@@ -293,23 +293,39 @@ func unionReduce(batch AdminBatch, algo string, siret string) (interface{}, erro
 	return result, nil
 }
 
-func compactEtablissementHandler(c *gin.Context) {
-	siret := c.Params.ByName("siret")
+func loadJSFunctions(path string) (map[string]bson.JavaScript, error) {
+	files, err := ioutil.ReadDir(path)
+	r := regexp.MustCompile(`(.*)\.js$`)
 
-	err := compactEtablissement(siret)
+	functions := make(map[string]bson.JavaScript)
 
-	if err != nil {
-		c.JSON(500, "Problème d'accès aux fichiers MapReduce")
+	for _, f := range files {
+		if name := r.FindStringSubmatch(f.Name()); len(name) > 0 {
+			b, err := ioutil.ReadFile(path + f.Name())
+			if err == nil {
+				functions[name[1]] = bson.JavaScript{
+					Code: string(b),
+				}
+			}
+		}
 	}
+	return functions, err
 }
 
-func compactEtablissement(siret string) error {
+func compactHandler(c *gin.Context) {
+	err := compact()
+	if err != nil {
+		c.JSON(500, err.Error())
+		return
+	}
+
+	c.JSON(200, "ok")
+}
+
+func compact() error {
 	batches, _ := getBatches()
 
 	// Détermination scope traitement
-	var query interface{}
-	var output interface{}
-	var etablissement []interface{}
 	var completeTypes = make(map[string][]string)
 	var batchesID []string
 
@@ -318,31 +334,21 @@ func compactEtablissement(siret string) error {
 		batchesID = append(batchesID, b.ID.Key)
 	}
 
-	// Si le parametre siret est absent, on traite l'ensemble de la collection
-	if siret == "" {
-		query = nil
-		output = bson.M{"replace": "Etablissement"}
-		etablissement = nil
-	} else {
-		query = bson.M{"value.siret": siret}
-		output = nil
+	query := bson.M{"value.key": "74655966775348"}
+	output := bson.M{"replace": "testCollection"}
+	functions, err := loadJSFunctions("js/compact/")
+	if err != nil {
+		return err
 	}
-
-	// Ressources JS
-	MREtablissement := MapReduceJS{}
-	errEt := MREtablissement.load("compact", "etablissement")
-
-	if errEt != nil {
-		return errEt
-	}
-
 	// Traitement MR
 	job := &mgo.MapReduce{
-		Map:      string(MREtablissement.Map),
-		Reduce:   string(MREtablissement.Reduce),
-		Finalize: string(MREtablissement.Finalize),
+		Map:      functions["map"].Code,
+		Reduce:   functions["reduce"].Code,
+		Finalize: functions["finalize"].Code,
 		Out:      output,
-		Scope: bson.M{"batches": batchesID,
+		Scope: bson.M{
+			"functions": functions,
+			"batches":   batchesID,
 			"types": []string{
 				"altares",
 				"apconso",
@@ -354,81 +360,6 @@ func compactEtablissement(siret string) error {
 				"effectif",
 				"sirene",
 				"dpae",
-			},
-			"completeTypes": completeTypes,
-		},
-	}
-
-	err := errors.New("")
-	if output == nil {
-		_, err = db.DB.C("Etablissement").Find(query).MapReduce(job, &etablissement)
-	} else {
-		_, err = db.DB.C("Etablissement").Find(query).MapReduce(job, nil)
-	}
-
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func getFeatures(c *gin.Context) {
-	var data []interface{}
-	db.DB.C("Features").Find(nil).All(&data)
-	c.JSON(200, data)
-}
-
-func compactEntrepriseHandler(c *gin.Context) {
-	siren := c.Params.ByName("siren")
-	err := compactEntreprise(siren)
-
-	if err != nil {
-		c.JSON(500, "Problème d'accès aux fichiers MapReduce")
-		return
-	}
-}
-
-func compactEntreprise(siren string) error {
-	batches, _ := getBatches()
-
-	// Détermination scope traitement
-	var query interface{}
-	var output interface{}
-	var etablissement []interface{}
-	var completeTypes = make(map[string][]string)
-	var batchesID []string
-
-	for _, b := range batches {
-		completeTypes[b.ID.Key] = b.CompleteTypes
-		batchesID = append(batchesID, b.ID.Key)
-	}
-
-	if siren == "" {
-		query = nil
-		output = bson.M{"replace": "Entreprise"}
-		etablissement = nil
-	} else {
-		query = bson.M{"value.siren": siren}
-		output = nil
-	}
-
-	// Ressources JS
-	MREntreprise := MapReduceJS{}
-	errEn := MREntreprise.load("compact", "entreprise")
-
-	if errEn != nil {
-		return errEn
-	}
-
-	// Traitement MR
-	job := &mgo.MapReduce{
-		Map:      string(MREntreprise.Map),
-		Reduce:   string(MREntreprise.Reduce),
-		Finalize: string(MREntreprise.Finalize),
-		Out:      output,
-		Scope: bson.M{
-			"batches": batchesID,
-			"types": []string{
 				"bdf",
 				"diane",
 			},
@@ -436,15 +367,15 @@ func compactEntreprise(siren string) error {
 		},
 	}
 
-	var err error
-
-	if output == nil {
-		_, err = db.DB.C("Entreprise").Find(query).MapReduce(job, &etablissement)
-	} else {
-		_, err = db.DB.C("Entreprise").Find(query).MapReduce(job, nil)
-	}
+	_, err = db.DB.C("RawData").Find(query).MapReduce(job, nil)
 
 	return err
+}
+
+func getFeatures(c *gin.Context) {
+	var data []interface{}
+	db.DB.C("Features").Find(nil).All(&data)
+	c.JSON(200, data)
 }
 
 func getNAF(c *gin.Context) {

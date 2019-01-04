@@ -117,7 +117,7 @@ func importSirene(batch *AdminBatch) error {
 
 		value := Value{
 			Value: Data{
-				Siret: sirene.Siren + sirene.Nic,
+				Scope: "etablissement",
 				Key:   sirene.Siren + sirene.Nic,
 				Batch: map[string]Batch{
 					batch.ID.Key: Batch{

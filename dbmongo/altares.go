@@ -75,7 +75,7 @@ func importAltares(batch *AdminBatch) error {
 
 			value := Value{
 				Value: Data{
-					Siret: altares.Siret,
+					Scope: "etablissement",
 					Key:   altares.Siret,
 					Batch: map[string]Batch{
 						batch.ID.Key: Batch{

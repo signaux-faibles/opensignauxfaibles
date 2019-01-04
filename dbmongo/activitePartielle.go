@@ -135,7 +135,8 @@ func importAPDemande(batch *AdminBatch) error {
 			hash := fmt.Sprintf("%x", structhash.Md5(apdemande, 1))
 			value := Value{
 				Value: Data{
-					Siret: apdemande.Siret,
+					Key:   apdemande.Siret,
+					Scope: "etablissement",
 					Batch: map[string]Batch{
 						batch.ID.Key: Batch{
 							Compact: map[string]bool{
@@ -214,7 +215,7 @@ func importAPConso(batch *AdminBatch) error {
 			hash := fmt.Sprintf("%x", structhash.Md5(apconso, 1))
 			value := Value{
 				Value: Data{
-					Siret: apconso.Siret,
+					Scope: "etablissement",
 					Key:   apconso.Siret,
 					Batch: map[string]Batch{
 						batch.ID.Key: Batch{

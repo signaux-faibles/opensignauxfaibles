@@ -84,7 +84,7 @@ func importBDF(batch *AdminBatch) error {
 
 		value := Value{
 			Value: Data{
-				Siren: bdf.Siren,
+				Scope: "entreprise",
 				Key:   bdf.Siren,
 				Batch: map[string]Batch{
 					batch.ID.Key: Batch{

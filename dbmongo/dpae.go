@@ -71,7 +71,7 @@ func importDPAE(batch *AdminBatch) error {
 
 			value := Value{
 				Value: Data{
-					Siret: dpae.Siret,
+					Scope: "etablissement",
 					Key:   dpae.Siret,
 					Batch: map[string]Batch{
 						batch.ID.Key: Batch{

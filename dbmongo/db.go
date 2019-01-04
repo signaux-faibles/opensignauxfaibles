@@ -123,12 +123,12 @@ func insert(db *mgo.Database) chan *Value {
 				i = 0
 			}
 			if value.Value.Batch != nil {
-				if knownValue, ok := buffer[value.Value.Siret]; ok {
+				if knownValue, ok := buffer[value.Value.Key]; ok {
 					newValue, _ := (*knownValue).merge(*value)
-					buffer[value.Value.Siret] = &newValue
+					buffer[value.Value.Key] = &newValue
 				} else {
 					value.ID = bson.NewObjectId()
-					buffer[value.Value.Siret] = value
+					buffer[value.Value.Key] = value
 					i++
 				}
 			}

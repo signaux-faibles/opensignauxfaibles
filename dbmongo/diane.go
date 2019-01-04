@@ -298,7 +298,7 @@ func importDiane(batch *AdminBatch) error {
 
 		value := Value{
 			Value: Data{
-				Siren: diane.NumeroSiren,
+				Scope: "entreprise",
 				Key:   diane.NumeroSiren,
 				Batch: map[string]Batch{
 					batch.ID.Key: Batch{

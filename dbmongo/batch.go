@@ -196,8 +196,7 @@ func processBatch() {
 	batch := lastBatch()
 	status.setDBStatus(sp("Import des fichiers"))
 	importBatch(&batch)
-	compactEntreprise("")
-	compactEtablissement("")
+	compact()
 	// for _, algo := range []string{"algo1", "algo2"} {
 	// 	_, err := reduce(batch, algo, "")
 	// 	fmt.Println(err)

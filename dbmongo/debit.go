@@ -100,7 +100,7 @@ func importDebit(batch *AdminBatch) error {
 
 			value := Value{
 				Value: Data{
-					Siret: siret,
+					Scope: "etablissement",
 					Key:   siret,
 					Batch: map[string]Batch{
 						batch.ID.Key: Batch{

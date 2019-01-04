@@ -15,9 +15,8 @@ type Value struct {
 
 // Data objet établissement (/entreprise/)
 type Data struct {
-	Siret string           `json:"siret,omitempty" bson:"siret,omitempty"`
-	Siren string           `json:"siren,omitempty" bson:"siren,omitempty"`
-	Key   string           `json:"key,omitempty" bson:"key,omitempty"`
+	Scope string           `json:"scope" bson:"scope"`
+	Key   string           `json:"key" bson:"key"`
 	Batch map[string]Batch `json:"batch,omitempty" bson:"batch,omitempty"`
 }
 
