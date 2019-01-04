@@ -82,17 +82,18 @@ func importBDF(batch *AdminBatch) error {
 	for bdf := range parseBDF(batch.Files["bdf"]) {
 		hash := fmt.Sprintf("%x", structhash.Md5(bdf, 1))
 
-		value := ValueEntreprise{
-			Value: Entreprise{
+		value := Value{
+			Value: Data{
 				Siren: bdf.Siren,
+				Key:   bdf.Siren,
 				Batch: map[string]Batch{
 					batch.ID.Key: Batch{
 						BDF: map[string]*BDF{
 							hash: bdf,
 						}}}}}
-		db.ChanEntreprise <- &value
+		db.ChanData <- &value
 	}
-	db.ChanEntreprise <- &ValueEntreprise{}
+	db.ChanData <- &Value{}
 	log(info, "importBDF", "Fin de l'import du batch "+batch.ID.Key+": Banque de France")
 
 	return nil

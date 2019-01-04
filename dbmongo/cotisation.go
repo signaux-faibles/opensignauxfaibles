@@ -84,17 +84,18 @@ func importCotisation(batch *AdminBatch) error {
 		if siret, ok := mapping[cotisation.NumeroCompte]; ok {
 			hash := fmt.Sprintf("%x", structhash.Md5(*cotisation, 1))
 
-			value := ValueEtablissement{
-				Value: Etablissement{
+			value := Value{
+				Value: Data{
 					Siret: siret,
+					Key:   siret,
 					Batch: map[string]Batch{
 						batch.ID.Key: Batch{
 							Cotisation: map[string]*Cotisation{
 								hash: cotisation,
 							}}}}}
-			db.ChanEtablissement <- &value
+			db.ChanData <- &value
 		}
 	}
-	db.ChanEtablissement <- &ValueEtablissement{}
+	db.ChanData <- &Value{}
 	return nil
 }

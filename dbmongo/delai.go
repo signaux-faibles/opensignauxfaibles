@@ -122,18 +122,19 @@ func importDelai(batch *AdminBatch) error {
 		if siret, ok := mapping[delai.NumeroCompte]; ok {
 			hash := fmt.Sprintf("%x", structhash.Md5(delai, 1))
 
-			value := ValueEtablissement{
-				Value: Etablissement{
+			value := Value{
+				Value: Data{
 					Siret: siret,
+					Key:   siret,
 					Batch: map[string]Batch{
 						batch.ID.Key: Batch{
 							Delai: map[string]*Delai{
 								hash: delai,
 							}}}}}
-			db.ChanEtablissement <- &value
+			db.ChanData <- &value
 		}
 	}
-	db.ChanEtablissement <- &ValueEtablissement{}
+	db.ChanData <- &Value{}
 	log(info, "importDelais", "Importation du batch "+batch.ID.Key+" terminée")
 	return nil
 }

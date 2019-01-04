@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"regexp"
 	"time"
 
 	"github.com/spf13/viper"
@@ -14,11 +13,10 @@ import (
 
 // DB contient des méthodes pour accéder à la base de données
 type DB struct {
-	DB                *mgo.Database
-	DBStatus          *mgo.Database
-	Status            Status
-	ChanEntreprise    chan *ValueEntreprise
-	ChanEtablissement chan *ValueEtablissement
+	DB       *mgo.Database
+	DBStatus *mgo.Database
+	Status   Status
+	ChanData chan *Value
 }
 
 // DB Initialisation de la connexion MongoDB
@@ -83,23 +81,20 @@ func initDB() DB {
 		// log.Panic(err)
 	}
 
-	chanEntreprise := insertEntreprise(db)
-	chanEtablissement := insertEtablissement(db)
+	chanData := insert(db)
 
 	// envoie un struct vide pour purger les channels au cas où il reste les objets non insérés
 	go func() {
 		for range time.Tick(1 * time.Second) {
-			chanEntreprise <- &ValueEntreprise{}
-			chanEtablissement <- &ValueEtablissement{}
+			chanData <- &Value{}
 		}
 	}()
 
 	return DB{
-		DB:                db,
-		DBStatus:          dbstatus,
-		ChanEntreprise:    chanEntreprise,
-		ChanEtablissement: chanEtablissement,
-		Status:            status,
+		DB:       db,
+		DBStatus: dbstatus,
+		ChanData: chanData,
+		Status:   status,
 	}
 }
 
@@ -107,11 +102,11 @@ func logErrors(db *mgo.Database, err error) {
 	db.C("Journal").Insert(err)
 }
 
-func insertEntreprise(db *mgo.Database) chan *ValueEntreprise {
-	source := make(chan *ValueEntreprise, 1000)
+func insert(db *mgo.Database) chan *Value {
+	source := make(chan *Value, 1000)
 
-	go func(chan *ValueEntreprise) {
-		buffer := make(map[string]*ValueEntreprise)
+	go func(chan *Value) {
+		buffer := make(map[string]*Value)
 		objects := make([]interface{}, 0)
 		i := 0
 
@@ -121,49 +116,13 @@ func insertEntreprise(db *mgo.Database) chan *ValueEntreprise {
 					objects = append(objects, *v)
 				}
 				if len(objects) > 0 {
-					go func(o []interface{}) { db.C("Entreprise").Insert(o...) }(objects)
+					go func(o []interface{}) { db.C("RawData").Insert(o...) }(objects)
 				}
-				buffer = make(map[string]*ValueEntreprise)
+				buffer = make(map[string]*Value)
 				objects = make([]interface{}, 0)
 				i = 0
 			}
-			if match, _ := regexp.MatchString("^[0-9]{9}$", value.Value.Siren); value.Value.Batch != nil && match {
-				if knownValue, ok := buffer[value.Value.Siren]; ok {
-					newValue, _ := (*knownValue).merge(*value)
-					buffer[value.Value.Siren] = &newValue
-				} else {
-					value.ID = bson.NewObjectId()
-					buffer[value.Value.Siren] = value
-					i++
-				}
-			}
-		}
-	}(source)
-
-	return source
-}
-
-func insertEtablissement(db *mgo.Database) chan *ValueEtablissement {
-	source := make(chan *ValueEtablissement, 1000)
-
-	go func(chan *ValueEtablissement) {
-		buffer := make(map[string]*ValueEtablissement)
-		objects := make([]interface{}, 0)
-		i := 0
-
-		for value := range source {
-			if (value.Value.Batch == nil) || i >= 100 {
-				for _, v := range buffer {
-					objects = append(objects, *v)
-				}
-				if len(objects) > 0 {
-					go func(o []interface{}) { db.C("Etablissement").Insert(o...) }(objects)
-				}
-				buffer = make(map[string]*ValueEtablissement)
-				objects = make([]interface{}, 0)
-				i = 0
-			}
-			if match, _ := regexp.MatchString("^[0-9]{14}$", value.Value.Siret); value.Value.Batch != nil && match {
+			if value.Value.Batch != nil {
 				if knownValue, ok := buffer[value.Value.Siret]; ok {
 					newValue, _ := (*knownValue).merge(*value)
 					buffer[value.Value.Siret] = &newValue

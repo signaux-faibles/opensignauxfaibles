@@ -133,8 +133,8 @@ func importAPDemande(batch *AdminBatch) error {
 	for _, file := range batch.Files["apdemande"] {
 		for apdemande := range parseAPDemande(viper.GetString("APP_DATA") + file) {
 			hash := fmt.Sprintf("%x", structhash.Md5(apdemande, 1))
-			value := ValueEtablissement{
-				Value: Etablissement{
+			value := Value{
+				Value: Data{
 					Siret: apdemande.Siret,
 					Batch: map[string]Batch{
 						batch.ID.Key: Batch{
@@ -146,10 +146,10 @@ func importAPDemande(batch *AdminBatch) error {
 							}}}}}
 			if value.Value.Batch == nil {
 			}
-			db.ChanEtablissement <- &value
+			db.ChanData <- &value
 		}
 	}
-	db.ChanEtablissement <- &ValueEtablissement{}
+	db.ChanData <- &Value{}
 	log(info, "importAPDemande", "Import APDemande du batch "+batch.ID.Key+" terminé")
 	return nil
 }
@@ -212,9 +212,10 @@ func importAPConso(batch *AdminBatch) error {
 	for _, file := range batch.Files["apconso"] {
 		for apconso := range parseAPConso(file) {
 			hash := fmt.Sprintf("%x", structhash.Md5(apconso, 1))
-			value := ValueEtablissement{
-				Value: Etablissement{
+			value := Value{
+				Value: Data{
 					Siret: apconso.Siret,
+					Key:   apconso.Siret,
 					Batch: map[string]Batch{
 						batch.ID.Key: Batch{
 							APConso: map[string]*APConso{
@@ -222,10 +223,10 @@ func importAPConso(batch *AdminBatch) error {
 							}}}}}
 			if value.Value.Batch == nil {
 			}
-			db.ChanEtablissement <- &value
+			db.ChanData <- &value
 		}
 	}
-	db.ChanEtablissement <- &ValueEtablissement{}
+	db.ChanData <- &Value{}
 	log(info, "importAPConso", "Fin de l'import du batch "+batch.ID.Key+": APConso")
 	return nil
 }

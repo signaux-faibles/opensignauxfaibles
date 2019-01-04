@@ -115,17 +115,18 @@ func importSirene(batch *AdminBatch) error {
 	for sirene := range parseSirene(batch.Files["sirene"], mapping) {
 		hash := fmt.Sprintf("%x", structhash.Md5(sirene, 1))
 
-		value := ValueEtablissement{
-			Value: Etablissement{
+		value := Value{
+			Value: Data{
 				Siret: sirene.Siren + sirene.Nic,
+				Key:   sirene.Siren + sirene.Nic,
 				Batch: map[string]Batch{
 					batch.ID.Key: Batch{
 						Sirene: map[string]*Sirene{
 							hash: sirene,
 						}}}}}
-		db.ChanEtablissement <- &value
+		db.ChanData <- &value
 	}
 
-	db.ChanEtablissement <- &ValueEtablissement{}
+	db.ChanData <- &Value{}
 	return nil
 }

@@ -296,17 +296,18 @@ func importDiane(batch *AdminBatch) error {
 	for diane := range parseDiane(batch.Files["diane"]) {
 		hash := fmt.Sprintf("%x", structhash.Md5(diane, 1))
 
-		value := ValueEntreprise{
-			Value: Entreprise{
+		value := Value{
+			Value: Data{
 				Siren: diane.NumeroSiren,
+				Key:   diane.NumeroSiren,
 				Batch: map[string]Batch{
 					batch.ID.Key: Batch{
 						Diane: map[string]*Diane{
 							hash: diane,
 						}}}}}
-		db.ChanEntreprise <- &value
+		db.ChanData <- &value
 	}
-	db.ChanEntreprise <- &ValueEntreprise{}
+	db.ChanData <- &Value{}
 	log(info, "importDiane", "Import batch "+batch.ID.Key+": fin import Diane")
 	return nil
 }
