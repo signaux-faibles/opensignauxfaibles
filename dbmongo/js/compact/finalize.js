@@ -1,5 +1,4 @@
 function finalize(k, o) {
-
     batches.reduce((m, batch) => {
         var deleteOld = new Set(completeTypes[batch])
         o.batch[batch] = (o.batch[batch]||{})

@@ -10,6 +10,6 @@ function reduce(key, values) {
         })
 
         return m
-    },{"key": key, "type": this.value.scope  })
+    },{"key": key, "scope": values[0].scope  })
 
 }

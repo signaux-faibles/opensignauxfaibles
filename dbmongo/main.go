@@ -96,7 +96,7 @@ func main() {
 	r.GET("/ws/:jwt", func(c *gin.Context) {
 		wshandler(c.Writer, c.Request, c.Params.ByName("jwt"))
 	})
-
+	r.GET("/debug", compactHandler)
 	api := r.Group("api")
 	api.Use(authMiddleware.MiddlewareFunc())
 
