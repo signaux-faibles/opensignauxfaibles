@@ -149,8 +149,8 @@ func min(a, b int) int {
 func genereSeriePeriode(debut time.Time, fin time.Time) []time.Time {
 	var serie []time.Time
 	for fin.After(debut) {
-		debut = debut.AddDate(0, 1, 0)
 		serie = append(serie, debut)
+		debut = debut.AddDate(0, 1, 0)
 	}
 	return serie
 }
