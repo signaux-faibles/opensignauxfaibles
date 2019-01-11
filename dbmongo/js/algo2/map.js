@@ -1,5 +1,4 @@
 function map () {
-
   let v = f.flatten(this.value, actual_batch)
 
   if (v.scope == "etablissement") {
@@ -18,15 +17,16 @@ function map () {
 
     output_array.forEach(val => {
       emit(    
-        {'siret': this._id,
+        { 'siren': this._id.substring(0, 9),
           'scope': this.value.scope,
           'batch': actual_batch,
-          'algo': 'algo2',
           'periode': val.periode},
           val
       )
     })
   }
-  
-  
+
+  if (v.scope == "entreprise") {
+
+  }
 }

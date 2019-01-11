@@ -14,6 +14,15 @@ import (
 
 type randomizer func(string, string, map[string]string) error
 
+func contains(array []int, element int) bool {
+	for _, i := range array {
+		if i == element {
+			return true
+		}
+	}
+	return false
+}
+
 // run execute une fonction de randomisation
 func run(name string, handler randomizer, mapping map[string]string) error {
 	file := viper.GetString(name)
@@ -50,6 +59,18 @@ func main() {
 		fmt.Println("Interruption.")
 	} else {
 		fmt.Println("OK -> " + outputCompte)
+	}
+
+	// Traitement Demandes d'activité partielle
+	err = run("apartdemande", readAndRandomApartDemande, mapping)
+	if err != nil {
+		panic(err)
+	}
+
+	// Traitement Conso d'activité partielle
+	err = run("apartconso", readAndRandomApartConso, mapping)
+	if err != nil {
+		panic(err)
 	}
 
 	// Traitement Banque de France

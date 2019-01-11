@@ -55,24 +55,22 @@ func listFiles(basePath string) ([]fileSummary, error) {
 }
 
 var importFunctions = map[string]func(*AdminBatch) error{
-	"apconso":    importAPConso,
-	"bdf":        importBDF,
-	"delai":      importDelai,
-	"apdemande":  importAPDemande,
-	"diane":      importDiane,
+	//"apconso":    importAPConso,
+	//"bdf":   importBDF,
+	//"delai": importDelai,
+	//"apdemande":  importAPDemande,
+	//"diane":      importDiane,
 	"cotisation": importCotisation,
-	"dpae":       importDPAE,
-	"altares":    importAltares,
-	"ccsf":       importCCSF,
-	"debit":      importDebit,
-	"effectif":   importEffectif,
-	"sirene":     importSirene,
+	//"dpae":       importDPAE,
+	//"altares":    importAltares,
+	//"ccsf":       importCCSF,
+	//"debit":      importDebit,
+	//"effectif":   importEffectif,
+	//"sirene":     importSirene,
 }
 
 func purge(c *gin.Context) {
-	db.DB.C("Etablissement").RemoveAll(nil)
-	db.DB.C("Entreprise").RemoveAll(nil)
-	db.DB.C("Prediction").RemoveAll(nil)
+	db.DB.C("RawData").RemoveAll(nil)
 	c.String(200, "Done")
 }
 

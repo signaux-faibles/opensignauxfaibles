@@ -1,5 +1,5 @@
 function sirene (v, output_array) {
-  var sireneHashes = Object.keys(v.sirene || {})
+  var sireneHashes = Object.keys(v.sirene)
 
   output_array.forEach(val => {
       if (sireneHashes.length != 0) {

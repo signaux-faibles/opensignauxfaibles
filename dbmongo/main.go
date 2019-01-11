@@ -51,7 +51,7 @@ func main() {
 
 	r := gin.Default()
 	r.Use(gin.Recovery())
-	// r.Use(Kanboard())
+
 	config := cors.DefaultConfig()
 	config.AllowOrigins = []string{"http://localhost:8080", "https://signaux.faibles.fr"}
 	config.AddAllowHeaders("Authorization")
