@@ -117,7 +117,7 @@ func main() {
 		api.GET("/batch/purge", purgeBatchHandler)
 		api.GET("/batch/process", processBatchHandler)
 		api.POST("/admin/files", addFile)
-		api.GET("/data/naf", getNAF)
+		// api.GET("/data/naf", getNAF)
 		api.GET("/data/features", getFeatures)
 		api.GET("/admin/epoch", epoch)
 		api.POST("/data/prediction", predictionBrowseHandler)
@@ -134,6 +134,7 @@ func main() {
 		api.GET("/data/etablissement/:batch/:siret", browseEtablissementHandler)
 		api.GET("/dashboard/tasks", getTasks)
 		api.GET("/admin/regions", getRegionsHandler)
+    api.GET("/union/:algo/:batch", unionReduceHandler)
 	}
 
 	bind := viper.GetString("APP_BIND")

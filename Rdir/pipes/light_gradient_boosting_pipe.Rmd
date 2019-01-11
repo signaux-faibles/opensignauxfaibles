@@ -1,5 +1,5 @@
 ---
-title: "Random forest pipe"
+title: "Light gradient boosting pipe"
 author: "Pierre Camilleri"
 date: "1 juin 2018"
 output: html_document
@@ -15,10 +15,7 @@ library(h2o)
 library(lubridate)
 library(assertthat)
 library(mongolite)
-library(mice)
-library(caret)
 library(broom)
-library(randomForest)
 library(MLmetrics)
 library(tibbletime)
 library(PRROC)
@@ -27,240 +24,38 @@ library(rprojroot)
 library(groupdata2)
 library(R.utils)
 
-sourceDirectory(find_rstudio_root_file('tools'))
+sourceDirectory(find_rstudio_root_file('tools'), modifiedOnly = FALSE)
 ```
 
 ## Script parameters
 ```{r}
-actual_period <- as.Date("2018-08-01")
-last_batch = '1809'
-algorithm = 'algo2'
-```
-
-
-## Recuperation des données dans MongoDB
-```{r}
-raw_data <- connect_to_database('Features', last_batch, algo = algorithm, min_effectif = 20)
-```
-
-```{r}
-# FIX ME
-# Cotisations avec un mois de décalage.
-cat('FIX ME: offset with cotisation')
-
-raw_data[ raw_data$periode == actual_period, "cotisation"] <- NA
-raw_data <- raw_data %>% 
-  arrange(siret,periode) %>% 
-  fill(cotisation)
-```
-
-## Definition de l'objectif
-```{r}
-raw_data <- raw_data %>%
-  objective_default_or_failure(n_months = 3, threshold = 1, lookback = 18) %>%
-  set_objective('default')
-```
-
-## Filter for training sample
-```{r}
-date_inf <- as.Date("2015-01-01")
-date_sup <- as.Date("2016-12-01")
-
-all_data <- raw_data %>% 
-  group_by(siret) %>%
-  arrange(siret,periode) %>%
-  mutate(CA_N_moins_1 = first(tail(unique(CA),2)),
-         resultat_net_consolide_N_moins_1 = first(tail(unique(resultat_net_consolide),2)),
-         resultat_expl_N_moins_1 = first(tail(unique(resultat_expl),2))) %>%
-  ungroup() %>% 
-  arrange(periode) %>% 
-  filter_time(actual_period %m-% months(12) ~ actual_period) 
-
-raw_data <- raw_data %>%
-  arrange(periode) %>%
-  filter_time( date_inf ~ date_sup) 
-
+database <- "test_signauxfaibles"
+actual_period <- as.Date("2018-11-01")
+last_batch <- '1812'
+algorithm <- 'algo2'
+min_effectif <- 300
+retrain_model <- TRUE
+reexport_csv <- FALSE
 ```
 
 ```{r}
-
-out <- feature_engineering_std(raw_data, all_data)
-raw_data <- out[[1]]
-all_data <- out[[2]]
-
-ref_f_e <- feature_engineering_create(raw_data)
-
-out <- feature_engineering_apply(ref_f_e, raw_data, all_data)
-
-raw_data <- out[[1]]
-all_data <- out[[2]]
-
-rm(out)
-
-raw_data <- raw_data %>%
-    mutate_if(is.POSIXct, as.Date)
-
-all_data <- all_data %>%
-    mutate_if(is.POSIXct, as.Date)
-
+res <- light_gradient_boosting(database, actual_period, last_batch, algorithm, min_effectif, retrain_model = retrain_model, reexport_csv = reexport_csv)
+my_data <- res[["current_data"]]
+my_model <- res[["model"]]
 ```
 
 ```{r}
-gc()
-h2o.init(ip = "localhost", port = 4444)
-train <- as.h2o(raw_data) 
-all <- as.h2o(all_data)
-
+my_data <- as.data.frame(my_data)
+my_data <- my_data %>% mutate(
+  periode =  as.Date(structure(periode / 1000, 
+                               class = c('POSIXct','POSIXt')))
+)
 ```
 
 ```{r}
-train['outcome'] <- h2o.relevel(x = train['outcome'], y = "non_default")
-all['outcome'] <- h2o.relevel(x = all['outcome'], y = "non_default")
+shapley_plot(c("81755759800023" ,"82452612300024" ,"49442016900026" ,"34323685700045" ,"64282087200025" ,"87695038700020" ,"40256514700020" ,"35342749500018" ,"40207811700015" ,"83063258400017"), my_data, my_model, batch = last_batch)
 ```
 
-```{r}
-te_map <- h2o.target_encode_create(
-  train, 
-  x = list(c('code_naf_niveau1'), c('code_ape')), 
-  y = 'outcome')
-
-
-train <- h2o.target_encode_apply(
-  train, 
-  x = list(c('code_naf_niveau1'), c('code_ape')), 
-  y = 'outcome',
-  target_encode_map = te_map,
-  holdout_type = 'LeaveOneOut',
-  blended_avg = TRUE,
-  seed = 1234)
-
-all <- h2o.target_encode_apply(
-  all,
-  x = list(c('code_naf_niveau1'), c('code_ape')),
-  y = 'outcome',
-  target_encode_map = te_map, 
-  holdout_type = 'None',
-  blended_avg = FALSE,
-  fold_column = 'fold_column',
-  noise_level = 0)
+```{r results="hide"}
+export_fiche_visite(sirets = c("39249938000013"), database, last_batch, with_urssaf = TRUE)
 ```
-
-## Model
-
-```{r}
-x_minimal = c(    
-  "effectif",
-  "effectif_diff_moy12",
-  "apart_heures_consommees",
-  "ratio_apart",
-  "cotisation",                                
-  "montant_part_ouvriere",                    
-  "montant_part_patronale",
-  "ratio_dette_moy12m",
-  "dette_any_12m",
-  "ratio_dette",
-  "poids_frng",                               
-  "taux_marge",                                
-  "delai_fournisseur",                         
-  "dette_fiscale",                            
-  "financier_court_terme",                     
-  "frais_financier")
-
-ratios_diane =c(
-  "CA",
-  "chiffre_affaires_net_lie_aux_exportations",
-  "resultat_net_consolide",
-  "ratio_CAF",
-  "ratio_marge_operationnelle",
-  "taux_rotation_stocks",
-  "ratio_productivite",
-  "ratio_export",
-  "ratio_delai_client",
-  "ratio_liquidite_reduite",
-  "ratio_endettement",
-  "ratio_rend_capitaux_propres",
-  "ratio_rend_des_ress_durables",
-  "ratio_RetD", 
-  "taux_marge_neg",
-  "taux_marge_extr_neg",
-  "taux_marge_extr_pos")
-
-new_variables = c(
-  "etat_proc_collective_num",   
-  "delai",
-  "montant_echeancier",
-  "ratio_dette_delai",
-  "duree_delai",
-  "age",
-  "productif",
-  "indice_monoactivite",
-  "effectif_entreprise",
-  "apart_entreprise",
-  "nbr_etablissements_connus",
-  "resultat_net_consolide",
-  "nombre_etab_secondaire")
-#,
-# "code_naf_niveau1")
-
-variations = c(grep('variation',names(raw_data), value = TRUE),
-               grep('diff_moy12',names(raw_data), value = TRUE))
-
-distrib = c(grep('APE1',names(raw_data), value = TRUE),
-            grep('APE1',names(raw_data), value = TRUE), 
-            'TargetEncode_code_naf_niveau1')
-
-x_distrib = c(
-  x_minimal,
-  ratios_diane,
-  new_variables,
-  variations,
-  distrib)
-
-y = "outcome"
-```
-
-
-```{r}
-model <- h2o.xgboost(
-                    model_id = 'Model_train',
-                    x= x_distrib, 
-                    y =y,
-                    training_frame = train,
-                    tree_method = "hist",
-                    grow_policy = "lossguide",
-                    learn_rate = 0.1,
-                    max_depth = 4,
-                    ntrees = 60,
-                    seed = 123
-                )
-```
-
-
-## Prediction
-```{r}
-
-#provisoire: retrait NA et inf
-# tw_complete_long <- imputed_data_long %>%
-#  filter(.imp != 0) %>% 
-#  filter(!is.infinite(log_cotisationdue_effectif)) %>%
-#  filter(!is.na(log_cotisationdue_effectif))
-
-
-prediction <- as.tibble(h2o.cbind(all,h2o.predict(model,all)))
-
-pred_data <- all_data %>%
-  left_join(prediction %>% rename(prob = default0) %>% select(predict, prob,siret, periode), by=c('siret', 'periode')) %>% 
-  group_by(siret) %>%
-  arrange(siret,periode) %>% 
-  mutate(last_prob = lag(prob),
-         interressant_urssaf = all(tail(montant_part_ouvriere + montant_part_patronale, 6) < 2)) %>% 
-  ungroup() %>% 
-  mutate(diff = prob - last_prob) 
-
-# Export
-pred_data %>% 
-  filter(periode == actual_period) %>% 
-  prepare_for_export(additional_names = c('diff', 'connu', 'interressant_urssaf')) %>%
-  export(batch = '1809')
-```
-
