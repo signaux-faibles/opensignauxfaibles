@@ -22,10 +22,10 @@ quantile_APE_apply <- function(
 
       if (level == 1) {
         out <- out %>%
-          mutate(.target = as.factor(code_naf_niveau1))
+          mutate(.target = as.character(code_naf))
       } else {
         out <- out %>%
-          mutate(.target = as.factor(substr(code_ape, 1, ape_levels)))
+          mutate(.target = as.character(substr(code_ape, 1, ape_levels)))
       }
 
 
@@ -40,6 +40,8 @@ quantile_APE_apply <- function(
         mutate(!!new_var := (!!rlang::sym(variable_names[i]) - moy) / std) %>%
         select(-c("moy", "std"))
       }
+      out <- out %>%
+        select(-.target)
     }
     return(out)
   }

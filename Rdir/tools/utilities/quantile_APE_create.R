@@ -2,10 +2,10 @@ quantile_APE_create <- function(
   my_data,
   variable_names,
   ape_levels = 1
-  ){
+){
 
-  assertthat::assert_that(all(c("code_naf_niveau1", "code_ape") %in%
-      names(my_data)))
+  assertthat::assert_that(all(c("code_naf", "code_ape") %in%
+                                names(my_data)))
 
   assertthat::assert_that(all(ape_levels >= 1 & ape_levels <= 5))
 
@@ -23,10 +23,10 @@ quantile_APE_create <- function(
 
     if (level == 1) {
       my_data <- my_data %>%
-        mutate(.target = as.factor(code_naf_niveau1))
+        mutate(.target = as.character(code_naf))
     } else {
       my_data <- my_data %>%
-        mutate(.target = as.factor(substr(code_ape, 1, ape_levels)))
+        mutate(.target = as.character(substr(code_ape, 1, ape_levels)))
     }
 
     for (i in seq_along(variable_names)){
@@ -38,13 +38,13 @@ quantile_APE_create <- function(
           variable = variable_names[i],
           moy = mean(!!rlang::sym(variable_names[i]), na.rm = TRUE),
           std = sd(!!rlang::sym(variable_names[i]), na.rm = TRUE)
-          ) %>%
-        select(-.target)
-
-
+        )
       out <- rbind(out, out_add)
     }
   }
+
+  out <- out %>%
+    select(-c(".target"))
 
   out[!is.finite(out$moy), 'moy'] <- NA
   out[!is.finite(out$std), 'std'] <- NA

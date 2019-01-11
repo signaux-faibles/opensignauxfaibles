@@ -161,6 +161,9 @@ const sessionStore = new Vuex.Store({
     updateLogs (state) {
       axiosClient.get('/api/admin/getLogs').then(response => { state.socket.message = (response.data || []) })
     },
+    updateLogs (state) {
+      axiosClient.get('/api/admin/getLogs').then(response => { state.socket.message = (response.data || []) })
+    },
     setCurrentBatchKey (state, key) {
       state.currentBatchKey = key
     },

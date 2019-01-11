@@ -1,126 +1,240 @@
 function finalize(k, v) {
 
-    v = Object.keys((v.batch || {})).sort().reduce((m, batch) => {
-        Object.keys(v.batch[batch]).forEach((type) => {
-            m[type] = (m[type] || {})
-            Object.assign(m[type], v.batch[batch][type])
-        })
-        return m
-    }, { "siren": v.siren })
+  v = Object.keys((v.batch || {})).sort().reduce((m, batch) => {
+    Object.keys(v.batch[batch]).forEach(type => {
+      m[type] = (m[type] || {})
+      Object.assign(m[type], v.batch[batch][type])
+    })
+    return m
+  }, { "siren": v.siren })
 
-    liste_periodes = generatePeriodSerie(date_debut, date_fin)
+  var liste_periodes = generatePeriodSerie(date_debut, date_fin)
 
-    var value_array = liste_periodes.map(function (e) {
-        return {
-            "siren": v.siren,
-            "periode": e,
-            "arrete_bilan_bdf": new Date(0),
-            "annee_bilan_diane": 0
+  var output_array = liste_periodes.map(function (e) {
+    return {
+      "siren": v.siren,
+      "periode": e,
+      "exercice_bdf": 0,
+      "arrete_bilan_bdf": new Date(0),
+      "exercice_diane": 0,
+      "arrete_bilan_diane": new Date(0)
+    }
+  })
+
+  var output_indexed = output_array.reduce(function (periode, val) {
+    periode[val.periode.getTime()] = val
+    return periode
+  }, {})
+
+  v.bdf = (v.bdf || {})
+  v.diane = (v.diane || {})
+
+  Object.keys(v.bdf).forEach(hash => {
+    let periode_arrete_bilan = new Date(Date.UTC(v.bdf[hash].arrete_bilan_bdf.getUTCFullYear(), v.bdf[hash].arrete_bilan_bdf.getUTCMonth() +1, 1, 0, 0, 0, 0))
+    let periode_dispo = DateAddMonth(periode_arrete_bilan, 8)
+    let series = generatePeriodSerie(
+      periode_dispo,
+      DateAddMonth(periode_dispo, 13)
+    )
+
+    series.forEach(periode => {
+      Object.keys(v.bdf[hash]).filter( k => {
+        var omit = ["raison_sociale","secteur", "siren"]
+        return (v.bdf[hash][k] != null &&  !(omit.includes(k)))
+      }).forEach(k => {
+        if (periode.getTime() in output_indexed){
+          output_indexed[periode.getTime()][k] = v.bdf[hash][k]
+          output_indexed[periode.getTime()].exercice_bdf = output_indexed[periode.getTime()].annee_bdf - 1
         }
-    });
 
-    v.bdf = (v.bdf || {})
-    v.diane = (v.diane || {})
-
-    Object.keys(v.bdf).forEach(hash => {
-        value_array.forEach(siren_periode => {
-            if (siren_periode.arrete_bilan_bdf.getTime() < v.bdf[hash].arrete_bilan.getTime()
-                && siren_periode.periode.getTime() > v.bdf[hash].arrete_bilan.getTime()) {
-                siren_periode.arrete_bilan_bdf = v.bdf[hash].arrete_bilan
-                //periode.secteur = v.bdf[hash].secteur
-                siren_periode.poids_frng = v.bdf[hash].poids_frng
-                siren_periode.taux_marge = v.bdf[hash].taux_marge
-                siren_periode.delai_fournisseur = v.bdf[hash].delai_fournisseur
-                siren_periode.dette_fiscale = v.bdf[hash].dette_fiscale
-                siren_periode.financier_court_terme = v.bdf[hash].financier_court_terme
-                siren_periode.frais_financier = v.bdf[hash].frais_financier
-            }
+        let past_year_offset = [1,2]
+        past_year_offset.forEach( offset =>{
+          let periode_offset = DateAddMonth(periode, 12* offset)
+          let variable_name =  k + "_past_" + offset
+          if (periode_offset.getTime() in output_indexed && 
+            k != "arrete_bilan_bdf" &&
+            k != "exercice_bdf"){
+            output_indexed[periode_offset.getTime()][variable_name] = v.bdf[hash][k]  
+          }
         })
+      }
+      )
     })
+  })
 
-    Object.keys(v.diane).forEach(hash => {
-        value_array.forEach(siren_periode => {
-            annee_bilan = v.diane[hash].annee 
-            if (siren_periode.annee_bilan_diane < annee_bilan
-                && siren_periode.periode.getTime() > Date.UTC(annee_bilan+1,0,0,0,0,0,0)) {
-                    siren_periode.annee_bilan_diane = annee_bilan 
-                    siren_periode.bilan_diane_absent = v.diane[hash].CA == null
+  Object.keys(v.diane).forEach(hash => {
 
-                    Object.keys(v.diane[hash]).filter( k => {
-                        var omit = ["annee","marquee", "nom_entreprise","numero_siren",
-                            "statut_juridique", "procedure_collective"]
-                        return (v.diane[hash][k] != null &&  !(omit.includes(k)))
-                    }
-                ).forEach( k => {       
+    //v.diane[hash].arrete_bilan_diane = new Date(Date.UTC(v.diane[hash].exercice_diane, 11, 31, 0, 0, 0, 0))
+    let periode_arrete_bilan = new Date(Date.UTC(v.diane[hash].arrete_bilan_diane.getUTCFullYear(), v.diane[hash].arrete_bilan_diane.getUTCMonth() +1, 1, 0, 0, 0, 0))
+    let periode_dispo = DateAddMonth(periode_arrete_bilan, 8) // 01/09 pour un bilan le 31/12
+    let series = generatePeriodSerie(
+      periode_dispo,
+      DateAddMonth(periode_dispo, 13) // periode de validité d'un bilan auprès de la Banque de France: 21 mois (13+8)
+    )
 
-                         siren_periode[k] = v.diane[hash][k]
-                    }                   
-                )           
-                
-                // siren_periode.procedure_collective_diane = v.diane[hash].procedure_collective 
-                // siren_periode.CA = v.diane[hash].CA 
-                // siren_periode.valeur_ajoutee = v.diane[hash].valeur_ajoutee 
-                // siren_periode.resultat_net_consolide = v.diane[hash].resultat_net_consolide 
-                // siren_periode.capacite_autofinanc_avant_repartition = v.diane[hash].capacite_autofinanc_avant_repartition 
-                // siren_periode.capital_social_ou_individuel = v.diane[hash].capital_social_ou_individuel 
-                // siren_periode.capitaux_propres_du_groupe = v.diane[hash].capitaux_propres_du_groupe 
-                // siren_periode.fonds_de_roul_net_global = v.diane[hash].fonds_de_roul_net_global 
-                // siren_periode.endettement_pourcent = v.diane[hash].endettement_pourcent 
-                // siren_periode.liquidite_reduite = v.diane[hash].liquidite_reduite 
-                // siren_periode.rentabilite_nette_pourcent = v.diane[hash].rentabilite_nette_pourcent 
-                // siren_periode.rend_des_capitaux_propres_nets_pourcent = v.diane[hash].rend_des_capitaux_propres_nets_pourcent 
-                // siren_periode.rend_des_ress_durables_nettes_pourcent = v.diane[hash].rend_des_ress_durables_nettes_pourcent 
-                // siren_periode.effectif_consolide = v.diane[hash].effectif_consolide 
-                // siren_periode.total_actif_immob = v.diane[hash].total_actif_immob 
-                // siren_periode.total_immob_fin = v.diane[hash].total_immob_fin 
-                // siren_periode.total_immob_corp = v.diane[hash].total_immob_corp 
-                // siren_periode.total_immob_incorp = v.diane[hash].total_immob_incorp 
-                // siren_periode.stocks = v.diane[hash].stocks 
-                // siren_periode.produits_intermed_et_finis = v.diane[hash].produits_intermed_et_finis 
-                // siren_periode.marchandises = v.diane[hash].marchandises 
-                // siren_periode.en_cours_de_prod_de_biens = v.diane[hash].en_cours_de_prod_de_biens 
-                // siren_periode.matières_prem_approv = v.diane[hash].matières_prem_approv 
-                // siren_periode.creances_expl = v.diane[hash].creances_expl 
-                // siren_periode.clients_et_cptes_ratt = v.diane[hash].clients_et_cptes_ratt 
-                // siren_periode.av_et_ac_sur_commandes = v.diane[hash].av_et_ac_sur_commandes 
-                // siren_periode.disponibilites = v.diane[hash].disponibilites 
-                // siren_periode.total_actif_circ_ch_const_av = v.diane[hash].total_actif_circ_ch_const_av 
-                // siren_periode.total_actif = v.diane[hash].total_actif 
-                // siren_periode.capitaux_propres_groupe = v.diane[hash].capitaux_propres_groupe 
-                // siren_periode.resultat_consolide_part_du_groupe = v.diane[hash].resultat_consolide_part_du_groupe 
-                // siren_periode.total_dettes_fin = v.diane[hash].total_dettes_fin 
-                // siren_periode.total_dette_expl_et_divers = v.diane[hash].total_dette_expl_et_divers 
-                // siren_periode.dettes_fourn_et_cptes_ratt = v.diane[hash].dettes_fourn_et_cptes_ratt 
-                // siren_periode.dettes_fiscales_et_sociales = v.diane[hash].dettes_fiscales_et_sociales 
-                // siren_periode.dettes_sur_immob_cptes_ratt = v.diane[hash].dettes_sur_immob_cptes_ratt 
-                // siren_periode.total_du_passif = v.diane[hash].total_du_passif 
-                // siren_periode.chiffre_affaires_net = v.diane[hash].chiffre_affaires_net 
-                // siren_periode.chiffre_affaires_net_en_france = v.diane[hash].chiffre_affaires_net_en_france 
-                // siren_periode.chiffre_affaires_net_lie_aux_exportations = v.diane[hash].chiffre_affaires_net_lie_aux_exportations 
-                // siren_periode.salaires_et_traitements = v.diane[hash].salaires_et_traitements 
-                // siren_periode.charges_sociales = v.diane[hash].charges_sociales 
-                // siren_periode.total_des_charges_expl = v.diane[hash].total_des_charges_expl 
-                // siren_periode.resultat_expl = v.diane[hash].resultat_expl 
-                // siren_periode.total_des_produits_fin = v.diane[hash].total_des_produits_fin 
-                // siren_periode.total_des_charges_fin = v.diane[hash].total_des_charges_fin 
-                // siren_periode.resultat_courant_avant_impots = v.diane[hash].resultat_courant_avant_impots 
-                // siren_periode.resultat_financier = v.diane[hash].resultat_financier 
-                // siren_periode.resultat_exceptionnel = v.diane[hash].resultat_exceptionnel 
-                // siren_periode.total_des_charges = v.diane[hash].total_des_charges 
-                // siren_periode.total_des_produits = v.diane[hash].total_des_produits 
-                // siren_periode.frais_de_RetD = v.diane[hash].frais_de_RetD 
-                // siren_periode.conces_brev_et_droits_sim = v.diane[hash].conces_brev_et_droits_sim 
-                // siren_periode.note_preface = v.diane[hash].note_preface 
-                // siren_periode.nombre_etab_secondaire = v.diane[hash].nombre_etab_secondaire 
-            }
-        })
-    })
-
-    value_array.forEach((periode, index) => {
-        if ((periode.arrete_bilan_bdf||new Date(0)).getTime() == 0 && (periode.annee_bilan_diane || 0) == 0) {
-            delete value_array[index]
+    series.forEach(periode => {
+      Object.keys(v.diane[hash]).filter( k => {
+        var omit = ["marquee", "nom_entreprise","numero_siren",
+          "statut_juridique", "procedure_collective"]
+        return (v.diane[hash][k] != null &&  !(omit.includes(k)))
+      }).forEach(k => {       
+        if (periode.getTime() in output_indexed){
+          output_indexed[periode.getTime()][k] = v.diane[hash][k]
         }
+
+        // Passé
+
+        let past_year_offset = [1,2]
+        past_year_offset.forEach(offset =>{
+          let periode_offset = DateAddMonth(periode, 12 * offset)
+          let variable_name =  k + "_past_" + offset
+
+          if (periode_offset.getTime() in output_indexed && 
+            k != "arrete_bilan_diane" &&
+            k != "exercice_diane"){
+            output_indexed[periode_offset.getTime()][variable_name] = v.diane[hash][k]
+          }
+        })
+      }                   
+      )           
+    })
+    
+    // FONCTIONS POUR CALCULER LES RATIOS BDF
+    function taux_marge(diane) {
+      if  (("excedent_brut_d_exploitation" in diane) && (diane["excedent_brut_d_exploitation"] !== null) &&
+        ("valeur_ajoutee" in diane) && (diane["valeur_ajoutee"] !== null) &&
+        (diane["excedent_brut_d_exploitation"] != 0)){
+        return diane["excedent_brut_d_exploitation"]/diane["valeur_ajoutee"] * 100
+      } else {
+        return null
+      }
+    }
+    function financier_court_terme(diane) {
+      if  (("concours_bancaire_courant" in diane) && (diane["concours_bancaire_courant"] !== null) &&
+        ("ca" in diane) && (diane["ca"] !== null) &&
+        (diane["ca"] != 0)){
+        return diane["concours_bancaire_courant"]/diane["ca"] * 100
+      } else {
+        return null
+      }
+    }
+    function poids_frng(diane){
+      if  (("couverture_ca_fdr" in diane) && (diane["couverture_ca_fdr"] !== null)){
+        return diane["couverture_ca_fdr"]/360 * 100
+      } else {
+        return null
+      }
+    }
+    function dette_fiscale(diane){
+      if  (("dette_fiscale_et_sociale" in diane) && (diane["dette_fiscale_et_sociale"] !== null) &&
+          ("valeur_ajoutee" in diane) && (diane["valeur_ajoutee"] !== null) &&
+          (diane["valeur_ajoutee"] != 0)){
+        return diane["dette_fiscale_et_sociale"]/ diane["valeur_ajoutee"] * 100
+      } else {
+        return null
+      }
+    }
+    function frais_financier(diane){
+      if  (("interets" in diane) && (diane["interets"] !== null) &&
+        ("excedent_brut_d_exploitation" in diane) && (diane["excedent_brut_d_exploitation"] !== null) &&
+        ("produits_financiers" in diane) && (diane["produits_financiers"] !== null) &&
+        ("charges_financieres" in diane) && (diane["charges_financieres"] !== null) &&
+        ("charge_exceptionnelle" in  diane) && (diane["charge_exceptionnelle"] !== null) &&
+        ("produit_exceptionnel" in diane) && (diane["produit_exceptionnel"] !== null) &&
+        diane["excedent_brut_d_exploitation"] + diane["produits_financiers"] + diane["produit_exceptionnel"] - diane["charge_exceptionnelle"] - diane["charges_financieres"] != 0 ){
+        return diane["interets"] / (diane["excedent_brut_d_exploitation"] + diane["produits_financiers"] + diane["produit_exceptionnel"] -
+          diane["charge_exceptionnelle"] - diane["charges_financieres"] ) * 100
+      } else {
+        return null
+      }
+    }
+
+    // function delai_fournisseur(diane){
+    //   if (("dette_fournisseur" in diane) &&("achat_marchandises" in diane) && ("achat_matieres_premieres" in diane) && ("autres_achats_charges_externes" in diane) &&
+    //       (diane["achat_marchandises"] + diane["achat_matieres_premieres"] + diane["autres_achats_charges_externes"] != 0)){
+    //     return diane["dette_fournisseur"] * 360 / (diane["achat_marchandises"] + diane["achat_matieres_premieres"] + diane["autres_achats_charges_externes"])
+    //   } else {
+    //     return null
+    //   }
+    // }
+
+    series.forEach(periode => {
+      if (periode.getTime() in output_indexed){
+        // Recalcul BdF si ratios bdf sont absents
+        if (!("taux_marge" in output_indexed[periode.getTime()]) && (taux_marge(v.diane[hash]) !== null)){
+          output_indexed[periode.getTime()].taux_marge = taux_marge(v.diane[hash])
+        }
+        if (!("financier_court_terme" in output_indexed[periode.getTime()]) && (financier_court_terme(v.diane[hash]) !== null)){
+          output_indexed[periode.getTime()].financier_court_terme = financier_court_terme(v.diane[hash])
+        }
+        if (!("poids_frng" in output_indexed[periode.getTime()]) && (poids_frng(v.diane[hash]) !== null)){
+          output_indexed[periode.getTime()].poids_frng = poids_frng(v.diane[hash])
+        }
+        if (!("dette_fiscale" in output_indexed[periode.getTime()]) && (dette_fiscale(v.diane[hash]) !== null)){
+          output_indexed[periode.getTime()].dette_fiscale = dette_fiscale(v.diane[hash])
+        }
+        if (!("frais_financier" in output_indexed[periode.getTime()]) && (frais_financier(v.diane[hash]) !== null)){
+          output_indexed[periode.getTime()].frais_financier = frais_financier(v.diane[hash])
+        }
+        // if (!("delai_fournisseur" in output_indexed[periode.getTime()]) && (delai_fournisseur(v.diane[hash]) !== null)){
+        //   output_indexed[periode.getTime()].delai_fournisseur = delai_fournisseur(v.diane[hash])
+        // }
+        var bdf_vars = ["taux_marge", "poids_frng", "dette_fiscale", "financier_court_terme", "frais_financier"]
+        let past_year_offset = [1,2]
+        bdf_vars.forEach(k =>{
+          if (k in output_indexed[periode.getTime()]){
+            past_year_offset.forEach(offset =>{
+              let periode_offset = DateAddMonth(periode, 12 * offset)
+              let variable_name =  k + "_past_" + offset
+
+              if (periode_offset.getTime() in output_indexed){
+                output_indexed[periode_offset.getTime()][variable_name] = output_indexed[periode.getTime()][k]
+              }
+            })
+          }
+        })
+      }
     })
 
-    return {"siren": k, "entreprise": value_array}
+
+    //        var EBE = (output_indexed[periode].valeur_ajoutee - output_indexed[periode].charges_sociales - output_indexed[periode].salaires_et_traitements)
+    //        var achats_ht =  output_indexed[periode].marchandises + output_indexed[periode].matieres_prem_approv
+    //
+    //        if ("taux_marge" in output_indexed[periode]){
+    //          output_indexed[periode].taux_marge = EBE / output_indexed[periode].valeur_ajoutee
+    //        }
+    //        if ("financier_court_terme" in output_indexed[periode]){
+    //
+    //          output_indexed[periode].financier_court_terme = output_indexed[periode].concours_bancaire_courant / output_indexed[periode].CA
+    //        }
+    //        if ("delai_fournisseur" in output_indexed[periode]){
+    //          output_indexed[periode].delai_fournisseur = output_indexed[periode].dettes_fourn_et_cptes_ratt / achats_ht
+    //        }
+    //        if ("dette_fiscale" in output_indexed[periode]){
+    //          output_indexed[periode].dette_fiscale = output_indexed[periode].dettes_fiscales_et_sociales / output_indexed[periode].valeur_ajoutee
+    //        }
+    //        if ("frais_financier" in output_indexed[periode]){
+    //          output_indexed[periode].frais_financier = output_indexed[periode].total_des_charges_fin / (EBE + output_indexed[periode].total_des_produits_fin - output_indexed[periode].total_des_charges_fin) 
+    //        }
+    //        if ("poids_frng" in output_indexed[periode]){
+    //          output_indexed[periode].poids_frng = output_indexed[periode].fonds_de_roul_net_global / output_indexed[periode].CA
+    //        }
+    //      }
+    //    })
+  })
+
+
+  output_array.forEach((periode, index) => {
+    if ((periode.arrete_bilan_bdf||new Date(0)).getTime() == 0 && (periode.arrete_bilan_diane || new Date(0)).getTime() == 0) {
+      delete output_array[index]
+    }
+    if ((periode.arrete_bilan_bdf||new Date(0)).getTime() == 0){
+      delete periode.arrete_bilan_bdf
+    }
+    if ((periode.arrete_bilan_diane||new Date(0)).getTime() == 0){
+      delete periode.arrete_bilan_diane
+    }
+  })
+
+  return {"siren": k, "entreprise": output_array}
 }
