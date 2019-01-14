@@ -308,16 +308,6 @@ func compactEtablissementHandler(c *gin.Context) {
 func compactEtablissement(siret string) error {
 	batches, _ := getBatches()
 
-	err := compactEtablissement(siret)
-
-	if err != nil {
-		c.JSON(500, "Problème d'accès aux fichiers MapReduce")
-	}
-}
-
-func compactEtablissement(siret string) error {
-	batches, _ := getBatches()
-
 	// Détermination scope traitement
 	var query interface{}
 	var output interface{}
