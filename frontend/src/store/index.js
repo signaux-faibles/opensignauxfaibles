@@ -8,7 +8,7 @@ Vue.use(Vuex)
 
 const vm = new Vue()
 
-var dev = false
+var dev = true
 
 var baseURL = ''
 var baseWS = ''
@@ -157,9 +157,6 @@ const sessionStore = new Vuex.Store({
     },
     setEpoch (state, epoch) {
       state.epoch = epoch
-    },
-    updateLogs (state) {
-      axiosClient.get('/api/admin/getLogs').then(response => { state.socket.message = (response.data || []) })
     },
     updateLogs (state) {
       axiosClient.get('/api/admin/getLogs').then(response => { state.socket.message = (response.data || []) })
