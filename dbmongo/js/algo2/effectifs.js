@@ -18,6 +18,16 @@ function effectifs (v, output_array, output_indexed) {
     }
   })
 
+  var past_month_offsets = [6,12,18,24]
+  past_month_offsets.forEach(offset => {
+    var time_past_offset = DateAddMonth(time_offset, offset)
+    var variable_name_effectif = "effectif_past_" + offset
+    if (time_past_offset.getTime() in output_indexed){
+      var val_offset = output_indexed[time_past_offset.getTime()]
+      val_offset[variable_name_effectif] = map_effectif[time]
+    }
+  })
+  
   output_array.forEach(function (val, index) {
     if (val.effectif == null) {
       delete output_indexed[val.periode.getTime()]

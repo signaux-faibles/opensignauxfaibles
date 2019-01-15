@@ -14,6 +14,8 @@ function map () {
     if (v.cotisations && v.debits) {f.cotisationsdettes(v, output_array, output_indexed)}
     if (v.ccsf) {f.ccsf(v, output_array)}
     if (v.sirene) {f.sirene(v, output_array)}
+    f.naf(output_indexed)
+    f.cotisation(output_indexed)
 
     output_array.forEach(val => {
       emit(    

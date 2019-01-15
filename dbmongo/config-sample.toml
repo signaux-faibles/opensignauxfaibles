@@ -12,3 +12,5 @@
 # DB_PORT = "27017"
 # DB = "signauxfaibles"
 # FIRST_BATCH = "1802"
+# smtpAddress = "localhost:25"
+# jwtSecret = "mettre ici le secret de votre choix pour sécuriser vos token JWT"

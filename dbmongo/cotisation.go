@@ -47,27 +47,27 @@ func parseCotisation(paths []string) chan *Cotisation {
 
 			reader := csv.NewReader(bufio.NewReader(file))
 			reader.Comma = ';'
+			reader.LazyQuotes = true
 			reader.Read()
 
 			for {
 
-				row, error := reader.Read()
-				if error == io.EOF {
+				row, err := reader.Read()
+				if err == io.EOF {
 					break
-				} else if error != nil {
-					// log.Fatal(error)
+				} else if err != nil {
+				} else {
+					cotisation := Cotisation{}
+					cotisation.NumeroCompte = row[field["NumeroCompte"]]
+					cotisation.Periode, err = UrssafToPeriod(row[field["Periode"]])
+					cotisation.PeriodeDebit = row[field["PeriodeDebit"]]
+					cotisation.Recouvrement, err = strconv.ParseFloat(strings.Replace(row[field["Recouvrement"]], ",", ".", -1), 64)
+					cotisation.Encaisse, err = strconv.ParseFloat(strings.Replace(row[field["Encaisse"]], ",", ".", -1), 64)
+					cotisation.Du, err = strconv.ParseFloat(strings.Replace(row[field["Du"]], ",", ".", -1), 64)
+					cotisation.Ecriture = row[field["Ecriture"]]
+
+					outputChannel <- &cotisation
 				}
-
-				cotisation := Cotisation{}
-				cotisation.NumeroCompte = row[field["NumeroCompte"]]
-				cotisation.Periode, err = UrssafToPeriod(row[field["Periode"]])
-				cotisation.PeriodeDebit = row[field["PeriodeDebit"]]
-				cotisation.Recouvrement, err = strconv.ParseFloat(strings.Replace(row[field["Recouvrement"]], ",", ".", -1), 64)
-				cotisation.Encaisse, err = strconv.ParseFloat(strings.Replace(row[field["Encaisse"]], ",", ".", -1), 64)
-				cotisation.Du, err = strconv.ParseFloat(strings.Replace(row[field["Du"]], ",", ".", -1), 64)
-				cotisation.Ecriture = row[field["Ecriture"]]
-
-				outputChannel <- &cotisation
 			}
 			file.Close()
 		}
