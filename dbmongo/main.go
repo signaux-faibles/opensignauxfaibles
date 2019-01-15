@@ -130,7 +130,6 @@ func main() {
 		api.GET("/data/etablissement/:batch/:siret", browseEtablissementHandler)
 		api.GET("/dashboard/tasks", getTasks)
 		api.GET("/admin/regions", getRegionsHandler)
-		api.GET("/union/:algo/:batch", unionReduceHandler)
 	}
 
 	bind := viper.GetString("APP_BIND")

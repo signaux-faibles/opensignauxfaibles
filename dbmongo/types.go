@@ -31,7 +31,7 @@ type Batch struct {
 	CCSF       map[string]*CCSF       `json:"ccsf,omitempty" bson:"ccsf,omitempty"`
 	Cotisation map[string]*Cotisation `json:"cotisation,omitempty" bson:"cotisation,omitempty"`
 	Altares    map[string]*Altares    `json:"altares,omitempty" bson:"altares,omitempty"`
-  Procol     map[string]*Procol     `json:"procol,omitempty" bson:"procol,omitempty"`
+	Procol     map[string]*Procol     `json:"procol,omitempty" bson:"procol,omitempty"`
 	APDemande  map[string]*APDemande  `json:"apdemande,omitempty" bson:"apdemande,omitempty"`
 	APConso    map[string]*APConso    `json:"apconso,omitempty" bson:"apconso,omitempty"`
 	Sirene     map[string]*Sirene     `json:"sirene,omitempty" bson:"sirene,omitempty"`

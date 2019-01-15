@@ -48,8 +48,8 @@ type Diane struct {
 	TauxEndettement                 *float64  `json:"taux_endettement" bson:"taux_endettement"`
 	CapaciteRemboursement           *float64  `json:"capacite_remboursement" bson:"capacite_remboursement"`
 	CapaciteAutofinancement         *float64  `json:"capacite_autofinancement" bson:"capacite_autofinancement"`
-	CouvertureCA_FDR                *float64  `json:"couverture_ca_fdr" bson:"couverture_ca_fdr"`
-	CouvertureCA_BesoinFDR          *float64  `json:"couverture_ca_besoin_fdr" bson:"couverture_ca_besoin_fdr"`
+	CouvertureCaFdr                 *float64  `json:"couverture_ca_fdr" bson:"couverture_ca_fdr"`
+	CouvertureCaBesoinFdr           *float64  `json:"couverture_ca_besoin_fdr" bson:"couverture_ca_besoin_fdr"`
 	PoidsBFRExploitation            *float64  `json:"poids_bfr_exploitation" bson:"poids_bfr_exploitation"`
 	Exportation                     *float64  `json:"exportation" bson:"exportation"`
 	EfficaciteEconomique            *float64  `json:"efficacite_economique" bson:"efficacite_economique"`
@@ -102,15 +102,15 @@ func parseDiane(paths []string) chan *Diane {
 
 	go func() {
 		n := 0
-		var full_paths []string
+		var fullPaths []string
 		for _, path := range paths {
-			full_paths = append(full_paths, viper.GetString("APP_DATA")+path)
+			fullPaths = append(fullPaths, viper.GetString("APP_DATA")+path)
 		}
 
-		if len(full_paths) != 0 {
-			full_paths = append([]string{viper.GetString("APP_DATA") + "/../script/convert_diane.sh"}, full_paths...)
+		if len(fullPaths) != 0 {
+			fullPaths = append([]string{viper.GetString("APP_DATA") + "/../script/convert_diane.sh"}, fullPaths...)
 
-			cmd := exec.Command("/bin/bash", full_paths...)
+			cmd := exec.Command("/bin/bash", fullPaths...)
 			stdout, err := cmd.StdoutPipe()
 
 			if err != nil {
@@ -252,10 +252,10 @@ func parseDiane(paths []string) chan *Diane {
 					diane.CapaciteAutofinancement = &i
 				}
 				if i, err := strconv.ParseFloat(row[36], 64); err == nil {
-					diane.CouvertureCA_FDR = &i
+					diane.CouvertureCaFdr = &i
 				}
 				if i, err := strconv.ParseFloat(row[37], 64); err == nil {
-					diane.CouvertureCA_BesoinFDR = &i
+					diane.CouvertureCaBesoinFdr = &i
 				}
 				if i, err := strconv.ParseFloat(row[38], 64); err == nil {
 					diane.PoidsBFRExploitation = &i
