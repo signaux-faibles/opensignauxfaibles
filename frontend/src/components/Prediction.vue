@@ -20,7 +20,7 @@
       Détection
     </div>
     <v-spacer></v-spacer>
-    <v-icon 
+    <v-icon
     :class="loading?'rotate':''"
     color="#ffffff" v-if="!rightDrawer" @click="rightDrawer=!rightDrawer">mdi-target</v-icon>
   </v-toolbar>
@@ -164,7 +164,7 @@ export default {
         this.prediction = prediction
         this.predictionLength = this.prediction.length
         self.loading = false
-      }) 
+      })
     },
     getPrediction (limit, offset) {
       this.loading = true
@@ -186,7 +186,7 @@ export default {
           p.bdf = Object.keys(p.bdf || {})
             .map(b => p.bdf[b])
             .sort((a, b) => a.annee < b.annee)
-          p.entreprise = {diane: []}
+          p.entreprise = { diane: [] }
         })
         this.prediction = this.prediction.concat(prediction)
         self.loading = false
@@ -195,10 +195,12 @@ export default {
   },
   computed: {
     naf1 () {
-      return Object.keys(this.$store.state.naf.n1 || {}).sort().map(n => {return {
-        text: this.$store.state.naf.n1[n].substring(0, 60),
-        value: n
-      }})
+      return Object.keys(this.$store.state.naf.n1 || {}).sort().map(n => {
+        return {
+          text: this.$store.state.naf.n1[n].substring(0, 60),
+          value: n
+        }
+      })
     },
     scrollTop () {
       return this.$store.state.scrollTop
@@ -240,7 +242,7 @@ export default {
       return (this.$store.state.batches || []).map(batch => batch.id.key)
     },
     detectionLength () {
-      var length = Math.round((this.height + this.scrollTop) / 860 + 5) * 10 
+      var length = Math.round((this.height + this.scrollTop) / 860 + 5) * 10
       if (length > this.predictionLength) {
         var complement = length - this.predictionLength
         this.getPrediction(complement, this.predictionLength)

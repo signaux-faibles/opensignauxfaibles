@@ -10,90 +10,20 @@
           <PredictionWidgetScore id="widget" :prob="prediction.prob" :diff="prediction.diff"/>
         </div>
         <div class="corps">
-          <div 
+          <div
           style="left: 250px; position: absolute;"
           :id="'marge_' + prediction._id.siret"></div>
           <div style="white-space: nowrap; overflow: hidden; max-width: 400px; max-height:30px">
             <span style="font-size: 18px; color: #333; line-height: 10px; font-family: 'Oswald';">{{ prediction.etablissement.sirene.raisonsociale }}<br style="line-height: 10px;"/></span>
           </div>
-          <div style="left: 450px; position: absolute; top: 3px;  padding: 2px">
-            <!-- <b>Chiffre d'affaire (k€)</b><br/> -->
-            <!-- <table>
-              <tr>
-                <td>{{ prediction.entreprise.diane[0].exercice_diane || '' }}</td>
-                <td>{{ prediction.entreprise.diane[1].exercice_diane || '' }}</td>
-              </tr>
-              <tr>
-                <td>
-                  {{ prediction.entreprise.diane[0].ca || '' }} 
-                  <v-icon 
-                  :class="upOrDownClass(prediction.entreprise.diane[1].ca, prediction.entreprise.diane[0].ca, 0.04)" small
-                  >
-                    {{ upOrDown(prediction.entreprise.diane[1].ca, prediction.entreprise.diane[0].ca, 0.04) }}
-                  </v-icon>
-                </td>
-                <td>
-                  {{ prediction.entreprise.diane[1].ca || '' }} 
-                  <v-icon 
-                  :class="upOrDownClass(prediction.entreprise.diane[2].ca, prediction.entreprise.diane[1].ca, 0.04)" small
-                  >
-                    {{ upOrDown(prediction.entreprise.diane[2].ca, prediction.entreprise.diane[1].ca, 0.04) }}</v-icon>
-                <td/>
-              </tr>
-            </table>
-          </div>
-
-          <div style="left: 620px; position: absolute; top: 3px;  padding: 2px">
-            <b>EBE (k€)</b><br/>
-            <table>
-              <tr>
-                <td>{{ prediction.entreprise.diane[0].exercice_diane || 'n/c' }}</td>
-                <td>{{ prediction.entreprise.diane[1].exercice_diane || 'n/c' }}</td>
-              </tr>
-              <tr>
-                <td>{{ prediction.entreprise.diane[0].excedent_brut_d_exploitation || 'n/c' }}</td>
-                <td>{{ prediction.entreprise.diane[1].excedent_brut_d_exploitation || 'n/c' }}</td>
-              </tr>
-            </table>
-          </div>
-
-          <div style="left: 790px; position: absolute; top: 3px;  padding: 2px">
-            <b>Bénéfice ou perte (k€)</b><br/>
-            <table>
-              <tr>
-                <td>{{ prediction.entreprise.diane[0].exercice_diane || 'n/c' }}</td>
-                <td>{{ prediction.entreprise.diane[1].exercice_diane || 'n/c' }}</td>
-              </tr>
-              <tr>
-                <td>{{ prediction.entreprise.diane[0].benefice_ou_perte || 'n/c' }}</td>
-                <td>{{ prediction.entreprise.diane[1].benefice_ou_perte || 'n/c' }}</td>
-              </tr>
-            </table>
-          </div>
-
-          <div style="left: 960px; position: absolute; top: 3px;  padding: 2px">
-            <b>Liquidité réduite (%)</b><br/>
-            <table>
-              <tr>
-                <td>{{ prediction.entreprise.diane[0].exercice_diane || 'n/c' }}</td>
-                <td>{{ prediction.entreprise.diane[1].exercice_diane || 'n/c' }}</td>
-              </tr>
-              <tr>
-                <td>{{ prediction.entreprise.diane[0].liquidite_reduite || 'n/c' }}</td>
-                <td>{{ prediction.entreprise.diane[1].liquidite_reduite || 'n/c' }}</td>
-              </tr>
-            </table> -->
-          </div>
-
           <span style="font-size: 12px; color: #333; line-height: 10px;">{{ prediction._id.siret }}<br style="line-height: 10px;"/></span>
           <v-img style="position: absolute; left: 160px; bottom: 10px;" width="17" src="/static/gray_apart.svg"></v-img>
           <v-img style="position: absolute; left: 90px; bottom: 10px;" width="57" :src="'/static/' + (prediction.etablissement.urssaf?'red':'gray') + '_urssaf.svg'"></v-img>
           <div style="position: absolute; left: 195px; bottom: 4px; color: #333">
             <span :class="variationEffectif" style="font-size: 20px">{{ prediction.etablissement.effectif || 'n/c' }}</span>
           </div>
-
         </div>
-        <v-dialog 
+        <v-dialog
         attach="#detection"
         lazy
         fullscreen
@@ -141,26 +71,26 @@ export default {
     }
   },
   methods: {
-    upOrDown(before, after, treshold) {
+    upOrDown (before, after, treshold) {
       if (before == null || after == null) {
         return 'mdi-help-circle'
-      } 
-      if (after/before > 1+treshold) {
+      }
+      if (after / before > 1 + treshold) {
         return 'mdi-arrow-up'
       }
-      if (after/before < 1-treshold) {
+      if (after / before < 1 - treshold) {
         return 'mdi-arrow-down'
       }
       return 'mdi-tilde'
     },
-    upOrDownClass(before, after, treshold) {
+    upOrDownClass (before, after, treshold) {
       if (before == null || after == null) {
         return 'unknown'
-      } 
-      if (after/before > 1+treshold) {
+      }
+      if (after / before > 1 + treshold) {
         return 'high'
       }
-      if (after/before < 1-treshold) {
+      if (after / before < 1 - treshold) {
         return 'down'
       }
       return 'none'
