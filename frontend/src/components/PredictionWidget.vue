@@ -17,8 +17,8 @@
             <span style="font-size: 18px; color: #333; line-height: 10px; font-family: 'Oswald';">{{ prediction.etablissement.sirene.raisonsociale }}<br style="line-height: 10px;"/></span>
           </div>
           <div style="left: 450px; position: absolute; top: 3px;  padding: 2px">
-            <b>Chiffre d'affaire (k€)</b><br/>
-            <table>
+            <!-- <b>Chiffre d'affaire (k€)</b><br/> -->
+            <!-- <table>
               <tr>
                 <td>{{ prediction.entreprise.diane[0].exercice_diane || '' }}</td>
                 <td>{{ prediction.entreprise.diane[1].exercice_diane || '' }}</td>
@@ -82,7 +82,7 @@
                 <td>{{ prediction.entreprise.diane[0].liquidite_reduite || 'n/c' }}</td>
                 <td>{{ prediction.entreprise.diane[1].liquidite_reduite || 'n/c' }}</td>
               </tr>
-            </table>
+            </table> -->
           </div>
 
           <span style="font-size: 12px; color: #333; line-height: 10px;">{{ prediction._id.siret }}<br style="line-height: 10px;"/></span>

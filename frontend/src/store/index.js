@@ -13,13 +13,8 @@ var dev = true
 var baseURL = ''
 var baseWS = ''
 
-if (dev) {
-  baseURL = 'http://localhost:3000'
-  baseWS = 'ws://localhost:3000'
-} else {
-  baseURL = 'https://signaux.faibles.fr'
-  baseWS = 'wss://signaux.faibles.fr'
-}
+baseURL = dev ? 'http://localhost:3000' : 'https://signaux.faibles.fr'
+baseWS = dev ? 'ws://localhost:3000' : 'wss://signaux.faibles.fr'
 
 var axiosClient = axios.create(
   {

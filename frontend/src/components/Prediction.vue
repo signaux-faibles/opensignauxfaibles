@@ -186,6 +186,7 @@ export default {
           p.bdf = Object.keys(p.bdf || {})
             .map(b => p.bdf[b])
             .sort((a, b) => a.annee < b.annee)
+          p.entreprise = {diane: []}
         })
         this.prediction = this.prediction.concat(prediction)
         self.loading = false

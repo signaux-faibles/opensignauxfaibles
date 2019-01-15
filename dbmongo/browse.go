@@ -210,8 +210,6 @@ func predictionBrowseHandler(c *gin.Context) {
 func predictionBrowse(batch string, naf1 string, effectif int, suivi bool, ccsf bool, procol bool, limit int, offset int) (interface{}, error) {
 	var pipeline []bson.M
 
-	// pipeline = append(pipeline, bson.M{"$limit": 50})
-
 	pipeline = append(pipeline, bson.M{"$match": bson.M{
 		"_id.batch": batch,
 	}})
