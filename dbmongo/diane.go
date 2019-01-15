@@ -115,9 +115,9 @@ func parseDiane(paths []string) chan *Diane {
 
 			if err != nil {
 				fmt.Println("Error", err)
-				log(critical, "importDiane", "Erreur à l'ouverture des fichiers Dianes, abandon.")
+				journal(critical, "importDiane", "Erreur à l'ouverture des fichiers Dianes, abandon.")
 			} else {
-				log(debug, "importDiane", "Ouverture du fichier Diane.")
+				journal(debug, "importDiane", "Ouverture du fichier Diane.")
 			}
 			reader := csv.NewReader(stdout)
 			reader.Comma = ';'
@@ -127,10 +127,10 @@ func parseDiane(paths []string) chan *Diane {
 			for {
 				row, err := reader.Read()
 				if err == io.EOF {
-					log(debug, "importDiane", "Traitement des fichiers diane terminé: "+fmt.Sprint(n)+" lignes traitées")
+					journal(debug, "importDiane", "Traitement des fichiers diane terminé: "+fmt.Sprint(n)+" lignes traitées")
 					break
 				} else if err != nil {
-					log(critical, "importDiane", "Erreur lors de la lecture du fichier diane: "+err.Error()+". Abandon !")
+					journal(critical, "importDiane", "Erreur lors de la lecture du fichier diane: "+err.Error()+". Abandon !")
 					break
 				}
 				n++
@@ -142,25 +142,25 @@ func parseDiane(paths []string) chan *Diane {
 				if 2 < len(row) {
 					diane.NomEntreprise = row[2]
 				} else {
-					log(critical, "importDiane", "Ligne invalide. Abandon !")
+					journal(critical, "importDiane", "Ligne invalide. Abandon !")
 					break
 				}
 				if 3 < len(row) {
 					diane.NumeroSiren = row[3]
 				} else {
-					log(critical, "importDiane", "Ligne invalide. Abandon !")
+					journal(critical, "importDiane", "Ligne invalide. Abandon !")
 					break
 				}
 				if 4 < len(row) {
 					diane.StatutJuridique = row[4]
 				} else {
-					log(critical, "importDiane", "Ligne invalide. Abandon !")
+					journal(critical, "importDiane", "Ligne invalide. Abandon !")
 					break
 				}
 				if 5 < len(row) {
 					diane.ProcedureCollective = (row[5] == "Oui")
 				} else {
-					log(critical, "importDiane", "Ligne invalide. Abandon !")
+					journal(critical, "importDiane", "Ligne invalide. Abandon !")
 					break
 				}
 
@@ -404,7 +404,7 @@ func parseDiane(paths []string) chan *Diane {
 }
 
 func importDiane(batch *AdminBatch) error {
-	log(info, "importDiane", "Import batch "+batch.ID.Key+": début import Diane")
+	journal(info, "importDiane", "Import batch "+batch.ID.Key+": début import Diane")
 	for diane := range parseDiane(batch.Files["diane"]) {
 		hash := fmt.Sprintf("%x", structhash.Md5(diane, 1))
 		value := Value{
@@ -419,6 +419,6 @@ func importDiane(batch *AdminBatch) error {
 		db.ChanData <- &value
 	}
 	db.ChanData <- &Value{}
-	log(info, "importDiane", "Import batch "+batch.ID.Key+": fin import Diane")
+	journal(info, "importDiane", "Import batch "+batch.ID.Key+": fin import Diane")
 	return nil
 }

@@ -84,14 +84,14 @@ func importBatchHandler(c *gin.Context) {
 func importBatch(batch *AdminBatch) {
 	if !batch.Readonly {
 		for fnName, fn := range importFunctions {
-			log(info, "importMain", "Début de l'import du type: "+fnName+" pour le batch "+batch.ID.Key)
+			journal(info, "importMain", "Début de l'import du type: "+fnName+" pour le batch "+batch.ID.Key)
 			err := fn(batch)
 			if err != nil {
-				log(critical, "importMain", "Erreur à l'importation du type: "+fnName)
+				journal(critical, "importMain", "Erreur à l'importation du type: "+fnName)
 			}
-			log(info, "importMain", "Fin de l'import du type: "+fnName+" pour le batch "+batch.ID.Key)
+			journal(info, "importMain", "Fin de l'import du type: "+fnName+" pour le batch "+batch.ID.Key)
 		}
 	} else {
-		log(critical, "importMain", "Le lot "+batch.ID.Key+" est fermé, import impossible.")
+		journal(critical, "importMain", "Le lot "+batch.ID.Key+" est fermé, import impossible.")
 	}
 }

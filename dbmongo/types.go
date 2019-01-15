@@ -20,9 +20,7 @@ type Data struct {
 	Batch map[string]Batch `json:"batch,omitempty" bson:"batch,omitempty"`
 }
 
-// Entreprise object Entreprise
-
-// Batch lot de data
+// Batch ensemble des données
 type Batch struct {
 	Compact    map[string]bool        `json:"compact,omitempty" bson:"compact,omitempty"`
 	Effectif   map[string]*Effectif   `json:"effectif,omitempty" bson:"effectif,omitempty"`

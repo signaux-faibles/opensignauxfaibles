@@ -54,7 +54,7 @@ func parseSirene(paths []string, mapping map[string]bool) chan *Sirene {
 		for _, path := range paths {
 			file, err := os.Open(viper.GetString("APP_DATA") + path)
 			if err != nil {
-				log(critical, "importSirene", "Erreur à l'ouverture du fichier: "+path+", erreur: "+err.Error())
+				journal(critical, "importSirene", "Erreur à l'ouverture du fichier: "+path+", erreur: "+err.Error())
 				close(outputChannel)
 			}
 
@@ -66,7 +66,7 @@ func parseSirene(paths []string, mapping map[string]bool) chan *Sirene {
 				if err == io.EOF {
 					break
 				} else if err != nil {
-					log(critical, "importSirene", "Erreur lors de la lecture du fichier "+path+". Abandon.")
+					journal(critical, "importSirene", "Erreur lors de la lecture du fichier "+path+". Abandon.")
 					close(outputChannel)
 				}
 
@@ -117,7 +117,7 @@ func parseSirene(paths []string, mapping map[string]bool) chan *Sirene {
 
 				//     for  i:=0; i < len(errors);i++ {
 				//       if (errors[i] != nil){
-				//         log(debug, "importSirene", "Erreur ? "+fmt.Sprint(i)+" - "+errors[i].Error())
+				//         journal(debug, "importSirene", "Erreur ? "+fmt.Sprint(i)+" - "+errors[i].Error())
 				//       }
 				//     }
 
@@ -132,9 +132,9 @@ func parseSirene(paths []string, mapping map[string]bool) chan *Sirene {
 
 			}
 			file.Close()
-			log(debug, "importSirene", "Import du fichier "+path+" terminé. "+fmt.Sprint(n)+" lignes traitée(s)") //, "+fmt.Sprint(e)+" rejet(s)")
+			journal(debug, "importSirene", "Import du fichier "+path+" terminé. "+fmt.Sprint(n)+" lignes traitée(s)") //, "+fmt.Sprint(e)+" rejet(s)")
 			// if len(errorLines) > 0 {
-			//   log(warning, "importSirene", "Erreurs de conversion constatées aux lignes suivantes: "+fmt.Sprintf("%v", errorLines))
+			//   journal(warning, "importSirene", "Erreurs de conversion constatées aux lignes suivantes: "+fmt.Sprintf("%v", errorLines))
 			// }
 		}
 		close(outputChannel)

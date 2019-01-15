@@ -28,7 +28,7 @@ func parseProcol(path string) chan *Procol {
 
 	file, err := os.Open(path)
 	if err != nil {
-		log(critical, "importProcol", "Erreur à l'ouverture du fichier: "+path+", erreur: "+err.Error())
+		journal(critical, "importProcol", "Erreur à l'ouverture du fichier: "+path+", erreur: "+err.Error())
 		close(outputChannel)
 	}
 
@@ -53,7 +53,7 @@ func parseProcol(path string) chan *Procol {
 			if err == io.EOF {
 				break
 			} else if err != nil {
-				log(critical, "importProcol", "Erreur de lecture pendant l'import du fichier "+path+". Abandon.")
+				journal(critical, "importProcol", "Erreur de lecture pendant l'import du fichier "+path+". Abandon.")
 				close(outputChannel)
 			}
 			if _, err := strconv.Atoi(row[siretIndex]); err == nil && len(row[siretIndex]) == 14 {
@@ -87,9 +87,9 @@ func parseProcol(path string) chan *Procol {
 			}
 		}
 
-		log(debug, "importProcol", "Import du fichier "+path+" terminé. "+fmt.Sprint(n)+" lignes traitée(s), "+fmt.Sprint(e)+" rejet(s)")
+		journal(debug, "importProcol", "Import du fichier "+path+" terminé. "+fmt.Sprint(n)+" lignes traitée(s), "+fmt.Sprint(e)+" rejet(s)")
 		if len(errorLines) > 0 {
-			log(warning, "importProcol", "Erreurs de conversion constatées aux lignes suivantes: "+fmt.Sprintf("%v", errorLines))
+			journal(warning, "importProcol", "Erreurs de conversion constatées aux lignes suivantes: "+fmt.Sprintf("%v", errorLines))
 		}
 		file.Close()
 		close(outputChannel)

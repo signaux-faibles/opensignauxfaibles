@@ -13,7 +13,7 @@ import (
 // BDF Information Banque de France
 type BDF struct {
 	Siren               string    `json:"siren" bson:"siren"`
-	Annee               *int       `json:"annee_bdf" bson:"annee_bdf"`
+	Annee               *int      `json:"annee_bdf" bson:"annee_bdf"`
 	ArreteBilan         time.Time `json:"arrete_bilan_bdf" bson:"arrete_bilan_bdf"`
 	RaisonSociale       string    `json:"raison_sociale" bson:"raison_sociale"`
 	Secteur             string    `json:"secteur" bson:"secteur"`
@@ -36,9 +36,9 @@ func parseBDF(path []string) chan *BDF {
 
 			xlFile, err := xlsx.OpenFile(viper.GetString("APP_DATA") + file)
 			if err != nil {
-				log(critical, "importBDF", "Erreur à l'ouverture du fichier "+file+": "+err.Error())
+				journal(critical, "importBDF", "Erreur à l'ouverture du fichier "+file+": "+err.Error())
 			} else {
-				log(info, "importBDF", "Ouverture du fichier "+file)
+				journal(info, "importBDF", "Ouverture du fichier "+file)
 
 				for _, sheet := range xlFile.Sheets {
 					for _, row := range sheet.Rows[1:] {
@@ -66,9 +66,9 @@ func parseBDF(path []string) chan *BDF {
 					}
 				}
 			}
-			log(debug, "importBDF", "Import du fichier Banque de France "+file+" terminé. "+fmt.Sprint(n)+" lignes traitée(s), "+fmt.Sprint(e)+" rejet(s)")
+			journal(debug, "importBDF", "Import du fichier Banque de France "+file+" terminé. "+fmt.Sprint(n)+" lignes traitée(s), "+fmt.Sprint(e)+" rejet(s)")
 			if len(errorLines) > 0 {
-				log(warning, "importBDF", "Erreurs de conversion constatées aux lignes suivantes: "+fmt.Sprintf("%v", errorLines))
+				journal(warning, "importBDF", "Erreurs de conversion constatées aux lignes suivantes: "+fmt.Sprintf("%v", errorLines))
 			}
 		}
 		close(outputChannel)
@@ -77,7 +77,7 @@ func parseBDF(path []string) chan *BDF {
 }
 
 func importBDF(batch *AdminBatch) error {
-	log(info, "importBDF", "Import du batch "+batch.ID.Key+": Banque de France")
+	journal(info, "importBDF", "Import du batch "+batch.ID.Key+": Banque de France")
 
 	for bdf := range parseBDF(batch.Files["bdf"]) {
 		hash := fmt.Sprintf("%x", structhash.Md5(bdf, 1))
@@ -94,7 +94,7 @@ func importBDF(batch *AdminBatch) error {
 		db.ChanData <- &value
 	}
 	db.ChanData <- &Value{}
-	log(info, "importBDF", "Fin de l'import du batch "+batch.ID.Key+": Banque de France")
+	journal(info, "importBDF", "Fin de l'import du batch "+batch.ID.Key+": Banque de France")
 
 	return nil
 }

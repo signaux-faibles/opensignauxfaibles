@@ -58,7 +58,7 @@ func messageDispatch() chan socketMessage {
 	return channel
 }
 
-func log(priority journalPriority, code journalCode, comment string) journalEvent {
+func journal(priority journalPriority, code journalCode, comment string) journalEvent {
 	e := journalEvent{
 		ID:       bson.NewObjectId(),
 		Date:     time.Now(),

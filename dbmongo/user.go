@@ -128,6 +128,13 @@ func unauthorized(c *gin.Context, code int, message string) {
 	})
 }
 
+func unauthorizedHandler(c *gin.Context, code int, message string) {
+	c.JSON(code, gin.H{
+		"code":    code,
+		"message": message,
+	})
+}
+
 func payload(data interface{}) jwt.MapClaims {
 	if v, ok := data.(AdminUser); ok {
 		return jwt.MapClaims{

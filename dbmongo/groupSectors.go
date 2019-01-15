@@ -113,7 +113,7 @@ func groupSectorsAggregation(c *gin.Context) {
 
 	err := db.DB.C("Features").Pipe(pipeline1).All(&result)
 	if err != nil {
-		log(critical, "group_sectors", "Erreur lors des comparaisons par groupes sectoriels: "+err.Error())
+		journal(critical, "group_sectors", "Erreur lors des comparaisons par groupes sectoriels: "+err.Error())
 		c.JSON(500, err)
 		return
 	}
@@ -121,7 +121,7 @@ func groupSectorsAggregation(c *gin.Context) {
 	err2 := db.DB.C("Features").Pipe(pipeline2).All(&result)
 
 	if err2 != nil {
-		log(critical, "group_sectors", "Erreur lors des comparaisons par groupes sectoriels: "+err2.Error())
+		journal(critical, "group_sectors", "Erreur lors des comparaisons par groupes sectoriels: "+err2.Error())
 		c.JSON(500, err2)
 		return
 	}

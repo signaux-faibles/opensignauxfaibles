@@ -38,7 +38,6 @@ func wshandler(w http.ResponseWriter, r *http.Request, jwt string) {
 	for event := range channel {
 		conn.WriteJSON(event)
 	}
-
 }
 
 const identityKey = "id"
@@ -70,12 +69,7 @@ func main() {
 		IdentityHandler: identityHandler,
 		Authenticator:   authenticator,
 		Authorizator:    authorizator,
-		Unauthorized: func(c *gin.Context, code int, message string) {
-			c.JSON(code, gin.H{
-				"code":    code,
-				"message": message,
-			})
-		},
+		Unauthorized:    unauthorizedHandler,
 
 		TokenLookup:   "header: Authorization, query: token, cookie: jwt",
 		TokenHeadName: "Bearer",

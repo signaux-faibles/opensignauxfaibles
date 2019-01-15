@@ -84,28 +84,6 @@
             Entreprise non suivie
           </v-list-tile-content>
         </v-list-tile>
-        <!-- <v-list-tile>
-          <v-list-tile-action>
-          <v-checkbox
-          @change="updatePrediction()"
-            v-model="horsCCSF">
-          </v-checkbox>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            hors CCSF
-          </v-list-tile-content>
-        </v-list-tile> -->
-        <!-- <v-list-tile>
-          <v-list-tile-action>
-          <v-checkbox
-          @change="updatePrediction()"
-            v-model="horsProcol">
-          </v-checkbox>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            hors Procédure Collective
-          </v-list-tile-content>
-        </v-list-tile> -->
       </v-list>
     </v-navigation-drawer>
   </div>

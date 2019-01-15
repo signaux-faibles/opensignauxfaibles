@@ -61,9 +61,9 @@ func excelToTime(excel string) (time.Time, error) {
 
 func getCompteSiretMapping(batch *AdminBatch) (map[string]string, error) {
 	compteSiretMapping := make(map[string]string)
-  compteSiretLast := make(map[string]int)
+	compteSiretLast := make(map[string]int)
 
-  path := batch.Files["admin_urssaf"]
+	path := batch.Files["admin_urssaf"]
 	basePath := viper.GetString("APP_DATA")
 
 	for _, p := range path {
@@ -80,36 +80,36 @@ func getCompteSiretMapping(batch *AdminBatch) (map[string]string, error) {
 
 		siretIndex := 3
 		compteIndex := 0
-    fermetureIndex := 5
+		fermetureIndex := 5
 
 		for {
 			row, err := reader.Read()
 			if err == io.EOF {
 				break
 			} else if err != nil {
-				log(critical, "importCompteSiret", "Erreur à la lecture du fichier "+file.Name())
+				journal(critical, "importCompteSiret", "Erreur à la lecture du fichier "+file.Name())
 				return map[string]string{}, err
 			}
 
-      _, err1 := strconv.Atoi(row[siretIndex]);
-      fermeture, err2 := strconv.Atoi(row[fermetureIndex]);
-      if err2 != nil {
-        if row[fermetureIndex] == "" {
-          fermeture = 1
-        } else {
-          log(critical, "importCompteSiret", "Erreur (2) à la lecture du fichier "+file.Name()+err2.Error())
-          return map[string]string{}, err2
-        }
-      }
-      derniereFermetureLue, ok  := compteSiretLast[row[compteIndex]];
-      if  err1 == nil &&
-          len(row[siretIndex]) == 14 &&
-          (!ok ||
-             (derniereFermetureLue != 0 && derniereFermetureLue < fermeture) ||
-             fermeture == 0) {
+			_, err1 := strconv.Atoi(row[siretIndex])
+			fermeture, err2 := strconv.Atoi(row[fermetureIndex])
+			if err2 != nil {
+				if row[fermetureIndex] == "" {
+					fermeture = 1
+				} else {
+					journal(critical, "importCompteSiret", "Erreur (2) à la lecture du fichier "+file.Name()+err2.Error())
+					return map[string]string{}, err2
+				}
+			}
+			derniereFermetureLue, ok := compteSiretLast[row[compteIndex]]
+			if err1 == nil &&
+				len(row[siretIndex]) == 14 &&
+				(!ok ||
+					(derniereFermetureLue != 0 && derniereFermetureLue < fermeture) ||
+					fermeture == 0) {
 
 				compteSiretMapping[row[compteIndex]] = row[siretIndex]
-        compteSiretLast[row[compteIndex]] = fermeture
+				compteSiretLast[row[compteIndex]] = fermeture
 			}
 		}
 		file.Close()
@@ -141,7 +141,7 @@ func getSirensFromMapping(batch *AdminBatch) (map[string]bool, error) {
 			if err == io.EOF {
 				break
 			} else if err != nil {
-				log(critical, "importCompteSiret", "Erreur à la lecture du fichier "+file.Name())
+				journal(critical, "importCompteSiret", "Erreur à la lecture du fichier "+file.Name())
 				return map[string]bool{}, err
 			}
 			if _, err := strconv.Atoi(row[siretIndex]); err == nil && len(row[siretIndex]) == 14 {
