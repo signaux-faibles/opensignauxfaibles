@@ -1,7 +1,6 @@
 _*
 .*
 !.gitignore
-**/*.html
 **/*.log
 **/*.csv
 **/*.xls*
