@@ -160,11 +160,12 @@ func reduce(batchKey string) {
 		Map:      functions["map"].Code,
 		Reduce:   functions["reduce"].Code,
 		Finalize: functions["finalize"].Code,
-		Out:      bson.M{"replace": "testCollection"},
+		Out:      bson.M{"replace": "Features"},
 		Scope:    scope,
 	}
 
-	_, err = db.DB.C("RawData").Find(bson.M{"_id": "00008113669414"}).MapReduce(job, nil)
+	_, err = db.DB.C("RawData").Find(bson.M{"value.index.algo2": true}).MapReduce(job, nil)
+
 	fmt.Println(err)
 }
 

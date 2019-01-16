@@ -70,7 +70,7 @@ func loginUser(username string, password string, browserToken string) (AdminUser
 	err := bcrypt.CompareHashAndPassword(user.HashedPassword, []byte(password))
 
 	_, errToken := readBrowserToken(browserToken)
-
+	fmt.Println(errToken)
 	if err == nil && errToken == nil {
 		return user, nil
 	}

@@ -7,7 +7,7 @@ function sirene (v, output_array) {
     if (sireneHashes.length != 0) {
       var sirene = v.sirene[sireneHashes[0]]
     }
-    val.siren = val.key.substring(0, 9)
+    val.siren = val.siret.substring(0, 9)
     val.lattitude = (sirene || { "lattitude": null }).lattitude
     val.longitude = (sirene || { "longitude": null }).longitude
     val.region = (sirene || {"region": null}).region

@@ -1,4 +1,4 @@
-function naf(output_indexed) {
+function naf(output_indexed, naf) {
   Object.keys(output_indexed).forEach(k =>{
     if (("code_ape" in output_indexed[k]) && (output_indexed[k].code_ape !== null)){
       output_indexed[k].code_naf = naf.n5to1[output_indexed[k].code_ape]

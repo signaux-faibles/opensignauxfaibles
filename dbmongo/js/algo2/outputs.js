@@ -1,7 +1,7 @@
 function outputs (v, serie_periode) {
   var output_array = serie_periode.map(function (e) {
     return {
-      "siret": v.siret,
+      "siret": v.key,
       "periode": e,
       "effectif": null,
       "date_effectif": null,

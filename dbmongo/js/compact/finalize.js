@@ -40,6 +40,10 @@ function finalize(k, o) {
             o.index.algo2 = true
         })      
     })
+    if (o.scope == "entreprise") {
+      o.index.algo1 = true
+      o.index.algo2 = true
+    }
 
     return o
 }

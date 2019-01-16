@@ -1,9 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
+	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/spf13/viper"
 )
 
@@ -47,10 +48,11 @@ func readBrowserToken(tokenString string) (Browser, error) {
 	if token.Valid {
 		var browser Browser
 
-		created, err := time.Parse("2006-01-02T15:04:05Z", token.Claims.(jwt.MapClaims)["created"].(string))
+		created, err := time.Parse("2006-01-02T15:04:05.99999-07:00", token.Claims.(jwt.MapClaims)["created"].(string))
 		if err != nil {
 			return Browser{}, err
 		}
+		fmt.Println(err)
 		browser.Created = created
 		browser.Email = token.Claims.(jwt.MapClaims)["email"].(string)
 		browser.IP = token.Claims.(jwt.MapClaims)["ip"].(string)
