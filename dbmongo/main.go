@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/appleboy/gin-jwt"
+	jwt "github.com/appleboy/gin-jwt"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
@@ -90,7 +90,7 @@ func main() {
 	r.GET("/ws/:jwt", func(c *gin.Context) {
 		wshandler(c.Writer, c.Request, c.Params.ByName("jwt"))
 	})
-	r.GET("/debug", reduceHandler)
+
 	api := r.Group("api")
 	api.Use(authMiddleware.MiddlewareFunc())
 
@@ -118,7 +118,7 @@ func main() {
 		api.GET("/data/compact", compactHandler)
 		api.GET("/data/public/etablissement/:batch", publicEtablissementHandler)
 		api.GET("/data/public/entreprise/:batch", publicEntrepriseHandler)
-		api.GET("/reduce/:algo/:batch", reduceHandler)
+		api.GET("/reduce/:algo/:batchKey", reduceHandler)
 		api.POST("/search", searchRaisonSociale)
 		api.GET("/data/etablissement/:batch/:siret", browseEtablissementHandler)
 		api.GET("/dashboard/tasks", getTasks)

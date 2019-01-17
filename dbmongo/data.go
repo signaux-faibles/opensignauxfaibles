@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"regexp"
 	"sort"
@@ -126,20 +125,33 @@ func loadJSFunctions(path string) (map[string]bson.JavaScript, error) {
 }
 
 func reduceHandler(c *gin.Context) {
-	reduce("1802")
+	batchKey := c.Params.ByName("batchKey")
+	algo := c.Params.ByName("algo")
+	err := reduce(algo, batchKey)
+	if err != nil {
+		c.JSON(500, err.Error())
+	} else {
+		c.JSON(200, "Traitement effectué")
+	}
 }
 
-func reduce(batchKey string) {
-	functions, err := loadJSFunctions("js/algo2/")
+func reduce(batchKey string, algo string) error {
+	// éviter les noms d'algo essayant de pervertir l'exploration des fonctions
+	isAlphaNum := regexp.MustCompile(`^[A-Za-z0-9]+$`).MatchString
+	if !isAlphaNum(algo) {
+		return errors.New("nom d'algorithme invalide, alphanumérique sans espace exigé")
+	}
+
+	functions, err := loadJSFunctions("js/" + algo + "/")
 
 	naf, err = loadNAF()
 	if err != nil {
-		return
+		return err
 	}
 
 	batch, err := getBatch(batchKey)
 	if err != nil {
-		return
+		return err
 	}
 
 	scope := bson.M{
@@ -166,7 +178,7 @@ func reduce(batchKey string) {
 
 	_, err = db.DB.C("RawData").Find(bson.M{"value.index.algo2": true}).MapReduce(job, nil)
 
-	fmt.Println(err)
+	return err
 }
 
 func compactHandler(c *gin.Context) {
