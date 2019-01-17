@@ -101,17 +101,18 @@ func importDebit(batch *AdminBatch) error {
 		if siret, ok := mapping[debit.NumeroCompte]; ok {
 			hash := fmt.Sprintf("%x", structhash.Md5(debit, 1))
 
-			value := ValueEtablissement{
-				Value: Etablissement{
-					Siret: siret,
+			value := Value{
+				Value: Data{
+					Scope: "etablissement",
+					Key:   siret,
 					Batch: map[string]Batch{
 						batch.ID.Key: Batch{
 							Debit: map[string]*Debit{
 								hash: debit,
 							}}}}}
-			db.ChanEtablissement <- &value
+			db.ChanData <- &value
 		}
 	}
-	db.ChanEtablissement <- &ValueEtablissement{}
+	db.ChanData <- &Value{}
 	return nil
 }

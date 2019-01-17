@@ -77,18 +77,19 @@ func importCCSF(batch *AdminBatch) error {
 			if siret, ok := mapping[ccsf.NumeroCompte]; ok {
 				hash := fmt.Sprintf("%x", structhash.Md5(ccsf, 1))
 
-				value := ValueEtablissement{
-					Value: Etablissement{
-						Siret: siret,
+				value := Value{
+					Value: Data{
+						Scope: "etablissement",
+						Key:   siret,
 						Batch: map[string]Batch{
 							batch.ID.Key: Batch{
 								CCSF: map[string]*CCSF{
 									hash: ccsf,
 								}}}}}
-				db.ChanEtablissement <- &value
+				db.ChanData <- &value
 			}
 		}
 	}
-	db.ChanEtablissement <- &ValueEtablissement{}
+	db.ChanData <- &Value{}
 	return nil
 }

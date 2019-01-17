@@ -8,6 +8,8 @@ altares = "/home/christophe/Project/data-fake/altares.csv"
 emploi = "/home/christophe/Project/data-fake/emploi.csv"
 prediction = "/home/christophe/Project/data-fake/prediction.csv"
 bdf = "/home/christophe/Project/data-fake/bdf.xlsx"
+apartdemande = "/home/christophe/Project/data-fake/apartdemande.xlsx"
+apartconso = "/home/christophe/Project/data-fake/apartconso.xlsx"
 
 ###### Les fichiers générés seront préfixés par outputPrefix
 prefixOutput = "fake-"

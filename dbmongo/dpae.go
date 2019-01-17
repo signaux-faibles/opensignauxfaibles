@@ -69,17 +69,18 @@ func importDPAE(batch *AdminBatch) error {
 		for dpae := range parseDPAE(dpaeFile) {
 			hash := fmt.Sprintf("%x", structhash.Md5(dpae, 1))
 
-			value := ValueEtablissement{
-				Value: Etablissement{
-					Siret: dpae.Siret,
+			value := Value{
+				Value: Data{
+					Scope: "etablissement",
+					Key:   dpae.Siret,
 					Batch: map[string]Batch{
 						batch.ID.Key: Batch{
 							DPAE: map[string]*DPAE{
 								hash: dpae,
 							}}}}}
-			db.ChanEtablissement <- &value
+			db.ChanData <- &value
 		}
 	}
-	db.ChanEtablissement <- &ValueEtablissement{}
+	db.ChanData <- &Value{}
 	return nil
 }

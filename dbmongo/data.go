@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"regexp"
 	"sort"
@@ -106,297 +105,96 @@ func (mr *MapReduceJS) load(routine string, scope string) error {
 	return nil
 }
 
+func loadJSFunctions(path string) (map[string]bson.JavaScript, error) {
+	files, err := ioutil.ReadDir(path)
+	r := regexp.MustCompile(`(.*)\.js$`)
+
+	functions := make(map[string]bson.JavaScript)
+
+	for _, f := range files {
+		if name := r.FindStringSubmatch(f.Name()); len(name) > 0 {
+			b, err := ioutil.ReadFile(path + f.Name())
+			if err == nil {
+				functions[name[1]] = bson.JavaScript{
+					Code: string(b),
+				}
+			}
+		}
+	}
+	return functions, err
+}
+
 func reduceHandler(c *gin.Context) {
+	batchKey := c.Params.ByName("batchKey")
 	algo := c.Params.ByName("algo")
-	batchKey := c.Params.ByName("batch")
-	siret := c.Params.ByName("siret")
-
-	batch, _ := getBatch(batchKey)
-	result, err := reduce(batch, algo, siret)
-
+	err := reduce(algo, batchKey)
 	if err != nil {
 		c.JSON(500, err.Error())
 	} else {
-		c.JSON(200, result)
+		c.JSON(200, "Traitement effectué")
 	}
 }
 
-func unionReduceHandler(c *gin.Context) {
-    algo := c.Params.ByName("algo")
-    batchKey := c.Params.ByName("batch")
-    siret := c.Params.ByName("siret")
-
-    batch, _ := getBatch(batchKey)
-    result, err := unionReduce(batch, algo, siret)
-
-    if err != nil {
-        c.JSON(500, err.Error())
-    } else {
-        c.JSON(200, result)
-    }
-}
-
-func unionReduce(batch AdminBatch, algo string, siret string) (interface{}, error) {
-    var queryEntreprise interface{}
-    var output interface{}
-    var result interface{}
-
-    dateDebut := batch.Params.DateDebut
-    dateFin := batch.Params.DateFin
-    dateFinEffectif := batch.Params.DateFinEffectif
-
-    if siret == "" {
-        db.DB.C("Features").RemoveAll(bson.M{"_id.batch": batch.ID.Key, "_id.algo": algo})
-        queryEntreprise = nil
-        output = bson.M{"merge": "Features"}
-    } else {
-        queryEntreprise = bson.M{"value.siren": siret[0:9]}
-        output = nil
-    }
-
-    MRUnion := MapReduceJS{}
-    errUn := MRUnion.load(algo, "union")
-
-    if errUn != nil {
-        return nil, fmt.Errorf("Problème d'accès aux fichiers MapReduce")
-    }
-
-    naf, errNAF := loadNAF()
-    if errNAF != nil {
-        return nil, fmt.Errorf("Problème d'accès aux fichiers naf")
-    }
-
-    scope := bson.M{
-        "date_debut":             dateDebut,
-        "date_fin":               dateFin,
-        "date_fin_effectif":      dateFinEffectif,
-        "serie_periode":          genereSeriePeriode(dateDebut, dateFin),
-        "serie_periode_annuelle": genereSeriePeriodeAnnuelle(dateDebut, dateFin),
-        "actual_batch":           batch.ID.Key,
-        "naf":                    naf,
-      }
-
-    jobUnion := &mgo.MapReduce{
-        Map:      string(MRUnion.Map),
-        Reduce:   string(MRUnion.Reduce),
-        Finalize: string(MRUnion.Finalize),
-        Out:      output,
-        Scope:    scope,
-    }
-
-    var err error
-    if output == nil {
-        _, err = db.DB.C("MRWorkspace").Find(queryEntreprise).MapReduce(jobUnion, &result)
-    } else {
-        _, err = db.DB.C("MRWorkspace").Find(queryEntreprise).MapReduce(jobUnion, nil)
-    }
-
-    if err != nil {
-        return result, fmt.Errorf("Erreur du traitement MapReduce Union")
-    }
-
-    return result, nil
-}
-
-
-
-func reduce(batch AdminBatch, algo string, siret string) (interface{}, error) {
-	var queryEtablissement interface{}
-	var queryEntreprise interface{}
-	var output interface{}
-	var result interface{}
-
-	dateDebut := batch.Params.DateDebut
-	dateFin := batch.Params.DateFin
-	dateFinEffectif := batch.Params.DateFinEffectif
-
-	if siret == "" {
-		db.DB.C("Features").RemoveAll(bson.M{"_id.batch": batch.ID.Key, "_id.algo": algo})
-		queryEtablissement = bson.M{"value.index." + algo: true}
-		queryEntreprise = nil
-		output = bson.M{"merge": "Features"}
-	} else {
-		queryEtablissement = bson.M{"value.siret": siret}
-		queryEntreprise = bson.M{"value.siren": siret[0:9]}
-		output = nil
+func reduce(batchKey string, algo string) error {
+	// éviter les noms d'algo essayant de pervertir l'exploration des fonctions
+	isAlphaNum := regexp.MustCompile(`^[A-Za-z0-9]+$`).MatchString
+	if !isAlphaNum(algo) {
+		return errors.New("nom d'algorithme invalide, alphanumérique sans espace exigé")
 	}
 
-	MREtablissement := MapReduceJS{}
-	MREntreprise := MapReduceJS{}
-	MRUnion := MapReduceJS{}
-	errEt := MREtablissement.load(algo, "etablissement")
-	errEn := MREntreprise.load(algo, "entreprise")
-	errUn := MRUnion.load(algo, "union")
+	functions, err := loadJSFunctions("js/" + algo + "/")
 
-	if errEt != nil || errEn != nil || errUn != nil {
-		return nil, fmt.Errorf("Problème d'accès aux fichiers MapReduce")
-	}
-
-	naf, errNAF := loadNAF()
-	if errNAF != nil {
-		return nil, fmt.Errorf("Problème d'accès aux fichiers naf")
-	}
-
-	scope := bson.M{
-		"date_debut":             dateDebut,
-		"date_fin":               dateFin,
-		"date_fin_effectif":      dateFinEffectif,
-		"serie_periode":          genereSeriePeriode(dateDebut, dateFin),
-		"serie_periode_annuelle": genereSeriePeriodeAnnuelle(dateDebut, dateFin),
-		"actual_batch":           batch.ID.Key,
-		"naf":                    naf,
-	}
-
-	jobEtablissement := &mgo.MapReduce{
-		Map:      string(MREtablissement.Map),
-		Reduce:   string(MREtablissement.Reduce),
-		Finalize: string(MREtablissement.Finalize),
-		Out:      bson.M{"replace": "MRWorkspace"},
-		Scope:    scope,
-	}
-
-	_, err := db.DB.C("Etablissement").Find(queryEtablissement).MapReduce(jobEtablissement, nil)
-	if err != nil {
-		return nil, fmt.Errorf("Erreur du traitement MapReduce Etablissement: " + err.Error())
-	}
-
-	jobEntreprise := &mgo.MapReduce{
-		Map:      string(MREntreprise.Map),
-		Reduce:   string(MREntreprise.Reduce),
-		Finalize: string(MREntreprise.Finalize),
-		Out:      bson.M{"merge": "MRWorkspace"},
-		Scope:    scope,
-	}
-
-	_, err = db.DB.C("Entreprise").Find(queryEntreprise).MapReduce(jobEntreprise, nil)
-	if err != nil {
-		return nil, fmt.Errorf("Erreur du traitement Entreprise: " + err.Error())
-	}
-
-	jobUnion := &mgo.MapReduce{
-		Map:      string(MRUnion.Map),
-		Reduce:   string(MRUnion.Reduce),
-		Finalize: string(MRUnion.Finalize),
-		Out:      output,
-		Scope:    scope,
-	}
-
-	if output == nil {
-		_, err = db.DB.C("MRWorkspace").Find(queryEntreprise).MapReduce(jobUnion, &result)
-	} else {
-		_, err = db.DB.C("MRWorkspace").Find(queryEntreprise).MapReduce(jobUnion, nil)
-	}
-
-	if err != nil {
-		return result, fmt.Errorf("Erreur du traitement MapReduce Union")
-	}
-
-	return result, nil
-
-}
-
-func compactEtablissementHandler(c *gin.Context) {
-	siret := c.Params.ByName("siret")
-
-	err := compactEtablissement(siret)
-
-	if err != nil {
-		c.JSON(500, "Problème d'accès aux fichiers MapReduce")
-	}
-}
-
-func compactEtablissement(siret string) error {
-	batches, _ := getBatches()
-
-	// Détermination scope traitement
-	var query interface{}
-	var output interface{}
-	var etablissement []interface{}
-	var completeTypes = make(map[string][]string)
-	var batchesID []string
-
-	for _, b := range batches {
-		completeTypes[b.ID.Key] = b.CompleteTypes
-		batchesID = append(batchesID, b.ID.Key)
-	}
-
-	// Si le parametre siret est absent, on traite l'ensemble de la collection
-	if siret == "" {
-		query = nil
-		output = bson.M{"replace": "Etablissement"}
-		etablissement = nil
-	} else {
-		query = bson.M{"value.siret": siret}
-		output = nil
-	}
-
-	// Ressources JS
-	MREtablissement := MapReduceJS{}
-	errEt := MREtablissement.load("compact", "etablissement")
-
-	if errEt != nil {
-		return errEt
-	}
-
-	// Traitement MR
-	job := &mgo.MapReduce{
-		Map:      string(MREtablissement.Map),
-		Reduce:   string(MREtablissement.Reduce),
-		Finalize: string(MREtablissement.Finalize),
-		Out:      output,
-		Scope: bson.M{"batches": batchesID,
-			"types": []string{
-        "procol",
-        "altares",
-				"apconso",
-				"apdemande",
-				"ccsf",
-				"cotisation",
-				"debit",
-				"delai",
-				"effectif",
-				"sirene",
-				"dpae",
-			},
-			"completeTypes": completeTypes,
-		},
-	}
-
-	err := errors.New("")
-	if output == nil {
-		_, err = db.DB.C("Etablissement").Find(query).MapReduce(job, &etablissement)
-	} else {
-		_, err = db.DB.C("Etablissement").Find(query).MapReduce(job, nil)
-	}
-
+	naf, err = loadNAF()
 	if err != nil {
 		return err
 	}
-	return nil
-}
 
-func getFeatures(c *gin.Context) {
-	var data []interface{}
-	db.DB.C("Features").Find(nil).All(&data)
-	c.JSON(200, data)
-}
-
-func compactEntrepriseHandler(c *gin.Context) {
-	siren := c.Params.ByName("siren")
-	err := compactEntreprise(siren)
-
+	batch, err := getBatch(batchKey)
 	if err != nil {
-		c.JSON(500, "Problème d'accès aux fichiers MapReduce")
+		return err
+	}
+
+	scope := bson.M{
+		"date_debut":             batch.Params.DateDebut,
+		"date_fin":               batch.Params.DateFin,
+		"date_fin_effectif":      batch.Params.DateFinEffectif,
+		"serie_periode":          genereSeriePeriode(batch.Params.DateDebut, batch.Params.DateFin),
+		"serie_periode_annuelle": genereSeriePeriodeAnnuelle(batch.Params.DateDebut, batch.Params.DateFin),
+		"offset_effectif":        (batch.Params.DateFinEffectif.Year()-batch.Params.DateFin.Year())*12 + int(batch.Params.DateFinEffectif.Month()-batch.Params.DateFin.Month()),
+		"actual_batch":           batch.ID.Key,
+		"naf":                    naf,
+		"f":                      functions,
+		"batches":                getBatchesID(),
+		"types":                  getTypes(),
+	}
+
+	job := &mgo.MapReduce{
+		Map:      functions["map"].Code,
+		Reduce:   functions["reduce"].Code,
+		Finalize: functions["finalize"].Code,
+		Out:      bson.M{"replace": "Features"},
+		Scope:    scope,
+	}
+
+	_, err = db.DB.C("RawData").Find(bson.M{"value.index.algo2": true}).MapReduce(job, nil)
+
+	return err
+}
+
+func compactHandler(c *gin.Context) {
+	err := compact()
+	if err != nil {
+		c.JSON(500, err.Error())
 		return
 	}
+
+	c.JSON(200, "ok")
 }
-func compactEntreprise(siren string) error {
+
+func compact() error {
 	batches, _ := getBatches()
 
 	// Détermination scope traitement
-	var query interface{}
-	var output interface{}
-	var etablissement []interface{}
 	var completeTypes = make(map[string][]string)
 	var batchesID []string
 
@@ -405,46 +203,46 @@ func compactEntreprise(siren string) error {
 		batchesID = append(batchesID, b.ID.Key)
 	}
 
-	if siren == "" {
-		query = nil
-		output = bson.M{"replace": "Entreprise"}
-		etablissement = nil
-	} else {
-		query = bson.M{"value.siren": siren}
-		output = nil
+	functions, err := loadJSFunctions("js/compact/")
+	if err != nil {
+		return err
 	}
-
-	// Ressources JS
-	MREntreprise := MapReduceJS{}
-	errEn := MREntreprise.load("compact", "entreprise")
-
-	if errEn != nil {
-		return errEn
-	}
-
 	// Traitement MR
 	job := &mgo.MapReduce{
-		Map:      string(MREntreprise.Map),
-		Reduce:   string(MREntreprise.Reduce),
-		Finalize: string(MREntreprise.Finalize),
-		Out:      output,
+		Map:      functions["map"].Code,
+		Reduce:   functions["reduce"].Code,
+		Finalize: functions["finalize"].Code,
+		Out:      bson.M{"replace": "RawData"},
 		Scope: bson.M{
-			"batches": batchesID,
-			"types": []string{
-				"bdf",
-				"diane",
-			},
+			"functions":     functions,
+			"batches":       getBatchesID(),
+			"types":         getTypes(),
 			"completeTypes": completeTypes,
 		},
 	}
 
-	var err error
-
-	if output == nil {
-		_, err = db.DB.C("Entreprise").Find(query).MapReduce(job, &etablissement)
-	} else {
-		_, err = db.DB.C("Entreprise").Find(query).MapReduce(job, nil)
-	}
+	_, err = db.DB.C("RawData").Find(nil).MapReduce(job, nil)
 
 	return err
+}
+
+func getTypes() []string {
+	return []string{
+		"altares",
+		"apconso",
+		"apdemande",
+		"ccsf",
+		"cotisation",
+		"debit",
+		"delai",
+		"effectif",
+		"sirene",
+		"dpae",
+		"bdf",
+		"diane",
+	}
+}
+
+func getNAF(c *gin.Context) {
+	c.JSON(200, naf)
 }

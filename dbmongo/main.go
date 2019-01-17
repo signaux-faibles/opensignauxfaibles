@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/appleboy/gin-jwt"
+	jwt "github.com/appleboy/gin-jwt"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
@@ -38,7 +38,6 @@ func wshandler(w http.ResponseWriter, r *http.Request, jwt string) {
 	for event := range channel {
 		conn.WriteJSON(event)
 	}
-
 }
 
 const identityKey = "id"
@@ -51,7 +50,7 @@ func main() {
 
 	r := gin.Default()
 	r.Use(gin.Recovery())
-	// r.Use(Kanboard())
+
 	config := cors.DefaultConfig()
 	config.AllowOrigins = []string{"http://localhost:8080", "https://signaux.faibles.fr"}
 	config.AddAllowHeaders("Authorization")
@@ -70,12 +69,7 @@ func main() {
 		IdentityHandler: identityHandler,
 		Authenticator:   authenticator,
 		Authorizator:    authorizator,
-		Unauthorized: func(c *gin.Context, code int, message string) {
-			c.JSON(code, gin.H{
-				"code":    code,
-				"message": message,
-			})
-		},
+		Unauthorized:    unauthorizedHandler,
 
 		TokenLookup:   "header: Authorization, query: token, cookie: jwt",
 		TokenHeadName: "Bearer",
@@ -117,24 +111,18 @@ func main() {
 		api.GET("/batch/purge", purgeBatchHandler)
 		api.GET("/batch/process", processBatchHandler)
 		api.POST("/admin/files", addFile)
-		// api.GET("/data/naf", getNAF)
-		api.GET("/data/features", getFeatures)
+		api.GET("/data/naf", getNAF)
 		api.GET("/admin/epoch", epoch)
 		api.POST("/data/prediction", predictionBrowseHandler)
 		api.GET("/import/:batch", importBatchHandler)
-		api.GET("/compact/etablissement/:siret", compactEtablissementHandler)
-		api.GET("/compact/etablissement", compactEtablissementHandler)
-		api.GET("/compact/entreprise/:siren", compactEntrepriseHandler)
-		api.GET("/compact/entreprise", compactEntrepriseHandler)
+		api.GET("/data/compact", compactHandler)
 		api.GET("/data/public/etablissement/:batch", publicEtablissementHandler)
 		api.GET("/data/public/entreprise/:batch", publicEntrepriseHandler)
-		api.GET("/reduce/:algo/:batch/:siret", reduceHandler)
-		api.GET("/reduce/:algo/:batch", reduceHandler)
+		api.GET("/reduce/:algo/:batchKey", reduceHandler)
 		api.POST("/search", searchRaisonSociale)
 		api.GET("/data/etablissement/:batch/:siret", browseEtablissementHandler)
 		api.GET("/dashboard/tasks", getTasks)
 		api.GET("/admin/regions", getRegionsHandler)
-    api.GET("/union/:algo/:batch", unionReduceHandler)
 	}
 
 	bind := viper.GetString("APP_BIND")

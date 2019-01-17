@@ -55,25 +55,23 @@ func listFiles(basePath string) ([]fileSummary, error) {
 }
 
 var importFunctions = map[string]func(*AdminBatch) error{
-  "apconso":    importAPConso,
-  "bdf":        importBDF,
-  "delai":      importDelai,
-  "apdemande":  importAPDemande,
-  "diane":      importDiane,
-  "cotisation": importCotisation,
-  "dpae":       importDPAE,
-  "altares":    importAltares,
-  "procol":   importProcol,
-  "ccsf":       importCCSF,
-  "debit":      importDebit,
-  "effectif":   importEffectif,
-  "sirene":     importSirene,
+	"apconso":    importAPConso,
+	"bdf":        importBDF,
+	"delai":      importDelai,
+	"apdemande":  importAPDemande,
+	"diane":      importDiane,
+	"cotisation": importCotisation,
+	"dpae":       importDPAE,
+	"altares":    importAltares,
+	"procol":     importProcol,
+	"ccsf":       importCCSF,
+	"debit":      importDebit,
+	"effectif":   importEffectif,
+	"sirene":     importSirene,
 }
 
 func purge(c *gin.Context) {
-	db.DB.C("Etablissement").RemoveAll(nil)
-	db.DB.C("Entreprise").RemoveAll(nil)
-	db.DB.C("Prediction").RemoveAll(nil)
+	db.DB.C("RawData").RemoveAll(nil)
 	c.String(200, "Done")
 }
 
@@ -84,16 +82,16 @@ func importBatchHandler(c *gin.Context) {
 	go importBatch(&batch)
 }
 func importBatch(batch *AdminBatch) {
-    if !batch.Readonly {
-        for fnName, fn := range importFunctions {
-            log(info, "importMain", "Début de l'import du type: "+fnName+" pour le batch "+batch.ID.Key)
-            err := fn(batch)
-            if err != nil {
-                log(critical, "importMain", "Erreur à l'importation du type: "+fnName)
-            }
-            log(info, "importMain", "Fin de l'import du type: "+fnName+" pour le batch "+batch.ID.Key)
-        }
-    } else {
-        log(critical, "importMain", "Le lot "+batch.ID.Key+" est fermé, import impossible.")
-    }
+	if !batch.Readonly {
+		for fnName, fn := range importFunctions {
+			journal(info, "importMain", "Début de l'import du type: "+fnName+" pour le batch "+batch.ID.Key)
+			err := fn(batch)
+			if err != nil {
+				journal(critical, "importMain", "Erreur à l'importation du type: "+fnName)
+			}
+			journal(info, "importMain", "Fin de l'import du type: "+fnName+" pour le batch "+batch.ID.Key)
+		}
+	} else {
+		journal(critical, "importMain", "Le lot "+batch.ID.Key+" est fermé, import impossible.")
+	}
 }

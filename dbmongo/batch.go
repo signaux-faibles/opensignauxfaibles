@@ -194,13 +194,12 @@ func processBatchHandler(c *gin.Context) {
 }
 
 func processBatch() {
-	log("info", "processBatch", "Lancement de l'intégration du batch")
+	journal("info", "processBatch", "Lancement de l'intégration du batch")
 	status := db.Status
 	batch := lastBatch()
 	status.setDBStatus(sp("Import des fichiers"))
 	importBatch(&batch)
-	compactEntreprise("")
-	compactEtablissement("")
+	compact()
 	// for _, algo := range []string{"algo1", "algo2"} {
 	// 	_, err := reduce(batch, algo, "")
 	// 	fmt.Println(err)
@@ -256,7 +255,7 @@ func addFileToBatch() chan newFile {
 			db.Status.Epoch++
 			db.Status.write()
 			mainMessageChannel <- socketMessage{
-				JournalEvent: log(info, "addFileToBatch", "Fichier "+file.FileName+"du type "+file.Type+" ajouté au batch "+file.BatchKey),
+				JournalEvent: journal(info, "addFileToBatch", "Fichier "+file.FileName+"du type "+file.Type+" ajouté au batch "+file.BatchKey),
 				Batches:      batches,
 			}
 		}

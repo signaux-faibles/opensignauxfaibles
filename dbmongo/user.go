@@ -70,7 +70,7 @@ func loginUser(username string, password string, browserToken string) (AdminUser
 	err := bcrypt.CompareHashAndPassword(user.HashedPassword, []byte(password))
 
 	_, errToken := readBrowserToken(browserToken)
-
+	fmt.Println(errToken)
 	if err == nil && errToken == nil {
 		return user, nil
 	}
@@ -122,6 +122,13 @@ func authorizator(data interface{}, c *gin.Context) bool {
 }
 
 func unauthorized(c *gin.Context, code int, message string) {
+	c.JSON(code, gin.H{
+		"code":    code,
+		"message": message,
+	})
+}
+
+func unauthorizedHandler(c *gin.Context, code int, message string) {
 	c.JSON(code, gin.H{
 		"code":    code,
 		"message": message,

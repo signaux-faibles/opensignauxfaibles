@@ -112,17 +112,18 @@ func importEffectif(batch *AdminBatch) error {
 		if randomKey != "" {
 			siret := effectif[randomKey].Siret
 
-			value := ValueEtablissement{
-				Value: Etablissement{
-					Siret: siret,
+			value := Value{
+				Value: Data{
+					Scope: "etablissement",
+					Key:   siret,
 					Batch: map[string]Batch{
 						batch.ID.Key: Batch{
 							Effectif: effectif,
 						}}}}
-			db.ChanEtablissement <- &value
+			db.ChanData <- &value
 		}
 	}
 
-	db.ChanEtablissement <- &ValueEtablissement{}
+	db.ChanData <- &Value{}
 	return nil
 }

@@ -50,11 +50,11 @@ func parseDelai(paths []string) chan *Delai {
 
 	go func() {
 		for _, path := range paths {
-			log(debug, "importDelais", "Import du fichier délais "+path)
+			journal(debug, "importDelais", "Import du fichier délais "+path)
 			file, err := os.Open(viper.GetString("APP_DATA") + path)
 
 			if err != nil {
-				log(critical, "importDelais", "Erreur à l'ouverture du fichier "+path+": "+err.Error()+", passe.")
+				journal(critical, "importDelais", "Erreur à l'ouverture du fichier "+path+": "+err.Error()+", passe.")
 				break
 			} else {
 				var errorLines []int
@@ -71,7 +71,7 @@ func parseDelai(paths []string) chan *Delai {
 					} else if err != nil {
 						n++
 						e++
-						log(warning, "importDelais", "Erreur à la ligne '"+fmt.Sprint(n)+"': «"+err.Error()+"», passe.")
+						journal(warning, "importDelais", "Erreur à la ligne '"+fmt.Sprint(n)+"': «"+err.Error()+"», passe.")
 						break
 					} else {
 						n++
@@ -99,9 +99,9 @@ func parseDelai(paths []string) chan *Delai {
 					}
 				}
 				file.Close()
-				log(debug, "importDelais", "Import du fichier délais "+path+" terminé. "+fmt.Sprint(n)+" lignes traitée(s), "+fmt.Sprint(e)+" rejet(s)")
+				journal(debug, "importDelais", "Import du fichier délais "+path+" terminé. "+fmt.Sprint(n)+" lignes traitée(s), "+fmt.Sprint(e)+" rejet(s)")
 				if len(errorLines) > 0 {
-					log(warning, "importDelais", "Erreurs de conversion constatées aux lignes suivantes: "+fmt.Sprintf("%v", errorLines))
+					journal(warning, "importDelais", "Erreurs de conversion constatées aux lignes suivantes: "+fmt.Sprintf("%v", errorLines))
 				}
 			}
 		}
@@ -112,28 +112,29 @@ func parseDelai(paths []string) chan *Delai {
 }
 
 func importDelai(batch *AdminBatch) error {
-	log(info, "importDelais", "Import du batch "+batch.ID.Key+": Délai")
+	journal(info, "importDelais", "Import du batch "+batch.ID.Key+": Délai")
 	mapping, err := getCompteSiretMapping(batch)
 	if err != nil {
-		log(critical, "importDelais", "Erreur d'accès au mapping Siret/Compte, interruption. "+err.Error())
+		journal(critical, "importDelais", "Erreur d'accès au mapping Siret/Compte, interruption. "+err.Error())
 	}
 
 	for delai := range parseDelai(batch.Files["delai"]) {
 		if siret, ok := mapping[delai.NumeroCompte]; ok {
 			hash := fmt.Sprintf("%x", structhash.Md5(delai, 1))
 
-			value := ValueEtablissement{
-				Value: Etablissement{
-					Siret: siret,
+			value := Value{
+				Value: Data{
+					Scope: "etablissement",
+					Key:   siret,
 					Batch: map[string]Batch{
 						batch.ID.Key: Batch{
 							Delai: map[string]*Delai{
 								hash: delai,
 							}}}}}
-			db.ChanEtablissement <- &value
+			db.ChanData <- &value
 		}
 	}
-	db.ChanEtablissement <- &ValueEtablissement{}
-  log(info, "importDelais", "Import du batch "+batch.ID.Key+" terminée: Délai")
+	db.ChanData <- &Value{}
+	journal(info, "importDelais", "Importation du batch "+batch.ID.Key+" terminée")
 	return nil
 }

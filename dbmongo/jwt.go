@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
+	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/spf13/viper"
 )
 
@@ -16,7 +16,7 @@ type Browser struct {
 	Email   string    `json:"email" bson:"email"`
 }
 
-// BrowserToken embarque un token
+// BrowserToken embarque un token long terme
 type BrowserToken struct {
 	BrowserToken string `json:"browserToken" bson:"browserToken"`
 }
@@ -31,7 +31,6 @@ func forgeBrowserToken(browser Browser) (BrowserToken, error) {
 
 	// Sign and get the complete encoded token as a string using the secret
 	tokenString, err := token.SignedString([]byte(viper.GetString("jwtSecret")))
-	fmt.Println(err)
 	return BrowserToken{
 		BrowserToken: tokenString,
 	}, err
@@ -45,13 +44,21 @@ func readBrowserToken(tokenString string) (Browser, error) {
 	if err != nil {
 		return Browser{}, err
 	}
+
 	if token.Valid {
 		var browser Browser
-		browser.Created, err = time.Parse("2006-01-02T15:04:05-0700", token.Claims.(jwt.MapClaims)["created"].(string))
+
+		created, err := time.Parse("2006-01-02T15:04:05.99999-07:00", token.Claims.(jwt.MapClaims)["created"].(string))
+		if err != nil {
+			return Browser{}, err
+		}
+		fmt.Println(err)
+		browser.Created = created
 		browser.Email = token.Claims.(jwt.MapClaims)["email"].(string)
 		browser.IP = token.Claims.(jwt.MapClaims)["ip"].(string)
-		browser.Email = token.Claims.(jwt.MapClaims)["email"].(string)
+		browser.Name = token.Claims.(jwt.MapClaims)["name"].(string)
 		return browser, nil
 	}
-	return Browser{}, nil
+
+	return Browser{}, err
 }

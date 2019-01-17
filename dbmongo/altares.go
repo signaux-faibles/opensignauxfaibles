@@ -73,17 +73,18 @@ func importAltares(batch *AdminBatch) error {
 		for altares := range parseAltares(viper.GetString("APP_DATA") + fileName) {
 			hash := fmt.Sprintf("%x", structhash.Md5(altares, 1))
 
-			value := ValueEtablissement{
-				Value: Etablissement{
-					Siret: altares.Siret,
+			value := Value{
+				Value: Data{
+					Scope: "etablissement",
+					Key:   altares.Siret,
 					Batch: map[string]Batch{
 						batch.ID.Key: Batch{
 							Altares: map[string]*Altares{
 								hash: altares,
 							}}}}}
-			db.ChanEtablissement <- &value
+			db.ChanData <- &value
 		}
 	}
-	db.ChanEtablissement <- &ValueEtablissement{}
+	db.ChanData <- &Value{}
 	return nil
 }

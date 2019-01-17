@@ -18,18 +18,11 @@ type APDemande struct {
 	EffectifEntreprise *int      `json:"effectif_entreprise" bson:"effectif_entreprise"`
 	Effectif           *int      `json:"effectif" bson:"effectif"`
 	DateStatut         time.Time `json:"date_statut" bson:"date_statut"`
-	//TxPC               *float64  `json:"tx_pc" bson:"tx_pc"`
-	//TxPCUnedicDares    *float64  `json:"tx_pc_unedic_dares" bson:"tx_pc_unedic_dares"`
-	//TxPCEtatDares      *float64  `json:"tx_pc_etat_dares" bson:"tx_pc_etat_dares"`
 	Periode            Periode   `json:"periode" bson:"periode"`
 	HTA                *float64  `json:"hta" bson:"hta"`
 	MTA                *float64  `json:"mta" bson:"mta"`
 	EffectifAutorise   *int      `json:"effectif_autorise" bson:"effectif_autorise"`
-	//ProdHTAEffectif    *float64  `json:"prod_hta_effectif" bson:"prod_hta_effectif"`
 	MotifRecoursSE     *int      `json:"motif_recours_se" bson:"motif_recours_se"`
-	//Perimetre          *int      `json:"perimetre" bson:"perimetre"`
-	//RecoursAnterieur   *int      `json:"recours_anterieur" bson:"recours_anterieur"`
-	//AvisCE             *int      `json:"avis_ce" bson:"avis_ce"`
 	HeureConsommee     *float64  `json:"heure_consommee" bson:"heure_consommee"`
 	MontantConsomme    *float64  `json:"montant_consommee" bson:"montant_consommee"`
 	EffectifConsomme   *int      `json:"effectif_consomme" bson:"effectif_consomme"`
@@ -55,10 +48,10 @@ func parseAPDemande(path string) chan *APDemande {
 
 		xlFile, err := xlsx.OpenFile(path)
 		if err != nil {
-			log(critical, "importAPDemande", "Erreur à l'ouverture du fichier: "+path+", erreur: "+err.Error())
+			journal(critical, "importAPDemande", "Erreur à l'ouverture du fichier: "+path+", erreur: "+err.Error())
 			close(outputChannel)
 		} else {
-			log(debug, "importAPDemande", "Ouverture du fichier, feuille 0, "+path)
+			journal(debug, "importAPDemande", "Ouverture du fichier, feuille 0, "+path)
 			sheet := xlFile.Sheets[0]
 			f := make(map[string]int)
 			for idx, cell := range sheet.Rows[0].Cells {
@@ -84,7 +77,7 @@ func parseAPDemande(path string) chan *APDemande {
 				if i, err := f[field]; err {
 					minLength = max(minLength, i)
 				} else {
-					log(critical, "importAPDemande", "Import du fichier "+path+". "+field+" non trouvé. Abandon.")
+					journal(critical, "importAPDemande", "Import du fichier "+path+". "+field+" non trouvé. Abandon.")
 					close(outputChannel)
 					return
 				}
@@ -121,9 +114,9 @@ func parseAPDemande(path string) chan *APDemande {
 
 			}
 		}
-		log(debug, "importAPDemande", "Import du fichier "+path+" terminé. "+fmt.Sprint(n)+" lignes traitée(s), "+fmt.Sprint(e)+" rejet(s)")
+		journal(debug, "importAPDemande", "Import du fichier "+path+" terminé. "+fmt.Sprint(n)+" lignes traitée(s), "+fmt.Sprint(e)+" rejet(s)")
 		if len(errorLines) > 0 {
-			log(warning, "importAPDemande", "Erreurs de conversion constatées aux lignes suivantes: "+fmt.Sprintf("%v", errorLines))
+			journal(warning, "importAPDemande", "Erreurs de conversion constatées aux lignes suivantes: "+fmt.Sprintf("%v", errorLines))
 		}
 		close(outputChannel)
 	}()
@@ -132,13 +125,14 @@ func parseAPDemande(path string) chan *APDemande {
 }
 
 func importAPDemande(batch *AdminBatch) error {
-	log(info, "importAPDemande", "Import du batch "+batch.ID.Key+": APDemande")
+	journal(info, "importAPDemande", "Import du batch "+batch.ID.Key+": APDemande")
 	for _, file := range batch.Files["apdemande"] {
 		for apdemande := range parseAPDemande(viper.GetString("APP_DATA") + file) {
 			hash := fmt.Sprintf("%x", structhash.Md5(apdemande, 1))
-			value := ValueEtablissement{
-				Value: Etablissement{
-					Siret: apdemande.Siret,
+			value := Value{
+				Value: Data{
+					Key:   apdemande.Siret,
+					Scope: "etablissement",
 					Batch: map[string]Batch{
 						batch.ID.Key: Batch{
 							Compact: map[string]bool{
@@ -150,27 +144,27 @@ func importAPDemande(batch *AdminBatch) error {
 			if value.Value.Batch == nil {
 				spew.Dump(value)
 			}
-			db.ChanEtablissement <- &value
+			db.ChanData <- &value
 		}
 	}
-	db.ChanEtablissement <- &ValueEtablissement{}
-	log(info, "importAPDemande", "Import APDemande du batch "+batch.ID.Key+" terminé")
+	db.ChanData <- &Value{}
+	journal(info, "importAPDemande", "Import APDemande du batch "+batch.ID.Key+" terminé")
 	return nil
 }
 
 func parseAPConso(path string) chan *APConso {
 	outputChannel := make(chan *APConso)
-	xlFile, err := xlsx.OpenFile(viper.GetString("APP_DATA") + path)
+	xlFile, err := xlsx.OpenFile(path)
 	if err != nil {
-		log(critical, "importApconso", "Erreur à l'ouverture du fichier "+path+": "+err.Error())
+		journal(critical, "importApconso", "Erreur à l'ouverture du fichier "+path+": "+err.Error())
 	} else {
-		log(debug, "importAPConso", "Ouverture du fichier "+path)
+		journal(debug, "importAPConso", "Ouverture du fichier "+path)
 		go func() {
 			var errorLines []int
 			n := 0
 			e := 0
 			for idx, sheet := range xlFile.Sheets {
-				log(debug, "importAPConso", "Import de la feuille "+fmt.Sprint(idx))
+				journal(debug, "importAPConso", "Import de la feuille "+fmt.Sprint(idx))
 				fields := sheet.Rows[0]
 				idxID := sliceIndex(35, func(i int) bool { return fields.Cells[i].Value == "ID_DA" })
 				idxSiret := sliceIndex(35, func(i int) bool { return fields.Cells[i].Value == "ETAB_SIRET" })
@@ -200,9 +194,9 @@ func parseAPConso(path string) chan *APConso {
 					}
 				}
 			}
-			log(debug, "importAPConso", "Import du fichier délais "+path+" terminé. "+fmt.Sprint(n)+" lignes traitée(s), "+fmt.Sprint(e)+" rejet(s)")
+			journal(debug, "importAPConso", "Import du fichier délais "+path+" terminé. "+fmt.Sprint(n)+" lignes traitée(s), "+fmt.Sprint(e)+" rejet(s)")
 			if len(errorLines) > 0 {
-				log(warning, "importAPConso", "Erreurs de conversion constatées aux lignes suivantes: "+fmt.Sprintf("%v", errorLines))
+				journal(warning, "importAPConso", "Erreurs de conversion constatées aux lignes suivantes: "+fmt.Sprintf("%v", errorLines))
 			}
 			close(outputChannel)
 		}()
@@ -211,14 +205,15 @@ func parseAPConso(path string) chan *APConso {
 }
 
 func importAPConso(batch *AdminBatch) error {
-	log(info, "importAPConso", "Import du batch "+batch.ID.Key+": APConso")
+	journal(info, "importAPConso", "Import du batch "+batch.ID.Key+": APConso")
 
 	for _, file := range batch.Files["apconso"] {
-		for apconso := range parseAPConso(file) {
+		for apconso := range parseAPConso(viper.GetString("APP_DATA") + file) {
 			hash := fmt.Sprintf("%x", structhash.Md5(apconso, 1))
-			value := ValueEtablissement{
-				Value: Etablissement{
-					Siret: apconso.Siret,
+			value := Value{
+				Value: Data{
+					Scope: "etablissement",
+					Key:   apconso.Siret,
 					Batch: map[string]Batch{
 						batch.ID.Key: Batch{
 							APConso: map[string]*APConso{
@@ -227,10 +222,10 @@ func importAPConso(batch *AdminBatch) error {
 			if value.Value.Batch == nil {
 				spew.Dump(value)
 			}
-			db.ChanEtablissement <- &value
+			db.ChanData <- &value
 		}
 	}
-	db.ChanEtablissement <- &ValueEtablissement{}
-	log(info, "importAPConso", "Fin de l'import du batch "+batch.ID.Key+": APConso")
+	db.ChanData <- &Value{}
+	journal(info, "importAPConso", "Fin de l'import du batch "+batch.ID.Key+": APConso")
 	return nil
 }

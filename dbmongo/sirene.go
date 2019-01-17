@@ -54,9 +54,9 @@ func parseSirene(paths []string, mapping map[string]bool) chan *Sirene {
 		for _, path := range paths {
 			file, err := os.Open(viper.GetString("APP_DATA") + path)
 			if err != nil {
-        log(critical, "importSirene", "Erreur à l'ouverture du fichier: "+path+", erreur: "+err.Error())
-        close(outputChannel)
-      }
+				journal(critical, "importSirene", "Erreur à l'ouverture du fichier: "+path+", erreur: "+err.Error())
+				close(outputChannel)
+			}
 
 			reader := csv.NewReader(bufio.NewReader(file))
 			reader.Comma = ','
@@ -66,109 +66,102 @@ func parseSirene(paths []string, mapping map[string]bool) chan *Sirene {
 				if err == io.EOF {
 					break
 				} else if err != nil {
-					log(critical, "importSirene", "Erreur lors de la lecture du fichier "+path+". Abandon.")
+					journal(critical, "importSirene", "Erreur lors de la lecture du fichier "+path+". Abandon.")
 					close(outputChannel)
 				}
 
+				//				if _, ok := mapping[row[0]]; ok {
+				n++
 
-//				if _, ok := mapping[row[0]]; ok {
-          n++
+				sirene := Sirene{}
+				sirene.Siren = row[0]
 
-          sirene := Sirene{}
-					sirene.Siren = row[0]
+				sirene.Nic = row[1]
+				sirene.NicSiege = row[65]
+				sirene.RaisonSociale = row[2]
+				sirene.NumVoie = row[16]
+				sirene.IndRep = row[17]
+				sirene.TypeVoie = row[19]
+				sirene.CodePostal = row[20]
+				sirene.Cedex = row[21]
+				sirene.Region = row[23]
+				sirene.Departement = row[24]
+				sirene.Commune = row[28]
+				sirene.APE = row[42]
+				sirene.NatureActivite = row[52]
+				sirene.ActiviteSaisoniere = row[55]
+				sirene.ModaliteActivite = row[56]
+				sirene.Productif = row[57]
+				sirene.NatureJuridique = row[71]
+				sirene.Categorie = row[82]
 
+				if i, err := time.Parse("20060102", row[50]); err == nil {
+					sirene.Creation = i
+				}
+				if i, err := strconv.Atoi(row[85]); err == nil {
+					sirene.IndiceMonoactivite = &i
+				}
+				if i, err := strconv.Atoi(row[89]); err == nil {
+					sirene.TrancheCA = &i
+				}
 
-					sirene.Nic = row[1]
-					sirene.NicSiege = row[65]
-					sirene.RaisonSociale = row[2]
-					sirene.NumVoie = row[16]
-					sirene.IndRep = row[17]
-					sirene.TypeVoie = row[19]
-					sirene.CodePostal = row[20]
-					sirene.Cedex = row[21]
-					sirene.Region = row[23]
-					sirene.Departement = row[24]
-					sirene.Commune = row[28]
-					sirene.APE = row[42]
-					sirene.NatureActivite = row[52]
-					sirene.ActiviteSaisoniere = row[55]
-					sirene.ModaliteActivite = row[56]
-					sirene.Productif = row[57]
-					sirene.NatureJuridique = row[71]
-					sirene.Categorie = row[82]
+				sirene.Sigle = row[61]
 
-          if i, err := time.Parse("20060102", row[50]); err == nil {
-            sirene.Creation = i
-          }
-          if i, err := strconv.Atoi(row[85]); err == nil {
-            sirene.IndiceMonoactivite = &i
-          }
-          if i, err := strconv.Atoi(row[89]); err == nil {
-            sirene.TrancheCA = &i
-          }
+				if i, err := strconv.ParseFloat(row[100], 64); err == nil {
+					sirene.Longitude = &i
+				}
+				if i, err := strconv.ParseFloat(row[101], 64); err == nil {
+					sirene.Lattitude = &i
+				}
+				sirene.Adresse = [7]string{row[2], row[3], row[4], row[5], row[6], row[7], row[8]}
 
-          sirene.Sigle = row[61]
+				//     for  i:=0; i < len(errors);i++ {
+				//       if (errors[i] != nil){
+				//         journal(debug, "importSirene", "Erreur ? "+fmt.Sprint(i)+" - "+errors[i].Error())
+				//       }
+				//     }
 
-          if i , err := strconv.ParseFloat(row[100], 64); err == nil {
-            sirene.Longitude = &i
-          }
-          if i, err := strconv.ParseFloat(row[101], 64); err == nil {
-            sirene.Lattitude = &i
-          }
-          sirene.Adresse = [7]string{row[2], row[3], row[4], row[5], row[6], row[7], row[8]}
+				//			if allErrors(errors[:], nil) {
+				//				outputChannel <- &sirene
+				//			} else {
+				//				e++
+				//				errorLines = append(errorLines, n)
+				//			}
+				outputChannel <- &sirene
+				// }
 
-          //     for  i:=0; i < len(errors);i++ {
-          //       if (errors[i] != nil){
-          //         log(debug, "importSirene", "Erreur ? "+fmt.Sprint(i)+" - "+errors[i].Error())
-          //       }
-          //     }
+			}
+			file.Close()
+			journal(debug, "importSirene", "Import du fichier "+path+" terminé. "+fmt.Sprint(n)+" lignes traitée(s)") //, "+fmt.Sprint(e)+" rejet(s)")
+			// if len(errorLines) > 0 {
+			//   journal(warning, "importSirene", "Erreurs de conversion constatées aux lignes suivantes: "+fmt.Sprintf("%v", errorLines))
+			// }
+		}
+		close(outputChannel)
+	}()
 
-          //			if allErrors(errors[:], nil) {
-          //				outputChannel <- &sirene
-          //			} else {
-          //				e++
-          //				errorLines = append(errorLines, n)
-          //			}
-          outputChannel <- &sirene
-          // }
-
-      }
-      file.Close()
-      log(debug, "importSirene", "Import du fichier "+path+" terminé. "+fmt.Sprint(n)+" lignes traitée(s)")//, "+fmt.Sprint(e)+" rejet(s)")
-      // if len(errorLines) > 0 {
-      //   log(warning, "importSirene", "Erreurs de conversion constatées aux lignes suivantes: "+fmt.Sprintf("%v", errorLines))
-      // }
-    }
-    close(outputChannel)
-  }()
-
-  return outputChannel
+	return outputChannel
 }
 
 // hash := fmt.Sprintf("%x", structhash.Md5(sirene, 1))
 
 func importSirene(batch *AdminBatch) error {
+	mapping, _ := getSirensFromMapping(batch)
+	for sirene := range parseSirene(batch.Files["sirene"], mapping) {
+		hash := fmt.Sprintf("%x", structhash.Md5(sirene, 1))
 
-  mapping, _ := getSirensFromMapping(batch)
+		value := Value{
+			Value: Data{
+				Scope: "etablissement",
+				Key:   sirene.Siren + sirene.Nic,
+				Batch: map[string]Batch{
+					batch.ID.Key: Batch{
+						Sirene: map[string]*Sirene{
+							hash: sirene,
+						}}}}}
+		db.ChanData <- &value
+	}
 
-  for sirene := range parseSirene(batch.Files["sirene"], mapping) {
-    hash := fmt.Sprintf("%x", structhash.Md5(sirene, 1))
-
-    value := ValueEtablissement{
-      Value: Etablissement{
-        Siret: sirene.Siren + sirene.Nic,
-        Batch: map[string]Batch{
-          batch.ID.Key: Batch{
-            Sirene: map[string]*Sirene{
-              hash: sirene,
-            },
-          },
-        },
-      },
-    }
-    db.ChanEtablissement <- &value
-  }
-
-  db.ChanEtablissement <- &ValueEtablissement{}
-  return nil
+	db.ChanData <- &Value{}
+	return nil
 }

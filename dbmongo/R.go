@@ -35,9 +35,7 @@ func algo1(c *gin.Context) {
 	value, err := rSession.Eval(string(Rscript))
 	if err != nil {
 		fmt.Println("Command failed: " + err.Error())
-	} /* else {
-		fmt.Println(value)
-	} */
+	}
 
 	var result []Algo1
 
