@@ -12,6 +12,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"github.com/spf13/viper"
+
+	ginSwagger "github.com/swaggo/gin-swagger"
+	"github.com/swaggo/gin-swagger/swaggerFiles"
+
+	_ "./docs"
 )
 
 var db = initDB()
@@ -42,20 +47,26 @@ func wshandler(w http.ResponseWriter, r *http.Request, jwt string) {
 
 const identityKey = "id"
 
+// @title API openSignauxFaibles
+// @version 1.1
+// @description
+// @license.name Licence MIT
+// @license.url https://raw.githubusercontent.com/entrepreneur-interet-general/opensignauxfaibles/master/LICENSE
+// @BasePath /
 func main() {
 	// Lancer Rserve en background
 
 	// go r()
 	go messageSocketAddClient()
 
-	r := gin.Default()
+	r := gin.New()
 	r.Use(gin.Recovery())
 
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"http://localhost:8080", "https://signaux.faibles.fr"}
+	config.AllowOrigins = []string{"http://localhost:3000", "http://localhost:8080", "https://signaux.faibles.fr"}
 	config.AddAllowHeaders("Authorization")
 	config.AddAllowMethods("GET", "POST", "PUT", "HEAD", "DELETE")
-
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	r.Use(cors.New(config))
 
 	authMiddleware, err := jwt.New(&jwt.GinJWTMiddleware{
@@ -81,7 +92,7 @@ func main() {
 	}
 
 	r.Use(static.Serve("/", static.LocalFile("static/", true)))
-
+	r.GET("/debug", debugFunc)
 	r.POST("/login", authMiddleware.LoginHandler)
 	r.POST("/login/get", loginGetHandler)
 	r.POST("/login/check", loginCheckHandler)
@@ -127,6 +138,18 @@ func main() {
 
 	bind := viper.GetString("APP_BIND")
 	r.Run(bind)
+}
+
+//
+// @summary debug swagger
+// @description I don't do anything
+// @accept  json
+// @produce  json
+// @Param   login      get      login   true        "Login values"
+// @Success 200 {string} string "ok"
+// @Router /login/get [post]
+func debugFunc(c *gin.Context) {
+	c.JSON(200, "yeah")
 }
 
 func loadConfig() {

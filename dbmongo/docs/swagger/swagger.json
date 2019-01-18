@@ -1,0 +1,43 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "\nI don't do anything",
+        "title": "API openSignauxFaibles",
+        "contact": {
+            "name": "Obtenir de l'aide",
+            "email": "contact@signaux-faibles.beta.gouv.fr"
+        },
+        "license": {
+            "name": "Licence MIT",
+            "url": "https://raw.githubusercontent.com/entrepreneur-interet-general/opensignauxfaibles/master/LICENSE"
+        },
+        "version": "1.1"
+    },
+    "host": "{{.Host}}",
+    "basePath": "/",
+    "paths": {
+        "/login/get": {
+            "post": {
+                "description": "get string by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Add a new pet to the store",
+                "parameters": [
+                    {}
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

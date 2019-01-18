@@ -306,6 +306,14 @@ func checkRecoverySetPassword(c *gin.Context) {
 
 }
 
+//
+// @summary Add a new pet to the store
+// @description get string by ID
+// @accept  json
+// @produce  json
+// @Param   login      get      login   true        "Login values"
+// @Success 200 {string} string "ok"
+// @Router /login/get [post]
 func loginGetHandler(c *gin.Context) {
 	var loginVals login
 

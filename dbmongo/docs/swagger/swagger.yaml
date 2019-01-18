@@ -1,0 +1,31 @@
+basePath: /
+host: '{{.Host}}'
+info:
+  contact:
+    email: contact@signaux-faibles.beta.gouv.fr
+    name: Obtenir de l'aide
+  description: |2-
+
+    I don't do anything
+  license:
+    name: Licence MIT
+    url: https://raw.githubusercontent.com/entrepreneur-interet-general/opensignauxfaibles/master/LICENSE
+  title: API openSignauxFaibles
+  version: "1.1"
+paths:
+  /login/get:
+    post:
+      consumes:
+      - application/json
+      description: get string by ID
+      parameters:
+      - {}
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: Add a new pet to the store
+swagger: "2.0"
