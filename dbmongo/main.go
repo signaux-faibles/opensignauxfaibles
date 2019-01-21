@@ -92,7 +92,6 @@ func main() {
 	}
 
 	r.Use(static.Serve("/", static.LocalFile("static/", true)))
-	r.GET("/debug", debugFunc)
 	r.POST("/login", authMiddleware.LoginHandler)
 	r.POST("/login/get", loginGetHandler)
 	r.POST("/login/check", loginCheckHandler)
@@ -117,9 +116,9 @@ func main() {
 		api.GET("/admin/features", adminFeature)
 		api.GET("/admin/status", getDBStatus)
 		api.GET("/admin/getLogs", getLogsHandler)
-		api.GET("/batch/revert", revertBatchHandler)
+		// api.GET("/batch/revert", revertBatchHandler)
 		api.GET("/batch/next", nextBatchHandler)
-		api.GET("/batch/purge", purgeBatchHandler)
+		// api.GET("/batch/purge", purgeBatchHandler)
 		api.GET("/batch/process", processBatchHandler)
 		api.POST("/admin/files", addFile)
 		api.GET("/data/naf", getNAF)
@@ -127,29 +126,17 @@ func main() {
 		api.POST("/data/prediction", predictionBrowseHandler)
 		api.GET("/import/:batch", importBatchHandler)
 		api.GET("/data/compact", compactHandler)
-		api.GET("/data/public/etablissement/:batch", publicEtablissementHandler)
-		api.GET("/data/public/entreprise/:batch", publicEntrepriseHandler)
+		// api.GET("/data/public/etablissement/:batch", publicEtablissementHandler)
+		// api.GET("/data/public/entreprise/:batch", publicEntrepriseHandler)
 		api.GET("/reduce/:algo/:batchKey", reduceHandler)
 		api.POST("/search", searchRaisonSociale)
-		api.GET("/data/etablissement/:batch/:siret", browseEtablissementHandler)
+		// api.GET("/data/etablissement/:batch/:siret", browseEtablissementHandler)
 		api.GET("/dashboard/tasks", getTasks)
 		api.GET("/admin/regions", getRegionsHandler)
 	}
 
 	bind := viper.GetString("APP_BIND")
 	r.Run(bind)
-}
-
-//
-// @summary debug swagger
-// @description I don't do anything
-// @accept  json
-// @produce  json
-// @Param   login      get      login   true        "Login values"
-// @Success 200 {string} string "ok"
-// @Router /login/get [post]
-func debugFunc(c *gin.Context) {
-	c.JSON(200, "yeah")
 }
 
 func loadConfig() {

@@ -264,51 +264,51 @@ func addFileToBatch() chan newFile {
 	return channel
 }
 
-func purgeBatchHandler(c *gin.Context) {
-	err := purgeBatch()
-	if err != nil {
-		c.JSON(500, "Erreur dans la purge du batch: "+err.Error())
-	}
-}
+// func purgeBatchHandler(c *gin.Context) {
+// 	err := purgeBatch()
+// 	if err != nil {
+// 		c.JSON(500, "Erreur dans la purge du batch: "+err.Error())
+// 	}
+// }
 
-func purgeBatch() error {
-	batch := lastBatch()
+// func purgeBatch() error {
+// 	batch := lastBatch()
 
-	// prepareMRJob charge les fichiers MapReduce et fournit les paramètres pour l'exécution
-	MREntreprise, errEn := loadMR("purgeBatch", "entreprise")
-	MREtablissement, errEt := loadMR("purgeBatch", "etablissement")
+// 	// prepareMRJob charge les fichiers MapReduce et fournit les paramètres pour l'exécution
+// 	MREntreprise, errEn := loadMR("purgeBatch", "entreprise")
+// 	MREtablissement, errEt := loadMR("purgeBatch", "etablissement")
 
-	if errEn != nil || errEt != nil {
-		return fmt.Errorf("Erreur de chargement MapReduce")
-	}
+// 	if errEn != nil || errEt != nil {
+// 		return fmt.Errorf("Erreur de chargement MapReduce")
+// 	}
 
-	MREntreprise.Out = &bson.M{"replace": "Entreprise"}
-	MREtablissement.Out = &bson.M{"replace": "Etablissement"}
+// 	MREntreprise.Out = &bson.M{"replace": "Entreprise"}
+// 	MREtablissement.Out = &bson.M{"replace": "Etablissement"}
 
-	MREntreprise.Scope = &bson.M{
-		"currentBatch": batch.ID.Key,
-	}
-	MREtablissement.Scope = &bson.M{
-		"currentBatch": batch.ID.Key,
-	}
+// 	MREntreprise.Scope = &bson.M{
+// 		"currentBatch": batch.ID.Key,
+// 	}
+// 	MREtablissement.Scope = &bson.M{
+// 		"currentBatch": batch.ID.Key,
+// 	}
 
-	_, errEn = db.DB.C("Entreprise").Find(nil).MapReduce(MREntreprise, nil)
-	_, errEt = db.DB.C("Etablissement").Find(nil).MapReduce(MREtablissement, nil)
+// 	_, errEn = db.DB.C("Entreprise").Find(nil).MapReduce(MREntreprise, nil)
+// 	_, errEt = db.DB.C("Etablissement").Find(nil).MapReduce(MREtablissement, nil)
 
-	return nil
-}
+// 	return nil
+// }
 
-func revertBatchHandler(c *gin.Context) {
-	err := revertBatch()
-	if err != nil {
-		c.JSON(500, err)
-	}
-	batches, _ := getBatches()
-	mainMessageChannel <- socketMessage{
-		Batches: batches,
-	}
-	c.JSON(200, "ok")
-}
+// func revertBatchHandler(c *gin.Context) {
+// 	err := revertBatch()
+// 	if err != nil {
+// 		c.JSON(500, err)
+// 	}
+// 	batches, _ := getBatches()
+// 	mainMessageChannel <- socketMessage{
+// 		Batches: batches,
+// 	}
+// 	c.JSON(200, "ok")
+// }
 
 func dropLastBatch() error {
 	batch := lastBatch()
@@ -317,17 +317,17 @@ func dropLastBatch() error {
 }
 
 // revertBatch purge le batch et supprime sa référence dans la collection Admin
-func revertBatch() error {
-	err := purgeBatch()
-	if err != nil {
-		return fmt.Errorf("Erreur lors de la purge: " + err.Error())
-	}
-	err = dropLastBatch()
-	if err != nil {
-		return fmt.Errorf("Erreur lors de la purge: " + err.Error())
-	}
+// func revertBatch() error {
+// 	err := purgeBatch()
+// 	if err != nil {
+// 		return fmt.Errorf("Erreur lors de la purge: " + err.Error())
+// 	}
+// 	err = dropLastBatch()
+// 	if err != nil {
+// 		return fmt.Errorf("Erreur lors de la purge: " + err.Error())
+// 	}
 
-	return nil
-}
+// 	return nil
+// }
 
 var addFileChannel = addFileToBatch()

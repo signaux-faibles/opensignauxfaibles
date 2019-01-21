@@ -256,6 +256,15 @@ func getRegionsHandler(c *gin.Context) {
 	c.JSON(200, getRegions())
 }
 
+//
+// @summary Add a new pet to the store
+// @description get string by ID
+// @Tags Authentification
+// @accept  json
+// @produce  json
+// @Param login post login true "Login values"
+// @Success 200 {string} string "ok"
+// @Router /login/recovery/setPassword [post]
 func checkRecoverySetPassword(c *gin.Context) {
 	var request struct {
 		Email        string `json:"email"`
@@ -309,9 +318,10 @@ func checkRecoverySetPassword(c *gin.Context) {
 //
 // @summary Add a new pet to the store
 // @description get string by ID
+// @Tags Authentification
 // @accept  json
 // @produce  json
-// @Param   login      get      login   true        "Login values"
+// @Param login post login true "Login values"
 // @Success 200 {string} string "ok"
 // @Router /login/get [post]
 func loginGetHandler(c *gin.Context) {
@@ -388,6 +398,15 @@ ps: si vous n'êtes pas à l'origine de cette tentative, nous vous prions d'en f
 	return err
 }
 
+//
+// @summary Add a new pet to the store
+// @description get string by ID
+// @Tags Authentification
+// @accept  json
+// @produce  json
+// @Param login post login true "Login values"
+// @Success 200 {string} string "ok"
+// @Router /login/recovery/check [post]
 func loginCheckHandler(c *gin.Context) {
 	var loginVals login
 	c.ShouldBind(&loginVals)
@@ -428,3 +447,19 @@ func loginCheck(email string, password string, checkCode string) error {
 	err = user.save()
 	return err
 }
+
+// Param name,param type,data type,is mandatory?,comment attribute(optional
+
+//
+// @summary Add a new pet to the store
+// @description get string by ID
+// @Tags Authentification
+// @accept  json
+// @produce  json
+// @Param email query string true "Adresse Email"
+// @Param password query string true "Mot de Passe"
+// @Param browserToken query string true "Token navigateur"
+// @Success 200 {string} "string" "ok"
+// @Failure 401 {string} string "dead"
+// @Router /login [post]
+func onlyForSwaggerFunction() {}

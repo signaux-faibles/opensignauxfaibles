@@ -1,18 +1,48 @@
 basePath: /
 host: '{{.Host}}'
 info:
-  contact:
-    email: contact@signaux-faibles.beta.gouv.fr
-    name: Obtenir de l'aide
-  description: |2-
-
-    I don't do anything
+  contact: {}
   license:
     name: Licence MIT
     url: https://raw.githubusercontent.com/entrepreneur-interet-general/opensignauxfaibles/master/LICENSE
   title: API openSignauxFaibles
   version: "1.1"
 paths:
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: get string by ID
+      parameters:
+      - description: Adresse Email
+        in: query
+        name: email
+        required: true
+        type: string
+      - description: Mot de Passe
+        in: query
+        name: password
+        required: true
+        type: string
+      - description: Token navigateur
+        in: query
+        name: browserToken
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+        "401":
+          description: dead
+          schema:
+            type: string
+      summary: Add a new pet to the store
+      tags:
+      - Authentification
   /login/get:
     post:
       consumes:
@@ -28,4 +58,40 @@ paths:
           schema:
             type: string
       summary: Add a new pet to the store
+      tags:
+      - Authentification
+  /login/recovery/check:
+    post:
+      consumes:
+      - application/json
+      description: get string by ID
+      parameters:
+      - {}
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: Add a new pet to the store
+      tags:
+      - Authentification
+  /login/recovery/setPassword:
+    post:
+      consumes:
+      - application/json
+      description: get string by ID
+      parameters:
+      - {}
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: Add a new pet to the store
+      tags:
+      - Authentification
 swagger: "2.0"
