@@ -278,6 +278,16 @@ func predictionBrowse(batch string, naf1 string, effectif int, suivi bool, ccsf 
 	return result, err
 }
 
+//
+// @summary Rechercher une entreprise
+// @description Effectue une recherche texte sur la collection Public et retourne les 15 premiers objets correspondants
+// @Tags Traitements
+// @accept  json
+// @produce  json
+// @Security ApiKeyAuth
+// @Param guessRaisonSociale query string true "Chaine à chercher"
+// @Success 200 {string} string ""
+// @Router /api/data/search [post]
 func searchRaisonSociale(c *gin.Context) {
 	var params struct {
 		GuessRaisonSociale string `json:"guessRaisonSociale"`

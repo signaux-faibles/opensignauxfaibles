@@ -56,6 +56,15 @@ func (batch *AdminBatch) new(batchID string) error {
 	return nil
 }
 
+//
+// @summary Création du batch suivant
+// @description Cloture le dernier batch et crée le batch suivant dans la collection admin
+// @Tags Administration
+// @accept  json
+// @produce  json
+// @Security ApiKeyAuth
+// @Success 200 {string} string ""
+// @Router /api/admin/batch/next [get]
 func nextBatchHandler(c *gin.Context) {
 	err := nextBatch()
 	if err != nil {
@@ -110,6 +119,17 @@ func sp(s string) *string {
 	return &s
 }
 
+//
+// @summary Remplace un batch
+// @description Alimente la collection Features
+// @Tags Traitements
+// @accept  json
+// @produce  json
+// @Param algo query string true "Identifiant du traitement"
+// @Param batch query string true "Identifier du batch"
+// @Security ApiKeyAuth
+// @Success 200 {string} string ""
+// @Router /api/reduce/{algo}/{batch} [get]
 func upsertBatch(c *gin.Context) {
 	status := db.Status
 
@@ -137,6 +157,15 @@ func upsertBatch(c *gin.Context) {
 	c.JSON(200, batch)
 }
 
+//
+// @summary Liste des batches
+// @description Produit une extraction des objets batch de la collection Admin
+// @Tags Administration
+// @accept  json
+// @produce  json
+// @Security ApiKeyAuth
+// @Success 200 {array} string ""
+// @Router /api/admin/batch [get]
 func listBatch(c *gin.Context) {
 	var batch []AdminBatch
 	err := db.DB.C("Admin").Find(bson.M{"_id.type": "batch"}).Sort("-_id.key").All(&batch)
@@ -186,6 +215,15 @@ func batchToTime(batch string) (time.Time, error) {
 	return date, err
 }
 
+//
+// @summary Traitement du dernier batch
+// @description Exécute l'import, le compactage et la réduction du dernier batch
+// @Tags Administration
+// @accept  json
+// @produce  json
+// @Security ApiKeyAuth
+// @Success 200 {string} string ""
+// @Router /api/admin/batch/next [get]
 func processBatchHandler(c *gin.Context) {
 	go func() {
 		processBatch()
@@ -230,17 +268,6 @@ type newFile struct {
 	FileName string `json:"filename"`
 	Type     string `json:"type"`
 	BatchKey string `json:"batch"`
-}
-
-func addFileToBatchHandler(c *gin.Context) {
-	var file newFile
-	err := c.Bind(&file)
-	if err != nil {
-		c.JSON(500, err.Error())
-	}
-	addFileChannel <- file
-
-	c.JSON(200, "Demande d'ajout prise en compte")
 }
 
 func addFileToBatch() chan newFile {

@@ -53,6 +53,10 @@ const identityKey = "id"
 // @license.name Licence MIT
 // @license.url https://raw.githubusercontent.com/entrepreneur-interet-general/opensignauxfaibles/master/LICENSE
 // @BasePath /
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
+// @scope.admin Fournir le jeton sur la forme « Bearer: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJl... »
 func main() {
 	// Lancer Rserve en background
 
@@ -81,10 +85,9 @@ func main() {
 		Authenticator:   authenticator,
 		Authorizator:    authorizator,
 		Unauthorized:    unauthorizedHandler,
-
-		TokenLookup:   "header: Authorization, query: token, cookie: jwt",
-		TokenHeadName: "Bearer",
-		TimeFunc:      time.Now,
+		TokenLookup:     "header: Authorization, query: token, cookie: jwt",
+		TokenHeadName:   "Bearer",
+		TimeFunc:        time.Now,
 	})
 
 	if err != nil {
@@ -106,33 +109,35 @@ func main() {
 
 	{
 		api.GET("/refreshToken", authMiddleware.RefreshHandler)
-		api.GET("/purge", purge)
+
 		api.POST("/admin/batch", upsertBatch)
-		api.POST("/admin/batch/addFile", addFileToBatchHandler)
 		api.GET("/admin/batch", listBatch)
 		api.GET("/admin/files", adminFiles)
 		api.GET("/admin/types", listTypes)
-		api.GET("/admin/clone/:to", cloneDB)
+		// api.GET("/admin/clone/:to", cloneDB)
 		api.GET("/admin/features", adminFeature)
 		api.GET("/admin/status", getDBStatus)
 		api.GET("/admin/getLogs", getLogsHandler)
-		// api.GET("/batch/revert", revertBatchHandler)
-		api.GET("/batch/next", nextBatchHandler)
-		// api.GET("/batch/purge", purgeBatchHandler)
-		api.GET("/batch/process", processBatchHandler)
-		api.POST("/admin/files", addFile)
-		api.GET("/data/naf", getNAF)
 		api.GET("/admin/epoch", epoch)
-		api.POST("/data/prediction", predictionBrowseHandler)
-		api.GET("/import/:batch", importBatchHandler)
+		api.GET("/admin/batch/next", nextBatchHandler)
+		api.GET("/admin/batch/process", processBatchHandler)
+		api.POST("/admin/files", addFile)
+
+		// api.GET("/admin/batch/revert", revertBatchHandler)
+		// api.GET("/admin/batch/purge", purgeBatchHandler)
+
+		// api.GET("/data/naf", getNAF)
+		api.GET("/data/import/:batch", importBatchHandler)
 		api.GET("/data/compact", compactHandler)
+		api.GET("/data/reduce/:algo/:batchKey", reduceHandler)
+		api.POST("/data/search", searchRaisonSociale)
+		api.GET("/data/purge", purge)
+		// api.POST("/data/prediction", predictionBrowseHandler)
 		// api.GET("/data/public/etablissement/:batch", publicEtablissementHandler)
 		// api.GET("/data/public/entreprise/:batch", publicEntrepriseHandler)
-		api.GET("/reduce/:algo/:batchKey", reduceHandler)
-		api.POST("/search", searchRaisonSociale)
 		// api.GET("/data/etablissement/:batch/:siret", browseEtablissementHandler)
+
 		api.GET("/dashboard/tasks", getTasks)
-		api.GET("/admin/regions", getRegionsHandler)
 	}
 
 	bind := viper.GetString("APP_BIND")

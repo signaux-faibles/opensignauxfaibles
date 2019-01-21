@@ -8,11 +8,341 @@ info:
   title: API openSignauxFaibles
   version: "1.1"
 paths:
+  /api/admin/batch:
+    get:
+      consumes:
+      - application/json
+      description: Produit une extraction des objets batch de la collection Admin
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: string
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Liste des batches
+      tags:
+      - Administration
+  /api/admin/batch/next:
+    get:
+      consumes:
+      - application/json
+      description: Exécute l'import, le compactage et la réduction du dernier batch
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Traitement du dernier batch
+      tags:
+      - Administration
+  /api/admin/epoch:
+    get:
+      consumes:
+      - application/json
+      description: Ce numéro s'incrémente à chaque action
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Numéro du statut du serveur
+      tags:
+      - Administration
+  /api/admin/features:
+    get:
+      consumes:
+      - application/json
+      description: Correspond aux mapReduces qui produisent les variables dans la
+        collection Features
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Identifiants des traitements de réduction
+      tags:
+      - Administration
+  /api/admin/files:
+    get:
+      consumes:
+      - application/json
+      description: Tous ces fichiers sont contenu dans APP_DATA (voir config.toml)
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Liste les fichiers disponibles dans le dépot
+      tags:
+      - Administration
+    post:
+      consumes:
+      - application/json
+      description: Réalise l'upload d'un fichier dans un batch/type. Une fois l'upload
+        effectué, le fichier est automatiquement attaché au batch.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Upload d'un fichier
+      tags:
+      - Administration
+  /api/admin/getLogs:
+    get:
+      consumes:
+      - application/json
+      description: Liste les 100 derniers évènements du journal
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Journal d'évènements
+      tags:
+      - Administration
+  /api/admin/status:
+    get:
+      consumes:
+      - application/json
+      description: Permet de connaître l'opération en cours
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Disponibilité de la base de données
+      tags:
+      - Administration
+  /api/admin/types:
+    get:
+      consumes:
+      - application/json
+      description: Correspond aux types disponibles dans les traitements d'importation
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Liste des types
+      tags:
+      - Administration
+  /api/data/compact:
+    get:
+      consumes:
+      - application/json
+      description: Alimente la collection Features
+      parameters:
+      - description: Identifiant du traitement
+        in: query
+        name: algo
+        required: true
+        type: string
+      - description: Identifier du batch
+        in: query
+        name: batch
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Lance un traitement de compactage
+      tags:
+      - Traitements
+  /api/data/import/{batch}:
+    get:
+      consumes:
+      - application/json
+      description: Effectue l'import de tous les fichiers du batch donné en paramètre
+      parameters:
+      - description: Clé du batch
+        in: query
+        name: batch
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Import de fichiers pour un batch
+      tags:
+      - Traitements
+  /api/data/purge:
+    get:
+      consumes:
+      - application/json
+      description: Suppression de tous les objets de données brutes contenus dans
+        la collection RawData (irréversible)
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Purge la collection RawData
+      tags:
+      - Traitements
+  /api/data/reduce/{algo}/{batch}:
+    get:
+      consumes:
+      - application/json
+      description: Alimente la collection Features
+      parameters:
+      - description: Identifiant du traitement
+        in: query
+        name: algo
+        required: true
+        type: string
+      - description: Identifier du batch
+        in: query
+        name: batch
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Lance un traitement de réduction
+      tags:
+      - Traitements
+  /api/data/search:
+    post:
+      consumes:
+      - application/json
+      description: Effectue une recherche texte sur la collection Public et retourne
+        les 15 premiers objets correspondants
+      parameters:
+      - description: Chaine à chercher
+        in: query
+        name: guessRaisonSociale
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Rechercher une entreprise
+      tags:
+      - Traitements
+  /api/reduce/{algo}/{batch}:
+    get:
+      consumes:
+      - application/json
+      description: Alimente la collection Features
+      parameters:
+      - description: Identifiant du traitement
+        in: query
+        name: algo
+        required: true
+        type: string
+      - description: Identifier du batch
+        in: query
+        name: batch
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Remplace un batch
+      tags:
+      - Traitements
+  /api/refreshToken:
+    get:
+      consumes:
+      - application/json
+      description: Fournit un jeton avec nouvelle date de validité en échange d'un
+        jeton encore valide
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{<br/>''code'': 200,<br/>   ''expire'': ''2019-01-21T12:16:50+01:00'',<br/>''token'':
+            ''eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9…''<br/>}'
+          schema:
+            type: string
+        "401":
+          description: '{<br/>''code'': 401,<br/>''message'': ''cookie token is empty''<br/>}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Obtenir un jeton d'identification
+      tags:
+      - Session
   /login:
     post:
       consumes:
       - application/json
-      description: get string by ID
+      description: |-
+        Nécessite 3 informations: email, mot de passe et jeton de navigateur
+        Le jeton de navigateur n'a pas de limite de validité et peut être conservé
       parameters:
       - description: Adresse Email
         in: query
@@ -33,23 +363,67 @@ paths:
       - application/json
       responses:
         "200":
-          description: ok
+          description: '{<br/>''code'': 200,<br/>''expire'':''2019-01-21T11:16:15+01:00'',<br/>''token'':''eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9…''<br/>}'
           schema:
             type: string
         "401":
-          description: dead
+          description: '{<br/>''code'': 401,<br/>''message'': ''incorrect Username
+            or Password''<br/>}'
           schema:
             type: string
-      summary: Add a new pet to the store
+      summary: Rafraichir le jeton d'identification
       tags:
-      - Authentification
+      - Session
+  /login/check:
+    post:
+      consumes:
+      - application/json
+      description: Fournit en retour un jeton de navigateur
+      parameters:
+      - description: Adresse EMail
+        in: query
+        name: email
+        required: true
+        type: string
+      - description: Mot de passe
+        in: query
+        name: password
+        required: true
+        type: string
+      - description: Code de vérification
+        in: query
+        name: checkCode
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Vérification du code temporaire renvoyé à l'utilisateur
+      tags:
+      - Session
   /login/get:
     post:
       consumes:
       - application/json
-      description: get string by ID
+      description: |-
+        Le code n'est envoyé que si le mot de passe est valide.
+        Le cas échéant, un email avertissant d'une tentative est envoyé.
+        Pour éviter les tentatives de forçage de mot de passe, ce service ne renvoie jamais d'échec.
       parameters:
-      - {}
+      - description: Adresse EMail
+        in: query
+        name: email
+        required: true
+        type: string
+      - description: Mot de passe
+        in: query
+        name: password
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -57,16 +431,17 @@ paths:
           description: ok
           schema:
             type: string
-      summary: Add a new pet to the store
+      summary: Envoie un code de vérification par EMail
       tags:
-      - Authentification
-  /login/recovery/check:
+      - Session
+  /login/recovery/get:
     post:
       consumes:
       - application/json
-      description: get string by ID
-      parameters:
-      - {}
+      description: |-
+        Dans le cas d'un oubli du mot de passe, on peut fixer un nouveau mot de passe à partir d'un navigateur identifié
+        Il faut dans ce cas pouvoir recevoir un code de vérification par mail
+        Voir /login/recovery/get
       produces:
       - application/json
       responses:
@@ -74,16 +449,17 @@ paths:
           description: ok
           schema:
             type: string
-      summary: Add a new pet to the store
+      summary: Récupération du mot de passe
       tags:
-      - Authentification
+      - Session
   /login/recovery/setPassword:
     post:
       consumes:
       - application/json
-      description: get string by ID
-      parameters:
-      - {}
+      description: |-
+        Dans le cas d'un oubli du mot de passe, on peut fixer un nouveau mot de passe à partir d'un navigateur identifié
+        Il faut dans ce cas pouvoir recevoir un code de vérification par mail
+        Voir /login/recovery/get
       produces:
       - application/json
       responses:
@@ -91,7 +467,12 @@ paths:
           description: ok
           schema:
             type: string
-      summary: Add a new pet to the store
+      summary: Récupération du mot de passe
       tags:
-      - Authentification
+      - Session
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

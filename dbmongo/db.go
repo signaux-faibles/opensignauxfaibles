@@ -280,6 +280,15 @@ func (status *Status) write() error {
 	return err
 }
 
+//
+// @summary Disponibilité de la base de données
+// @description Permet de connaître l'opération en cours
+// @Tags Administration
+// @accept  json
+// @produce  json
+// @Security ApiKeyAuth
+// @Success 200 {string} string ""
+// @Router /api/admin/status [get]
 func getDBStatus(c *gin.Context) {
 	c.JSON(200, db.Status.Status)
 }
@@ -292,6 +301,15 @@ func (status *Status) setDBStatus(message *string) error {
 	return status.write()
 }
 
+//
+// @summary Numéro du statut du serveur
+// @description Ce numéro s'incrémente à chaque action
+// @Tags Administration
+// @accept  json
+// @produce  json
+// @Security ApiKeyAuth
+// @Success 200 {string} string ""
+// @Router /api/admin/epoch [get]
 func epoch(c *gin.Context) {
 	c.JSON(200, db.Status.Epoch)
 }

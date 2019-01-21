@@ -29,6 +29,17 @@ func loadJSFunctions(path string) (map[string]bson.JavaScript, error) {
 	return functions, err
 }
 
+//
+// @summary Lance un traitement de réduction
+// @description Alimente la collection Features
+// @Tags Traitements
+// @accept  json
+// @produce  json
+// @Param algo query string true "Identifiant du traitement"
+// @Param batch query string true "Identifier du batch"
+// @Security ApiKeyAuth
+// @Success 200 {string} string ""
+// @Router /api/data/reduce/{algo}/{batch} [get]
 func reduceHandler(c *gin.Context) {
 	batchKey := c.Params.ByName("batchKey")
 	algo := c.Params.ByName("algo")
@@ -86,6 +97,17 @@ func reduce(batchKey string, algo string) error {
 	return err
 }
 
+//
+// @summary Lance un traitement de compactage
+// @description Alimente la collection Features
+// @Tags Traitements
+// @accept  json
+// @produce  json
+// @Param algo query string true "Identifiant du traitement"
+// @Param batch query string true "Identifier du batch"
+// @Success 200 {string} string ""
+// @Router /api/data/compact [get]
+// @Security ApiKeyAuth
 func compactHandler(c *gin.Context) {
 	err := compact()
 	if err != nil {

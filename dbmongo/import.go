@@ -9,6 +9,15 @@ import (
 	"github.com/spf13/viper"
 )
 
+//
+// @summary Liste les fichiers disponibles dans le dépot
+// @description Tous ces fichiers sont contenu dans APP_DATA (voir config.toml)
+// @Tags Administration
+// @accept  json
+// @produce  json
+// @Security ApiKeyAuth
+// @Success 200 {string} string ""
+// @Router /api/admin/files [get]
 func adminFiles(c *gin.Context) {
 	basePath := viper.GetString("APP_DATA")
 	files, err := listFiles(basePath)
@@ -70,11 +79,30 @@ var importFunctions = map[string]func(*AdminBatch) error{
 	"sirene":     importSirene,
 }
 
+//
+// @summary Purge la collection RawData
+// @description Suppression de tous les objets de données brutes contenus dans la collection RawData (irréversible)
+// @Tags Traitements
+// @accept  json
+// @produce  json
+// @Security ApiKeyAuth
+// @Success 200 {string} string ""
+// @Router /api/data/purge [get]
 func purge(c *gin.Context) {
 	db.DB.C("RawData").RemoveAll(nil)
 	c.String(200, "Done")
 }
 
+//
+// @summary Import de fichiers pour un batch
+// @description Effectue l'import de tous les fichiers du batch donné en paramètre
+// @Tags Traitements
+// @accept  json
+// @produce  json
+// @Security ApiKeyAuth
+// @Param batch query string true "Clé du batch"
+// @Success 200 {string} string ""
+// @Router /api/data/import/{batch} [get]
 func importBatchHandler(c *gin.Context) {
 	batchKey := c.Params.ByName("batch")
 	batch := AdminBatch{}
