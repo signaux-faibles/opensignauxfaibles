@@ -1,6 +1,7 @@
 {
     "swagger": "2.0",
     "info": {
+        "description": "Cette API centralise toutes les fonctionnalités du module de traitement de données OpenSignauxFaibles\nPour plus de renseignements: https://beta.gouv.fr/startups/signaux-faibles.html",
         "title": "API openSignauxFaibles",
         "contact": {},
         "license": {
@@ -255,6 +256,34 @@
                     "Administration"
                 ],
                 "summary": "Liste des types",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/data/batch/purge": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Exécute l'import, le compactage et la réduction du dernier batch",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Administration"
+                ],
+                "summary": "Traitement du dernier batch",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -624,45 +653,6 @@
                 "responses": {
                     "200": {
                         "description": "OK",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/login/get": {
-            "post": {
-                "description": "Le code n'est envoyé que si le mot de passe est valide.\nLe cas échéant, un email avertissant d'une tentative est envoyé.\nPour éviter les tentatives de forçage de mot de passe, ce service ne renvoie jamais d'échec.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Session"
-                ],
-                "summary": "Envoie un code de vérification par EMail",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Adresse EMail",
-                        "name": "email",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Mot de passe",
-                        "name": "password",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "ok",
                         "schema": {
                             "type": "string"
                         }

@@ -8,6 +8,7 @@ import (
 
 	"github.com/davecgh/go-spew/spew"
 	"github.com/gin-gonic/gin"
+	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
 )
 
@@ -291,39 +292,48 @@ func addFileToBatch() chan newFile {
 	return channel
 }
 
-// func purgeBatchHandler(c *gin.Context) {
-// 	err := purgeBatch()
-// 	if err != nil {
-// 		c.JSON(500, "Erreur dans la purge du batch: "+err.Error())
-// 	}
-// }
+//
+// @summary Traitement du dernier batch
+// @description Exécute l'import, le compactage et la réduction du dernier batch
+// @Tags Administration
+// @accept  json
+// @produce  json
+// @Security ApiKeyAuth
+// @Success 200 {string} string ""
+// @Router /api/data/batch/purge [get]
+func purgeBatchHandler(c *gin.Context) {
+	batch := lastBatch()
+	err := purgeBatch(batch.ID.Key)
 
-// func purgeBatch() error {
-// 	batch := lastBatch()
+	if err != nil {
+		c.JSON(500, "Erreur dans la purge du batch: "+err.Error())
+	} else {
+		c.JSON(200, "ok")
+	}
+}
 
-// 	// prepareMRJob charge les fichiers MapReduce et fournit les paramètres pour l'exécution
-// 	MREntreprise, errEn := loadMR("purgeBatch", "entreprise")
-// 	MREtablissement, errEt := loadMR("purgeBatch", "etablissement")
+func purgeBatch(batchKey string) error {
 
-// 	if errEn != nil || errEt != nil {
-// 		return fmt.Errorf("Erreur de chargement MapReduce")
-// 	}
+	functions, err := loadJSFunctions("js/purgeBatch/")
+	if err != nil {
+		return err
+	}
+	scope := bson.M{
+		"currentBatch": batchKey,
+		"f":            functions,
+	}
 
-// 	MREntreprise.Out = &bson.M{"replace": "Entreprise"}
-// 	MREtablissement.Out = &bson.M{"replace": "Etablissement"}
+	job := &mgo.MapReduce{
+		Map:      functions["map"].Code,
+		Reduce:   functions["reduce"].Code,
+		Finalize: functions["finalize"].Code,
+		Out:      bson.M{"replace": "Toto"},
+		Scope:    scope,
+	}
 
-// 	MREntreprise.Scope = &bson.M{
-// 		"currentBatch": batch.ID.Key,
-// 	}
-// 	MREtablissement.Scope = &bson.M{
-// 		"currentBatch": batch.ID.Key,
-// 	}
-
-// 	_, errEn = db.DB.C("Entreprise").Find(nil).MapReduce(MREntreprise, nil)
-// 	_, errEt = db.DB.C("Etablissement").Find(nil).MapReduce(MREtablissement, nil)
-
-// 	return nil
-// }
+	_, err = db.DB.C("RawData").Find(nil).MapReduce(job, nil)
+	return err
+}
 
 // func revertBatchHandler(c *gin.Context) {
 // 	err := revertBatch()

@@ -5,6 +5,7 @@ import (
 	"crypto/rand"
 	"errors"
 	"fmt"
+	"html/template"
 	"math/big"
 	"net/smtp"
 	"time"
@@ -341,18 +342,6 @@ func checkRecoverySetPassword(c *gin.Context) {
 // @Param password query string true "Mot de passe"
 // @Success 200 {string} string "ok"
 // @Router /login/get [post]
-func loginGetHandler(c *gin.Context) {
-	var loginVals login
-
-	if err := c.ShouldBind(&loginVals); err != nil {
-		c.JSON(401, "requête malformée")
-		return
-	}
-
-	loginGet(loginVals)
-
-	c.JSON(200, "ok")
-}
 
 func sendMail(sender string, recipient string, title string, body string) error {
 	smtpAddress := viper.GetString("smtpAddress")
@@ -373,20 +362,48 @@ func sendMail(sender string, recipient string, title string, body string) error 
 	return nil
 }
 
+func loginGetHandler(c *gin.Context) {
+	var loginVals login
+
+	if err := c.ShouldBind(&loginVals); err != nil {
+		c.JSON(401, "requête malformée")
+		return
+	}
+
+	loginGet(loginVals)
+
+	c.JSON(200, "ok")
+}
+
 func loginGet(login login) error {
 	email := login.Email
 	password := login.Password
 	user, err := loginUserWithCredentials(email, password)
 
+	mailTemplate, _ := template.New("loginMail").Parse(`
+	Subject: Authentification: votre code de vérification.
+	Content-Type: text/plain; charset=us-ascii; format=flowed
+	Content-Transfer-Encoding: 7bit
+	
+	Bonjour,
+	suite à votre tentative d'identification sur l'applicatif Signaux Faibles, voici votre code de vérification:
+	{{.CheckCode}}
+	
+	Cordialement,
+	l'équipe Signaux-Faibles.
+				
+	ps: si vous n'êtes pas à l'origine de cette tentative, nous vous prions d'en faire part à l'adresse contact@signaux-faibles.beta.gouv.fr`)
+
 	if err == nil {
-		checkCode := fmt.Sprintf("%06d", getCode())
-		hashedCode, err := bcrypt.GenerateFromPassword([]byte(checkCode), bcrypt.DefaultCost)
+		code := struct{ checkCode string }{}
+		code.checkCode = fmt.Sprintf("%06d", getCode())
+		hashedCode, err := bcrypt.GenerateFromPassword([]byte(code.checkCode), bcrypt.DefaultCost)
 		if err == nil {
 			user.HashedCode = hashedCode
 			user.TimeCode = time.Now()
 			err = user.save()
 			if err == nil {
-				fmt.Println(checkCode)
+				fmt.Println(code.checkCode)
 
 				smtpAddress := viper.GetString("smtpAddress")
 				//smtpUser := viper.GetString("smtpUser")
@@ -399,7 +416,7 @@ func loginGet(login login) error {
 				defer c.Close()
 
 				// Set the sender and recipient.
-				c.Mail("do.not.reply@signaux.faibles.fr")
+				c.Mail("Signaux Faibles <do.not.reply@signaux.faibles.fr>")
 				c.Rcpt(email)
 
 				// Send the email body.
@@ -407,22 +424,9 @@ func loginGet(login login) error {
 				if err != nil {
 					spew.Dump(err)
 				}
-				defer wc.Close()
-				buf := bytes.NewBufferString(`Bonjour,
-suite à votre première identification sur l'applicatif Signaux Faibles, voici votre code de vérification:
 
-` + checkCode + `
-
-Cordialement,
-l'équipe Signaux-Faibles.
-			
-ps: si vous n'êtes pas à l'origine de cette tentative, nous vous prions d'en faire part à l'adresse contact@signaux-faibles.beta.gouv.fr
-				
-				`)
-
-				if _, err = buf.WriteTo(wc); err != nil {
-					spew.Dump(err)
-				}
+				mailTemplate.Execute(wc, code)
+				wc.Close()
 				return err
 			}
 		}

@@ -2,6 +2,9 @@ basePath: /
 host: '{{.Host}}'
 info:
   contact: {}
+  description: |-
+    Cette API centralise toutes les fonctionnalités du module de traitement de données OpenSignauxFaibles
+    Pour plus de renseignements: https://beta.gouv.fr/startups/signaux-faibles.html
   license:
     name: Licence MIT
     url: https://raw.githubusercontent.com/entrepreneur-interet-general/opensignauxfaibles/master/LICENSE
@@ -162,6 +165,23 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Liste des types
+      tags:
+      - Administration
+  /api/data/batch/purge:
+    get:
+      consumes:
+      - application/json
+      description: Exécute l'import, le compactage et la réduction du dernier batch
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Traitement du dernier batch
       tags:
       - Administration
   /api/data/compact:
@@ -403,35 +423,6 @@ paths:
           schema:
             type: string
       summary: Vérification du code temporaire renvoyé à l'utilisateur
-      tags:
-      - Session
-  /login/get:
-    post:
-      consumes:
-      - application/json
-      description: |-
-        Le code n'est envoyé que si le mot de passe est valide.
-        Le cas échéant, un email avertissant d'une tentative est envoyé.
-        Pour éviter les tentatives de forçage de mot de passe, ce service ne renvoie jamais d'échec.
-      parameters:
-      - description: Adresse EMail
-        in: query
-        name: email
-        required: true
-        type: string
-      - description: Mot de passe
-        in: query
-        name: password
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: ok
-          schema:
-            type: string
-      summary: Envoie un code de vérification par EMail
       tags:
       - Session
   /login/recovery/get:

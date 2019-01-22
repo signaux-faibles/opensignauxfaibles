@@ -70,7 +70,8 @@ func parseSirene(paths []string, mapping map[string]bool) chan *Sirene {
 					close(outputChannel)
 				}
 
-				//				if _, ok := mapping[row[0]]; ok {
+				// limitait l'intégration aux entreprises connues de l'urssaf
+				// if _, ok := mapping[row[0]]; ok {
 				n++
 
 				sirene := Sirene{}

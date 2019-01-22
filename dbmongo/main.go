@@ -49,7 +49,8 @@ const identityKey = "id"
 
 // @title API openSignauxFaibles
 // @version 1.1
-// @description
+// @description Cette API centralise toutes les fonctionnalités du module de traitement de données OpenSignauxFaibles
+// @description Pour plus de renseignements: https://beta.gouv.fr/startups/signaux-faibles.html
 // @license.name Licence MIT
 // @license.url https://raw.githubusercontent.com/entrepreneur-interet-general/opensignauxfaibles/master/LICENSE
 // @BasePath /
@@ -64,13 +65,18 @@ func main() {
 	go messageSocketAddClient()
 
 	r := gin.New()
-	r.Use(gin.Recovery())
+
+	if !viper.GetBool("DEV") {
+		gin.SetMode(gin.ReleaseMode)
+	} else {
+		r.Use(gin.Recovery())
+		r.Use(gin.Logger())
+	}
 
 	config := cors.DefaultConfig()
 	config.AllowOrigins = []string{"http://localhost:3000", "http://localhost:8080", "https://signaux.faibles.fr"}
 	config.AddAllowHeaders("Authorization")
-	config.AddAllowMethods("GET", "POST", "PUT", "HEAD", "DELETE")
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	config.AddAllowMethods("GET", "POST")
 	r.Use(cors.New(config))
 
 	authMiddleware, err := jwt.New(&jwt.GinJWTMiddleware{
@@ -91,10 +97,12 @@ func main() {
 	})
 
 	if err != nil {
-		panic("JWT Error:" + err.Error())
+		panic("Erreur lors de la mise en place de l'authentification:" + err.Error())
 	}
 
 	r.Use(static.Serve("/", static.LocalFile("static/", true)))
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
 	r.POST("/login", authMiddleware.LoginHandler)
 	r.POST("/login/get", loginGetHandler)
 	r.POST("/login/check", loginCheckHandler)
@@ -124,9 +132,9 @@ func main() {
 		api.POST("/admin/files", addFile)
 
 		// api.GET("/admin/batch/revert", revertBatchHandler)
-		// api.GET("/admin/batch/purge", purgeBatchHandler)
 
 		// api.GET("/data/naf", getNAF)
+		api.GET("/data/batch/purge", purgeBatchHandler)
 		api.GET("/data/import/:batch", importBatchHandler)
 		api.GET("/data/compact", compactHandler)
 		api.GET("/data/reduce/:algo/:batchKey", reduceHandler)
