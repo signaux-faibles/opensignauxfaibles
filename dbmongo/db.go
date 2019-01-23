@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"log"
 	"time"
 
 	"github.com/spf13/viper"
@@ -19,25 +20,24 @@ type DB struct {
 	ChanData chan *Value
 }
 
-// DB Initialisation de la connexion MongoDB
+// initDB Initialisation de la connexion MongoDB
 func initDB() DB {
 	loadConfig()
 
 	dbDial := viper.GetString("DB_DIAL")
 	dbDatabase := viper.GetString("DB")
 
-	// définition de 3 connexions pour isoler les curseurs
+	// définition de 2 connexions pour isoler les requêtes (TODO: utile ?)
 	mongostatus, err := mgo.Dial(dbDial)
 	if err != nil {
-		// log.Panic(err)
+		log.Panic(err)
 	}
+	mongostatus.SetSocketTimeout(3600 * time.Second)
 
 	mongodb, err := mgo.Dial(dbDial)
 	if err != nil {
-		// log.Panic(err)
+		log.Panic(err)
 	}
-
-	mongostatus.SetSocketTimeout(3600 * time.Second)
 	mongodb.SetSocketTimeout(3600 * time.Second)
 	dbstatus := mongostatus.DB(dbDatabase)
 	db := mongodb.DB(dbDatabase)

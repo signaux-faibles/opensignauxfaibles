@@ -47,6 +47,7 @@ func wshandler(w http.ResponseWriter, r *http.Request, jwt string) {
 
 const identityKey = "id"
 
+// main Fonction Principale
 // @title API openSignauxFaibles
 // @version 1.1
 // @description Cette API centralise toutes les fonctionnalités du module de traitement de données OpenSignauxFaibles
@@ -57,7 +58,6 @@ const identityKey = "id"
 // @securityDefinitions.apikey ApiKeyAuth
 // @in header
 // @name Authorization
-// @scope.admin Fournir le jeton sur la forme « Bearer: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJl... »
 func main() {
 	// Lancer Rserve en background
 
@@ -131,18 +131,18 @@ func main() {
 		api.GET("/admin/batch/process", processBatchHandler)
 		api.POST("/admin/files", addFile)
 
-		// api.GET("/admin/batch/revert", revertBatchHandler)
+		api.GET("/admin/batch/revert", revertBatchHandler)
 
-		// api.GET("/data/naf", getNAF)
+		api.GET("/data/naf", getNAF)
 		api.GET("/data/batch/purge", purgeBatchHandler)
 		api.GET("/data/import/:batch", importBatchHandler)
 		api.GET("/data/compact", compactHandler)
 		api.GET("/data/reduce/:algo/:batchKey", reduceHandler)
 		api.POST("/data/search", searchRaisonSociale)
 		api.GET("/data/purge", purge)
-		// api.POST("/data/prediction", predictionBrowseHandler)
-		// api.GET("/data/public/etablissement/:batch", publicEtablissementHandler)
-		// api.GET("/data/public/entreprise/:batch", publicEntrepriseHandler)
+
+		api.GET("/data/public/:batch", publicHandler)
+
 		// api.GET("/data/etablissement/:batch/:siret", browseEtablissementHandler)
 
 		api.GET("/dashboard/tasks", getTasks)

@@ -335,36 +335,36 @@ func purgeBatch(batchKey string) error {
 	return err
 }
 
-// func revertBatchHandler(c *gin.Context) {
-// 	err := revertBatch()
-// 	if err != nil {
-// 		c.JSON(500, err)
-// 	}
-// 	batches, _ := getBatches()
-// 	mainMessageChannel <- socketMessage{
-// 		Batches: batches,
-// 	}
-// 	c.JSON(200, "ok")
-// }
+func revertBatchHandler(c *gin.Context) {
+	err := revertBatch()
+	if err != nil {
+		c.JSON(500, err)
+	}
+	batches, _ := getBatches()
+	mainMessageChannel <- socketMessage{
+		Batches: batches,
+	}
+	c.JSON(200, "ok")
+}
 
-func dropLastBatch() error {
-	batch := lastBatch()
-	_, err := db.DB.C("Admin").RemoveAll(bson.M{"_id.key": batch.ID.Key, "_id.type": "batch"})
+func dropBatch(batchKey string) error {
+	_, err := db.DB.C("Admin").RemoveAll(bson.M{"_id.key": batchKey, "_id.type": "batch"})
 	return err
 }
 
 // revertBatch purge le batch et supprime sa référence dans la collection Admin
-// func revertBatch() error {
-// 	err := purgeBatch()
-// 	if err != nil {
-// 		return fmt.Errorf("Erreur lors de la purge: " + err.Error())
-// 	}
-// 	err = dropLastBatch()
-// 	if err != nil {
-// 		return fmt.Errorf("Erreur lors de la purge: " + err.Error())
-// 	}
+func revertBatch() error {
+	batch := lastBatch()
+	err := purgeBatch(batch.ID.Key)
+	if err != nil {
+		return fmt.Errorf("Erreur lors de la purge: " + err.Error())
+	}
+	err = dropBatch(batch.ID.Key)
+	if err != nil {
+		return fmt.Errorf("Erreur lors de la purge: " + err.Error())
+	}
 
-// 	return nil
-// }
+	return nil
+}
 
 var addFileChannel = addFileToBatch()

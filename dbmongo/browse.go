@@ -1,9 +1,11 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/gin-gonic/gin"
+	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
 )
 
@@ -120,34 +122,63 @@ import (
 // 	}, nil
 // }
 
-// func publicEtablissementHandler(c *gin.Context) {
-// 	batch := c.Params.ByName("batch")
-// 	err := publicEtablissement(batch)
-// 	if err != nil {
-// 		c.JSON(500, err.Error())
-// 		return
-// 	}
-// 	c.JSON(200, "ok")
-// }
+func publicHandler(c *gin.Context) {
+	batchKey := c.Params.ByName("batch")
+	batch := AdminBatch{}
+	batch.load(batchKey)
 
-// func publicEtablissement(batch string) error {
-// 	// préparation des jobs
-// 	job, _, err := prepareMRJob(batch, "", "public", "etablissement", "Public")
+	err := public(batch)
+	if err != nil {
+		c.JSON(500, err.Error())
+		return
+	}
+	c.JSON(200, "ok")
+}
 
-// 	if err != nil {
-// 		return errors.New("Erreur dans la création du job MapReduce: " + err.Error())
-// 	}
+//
+// @summary Extraction des données publiques
+// @description Lance le traitement mapReduce public pour alimenter la collection Public
+// @Tags Traitements
+// @accept  json
+// @produce  json
+// @Param batch query string true "Identifiant du batch"
+// @Security ApiKeyAuth
+// @Success 200 {string} string ""
+// @Router /api/data/public/{batch} [get]
+func public(batch AdminBatch) error {
+	functions, err := loadJSFunctions("js/public/")
 
-// exécution
+	scope := bson.M{
+		"date_debut":             batch.Params.DateDebut,
+		"date_fin":               batch.Params.DateFin,
+		"date_fin_effectif":      batch.Params.DateFinEffectif,
+		"serie_periode":          genereSeriePeriode(batch.Params.DateDebut, batch.Params.DateFin),
+		"serie_periode_annuelle": genereSeriePeriodeAnnuelle(batch.Params.DateDebut, batch.Params.DateFin),
+		"offset_effectif":        (batch.Params.DateFinEffectif.Year()-batch.Params.DateFin.Year())*12 + int(batch.Params.DateFinEffectif.Month()-batch.Params.DateFin.Month()),
+		"actual_batch":           batch.ID.Key,
+		"naf":                    naf,
+		"f":                      functions,
+		"batches":                getBatchesID(),
+		"types":                  getTypes(),
+	}
 
-// 	_, err = db.DB.C("Etablissement").Find(nil).MapReduce(job, nil)
+	job := &mgo.MapReduce{
+		Map:      functions["map"].Code,
+		Reduce:   functions["reduce"].Code,
+		Finalize: functions["finalize"].Code,
+		Out:      bson.M{"replace": "Features"},
+		Scope:    scope,
+	}
+	// exécution
 
-// 	if err != nil {
-// 		return errors.New("Erreur dans l'exécution des jobs MapReduce" + err.Error())
-// 	}
+	_, err = db.DB.C("DataRaw").Find(nil).MapReduce(job, nil)
 
-// 	return nil
-// }
+	if err != nil {
+		return errors.New("Erreur dans l'exécution des jobs MapReduce" + err.Error())
+	}
+
+	return nil
+}
 
 // func publicEntrepriseHandler(c *gin.Context) {
 // 	batch := c.Params.ByName("batch")

@@ -170,6 +170,17 @@ func getTypes() []string {
 	}
 }
 
+//
+// @summary Descriptif NAF
+// @description Liste tous les codes NAF, les descriptions des codes NAF et les liens entre le niveau 1 et le niveau 5
+// @Tags Traitements
+// @accept  json
+// @produce  json
+// @Param algo query string true "Identifiant du traitement"
+// @Param batch query string true "Identifier du batch"
+// @Success 200 {string} string ""
+// @Router /api/data/compact [get]
+// @Security ApiKeyAuth
 func getNAF(c *gin.Context) {
 	c.JSON(200, naf)
 }

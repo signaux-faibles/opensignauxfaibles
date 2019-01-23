@@ -1,3 +1,3 @@
 function reduce(key, values) {
-    return values
+  return values
 }
