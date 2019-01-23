@@ -12,6 +12,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"github.com/spf13/viper"
+
+	ginSwagger "github.com/swaggo/gin-swagger"
+	"github.com/swaggo/gin-swagger/swaggerFiles"
+
+	_ "./docs"
 )
 
 var db = initDB()
@@ -42,20 +47,36 @@ func wshandler(w http.ResponseWriter, r *http.Request, jwt string) {
 
 const identityKey = "id"
 
+// main Fonction Principale
+// @title API openSignauxFaibles
+// @version 1.1
+// @description Cette API centralise toutes les fonctionnalités du module de traitement de données OpenSignauxFaibles
+// @description Pour plus de renseignements: https://beta.gouv.fr/startups/signaux-faibles.html
+// @license.name Licence MIT
+// @license.url https://raw.githubusercontent.com/entrepreneur-interet-general/opensignauxfaibles/master/LICENSE
+// @BasePath /
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
 func main() {
 	// Lancer Rserve en background
 
 	// go r()
 	go messageSocketAddClient()
 
-	r := gin.Default()
-	r.Use(gin.Recovery())
+	r := gin.New()
+
+	if !viper.GetBool("DEV") {
+		gin.SetMode(gin.ReleaseMode)
+	} else {
+		r.Use(gin.Recovery())
+		r.Use(gin.Logger())
+	}
 
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"http://localhost:8080", "https://signaux.faibles.fr"}
+	config.AllowOrigins = []string{"http://localhost:3000", "http://localhost:8080", "https://signaux.faibles.fr"}
 	config.AddAllowHeaders("Authorization")
-	config.AddAllowMethods("GET", "POST", "PUT", "HEAD", "DELETE")
-
+	config.AddAllowMethods("GET", "POST")
 	r.Use(cors.New(config))
 
 	authMiddleware, err := jwt.New(&jwt.GinJWTMiddleware{
@@ -70,17 +91,17 @@ func main() {
 		Authenticator:   authenticator,
 		Authorizator:    authorizator,
 		Unauthorized:    unauthorizedHandler,
-
-		TokenLookup:   "header: Authorization, query: token, cookie: jwt",
-		TokenHeadName: "Bearer",
-		TimeFunc:      time.Now,
+		TokenLookup:     "header: Authorization, query: token, cookie: jwt",
+		TokenHeadName:   "Bearer",
+		TimeFunc:        time.Now,
 	})
 
 	if err != nil {
-		panic("JWT Error:" + err.Error())
+		panic("Erreur lors de la mise en place de l'authentification:" + err.Error())
 	}
 
 	r.Use(static.Serve("/", static.LocalFile("static/", true)))
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	r.POST("/login", authMiddleware.LoginHandler)
 	r.POST("/login/get", loginGetHandler)
@@ -96,33 +117,33 @@ func main() {
 
 	{
 		api.GET("/refreshToken", authMiddleware.RefreshHandler)
-		api.GET("/purge", purge)
+
 		api.POST("/admin/batch", upsertBatch)
-		api.POST("/admin/batch/addFile", addFileToBatchHandler)
 		api.GET("/admin/batch", listBatch)
 		api.GET("/admin/files", adminFiles)
 		api.GET("/admin/types", listTypes)
-		api.GET("/admin/clone/:to", cloneDB)
+		// api.GET("/admin/clone/:to", cloneDB)
 		api.GET("/admin/features", adminFeature)
 		api.GET("/admin/status", getDBStatus)
 		api.GET("/admin/getLogs", getLogsHandler)
-		api.GET("/batch/revert", revertBatchHandler)
-		api.GET("/batch/next", nextBatchHandler)
-		api.GET("/batch/purge", purgeBatchHandler)
-		api.GET("/batch/process", processBatchHandler)
-		api.POST("/admin/files", addFile)
-		api.GET("/data/naf", getNAF)
 		api.GET("/admin/epoch", epoch)
-		api.POST("/data/prediction", predictionBrowseHandler)
-		api.GET("/import/:batch", importBatchHandler)
+		api.GET("/admin/batch/next", nextBatchHandler)
+		api.GET("/admin/batch/process", processBatchHandler)
+		api.POST("/admin/files", addFile)
+
+		api.GET("/admin/batch/revert", revertBatchHandler)
+
+		api.GET("/data/naf", getNAF)
+		api.GET("/data/batch/purge", purgeBatchHandler)
+		api.GET("/data/import/:batch", importBatchHandler)
 		api.GET("/data/compact", compactHandler)
-		api.GET("/data/public/etablissement/:batch", publicEtablissementHandler)
-		api.GET("/data/public/entreprise/:batch", publicEntrepriseHandler)
-		api.GET("/reduce/:algo/:batchKey", reduceHandler)
-		api.POST("/search", searchRaisonSociale)
-		api.GET("/data/etablissement/:batch/:siret", browseEtablissementHandler)
+		api.GET("/data/reduce/:algo/:batchKey", reduceHandler)
+		api.POST("/data/search", searchRaisonSociale)
+		api.GET("/data/purge", purge)
+
+		api.GET("/data/public/:batch", publicHandler)
+
 		api.GET("/dashboard/tasks", getTasks)
-		api.GET("/admin/regions", getRegionsHandler)
 	}
 
 	bind := viper.GetString("APP_BIND")

@@ -5,6 +5,7 @@ import (
 	"crypto/rand"
 	"errors"
 	"fmt"
+	"html/template"
 	"math/big"
 	"net/smtp"
 	"time"
@@ -70,7 +71,6 @@ func loginUser(username string, password string, browserToken string) (AdminUser
 	err := bcrypt.CompareHashAndPassword(user.HashedPassword, []byte(password))
 
 	_, errToken := readBrowserToken(browserToken)
-	fmt.Println(errToken)
 	if err == nil && errToken == nil {
 		return user, nil
 	}
@@ -149,6 +149,20 @@ func getCode() int {
 	return int(i.Int64())
 }
 
+//
+// @summary Récupération du mot de passe
+// @description Dans le cas d'un oubli du mot de passe, on peut fixer un nouveau mot de passe à partir d'un navigateur identifié
+// @description Il faut dans ce cas pouvoir recevoir un code de vérification par mail
+// @description Voir /login/recovery/get
+// @Tags Session
+// @accept  json
+// @produce  json
+// @Params email query string true "Adresse e-mail"
+// @Params code query string true "Code de vérification"
+// @Params password query string true "Nouveau mot de passe"
+// @Params browserToken query string true "Jeton du navigateur"
+// @Success 200 {string} string "ok"
+// @Router /login/recovery/get [post]
 func getRecoveryEmailHandler(c *gin.Context) {
 	var request struct {
 		Email        string `json:"email"`
@@ -252,10 +266,20 @@ func getRegions() map[string]string {
 	return regions
 }
 
-func getRegionsHandler(c *gin.Context) {
-	c.JSON(200, getRegions())
-}
-
+//
+// @summary Récupération du mot de passe
+// @description Dans le cas d'un oubli du mot de passe, on peut fixer un nouveau mot de passe à partir d'un navigateur identifié
+// @description Il faut dans ce cas pouvoir recevoir un code de vérification par mail
+// @description Voir /login/recovery/get
+// @Tags Session
+// @accept  json
+// @produce  json
+// @Params email query string true "Adresse e-mail"
+// @Params code query string true "Code de vérification"
+// @Params password query string true "Nouveau mot de passe"
+// @Params browserToken query string true "Jeton du navigateur"
+// @Success 200 {string} string "ok"
+// @Router /login/recovery/setPassword [post]
 func checkRecoverySetPassword(c *gin.Context) {
 	var request struct {
 		Email        string `json:"email"`
@@ -306,6 +330,38 @@ func checkRecoverySetPassword(c *gin.Context) {
 
 }
 
+//
+// @summary Envoie un code de vérification par EMail
+// @description Le code n'est envoyé que si le mot de passe est valide.
+// @description Le cas échéant, un email avertissant d'une tentative est envoyé.
+// @description Pour éviter les tentatives de forçage de mot de passe, ce service ne renvoie jamais d'échec.
+// @Tags Session
+// @accept  json
+// @produce  json
+// @Param email query string true "Adresse EMail"
+// @Param password query string true "Mot de passe"
+// @Success 200 {string} string "ok"
+// @Router /login/get [post]
+
+func sendMail(sender string, recipient string, title string, body string) error {
+	smtpAddress := viper.GetString("smtpAddress")
+	smtpConnection, err := smtp.Dial(smtpAddress)
+	if err != nil {
+		return err
+	}
+	defer smtpConnection.Close()
+	smtpConnection.Mail(sender)
+	smtpConnection.Rcpt(recipient)
+
+	emailObject, err := smtpConnection.Data()
+	if err != nil {
+		return err
+	}
+	defer emailObject.Close()
+
+	return nil
+}
+
 func loginGetHandler(c *gin.Context) {
 	var loginVals login
 
@@ -314,12 +370,9 @@ func loginGetHandler(c *gin.Context) {
 		return
 	}
 
-	err := loginGet(loginVals)
+	loginGet(loginVals)
 
-	if err != nil {
-		c.JSON(500, "Erreur lors de l'envoi du code de validation")
-	}
-
+	c.JSON(200, "ok")
 }
 
 func loginGet(login login) error {
@@ -327,15 +380,30 @@ func loginGet(login login) error {
 	password := login.Password
 	user, err := loginUserWithCredentials(email, password)
 
+	mailTemplate, _ := template.New("loginMail").Parse(`
+	Subject: Authentification: votre code de vérification.
+	Content-Type: text/plain; charset=us-ascii; format=flowed
+	Content-Transfer-Encoding: 7bit
+	
+	Bonjour,
+	suite à votre tentative d'identification sur l'applicatif Signaux Faibles, voici votre code de vérification:
+	{{.CheckCode}}
+	
+	Cordialement,
+	l'équipe Signaux-Faibles.
+				
+	ps: si vous n'êtes pas à l'origine de cette tentative, nous vous prions d'en faire part à l'adresse contact@signaux-faibles.beta.gouv.fr`)
+
 	if err == nil {
-		checkCode := fmt.Sprintf("%06d", getCode())
-		hashedCode, err := bcrypt.GenerateFromPassword([]byte(checkCode), bcrypt.DefaultCost)
+		code := struct{ checkCode string }{}
+		code.checkCode = fmt.Sprintf("%06d", getCode())
+		hashedCode, err := bcrypt.GenerateFromPassword([]byte(code.checkCode), bcrypt.DefaultCost)
 		if err == nil {
 			user.HashedCode = hashedCode
 			user.TimeCode = time.Now()
 			err = user.save()
 			if err == nil {
-				fmt.Println(checkCode)
+				fmt.Println(code.checkCode)
 
 				smtpAddress := viper.GetString("smtpAddress")
 				//smtpUser := viper.GetString("smtpUser")
@@ -343,11 +411,12 @@ func loginGet(login login) error {
 
 				c, err := smtp.Dial(smtpAddress)
 				if err != nil {
-					spew.Dump(err)
+					return err
 				}
 				defer c.Close()
+
 				// Set the sender and recipient.
-				c.Mail("do.not.reply@signaux.faibles.fr")
+				c.Mail("Signaux Faibles <do.not.reply@signaux.faibles.fr>")
 				c.Rcpt(email)
 
 				// Send the email body.
@@ -355,22 +424,9 @@ func loginGet(login login) error {
 				if err != nil {
 					spew.Dump(err)
 				}
-				defer wc.Close()
-				buf := bytes.NewBufferString(`Bonjour,
-suite à votre première identification sur l'applicatif Signaux Faibles, voici votre code de vérification:
 
-` + checkCode + `
-
-Cordialement,
-l'équipe Signaux-Faibles.
-			
-ps: si vous n'êtes pas à l'origine de cette tentative, nous vous prions d'en faire part à l'adresse contact@signaux-faibles.beta.gouv.fr
-				
-				`)
-
-				if _, err = buf.WriteTo(wc); err != nil {
-					spew.Dump(err)
-				}
+				mailTemplate.Execute(wc, code)
+				wc.Close()
 				return err
 			}
 		}
@@ -380,6 +436,17 @@ ps: si vous n'êtes pas à l'origine de cette tentative, nous vous prions d'en f
 	return err
 }
 
+//
+// @summary Vérification du code temporaire renvoyé à l'utilisateur
+// @description Fournit en retour un jeton de navigateur
+// @Tags Session
+// @accept  json
+// @produce  json
+// @Param email query string true "Adresse EMail"
+// @Param password query string true "Mot de passe"
+// @Param checkCode query string true "Code de vérification"
+// @Success 200 {string} string ""
+// @Router /login/check [post]
 func loginCheckHandler(c *gin.Context) {
 	var loginVals login
 	c.ShouldBind(&loginVals)
@@ -397,7 +464,8 @@ func loginCheckHandler(c *gin.Context) {
 			IP:      c.ClientIP(),
 			Created: time.Now(),
 			Email:   email,
-			Name:    "gabuzomeuh",
+			// TODO: nommer les navigateurs
+			Name: "",
 		}
 		browserToken, _ := forgeBrowserToken(browser)
 		c.JSON(200, browserToken)
@@ -420,3 +488,30 @@ func loginCheck(email string, password string, checkCode string) error {
 	err = user.save()
 	return err
 }
+
+//
+// @summary Rafraichir le jeton d'identification
+// @description Nécessite 3 informations: email, mot de passe et jeton de navigateur
+// @description Le jeton de navigateur n'a pas de limite de validité et peut être conservé
+// @Tags Session
+// @accept  application/json
+// @produce  application/json
+// @Param email query string true "Adresse Email" "gnigni"
+// @Param password query string true "Mot de Passe"
+// @Param browserToken query string true "Token navigateur"
+// @Success 200 {string} string "{<br/>'code': 200,<br/>'expire':'2019-01-21T11:16:15+01:00',<br/>'token':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9…'<br/>}"
+// @Failure 401 {string} string "{<br/>'code': 401,<br/>'message': 'incorrect Username or Password'<br/>}"
+// @Router /login [post]
+func dummyLogin() {}
+
+//
+// @summary Obtenir un jeton d'identification
+// @description Fournit un jeton avec nouvelle date de validité en échange d'un jeton encore valide
+// @Tags Session
+// @accept  application/json
+// @produce  application/json
+// @Security ApiKeyAuth
+// @Success 200 {string} string "{<br/>'code': 200,<br/>   'expire': '2019-01-21T12:16:50+01:00',<br/>'token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9…'<br/>}"
+// @Failure 401 {string} string "{<br/>'code': 401,<br/>'message': 'cookie token is empty'<br/>}"
+// @Router /api/refreshToken [get]
+func dummyRefreshtoken() {}

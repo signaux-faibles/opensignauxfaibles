@@ -342,6 +342,7 @@ export default {
     }
   },
   mounted () {
+    // TODO: remplacer l'appel /data/etablissement par /data/public
     this.$axios.get('/api/data/etablissement/'+ this.currentBatchKey + '/' + this.siret).then(response => {
       this.etablissement = response.data.etablissement[0].value
       this.entreprise = response.data.entreprise[0].value

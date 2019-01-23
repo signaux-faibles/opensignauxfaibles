@@ -78,6 +78,15 @@ func getLogs() ([]journalEvent, error) {
 	return logs, err
 }
 
+//
+// @summary Journal d'évènements
+// @description Liste les 100 derniers évènements du journal
+// @Tags Administration
+// @accept  json
+// @produce  json
+// @Security ApiKeyAuth
+// @Success 200 {string} string ""
+// @Router /api/admin/getLogs [get]
 func getLogsHandler(c *gin.Context) {
 	logs, err := getLogs()
 	if err != nil {

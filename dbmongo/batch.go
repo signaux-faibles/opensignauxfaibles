@@ -8,6 +8,7 @@ import (
 
 	"github.com/davecgh/go-spew/spew"
 	"github.com/gin-gonic/gin"
+	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
 )
 
@@ -56,6 +57,15 @@ func (batch *AdminBatch) new(batchID string) error {
 	return nil
 }
 
+//
+// @summary Création du batch suivant
+// @description Cloture le dernier batch et crée le batch suivant dans la collection admin
+// @Tags Administration
+// @accept  json
+// @produce  json
+// @Security ApiKeyAuth
+// @Success 200 {string} string ""
+// @Router /api/admin/batch/next [get]
 func nextBatchHandler(c *gin.Context) {
 	err := nextBatch()
 	if err != nil {
@@ -110,6 +120,17 @@ func sp(s string) *string {
 	return &s
 }
 
+//
+// @summary Remplace un batch
+// @description Alimente la collection Features
+// @Tags Traitements
+// @accept  json
+// @produce  json
+// @Param algo query string true "Identifiant du traitement"
+// @Param batch query string true "Identifier du batch"
+// @Security ApiKeyAuth
+// @Success 200 {string} string ""
+// @Router /api/reduce/{algo}/{batch} [get]
 func upsertBatch(c *gin.Context) {
 	status := db.Status
 
@@ -137,6 +158,15 @@ func upsertBatch(c *gin.Context) {
 	c.JSON(200, batch)
 }
 
+//
+// @summary Liste des batches
+// @description Produit une extraction des objets batch de la collection Admin
+// @Tags Administration
+// @accept  json
+// @produce  json
+// @Security ApiKeyAuth
+// @Success 200 {array} string ""
+// @Router /api/admin/batch [get]
 func listBatch(c *gin.Context) {
 	var batch []AdminBatch
 	err := db.DB.C("Admin").Find(bson.M{"_id.type": "batch"}).Sort("-_id.key").All(&batch)
@@ -186,6 +216,15 @@ func batchToTime(batch string) (time.Time, error) {
 	return date, err
 }
 
+//
+// @summary Traitement du dernier batch
+// @description Exécute l'import, le compactage et la réduction du dernier batch
+// @Tags Administration
+// @accept  json
+// @produce  json
+// @Security ApiKeyAuth
+// @Success 200 {string} string ""
+// @Router /api/admin/batch/next [get]
 func processBatchHandler(c *gin.Context) {
 	go func() {
 		processBatch()
@@ -232,17 +271,6 @@ type newFile struct {
 	BatchKey string `json:"batch"`
 }
 
-func addFileToBatchHandler(c *gin.Context) {
-	var file newFile
-	err := c.Bind(&file)
-	if err != nil {
-		c.JSON(500, err.Error())
-	}
-	addFileChannel <- file
-
-	c.JSON(200, "Demande d'ajout prise en compte")
-}
-
 func addFileToBatch() chan newFile {
 	channel := make(chan newFile)
 
@@ -264,38 +292,47 @@ func addFileToBatch() chan newFile {
 	return channel
 }
 
+//
+// @summary Traitement du dernier batch
+// @description Exécute l'import, le compactage et la réduction du dernier batch
+// @Tags Administration
+// @accept  json
+// @produce  json
+// @Security ApiKeyAuth
+// @Success 200 {string} string ""
+// @Router /api/data/batch/purge [get]
 func purgeBatchHandler(c *gin.Context) {
-	err := purgeBatch()
+	batch := lastBatch()
+	err := purgeBatch(batch.ID.Key)
+
 	if err != nil {
 		c.JSON(500, "Erreur dans la purge du batch: "+err.Error())
+	} else {
+		c.JSON(200, "ok")
 	}
 }
 
-func purgeBatch() error {
-	batch := lastBatch()
+func purgeBatch(batchKey string) error {
 
-	// prepareMRJob charge les fichiers MapReduce et fournit les paramètres pour l'exécution
-	MREntreprise, errEn := loadMR("purgeBatch", "entreprise")
-	MREtablissement, errEt := loadMR("purgeBatch", "etablissement")
-
-	if errEn != nil || errEt != nil {
-		return fmt.Errorf("Erreur de chargement MapReduce")
+	functions, err := loadJSFunctions("js/purgeBatch/")
+	if err != nil {
+		return err
+	}
+	scope := bson.M{
+		"currentBatch": batchKey,
+		"f":            functions,
 	}
 
-	MREntreprise.Out = &bson.M{"replace": "Entreprise"}
-	MREtablissement.Out = &bson.M{"replace": "Etablissement"}
-
-	MREntreprise.Scope = &bson.M{
-		"currentBatch": batch.ID.Key,
-	}
-	MREtablissement.Scope = &bson.M{
-		"currentBatch": batch.ID.Key,
+	job := &mgo.MapReduce{
+		Map:      functions["map"].Code,
+		Reduce:   functions["reduce"].Code,
+		Finalize: functions["finalize"].Code,
+		Out:      bson.M{"replace": "Toto"},
+		Scope:    scope,
 	}
 
-	_, errEn = db.DB.C("Entreprise").Find(nil).MapReduce(MREntreprise, nil)
-	_, errEt = db.DB.C("Etablissement").Find(nil).MapReduce(MREtablissement, nil)
-
-	return nil
+	_, err = db.DB.C("RawData").Find(nil).MapReduce(job, nil)
+	return err
 }
 
 func revertBatchHandler(c *gin.Context) {
@@ -310,19 +347,19 @@ func revertBatchHandler(c *gin.Context) {
 	c.JSON(200, "ok")
 }
 
-func dropLastBatch() error {
-	batch := lastBatch()
-	_, err := db.DB.C("Admin").RemoveAll(bson.M{"_id.key": batch.ID.Key, "_id.type": "batch"})
+func dropBatch(batchKey string) error {
+	_, err := db.DB.C("Admin").RemoveAll(bson.M{"_id.key": batchKey, "_id.type": "batch"})
 	return err
 }
 
 // revertBatch purge le batch et supprime sa référence dans la collection Admin
 func revertBatch() error {
-	err := purgeBatch()
+	batch := lastBatch()
+	err := purgeBatch(batch.ID.Key)
 	if err != nil {
 		return fmt.Errorf("Erreur lors de la purge: " + err.Error())
 	}
-	err = dropLastBatch()
+	err = dropBatch(batch.ID.Key)
 	if err != nil {
 		return fmt.Errorf("Erreur lors de la purge: " + err.Error())
 	}

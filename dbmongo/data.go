@@ -4,106 +4,11 @@ import (
 	"errors"
 	"io/ioutil"
 	"regexp"
-	"sort"
 
 	"github.com/gin-gonic/gin"
 	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
 )
-
-// MapReduceJS Ensemble de fonctions JS pour mongodb
-type MapReduceJS struct {
-	Routine  string
-	Scope    string
-	Map      string
-	Reduce   string
-	Finalize string
-}
-
-func loadMR(typeJob string, target string) (*mgo.MapReduce, error) {
-	mr := &mgo.MapReduce{}
-
-	file, err := ioutil.ReadDir("js/" + typeJob + "/" + target)
-	sort.Slice(file, func(i, j int) bool {
-		return file[i].Name() < file[j].Name()
-	})
-
-	if err != nil {
-		return nil, errors.New("Chemin introuvable")
-	}
-
-	mr.Map = ""
-	mr.Reduce = ""
-	mr.Finalize = ""
-
-	for _, f := range file {
-		if match, _ := regexp.MatchString("^map.*js", f.Name()); match {
-			fp, err := ioutil.ReadFile("js/" + typeJob + "/" + target + "/" + f.Name())
-			if err != nil {
-				return nil, errors.New("Lecture impossible: js/" + typeJob + "/" + target + "/" + f.Name())
-			}
-			mr.Map = mr.Map + string(fp)
-		}
-		if match, _ := regexp.MatchString("^reduce.*js", f.Name()); match {
-			fp, err := ioutil.ReadFile("js/" + typeJob + "/" + target + "/" + f.Name())
-			if err != nil {
-				return nil, errors.New("Lecture impossible: js/" + typeJob + "/" + target + "/" + f.Name())
-			}
-			mr.Reduce = mr.Reduce + string(fp)
-		}
-		if match, _ := regexp.MatchString("^finalize.*js", f.Name()); match {
-			fp, err := ioutil.ReadFile("js/" + typeJob + "/" + target + "/" + f.Name())
-			if err != nil {
-				return nil, errors.New("Lecture impossible: js/" + typeJob + "/" + target + "/" + f.Name())
-			}
-			mr.Finalize = mr.Finalize + string(fp)
-		}
-	}
-	return mr, nil
-
-}
-
-func (mr *MapReduceJS) load(routine string, scope string) error {
-	file, err := ioutil.ReadDir("js/" + routine + "/" + scope)
-	sort.Slice(file, func(i, j int) bool {
-		return file[i].Name() < file[j].Name()
-	})
-
-	if err != nil {
-		return errors.New("Chemin introuvable")
-	}
-
-	mr.Routine = routine
-	mr.Scope = scope
-	mr.Map = ""
-	mr.Reduce = ""
-	mr.Finalize = ""
-
-	for _, f := range file {
-		if match, _ := regexp.MatchString("^map.*js$", f.Name()); match {
-			fp, err := ioutil.ReadFile("js/" + routine + "/" + scope + "/" + f.Name())
-			if err != nil {
-				return errors.New("Lecture impossible: js/" + routine + "/" + scope + "/" + f.Name())
-			}
-			mr.Map = mr.Map + string(fp)
-		}
-		if match, _ := regexp.MatchString("^reduce.*js$", f.Name()); match {
-			fp, err := ioutil.ReadFile("js/" + routine + "/" + scope + "/" + f.Name())
-			if err != nil {
-				return errors.New("Lecture impossible: js/" + routine + "/" + scope + "/" + f.Name())
-			}
-			mr.Reduce = mr.Reduce + string(fp)
-		}
-		if match, _ := regexp.MatchString("^finalize.*js$", f.Name()); match {
-			fp, err := ioutil.ReadFile("js/" + routine + "/" + scope + "/" + f.Name())
-			if err != nil {
-				return errors.New("Lecture impossible: js/" + routine + "/" + scope + "/" + f.Name())
-			}
-			mr.Finalize = mr.Finalize + string(fp)
-		}
-	}
-	return nil
-}
 
 func loadJSFunctions(path string) (map[string]bson.JavaScript, error) {
 	files, err := ioutil.ReadDir(path)
@@ -124,6 +29,17 @@ func loadJSFunctions(path string) (map[string]bson.JavaScript, error) {
 	return functions, err
 }
 
+//
+// @summary Lance un traitement de réduction
+// @description Alimente la collection Features
+// @Tags Traitements
+// @accept  json
+// @produce  json
+// @Param algo query string true "Identifiant du traitement"
+// @Param batch query string true "Identifier du batch"
+// @Security ApiKeyAuth
+// @Success 200 {string} string ""
+// @Router /api/data/reduce/{algo}/{batch} [get]
 func reduceHandler(c *gin.Context) {
 	batchKey := c.Params.ByName("batchKey")
 	algo := c.Params.ByName("algo")
@@ -181,6 +97,17 @@ func reduce(batchKey string, algo string) error {
 	return err
 }
 
+//
+// @summary Lance un traitement de compactage
+// @description Alimente la collection Features
+// @Tags Traitements
+// @accept  json
+// @produce  json
+// @Param algo query string true "Identifiant du traitement"
+// @Param batch query string true "Identifier du batch"
+// @Success 200 {string} string ""
+// @Router /api/data/compact [get]
+// @Security ApiKeyAuth
 func compactHandler(c *gin.Context) {
 	err := compact()
 	if err != nil {
@@ -243,6 +170,17 @@ func getTypes() []string {
 	}
 }
 
+//
+// @summary Descriptif NAF
+// @description Liste tous les codes NAF, les descriptions des codes NAF et les liens entre le niveau 1 et le niveau 5
+// @Tags Traitements
+// @accept  json
+// @produce  json
+// @Param algo query string true "Identifiant du traitement"
+// @Param batch query string true "Identifier du batch"
+// @Success 200 {string} string ""
+// @Router /api/data/compact [get]
+// @Security ApiKeyAuth
 func getNAF(c *gin.Context) {
 	c.JSON(200, naf)
 }

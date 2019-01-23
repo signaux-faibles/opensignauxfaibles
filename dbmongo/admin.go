@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/globalsign/mgo/bson"
 	"github.com/spf13/viper"
-) 
+)
 
 // AdminID Collection key
 type AdminID struct {
@@ -15,6 +15,15 @@ type AdminID struct {
 	Type string `json:"type" bson:"type"`
 }
 
+//
+// @summary Identifiants des traitements de réduction
+// @description Correspond aux mapReduces qui produisent les variables dans la collection Features
+// @Tags Administration
+// @accept  json
+// @produce  json
+// @Security ApiKeyAuth
+// @Success 200 {string} string ""
+// @Router /api/admin/features [get]
 func adminFeature(c *gin.Context) {
 	c.JSON(200, []string{"algo1", "algo2"})
 }
@@ -26,6 +35,15 @@ type Types []struct {
 	Filter  string `json:"filter" bson:"filter"`
 }
 
+//
+// @summary Liste des types
+// @description Correspond aux types disponibles dans les traitements d'importation
+// @Tags Administration
+// @accept  json
+// @produce  json
+// @Security ApiKeyAuth
+// @Success 200 {string} string ""
+// @Router /api/admin/types [get]
 func listTypes(c *gin.Context) {
 	c.JSON(200, Types{
 		{"admin_urssaf", "Siret/Compte URSSAF", "Liste comptes"},
@@ -36,7 +54,7 @@ func listTypes(c *gin.Context) {
 		{"dpae", "Déclaration Préalable à l'embauche", "DPAE"},
 		{"interim", "Base Interim", "interim"},
 		{"altares", "Base Altarès", "ALTARES"},
-    {"procol", "Procédures collectives", "procol"},
+		{"procol", "Procédures collectives", "procol"},
 		{"apdemande", "Demande Activité Partielle", "dde"},
 		{"ccsf", "Stock CCSF à date", "ccsf"},
 		{"debit", "Débits URSSAF", "debit"},
@@ -62,6 +80,15 @@ func cloneDB(c *gin.Context) {
 	c.JSON(200, err)
 }
 
+//
+// @summary Upload d'un fichier
+// @description Réalise l'upload d'un fichier dans un batch/type. Une fois l'upload effectué, le fichier est automatiquement attaché au batch.
+// @Tags Administration
+// @accept  json
+// @produce  json
+// @Security ApiKeyAuth
+// @Success 200 {string} string ""
+// @Router /api/admin/files [post]
 func addFile(c *gin.Context) {
 	file, err := c.FormFile("file")
 	batch := c.Request.FormValue("batch")
