@@ -143,8 +143,6 @@ func main() {
 
 		api.GET("/data/public/:batch", publicHandler)
 
-		// api.GET("/data/etablissement/:batch/:siret", browseEtablissementHandler)
-
 		api.GET("/dashboard/tasks", getTasks)
 	}
 

@@ -180,35 +180,6 @@ func public(batch AdminBatch) error {
 	return nil
 }
 
-// func publicEntrepriseHandler(c *gin.Context) {
-// 	batch := c.Params.ByName("batch")
-// 	err := publicEntreprise(batch)
-// 	if err != nil {
-// 		c.JSON(500, err.Error())
-// 		return
-// 	}
-// 	c.JSON(200, "ok")
-// }
-
-// func publicEntreprise(batch string) error {
-// 	// préparation des jobs
-// 	job, query, err := prepareMRJob(batch, "", "public", "entreprise", "Public")
-
-// 	if err != nil {
-// 		return errors.New("Erreur dans la création du job MapReduce: " + err.Error())
-// 	}
-
-// 	// exécution
-
-// 	_, err = db.DB.C("Entreprise").Find(query).MapReduce(job, nil)
-
-// 	if err != nil {
-// 		return errors.New("Erreur dans l'exécution des jobs MapReduce" + err.Error())
-// 	}
-
-// 	return nil
-// }
-
 func predictionBrowseHandler(c *gin.Context) {
 	params := struct {
 		Algo     string `json:"algo"`
