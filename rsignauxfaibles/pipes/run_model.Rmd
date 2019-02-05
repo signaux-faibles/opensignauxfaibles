@@ -1,0 +1,65 @@
+---
+title: "Light gradient boosting pipe"
+author: "Pierre Camilleri"
+date: "1 juin 2018"
+output: html_document
+---
+
+## Imports
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+h2o.no_progress()
+devtools::load_all()
+```
+
+## Script parameters
+```{r}
+database <- "test_signauxfaibles"
+collection <- "test2"
+actual_period <- as.Date("2018-11-01")
+last_batch <- '1901'
+algorithm <- 'algo2'
+min_effectif <- 10
+retrain_model <- TRUE
+type <- "spark"
+```
+
+```{r}
+connect_to_h2o()
+```
+
+```{r}
+res <- light_gradient_boosting(
+  database, 
+  collection,
+  actual_period, 
+  last_batch, 
+  algorithm,
+  min_effectif, 
+  retrain_model = retrain_model,
+  type = type)
+```
+
+```{r}
+my_data <- as.data.frame(my_data)
+my_data <- my_data %>% mutate(
+  periode =  as.Date(structure(periode / 1000, 
+                               class = c('POSIXct','POSIXt')))
+)
+```
+
+```{r}
+siret = "01234567891112"
+shapley_plot(c(siret), my_data, my_model, batch = last_batch)
+```
+
+```{r results="hide"}
+
+siret = "01234567891112"
+export_fiche_visite(
+  sirets = c(), 
+  database, 
+  last_batch, 
+  with_urssaf = FALSE
+  )
+```

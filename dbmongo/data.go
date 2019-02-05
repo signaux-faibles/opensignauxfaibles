@@ -4,7 +4,6 @@ import (
 	"errors"
 	"io/ioutil"
 	"regexp"
-
 	"github.com/gin-gonic/gin"
 	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
@@ -39,24 +38,29 @@ func loadJSFunctions(path string) (map[string]bson.JavaScript, error) {
 // @Param batch query string true "Identifier du batch"
 // @Security ApiKeyAuth
 // @Success 200 {string} string ""
-// @Router /api/data/reduce/{algo}/{batch} [get]
+// @Router /api/data/reduce/{algo}/{batch}/{siret} [get]
 func reduceHandler(c *gin.Context) {
 	batchKey := c.Params.ByName("batchKey")
 	algo := c.Params.ByName("algo")
-	err := reduce(algo, batchKey)
-	if err != nil {
+	batchKey := c.Params.ByName("batchKey")
+  key := c.Params.ByName("key")
+  err := reduce(algo, batchKey, key)
+  if err != nil {
 		c.JSON(500, err.Error())
 	} else {
 		c.JSON(200, "Traitement effectué")
 	}
 }
 
-func reduce(batchKey string, algo string) error {
+func reduce(algo string, batchKey string, key string) error {
 	// éviter les noms d'algo essayant de pervertir l'exploration des fonctions
 	isAlphaNum := regexp.MustCompile(`^[A-Za-z0-9]+$`).MatchString
 	if !isAlphaNum(algo) {
 		return errors.New("nom d'algorithme invalide, alphanumérique sans espace exigé")
 	}
+  if !isAlphaNum(key) && key != "" {
+    return errors.New("Clé invalide, alphanumérique sans espace exigé")
+  }
 
 	functions, err := loadJSFunctions("js/" + algo + "/")
 
@@ -88,13 +92,15 @@ func reduce(batchKey string, algo string) error {
 		Map:      functions["map"].Code,
 		Reduce:   functions["reduce"].Code,
 		Finalize: functions["finalize"].Code,
-		Out:      bson.M{"replace": "Features"},
+		Out:      bson.M{"merge": "Features"},
 		Scope:    scope,
 	}
-
-	_, err = db.DB.C("RawData").Find(bson.M{"value.index.algo2": true}).MapReduce(job, nil)
-
-	return err
+  if (key != "") {
+    _, err = db.DB.C("RawData").Find(bson.M{"_id": bson.M{"$regex": "^" + key[0:9]}}).MapReduce(job, nil)
+  } else {
+    _, err = db.DB.C("RawData").Find(bson.M{"value.index.algo2": true}).MapReduce(job, nil)
+  }
+  return err
 }
 
 //
@@ -170,6 +176,12 @@ func getTypes() []string {
 	}
 }
 
+func deleteHandler(c *gin.Context) {
+    var result []interface{}
+    db.DB.C("Etablissement").RemoveAll(bson.M{"_id": bson.M{"$type": "objectId"}})
+    db.DB.C("Entreprise").RemoveAll(bson.M{"_id": bson.M{"$type": "objectId"}})
+    c.JSON(200, result)
+}
 //
 // @summary Descriptif NAF
 // @description Liste tous les codes NAF, les descriptions des codes NAF et les liens entre le niveau 1 et le niveau 5

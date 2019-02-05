@@ -33,7 +33,7 @@ func (batchFiles BatchFiles) attachFile(fileType string, file string) {
 }
 
 func isBatchID(batchID string) bool {
-	_, err := time.Parse("0601", batchID)
+  _, err := time.Parse("0601", batchID[0:4])
 	return err == nil
 }
 
@@ -233,17 +233,22 @@ func processBatchHandler(c *gin.Context) {
 }
 
 func processBatch() {
-	journal("info", "processBatch", "Lancement de l'intégration du batch")
-	status := db.Status
-	batch := lastBatch()
-	status.setDBStatus(sp("Import des fichiers"))
-	importBatch(&batch)
-	compact()
-	// for _, algo := range []string{"algo1", "algo2"} {
-	// 	_, err := reduce(batch, algo, "")
-	// 	fmt.Println(err)
-	// }
-	status.setDBStatus(nil)
+  journal("info", "processBatch", "Lancement de l'intégration du batch")
+
+  status := db.Status
+  for _, v := range []string{"1802", "1803", "1804", "1805", "1806",
+  "1807", "1808", "1809", "1810", "1811", "1812", "1901", "1901_interim"} {
+    batch, _ := getBatch(v)
+    importBatch(&batch)
+  }
+  time.Sleep(10 * time.Second)
+
+ //  status.setDBStatus(sp("Import des fichiers"))
+
+  compact()
+  batch := lastBatch()
+  reduce(batch.ID.Key, "algo2", "")
+  status.setDBStatus(nil)
 }
 
 func lastBatch() AdminBatch {

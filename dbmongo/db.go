@@ -32,13 +32,13 @@ func initDB() DB {
 	if err != nil {
 		log.Panic(err)
 	}
-	mongostatus.SetSocketTimeout(3600 * time.Second)
+	mongostatus.SetSocketTimeout(7200 * time.Second)
 
 	mongodb, err := mgo.Dial(dbDial)
 	if err != nil {
 		log.Panic(err)
 	}
-	mongodb.SetSocketTimeout(3600 * time.Second)
+	mongodb.SetSocketTimeout(7200 * time.Second)
 	dbstatus := mongostatus.DB(dbDatabase)
 	db := mongodb.DB(dbDatabase)
 

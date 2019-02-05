@@ -1,0 +1,33 @@
+Package: rsignauxfaibles
+Type: Package
+Title: Charge et Analyse les Données de Signaux Faibles
+Version: 0.1.0
+Authors@R: person("Pierre", "Camilleri", email = "pierre.camilleri@direccte.gouv.fr", 
+  role = c("aut", "cre"))
+Description: Ce package permet de récupérer les données depuis MongoDB, de les traiter et de développer des modèles dans le cadre du projet de la startup d'État Signaux Faibles
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
+Imports: 
+    tidyverse,
+    plyr,
+    h2o,
+    lubridate,
+    assertthat,
+    mongolite,
+    broom,
+    MLmetrics,
+    tibbletime,
+    PRROC,
+    broom,
+    rprojroot,
+    sparklyr, 
+    rsparkling
+Depends:
+    dplyr,
+    sparklyr,
+    h2o
+Suggests: 
+    ggplot2,
+    testthat
+RoxygenNote: 6.1.1

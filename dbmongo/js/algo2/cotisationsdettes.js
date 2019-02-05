@@ -29,11 +29,10 @@ function cotisationsdettes(v, output_array, output_indexed) {
     let periode_debut = (date_traitement_debut.getTime() >= date_limite.getTime() ? date_limite : date_traitement_debut)
     let periode_fin = (date_traitement_fin.getTime() >= date_limite.getTime() ? date_limite : date_traitement_fin)
 
-    generatePeriodSerie(periode_debut, periode_fin).map(function (date) {
+    generatePeriodSerie(periode_debut, periode_fin).map(date => {
       let time = date.getTime()
       value_dette[time] = (value_dette[time] || []).concat([{ "periode": debit.periode.start, "part_ouvriere": debit.part_ouvriere, "part_patronale": debit.part_patronale, "montant_majorations": debit.montant_majorations}])
     })
-
   })    
 
   var numeros_compte = Array.from(new Set(
@@ -57,7 +56,7 @@ function cotisationsdettes(v, output_array, output_indexed) {
     let time_d = new Date(parseInt(time))
     var val = output_indexed[time]
 
-    val.montant_dette = val.debit_array.reduce(function (m, dette) {
+    val.montant_dette = (val.debit_array || []).reduce(function (m, dette) {
       m.part_ouvriere += dette.part_ouvriere
       m.part_patronale += dette.part_patronale
       m.montant_majorations += dette.montant_majorations

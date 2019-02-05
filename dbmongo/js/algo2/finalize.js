@@ -23,14 +23,20 @@ function finalize(k, v) {
   Object.keys(v).forEach(siret =>{
     if (siret != "entreprise" && siret != "siren" ) {
       etablissements_connus[siret] = true
-      if (v[siret]){
-        //    var time = v[siret].periode.getTime()
-        Object.assign(v[siret],entreprise) 
-        v[siret].effectif_entreprise = (v[siret].effectif_entreprise || 0) + v[siret].effectif
-        v[siret].apart_entreprise = (v[siret].apart_entreprise || 0)  + v[siret].apart_heures_consommees
-        v[siret].debit_entreprise = (v[siret].debit_entreprise || 0) + v[siret].montant_part_patronale + v[siret].montant_part_ouvriere   
-      }
+      //if (v[siret]){  // always TRUE
+      //    var time = v[siret].periode.getTime()
+      entreprise.effectif_entreprise = (entreprise.effectif_entreprise || 0) + v[siret].effectif // initialized to null
+      entreprise.apart_entreprise = (entreprise.apart_entreprise || 0) + v[siret].apart_heures_consommees // initialized to 0
+      entreprise.debit_entreprise = (entreprise.debit_entreprise || 0) +
+        (v[siret].montant_part_patronale || 0) +
+        (v[siret].montant_part_ouvriere || 0) 
+      // not initialized
+      //}
     }
+  })
+
+  Object.keys(v).forEach(siret =>{ 
+      Object.assign(v[siret], entreprise) 
   })
 
   //
@@ -58,6 +64,7 @@ function finalize(k, v) {
         v[siret].outcome = false
     }
   })
+
   //une fois que les comptes sont faits...
   let output = []
   Object.keys(v).forEach(siret =>{

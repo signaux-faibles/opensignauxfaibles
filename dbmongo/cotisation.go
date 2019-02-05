@@ -78,7 +78,10 @@ func parseCotisation(paths []string) chan *Cotisation {
 }
 
 func importCotisation(batch *AdminBatch) error {
-	mapping, _ := getCompteSiretMapping(batch)
+  mapping, err := getCompteSiretMapping(batch)
+  if (err != nil){
+    journal(critical, "importCotisation", "Impossible d'ouvrir admin urssaf")
+  }
 
 	for cotisation := range parseCotisation(batch.Files["cotisation"]) {
 		if siret, ok := mapping[cotisation.NumeroCompte]; ok {
