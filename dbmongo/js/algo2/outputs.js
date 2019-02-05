@@ -7,7 +7,6 @@ function outputs (v, serie_periode) {
       "date_effectif": null,
       "apart_heures_consommees": 0,
       "apart_motif_recours": 0,
-      "debit_array": [],
       "etat_proc_collective": "in_bonis"
     }
   });

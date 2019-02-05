@@ -77,6 +77,7 @@ var importFunctions = map[string]func(*AdminBatch) error{
 	"debit":      importDebit,
 	"effectif":   importEffectif,
 	"sirene":     importSirene,
+  "interim":    importInterim,
 }
 
 //

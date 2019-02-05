@@ -1,4 +1,4 @@
-function apart (v, output_indexed) {
+function apart (v, output_indexed, output_array) {
   var apart = Object.keys(v.apdemande).reduce((apart, hash) => {
     apart[v.apdemande[hash].id_demande.substring(0, 9)] = {
       "demande": hash,

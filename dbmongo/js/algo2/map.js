@@ -8,7 +8,15 @@ function map () {
 
     if (v.debit) { f.debits(v) }
     if (v.effectif) {f.effectifs(v, output_array, output_indexed)}
-    if (v.apconso && v.apdemande) {f.apart(v, output_indexed)}
+
+    if (v.interim) {
+      let output_interim = f.interim(v.interim, output_indexed)
+      Object.keys(output_interim).forEach(periode => {
+        output_indexed[periode] = Object.assign(output_indexed[periode], output_interim[periode])
+      }) 
+    }
+    
+    if (v.apconso && v.apdemande) {f.apart(v, output_indexed, output_array)}
     if (v.delai) {f.delais(v, output_indexed)}
 
     v.altares = v.altares || {}
@@ -16,8 +24,10 @@ function map () {
 
     if (v.altares) {f.defaillances(v, output_indexed)}
     if (v.cotisations && v.debits) {f.cotisationsdettes(v, output_array, output_indexed)}
+
     if (v.ccsf) {f.ccsf(v, output_array)}
     if (v.sirene) {f.sirene(v, output_array)}
+
     f.naf(output_indexed, naf)
 
     f.cotisation(output_indexed, output_array)
@@ -37,7 +47,7 @@ function map () {
   if (v.scope == "entreprise") {
     var output_array = serie_periode.map(function (e) {
       return {
-        "siren": v.siren,
+        "siren": v.key,
         "periode": e,
         "exercice_bdf": 0,
         "arrete_bilan_bdf": new Date(0),

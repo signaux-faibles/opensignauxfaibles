@@ -77,24 +77,24 @@ func parseBDF(path []string) chan *BDF {
 }
 
 func importBDF(batch *AdminBatch) error {
-	journal(info, "importBDF", "Import du batch "+batch.ID.Key+": Banque de France")
+   journal(info, "importBDF", "Import du batch "+batch.ID.Key+": Banque de France")
 
-	for bdf := range parseBDF(batch.Files["bdf"]) {
-		hash := fmt.Sprintf("%x", structhash.Md5(bdf, 1))
+   for bdf := range parseBDF(batch.Files["bdf"]) {
+      hash := fmt.Sprintf("%x", structhash.Md5(bdf, 1))
 
-		value := Value{
-			Value: Data{
-				Scope: "entreprise",
-				Key:   bdf.Siren,
-				Batch: map[string]Batch{
-					batch.ID.Key: Batch{
-						BDF: map[string]*BDF{
-							hash: bdf,
-						}}}}}
-		db.ChanData <- &value
-	}
-	db.ChanData <- &Value{}
-	journal(info, "importBDF", "Fin de l'import du batch "+batch.ID.Key+": Banque de France")
-
-	return nil
+      value := Value{
+         Value: Data{
+            Scope: "entreprise",
+            Key:   bdf.Siren,
+            Batch: map[string]Batch{
+               batch.ID.Key: Batch{
+                  BDF: map[string]*BDF{
+                     hash: bdf,
+                  }}}}}
+      db.ChanData <- &value
+   }
+   db.ChanData <- &Value{}
+   journal(info, "importBDF", "Fin de l'import du batch "+batch.ID.Key+": Banque de France")
+ 
+   return nil
 }

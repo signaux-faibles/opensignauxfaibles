@@ -13,10 +13,12 @@ dbmongo/dbmongo
 .vscode/*
 dbmongo/static/*
 archive/*
-Rdir/RData/*
-Rdir/exploration/*
-Rdir/pipes/my_log_dir/*
-Rdir/pipes/RNNs/*
+rsignauxfaibles/RData/*
+rsignauxfaibles/exploration/*
+rsignauxfaibles/man/*
+rsignauxfaibles/logs/*
+rsignauxfaibles/tests/testthat/logs/*
+rsignauxfaibles/NAMESPACE
 dbmongo/config.toml*
 dbmongo/debug
 dbmongo/dbmongo

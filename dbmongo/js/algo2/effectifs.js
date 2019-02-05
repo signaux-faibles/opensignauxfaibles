@@ -9,7 +9,6 @@ function effectifs (v, output_array, output_indexed) {
     return map_effectif
   }, {})
 
-
   Object.keys(map_effectif).forEach(time =>{
     var time_d = new Date(parseInt(time))
     var time_offset = DateAddMonth(time_d, -offset_effectif -1)

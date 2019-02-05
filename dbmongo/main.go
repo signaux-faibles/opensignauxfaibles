@@ -137,12 +137,14 @@ func main() {
 		api.GET("/data/batch/purge", purgeBatchHandler)
 		api.GET("/data/import/:batch", importBatchHandler)
 		api.GET("/data/compact", compactHandler)
-		api.GET("/data/reduce/:algo/:batchKey", reduceHandler)
+    api.GET("/data/reduce/:algo/:batchKey", reduceHandler)
+    api.GET("/data/reduce/:algo/:batchKey/:key", reduceHandler)
 		api.POST("/data/search", searchRaisonSociale)
 		api.GET("/data/purge", purge)
 
 		api.GET("/data/public/:batch", publicHandler)
 
+		api.GET("/data/purgeNotCompacted", deleteHandler)
 		api.GET("/dashboard/tasks", getTasks)
 	}
 
