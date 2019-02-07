@@ -21,7 +21,6 @@ split_snapshot_rdm_month <- function(
   frac_train = 0.60,
   frac_val = 0.20) {
 
-
   if (data_sample %>% inherits("tbl_spark")){
 
     # split <- function(data_sample, split_vect){

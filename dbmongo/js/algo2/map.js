@@ -23,7 +23,7 @@ function map () {
     v.procol = v.procol || {}
 
     if (v.altares) {f.defaillances(v, output_indexed)}
-    if (v.cotisations && v.debits) {f.cotisationsdettes(v, output_array, output_indexed)}
+    if (v.cotisation && v.debit) {f.cotisationsdettes(v, output_array, output_indexed)}
 
     if (v.ccsf) {f.ccsf(v, output_array)}
     if (v.sirene) {f.sirene(v, output_array)}
@@ -31,6 +31,8 @@ function map () {
     f.naf(output_indexed, naf)
 
     f.cotisation(output_indexed, output_array)
+
+    f.cibleApprentissage(output_indexed)
 
     output_array.forEach(val => {
       let data = {}

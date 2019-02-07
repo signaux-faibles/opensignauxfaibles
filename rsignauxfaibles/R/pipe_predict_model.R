@@ -5,7 +5,6 @@ predict_model <- function(
     te_map,
     last_batch,
     actual_period,
-    algo,
     min_effectif,
     fields
   ){
@@ -16,7 +15,6 @@ predict_model <- function(
     last_batch,
     date_inf = actual_period %m-% months(1),
     date_sup = actual_period %m+% months(1),
-    algo = algorithm,
     min_effectif = min_effectif,
     fields = fields[fields != "outcome"]
     )

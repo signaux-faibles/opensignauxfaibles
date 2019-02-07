@@ -42,7 +42,6 @@ func loadJSFunctions(path string) (map[string]bson.JavaScript, error) {
 func reduceHandler(c *gin.Context) {
 	batchKey := c.Params.ByName("batchKey")
 	algo := c.Params.ByName("algo")
-	batchKey := c.Params.ByName("batchKey")
   key := c.Params.ByName("key")
   err := reduce(algo, batchKey, key)
   if err != nil {

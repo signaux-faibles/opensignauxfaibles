@@ -1,6 +1,8 @@
 function cotisationsdettes(v, output_array, output_indexed) {
   var value_cotisation = {}
 
+  var offset_cotisation = 1
+
   Object.keys(v.cotisation).forEach(function (h) {
     var cotisation = v.cotisation[h]
     var periode_cotisation = generatePeriodSerie(cotisation.periode.start, cotisation.periode.end)

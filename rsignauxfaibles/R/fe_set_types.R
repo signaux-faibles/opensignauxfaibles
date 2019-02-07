@@ -9,7 +9,7 @@
 #'
 #' @examples
 convert_to_h2o <- function(table_to_convert){
-  if (table_to_convert %>% inherits("tbl_spark")){
+  if (table_to_convert %>% inherits("tbl_spark")) {
 
     sc <- sparklyr::spark_connection_find()[[1]]
     h2o_table <- rsparkling::as_h2o_frame(sc, table_to_convert)
@@ -22,7 +22,7 @@ convert_to_h2o <- function(table_to_convert){
 
   }
   h2o_table <- set_h2o_types(h2o_table)
-  return (h2o_table)
+  return(h2o_table)
 }
 
 
@@ -36,12 +36,12 @@ convert_to_h2o <- function(table_to_convert){
 #' @examples
 set_h2o_types <- function(h2o_table){
 
-  fields <- names(h2o_table)[h2o.getTypes(h2o_table) == "string"]
+  fields <- names(h2o_table)[h2o::h2o.getTypes(h2o_table) == "string"]
 
   if ("outcome" %in% names(h2o_table)) fields <- c(fields, "outcome")
 
   aux_type_factor <- function(colname){
-      h2o_table[colname] <<- h2o.asfactor(h2o_table[colname])
+      h2o_table[colname] <<- h2o::h2o.asfactor(h2o_table[colname])
   }
 
   plyr::l_ply(fields, aux_type_factor)

@@ -3,7 +3,6 @@ light_gradient_boosting <- function(
   collection,
   actual_period,
   last_batch,
-  algorithm,
   min_effectif = 10,
   retrain_model = FALSE,
   training_date_inf = as.Date("2015-01-01"),
@@ -585,11 +584,10 @@ light_gradient_boosting <- function(
 
   if (retrain_model) {
 
-    data_frame <- connect_to_database(
+  data_frame <- connect_to_database(
       database,
       collection,
       last_batch,
-      algo = "algo2",
       siren = NULL,
       date_inf = "2015-01-01",
       date_sup = "2017-01-01",
@@ -597,7 +595,7 @@ light_gradient_boosting <- function(
       fields = fields,
       code_ape = NULL,
       type = type,
-      frac_periods = 1
+      limit = NULL
       )
 
     out <- prepare_frame_light_gradient_boosting(
@@ -627,7 +625,6 @@ light_gradient_boosting <- function(
     te_map,
     last_batch,
     actual_period,
-    algo = algorithm,
     min_effectif = min_effectif,
     fields = fields)
 
@@ -679,8 +676,7 @@ light_gradient_boosting <- function(
       export_fields = export_fields,
       database = database,
       collection = collection,
-      last_batch = last_batch,
-      algorithm = algorithm) %>%
+      last_batch = last_batch) %>%
   export(batch = last_batch)
 
 # Returns H2O frames and model

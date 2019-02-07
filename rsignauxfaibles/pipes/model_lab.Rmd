@@ -9,26 +9,27 @@ editor_options:
 
 ```{r setup, include=FALSE}
 devtools::load_all()
+knitr::opts_chunk$set(echo = FALSE)
 ```
 
 ## Script parameters
 ```{r}
 database <- "test_signauxfaibles"
-collection <- "test2"
-actual_period <- as.Date("2018-11-01")
-last_batch <- '1812'
-algorithm <- 'algo2'
-min_effectif <- 30
-type <- "spark"
+collection <- "Features"
+actual_period <- as.Date("2019-01-01")
+last_batch <- '1901_interim'
+min_effectif <- 10
+type <- "dataframe"
 ```
 
 ```{r}
 sc <- connect_to_spark(database, collection)
+connect_to_h2o()
 ```
 
 
 ## Fields to import / train on 
-```{r}
+```{r include = FALSE}
   fields <- c(
     "siret",
     "siren",
@@ -611,7 +612,6 @@ sc <- connect_to_spark(database, collection)
       database,
       collection,
       last_batch,
-      algo = "algo2",
       siren = NULL,
       date_inf = "2015-01-01",
       date_sup = "2017-01-01",
@@ -619,7 +619,7 @@ sc <- connect_to_spark(database, collection)
       fields = fields,
       code_ape = NULL,
       type = type,
-      frac_periods = 1
+      limit = 500000
       )
 ```
 

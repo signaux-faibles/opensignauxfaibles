@@ -18,7 +18,6 @@ database <- "test_signauxfaibles"
 collection <- "test2"
 actual_period <- as.Date("2018-11-01")
 last_batch <- '1901'
-algorithm <- 'algo2'
 min_effectif <- 10
 retrain_model <- TRUE
 type <- "spark"
@@ -34,7 +33,6 @@ res <- light_gradient_boosting(
   collection,
   actual_period, 
   last_batch, 
-  algorithm,
   min_effectif, 
   retrain_model = retrain_model,
   type = type)

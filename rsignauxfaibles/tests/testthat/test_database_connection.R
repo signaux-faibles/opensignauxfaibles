@@ -3,25 +3,24 @@ context("Check database connection")
 
 test_that("Les requêtes sont bien formées", {
   test_grid <- expand.grid(
-    batch = "1812", algo = "algo2", date_inf = c("2014-02-01", NA),
+    batch = "1812", date_inf = c("2014-02-01", NA),
     date_sup = c("2015-03-01", NA), min_effectif = c(10, NA),
     fields = c("siren", NA), siren = c("0123456789", NA), code_ape = c("A", NA),
-    frac_periods = 1,
+    limit = NULL,
     stringsAsFactors = FALSE)
 
   aux_null <- function(x) ifelse(is.na(x), return(NULL), return(x))
-  aux_test_function <- function(batch, algo, date_inf, date_sup, min_effectif,
-                                fields, siren, code_ape, frac_periods){
+  aux_test_function <- function(batch, date_inf, date_sup, min_effectif,
+                                fields, siren, code_ape, limit){
     req <- factor_request(
       batch = batch,
-      algo = algo,
       date_inf = aux_null(date_inf),
       date_sup = aux_null(date_sup),
       min_effectif = aux_null(min_effectif),
       fields = aux_null(fields),
       siren = aux_null(siren),
       code_ape = aux_null(code_ape),
-      frac_periods = frac_periods
+      limit = limit
     )
     expect_true( req %>% jsonlite::validate(),
                  info = req)
@@ -29,14 +28,13 @@ test_that("Les requêtes sont bien formées", {
 
   mapply(aux_test_function,
          test_grid$batch,
-         test_grid$algo,
          test_grid$date_inf,
          test_grid$date_sup,
          test_grid$min_effectif,
          test_grid$fields,
          test_grid$siren,
          test_grid$code_ape,
-         test_grid$frac_periods
+         test_grid$limit
   )
 })
 
@@ -47,7 +45,7 @@ test_procedure <- function(type){
   test_that(paste0(type, ": Une requête vide renvoie un dataframe vide"), {
     empty_query <- connect_to_database(
       "test_signauxfaibles", "test1",
-      "1812", "algo2", date_sup = "2001-01-01", fields = c("siret", "periode"),
+      "1812", date_sup = "2001-01-01", fields = c("siret", "periode"),
       type = type)
     expect_true(any(dim(empty_query %>% collect()) == 0))
   })
@@ -55,7 +53,7 @@ test_procedure <- function(type){
   test_that(paste0(type, ": Un champs vide est présent et complété avec des NA"), {
     missing_field <- connect_to_database(
       "test_signauxfaibles", "test1",
-      "1812", "algo2", fields = c("siret", "periode", "missing_field"),
+      "1812", fields = c("siret", "periode", "missing_field"),
       type = type)
 
     expect_true(all(is.na(
@@ -67,28 +65,26 @@ test_procedure <- function(type){
     "test_signauxfaibles",
     "test1",
     "1812",
-    algo = "algo2",
     siren = c("006280234", "007080260"),
     date_inf = "2016-01-01",
     min_effectif = 10,
     fields = NULL,
     code_ape = NULL,
     type = type,
-    frac_periods = 1
+    limit = NULL
   )
 
   test_frame_2 <- connect_to_database(
     "test_signauxfaibles",
     "test1",
     "1812",
-    algo = "algo2",
     siren = NULL,
     date_inf = NULL,
     min_effectif = NULL,
     fields = c("siret", "siren", "periode", "effectif", "code_naf"),
     code_ape = c("H"),
     type = type,
-    frac_periods = 1
+    limit = NULL
   )
 
   test_that(paste0(type, ": Les filtres fonctionnent comme espéré"), {

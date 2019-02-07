@@ -5,13 +5,12 @@
 #' @param export_fields
 #' @param database
 #' @param last_batch
-#' @param algorithm
 #'
 #' @return
 #' @export
 #'
 #' @examples
-prepare_for_export <- function(donnees, collection, export_fields, database, last_batch, algorithm){
+prepare_for_export <- function(donnees, collection, export_fields, database, last_batch){
 
   last_period  <- max(donnees$periode, na.rm = TRUE)
   cat("Préparation à l'export ... \n")
@@ -24,7 +23,6 @@ prepare_for_export <- function(donnees, collection, export_fields, database, las
     last_batch,
     date_inf = last_period,
     date_sup = last_period %m+% months(1),
-    algo = algorithm,
     min_effectif = 10,
     fields = export_fields[!export_fields %in% c("connu", "diff", "prob")]
   )

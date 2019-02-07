@@ -22,7 +22,7 @@ NULL
 #' @param code_ape code_ape à requêter, sous la forme "7112B"
 #' @param type Prend comme valeur "dataframe" pour extraire un dataframe dans R
 #'   (par défaut), "spark" pour extraire un spark dataframe.
-#' @param frac_periods Randomly samples frac_periods for each company
+#' @param limit Randomly samples company/period pairs. If negative, keeps all objects.
 #'
 #' @return Renvoie un dataframe ou un spark dataframe selon la valeur de
 #'   \code{type}
@@ -33,7 +33,6 @@ connect_to_database <- function(
   database,
   collection,
   batch,
-  algo = "algo2",
   siren = NULL,
   date_inf = NULL,
   date_sup = NULL,
@@ -41,20 +40,25 @@ connect_to_database <- function(
   fields = NULL,
   code_ape = NULL,
   type = "dataframe",
-  frac_periods = 1
-){
+  limit = NULL
+) {
 
   requete <- factor_request(
     batch,
-    algo,
     siren,
     date_inf,
     date_sup,
     min_effectif,
     fields,
     code_ape,
-    frac_periods
+    limit
   )
+
+  #cat("\n")
+  #cat(requete)
+  #cat("\n")
+
+
 
   TYPES <- c("dataframe", "spark")
 
@@ -62,7 +66,7 @@ connect_to_database <- function(
                           msg = "connect_to_database:
     specification du type d'import/export non valide")
 
-  if (type == TYPES[1]){
+  if (type == TYPES[1]) {
 
     cat("Connexion à la collection mongodb ...")
 
@@ -81,7 +85,7 @@ connect_to_database <- function(
 
     cat(" Fini.", "\n")
 
-    if (dim(donnees)[1] == 0){
+    if (dim(donnees)[1] == 0) {
       return(dplyr::data_frame(siret = character(0), periode = character(0)))
     }
     assertthat::assert_that(
@@ -107,24 +111,23 @@ connect_to_database <- function(
 
     cat(" Fini.", "\n")
 
-  } else if (type == TYPES[2]){
-
+  } else if (type == TYPES[2]) {
+    browser()
     cat("Ouverture de la connection spark", "\n")
 
     #FIX ME: neater way to deal with already open connection
     #spark_disconnect_all()
-    browser()
     sc <- sparklyr::spark_connection_find()[[1]]
 
     cat("Connection à MongoDB et import des donnees dans spark", "\n")
-    load <- sparklyr::invoke(spark_session(sc), "read") %>%
+    load <- sparklyr::invoke(sparklyr::spark_session(sc), "read") %>%
       sparklyr::invoke("format", "com.mongodb.spark.sql.DefaultSource") %>%
       sparklyr::invoke("option", "pipeline", requete) %>%
       sparklyr::invoke("load")
 
     table_wholesample <- sparklyr::sdf_register(load)
 
-    if (ncol(table_wholesample) == 0){
+    if (ncol(table_wholesample) == 0) {
       return(table_wholesample)
     }
 
@@ -143,14 +146,14 @@ connect_to_database <- function(
 
   # Champs manquants
   champs_manquants <- fields[!fields %in% tbl_vars(table_wholesample)]
-  if (length(champs_manquants) >= 1){
+  if (length(champs_manquants) >= 1) {
     cat("Champs manquants: ")
     cat(champs_manquants, "\n")
 
     cat("Remplacements par NA", "\n")
-    if (type == "dataframe"){
+    if (type == "dataframe") {
       NA_variable <- NA_character_
-    } else if (type == "spark"){
+    } else if (type == "spark") {
       NA_variable <- "NA_character_"
     }
     remplacement <- paste0(NA_variable, character(length(champs_manquants))) %>%
@@ -173,33 +176,32 @@ connect_to_database <- function(
 #' @rdname connect_to_database
 factor_request <- function(
   batch,
-  algo,
   siren,
   date_inf,
   date_sup,
   min_effectif,
   fields,
   code_ape,
-  frac_periods
+  limit
 ) {
   # Util functions
 
-  make_query  <- function(keyword, x){
+  make_query  <- function(keyword, x) {
     if (any(x != "")) return(paste0('{"$', keyword, '":{',
                                     paste0(x[x != ""], collapse = ', '), '}}'))
     else return("")
   }
 
   ## Construction de la requête ##
-  match_id  <- paste0('"_id.batch":"', batch, '","_id.algo":"', algo, '"')
+  match_id  <- paste0('"_id.batch":"', batch, '"')
 
   # Filtrage siren
 
-  if (is.null(siren)){
+  if (is.null(siren)) {
     match_siren <- ""
   } else {
     match_siren  <- c()
-    for (i in seq_along(siren)){
+    for (i in seq_along(siren)) {
       match_siren  <- c(
         match_siren,
         paste0('{"_id.siren":"', siren[i], '"}')
@@ -216,19 +218,26 @@ factor_request <- function(
   # Unwind du tableau
   unwind_req <- '{"$unwind":{"path": "$value"}}'
 
+  # Sample
+  if (is.null(limit)) {
+    sample_req <- ""
+  } else {
+    sample_req <- paste0('{"$sample": {"size": ', limit, '}}')
+  }
+
   # Filtrage code APE
 
-  if (is.null(code_ape)){
+  if (is.null(code_ape)) {
     match_APE <- ""
   } else {
     niveau_code_ape <- nchar(code_ape)
-    if (any(niveau_code_ape >= 2)){
+    if (any(niveau_code_ape >= 2)) {
       ape_or_naf <- "code_ape"
     } else {
       ape_or_naf <- "code_naf"
     }
     match_APE  <- c()
-    for (i in seq_along(code_ape)){
+    for (i in seq_along(code_ape)) {
       match_APE  <- c(
         match_APE,
         paste0('{"value.', ape_or_naf, '":
@@ -241,7 +250,7 @@ factor_request <- function(
   }
 
   # Filtrage effectif
-  if (is.null(min_effectif)){
+  if (is.null(min_effectif)) {
     match_eff <- ""
   } else {
     match_eff <- paste0(
@@ -250,7 +259,7 @@ factor_request <- function(
   }
 
   # Filtrage date
-  if (is.null(date_inf)){
+  if (is.null(date_inf)) {
     match_date_1  <- ""
   } else {
     match_date_1  <- paste0('"value.periode":{
@@ -258,7 +267,7 @@ factor_request <- function(
   }
 
   # Filtrage date
-  if (is.null(date_sup)){
+  if (is.null(date_sup)) {
     match_date_2  <- ""
   } else {
     match_date_2  <- paste0('"value.periode":{"$lt": {"$date":"', date_sup, 'T00:00:00Z"}}')
@@ -270,9 +279,11 @@ factor_request <- function(
 
   # Construction de la projection
 
-  if (is.null(fields)){
+  if (is.null(fields)) {
     projection_req  <- ""
   } else {
+    assertthat::assert_that(
+      all(c("periode", "siret") %in% fields))
     projection_req  <- paste0('"', fields, '":1')
     projection_req  <- paste(projection_req, collapse = ",")
     projection_req  <- paste0('{"$project":{', projection_req, "}}")
@@ -286,6 +297,7 @@ factor_request <- function(
   reqs <- c(
     match_req_1,
     unwind_req,
+    sample_req,
     match_req_2,
     new_root,
     projection_req
@@ -312,8 +324,8 @@ factor_request <- function(
 #' @export
 #'
 #' @examples
-connect_to_h2o <- function(){
-  h2o.init(
+connect_to_h2o <- function() {
+  h2o::h2o.init(
     ip = "localhost",
     port = 4444,
     min_mem_size = "5G",
@@ -322,7 +334,7 @@ connect_to_h2o <- function(){
 
 
 #' @rdname connect_to_h2o
-connect_to_spark <- function(database = NULL, collection = NULL){
+connect_to_spark <- function(database = NULL, collection = NULL) {
   config <- sparklyr::spark_config()
   config$sparklyr.defaultPackages <-
     c("org.mongodb.spark:mongo-spark-connector_2.11:2.4.0")
@@ -336,7 +348,7 @@ connect_to_spark <- function(database = NULL, collection = NULL){
   sc <- sparklyr::spark_connect(master = "local[*]", config = config)
 
   if ("spark.mongodb.input.uri" %in% sc$config &&
-      config$spark.mongodb.input.uri != sc$config$spark.mongodb.input.uri){
+      config$spark.mongodb.input.uri != sc$config$spark.mongodb.input.uri) {
     sparklyr::spark_disconnect_all()
     sc <- sparklyr::spark_connect(master = "local[*]", config = config)
   }
@@ -353,7 +365,6 @@ connect_to_spark <- function(database = NULL, collection = NULL){
 #' Attention, fonction non maintenue car plus utilisée. Faisais maladroitement appel à un fichier sh. Les données transitent dorénavant par Spark.
 #'
 #' @param database Nom de la base de donnée mongodb
-#' @param algo Nom de l'algo (pour l'instant, uniquement "algo2" fonctionnel)
 #' @param batch Numéro de batch, au format "AAMM"
 #' @param fields Liste de champs à extraire.
 #' @param min_effectif Limite minimale du filtrage sur l'effectif. NE FONCTIONNE PAS. POUR L'INSTANT EFFECTIF_MIN = 10.
@@ -362,7 +373,7 @@ connect_to_spark <- function(database = NULL, collection = NULL){
 #'
 #'
 #' @examples
-export_to_csv <- function(database, algo, batch, fields, min_effectif){
+export_to_csv <- function(database, algo, batch, fields, min_effectif) {
   path_1 <- rprojroot::find_rstudio_root_file(
     "..", "dbmongo", "export", "export.sh"
   )

@@ -62,7 +62,6 @@ prepare_frame_light_gradient_boosting <- function(
   validation_data = NULL,
   save_results = TRUE
 ) {
-  browser()
   with_validation <- !is.null(validation_data)
 
   h2o_train_data <- convert_to_h2o(train_data)

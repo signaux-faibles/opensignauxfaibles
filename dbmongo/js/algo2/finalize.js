@@ -47,23 +47,6 @@ function finalize(k, v) {
   ///
   //
 
-  Object.keys(v).forEach(siret => {
-    if (siret != "entreprise" && siret != "siren" && v[siret]){
-
-      if ("time_til_outcome" in v[siret] && 
-        v[siret].time_til_outcome <= 18){
-        //||
-        //(("arrete_bilan_diane" in v[siret] || "arrete_bilan_bdf" in v[siret]) && 
-        //  v[siret].time_til_outcome <= 30)) &&
-        //  !("arrete_bilan_diane" in v[siret] && v[siret].arrete_bilan_diane < key.periode &&  
-        //  generatePeriodSerie(key.periode, v[siret].arrete_bilan_diane).length >= 18)  &&
-        //!("arrete_bilan_bdf" in v[siret] && v[siret].arrete_bilan_bdf < key.periode && 
-        //  generatePeriodSerie(key.periode, v[siret].arrete_bilan_bdf).length >= 18)) {
-        v[siret].outcome = true
-      } else 
-        v[siret].outcome = false
-    }
-  })
 
   //une fois que les comptes sont faits...
   let output = []
