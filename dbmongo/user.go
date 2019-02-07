@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"crypto/rand"
+	"dbmongo/lib/engine"
 	"errors"
 	"fmt"
 	"html/template"
@@ -28,22 +29,22 @@ type login struct {
 
 // AdminUser object utilisateur mongodb
 type AdminUser struct {
-	ID             AdminID   `json:"_id" bson:"_id"`
-	HashedPassword []byte    `json:"hashedPassword,omitempty" bson:"hashedPassword,omitempty"`
-	HashedRecovery []byte    `json:"hashedRecovery,omitempty" bson:"hashedRecovery,omitempty"`
-	TimeRecovery   time.Time `json:"timeRecovery" bson:"timeRecovery"`
-	HashedCode     []byte    `json:"hashedCode,omitempty" bson:"hashedCode,omitempty"`
-	TimeCode       time.Time `json:"timeCode,omitempty" bson:"timeCode,omitempty"`
-	Cookies        []string  `json:"cookies" bson:"cookies"`
-	Level          string    `json:"level" bson:"level"`
-	FirstName      string    `json:"firstName" bson:"firstName"`
-	LastName       string    `json:"lastName" bson:"lastName"`
-	BrowserTokens  []string  `json:"browserTokens" bson:"browserTokens"`
-	Regions        []string  `json:"regions" bson:"regions"`
+	ID             engine.AdminID `json:"_id" bson:"_id"`
+	HashedPassword []byte         `json:"hashedPassword,omitempty" bson:"hashedPassword,omitempty"`
+	HashedRecovery []byte         `json:"hashedRecovery,omitempty" bson:"hashedRecovery,omitempty"`
+	TimeRecovery   time.Time      `json:"timeRecovery" bson:"timeRecovery"`
+	HashedCode     []byte         `json:"hashedCode,omitempty" bson:"hashedCode,omitempty"`
+	TimeCode       time.Time      `json:"timeCode,omitempty" bson:"timeCode,omitempty"`
+	Cookies        []string       `json:"cookies" bson:"cookies"`
+	Level          string         `json:"level" bson:"level"`
+	FirstName      string         `json:"firstName" bson:"firstName"`
+	LastName       string         `json:"lastName" bson:"lastName"`
+	BrowserTokens  []string       `json:"browserTokens" bson:"browserTokens"`
+	Regions        []string       `json:"regions" bson:"regions"`
 }
 
 func (user AdminUser) save() error {
-	err := db.DBStatus.C("Admin").Update(bson.M{"_id": user.ID}, user)
+	err := engine.Db.DBStatus.C("Admin").Update(bson.M{"_id": user.ID}, user)
 	return err
 }
 
@@ -65,7 +66,7 @@ func identityHandler(c *gin.Context) interface{} {
 
 func loginUser(username string, password string, browserToken string) (AdminUser, error) {
 	var user AdminUser
-	if err := db.DBStatus.C("Admin").Find(bson.M{"_id.type": "credential", "_id.key": username}).One(&user); err != nil {
+	if err := engine.Db.DBStatus.C("Admin").Find(bson.M{"_id.type": "credential", "_id.key": username}).One(&user); err != nil {
 		return AdminUser{}, err
 	}
 	err := bcrypt.CompareHashAndPassword(user.HashedPassword, []byte(password))
@@ -79,7 +80,7 @@ func loginUser(username string, password string, browserToken string) (AdminUser
 
 func loginUserWithCredentials(username string, password string) (AdminUser, error) {
 	var user AdminUser
-	if err := db.DBStatus.C("Admin").Find(bson.M{"_id.type": "credential", "_id.key": username}).One(&user); err != nil {
+	if err := engine.Db.DBStatus.C("Admin").Find(bson.M{"_id.type": "credential", "_id.key": username}).One(&user); err != nil {
 		return AdminUser{}, err
 	}
 	err := bcrypt.CompareHashAndPassword(user.HashedPassword, []byte(password))
@@ -91,7 +92,7 @@ func loginUserWithCredentials(username string, password string) (AdminUser, erro
 
 func loadUser(email string) (AdminUser, error) {
 	var user AdminUser
-	if err := db.DBStatus.C("Admin").Find(bson.M{"_id.type": "credential", "_id.key": email}).One(&user); err != nil {
+	if err := engine.Db.DBStatus.C("Admin").Find(bson.M{"_id.type": "credential", "_id.key": email}).One(&user); err != nil {
 		return AdminUser{}, err
 	}
 	return user, nil
@@ -138,7 +139,7 @@ func unauthorizedHandler(c *gin.Context, code int, message string) {
 func payload(data interface{}) jwt.MapClaims {
 	if v, ok := data.(AdminUser); ok {
 		return jwt.MapClaims{
-			identityKey: v.ID.Key,
+			"id": v.ID.Key,
 		}
 	}
 	return jwt.MapClaims{}

@@ -81,51 +81,6 @@
                   <v-divider></v-divider>
 
                   <v-list dense>
-                    <!-- <v-list-tile>
-                      <v-list-tile-content>BDF | Arrété Bilan</v-list-tile-content>
-                      <v-list-tile-content
-                      :class="(props.item.bdf[0]||{})['arrete_bilan']?'align-end':'nc align-end'"
-                      >
-
-                        {{ ((props.item.bdf[0]||{})['arrete_bilan'] || 'n/c').substring(0,10) }}
-                      </v-list-tile-content>
-                    </v-list-tile>
-                    <v-list-tile>
-                      <v-list-tile-content>BDF | Taux de marge</v-list-tile-content>
-                      <v-list-tile-content
-                      :class="(props.item.bdf[0]||{})['taux_marge']?'align-end':'nc align-end'"
-                      >
-                      {{ round((props.item.bdf[0]||{})['taux_marge'], 2) || 'n/c' }} %</v-list-tile-content>
-                    </v-list-tile>
-                    <v-list-tile>
-                      <v-list-tile-content>BDF | Frais Financier</v-list-tile-content>
-                      <v-list-tile-content
-                      :class="(props.item.bdf[0]||{})['frais_financier']?'align-end':'nc align-end'"
-                      >
-                      {{ round((props.item.bdf[0]||{})['frais_financier'], 2) || 'n/c' }} %</v-list-tile-content>
-                    </v-list-tile>
-                    <v-list-tile>
-                      <v-list-tile-content>BDF | Frais Financier CT</v-list-tile-content>
-                      <v-list-tile-content
-                      :class="(props.item.bdf[0]||{})['financier_court_terme']?'align-end':'nc align-end'"
-                      >
-                      {{ round((props.item.bdf[0]||{})['financier_court_terme'], 2) || 'n/c' }} %</v-list-tile-content>
-                    </v-list-tile>
-                    <v-list-tile>
-                      <v-list-tile-content>BDF | Délai Fournisseur</v-list-tile-content>
-                      <v-list-tile-content
-                      :class="(props.item.bdf[0])?'align-end':'nc align-end'"
-                      >
-                      {{ round((props.item.bdf[0]||{})['delai_fournisseur'], 2) || 'n/c' }} j</v-list-tile-content>
-                    </v-list-tile>
-                    <v-list-tile>
-                      <v-list-tile-content>BDF | Poids FRNG</v-list-tile-content>
-                      <v-list-tile-content
-                      :class="(props.item.bdf[0])?'align-end':'nc align-end'"
-                      >
-                      {{ round((props.item.bdf[0]||{})['poids_frng'], 2) || 'n/c' }} %</v-list-tile-content>
-                    </v-list-tile> -->
-
                     <v-list-tile>
                       <v-list-tile-content>Diane | Chiffre d'Affaire:</v-list-tile-content>
                       <v-list-tile-content
@@ -342,8 +297,8 @@ export default {
     }
   },
   mounted () {
-    // TODO: remplacer l'appel /data/etablissement par /data/public
-    this.$axios.get('/api/data/etablissement/'+ this.currentBatchKey + '/' + this.siret).then(response => {
+    // TODO: remplacer l'appel /data/etablissement par /data/public ?
+    this.$axios.get('/api/data/etablissement/' + this.currentBatchKey + '/' + this.siret).then(response => {
       this.etablissement = response.data.etablissement[0].value
       this.entreprise = response.data.entreprise[0].value
     })

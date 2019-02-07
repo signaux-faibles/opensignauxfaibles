@@ -1,7 +1,10 @@
 package main
 
 import (
+	"dbmongo/lib/engine"
 	"fmt"
+
+	"github.com/globalsign/mgo/bson"
 
 	"net/http"
 	"time"
@@ -19,8 +22,6 @@ import (
 	_ "./docs"
 )
 
-var db = initDB()
-
 var wsupgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
@@ -37,15 +38,13 @@ func wshandler(w http.ResponseWriter, r *http.Request, jwt string) {
 		fmt.Printf("Failed to set websocket upgrade: %+v", err)
 		return
 	}
-	channel := make(chan socketMessage)
-	addClientChannel <- channel
+	channel := make(chan engine.SocketMessage)
+	engine.AddClientChannel <- channel
 
 	for event := range channel {
 		conn.WriteJSON(event)
 	}
 }
-
-const identityKey = "id"
 
 // main Fonction Principale
 // @title API openSignauxFaibles
@@ -62,7 +61,8 @@ func main() {
 	// Lancer Rserve en background
 
 	// go r()
-	go messageSocketAddClient()
+	engine.Db = engine.InitDB()
+	go engine.MessageSocketAddClient()
 
 	r := gin.New()
 
@@ -74,7 +74,11 @@ func main() {
 	}
 
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"http://localhost:3000", "http://localhost:8080", "https://signaux.faibles.fr"}
+	if viper.GetBool("DEV") {
+		config.AllowOrigins = []string{"http://localhost:8080"}
+	} else {
+		config.AllowOrigins = []string{"https://signaux.faibles.fr"}
+	}
 	config.AddAllowHeaders("Authorization")
 	config.AddAllowMethods("GET", "POST")
 	r.Use(cors.New(config))
@@ -85,7 +89,7 @@ func main() {
 		SendCookie:      false,
 		Timeout:         time.Hour,
 		MaxRefresh:      time.Hour,
-		IdentityKey:     identityKey,
+		IdentityKey:     "id",
 		PayloadFunc:     payload,
 		IdentityHandler: identityHandler,
 		Authenticator:   authenticator,
@@ -118,57 +122,44 @@ func main() {
 	{
 		api.GET("/refreshToken", authMiddleware.RefreshHandler)
 
-		api.POST("/admin/batch", upsertBatch)
-		api.GET("/admin/batch", listBatch)
-		api.GET("/admin/files", adminFiles)
-		api.GET("/admin/types", listTypes)
-		// api.GET("/admin/clone/:to", cloneDB)
+		api.POST("/admin/batch", upsertBatchHandler)
+		api.GET("/admin/batch", listBatchHandler)
+		api.GET("/admin/files", adminFilesHandler)
+		api.GET("/admin/types", listTypesHandler)
+
 		api.GET("/admin/features", adminFeature)
-		api.GET("/admin/status", getDBStatus)
+
 		api.GET("/admin/getLogs", getLogsHandler)
-		api.GET("/admin/epoch", epoch)
+
 		api.GET("/admin/batch/next", nextBatchHandler)
 		api.GET("/admin/batch/process", processBatchHandler)
 		api.POST("/admin/files", addFile)
 
 		api.GET("/admin/batch/revert", revertBatchHandler)
 
-		api.GET("/data/naf", getNAF)
+		api.GET("/data/naf", nafHandler)
 		api.GET("/data/batch/purge", purgeBatchHandler)
-		api.GET("/data/import/:batch", importBatchHandler)
+		api.POST("/data/import", importBatchHandler)
 		api.GET("/data/compact", compactHandler)
-    api.GET("/data/reduce/:algo/:batchKey", reduceHandler)
-    api.GET("/data/reduce/:algo/:batchKey/:key", reduceHandler)
-		api.POST("/data/search", searchRaisonSociale)
-		api.GET("/data/purge", purge)
-
+		api.POST("/data/reduce", reduceHandler)
+		api.POST("/data/search", searchRaisonSocialeHandler)
+		api.GET("/data/purge", purgeHandler)
+		api.GET("/data/purgeNotCompacted", deleteHandler)
 		api.GET("/data/public/:batch", publicHandler)
 
-		api.GET("/data/purgeNotCompacted", deleteHandler)
-		api.GET("/dashboard/tasks", getTasks)
+		api.GET("/dashboard/tasks", getTasksHandler)
 	}
 
 	bind := viper.GetString("APP_BIND")
 	r.Run(bind)
 }
 
-func loadConfig() {
-	viper.SetConfigName("config")
-	viper.SetConfigType("toml")
-	viper.AddConfigPath("/etc/opensignauxfaibles")
-	viper.AddConfigPath("$HOME/.opensignauxfaibles")
-	viper.AddConfigPath(".")
-	viper.SetDefault("APP_BIND", ":3000")
-	viper.SetDefault("APP_DATA", "$HOME/data-raw/")
-	viper.SetDefault("DB_HOST", "127.0.0.1")
-	viper.SetDefault("DB_PORT", "27017")
-	viper.SetDefault("DB", "opensignauxfaibles")
-	viper.SetDefault("JWT_SECRET", "Secret à changer")
-	// viper.SetDefault("KANBOARD_ENDPOINT", "http://localhost/kanboard/jsonrpc.php")
-	// viper.SetDefault("KANBOARD_USERNAME", "admin")
-	// viper.SetDefault("KANBOARD_PASSWORD", "admin")
-	err := viper.ReadInConfig()
-	if err != nil {
-		panic("Erreur à la lecture de la configuration")
-	}
+func deleteHandler(c *gin.Context) {
+	var result []interface{}
+	engine.Db.DB.C("RawData").RemoveAll(bson.M{"_id": bson.M{"$type": "objectId"}})
+	c.JSON(200, result)
+}
+
+func getTasksHandler(c *gin.Context) {
+
 }

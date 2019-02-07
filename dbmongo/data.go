@@ -1,32 +1,12 @@
 package main
 
 import (
-	"errors"
-	"io/ioutil"
-	"regexp"
+	"dbmongo/lib/engine"
+	"dbmongo/lib/naf"
+
 	"github.com/gin-gonic/gin"
-	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
 )
-
-func loadJSFunctions(path string) (map[string]bson.JavaScript, error) {
-	files, err := ioutil.ReadDir(path)
-	r := regexp.MustCompile(`(.*)\.js$`)
-
-	functions := make(map[string]bson.JavaScript)
-
-	for _, f := range files {
-		if name := r.FindStringSubmatch(f.Name()); len(name) > 0 {
-			b, err := ioutil.ReadFile(path + f.Name())
-			if err == nil {
-				functions[name[1]] = bson.JavaScript{
-					Code: string(b),
-				}
-			}
-		}
-	}
-	return functions, err
-}
 
 //
 // @summary Lance un traitement de réduction
@@ -40,67 +20,46 @@ func loadJSFunctions(path string) (map[string]bson.JavaScript, error) {
 // @Success 200 {string} string ""
 // @Router /api/data/reduce/{algo}/{batch}/{siret} [get]
 func reduceHandler(c *gin.Context) {
-	batchKey := c.Params.ByName("batchKey")
-	algo := c.Params.ByName("algo")
-  key := c.Params.ByName("key")
-  err := reduce(algo, batchKey, key)
-  if err != nil {
+	var params struct {
+		BatchKey string
+		Algo     string
+		Key      string
+	}
+	err := c.ShouldBind(&params)
+	if err != nil {
+		c.JSON(400, err.Error())
+	}
+
+	var query bson.M
+	if params.Key != "" {
+		query = bson.M{"_id": query}
+	} else {
+		query = bson.M{"value.index." + params.Algo: true}
+	}
+
+	err = engine.Reduce(params.BatchKey, params.Algo, params.Key)
+	if err != nil {
 		c.JSON(500, err.Error())
 	} else {
 		c.JSON(200, "Traitement effectué")
 	}
 }
 
-func reduce(algo string, batchKey string, key string) error {
-	// éviter les noms d'algo essayant de pervertir l'exploration des fonctions
-	isAlphaNum := regexp.MustCompile(`^[A-Za-z0-9]+$`).MatchString
-	if !isAlphaNum(algo) {
-		return errors.New("nom d'algorithme invalide, alphanumérique sans espace exigé")
-	}
-  if !isAlphaNum(key) && key != "" {
-    return errors.New("Clé invalide, alphanumérique sans espace exigé")
-  }
+// func reduce(algo string, batchKey string, key string) error {
+// 	// éviter les noms d'algo essayant de pervertir l'exploration des fonctions
+// 	isAlphaNum := regexp.MustCompile(`^[A-Za-z0-9]+$`).MatchString
+// 	if !isAlphaNum(algo) {
+// 		return errors.New("nom d'algorithme invalide, alphanumérique sans espace exigé")
+// 	}
+// 	c.ShouldBind(params)
 
-	functions, err := loadJSFunctions("js/" + algo + "/")
-
-	naf, err = loadNAF()
-	if err != nil {
-		return err
-	}
-
-	batch, err := getBatch(batchKey)
-	if err != nil {
-		return err
-	}
-
-	scope := bson.M{
-		"date_debut":             batch.Params.DateDebut,
-		"date_fin":               batch.Params.DateFin,
-		"date_fin_effectif":      batch.Params.DateFinEffectif,
-		"serie_periode":          genereSeriePeriode(batch.Params.DateDebut, batch.Params.DateFin),
-		"serie_periode_annuelle": genereSeriePeriodeAnnuelle(batch.Params.DateDebut, batch.Params.DateFin),
-		"offset_effectif":        (batch.Params.DateFinEffectif.Year()-batch.Params.DateFin.Year())*12 + int(batch.Params.DateFinEffectif.Month()-batch.Params.DateFin.Month()),
-		"actual_batch":           batch.ID.Key,
-		"naf":                    naf,
-		"f":                      functions,
-		"batches":                getBatchesID(),
-		"types":                  getTypes(),
-	}
-
-	job := &mgo.MapReduce{
-		Map:      functions["map"].Code,
-		Reduce:   functions["reduce"].Code,
-		Finalize: functions["finalize"].Code,
-		Out:      bson.M{"merge": "Features"},
-		Scope:    scope,
-	}
-  if (key != "") {
-    _, err = db.DB.C("RawData").Find(bson.M{"_id": bson.M{"$regex": "^" + key[0:9]}}).MapReduce(job, nil)
-  } else {
-    _, err = db.DB.C("RawData").Find(bson.M{"value.index.algo2": true}).MapReduce(job, nil)
-  }
-  return err
-}
+// 	err := engine.Reduce(params.BatchKey, params.Algo, nil)
+// 	if err != nil {
+// 		c.JSON(500, err.Error())
+// 	} else {
+// 		c.JSON(200, "Traitement effectué")
+// 	}
+// }
 
 //
 // @summary Lance un traitement de compactage
@@ -114,7 +73,7 @@ func reduce(algo string, batchKey string, key string) error {
 // @Router /api/data/compact [get]
 // @Security ApiKeyAuth
 func compactHandler(c *gin.Context) {
-	err := compact()
+	err := engine.Compact()
 	if err != nil {
 		c.JSON(500, err.Error())
 		return
@@ -123,64 +82,6 @@ func compactHandler(c *gin.Context) {
 	c.JSON(200, "ok")
 }
 
-func compact() error {
-	batches, _ := getBatches()
-
-	// Détermination scope traitement
-	var completeTypes = make(map[string][]string)
-	var batchesID []string
-
-	for _, b := range batches {
-		completeTypes[b.ID.Key] = b.CompleteTypes
-		batchesID = append(batchesID, b.ID.Key)
-	}
-
-	functions, err := loadJSFunctions("js/compact/")
-	if err != nil {
-		return err
-	}
-	// Traitement MR
-	job := &mgo.MapReduce{
-		Map:      functions["map"].Code,
-		Reduce:   functions["reduce"].Code,
-		Finalize: functions["finalize"].Code,
-		Out:      bson.M{"replace": "RawData"},
-		Scope: bson.M{
-			"functions":     functions,
-			"batches":       getBatchesID(),
-			"types":         getTypes(),
-			"completeTypes": completeTypes,
-		},
-	}
-
-	_, err = db.DB.C("RawData").Find(nil).MapReduce(job, nil)
-
-	return err
-}
-
-func getTypes() []string {
-	return []string{
-		"altares",
-		"apconso",
-		"apdemande",
-		"ccsf",
-		"cotisation",
-		"debit",
-		"delai",
-		"effectif",
-		"sirene",
-		"dpae",
-		"bdf",
-		"diane",
-	}
-}
-
-func deleteHandler(c *gin.Context) {
-    var result []interface{}
-    db.DB.C("Etablissement").RemoveAll(bson.M{"_id": bson.M{"$type": "objectId"}})
-    db.DB.C("Entreprise").RemoveAll(bson.M{"_id": bson.M{"$type": "objectId"}})
-    c.JSON(200, result)
-}
 //
 // @summary Descriptif NAF
 // @description Liste tous les codes NAF, les descriptions des codes NAF et les liens entre le niveau 1 et le niveau 5
@@ -192,6 +93,20 @@ func deleteHandler(c *gin.Context) {
 // @Success 200 {string} string ""
 // @Router /api/data/compact [get]
 // @Security ApiKeyAuth
-func getNAF(c *gin.Context) {
-	c.JSON(200, naf)
+func nafHandler(c *gin.Context) {
+	c.JSON(200, naf.Naf)
+}
+
+//
+// @summary Purge la collection RawData
+// @description Suppression de tous les objets de données brutes contenus dans la collection RawData (irréversible)
+// @Tags Traitements
+// @accept  json
+// @produce  json
+// @Security ApiKeyAuth
+// @Success 200 {string} string ""
+// @Router /api/data/purge [get]
+func purgeHandler(c *gin.Context) {
+	info := engine.Purge()
+	c.JSON(200, info)
 }
