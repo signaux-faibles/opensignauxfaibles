@@ -183,17 +183,17 @@ factor_request <- function(
   fields,
   code_ape,
   limit
-) {
+  ) {
   # Util functions
 
   make_query  <- function(keyword, x) {
     if (any(x != "")) return(paste0('{"$', keyword, '":{',
-                                    paste0(x[x != ""], collapse = ', '), '}}'))
-    else return("")
+        paste0(x[x != ""], collapse = ', '), '}}'))
+  else return("")
   }
 
   ## Construction de la requête ##
-  match_id  <- paste0('"_id.batch":"', batch, '"')
+  match_id  <- paste0('"info.batch":"', batch, '"')
 
   # Filtrage siren
 
@@ -204,8 +204,8 @@ factor_request <- function(
     for (i in seq_along(siren)) {
       match_siren  <- c(
         match_siren,
-        paste0('{"_id.siren":"', siren[i], '"}')
-      )
+        paste0('{"info.siren":"', siren[i], '"}')
+        )
     }
 
     match_siren <- paste0('"$or":[', paste(match_siren, collapse = ","), "]")
@@ -213,7 +213,6 @@ factor_request <- function(
 
 
 
-  match_req_1 <- make_query("match", c(match_id, match_siren))
 
   # Unwind du tableau
   unwind_req <- '{"$unwind":{"path": "$value"}}'
@@ -241,77 +240,85 @@ factor_request <- function(
       match_APE  <- c(
         match_APE,
         paste0('{"value.', ape_or_naf, '":
-                        {"$regex":"^', code_ape[i], '", "$options":"i"}
-                        }')
-      )
-    }
-    match_APE <- paste0('"$or":[', paste(match_APE, collapse = ","), "]")
-    # FIX ME: Requete nettement sous-optimale
-  }
-
-  # Filtrage effectif
-  if (is.null(min_effectif)) {
-    match_eff <- ""
-  } else {
-    match_eff <- paste0(
-      '"value.effectif":{"$gte":',
-      min_effectif, "}")
-  }
-
-  # Filtrage date
-  if (is.null(date_inf)) {
-    match_date_1  <- ""
-  } else {
-    match_date_1  <- paste0('"value.periode":{
-      "$gte": {"$date":"', date_inf, 'T00:00:00Z"}}')
-  }
-
-  # Filtrage date
-  if (is.null(date_sup)) {
-    match_date_2  <- ""
-  } else {
-    match_date_2  <- paste0('"value.periode":{"$lt": {"$date":"', date_sup, 'T00:00:00Z"}}')
-
-  }
-
-  match_req_2 <- make_query("match",
-                            c(match_APE, match_eff, match_date_1, match_date_2))
-
-  # Construction de la projection
-
-  if (is.null(fields)) {
-    projection_req  <- ""
-  } else {
-    assertthat::assert_that(
-      all(c("periode", "siret") %in% fields))
-    projection_req  <- paste0('"', fields, '":1')
-    projection_req  <- paste(projection_req, collapse = ",")
-    projection_req  <- paste0('{"$project":{', projection_req, "}}")
-  }
-
-  # Remplacement de la racine
-
-  new_root <- "{\"$replaceRoot\" : {\"newRoot\": \"$value\"}}"
-  #new_root = ""
-
-  reqs <- c(
-    match_req_1,
-    unwind_req,
-    sample_req,
-    match_req_2,
-    new_root,
-    projection_req
+          {"$regex":"^', code_ape[i], '", "$options":"i"}
+    }')
     )
+  }
+  match_APE <- paste0('"$or":[', paste(match_APE, collapse = ","), "]")
+  # FIX ME: Requete nettement sous-optimale
+}
 
-  requete  <- paste(
-    reqs[reqs != ""],
-    collapse = ", ")
-  requete <- paste0(
-    "[",
-    requete,
-    "]")
+# Filtrage effectif
+if (is.null(min_effectif)) {
+  match_eff <- ""
+} else {
+  match_eff <- paste0(
+    '"value.effectif":{"$gte":',
+    min_effectif, "}")
+}
 
-  return(requete)
+# Filtrage date
+if (is.null(date_inf)) {
+  match_date_1  <- ""
+} else {
+  match_date_1  <- paste0('"info.periode":{
+    "$gte": {"$date":"', date_inf, 'T00:00:00Z"}}')
+}
+
+# Filtrage date
+if (is.null(date_sup)) {
+  match_date_2  <- ""
+} else {
+  match_date_2  <- paste0('"info.periode":{"$lt": {"$date":"', date_sup, 'T00:00:00Z"}}')
+
+}
+
+match_req <- make_query(
+  "match",
+  c(
+    match_id,
+    match_siren,
+    match_date_1,
+    match_date_2,
+    match_APE,
+    match_eff
+  ))
+
+# Construction de la projection
+
+if (is.null(fields)) {
+  projection_req  <- ""
+} else {
+  assertthat::assert_that(
+    all(c("periode", "siret") %in% fields))
+  projection_req  <- paste0('"', fields, '":1')
+  projection_req  <- paste(projection_req, collapse = ",")
+  projection_req  <- paste0('{"$project":{', projection_req, "}}")
+}
+
+# Remplacement de la racine
+
+new_root <- "{\"$replaceRoot\" : {\"newRoot\": \"$value\"}}"
+#new_root = ""
+
+reqs <- c(
+  #match_req_1,
+  #unwind_req,
+  match_req,
+  sample_req,
+  new_root,
+  projection_req
+  )
+
+requete  <- paste(
+  reqs[reqs != ""],
+  collapse = ", ")
+requete <- paste0(
+  "[",
+  requete,
+  "]")
+
+return(requete)
 
 }
 
