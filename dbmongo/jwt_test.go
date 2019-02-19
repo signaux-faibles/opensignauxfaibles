@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
@@ -20,7 +21,8 @@ func Test_forgeBrowserToken(t *testing.T) {
 
 	testToken := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVhdGVkIjoiMjAxNy0wMS0wMVQwMDowMDowMFoiLCJlbWFpbCI6InRlc3RldXJAZG9tYWluZS50ZXN0IiwiaXAiOiIxMC4xMC4xMC4xMCIsIm5hbWUiOiJ0ZXN0In0.3ZcIWjYmGwbfelDMoFzfBPLvcwa0sKDN14iuLX1bfeg"
 	browserToken, err := forgeBrowserToken(browser)
-
+	fmt.Println(browserToken)
+	fmt.Println(browser)
 	if err != nil {
 		t.Error("Erreur forgeBrowserToken: " + err.Error())
 	} else if browserToken.BrowserToken != testToken {
