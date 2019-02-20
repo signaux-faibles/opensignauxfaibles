@@ -18,7 +18,7 @@ import (
 // @Param batch query string true "Identifier du batch"
 // @Security ApiKeyAuth
 // @Success 200 {string} string ""
-// @Router /api/data/reduce/{algo}/{batch}/{siret} [get]
+// @Router /api/data/reduce/{algo}/{batch}/{key} [get]
 func reduceHandler(c *gin.Context) {
 	var params struct {
 		BatchKey string `json:"batch"`
@@ -32,12 +32,12 @@ func reduceHandler(c *gin.Context) {
 
 	var query bson.M
 	if params.Key != "" {
-		query = bson.M{"_id": query}
+		query = bson.M{"_id": params.Key}
 	} else {
 		query = bson.M{"value.index." + params.Algo: true}
 	}
 
-	err = engine.Reduce(params.BatchKey, params.Algo, params.Key)
+	err = engine.Reduce(params.BatchKey, params.Algo, query)
 	if err != nil {
 		c.JSON(500, err.Error())
 	} else {
