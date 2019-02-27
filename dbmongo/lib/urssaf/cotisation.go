@@ -8,6 +8,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+  "time"
 
 	"github.com/chrnin/gournal"
 	"github.com/spf13/viper"
@@ -41,7 +42,7 @@ func (cotisation Cotisation) Type() string {
 }
 
 // ParseCotisation transforme les fichiers en données à intégrer
-func parseCotisation(batch engine.AdminBatch, mapping map[string]string) (chan engine.Tuple, chan engine.Event) {
+func parseCotisation(batch engine.AdminBatch, mapping Comptes) (chan engine.Tuple, chan engine.Event) {
 	outputChannel := make(chan engine.Tuple)
 	eventChannel := make(chan engine.Event)
 
@@ -87,7 +88,10 @@ func parseCotisation(batch engine.AdminBatch, mapping map[string]string) (chan e
 					break
 				} else if err != nil {
 				} else {
-					if siret, ok := mapping[row[field["NumeroCompte"]]]; ok {
+          date, err := urssafToDate(row[field["Periode"]])
+          if err != nil { date = time.Now() }
+
+          if siret, ok := mapping.GetSiret(row[field["NumeroCompte"]], date); ok == nil {
 						cotisation := Cotisation{}
 						cotisation.key = siret
 						cotisation.NumeroCompte = row[field["NumeroCompte"]]

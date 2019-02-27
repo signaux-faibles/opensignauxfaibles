@@ -51,7 +51,7 @@ func parseEffectifPeriod(effectifPeriods []string) ([]time.Time, error) {
 }
 
 // Parser retourne un channel fournissant des données extraites
-func parseEffectif(batch engine.AdminBatch, mapping map[string]string) (chan engine.Tuple, chan engine.Event) {
+func parseEffectif(batch engine.AdminBatch, mapping Comptes) (chan engine.Tuple, chan engine.Event) {
 	outputChannel := make(chan engine.Tuple)
 	eventChannel := make(chan engine.Event)
 	event := engine.Event{

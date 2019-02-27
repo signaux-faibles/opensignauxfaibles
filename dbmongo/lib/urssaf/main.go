@@ -4,7 +4,7 @@ import (
 	"dbmongo/lib/engine"
 )
 
-type parserFunc func(batch engine.AdminBatch, mapping map[string]string) (chan engine.Tuple, chan engine.Event)
+type parserFunc func(batch engine.AdminBatch, mapping Comptes) (chan engine.Tuple, chan engine.Event)
 
 // Parser fournit le contenu des fichiers urssaf
 func Parser(batch engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {

@@ -47,7 +47,7 @@ func (debit Debit) Type() string {
 	return "debit"
 }
 
-func parseDebit(batch engine.AdminBatch, mapping map[string]string) (chan engine.Tuple, chan engine.Event) {
+func parseDebit(batch engine.AdminBatch, mapping Comptes) (chan engine.Tuple, chan engine.Event) {
 	outputChannel := make(chan engine.Tuple)
 	eventChannel := make(chan engine.Event)
 
@@ -104,7 +104,9 @@ func parseDebit(batch engine.AdminBatch, mapping map[string]string) (chan engine
 					break
 				}
 
-				if siret, ok := mapping[row[numeroCompteIndex]]; ok {
+        date, err := urssafToDate(row[periodeIndex])
+        if err != nil { date = time.Now() }
+				if siret, ok := mapping.GetSiret(row[numeroCompteIndex], date); ok == nil {
 
 					debit := Debit{
 						key:                       siret,

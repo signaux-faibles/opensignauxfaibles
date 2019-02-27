@@ -48,7 +48,7 @@ func (delai Delai) Type() string {
 }
 
 // Parser fonction d'extraction des délais
-func parseDelai(batch engine.AdminBatch, mapping map[string]string) (chan engine.Tuple, chan engine.Event) {
+func parseDelai(batch engine.AdminBatch, mapping Comptes) (chan engine.Tuple, chan engine.Event) {
 	outputChannel := make(chan engine.Tuple)
 	eventChannel := make(chan engine.Event)
 
@@ -99,7 +99,9 @@ func parseDelai(batch engine.AdminBatch, mapping map[string]string) (chan engine
 						event.Debug(tracker.Report("invalidLine"))
 						break
 					} else {
-						if siret, ok := mapping[row[field["NumeroCompte"]]]; ok {
+            date, err := time.Parse("2006-01-02", row[field["DateCreation"]])
+            if err != nil { date = time.Now() }
+						if siret, ok := mapping.GetSiret(row[field["NumeroCompte"]], date); ok == nil {
 							delai := Delai{}
 							delai.key = siret
 							delai.NumeroCompte = row[field["NumeroCompte"]]

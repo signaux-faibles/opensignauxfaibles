@@ -19,6 +19,9 @@ rsignauxfaibles/man/*
 rsignauxfaibles/logs/*
 rsignauxfaibles/tests/testthat/logs/*
 rsignauxfaibles/NAMESPACE
+*.Rcheck
+rsignauxfaibles/**/*.model
+rsignauxfaibles/**/*.temap
 dbmongo/config.toml*
 dbmongo/debug
 dbmongo/dbmongo
@@ -30,3 +33,4 @@ dbmongo/tools/fakeData/config.toml
 *.patch
 dbmongo/js/node_modules
 dbmongo/export/mongo_dump
+**/tags
