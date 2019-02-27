@@ -319,7 +319,13 @@ connect_to_h2o()
     "code_ape_niveau3",
     "code_naf",
     # PROCOL
-    "outcome"
+    "outcome",
+    # INTERIM
+    "interim_proportion",
+    "interim_ratio_past_6",
+    "interim_ratio_past_12",
+    "interim_ratio_past_18",
+    "interim_ratio_past_24"
     )
 
   x_fields_model <- c(
@@ -603,6 +609,16 @@ connect_to_h2o()
     "TargetEncode_code_ape_niveau2",
     "TargetEncode_code_ape_niveau3"
     )
+
+x_fields_test <- c(
+  x_fields_model,
+  # INTERIM 
+  "interim_proportion",
+  "interim_ratio_past_6",
+  "interim_ratio_past_12",
+  "interim_ratio_past_18",
+  "interim_ratio_past_24"
+)
 ```
 
 ## Load data
@@ -652,8 +668,8 @@ model <- train_light_gradient_boosting(
 ## Model performance
 ```{r}
 cat(model@model$validation_metrics@metrics$pr_auc)
-plotPR(model, h2o_train_sample)
-```
+plotPR(model, h2o_train_sample, new_fig = FALSE)
+plotPR(model, h2o_val_sample, new_fig = FALSE)```
 
 ## Model testing 
 ```{r}

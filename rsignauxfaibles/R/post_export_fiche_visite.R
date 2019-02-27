@@ -1,9 +1,9 @@
 export_fiche_visite <- function(
   sirets,
   database = "test_signauxfaibles",
-  collection = "Features",
+  collection = "Features_a_plat",
   batch,
-  with_urssaf = FALSEfolde,
+  with_urssaf = FALSE,
   folder = batch){
 
 
@@ -25,7 +25,6 @@ export_fiche_visite <- function(
     raison_sociale <- elementary_info %>%
       .$raison_sociale
 
-
     rmarkdown::render("/home/pierre/Documents/opensignauxfaibles/rsignauxfaibles/R/post_fiche_visite.Rmd",
       params  = list(
         siret = sirets[i],
@@ -34,7 +33,7 @@ export_fiche_visite <- function(
         collection = collection,
         with_urssaf = with_urssaf
       ),
-      output_file = paste0("/home/pierre/Documents/opensignauxfaibles/output/Fiches/", folder, "/Fiche_visite_", raison_sociale, ".pdf"),
+      output_file = paste0("/home/pierre/Documents/opensignauxfaibles/output/Fiches/", folder, "/Fiche_visite_", stringr::str_replace_all(raison_sociale, "[^[:alnum:]]", "_"), ".pdf"),
       clean = TRUE
     )
     }

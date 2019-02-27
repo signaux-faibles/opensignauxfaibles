@@ -9,32 +9,41 @@ AUCPR <- function(y_pred, y_true){
 
 # define custom callback class
 
-AUCPR_keras_callback <- function(){
-  AUCPR_keras <- R6::R6Class("AUCPR_keras_callback",
-                             inherit = KerasCallback,
+#AUCPR_keras_callback <- function(){
+#  AUCPR_keras <- R6::R6Class("AUCPR_keras_callback",
+#                             inherit = KerasCallback,
+#
+#                             public = list(
+#
+#                               AUCPR = NULL,
+#
+#                               on_epoch_end = function(epoch, logs = list()) {
+#                                 X_val = self.validation_data[0]
+#                                 Y_val = self.validation_data[1]
+#                                 Y_predict = model.predict(X_val)
+#                                 self$AUCPR <- c(self$AUCPR,
+#                                                 AUCPR(
+#                                                   y_true = Y_val,
+#                                                   y_pred = Y_predict)
+#                                 )
+#                                 cat(self$AUCPR)
+#                               }
+#                             ))
+#
+#  return(AUCPR$new())
+#}
 
-                             public = list(
-
-                               AUCPR = NULL,
-
-                               on_epoch_end = function(epoch, logs = list()) {
-                                 X_val = self.validation_data[0]
-                                 Y_val = self.validation_data[1]
-                                 Y_predict = model.predict(X_val)
-                                 self$AUCPR <- c(self$AUCPR,
-                                                 AUCPR(
-                                                   y_true = Y_val,
-                                                   y_pred = Y_predict)
-                                 )
-                                 cat(self$AUCPR)
-                               }
-                             ))
-
-  return(AUCPR$new())
-}
-
+#' Title
+#'
+#' @param predicted
+#' @param outcome
+#'
+#' @return
+#' @export
+#'
+#' @examples
 pr.F1 <- function(predicted, outcome){
-  PR <-  pr.curve(scores.class0 = predicted,
+  PR <-  PRROC::pr.curve(scores.class0 = predicted,
                   weights.class0 =  as.numeric(outcome),
                   curve = TRUE)
 
@@ -53,10 +62,11 @@ pr.F1 <- function(predicted, outcome){
 #' @examples
 plotPR <- function(model, my_data, new_fig = TRUE, model_objective = "outcome"){
   if (new_fig)  plot(1, type = 'n', xlab = "recall", ylab = "precision", xlim = c(0,1), ylim = c(0,1))
-
   perf <- h2o::h2o.performance(model, newdata = my_data)
   pred <- h2o::h2o.predict(model, my_data)
-  true_res <- as.vector(as.numeric(my_data[model_objective]))
+
+  true_res <- as.vector(h2o::as.numeric(my_data[model_objective]))
+
 
 
   precision <- h2o::h2o.precision(perf)
@@ -66,13 +76,13 @@ plotPR <- function(model, my_data, new_fig = TRUE, model_objective = "outcome"){
   F2 <- h2o::h2o.F2(perf)
   precision_F2 <- precision$precision[which.max(F2$f2)]
   recall_F2 <- recall$tpr[which.max(F2$f2)]
-  points(recall_F2, precision_F2, col = 'red', pch= 4)
+  points(recall_F2, precision_F2, col = 'red', pch = 4)
   text(recall_F2, precision_F2,'F2', pos = 4, col = 'red')
 
   F1 <- h2o::h2o.F1(perf)
   precision_F1 <- precision$precision[which.max(F1$f1)]
   recall_F1 <- recall$tpr[which.max(F1$f1)]
-  points(recall_F1, precision_F1, col = 'green', pch= 4)
+  points(recall_F1, precision_F1, col = 'green', pch = 4)
   text(recall_F1, precision_F1,'F1', pos = 4, col = 'green')
 
 

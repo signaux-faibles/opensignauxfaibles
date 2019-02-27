@@ -1,15 +1,17 @@
-light_gradient_boosting <- function(
-  database,
-  collection,
-  actual_period,
-  last_batch,
-  min_effectif = 10,
-  retrain_model = FALSE,
-  training_date_inf = as.Date("2015-01-01"),
-  training_date_sup = as.Date("2017-01-01"),
-  type = "spark") {
+context("test the field names")
 
-  fields <- c(
+
+compare_fields <- function(actual_fields, expected_fields){
+  expect_equal(
+    sort(actual_fields), sort(expected_fields),
+    info =  paste("Only in expected: ", expected_fields[!expected_fields %in% actual_fields],
+      "\nOnly in actual: ", actual_fields[!actual_fields %in% expected_fields]))
+}
+
+test_that("get fields does not change the fields queried
+  (default behavior)", {
+  actual_fields  <- get_fields(training = FALSE)
+  expected_fields <- c(
     "siret",
     "siren",
     "periode",
@@ -44,7 +46,6 @@ light_gradient_boosting <- function(
     # ALTARES
     "etat_proc_collective",
     # DIANE
-    "exercice_diane",
     "dette_fiscale_et_sociale",
     "effectif_consolide",
     "frais_de_RetD",
@@ -53,7 +54,6 @@ light_gradient_boosting <- function(
     "nombre_etab_secondaire",
     "nombre_filiale",
     "taille_compo_groupe",
-    "arrete_bilan_diane",
     "concours_bancaire_courant",
     "equilibre_financier",
     "independance_financiere",
@@ -297,10 +297,18 @@ light_gradient_boosting <- function(
     "code_ape_niveau3",
     "code_naf",
     # PROCOL
-    "outcome"
+    "outcome",
+    "time_til_outcome"
     )
+  compare_fields(actual_fields, expected_fields)
+}
+)
 
-  x_fields_model <- c(
+test_that("get fields does not change the fields queried
+  (training behavior)",{
+
+  actual_fields <- get_fields(training = TRUE)
+  expected_fields <- c(
     "age",
     # URSSAF
     "montant_part_patronale",
@@ -581,104 +589,6 @@ light_gradient_boosting <- function(
     "TargetEncode_code_ape_niveau2",
     "TargetEncode_code_ape_niveau3"
     )
-
-  if (retrain_model) {
-
-  data_frame <- connect_to_database(
-      database,
-      collection,
-      last_batch,
-      siren = NULL,
-      date_inf = "2015-01-01",
-      date_sup = "2017-01-01",
-      min_effectif = min_effectif,
-      fields = fields,
-      code_ape = NULL,
-      type = type,
-      limit = NULL
-      )
-
-    out <- prepare_frame_light_gradient_boosting(
-      train_data = data_frame,
-      save_results = TRUE
-    )
-
-
-    train_data <- out[["train_data"]]
-    te_map <- out[["te_map"]]
-
-    model <- train_light_gradient_boosting(
-      h2o_train_data = train_data,
-      x_fields_model = x_fields_model,
-      save_results = TRUE
-      )
-
-  } else {
-    model <- load_h2o_object("lgb", "model", last = TRUE)
-    te_map <- load_h2o_object("te_map", "temap", last = TRUE)
-  }
-
-  pred_data <- predict_model(
-    model,
-    database,
-    collection,
-    te_map,
-    last_batch,
-    actual_period,
-    min_effectif = min_effectif,
-    fields = fields)
-
-
-
-  export_fields <-  c(
-    "siret",
-    "periode",
-    "raison_sociale",
-    "departement",
-    "region",
-    "prob",
-    "diff",
-    "connu",
-    "date_ccsf",
-    "etat_proc_collective",
-    "date_proc_collective",
-    "interessante_urssaf",
-    #"default_urssaf",
-    "effectif",
-    "libelle_naf",
-    "libelle_ape5",
-    "code_ape",
-    "montant_part_ouvriere",
-    "montant_part_patronale",
-    "ca",
-    "ca_past_1",
-    "benefice_ou_perte",
-    "benefice_ou_perte_past_1",
-    "resultat_expl",
-    "resultat_expl_past_1",
-    "poids_frng",
-    "taux_marge",
-    "frais_financier",
-    "financier_court_terme",
-    "delai_fournisseur",
-    "dette_fiscale",
-    "apart_heures_consommees",
-    "apart_heures_autorisees",
-    "cotisation_moy12m",
-    "montant_majorations",
-    "exercice_bdf",
-    "exercice_diane"
-    )
-
-  # Export
-  pred_data %>%
-    prepare_for_export(
-      export_fields = export_fields,
-      database = database,
-      collection = collection,
-      last_batch = last_batch) %>%
-  export(batch = last_batch)
-
-# Returns H2O frames and model
-return(TRUE)
+  compare_fields(actual_fields, expected_fields)
 }
+)

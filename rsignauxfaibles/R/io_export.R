@@ -10,7 +10,14 @@
 #' @export
 #'
 #' @examples
-prepare_for_export <- function(donnees, collection, export_fields, database, last_batch){
+prepare_for_export <- function(
+  donnees,
+  collection,
+  export_fields,
+  database,
+  last_batch,
+  known_sirens_filenames = c("sirets_connus_pdl.csv", "sirets_connus_bfc.csv")
+){
 
   last_period  <- max(donnees$periode, na.rm = TRUE)
   cat("Préparation à l'export ... \n")
@@ -36,7 +43,7 @@ prepare_for_export <- function(donnees, collection, export_fields, database, las
   # Report des dernières infos financieres connues
 
   donnees <- donnees %>%
-    mark_known_sirets(name = "sirets_connus.csv") %>%
+    mark_known_sirets(names = known_sirens_filenames) %>%
     select(export_fields)
 
   all_names <- names(donnees)
@@ -52,7 +59,7 @@ prepare_for_export <- function(donnees, collection, export_fields, database, las
 
 
 
-#' Title
+#' Exports a dataframe to csv
 #'
 #' @param donnees
 #' @param batch
@@ -106,12 +113,14 @@ export <- function(
   }
 }
 
-mark_known_sirets <- function(df, name){
-  sirets <-readLines(rprojroot::find_rstudio_root_file('..','data-raw',name))
-  sirens <- substr(sirets,1,9)
-
+mark_known_sirets <- function(df, names){
+  sirens <- c()
+  for (name in names) {
+    sirets <- readLines(rprojroot::find_rstudio_root_file('..','data-raw',name))
+    sirens <- c(sirens, substr(sirets,1,9))
+  }
   df <- df %>%
-    mutate(connu = as.numeric(substr(siret,1,9) %in% sirens))
+    dplyr::mutate(connu = as.numeric(substr(siret,1,9) %in% sirens))
 
   return(df)
 }
