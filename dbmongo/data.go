@@ -31,13 +31,17 @@ func reduceHandler(c *gin.Context) {
 	}
 
 	var query bson.M
+  var collection string
 	if params.Key != "" {
 		query = bson.M{"_id": params.Key}
+    collection = "Features_debug"
 	} else {
 		query = bson.M{"value.index." + params.Algo: true}
+    collection = "Features"
 	}
 
-	err = engine.Reduce(params.BatchKey, params.Algo, query)
+
+	err = engine.Reduce(params.BatchKey, params.Algo, query, collection)
 	if err != nil {
 		c.JSON(500, err.Error())
 	} else {

@@ -6,7 +6,6 @@ import (
 	"errors"
 	"io/ioutil"
 	"regexp"
-
 	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
 )
@@ -91,7 +90,7 @@ func Compact() error {
 }
 
 // Reduce alimente la base Features
-func Reduce(batchKey string, algo string, query interface{}) error {
+func Reduce(batchKey string, algo string, query interface{}, collection string) error {
 	// éviter les noms d'algo essayant de pervertir l'exploration des fonctions
 	isAlphaNum := regexp.MustCompile(`^[A-Za-z0-9]+$`).MatchString
 	if !isAlphaNum(algo) {
@@ -128,11 +127,23 @@ func Reduce(batchKey string, algo string, query interface{}) error {
 		Map:      functions["map"].Code,
 		Reduce:   functions["reduce"].Code,
 		Finalize: functions["finalize"].Code,
-		Out:      bson.M{"merge": "Features"},
+		Out:      bson.M{"merge": collection},
 		Scope:    scope,
 	}
 
 	_, err = Db.DB.C("RawData").Find(query).MapReduce(job, nil)
+
+  if err != nil { return err }
+  query2 := []bson.M{{
+            "$unwind" : bson.M{"path" : "$value", "preserveNullAndEmptyArrays" : false},
+        },
+        {
+            "$project" : bson.M{"_id" : 0.0, "info" : "$_id", "value" : 1.0},
+        },
+        { "$out" : collection }}
+  pipe := Db.DB.C(collection).Pipe(query2)
+  resp := []bson.M{}
+  err = pipe.All(&resp)
 
 	return err
 }

@@ -138,7 +138,7 @@ func ProcessBatch(batchList []string) error {
 	}
 
 	batch := LastBatch()
-	return Reduce(batch.ID.Key, "algo2", nil)
+	return Reduce(batch.ID.Key, "algo2", nil, "Features")
 }
 
 // LastBatch retourne le dernier batch
