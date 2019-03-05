@@ -127,7 +127,7 @@ func Reduce(batchKey string, algo string, query interface{}, collection string) 
 		Map:      functions["map"].Code,
 		Reduce:   functions["reduce"].Code,
 		Finalize: functions["finalize"].Code,
-		Out:      bson.M{"merge": collection},
+		Out:      collection, //bson.M{"merge": collection},
 		Scope:    scope,
 	}
 
