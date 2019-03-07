@@ -134,7 +134,7 @@ func processBatchHandler(c *gin.Context) {
 	}
 	err := c.ShouldBind(query)
 	if err != nil {
-		c.JSON(400, err.Error)
+		c.JSON(400, err.Error())
 	}
 
 	// TODO: valider que tous les batches demandés existent
