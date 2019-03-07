@@ -14,7 +14,7 @@ import (
 	"fmt"
 	"io"
 	"os"
-
+  "errors"
 	"github.com/davecgh/go-spew/spew"
 	"github.com/gin-gonic/gin"
 	"github.com/globalsign/mgo/bson"
@@ -132,15 +132,22 @@ func processBatchHandler(c *gin.Context) {
 	var query struct {
 		Batches []string `json:"batches"`
 	}
-	err := c.ShouldBind(query)
+	err := c.ShouldBind(&query)
+
+
 	if err != nil {
 		c.JSON(400, err.Error())
+    return
 	}
-
 	// TODO: valider que tous les batches demandés existent
-	err = engine.ProcessBatch(query.Batches)
+  parsers , err := resolveParsers(nil)
+  if err != nil {
+				c.JSON(404, err.Error())
+  }
+	err = engine.ProcessBatch(query.Batches, parsers)
 	if err != nil {
 		c.JSON(500, err.Error())
+    return
 	}
 	c.JSON(200, "ok !")
 }
@@ -205,22 +212,10 @@ func importBatchHandler(c *gin.Context) {
 	batch := engine.AdminBatch{}
 	batch.Load(params.BatchKey)
 
-	var parsers []engine.Parser
-	if params.Parsers == nil {
-		for _, f := range registeredParsers {
-			parsers = append(parsers, f)
-		}
-	} else {
-		for _, p := range params.Parsers {
-			if f, ok := registeredParsers[p]; ok {
-				parsers = append(parsers, f)
-			} else {
-				c.JSON(404, p+" n'est pas un parser reconnu.")
-				return
-			}
-		}
-	}
-
+  parsers , err := resolveParsers(params.Parsers)
+  if err != nil {
+				c.JSON(404, err.Error())
+  }
 	engine.ImportBatch(batch, parsers)
 }
 
@@ -247,4 +242,24 @@ func getTasksHandler(c *gin.Context) {
 func browsePublicHandler(c *gin.Context) {
 	data := engine.BrowsePublic(nil)
 	c.JSON(200, data)
+}
+
+
+// Vérifie et charge les parsers
+func resolveParsers(parserNames []string) ([]engine.Parser, error) {
+	var parsers []engine.Parser
+	if parserNames == nil {
+		for _, f := range registeredParsers {
+			parsers = append(parsers, f)
+		}
+	} else {
+		for _, p := range parserNames {
+			if f, ok := registeredParsers[p]; ok {
+				parsers = append(parsers, f)
+			} else {
+				return parsers, errors.New(p+" n'est pas un parser reconnu.")
+			}
+		}
+	}
+  return parsers, nil
 }

@@ -125,11 +125,12 @@ func ImportBatch(batch AdminBatch, parsers []Parser) error {
 }
 
 // ProcessBatch traitement ad-hoc modifiable pour les besoins du développement
-func ProcessBatch(batchList []string) error {
+func ProcessBatch(batchList []string, parsers []Parser) error {
+
 	for _, v := range batchList {
 		batch, _ := GetBatch(v)
-		ImportBatch(batch, nil)
-	}
+    ImportBatch(batch, parsers)
+  }
 	time.Sleep(10 * time.Second) // TODO: trouver une façon de synchroniser l'insert des paquets
 
 	err := Compact()
