@@ -37,7 +37,7 @@ field_names <- c(
   "cotisation_moy12m",
   "montant_part_patronale",
   "montant_part_ouvriere",
-  "apart_heures_consommees",
+  "apart_heures_consommees_cumulees",
   "apart_heures_autorisees",
   "code_naf",
   "code_ape",
@@ -157,7 +157,7 @@ if (nrow(autres_etab) > 1) {
 ```{r echo = FALSE, fig.show = "hold", fig.align = "center"}
 
 to_plot <- etablissement %>%
-  mutate(activite_partielle_conso_approx = effectif * ratio_apart,
+  mutate(activite_partielle_conso_approx = apart_heures_consommees_cumulees / 157.67,
          activite_partielle_auto_approx = apart_heures_autorisees / 157.67) %>%
   tidyr::gather(c("activite_partielle_conso_approx", "activite_partielle_auto_approx"),
     key = "conso_ou_demande",

@@ -32,14 +32,19 @@ function finalize(k, o) {
         return m
     }, {})
 
-    o.index = {"algo1": false,
+    // 1er Filtrage
+    // Utilisé dans Reduce Handler actuellement
+    // Entreprise qui n'ont aucune information effectif 
+    o.index = {"algo1":false,
                "algo2":false}
+
     Object.keys(o.batch).forEach(batch => {
         Object.keys((o.batch[batch].effectif||{})).forEach(effectif => {
             o.index.algo1 = true
             o.index.algo2 = true
         })      
     })
+
     if (o.scope == "entreprise") {
       o.index.algo1 = true
       o.index.algo2 = true

@@ -98,8 +98,10 @@ func Parser(batch engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
 					break
 				}
 				interim := Interim{}
+        validSiret, _ := regexp.MatchString("[0-9]{14}", sirets[i]);
+        validSiren :=  (sirets[i][:9] != "000000000")
 
-				if validSiret, err := regexp.MatchString("[0-9]{14}", sirets[i]); !missing[i] && validSiret {
+				if  !missing[i] && validSiret &&  validSiren {
 					tracker.Error(err)
 					interim.Siret = sirets[i][:14]
 					interim.Periode, _ = time.Parse("20060102", fmt.Sprintf("%6.0f", periode[i])+"01")
