@@ -20,30 +20,15 @@ type SiretDate struct{
 type Comptes map[string][]SiretDate
 
 
-func (c Comptes) GetSiret(compte string, date time.Time) (string, error) {
-  date_keys := make([]SiretDate, len(c))
-  i := 0
-  for _, k := range c[compte] {
-    date_keys[i] = k
-    i++
-  }
+func (c *Comptes) GetSiret(compte string, date time.Time) (string, error) {
 
-  found := false
-  i = 0
-  siret := ""
-  for !found && i < len(date_keys) {
-    if date.Before(date_keys[i].Date){
-    //Première association compte-siret non fermée
-      found = true
-      siret = c[compte][i].Siret
+  for _, sd := range((*c)[compte]) {
+    if date.Before(sd.Date){
+      return sd.Siret , nil
     }
 
-    i++
   }
-  if siret == "" {
-    return siret, errors.New("Pas de siret associé au compte " + compte + " à cette période")
-  }
-  return siret, nil
+    return "", errors.New("Pas de siret associé au compte " + compte + " à cette période")
 }
 
 func getCompteSiretMapping(batch *engine.AdminBatch) (Comptes, error) {

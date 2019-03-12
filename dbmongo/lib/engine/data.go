@@ -127,6 +127,8 @@ func Reduce(batchKey string, algo string, query interface{}, collection string) 
 		Map:      functions["map"].Code,
 		Reduce:   functions["reduce"].Code,
 		Finalize: functions["finalize"].Code,
+    //TODO merge into collection instead of replacing. Must be idempotent
+    //transformation. Not the case now with agregation
 		Out:      collection, //bson.M{"merge": collection},
 		Scope:    scope,
 	}

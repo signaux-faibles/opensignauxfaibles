@@ -106,7 +106,7 @@ func parseDebit(batch engine.AdminBatch, mapping Comptes) (chan engine.Tuple, ch
 
         date, err := urssafToDate(row[periodeIndex])
         if err != nil { date = time.Now() }
-				if siret, ok := mapping.GetSiret(row[numeroCompteIndex], date); ok == nil {
+				if siret, err := mapping.GetSiret(row[numeroCompteIndex], date); err == nil {
 
 					debit := Debit{
 						key:                       siret,

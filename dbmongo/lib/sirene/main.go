@@ -50,7 +50,7 @@ func (sirene Sirene) Key() string {
 
 // Type de données
 func (sirene Sirene) Type() string {
-	return "bdf"
+	return "sirene"
 }
 
 // Scope de l'objet

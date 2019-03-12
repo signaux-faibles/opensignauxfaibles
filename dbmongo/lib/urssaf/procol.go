@@ -19,7 +19,6 @@ import (
 
 // Procol Procédures collectives, extraction URSSAF
 type Procol struct {
-	key          string
 	DateEffet    time.Time `json:"date_effet" bson:"date_effet"`
 	ActionProcol string    `json:"action_procol" bson:"action_procol"`
 	StadeProcol  string    `json:"stade_procol" bson:"stade_procol"`
@@ -28,7 +27,7 @@ type Procol struct {
 
 // Key _id de l'objet
 func (procol Procol) Key() string {
-	return procol.key
+	return procol.Siret
 }
 
 // Scope de l'objet

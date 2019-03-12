@@ -9,6 +9,7 @@ import (
 	"os"
 	"strconv"
 	"time"
+  "strings"
 
 	"github.com/chrnin/gournal"
 	"github.com/globalsign/mgo/bson"
@@ -81,11 +82,14 @@ func parseEffectif(batch engine.AdminBatch, mapping Comptes) (chan engine.Tuple,
 				continue
 			}
 
-			siretIndex := misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "SIRET" })
-			compteIndex := misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "compte" })
-			boundaryIndex := misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "ape_ins" })
+			siretIndex := misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "siret" })
+			compteIndex := misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "compte" })
+			boundaryIndex := misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "ape_ins" })
 			if misc.SliceMin(siretIndex, compteIndex, boundaryIndex) == -1 {
-				event.Critical(path + ": erreur à l'analyse du fichier, abandon: " + err.Error())
+        event.Critical(path + ": erreur à l'analyse du fichier, abandon, l'un " +
+        "des champs obligatoire n'a pu être trouve: siretIndex = " + strconv.Itoa(siretIndex) +
+        ", compteIndex = " + strconv.Itoa(compteIndex) + ", boundaryIndex = " +
+        strconv.Itoa(boundaryIndex))
 				continue
 			}
 

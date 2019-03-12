@@ -91,7 +91,7 @@ func parseCotisation(batch engine.AdminBatch, mapping Comptes) (chan engine.Tupl
           date, err := urssafToDate(row[field["Periode"]])
           if err != nil { date = time.Now() }
 
-          if siret, ok := mapping.GetSiret(row[field["NumeroCompte"]], date); ok == nil {
+          if siret, err := mapping.GetSiret(row[field["NumeroCompte"]], date); err == nil {
 						cotisation := Cotisation{}
 						cotisation.key = siret
 						cotisation.NumeroCompte = row[field["NumeroCompte"]]

@@ -46,8 +46,10 @@ func parseCompte(batch engine.AdminBatch, mapping Comptes) (chan engine.Tuple, c
         compte := Compte{}
         compte.NumeroCompte = c
         compte.Periode = p
-        compte.Siret, _ = mapping.GetSiret(c, p)
-        outputChannel <- compte
+        var err error
+        compte.Siret, err = mapping.GetSiret(c, p)
+        compte.key = compte.Siret
+        if err == nil {outputChannel <- compte}
       }
     }
     close(outputChannel)

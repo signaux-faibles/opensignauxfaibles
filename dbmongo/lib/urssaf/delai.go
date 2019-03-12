@@ -101,7 +101,7 @@ func parseDelai(batch engine.AdminBatch, mapping Comptes) (chan engine.Tuple, ch
 					} else {
             date, err := time.Parse("2006-01-02", row[field["DateCreation"]])
             if err != nil { date = time.Now() }
-						if siret, ok := mapping.GetSiret(row[field["NumeroCompte"]], date); ok == nil {
+						if siret, err := mapping.GetSiret(row[field["NumeroCompte"]], date); err == nil {
 							delai := Delai{}
 							delai.key = siret
 							delai.NumeroCompte = row[field["NumeroCompte"]]
@@ -126,7 +126,7 @@ func parseDelai(batch engine.AdminBatch, mapping Comptes) (chan engine.Tuple, ch
 								event.Debug(tracker.Report("errors"))
 							}
 						} else {
-							tracker.Error(errors.New("compte absent du mapping"))
+              tracker.Error(errors.New("Compte absent du mapping : " + row[field["NumeroCompte"]]))
 							event.Debug(tracker.Report("invalidLine"))
 						}
 					}
