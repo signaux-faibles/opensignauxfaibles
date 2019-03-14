@@ -43,11 +43,27 @@ predict_on_last_batch <- function(
     model,
     new_data = current_data)
 
+
+  all_periods <- prediction %>% 
+    arrange(periode) %>% 
+    .$periode %>% 
+    unique()
+
   pred_data <- prediction %>%
     group_by(siret) %>%
     arrange(siret, periode) %>%
-    mutate(last_prob = lag(prob)) %>%
+    mutate(
+      last_prob = dplyr::lag(prob), 
+      last_periode = dplyr::lag(periode),
+      next_periode = dplyr::lead(periode),
+      apparait =  ifelse(periode == first(all_periods), NA, 
+        ifelse(last_periode == NA || last_periode != periode %m-% months(1), 1, 0)
+        ),
+      disparait = ifelse(periode == last(all_periods), NA,
+        ifelse(next_periode == NA || next_periode != periode %m+% months(1), 1, 0)
+      )) %>%
     ungroup() %>%
+    select(-c(last_periode, next_periode)) %>%
     mutate(diff = prob - last_prob) %>%
     filter(periode >= min(periods), periode <= max(periods))
 

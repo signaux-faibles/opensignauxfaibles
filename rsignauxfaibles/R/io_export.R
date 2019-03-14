@@ -31,7 +31,7 @@ prepare_for_export <- function(
     date_inf = last_period,
     date_sup = last_period %m+% months(1),
     min_effectif = 10,
-    fields = export_fields[!export_fields %in% c("connu", "diff", "prob")]
+    fields = export_fields[!export_fields %in% c("connu", "diff", "prob", "apparait", "disparait")]
   )
 
   donnees <- donnees %>%

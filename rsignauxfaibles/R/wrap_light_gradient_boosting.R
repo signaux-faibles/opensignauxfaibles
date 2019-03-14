@@ -98,7 +98,10 @@ full_light_gradient_boosting <- function(
     "cotisation_moy12m",
     "montant_majorations",
     "exercice_bdf",
-    "exercice_diane"
+    "exercice_diane",
+    "delai",
+    "apparait",
+    "disparait"
     )
 
   # Export
