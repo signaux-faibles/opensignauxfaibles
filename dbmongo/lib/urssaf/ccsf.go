@@ -17,7 +17,7 @@ import (
 
 // CCSF information urssaf ccsf
 type CCSF struct {
-	key            string
+  key            string    `hash:"-"`
 	NumeroCompte   string    `json:"-" bson:"-"`
 	DateTraitement time.Time `json:"date_traitement" bson:"date_traitement"`
 	Stade          string    `json:"stade" bson:"stade"`

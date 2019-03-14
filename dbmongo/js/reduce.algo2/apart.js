@@ -88,8 +88,6 @@ function apart (v, output_effectif) {
   Object.keys(output_apart).forEach(time => {
     if (time in output_effectif){
       output_apart[time].ratio_apart = (output_apart[time].apart_heures_consommees || 0) / (output_effectif[time].effectif * 157.67) 
-      print(output_apart[time].apart_heures_consommees)
-      print(output_effectif[time].effectif)
       //nbr approximatif d'heures ouvrées par mois
     }
   })

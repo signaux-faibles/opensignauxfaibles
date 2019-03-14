@@ -1,7 +1,7 @@
 package sirene
 
 import (
-	"bufio"
+	//"bufio"
 	"dbmongo/lib/engine"
 	"encoding/csv"
 	"errors"
@@ -11,35 +11,36 @@ import (
 	"time"
 
 	"github.com/chrnin/gournal"
+	"github.com/spf13/viper"
 )
 
 // Sirene informations sur les entreprises
 type Sirene struct {
-	Siren              string     `json,omitempty:"siren" bson,omitempty:"siren"`
-	Nic                string     `json,omitempty:"nic" bson,omitempty:"nic"`
-	NicSiege           string     `json,omitempty:"nic_siege" bson,omitempty:"nic_siege"`
-	RaisonSociale      string     `json,omitempty:"raison_sociale" bson,omitempty:"raison_sociale"`
-	NumVoie            string     `json,omitempty:"numero_voie" bson,omitempty:"numero_voie"`
-	IndRep             string     `json,omitempty:"indrep" bson,omitempty:"indrep"`
-	TypeVoie           string     `json,omitempty:"type_voie" bson,omitempty:"type_voie"`
-	CodePostal         string     `json,omitempty:"code_postal" bson,omitempty:"code_postal"`
-	Cedex              string     `json,omitempty:"cedex" bson,omitempty:"cedex"`
-	Region             string     `json,omitempty:"region" bson,omitempty:"region"`
-	Departement        string     `json,omitempty:"departement" bson,omitempty:"departement"`
-	Commune            string     `json,omitempty:"commune" bson,omitempty:"commune"`
-	APE                string     `json,omitempty:"ape" bson,omitempty:"ape"`
-	NatureActivite     string     `json,omitempty:"nature_activite" bson,omitempty:"nature_activite"`
-	ActiviteSaisoniere string     `json,omitempty:"activite_saisoniere" bson,omitempty:"activite_sai"`
-	ModaliteActivite   string     `json,omitempty:"modalite_activite" bson,omitempty:"modalite_activite"`
-	Productif          string     `json,omitempty:"productif" bson,omitempty:"productif"`
-	NatureJuridique    string     `json,omitempty:"nature_juridique" bson,omitempty:"nature_juridique"`
-	Categorie          string     `json,omitempty:"categorie" bson,omitempty:"categorie"`
-	Creation           *time.Time `json,omitempty:"date_creation" bson,omitempty:"date_creation"`
-	IndiceMonoactivite *int       `json,omitempty:"indice_monoactivite" bson,omitempty:"indice_monoactivite"`
-	TrancheCA          *int       `json,omitempty:"tranche_ca" bson,omitempty:"tranche_ca"`
-	Sigle              string     `json,omitempty:"sigle" bson,omitempty:"sigle"`
-	Longitude          *float64   `json,omitempty:"longitude" bson:"longitude"`
-	Lattitude          *float64   `json,omitempty:"lattitude" bson:"lattitude"`
+	Siren              string     `json:"siren,omitempty" bson:"siren,omitempty"`
+	Nic                string     `json:"nic,omitempty" bson:"nic,omitempty"`
+	NicSiege           string     `json:"nic_siege,omitempty" bson:"nic_siege,omitempty"`
+	RaisonSociale      string     `json:"raison_sociale,omitempty" bson:"raison_sociale,omitempty"`
+	NumVoie            string     `json:"numero_voie,omitempty" bson:"numero_voie,omitempty"`
+	IndRep             string     `json:"indrep,omitempty" bson:"indrep,omitempty"`
+	TypeVoie           string     `json:"type_voie,omitempty" bson:"type_voie,omitempty"`
+	CodePostal         string     `json:"code_postal,omitempty" bson:"code_postal,omitempty"`
+	Cedex              string     `json:"cedex,omitempty" bson:"cedex,omitempty"`
+	Region             string     `json:"region,omitempty" bson:"region,omitempty"`
+	Departement        string     `json:"departement,omitempty" bson:"departement,omitempty"`
+	Commune            string     `json:"commune,omitempty" bson:"commune,omitempty"`
+	APE                string     `json:"ape,omitempty" bson:"ape,omitempty"`
+	NatureActivite     string     `json:"nature_activite,omitempty" bson:"nature_activite,omitempty"`
+	ActiviteSaisoniere string     `json:"activite_saisoniere,omitempty" bson:"activite_saisoniere,omitempty"`
+	ModaliteActivite   string     `json:"modalite_activite,omitempty" bson:"modalite_activite,omitempty"`
+	Productif          string     `json:"productif,omitempty" bson:"productif,omitempty"`
+	NatureJuridique    string     `json:"nature_juridique,omitempty" bson:"nature_juridique,omitempty"`
+	Categorie          string     `json:"categorie,omitempty" bson:"categorie,omitempty"`
+	Creation           *time.Time `json:"date_creation,omitempty" bson:"date_creation,omitempty"`
+	IndiceMonoactivite *int       `json:"indice_monoactivite,omitempty" bson:"indice_monoactivite,omitempty"`
+	TrancheCA          *int       `json:"tranche_ca,omitempty" bson:"tranche_ca,omitempty"`
+	Sigle              string     `json:"sigle,omitempty" bson:"sigle,omitempty"`
+	Longitude          *float64   `json:"longitude,omitempty" bson:"longitude,omitempty"`
+	Lattitude          *float64   `json:"lattitude,omitempty" bson:"lattitude,omitempty"`
 	Adresse            [7]string  `json:"adresse" bson:"adresse"`
 }
 
@@ -69,22 +70,25 @@ func Parser(batch engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
 	}
 
 	go func() {
-		for _, path := range batch.Files["engine"] {
+		for _, path := range batch.Files["sirene"] {
 			tracker := gournal.NewTracker(
 				map[string]string{"path": path},
 				engine.TrackerReports)
 
-			file, err := os.Open(path)
+			file, err := os.Open(viper.GetString("APP_DATA") + path)
 			if err != nil {
 				tracker.Error(err)
 				tracker.Report("fatalError")
 			}
-			reader := csv.NewReader(bufio.NewReader(file))
+			event.Info(path + ": ouverture")
+      reader := csv.NewReader(file)
 			reader.Comma = ','
+      reader.LazyQuotes = true
 
+      _, _ = reader.Read()
 			for {
-				row, err := reader.Read()
-				if err == io.EOF {
+        row, err := reader.Read()
+        if err == io.EOF {
 					break
 				} else if err != nil {
 					tracker.Error(err)
@@ -143,6 +147,7 @@ func Parser(batch engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
 				tracker.Next()
 			}
 			file.Close()
+      event.Info(tracker.Report("abstract"))
 		}
 		close(outputChannel)
 		close(eventChannel)

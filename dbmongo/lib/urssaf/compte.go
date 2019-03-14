@@ -8,7 +8,7 @@ import (
 
 // Compte tuple fichier ursaff
 type Compte struct {
-  key               string
+  key               string    `hash:"-"`
   Siret             string    `json:"siret" bson:"siret"`
   NumeroCompte      string    `json:"numero_compte" bson:"numero_compte"`
   Periode           time.Time `json:"periode" bson:"periode"`

@@ -16,7 +16,7 @@ import (
 
 // Debit Débit – fichier Urssaf
 type Debit struct {
-	key                          string
+	key                          string    `hash:"-"`
 	NumeroCompte                 string    `json:"numero_compte" bson:"numero_compte"`
 	NumeroEcartNegatif           string    `json:"numero_ecart_negatif" bson:"numero_ecart_negatif"`
 	DateTraitement               time.Time `json:"date_traitement" bson:"date_traitement"`

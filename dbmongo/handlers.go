@@ -95,7 +95,7 @@ func sp(s string) *string {
 //
 func upsertBatchHandler(c *gin.Context) {
 	var batch engine.AdminBatch
-	err := c.Bind(&batch)
+	err := c.ShouldBind(&batch)
 	if err != nil {
 		c.JSON(400, err.Error)
 		return
@@ -208,6 +208,7 @@ func importBatchHandler(c *gin.Context) {
 	err := c.ShouldBind(&params)
 	if err != nil {
 		c.JSON(400, "Requête malformée: "+err.Error())
+    return
 	}
 	batch := engine.AdminBatch{}
 	batch.Load(params.BatchKey)

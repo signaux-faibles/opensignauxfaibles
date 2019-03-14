@@ -16,7 +16,7 @@ import (
 
 // Cotisation Objet cotisation
 type Cotisation struct {
-	key          string
+	key          string  `hash:"-"`
 	NumeroCompte string  `json:"numero_compte" bson:"numero_compte"`
 	PeriodeDebit string  `json:"periode_debit" bson:"periode_debit"`
 	Periode      Periode `json:"period" bson:"periode"`
