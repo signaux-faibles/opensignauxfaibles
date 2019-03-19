@@ -127,6 +127,7 @@ func main() {
 		api.GET("/data/naf", nafHandler)
 		api.GET("/data/batch/purge", purgeBatchHandler)
 		api.POST("/data/import", importBatchHandler)
+		api.GET("/data/precompact", precompactHandler)
 		api.GET("/data/compact", compactHandler)
 		api.POST("/data/reduce", reduceHandler)
 		api.POST("/data/search", searchRaisonSocialeHandler)

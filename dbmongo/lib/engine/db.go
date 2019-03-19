@@ -147,7 +147,7 @@ func insert(db *mgo.Database) chan *Value {
 					objects = append(objects, *v)
 				}
 				if len(objects) > 0 {
-					go func(o []interface{}) { db.C("RawData").Insert(o...) }(objects)
+					go func(o []interface{}) { db.C("ImportedData").Insert(o...) }(objects)
 				}
 				buffer = make(map[string]*Value)
 				objects = make([]interface{}, 0)

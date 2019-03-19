@@ -53,6 +53,38 @@ func PurgeBatch(batchKey string) error {
 	return err
 }
 
+// PreCompact prepare la base ImportedData avant le merge dans RawData
+func PreCompact() error {
+	//batches, _ := GetBatches()
+
+	// Détermination scope traitement
+	//var completeTypes = make(map[string][]string)
+	//var batchesID []string
+
+	//for _, b := range batches {
+	//	completeTypes[b.ID.Key] = b.CompleteTypes
+	//	batchesID = append(batchesID, b.ID.Key)
+	//}
+
+	functions, err := loadJSFunctions("js/precompact/")
+	if err != nil {
+		return err
+	}
+	// Traitement MR
+	job := &mgo.MapReduce{
+		Map:      functions["map"].Code,
+		Reduce:   functions["reduce"].Code,
+		Finalize: functions["finalize"].Code,
+		Out:      bson.M{"replace": "ImportedData"},
+		Scope: bson.M{
+			"functions":     functions,
+		},
+	}
+
+	_, err = Db.DB.C("ImportedData").Find(nil).MapReduce(job, nil)
+
+	return err
+}
 // Compact traite le compactage de la base RawData
 func Compact() error {
 	batches, _ := GetBatches()
