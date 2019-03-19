@@ -19,6 +19,7 @@ prepare_for_export <- function(
   known_sirens_filenames = c("sirets_connus_pdl.csv", "sirets_connus_bfc.csv")
 ){
 
+  first_period <- min(donnees$periode, na.rm = TRUE)
   last_period  <- max(donnees$periode, na.rm = TRUE)
   cat("Préparation à l'export ... \n")
   cat(paste0("Dernière période connue: ",
@@ -28,7 +29,7 @@ prepare_for_export <- function(
     database,
     collection,
     last_batch,
-    date_inf = last_period,
+    date_inf = first_period,
     date_sup = last_period %m+% months(1),
     min_effectif = 10,
     fields = export_fields[!export_fields %in% c("connu", "diff", "prob", "apparait", "disparait")]
@@ -38,7 +39,7 @@ prepare_for_export <- function(
     mutate(siret = as.character(siret)) %>%
     left_join(full_data %>% mutate(siret = as.character(siret)), by = c("siret", "periode")) %>%
     dplyr::mutate(CCSF = date_ccsf) %>%
-    dplyr::arrange(dplyr::desc(prob))
+    dplyr::arrange(dplyr::desc(prob), siret, dplyr::desc(periode))
 
   # Report des dernières infos financieres connues
 

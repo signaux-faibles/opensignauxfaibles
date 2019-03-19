@@ -1,6 +1,8 @@
 function sirene (v, output_array) {
   var sireneHashes = Object.keys(v.sirene || {})
 
+  print("----------------------------------------------------------------------------------------------------")
+  print(JSON.stringify(v.sirene, null, 2))
   output_array.forEach(val => {
     // geolocalisation
 
@@ -13,8 +15,8 @@ function sirene (v, output_array) {
     val.region = sirene.region || null 
     val.departement = sirene.departement || null 
     val.code_ape  = sirene.ape || null 
-    val.raison_sociale = sirene.raisonsociale || null 
-    val.activite_saisonniere = sirene.activitesaisoniere || null 
+    val.raison_sociale = sirene.raison_sociale || null 
+    val.activite_saisonniere = sirene.activite_saisoniere || null 
     val.productif = sirene.productif || null 
     val.tranche_ca = sirene.tranche_ca || null
     val.indice_monoactivite = sirene.indice_monoactivite || null

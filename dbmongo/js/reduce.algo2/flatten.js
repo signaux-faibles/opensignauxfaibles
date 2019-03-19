@@ -1,9 +1,16 @@
 function flatten(v, actual_batch) {
-  return Object.keys(v.batch || {})
+  var res = Object.keys(v.batch || {})
     .sort()
     .filter(batch => batch <= actual_batch)
     .reduce((m, batch) => {
-      Object.keys(v.batch[batch]).forEach((type) => {
+
+      // Types intéressants = nouveaux types, ou types avec suppressions
+      var delete_types = Object.keys((v.batch[batch].compact || {}).delete || {})
+      var new_types =  Object.keys(v.batch[batch])
+      var all_interesting_types = [...new Set([...delete_types, ...new_types])]
+
+      all_interesting_types.forEach((type) => {
+
         m[type] = (m[type] || {})
         // On supprime les clés qu'il faut
         if (v.batch[batch] && v.batch[batch].compact && v.batch[batch].compact.delete &&
@@ -17,4 +24,6 @@ function flatten(v, actual_batch) {
       })
       return m
     }, { "key": v.key, scope: v.scope })
+
+  return(res)
 }

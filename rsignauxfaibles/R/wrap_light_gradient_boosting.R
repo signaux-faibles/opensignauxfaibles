@@ -25,9 +25,10 @@ full_light_gradient_boosting <- function(
       fields = fields,
       code_ape = NULL,
       type = type,
-      subsample = 500000
+      subsample = 200000
       )
 
+    browser() # Change NA outcomes !!
     out <- prepare_frame(
       data_to_prepare = data_frame,
       test_or_train = "train",

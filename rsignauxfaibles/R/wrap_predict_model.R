@@ -44,23 +44,23 @@ predict_on_last_batch <- function(
     new_data = current_data)
 
 
-  all_periods <- prediction %>% 
-    arrange(periode) %>% 
-    .$periode %>% 
+  all_periods <- prediction %>%
+    arrange(periode) %>%
+    .$periode %>%
     unique()
 
   pred_data <- prediction %>%
     group_by(siret) %>%
     arrange(siret, periode) %>%
     mutate(
-      last_prob = dplyr::lag(prob), 
+      last_prob = dplyr::lag(prob),
       last_periode = dplyr::lag(periode),
       next_periode = dplyr::lead(periode),
-      apparait =  ifelse(periode == first(all_periods), NA, 
-        ifelse(last_periode == NA || last_periode != periode %m-% months(1), 1, 0)
+      apparait =  ifelse(periode == first(all_periods), NA,
+        ifelse(is.na(last_periode) | last_periode != periode %m-% months(1), 1, 0)
         ),
       disparait = ifelse(periode == last(all_periods), NA,
-        ifelse(next_periode == NA || next_periode != periode %m+% months(1), 1, 0)
+        ifelse(is.na(next_periode) | next_periode != periode %m+% months(1), 1, 0)
       )) %>%
     ungroup() %>%
     select(-c(last_periode, next_periode)) %>%
@@ -87,7 +87,7 @@ predict_model  <- function(model, new_data) {
       .[,c(1,3)] %>%
       setNames(list("predicted_outcome", "prob"))
     ) %>%
-  tibble::as.tibble()
+  tibble::as_tibble()
 
 prediction <- prediction %>%
   mutate(

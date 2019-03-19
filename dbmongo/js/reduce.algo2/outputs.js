@@ -7,7 +7,8 @@ function outputs (v, serie_periode) {
       "apart_heures_consommees": 0,
       "apart_motif_recours": 0,
       "etat_proc_collective": "in_bonis",
-      "interessante_urssaf": true
+      "interessante_urssaf": true,
+      "outcome": false
     }
   });
     
