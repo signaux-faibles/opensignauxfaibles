@@ -28,6 +28,11 @@ func loadJSFunctions(path string) (map[string]bson.JavaScript, error) {
 	}
 	return functions, err
 }
+// PurgeNotCompacted permet de supprimer les objets non encore compactés
+// c'est à dire, vider la collection ImportedData
+func PurgeNotCompacted() {
+	Db.DB.C("ImportedData").RemoveAll(nil)
+}
 
 // PurgeBatch permet de supprimer un batch dans les objets de RawData
 func PurgeBatch(batchKey string) error {

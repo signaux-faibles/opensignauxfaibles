@@ -171,7 +171,7 @@ function reduce(key, values) {
     if (reduced_value.batch[batch] && Object.keys(reduced_value.batch[batch]).length == 0 ) {
       delete reduced_value.batch[batch]
     }
-    if (reduced_value.batch[batch].compact && reduced_value.batch[batch].compact.delete) {
+    if (reduced_value.batch[batch] && reduced_value.batch[batch].compact && reduced_value.batch[batch].compact.delete) {
       Object.keys(reduced_value.batch[batch].compact.delete).forEach( type => {
         if (reduced_value.batch[batch].compact.delete[type].length == 0){
           delete reduced_value.batch[batch].compact.delete[type]

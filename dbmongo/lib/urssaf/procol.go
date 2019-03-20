@@ -116,7 +116,7 @@ func parseProcol(batch engine.AdminBatch, mapping Comptes) (chan engine.Tuple, c
 					if !tracker.ErrorInCycle() {
 						outputChannel <- procol
 					} else {
-						event.Debug(tracker.Report("errors"))
+						//event.Debug(tracker.Report("errors"))
 					}
 				}
 				tracker.Next()

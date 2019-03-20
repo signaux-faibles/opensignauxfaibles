@@ -130,6 +130,7 @@ func listBatchHandler(c *gin.Context) {
 
 //
 func processBatchHandler(c *gin.Context) {
+
 	var query struct {
 		Batches []string `json:"batches"`
     Parsers []string `json:"parsers"`
@@ -141,7 +142,12 @@ func processBatchHandler(c *gin.Context) {
 		c.JSON(400, err.Error())
     return
 	}
-	// TODO: valider que tous les batches demandés existent
+  if (query.Batches == nil) {
+    query.Batches = engine.GetBatchesID()
+  }
+
+  // TODO: valider que tous les batches demandés existent
+
   parsers , err := resolveParsers(query.Parsers)
   types := query.Parsers
   if err != nil {
@@ -234,9 +240,9 @@ func eventsHandler(c *gin.Context) {
 	}
 }
 
-func deleteHandler(c *gin.Context) {
+func purgeNotCompactedHandler(c *gin.Context) {
 	var result []interface{}
-	engine.Db.DB.C("ImportedData").RemoveAll(nil)
+  engine.PurgeNotCompacted()
 	c.JSON(200, result)
 }
 

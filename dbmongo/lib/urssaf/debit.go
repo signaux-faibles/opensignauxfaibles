@@ -138,7 +138,7 @@ func parseDebit(batch engine.AdminBatch, mapping Comptes) (chan engine.Tuple, ch
 					if !tracker.ErrorInCycle() {
 						outputChannel <- debit
 					} else {
-						event.Debug(tracker.Report("errors"))
+						//event.Debug(tracker.Report("errors"))
 					}
 				}
 				tracker.Next()

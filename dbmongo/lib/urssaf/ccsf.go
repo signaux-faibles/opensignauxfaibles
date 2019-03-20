@@ -118,7 +118,7 @@ func parseCCSF(batch engine.AdminBatch, mapping Comptes) (chan engine.Tuple, cha
 					if !tracker.ErrorInCycle() {
 						outputChannel <- ccsf
 					} else {
-						event.Debug(tracker.Report("error"))
+						//event.Debug(tracker.Report("error"))
 					}
 
 				} else {

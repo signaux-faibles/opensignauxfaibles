@@ -128,13 +128,17 @@ func ImportBatch(batch AdminBatch, parsers []Parser) error {
 func ProcessBatch(batchList []string, parsers []Parser, types []string) error {
 
 	for _, v := range batchList {
-		batch, _ := GetBatch(v)
+		batch, errBatch := GetBatch(v)
+    if errBatch !=nil {
+      return errors.New("Erreur de lecture du batch: " + errBatch.Error())
+    }
     ImportBatch(batch, parsers)
-    time.Sleep(10 * time.Second) // TODO: trouver une façon de synchroniser l'insert des paquets
-    err := Compact(batchList[0], types)
+    time.Sleep(5 * time.Second) // TODO: trouver une façon de synchroniser l'insert des paquets
+    err := Compact(v, types)
     if err != nil {
       return errors.New("Erreur de compactage: " + err.Error())
     }
+    PurgeNotCompacted()
   }
 
 

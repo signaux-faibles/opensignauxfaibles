@@ -109,7 +109,7 @@ func parseCotisation(batch engine.AdminBatch, mapping Comptes) (chan engine.Tupl
 						if !tracker.ErrorInCycle() {
 							outputChannel <- cotisation
 						} else {
-							event.Debug(tracker.Report("errors"))
+							//event.Debug(tracker.Report("errors"))
 						}
 					}
 				}

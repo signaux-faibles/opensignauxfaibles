@@ -35,7 +35,7 @@ func (dpae DPAE) Scope() string {
 
 // Type de l'objet
 func (dpae DPAE) Type() string {
-	return "delai"
+	return "dpae"
 }
 
 // Parser produit les datas DPAE
@@ -88,7 +88,7 @@ func parseDPAE(batch engine.AdminBatch, mapping Comptes) (chan engine.Tuple, cha
 				if !tracker.ErrorInCycle() {
 					outputChannel <- dpae
 				} else {
-					event.Debug(tracker.Report("errors"))
+					//event.Debug(tracker.Report("errors"))
 				}
 				tracker.Next()
 			}

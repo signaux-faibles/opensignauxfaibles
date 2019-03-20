@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"dbmongo/lib/engine"
 	"encoding/csv"
-	"errors"
+	//"errors"
 	"io"
 	"os"
 	"strconv"
@@ -123,11 +123,11 @@ func parseDelai(batch engine.AdminBatch, mapping Comptes) (chan engine.Tuple, ch
 							if !tracker.ErrorInCycle() {
 								outputChannel <- delai
 							} else {
-								event.Debug(tracker.Report("errors"))
+								//event.Debug(tracker.Report("errors"))
 							}
 						} else {
-              tracker.Error(errors.New("Compte absent du mapping : " + row[field["NumeroCompte"]]))
-							event.Debug(tracker.Report("invalidLine"))
+              //tracker.Error(errors.New("Compte absent du mapping : " + row[field["NumeroCompte"]]))
+							//event.Debug(tracker.Report("invalidLine"))
 						}
 					}
 					tracker.Next()
