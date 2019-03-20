@@ -76,8 +76,19 @@ func reduceHandler(c *gin.Context) {
 // @Success 200 {string} string ""
 // @Router /api/data/compact [get]
 // @Security ApiKeyAuth
-func precompactHandler(c *gin.Context) {
-  err := engine.PreCompact()
+func compactHandler(c *gin.Context) {
+
+	var params struct {
+		BatchKey string `json:"batch"`
+    Types []string `json:"types"`
+	}
+	err := c.ShouldBind(&params)
+  if err != nil {
+		c.JSON(400, err.Error())
+  }
+  //TODO: verifier comportement si batch est vide
+  //TODO: verifier comportement si types est vide
+  err = engine.Compact(params.BatchKey, params.Types)
 	if err != nil {
 		c.JSON(500, err.Error())
 		return
@@ -95,15 +106,15 @@ func precompactHandler(c *gin.Context) {
 // @Success 200 {string} string ""
 // @Router /api/data/compact [get]
 // @Security ApiKeyAuth
-func compactHandler(c *gin.Context) {
-  err := engine.Compact()
-	if err != nil {
-		c.JSON(500, err.Error())
-		return
-	}
-
-	c.JSON(200, "ok")
-}
+//func compactHandler(c *gin.Context) {
+//  err := engine.Compact()
+//	if err != nil {
+//		c.JSON(500, err.Error())
+//		return
+//	}
+//
+//	c.JSON(200, "ok")
+//}
 
 //
 // @summary Descriptif NAF

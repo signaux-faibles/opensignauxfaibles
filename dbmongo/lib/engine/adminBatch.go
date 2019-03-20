@@ -125,21 +125,21 @@ func ImportBatch(batch AdminBatch, parsers []Parser) error {
 }
 
 // ProcessBatch traitement ad-hoc modifiable pour les besoins du développement
-func ProcessBatch(batchList []string, parsers []Parser) error {
+func ProcessBatch(batchList []string, parsers []Parser, types []string) error {
 
 	for _, v := range batchList {
 		batch, _ := GetBatch(v)
     ImportBatch(batch, parsers)
+    time.Sleep(10 * time.Second) // TODO: trouver une façon de synchroniser l'insert des paquets
+    err := Compact(batchList[0], types)
+    if err != nil {
+      return errors.New("Erreur de compactage: " + err.Error())
+    }
   }
-	time.Sleep(10 * time.Second) // TODO: trouver une façon de synchroniser l'insert des paquets
 
-	err := Compact()
-	if err != nil {
-		return errors.New("Erreur de compactage: " + err.Error())
-	}
 
-	batch := LastBatch()
-	return Reduce(batch.ID.Key, "algo2", nil, "Features")
+  batch := LastBatch()
+  return Reduce(batch.ID.Key, "algo2", nil, "Features")
 }
 
 // LastBatch retourne le dernier batch

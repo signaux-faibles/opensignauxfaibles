@@ -12,6 +12,7 @@ import (
 	"dbmongo/lib/sirene"
 	"dbmongo/lib/urssaf"
 	"fmt"
+  "sort"
 	"io"
 	"os"
   "errors"
@@ -131,20 +132,23 @@ func listBatchHandler(c *gin.Context) {
 func processBatchHandler(c *gin.Context) {
 	var query struct {
 		Batches []string `json:"batches"`
+    Parsers []string `json:"parsers"`
 	}
-	err := c.ShouldBind(&query)
 
+	err := c.ShouldBind(&query)
 
 	if err != nil {
 		c.JSON(400, err.Error())
     return
 	}
 	// TODO: valider que tous les batches demandés existent
-  parsers , err := resolveParsers(nil)
+  parsers , err := resolveParsers(query.Parsers)
+  types := query.Parsers
   if err != nil {
 				c.JSON(404, err.Error())
   }
-	err = engine.ProcessBatch(query.Batches, parsers)
+  sort.Strings(query.Batches)
+	err = engine.ProcessBatch(query.Batches, parsers, types)
 	if err != nil {
 		c.JSON(500, err.Error())
     return
@@ -232,7 +236,7 @@ func eventsHandler(c *gin.Context) {
 
 func deleteHandler(c *gin.Context) {
 	var result []interface{}
-	engine.Db.DB.C("RawData").RemoveAll(bson.M{"_id": bson.M{"$type": "objectId"}})
+	engine.Db.DB.C("ImportedData").RemoveAll(nil)
 	c.JSON(200, result)
 }
 

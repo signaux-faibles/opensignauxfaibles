@@ -54,49 +54,27 @@ func PurgeBatch(batchKey string) error {
 }
 
 // PreCompact prepare la base ImportedData avant le merge dans RawData
-func PreCompact() error {
-	//batches, _ := GetBatches()
-
+func Compact(batchKey string, types []string) error {
 	// Détermination scope traitement
-	//var completeTypes = make(map[string][]string)
-	//var batchesID []string
-
-	//for _, b := range batches {
-	//	completeTypes[b.ID.Key] = b.CompleteTypes
-	//	batchesID = append(batchesID, b.ID.Key)
-	//}
-
-	functions, err := loadJSFunctions("js/precompact/")
-	if err != nil {
-		return err
-	}
-	// Traitement MR
-	job := &mgo.MapReduce{
-		Map:      functions["map"].Code,
-		Reduce:   functions["reduce"].Code,
-		Finalize: functions["finalize"].Code,
-		Out:      bson.M{"replace": "ImportedData"},
-		Scope: bson.M{
-			"functions":     functions,
-		},
-	}
-
-	_, err = Db.DB.C("ImportedData").Find(nil).MapReduce(job, nil)
-
-	return err
-}
-// Compact traite le compactage de la base RawData
-func Compact() error {
 	batches, _ := GetBatches()
 
-	// Détermination scope traitement
-	var completeTypes = make(map[string][]string)
 	var batchesID []string
-
+  var completeTypes = make(map[string][]string)
 	for _, b := range batches {
 		completeTypes[b.ID.Key] = b.CompleteTypes
 		batchesID = append(batchesID, b.ID.Key)
 	}
+  // Si le numéro de batch n'est pas valide, on prend le premier
+  found := false
+  for _, batchID := range(batchesID){
+    if batchID == batchKey {
+      found = true
+      break
+    }
+  }
+  if !found {
+    batchKey = batchesID[0]
+  }
 
 	functions, err := loadJSFunctions("js/compact/")
 	if err != nil {
@@ -107,19 +85,56 @@ func Compact() error {
 		Map:      functions["map"].Code,
 		Reduce:   functions["reduce"].Code,
 		Finalize: functions["finalize"].Code,
-		Out:      bson.M{"replace": "RawData"},
+		Out:      bson.M{"reduce": "RawData"},
 		Scope: bson.M{
-			"functions":     functions,
-			"batches":       GetBatchesID(),
-			"types":         GetTypes(),
-			"completeTypes": completeTypes,
+			"f":     functions,
+      "batches"  :     batchesID,
+      "types"    :     types,
+      "completeTypes": completeTypes,
+      "batchKey":      batchKey,
 		},
 	}
 
-	_, err = Db.DB.C("RawData").Find(nil).MapReduce(job, nil)
+	_, err = Db.DB.C("ImportedData").Find(nil).MapReduce(job, nil)
+
 
 	return err
 }
+// Compact traite le compactage de la base RawData
+//func Compact() error {
+//	batches, _ := GetBatches()
+//
+//	// Détermination scope traitement
+//	var completeTypes = make(map[string][]string)
+//	var batchesID []string
+//
+//	for _, b := range batches {
+//		completeTypes[b.ID.Key] = b.CompleteTypes
+//		batchesID = append(batchesID, b.ID.Key)
+//	}
+//
+//	functions, err := loadJSFunctions("js/compact/")
+//	if err != nil {
+//		return err
+//	}
+//	// Traitement MR
+//	job := &mgo.MapReduce{
+//		Map:      functions["map"].Code,
+//		Reduce:   functions["reduce"].Code,
+//		Finalize: functions["finalize"].Code,
+//		Out:      bson.M{"replace": "RawData"},
+//		Scope: bson.M{
+//			"f":     functions,
+//			"batches":       GetBatchesID(),
+//			"types":         GetTypes(),
+//			"completeTypes": completeTypes,
+//		},
+//	}
+//
+//	_, err = Db.DB.C("RawData").Find(nil).MapReduce(job, nil)
+//
+//	return err
+//}
 
 // Reduce alimente la base Features
 func Reduce(batchKey string, algo string, query interface{}, collection string) error {
@@ -262,12 +277,17 @@ func GetBatch(batchKey string) (AdminBatch, error) {
 
 // Purge réinitialise la base, à utiliser avec modération
 func Purge() interface{} {
+	infoImportedData, errImportedData := Db.DB.C("ImportedData").RemoveAll(nil)
 	infoRawData, errRawData := Db.DB.C("RawData").RemoveAll(nil)
 	infoJournal, errJournal := Db.DB.C("Journal").RemoveAll(nil)
 	infoFeatures, errFeatures := Db.DB.C("Features").RemoveAll(nil)
 	infoPublic, errPublic := Db.DB.C("Public").RemoveAll(nil)
 
 	returnData := map[string]map[string]interface{}{
+    "ImportedData": map[string]interface{}{
+      "info": infoImportedData,
+      "error": errImportedData,
+    },
 		"RawData": map[string]interface{}{
 			"info":  infoRawData,
 			"error": errRawData,
