@@ -60,7 +60,11 @@ func PurgeBatch(batchKey string) error {
 	return err
 }
 
-// PreCompact prepare la base ImportedData avant le merge dans RawData
+// Compact traite le compactage de la base RawData
+//func Compact() error {
+//	batches, _ := GetBatches()
+//
+//	// Détermination scope traitement
 func Compact(batchKey string, types []string) error {
 	// Détermination scope traitement
 	batches, _ := GetBatches()
