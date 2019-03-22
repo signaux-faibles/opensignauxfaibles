@@ -37,7 +37,7 @@ func (procol Procol) Scope() string {
 
 // Type de l'objet
 func (procol Procol) Type() string {
-	return "effectif"
+	return "procol"
 }
 
 // Parser transorme le fichier procol en data

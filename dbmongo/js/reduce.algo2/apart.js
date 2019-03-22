@@ -1,5 +1,4 @@
 function apart (v, output_effectif) {
-
   var output_apart = {}
 
   // Mapping (pour l'instant vide) du hash de la demande avec les hash des consos correspondantes
@@ -86,7 +85,7 @@ function apart (v, output_effectif) {
 
 
   Object.keys(output_apart).forEach(time => {
-    if (time in output_effectif){
+    if (output_effectif && time in output_effectif){
       output_apart[time].ratio_apart = (output_apart[time].apart_heures_consommees || 0) / (output_effectif[time].effectif * 157.67) 
       //nbr approximatif d'heures ouvrées par mois
     }

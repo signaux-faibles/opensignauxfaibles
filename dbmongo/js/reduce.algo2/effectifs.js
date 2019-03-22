@@ -3,14 +3,14 @@ function effectifs (v, periodes) {
   let output_effectif = {}  
 
   // Construction d'une map[time] = effectif à cette periode
-  let map_effectif = Object.keys(v.effectif).reduce((map_effectif, hash) => {
+  let map_effectif = Object.keys(v.effectif).reduce((m, hash) => {
     var effectif = v.effectif[hash]
     if (effectif == null) {
-      return map_effectif
+      return m
     }
     var effectifTime = effectif.periode.getTime()
-    map_effectif[effectifTime] = (map_effectif[effectifTime] || 0) + effectif.effectif
-    return map_effectif
+    m[effectifTime] = (m[effectifTime] || 0) + effectif.effectif
+    return m
   }, {})
   
   //ne reporter que si le dernier est disponible

@@ -13,9 +13,6 @@ function reduce(key, values) {
       m.batch = (m.batch||{})
       m.batch[batch] = (m.batch[batch] || {})
       Object.keys(value.batch[batch]).forEach(type => {
-        if (types.length > 0 && !types.includes(type) && type != "compact") {
-          throw "Types do not coincide with imported objects" 
-        }
         m.batch[batch][type] = (m.batch[batch][type] || {})
         Object.assign(m.batch[batch][type], value.batch[batch][type])
       })
@@ -109,13 +106,21 @@ function reduce(key, values) {
       // i.e. on herite de la memoire. (pas de maj de la memoire)
       // ------------------------------------------------------------------------------
 
+      print("before")
+      print([...hashToDelete[type]])
+      print([...hashToAdd[type]])
       hashToDelete[type] = new Set([...hashToDelete[type]].filter( hash => {
         let also_added = (hashToAdd[type] || new Set()).has(hash)
+        print(type)
+        print(also_added)
         if (also_added) { 
           hashToAdd[type].delete(hash)
         }
         return(!also_added)
       }))
+      print("after")
+      print([...hashToDelete[type]])
+      print([...hashToAdd[type]])
 
       // 3.c On retire les cles restantes de la memoire. 
       // --------------------------------------------------
@@ -148,7 +153,7 @@ function reduce(key, values) {
     // 5. On met à jour reduced_value
     // -------------------------------
     stock_types.forEach(type => {
-      if (hashToDelete[type] && hashToDelete[type].size > 0) {
+      if (hashToDelete[type]) {
         reduced_value.batch[batch].compact = reduced_value.batch[batch].compact  || {}
         reduced_value.batch[batch].compact.delete = reduced_value.batch[batch].compact.delete  || {}
         reduced_value.batch[batch].compact.delete[type] = [...hashToDelete[type]]
@@ -157,7 +162,7 @@ function reduce(key, values) {
 
 
     new_types.forEach(type => {
-      if (hashToAdd[type] && hashToAdd[type].size > 0) {
+      if (hashToAdd[type]) {
         reduced_value.batch[batch][type] = Object.keys(reduced_value.batch[batch][type] || {}).filter( hash => {
           return(hashToAdd[type].has(hash))
         }).reduce( (m, hash) => {
@@ -168,17 +173,27 @@ function reduce(key, values) {
     })
 
     // nettoyage
-    if (reduced_value.batch[batch] && Object.keys(reduced_value.batch[batch]).length == 0 ) {
-      delete reduced_value.batch[batch]
-    }
-    if (reduced_value.batch[batch] && reduced_value.batch[batch].compact && reduced_value.batch[batch].compact.delete) {
-      Object.keys(reduced_value.batch[batch].compact.delete).forEach( type => {
-        if (reduced_value.batch[batch].compact.delete[type].length == 0){
-          delete reduced_value.batch[batch].compact.delete[type]
+    if (reduced_value.batch[batch]){
+      //types vides
+      Object.keys(reduced_value.batch[batch]).forEach( type => {
+        if (Object.keys(reduced_value.batch[batch][type]).length == 0){
+          delete reduced_value.batch[batch][type]
         }
       })
-      if (Object.keys(reduced_value.batch[batch].compact.delete).length == 0 ) {
-        delete reduced_value.batch[batch].compact
+      //suppressions vides
+      if (reduced_value.batch[batch].compact && reduced_value.batch[batch].compact.delete) {
+        Object.keys(reduced_value.batch[batch].compact.delete).forEach( type => {
+          if (reduced_value.batch[batch].compact.delete[type].length == 0){
+            delete reduced_value.batch[batch].compact.delete[type]
+          }
+        })
+        if (Object.keys(reduced_value.batch[batch].compact.delete).length == 0 ) {
+          delete reduced_value.batch[batch].compact
+        }
+      }
+      //batchs vides
+      if (Object.keys(reduced_value.batch[batch]).length == 0 ) {
+        delete reduced_value.batch[batch]
       }
     }
   })

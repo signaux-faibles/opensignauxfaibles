@@ -123,3 +123,47 @@ var values = [
 
 print("Exemple avec insertion au milieu")
 print(JSON.stringify(reduce(key,values), null, 2))
+
+/////// AUTRE TEST AVEC AJOUT DU DERNIER BATCH
+
+batchKey = "1901"
+completeTypes = {
+  "1812": [],
+  "1901": ["apconso"],
+  "1902": []
+}
+
+//on simule le map
+var values = [
+  {"batch":
+    {"1812":
+      {
+        "apconso": {
+          "deleteme":{"bonjour":1, "aurevoir":2}
+        }
+      }, 
+      "1901": 
+      {
+        "compact": {
+          "delete": {
+            "apconso":["deleteme"]
+          }
+        }
+      }
+    },
+    "scope":"etablissement"
+  },
+  {"batch":
+    { "1901": 
+      {
+        "apconso": { 
+          "deleteme":{"bonjour":1, "aurevoir":2}
+        }
+      }
+    },
+    "scope":"etablissement"
+  }] 
+
+
+print("Exemple avec cle retiree reajoutee")
+print(JSON.stringify(reduce(key,values), null, 2))
