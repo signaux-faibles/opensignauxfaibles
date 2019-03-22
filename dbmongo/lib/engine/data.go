@@ -206,7 +206,7 @@ func Reduce(batchKey string, algo string, query interface{}, collection string) 
 	return err
 }
 
-// Publish alimente la collection Public avec les objets destinés à la diffusion
+// Public alimente la collection Public avec les objets destinés à la diffusion
 func Public(batch AdminBatch) error {
 	functions, err := loadJSFunctions("js/public/")
 
