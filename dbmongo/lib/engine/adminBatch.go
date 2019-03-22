@@ -129,17 +129,16 @@ func ProcessBatch(batchList []string, parsers []Parser, types []string) error {
 
 	for _, v := range batchList {
 		batch, errBatch := GetBatch(v)
-		if errBatch != nil {
-			return errors.New("Erreur de lecture du batch: " + errBatch.Error())
-		}
-		ImportBatch(batch, parsers)
-		time.Sleep(5 * time.Second) // TODO: trouver une façon de synchroniser l'insert des paquets
-		err := Compact(v, types)
-		if err != nil {
-			return errors.New("Erreur de compactage: " + err.Error())
-		}
-		PurgeNotCompacted()
-	}
+    if errBatch !=nil {
+      return errors.New("Erreur de lecture du batch: " + errBatch.Error())
+    }
+    ImportBatch(batch, parsers)
+    time.Sleep(5 * time.Second) // TODO: trouver une façon de synchroniser l'insert des paquets
+    err := Compact(v, types)
+    if err != nil {
+      return errors.New("Erreur de compactage: " + err.Error())
+    }
+  }
 
 	batch := LastBatch()
 	return Reduce(batch.ID.Key, "algo2", nil, "Features")
