@@ -3,5 +3,5 @@ function add(obj, output){
         if (periode in output){
           output[periode] = Object.assign(output[periode], obj[periode])
         }
-      }) 
+      })
 }

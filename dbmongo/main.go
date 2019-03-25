@@ -134,12 +134,13 @@ func main() {
 		api.GET("/data/purge", purgeHandler)
 		api.GET("/data/purgeNotCompacted", purgeNotCompactedHandler)
 		api.POST("/data/publish", publicHandler)
+		api.POST("/data/toDatapi", toDatapiHandler)
 		// TODO: adapter le handler pour traiter la requête en post
 		api.POST("/data/browse", browsePublicHandler)
 		// TODO: mapreduce pour traiter le scope, modification des objets utilisateurs
 		// TODO: écrire l'aggrégation qui va bien
-		api.POST("/data/")
 		api.GET("/dashboard/tasks", getTasksHandler)
+
 	}
 
 	bind := viper.GetString("APP_BIND")

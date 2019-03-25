@@ -11,11 +11,12 @@ import (
 	"dbmongo/lib/interim"
 	"dbmongo/lib/sirene"
 	"dbmongo/lib/urssaf"
+	"errors"
 	"fmt"
-  "sort"
 	"io"
 	"os"
-  "errors"
+	"sort"
+
 	"github.com/davecgh/go-spew/spew"
 	"github.com/gin-gonic/gin"
 	"github.com/globalsign/mgo/bson"
@@ -133,31 +134,31 @@ func processBatchHandler(c *gin.Context) {
 
 	var query struct {
 		Batches []string `json:"batches"`
-    Parsers []string `json:"parsers"`
+		Parsers []string `json:"parsers"`
 	}
 
 	err := c.ShouldBind(&query)
 
 	if err != nil {
 		c.JSON(400, err.Error())
-    return
+		return
 	}
-  if (query.Batches == nil) {
-    query.Batches = engine.GetBatchesID()
-  }
+	if query.Batches == nil {
+		query.Batches = engine.GetBatchesID()
+	}
 
-  // TODO: valider que tous les batches demandés existent
+	// TODO: valider que tous les batches demandés existent
 
-  parsers , err := resolveParsers(query.Parsers)
-  types := query.Parsers
-  if err != nil {
-				c.JSON(404, err.Error())
-  }
-  sort.Strings(query.Batches)
+	parsers, err := resolveParsers(query.Parsers)
+	types := query.Parsers
+	if err != nil {
+		c.JSON(404, err.Error())
+	}
+	sort.Strings(query.Batches)
 	err = engine.ProcessBatch(query.Batches, parsers, types)
 	if err != nil {
 		c.JSON(500, err.Error())
-    return
+		return
 	}
 	c.JSON(200, "ok !")
 }
@@ -218,15 +219,15 @@ func importBatchHandler(c *gin.Context) {
 	err := c.ShouldBind(&params)
 	if err != nil {
 		c.JSON(400, "Requête malformée: "+err.Error())
-    return
+		return
 	}
 	batch := engine.AdminBatch{}
 	batch.Load(params.BatchKey)
 
-  parsers , err := resolveParsers(params.Parsers)
-  if err != nil {
-				c.JSON(404, err.Error())
-  }
+	parsers, err := resolveParsers(params.Parsers)
+	if err != nil {
+		c.JSON(404, err.Error())
+	}
 	engine.ImportBatch(batch, parsers)
 }
 
@@ -242,7 +243,7 @@ func eventsHandler(c *gin.Context) {
 
 func purgeNotCompactedHandler(c *gin.Context) {
 	var result []interface{}
-  engine.PurgeNotCompacted()
+	engine.PurgeNotCompacted()
 	c.JSON(200, result)
 }
 
@@ -254,7 +255,6 @@ func browsePublicHandler(c *gin.Context) {
 	data := engine.BrowsePublic(nil)
 	c.JSON(200, data)
 }
-
 
 // Vérifie et charge les parsers
 func resolveParsers(parserNames []string) ([]engine.Parser, error) {
@@ -268,9 +268,27 @@ func resolveParsers(parserNames []string) ([]engine.Parser, error) {
 			if f, ok := registeredParsers[p]; ok {
 				parsers = append(parsers, f)
 			} else {
-				return parsers, errors.New(p+" n'est pas un parser reconnu.")
+				return parsers, errors.New(p + " n'est pas un parser reconnu.")
 			}
 		}
 	}
-  return parsers, nil
+	return parsers, nil
+}
+
+func toDatapiHandler(c *gin.Context) {
+	params := struct {
+		Batch string `json:"batch"`
+	}{}
+	err := c.Bind(&params)
+	if err != nil {
+		c.JSON(400, err.Error())
+		return
+	}
+
+	err = engine.ToDatapi(params.Batch)
+	if err != nil {
+		c.JSON(500, err.Error())
+		return
+	}
+	c.JSON(200, "ok")
 }
