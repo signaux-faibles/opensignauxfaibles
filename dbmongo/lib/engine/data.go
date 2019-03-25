@@ -109,7 +109,7 @@ func Compact(batchKey string, types []string) error {
 
 	_, err = Db.DB.C("ImportedData").Find(nil).MapReduce(job, nil)
 
-  PurgeNotCompacted()
+	PurgeNotCompacted()
 	return err
 }
 
@@ -239,7 +239,7 @@ func Public(batch AdminBatch) error {
 	}
 	// exécution
 
-	_, err = Db.DB.C("RawData").Find(nil).MapReduce(job, nil)
+	_, err = Db.DB.C("RawData").Find(bson.M{"_id": "005282761"}).MapReduce(job, nil)
 
 	if err != nil {
 		return errors.New("Erreur dans l'exécution des jobs MapReduce" + err.Error())
