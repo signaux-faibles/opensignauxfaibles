@@ -95,13 +95,15 @@ func readAndRandomDiane(fileName string, outputFileName string, mapping map[stri
 
 			newRow[1] = ""
 			newRow[2] = sirens[row[2]]
-			fmt.Println(row[2])
-			outputRow := "\"" + strings.Join(newRow, "\";\"") + "\"\n"
-			encodedRow, err := encoder.String(outputRow)
-			_, err = outputFile.WriteString(encodedRow)
 
-			if err != nil {
-				return err
+			if newRow[2] != "" {
+				outputRow := "\"" + strings.Join(newRow, "\";\"") + "\"\n"
+				encodedRow, err := encoder.String(outputRow)
+				_, err = outputFile.WriteString(encodedRow)
+
+				if err != nil {
+					return err
+				}
 			}
 		}
 	}

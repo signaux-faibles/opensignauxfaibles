@@ -62,17 +62,17 @@ func main() {
 	}
 
 	randomizers := map[string]randomizer{
-		"diane": readAndRandomDiane,
-		// "apartdemande": readAndRandomApartDemande,
-		// "apartconso":   readAndRandomApartConso,
-		// "bdf":          readAndRandomBDF,
-		// "emploi":       readAndRandomEmploi,
-		// "delais":       readAndRandomDelais,
-		// "sirene":       readAndRandomSirene,
-		// "debits":       readAndRandomDebits,
-		// "altares":      readAndRandomAltares,
-		// "cotisations":  readAndRandomCotisations,
-		// "prediction":   readAndRandomPrediction,
+		"diane":        readAndRandomDiane,
+		"apartdemande": readAndRandomApartDemande,
+		"apartconso":   readAndRandomApartConso,
+		"bdf":          readAndRandomBDF,
+		"emploi":       readAndRandomEmploi,
+		"delais":       readAndRandomDelais,
+		"sirene":       readAndRandomSirene,
+		"debits":       readAndRandomDebits,
+		"altares":      readAndRandomAltares,
+		"cotisations":  readAndRandomCotisations,
+		"prediction":   readAndRandomPrediction,
 	}
 
 	for k, r := range randomizers {
