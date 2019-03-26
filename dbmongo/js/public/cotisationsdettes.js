@@ -4,15 +4,14 @@ function cotisationsdettes(v) {
   // Permet de s'aligner avec le calendrier de fourniture des données
   last_treatment_day = 20
 
-  var output_cotisationsdettes = {}
-
-
   // TODO Cotisations avec un mois de retard ? Bizarre, plus maintenant que l'export se fait le 20
   // var offset_cotisation = 1
   var offset_cotisation = 0 
   var value_cotisation = {}
   
   // Répartition des cotisations sur toute la période qu'elle concerne
+  v.cotisation = v.cotisation || {}
+  v.debit = v.debit || {}
   Object.keys(v.cotisation).forEach(function (h) {
     var cotisation = v.cotisation[h]
     var periode_cotisation = generatePeriodSerie(cotisation.periode.start, cotisation.periode.end)
@@ -99,6 +98,12 @@ function cotisationsdettes(v) {
     })
   })    
 
+  output_cotisation = []
+  output_dette = []
+  serie_periode.forEach(p => {
+    output_cotisation.push(value_cotisation[p.getTime()])
+    output_dette.push(value_cotisation[p.getTime()])
+  })
   // TODO faire numero de compte ailleurs
   // Array des numeros de compte
   //var numeros_compte = Array.from(new Set(
@@ -107,47 +112,47 @@ function cotisationsdettes(v) {
   //  })
   //))
 
-  periodes.forEach(function (time) {
-    output_cotisationsdettes[time] = output_cotisationsdettes[time] || {} 
-    var val = output_cotisationsdettes[time]
-  //output_cotisationsdettes[time].numero_compte_urssaf = numeros_compte
-    if (time in value_cotisation){
-      // somme de toutes les cotisations dues pour une periode donnée
-      val.cotisation = value_cotisation[time].reduce((a,cot) => a + cot,0)
-    }
+  // serie_periode.forEach(function (time) {
+  //   output_cotisationsdettes[time] = output_cotisationsdettes[time] || {} 
+  //   var val = output_cotisationsdettes[time]
+  // //output_cotisationsdettes[time].numero_compte_urssaf = numeros_compte
+  //   if (time in value_cotisation){
+  //     // somme de toutes les cotisations dues pour une periode donnée
+  //     val.cotisation = value_cotisation[time].reduce((a,cot) => a + cot,0)
+  //   }
 
-    // somme de tous les débits (part ouvriere, part patronale, montant_majorations)
-    let montant_dette = (value_dette[time] || []).reduce(function (m, dette) {
-      m.montant_part_ouvriere += dette.part_ouvriere
-      m.montant_part_patronale += dette.part_patronale
-      m.montant_majorations += dette.montant_majorations
-      return m
-    }, {"montant_part_ouvriere": 0, "montant_part_patronale": 0, "montant_majorations": 0})
-    val = Object.assign(val, montant_dette)
+  //   // somme de tous les débits (part ouvriere, part patronale, montant_majorations)
+  //   let montant_dette = (value_dette[time] || []).reduce(function (m, dette) {
+  //     m.montant_part_ouvriere += dette.part_ouvriere
+  //     m.montant_part_patronale += dette.part_patronale
+  //     m.montant_majorations += dette.montant_majorations
+  //     return m
+  //   }, {"montant_part_ouvriere": 0, "montant_part_patronale": 0, "montant_majorations": 0})
+  //   val = Object.assign(val, montant_dette)
 
 
-    let past_month_offsets = [1,2,3,6,12]
-    let time_d = new Date(parseInt(time))
+  //   let past_month_offsets = [1,2,3,6,12]
+  //   let time_d = new Date(parseInt(time))
 
-    past_month_offsets.forEach(offset => {
-      let time_offset = DateAddMonth(time_d, offset)      
-      let variable_name_part_ouvriere = "montant_part_ouvriere_past_" + offset
-      let variable_name_part_patronale = "montant_part_patronale_past_" + offset
-      output_cotisationsdettes[time_offset.getTime()] = output_cotisationsdettes[time_offset.getTime()] || {}
-      let val_offset = output_cotisationsdettes[time_offset.getTime()]
-      val_offset[variable_name_part_ouvriere] = val.montant_part_ouvriere
-      val_offset[variable_name_part_patronale] = val.montant_part_patronale
-    })
+  //   past_month_offsets.forEach(offset => {
+  //     let time_offset = DateAddMonth(time_d, offset)      
+  //     let variable_name_part_ouvriere = "montant_part_ouvriere_past_" + offset
+  //     let variable_name_part_patronale = "montant_part_patronale_past_" + offset
+  //     output_cotisationsdettes[time_offset.getTime()] = output_cotisationsdettes[time_offset.getTime()] || {}
+  //     let val_offset = output_cotisationsdettes[time_offset.getTime()]
+  //     val_offset[variable_name_part_ouvriere] = val.montant_part_ouvriere
+  //     val_offset[variable_name_part_patronale] = val.montant_part_patronale
+  //   })
 
-    let future_month_offsets = [0, 1, 2, 3, 4, 5]
-    if (val.montant_part_ouvriere + val.montant_part_patronale > 0){
-      future_month_offsets.forEach(offset => {
-        let time_offset = DateAddMonth(time_d, offset)
-        output_cotisationsdettes[time_offset.getTime()] = output_cotisationsdettes[time_offset.getTime()] || {}
-        output_cotisationsdettes[time_offset.getTime()].interessante_urssaf = false    
-      })
-    }
-  })
+  //   let future_month_offsets = [0, 1, 2, 3, 4, 5]
+  //   if (val.montant_part_ouvriere + val.montant_part_patronale > 0){
+  //     future_month_offsets.forEach(offset => {
+  //       let time_offset = DateAddMonth(time_d, offset)
+  //       output_cotisationsdettes[time_offset.getTime()] = output_cotisationsdettes[time_offset.getTime()] || {}
+  //       output_cotisationsdettes[time_offset.getTime()].interessante_urssaf = false    
+  //     })
+  //   }
+  // })
 
-  return(output_cotisationsdettes)
+  return([output_cotisation, output_dette])
 }
