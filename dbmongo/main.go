@@ -4,6 +4,7 @@ import (
 	"dbmongo/lib/engine"
 	"fmt"
 
+	"dbmongo/lib/naf"
 	"net/http"
 	"time"
 
@@ -52,6 +53,12 @@ func main() {
 	// go r()
 	engine.Db = engine.InitDB()
 	go engine.MessageSocketAddClient()
+
+	var err error
+	naf.Naf, err = naf.LoadNAF()
+	if err != nil {
+		panic(err)
+	}
 
 	r := gin.New()
 
@@ -116,7 +123,7 @@ func main() {
 		api.GET("/admin/batch/next", nextBatchHandler)
 		api.POST("/admin/batch/process", processBatchHandler)
 		api.GET("/admin/batch/revert", revertBatchHandler)
-
+		api.GET("/admin/regions", adminRegionHandler)
 		api.GET("/admin/files", adminFilesHandler)
 		api.POST("/admin/files", addFile)
 
@@ -128,16 +135,16 @@ func main() {
 		api.GET("/data/batch/purge", purgeBatchHandler)
 		api.POST("/data/import", importBatchHandler)
 		api.POST("/data/compact", compactHandler)
-		//api.GET("/data/compact", compactHandler)
 		api.POST("/data/reduce", reduceHandler)
 		api.POST("/data/search", searchRaisonSocialeHandler)
 		api.GET("/data/purge", purgeHandler)
 		api.GET("/data/purgeNotCompacted", purgeNotCompactedHandler)
 		api.POST("/data/publish", publicHandler)
 		api.POST("/data/toDatapi", toDatapiHandler)
-		// TODO: adapter le handler pour traiter la requête en post
 		api.POST("/data/browse", browsePublicHandler)
 		api.POST("/data/prediction", predictionBrowseHandler)
+		// api.POST("/data/etablissement", browseEtablissementHandler)
+
 		// TODO: mapreduce pour traiter le scope, modification des objets utilisateurs
 		// TODO: écrire l'aggrégation qui va bien
 		api.GET("/dashboard/tasks", getTasksHandler)

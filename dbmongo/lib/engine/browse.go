@@ -18,24 +18,38 @@ func SearchRaisonSociale(params SearchCriteria) ([]interface{}, error) {
 	return result, err
 }
 
+// BrowseParams is type for params for prediction browser
+type BrowseParams struct {
+	Batch    string `json:"batch"`
+	Naf1     string `json:"naf1"`
+	Effectif int    `json:"effectif"`
+	Suivi    bool   `json:"suivi"`
+	Ccsf     bool   `json:"ccsf"`
+	Procol   bool   `json:"procol"`
+	Limit    int    `json:"limit"`
+	Offset   int    `json:"offset"`
+}
+
 // PredictionBrowse retourne la lise de prédiction filtrée pour la navigation
-func PredictionBrowse(batch string, naf1 string, effectif int, suivi bool, ccsf bool, procol bool, limit int, offset int) (interface{}, error) {
+func PredictionBrowse(params BrowseParams) (interface{}, error) {
 	var pipeline []bson.M
 
 	pipeline = append(pipeline, bson.M{"$match": bson.M{
-		"_id.batch": batch,
+		"_id.batch": params.Batch,
 	}})
 
-	if suivi {
+	if params.Suivi {
 		pipeline = append(pipeline, bson.M{"$match": bson.M{
 			"connu": false,
 		}})
 	}
 
 	pipeline = append(pipeline, bson.M{"$project": bson.M{
-		"_idEntreprise.siren": bson.M{"$substrBytes": []interface{}{"$_id.siret", 0, 9}},
+		"_idEntreprise.scope": "entreprise",
+		"_idEntreprise.key":   bson.M{"$substrBytes": []interface{}{"$_id.siret", 0, 9}},
 		"_idEntreprise.batch": "$_id.batch",
-		"_id.siret":           "$_id.siret",
+		"_id.scope":           "etablissement",
+		"_id.key":             "$_id.siret",
 		"_id.batch":           "$_id.batch",
 		"prob":                "$prob",
 		"diff":                "$diff",
@@ -67,25 +81,25 @@ func PredictionBrowse(batch string, naf1 string, effectif int, suivi bool, ccsf 
 		"entreprise":    "$entreprise.value",
 	}})
 
-	if naf1 != "" {
+	if params.Naf1 != "" {
 		pipeline = append(pipeline, bson.M{"$match": bson.M{
-			"etablissement.sirene.ape": bson.M{"$in": naf.Naf5from1(naf1)},
+			"etablissement.sirene.ape": bson.M{"$in": naf.Naf5from1(params.Naf1)},
 		}})
 	}
 
-	if procol {
+	if params.Procol {
 		pipeline = append(pipeline, bson.M{"$match": bson.M{
 			"etablissement.procol": "in_bonis",
 		}})
 	}
 
 	pipeline = append(pipeline, bson.M{"$match": bson.M{
-		"etablissement.effectif": bson.M{"$gt": effectif},
+		"etablissement.dernier_effectif.effectif": bson.M{"$gt": params.Effectif},
 	}})
 
-	pipeline = append(pipeline, bson.M{"$skip": offset})
+	pipeline = append(pipeline, bson.M{"$skip": params.Offset})
 
-	pipeline = append(pipeline, bson.M{"$limit": limit})
+	pipeline = append(pipeline, bson.M{"$limit": params.Limit})
 	var result = []interface{}{}
 	err := Db.DB.C("Prediction").Pipe(pipeline).All(&result)
 

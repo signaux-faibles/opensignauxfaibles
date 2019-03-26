@@ -30,7 +30,7 @@ func adminFeature(c *gin.Context) {
 
 //
 func listTypesHandler(c *gin.Context) {
-	c.JSON(200, engine.GetTypes)
+	c.JSON(200, engine.GetTypes())
 }
 
 //
@@ -208,6 +208,12 @@ func adminFilesHandler(c *gin.Context) {
 	} else {
 		c.JSON(200, files)
 	}
+}
+
+func adminRegionHandler(c *gin.Context) {
+	c.JSON(200, []string{
+		"FR-BFC", "FR-PDL",
+	})
 }
 
 //
