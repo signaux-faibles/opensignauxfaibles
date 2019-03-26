@@ -1,7 +1,7 @@
 full_light_gradient_boosting <- function(
   database,
   collection,
-  actual_period,
+  periods,
   last_batch,
   min_effectif = 10,
   retrain_model = FALSE,
@@ -25,7 +25,7 @@ full_light_gradient_boosting <- function(
       fields = fields,
       code_ape = NULL,
       type = type,
-      subsample = 500000
+      subsample = 200000
       )
 
     out <- prepare_frame(
@@ -56,7 +56,7 @@ full_light_gradient_boosting <- function(
     collection,
     te_map,
     last_batch,
-    actual_period,
+    periods,
     min_effectif = min_effectif,
     fields = fields
     )
@@ -95,10 +95,14 @@ full_light_gradient_boosting <- function(
     "dette_fiscale",
     "apart_heures_consommees",
     "apart_heures_autorisees",
-    "cotisation_moy12m",
+    #"cotisation_moy12m",
+    "compte_urssaf",
     "montant_majorations",
     "exercice_bdf",
-    "exercice_diane"
+    "exercice_diane",
+    "delai",
+    "apparait",
+    "disparait"
     )
 
   # Export
@@ -128,6 +132,7 @@ export_results <- function(
       last_batch = last_batch)
 
   export(res, batch = last_batch)
+  #export(res, batch = last_batch, database = "test_signauxfaibles", destination = "mongodb")
   return(res)
 }
 

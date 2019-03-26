@@ -7,15 +7,24 @@ import (
 )
 
 func publicHandler(c *gin.Context) {
-	batchKey := c.Params.ByName("batch")
-	batch := engine.AdminBatch{}
-	batch.Load(batchKey)
+	params := struct {
+		Batch string `json:"batch"`
+	}{}
+	c.Bind(&params)
 
-	err := engine.Public(batch)
+	batch := engine.AdminBatch{}
+	err := batch.Load(params.Batch)
+	if err != nil {
+		c.JSON(404, "batch non trouvé")
+		return
+	}
+
+	err = engine.Public(batch)
 	if err != nil {
 		c.JSON(500, err.Error())
 		return
 	}
+
 	c.JSON(200, "ok")
 }
 

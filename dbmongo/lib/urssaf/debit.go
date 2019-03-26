@@ -16,7 +16,7 @@ import (
 
 // Debit Débit – fichier Urssaf
 type Debit struct {
-	key                          string
+	key                          string    `hash:"-"`
 	NumeroCompte                 string    `json:"numero_compte" bson:"numero_compte"`
 	NumeroEcartNegatif           string    `json:"numero_ecart_negatif" bson:"numero_ecart_negatif"`
 	DateTraitement               time.Time `json:"date_traitement" bson:"date_traitement"`
@@ -106,7 +106,7 @@ func parseDebit(batch engine.AdminBatch, mapping Comptes) (chan engine.Tuple, ch
 
         date, err := urssafToDate(row[periodeIndex])
         if err != nil { date = time.Now() }
-				if siret, ok := mapping.GetSiret(row[numeroCompteIndex], date); ok == nil {
+				if siret, err := mapping.GetSiret(row[numeroCompteIndex], date); err == nil {
 
 					debit := Debit{
 						key:                       siret,
@@ -138,7 +138,7 @@ func parseDebit(batch engine.AdminBatch, mapping Comptes) (chan engine.Tuple, ch
 					if !tracker.ErrorInCycle() {
 						outputChannel <- debit
 					} else {
-						event.Debug(tracker.Report("errors"))
+						//event.Debug(tracker.Report("errors"))
 					}
 				}
 				tracker.Next()

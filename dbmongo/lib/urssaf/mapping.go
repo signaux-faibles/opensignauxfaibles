@@ -20,29 +20,15 @@ type SiretDate struct{
 type Comptes map[string][]SiretDate
 
 
-func (c Comptes) GetSiret(compte string, date time.Time) (string, error) {
-  date_keys := make([]SiretDate, len(c))
-  i := 0
-  for _, k := range c[compte] {
-    date_keys[i] = k
-    i++
-  }
+func (c *Comptes) GetSiret(compte string, date time.Time) (string, error) {
 
-  found := false
-  i = 0
-  siret := ""
-  for !found && i < len(date_keys) {
-    if date.Before(date_keys[i].Date){
-      found = true
-      siret = c[compte][i].Siret
+  for _, sd := range((*c)[compte]) {
+    if date.Before(sd.Date){
+      return sd.Siret , nil
     }
 
-    i++
   }
-  if siret == "" {
-    return siret, errors.New("Pas de siret associé au compte " + compte + " à cette période")
-  }
-  return siret, nil
+    return "", errors.New("Pas de siret associé au compte " + compte + " à cette période")
 }
 
 func getCompteSiretMapping(batch *engine.AdminBatch) (Comptes, error) {
@@ -65,7 +51,6 @@ func getCompteSiretMapping(batch *engine.AdminBatch) (Comptes, error) {
     reader.Read()
 
     compteIndex := 0
-    // etatCompte := 2
     siretIndex := 3
     fermetureIndex := 5
 
@@ -84,7 +69,7 @@ func getCompteSiretMapping(batch *engine.AdminBatch) (Comptes, error) {
 
       fermeture, err := urssafToDate(row[fermetureIndex])
       if  err != nil {
-        return map[string][]SiretDate{}, err // fermeture n'a pas pu être lue ou convertie en date 
+        return map[string][]SiretDate{}, err // fermeture n'a pas pu être lue ou convertie en date
       }
 
       compte := row[compteIndex]
@@ -92,6 +77,9 @@ func getCompteSiretMapping(batch *engine.AdminBatch) (Comptes, error) {
       if len(siret) == 14 {
         //siret valide
         compteSiretMapping[compte] = append(compteSiretMapping[compte], SiretDate{siret, fermeture})
+        // Tri des sirets pour chaque compte par ordre croissant de date de fermeture
+        // TODO pour être exact, trier également selon que le compte est ouvert ou fermé. Comptes ouverts d'abord dans la liste.
+        // Permettrait d'éviter de sélectionner des comptes fermés mais dont la date de fermeture n'a pas encore été renseignée
         sort.Slice(compteSiretMapping[compte],
         func(i, j int) bool {return(
           compteSiretMapping[compte][i].Date.Before(compteSiretMapping[compte][j].Date))})

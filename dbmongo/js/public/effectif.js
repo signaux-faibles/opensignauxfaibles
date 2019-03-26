@@ -1,5 +1,4 @@
-function effectifs (v, periodes) {
-
+function effectif(effectif, periodes) {
   let output_effectif = {}  
 
   // Construction d'une map[time] = effectif à cette periode
@@ -60,4 +59,5 @@ function effectifs (v, periodes) {
   })
     
   return(output_effectif)
+
 }

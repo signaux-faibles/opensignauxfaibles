@@ -16,7 +16,7 @@ import (
 
 // Cotisation Objet cotisation
 type Cotisation struct {
-	key          string
+	key          string  `hash:"-"`
 	NumeroCompte string  `json:"numero_compte" bson:"numero_compte"`
 	PeriodeDebit string  `json:"periode_debit" bson:"periode_debit"`
 	Periode      Periode `json:"period" bson:"periode"`
@@ -91,7 +91,7 @@ func parseCotisation(batch engine.AdminBatch, mapping Comptes) (chan engine.Tupl
           date, err := urssafToDate(row[field["Periode"]])
           if err != nil { date = time.Now() }
 
-          if siret, ok := mapping.GetSiret(row[field["NumeroCompte"]], date); ok == nil {
+          if siret, err := mapping.GetSiret(row[field["NumeroCompte"]], date); err == nil {
 						cotisation := Cotisation{}
 						cotisation.key = siret
 						cotisation.NumeroCompte = row[field["NumeroCompte"]]
@@ -109,7 +109,7 @@ func parseCotisation(batch engine.AdminBatch, mapping Comptes) (chan engine.Tupl
 						if !tracker.ErrorInCycle() {
 							outputChannel <- cotisation
 						} else {
-							event.Debug(tracker.Report("errors"))
+							//event.Debug(tracker.Report("errors"))
 						}
 					}
 				}

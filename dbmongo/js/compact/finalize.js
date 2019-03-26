@@ -1,49 +1,20 @@
 function finalize(k, o) {
-    batches.reduce((m, batch) => {
-        var deleteOld = new Set(completeTypes[batch])
-        o.batch[batch] = (o.batch[batch]||{})
-        o.batch[batch].compact = (o.batch[batch].compact||{})
-        o.batch[batch].compact["status"] = (o.batch[batch].compact["status"]||false)
 
-        types.forEach(type => {
-            o.batch[batch][type] = (o.batch[batch][type]||{})
-            m[type] = (m[type] || new Set())
-            var keys = Object.keys(o.batch[batch][type])
-            o.batch[batch].compact.delete = (o.batch[batch].compact.delete||{})
+  o.index = {"algo1":false,
+    "algo2":false}
 
-            if (deleteOld.has(type) && o.batch[batch].compact.status == false) {
-                var discardKeys = [...m[type]].filter(key => !(new Set(keys).has(key)))
-                o.batch[batch].compact.delete[type] = discardKeys;
-            }
-            if (deleteOld.has(type)) {
-                o.batch[batch].compact.delete[type] = (o.batch[batch].compact.delete[type] || {})
-                o.batch[batch].compact.delete[type].forEach(key => {
-                    m[type].delete(key)
-                })
-            }
 
-            keys.filter(key => (m[type].has(key))).forEach(key => delete o.batch[batch][type][key])
-            m[type] = new Set([...m[type]].concat(keys))
-            if (Object.keys(o.batch[batch][type]).length == 0) {delete o.batch[batch][type]}
-        })
-
-        o.batch[batch].compact = (o.batch[batch].compact||{})
-        o.batch[batch].compact.status = true
-        return m
-    }, {})
-
-    o.index = {"algo1": false,
-               "algo2":false}
-    Object.keys(o.batch).forEach(batch => {
-        Object.keys((o.batch[batch].effectif||{})).forEach(effectif => {
-            o.index.algo1 = true
-            o.index.algo2 = true
-        })      
+  if (o.scope == "entreprise") {
+    o.index.algo1 = true
+    o.index.algo2 = true
+  } else {
+    // Est-ce que l'un des batchs a un effectif ? 
+    Object.keys(o.batch).some(batch => {
+      let hasEffectif = Object.keys(o.batch[batch].effectif || {}).length > 0 
+      o.index.algo1 = hasEffectif 
+      o.index.algo2 = hasEffectif
+      return (hasEffectif)
     })
-    if (o.scope == "entreprise") {
-      o.index.algo1 = true
-      o.index.algo2 = true
-    }
-
-    return o
+  }
+  return(o)
 }

@@ -17,7 +17,7 @@ import (
 
 // CCSF information urssaf ccsf
 type CCSF struct {
-	key            string
+  key            string    `hash:"-"`
 	NumeroCompte   string    `json:"-" bson:"-"`
 	DateTraitement time.Time `json:"date_traitement" bson:"date_traitement"`
 	Stade          string    `json:"stade" bson:"stade"`
@@ -37,7 +37,7 @@ func (ccsf CCSF) Scope() string {
 
 // Type de l'objet
 func (ccsf CCSF) Type() string {
-	return "effectif"
+	return "ccsf"
 }
 
 func batchToTime(batch string) (time.Time, error) {
@@ -96,13 +96,21 @@ func parseCCSF(batch engine.AdminBatch, mapping Comptes) (chan engine.Tuple, cha
 					event.Critical(path + "Erreur à la lecture, abandon: " + err.Error())
 					continue
 				}
-				if len(r) > 4 {
+				if len(r) >= 4 {
 					dateBatch, err := batchToTime(batch.ID.Key)
 					tracker.Error(err)
 					ccsf := CCSF{}
+
+
 					ccsf.Action = r[f["Action"]]
 					ccsf.Stade = r[f["Stade"]]
 					ccsf.DateTraitement, err = urssafToDate(r[f["DateTraitement"]])
+          tracker.Error(err)
+          if err != nil {
+            tracker.Next()
+            continue
+          }
+          ccsf.key, err = mapping.GetSiret(r[f["NumeroCompte"]], ccsf.DateTraitement)
 					tracker.Error(err)
 					ccsf.NumeroCompte = r[f["NumeroCompte"]]
 					ccsf.DateBatch = dateBatch
@@ -110,7 +118,7 @@ func parseCCSF(batch engine.AdminBatch, mapping Comptes) (chan engine.Tuple, cha
 					if !tracker.ErrorInCycle() {
 						outputChannel <- ccsf
 					} else {
-						event.Debug(tracker.Report("error"))
+						//event.Debug(tracker.Report("error"))
 					}
 
 				} else {

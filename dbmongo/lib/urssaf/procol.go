@@ -19,7 +19,6 @@ import (
 
 // Procol Procédures collectives, extraction URSSAF
 type Procol struct {
-	key          string
 	DateEffet    time.Time `json:"date_effet" bson:"date_effet"`
 	ActionProcol string    `json:"action_procol" bson:"action_procol"`
 	StadeProcol  string    `json:"stade_procol" bson:"stade_procol"`
@@ -28,7 +27,7 @@ type Procol struct {
 
 // Key _id de l'objet
 func (procol Procol) Key() string {
-	return procol.key
+	return procol.Siret
 }
 
 // Scope de l'objet
@@ -38,7 +37,7 @@ func (procol Procol) Scope() string {
 
 // Type de l'objet
 func (procol Procol) Type() string {
-	return "effectif"
+	return "procol"
 }
 
 // Parser transorme le fichier procol en data
@@ -117,7 +116,7 @@ func parseProcol(batch engine.AdminBatch, mapping Comptes) (chan engine.Tuple, c
 					if !tracker.ErrorInCycle() {
 						outputChannel <- procol
 					} else {
-						event.Debug(tracker.Report("errors"))
+						//event.Debug(tracker.Report("errors"))
 					}
 				}
 				tracker.Next()
