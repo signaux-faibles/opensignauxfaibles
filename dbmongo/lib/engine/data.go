@@ -110,15 +110,10 @@ func Compact(batchKey string, types []string) error {
 
 	_, err = Db.DB.C("ImportedData").Find(nil).MapReduce(job, nil)
 
-<<<<<<< HEAD
-	if err != nil 
-	PurgeNotCompacted()
-=======
 	if err != nil {
 		return err
 	}
 	err = PurgeNotCompacted()
->>>>>>> origin/refonte_compact
 	return err
 }
 
