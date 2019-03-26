@@ -1,3 +1,4 @@
+
 #' Title
 #'
 #' @param donnees
@@ -74,6 +75,8 @@ prepare_for_export <- function(
 export <- function(
   donnees,
   batch,
+  database = NULL,
+  collection = "Scores",
   destination = "csv",
   relative_path =  file.path("..", "output")) {
 
@@ -83,7 +86,6 @@ export <- function(
     Possible destinations are 'csv', 'mongodb' or 'json'")
 
   if (tolower(destination) == "csv") {
-
 
     fullpath <- name_file(
       relative_path,
@@ -104,10 +106,21 @@ export <- function(
 
 
   } else if (tolower(destination) == "mongodb") {
+      dbconnection <- mongolite::mongo(
+        collection = collection,
+        db = database,
+        verbose = TRUE,
+        url = "mongodb://localhost:27017")
 
-    error("Export to mongodb not implemented yet !")
 
-  } else if (tolower(destination) == "json"){
+      donnees_export <- donnees %>%
+        dplyr::select(siret, periode, prob, diff) %>%
+        dplyr::mutate(batch = batch, time = Sys.time()) %>%
+        dplyr::rename(score = prob)
+
+      dbconnection$insert(donnees_export)
+
+  } else if (tolower(destination) == "json") {
 
     error("Export to json not implemented yet !")
 
