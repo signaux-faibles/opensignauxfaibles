@@ -37,7 +37,7 @@ func readAndRandomApartDemande(fileName string, outputFileName string, mapping m
 				if err != nil {
 					panic(err)
 				}
-				row.Cells[i].Value = string(int(v * rand.Float64() * 2))
+				row.Cells[i].Value = strconv.Itoa(int(v * rand.Float64() * 2))
 			}
 		}
 
