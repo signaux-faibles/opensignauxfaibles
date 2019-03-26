@@ -12,6 +12,7 @@ import (
 	"dbmongo/lib/sirene"
 	"dbmongo/lib/urssaf"
 	"fmt"
+  "sort"
 	"io"
 	"os"
   "errors"
@@ -95,7 +96,7 @@ func sp(s string) *string {
 //
 func upsertBatchHandler(c *gin.Context) {
 	var batch engine.AdminBatch
-	err := c.Bind(&batch)
+	err := c.ShouldBind(&batch)
 	if err != nil {
 		c.JSON(400, err.Error)
 		return
@@ -129,22 +130,31 @@ func listBatchHandler(c *gin.Context) {
 
 //
 func processBatchHandler(c *gin.Context) {
+
 	var query struct {
 		Batches []string `json:"batches"`
+    Parsers []string `json:"parsers"`
 	}
-	err := c.ShouldBind(&query)
 
+	err := c.ShouldBind(&query)
 
 	if err != nil {
 		c.JSON(400, err.Error())
     return
 	}
-	// TODO: valider que tous les batches demandés existent
-  parsers , err := resolveParsers(nil)
+  if (query.Batches == nil) {
+    query.Batches = engine.GetBatchesID()
+  }
+
+  // TODO: valider que tous les batches demandés existent
+
+  parsers , err := resolveParsers(query.Parsers)
+  types := query.Parsers
   if err != nil {
 				c.JSON(404, err.Error())
   }
-	err = engine.ProcessBatch(query.Batches, parsers)
+  sort.Strings(query.Batches)
+	err = engine.ProcessBatch(query.Batches, parsers, types)
 	if err != nil {
 		c.JSON(500, err.Error())
     return
@@ -208,6 +218,7 @@ func importBatchHandler(c *gin.Context) {
 	err := c.ShouldBind(&params)
 	if err != nil {
 		c.JSON(400, "Requête malformée: "+err.Error())
+    return
 	}
 	batch := engine.AdminBatch{}
 	batch.Load(params.BatchKey)
@@ -229,9 +240,9 @@ func eventsHandler(c *gin.Context) {
 	}
 }
 
-func deleteHandler(c *gin.Context) {
+func purgeNotCompactedHandler(c *gin.Context) {
 	var result []interface{}
-	engine.Db.DB.C("RawData").RemoveAll(bson.M{"_id": bson.M{"$type": "objectId"}})
+  engine.PurgeNotCompacted()
 	c.JSON(200, result)
 }
 

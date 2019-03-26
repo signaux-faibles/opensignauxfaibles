@@ -104,7 +104,7 @@ func (diane Diane) Key() string {
 
 // Type de données
 func (diane Diane) Type() string {
-	return "bdf"
+	return "diane"
 }
 
 // Scope de l'objet
@@ -123,7 +123,9 @@ func Parser(batch engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
 
 	go func() {
 		for _, path := range batch.Files["diane"] {
-			tracker := gournal.Tracker{}
+			tracker := gournal.NewTracker(
+        map[string]string{"path": path},
+        engine.TrackerReports)
 
 			cmdPath := []string{"lib/diane/convert_diane.sh", viper.GetString("APP_DATA") + path}
 			cmd := exec.Command("/bin/bash", cmdPath...)

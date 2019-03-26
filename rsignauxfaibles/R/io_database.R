@@ -476,8 +476,8 @@ get_fields <- function(
       "delai",
       "duree_delai",
       "ratio_dette",
-      "ratio_dette_moy12m",
-      "cotisation_moy12m"
+      "ratio_dette_moy12m"#,
+      #"cotisation_moy12m"
       )
   }
   if (urssaf >= 2) {

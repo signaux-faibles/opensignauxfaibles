@@ -81,13 +81,13 @@ func InitDB() DB {
 	if err != nil {
 		log.Panic(err)
 	}
-	mongostatus.SetSocketTimeout(3600 * time.Second)
+	mongostatus.SetSocketTimeout(36000 * time.Second)
 
 	mongodb, err := mgo.Dial(dbDial)
 	if err != nil {
 		log.Panic(err)
 	}
-	mongodb.SetSocketTimeout(3600 * time.Second)
+	mongodb.SetSocketTimeout(36000 * time.Second)
 	dbstatus := mongostatus.DB(dbDatabase)
 	db := mongodb.DB(dbDatabase)
 
@@ -147,7 +147,7 @@ func insert(db *mgo.Database) chan *Value {
 					objects = append(objects, *v)
 				}
 				if len(objects) > 0 {
-					go func(o []interface{}) { db.C("RawData").Insert(o...) }(objects)
+					go func(o []interface{}) { db.C("ImportedData").Insert(o...) }(objects)
 				}
 				buffer = make(map[string]*Value)
 				objects = make([]interface{}, 0)

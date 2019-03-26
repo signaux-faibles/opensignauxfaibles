@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"dbmongo/lib/engine"
 	"encoding/csv"
-	"errors"
+	//"errors"
 	"io"
 	"os"
 	"strconv"
@@ -17,7 +17,7 @@ import (
 
 // Delai tuple fichier ursaff
 type Delai struct {
-	key               string
+	key               string    `hash:"-"`
 	NumeroCompte      string    `json:"numero_compte" bson:"numero_compte"`
 	NumeroContentieux string    `json:"numero_contentieux" bson:"numero_contentieux"`
 	DateCreation      time.Time `json:"date_creation" bson:"date_creation"`
@@ -39,7 +39,7 @@ func (delai Delai) Key() string {
 
 // Scope de l'objet
 func (delai Delai) Scope() string {
-	return "etablissemnt"
+	return "etablissement"
 }
 
 // Type de l'objet
@@ -101,7 +101,7 @@ func parseDelai(batch engine.AdminBatch, mapping Comptes) (chan engine.Tuple, ch
 					} else {
             date, err := time.Parse("2006-01-02", row[field["DateCreation"]])
             if err != nil { date = time.Now() }
-						if siret, ok := mapping.GetSiret(row[field["NumeroCompte"]], date); ok == nil {
+						if siret, err := mapping.GetSiret(row[field["NumeroCompte"]], date); err == nil {
 							delai := Delai{}
 							delai.key = siret
 							delai.NumeroCompte = row[field["NumeroCompte"]]
@@ -123,11 +123,11 @@ func parseDelai(batch engine.AdminBatch, mapping Comptes) (chan engine.Tuple, ch
 							if !tracker.ErrorInCycle() {
 								outputChannel <- delai
 							} else {
-								event.Debug(tracker.Report("errors"))
+								//event.Debug(tracker.Report("errors"))
 							}
 						} else {
-							tracker.Error(errors.New("compte absent du mapping"))
-							event.Debug(tracker.Report("invalidLine"))
+              //tracker.Error(errors.New("Compte absent du mapping : " + row[field["NumeroCompte"]]))
+							//event.Debug(tracker.Report("invalidLine"))
 						}
 					}
 					tracker.Next()

@@ -6,6 +6,7 @@ import (
 	"errors"
 	"io/ioutil"
 	"regexp"
+
 	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
 )
@@ -27,6 +28,13 @@ func loadJSFunctions(path string) (map[string]bson.JavaScript, error) {
 		}
 	}
 	return functions, err
+}
+
+// PurgeNotCompacted permet de supprimer les objets non encore compactés
+// c'est à dire, vider la collection ImportedData
+func PurgeNotCompacted() error {
+	_, err := Db.DB.C("ImportedData").RemoveAll(nil)
+	return err
 }
 
 // PurgeBatch permet de supprimer un batch dans les objets de RawData
@@ -54,16 +62,30 @@ func PurgeBatch(batchKey string) error {
 }
 
 // Compact traite le compactage de la base RawData
-func Compact() error {
+//func Compact() error {
+//	batches, _ := GetBatches()
+//
+//	// Détermination scope traitement
+func Compact(batchKey string, types []string) error {
+	// Détermination scope traitement
 	batches, _ := GetBatches()
 
-	// Détermination scope traitement
-	var completeTypes = make(map[string][]string)
 	var batchesID []string
-
+	var completeTypes = make(map[string][]string)
 	for _, b := range batches {
 		completeTypes[b.ID.Key] = b.CompleteTypes
 		batchesID = append(batchesID, b.ID.Key)
+	}
+	// Si le numéro de batch n'est pas valide, on prend le premier
+	found := false
+	for _, batchID := range batchesID {
+		if batchID == batchKey {
+			found = true
+			break
+		}
+	}
+	if !found {
+		batchKey = batchesID[0]
 	}
 
 	functions, err := loadJSFunctions("js/compact/")
@@ -75,19 +97,60 @@ func Compact() error {
 		Map:      functions["map"].Code,
 		Reduce:   functions["reduce"].Code,
 		Finalize: functions["finalize"].Code,
-		Out:      bson.M{"replace": "RawData"},
+		Out:      bson.M{"reduce": "RawData"},
 		Scope: bson.M{
-			"functions":     functions,
-			"batches":       GetBatchesID(),
-			"types":         GetTypes(),
+			"f":             functions,
+			"batches":       batchesID,
+			"types":         types,
 			"completeTypes": completeTypes,
+			"batchKey":      batchKey,
 		},
 	}
 
-	_, err = Db.DB.C("RawData").Find(nil).MapReduce(job, nil)
+	_, err = Db.DB.C("ImportedData").Find(nil).MapReduce(job, nil)
 
+	if err != nil {
+		return err
+	}
+	err = PurgeNotCompacted()
 	return err
 }
+
+// Compact traite le compactage de la base RawData
+//func Compact() error {
+//	batches, _ := GetBatches()
+//
+//	// Détermination scope traitement
+//	var completeTypes = make(map[string][]string)
+//	var batchesID []string
+//
+//	for _, b := range batches {
+//		completeTypes[b.ID.Key] = b.CompleteTypes
+//		batchesID = append(batchesID, b.ID.Key)
+//	}
+//
+//	functions, err := loadJSFunctions("js/compact/")
+//	if err != nil {
+//		return err
+//	}
+//	// Traitement MR
+//	job := &mgo.MapReduce{
+//		Map:      functions["map"].Code,
+//		Reduce:   functions["reduce"].Code,
+//		Finalize: functions["finalize"].Code,
+//		Out:      bson.M{"replace": "RawData"},
+//		Scope: bson.M{
+//			"f":     functions,
+//			"batches":       GetBatchesID(),
+//			"types":         GetTypes(),
+//			"completeTypes": completeTypes,
+//		},
+//	}
+//
+//	_, err = Db.DB.C("RawData").Find(nil).MapReduce(job, nil)
+//
+//	return err
+//}
 
 // Reduce alimente la base Features
 func Reduce(batchKey string, algo string, query interface{}, collection string) error {
@@ -127,28 +190,32 @@ func Reduce(batchKey string, algo string, query interface{}, collection string) 
 		Map:      functions["map"].Code,
 		Reduce:   functions["reduce"].Code,
 		Finalize: functions["finalize"].Code,
-		Out:      collection, //bson.M{"merge": collection},
-		Scope:    scope,
+		//TODO merge into collection instead of replacing. Must be idempotent
+		//transformation. Not the case now with agregation
+		Out:   collection, //bson.M{"merge": collection},
+		Scope: scope,
 	}
 
 	_, err = Db.DB.C("RawData").Find(query).MapReduce(job, nil)
 
-  if err != nil { return err }
-  query2 := []bson.M{{
-            "$unwind" : bson.M{"path" : "$value", "preserveNullAndEmptyArrays" : false},
-        },
-        {
-            "$project" : bson.M{"_id" : 0.0, "info" : "$_id", "value" : 1.0},
-        },
-        { "$out" : collection }}
-  pipe := Db.DB.C(collection).Pipe(query2)
-  resp := []bson.M{}
-  err = pipe.All(&resp)
+	if err != nil {
+		return err
+	}
+	query2 := []bson.M{{
+		"$unwind": bson.M{"path": "$value", "preserveNullAndEmptyArrays": false},
+	},
+		{
+			"$project": bson.M{"_id": 0.0, "info": "$_id", "value": 1.0},
+		},
+		{"$out": collection}}
+	pipe := Db.DB.C(collection).Pipe(query2)
+	resp := []bson.M{}
+	err = pipe.All(&resp)
 
 	return err
 }
 
-// Publish alimente la collection Public avec les objets destinés à la diffusion
+// Public alimente la collection Public avec les objets destinés à la diffusion
 func Public(batch AdminBatch) error {
 	functions, err := loadJSFunctions("js/public/")
 
@@ -170,12 +237,12 @@ func Public(batch AdminBatch) error {
 		Map:      functions["map"].Code,
 		Reduce:   functions["reduce"].Code,
 		Finalize: functions["finalize"].Code,
-		Out:      bson.M{"replace": "Features"},
+		Out:      bson.M{"replace": "Public"},
 		Scope:    scope,
 	}
 	// exécution
 
-	_, err = Db.DB.C("DataRaw").Find(nil).MapReduce(job, nil)
+	_, err = Db.DB.C("RawData").Find(nil).MapReduce(job, nil)
 
 	if err != nil {
 		return errors.New("Erreur dans l'exécution des jobs MapReduce" + err.Error())
@@ -228,12 +295,17 @@ func GetBatch(batchKey string) (AdminBatch, error) {
 
 // Purge réinitialise la base, à utiliser avec modération
 func Purge() interface{} {
+	infoImportedData, errImportedData := Db.DB.C("ImportedData").RemoveAll(nil)
 	infoRawData, errRawData := Db.DB.C("RawData").RemoveAll(nil)
 	infoJournal, errJournal := Db.DB.C("Journal").RemoveAll(nil)
 	infoFeatures, errFeatures := Db.DB.C("Features").RemoveAll(nil)
 	infoPublic, errPublic := Db.DB.C("Public").RemoveAll(nil)
 
 	returnData := map[string]map[string]interface{}{
+		"ImportedData": map[string]interface{}{
+			"info":  infoImportedData,
+			"error": errImportedData,
+		},
 		"RawData": map[string]interface{}{
 			"info":  infoRawData,
 			"error": errRawData,

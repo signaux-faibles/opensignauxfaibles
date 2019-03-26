@@ -15,12 +15,13 @@ devtools::load_all()
 ## Script parameters
 ```{r}
 database <- "test_signauxfaibles"
-collection <- "test2"
-actual_period <- as.Date("2018-11-01")
-last_batch <- '1901'
+collection <- "Features"
+actual_period <- as.Date("2019-01-01")
+periods <- seq.Date(from = as.Date("2018-07-01"), to = actual_period, by = "months")
+last_batch <- '1902'
 min_effectif <- 10
 retrain_model <- TRUE
-type <- "spark"
+type <- "dataframe"
 ```
 
 ```{r}
@@ -28,10 +29,10 @@ connect_to_h2o()
 ```
 
 ```{r}
-res <- light_gradient_boosting(
+res <- full_light_gradient_boosting(
   database, 
   collection,
-  actual_period, 
+  periods, 
   last_batch, 
   min_effectif, 
   retrain_model = retrain_model,

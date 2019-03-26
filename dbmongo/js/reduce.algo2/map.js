@@ -6,24 +6,37 @@ function map () {
     let output_array = o[0]
     let output_indexed = o[1]
 
-    if (v.debit) { f.debits(v) }
-    if (v.effectif) {f.effectifs(v, output_array, output_indexed)}
+    // Les periodes qui nous interessent, triées
+    let periodes = Object.keys(output_indexed).sort((a,b) => (a >= b))
 
-    if (v.interim) {
+    if (v.compte) {
+        var output_compte = f.compte(v)
+        f.add(output_compte, output_indexed)
+    }
+    if (v.effectif) {
+      var output_effectif = f.effectifs(v, periodes)
+      f.add(output_effectif, output_indexed)
+    }
+
+    if (v.interim){
       let output_interim = f.interim(v.interim, output_indexed)
-      Object.keys(output_interim).forEach(periode => {
-        output_indexed[periode] = Object.assign(output_indexed[periode], output_interim[periode])
-      }) 
+      f.add(output_interim, output_indexed)
     }
     
-    if (v.apconso && v.apdemande) {f.apart(v, output_indexed, output_array)}
+    if (v.apconso && v.apdemande) {
+      let output_apart = f.apart(v, output_effectif)
+      f.add(output_apart, output_indexed)
+    }
     if (v.delai) {f.delais(v, output_indexed)}
 
     v.altares = v.altares || {}
     v.procol = v.procol || {}
 
     if (v.altares) {f.defaillances(v, output_indexed)}
-    if (v.cotisation && v.debit) {f.cotisationsdettes(v, output_array, output_indexed)}
+    if (v.cotisation && v.debit) {
+      let output_cotisationsdettes = f.cotisationsdettes(v, periodes)
+      f.add(output_cotisationsdettes, output_indexed)
+    }
 
     if (v.ccsf) {f.ccsf(v, output_array)}
     if (v.sirene) {f.sirene(v, output_array)}
@@ -32,7 +45,9 @@ function map () {
 
     f.cotisation(output_indexed, output_array)
 
-    f.cibleApprentissage(output_indexed)
+    let output_cible = f.cibleApprentissage(output_indexed)
+    f.add(output_cible, output_indexed)
+
 
     output_array.forEach(val => {
       let data = {}

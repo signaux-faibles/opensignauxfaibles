@@ -43,6 +43,7 @@ func Parser(batch engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
 
 	event := engine.Event{
 		Code: "parserInterim",
+    Channel: eventChannel,
 	}
 
 	field := map[string]int{
@@ -83,24 +84,24 @@ func Parser(batch engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
 
 			sirets, missing, err := row[field["Siret"]].AsStringSlice()
 			tracker.Error(err)
+
+
 			periode, _, err := row[field["Periode"]].AsFloat64Slice()
 			tracker.Error(err)
 			etp, _, err := row[field["ETP"]].AsFloat64Slice()
 			tracker.Error(err)
 			if tracker.ErrorInCycle() {
-				event.Debug(tracker.Report("errors"))
 				tracker.Error(errors.New("problème d'accès aux données SAS"))
+				event.Debug(tracker.Report("errors"))
 				event.Critical(tracker.Report("fatalError"))
 				continue
 			}
 			for i := 0; i < len(sirets); i++ {
-				if err != nil {
-					break
-				}
 				interim := Interim{}
+        validSiret, _ := regexp.MatchString("[0-9]{14}", sirets[i]);
+        validSiren :=  (sirets[i][:9] != "000000000")
 
-				if validSiret, err := regexp.MatchString("[0-9]{14}", sirets[i]); !missing[i] && validSiret {
-					tracker.Error(err)
+				if  !missing[i] && validSiret &&  validSiren {
 					interim.Siret = sirets[i][:14]
 					interim.Periode, _ = time.Parse("20060102", fmt.Sprintf("%6.0f", periode[i])+"01")
 					interim.ETP = etp[i]
@@ -111,9 +112,9 @@ func Parser(batch engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
 				if !tracker.ErrorInCycle() {
 					outputChannel <- interim
 				} else {
-					event.Debug(tracker.Report("errors"))
+					//event.Debug(tracker.Report("errors"))
 				}
-
+        tracker.Next()
 			}
 			event.Info(tracker.Report("abstract"))
 			file.Close()

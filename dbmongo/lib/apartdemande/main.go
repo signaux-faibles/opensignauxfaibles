@@ -14,9 +14,6 @@ import (
 
 // APDemande Demande d'activité partielle
 type APDemande struct {
-	key                string
-	scope              string
-	datatype           string
 	ID                 string       `json:"id_demande" bson:"id_demande"`
 	Siret              string       `json:"-" bson:"-"`
 	EffectifEntreprise *int         `json:"effectif_entreprise" bson:"effectif_entreprise"`
@@ -34,17 +31,17 @@ type APDemande struct {
 
 // Key id de l'objet
 func (apdemande APDemande) Key() string {
-	return apdemande.key
+	return apdemande.Siret
 }
 
 // Type de données
 func (apdemande APDemande) Type() string {
-	return apdemande.datatype
+	return "apdemande"
 }
 
 // Scope de l'objet
 func (apdemande APDemande) Scope() string {
-	return apdemande.scope
+	return "etablissement"
 }
 
 // Parser produit les lignes

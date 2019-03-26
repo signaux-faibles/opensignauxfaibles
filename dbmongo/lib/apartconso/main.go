@@ -12,9 +12,6 @@ import (
 
 // APConso Consommation d'activité partielle
 type APConso struct {
-	key            string
-	scope          string
-	datatype       string
 	ID             string    `json:"id_conso" bson:"id_conso"`
 	Siret          string    `json:"-" bson:"-"`
 	HeureConsommee *float64  `json:"heure_consomme" bson:"heure_consomme"`
@@ -25,17 +22,17 @@ type APConso struct {
 
 // Key id de l'objet
 func (apconso APConso) Key() string {
-	return apconso.key
+	return apconso.Siret
 }
 
 // Type de données
 func (apconso APConso) Type() string {
-	return apconso.datatype
+	return "apconso"
 }
 
 // Scope de l'objet
 func (apconso APConso) Scope() string {
-	return apconso.scope
+	return "etablissement"
 }
 
 // Parser produit des lignes de consommation d'activité partielle
@@ -83,9 +80,6 @@ func Parser(batch engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
 
 						apconso.ID = row.Cells[idxID].Value
 						apconso.Siret = row.Cells[idxSiret].Value
-						apconso.key = apconso.Siret
-						apconso.datatype = "apconso"
-						apconso.scope = "etablissement"
 						apconso.Periode, err = misc.ExcelToTime(row.Cells[idxPeriode].Value)
 						tracker.Error(err)
 						apconso.HeureConsommee, err = misc.ParsePFloat(row.Cells[idxHeureConsommee].Value)
