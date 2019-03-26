@@ -137,6 +137,7 @@ func main() {
 		api.POST("/data/toDatapi", toDatapiHandler)
 		// TODO: adapter le handler pour traiter la requête en post
 		api.POST("/data/browse", browsePublicHandler)
+		api.POST("/data/prediction", predictionBrowseHandler)
 		// TODO: mapreduce pour traiter le scope, modification des objets utilisateurs
 		// TODO: écrire l'aggrégation qui va bien
 		api.GET("/dashboard/tasks", getTasksHandler)

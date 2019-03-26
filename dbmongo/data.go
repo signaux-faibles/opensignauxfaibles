@@ -31,15 +31,14 @@ func reduceHandler(c *gin.Context) {
 	}
 
 	var query bson.M
-  var collection string
+	var collection string
 	if params.Key != "" {
 		query = bson.M{"_id": params.Key}
-    collection = "Features_debug"
+		collection = "Features_debug"
 	} else {
 		query = bson.M{"value.index." + params.Algo: true}
-    collection = "Features"
+		collection = "Features"
 	}
-
 
 	err = engine.Reduce(params.BatchKey, params.Algo, query, collection)
 	if err != nil {
@@ -79,22 +78,23 @@ func reduceHandler(c *gin.Context) {
 func compactHandler(c *gin.Context) {
 
 	var params struct {
-		BatchKey string `json:"batch"`
-    Types []string `json:"types"`
+		BatchKey string   `json:"batch"`
+		Types    []string `json:"types"`
 	}
 	err := c.ShouldBind(&params)
-  if err != nil {
+	if err != nil {
 		c.JSON(400, err.Error())
-  }
-  //TODO: verifier comportement si batch est vide
-  //TODO: verifier comportement si types est vide
-  err = engine.Compact(params.BatchKey, params.Types)
+	}
+	//TODO: verifier comportement si batch est vide
+	//TODO: verifier comportement si types est vide
+	err = engine.Compact(params.BatchKey, params.Types)
 	if err != nil {
 		c.JSON(500, err.Error())
 		return
 	}
 	c.JSON(200, "ok")
 }
+
 //
 // @summary Lance un traitement de compactage
 // @description Alimente la collection Features
@@ -128,7 +128,8 @@ func compactHandler(c *gin.Context) {
 // @Router /api/data/compact [get]
 // @Security ApiKeyAuth
 func nafHandler(c *gin.Context) {
-	c.JSON(200, naf.Naf)
+	naf, _ := naf.LoadNAF()
+	c.JSON(200, naf)
 }
 
 //
