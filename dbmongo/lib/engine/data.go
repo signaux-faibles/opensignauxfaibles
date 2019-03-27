@@ -207,7 +207,7 @@ func Public(batch AdminBatch) error {
 	}
 	// exécution
 
-	_, err = Db.DB.C("RawData").Find(nil).MapReduce(job, nil)
+	_, err = Db.DB.C("RawData").Find(bson.M{"value.index.algo2": true}).MapReduce(job, nil)
 
 	if err != nil {
 		return errors.New("Erreur dans l'exécution des jobs MapReduce" + err.Error())

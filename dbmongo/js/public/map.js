@@ -9,7 +9,7 @@ function map() {
     vcmde.dernier_effectif = vcmde.effectif[vcmde.effectif.length - 1]
     vcmde.sirene = f.sirene(f.iterable(value.sirene))
     vcmde.cotisation = f.cotisations(value.cotisation)
-    vcmde.dette = f.dettes(value.dettes)
+    vcmde.debit = f.debits(value.debit)
     vcmde.apconso = f.apconso(value.apconso)
     vcmde.apdemande = f.apconso(value.apdemande)
     vcmde.idEntreprise = f.idEntreprise(this._id)
@@ -17,7 +17,7 @@ function map() {
     //if (vcmde.effectif.length > 0) {
       // emit({scope: ["bfc", "crp"], key: this.value.key, batch: actual_batch}, vcrp)
     emit({scope: "etablissement", key: this.value.key, batch: actual_batch}, vcmde)
-    //}
+    emit({scope: "entreprise", key: this.value.key.slice(0,9), batch: actual_batch}, {sirets: [this.value.key]})
 
 
   }

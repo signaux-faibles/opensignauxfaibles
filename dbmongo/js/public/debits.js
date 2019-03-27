@@ -69,7 +69,14 @@ function dettes(vdebit) {
 
   output_dette = []
   serie_periode.forEach(p => {
-    output_dette.push(value_dette[p.getTime()])
+    output_dette.push(
+      (value_dette[p.getTime()] || [])
+        .reduce((m,c) => {
+          return {
+            part_ouvriere: m.part_ouvriere + c.part_ouvriere,
+            part_patronale: m.part_patronale + c.part_patronale}
+          }, {part_ouvriere: 0, part_patronale: 0})
+    )
   })
 
   return(output_dette)
