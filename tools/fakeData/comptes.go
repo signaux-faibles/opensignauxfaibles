@@ -17,8 +17,10 @@ func readAndRandomComptes(fileName string, outputFileName string) (map[string]st
 	defer file.Close()
 	reader := csv.NewReader(bufio.NewReader(file))
 	reader.Comma = ';'
-	date := "1000101"
+
 	mapping := make(map[string]string)
+	sirens := make(map[string]string)
+
 	// destination
 	outputFile, err := os.OpenFile(outputFileName, os.O_WRONLY|os.O_CREATE, 0660)
 	if err != nil {
@@ -41,12 +43,27 @@ func readAndRandomComptes(fileName string, outputFileName string) (map[string]st
 		} else if err != nil {
 			return nil, err
 		}
+		siren := row[3][0:9]
+
+		var newSiren string
+		if _, ok := sirens[siren]; ok {
+			newSiren = sirens[siren]
+		} else {
+			for {
+				newSiren = randStringBytesRmndr(9)
+				if _, ok := sirens[newSiren]; !ok && newSiren != siren {
+					break
+				}
+			}
+		}
+
 		siret := row[3]
+
 		compte := row[0]
-		newSiret := ""
-		newCompte := ""
+		var newSiret, newCompte string
+
 		for {
-			newSiret = randStringBytesRmndr(len(siret))
+			newSiret = newSiren + randStringBytesRmndr(5)
 			if _, ok := mapping[newSiret]; !ok && newSiret != siret {
 				break
 			}
@@ -59,12 +76,13 @@ func readAndRandomComptes(fileName string, outputFileName string) (map[string]st
 		}
 		mapping[compte] = newCompte
 		mapping[siret] = newSiret
+		sirens[siren] = newSiren
 
 		row[0] = newCompte
-		row[2] = newSiret[0:9]
+		row[2] = newSiren
 		row[3] = newSiret
-		row[4] = date
-		row[5] = date
+		// row[4] = date
+		// row[5] = date
 
 		outputRow := "\"" + strings.Join(row, "\";\"") + "\"\n"
 		_, err = outputFile.WriteString(outputRow)

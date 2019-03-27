@@ -72,5 +72,5 @@ function dettes(vdebit) {
     output_dette.push(value_dette[p.getTime()])
   })
 
-  return(output_dette.filter(p => p))
+  return(output_dette)
 }

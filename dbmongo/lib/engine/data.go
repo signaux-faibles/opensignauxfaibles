@@ -117,42 +117,6 @@ func Compact(batchKey string, types []string) error {
 	return err
 }
 
-// Compact traite le compactage de la base RawData
-//func Compact() error {
-//	batches, _ := GetBatches()
-//
-//	// Détermination scope traitement
-//	var completeTypes = make(map[string][]string)
-//	var batchesID []string
-//
-//	for _, b := range batches {
-//		completeTypes[b.ID.Key] = b.CompleteTypes
-//		batchesID = append(batchesID, b.ID.Key)
-//	}
-//
-//	functions, err := loadJSFunctions("js/compact/")
-//	if err != nil {
-//		return err
-//	}
-//	// Traitement MR
-//	job := &mgo.MapReduce{
-//		Map:      functions["map"].Code,
-//		Reduce:   functions["reduce"].Code,
-//		Finalize: functions["finalize"].Code,
-//		Out:      bson.M{"replace": "RawData"},
-//		Scope: bson.M{
-//			"f":     functions,
-//			"batches":       GetBatchesID(),
-//			"types":         GetTypes(),
-//			"completeTypes": completeTypes,
-//		},
-//	}
-//
-//	_, err = Db.DB.C("RawData").Find(nil).MapReduce(job, nil)
-//
-//	return err
-//}
-
 // Reduce alimente la base Features
 func Reduce(batchKey string, algo string, query interface{}, collection string) error {
 	// éviter les noms d'algo essayant de pervertir l'exploration des fonctions

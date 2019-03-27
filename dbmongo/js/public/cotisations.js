@@ -19,5 +19,8 @@ function cotisations(vcotisation) {
     output_cotisation.push(value_cotisation[p.getTime()])
   })
 
-  return(output_cotisation.filter(p => p))
+  return({"test": serie_periode.map(p => p.getTime()),
+          "bla": value_cotisation
+          }
+    )
 }

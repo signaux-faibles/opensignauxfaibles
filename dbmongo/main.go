@@ -143,7 +143,7 @@ func main() {
 		api.POST("/data/toDatapi", toDatapiHandler)
 		api.POST("/data/browse", browsePublicHandler)
 		api.POST("/data/prediction", predictionBrowseHandler)
-		// api.POST("/data/etablissement", browseEtablissementHandler)
+		api.POST("/data/etablissement", etablissementBrowseHandler)
 
 		// TODO: mapreduce pour traiter le scope, modification des objets utilisateurs
 		// TODO: écrire l'aggrégation qui va bien

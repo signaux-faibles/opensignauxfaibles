@@ -49,7 +49,6 @@ func main() {
 		if error == io.EOF {
 			break
 		} else if error != nil {
-			fmt.Println("niktoo")
 			log.Fatal(error)
 		}
 		if line[0] != "" {

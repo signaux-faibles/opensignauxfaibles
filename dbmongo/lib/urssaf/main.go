@@ -22,7 +22,7 @@ func Parser(batch engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
 
 		functions := []parserFunc{
 			parseCCSF,
-      parseCompte,
+			parseCompte,
 			parseCotisation,
 			parseDebit,
 			parseDelai,
@@ -44,7 +44,6 @@ func Parser(batch engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
 				outputChannel <- o
 			}
 		}
-
 	}()
 	return outputChannel, eventChannel
 }

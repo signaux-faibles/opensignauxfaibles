@@ -12,10 +12,7 @@ function map() {
     vcmde.dette = f.dettes(value.dettes)
     vcmde.apconso = f.apconso(value.apconso)
     vcmde.apdemande = f.apconso(value.apdemande)
-    // if (v.cotisation) {
-    //   let output_cotisationsdettes = f.cotisationsdettes(v)
-    //   v.cotisation = output_cotisation
-    // }
+    vcmde.idEntreprise = f.idEntreprise(this._id)
 
     //if (vcmde.effectif.length > 0) {
       // emit({scope: ["bfc", "crp"], key: this.value.key, batch: actual_batch}, vcrp)

@@ -105,3 +105,46 @@ func PredictionBrowse(params BrowseParams) (interface{}, error) {
 
 	return result, err
 }
+
+// EtablissementBrowseParams is type for params for prediction browser
+type EtablissementBrowseParams struct {
+	Siret string `json:"siret"`
+	Batch string `json:"batch"`
+}
+
+// EtablissementBrowse retourne la lise de prédiction filtrée pour la navigation
+func EtablissementBrowse(params EtablissementBrowseParams) (interface{}, error) {
+	var pipeline []bson.M
+
+	pipeline = append(pipeline, bson.M{"$match": bson.M{
+		"_id.scope": "etablissement",
+		"_id.key":   params.Siret,
+		"_id.batch": params.Batch,
+	}})
+
+	pipeline = append(pipeline, bson.M{"$lookup": bson.M{
+		"from":         "Public",
+		"localField":   "value.idEntreprise",
+		"foreignField": "value.idEntreprise",
+		"as":           "etablissements"}})
+
+	pipeline = append(pipeline, bson.M{"$lookup": bson.M{
+		"from":         "Public",
+		"localField":   "value.idEntreprise",
+		"foreignField": "_id",
+		"as":           "entreprise"}})
+
+	pipeline = append(pipeline, bson.M{"$addFields": bson.M{
+		"entreprise": bson.M{"$arrayElemAt": []interface{}{"$entreprise", 0}},
+	}})
+
+	// pipeline = append(pipeline, bson.M{"$addFields": bson.M{
+	// 	"etablissement": "$etablissement.value",
+	// 	"entreprise":    "$entreprise.value",
+	// }})
+
+	var result = []interface{}{}
+	err := Db.DB.C("Public").Pipe(pipeline).All(&result)
+
+	return result, err
+}

@@ -4,6 +4,7 @@ import (
 	"dbmongo/lib/files"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 )
 
@@ -32,7 +33,6 @@ func (message SocketMessage) MarshalJSON() ([]byte, error) {
 	tmp.Types = message.Types
 	tmp.Features = message.Features
 	tmp.Files = message.Files
-
 	return json.Marshal(tmp)
 }
 
@@ -100,6 +100,7 @@ func RelayEvents(eventChannel chan Event) {
 		return
 	}
 	for e := range eventChannel {
+		fmt.Println(e)
 		MainMessageChannel <- SocketMessage{
 			JournalEvent: e,
 		}

@@ -70,6 +70,11 @@ export default {
         return 'down'
       }
       return 'none'
+    },
+    urssaf () {
+      this.prediction.etablissement.dette.reduce((m, d) => {
+        return m + d.part_patronale + d.part_ouvriere
+      }, 0)
     }
   },
   methods: {

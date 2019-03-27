@@ -60,7 +60,6 @@ func main() {
 	} else {
 		fmt.Println("OK -> " + outputCompte)
 	}
-
 	randomizers := map[string]randomizer{
 		"diane":        readAndRandomDiane,
 		"apartdemande": readAndRandomApartDemande,
@@ -74,9 +73,9 @@ func main() {
 		"cotisations":  readAndRandomCotisations,
 		"prediction":   readAndRandomPrediction,
 	}
-
-	for k, r := range randomizers {
-		err := run(k, r, mapping)
+	order := []string{"diane", "apartdemande", "apartconso", "bdf", "emploi", "delais", "sirene", "debits", "altares", "cotisations", "prediction"}
+	for _, k := range order {
+		err := run(k, randomizers[k], mapping)
 		if err != nil {
 			panic(err)
 		}
