@@ -6,15 +6,24 @@ import (
 	"github.com/globalsign/mgo/bson"
 )
 
-// SearchCriteria critères de recherche d'une entreprise
-type SearchCriteria struct {
-	GuessRaisonSociale string `json:"guessRaisonSociale"`
+// SearchParams critères de recherche d'une entreprise
+type SearchParams struct {
+	Text string `json:"text"`
 }
 
-// SearchRaisonSociale effectue une recherche texte sur la collection Public
-func SearchRaisonSociale(params SearchCriteria) ([]interface{}, error) {
+// Search effectue une recherche texte sur la collection Public
+func Search(params SearchParams) ([]interface{}, error) {
 	var result = make([]interface{}, 0)
-	err := Db.DBStatus.C("Public").Find(bson.M{"$text": bson.M{"$search": params.GuessRaisonSociale}}).Limit(15).All(&result)
+	err := Db.DBStatus.C("Public").Find(
+		bson.M{"$and": []interface{}{
+			bson.M{"$or": []interface{}{
+				bson.M{"$text": bson.M{"$search": params.Text}},
+				//bson.M{"value.sirene.raison_sociale": bson.M{"$regex": params.Text}},
+				bson.M{"_id.key": bson.M{"$regex": params.Text}},
+			}},
+			bson.M{"value.sirene": bson.M{"$exists": true}},
+		},
+		}).Limit(15).All(&result)
 	return result, err
 }
 
@@ -137,11 +146,6 @@ func EtablissementBrowse(params EtablissementBrowseParams) (interface{}, error) 
 	pipeline = append(pipeline, bson.M{"$addFields": bson.M{
 		"entreprise": bson.M{"$arrayElemAt": []interface{}{"$entreprise", 0}},
 	}})
-
-	// pipeline = append(pipeline, bson.M{"$addFields": bson.M{
-	// 	"etablissement": "$etablissement.value",
-	// 	"entreprise":    "$entreprise.value",
-	// }})
 
 	var result = []interface{}{}
 	err := Db.DB.C("Public").Pipe(pipeline).All(&result)

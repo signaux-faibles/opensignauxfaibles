@@ -1,118 +1,158 @@
 <template>
-  <div >
+  <div>
     <v-card
       @click="showEtablissement()"
       style="height: 80px; background: linear-gradient(#fff, #eee 45%, #ccc);"
       class="elevation-2 ma-2 pointer"
     >
-      <div style="height: 100%; width: 100%; overflow: hidden;" >
-        <div class="entete pointer" >
+      <div style="height: 100%; width: 100%; overflow: hidden;">
+        <div class="entete pointer">
           <PredictionWidgetScore id="widget" :prob="prediction.prob" :diff="prediction.diff"/>
         </div>
         <div class="corps">
-          <div
-          style="left: 250px; position: absolute;"
-          :id="'marge_' + prediction._id.siret"></div>
+          <div style="left: 250px; position: absolute;" :id="'marge_' + prediction._id.siret"></div>
           <div style="white-space: nowrap; overflow: hidden; max-width: 400px; max-height:30px">
-            <span style="font-size: 18px; color: #333; line-height: 10px; font-family: 'Oswald';">{{ prediction.etablissement.sirene.raison_sociale }}<br style="line-height: 10px;"/></span>
+            <span style="font-size: 18px; color: #333; line-height: 10px; display: inline-block; font-family: 'Oswald'; max-width: '100px'">
+              {{ prediction.etablissement.sirene.raison_sociale }}
+              <br style="line-height: 10px;">
+            </span>
           </div>
-          <span style="font-size: 12px; color: #333; line-height: 10px;">{{ prediction._id.key }}<br style="line-height: 10px;"/></span>
-          <v-img style="position: absolute; left: 160px; bottom: 10px;" width="17" src="/static/gray_apart.svg"></v-img>
-          <v-img style="position: absolute; left: 90px; bottom: 10px;" width="57" :src="'/static/' + (prediction.etablissement.urssaf?'red':'gray') + '_urssaf.svg'"></v-img>
+          <span style="font-size: 12px; color: #333; line-height: 10px;">
+            {{ prediction._id.key }}
+            <br style="line-height: 10px;">
+          </span>
+          <v-img
+            style="position: absolute; left: 160px; bottom: 10px;"
+            width="17"
+            src="/static/gray_apart.svg"
+          ></v-img>
+          <v-img
+            style="position: absolute; left: 90px; bottom: 10px;"
+            width="57"
+            :src="'/static/' + (prediction.etablissement.urssaf?'red':'gray') + '_urssaf.svg'"
+          ></v-img>
           <div style="position: absolute; left: 195px; bottom: 4px; color: #333">
-            <span :class="variationEffectif" style="font-size: 20px">{{ prediction.etablissement.dernier_effectif.effectif || 'n/c' }}</span>
+            <span
+              :class="variationEffectif"
+              style="font-size: 20px"
+            >{{ prediction.etablissement.dernier_effectif.effectif || 'n/c' }}</span>
+          </div>
+          <div class="flex" style="position:absolute; left: 340px; top: 1px; bottom: 1px; right: 1px;">
+            <div 
+              style="width: 400px"
+              v-for="d in diane"
+              :key="d.exercice_diane">
+              {{ d.exercice_diane }}<br>
+              {{ d.ca }}
+            </div>
           </div>
         </div>
-        <v-dialog
-        attach="#detection"
-        lazy
-        fullscreen
-        v-model="dialog">
+        <v-dialog attach="#detection" lazy fullscreen v-model="dialog">
           <div style="height: 100%; width: 100%;  font-weight: 800; font-family: 'Abel', sans;">
             <v-toolbar fixed class="toolbar" height="35px" style="color: #fff; font-size: 22px;">
               <v-spacer/>
-                {{ prediction.etablissement.sirene.raisonsociale }}
+              {{ prediction.etablissement.sirene.raison_sociale }}
               <v-spacer/>
-              <v-icon @click="dialog=false"  style="color: #fff">mdi-close</v-icon>
+              <v-icon @click="dialog=false" style="color: #fff">mdi-close</v-icon>
             </v-toolbar>
-          <Etablissement :siret="prediction._id.key"></Etablissement>
+            <Etablissement :siret="prediction._id.key"></Etablissement>
           </div>
         </v-dialog>
       </div>
     </v-card>
-
   </div>
 </template>
 
 <script>
-import Etablissement from '@/components/Etablissement'
-import PredictionWidgetScore from '@/components/PredictionWidgetScore'
+import Etablissement from "@/components/Etablissement";
+import PredictionWidgetScore from "@/components/PredictionWidgetScore";
 
 export default {
-  props: ['prediction'],
+  props: ["prediction"],
   components: {
     PredictionWidgetScore,
     Etablissement
   },
-  data () {
+  data() {
     return {
-      dialog: false
-    }
+      dialog: false,
+      expand: false,
+      rowsPerPageItems: [4, 8, 12],
+      pagination: {
+        rowsPerPage: 4
+      },
+    };
   },
   computed: {
-    variationEffectif () {
-      var effectif = this.prediction.etablissement.effectif[this.prediction.etablissement.effectif.length-1]
-      var effectif_precedent = this.prediction.etablissement.effectif[this.prediction.etablissement.effectif.length-12]
+    variationEffectif() {
+      var effectif = this.prediction.etablissement.effectif[
+        this.prediction.etablissement.effectif.length - 1
+      ];
+      var effectif_precedent = this.prediction.etablissement.effectif[
+        this.prediction.etablissement.effectif.length - 12
+      ];
       if (effectif / effectif_precedent > 1.05) {
-        return 'high'
+        return "high";
       }
       if (effectif / effectif_precedent < 0.95) {
-        return 'down'
+        return "down";
       }
-      return 'none'
+      return "none";
     },
-    urssaf () {
+    urssaf() {
       this.prediction.etablissement.dette.reduce((m, d) => {
-        return m + d.part_patronale + d.part_ouvriere
-      }, 0)
+        return m + d.part_patronale + d.part_ouvriere;
+      }, 0);
+    },
+    diane() {
+      return this.prediction.entreprise.diane
     }
   },
   methods: {
-    upOrDown (before, after, treshold) {
+    upOrDown(before, after, treshold) {
       if (before == null || after == null) {
-        return 'mdi-help-circle'
+        return "mdi-help-circle";
       }
       if (after / before > 1 + treshold) {
-        return 'mdi-arrow-up'
+        return "mdi-arrow-up";
       }
       if (after / before < 1 - treshold) {
-        return 'mdi-arrow-down'
+        return "mdi-arrow-down";
       }
-      return 'mdi-tilde'
+      return "mdi-tilde";
     },
-    upOrDownClass (before, after, treshold) {
+    upOrDownClass(before, after, treshold) {
       if (before == null || after == null) {
-        return 'unknown'
+        return "unknown";
       }
       if (after / before > 1 + treshold) {
-        return 'high'
+        return "high";
       }
       if (after / before < 1 - treshold) {
-        return 'down'
+        return "down";
       }
-      return 'none'
+      return "none";
     },
-    showEtablissement () {
-      this.dialog = true
+    showEtablissement() {
+      this.dialog = true;
     }
   }
-}
+};
 </script>
 
 <style scoped>
+div.flex {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+}
 div.entete {
   float: left;
-  background: linear-gradient(270deg, rgba(119, 122, 170, 0.219), rgba(119, 122, 170, 0));
+  background: linear-gradient(
+    270deg,
+    rgba(119, 122, 170, 0.219),
+    rgba(119, 122, 170, 0)
+  );
   border-right: solid 1px #3334;
   width: 80px;
   height: 80px;
@@ -138,5 +178,7 @@ div.corps {
 td {
   width: 80px;
 }
-.pointer {cursor: pointer;}
+.pointer {
+  cursor: pointer;
+}
 </style>

@@ -9,8 +9,8 @@
           class="pa-3"
           style="font-size: 18px">
             SIRET <b>{{ siret }}</b> <br/>
-            {{ sirene.naturejuridique }}<br/>
-            Création: {{ printDate(sirene.debut_activite) }}
+            {{ sirene.nature_juridique }}<br/>
+            Création: {{ printDate(sirene.debutactivite) }}
             <br/><br/>
             <b>{{ (sirene.adresse || [])[0] }} </b>
             <br
@@ -253,6 +253,15 @@ export default {
       this.tabs = this.tabs.filter((tab, index) => index !== this.activeTab)
       this.activeTab = this.activeTab - 1
     },
+    getEtablissement (val) {
+      var params = {
+        batch: this.currentBatchKey,
+        siret: val
+      }
+      this.$axios.post('/api/data/etablissement', params ).then(response => {
+        this.etablissement = response.data[0]
+      })
+    },
     printDate (date) {
       return (date || '          ').substring(0, 10)
     },
@@ -297,17 +306,21 @@ export default {
     }
   },
   mounted () {
-    // TODO: remplacer l'appel /data/etablissement par /data/public ?
-    this.$axios.get('/api/data/etablissement/' + this.currentBatchKey + '/' + this.siret).then(response => {
-      this.etablissement = response.data.etablissement[0].value
-      this.entreprise = response.data.entreprise[0].value
-    })
     this.$axios.get('/api/data/naf').then(response => { this.naf = response.data })
+    this.getEtablissement(this.siret)
   },
   components: {
     IEcharts
   },
+  watch: {
+    localSiret: function (val) {
+      this.getEtablissement(val)
+    }
+  },  
   computed: {
+    localSiret () {
+      return this.siret
+    },
     apconso () {
       return ((this.etablissement || {}).apconso || []).sort((a, b) => a.periode <= b.periode).slice(0, 10)
     },
@@ -323,7 +336,7 @@ export default {
       set (tabs) { this.$store.dispatch('updateTabs', tabs) }
     },
     sirene () {
-      return ((this.etablissement.sirene || [])[0]) || {}
+      return (this.etablissement.value || {'sirene': {}}).sirene
     },
     effectif () {
       return ((this.etablissement.effectif || []) || []).sort((a, b) => a.periode < b.periode).slice(0, 15).reverse()

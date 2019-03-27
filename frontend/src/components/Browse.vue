@@ -61,8 +61,8 @@ export default {
   methods: {
     querySelections (val) {
       this.loading = true
-      this.$axios.post('/api/search', { 'guessRaisonSociale': val }).then(r => {
-        this.items = r.data.map(e => { return { text: e._id.siret + ' ' + e.value.sirene.raisonsociale, value: e._id.siret } })
+      this.$axios.post('/api/data/search', {'text': val}).then(r => {
+        this.items = r.data.map(e => { return { text: e._id.key + ' ' + e.value.sirene.raison_sociale, value: e._id.key } })
       }).finally(this.loading = false)
     }
   },

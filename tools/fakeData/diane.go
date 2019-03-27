@@ -17,6 +17,7 @@ import (
 func readAndRandomDiane(fileName string, outputFileName string, mapping map[string]string) error {
 	rand.Seed(time.Now().UTC().UnixNano())
 	encoder := unicode.UTF16(unicode.LittleEndian, unicode.UseBOM).NewEncoder()
+	knownSiren := make(map[string]struct{})
 
 	// source
 	file, err := utfutil.OpenFile(fileName, utfutil.UTF16LE)
@@ -43,11 +44,11 @@ func readAndRandomDiane(fileName string, outputFileName string, mapping map[stri
 	// ligne de titre
 	row, err := reader.Read()
 	outputRow := "\"" + strings.Join(row, "\";\"") + "\"\n"
-	encodedRow, err := encoder.String(outputRow)
+	titleRow, err := encoder.String(outputRow)
 	if err != nil {
 		panic(err)
 	}
-	_, err = outputFile.WriteString(encodedRow)
+	_, err = outputFile.WriteString(titleRow)
 	if err != nil {
 		return err
 	}
@@ -80,7 +81,10 @@ func readAndRandomDiane(fileName string, outputFileName string, mapping map[stri
 		} else if err != nil {
 			return err
 		}
-		if row[1] != "Nom de l'entreprise" {
+
+		if _, ok := knownSiren[row[2]]; !ok && row[1] != "Nom de l'entreprise" {
+			knownSiren[row[2]] = struct{}{}
+
 			for _, i := range ints {
 				newRow[i] = randomInt(row[i])
 			}
@@ -97,8 +101,8 @@ func readAndRandomDiane(fileName string, outputFileName string, mapping map[stri
 			newRow[2] = sirens[row[2]]
 
 			if newRow[2] != "" {
-				outputRow := "\"" + strings.Join(newRow, "\";\"") + "\"\n"
-				encodedRow, err := encoder.String(outputRow)
+				outRow := "\"" + strings.Join(newRow, "\";\"") + "\"\n"
+				encodedRow, err := encoder.String(outRow)
 				_, err = outputFile.WriteString(encodedRow)
 
 				if err != nil {

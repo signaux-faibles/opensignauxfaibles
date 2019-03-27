@@ -137,7 +137,7 @@ func main() {
 		api.POST("/data/compact", compactHandler)
 		//api.GET("/data/compact", compactHandler)
 		api.POST("/data/reduce", reduceHandler)
-		api.POST("/data/search", searchRaisonSocialeHandler)
+		api.POST("/data/search", searchHandler)
 		api.GET("/data/purge", purgeHandler)
 		api.GET("/data/purgeNotCompacted", purgeNotCompactedHandler)
 		api.POST("/data/publish", publicHandler)

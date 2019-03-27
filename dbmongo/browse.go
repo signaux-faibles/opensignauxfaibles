@@ -56,15 +56,15 @@ func etablissementBrowseHandler(c *gin.Context) {
 	c.JSON(200, etablissement)
 }
 
-func searchRaisonSocialeHandler(c *gin.Context) {
-	var params engine.SearchCriteria
+func searchHandler(c *gin.Context) {
+	var params engine.SearchParams
 	err := c.ShouldBind(&params)
 	if err != nil {
 		c.JSON(400, err.Error())
 		return
 	}
 
-	result, err := engine.SearchRaisonSociale(params)
+	result, err := engine.Search(params)
 
 	if err != nil {
 		c.JSON(500, err.Error())

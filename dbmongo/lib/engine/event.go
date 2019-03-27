@@ -4,7 +4,6 @@ import (
 	"dbmongo/lib/files"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"log"
 )
 
@@ -100,7 +99,6 @@ func RelayEvents(eventChannel chan Event) {
 		return
 	}
 	for e := range eventChannel {
-		fmt.Println(e)
 		MainMessageChannel <- SocketMessage{
 			JournalEvent: e,
 		}
