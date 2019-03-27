@@ -29,29 +29,31 @@ func publicHandler(c *gin.Context) {
 }
 
 func predictionBrowseHandler(c *gin.Context) {
-	params := struct {
-		Algo     string `json:"algo"`
-		Batch    string `json:"batch"`
-		Naf1     string `json:"naf1"`
-		Effectif int    `json:"effectif"`
-		Suivi    bool   `json:"suivi"`
-		Ccsf     bool   `json:"ccsf"`
-		Procol   bool   `json:"procol"`
-		Limit    int    `json:"limit"`
-		Offset   int    `json:"offset"`
-	}{}
+	var params engine.BrowseParams
 
 	err := c.ShouldBind(&params)
 	if err != nil {
 		c.JSON(400, "Bad Request: "+err.Error())
 	}
 
-	result, err := engine.PredictionBrowse(params.Batch, params.Naf1, params.Effectif, params.Suivi, params.Ccsf, params.Procol, params.Limit, params.Offset)
+	result, err := engine.PredictionBrowse(params)
 	if err != nil {
 		c.JSON(500, err)
 		return
 	}
 	c.JSON(200, result)
+}
+
+func etablissementBrowseHandler(c *gin.Context) {
+	var params engine.EtablissementBrowseParams
+	c.Bind(&params)
+
+	etablissement, err := engine.EtablissementBrowse(params)
+	if err != nil {
+		c.JSON(500, err)
+		return
+	}
+	c.JSON(200, etablissement)
 }
 
 func searchRaisonSocialeHandler(c *gin.Context) {

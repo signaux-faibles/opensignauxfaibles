@@ -24,7 +24,7 @@ type NAF struct {
 }
 
 // Naf contient le descriptif des codes naf
-var Naf, _ = LoadNAF()
+var Naf NAF
 
 // LoadNAF charge et retourne le descriptif des codes NAF
 func LoadNAF() (NAF, error) {

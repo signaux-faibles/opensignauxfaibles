@@ -14,13 +14,13 @@
           style="left: 250px; position: absolute;"
           :id="'marge_' + prediction._id.siret"></div>
           <div style="white-space: nowrap; overflow: hidden; max-width: 400px; max-height:30px">
-            <span style="font-size: 18px; color: #333; line-height: 10px; font-family: 'Oswald';">{{ prediction.etablissement.sirene.raisonsociale }}<br style="line-height: 10px;"/></span>
+            <span style="font-size: 18px; color: #333; line-height: 10px; font-family: 'Oswald';">{{ prediction.etablissement.sirene.raison_sociale }}<br style="line-height: 10px;"/></span>
           </div>
-          <span style="font-size: 12px; color: #333; line-height: 10px;">{{ prediction._id.siret }}<br style="line-height: 10px;"/></span>
+          <span style="font-size: 12px; color: #333; line-height: 10px;">{{ prediction._id.key }}<br style="line-height: 10px;"/></span>
           <v-img style="position: absolute; left: 160px; bottom: 10px;" width="17" src="/static/gray_apart.svg"></v-img>
           <v-img style="position: absolute; left: 90px; bottom: 10px;" width="57" :src="'/static/' + (prediction.etablissement.urssaf?'red':'gray') + '_urssaf.svg'"></v-img>
           <div style="position: absolute; left: 195px; bottom: 4px; color: #333">
-            <span :class="variationEffectif" style="font-size: 20px">{{ prediction.etablissement.effectif || 'n/c' }}</span>
+            <span :class="variationEffectif" style="font-size: 20px">{{ prediction.etablissement.dernier_effectif.effectif || 'n/c' }}</span>
           </div>
         </div>
         <v-dialog
@@ -35,7 +35,7 @@
               <v-spacer/>
               <v-icon @click="dialog=false"  style="color: #fff">mdi-close</v-icon>
             </v-toolbar>
-          <Etablissement :siret="prediction._id.siret"></Etablissement>
+          <Etablissement :siret="prediction._id.key"></Etablissement>
           </div>
         </v-dialog>
       </div>
@@ -61,13 +61,20 @@ export default {
   },
   computed: {
     variationEffectif () {
-      if (this.prediction.etablissement.effectif / this.prediction.etablissement.effectif_precedent > 1.05) {
+      var effectif = this.prediction.etablissement.effectif[this.prediction.etablissement.effectif.length-1]
+      var effectif_precedent = this.prediction.etablissement.effectif[this.prediction.etablissement.effectif.length-12]
+      if (effectif / effectif_precedent > 1.05) {
         return 'high'
       }
-      if (this.prediction.etablissement.effectif / this.prediction.etablissement.effectif_precedent < 0.95) {
+      if (effectif / effectif_precedent < 0.95) {
         return 'down'
       }
       return 'none'
+    },
+    urssaf () {
+      this.prediction.etablissement.dette.reduce((m, d) => {
+        return m + d.part_patronale + d.part_ouvriere
+      }, 0)
     }
   },
   methods: {

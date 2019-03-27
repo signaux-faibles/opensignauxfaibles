@@ -125,7 +125,6 @@ func importPrediction(mapping map[string]string) {
 		if error == io.EOF {
 			break
 		} else if error != nil {
-			fmt.Println("niktoo")
 			log.Fatal(error)
 		}
 
@@ -181,7 +180,6 @@ func importPrediction(mapping map[string]string) {
 
 	mongodb, err := mgo.Dial("")
 	if err != nil {
-		fmt.Println("pouet pouet")
 		fmt.Println(err)
 		return
 	}
