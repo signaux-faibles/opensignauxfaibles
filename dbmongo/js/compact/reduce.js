@@ -106,21 +106,13 @@ function reduce(key, values) {
       // i.e. on herite de la memoire. (pas de maj de la memoire)
       // ------------------------------------------------------------------------------
 
-      print("before")
-      print([...hashToDelete[type]])
-      print([...hashToAdd[type]])
       hashToDelete[type] = new Set([...hashToDelete[type]].filter( hash => {
         let also_added = (hashToAdd[type] || new Set()).has(hash)
-        print(type)
-        print(also_added)
         if (also_added) { 
           hashToAdd[type].delete(hash)
         }
         return(!also_added)
       }))
-      print("after")
-      print([...hashToDelete[type]])
-      print([...hashToAdd[type]])
 
       // 3.c On retire les cles restantes de la memoire. 
       // --------------------------------------------------
