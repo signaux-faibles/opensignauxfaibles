@@ -8,6 +8,7 @@
           md6
           class="pa-3"
           style="font-size: 18px">
+            {{ Object.keys(etablissement) }}
             SIRET <b>{{ siret }}</b> <br/>
             {{ sirene.nature_juridique }}<br/>
             Création: {{ printDate(sirene.debutactivite) }}
@@ -121,27 +122,23 @@
               </v-flex>
             </v-data-iterator>
           </v-flex>
-          <v-flex xs12>
+
+          <v-flex xs6 class="pr-1" style="height: 200px">
             <v-toolbar
-              class="mb-2"
-              color="indigo darken-5"
               dark
-              flat
-            >
+              color='indigo darken-5'>
               <v-toolbar-title>Effectifs</v-toolbar-title>
             </v-toolbar>
-          </v-flex>
-          <v-flex xs12 style="height: 350px">
             <IEcharts
               :loading="chart"
               style="height: 350px"
               :option="effectifOptions(effectif)"
             />
           </v-flex>
-          <v-flex xs12>
+          <v-flex xs6 class="pr-1">
             <v-toolbar
-            dark
-            color='indigo darken-5'>
+              dark
+              color='indigo darken-5'>
               <v-toolbar-title>Débits Urssaf</v-toolbar-title>
             </v-toolbar>
             <IEcharts
@@ -152,8 +149,8 @@
           </v-flex>
           <v-flex xs6 class="pr-1">
             <v-toolbar
-            dark
-            color='indigo darken-5'>
+              dark
+              color='indigo darken-5'>
               <v-toolbar-title>Demandes d'activité partielle</v-toolbar-title>
             </v-toolbar>
             <v-list>
@@ -189,6 +186,7 @@
               </v-list-tile>
             </v-list>
           </v-flex>
+
           <v-flex xs6 class="pl-1">
             <v-toolbar
             dark
@@ -289,7 +287,7 @@ export default {
           show: true,
           type: 'category',
           axisTick: false,
-          data: this.effectif.map(e => e.periode)
+          data: this.etablissement.value.effectif.map(e => e.periode)
         },
         yAxis: {
           type: 'value',
@@ -300,7 +298,7 @@ export default {
           smooth: true,
           name: 'taux marge',
           type: 'line',
-          data: this.effectif.map(e => e.effectif)
+          data: this.etablissement.value.effectif.map(e => e.effectif)
         }]
       }
     }
@@ -381,7 +379,7 @@ export default {
           show: true,
           type: 'category',
           axisTick: false,
-          data: (this.etablissement.array_debit || []).map(d => d.periode)
+          data: (this.etablissement.value.debit || []).map(d => d.periode)
         },
         yAxis: {
           type: 'value',
@@ -392,13 +390,13 @@ export default {
           smooth: true,
           name: 'Cotisation',
           type: 'line',
-          data: (this.etablissement.array_debit || []).map(d => d.cotisation)
+          data: (this.etablissement.value.cotisation || [])
         }, {
           color: 'red',
           smooth: true,
           name: 'Dette URSSAF',
           type: 'line',
-          data: (this.etablissement.array_debit || []).map(d => d.montant_part_ouvriere + d.montant_part_patronale)
+          data: (this.etablissement.value.debit || []).map(d => d.part_ouvriere + d.part_patronale)
         }]
       }
     }

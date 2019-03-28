@@ -134,11 +134,7 @@ export default {
       }
       this.$axios.post('/api/data/prediction', params).then(response => {
         var prediction = response.data
-        prediction.forEach(p => {
-          p.bdf = Object.keys(p.bdf || {})
-            .map(b => p.bdf[b])
-            .sort((a, b) => a.annee < b.annee)
-        })
+
         this.prediction = prediction
         this.predictionLength = this.prediction.length
         self.loading = false
@@ -160,12 +156,6 @@ export default {
       this.predictionLength = limit + offset
       this.$axios.post('/api/data/prediction', params).then(response => {
         var prediction = response.data
-        prediction.forEach(p => {
-          p.bdf = Object.keys(p.bdf || {})
-            .map(b => p.bdf[b])
-            .sort((a, b) => a.annee < b.annee)
-          p.entreprise = { diane: [] }
-        })
         this.prediction = this.prediction.concat(prediction)
         self.loading = false
       })

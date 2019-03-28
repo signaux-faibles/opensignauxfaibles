@@ -37,13 +37,34 @@
               style="font-size: 20px"
             >{{ prediction.etablissement.dernier_effectif.effectif || 'n/c' }}</span>
           </div>
-          <div class="flex" style="position:absolute; left: 340px; top: 1px; bottom: 1px; right: 1px;">
-            <div 
-              style="width: 400px"
-              v-for="d in diane"
-              :key="d.exercice_diane">
-              {{ d.exercice_diane }}<br>
-              {{ d.ca }}
+          <div class="flex" style="position:absolute; left: 400px; top: 0px; bottom: 0px; right: 9px;">
+            
+            <div class = "label">
+              <b>Exercice</b><br/>
+              {{ (diane[0] || {'exercice_diane': '-'}).exercice_diane || '-' }}<br/>
+              {{ (diane[1] || {'exercice_diane': '-'}).exercice_diane || '-' }}<br/>
+              {{ (diane[2] || {'exercice_diane': '-'}).exercice_diane || '-' }}<br/>
+            </div>
+
+            <div class = "label">
+              <b>Chiffre d'affaire (k€)</b><br/>
+              {{ (diane[0] || {'ca': '-'}).ca || '-' }}<br/>
+              {{ (diane[1] || {'ca': '-'}).ca || '-' }}<br/>
+              {{ (diane[2] || {'ca': '-'}).ca || '-' }}<br/>
+            </div>
+
+            <div class = "label">
+              <b>Dont export (k€)</b><br/>
+              {{ (diane[0] || {'ca_exportation': '-'}).ca_exportation || '-' }}<br/>
+              {{ (diane[1] || {'ca_exportation': '-'}).ca_exportation || '-' }}<br/>
+              {{ (diane[2] || {'ca_exportation': '-'}).ca_exportation || '-' }}<br/>
+            </div>
+
+            <div class = "label">
+              <b>Résultat net (k€)</b><br/>
+              {{ (diane[0] || {'benefice_ou_perte': '-'}).benefice_ou_perte || '-' }}<br/>
+              {{ (diane[1] || {'benefice_ou_perte': '-'}).benefice_ou_perte || '-' }}<br/>
+              {{ (diane[2] || {'benefice_ou_perte': '-'}).benefice_ou_perte || '-' }}<br/>
             </div>
           </div>
         </div>
@@ -105,7 +126,7 @@ export default {
       }, 0);
     },
     diane() {
-      return this.prediction.entreprise.diane
+      return (this.prediction.entreprise || {diane: []}).diane
     }
   },
   methods: {
@@ -144,7 +165,13 @@ export default {
 div.flex {
   display: flex;
   align-items: center;
-  justify-content: start;
+  justify-content: flex-start;
+  font-size: 11px;
+}
+div.label {
+  text-align: right;
+  font-family: 'Quicksand';
+  width: 130px;
 }
 div.entete {
   float: left;
