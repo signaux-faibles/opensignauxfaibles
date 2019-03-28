@@ -8,7 +8,7 @@
           md6
           class="pa-3"
           style="font-size: 18px">
-            {{ Object.keys(etablissement) }}
+            <!-- {{ Object.keys(etablissement) }} -->
             SIRET <b>{{ siret }}</b> <br/>
             {{ sirene.nature_juridique }}<br/>
             Création: {{ printDate(sirene.debutactivite) }}
@@ -50,16 +50,30 @@
           <v-flex xs12 md6 class="text-xs-right pa-3">
             <iframe :v-if="sirene.longitude" width="100%" height="360" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" :src="'https://www.openstreetmap.org/export/embed.html?bbox=' + (sirene.longitude - 0.03) + '%2C' + (sirene.lattitude  - 0.03) + '%2C' + (sirene.longitude + 0.03) + '%2C' + (sirene.lattitude + 0.03) + '&amp;layer=mapnik&amp;marker=' + sirene.lattitude + '%2C' + sirene.longitude" style="border: 1px solid black"></iframe><br/><small><a href="https://www.openstreetmap.org/#map=19/47.31581/5.05088">Afficher une carte plus grande</a></small>
           </v-flex>
+          
           <v-flex xs12>
+            <v-btn color="success">Suivre cette entreprise</v-btn>
+            <v-btn color="success" @click="addComment">Ajouter une annotation</v-btn>
+          </v-flex>
+          <v-flex 
+            xs4 md4 class="pa-3"
+            v-for="(c, i) in comments"
+            :key="comment + i">
+            <v-textarea
+              box
+              :label="c.author + ', le ' + c.date"
+              :value="c.comment"
+            ></v-textarea>
+          </v-flex>
+          <v-flex xs12 class="pr-1">
               <v-toolbar
                 class="mb-2"
                 color="indigo darken-5"
                 dark
-                flat
               >
-                <v-toolbar-title>Informations Financières</v-toolbar-title>
+                <v-toolbar-title class="localtoolbar">Informations Financières</v-toolbar-title>
               </v-toolbar>
-            <v-data-iterator
+            <!-- <v-data-iterator
             :items="zipDianeBDF"
             :rows-per-page-items="[3]"
             :pagination.sync="pagination"
@@ -120,14 +134,14 @@
                   </v-list>
                 </v-card>
               </v-flex>
-            </v-data-iterator>
+            </v-data-iterator> -->
           </v-flex>
 
           <v-flex xs6 class="pr-1" style="height: 200px">
             <v-toolbar
               dark
               color='indigo darken-5'>
-              <v-toolbar-title>Effectifs</v-toolbar-title>
+              <v-toolbar-title class="localtoolbar">Effectifs</v-toolbar-title>
             </v-toolbar>
             <IEcharts
               :loading="chart"
@@ -135,11 +149,12 @@
               :option="effectifOptions(effectif)"
             />
           </v-flex>
+
           <v-flex xs6 class="pr-1">
             <v-toolbar
               dark
               color='indigo darken-5'>
-              <v-toolbar-title>Débits Urssaf</v-toolbar-title>
+              <v-toolbar-title class="localtoolbar">Débits Urssaf</v-toolbar-title>
             </v-toolbar>
             <IEcharts
               :loading="chart"
@@ -147,11 +162,12 @@
               :option="urssafOptions"
             />
           </v-flex>
+
           <v-flex xs6 class="pr-1">
             <v-toolbar
               dark
               color='indigo darken-5'>
-              <v-toolbar-title>Demandes d'activité partielle</v-toolbar-title>
+              <v-toolbar-title class="localtoolbar">Demandes d'activité partielle</v-toolbar-title>
             </v-toolbar>
             <v-list>
               <v-list-tile>
@@ -187,11 +203,11 @@
             </v-list>
           </v-flex>
 
-          <v-flex xs6 class="pl-1">
+          <v-flex xs6 class="pr-1">
             <v-toolbar
             dark
             color='indigo darken-5'>
-              <v-toolbar-title>Consommations d'activité partielle</v-toolbar-title>
+              <v-toolbar-title class="localtoolbar">Consommations d'activité partielle</v-toolbar-title>
             </v-toolbar>
             <v-list style="width: 100%">
               <v-list-tile>
@@ -240,13 +256,30 @@ export default {
       bilan: true,
       urssaf: true,
       apart: true,
-      etablissement: {},
+      etablissement: { 'value': {} },
       entreprise: {},
       pagination: null,
-      naf: {}
+      comments: []
     }
   },
   methods: {
+    addComment() {
+      this.comments.push({
+        'comment': '',
+        'author': 'C.Ninucci',
+        'date': this.formattedDate(new Date)
+        })
+    },
+    formattedDate (d) {
+      let month = String(d.getMonth() + 1);
+      let day = String(d.getDate());
+      const year = String(d.getFullYear());
+
+      if (month.length < 2) month = '0' + month;
+      if (day.length < 2) day = '0' + day;
+
+      return `${day}/${month}/${year}`
+    },
     close () {
       this.tabs = this.tabs.filter((tab, index) => index !== this.activeTab)
       this.activeTab = this.activeTab - 1
@@ -256,7 +289,7 @@ export default {
         batch: this.currentBatchKey,
         siret: val
       }
-      this.$axios.post('/api/data/etablissement', params ).then(response => {
+      this.$axios.post('/api/data/etablissement', params).then(response => {
         this.etablissement = response.data[0]
       })
     },
@@ -304,7 +337,6 @@ export default {
     }
   },
   mounted () {
-    this.$axios.get('/api/data/naf').then(response => { this.naf = response.data })
     this.getEtablissement(this.siret)
   },
   components: {
@@ -314,16 +346,19 @@ export default {
     localSiret: function (val) {
       this.getEtablissement(val)
     }
-  },  
+  },
   computed: {
+    naf () {
+      return this.$store.state.naf
+    },
     localSiret () {
       return this.siret
     },
     apconso () {
-      return ((this.etablissement || {}).apconso || []).sort((a, b) => a.periode <= b.periode).slice(0, 10)
+      return ((this.etablissement.value || {}).apconso || []).sort((a, b) => a.periode <= b.periode).slice(0, 10)
     },
     apdemande () {
-      return ((this.etablissement || {}).apdemande || []).sort((a, b) => a.periode.start <= b.periode.start).slice(0, 10)
+      return ((this.etablissement.value || {}).apdemande || []).sort((a, b) => a.periode.start <= b.periode.start).slice(0, 10)
     },
     activeTab: {
       get () { return this.$store.getters.activeTab },
@@ -334,7 +369,7 @@ export default {
       set (tabs) { this.$store.dispatch('updateTabs', tabs) }
     },
     sirene () {
-      return (this.etablissement.value || {'sirene': {}}).sirene
+      return (this.etablissement.value || { 'sirene': {} }).sirene
     },
     effectif () {
       return ((this.etablissement.effectif || []) || []).sort((a, b) => a.periode < b.periode).slice(0, 15).reverse()
@@ -413,6 +448,11 @@ export default {
   left: 20px;
   top: 20px;
   right: 20px;
+}
+.localtoolbar {
+  font-weight: 600;
+  text-align: center;
+  width: 100%;
 }
 .nc {
   color: #bbb;

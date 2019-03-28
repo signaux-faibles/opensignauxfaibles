@@ -11,60 +11,42 @@
         </div>
         <div class="corps">
           <div style="left: 250px; position: absolute;" :id="'marge_' + prediction._id.siret"></div>
-          <div style="white-space: nowrap; overflow: hidden; max-width: 400px; max-height:30px">
-            <span style="font-size: 18px; color: #333; line-height: 10px; display: inline-block; font-family: 'Oswald'; max-width: '100px'">
+          <div style="white-space: nowrap; overflow: hidden; max-width: 400px; max-height:40px">
+            <span style="font-size: 30px; color: #333; line-height: 40px; display: inline-block; font-family: 'Oswald'; max-width: '100px'">
               {{ prediction.etablissement.sirene.raison_sociale }}
-              <br style="line-height: 10px;">
             </span>
           </div>
-          <span style="font-size: 12px; color: #333; line-height: 10px;">
-            {{ prediction._id.key }}
-            <br style="line-height: 10px;">
-          </span>
+          <span style="font-family: 'Quicksand'; font-size: 15px; font-weight: 400;">{{ (naf.n5 || {})[(sirene.ape || '')] }}</span>
+
           <v-img
-            style="position: absolute; left: 160px; bottom: 10px;"
-            width="17"
-            src="/static/gray_apart.svg"
+            style="position: absolute; left: 500px; top: 10px;"
+            width="70"
+            :src="'/static/' + (urssaf?'red':'gray') + '_urssaf.svg'"
           ></v-img>
+
           <v-img
-            style="position: absolute; left: 90px; bottom: 10px;"
-            width="57"
-            :src="'/static/' + (prediction.etablissement.urssaf?'red':'gray') + '_urssaf.svg'"
+            style="position: absolute; left: 500px; bottom: 10px;"
+            width="22"
+            :src="'/static/' + apart + '_apart.svg'"
           ></v-img>
-          <div style="position: absolute; left: 195px; bottom: 4px; color: #333">
+
+          <div style="position: absolute; left: 540px; bottom: 4px; color: #333">
             <span
               :class="variationEffectif"
-              style="font-size: 20px"
+              style="font-size: 22px"
             >{{ prediction.etablissement.dernier_effectif.effectif || 'n/c' }}</span>
           </div>
-          <div class="flex" style="position:absolute; left: 400px; top: 0px; bottom: 0px; right: 9px;">
-            
-            <div class = "label">
-              <b>Exercice</b><br/>
-              {{ (diane[0] || {'exercice_diane': '-'}).exercice_diane || '-' }}<br/>
-              {{ (diane[1] || {'exercice_diane': '-'}).exercice_diane || '-' }}<br/>
-              {{ (diane[2] || {'exercice_diane': '-'}).exercice_diane || '-' }}<br/>
+          
+          <div class="flex" style="position:absolute; left: 600px; top: 0px; bottom: 0px; right: 9px;">
+            <div class='label'>
+              Chiffre d'affaire<br/>
+              <span style="font-size: 25px" :class='diane.ca_color'>{{ diane.ca }}</span>
             </div>
-
-            <div class = "label">
-              <b>Chiffre d'affaire (k€)</b><br/>
-              {{ (diane[0] || {'ca': '-'}).ca || '-' }}<br/>
-              {{ (diane[1] || {'ca': '-'}).ca || '-' }}<br/>
-              {{ (diane[2] || {'ca': '-'}).ca || '-' }}<br/>
-            </div>
-
-            <div class = "label">
-              <b>Dont export (k€)</b><br/>
-              {{ (diane[0] || {'ca_exportation': '-'}).ca_exportation || '-' }}<br/>
-              {{ (diane[1] || {'ca_exportation': '-'}).ca_exportation || '-' }}<br/>
-              {{ (diane[2] || {'ca_exportation': '-'}).ca_exportation || '-' }}<br/>
-            </div>
-
-            <div class = "label">
-              <b>Résultat net (k€)</b><br/>
-              {{ (diane[0] || {'benefice_ou_perte': '-'}).benefice_ou_perte || '-' }}<br/>
-              {{ (diane[1] || {'benefice_ou_perte': '-'}).benefice_ou_perte || '-' }}<br/>
-              {{ (diane[2] || {'benefice_ou_perte': '-'}).benefice_ou_perte || '-' }}<br/>
+          </div>
+          <div class="flex" style="position:absolute; left: 750px; top: 0px; bottom: 0px; right: 9px;">
+            <div class='label'>
+              Résultat d'exploitation<br/>
+              <span style="font-size: 25px" :class='diane.resultat_expl_color'>{{ diane.resultat_expl }}</span>
             </div>
           </div>
         </div>
@@ -72,7 +54,7 @@
           <div style="height: 100%; width: 100%;  font-weight: 800; font-family: 'Abel', sans;">
             <v-toolbar fixed class="toolbar" height="35px" style="color: #fff; font-size: 22px;">
               <v-spacer/>
-              {{ prediction.etablissement.sirene.raison_sociale }}
+                {{ prediction.etablissement.sirene.raison_sociale }}
               <v-spacer/>
               <v-icon @click="dialog=false" style="color: #fff">mdi-close</v-icon>
             </v-toolbar>
@@ -85,80 +67,115 @@
 </template>
 
 <script>
-import Etablissement from "@/components/Etablissement";
-import PredictionWidgetScore from "@/components/PredictionWidgetScore";
+import Etablissement from '@/components/Etablissement'
+import PredictionWidgetScore from '@/components/PredictionWidgetScore'
 
 export default {
-  props: ["prediction"],
+  props: ['prediction'],
   components: {
     PredictionWidgetScore,
     Etablissement
   },
-  data() {
+  data () {
     return {
       dialog: false,
       expand: false,
       rowsPerPageItems: [4, 8, 12],
       pagination: {
         rowsPerPage: 4
-      },
-    };
+      }
+    }
   },
   computed: {
-    variationEffectif() {
-      var effectif = this.prediction.etablissement.effectif[
-        this.prediction.etablissement.effectif.length - 1
-      ];
-      var effectif_precedent = this.prediction.etablissement.effectif[
-        this.prediction.etablissement.effectif.length - 12
-      ];
-      if (effectif / effectif_precedent > 1.05) {
-        return "high";
-      }
-      if (effectif / effectif_precedent < 0.95) {
-        return "down";
-      }
-      return "none";
+    naf () {
+      return this.$store.state.naf
     },
-    urssaf() {
-      this.prediction.etablissement.dette.reduce((m, d) => {
-        return m + d.part_patronale + d.part_ouvriere;
-      }, 0);
+    apart () {
+      var apart = this.prediction.etablissement.apdemande.filter(d => {
+        var end = new Date(d.periode.end)
+        return end.getTime() > new Date(new Date().setFullYear(new Date().getFullYear() - 1))
+      })
+      return (apart.length > 0)?'red':'gray'
     },
-    diane() {
-      return (this.prediction.entreprise || {diane: []}).diane
+    sirene () {
+      return this.prediction.etablissement.sirene
+    },
+    variationEffectif () {
+      var effectif = this.prediction.etablissement.effectif[this.prediction.etablissement.effectif.length - 1].effectif
+      var effectifPrecedent = this.prediction.etablissement.effectif[this.prediction.etablissement.effectif.length - 12].effectif
+      if (effectif / effectifPrecedent > 1.10) {
+        return 'high'
+      }
+      if (effectif / effectifPrecedent < 0.90) {
+        return 'down'
+      }
+      return 'none'
+    },
+    urssaf () {
+      var urssaf = this.prediction.etablissement.debit.map(d => d.part_patronale + d.part_ouvriere)
+      console.log(urssaf)
+      var l = urssaf.length
+      for (var i = l - 3; i < l; i++) {
+        if (urssaf[i] / urssaf[i - 1] > 1.01) {
+          return true
+        }
+      }
+      return false
+    },
+    diane () {
+      var entreprise = this.prediction.entreprise || {diane: []}
+      var diane = entreprise.diane.reduce((m, d) => {
+        if (d.ca && d.resultat_expl && d.exercice_diane && m.length < 2) {
+          m.push({
+            exercice: d.exercice_diane,
+            ca: d.ca,
+            resultat_expl: d.resultat_expl
+          })
+        }
+        return m
+      }, [])
+
+      if (diane.length == 2) {
+        return {
+          ca: diane[0].ca + ' k€',
+          resultat_expl: diane[0].resultat_expl + ' k€',
+          ca_color: (diane[0].ca/diane[1].ca > 1.10)?"high":(diane[0].ca/diane[1].ca<0.90)?"down":"gray",
+          resultat_expl_color: ((diane[0].resultat_expl/diane[0].ca)-(diane[1].resultat_expl/diane[1].ca)>0.04)?"high":((diane[0].resultat_expl/diane[0].ca)-(diane[1].resultat_expl/diane[1].ca)<-0.04)?"down":"gray"
+        }
+      }
+      return {ca: 'n/c', resultat_expl: 'n/c', ca_color:'unknown', resultat_expl_color: 'unknown'}
     }
   },
   methods: {
-    upOrDown(before, after, treshold) {
+    upOrDown (before, after, treshold) {
       if (before == null || after == null) {
-        return "mdi-help-circle";
+        return 'mdi-help-circle'
       }
       if (after / before > 1 + treshold) {
-        return "mdi-arrow-up";
+        return 'mdi-arrow-up'
       }
       if (after / before < 1 - treshold) {
-        return "mdi-arrow-down";
+        return 'mdi-arrow-down'
       }
-      return "mdi-tilde";
+      return 'mdi-tilde'
     },
-    upOrDownClass(before, after, treshold) {
+    upOrDownClass (before, after, treshold) {
       if (before == null || after == null) {
-        return "unknown";
+        return 'unknown'
       }
       if (after / before > 1 + treshold) {
-        return "high";
+        return 'high'
       }
       if (after / before < 1 - treshold) {
-        return "down";
+        return 'down'
       }
-      return "none";
+      return 'none'
     },
-    showEtablissement() {
-      this.dialog = true;
+    showEtablissement () {
+      this.dialog = true
     }
   }
-};
+}
 </script>
 
 <style scoped>
@@ -166,7 +183,8 @@ div.flex {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  font-size: 11px;
+  font-size: 12px;
+  font-family: "Quicksand"
 }
 div.label {
   text-align: right;
@@ -194,10 +212,10 @@ div.corps {
   background: linear-gradient(45deg, rgba(50, 51, 121, 0.212), #0000);
 }
 .high {
-  color: rgb(16, 114, 16);
+  color: rgb(4, 153, 41);
 }
 .down {
-  color: rgb(139, 19, 19);
+  color: rgb(244, 67, 54);
 }
 .unknown {
   color: rgb(150, 150, 150);

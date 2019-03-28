@@ -26,7 +26,7 @@
           </v-list-tile-content>
         </v-list-tile> -->
 
-        <v-list-tile to="/">
+        <v-list-tile to="/detection">
           <v-list-tile-action>
             <v-icon>mdi-target</v-icon>
           </v-list-tile-action>
@@ -35,7 +35,7 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-tile to="/browse">
+        <v-list-tile to="/">
           <v-list-tile-action>
             <v-icon>mdi-database-search</v-icon>
           </v-list-tile-action>
@@ -46,7 +46,7 @@
 
         <v-list-tile to="/data">
           <v-list-tile-action>
-            <v-icon>fa-database</v-icon>
+            <v-icon>mdi-database</v-icon>
           </v-list-tile-action>
           <v-list-tile-content>
             <v-list-tile-title>Données</v-list-tile-title>

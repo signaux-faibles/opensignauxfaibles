@@ -26,12 +26,12 @@ export default new Router({
     //   component: Admin
     // },
     {
-      path: '/browse',
+      path: '/',
       name: 'Browse',
       component: Browse
     },
     {
-      path: '/',
+      path: '/detection',
       name: 'Detection',
       component: Prediction
     }

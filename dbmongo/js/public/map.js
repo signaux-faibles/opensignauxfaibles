@@ -13,13 +13,11 @@ function map() {
     vcmde.apconso = f.apconso(value.apconso)
     vcmde.apdemande = f.apconso(value.apdemande)
     vcmde.idEntreprise = f.idEntreprise(this._id)
-
+    vcmde.delai = f.delai(value.delai)
     //if (vcmde.effectif.length > 0) {
-      // emit({scope: ["bfc", "crp"], key: this.value.key, batch: actual_batch}, vcrp)
+    // emit({scope: ["bfc", "crp"], key: this.value.key, batch: actual_batch}, vcrp)
     emit({scope: "etablissement", key: this.value.key, batch: actual_batch}, vcmde)
     emit({scope: "entreprise", key: this.value.key.slice(0,9), batch: actual_batch}, {sirets: [this.value.key]})
-
-
   }
   else if (this.value.scope=='entreprise') {
      v = {

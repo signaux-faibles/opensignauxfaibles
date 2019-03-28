@@ -34,7 +34,7 @@
               <v-icon :class="loading?'rotate':''" @click="rightDrawer=!rightDrawer">mdi-target</v-icon>
             </v-list-tile-avatar>
             <v-spacer></v-spacer>
-            <v-img src="/static/regions/PDL.svg"></v-img>
+            <!-- <v-img src="/static/regions/PDL.svg"></v-img> -->
           </v-list-tile>
         </v-list>
       </v-toolbar>
@@ -134,7 +134,6 @@ export default {
       }
       this.$axios.post('/api/data/prediction', params).then(response => {
         var prediction = response.data
-
         this.prediction = prediction
         this.predictionLength = this.prediction.length
         self.loading = false
@@ -162,6 +161,7 @@ export default {
     }
   },
   computed: {
+
     naf1 () {
       return Object.keys(this.$store.state.naf.n1 || {}).sort().map(n => {
         return {
