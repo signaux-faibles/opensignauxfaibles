@@ -18,17 +18,18 @@
       </div>
     </v-card-text>
     <v-divider></v-divider>
+    <div v-if="viewDetail">
     <v-card-text 
       class="tasktext ma-2" 
       dark 
       v-for="s in task.tasks" 
       :key="s.id" 
       style="background-color: transparent;"
-      v-if="viewDetail"
     >
         {{ s.event }} le {{ formatDate(s._id.date) }}<br/>
         {{ s.value }}<br/>
     </v-card-text>
+    </div>
   </v-card>
 </template>
 

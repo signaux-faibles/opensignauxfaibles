@@ -301,3 +301,44 @@ func toDatapiHandler(c *gin.Context) {
 	}
 	c.JSON(200, "ok")
 }
+
+func getCommentsHandler(c *gin.Context) {
+	var params struct {
+		Siret string `json:"siret"`
+	}
+	err := c.Bind(&params)
+	if err != nil {
+		return
+	}
+	comments, err := engine.GetComments(params.Siret)
+	if err != nil {
+		c.JSON(500, err.Error())
+		return
+	}
+	c.JSON(200, comments)
+}
+
+func getCommentHistoryHandler(c *gin.Context) {
+	var comment engine.Comment
+	err := c.Bind(&comment)
+	if err != nil {
+		return
+	}
+	comments, err := engine.GetCommentHistory(comment)
+	if err != nil {
+		c.JSON(500, err.Error())
+		return
+	}
+	c.JSON(200, comments)
+}
+
+func setCommentHandler(c *gin.Context) {
+	var comment engine.Comment
+	c.Bind(&comment)
+	err := engine.SetComment(comment)
+	if err != nil {
+		c.JSON(500, err.Error())
+		return
+	}
+	c.JSON(200, "ok")
+}

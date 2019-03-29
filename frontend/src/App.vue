@@ -14,60 +14,59 @@ import NavigationDrawer from '@/components/NavigationDrawer'
 
 export default {
   methods: {
-    handleResize() {
+    handleResize () {
       this.height = Math.max(
         document.documentElement.clientHeight,
         window.innerHeight || 0
       )
     },
-    handleScrolling(event) {
-      
+    handleScrolling (event) {
       this.scrollTop = event.pageY || window.scrollY
     }
   },
   components: { Login, NavigationDrawer },
   computed: {
     height: {
-      get() {
+      get () {
         return this.$store.state.height
       },
-      set(height) {
+      set (height) {
         this.$store.dispatch('setHeight', height)
       }
     },
     scrollTop: {
-      get() {
+      get () {
         return this.$store.state.scrolltop
       },
-      set(scrollTop) {
+      set (scrollTop) {
         this.$store.dispatch('setScrollTop', scrollTop)
       }
     },
-    uploads() {
+    uploads () {
       return this.$store.getters.getUploads
     },
-    login() {
+    login () {
       return this.$store.state.token != null
     },
-    batches() {
+    batches () {
       return JSON.stringify(this.$store.state.batches, null, 2)
     },
-    dbstatus() {
+    dbstatus () {
       return this.$store.state.dbstatus
     },
-    messages() {
+    messages () {
       return this.$store.getters.messages
     },
     drawer: {
-      get() {
+      get () {
         return this.$store.state.appDrawer
       },
-      set(val) {
+      set (val) {
         this.$store.dispatch('setDrawer', val)
       }
     }
   },
-  data() {
+  data () {
     return {
       fixed: false,
       dialog: false,
@@ -84,7 +83,7 @@ export default {
       }
     }
   },
-  mounted() {
+  mounted () {
     document.onscroll = this.handleScrolling
     window.addEventListener('resize', this.handleResize)
     this.height = Math.max(
@@ -100,6 +99,8 @@ export default {
 @import url('https://fonts.googleapis.com/css?family=Quicksand');
 @import url('https://fonts.googleapis.com/css?family=Abel');
 @import url('https://fonts.googleapis.com/css?family=Oswald');
+@import url('https://fonts.googleapis.com/css?family=Source+Serif+Pro');
+
 body {
   font-family: 'Quicksand', sans-serif;
 }

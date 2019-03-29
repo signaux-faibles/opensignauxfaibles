@@ -12,36 +12,40 @@
         <div class="corps">
           <div style="left: 250px; position: absolute;" :id="'marge_' + prediction._id.siret"></div>
           <div style="white-space: nowrap; overflow: hidden; max-width: 400px; max-height:40px">
-            <span style="font-size: 30px; color: #333; line-height: 40px; display: inline-block; font-family: 'Oswald'; max-width: '100px'">
+            <span style="font-size: 28px; color: #333; line-height: 40px; display: inline-block; font-family: 'Oswald'; max-width: '100px'">
               {{ prediction.etablissement.sirene.raison_sociale }}
             </span>
           </div>
-          <span style="font-family: 'Quicksand'; font-size: 15px; font-weight: 400;">{{ (naf.n5 || {})[(sirene.ape || '')] }}</span>
+          <span style="font-family: 'Abel'; font-size: 17px; font-weight: 400;">{{ (naf.n5 || {})[(sirene.ape || '')] }}</span>
 
           <v-img
-            style="position: absolute; left: 500px; top: 10px;"
+            style="position: absolute; left: 550px; top: 10px;"
             width="70"
             :src="'/static/' + (urssaf?'red':'gray') + '_urssaf.svg'"
           ></v-img>
 
           <v-img
-            style="position: absolute; left: 500px; bottom: 10px;"
-            width="22"
+            style="position: absolute; left: 550px; bottom: 10px;"
+            width="18"
+            height="24"
             :src="'/static/' + apart + '_apart.svg'"
           ></v-img>
 
-          <div style="position: absolute; left: 540px; bottom: 4px; color: #333">
+          <div style="position: absolute; left: 584px; bottom: 3px; color: #333">
             <span
-              :class="variationEffectif"
-              style="font-size: 22px"
+              style="font-size: 24px"
             >{{ prediction.etablissement.dernier_effectif.effectif || 'n/c' }}</span>
+            <v-icon style="position:relative; top:-4px" small v-if="variationEffectif">{{ variationEffectif }}</v-icon>
           </div>
-          
+
           <div class="flex" style="position:absolute; left: 600px; top: 0px; bottom: 0px; right: 9px;">
             <div class='label'>
               Chiffre d'affaire<br/>
-              <span style="font-size: 25px" :class='diane.ca_color'>{{ diane.ca }}</span>
+              <span style="font-size: 25px" :class="diane.ca_arrow?'':'unknown'">{{ diane.ca }}</span>
             </div>
+          </div>
+          <div style="position:absolute; left: 780px; top: 42px">
+            <v-icon small v-if="diane.ca_arrow">{{ diane.ca_arrow }}</v-icon>
           </div>
           <div class="flex" style="position:absolute; left: 750px; top: 0px; bottom: 0px; right: 9px;">
             <div class='label'>
@@ -50,13 +54,13 @@
             </div>
           </div>
         </div>
-        <v-dialog attach="#detection" lazy fullscreen v-model="dialog">
-          <div style="height: 100%; width: 100%;  font-weight: 800; font-family: 'Abel', sans;">
+        <v-dialog  lazy fullscreen v-model="dialog">
+          <div style="height: 100%; width: 100%;  font-weight: 800; font-family: 'Oswald', sans;">
             <v-toolbar fixed class="toolbar" height="35px" style="color: #fff; font-size: 22px;">
               <v-spacer/>
                 {{ prediction.etablissement.sirene.raison_sociale }}
               <v-spacer/>
-              <v-icon @click="dialog=false" style="color: #fff">mdi-close</v-icon>
+              <v-icon @click="dialog=false;log()" style="color: #fff">mdi-close</v-icon>
             </v-toolbar>
             <Etablissement :siret="prediction._id.key"></Etablissement>
           </div>
@@ -86,6 +90,9 @@ export default {
       }
     }
   },
+  mounted () {
+    console.log(this.prediction)
+  },
   computed: {
     naf () {
       return this.$store.state.naf
@@ -95,25 +102,28 @@ export default {
         var end = new Date(d.periode.end)
         return end.getTime() > new Date(new Date().setFullYear(new Date().getFullYear() - 1))
       })
-      return (apart.length > 0)?'red':'gray'
+      return (apart.length > 0) ? 'red' : 'gray'
     },
     sirene () {
       return this.prediction.etablissement.sirene
     },
     variationEffectif () {
-      var effectif = this.prediction.etablissement.effectif[this.prediction.etablissement.effectif.length - 1].effectif
-      var effectifPrecedent = this.prediction.etablissement.effectif[this.prediction.etablissement.effectif.length - 12].effectif
+      var effectifArray = this.prediction.etablissement.effectif
+      var l = effectifArray.length
+      if (l === 0) { return 'none' }
+
+      var effectif = effectifArray[l - 1].effectif
+      var effectifPrecedent = effectifArray[l - Math.min(12, l)].effectif
       if (effectif / effectifPrecedent > 1.10) {
-        return 'high'
+        return 'mdi-arrow-bottom-right'
       }
       if (effectif / effectifPrecedent < 0.90) {
-        return 'down'
+        return 'mdi-arrow-top-right'
       }
-      return 'none'
+      return null
     },
     urssaf () {
       var urssaf = this.prediction.etablissement.debit.map(d => d.part_patronale + d.part_ouvriere)
-      console.log(urssaf)
       var l = urssaf.length
       for (var i = l - 3; i < l; i++) {
         if (urssaf[i] / urssaf[i - 1] > 1.01) {
@@ -123,7 +133,7 @@ export default {
       return false
     },
     diane () {
-      var entreprise = this.prediction.entreprise || {diane: []}
+      var entreprise = this.prediction.entreprise || { diane: [] }
       var diane = entreprise.diane.reduce((m, d) => {
         if (d.ca && d.resultat_expl && d.exercice_diane && m.length < 2) {
           m.push({
@@ -135,18 +145,26 @@ export default {
         return m
       }, [])
 
-      if (diane.length == 2) {
+      if (diane.length === 2) {
         return {
           ca: diane[0].ca + ' k€',
           resultat_expl: diane[0].resultat_expl + ' k€',
-          ca_color: (diane[0].ca/diane[1].ca > 1.10)?"high":(diane[0].ca/diane[1].ca<0.90)?"down":"gray",
-          resultat_expl_color: ((diane[0].resultat_expl/diane[0].ca)-(diane[1].resultat_expl/diane[1].ca)>0.04)?"high":((diane[0].resultat_expl/diane[0].ca)-(diane[1].resultat_expl/diane[1].ca)<-0.04)?"down":"gray"
+          ca_arrow: (diane[0].ca / diane[1].ca > 1.05) ? 'mdi-arrow-top-right' : (diane[0].ca / diane[1].ca < 0.95) ? 'mdi-arrow-bottom-right' : null,
+          resultat_expl_color: diane[0].resultat_expl <= 0 ? 'down' : null
         }
       }
-      return {ca: 'n/c', resultat_expl: 'n/c', ca_color:'unknown', resultat_expl_color: 'unknown'}
+      return {
+        ca: 'n/c',
+        resultat_expl: 'n/c',
+        ca_color: 'unknown',
+        resultat_expl_color: 'unknown'
+      }
     }
   },
   methods: {
+    log () {
+      console.log(this.prediction)
+    },
     upOrDown (before, after, treshold) {
       if (before == null || after == null) {
         return 'mdi-help-circle'
@@ -183,13 +201,13 @@ div.flex {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  font-size: 12px;
+  font-size: 16px;
   font-family: "Quicksand"
 }
 div.label {
   text-align: right;
-  font-family: 'Quicksand';
-  width: 130px;
+  font-family: 'Abel';
+  width: 180px;
 }
 div.entete {
   float: left;

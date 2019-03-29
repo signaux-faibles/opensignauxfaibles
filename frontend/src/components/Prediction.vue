@@ -155,13 +155,13 @@ export default {
       this.predictionLength = limit + offset
       this.$axios.post('/api/data/prediction', params).then(response => {
         var prediction = response.data
-        this.prediction = this.prediction.concat(prediction)
+        var newPrediction = this.prediction.concat(prediction)
+        this.prediction = newPrediction
         self.loading = false
       })
     }
   },
   computed: {
-
     naf1 () {
       return Object.keys(this.$store.state.naf.n1 || {}).sort().map(n => {
         return {

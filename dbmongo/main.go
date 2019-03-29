@@ -146,6 +146,10 @@ func main() {
 		api.POST("/data/prediction", predictionBrowseHandler)
 		api.POST("/data/etablissement", etablissementBrowseHandler)
 
+		api.POST("/comments/get", getCommentsHandler)
+		api.POST("/comments/set", setCommentHandler)
+		api.POST("/comments/history", getCommentHistoryHandler)
+
 		// TODO: mapreduce pour traiter le scope, modification des objets utilisateurs
 		// TODO: écrire l'aggrégation qui va bien
 		api.GET("/dashboard/tasks", getTasksHandler)

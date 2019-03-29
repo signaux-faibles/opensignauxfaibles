@@ -3,6 +3,7 @@ package engine
 import (
 	"dbmongo/lib/naf"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/globalsign/mgo/bson"
 )
 
@@ -54,15 +55,20 @@ func PredictionBrowse(params BrowseParams) (interface{}, error) {
 	}
 
 	pipeline = append(pipeline, bson.M{"$project": bson.M{
-		"_idEntreprise.scope": "entreprise",
-		"_idEntreprise.key":   bson.M{"$substrBytes": []interface{}{"$_id.siret", 0, 9}},
-		"_idEntreprise.batch": "$_id.batch",
-		"_id.scope":           "etablissement",
-		"_id.key":             "$_id.siret",
-		"_id.batch":           "$_id.batch",
-		"prob":                "$prob",
-		"diff":                "$diff",
+		"_id.scope": "etablissement",
+		"_id.key":   "$_id.siret",
+		"_id.batch": "$_id.batch",
+		"prob":      "$prob",
+		"diff":      "$diff",
 	}})
+
+	// pipeline = append(pipeline, bson.M{"$addFields": bson.M{
+	// 	"_idEntreprise": bson.M{
+	// 		"scope": "entreprise",
+	// 		"key":   bson.M{"$substrBytes": []interface{}{"$_id.key", 0, 9}},
+	// 		"batch": "$_id.batch",
+	// 	},
+	// }})
 
 	pipeline = append(pipeline, bson.M{"$sort": bson.M{
 		"prob": -1,
@@ -76,7 +82,7 @@ func PredictionBrowse(params BrowseParams) (interface{}, error) {
 
 	pipeline = append(pipeline, bson.M{"$lookup": bson.M{
 		"from":         "Public",
-		"localField":   "_idEntreprise",
+		"localField":   "etablissement.0.value.idEntreprise",
 		"foreignField": "_id",
 		"as":           "entreprise"}})
 
@@ -112,6 +118,9 @@ func PredictionBrowse(params BrowseParams) (interface{}, error) {
 	var result = []interface{}{}
 	err := Db.DB.C("Prediction").Pipe(pipeline).All(&result)
 
+	if len(result) > 0 {
+		spew.Dump(result[0])
+	}
 	return result, err
 }
 
