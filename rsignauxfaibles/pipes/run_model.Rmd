@@ -16,11 +16,11 @@ devtools::load_all()
 ```{r}
 database <- "test_signauxfaibles"
 collection <- "Features"
-actual_period <- as.Date("2019-01-01")
+actual_period <- as.Date("2019-02-01")
 periods <- seq.Date(from = as.Date("2018-07-01"), to = actual_period, by = "months")
-last_batch <- '1902'
+last_batch <- '1903_part1'
 min_effectif <- 10
-retrain_model <- TRUE
+retrain_model <- FALSE
 type <- "dataframe"
 ```
 
