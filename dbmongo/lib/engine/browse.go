@@ -2,8 +2,8 @@ package engine
 
 import (
 	"dbmongo/lib/naf"
+	"fmt"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/globalsign/mgo/bson"
 )
 
@@ -30,14 +30,15 @@ func Search(params SearchParams) ([]interface{}, error) {
 
 // BrowseParams is type for params for prediction browser
 type BrowseParams struct {
-	Batch    string `json:"batch"`
-	Naf1     string `json:"naf1"`
-	Effectif int    `json:"effectif"`
-	Suivi    bool   `json:"suivi"`
-	Ccsf     bool   `json:"ccsf"`
-	Procol   bool   `json:"procol"`
-	Limit    int    `json:"limit"`
-	Offset   int    `json:"offset"`
+	Batch    string   `json:"batch"`
+	Naf1     string   `json:"naf1"`
+	Effectif int      `json:"effectif"`
+	Suivi    *bool    `json:"suivi"`
+	Ccsf     bool     `json:"ccsf"`
+	Procol   bool     `json:"procol"`
+	Limit    int      `json:"limit"`
+	Offset   int      `json:"offset"`
+	Zone     []string `json:"zone"`
 }
 
 // PredictionBrowse retourne la lise de prédiction filtrée pour la navigation
@@ -48,27 +49,32 @@ func PredictionBrowse(params BrowseParams) (interface{}, error) {
 		"_id.batch": params.Batch,
 	}})
 
-	if params.Suivi {
-		pipeline = append(pipeline, bson.M{"$match": bson.M{
-			"connu": false,
-		}})
+	if params.Suivi != nil {
+		if *params.Suivi {
+			pipeline = append(pipeline, bson.M{"$match": bson.M{
+				"connu": true,
+			}})
+		} else {
+			pipeline = append(pipeline, bson.M{"$match": bson.M{
+				"connu": false,
+			}})
+		}
 	}
-
-	pipeline = append(pipeline, bson.M{"$project": bson.M{
-		"_id.scope": "etablissement",
-		"_id.key":   "$_id.siret",
-		"_id.batch": "$_id.batch",
-		"prob":      "$prob",
-		"diff":      "$diff",
+	fmt.Println(params.Zone)
+	pipeline = append(pipeline, bson.M{"$addFields": bson.M{"inZone": bson.M{"$in": []interface{}{"$departement", params.Zone}}}})
+	pipeline = append(pipeline, bson.M{"$match": bson.M{
+		"inZone": true,
 	}})
-
-	// pipeline = append(pipeline, bson.M{"$addFields": bson.M{
-	// 	"_idEntreprise": bson.M{
-	// 		"scope": "entreprise",
-	// 		"key":   bson.M{"$substrBytes": []interface{}{"$_id.key", 0, 9}},
-	// 		"batch": "$_id.batch",
-	// 	},
-	// }})
+	pipeline = append(pipeline, bson.M{"$project": bson.M{
+		"_id.scope":   "etablissement",
+		"_id.key":     "$_id.siret",
+		"_id.batch":   "$_id.batch",
+		"prob":        "$prob",
+		"diff":        "$diff",
+		"test":        params.Zone,
+		"inZone":      bson.M{"inZone": bson.M{"$in": []interface{}{"$departement", params.Zone}}},
+		"departement": "$departement",
+	}})
 
 	pipeline = append(pipeline, bson.M{"$sort": bson.M{
 		"prob": -1,
@@ -117,10 +123,8 @@ func PredictionBrowse(params BrowseParams) (interface{}, error) {
 	pipeline = append(pipeline, bson.M{"$limit": params.Limit})
 	var result = []interface{}{}
 	err := Db.DB.C("Prediction").Pipe(pipeline).All(&result)
-
-	if len(result) > 0 {
-		spew.Dump(result[0])
-	}
+	fmt.Println(err)
+	fmt.Println(len(result))
 	return result, err
 }
 

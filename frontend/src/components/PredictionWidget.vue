@@ -91,7 +91,6 @@ export default {
     }
   },
   mounted () {
-    console.log(this.prediction)
   },
   computed: {
     naf () {
@@ -162,9 +161,6 @@ export default {
     }
   },
   methods: {
-    log () {
-      console.log(this.prediction)
-    },
     upOrDown (before, after, treshold) {
       if (before == null || after == null) {
         return 'mdi-help-circle'

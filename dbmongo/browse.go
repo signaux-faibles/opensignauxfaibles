@@ -2,6 +2,7 @@ package main
 
 import (
 	"dbmongo/lib/engine"
+	"fmt"
 
 	"github.com/gin-gonic/gin"
 )
@@ -34,6 +35,8 @@ func predictionBrowseHandler(c *gin.Context) {
 	err := c.ShouldBind(&params)
 	if err != nil {
 		c.JSON(400, "Bad Request: "+err.Error())
+		fmt.Println(err)
+		return
 	}
 
 	result, err := engine.PredictionBrowse(params)
