@@ -54,7 +54,7 @@ const sessionStore = new Vuex.Store({
       email: null,
       password: null
     },
-    appDrawer: true,
+    appDrawer: false,
     rightDrawer: false,
     token: null,
     types: null,

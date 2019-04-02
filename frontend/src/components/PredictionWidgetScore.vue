@@ -46,8 +46,8 @@ export default {
   data () {
     return {
       seuils: {
-        low: 0.13,
-        high: 0.37
+        low: 0.98,
+        high: 1
       }
     }
   }

@@ -134,7 +134,7 @@ func InitDB() DB {
 }
 
 func insert(db *mgo.Database) chan *Value {
-	source := make(chan *Value, 1000)
+	source := make(chan *Value, 10)
 
 	go func(chan *Value) {
 		buffer := make(map[string]*Value)
@@ -147,7 +147,7 @@ func insert(db *mgo.Database) chan *Value {
 					objects = append(objects, *v)
 				}
 				if len(objects) > 0 {
-					go func(o []interface{}) { db.C("ImportedData").Insert(o...) }(objects)
+					db.C("ImportedData").Insert(objects...)
 				}
 				buffer = make(map[string]*Value)
 				objects = make([]interface{}, 0)

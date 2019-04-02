@@ -4,6 +4,7 @@ import (
 	"dbmongo/lib/misc"
 	"dbmongo/lib/naf"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"regexp"
 
@@ -223,8 +224,8 @@ func Public(batch AdminBatch) error {
 		"date_debut":             batch.Params.DateDebut,
 		"date_fin":               batch.Params.DateFin,
 		"date_fin_effectif":      batch.Params.DateFinEffectif,
-		"serie_periode":          misc.GenereSeriePeriode(batch.Params.DateDebut, batch.Params.DateFin),
-		"serie_periode_annuelle": misc.GenereSeriePeriodeAnnuelle(batch.Params.DateDebut, batch.Params.DateFin),
+		"serie_periode":          misc.GenereSeriePeriode(batch.Params.DateFin.AddDate(0, -24, 0), batch.Params.DateFin),
+		"serie_periode_annuelle": misc.GenereSeriePeriodeAnnuelle(batch.Params.DateFin.AddDate(0, -24, 0), batch.Params.DateFin),
 		"offset_effectif":        (batch.Params.DateFinEffectif.Year()-batch.Params.DateFin.Year())*12 + int(batch.Params.DateFinEffectif.Month()-batch.Params.DateFin.Month()),
 		"actual_batch":           batch.ID.Key,
 		"naf":                    naf.Naf,
@@ -242,7 +243,7 @@ func Public(batch AdminBatch) error {
 	}
 	// exécution
 
-	_, err = Db.DB.C("RawData").Find(nil).MapReduce(job, nil)
+	_, err = Db.DB.C("RawData").Find(bson.M{"value.index.algo2": true}).MapReduce(job, nil)
 
 	if err != nil {
 		return errors.New("Erreur dans l'exécution des jobs MapReduce" + err.Error())
@@ -267,6 +268,30 @@ func BrowsePublic(query interface{}) []Browseable {
 			},
 		},
 	}
+}
+
+type object struct {
+	Key struct {
+		Siret string `json:"key" bson:"key"`
+		Batch string `json:"batch" bson:"batch"`
+	} `json:"key"`
+	Value map[string]interface{} `json:"value" bson:"value"`
+	Scope []string               `json:"scope" value:"scope"`
+}
+
+// ToDatapi exports data from database to datapi instance
+func ToDatapi(batchKey string) error {
+
+	prediction := Db.DB.C("Public").Find(bson.M{"_id.batch": batchKey})
+	predictions := prediction.Iter()
+	var p interface{}
+
+	for predictions.Next(&p) {
+		fmt.Println(p)
+	}
+	// public := Db.DB.C("Public").Find(bson.M{"_id.batch": batchKey})
+
+	return nil
 }
 
 // GetBatches retourne tous les objets AdminBatch de la base triés par ID

@@ -1,5 +1,5 @@
 <template>
-<div>
+<div >
   <v-toolbar class="toolbar" color="#c9aec5" height="35px" app>
     <v-icon
     @click="drawer=!drawer"
@@ -13,11 +13,15 @@
       Consultation
     </div>
     <v-spacer></v-spacer>
-    <v-icon color="#ffffff" @click="rightDrawer=!rightDrawer">mdi-database-search</v-icon>
+    <!-- <v-icon color="#ffffff" @click="rightDrawer=!rightDrawer">mdi-database-search</v-icon> -->
   </v-toolbar>
-    <v-container>
-      <v-layout>
-        <v-flex>
+    <v-container bg fill-height grid-list-md text-xs-center>
+      <v-layout row wrap align-center>
+        <v-flex :class="select?'small':'big'" xs12>
+          <span class="fblue">Signaux</span>
+          <span class="fblack">·</span>
+          <span class="fred">Faibles</span></v-flex>
+        <v-flex style="margin: 0 auto" xs10>
           <v-autocomplete
             slot="extension"
             v-model="select"
@@ -29,7 +33,8 @@
             prepend-icon="mdi-database-search"
             cache-items
             class="mx-3"
-            flat
+            solo
+            style="border-radius: 25px"
             hide-no-data
             hide-details
           ></v-autocomplete>
@@ -61,8 +66,8 @@ export default {
   methods: {
     querySelections (val) {
       this.loading = true
-      this.$axios.post('/api/search', { 'guessRaisonSociale': val }).then(r => {
-        this.items = r.data.map(e => { return { text: e._id.siret + ' ' + e.value.sirene.raisonsociale, value: e._id.siret } })
+      this.$axios.post('/api/data/search', { 'text': val }).then(r => {
+        this.items = r.data.map(e => { return { text: e._id.key + ' ' + e.value.sirene.raison_sociale, value: e._id.key } })
       }).finally(this.loading = false)
     }
   },
@@ -110,5 +115,28 @@ div.titre {
   color: #ffffff;
   font-weight: 800;
   font-size: 20px
+}
+span.fblue {
+  font-family: 'Quicksand', sans-serif;
+  color: #20459a
+}
+span.fblack {
+  font-family: 'Quicksand', sans-serif;
+  color: #000000
+}
+span.fred {
+  font-family: 'Quicksand', sans-serif;
+  color: #e9222e
+}
+.small {
+  display:none;
+  font-size: 15px;
+  font-weight: 400;
+}
+.big {
+  margin: 70px;
+  text-shadow: 0 0 1px #00000040;
+  font-size: 65px;
+  font-weight: 800;
 }
 </style>

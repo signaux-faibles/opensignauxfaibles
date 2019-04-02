@@ -32,7 +32,6 @@ func (message SocketMessage) MarshalJSON() ([]byte, error) {
 	tmp.Types = message.Types
 	tmp.Features = message.Features
 	tmp.Files = message.Files
-
 	return json.Marshal(tmp)
 }
 

@@ -117,7 +117,7 @@ func Parser(batch engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
 			}
 			event.Info(tracker.Report("abstract"))
 		}
-
+		close(eventChannel)
 		close(outputChannel)
 	}()
 	return outputChannel, eventChannel
