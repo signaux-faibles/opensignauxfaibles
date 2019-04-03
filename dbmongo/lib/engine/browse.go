@@ -2,7 +2,6 @@ package engine
 
 import (
 	"dbmongo/lib/naf"
-	"fmt"
 
 	"github.com/globalsign/mgo/bson"
 )
@@ -55,16 +54,23 @@ func PredictionBrowse(params BrowseParams) (interface{}, error) {
 				"connu": true,
 			}})
 		} else {
-			pipeline = append(pipeline, bson.M{"$match": bson.M{
-				"connu": false,
-			}})
+			pipeline = append(pipeline, bson.M{
+				"$match": bson.M{
+					"$and": []interface{}{
+						bson.M{"connu": false},
+						// bson.M{"procol": "in_bonis"},
+					},
+				},
+			})
 		}
 	}
-	fmt.Println(params.Zone)
+
 	pipeline = append(pipeline, bson.M{"$addFields": bson.M{"inZone": bson.M{"$in": []interface{}{"$departement", params.Zone}}}})
+
 	pipeline = append(pipeline, bson.M{"$match": bson.M{
 		"inZone": true,
 	}})
+
 	pipeline = append(pipeline, bson.M{"$project": bson.M{
 		"_id.scope":   "etablissement",
 		"_id.key":     "$_id.siret",
@@ -123,8 +129,7 @@ func PredictionBrowse(params BrowseParams) (interface{}, error) {
 	pipeline = append(pipeline, bson.M{"$limit": params.Limit})
 	var result = []interface{}{}
 	err := Db.DB.C("Prediction").Pipe(pipeline).All(&result)
-	fmt.Println(err)
-	fmt.Println(len(result))
+
 	return result, err
 }
 

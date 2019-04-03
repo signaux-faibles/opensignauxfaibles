@@ -58,7 +58,7 @@
           <div style="height: 100%; width: 100%;  font-weight: 800; font-family: 'Oswald', sans;">
             <v-toolbar fixed class="toolbar" height="35px" style="color: #fff; font-size: 22px;">
               <v-spacer/>
-                {{ prediction.etablissement.sirene.raison_sociale }}
+                ETABLISSEMENT
               <v-spacer/>
               <v-icon @click="dialog=false;log()" style="color: #fff">mdi-close</v-icon>
             </v-toolbar>

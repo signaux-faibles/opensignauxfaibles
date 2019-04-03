@@ -47,7 +47,7 @@ export default {
     return {
       seuils: {
         low: 0.98,
-        high: 1
+        high: 0.995
       }
     }
   }

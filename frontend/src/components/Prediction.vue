@@ -18,7 +18,7 @@
     </v-icon>
     
     <div style="width: 100%; text-align: center;" class="toolbar_titre">
-      Détection - Bourgogne Franche Comté
+      Détection - Bourgogne Franche Comté - Février 2019
     </div>
     <v-spacer></v-spacer>
     <v-icon
@@ -51,7 +51,7 @@
       </div>
       <p style="height: 1px; border: 1px solid #eee"/>
       <div style="display: flex; flex-direction: row; vertical-align: middle; padding: 0 15px;" >
-        <v-icon style="margin-right: 10px;">fa-industry</v-icon>
+        <v-icon style="margin-right: 10px;">fa-map</v-icon>
         <v-select
           :items="subzones"
           v-model="zone"
@@ -118,7 +118,7 @@ export default {
       zone: ['21', '25', '39', '58', '70', '71', '89', '90'],
       subzones: [
         {
-          text: 'Région complète',
+          text: 'Région entière',
           value:  ['21', '25', '39', '58', '70', '71', '89', '90'],
         },
         {
@@ -276,22 +276,22 @@ export default {
     },
     batches () {
       return [{
-        "value": "1810",
-        "text": "Octobre 2019"
+        'value': '1810',
+        'text': 'Octobre 2018'
       },{
-        "value": "1811",
-        "text": "Novembre 2018"
+        'value': '1811',
+        'text': 'Novembre 2018'
       },{
-        "value": "1812",
-        "text": "Décembre 2018"
+        'value': '1812',
+        'text': 'Décembre 2018'
       },{
-        "value": "1901",
-        "text": "Janvier 2018"
+        'value': '1901',
+        'text': 'Janvier 2018'
       },{
-        "value": "1802",
-        "text": "Février 2018"
+        'value': '1802',
+        'text': 'Février 2019'
       }]
-      return (this.$store.state.batches || []).map(batch => batch.id.key)
+      // return (this.$store.state.batches || []).map(batch => batch.id.key)
     },
     detectionLength () {
       var length = Math.round((this.height + this.scrollTop) / 860 + 5) * 10
