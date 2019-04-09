@@ -8,13 +8,15 @@ Vue.use(Vuex)
 
 const vm = new Vue()
 
-var dev = true
+// var dev = true
 
 var baseURL = ''
 var baseWS = ''
 
-baseURL = dev ? 'http://localhost:3000' : 'https://signaux.faibles.fr'
-baseWS = dev ? 'ws://localhost:3000' : 'wss://signaux.faibles.fr'
+// baseURL = dev ? 'http://localhost:3000' : 'https://signaux.faibles.fr'
+// baseWS = dev ? 'ws://localhost:3000' : 'wss://signaux.faibles.fr'
+baseURL = 'https://signaux-faibles.beta.gouv.fr'
+baseWS = 'wss://signaux-faibles.beta.gouv.fr'
 
 var axiosClient = axios.create(
   {

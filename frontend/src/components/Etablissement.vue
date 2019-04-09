@@ -504,6 +504,13 @@ export default {
           step: 'end',
           type: 'line',
           data: this.effectif.map(e => e.effectif)
+        },{
+          name: 'apconso',
+          color: 'green',
+          step: 'end',
+          type: 'line',
+          data: [30,10,5,0,0,0,10,10,4],
+          areaStyle: {}
         }]
       }
     },
