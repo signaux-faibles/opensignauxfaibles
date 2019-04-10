@@ -8,15 +8,13 @@ Vue.use(Vuex)
 
 const vm = new Vue()
 
-// var dev = true
+var dev = false
 
 var baseURL = ''
 var baseWS = ''
 
-// baseURL = dev ? 'http://localhost:3000' : 'https://signaux.faibles.fr'
-// baseWS = dev ? 'ws://localhost:3000' : 'wss://signaux.faibles.fr'
-baseURL = 'https://signaux-faibles.beta.gouv.fr'
-baseWS = 'wss://signaux-faibles.beta.gouv.fr'
+baseURL = dev ? 'http://localhost:3000' : 'https://signaux-faibles.beta.gouv.fr'
+baseWS = dev ? 'ws://localhost:3000' : 'wss://signaux-faibles.beta.gouv.fr'
 
 var axiosClient = axios.create(
   {
@@ -53,8 +51,8 @@ const sessionStore = new Vuex.Store({
   plugins: [createPersistedState({ storage: window.sessionStorage })],
   state: {
     credentials: {
-      email: null,
-      password: null
+      email: 'test@test.gouv.fr',
+      password: 'demo'
     },
     appDrawer: false,
     rightDrawer: false,
@@ -260,8 +258,7 @@ const sessionStore = new Vuex.Store({
     login (context) {
       let credentials = {
         email: context.state.credentials.email,
-        password: context.state.credentials.password,
-        browserToken: localStore.state.browserToken
+        password: context.state.credentials.password
       }
 
       axiosClient.post('/login', credentials).then(response => {

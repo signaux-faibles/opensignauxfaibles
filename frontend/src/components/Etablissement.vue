@@ -18,7 +18,7 @@
 
             <v-btn :color="suivi?'error':'success'" @click="suivi=!suivi">
               {{ suivi?'Ne plus suivre cet établissement':'Suivre cet établissement' }}
-            </v-btn>            
+            </v-btn>
 
             <!-- Création: {{ printDate(sirene.debutactivite) }} -->
             <br/><br/>
@@ -57,20 +57,19 @@
             Code APE: {{ (sirene.ape || '') }}<br/>
           </v-flex>
           <v-flex xs12 md6 class="text-xs-right pa-3">
-            <iframe 
-            :v-if="sirene.longitude" 
-            width="100%" 
-            height="360" 
-            frameborder="0" 
-            scrolling="no" 
-            marginheight="0" 
-            marginwidth="0" 
+            <iframe
+            :v-if="sirene.longitude"
+            width="100%"
+            height="360"
+            frameborder="0"
+            scrolling="no"
+            marginheight="0"
+            marginwidth="0"
             :src="'https://www.openstreetmap.org/export/embed.html?bbox=' + (sirene.longitude - 0.03) + '%2C' + (sirene.lattitude  - 0.03) + '%2C' + (sirene.longitude + 0.03) + '%2C' + (sirene.lattitude + 0.03) + '&amp;layer=mapnik&amp;marker=' + sirene.lattitude + '%2C' + sirene.longitude" style="border: 1px solid black"></iframe><br/>
             <small><a href="https://www.openstreetmap.org/#map=19/47.31581/5.05088">Afficher une carte plus grande</a></small>
           </v-flex>
-          
 
-          <v-flex 
+          <v-flex
             xs12 md12 class="pa-3"
             v-for="(c, i) in comments"
             :key="comment + i">
@@ -206,7 +205,7 @@
                 <v-list-tile>
                   <v-list-tile-content>Chiffre d'Affaire:</v-list-tile-content>
                   <v-list-tile-content class="text-xs-right">
-                    <div style="width: 100%;" :class="f.ca_class">
+                    <div style="width: 100%;" :class="f.caClass">
                     {{ f.ca }}
                     </div>
                   </v-list-tile-content>
@@ -217,8 +216,8 @@
                 <v-list-tile>
                   <v-list-tile-content>Résultat d'exploitation:</v-list-tile-content>
                   <v-list-tile-content class="text-xs-right">
-                    <div style="width: 100%;" :class="f.marge_ope_class">
-                      {{ f.resultat_expl }} ({{ (f.marge_ope) }})
+                    <div style="width: 100%;" :class="f.margeOpeClass">
+                      {{ f.resultatExpl }} ({{ (f.margeOpe) }})
                     </div>
                   </v-list-tile-content>
                 </v-list-tile>
@@ -228,8 +227,8 @@
                 <v-list-tile>
                   <v-list-tile-content>Résultat net:</v-list-tile-content>
                   <v-list-tile-content class="text-xs-right">
-                    <div style="width: 100%;" :class="f.marge_nette_class">
-                      {{ f.benefice_ou_perte }} ({{ (f.marge_nette) }})
+                    <div style="width: 100%;" :class="f.margeNetteClass">
+                      {{ f.beneficeOuPerte }} ({{ (f.margeNette) }})
                     </div>
                   </v-list-tile-content>
                 </v-list-tile>
@@ -239,8 +238,8 @@
                 <v-list-tile>
                   <v-list-tile-content>Délai Fournisseur:</v-list-tile-content>
                   <v-list-tile-content class="text-xs-right">
-                    <div style="width: 100%;" :class="f.delai_fournisseur_class">
-                      {{ f.delai_fournisseur }}
+                    <div style="width: 100%;" :class="f.delaiFournisseurClass">
+                      {{ f.delaiFournisseur }}
                     </div>
                   </v-list-tile-content>
                 </v-list-tile>
@@ -250,8 +249,8 @@
                 <v-list-tile>
                   <v-list-tile-content>Délai Client:</v-list-tile-content>
                   <v-list-tile-content class="text-xs-right">
-                    <div style="width: 100%;" :class="f.delai_client_class">
-                      {{ f.delai_client }}
+                    <div style="width: 100%;" :class="f.delaiClientClass">
+                      {{ f.delaiClient }}
                     </div>
                   </v-list-tile-content>
                 </v-list-tile>
@@ -261,8 +260,8 @@
                 <v-list-tile>
                   <v-list-tile-content>Poids FRNG:</v-list-tile-content>
                   <v-list-tile-content class="text-xs-right">
-                    <div style="width: 100%;" :class="f.poids_frng_class">
-                      {{ f.poids_frng }}
+                    <div style="width: 100%;" :class="f.poidsFrngClass">
+                      {{ f.poidsFrng }}
                     </div>
                   </v-list-tile-content>
                 </v-list-tile>
@@ -272,8 +271,8 @@
                 <v-list-tile>
                   <v-list-tile-content>Financement court terme:</v-list-tile-content>
                   <v-list-tile-content class="text-xs-right">
-                    <div style="width: 100%;" :class="f.financier_court_terme_class">
-                      {{ f.financier_court_terme }}
+                    <div style="width: 100%;" :class="f.financierCourtTermeClass">
+                      {{ f.financierCourtTerme }}
                     </div>
                   </v-list-tile-content>
                 </v-list-tile>
@@ -304,73 +303,73 @@ export default {
       bilan: true,
       urssaf: true,
       apart: true,
-      etablissement: {value: {}},
+      etablissement: { value: {} },
       pagination: null,
       comments: []
     }
   },
   methods: {
-    computeFinance(f) {
+    computeFinance (f) {
       var annee = f.annee
-      var ca = f.diane.ca?f.diane.ca + ' k€':'n/c'
-      var ca_class = (!f.diane.ca)?'gray':''
-      var resultat_expl = f.diane.resultat_expl?f.diane.resultat_expl + ' k€':'n/c'
-      var marge_ope = f.diane.resultat_expl / f.diane.ca 
-      var marge_ope_class = (!marge_ope)?'gray':(marge_ope<0)?'down':''
-      marge_ope = marge_ope?(Math.floor(marge_ope*1000)/10) + ' %':'n/c'
+      var ca = f.diane.ca ? f.diane.ca + ' k€' : 'n/c'
+      var caClass = (!f.diane.ca) ? 'gray' : ''
+      var resultatExpl = f.diane.resultatExpl ? f.diane.resultatExpl + ' k€' : 'n/c'
+      var margeOpe = f.diane.resultatExpl / f.diane.ca
+      var margeOpeClass = (!margeOpe) ? 'gray' : (margeOpe < 0) ? 'down' : ''
+      margeOpe = margeOpe ? (Math.floor(margeOpe * 1000) / 10) + ' %' : 'n/c'
 
-      var benefice_ou_perte = f.diane.benefice_ou_perte?f.diane.benefice_ou_perte + ' k€':'n/c'
-      var marge_nette = f.diane.benefice_ou_perte / f.diane.ca 
-      var marge_nette_class = !(marge_nette)?'gray':(marge_nette<0)?'down':''
-      marge_nette = marge_nette?(Math.floor(marge_nette*1000)/10) + ' %':'n/c'
+      var beneficeOuPerte = f.diane.beneficeOuPerte ? f.diane.beneficeOuPerte + ' k€' : 'n/c'
+      var margeNette = f.diane.beneficeOuPerte / f.diane.ca
+      var margeNetteClass = !(margeNette) ? 'gray' : (margeNette < 0) ? 'down' : ''
+      margeNette = margeNette ? (Math.floor(margeNette * 1000) / 10) + ' %' : 'n/c'
 
-      var delai_fournisseur = f.bdf.delai_fournisseur?Math.round(f.bdf.delai_fournisseur) + ' jours':'n/c'
-      var delai_fournisseur_class = !(f.bdf.delai_fournisseur)?'gray':''
-      var delai_client = Math.round(f.diane.credit_client / f.diane.ca * 360)
-      var delai_client_class = !(delai_client)?'gray':''
+      var delaiFournisseur = f.bdf.delaiFournisseur ? Math.round(f.bdf.delaiFournisseur) + ' jours' : 'n/c'
+      var delaiFournisseurClass = !(f.bdf.delaiFournisseur) ? 'gray' : ''
+      var delaiClient = Math.round(f.diane.credit_client / f.diane.ca * 360)
+      var delaiClientClass = !(delaiClient) ? 'gray' : ''
 
-      var delai_client = delai_client?delai_client + ' jours':'n/c' 
+      delaiClient = delaiClient ? delaiClient + ' jours' : 'n/c'
 
-      var poids_frng = f.bdf.poids_frng?Math.round(f.bdf.poids_frng*10)/10 + ' %':'n/c'
-      var poids_frng_class = !(f.bdf.poids_frng)?'gray':''
+      var poidsFrng = f.bdf.poidsFrng ? Math.round(f.bdf.poidsFrng * 10) / 10 + ' %' : 'n/c'
+      var poidsFrngClass = !(f.bdf.poidsFrng) ? 'gray' : ''
 
-      var financier_court_terme = f.bdf.financier_court_terme?Math.round(f.bdf.financier_court_terme*10)/10 + ' %':'n/c'
-      var financier_court_terme_class = !(f.bdf.financier_court_terme)?'gray':''
+      var financierCourtTerme = f.bdf.financierCourtTerme ? Math.round(f.bdf.financierCourtTerme * 10) / 10 + ' %' : 'n/c'
+      var financierCourtTermeClass = !(f.bdf.financierCourtTerme) ? 'gray' : ''
 
       return {
         annee,
         ca,
-        ca_class,
-        resultat_expl,
-        marge_ope,
-        marge_ope_class,
-        benefice_ou_perte,
-        marge_nette,
-        marge_nette_class,
-        delai_fournisseur,
-        delai_fournisseur_class,
-        delai_client,
-        delai_client_class,
-        poids_frng,
-        poids_frng_class,
-        financier_court_terme,
-        financier_court_terme_class
+        caClass,
+        resultatExpl,
+        margeOpe,
+        margeOpeClass,
+        beneficeOuPerte,
+        margeNette,
+        margeNetteClass,
+        delaiFournisseur,
+        delaiFournisseurClass,
+        delaiClient,
+        delaiClientClass,
+        poidsFrng,
+        poidsFrngClass,
+        financierCourtTerme,
+        financierCourtTermeClass
       }
     },
-    addComment() {
+    addComment () {
       this.comments.push({
         'comment': '',
         'author': 'C.Ninucci',
-        'date': this.formattedDate(new Date)
-        })
+        'date': this.formattedDate(new Date())
+      })
     },
     formattedDate (d) {
-      let month = String(d.getMonth() + 1);
-      let day = String(d.getDate());
-      const year = String(d.getFullYear());
+      let month = String(d.getMonth() + 1)
+      let day = String(d.getDate())
+      const year = String(d.getFullYear())
 
-      if (month.length < 2) month = '0' + month;
-      if (day.length < 2) day = '0' + day;
+      if (month.length < 2) month = '0' + month
+      if (day.length < 2) day = '0' + day
 
       return `${day}/${month}/${year}`
     },
@@ -474,8 +473,8 @@ export default {
           text: null
         },
         legend: {
-            data:['effectif'],
-            y: 'bottom'
+          data: ['effectif'],
+          y: 'bottom'
         },
         toolbox: {
           show: true
@@ -492,7 +491,7 @@ export default {
         xAxis: {
           show: true,
           type: 'category',
-          data: this.effectif.map(e => e.periode.slice(0,10))
+          data: this.effectif.map(e => e.periode.slice(0, 10))
         },
         yAxis: {
           type: 'value',
@@ -504,13 +503,6 @@ export default {
           step: 'end',
           type: 'line',
           data: this.effectif.map(e => e.effectif)
-        },{
-          name: 'apconso',
-          color: 'green',
-          step: 'end',
-          type: 'line',
-          data: [30,10,5,0,0,0,10,10,4],
-          areaStyle: {}
         }]
       }
     },
@@ -539,7 +531,7 @@ export default {
           show: true,
           type: 'category',
           axisTick: false,
-          data: this.debit.map(d => (d.periode||'').slice(0,10))
+          data: this.debit.map(d => (d.periode || '').slice(0, 10))
         },
         yAxis: {
           type: 'value',
@@ -550,7 +542,7 @@ export default {
           smooth: true,
           name: 'Cotisation',
           type: 'line',
-          data: this.cotisation,
+          data: this.cotisation
         }, {
           color: 'red',
           smooth: true,

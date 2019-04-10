@@ -35,7 +35,7 @@
             <span
               style="font-size: 24px"
             >{{ prediction.etablissement.dernier_effectif.effectif || 'n/c' }}</span>
-            <v-icon style="position:relative; top:-4px" small v-if="variationEffectif">{{ variationEffectif }}</v-icon>
+            <v-icon style="position:relative; top:-4px" small v-if="variationEffectif">{{ variationEffectif }}</v-icon>
           </div>
 
           <div class="flex" style="position:absolute; left: 600px; top: 0px; bottom: 0px; right: 9px;">

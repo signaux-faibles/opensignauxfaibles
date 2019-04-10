@@ -34,11 +34,10 @@
 </template>
 
 <script>
-import Etablissement from '@/components/Etablissement'
 import DashboardTask from '@/components/DashboardTask'
 
 export default {
-  components: { Etablissement, DashboardTask },
+  components: { DashboardTask },
   data () {
     return {
       tasks: []

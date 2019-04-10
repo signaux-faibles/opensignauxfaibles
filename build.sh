@@ -1,8 +1,7 @@
 #!/bin/bash
 # build.sh compile les éléments et dispose le nécessaire dans le répertoire dist.
 # ce script ne se charge pas d'installer les éléments nécessaires à la compilation.
-mkdir -p dist/dbmongo 
-mkdir dist/frontend 
+mkdir -p dist/dbmongo/static
 
 # dbmongo: compilation et recopie des éléments nécessaires
 cd dbmongo 
@@ -16,7 +15,7 @@ cp config.toml ../dist/dbmongo
 echo $PWD
 cd ../frontend &&
 yarn build
-cp -r dist/* ../dist/frontend
+cp -r dist/* ../dist/dbmongo/static
 
 # création de l'archive
 cd ..

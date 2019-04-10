@@ -1,14 +1,14 @@
 <template>
 <v-card class="elevation-6">
   <v-card-text>
-    
+
   </v-card-text>
   <v-img
     contain
     height="80px"
     :src="process.img"
   >
-    
+
   </v-img>
   <v-card-text class="text-xs-center">
     {{ process.description }}
@@ -18,7 +18,7 @@
     :disabled="dbstatus != null"
     @click.stop="dialog = true"
     block>LANCER</v-btn>
-    
+
     <v-dialog
       v-model="dialog"
       max-width="290"
