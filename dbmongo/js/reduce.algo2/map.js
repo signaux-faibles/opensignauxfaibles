@@ -113,7 +113,7 @@ function map () {
       })
     })
   
-    Object.keys(v.diane).forEach(hash => {
+    Object.keys(v.diane).filter(hash => v.diane[hash].arrete_bilan_diane).forEach(hash => {
       //v.diane[hash].arrete_bilan_diane = new Date(Date.UTC(v.diane[hash].exercice_diane, 11, 31, 0, 0, 0, 0))
       let periode_arrete_bilan = new Date(Date.UTC(v.diane[hash].arrete_bilan_diane.getUTCFullYear(), v.diane[hash].arrete_bilan_diane.getUTCMonth() +1, 1, 0, 0, 0, 0))
       let periode_dispo = DateAddMonth(periode_arrete_bilan, 8) // 01/09 pour un bilan le 31/12

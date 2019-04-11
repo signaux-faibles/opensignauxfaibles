@@ -8,7 +8,7 @@ Vue.use(Vuex)
 
 const vm = new Vue()
 
-var dev = false
+var dev = true
 
 var baseURL = ''
 var baseWS = ''
@@ -257,6 +257,7 @@ const sessionStore = new Vuex.Store({
     },
     login (context) {
       let credentials = {
+        browserToken: localStore.state.browserToken,
         email: context.state.credentials.email,
         password: context.state.credentials.password
       }

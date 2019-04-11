@@ -313,28 +313,28 @@ export default {
       var annee = f.annee
       var ca = f.diane.ca ? f.diane.ca + ' k€' : 'n/c'
       var caClass = (!f.diane.ca) ? 'gray' : ''
-      var resultatExpl = f.diane.resultatExpl ? f.diane.resultatExpl + ' k€' : 'n/c'
-      var margeOpe = f.diane.resultatExpl / f.diane.ca
+      var resultatExpl = f.diane.resultat_expl ? f.diane.resultat_expl + ' k€' : 'n/c'
+      var margeOpe = f.diane.resultat_expl / f.diane.ca
       var margeOpeClass = (!margeOpe) ? 'gray' : (margeOpe < 0) ? 'down' : ''
       margeOpe = margeOpe ? (Math.floor(margeOpe * 1000) / 10) + ' %' : 'n/c'
 
-      var beneficeOuPerte = f.diane.beneficeOuPerte ? f.diane.beneficeOuPerte + ' k€' : 'n/c'
-      var margeNette = f.diane.beneficeOuPerte / f.diane.ca
+      var beneficeOuPerte = f.diane.benefice_ou_perte ? f.diane.benefice_ou_perte + ' k€' : 'n/c'
+      var margeNette = f.diane.benefice_ou_perte / f.diane.ca
       var margeNetteClass = !(margeNette) ? 'gray' : (margeNette < 0) ? 'down' : ''
       margeNette = margeNette ? (Math.floor(margeNette * 1000) / 10) + ' %' : 'n/c'
 
-      var delaiFournisseur = f.bdf.delaiFournisseur ? Math.round(f.bdf.delaiFournisseur) + ' jours' : 'n/c'
-      var delaiFournisseurClass = !(f.bdf.delaiFournisseur) ? 'gray' : ''
+      var delaiFournisseur = f.bdf.delai_fournisseur ? Math.round(f.bdf.delai_fournisseur) + ' jours' : 'n/c'
+      var delaiFournisseurClass = !(f.bdf.delai_fournisseur) ? 'gray' : ''
       var delaiClient = Math.round(f.diane.credit_client / f.diane.ca * 360)
       var delaiClientClass = !(delaiClient) ? 'gray' : ''
 
       delaiClient = delaiClient ? delaiClient + ' jours' : 'n/c'
 
-      var poidsFrng = f.bdf.poidsFrng ? Math.round(f.bdf.poidsFrng * 10) / 10 + ' %' : 'n/c'
-      var poidsFrngClass = !(f.bdf.poidsFrng) ? 'gray' : ''
+      var poidsFrng = f.bdf.poids_frng ? Math.round(f.bdf.poids_frng * 10) / 10 + ' %' : 'n/c'
+      var poidsFrngClass = !(f.bdf.poids_frng) ? 'gray' : ''
 
-      var financierCourtTerme = f.bdf.financierCourtTerme ? Math.round(f.bdf.financierCourtTerme * 10) / 10 + ' %' : 'n/c'
-      var financierCourtTermeClass = !(f.bdf.financierCourtTerme) ? 'gray' : ''
+      var financierCourtTerme = f.bdf.financier_court_terme ? Math.round(f.bdf.financier_court_terme * 10) / 10 + ' %' : 'n/c'
+      var financierCourtTermeClass = !(f.bdf.financier_court_terme) ? 'gray' : ''
 
       return {
         annee,
@@ -406,6 +406,7 @@ export default {
   },
   computed: {
     finance () {
+      console.log(this.zipDianeBDF)
       return this.zipDianeBDF.filter(z => z.annee).map(z => this.computeFinance(z))
     },
     naf () {

@@ -54,15 +54,12 @@ const levelPowerUser = "powerUser"
 const levelUser = "user"
 
 func identityHandler(c *gin.Context) interface{} {
-	// //user, err := loadUser(email)
-	// if err != nil {
-	// 	c.JSON(500, "Erreur d'identification")
-	// }
-	user := AdminUser{
-		ID:        engine.AdminID{Key: "test@test.gouv.fr", Type: "credential"},
-		FirstName: "test",
-		LastName:  "test",
-		Level:     "admin",
+	claims := jwt.ExtractClaims(c)
+
+	email := claims["id"].(string)
+	user, err := loadUser(email)
+	if err != nil {
+		c.JSON(500, "Erreur d'identification")
 	}
 	return &user
 }
@@ -107,21 +104,14 @@ func authenticator(c *gin.Context) (interface{}, error) {
 	if err := c.ShouldBind(&loginVals); err != nil {
 		return "", jwt.ErrMissingLoginValues
 	}
-	// email := loginVals.Email
-	// password := loginVals.Password
-	// browserToken := loginVals.BrowserToken
-	// user, err := loginUser(email, password, browserToken)
-	if loginVals.Email == "test@test.gouv.fr" && loginVals.Password == "demo" {
-		return AdminUser{
-			ID:        engine.AdminID{Key: "test@test.gouv.fr", Type: "credential"},
-			FirstName: "test",
-			LastName:  "test",
-			Level:     "admin",
-		}, nil
+	email := loginVals.Email
+	password := loginVals.Password
+	browserToken := loginVals.BrowserToken
+	user, err := loginUser(email, password, browserToken)
+
+	if err == nil {
+		return user, nil
 	}
-	// if err == nil {
-	// 	return user, nil
-	// }
 	return nil, jwt.ErrFailedAuthentication
 }
 

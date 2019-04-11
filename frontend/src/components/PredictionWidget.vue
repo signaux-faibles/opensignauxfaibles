@@ -55,7 +55,7 @@
           </div>
         </div>
         <v-dialog  lazy fullscreen v-model="dialog">
-          <div style="height: 100%; width: 100%;  font-weight: 800; font-family: 'Oswald', sans;">
+          <div style="height: 100%; width: 100%; font-weight: 800; font-family: 'Oswald', sans;">
             <v-toolbar fixed class="toolbar" height="35px" style="color: #fff; font-size: 22px;">
               <v-spacer/>
                 ETABLISSEMENT

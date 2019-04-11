@@ -115,6 +115,8 @@ export default {
       horsCCSF: true,
       horsProcol: true,
       loading: false,
+      activitePartielle: false,
+      interetUrssaf: false,
       zone: ['21', '25', '39', '58', '70', '71', '89', '90'],
       subzones: [
         {
