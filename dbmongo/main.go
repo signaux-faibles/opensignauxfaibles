@@ -150,6 +150,7 @@ func main() {
 		api.POST("/comments/set", setCommentHandler)
 		api.POST("/comments/history", getCommentHistoryHandler)
 
+		api.GET("/data/export", datapiExportHandler)
 		// TODO: mapreduce pour traiter le scope, modification des objets utilisateurs
 		// TODO: écrire l'aggrégation qui va bien
 		api.GET("/dashboard/tasks", getTasksHandler)
