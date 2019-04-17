@@ -35,7 +35,7 @@
             <span
               style="font-size: 24px"
             >{{ prediction.etablissement.dernier_effectif.effectif || 'n/c' }}</span>
-            <v-icon style="position:relative; top:-4px" small v-if="variationEffectif">{{ variationEffectif }}</v-icon>
+            <v-icon style="position:relative; top:-4px" small v-if="variationEffectif">{{ variationEffectif }}</v-icon>
           </div>
 
           <div class="flex" style="position:absolute; left: 600px; top: 0px; bottom: 0px; right: 9px;">
@@ -55,10 +55,10 @@
           </div>
         </div>
         <v-dialog  lazy fullscreen v-model="dialog">
-          <div style="height: 100%; width: 100%;  font-weight: 800; font-family: 'Oswald', sans;">
+          <div style="height: 100%; width: 100%; font-weight: 800; font-family: 'Oswald', sans;">
             <v-toolbar fixed class="toolbar" height="35px" style="color: #fff; font-size: 22px;">
               <v-spacer/>
-                {{ prediction.etablissement.sirene.raison_sociale }}
+                ETABLISSEMENT
               <v-spacer/>
               <v-icon @click="dialog=false;log()" style="color: #fff">mdi-close</v-icon>
             </v-toolbar>

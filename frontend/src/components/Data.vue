@@ -259,5 +259,3 @@ export default {
   name: 'Data'
 }
 </script>
-
-

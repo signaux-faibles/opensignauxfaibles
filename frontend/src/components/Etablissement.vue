@@ -4,16 +4,22 @@
       <v-container>
         <v-layout wrap>
           <v-flex
+          style="vertical-align: middle; text-align: center; margin-top: 30px; font-size: 24px"
+          xs12>
+            {{ sirene.raison_sociale }}
+          </v-flex>
+          <v-flex
           xs12
           md6
           class="pa-3"
           style="font-size: 18px">
             <!-- {{ Object.keys(etablissement) }} -->
             SIRET <b>{{ siret }} – {{ sirene.nature_juridique }}</b> <br/>
-          
-            <v-btn :color="suivi?'error':'success'" @click="suivi=!suivi">{{ suivi?'Ne plus suivre cet établissement':'Suivre cet établissement' }}</v-btn>
-            
-            
+
+            <v-btn :color="suivi?'error':'success'" @click="suivi=!suivi">
+              {{ suivi?'Ne plus suivre cet établissement':'Suivre cet établissement' }}
+            </v-btn>
+
             <!-- Création: {{ printDate(sirene.debutactivite) }} -->
             <br/><br/>
             <b>{{ (sirene.adresse || [])[0] }} </b>
@@ -51,11 +57,19 @@
             Code APE: {{ (sirene.ape || '') }}<br/>
           </v-flex>
           <v-flex xs12 md6 class="text-xs-right pa-3">
-            <iframe :v-if="sirene.longitude" width="100%" height="360" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" :src="'https://www.openstreetmap.org/export/embed.html?bbox=' + (sirene.longitude - 0.03) + '%2C' + (sirene.lattitude  - 0.03) + '%2C' + (sirene.longitude + 0.03) + '%2C' + (sirene.lattitude + 0.03) + '&amp;layer=mapnik&amp;marker=' + sirene.lattitude + '%2C' + sirene.longitude" style="border: 1px solid black"></iframe><br/><small><a href="https://www.openstreetmap.org/#map=19/47.31581/5.05088">Afficher une carte plus grande</a></small>
+            <iframe
+            :v-if="sirene.longitude"
+            width="100%"
+            height="360"
+            frameborder="0"
+            scrolling="no"
+            marginheight="0"
+            marginwidth="0"
+            :src="'https://www.openstreetmap.org/export/embed.html?bbox=' + (sirene.longitude - 0.03) + '%2C' + (sirene.lattitude  - 0.03) + '%2C' + (sirene.longitude + 0.03) + '%2C' + (sirene.lattitude + 0.03) + '&amp;layer=mapnik&amp;marker=' + sirene.lattitude + '%2C' + sirene.longitude" style="border: 1px solid black"></iframe><br/>
+            <small><a href="https://www.openstreetmap.org/#map=19/47.31581/5.05088">Afficher une carte plus grande</a></small>
           </v-flex>
-          
 
-          <v-flex 
+          <v-flex
             xs12 md12 class="pa-3"
             v-for="(c, i) in comments"
             :key="comment + i">
@@ -74,7 +88,7 @@
             <IEcharts
               :loading="chart"
               style="height: 350px"
-              :option="effectifOptions(effectif)"
+              :option="effectifOptions"
             />
           </v-flex>
 
@@ -97,38 +111,37 @@
               color='indigo darken-5'>
               <v-toolbar-title class="localtoolbar">Demandes d'activité partielle</v-toolbar-title>
             </v-toolbar>
-            <v-list>
-              <v-list-tile>
-                <v-list-tile-content class="text-xs-right" style="width: '25%'">
+            <table style="width: 100%; padding: 5px; text-align: center">
+              <tr>
+                <th>
                   Date
-                </v-list-tile-content>
-                <v-list-tile-content class="text-xs-right" style="width: '25%'">
+                </th>
+                <th>
                   Effectif Autorisé
-                </v-list-tile-content>
-                <v-list-tile-content class="text-xs-right" style="width: '25%'">
+                </th>
+                <th>
                   Début
-                </v-list-tile-content>
-                <v-list-tile-content class="text-xs-right" style="width: '25%'">
+                </th>
+                <th>
                   Fin
-                </v-list-tile-content>
-              </v-list-tile>
-              <v-list-tile
-                v-for="(d, i) in apdemande"
-                :key="i">
-                <v-list-tile-content class="text-xs-right" style="width: '25%'">
+                </th>
+              </tr>
+              <tr v-for="d in apdemande" :key="d.date_statut" style="font-weight: 400">
+                <td>
                   {{ d.date_statut.substring(0,10) }}
-                </v-list-tile-content>
-                <v-list-tile-content class="text-xs-right" style="width: '25%'">
+                </td>
+                <td>
                   {{ d.effectif_autorise }}
-                </v-list-tile-content>
-                <v-list-tile-content class="text-xs-right" style="width: '25%'">
+                </td>
+                <td>
                   {{ d.periode.start.substring(0,10) }}
-                </v-list-tile-content>
-                <v-list-tile-content class="text-xs-right" style="width: '25%'">
+                </td>
+                <td>
                   {{ d.periode.end.substring(0,10) }}
-                </v-list-tile-content>
-              </v-list-tile>
-            </v-list>
+                </td>
+              </tr>
+            </table>
+
           </v-flex>
 
           <v-flex xs6 class="pr-1" v-if="apdemande.length + apconso.length > 0">
@@ -137,32 +150,30 @@
             color='indigo darken-5'>
               <v-toolbar-title class="localtoolbar">Consommations d'activité partielle</v-toolbar-title>
             </v-toolbar>
-            <v-list style="width: 100%">
-              <v-list-tile>
-                <v-list-tile-content class="text-xs-right" style="width: '33%';">
+            <table style="width: 100%; padding: 5px; text-align: center">
+              <tr>
+                <th>
                   Date
-                </v-list-tile-content>
-                <v-list-tile-content class="text-xs-right" style="width: '33%'">
+                </th>
+                <th>
                   Effectifs
-                </v-list-tile-content>
-                <v-list-tile-content class="text-xs-right" style="width: '33%'">
+                </th>
+                <th>
                   Heures
-                </v-list-tile-content>
-              </v-list-tile>
-              <v-list-tile
-                v-for="(d, i) in apconso"
-                :key="i">
-                <v-list-tile-content class="text-xs-right" style="width: '33%'">
+                </th>
+              </tr>
+              <tr v-for="d in apconso" :key="d.periode" style="font-weight: 400">
+                <td>
                   {{ d.periode.substring(0, 10) }}
-                </v-list-tile-content>
-                <v-list-tile-content class="text-xs-right" style="width: '33%'">
+                </td>
+                <td>
                   {{ d.effectif }}
-                </v-list-tile-content>
-                <v-list-tile-content class="text-xs-right" style="width: '33%'">
+                </td>
+                <td>
                   {{ d.heure_consomme }}
-                </v-list-tile-content>
-              </v-list-tile>
-            </v-list>
+                </td>
+              </tr>
+            </table>
           </v-flex>
 
           <v-flex xs12 class="pr-1">
@@ -175,7 +186,7 @@
             </v-toolbar>
           </v-flex>
           <v-flex
-            v-for="f in zipDianeBDF.slice(0,3)"
+            v-for="f in finance.slice(0,3)"
             :key="f.annee"
             pa-1
             xs12
@@ -193,8 +204,10 @@
               <v-list dense>
                 <v-list-tile>
                   <v-list-tile-content>Chiffre d'Affaire:</v-list-tile-content>
-                  <v-list-tile-content>
-                    {{ finance(f).ca }}
+                  <v-list-tile-content class="text-xs-right">
+                    <div style="width: 100%;" :class="f.caClass">
+                    {{ f.ca }}
+                    </div>
                   </v-list-tile-content>
                 </v-list-tile>
               </v-list>
@@ -202,8 +215,10 @@
               <v-list dense>
                 <v-list-tile>
                   <v-list-tile-content>Résultat d'exploitation:</v-list-tile-content>
-                  <v-list-tile-content>
-                    {{ finance(f).resultat_expl }} ({{ (finance(f).marge_ope) }})
+                  <v-list-tile-content class="text-xs-right">
+                    <div style="width: 100%;" :class="f.margeOpeClass">
+                      {{ f.resultatExpl }} ({{ (f.margeOpe) }})
+                    </div>
                   </v-list-tile-content>
                 </v-list-tile>
               </v-list>
@@ -211,8 +226,10 @@
               <v-list dense>
                 <v-list-tile>
                   <v-list-tile-content>Résultat net:</v-list-tile-content>
-                  <v-list-tile-content>
-                    {{ finance(f).benefice_ou_perte }} ({{ (finance(f).marge_nette) }})
+                  <v-list-tile-content class="text-xs-right">
+                    <div style="width: 100%;" :class="f.margeNetteClass">
+                      {{ f.beneficeOuPerte }} ({{ (f.margeNette) }})
+                    </div>
                   </v-list-tile-content>
                 </v-list-tile>
               </v-list>
@@ -220,8 +237,10 @@
               <v-list dense>
                 <v-list-tile>
                   <v-list-tile-content>Délai Fournisseur:</v-list-tile-content>
-                  <v-list-tile-content>
-                    {{ finance(f).delai_fournisseur }}
+                  <v-list-tile-content class="text-xs-right">
+                    <div style="width: 100%;" :class="f.delaiFournisseurClass">
+                      {{ f.delaiFournisseur }}
+                    </div>
                   </v-list-tile-content>
                 </v-list-tile>
               </v-list>
@@ -229,8 +248,10 @@
               <v-list dense>
                 <v-list-tile>
                   <v-list-tile-content>Délai Client:</v-list-tile-content>
-                  <v-list-tile-content>
-                    {{ finance(f).delai_client }}
+                  <v-list-tile-content class="text-xs-right">
+                    <div style="width: 100%;" :class="f.delaiClientClass">
+                      {{ f.delaiClient }}
+                    </div>
                   </v-list-tile-content>
                 </v-list-tile>
               </v-list>
@@ -238,8 +259,10 @@
               <v-list dense>
                 <v-list-tile>
                   <v-list-tile-content>Poids FRNG:</v-list-tile-content>
-                  <v-list-tile-content>
-                    {{ finance(f).poids_frng }}
+                  <v-list-tile-content class="text-xs-right">
+                    <div style="width: 100%;" :class="f.poidsFrngClass">
+                      {{ f.poidsFrng }}
+                    </div>
                   </v-list-tile-content>
                 </v-list-tile>
               </v-list>
@@ -247,8 +270,10 @@
               <v-list dense>
                 <v-list-tile>
                   <v-list-tile-content>Financement court terme:</v-list-tile-content>
-                  <v-list-tile-content style="text-align: right">
-                    {{ finance(f).financier_court_terme }}
+                  <v-list-tile-content class="text-xs-right">
+                    <div style="width: 100%;" :class="f.financierCourtTermeClass">
+                      {{ f.financierCourtTerme }}
+                    </div>
                   </v-list-tile-content>
                 </v-list-tile>
               </v-list>
@@ -265,6 +290,8 @@
 import IEcharts from 'vue-echarts-v3/src/lite.js'
 import 'echarts/lib/chart/line'
 import 'echarts/lib/component/title'
+import 'echarts/lib/component/legend'
+import 'echarts/lib/component/tooltip'
 
 export default {
   props: ['siret', 'batch'],
@@ -276,54 +303,73 @@ export default {
       bilan: true,
       urssaf: true,
       apart: true,
-      etablissement: {value: {}},
+      etablissement: { value: {} },
       pagination: null,
       comments: []
     }
   },
   methods: {
-    finance(f) {
-      var ca = f.diane.ca?f.diane.ca + ' k€':'n/c'
-      var resultat_expl = f.diane.resultat_expl?f.diane.resultat_expl + ' k€':'n/c'
-      var marge_ope = f.diane.resultat_expl / f.diane.ca 
-      marge_ope = marge_ope?(Math.floor(marge_ope*1000)/10) + ' %':'n/c'
+    computeFinance (f) {
+      var annee = f.annee
+      var ca = f.diane.ca ? f.diane.ca + ' k€' : 'n/c'
+      var caClass = (!f.diane.ca) ? 'gray' : ''
+      var resultatExpl = f.diane.resultat_expl ? f.diane.resultat_expl + ' k€' : 'n/c'
+      var margeOpe = f.diane.resultat_expl / f.diane.ca
+      var margeOpeClass = (!margeOpe) ? 'gray' : (margeOpe < 0) ? 'down' : ''
+      margeOpe = margeOpe ? (Math.floor(margeOpe * 1000) / 10) + ' %' : 'n/c'
 
-      var benefice_ou_perte = f.diane.benefice_ou_perte?f.diane.benefice_ou_perte + ' k€':'n/c'
-      var marge_nette = f.diane.benefice_ou_perte / f.diane.ca 
-      marge_nette = marge_nette?(Math.floor(marge_nette*1000)/10) + ' %':'n/c'
+      var beneficeOuPerte = f.diane.benefice_ou_perte ? f.diane.benefice_ou_perte + ' k€' : 'n/c'
+      var margeNette = f.diane.benefice_ou_perte / f.diane.ca
+      var margeNetteClass = !(margeNette) ? 'gray' : (margeNette < 0) ? 'down' : ''
+      margeNette = margeNette ? (Math.floor(margeNette * 1000) / 10) + ' %' : 'n/c'
 
-      var delai_fournisseur = f.bdf.delai_fournisseur?Math.round(f.bdf.delai_fournisseur) + ' jours':'n/c'
-      var delai_client = Math.round(f.diane.credit_client / f.diane.ca * 360)
-      var delai_client = delai_client?delai_client + ' jours':'n/c' 
+      var delaiFournisseur = f.bdf.delai_fournisseur ? Math.round(f.bdf.delai_fournisseur) + ' jours' : 'n/c'
+      var delaiFournisseurClass = !(f.bdf.delai_fournisseur) ? 'gray' : ''
+      var delaiClient = Math.round(f.diane.credit_client / f.diane.ca * 360)
+      var delaiClientClass = !(delaiClient) ? 'gray' : ''
 
-      var poids_frng = f.bdf.poids_frng?Math.round(f.bdf.poids_frng*10)/10 + ' %':'n/c'
-      var financier_court_terme = f.bdf.financier_court_terme?Math.round(f.bdf.financier_court_terme*10)/10 + ' %':'n/c'
+      delaiClient = delaiClient ? delaiClient + ' jours' : 'n/c'
+
+      var poidsFrng = f.bdf.poids_frng ? Math.round(f.bdf.poids_frng * 10) / 10 + ' %' : 'n/c'
+      var poidsFrngClass = !(f.bdf.poids_frng) ? 'gray' : ''
+
+      var financierCourtTerme = f.bdf.financier_court_terme ? Math.round(f.bdf.financier_court_terme * 10) / 10 + ' %' : 'n/c'
+      var financierCourtTermeClass = !(f.bdf.financier_court_terme) ? 'gray' : ''
+
       return {
+        annee,
         ca,
-        resultat_expl,
-        marge_ope,
-        benefice_ou_perte,
-        marge_nette,
-        delai_fournisseur,
-        delai_client,
-        poids_frng,
-        financier_court_terme
+        caClass,
+        resultatExpl,
+        margeOpe,
+        margeOpeClass,
+        beneficeOuPerte,
+        margeNette,
+        margeNetteClass,
+        delaiFournisseur,
+        delaiFournisseurClass,
+        delaiClient,
+        delaiClientClass,
+        poidsFrng,
+        poidsFrngClass,
+        financierCourtTerme,
+        financierCourtTermeClass
       }
     },
-    addComment() {
+    addComment () {
       this.comments.push({
         'comment': '',
         'author': 'C.Ninucci',
-        'date': this.formattedDate(new Date)
-        })
+        'date': this.formattedDate(new Date())
+      })
     },
     formattedDate (d) {
-      let month = String(d.getMonth() + 1);
-      let day = String(d.getDate());
-      const year = String(d.getFullYear());
+      let month = String(d.getMonth() + 1)
+      let day = String(d.getDate())
+      const year = String(d.getFullYear())
 
-      if (month.length < 2) month = '0' + month;
-      if (day.length < 2) day = '0' + day;
+      if (month.length < 2) month = '0' + month
+      if (day.length < 2) day = '0' + day
 
       return `${day}/${month}/${year}`
     },
@@ -345,42 +391,6 @@ export default {
     },
     round (value, size) {
       return Math.round(value * (10 ^ size)) / (10 ^ size)
-    },
-    effectifOptions (effectif) {
-      return {
-        title: {
-          text: null
-        },
-        tooltip: {
-          trigger: 'axis',
-          axisPointer: {
-            type: 'cross',
-            label: {
-              backgroundColor: '#283b56'
-            }
-          }
-        },
-        toolbox: {
-          show: true
-        },
-        xAxis: {
-          show: true,
-          type: 'category',
-          axisTick: false,
-          data: this.effectif.map(e => e.periode.slice(0,10))
-        },
-        yAxis: {
-          type: 'value',
-          show: true
-        },
-        series: [{
-          color: 'indigo',
-          smooth: true,
-          name: 'taux marge',
-          type: 'line',
-          data: this.effectif.map(e => e.effectif)
-        }]
-      }
     }
   },
   mounted () {
@@ -395,6 +405,10 @@ export default {
     }
   },
   computed: {
+    finance () {
+      console.log(this.zipDianeBDF)
+      return this.zipDianeBDF.filter(z => z.annee).map(z => this.computeFinance(z))
+    },
     naf () {
       return this.$store.state.naf
     },
@@ -454,6 +468,45 @@ export default {
         }
       })
     },
+    effectifOptions () {
+      return {
+        title: {
+          text: null
+        },
+        legend: {
+          data: ['effectif'],
+          y: 'bottom'
+        },
+        toolbox: {
+          show: true
+        },
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'cross',
+            label: {
+              backgroundColor: '#283b56'
+            }
+          }
+        },
+        xAxis: {
+          show: true,
+          type: 'category',
+          data: this.effectif.map(e => e.periode.slice(0, 10))
+        },
+        yAxis: {
+          type: 'value',
+          show: true
+        },
+        series: [{
+          name: 'effectif',
+          color: 'indigo',
+          step: 'end',
+          type: 'line',
+          data: this.effectif.map(e => e.effectif)
+        }]
+      }
+    },
     urssafOptions () {
       return {
         title: {
@@ -468,6 +521,10 @@ export default {
             }
           }
         },
+        legend: {
+          data: ['Cotisation', 'Débit'],
+          y: 'bottom'
+        },
         toolbox: {
           show: true
         },
@@ -475,7 +532,7 @@ export default {
           show: true,
           type: 'category',
           axisTick: false,
-          data: this.debit.map(d => (d.periode||''))
+          data: this.debit.map(d => (d.periode || '').slice(0, 10))
         },
         yAxis: {
           type: 'value',
@@ -486,11 +543,11 @@ export default {
           smooth: true,
           name: 'Cotisation',
           type: 'line',
-          data: this.cotisation 
+          data: this.cotisation
         }, {
           color: 'red',
           smooth: true,
-          name: 'Dette URSSAF',
+          name: 'Débit',
           type: 'line',
           data: this.debit.map(d => d.part_ouvriere + d.part_patronale)
         }]
@@ -503,6 +560,12 @@ export default {
 <style scoped>
 .echarts {
   width: 400px
+}
+.gray {
+  color: #aaa;
+}
+.down {
+  color: rgb(244, 67, 54);
 }
 .widget {
   position: absolute;

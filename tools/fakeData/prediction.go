@@ -98,8 +98,7 @@ func readAndRandomPrediction(fileName string, outputFileName string, mapping map
 		}
 		row[3] = raisoc[mapping[row[0]]]
 		row[0] = mapping[row[0]]
-		row[4] = "21"
-		row[5] = "Bourgogne-Franche-Comté"
+
 		outputRow := "\"" + strings.Join(row, "\";\"") + "\"\n"
 		_, err = outputFile.WriteString(outputRow)
 		if err != nil {

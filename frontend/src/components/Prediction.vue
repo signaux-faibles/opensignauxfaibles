@@ -16,9 +16,9 @@
     >
       mdi-backburger
     </v-icon>
-    
+
     <div style="width: 100%; text-align: center;" class="toolbar_titre">
-      Détection - Bourgogne Franche Comté
+      Détection - Bourgogne Franche Comté - Février 2019
     </div>
     <v-spacer></v-spacer>
     <v-icon
@@ -51,7 +51,7 @@
       </div>
       <p style="height: 1px; border: 1px solid #eee"/>
       <div style="display: flex; flex-direction: row; vertical-align: middle; padding: 0 15px;" >
-        <v-icon style="margin-right: 10px;">fa-industry</v-icon>
+        <v-icon style="margin-right: 10px;">fa-map</v-icon>
         <v-select
           :items="subzones"
           v-model="zone"
@@ -70,15 +70,15 @@
         ></v-select>
       </div>
       <p style="height: 1px; border: 1px solid #eee"/>
-      <v-radio-group 
-        style="padding: 0 15px" 
-        v-model="suivi" 
+      <v-radio-group
+        style="padding: 0 15px"
+        v-model="suivi"
         @change="updatePrediction()"
         :mandatory="false">
         <v-radio label="Non suivies" value="false"></v-radio>
         <v-radio label="Suivies" value="true"></v-radio>
         <v-radio label="Toutes" value="null"></v-radio>
-      </v-radio-group> 
+      </v-radio-group>
       <p style="height: 1px; border: 1px solid #eee"/>
       <div style="display: flex; flex-direction: row; vertical-align: middle; padding: 0 15px;" >
         <v-checkbox
@@ -115,52 +115,54 @@ export default {
       horsCCSF: true,
       horsProcol: true,
       loading: false,
+      activitePartielle: false,
+      interetUrssaf: false,
       zone: ['21', '25', '39', '58', '70', '71', '89', '90'],
       subzones: [
         {
-          text: 'Région complète',
-          value:  ['21', '25', '39', '58', '70', '71', '89', '90'],
+          text: 'Région entière',
+          value: ['21', '25', '39', '58', '70', '71', '89', '90']
         },
         {
           text: 'Bourgogne',
-          value:  ['21', '58', '71', '89'],
+          value: ['21', '58', '71', '89']
         },
         {
           text: 'Franche Comté',
-          value:  ['25', '39', '70', '90'],
+          value: ['25', '39', '70', '90']
         },
         {
           text: 'Côte d\'or',
-          value:  ['21'],
+          value: ['21']
         },
         {
           text: 'Doubs',
-          value:  ['25'],
+          value: ['25']
         },
         {
           text: 'Jura',
-          value:  ['39'],
+          value: ['39']
         },
         {
           text: 'Nièvre',
-          value:  ['58'],
+          value: ['58']
         },
         {
           text: 'Haute-Saône',
-          value:  ['70'],
+          value: ['70']
         },
         {
           text: 'Saône-et-Loire',
-          value:  ['71'],
+          value: ['71']
         },
         {
           text: 'Yonne',
-          value:  ['89'],
+          value: ['89']
         },
         {
           text: 'Territoire de Belfort',
-          value:  ['90'],
-        },
+          value: ['90']
+        }
       ]
     }
   },
@@ -189,7 +191,7 @@ export default {
         suivi: this.suiviQuery,
         zone: this.zone
       }
-      
+
       this.$axios.post('/api/data/prediction', params).then(response => {
         var prediction = response.data
         this.prediction = prediction
@@ -276,22 +278,22 @@ export default {
     },
     batches () {
       return [{
-        "value": "1810",
-        "text": "Octobre 2019"
-      },{
-        "value": "1811",
-        "text": "Novembre 2018"
-      },{
-        "value": "1812",
-        "text": "Décembre 2018"
-      },{
-        "value": "1901",
-        "text": "Janvier 2018"
-      },{
-        "value": "1802",
-        "text": "Février 2018"
+        'value': '1810',
+        'text': 'Octobre 2018'
+      }, {
+        'value': '1811',
+        'text': 'Novembre 2018'
+      }, {
+        'value': '1812',
+        'text': 'Décembre 2018'
+      }, {
+        'value': '1901',
+        'text': 'Janvier 2018'
+      }, {
+        'value': '1802',
+        'text': 'Février 2019'
       }]
-      return (this.$store.state.batches || []).map(batch => batch.id.key)
+      // return (this.$store.state.batches || []).map(batch => batch.id.key)
     },
     detectionLength () {
       var length = Math.round((this.height + this.scrollTop) / 860 + 5) * 10

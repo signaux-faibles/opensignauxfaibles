@@ -71,7 +71,7 @@ func main() {
 
 	config := cors.DefaultConfig()
 	if viper.GetBool("DEV") {
-		config.AllowOrigins = []string{"http://localhost:8080"}
+		config.AllowOrigins = []string{"*"}
 	} else {
 		config.AllowOrigins = []string{"https://signaux.faibles.fr"}
 	}

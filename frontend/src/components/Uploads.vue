@@ -44,7 +44,7 @@ export default {
           accu.amount += upload.amount
         }
         return accu
-      }, {total: 0, amount: 0})
+      }, { total: 0, amount: 0 })
       if (amount.total === 0) return 100
       else return parseInt(100 * amount.amount / amount.total)
     }
