@@ -31,6 +31,8 @@ connect_to_h2o()
 ```{r include = FALSE}
   fields <- get_fields(training = FALSE)
   x_fields_model <- get_fields(training = TRUE)
+  x_fields_mini <- get_fields(training = TRUE,
+                              urssaf = 0)
 ```
 
 ## Load data
@@ -47,7 +49,7 @@ connect_to_h2o()
       fields = fields,
       code_ape = NULL,
       type = type,
-      subsample = 100000
+      subsample = 50000
       )
 ```
 
@@ -102,18 +104,19 @@ result <- MLsegmentr::assess_training_sets(
   training_frames = h2o_train_sample,
   test_frame = h2o_val_sample,
   feature_sets = list(
-    initial = x_fields_model,
-    without_urssaf = x_fields_model
+    initial = x_fields_model#,
+    #without_urssaf = x_fields_mini
     ),
   outcome_names = "outcome",
   training_fun = train_light_gradient_boosting,
   predict_fun = aux_predict,
-  eval_funs = MLsegmentr::prcurve_eval,
+  eval_funs = MLsegmentr::confusion_matrix_eval,
     #MLsegmentr::main_diff_eval
   more_training_args = list(
     h2o_validation_data = h2o_val_sample, 
     save_results = FALSE
-    )
+    ),
+  segments = tidyr::replace_na(as.vector(h2o_val_sample["code_naf"]) == "C", FALSE)
 )
 ```
 
