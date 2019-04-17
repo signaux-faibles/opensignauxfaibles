@@ -6,7 +6,7 @@ function cibleApprentissage(output_indexed) {
   let output_cible = {}
 
   let counter = -1
-  let all_keys = [...new Set([...output_cotisation, ...output_procol])]
+  let all_keys = [...new Set([...Object.keys(output_cotisation), ...Object.keys(output_procol)])]
   all_keys.sort((a,b)=> a<=b).forEach( k => {
     if (counter >= 0) counter = counter + 1 
     if (output_procol[k].tag_failure || output_cotisation[k].tag_default){
