@@ -3,7 +3,7 @@ title: "Untitled"
 author: "Pierre Camilleri"
 date: "25 juillet 2018"
 output: html_notebook
-editor_options: 
+editor_options:
   chunk_output_type: console
 ---
 
@@ -16,8 +16,8 @@ knitr::opts_chunk$set(echo = FALSE)
 ```{r}
 database <- "test_signauxfaibles"
 collection <- "Features"
-actual_period <- as.Date("2019-01-01")
-last_batch <- '1903_part1'
+actual_period <- as.Date("2019-04-01")
+last_batch <- "1904"
 min_effectif <- 10
 type <- "dataframe"
 ```
@@ -27,12 +27,11 @@ connect_to_h2o()
 ```
 
 
-## Fields to import / train on 
+## Fields to import / train on
 ```{r include = FALSE}
   fields <- get_fields(training = FALSE)
-  x_fields_model <- get_fields(training = TRUE)
-  x_fields_mini <- get_fields(training = TRUE,
-                              urssaf = 0)
+  x_fields_model <- c(get_fields(training = TRUE), "debit_18m")
+  x_fields_mini <- get_fields(training = TRUE, urssaf = 0)
 ```
 
 ## Load data
@@ -43,13 +42,13 @@ connect_to_h2o()
       collection = collection,
       batch = last_batch,
       siren = NULL,
-      date_inf = "2015-01-01",
-      date_sup = "2017-01-01",
+      date_inf = "2019-03-01",#"2015-01-01",
+      date_sup = "2019-04-01",#"2017-01-01",
       min_effectif = min_effectif,
       fields = fields,
       code_ape = NULL,
-      type = type,
-      subsample = 50000
+      type = type#,
+      #subsample = 200000
       )
 ```
 
@@ -98,6 +97,7 @@ aux_predict <- function(model, new_data){
 }
 
 ```
+
 ## Model performance
 ```{r}
 result <- MLsegmentr::assess_training_sets(
@@ -110,13 +110,14 @@ result <- MLsegmentr::assess_training_sets(
   outcome_names = "outcome",
   training_fun = train_light_gradient_boosting,
   predict_fun = aux_predict,
-  eval_funs = MLsegmentr::confusion_matrix_eval,
+  eval_funs = custom_eval_urssaf,
     #MLsegmentr::main_diff_eval
   more_training_args = list(
-    h2o_validation_data = h2o_val_sample, 
+    h2o_validation_data = h2o_val_sample,
     save_results = FALSE
     ),
-  segments = tidyr::replace_na(as.vector(h2o_val_sample["code_naf"]) == "C", FALSE)
+  segments = tidyr::replace_na(as.vector(h2o_val_sample["code_naf"]) == "C", FALSE),
+  ... = h2o_val_sample[["siret"]] %>% as.vector()
 )
 ```
 
@@ -126,9 +127,13 @@ plotPR(model, h2o_train_sample, new_fig = FALSE)
 plotPR(model, h2o_val_sample, new_fig = FALSE)
 ```
 
-## Model testing 
+## Model testing
 ```{r}
 cat("BEWARE YOU ARE ABOUT TO TEST ON TEST DATA")
 cat("TAKING DECISIONS ON THESE RESULTS MAY LEAD TO OVERFITTING TEST DATA")
+```
+
+```{r}
+shapley_plot(siret, my_data_frame, model, batch = last_batch)
 ```
 

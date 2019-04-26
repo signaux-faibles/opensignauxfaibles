@@ -16,11 +16,11 @@ devtools::load_all()
 ```{r}
 database <- "test_signauxfaibles"
 collection <- "Features"
-actual_period <- as.Date("2019-02-01")
-periods <- seq.Date(from = as.Date("2018-07-01"), to = actual_period, by = "months")
-last_batch <- '1903_part1'
+actual_period <- as.Date("2019-03-01")
+periods <- actual_period
+last_batch <- "1904"
 min_effectif <- 10
-retrain_model <- FALSE
+retrain_model <- TRUE
 type <- "dataframe"
 ```
 
@@ -30,35 +30,36 @@ connect_to_h2o()
 
 ```{r}
 res <- full_light_gradient_boosting(
-  database, 
+  database,
   collection,
-  periods, 
-  last_batch, 
-  min_effectif, 
+  periods,
+  last_batch,
+  min_effectif,
   retrain_model = retrain_model,
-  type = type)
-```
-
-```{r}
-my_data <- as.data.frame(my_data)
-my_data <- my_data %>% mutate(
-  periode =  as.Date(structure(periode / 1000, 
-                               class = c('POSIXct','POSIXt')))
-)
-```
-
-```{r}
-siret = "01234567891112"
-shapley_plot(c(siret), my_data, my_model, batch = last_batch)
-```
-
-```{r results="hide"}
-
-siret = "01234567891112"
-export_fiche_visite(
-  sirets = c(), 
-  database, 
-  last_batch, 
-  with_urssaf = FALSE
+  type = type
   )
 ```
+
+#```{r}
+#my_data <- as.data.frame(my_data)
+#my_data <- my_data %>% mutate(
+#  periode =  as.Date(structure(periode / 1000,
+#                               class = c('POSIXct','POSIXt')))
+#)
+#```
+#
+#```{r}
+#siret = "01234567891112"
+#shapley_plot(c(siret), my_data, my_model, batch = last_batch)
+#```
+#
+#```{r results="hide"}
+#
+#siret = "01234567891112"
+#export_fiche_visite(
+#  sirets = c(),
+#  database,
+#  last_batch,
+#  with_urssaf = FALSE
+#  )
+#```

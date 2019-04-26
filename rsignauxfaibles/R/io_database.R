@@ -837,3 +837,63 @@ get_fields <- function(
   return(fields)
 }
 
+#' Title
+#'
+#' @return
+#' @export
+#'
+#' @examples
+get_fields_training_light <- function(){
+  return( c(
+  "apart_heures_consommees",
+  "effectif_past_24",
+  "montant_part_ouvriere_past_12",
+  "montant_part_ouvriere_past_3",
+  "montant_part_ouvriere_past_2",
+  "montant_part_patronale_past_2",
+  "montant_part_ouvriere_past_1",
+  "montant_part_patronale_past_1",
+  "montant_part_patronale",
+  "ratio_dette",
+  "ratio_dette_moy12m",
+  "dette_fiscale_et_sociale_past_2",
+  "frais_de_RetD_past_2",
+  "independance_financiere_past_2",
+  "endettement_past_2",
+  "credit_client_past_2",
+  "capacite_autofinancement_past_2",
+  "exportation_past_2",
+  "productivite_capital_investi_past_2",
+  "rendement_capitaux_propres_past_2",
+  "rendement_ressources_durables_past_2",
+  "part_autofinancement_past_2",
+  "charge_personnel_past_2",
+  "frais_de_RetD_past_1",
+  "endettement_past_1",
+  "credit_client_past_1",
+  "capacite_autofinancement_past_1",
+  "exportation_past_1",
+  "rentabilite_economique_past_1",
+  "part_autofinancement_past_1",
+  "valeur_ajoutee_past_1",
+  "charge_personnel_past_1",
+  "effectif_consolide",
+  "frais_de_RetD",
+  "concours_bancaire_courant",
+  "endettement",
+  "autonomie_financiere",
+  "degre_immo_corporelle",
+  "rotation_stocks",
+  "credit_fournisseur",
+  "productivite_capital_investi",
+  "performance",
+  "benefice_ou_perte",
+  "taux_marge_past_2",
+  "concours_bancaire_courant_past_2",
+  "taux_marge_commerciale_past_2",
+  "taux_marge_commerciale_past_1",
+  "taux_marge_commerciale",
+  "TargetEncode_code_ape_niveau2",
+  "TargetEncode_code_ape_niveau3")
+  )
+}

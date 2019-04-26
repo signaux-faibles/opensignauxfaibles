@@ -1,7 +1,7 @@
 export_fiche_visite <- function(
   sirets,
   database = "test_signauxfaibles",
-  collection = "Features_a_plat",
+  collection = "Features",
   batch,
   with_urssaf = FALSE,
   folder = batch){
