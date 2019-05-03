@@ -1,7 +1,7 @@
 package engine
 
 // GetTypes retourne la liste des types déclarés
-func GetTypes() []Type {
+func GetTypes() Types {
 	return []Type{
 		{"admin_urssaf", "Siret/Compte URSSAF", "Liste comptes"},
 		{"apconso", "Consommation Activité Partielle", "conso"},
@@ -27,6 +27,21 @@ type Type struct {
 	Type    string `json:"type" bson:"type"`
 	Libelle string `json:"text" bson:"text"`
 	Filter  string `json:"filter" bson:"filter"`
+}
+
+// Types is a Type array
+type Types []Type
+
+// ToData transforms Types to datapi compatible type
+func (t Types) ToData() map[string]interface{} {
+	r := make(map[string]interface{})
+	for _, v := range t {
+		r[v.Type] = map[string]string{
+			"text":   v.Libelle,
+			"filter": v.Filter,
+		}
+	}
+	return r
 }
 
 // Parser fonction de traitement de données en entrée

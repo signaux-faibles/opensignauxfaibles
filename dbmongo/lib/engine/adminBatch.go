@@ -60,6 +60,17 @@ func (batch *AdminBatch) New(batchKey string) error {
 	return nil
 }
 
+// ToData exports batches to a datapi compatible format
+func (batch *AdminBatch) ToData() map[string]interface{} {
+	data := map[string]interface{}{
+		"key":           batch.ID.Key,
+		"data_debut":    batch.Params.DateDebut,
+		"date_fin":      batch.Params.DateFin,
+		"date_effectif": batch.Params.DateFinEffectif,
+	}
+	return data
+}
+
 func isBatchID(batchID string) bool {
 	_, err := time.Parse("0601", batchID[0:4])
 	return err == nil
@@ -129,16 +140,16 @@ func ProcessBatch(batchList []string, parsers []Parser, types []string) error {
 
 	for _, v := range batchList {
 		batch, errBatch := GetBatch(v)
-    if errBatch !=nil {
-      return errors.New("Erreur de lecture du batch: " + errBatch.Error())
-    }
-    ImportBatch(batch, parsers)
-    time.Sleep(5 * time.Second) // TODO: trouver une façon de synchroniser l'insert des paquets
-    err := Compact(v, types)
-    if err != nil {
-      return errors.New("Erreur de compactage: " + err.Error())
-    }
-  }
+		if errBatch != nil {
+			return errors.New("Erreur de lecture du batch: " + errBatch.Error())
+		}
+		ImportBatch(batch, parsers)
+		time.Sleep(5 * time.Second) // TODO: trouver une façon de synchroniser l'insert des paquets
+		err := Compact(v, types)
+		if err != nil {
+			return errors.New("Erreur de compactage: " + err.Error())
+		}
+	}
 
 	batch := LastBatch()
 	return Reduce(batch.ID.Key, "algo2", nil, "Features")

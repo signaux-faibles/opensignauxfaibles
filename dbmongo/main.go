@@ -135,13 +135,11 @@ func main() {
 		api.GET("/data/batch/purge", purgeBatchHandler)
 		api.POST("/data/import", importBatchHandler)
 		api.POST("/data/compact", compactHandler)
-		//api.GET("/data/compact", compactHandler)
 		api.POST("/data/reduce", reduceHandler)
 		api.POST("/data/search", searchHandler)
 		api.GET("/data/purge", purgeHandler)
 		api.GET("/data/purgeNotCompacted", purgeNotCompactedHandler)
 		api.POST("/data/publish", publicHandler)
-		api.POST("/data/toDatapi", toDatapiHandler)
 		api.POST("/data/browse", browsePublicHandler)
 		api.POST("/data/prediction", predictionBrowseHandler)
 		api.POST("/data/etablissement", etablissementBrowseHandler)
@@ -151,6 +149,9 @@ func main() {
 		api.POST("/comments/history", getCommentHistoryHandler)
 
 		api.GET("/data/export", datapiExportHandler)
+		api.POST("/data/exportPublic", datapiExportPublicHandler)
+		api.POST("/data/exportDetection", datapiExportDetectionHandler)
+
 		// TODO: mapreduce pour traiter le scope, modification des objets utilisateurs
 		// TODO: écrire l'aggrégation qui va bien
 		api.GET("/dashboard/tasks", getTasksHandler)
