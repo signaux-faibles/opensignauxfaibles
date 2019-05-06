@@ -4,7 +4,6 @@ import (
 	"dbmongo/lib/exportdatapi"
 	"dbmongo/lib/naf"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/globalsign/mgo/bson"
 	daclient "github.com/signaux-faibles/datapi/client"
 )
@@ -31,27 +30,23 @@ func ExportDetectionToDatapi(url, user, password, batch string) error {
 
 	for iter.Next(&data) {
 		i++
+		d, err := exportdatapi.ComputeDetection(data)
+		if err != nil {
+			continue
+		}
+
 		object := daclient.Object{
-			Key: map[string]string{
-				"type":  "detection",
-				"siret": data.ID["key"],
-				"batch": batch,
-			},
-			Value: make(map[string]interface{}),
+			Key:   d.Key,
+			Scope: d.Scope,
+			Value: d.Value,
 		}
 
 		datas = append(datas, object)
-		// 	datas = append(datas, o)
-		// }
-		if i == 1 {
-			break
-		}
 	}
 
-	// if datas != nil {
-	// 	err = client.Put("public", datas)
-	// }
-	spew.Dump(datas)
+	if datas != nil {
+		err = client.Put("public", datas)
+	}
 	return err
 }
 
