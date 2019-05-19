@@ -148,7 +148,7 @@ func main() {
 		api.POST("/comments/set", setCommentHandler)
 		api.POST("/comments/history", getCommentHistoryHandler)
 
-		api.GET("/data/export", datapiExportHandler)
+		api.POST("/data/exportReference", datapiExportReferenceHandler)
 		api.POST("/data/exportPublic", datapiExportPublicHandler)
 		api.POST("/data/exportDetection", datapiExportDetectionHandler)
 

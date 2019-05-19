@@ -19,6 +19,7 @@ type AdminID struct {
 type AdminBatch struct {
 	ID            AdminID    `json:"id" bson:"_id"`
 	Files         BatchFiles `json:"files" bson:"files"`
+	Name          string     `json:"name" bson:"name"`
 	Readonly      bool       `json:"readonly" bson:"readonly"`
 	CompleteTypes []string   `json:"complete_types" bson:"complete_types"`
 	Params        struct {
@@ -67,6 +68,7 @@ func (batch *AdminBatch) ToData() map[string]interface{} {
 		"data_debut":    batch.Params.DateDebut,
 		"date_fin":      batch.Params.DateFin,
 		"date_effectif": batch.Params.DateFinEffectif,
+		"name":          batch.Name,
 	}
 	return data
 }

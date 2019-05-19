@@ -53,7 +53,7 @@ func datapiExportPublicHandler(c *gin.Context) {
 	c.JSON(200, "ok")
 }
 
-func datapiExportHandler(c *gin.Context) {
+func datapiExportReferenceHandler(c *gin.Context) {
 	var params struct {
 		Batch string `json:"batch"`
 	}

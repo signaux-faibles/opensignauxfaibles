@@ -4,7 +4,6 @@ import (
 	"dbmongo/lib/exportdatapi"
 	"dbmongo/lib/naf"
 
-	"github.com/globalsign/mgo/bson"
 	daclient "github.com/signaux-faibles/datapi/client"
 )
 
@@ -30,18 +29,14 @@ func ExportDetectionToDatapi(url, user, password, batch string) error {
 
 	for iter.Next(&data) {
 		i++
-		d, err := exportdatapi.ComputeDetection(data)
+		detection, public, entreprise, err := exportdatapi.ComputeDetection(data)
+
 		if err != nil {
 			continue
 		}
 
-		object := daclient.Object{
-			Key:   d.Key,
-			Scope: d.Scope,
-			Value: d.Value,
-		}
+		datas = append(datas, detection, public, entreprise)
 
-		datas = append(datas, object)
 	}
 
 	if datas != nil {
@@ -50,48 +45,71 @@ func ExportDetectionToDatapi(url, user, password, batch string) error {
 	return err
 }
 
-// ExportPublicToDatapi sends public data to a datapi server
-func ExportPublicToDatapi(url string, user string, password string, batch string) error {
-	client := daclient.DatapiServer{
-		URL: url,
-	}
-	err := client.Connect(user, password)
-	if err != nil {
-		return err
-	}
+// func getDepartement(b map[string]interface{}) (string, error) {
+// 	sirene, ok := b["sirene"].(map[string]interface{})
+// 	if !ok {
+// 		return "", errors.New("no sirene")
+// 	}
 
-	cursor := Db.DB.C("Public").Find(bson.M{"_id.batch": batch})
+// 	dept, ok := sirene["departement"].(string)
+// 	if !ok {
+// 		return "", errors.New("no departement")
+// 	}
 
-	iter := cursor.Iter()
+// 	return dept, nil
+// }
 
-	var data struct {
-		ID    map[string]string      `bson:"_id"`
-		Value map[string]interface{} `bson:"value"`
-	}
+// // ExportPublicToDatapi sends public data to a datapi server
+// func ExportPublicToDatapi(url string, user string, password string, batch string) error {
+// 	client := daclient.DatapiServer{
+// 		URL: url,
+// 	}
 
-	var datas []daclient.Object
+// 	err := client.Connect(user, password)
+// 	if err != nil {
+// 		return err
+// 	}
 
-	var i int
+// 	cursor := Db.DB.C("Public").Find(bson.M{"_id.batch": batch})
 
-	for iter.Next(&data) {
-		i++
+// 	iter := cursor.Iter()
 
-		if data.Value != nil {
-			o := daclient.Object{
-				Key:   data.ID,
-				Value: data.Value,
-			}
+// 	var data struct {
+// 		ID    map[string]string      `bson:"_id"`
+// 		Value map[string]interface{} `bson:"value"`
+// 	}
 
-			datas = append(datas, o)
-		}
-	}
+// 	var datas []daclient.Object
 
-	if datas != nil {
-		err = client.Put("public", datas)
-	}
+// 	var i int
 
-	return err
-}
+// 	for iter.Next(&data) {
+// 		i++
+
+// 		departement, error := getDepartement
+// 		key := map[string]string{
+// 			"key":   data.ID["key"],
+// 			"batch": data.ID["batch"],
+// 			"type":  "detail",
+// 			"scope": data.ID["scope"],
+// 		}
+
+// 		if data.Value != nil {
+// 			o := daclient.Object{
+// 				Key:   key,
+// 				Value: data.Value,
+// 			}
+
+// 			datas = append(datas, o)
+// 		}
+// 	}
+
+// 	if datas != nil {
+// 		err = client.Put("public", datas)
+// 	}
+
+// 	return err
+// }
 
 // ExportReferencesToDatapi pushes references (batches, types, etc.) to a datapi server
 func ExportReferencesToDatapi(url string, user string, password string, batch string) error {
@@ -127,7 +145,7 @@ func ExportReferencesToDatapi(url string, user string, password string, batch st
 	for _, b := range batches {
 		o := daclient.Object{
 			Key: map[string]string{
-				"key":   "batches",
+				"key":   "batch",
 				"batch": b.ID.Key,
 			},
 			Scope: []string{},
@@ -144,25 +162,3 @@ func ExportReferencesToDatapi(url string, user string, password string, batch st
 
 	return err
 }
-
-// // ExportToDatapi exports Public to Datapi
-// func ExportToDatapi(url string, user string, password string) error {
-// 	client := daclient.DatapiServer{
-// 		URL: url,
-// 	}
-
-// 	err := client.Connect(user, password)
-
-// 	data := daclient.Object{
-// 		Key: map[string]string{
-// 			"type": "reference",
-// 			"key":  "naf",
-// 		},
-// 		Scope: []string{},
-// 		Value: naf.Naf.ToData(),
-// 	}
-
-// 	err = client.Put("reference", []daclient.Object{data})
-
-// 	return err
-// }

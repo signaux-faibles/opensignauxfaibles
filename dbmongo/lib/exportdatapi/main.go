@@ -5,6 +5,8 @@ import (
 	"strconv"
 	"time"
 
+	daclient "github.com/signaux-faibles/datapi/client"
+
 	"github.com/globalsign/mgo/bson"
 )
 
@@ -25,8 +27,9 @@ func GetPipeline(batch string) (pipeline []bson.M) {
 			{Name: "key", Value: bson.M{"$substr": []interface{}{"$_id.siret", 0, 9}}},
 			{Name: "batch", Value: "$_id.batch"},
 		},
-		"prob": "$prob",
-		"diff": "$diff",
+		"prob":  "$prob",
+		"diff":  "$diff",
+		"connu": "$connu",
 	}})
 
 	pipeline = append(pipeline, bson.M{"$lookup": bson.M{
@@ -54,6 +57,7 @@ type Detection struct {
 	ID            map[string]string `bson:"_id"`
 	Prob          float64           `bson:"prob"`
 	Diff          float64           `bson:"diff"`
+	Connu         bool              `bson:"connu"`
 	Etablissement Etablissement     `bson:"etablissement"`
 	Entreprise    Entreprise        `bson:"entreprise"`
 }
@@ -155,35 +159,77 @@ type DatapiDetection struct {
 	Value map[string]interface{}
 }
 
-// ComputeDetection traite un objet detection pour sortir les éléments nécessaires à une liste de détection
-func ComputeDetection(detection Detection) (DatapiDetection, error) {
+func computeDetection(detection Detection) (detections []daclient.Object) {
 	caVal, caVar, reVal, reVar := computeDiane(detection)
+	dernierEffectif, variationEffectif := computeEffectif(detection)
+
+	scope := []string{"detection", detection.Etablissement.Value.Sirene.Departement}
+
+	key := map[string]string{
+		"siret": detection.ID["key"],
+		"batch": detection.ID["batch"],
+		"type":  "detection",
+	}
+
+	value := map[string]interface{}{
+		"prob":                    detection.Prob,
+		"diff":                    detection.Diff,
+		"connu":                   detection.Connu,
+		"raison_sociale":          detection.Etablissement.Value.Sirene.RaisonSociale,
+		"activite":                detection.Etablissement.Value.Sirene.Ape,
+		"urssaf":                  computeUrssaf(detection),
+		"activite_partielle":      computeActivitePartielle(detection),
+		"dernier_effectif":        &dernierEffectif,
+		"variation_effectif":      &variationEffectif,
+		"ca":                      caVal,
+		"variation_ca":            caVar,
+		"resultat_expl":           reVal,
+		"variation_resultat_expl": reVar,
+	}
+
+	detections = append(detections, daclient.Object{
+		Key:   key,
+		Scope: scope,
+		Value: value,
+	})
+
+	return detections
+}
+
+func computeEtablissement(detection Detection) (etablissements []daclient.Object) {
+	// scope normal
+
+	return daclient.Object{
+		Key:   key,
+		Scope: scope,
+		Value: value,
+	}
+}
+
+func computeEntreprise(detection Detection) (etablissements []daclient.Object) {
+	return nil
+}
+
+// Compute traite un objet detection pour produire les objets datapi
+func Compute(detection Detection) (detections []daclient.Object, etablissements []daclient.Object, entreprises []daclient.Object, err error) {
 
 	if detection.Etablissement.Value.Sirene.Departement != "" {
-		scope := []string{"detection", detection.Etablissement.Value.Sirene.Departement}
-		d := DatapiDetection{
-			Key: map[string]string{
-				"siret": detection.ID["key"],
-				"batch": detection.ID["batch"],
-				"type":  "detection",
-			},
-			Scope: scope,
-			Value: map[string]interface{}{
-				"prob":                    detection.Prob,
-				"diff":                    detection.Diff,
-				"raison_sociale":          detection.Etablissement.Value.Sirene.RaisonSociale,
-				"activite":                detection.Etablissement.Value.Sirene.Ape,
-				"urssaf":                  computeUrssaf(detection),
-				"activite_partielle":      computeActivitePartielle(detection),
-				"ca":                      caVal,
-				"variation_ca":            caVar,
-				"resultat_expl":           reVal,
-				"variation_resultat_expl": reVar,
-			},
-		}
-		return d, nil
+		detections = append(detections, computeDetection(detection)...)
+		etablissements = append(etablissements, computeEtablissement(detection)...)
+		entreprises = append(entreprises, computeEntreprise(detection)...)
 	}
-	return DatapiDetection{}, errors.New("pas d'information sirene")
+
+	return nil, nil, nil, errors.New("pas d'information sirene")
+}
+
+func computeEffectif(detection Detection) (dernierEffectif int, variationEffectif float64) {
+	l := len(detection.Etablissement.Value.Effectif)
+	if l > 2 {
+		dernierEffectif := detection.Etablissement.Value.Effectif[l-1].Effectif
+		variationEffectif := float64(detection.Etablissement.Value.Effectif[l-1].Effectif) / float64(detection.Etablissement.Value.Effectif[l-2].Effectif)
+		return dernierEffectif, variationEffectif
+	}
+	return 0, 0
 }
 
 func computeUrssaf(detection Detection) bool {
