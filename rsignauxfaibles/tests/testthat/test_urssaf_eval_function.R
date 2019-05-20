@@ -24,3 +24,19 @@ testthat::test_that("custom_eval_urssaf works correctly", {
   expect_error(custom_plot_urssaf(actual_out) , NA)
 }
 )
+
+# TODO this should be the correct test procedure
+#
+# test_eval_frame <- MLsegmentr::get_test_eval_frame()
+#
+# test_eval_frame <- test_eval_frame %>%
+#   mutate(siret = .id)
+#
+# test_eval_frame <- dplyr::bind_rows(
+#   test_eval_frame,
+#   test_eval_frame,
+#   .id = "periode")
+#
+#
+# eval_urssaf = wrap_simple_eval(aux_custom_eval_urssaf)
+# eval_urssaf(test_eval_frame)
