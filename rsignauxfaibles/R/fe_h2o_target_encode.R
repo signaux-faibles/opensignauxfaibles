@@ -16,7 +16,7 @@ h2o_target_encode <- function(
     noise_level <- 0
   }
 
-  res <- h2o.target_encode_apply(
+  res <- h2o::h2o.target_encode_apply(
     h2o_frame,
     x = as.list(names(te_map)),
     y = "outcome",

@@ -118,7 +118,7 @@ Fscore_threshold <- function(prediction, outcome, alpha){
 #' @export
 #'
 #' @examples
-aux_custom_eval_urssaf <- function(eval_frame, additional_data, F1_thres, F2_thres) {
+aux_custom_eval_urssaf <- function(eval_frame, F1_thres, F2_thres) {
 
  ### TODO change
   F1_thres = 0.31
@@ -232,7 +232,7 @@ aux_custom_eval_urssaf <- function(eval_frame, additional_data, F1_thres, F2_thr
 #' @examples
 aux_custom_plot_urssaf  <- function(evaluation){
   if (require(ggplot2)) {
-  ggplot2::ggplot(
+  p <- ggplot2::ggplot(
    evaluation,
    ggplot2::aes(
      x = statut,
@@ -247,6 +247,8 @@ aux_custom_plot_urssaf  <- function(evaluation){
      ggplot2::geom_errorbar(position = "dodge") +
      ggplot2::facet_wrap(ggplot2::vars(segment, model)) +
      ggplot2::geom_text(y = -0.015)
+
+   plot(p)
   } else {
     warning("Cette fonction nécessite le package ggplot2; veuillez l'installer pour l'utiliser")
   }
@@ -275,7 +277,8 @@ eval_urssaf  <- function(){
   evo$eval_fun <- aux_custom_eval_urssaf
   evo$wrap_eval_fun  <- TRUE
   evo$unnest <- TRUE
-  evo$plot_fun  <- aux_custom_eval_urssaf
+  evo$plot_fun  <- aux_custom_plot_urssaf
+  evo$compulsory_fields <- c("siret","periode")
 
   return(evo)
 
