@@ -8,7 +8,7 @@ output: html_document
 ## Imports
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
-h2o.no_progress()
+h2o::h2o.no_progress()
 devtools::load_all()
 ```
 

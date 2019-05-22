@@ -1,3 +1,19 @@
+#' Export d'une fiche visite
+#'
+#' @param sirets Vecteur de sirets des établissements dont il faut exporter la
+#' fiche
+#' @param database Base de donnée Mongodb à requêter
+#' @param collection Collection mongodb à requêter
+#' @param batch Choix du batch pour lequel se fait l'export
+#' @param with_urssaf. logical. Si TRUE, les informations du montant des
+#'  dettes URSSAF sont incluses à la fiche.
+#' @param folder Nom du dossier dans lequel la fiche est exportée. Le dossier
+#'  doit préexister. TODO: chemin d'accès écrit en dur; à corriger !
+#'
+#' @return NULL
+#' @export
+#'
+#' @examples
 export_fiche_visite <- function(
   sirets,
   database = "test_signauxfaibles",
@@ -5,9 +21,6 @@ export_fiche_visite <- function(
   batch,
   with_urssaf = FALSE,
   folder = batch){
-
-
-
 
   for (i in seq_along(sirets)) {
 

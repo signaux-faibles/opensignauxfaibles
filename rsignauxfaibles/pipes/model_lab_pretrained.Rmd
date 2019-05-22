@@ -29,8 +29,8 @@ connect_to_h2o()
 
 ## Fields to import / train on
 ```{r include = FALSE}
-  fields <- c(get_fields(training = FALSE), "debit_18m")
-  x_fields_model <- get_fields(training = TRUE)
+  fields <- get_fields(training = FALSE)
+  x_fields_model <- c(get_fields(training = TRUE), "debit_18m")
   x_fields_mini <- get_fields(training = TRUE, urssaf = 0)
 ```
 
@@ -59,16 +59,29 @@ train_sample <- my_data_frame %>% semi_join(res[["train"]])
 val_sample <- my_data_frame %>% semi_join(res[["validation"]])
 test_sample <- my_data_frame %>% semi_join(res[["test"]])
 ```
-
-## Train model
 ```{r}
-out <- prepare_frame(
-  data_to_prepare = train_sample,
-  save_or_load_map = FALSE,
-  test_or_train = "train"
+# Memory gain
+rm(my_data_frame)
+rm(res)
+rm(train_sample)
+rm(test_sample)
+```
+
+
+## Load trained model
+```{r}
+
+model <- load_h2o_object(
+  "lgb",
+  "model",
+  last = TRUE
+)
+te_map <- load_h2o_object(
+  "te_map",
+  "temap",
+  last = TRUE
 )
 
-te_map <- out[["te_map"]]
 out2 <- prepare_frame(
   data_to_prepare = val_sample,
   test_or_train = "test",
@@ -76,74 +89,39 @@ out2 <- prepare_frame(
   save_or_load_map = FALSE
 )
 
-h2o_train_sample <- out[["data"]]
 h2o_val_sample <- out2[["data"]]
 
-model <- train_light_gradient_boosting(
-  h2o_train_data = h2o_train_sample,
-  h2o_validation_data = h2o_val_sample,
-  x_fields_model = x_fields_model,
-  outcome = "outcome",
-  save_results = "FALSE"
-)
-```
-
-```{r}
 aux_predict <- function(model, new_data){
-  new_data$periode <- as.Date(new_data$periode)
-  h2o_new_data <- h2o::as.h2o(new_data)
   res <- predict_model(
     model = model,
-    new_data = h2o_new_data
+    new_data = new_data
   )
   return(res$prob)
 }
 
-aux_train <- function(train_data, features, target){
-  return(
-    train_light_gradient_boosting(
-      h2o_train_data = train_data,
-      h2o_validation_data = NULL,
-      x_fields_model = features,
-      outcome = target,
-      save_results = FALSE
-    )
-  )
-}
-
-val_df <- as.data.frame(h2o_val_sample)
-val_df$outcome <- as.logical(val_df$outcome)
-prediction <- aux_predict(model, val_df)
 ```
 
 ## Model performance
 ```{r}
-model_assesser <- MLsegmentr::Assesser$new(val_df)
-model_assesser$set_predictions(prediction)
-model_assesser$set_targets("outcome")
-
-model_assesser$evaluation_funs <- MLsegmentr::eval_precision_recall()
-
-model_assesser$assess_model()
-```
-
-```{r}
-
-model_assesser$set_predictions_with_training(
-  train_fun = aux_train,
-  train_data = h2o_train_sample,
-  test_data = val_df,
-  target_names = "outcome",
-  feature_sets = list(initial = x_fields_model,
-    without_urssaf = x_fields_mini
+result <- MLsegmentr::assess_training_sets(
+  training_frames = h2o_train_sample,
+  test_frame = h2o_val_sample,
+  feature_sets = list(
+    initial = x_fields_model#,
+    #without_urssaf = x_fields_mini
     ),
-  predict_fun = aux_predict
-  )
-model_assesser$evaluation_funs <- eval_urssaf()
-
-```
-```{r}
-model_assesser$assess_model()
+  outcome_names = "outcome",
+  training_fun = train_light_gradient_boosting,
+  predict_fun = aux_predict,
+  eval_funs = custom_eval_urssaf,
+    #MLsegmentr::main_diff_eval
+  more_training_args = list(
+    h2o_validation_data = h2o_val_sample,
+    save_results = FALSE
+    ),
+  segments = tidyr::replace_na(as.vector(h2o_val_sample["code_naf"]) == "C", FALSE),
+  ... = h2o_val_sample[["siret"]] %>% as.vector()
+)
 ```
 
 ```{r}
