@@ -8,7 +8,7 @@ output: html_document
 ## Imports
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
-h2o.no_progress()
+h2o::h2o.no_progress()
 devtools::load_all()
 ```
 
@@ -16,11 +16,12 @@ devtools::load_all()
 ```{r}
 database <- "test_signauxfaibles"
 collection <- "Features"
-actual_period <- as.Date("2019-01-01")
-periods <- seq.Date(from = as.Date("2018-07-01"), to = actual_period, by = "months")
-last_batch <- '1902'
+actual_period <- as.Date("2019-03-01")
+# periods <- seq.Date(from = as.Date("2014-01-01"),
+#  to = actual_period, by = "months")
+last_batch <- '1904'
 min_effectif <- 10
-retrain_model <- TRUE
+retrain_model <- FALSE
 type <- "dataframe"
 ```
 
@@ -30,11 +31,11 @@ connect_to_h2o()
 
 ```{r}
 res <- full_light_gradient_boosting(
-  database, 
+  database,
   collection,
-  periods, 
-  last_batch, 
-  min_effectif, 
+  actual_period,
+  last_batch,
+  min_effectif,
   retrain_model = retrain_model,
   type = type)
 ```
@@ -42,7 +43,7 @@ res <- full_light_gradient_boosting(
 ```{r}
 my_data <- as.data.frame(my_data)
 my_data <- my_data %>% mutate(
-  periode =  as.Date(structure(periode / 1000, 
+  periode =  as.Date(structure(periode / 1000,
                                class = c('POSIXct','POSIXt')))
 )
 ```
@@ -56,9 +57,9 @@ shapley_plot(c(siret), my_data, my_model, batch = last_batch)
 
 siret = "01234567891112"
 export_fiche_visite(
-  sirets = c(), 
-  database, 
-  last_batch, 
+  sirets = c(),
+  database,
+  last_batch,
   with_urssaf = FALSE
   )
 ```

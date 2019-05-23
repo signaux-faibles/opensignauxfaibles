@@ -6,7 +6,7 @@ elapsed_months <- function(end_date, start_date) {
 
 
 compare_vects <- function(data,field1,field2){
-  
+
   smy <- data %>%
     group_by(siret) %>%
     summarize(a = first(!!sym(field1)), b = first(!!sym(field2)))
@@ -17,7 +17,7 @@ compare_vects <- function(data,field1,field2){
 count_etab_entr <- function(df){
   nb_etab   <- n_distinct(df %>% select(siret))
   nb_entr <- n_distinct(df %>% select(siren))
-  
+
   cat(nb_etab,' établissements dans ', nb_entr, ' entreprises','\n')
 }
 
@@ -37,4 +37,31 @@ average_12m <- function(vec){
       else return(NA)
     }
   )
+}
+
+#' Gives alert levels from prediction and F-scores
+#'
+#' Lower thresholds are strict (a prediction falling on the threshold is
+#' binned to the lower alert level)
+#'
+#' @param prediction Vector, list of predictions between 0 and 1.
+#' @param F1 `Double(1)`. F1_score
+#' @param F2 `Double(1)`. F2_score
+#'
+#' @return A factor vector with alert levels.
+#' @export
+#'
+#' @examples
+alert_levels <- function(prediction, F1,F2){
+  assertthat::assert_that(F2 <= F1,
+    msg = "F2 score cannot be less than F1 score. Could you have entered the
+    scores in the wrong order ?")
+  alert  <- .bincode(
+          x = prediction,
+          breaks = c(-1e-4, F2, F1, 1 + 1e-4),
+          ) %>%
+  factor(
+    levels = 1:3,
+    labels = c("Pas d'alerte", "Alerte seuil F2", "Alerte seuil F1")
+    )
 }

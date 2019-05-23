@@ -1,3 +1,4 @@
+
 AUCPR <- function(y_pred, y_true){
 
   PR <-  pr.curve(scores.class0 = y_pred,
@@ -33,21 +34,26 @@ AUCPR <- function(y_pred, y_true){
 #  return(AUCPR$new())
 #}
 
-#' Title
+#' Fscore_from_prediction
 #'
-#' @param predicted
-#' @param outcome
+#' @param prediction
+#' @param target
+#' @param alpha
 #'
 #' @return
 #' @export
 #'
 #' @examples
-pr.F1 <- function(predicted, outcome){
-  PR <-  PRROC::pr.curve(scores.class0 = predicted,
-                  weights.class0 =  as.numeric(outcome),
-                  curve = TRUE)
-
-  return( max(2 * PR$curve[, 1] * PR$curve[, 2] / (PR$curve[, 1] + PR$curve[, 2]), na.rm = TRUE))
+Fscore_from_prediction <- function(prediction, target, alpha){
+  pr_object <- PRROC::pr.curve(
+    scores.class0 = prediction,
+    weights.class0 =  target,
+    curve = TRUE)
+  res <- as.data.frame(pr_object$curve) %>%
+    dplyr::mutate(Fscore = Fscore_from_prcurve(pr_object$curve, alpha)) %>%
+    dplyr::filter(Fscore == max(Fscore, na.rm = TRUE)) %>%
+    .[1, 3]
+  return(res)
 }
 
 #' Trace la courbe précision rappel pour le modèle H2O considéré

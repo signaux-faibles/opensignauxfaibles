@@ -1,8 +1,11 @@
 context("Test wrappers")
 
+test_database = "unittest_signauxfaibles"
+test_collection = "Features_for_tests"
+
 sample   <- get_last_batch(
-  database = "test_signauxfaibles",
-  collection = "used_in_tests",
+  database = test_database,
+  collection = test_collection,
   last_batch = "1901_interim",
   periods = as.Date("2019-01-01"),
   fields = c("siret", "periode", "code_naf", "code_ape_niveau2", "code_ape_niveau3"),
@@ -100,8 +103,8 @@ test_that("predict_on_last_batch works",{
      expect_error(
        foo <- predict_on_last_batch(
          model = bar,
-         database = "test_signauxfaibles",
-         collection = "used_in_tests",
+         database = test_database,
+         collection = test_collection,
          te_map = res[["te_map"]],
          last_batch = "1901_interim",
          periods = as.Date("2019-01-01"),
@@ -116,8 +119,8 @@ test_that("predict_on_last_batch works",{
 test_that("train_light_gradient_boosting works", {
   expect_error(
       full_light_gradient_boosting(
-        database = "test_signauxfaibles",
-        collection = "used_in_tests",
+        database = test_database,
+        collection = test_collection,
         periods = as.Date("2019-01-01"),
         last_batch = "1901_interim",
         min_effectif = 10,

@@ -86,7 +86,7 @@ get_last_batch <- function(
     )
 
   if ("periode" %in% fields && max(current_data$periode) != max(periods))
-    warning("Data is missing at actual period !!")
+    log_warn("Data is missing at actual period !")
 
   return(current_data)
 }

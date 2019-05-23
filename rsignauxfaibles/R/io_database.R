@@ -30,7 +30,6 @@ NULL
 #' @export
 #'
 #' @examples connect_to_database("test_signauxfaibles","testing", "1812", date_inf = "2014-01-01", date_sup = "2019-01-01", type = "spark")
-
 connect_to_database <- function(
   database,
   collection,
@@ -43,9 +42,16 @@ connect_to_database <- function(
   code_ape = NULL,
   type = "dataframe",
   subsample = NULL,
-  .limit = NULL
+  .limit = NULL,
+  verbose = TRUE
   ) {
 
+  require(logger)
+  if (verbose){
+    log_threshold(WARN)
+  } else {
+    log_threshold(TRACE)
+  }
   requete <- factor_request(
     batch,
     siren,
@@ -57,12 +63,8 @@ connect_to_database <- function(
     subsample
     )
 
-  #cat("\n")
-  #cat(requete)
-  #cat("\n")
-  #browser()
 
-
+  require(logger)
 
   TYPES <- c("dataframe", "spark")
 
@@ -72,22 +74,21 @@ connect_to_database <- function(
 
     if (type == TYPES[1]) {
 
-      cat("Connexion à la collection mongodb ", collection, " ...")
+      log_info("Connexion à la collection mongodb {collection} ...")
 
       dbconnection <- mongolite::mongo(
         collection = collection,
         db = database,
-        verbose = TRUE,
-        url = "mongodb://localhost:27017")
-      cat(" Fini.", "\n")
+        url = "mongodb://localhost:27017",
+        verbose = verbose)
+      log_info(" Connexion effectuée avec succès.")
 
       # Import dataframe
-      cat("Import ...", "\n")
+      log_info("Import en cours...")
 
       donnees <- dbconnection$aggregate(requete)
 
-
-      cat(" Fini.", "\n")
+      log_info(" Import fini.")
 
       if (dim(donnees)[1] == 0) {
         return(dplyr::data_frame(siret = character(0), periode = character(0)))
@@ -110,20 +111,19 @@ connect_to_database <- function(
       n_ent <- table_wholesample$siret %>%
         stringr::str_sub(1, 9) %>%
         n_distinct()
-      cat("Import de", n_eta, "etablissements issus de",
-        n_ent, "entreprises", "\n")
+      log_info("Import de", n_eta, "etablissements issus de",
+        n_ent, "entreprises")
 
-      cat(" Fini.", "\n")
+      log_info(" Fini.")
 
     } else if (type == TYPES[2]) {
-      browser()
-      cat("Ouverture de la connection spark", "\n")
+      log_info("Ouverture de la connection spark")
 
       #FIX ME: neater way to deal with already open connection
       #spark_disconnect_all()
       sc <- sparklyr::spark_connection_find()[[1]]
 
-      cat("Connection à MongoDB et import des donnees dans spark", "\n")
+      log_info("Connection à MongoDB et import des donnees dans spark")
       load <- sparklyr::invoke(sparklyr::spark_session(sc), "read") %>%
         sparklyr::invoke("format", "com.mongodb.spark.sql.DefaultSource") %>%
         sparklyr::invoke("option", "pipeline", requete) %>%
@@ -151,10 +151,10 @@ connect_to_database <- function(
     # Champs manquants
     champs_manquants <- fields[!fields %in% tbl_vars(table_wholesample)]
     if (length(champs_manquants) >= 1) {
-      cat("Champs manquants: ")
-      cat(champs_manquants, "\n")
+      log_info("Champs manquants: ")
+      log_info(champs_manquants)
 
-      cat("Remplacements par NA", "\n")
+      log_info("Remplacements par NA")
       if (type == "dataframe") {
         NA_variable <- NA_character_
       } else if (type == "spark") {
@@ -164,13 +164,40 @@ connect_to_database <- function(
         setNames(champs_manquants)
       table_wholesample <- table_wholesample %>%
         mutate_(.dots = remplacement)
-
-
     }
 
-
     return(table_wholesample)
+}
 
+#' Get sirets of companies detected by SF
+#'
+#' Under construction: TODO
+#' - Possibility to filter by batch, algo, periods
+#' - custom threshold (F1, F2, other)
+#'
+#' @param
+#'
+#' @return vector of unique sirets
+#' @export
+#'
+#' @examples
+get_sirets_of_detected  <- function(
+  database = "test_signauxfaibles",
+  collection = "Scores"
+  ){
+
+
+  dbconnection <- mongolite::mongo(
+    collection = collection,
+    db = database,
+    url = "mongodb://localhost:27017",
+    verbose = FALSE)
+
+  res <- dbconnection$find(
+    '{ "$or": [ { "alert": "Alerte seuil F1" }, { "alert": "Alerte seuil F2" } ] }'
+    )
+
+  return(unique(res$siret))
 
 }
 
@@ -378,36 +405,36 @@ connect_to_spark <- function(database = NULL, collection = NULL) {
 }
 
 
-#' Exporte une requête de base mongodb as a csv file
-#'
-#' Attention, fonction non maintenue car plus utilisée. Faisais maladroitement appel à un fichier sh. Les données transitent dorénavant par Spark.
-#'
-#' @param database Nom de la base de donnée mongodb
-#' @param batch Numéro de batch, au format "AAMM"
-#' @param fields Liste de champs à extraire.
-#' @param min_effectif Limite minimale du filtrage sur l'effectif. NE FONCTIONNE PAS. POUR L'INSTANT EFFECTIF_MIN = 10.
-#'
-#' @return
-#'
-#'
-#' @examples
-export_to_csv <- function(database, algo, batch, fields, min_effectif) {
-  path_1 <- rprojroot::find_rstudio_root_file(
-    "..", "dbmongo", "export", "export.sh"
-    )
-
-  path_2 <- rprojroot::find_rstudio_root_file(
-    "..", "dbmongo", "export", "export_fields.txt"
-    )
-
-  ## Write fields to file path_1
-  write(fields, path_2, append = FALSE, sep = "\n")
-
-  ##
-
-  # FIX ME: ignore complètement min_effectif !! (par défaut, min_effectif = 10)
-  system2("bash", args = c(path_1, database, algo, batch, min_effectif))
-}
+# #' Exporte une requête de base mongodb as a csv file
+# #'
+# #' Attention, fonction non maintenue car plus utilisée. Faisais maladroitement appel à un fichier sh. Les données transitent dorénavant par Spark.
+# #'
+# #' @param database Nom de la base de donnée mongodb
+# #' @param batch Numéro de batch, au format "AAMM"
+# #' @param fields Liste de champs à extraire.
+# #' @param min_effectif Limite minimale du filtrage sur l'effectif. NE FONCTIONNE PAS. POUR L'INSTANT EFFECTIF_MIN = 10.
+# #'
+# #' @return
+# #'
+# #'
+# #' @examples
+# export_to_csv <- function(database, algo, batch, fields, min_effectif) {
+#   path_1 <- rprojroot::find_rstudio_root_file(
+#     "..", "dbmongo", "export", "export.sh"
+#     )
+#
+#   path_2 <- rprojroot::find_rstudio_root_file(
+#     "..", "dbmongo", "export", "export_fields.txt"
+#     )
+#
+#   ## Write fields to file path_1
+#   write(fields, path_2, append = FALSE, sep = "\n")
+#
+#   ##
+#
+#   # FIX ME: ignore complètement min_effectif !! (par défaut, min_effectif = 10)
+#   system2("bash", args = c(path_1, database, algo, batch, min_effectif))
+# }
 
 
 #' Get a list of field names
