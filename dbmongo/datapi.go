@@ -30,7 +30,7 @@ func datapiExportDetectionHandler(c *gin.Context) {
 	c.JSON(200, "ok")
 }
 
-func datapiExportPublicHandler(c *gin.Context) {
+func datapiExportPoliciesHandler(c *gin.Context) {
 	var params struct {
 		Batch string `json:"batch"`
 	}
@@ -40,7 +40,7 @@ func datapiExportPublicHandler(c *gin.Context) {
 		return
 	}
 
-	err = engine.ExportPublicToDatapi(
+	err = engine.ExportPoliciesToDatapi(
 		viper.GetString("datapiUrl"),
 		viper.GetString("datapiUser"),
 		viper.GetString("datapiPassword"),

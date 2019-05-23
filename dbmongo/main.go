@@ -113,7 +113,7 @@ func main() {
 	})
 
 	api := r.Group("api")
-	api.Use(authMiddleware.MiddlewareFunc())
+	// api.Use(authMiddleware.MiddlewareFunc())
 
 	{
 		api.GET("/refreshToken", authMiddleware.RefreshHandler)
@@ -149,9 +149,8 @@ func main() {
 		api.POST("/comments/history", getCommentHistoryHandler)
 
 		api.POST("/data/exportReference", datapiExportReferenceHandler)
-		api.POST("/data/exportPublic", datapiExportPublicHandler)
 		api.POST("/data/exportDetection", datapiExportDetectionHandler)
-
+		api.POST("/data/exportPolicies", datapiExportPoliciesHandler)
 		// TODO: mapreduce pour traiter le scope, modification des objets utilisateurs
 		// TODO: écrire l'aggrégation qui va bien
 		api.GET("/dashboard/tasks", getTasksHandler)

@@ -54,102 +54,102 @@ func GetPipeline(batch string) (pipeline []bson.M) {
 
 // Detection correspond aux données retournées pour l'export Datapi
 type Detection struct {
-	ID            map[string]string `bson:"_id"`
-	Prob          float64           `bson:"prob"`
-	Diff          float64           `bson:"diff"`
-	Connu         bool              `bson:"connu"`
-	Etablissement Etablissement     `bson:"etablissement"`
-	Entreprise    Entreprise        `bson:"entreprise"`
+	ID            map[string]string `json:"_id" bson:"_id"`
+	Prob          float64           `json:"prob" bson:"prob"`
+	Diff          float64           `json:"diff" bson:"diff"`
+	Connu         bool              `json:"connu" bson:"connu"`
+	Etablissement Etablissement     `json:"etablissement" bson:"etablissement"`
+	Entreprise    Entreprise        `json:"entreprise" bson:"entreprise"`
 }
 
 // Etablissement is an object
 type Etablissement struct {
 	ID    map[string]string `bson:"_id"`
 	Value struct {
-		Sirene          Sirene        `bson:"sirene"`
-		Cotisation      []float64     `bson:"cotisation"`
-		Debit           []Debit       `bson:"debit"`
-		APDemande       []APDemande   `bson:"apdemande"`
-		APConso         []APConso     `bson:"apconso"`
-		Effectif        []Effectif    `bson:"effectif"`
-		DernierEffectif Effectif      `bson:"dernier_effectif"`
-		Delai           []interface{} `bson:"delai"`
+		Sirene          Sirene        `json:"sirene" bson:"sirene"`
+		Cotisation      []float64     `json:"cotisation" bson:"cotisation"`
+		Debit           []Debit       `json:"debit" bson:"debit"`
+		APDemande       []APDemande   `json:"apdemande" bson:"apdemande"`
+		APConso         []APConso     `json:"apconso" bson:"apconso"`
+		Effectif        []Effectif    `json:"effectif" bson:"effectif"`
+		DernierEffectif Effectif      `json:"dernier_effectif" bson:"dernier_effectif"`
+		Delai           []interface{} `json:"delai" bson:"delai"`
 	} `bson:"value"`
 }
 
 // Entreprise object
 type Entreprise struct {
-	ID    map[string]string `bson:"_id"`
+	ID    map[string]string `json:"_id" bson:"_id"`
 	Value struct {
-		Diane []Diane       `bson:"diane"`
-		BDF   []interface{} `bson:"bdf"`
+		Diane []Diane       `json:"diane" bson:"diane"`
+		BDF   []interface{} `json:"bdf" bson:"bdf"`
 	} `bson:"value"`
 }
 
 // Effectif detail
 type Effectif struct {
-	Periode  time.Time `bson:"periode"`
-	Effectif int       `bson:"effectif"`
+	Periode  time.Time `json:"periode" bson:"periode"`
+	Effectif int       `json:"effectif" bson:"effectif"`
 }
 
 // Debit detail
 type Debit struct {
-	PartOuvriere  float64   `bson:"part_ouvriere"`
-	PartPatronale float64   `bson:"part_patronale"`
-	Periode       time.Time `bson:"periode"`
+	PartOuvriere  float64   `json:"part_ouvriere" bson:"part_ouvriere"`
+	PartPatronale float64   `json:"part_patronale" bson:"part_patronale"`
+	Periode       time.Time `json:"periode" bson:"periode"`
 }
 
 // APConso detail
 type APConso struct {
-	IDConso       string    `bson:"id_conso"`
-	HeureConsomme float64   `bson:"heure_consomme"`
-	Montant       float64   `bson:"montant"`
-	Effectif      int       `bson:"int"`
-	Periode       time.Time `bson:"periode"`
+	IDConso       string    `json:"id_conso" bson:"id_conso"`
+	HeureConsomme float64   `json:"heure_consomme" bson:"heure_consomme"`
+	Montant       float64   `json:"montant" bson:"montant"`
+	Effectif      int       `json:"int" bson:"int"`
+	Periode       time.Time `json:"periode" bson:"periode"`
 }
 
 // APDemande detail
 type APDemande struct {
-	DateStatut time.Time `bson:"date_statut"`
+	DateStatut time.Time `json:"date_statut" bson:"date_statut"`
 	Periode    struct {
-		Start time.Time `bson:"start"`
-		End   time.Time `bson:"end"`
-	} `bson:"periode"`
-	EffectifAutorise int     `bson:"effectif_autorise"`
-	EffectifConsomme int     `bson:"effectif_consomme"`
-	IDDemande        string  `bson:"id_conso"`
-	Effectif         int     `bson:"int"`
-	MTA              float64 `bson:"mta"`
-	HTA              float64 `bson:"hta"`
-	MotifRecoursSE   int     `bson:"motif_recours_se"`
-	HeureConsomme    float64 `bson:"heure_consomme"`
-	Montant          float64 `bson:"montant"`
+		Start time.Time `json:"start" bson:"start"`
+		End   time.Time `json:"end" bson:"end"`
+	} `json:"periode" bson:"periode"`
+	EffectifAutorise int     `json:"effectif_autorise" bson:"effectif_autorise"`
+	EffectifConsomme int     `json:"effectif_consomme" bson:"effectif_consomme"`
+	IDDemande        string  `json:"id_conso" bson:"id_conso"`
+	Effectif         int     `json:"int" bson:"int"`
+	MTA              float64 `json:"mta" bson:"mta"`
+	HTA              float64 `json:"hta" bson:"hta"`
+	MotifRecoursSE   int     `json:"motif_recours_se" bson:"motif_recours_se"`
+	HeureConsomme    float64 `json:"heure_consomme" bson:"heure_consomme"`
+	Montant          float64 `json:"montant" bson:"montant"`
 }
 
 // Diane detail
 type Diane struct {
-	ChiffreAffaire       float64 `bson:"ca"`
-	ResultatExploitation float64 `bson:"benefice_ou_perte"`
-	Exercice             float64 `bson:"exercice_diane"`
+	ChiffreAffaire       float64 `json:"ca" bson:"ca"`
+	ResultatExploitation float64 `json:"benefice_ou_perte" bson:"benefice_ou_perte"`
+	Exercice             float64 `json:"exercice_diane" bson:"exercice_diane"`
 }
 
 // Sirene detail
 type Sirene struct {
-	Region          string   `bson:"region"`
-	Commune         string   `bson:"commune"`
-	RaisonSociale   string   `bson:"raison_sociale"`
-	TypeVoie        string   `bson:"type_voie"`
-	Siren           string   `bson:"siren"`
-	CodePostal      string   `bson:"code_postal"`
-	Lattitude       float64  `bson:"lattitude"`
-	Adresse         []string `bson:"adresse"`
-	Departement     string   `bson:"departement"`
-	NatureJuridique string   `bson:"nature_juridique"`
-	NumeroVoie      string   `bson:"numero_voie"`
-	Ape             string   `bson:"ape"`
-	Longitude       float64  `bson:"longitude"`
-	Nic             string   `bson:"nic"`
-	NicSiege        string   `bson:"nic_siege"`
+	Region          string   `json:"region" bson:"region"`
+	Commune         string   `json:"commune" bson:"commune"`
+	RaisonSociale   string   `json:"raison_sociale" bson:"raison_sociale"`
+	TypeVoie        string   `json:"type_voie" bson:"type_voie"`
+	Siren           string   `json:"siren" bson:"siren"`
+	CodePostal      string   `json:"code_postal" bson:"code_postal"`
+	Lattitude       float64  `json:"lattitude" bson:"lattitude"`
+	Adresse         []string `json:"adresse" bson:"adresse"`
+	Departement     string   `json:"departement" bson:"departement"`
+	NatureJuridique string   `json:"nature_juridique" bson:"nature_juridique"`
+	NumeroVoie      string   `json:"numero_voie" bson:"numero_voie"`
+	Ape             string   `json:"ape" bson:"ape"`
+	Longitude       float64  `json:"longitude" bson:"longitude"`
+	Nic             string   `json:"nic" bson:"nic"`
+	NicSiege        string   `json:"nic_siege" bson:"nic_siege"`
 }
 
 // DatapiDetection résultat de l'aggregation
@@ -163,18 +163,20 @@ func computeDetection(detection Detection) (detections []daclient.Object) {
 	caVal, caVar, reVal, reVar := computeDiane(detection)
 	dernierEffectif, variationEffectif := computeEffectif(detection)
 
-	scope := []string{"detection", detection.Etablissement.Value.Sirene.Departement}
-
 	key := map[string]string{
 		"siret": detection.ID["key"],
 		"batch": detection.ID["batch"],
 		"type":  "detection",
 	}
 
-	value := map[string]interface{}{
-		"prob":                    detection.Prob,
-		"diff":                    detection.Diff,
-		"connu":                   detection.Connu,
+	var acteurs []string
+	if detection.Connu {
+		acteurs = append(acteurs, "connu")
+	}
+
+	scopeB := []string{"detection", detection.Etablissement.Value.Sirene.Departement}
+	valueB := map[string]interface{}{
+		"acteurs":                 acteurs,
 		"raison_sociale":          detection.Etablissement.Value.Sirene.RaisonSociale,
 		"activite":                detection.Etablissement.Value.Sirene.Ape,
 		"urssaf":                  computeUrssaf(detection),
@@ -185,41 +187,102 @@ func computeDetection(detection Detection) (detections []daclient.Object) {
 		"variation_ca":            caVar,
 		"resultat_expl":           reVal,
 		"variation_resultat_expl": reVar,
+		// "procedure_collective":    detection.Etablissement.Value.Procol,
+	}
+
+	scopeA := []string{"detection", "score", detection.Etablissement.Value.Sirene.Departement}
+	valueA := map[string]interface{}{
+		"prob": detection.Prob,
+		"diff": detection.Diff,
 	}
 
 	detections = append(detections, daclient.Object{
 		Key:   key,
-		Scope: scope,
-		Value: value,
+		Scope: scopeA,
+		Value: valueA,
+	})
+
+	detections = append(detections, daclient.Object{
+		Key:   key,
+		Scope: scopeB,
+		Value: valueB,
 	})
 
 	return detections
 }
 
-func computeEtablissement(detection Detection) (etablissements []daclient.Object) {
-	// scope normal
+func computeEtablissement(detection Detection) (objects []daclient.Object) {
+	key := map[string]string{
+		"siret": detection.Etablissement.Value.Sirene.Siren + detection.Etablissement.Value.Sirene.Nic,
+		"siren": detection.Etablissement.Value.Sirene.Siren,
+		"batch": detection.ID["batch"],
+		"type":  "detail",
+	}
 
-	return daclient.Object{
+	scope := []string{detection.Etablissement.Value.Sirene.Departement}
+	value := map[string]interface{}{
+		"diane":    detection.Entreprise.Value.Diane,
+		"effectif": detection.Etablissement.Value.Effectif,
+		"sirene":   detection.Etablissement.Value.Sirene,
+	}
+
+	scopeURSSAF := []string{"urssaf", detection.Etablissement.Value.Sirene.Departement}
+	valueURSSAF := map[string]interface{}{
+		"debit":      detection.Etablissement.Value.Debit,
+		"delai":      detection.Etablissement.Value.Delai,
+		"cotisation": detection.Etablissement.Value.Cotisation,
+	}
+
+	scopeDGEFP := []string{"dgefp", detection.Etablissement.Value.Sirene.Departement}
+	valueDGEFP := map[string]interface{}{
+		"apconso":   detection.Etablissement.Value.APConso,
+		"apdemande": detection.Etablissement.Value.APDemande,
+	}
+
+	scopeBDF := []string{"bdf", detection.Etablissement.Value.Sirene.Departement}
+	valueBDF := map[string]interface{}{
+		"bdf": detection.Entreprise.Value.BDF,
+	}
+
+	object := daclient.Object{
 		Key:   key,
 		Scope: scope,
 		Value: value,
 	}
-}
 
-func computeEntreprise(detection Detection) (etablissements []daclient.Object) {
-	return nil
+	objectURSSAF := daclient.Object{
+		Key:   key,
+		Scope: scopeURSSAF,
+		Value: valueURSSAF,
+	}
+
+	objectDGEFP := daclient.Object{
+		Key:   key,
+		Scope: scopeDGEFP,
+		Value: valueDGEFP,
+	}
+
+	objectBDF := daclient.Object{
+		Key:   key,
+		Scope: scopeBDF,
+		Value: valueBDF,
+	}
+
+	objects = append(objects, object, objectURSSAF, objectDGEFP, objectBDF)
+	return objects
 }
 
 // Compute traite un objet detection pour produire les objets datapi
-func Compute(detection Detection) (detections []daclient.Object, etablissements []daclient.Object, entreprises []daclient.Object, err error) {
+func Compute(detection Detection) ([]daclient.Object, error) {
 
 	if detection.Etablissement.Value.Sirene.Departement != "" {
-		detections = append(detections, computeDetection(detection)...)
-		etablissements = append(etablissements, computeEtablissement(detection)...)
-		entreprises = append(entreprises, computeEntreprise(detection)...)
+		var objects []daclient.Object
+		objects = append(objects, computeDetection(detection)...)
+		objects = append(objects, computeEtablissement(detection)...)
+		return objects, nil
 	}
 
-	return nil, nil, nil, errors.New("pas d'information sirene")
+	return nil, errors.New("pas d'information sirene, objet ignoré")
 }
 
 func computeEffectif(detection Detection) (dernierEffectif int, variationEffectif float64) {
