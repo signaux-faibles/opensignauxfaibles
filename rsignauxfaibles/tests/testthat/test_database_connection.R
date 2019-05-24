@@ -128,20 +128,41 @@ test_procedure <- function(type) {
       c("siret", "siren", "periode", "effectif", "code_naf")
     )
     expect_equal(
-      test_frame_2 %>% select(code_naf) %>% distinct() %>% collect() %>% .$code_naf,
+      test_frame_2 %>%
+        select(code_naf) %>%
+        distinct() %>%
+        collect() %>%
+        .$code_naf,
       "H"
     )
   })
 }
 
 test_procedure("dataframe")
-# test_procedure("spark")
 
 # TODO: wrong database or collection should throw an error, not returning empty dataframe.
 
 test_that("No problem in get_fields", {
-  expect_false(all(c("outcome", "siret", "periode", "siren", "code_ape") %in% get_fields(training = TRUE)))
-  expect_true(all(c("TargetEncode_code_ape_niveau2", "TargetEncode_code_ape_niveau3") %in% get_fields(training = TRUE, target_encode = 2)))
-  expect_false(all(c("TargetEncode_code_ape_niveau2", "TargetEncode_code_ape_niveau3") %in% get_fields(training = FALSE, target_encode = 2)))
-  expect_true(all(c("outcome", "siret", "periode", "siren", "code_ape") %in% get_fields(training = FALSE)))
+  expect_false(all(c(
+    "outcome",
+    "siret",
+    "periode",
+    "siren",
+    "code_ape"
+  ) %in% get_fields(training = TRUE)))
+  expect_true(all(c(
+    "TargetEncode_code_ape_niveau2",
+    "TargetEncode_code_ape_niveau3"
+  ) %in% get_fields(training = TRUE, target_encode = 2)))
+  expect_false(all(c(
+    "TargetEncode_code_ape_niveau2",
+    "TargetEncode_code_ape_niveau3"
+  ) %in% get_fields(training = FALSE, target_encode = 2)))
+  expect_true(all(c(
+    "outcome",
+    "siret",
+    "periode",
+    "siren",
+    "code_ape"
+  ) %in% get_fields(training = FALSE)))
 })
