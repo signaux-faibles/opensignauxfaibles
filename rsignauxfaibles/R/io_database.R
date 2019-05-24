@@ -48,9 +48,9 @@ connect_to_database <- function(
 
   require(logger)
   if (verbose){
-    log_threshold(WARN)
-  } else {
     log_threshold(TRACE)
+ } else {
+    log_threshold(WARN)
   }
   requete <- factor_request(
     batch,
@@ -62,9 +62,6 @@ connect_to_database <- function(
     code_ape,
     subsample
     )
-
-
-  require(logger)
 
   TYPES <- c("dataframe", "spark")
 
@@ -111,8 +108,7 @@ connect_to_database <- function(
       n_ent <- table_wholesample$siret %>%
         stringr::str_sub(1, 9) %>%
         n_distinct()
-      log_info("Import de", n_eta, "etablissements issus de",
-        n_ent, "entreprises")
+      log_info("Import de {n_eta} etablissements issus de {n_ent} entreprises")
 
       log_info(" Fini.")
 
@@ -151,9 +147,7 @@ connect_to_database <- function(
     # Champs manquants
     champs_manquants <- fields[!fields %in% tbl_vars(table_wholesample)]
     if (length(champs_manquants) >= 1) {
-      log_info("Champs manquants: ")
-      log_info(champs_manquants)
-
+      log_info("Champ manquant: {champs_manquants}")
       log_info("Remplacements par NA")
       if (type == "dataframe") {
         NA_variable <- NA_character_
@@ -503,8 +497,8 @@ get_fields <- function(
       "delai",
       "duree_delai",
       "ratio_dette",
-      "ratio_dette_moy12m"#,
-      #"cotisation_moy12m"
+      "ratio_dette_moy12m",
+      "cotisation_moy12m"
       )
   }
   if (urssaf >= 2) {

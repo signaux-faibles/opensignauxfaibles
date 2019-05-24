@@ -4,11 +4,12 @@ context("Test the write and read of model scores")
 siret_df <- data.frame(
   siret = as.character(rep(1:10, each = 3)),
   periode = seq.Date(
-    from =as.Date("2019-01-01"),
+    from = as.Date("2019-01-01"),
     by = "month",
     length.out = 3
+    ),
+  diff = 1
   )
-)
 
 
 set.seed(1)
@@ -27,62 +28,62 @@ dbconnection <- mongolite::mongo(
   )
 
 # Empty test collection
-dbconnection$remove(query = "{}")
 
 # ------------------------------------------------------------------------------
 # -------- Export to mongodb ---------------------------------------------------
 # ------------------------------------------------------------------------------
 test_that("Test inputs for export function to mongodb", {
-expect_error(export(
-    donnees = cbind(siret_df, prob = scores_1),
-    batch = 123,
-    destination = "mongodb",
-    database = test_database,
-    collection = test_collection))
+  expect_error(export(
+      donnees = cbind(siret_df, prob = scores_1),
+      batch = 123,
+      destination = "mongodb",
+      database = test_database,
+      collection = test_collection))
 
-expect_error(export(
-    donnees = cbind(siret_df, prob = scores_1),
-    batch = "1234",
-    destination = "mongodb",
-    database = c(test_database, test_database),
-    collection = test_collection
-    ))
+  expect_error(export(
+      donnees = cbind(siret_df, prob = scores_1),
+      batch = "1234",
+      destination = "mongodb",
+      database = c(test_database, test_database),
+      collection = test_collection
+      ))
 
-# Wrong dataframe input columns
-expect_error(export(
-    donnees = data.frame(),
-    batch = "1234",
-    destination = "mongodb",
-    database = test_database,
-    collection = test_collection
-    ))
+  # Wrong dataframe input columns
+  expect_error(export(
+      donnees = data.frame(),
+      batch = "1234",
+      destination = "mongodb",
+      database = test_database,
+      collection = test_collection
+      ))
   })
 
-test_that("Scores are well exported with
-  export function", {
-expect_error(
-  export(
-    donnees = cbind(siret_df, prob = scores_1),
-    batch = "1901",
-    database = test_database,
-    collection = test_collection,
-    destination = "mongodb"
-    ),
-  NA
-  )
-expect_equal(dbconnection$count(), 30)
-expect_true("timestamp" %in% names(
-  dbconnection$find('{"siret":"1", "periode":"2019-01-01"}')
-  ))
-expect_equal(dbconnection$find('{"siret":"1", "periode":"2019-01-01"}') %>%
-  dplyr::select(-timestamp),
-  structure(list(siret = "1", periode = "2019-01-01", score = 0.265508663,
+test_that("Scores are well exported with export function", {
+
+  dbconnection$remove(query = "{}")
+  expect_error(
+    export(
+      donnees = cbind(siret_df, prob = scores_1),
+      batch = "1901",
+      database = test_database,
+      collection = test_collection,
+      destination = "mongodb"
+      ),
+    NA
+    )
+  expect_equal(dbconnection$count(), 30)
+  expect_true("timestamp" %in% names(
+      dbconnection$find('{"siret":"1", "periode":"2019-01-01"}')
+      ))
+  expect_equal(dbconnection$find('{"siret":"1", "periode":"2019-01-01"}') %>%
+    dplyr::select(-timestamp),
+  structure(list(siret = "1", periode = "2019-01-01", score = 0.265508663, diff = 1,
       batch = "1901", algo = "algo"), class = "data.frame", row.names = 1L)
   )
 
-export(
-  donnees = cbind(siret_df, prob = scores_2),
-  batch = "1902",
+  export(
+    donnees = cbind(siret_df, prob = scores_2),
+    batch = "1902",
   database = test_database,
   collection = test_collection,
   destination = "mongodb"
@@ -137,22 +138,22 @@ test_that("Input checking for get_scores", {
 })
 
 test_that("Get_scores works with 'historical' method", {
-timestamp <-  Sys.time()
-Sys.sleep(1)
-export(
-  donnees = cbind(siret_df, prob = scores_2),
-  batch = "1901",
-  database = test_database,
-  collection = test_collection,
-  destination = "mongodb"
-  )
-export(
-  donnees = cbind(siret_df, prob = scores_3),
-  batch = "1903",
-  database = test_database,
-  collection = test_collection,
-  destination = "mongodb"
-  )
+  timestamp <-  Sys.time()
+  Sys.sleep(1)
+  export(
+    donnees = cbind(siret_df, prob = scores_2),
+    batch = "1901",
+    database = test_database,
+    collection = test_collection,
+    destination = "mongodb"
+    )
+  export(
+    donnees = cbind(siret_df, prob = scores_3),
+    batch = "1903",
+    database = test_database,
+    collection = test_collection,
+    destination = "mongodb"
+    )
 
 res_last <- get_scores(
   database = test_database,

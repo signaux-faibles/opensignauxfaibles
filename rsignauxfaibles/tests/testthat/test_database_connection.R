@@ -1,6 +1,9 @@
 context("Check database connection")
 # Tester à chaque fois pour un frame spark et pour un dataframe
 
+test_db <- "unittest_signauxfaibles"
+test_col <- "Features_for_tests"
+
 test_that("Les requêtes sont bien formées", {
   test_grid <- expand.grid(
     batch = "1812", date_inf = c("2014-02-01", NA),
@@ -44,17 +47,25 @@ test_that("Les requêtes sont bien formées", {
 test_procedure <- function(type){
   test_that(paste0(type, ": Une requête vide renvoie un dataframe vide"), {
     empty_query <- connect_to_database(
-      "test_signauxfaibles", "used_in_tests",
-      "1901_interim", date_sup = "2001-01-01", fields = c("siret", "periode"),
-      type = type)
+      test_db,
+      test_col,
+      "1901_interim",
+      date_sup = "2001-01-01",
+      fields = c("siret", "periode"),
+      type = type,
+      verbose = FALSE
+    )
     expect_true(any(dim(empty_query %>% collect()) == 0))
   })
 
   test_that(paste0(type, ": Un champs vide présent et complété avec des NA"), {
     missing_field <- connect_to_database(
-      "test_signauxfaibles", "used_in_tests",
-      "1901_interim", fields = c("siret", "periode", "missing_field"),
-      type = type)
+      test_db,
+      test_col,
+      "1901_interim",
+      fields = c("siret", "periode", "missing_field"),
+      type = type
+      )
 
     expect_true(all(is.na(
       missing_field %>% select("missing_field") %>% collect()
@@ -62,8 +73,8 @@ test_procedure <- function(type){
   })
 
   test_frame_1 <- connect_to_database(
-    "test_signauxfaibles",
-    "used_in_tests",
+    test_db,
+    test_col,
     "1901_interim",
     siren = c("012345678", "876543210"),
     date_inf = "2014-06-01",
@@ -75,8 +86,8 @@ test_procedure <- function(type){
   )
 
   test_frame_2 <- connect_to_database(
-    "test_signauxfaibles",
-    "used_in_tests",
+    test_db,
+    test_col,
     "1901_interim",
     siren = NULL,
     date_inf = NULL,
