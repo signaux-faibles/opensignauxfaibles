@@ -120,32 +120,14 @@ Fscore_threshold <- function(prediction, outcome, alpha){
 aux_custom_eval_urssaf <- function(eval_frame, F1_thres, F2_thres) {
 
  ### TODO change
-  F1_thres = 0.31
-  F2_thres = 0.13
+  F1_thres <- 0.31
+  F2_thres <- 0.13
 
   # TODO simplifier: F1 et F2 sont en fait une segmentation ! Donc à faire
   # sur les données a priori. Cette fonction ne calcule au final que la
   # précision avec intervalle de confiance + count.
 
   assertthat::assert_that(F2_thres <= F1_thres)
-
-  # eval_frame <- dplyr::left_join(eval_frame, additional_data, by = ".id")
-
-  # assertthat::assert_that(all(
-  #     c("siret", "periode") %in% names(additional_data)
-  #     ), msg = "Données manquantes")
-
-  # À calculer a priori sur les données d'entraînement;
-  #F1_thres <- Fscore_threshold(
-  #  prediction = eval_frame$prediction,
-  #  outcome = eval_frame$outcome,
-  #  alpha = 1
-  #  )
-  #F2_thres <- Fscore_threshold(
-  #  prediction = eval_frame$prediction,
-  #  outcome = eval_frame$outcome,
-  #  alpha = 2
-  #  )
 
   # Calcul de la première détection au seuils F2 et F1
     first_detection  <- eval_frame %>%
@@ -205,9 +187,9 @@ aux_custom_eval_urssaf <- function(eval_frame, F1_thres, F2_thres) {
           ) %>%
       tidyr::unnest() %>%
       dplyr::rename(
-        moyenne = PointEst,
-        lconf = Lower,
-        hconf = Upper
+        moyenne = PointEst, #nolint
+        lconf = Lower, #nolint
+        hconf = Upper #nolint
         )
 
   return(res)
@@ -249,7 +231,10 @@ aux_custom_plot_urssaf  <- function(evaluation){
 
    plot(p)
   } else {
-    warning("Cette fonction nécessite le package ggplot2; veuillez l'installer pour l'utiliser")
+    warning(
+      "Cette fonction nécessite le package ggplot2; veuillez l'installer pour
+      l'utiliser"
+    )
   }
 }
 
@@ -272,12 +257,12 @@ aux_custom_plot_urssaf  <- function(evaluation){
 #' @examples
 eval_urssaf  <- function(){
   require(MLsegmentr)
-  evo <- EvaluationFunction$new()
+  evo <- EvaluationFunction$new() #nolint
   evo$eval_fun <- aux_custom_eval_urssaf
   evo$wrap_eval_fun  <- TRUE
   evo$unnest <- TRUE
   evo$plot_fun  <- aux_custom_plot_urssaf
-  evo$compulsory_fields <- c("siret","periode")
+  evo$compulsory_fields <- c("siret", "periode")
 
   return(evo)
 

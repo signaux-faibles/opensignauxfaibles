@@ -10,18 +10,25 @@ additional_data <- data.frame(
   periode = round(runif(n) + 1)
  )
 
-testthat::test_that("custom_eval_urssaf works correctly", {
-  actual_out <- custom_eval_urssaf(eval_frame, additional_data)
-  actual_moyenne  <- c(0.125, 0.913, 0, 0.958, 0.133, 0.5, 0.909, 0, 0, 0.958)
-  actual_lconf  <- c(0.034, 0.732, 1.131e-17, 0.797, 0.037,
-    0.025, 0.721, 0, 0, 0.797)
-  actual_hconf  <- c(0.360, 0.975, 0.184, 0.997, 0.378, 0.974,
-    0.974, 0.215, 0.561, 0.997)
-  expect_equal(actual_out$moyenne, actual_moyenne, tolerance = 1e-2 )
-  expect_equal(actual_out$lconf, actual_lconf, tolerance = 1e-2 )
-  expect_equal(actual_out$hconf, actual_hconf, tolerance = 1e-2 )
+eval_frame  <- eval_frame %>%
+  left_join(additional_data, by = c(".id"))
 
-  expect_error(custom_plot_urssaf(actual_out) , NA)
+testthat::test_that("custom_eval_urssaf works correctly", {
+  eval_obj <- eval_urssaf()
+  expect_error(
+    actual_out <- eval_obj$assess_eval_frame(eval_frame),
+    NA
+  )
+  expected_moyenne  <- c(0.07692, 0.33333, 0.95833, 0, 0, 0.81818,
+    0, 0.5, 0.58823, 0, 0, 0.60714)
+  expected_lconf  <- c(0.00394, 0.01709, 0.79758, 2.20966e-17, 0,
+    0.61483, 0, 0.02564, 0.42221, 0, 0, 0.42409)
+  expected_hconf  <- c(0.33313, 0.79234, 0.99786, 0.20388, 0.94870, 0.92693,
+    0.65761, 0.97435, 0.73634, 0.56149, 0.32440, 0.76434)
+
+  expect_equal(actual_out$moyenne, expected_moyenne, tolerance = 1e-2 )
+  expect_equal(actual_out$lconf, expected_lconf, tolerance = 1e-2 )
+  expect_equal(actual_out$hconf, expected_hconf, tolerance = 1e-2 )
 }
 )
 

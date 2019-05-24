@@ -76,14 +76,14 @@ test_that("predict_model_works", {
       package = "h2o"
     )
   )
-  iris.gbm <- h2o.gbm(
+  iris.gbm <- h2o::h2o.gbm(
     x = 1:4,
     y = 5,
     training_frame = iris.hex,
     distribution = "multinomial"
   )
 
-  iris.hex <- h2o::h2o.cbind(iris.hex, as.h2o(data.frame(
+  iris.hex <- h2o::h2o.cbind(iris.hex, h2o::as.h2o(data.frame(
     siret = 1:nrow(iris.hex),
     periode = rep(as.Date("2018-01-01"), nrow(iris.hex))
   )))

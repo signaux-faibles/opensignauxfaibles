@@ -48,7 +48,7 @@ save_H2OModel <- function(object, path, filename) {
     msg = paste("This function saves a H2OBinomialModel, not a", class(object))
   )
 
-  h2o.saveModel(object, path)
+  h2o::h2o.saveModel(object, path)
 
   # Rename model object, which has the model_id as name at this stage
   file.rename(file.path(path, object@model_id), file.path(path, filename))

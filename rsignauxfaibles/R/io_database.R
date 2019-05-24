@@ -112,7 +112,7 @@ connect_to_database <- function(
     log_info(" Import fini.")
 
     if (dim(donnees)[1] == 0) {
-      return(dplyr::data_frame(siret = character(0), periode = character(0)))
+      return(tibble::tibble(siret = character(0), periode = character(0)))
     }
     assertthat::assert_that(
       all(c("periode", "siret") %in% names(donnees))

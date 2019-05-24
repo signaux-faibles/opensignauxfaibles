@@ -81,29 +81,35 @@ test_procedure <- function(frame_to_test, prefix) {
     }
   })
 
-  test_that(add_prefix("Les échantillons ne dépendent pas de l'ordre des données d'entrée
-          et restent identiques d'une fois sur l'autre"), {
+  test_that(add_prefix(
+    "Les échantillons ne dépendent pas de l'ordre des données d'entréeet
+    restent identiques d'une fois sur l'autre"
+  ), {
     folder <- rprojroot::find_rstudio_root_file("tests", ".known_outputs")
 
     if (!dir.exists(folder)) skip("known values only on local repository")
 
     if (frame_to_test %>% inherits("tbl_spark")) {
-      expect_known_output(frame_to_test %>% mutate(.aux = rand()) %>% arrange(.aux) %>% select(-.aux),
+      expect_known_output(
+        frame_to_test %>%
+          mutate(.aux = rand()) %>% arrange(.aux) %>% select(-.aux),
         file.path(folder, add_prefix("test_split")),
         update = TRUE
       )
     } else {
-      expect_known_output(sample_n(frame_to_test, size = nrow(frame_to_test), replace = FALSE),
+      expect_known_output(
+        sample_n(frame_to_test, size = nrow(frame_to_test), replace = FALSE),
         file.path(folder, add_prefix("test_split")),
         update = TRUE
       )
     }
   })
 
-  test_that(add_prefix("Chaque entreprise appartient au moins à un échantillon"), {
+  test_that(add_prefix(
+    "Chaque entreprise appartient au moins à un échantillon"
+  ), {
     expect_true(all(unique(frame_to_test$siret) %in% combined$siret))
   })
 }
 
 test_procedure(my_test_frame, "R_dataframe")
-test_procedure(my_test_frame_spark, "spark_dataframe")
