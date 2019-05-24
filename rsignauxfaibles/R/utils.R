@@ -22,8 +22,40 @@ count_etab_entr <- function(df) {
 }
 
 
-replace_na_by <- function(name, data, na_value) {
-  data[is.na(data[, name]), name] <- na_value
+#' Replace NAs in a data.frame
+#'
+#' @param data A data frame
+#' @param replace_missing A list where names are column names and values
+#' replace values for NAs
+#' @param fail_if_column_missing What to do if a replace_missing name is not a column
+#' name ? Nothing if drop_silently is true, warning otherwise
+#'
+#' @return
+#' @export
+#'
+#' @examples
+replace_na <- function(
+  data,
+  replace_missing,
+  fail_on_missing_col = TRUE
+) {
+
+  if (any(!names(replace_missing) %in% colnames(data)) &&
+    fail_on_missing_col &&
+    require(logger)){
+    stop(
+      "{names(replace_missing)[!names(replace_missing) %in% colnames(data)]}
+      is missing from the dataframe"
+    )
+  }
+
+  replace_missing <- replace_missing[names(replace_missing) %in% colnames(data)]
+
+  purrr::walk2(replace_missing, names(replace_missing),
+    function(na_value, name) {
+      data[is.na(data[, name]), name] <<- na_value
+    }
+    )
   return(data)
 }
 
