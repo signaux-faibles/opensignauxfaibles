@@ -128,7 +128,6 @@ model_assesser$assess_model()
 ```
 
 ```{r}
-
 model_assesser$set_predictions_with_training(
   train_fun = aux_train,
   train_data = h2o_train_sample,

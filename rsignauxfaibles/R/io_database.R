@@ -30,7 +30,6 @@ NULL
 #' @export
 #'
 #' @examples
-#' connect_to_database("test_signauxfaibles", "testing", "1812", date_inf = "2014-01-01", date_sup = "2019-01-01", type = "spark")
 connect_to_database <- function(
                                 database,
                                 collection,
