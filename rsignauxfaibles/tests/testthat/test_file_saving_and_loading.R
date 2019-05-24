@@ -3,25 +3,29 @@ context("Test des utilitaires pour charger ou enregistrer les objets H2O")
 
 connect_to_h2o()
 
-h2o_test_frame <-
-  h2o::as.h2o(datasets::mtcars %>%
+h2o::h2o.no_progress()
+h2o_test_frame <- h2o::as.h2o(
+  datasets::mtcars %>%
     dplyr::mutate(vehicle_name = rownames(mtcars),
       outcome = round(runif(
           nrow(datasets::mtcars)
-          ))))
+          )
+        )
+      )
+  )
 
 test_frame_list_1  <- list(h2o_test_frame, h2o_test_frame)
 test_frame_list_2 <- list(h2o_test_frame)
 test_model_1 <- h2o::h2o.glm(
   "model_1",
-  x = names(h2o_test_frame)[1:12],
+  x = names(h2o_test_frame)[1:11],
   y = "outcome",
   family = "binomial",
   training_frame = h2o_test_frame)
 
 test_model_2 <- h2o::h2o.glm(
   "model_2",
-  x = names(h2o_test_frame)[1:12],
+  x = names(h2o_test_frame)[1:11],
   y = "outcome",
   family = "binomial",
   training_frame = h2o_test_frame)

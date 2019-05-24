@@ -22,9 +22,9 @@ prepare_for_export <- function(
 
   require(logger)
   if (verbose){
-    log_threshold(WARN)
-  } else {
     log_threshold(TRACE)
+  } else {
+    log_threshold(WARN)
   }
   first_period <- min(donnees$periode, na.rm = TRUE)
   last_period  <- max(donnees$periode, na.rm = TRUE)
@@ -38,12 +38,14 @@ prepare_for_export <- function(
     date_inf = first_period,
     date_sup = last_period %m+% months(1),
     min_effectif = 10,
-    fields = export_fields[!export_fields %in% c("connu", "diff", "prob", "apparait", "disparait")]
+    fields = export_fields[!export_fields %in% c("connu", "diff", "prob",
+      "apparait", "disparait")]
   )
 
   donnees <- donnees %>%
     mutate(siret = as.character(siret)) %>%
-    left_join(full_data %>% mutate(siret = as.character(siret)), by = c("siret", "periode")) %>%
+    left_join(full_data %>% mutate(siret = as.character(siret)), by =
+      c("siret", "periode")) %>%
     dplyr::mutate(CCSF = date_ccsf) %>%
     dplyr::arrange(dplyr::desc(prob), siret, dplyr::desc(periode))
 

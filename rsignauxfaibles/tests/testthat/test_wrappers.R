@@ -116,7 +116,7 @@ test_that("predict_on_last_batch works",{
 })
 
 
-test_that("train_light_gradient_boosting works", {
+test_that("full_light_gradient_boosting works", {
   expect_error(
       full_light_gradient_boosting(
         database = test_database,
@@ -125,8 +125,7 @@ test_that("train_light_gradient_boosting works", {
         last_batch = "1901_interim",
         min_effectif = 10,
         retrain_model = TRUE,
-        type = "dataframe"),
+        type = "dataframe",
+        verbose = FALSE),
       NA)
-
-
 })
