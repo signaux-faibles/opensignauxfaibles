@@ -11,3 +11,21 @@ test_that("alert_levels works as expected", {
   ), class = "factor")
   expect_equal(expected, actual)
 })
+
+
+test_that("replace_na works as expected", {
+
+  a <- data.frame(foo = c(1, NA, 3), bar = c(NA, NA, 3))
+  actual <- replace_na(a, list(foo = 2, bar = 1))
+  expected <- data.frame(foo = c(1, 2, 3), bar = c(1, 1, 3))
+  expect_equal(actual, expected)
+  expect_error(replace_na(a, list(toto = 3)))
+  expect_error(
+    actual <- replace_na(
+      a,
+      list(toto = 3, foo = 2, bar = 1),
+      fail_on_missing_col = FALSE
+    ),
+    NA)
+  expect_equal(actual, expected)
+})
