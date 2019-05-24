@@ -1,8 +1,7 @@
-feature_engineering_std <- function(...){
-
+feature_engineering_std <- function(...) {
   cat("Data preproccessing ...", "\n")
 
-  #ratios_financiers <- c(
+  # ratios_financiers <- c(
   #  "ca",
   #  "taux_marge",
   #  "delai_fournisseur",
@@ -21,7 +20,7 @@ feature_engineering_std <- function(...){
   #  "ratio_rend_capitaux_propres",
   #  "ratio_rend_des_ress_durables",
   #  "ratio_RetD"
-  #)
+  # )
 
   ####################
   ## Default values ##
@@ -42,16 +41,17 @@ feature_engineering_std <- function(...){
   #
   #   past_trend_lookbacks_ym <- past_trend_lookbacks_years * 12
 
-  aux_fun <- function(my_data){
-
+  aux_fun <- function(my_data) {
     assertthat::assert_that(all(c("siret", "periode") %in% names(my_data)))
 
     ##################
     ##  PreFiltering   ##
     ##################
 
-    wrong_sirets <- c("34117000900037",
-                      "38520230400023")
+    wrong_sirets <- c(
+      "34117000900037",
+      "38520230400023"
+    )
 
     my_data <- my_data %>%
       filter(
@@ -65,7 +65,8 @@ feature_engineering_std <- function(...){
     ##################
 
     # Removing errors in etat_proc_collective
-    my_data <- my_data %>% group_by(siret) %>%
+    my_data <- my_data %>%
+      group_by(siret) %>%
       arrange(siret, periode) %>%
       mutate(
         etat_proc_collective_lag = lag(etat_proc_collective),
@@ -91,7 +92,8 @@ feature_engineering_std <- function(...){
         activite_saisonniere = ifelse(
           activite_saisonniere == "S",
           1,
-          0),
+          0
+        ),
         productif = ifelse(productif == "O", 1, 0),
         etat_proc_collective = factor(
           etat_proc_collective,
@@ -147,9 +149,9 @@ feature_engineering_std <- function(...){
     my_data <- replace_na_by("cotisation_moy12m", my_data, 0)
 
     # SIMPLIFIED NAF
-    #assertthat::assert_that("libelle_naf" %in% names(my_data))
-    #libelle_naf_simplifie <- my_data$libelle_naf_niveau1
-    #libelle_naf_simplifie[libelle_naf_simplifie %in% c(
+    # assertthat::assert_that("libelle_naf" %in% names(my_data))
+    # libelle_naf_simplifie <- my_data$libelle_naf_niveau1
+    # libelle_naf_simplifie[libelle_naf_simplifie %in% c(
     #  "Enseignement",
     #  "Activités extra-territoriales",
     #  "Administration publique",
@@ -172,7 +174,7 @@ feature_engineering_std <- function(...){
     ))
 
     # Debits
-    #FIX ME toutes les périodes sont elles contigues ??
+    # FIX ME toutes les périodes sont elles contigues ??
 
     # Correction cotisations déconnantes
     # my_data <- my_data %>%
@@ -183,7 +185,7 @@ feature_engineering_std <- function(...){
 
 
 
-    my_data <-  my_data %>%
+    my_data <- my_data %>%
       mutate(
         # ratio_apart = apart_heures_consommees / (effectif * 157.67),
         # ratio_dette = base::ifelse(
@@ -276,7 +278,6 @@ feature_engineering_std <- function(...){
     my_data <- my_data %>% filter(etat_proc_collective != "cession")
 
     return(my_data)
-
   }
 
   return(
@@ -285,12 +286,10 @@ feature_engineering_std <- function(...){
 }
 
 feature_engineering_create <- function(
-  train_set,
-  quantile_vars = NULL,
-  quantile_levels = NULL
-){
-  
-  out  <-  list()
+                                       train_set,
+                                       quantile_vars = NULL,
+                                       quantile_levels = NULL) {
+  out <- list()
   ratios_financiers <- c(
     "taux_marge",
     "delai_fournisseur",
@@ -302,42 +301,39 @@ feature_engineering_create <- function(
   #####################
   ## APE COMPARISONS ##
   #####################
-  
+
   if (is.null(quantile_vars)) {
     quantile_vars <- c(ratios_financiers, "effectif")
-    
+
     cat("Taking default value for quantile_APE variables", "\n")
   }
-  
+
   if (is.null(quantile_levels)) {
-    quantile_levels <-  c(1, 2)
+    quantile_levels <- c(1, 2)
     cat("Taking default value for quantile_APE levels", "\n")
   }
-  
+
   assertthat::assert_that(all(quantile_vars %in% names(train_set)))
-  
+
   out[["quantile"]] <- quantile_APE_create(
     train_set,
     variable_names = quantile_vars,
-    ape_levels = quantile_levels)
-  
+    ape_levels = quantile_levels
+  )
+
   return(out)
 }
-  
 
 
-feature_engineering_apply  <-  function(
-  ref_feature_engineering,
-  ...){
-  
-  
+
+feature_engineering_apply <- function(
+                                      ref_feature_engineering,
+                                      ...) {
   ref_quantile <- ref_feature_engineering[["quantile"]]
-  
-  out  <- list(...)
-  
-  out  <- quantile_APE_apply(ref_quantile, out)
-  
-  return(out)
-  
-}
 
+  out <- list(...)
+
+  out <- quantile_APE_apply(ref_quantile, out)
+
+  return(out)
+}

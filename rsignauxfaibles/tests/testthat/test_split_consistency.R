@@ -7,9 +7,12 @@ my_test_frame <- expand.grid(
     siren = 100000001:100000500,
     et_id = 20001:20004
   ), col = "siret", sep = "")),
-  periode = seq.Date(from = as.Date("2014-01-01"),
-                     to = as.Date("2014-12-01"), "month"),
-  stringsAsFactors = FALSE) %>%
+  periode = seq.Date(
+    from = as.Date("2014-01-01"),
+    to = as.Date("2014-12-01"), "month"
+  ),
+  stringsAsFactors = FALSE
+) %>%
   dplyr::mutate(siren = substr(siret, 1, 9)) %>%
   tibble::as.tibble()
 
@@ -17,11 +20,12 @@ my_test_frame <- expand.grid(
 sc <- sparklyr::spark_connect(master = "local[*]")
 my_test_frame_spark <- copy_to(sc, my_test_frame, overwrite = TRUE)
 
-test_procedure <- function(frame_to_test, prefix){
+test_procedure <- function(frame_to_test, prefix) {
   res <- split_snapshot_rdm_month(
     frame_to_test,
     frac_train = 0.60,
-    frac_val = 0.25)
+    frac_val = 0.25
+  )
 
   train <- res[["train"]] %>%
     mutate(siren = substr(siret, 1, 9))
@@ -32,20 +36,27 @@ test_procedure <- function(frame_to_test, prefix){
 
   combined <- rbind(train, validation, test)
 
-  add_prefix <- function(text){paste(prefix, text, sep = "_")}
+  add_prefix <- function(text) {
+    paste(prefix, text, sep = "_")
+  }
 
-  test_that(add_prefix("Le format du resultat est respecte"),{
+  test_that(add_prefix("Le format du resultat est respecte"), {
     expect_false(is_grouped_df(train))
-    expect_true(all(tbl_vars(res[["train"]]) ==  c("siret", "periode")))
+    expect_true(all(tbl_vars(res[["train"]]) == c("siret", "periode")))
   })
 
 
 
   test_that(add_prefix("Les échantillons ont les bonnes proportions"), {
     expect_ratio <- function(sample, total, frac) {
-      #sparklyr compatible function
+      # sparklyr compatible function
       n_distinct <- function(myframe) {
-        myframe %>% distinct() %>% count() %>% collect() %>% unlist() %>% as.vector()
+        myframe %>%
+          distinct() %>%
+          count() %>%
+          collect() %>%
+          unlist() %>%
+          as.vector()
       }
       expect_lt(abs(
         n_distinct(sample %>% select(siren)) /
@@ -60,33 +71,36 @@ test_procedure <- function(frame_to_test, prefix){
 
   test_that(add_prefix("Il n'y a pas de fuite de données entre échantillons"), {
     if (train %>% inherits("tbl_spark")) {
-      expect_equal(sdf_nrow(train %>% semi_join(validation, by = 'siren')), 0)
-      expect_equal(sdf_nrow(train %>% semi_join(test, by = 'siren')), 0)
-      expect_equal(sdf_nrow(test %>% semi_join(validation, by = 'siren')), 0)
+      expect_equal(sdf_nrow(train %>% semi_join(validation, by = "siren")), 0)
+      expect_equal(sdf_nrow(train %>% semi_join(test, by = "siren")), 0)
+      expect_equal(sdf_nrow(test %>% semi_join(validation, by = "siren")), 0)
     } else {
-      expect_equal(nrow(train %>% semi_join(validation, by = 'siren')), 0)
-      expect_equal(nrow(train %>% semi_join(test, by = 'siren')), 0)
-      expect_equal(nrow(test %>% semi_join(validation, by = 'siren')), 0)}
+      expect_equal(nrow(train %>% semi_join(validation, by = "siren")), 0)
+      expect_equal(nrow(train %>% semi_join(test, by = "siren")), 0)
+      expect_equal(nrow(test %>% semi_join(validation, by = "siren")), 0)
+    }
   })
 
   test_that(add_prefix("Les échantillons ne dépendent pas de l'ordre des données d'entrée
-          et restent identiques d'une fois sur l'autre"),{
-            folder <- rprojroot::find_rstudio_root_file("tests", ".known_outputs")
+          et restent identiques d'une fois sur l'autre"), {
+    folder <- rprojroot::find_rstudio_root_file("tests", ".known_outputs")
 
-            if (!dir.exists(folder)) skip("known values only on local repository")
+    if (!dir.exists(folder)) skip("known values only on local repository")
 
-            if (frame_to_test %>% inherits("tbl_spark")) {
-              expect_known_output(frame_to_test %>% mutate(.aux = rand()) %>% arrange(.aux) %>% select(-.aux),
-                                  file.path(folder, add_prefix("test_split")),
-                                  update = TRUE)
-            } else {
-              expect_known_output(sample_n(frame_to_test, size = nrow(frame_to_test), replace = FALSE),
-                                  file.path(folder, add_prefix("test_split")),
-                                  update = TRUE)
-              }
-          })
+    if (frame_to_test %>% inherits("tbl_spark")) {
+      expect_known_output(frame_to_test %>% mutate(.aux = rand()) %>% arrange(.aux) %>% select(-.aux),
+        file.path(folder, add_prefix("test_split")),
+        update = TRUE
+      )
+    } else {
+      expect_known_output(sample_n(frame_to_test, size = nrow(frame_to_test), replace = FALSE),
+        file.path(folder, add_prefix("test_split")),
+        update = TRUE
+      )
+    }
+  })
 
-  test_that(add_prefix("Chaque entreprise appartient au moins à un échantillon"),{
+  test_that(add_prefix("Chaque entreprise appartient au moins à un échantillon"), {
     expect_true(all(unique(frame_to_test$siret) %in% combined$siret))
   })
 }

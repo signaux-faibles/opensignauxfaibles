@@ -13,25 +13,24 @@
 #'
 #' @examples
 load_h2o_object <- function(
-    name,
-    extension = NULL,
-    relative_path = file.path("..", "output", "model"),
-    last = TRUE,
-    file_name = ""
-    ){
-
+                            name,
+                            extension = NULL,
+                            relative_path = file.path("..", "output", "model"),
+                            last = TRUE,
+                            file_name = "") {
   if (substr(relative_path, nchar(relative_path), nchar(relative_path))
-    %in% c("/", "\\")){
+  %in% c("/", "\\")) {
     relative_path <- substr(relative_path, 1, nchar(relative_path) - 1)
   }
 
-  if (file_name != ""){
+  if (file_name != "") {
     fnsplit <- strsplit(file_name, ".", fixed = TRUE)
     extension <- tail(fnsplit[[1]], n = 1)
   }
 
   assertthat::assert_that(extension %in% c("model", "temap"),
-    msg = 'Unsupported extension. Supported extensions are "model" and "temap"')
+    msg = 'Unsupported extension. Supported extensions are "model" and "temap"'
+  )
 
   if (extension == "model") {
     load_function <- load_H2OModel
@@ -41,16 +40,18 @@ load_h2o_object <- function(
 
   full_dir_path <- rprojroot::find_rstudio_root_file(relative_path)
   assertthat::assert_that(dir.exists(full_dir_path),
-    msg = "Directory not found. Check relative path")
+    msg = "Directory not found. Check relative path"
+  )
 
-  if (last){
+  if (last) {
     file_candidates <- list.files(full_dir_path) %>%
       grep(pattern = paste0(name, ".", extension), value = TRUE)
 
     assertthat::assert_that(length(file_candidates) > 0,
-      msg = "No such file, please check name and extension")
+      msg = "No such file, please check name and extension"
+    )
 
-    file_name <-  file_candidates %>%
+    file_name <- file_candidates %>%
       sort(decreasing = TRUE) %>%
       .[1]
   }
@@ -58,7 +59,8 @@ load_h2o_object <- function(
   full_path <- file.path(full_dir_path, file_name)
 
   assertthat::assert_that(file.exists(full_path),
-      msg = "No such file, please check file_name")
+    msg = "No such file, please check file_name"
+  )
 
   res <- load_function(full_dir_path, file_name)
 
@@ -74,12 +76,12 @@ load_h2o_object <- function(
 #' @return
 #'
 #' @examples
-load_H2OFrame_list <- function(path, filename){
-
+load_H2OFrame_list <- function(path, filename) {
   object <- readRDS(file.path(path, filename))
 
   assertthat::assert_that(class(object) == "list",
-                          msg = paste("This function loads a list, not a", class(object)))
+    msg = paste("This function loads a list, not a", class(object))
+  )
 
   # Convert dataframes to H2OFrames
   res <- lapply(object, as.h2o)
@@ -96,21 +98,18 @@ load_H2OFrame_list <- function(path, filename){
 #'
 #' @return
 #' @examples
-load_H2OModel <- function(path, filename){
-
+load_H2OModel <- function(path, filename) {
   object <- h2o.loadModel(file.path(path, filename))
 
   assertthat::assert_that(class(object) == "H2OBinomialModel",
-                          msg = paste("This function loads a H2OBinomialModel, not a", class(object)))
+    msg = paste("This function loads a H2OBinomialModel, not a", class(object))
+  )
 
   return(object)
-
-
 }
 
 
-read_h2oframe_from_csv <- function(){
-
+read_h2oframe_from_csv <- function() {
   path <- rprojroot::find_rstudio_root_file(
     "..", "output", "features", "features.csv"
   )
@@ -118,5 +117,3 @@ read_h2oframe_from_csv <- function(){
   # Read csv file
   return(h2o::h2o.importFile(path))
 }
-
-

@@ -14,14 +14,12 @@
 #' @return Liste de trois vecteurs: \code{train}, \code{validation} and \code{test} avec les indices des échantillons
 #' @export
 #' @examples
-
-
+#'
 split_snapshot_rdm_month <- function(
-  data_sample,
-  frac_train = 0.60,
-  frac_val = 0.20) {
-
-  if (data_sample %>% inherits("tbl_spark")){
+                                     data_sample,
+                                     frac_train = 0.60,
+                                     frac_val = 0.20) {
+  if (data_sample %>% inherits("tbl_spark")) {
 
     # split <- function(data_sample, split_vect){
     #   browser()
@@ -31,20 +29,21 @@ split_snapshot_rdm_month <- function(
     #     sparklyr::invoke("partitionBy", "ss") %>%
     #     register()
     # }
-    split <- function(data_sample, split_vect){
-
+    split <- function(data_sample, split_vect) {
       data_sample <- data_sample %>%
         sparklyr::sdf_bind_cols(split_vect)
 
 
-      res <-  list()
+      res <- list()
       categories <- pull(split_vect %>% distinct(), ss) %>%
         sort()
 
-      for (i in categories){
-        res[[i]] <- data_sample %>% filter(ss == i) %>% select(-ss)
+      for (i in categories) {
+        res[[i]] <- data_sample %>%
+          filter(ss == i) %>%
+          select(-ss)
       }
-      return (res)
+      return(res)
     }
   }
 
@@ -52,23 +51,24 @@ split_snapshot_rdm_month <- function(
 
 
   assertthat::assert_that(
-    frac_train > 0 ,
+    frac_train > 0,
     frac_val > 0,
     frac_train + frac_val <= 1,
     msg = "Fractions must be positive and not exceed 1"
   )
 
-  frac_test = 1 - (frac_train + frac_val)
+  frac_test <- 1 - (frac_train + frac_val)
 
 
   data_sample <- data_sample %>%
-    select(siret,periode) %>%
+    select(siret, periode) %>%
     arrange(siret, periode) %>%
     mutate(siren = substr(siret, 1, 9))
 
-  sirens <- data_sample %>% select(siren) %>%
+  sirens <- data_sample %>%
+    select(siren) %>%
     distinct()
-  if (sirens %>% inherits("tbl_spark")){
+  if (sirens %>% inherits("tbl_spark")) {
     sirens <- sirens %>%
       mutate(ss = rand()) %>%
       mutate(ss = ifelse(ss < frac_train, 1, ss)) %>%
@@ -76,8 +76,10 @@ split_snapshot_rdm_month <- function(
       mutate(ss = ifelse(ss < frac_train + frac_val + frac_test, 3, ss))
   } else {
     sirens <- sirens %>%
-      mutate(ss = sample(1:3, size = nrow(sirens), replace = TRUE,
-                         prob = c(frac_train, frac_val, frac_test)))
+      mutate(ss = sample(1:3,
+        size = nrow(sirens), replace = TRUE,
+        prob = c(frac_train, frac_val, frac_test)
+      ))
   }
 
   data_sample <- data_sample %>%
