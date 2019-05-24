@@ -16,17 +16,16 @@
 #'
 #' @examples
 prepare_frame <- function(
-  data_to_prepare,
-  test_or_train = "train",
-  te_map = NULL,
-  save_or_load_map = TRUE,
-  outcome = "outcome"
-  ) {
-
+                          data_to_prepare,
+                          test_or_train = "train",
+                          te_map = NULL,
+                          save_or_load_map = TRUE,
+                          outcome = "outcome") {
   if ((!is.null(te_map) && test_or_train == "train") ||
-    (!is.null(te_map) && save_or_load_map == TRUE))
+    (!is.null(te_map) && save_or_load_map == TRUE)) {
     error('te_map should not be specified if it is computed (test_or_train =
       "train") or if map is loaded (save_or_load_map = TRUE)')
+  }
 
   h2o_data <- convert_to_h2o(data_to_prepare)
 
@@ -37,10 +36,13 @@ prepare_frame <- function(
   if (test_or_train == "train") {
     te_map <- h2o::h2o.target_encode_create(
       h2o_data,
-      x = list(c("code_naf"),
+      x = list(
+        c("code_naf"),
         c("code_ape_niveau2"),
-        c("code_ape_niveau3")),
-      y = outcome)
+        c("code_ape_niveau3")
+      ),
+      y = outcome
+    )
 
     if (save_or_load_map) {
       save_h2o_object(te_map, "te_map")
@@ -52,11 +54,13 @@ prepare_frame <- function(
   h2o_data <- h2o_target_encode(
     te_map,
     h2o_data,
-    test_or_train)
+    test_or_train
+  )
 
   res <- list(
     data = h2o_data,
-    te_map = te_map)
+    te_map = te_map
+  )
   return(res)
 }
 
@@ -67,14 +71,13 @@ prepare_frame <- function(
 #'
 #' @examples
 get_last_batch <- function(
-  database,
-  collection,
-  last_batch,
-  periods,
-  fields,
-  min_effectif,
-  rollback_months = 1){
-
+                           database,
+                           collection,
+                           last_batch,
+                           periods,
+                           fields,
+                           min_effectif,
+                           rollback_months = 1) {
   current_data <- connect_to_database(
     database,
     collection,
@@ -83,13 +86,11 @@ get_last_batch <- function(
     date_sup = max(periods) %m+% months(1),
     min_effectif = min_effectif,
     fields = fields
-    )
+  )
 
-  if ("periode" %in% fields && max(current_data$periode) != max(periods))
-    warning("Data is missing at actual period !!")
+  if ("periode" %in% fields && max(current_data$periode) != max(periods)) {
+    log_warn("Data is missing at actual period !")
+  }
 
   return(current_data)
 }
-
-
-

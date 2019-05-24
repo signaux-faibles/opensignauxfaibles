@@ -20,7 +20,7 @@ actual_period <- as.Date("2019-03-01")
 periods <- actual_period
 last_batch <- "1904"
 min_effectif <- 10
-retrain_model <- TRUE
+retrain_model <- FALSE
 type <- "dataframe"
 ```
 

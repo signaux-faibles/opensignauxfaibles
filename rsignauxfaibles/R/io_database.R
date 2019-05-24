@@ -29,23 +29,28 @@ NULL
 #'   \code{type}
 #' @export
 #'
-#' @examples connect_to_database("test_signauxfaibles","testing", "1812", date_inf = "2014-01-01", date_sup = "2019-01-01", type = "spark")
-
+#' @examples
+#' connect_to_database("test_signauxfaibles", "testing", "1812", date_inf = "2014-01-01", date_sup = "2019-01-01", type = "spark")
 connect_to_database <- function(
-  database,
-  collection,
-  batch,
-  siren = NULL,
-  date_inf = NULL,
-  date_sup = NULL,
-  min_effectif = 10,
-  fields = NULL,
-  code_ape = NULL,
-  type = "dataframe",
-  subsample = NULL,
-  .limit = NULL
-  ) {
-
+                                database,
+                                collection,
+                                batch,
+                                siren = NULL,
+                                date_inf = NULL,
+                                date_sup = NULL,
+                                min_effectif = 10,
+                                fields = NULL,
+                                code_ape = NULL,
+                                type = "dataframe",
+                                subsample = NULL,
+                                .limit = NULL,
+                                verbose = TRUE) {
+  require(logger)
+  if (verbose) {
+    log_threshold(TRACE)
+  } else {
+    log_threshold(WARN)
+  }
   requete <- factor_request(
     batch,
     siren,
@@ -55,123 +60,140 @@ connect_to_database <- function(
     fields,
     code_ape,
     subsample
-    )
-
-  #cat("\n")
-  #cat(requete)
-  #cat("\n")
-  #browser()
-
-
+  )
 
   TYPES <- c("dataframe", "spark")
 
   assertthat::assert_that(type %in% TYPES,
     msg = "connect_to_database:
-    specification du type d'import/export non valide")
+    specification du type d'import/export non valide"
+  )
 
-    if (type == TYPES[1]) {
+  if (type == TYPES[1]) {
+    log_info("Connexion à la collection mongodb {collection} ...")
 
-      cat("Connexion à la collection mongodb ", collection, " ...")
+    dbconnection <- mongolite::mongo(
+      collection = collection,
+      db = database,
+      url = "mongodb://localhost:27017",
+      verbose = verbose
+    )
+    log_info(" Connexion effectuée avec succès.")
 
-      dbconnection <- mongolite::mongo(
-        collection = collection,
-        db = database,
-        verbose = TRUE,
-        url = "mongodb://localhost:27017")
-      cat(" Fini.", "\n")
+    # Import dataframe
+    log_info("Import en cours...")
 
-      # Import dataframe
-      cat("Import ...", "\n")
+    donnees <- dbconnection$aggregate(requete)
 
-      donnees <- dbconnection$aggregate(requete)
+    log_info(" Import fini.")
 
-
-      cat(" Fini.", "\n")
-
-      if (dim(donnees)[1] == 0) {
-        return(dplyr::data_frame(siret = character(0), periode = character(0)))
-      }
-      assertthat::assert_that(
-        all(c("periode", "siret") %in% names(donnees)))
-
-      assertthat::assert_that(
-        anyDuplicated(donnees %>% select(siret, periode)) == 0,
-        msg = "La base importee contient des lignes identiques"
-        )
-
-      table_wholesample <- donnees %>%
-        arrange(periode) %>%
-        mutate_if(lubridate::is.POSIXct, as.Date) %>%
-        tibbletime::as_tbl_time(periode)
-
-      n_eta <- table_wholesample$siret %>%
-        n_distinct()
-      n_ent <- table_wholesample$siret %>%
-        stringr::str_sub(1, 9) %>%
-        n_distinct()
-      cat("Import de", n_eta, "etablissements issus de",
-        n_ent, "entreprises", "\n")
-
-      cat(" Fini.", "\n")
-
-    } else if (type == TYPES[2]) {
-      browser()
-      cat("Ouverture de la connection spark", "\n")
-
-      #FIX ME: neater way to deal with already open connection
-      #spark_disconnect_all()
-      sc <- sparklyr::spark_connection_find()[[1]]
-
-      cat("Connection à MongoDB et import des donnees dans spark", "\n")
-      load <- sparklyr::invoke(sparklyr::spark_session(sc), "read") %>%
-        sparklyr::invoke("format", "com.mongodb.spark.sql.DefaultSource") %>%
-        sparklyr::invoke("option", "pipeline", requete) %>%
-        sparklyr::invoke("load")
-
-      table_wholesample <- sparklyr::sdf_register(load)
-
-      if (ncol(table_wholesample) == 0) {
-        return(table_wholesample)
-      }
-
-
-      type_frame <- sparklyr::sdf_schema(table_wholesample) %>%
-        lapply(function(x) do.call(tibble::data_frame, x)) %>%
-        bind_rows()
-
-      assertthat::assert_that(
-        all(type_frame$type != "NullType"),
-        msg = paste("NullTypes found in imported spark frame: ",
-          type_frame$name[type_frame$type == "NullType"], collapse = " :: ")
-        )
-
+    if (dim(donnees)[1] == 0) {
+      return(dplyr::data_frame(siret = character(0), periode = character(0)))
     }
+    assertthat::assert_that(
+      all(c("periode", "siret") %in% names(donnees))
+    )
 
-    # Champs manquants
-    champs_manquants <- fields[!fields %in% tbl_vars(table_wholesample)]
-    if (length(champs_manquants) >= 1) {
-      cat("Champs manquants: ")
-      cat(champs_manquants, "\n")
+    assertthat::assert_that(
+      anyDuplicated(donnees %>% select(siret, periode)) == 0,
+      msg = "La base importee contient des lignes identiques"
+    )
 
-      cat("Remplacements par NA", "\n")
-      if (type == "dataframe") {
-        NA_variable <- NA_character_
-      } else if (type == "spark") {
-        NA_variable <- "NA_character_"
-      }
-      remplacement <- paste0(NA_variable, character(length(champs_manquants))) %>%
-        setNames(champs_manquants)
-      table_wholesample <- table_wholesample %>%
-        mutate_(.dots = remplacement)
+    table_wholesample <- donnees %>%
+      arrange(periode) %>%
+      mutate_if(lubridate::is.POSIXct, as.Date) %>%
+      tibbletime::as_tbl_time(periode)
 
+    n_eta <- table_wholesample$siret %>%
+      n_distinct()
+    n_ent <- table_wholesample$siret %>%
+      stringr::str_sub(1, 9) %>%
+      n_distinct()
+    log_info("Import de {n_eta} etablissements issus de {n_ent} entreprises")
 
+    log_info(" Fini.")
+  } else if (type == TYPES[2]) {
+    log_info("Ouverture de la connection spark")
+
+    # FIX ME: neater way to deal with already open connection
+    sc <- sparklyr::spark_connection_find()[[1]]
+
+    log_info("Connection à MongoDB et import des donnees dans spark")
+    load <- sparklyr::invoke(sparklyr::spark_session(sc), "read") %>%
+      sparklyr::invoke("format", "com.mongodb.spark.sql.DefaultSource") %>%
+      sparklyr::invoke("option", "pipeline", requete) %>%
+      sparklyr::invoke("load")
+
+    table_wholesample <- sparklyr::sdf_register(load)
+
+    if (ncol(table_wholesample) == 0) {
+      return(table_wholesample)
     }
 
 
-    return(table_wholesample)
+    type_frame <- sparklyr::sdf_schema(table_wholesample) %>%
+      lapply(function(x) do.call(tibble::data_frame, x)) %>%
+      bind_rows()
 
+    assertthat::assert_that(
+      all(type_frame$type != "NullType"),
+      msg = paste("NullTypes found in imported spark frame: ",
+        type_frame$name[type_frame$type == "NullType"],
+        collapse = " :: "
+      )
+    )
+  }
 
+  # Champs manquants
+  champs_manquants <- fields[!fields %in% tbl_vars(table_wholesample)]
+  if (length(champs_manquants) >= 1) {
+    log_info("Champ manquant: {champs_manquants}")
+    log_info("Remplacements par NA")
+    if (type == "dataframe") {
+      NA_variable <- NA_character_
+    } else if (type == "spark") {
+      NA_variable <- "NA_character_"
+    }
+    remplacement <- paste0(
+      NA_variable,
+      character(length(champs_manquants))
+    ) %>%
+      setNames(champs_manquants)
+    table_wholesample <- table_wholesample %>%
+      mutate_(.dots = remplacement)
+  }
+
+  return(table_wholesample)
+}
+
+#' Get sirets of companies detected by SF
+#'
+#' Under construction: TODO
+#' - Possibility to filter by batch, algo, periods
+#' - custom threshold (F1, F2, other)
+#'
+#' @param
+#'
+#' @return vector of unique sirets
+#' @export
+#'
+#' @examples
+get_sirets_of_detected <- function(
+                                   database = "test_signauxfaibles",
+                                   collection = "Scores") {
+  dbconnection <- mongolite::mongo(
+    collection = collection,
+    db = database,
+    url = "mongodb://localhost:27017",
+    verbose = FALSE
+  )
+
+  res <- dbconnection$find(
+    '{ "$or": [ { "alert": "Alerte seuil F1" },
+    { "alert": "Alerte seuil F2" } ] }'
+  )
+
+  return(unique(res$siret))
 }
 
 ###################################
@@ -179,42 +201,47 @@ connect_to_database <- function(
 
 #' @rdname connect_to_database
 factor_request <- function(
-  batch,
-  siren,
-  date_inf,
-  date_sup,
-  min_effectif,
-  fields,
-  code_ape,
-  subsample,
-  .limit = NULL
-  ) {
+                           batch,
+                           siren,
+                           date_inf,
+                           date_sup,
+                           min_effectif,
+                           fields,
+                           code_ape,
+                           subsample,
+                           .limit = NULL) {
   # Util functions
 
-  make_query  <- function(keyword, x) {
-    if (any(x != "")) return(paste0('{"$', keyword, '":{',
-        paste0(x[x != ""], collapse = ', '), '}}'))
-  else return("")
+  make_query <- function(keyword, x) {
+    if (any(x != "")) {
+      return(paste0(
+        '{"$', keyword, '":{',
+        paste0(x[x != ""], collapse = ", "), "}}"
+      ))
+    } else {
+      return("")
+    }
   }
 
-  if (!is.null(.limit))
-    limit_req  <- paste0('{"$limit":', .limit, "}")
-  else
+  if (!is.null(.limit)) {
+    limit_req <- paste0('{"$limit":', .limit, "}")
+  } else {
     limit_req <- ""
+  }
   ## Construction de la requête ##
-  match_id  <- paste0('"info.batch":"', batch, '"')
+  match_id <- paste0('"info.batch":"', batch, '"')
 
   # Filtrage siren
 
   if (is.null(siren)) {
     match_siren <- ""
   } else {
-    match_siren  <- c()
+    match_siren <- c()
     for (i in seq_along(siren)) {
-      match_siren  <- c(
+      match_siren <- c(
         match_siren,
         paste0('{"info.siren":"', siren[i], '"}')
-        )
+      )
     }
 
     match_siren <- paste0('"$or":[', paste(match_siren, collapse = ","), "]")
@@ -230,7 +257,7 @@ factor_request <- function(
   if (is.null(subsample)) {
     sample_req <- ""
   } else {
-    sample_req <- paste0('{"$sample": {"size": ', subsample, '}}')
+    sample_req <- paste0('{"$sample": {"size": ', subsample, "}}")
   }
 
   # Filtrage code APE
@@ -244,93 +271,97 @@ factor_request <- function(
     } else {
       ape_or_naf <- "code_naf"
     }
-    match_APE  <- c()
+    match_APE <- c()
     for (i in seq_along(code_ape)) {
-      match_APE  <- c(
+      match_APE <- c(
         match_APE,
         paste0('{"value.', ape_or_naf, '":
           {"$regex":"^', code_ape[i], '", "$options":"i"}
     }')
+      )
+    }
+    match_APE <- paste0('"$or":[', paste(match_APE, collapse = ","), "]")
+    # FIX ME: Requete nettement sous-optimale
+  }
+
+  # Filtrage effectif
+  if (is.null(min_effectif)) {
+    match_eff <- ""
+  } else {
+    match_eff <- paste0(
+      '"value.effectif":{"$gte":',
+      min_effectif, "}"
     )
   }
-  match_APE <- paste0('"$or":[', paste(match_APE, collapse = ","), "]")
-  # FIX ME: Requete nettement sous-optimale
-}
 
-# Filtrage effectif
-if (is.null(min_effectif)) {
-  match_eff <- ""
-} else {
-  match_eff <- paste0(
-    '"value.effectif":{"$gte":',
-    min_effectif, "}")
-}
-
-# Filtrage date
-if (is.null(date_inf)) {
-  match_date_1  <- ""
-} else {
-  match_date_1  <- paste0('"info.periode":{
+  # Filtrage date
+  if (is.null(date_inf)) {
+    match_date_1 <- ""
+  } else {
+    match_date_1 <- paste0('"info.periode":{
     "$gte": {"$date":"', date_inf, 'T00:00:00Z"}}')
-}
+  }
 
-# Filtrage date
-if (is.null(date_sup)) {
-  match_date_2  <- ""
-} else {
-  match_date_2  <- paste0('"info.periode":{"$lt": {"$date":"', date_sup, 'T00:00:00Z"}}')
+  # Filtrage date
+  if (is.null(date_sup)) {
+    match_date_2 <- ""
+  } else {
+    match_date_2 <- paste0(
+      '"info.periode":{"$lt": {"$date":"',
+      date_sup,
+      'T00:00:00Z"}}'
+    )
+  }
 
-}
-
-match_req <- make_query(
-  "match",
-  c(
-    match_id,
-    match_siren,
-    match_date_1,
-    match_date_2,
-    match_APE,
-    match_eff
-    ))
-
-# Construction de la projection
-
-if (is.null(fields)) {
-  projection_req  <- ""
-} else {
-  assertthat::validate_that( #does not return an error if not verified
-    all(c("periode", "siret") %in% fields),
-    msg = "Beware: siret and periode are not included in the request")
-  projection_req  <- paste0('"', fields, '":1')
-  projection_req  <- paste(projection_req, collapse = ",")
-  projection_req  <- paste0('{"$project":{', projection_req, "}}")
-}
-
-# Remplacement de la racine
-
-new_root <- "{\"$replaceRoot\" : {\"newRoot\": \"$value\"}}"
-#new_root = ""
-
-reqs <- c(
-  #match_req_1,
-  #unwind_req,
-  limit_req,
-  match_req,
-  sample_req,
-  new_root,
-  projection_req
+  match_req <- make_query(
+    "match",
+    c(
+      match_id,
+      match_siren,
+      match_date_1,
+      match_date_2,
+      match_APE,
+      match_eff
+    )
   )
 
-requete  <- paste(
-  reqs[reqs != ""],
-  collapse = ", ")
-requete <- paste0(
-  "[",
-  requete,
-  "]")
+  # Construction de la projection
 
-return(requete)
+  if (is.null(fields)) {
+    projection_req <- ""
+  } else {
+    assertthat::validate_that( # does not return an error if not verified
+      all(c("periode", "siret") %in% fields),
+      msg = "Beware: siret and periode are not included in the request"
+    )
+    projection_req <- paste0('"', fields, '":1')
+    projection_req <- paste(projection_req, collapse = ",")
+    projection_req <- paste0('{"$project":{', projection_req, "}}")
+  }
 
+  # Remplacement de la racine
+
+  new_root <- "{\"$replaceRoot\" : {\"newRoot\": \"$value\"}}"
+
+  reqs <- c(
+    limit_req,
+    match_req,
+    sample_req,
+    new_root,
+    projection_req
+  )
+
+  requete <- paste(
+    reqs[reqs != ""],
+    collapse = ", "
+  )
+  requete <- paste0(
+    "[",
+    requete,
+    "]"
+  )
+
+  return(requete)
 }
 
 #' Wrapper pour se connecter à H2O et spark avec la bonne configuration
@@ -347,14 +378,15 @@ connect_to_h2o <- function() {
     ip = "localhost",
     port = 4444,
     min_mem_size = "5G",
-    log_dir = rprojroot::find_rstudio_root_file("logs"))
+    log_dir = rprojroot::find_rstudio_root_file("logs")
+  )
 }
 
 
 #' @rdname connect_to_h2o
 connect_to_spark <- function(database = NULL, collection = NULL) {
   config <- sparklyr::spark_config()
-  config$sparklyr.defaultPackages <-
+  config$sparklyr.defaultPackages <- #lintignore
     c("org.mongodb.spark:mongo-spark-connector_2.11:2.4.0")
   if (!is.null(database) && !is.null(collection)) {
     config$spark.mongodb.input.uri <-
@@ -370,43 +402,10 @@ connect_to_spark <- function(database = NULL, collection = NULL) {
     sparklyr::spark_disconnect_all()
     sc <- sparklyr::spark_connect(master = "local[*]", config = config)
   }
-  #FIX ME: add config if spark has been initiated without this config file.
-  #Spark_connect does not correct this automatically.
+  # FIX ME: add config if spark has been initiated without this config file.
+  # Spark_connect does not correct this automatically.
 
   return(sc)
-
-}
-
-
-#' Exporte une requête de base mongodb as a csv file
-#'
-#' Attention, fonction non maintenue car plus utilisée. Faisais maladroitement appel à un fichier sh. Les données transitent dorénavant par Spark.
-#'
-#' @param database Nom de la base de donnée mongodb
-#' @param batch Numéro de batch, au format "AAMM"
-#' @param fields Liste de champs à extraire.
-#' @param min_effectif Limite minimale du filtrage sur l'effectif. NE FONCTIONNE PAS. POUR L'INSTANT EFFECTIF_MIN = 10.
-#'
-#' @return
-#'
-#'
-#' @examples
-export_to_csv <- function(database, algo, batch, fields, min_effectif) {
-  path_1 <- rprojroot::find_rstudio_root_file(
-    "..", "dbmongo", "export", "export.sh"
-    )
-
-  path_2 <- rprojroot::find_rstudio_root_file(
-    "..", "dbmongo", "export", "export_fields.txt"
-    )
-
-  ## Write fields to file path_1
-  write(fields, path_2, append = FALSE, sep = "\n")
-
-  ##
-
-  # FIX ME: ignore complètement min_effectif !! (par défaut, min_effectif = 10)
-  system2("bash", args = c(path_1, database, algo, batch, min_effectif))
 }
 
 
@@ -434,24 +433,24 @@ export_to_csv <- function(database, algo, batch, fields, min_effectif) {
 #'
 #' @examples
 get_fields <- function(
-  training,
-  siren = 2,
-  urssaf = 2,
-  delai = 2,
-  effectif = 2,
-  note_preface = 2,
-  diane = 2,
-  bdf = 2,
-  apart = 2,
-  procol = 1,
-  interim = 0,
-  target_encode = 2,
-  info = 0
-  ) {
+                       training,
+                       siren = 2,
+                       urssaf = 2,
+                       delai = 2,
+                       effectif = 2,
+                       note_preface = 2,
+                       diane = 2,
+                       bdf = 2,
+                       apart = 2,
+                       procol = 1,
+                       interim = 0,
+                       target_encode = 2,
+                       info = 0) {
   # TODO change this into data-frame !
-  fields  <- c()
+  fields <- c()
   if (siren >= 1 && !training) {
-    fields  <- c(fields,
+    fields <- c(
+      fields,
       "siret",
       "siren",
       "periode",
@@ -459,29 +458,31 @@ get_fields <- function(
       "code_ape_niveau2",
       "code_ape_niveau3",
       "code_naf"
-      )
+    )
   }
   if (siren >= 1) {
     fields <- c(
       fields,
       "age"
-      )
+    )
   }
 
   if (urssaf >= 1) {
-    fields  <- c(fields,
+    fields <- c(
+      fields,
       "montant_part_patronale",
       "montant_part_ouvriere",
       "montant_echeancier",
       "delai",
       "duree_delai",
       "ratio_dette",
-      "ratio_dette_moy12m"#,
-      #"cotisation_moy12m"
-      )
+      "ratio_dette_moy12m",
+      "cotisation_moy12m"
+    )
   }
   if (urssaf >= 2) {
-    fields  <- c(fields,
+    fields <- c(
+      fields,
       "montant_part_patronale_past_1",
       "montant_part_ouvriere_past_1",
       "montant_part_patronale_past_2",
@@ -492,7 +493,7 @@ get_fields <- function(
       "montant_part_ouvriere_past_6",
       "montant_part_patronale_past_12",
       "montant_part_ouvriere_past_12"
-      )
+    )
   }
 
   if (apart >= 1) {
@@ -500,26 +501,29 @@ get_fields <- function(
       fields,
       "apart_heures_consommees",
       "apart_heures_autorisees"
-      )
+    )
   }
 
   if (effectif >= 1) {
-    fields <- c(fields,
+    fields <- c(
+      fields,
       "effectif",
       "effectif_entreprise"
-      )
+    )
   }
   if (effectif >= 2) {
-    fields <- c(fields,
+    fields <- c(
+      fields,
       "effectif_past_6",
       "effectif_past_12",
       "effectif_past_18",
       "effectif_past_24"
-      )
+    )
   }
 
   if (note_preface >= 1) {
-    fields <- c(fields,
+    fields <- c(
+      fields,
       "note_preface",
       "note_preface_past_1",
       "note_preface_past_2"
@@ -527,9 +531,8 @@ get_fields <- function(
   }
 
   if (diane >= 1) {
-
-
-    fields <- c(fields,
+    fields <- c(
+      fields,
       "dette_fiscale_et_sociale",
       "effectif_consolide",
       "frais_de_RetD",
@@ -602,11 +605,11 @@ get_fields <- function(
       "participation_salaries",
       "impot_benefice",
       "benefice_ou_perte"
-      )
+    )
   }
 
   if (diane >= 2) {
-    fields  <- c(
+    fields <- c(
       fields,
       # DIANE PAST 1
       "effectif_consolide_past_1",
@@ -754,7 +757,7 @@ get_fields <- function(
       "participation_salaries_past_2",
       "impot_benefice_past_2",
       "benefice_ou_perte_past_2"
-      )
+    )
   }
   if (bdf >= 1) {
     fields <- c(
@@ -765,45 +768,48 @@ get_fields <- function(
       "financier_court_terme",
       "frais_financier",
       "dette_fiscale"
-      )
+    )
   }
 
   if (bdf >= 2) {
-    fields  <- c(
+    fields <- c(
       fields,
-      #BDF PAST 1
+      # BDF PAST 1
       "taux_marge_past_1",
       "delai_fournisseur_past_1",
       "poids_frng_past_1",
       "financier_court_terme_past_1",
       "frais_financier_past_1",
       "dette_fiscale_past_1",
-      #BDF PAST 2
+      # BDF PAST 2
       "taux_marge_past_2",
       "delai_fournisseur_past_2",
       "poids_frng_past_2",
       "financier_court_terme_past_2",
       "frais_financier_past_2",
       "dette_fiscale_past_2"
-      )
+    )
   }
 
   if (procol >= 1) {
-    fields  <- c(fields,
+    fields <- c(
+      fields,
       "etat_proc_collective"
-      )
+    )
   }
-  if (procol >= 1  && !training) {
-    fields  <- c(fields,
+  if (procol >= 1 && !training) {
+    fields <- c(
+      fields,
       # ALTARES
       "outcome",
       "time_til_outcome"
-      )
+    )
   } else if (procol >= 2 && !training) {
-    fields <- c(fields,
+    fields <- c(
+      fields,
       "tag_outcome",
       "tag_failure"
-      )
+    )
   }
 
   if (interim >= 1) {
@@ -814,7 +820,7 @@ get_fields <- function(
       "interim_ratio_past_12",
       "interim_ratio_past_18",
       "interim_ratio_past_24"
-      )
+    )
   }
 
   if (target_encode >= 1 && training) {
@@ -822,7 +828,7 @@ get_fields <- function(
       fields,
       "TargetEncode_code_ape_niveau2",
       "TargetEncode_code_ape_niveau3"
-      )
+    )
   }
   if (info >= 1 && !training) {
     fields <- c(
@@ -832,7 +838,7 @@ get_fields <- function(
       "arrete_bilan_diane",
       "exercice_bdf",
       "exercice_diane"
-      )
+    )
   }
   return(fields)
 }

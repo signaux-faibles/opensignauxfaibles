@@ -10,12 +10,11 @@
 #'
 #' @examples
 train_light_gradient_boosting <- function(
-  h2o_train_data,
-  h2o_validation_data = NULL,
-  x_fields_model,
-  outcome = "outcome",
-  save_results = TRUE
-){
+                                          h2o_train_data,
+                                          h2o_validation_data = NULL,
+                                          x_fields_model,
+                                          outcome = "outcome",
+                                          save_results = TRUE) {
 
   #
   # Train the model
@@ -26,7 +25,7 @@ train_light_gradient_boosting <- function(
   # FIX ME: RISQUE D'ECRASER UN MODELE EXISTANT AVEC CE MODEL_ID
 
   model <- h2o::h2o.xgboost(
-    model_id = paste0("Train_model", floor(runif(1)*1000)),
+    model_id = paste0("Train_model", floor(runif(1) * 1000)),
     x = x_fields_model,
     y = outcome,
     training_frame = h2o_train_data,
@@ -37,10 +36,10 @@ train_light_gradient_boosting <- function(
     max_depth = 4,
     ntrees = 60,
     seed = 123
-    )
+  )
 
   if (save_results) {
-    save_h2o_object(model, "lgb") #lgb like Light Gradient Boosting
+    save_h2o_object(model, "lgb") # lgb like Light Gradient Boosting
   }
   return(model)
 }
