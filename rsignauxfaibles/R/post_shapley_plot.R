@@ -1,16 +1,14 @@
 shapley_plot <- function(
-  mes_sirets,
-  my_data,
-  model,
-  batch,
-  dir_out = rprojroot::find_rstudio_root_file("..", "output", "shapley", batch)
-  ) {
-
+                         mes_sirets,
+                         my_data,
+                         model,
+                         batch,
+                         dir_out = rprojroot::find_rstudio_root_file("..", "output", "shapley", batch)) {
   assert_that(inherits(my_data, "data.frame"))
   max_periode <- max(my_data$periode)
 
   h2o::h2o.no_progress()
-  pred <- function(model, newdata)  {
+  pred <- function(model, newdata) {
     results <- as.data.frame(h2o::h2o.predict(model, h2o::as.h2o(newdata)))
     return(results[[3L]])
   }
@@ -43,7 +41,7 @@ shapley_plot <- function(
     "effectif_past_12",
     "montant_part_ouvriere",
     "financier_court_terme_distrib_APE1",
-    #"effectif_entreprise",
+    # "effectif_entreprise",
     "age",
     "ratio_liquidite_reduite",
     "ratio_productivite_distrib_APE1",
@@ -60,7 +58,7 @@ shapley_plot <- function(
     "ratio_dette_delai",
     "ratio_marge_operationnelle_distrib_APE1",
     "poids_frng"
-    )
+  )
 
 
 
@@ -91,7 +89,7 @@ shapley_plot <- function(
     "Variation mensuelle d'effectif moyenne sur 12 mois",
     "Montant de la part ouvrière",
     "Comparaison financier court terme par code NAF",
-    #"effectif_entreprise",
+    # "effectif_entreprise",
     "Age de l'entreprise",
     "Ratio des liquidités réduites",
     "Comparaison de la productivité par code NAF",
@@ -108,7 +106,7 @@ shapley_plot <- function(
     "Décroissance de la dette pendant un délai URSSAF",
     "Comparaison de la marge opérationnelle par code NAF",
     "Poids du frng"
-    )
+  )
 
   # x_medium_names_test <- c(
   #   "Dette_URSSAF",
@@ -159,7 +157,7 @@ shapley_plot <- function(
   # names(x_medium_names_test) <- x_medium
   names(x_medium_names) <- x_medium
 
-  features  <- my_data[, x_medium]
+  features <- my_data[, x_medium]
 
   response <- pred(model, features)
 
@@ -169,9 +167,9 @@ shapley_plot <- function(
     y = response,
     predict.fun = pred,
     class = "classification"
-    )
+  )
 
-  for (i in seq_along(mes_sirets)){
+  for (i in seq_along(mes_sirets)) {
     etablissement <- my_data %>%
       filter(siret == mes_sirets[i]) %>%
       filter(periode == max_periode)
@@ -192,7 +190,7 @@ shapley_plot <- function(
         feature = unique(category),
         phi = sum(phi),
         phi.var = sum(phi.var)
-        ) %>%
+      ) %>%
       mutate(feature.value = as.factor(category))
 
     thresh <- 5e-3
@@ -202,9 +200,11 @@ shapley_plot <- function(
     # labels
     shap_plot$labels$x <- ""
     dir.create(dir_out, showWarnings = FALSE)
-    ggsave(filename = paste0(mes_sirets[i], "_", max_periode,".png"),
+    ggsave(
+      filename = paste0(mes_sirets[i], "_", max_periode, ".png"),
       plot = shap_plot,
-      path = dir_out)
+      path = dir_out
+    )
   }
   h2o::h2o.show_progress()
   return(shap_plot)

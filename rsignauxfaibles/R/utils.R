@@ -5,8 +5,7 @@ elapsed_months <- function(end_date, start_date) {
 }
 
 
-compare_vects <- function(data,field1,field2){
-
+compare_vects <- function(data, field1, field2) {
   smy <- data %>%
     group_by(siret) %>%
     summarize(a = first(!!sym(field1)), b = first(!!sym(field2)))
@@ -14,27 +13,30 @@ compare_vects <- function(data,field1,field2){
 }
 
 
-count_etab_entr <- function(df){
-  nb_etab   <- n_distinct(df %>% select(siret))
+count_etab_entr <- function(df) {
+  nb_etab <- n_distinct(df %>% select(siret))
   nb_entr <- n_distinct(df %>% select(siren))
 
-  cat(nb_etab,' établissements dans ', nb_entr, ' entreprises','\n')
+  cat(nb_etab, " établissements dans ", nb_entr, " entreprises", "
+")
 }
 
 
-replace_na_by <- function(name,data,na_value) {
-  data[is.na(data[,name]), name] = na_value
+replace_na_by <- function(name, data, na_value) {
+  data[is.na(data[, name]), name] <- na_value
   return(data)
 }
 
-average_12m <- function(vec){
+average_12m <- function(vec) {
   sapply(
     1:length(vec),
-    FUN = function(x){
+    FUN = function(x) {
       res <- tail(vec[1:x], 12)
-      if (sum(!is.na(res)) > 3)
-        return(mean(res , na.rm = TRUE))
-      else return(NA)
+      if (sum(!is.na(res)) > 3) {
+        return(mean(res, na.rm = TRUE))
+      } else {
+        return(NA)
+      }
     }
   )
 }
@@ -52,16 +54,17 @@ average_12m <- function(vec){
 #' @export
 #'
 #' @examples
-alert_levels <- function(prediction, F1,F2){
+alert_levels <- function(prediction, F1, F2) {
   assertthat::assert_that(F2 <= F1,
     msg = "F2 score cannot be less than F1 score. Could you have entered the
-    scores in the wrong order ?")
-  alert  <- .bincode(
-          x = prediction,
-          breaks = c(-1e-4, F2, F1, 1 + 1e-4),
-          ) %>%
-  factor(
-    levels = 1:3,
-    labels = c("Pas d'alerte", "Alerte seuil F2", "Alerte seuil F1")
+    scores in the wrong order ?"
+  )
+  alert <- .bincode(
+    x = prediction,
+    breaks = c(-1e-4, F2, F1, 1 + 1e-4),
+  ) %>%
+    factor(
+      levels = 1:3,
+      labels = c("Pas d'alerte", "Alerte seuil F2", "Alerte seuil F1")
     )
 }

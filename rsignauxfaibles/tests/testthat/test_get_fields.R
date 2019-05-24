@@ -1,16 +1,19 @@
 context("test the field names")
 
 
-compare_fields <- function(actual_fields, expected_fields){
+compare_fields <- function(actual_fields, expected_fields) {
   expect_equal(
     sort(actual_fields), sort(expected_fields),
-    info =  paste("Only in expected: ", expected_fields[!expected_fields %in% actual_fields],
-      "\nOnly in actual: ", actual_fields[!actual_fields %in% expected_fields]))
+    info = paste(
+      "Only in expected: ", expected_fields[!expected_fields %in% actual_fields],
+      "\nOnly in actual: ", actual_fields[!actual_fields %in% expected_fields]
+    )
+  )
 }
 
 test_that("get fields does not change the fields queried
   (default behavior)", {
-  actual_fields  <- get_fields(training = FALSE)
+  actual_fields <- get_fields(training = FALSE)
   expected_fields <- c(
     "siret",
     "siren",
@@ -267,21 +270,21 @@ test_that("get fields does not change the fields queried
     "participation_salaries_past_2",
     "impot_benefice_past_2",
     "benefice_ou_perte_past_2",
-    #BDF
+    # BDF
     "taux_marge",
     "delai_fournisseur",
     "poids_frng",
     "financier_court_terme",
     "frais_financier",
     "dette_fiscale",
-    #BDF PAST 1
+    # BDF PAST 1
     "taux_marge_past_1",
     "delai_fournisseur_past_1",
     "poids_frng_past_1",
     "financier_court_terme_past_1",
     "frais_financier_past_1",
     "dette_fiscale_past_1",
-    #BDF PAST 2
+    # BDF PAST 2
     "taux_marge_past_2",
     "delai_fournisseur_past_2",
     "poids_frng_past_2",
@@ -299,14 +302,12 @@ test_that("get fields does not change the fields queried
     # PROCOL
     "outcome",
     "time_til_outcome"
-    )
+  )
   compare_fields(actual_fields, expected_fields)
-}
-)
+})
 
 test_that("get fields does not change the fields queried
-  (training behavior)",{
-
+  (training behavior)", {
   actual_fields <- get_fields(training = TRUE)
   expected_fields <- c(
     "age",
@@ -561,21 +562,21 @@ test_that("get fields does not change the fields queried
     "participation_salaries_past_2",
     "impot_benefice_past_2",
     "benefice_ou_perte_past_2",
-    #BDF
+    # BDF
     "taux_marge",
     "delai_fournisseur",
     "poids_frng",
     "financier_court_terme",
     "frais_financier",
     "dette_fiscale",
-    #BDF PAST 1
+    # BDF PAST 1
     "taux_marge_past_1",
     "delai_fournisseur_past_1",
     "poids_frng_past_1",
     "financier_court_terme_past_1",
     "frais_financier_past_1",
     "dette_fiscale_past_1",
-    #BDF PAST 2
+    # BDF PAST 2
     "taux_marge_past_2",
     "delai_fournisseur_past_2",
     "poids_frng_past_2",
@@ -588,7 +589,6 @@ test_that("get fields does not change the fields queried
     # SIRENE
     "TargetEncode_code_ape_niveau2",
     "TargetEncode_code_ape_niveau3"
-    )
+  )
   compare_fields(actual_fields, expected_fields)
-}
-)
+})
