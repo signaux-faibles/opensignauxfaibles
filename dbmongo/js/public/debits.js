@@ -61,7 +61,7 @@ function dettes(vdebit) {
     let periode_fin = date_traitement_fin
 
     //generatePeriodSerie exlue la dernière période
-    generatePeriodSerie(periode_debut, periode_fin).map(date => {
+    f.generatePeriodSerie(periode_debut, periode_fin).map(date => {
       let time = date.getTime()
       value_dette[time] = (value_dette[time] || []).concat([{ "periode": debit.periode.start, "part_ouvriere": debit.part_ouvriere, "part_patronale": debit.part_patronale, "montant_majorations": debit.montant_majorations}])
     })
