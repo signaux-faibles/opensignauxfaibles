@@ -328,22 +328,23 @@ func computeActivitePartielle(detection Detection) bool {
 }
 
 func computeDiane(detection Detection) (caVal *float64, caVar *float64, reVal *float64, reVar *float64) {
-	if len(detection.Entreprise.Value.Diane) > 1 {
-		d1 := detection.Entreprise.Value.Diane[0]
-		d2 := detection.Entreprise.Value.Diane[1]
+	for i := 1; i < len(detection.Entreprise.Value.Diane); i++ {
+		if detection.Entreprise.Value.Diane[i-1].ChiffreAffaire != 0 &&
+			detection.Entreprise.Value.Diane[i].ChiffreAffaire != 0 {
+			d1 := detection.Entreprise.Value.Diane[i-1]
+			d2 := detection.Entreprise.Value.Diane[i]
 
-		if d2.ChiffreAffaire*d1.ChiffreAffaire != 0 {
 			cavar := d1.ChiffreAffaire / d2.ChiffreAffaire
 			caVal = &d1.ChiffreAffaire
 			caVar = &cavar
-		}
 
-		if d2.ResultatExploitation*d1.ResultatExploitation != 0 {
-			reVal = &d1.ResultatExploitation
-			revar := d1.ResultatExploitation / d2.ResultatExploitation
-			reVar = &revar
-		}
+			if d2.ResultatExploitation*d1.ResultatExploitation != 0 {
+				reVal = &d1.ResultatExploitation
+				revar := d1.ResultatExploitation / d2.ResultatExploitation
+				reVar = &revar
+			}
 
+		}
 	}
 
 	return caVal, caVar, reVal, reVar
