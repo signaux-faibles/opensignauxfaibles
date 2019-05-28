@@ -20,7 +20,7 @@ func ExportDetectionToDatapi(url, user, password, batch string) error {
 
 	var pipeline = exportdatapi.GetPipeline(batch)
 
-	iter := Db.DB.C("Prediction").Pipe(pipeline).Iter()
+	iter := Db.DB.C("Scores").Pipe(pipeline).Iter()
 
 	var data exportdatapi.Detection
 
@@ -46,72 +46,6 @@ func ExportDetectionToDatapi(url, user, password, batch string) error {
 	return err
 }
 
-// func getDepartement(b map[string]interface{}) (string, error) {
-// 	sirene, ok := b["sirene"].(map[string]interface{})
-// 	if !ok {
-// 		return "", errors.New("no sirene")
-// 	}
-
-// 	dept, ok := sirene["departement"].(string)
-// 	if !ok {
-// 		return "", errors.New("no departement")
-// 	}
-
-// 	return dept, nil
-// }
-
-// // ExportPublicToDatapi sends public data to a datapi server
-// func ExportPublicToDatapi(url string, user string, password string, batch string) error {
-// 	client := daclient.DatapiServer{
-// 		URL: url,
-// 	}
-
-// 	err := client.Connect(user, password)
-// 	if err != nil {
-// 		return err
-// 	}
-
-// 	cursor := Db.DB.C("Public").Find(bson.M{"_id.batch": batch})
-
-// 	iter := cursor.Iter()
-
-// 	var data struct {
-// 		ID    map[string]string      `bson:"_id"`
-// 		Value map[string]interface{} `bson:"value"`
-// 	}
-
-// 	var datas []daclient.Object
-
-// 	var i int
-
-// 	for iter.Next(&data) {
-// 		i++
-
-// 		departement, error := getDepartement
-// 		key := map[string]string{
-// 			"key":   data.ID["key"],
-// 			"batch": data.ID["batch"],
-// 			"type":  "detail",
-// 			"scope": data.ID["scope"],
-// 		}
-
-// 		if data.Value != nil {
-// 			o := daclient.Object{
-// 				Key:   key,
-// 				Value: data.Value,
-// 			}
-
-// 			datas = append(datas, o)
-// 		}
-// 	}
-
-// 	if datas != nil {
-// 		err = client.Put("public", datas)
-// 	}
-
-// 	return err
-// }
-
 // ExportPoliciesToDatapi exports standard policies to datapi
 func ExportPoliciesToDatapi(url, user, password, batch string) error {
 	var policies []daclient.Object
@@ -124,14 +58,14 @@ func ExportPoliciesToDatapi(url, user, password, batch string) error {
 			"match": "(public|reference)",
 			"scope": []string{"Bourgogne Franche-Comté"},
 			"promote": []string{
-				"Côte d'or",
-				"Doubs",
-				"Haute-Saône",
-				"Jura",
-				"Nièvre",
-				"Saône-et-Loire",
-				"Territoire de Belfort",
-				"Yonne",
+				"21",
+				"25",
+				"70",
+				"39",
+				"58",
+				"71",
+				"90",
+				"89",
 			},
 		},
 	})
@@ -145,10 +79,10 @@ func ExportPoliciesToDatapi(url, user, password, batch string) error {
 			"match": "(public|reference)",
 			"scope": []string{"Bourgogne"},
 			"promote": []string{
-				"Côte d'or",
-				"Nièvre",
-				"Saône-et-Loire",
-				"Yonne",
+				"21",
+				"58",
+				"71",
+				"89",
 			},
 		},
 	})
@@ -162,10 +96,10 @@ func ExportPoliciesToDatapi(url, user, password, batch string) error {
 			"match": "(public|reference)",
 			"scope": []string{"Franche-Comté"},
 			"promote": []string{
-				"Doubs",
-				"Haute-Saône",
-				"Jura",
-				"Territoire de Belfort",
+				"25",
+				"70",
+				"39",
+				"90",
 			},
 		},
 	})
@@ -179,11 +113,11 @@ func ExportPoliciesToDatapi(url, user, password, batch string) error {
 			"match": "(public|reference)",
 			"scope": []string{"Pays de la Loire"},
 			"promote": []string{
-				"Loire-Atlantique",
-				"Maine-et-Loire",
-				"Mayenne",
-				"Sarthe",
-				"Vendée",
+				"44",
+				"49",
+				"53",
+				"72",
+				"85",
 			},
 		},
 	})
@@ -217,7 +151,6 @@ func ExportPoliciesToDatapi(url, user, password, batch string) error {
 		URL: url,
 	}
 	err := client.Connect(user, password)
-
 	if err != nil {
 		return err
 	}
@@ -286,10 +219,10 @@ func getRegions() (regions []daclient.Object) {
 		Scope: []string{"Bourgogne"},
 		Value: map[string]interface{}{
 			"departements": []string{
-				"Côte d'or",
-				"Nièvre",
-				"Saône-et-Loire",
-				"Yonne",
+				"21",
+				"58",
+				"71",
+				"89",
 			},
 		},
 	})
@@ -302,10 +235,10 @@ func getRegions() (regions []daclient.Object) {
 		Scope: []string{"Franche-Comté"},
 		Value: map[string]interface{}{
 			"departements": []string{
-				"Doubs",
-				"Haute-Saône",
-				"Jura",
-				"Territoire de Belfort",
+				"25",
+				"70",
+				"39",
+				"90",
 			},
 		},
 	})
@@ -318,11 +251,11 @@ func getRegions() (regions []daclient.Object) {
 		Scope: []string{"Pays de la Loire"},
 		Value: map[string]interface{}{
 			"departements": []string{
-				"Loire-Atlantique",
-				"Maine-et-Loire",
-				"Mayenne",
-				"Sarthe",
-				"Vendée",
+				"44",
+				"49",
+				"53",
+				"72",
+				"85",
 			},
 		},
 	})
@@ -331,9 +264,9 @@ func getRegions() (regions []daclient.Object) {
 		Key: map[string]string{
 			"type": "departements",
 		},
-		Scope: []string{"Doubs"},
+		Scope: []string{"25"},
 		Value: map[string]interface{}{
-			"Doubs": 25,
+			"25": 25,
 		},
 	})
 
@@ -341,9 +274,9 @@ func getRegions() (regions []daclient.Object) {
 		Key: map[string]string{
 			"type": "departements",
 		},
-		Scope: []string{"Haute-Saône"},
+		Scope: []string{"70"},
 		Value: map[string]interface{}{
-			"Haute-Saône": 70,
+			"70": 70,
 		},
 	})
 
@@ -351,9 +284,9 @@ func getRegions() (regions []daclient.Object) {
 		Key: map[string]string{
 			"type": "departements",
 		},
-		Scope: []string{"Jura"},
+		Scope: []string{"39"},
 		Value: map[string]interface{}{
-			"Jura": 39,
+			"39": 39,
 		},
 	})
 
@@ -361,9 +294,9 @@ func getRegions() (regions []daclient.Object) {
 		Key: map[string]string{
 			"type": "departements",
 		},
-		Scope: []string{"Territoire de Belfort"},
+		Scope: []string{"90"},
 		Value: map[string]interface{}{
-			"Territoire de Belfort": 90,
+			"90": 90,
 		},
 	})
 
@@ -371,9 +304,9 @@ func getRegions() (regions []daclient.Object) {
 		Key: map[string]string{
 			"type": "departements",
 		},
-		Scope: []string{"Côte d'or"},
+		Scope: []string{"21"},
 		Value: map[string]interface{}{
-			"Côte d'or": 21,
+			"21": 21,
 		},
 	})
 
@@ -381,9 +314,9 @@ func getRegions() (regions []daclient.Object) {
 		Key: map[string]string{
 			"type": "departements",
 		},
-		Scope: []string{"Nièvre"},
+		Scope: []string{"58"},
 		Value: map[string]interface{}{
-			"Nièvre": 58,
+			"58": 58,
 		},
 	})
 
@@ -391,9 +324,9 @@ func getRegions() (regions []daclient.Object) {
 		Key: map[string]string{
 			"type": "departements",
 		},
-		Scope: []string{"Saône-et-Loire"},
+		Scope: []string{"71"},
 		Value: map[string]interface{}{
-			"Saône-et-Loire": 71,
+			"71": 71,
 		},
 	})
 
@@ -401,9 +334,9 @@ func getRegions() (regions []daclient.Object) {
 		Key: map[string]string{
 			"type": "departements",
 		},
-		Scope: []string{"Yonne"},
+		Scope: []string{"89"},
 		Value: map[string]interface{}{
-			"Yonne": 89,
+			"89": 89,
 		},
 	})
 
@@ -411,9 +344,9 @@ func getRegions() (regions []daclient.Object) {
 		Key: map[string]string{
 			"type": "departements",
 		},
-		Scope: []string{"Loire-Atlantique"},
+		Scope: []string{"44"},
 		Value: map[string]interface{}{
-			"Loire-Atlantique": 44,
+			"44": 44,
 		},
 	})
 
@@ -421,9 +354,9 @@ func getRegions() (regions []daclient.Object) {
 		Key: map[string]string{
 			"type": "departements",
 		},
-		Scope: []string{"Maine-et-Loire"},
+		Scope: []string{"49"},
 		Value: map[string]interface{}{
-			"Maine-et-Loire": 49,
+			"49": 49,
 		},
 	})
 
@@ -431,9 +364,9 @@ func getRegions() (regions []daclient.Object) {
 		Key: map[string]string{
 			"type": "departements",
 		},
-		Scope: []string{"Mayenne"},
+		Scope: []string{"53"},
 		Value: map[string]interface{}{
-			"Mayenne": 53,
+			"53": 53,
 		},
 	})
 
@@ -441,9 +374,9 @@ func getRegions() (regions []daclient.Object) {
 		Key: map[string]string{
 			"type": "departements",
 		},
-		Scope: []string{"Sarthe"},
+		Scope: []string{"72"},
 		Value: map[string]interface{}{
-			"Sarthe": 72,
+			"72": 72,
 		},
 	})
 
@@ -451,9 +384,9 @@ func getRegions() (regions []daclient.Object) {
 		Key: map[string]string{
 			"type": "departements",
 		},
-		Scope: []string{"Vendée"},
+		Scope: []string{"85"},
 		Value: map[string]interface{}{
-			"Vendée": 85,
+			"85": 85,
 		},
 	})
 

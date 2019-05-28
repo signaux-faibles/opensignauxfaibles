@@ -13,21 +13,21 @@ import (
 // GetPipeline construit le pipeline d'aggregation
 func GetPipeline(batch string) (pipeline []bson.M) {
 	pipeline = append(pipeline, bson.M{"$match": bson.M{
-		"_id.batch": batch,
+		"batch": batch,
 	}})
 
 	pipeline = append(pipeline, bson.M{"$project": bson.M{
 		"_id": bson.D{
 			{Name: "scope", Value: "etablissement"},
-			{Name: "key", Value: "$_id.siret"},
-			{Name: "batch", Value: "$_id.batch"},
+			{Name: "key", Value: "$siret"},
+			{Name: "batch", Value: "$batch"},
 		},
 		"_idEntreprise": bson.D{
 			{Name: "scope", Value: "entreprise"},
-			{Name: "key", Value: bson.M{"$substr": []interface{}{"$_id.siret", 0, 9}}},
-			{Name: "batch", Value: "$_id.batch"},
+			{Name: "key", Value: bson.M{"$substr": []interface{}{"$siret", 0, 9}}},
+			{Name: "batch", Value: "$batch"},
 		},
-		"prob":  "$prob",
+		"prob":  "$score",
 		"diff":  "$diff",
 		"connu": "$connu",
 	}})
