@@ -18,10 +18,11 @@ database <- "test_signauxfaibles"
 collection <- "Features"
 actual_period <- as.Date("2019-03-01")
 periods <- actual_period
-last_batch <- "1904"
+last_batch <- "1905"
 min_effectif <- 10
-retrain_model <- FALSE
+retrain_model <- TRUE
 type <- "dataframe"
+export_type <- c("csv", "mongodb")
 ```
 
 ```{r}
@@ -36,7 +37,8 @@ res <- full_light_gradient_boosting(
   last_batch,
   min_effectif,
   retrain_model = retrain_model,
-  type = type
+  type = type,
+  export_type = export_type
   )
 ```
 

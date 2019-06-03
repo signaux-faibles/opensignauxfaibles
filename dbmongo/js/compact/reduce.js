@@ -29,7 +29,7 @@ function reduce(key, values) {
   // 0. On calcule la memoire au moment du batch à modifier
   var memory_batches = Object.keys(reduced_value.batch).filter( batch => 
     batch < batchKey
-  ).reduce( (m, batch) => {
+  ).sort().reduce((m, batch) => {
     m.push(reduced_value.batch[batch])
     return(m)
   },[])
