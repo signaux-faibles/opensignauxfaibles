@@ -10,6 +10,7 @@ import (
 func publicHandler(c *gin.Context) {
 	params := struct {
 		Batch string `json:"batch"`
+		Siret string `json:"siret"`
 	}{}
 	c.Bind(&params)
 
@@ -20,7 +21,7 @@ func publicHandler(c *gin.Context) {
 		return
 	}
 
-	err = engine.Public(batch)
+	err = engine.Public(batch, params.Siret)
 	if err != nil {
 		c.JSON(500, err.Error())
 		return

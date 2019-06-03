@@ -13,8 +13,54 @@ import (
 // GetPipeline construit le pipeline d'aggregation
 func GetPipeline(batch string) (pipeline []bson.M) {
 	pipeline = append(pipeline, bson.M{"$match": bson.M{
+		"algo":  "algo",
 		"batch": batch,
 	}})
+
+	pipeline = append(pipeline, bson.M{"$sort": bson.M{
+		"siret":     1,
+		"periode":   1,
+		"timestamp": -1,
+	}})
+
+	pipeline = append(pipeline, bson.M{
+		"$group": bson.M{
+			"_id": bson.M{
+				"siret":   "$siret",
+				"periode": "$periode",
+				"batch":   "$batch",
+				"algo":    "$algo",
+			},
+			"score": bson.M{
+				"$first": "$score",
+			},
+			"alert": bson.M{
+				"$first": "$alert",
+			},
+			"diff": bson.M{
+				"$first": "$diff",
+			},
+			"timestamp": bson.M{
+				"$first": "$timestamp",
+			},
+		},
+	})
+
+	pipeline = append(pipeline, bson.M{
+		"$addFields": bson.M{
+			"siret":   "$_id.siret",
+			"periode": "$_id.periode",
+			"batch":   "$_id.batch",
+			"algo":    "$_id.algo",
+			"alert":   "$_id.alert",
+		},
+	})
+
+	pipeline = append(pipeline, bson.M{
+		"$project": bson.M{
+			"_id": 0,
+		},
+	})
 
 	pipeline = append(pipeline, bson.M{"$project": bson.M{
 		"_id": bson.D{
@@ -27,7 +73,8 @@ func GetPipeline(batch string) (pipeline []bson.M) {
 			{Name: "key", Value: bson.M{"$substr": []interface{}{"$siret", 0, 9}}},
 			{Name: "batch", Value: "$batch"},
 		},
-		"prob":  "$score",
+		"score": "$score",
+		"alert": "$alert",
 		"diff":  "$diff",
 		"connu": "$connu",
 	}})
@@ -55,9 +102,12 @@ func GetPipeline(batch string) (pipeline []bson.M) {
 // Detection correspond aux données retournées pour l'export Datapi
 type Detection struct {
 	ID            map[string]string `json:"_id" bson:"_id"`
-	Prob          float64           `json:"prob" bson:"prob"`
+	Score         float64           `json:"score" bson:"score"`
 	Diff          float64           `json:"diff" bson:"diff"`
+	Timestamp     time.Time         `json:"timestamp" bson:"timestamp"`
+	Alert         string            `json:"alert" bson:"alert"`
 	Connu         bool              `json:"connu" bson:"connu"`
+	Periode       time.Time         `json:"periode" bson:"periode"`
 	Etablissement Etablissement     `json:"etablissement" bson:"etablissement"`
 	Entreprise    Entreprise        `json:"entreprise" bson:"entreprise"`
 }
@@ -74,6 +124,7 @@ type Etablissement struct {
 		Effectif        []Effectif    `json:"effectif" bson:"effectif"`
 		DernierEffectif Effectif      `json:"dernier_effectif" bson:"dernier_effectif"`
 		Delai           []interface{} `json:"delai" bson:"delai"`
+		Procol          string        `json:"procol" bson:"procol"`
 	} `bson:"value"`
 }
 
@@ -187,13 +238,15 @@ func computeDetection(detection Detection) (detections []daclient.Object) {
 		"variation_ca":            caVar,
 		"resultat_expl":           reVal,
 		"variation_resultat_expl": reVar,
-		// "procedure_collective":    detection.Etablissement.Value.Procol,
+		"departement":             detection.Etablissement.Value.Sirene.Departement,
+		"procedure_collective":    detection.Etablissement.Value.Procol,
 	}
 
 	scopeA := []string{"detection", "score", detection.Etablissement.Value.Sirene.Departement}
 	valueA := map[string]interface{}{
-		"prob": detection.Prob,
-		"diff": detection.Diff,
+		"score": detection.Score,
+		"alert": detection.Alert,
+		"diff":  detection.Diff,
 	}
 
 	detections = append(detections, daclient.Object{

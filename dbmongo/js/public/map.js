@@ -14,6 +14,7 @@ function map() {
     vcmde.apdemande = f.apconso(value.apdemande)
     vcmde.idEntreprise = f.idEntreprise(this._id)
     vcmde.delai = f.delai(value.delai)
+    vcmde.procol = f.dealWithProcols(value)
     //if (vcmde.effectif.length > 0) {
     // emit({scope: ["bfc", "crp"], key: this.value.key, batch: actual_batch}, vcrp)
     emit({scope: "etablissement", key: this.value.key, batch: actual_batch}, vcmde)
