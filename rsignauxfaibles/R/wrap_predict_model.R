@@ -14,14 +14,15 @@
 #'
 #' @examples
 predict_on_last_batch <- function(
-                                  model,
-                                  database,
-                                  collection,
-                                  te_map,
-                                  last_batch,
-                                  periods,
-                                  min_effectif,
-                                  fields) {
+  model,
+  database,
+  collection,
+  te_map,
+  last_batch,
+  periods,
+  min_effectif,
+  fields) {
+
   current_data <- get_last_batch(
     database,
     collection,
@@ -29,19 +30,19 @@ predict_on_last_batch <- function(
     periods,
     fields,
     min_effectif
-  )
+    )
 
   current_data <- prepare_frame(
     data_to_prepare = current_data,
     test_or_train = "test",
     te_map = te_map,
     save_or_load_map = FALSE
-  )[["data"]]
+    )[["data"]]
 
   prediction <- predict_model(
     model,
     new_data = current_data
-  )
+    )
 
 
   all_periods <- prediction %>%

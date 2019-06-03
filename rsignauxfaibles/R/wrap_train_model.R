@@ -10,11 +10,11 @@
 #'
 #' @examples
 train_light_gradient_boosting <- function(
-                                          h2o_train_data,
-                                          h2o_validation_data = NULL,
-                                          x_fields_model,
-                                          outcome = "outcome",
-                                          save_results = TRUE) {
+  h2o_train_data,
+  h2o_validation_data = NULL,
+  x_fields_model,
+  outcome = "outcome",
+  save_results = TRUE) {
 
   #
   # Train the model

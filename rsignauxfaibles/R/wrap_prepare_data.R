@@ -21,7 +21,7 @@ prepare_frame <- function(
                           te_map = NULL,
                           save_or_load_map = TRUE,
                           outcome = "outcome") {
-  if ((!is.null(te_map) && test_or_train == "train") ||
+  if ( (!is.null(te_map) && test_or_train == "train") ||
     (!is.null(te_map) && save_or_load_map == TRUE)) {
     error('te_map should not be specified if it is computed (test_or_train =
       "train") or if map is loaded (save_or_load_map = TRUE)')

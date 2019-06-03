@@ -22,17 +22,18 @@
 #'
 #' @examples
 full_light_gradient_boosting <- function(
-                                         database,
-                                         collection,
-                                         periods,
-                                         last_batch,
-                                         min_effectif = 10,
-                                         retrain_model = FALSE,
-                                         training_date_inf = as.Date("2015-01-01"),
-                                         training_date_sup = as.Date("2017-01-01"),
-                                         type = "dataframe",
-                                         export_type = c("csv", "mongodb"),
-                                         verbose = TRUE) {
+  database,
+  collection,
+  periods,
+  last_batch,
+  min_effectif = 10,
+  retrain_model = FALSE,
+  training_date_inf = as.Date("2015-01-01"),
+  training_date_sup = as.Date("2017-01-01"),
+  type = "dataframe",
+  export_type = c("csv", "mongodb"),
+  verbose = TRUE) {
+
   require(logger)
   if (verbose) {
     log_threshold(TRACE)
@@ -145,7 +146,8 @@ full_light_gradient_boosting <- function(
   # TODO compute F-scores !!
   F_scores <- c(F1 = 0.31, F2 = 0.13)
   # Export
-  # export(res, batch = last_batch, database = "test_signauxfaibles", destination = "mongodb")
+  # export(res, batch = last_batch, database = "test_signauxfaibles",
+  # destination = "mongodb")
 
 
   if (!is.null(export_type) && export_type != "none") {
