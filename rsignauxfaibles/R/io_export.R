@@ -225,11 +225,14 @@ mark_known_sirets <- function(df, names) {
 #'
 #' @examples
 get_scores <- function(
-                       database = "test_signauxfaibles",
-                       collection = "Scores",
-                       algo = "algo",
-                       method = "first",
-                       sirets = NULL) {
+  database = "test_signauxfaibles",
+  collection = "Scores",
+  algo = "algo",
+  method = "first",
+  batchs = NULL,
+  sirets = NULL
+  ){
+
   assertthat::assert_that(is.character(database) && length(database) == 1,
     msg = "Database name should be a length 1 string"
   )
@@ -270,7 +273,7 @@ get_scores <- function(
   )
 
   db <- mongolite::mongo(db = database, collection = collection)
-  col_names <- db$run('{"listCollections":1}')$cursor$firstBatch$name
+  col_names <- db$run('{"listCollections":1}')$cursor$firstBatch$name #nolint
   assertthat::assert_that(collection %in% col_names,
     msg = "Collection not found"
   )
@@ -285,13 +288,20 @@ get_scores <- function(
   aggregation <- paste0(
     '[
     {
-      "$match" : {
-        "siret" : {
+      "$match" : {',
+      if (!is.null(sirets)){
+        paste0('"siret" : {
           "$in" : [',
     paste0(paste0('"', sirets, '"'), collapse = ", "), '
             ]
-        },
-        "algo" : "', algo, '"
+        },')} else {''},
+      if (!is.null(batchs)){
+        paste0('"batch" : {
+          "$in" : [',
+    paste0(paste0('"', batchs, '"'), collapse = ", "), '
+            ]
+        },')} else {''},
+        '"algo" : "', algo, '"
       }
     },
     {
