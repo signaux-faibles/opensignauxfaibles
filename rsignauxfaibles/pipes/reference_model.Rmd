@@ -53,10 +53,15 @@ task <- load_new_data(
   periods = actual_period
   )
 ```
+
 ```{r}
 task <- prepare(task, data_names = c("new_data"))
 task <- predict(task, data_names = c("new_data"))
 ```
+```{r}
+export(task)
+```
+
 
 ```{r}
 task <- evaluate(task)

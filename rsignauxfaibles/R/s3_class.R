@@ -359,11 +359,8 @@ predict.sf_task <- function(
     task  <- predict_on_given_data(name, task)
   }
 
-
-
-    #task[["prediction"]] <- pred_data
-    log_info("Prediction successfully done.")
-    return(task)
+  log_info("Prediction successfully done.")
+  return(task)
 }
 
 export.sf_task <- function(task, ...){
@@ -406,33 +403,35 @@ export.sf_task <- function(task, ...){
     "montant_majorations",
     "exercice_bdf",
     "exercice_diane",
-    "delai",
-    "apparait",
-    "disparait"
+    "delai"
     )
 
-  F_scores <- c(F1 = 0.31, F2 = 0.13)
+  F_scores <- c(F1 = 0.31, F2 = 0.13) # TODO TODO
 
 
   if (!is.null(export_type) && export_type != "none") {
     assertthat::assert_that(all(export_type %in% c("csv", "mongodb")))
 
     log_info("Adding additional fields for export")
-    res <- pred_data %>%
+    res <- task[["new_data"]] %>%
       prepare_for_export(
         export_fields = export_fields,
         database = database,
         collection = collection,
         last_batch = last_batch
         )
+    browser()
     log_info("Data is exported to {paste(export_type, collapse = ' and ')}")
-    purrr::map(
-      .x = export_type, function(x, ...) export(destination = x, ...),
+    purrr::walk(
+      .x = export_type,
+      .f = function(x, ...) export_scores(destination = x, ...),
       donnees = res,
       batch = last_batch,
       F_scores = F_scores
-      )
+    )
   }
+  log_info("Data exported with success to
+    {paste(export_type, collapse = ' and ')}")
   return(task)
 }
 

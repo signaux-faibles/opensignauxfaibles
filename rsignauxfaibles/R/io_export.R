@@ -1,5 +1,7 @@
 #' Prepare_for_export
 #'
+#' If number of periods exceeds two, last period is dropped.
+#'
 #' @param donnees
 #' @param collection
 #' @param export_fields
@@ -37,8 +39,8 @@ prepare_for_export <- function(
   if (length(all_periods) < 2) {
     log_warning(
       "Less than two periods do not allow to compute score variations,
-      or to monitor company appearing since last period. You can add more periods
-      with the rollback_months parameter from load_new_data function"
+      or to monitor company appearing since last period. You can add more
+      periods with the rollback_months parameter from load_new_data function"
     )
   }
 
@@ -47,29 +49,26 @@ prepare_for_export <- function(
     group_by(siret) %>%
     arrange(siret, periode) %>%
     mutate(
-      last_score = dplyr::lag(score),
-      last_periode = dplyr::lag(periode),
-      next_periode = dplyr::lead(periode),
-      apparait = ifelse(periode == first(all_periods), NA,
-        ifelse(is.na(last_periode) |
-          last_periode != periode %m-% months(1), 1, 0)
-        ),
-      disparait = ifelse(periode == last(all_periods), NA,
-        ifelse(is.na(next_periode) |
-          next_periode != periode %m+% months(1), 1, 0)
-        )
+      last_score = dplyr::lag(score)#,
+      # last_periode = dplyr::lag(periode),
+      # next_periode = dplyr::lead(periode),
       ) %>%
     ungroup() %>%
-    select(-c(last_periode, next_periode)) %>%
+    # select(-c(last_periode, next_periode)) %>%
     mutate(score_diff = score - last_score) %>%
-    filter(periode >= min(periods), periode <= max(periods))
+    select(-c(last_score))
 
-  first_period <- min(donnees$periode, na.rm = TRUE)
-  last_period <- max(donnees$periode, na.rm = TRUE)
+  if (length(all_periods) >= 2){
+    pred_data <- pred_data %>%
+      filter(periode > min(all_periods), periode <= max(periods))
+  }
+
+  first_period <- min(all_periods)
+  last_period <- max(all_periods)
   log_info("Préparation à l'export ... ")
   log_info("Dernière période connue: {last_period}")
 
-  full_data <- connect_to_database(
+  donnees <- connect_to_database(
     database,
     collection,
     last_batch,
@@ -77,14 +76,13 @@ prepare_for_export <- function(
     date_sup = last_period %m+% months(1),
     min_effectif = 10,
     fields = export_fields[!export_fields %in% c(
-      "connu", "score_diff", "score",
-      "apparait", "disparait"
+      "connu", "score_diff", "score"
       )]
     )
 
-  donnees <- donnees %>%
+  donnees <- pred_data %>%
     mutate(siret = as.character(siret)) %>%
-    left_join(full_data %>% mutate(siret = as.character(siret)),
+    left_join(donnees %>% mutate(siret = as.character(siret)),
       by =
         c("siret", "periode")
       ) %>%
@@ -106,6 +104,7 @@ prepare_for_export <- function(
     # if (is.emp)
     to_export <- donnees %>%
       dplyr::select(one_of(export_fields))
+    return(to_export)
 }
 
 
@@ -223,6 +222,7 @@ export_scores <- function(
   } else if (tolower(destination) == "json") {
     error("Export to json not implemented yet !")
   }
+  return()
 }
 
 #' Marks sirets from files as "known"
