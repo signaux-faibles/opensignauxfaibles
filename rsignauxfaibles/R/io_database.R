@@ -30,21 +30,45 @@ NULL
 #' @export
 #'
 #' @examples
-#' connect_to_database("test_signauxfaibles", "testing", "1812", date_inf = "2014-01-01", date_sup = "2019-01-01", type = "spark")
 connect_to_database <- function(
-                                database,
-                                collection,
-                                batch,
-                                siren = NULL,
-                                date_inf = NULL,
-                                date_sup = NULL,
-                                min_effectif = 10,
-                                fields = NULL,
-                                code_ape = NULL,
-                                type = "dataframe",
-                                subsample = NULL,
-                                .limit = NULL,
-                                verbose = TRUE) {
+  database,
+  collection,
+  batch,
+  siren = NULL,
+  date_inf = NULL,
+  date_sup = NULL,
+  min_effectif = 10,
+  fields = NULL,
+  code_ape = NULL,
+  type = "dataframe",
+  subsample = NULL,
+  .limit = NULL,
+  verbose = TRUE,
+  replace_missing = NULL
+  ) {
+
+  if (is.null(replace_missing)){
+    replace_missing <- list(
+      montant_part_patronale         = 0,
+      montant_part_ouvriere          = 0,
+      montant_echeancier             = 0,
+      ratio_dette                    = 0,
+      ratio_dette_moy12m             = 0,
+      montant_part_patronale_past_1  = 0,
+      montant_part_ouvriere_past_1   = 0,
+      montant_part_patronale_past_2  = 0,
+      montant_part_ouvriere_past_2   = 0,
+      montant_part_patronale_past_3  = 0,
+      montant_part_ouvriere_past_3   = 0,
+      montant_part_patronale_past_6  = 0,
+      montant_part_ouvriere_past_6   = 0,
+      montant_part_patronale_past_12 = 0,
+      montant_part_ouvriere_past_12  = 0,
+      apart_heures_consommees        = 0,
+      apart_heures_autorisees        = 0
+      )
+  }
+
   require(logger)
   if (verbose) {
     log_threshold(TRACE)
@@ -60,14 +84,14 @@ connect_to_database <- function(
     fields,
     code_ape,
     subsample
-  )
+    )
 
   TYPES <- c("dataframe", "spark")
 
   assertthat::assert_that(type %in% TYPES,
     msg = "connect_to_database:
     specification du type d'import/export non valide"
-  )
+    )
 
   if (type == TYPES[1]) {
     log_info("Connexion à la collection mongodb {collection} ...")
@@ -77,7 +101,7 @@ connect_to_database <- function(
       db = database,
       url = "mongodb://localhost:27017",
       verbose = verbose
-    )
+      )
     log_info(" Connexion effectuée avec succès.")
 
     # Import dataframe
@@ -88,16 +112,16 @@ connect_to_database <- function(
     log_info(" Import fini.")
 
     if (dim(donnees)[1] == 0) {
-      return(dplyr::data_frame(siret = character(0), periode = character(0)))
+      return(tibble::tibble(siret = character(0), periode = character(0)))
     }
     assertthat::assert_that(
       all(c("periode", "siret") %in% names(donnees))
-    )
+      )
 
     assertthat::assert_that(
       anyDuplicated(donnees %>% select(siret, periode)) == 0,
       msg = "La base importee contient des lignes identiques"
-    )
+      )
 
     table_wholesample <- donnees %>%
       arrange(periode) %>%
@@ -140,9 +164,17 @@ connect_to_database <- function(
       msg = paste("NullTypes found in imported spark frame: ",
         type_frame$name[type_frame$type == "NullType"],
         collapse = " :: "
+        )
       )
-    )
   }
+
+  # Champs par défaut lorsque absent.
+
+  if (any(names(replace_missing) %in% colnames(table_wholesample))){
+    log_info("Filling missing values with default values")
+  }
+  table_wholesample <- table_wholesample %>%
+    replace_na(replace_missing, fail_on_missing_col = FALSE)
 
   # Champs manquants
   champs_manquants <- fields[!fields %in% tbl_vars(table_wholesample)]
@@ -157,11 +189,12 @@ connect_to_database <- function(
     remplacement <- paste0(
       NA_variable,
       character(length(champs_manquants))
-    ) %>%
-      setNames(champs_manquants)
-    table_wholesample <- table_wholesample %>%
-      mutate_(.dots = remplacement)
+      ) %>%
+    setNames(champs_manquants)
+  table_wholesample <- table_wholesample %>%
+    mutate_(.dots = remplacement)
   }
+
 
   return(table_wholesample)
 }
@@ -179,14 +212,14 @@ connect_to_database <- function(
 #'
 #' @examples
 get_sirets_of_detected <- function(
-                                   database = "test_signauxfaibles",
-                                   collection = "Scores") {
+  database = "test_signauxfaibles",
+  collection = "Scores") {
   dbconnection <- mongolite::mongo(
     collection = collection,
     db = database,
     url = "mongodb://localhost:27017",
     verbose = FALSE
-  )
+    )
 
   res <- dbconnection$find(
     '{ "$or": [ { "alert": "Alerte seuil F1" },
@@ -201,23 +234,23 @@ get_sirets_of_detected <- function(
 
 #' @rdname connect_to_database
 factor_request <- function(
-                           batch,
-                           siren,
-                           date_inf,
-                           date_sup,
-                           min_effectif,
-                           fields,
-                           code_ape,
-                           subsample,
-                           .limit = NULL) {
+  batch,
+  siren,
+  date_inf,
+  date_sup,
+  min_effectif,
+  fields,
+  code_ape,
+  subsample,
+  .limit = NULL) {
   # Util functions
 
   make_query <- function(keyword, x) {
     if (any(x != "")) {
       return(paste0(
-        '{"$', keyword, '":{',
-        paste0(x[x != ""], collapse = ", "), "}}"
-      ))
+          '{"$', keyword, '":{',
+          paste0(x[x != ""], collapse = ", "), "}}"
+          ))
     } else {
       return("")
     }
@@ -241,7 +274,7 @@ factor_request <- function(
       match_siren <- c(
         match_siren,
         paste0('{"info.siren":"', siren[i], '"}')
-      )
+        )
     }
 
     match_siren <- paste0('"$or":[', paste(match_siren, collapse = ","), "]")
@@ -278,90 +311,90 @@ factor_request <- function(
         paste0('{"value.', ape_or_naf, '":
           {"$regex":"^', code_ape[i], '", "$options":"i"}
     }')
-      )
-    }
-    match_APE <- paste0('"$or":[', paste(match_APE, collapse = ","), "]")
-    # FIX ME: Requete nettement sous-optimale
-  }
-
-  # Filtrage effectif
-  if (is.null(min_effectif)) {
-    match_eff <- ""
-  } else {
-    match_eff <- paste0(
-      '"value.effectif":{"$gte":',
-      min_effectif, "}"
     )
   }
+  match_APE <- paste0('"$or":[', paste(match_APE, collapse = ","), "]")
+  # FIX ME: Requete nettement sous-optimale
+}
 
-  # Filtrage date
-  if (is.null(date_inf)) {
-    match_date_1 <- ""
-  } else {
-    match_date_1 <- paste0('"info.periode":{
+# Filtrage effectif
+if (is.null(min_effectif)) {
+  match_eff <- ""
+} else {
+  match_eff <- paste0(
+    '"value.effectif":{"$gte":',
+    min_effectif, "}"
+    )
+}
+
+# Filtrage date
+if (is.null(date_inf)) {
+  match_date_1 <- ""
+} else {
+  match_date_1 <- paste0('"info.periode":{
     "$gte": {"$date":"', date_inf, 'T00:00:00Z"}}')
-  }
+}
 
-  # Filtrage date
-  if (is.null(date_sup)) {
-    match_date_2 <- ""
-  } else {
-    match_date_2 <- paste0(
-      '"info.periode":{"$lt": {"$date":"',
-      date_sup,
-      'T00:00:00Z"}}'
+# Filtrage date
+if (is.null(date_sup)) {
+  match_date_2 <- ""
+} else {
+  match_date_2 <- paste0(
+    '"info.periode":{"$lt": {"$date":"',
+    date_sup,
+    'T00:00:00Z"}}'
     )
-  }
+}
 
-  match_req <- make_query(
-    "match",
-    c(
-      match_id,
-      match_siren,
-      match_date_1,
-      match_date_2,
-      match_APE,
-      match_eff
+match_req <- make_query(
+  "match",
+  c(
+    match_id,
+    match_siren,
+    match_date_1,
+    match_date_2,
+    match_APE,
+    match_eff
     )
   )
 
-  # Construction de la projection
+# Construction de la projection
 
-  if (is.null(fields)) {
-    projection_req <- ""
-  } else {
-    assertthat::validate_that( # does not return an error if not verified
-      all(c("periode", "siret") %in% fields),
-      msg = "Beware: siret and periode are not included in the request"
+if (is.null(fields)) {
+  projection_req <- ""
+} else {
+  assertthat::validate_that( # does not return an error if not verified
+    all(c("periode", "siret") %in% fields),
+    msg = "Beware: siret and periode are not included in the request"
     )
-    projection_req <- paste0('"', fields, '":1')
-    projection_req <- paste(projection_req, collapse = ",")
-    projection_req <- paste0('{"$project":{', projection_req, "}}")
-  }
+  projection_req <- paste0('"', fields, '":1')
+  projection_req <- paste(projection_req, collapse = ",")
+  projection_req <- paste0('{"$project":{', projection_req, "}}")
+}
 
-  # Remplacement de la racine
+# Remplacement de la racine
 
-  new_root <- "{\"$replaceRoot\" : {\"newRoot\": \"$value\"}}"
+new_root <- "{\"$replaceRoot\" : {\"newRoot\": \"$value\"}}"
 
-  reqs <- c(
-    limit_req,
-    match_req,
-    sample_req,
-    new_root,
-    projection_req
+reqs <- c(
+  limit_req,
+  match_req,
+  sample_req,
+  new_root,
+  projection_req
   )
 
-  requete <- paste(
-    reqs[reqs != ""],
-    collapse = ", "
+requete <- paste(
+  reqs[reqs != ""],
+  collapse = ", "
   )
-  requete <- paste0(
-    "[",
-    requete,
-    "]"
+requete <- paste0(
+  "[",
+  requete,
+  "]"
   )
 
-  return(requete)
+return(requete)
 }
 
 #' Wrapper pour se connecter à H2O et spark avec la bonne configuration
@@ -379,26 +412,26 @@ connect_to_h2o <- function() {
     port = 4444,
     min_mem_size = "5G",
     log_dir = rprojroot::find_rstudio_root_file("logs")
-  )
+    )
 }
 
 
 #' @rdname connect_to_h2o
 connect_to_spark <- function(database = NULL, collection = NULL) {
   config <- sparklyr::spark_config()
-  config$sparklyr.defaultPackages <- #lintignore
+  config$sparklyr.defaultPackages <- #nolint
     c("org.mongodb.spark:mongo-spark-connector_2.11:2.4.0")
   if (!is.null(database) && !is.null(collection)) {
-    config$spark.mongodb.input.uri <-
+    config$spark.mongodb.input.uri <- #nolint
       paste0("mongodb://127.0.0.1:27017/", database, ".", collection)
-    config$spark.mongodb.output.uri <-
+    config$spark.mongodb.output.uri <- #nolint
       paste0("mongodb://127.0.0.1:27017/", database, ".", collection)
   }
 
   sc <- sparklyr::spark_connect(master = "local[*]", config = config)
 
   if ("spark.mongodb.input.uri" %in% sc$config &&
-    config$spark.mongodb.input.uri != sc$config$spark.mongodb.input.uri) {
+    config$spark.mongodb.input.uri != sc$config$spark.mongodb.input.uri) { #nolint
     sparklyr::spark_disconnect_all()
     sc <- sparklyr::spark_connect(master = "local[*]", config = config)
   }
@@ -433,19 +466,19 @@ connect_to_spark <- function(database = NULL, collection = NULL) {
 #'
 #' @examples
 get_fields <- function(
-                       training,
-                       siren = 2,
-                       urssaf = 2,
-                       delai = 2,
-                       effectif = 2,
-                       note_preface = 2,
-                       diane = 2,
-                       bdf = 2,
-                       apart = 2,
-                       procol = 1,
-                       interim = 0,
-                       target_encode = 2,
-                       info = 0) {
+  training,
+  siren = 2,
+  urssaf = 2,
+  delai = 2,
+  effectif = 2,
+  note_preface = 2,
+  diane = 2,
+  bdf = 2,
+  apart = 2,
+  procol = 1,
+  interim = 0,
+  target_encode = 2,
+  info = 0) {
   # TODO change this into data-frame !
   fields <- c()
   if (siren >= 1 && !training) {
@@ -458,13 +491,13 @@ get_fields <- function(
       "code_ape_niveau2",
       "code_ape_niveau3",
       "code_naf"
-    )
+      )
   }
   if (siren >= 1) {
     fields <- c(
       fields,
       "age"
-    )
+      )
   }
 
   if (urssaf >= 1) {
@@ -478,7 +511,7 @@ get_fields <- function(
       "ratio_dette",
       "ratio_dette_moy12m",
       "cotisation_moy12m"
-    )
+      )
   }
   if (urssaf >= 2) {
     fields <- c(
@@ -493,7 +526,7 @@ get_fields <- function(
       "montant_part_ouvriere_past_6",
       "montant_part_patronale_past_12",
       "montant_part_ouvriere_past_12"
-    )
+      )
   }
 
   if (apart >= 1) {
@@ -501,7 +534,7 @@ get_fields <- function(
       fields,
       "apart_heures_consommees",
       "apart_heures_autorisees"
-    )
+      )
   }
 
   if (effectif >= 1) {
@@ -509,7 +542,7 @@ get_fields <- function(
       fields,
       "effectif",
       "effectif_entreprise"
-    )
+      )
   }
   if (effectif >= 2) {
     fields <- c(
@@ -518,7 +551,7 @@ get_fields <- function(
       "effectif_past_12",
       "effectif_past_18",
       "effectif_past_24"
-    )
+      )
   }
 
   if (note_preface >= 1) {
@@ -527,7 +560,7 @@ get_fields <- function(
       "note_preface",
       "note_preface_past_1",
       "note_preface_past_2"
-    )
+      )
   }
 
   if (diane >= 1) {
@@ -605,7 +638,7 @@ get_fields <- function(
       "participation_salaries",
       "impot_benefice",
       "benefice_ou_perte"
-    )
+      )
   }
 
   if (diane >= 2) {
@@ -757,7 +790,7 @@ get_fields <- function(
       "participation_salaries_past_2",
       "impot_benefice_past_2",
       "benefice_ou_perte_past_2"
-    )
+      )
   }
   if (bdf >= 1) {
     fields <- c(
@@ -768,7 +801,7 @@ get_fields <- function(
       "financier_court_terme",
       "frais_financier",
       "dette_fiscale"
-    )
+      )
   }
 
   if (bdf >= 2) {
@@ -788,14 +821,14 @@ get_fields <- function(
       "financier_court_terme_past_2",
       "frais_financier_past_2",
       "dette_fiscale_past_2"
-    )
+      )
   }
 
   if (procol >= 1) {
     fields <- c(
       fields,
       "etat_proc_collective"
-    )
+      )
   }
   if (procol >= 1 && !training) {
     fields <- c(
@@ -803,13 +836,13 @@ get_fields <- function(
       # ALTARES
       "outcome",
       "time_til_outcome"
-    )
+      )
   } else if (procol >= 2 && !training) {
     fields <- c(
       fields,
       "tag_outcome",
       "tag_failure"
-    )
+      )
   }
 
   if (interim >= 1) {
@@ -820,7 +853,7 @@ get_fields <- function(
       "interim_ratio_past_12",
       "interim_ratio_past_18",
       "interim_ratio_past_24"
-    )
+      )
   }
 
   if (target_encode >= 1 && training) {
@@ -828,7 +861,7 @@ get_fields <- function(
       fields,
       "TargetEncode_code_ape_niveau2",
       "TargetEncode_code_ape_niveau3"
-    )
+      )
   }
   if (info >= 1 && !training) {
     fields <- c(
@@ -838,7 +871,68 @@ get_fields <- function(
       "arrete_bilan_diane",
       "exercice_bdf",
       "exercice_diane"
-    )
+      )
   }
   return(fields)
+}
+
+#' Title
+#'
+#' @return
+#' @export
+#'
+#' @examples
+get_fields_training_light <- function(){
+  return( c(
+  "apart_heures_consommees",
+  "effectif_past_24",
+  "montant_part_ouvriere_past_12",
+  "montant_part_ouvriere_past_3",
+  "montant_part_ouvriere_past_2",
+  "montant_part_patronale_past_2",
+  "montant_part_ouvriere_past_1",
+  "montant_part_patronale_past_1",
+  "montant_part_patronale",
+  "ratio_dette",
+  "ratio_dette_moy12m",
+  "dette_fiscale_et_sociale_past_2",
+  "frais_de_RetD_past_2",
+  "independance_financiere_past_2",
+  "endettement_past_2",
+  "credit_client_past_2",
+  "capacite_autofinancement_past_2",
+  "exportation_past_2",
+  "productivite_capital_investi_past_2",
+  "rendement_capitaux_propres_past_2",
+  "rendement_ressources_durables_past_2",
+  "part_autofinancement_past_2",
+  "charge_personnel_past_2",
+  "frais_de_RetD_past_1",
+  "endettement_past_1",
+  "credit_client_past_1",
+  "capacite_autofinancement_past_1",
+  "exportation_past_1",
+  "rentabilite_economique_past_1",
+  "part_autofinancement_past_1",
+  "valeur_ajoutee_past_1",
+  "charge_personnel_past_1",
+  "effectif_consolide",
+  "frais_de_RetD",
+  "concours_bancaire_courant",
+  "endettement",
+  "autonomie_financiere",
+  "degre_immo_corporelle",
+  "rotation_stocks",
+  "credit_fournisseur",
+  "productivite_capital_investi",
+  "performance",
+  "benefice_ou_perte",
+  "taux_marge_past_2",
+  "concours_bancaire_courant_past_2",
+  "taux_marge_commerciale_past_2",
+  "taux_marge_commerciale_past_1",
+  "taux_marge_commerciale",
+  "TargetEncode_code_ape_niveau2",
+  "TargetEncode_code_ape_niveau3")
+  )
 }

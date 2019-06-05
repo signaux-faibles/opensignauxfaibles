@@ -33,7 +33,7 @@ connect_to_h2o()
 res <- full_light_gradient_boosting(
   database,
   collection,
-  actual_period,
+  periods,
   last_batch,
   min_effectif,
   retrain_model = retrain_model,
@@ -42,26 +42,26 @@ res <- full_light_gradient_boosting(
   )
 ```
 
-```{r}
-my_data <- as.data.frame(my_data)
-my_data <- my_data %>% mutate(
-  periode =  as.Date(structure(periode / 1000,
-                               class = c('POSIXct','POSIXt')))
-)
-```
-
-```{r}
-siret = "01234567891112"
-shapley_plot(c(siret), my_data, my_model, batch = last_batch)
-```
-
-```{r results="hide"}
-
-siret = "01234567891112"
-export_fiche_visite(
-  sirets = c(),
-  database,
-  last_batch,
-  with_urssaf = FALSE
-  )
-```
+#```{r}
+#my_data <- as.data.frame(my_data)
+#my_data <- my_data %>% mutate(
+#  periode =  as.Date(structure(periode / 1000,
+#                               class = c('POSIXct','POSIXt')))
+#)
+#```
+#
+#```{r}
+#siret = "01234567891112"
+#shapley_plot(c(siret), my_data, my_model, batch = last_batch)
+#```
+#
+#```{r results="hide"}
+#
+#siret = "01234567891112"
+#export_fiche_visite(
+#  sirets = c(),
+#  database,
+#  last_batch,
+#  with_urssaf = FALSE
+#  )
+#```

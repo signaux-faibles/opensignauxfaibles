@@ -71,8 +71,10 @@ test_procedure <- function(frame_to_test, prefix) {
       expect_equal(nrow(test %>% semi_join(validation, by = "siren")), 0)
   })
 
-  test_that(add_prefix("Les échantillons ne dépendent pas de l'ordre des données d'entrée
-          et restent identiques d'une fois sur l'autre"), {
+  test_that(add_prefix(
+    "Les échantillons ne dépendent pas de l'ordre des données d'entréeet
+    restent identiques d'une fois sur l'autre"
+  ), {
     folder <- rprojroot::find_rstudio_root_file("tests", ".known_outputs")
 
     if (!dir.exists(folder)) skip("known values only on local repository")
@@ -83,7 +85,9 @@ test_procedure <- function(frame_to_test, prefix) {
       )
   })
 
-  test_that(add_prefix("Chaque entreprise appartient au moins à un échantillon"), {
+  test_that(add_prefix(
+    "Chaque entreprise appartient au moins à un échantillon"
+  ), {
     expect_true(all(unique(frame_to_test$siret) %in% combined$siret))
   })
 }

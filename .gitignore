@@ -36,3 +36,4 @@ dbmongo/tools/fakeData/config.toml
 dbmongo/js/node_modules
 dbmongo/export/mongo_dump
 **/tags
+rsignauxfaibles_*.tar.gz

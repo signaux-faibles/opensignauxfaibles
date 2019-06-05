@@ -11,13 +11,14 @@
 #'
 #' @examples
 prepare_for_export <- function(
-                               donnees,
-                               collection,
-                               export_fields,
-                               database,
-                               last_batch,
-                               known_sirens_filenames = c("sirets_connus_pdl.csv", "sirets_connus_bfc.csv"),
-                               verbose = TRUE) {
+  donnees,
+  collection,
+  export_fields,
+  database,
+  last_batch,
+  known_sirens_filenames = c("sirets_connus_pdl.csv", "sirets_connus_bfc.csv"),
+  verbose = TRUE) {
+
   require(logger)
   if (verbose) {
     log_threshold(TRACE)
@@ -87,7 +88,7 @@ prepare_for_export <- function(
 #' @section Details of csv export:
 #' If destination is "csv", then a full csv export is operated.
 #'
-#' @section Details of mongodb export
+#' @section Details of mongodb export:
 #' If destination is "mongodb", then the scores are exported to mongodb
 #' \code(database) and \code(collection).  Input data \code(donnees) needs to
 #' have columns "siret", "periode" and "prob".
@@ -95,7 +96,8 @@ prepare_for_export <- function(
 #' Inserts object with fields "siret", "periode", "prob", "batch" and
 #' "timestamp" which gives the timestamp of insertion.
 #'
-#' @return @export
+#' @return
+#' @export
 #'
 #' @examples
 export_scores <- function(
@@ -196,7 +198,9 @@ export_scores <- function(
 mark_known_sirets <- function(df, names) {
   sirens <- c()
   for (name in names) {
-    sirets <- readLines(rprojroot::find_rstudio_root_file("..", "data-raw", name))
+    sirets <- readLines(
+      rprojroot::find_rstudio_root_file("..", "data-raw", name)
+    )
     sirens <- c(sirens, substr(sirets, 1, 9))
   }
   df <- df %>%
@@ -240,13 +244,6 @@ get_scores <- function(
     msg = "Collection name should be a length 1 string"
   )
   assertthat::assert_that(tolower(method) %in% c("first", "last"))
-  # if (method == "last"){
-  #   assertthat::assert_that(!is.null(batch),
-  #     msg =  "batch name to be considered as last should be specified for 'last' method")
-  # }
-  # assertthat::assert_that(is.null(batch) || ((is.character(batch) && length(batch) == 1)),
-  #   msg =  "Batch name should be a length 1 string"
-  #   )
 
   assertthat::assert_that(grepl("^[[:alnum:]_]+$", algo),
     msg = "Please use alphanumeric and underscore characters for algorithm name"
@@ -353,10 +350,5 @@ get_scores <- function(
 
   if (nrow(query) >= 1) result <- query
 
-  # query  <- result ## TODO change here
-
-  # if (query != ??){
-  #   result <- query
-  # }
   return(result)
 }

@@ -84,7 +84,7 @@ load_H2OFrame_list <- function(path, filename) {
   )
 
   # Convert dataframes to H2OFrames
-  res <- lapply(object, as.h2o)
+  res <- lapply(object, h2o::as.h2o)
 
   return(res)
 }
@@ -99,7 +99,7 @@ load_H2OFrame_list <- function(path, filename) {
 #' @return
 #' @examples
 load_H2OModel <- function(path, filename) {
-  object <- h2o.loadModel(file.path(path, filename))
+  object <- h2o::h2o.loadModel(file.path(path, filename))
 
   assertthat::assert_that(class(object) == "H2OBinomialModel",
     msg = paste("This function loads a H2OBinomialModel, not a", class(object))
