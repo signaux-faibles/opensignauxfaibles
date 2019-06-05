@@ -21,6 +21,7 @@ prepare_frame <- function(
                           te_map = NULL,
                           save_or_load_map = TRUE,
                           outcome = "outcome") {
+
   if ( (!is.null(te_map) && test_or_train == "train") ||
     (!is.null(te_map) && save_or_load_map == TRUE)) {
     error('te_map should not be specified if it is computed (test_or_train =
@@ -77,7 +78,7 @@ get_last_batch <- function(
   periods,
   fields,
   min_effectif,
-  rollback_months = 1) {
+  rollback_months) {
 
   current_data <- connect_to_database(
     database,

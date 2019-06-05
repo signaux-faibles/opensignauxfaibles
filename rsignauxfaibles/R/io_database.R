@@ -94,8 +94,9 @@ connect_to_database <- function(
     )
 
     assertthat::assert_that(
-      all(c("periode", "siret") %in% fields)
+      is.null(fields) || all(c("periode", "siret") %in% fields)
       )
+
   if (type == TYPES[1]) {
     log_info("Connexion à la collection mongodb {collection} ...")
 

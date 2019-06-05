@@ -8,7 +8,7 @@ siret_df <- data.frame(
     by = "month",
     length.out = 3
   ),
-  diff = 1
+  score_diff = 1
 )
 
 
@@ -34,7 +34,7 @@ dbconnection <- mongolite::mongo(
 # ------------------------------------------------------------------------------
 test_that("Test inputs for export_scores function to mongodb", {
   expect_error(export_scores(
-    donnees = cbind(siret_df, prob = scores_1),
+    donnees = cbind(siret_df, score = scores_1),
     batch = 123,
     destination = "mongodb",
     database = test_database,
@@ -42,7 +42,7 @@ test_that("Test inputs for export_scores function to mongodb", {
   ))
 
   expect_error(export_scores(
-    donnees = cbind(siret_df, prob = scores_1),
+    donnees = cbind(siret_df, score = scores_1),
     batch = "1234",
     destination = "mongodb",
     database = c(test_database, test_database),
@@ -63,7 +63,7 @@ test_that("Scores are well exported with export_scores function", {
   dbconnection$remove(query = "{}")
   expect_error(
     export_scores(
-      donnees = cbind(siret_df, prob = scores_1),
+      donnees = cbind(siret_df, score = scores_1),
       batch = "1901",
       database = test_database,
       collection = test_collection,
@@ -79,20 +79,20 @@ test_that("Scores are well exported with export_scores function", {
     dbconnection$find('{"siret":"1", "periode":"2019-01-01"}') %>%
       dplyr::select(-timestamp),
     structure(list(
-      siret = "1", periode = "2019-01-01", score = 0.265508663, diff = 1,
+      siret = "1", periode = "2019-01-01", score = 0.265508663, score_diff = 1,
       batch = "1901", algo = "algo"
     ), class = "data.frame", row.names = 1L)
   )
 
   export_scores(
-    donnees = cbind(siret_df, prob = scores_2),
+    donnees = cbind(siret_df, score = scores_2),
     batch = "1902",
     database = test_database,
     collection = test_collection,
     destination = "mongodb"
   )
   export_scores(
-    donnees = cbind(siret_df, prob = scores_3),
+    donnees = cbind(siret_df, score = scores_3),
     batch = "1903",
     database = test_database,
     collection = test_collection,
@@ -143,14 +143,14 @@ test_that("Get_scores works with 'historical' method", {
   timestamp <- Sys.time()
   Sys.sleep(1)
   export_scores(
-    donnees = cbind(siret_df, prob = scores_2),
+    donnees = cbind(siret_df, score = scores_2),
     batch = "1901",
     database = test_database,
     collection = test_collection,
     destination = "mongodb"
   )
   export_scores(
-    donnees = cbind(siret_df, prob = scores_3),
+    donnees = cbind(siret_df, score = scores_3),
     batch = "1903",
     database = test_database,
     collection = test_collection,

@@ -39,9 +39,6 @@ save <- function(task, ...){
 save.default <- function(task, ...){
   base::save(task, ...)
 }
-# predict <- function(task, ...){ ## Already S3 in stats
-#   UseMethod("predict", task)
-# }
 export <- function(task, ...){
   UseMethod("export", task)
 }
@@ -110,7 +107,8 @@ load_new_data.sf_task <- function(
   database = task[["database"]],
   collection = task[["collection"]],
   fields = get_fields(training = FALSE),
-  min_effectif = 10
+  min_effectif = 10,
+  rollback_months = 1
 ){
 
   require(logger)
@@ -127,7 +125,8 @@ load_new_data.sf_task <- function(
     last_batch = last_batch,
     periods = periods,
     fields = fields,
-    min_effectif = min_effectif
+    min_effectif = min_effectif,
+    rollback_months =  rollback_months
     )
 
   return(task)
@@ -218,7 +217,7 @@ prepare.sf_task <- function(
         test_or_train = test_or_train
         )
 
-      task[[name]]  <- out[["data"]]
+      task[[paste0("prepared_", name)]]  <- out[["data"]]
       if (name == "train_data"){
         task[["preparation_map"]]  <- out[["te_map"]]
       }
@@ -257,7 +256,7 @@ train.sf_task <- function(
   task[["features"]] <- fields
 
   model <- train_light_gradient_boosting(
-    h2o_train_data = task[["train_data"]],
+    h2o_train_data = task[["prepared_train_data"]],
     x_fields_model = fields,
     save_results = FALSE
     )
@@ -309,7 +308,22 @@ save.sf_task <- function(task, ...) {
   return(task)
 }
 
-predict.sf_task <- function(object, ...){
+#' Predict from a trained model
+#'
+#' Predict on some data.
+#' Data should be prepared.
+#'
+#' @param
+#'
+#' @return
+#' @export
+#'
+#' @examples
+predict.sf_task <- function(
+  object,
+  data_names = c("new_data", "train_data", "validation_data", "test_data")
+){
+
   task  <- object
   require(logger)
   if (attr(task, "verbose")){
@@ -318,42 +332,36 @@ predict.sf_task <- function(object, ...){
     log_threshold(WARN)
   }
 
-  assertthat::assert_that(all(c("model", "preparation_map") %in% names(task)),
-    msg = "Task should have a model and a preparation_map to predict on new
+  assertthat::assert_that(all(c("model") %in% names(task)),
+    msg = "Task should have a model to predict on new
     data")
 
-    log_info("Model is being applied on new_data")
+  predict_on_given_data <- function(data_name, task){
+
+    prepared_data_name <- paste0("prepared_", data_name)
+    if (!prepared_data_name %in% names(task)){
+      log_warning("{data_name} is missing or has not been prepared yet")
+      return(task)
+    }
+
+    log_info("Model is being applied on {prepared_data_name}")
+
     prediction <- predict_model(
       model = task[["model"]],
-      new_data = task[["new_data"]]
+      new_data = task[[prepared_data_name]]
       )
+    task[[data_name]] <- task[[data_name]] %>%
+      left_join(prediction, by = c("siret", "periode"))
+    return(task)
+  }
 
-    all_periods <- prediction %>%
-      arrange(periode) %>%
-      .$periode %>%
-      unique()
-    pred_data <- prediction %>%
-      group_by(siret) %>%
-      arrange(siret, periode) %>%
-      mutate(
-        last_prob = dplyr::lag(prob),
-        last_periode = dplyr::lag(periode),
-        next_periode = dplyr::lead(periode),
-        apparait = ifelse(periode == first(all_periods), NA,
-          ifelse(is.na(last_periode) |
-            last_periode != periode %m-% months(1), 1, 0)
-          ),
-        disparait = ifelse(periode == last(all_periods), NA,
-          ifelse(is.na(next_periode) |
-            next_periode != periode %m+% months(1), 1, 0)
-          )
-        ) %>%
-      ungroup() %>%
-      select(-c(last_periode, next_periode)) %>%
-      mutate(diff = prob - last_prob) %>%
-      filter(periode >= min(periods), periode <= max(periods))
+  for (name in data_names){
+    task  <- predict_on_given_data(name, task)
+  }
 
-    task[["prediction"]] <- pred_data
+
+
+    #task[["prediction"]] <- pred_data
     log_info("Prediction successfully done.")
     return(task)
 }
@@ -365,8 +373,8 @@ export.sf_task <- function(task, ...){
     "raison_sociale",
     "departement",
     "region",
-    "prob",
-    "diff",
+    "score",
+    "score_diff",
     "connu",
     "date_ccsf",
     "etat_proc_collective",
@@ -444,7 +452,9 @@ evaluate.sf_task <- function(task){
       )
 
   eval$set_predictions(
-    MLsegmentr::add_id(data.frame(prediction = as.numeric(as.vector(task[["prediction"]]$prob))))
+    MLsegmentr::add_id(
+      data.frame(prediction = as.numeric(as.vector(task[["prediction"]]$prob)))
+    )
   )
   eval$set_targets("outcome")
 

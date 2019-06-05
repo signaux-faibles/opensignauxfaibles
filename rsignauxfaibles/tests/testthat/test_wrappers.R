@@ -95,7 +95,7 @@ test_that("predict_model_works", {
 
   expect_true("data.frame" %in% class(actual))
   expect_equal(actual$periode[1], as.Date("2018-01-01"))
-  expect_true(all(c("prob", "predicted_outcome") %in% names(actual)))
+  expect_true(all(c("score", "predicted_outcome") %in% names(actual)))
 })
 
 
@@ -118,43 +118,45 @@ bar <- train_light_gradient_boosting(
   save_results = FALSE
 )
 
-test_that("predict_on_last_batch works", {
-  expect_error(
-    foo <- predict_on_last_batch(
-      model = bar,
-      database = test_database,
-      collection = test_collection,
-      te_map = res[["te_map"]],
-      last_batch = "1901_interim",
-      periods = as.Date("2019-01-01"),
-      min_effectif = 10,
-      fields = c(
-        "siret",
-        "periode",
-        "code_naf",
-        "code_ape_niveau2",
-        "code_ape_niveau3"
-      )
-    ),
-    NA
-  )
+# OBSOLETE
+# test_that("predict_on_last_batch works", {
+#   expect_error(
+#     foo <- predict_on_last_batch(
+#       model = bar,
+#       database = test_database,
+#       collection = test_collection,
+#       te_map = res[["te_map"]],
+#       last_batch = "1901_interim",
+#       periods = as.Date("2019-01-01"),
+#       min_effectif = 10,
+#       fields = c(
+#         "siret",
+#         "periode",
+#         "code_naf",
+#         "code_ape_niveau2",
+#         "code_ape_niveau3"
+#       )
+#     ),
+#     NA
+#   )
+#
+#   expect_true(all(c("siret", "periode", "score", "predicted_outcome") %in% names(foo)))
+# })
 
-  expect_true(all(c("prob", "last_prob", "diff") %in% names(foo)))
-})
 
-
-test_that("full_light_gradient_boosting works", {
-  expect_error(
-    full_light_gradient_boosting(
-      database = test_database,
-      collection = test_collection,
-      periods = as.Date("2019-01-01"),
-      last_batch = "1901_interim",
-      min_effectif = 10,
-      retrain_model = TRUE,
-      type = "dataframe",
-      verbose = FALSE
-    ),
-    NA
-  )
-})
+# OBSOLETE
+# test_that("full_light_gradient_boosting works", {
+#   expect_error(
+#     full_light_gradient_boosting(
+#       database = test_database,
+#       collection = test_collection,
+#       periods = as.Date("2019-01-01"),
+#       last_batch = "1901_interim",
+#       min_effectif = 10,
+#       retrain_model = TRUE,
+#       type = "dataframe",
+#       verbose = FALSE
+#     ),
+#     NA
+#   )
+# })
