@@ -17,7 +17,6 @@ devtools::load_all()
 database <- "test_signauxfaibles"
 collection <- "Features"
 actual_period <- as.Date("2019-03-01")
-periods <- actual_period
 last_batch <- "1905"
 min_effectif <- 10
 retrain_model <- TRUE
@@ -39,19 +38,24 @@ task <- load_hist_data(
   last_batch = "1905",
   subsample = 10000
 )
-
 ```
 
 ```{r}
-task <- hold_out(task, frac_train = 1)
-```
-
-```{r}
+task <- hold_out(task)
 task <- prepare(task, data_names = c("train_data"))
+task  <- train(task)
 ```
 
 ```{r}
-task  <- train(task)
+task <- load_new_data(
+  task = task,
+  last_batch = "1905",
+  periods = actual_period
+  )
+```
+```{r}
+task <- prepare(task, data_names = c("new_data"))
+task <- predict(task)
 ```
 
 ```{r}

@@ -93,6 +93,9 @@ connect_to_database <- function(
     specification du type d'import/export non valide"
     )
 
+    assertthat::assert_that(
+      all(c("periode", "siret") %in% fields)
+      )
   if (type == TYPES[1]) {
     log_info("Connexion à la collection mongodb {collection} ...")
 
