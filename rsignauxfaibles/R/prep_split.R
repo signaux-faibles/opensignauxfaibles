@@ -14,42 +14,10 @@
 #' @return Liste de trois vecteurs: \code{train}, \code{validation} and \code{test} avec les indices des échantillons
 #' @export
 #' @examples
-#'
 split_snapshot_rdm_month <- function(
   data_sample,
   frac_train,
   frac_val) {
-
-  if (data_sample %>% inherits("tbl_spark")) {
-
-    # split <- function(data_sample, split_vect){
-    #   browser()
-    #   data_sample <- data_sample %>%
-    #     sparklyr::sdf_bind_cols(split_vect)
-    #   data_sample <- spark_dataframe(data_sample) %>%
-    #     sparklyr::invoke("partitionBy", "ss") %>%
-    #     register()
-    # }
-    split <- function(data_sample, split_vect) {
-      data_sample <- data_sample %>%
-        sparklyr::sdf_bind_cols(split_vect)
-
-
-      res <- list()
-      categories <- pull(split_vect %>% distinct(), ss) %>%
-        sort()
-
-      for (i in categories) {
-        res[[i]] <- data_sample %>%
-          filter(ss == i) %>%
-          select(-ss)
-      }
-      return(res)
-    }
-  }
-
-
-
 
   assertthat::assert_that(
     frac_train > 0,
@@ -69,25 +37,22 @@ split_snapshot_rdm_month <- function(
   sirens <- data_sample %>%
     select(siren) %>%
     distinct()
-  if (sirens %>% inherits("tbl_spark")) {
-    sirens <- sirens %>%
-      mutate(ss = rand()) %>%
-      mutate(ss = ifelse(ss < frac_train, 1, ss)) %>%
-      mutate(ss = ifelse(ss < frac_train + frac_val, 2, ss)) %>%
-      mutate(ss = ifelse(ss < frac_train + frac_val + frac_test, 3, ss))
-  } else {
-    sirens <- sirens %>%
-      mutate(ss = sample(1:3,
+
+  sirens <- sirens %>%
+    mutate(ss = sample(1:3,
         size = nrow(sirens), replace = TRUE,
         prob = c(frac_train, frac_val, frac_test)
-      ))
-  }
+        )) %>%
+    mutate(ss = factor(ss, levels = c(1, 2, 3)))
 
   data_sample <- data_sample %>%
     left_join(y = sirens, by = "siren") %>%
     select(siret, periode, ss)
 
-  result <- setNames(split(data_sample %>% select(-ss), data_sample %>% select(ss)), c("train", "validation", "test"))
+  result <- setNames(
+    split(data_sample %>% select(-ss), data_sample %>% select(ss)),
+    c("train", "validation", "test")
+  )
 
   return(result)
 }

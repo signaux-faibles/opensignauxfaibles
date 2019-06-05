@@ -1,17 +1,22 @@
-sf_task <- function(verbose){
-  res <- data.frame()
+sf_task <- function(
+  verbose,
+  database,
+  collection
+){
+  res <- list(database = database, collection = collection)
   class(res) <- "sf_task"
   attr(res, "verbose") <- verbose
+  require(MLlogr)
+  attr(res, "MLLogger") <- MLLogger$new(database, "ml_logs")
   return(res)
 }
 
-
 # Generic functions
 load_hist_data <- function(task, ...){
-  UseMethod("load_data", task)
+  UseMethod("load_hist_data", task)
 }
 load_last_data <- function(task, ...){
-  UseMethod("load_data", task)
+  UseMethod("load_last_data", task)
 }
 hold_out <- function(task, ...){
   UseMethod("hold_out", task)
@@ -25,7 +30,7 @@ train <- function(task, ...){
 load <- function(task, ...){
   UseMethod("load", task)
 }
-load.default <- function(task,...){
+load.default <- function(task, ...){
   base::load(task, ...)
 }
 save <- function(task, ...){
@@ -40,6 +45,9 @@ predict <- function(task, ...){
 export <- function(task, ...){
   UseMethod("export", task)
 }
+evaluate <- function(task, ...){
+  UseMethod("evaluate", task)
+}
 log <- function(task, ...){
   UseMethod("log", task)
 }
@@ -52,8 +60,8 @@ explain <- function(task, ...){
 load_hist_data.sf_task <- function(
   task,
   last_batch,
-  database,
-  collection,
+  database = task[["database"]],
+  collection = task[["collection"]],
   subsample = 200000,
   fields = get_fields(training = FALSE),
   date_inf = as.Date("2015-01-01"),
@@ -76,17 +84,17 @@ load_hist_data.sf_task <- function(
     collection,
     last_batch,
     siren = NULL,
-    date_inf = training_date_inf,
-    date_sup = training_date_sup,
+    date_inf = date_inf,
+    date_sup = date_sup,
     min_effectif = min_effectif,
     fields = fields,
     code_ape = NULL,
-    type = type,
-    subsample = 200000,
+    type = "dataframe",
+    subsample = subsample,
     verbose = attr(task, "verbose")
     )
 
-  if (nrow(data_frame) > 1) {
+  if (nrow(hist_data) > 1) {
     log_info("Data has been loaded successfully")
   } else {
     log_warn("No data has been loaded, no data could be found")
@@ -136,6 +144,8 @@ hold_out.sf_task <- function(
     log_threshold(WARN)
   }
 
+
+
   log_info("Historical data is splitted into a train, validation and test
     frame")
 
@@ -143,18 +153,33 @@ hold_out.sf_task <- function(
       msg = "Please load historical data before holding out test data")
 
     if (frac_train == 1) {
-    task[["train_data"]] <- task[["hist_data"]]
-  } else {
-    res <- split_snapshot_rdm_month(
-      task[["hist_data"]],
-      frac_train,
-      frac_val
+      frac_val <- 0
+      task[["train_data"]] <- task[["hist_data"]]
+    } else {
+      res <- split_snapshot_rdm_month(
+        task[["hist_data"]],
+        frac_train,
+        frac_val
+        )
+      task[["train_data"]] <- task[["hist_data"]] %>%
+        semi_join(res[["train"]], by = c("siret", "periode"))
+      task[["validation_data"]] <- task[["hist_data"]] %>%
+        semi_join(res[["validation"]], by = c("siret", "periode"))
+      task[["test_data"]] <- task[["hist_data"]] %>%
+        semi_join(res[["test"]], by = c("siret", "periode"))
+    }
+
+    attr(task, "MLLogger")$set(
+      resampling_strategy = "holdout",
+      train_val_test_shares = c(
+        frac_train,
+        frac_val,
+        1 - frac_train - frac_val
+      ),
+      test_frame = task[["test_data"]]
       )
-    task[["train_data"]] <- my_data_frame %>% semi_join(res[["train"]])
-    task[["validation_data"]] <- my_data_frame %>% semi_join(res[["validation"]])
-    task[["test_data"]] <- my_data_frame %>% semi_join(res[["test"]])
-  }
-  return(task)
+
+    return(task)
 }
 
 prepare.sf_task <- function(
@@ -165,7 +190,7 @@ prepare.sf_task <- function(
     "test_data",
     "new_data"
     )
-){
+  ){
   require(logger)
   if (attr(task, "verbose")){
     log_threshold(TRACE)
@@ -175,18 +200,20 @@ prepare.sf_task <- function(
 
   aux_function <- function(task, name){
     if (name == "train_data"){
-      test_or_train = "train"
+      test_or_train <- "train"
     } else {
-      test_or_train = "test"
+      test_or_train <- "test"
       assertthat::assert_that("preparation_map" %in% names(task),
-        msg = 'No preparation map has been found. Have you loaded a task, or prepared the "train_data" first ?')
+        msg = 'No preparation map has been found. Have you loaded a task, or
+        prepared the "train_data" first ?')
     }
 
+    log_info("Preparing data for training and predicting")
     if (name %in% names(task)){
 
-      task[[name]] <-  prepare_frame(
+      out <-  prepare_frame(
         data_to_prepare = task[[name]],
-        sav_or_load_map = FALSE,
+        save_or_load_map = FALSE,
         test_or_train = test_or_train
         )
 
@@ -207,13 +234,16 @@ prepare.sf_task <- function(
     task  <- aux_function(task, name)
   }
 
+  attr(task, "MLLogger")$set(
+    preprocessing_strategy = "H2OFrame, Target encoding with H2O"
+    )
   return(task)
 }
 
 train.sf_task <- function(
   task,
   fields = get_fields(training = TRUE)
-){
+  ){
   require(logger)
   if (attr(task, "verbose")){
     log_threshold(TRACE)
@@ -221,15 +251,32 @@ train.sf_task <- function(
     log_threshold(WARN)
   }
 
-  log_info("Model is trained.")
+  log_info("Model is being trained.")
+
+  task[["features"]] <- fields
 
   model <- train_light_gradient_boosting(
-    h2o_train_data = train_data,
+    h2o_train_data = task[["train_data"]],
     x_fields_model = fields,
     save_results = FALSE
     )
 
   log_info("Model trained_successfully")
+  task[["model"]] <- model
+
+  attr(task, "MLLogger")$set(
+    model_name = "light gradient boosting",
+    model = "model",
+    model_features = fields,
+    model_parameters = list(
+      "learn_rate = 0.1",
+      "max_depth = 4",
+      "ntrees = 60",
+      "seed = 123"
+    ),
+    model_target = "18 mois, defaut et défaillance"
+    )
+  return(task)
 }
 
 load.sf_task <- function(task){
@@ -270,40 +317,43 @@ predict.sf_task <- function(task, ...){
   }
 
   assertthat::assert_that(all(c("model", "preparation_map") %in% names(task)),
-    msg = "Task should have a model and a preparation_map to predict on new data")
+    msg = "Task should have a model and a preparation_map to predict on new
+    data")
 
-  log_info("Model is being applied on new_data")
-  prediction <- predict_model(
-    model = task[["model"]],
-    new_data = task[["new_data"]]
-    )
+    log_info("Model is being applied on new_data")
+    prediction <- predict_model(
+      model = task[["model"]],
+      new_data = task[["new_data"]]
+      )
 
-  all_periods <- prediction %>%
-    arrange(periode) %>%
-    .$periode %>%
-    unique()
-  pred_data <- prediction %>%
-    group_by(siret) %>%
-    arrange(siret, periode) %>%
-    mutate(
-      last_prob = dplyr::lag(prob),
-      last_periode = dplyr::lag(periode),
-      next_periode = dplyr::lead(periode),
-      apparait = ifelse(periode == first(all_periods), NA,
-        ifelse(is.na(last_periode) | last_periode != periode %m-% months(1), 1, 0)
-        ),
-      disparait = ifelse(periode == last(all_periods), NA,
-        ifelse(is.na(next_periode) | next_periode != periode %m+% months(1), 1, 0)
-        )
-      ) %>%
-    ungroup() %>%
-    select(-c(last_periode, next_periode)) %>%
-    mutate(diff = prob - last_prob) %>%
-    filter(periode >= min(periods), periode <= max(periods))
+    all_periods <- prediction %>%
+      arrange(periode) %>%
+      .$periode %>%
+      unique()
+    pred_data <- prediction %>%
+      group_by(siret) %>%
+      arrange(siret, periode) %>%
+      mutate(
+        last_prob = dplyr::lag(prob),
+        last_periode = dplyr::lag(periode),
+        next_periode = dplyr::lead(periode),
+        apparait = ifelse(periode == first(all_periods), NA,
+          ifelse(is.na(last_periode) |
+            last_periode != periode %m-% months(1), 1, 0)
+          ),
+        disparait = ifelse(periode == last(all_periods), NA,
+          ifelse(is.na(next_periode) |
+            next_periode != periode %m+% months(1), 1, 0)
+          )
+        ) %>%
+      ungroup() %>%
+      select(-c(last_periode, next_periode)) %>%
+      mutate(diff = prob - last_prob) %>%
+      filter(periode >= min(periods), periode <= max(periods))
 
-  task[["prediction"]] <- pred_data
-  log_info("Prediction successfully done.")
-  return(task)
+    task[["prediction"]] <- pred_data
+    log_info("Prediction successfully done.")
+    return(task)
 }
 
 export.sf_task <- function(task, ...){
@@ -349,12 +399,9 @@ export.sf_task <- function(task, ...){
     "delai",
     "apparait",
     "disparait"
-  )
+    )
 
-  # TODO compute F-scores !!
   F_scores <- c(F1 = 0.31, F2 = 0.13)
-  # Export
-  # export(res, batch = last_batch, database = "test_signauxfaibles", destination = "mongodb")
 
 
   if (!is.null(export_type) && export_type != "none") {
@@ -367,18 +414,44 @@ export.sf_task <- function(task, ...){
         database = database,
         collection = collection,
         last_batch = last_batch
-      )
+        )
     log_info("Data is exported to {paste(export_type, collapse = ' and ')}")
     purrr::map(
       .x = export_type, function(x, ...) export(destination = x, ...),
       donnees = res,
       batch = last_batch,
       F_scores = F_scores
-    )
+      )
   }
   return(task)
 }
-log.sf_task <- function(task, ...){
+
+evaluate.sf_task <- function(task){
+
+  attr(task, "MLLogger")$set(
+    model_performance = "Untested"
+    )
+
+  return(task)
+  ## Log model performance.
 }
+
+log.sf_task <- function(
+  task,
+  experiment_aim,
+  experiment_description,
+  database = "test_signaux_faibles",
+  collection = "ml_logs"
+  ){
+  require("MLlogr")
+
+  attr(task, "MLLogger")$set(
+    experiment_aim = experiment_aim,
+    experiment_description = experiment_description
+    )
+  attr(task, "MLLogger")$log()
+}
+
 explain.sf_task <- function(task, ...){
+  # Later
 }

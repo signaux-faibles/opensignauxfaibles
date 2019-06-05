@@ -163,7 +163,7 @@ full_light_gradient_boosting <- function(
       )
     log_info("Data is exported to {paste(export_type, collapse = ' and ')}")
     purrr::map(
-      .x = export_type, function(x, ...) export(destination = x, ...),
+      .x = export_type, function(x, ...) export_scores(destination = x, ...),
       donnees = res,
       batch = last_batch,
       F_scores = F_scores

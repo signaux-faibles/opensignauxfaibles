@@ -98,7 +98,7 @@ prepare_for_export <- function(
 #' @return @export
 #'
 #' @examples
-export <- function(
+export_scores <- function(
                    donnees,
                    batch,
                    algo = "algo",

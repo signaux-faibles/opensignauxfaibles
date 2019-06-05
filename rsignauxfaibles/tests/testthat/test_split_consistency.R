@@ -17,9 +17,6 @@ my_test_frame <- expand.grid(
   tibble::as.tibble()
 
 
-sc <- sparklyr::spark_connect(master = "local[*]")
-my_test_frame_spark <- copy_to(sc, my_test_frame, overwrite = TRUE)
-
 test_procedure <- function(frame_to_test, prefix) {
   res <- split_snapshot_rdm_month(
     frame_to_test,
@@ -49,7 +46,6 @@ test_procedure <- function(frame_to_test, prefix) {
 
   test_that(add_prefix("Les échantillons ont les bonnes proportions"), {
     expect_ratio <- function(sample, total, frac) {
-      # sparklyr compatible function
       n_distinct <- function(myframe) {
         myframe %>%
           distinct() %>%
@@ -70,15 +66,9 @@ test_procedure <- function(frame_to_test, prefix) {
   })
 
   test_that(add_prefix("Il n'y a pas de fuite de données entre échantillons"), {
-    if (train %>% inherits("tbl_spark")) {
-      expect_equal(sdf_nrow(train %>% semi_join(validation, by = "siren")), 0)
-      expect_equal(sdf_nrow(train %>% semi_join(test, by = "siren")), 0)
-      expect_equal(sdf_nrow(test %>% semi_join(validation, by = "siren")), 0)
-    } else {
       expect_equal(nrow(train %>% semi_join(validation, by = "siren")), 0)
       expect_equal(nrow(train %>% semi_join(test, by = "siren")), 0)
       expect_equal(nrow(test %>% semi_join(validation, by = "siren")), 0)
-    }
   })
 
   test_that(add_prefix("Les échantillons ne dépendent pas de l'ordre des données d'entrée
@@ -87,17 +77,10 @@ test_procedure <- function(frame_to_test, prefix) {
 
     if (!dir.exists(folder)) skip("known values only on local repository")
 
-    if (frame_to_test %>% inherits("tbl_spark")) {
-      expect_known_output(frame_to_test %>% mutate(.aux = rand()) %>% arrange(.aux) %>% select(-.aux),
-        file.path(folder, add_prefix("test_split")),
-        update = TRUE
-      )
-    } else {
       expect_known_output(sample_n(frame_to_test, size = nrow(frame_to_test), replace = FALSE),
         file.path(folder, add_prefix("test_split")),
         update = TRUE
       )
-    }
   })
 
   test_that(add_prefix("Chaque entreprise appartient au moins à un échantillon"), {
@@ -106,4 +89,3 @@ test_procedure <- function(frame_to_test, prefix) {
 }
 
 test_procedure(my_test_frame, "R_dataframe")
-test_procedure(my_test_frame_spark, "spark_dataframe")

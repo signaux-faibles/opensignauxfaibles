@@ -32,8 +32,8 @@ dbconnection <- mongolite::mongo(
 # ------------------------------------------------------------------------------
 # -------- Export to mongodb ---------------------------------------------------
 # ------------------------------------------------------------------------------
-test_that("Test inputs for export function to mongodb", {
-  expect_error(export(
+test_that("Test inputs for export_scores function to mongodb", {
+  expect_error(export_scores(
     donnees = cbind(siret_df, prob = scores_1),
     batch = 123,
     destination = "mongodb",
@@ -41,7 +41,7 @@ test_that("Test inputs for export function to mongodb", {
     collection = test_collection
   ))
 
-  expect_error(export(
+  expect_error(export_scores(
     donnees = cbind(siret_df, prob = scores_1),
     batch = "1234",
     destination = "mongodb",
@@ -50,7 +50,7 @@ test_that("Test inputs for export function to mongodb", {
   ))
 
   # Wrong dataframe input columns
-  expect_error(export(
+  expect_error(export_scores(
     donnees = data.frame(),
     batch = "1234",
     destination = "mongodb",
@@ -59,10 +59,10 @@ test_that("Test inputs for export function to mongodb", {
   ))
 })
 
-test_that("Scores are well exported with export function", {
+test_that("Scores are well exported with export_scores function", {
   dbconnection$remove(query = "{}")
   expect_error(
-    export(
+    export_scores(
       donnees = cbind(siret_df, prob = scores_1),
       batch = "1901",
       database = test_database,
@@ -84,14 +84,14 @@ test_that("Scores are well exported with export function", {
     ), class = "data.frame", row.names = 1L)
   )
 
-  export(
+  export_scores(
     donnees = cbind(siret_df, prob = scores_2),
     batch = "1902",
     database = test_database,
     collection = test_collection,
     destination = "mongodb"
   )
-  export(
+  export_scores(
     donnees = cbind(siret_df, prob = scores_3),
     batch = "1903",
     database = test_database,
@@ -142,14 +142,14 @@ test_that("Input checking for get_scores", {
 test_that("Get_scores works with 'historical' method", {
   timestamp <- Sys.time()
   Sys.sleep(1)
-  export(
+  export_scores(
     donnees = cbind(siret_df, prob = scores_2),
     batch = "1901",
     database = test_database,
     collection = test_collection,
     destination = "mongodb"
   )
-  export(
+  export_scores(
     donnees = cbind(siret_df, prob = scores_3),
     batch = "1903",
     database = test_database,

@@ -29,5 +29,5 @@ Depends:
     h2o
 Suggests: 
     ggplot2,
-    testthat
+    testthat (>= 2.1.0)
 RoxygenNote: 6.1.1

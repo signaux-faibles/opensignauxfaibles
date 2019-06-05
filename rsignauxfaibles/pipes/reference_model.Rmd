@@ -1,0 +1,101 @@
+---
+title: "Light gradient boosting pipe reference model"
+author: "Pierre Camilleri"
+date: "3 juin 2019"
+output: html_document
+---
+
+## Imports
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+h2o::h2o.no_progress()
+devtools::load_all()
+```
+
+## Script parameters
+```{r}
+database <- "test_signauxfaibles"
+collection <- "Features"
+actual_period <- as.Date("2019-03-01")
+periods <- actual_period
+last_batch <- "1905"
+min_effectif <- 10
+retrain_model <- TRUE
+type <- "dataframe"
+export_type <- c("csv", "mongodb")
+```
+
+```{r}
+connect_to_h2o()
+```
+
+```{r}
+task <- sf_task(verbose = TRUE, database, collection)
+```
+
+```{r}
+task <- load_hist_data(
+  task = task,
+  last_batch = "1905",
+  subsample = 10000
+)
+
+```
+
+```{r}
+task <- hold_out(task, frac_train = 1)
+```
+
+```{r}
+task <- prepare(task, data_names = c("train_data"))
+```
+
+```{r}
+task  <- train(task)
+```
+
+```{r}
+task <- evaluate(task)
+task <- log(
+  task,
+  experiment_aim = "Test",
+  experiment_description = "Test the logging facility"
+)
+```
+
+```{r}
+res <- full_light_gradient_boosting(
+  database,
+  collection,
+  actual_period,
+  last_batch,
+  min_effectif,
+  retrain_model = retrain_model,
+  type = type,
+  export_type = export_type
+  )
+```
+
+```{r}
+my_data <- as.data.frame(my_data)
+my_data <- my_data %>% mutate(
+  periode =  as.Date(structure(periode / 1000,
+                               class = c('POSIXct','POSIXt')))
+)
+```
+
+```{r}
+siret = "01234567891112"
+shapley_plot(c(siret), my_data, my_model, batch = last_batch)
+```
+
+```{r results="hide"}
+
+siret = "01234567891112"
+export_fiche_visite(
+  sirets = c(),
+  database,
+  last_batch,
+  with_urssaf = FALSE
+  )
+```
