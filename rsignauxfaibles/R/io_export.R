@@ -25,6 +25,45 @@ prepare_for_export <- function(
   } else {
     log_threshold(WARN)
   }
+
+  prediction <- donnees %>%
+    select(siret, periode, score)
+
+  all_periods <- prediction %>%
+    arrange(periode) %>%
+    .$periode %>%
+    unique()
+
+  if (length(all_periods) < 2) {
+    log_warning(
+      "Less than two periods do not allow to compute score variations,
+      or to monitor company appearing since last period. You can add more periods
+      with the rollback_months parameter from load_new_data function"
+    )
+  }
+
+  # Compute additional indicators about progression
+  pred_data <- prediction %>%
+    group_by(siret) %>%
+    arrange(siret, periode) %>%
+    mutate(
+      last_score = dplyr::lag(score),
+      last_periode = dplyr::lag(periode),
+      next_periode = dplyr::lead(periode),
+      apparait = ifelse(periode == first(all_periods), NA,
+        ifelse(is.na(last_periode) |
+          last_periode != periode %m-% months(1), 1, 0)
+        ),
+      disparait = ifelse(periode == last(all_periods), NA,
+        ifelse(is.na(next_periode) |
+          next_periode != periode %m+% months(1), 1, 0)
+        )
+      ) %>%
+    ungroup() %>%
+    select(-c(last_periode, next_periode)) %>%
+    mutate(score_diff = score - last_score) %>%
+    filter(periode >= min(periods), periode <= max(periods))
+
   first_period <- min(donnees$periode, na.rm = TRUE)
   last_period <- max(donnees$periode, na.rm = TRUE)
   log_info("Préparation à l'export ... ")
@@ -38,19 +77,19 @@ prepare_for_export <- function(
     date_sup = last_period %m+% months(1),
     min_effectif = 10,
     fields = export_fields[!export_fields %in% c(
-      "connu", "diff", "prob",
+      "connu", "score_diff", "score",
       "apparait", "disparait"
-    )]
-  )
+      )]
+    )
 
   donnees <- donnees %>%
     mutate(siret = as.character(siret)) %>%
     left_join(full_data %>% mutate(siret = as.character(siret)),
       by =
         c("siret", "periode")
-    ) %>%
+      ) %>%
     dplyr::mutate(CCSF = date_ccsf) %>%
-    dplyr::arrange(dplyr::desc(prob), siret, dplyr::desc(periode))
+    dplyr::arrange(dplyr::desc(score), siret, dplyr::desc(periode))
 
   # Report des dernières infos financieres connues
 
@@ -61,12 +100,12 @@ prepare_for_export <- function(
   all_names <- names(donnees)
   log_info("Les variables suivantes sont absentes du dataframe:
     {export_fields[!(export_fields %in% all_names)]}")
-  export_fields <- export_fields[export_fields %in% all_names]
+    export_fields <- export_fields[export_fields %in% all_names]
 
 
-  # if (is.emp)
-  to_export <- donnees %>%
-    dplyr::select(one_of(export_fields))
+    # if (is.emp)
+    to_export <- donnees %>%
+      dplyr::select(one_of(export_fields))
 }
 
 
@@ -91,9 +130,9 @@ prepare_for_export <- function(
 #' @section Details of mongodb export:
 #' If destination is "mongodb", then the scores are exported to mongodb
 #' \code(database) and \code(collection).  Input data \code(donnees) needs to
-#' have columns "siret", "periode" and "prob".
+#' have columns "siret", "periode" and "score".
 #'
-#' Inserts object with fields "siret", "periode", "prob", "batch" and
+#' Inserts object with fields "siret", "periode", "score", "batch" and
 #' "timestamp" which gives the timestamp of insertion.
 #'
 #' @return
@@ -101,34 +140,34 @@ prepare_for_export <- function(
 #'
 #' @examples
 export_scores <- function(
-                   donnees,
-                   batch,
-                   algo = "algo",
-                   database = "test_signauxfaibles",
-                   collection = "Scores",
-                   destination = "csv",
-                   relative_path = file.path("..", "output"),
-                   F_scores = NULL) {
+  donnees,
+  batch,
+  algo = "algo",
+  database = "test_signauxfaibles",
+  collection = "Scores",
+  destination = "csv",
+  relative_path = file.path("..", "output"),
+  F_scores = NULL) {
   assertthat::assert_that(tolower(destination) %in% c("csv", "mongodb", "json"),
     msg = "Wrong export destination argument.
     Possible destinations are 'csv', 'mongodb' or 'json'"
-  )
+    )
 
 
 
   assertthat::assert_that(is.character(batch) && length(batch) == 1,
     msg = "Batch shoud be a length 1 character vector"
-  )
+    )
   assertthat::assert_that(is.character(database) && length(database) == 1,
     msg = "Database shoud be a length 1 character vector"
-  )
+    )
   assertthat::assert_that(is.character(collection) && length(collection) == 1,
     msg = "Collection shoud be a length 1 character vector"
-  )
+    )
 
   assertthat::assert_that(grepl("^[[:alnum:]_]+$", algo),
     msg = "Please use alphanumeric and underscore characters for algorithm name"
-  )
+    )
 
   if (tolower(destination) == "csv") {
     fullpath <- name_file(
@@ -136,7 +175,7 @@ export_scores <- function(
       file_detail = paste0("detection", batch),
       file_extension = "csv",
       full_name = TRUE
-    )
+      )
 
     write.table(donnees,
       row.names = F,
@@ -145,32 +184,32 @@ export_scores <- function(
       file = fullpath,
       quote = T,
       append = F
-    )
+      )
   } else if (tolower(destination) == "mongodb") {
     dbconnection <- mongolite::mongo(
       collection = collection,
       db = database,
       verbose = TRUE,
       url = "mongodb://localhost:27017"
-    )
+      )
 
-    compulsory_columns <- c("siret", "periode", "prob", "diff")
+    compulsory_columns <- c("siret", "periode", "score", "score_diff")
 
     assertthat::assert_that(all(compulsory_columns %in% names(donnees)),
       msg = paste(
         paste0(compulsory_columns, collapse = ", "),
         "are compulsary column names to export the scores to mongodb"
+        )
       )
-    )
 
     donnees_export <- donnees %>%
-      dplyr::select(siret, periode, prob, diff) %>%
+      dplyr::select(siret, periode, score, score_diff) %>%
       dplyr::mutate(
         batch = batch,
         timestamp = Sys.time(),
         algo = algo
-      ) %>%
-      dplyr::rename(score = prob)
+        ) %>%
+      dplyr::rename(score = score)
 
     if (!is.null(F_scores)) {
       assertthat::assert_that(length(F_scores) == 2)
@@ -221,7 +260,7 @@ mark_known_sirets <- function(df, names) {
 #' If method is "first", then the last score available for the first batch
 #' scoring this period.
 #'
-#' @return Returns a dataframe with columns "siret", "periode", "prob"
+#' @return Returns a dataframe with columns "siret", "periode", "score"
 #' (failure probability), "batch" (batch of the model used), "algo" (name of
 #' the algorithm)
 #'
@@ -259,7 +298,7 @@ get_scores <- function(
   result <- data.frame(
     siret = character(),
     periode = as.Date(character()),
-    prob = double(),
+    score = double(),
     batch = character()
   )
 
