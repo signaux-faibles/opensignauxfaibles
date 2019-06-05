@@ -71,13 +71,14 @@ prepare_frame <- function(
 #'
 #' @examples
 get_last_batch <- function(
-                           database,
-                           collection,
-                           last_batch,
-                           periods,
-                           fields,
-                           min_effectif,
-                           rollback_months = 1) {
+  database,
+  collection,
+  last_batch,
+  periods,
+  fields,
+  min_effectif,
+  rollback_months = 1) {
+
   current_data <- connect_to_database(
     database,
     collection,

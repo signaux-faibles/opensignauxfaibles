@@ -15,8 +15,8 @@ sf_task <- function(
 load_hist_data <- function(task, ...){
   UseMethod("load_hist_data", task)
 }
-load_last_data <- function(task, ...){
-  UseMethod("load_last_data", task)
+load_new_data <- function(task, ...){
+  UseMethod("load_new_data", task)
 }
 hold_out <- function(task, ...){
   UseMethod("hold_out", task)
@@ -39,9 +39,9 @@ save <- function(task, ...){
 save.default <- function(task, ...){
   base::save(task, ...)
 }
-predict <- function(task, ...){
-  UseMethod("predict", task)
-}
+# predict <- function(task, ...){ ## Already S3 in stats
+#   UseMethod("predict", task)
+# }
 export <- function(task, ...){
   UseMethod("export", task)
 }
@@ -103,12 +103,13 @@ load_hist_data.sf_task <- function(
   return(task)
 }
 
-load_last_data.sf_task <- function(
-  database,
-  collection,
+load_new_data.sf_task <- function(
+  task,
   last_batch,
   periods,
-  fields = get_fields(training = TRUE),
+  database = task[["database"]],
+  collection = task[["collection"]],
+  fields = get_fields(training = FALSE),
   min_effectif = 10
 ){
 
@@ -308,7 +309,8 @@ save.sf_task <- function(task, ...) {
   return(task)
 }
 
-predict.sf_task <- function(task, ...){
+predict.sf_task <- function(object, ...){
+  task  <- object
   require(logger)
   if (attr(task, "verbose")){
     log_threshold(TRACE)
@@ -428,13 +430,38 @@ export.sf_task <- function(task, ...){
 
 evaluate.sf_task <- function(task){
 
+  require(MLsegmentr)
+  eval <- Assesser$new(
+    task[["new_data"]] %>%
+      as_tibble() %>%
+      filter(periode == max(periode)) %>%
+      mutate(outcome = sample(
+        c(TRUE, FALSE),
+        length(outcome),
+        replace = TRUE
+      )) %>%
+      mutate(prediction = as.numeric(as.vector(task[["prediction"]]$prob)))
+      )
+
+  eval$set_predictions(
+    MLsegmentr::add_id(data.frame(prediction = as.numeric(as.vector(task[["prediction"]]$prob))))
+  )
+  eval$set_targets("outcome")
+
+  eval$evaluation_funs <- eval_precision_recall()
+
+  perf <- eval$assess_model()
+
   attr(task, "MLLogger")$set(
-    model_performance = "Untested"
+    model_performance = perf %>%
+      select(evaluation_name, evaluation) %>%
+      filter(evaluation_name != "prcurve")
     )
 
   return(task)
   ## Log model performance.
 }
+
 
 log.sf_task <- function(
   task,
