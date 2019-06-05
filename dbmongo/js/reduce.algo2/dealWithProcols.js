@@ -1,4 +1,4 @@
-function deal_with_procols(data_source, altar_or_procol, output_indexed){
+function dealWithProcols(data_source, altar_or_procol, output_indexed){
   var codes  =  Object.keys(data_source).reduce((events,hash) => {
     var the_event = data_source[hash]
 
@@ -25,7 +25,7 @@ function deal_with_procols(data_source, altar_or_procol, output_indexed){
           output_indexed[time].etat_proc_collective = event.etat
           output_indexed[time].date_proc_collective = event.date_proc_col
           if (event.etat != "in_bonis")
-            output_indexed[time].tag_failure = true 
+            output_indexed[time].tag_failure = true
         }
       })
     }
