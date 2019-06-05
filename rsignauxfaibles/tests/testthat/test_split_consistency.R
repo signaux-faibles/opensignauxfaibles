@@ -1,7 +1,5 @@
 context("Check the test/train split function")
 
-# Tester à chaque fois pour un frame spark et pour un dataframe
-
 my_test_frame <- expand.grid(
   siret = unlist(tidyr::unite(expand.grid(
     siren = 100000001:100000500,
@@ -14,7 +12,7 @@ my_test_frame <- expand.grid(
   stringsAsFactors = FALSE
 ) %>%
   dplyr::mutate(siren = substr(siret, 1, 9)) %>%
-  tibble::as.tibble()
+  tibble::as_tibble()
 
 
 test_procedure <- function(frame_to_test, prefix) {
