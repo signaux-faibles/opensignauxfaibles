@@ -2,6 +2,7 @@
 #' @importFrom lubridate %m+% %m-%
 NULL
 
+
 #' Connexion à la base de donnée
 #'
 #' \code{connect_to_database} permet de requêter des données mongoDB pour en
@@ -25,8 +26,8 @@ NULL
 #' @param subsample Randomly samples company/period pairs. If negative, keeps all objects.
 #' @param limit Number of entries to take into account. For test purposes mainly.
 #'
-#' @return Renvoie un dataframe ou un spark dataframe selon la valeur de
-#'   \code{type}
+#' @return Renvoie un dataframe ou un spark dataframe selon la valeur de \code{type}
+#'
 #' @export
 #'
 #' @examples
@@ -209,7 +210,7 @@ connect_to_database <- function(
 #' - Possibility to filter by batch, algo, periods
 #' - custom threshold (F1, F2, other)
 #'
-#' @param
+#' @param database
 #'
 #' @return vector of unique sirets
 #' @export

@@ -12,7 +12,7 @@
 #' @export
 #'
 #' @examples
-prepare_for_export <- function(
+format_for_export <- function(
   donnees,
   collection,
   export_fields,
@@ -60,7 +60,7 @@ prepare_for_export <- function(
 
   if (length(all_periods) >= 2){
     pred_data <- pred_data %>%
-      filter(periode > min(all_periods), periode <= max(periods))
+      filter(periode > min(all_periods), periode <= max(all_periods))
   }
 
   first_period <- min(all_periods)
@@ -109,6 +109,151 @@ prepare_for_export <- function(
 
 
 
+#' Export des scores dans une collection mongodb
+#'
+#' Exporte les scores vers une collection mongodb à partir des données formattées par la fonction
+#' \code{\link{format_for_export}}.
+#'
+#'
+#' @param formatted_data `data.frame()` \cr Données avec les champs "siret",
+#'   "periode", "score" et "score_diff". C'est le cas des données formatées par
+#'   \code{\link{format_for_export}}.
+#' @param algo `character(1)` \cr Nom de l'algo qui figurera dans les objets
+#'   exportés
+#' @param batch `character(1)` \cr Nom du batch qui figurera dans les objets
+#'   exportés
+#' @param f_scores `character(2)` \cr Vecteur de scores F1 et F2. Doit être
+#'   nommé avec comme noms "F1" et "F2"
+#' @param database `character(1)` \cr Nom de la base de données vers laquelle
+#'   param exporter.
+#' @param collection `character(1)' \cr Nom de la collection vers laquelle
+#'   exporter.
+#'
+#' @return Retourne TRUE. \cr Les objets insérés dans la base de données ont les
+#'   champs:
+#'   * "_id" (ObjectId générés),
+#'   * "alert", qui peut prendre les valeurs _Alerte seuil F1_, _Alerte seuil F2_ et _Pas d'alerte_,
+#'   * "algo" et "batch" tel qu'entrés en paramètres,
+#'   * "siret", "periode", "score" et "score_diff" tel qu'extraits de la table \code{formatted_data},
+#'   * "timestamp" qui donne la date et l'heure.
+#'
+#' @export
+#'
+#' @examples
+export_scores_to_mongodb <- function(
+  formatted_data,
+  algo,
+  batch,
+  f_scores,
+  database,
+  collection
+  ){
+
+  exported_columns <- c("siret", "periode", "score", "score_diff")
+  assertthat::assert_that(
+    all(exported_columns %in% names(formatted_data)),
+    msg = paste(
+      paste0(exported_columns, collapse = ", "),
+      "are compulsary column names to export the scores to mongodb"
+      )
+    )
+  assertthat::assert_that(is.character(batch) && length(batch) == 1,
+    msg = "Batch shoud be a length 1 character vector"
+    )
+  assertthat::assert_that(is.character(database) && length(database) == 1,
+    msg = "Database shoud be a length 1 character vector"
+    )
+  assertthat::assert_that(is.character(collection) && length(collection) == 1,
+    msg = "Collection shoud be a length 1 character vector"
+    )
+
+  assertthat::assert_that(length(f_scores) == 2)
+  assertthat::assert_that(all(c("F1", "F2") %in% names(f_scores)))
+
+  dbconnection <- mongolite::mongo(
+    collection = collection,
+    db = database,
+    verbose = FALSE,
+    # TODO: à lire du fichier de config
+    url = "mongodb://localhost:27017"
+    )
+
+  data_to_export <- formatted_data %>%
+    dplyr::select(dplyr::one_of(exported_columns)) %>%
+    dplyr::mutate(
+      algo = algo,
+      batch = batch,
+      timestamp = Sys.time()
+      )
+  data_to_export <- data_to_export %>%
+    mutate(alert = alert_levels(score, f_scores["F1"], f_scores["F2"]))
+
+  dbconnection$insert(data_to_export)
+
+  return(TRUE)
+}
+
+#' Export des scores dans un tableau csv
+#'
+#' Exporte les scores vers un tableau csv à partir des données formattées par la fonction
+#' \code{\link{format_for_export}}.
+#'
+#' @param formatted_data `data.frame()` \cr Données à exporter. Typiquement,
+#'   le data.frame retourné par la fonction \code{\link{format_for_export}}.
+#' @param algo `character(1)` \cr Nom de l'algo qui figurera dans les objets
+#'   exportés
+#' @param batch `character(1)` \cr Nom du batch qui figurera dans les objets
+#'   exportés
+#' @param relative_path `character(1)` \cr Chemin relatif du dossier dans lequel effectuer
+#'   l'export, par rapport à la racine du paquet R.
+#'
+#'
+#' @return Retourne TRUE. \cr Exporte un fichier csv, dans le dossier spécifié
+#'   en entrée, nommé automatiquement "aaaa_mm_jj_export_{algo}_{batch}" avec
+#'   éventuellement un suffixe "_vX" pour ne pas écraser de fichier existant.
+#'
+#' @export
+#'
+#' @examples
+export_scores_to_csv  <- function(
+  formatted_data,
+  algo,
+  batch,
+  relative_path
+  ){
+
+  assertthat::assert_that(is.character(batch) && length(batch) == 1,
+    msg = "Batch shoud be a length 1 character vector"
+    )
+
+  data_to_export <- formatted_data
+
+  # create unique filename
+  full_path <- name_file(
+    relative_path,
+    file_detail = paste("export", algo, batch, sep = "_"),
+    file_extension = "csv",
+    full_path = TRUE
+    )
+
+  write.table(data_to_export,
+    row.names = F,
+    dec = ",",
+    sep = ";",
+    file = full_path,
+    quote = T,
+    append = F
+    )
+
+  return(TRUE)
+}
+
+export_company_card  <- function(formatted_data){
+
+  # TODO
+
+}
+
 #' Exports a dataframe to csv, or export scores to mongodb
 #'
 #' @param donnees Data to export.
@@ -138,92 +283,91 @@ prepare_for_export <- function(
 #' @export
 #'
 #' @examples
-export_scores <- function(
-  donnees,
-  batch,
-  algo = "algo",
-  database = "test_signauxfaibles",
-  collection = "Scores",
-  destination = "csv",
-  relative_path = file.path("..", "output"),
-  F_scores = NULL) {
-  assertthat::assert_that(tolower(destination) %in% c("csv", "mongodb", "json"),
-    msg = "Wrong export destination argument.
-    Possible destinations are 'csv', 'mongodb' or 'json'"
-    )
+# export_scores <- function(
+#   donnees,
+#   batch,
+#   algo = "algo",
+#   database = "test_signauxfaibles",
+#   collection = "Scores",
+#   destination = "csv",
+#   relative_path = file.path("..", "output"),
+#   F_scores = NULL) {
 
+#   assertthat::assert_that(tolower(destination) %in% c("csv", "mongodb", "json"),
+#     msg = "Wrong export destination argument.
+#     Possible destinations are 'csv', 'mongodb' or 'json'"
+#     )
 
+#   assertthat::assert_that(is.character(batch) && length(batch) == 1,
+#     msg = "Batch shoud be a length 1 character vector"
+#     )
+#   assertthat::assert_that(is.character(database) && length(database) == 1,
+#     msg = "Database shoud be a length 1 character vector"
+#     )
+#   assertthat::assert_that(is.character(collection) && length(collection) == 1,
+#     msg = "Collection shoud be a length 1 character vector"
+#     )
 
-  assertthat::assert_that(is.character(batch) && length(batch) == 1,
-    msg = "Batch shoud be a length 1 character vector"
-    )
-  assertthat::assert_that(is.character(database) && length(database) == 1,
-    msg = "Database shoud be a length 1 character vector"
-    )
-  assertthat::assert_that(is.character(collection) && length(collection) == 1,
-    msg = "Collection shoud be a length 1 character vector"
-    )
+#   assertthat::assert_that(grepl("^[[:alnum:]_]+$", algo),
+#     msg = "Please use alphanumeric and underscore characters for algorithm name"
+#     )
 
-  assertthat::assert_that(grepl("^[[:alnum:]_]+$", algo),
-    msg = "Please use alphanumeric and underscore characters for algorithm name"
-    )
+#   if (tolower(destination) == "csv") {
+#     fullpath <- name_file(
+#       relative_path,
+#       file_detail = paste0("detection", batch),
+#       file_extension = "csv",
+#       full_path = TRUE
+#       )
 
-  if (tolower(destination) == "csv") {
-    fullpath <- name_file(
-      relative_path,
-      file_detail = paste0("detection", batch),
-      file_extension = "csv",
-      full_name = TRUE
-      )
+#     write.table(donnees,
+#       row.names = F,
+#       dec = ",",
+#       sep = ";",
+#       file = fullpath,
+#       quote = T,
+#       append = F
+#       )
+#   } else if (tolower(destination) == "mongodb") {
+#     dbconnection <- mongolite::mongo(
+#       collection = collection,
+#       db = database,
+#       verbose = TRUE,
+#       url = "mongodb://localhost:27017"
+#       )
 
-    write.table(donnees,
-      row.names = F,
-      dec = ",",
-      sep = ";",
-      file = fullpath,
-      quote = T,
-      append = F
-      )
-  } else if (tolower(destination) == "mongodb") {
-    dbconnection <- mongolite::mongo(
-      collection = collection,
-      db = database,
-      verbose = TRUE,
-      url = "mongodb://localhost:27017"
-      )
+#     compulsory_columns <- c("siret", "periode", "score", "score_diff")
 
-    compulsory_columns <- c("siret", "periode", "score", "score_diff")
+#     assertthat::assert_that(all(compulsory_columns %in% names(donnees)),
+#       msg = paste(
+#         paste0(compulsory_columns, collapse = ", "),
+#         "are compulsary column names to export the scores to mongodb"
+#         )
+#       )
 
-    assertthat::assert_that(all(compulsory_columns %in% names(donnees)),
-      msg = paste(
-        paste0(compulsory_columns, collapse = ", "),
-        "are compulsary column names to export the scores to mongodb"
-        )
-      )
+#     donnees_export <- donnees %>%
+#       dplyr::select(siret, periode, score, score_diff) %>%
+#       dplyr::mutate(
+#         batch = batch,
+#         timestamp = Sys.time(),
+#         algo = algo
+#         ) %>%
+#       dplyr::rename(score = score)
 
-    donnees_export <- donnees %>%
-      dplyr::select(siret, periode, score, score_diff) %>%
-      dplyr::mutate(
-        batch = batch,
-        timestamp = Sys.time(),
-        algo = algo
-        ) %>%
-      dplyr::rename(score = score)
+#     if (!is.null(F_scores)) {
+#       assertthat::assert_that(length(F_scores) == 2)
+#       assertthat::assert_that(all(c("F1", "F2") %in% names(F_scores)))
 
-    if (!is.null(F_scores)) {
-      assertthat::assert_that(length(F_scores) == 2)
-      assertthat::assert_that(all(c("F1", "F2") %in% names(F_scores)))
+#       donnees_export <- donnees_export %>%
+#         mutate(alert = alert_levels(score, F_scores["F1"], F_scores["F2"]))
+#     }
 
-      donnees_export <- donnees_export %>%
-        mutate(alert = alert_levels(score, F_scores["F1"], F_scores["F2"]))
-    }
-
-    dbconnection$insert(donnees_export)
-  } else if (tolower(destination) == "json") {
-    error("Export to json not implemented yet !")
-  }
-  return()
-}
+#     dbconnection$insert(donnees_export)
+#   } else if (tolower(destination) == "json") {
+#     error("Export to json not implemented yet !")
+#   }
+#   return()
+# }
 
 #' Marks sirets from files as "known"
 #'

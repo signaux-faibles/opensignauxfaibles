@@ -1,4 +1,40 @@
-context("Test the write and read of model scores")
+context("Test that exports and import of scores work as expected")
+
+
+# test_dataframe <- data.frame(
+#   siret = c("1", "1", "2"),
+#   periode = c("2018", "2019", "2019"),
+#   score = c(0.4, 0.6, 0.2),
+#   score_diff = c(0, 0.2, -0.2)
+# )
+
+
+test_database <- "unittest_signauxfaibles"
+test_collection <- "Scores_for_tests"
+
+dbconnection <- mongolite::mongo(
+  collection = test_collection,
+  db = test_database,
+  verbose = TRUE,
+  url = "mongodb://localhost:27017"
+)
+
+f_scores = c(F2 = 0.2, F1 = 0.4)
+# test_that("export_scores_to_mongodb works as expected", {
+
+#     expect_error(
+#       export_scores_to_mongodb(
+#         formatted_data = test_dataframe,
+#         algo = "test_algo",
+#         batch = "test_batch",
+#         f_scores = c(F2 = 0.2, F1 = 0.4),
+#         database = test_database,
+#         collection = test_collection
+#         ),
+#       NA
+#       )
+
+# })
 
 # Sample object for the tests
 siret_df <- data.frame(
@@ -17,15 +53,6 @@ scores_1 <- runif(n = nrow(siret_df))
 scores_2 <- runif(n = nrow(siret_df))
 scores_3 <- runif(n = nrow(siret_df))
 
-test_database <- "unittest_signauxfaibles"
-test_collection <- "Scores_for_tests"
-
-dbconnection <- mongolite::mongo(
-  collection = test_collection,
-  db = test_database,
-  verbose = TRUE,
-  url = "mongodb://localhost:27017"
-)
 
 # Empty test collection
 
@@ -33,41 +60,45 @@ dbconnection <- mongolite::mongo(
 # -------- Export to mongodb ---------------------------------------------------
 # ------------------------------------------------------------------------------
 test_that("Test inputs for export_scores function to mongodb", {
-  expect_error(export_scores(
-    donnees = cbind(siret_df, score = scores_1),
+  expect_error(export_scores_to_mongodb(
+    formatted_data = cbind(siret_df, score = scores_1),
     batch = 123,
-    destination = "mongodb",
+    algo = "test_algo",
+    f_scores = c(F2 = 0.2, F1 = 0.4),
     database = test_database,
     collection = test_collection
   ))
 
   expect_error(export_scores(
-    donnees = cbind(siret_df, score = scores_1),
+    formatted_data = cbind(siret_df, score = scores_1),
     batch = "1234",
-    destination = "mongodb",
+    algo = "test_algo",
+    f_scores = c(F2 = 0.2, F1 = 0.4),
     database = c(test_database, test_database),
     collection = test_collection
   ))
 
   # Wrong dataframe input columns
   expect_error(export_scores(
-    donnees = data.frame(),
+    formatted_data = data.frame(),
     batch = "1234",
-    destination = "mongodb",
+    algo = "test_algo",
+    f_scores = c(F2 = 0.2, F1 = 0.4),
     database = test_database,
     collection = test_collection
   ))
 })
 
-test_that("Scores are well exported with export_scores function", {
+test_that("Scores are well exported with export_scores_to_mongodb function", {
   dbconnection$remove(query = "{}")
   expect_error(
-    export_scores(
-      donnees = cbind(siret_df, score = scores_1),
+    export_scores_to_mongodb(
+      formatted_data = cbind(siret_df, score = scores_1),
       batch = "1901",
       database = test_database,
       collection = test_collection,
-      destination = "mongodb"
+      algo = "test_algo",
+      f_scores = c(F2 = 0.2, F1 = 0.4)
     ),
     NA
   )
@@ -80,23 +111,24 @@ test_that("Scores are well exported with export_scores function", {
       dplyr::select(-timestamp),
     structure(list(
       siret = "1", periode = "2019-01-01", score = 0.265508663, score_diff = 1,
-      batch = "1901", algo = "algo"
-    ), class = "data.frame", row.names = 1L)
+      algo = "test_algo", batch = "1901", alert = "Alerte seuil F2"), class = "data.frame", row.names = 1L)
   )
 
-  export_scores(
-    donnees = cbind(siret_df, score = scores_2),
+  export_scores_to_mongodb(
+    formatted_data = cbind(siret_df, score = scores_2),
     batch = "1902",
     database = test_database,
     collection = test_collection,
-    destination = "mongodb"
+    algo = "test_algo",
+    f_scores = c(F2 = 0.2, F1 = 0.4)
   )
-  export_scores(
-    donnees = cbind(siret_df, score = scores_3),
+  export_scores_to_mongodb(
+    formatted_data = cbind(siret_df, score = scores_3),
     batch = "1903",
     database = test_database,
     collection = test_collection,
-    destination = "mongodb"
+    algo = "test_algo",
+    f_scores = c(F2 = 0.2, F1 = 0.4)
   )
   expect_equal(dbconnection$count(), 90)
 })
@@ -142,25 +174,27 @@ test_that("Input checking for get_scores", {
 test_that("Get_scores works with 'historical' method", {
   timestamp <- Sys.time()
   Sys.sleep(1)
-  export_scores(
-    donnees = cbind(siret_df, score = scores_2),
+  export_scores_to_mongodb(
+    formatted_data = cbind(siret_df, score = scores_2),
     batch = "1901",
     database = test_database,
     collection = test_collection,
-    destination = "mongodb"
+    f_scores = c(F2 = 0.2, F1 = 0.4),
+    algo = "test_algo"
   )
-  export_scores(
-    donnees = cbind(siret_df, score = scores_3),
+  export_scores_to_mongodb(
+    formatted_data = cbind(siret_df, score = scores_3),
     batch = "1903",
     database = test_database,
     collection = test_collection,
-    destination = "mongodb"
+    f_scores = c(F2 = 0.2, F1 = 0.4),
+    algo = "test_algo"
   )
 
   res_last <- get_scores(
     database = test_database,
     collection = test_collection,
-    algo = "algo",
+    algo = "test_algo",
     method = "last",
     sirets = c("1", "2", "3")
   )
@@ -168,7 +202,7 @@ test_that("Get_scores works with 'historical' method", {
   res_first <- get_scores(
     database = test_database,
     collection = test_collection,
-    algo = "algo",
+    algo = "test_algo",
     method = "first",
     sirets = c("1", "2", "3")
   )

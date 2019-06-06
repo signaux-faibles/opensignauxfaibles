@@ -313,7 +313,7 @@ save.sf_task <- function(task, ...) {
 #' Predict on some data.
 #' Data should be prepared.
 #'
-#' @param
+#' @param object
 #'
 #' @return
 #' @export
@@ -340,7 +340,7 @@ predict.sf_task <- function(
 
     prepared_data_name <- paste0("prepared_", data_name)
     if (!prepared_data_name %in% names(task)){
-      log_warning("{data_name} is missing or has not been prepared yet")
+      log_warn("{data_name} is missing or has not been prepared yet")
       return(task)
     }
 
@@ -406,33 +406,45 @@ export.sf_task <- function(task, ...){
     "delai"
     )
 
-  F_scores <- c(F1 = 0.31, F2 = 0.13) # TODO TODO
-
+  f_scores <- c(F1 = 0.31, F2 = 0.13) # TODO TODO
 
   if (!is.null(export_type) && export_type != "none") {
     assertthat::assert_that(all(export_type %in% c("csv", "mongodb")))
 
     log_info("Adding additional fields for export")
     res <- task[["new_data"]] %>%
-      prepare_for_export(
+      format_for_export(
         export_fields = export_fields,
         database = database,
         collection = collection,
         last_batch = last_batch
         )
-    browser()
+
     log_info("Data is exported to {paste(export_type, collapse = ' and ')}")
     purrr::walk(
       .x = export_type,
-      .f = function(x, ...) export_scores(destination = x, ...),
-      donnees = res,
+      .f = function(x, ...){
+        if (x == "csv") {
+          export_scores_to_csv(
+            ...,
+            relative_path = "../output/"
+            )
+        } else if (x == "mongodb") {
+          export_scores_to_mongodb(
+            ...,
+            f_scores = f_scores,
+            database = database,
+            collection = collection
+            )
+      }},
+      formatted_data = res,
       batch = last_batch,
-      F_scores = F_scores
-    )
+      algo = "algo"
+      )
   }
   log_info("Data exported with success to
     {paste(export_type, collapse = ' and ')}")
-  return(task)
+    return(task)
 }
 
 evaluate.sf_task <- function(task){
@@ -443,18 +455,18 @@ evaluate.sf_task <- function(task){
       as_tibble() %>%
       filter(periode == max(periode)) %>%
       mutate(outcome = sample(
-        c(TRUE, FALSE),
-        length(outcome),
-        replace = TRUE
-      )) %>%
+          c(TRUE, FALSE),
+          length(outcome),
+          replace = TRUE
+          )) %>%
       mutate(prediction = as.numeric(as.vector(task[["prediction"]]$prob)))
-      )
+    )
 
   eval$set_predictions(
     MLsegmentr::add_id(
       data.frame(prediction = as.numeric(as.vector(task[["prediction"]]$prob)))
+      )
     )
-  )
   eval$set_targets("outcome")
 
   eval$evaluation_funs <- eval_precision_recall()

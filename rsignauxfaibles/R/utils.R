@@ -88,8 +88,8 @@ average_12m <- function(vec) {
 #' @examples
 alert_levels <- function(prediction, F1, F2) {
   assertthat::assert_that(F2 <= F1,
-    msg = "F2 score cannot be less than F1 score. Could you have entered the
-    scores in the wrong order ?"
+    msg = "F2 score cannot be less than F1 score. Could you have inverted the
+    F scores ?"
   )
   alert <- .bincode(
     x = prediction,
@@ -99,4 +99,49 @@ alert_levels <- function(prediction, F1, F2) {
       levels = 1:3,
       labels = c("Pas d'alerte", "Alerte seuil F2", "Alerte seuil F1")
     )
+}
+
+
+name_file <- function(
+  relative_path,
+  file_detail,
+  file_extension = "",
+  full_path = FALSE) {
+
+  full_dir_path <- rprojroot::find_rstudio_root_file(relative_path)
+
+  assertthat::assert_that(dir.exists(full_dir_path),
+    msg = "Directory not found. Check relative path"
+  )
+
+  file_list <- list.files(full_dir_path)
+
+
+  n_different <- grepl(
+    paste0(
+      "^", Sys.Date(), "_v[0-9]*_",
+      file_detail, "\\.", file_extension, "$"
+    ),
+    file_list
+  ) %>%
+    sum()
+
+
+  file_name <- paste0(
+    Sys.Date(),
+    "_v",
+    n_different + 1,
+    "_",
+    file_detail,
+    ".",
+    file_extension
+  )
+
+  if (full_path) {
+    full_file_path <- file.path(full_dir_path, file_name)
+
+    return(full_file_path)
+  } else {
+    return(file_name)
+  }
 }

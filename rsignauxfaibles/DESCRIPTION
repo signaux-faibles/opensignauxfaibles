@@ -9,20 +9,21 @@ License: What license is it under?
 Encoding: UTF-8
 LazyData: true
 Imports:
+    assertthat,
+    broom,
     dplyr,
-    tidyr,
-    tibble,
+    h2o,
     h2o,
     lubridate,
-    assertthat,
     mongolite,
-    broom,
     MLmetrics,
-    tibbletime,
     PRROC,
-    broom,
-    rprojroot
+    rprojroot,
+    tibble,
+    tibbletime,
+    tidyr
 Suggests:
     ggplot2,
     testthat (>= 2.1.0)
 RoxygenNote: 6.1.1
+Roxygen: list(markdown = TRUE)

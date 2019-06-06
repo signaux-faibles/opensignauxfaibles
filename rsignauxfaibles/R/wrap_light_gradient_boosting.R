@@ -158,7 +158,7 @@
 #
 #     log_info("Adding additional fields for export")
 #     res <- pred_data %>%
-#       prepare_for_export(
+#       format_for_export(
 #         export_fields = export_fields,
 #         database = database,
 #         collection = collection,
