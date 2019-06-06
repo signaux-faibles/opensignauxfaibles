@@ -29,14 +29,20 @@ connect_to_h2o()
 ```
 
 ```{r}
-task <- sf_task(verbose = TRUE, database, collection)
+task <- sf_task(
+  verbose = TRUE,
+  database,
+  collection,
+  experiment_aim = "Reference evaluation canvas",
+  experiment_description = "This experiment fixes the conditions for the evaluation of a new algorithm compared to former versions"
+)
 ```
 
 ```{r}
 task <- load_hist_data(
   task = task,
-  last_batch = "1905",
-  subsample = 10000
+  batch = "1905",
+  subsample = 200000
 )
 ```
 
@@ -44,6 +50,10 @@ task <- load_hist_data(
 task <- hold_out(task)
 task <- prepare(task, data_names = c("train_data"))
 task  <- train(task)
+```
+
+```{r}
+# task <- save(task)
 ```
 
 ```{r}
@@ -55,57 +65,11 @@ task <- load_new_data(
 ```
 
 ```{r}
-task <- prepare(task, data_names = c("new_data"))
-task <- predict(task, data_names = c("new_data"))
+task <- prepare(task, data_names = c("validation_data"))
+task <- predict(task, data_names = c("validation_data"))
 ```
 
 ```{r}
-export(task)
-```
-
-
-```{r}
-task <- evaluate(task)
-task <- log(
-  task,
-  experiment_aim = "Test",
-  experiment_description = "Test the logging facility"
-)
-```
-
-```{r}
-res <- full_light_gradient_boosting(
-  database,
-  collection,
-  actual_period,
-  last_batch,
-  min_effectif,
-  retrain_model = retrain_model,
-  type = type,
-  export_type = export_type
-  )
-```
-
-```{r}
-my_data <- as.data.frame(my_data)
-my_data <- my_data %>% mutate(
-  periode =  as.Date(structure(periode / 1000,
-                               class = c('POSIXct','POSIXt')))
-)
-```
-
-```{r}
-siret = "01234567891112"
-shapley_plot(c(siret), my_data, my_model, batch = last_batch)
-```
-
-```{r results="hide"}
-
-siret = "01234567891112"
-export_fiche_visite(
-  sirets = c(),
-  database,
-  last_batch,
-  with_urssaf = FALSE
-  )
+task <- evaluate(task, data_name = "validation_data")
+task <- log(task)
 ```

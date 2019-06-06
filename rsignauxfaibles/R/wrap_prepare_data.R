@@ -17,10 +17,10 @@
 #' @examples
 prepare_frame <- function(
                           data_to_prepare,
-                          test_or_train = "train",
-                          te_map = NULL,
-                          save_or_load_map = TRUE,
-                          outcome = "outcome") {
+                          test_or_train,
+                          te_map,
+                          save_or_load_map,
+                          outcome) {
 
   if ( (!is.null(te_map) && test_or_train == "train") ||
     (!is.null(te_map) && save_or_load_map == TRUE)) {

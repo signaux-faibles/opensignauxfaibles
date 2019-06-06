@@ -1,13 +1,16 @@
 sf_task <- function(
   verbose,
   database,
-  collection
-){
+  collection,
+  experiment_aim,
+  experiment_description
+  ){
   res <- list(database = database, collection = collection)
   class(res) <- "sf_task"
   attr(res, "verbose") <- verbose
-  require(MLlogr)
-  attr(res, "MLLogger") <- MLLogger$new(database, "ml_logs")
+  attr(res, "to_log") <- list(
+    experiment_aim = experiment_aim,
+    experiment_description = experiment_description)
   return(res)
 }
 
@@ -53,20 +56,53 @@ explain <- function(task, ...){
 }
 
 
-# Definitions
+#' Chargement de données historiques
+#'
+#' Charge les données historiques de signaux faibles et les stocke dans un
+#' champ "hist_data" de l'objet \code{task}
+#'
+#' @param task `[sf_task]` \cr Objet s3 de type sf_task
+#' @param batch `character(1)` \cr Batch auquel doit être importées les
+#'   données. Les modifications opérées par les batchs ultérieurs sont
+#'   ignorées.
+#' @param database `character(1)` \cr Nom de la base de données vers laquelle
+#'   param exporter. Par défaut, celle stockée dans \code{task}.
+#' @param collection `character(1)` \cr Nom de la collection vers laquelle
+#'   exporter. Par défaut, celle stockée dans \code{task}.
+#' @param subsample `integer(1)` \cr Nombre d'objets (c'est-à-dire de couples
+#'   siret x periode) à échantillonner.
+#' @param fields `character()` \cr Noms des champs à requêter dans la base de
+#'   données. Doit contenir "siret" et "periode". Si égal à \code{NULL}, alors
+#'   charge tous les champs disponibles.
+#' @param min_effectif `integer(1)` \cr Limite basse du filtrage de l'effectif
+#'   (la limite est incluse)
+#' @param siren `character()` \cr Liste de sirens à exporter. Si égale à
+#'   \code{NULL}, charge tous les sirens disponibles.
+#' @param code_ape `character() \cr Liste de codes APE à exporter. Si égale à
+#'   \code{NULL}, charge tous les codes disponibles.
+#'
+#' @return `[sf_task]` \cr
+#'   L'objet \code{task} donné en entrée auquel le champs "hist_data" a été
+#'   ajouté (ou écrasé), contenant un  data.frame() avec les colonnes incluses dans le paramètre d'entrée
+#'  \code{fields}, et pour chaque ligne un couple unique siret x periode.
+#'
+#' @export
+#'
+#' @examples
 load_hist_data.sf_task <- function(
   task,
-  last_batch,
+  batch,
   database = task[["database"]],
   collection = task[["collection"]],
-  subsample = 200000,
+  subsample = 200000L,
   fields = get_fields(training = FALSE),
   date_inf = as.Date("2015-01-01"),
   date_sup = as.Date("2017-01-01"),
-  min_effectif = 10,
+  min_effectif = 10L,
   siren = NULL,
   code_ape = NULL
-){
+  ){
+
   require(logger)
   if (attr(task, "verbose")){
     log_threshold(TRACE)
@@ -79,7 +115,7 @@ load_hist_data.sf_task <- function(
   hist_data <- connect_to_database(
     database,
     collection,
-    last_batch,
+    batch,
     siren = NULL,
     date_inf = date_inf,
     date_sup = date_sup,
@@ -100,6 +136,14 @@ load_hist_data.sf_task <- function(
   return(task)
 }
 
+#' Chargement de nouvelles données
+#'
+#' @param task
+#'
+#'  @return
+#'  @export
+#'
+#'  @examples
 load_new_data.sf_task <- function(
   task,
   last_batch,
@@ -109,7 +153,7 @@ load_new_data.sf_task <- function(
   fields = get_fields(training = FALSE),
   min_effectif = 10,
   rollback_months = 1
-){
+  ){
 
   require(logger)
   if (attr(task, "verbose")){
@@ -169,15 +213,15 @@ hold_out.sf_task <- function(
         semi_join(res[["test"]], by = c("siret", "periode"))
     }
 
-    attr(task, "MLLogger")$set(
-      resampling_strategy = "holdout",
-      train_val_test_shares = c(
-        frac_train,
-        frac_val,
-        1 - frac_train - frac_val
-      ),
-      test_frame = task[["test_data"]]
-      )
+
+    attr(task, "to_log")[["resampling_strategy"]]  <-  "holdout"
+    attr(task, "to_log")[["train_val_test_shares"]] <- c(
+          frac_train,
+          frac_val,
+          1 - frac_train - frac_val
+          )
+    attr(task, "to_log")[["test_frame"]] <- task[["validation_data"]]
+    attr(task, "to_log")[["train_frame"]] <- task[["train_data"]]
 
     return(task)
 }
@@ -214,7 +258,9 @@ prepare.sf_task <- function(
       out <-  prepare_frame(
         data_to_prepare = task[[name]],
         save_or_load_map = FALSE,
-        test_or_train = test_or_train
+        te_map = task[["preparation_map"]],
+        test_or_train = test_or_train,
+        outcome = "outcome"
         )
 
       task[[paste0("prepared_", name)]]  <- out[["data"]]
@@ -234,9 +280,11 @@ prepare.sf_task <- function(
     task  <- aux_function(task, name)
   }
 
-  attr(task, "MLLogger")$set(
-    preprocessing_strategy = "H2OFrame, Target encoding with H2O"
-    )
+  attr(
+    task,
+    "to_log"
+  )[["preprocessing_strategy"]] <- "H2OFrame, Target encoding with H2O"
+
   return(task)
 }
 
@@ -264,18 +312,17 @@ train.sf_task <- function(
   log_info("Model trained_successfully")
   task[["model"]] <- model
 
-  attr(task, "MLLogger")$set(
-    model_name = "light gradient boosting",
-    model = "model",
-    model_features = fields,
-    model_parameters = list(
-      "learn_rate = 0.1",
-      "max_depth = 4",
-      "ntrees = 60",
-      "seed = 123"
-    ),
-    model_target = "18 mois, defaut et défaillance"
-    )
+  attr(task, "to_log")[["model_name"]] <- "light gradient boosting"
+  attr(task, "to_log")[["model"]] <- "model"
+  attr(task, "to_log")[["model_features"]] <- fields
+  attr(task, "to_log")[["model_parameters"]] <- list(
+        "learn_rate <- 0.1",
+        "max_depth <- 4",
+        "ntrees <- 60",
+        "seed <- 123"
+        )
+  attr(task, "to_log")[["model_target"]] <- "18 mois, defaut et défaillance"
+
   return(task)
 }
 
@@ -303,7 +350,7 @@ save.sf_task <- function(task, ...) {
   assertthat::assert_that(all(c("model", "preparation_map") %in% names(task)),
     msg = "Task should have a model and a preparation_map to be saved")
   save_h2o_object(task[["model"]], "lgb")
-  save_h2o_object(taks[["te_map"]], "te_map")
+  save_h2o_object(task[["preparation_map"]], "preparation_map")
 
   return(task)
 }
@@ -447,37 +494,34 @@ export.sf_task <- function(task, ...){
     return(task)
 }
 
-evaluate.sf_task <- function(task){
+evaluate.sf_task <- function(
+  task,
+  data_name = c("validataion_data")
+){
+
+  browser()
+
+  assertthat::assert_that(
+    length(data_name) == 1,
+    msg = "Evaluation can only be made on a single data.frame at once"
+  )
 
   require(MLsegmentr)
   eval <- Assesser$new(
-    task[["new_data"]] %>%
-      as_tibble() %>%
-      filter(periode == max(periode)) %>%
-      mutate(outcome = sample(
-          c(TRUE, FALSE),
-          length(outcome),
-          replace = TRUE
-          )) %>%
-      mutate(prediction = as.numeric(as.vector(task[["prediction"]]$prob)))
+    task[[data_name]] %>%
+      filter(periode == max(periode))
     )
 
-  eval$set_predictions(
-    MLsegmentr::add_id(
-      data.frame(prediction = as.numeric(as.vector(task[["prediction"]]$prob)))
-      )
-    )
+  eval$set_predictions("score")
   eval$set_targets("outcome")
 
   eval$evaluation_funs <- eval_precision_recall()
 
   perf <- eval$assess_model()
 
-  attr(task, "MLLogger")$set(
-    model_performance = perf %>%
-      select(evaluation_name, evaluation) %>%
-      filter(evaluation_name != "prcurve")
-    )
+  attr(task, "to_log")[["model_performance"]] <- perf %>%
+        select(evaluation_name, evaluation) %>%
+        filter(evaluation_name != "prcurve")
 
   return(task)
   ## Log model performance.
@@ -486,20 +530,41 @@ evaluate.sf_task <- function(task){
 
 log.sf_task <- function(
   task,
-  experiment_aim,
-  experiment_description,
-  database = "test_signaux_faibles",
-  collection = "ml_logs"
+  database = task[["database"]],
+  collection = "ml_logs",
+  ...
   ){
-  require("MLlogr")
 
-  attr(task, "MLLogger")$set(
-    experiment_aim = experiment_aim,
-    experiment_description = experiment_description
-    )
-  attr(task, "MLLogger")$log()
+  require("MLlogr")
+  logger <- MLLogger$new(database, collection)
+  do.call(logger$set, args = attr(task, "to_log"))
+  browser()
+  logger$log(...)
+
+  return(task)
 }
 
 explain.sf_task <- function(task, ...){
   # Later
+}
+
+
+print.sf_task <- function(x, ...){
+  cat("-- FIELDS --\n")
+  aux_fun <- function(name, x){
+    if (!is.character(x) || length(x) > 1){
+      cat(paste0("  * ", name, " (", paste0(class(x), collapse = ", "), ")\n"))
+    } else {
+      cat(paste0("  * ", name, " : ", x, "\n"))
+    }
+  }
+  purrr::walk2(names(x), x, aux_fun)
+
+  cat("-- INFO --\n")
+  purrr::walk2(
+    names(attr(x, "to_log")),
+    attr(x, "to_log"),
+    aux_fun
+  )
+  return()
 }

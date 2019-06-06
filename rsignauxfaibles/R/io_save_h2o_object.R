@@ -9,9 +9,11 @@
 #'
 #' @examples
 save_h2o_object <- function(
-                            object,
-                            object_name,
-                            relative_path = file.path("..", "output", "model")) {
+  object,
+  object_name,
+  relative_path = file.path("..", "output", "model")
+  ){
+
   if (object %>% inherits("H2OBinomialModel")) {
     save_function <- save_H2OModel
     extension <- "model"

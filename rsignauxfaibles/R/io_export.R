@@ -3,9 +3,11 @@
 #' If number of periods exceeds two, last period is dropped.
 #'
 #' @param donnees
-#' @param collection
 #' @param export_fields
-#' @param database
+#' @param database `character(1)` \cr Nom de la base de données vers laquelle
+#'   param exporter.
+#' @param collection `character(1)' \cr Nom de la collection vers laquelle
+#'   exporter.
 #' @param last_batch
 #'
 #' @return
@@ -14,9 +16,9 @@
 #' @examples
 format_for_export <- function(
   donnees,
-  collection,
   export_fields,
   database,
+  collection,
   last_batch,
   known_sirens_filenames = c("sirets_connus_pdl.csv", "sirets_connus_bfc.csv"),
   verbose = TRUE) {
