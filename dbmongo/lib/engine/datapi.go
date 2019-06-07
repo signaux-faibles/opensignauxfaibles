@@ -260,6 +260,22 @@ func ExportReferencesToDatapi(url string, user string, password string, batch st
 		Value: naf.Naf.ToData(),
 	}
 
+	procol := daclient.Object{
+		Key: map[string]string{
+			"key":   "procol",
+			"batch": batch,
+		},
+		Scope: []string{},
+		Value: map[string]interface{}{
+			"in_bonis":          "In bonis",
+			"continuation":      "Plan de continuation",
+			"plan_redressement": "Redressement judiciaire",
+			"plan_sauvegarde":   "Plan de sauvegarde",
+			"liquidation":       "Liquidation judiciaire",
+			"sauvegarde":        "Plan de sauvegarde",
+		},
+	}
+
 	types := daclient.Object{
 		Key: map[string]string{
 			"key":   "types",
@@ -286,6 +302,7 @@ func ExportReferencesToDatapi(url string, user string, password string, batch st
 	var data []daclient.Object
 	data = append(data, nafCodes)
 	data = append(data, types)
+	data = append(data, procol)
 	data = append(data, batchObject)
 	data = append(data, getRegions(batch)...)
 	err = client.Put("reference", data)

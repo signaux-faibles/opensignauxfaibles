@@ -52,7 +52,6 @@ func GetPipeline(batch string) (pipeline []bson.M) {
 			"periode": "$_id.periode",
 			"batch":   "$_id.batch",
 			"algo":    "$_id.algo",
-			"alert":   "$_id.alert",
 		},
 	})
 
@@ -112,6 +111,12 @@ type Detection struct {
 	Entreprise    Entreprise        `json:"entreprise" bson:"entreprise"`
 }
 
+// Procol donne le statut et la date de statut pour une entreprise en matière de procédures collectives
+type Procol struct {
+	Etat string    `json:"etat" bson:"etat"`
+	Date time.Time `json:"date_procol"`
+}
+
 // Etablissement is an object
 type Etablissement struct {
 	ID    map[string]string `bson:"_id"`
@@ -124,7 +129,8 @@ type Etablissement struct {
 		Effectif        []Effectif    `json:"effectif" bson:"effectif"`
 		DernierEffectif Effectif      `json:"dernier_effectif" bson:"dernier_effectif"`
 		Delai           []interface{} `json:"delai" bson:"delai"`
-		Procol          string        `json:"procol" bson:"procol"`
+		Procol          []Procol      `json:"procol" bson:"procol"`
+		LastProcol      Procol        `json:"last_procol" bson:"last_procol"`
 	} `bson:"value"`
 }
 
@@ -239,7 +245,8 @@ func computeDetection(detection Detection) (detections []daclient.Object) {
 		"resultat_expl":           reVal,
 		"variation_resultat_expl": reVar,
 		"departement":             detection.Etablissement.Value.Sirene.Departement,
-		"procedure_collective":    detection.Etablissement.Value.Procol,
+		"etat_procol":             detection.Etablissement.Value.LastProcol.Etat,
+		"date_procol":             detection.Etablissement.Value.LastProcol.Date,
 	}
 
 	scopeA := []string{"detection", "score", detection.Etablissement.Value.Sirene.Departement}
@@ -274,9 +281,10 @@ func computeEtablissement(detection Detection) (objects []daclient.Object) {
 
 	scope := []string{detection.Etablissement.Value.Sirene.Departement}
 	value := map[string]interface{}{
-		"diane":    detection.Entreprise.Value.Diane,
-		"effectif": detection.Etablissement.Value.Effectif,
-		"sirene":   detection.Etablissement.Value.Sirene,
+		"diane":                detection.Entreprise.Value.Diane,
+		"effectif":             detection.Etablissement.Value.Effectif,
+		"sirene":               detection.Etablissement.Value.Sirene,
+		"procedure_collective": detection.Etablissement.Value.Procol,
 	}
 
 	scopeURSSAF := []string{"urssaf", detection.Etablissement.Value.Sirene.Departement}

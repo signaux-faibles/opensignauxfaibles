@@ -14,11 +14,11 @@ function map() {
     vcmde.apdemande = f.apconso(value.apdemande)
     vcmde.idEntreprise = f.idEntreprise(this._id)
     vcmde.delai = f.delai(value.delai)
-    vcmde.altares = f.dealWithProcols(value.altares, "altares",  null)
-    if (vcmde.altares.length >= 1){
-      vcmde.dernier_altares = vcmde.altares[vcmde.altares.length - 1]
+    vcmde.procol = f.dealWithProcols(value.altares, "altares",  null).concat(f.dealWithProcols(value.procol, "procol",  null)) 
+    if (vcmde.procol.length >= 1){
+      vcmde.last_procol = vcmde.procol[vcmde.procol.length - 1]
     } else {
-      vcmde.dernier_altares = {"etat": "in_bonis"}
+      vcmde.last_procol = {"etat": "in_bonis"}
     }
     //if (vcmde.effectif.length > 0) {
     // emit({scope: ["bfc", "crp"], key: this.value.key, batch: actual_batch}, vcrp)
