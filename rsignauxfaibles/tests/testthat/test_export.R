@@ -19,7 +19,7 @@ dbconnection <- mongolite::mongo(
   url = "mongodb://localhost:27017"
 )
 
-f_scores = c(F2 = 0.2, F1 = 0.4)
+f_scores <- c(F2 = 0.2, F1 = 0.4)
 # test_that("export_scores_to_mongodb works as expected", {
 
 #     expect_error(

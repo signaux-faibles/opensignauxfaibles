@@ -11,6 +11,7 @@ import (
 	"dbmongo/lib/interim"
 	"dbmongo/lib/sirene"
 	"dbmongo/lib/urssaf"
+  "dbmongo/lib/repeatable_order"
 	"errors"
 	"fmt"
 	"io"
@@ -192,14 +193,15 @@ func revertBatchHandler(c *gin.Context) {
 
 // RegisteredParsers liste des parsers disponibles
 var registeredParsers = map[string]engine.Parser{
-	"urssaf":    urssaf.Parser,
-	"apconso":   apartconso.Parser,
-	"apdemande": apartdemande.Parser,
-	"bdf":       bdf.Parser,
-	"altares":   altares.Parser,
-	"sirene":    sirene.Parser,
-	"diane":     diane.Parser,
-	"interim":   interim.Parser,
+	"urssaf":            urssaf.Parser,
+	"apconso":           apartconso.Parser,
+	"apdemande":         apartdemande.Parser,
+	"bdf":               bdf.Parser,
+	"altares":           altares.Parser,
+  "repeatable_order":  repeatable_order.Parser,
+	"sirene":            sirene.Parser,
+	"diane":             diane.Parser,
+	"interim":           interim.Parser,
 }
 
 //

@@ -17,7 +17,8 @@
 split_snapshot_rdm_month <- function(
   data_sample,
   frac_train,
-  frac_val) {
+  frac_val,
+  seed = 1234) {
 
   assertthat::assert_that(
     frac_train > 0,
@@ -29,6 +30,7 @@ split_snapshot_rdm_month <- function(
   frac_test <- 1 - (frac_train + frac_val)
 
 
+
   data_sample <- data_sample %>%
     select(siret, periode) %>%
     arrange(siret, periode) %>%
@@ -38,6 +40,7 @@ split_snapshot_rdm_month <- function(
     select(siren) %>%
     distinct()
 
+  set.seed(seed)
   sirens <- sirens %>%
     mutate(ss = sample(1:3,
         size = nrow(sirens), replace = TRUE,
