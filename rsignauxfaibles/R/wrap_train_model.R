@@ -14,6 +14,11 @@ train_light_gradient_boosting <- function(
   h2o_validation_data = NULL,
   x_fields_model,
   outcome = "outcome",
+  learn_rate = 0.1,
+  max_depth = 4,
+  ntrees = 60,
+  min_child_weight = 1,
+  seed = 123,
   save_results = TRUE) {
 
   #
@@ -30,10 +35,11 @@ train_light_gradient_boosting <- function(
     validation_frame = h2o_validation_data,
     tree_method = "hist",
     grow_policy = "lossguide",
-    learn_rate = 0.1,
-    max_depth = 4,
-    ntrees = 60,
-    seed = 123
+    learn_rate = learn_rate,
+    max_depth = max_depth,
+    ntrees = ntrees,
+    min_child_weight = min_child_weight,
+    seed = seed
   )
 
   if (save_results) {

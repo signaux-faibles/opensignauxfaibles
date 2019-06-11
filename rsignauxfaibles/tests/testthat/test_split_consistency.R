@@ -104,7 +104,3 @@ test_that(
     expect_true(all(unique(my_test_frame$siret) %in% combined$siret))
   }
   )
-
-test_that(
-
-  )

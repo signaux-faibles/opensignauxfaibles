@@ -14,7 +14,7 @@ devtools::load_all()
 database <- "test_signauxfaibles"
 collection <- "Features"
 actual_period <- as.Date("2019-03-01")
-last_batch <- "1905"
+last_batch <- "1905_repeatable"
 min_effectif <- 10
 retrain_model <- TRUE
 type <- "dataframe"
@@ -37,7 +37,7 @@ task <- sf_task(
 
 task <- load_hist_data(
   task = task,
-  batch = "1905",
+  batch = last_batch,
   subsample = sample_size
 )
 ```

@@ -46,6 +46,8 @@ hold_out <- function(task, ...){
 prepare <- function(task, ...){
   UseMethod("prepare", task)
 }
+optimize_hyperparams <- function(task, ...){
+}
 train <- function(task, ...){
   UseMethod("train", task)
 }
@@ -406,6 +408,17 @@ prepare.sf_task <- function(
   return(task)
 }
 
+#' Optimize the hyperparameters of a model
+#'
+#' @param param
+#'
+#'  @return
+#'  @export
+#'
+#'  @examples
+optimize_hyperparams.sf_task <- function(){
+
+}
 #' Entraînement de l'algorithme
 #'
 #' Entraîne un algorithme sur les données `task[["train_data"]]`. Cf
@@ -425,7 +438,12 @@ prepare.sf_task <- function(
 #'  @examples
 train.sf_task <- function(
   task,
-  fields = get_fields(training = TRUE)
+  fields = get_fields(training = TRUE),
+  learn_rate = 0.1,
+  max_depth = 4,
+  ntrees = 60,
+  min_child_weight = min_child_weight,
+  seed = 123
   ){
   require(logger)
   if (attr(task, "verbose")){
@@ -441,8 +459,13 @@ train.sf_task <- function(
   model <- train_light_gradient_boosting(
     h2o_train_data = task[["prepared_train_data"]],
     x_fields_model = fields,
-    save_results = FALSE
-    )
+    save_results = FALSE,
+    learn_rate = learn_rate,
+    max_depth = max_depth,
+    ntrees = ntrees,
+    min_child_weight = min_child_weight,
+    seed = seed
+  )
 
   log_info("Model trained_successfully")
   task[["model"]] <- model
