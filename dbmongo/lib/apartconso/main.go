@@ -12,12 +12,12 @@ import (
 
 // APConso Consommation d'activité partielle
 type APConso struct {
-	ID             string    `json:"id_conso" bson:"id_conso"`
-	Siret          string    `json:"-" bson:"-"`
-	HeureConsommee *float64  `json:"heure_consomme" bson:"heure_consomme"`
-	Montant        *float64  `json:"montant" bson:"montant"`
-	Effectif       *int      `json:"effectif" bson:"effectif"`
-	Periode        time.Time `json:"periode" bson:"periode"`
+	ID               string      `json:"id_conso"         bson:"id_conso"`
+	Siret            string      `json:"-"                bson:"-"`
+	HeureConsommee   *float64    `json:"heure_consomme"   bson:"heure_consomme"`
+	Montant          *float64    `json:"montant"          bson:"montant"`
+	Effectif         *int        `json:"effectif"         bson:"effectif"`
+	Periode          time.Time   `json:"periode"          bson:"periode"`
 }
 
 // Key id de l'objet

@@ -285,9 +285,6 @@ factor_request <- function(
     match_siren <- paste0('"$or":[', paste(match_siren, collapse = ","), "]")
   }
 
-
-
-
   # Unwind du tableau
   unwind_req <- '{"$unwind":{"path": "$value"}}'
 
@@ -295,7 +292,9 @@ factor_request <- function(
   if (is.null(subsample)) {
     sample_req <- ""
   } else {
-    sample_req <- paste0('{"$sample": {"size": ', subsample, "}}")
+    sample_req <- paste0(
+      '{"$sort": {"value.random_order": -1}}, {"$limit" :', subsample, "}"
+    )
   }
 
   # Filtrage code APE
