@@ -18,15 +18,15 @@
 prepare_frame <- function(
                           data_to_prepare,
                           test_or_train,
-                          te_map,
+                          te_map = NULL,
                           save_or_load_map,
                           outcome) {
 
-  if ( (!is.null(te_map) && test_or_train == "train") ||
-    (!is.null(te_map) && save_or_load_map == TRUE)) {
-    error('te_map should not be specified if it is computed (test_or_train =
-      "train") or if map is loaded (save_or_load_map = TRUE)')
-  }
+  #if ( (!is.null(te_map) && test_or_train == "train") ||
+  #  (!is.null(te_map) && save_or_load_map == TRUE)) {
+  #  error('te_map should not be specified if it is computed (test_or_train =
+  #    "train") or if map is loaded (save_or_load_map = TRUE)')
+  #}
 
   h2o_data <- convert_to_h2o(data_to_prepare)
 

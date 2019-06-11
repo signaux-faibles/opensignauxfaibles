@@ -38,68 +38,6 @@ Fscore_threshold <- function(prediction, outcome, alpha){
 }
 
 
-## Depreciée Utiliser MLsegmentr avec evaluation_precision_rappel à la
-## place.
-##' Trace la courbe précision rappel pour le modèle H2O considéré
-##'
-##' @param model Modèle H2O
-##' @param my_data H2OFrame sur lequel la courbe PRROC est tracée (validation, test etc.)
-##' @param new_fig Si TRUE, ouvre une nouvelle fenêtre graphique. Sinon, trace dans la dernière fenêtre active.
-##'
-##' @return
-##' @export
-##'
-##' @examples
-#plotpr <- function(
-#  model,
-#  my_data,
-#  new_fig = TRUE,
-#  model_objective = "outcome"
-#){
-#
-#  if (new_fig)  plot(
-#    1,
-#    type = "n",
-#    xlab = "recall",
-#    ylab = "precision",
-#    xlim = c(0, 1),
-#    ylim = c(0, 1)
-#  )
-#  perf <- h2o::h2o.performance(model, newdata = my_data)
-#  pred <- h2o::h2o.predict(model, my_data)
-#
-#  true_res <- as.vector(h2o::as.numeric(my_data[model_objective]))
-#
-#
-#
-#  precision <- h2o::h2o.precision(perf)
-#  recall <- h2o::h2o.recall(perf)
-#  lines(recall$tpr, precision$precision, col = rgb(
-#    runif(5),
-#    runif(5),
-#    runif(5)
-#  ))
-#
-#  F2 <- h2o::h2o.F2(perf)
-#  precision_F2 <- precision$precision[which.max(F2$f2)]
-#  recall_F2 <- recall$tpr[which.max(F2$f2)]
-#  points(recall_F2, precision_F2, col = "red", pch = 4)
-#  text(recall_F2, precision_F2, "F2", pos = 4, col = "red")
-#
-#  F1 <- h2o::h2o.F1(perf)
-#  precision_F1 <- precision$precision[which.max(F1$f1)]
-#  recall_F1 <- recall$tpr[which.max(F1$f1)]
-#  points(recall_F1, precision_F1, col = "green", pch = 4)
-#  text(recall_F1, precision_F1, "F1", pos = 4, col = "green")
-#
-#
-#  cat(str(PRROC::pr.curve(scores.class0 = as.vector(
-#    pred[[3]]
-#  ), weights.class0 = true_res)))
-#}
-
-
-
 #' Fonction d'évaluation de survenue de nouvelles dettes urssaf.
 #'
 #' Cette fonction est prévue pour construire un objet EvaluationFunctions
@@ -257,12 +195,13 @@ aux_custom_plot_urssaf  <- function(evaluation){
 #' @examples
 eval_urssaf  <- function(){
   require(MLsegmentr)
-  evo <- EvaluationFunction$new() #nolint
-  evo$eval_fun <- aux_custom_eval_urssaf
-  evo$wrap_eval_fun  <- TRUE
-  evo$unnest <- TRUE
-  evo$plot_fun  <- aux_custom_plot_urssaf
-  evo$compulsory_fields <- c("siret", "periode")
+  evo <- MLsegmentr::eval_function(
+    eval_fun = aux_custom_eval_urssaf,
+    wrap_eval_fun = TRUE,
+    unnest =  TRUE,
+  plot_fun  = aux_custom_plot_urssaf,
+  compulsory_fields = c("siret", "periode")
+  )
 
   return(evo)
 

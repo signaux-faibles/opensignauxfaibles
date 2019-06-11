@@ -1,12 +1,13 @@
 #' Prepare_for_export
 #'
-#' If number of periods exceeds two, last period is dropped.
+#' Si le nombre de périodes disponible dans les données est supérieur à deux,
+#' alors la dernière période disponible est absente du data.frame de retour.
 #'
 #' @param donnees
 #' @param export_fields
 #' @param database `character(1)` \cr Nom de la base de données vers laquelle
 #'   param exporter.
-#' @param collection `character(1)' \cr Nom de la collection vers laquelle
+#' @param collection `character(1)` \cr Nom de la collection vers laquelle
 #'   exporter.
 #' @param last_batch
 #'
@@ -115,7 +116,6 @@ format_for_export <- function(
 #'
 #' Exporte les scores vers une collection mongodb à partir des données formattées par la fonction
 #' \code{\link{format_for_export}}.
-#'
 #'
 #' @param formatted_data `data.frame()` \cr Données avec les champs "siret",
 #'   "periode", "score" et "score_diff". C'est le cas des données formatées par

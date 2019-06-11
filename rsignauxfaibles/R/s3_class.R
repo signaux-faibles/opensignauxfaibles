@@ -14,7 +14,26 @@ sf_task <- function(
   return(res)
 }
 
+
+#' Documentation des paramètres de connection à mongodb
+#'
+#' @param database `character(1)` \cr Nom de la base de données vers laquelle
+#'   param exporter. Par défaut, celle stockée dans \code{task}.
+#' @param collection `character(1)` \cr Nom de la collection vers laquelle
+#'   exporter. Par défaut, celle stockée dans \code{task}.
+mongodb_connection <- function(){
+}
+
 # Generic functions
+
+#' Chargement de données historiques
+#'
+#' @param task `[sf_task]` \cr Objet s3 de type sf_task
+#'
+#' @return
+#' @export
+#'
+#' @examples
 load_hist_data <- function(task, ...){
   UseMethod("load_hist_data", task)
 }
@@ -61,14 +80,10 @@ explain <- function(task, ...){
 #' Charge les données historiques de signaux faibles et les stocke dans un
 #' champ "hist_data" de l'objet \code{task}
 #'
-#' @param task `[sf_task]` \cr Objet s3 de type sf_task
 #' @param batch `character(1)` \cr Batch auquel doit être importées les
 #'   données. Les modifications opérées par les batchs ultérieurs sont
 #'   ignorées.
-#' @param database `character(1)` \cr Nom de la base de données vers laquelle
-#'   param exporter. Par défaut, celle stockée dans \code{task}.
-#' @param collection `character(1)` \cr Nom de la collection vers laquelle
-#'   exporter. Par défaut, celle stockée dans \code{task}.
+#' @inheritParams mongodb_connection
 #' @param subsample `integer(1)` \cr Nombre d'objets (c'est-à-dire de couples
 #'   siret x periode) à échantillonner.
 #' @param fields `character()` \cr Noms des champs à requêter dans la base de
@@ -78,13 +93,15 @@ explain <- function(task, ...){
 #'   (la limite est incluse)
 #' @param siren `character()` \cr Liste de sirens à exporter. Si égale à
 #'   \code{NULL}, charge tous les sirens disponibles.
-#' @param code_ape `character() \cr Liste de codes APE à exporter. Si égale à
+#' @param code_ape `character()` \cr Liste de codes APE à exporter. Si égale à
 #'   \code{NULL}, charge tous les codes disponibles.
 #'
 #' @return `[sf_task]` \cr
 #'   L'objet \code{task} donné en entrée auquel le champs "hist_data" a été
 #'   ajouté (ou écrasé), contenant un  data.frame() avec les colonnes incluses dans le paramètre d'entrée
 #'  \code{fields}, et pour chaque ligne un couple unique siret x periode.
+#'
+#' @describeIn load_hist_data
 #'
 #' @export
 #'
@@ -138,9 +155,32 @@ load_hist_data.sf_task <- function(
 
 #' Chargement de nouvelles données
 #'
-#' @param task
+#' @param task `[sf_task]` \cr Objet s3 de type sf_task
+#' @param last_batch `character(1)` \cr Batch auquel doit être importées les
+#'   données. Les modifications opérées par les batchs ultérieurs sont
+#'   ignorées.
+#' @param periods `[Date()]` \cr Périodes d'intérêt, auquels charger les
+#'   données. Des périodes supplémentairs peuvent être chargées selon la
+#'   valeur de rollback_months.
+#' @param database `character(1)` \cr Nom de la base de données vers
+#'   laquelle param exporter. Par défaut, celle stockée dans \code{task}.
+#' @param collection `character(1)` \cr Nom de la collection vers laquelle
+#'    exporter. Par défaut, celle stockée dans \code{task}.
+#' @param fields `character()` \cr Noms des champs à requêter dans la base de
+#'   données. Doit contenir "siret" et "periode". Si égal à \code{NULL}, alors
+#'   charge tous les champs disponibles.
+#' @param min_effectif `integer(1)` \cr Limite basse du filtrage de l'effectif
+#'   (la limite est incluse)
+#' @param rollback_months Nombre de mois précédant le premier mois de
+#'   `periods` à charger. Permet d'effectuer des calculs de différences ou de
+#'   moyennes glissantes pour les périodes d'intérêt.
 #'
-#'  @return
+#' @describeIn load_new_data
+#'
+#' @return `[sf_task]` \cr
+#'   L'objet \code{task} donné en entrée auquel le champs "new_data" a été
+#'   ajouté (ou écrasé), contenant un  data.frame() avec les colonnes incluses dans le paramètre d'entrée
+#'  \code{fields}, et pour chaque ligne un couple unique siret x periode.
 #'  @export
 #'
 #'  @examples
@@ -176,10 +216,48 @@ load_new_data.sf_task <- function(
   return(task)
 }
 
+#' Scission des données en échantillon d'entraînement, de validation et de
+#' test.
+#'
+#' Scinde les données en échantillon d'entraînement, de validation et de
+#' test, selon les proportions souhaitées. S'assure que deux établissements de la même entreprise ne soient pas
+#' à la fois dans deux échantillons différents pour éviter la fuite
+#' d'information d'un échantillon vers l'autre.
+#'
+#' @param task `[sf_task]` \cr Objet s3 de type sf_task. Doit posséder des
+#'   données dans le champs "hist_data".
+#' @param frac_train `numeric(1)` \cr Fraction des données utilisées pour
+#'   l'entraînement. Doit être entre 0 et 1.
+#' @param frac_val `numeric(1)` \cr Fraction des données utilisées pour la
+#'   validation. Doit être entre 0 et 1.
+#' @param remove_strong_signals Faut-il retirer des échantillons de test ou de
+#'   validation les entrerprises qui présentent des signaux forts, c'est-à-dire 3 mois de défaut, ou une
+#'   procédure collective en cours ? Nécessite que les données contenues dans
+#'   \code{task[["hist_data"]]} possèdent le champs "time_til_outcome".
+#'
+#'
+#' @section Fractions:
+#' La fraction de l'échantillon de test est calculée par
+#' 1 - frac_train - frac_val. (frac_train + frac_val) doit donc être inférieur
+#' à 1. Le seul cas où cette condition n'est pas testée est lorsque frac_train
+#' = 1.
+#'
+#'
+#' @return `[sf_task]` \cr
+#'   L'objet \code{task} donné en entrée auquel les champs "train_data",
+#'   "validation_data" et "test_data" ont été
+#'   ajoutés (ou écrasés), chacun contenant un data.frame() avec les colonnes
+#'   de `task[["hist_data"]]` et un sous-ensemble (possiblement vide) de ces
+#'   lignes.
+#'
+#' @export
+#'
+#' @examples
 hold_out.sf_task <- function(
   task,
   frac_train = 0.6,
-  frac_val = 0.2
+  frac_val = 0.2,
+  remove_strong_signals = TRUE
   ){
   require(logger)
   if (attr(task, "verbose")){
@@ -187,8 +265,6 @@ hold_out.sf_task <- function(
   } else {
     log_threshold(WARN)
   }
-
-
 
   log_info("Historical data is splitted into a train, validation and test
     frame")
@@ -200,17 +276,40 @@ hold_out.sf_task <- function(
       frac_val <- 0
       task[["train_data"]] <- task[["hist_data"]]
     } else {
+
       res <- split_snapshot_rdm_month(
         task[["hist_data"]],
         frac_train,
         frac_val
         )
+
       task[["train_data"]] <- task[["hist_data"]] %>%
         semi_join(res[["train"]], by = c("siret", "periode"))
       task[["validation_data"]] <- task[["hist_data"]] %>%
         semi_join(res[["validation"]], by = c("siret", "periode"))
       task[["test_data"]] <- task[["hist_data"]] %>%
         semi_join(res[["test"]], by = c("siret", "periode"))
+    }
+
+    if (remove_strong_signals){
+      log_info("Strong signals are removed from test and validation frames")
+      # TODO Move to split snapshot
+      if (!is.null(task[["validation_data"]])){
+        assertthat::assert_that("time_til_outcome" %in%
+          names(task[["validation_data"]]))
+
+        task[["validation_data"]]  <- task[["validation_data"]] %>%
+          filter(is.na(task[["validation_data"]]$time_til_outcome) |
+            task[["validation_data"]]$time_til_outcome > 0)
+      }
+      if (!is.null(task[["test_data"]])){
+        assertthat::assert_that("time_til_outcome" %in%
+          names(task[["test_data"]]))
+
+        task[["test_data"]]  <- task[["test_data"]] %>%
+          filter(is.na(task[["test_data"]]$time_til_outcome) |
+            task[["test_data"]]$time_til_outcome > 0)
+      }
     }
 
 
@@ -226,6 +325,25 @@ hold_out.sf_task <- function(
     return(task)
 }
 
+#' Préparation des échantillons
+#'
+#' Prépare les échantillons souhaités (listés dans `data_names`) pour
+#' l'entraînement ou la prédiction de l'algorithme. Cf `[prepare_data]` pour
+#' la nature de cette préparation.
+#'
+#' @param task `[sf_task]` \cr Objet s3 de type sf_task
+#' @param data_names `character()` \cr Vecteur de noms des données à préparer.
+#'   Doivent-être des noms de champs valides de `task`.
+#'
+#' @return `[sf_task]` \cr
+#'   L'objet \code{task} donné en entrée auquel les champs de données
+#'   préparées ont été ajoutées, avec une convention de nommage d'apposition
+#'   du préfixe "prepared_" aux noms des données noms préparées (par exemple:
+#'   "prepared_train_data" correspond aux données de "train_data" préparées).
+#'
+#' @export
+#'
+#' @examples
 prepare.sf_task <- function(
   task,
   data_names = c(
@@ -288,6 +406,23 @@ prepare.sf_task <- function(
   return(task)
 }
 
+#' Entraînement de l'algorithme
+#'
+#' Entraîne un algorithme sur les données `task[["train_data"]]`. Cf
+#' `[train_light_gradient_boosting]` pour plus de détails sur le modèle
+#' entraîné.
+#'
+#' @param task `[sf_task]` \cr Objet s3 de type sf_task
+#' @param fields `character()` \cr Liste des variables pour l'entraînement. Cf
+#' `[get_fields]` pour les variables par défaut.
+#'
+#' @return `[sf_task]` \cr L'objet `task` donné en entré, auquel a été ajouté
+#' (ou écrasé) le champs "model", dans lequel est stocké un modèle compatible
+#' avec la fonction `[prepare.sf_task]`.
+#'
+#' @export
+#'
+#'  @examples
 train.sf_task <- function(
   task,
   fields = get_fields(training = TRUE)
@@ -496,32 +631,31 @@ export.sf_task <- function(task, ...){
 
 evaluate.sf_task <- function(
   task,
-  data_name = c("validataion_data")
-){
-
-  browser()
+  eval_function = MLsegmentr::eval_precision_recall(),
+  data_name = c("validation_data")
+  ){
 
   assertthat::assert_that(
     length(data_name) == 1,
     msg = "Evaluation can only be made on a single data.frame at once"
-  )
+    )
 
   require(MLsegmentr)
-  eval <- Assesser$new(
+  assesser <- Assesser$new(
     task[[data_name]] %>%
       filter(periode == max(periode))
     )
 
-  eval$set_predictions("score")
-  eval$set_targets("outcome")
+  assesser$set_predictions("score")
+  assesser$set_targets("outcome")
 
-  eval$evaluation_funs <- eval_precision_recall()
+  assesser$evaluation_funs <- eval_function
 
-  perf <- eval$assess_model()
+  perf <- assesser$assess_model()
 
   attr(task, "to_log")[["model_performance"]] <- perf %>%
-        select(evaluation_name, evaluation) %>%
-        filter(evaluation_name != "prcurve")
+    select(evaluation_name, evaluation) %>%
+    filter(evaluation_name != "prcurve")
 
   return(task)
   ## Log model performance.
@@ -536,9 +670,12 @@ log.sf_task <- function(
   ){
 
   require("MLlogr")
-  logger <- MLLogger$new(database, collection)
+  logger <- MLLogger$new(
+    database,
+    collection,
+    id_columns = c("siret", "periode")
+  )
   do.call(logger$set, args = attr(task, "to_log"))
-  browser()
   logger$log(...)
 
   return(task)
@@ -565,6 +702,6 @@ print.sf_task <- function(x, ...){
     names(attr(x, "to_log")),
     attr(x, "to_log"),
     aux_fun
-  )
+    )
   return()
 }

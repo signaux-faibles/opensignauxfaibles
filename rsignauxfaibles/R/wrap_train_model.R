@@ -20,8 +20,6 @@ train_light_gradient_boosting <- function(
   # Train the model
   #
 
-
-
   # FIX ME: RISQUE D'ECRASER UN MODELE EXISTANT AVEC CE MODEL_ID
 
   model <- h2o::h2o.xgboost(
