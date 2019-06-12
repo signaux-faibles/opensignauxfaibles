@@ -555,6 +555,10 @@ predict.sf_task <- function(
       model = task[["model"]],
       new_data = task[[prepared_data_name]]
       )
+
+    dup_names  <-  intersect(names(prediction %>% select(-siret, -periode)),
+      names(task[[data_name]]))
+    task[[data_name]]  <- task[[data_name]] %>% select(-one_of(dup_names))
     task[[data_name]] <- task[[data_name]] %>%
       left_join(prediction, by = c("siret", "periode"))
     return(task)
