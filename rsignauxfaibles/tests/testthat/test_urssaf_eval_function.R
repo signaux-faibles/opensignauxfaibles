@@ -16,7 +16,7 @@ eval_frame  <- eval_frame %>%
 testthat::test_that("custom_eval_urssaf works correctly", {
   eval_obj <- eval_urssaf()
   expect_error(
-    actual_out <- MLsegmentr::assess_eval_frame(eval_obj, eval_frame),
+    actual_out <- MLsegmentr::assess_eval_frame(eval_obj, eval_frame, plot = FALSE),
     NA
     )
   expected_moyenne  <- c(0.07692, 0.33333, 0.95833, 0, 0, 0.81818,

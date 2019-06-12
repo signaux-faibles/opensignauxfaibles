@@ -1,20 +1,3 @@
-sf_task <- function(
-  verbose,
-  database,
-  collection,
-  experiment_aim,
-  experiment_description
-  ){
-  res <- list(database = database, collection = collection)
-  class(res) <- "sf_task"
-  attr(res, "verbose") <- verbose
-  attr(res, "to_log") <- list(
-    experiment_aim = experiment_aim,
-    experiment_description = experiment_description)
-  return(res)
-}
-
-
 #' Documentation des paramètres de connection à mongodb
 #'
 #' @param database `character(1)` \cr Nom de la base de données vers laquelle
@@ -24,58 +7,76 @@ sf_task <- function(
 mongodb_connection <- function(){
 }
 
-# Generic functions
+#' Initialiser une tâche d'apprentissage
+#'
+#' Un objet s3 de type sf_task est défini, dans lequel seront défini et
+#' stockés les tâches intermédiaires et les résultats de l'apprentissage.
+#'
+#'
+#' @param verbose `logical(1)` \cr
+#' Active ou désactive le log des actions ultérieures.
+#' @inheritParams mongodb_connection
+#' @param experiment_name `character()` \cr
+#' Quel est l'objet de cette tâche ?
+#' @param experiment_description `character()` \cr
+#' Descriptions supplémentaires sur l'expérimentation en cours.
+#'
+#'  @return `[sf_task]` \cr
+#' Un objet sf_task avec un attribut de type `logical` "verbose", qui définit le niveau de log,
+#' ainsi qu'un attribut "to_log" de type `list` dans lequel seront stockés des
+#' informations spécifiques pour le log.
+#'
+#'  @export
+sf_task <- function(
+  verbose,
+  database = "test_signauxfaibles",
+  collection = "Features",
+  experiment_name,
+  experiment_description
+  ){
+  res <- list(database = database, collection = collection)
+  class(res) <- "sf_task"
+  attr(res, "verbose") <- verbose
+  attr(res, "to_log") <- list(
+    experiment_aim = experiment_name,
+    experiment_description = experiment_description)
+  return(res)
+}
 
-#' Chargement de données historiques
+#' Active ou désactive le logging
+#'
+#' Prend en compte l'attribut "verbose" de l'objet task pour fixer le bon
+#' niveau de logging
+#' @param task `[sf_task]` \cr Objet s3 de type sf_task
+#' @return TRUE
+set_verbose_level <- function(task){
+  require(logger)
+  if (attr(task, "verbose")){
+    log_threshold(TRACE)
+  } else {
+    log_threshold(WARN)
+  }
+  return(TRUE)
+}
+
+#' Vérification de champs
+#'
+#' Vérifie si les champs qui vont être écrits sont déjà existant, et le cas
+#' échéant vont être écrasés.
 #'
 #' @param task `[sf_task]` \cr Objet s3 de type sf_task
+#' @param field_names `character()` \cr Nom des champs à vérifier.
 #'
-#' @return
-#' @export
-#'
-#' @examples
-load_hist_data <- function(task, ...){
-  UseMethod("load_hist_data", task)
+#' @return Nom des champs écrasés, `character(0)` sinon.
+check_overwrites <- function(task, field_names){
+  set_verbose_level()
+  overwrite <- intersect(field_names, names(task))
+  if (length(overwrite) > 1){
+    log_info('Les champs {paste(overwrite, collapse = ",")} sont écrasés avec
+      les nouvelles valeurs.')
+  }
+  return(overwrite)
 }
-load_new_data <- function(task, ...){
-  UseMethod("load_new_data", task)
-}
-hold_out <- function(task, ...){
-  UseMethod("hold_out", task)
-}
-prepare <- function(task, ...){
-  UseMethod("prepare", task)
-}
-optimize_hyperparams <- function(task, ...){
-}
-train <- function(task, ...){
-  UseMethod("train", task)
-}
-load <- function(task, ...){
-  UseMethod("load", task)
-}
-load.default <- function(task, ...){
-  base::load(task, ...)
-}
-save <- function(task, ...){
-  UseMethod("save", task)
-}
-save.default <- function(task, ...){
-  base::save(task, ...)
-}
-export <- function(task, ...){
-  UseMethod("export", task)
-}
-evaluate <- function(task, ...){
-  UseMethod("evaluate", task)
-}
-log <- function(task, ...){
-  UseMethod("log", task)
-}
-explain <- function(task, ...){
-  UseMethod("explain", task)
-}
-
 
 #' Chargement de données historiques
 #'
@@ -121,36 +122,30 @@ load_hist_data.sf_task <- function(
   siren = NULL,
   code_ape = NULL
   ){
+  set_verbose_level(task)
 
-  require(logger)
-  if (attr(task, "verbose")){
-    log_threshold(TRACE)
-  } else {
-    log_threshold(WARN)
-  }
-
-  log_info("Loading historical data")
+  log_info("Chargement des données historiques.")
 
   hist_data <- connect_to_database(
     database,
     collection,
     batch,
+    min_effectif = min_effectif,
     siren = NULL,
     date_inf = date_inf,
     date_sup = date_sup,
-    min_effectif = min_effectif,
     fields = fields,
     code_ape = NULL,
-    type = "dataframe",
     subsample = subsample,
-    verbose = attr(task, "verbose")
+    verbose = FALSE
     )
 
   if (nrow(hist_data) > 1) {
-    log_info("Data has been loaded successfully")
+    log_info("Les données ont été chargées avec succès.")
   } else {
-    log_warn("No data has been loaded, no data could be found")
+    log_warn("Aucune donnée n'a été chargée. Veuillez vérifier la requête.")
   }
+  check_overwrites(task, "hist_data")
   task[["hist_data"]] <- hist_data
   return(task)
 }
@@ -372,7 +367,7 @@ prepare.sf_task <- function(
         prepared the "train_data" first ?')
     }
 
-    log_info("Preparing data for training and predicting")
+    log_info("Preparing {name} for training and predicting")
     if (name %in% names(task)){
 
       out <-  prepare_frame(
@@ -410,14 +405,71 @@ prepare.sf_task <- function(
 
 #' Optimize the hyperparameters of a model
 #'
-#' @param param
+#' Optimise les hyperparamètres du modèle. Nécessite des données
+#' d'entraînement et de validation préparées.
 #'
-#'  @return
+#' @param task `[sf_task]` \cr Objet s3 de type sf_task
+#' @param fields `character()` \cr Liste des variables pour l'entraînement. Cf
+#' `[get_fields]` pour les variables par défaut.
+#'
+#'
+#'  @return La `task` donnée en entrée, auquel a été ajouté un champ
+#'  "model_parameters" avec les paramètres optimaux calculées.
 #'  @export
 #'
 #'  @examples
-optimize_hyperparams.sf_task <- function(){
+optimize_hyperparameters.sf_task <- function( #nolint
+  task,
+  fields = get_fields(training = TRUE),
+  init_points = 6,
+  n_iter = 12
+){
 
+  assertthat::assert_that(
+    all(c("prepared_train_data", "prepared_validation_data") %in% names(task)),
+    msg = "train_data and validation_data need first to be prepared."
+    )
+
+  train_fun  <- function(
+    learn_rate,
+    max_depth,
+    ntrees,
+    min_child_weight
+  ){
+    new_task <- train(
+      task,
+      parameters = list(
+        learn_rate = learn_rate,
+        max_depth = max_depth,
+        ntrees = ntrees,
+        min_child_weight = min_child_weight
+        )
+    )
+
+    new_task <- predict(new_task, data_names = c("validation_data"))
+    new_task <- evaluate(new_task, plot = FALSE)
+    aucpr <- new_task[["model_performance"]] %>% .$evaluation %>% .[[1]]
+    return(list(Score = aucpr, Pred = 0))
+  }
+  opt_res <- rBayesianOptimization::BayesianOptimization( #nolint
+    train_fun,
+    bounds = list(
+      learn_rate = c(0.003, 0.2),
+      max_depth = c(2L, 12L),
+      ntrees = c(10L, 300L),
+      min_child_weight = c(1L, 10L)
+      ),
+    init_points = init_points,
+    n_iter = n_iter,
+    acq = "ucb",
+    # kappa = 2.576,
+    eps = 0.5,
+    verbose = TRUE
+    )
+
+  task[["optim_history"]] <- opt_res[["History"]]
+  task[["model_parameters"]]  <- as.list(opt_res[["Best_Par"]])
+  return(task)
 }
 #' Entraînement de l'algorithme
 #'
@@ -439,18 +491,37 @@ optimize_hyperparams.sf_task <- function(){
 train.sf_task <- function(
   task,
   fields = get_fields(training = TRUE),
-  learn_rate = 0.1,
-  max_depth = 4,
-  ntrees = 60,
-  min_child_weight = min_child_weight,
+  parameters = NULL,
   seed = 123
   ){
+
   require(logger)
   if (attr(task, "verbose")){
     log_threshold(TRACE)
   } else {
     log_threshold(WARN)
   }
+
+  if (is.null(parameters) && (!"model_parameters" %in% names(task))){
+      parameters  <- list(
+        learn_rate = 0.1,
+        max_depth = 4,
+        ntrees = 60,
+        min_child_weight = min_child_weight)
+  } else if (is.null(parameters)){
+    parameters <- task[["model_parameters"]]
+  }
+
+
+  assertthat::assert_that(
+    is.list(parameters)
+    )
+
+  assertthat::assert_that(
+    all(c("learn_rate", "max_depth", "ntrees", "min_child_weight")
+      %in% names(parameters)),
+    msg = "Missing parameters."
+    )
 
   log_info("Model is being trained.")
 
@@ -460,10 +531,10 @@ train.sf_task <- function(
     h2o_train_data = task[["prepared_train_data"]],
     x_fields_model = fields,
     save_results = FALSE,
-    learn_rate = learn_rate,
-    max_depth = max_depth,
-    ntrees = ntrees,
-    min_child_weight = min_child_weight,
+    learn_rate = parameters[["learn_rate"]],
+    max_depth = parameters[["max_depth"]],
+    ntrees = parameters[["ntrees"]],
+    min_child_weight = parameters[["min_child_weight"]],
     seed = seed
   )
 
@@ -656,10 +727,19 @@ export.sf_task <- function(task, ...){
     return(task)
 }
 
+#' Evaluate a model
+#'
+#' @param param
+#'
+#' @return
+#' @export
+#'
+#' @examples
 evaluate.sf_task <- function(
   task,
   eval_function = MLsegmentr::eval_precision_recall(),
-  data_name = c("validation_data")
+  data_name = c("validation_data"),
+  plot = TRUE
   ){
 
   assertthat::assert_that(
@@ -678,7 +758,11 @@ evaluate.sf_task <- function(
 
   assesser$evaluation_funs <- eval_function
 
-  perf <- assesser$assess_model()
+  perf <- assesser$assess_model(plot = plot)
+
+  task[["model_performance"]] <- perf %>%
+    select(evaluation_name, evaluation) %>%
+    filter(evaluation_name != "prcurve")
 
   attr(task, "to_log")[["model_performance"]] <- perf %>%
     select(evaluation_name, evaluation) %>%
@@ -701,7 +785,7 @@ log.sf_task <- function(
     database,
     collection,
     id_columns = c("siret", "periode")
-  )
+    )
   do.call(logger$set, args = attr(task, "to_log"))
   logger$log(...)
 

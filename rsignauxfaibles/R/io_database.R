@@ -21,12 +21,10 @@ NULL
 #' @param fields Liste des champs à requêter. Si omis ou égal à NULL, tous les
 #'   champs sont requêtés.
 #' @param code_ape code_ape à requêter, sous la forme "7112B"
-#' @param type Prend comme valeur "dataframe" pour extraire un dataframe dans R
-#'   (par défaut), "spark" pour extraire un spark dataframe.
 #' @param subsample Randomly samples company/period pairs. If negative, keeps all objects.
 #' @param limit Number of entries to take into account. For test purposes mainly.
 #'
-#' @return Renvoie un dataframe ou un spark dataframe selon la valeur de \code{type}
+#' @return Renvoie un dataframe
 #'
 #' @export
 #'
@@ -35,15 +33,13 @@ connect_to_database <- function(
   database,
   collection,
   batch,
+  min_effectif,
   siren = NULL,
   date_inf = NULL,
   date_sup = NULL,
-  min_effectif = 10,
   fields = NULL,
   code_ape = NULL,
-  type = "dataframe",
   subsample = NULL,
-  .limit = NULL,
   verbose = TRUE,
   replace_missing = NULL
   ) {
@@ -87,91 +83,52 @@ connect_to_database <- function(
     subsample
     )
 
-  TYPES <- c("dataframe", "spark")
-
-  assertthat::assert_that(type %in% TYPES,
-    msg = "connect_to_database:
-    specification du type d'import/export non valide"
+  assertthat::assert_that(
+    is.null(fields) || all(c("periode", "siret") %in% fields)
     )
 
-    assertthat::assert_that(
-      is.null(fields) || all(c("periode", "siret") %in% fields)
-      )
+  log_info("Connexion à la collection mongodb {collection} ...")
 
-  if (type == TYPES[1]) {
-    log_info("Connexion à la collection mongodb {collection} ...")
+  dbconnection <- mongolite::mongo(
+    collection = collection,
+    db = database,
+    url = "mongodb://localhost:27017",
+    verbose = verbose
+    )
+  log_info(" Connexion effectuée avec succès.")
 
-    dbconnection <- mongolite::mongo(
-      collection = collection,
-      db = database,
-      url = "mongodb://localhost:27017",
-      verbose = verbose
-      )
-    log_info(" Connexion effectuée avec succès.")
+  # Import dataframe
+  log_info("Import en cours...")
 
-    # Import dataframe
-    log_info("Import en cours...")
+  donnees <- dbconnection$aggregate(requete)
 
-    donnees <- dbconnection$aggregate(requete)
+  log_info(" Import fini.")
 
-    log_info(" Import fini.")
-
-    if (dim(donnees)[1] == 0) {
-      return(tibble::tibble(siret = character(0), periode = character(0)))
-    }
-    assertthat::assert_that(
-      all(c("periode", "siret") %in% names(donnees))
-      )
-
-    assertthat::assert_that(
-      anyDuplicated(donnees %>% select(siret, periode)) == 0,
-      msg = "La base importee contient des lignes identiques"
-      )
-
-    table_wholesample <- donnees %>%
-      arrange(periode) %>%
-      mutate_if(lubridate::is.POSIXct, as.Date) %>%
-      tibbletime::as_tbl_time(periode)
-
-    n_eta <- table_wholesample$siret %>%
-      n_distinct()
-    n_ent <- table_wholesample$siret %>%
-      stringr::str_sub(1, 9) %>%
-      n_distinct()
-    log_info("Import de {n_eta} etablissements issus de {n_ent} entreprises")
-
-    log_info(" Fini.")
-  } else if (type == TYPES[2]) {
-    log_info("Ouverture de la connection spark")
-
-    # FIX ME: neater way to deal with already open connection
-    sc <- sparklyr::spark_connection_find()[[1]]
-
-    log_info("Connection à MongoDB et import des donnees dans spark")
-    load <- sparklyr::invoke(sparklyr::spark_session(sc), "read") %>%
-      sparklyr::invoke("format", "com.mongodb.spark.sql.DefaultSource") %>%
-      sparklyr::invoke("option", "pipeline", requete) %>%
-      sparklyr::invoke("load")
-
-    table_wholesample <- sparklyr::sdf_register(load)
-
-    if (ncol(table_wholesample) == 0) {
-      return(table_wholesample)
-    }
-
-
-    type_frame <- sparklyr::sdf_schema(table_wholesample) %>%
-      lapply(function(x) do.call(tibble::data_frame, x)) %>%
-      bind_rows()
-
-    assertthat::assert_that(
-      all(type_frame$type != "NullType"),
-      msg = paste("NullTypes found in imported spark frame: ",
-        type_frame$name[type_frame$type == "NullType"],
-        collapse = " :: "
-        )
-      )
+  if (dim(donnees)[1] == 0) {
+    return(tibble::tibble(siret = character(0), periode = character(0)))
   }
+  assertthat::assert_that(
+    all(c("periode", "siret") %in% names(donnees))
+    )
+
+  assertthat::assert_that(
+    anyDuplicated(donnees %>% select(siret, periode)) == 0,
+    msg = "La base importee contient des lignes identiques"
+    )
+
+  table_wholesample <- donnees %>%
+    arrange(periode) %>%
+    mutate_if(lubridate::is.POSIXct, as.Date) %>%
+    tibbletime::as_tbl_time(periode)
+
+  n_eta <- table_wholesample$siret %>%
+    n_distinct()
+  n_ent <- table_wholesample$siret %>%
+    stringr::str_sub(1, 9) %>%
+    n_distinct()
+  log_info("Import de {n_eta} etablissements issus de {n_ent} entreprises")
+
+  log_info(" Fini.")
 
   # Champs par défaut lorsque absent.
 
@@ -186,11 +143,7 @@ connect_to_database <- function(
   if (length(champs_manquants) >= 1) {
     log_info("Champ manquant: {champs_manquants}")
     log_info("Remplacements par NA")
-    if (type == "dataframe") {
-      NA_variable <- NA_character_
-    } else if (type == "spark") {
-      NA_variable <- "NA_character_"
-    }
+    NA_variable <- NA_character_
     remplacement <- paste0(
       NA_variable,
       character(length(champs_manquants))
@@ -246,8 +199,8 @@ factor_request <- function(
   min_effectif,
   fields,
   code_ape,
-  subsample,
-  .limit = NULL) {
+  subsample
+  ) {
   # Util functions
 
   make_query <- function(keyword, x) {
@@ -261,11 +214,6 @@ factor_request <- function(
     }
   }
 
-  if (!is.null(.limit)) {
-    limit_req <- paste0('{"$limit":', .limit, "}")
-  } else {
-    limit_req <- ""
-  }
   ## Construction de la requête ##
   match_id <- paste0('"info.batch":"', batch, '"')
 
@@ -294,7 +242,7 @@ factor_request <- function(
   } else {
     sample_req <- paste0(
       '{"$sort": {"value.random_order": -1}}, {"$limit" :', subsample, "}"
-    )
+      )
   }
 
   # Filtrage code APE
@@ -381,7 +329,6 @@ if (is.null(fields)) {
 new_root <- "{\"$replaceRoot\" : {\"newRoot\": \"$value\"}}"
 
 reqs <- c(
-  limit_req,
   match_req,
   sample_req,
   new_root,

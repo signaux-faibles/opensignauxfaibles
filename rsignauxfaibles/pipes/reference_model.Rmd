@@ -19,7 +19,7 @@ min_effectif <- 10
 retrain_model <- TRUE
 type <- "dataframe"
 export_type <- c("csv", "mongodb")
-sample_size <- 1000
+sample_size <- 50000
 ```
 
 ```{r}
@@ -44,7 +44,8 @@ task <- load_hist_data(
 
 ```{r}
 task <- hold_out(task)
-task <- prepare(task, data_names = c("train_data"))
+task <- prepare(task, data_names = c("train_data", "validation_data"))
+test <- optimize_hyperparameters(task, init_points = 2, n_iter = 1)
 task  <- train(task)
 ```
 

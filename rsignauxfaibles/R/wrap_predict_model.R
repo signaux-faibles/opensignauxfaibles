@@ -77,7 +77,8 @@ predict_model <- function(model, new_data) {
       # H2O bug ??
       periode = as.Date(structure(periode / 1000,
         class = c("POSIXct", "POSIXt")
-      ))
+      )),
+      siret = as.character(siret)
     )
   return(prediction)
 }
