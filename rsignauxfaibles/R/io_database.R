@@ -5,26 +5,33 @@ NULL
 
 #' Connexion à la base de donnée
 #'
-#' \code{connect_to_database} permet de requêter des données mongoDB pour en
-#' faire un dataframe ou un Spark dataframe. \code{factor_request} permet de fabriquer la requête d'aggrégation correspondante.
+#' `connect_to_database` permet de requêter des données mongoDB pour en
+#' faire un dataframe ou un Spark dataframe. \cr
+#' `factor_request` permet de fabriquer la requête d'aggrégation
+#' correspondante. \cr
 #'
-#' @param database Nom de la base de données Mongodb.
-#' @param collection Nom de la collection Mongodb.
-#' @param batch Valeur du batch, format "aamm".
-#' @param algo Seule la valeur par défaut ("algo2") est supportée actuellement.
-#' @param siren Vecteur de numéros siren. Si omis ou égal à NULL, tous les
-#'   numéros siren sont extraits.
-#' @param date_inf Limite inférieure de la période de temps requêtée
-#' @param date_sup Limite supérieure de la période de temps requêtée
-#' @param min_effectif Limite inférieure de la taille d'établissement requêtée,
-#'   en nombre d'employés.
-#' @param fields Liste des champs à requêter. Si omis ou égal à NULL, tous les
-#'   champs sont requêtés.
-#' @param code_ape code_ape à requêter, sous la forme "7112B"
-#' @param subsample Randomly samples company/period pairs. If negative, keeps all objects.
-#' @param limit Number of entries to take into account. For test purposes mainly.
 #'
-#' @return Renvoie un dataframe
+#'
+#' @inheritParams mongodb_connection
+#' @param batch `character(1)` \cr Batch auquel doit être importées les
+#'   données. Les modifications opérées par les batchs ultérieurs sont
+#'   ignorées.
+#' @param siren `character()` \cr Liste de sirens à exporter. Si égale à
+#'   \code{NULL}, charge tous les sirens disponibles.
+#' @param date_inf `Date(1)` \cr Limite inférieure de la période de temps requêtée
+#' @param date_sup `Date(1)` \cr Limite supérieure de la période de temps requêtée
+#' @param min_effectif `integer(1)` \cr Limite basse du filtrage de l'effectif
+#'   (la limite est incluse)
+#' @param fields `character()` \cr Noms des champs à requêter dans la base de
+#'   données. Doit contenir "siret" et "periode". Si égal à `NULL`, alors
+#'   charge tous les champs disponibles.
+#' @param code_ape `character()` \cr Liste de code NAF ou APE (niveau 2 à 5) à exporter. Si égale à
+#'   \code{NULL}, charge tous les codes disponibles. Il est permis de mélanger
+#'   des codes de différents niveaux.
+#' @param subsample `integer(1)` \cr Nombre d'objets (c'est-à-dire de couples
+#'   siret x periode) à échantillonner.
+#'
+#' @return `data.frame()`
 #'
 #' @export
 #'

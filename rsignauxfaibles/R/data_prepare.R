@@ -65,17 +65,36 @@ prepare_frame <- function(
   return(res)
 }
 
-#' Get newest data
+#' Récupère les dernières données disponibles pour un batch
 #'
-#' @return
+#' Cette fonction permet d'accéder rapidement aux dernières données
+#' disponibles.
+#'
+#' @param last_batch `character(1)` \cr Batch auquel doit être importées les
+#'   données. Les modifications opérées par les batchs ultérieurs sont
+#'   ignorées.
+#' @param periods `[Date()]` \cr Périodes d'intérêt, auquels charger les
+#'   données. Des périodes supplémentairs peuvent être chargées selon la
+#'   valeur de rollback_months.
+#' @inheritParams mongodb_connection
+#' @param fields `character()` \cr Noms des champs à requêter dans la base de
+#'   données. Doit contenir "siret" et "periode". Si égal à \code{NULL}, alors
+#'   charge tous les champs disponibles.
+#' @param min_effectif `integer(1)` \cr Limite basse du filtrage de l'effectif
+#'   (la limite est incluse)
+#' @param rollback_months `integer(1)`\cr Nombre de mois précédant le premier mois de
+#'   `periods` à charger. Permet d'effectuer des calculs de différences ou de
+#'   moyennes glissantes pour les périodes d'intérêt.
+#'
+#' @return `data.frame()'\cr
+#' Données avec les colonnes décrites dans `fields`, pour les périodes
+#' définies par `periods` et `rollback_months`
 #' @export
-#'
-#' @examples
 get_last_batch <- function(
-  database,
-  collection,
   last_batch,
   periods,
+  database,
+  collection,
   fields,
   min_effectif,
   rollback_months) {
@@ -93,6 +112,37 @@ get_last_batch <- function(
   if ("periode" %in% fields && max(current_data$periode) != max(periods)) {
     log_warn("Data is missing at actual period !")
   }
-
   return(current_data)
+}
+
+
+
+h2o_target_encode <- function(
+                              te_map,
+                              h2o_frame,
+                              train_or_test) {
+  assertthat::assert_that(train_or_test %in% c("train", "test"))
+
+  if (train_or_test == "train") {
+    holdout_type <- "LeaveOneOut"
+    blended_avg <- TRUE
+    noise_level <- 0.02
+  } else if (train_or_test == "test") {
+    holdout_type <- "None"
+    blended_avg <- FALSE
+    noise_level <- 0
+  }
+
+  res <- h2o::h2o.target_encode_apply(
+    h2o_frame,
+    x = as.list(names(te_map)),
+    y = "outcome",
+    target_encode_map = te_map,
+    holdout_type = holdout_type,
+    blended_avg = blended_avg,
+    # fold_column = "fold_column", should be not necessary
+    noise_level = noise_level,
+    seed = 1234
+  )
+  return(res)
 }

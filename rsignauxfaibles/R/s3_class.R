@@ -107,8 +107,6 @@ check_overwrites <- function(task, field_names){
 #' @describeIn load_hist_data
 #'
 #' @export
-#'
-#' @examples
 load_hist_data.sf_task <- function(
   task,
   batch,
@@ -153,22 +151,11 @@ load_hist_data.sf_task <- function(
 #' Chargement de nouvelles données
 #'
 #' @param task `[sf_task]` \cr Objet s3 de type sf_task
-#' @param last_batch `character(1)` \cr Batch auquel doit être importées les
-#'   données. Les modifications opérées par les batchs ultérieurs sont
-#'   ignorées.
 #' @param periods `[Date()]` \cr Périodes d'intérêt, auquels charger les
 #'   données. Des périodes supplémentairs peuvent être chargées selon la
 #'   valeur de rollback_months.
-#' @param database `character(1)` \cr Nom de la base de données vers
-#'   laquelle param exporter. Par défaut, celle stockée dans \code{task}.
-#' @param collection `character(1)` \cr Nom de la collection vers laquelle
-#'    exporter. Par défaut, celle stockée dans \code{task}.
-#' @param fields `character()` \cr Noms des champs à requêter dans la base de
-#'   données. Doit contenir "siret" et "periode". Si égal à \code{NULL}, alors
-#'   charge tous les champs disponibles.
-#' @param min_effectif `integer(1)` \cr Limite basse du filtrage de l'effectif
-#'   (la limite est incluse)
-#' @param rollback_months Nombre de mois précédant le premier mois de
+#' @inheritParams connect_to_database
+#' @param rollback_months `integer(1)`\cr Nombre de mois précédant le premier mois de
 #'   `periods` à charger. Permet d'effectuer des calculs de différences ou de
 #'   moyennes glissantes pour les périodes d'intérêt.
 #'
@@ -178,37 +165,35 @@ load_hist_data.sf_task <- function(
 #'   L'objet \code{task} donné en entrée auquel le champs "new_data" a été
 #'   ajouté (ou écrasé), contenant un  data.frame() avec les colonnes incluses dans le paramètre d'entrée
 #'  \code{fields}, et pour chaque ligne un couple unique siret x periode.
-#'  @export
-#'
-#'  @examples
+#' @export
 load_new_data.sf_task <- function(
   task,
-  last_batch,
   periods,
+  batch,
   database = task[["database"]],
   collection = task[["collection"]],
   fields = get_fields(training = FALSE),
-  min_effectif = 10,
-  rollback_months = 1
+  min_effectif = 10L,
+  rollback_months = 1L
   ){
 
-  require(logger)
-  if (attr(task, "verbose")){
-    log_threshold(TRACE)
-  } else {
-    log_threshold(WARN)
-  }
+  set_verbose_level(task)
 
   log_info("Loading data from last batch")
-  task[["new_data"]] <- get_last_batch(
+  task[["new_data"]] <- connect_to_database(
     database = database,
     collection = collection,
-    last_batch = last_batch,
-    periods = periods,
-    fields = fields,
+    batch = batch,
+    date_inf = min(periods) %m-% months(rollback_months),
+    date_sup = max(periods) %m+% months(1),
     min_effectif = min_effectif,
-    rollback_months =  rollback_months
-    )
+    fields = fields
+  )
+
+  if ("periode" %in% fields && max(current_data$periode) != max(periods)) {
+    log_warn("Data is missing at actual period !")
+  }
+  return(current_data)
 
   return(task)
 }
@@ -216,29 +201,26 @@ load_new_data.sf_task <- function(
 #' Scission des données en échantillon d'entraînement, de validation et de
 #' test.
 #'
-#' Scinde les données en échantillon d'entraînement, de validation et de
+#' Scinde les données historiques en échantillon d'entraînement, de validation et de
 #' test, selon les proportions souhaitées. S'assure que deux établissements de la même entreprise ne soient pas
 #' à la fois dans deux échantillons différents pour éviter la fuite
 #' d'information d'un échantillon vers l'autre.
 #'
+#'  La fraction de l'échantillon de test est calculée par
+#'  1 - frac_train - frac_val. (frac_train + frac_val) doit donc être inférieur
+#'  à 1. Le seul cas où cette condition n'est pas testée est lorsque frac_train
+#'  = 1.
+#'
 #' @param task `[sf_task]` \cr Objet s3 de type sf_task. Doit posséder des
 #'   données dans le champs "hist_data".
-#' @param frac_train `numeric(1)` \cr Fraction des données utilisées pour
-#'   l'entraînement. Doit être entre 0 et 1.
-#' @param frac_val `numeric(1)` \cr Fraction des données utilisées pour la
-#'   validation. Doit être entre 0 et 1.
-#' @param remove_strong_signals Faut-il retirer des échantillons de test ou de
+#' @inheritParams split_snapshot_rdm_month
+#' @param remove_strong_signals `logical(1)`\cr
+#'   Faut-il retirer des échantillons de test ou de
 #'   validation les entrerprises qui présentent des signaux forts, c'est-à-dire 3 mois de défaut, ou une
 #'   procédure collective en cours ? Nécessite que les données contenues dans
 #'   \code{task[["hist_data"]]} possèdent le champs "time_til_outcome".
 #'
-#'
-#' @section Fractions:
-#' La fraction de l'échantillon de test est calculée par
-#' 1 - frac_train - frac_val. (frac_train + frac_val) doit donc être inférieur
-#' à 1. Le seul cas où cette condition n'est pas testée est lorsque frac_train
-#' = 1.
-#'
+#' @describeIn hold_out
 #'
 #' @return `[sf_task]` \cr
 #'   L'objet \code{task} donné en entrée auquel les champs "train_data",
@@ -248,78 +230,71 @@ load_new_data.sf_task <- function(
 #'   lignes.
 #'
 #' @export
-#'
-#' @examples
 hold_out.sf_task <- function(
   task,
   frac_train = 0.6,
   frac_val = 0.2,
   remove_strong_signals = TRUE
   ){
-  require(logger)
-  if (attr(task, "verbose")){
-    log_threshold(TRACE)
+
+  set_verbose_level(task)
+
+  log_info("Les données historiques sont scindés en échantillons
+    d'entraînement, de test et de validation")
+
+  assertthat::assert_that("hist_data" %in% names(task),
+    msg = "Please load historical data before holding out test data")
+
+  if (frac_train == 1) {
+    frac_val <- 0
+    task[["train_data"]] <- task[["hist_data"]]
   } else {
-    log_threshold(WARN)
+
+    res <- split_snapshot_rdm_month(
+      task = task[["hist_data"]],
+      frac_train = frac_train,
+      frac_val = frac_val
+      )
+
+    task[["train_data"]] <- task[["hist_data"]] %>%
+      semi_join(res[["train"]], by = c("siret", "periode"))
+    task[["validation_data"]] <- task[["hist_data"]] %>%
+      semi_join(res[["validation"]], by = c("siret", "periode"))
+    task[["test_data"]] <- task[["hist_data"]] %>%
+      semi_join(res[["test"]], by = c("siret", "periode"))
   }
 
-  log_info("Historical data is splitted into a train, validation and test
-    frame")
+  if (remove_strong_signals){
 
-    assertthat::assert_that("hist_data" %in% names(task),
-      msg = "Please load historical data before holding out test data")
+    log_info("Les 'signaux forts' sont retirés des données d'évaluation (test,
+      validation)")
 
-    if (frac_train == 1) {
-      frac_val <- 0
-      task[["train_data"]] <- task[["hist_data"]]
-    } else {
+    # TODO Move to split snapshot
+    if (!is.null(task[["validation_data"]])){
+      assertthat::assert_that("time_til_outcome" %in%
+        names(task[["validation_data"]]))
 
-      res <- split_snapshot_rdm_month(
-        task[["hist_data"]],
-        frac_train,
-        frac_val
-        )
-
-      task[["train_data"]] <- task[["hist_data"]] %>%
-        semi_join(res[["train"]], by = c("siret", "periode"))
-      task[["validation_data"]] <- task[["hist_data"]] %>%
-        semi_join(res[["validation"]], by = c("siret", "periode"))
-      task[["test_data"]] <- task[["hist_data"]] %>%
-        semi_join(res[["test"]], by = c("siret", "periode"))
+      task[["validation_data"]]  <- task[["validation_data"]] %>%
+        filter(is.na(task[["validation_data"]]$time_til_outcome) |
+          task[["validation_data"]]$time_til_outcome > 0)
     }
+    if (!is.null(task[["test_data"]])){
+      assertthat::assert_that("time_til_outcome" %in%
+        names(task[["test_data"]]))
 
-    if (remove_strong_signals){
-      log_info("Strong signals are removed from test and validation frames")
-      # TODO Move to split snapshot
-      if (!is.null(task[["validation_data"]])){
-        assertthat::assert_that("time_til_outcome" %in%
-          names(task[["validation_data"]]))
-
-        task[["validation_data"]]  <- task[["validation_data"]] %>%
-          filter(is.na(task[["validation_data"]]$time_til_outcome) |
-            task[["validation_data"]]$time_til_outcome > 0)
-      }
-      if (!is.null(task[["test_data"]])){
-        assertthat::assert_that("time_til_outcome" %in%
-          names(task[["test_data"]]))
-
-        task[["test_data"]]  <- task[["test_data"]] %>%
-          filter(is.na(task[["test_data"]]$time_til_outcome) |
-            task[["test_data"]]$time_til_outcome > 0)
-      }
+      task[["test_data"]]  <- task[["test_data"]] %>%
+        filter(is.na(task[["test_data"]]$time_til_outcome) |
+          task[["test_data"]]$time_til_outcome > 0)
     }
+  }
+  attr(task, "to_log")[["resampling_strategy"]]  <-  "holdout"
+  attr(task, "to_log")[["train_val_test_shares"]] <- c(
+    frac_train,
+    frac_val,
+    1 - frac_train - frac_val
+    )
 
-
-    attr(task, "to_log")[["resampling_strategy"]]  <-  "holdout"
-    attr(task, "to_log")[["train_val_test_shares"]] <- c(
-          frac_train,
-          frac_val,
-          1 - frac_train - frac_val
-          )
-    attr(task, "to_log")[["test_frame"]] <- task[["validation_data"]]
-    attr(task, "to_log")[["train_frame"]] <- task[["train_data"]]
-
-    return(task)
+  return(task)
 }
 
 #' Préparation des échantillons
@@ -338,9 +313,9 @@ hold_out.sf_task <- function(
 #'   du préfixe "prepared_" aux noms des données noms préparées (par exemple:
 #'   "prepared_train_data" correspond aux données de "train_data" préparées).
 #'
-#' @export
+#' @describeIn prepare
 #'
-#' @examples
+#' @export
 prepare.sf_task <- function(
   task,
   data_names = c(
@@ -350,12 +325,8 @@ prepare.sf_task <- function(
     "new_data"
     )
   ){
-  require(logger)
-  if (attr(task, "verbose")){
-    log_threshold(TRACE)
-  } else {
-    log_threshold(WARN)
-  }
+
+  set_verbose_level(task)
 
   aux_function <- function(task, name){
     if (name == "train_data"){
@@ -412,12 +383,12 @@ prepare.sf_task <- function(
 #' @param fields `character()` \cr Liste des variables pour l'entraînement. Cf
 #' `[get_fields]` pour les variables par défaut.
 #'
+#' @describeIn optimize_hyperparameters
 #'
-#'  @return La `task` donnée en entrée, auquel a été ajouté un champ
-#'  "model_parameters" avec les paramètres optimaux calculées.
-#'  @export
+#' @return La `task` donnée en entrée, auquel a été ajouté un champ
+#' "model_parameters" avec les paramètres optimaux calculées.
+#' @export
 #'
-#'  @examples
 optimize_hyperparameters.sf_task <- function( #nolint
   task,
   fields = get_fields(training = TRUE),
@@ -471,6 +442,7 @@ optimize_hyperparameters.sf_task <- function( #nolint
   task[["model_parameters"]]  <- as.list(opt_res[["Best_Par"]])
   return(task)
 }
+
 #' Entraînement de l'algorithme
 #'
 #' Entraîne un algorithme sur les données `task[["train_data"]]`. Cf
@@ -486,8 +458,6 @@ optimize_hyperparameters.sf_task <- function( #nolint
 #' avec la fonction `[prepare.sf_task]`.
 #'
 #' @export
-#'
-#'  @examples
 train.sf_task <- function(
   task,
   fields = get_fields(training = TRUE),
@@ -495,12 +465,7 @@ train.sf_task <- function(
   seed = 123
   ){
 
-  require(logger)
-  if (attr(task, "verbose")){
-    log_threshold(TRACE)
-  } else {
-    log_threshold(WARN)
-  }
+  set_verbose_level(task)
 
   if (is.null(parameters) && (!"model_parameters" %in% names(task))){
       parameters  <- list(
@@ -543,25 +508,13 @@ train.sf_task <- function(
 
   attr(task, "to_log")[["model_name"]] <- "light gradient boosting"
   attr(task, "to_log")[["model"]] <- "model"
-  attr(task, "to_log")[["model_features"]] <- fields
-  attr(task, "to_log")[["model_parameters"]] <- list(
-        "learn_rate <- 0.1",
-        "max_depth <- 4",
-        "ntrees <- 60",
-        "seed <- 123"
-        )
   attr(task, "to_log")[["model_target"]] <- "18 mois, defaut et défaillance"
 
   return(task)
 }
 
 load.sf_task <- function(task){
-  require(logger)
-  if (attr(task, "verbose")){
-    log_threshold(TRACE)
-  } else {
-    log_threshold(WARN)
-  }
+  set_verbose_level(task)
   task[["model"]] <- load_h2o_object("lgb", "model", last = TRUE)
   task[["preparation_map"]] <- load_h2o_object("te_map", "temap", last = TRUE)
 
@@ -569,12 +522,7 @@ load.sf_task <- function(task){
 }
 
 save.sf_task <- function(task, ...) {
-  require(logger)
-  if (attr(task, "verbose")){
-    log_threshold(TRACE)
-  } else {
-    log_threshold(WARN)
-  }
+  set_verbose_level(task)
 
   assertthat::assert_that(all(c("model", "preparation_map") %in% names(task)),
     msg = "Task should have a model and a preparation_map to be saved")
@@ -593,20 +541,13 @@ save.sf_task <- function(task, ...) {
 #'
 #' @return
 #' @export
-#'
-#' @examples
 predict.sf_task <- function(
   object,
   data_names = c("new_data", "train_data", "validation_data", "test_data")
 ){
 
   task  <- object
-  require(logger)
-  if (attr(task, "verbose")){
-    log_threshold(TRACE)
-  } else {
-    log_threshold(WARN)
-  }
+  set_verbose_level(task)
 
   assertthat::assert_that(all(c("model") %in% names(task)),
     msg = "Task should have a model to predict on new
@@ -727,14 +668,17 @@ export.sf_task <- function(task, ...){
     return(task)
 }
 
-#' Evaluate a model
+#' Évaluation du modèle
 #'
-#' @param param
+#' @param task
+#' @param eval_function
+#' @param data_name
+#' @param plot
+#'
+#' @describeIn evaluate
 #'
 #' @return
 #' @export
-#'
-#' @examples
 evaluate.sf_task <- function(
   task,
   eval_function = MLsegmentr::eval_precision_recall(),
@@ -764,15 +708,24 @@ evaluate.sf_task <- function(
     select(evaluation_name, evaluation) %>%
     filter(evaluation_name != "prcurve")
 
-  attr(task, "to_log")[["model_performance"]] <- perf %>%
-    select(evaluation_name, evaluation) %>%
-    filter(evaluation_name != "prcurve")
 
   return(task)
   ## Log model performance.
 }
 
 
+#' Log des expérimentations Machine Learning
+#'
+#' Permet de loguer dans une collection mongodb la nature et les différents
+#' éléments de la tâche d'apprentissage. Cf le package `MLlogs`.
+#'
+#' @param task
+#' @inheritParams mongodb_connection
+#' @param collection `character(1)`. La collection vers laquelle exporter. Par
+#' défaut, "ml_logs".
+#'
+#' @return returns the `task` unchanged.
+#' @export
 log.sf_task <- function(
   task,
   database = task[["database"]],
@@ -786,16 +739,22 @@ log.sf_task <- function(
     collection,
     id_columns = c("siret", "periode")
     )
+
+  list_to_log  <- attr(task, "to_log")
+  list_to_log[["model_performance"]]  <- task[["model_performance"]]
+  list_to_log[["model_parameters"]] <- task[["model_parameters"]]
+  list_to_log[["model_features"]]  <-  task[["features"]]
+  list_to_log[["test_frame"]] <- task[["validation_data"]]
+  list_to_log[["train_frame"]] <- task[["train_data"]]
   do.call(logger$set, args = attr(task, "to_log"))
   logger$log(...)
 
-  return(task)
+  return(invisible(task))
 }
 
 explain.sf_task <- function(task, ...){
   # Later
 }
-
 
 print.sf_task <- function(x, ...){
   cat("-- FIELDS --\n")
