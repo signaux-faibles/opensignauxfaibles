@@ -69,7 +69,7 @@ set_verbose_level <- function(task){
 #'
 #' @return Nom des champs écrasés, `character(0)` sinon.
 check_overwrites <- function(task, field_names){
-  set_verbose_level()
+  set_verbose_level(task)
   overwrite <- intersect(field_names, names(task))
   if (length(overwrite) > 1){
     log_info('Les champs {paste(overwrite, collapse = ",")} sont écrasés avec
@@ -220,7 +220,7 @@ load_new_data.sf_task <- function(
 #'   procédure collective en cours ? Nécessite que les données contenues dans
 #'   \code{task[["hist_data"]]} possèdent le champs "time_til_outcome".
 #'
-#' @describeIn hold_out
+#' @describeIn split_data
 #'
 #' @return `[sf_task]` \cr
 #'   L'objet \code{task} donné en entrée auquel les champs "train_data",
@@ -230,10 +230,10 @@ load_new_data.sf_task <- function(
 #'   lignes.
 #'
 #' @export
-hold_out.sf_task <- function(
+split_data.sf_task <- function(
   task,
-  frac_train = 0.6,
-  frac_val = 0.2,
+  fracs = c(0.6, 0.2, 0.2),
+  names = c("train", "validation", "test"),
   remove_strong_signals = TRUE
   ){
 
@@ -245,23 +245,20 @@ hold_out.sf_task <- function(
   assertthat::assert_that("hist_data" %in% names(task),
     msg = "Please load historical data before holding out test data")
 
-  if (frac_train == 1) {
-    frac_val <- 0
+  if (length(fracs) == 1 && fracs == 1) {
     task[["train_data"]] <- task[["hist_data"]]
   } else {
 
     res <- split_snapshot_rdm_month(
-      task = task[["hist_data"]],
-      frac_train = frac_train,
-      frac_val = frac_val
+      data_sample = task[["hist_data"]],
+      fracs = fracs,
+      names = names
       )
 
-    task[["train_data"]] <- task[["hist_data"]] %>%
-      semi_join(res[["train"]], by = c("siret", "periode"))
-    task[["validation_data"]] <- task[["hist_data"]] %>%
-      semi_join(res[["validation"]], by = c("siret", "periode"))
-    task[["test_data"]] <- task[["hist_data"]] %>%
-      semi_join(res[["test"]], by = c("siret", "periode"))
+    for (name in names){
+      task[[paste0(name, "_data")]] <- task[["hist_data"]] %>%
+        semi_join(res[[name]], by = c("siret", "periode"))
+    }
   }
 
   if (remove_strong_signals){
@@ -269,7 +266,8 @@ hold_out.sf_task <- function(
     log_info("Les 'signaux forts' sont retirés des données d'évaluation (test,
       validation)")
 
-    # TODO Move to split snapshot
+    # TODO Move to evaluate
+    # task 4d79eca5-80ed-4196-b8b6-257c5f7a2ac0
     if (!is.null(task[["validation_data"]])){
       assertthat::assert_that("time_til_outcome" %in%
         names(task[["validation_data"]]))
@@ -288,11 +286,8 @@ hold_out.sf_task <- function(
     }
   }
   attr(task, "to_log")[["resampling_strategy"]]  <-  "holdout"
-  attr(task, "to_log")[["train_val_test_shares"]] <- c(
-    frac_train,
-    frac_val,
-    1 - frac_train - frac_val
-    )
+  names(fracs) <- names
+  attr(task, "to_log")[["train_val_test_shares"]] <- fracs
 
   return(task)
 }
@@ -338,9 +333,9 @@ prepare.sf_task <- function(
         prepared the "train_data" first ?')
     }
 
-    log_info("Preparing {name} for training and predicting")
     if (name %in% names(task)){
 
+      log_info("Preparing {name} for training and predicting")
       out <-  prepare_frame(
         data_to_prepare = task[[name]],
         save_or_load_map = FALSE,
@@ -358,7 +353,7 @@ prepare.sf_task <- function(
 
     } else {
       log_warn("There is no {name} in current task")
-      return(NULL)
+      return(task)
     }
   }
 
@@ -472,19 +467,18 @@ train.sf_task <- function(
         learn_rate = 0.1,
         max_depth = 4,
         ntrees = 60,
-        min_child_weight = min_child_weight)
+        min_child_weight = 1)
   } else if (is.null(parameters)){
     parameters <- task[["model_parameters"]]
   }
-
 
   assertthat::assert_that(
     is.list(parameters)
     )
 
   assertthat::assert_that(
-    all(c("learn_rate", "max_depth", "ntrees", "min_child_weight")
-      %in% names(parameters)),
+    all(c("learn_rate", "max_depth", "ntrees", "min_child_weight") %in%
+      names(parameters)),
     msg = "Missing parameters."
     )
 
@@ -543,7 +537,12 @@ save.sf_task <- function(task, ...) {
 #' @export
 predict.sf_task <- function(
   object,
-  data_names = c("new_data", "train_data", "validation_data", "test_data")
+  data_names = c(
+    "new_data",
+    "train_data",
+    "validation_data",
+    "test_data"
+  )
 ){
 
   task  <- object
@@ -683,8 +682,13 @@ evaluate.sf_task <- function(
   task,
   eval_function = MLsegmentr::eval_precision_recall(),
   data_name = c("validation_data"),
-  plot = TRUE
+  plot = TRUE,
+  prediction_names = "score",
+  target_names = "outcome",
+  segment_names = NULL
   ){
+
+  browser()
 
   assertthat::assert_that(
     length(data_name) == 1,
@@ -693,12 +697,15 @@ evaluate.sf_task <- function(
 
   require(MLsegmentr)
   assesser <- Assesser$new(
-    task[[data_name]] %>%
-      filter(periode == max(periode))
+    task[[data_name]] #%>% filter(periode == max(periode))
     )
 
-  assesser$set_predictions("score")
-  assesser$set_targets("outcome")
+  assesser$set_predictions(prediction_names)
+  assesser$set_targets(target_names)
+
+  if (!is.null(segment_names)){
+    assesser$set_segments(segment_name)
+  }
 
   assesser$evaluation_funs <- eval_function
 

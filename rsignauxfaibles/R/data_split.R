@@ -11,10 +11,12 @@
 #'
 #' @param data_sample `dataframe()`\cr
 #' Données à scinder avec des champs "periode" et "siret".
-#' @param frac_train `numeric(1)` \cr Fraction des données utilisées pour
-#'   l'entraînement. Doit être entre 0 et 1.
-#' @param frac_val `numeric(1)` \cr Fraction des données utilisées pour la
-#'   validation. Doit être entre 0 et 1.
+#' @param fracs `numeric()` \cr Fraction des différents sous-échantillons.
+#' Toutes les fractions doivent être dans ]0,1] et leur somme doit être égale
+#' à 1.
+#' @param names `character()` \cr Vecteur de noms des sous-échantillons, qui doit être de même
+#' longueur que les fractions, ou de longueur 1. Si de longueur 1, alors un
+#' préfixe "_X", avec X la numérotation des échantillons, est automatiquement ajouté.
 #' @param seed `integer(1)` \cr Seed pour assurer la reproductibilité des
 #'   opérations aléatoires.
 #'
@@ -24,19 +26,25 @@
 #' @export
 split_snapshot_rdm_month <- function(
   data_sample,
-  frac_train,
-  frac_val,
+  fracs,
+  names,
   seed = 1234
   ) {
 
   assertthat::assert_that(
-    frac_train > 0,
-    frac_val > 0,
-    frac_train + frac_val <= 1,
-    msg = "Fractions must be positive and not exceed 1"
-  )
+    sum(fracs) == 1,
+    msg = "Sum of fractions should be equal to 1"
+    )
+  assertthat::assert_that(
+    all(fracs > 0),
+    msg = "All fractions should be strictly positivie"
+    )
+  assertthat::assert_that(
+    length(names) == length(fracs) ||
+      length(names) == 1,
+    msg = "Les noms spécifiés doivent être de même longueur que les fractions,
+    ou de longueur 1")
 
-  frac_test <- 1 - (frac_train + frac_val)
 
   data_sample <- data_sample %>%
     select(siret, periode) %>%
@@ -48,20 +56,23 @@ split_snapshot_rdm_month <- function(
     distinct()
 
   set.seed(seed)
+
+  random_vec <- runif(n = nrow(sirens))
+  random_cats <- .bincode(random_vec, breaks = c(0, cumsum(fracs)), TRUE, TRUE)
   sirens <- sirens %>%
-    mutate(ss = sample(1:3,
-        size = nrow(sirens), replace = TRUE,
-        prob = c(frac_train, frac_val, frac_test)
-        )) %>%
-    mutate(ss = factor(ss, levels = c(1, 2, 3)))
+    mutate(ss = random_cats) %>%
+    mutate(ss = factor(ss, levels = 1:length(fracs)))
 
   data_sample <- data_sample %>%
     left_join(y = sirens, by = "siren") %>%
     select(siret, periode, ss)
 
+  if (length(names) == 1 && length(fracs) > 1){
+    names <- paste0(names, "_", 1:length(fracs))
+  }
   result <- setNames(
-    split(data_sample %>% select(-ss), data_sample %>% select(ss)),
-    c("train", "validation", "test")
+    base::split(data_sample %>% select(-ss), data_sample %>% select(ss)),
+    names
   )
 
   return(result)
