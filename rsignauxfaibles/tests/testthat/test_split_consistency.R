@@ -17,8 +17,8 @@ tibble::as_tibble()
 
 res <- split_snapshot_rdm_month(
   my_test_frame,
-  frac_train = 0.60,
-  frac_val = 0.25
+  fracs = c(0.60, 0.25, 0.15),
+  names = c("train", "validation", "test")
   )
 
 train <- res[["train"]] %>%
@@ -78,20 +78,20 @@ test_that(
     expect_equal(
       split_snapshot_rdm_month(
         my_test_frame,
-        frac_train = 0.60,
-        frac_val = 0.25
+        fracs = c(0.60, 0.25, 0.15),
+        names = c("train", "validation", "test")
         ),
       split_snapshot_rdm_month(
         my_test_frame,
-        frac_train = 0.60,
-        frac_val = 0.25
+        fracs = c(0.60, 0.25, 0.15),
+        names = c("train", "validation", "test")
         )
       )
     expect_known_output(
       split_snapshot_rdm_month(
         my_test_frame,
-        frac_train = 0.60,
-        frac_val = 0.25
+        fracs = c(0.60, 0.25, 0.15),
+        names = c("train", "validation", "test")
         ),
       file.path(folder, "test_split"),
       print = TRUE,
@@ -104,3 +104,37 @@ test_that(
     expect_true(all(unique(my_test_frame$siret) %in% combined$siret))
   }
   )
+
+
+test_that(
+  "split_snapshot_rdm_month gère un nom unique", {
+      split <- split_snapshot_rdm_month(
+        my_test_frame,
+        fracs = c(0.25, 0.25, 0.25, 0.25),
+        names = c("cv")
+        )
+  actual_names <- names(split)
+  expected_names  <- c("cv_1", "cv_2", "cv_3", "cv_4")
+
+  expect_equal(actual_names, expected_names)
+  }
+  )
+
+
+test_that(
+  "La fusion de deux catégories ne change pas la reproductibilité de la
+  troisième", {
+  split_1  <- split_snapshot_rdm_month(
+        my_test_frame,
+        fracs = c(0.25, 0.25, 0.25, 0.25),
+        names = c("no1", "no2", "no3", "test")
+        )
+  split_2  <- split_snapshot_rdm_month(
+        my_test_frame,
+        fracs = c(0.75, 0.25),
+        names = c("no1", "test")
+        )
+
+  expect_equal(split_1[["test"]], split_2[["test"]])
+}
+)

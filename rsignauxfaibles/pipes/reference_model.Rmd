@@ -31,7 +31,7 @@ task <- sf_task(
   verbose = TRUE,
   database,
   collection,
-  experiment_aim = "Reference evaluation canvas",
+  experiment_name = "Reference evaluation canvas",
   experiment_description = "This experiment fixes the conditions for the evaluation of a new algorithm compared to former versions"
 )
 
@@ -43,9 +43,10 @@ task <- load_hist_data(
 ```
 
 ```{r}
-task <- hold_out(task)
+task <- split_data(task)
 task <- prepare(task, data_names = c("train_data", "validation_data"))
-test <- optimize_hyperparameters(task, init_points = 2, n_iter = 1)
+test <- split_n_folds(task, 4, 0.2, FALSE)
+  test <- optimize_hyperparameters(task, init_points = 2, n_iter = 1)
 task  <- train(task)
 ```
 
