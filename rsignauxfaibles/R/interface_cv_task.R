@@ -13,11 +13,9 @@
 #' @export
 split_n_folds <- function(
   task,
-  n_folds,
-  frac_test,
-  remove_strong_signals
-  # TODO: not working
-  # 55015842-b766-4c4d-8d0e-51b814803479
+  n_folds = 4,
+  frac_test = 0.2,
+  tracker = task[["tracker"]]
 ){
 
   assertthat::assert_that(frac_test >= 0 && frac_test < 1)
@@ -26,8 +24,7 @@ split_n_folds <- function(
   task <- split_data(
     task,
     fracs = c(rep(frac_cv, n_folds), frac_test),
-    names = c(cv_names, "test"),
-    remove_strong_signals = remove_strong_signals
+    names = c(cv_names, "test")
   )
   cv_names <- paste0(cv_names, "_data")
   cv_chunks <- task[cv_names]
@@ -40,19 +37,24 @@ split_n_folds <- function(
         collection = task[["collection"]],
         experiment_name = paste0(
           #TODO change in special field
-          attr(task, "to_log")[["experiment_aim"]],
+          task[["tracker"]]$values[["experiment_aim"]],
           "_cv",
           cv_number
         ),
-      experiment_description = attr(task, "to_log")[["experiment_description"]]
+      experiment_description =
+        task[["tracker"]]$values[["experiment_description"]]
       )
     cv_task[["validation_data"]] <- cv_chunks[[cv_number]]
     cv_task[["train_data"]] <- dplyr::bind_rows(cv_chunks[-cv_number])
 
-    attr(cv_task, "to_log")[["resampling_strategy"]] <- paste0(
-      n_folds,
-      "-folds cross validation"
-    )
+    if (!is.null(tracker)){
+      tracker$set(
+        resampling_strategy = paste0(
+          n_folds,
+          "-folds cross validation"
+          )
+        )
+    }
 
     return(cv_task)
   }
@@ -90,7 +92,8 @@ prepare.cv_task <- function(
   task[["cross_validation"]] <- purrr::map(
     .x = task[["cross_validation"]],
     .f = prepare.sf_task,
-    data_names = data_names
+    data_names = data_names,
+    tracker = task[["tracker"]]
   )
   return(task)
 }
@@ -115,7 +118,8 @@ train.cv_task  <- function(
     train.sf_task,
     fields = fields,
     parameters = parameters,
-    seed = seed
+    seed = seed,
+    tracker = task[["tracker"]]
     )
 
   return(task)
@@ -162,7 +166,8 @@ evaluate.cv_task <- function(
   plot = TRUE,
   prediction_names = "score",
   target_names = "outcome",
-  segment_names = NULL
+  segment_names = NULL,
+  remove_strong_signals = TRUE
   ){
 
   combined_data <- purrr::map(task[["cross_validation"]], "validation_data")
@@ -175,7 +180,6 @@ evaluate.cv_task <- function(
   combined_data  <- combined_data %>%
     tidyr::spread(key = model, value = "score")
 
-  browser()
   modified_task <- task
   modified_task[["validation_data"]] <- combined_data
   modified_task <- evaluate.sf_task(
@@ -185,10 +189,31 @@ evaluate.cv_task <- function(
     plot = plot,
     prediction_names = model_names,
     target_names = target_names,
-    segment_names = NULL
+    segment_names = NULL,
+    remove_strong_signals = remove_strong_signals,
+    tracker = task[["tracker"]]
   )
+
   # TODO: why isn't there the column model in output ?
   # Task 282fe34e-45df-4c5d-9e57-0ec0ef2e8a77
+  #
+  # TODO: next section to be replaced with build-in summary functions of
+  # MLsegmentr
+  # see c5823da4-48ae-4c33-a345-2a5efdc808e7
 
+  summary_eval <-
+    modified_task[["model_performance"]] %>%
+    filter(evaluation_name == "aucpr")  %>%
+    group_by(target_type, segment, evaluation_name) %>%
+    tidyr::unnest() %>%
+    summarize(evaluation = mean(evaluation), model = "cv_averaged") %>%
+    #to have same col order
+    select(names(modified_task[["model_performance"]]))
+
+  summary_eval$evaluation <- list(summary_eval$evaluation)
+  modified_task[["model_performance"]] <- bind_rows(
+    summary_eval,
+    modified_task[["model_performance"]]
+    )
   return (modified_task)
 }

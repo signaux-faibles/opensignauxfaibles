@@ -32,14 +32,21 @@ sf_task <- function(
   database = "test_signauxfaibles",
   collection = "Features",
   experiment_name,
-  experiment_description
+  experiment_description,
+  tracker = NULL
   ){
   res <- list(database = database, collection = collection)
   class(res) <- "sf_task"
   attr(res, "verbose") <- verbose
-  attr(res, "to_log") <- list(
-    experiment_aim = experiment_name,
-    experiment_description = experiment_description)
+  if (is.null(tracker) && require(MLlogr)){
+    res[["tracker"]] <- MLlogr::MLLogger$new(
+      id_columns = c("siret", "periode")
+    )
+    res[["tracker"]]$set(
+      experiment_aim = experiment_name,
+      experiment_description = experiment_description
+    )
+  }
   return(res)
 }
 
@@ -190,11 +197,10 @@ load_new_data.sf_task <- function(
     fields = fields
   )
 
-  if ("periode" %in% fields && max(current_data$periode) != max(periods)) {
+  if ("periode" %in% fields &&
+    max(task[["new_data"]]$periode) != max(periods)) {
     log_warn("Data is missing at actual period !")
   }
-  return(current_data)
-
   return(task)
 }
 
@@ -214,11 +220,6 @@ load_new_data.sf_task <- function(
 #' @param task `[sf_task]` \cr Objet s3 de type sf_task. Doit posséder des
 #'   données dans le champs "hist_data".
 #' @inheritParams split_snapshot_rdm_month
-#' @param remove_strong_signals `logical(1)`\cr
-#'   Faut-il retirer des échantillons de test ou de
-#'   validation les entrerprises qui présentent des signaux forts, c'est-à-dire 3 mois de défaut, ou une
-#'   procédure collective en cours ? Nécessite que les données contenues dans
-#'   \code{task[["hist_data"]]} possèdent le champs "time_til_outcome".
 #'
 #' @describeIn split_data
 #'
@@ -234,7 +235,7 @@ split_data.sf_task <- function(
   task,
   fracs = c(0.6, 0.2, 0.2),
   names = c("train", "validation", "test"),
-  remove_strong_signals = TRUE
+  tracker = task[["tracker"]]
   ){
 
   set_verbose_level(task)
@@ -261,34 +262,11 @@ split_data.sf_task <- function(
     }
   }
 
-  if (remove_strong_signals){
 
-    log_info("Les 'signaux forts' sont retirés des données d'évaluation (test,
-      validation)")
-
-    # TODO Move to evaluate
-    # task 4d79eca5-80ed-4196-b8b6-257c5f7a2ac0
-    if (!is.null(task[["validation_data"]])){
-      assertthat::assert_that("time_til_outcome" %in%
-        names(task[["validation_data"]]))
-
-      task[["validation_data"]]  <- task[["validation_data"]] %>%
-        filter(is.na(task[["validation_data"]]$time_til_outcome) |
-          task[["validation_data"]]$time_til_outcome > 0)
-    }
-    if (!is.null(task[["test_data"]])){
-      assertthat::assert_that("time_til_outcome" %in%
-        names(task[["test_data"]]))
-
-      task[["test_data"]]  <- task[["test_data"]] %>%
-        filter(is.na(task[["test_data"]]$time_til_outcome) |
-          task[["test_data"]]$time_til_outcome > 0)
-    }
+  if (!is.null(tracker)){
+    names(fracs) <- names
+    tracker$set(resampling_strategy = "holdout", train_val_test_shares = fracs)
   }
-  attr(task, "to_log")[["resampling_strategy"]]  <-  "holdout"
-  names(fracs) <- names
-  attr(task, "to_log")[["train_val_test_shares"]] <- fracs
-
   return(task)
 }
 
@@ -318,8 +296,12 @@ prepare.sf_task <- function(
     "validation_data",
     "test_data",
     "new_data"
-    )
+    ),
+  tracker = task[["tracker"]]
   ){
+
+  ## TODO: Should not fail with empty frames
+  # 93c281b7-d567-4026-aba4-e13d289b9170
 
   set_verbose_level(task)
 
@@ -361,10 +343,9 @@ prepare.sf_task <- function(
     task  <- aux_function(task, name)
   }
 
-  attr(
-    task,
-    "to_log"
-  )[["preprocessing_strategy"]] <- "H2OFrame, Target encoding with H2O"
+  if (!is.null(tracker)){
+    tracker$set(preprocessing_strategy = "H2OFrame, Target encoding with H2O")
+  }
 
   return(task)
 }
@@ -387,54 +368,101 @@ prepare.sf_task <- function(
 optimize_hyperparameters.sf_task <- function( #nolint
   task,
   fields = get_fields(training = TRUE),
-  init_points = 6,
-  n_iter = 12
+  n_init = 6,
+  n_iter = 12,
+  train_pipe = NULL,
+  optim_bounds = NULL
 ){
 
-  assertthat::assert_that(
-    all(c("prepared_train_data", "prepared_validation_data") %in% names(task)),
-    msg = "train_data and validation_data need first to be prepared."
-    )
+  require(DiceKriging) #nolint
+  require(rgenoud)
+  require(mlrMBO) #nolint
+  require(ParamHelpers) #nolint
 
-  train_fun  <- function(
-    learn_rate,
-    max_depth,
-    ntrees,
-    min_child_weight
-  ){
-    new_task <- train(
-      task,
-      parameters = list(
-        learn_rate = learn_rate,
-        max_depth = max_depth,
-        ntrees = ntrees,
-        min_child_weight = min_child_weight
-        )
-    )
-
-    new_task <- predict(new_task, data_names = c("validation_data"))
-    new_task <- evaluate(new_task, plot = FALSE)
-    aucpr <- new_task[["model_performance"]] %>% .$evaluation %>% .[[1]]
-    return(list(Score = aucpr, Pred = 0))
+  if (is.null(optim_bounds)){
+    optim_bounds <- ParamHelpers::makeParamSet(
+      ParamHelpers::makeNumericParam("learn_rate",  lower = 0.003, upper = 0.2),
+      ParamHelpers::makeIntegerParam("max_depth", lower = 2L, upper = 12L),
+      ParamHelpers::makeIntegerParam("ntrees", lower = 10L, upper = 300L),
+      ParamHelpers::makeIntegerParam(
+        "min_child_weight",
+        lower = 1L,
+        upper = 9L
+      )
+      )
   }
-  opt_res <- rBayesianOptimization::BayesianOptimization( #nolint
-    train_fun,
-    bounds = list(
-      learn_rate = c(0.003, 0.2),
-      max_depth = c(2L, 12L),
-      ntrees = c(10L, 300L),
-      min_child_weight = c(1L, 10L)
-      ),
-    init_points = init_points,
-    n_iter = n_iter,
-    acq = "ucb",
-    # kappa = 2.576,
-    eps = 0.5,
-    verbose = TRUE
-    )
 
-  task[["optim_history"]] <- opt_res[["History"]]
-  task[["model_parameters"]]  <- as.list(opt_res[["Best_Par"]])
+  if (is.null(train_pipe)){
+    #1 Objective function
+    train_pipe <- smoof::makeSingleObjectiveFunction(
+      name = "lgb_pipe",
+      fn = function(
+        x
+        ){
+
+        new_task <- train(
+          task,
+          parameters = as.list(x)
+          )
+
+        new_task <- predict(new_task, data_names = c("validation_data"))
+        new_task <- evaluate(new_task, plot = FALSE)
+        # TODO: Bayesian optimization criteria should be more flexible
+        # 77d91ced-beac-4e91-9b48-e8fd16e956ee
+        aucpr <- new_task[["model_performance"]] %>% .$evaluation %>% .[[1]]
+        cat(aucpr)
+        return(aucpr)
+      },
+      par.set = optim_bounds,
+      minimize = FALSE
+      )
+  }
+
+  #2 Initial design
+  set.seed(159)
+  des <- ParamHelpers::generateDesign(n = n_init,
+    par.set = ParamHelpers::getParamSet(train_pipe),
+    fun = lhs::randomLHS)
+
+  des$y <- apply(des, 1, train_pipe)
+
+  #3 Surrogate model
+  surrogate  <- mlr::makeLearner(
+    "regr.km",
+    predict.type = "se",
+    covtype = "matern3_2",
+    control = list(trace = FALSE)
+  )
+
+  #4 Control
+  control <- mlrMBO::makeMBOControl()
+  control <- mlrMBO::setMBOControlTermination(
+    control,
+    iters = n_iter
+  )
+  control <- mlrMBO::setMBOControlInfill( #nolint
+    control,
+    crit = mlrMBO::makeMBOInfillCritEI() #nolint
+  )
+
+  #5 optimization
+  run <- mlrMBO::mbo(fun = train_pipe,
+    design = des,
+    control = control,
+    show.info = TRUE)
+
+
+  all_res <- run$opt.path$env$path
+  run$opt.path$env$path  %>%
+    mutate(round = row_number()) %>%
+    mutate(type = case_when(
+        round <= n_init ~ "initial design",
+        TRUE ~ "mlrMBO optimization")) %>%
+    ggplot2::ggplot(ggplot2::aes(x = round, y = y, color = type)) +
+    ggplot2::geom_point() +
+    ggplot2::labs(title = "mlrMBO optimization")
+
+  task[["model_parameters"]] <- as.list(run$x)
   return(task)
 }
 
@@ -457,17 +485,24 @@ train.sf_task <- function(
   task,
   fields = get_fields(training = TRUE),
   parameters = NULL,
-  seed = 123
+  seed = 123,
+  tracker = task[["tracker"]]
   ){
 
-  set_verbose_level(task)
+  assertthat::assert_that(
+    "prepared_train_data" %in% names(task),
+    msg = "task does not contain prepared train data."
+    )
 
   if (is.null(parameters) && (!"model_parameters" %in% names(task))){
-      parameters  <- list(
-        learn_rate = 0.1,
-        max_depth = 4,
-        ntrees = 60,
-        min_child_weight = 1)
+    parameters  <- list(
+      learn_rate = 0.1,
+      max_depth = 4,
+      ntrees = 60,
+      min_child_weight = 1
+      )
+
+    task[["model_parameters"]] <- parameters
   } else if (is.null(parameters)){
     parameters <- task[["model_parameters"]]
   }
@@ -482,6 +517,10 @@ train.sf_task <- function(
     msg = "Missing parameters."
     )
 
+  set_verbose_level(task)
+
+
+
   log_info("Model is being trained.")
 
   task[["features"]] <- fields
@@ -495,14 +534,18 @@ train.sf_task <- function(
     ntrees = parameters[["ntrees"]],
     min_child_weight = parameters[["min_child_weight"]],
     seed = seed
-  )
+    )
 
   log_info("Model trained_successfully")
   task[["model"]] <- model
 
-  attr(task, "to_log")[["model_name"]] <- "light gradient boosting"
-  attr(task, "to_log")[["model"]] <- "model"
-  attr(task, "to_log")[["model_target"]] <- "18 mois, defaut et défaillance"
+  if (!is.null(tracker)){
+    tracker$set(
+      model_name  = "light gradient boosting",
+      model  = "model",
+      model_target  = "18 mois, defaut et défaillance"
+      )
+  }
 
   return(task)
 }
@@ -542,8 +585,8 @@ predict.sf_task <- function(
     "train_data",
     "validation_data",
     "test_data"
-  )
-){
+    )
+  ){
 
   task  <- object
   set_verbose_level(task)
@@ -552,35 +595,36 @@ predict.sf_task <- function(
     msg = "Task should have a model to predict on new
     data")
 
-  predict_on_given_data <- function(data_name, task){
+    predict_on_given_data <- function(data_name, task){
 
-    prepared_data_name <- paste0("prepared_", data_name)
-    if (!prepared_data_name %in% names(task)){
-      log_warn("{data_name} is missing or has not been prepared yet")
+      prepared_data_name <- paste0("prepared_", data_name)
+      if (!prepared_data_name %in% names(task)){
+        log_warn("{data_name} is missing or has not been prepared yet")
+        return(task)
+      }
+
+      log_info("Model is being applied on {prepared_data_name}")
+
+      prediction <- predict_model(
+        model = task[["model"]],
+        new_data = task[[prepared_data_name]]
+        )
+
+      dup_names  <-  intersect(names(prediction %>% select(-siret, -periode)),
+        names(task[[data_name]]))
+      task[[data_name]]  <- task[[data_name]] %>% select(-one_of(dup_names))
+      task[[data_name]] <- task[[data_name]] %>%
+        left_join(prediction, by = c("siret", "periode"))
+
+      log_info("Prediction successfully done.")
       return(task)
     }
 
-    log_info("Model is being applied on {prepared_data_name}")
+    for (name in data_names){
+      task  <- predict_on_given_data(name, task)
+    }
 
-    prediction <- predict_model(
-      model = task[["model"]],
-      new_data = task[[prepared_data_name]]
-      )
-
-    dup_names  <-  intersect(names(prediction %>% select(-siret, -periode)),
-      names(task[[data_name]]))
-    task[[data_name]]  <- task[[data_name]] %>% select(-one_of(dup_names))
-    task[[data_name]] <- task[[data_name]] %>%
-      left_join(prediction, by = c("siret", "periode"))
     return(task)
-  }
-
-  for (name in data_names){
-    task  <- predict_on_given_data(name, task)
-  }
-
-  log_info("Prediction successfully done.")
-  return(task)
 }
 
 export.sf_task <- function(task, ...){
@@ -673,6 +717,11 @@ export.sf_task <- function(task, ...){
 #' @param eval_function
 #' @param data_name
 #' @param plot
+#' @param remove_strong_signals `logical(1)`\cr
+#'   Faut-il retirer des échantillons de test ou de
+#'   validation les entrerprises qui présentent des signaux forts, c'est-à-dire 3 mois de défaut, ou une
+#'   procédure collective en cours ? Nécessite que les données contenues dans
+#'   \code{task[["hist_data"]]} possèdent le champs "time_til_outcome".
 #'
 #' @describeIn evaluate
 #'
@@ -685,19 +734,30 @@ evaluate.sf_task <- function(
   plot = TRUE,
   prediction_names = "score",
   target_names = "outcome",
-  segment_names = NULL
+  segment_names = NULL,
+  remove_strong_signals = TRUE,
+  tracker = task[["tracker"]]
   ){
-
-  browser()
 
   assertthat::assert_that(
     length(data_name) == 1,
     msg = "Evaluation can only be made on a single data.frame at once"
     )
 
+  evaluation_data  <- task[[data_name]]
+  if (remove_strong_signals){
+    log_info("Les 'signaux forts' sont retirés des données d'évaluation (test,
+      validation)")
+    # TODO add to log
+    # task a7368366-ad3c-4dcb-b8d9-2e23de616bf0
+    assertthat::assert_that("time_til_outcome" %in% names(evaluation_data))
+    evaluation_data  <- evaluation_data %>%
+      filter(is.na(time_til_outcome) | time_til_outcome > 0)
+  }
+
   require(MLsegmentr)
   assesser <- Assesser$new(
-    task[[data_name]] #%>% filter(periode == max(periode))
+    evaluation_data
     )
 
   assesser$set_predictions(prediction_names)
@@ -712,10 +772,14 @@ evaluate.sf_task <- function(
   perf <- assesser$assess_model(plot = plot)
 
   task[["model_performance"]] <- perf %>%
-    select(evaluation_name, evaluation) %>%
     filter(evaluation_name != "prcurve")
 
 
+  if (!is.null(tracker)){
+    tracker$set(
+      model_performance = task[["model_performance"]]
+    )
+  }
   return(task)
   ## Log model performance.
 }
@@ -737,24 +801,24 @@ log.sf_task <- function(
   task,
   database = task[["database"]],
   collection = "ml_logs",
+  tracker = task[["tracker"]],
   ...
   ){
 
   require("MLlogr")
-  logger <- MLLogger$new(
-    database,
-    collection,
-    id_columns = c("siret", "periode")
+
+  assertthat::assert_that(!is.null(tracker))
+
+  tracker$database <- database
+  tracker$collection <- collection
+  tracker$set(
+    model_parameters = task[["model_parameters"]],
+    model_features =  task[["features"]],
+    test_frame = task[["validation_data"]],
+    train_frame = task[["train_data"]]
     )
 
-  list_to_log  <- attr(task, "to_log")
-  list_to_log[["model_performance"]]  <- task[["model_performance"]]
-  list_to_log[["model_parameters"]] <- task[["model_parameters"]]
-  list_to_log[["model_features"]]  <-  task[["features"]]
-  list_to_log[["test_frame"]] <- task[["validation_data"]]
-  list_to_log[["train_frame"]] <- task[["train_data"]]
-  do.call(logger$set, args = attr(task, "to_log"))
-  logger$log(...)
+  tracker$log(...)
 
   return(invisible(task))
 }
@@ -776,8 +840,8 @@ print.sf_task <- function(x, ...){
 
   cat("-- INFO --\n")
   purrr::walk2(
-    names(attr(x, "to_log")),
-    attr(x, "to_log"),
+    names(x[["tracker"]]$values),
+    x[["tracker"]]$values,
     aux_fun
     )
   return()

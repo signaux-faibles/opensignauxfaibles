@@ -103,7 +103,7 @@ test_frame_2 <- connect_to_database(
   verbose = FALSE
   )
 
-test_that(paste0(type, ": Les filtres fonctionnent comme espéré"), {
+test_that("Les filtres fonctionnent comme espéré", {
   test_summary <- test_frame_1 %>%
     summarize(
       date_min = min(periode),

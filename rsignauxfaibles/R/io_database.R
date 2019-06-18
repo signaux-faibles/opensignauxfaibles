@@ -125,8 +125,7 @@ connect_to_database <- function(
 
   table_wholesample <- donnees %>%
     arrange(periode) %>%
-    mutate_if(lubridate::is.POSIXct, as.Date) %>%
-    tibbletime::as_tbl_time(periode)
+    mutate_if(lubridate::is.POSIXct, as.Date)
 
   n_eta <- table_wholesample$siret %>%
     n_distinct()
