@@ -85,11 +85,11 @@
               color='indigo darken-5'>
               <v-toolbar-title class="localtoolbar">Effectifs</v-toolbar-title>
             </v-toolbar>
-            <IEcharts
+            <!-- <IEcharts
               :loading="chart"
               style="height: 350px"
               :option="effectifOptions"
-            />
+            /> -->
           </v-flex>
 
           <v-flex xs6 class="pr-1">
@@ -287,11 +287,11 @@
 </template>
 
 <script>
-import IEcharts from 'vue-echarts-v3/src/lite.js'
-import 'echarts/lib/chart/line'
-import 'echarts/lib/component/title'
-import 'echarts/lib/component/legend'
-import 'echarts/lib/component/tooltip'
+// import IEcharts from 'vue-echarts-v3/src/lite.js'
+// import 'echarts/lib/chart/line'
+// import 'echarts/lib/component/title'
+// import 'echarts/lib/component/legend'
+// import 'echarts/lib/component/tooltip'
 
 export default {
   props: ['siret', 'batch'],
@@ -397,7 +397,7 @@ export default {
     this.getEtablissement(this.siret)
   },
   components: {
-    IEcharts
+    // IEcharts
   },
   watch: {
     localSiret: function (val) {

@@ -8,29 +8,24 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"time"
+
+	"github.com/globalsign/mgo/bson"
 
 	"github.com/globalsign/mgo"
 )
 
 // Prediction prédiction
 type Prediction struct {
-	ID struct {
-		Siret string `json:"siret" bson:"siret"`
-		Batch string `json:"batch" bson:"batch"`
-		Algo  string `json:"algo" bson:"algo"`
-	} `json:"id" bson:"_id"`
-
-	Prob          float64 `json:"prob" bson:"prob"`
-	Diff          float64 `json:"diff" bson:"diff"`
-	RaiSoc        string  `json:"raison_sociale" bson:"raison_sociale"`
-	Departement   string  `json:"departement" bson:"departement"`
-	Region        string  `json:"region" bson:"region"`
-	EtatProCol    string  `json:"procol" bson:"procol"`
-	DefaultUrssaf bool    `json:"default_urssaf" bson:"default_urssaf"`
-	Connu         bool    `json:"connu" bson:"connu"`
-	Niveau1       string  `json:"naf1" bson:"naf1"`
-	Effectif      int     `json:"effectif" bson:"effectif"`
-	CCSF          bool    `json:"ccsf" bson:"ccsf"`
+	ID        bson.ObjectId `bson:"_id"`
+	Batch     string        `bson:"batch"`
+	Algo      string        `bson:"algo"`
+	Siret     string        `bson:"siret"`
+	Score     float64       `bson:"score"`
+	Diff      float64       `bson:"diff"`
+	Periode   time.Time     `bson:"periode"`
+	Timestamp time.Time     `bson:"timestamp"`
+	Alert     string        `bson:"alert"`
 }
 
 func main() {
@@ -53,50 +48,28 @@ func main() {
 		}
 		if line[0] != "" {
 			proba, _ := strconv.ParseFloat(line[1], 64)
+			var alert = "Pas d'alerte"
+
+			if proba > 0.13 {
+				alert = "Alerte seuil F2"
+			}
+			if proba > 0.37 {
+				alert = "Alerte seuil F1"
+			}
+
 			diff, _ := strconv.ParseFloat(line[2], 64)
-			effectif, _ := strconv.Atoi(line[11])
-			var ccsf bool
-			if line[12] == "" {
-				ccsf = false
-			} else {
-				ccsf = true
-			}
-
-			var defaultUrssaf bool
-			if line[7] == "TRUE" {
-				defaultUrssaf = true
-			} else {
-				defaultUrssaf = false
-			}
-
-			var connu bool
-			if line[8] == "0" {
-				connu = false
-			} else {
-				connu = true
-			}
 
 			p := Prediction{
-				ID: struct {
-					Siret string `json:"siret" bson:"siret"`
-					Batch string `json:"batch" bson:"batch"`
-					Algo  string `json:"algo" bson:"algo"`
-				}{
-					Siret: line[0],
-					Batch: "1802",
-					Algo:  "algo1",
-				},
-				Prob:          proba,
-				Diff:          diff,
-				RaiSoc:        line[3],
-				Departement:   line[4],
-				Region:        line[5],
-				EtatProCol:    line[6],
-				DefaultUrssaf: defaultUrssaf,
-				Connu:         connu,
-				Niveau1:       line[10],
-				Effectif:      effectif,
-				CCSF:          ccsf,
+				ID:        bson.NewObjectId(),
+				Siret:     line[0],
+				Batch:     "1905",
+				Algo:      "algo",
+				Score:     proba,
+				Diff:      diff,
+				Timestamp: time.Now(),
+				Periode: time.Date(
+					2019, 05, 01, 0, 0, 0, 0, time.UTC),
+				Alert: alert,
 			}
 
 			predictionDict[line[0]] = p
@@ -115,7 +88,7 @@ func main() {
 
 	db := mongodb.DB("fakesignauxfaibles")
 
-	err = db.C("Prediction").Insert(prediction...)
+	err = db.C("Scores").Insert(prediction...)
 
 	if err != nil {
 		fmt.Println("Insertion interrompue: " + err.Error())

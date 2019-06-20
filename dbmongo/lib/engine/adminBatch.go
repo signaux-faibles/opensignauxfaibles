@@ -19,6 +19,7 @@ type AdminID struct {
 type AdminBatch struct {
 	ID            AdminID    `json:"id" bson:"_id"`
 	Files         BatchFiles `json:"files" bson:"files"`
+	Name          string     `json:"name" bson:"name"`
 	Readonly      bool       `json:"readonly" bson:"readonly"`
 	CompleteTypes []string   `json:"complete_types" bson:"complete_types"`
 	Params        struct {
@@ -58,6 +59,18 @@ func (batch *AdminBatch) New(batchKey string) error {
 	batch.ID.Type = "batch"
 	batch.Files = BatchFiles{}
 	return nil
+}
+
+// ToData exports batches to a datapi compatible format
+func (batch *AdminBatch) ToData() map[string]interface{} {
+	data := map[string]interface{}{
+		"key":           batch.ID.Key,
+		"data_debut":    batch.Params.DateDebut,
+		"date_fin":      batch.Params.DateFin,
+		"date_effectif": batch.Params.DateFinEffectif,
+		"name":          batch.Name,
+	}
+	return data
 }
 
 func isBatchID(batchID string) bool {
@@ -129,16 +142,16 @@ func ProcessBatch(batchList []string, parsers []Parser, types []string) error {
 
 	for _, v := range batchList {
 		batch, errBatch := GetBatch(v)
-    if errBatch !=nil {
-      return errors.New("Erreur de lecture du batch: " + errBatch.Error())
-    }
-    ImportBatch(batch, parsers)
-    time.Sleep(5 * time.Second) // TODO: trouver une façon de synchroniser l'insert des paquets
-    err := Compact(v, types)
-    if err != nil {
-      return errors.New("Erreur de compactage: " + err.Error())
-    }
-  }
+		if errBatch != nil {
+			return errors.New("Erreur de lecture du batch: " + errBatch.Error())
+		}
+		ImportBatch(batch, parsers)
+		time.Sleep(5 * time.Second) // TODO: trouver une façon de synchroniser l'insert des paquets
+		err := Compact(v, types)
+		if err != nil {
+			return errors.New("Erreur de compactage: " + err.Error())
+		}
+	}
 
 	batch := LastBatch()
 	return Reduce(batch.ID.Key, "algo2", nil, "Features")

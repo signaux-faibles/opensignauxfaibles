@@ -4,7 +4,7 @@ import Router from 'vue-router'
 import Data from '@/components/Data'
 // import Admin from '@/components/Admin'
 import Browse from '@/components/Browse'
-import Prediction from '@/components/Prediction'
+// import Prediction from '@/components/Prediction'
 
 Vue.use(Router)
 
@@ -29,12 +29,13 @@ export default new Router({
       path: '/',
       name: 'Browse',
       component: Browse
-    },
-    {
-      path: '/detection',
-      name: 'Detection',
-      component: Prediction
     }
+    // ,
+    // {
+    //   path: '/detection',
+    //   name: 'Detection',
+    //   component: Prediction
+    // }
     // },
     // {
     //   path: '/detection',

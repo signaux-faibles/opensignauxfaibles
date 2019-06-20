@@ -38,7 +38,6 @@ func reduceHandler(c *gin.Context) {
 }
 
 func compactHandler(c *gin.Context) {
-
 	var params struct {
 		BatchKey string   `json:"batch"`
 		Types    []string `json:"types"`
@@ -56,27 +55,6 @@ func compactHandler(c *gin.Context) {
 	}
 	c.JSON(200, "ok")
 }
-
-//
-// @summary Lance un traitement de compactage
-// @description Alimente la collection Features
-// @Tags Traitements
-// @accept  json
-// @produce  json
-// @Param algo query string true "Identifiant du traitement"
-// @Param batch query string true "Identifier du batch"
-// @Success 200 {string} string ""
-// @Router /api/data/compact [get]
-// @Security ApiKeyAuth
-//func compactHandler(c *gin.Context) {
-//  err := engine.Compact()
-//	if err != nil {
-//		c.JSON(500, err.Error())
-//		return
-//	}
-//
-//	c.JSON(200, "ok")
-//}
 
 func nafHandler(c *gin.Context) {
 	c.JSON(200, naf.Naf)

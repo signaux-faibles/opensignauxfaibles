@@ -284,23 +284,23 @@ func resolveParsers(parserNames []string) ([]engine.Parser, error) {
 	return parsers, nil
 }
 
-func toDatapiHandler(c *gin.Context) {
-	params := struct {
-		Batch string `json:"batch"`
-	}{}
-	err := c.Bind(&params)
-	if err != nil {
-		c.JSON(400, err.Error())
-		return
-	}
+// func toDatapiHandler(c *gin.Context) {
+// 	params := struct {
+// 		Batch string `json:"batch"`
+// 	}{}
+// 	err := c.Bind(&params)
+// 	if err != nil {
+// 		c.JSON(400, err.Error())
+// 		return
+// 	}
 
-	err = engine.ToDatapi(params.Batch)
-	if err != nil {
-		c.JSON(500, err.Error())
-		return
-	}
-	c.JSON(200, "ok")
-}
+// 	err = engine.ToDatapi(params.Batch)
+// 	if err != nil {
+// 		c.JSON(500, err.Error())
+// 		return
+// 	}
+// 	c.JSON(200, "ok")
+// }
 
 func getCommentsHandler(c *gin.Context) {
 	var params struct {

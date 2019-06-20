@@ -217,7 +217,7 @@ func Reduce(batchKey string, algo string, query interface{}, collection string) 
 }
 
 // Public alimente la collection Public avec les objets destinés à la diffusion
-func Public(batch AdminBatch) error {
+func Public(batch AdminBatch, siret string) error {
 	functions, err := loadJSFunctions("js/public/")
 
 	scope := bson.M{
@@ -243,8 +243,11 @@ func Public(batch AdminBatch) error {
 	}
 	// exécution
 
-	_, err = Db.DB.C("RawData").Find(bson.M{"value.index.algo2": true}).MapReduce(job, nil)
-
+	if siret != "" {
+		_, err = Db.DB.C("RawData").Find(bson.M{"value.index.algo2": true, "_id": siret}).MapReduce(job, nil)
+	} else {
+		_, err = Db.DB.C("RawData").Find(bson.M{"value.index.algo2": true}).MapReduce(job, nil)
+	}
 	if err != nil {
 		return errors.New("Erreur dans l'exécution des jobs MapReduce" + err.Error())
 	}
