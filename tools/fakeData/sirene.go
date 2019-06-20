@@ -17,14 +17,14 @@ func readAndRandomSirene(fileName string, outputFileName string, mapping map[str
 	lnaf := len(nafs)
 	// liste d'adresses à affecter aléatoirement, une par département.
 	adresses := [][]string{
-		[]string{"21", "RUE", "21000", "Bourgogne Franche-Comté", "Côte d'or", "Dijon", "5.051709", "47.315471", "21 BOULEVARD VOLTAIRE", "21000 DIJON"},
-		[]string{"5", "PLACE", "25000", "Bourgogne Franche-Comté", "Doubs", "Besançon", "6.030186", "47.236904", "5 PLACE JEAN CORNET", "25000 BESANCON"},
-		[]string{"165", "AVENUE", "39000", "Bourgogne Franche-Comté", "Jura", "Lons Le Saunier", "5.559474", "46.675368", "AVENUE PAUL SEGUIN", "39570 LONS-LE-SAUNIER"},
-		[]string{"12", "RUE", "03000", "Bourgogne Franche-Comté", "Nièvre", "Nevers", "3.150634", "46.986340", "1 RUE DE LA ROTONDE", "58000 NEVERS"},
-		[]string{"5", "RUE", "70000", "Bourgogne Franche-Comté", "Haute-Saône", "Vesoul", "6.153722", "47.624791", "5 RUE BEAUCHAMP", "70000 VESOUL"},
-		[]string{"173", "RUE", "71000", "Bourgogne Franche-Comté", "Saône-et-Loire", "Mâcon", "4.836899", "46.314469", "193 BOULEVARD HENRI DUNANT", "71000 MÂCON"},
-		[]string{"1", "RUE", "89000", "Bourgogne Franche-Comté", "Yonne", "Auxerre", "3.579027", "47.793249", "1 RUE DE PREUILLY", "89000 AUXERRE"},
-		[]string{"11", "RUE", "90000", "Bourgogne Franche-Comté", "Territoire de Belfort", "Belfort", "6.859756", "47.632216", "11 RUE LEGRAND", "90000 BELFORT"},
+		[]string{"21", "RUE", "21000", "Bourgogne Franche-Comté", "21", "Dijon", "5.051709", "47.315471", "21 BOULEVARD VOLTAIRE", "21000 DIJON"},
+		[]string{"5", "PLACE", "25000", "Bourgogne Franche-Comté", "25", "Besançon", "6.030186", "47.236904", "5 PLACE JEAN CORNET", "25000 BESANCON"},
+		[]string{"165", "AVENUE", "39000", "Bourgogne Franche-Comté", "39", "Lons Le Saunier", "5.559474", "46.675368", "AVENUE PAUL SEGUIN", "39570 LONS-LE-SAUNIER"},
+		[]string{"12", "RUE", "03000", "Bourgogne Franche-Comté", "58", "Nevers", "3.150634", "46.986340", "1 RUE DE LA ROTONDE", "58000 NEVERS"},
+		[]string{"5", "RUE", "70000", "Bourgogne Franche-Comté", "70", "Vesoul", "6.153722", "47.624791", "5 RUE BEAUCHAMP", "70000 VESOUL"},
+		[]string{"173", "RUE", "71000", "Bourgogne Franche-Comté", "71", "Mâcon", "4.836899", "46.314469", "193 BOULEVARD HENRI DUNANT", "71000 MÂCON"},
+		[]string{"1", "RUE", "89000", "Bourgogne Franche-Comté", "89", "Auxerre", "3.579027", "47.793249", "1 RUE DE PREUILLY", "89000 AUXERRE"},
+		[]string{"11", "RUE", "90000", "Bourgogne Franche-Comté", "90", "Belfort", "6.859756", "47.632216", "11 RUE LEGRAND", "90000 BELFORT"},
 	}
 
 	// source
