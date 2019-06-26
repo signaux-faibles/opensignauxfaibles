@@ -14,9 +14,13 @@ eval_frame  <- eval_frame %>%
   left_join(additional_data, by = c(".id"))
 
 testthat::test_that("custom_eval_urssaf works correctly", {
-  eval_obj <- eval_urssaf()
+  eval_obj <- custom_eval_urssaf()
   expect_error(
-    actual_out <- MLsegmentr::assess_eval_frame(eval_obj, eval_frame, plot = FALSE),
+    actual_out <- MLsegmentr::assess_eval_frame(
+      eval_obj,
+      eval_frame,
+      plot = FALSE
+    ),
     NA
     )
   expected_moyenne  <- c(0.07692, 0.33333, 0.95833, 0, 0, 0.81818,

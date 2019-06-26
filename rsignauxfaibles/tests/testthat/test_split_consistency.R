@@ -66,7 +66,7 @@ test_that("Il n'y a pas de fuite de données entre échantillons", {
 test_that(
   "Les échantillons ne dépendent pas de l'ordre des données d'entrée et
   restent identiques d'une fois sur l'autre", {
-    folder <- rprojroot::find_rstudio_root_file("tests", ".known_outputs")
+    folder <- rprojroot::find_rstudio_root_file("tests", "testthat", "test_split_consistency_known_output")
 
     if (!dir.exists(folder)) skip("known values only on local repository")
 

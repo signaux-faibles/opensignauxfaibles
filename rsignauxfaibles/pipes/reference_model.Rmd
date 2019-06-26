@@ -9,8 +9,9 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 h2o::h2o.no_progress()
-devtools::load_all()
+library(mlr)
 # Script parameters
+devtools::load_all()
 database <- "test_signauxfaibles"
 collection <- "Features"
 actual_period <- as.Date("2019-03-01")
@@ -19,7 +20,7 @@ min_effectif <- 10
 retrain_model <- TRUE
 type <- "dataframe"
 export_type <- c("csv", "mongodb")
-sample_size <- 50000
+sample_size <- 200000
 ```
 
 ```{r}
@@ -40,39 +41,19 @@ task <- load_hist_data(
   batch = last_batch,
   subsample = sample_size
 )
-```
-
-```{r}
-task <- split_data(task)
+task <- split_n_folds(task, 4, 0.2)
 task <- prepare(task, data_names = c("train_data", "validation_data"))
-test <- split_n_folds(task, 4, 0.2, FALSE)
-  test <- optimize_hyperparameters(task, init_points = 2, n_iter = 1)
-task  <- train(task)
-```
-
-```{r}
-# task <- save(task)
-```
-
-```{r}
-#task <- load_new_data(
-#  task = task,
-#  last_batch = "1905",
-#  periods = actual_period
-#  )
-```
-
-```{r}
-task <- prepare(task, data_names = c("validation_data"))
-task <- predict(task, data_names = c("validation_data"))
+task <- optimize_hyperparameters(task, n_iter = 10)
+task <- train(task)
+task <- predict(task, data_names = "validation_data")
 task <- evaluate(task, data_name = "validation_data")
 task <- log(task)
 ```
 
 # OU
 ```{r}
-task  <- full_light_gradient_boosting(
-  sample_size
-)
+#task  <- full_light_gradient_boosting(
+#  sample_size
+#)
 ```
 

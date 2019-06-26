@@ -16,11 +16,9 @@ dbmongo/dbmongo
 dbmongo/static/*
 archive/*
 rsignauxfaibles/RData/*
-rsignauxfaibles/exploration/*
-rsignauxfaibles/man/*
 rsignauxfaibles/logs/*
 rsignauxfaibles/tests/testthat/logs/*
-rsignauxfaibles/NAMESPACE
+exploration/*
 *.Rcheck
 rsignauxfaibles/**/*.model
 rsignauxfaibles/**/*.temap

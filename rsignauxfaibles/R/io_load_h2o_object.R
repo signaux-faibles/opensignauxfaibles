@@ -2,18 +2,22 @@
 #'
 #' Cette fonction charge un fichier enregistré avec \code{save_h2o_object}, ou bien avec la racine \code{name}, l'extension du fichier, et le paramètre \code{last = TRUE}(qui charge le dernier fichier disponible), ou bien avec le nom exact avec le paramètre \code{file_name} et \code{last = FALSE}
 #'
-#' @param name Nom de l'objet
-#' @param extension L'extension du fichier à charger, ou bien "model" ou bien "temap"
+#' @param object_name `character(1)`\cr Nom de l'objet, spécifié de manière
+#' identique qu'au moment de l'enregistrement. Cf `[save_h2o_object]`
+#' @param extension `character(1)`\cr
+#'   L'extension du fichier à charger, ou bien "model" (pour un
+#'   `H2OBinomialModel`) ou bien "temap" (pour une `list(H2OFrame)`).
 #' @param relative_path Chemin d'accès relatif par rapport à la racine du projet.
-#' @param last Si TRUE, charge le dernier fichier sauvegardé.
-#' @param file_name Nom exact du fichier à charger. N'est pris en compte uniquement si last est FALSE.
+#' @param last `logical()` \cr Si TRUE, charge le dernier fichier sauvegardé
+#'  correspondant à `object_name`, `extension` et `relative_path`. Sinon, il
+#'  faut spécifier le nom complet: `file_name`.
+#' @param file_name `character(1)`\cr Nom complet et exact du fichier à charger. N'est pris en compte uniquement si last est FALSE.
 #'
-#' @return
+#' @return `H2OBinomialModel() | `list(H2OFrame)` \cr
+#'   depending on the loaded model.
 #' @export
-#'
-#' @examples
 load_h2o_object <- function(
-                            name,
+                            object_name,
                             extension = NULL,
                             relative_path = file.path("..", "output", "model"),
                             last = TRUE,
@@ -45,10 +49,10 @@ load_h2o_object <- function(
 
   if (last) {
     file_candidates <- list.files(full_dir_path) %>%
-      grep(pattern = paste0(name, ".", extension), value = TRUE)
+      grep(pattern = paste0(object_name, ".", extension), value = TRUE)
 
     assertthat::assert_that(length(file_candidates) > 0,
-      msg = "No such file, please check name and extension"
+      msg = "No such file, please check object_name and extension"
     )
 
     file_name <- file_candidates %>%
@@ -70,14 +74,10 @@ load_h2o_object <- function(
 #' Chargement d'une liste de H2OFrames
 #'
 #' Charge une liste de H2OFrames. Utilisé pour le target encoding.
-#' @param path Chemin d'accès relatif
-#' @param filename Nom complet du fichier
-#'
-#' @return
-#'
-#' @examples
-load_H2OFrame_list <- function(path, filename) {
-  object <- readRDS(file.path(path, filename))
+#' @inheritParams save_H2OFrame_list
+#' @return `H2OBinomialModel`
+load_H2OFrame_list <- function(absolute_path, filename) {
+  object <- readRDS(file.path(absolute_path, filename))
 
   assertthat::assert_that(class(object) == "list",
     msg = paste("This function loads a list, not a", class(object))
@@ -93,27 +93,16 @@ load_H2OFrame_list <- function(path, filename) {
 #'
 #' Charge un fichier de classe "H2OBinomialModel".
 #'
-#' @param path Chemin d'accès
+#' @param absolute_path `character(1)`\cr Chemin d'accès
 #' @param filename Nom exact du fichier à charger.
 #'
-#' @return
-#' @examples
-load_H2OModel <- function(path, filename) {
-  object <- h2o::h2o.loadModel(file.path(path, filename))
+#' @return `list(H2OFrame)`
+load_H2OModel <- function(absolute_path, filename) {
+  object <- h2o::h2o.loadModel(file.path(absolute_path, filename))
 
   assertthat::assert_that(class(object) == "H2OBinomialModel",
     msg = paste("This function loads a H2OBinomialModel, not a", class(object))
   )
 
   return(object)
-}
-
-
-read_h2oframe_from_csv <- function() {
-  path <- rprojroot::find_rstudio_root_file(
-    "..", "output", "features", "features.csv"
-  )
-
-  # Read csv file
-  return(h2o::h2o.importFile(path))
 }

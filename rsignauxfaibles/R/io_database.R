@@ -10,8 +10,6 @@ NULL
 #' `factor_request` permet de fabriquer la requête d'aggrégation
 #' correspondante. \cr
 #'
-#'
-#'
 #' @inheritParams mongodb_connection
 #' @param batch `character(1)` \cr Batch auquel doit être importées les
 #'   données. Les modifications opérées par les batchs ultérieurs sont
@@ -30,12 +28,36 @@ NULL
 #'   des codes de différents niveaux.
 #' @param subsample `integer(1)` \cr Nombre d'objets (c'est-à-dire de couples
 #'   siret x periode) à échantillonner.
+#' @param verbose `logical(1)` \cr Faut-il afficher dans le terminal des
+#'   informations sur l'évolution du chargement des données?
+#' @param replace_missing `list()` \cr Liste nommée, dont les noms sont les
+#'   noms de variables et les valeurs sont les valeurs de remplacement des NA.
+#'   Si égal à NULL, alors des remplacements par défauts
+#'
+#' @section Remplacement des valeurs manquantes par défaut:
+#' replace_missing <- list(
+#'   montant_part_patronale         = 0,
+#'   montant_part_ouvriere          = 0,
+#'   montant_echeancier             = 0,
+#'   ratio_dette                    = 0,
+#'   ratio_dette_moy12m             = 0,
+#'   montant_part_patronale_past_1  = 0,
+#'   montant_part_ouvriere_past_1   = 0,
+#'   montant_part_patronale_past_2  = 0,
+#'   montant_part_ouvriere_past_2   = 0,
+#'   montant_part_patronale_past_3  = 0,
+#'   montant_part_ouvriere_past_3   = 0,
+#'   montant_part_patronale_past_6  = 0,
+#'   montant_part_ouvriere_past_6   = 0,
+#'   montant_part_patronale_past_12 = 0,
+#'   montant_part_ouvriere_past_12  = 0,
+#'   apart_heures_consommees        = 0,
+#'   apart_heures_autorisees        = 0
+#'   )
 #'
 #' @return `data.frame()`
 #'
 #' @export
-#'
-#' @examples
 connect_to_database <- function(
   database,
   collection,
@@ -94,7 +116,7 @@ connect_to_database <- function(
     is.null(fields) || all(c("periode", "siret") %in% fields)
     )
 
-  log_info("Connexion à la collection mongodb {collection} ...")
+  log_info("Connexion a la collection mongodb {collection} ...")
 
   dbconnection <- mongolite::mongo(
     collection = collection,
@@ -102,7 +124,7 @@ connect_to_database <- function(
     url = "mongodb://localhost:27017",
     verbose = verbose
     )
-  log_info(" Connexion effectuée avec succès.")
+  log_info(" Connexion effectuee avec succes.")
 
   # Import dataframe
   log_info("Import en cours...")
@@ -136,13 +158,16 @@ connect_to_database <- function(
 
   log_info(" Fini.")
 
-  # Champs par défaut lorsque absent.
+  # Champs par defaut lorsque absent.
 
   if (any(names(replace_missing) %in% colnames(table_wholesample))){
     log_info("Filling missing values with default values")
   }
   table_wholesample <- table_wholesample %>%
-    replace_na(replace_missing, fail_on_missing_col = FALSE)
+    replace_na(
+      replacements_by_column = replace_missing,
+      fail_if_column_missing = FALSE
+    )
 
   # Champs manquants
   champs_manquants <- fields[!fields %in% tbl_vars(table_wholesample)]
@@ -169,15 +194,13 @@ connect_to_database <- function(
 #' - Possibility to filter by batch, algo, periods
 #' - custom threshold (F1, F2, other)
 #'
-#' @param database
-#'
+#' @inheritParams mongodb_connection
 #' @return vector of unique sirets
 #' @export
-#'
-#' @examples
 get_sirets_of_detected <- function(
   database = "test_signauxfaibles",
-  collection = "Scores") {
+  collection = "Scores"
+  ) {
   dbconnection <- mongolite::mongo(
     collection = collection,
     db = database,
@@ -220,7 +243,7 @@ factor_request <- function(
     }
   }
 
-  ## Construction de la requête ##
+  ## Construction de la requete ##
   match_id <- paste0('"info.batch":"', batch, '"')
 
   # Filtrage siren
@@ -354,15 +377,12 @@ requete <- paste0(
 return(requete)
 }
 
-#' Wrapper pour se connecter à H2O et spark avec la bonne configuration
+#' Wrapper pour se connecter à H2O avec la bonne configuration
 #'
 #' Créé une instance ou rejoint l'instance existante le cas échéant.
-#' N'utiliser qu'avec des R dataframes, sinon rsparkling s'occupe de créer une instance.
 #'
-#' @return
+#' @return NULL
 #' @export
-#'
-#' @examples
 connect_to_h2o <- function() {
   h2o::h2o.init(
     ip = "localhost",
@@ -401,27 +421,34 @@ connect_to_spark <- function(database = NULL, collection = NULL) {
 
 #' Get a list of field names
 #'
+#' Fonction utilitaire pour récupérer rapidement une liste de noms de
+#' variables (champs mongodb).
 #' Utilitary function to quickly get a field name list. Put training = TRUE to
 #' get only fields used for training. Put an input to 0 to remove the related
 #' fields, to 1 to keep basic fields, and to 2 to include all fields.
 #'
-#' @param training
-#' @param siren
-#' @param urssaf
-#' @param delai
-#' @param effectif
-#' @param diane
-#' @param bdf
-#' @param apart
-#' @param procol
-#' @param interim
-#' @param target_encode Only available for training
-#' @param info Exercices Diane & Bdf
+#' @param training `logical()` \cr Si `TRUE`, uniquement des champs
+#'   utilisés pour l'entraînement sont retournés.
+#' @param siren `0 | 1 | 2` \cr Niveau de détail des données Sirene. cf Détails.
+#' @param urssaf `0 | 1 | 2` \cr Niveau de détail des données urssaf. cf Détails.
+#' @param delai `0 | 1 | 2` \cr Niveau de détail des données delai. cf Détails.
+#' @param effectif `0 | 1 | 2` \cr Niveau de détail des données effectif. cf Détails.
+#' @param diane `0 | 1 | 2` \cr Niveau de détail des données diane. cf Détails.
+#' @param bdf `0 | 1 | 2` \cr Niveau de détail des données bdf. cf Détails.
+#' @param apart `0 | 1 | 2` \cr Niveau de détail des données apart. cf Détails.
+#' @param procol `0 | 1 | 2` \cr Niveau de détail des données procol. cf Détails.
+#' @param interim `0 | 1 | 2` \cr Niveau de détail des données interim. cf Détails.
+#' @param target_encode `0 | 1 | 2` \cr Target encoding. Uniquement
+#' disponibles si `training`= `TRUE`.
+#' @param info `0 | 1 | 2`\cr Année des exercices Diane & Bdf
 #'
-#' @return  Vector of field names
+#' @section Details:
+#'   Chaque type de données a 3 niveaux. Le niveau 0 correspond à aucune
+#'   données. Le niveau 1 aux données élémentaires, et le niveau 2 toutes les
+#'   données retravaillées.
+#'
+#' @return `character()` \cr Vecteur de noms de variables
 #' @export
-#'
-#' @examples
 get_fields <- function(
   training,
   siren = 2,
@@ -833,12 +860,12 @@ get_fields <- function(
   return(fields)
 }
 
-#' Title
+#' Obtenir une liste allégée de champs à exporter
 #'
-#' @return
+#' TODO temporaire, retravailler get_fields.
+#' task e58fb5d5-4bc1-410b-8287-c78e4fd442d0
+#'
 #' @export
-#'
-#' @examples
 get_fields_training_light <- function(){
   return( c(
   "apart_heures_consommees",

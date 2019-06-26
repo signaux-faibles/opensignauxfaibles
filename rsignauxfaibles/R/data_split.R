@@ -2,12 +2,12 @@
 #'
 #' Scinde les données en échantillon d'entraînement, de validation et de
 #' test, selon les proportions souhaitées. S'assure que deux établissements de la même entreprise ne soient pas
-#' à la fois dans deux échantillons différents pour éviter la fuite
+#' a la fois dans deux échantillons différents pour éviter la fuite
 #' d'information d'un échantillon vers l'autre.
 #'
 #'  La fraction de l'échantillon de test est calculée par
 #'  1 - frac_train - frac_val. (frac_train + frac_val) doit donc être inférieur
-#'  à 1.
+#'  a 1.
 #'
 #' @param data_sample `dataframe()`\cr
 #' Données à scinder avec des champs "periode" et "siret".
@@ -42,7 +42,7 @@ split_snapshot_rdm_month <- function(
   assertthat::assert_that(
     length(names) == length(fracs) ||
       length(names) == 1,
-    msg = "Les noms spécifiés doivent être de même longueur que les fractions,
+    msg = "Les noms specifies doivent etre de meme longueur que les fractions,
     ou de longueur 1")
 
 
@@ -57,7 +57,7 @@ split_snapshot_rdm_month <- function(
 
   set.seed(seed)
 
-  random_vec <- runif(n = nrow(sirens))
+  random_vec <- stats::runif(n = nrow(sirens))
   random_cats <- .bincode(random_vec, breaks = c(0, cumsum(fracs)), TRUE, TRUE)
   sirens <- sirens %>%
     mutate(ss = random_cats) %>%

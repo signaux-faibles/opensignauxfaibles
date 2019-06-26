@@ -17,6 +17,7 @@ split_n_folds <- function(
   frac_test = 0.2,
   tracker = task[["tracker"]]
 ){
+  require(purrr)
 
   assertthat::assert_that(frac_test >= 0 && frac_test < 1)
   frac_cv <- (1 - frac_test) / n_folds
@@ -37,7 +38,7 @@ split_n_folds <- function(
         collection = task[["collection"]],
         experiment_name = paste0(
           #TODO change in special field
-          task[["tracker"]]$values[["experiment_aim"]],
+          task[["tracker"]]$values[["experiment_name"]],
           "_cv",
           cv_number
         ),
@@ -48,10 +49,12 @@ split_n_folds <- function(
     cv_task[["train_data"]] <- dplyr::bind_rows(cv_chunks[-cv_number])
 
     if (!is.null(tracker)){
-      tracker$set(
-        resampling_strategy = paste0(
-          n_folds,
-          "-folds cross validation"
+      suppressWarnings(
+        tracker$set(
+          resampling_strategy = paste0(
+            n_folds,
+            "-folds cross validation"
+            )
           )
         )
     }
@@ -77,9 +80,8 @@ split_n_folds <- function(
 #' Prepares all subtasks (one for each fold) from cv_task.
 #'
 #' @inheritParams prepare.sf_task
-#'
-#'  @return The task given as input where each fold-task has been prepared.
-#'  @export
+#' @return The task given as input where each fold-task has been prepared.
+#' @export
 prepare.cv_task <- function(
   task,
   data_names = c("train_data",
@@ -88,6 +90,8 @@ prepare.cv_task <- function(
     "new_data"
     )
   ){
+
+  require(purrr)
 
   task[["cross_validation"]] <- purrr::map(
     .x = task[["cross_validation"]],
@@ -103,9 +107,8 @@ prepare.cv_task <- function(
 #' Train models for each subtask, i.e. for each cross-validation fold.
 #'
 #' @inheritParams train.sf_task
-#'
-#'  @return The input task, where each cv-subtask has a trained model
-#'  @export
+#' @return The input task, where each cv-subtask has a trained model
+#' @export
 train.cv_task  <- function(
   task,
   fields = get_fields(training = TRUE),
@@ -113,6 +116,14 @@ train.cv_task  <- function(
   seed = 123
   ){
 
+  require(purrr)
+  if (is.null(parameters) && "model_parameters" %in% names(task)){
+    parameters <- task[["model_parameters"]]
+  }
+
+  task[["features"]] <- fields
+  # Sort out what should be stored in parent task and in cross validation
+  # folds
   task[["cross_validation"]]  <- purrr::map(
     task[["cross_validation"]],
     train.sf_task,
@@ -130,11 +141,10 @@ train.cv_task  <- function(
 #' Predict on new data for each cross-validated fold.
 #'
 #' @inheritParams predict.sf_task
-#'
-#'  @return A task where each cross-validated fold has predictions
-#'  @export
+#' @return A task where each cross-validated fold has predictions
+#' @export
 predict.cv_task <- function(
-  task,
+  object,
   data_names = c(
     "new_data",
     "train_data",
@@ -143,6 +153,8 @@ predict.cv_task <- function(
     )
   ){
 
+  require(purrr)
+  task <- object
   task[["cross_validation"]] <- purrr::map(
     task[["cross_validation"]],
     predict.sf_task,
@@ -170,10 +182,9 @@ evaluate.cv_task <- function(
   remove_strong_signals = TRUE
   ){
 
+  require(purrr)
   combined_data <- purrr::map(task[["cross_validation"]], "validation_data")
-  #TODO no need for tibble_time !!
-  # Task f338d4ff-6516-480a-bf85-7c5c1da4fbd7
-  combined_data <- purrr::map(combined_data, tibble::as_tibble)  %>%
+  combined_data <- combined_data  %>%
     dplyr::bind_rows(.id = "model") %>%
     mutate(model = paste0("cv_", model))
   model_names  <- unique(combined_data$model)
@@ -201,16 +212,22 @@ evaluate.cv_task <- function(
   # MLsegmentr
   # see c5823da4-48ae-4c33-a345-2a5efdc808e7
 
-  summary_eval <-
-    modified_task[["model_performance"]] %>%
+  summary_eval <- modified_task[["model_performance"]] %>%
     filter(evaluation_name == "aucpr")  %>%
     group_by(target_type, segment, evaluation_name) %>%
     tidyr::unnest() %>%
-    summarize(evaluation = mean(evaluation), model = "cv_averaged") %>%
+    summarize(evaluation = mean(evaluation), model = factor("cv_averaged")) %>%
     #to have same col order
-    select(names(modified_task[["model_performance"]]))
+    select(names(modified_task[["model_performance"]])) %>%
+    ungroup()
 
   summary_eval$evaluation <- list(summary_eval$evaluation)
+  summary_eval  <- summary_eval %>%
+    mutate_if(is.factor, as.character)
+  modified_task[["model_performance"]] <-
+    modified_task[["model_performance"]] %>%
+    mutate_if(is.factor, as.character)
+
   modified_task[["model_performance"]] <- bind_rows(
     summary_eval,
     modified_task[["model_performance"]]

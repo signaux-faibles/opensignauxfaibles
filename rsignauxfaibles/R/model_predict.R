@@ -1,68 +1,17 @@
-# ------------------------------------------------------------------------------
-# -------- OBSOLETE ------------------------------------------------------------
-# ------------------------------------------------------------------------------
-
-##' Predict the model on last available data
-##'
-##' @param model
-##' @param database
-##' @param collection
-##' @param te_map
-##' @param last_batch
-##' @param periods Date, or vector of two Dates defining lower and upper time limit
-##' @param min_effectif
-##' @param fields
-##'
-##' @return
-##' @export
-##'
-##' @examples
-#predict_on_last_batch <- function(
-#  model,
-#  database,
-#  collection,
-#  te_map,
-#  last_batch,
-#  periods,
-#  min_effectif,
-#  fields) {
-#
-#
-#
-#  current_data <- get_last_batch(
-#    database,
-#    collection,
-#    last_batch,
-#    periods,
-#    fields,
-#    min_effectif,
-#    rollback_months = 1
-#    )
-#
-#  current_data <- prepare_frame(
-#    data_to_prepare = current_data,
-#    test_or_train = "test",
-#    te_map = te_map,
-#    save_or_load_map = FALSE
-#    )[["data"]]
-#
-#  prediction <- predict_model(
-#    model = model,
-#    new_data = current_data
-#    )
-#
-#  return(pred_data)
-#}
-
-#' Make prediction on new data
+#' Prédiction du model
 #'
-#' @param model An H2O model
-#' @param new_data Prepared data
+#' Produit une prédiction du modèle sur de nouvelles données. Renvoie le
+#' résultat converti sous forme de `data.frame()`
 #'
-#' @return
+#' @param model `H2OModel()` \cr
+#'   Un modèle H2O.
+#' @param new_data `H2OFrame()` \cr  Données au bon format pour alimenter le
+#' modèle.
+#'
+#' @return `data.frame()` \cr
+#'   Un data.frame avec les colonnes "predicted_outcome" (`TRUE` ou `FALSE`),
+#'   "score" (entre 0 et 1), "siret" et "periode"
 #' @export
-#'
-#' @examples
 predict_model <- function(model, new_data) {
   prediction <- h2o::h2o.cbind(
     new_data[, c("siret", "periode")],

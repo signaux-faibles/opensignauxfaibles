@@ -3,25 +3,44 @@
 #' Si le nombre de périodes disponible dans les données est supérieur à deux,
 #' alors la dernière période disponible est absente du data.frame de retour.
 #'
-#' @param donnees
-#' @param export_fields
-#' @param database `character(1)` \cr Nom de la base de données vers laquelle
-#'   param exporter.
-#' @param collection `character(1)` \cr Nom de la collection vers laquelle
-#'   exporter.
-#' @param last_batch
+#' @param data_to_export `data.frame(1)` \cr Données à exporter. Doit avoir
+#'   les champs "siret", "periode", et "score".
+#' @param export_fields `character()` \cr Liste des champs à charger pour
+#'   enrichir les scores. Ces champs sont chargés directement depuis la base
+#'   avec les informations de connection.
+#' @inheritParams mongodb_connection
+#' @param last_batch `character(1)` \cr Nom du batch à prendre en compte pour
+#'   les données.
+#' @param known_sirens_full_paths `character()` \cr Chemins absolus des
+#'   fichiers contenant des listes de sirens connus.
+#' @param verbose `logical()` \cr Faut-il imprimer des informations sur le
+#'   chargement des données supplémentaires ?
 #'
-#' @return
+#' @return `data.frame()`\cr
+#'   Données formatées avec les champs "siret", "periode", "score",
+#'   "score_diff", "connu" ainsi que les champs spécifiés dans
+#'   `export_fields`.
 #' @export
-#'
-#' @examples
 format_for_export <- function(
-  donnees,
+  data_to_export,
   export_fields,
   database,
   collection,
   last_batch,
-  known_sirens_filenames = c("sirets_connus_pdl.csv", "sirets_connus_bfc.csv"),
+  # TODO: no default needed here
+  # ec79ac15-b8b3-426c-b804-f441851ac58b
+  known_sirens_full_paths = c(
+    rprojroot::find_package_root_file(
+      "..",
+      "data-raw",
+      "sirets_connus_pdl.csv"
+    ),
+    rprojroot::find_package_root_file(
+      "..",
+      "data-raw",
+      "sirets_connus_bfc.csv"
+    )
+  ),
   verbose = TRUE) {
 
   require(logger)
@@ -31,7 +50,7 @@ format_for_export <- function(
     log_threshold(WARN)
   }
 
-  prediction <- donnees %>%
+  prediction <- data_to_export %>%
     select(siret, periode, score)
 
   all_periods <- prediction %>%
@@ -68,8 +87,8 @@ format_for_export <- function(
 
   first_period <- min(all_periods)
   last_period <- max(all_periods)
-  log_info("Préparation à l'export ... ")
-  log_info("Dernière période connue: {last_period}")
+  log_info("Preparation a l'export ... ")
+  log_info("Derniere periode connue: {last_period}")
 
   donnees <- connect_to_database(
     database,
@@ -92,10 +111,12 @@ format_for_export <- function(
     dplyr::mutate(CCSF = date_ccsf) %>%
     dplyr::arrange(dplyr::desc(score), siret, dplyr::desc(periode))
 
-  # Report des dernières infos financieres connues
+  # Report des dernieres infos financieres connues
 
+  # TODO couper nom / chemin du dossier
   donnees <- donnees %>%
-    mark_known_sirets(names = known_sirens_filenames) %>%
+    mark_known_sirets(names = basename(known_sirens_full_paths),
+      absolute_path = dirname(known_sirens_full_paths)) %>%
     select(export_fields)
 
   all_names <- names(donnees)
@@ -141,7 +162,6 @@ format_for_export <- function(
 #'
 #' @export
 #'
-#' @examples
 export_scores_to_mongodb <- function(
   formatted_data,
   algo,
@@ -176,7 +196,7 @@ export_scores_to_mongodb <- function(
     collection = collection,
     db = database,
     verbose = FALSE,
-    # TODO: à lire du fichier de config
+    # TODO: a lire du fichier de config
     url = "mongodb://localhost:27017"
     )
 
@@ -210,13 +230,12 @@ export_scores_to_mongodb <- function(
 #'   l'export, par rapport à la racine du paquet R.
 #'
 #'
-#' @return Retourne TRUE. \cr Exporte un fichier csv, dans le dossier spécifié
+#' @return `TRUE`. \cr Exporte un fichier csv, dans le dossier spécifié
 #'   en entrée, nommé automatiquement "aaaa_mm_jj_export_{algo}_{batch}" avec
 #'   éventuellement un suffixe "_vX" pour ne pas écraser de fichier existant.
 #'
 #' @export
 #'
-#' @examples
 export_scores_to_csv  <- function(
   formatted_data,
   algo,
@@ -256,135 +275,31 @@ export_company_card  <- function(formatted_data){
 
 }
 
-#' Exports a dataframe to csv, or export scores to mongodb
-#'
-#' @param donnees Data to export.
-#' @param batch Batch name.
-#' @param algo Algorithm name.
-#' @param database Database name. Database is created if non-existent. Only
-#' used for mongodb export
-#' @param collection Collection name.  Collection is created if non-existent. Only
-#' used for mongodb export.
-#' @param destination Either "csv", "mongodb" or "json" (case insensitive). See details.
-#' @param relative_path Relative path used for csv export.
-#' @param F_scores Named vector with F-scores, and names F1 and F2. Allows to
-#' add the alert status.
-#'
-#' @section Details of csv export:
-#' If destination is "csv", then a full csv export is operated.
-#'
-#' @section Details of mongodb export:
-#' If destination is "mongodb", then the scores are exported to mongodb
-#' \code(database) and \code(collection).  Input data \code(donnees) needs to
-#' have columns "siret", "periode" and "score".
-#'
-#' Inserts object with fields "siret", "periode", "score", "batch" and
-#' "timestamp" which gives the timestamp of insertion.
-#'
-#' @return
-#' @export
-#'
-#' @examples
-# export_scores <- function(
-#   donnees,
-#   batch,
-#   algo = "algo",
-#   database = "test_signauxfaibles",
-#   collection = "Scores",
-#   destination = "csv",
-#   relative_path = file.path("..", "output"),
-#   F_scores = NULL) {
-
-#   assertthat::assert_that(tolower(destination) %in% c("csv", "mongodb", "json"),
-#     msg = "Wrong export destination argument.
-#     Possible destinations are 'csv', 'mongodb' or 'json'"
-#     )
-
-#   assertthat::assert_that(is.character(batch) && length(batch) == 1,
-#     msg = "Batch shoud be a length 1 character vector"
-#     )
-#   assertthat::assert_that(is.character(database) && length(database) == 1,
-#     msg = "Database shoud be a length 1 character vector"
-#     )
-#   assertthat::assert_that(is.character(collection) && length(collection) == 1,
-#     msg = "Collection shoud be a length 1 character vector"
-#     )
-
-#   assertthat::assert_that(grepl("^[[:alnum:]_]+$", algo),
-#     msg = "Please use alphanumeric and underscore characters for algorithm name"
-#     )
-
-#   if (tolower(destination) == "csv") {
-#     fullpath <- name_file(
-#       relative_path,
-#       file_detail = paste0("detection", batch),
-#       file_extension = "csv",
-#       full_path = TRUE
-#       )
-
-#     write.table(donnees,
-#       row.names = F,
-#       dec = ",",
-#       sep = ";",
-#       file = fullpath,
-#       quote = T,
-#       append = F
-#       )
-#   } else if (tolower(destination) == "mongodb") {
-#     dbconnection <- mongolite::mongo(
-#       collection = collection,
-#       db = database,
-#       verbose = TRUE,
-#       url = "mongodb://localhost:27017"
-#       )
-
-#     compulsory_columns <- c("siret", "periode", "score", "score_diff")
-
-#     assertthat::assert_that(all(compulsory_columns %in% names(donnees)),
-#       msg = paste(
-#         paste0(compulsory_columns, collapse = ", "),
-#         "are compulsary column names to export the scores to mongodb"
-#         )
-#       )
-
-#     donnees_export <- donnees %>%
-#       dplyr::select(siret, periode, score, score_diff) %>%
-#       dplyr::mutate(
-#         batch = batch,
-#         timestamp = Sys.time(),
-#         algo = algo
-#         ) %>%
-#       dplyr::rename(score = score)
-
-#     if (!is.null(F_scores)) {
-#       assertthat::assert_that(length(F_scores) == 2)
-#       assertthat::assert_that(all(c("F1", "F2") %in% names(F_scores)))
-
-#       donnees_export <- donnees_export %>%
-#         mutate(alert = alert_levels(score, F_scores["F1"], F_scores["F2"]))
-#     }
-
-#     dbconnection$insert(donnees_export)
-#   } else if (tolower(destination) == "json") {
-#     error("Export to json not implemented yet !")
-#   }
-#   return()
-# }
-
 #' Marks sirets from files as "known"
 #'
-#' @param df
-#' @param names File names
+#' Récupère des sirens d'une liste de fichier et ajoute une colonne à un
+#' data.frame pour spécifier dans une colonne "connu" si le siren est présent dans l'un de ces
+#' fichiers.
 #'
-#' @return
+#' @param df `data.frame()` \cr Table avec au moins une colonne "siret"
+#' @param names `character()` \cr Nom des fichiers
+#' @param absolute_path `character()` \cr Chemin d'accès absolu
+#'
+#' @return `data.frame()` \cr Table donnée en entrée à laquelle a été apposé
+#' une colonne "connu", qui vaut 1 si le siren correspondant a été trouvé dans
+#' les fichiers spécifiés, 0 sinon.
+#'
 #' @export
 #'
-#' @examples
-mark_known_sirets <- function(df, names) {
+mark_known_sirets <- function(
+  df,
+  names,
+  absolute_path = rprojroot::find_package_root_file("..", "data-raw")
+) {
   sirens <- c()
   for (name in names) {
     sirets <- readLines(
-      rprojroot::find_rstudio_root_file("..", "data-raw", name)
+      file.path(absolute_path, name)
     )
     sirens <- c(sirens, substr(sirets, 1, 9))
   }
@@ -394,17 +309,21 @@ mark_known_sirets <- function(df, names) {
   return(df)
 }
 
-#' Get the scores for specific sirets and periods
+#' Récupération des scores
 #'
-#' @param database String. Mongodb database name to query.
-#' @param collection String. Mongodb collection name to query.
-#' @param algo. Algorithm from which to take the score.
-#' @param method String, either "first" or "last". See details.
-#' @param siret Vector of sirets to query.
+#' @inheritParams mongodb_connection
+#' @param algo`character(1)`\cr Algorithm from which to take the score. Defaults to "algo".
+#' @param method `character(1)`\cr Ou bien "first" ou bien "last". See details.
+#' @param siret `character()` \cr Vecteur de sirets à requêter
 #'
 #' @section Details:
-#' If method is "first", then the last score available for the first batch
-#' scoring this period.
+#' Si la méthode est "first", alors le dernier score disponible pour le
+#' **premier** batch disponible pour cette période est récupéré. Sinon, le
+#' dernier score disponible pour le **dernier** batch disponible est récupéré.
+#' "first" représente plus fidèlement les scores qui ont été obtenues par le
+#' passé, là où "last" représente les scores qui auraient été obtenues avec
+#' le dernier algorithme en date (même si ce n'est pas toujours le cas, ça
+#' dépend des périodes qui ont été  exportées avec cet algorithme).
 #'
 #' @return Returns a dataframe with columns "siret", "periode", "score"
 #' (failure probability), "batch" (batch of the model used), "algo" (name of
@@ -412,7 +331,6 @@ mark_known_sirets <- function(df, names) {
 #'
 #' @export
 #'
-#' @examples
 get_scores <- function(
   database = "test_signauxfaibles",
   collection = "Scores",
@@ -543,25 +461,25 @@ get_scores <- function(
 #'
 #' @param sirets Vecteur de sirets des établissements dont il faut exporter la
 #' fiche
-#' @param database Base de donnée Mongodb à requêter
-#' @param collection Collection mongodb à requêter
-#' @param batch Choix du batch pour lequel se fait l'export
-#' @param with_urssaf. logical. Si TRUE, les informations du montant des
+#' @inheritParams mongodb_connection
+#' @param batch `character(1)` Choix du batch pour lequel se fait l'export
+#' @param with_urssaf `logical(1)`\cr Si TRUE, les informations du montant des
 #'  dettes URSSAF sont incluses à la fiche.
-#' @param folder Nom du dossier dans lequel la fiche est exportée. Le dossier
-#'  doit préexister. TODO: chemin d'accès écrit en dur; à corriger !
+#' @param absolute_path `character(1)` \cr Chemin d'accès absolu au dossier
+#' d'export.
 #'
-#' @return NULL
+#' @return `NULL`
+#'   Exporte la ou les fiches visites sous le nom
+#'   "Fiche_visite_{raison_sociale}.pdf"
 #' @export
 #'
-#' @examples
 export_fiche_visite <- function(
   sirets,
   database = "test_signauxfaibles",
   collection = "Features",
   batch,
   with_urssaf = FALSE,
-  folder = batch){
+  absolute_path = rprojroot::find_package_root_file("..", "output", "Fiches", batch)){
 
   for (i in seq_along(sirets)) {
     elementary_info <- connect_to_database(
@@ -578,7 +496,8 @@ export_fiche_visite <- function(
     raison_sociale <- elementary_info %>%
       .$raison_sociale
 
-    rmarkdown::render("/home/pierre/Documents/opensignauxfaibles/rsignauxfaibles/R/post_fiche_visite.Rmd",
+    require(rprojroot)
+    rmarkdown::render(rprojroot::find_package_root_file("R", "post_fiche_visite.Rmd"),
       params = list(
         siret = sirets[i],
         batch = batch,
@@ -586,7 +505,7 @@ export_fiche_visite <- function(
         collection = collection,
         with_urssaf = with_urssaf
       ),
-      output_file = paste0("/home/pierre/Documents/opensignauxfaibles/output/Fiches/", folder, "/Fiche_visite_", stringr::str_replace_all(raison_sociale, "[^[:alnum:]]", "_"), ".pdf"),
+      output_file =  file.path(absolute_path, paste0("Fiche_visite_", stringr::str_replace_all(raison_sociale, "[^[:alnum:]]", "_"), ".pdf")),
       clean = TRUE
     )
   }

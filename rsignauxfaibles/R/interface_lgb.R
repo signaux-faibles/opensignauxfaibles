@@ -1,12 +1,20 @@
 #' Quickly run the model -- temporary function
 #'
-#' @param param
+#' Charge les données, les prépare, entraîne l'algorithme, charge les
+#' dernières données, prédit sur les dernières données et exporte les
+#' résultats en un appel de fonction.
 #'
-#'  @return
+#' @param sample_size `integer()` \cr Taille de l'échantillon sur lequel
+#'   l'algorithme est entraîné.
+#' @param  batch `character()` \cr Nom du batch pour lequel le modèle est
+#' entraîné et les dernières données sont sélectionnées.
+#'
+#'  @return `TRUE`
 #'  @export
-#'
-#'  @examples
-full_light_gradient_boosting <- function(sample_size){
+full_light_gradient_boosting <- function(
+  sample_size,
+  batch
+){
   h2o::h2o.no_progress()
   devtools::load_all()
   # Script parameters
@@ -23,14 +31,14 @@ full_light_gradient_boosting <- function(sample_size){
     verbose = TRUE,
     database,
     collection,
-    experiment_aim = "Reference evaluation canvas",
+    experiment_name = "Reference evaluation canvas",
     experiment_description = "This experiment fixes the conditions for the
     evaluation of a new algorithm compared to former versions"
     )
 
   task <- load_hist_data(
     task = task,
-    batch = "1905",
+    batch = batch,
     subsample = sample_size
     )
   task <- hold_out(task)
@@ -40,4 +48,6 @@ full_light_gradient_boosting <- function(sample_size){
   task <- predict(task, data_names = c("validation_data"))
   task <- evaluate(task, data_name = "validation_data")
   task <- log(task)
+
+  return(TRUE)
 }

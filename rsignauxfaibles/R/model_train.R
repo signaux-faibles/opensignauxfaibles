@@ -1,14 +1,28 @@
 #' Train a light gradient boosting model
 #'
-#' @param train_data données d'entraînement, sous la forme d'un H2OFrame
-#' @param validation_data données d'évaluation, sous la forme d'un H2OFrame
+#' Trains a light gradient boosting model on training data.
+#'
+#' @param h2o_train_data `H2OFrame` \cr données d'entraînement, sous la forme d'un H2OFrame
+#' @param h2o_validation_data `H2OFrame` \cr Données d'évaluation, sous la forme d'un H2OFrame
 #' @param x_fields_model Champs sur lequel entraîner le modèle.
 #' @param save_results si TRUE, sauvegarde le modèle sur le disque.
+#' @param outcome `character(1)` \cr Nom de la variable qui sert de cible
+#'   d'apprentissage
+#' @param learn_rate `numeric(1)` \cr
+#' @param max_depth `integer(1)` \cr  Specify the maximum tree depth. Higher
+#'   values will make the model more complex and can lead to overfitting.
+#'   Setting this value to 0 specifies no limit.
+#' @param ntrees `integer(1)` \cr Specify the number of trees to build.
+#' @param min_child_weight `integer(1)` \cr Specify the minimum number of
+#' observations for a leaf.
+#' @param seed `integer(1)` \cr Graine aléatoire pour que les opérations
+#'   aléatoires soient reproductibles.
+#' @param save_results `logical(1)` \cr Faut-il sauvegarder le modèle pour un
+#'   chargement ultérieur ?
 #'
-#' @return Liste("model", "temap")
+#' @return `H2OBinomialModel` \cr
 #' @export
 #'
-#' @examples
 train_light_gradient_boosting <- function(
   h2o_train_data,
   h2o_validation_data = NULL,
@@ -25,10 +39,9 @@ train_light_gradient_boosting <- function(
   # Train the model
   #
 
-  # FIX ME: RISQUE D'ECRASER UN MODELE EXISTANT AVEC CE MODEL_ID
-
+  require(uuid)
   model <- h2o::h2o.xgboost(
-    model_id = paste0("Train_model", floor(runif(1) * 1000)),
+    model_id = paste0("Train_model_", uuid::UUIDgenerate()),
     x = x_fields_model,
     y = outcome,
     training_frame = h2o_train_data,

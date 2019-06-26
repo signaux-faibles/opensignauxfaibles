@@ -1,30 +1,39 @@
-#' Documentation des paramètres de connection à mongodb
+#' Documentation des informations de connection à mongodb
 #'
 #' @param database `character(1)` \cr Nom de la base de données vers laquelle
 #'   param exporter. Par défaut, celle stockée dans \code{task}.
 #' @param collection `character(1)` \cr Nom de la collection vers laquelle
 #'   exporter. Par défaut, celle stockée dans \code{task}.
-mongodb_connection <- function(){
-}
+#' @name mongodb_connection
+NULL
+
+#' Documentation tâche générique
+#'
+#' @param task `[sf_task]` \cr Objet s3 de type sf_task
+#' @param tracker `[mllogr::Tracker]` \cr Logger of ML experiment
+#' @name generic_task
+NULL
 
 #' Initialiser une tâche d'apprentissage
 #'
 #' Un objet s3 de type sf_task est défini, dans lequel seront défini et
 #' stockés les tâches intermédiaires et les résultats de l'apprentissage.
 #'
+#' Si `tracker` est `NULL`, alors un nouveau Tracker est créé
 #'
 #' @param verbose `logical(1)` \cr
-#' Active ou désactive le log des actions ultérieures.
+#'   Active ou désactive le log des actions ultérieures.
 #' @inheritParams mongodb_connection
+#' @inheritParams generic_task
 #' @param experiment_name `character()` \cr
-#' Quel est l'objet de cette tâche ?
+#'   Quel est l'objet de cette tâche ?
 #' @param experiment_description `character()` \cr
-#' Descriptions supplémentaires sur l'expérimentation en cours.
+#'   Descriptions supplémentaires sur l'expérimentation en cours.
 #'
-#'  @return `[sf_task]` \cr
-#' Un objet sf_task avec un attribut de type `logical` "verbose", qui définit le niveau de log,
-#' ainsi qu'un attribut "to_log" de type `list` dans lequel seront stockés des
-#' informations spécifiques pour le log.
+#' @return `[rsignauxfaibles::sf_task]` \cr
+#'   Un objet sf_task avec un attribut de type `logical` "verbose", qui définit le niveau de log,
+#'   ainsi qu'un attribut "to_log" de type `list` dans lequel seront stockés des
+#'   informations spécifiques pour le log.
 #'
 #'  @export
 sf_task <- function(
@@ -35,15 +44,21 @@ sf_task <- function(
   experiment_description,
   tracker = NULL
   ){
+
   res <- list(database = database, collection = collection)
   class(res) <- "sf_task"
   attr(res, "verbose") <- verbose
   if (is.null(tracker) && require(MLlogr)){
-    res[["tracker"]] <- MLlogr::MLLogger$new(
-      id_columns = c("siret", "periode")
+
+    res[["tracker"]] <- MLlogr::Tracker$new(
+      #TODO: Mieux gérer la base de logging
+      # f4737679-916d-4aeb-84ba-958046f4ca31
+      database = database,
+      collection = collection,
+      control = list(id_columns = c("siret", "periode"))
     )
     res[["tracker"]]$set(
-      experiment_aim = experiment_name,
+      experiment_name = experiment_name,
       experiment_description = experiment_description
     )
   }
@@ -70,16 +85,14 @@ set_verbose_level <- function(task){
 #'
 #' Vérifie si les champs qui vont être écrits sont déjà existant, et le cas
 #' échéant vont être écrasés.
-#'
 #' @param task `[sf_task]` \cr Objet s3 de type sf_task
 #' @param field_names `character()` \cr Nom des champs à vérifier.
-#'
 #' @return Nom des champs écrasés, `character(0)` sinon.
 check_overwrites <- function(task, field_names){
   set_verbose_level(task)
   overwrite <- intersect(field_names, names(task))
   if (length(overwrite) > 1){
-    log_info('Les champs {paste(overwrite, collapse = ",")} sont écrasés avec
+    log_info('Les champs {paste(overwrite, collapse = ",")} sont ecrases avec
       les nouvelles valeurs.')
   }
   return(overwrite)
@@ -99,6 +112,9 @@ check_overwrites <- function(task, field_names){
 #' @param fields `character()` \cr Noms des champs à requêter dans la base de
 #'   données. Doit contenir "siret" et "periode". Si égal à \code{NULL}, alors
 #'   charge tous les champs disponibles.
+#' @param date_inf `Date` \cr Date inférieure du chargement des données.
+#' @param date_sup `Date` \cr Date supérieure (exclue) du chargement des
+#'   données.
 #' @param min_effectif `integer(1)` \cr Limite basse du filtrage de l'effectif
 #'   (la limite est incluse)
 #' @param siren `character()` \cr Liste de sirens à exporter. Si égale à
@@ -129,7 +145,7 @@ load_hist_data.sf_task <- function(
   ){
   set_verbose_level(task)
 
-  log_info("Chargement des données historiques.")
+  log_info("Chargement des donnees historiques.")
 
   hist_data <- connect_to_database(
     database,
@@ -146,9 +162,9 @@ load_hist_data.sf_task <- function(
     )
 
   if (nrow(hist_data) > 1) {
-    log_info("Les données ont été chargées avec succès.")
+    log_info("Les donnees ont ete chargees avec succes.")
   } else {
-    log_warn("Aucune donnée n'a été chargée. Veuillez vérifier la requête.")
+    log_warn("Aucune donnee n'a ete chargee. Veuillez verifier la requete.")
   }
   check_overwrites(task, "hist_data")
   task[["hist_data"]] <- hist_data
@@ -204,6 +220,7 @@ load_new_data.sf_task <- function(
   return(task)
 }
 
+
 #' Scission des données en échantillon d'entraînement, de validation et de
 #' test.
 #'
@@ -217,10 +234,8 @@ load_new_data.sf_task <- function(
 #'  à 1. Le seul cas où cette condition n'est pas testée est lorsque frac_train
 #'  = 1.
 #'
-#' @param task `[sf_task]` \cr Objet s3 de type sf_task. Doit posséder des
-#'   données dans le champs "hist_data".
+#' @inheritParams generic_task
 #' @inheritParams split_snapshot_rdm_month
-#'
 #' @describeIn split_data
 #'
 #' @return `[sf_task]` \cr
@@ -240,8 +255,8 @@ split_data.sf_task <- function(
 
   set_verbose_level(task)
 
-  log_info("Les données historiques sont scindés en échantillons
-    d'entraînement, de test et de validation")
+  log_info("Les donnees historiques sont scindes en echantillons
+    d'entrainement, de test et de validation")
 
   assertthat::assert_that("hist_data" %in% names(task),
     msg = "Please load historical data before holding out test data")
@@ -276,7 +291,7 @@ split_data.sf_task <- function(
 #' l'entraînement ou la prédiction de l'algorithme. Cf `[prepare_data]` pour
 #' la nature de cette préparation.
 #'
-#' @param task `[sf_task]` \cr Objet s3 de type sf_task
+#' @inheritParams generic_task
 #' @param data_names `character()` \cr Vecteur de noms des données à préparer.
 #'   Doivent-être des noms de champs valides de `task`.
 #'
@@ -358,6 +373,15 @@ prepare.sf_task <- function(
 #' @param task `[sf_task]` \cr Objet s3 de type sf_task
 #' @param fields `character()` \cr Liste des variables pour l'entraînement. Cf
 #' `[get_fields]` pour les variables par défaut.
+#' @param n_init `integer(1)` \cr Nombre d'évaluations aléatoires initiales.
+#' @param n_iter `integer(1)` \cr Nombre d'itérations (d'évaluations) d'optimisation.
+#' @param train_pipe `function` \cr Fonction d'entraînement et d'évaluation
+#'   compatible avec l'optimisation avec "mlrMBO" (donc avec des attributs
+#'   spécifiques), notamment comme celles créées avec
+#'   `[smoof::makeSingleObjectiveFunction]`
+#' @param optim_bounds `ParamSet` \cr Objet précisant l'espace exploré par
+#'   l'optimisation, tel que donné par `[ParamHelpers::ParamSet]`. Si NULL,
+#'   alors des limites par défaut sont fixées.
 #'
 #' @describeIn optimize_hyperparameters
 #'
@@ -368,7 +392,7 @@ prepare.sf_task <- function(
 optimize_hyperparameters.sf_task <- function( #nolint
   task,
   fields = get_fields(training = TRUE),
-  n_init = 6,
+  n_init = NULL,
   n_iter = 12,
   train_pipe = NULL,
   optim_bounds = NULL
@@ -402,11 +426,15 @@ optimize_hyperparameters.sf_task <- function( #nolint
 
         new_task <- train(
           task,
-          parameters = as.list(x)
+          parameters = as.list(x),
+          fields = fields
           )
-
         new_task <- predict(new_task, data_names = c("validation_data"))
-        new_task <- evaluate(new_task, plot = FALSE)
+        new_task <- evaluate(
+          new_task,
+          data_name = c("validation_data"),
+          plot = FALSE
+        )
         # TODO: Bayesian optimization criteria should be more flexible
         # 77d91ced-beac-4e91-9b48-e8fd16e956ee
         aucpr <- new_task[["model_performance"]] %>% .$evaluation %>% .[[1]]
@@ -418,13 +446,15 @@ optimize_hyperparameters.sf_task <- function( #nolint
       )
   }
 
+    set.seed(159)
   #2 Initial design
-  set.seed(159)
-  des <- ParamHelpers::generateDesign(n = n_init,
-    par.set = ParamHelpers::getParamSet(train_pipe),
-    fun = lhs::randomLHS)
-
-  des$y <- apply(des, 1, train_pipe)
+  if (!is.null(n_init)){
+    des <- ParamHelpers::generateDesign(n = n_init,
+      par.set = ParamHelpers::getParamSet(train_pipe),
+      fun = lhs::randomLHS)
+  } else {
+    des <- NULL
+  }
 
   #3 Surrogate model
   surrogate  <- mlr::makeLearner(
@@ -451,8 +481,12 @@ optimize_hyperparameters.sf_task <- function( #nolint
     control = control,
     show.info = TRUE)
 
+  task[["model_parameters"]] <- as.list(run$x)
 
   all_res <- run$opt.path$env$path
+  if (is.null(n_init)){
+    n_init  <- 4 * smoof::getNumberOfParameters(train_pipe)
+  }
   run$opt.path$env$path  %>%
     mutate(round = row_number()) %>%
     mutate(type = case_when(
@@ -462,7 +496,6 @@ optimize_hyperparameters.sf_task <- function( #nolint
     ggplot2::geom_point() +
     ggplot2::labs(title = "mlrMBO optimization")
 
-  task[["model_parameters"]] <- as.list(run$x)
   return(task)
 }
 
@@ -472,9 +505,15 @@ optimize_hyperparameters.sf_task <- function( #nolint
 #' `[train_light_gradient_boosting]` pour plus de détails sur le modèle
 #' entraîné.
 #'
-#' @param task `[sf_task]` \cr Objet s3 de type sf_task
+#' @inheritParams generic_task
 #' @param fields `character()` \cr Liste des variables pour l'entraînement. Cf
 #' `[get_fields]` pour les variables par défaut.
+#' @param parameters `list(any())` \cr Paramètres du modèle. Cf
+#' `[train_light_gradient_boosting]`. Si `NULL`, alors des paramètres par
+#' défaut sont sélectionnés.
+#' @param seed `integer()`\cr Graîne pour que les calculs aléatoires soient
+#' reproductibles.
+#'
 #'
 #' @return `[sf_task]` \cr L'objet `task` donné en entré, auquel a été ajouté
 #' (ou écrasé) le champs "model", dans lequel est stocké un modèle compatible
@@ -494,7 +533,8 @@ train.sf_task <- function(
     msg = "task does not contain prepared train data."
     )
 
-  if (is.null(parameters) && (!"model_parameters" %in% names(task))){
+  if (is.null(parameters) &&
+    (!"model_parameters" %in% names(task))){
     parameters  <- list(
       learn_rate = 0.1,
       max_depth = 4,
@@ -519,8 +559,6 @@ train.sf_task <- function(
 
   set_verbose_level(task)
 
-
-
   log_info("Model is being trained.")
 
   task[["features"]] <- fields
@@ -540,14 +578,16 @@ train.sf_task <- function(
   task[["model"]] <- model
 
   if (!is.null(tracker)){
-    tracker$set(
-      model_name  = "light gradient boosting",
-      model  = "model",
-      model_target  = "18 mois, defaut et défaillance"
-      )
+    #TODO: Why does it print "model"?
+    # e51f22ca-ed0d-434b-be1e-d57547092a22
+     tracker$set(
+       model_name  = "light gradient boosting",
+       model  = "model",
+       model_target  = "18 mois, defaut et defaillance"
+       )
   }
 
-  return(task)
+  return(invisible(task))
 }
 
 load.sf_task <- function(task){
@@ -574,9 +614,13 @@ save.sf_task <- function(task, ...) {
 #' Predict on some data.
 #' Data should be prepared.
 #'
-#' @param object
+#' @param object `sf_task()` \cr Objet `sf_task` avec un modèle entraîné dans
+#'   le champs `model`. Les données doivent avoir été préparées.
+#' @param data_names `character()` \cr Nom des données sur lesquelles prédire.
 #'
-#' @return
+#' @return `sf_task()`\cr
+#'   Task donnée en entrée, pour laquelle une colonne "score" a été rajoutée
+#'   aux données nommées dans `data_names`
 #' @export
 predict.sf_task <- function(
   object,
@@ -627,7 +671,18 @@ predict.sf_task <- function(
     return(task)
 }
 
-export.sf_task <- function(task, ...){
+#' Export de données
+#'
+#' Exporte les données.
+#'
+#' @inheritParams generic_task
+#' @param export_type `"csv" | "mongodb"` \cr Export en csv, ou en
+#'   mongodb ?
+#' @param ... additional parameters for export functions.
+#' @return `sf_task` \cr L'objet `task` donné en entrée.
+#' @export
+export.sf_task <- function(task, export_type, ...){
+  require(purrr)
   export_fields <- c(
     "siret",
     "periode",
@@ -672,7 +727,7 @@ export.sf_task <- function(task, ...){
 
   f_scores <- c(F1 = 0.31, F2 = 0.13) # TODO TODO
 
-  if (!is.null(export_type) && export_type != "none") {
+  if (!is.null(export_type)) {
     assertthat::assert_that(all(export_type %in% c("csv", "mongodb")))
 
     log_info("Adding additional fields for export")
@@ -713,10 +768,14 @@ export.sf_task <- function(task, ...){
 
 #' Évaluation du modèle
 #'
-#' @param task
-#' @param eval_function
-#' @param data_name
-#' @param plot
+#' Evalue le modèle stocké dans l'objet task
+#'
+#' @inheritParams generic_task
+#' @param eval_function `MLsegmentr::eval_function()` \cr Objet s3
+#' d'évaluation.
+#' @param data_name `character(1)` \cr Sur quelles données évaluer ?
+#' @param plot `logical(1)` \cr Faut-il tracer la figure avec la fonction de
+#'   l'`eval_function` (si disponible)
 #' @param remove_strong_signals `logical(1)`\cr
 #'   Faut-il retirer des échantillons de test ou de
 #'   validation les entrerprises qui présentent des signaux forts, c'est-à-dire 3 mois de défaut, ou une
@@ -725,7 +784,9 @@ export.sf_task <- function(task, ...){
 #'
 #' @describeIn evaluate
 #'
-#' @return
+#' @return `task` donnée en entrée à laquelle s'est ajoutée (ou a été
+#' remplacé) un champs "model_performance", avec le résultat de la fonction
+#' d'évaluation
 #' @export
 evaluate.sf_task <- function(
   task,
@@ -746,7 +807,7 @@ evaluate.sf_task <- function(
 
   evaluation_data  <- task[[data_name]]
   if (remove_strong_signals){
-    log_info("Les 'signaux forts' sont retirés des données d'évaluation (test,
+    log_info("Les 'signaux forts' sont retires des donnees d'evaluation (test,
       validation)")
     # TODO add to log
     # task a7368366-ad3c-4dcb-b8d9-2e23de616bf0
@@ -790,7 +851,7 @@ evaluate.sf_task <- function(
 #' Permet de loguer dans une collection mongodb la nature et les différents
 #' éléments de la tâche d'apprentissage. Cf le package `MLlogs`.
 #'
-#' @param task
+#' @inheritParams generic_task
 #' @inheritParams mongodb_connection
 #' @param collection `character(1)`. La collection vers laquelle exporter. Par
 #' défaut, "ml_logs".
@@ -814,9 +875,10 @@ log.sf_task <- function(
   tracker$set(
     model_parameters = task[["model_parameters"]],
     model_features =  task[["features"]],
-    test_frame = task[["validation_data"]],
-    train_frame = task[["train_data"]]
+    test_frame = task[["validation_data"]]
     )
+  # No train data as it currently not work with cross validation.
+  # e82f5df1-7c7f-472e-b3f8-60707d42136d
 
   tracker$log(...)
 
@@ -828,6 +890,7 @@ explain.sf_task <- function(task, ...){
 }
 
 print.sf_task <- function(x, ...){
+  require(purrr)
   cat("-- FIELDS --\n")
   aux_fun <- function(name, x){
     if (!is.character(x) || length(x) > 1){

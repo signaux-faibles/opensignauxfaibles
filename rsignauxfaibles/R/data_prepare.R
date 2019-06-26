@@ -3,18 +3,26 @@
 #' Inclut la conversion en H2O, et le target encoding.
 #' La map pour le target encoding peut être sauvegardé, afin de permettre de
 #' l'appliquer à de nouvelles données.
+#' Le target encoding se fait avec du bruit pour éviter le surapprentissage.
 #'
-#' @param data_to_prepare
-#' @param test_or_train "train" if a new te_map should be computed, and applied noise; "test" otherwise
-#' @param te_map Only relevant for test: specify used te_map.
-#' @param save_or_load_map if test_or_train="test", then loading the map ? (no
-#' te_map should be specified). if test_or_train="train", the saving the map ?
-#' @param outcome to perform the target encode map on. Only needed if test_or_train = "train"
+#' @param data_to_prepare `data.frame()` \cr Données à préparer
+#' @param test_or_train `"test" | "train"` \cr "train" if a new target
+#' encoding map (`te_map`) should be computed; "test" otherwise
+#' @param te_map `list(H2OFrame)`\cr Carte de calcul du target encoding. Utile
+#'   uniquement si `test_or_train` = "test", sinon elle est recalculée.
+#' @param save_or_load_map `logical(1)` \cr Faut-il charger la carte de target
+#' encoding (si `test_or_train`="test"), ou l'enregistrer (si `test_or_train`
+#' = "train"). Chargement et sauvegarde se font avec le nom "te_map",
+#' l'extension "te_map" et le chemin d'accès par défaut, cf
+#' `[save_h2o_object]`.
+#' @param outcome `character(1)`\cr Nom de la cible d'apprentissage sur
+#' laquelle effectuer le target encoding.
 #'
-#' @return
+#' @return `list(2)` \cr
+#'   Une liste avec deux champs:
+#'   * "data": `H2OFrame`; les données préparées
+#'   * "te_map": `list(H2OFrame)`; la carte de target encoding
 #' @export
-#'
-#' @examples
 prepare_frame <- function(
                           data_to_prepare,
                           test_or_train,
@@ -86,7 +94,7 @@ prepare_frame <- function(
 #'   `periods` à charger. Permet d'effectuer des calculs de différences ou de
 #'   moyennes glissantes pour les périodes d'intérêt.
 #'
-#' @return `data.frame()'\cr
+#' @return `data.frame()` \cr
 #' Données avec les colonnes décrites dans `fields`, pour les périodes
 #' définies par `periods` et `rollback_months`
 #' @export

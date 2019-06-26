@@ -58,8 +58,9 @@ test_that("quick test that everything works", {
   my_test_task  <- optimize_hyperparameters(
     my_test_task,
     n_init = 5,
-    n_iter = 5
-  )
+    n_iter = 5,
+    fields = c("montant_part_patronale", "ca")
+    )
   my_test_task <- log(
     my_test_task,
     database = "unittest_signauxfaibles",
