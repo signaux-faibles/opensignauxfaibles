@@ -1,5 +1,6 @@
 #' Documentation des informations de connection à mongodb
 #'
+#' @param url `character(1)` \cr url to the database in mongodb uri format.
 #' @param database `character(1)` \cr Nom de la base de données vers laquelle
 #'   param exporter. Par défaut, celle stockée dans \code{task}.
 #' @param collection `character(1)` \cr Nom de la collection vers laquelle
@@ -133,6 +134,7 @@ check_overwrites <- function(task, field_names){
 load_hist_data.sf_task <- function(
   task,
   batch,
+  url = "mongodb://192.168.0.19:27017",
   database = task[["database"]],
   collection = task[["collection"]],
   subsample = 200000L,
@@ -148,6 +150,7 @@ load_hist_data.sf_task <- function(
   log_info("Chargement des donnees historiques.")
 
   hist_data <- connect_to_database(
+    url,
     database,
     collection,
     batch,
@@ -158,7 +161,7 @@ load_hist_data.sf_task <- function(
     fields = fields,
     code_ape = NULL,
     subsample = subsample,
-    verbose = FALSE
+    verbose = attr(task, "verbose")
     )
 
   if (nrow(hist_data) > 1) {
@@ -193,6 +196,7 @@ load_new_data.sf_task <- function(
   task,
   periods,
   batch,
+  url = "mongodb://192.168.0.19:27017",
   database = task[["database"]],
   collection = task[["collection"]],
   fields = get_fields(training = FALSE),
@@ -204,6 +208,7 @@ load_new_data.sf_task <- function(
 
   log_info("Loading data from last batch")
   task[["new_data"]] <- connect_to_database(
+    url = url,
     database = database,
     collection = collection,
     batch = batch,
@@ -314,6 +319,7 @@ prepare.sf_task <- function(
     ),
   tracker = task[["tracker"]]
   ){
+
 
   ## TODO: Should not fail with empty frames
   # 93c281b7-d567-4026-aba4-e13d289b9170
@@ -790,7 +796,7 @@ export.sf_task <- function(task, export_type, ...){
 #' @export
 evaluate.sf_task <- function(
   task,
-  eval_function = MLsegmentr::eval_precision_recall(),
+  eval_function =  NULL,
   data_name = c("validation_data"),
   plot = TRUE,
   prediction_names = "score",
@@ -799,6 +805,12 @@ evaluate.sf_task <- function(
   remove_strong_signals = TRUE,
   tracker = task[["tracker"]]
   ){
+  if (is.null(eval_function)){
+    default_eval_fun = TRUE
+    eval_fun = MLsegmentr::eval_precision_recall()
+  } else {
+    default_eval_fun = FALSE
+  }
 
   assertthat::assert_that(
     length(data_name) == 1,
@@ -825,16 +837,20 @@ evaluate.sf_task <- function(
   assesser$set_targets(target_names)
 
   if (!is.null(segment_names)){
-    assesser$set_segments(segment_name)
+    assesser$set_segments(segment_names)
   }
 
   assesser$evaluation_funs <- eval_function
 
   perf <- assesser$assess_model(plot = plot)
 
-  task[["model_performance"]] <- perf %>%
-    filter(evaluation_name != "prcurve")
-
+  browser()
+  if (default_eval_fun){
+    task[["model_performance"]] <- perf %>%
+      filter(evaluation_name != "prcurve")
+  } else {
+    task[["model_performance"]] <- perf
+  }
 
   if (!is.null(tracker)){
     tracker$set(

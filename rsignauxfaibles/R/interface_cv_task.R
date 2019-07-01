@@ -33,7 +33,7 @@ split_n_folds <- function(
 
   create_cv_task <- function(cv_number, cv_chunks){
     cv_task  <- sf_task(
-        verbose = FALSE,
+        verbose = TRUE,
         database = task[["database"]],
         collection = task[["collection"]],
         experiment_name = paste0(
@@ -173,7 +173,7 @@ predict.cv_task <- function(
 #'  @export
 evaluate.cv_task <- function(
   task,
-  eval_function = MLsegmentr::eval_precision_recall(),
+  eval_function = NULL,
   data_name = c("validation_data"),
   plot = TRUE,
   prediction_names = "score",
@@ -181,6 +181,15 @@ evaluate.cv_task <- function(
   segment_names = NULL,
   remove_strong_signals = TRUE
   ){
+
+  if (is.null(eval_function)){
+    is_default_eval <- TRUE
+    eval_function <- MLsegmentr::eval_precision_recall()
+  } else {
+    is_default_eval <- FALSE
+  }
+  # TODO remove and tidy
+  # 8ebe8e50-fb4c-4792-b19a-5074ba8c7807
 
   require(purrr)
   combined_data <- purrr::map(task[["cross_validation"]], "validation_data")
@@ -200,7 +209,7 @@ evaluate.cv_task <- function(
     plot = plot,
     prediction_names = model_names,
     target_names = target_names,
-    segment_names = NULL,
+    segment_names = segment_names,
     remove_strong_signals = remove_strong_signals,
     tracker = task[["tracker"]]
   )
@@ -212,6 +221,7 @@ evaluate.cv_task <- function(
   # MLsegmentr
   # see c5823da4-48ae-4c33-a345-2a5efdc808e7
 
+  if (is_default_eval){
   summary_eval <- modified_task[["model_performance"]] %>%
     filter(evaluation_name == "aucpr")  %>%
     group_by(target_type, segment, evaluation_name) %>%
@@ -232,5 +242,6 @@ evaluate.cv_task <- function(
     summary_eval,
     modified_task[["model_performance"]]
     )
+  }
   return (modified_task)
 }

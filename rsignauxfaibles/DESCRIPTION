@@ -20,7 +20,8 @@ Imports:
     purrr,
     rprojroot,
     tibble,
-    tidyr
+    tidyr,
+    uuid
 Suggests:
     ggplot2,
     mlrMBO,

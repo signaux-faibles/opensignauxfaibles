@@ -59,6 +59,7 @@ NULL
 #'
 #' @export
 connect_to_database <- function(
+  url,
   database,
   collection,
   batch,
@@ -198,6 +199,7 @@ connect_to_database <- function(
 #' @return vector of unique sirets
 #' @export
 get_sirets_of_detected <- function(
+  url = "mongodb://192.168.0.19:27017",
   database = "test_signauxfaibles",
   collection = "Scores"
   ) {
@@ -384,12 +386,21 @@ return(requete)
 #' @return NULL
 #' @export
 connect_to_h2o <- function() {
+  Sys.unsetenv("http_proxy")
+
   h2o::h2o.init(
     ip = "localhost",
     port = 4444,
-    min_mem_size = "5G",
+    # proxy = "http://localhost:8888/",
+    # insecure = TRUE,
+    # https = TRUE,
+    nthreads = -1,
+    min_mem_size = "16G",
     log_dir = rprojroot::find_rstudio_root_file("logs")
     )
+
+  # Ugly but no other solution found yet.
+  # Sys.setenv(http_proxy = "http://localhost:8888")
 }
 
 

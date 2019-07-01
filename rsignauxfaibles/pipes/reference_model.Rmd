@@ -43,7 +43,13 @@ task <- load_hist_data(
 )
 task <- split_n_folds(task, 4, 0.2)
 task <- prepare(task, data_names = c("train_data", "validation_data"))
-task <- optimize_hyperparameters(task, n_iter = 10)
+# task <- optimize_hyperparameters(task, n_iter = 10)
+task[["model_parameters"]] <- list(
+  learn_rate = 0.053254087,
+  max_depth = 7,
+  ntrees = 153,
+  min_child_weight = 9
+  )
 task <- train(task)
 task <- predict(task, data_names = "validation_data")
 task <- evaluate(task, data_name = "validation_data")
@@ -52,8 +58,6 @@ task <- log(task)
 
 # OU
 ```{r}
-#task  <- full_light_gradient_boosting(
-#  sample_size
-#)
+task <- evaluate(task, data_name = "validation_data", eval_function = custom_eval_urssaf())
 ```
 

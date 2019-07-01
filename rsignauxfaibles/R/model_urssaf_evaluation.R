@@ -9,13 +9,13 @@
 #'   l'objet `MLsegmentr::Assesser`. Se référer à la documentation
 #'   TODO: référence doc MLsegmentr 5fb65cac-b478-4413-a359-294e647103e3
 #' @param F1_thres Seuil qui maximise le score F1, calculés sur
-#' les données d'entraînement.
+#'   les données d'entraînement.
 #' @param F2_thres Seuil qui maximise le score F2.
 #' @return `data.frame` \cr avec en plus des colonnes classiques "model",
-#' "target_type", "segment"; les colonnes "statut" (niveau d'alerte), "count"
-#' (nombre d'entreprises); "moyenne" (taux de défaillance moyen), "lconf" et
-#' "hconf" (limites basse et haute respectivement de l'intervalle de confiance
-#' issue d'une loi binomiale, à 95%)
+#'   "target_type", "segment"; les colonnes "statut" (niveau d'alerte), "count"
+#'   (nombre d'entreprises); "moyenne" (taux de défaillance moyen), "lconf" et
+#'   "hconf" (limites basse et haute respectivement de l'intervalle de confiance
+#'   issue d'une loi binomiale, à 95%)
 #' @export
 aux_custom_eval_urssaf <- function(eval_frame, F1_thres, F2_thres) {
 
@@ -26,8 +26,8 @@ aux_custom_eval_urssaf <- function(eval_frame, F1_thres, F2_thres) {
   # precision avec intervalle de confiance + count.
   # La fusion des segments doit se faire avant l'application de la fonction
   # d'evaluation !
-  F1_thres <- 0.31
-  F2_thres <- 0.13
+  # F1_thres <- 0.31
+  # F2_thres <- 0.13
 
   assertthat::assert_that(F2_thres <= F1_thres)
 
@@ -154,10 +154,10 @@ aux_custom_plot_urssaf  <- function(eval_frame){
 #' @return `MLsegmentr::eval_function`
 #' @export
 #'
-custom_eval_urssaf  <- function(){
+custom_eval_urssaf  <- function(f1_score, f2_score){
   require(MLsegmentr)
   evo <- MLsegmentr::eval_function(
-    eval_fun = aux_custom_eval_urssaf,
+    eval_fun = function(x) aux_custom_eval_urssaf(x, f1_score, f2_score),
     wrap_eval_fun = TRUE,
     unnest =  TRUE,
     plot_fun  = aux_custom_plot_urssaf,
