@@ -50,9 +50,9 @@ func getCompteSiretMapping(batch *engine.AdminBatch) (Comptes, error) {
     // discard header row
     reader.Read()
 
-    compteIndex := 0
-    siretIndex := 3
-    fermetureIndex := 5
+    compteIndex := 1
+    siretIndex := 4
+    fermetureIndex := 6
 
     for {
       row, err := reader.Read()
@@ -62,12 +62,12 @@ func getCompteSiretMapping(batch *engine.AdminBatch) (Comptes, error) {
         return map[string][]SiretDate{}, err
       }
 
-      maxTime := "9990101"
+      maxTime := "01/01/9999"
 
-      if row[fermetureIndex] == "" {row[fermetureIndex] = "0"} // date de fermeture manquante
-      if (row[fermetureIndex] == "0") { row[fermetureIndex] = maxTime } // compte non fermé
+      if row[fermetureIndex] == "" {row[fermetureIndex] = maxTime } // compte non fermé
 
-      fermeture, err := urssafToDate(row[fermetureIndex])
+      // fermeture, err := urssafToDate(row[fermetureIndex])
+      fermeture, err := time.Parse( "02/01/2006", row[fermetureIndex])
       if  err != nil {
         return map[string][]SiretDate{}, err // fermeture n'a pas pu être lue ou convertie en date
       }
