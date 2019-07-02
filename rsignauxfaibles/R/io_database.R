@@ -520,8 +520,10 @@ get_fields <- function(
       "montant_part_patronale_past_6",
       "montant_part_ouvriere_past_6",
       "montant_part_patronale_past_12",
-      "montant_part_ouvriere_past_12"
-      )
+      "montant_part_ouvriere_past_12",
+      "ratio_dette_delai",
+      "debit_entreprise"
+    )
   }
 
   if (apart >= 1) {
@@ -532,6 +534,12 @@ get_fields <- function(
       )
   }
 
+  if (apart >= 2) {
+    fields <- c(
+      fields,
+      "apart_entreprise"
+    )
+  }
   if (effectif >= 1) {
     fields <- c(
       fields,
