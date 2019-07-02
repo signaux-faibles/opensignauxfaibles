@@ -24,6 +24,7 @@ rsignauxfaibles/NAMESPACE
 *.Rcheck
 rsignauxfaibles/**/*.model
 rsignauxfaibles/**/*.temap
+exploration/*
 dbmongo/config.toml*
 dbmongo/debug
 dbmongo/dbmongo
