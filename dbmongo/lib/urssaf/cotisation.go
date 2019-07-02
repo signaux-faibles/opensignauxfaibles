@@ -102,6 +102,7 @@ func parseCotisation(batch engine.AdminBatch, mapping Comptes) (chan engine.Tupl
               //event.Debug(tracker.Report("errors"))
             }
           }
+          tracker.Error(err)
         }
         tracker.Next()
       }

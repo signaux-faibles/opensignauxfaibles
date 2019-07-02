@@ -116,6 +116,7 @@ func parseDebit(batch engine.AdminBatch, mapping Comptes) (chan engine.Tuple, ch
             CodeOperationEcartNegatif: row[codeOperationEcartNegatifIndex],
             CodeMotifEcartNegatif:     row[codeMotifEcartNegatifIndex],
           }
+          tracker.Error(err)
 
           debit.DateTraitement, err = urssafToDate(row[dateTraitementIndex])
           tracker.Error(err)
