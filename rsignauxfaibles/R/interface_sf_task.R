@@ -554,7 +554,10 @@ train.sf_task <- function(
   assertthat::assert_that(
     all(c("learn_rate", "max_depth", "ntrees", "min_child_weight") %in%
       names(parameters)),
-    msg = "Missing parameters."
+    msg = paste("Following parameters are missing: ",
+      dplyr::setdiff(c("learn_rate", "max_depth", "ntrees", "min_child_weight"),
+      names(parameters)),
+      sep = ", ")
     )
 
   set_verbose_level(task)

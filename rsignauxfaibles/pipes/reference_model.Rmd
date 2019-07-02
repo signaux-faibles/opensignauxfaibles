@@ -43,7 +43,9 @@ task <- load_hist_data(
 )
 task <- split_n_folds(task, 4, 0.2)
 task <- prepare(task, data_names = c("train_data", "validation_data"))
-task <- optimize_hyperparameters(task, n_iter = 10)
+#task <- optimize_hyperparameters(task, n_iter = 10)
+# optimization result
+task[["model_parameters"]] <- list(learn_rate = 0.03058, max_depth = 7, ntrees = 288, min_child_weight = 5)
 task <- train(task)
 task <- predict(task, data_names = "validation_data")
 task <- evaluate(task, data_name = "validation_data")
