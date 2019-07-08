@@ -466,7 +466,6 @@ get_fields <- function(
   urssaf = 2,
   delai = 2,
   effectif = 2,
-  note_preface = 2,
   diane = 2,
   bdf = 2,
   apart = 2,
@@ -554,15 +553,6 @@ get_fields <- function(
       "effectif_past_12",
       "effectif_past_18",
       "effectif_past_24"
-      )
-  }
-
-  if (note_preface >= 1) {
-    fields <- c(
-      fields,
-      "note_preface",
-      "note_preface_past_1",
-      "note_preface_past_2"
       )
   }
 

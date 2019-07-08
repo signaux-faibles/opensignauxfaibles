@@ -18,7 +18,6 @@ actual_period <- as.Date("2019-03-01")
 last_batch <- "1905_repeatable"
 min_effectif <- 10
 retrain_model <- TRUE
-type <- "dataframe"
 export_type <- c("csv", "mongodb")
 sample_size <- 200000
 ```
@@ -43,13 +42,13 @@ task <- load_hist_data(
 )
 task <- split_n_folds(task, 4, 0.2)
 task <- prepare(task, data_names = c("train_data", "validation_data"))
-# task <- optimize_hyperparameters(task, n_iter = 10)
-task[["model_parameters"]] <- list(
-  learn_rate = 0.053254087,
-  max_depth = 7,
-  ntrees = 153,
-  min_child_weight = 9
-  )
+task <- optimize_hyperparameters(task, n_iter = 10)
+ task[["model_parameters"]] <- list(
+   learn_rate = 0.044849,
+   max_depth = 8,
+   ntrees = 185,
+   min_child_weight = 6
+   )
 task <- train(task)
 task <- predict(task, data_names = "validation_data")
 task <- evaluate(task, data_name = "validation_data")

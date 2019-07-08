@@ -266,7 +266,7 @@ split_data.sf_task <- function(
   assertthat::assert_that("hist_data" %in% names(task),
     msg = "Please load historical data before holding out test data")
 
-  if (length(fracs) == 1 && fracs == 1) {
+  if ((length(fracs) == 1 && fracs == 1) || identical(fracs,c(1,0,0))) {
     task[["train_data"]] <- task[["hist_data"]]
   } else {
 
@@ -847,7 +847,6 @@ evaluate.sf_task <- function(
 
   perf <- assesser$assess_model(plot = plot)
 
-  browser()
   if (default_eval_fun){
     task[["model_performance"]] <- perf %>%
       filter(evaluation_name != "prcurve")
