@@ -37,7 +37,7 @@ func (interim Interim) Type() string {
 }
 
 // Parser fonction qui retourne data et journaux
-func Parser(batch engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
+func Parser(batch engine.AdminBatch, filter map[string]bool) (chan engine.Tuple, chan engine.Event) {
 	outputChannel := make(chan engine.Tuple)
 	eventChannel := make(chan engine.Event)
 

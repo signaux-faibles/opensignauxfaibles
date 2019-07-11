@@ -104,8 +104,9 @@ func parseDebit(batch engine.AdminBatch, mapping Comptes) (chan engine.Tuple, ch
           break
         }
 
-        date, err := urssafToDate(row[periodeIndex])
-        if err != nil { date = time.Now() }
+        period, err := urssafToPeriod(row[periodeIndex])
+        date := period.Start
+
         if siret, err := mapping.GetSiret(row[numeroCompteIndex], date); err == nil {
 
           debit := Debit{
@@ -116,7 +117,6 @@ func parseDebit(batch engine.AdminBatch, mapping Comptes) (chan engine.Tuple, ch
             CodeOperationEcartNegatif: row[codeOperationEcartNegatifIndex],
             CodeMotifEcartNegatif:     row[codeMotifEcartNegatifIndex],
           }
-          tracker.Error(err)
 
           debit.DateTraitement, err = urssafToDate(row[dateTraitementIndex])
           tracker.Error(err)
@@ -138,9 +138,9 @@ func parseDebit(batch engine.AdminBatch, mapping Comptes) (chan engine.Tuple, ch
 
           if !tracker.ErrorInCycle() {
             outputChannel <- debit
-          } else {
-            //event.Debug(tracker.Report("errors"))
           }
+        } else {
+          continue
         }
         tracker.Next()
       }

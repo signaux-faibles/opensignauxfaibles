@@ -4,6 +4,7 @@ import (
 	"dbmongo/lib/engine"
 	"testing"
   "time"
+  "fmt"
 )
 
 
@@ -14,10 +15,11 @@ func Test_parseCompte(t *testing.T) {
 		},
 	}
 
-	dataChannel, eventChannel := Parser(batch)
+	dataChannel, eventChannel := Parser(batch, nil)
 	engine.DiscardEvents(eventChannel)
 
   tuple := <-dataChannel
+  fmt.Println(tuple)
 	data := tuple.(Compte)
   periode_init, _ := time.Parse("2006-01-02", "2014-01-01")
 
@@ -32,5 +34,4 @@ func Test_parseCompte(t *testing.T) {
 
   for range(dataChannel){
   }
-
 }

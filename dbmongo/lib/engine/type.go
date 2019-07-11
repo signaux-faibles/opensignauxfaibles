@@ -45,7 +45,7 @@ func (t Types) ToData() map[string]interface{} {
 }
 
 // Parser fonction de traitement de données en entrée
-type Parser func(AdminBatch) (chan Tuple, chan Event)
+type Parser func(AdminBatch, map[string]bool) (chan Tuple, chan Event)
 
 // Browseable est le type qui permet d'envoyer les objets vers le frontend
 // Voir la fonction Browse

@@ -9,15 +9,15 @@ function cotisationsdettes(v, periodes) {
 
   // TODO Cotisations avec un mois de retard ? Bizarre, plus maintenant que l'export se fait le 20
   // var offset_cotisation = 1
-  var offset_cotisation = 0 
+  var offset_cotisation = 0
   var value_cotisation = {}
-  
+
   // Répartition des cotisations sur toute la période qu'elle concerne
   Object.keys(v.cotisation).forEach(function (h) {
     var cotisation = v.cotisation[h]
-    var periode_cotisation = generatePeriodSerie(cotisation.periode.start, cotisation.periode.end)
+    var periode_cotisation = f.generatePeriodSerie(cotisation.periode.start, cotisation.periode.end)
     periode_cotisation.forEach(date_cotisation => {
-      let date_offset = DateAddMonth(date_cotisation, offset_cotisation)
+      let date_offset = f.dateAddMonth(date_cotisation, offset_cotisation)
       value_cotisation[date_offset.getTime()] = (value_cotisation[date_offset.getTime()] || []).concat(cotisation.du / periode_cotisation.length)
     })
   })
@@ -41,7 +41,7 @@ function cotisationsdettes(v, periodes) {
           "hash": h,
           "numero_historique": debit.numero_historique,
           "date_traitement": debit.date_traitement
-      }]) 
+      }])
       return accu
   }, {})
 
@@ -60,14 +60,14 @@ function cotisationsdettes(v, periodes) {
   // Pour chaque objet debit:
   // debit_traitement_debut => periode de traitement du débit
   // debit_traitement_fin => periode de traitement du debit suivant, ou bien date_fin
-  // Entre ces deux dates, c'est cet objet qui est le plus à jour. 
+  // Entre ces deux dates, c'est cet objet qui est le plus à jour.
   Object.keys(v.debit).forEach(function (h) {
     var debit = v.debit[h]
 
     var debit_suivant = (v.debit[debit.debit_suivant] || {"date_traitement" : date_fin})
-    
-    //Selon le jour du traitement, cela passe sur la période en cours ou sur la suivante. 
-    let jour_traitement = debit.date_traitement.getUTCDate() 
+
+    //Selon le jour du traitement, cela passe sur la période en cours ou sur la suivante.
+    let jour_traitement = debit.date_traitement.getUTCDate()
     let jour_traitement_suivant = debit_suivant.date_traitement.getUTCDate()
     if (jour_traitement <= last_treatment_day){
       date_traitement_debut = new Date(
@@ -92,12 +92,12 @@ function cotisationsdettes(v, periodes) {
     let periode_debut = date_traitement_debut
     let periode_fin = date_traitement_fin
 
-    //generatePeriodSerie exlue la dernière période
-    generatePeriodSerie(periode_debut, periode_fin).map(date => {
+    //f.generatePeriodSerie exlue la dernière période
+    f.generatePeriodSerie(periode_debut, periode_fin).map(date => {
       let time = date.getTime()
       value_dette[time] = (value_dette[time] || []).concat([{ "periode": debit.periode.start, "part_ouvriere": debit.part_ouvriere, "part_patronale": debit.part_patronale, "montant_majorations": debit.montant_majorations}])
     })
-  })    
+  })
 
   // TODO faire numero de compte ailleurs
   // Array des numeros de compte
@@ -108,7 +108,7 @@ function cotisationsdettes(v, periodes) {
   //))
 
   periodes.forEach(function (time) {
-    output_cotisationsdettes[time] = output_cotisationsdettes[time] || {} 
+    output_cotisationsdettes[time] = output_cotisationsdettes[time] || {}
     var val = output_cotisationsdettes[time]
   //output_cotisationsdettes[time].numero_compte_urssaf = numeros_compte
     if (time in value_cotisation){
@@ -130,7 +130,7 @@ function cotisationsdettes(v, periodes) {
     let time_d = new Date(parseInt(time))
 
     past_month_offsets.forEach(offset => {
-      let time_offset = DateAddMonth(time_d, offset)      
+      let time_offset = f.dateAddMonth(time_d, offset)
       let variable_name_part_ouvriere = "montant_part_ouvriere_past_" + offset
       let variable_name_part_patronale = "montant_part_patronale_past_" + offset
       output_cotisationsdettes[time_offset.getTime()] = output_cotisationsdettes[time_offset.getTime()] || {}
@@ -142,9 +142,9 @@ function cotisationsdettes(v, periodes) {
     let future_month_offsets = [0, 1, 2, 3, 4, 5]
     if (val.montant_part_ouvriere + val.montant_part_patronale > 0){
       future_month_offsets.forEach(offset => {
-        let time_offset = DateAddMonth(time_d, offset)
+        let time_offset = f.dateAddMonth(time_d, offset)
         output_cotisationsdettes[time_offset.getTime()] = output_cotisationsdettes[time_offset.getTime()] || {}
-        output_cotisationsdettes[time_offset.getTime()].interessante_urssaf = false    
+        output_cotisationsdettes[time_offset.getTime()].interessante_urssaf = false
       })
     }
   })

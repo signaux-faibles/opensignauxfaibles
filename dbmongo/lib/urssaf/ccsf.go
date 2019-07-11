@@ -111,7 +111,10 @@ func parseCCSF(batch engine.AdminBatch, mapping Comptes) (chan engine.Tuple, cha
             continue
           }
           ccsf.key, err = mapping.GetSiret(r[f["NumeroCompte"]], ccsf.DateTraitement)
-          tracker.Error(err)
+          if (err != nil){
+            // Compte filtré
+             continue
+          }
           ccsf.NumeroCompte = r[f["NumeroCompte"]]
           ccsf.DateBatch = dateBatch
 

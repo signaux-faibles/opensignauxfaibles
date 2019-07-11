@@ -45,7 +45,7 @@ func (apdemande APDemande) Scope() string {
 }
 
 // Parser produit les lignes
-func Parser(batch engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
+func Parser(batch engine.AdminBatch, filter map[string]bool) (chan engine.Tuple, chan engine.Event) {
 	outputChannel := make(chan engine.Tuple)
 	eventChannel := make(chan engine.Event)
 	event := engine.Event{

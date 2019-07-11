@@ -8,7 +8,6 @@ import (
   "os"
   "strconv"
   "strings"
-  "time"
 
   "github.com/chrnin/gournal"
   "github.com/spf13/viper"
@@ -82,8 +81,10 @@ func parseCotisation(batch engine.AdminBatch, mapping Comptes) (chan engine.Tupl
           break
         } else if err != nil {
         } else {
-          date, err := urssafToDate(row[field["Periode"]])
-          if err != nil { date = time.Now() }
+          periode, err := urssafToPeriod(row[field["Periode"]])
+          date := periode.Start
+          tracker.Error(err)
+          // if err != nil { date = time.Now() }
 
           if siret, err := mapping.GetSiret(row[field["NumeroCompte"]], date); err == nil {
             cotisation := Cotisation{}
@@ -98,11 +99,10 @@ func parseCotisation(batch engine.AdminBatch, mapping Comptes) (chan engine.Tupl
 
             if !tracker.ErrorInCycle() {
               outputChannel <- cotisation
-            } else {
-              //event.Debug(tracker.Report("errors"))
             }
+          } else {
+            continue
           }
-          tracker.Error(err)
         }
         tracker.Next()
       }

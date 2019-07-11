@@ -3,7 +3,7 @@
 /////////////////
 // on simule le scope
 completeTypes = {
-  
+
   "1902": ["apconso"]
 }
 
@@ -17,21 +17,21 @@ f.currentState = currentState
 // on simule le map
 var key = "123"
 var values = [
-  {"batch": 
+  {"batch":
     {
-      "1901": 
+      "1901":
       {
-        "apconso": { 
+        "apconso": {
           "a":{"bonjour":3, "aurevoir":4},
           "b":{"bonjour":5, "aurevoir":6}
         }
       }
     },
     "scope":"etablissement"
-  }, 
+  },
   {"batch":
     {
-      "1902": 
+      "1902":
       {
         "apconso": {
           "a":{"bonjour":3, "aurevoir":4},
@@ -41,7 +41,7 @@ var values = [
     },
     "scope":"etablissement"
   }]
-  
+
 
 
 print("Exemple retourné")
@@ -51,7 +51,7 @@ print(JSON.stringify(reduce(key,values), null, 2))
 var values = [
   {"batch":
     {
-      "1902": 
+      "1902":
       {
         "apconso": {
           "a":{"bonjour":3, "aurevoir":4},
@@ -61,11 +61,11 @@ var values = [
     },
     "scope":"etablissement"
   },
-  {"batch": 
+  {"batch":
     {
-      "1901": 
+      "1901":
       {
-        "apconso": { 
+        "apconso": {
           "a":{"bonjour":3, "aurevoir":4},
           "b":{"bonjour":5, "aurevoir":6}
         }
@@ -80,7 +80,7 @@ var values = [
 
 batchKey = "1901"
 completeTypes = {
-  "1901": ["apconso"],  
+  "1901": ["apconso"],
   "1902": ["apconso"]
 }
 
@@ -92,13 +92,13 @@ var values = [
         "apconso": {
           "deleteme":{"bonjour":1, "aurevoir":2}
         }
-      }, 
-      "1902": 
+      },
+      "1902":
       {
         "apconso": {
           "a":{"bonjour":3, "aurevoir":4},
           "c":{"bonjour":7, "aurevoir":8}
-        }, 
+        },
         "compact": {
           "delete": {
             "apconso":["deleteme"]
@@ -109,16 +109,16 @@ var values = [
     "scope":"etablissement"
   },
   {"batch":
-    { "1901": 
+    { "1901":
       {
-        "apconso": { 
+        "apconso": {
           "a":{"bonjour":3, "aurevoir":4},
           "b":{"bonjour":5, "aurevoir":6}
         }
       }
     },
     "scope":"etablissement"
-  }] 
+  }]
 
 
 print("Exemple avec insertion au milieu")
@@ -141,8 +141,8 @@ var values = [
         "apconso": {
           "deleteme":{"bonjour":1, "aurevoir":2}
         }
-      }, 
-      "1901": 
+      },
+      "1901":
       {
         "compact": {
           "delete": {
@@ -154,16 +154,74 @@ var values = [
     "scope":"etablissement"
   },
   {"batch":
-    { "1901": 
+    { "1901":
       {
-        "apconso": { 
+        "apconso": {
           "deleteme":{"bonjour":1, "aurevoir":2}
         }
       }
     },
     "scope":"etablissement"
-  }] 
+  }]
 
 
 print("Exemple avec cle retiree reajoutee")
+print(JSON.stringify(reduce(key,values), null, 2))
+
+// ------------------------------------------------------------------------------
+// ------- Exemple 4: Delete without complete types    --------------------------
+// ------------------------------------------------------------------------------
+
+completeTypes = {
+  "1812" : [],
+  "1901" : [],
+  "1902" : ["apconso"]
+}
+
+batchKey = "1901"
+
+types = ""
+batches = ["1901", "1902"]
+f = {}
+f.currentState = currentState
+
+// on simule le map
+var key = "123"
+var values = [
+  {"batch":
+    {
+      "1812":
+      {
+        "apconso": {
+          "a":{"bonjour":3, "aurevoir":4},
+          "b":{"bonjour":5, "aurevoir":6}
+        }
+      }
+    },
+  "scope":"etablissement"
+  },
+  {"batch":
+    {
+      "1901":
+      {
+        "compact": {
+          "delete" : {
+            "apconso": ["a", "b"]
+          }
+        }
+      }
+    },
+  "scope":"etablissement"
+  },
+  {"batch":
+     {
+       "1902": {
+         "a":{"bonjour":3, "aurevoir":4},
+         "b":{"bonjour":5, "aurevoir":6},
+         "c":{"bonjour":7, "aurevoir":8}
+       }
+     }
+  }]
+
+print("Suppression avec type non complet")
 print(JSON.stringify(reduce(key,values), null, 2))

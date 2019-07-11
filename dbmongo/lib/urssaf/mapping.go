@@ -31,7 +31,7 @@ func (c *Comptes) GetSiret(compte string, date time.Time) (string, error) {
     return "", errors.New("Pas de siret associé au compte " + compte + " à cette période")
 }
 
-func getCompteSiretMapping(batch *engine.AdminBatch) (Comptes, error) {
+func getCompteSiretMapping(batch *engine.AdminBatch, filter map[string]bool) (Comptes, error) {
 
   compteSiretMapping := make(map[string][]SiretDate)
 
@@ -50,9 +50,9 @@ func getCompteSiretMapping(batch *engine.AdminBatch) (Comptes, error) {
     // discard header row
     reader.Read()
 
-    compteIndex := 1
-    siretIndex := 4
-    fermetureIndex := 6
+    compteIndex := 2
+    siretIndex := 5
+    fermetureIndex := 7
 
     for {
       row, err := reader.Read()
@@ -62,27 +62,28 @@ func getCompteSiretMapping(batch *engine.AdminBatch) (Comptes, error) {
         return map[string][]SiretDate{}, err
       }
 
-      maxTime := "01/01/9999"
+      maxTime := "9990101"
 
       if row[fermetureIndex] == "" {row[fermetureIndex] = maxTime } // compte non fermé
 
       // fermeture, err := urssafToDate(row[fermetureIndex])
-      fermeture, err := time.Parse( "02/01/2006", row[fermetureIndex])
+      fermeture, err := urssafToDate(row[fermetureIndex])
       if  err != nil {
         return map[string][]SiretDate{}, err // fermeture n'a pas pu être lue ou convertie en date
       }
 
       compte := row[compteIndex]
       siret := row[siretIndex]
-      if len(siret) == 14 {
+      if len(siret) == 14 && filter[siret[0:9]]{
         //siret valide
         compteSiretMapping[compte] = append(compteSiretMapping[compte], SiretDate{siret, fermeture})
         // Tri des sirets pour chaque compte par ordre croissant de date de fermeture
         // TODO pour être exact, trier également selon que le compte est ouvert ou fermé. Comptes ouverts d'abord dans la liste.
         // Permettrait d'éviter de sélectionner des comptes fermés mais dont la date de fermeture n'a pas encore été renseignée
-        sort.Slice(compteSiretMapping[compte],
-        func(i, j int) bool {return(
-          compteSiretMapping[compte][i].Date.Before(compteSiretMapping[compte][j].Date))})
+        sort.Slice(
+          compteSiretMapping[compte],
+          func(i, j int) bool {return(compteSiretMapping[compte][i].Date.Before(compteSiretMapping[compte][j].Date))},
+        )
         }
       }
       file.Close()

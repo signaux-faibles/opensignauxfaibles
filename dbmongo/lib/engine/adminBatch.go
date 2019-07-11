@@ -115,8 +115,12 @@ func addFileToBatch() chan newFile {
 
 // ImportBatch lance tous les parsers sur le batch fourni
 func ImportBatch(batch AdminBatch, parsers []Parser) error {
+  filter, err := getSirenFilter(&batch)
+  if err != nil {
+    return err
+  }
 	for _, parser := range parsers {
-		outputChannel, eventChannel := parser(batch)
+		outputChannel, eventChannel := parser(batch, filter)
 		go RelayEvents(eventChannel)
 		for tuple := range outputChannel {
 			hash := fmt.Sprintf("%x", structhash.Md5(tuple, 1))

@@ -10,8 +10,9 @@ import (
 	"dbmongo/lib/files"
 	"dbmongo/lib/interim"
 	"dbmongo/lib/sirene"
+	"dbmongo/lib/sirene_ul"
 	"dbmongo/lib/urssaf"
-  "dbmongo/lib/repeatable_order"
+  "dbmongo/lib/repeatableOrder"
 	"errors"
 	"fmt"
 	"io"
@@ -169,8 +170,19 @@ func processBatchHandler(c *gin.Context) {
 
 //
 func purgeBatchHandler(c *gin.Context) {
-	batch := engine.LastBatch()
-	err := engine.PurgeBatch(batch.ID.Key)
+	var params struct {
+		BatchKey string   `json:"batch"`
+	}
+	err := c.ShouldBind(&params)
+	if err != nil {
+		c.JSON(400, "Requête malformée: "+err.Error())
+		return
+	}
+  if params.BatchKey == ""{
+    batch := engine.LastBatch()
+    params.BatchKey = batch.ID.Key
+  }
+	err = engine.PurgeBatch(params.BatchKey)
 
 	if err != nil {
 		c.JSON(500, "Erreur dans la purge du batch: "+err.Error())
@@ -198,8 +210,9 @@ var registeredParsers = map[string]engine.Parser{
 	"apdemande":         apartdemande.Parser,
 	"bdf":               bdf.Parser,
 	"altares":           altares.Parser,
-  "repeatable_order":  repeatable_order.Parser,
+  "repeatableOrder":  repeatableOrder.Parser,
 	"sirene":            sirene.Parser,
+  "sirene_ul":         sirene_ul.Parser,
 	"diane":             diane.Parser,
 	"interim":           interim.Parser,
 }
