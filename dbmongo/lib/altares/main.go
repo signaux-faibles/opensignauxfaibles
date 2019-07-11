@@ -46,7 +46,7 @@ func sliceIndex(limit int, predicate func(i int) bool) int {
 }
 
 // Parser du type Altares
-func Parser(batch engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
+func Parser(batch engine.AdminBatch, filter map[string]bool) (chan engine.Tuple, chan engine.Event) {
 	outputChannel := make(chan engine.Tuple)
 	eventChannel := make(chan engine.Event)
 

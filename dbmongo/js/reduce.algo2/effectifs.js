@@ -1,6 +1,6 @@
 function effectifs (v, periodes) {
 
-  let output_effectif = {}  
+  let output_effectif = {}
 
   // Construction d'une map[time] = effectif à cette periode
   let map_effectif = Object.keys(v.effectif).reduce((m, hash) => {
@@ -12,16 +12,16 @@ function effectifs (v, periodes) {
     m[effectifTime] = (m[effectifTime] || 0) + effectif.effectif
     return m
   }, {})
-  
+
   //ne reporter que si le dernier est disponible
   // 1- quelle periode doit être disponible
   var last_period = new Date(parseInt(periodes[periodes.length - 1]))
-  var last_period_offset = DateAddMonth(last_period, offset_effectif + 1)
+  var last_period_offset = f.dateAddMonth(last_period, offset_effectif + 1)
   // 2- Cette période est-elle disponible ?
-    
+
   var available = map_effectif[last_period_offset.getTime()] ? 1 : 0
-  
-  
+
+
   //pour chaque periode (elles sont triees dans l'ordre croissant)
   periodes.reduce((accu, time) => {
     var periode = new Date(parseInt(time))
@@ -29,7 +29,7 @@ function effectifs (v, periodes) {
     output_effectif[time] = output_effectif[time] || {}
     output_effectif[time].effectif = map_effectif[time] || (available ? accu : null)
 
-    
+
     // le cas échéant, on met à jour l'accu avec le dernier effectif disponible
     accu = map_effectif[time] || accu
 
@@ -44,7 +44,7 @@ function effectifs (v, periodes) {
     var past_month_offsets = [6,12,18,24]
     past_month_offsets.forEach(lookback => {
       // On ajoute un offset pour partir de la dernière période où l'effectif est connu
-      var time_past_lookback = DateAddMonth(periode, lookback - offset_effectif - 1)
+      var time_past_lookback = f.dateAddMonth(periode, lookback - offset_effectif - 1)
 
       var variable_name_effectif = "effectif_past_" + lookback
       output_effectif[time_past_lookback.getTime()] = output_effectif[time_past_lookback.getTime()] || {}
@@ -58,6 +58,6 @@ function effectifs (v, periodes) {
       delete output_effectif[k]
     }
   })
-    
+
   return(output_effectif)
 }

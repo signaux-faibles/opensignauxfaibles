@@ -14,7 +14,7 @@ function apart (v, output_effectif) {
 
   // on note le nombre d'heures demandées dans output_apart
   Object.keys(v.apdemande).forEach(hash => {
-    
+
     var periode_deb = v.apdemande[hash].periode.start
     var periode_fin = v.apdemande[hash].periode.end
     // Des periodes arrondies aux débuts de périodes
@@ -23,8 +23,8 @@ function apart (v, output_effectif) {
     var periode_fin_ceil = new Date(Date.UTC(periode_fin.getUTCFullYear(), periode_fin.getUTCMonth() + 1, 1, 0, 0, 0, 0))
     apart[v.apdemande[hash].id_demande.substring(0, 9)].periode_debut = periode_deb_floor
     apart[v.apdemande[hash].id_demande.substring(0, 9)].periode_fin = periode_fin_ceil
-    
-    var series = generatePeriodSerie(periode_deb_floor, periode_fin_ceil)
+
+    var series = f.generatePeriodSerie(periode_deb_floor, periode_fin_ceil)
     series.forEach( date => {
       let time = date.getTime()
       output_apart[time] = output_apart[time] || {}
@@ -59,7 +59,7 @@ function apart (v, output_effectif) {
       })
 
       // Heures consommees cumulees sur la demande
-      let series = generatePeriodSerie(apart[k].periode_debut, apart[k].periode_fin)
+      let series = f.generatePeriodSerie(apart[k].periode_debut, apart[k].periode_fin)
       series.reduce( (accu, date) => {
         let time = date.getTime()
         //output_apart est déjà défini pour les heures autorisées
@@ -86,7 +86,7 @@ function apart (v, output_effectif) {
 
   Object.keys(output_apart).forEach(time => {
     if (output_effectif && time in output_effectif){
-      output_apart[time].ratio_apart = (output_apart[time].apart_heures_consommees || 0) / (output_effectif[time].effectif * 157.67) 
+      output_apart[time].ratio_apart = (output_apart[time].apart_heures_consommees || 0) / (output_effectif[time].effectif * 157.67)
       //nbr approximatif d'heures ouvrées par mois
     }
   })

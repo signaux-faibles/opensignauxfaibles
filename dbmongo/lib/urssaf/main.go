@@ -7,7 +7,7 @@ import (
 type parserFunc func(batch engine.AdminBatch, mapping Comptes) (chan engine.Tuple, chan engine.Event)
 
 // Parser fournit le contenu des fichiers urssaf
-func Parser(batch engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
+func Parser(batch engine.AdminBatch, filter map[string]bool) (chan engine.Tuple, chan engine.Event) {
 	outputChannel := make(chan engine.Tuple)
 	eventChannel := make(chan engine.Event)
 
@@ -18,7 +18,8 @@ func Parser(batch engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
 
 	go func() {
 		defer close(outputChannel)
-		defer close(eventChannel)
+    // TODO close properly eventChannel
+ // 77fbb9b6-e2ff-438d-9396-2ce6277414c8
 
 		functions := []parserFunc{
 			parseCCSF,
@@ -31,7 +32,7 @@ func Parser(batch engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
 			parseProcol,
 		}
 
-		mapping, err := getCompteSiretMapping(&batch)
+		mapping, err := getCompteSiretMapping(&batch, filter)
 		if err != nil {
 			event.Critical("Erreur mapping: " + err.Error())
 			return

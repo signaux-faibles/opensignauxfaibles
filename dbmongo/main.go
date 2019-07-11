@@ -132,7 +132,7 @@ func main() {
 		api.GET("/admin/events", eventsHandler)
 
 		api.GET("/data/naf", nafHandler)
-		api.GET("/data/batch/purge", purgeBatchHandler)
+		api.POST("/data/batch/purge", purgeBatchHandler)
 		api.POST("/data/import", importBatchHandler)
 		api.POST("/data/compact", compactHandler)
 		api.POST("/data/reduce", reduceHandler)

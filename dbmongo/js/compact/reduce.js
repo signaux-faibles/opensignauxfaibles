@@ -1,6 +1,7 @@
 function reduce(key, values) {
 
-  // Tester si plusieurs batch. Reduce complet uniquement si plusieurs batchs. Sinon, juste fusion des attributs
+  // Tester si plusieurs batchs. Reduce complet uniquement si plusieurs
+  // batchs. Sinon, juste fusion des attributs
   let auxBatchSet = new Set()
   let severalBatches = values.some(value => {
     auxBatchSet.add(Object.keys(value.batch || {}))
@@ -27,18 +28,19 @@ function reduce(key, values) {
   ///////////////////////////////////
   // Uniquement si severalBatches
   // 0. On calcule la memoire au moment du batch à modifier
-  var memory_batches = Object.keys(reduced_value.batch).filter( batch => 
+  var memory_batches = Object.keys(reduced_value.batch).filter( batch =>
     batch < batchKey
   ).sort().reduce((m, batch) => {
     m.push(reduced_value.batch[batch])
     return(m)
   },[])
 
-  var memory = f.currentState(memory_batches) 
+  var memory = f.currentState(memory_batches)
 
 
-  // Pour tous les batchs à modifier:
-  var modified_batches = batches.filter( batch => 
+  // Pour tous les batchs à modifier, c'est-à-dire le batch ajouté et tous les
+  // suivants.
+  var modified_batches = batches.filter( batch =>
     batch >= batchKey
   )
   modified_batches.forEach(batch => {
@@ -47,7 +49,7 @@ function reduce(key, values) {
 
     // Les types où il y  a potentiellement des suppressions
     var stock_types = completeTypes[batch].filter(type => (memory[type] || new Set()).size > 0)
-    // Les types qui ont bouge dans le batch en cours
+    // Les types qui ont bougé dans le batch en cours
     var new_types =  Object.keys(reduced_value.batch[batch])
     // On dedoublonne au besoin
     var all_interesting_types = [...new Set([...stock_types, ...new_types])]
@@ -59,18 +61,20 @@ function reduce(key, values) {
       all_interesting_types = all_interesting_types.filter(type => types.includes(type))
     }
 
-    // 1. On recupère les cles ajoutes et les cles supprimes 
+    // 1. On recupère les cles ajoutes et les cles supprimes
     // -----------------------------------------------------
 
     var hashToDelete = {}
     var hashToAdd = {}
 
     all_interesting_types.forEach(type => {
+      // Le type compact gère les clés supprimées
       if (type == "compact") {
         if (reduced_value.batch[batch].compact.delete){
           Object.keys(reduced_value.batch[batch].compact.delete).forEach(delete_type => {
             reduced_value.batch[batch].compact.delete[delete_type].forEach(hash => {
-              (hashToDelete[delete_type] || new Set()).add(hash)
+              hashToDelete[delete_type] = hashToDelete[delete_type] || new Set()
+              hashToDelete[delete_type].add(hash)
             })
           })
         }
@@ -83,8 +87,7 @@ function reduce(key, values) {
     })
 
     //
-    // 2. On ajoute aux cles supprimees les types stocks de la memoire. 
-    // Par defaut, elles sont supprimees
+    // 2. On ajoute aux cles supprimees les types stocks de la memoire.
     // ----------------------------------------------------------------
 
     stock_types.forEach(type => {
@@ -95,26 +98,31 @@ function reduce(key, values) {
 
     Object.keys(hashToDelete).forEach(type => {
 
-      // 3.a Pour chaque cle supprimee: est-ce qu'elle est bien dans la memoire ? sinon on la retire (pas de maj memoire)
+      // 3.a Pour chaque cle supprimee: est-ce qu'elle est bien dans la
+      // memoire ? sinon on la retire de la liste des clés supprimées (pas de
+      // maj memoire)
       // -----------------------------------------------------------------------------------------------------------------
       hashToDelete[type] = new Set([...hashToDelete[type]].filter( hash => {
         return((memory[type] || new Set()).has(hash))
       }))
 
 
-      // 3.b Est-ce qu'elle a ete egalement ajoutee ? Dans ce cas là, on retire les deux 
+      // 3.b Est-ce qu'elle a ete egalement ajoutee en même temps que
+      // supprimée ? (par exemple remplacement d'un stock complet à
+      // l'identique) Dans ce cas là, on retire cette clé des valeurs ajoutées
+      // et supprimées
       // i.e. on herite de la memoire. (pas de maj de la memoire)
       // ------------------------------------------------------------------------------
 
       hashToDelete[type] = new Set([...hashToDelete[type]].filter( hash => {
         let also_added = (hashToAdd[type] || new Set()).has(hash)
-        if (also_added) { 
+        if (also_added) {
           hashToAdd[type].delete(hash)
         }
         return(!also_added)
       }))
 
-      // 3.c On retire les cles restantes de la memoire. 
+      // 3.c On retire les cles restantes de la memoire.
       // --------------------------------------------------
       hashToDelete[type].forEach( hash => {
         memory[type].delete(hash)
@@ -132,7 +140,7 @@ function reduce(key, values) {
       }))
 
 
-      // 4.b Pour chaque cle ajoutee restante: on ajoute à la memoire. 
+      // 4.b Pour chaque cle ajoutee restante: on ajoute à la memoire.
       // -------------------------------------------------------------
 
       hashToAdd[type].forEach( hash => {
@@ -164,7 +172,9 @@ function reduce(key, values) {
       }
     })
 
-    // nettoyage
+    // 6. nettoyage
+    // ------------
+
     if (reduced_value.batch[batch]){
       //types vides
       Object.keys(reduced_value.batch[batch]).forEach( type => {
@@ -172,7 +182,7 @@ function reduce(key, values) {
           delete reduced_value.batch[batch][type]
         }
       })
-      //suppressions vides
+      //hash à supprimer vides (compact.delete)
       if (reduced_value.batch[batch].compact && reduced_value.batch[batch].compact.delete) {
         Object.keys(reduced_value.batch[batch].compact.delete).forEach( type => {
           if (reduced_value.batch[batch].compact.delete[type].length == 0){

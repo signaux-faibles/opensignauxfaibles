@@ -39,7 +39,7 @@ func parseCompte(batch engine.AdminBatch, mapping Comptes) (chan engine.Tuple, c
 	//}
 
 	go func() {
-		periode_init, _ := time.Parse("2006-01-02", "2014-01-01")
+		periode_init := batch.Params.DateDebut
 		periodes := misc.GenereSeriePeriode(periode_init, time.Now()) //[]time.Time
 		for c := range mapping {
 			for _, p := range periodes {
@@ -48,8 +48,8 @@ func parseCompte(batch engine.AdminBatch, mapping Comptes) (chan engine.Tuple, c
 				compte.Periode = p
 				var err error
 				compte.Siret, err = mapping.GetSiret(c, p)
-				compte.key = compte.Siret
 				if err == nil {
+          compte.key = compte.Siret
 					outputChannel <- compte
 				}
 			}

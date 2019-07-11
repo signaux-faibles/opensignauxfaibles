@@ -66,6 +66,7 @@ function map () {
   }
 
   if (v.scope == "entreprise") {
+
     var output_array = serie_periode.map(function (e) {
       return {
         "siren": v.key,
@@ -76,6 +77,8 @@ function map () {
         "arrete_bilan_diane": new Date(0)
       }
     })
+
+    if (v.sirene_ul) {f.sirene_ul(v, output_array)}
 
     var output_indexed = output_array.reduce(function (periode, val) {
       periode[val.periode.getTime()] = val
@@ -105,7 +108,7 @@ function map () {
 
           let past_year_offset = [1,2]
           past_year_offset.forEach( offset =>{
-            let periode_offset = DateAddMonth(periode, 12* offset)
+            let periode_offset = f.dateAddMonth(periode, 12* offset)
             let variable_name =  k + "_past_" + offset
             if (periode_offset.getTime() in output_indexed &&
               k != "arrete_bilan_bdf" &&
@@ -120,10 +123,10 @@ function map () {
     Object.keys(v.diane).filter(hash => v.diane[hash].arrete_bilan_diane).forEach(hash => {
       //v.diane[hash].arrete_bilan_diane = new Date(Date.UTC(v.diane[hash].exercice_diane, 11, 31, 0, 0, 0, 0))
       let periode_arrete_bilan = new Date(Date.UTC(v.diane[hash].arrete_bilan_diane.getUTCFullYear(), v.diane[hash].arrete_bilan_diane.getUTCMonth() +1, 1, 0, 0, 0, 0))
-      let periode_dispo = DateAddMonth(periode_arrete_bilan, 8) // 01/09 pour un bilan le 31/12
+      let periode_dispo = f.dateAddMonth(periode_arrete_bilan, 8) // 01/09 pour un bilan le 31/12
       let series = f.generatePeriodSerie(
         periode_dispo,
-        DateAddMonth(periode_dispo, 13) // periode de validité d'un bilan auprès de la Banque de France: 21 mois (13+8)
+        f.dateAddMonth(periode_dispo, 13) // periode de validité d'un bilan auprès de la Banque de France: 21 mois (13+8)
       )
 
       series.forEach(periode => {
@@ -140,7 +143,7 @@ function map () {
 
           let past_year_offset = [1,2]
           past_year_offset.forEach(offset =>{
-            let periode_offset = DateAddMonth(periode, 12 * offset)
+            let periode_offset = f.dateAddMonth(periode, 12 * offset)
             let variable_name =  k + "_past_" + offset
 
             if (periode_offset.getTime() in output_indexed &&
@@ -177,7 +180,7 @@ function map () {
           bdf_vars.forEach(k =>{
             if (k in output_indexed[periode.getTime()]){
               past_year_offset.forEach(offset =>{
-                let periode_offset = DateAddMonth(periode, 12 * offset)
+                let periode_offset = f.dateAddMonth(periode, 12 * offset)
                 let variable_name =  k + "_past_" + offset
 
                 if (periode_offset.getTime() in output_indexed){
