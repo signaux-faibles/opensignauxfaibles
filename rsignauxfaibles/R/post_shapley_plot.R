@@ -3,7 +3,12 @@ shapley_plot <- function(
                          my_data,
                          model,
                          batch,
-                         dir_out = rprojroot::find_rstudio_root_file("..", "output", "shapley", batch)) {
+                         dir_out = rprojroot::find_rstudio_root_file(
+                           "..",
+                           "output",
+                           "shapley",
+                           batch
+                         )) {
   assert_that(inherits(my_data, "data.frame"))
   max_periode <- max(my_data$periode)
 
@@ -66,95 +71,48 @@ shapley_plot <- function(
     "Montant part patronale",
     "Ratio dette / cotisation",
     "Moyenne dette/cotisation (12 mois)",
-    "Procédure collective en cours",
-    "Taux de défaillance dans le secteur d'activité (code APE 3)",
+    "Procedure collective en cours",
+    "Taux de defaillance dans le secteur d'activite (code APE 3)",
     "Cotisations URSSAF",
     "Comparaison des frais financiers par code NAF",
     "Comparaison du taux de marge par code NAF",
-    "Montant part patronale 3 mois en arrière",
-    "Comparaison des liquidités réduites par code NAF",
+    "Montant part patronale 3 mois en arriere",
+    "Comparaison des liquidites reduites par code NAF",
     "Dette fiscale et sociale",
-    "Comparaison du délai client par code NAF",
-    "Montant part patronale 1 mois en arrière",
-    "Montant part patronale 2 mois en arrière",
+    "Comparaison du delai client par code NAF",
+    "Montant part patronale 1 mois en arriere",
+    "Montant part patronale 2 mois en arriere",
     "Rendement des capitaux propres",
     "Taux de marge",
     "Poids du frng",
-    "Comparaison du délai fournisseur par code NAF",
+    "Comparaison du delai fournisseur par code NAF",
     "Comparaison du taux de rotation des stocks par code NAF",
-    "Effectif salarié",
-    "Comparaison de la rentabilité nette par code NAF",
+    "Effectif salarie",
+    "Comparaison de la rentabilite nette par code NAF",
     "ratio_export_distrib_APE1",
-    "Taux de défaillance dans le secteur d'activité (code APE 2)",
+    "Taux de defaillance dans le secteur d'activite (code APE 2)",
     "Variation mensuelle d'effectif moyenne sur 12 mois",
-    "Montant de la part ouvrière",
+    "Montant de la part ouvriere",
     "Comparaison financier court terme par code NAF",
     # "effectif_entreprise",
     "Age de l'entreprise",
-    "Ratio des liquidités réduites",
-    "Comparaison de la productivité par code NAF",
+    "Ratio des liquidites reduites",
+    "Comparaison de la productivite par code NAF",
     "Frais financiers",
     "Frais financiers court terme",
-    "Délai client",
-    "Taux de défillance dans le secteur d'activité (code NAF)",
-    "Résultat net consolidé",
+    "Delai client",
+    "Taux de defillance dans le secteur d'activite (code NAF)",
+    "Resultat net consolide",
     "Taux de rotation des stocks",
-    "Nombre d'établissements secondaires",
-    "Nombre d'établissements connus",
+    "Nombre d'etablissements secondaires",
+    "Nombre d'etablissements connus",
     "Chiffre d'affaire",
-    "Chiffre d'affaire net lié aux exportations",
-    "Décroissance de la dette pendant un délai URSSAF",
-    "Comparaison de la marge opérationnelle par code NAF",
+    "Chiffre d'affaire net lie aux exportations",
+    "Decroissance de la dette pendant un delai URSSAF",
+    "Comparaison de la marge operationnelle par code NAF",
     "Poids du frng"
   )
 
-  # x_medium_names_test <- c(
-  #   "Dette_URSSAF",
-  #   "Dette_URSSAF",
-  #   "Dette_URSSAF",
-  #   "Procédure_collective_en_cours",
-  #   "Taux_de_defaillance_dans_le_secteur_d_activité",
-  #   "Taille_de_l_entreprise",
-  #   "Endettement_par_code_NAF",
-  #   "Solvabilité_par_code_NAF",
-  #   "Dette_URSSAF",
-  #   "Solvabilité_par_code_NAF",
-  #   "Dette_fiscale_et_sociale",
-  #   "Délais_de_paiement_par_code_NAF",
-  #   "Dette_URSSAF",
-  #   "Dette_URSSAF",
-  #   "Rentabilité",
-  #   "Rentabilité",
-  #   "Robustesse",
-  #   "Délais_de_paiement_par_code_NAF",
-  #   "Comparaison_du_taux_de_rotation_des_stocks_par_code_NAF",
-  #   "Taille_de_l_entreprise",
-  #   "Rentabilité_par_code_NAF",
-  #   "Ratio_d_exportation",
-  #   "Taux_de_defaillance_dans_le_secteur_d_activité",
-  #   "Variation_de_taille",
-  #   "Dette_URSSAF",
-  #   "Solvabilité_par_code_NAF",
-  #   #"effectif_entreprise",
-  #   "Age_de_l_entreprise",
-  #   "Solvabilité",
-  #   "Rentabilité_par_code_NAF",
-  #   "Endettement",
-  #   "Solvabilité",
-  #   "Délais",
-  #   "Taux_de_defaillance_dans_le_secteur_d_activité",
-  #   "Résultat_net_consolidé",
-  #   "Taux_de_rotation_des_stocks",
-  #   "Taille_de_l_entreprise",
-  #   "Taille_de_l_entreprise",
-  #   "Taille_de_l_entreprise",
-  #   "Taille_de_l_entreprise",
-  #   "Délai_URSSAF",
-  #   "Rentabilité_par_code_NAF",
-  #   "Robustesse"
-  #   )
-
-  # names(x_medium_names_test) <- x_medium
   names(x_medium_names) <- x_medium
 
   features <- my_data[, x_medium]
@@ -178,10 +136,6 @@ shapley_plot <- function(
 
     shap_plot <- shap.xgb %>%
       plot()
-
-
-    # Changing for more informative names
-    # names <- levels(shap_plot$data$feature)
 
     shap_plot$data <- shap_plot$data %>%
       mutate(category = unname(x_medium_names[feature])) %>%

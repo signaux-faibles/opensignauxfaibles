@@ -24,7 +24,7 @@ test_that("replace_na works as expected", {
     actual <- replace_na(
       a,
       list(toto = 3, foo = 2, bar = 1),
-      fail_on_missing_col = FALSE
+      fail_if_column_missing = FALSE
     ),
     NA)
   expect_equal(actual, expected)

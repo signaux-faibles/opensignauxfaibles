@@ -1,76 +1,46 @@
-elapsed_months <- function(end_date, start_date) {
-  ed <- as.POSIXlt(end_date)
-  sd <- as.POSIXlt(start_date)
-  12 * (ed$year - sd$year) + (ed$mon - sd$mon)
-}
-
-
-compare_vects <- function(data, field1, field2) {
-  smy <- data %>%
-    group_by(siret) %>%
-    summarize(a = first(!!sym(field1)), b = first(!!sym(field2)))
-  return(list(only_first = smy$a & !smy$b, only_second = smy$b & !smy$a))
-}
-
-
-count_etab_entr <- function(df) {
-  nb_etab <- n_distinct(df %>% select(siret))
-  nb_entr <- n_distinct(df %>% select(siren))
-
-  cat(nb_etab, " établissements dans ", nb_entr, " entreprises", "
-")
-}
-
-
-#' Replace NAs in a data.frame
+#' Remplacement de NA dans un data.frame
 #'
-#' @param data A data frame
-#' @param replace_missing A list where names are column names and values
-#' replace values for NAs
-#' @param fail_if_column_missing What to do if a replace_missing name is not a column
-#' name ? Nothing if drop_silently is true, warning otherwise
+#' Remplace toutes les valeurs NA dans un data.frame par les valeurs spécifiés
+#' colonne par colonne dans `replace_missing`
 #'
-#' @return
+#' @param frame `data.frame()` \cr
+#'   Le `data.frame()` dans lequel les NA doivent être remplacés.
+#' @param replacements_by_column `list()` \cr Une liste nommée, dans laquelle
+#'   les noms sont des noms de colonnes, et les valeurs les valeurs de
+#'   remplacement pour ces colonnes.
+#' @param fail_if_column_missing `logical(1)` \cr Si `true`, déclenche une
+#' erreur si un nom de `replacements_by_column` ne figure pas dans la liste.
+#'
+#' @return La table `frame` dans laquelle les valeurs NA ont été remplacées
+#'   selon les indications de `replacements_by_column`
 #' @export
 #'
-#' @examples
 replace_na <- function(
-  data,
-  replace_missing,
-  fail_on_missing_col = TRUE
+  frame,
+  replacements_by_column,
+  fail_if_column_missing = TRUE
 ) {
 
-  if (any(!names(replace_missing) %in% colnames(data)) &&
-    fail_on_missing_col &&
+  require(purrr)
+  if (any(!names(replacements_by_column) %in% colnames(frame)) &&
+    fail_if_column_missing &&
     require(logger)){
     stop(
-      "{names(replace_missing)[!names(replace_missing) %in% colnames(data)]}
-      is missing from the dataframe"
+      "{names(replacements_by_column)[!names(replacements_by_column) %in%
+      colnames(frame)]} is missing from the dataframe"
     )
   }
 
-  replace_missing <- replace_missing[names(replace_missing) %in% colnames(data)]
+  replacements_by_column <- replacements_by_column[
+    names(replacements_by_column) %in% colnames(frame)
+  ]
 
-  purrr::walk2(replace_missing, names(replace_missing),
+  purrr::walk2(replacements_by_column, names(replacements_by_column),
     function(na_value, name) {
-      data[is.na(data[, name]), name] <<- na_value
+      frame[is.na(frame[, name]), name] <<- na_value
     }
     )
-  return(data)
-}
-
-average_12m <- function(vec) {
-  sapply(
-    1:length(vec),
-    FUN = function(x) {
-      res <- tail(vec[1:x], 12)
-      if (sum(!is.na(res)) > 3) {
-        return(mean(res, na.rm = TRUE))
-      } else {
-        return(NA)
-      }
-    }
-  )
+  return(frame)
 }
 
 #' Gives alert levels from prediction and F-scores
@@ -85,11 +55,10 @@ average_12m <- function(vec) {
 #' @return A factor vector with alert levels.
 #' @export
 #'
-#' @examples
 alert_levels <- function(prediction, F1, F2) {
   assertthat::assert_that(F2 <= F1,
-    msg = "F2 score cannot be less than F1 score. Could you have entered the
-    scores in the wrong order ?"
+    msg = "F2 score cannot be less than F1 score. Could you have inverted the
+    F scores ?"
   )
   alert <- .bincode(
     x = prediction,
@@ -99,4 +68,112 @@ alert_levels <- function(prediction, F1, F2) {
       levels = 1:3,
       labels = c("Pas d'alerte", "Alerte seuil F2", "Alerte seuil F1")
     )
+}
+
+
+#' Nomme un fichier
+#'
+#' Nomme un fichier selon une convension précise afin de sauvegarder plusieurs
+#' fichiers sans écraser les précédents.
+#'
+#' @param relative_path `character(1)`\cr Chemin d'accès depuis
+#' la racine
+#'   du projet.
+#' @param file_detail `character(1)` \cr Description en un mot de la nature du
+#'   fichier sauvegardé
+#' @param file_extension `character(1)` \cr Extension souhaitée pour le nom de
+#' fichier
+#' @param full_path `logical(1)` \cr Faut-il renvoyer le chemin complet
+#' (`TRUE`) ou uniquement le nom de fichier (`FALSE`)
+#'
+#' @return `character()` \cr
+#'   Un nom de fichier qui n'écrase pas les fichiers déjà contenues dans le
+#'   dossier spécifié par "relative_path", de la forme
+#'   "AAAA-MM-JJ_vX_{file_detail}.{file_extension}", où X est un chiffre
+#'
+#' @export
+name_file <- function(
+  relative_path,
+  file_detail,
+  file_extension = "",
+  full_path = FALSE) {
+
+  full_dir_path <- rprojroot::find_rstudio_root_file(relative_path)
+
+  assertthat::assert_that(dir.exists(full_dir_path),
+    msg = "Directory not found. Check relative path"
+  )
+
+  file_list <- list.files(full_dir_path)
+
+
+  n_different <- grepl(
+    paste0(
+      "^", Sys.Date(), "_v[0-9]*_",
+      file_detail, "\\.", file_extension, "$"
+    ),
+    file_list
+  ) %>%
+    sum()
+
+
+  file_name <- paste0(
+    Sys.Date(),
+    "_v",
+    n_different + 1,
+    "_",
+    file_detail,
+    ".",
+    file_extension
+  )
+
+  if (full_path) {
+    full_file_path <- file.path(full_dir_path, file_name)
+
+    return(full_file_path)
+  } else {
+    return(file_name)
+  }
+}
+
+
+#' Conversion d'un data.frame en H2OFrame
+#'
+#' Convertit un data.frame en H2OFrame en s'assurant de conserver les bons
+#' types de données.
+#'
+#' @param table_to_convert `data.frame()` \cr Table à convertir.
+#'
+#' @return `h2o::H2OFrame` \cr
+#'   La table convertie.
+#'
+#' @export
+#'
+convert_to_h2o <- function(table_to_convert) {
+  h2o_table <- h2o::as.h2o(table_to_convert)
+  h2o_table <- set_h2o_types(h2o_table)
+  return(h2o_table)
+}
+
+
+#' Conversion des colonnes "string" en "enum" dans un H2OFrame
+#'
+#' @param h2o_table Table h2o
+#'
+#' @return Table h2o avec les colonnes de type "string" remplacées par des colonnes de type "enum"
+#' @export
+#'
+set_h2o_types <- function(h2o_table) {
+  fields <- names(h2o_table)[h2o::h2o.getTypes(h2o_table) == "string"]
+
+  if ("outcome" %in% names(h2o_table)) fields <- c(fields, "outcome")
+
+  aux_type_factor <- function(colname) {
+    h2o_table[colname] <<- h2o::h2o.asfactor(h2o_table[colname])
+  }
+
+  plyr::l_ply(fields, aux_type_factor)
+  # BUG H2O: cf JIRA H2O BUG PUBDEV-6221
+  utils::capture.output(h2o_table, file = "/dev/null") #nolint
+  return(h2o_table)
 }

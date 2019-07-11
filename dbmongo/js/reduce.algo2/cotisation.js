@@ -26,7 +26,10 @@ function cotisation(output_indexed, output_array) {
       let po_average =  (val.montant_po_array || []).reduce((p, c) => p + c, 0) / (val.montant_po_array.length || 1)
       val.ratio_dette_moy12m = (po_average + pp_average) / val.cotisation_moy12m
     }
-    val.dette_any_12m = (val.montant_pp_array || []).reduce((p,c) => (c >= 100) || p, false) || (val.montant_po_array || []).reduce((p, c) => (c >= 100) || p, false)
+    // Remplace dans cibleApprentissage
+    //val.dette_any_12m = (val.montant_pp_array || []).reduce((p,c) => (c >= 
+    //100) || p, false) || (val.montant_po_array || []).reduce((p, c) => (c >= 
+    //100) || p, false)
     delete val.cotisation_array
     delete val.montant_pp_array
     delete val.montant_po_array
@@ -35,6 +38,9 @@ function cotisation(output_indexed, output_array) {
   // Calcul des défauts URSSAF prolongés
   let counter = 0
   Object.keys(output_indexed).sort().forEach(k => {
+    if (output_indexed[k].ratio_dette > 0.01){
+      output_indexed[k].tag_debit = true // Survenance d'un débit d'au moins 1% des cotisations 
+    }
     if (output_indexed[k].ratio_dette > 1){
       counter = counter + 1
       if (counter >= 3) 
