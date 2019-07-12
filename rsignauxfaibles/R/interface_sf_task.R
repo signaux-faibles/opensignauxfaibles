@@ -262,7 +262,7 @@ split_data.sf_task <- function(
   assertthat::assert_that("hist_data" %in% names(task),
     msg = "Please load historical data before holding out test data")
 
-  if ((length(fracs) == 1 && fracs == 1) || identical(fracs,c(1,0,0))) {
+  if ( (length(fracs) == 1 && fracs == 1) || identical(fracs, c(1, 0, 0))) {
     task[["train_data"]] <- task[["hist_data"]]
   } else {
 
@@ -686,7 +686,15 @@ predict.sf_task <- function(
 #' @param ... additional parameters for export functions.
 #' @return `sf_task` \cr L'objet `task` donné en entrée.
 #' @export
-export.sf_task <- function(task, export_type, batch, ...){
+export.sf_task <- function(
+  task,
+  export_type,
+  batch,
+  database = task[["database"]],
+  collection_features = task[["collection"]],
+  collection_scores = "scores",
+  ...
+){
   require(purrr)
   export_fields <- c(
     "siret",
@@ -740,8 +748,8 @@ export.sf_task <- function(task, export_type, batch, ...){
     res <- task[["new_data"]] %>%
       format_for_export(
         export_fields = export_fields,
-        database = task[["database"]],
-        collection = task[["collection"]],
+        database = database,
+        collection = collection_features,
         last_batch = batch
         )
 
@@ -759,7 +767,7 @@ export.sf_task <- function(task, export_type, batch, ...){
             ...,
             f_scores = f_scores,
             database = database,
-            collection = "Scores"
+            collection = collection_scores
             )
       }},
       formatted_data = res,
@@ -806,10 +814,10 @@ evaluate.sf_task <- function(
   tracker = task[["tracker"]]
   ){
   if (is.null(eval_function)){
-    default_eval_fun = TRUE
-    eval_fun = MLsegmentr::eval_precision_recall()
+    default_eval_fun <- TRUE
+    eval_fun <- MLsegmentr::eval_precision_recall()
   } else {
-    default_eval_fun = FALSE
+    default_eval_fun <- FALSE
   }
 
   assertthat::assert_that(
