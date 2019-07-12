@@ -59,7 +59,6 @@ NULL
 #'
 #' @export
 connect_to_database <- function(
-  url,
   database,
   collection,
   batch,
