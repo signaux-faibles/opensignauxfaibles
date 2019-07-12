@@ -34,6 +34,16 @@ test_that("load_hist_data works as expected", {
   expect_equal(nrow(my_test_task[["hist_data"]]), 440)
 })
 
+
+test_that("load_new_data works as expected", {
+  expect_error(
+    my_test_task <<- load_new_data.sf_task(
+      my_test_task,
+      batch = "1901_interim"
+    ),
+    NA
+    )
+})
 test_that("split_data works as expected", {
   expect_error(split_data(my_test_task, fracs <- c (0.6, 0.1, 0.1)))
   expect_error(

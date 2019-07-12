@@ -91,9 +91,9 @@ format_for_export <- function(
   log_info("Derniere periode connue: {last_period}")
 
   donnees <- connect_to_database(
-    database,
-    collection,
-    last_batch,
+    database = database,
+    collection = collection,
+    batch = last_batch,
     date_inf = first_period,
     date_sup = last_period %m+% months(1),
     min_effectif = 10,
@@ -116,7 +116,7 @@ format_for_export <- function(
   # TODO couper nom / chemin du dossier
   donnees <- donnees %>%
     mark_known_sirets(names = basename(known_sirens_full_paths),
-      absolute_path = dirname(known_sirens_full_paths)) %>%
+      absolute_path = unique(dirname(known_sirens_full_paths))) %>%
     select(export_fields)
 
   all_names <- names(donnees)
@@ -171,6 +171,7 @@ export_scores_to_mongodb <- function(
   collection
   ){
 
+  browser()
   exported_columns <- c("siret", "periode", "score", "score_diff")
   assertthat::assert_that(
     all(exported_columns %in% names(formatted_data)),
