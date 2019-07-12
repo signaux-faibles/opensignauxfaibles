@@ -691,12 +691,21 @@ export.sf_task <- function(
   export_type,
   batch,
   f_scores = c(F1 = 0.15, F2 = 0.07),
+  known_sirens_full_path = c(
+    rprojroot::find_package_root_file(
+      "..", "data-raw", "sirets_connus_pdl.csv"
+      ),
+    rprojroot::find_package_root_file(
+      "..", "data-raw", "sirets_connus_bfc.csv"
+    )
+  ),
+  export_fields = NULL,
   database = task[["database"]],
   collection_features = task[["collection"]],
   collection_scores = "scores",
-  export_fields = NULL,
   ...
 ){
+
   require(purrr)
   if (is.null(export_fields)){
     export_fields <- c(
@@ -753,7 +762,9 @@ export.sf_task <- function(
         export_fields = export_fields,
         database = database,
         collection = collection_features,
-        last_batch = batch
+        last_batch = batch,
+        known_sirens_full_path = known_sirens_full_path,
+        verbose = attr(task, "verbose")
         )
 
     log_info("Data is exported to {paste(export_type, collapse = ' and ')}")

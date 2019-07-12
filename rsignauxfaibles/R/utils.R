@@ -57,8 +57,8 @@ replace_na <- function(
 #'
 alert_levels <- function(prediction, F1, F2) {
   assertthat::assert_that(F2 <= F1,
-    msg = "F2 threshold cannot be greater than F1 threshold Could you have inverted the
-    F scores ?"
+    msg = "F2 threshold cannot be greater than F1 threshold Could you have
+    inverted the F scores ?"
   )
   alert <- .bincode(
     x = prediction,

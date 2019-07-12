@@ -27,21 +27,8 @@ format_for_export <- function(
   database,
   collection,
   last_batch,
-  # TODO: no default needed here
-  # ec79ac15-b8b3-426c-b804-f441851ac58b
-  known_sirens_full_paths = c(
-    rprojroot::find_package_root_file(
-      "..",
-      "data-raw",
-      "sirets_connus_pdl.csv"
-    ),
-    rprojroot::find_package_root_file(
-      "..",
-      "data-raw",
-      "sirets_connus_bfc.csv"
-    )
-  ),
-  verbose = TRUE) {
+  known_sirens_full_path,
+  verbose) {
 
   require(logger)
   if (verbose) {
@@ -294,14 +281,11 @@ export_company_card  <- function(formatted_data){
 #'
 mark_known_sirets <- function(
   df,
-  names,
-  absolute_path = rprojroot::find_package_root_file("..", "data-raw")
+  full_paths
 ) {
   sirens <- c()
-  for (name in names) {
-    sirets <- readLines(
-      file.path(absolute_path, name)
-    )
+  for (full_path in full_path) {
+    sirets <- readLines(full_path)
     sirens <- c(sirens, substr(sirets, 1, 9))
   }
   df <- df %>%
