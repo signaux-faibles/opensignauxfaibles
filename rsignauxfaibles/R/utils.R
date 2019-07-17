@@ -49,15 +49,15 @@ replace_na <- function(
 #' binned to the lower alert level)
 #'
 #' @param prediction Vector, list of predictions between 0 and 1.
-#' @param F1 `Double(1)`. F1_score
-#' @param F2 `Double(1)`. F2_score
+#' @param F1 `Double(1)`. F1 threshold
+#' @param F2 `Double(1)`. F2 threshold
 #'
 #' @return A factor vector with alert levels.
 #' @export
 #'
 alert_levels <- function(prediction, F1, F2) {
   assertthat::assert_that(F2 <= F1,
-    msg = "F2 score cannot be less than F1 score. Could you have inverted the
+    msg = "F2 threshold cannot be greater than F1 threshold Could you have inverted the
     F scores ?"
   )
   alert <- .bincode(

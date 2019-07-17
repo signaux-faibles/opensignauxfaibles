@@ -134,7 +134,6 @@ check_overwrites <- function(task, field_names){
 load_hist_data.sf_task <- function(
   task,
   batch,
-  url = "mongodb://192.168.0.19:27017",
   database = task[["database"]],
   collection = task[["collection"]],
   subsample = 200000L,
@@ -150,7 +149,6 @@ load_hist_data.sf_task <- function(
   log_info("Chargement des donnees historiques.")
 
   hist_data <- connect_to_database(
-    url,
     database,
     collection,
     batch,
@@ -196,7 +194,6 @@ load_new_data.sf_task <- function(
   task,
   periods,
   batch,
-  url = "mongodb://192.168.0.19:27017",
   database = task[["database"]],
   collection = task[["collection"]],
   fields = get_fields(training = FALSE),
@@ -208,7 +205,6 @@ load_new_data.sf_task <- function(
 
   log_info("Loading data from last batch")
   task[["new_data"]] <- connect_to_database(
-    url = url,
     database = database,
     collection = collection,
     batch = batch,
@@ -690,7 +686,7 @@ predict.sf_task <- function(
 #' @param ... additional parameters for export functions.
 #' @return `sf_task` \cr L'objet `task` donné en entrée.
 #' @export
-export.sf_task <- function(task, export_type, ...){
+export.sf_task <- function(task, export_type, batch, ...){
   require(purrr)
   export_fields <- c(
     "siret",
@@ -734,18 +730,19 @@ export.sf_task <- function(task, export_type, ...){
     "delai"
     )
 
-  f_scores <- c(F1 = 0.31, F2 = 0.13) # TODO TODO
+  f_scores <- c(F1 = 0.15, F2 = 0.07) # TODO TODO
 
   if (!is.null(export_type)) {
     assertthat::assert_that(all(export_type %in% c("csv", "mongodb")))
 
     log_info("Adding additional fields for export")
+
     res <- task[["new_data"]] %>%
       format_for_export(
         export_fields = export_fields,
-        database = database,
-        collection = collection,
-        last_batch = last_batch
+        database = task[["database"]],
+        collection = task[["collection"]],
+        last_batch = batch
         )
 
     log_info("Data is exported to {paste(export_type, collapse = ' and ')}")
@@ -762,11 +759,11 @@ export.sf_task <- function(task, export_type, ...){
             ...,
             f_scores = f_scores,
             database = database,
-            collection = collection
+            collection = "Scores"
             )
       }},
       formatted_data = res,
-      batch = last_batch,
+      batch = batch,
       algo = "algo"
       )
   }
