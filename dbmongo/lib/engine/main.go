@@ -128,7 +128,7 @@ func (event Event) Critical(comment interface{}) {
 func reportAbstract(tracker gournal.Tracker) interface{} {
 	return tracker.Context["path"] + ": intégration terminée, " +
 		strconv.Itoa(tracker.Count) + " éléments traités " +
-		strconv.Itoa(tracker.CountErrors()) + " rejets."
+		strconv.Itoa(tracker.CountErrorCycles()) + " rejets."
 }
 
 func reportErrors(tracker gournal.Tracker) interface{} {

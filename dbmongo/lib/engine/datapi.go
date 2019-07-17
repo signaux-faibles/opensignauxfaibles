@@ -8,15 +8,17 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/spf13/viper"
+
 	daclient "github.com/signaux-faibles/datapi/client"
 )
 
 func readConnu() ([]string, error) {
-	bfc, err := ioutil.ReadFile("/home/christophe/Project/data-raw/1905/sirets_connus_bfc.csv")
+	bfc, err := ioutil.ReadFile(viper.GetString("scbfc"))
 	if err != nil {
 		return nil, err
 	}
-	pdl, err := ioutil.ReadFile("/home/christophe/Project/data-raw/1905/sirets_connus_pdl.csv")
+	pdl, err := ioutil.ReadFile(viper.GetString("scpdl"))
 	if err != nil {
 		return nil, err
 	}
@@ -60,8 +62,10 @@ func ExportDetectionToDatapi(url, user, password, batch string) error {
 	}
 
 	for iter.Next(&data) {
+		fmt.Println(i)
 		detection, err := exportdatapi.Compute(data)
 		if err != nil {
+			fmt.Println(err)
 			continue
 		}
 		i++
@@ -81,9 +85,12 @@ func ExportDetectionToDatapi(url, user, password, batch string) error {
 		datas = append(datas, detection...)
 		datas = append(datas, c)
 
-		if i > 10000 {
+		if i > 100 {
 			if datas != nil {
 				err = client.Put("public", datas)
+				if err != nil {
+					fmt.Println(err)
+				}
 				datas = nil
 			}
 			i = 0
@@ -92,6 +99,9 @@ func ExportDetectionToDatapi(url, user, password, batch string) error {
 
 	if datas != nil {
 		err = client.Put("public", datas)
+		if err != nil {
+			fmt.Println(err)
+		}
 	}
 
 	return err
@@ -109,10 +119,10 @@ func ExportPoliciesToDatapi(url, user, password, batch string) error {
 			"match": "(public|reference)",
 			"scope": []string{"France entière"},
 			"promote": []string{
+				"Auvergne-Rhône-Alpes",
 				"Pays de la Loire",
-				"Bourgogne Franche-Comté",
-				"Bourgogne",
-				"Franche-Comté",
+				"Bourgogne-Franche-Comté",
+				"Nouvelle-Aquitaine",
 				"21",
 				"25",
 				"70",
@@ -126,6 +136,30 @@ func ExportPoliciesToDatapi(url, user, password, batch string) error {
 				"53",
 				"72",
 				"85",
+				"01",
+				"03",
+				"07",
+				"15",
+				"26",
+				"38",
+				"42",
+				"43",
+				"63",
+				"69",
+				"73",
+				"74",
+				"16",
+				"17",
+				"19",
+				"23",
+				"24",
+				"33",
+				"40",
+				"47",
+				"64",
+				"79",
+				"86",
+				"87",
 			},
 		},
 	})
@@ -133,14 +167,12 @@ func ExportPoliciesToDatapi(url, user, password, batch string) error {
 	policies = append(policies, daclient.Object{
 		Key: map[string]string{
 			"type": "policy",
-			"name": "Accès Bourgogne Franche-Comté",
+			"name": "Accès Bourgogne-Franche-Comté",
 		},
 		Value: map[string]interface{}{
 			"match": "(public|reference)",
-			"scope": []string{"Bourgogne Franche-Comté"},
+			"scope": []string{"Bourgogne-Franche-Comté"},
 			"promote": []string{
-				"Bourgogne",
-				"Franche-Comté",
 				"21",
 				"25",
 				"70",
@@ -149,6 +181,56 @@ func ExportPoliciesToDatapi(url, user, password, batch string) error {
 				"71",
 				"90",
 				"89",
+			},
+		},
+	})
+
+	policies = append(policies, daclient.Object{
+		Key: map[string]string{
+			"type": "policy",
+			"name": "Accès Auvergne-Rhône-Alpes",
+		},
+		Value: map[string]interface{}{
+			"match": "(public|reference)",
+			"scope": []string{"Auvergne-Rhône-Alpes"},
+			"promote": []string{
+				"01",
+				"03",
+				"07",
+				"15",
+				"26",
+				"38",
+				"42",
+				"43",
+				"63",
+				"69",
+				"73",
+				"74",
+			},
+		},
+	})
+
+	policies = append(policies, daclient.Object{
+		Key: map[string]string{
+			"type": "policy",
+			"name": "Accès Nouvelle-Aquitaine",
+		},
+		Value: map[string]interface{}{
+			"match": "(public|reference)",
+			"scope": []string{"Nouvelle-Aquitaine"},
+			"promote": []string{
+				"16",
+				"17",
+				"19",
+				"23",
+				"24",
+				"33",
+				"40",
+				"47",
+				"64",
+				"79",
+				"86",
+				"87",
 			},
 		},
 	})
@@ -223,7 +305,7 @@ func ExportPoliciesToDatapi(url, user, password, batch string) error {
 			"name": "Limitation Accès",
 		},
 		Value: map[string]interface{}{
-			"match":  "policy",
+			"match":  "system",
 			"key":    map[string]string{},
 			"writer": []string{"manager"},
 			"reader": []string{"manager"},
@@ -333,6 +415,30 @@ func getRegions(batch string) (regions []daclient.Object) {
 				"53",
 				"72",
 				"85",
+				"01",
+				"03",
+				"07",
+				"15",
+				"26",
+				"38",
+				"42",
+				"43",
+				"63",
+				"69",
+				"73",
+				"74",
+				"16",
+				"17",
+				"19",
+				"23",
+				"24",
+				"33",
+				"40",
+				"47",
+				"64",
+				"79",
+				"86",
+				"87",
 			},
 		},
 	})
@@ -340,10 +446,10 @@ func getRegions(batch string) (regions []daclient.Object) {
 	regions = append(regions, daclient.Object{
 		Key: map[string]string{
 			"type":   "region",
-			"region": "Bourgogne Franche-Comté",
+			"region": "Bourgogne-Franche-Comté",
 			"batch":  batch,
 		},
-		Scope: []string{"Bourgogne Franche-Comté"},
+		Scope: []string{"Bourgogne-Franche-Comté"},
 		Value: map[string]interface{}{
 			"departements": []string{
 				"25",
@@ -406,6 +512,56 @@ func getRegions(batch string) (regions []daclient.Object) {
 				"53",
 				"72",
 				"85",
+			},
+		},
+	})
+
+	regions = append(regions, daclient.Object{
+		Key: map[string]string{
+			"type":   "region",
+			"region": "Auvergne-Rhône-Alpes",
+			"batch":  batch,
+		},
+		Scope: []string{"Auvergne-Rhône-Alpes"},
+		Value: map[string]interface{}{
+			"departements": []string{
+				"01",
+				"03",
+				"07",
+				"15",
+				"26",
+				"38",
+				"42",
+				"43",
+				"63",
+				"69",
+				"73",
+				"74",
+			},
+		},
+	})
+
+	regions = append(regions, daclient.Object{
+		Key: map[string]string{
+			"type":   "region",
+			"region": "Nouvelle-Aquitaine",
+			"batch":  batch,
+		},
+		Scope: []string{"Nouvelle-Aquitaine"},
+		Value: map[string]interface{}{
+			"departements": []string{
+				"16",
+				"17",
+				"19",
+				"23",
+				"24",
+				"33",
+				"40",
+				"47",
+				"64",
+				"79",
+				"86",
+				"87",
 			},
 		},
 	})
@@ -550,6 +706,270 @@ func getRegions(batch string) (regions []daclient.Object) {
 		Scope: []string{"85"},
 		Value: map[string]interface{}{
 			"85": "Vendée",
+		},
+	})
+
+	regions = append(regions, daclient.Object{
+		Key: map[string]string{
+			"type":  "departements",
+			"batch": batch,
+		},
+		Scope: []string{"01"},
+		Value: map[string]interface{}{
+			"01": "Ain",
+		},
+	})
+
+	regions = append(regions, daclient.Object{
+		Key: map[string]string{
+			"type":  "departements",
+			"batch": batch,
+		},
+		Scope: []string{"03"},
+		Value: map[string]interface{}{
+			"03": "Allier",
+		},
+	})
+
+	regions = append(regions, daclient.Object{
+		Key: map[string]string{
+			"type":  "departements",
+			"batch": batch,
+		},
+		Scope: []string{"07"},
+		Value: map[string]interface{}{
+			"07": "Ardèche",
+		},
+	})
+
+	regions = append(regions, daclient.Object{
+		Key: map[string]string{
+			"type":  "departements",
+			"batch": batch,
+		},
+		Scope: []string{"15"},
+		Value: map[string]interface{}{
+			"15": "Cantal",
+		},
+	})
+
+	regions = append(regions, daclient.Object{
+		Key: map[string]string{
+			"type":  "departements",
+			"batch": batch,
+		},
+		Scope: []string{"26"},
+		Value: map[string]interface{}{
+			"26": "Drôme",
+		},
+	})
+
+	regions = append(regions, daclient.Object{
+		Key: map[string]string{
+			"type":  "departements",
+			"batch": batch,
+		},
+		Scope: []string{"38"},
+		Value: map[string]interface{}{
+			"38": "Isère",
+		},
+	})
+
+	regions = append(regions, daclient.Object{
+		Key: map[string]string{
+			"type":  "departements",
+			"batch": batch,
+		},
+		Scope: []string{"42"},
+		Value: map[string]interface{}{
+			"42": "Loire",
+		},
+	})
+
+	regions = append(regions, daclient.Object{
+		Key: map[string]string{
+			"type":  "departements",
+			"batch": batch,
+		},
+		Scope: []string{"43"},
+		Value: map[string]interface{}{
+			"43": "Vendée",
+		},
+	})
+
+	regions = append(regions, daclient.Object{
+		Key: map[string]string{
+			"type":  "departements",
+			"batch": batch,
+		},
+		Scope: []string{"63"},
+		Value: map[string]interface{}{
+			"63": "Puy-de-Dôme",
+		},
+	})
+
+	regions = append(regions, daclient.Object{
+		Key: map[string]string{
+			"type":  "departements",
+			"batch": batch,
+		},
+		Scope: []string{"69"},
+		Value: map[string]interface{}{
+			"69": "Rhône",
+		},
+	})
+
+	regions = append(regions, daclient.Object{
+		Key: map[string]string{
+			"type":  "departements",
+			"batch": batch,
+		},
+		Scope: []string{"73"},
+		Value: map[string]interface{}{
+			"73": "Savoie",
+		},
+	})
+
+	regions = append(regions, daclient.Object{
+		Key: map[string]string{
+			"type":  "departements",
+			"batch": batch,
+		},
+		Scope: []string{"74"},
+		Value: map[string]interface{}{
+			"74": "Haute-Savoie",
+		},
+	})
+
+	regions = append(regions, daclient.Object{
+		Key: map[string]string{
+			"type":  "departements",
+			"batch": batch,
+		},
+		Scope: []string{"16"},
+		Value: map[string]interface{}{
+			"16": "Charente",
+		},
+	})
+
+	regions = append(regions, daclient.Object{
+		Key: map[string]string{
+			"type":  "departements",
+			"batch": batch,
+		},
+		Scope: []string{"17"},
+		Value: map[string]interface{}{
+			"17": "Charente-Maritime",
+		},
+	})
+
+	regions = append(regions, daclient.Object{
+		Key: map[string]string{
+			"type":  "departements",
+			"batch": batch,
+		},
+		Scope: []string{"19"},
+		Value: map[string]interface{}{
+			"19": "Corrèze",
+		},
+	})
+
+	regions = append(regions, daclient.Object{
+		Key: map[string]string{
+			"type":  "departements",
+			"batch": batch,
+		},
+		Scope: []string{"23"},
+		Value: map[string]interface{}{
+			"23": "Creuse",
+		},
+	})
+
+	regions = append(regions, daclient.Object{
+		Key: map[string]string{
+			"type":  "departements",
+			"batch": batch,
+		},
+		Scope: []string{"24"},
+		Value: map[string]interface{}{
+			"24": "Dordogne",
+		},
+	})
+
+	regions = append(regions, daclient.Object{
+		Key: map[string]string{
+			"type":  "departements",
+			"batch": batch,
+		},
+		Scope: []string{"33"},
+		Value: map[string]interface{}{
+			"33": "Gironde",
+		},
+	})
+
+	regions = append(regions, daclient.Object{
+		Key: map[string]string{
+			"type":  "departements",
+			"batch": batch,
+		},
+		Scope: []string{"40"},
+		Value: map[string]interface{}{
+			"40": "Landes",
+		},
+	})
+
+	regions = append(regions, daclient.Object{
+		Key: map[string]string{
+			"type":  "departements",
+			"batch": batch,
+		},
+		Scope: []string{"47"},
+		Value: map[string]interface{}{
+			"47": "Lot-et-Garonne",
+		},
+	})
+
+	regions = append(regions, daclient.Object{
+		Key: map[string]string{
+			"type":  "departements",
+			"batch": batch,
+		},
+		Scope: []string{"64"},
+		Value: map[string]interface{}{
+			"64": "Pyrénées-Atlantique",
+		},
+	})
+
+	regions = append(regions, daclient.Object{
+		Key: map[string]string{
+			"type":  "departements",
+			"batch": batch,
+		},
+		Scope: []string{"79"},
+		Value: map[string]interface{}{
+			"79": "Deux-Sèvres",
+		},
+	})
+
+	regions = append(regions, daclient.Object{
+		Key: map[string]string{
+			"type":  "departements",
+			"batch": batch,
+		},
+		Scope: []string{"86"},
+		Value: map[string]interface{}{
+			"86": "Vienne",
+		},
+	})
+
+	regions = append(regions, daclient.Object{
+		Key: map[string]string{
+			"type":  "departements",
+			"batch": batch,
+		},
+		Scope: []string{"87"},
+		Value: map[string]interface{}{
+			"87": "Haute-Vienne",
 		},
 	})
 

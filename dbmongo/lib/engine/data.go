@@ -238,7 +238,7 @@ func Public(batch AdminBatch, siret string) error {
 		Map:      functions["map"].Code,
 		Reduce:   functions["reduce"].Code,
 		Finalize: functions["finalize"].Code,
-		Out:      bson.M{"replace": "Public"},
+		Out:      bson.M{"merge": "Public"},
 		Scope:    scope,
 	}
 	// exécution
