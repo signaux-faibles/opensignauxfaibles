@@ -7,6 +7,7 @@ dist.tar.xz
 **/*.csv
 **/*.xls*
 **/*.RData
+**/*.toml
 data-raw/
 output/*
 keys.json
@@ -23,10 +24,8 @@ exploration/*
 rsignauxfaibles/**/*.model
 rsignauxfaibles/**/*.temap
 exploration/*
-dbmongo/config.toml*
 dbmongo/debug
 dbmongo/dbmongo
-dbmongo/tools/fakeData/config.toml
 .Rproj.user
 *.orig
 *.rdx
