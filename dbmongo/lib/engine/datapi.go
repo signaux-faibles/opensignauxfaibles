@@ -793,7 +793,7 @@ func getRegions(batch string) (regions []daclient.Object) {
 		},
 		Scope: []string{"43"},
 		Value: map[string]interface{}{
-			"43": "Vendée",
+			"43": "Haute-Loire",
 		},
 	})
 
