@@ -73,9 +73,9 @@ func parseProcol(batch engine.AdminBatch, mapping Comptes) (chan engine.Tuple, c
 				continue
 			}
 
-			dateEffetIndex := misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "dt_effet" })
-			actionStadeIndex := misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "lib_actx_stdx" })
-			siretIndex := misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Siret" })
+			dateEffetIndex := misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "dt_effet" })
+			actionStadeIndex := misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "lib_actx_stdx" })
+			siretIndex := misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "siret" })
 
 			if misc.SliceMin(dateEffetIndex, actionStadeIndex, siretIndex) == -1 {
 				tracker.Error(errors.New("format de fichier incorrect"))
@@ -93,27 +93,16 @@ func parseProcol(batch engine.AdminBatch, mapping Comptes) (chan engine.Tuple, c
 					// Journal(critical, "importProcol", "Erreur de lecture pendant l'import du fichier "+path+". Abandon.")
 					close(outputChannel)
 				}
+        procol := readLineProcol(
+          row,
+          &tracker,
+          dateEffetIndex,
+          siretIndex,
+          actionStadeIndex,
+        )
 				if _, err := strconv.Atoi(row[siretIndex]); err == nil && len(row[siretIndex]) == 14 {
-					procol := Procol{}
-
-					dateFormatee := row[dateEffetIndex]
-					dateFormatee = dateFormatee[:3] + strings.ToLower(dateFormatee[4:5]) + dateFormatee[6:]
-					procol.DateEffet, err = time.Parse("02Jan2006", row[dateEffetIndex])
-					tracker.Error(err)
-					procol.Siret = row[siretIndex]
-					splitted := strings.Split(strings.ToLower(row[actionStadeIndex]), "_")
-
-					for i, v := range splitted {
-						r, err := regexp.Compile("liquidation|redressement|sauvegarde")
-						tracker.Error(err)
-						if match := r.MatchString(v); match {
-							procol.ActionProcol = v
-							procol.StadeProcol = strings.Join(append(splitted[:i], splitted[i+1:]...), "_")
-							break
-						}
-					}
-
 					if !tracker.ErrorInCycle() {
+
 						outputChannel <- procol
 					} else {
 						//event.Debug(tracker.Report("errors"))
@@ -128,4 +117,34 @@ func parseProcol(batch engine.AdminBatch, mapping Comptes) (chan engine.Tuple, c
 		close(eventChannel)
 	}()
 	return outputChannel, eventChannel
+}
+
+func readLineProcol(
+  row []string,
+  tracker *gournal.Tracker,
+  dateEffetIndex int,
+  siretIndex int,
+  actionStadeIndex int,
+)(Procol){
+
+  procol := Procol{}
+  var err error
+
+  dateFormatee := row[dateEffetIndex]
+  dateFormatee = dateFormatee[:3] + strings.ToLower(dateFormatee[4:5]) + dateFormatee[6:]
+  procol.DateEffet, err = time.Parse("02Jan2006", row[dateEffetIndex])
+  tracker.Error(err)
+  procol.Siret = row[siretIndex]
+  splitted := strings.Split(strings.ToLower(row[actionStadeIndex]), "_")
+
+  for i, v := range splitted {
+    r, err := regexp.Compile("liquidation|redressement|sauvegarde")
+    tracker.Error(err)
+    if match := r.MatchString(v); match {
+      procol.ActionProcol = v
+      procol.StadeProcol = strings.Join(append(splitted[:i], splitted[i+1:]...), "_")
+      break
+    }
+  }
+  return(procol)
 }
