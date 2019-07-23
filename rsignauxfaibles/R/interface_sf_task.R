@@ -262,7 +262,7 @@ split_data.sf_task <- function(
   assertthat::assert_that("hist_data" %in% names(task),
     msg = "Please load historical data before holding out test data")
 
-  if ((length(fracs) == 1 && fracs == 1) || identical(fracs,c(1,0,0))) {
+  if ( (length(fracs) == 1 && fracs == 1) || identical(fracs, c(1, 0, 0))) {
     task[["train_data"]] <- task[["hist_data"]]
   } else {
 
@@ -686,51 +686,71 @@ predict.sf_task <- function(
 #' @param ... additional parameters for export functions.
 #' @return `sf_task` \cr L'objet `task` donné en entrée.
 #' @export
-export.sf_task <- function(task, export_type, batch, ...){
-  require(purrr)
-  export_fields <- c(
-    "siret",
-    "periode",
-    "raison_sociale",
-    "departement",
-    "region",
-    "score",
-    "score_diff",
-    "connu",
-    "date_ccsf",
-    "etat_proc_collective",
-    "date_proc_collective",
-    "interessante_urssaf",
-    # "default_urssaf",
-    "effectif",
-    "libelle_naf",
-    "libelle_ape5",
-    "code_ape",
-    "montant_part_ouvriere",
-    "montant_part_patronale",
-    "ca",
-    "ca_past_1",
-    "benefice_ou_perte",
-    "benefice_ou_perte_past_1",
-    "resultat_expl",
-    "resultat_expl_past_1",
-    "poids_frng",
-    "taux_marge",
-    "frais_financier",
-    "financier_court_terme",
-    "delai_fournisseur",
-    "dette_fiscale",
-    "apart_heures_consommees",
-    "apart_heures_autorisees",
-    # "cotisation_moy12m",
-    "compte_urssaf",
-    "montant_majorations",
-    "exercice_bdf",
-    "exercice_diane",
-    "delai"
+export.sf_task <- function(
+  task,
+  export_type,
+  batch,
+  f_scores = c(F1 = 0.15, F2 = 0.07),
+  known_sirens_full_path = c(
+    rprojroot::find_package_root_file(
+      "..", "data-raw", "sirets_connus_pdl.csv"
+      ),
+    rprojroot::find_package_root_file(
+      "..", "data-raw", "sirets_connus_bfc.csv"
     )
+  ),
+  export_fields = NULL,
+  database = task[["database"]],
+  collection_features = task[["collection"]],
+  collection_scores = "scores",
+  ...
+){
 
-  f_scores <- c(F1 = 0.15, F2 = 0.07) # TODO TODO
+  require(purrr)
+  if (is.null(export_fields)){
+    export_fields <- c(
+      "siret",
+      "periode",
+      "raison_sociale",
+      "departement",
+      "region",
+      "score",
+      "score_diff",
+      "connu",
+      "date_ccsf",
+      "etat_proc_collective",
+      "date_proc_collective",
+      "interessante_urssaf",
+      # "default_urssaf",
+      "effectif",
+      "libelle_naf",
+      "libelle_ape5",
+      "code_ape",
+      "montant_part_ouvriere",
+      "montant_part_patronale",
+      "ca",
+      "ca_past_1",
+      "benefice_ou_perte",
+      "benefice_ou_perte_past_1",
+      "resultat_expl",
+      "resultat_expl_past_1",
+      "poids_frng",
+      "taux_marge",
+      "frais_financier",
+      "financier_court_terme",
+      "delai_fournisseur",
+      "dette_fiscale",
+      "apart_heures_consommees",
+      "apart_heures_autorisees",
+      # "cotisation_moy12m",
+      "compte_urssaf",
+      "montant_majorations",
+      "exercice_bdf",
+      "exercice_diane",
+      "delai"
+      )
+  }
+
 
   if (!is.null(export_type)) {
     assertthat::assert_that(all(export_type %in% c("csv", "mongodb")))
@@ -740,9 +760,11 @@ export.sf_task <- function(task, export_type, batch, ...){
     res <- task[["new_data"]] %>%
       format_for_export(
         export_fields = export_fields,
-        database = task[["database"]],
-        collection = task[["collection"]],
-        last_batch = batch
+        database = database,
+        collection = collection_features,
+        last_batch = batch,
+        known_sirens_full_path = known_sirens_full_path,
+        verbose = attr(task, "verbose")
         )
 
     log_info("Data is exported to {paste(export_type, collapse = ' and ')}")
@@ -759,7 +781,7 @@ export.sf_task <- function(task, export_type, batch, ...){
             ...,
             f_scores = f_scores,
             database = database,
-            collection = "Scores"
+            collection = collection_scores
             )
       }},
       formatted_data = res,
@@ -806,10 +828,10 @@ evaluate.sf_task <- function(
   tracker = task[["tracker"]]
   ){
   if (is.null(eval_function)){
-    default_eval_fun = TRUE
-    eval_fun = MLsegmentr::eval_precision_recall()
+    default_eval_fun <- TRUE
+    eval_fun <- MLsegmentr::eval_precision_recall()
   } else {
-    default_eval_fun = FALSE
+    default_eval_fun <- FALSE
   }
 
   assertthat::assert_that(
