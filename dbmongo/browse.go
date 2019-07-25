@@ -13,7 +13,6 @@ func publicHandler(c *gin.Context) {
 		Siret string `json:"siret"`
 	}{}
 	c.Bind(&params)
-
 	batch := engine.AdminBatch{}
 	err := batch.Load(params.Batch)
 	if err != nil {

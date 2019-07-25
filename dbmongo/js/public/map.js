@@ -28,7 +28,8 @@ function map() {
   else if (this.value.scope == "entreprise") {
     let v = {
       diane: f.diane(value.diane),
-      bdf: f.bdf(value.bdf)
+      bdf: f.bdf(value.bdf),
+      sirene_ul: value.sirene_ul,
     }
     emit({scope: "entreprise", key: this.value.key, batch: actual_batch}, v)
   }

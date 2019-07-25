@@ -238,13 +238,18 @@ func Public(batch AdminBatch, siret string) error {
 		Map:      functions["map"].Code,
 		Reduce:   functions["reduce"].Code,
 		Finalize: functions["finalize"].Code,
-		Out:      bson.M{"merge": "Public"},
+		Out:      bson.M{"replace": "Public"},
 		Scope:    scope,
 	}
 	// exécution
 
 	if siret != "" {
-		_, err = Db.DB.C("RawData").Find(bson.M{"value.index.algo2": true, "_id": siret}).MapReduce(job, nil)
+		_, err = Db.DB.C("RawData").Find(bson.M{
+			"$or": []interface{}{
+				bson.M{"_id": siret},
+				bson.M{"_id": siret[0:9]},
+			},
+		}).MapReduce(job, nil)
 	} else {
 		_, err = Db.DB.C("RawData").Find(bson.M{"value.index.algo2": true}).MapReduce(job, nil)
 	}
