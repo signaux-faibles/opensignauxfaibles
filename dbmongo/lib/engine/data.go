@@ -5,30 +5,28 @@ import (
 	"dbmongo/lib/naf"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"regexp"
 
 	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
 )
 
-func loadJSFunctions(path string) (map[string]bson.JavaScript, error) {
-	files, err := ioutil.ReadDir(path)
-	r := regexp.MustCompile(`(.*)\.js$`)
+//go:generate go run js/loadJS.go
 
-	functions := make(map[string]bson.JavaScript)
-
-	for _, f := range files {
-		if name := r.FindStringSubmatch(f.Name()); len(name) > 0 {
-			b, err := ioutil.ReadFile(path + f.Name())
-			if err == nil {
-				functions[name[1]] = bson.JavaScript{
-					Code: string(b),
-				}
-			}
-		}
-	}
-	return functions, err
+func loadJSFunctions(directoryName string) (map[string]bson.JavaScript, error) {
+  functions := make(map[string]bson.JavaScript)
+  var err error
+  if _, ok := jsFunctions[directoryName]; !ok {
+    err = errors.New("Map reduce javascript functions could not be found for " + directoryName)
+  } else {
+    err = nil
+  }
+  for k, v := range(jsFunctions[directoryName]) {
+    functions[k] = bson.JavaScript{
+      Code: string(v),
+    }
+  }
+  return functions, err
 }
 
 // PurgeNotCompacted permet de supprimer les objets non encore compactés
@@ -41,7 +39,7 @@ func PurgeNotCompacted() error {
 // PurgeBatch permet de supprimer un batch dans les objets de RawData
 func PurgeBatch(batchKey string) error {
 
-	functions, err := loadJSFunctions("js/purgeBatch/")
+	functions, err := loadJSFunctions("purgeBatch")
 	if err != nil {
 		return err
 	}
@@ -89,7 +87,7 @@ func Compact(batchKey string, types []string) error {
 		batchKey = batchesID[0]
 	}
 
-	functions, err := loadJSFunctions("js/compact/")
+	functions, err := loadJSFunctions("compact")
 	if err != nil {
 		return err
 	}
@@ -130,7 +128,7 @@ func Compact(batchKey string, types []string) error {
 //		batchesID = append(batchesID, b.ID.Key)
 //	}
 //
-//	functions, err := loadJSFunctions("js/compact/")
+//	functions, err := loadJSFunctions("compact")
 //	if err != nil {
 //		return err
 //	}
@@ -161,7 +159,7 @@ func Reduce(batchKey string, algo string, query interface{}, collection string) 
 		return errors.New("nom d'algorithme invalide, alphanumérique sans espace exigé")
 	}
 
-	functions, err := loadJSFunctions("js/reduce." + algo + "/")
+	functions, err := loadJSFunctions("reduce." + algo)
 
 	naf, err := naf.LoadNAF()
 	if err != nil {
@@ -218,7 +216,7 @@ func Reduce(batchKey string, algo string, query interface{}, collection string) 
 
 // Public alimente la collection Public avec les objets destinés à la diffusion
 func Public(batch AdminBatch, siret string) error {
-	functions, err := loadJSFunctions("js/public/")
+	functions, err := loadJSFunctions("public")
 
 	scope := bson.M{
 		"date_debut":             batch.Params.DateDebut,
