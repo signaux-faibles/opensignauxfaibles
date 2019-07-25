@@ -8,6 +8,8 @@ import (
 	"github.com/globalsign/mgo/bson"
 )
 
+//go:generate go run js/loadJS.go
+
 // Db connecteur exportable
 var Db DB
 
