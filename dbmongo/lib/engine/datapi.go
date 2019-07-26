@@ -14,16 +14,12 @@ import (
 )
 
 func readConnu() ([]string, error) {
-	bfc, err := ioutil.ReadFile(viper.GetString("scbfc"))
+	connus, err := ioutil.ReadFile(viper.GetString("sirens"))
 	if err != nil {
 		return nil, err
 	}
-	pdl, err := ioutil.ReadFile(viper.GetString("scpdl"))
-	if err != nil {
-		return nil, err
-	}
-	sirets := strings.Split(string(bfc), "\n")
-	sirets = append(sirets, strings.Split(string(pdl), "\n")...)
+
+	sirets := strings.Split(string(connus), "\n")
 	sort.Strings(sirets)
 	return sirets, nil
 }
@@ -62,7 +58,6 @@ func ExportDetectionToDatapi(url, user, password, batch string) error {
 	}
 
 	for iter.Next(&data) {
-		fmt.Println(i)
 		detection, err := exportdatapi.Compute(data)
 		if err != nil {
 			fmt.Println(err)
@@ -85,8 +80,9 @@ func ExportDetectionToDatapi(url, user, password, batch string) error {
 		datas = append(datas, detection...)
 		datas = append(datas, c)
 
-		if i > 100 {
+		if i > 3000 {
 			if datas != nil {
+				client.Connect(user, password)
 				err = client.Put("public", datas)
 				if err != nil {
 					fmt.Println(err)
@@ -98,6 +94,7 @@ func ExportDetectionToDatapi(url, user, password, batch string) error {
 	}
 
 	if datas != nil {
+		client.Connect(user, password)
 		err = client.Put("public", datas)
 		if err != nil {
 			fmt.Println(err)

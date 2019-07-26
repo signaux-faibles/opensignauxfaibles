@@ -29,7 +29,7 @@ function map() {
     let v = {
       diane: f.diane(value.diane),
       bdf: f.bdf(value.bdf),
-      sirene_ul: value.sirene_ul,
+      sirene_ul: (value.sirene_ul || {})[Object.keys(value.sirene_ul || {})[0] || ""],
     }
     emit({scope: "entreprise", key: this.value.key, batch: actual_batch}, v)
   }
