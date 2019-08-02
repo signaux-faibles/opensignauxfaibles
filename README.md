@@ -12,7 +12,7 @@ Solution logicielle pour la détection anticipée d'entreprises en difficulté
 ## Installation
 
 ```bash
-go get github.com/entrepreneur-interet-general/opensignauxfaibles/dbmongo
+go get github.com/signaux-faibles/opensignauxfaibles/dbmongo
 ```
 
 Dans l'arbre de sources de l'installation go, vous trouverez tous les répertoires nécessaires à l'exécution.
