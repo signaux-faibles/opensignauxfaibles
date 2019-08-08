@@ -1,10 +1,10 @@
-package engine 
+package engine
 
- var jsFunctions = map[string]map[string]string{
-"compact":{
-"currentState": `function currentState(batches){
+var jsFunctions = map[string]map[string]string{
+	"compact": {
+		"currentState": `function currentState(batches){
   var currentState = batches.reduce((m, batch) => {
-    //1. On supprime les clés de la mémoire 
+    //1. On supprime les clés de la mémoire
     Object.keys((batch.compact || {"delete":[]}).delete).forEach( type => {
       batch.compact.delete[type].forEach(key => {
         delete m[type].delete(key) // Should never fail or collection is corrupted
@@ -14,7 +14,7 @@ package engine
     //2. On ajoute les nouvelles clés
     Object.keys(batch).filter(type => type != "compact").forEach( type => {
       m[type] = m[type] || new Set()
-      
+
       Object.keys(batch[type]).forEach( key => {
         m[type].add(key)
       })
@@ -27,7 +27,7 @@ package engine
   return(currentState)
 }
 `,
-"finalize": `function finalize(k, o) {
+		"finalize": `function finalize(k, o) {
 
   o.index = {"algo1":false,
     "algo2":false}
@@ -37,10 +37,10 @@ package engine
     o.index.algo1 = true
     o.index.algo2 = true
   } else {
-    // Est-ce que l'un des batchs a un effectif ? 
+    // Est-ce que l'un des batchs a un effectif ?
     Object.keys(o.batch).some(batch => {
-      let hasEffectif = Object.keys(o.batch[batch].effectif || {}).length > 0 
-      o.index.algo1 = hasEffectif 
+      let hasEffectif = Object.keys(o.batch[batch].effectif || {}).length > 0
+      o.index.algo1 = hasEffectif
       o.index.algo2 = hasEffectif
       return (hasEffectif)
     })
@@ -48,17 +48,17 @@ package engine
   return(o)
 }
 `,
-"map": `function map() {      
+		"map": `function map() {
   try{
     if (this.value != null) {
-      emit(this.value.key, this.value) 
-    }   
+      emit(this.value.key, this.value)
+    }
   } catch(error) {
     print(this.value.key)
   }
 }
 `,
-"reduce": `function reduce(key, values) {
+		"reduce": `function reduce(key, values) {
 
   // Tester si plusieurs batchs. Reduce complet uniquement si plusieurs
   // batchs. Sinon, juste fusion des attributs
@@ -263,9 +263,9 @@ package engine
   return(reduced_value)
 }
 `,
-},
-"public":{
-"altaresToHuman": `function altaresToHuman (code) {
+	},
+	"public": {
+		"altaresToHuman": `function altaresToHuman (code) {
   var codeLiquidation = ['PCL0108', 'PCL010801','PCL010802','PCL030107','PCL030307','PCL030311','PCL05010103','PCL05010204','PCL05010303','PCL05010403','PCL05010503','PCL05010703','PCL05011004','PCL05011102','PCL05011204','PCL05011206','PCL05011304','PCL05011404','PCL05011504','PCL05011604','PCL05011903','PCL05012004','PCL050204','PCL0109','PCL010901','PCL030108','PCL030308','PCL05010104','PCL05010205','PCL05010304','PCL05010404','PCL05010504','PCL05010803','PCL05011005','PCL05011103','PCL05011205','PCL05011207','PCL05011305','PCL05011405','PCL05011505','PCL05011904','PCL05011605','PCL05012005'];
   var codePlanSauvegarde = ['PCL010601','PCL0106','PCL010602','PCL030103','PCL030303','PCL03030301','PCL05010101','PCL05010202','PCL05010301','PCL05010401','PCL05010501','PCL05010506','PCL05010701','PCL05010705','PCL05010801','PCL05010805','PCL05011002','PCL05011202','PCL05011302','PCL05011402','PCL05011502','PCL05011602','PCL05011901','PCL0114','PCL030110','PCL030310'];
   var codeRedressement = ['PCL0105','PCL010501','PCL010502','PCL010503','PCL030105','PCL030305','PCL05010102','PCL05010203','PCL05010302','PCL05010402','PCL05010502','PCL05010702','PCL05010706','PCL05010802','PCL05010806','PCL05010901','PCL05011003','PCL05011101','PCL05011203','PCL05011303','PCL05011403','PCL05011503','PCL05011603','PCL05011902','PCL05012003'];
@@ -274,7 +274,7 @@ package engine
   var codeSauvegarde = ['PCL0203','PCL020301','PCL0205','PCL040408'];
   var codeCession = ['PCL0204','PCL020401','PCL020402','PCL020403'];
   var res = null;
-  if (codeLiquidation.includes(code)) 
+  if (codeLiquidation.includes(code))
     res = 'liquidation';
   else if (codePlanSauvegarde.includes(code))
     res = 'plan_sauvegarde';
@@ -290,19 +290,19 @@ package engine
     res = 'cession';
   return res;
 }`,
-"apconso": `function apconso(apconso) {
+		"apconso": `function apconso(apconso) {
   return f.iterable(apconso).sort((p1, p2) => p1.periode < p2.periode)
 }`,
-"apdemande": `function apdemande(apdemande) {
+		"apdemande": `function apdemande(apdemande) {
   return f.iterable(apdemande).sort((p1, p2) => p1.periode < p2.periode)
 }`,
-"bdf": `function bdf(hs) {
+		"bdf": `function bdf(hs) {
   return f.iterable(hs).sort((a, b) => a.annee_bdf < b.annee_bdf)
 }`,
-"cotisations": `function cotisations(vcotisation) {
-  var offset_cotisation = 0 
+		"cotisations": `function cotisations(vcotisation) {
+  var offset_cotisation = 0
   var value_cotisation = {}
-  
+
   // Répartition des cotisations sur toute la période qu'elle concerne
   vcotisation = vcotisation || {}
   Object.keys(vcotisation).forEach(function (h) {
@@ -318,7 +318,7 @@ package engine
 
   serie_periode.forEach(p => {
     output_cotisation.push(
-      (value_cotisation[p.getTime()] || []) 
+      (value_cotisation[p.getTime()] || [])
         .reduce((m,c) => m+c, 0)
     )
   })
@@ -326,17 +326,17 @@ package engine
   return(output_cotisation)
 }
 `,
-"dateAddDay": `function dateAddDay(date, nbMonth) {
+		"dateAddDay": `function dateAddDay(date, nbMonth) {
   var result = new Date(date.getTime())
   result.setDate( result.getDate() + nbMonth );
   return result
 }`,
-"dateAddMonth": `function dateAddMonth(date, nbMonth) {
+		"dateAddMonth": `function dateAddMonth(date, nbMonth) {
   var result = new Date(date.getTime())
   result.setUTCMonth(result.getUTCMonth() + nbMonth)
   return result
 }`,
-"dealWithProcols": `function dealWithProcols(data_source, altar_or_procol, output_indexed){
+		"dealWithProcols": `function dealWithProcols(data_source, altar_or_procol, output_indexed){
   return Object.keys(data_source || {}).reduce((events,hash) => {
     var the_event = data_source[hash]
 
@@ -355,7 +355,7 @@ package engine
   )
 }
 `,
-"debits": `function dettes(vdebit) {
+		"debits": `function dettes(vdebit) {
 
   last_treatment_day = 20
   vdebit = vdebit || {}
@@ -370,7 +370,7 @@ package engine
           "hash": h,
           "numero_historique": debit.numero_historique,
           "date_traitement": debit.date_traitement
-      }]) 
+      }])
       return accu
   }, {})
 
@@ -390,9 +390,9 @@ package engine
     var debit = vdebit[h]
 
     var debit_suivant = (vdebit[debit.debit_suivant] || {"date_traitement" : date_fin})
-    
-    //Selon le jour du traitement, cela passe sur la période en cours ou sur la suivante. 
-    let jour_traitement = debit.date_traitement.getUTCDate() 
+
+    //Selon le jour du traitement, cela passe sur la période en cours ou sur la suivante.
+    let jour_traitement = debit.date_traitement.getUTCDate()
     let jour_traitement_suivant = debit_suivant.date_traitement.getUTCDate()
     if (jour_traitement <= last_treatment_day){
       date_traitement_debut = new Date(
@@ -422,7 +422,7 @@ package engine
       let time = date.getTime()
       value_dette[time] = (value_dette[time] || []).concat([{ "periode": debit.periode.start, "part_ouvriere": debit.part_ouvriere, "part_patronale": debit.part_patronale, "montant_majorations": debit.montant_majorations}])
     })
-  })    
+  })
 
   output_dette = []
   serie_periode.forEach(p => {
@@ -440,13 +440,13 @@ package engine
   return(output_dette)
 }
 `,
-"delai": `function delai(delai) {
+		"delai": `function delai(delai) {
   return f.iterable(delai)
 }`,
-"diane": `function diane(hs) {
+		"diane": `function diane(hs) {
  return f.iterable(hs).sort((a, b) => a.exercice_diane < b.exercice_diane)
 }`,
-"effectifs": `function effectifs(v) {
+		"effectifs": `function effectifs(v) {
   var mapEffectif = {}
   f.iterable(v.effectif).forEach(e => {
     mapEffectif[e.periode.getTime()] = (mapEffectif[e.periode.getTime()] || 0) + e.effectif
@@ -458,10 +458,10 @@ package engine
     }
   }).filter(p => p.effectif)
 }`,
-"finalize": `function finalize(_, v) {
+		"finalize": `function finalize(_, v) {
   return v
 }`,
-"flatten": `function flatten(v, actual_batch) {
+		"flatten": `function flatten(v, actual_batch) {
   var res = Object.keys(v.batch || {})
     .sort()
     .filter(batch => batch <= actual_batch)
@@ -491,7 +491,7 @@ package engine
   return(res)
 }
 `,
-"generatePeriodSerie": `function generatePeriodSerie (date_debut, date_fin) {
+		"generatePeriodSerie": `function generatePeriodSerie (date_debut, date_fin) {
   var date_next = new Date(date_debut.getTime())
   var serie = []
   while (date_next.getTime() < date_fin.getTime()) {
@@ -500,14 +500,14 @@ package engine
   }
   return serie
 }`,
-"idEntreprise": `function idEntreprise(idEtablissement) {
+		"idEntreprise": `function idEntreprise(idEtablissement) {
   return {
     scope: 'entreprise',
     key: idEtablissement.slice(0,9),
     batch: actual_batch
   }
 }`,
-"iterable": `function iterable(dict) {
+		"iterable": `function iterable(dict) {
   try {
     return Object.keys(dict).map(h => {
       return dict[h]
@@ -517,7 +517,7 @@ package engine
   }
 }
 `,
-"map": `function map() {
+		"map": `function map() {
   var value = f.flatten(this.value, actual_batch)
 
   if (this.value.scope=="etablissement") {
@@ -533,7 +533,7 @@ package engine
     vcmde.apdemande = f.apconso(value.apdemande)
     vcmde.idEntreprise = f.idEntreprise(this._id)
     vcmde.delai = f.delai(value.delai)
-    vcmde.procol = f.dealWithProcols(value.altares, "altares",  null).concat(f.dealWithProcols(value.procol, "procol",  null)) 
+    vcmde.procol = f.dealWithProcols(value.altares, "altares",  null).concat(f.dealWithProcols(value.procol, "procol",  null))
     if (vcmde.procol.length >= 1){
       vcmde.last_procol = vcmde.procol[vcmde.procol.length - 1]
     } else {
@@ -547,15 +547,16 @@ package engine
   else if (this.value.scope == "entreprise") {
     let v = {
       diane: f.diane(value.diane),
-      bdf: f.bdf(value.bdf)
+      bdf: f.bdf(value.bdf),
+      sirene_ul: (value.sirene_ul || {})[Object.keys(value.sirene_ul || {})[0] || ""],
     }
     emit({scope: "entreprise", key: this.value.key, batch: actual_batch}, v)
   }
 }
 `,
-"procolToHuman": `function procolToHuman (action, stade) {
+		"procolToHuman": `function procolToHuman (action, stade) {
   var res = null;
-  if (action == "liquidation" && stade != "abandon_procedure") 
+  if (action == "liquidation" && stade != "abandon_procedure")
     res = 'liquidation';
   else if (stade == "abandon_procedure" || stade == "fin_procedure")
     res = 'in_bonis';
@@ -569,7 +570,7 @@ package engine
     res = 'plan_redressement';
   return res;
 }`,
-"reduce": `function reduce(key, values) {
+		"reduce": `function reduce(key, values) {
   if (key.scope="entreprise") {
     values = values.reduce((m, v) => {
       if (v.sirets) {
@@ -582,17 +583,17 @@ package engine
   }
   return values
 }`,
-"sirene": `function sirene(sireneArray) {
+		"sirene": `function sirene(sireneArray) {
   return sireneArray.reduce((accu, k) => {
     return k
   }, {})
 }`,
-},
-"purgeBatch":{
-"finalize": `function finalize(k, o) {
+	},
+	"purgeBatch": {
+		"finalize": `function finalize(k, o) {
     return o
 }`,
-"map": `function map() {
+		"map": `function map() {
   if (this.value.batch[currentBatch]){
     delete this.value.batch[currentBatch]
   }
@@ -602,20 +603,95 @@ package engine
   }
 }
 `,
-"reduce": `function reduce(key, values) {
+		"reduce": `function reduce(key, values) {
     return values
 }`,
-},
-"reduce.algo2":{
-"add": `function add(obj, output){
-      Object.keys(obj).forEach(periode => {
-        if (periode in output){
-          output[periode] = Object.assign(output[periode], obj[periode])
-        }
-      }) 
+	},
+	"reduce.algo2": {
+		"add": `function add(obj, output){
+  Object.keys(output).forEach(function(periode) {
+    if (periode in obj){
+      Object.assign(output[periode], obj[periode])
+    } else {
+      // throw new EvalError(
+      //   "Attention, l'objet à fusionner ne possède pas les mêmes périodes que l'objet dans lequel il est fusionné"
+      // )
+    }
+  })
 }
 `,
-"altaresToHuman": `function altaresToHuman (code) {
+		"add_test": `var test_cases = [
+  {
+    data: {"2015-01-01": {any_value: true}},
+    data_to_add: {},
+    error_expected: true,
+    expected: {}
+  },
+  {
+    data: {"2015-01-01": {any_value: true}},
+    data_to_add: {"2015-01-01":{}},
+    error_expected: false,
+    expected: {"2015-01-01":{any_value: true}}
+  },
+  {
+    data: {"2015-01-01": {any_value: true}},
+    data_to_add: {"2015-01-01":{any_value: false}},
+    error_expected: false,
+    expected: {"2015-01-01":{any_value: false}}
+  },
+  {
+    data: {"2015-01-01": {any_value: true}},
+    data_to_add: {"2015-01-01":{other_value: false}},
+    error_expected: false,
+    expected: {"2015-01-01":{any_value: true, other_value: false}}
+  },
+  {
+    data: {
+      "2015-01-01": {any_value: true},
+      "2015-02-01": {any_value: true}
+    },
+    data_to_add: {
+      "2015-01-01":{other_value: false},
+      "2015-02-01":{other_value: false},
+    },
+    error_expected: false,
+    expected: {
+      "2015-01-01":{any_value: true, other_value: false},
+      "2015-02-01":{any_value: true, other_value: false},
+    }
+  }
+]
+
+var test_results = test_cases.map(function(tc, id){
+  var test_passes
+  if (tc.error_expected) {
+    try {
+      add(tc["data_to_add"], tc["data"])
+    } catch (e) {
+      var rightError = (e instanceof EvalError)
+    }
+    test_passes = rightError
+    if (!test_passes){
+      console.log("Test fails: error expected. " + id)
+    }
+
+  } else {
+    add(tc["data_to_add"], tc["data"])
+    test_passes = compare(tc["data"], tc["expected"])
+    if (!test_passes){
+      console.log("Test fails: " + id)
+      console.log("actual:" + JSON.stringify(tc["data"]))
+      console.log("expected: " + JSON.stringify(tc["expected"]))
+    }
+
+  }
+  return(test_passes)
+})
+
+console.log("add.js",test_results)
+
+`,
+		"altaresToHuman": `function altaresToHuman (code) {
   var codeLiquidation = ['PCL0108', 'PCL010801','PCL010802','PCL030107','PCL030307','PCL030311','PCL05010103','PCL05010204','PCL05010303','PCL05010403','PCL05010503','PCL05010703','PCL05011004','PCL05011102','PCL05011204','PCL05011206','PCL05011304','PCL05011404','PCL05011504','PCL05011604','PCL05011903','PCL05012004','PCL050204','PCL0109','PCL010901','PCL030108','PCL030308','PCL05010104','PCL05010205','PCL05010304','PCL05010404','PCL05010504','PCL05010803','PCL05011005','PCL05011103','PCL05011205','PCL05011207','PCL05011305','PCL05011405','PCL05011505','PCL05011904','PCL05011605','PCL05012005'];
   var codePlanSauvegarde = ['PCL010601','PCL0106','PCL010602','PCL030103','PCL030303','PCL03030301','PCL05010101','PCL05010202','PCL05010301','PCL05010401','PCL05010501','PCL05010506','PCL05010701','PCL05010705','PCL05010801','PCL05010805','PCL05011002','PCL05011202','PCL05011302','PCL05011402','PCL05011502','PCL05011602','PCL05011901','PCL0114','PCL030110','PCL030310'];
   var codeRedressement = ['PCL0105','PCL010501','PCL010502','PCL010503','PCL030105','PCL030305','PCL05010102','PCL05010203','PCL05010302','PCL05010402','PCL05010502','PCL05010702','PCL05010706','PCL05010802','PCL05010806','PCL05010901','PCL05011003','PCL05011101','PCL05011203','PCL05011303','PCL05011403','PCL05011503','PCL05011603','PCL05011902','PCL05012003'];
@@ -624,7 +700,7 @@ package engine
   var codeSauvegarde = ['PCL0203','PCL020301','PCL0205','PCL040408'];
   var codeCession = ['PCL0204','PCL020401','PCL020402','PCL020403'];
   var res = null;
-  if (codeLiquidation.includes(code)) 
+  if (codeLiquidation.includes(code))
     res = 'liquidation';
   else if (codePlanSauvegarde.includes(code))
     res = 'plan_sauvegarde';
@@ -640,7 +716,7 @@ package engine
     res = 'cession';
   return res;
 }`,
-"apart": `function apart (v, output_effectif) {
+		"apart": `function apart (v, output_effectif) {
   var output_apart = {}
 
   // Mapping (pour l'instant vide) du hash de la demande avec les hash des consos correspondantes
@@ -735,94 +811,152 @@ package engine
   return(output_apart)
 }
 `,
-"ccsf": `function ccsf(v, output_array){
+		"ccsf": `function ccsf(v, output_array){
 
   var ccsfHashes = Object.keys(v.ccsf || {})
 
-  output_array.forEach(val => {    
+  output_array.forEach(val => {
     var optccsf = ccsfHashes.reduce( function (accu, hash) {
-      let ccsf = v.ccsf[hash] 
-      if (ccsf.date_traitement.getTime() < val.periode.getTime() && ccsf.date_traitement.getTime() > accu.date_traitement.getTime()) { 
-        accu = ccsf 
-      } 
+      let ccsf = v.ccsf[hash]
+      if (ccsf.date_traitement.getTime() < val.periode.getTime() && ccsf.date_traitement.getTime() > accu.date_traitement.getTime()) {
+        accu = ccsf
+      }
       return(accu)
-    }, 
-      { 
-        date_traitement: new Date(0) 
-      } 
-    )         
+    },
+      {
+        date_traitement: new Date(0)
+      }
+    )
 
-    if (optccsf.date_traitement.getTime() != 0) { 
-      val.date_ccsf = optccsf.date_traitement 
-    } 
-  })
-}
-`,
-"cibleApprentissage": `function cibleApprentissage(output_indexed) {
-  // Préparation des transformations de fonctions
-  //
-  let output_cotisation = output_indexed
-  let output_procol = output_indexed
-
-  let all_keys = [...new Set([...Object.keys(output_cotisation), ...Object.keys(output_procol)])]
-
-  let merged_info = {}
-  all_keys.forEach(k => {
-    merged_info[k] = merged_info[k] || {outcome: false}
-    if (output_procol[k].tag_failure || output_cotisation[k].tag_default)
-      merged_info[k]["outcome"] = true
-  })
-
-  let output_cible = {}
-
-  let output_cible1 = f.lookAhead(merged_info, "outcome", 18, true)
-  let output_cible2 = f.lookAhead(output_cotisation, "tag_debit", 18, true)
-
-  all_keys.forEach(k => {
-    output_cible[k] = {}
-    if (output_cible1[k]){
-      output_cible[k].outcome = output_cible1[k].outcome
-      output_cible[k].time_til_outcome = output_cible1[k].time_til_outcome
+    if (optccsf.date_traitement.getTime() != 0) {
+      val.date_ccsf = optccsf.date_traitement
     }
-    if (output_cible2[k])
-      output_cible[k].debit_18m = output_cible2[k].outcome
   })
-
-  return (output_cible)
-  //let counter = -1
-  //all_keys.sort((a,b)=> a<=b).forEach( k => {
-  //  if (counter >= 0) counter = counter + 1
-  //  if (output_procol[k].tag_failure || output_cotisation[k].tag_default){
-  //    counter = 0
-  //  }
-  //  if (counter >= 0){
-  //    output_cible[k] = output_cible[k] || {}
-  //    output_cible[k].time_til_outcome = counter
-  //  }
-  //})
-
-  //Object.keys(output_cible).forEach( k => {
-  //  if ("time_til_outcome" in output_cible[k] &&
-  //    output_cible[k].time_til_outcome <= 18){
-  //    //||
-  //    //(("arrete_bilan_diane" in v[siret] || "arrete_bilan_bdf" in v[siret]) &&
-  //    //  v[siret].time_til_outcome <= 30)) &&
-  //    //  !("arrete_bilan_diane" in v[siret] && v[siret].arrete_bilan_diane < key.periode &&
-  //    //  f.generatePeriodSerie(key.periode, v[siret].arrete_bilan_diane).length >= 18)  &&
-  //    //!("arrete_bilan_bdf" in v[siret] && v[siret].arrete_bilan_bdf < key.periode &&
-  //    //  f.generatePeriodSerie(key.periode, v[siret].arrete_bilan_bdf).length >= 18)) {
-  //    output_cible[k].outcome = true
-  //  } else output_cible[k].outcome = false
-  //})
 }
-
 `,
-"compareDebit": `function compareDebit (a,b) {
+		"cibleApprentissage": `function cibleApprentissage(output_indexed, n_months) {
+
+  // Mock two input instead of one for future modification
+  var output_cotisation = output_indexed
+  var output_procol = output_indexed
+  // replace with const
+  var all_keys = Object.keys(output_indexed)
+  //
+
+  var merged_info = all_keys.reduce(function(m, k) {
+    m[k] = {outcome: Boolean(
+      output_procol[k].tag_failure || output_cotisation[k].tag_default
+    )}
+    return m
+  }, {})
+
+  var output_outcome = f.lookAhead(merged_info, "outcome", n_months, true)
+  var output_default = f.lookAhead(output_cotisation, "tag_default", n_months, true)
+  var output_failure = f.lookAhead(output_procol, "tag_failure", n_months, true)
+
+  var output_cible = all_keys.reduce(function(m, k) {
+    m[k] = {}
+
+    if (output_outcome[k])
+      m[k] = output_outcome[k]
+    if (output_default[k])
+      m[k].time_til_default = output_default[k].time_til_outcome
+    if (output_failure[k])
+      m[k].time_til_failure = output_failure[k].time_til_outcome
+    return m
+  }, {})
+
+  return output_cible
+}
+`,
+		"cibleApprentissage_test": `var test_cases = [
+  {
+    data: {"2015-01-01": {tag_default: true}},
+    n_months: 1,
+    expected: {"2015-01-01":{"time_til_outcome":0,"outcome":true, "time_til_default":0}}
+  },
+  {
+    data: {
+      "2015-01-01": {},
+      "2015-02-01": {},
+      "2015-03-01": {},
+      "2015-04-01": {}
+    },
+    n_months: 1,
+    expected: {
+      "2015-01-01":{},
+      "2015-02-01":{},
+      "2015-03-01":{},
+      "2015-04-01":{}
+    }
+  },
+  {
+    data: {
+      "2015-01-01": {},
+      "2015-02-01": {},
+      "2015-03-01": {tag_default: true},
+      "2015-04-01": {}
+    },
+    n_months: 1,
+    expected: {
+      "2015-01-01":{"time_til_outcome":2, "outcome":false, "time_til_default":2},
+      "2015-02-01":{"time_til_outcome":1, "outcome":true, "time_til_default":1},
+      "2015-03-01":{"time_til_outcome":0, "outcome":true, "time_til_default":0},
+      "2015-04-01":{}
+    }
+  },
+  {
+    data: {
+      "2015-01-01": {},
+      "2015-02-01": {},
+      "2015-03-01": {tag_failure: true},
+      "2015-04-01": {}
+    },
+    n_months: 1,
+    expected: {
+      "2015-01-01":{"time_til_outcome":2, "outcome":false, "time_til_failure":2},
+      "2015-02-01":{"time_til_outcome":1, "outcome":true, "time_til_failure":1},
+      "2015-03-01":{"time_til_outcome":0, "outcome":true, "time_til_failure":0},
+      "2015-04-01":{}
+    }
+  },
+  {
+    data: {
+      "2015-01-01": {},
+      "2015-02-01": {},
+      "2015-03-01": {tag_failure: true},
+      "2015-04-01": {tag_default: true}
+    },
+    n_months: 1,
+    expected: {
+      "2015-01-01":{"time_til_outcome":2, "outcome":false, "time_til_failure":2, "time_til_default": 3},
+      "2015-02-01":{"time_til_outcome":1, "outcome":true, "time_til_failure":1, "time_til_default": 2},
+      "2015-03-01":{"time_til_outcome":0, "outcome":true, "time_til_failure":0, "time_til_default": 1},
+      "2015-04-01":{"time_til_outcome":0, "outcome":true, "time_til_default":0}
+    }
+  }
+]
+
+var test_results = test_cases.map(function(tc, id){
+  var actual = cibleApprentissage(tc["data"], tc["n_months"])
+
+  var test_passes = compare(actual, tc["expected"])
+  if (!test_passes){
+    console.log("Test fails: " + id)
+    console.log("actual:" + JSON.stringify(actual))
+    console.log("expected: " + JSON.stringify(tc["expected"]))
+  }
+  return(test_passes)
+})
+
+console.log("cibleApprentissage_test.js",test_results)
+`,
+		"compareDebit": `function compareDebit (a,b) {
   if (a.numero_historique < b.numero_historique) return -1
   if (a.numero_historique > b.numero_historique) return 1
   return 0
 }`,
-"compte": `function compte (v, periodes) {
+		"compte": `function compte (v, periodes) {
   let output_compte = {}
 
 
@@ -837,7 +971,7 @@ package engine
   return output_compte
 }
 `,
-"cotisation": `function cotisation(output_indexed, output_array) {
+		"cotisation": `function cotisation(output_indexed, output_array) {
   // calcul de cotisation_moyenne sur 12 mois
   Object.keys(output_indexed).forEach(k => {
     let periode_courante = output_indexed[k].periode
@@ -889,7 +1023,7 @@ package engine
   })
 }
 `,
-"cotisationsdettes": `function cotisationsdettes(v, periodes) {
+		"cotisationsdettes": `function cotisationsdettes(v, periodes) {
 
   // Tous les débits traitées après ce jour du mois sont reportées à la période suivante
   // Permet de s'aligner avec le calendrier de fourniture des données
@@ -1043,12 +1177,12 @@ package engine
   return(output_cotisationsdettes)
 }
 `,
-"dateAddMonth": `function dateAddMonth(date, nbMonth) {
+		"dateAddMonth": `function dateAddMonth(date, nbMonth) {
   var result = new Date(date.getTime())
   result.setUTCMonth(result.getUTCMonth() + nbMonth)
   return result
 }`,
-"dealWithProcols": `function dealWithProcols(data_source, altar_or_procol, output_indexed){
+		"dealWithProcols": `function dealWithProcols(data_source, altar_or_procol, output_indexed){
   var codes  =  Object.keys(data_source).reduce((events,hash) => {
     var the_event = data_source[hash]
 
@@ -1082,14 +1216,14 @@ package engine
   )
 }
 `,
-"defaillances": `function defaillances (v, output_indexed) {
+		"defaillances": `function defaillances (v, output_indexed) {
   f.dealWithProcols(v.altares, "altares", output_indexed)
   f.dealWithProcols(v.procol, "procol", output_indexed)
 }
-  
-  
+
+
   `,
-"delais": `function delais (v, output_indexed) {
+		"delais": `function delais (v, output_indexed) {
   Object.keys(v.delai).map(
     function (hash) {
       var delai = v.delai[hash]
@@ -1118,7 +1252,7 @@ package engine
   )
 }
 `,
-"detteFiscale": `function detteFiscale (diane){
+		"detteFiscale": `function detteFiscale (diane){
   if  (("dette_fiscale_et_sociale" in diane) && (diane["dette_fiscale_et_sociale"] !== null) &&
       ("valeur_ajoutee" in diane) && (diane["valeur_ajoutee"] !== null) &&
       (diane["valeur_ajoutee"] != 0)){
@@ -1127,7 +1261,7 @@ package engine
     return null
   }
 }`,
-"effectifs": `function effectifs (v, periodes) {
+		"effectifs": `function effectifs (v, periodes) {
 
   let output_effectif = {}
 
@@ -1191,17 +1325,12 @@ package engine
   return(output_effectif)
 }
 `,
-"finalize": `function finalize(k, v) {
+		"finalize": `function finalize(k, v) {
 
-
-  //var empty = (v.entreprise||[]).reduce((accu, siren_periode) => {
-  //  if (siren_periode){
-  //    Object.keys(siren_periode).forEach(key => {
-  //      accu[key] = null
-  //    })
-  //  }
-  //  return(accu)
-  //},{})
+  //v de la forme
+  // .id: {batch / siren / periode}
+  // value: {siret1: {}, siret2: {}, "siren": {}}
+  print(JSON.stringify(k), JSON.stringify(v))
   //
   ///
   ///////////////////////////////////////////////
@@ -1222,24 +1351,15 @@ package engine
       entreprise.apart_entreprise = (entreprise.apart_entreprise || 0) + v[siret].apart_heures_consommees // initialized to 0
       entreprise.debit_entreprise = (entreprise.debit_entreprise || 0) +
         (v[siret].montant_part_patronale || 0) +
-        (v[siret].montant_part_ouvriere || 0) 
+        (v[siret].montant_part_ouvriere || 0)
       // not initialized
       //}
     }
   })
 
-  Object.keys(v).forEach(siret =>{ 
-      Object.assign(v[siret], entreprise) 
+  Object.keys(v).forEach(siret =>{
+    Object.assign(v[siret], entreprise)
   })
-
-  //
-  ///
-  //////////////////////////////
-  /// Objectif entrainement ///
-  //////////////////////////////
-  ///
-  //
-
 
   //une fois que les comptes sont faits...
   let output = []
@@ -1254,7 +1374,7 @@ package engine
     return output
 }
 `,
-"financierCourtTerme": `function financierCourtTerme(diane) {
+		"financierCourtTerme": `function financierCourtTerme(diane) {
   if  (("concours_bancaire_courant" in diane) && (diane["concours_bancaire_courant"] !== null) &&
     ("ca" in diane) && (diane["ca"] !== null) &&
     (diane["ca"] != 0)){
@@ -1263,7 +1383,7 @@ package engine
     return null
   }
 }`,
-"financierCourtTerms": `function financierCourtTerme(diane) {
+		"financierCourtTerms": `function financierCourtTerme(diane) {
   if  (("concours_bancaire_courant" in diane) && (diane["concours_bancaire_courant"] !== null) &&
     ("ca" in diane) && (diane["ca"] !== null) &&
     (diane["ca"] != 0)){
@@ -1272,7 +1392,7 @@ package engine
     return null
   }
 }`,
-"flatten": `function flatten(v, actual_batch) {
+		"flatten": `function flatten(v, actual_batch) {
   var res = Object.keys(v.batch || {})
     .sort()
     .filter(batch => batch <= actual_batch)
@@ -1283,8 +1403,7 @@ package engine
       var new_types =  Object.keys(v.batch[batch])
       var all_interesting_types = [...new Set([...delete_types, ...new_types])]
 
-      all_interesting_types.forEach((type) => {
-
+      all_interesting_types.forEach(type => {
         m[type] = (m[type] || {})
         // On supprime les clés qu'il faut
         if (v.batch[batch] && v.batch[batch].compact && v.batch[batch].compact.delete &&
@@ -1302,7 +1421,7 @@ package engine
   return(res)
 }
 `,
-"fraisFinancier": `function fraisFinancier(diane){
+		"fraisFinancier": `function fraisFinancier(diane){
   if (("interets" in diane) && (diane["interets"] !== null) &&
     ("excedent_brut_d_exploitation" in diane) && (diane["excedent_brut_d_exploitation"] !== null) &&
     ("produits_financiers" in diane) && (diane["produits_financiers"] !== null) &&
@@ -1316,7 +1435,7 @@ package engine
     return null
   }
 }`,
-"generatePeriodSerie": `function generatePeriodSerie (date_debut, date_fin) {
+		"generatePeriodSerie": `function generatePeriodSerie (date_debut, date_fin) {
   var date_next = new Date(date_debut.getTime())
   var serie = []
   while (date_next.getTime() < date_fin.getTime()) {
@@ -1325,7 +1444,7 @@ package engine
   }
   return serie
 }`,
-"interim": `function interim (interim, output_indexed) {
+		"interim": `function interim (interim, output_indexed) {
   let output_effectif = output_indexed
   // let periodes = Object.keys(output_indexed)
   // output_indexed devra être remplacé par output_effectif, et ne contenir que les données d'effectif.
@@ -1360,49 +1479,157 @@ package engine
   return output_interim
 }
 `,
-"lookAhead": `function lookAhead(data, attr_name, n_months, past){
- 
-  // Est-ce que l'évènement se répercute dans le passé (past = true; on pourra se
-  // demander: que va-t-il se passer) ou dans le future (past = false; on
+		"lookAhead": `function lookAhead(data, attr_name, n_months, past) {
+  // Est-ce que l'évènement se répercute dans le passé (past = true on pourra se
+  // demander: que va-t-il se passer) ou dans le future (past = false on
   // pourra se demander que s'est-il passé
-
-  var sorting_fun = (
-    (a, b) => a>=b
-  ) 
+  var sorting_fun = function(a, b) { return(a >= b) }
   if (past) {
-    sorting_fun = (
-      (a, b) => a<=b
-    )
+    sorting_fun = function(a, b) { return(a <= b) }
   }
 
-  var output = {}
-  
-  let counter = -1
-  // Object.keys(data) représente les periodes 
-  Object.keys(data).sort(sorting_fun).forEach( k => {
-    if (counter >= 0) counter = counter + 1  // Si on a détecter quelque chose, on ajoute un à chaque période. 
-    
+  var counter = -1
+  var output = Object.keys(data).sort(sorting_fun).reduce(function (m, period) {
+    // Si on a déjà détecté quelque chose, on compte le nombre de périodes
+    if (counter >= 0) counter = counter + 1
 
+    if (data[period][attr_name]) {
+      // si l'évènement se produit on retombe à 0
+      counter = 0
+    }
 
-    if (data[k][attr_name]){ // l'évènement se produit 
-      counter = 0   
+    if (counter >= 0) {
+      // l'évènement s'est produit
+      m[period] = m[period] || {}
+      m[period].time_til_outcome = counter
+      if (m[period].time_til_outcome <= n_months) {
+        m[period].outcome = true
+      } else {
+        m[period].outcome = false
+      }
     }
-    if (counter >= 0){ // l'évènement s'est déjà produit
-      output[k] = output[k] || {}
-      output[k].time_til_outcome = counter
-    }
-  })
-  
-  Object.keys(output).forEach( k => {
-    if (output[k].time_til_outcome <= n_months){
-      output[k].outcome = true
-    } else output[k].outcome = false
-  })
-  return (output)
+    return m
+  }, {})
+
+  return output
 }
-
 `,
-"map": `function map () {
+		"lookAhead_test": `
+var test_cases = [
+  {
+    data: {"2015-01-01": {outcome: true}},
+    attr_name: "outcome",
+    n_months: 1,
+    past: true,
+    expected: {"2015-01-01":{"time_til_outcome":0,"outcome":true}}
+  },
+  {
+    data: {"2015-01-01": {outcome: false}},
+    attr_name: "outcome",
+    n_months: 1,
+    past: true,
+    expected: {}
+  },
+  {
+    data: {
+      "2015-01-01": {outcome: false},
+      "2015-02-01": {outcome: false},
+      "2015-03-01": {outcome: false}
+    },
+    attr_name: "outcome",
+    n_months: 1,
+    past: true,
+    expected: {}
+  },
+  {
+    data: {
+      "2015-01-01": {outcome: true},
+      "2015-02-01": {outcome: true},
+      "2015-03-01": {outcome: true}
+    },
+    attr_name: "outcome",
+    n_months: 1,
+    past: true,
+    expected: {
+      "2015-01-01":{"time_til_outcome":0,"outcome":true},
+      "2015-02-01":{"time_til_outcome":0,"outcome":true},
+      "2015-03-01":{"time_til_outcome":0,"outcome":true}
+    }
+  },
+  {
+    data: {
+      "2015-01-01": {outcome: false},
+      "2015-02-01": {outcome: false},
+      "2015-03-01": {outcome: true}
+    },
+    attr_name: "outcome",
+    n_months: 1,
+    past: true,
+    expected: {
+      "2015-01-01":{"time_til_outcome":2,"outcome":false},
+      "2015-02-01":{"time_til_outcome":1,"outcome":true},
+      "2015-03-01":{"time_til_outcome":0,"outcome":true}
+    }
+  },
+  {
+    data: {
+      "2015-01-01": {outcome: true},
+      "2015-02-01": {outcome: false},
+      "2015-03-01": {outcome: false}
+    },
+    attr_name: "outcome",
+    n_months: 1,
+    past: true,
+    expected: {
+      "2015-01-01":{"time_til_outcome":0,"outcome":true},
+    }
+  },
+  {
+    data: {
+      "2015-01-01": {outcome: true},
+      "2015-02-01": {outcome: false},
+      "2015-03-01": {outcome: false}
+    },
+    attr_name: "outcome",
+    n_months: 1,
+    past: false,
+    expected: {
+      "2015-01-01":{"time_til_outcome":0,"outcome":true},
+      "2015-02-01":{"time_til_outcome":1,"outcome":true},
+      "2015-03-01":{"time_til_outcome":2,"outcome":false}
+    }
+  },
+  {
+    data: {
+      "2015-01-01": {outcome: true},
+      "2015-02-01": {},
+      "2015-03-01": {}
+    },
+    attr_name: "outcome",
+    n_months: 1,
+    past: false,
+    expected: {
+      "2015-01-01":{"time_til_outcome":0,"outcome":true},
+      "2015-02-01":{"time_til_outcome":1,"outcome":true},
+      "2015-03-01":{"time_til_outcome":2,"outcome":false}
+    }
+  }
+]
+
+var test_results = test_cases.map(function(tc, id){
+  var actual = lookAhead(tc["data"], tc["attr_name"], tc["n_months"], tc["past"])
+
+  var test_passes = compare(actual, tc["expected"])
+  if (!test_passes){
+    console.log("Test fails: " + id)
+    console.log("actual:" + JSON.stringify(actual))
+    console.log("expected: " + JSON.stringify(tc["expected"]))
+  }
+  return(test_passes)
+})
+console.log("lookAhead_test.js", test_results)
+`,
+		"map": `function map () {
   let v = f.flatten(this.value, actual_batch)
 
   if (v.scope == "etablissement") {
@@ -1453,7 +1680,7 @@ package engine
 
     f.cotisation(output_indexed, output_array)
 
-    let output_cible = f.cibleApprentissage(output_indexed)
+    let output_cible = f.cibleApprentissage(output_indexed, 18)
     f.add(output_cible, output_indexed)
 
 
@@ -1609,16 +1836,20 @@ package engine
         delete periode.arrete_bilan_diane
       }
       emit(
-        { 'siren': this._id.substring(0, 9),
-          'batch': actual_batch,
-          'periode': periode.periode},
-          {'entreprise': periode}
-        )
+        {
+          "siren": this._id.substring(0, 9),
+          "batch": actual_batch,
+          "periode": periode.periode
+        },
+        {
+          "entreprise": periode
+        }
+      )
     })
   }
 }
 `,
-"naf": `function naf(output_indexed, naf) {
+		"naf": `function naf(output_indexed, naf) {
   Object.keys(output_indexed).forEach(k =>{
     if (("code_ape" in output_indexed[k]) && (output_indexed[k].code_ape !== null)){
       code_ape = output_indexed[k].code_ape
@@ -1635,7 +1866,7 @@ package engine
   })
 }
 `,
-"outputs": `function outputs (v, serie_periode) {
+		"outputs": `function outputs (v, serie_periode) {
   var output_array = serie_periode.map(function (e) {
     return {
       "siret": v.key,
@@ -1648,7 +1879,7 @@ package engine
       "outcome": false
     }
   });
-    
+
   var output_indexed = output_array.reduce(function (periode, val) {
       periode[val.periode.getTime()] = val
       return periode
@@ -1657,16 +1888,16 @@ package engine
   return [output_array, output_indexed]
 }
 `,
-"poidsFrng": `function poidsFrng(diane){
+		"poidsFrng": `function poidsFrng(diane){
   if  (("couverture_ca_fdr" in diane) && (diane["couverture_ca_fdr"] !== null)){
     return diane["couverture_ca_fdr"]/360 * 100
   } else {
     return null
   }
 }`,
-"procolToHuman": `function procolToHuman (action, stade) {
+		"procolToHuman": `function procolToHuman (action, stade) {
   var res = null;
-  if (action == "liquidation" && stade != "abandon_procedure") 
+  if (action == "liquidation" && stade != "abandon_procedure")
     res = 'liquidation';
   else if (stade == "abandon_procedure" || stade == "fin_procedure")
     res = 'in_bonis';
@@ -1680,12 +1911,13 @@ package engine
     res = 'plan_redressement';
   return res;
 }`,
-"reduce": `function reduce(_, values) {
-    return values.reduce((val, accu) => {
-        return Object.assign(accu, val)
-    }, {})
-}`,
-"repeatable": `function repeatable(rep){
+		"reduce": `function reduce(_, values) {
+  return values.reduce((val, accu) => {
+    return Object.assign(accu, val)
+  }, {})
+}
+`,
+		"repeatable": `function repeatable(rep){
   let output_repeatable = {}
   Object.keys(rep).forEach(hash => {
     var one_rep = rep[hash]
@@ -1700,7 +1932,7 @@ package engine
 
 
 `,
-"sirene": `function sirene (v, output_array) {
+		"sirene": `function sirene (v, output_array) {
   var sireneHashes = Object.keys(v.sirene || {})
 
   output_array.forEach(val => {
@@ -1726,7 +1958,7 @@ package engine
 }
 
 `,
-"sirene_ul": `function sirene_ul(v, output_array) {
+		"sirene_ul": `function sirene_ul(v, output_array) {
   var sireneHashes = Object.keys(v.sirene_ul || {})
   output_array.forEach(val => {
     if (sireneHashes.length != 0) {
@@ -1738,7 +1970,7 @@ package engine
   })
 }
 `,
-"tauxMarge": `function tauxMarge(diane) {
+		"tauxMarge": `function tauxMarge(diane) {
   if  (("excedent_brut_d_exploitation" in diane) && (diane["excedent_brut_d_exploitation"] !== null) &&
     ("valeur_ajoutee" in diane) && (diane["valeur_ajoutee"] !== null) &&
     (diane["excedent_brut_d_exploitation"] != 0)){
@@ -1747,5 +1979,34 @@ package engine
     return null
   }
 }`,
-},
+		"testing": `Object.assign = function(target) {
+  if (target == null) {
+    throw new TypeError("Cannot convert undefined or null to object")
+  }
+
+  target = Object(target)
+  for (var index = 1; index < arguments.length; index++) {
+    var source = arguments[index]
+    if (source != null) {
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key]
+        }
+      }
+    }
+  }
+  return target
+}
+
+function compare(a, b) {
+  if (Object.keys(a).length != Object.keys(b).length){
+    return false
+  }
+  var equal = Object.keys(a).every(function(k) {
+    return(JSON.stringify(a[k]) == JSON.stringify(b[k]))
+  })
+  return equal
+}
+`,
+	},
 }

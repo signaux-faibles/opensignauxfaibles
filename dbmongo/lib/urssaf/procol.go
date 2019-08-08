@@ -13,7 +13,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/chrnin/gournal"
+	"github.com/signaux-faibles/gournal"
 	"github.com/spf13/viper"
 )
 
@@ -93,13 +93,13 @@ func parseProcol(batch engine.AdminBatch, mapping Comptes) (chan engine.Tuple, c
 					// Journal(critical, "importProcol", "Erreur de lecture pendant l'import du fichier "+path+". Abandon.")
 					close(outputChannel)
 				}
-        procol := readLineProcol(
-          row,
-          &tracker,
-          dateEffetIndex,
-          siretIndex,
-          actionStadeIndex,
-        )
+				procol := readLineProcol(
+					row,
+					&tracker,
+					dateEffetIndex,
+					siretIndex,
+					actionStadeIndex,
+				)
 				if _, err := strconv.Atoi(row[siretIndex]); err == nil && len(row[siretIndex]) == 14 {
 					if !tracker.ErrorInCycle() {
 
@@ -120,31 +120,31 @@ func parseProcol(batch engine.AdminBatch, mapping Comptes) (chan engine.Tuple, c
 }
 
 func readLineProcol(
-  row []string,
-  tracker *gournal.Tracker,
-  dateEffetIndex int,
-  siretIndex int,
-  actionStadeIndex int,
-)(Procol){
+	row []string,
+	tracker *gournal.Tracker,
+	dateEffetIndex int,
+	siretIndex int,
+	actionStadeIndex int,
+) Procol {
 
-  procol := Procol{}
-  var err error
+	procol := Procol{}
+	var err error
 
-  dateFormatee := row[dateEffetIndex]
-  dateFormatee = dateFormatee[:3] + strings.ToLower(dateFormatee[4:5]) + dateFormatee[6:]
-  procol.DateEffet, err = time.Parse("02Jan2006", row[dateEffetIndex])
-  tracker.Error(err)
-  procol.Siret = row[siretIndex]
-  splitted := strings.Split(strings.ToLower(row[actionStadeIndex]), "_")
+	dateFormatee := row[dateEffetIndex]
+	dateFormatee = dateFormatee[:3] + strings.ToLower(dateFormatee[4:5]) + dateFormatee[6:]
+	procol.DateEffet, err = time.Parse("02Jan2006", row[dateEffetIndex])
+	tracker.Error(err)
+	procol.Siret = row[siretIndex]
+	splitted := strings.Split(strings.ToLower(row[actionStadeIndex]), "_")
 
-  for i, v := range splitted {
-    r, err := regexp.Compile("liquidation|redressement|sauvegarde")
-    tracker.Error(err)
-    if match := r.MatchString(v); match {
-      procol.ActionProcol = v
-      procol.StadeProcol = strings.Join(append(splitted[:i], splitted[i+1:]...), "_")
-      break
-    }
-  }
-  return(procol)
+	for i, v := range splitted {
+		r, err := regexp.Compile("liquidation|redressement|sauvegarde")
+		tracker.Error(err)
+		if match := r.MatchString(v); match {
+			procol.ActionProcol = v
+			procol.StadeProcol = strings.Join(append(splitted[:i], splitted[i+1:]...), "_")
+			break
+		}
+	}
+	return (procol)
 }

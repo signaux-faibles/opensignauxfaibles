@@ -7,7 +7,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/chrnin/gournal"
+	"github.com/signaux-faibles/gournal"
 	"github.com/spf13/viper"
 )
 

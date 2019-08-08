@@ -49,7 +49,7 @@ function map () {
 
     f.cotisation(output_indexed, output_array)
 
-    let output_cible = f.cibleApprentissage(output_indexed)
+    let output_cible = f.cibleApprentissage(output_indexed, 18)
     f.add(output_cible, output_indexed)
 
 
@@ -205,11 +205,15 @@ function map () {
         delete periode.arrete_bilan_diane
       }
       emit(
-        { 'siren': this._id.substring(0, 9),
-          'batch': actual_batch,
-          'periode': periode.periode},
-          {'entreprise': periode}
-        )
+        {
+          "siren": this._id.substring(0, 9),
+          "batch": actual_batch,
+          "periode": periode.periode
+        },
+        {
+          "entreprise": periode
+        }
+      )
     })
   }
 }

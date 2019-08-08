@@ -1,14 +1,9 @@
 function finalize(k, v) {
 
-
-  //var empty = (v.entreprise||[]).reduce((accu, siren_periode) => {
-  //  if (siren_periode){
-  //    Object.keys(siren_periode).forEach(key => {
-  //      accu[key] = null
-  //    })
-  //  }
-  //  return(accu)
-  //},{})
+  //v de la forme
+  // .id: {batch / siren / periode}
+  // value: {siret1: {}, siret2: {}, "siren": {}}
+  print(JSON.stringify(k), JSON.stringify(v))
   //
   ///
   ///////////////////////////////////////////////
@@ -29,24 +24,15 @@ function finalize(k, v) {
       entreprise.apart_entreprise = (entreprise.apart_entreprise || 0) + v[siret].apart_heures_consommees // initialized to 0
       entreprise.debit_entreprise = (entreprise.debit_entreprise || 0) +
         (v[siret].montant_part_patronale || 0) +
-        (v[siret].montant_part_ouvriere || 0) 
+        (v[siret].montant_part_ouvriere || 0)
       // not initialized
       //}
     }
   })
 
-  Object.keys(v).forEach(siret =>{ 
-      Object.assign(v[siret], entreprise) 
+  Object.keys(v).forEach(siret =>{
+    Object.assign(v[siret], entreprise)
   })
-
-  //
-  ///
-  //////////////////////////////
-  /// Objectif entrainement ///
-  //////////////////////////////
-  ///
-  //
-
 
   //une fois que les comptes sont faits...
   let output = []

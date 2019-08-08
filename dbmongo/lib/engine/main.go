@@ -4,8 +4,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/chrnin/gournal"
 	"github.com/globalsign/mgo/bson"
+	"github.com/signaux-faibles/gournal"
 )
 
 //go:generate go run js/loadJS.go

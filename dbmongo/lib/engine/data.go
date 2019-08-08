@@ -14,19 +14,19 @@ import (
 //go:generate go run js/loadJS.go
 
 func loadJSFunctions(directoryName string) (map[string]bson.JavaScript, error) {
-  functions := make(map[string]bson.JavaScript)
-  var err error
-  if _, ok := jsFunctions[directoryName]; !ok {
-    err = errors.New("Map reduce javascript functions could not be found for " + directoryName)
-  } else {
-    err = nil
-  }
-  for k, v := range(jsFunctions[directoryName]) {
-    functions[k] = bson.JavaScript{
-      Code: string(v),
-    }
-  }
-  return functions, err
+	functions := make(map[string]bson.JavaScript)
+	var err error
+	if _, ok := jsFunctions[directoryName]; !ok {
+		err = errors.New("Map reduce javascript functions could not be found for " + directoryName)
+	} else {
+		err = nil
+	}
+	for k, v := range jsFunctions[directoryName] {
+		functions[k] = bson.JavaScript{
+			Code: string(v),
+		}
+	}
+	return functions, err
 }
 
 // PurgeNotCompacted permet de supprimer les objets non encore compactés
@@ -115,45 +115,10 @@ func Compact(batchKey string, types []string) error {
 	return err
 }
 
-// Compact traite le compactage de la base RawData
-//func Compact() error {
-//	batches, _ := GetBatches()
-//
-//	// Détermination scope traitement
-//	var completeTypes = make(map[string][]string)
-//	var batchesID []string
-//
-//	for _, b := range batches {
-//		completeTypes[b.ID.Key] = b.CompleteTypes
-//		batchesID = append(batchesID, b.ID.Key)
-//	}
-//
-//	functions, err := loadJSFunctions("compact")
-//	if err != nil {
-//		return err
-//	}
-//	// Traitement MR
-//	job := &mgo.MapReduce{
-//		Map:      functions["map"].Code,
-//		Reduce:   functions["reduce"].Code,
-//		Finalize: functions["finalize"].Code,
-//		Out:      bson.M{"replace": "RawData"},
-//		Scope: bson.M{
-//			"f":     functions,
-//			"batches":       GetBatchesID(),
-//			"types":         GetTypes(),
-//			"completeTypes": completeTypes,
-//		},
-//	}
-//
-//	_, err = Db.DB.C("RawData").Find(nil).MapReduce(job, nil)
-//
-//	return err
-//}
-
 // Reduce alimente la base Features
 func Reduce(batchKey string, algo string, query interface{}, collection string) error {
-	// éviter les noms d'algo essayant de pervertir l'exploration des fonctions
+
+	// éviter les noms d'algo essayant de hacker l'exploration des fonctions ci-dessous
 	isAlphaNum := regexp.MustCompile(`^[A-Za-z0-9]+$`).MatchString
 	if !isAlphaNum(algo) {
 		return errors.New("nom d'algorithme invalide, alphanumérique sans espace exigé")
@@ -191,7 +156,7 @@ func Reduce(batchKey string, algo string, query interface{}, collection string) 
 		Finalize: functions["finalize"].Code,
 		//TODO merge into collection instead of replacing. Must be idempotent
 		//transformation. Not the case now with agregation
-		Out:   collection, //bson.M{"merge": collection},
+		Out:   bson.M{"replace": collection}, // bson.M{"merge": collection},
 		Scope: scope,
 	}
 
@@ -200,6 +165,8 @@ func Reduce(batchKey string, algo string, query interface{}, collection string) 
 	if err != nil {
 		return err
 	}
+
+	// Separating different sirets in different objects
 	query2 := []bson.M{{
 		"$unwind": bson.M{"path": "$value", "preserveNullAndEmptyArrays": false},
 	},

@@ -8,8 +8,8 @@ import (
 	"regexp"
 	"time"
 
-	"github.com/chrnin/gournal"
 	"github.com/kshedden/datareader"
+	"github.com/signaux-faibles/gournal"
 
 	"github.com/spf13/viper"
 )
@@ -42,8 +42,8 @@ func Parser(batch engine.AdminBatch, filter map[string]bool) (chan engine.Tuple,
 	eventChannel := make(chan engine.Event)
 
 	event := engine.Event{
-		Code: "parserInterim",
-    Channel: eventChannel,
+		Code:    "parserInterim",
+		Channel: eventChannel,
 	}
 
 	field := map[string]int{
@@ -85,7 +85,6 @@ func Parser(batch engine.AdminBatch, filter map[string]bool) (chan engine.Tuple,
 			sirets, missing, err := row[field["Siret"]].AsStringSlice()
 			tracker.Error(err)
 
-
 			periode, _, err := row[field["Periode"]].AsFloat64Slice()
 			tracker.Error(err)
 			etp, _, err := row[field["ETP"]].AsFloat64Slice()
@@ -98,10 +97,10 @@ func Parser(batch engine.AdminBatch, filter map[string]bool) (chan engine.Tuple,
 			}
 			for i := 0; i < len(sirets); i++ {
 				interim := Interim{}
-        validSiret, _ := regexp.MatchString("[0-9]{14}", sirets[i]);
-        validSiren :=  (sirets[i][:9] != "000000000")
+				validSiret, _ := regexp.MatchString("[0-9]{14}", sirets[i])
+				validSiren := (sirets[i][:9] != "000000000")
 
-				if  !missing[i] && validSiret &&  validSiren {
+				if !missing[i] && validSiret && validSiren {
 					interim.Siret = sirets[i][:14]
 					interim.Periode, _ = time.Parse("20060102", fmt.Sprintf("%6.0f", periode[i])+"01")
 					interim.ETP = etp[i]
@@ -114,7 +113,7 @@ func Parser(batch engine.AdminBatch, filter map[string]bool) (chan engine.Tuple,
 				} else {
 					//event.Debug(tracker.Report("errors"))
 				}
-        tracker.Next()
+				tracker.Next()
 			}
 			event.Info(tracker.Report("abstract"))
 			file.Close()
