@@ -135,8 +135,8 @@ func reportAbstract(tracker gournal.Tracker) interface{} {
 
 func reportErrors(tracker gournal.Tracker) interface{} {
 	return bson.M{
-		"report":      tracker.Context["path"] + ": ligne " + strconv.Itoa(tracker.Count) + " ignorée",
-		"errorReport": tracker.CurrentErrors(),
+		"report": tracker.Context["path"] + ": ligne " + strconv.Itoa(tracker.Count) + " ignorée",
+		// "errorReport": tracker.CurrentErrors(),
 	}
 }
 

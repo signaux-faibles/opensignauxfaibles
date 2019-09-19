@@ -181,48 +181,48 @@ func Reduce(batchKey string, algo string, query interface{}, collection string) 
 	return err
 }
 
-// Public alimente la collection Public avec les objets destinés à la diffusion
-func Public(batch AdminBatch, siret string) error {
-	functions, err := loadJSFunctions("public")
+// // Public alimente la collection Public avec les objets destinés à la diffusion
+// func OldPublic(batch AdminBatch, siret string) error {
+// 	functions, err := loadJSFunctions("public")
 
-	scope := bson.M{
-		"date_debut":             batch.Params.DateDebut,
-		"date_fin":               batch.Params.DateFin,
-		"date_fin_effectif":      batch.Params.DateFinEffectif,
-		"serie_periode":          misc.GenereSeriePeriode(batch.Params.DateFin.AddDate(0, -24, 0), batch.Params.DateFin),
-		"serie_periode_annuelle": misc.GenereSeriePeriodeAnnuelle(batch.Params.DateFin.AddDate(0, -24, 0), batch.Params.DateFin),
-		"offset_effectif":        (batch.Params.DateFinEffectif.Year()-batch.Params.DateFin.Year())*12 + int(batch.Params.DateFinEffectif.Month()-batch.Params.DateFin.Month()),
-		"actual_batch":           batch.ID.Key,
-		"naf":                    naf.Naf,
-		"f":                      functions,
-		"batches":                GetBatchesID(),
-		"types":                  GetTypes(),
-	}
+// 	scope := bson.M{
+// 		"date_debut":             batch.Params.DateDebut,
+// 		"date_fin":               batch.Params.DateFin,
+// 		"date_fin_effectif":      batch.Params.DateFinEffectif,
+// 		"serie_periode":          misc.GenereSeriePeriode(batch.Params.DateFin.AddDate(0, -24, 0), batch.Params.DateFin),
+// 		"serie_periode_annuelle": misc.GenereSeriePeriodeAnnuelle(batch.Params.DateFin.AddDate(0, -24, 0), batch.Params.DateFin),
+// 		"offset_effectif":        (batch.Params.DateFinEffectif.Year()-batch.Params.DateFin.Year())*12 + int(batch.Params.DateFinEffectif.Month()-batch.Params.DateFin.Month()),
+// 		"actual_batch":           batch.ID.Key,
+// 		"naf":                    naf.Naf,
+// 		"f":                      functions,
+// 		"batches":                GetBatchesID(),
+// 		"types":                  GetTypes(),
+// 	}
 
-	job := &mgo.MapReduce{
-		Map:      functions["map"].Code,
-		Reduce:   functions["reduce"].Code,
-		Finalize: functions["finalize"].Code,
-		Out:      bson.M{"replace": "Public"},
-		Scope:    scope,
-	}
-	// exécution
+// 	job := &mgo.MapReduce{
+// 		Map:      functions["map"].Code,
+// 		Reduce:   functions["reduce"].Code,
+// 		Finalize: functions["finalize"].Code,
+// 		Out:      bson.M{"replace": "Public"},
+// 		Scope:    scope,
+// 	}
+// 	// exécution
 
-	if siret != "" {
-		_, err = Db.DB.C("RawData").Find(bson.M{
-			"$or": []interface{}{
-				bson.M{"_id": siret},
-				bson.M{"_id": siret[0:9]},
-			},
-		}).MapReduce(job, nil)
-	} else {
-		_, err = Db.DB.C("RawData").Find(bson.M{"value.index.algo2": true}).MapReduce(job, nil)
-	}
-	if err != nil {
-		return errors.New("Erreur dans l'exécution des jobs MapReduce" + err.Error())
-	}
-	return nil
-}
+// 	if siret != "" {
+// 		_, err = Db.DB.C("RawData").Find(bson.M{
+// 			"$or": []interface{}{
+// 				bson.M{"_id": siret},
+// 				bson.M{"_id": siret[0:9]},
+// 			},
+// 		}).MapReduce(job, nil)
+// 	} else {
+// 		_, err = Db.DB.C("RawData").Find(bson.M{"value.index.algo2": true}).MapReduce(job, nil)
+// 	}
+// 	if err != nil {
+// 		return errors.New("Erreur dans l'exécution des jobs MapReduce" + err.Error())
+// 	}
+// 	return nil
+// }
 
 // BrowsePublic selectionne et retourne les objets de la collection Public
 // Cette selection tient compte du scope et des tris demandés pour aggréger le résultat

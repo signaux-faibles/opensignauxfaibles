@@ -140,13 +140,14 @@ func main() {
 		api.GET("/data/purge", purgeHandler)
 		api.GET("/data/purgeNotCompacted", purgeNotCompactedHandler)
 		api.POST("/data/public", publicHandler)
-		api.POST("/data/browse", browsePublicHandler)
-		api.POST("/data/prediction", predictionBrowseHandler)
-		api.POST("/data/etablissement", etablissementBrowseHandler)
 
-		api.POST("/comments/get", getCommentsHandler)
-		api.POST("/comments/set", setCommentHandler)
-		api.POST("/comments/history", getCommentHistoryHandler)
+		// api.POST("/data/browse", browsePublicHandler)
+		// api.POST("/data/prediction", predictionBrowseHandler)
+		// api.POST("/data/etablissement", etablissementBrowseHandler)
+
+		// api.POST("/comments/get", getCommentsHandler)
+		// api.POST("/comments/set", setCommentHandler)
+		// api.POST("/comments/history", getCommentHistoryHandler)
 
 		api.POST("/data/exportReference", datapiExportReferenceHandler)
 		api.POST("/data/exportDetection", datapiExportDetectionHandler)

@@ -1,10 +1,10 @@
-package engine
+package engine 
 
-var jsFunctions = map[string]map[string]string{
-	"compact": {
-		"currentState": `function currentState(batches){
+ var jsFunctions = map[string]map[string]string{
+"compact":{
+"currentState": `function currentState(batches){
   var currentState = batches.reduce((m, batch) => {
-    //1. On supprime les clés de la mémoire
+    //1. On supprime les clés de la mémoire 
     Object.keys((batch.compact || {"delete":[]}).delete).forEach( type => {
       batch.compact.delete[type].forEach(key => {
         delete m[type].delete(key) // Should never fail or collection is corrupted
@@ -14,7 +14,7 @@ var jsFunctions = map[string]map[string]string{
     //2. On ajoute les nouvelles clés
     Object.keys(batch).filter(type => type != "compact").forEach( type => {
       m[type] = m[type] || new Set()
-
+      
       Object.keys(batch[type]).forEach( key => {
         m[type].add(key)
       })
@@ -27,7 +27,7 @@ var jsFunctions = map[string]map[string]string{
   return(currentState)
 }
 `,
-		"finalize": `function finalize(k, o) {
+"finalize": `function finalize(k, o) {
 
   o.index = {"algo1":false,
     "algo2":false}
@@ -37,10 +37,10 @@ var jsFunctions = map[string]map[string]string{
     o.index.algo1 = true
     o.index.algo2 = true
   } else {
-    // Est-ce que l'un des batchs a un effectif ?
+    // Est-ce que l'un des batchs a un effectif ? 
     Object.keys(o.batch).some(batch => {
-      let hasEffectif = Object.keys(o.batch[batch].effectif || {}).length > 0
-      o.index.algo1 = hasEffectif
+      let hasEffectif = Object.keys(o.batch[batch].effectif || {}).length > 0 
+      o.index.algo1 = hasEffectif 
       o.index.algo2 = hasEffectif
       return (hasEffectif)
     })
@@ -48,17 +48,17 @@ var jsFunctions = map[string]map[string]string{
   return(o)
 }
 `,
-		"map": `function map() {
+"map": `function map() {      
   try{
     if (this.value != null) {
-      emit(this.value.key, this.value)
-    }
+      emit(this.value.key, this.value) 
+    }   
   } catch(error) {
     print(this.value.key)
   }
 }
 `,
-		"reduce": `function reduce(key, values) {
+"reduce": `function reduce(key, values) {
 
   // Tester si plusieurs batchs. Reduce complet uniquement si plusieurs
   // batchs. Sinon, juste fusion des attributs
@@ -263,9 +263,9 @@ var jsFunctions = map[string]map[string]string{
   return(reduced_value)
 }
 `,
-	},
-	"public": {
-		"altaresToHuman": `function altaresToHuman (code) {
+},
+"public":{
+"altaresToHuman": `function altaresToHuman (code) {
   var codeLiquidation = ['PCL0108', 'PCL010801','PCL010802','PCL030107','PCL030307','PCL030311','PCL05010103','PCL05010204','PCL05010303','PCL05010403','PCL05010503','PCL05010703','PCL05011004','PCL05011102','PCL05011204','PCL05011206','PCL05011304','PCL05011404','PCL05011504','PCL05011604','PCL05011903','PCL05012004','PCL050204','PCL0109','PCL010901','PCL030108','PCL030308','PCL05010104','PCL05010205','PCL05010304','PCL05010404','PCL05010504','PCL05010803','PCL05011005','PCL05011103','PCL05011205','PCL05011207','PCL05011305','PCL05011405','PCL05011505','PCL05011904','PCL05011605','PCL05012005'];
   var codePlanSauvegarde = ['PCL010601','PCL0106','PCL010602','PCL030103','PCL030303','PCL03030301','PCL05010101','PCL05010202','PCL05010301','PCL05010401','PCL05010501','PCL05010506','PCL05010701','PCL05010705','PCL05010801','PCL05010805','PCL05011002','PCL05011202','PCL05011302','PCL05011402','PCL05011502','PCL05011602','PCL05011901','PCL0114','PCL030110','PCL030310'];
   var codeRedressement = ['PCL0105','PCL010501','PCL010502','PCL010503','PCL030105','PCL030305','PCL05010102','PCL05010203','PCL05010302','PCL05010402','PCL05010502','PCL05010702','PCL05010706','PCL05010802','PCL05010806','PCL05010901','PCL05011003','PCL05011101','PCL05011203','PCL05011303','PCL05011403','PCL05011503','PCL05011603','PCL05011902','PCL05012003'];
@@ -274,7 +274,7 @@ var jsFunctions = map[string]map[string]string{
   var codeSauvegarde = ['PCL0203','PCL020301','PCL0205','PCL040408'];
   var codeCession = ['PCL0204','PCL020401','PCL020402','PCL020403'];
   var res = null;
-  if (codeLiquidation.includes(code))
+  if (codeLiquidation.includes(code)) 
     res = 'liquidation';
   else if (codePlanSauvegarde.includes(code))
     res = 'plan_sauvegarde';
@@ -290,19 +290,24 @@ var jsFunctions = map[string]map[string]string{
     res = 'cession';
   return res;
 }`,
-		"apconso": `function apconso(apconso) {
+"apconso": `function apconso(apconso) {
   return f.iterable(apconso).sort((p1, p2) => p1.periode < p2.periode)
 }`,
-		"apdemande": `function apdemande(apdemande) {
+"apdemande": `function apdemande(apdemande) {
   return f.iterable(apdemande).sort((p1, p2) => p1.periode < p2.periode)
 }`,
-		"bdf": `function bdf(hs) {
+"bdf": `function bdf(hs) {
   return f.iterable(hs).sort((a, b) => a.annee_bdf < b.annee_bdf)
 }`,
-		"cotisations": `function cotisations(vcotisation) {
-  var offset_cotisation = 0
+"compareDebit": `function compareDebit (a,b) {
+  if (a.numero_historique < b.numero_historique) return -1
+  if (a.numero_historique > b.numero_historique) return 1
+  return 0
+}`,
+"cotisations": `function cotisations(vcotisation) {
+  var offset_cotisation = 0 
   var value_cotisation = {}
-
+  
   // Répartition des cotisations sur toute la période qu'elle concerne
   vcotisation = vcotisation || {}
   Object.keys(vcotisation).forEach(function (h) {
@@ -318,7 +323,7 @@ var jsFunctions = map[string]map[string]string{
 
   serie_periode.forEach(p => {
     output_cotisation.push(
-      (value_cotisation[p.getTime()] || [])
+      (value_cotisation[p.getTime()] || []) 
         .reduce((m,c) => m+c, 0)
     )
   })
@@ -326,17 +331,17 @@ var jsFunctions = map[string]map[string]string{
   return(output_cotisation)
 }
 `,
-		"dateAddDay": `function dateAddDay(date, nbMonth) {
+"dateAddDay": `function dateAddDay(date, nbMonth) {
   var result = new Date(date.getTime())
   result.setDate( result.getDate() + nbMonth );
   return result
 }`,
-		"dateAddMonth": `function dateAddMonth(date, nbMonth) {
+"dateAddMonth": `function dateAddMonth(date, nbMonth) {
   var result = new Date(date.getTime())
   result.setUTCMonth(result.getUTCMonth() + nbMonth)
   return result
 }`,
-		"dealWithProcols": `function dealWithProcols(data_source, altar_or_procol, output_indexed){
+"dealWithProcols": `function dealWithProcols(data_source, altar_or_procol, output_indexed){
   return Object.keys(data_source || {}).reduce((events,hash) => {
     var the_event = data_source[hash]
 
@@ -355,7 +360,7 @@ var jsFunctions = map[string]map[string]string{
   )
 }
 `,
-		"debits": `function dettes(vdebit) {
+"debits": `function dettes(vdebit) {
 
   last_treatment_day = 20
   vdebit = vdebit || {}
@@ -370,7 +375,7 @@ var jsFunctions = map[string]map[string]string{
           "hash": h,
           "numero_historique": debit.numero_historique,
           "date_traitement": debit.date_traitement
-      }])
+      }]) 
       return accu
   }, {})
 
@@ -390,9 +395,9 @@ var jsFunctions = map[string]map[string]string{
     var debit = vdebit[h]
 
     var debit_suivant = (vdebit[debit.debit_suivant] || {"date_traitement" : date_fin})
-
-    //Selon le jour du traitement, cela passe sur la période en cours ou sur la suivante.
-    let jour_traitement = debit.date_traitement.getUTCDate()
+    
+    //Selon le jour du traitement, cela passe sur la période en cours ou sur la suivante. 
+    let jour_traitement = debit.date_traitement.getUTCDate() 
     let jour_traitement_suivant = debit_suivant.date_traitement.getUTCDate()
     if (jour_traitement <= last_treatment_day){
       date_traitement_debut = new Date(
@@ -422,7 +427,7 @@ var jsFunctions = map[string]map[string]string{
       let time = date.getTime()
       value_dette[time] = (value_dette[time] || []).concat([{ "periode": debit.periode.start, "part_ouvriere": debit.part_ouvriere, "part_patronale": debit.part_patronale, "montant_majorations": debit.montant_majorations}])
     })
-  })
+  })    
 
   output_dette = []
   serie_periode.forEach(p => {
@@ -440,13 +445,13 @@ var jsFunctions = map[string]map[string]string{
   return(output_dette)
 }
 `,
-		"delai": `function delai(delai) {
+"delai": `function delai(delai) {
   return f.iterable(delai)
 }`,
-		"diane": `function diane(hs) {
+"diane": `function diane(hs) {
  return f.iterable(hs).sort((a, b) => a.exercice_diane < b.exercice_diane)
 }`,
-		"effectifs": `function effectifs(v) {
+"effectifs": `function effectifs(v) {
   var mapEffectif = {}
   f.iterable(v.effectif).forEach(e => {
     mapEffectif[e.periode.getTime()] = (mapEffectif[e.periode.getTime()] || 0) + e.effectif
@@ -458,10 +463,10 @@ var jsFunctions = map[string]map[string]string{
     }
   }).filter(p => p.effectif)
 }`,
-		"finalize": `function finalize(_, v) {
+"finalize": `function finalize(_, v) {
   return v
 }`,
-		"flatten": `function flatten(v, actual_batch) {
+"flatten": `function flatten(v, actual_batch) {
   var res = Object.keys(v.batch || {})
     .sort()
     .filter(batch => batch <= actual_batch)
@@ -472,8 +477,7 @@ var jsFunctions = map[string]map[string]string{
       var new_types =  Object.keys(v.batch[batch])
       var all_interesting_types = [...new Set([...delete_types, ...new_types])]
 
-      all_interesting_types.forEach((type) => {
-
+      all_interesting_types.forEach(type => {
         m[type] = (m[type] || {})
         // On supprime les clés qu'il faut
         if (v.batch[batch] && v.batch[batch].compact && v.batch[batch].compact.delete &&
@@ -491,7 +495,7 @@ var jsFunctions = map[string]map[string]string{
   return(res)
 }
 `,
-		"generatePeriodSerie": `function generatePeriodSerie (date_debut, date_fin) {
+"generatePeriodSerie": `function generatePeriodSerie (date_debut, date_fin) {
   var date_next = new Date(date_debut.getTime())
   var serie = []
   while (date_next.getTime() < date_fin.getTime()) {
@@ -500,14 +504,14 @@ var jsFunctions = map[string]map[string]string{
   }
   return serie
 }`,
-		"idEntreprise": `function idEntreprise(idEtablissement) {
+"idEntreprise": `function idEntreprise(idEtablissement) {
   return {
     scope: 'entreprise',
     key: idEtablissement.slice(0,9),
     batch: actual_batch
   }
 }`,
-		"iterable": `function iterable(dict) {
+"iterable": `function iterable(dict) {
   try {
     return Object.keys(dict).map(h => {
       return dict[h]
@@ -517,7 +521,7 @@ var jsFunctions = map[string]map[string]string{
   }
 }
 `,
-		"map": `function map() {
+"map": `function map() {
   var value = f.flatten(this.value, actual_batch)
 
   if (this.value.scope=="etablissement") {
@@ -533,7 +537,8 @@ var jsFunctions = map[string]map[string]string{
     vcmde.apdemande = f.apconso(value.apdemande)
     vcmde.idEntreprise = f.idEntreprise(this._id)
     vcmde.delai = f.delai(value.delai)
-    vcmde.procol = f.dealWithProcols(value.altares, "altares",  null).concat(f.dealWithProcols(value.procol, "procol",  null))
+    vcmde.procol = f.dealWithProcols(value.altares, "altares",  null).concat(f.dealWithProcols(value.procol, "procol",  null)) 
+
     if (vcmde.procol.length >= 1){
       vcmde.last_procol = vcmde.procol[vcmde.procol.length - 1]
     } else {
@@ -554,9 +559,9 @@ var jsFunctions = map[string]map[string]string{
   }
 }
 `,
-		"procolToHuman": `function procolToHuman (action, stade) {
+"procolToHuman": `function procolToHuman (action, stade) {
   var res = null;
-  if (action == "liquidation" && stade != "abandon_procedure")
+  if (action == "liquidation" && stade != "abandon_procedure") 
     res = 'liquidation';
   else if (stade == "abandon_procedure" || stade == "fin_procedure")
     res = 'in_bonis';
@@ -570,7 +575,7 @@ var jsFunctions = map[string]map[string]string{
     res = 'plan_redressement';
   return res;
 }`,
-		"reduce": `function reduce(key, values) {
+"reduce": `function reduce(key, values) {
   if (key.scope="entreprise") {
     values = values.reduce((m, v) => {
       if (v.sirets) {
@@ -583,17 +588,17 @@ var jsFunctions = map[string]map[string]string{
   }
   return values
 }`,
-		"sirene": `function sirene(sireneArray) {
+"sirene": `function sirene(sireneArray) {
   return sireneArray.reduce((accu, k) => {
     return k
   }, {})
 }`,
-	},
-	"purgeBatch": {
-		"finalize": `function finalize(k, o) {
+},
+"purgeBatch":{
+"finalize": `function finalize(k, o) {
     return o
 }`,
-		"map": `function map() {
+"map": `function map() {
   if (this.value.batch[currentBatch]){
     delete this.value.batch[currentBatch]
   }
@@ -603,12 +608,12 @@ var jsFunctions = map[string]map[string]string{
   }
 }
 `,
-		"reduce": `function reduce(key, values) {
+"reduce": `function reduce(key, values) {
     return values
 }`,
-	},
-	"reduce.algo2": {
-		"add": `function add(obj, output){
+},
+"reduce.algo2":{
+"add": `function add(obj, output){
   Object.keys(output).forEach(function(periode) {
     if (periode in obj){
       Object.assign(output[periode], obj[periode])
@@ -620,7 +625,7 @@ var jsFunctions = map[string]map[string]string{
   })
 }
 `,
-		"add_test": `var test_cases = [
+"add_test": `var test_cases = [
   {
     data: {"2015-01-01": {any_value: true}},
     data_to_add: {},
@@ -691,7 +696,7 @@ var test_results = test_cases.map(function(tc, id){
 console.log("add.js",test_results)
 
 `,
-		"altaresToHuman": `function altaresToHuman (code) {
+"altaresToHuman": `function altaresToHuman (code) {
   var codeLiquidation = ['PCL0108', 'PCL010801','PCL010802','PCL030107','PCL030307','PCL030311','PCL05010103','PCL05010204','PCL05010303','PCL05010403','PCL05010503','PCL05010703','PCL05011004','PCL05011102','PCL05011204','PCL05011206','PCL05011304','PCL05011404','PCL05011504','PCL05011604','PCL05011903','PCL05012004','PCL050204','PCL0109','PCL010901','PCL030108','PCL030308','PCL05010104','PCL05010205','PCL05010304','PCL05010404','PCL05010504','PCL05010803','PCL05011005','PCL05011103','PCL05011205','PCL05011207','PCL05011305','PCL05011405','PCL05011505','PCL05011904','PCL05011605','PCL05012005'];
   var codePlanSauvegarde = ['PCL010601','PCL0106','PCL010602','PCL030103','PCL030303','PCL03030301','PCL05010101','PCL05010202','PCL05010301','PCL05010401','PCL05010501','PCL05010506','PCL05010701','PCL05010705','PCL05010801','PCL05010805','PCL05011002','PCL05011202','PCL05011302','PCL05011402','PCL05011502','PCL05011602','PCL05011901','PCL0114','PCL030110','PCL030310'];
   var codeRedressement = ['PCL0105','PCL010501','PCL010502','PCL010503','PCL030105','PCL030305','PCL05010102','PCL05010203','PCL05010302','PCL05010402','PCL05010502','PCL05010702','PCL05010706','PCL05010802','PCL05010806','PCL05010901','PCL05011003','PCL05011101','PCL05011203','PCL05011303','PCL05011403','PCL05011503','PCL05011603','PCL05011902','PCL05012003'];
@@ -700,7 +705,7 @@ console.log("add.js",test_results)
   var codeSauvegarde = ['PCL0203','PCL020301','PCL0205','PCL040408'];
   var codeCession = ['PCL0204','PCL020401','PCL020402','PCL020403'];
   var res = null;
-  if (codeLiquidation.includes(code))
+  if (codeLiquidation.includes(code)) 
     res = 'liquidation';
   else if (codePlanSauvegarde.includes(code))
     res = 'plan_sauvegarde';
@@ -716,7 +721,7 @@ console.log("add.js",test_results)
     res = 'cession';
   return res;
 }`,
-		"apart": `function apart (v, output_effectif) {
+"apart": `function apart (v, output_effectif) {
   var output_apart = {}
 
   // Mapping (pour l'instant vide) du hash de la demande avec les hash des consos correspondantes
@@ -811,30 +816,30 @@ console.log("add.js",test_results)
   return(output_apart)
 }
 `,
-		"ccsf": `function ccsf(v, output_array){
+"ccsf": `function ccsf(v, output_array){
 
   var ccsfHashes = Object.keys(v.ccsf || {})
 
-  output_array.forEach(val => {
+  output_array.forEach(val => {    
     var optccsf = ccsfHashes.reduce( function (accu, hash) {
-      let ccsf = v.ccsf[hash]
-      if (ccsf.date_traitement.getTime() < val.periode.getTime() && ccsf.date_traitement.getTime() > accu.date_traitement.getTime()) {
-        accu = ccsf
-      }
+      let ccsf = v.ccsf[hash] 
+      if (ccsf.date_traitement.getTime() < val.periode.getTime() && ccsf.date_traitement.getTime() > accu.date_traitement.getTime()) { 
+        accu = ccsf 
+      } 
       return(accu)
-    },
-      {
-        date_traitement: new Date(0)
-      }
-    )
+    }, 
+      { 
+        date_traitement: new Date(0) 
+      } 
+    )         
 
-    if (optccsf.date_traitement.getTime() != 0) {
-      val.date_ccsf = optccsf.date_traitement
-    }
+    if (optccsf.date_traitement.getTime() != 0) { 
+      val.date_ccsf = optccsf.date_traitement 
+    } 
   })
 }
 `,
-		"cibleApprentissage": `function cibleApprentissage(output_indexed, n_months) {
+"cibleApprentissage": `function cibleApprentissage(output_indexed, n_months) {
 
   // Mock two input instead of one for future modification
   var output_cotisation = output_indexed
@@ -869,7 +874,7 @@ console.log("add.js",test_results)
   return output_cible
 }
 `,
-		"cibleApprentissage_test": `var test_cases = [
+"cibleApprentissage_test": `var test_cases = [
   {
     data: {"2015-01-01": {tag_default: true}},
     n_months: 1,
@@ -951,12 +956,12 @@ var test_results = test_cases.map(function(tc, id){
 
 console.log("cibleApprentissage_test.js",test_results)
 `,
-		"compareDebit": `function compareDebit (a,b) {
+"compareDebit": `function compareDebit (a,b) {
   if (a.numero_historique < b.numero_historique) return -1
   if (a.numero_historique > b.numero_historique) return 1
   return 0
 }`,
-		"compte": `function compte (v, periodes) {
+"compte": `function compte (v, periodes) {
   let output_compte = {}
 
 
@@ -971,7 +976,7 @@ console.log("cibleApprentissage_test.js",test_results)
   return output_compte
 }
 `,
-		"cotisation": `function cotisation(output_indexed, output_array) {
+"cotisation": `function cotisation(output_indexed, output_array) {
   // calcul de cotisation_moyenne sur 12 mois
   Object.keys(output_indexed).forEach(k => {
     let periode_courante = output_indexed[k].periode
@@ -1023,7 +1028,7 @@ console.log("cibleApprentissage_test.js",test_results)
   })
 }
 `,
-		"cotisationsdettes": `function cotisationsdettes(v, periodes) {
+"cotisationsdettes": `function cotisationsdettes(v, periodes) {
 
   // Tous les débits traitées après ce jour du mois sont reportées à la période suivante
   // Permet de s'aligner avec le calendrier de fourniture des données
@@ -1177,12 +1182,12 @@ console.log("cibleApprentissage_test.js",test_results)
   return(output_cotisationsdettes)
 }
 `,
-		"dateAddMonth": `function dateAddMonth(date, nbMonth) {
+"dateAddMonth": `function dateAddMonth(date, nbMonth) {
   var result = new Date(date.getTime())
   result.setUTCMonth(result.getUTCMonth() + nbMonth)
   return result
 }`,
-		"dealWithProcols": `function dealWithProcols(data_source, altar_or_procol, output_indexed){
+"dealWithProcols": `function dealWithProcols(data_source, altar_or_procol, output_indexed){
   var codes  =  Object.keys(data_source).reduce((events,hash) => {
     var the_event = data_source[hash]
 
@@ -1216,14 +1221,14 @@ console.log("cibleApprentissage_test.js",test_results)
   )
 }
 `,
-		"defaillances": `function defaillances (v, output_indexed) {
+"defaillances": `function defaillances (v, output_indexed) {
   f.dealWithProcols(v.altares, "altares", output_indexed)
   f.dealWithProcols(v.procol, "procol", output_indexed)
 }
-
-
+  
+  
   `,
-		"delais": `function delais (v, output_indexed) {
+"delais": `function delais (v, output_indexed) {
   Object.keys(v.delai).map(
     function (hash) {
       var delai = v.delai[hash]
@@ -1252,7 +1257,7 @@ console.log("cibleApprentissage_test.js",test_results)
   )
 }
 `,
-		"detteFiscale": `function detteFiscale (diane){
+"detteFiscale": `function detteFiscale (diane){
   if  (("dette_fiscale_et_sociale" in diane) && (diane["dette_fiscale_et_sociale"] !== null) &&
       ("valeur_ajoutee" in diane) && (diane["valeur_ajoutee"] !== null) &&
       (diane["valeur_ajoutee"] != 0)){
@@ -1261,7 +1266,7 @@ console.log("cibleApprentissage_test.js",test_results)
     return null
   }
 }`,
-		"effectifs": `function effectifs (v, periodes) {
+"effectifs": `function effectifs (v, periodes) {
 
   let output_effectif = {}
 
@@ -1325,7 +1330,7 @@ console.log("cibleApprentissage_test.js",test_results)
   return(output_effectif)
 }
 `,
-		"finalize": `function finalize(k, v) {
+"finalize": `function finalize(k, v) {
 
   //v de la forme
   // .id: {batch / siren / periode}
@@ -1374,7 +1379,7 @@ console.log("cibleApprentissage_test.js",test_results)
     return output
 }
 `,
-		"financierCourtTerme": `function financierCourtTerme(diane) {
+"financierCourtTerme": `function financierCourtTerme(diane) {
   if  (("concours_bancaire_courant" in diane) && (diane["concours_bancaire_courant"] !== null) &&
     ("ca" in diane) && (diane["ca"] !== null) &&
     (diane["ca"] != 0)){
@@ -1383,7 +1388,7 @@ console.log("cibleApprentissage_test.js",test_results)
     return null
   }
 }`,
-		"financierCourtTerms": `function financierCourtTerme(diane) {
+"financierCourtTerms": `function financierCourtTerme(diane) {
   if  (("concours_bancaire_courant" in diane) && (diane["concours_bancaire_courant"] !== null) &&
     ("ca" in diane) && (diane["ca"] !== null) &&
     (diane["ca"] != 0)){
@@ -1392,7 +1397,7 @@ console.log("cibleApprentissage_test.js",test_results)
     return null
   }
 }`,
-		"flatten": `function flatten(v, actual_batch) {
+"flatten": `function flatten(v, actual_batch) {
   var res = Object.keys(v.batch || {})
     .sort()
     .filter(batch => batch <= actual_batch)
@@ -1421,7 +1426,7 @@ console.log("cibleApprentissage_test.js",test_results)
   return(res)
 }
 `,
-		"fraisFinancier": `function fraisFinancier(diane){
+"fraisFinancier": `function fraisFinancier(diane){
   if (("interets" in diane) && (diane["interets"] !== null) &&
     ("excedent_brut_d_exploitation" in diane) && (diane["excedent_brut_d_exploitation"] !== null) &&
     ("produits_financiers" in diane) && (diane["produits_financiers"] !== null) &&
@@ -1435,7 +1440,7 @@ console.log("cibleApprentissage_test.js",test_results)
     return null
   }
 }`,
-		"generatePeriodSerie": `function generatePeriodSerie (date_debut, date_fin) {
+"generatePeriodSerie": `function generatePeriodSerie (date_debut, date_fin) {
   var date_next = new Date(date_debut.getTime())
   var serie = []
   while (date_next.getTime() < date_fin.getTime()) {
@@ -1444,7 +1449,7 @@ console.log("cibleApprentissage_test.js",test_results)
   }
   return serie
 }`,
-		"interim": `function interim (interim, output_indexed) {
+"interim": `function interim (interim, output_indexed) {
   let output_effectif = output_indexed
   // let periodes = Object.keys(output_indexed)
   // output_indexed devra être remplacé par output_effectif, et ne contenir que les données d'effectif.
@@ -1479,7 +1484,7 @@ console.log("cibleApprentissage_test.js",test_results)
   return output_interim
 }
 `,
-		"lookAhead": `function lookAhead(data, attr_name, n_months, past) {
+"lookAhead": `function lookAhead(data, attr_name, n_months, past) {
   // Est-ce que l'évènement se répercute dans le passé (past = true on pourra se
   // demander: que va-t-il se passer) ou dans le future (past = false on
   // pourra se demander que s'est-il passé
@@ -1514,7 +1519,7 @@ console.log("cibleApprentissage_test.js",test_results)
   return output
 }
 `,
-		"lookAhead_test": `
+"lookAhead_test": `
 var test_cases = [
   {
     data: {"2015-01-01": {outcome: true}},
@@ -1629,7 +1634,7 @@ var test_results = test_cases.map(function(tc, id){
 })
 console.log("lookAhead_test.js", test_results)
 `,
-		"map": `function map () {
+"map": `function map () {
   let v = f.flatten(this.value, actual_batch)
 
   if (v.scope == "etablissement") {
@@ -1849,7 +1854,7 @@ console.log("lookAhead_test.js", test_results)
   }
 }
 `,
-		"naf": `function naf(output_indexed, naf) {
+"naf": `function naf(output_indexed, naf) {
   Object.keys(output_indexed).forEach(k =>{
     if (("code_ape" in output_indexed[k]) && (output_indexed[k].code_ape !== null)){
       code_ape = output_indexed[k].code_ape
@@ -1866,7 +1871,7 @@ console.log("lookAhead_test.js", test_results)
   })
 }
 `,
-		"outputs": `function outputs (v, serie_periode) {
+"outputs": `function outputs (v, serie_periode) {
   var output_array = serie_periode.map(function (e) {
     return {
       "siret": v.key,
@@ -1879,7 +1884,7 @@ console.log("lookAhead_test.js", test_results)
       "outcome": false
     }
   });
-
+    
   var output_indexed = output_array.reduce(function (periode, val) {
       periode[val.periode.getTime()] = val
       return periode
@@ -1888,16 +1893,16 @@ console.log("lookAhead_test.js", test_results)
   return [output_array, output_indexed]
 }
 `,
-		"poidsFrng": `function poidsFrng(diane){
+"poidsFrng": `function poidsFrng(diane){
   if  (("couverture_ca_fdr" in diane) && (diane["couverture_ca_fdr"] !== null)){
     return diane["couverture_ca_fdr"]/360 * 100
   } else {
     return null
   }
 }`,
-		"procolToHuman": `function procolToHuman (action, stade) {
+"procolToHuman": `function procolToHuman (action, stade) {
   var res = null;
-  if (action == "liquidation" && stade != "abandon_procedure")
+  if (action == "liquidation" && stade != "abandon_procedure") 
     res = 'liquidation';
   else if (stade == "abandon_procedure" || stade == "fin_procedure")
     res = 'in_bonis';
@@ -1911,13 +1916,13 @@ console.log("lookAhead_test.js", test_results)
     res = 'plan_redressement';
   return res;
 }`,
-		"reduce": `function reduce(_, values) {
+"reduce": `function reduce(_, values) {
   return values.reduce((val, accu) => {
     return Object.assign(accu, val)
   }, {})
 }
 `,
-		"repeatable": `function repeatable(rep){
+"repeatable": `function repeatable(rep){
   let output_repeatable = {}
   Object.keys(rep).forEach(hash => {
     var one_rep = rep[hash]
@@ -1932,7 +1937,7 @@ console.log("lookAhead_test.js", test_results)
 
 
 `,
-		"sirene": `function sirene (v, output_array) {
+"sirene": `function sirene (v, output_array) {
   var sireneHashes = Object.keys(v.sirene || {})
 
   output_array.forEach(val => {
@@ -1958,7 +1963,7 @@ console.log("lookAhead_test.js", test_results)
 }
 
 `,
-		"sirene_ul": `function sirene_ul(v, output_array) {
+"sirene_ul": `function sirene_ul(v, output_array) {
   var sireneHashes = Object.keys(v.sirene_ul || {})
   output_array.forEach(val => {
     if (sireneHashes.length != 0) {
@@ -1970,7 +1975,7 @@ console.log("lookAhead_test.js", test_results)
   })
 }
 `,
-		"tauxMarge": `function tauxMarge(diane) {
+"tauxMarge": `function tauxMarge(diane) {
   if  (("excedent_brut_d_exploitation" in diane) && (diane["excedent_brut_d_exploitation"] !== null) &&
     ("valeur_ajoutee" in diane) && (diane["valeur_ajoutee"] !== null) &&
     (diane["excedent_brut_d_exploitation"] != 0)){
@@ -1979,7 +1984,7 @@ console.log("lookAhead_test.js", test_results)
     return null
   }
 }`,
-		"testing": `Object.assign = function(target) {
+"testing": `Object.assign = function(target) {
   if (target == null) {
     throw new TypeError("Cannot convert undefined or null to object")
   }
@@ -2008,5 +2013,5 @@ function compare(a, b) {
   return equal
 }
 `,
-	},
+},
 }

@@ -7,28 +7,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func publicHandler(c *gin.Context) {
-	params := struct {
-		Batch string `json:"batch"`
-		Siret string `json:"siret"`
-	}{}
-	c.Bind(&params)
-	batch := engine.AdminBatch{}
-	err := batch.Load(params.Batch)
-	if err != nil {
-		c.JSON(404, "batch non trouvé")
-		return
-	}
-
-	err = engine.Public(batch, params.Siret)
-	if err != nil {
-		c.JSON(500, err.Error())
-		return
-	}
-
-	c.JSON(200, "ok")
-}
-
 func predictionBrowseHandler(c *gin.Context) {
 	var params engine.BrowseParams
 
