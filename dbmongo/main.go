@@ -136,6 +136,7 @@ func main() {
 		api.POST("/data/import", importBatchHandler)
 		api.POST("/data/compact", compactHandler)
 		api.POST("/data/reduce", reduceHandler)
+		api.POST("/data/reduceSliced", reduceSlicedHandler)
 		api.POST("/data/search", searchHandler)
 		api.GET("/data/purge", purgeHandler)
 		api.GET("/data/purgeNotCompacted", purgeNotCompactedHandler)

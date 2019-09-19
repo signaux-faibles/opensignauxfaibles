@@ -1,13 +1,17 @@
 package apartdemande
 
 import (
+	"bufio"
 	"dbmongo/lib/engine"
 	"dbmongo/lib/misc"
+	"encoding/csv"
+	"io"
+	"os"
+	"strings"
 	"time"
 
 	"github.com/signaux-faibles/gournal"
 	"github.com/spf13/viper"
-	"github.com/tealeg/xlsx"
 )
 
 // Periode Période de temps avec un début et une fin
@@ -62,19 +66,28 @@ func Parser(batch engine.AdminBatch, filter map[string]bool) (chan engine.Tuple,
 				map[string]string{"path": path},
 				engine.TrackerReports)
 
-			xlFile, err := xlsx.OpenFile(viper.GetString("APP_DATA") + path)
+			file, err := os.Open(viper.GetString("APP_DATA") + path)
 			if err != nil {
 				event.Critical(path + ": erreur à l'ouverture du fichier: " + err.Error())
 				return
 			}
+			reader := csv.NewReader(bufio.NewReader(file))
+			reader.Comma = ','
+			reader.LazyQuotes = true
+
 			event.Info(path + ": ouverture")
 
-			sheet := xlFile.Sheets[0]
-			f := make(map[string]int)
-			for idx, cell := range sheet.Rows[0].Cells {
-				f[cell.Value] = idx
+			header, err := reader.Read()
+			if err != nil {
+				tracker.Error(err)
+				event.Debug(tracker.Report("invalidLine"))
+				break
 			}
 
+			f := make(map[string]int)
+			for idx, field := range header {
+				f[field] = idx
+			}
 			fields := []string{
 				"ID_DA",
 				"ETAB_SIRET",
@@ -89,49 +102,56 @@ func Parser(batch engine.AdminBatch, filter map[string]bool) (chan engine.Tuple,
 				"S_HEURE_CONSOM_TOT",
 				"S_EFF_CONSOM_TOT",
 			}
-			minLength := 0
+
 			for _, field := range fields {
-				if i, err := f[field]; err {
-					minLength = misc.Max(minLength, i)
-				} else {
+				if _, found := f[field]; !found {
 					event.Critical("Import du fichier " + path + ". " + field + " non trouvé. Abandon.")
 					continue
 				}
 			}
-			for _, row := range sheet.Rows[1:] {
-				if len(row.Cells) >= minLength && row.Cells[f["ETAB_SIRET"]].Value != "" {
+			for {
+				row, err := reader.Read()
+				if err == io.EOF {
+					break
+				} else if err != nil {
+					tracker.Error(err)
+					event.Debug(tracker.Report("invalidLine"))
+					break
+				}
+
+				if row[f["ETAB_SIRET"]] != "" {
 					apdemande := APDemande{}
-					apdemande.ID = row.Cells[f["ID_DA"]].Value
-					apdemande.Siret = row.Cells[f["ETAB_SIRET"]].Value
-					apdemande.EffectifEntreprise, err = misc.ParsePInt(row.Cells[f["EFF_ENT"]].Value)
+					apdemande.ID = row[f["ID_DA"]]
+					apdemande.Siret = row[f["ETAB_SIRET"]]
+					apdemande.EffectifEntreprise, err = misc.ParsePInt(row[f["EFF_ENT"]])
 					tracker.Error(err)
-					apdemande.Effectif, err = misc.ParsePInt(row.Cells[f["EFF_ETAB"]].Value)
+					apdemande.Effectif, err = misc.ParsePInt(row[f["EFF_ETAB"]])
 					tracker.Error(err)
-					apdemande.DateStatut, err = misc.ExcelToTime(row.Cells[f["DATE_STATUT"]].Value)
+					apdemande.DateStatut, err = time.Parse("02/01/2006", row[f["DATE_STATUT"]])
 					tracker.Error(err)
 					apdemande.Periode = misc.Periode{}
-					apdemande.Periode.Start, err = misc.ExcelToTime(row.Cells[f["DATE_DEB"]].Value)
+					apdemande.Periode.Start, err = time.Parse("02/01/2006", row[f["DATE_DEB"]])
 					tracker.Error(err)
-					apdemande.Periode.End, err = misc.ExcelToTime(row.Cells[f["DATE_FIN"]].Value)
+					apdemande.Periode.End, err = time.Parse("02/01/2006", row[f["DATE_FIN"]])
 					tracker.Error(err)
-					apdemande.HTA, err = misc.ParsePFloat(row.Cells[f["HTA"]].Value)
+					apdemande.HTA, err = misc.ParsePFloat(row[f["HTA"]])
 					tracker.Error(err)
-					apdemande.MTA, err = misc.ParsePFloat(row.Cells[f["MTA"]].Value)
+					apdemande.MTA, err = misc.ParsePFloat(strings.ReplaceAll(row[f["MTA"]], ",", "."))
 					tracker.Error(err)
-					apdemande.EffectifAutorise, err = misc.ParsePInt(row.Cells[f["EFF_AUTO"]].Value)
+					apdemande.EffectifAutorise, err = misc.ParsePInt(row[f["EFF_AUTO"]])
 					tracker.Error(err)
-					apdemande.MotifRecoursSE, err = misc.ParsePInt(row.Cells[f["MOTIF_RECOURS_SE"]].Value)
+					apdemande.MotifRecoursSE, err = misc.ParsePInt(row[f["MOTIF_RECOURS_SE"]])
 					tracker.Error(err)
-					apdemande.HeureConsommee, err = misc.ParsePFloat(row.Cells[f["S_HEURE_CONSOM_TOT"]].Value)
+					apdemande.HeureConsommee, err = misc.ParsePFloat(row[f["S_HEURE_CONSOM_TOT"]])
 					tracker.Error(err)
-					apdemande.EffectifConsomme, err = misc.ParsePInt(row.Cells[f["S_EFF_CONSOM_TOT"]].Value)
+					apdemande.EffectifConsomme, err = misc.ParsePInt(row[f["S_EFF_CONSOM_TOT"]])
 					tracker.Error(err)
-					apdemande.MontantConsomme, err = misc.ParsePFloat(row.Cells[f["S_MONTANT_CONSOM_TOT"]].Value)
+					apdemande.MontantConsomme, err = misc.ParsePFloat(strings.ReplaceAll(row[f["S_MONTANT_CONSOM_TOT"]], ",", "."))
 					tracker.Error(err)
 					if !tracker.ErrorInCycle() {
 						outputChannel <- apdemande
 					} else {
-						event.Debug(tracker.Report("error"))
+						// event.Debug(tracker.Report("error"))
 					}
 				} else {
 					event.Debug(tracker.Report("invalidLine"))

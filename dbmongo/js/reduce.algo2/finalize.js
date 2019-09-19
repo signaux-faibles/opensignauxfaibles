@@ -3,7 +3,6 @@ function finalize(k, v) {
   //v de la forme
   // .id: {batch / siren / periode}
   // value: {siret1: {}, siret2: {}, "siren": {}}
-  print(JSON.stringify(k), JSON.stringify(v))
   //
   ///
   ///////////////////////////////////////////////

@@ -1,7 +1,7 @@
 function naf(output_indexed, naf) {
   Object.keys(output_indexed).forEach(k =>{
     if (("code_ape" in output_indexed[k]) && (output_indexed[k].code_ape !== null)){
-      code_ape = output_indexed[k].code_ape
+      var code_ape = output_indexed[k].code_ape
       output_indexed[k].code_naf = naf.n5to1[code_ape]
       output_indexed[k].libelle_naf = naf.n1[output_indexed[k].code_naf]
       output_indexed[k].code_ape_niveau2 = code_ape.substring(0,2)

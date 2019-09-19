@@ -2,14 +2,14 @@ function cotisationsdettes(v, periodes) {
 
   // Tous les débits traitées après ce jour du mois sont reportées à la période suivante
   // Permet de s'aligner avec le calendrier de fourniture des données
-  last_treatment_day = 20
+  const last_treatment_day = 20
 
   var output_cotisationsdettes = {}
 
 
   // TODO Cotisations avec un mois de retard ? Bizarre, plus maintenant que l'export se fait le 20
   // var offset_cotisation = 1
-  var offset_cotisation = 0
+  const offset_cotisation = 0
   var value_cotisation = {}
 
   // Répartition des cotisations sur toute la période qu'elle concerne

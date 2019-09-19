@@ -181,6 +181,32 @@ func Reduce(batchKey string, algo string, query interface{}, collection string) 
 	return err
 }
 
+func ReduceMergeAux() error {
+	// job := &mgo.MapReduce{
+	// 	Map:      "function map() { emit(this._id, {info: this.info, value: this.value}) }",
+	// 	Reduce:   "function reduce(_, v) {return v}",
+	// 	Finalize: "function finalize(_, v) { return v }",
+	// 	Out:      bson.M{"merge": "Features"},
+	// }
+	// _, err := Db.DB.C("Features_aux").Find(bson.M{}).MapReduce(job, nil)
+
+	query := []bson.M{{
+		"$merge": bson.M{"into": "Features"},
+	}}
+	pipe := Db.DB.C("Features_aux").Pipe(query)
+	resp := []bson.M{}
+	err := pipe.All(&resp)
+
+	if err != nil {
+		return err
+	}
+	_, err = Db.DB.C("Features_aux").RemoveAll(nil)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // Public alimente la collection Public avec les objets destinés à la diffusion
 func Public(batch AdminBatch, siret string) error {
 	functions, err := loadJSFunctions("public")

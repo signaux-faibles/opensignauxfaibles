@@ -1,13 +1,16 @@
 package apartconso
 
 import (
+	"bufio"
 	"dbmongo/lib/engine"
 	"dbmongo/lib/misc"
+	"encoding/csv"
+	"io"
+	"os"
 	"time"
 
 	"github.com/signaux-faibles/gournal"
 	"github.com/spf13/viper"
-	"github.com/tealeg/xlsx"
 )
 
 // APConso Consommation d'activité partielle
@@ -53,49 +56,66 @@ func Parser(batch engine.AdminBatch, filter map[string]bool) (chan engine.Tuple,
 				map[string]string{"path": path},
 				engine.TrackerReports)
 
-			xlFile, err := xlsx.OpenFile(viper.GetString("APP_DATA") + path)
+			file, err := os.Open(viper.GetString("APP_DATA") + path)
 			if err != nil {
 				event.Critical(path + ": erreur à l'ouverture du fichier, abandon:" + err.Error())
 				continue
 			}
 
+			reader := csv.NewReader(bufio.NewReader(file))
+			reader.Comma = ','
+
 			event.Info(path + ": ouverture")
 
-			for _, sheet := range xlFile.Sheets {
-				fields := sheet.Rows[0]
-				idxID := misc.SliceIndex(35, func(i int) bool { return fields.Cells[i].Value == "ID_DA" })
-				idxSiret := misc.SliceIndex(35, func(i int) bool { return fields.Cells[i].Value == "ETAB_SIRET" })
-				idxPeriode := misc.SliceIndex(35, func(i int) bool { return fields.Cells[i].Value == "MOIS" })
-				idxHeureConsommee := misc.SliceIndex(35, func(i int) bool { return fields.Cells[i].Value == "HEURES" })
-				idxMontants := misc.SliceIndex(35, func(i int) bool { return fields.Cells[i].Value == "MONTANTS" })
-				idxEffectifs := misc.SliceIndex(35, func(i int) bool { return fields.Cells[i].Value == "EFFECTIFS" })
-				if misc.SliceMin(idxID, idxSiret, idxPeriode, idxHeureConsommee, idxMontants, idxEffectifs) == -1 {
-					event.Critical(path + ": entête non conforme, fichier ignoré")
-					continue
+			fields, err := reader.Read()
+			if err != nil {
+				tracker.Error(err)
+				event.Debug(tracker.Report("invalidLine"))
+				break
+			}
+			idxID := misc.SliceIndex(35, func(i int) bool { return fields[i] == "ID_DA" })
+			idxSiret := misc.SliceIndex(35, func(i int) bool { return fields[i] == "ETAB_SIRET" })
+			idxPeriode := misc.SliceIndex(35, func(i int) bool { return fields[i] == "MOIS" })
+			idxHeureConsommee := misc.SliceIndex(35, func(i int) bool { return fields[i] == "HEURES" })
+			idxMontants := misc.SliceIndex(35, func(i int) bool { return fields[i] == "MONTANTS" })
+			idxEffectifs := misc.SliceIndex(35, func(i int) bool { return fields[i] == "EFFECTIFS" })
+
+			if misc.SliceMin(idxID, idxSiret, idxPeriode, idxHeureConsommee, idxMontants, idxEffectifs) == -1 {
+				event.Critical(path + ": entête non conforme, fichier ignoré")
+				continue
+			}
+
+			for {
+				row, err := reader.Read()
+
+				if err == io.EOF {
+					break
+				} else if err != nil {
+					tracker.Error(err)
+					event.Debug(tracker.Report("invalidLine"))
+					break
 				}
 
-				for _, row := range sheet.Rows[1:] {
-					if len(row.Cells) > 0 {
-						apconso := APConso{}
+				if len(row) > 0 {
+					apconso := APConso{}
 
-						apconso.ID = row.Cells[idxID].Value
-						apconso.Siret = row.Cells[idxSiret].Value
-						apconso.Periode, err = misc.ExcelToTime(row.Cells[idxPeriode].Value)
-						tracker.Error(err)
-						apconso.HeureConsommee, err = misc.ParsePFloat(row.Cells[idxHeureConsommee].Value)
-						tracker.Error(err)
-						apconso.Montant, err = misc.ParsePFloat(row.Cells[idxMontants].Value)
-						tracker.Error(err)
-						apconso.Effectif, err = misc.ParsePInt(row.Cells[idxEffectifs].Value)
-						tracker.Error(err)
+					apconso.ID = row[idxID]
+					apconso.Siret = row[idxSiret]
+					apconso.Periode, err = time.Parse("01/2006", row[idxPeriode])
+					tracker.Error(err)
+					apconso.HeureConsommee, err = misc.ParsePFloat(row[idxHeureConsommee])
+					tracker.Error(err)
+					apconso.Montant, err = misc.ParsePFloat(row[idxMontants])
+					tracker.Error(err)
+					apconso.Effectif, err = misc.ParsePInt(row[idxEffectifs])
+					tracker.Error(err)
 
-						if !tracker.ErrorInCycle() && apconso.Siret != "" {
-							outputChannel <- apconso
-						} else {
-							event.Debug(tracker.Report("errors"))
-						}
-						tracker.Next()
+					if !tracker.ErrorInCycle() && apconso.Siret != "" {
+						outputChannel <- apconso
+					} else {
+						// event.Debug(tracker.Report("errors"))
 					}
+					tracker.Next()
 				}
 			}
 			event.Info(tracker.Report("abstract"))

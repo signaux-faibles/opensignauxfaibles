@@ -36,7 +36,7 @@ function cotisation(output_indexed, output_array) {
   })
 
   // Calcul des défauts URSSAF prolongés
-  let counter = 0
+  var counter = 0
   Object.keys(output_indexed).sort().forEach(k => {
     if (output_indexed[k].ratio_dette > 0.01){
       output_indexed[k].tag_debit = true // Survenance d'un débit d'au moins 1% des cotisations

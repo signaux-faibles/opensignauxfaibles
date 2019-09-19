@@ -90,7 +90,7 @@ function map () {
 
     Object.keys(v.bdf).forEach(hash => {
       let periode_arrete_bilan = new Date(Date.UTC(v.bdf[hash].arrete_bilan_bdf.getUTCFullYear(), v.bdf[hash].arrete_bilan_bdf.getUTCMonth() +1, 1, 0, 0, 0, 0))
-      let periode_dispo = f.dateAddMonth(periode_arrete_bilan, 8)
+      let periode_dispo = f.dateAddMonth(periode_arrete_bilan, 7)
       let series = f.generatePeriodSerie(
         periode_dispo,
         f.dateAddMonth(periode_dispo, 13)
@@ -123,10 +123,10 @@ function map () {
     Object.keys(v.diane).filter(hash => v.diane[hash].arrete_bilan_diane).forEach(hash => {
       //v.diane[hash].arrete_bilan_diane = new Date(Date.UTC(v.diane[hash].exercice_diane, 11, 31, 0, 0, 0, 0))
       let periode_arrete_bilan = new Date(Date.UTC(v.diane[hash].arrete_bilan_diane.getUTCFullYear(), v.diane[hash].arrete_bilan_diane.getUTCMonth() +1, 1, 0, 0, 0, 0))
-      let periode_dispo = f.dateAddMonth(periode_arrete_bilan, 8) // 01/09 pour un bilan le 31/12
+      let periode_dispo = f.dateAddMonth(periode_arrete_bilan, 7) // 01/08 pour un bilan le 31/12, donc algo qui tourne en 01/09
       let series = f.generatePeriodSerie(
         periode_dispo,
-        f.dateAddMonth(periode_dispo, 13) // periode de validité d'un bilan auprès de la Banque de France: 21 mois (13+8)
+        f.dateAddMonth(periode_dispo, 14) // periode de validité d'un bilan auprès de la Banque de France: 21 mois (14+7)
       )
 
       series.forEach(periode => {
