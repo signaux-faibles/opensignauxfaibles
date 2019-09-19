@@ -299,6 +299,11 @@ package engine
 "bdf": `function bdf(hs) {
   return f.iterable(hs).sort((a, b) => a.annee_bdf < b.annee_bdf)
 }`,
+"compareDebit": `function compareDebit (a,b) {
+  if (a.numero_historique < b.numero_historique) return -1
+  if (a.numero_historique > b.numero_historique) return 1
+  return 0
+}`,
 "cotisations": `function cotisations(vcotisation) {
   var offset_cotisation = 0 
   var value_cotisation = {}
@@ -472,8 +477,7 @@ package engine
       var new_types =  Object.keys(v.batch[batch])
       var all_interesting_types = [...new Set([...delete_types, ...new_types])]
 
-      all_interesting_types.forEach((type) => {
-
+      all_interesting_types.forEach(type => {
         m[type] = (m[type] || {})
         // On supprime les clés qu'il faut
         if (v.batch[batch] && v.batch[batch].compact && v.batch[batch].compact.delete &&
@@ -534,6 +538,7 @@ package engine
     vcmde.idEntreprise = f.idEntreprise(this._id)
     vcmde.delai = f.delai(value.delai)
     vcmde.procol = f.dealWithProcols(value.altares, "altares",  null).concat(f.dealWithProcols(value.procol, "procol",  null)) 
+
     if (vcmde.procol.length >= 1){
       vcmde.last_procol = vcmde.procol[vcmde.procol.length - 1]
     } else {
@@ -815,22 +820,22 @@ console.log("add.js",test_results)
 
   var ccsfHashes = Object.keys(v.ccsf || {})
 
-  output_array.forEach(val => {    
+  output_array.forEach(val => {
     var optccsf = ccsfHashes.reduce( function (accu, hash) {
-      let ccsf = v.ccsf[hash] 
-      if (ccsf.date_traitement.getTime() < val.periode.getTime() && ccsf.date_traitement.getTime() > accu.date_traitement.getTime()) { 
-        accu = ccsf 
-      } 
+      let ccsf = v.ccsf[hash]
+      if (ccsf.date_traitement.getTime() < val.periode.getTime() && ccsf.date_traitement.getTime() > accu.date_traitement.getTime()) {
+        let accu = ccsf
+      }
       return(accu)
-    }, 
-      { 
-        date_traitement: new Date(0) 
-      } 
-    )         
+    },
+      {
+        date_traitement: new Date(0)
+      }
+    )
 
-    if (optccsf.date_traitement.getTime() != 0) { 
-      val.date_ccsf = optccsf.date_traitement 
-    } 
+    if (optccsf.date_traitement.getTime() != 0) {
+      val.date_ccsf = optccsf.date_traitement
+    }
   })
 }
 `,
@@ -1009,7 +1014,7 @@ console.log("cibleApprentissage_test.js",test_results)
   })
 
   // Calcul des défauts URSSAF prolongés
-  let counter = 0
+  var counter = 0
   Object.keys(output_indexed).sort().forEach(k => {
     if (output_indexed[k].ratio_dette > 0.01){
       output_indexed[k].tag_debit = true // Survenance d'un débit d'au moins 1% des cotisations
@@ -1027,14 +1032,14 @@ console.log("cibleApprentissage_test.js",test_results)
 
   // Tous les débits traitées après ce jour du mois sont reportées à la période suivante
   // Permet de s'aligner avec le calendrier de fourniture des données
-  last_treatment_day = 20
+  const last_treatment_day = 20
 
   var output_cotisationsdettes = {}
 
 
   // TODO Cotisations avec un mois de retard ? Bizarre, plus maintenant que l'export se fait le 20
   // var offset_cotisation = 1
-  var offset_cotisation = 0
+  const offset_cotisation = 0
   var value_cotisation = {}
 
   // Répartition des cotisations sur toute la période qu'elle concerne
@@ -1851,7 +1856,7 @@ console.log("lookAhead_test.js", test_results)
 "naf": `function naf(output_indexed, naf) {
   Object.keys(output_indexed).forEach(k =>{
     if (("code_ape" in output_indexed[k]) && (output_indexed[k].code_ape !== null)){
-      code_ape = output_indexed[k].code_ape
+      var code_ape = output_indexed[k].code_ape
       output_indexed[k].code_naf = naf.n5to1[code_ape]
       output_indexed[k].libelle_naf = naf.n1[output_indexed[k].code_naf]
       output_indexed[k].code_ape_niveau2 = code_ape.substring(0,2)

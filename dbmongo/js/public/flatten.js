@@ -9,8 +9,7 @@ function flatten(v, actual_batch) {
       var new_types =  Object.keys(v.batch[batch])
       var all_interesting_types = [...new Set([...delete_types, ...new_types])]
 
-      all_interesting_types.forEach((type) => {
-
+      all_interesting_types.forEach(type => {
         m[type] = (m[type] || {})
         // On supprime les clés qu'il faut
         if (v.batch[batch] && v.batch[batch].compact && v.batch[batch].compact.delete &&

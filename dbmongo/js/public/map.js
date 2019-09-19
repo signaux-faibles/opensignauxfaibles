@@ -15,6 +15,7 @@ function map() {
     vcmde.idEntreprise = f.idEntreprise(this._id)
     vcmde.delai = f.delai(value.delai)
     vcmde.procol = f.dealWithProcols(value.altares, "altares",  null).concat(f.dealWithProcols(value.procol, "procol",  null)) 
+
     if (vcmde.procol.length >= 1){
       vcmde.last_procol = vcmde.procol[vcmde.procol.length - 1]
     } else {

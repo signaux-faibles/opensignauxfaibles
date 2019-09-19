@@ -106,7 +106,8 @@ func publicSlicedHandler(c *gin.Context) {
 	var queries []bson.M
 	var collection string
 	slices := []string{
-		"^0.*", "^1.*", "^2.*", "^3[0-4].*", "^3[5-9].*", "^4.*", "^5.*", "^6.*", "^7.*", "8.*", "^9.*",
+		// "^0.*", "^1.*", "^2.*", "^3[0-4].*", "^3[5-9].*", "^4.*", "^5.*", "^6.*", "^7.*",
+		"^8.*", "^9.*",
 	}
 	for _, s := range slices {
 		query := bson.M{

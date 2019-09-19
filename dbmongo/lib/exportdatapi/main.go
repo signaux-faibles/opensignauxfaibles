@@ -78,6 +78,10 @@ func GetPipeline(batch string) (pipeline []bson.M) {
 		"connu": "$connu",
 	}})
 
+	pipeline = append(pipeline, bson.M{
+		"$match": bson.M{"$ne": "Pas d'alerte"},
+	})
+
 	pipeline = append(pipeline, bson.M{"$lookup": bson.M{
 		"from":         "Public",
 		"localField":   "_id",
