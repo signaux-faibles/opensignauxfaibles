@@ -137,10 +137,13 @@ func main() {
 		api.POST("/data/compact", compactHandler)
 		api.POST("/data/reduce", reduceHandler)
 		api.POST("/data/reduceSliced", reduceSlicedHandler)
+		api.POST("/data/publicSliced", publicSlicedHandler)
+
 		api.POST("/data/search", searchHandler)
+
 		api.GET("/data/purge", purgeHandler)
 		api.GET("/data/purgeNotCompacted", purgeNotCompactedHandler)
-		api.POST("/data/public", publicHandler)
+		// api.POST("/data/public", publicHandler)
 		api.POST("/data/browse", browsePublicHandler)
 		api.POST("/data/prediction", predictionBrowseHandler)
 		api.POST("/data/etablissement", etablissementBrowseHandler)

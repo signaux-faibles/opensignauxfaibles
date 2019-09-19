@@ -86,6 +86,60 @@ func reduceSlicedHandler(c *gin.Context) {
 	}
 }
 
+func publicSlicedHandler(c *gin.Context) {
+	var params struct {
+		BatchKey string `json:"batch"`
+		Algo     string `json:"features"`
+	}
+	err := c.ShouldBind(&params)
+	if err != nil {
+		c.JSON(400, err.Error())
+	}
+
+	batch := engine.AdminBatch{}
+	err = batch.Load(params.BatchKey)
+	if err != nil {
+		c.JSON(404, "batch non trouvé")
+		return
+	}
+
+	var queries []bson.M
+	var collection string
+	slices := []string{
+		"^0.*", "^1.*", "^2.*", "^3[0-4].*", "^3[5-9].*", "^4.*", "^5.*", "^6.*", "^7.*", "8.*", "^9.*",
+	}
+	for _, s := range slices {
+		query := bson.M{
+			"_id": bson.RegEx{
+				Pattern: s,
+				Options: "",
+			},
+			"value.index." + params.Algo: true,
+		}
+		queries = append(queries, query)
+
+		collection = "Public_aux"
+		err = engine.Public(batch, params.Algo, query, collection)
+		if err != nil {
+			c.JSON(500, err.Error())
+			return
+		}
+		fmt.Println("Public_aux full of new stuff")
+		err = engine.PublicMergeAux()
+		if err != nil {
+			c.JSON(500, err.Error())
+			return
+		}
+		fmt.Println("Public Merge completed")
+	}
+
+	if err != nil {
+		c.JSON(500, err.Error())
+	} else {
+		c.JSON(200, "Traitement effectué")
+	}
+}
+
 func compactHandler(c *gin.Context) {
 	var params struct {
 		BatchKey string   `json:"batch"`
