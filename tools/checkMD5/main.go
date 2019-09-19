@@ -32,17 +32,21 @@ func main() {
 			panic(err)
 		} else {
 			line++
-			var testRow string
-			if row[7] == "" {
-				testRow = strings.Join(row[0:7], ";")
+			if len(row) > 8 {
+				var testRow string
+				if row[7] == "" {
+					testRow = strings.Join(row[0:7], ";")
+				} else {
+					testRow = strings.Join(row[0:8], ";")
+				}
+				h := md5.New()
+				io.WriteString(h, testRow)
+				sum := fmt.Sprintf("%x", h.Sum(nil))
+				if strings.ToUpper(sum) != row[8] {
+					fmt.Println("erreur à la ligne " + strconv.Itoa(line) + ": " + strings.ToUpper(sum) + " calculé contre " + row[8])
+				}
 			} else {
-				testRow = strings.Join(row[0:8], ";")
-			}
-			h := md5.New()
-			io.WriteString(h, testRow)
-			sum := fmt.Sprintf("%x", h.Sum(nil))
-			if strings.ToUpper(sum) != row[8] {
-				fmt.Println("erreur à la ligne " + strconv.Itoa(line) + ": " + strings.ToUpper(sum) + " calculé contre " + row[8])
+				fmt.Println("erreur à la ligne " + strconv.Itoa(line) + ": format de ligne incorrect")
 			}
 		}
 	}
