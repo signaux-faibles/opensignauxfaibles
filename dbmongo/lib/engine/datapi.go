@@ -117,7 +117,7 @@ func ExportDetectionToDatapi(url, user, password, batch string) error {
 
 	var pipeline = exportdatapi.GetPipeline(batch)
 
-	iter := Db.DB.C("Scores").Pipe(pipeline).Iter()
+	iter := Db.DB.C("Scores").Pipe(pipeline).AllowDiskUse().Iter()
 
 	var data exportdatapi.Detection
 
@@ -129,7 +129,9 @@ func ExportDetectionToDatapi(url, user, password, batch string) error {
 		return err
 	}
 
+	fmt.Println("coucou")
 	for iter.Next(&data) {
+		fmt.Println("coucou")
 		detection, err := exportdatapi.Compute(data)
 		if err != nil {
 			fmt.Println(err)

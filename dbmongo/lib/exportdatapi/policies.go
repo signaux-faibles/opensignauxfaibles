@@ -25,7 +25,7 @@ func GetPolicies(batch string) []daclient.Object {
 	policies = append(policies, daclient.Object{
 		Key: map[string]string{
 			"type": "policy",
-			"name": "Accès France",
+			"name": "Accès France Entière",
 		},
 		Value: map[string]interface{}{
 			"match":   "(public|reference)",
@@ -37,7 +37,7 @@ func GetPolicies(batch string) []daclient.Object {
 	policies = append(policies, daclient.Object{
 		Key: map[string]string{
 			"type": "policy",
-			"name": "Accès France",
+			"name": "Accès France Entière Ancienne région",
 		},
 		Value: map[string]interface{}{
 			"match":   "(public|reference)",

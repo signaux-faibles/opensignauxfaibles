@@ -5,6 +5,7 @@ import (
 	"dbmongo/lib/apartconso"
 	"dbmongo/lib/apartdemande"
 	"dbmongo/lib/bdf"
+	"dbmongo/lib/crp"
 	"dbmongo/lib/diane"
 	"dbmongo/lib/engine"
 	"dbmongo/lib/files"
@@ -215,6 +216,7 @@ var registeredParsers = map[string]engine.Parser{
 	"sirene_ul":       sirene_ul.Parser,
 	"diane":           diane.Parser,
 	"interim":         interim.Parser,
+	"crp":             crp.Parser,
 }
 
 //
@@ -234,7 +236,9 @@ func adminRegionHandler(c *gin.Context) {
 	})
 }
 
-//
+// importBatchHandler traite les demandes d'import par l'API
+// on peut demander l'exécution de tous les parsers sans fournir d'option
+// ou demander l'exécution de parsers particuliers en fournissant une liste de leurs codes.
 func importBatchHandler(c *gin.Context) {
 	var params struct {
 		BatchKey string   `json:"batch"`
