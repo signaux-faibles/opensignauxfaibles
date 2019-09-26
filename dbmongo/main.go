@@ -158,7 +158,6 @@ func main() {
 		api.POST("/data/exportPolicies", datapiExportPoliciesHandler)
 		// TODO: mapreduce pour traiter le scope, modification des objets utilisateurs
 		// TODO: écrire l'aggrégation qui va bien
-		api.GET("/dashboard/tasks", getTasksHandler)
 
 	}
 

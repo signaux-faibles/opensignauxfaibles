@@ -52,12 +52,27 @@ func PurgeBatch(batchKey string) error {
 		Map:      functions["map"].Code,
 		Reduce:   functions["reduce"].Code,
 		Finalize: functions["finalize"].Code,
-		Out:      bson.M{"replace": "RawData"},
+		Out:      bson.M{"merge": "RawData", "nonAtomic": true},
 		Scope:    scope,
 	}
 
-	_, err = Db.DB.C("RawData").Find(nil).MapReduce(job, nil)
-	return err
+	var slices []string
+	for i := 0; i <= 99; i++ {
+		slices = append(slices, fmt.Sprintf("^%02d.*", i))
+	}
+
+	for _, s := range slices {
+		fmt.Println("Purge des objets " + s)
+		_, err = Db.DB.C("RawData").Find(bson.M{"_id": bson.RegEx{
+			Pattern: s,
+			Options: "",
+		}}).MapReduce(job, nil)
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // Compact traite le compactage de la base RawData

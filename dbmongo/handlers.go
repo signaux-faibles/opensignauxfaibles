@@ -271,17 +271,12 @@ func eventsHandler(c *gin.Context) {
 
 func purgeNotCompactedHandler(c *gin.Context) {
 	var result []interface{}
-	engine.PurgeNotCompacted()
+	err := engine.PurgeNotCompacted()
+	if err != nil {
+		c.JSON(500, err.Error())
+		return
+	}
 	c.JSON(200, result)
-}
-
-func getTasksHandler(c *gin.Context) {
-	c.JSON(501, "Not implemented (for the moment)")
-}
-
-func browsePublicHandler(c *gin.Context) {
-	data := engine.BrowsePublic(nil)
-	c.JSON(200, data)
 }
 
 // Vérifie et charge les parsers
@@ -343,25 +338,3 @@ func setCommentHandler(c *gin.Context) {
 	}
 	c.JSON(200, "ok")
 }
-
-// func publicHandler(c *gin.Context) {
-// 	params := struct {
-// 		Batch string `json:"batch"`
-// 		Siret string `json:"siret"`
-// 	}{}
-// 	c.Bind(&params)
-// 	batch := engine.AdminBatch{}
-// 	err := batch.Load(params.Batch)
-// 	if err != nil {
-// 		c.JSON(404, "batch non trouvé")
-// 		return
-// 	}
-
-// 	err = engine.Public(batch, params.Siret)
-// 	if err != nil {
-// 		c.JSON(500, err.Error())
-// 		return
-// 	}
-
-// 	c.JSON(200, "ok")
-// }

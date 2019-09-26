@@ -544,8 +544,6 @@ package engine
     } else {
       vcmde.last_procol = {"etat": "in_bonis"}
     }
-    //if (vcmde.effectif.length > 0) {
-    // emit({scope: ["bfc", "crp"], key: this.value.key, batch: actual_batch}, vcrp)
     emit({scope: "etablissement", key: this.value.key, batch: actual_batch}, vcmde)
     emit({scope: "entreprise", key: this.value.key.slice(0,9), batch: actual_batch}, {sirets: [this.value.key]})
   }
@@ -554,6 +552,7 @@ package engine
       diane: f.diane(value.diane),
       bdf: f.bdf(value.bdf),
       sirene_ul: (value.sirene_ul || {})[Object.keys(value.sirene_ul || {})[0] || ""],
+      crp: value.crp,
     }
     emit({scope: "entreprise", key: this.value.key, batch: actual_batch}, v)
   }

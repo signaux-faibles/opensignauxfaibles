@@ -54,7 +54,7 @@ func reduceSlicedHandler(c *gin.Context) {
 
 	var queries [10]bson.M
 	var collection string
-	for i, _ := range queries {
+	for i := range queries {
 		queries[i] = bson.M{
 			"_id": bson.RegEx{
 				Pattern: "^" + strconv.Itoa(i) + ".*",
@@ -89,7 +89,7 @@ func reduceSlicedHandler(c *gin.Context) {
 func publicSlicedHandler(c *gin.Context) {
 	var params struct {
 		BatchKey string `json:"batch"`
-		Algo     string `json:"features"`
+		Algo     string `json:"algo"`
 	}
 	err := c.ShouldBind(&params)
 	if err != nil {
@@ -108,6 +108,7 @@ func publicSlicedHandler(c *gin.Context) {
 	slices := []string{
 		"^0.*", "^1.*", "^2.*", "^3[0-4].*", "^3[5-9].*", "^4.*", "^5.*", "^6.*", "^7.*", "^8.*", "^9.*",
 	}
+
 	for _, s := range slices {
 		query := bson.M{
 			"_id": bson.RegEx{
@@ -124,12 +125,14 @@ func publicSlicedHandler(c *gin.Context) {
 			c.JSON(500, err.Error())
 			return
 		}
+
 		fmt.Println("Public_aux full of new stuff")
 		err = engine.PublicMergeAux()
 		if err != nil {
 			c.JSON(500, err.Error())
 			return
 		}
+
 		fmt.Println("Public Merge completed")
 	}
 

@@ -111,6 +111,16 @@ type Detection struct {
 	Entreprise    Entreprise        `json:"entreprise" bson:"entreprise"`
 }
 
+// CRP est une ligne de fichier CRP
+type CRP struct {
+	Siret       string `json:"siret" bson:"siret"`
+	Difficulte  string `json:"difficulte" bson:"difficulte"`
+	EtatDossier string `json:"etat_dossier" bson:"etat_dossier"`
+	Actions     string `json:"actions" bson:"actions"`
+	Statut      string `json:"statut" bson:"statut"`
+	Fichier     string `json:"fichier" bson:"fichier"`
+}
+
 // Procol donne le statut et la date de statut pour une entreprise en matière de procédures collectives
 type Procol struct {
 	Etat string    `json:"etat" bson:"etat"`
@@ -141,6 +151,7 @@ type Entreprise struct {
 		Diane    []Diane       `json:"diane" bson:"diane"`
 		BDF      []interface{} `json:"bdf" bson:"bdf"`
 		SireneUL SireneUL      `json:"sirene_ul" bson:"sirene_ul"`
+		CRP      CRP           `json:"crp" bson:"crp"`
 	} `bson:"value"`
 }
 
