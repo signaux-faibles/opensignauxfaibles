@@ -141,7 +141,7 @@ func main() {
 
 		api.POST("/data/search", searchHandler)
 
-		api.GET("/data/purge", purgeHandler)
+		api.POST("/data/purge", purgeHandler)
 		api.GET("/data/purgeNotCompacted", purgeNotCompactedHandler)
 		// api.POST("/data/public", publicHandler)
 

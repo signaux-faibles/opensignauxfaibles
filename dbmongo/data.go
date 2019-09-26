@@ -167,6 +167,15 @@ func nafHandler(c *gin.Context) {
 }
 
 func purgeHandler(c *gin.Context) {
-	info := engine.Purge()
-	c.JSON(200, info)
+	var params struct {
+		AreYouSure string `json:"areyousure"`
+	}
+	c.Bind(&params)
+	if params.AreYouSure == "yes" {
+		info := engine.Purge()
+		c.JSON(200, info)
+		return
+	}
+	c.JSON(300, "Provide areyousure=yes")
+
 }

@@ -52,12 +52,12 @@ func PurgeBatch(batchKey string) error {
 		Map:      functions["map"].Code,
 		Reduce:   functions["reduce"].Code,
 		Finalize: functions["finalize"].Code,
-		Out:      bson.M{"merge": "RawData", "nonAtomic": true},
+		Out:      bson.M{"merge": "RawData"},
 		Scope:    scope,
 	}
 
 	var slices []string
-	for i := 0; i <= 99; i++ {
+	for i := 57; i <= 57; i++ {
 		slices = append(slices, fmt.Sprintf("^%02d.*", i))
 	}
 
@@ -284,25 +284,6 @@ func Public(batch AdminBatch, algo string, query bson.M, collection string) erro
 		return errors.New("Erreur dans l'exécution des jobs MapReduce" + err.Error())
 	}
 	return nil
-}
-
-// BrowsePublic selectionne et retourne les objets de la collection Public
-// Cette selection tient compte du scope et des tris demandés pour aggréger le résultat
-func BrowsePublic(query interface{}) []Browseable {
-	return []Browseable{
-		Browseable{
-			ID: struct {
-				Key   string   `json:"key" bson:"key"`
-				Scope []string `json:"scope" bson:"scope"`
-			}{
-				Key:   "test",
-				Scope: []string{"test", "test2"},
-			},
-			Value: map[string]interface{}{
-				"test": "test",
-			},
-		},
-	}
 }
 
 type object struct {

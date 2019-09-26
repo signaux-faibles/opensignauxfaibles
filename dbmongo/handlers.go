@@ -10,7 +10,7 @@ import (
 	"dbmongo/lib/engine"
 	"dbmongo/lib/files"
 	"dbmongo/lib/interim"
-	"dbmongo/lib/repeatableOrder"
+	"dbmongo/lib/repeatableorder"
 	"dbmongo/lib/sirene"
 	"dbmongo/lib/sirene_ul"
 	"dbmongo/lib/urssaf"
@@ -211,7 +211,7 @@ var registeredParsers = map[string]engine.Parser{
 	"apdemande":       apartdemande.Parser,
 	"bdf":             bdf.Parser,
 	"altares":         altares.Parser,
-	"repeatableOrder": repeatableOrder.Parser,
+	"repeatableOrder": repeatableorder.Parser,
 	"sirene":          sirene.Parser,
 	"sirene_ul":       sirene_ul.Parser,
 	"diane":           diane.Parser,

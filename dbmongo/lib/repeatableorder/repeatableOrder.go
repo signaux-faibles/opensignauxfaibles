@@ -1,4 +1,4 @@
-package repeatableOrder
+package repeatableorder
 
 import (
 	"dbmongo/lib/engine"
@@ -13,6 +13,7 @@ import (
 	"github.com/spf13/viper"
 )
 
+// RepeatableOrder random number
 type RepeatableOrder struct {
 	Siret       string    `json:"siret"          bson:"siret"`
 	Periode     time.Time `json:"periode"        bson:"periode"`
