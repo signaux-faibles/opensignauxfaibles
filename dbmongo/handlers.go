@@ -211,7 +211,7 @@ var registeredParsers = map[string]engine.Parser{
 	"apdemande":       apartdemande.Parser,
 	"bdf":             bdf.Parser,
 	"altares":         altares.Parser,
-	"repeatableOrder": repeatableorder.Parser,
+	"repeatableorder": repeatableorder.Parser,
 	"sirene":          sirene.Parser,
 	"sirene_ul":       sirene_ul.Parser,
 	"diane":           diane.Parser,

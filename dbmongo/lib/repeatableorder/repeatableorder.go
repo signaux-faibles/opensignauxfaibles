@@ -32,7 +32,7 @@ func (rep RepeatableOrder) Scope() string {
 
 // Type de l'objet
 func (rep RepeatableOrder) Type() string {
-	return "repOrder"
+	return "reporder"
 }
 
 // Parser fonction qui retourne data et journaux
@@ -46,7 +46,7 @@ func Parser(batch engine.AdminBatch, filter map[string]bool) (chan engine.Tuple,
 	}
 
 	go func() {
-		for _, path := range batch.Files["repOrder"] {
+		for _, path := range batch.Files["reporder"] {
 			tracker := gournal.NewTracker(
 				map[string]string{"path": path},
 				engine.TrackerReports)
@@ -86,14 +86,14 @@ func Parser(batch engine.AdminBatch, filter map[string]bool) (chan engine.Tuple,
 				randomOrder, err := misc.ParsePFloat(row[2])
 				tracker.Error(err)
 
-				repOrder := RepeatableOrder{
+				reporder := RepeatableOrder{
 					Siret:       row[0],
 					Periode:     periode,
 					RandomOrder: randomOrder,
 				}
 
-				if !tracker.ErrorInCycle() && filter[repOrder.Siret[0:9]] {
-					outputChannel <- repOrder
+				if !tracker.ErrorInCycle() && filter[reporder.Siret[0:9]] {
+					outputChannel <- reporder
 					tracker.Next()
 				}
 			}

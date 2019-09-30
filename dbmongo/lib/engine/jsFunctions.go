@@ -1656,8 +1656,8 @@ console.log("lookAhead_test.js", test_results)
       let output_interim = f.interim(v.interim, output_indexed)
       f.add(output_interim, output_indexed)
     }
-    if (v.repeatable_order){
-      let output_repeatable = f.repeatable(v.repeatable_order)
+    if (v.reporder){
+      let output_repeatable = f.repeatable(v.reporder)
       f.add(output_repeatable, output_indexed)
     }
 
