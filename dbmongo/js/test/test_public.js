@@ -1,34 +1,12 @@
-// Pour lancer ce test
-// jsc /chemin/vers/js/public/* test_public.js
 
+actual_batch = "1905"
+date_debut = new Date("2014-01-01")
+date_fin = new Date("2018-02-01")
+serie_periode = f.generatePeriodSerie(new Date("2014-01-01"), new Date("2018-02-01"))
 
-function emit(key, val) {
+f.value = object.value
+f._id = object._id
 
-}
+f.map()
 
-
-f = {
-  altaresToHuman,
-  apconso,
-  apdemande,
-  bdf,
-  compareDebit,
-  cotisations,
-  dateAddDay,
-  dateAddMonth,
-  dealWithProcols,
-  debits,
-  delai,
-  diane,
-  effectifs,
-  finalize,
-  flatten,
-  generatePeriodSerie,
-  idEntreprise,
-  iterable,
-  map,
-  procolToHuman,
-  reduce,
-  sirene,
-}
-
+print(JSON.stringify(pool, null, 2))
