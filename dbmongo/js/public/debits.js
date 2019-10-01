@@ -1,4 +1,4 @@
-function dettes(vdebit) {
+function debits(vdebit) {
 
   last_treatment_day = 20
   vdebit = vdebit || {}

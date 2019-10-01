@@ -1,29 +1,38 @@
 package engine
 
 import (
-	"dbmongo/lib/misc"
-	"dbmongo/lib/naf"
 	"errors"
 	"fmt"
-	"regexp"
+	"sync"
+	"time"
 
 	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
+	"github.com/spf13/viper"
 )
 
 //go:generate go run js/loadJS.go
 
-func loadJSFunctions(directoryName string) (map[string]bson.JavaScript, error) {
+func loadJSFunctions(directoryNames ...string) (map[string]bson.JavaScript, error) {
 	functions := make(map[string]bson.JavaScript)
 	var err error
-	if _, ok := jsFunctions[directoryName]; !ok {
-		err = errors.New("Map reduce javascript functions could not be found for " + directoryName)
-	} else {
-		err = nil
-	}
-	for k, v := range jsFunctions[directoryName] {
+
+	for k, v := range jsFunctions["common"] {
 		functions[k] = bson.JavaScript{
 			Code: string(v),
+		}
+	}
+
+	for _, directoryName := range directoryNames {
+		if _, ok := jsFunctions[directoryName]; !ok {
+			err = errors.New("Map reduce javascript functions could not be found for " + directoryName)
+		} else {
+			err = nil
+		}
+		for k, v := range jsFunctions[directoryName] {
+			functions[k] = bson.JavaScript{
+				Code: string(v),
+			}
 		}
 	}
 	return functions, err
@@ -36,50 +45,67 @@ func PurgeNotCompacted() error {
 	return err
 }
 
-// PurgeBatch permet de supprimer un batch dans les objets de RawData
-func PurgeBatch(batchKey string) error {
+// MRWait centralise les variables nécessaires à l'isolation des traitements parallèlisés MR
+type MRWait struct {
+	waitGroup sync.WaitGroup
+	running   sync.Map
+	lock      sync.Mutex
+	mergeLock sync.Mutex
+}
 
-	functions, err := loadJSFunctions("purgeBatch")
-	if err != nil {
-		return err
+func (w *MRWait) init() {
+	w.waitGroup = sync.WaitGroup{}
+	w.lock = sync.Mutex{}
+	w.running = sync.Map{}
+	w.running.Store("active", 0)
+	w.running.Store("errors", 0)
+	w.running.Store("total", 0)
+}
+
+// add incrémente le compteur désigné de la valeur choisie
+// Retourne false si la valeur obtenue excède la valeur max
+// Si max < 0 alors le test n'est pas effectué
+func (w *MRWait) add(compteur string, val int, max int) bool {
+	w.lock.Lock()
+	defer w.lock.Unlock()
+	total, _ := w.running.Load(compteur)
+	if total.(int) < max || max < 0 {
+		w.running.Store(compteur, total.(int)+val)
+		return true
 	}
-	scope := bson.M{
-		"currentBatch": batchKey,
-		"f":            functions,
-	}
+	return false
+}
 
-	job := &mgo.MapReduce{
-		Map:      functions["map"].Code,
-		Reduce:   functions["reduce"].Code,
-		Finalize: functions["finalize"].Code,
-		Out:      bson.M{"merge": "RawData"},
-		Scope:    scope,
-	}
+// MRroutine travaille dans un pool pour exécuter des jobs de mapreduce. merge et nonAtomic recommandés.
+func MRroutine(job *mgo.MapReduce, query bson.M, dbTemp string, collOrig string, w *MRWait, pipeChannel chan string) {
+	w.add("total", 1, -1)
 
-	var slices []string
-	for i := 57; i <= 57; i++ {
-		slices = append(slices, fmt.Sprintf("^%02d.*", i))
-	}
-
-	for _, s := range slices {
-		fmt.Println("Purge des objets " + s)
-		_, err = Db.DB.C("RawData").Find(bson.M{"_id": bson.RegEx{
-			Pattern: s,
-			Options: "",
-		}}).MapReduce(job, nil)
-
-		if err != nil {
-			return err
+	for {
+		ok := w.add("active", 1, viper.GetInt("MRthreads"))
+		if ok {
+			break
 		}
+		time.Sleep(time.Second)
 	}
-	return nil
+	fmt.Println(query)
+
+	db, _ := mgo.Dial(viper.GetString("DB_DIAL"))
+	db.SetSocketTimeout(720000 * time.Second)
+	// _, err := db.DB(viper.GetString("DB")).C(collOrig).Find(query).MapReduce(job, nil)
+	var err error
+	if err == nil {
+		pipeChannel <- dbTemp
+	} else {
+		fmt.Println(err)
+		w.add("errors", 1, -1)
+	}
+
+	w.add("active", -1, -1)
+	db.Close()
+	w.waitGroup.Done()
 }
 
 // Compact traite le compactage de la base RawData
-//func Compact() error {
-//	batches, _ := GetBatches()
-//
-//	// Détermination scope traitement
 func Compact(batchKey string, types []string) error {
 	// Détermination scope traitement
 	batches, _ := GetBatches()
@@ -128,162 +154,6 @@ func Compact(batchKey string, types []string) error {
 	}
 	err = PurgeNotCompacted()
 	return err
-}
-
-// Reduce alimente la base Features
-func Reduce(batchKey string, algo string, query interface{}, collection string) error {
-
-	// éviter les noms d'algo essayant de hacker l'exploration des fonctions ci-dessous
-	isAlphaNum := regexp.MustCompile(`^[A-Za-z0-9]+$`).MatchString
-	if !isAlphaNum(algo) {
-		return errors.New("nom d'algorithme invalide, alphanumérique sans espace exigé")
-	}
-
-	functions, err := loadJSFunctions("reduce." + algo)
-
-	naf, err := naf.LoadNAF()
-	if err != nil {
-		return err
-	}
-
-	batch, err := GetBatch(batchKey)
-	if err != nil {
-		return err
-	}
-
-	scope := bson.M{
-		"date_debut":             batch.Params.DateDebut,
-		"date_fin":               batch.Params.DateFin,
-		"date_fin_effectif":      batch.Params.DateFinEffectif,
-		"serie_periode":          misc.GenereSeriePeriode(batch.Params.DateDebut, batch.Params.DateFin),
-		"serie_periode_annuelle": misc.GenereSeriePeriodeAnnuelle(batch.Params.DateDebut, batch.Params.DateFin),
-		"offset_effectif":        (batch.Params.DateFinEffectif.Year()-batch.Params.DateFin.Year())*12 + int(batch.Params.DateFinEffectif.Month()-batch.Params.DateFin.Month()),
-		"actual_batch":           batch.ID.Key,
-		"naf":                    naf,
-		"f":                      functions,
-		"batches":                GetBatchesID(),
-		"types":                  GetTypes(),
-	}
-
-	job := &mgo.MapReduce{
-		Map:      functions["map"].Code,
-		Reduce:   functions["reduce"].Code,
-		Finalize: functions["finalize"].Code,
-		//TODO merge into collection instead of replacing. Must be idempotent
-		//transformation. Not the case now with agregation
-		Out:   bson.M{"replace": collection}, // bson.M{"merge": collection},
-		Scope: scope,
-	}
-
-	_, err = Db.DB.C("RawData").Find(query).MapReduce(job, nil)
-
-	if err != nil {
-		return err
-	}
-
-	// Separating different sirets in different objects
-	query2 := []bson.M{{
-		"$unwind": bson.M{"path": "$value", "preserveNullAndEmptyArrays": false},
-	},
-		{
-			"$project": bson.M{"_id": 0.0, "info": "$_id", "value": 1.0},
-		},
-		{"$out": collection}}
-	pipe := Db.DB.C(collection).Pipe(query2)
-	resp := []bson.M{}
-	err = pipe.All(&resp)
-
-	return err
-}
-
-// ReduceMergeAux merges collection reduced into its destination
-func ReduceMergeAux() error {
-	// job := &mgo.MapReduce{
-	// 	Map:      "function map() { emit(this._id, {info: this.info, value: this.value}) }",
-	// 	Reduce:   "function reduce(_, v) {return v}",
-	// 	Finalize: "function finalize(_, v) { return v }",
-	// 	Out:      bson.M{"merge": "Features"},
-	// }
-	// _, err := Db.DB.C("Features_aux").Find(bson.M{}).MapReduce(job, nil)
-
-	query := []bson.M{{
-		"$merge": bson.M{"into": "Features"},
-	}}
-	pipe := Db.DB.C("Features_aux").Pipe(query)
-	resp := []bson.M{}
-	err := pipe.All(&resp)
-
-	if err != nil {
-		return err
-	}
-	_, err = Db.DB.C("Features_aux").RemoveAll(nil)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-// PublicMergeAux merges collection reduced into its destination
-func PublicMergeAux() error {
-	// job := &mgo.MapReduce{
-	// 	Map:      "function map() { emit(this._id, {info: this.info, value: this.value}) }",
-	// 	Reduce:   "function reduce(_, v) {return v}",
-	// 	Finalize: "function finalize(_, v) { return v }",
-	// 	Out:      bson.M{"merge": "Features"},
-	// }
-	// _, err := Db.DB.C("Features_aux").Find(bson.M{}).MapReduce(job, nil)
-
-	query := []bson.M{{
-		"$merge": bson.M{"into": "Public"},
-	}}
-	pipe := Db.DB.C("Public_aux").Pipe(query)
-	resp := []bson.M{}
-	err := pipe.All(&resp)
-
-	if err != nil {
-		return err
-	}
-	_, err = Db.DB.C("Public_aux").RemoveAll(nil)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-// Public alimente la collection Public avec les objets destinés à la diffusion
-func Public(batch AdminBatch, algo string, query bson.M, collection string) error {
-
-	functions, err := loadJSFunctions("public")
-
-	scope := bson.M{
-		"date_debut":             batch.Params.DateDebut,
-		"date_fin":               batch.Params.DateFin,
-		"date_fin_effectif":      batch.Params.DateFinEffectif,
-		"serie_periode":          misc.GenereSeriePeriode(batch.Params.DateFin.AddDate(0, -24, 0), batch.Params.DateFin),
-		"serie_periode_annuelle": misc.GenereSeriePeriodeAnnuelle(batch.Params.DateFin.AddDate(0, -24, 0), batch.Params.DateFin),
-		"offset_effectif":        (batch.Params.DateFinEffectif.Year()-batch.Params.DateFin.Year())*12 + int(batch.Params.DateFinEffectif.Month()-batch.Params.DateFin.Month()),
-		"actual_batch":           batch.ID.Key,
-		"naf":                    naf.Naf,
-		"f":                      functions,
-		"batches":                GetBatchesID(),
-		"types":                  GetTypes(),
-	}
-
-	job := &mgo.MapReduce{
-		Map:      functions["map"].Code,
-		Reduce:   functions["reduce"].Code,
-		Finalize: functions["finalize"].Code,
-		Out:      bson.M{"replace": collection},
-		Scope:    scope,
-	}
-	// exécution
-
-	_, err = Db.DB.C("RawData").Find(query).MapReduce(job, nil)
-
-	if err != nil {
-		return errors.New("Erreur dans l'exécution des jobs MapReduce" + err.Error())
-	}
-	return nil
 }
 
 type object struct {
@@ -366,4 +236,52 @@ func Purge() interface{} {
 	}
 
 	return returnData
+}
+
+// Chunks est le retour de la fonction mongodb SplitKeys
+type Chunks struct {
+	OK        int `bson:"ok"`
+	SplitKeys []struct {
+		ID string `bson:"_id"`
+	} `bson:"splitKeys"`
+}
+
+// ChunkCollection exécute la fonction SplitKeys sur la collection passée en paramètres
+func ChunkCollection(db string, collection string, chunkSize int64) (Chunks, error) {
+	var result Chunks
+
+	err := Db.DB.Run(
+		bson.D{{Name: "splitVector", Value: db + "." + collection},
+			{Name: "keyPattern", Value: bson.M{"_id": 1}},
+			{Name: "maxChunkSizeBytes", Value: chunkSize}},
+		&result)
+
+	return result, err
+}
+
+// ToQueries translates chunks into bson queries to chunk collection by siren code
+func (chunks Chunks) ToQueries(query bson.M) []bson.M {
+	var ret []bson.M
+	ret = append(ret, bson.M{
+		"_id": bson.M{
+			"$lte": chunks.SplitKeys[0].ID[0:9],
+		},
+	})
+
+	for i := 1; i < len(chunks.SplitKeys); i++ {
+		ret = append(ret, bson.M{
+			"$and": []bson.M{
+				bson.M{"_id": bson.M{"$gt": chunks.SplitKeys[i-1].ID[0:9]}},
+				bson.M{"_id": bson.M{"$lte": chunks.SplitKeys[i].ID[0:9]}},
+				query,
+			},
+		})
+	}
+
+	ret = append(ret, bson.M{
+		"_id": bson.M{
+			"$gt": chunks.SplitKeys[len(chunks.SplitKeys)-1].ID[0:9],
+		},
+	})
+	return ret
 }

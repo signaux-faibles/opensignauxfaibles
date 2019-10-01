@@ -14,3 +14,4 @@
 # FIRST_BATCH = "1802"
 # smtpAddress = "localhost:25"
 # jwtSecret = "mettre ici le secret de votre choix pour sécuriser vos token JWT"
+# MRthreads = 2 # nombre de threads pour traiter MapReduce

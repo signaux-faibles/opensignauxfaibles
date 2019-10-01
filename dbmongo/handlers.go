@@ -327,14 +327,3 @@ func getCommentHistoryHandler(c *gin.Context) {
 	}
 	c.JSON(200, comments)
 }
-
-func setCommentHandler(c *gin.Context) {
-	var comment engine.Comment
-	c.Bind(&comment)
-	err := engine.SetComment(comment)
-	if err != nil {
-		c.JSON(500, err.Error())
-		return
-	}
-	c.JSON(200, "ok")
-}

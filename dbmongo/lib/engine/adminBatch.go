@@ -115,10 +115,10 @@ func addFileToBatch() chan newFile {
 
 // ImportBatch lance tous les parsers sur le batch fourni
 func ImportBatch(batch AdminBatch, parsers []Parser) error {
-  filter, err := getSirenFilter(&batch)
-  if err != nil {
-    return err
-  }
+	filter, err := getSirenFilter(&batch)
+	if err != nil {
+		return err
+	}
 	for _, parser := range parsers {
 		outputChannel, eventChannel := parser(batch, filter)
 		go RelayEvents(eventChannel)
@@ -158,7 +158,7 @@ func ProcessBatch(batchList []string, parsers []Parser, types []string) error {
 	}
 
 	batch := LastBatch()
-	return Reduce(batch.ID.Key, "algo2", nil, "Features")
+	return Reduce(batch, "algo2")
 }
 
 // LastBatch retourne le dernier batch
