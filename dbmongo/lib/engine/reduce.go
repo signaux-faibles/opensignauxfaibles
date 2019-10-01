@@ -4,6 +4,7 @@ import (
 	"dbmongo/lib/misc"
 	"dbmongo/lib/naf"
 	"errors"
+	"fmt"
 	"regexp"
 	"strconv"
 	"time"
@@ -12,6 +13,90 @@ import (
 	"github.com/globalsign/mgo/bson"
 	"github.com/spf13/viper"
 )
+
+// ReduceOne lance le calcul de Features pour la clé passée en argument
+func ReduceOne(batch AdminBatch, algo string, key string) error {
+	// éviter les noms d'algo essayant de hacker l'exploration des fonctions ci-dessous
+	isAlphaNum := regexp.MustCompile(`^[A-Za-z0-9]+$`).MatchString
+	if !isAlphaNum(algo) {
+		return errors.New("nom d'algorithme invalide, alphanumérique sans espace exigé")
+	}
+
+	if len(key) < 9 {
+		return errors.New("key minimal length of 9")
+	}
+
+	functions, err := loadJSFunctions("reduce." + algo)
+
+	naf, err := naf.LoadNAF()
+	if err != nil {
+		return err
+	}
+
+	scope := bson.M{
+		"date_debut":             batch.Params.DateDebut,
+		"date_fin":               batch.Params.DateFin,
+		"date_fin_effectif":      batch.Params.DateFinEffectif,
+		"serie_periode":          misc.GenereSeriePeriode(batch.Params.DateDebut, batch.Params.DateFin),
+		"serie_periode_annuelle": misc.GenereSeriePeriodeAnnuelle(batch.Params.DateDebut, batch.Params.DateFin),
+		"offset_effectif":        (batch.Params.DateFinEffectif.Year()-batch.Params.DateFin.Year())*12 + int(batch.Params.DateFinEffectif.Month()-batch.Params.DateFin.Month()),
+		"actual_batch":           batch.ID.Key,
+		"naf":                    naf,
+		"f":                      functions,
+		"batches":                GetBatchesID(),
+		"types":                  GetTypes(),
+	}
+
+	job := &mgo.MapReduce{
+		Map:      functions["map"].Code,
+		Reduce:   functions["reduce"].Code,
+		Finalize: functions["finalize"].Code,
+		Out:      bson.M{"replace": "TemporaryCollection"},
+		Scope:    scope,
+	}
+
+	query := bson.M{
+		"_id": bson.M{
+			"$regex": bson.RegEx{Pattern: "^" + key[0:9],
+				Options: "",
+			},
+		},
+	}
+	_, err = Db.DB.C("RawData").Find(query).MapReduce(job, nil)
+
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	pipeline := []bson.M{
+		bson.M{
+			"$unwind": bson.M{
+				"path":                       "$value",
+				"preserveNullAndEmptyArrays": false,
+			},
+		},
+		bson.M{
+			"$project": bson.M{
+				"_id":   0.0,
+				"info":  "$_id",
+				"value": 1.0,
+			},
+		},
+		bson.M{
+			"$merge": bson.M{
+				"into": bson.M{
+					"coll": "Features_debug",
+				},
+			},
+		},
+	}
+
+	pipe := Db.DB.C("TemporaryCollection").Pipe(pipeline)
+	var result []interface{}
+	err = pipe.AllowDiskUse().All(&result)
+
+	return err
+}
 
 // Reduce alimente la base Features
 func Reduce(batch AdminBatch, algo string) error {

@@ -22,25 +22,19 @@ func reduceHandler(c *gin.Context) {
 	if err != nil {
 		c.JSON(404, "le batch "+params.BatchKey+" n'existe pas")
 	}
-	// var query bson.M
-	// var collection string
-	// if params.Key != "" {
-	// 	query = bson.M{"_id": bson.M{"$regex": bson.RegEx{
-	// 		Pattern: "^" + params.Key[0:9],
-	// 		Options: "",
-	// 	}}}
-	// 	collection = "Features_debug"
-	// } else {
-	// 	query = bson.M{"value.index." + params.Algo: true}
-	// 	collection = "Features"
-	// }
 
-	err = engine.Reduce(batch, params.Algo)
+	if params.Key == "" {
+		err = engine.Reduce(batch, params.Algo)
+	} else {
+		err = engine.ReduceOne(batch, params.Algo, params.Key)
+	}
+
 	if err != nil {
 		c.JSON(500, err.Error())
 	} else {
 		c.JSON(200, "Traitement effectué")
 	}
+
 }
 
 // func reduceSlicedHandler(c *gin.Context) {

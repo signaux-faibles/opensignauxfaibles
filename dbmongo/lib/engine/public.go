@@ -11,69 +11,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-// PublicMergeAux merges collection reduced into its destination
-// func PublicMergeAux() error {
-// 	// job := &mgo.MapReduce{
-// 	// 	Map:      "function map() { emit(this._id, {info: this.info, value: this.value}) }",
-// 	// 	Reduce:   "function reduce(_, v) {return v}",
-// 	// 	Finalize: "function finalize(_, v) { return v }",
-// 	// 	Out:      bson.M{"merge": "Features"},
-// 	// }
-// 	// _, err := Db.DB.C("Features_aux").Find(bson.M{}).MapReduce(job, nil)
-
-// 	query := []bson.M{{
-// 		"$merge": bson.M{"into": "Public"},
-// 	}}
-// 	pipe := Db.DB.C("Public_aux").Pipe(query)
-// 	resp := []bson.M{}
-// 	err := pipe.All(&resp)
-
-// 	if err != nil {
-// 		return err
-// 	}
-// 	_, err = Db.DB.C("Public_aux").RemoveAll(nil)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	return nil
-// }
-
-// Public alimente la collection Public avec les objets destinés à la diffusion
-// func Public(batch AdminBatch) error {
-
-// 	functions, err := loadJSFunctions("public")
-
-// 	scope := bson.M{
-// 		"date_debut":             batch.Params.DateDebut,
-// 		"date_fin":               batch.Params.DateFin,
-// 		"date_fin_effectif":      batch.Params.DateFinEffectif,
-// 		"serie_periode":          misc.GenereSeriePeriode(batch.Params.DateFin.AddDate(0, -24, 0), batch.Params.DateFin),
-// 		"serie_periode_annuelle": misc.GenereSeriePeriodeAnnuelle(batch.Params.DateFin.AddDate(0, -24, 0), batch.Params.DateFin),
-// 		"offset_effectif":        (batch.Params.DateFinEffectif.Year()-batch.Params.DateFin.Year())*12 + int(batch.Params.DateFinEffectif.Month()-batch.Params.DateFin.Month()),
-// 		"actual_batch":           batch.ID.Key,
-// 		"naf":                    naf.Naf,
-// 		"f":                      functions,
-// 		"batches":                GetBatchesID(),
-// 		"types":                  GetTypes(),
-// 	}
-
-// 	job := &mgo.MapReduce{
-// 		Map:      functions["map"].Code,
-// 		Reduce:   functions["reduce"].Code,
-// 		Finalize: functions["finalize"].Code,
-// 		Out:      bson.M{"replace": collection},
-// 		Scope:    scope,
-// 	}
-// 	// exécution
-
-// 	_, err = Db.DB.C("RawData").Find(query).MapReduce(job, nil)
-
-// 	if err != nil {
-// 		return errors.New("Erreur dans l'exécution des jobs MapReduce" + err.Error())
-// 	}
-// 	return nil
-// }
-
 // Public permet de supprimer un batch dans les objets de RawData
 func Public(batch AdminBatch) error {
 	functions, err := loadJSFunctions("public")

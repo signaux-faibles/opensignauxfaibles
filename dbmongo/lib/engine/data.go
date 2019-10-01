@@ -91,8 +91,8 @@ func MRroutine(job *mgo.MapReduce, query bson.M, dbTemp string, collOrig string,
 
 	db, _ := mgo.Dial(viper.GetString("DB_DIAL"))
 	db.SetSocketTimeout(720000 * time.Second)
-	// _, err := db.DB(viper.GetString("DB")).C(collOrig).Find(query).MapReduce(job, nil)
-	var err error
+	_, err := db.DB(viper.GetString("DB")).C(collOrig).Find(query).MapReduce(job, nil)
+
 	if err == nil {
 		pipeChannel <- dbTemp
 	} else {
