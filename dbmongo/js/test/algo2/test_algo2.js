@@ -18,9 +18,21 @@ Object.keys(pool).forEach(k => {
   intermediateResult.push(reducer(array, f.reduce))
 })
 
+var invertedIntermediateResult = []
+
+Object.keys(pool).forEach(k => {
+  array = pool[k]
+  invertedIntermediateResult.push(invertedReducer(array, f.reduce))
+})
+
 var result = []
 intermediateResult.forEach(r => {
   result.push(f.finalize(null, r))
 })
 
-print(JSON.stringify(result, null, 2))
+var invertedResult = []
+intermediateResult.forEach(r => {
+  invertedResult.push(f.finalize(null, r))
+})
+
+print(JSON.stringify(result) == JSON.stringify(invertedResult))

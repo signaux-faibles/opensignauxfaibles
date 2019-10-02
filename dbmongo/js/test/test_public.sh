@@ -1,1 +1,1 @@
-jsc ../public/*.js lib.js object.js test_public.js
+jsc ../public/*.js public/lib_public.js objects.js public/test_public.js

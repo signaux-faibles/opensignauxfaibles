@@ -104,11 +104,6 @@ var test_results = test_cases.map(function(tc, id){
   var actual = lookAhead(tc["data"], tc["attr_name"], tc["n_months"], tc["past"])
 
   var test_passes = compare(actual, tc["expected"])
-  if (!test_passes){
-    console.log("Test fails: " + id)
-    console.log("actual:" + JSON.stringify(actual))
-    console.log("expected: " + JSON.stringify(tc["expected"]))
-  }
   return(test_passes)
 })
-console.log("lookAhead_test.js", test_results)
+print(test_results.every(t=>t))
