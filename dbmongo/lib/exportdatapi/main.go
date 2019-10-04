@@ -415,10 +415,13 @@ func computeEtablissement(detection Detection) (objects []daclient.Object) {
 		Value: valueURSSAF,
 	}
 
-	objectDGEFP := daclient.Object{
-		Key:   key,
-		Scope: scopeDGEFP,
-		Value: valueDGEFP,
+	if detection.Alert != "Pas d'alerte" {
+		objectDGEFP := daclient.Object{
+			Key:   key,
+			Scope: scopeDGEFP,
+			Value: valueDGEFP,
+		}
+		objects = append(objects, objectDGEFP)
 	}
 
 	objectBDF := daclient.Object{
@@ -427,7 +430,7 @@ func computeEtablissement(detection Detection) (objects []daclient.Object) {
 		Value: valueBDF,
 	}
 
-	objects = append(objects, object, objectURSSAF, objectDGEFP, objectBDF)
+	objects = append(objects, object, objectURSSAF, objectBDF)
 	return objects
 }
 
@@ -436,7 +439,9 @@ func Compute(detection Detection) ([]daclient.Object, error) {
 
 	if detection.Etablissement.Value.Sirene.Departement != "" {
 		var objects []daclient.Object
-		objects = append(objects, computeDetection(detection)...)
+		if detection.Alert != "Pas d'alerte" {
+			objects = append(objects, computeDetection(detection)...)
+		}
 		objects = append(objects, computeEtablissement(detection)...)
 		return objects, nil
 	}
