@@ -1,11 +1,11 @@
-package apartdemande
+package apdemande
 
 import (
 	"bufio"
-	"dbmongo/lib/engine"
-	"dbmongo/lib/misc"
 	"encoding/csv"
 	"io"
+	"opensignauxfaibles/dbmongo/lib/engine"
+	"opensignauxfaibles/dbmongo/lib/misc"
 	"os"
 	"strings"
 	"time"
@@ -49,7 +49,7 @@ func (apdemande APDemande) Scope() string {
 }
 
 // Parser produit les lignes
-func Parser(batch engine.AdminBatch, filter map[string]bool) (chan engine.Tuple, chan engine.Event) {
+func Parser(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
 	outputChannel := make(chan engine.Tuple)
 	eventChannel := make(chan engine.Event)
 	event := engine.Event{
@@ -148,7 +148,7 @@ func Parser(batch engine.AdminBatch, filter map[string]bool) (chan engine.Tuple,
 					tracker.Error(err)
 					apdemande.MontantConsomme, err = misc.ParsePFloat(strings.ReplaceAll(row[f["S_MONTANT_CONSOM_TOT"]], ",", "."))
 					tracker.Error(err)
-					if !tracker.ErrorInCycle() {
+					if !tracker.HasErrorInCurrentCycle() {
 						outputChannel <- apdemande
 					} else {
 						// event.Debug(tracker.Report("error"))

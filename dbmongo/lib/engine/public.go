@@ -1,8 +1,8 @@
 package engine
 
 import (
-	"dbmongo/lib/misc"
-	"dbmongo/lib/naf"
+	"opensignauxfaibles/dbmongo/lib/misc"
+	"opensignauxfaibles/dbmongo/lib/naf"
 	"strconv"
 	"time"
 

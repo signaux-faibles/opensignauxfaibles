@@ -1,5 +1,32 @@
 package engine
 
+import (
+	"errors"
+)
+
+// Cache saves values in memory
+type Cache map[string]interface{}
+
+//_Get gets a value from the cache
+func (ca Cache) Get(name string) (interface{}, error) {
+	if ca == nil {
+		return nil, errors.New("Entry not found: " + name)
+	}
+	if _, ok := ca[name]; !ok {
+		return nil, errors.New("Entry not found: " + name)
+	}
+	return ca[name], nil
+}
+
+// Set writes a value to the Cache
+func (ca Cache) Set(name string, value interface{}) {
+	ca[name] = value
+}
+
+func NewCache() Cache {
+	return map[string]interface{}{}
+}
+
 // GetTypes retourne la liste des types déclarés
 func GetTypes() Types {
 	return []Type{
@@ -45,7 +72,7 @@ func (t Types) ToData() map[string]interface{} {
 }
 
 // Parser fonction de traitement de données en entrée
-type Parser func(AdminBatch, map[string]bool) (chan Tuple, chan Event)
+type Parser func(Cache, *AdminBatch) (chan Tuple, chan Event)
 
 // Browseable est le type qui permet d'envoyer les objets vers le frontend
 // Voir la fonction Browse

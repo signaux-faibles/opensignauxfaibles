@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"fmt"
 	"strconv"
 	"time"
 
@@ -22,22 +23,23 @@ type Code string
 // Event est un objet de journal
 // swagger:ignore
 type Event struct {
-	ID       bson.ObjectId `json:"-" bson:"_id"`
-	Date     time.Time     `json:"date" bson:"date"`
-	Comment  interface{}   `json:"event" bson:"event"`
-	Priority Priority      `json:"priority" bson:"priority"`
-	Code     Code          `json:"code" bson:"code"`
-	Channel  chan Event    `json:"-"`
+	ID         bson.ObjectId `json:"-" bson:"_id"`
+	Date       time.Time     `json:"date" bson:"date"`
+	Comment    interface{}   `json:"event" bson:"event"`
+	Priority   Priority      `json:"priority" bson:"priority"`
+	Code       Code          `json:"code" bson:"code"`
+	ReportType string        `json:"report_type" bson:"record_type"`
+	Channel    chan Event    `json:"-"`
 }
 
-// Events Event serialisable pour swaggo (TODO: fix this !)
-type Events []struct {
-	ID       bson.ObjectId `json:"-" bson:"_id"`
-	Date     time.Time     `json:"date" bson:"date"`
-	Comment  interface{}   `json:"event" bson:"event"`
-	Priority Priority      `json:"priority" bson:"priority"`
-	Code     Code          `json:"code" bson:"code"`
-}
+// // Events Event serialisable pour swaggo (TODO: fix this !)
+// type Events []struct {
+// 	ID       bson.ObjectId `json:"-" bson:"_id"`
+// 	Date     time.Time     `json:"date" bson:"date"`
+// 	Comment  interface{}   `json:"event" bson:"event"`
+// 	Priority Priority      `json:"priority" bson:"priority"`
+// 	Code     Code          `json:"code" bson:"code"`
+// }
 
 // GetBSON retourne l'objet Event sous une forme sérialisable
 func (event Event) GetBSON() (interface{}, error) {
@@ -70,94 +72,180 @@ var Critical = Priority("critical")
 
 var unknownCode = Code("unknown")
 
-// DiscardEvents supprime les évènements
-func DiscardEvents(events chan Event) {
-	go func() {
-		for range events {
-			// fmt.Println(e)
-		}
-	}()
+func (event Event) throw(comment interface{}, logLevel string) {
+	event.ID = bson.NewObjectId()
+	event.Date = time.Now()
+	event.Comment = comment
+	if event.Code == "" {
+		event.Code = unknownCode
+	}
+	switch logLevel {
+	case "debug":
+		event.Priority = Debug
+	case "info":
+		event.Priority = Info
+	case "warning":
+		event.Priority = Warning
+	case "critical":
+		event.Priority = Critical
+	default:
+		panic("Wrong use of throw function")
+	}
+	event.Channel <- event
 }
 
 // Debug produit un évènement de niveau Debug
 func (event Event) Debug(comment interface{}) {
-	event.ID = bson.NewObjectId()
-	event.Date = time.Now()
-	event.Comment = comment
-	event.Priority = Debug
-	if event.Code == "" {
-		event.Code = unknownCode
-	}
-	event.Channel <- event
+	event.throw(comment, "debug")
 }
 
 // Info produit un évènement de niveau Info
 func (event Event) Info(comment interface{}) {
-	event.ID = bson.NewObjectId()
-	event.Date = time.Now()
-	event.Comment = comment
-	event.Priority = Info
-	if event.Code == "" {
-		event.Code = unknownCode
-	}
-	event.Channel <- event
+	event.throw(comment, "info")
 }
 
 // Warning produit un évènement de niveau Warning
 func (event Event) Warning(comment interface{}) {
-	event.ID = bson.NewObjectId()
-	event.Date = time.Now()
-	event.Comment = comment
-	event.Priority = Warning
-	if event.Code == "" {
-		event.Code = unknownCode
-	}
-	event.Channel <- event
+	event.throw(comment, "warning")
 }
 
 // Critical produit un évènement de niveau Critical
 func (event Event) Critical(comment interface{}) {
-	event.ID = bson.NewObjectId()
-	event.Date = time.Now()
-	event.Comment = comment
-	event.Priority = Critical
-	if event.Code == "" {
-		event.Code = unknownCode
-	}
-	event.Channel <- event
+	event.throw(comment, "critical")
+}
+
+// DebugReport produit un rapport de niveau Debug
+func (event Event) DebugReport(report string, tracker gournal.Tracker) {
+	event.ReportType = report
+	event.Debug(tracker.Report(report))
+}
+
+// InfoReport produit un rapport de niveau Info
+func (event Event) InfoReport(report string, tracker gournal.Tracker) {
+	event.ReportType = report
+	event.Info(tracker.Report(report))
+}
+
+// WarningReport produit un rapport de niveau Warning
+func (event Event) WarningReport(report string, tracker gournal.Tracker) {
+	event.ReportType = report
+	event.Warning(tracker.Report(report))
+}
+
+// CriticalReport produit un rapport de niveau Critical
+func (event Event) CriticalReport(report string, tracker gournal.Tracker) {
+	event.ReportType = report
+	event.Critical(tracker.Report(report))
 }
 
 func reportAbstract(tracker gournal.Tracker) interface{} {
-	return tracker.Context["path"] + ": intégration terminée, " +
-		strconv.Itoa(tracker.Count) + " éléments traités " +
-		strconv.Itoa(tracker.CountErrorCycles()) + " rejets."
-}
 
-func reportErrors(tracker gournal.Tracker) interface{} {
+	nValid := tracker.Count - tracker.CountErrorCycles()
+	var nError = 0
+	var nFiltered = 0
+	var nFatal = 0
+
+	for ind := range tracker.Errors {
+		var hasError = false
+		var hasFilter = false
+		var hasFatal = false
+		for _, e := range tracker.Errors[ind] {
+			switch c := e.(type) {
+			case *ParseError:
+				if c.Criticity() == "fatal" {
+					hasFatal = true
+				}
+				if c.Criticity() == "error" {
+					hasError = true
+				}
+				if c.Criticity() == "filter" {
+					hasFilter = true
+				}
+			case *MappingError:
+				if c.Criticity() == "fatal" {
+					hasFatal = true
+				}
+				if c.Criticity() == "error" {
+					hasError = true
+				}
+				if c.Criticity() == "filter" {
+					hasFilter = true
+				}
+			case *FilterError:
+				if c.Criticity() == "fatal" {
+					hasFatal = true
+				}
+				if c.Criticity() == "error" {
+					hasError = true
+				}
+				if c.Criticity() == "filter" {
+					hasFilter = true
+				}
+			default:
+				hasFatal = true
+			}
+		}
+		if hasFatal {
+			nFatal = nFatal + 1
+		} else if hasError {
+			nError = nError + 1
+		} else if hasFilter {
+			nFiltered = nFiltered + 1
+		}
+	}
+	report := fmt.Sprintf(
+		"%s: intégration terminée, %d lignes traitées, %d erreures fatales, %d rejets, %d lignes filtrées, %d lignes valides",
+		tracker.Context["path"],
+		tracker.Count,
+		nFatal,
+		nError,
+		nFiltered,
+		nValid,
+	)
+
+	maxErrors := 100
+	count := 0
+	headErrors := []string{}
+	for c := range tracker.Errors {
+		for _, e := range tracker.Errors[c] {
+			headErrors = append(headErrors, fmt.Sprintf("Cycle %d: %v", c, e))
+			count = count + 1
+		}
+		if count > maxErrors {
+			break
+		}
+	}
+
 	return bson.M{
-		"report": tracker.Context["path"] + ": ligne " + strconv.Itoa(tracker.Count) + " ignorée",
-		// "errorReport": tracker.CurrentErrors(),
+		"report":      report,
+		"total":       tracker.Count,
+		"valid":       nValid,
+		"filtered":    nFiltered,
+		"error":       nError,
+		"head_errors": headErrors,
 	}
 }
 
-func reportInvalidData(tracker gournal.Tracker) interface{} {
-	if errs, ok := tracker.Errors[tracker.Count]; ok {
-		return tracker.Context["path"] + ": cycle " + strconv.Itoa(tracker.Count) + " ignoré: " + errs[len(errs)-1].Error()
+func reportCycleErrors(tracker gournal.Tracker) interface{} {
+	return bson.M{
+		"report":      tracker.Context["path"] + ": ligne " + strconv.Itoa(tracker.Count) + " ignorée",
+		"errorReport": tracker.ErrorsInCurrentCycle(),
 	}
-	return nil
 }
 
 func reportFatalError(tracker gournal.Tracker) interface{} {
+	report := "Erreur fatale, abandon"
 	if errs, ok := tracker.Errors[tracker.Count]; ok {
-		return "Erreur fatale, abandon: " + errs[len(errs)-1].Error()
+		report = report + ": " + errs[len(errs)-1].Error()
 	}
-	return nil
+	return bson.M{
+		"report": report,
+	}
 }
 
 // TrackerReports contient les fonctions de reporting du moteur
 var TrackerReports = map[string]gournal.ReportFunction{
-	"abstract":    reportAbstract,
-	"errors":      reportErrors,
-	"invalidLine": reportInvalidData,
-	"fatalError":  reportFatalError,
+	"abstract":   reportAbstract,
+	"errors":     reportCycleErrors,
+	"fatalError": reportFatalError,
 }

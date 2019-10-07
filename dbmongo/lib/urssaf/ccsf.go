@@ -2,11 +2,12 @@ package urssaf
 
 import (
 	"bufio"
-	"dbmongo/lib/engine"
 	"encoding/csv"
 	"errors"
 	"fmt"
 	"io"
+	"opensignauxfaibles/dbmongo/lib/engine"
+	"opensignauxfaibles/dbmongo/lib/marshal"
 	"os"
 	"strconv"
 	"time"
@@ -22,7 +23,6 @@ type CCSF struct {
 	DateTraitement time.Time `json:"date_traitement" bson:"date_traitement"`
 	Stade          string    `json:"stade" bson:"stade"`
 	Action         string    `json:"action" json:"action"`
-	DateBatch      time.Time `json:"date_batch" bson:"date_batch"`
 }
 
 // Key _id de l'objet
@@ -56,7 +56,7 @@ func batchToTime(batch string) (time.Time, error) {
 }
 
 // Parser produit des lignes CCSF
-func parseCCSF(batch engine.AdminBatch, mapping Comptes) (chan engine.Tuple, chan engine.Event) {
+func parseCCSF(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
 	outputChannel := make(chan engine.Tuple)
 	eventChannel := make(chan engine.Event)
 
@@ -97,8 +97,6 @@ func parseCCSF(batch engine.AdminBatch, mapping Comptes) (chan engine.Tuple, cha
 					continue
 				}
 				if len(r) >= 4 {
-					dateBatch, err := batchToTime(batch.ID.Key)
-					tracker.Error(err)
 					ccsf := CCSF{}
 
 					ccsf.Action = r[f["Action"]]
@@ -109,15 +107,19 @@ func parseCCSF(batch engine.AdminBatch, mapping Comptes) (chan engine.Tuple, cha
 						tracker.Next()
 						continue
 					}
-					ccsf.key, err = mapping.GetSiret(r[f["NumeroCompte"]], ccsf.DateTraitement)
+					ccsf.key, err = marshal.GetSiret(
+						r[f["NumeroCompte"]],
+						&ccsf.DateTraitement,
+						cache,
+						batch,
+					)
 					if err != nil {
 						// Compte filtré
 						continue
 					}
 					ccsf.NumeroCompte = r[f["NumeroCompte"]]
-					ccsf.DateBatch = dateBatch
 
-					if !tracker.ErrorInCycle() {
+					if !tracker.HasErrorInCurrentCycle() {
 						outputChannel <- ccsf
 					} else {
 						//event.Debug(tracker.Report("error"))

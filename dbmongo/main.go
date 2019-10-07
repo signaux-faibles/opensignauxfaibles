@@ -1,14 +1,12 @@
 package main
 
 import (
-	"dbmongo/lib/engine"
 	"fmt"
+	"opensignauxfaibles/dbmongo/lib/engine"
 
-	"dbmongo/lib/naf"
 	"net/http"
-	"time"
+	"opensignauxfaibles/dbmongo/lib/naf"
 
-	jwt "github.com/appleboy/gin-jwt"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
@@ -18,7 +16,7 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 
-	_ "./docs"
+	_ "opensignauxfaibles/dbmongo/docs"
 )
 
 var wsupgrader = websocket.Upgrader{
@@ -79,45 +77,12 @@ func main() {
 	config.AddAllowMethods("GET", "POST")
 	r.Use(cors.New(config))
 
-	authMiddleware, err := jwt.New(&jwt.GinJWTMiddleware{
-		Realm:           "Signaux-Faibles",
-		Key:             []byte(viper.GetString("jwtSecret")),
-		SendCookie:      false,
-		Timeout:         time.Hour,
-		MaxRefresh:      time.Hour,
-		IdentityKey:     "id",
-		PayloadFunc:     payload,
-		IdentityHandler: identityHandler,
-		Authenticator:   authenticator,
-		Authorizator:    authorizator,
-		Unauthorized:    unauthorizedHandler,
-		TokenLookup:     "header: Authorization, query: token, cookie: jwt",
-		TokenHeadName:   "Bearer",
-		TimeFunc:        time.Now,
-	})
-
-	if err != nil {
-		panic("Erreur lors de la mise en place de l'authentification:" + err.Error())
-	}
-
 	r.Use(static.Serve("/", static.LocalFile("static/", true)))
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	r.POST("/login", authMiddleware.LoginHandler)
-	r.POST("/login/get", loginGetHandler)
-	r.POST("/login/check", loginCheckHandler)
-	r.POST("/login/recovery/get", getRecoveryEmailHandler)
-	r.POST("/login/recovery/setPassword", checkRecoverySetPassword)
-	r.GET("/ws/:jwt", func(c *gin.Context) {
-		wshandler(c.Writer, c.Request, c.Params.ByName("jwt"))
-	})
-
 	api := r.Group("api")
-	// api.Use(authMiddleware.MiddlewareFunc())
 
 	{
-		api.GET("/refreshToken", authMiddleware.RefreshHandler)
-
 		api.POST("/admin/batch", upsertBatchHandler)
 		api.GET("/admin/batch", listBatchHandler)
 		api.GET("/admin/batch/next", nextBatchHandler)
@@ -134,6 +99,7 @@ func main() {
 		api.GET("/data/naf", nafHandler)
 		api.POST("/data/batch/purge", purgeBatchHandler)
 		api.POST("/data/import", importBatchHandler)
+		api.POST("/data/check", checkBatchHandler)
 		api.POST("/data/compact", compactHandler)
 		api.POST("/data/reduce", reduceHandler)
 		api.POST("/data/public", publicHandler)

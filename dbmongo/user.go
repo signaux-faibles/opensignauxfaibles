@@ -1,14 +1,12 @@
 package main
 
 import (
-	"bytes"
 	"crypto/rand"
-	"dbmongo/lib/engine"
-	"errors"
 	"fmt"
 	"html/template"
 	"math/big"
 	"net/smtp"
+	"opensignauxfaibles/dbmongo/lib/engine"
 	"time"
 
 	jwt "github.com/appleboy/gin-jwt"
@@ -64,20 +62,6 @@ func identityHandler(c *gin.Context) interface{} {
 	return &user
 }
 
-func loginUser(username string, password string, browserToken string) (AdminUser, error) {
-	var user AdminUser
-	if err := engine.Db.DBStatus.C("Admin").Find(bson.M{"_id.type": "credential", "_id.key": username}).One(&user); err != nil {
-		return AdminUser{}, err
-	}
-	err := bcrypt.CompareHashAndPassword(user.HashedPassword, []byte(password))
-
-	_, errToken := readBrowserToken(browserToken)
-	if err == nil && errToken == nil {
-		return user, nil
-	}
-	return AdminUser{}, errors.New("nop")
-}
-
 func loginUserWithCredentials(username string, password string) (AdminUser, error) {
 	var user AdminUser
 	if err := engine.Db.DBStatus.C("Admin").Find(bson.M{"_id.type": "credential", "_id.key": username}).One(&user); err != nil {
@@ -96,23 +80,6 @@ func loadUser(email string) (AdminUser, error) {
 		return AdminUser{}, err
 	}
 	return user, nil
-}
-
-func authenticator(c *gin.Context) (interface{}, error) {
-	var loginVals login
-
-	if err := c.ShouldBind(&loginVals); err != nil {
-		return "", jwt.ErrMissingLoginValues
-	}
-	email := loginVals.Email
-	password := loginVals.Password
-	browserToken := loginVals.BrowserToken
-	user, err := loginUser(email, password, browserToken)
-
-	if err == nil {
-		return user, nil
-	}
-	return nil, jwt.ErrFailedAuthentication
 }
 
 func authorizator(data interface{}, c *gin.Context) bool {
@@ -151,104 +118,6 @@ func getCode() int {
 	return int(i.Int64())
 }
 
-//
-// @summary Récupération du mot de passe
-// @description Dans le cas d'un oubli du mot de passe, on peut fixer un nouveau mot de passe à partir d'un navigateur identifié
-// @description Il faut dans ce cas pouvoir recevoir un code de vérification par mail
-// @description Voir /login/recovery/get
-// @Tags Authentification
-// @accept  json
-// @produce  json
-// @Params email query string true "Adresse e-mail"
-// @Params code query string true "Code de vérification"
-// @Params password query string true "Nouveau mot de passe"
-// @Params browserToken query string true "Jeton du navigateur"
-// @Success 200 {string} string "ok"
-// @Router /login/recovery/get [post]
-func getRecoveryEmailHandler(c *gin.Context) {
-	var request struct {
-		Email        string `json:"email"`
-		BrowserToken string `json:"browserToken"`
-	}
-	err := c.ShouldBind(&request)
-	if err != nil {
-		c.JSON(400, "Bad Parameters 1")
-		return
-	}
-
-	email := request.Email
-	browser, err := readBrowserToken(request.BrowserToken)
-	if err != nil || browser.Email != email {
-		c.JSON(400, "Bad Parameters 2")
-		return
-	}
-
-	err = sendRecoveryEmail(email)
-	if err != nil {
-		c.JSON(500, err.Error())
-	} else {
-		c.JSON(200, nil)
-	}
-}
-
-func sendRecoveryEmail(email string) error {
-	user, err := loadUser(email)
-	if err == nil {
-		recoveryCode := fmt.Sprintf("%06d", getCode())
-		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(recoveryCode), bcrypt.DefaultCost)
-		if err == nil {
-			user.HashedRecovery = hashedPassword
-			user.TimeRecovery = time.Now()
-			err = user.save()
-
-			if err == nil {
-				fmt.Println(recoveryCode)
-
-				smtpAddress := viper.GetString("smtpAddress")
-				//smtpUser := viper.GetString("smtpUser")
-				//smtpPassword := viper.GetString("smtpPass")
-
-				c, err := smtp.Dial(smtpAddress)
-				if err != nil {
-					spew.Dump(err)
-				}
-				defer c.Close()
-				// Set the sender and recipient.
-				c.Mail("do.not.reply@signaux.faibles.fr")
-				c.Rcpt(email)
-
-				// Send the email body.
-				wc, err := c.Data()
-				if err != nil {
-					spew.Dump(err)
-				}
-				defer wc.Close()
-				buf := bytes.NewBufferString(`Bonjour,
-				
-				suite à votre demande de récupération de mot de passe sur l'applicatif Signaux Faibles, voici votre code de vérification:` + recoveryCode + `
-				
-				Cordialement,
-			
-				l'équipe Signaux-Faibles.
-			
-				ps: si vous n'êtes pas à l'origine de cette tentative, nous vous prions d'en faire part à l'adresse contact@signaux-faibles.beta.gouv.fr
-				
-				`)
-
-				if _, err = buf.WriteTo(wc); err != nil {
-					spew.Dump(err)
-				}
-				return err
-
-			}
-		}
-	} else {
-		fmt.Println("error: " + err.Error())
-	}
-
-	return nil
-}
-
 func getRegions() map[string]string {
 	regions := map[string]string{
 		"ARA": "Auvergne-Rhône-Alpes",
@@ -266,71 +135,6 @@ func getRegions() map[string]string {
 		"PAC": "Provence-Alpes-Côte d'Azur",
 	}
 	return regions
-}
-
-//
-// @summary Récupération du mot de passe
-// @description Dans le cas d'un oubli du mot de passe, on peut fixer un nouveau mot de passe à partir d'un navigateur identifié
-// @description L'utilisation de ce service permet de vérifier le code envoyé à l'utilisateur sur sa messagerie
-// @description Ce code est validé en utilisant le hash (bcrypt) stocké en base par le service /login/recovery/get
-// @Tags Authentification
-// @accept  json
-// @produce  json
-// @Params email query string true "Adresse e-mail"
-// @Params code query string true "Code de vérification"
-// @Params password query string true "Nouveau mot de passe"
-// @Params browserToken query string true "Jeton du navigateur"
-// @Success 200 {string} string "Le serveur a accepté la vérification, le mot de passe est changé"
-// @Failure 400 {string} string "Les paramètres sont incorrects"
-// @Failure 500 {string} string "La vérification du code a échoué (raison non spécifiée)"
-// @Router /login/recovery/setPassword [post]
-func checkRecoverySetPassword(c *gin.Context) {
-	var request struct {
-		Email        string `json:"email"`
-		RecoveryCode string `json:"code"`
-		Password     string `json:"password"`
-		BrowserToken string `json:"browserToken"`
-	}
-	err := c.ShouldBind(&request)
-
-	if err != nil {
-		c.JSON(400, "Bad Parameters")
-	}
-
-	browser, err := readBrowserToken(request.BrowserToken)
-	if err != nil {
-		c.JSON(400, "Bad Parameters")
-	}
-
-	email := request.Email
-	code := request.RecoveryCode
-	password := request.Password
-	if browser.Email != email {
-		c.JSON(400, "Bad Parameters")
-	}
-
-	user, err := loadUser(email)
-	if err != nil {
-		c.JSON(400, "Bad Parameters")
-	}
-	err = bcrypt.CompareHashAndPassword(user.HashedRecovery, []byte(code))
-	if err != nil {
-		c.JSON(500, "Server side error")
-	}
-	user.HashedRecovery = nil
-	user.TimeRecovery = time.Time{}
-
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-
-	if err != nil {
-		c.JSON(500, "Server side error")
-	}
-	user.HashedPassword = hashedPassword
-	err = user.save()
-
-	if err != nil {
-		c.JSON(500, "Server side error")
-	}
 }
 
 //
@@ -386,14 +190,14 @@ func loginGet(login login) error {
 	Subject: Signaux-Faibles – votre code de vérification
 	Content-Type: text/plain; charset=us-ascii; format=flowed
 	Content-Transfer-Encoding: 7bit
-	
+
 	Bonjour,
 	suite à votre tentative d'identification sur l'applicatif Signaux Faibles, voici votre code de vérification:
 	{{.CheckCode}}
-	
+
 	Cordialement,
 	l'équipe Signaux-Faibles.
-				
+
 	ps: si vous n'êtes pas à l'origine de cette tentative, nous vous prions d'en faire part à l'adresse contact@signaux-faibles.beta.gouv.fr`)
 
 	if err == nil {
@@ -436,42 +240,6 @@ func loginGet(login login) error {
 		fmt.Println("error: " + err.Error())
 	}
 	return err
-}
-
-//
-// @summary Vérification du code temporaire renvoyé à l'utilisateur
-// @description Fournit en retour un jeton de navigateur
-// @Tags Authentification
-// @accept  json
-// @produce  json
-// @Param email query string true "Adresse EMail"
-// @Param password query string true "Mot de passe"
-// @Param checkCode query string true "Code de vérification"
-// @Success 200 {string} string "Le mot de passe et le code de vérification correspondent aux valeurs hashées en base"
-// @Router /login/check [post]
-func loginCheckHandler(c *gin.Context) {
-	var loginVals login
-	c.ShouldBind(&loginVals)
-
-	email := loginVals.Email
-	password := loginVals.Password
-	checkCode := loginVals.CheckCode
-
-	err := loginCheck(email, password, checkCode)
-
-	if err != nil {
-		c.JSON(401, "Erreur d'authentification")
-	} else {
-		browser := Browser{
-			IP:      c.ClientIP(),
-			Created: time.Now(),
-			Email:   email,
-			// TODO: identifier les navigateurs
-			Name: "",
-		}
-		browserToken, _ := forgeBrowserToken(browser)
-		c.JSON(200, browserToken)
-	}
 }
 
 func loginCheck(email string, password string, checkCode string) error {

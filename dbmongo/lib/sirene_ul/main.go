@@ -2,9 +2,10 @@ package sirene_ul
 
 import (
 	//"bufio"
-	"dbmongo/lib/engine"
 	"encoding/csv"
 	"io"
+	"opensignauxfaibles/dbmongo/lib/engine"
+	"opensignauxfaibles/dbmongo/lib/marshal"
 	"os"
 
 	"github.com/signaux-faibles/gournal"
@@ -35,7 +36,7 @@ func (sirene_ul SireneUL) Scope() string {
 }
 
 // Parser produit les données sirene à partir du fichier geosirene
-func Parser(batch engine.AdminBatch, filter map[string]bool) (chan engine.Tuple, chan engine.Event) {
+func Parser(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
 	outputChannel := make(chan engine.Tuple)
 	eventChannel := make(chan engine.Event)
 
@@ -72,7 +73,11 @@ func Parser(batch engine.AdminBatch, filter map[string]bool) (chan engine.Tuple,
 					break
 				}
 
-				if filter[row[0]] {
+				filtered, err := marshal.IsFiltered(row[0], cache, batch)
+				if err != nil {
+					tracker.Error(err)
+				}
+				if !filtered {
 					sirene_ul := readLineEtablissement(row, &tracker)
 					outputChannel <- sirene_ul
 					tracker.Next()

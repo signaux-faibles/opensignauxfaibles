@@ -17,6 +17,8 @@ func loadJSFunctions(directoryNames ...string) (map[string]bson.JavaScript, erro
 	functions := make(map[string]bson.JavaScript)
 	var err error
 
+	// If encountering an error at following line, you probably forgot to
+	// generate the file with "go generate" in ./lib/engine
 	for k, v := range jsFunctions["common"] {
 		functions[k] = bson.JavaScript{
 			Code: string(v),
