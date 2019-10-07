@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/cnf/structhash"
 	"github.com/globalsign/mgo/bson"
 )
 
@@ -74,7 +73,13 @@ func (batch *AdminBatch) ToData() map[string]interface{} {
 }
 
 func isBatchID(batchID string) bool {
+	if len(batchID) < 4 {
+		return false
+	}
 	_, err := time.Parse("0601", batchID[0:4])
+	if len(batchID) > 4 && batchID[4] != '_' {
+		return false
+	}
 	return err == nil
 }
 
@@ -115,15 +120,12 @@ func addFileToBatch() chan newFile {
 
 // ImportBatch lance tous les parsers sur le batch fourni
 func ImportBatch(batch AdminBatch, parsers []Parser) error {
-	filter, err := getSirenFilter(&batch)
-	if err != nil {
-		return err
-	}
+	var cache Cache
 	for _, parser := range parsers {
-		outputChannel, eventChannel := parser(batch, filter)
+		outputChannel, eventChannel := parser(cache, &batch)
 		go RelayEvents(eventChannel)
 		for tuple := range outputChannel {
-			hash := fmt.Sprintf("%x", structhash.Md5(tuple, 1))
+			hash := fmt.Sprintf("%x", GetMD5(tuple))
 			value := Value{
 				Value: Data{
 					Scope: tuple.Scope(),
@@ -135,6 +137,18 @@ func ImportBatch(batch AdminBatch, parsers []Parser) error {
 							}}}}}
 			Db.ChanData <- &value
 		}
+	}
+
+	Db.ChanData <- &Value{}
+	return nil
+}
+
+func CheckBatch(batch AdminBatch, parsers []Parser) error {
+	var cache Cache
+	for _, parser := range parsers {
+		outputChannel, eventChannel := parser(cache, &batch)
+		DiscardTuple(outputChannel)
+		RelayEvents(eventChannel)
 	}
 
 	Db.ChanData <- &Value{}
@@ -218,4 +232,13 @@ func RevertBatch() error {
 func DropBatch(batchKey string) error {
 	_, err := Db.DB.C("Admin").RemoveAll(bson.M{"_id.key": batchKey, "_id.type": "batch"})
 	return err
+}
+
+// Mocks batch with a map[type][]filepaths
+func MockBatch(filetype string, filepaths []string) AdminBatch {
+	fileMap := map[string][]string{filetype: filepaths}
+	batch := AdminBatch{
+		Files: BatchFiles(fileMap),
+	}
+	return batch
 }

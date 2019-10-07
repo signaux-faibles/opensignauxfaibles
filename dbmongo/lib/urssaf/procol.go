@@ -2,11 +2,11 @@ package urssaf
 
 import (
 	"bufio"
-	"dbmongo/lib/engine"
-	"dbmongo/lib/misc"
 	"encoding/csv"
 	"errors"
 	"io"
+	"opensignauxfaibles/dbmongo/lib/engine"
+	"opensignauxfaibles/dbmongo/lib/misc"
 	"os"
 	"regexp"
 	"strconv"
@@ -41,7 +41,7 @@ func (procol Procol) Type() string {
 }
 
 // Parser transorme le fichier procol en data
-func parseProcol(batch engine.AdminBatch, mapping Comptes) (chan engine.Tuple, chan engine.Event) {
+func parseProcol(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
 	outputChannel := make(chan engine.Tuple)
 	eventChannel := make(chan engine.Event)
 
@@ -101,7 +101,7 @@ func parseProcol(batch engine.AdminBatch, mapping Comptes) (chan engine.Tuple, c
 					actionStadeIndex,
 				)
 				if _, err := strconv.Atoi(row[siretIndex]); err == nil && len(row[siretIndex]) == 14 {
-					if !tracker.ErrorInCycle() {
+					if !tracker.HasErrorInCurrentCycle() {
 
 						outputChannel <- procol
 					} else {

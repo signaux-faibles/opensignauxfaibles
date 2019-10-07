@@ -1,10 +1,10 @@
 package engine
 
 import (
-	"dbmongo/lib/misc"
-	"dbmongo/lib/naf"
 	"errors"
 	"fmt"
+	"opensignauxfaibles/dbmongo/lib/misc"
+	"opensignauxfaibles/dbmongo/lib/naf"
 	"regexp"
 	"strconv"
 	"time"
@@ -71,7 +71,7 @@ func ReduceOne(batch AdminBatch, algo string, key string) error {
 	pipeline := []bson.M{
 		bson.M{
 			"$unwind": bson.M{
-				"path":                       "$value",
+				"path": "$value",
 				"preserveNullAndEmptyArrays": false,
 			},
 		},
@@ -176,7 +176,7 @@ func Reduce(batch AdminBatch, algo string) error {
 		pipeline := []bson.M{
 			bson.M{
 				"$unwind": bson.M{
-					"path":                       "$value",
+					"path": "$value",
 					"preserveNullAndEmptyArrays": false,
 				},
 			},

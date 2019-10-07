@@ -1,8 +1,8 @@
 package main
 
 import (
-	"dbmongo/lib/engine"
-	"dbmongo/lib/naf"
+	"opensignauxfaibles/dbmongo/lib/engine"
+	"opensignauxfaibles/dbmongo/lib/naf"
 
 	"github.com/gin-gonic/gin"
 )

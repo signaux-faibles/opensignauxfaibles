@@ -1,5 +1,5 @@
 function dealWithProcols(data_source, altar_or_procol, output_indexed){
-  var codes  =  Object.keys(data_source).reduce((events,hash) => {
+  var codes  =  Object.keys(data_source).reduce((events, hash) => {
     var the_event = data_source[hash]
 
     if (altar_or_procol == "altares")

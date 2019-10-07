@@ -2,8 +2,10 @@ package urssaf
 
 import (
 	"bufio"
-	"dbmongo/lib/engine"
 	"encoding/csv"
+	"fmt"
+	"opensignauxfaibles/dbmongo/lib/engine"
+	"opensignauxfaibles/dbmongo/lib/marshal"
 
 	//"errors"
 	"io"
@@ -48,7 +50,7 @@ func (delai Delai) Type() string {
 }
 
 // Parser fonction d'extraction des délais
-func parseDelai(batch engine.AdminBatch, mapping Comptes) (chan engine.Tuple, chan engine.Event) {
+func parseDelai(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
 	outputChannel := make(chan engine.Tuple)
 	eventChannel := make(chan engine.Event)
 
@@ -105,9 +107,12 @@ func parseDelai(batch engine.AdminBatch, mapping Comptes) (chan engine.Tuple, ch
 					continue
 				}
 
-				if siret, err := mapping.GetSiret(row[field["NumeroCompte"]], date); err == nil {
+				_, err = marshal.GetSiret(row[field["NumeroCompte"]], &date, cache, batch)
+				//TODO continue here
+				fmt.Println(err)
+				if siret, err := marshal.GetSiret(row[field["NumeroCompte"]], &date, cache, batch); err == nil {
 					delai, tracker := readLine(row, field, siret, tracker)
-					if !tracker.ErrorInCycle() {
+					if !tracker.HasErrorInCurrentCycle() {
 						outputChannel <- delai
 					}
 				} else {

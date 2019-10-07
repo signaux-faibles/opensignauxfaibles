@@ -1,0 +1,29 @@
+---
+file_type: csv
+data_type: test_type
+delimiter: ","
+struct_name: Test
+scope: entreprise
+key: Siret
+has_header: false
+fields:
+  - go_name: Siret
+    csv_name: siret
+    csv_col: 1
+    parser: string
+    if_empty: fatal
+    if_invalid: fatal
+    validity_regex: marshal.SiretRegexp
+  - go_name: PeriodeDebut
+    csv_name: periode_debut
+    csv_col: 2
+    parser: time
+    if_empty: fatal
+    if_invalid: fatal
+    validity_regex: nil
+    time_format: 2006-01-02
+
+
+
+
+

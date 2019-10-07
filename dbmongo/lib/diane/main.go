@@ -1,10 +1,12 @@
 package diane
 
 import (
-	"dbmongo/lib/engine"
 	"encoding/csv"
+	"fmt"
 	"io"
+	"opensignauxfaibles/dbmongo/lib/engine"
 	"os/exec"
+	"path/filepath"
 	"strconv"
 	"time"
 
@@ -112,7 +114,7 @@ func (diane Diane) Scope() string {
 }
 
 // Parser produit les données Diane
-func Parser(batch engine.AdminBatch, filter map[string]bool) (chan engine.Tuple, chan engine.Event) {
+func Parser(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
 	outputChannel := make(chan engine.Tuple)
 	eventChannel := make(chan engine.Event)
 	event := engine.Event{
@@ -126,9 +128,10 @@ func Parser(batch engine.AdminBatch, filter map[string]bool) (chan engine.Tuple,
 				map[string]string{"path": path},
 				engine.TrackerReports)
 
-			cmdPath := []string{"lib/diane/convert_diane.sh", viper.GetString("APP_DATA") + path}
+			cmdPath := []string{filepath.Join(viper.GetString("SCRIPTDIANE_DIR"), "convert_diane.sh"), viper.GetString("APP_DATA") + path}
 			cmd := exec.Command("/bin/bash", cmdPath...)
 			stdout, err := cmd.StdoutPipe()
+			fmt.Println(err)
 			defer stdout.Close()
 
 			if err != nil {

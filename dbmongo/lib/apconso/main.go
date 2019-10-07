@@ -1,11 +1,10 @@
-package apartconso
+package apconso
 
 import (
-	"bufio"
-	"dbmongo/lib/engine"
-	"dbmongo/lib/misc"
 	"encoding/csv"
 	"io"
+	"opensignauxfaibles/dbmongo/lib/engine"
+	"opensignauxfaibles/dbmongo/lib/misc"
 	"os"
 	"time"
 
@@ -39,7 +38,7 @@ func (apconso APConso) Scope() string {
 }
 
 // Parser produit des lignes de consommation d'activité partielle
-func Parser(batch engine.AdminBatch, filter map[string]bool) (chan engine.Tuple, chan engine.Event) {
+func Parser(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
 	outputChannel := make(chan engine.Tuple)
 	eventChannel := make(chan engine.Event)
 	event := engine.Event{
@@ -62,7 +61,7 @@ func Parser(batch engine.AdminBatch, filter map[string]bool) (chan engine.Tuple,
 				continue
 			}
 
-			reader := csv.NewReader(bufio.NewReader(file))
+			reader := csv.NewReader(file)
 			reader.Comma = ','
 
 			event.Info(path + ": ouverture")
@@ -110,7 +109,7 @@ func Parser(batch engine.AdminBatch, filter map[string]bool) (chan engine.Tuple,
 					apconso.Effectif, err = misc.ParsePInt(row[idxEffectifs])
 					tracker.Error(err)
 
-					if !tracker.ErrorInCycle() && apconso.Siret != "" {
+					if !tracker.HasErrorInCurrentCycle() && apconso.Siret != "" {
 						outputChannel <- apconso
 					} else {
 						// event.Debug(tracker.Report("errors"))

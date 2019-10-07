@@ -1,8 +1,8 @@
 package bdf
 
 import (
-	"dbmongo/lib/engine"
-	"dbmongo/lib/misc"
+	"opensignauxfaibles/dbmongo/lib/engine"
+	"opensignauxfaibles/dbmongo/lib/misc"
 	"strings"
 	"time"
 
@@ -42,7 +42,7 @@ func (bdf BDF) Scope() string {
 }
 
 // Parser produit les datas BDF à partir des fichiers source
-func Parser(batch engine.AdminBatch, filter map[string]bool) (chan engine.Tuple, chan engine.Event) {
+func Parser(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
 	outputChannel := make(chan engine.Tuple)
 	eventChannel := make(chan engine.Event)
 	event := engine.Event{
@@ -111,7 +111,7 @@ func Parser(batch engine.AdminBatch, filter map[string]bool) (chan engine.Tuple,
 							bdf.FraisFinancier = nil
 						}
 
-						if !tracker.ErrorInCycle() {
+						if !tracker.HasErrorInCurrentCycle() {
 							outputChannel <- bdf
 						} else {
 							event.Debug(tracker.Report("error"))
