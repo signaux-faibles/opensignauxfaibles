@@ -1,7 +1,11 @@
 package marshal
 
 import (
+	"fmt"
+	"opensignauxfaibles/dbmongo/lib/engine"
 	"testing"
+
+	"github.com/globalsign/mgo/bson"
 )
 
 func TestCheckMarshallingMap(t *testing.T) {
@@ -21,4 +25,14 @@ func TestCheckMarshallingMap(t *testing.T) {
 			t.Errorf("Test fails on case %d", ind)
 		}
 	}
+}
+
+func TestMD5(t *testing.T) {
+	var test Object
+	test.key = "0123456789"
+	test.scope = "abc"
+	test.datatype = "ced"
+	test.Data = make(bson.M)
+
+	fmt.Println(engine.GetMD5(test))
 }
