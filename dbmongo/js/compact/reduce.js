@@ -3,6 +3,7 @@ function reduce(key, values) {
   // Tester si plusieurs batchs. Reduce complet uniquement si plusieurs
   // batchs. Sinon, juste fusion des attributs
   let auxBatchSet = new Set()
+
   let severalBatches = values.some(value => {
     auxBatchSet.add(Object.keys(value.batch || {}))
     return auxBatchSet.size > 1
@@ -37,12 +38,12 @@ function reduce(key, values) {
 
   var memory = f.currentState(memory_batches)
 
-
   // Pour tous les batchs à modifier, c'est-à-dire le batch ajouté et tous les
   // suivants.
   var modified_batches = batches.filter( batch =>
     batch >= batchKey
   )
+
   modified_batches.forEach(batch => {
 
     reduced_value.batch[batch] = reduced_value.batch[batch] || {}

@@ -1,10 +1,10 @@
 package marshal
 
 import (
-	"fmt"
 	"opensignauxfaibles/dbmongo/lib/engine"
 	"testing"
 
+	"github.com/cnf/structhash"
 	"github.com/globalsign/mgo/bson"
 )
 
@@ -33,6 +33,13 @@ func TestMD5(t *testing.T) {
 	test.scope = "abc"
 	test.datatype = "ced"
 	test.Data = make(bson.M)
+	test.Data["test"] = 3
 
-	fmt.Println(engine.GetMD5(test))
+	test2 := struct{ test int }{test: 3}
+	test3 := map[string]int{"test": 3}
+
+	t.Log(engine.GetMD5(test))
+	t.Log(structhash.Md5(test.Data, 1))
+	t.Log(structhash.Md5(test2, 1))
+	t.Log(structhash.Md5(test3, 1))
 }
