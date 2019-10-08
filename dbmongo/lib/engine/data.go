@@ -3,6 +3,7 @@ package engine
 import (
 	"errors"
 	"fmt"
+	"opensignauxfaibles/dbmongo/lib/misc"
 	"sync"
 	"time"
 
@@ -118,16 +119,19 @@ func Compact(batchKey string, types []string) error {
 		completeTypes[b.ID.Key] = b.CompleteTypes
 		batchesID = append(batchesID, b.ID.Key)
 	}
-	// Si le numéro de batch n'est pas valide, on prend le premier
-	found := false
-	for _, batchID := range batchesID {
+	found := -1
+	for ind, batchID := range batchesID {
 		if batchID == batchKey {
-			found = true
+			found = ind
 			break
 		}
 	}
-	if !found {
-		batchKey = batchesID[0]
+	// Si le numéro de batch n'est pas valide, erreur
+	var batch AdminBatch
+	if found == -1 {
+		return errors.New("Le batch " + batchKey + "n'a pas été trouvé")
+	} else {
+		batch = batches[found]
 	}
 
 	functions, err := loadJSFunctions("compact")
@@ -146,6 +150,7 @@ func Compact(batchKey string, types []string) error {
 			"types":         types,
 			"completeTypes": completeTypes,
 			"batchKey":      batchKey,
+			"serie_periode": misc.GenereSeriePeriode(batch.Params.DateDebut, batch.Params.DateFin),
 		},
 	}
 

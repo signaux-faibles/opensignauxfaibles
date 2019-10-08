@@ -74,7 +74,6 @@ func compactHandler(c *gin.Context) {
 		c.JSON(400, err.Error())
 	}
 	//TODO: verifier comportement si batch est vide
-	//TODO: verifier comportement si types est vide
 	err = engine.Compact(params.BatchKey, params.Types)
 	if err != nil {
 		c.JSON(500, err.Error())

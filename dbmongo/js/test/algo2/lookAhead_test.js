@@ -1,4 +1,3 @@
-
 var test_cases = [
   {
     data: {"2015-01-01": {outcome: true}},
