@@ -3,10 +3,11 @@ package altares
 import (
 	"encoding/csv"
 	"io"
-	"opensignauxfaibles/dbmongo/lib/engine"
-	"opensignauxfaibles/dbmongo/lib/misc"
 	"os"
 	"time"
+
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
 
 	"github.com/signaux-faibles/gournal"
 	"github.com/spf13/viper"

@@ -5,9 +5,10 @@ import (
 	"encoding/csv"
 	"errors"
 	"io"
-	"opensignauxfaibles/dbmongo/lib/engine"
-	"opensignauxfaibles/dbmongo/lib/sfregexp"
 	"os"
+
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sfregexp"
 
 	//"strconv"
 	"sort"
@@ -60,7 +61,7 @@ func getCompteSiretMapping(cache engine.Cache, batch *engine.AdminBatch, mr mapp
 	basePath := viper.GetString("APP_DATA")
 
 	if len(path) == 0 {
-		return nil, errors.New("No admin_urssaf mapping found !")
+		return nil, errors.New("no admin_urssaf mapping found")
 	}
 	for _, p := range path {
 		compteSiretMapping, err = mr(basePath, p, compteSiretMapping, cache, batch)

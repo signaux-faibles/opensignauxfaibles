@@ -1,10 +1,11 @@
 package engine
 
 import (
-	"opensignauxfaibles/dbmongo/lib/misc"
-	"opensignauxfaibles/dbmongo/lib/naf"
 	"strconv"
 	"time"
+
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/naf"
 
 	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"

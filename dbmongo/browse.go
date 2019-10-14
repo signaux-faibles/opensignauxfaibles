@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"opensignauxfaibles/dbmongo/lib/engine"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 
 	"github.com/gin-gonic/gin"
 )

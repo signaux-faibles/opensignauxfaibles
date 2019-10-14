@@ -1,7 +1,7 @@
 package urssaf
 
 import (
-	"opensignauxfaibles/dbmongo/lib/engine"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 )
 
 // Parser fournit le contenu des fichiers urssaf

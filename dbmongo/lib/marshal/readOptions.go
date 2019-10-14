@@ -74,7 +74,7 @@ func (po *ParserOptions) ReadOptions(filepath string) error {
 	}
 
 	// default field values
-	for ind, _ := range po.Fields {
+	for ind := range po.Fields {
 		if po.Fields[ind].IfInvalid == "" {
 			po.Fields[ind].IfInvalid = "fatal"
 		}
@@ -90,7 +90,7 @@ func (po *ParserOptions) ReadOptions(filepath string) error {
 	}
 
 	// Options
-	for ind, _ := range po.Fields {
+	for ind := range po.Fields {
 		if (po.Fields[ind].TimeFormat == "" && po.Fields[ind].Parser == "time") &&
 			(po.Fields[ind].TimeFormat != "" && po.Fields[ind].Parser != "time") {
 			return errors.New("time_format option is only valid for time parsers")
@@ -103,6 +103,7 @@ func (po *ParserOptions) ReadOptions(filepath string) error {
 	return nil
 }
 
+// RegisteredParserOptions ...
 func RegisteredParserOptions(folder string) (map[string]*ParserOptions, error) {
 	pomap := make(map[string]*ParserOptions)
 

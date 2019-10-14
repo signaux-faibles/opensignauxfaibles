@@ -8,7 +8,7 @@ import (
 // They must be able to deal with zero values of this type.
 
 func TestDepartement(t *testing.T) {
-	test_cases := []struct {
+	testCases := []struct {
 		codePostal string
 		expected   string
 	}{
@@ -17,7 +17,7 @@ func TestDepartement(t *testing.T) {
 		{"", ""},
 	}
 
-	for ind, tc := range test_cases {
+	for ind, tc := range testCases {
 		if Departement(tc.codePostal) != tc.expected {
 			t.Errorf("Test %d failed", ind)
 		}
@@ -25,7 +25,7 @@ func TestDepartement(t *testing.T) {
 }
 
 func TestStripPoint(t *testing.T) {
-	test_cases := []struct {
+	testCases := []struct {
 		input    string
 		expected string
 	}{
@@ -35,7 +35,7 @@ func TestStripPoint(t *testing.T) {
 		{"", ""},
 	}
 
-	for ind, tc := range test_cases {
+	for ind, tc := range testCases {
 		if StripPoint(tc.input) != tc.expected {
 			t.Errorf("Test %d failed", ind)
 		}

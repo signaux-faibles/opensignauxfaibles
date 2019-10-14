@@ -3,11 +3,12 @@ package reporder
 import (
 	"encoding/csv"
 	"io"
-	"opensignauxfaibles/dbmongo/lib/engine"
-	"opensignauxfaibles/dbmongo/lib/marshal"
-	"opensignauxfaibles/dbmongo/lib/misc"
 	"os"
 	"time"
+
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
 
 	"github.com/signaux-faibles/gournal"
 

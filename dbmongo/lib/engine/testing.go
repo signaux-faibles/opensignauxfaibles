@@ -14,7 +14,7 @@ func DiscardEvents(events chan Event) {
 	}()
 }
 
-// DiscardTulpe supprime les évènements
+// DiscardTuple supprime les évènements
 func DiscardTuple(tuples chan Tuple) {
 	go func() {
 		for range tuples {
@@ -23,7 +23,7 @@ func DiscardTuple(tuples chan Tuple) {
 }
 
 // AnalyseEvents extracts information from events. Wait til waitgroup is done before doing
-//anything with the output
+// anything with the output
 func AnalyseEvents(events chan Event, wg *sync.WaitGroup) (*int, *int, *int, *int, bool) {
 
 	type abstractData struct {

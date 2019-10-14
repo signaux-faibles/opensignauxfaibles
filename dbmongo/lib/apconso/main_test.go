@@ -2,10 +2,11 @@ package apconso
 
 import (
 	"flag"
-	"opensignauxfaibles/dbmongo/lib/engine"
-	"opensignauxfaibles/dbmongo/lib/marshal"
 	"path/filepath"
 	"testing"
+
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 )
 
 var update = flag.Bool("update", false, "Update the expected test values in golden file")

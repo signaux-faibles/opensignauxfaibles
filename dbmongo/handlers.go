@@ -4,19 +4,21 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"opensignauxfaibles/dbmongo/lib/apconso"
-	"opensignauxfaibles/dbmongo/lib/apdemande"
-	"opensignauxfaibles/dbmongo/lib/bdf"
-	"opensignauxfaibles/dbmongo/lib/diane"
-	"opensignauxfaibles/dbmongo/lib/engine"
-	"opensignauxfaibles/dbmongo/lib/files"
-	"opensignauxfaibles/dbmongo/lib/marshal"
-	"opensignauxfaibles/dbmongo/lib/reporder"
-	"opensignauxfaibles/dbmongo/lib/sirene"
-	"opensignauxfaibles/dbmongo/lib/sirene_ul"
-	"opensignauxfaibles/dbmongo/lib/urssaf"
 	"os"
 	"sort"
+
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/apconso"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/apdemande"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/bdf"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/diane"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/files"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/reporder"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sirene"
+
+	sireneul "github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sirene_ul"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/urssaf"
 
 	"github.com/davecgh/go-spew/spew"
 	"github.com/gin-gonic/gin"
@@ -290,7 +292,7 @@ var registeredParsers = map[string]engine.Parser{
 	"bdf":        bdf.Parser,
 	"repeatable": reporder.Parser,
 	"sirene":     sirene.Parser,
-	"sirene_ul":  sirene_ul.Parser,
+	"sirene_ul":  sireneul.Parser,
 	"diane":      diane.Parser,
 }
 

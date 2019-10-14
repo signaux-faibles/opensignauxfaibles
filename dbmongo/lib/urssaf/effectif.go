@@ -4,13 +4,14 @@ import (
 	"bufio"
 	"encoding/csv"
 	"io"
-	"opensignauxfaibles/dbmongo/lib/engine"
-	"opensignauxfaibles/dbmongo/lib/misc"
 	"os"
 	"regexp"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
 
 	"github.com/signaux-faibles/gournal"
 	//"github.com/globalsign/mgo/bson"
@@ -94,16 +95,16 @@ func parseEffectif(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tu
 			}
 			// Dans quels champs lire l'effectif
 			re, _ := regexp.Compile("^eff")
-			var effectif_fields []string
-			var effectif_indexes []int
+			var effectifFields []string
+			var effectifIndexes []int
 			for ind, field := range fields {
 				if re.MatchString(field) {
-					effectif_fields = append(effectif_fields, field)
-					effectif_indexes = append(effectif_indexes, ind)
+					effectifFields = append(effectifFields, field)
+					effectifIndexes = append(effectifIndexes, ind)
 				}
 			}
 
-			periods, err := parseEffectifPeriod(effectif_fields)
+			periods, err := parseEffectifPeriod(effectifFields)
 			if err != nil {
 				event.Critical(path + ": erreur a l'analyse du fichier, abandon: " + err.Error())
 				continue
@@ -127,7 +128,7 @@ func parseEffectif(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tu
 				}
 
 				if len(row[siretIndex]) == 14 {
-					for i, j := range effectif_indexes {
+					for i, j := range effectifIndexes {
 						if row[j] != "" {
 							e, err := strconv.Atoi(row[j])
 							tracker.Error(err)

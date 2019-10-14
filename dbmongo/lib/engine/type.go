@@ -7,7 +7,7 @@ import (
 // Cache saves values in memory
 type Cache map[string]interface{}
 
-//_Get gets a value from the cache
+// Get gets a value from the cache
 func (ca Cache) Get(name string) (interface{}, error) {
 	if ca == nil {
 		return nil, errors.New("Entry not found: " + name)
@@ -23,6 +23,7 @@ func (ca Cache) Set(name string, value interface{}) {
 	ca[name] = value
 }
 
+// NewCache returns a new cache object
 func NewCache() Cache {
 	return map[string]interface{}{}
 }

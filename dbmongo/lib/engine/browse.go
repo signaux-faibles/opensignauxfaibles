@@ -1,7 +1,7 @@
 package engine
 
 import (
-	"opensignauxfaibles/dbmongo/lib/naf"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/naf"
 
 	"github.com/globalsign/mgo/bson"
 )

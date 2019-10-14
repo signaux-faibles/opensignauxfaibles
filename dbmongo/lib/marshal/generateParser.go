@@ -5,10 +5,11 @@ package main
 import (
 	"io/ioutil"
 	"log"
-	"opensignauxfaibles/dbmongo/lib/marshal"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 )
 
 // creates all parsers which options files are in folderName

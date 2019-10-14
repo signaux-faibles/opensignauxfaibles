@@ -6,11 +6,12 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"opensignauxfaibles/dbmongo/lib/engine"
-	"opensignauxfaibles/dbmongo/lib/marshal"
 	"os"
 	"strconv"
 	"time"
+
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 
 	"github.com/signaux-faibles/gournal"
 	"github.com/spf13/viper"

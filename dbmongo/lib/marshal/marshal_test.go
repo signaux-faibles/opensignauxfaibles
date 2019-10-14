@@ -1,8 +1,9 @@
 package marshal
 
 import (
-	"opensignauxfaibles/dbmongo/lib/engine"
 	"testing"
+
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 
 	"github.com/cnf/structhash"
 	"github.com/globalsign/mgo/bson"

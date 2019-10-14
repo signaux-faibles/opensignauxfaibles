@@ -5,9 +5,10 @@ import (
 	"encoding/csv"
 	"fmt"
 	"io"
-	"opensignauxfaibles/dbmongo/lib/engine"
 	"os"
 	"regexp"
+
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 
 	"github.com/signaux-faibles/gournal"
 	"github.com/spf13/viper"

@@ -2,10 +2,11 @@ package marshal
 
 import (
 	"io/ioutil"
-	"opensignauxfaibles/dbmongo/lib/engine"
 	"strconv"
 	"testing"
 	"time"
+
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 )
 
 func compareFields(field1 Field, field2 Field) string {
@@ -37,6 +38,7 @@ func compareFields(field1 Field, field2 Field) string {
 	return res
 }
 
+// MockComptesMapping ...
 func MockComptesMapping(mapping map[string]string) Comptes {
 
 	mockComptes := make(Comptes)

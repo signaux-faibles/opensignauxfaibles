@@ -1,11 +1,12 @@
 package marshal
 
 import (
-	"opensignauxfaibles/dbmongo/lib/engine"
 	"reflect"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 )
 
 func TestGetSiret(t *testing.T) {
@@ -19,7 +20,7 @@ func TestGetSiret(t *testing.T) {
 		},
 	}
 	var batch = engine.AdminBatch{}
-	test_cases := []struct {
+	testCases := []struct {
 		compte      string
 		date        string
 		mapping     Comptes
@@ -33,7 +34,7 @@ func TestGetSiret(t *testing.T) {
 		{"abc", "2016-01-01", stdMapping, true, ""},
 	}
 
-	for ind, tc := range test_cases {
+	for ind, tc := range testCases {
 
 		var cache = engine.Cache{"comptes": tc.mapping}
 

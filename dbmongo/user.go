@@ -6,8 +6,9 @@ import (
 	"html/template"
 	"math/big"
 	"net/smtp"
-	"opensignauxfaibles/dbmongo/lib/engine"
 	"time"
+
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 
 	jwt "github.com/appleboy/gin-jwt"
 	"github.com/davecgh/go-spew/spew"

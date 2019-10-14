@@ -4,7 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"log"
-	"opensignauxfaibles/dbmongo/lib/files"
+
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/files"
 )
 
 // PlugEvents connecte deux chan Event

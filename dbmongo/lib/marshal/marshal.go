@@ -4,11 +4,12 @@ import (
 	"encoding/csv"
 	"errors"
 	"io"
-	"opensignauxfaibles/dbmongo/lib/engine"
-	"opensignauxfaibles/dbmongo/lib/sfregexp"
 	"os"
 	"strings"
 	"time"
+
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sfregexp"
 
 	"github.com/globalsign/mgo/bson"
 	"github.com/signaux-faibles/gournal"
@@ -34,6 +35,7 @@ func CheckMarshallingMap(headerRow []string, marshallingMap map[string]int) erro
 	return errors.New(errorString + strings.Join(failingFields, ", "))
 }
 
+// Object ...
 type Object struct {
 	Data     bson.M
 	key      string
@@ -41,12 +43,17 @@ type Object struct {
 	datatype string
 }
 
+// Scope ...
 func (obj Object) Scope() string {
 	return obj.scope
 }
+
+// Key ...
 func (obj Object) Key() string {
 	return obj.key
 }
+
+// Type ...
 func (obj Object) Type() string {
 	return obj.datatype
 }

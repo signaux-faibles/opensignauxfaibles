@@ -2,9 +2,10 @@ package urssaf
 
 import (
 	"errors"
-	"opensignauxfaibles/dbmongo/lib/misc"
 	"strconv"
 	"time"
+
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
 )
 
 // UrssafToDate convertit le format de date urssaf en type Date.

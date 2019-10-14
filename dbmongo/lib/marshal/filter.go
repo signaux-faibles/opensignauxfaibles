@@ -5,10 +5,11 @@ import (
 	"encoding/csv"
 	"errors"
 	"io"
-	"opensignauxfaibles/dbmongo/lib/engine"
-	"opensignauxfaibles/dbmongo/lib/sfregexp"
 	"os"
 	"path/filepath"
+
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sfregexp"
 
 	"github.com/spf13/viper"
 )

@@ -2,6 +2,7 @@ package engine
 
 import "fmt"
 
+// CriticityError object
 type CriticityError interface {
 	error
 	Criticity() string
@@ -13,6 +14,7 @@ type CriticError struct {
 	criticity string
 }
 
+// NewCriticError creates a critical error
 func NewCriticError(err error, criticity string) error {
 	if err == nil {
 		return nil
@@ -20,6 +22,7 @@ func NewCriticError(err error, criticity string) error {
 	return &CriticError{err, criticity}
 }
 
+// Criticity returns criticity
 func (pe *CriticError) Criticity() string {
 	if pe == nil {
 		return ""
@@ -37,6 +40,7 @@ type ParseError struct {
 	ParsedVariable string
 }
 
+// NewParseError error parser
 func NewParseError(err *CriticError, ParsedVariable string) error {
 	if err == nil {
 		return nil
@@ -53,6 +57,7 @@ type FilterError struct {
 	*CriticError
 }
 
+// NewFilterError returns a filter error
 func NewFilterError(err error, criticity string) *FilterError {
 	if err == nil {
 		return nil
@@ -70,6 +75,7 @@ type MappingError struct {
 	*CriticError
 }
 
+// NewMappingError return a mapping Error
 func NewMappingError(err error, criticity string) error {
 	if err == nil {
 		return nil

@@ -2,10 +2,11 @@ package marshal
 
 import (
 	"errors"
-	"opensignauxfaibles/dbmongo/lib/engine"
 	"regexp"
 	"testing"
 	"time"
+
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 )
 
 // testHelperError tests if an error is as expected

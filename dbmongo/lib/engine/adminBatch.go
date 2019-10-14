@@ -143,6 +143,7 @@ func ImportBatch(batch AdminBatch, parsers []Parser) error {
 	return nil
 }
 
+// CheckBatch checks batch
 func CheckBatch(batch AdminBatch, parsers []Parser) error {
 	var cache Cache
 	for _, parser := range parsers {
@@ -234,7 +235,7 @@ func DropBatch(batchKey string) error {
 	return err
 }
 
-// Mocks batch with a map[type][]filepaths
+// MockBatch with a map[type][]filepaths
 func MockBatch(filetype string, filepaths []string) AdminBatch {
 	fileMap := map[string][]string{filetype: filepaths}
 	batch := AdminBatch{

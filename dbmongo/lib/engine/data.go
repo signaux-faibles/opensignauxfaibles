@@ -3,9 +3,10 @@ package engine
 import (
 	"errors"
 	"fmt"
-	"opensignauxfaibles/dbmongo/lib/misc"
 	"sync"
 	"time"
+
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
 
 	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
@@ -130,9 +131,8 @@ func Compact(batchKey string, types []string) error {
 	var batch AdminBatch
 	if found == -1 {
 		return errors.New("Le batch " + batchKey + "n'a pas été trouvé")
-	} else {
-		batch = batches[found]
 	}
+	batch = batches[found]
 
 	functions, err := loadJSFunctions("compact")
 	if err != nil {

@@ -2,15 +2,16 @@ package marshal
 
 import (
 	"fmt"
-	"opensignauxfaibles/dbmongo/lib/engine"
 	"reflect"
 	"strings"
 	"testing"
+
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 )
 
 func TestIsFiltered(t *testing.T) {
 
-	test_cases := []struct {
+	testCases := []struct {
 		siret       string
 		filter      map[string]bool
 		expectError bool
@@ -27,7 +28,7 @@ func TestIsFiltered(t *testing.T) {
 	}
 
 	var batch = engine.AdminBatch{}
-	for ind, tc := range test_cases {
+	for ind, tc := range testCases {
 		var cache = engine.Cache{"filter": tc.filter}
 		actual, err := IsFiltered(tc.siret, cache, &batch)
 		if err != nil && !tc.expectError {
@@ -45,7 +46,7 @@ func TestIsFiltered(t *testing.T) {
 
 func TestGetSirenFilter(t *testing.T) {
 
-	test_cases := []struct {
+	testCases := []struct {
 		experimentName string
 		cacheKey       string
 		cacheValue     interface{}
@@ -64,7 +65,7 @@ func TestGetSirenFilter(t *testing.T) {
 			"filter", map[string]bool{"876543210": true}, engine.MockBatch("filter", []string{"at least one"}), map[string]bool{"876543210": true}},
 	}
 
-	for ind, tc := range test_cases {
+	for ind, tc := range testCases {
 		cache := engine.NewCache()
 		cache.Set(tc.cacheKey, tc.cacheValue)
 		actual, err := getSirenFilter(cache, &tc.batch, mockReadFilter)
@@ -95,17 +96,17 @@ func mockReadFilter(string, []string) (map[string]bool, error) {
 }
 
 func TestReadFilter(t *testing.T) {
-	var test_filter = make(map[string]bool)
-	err := readFilter(strings.NewReader("012345678\n876543210"), test_filter)
+	var testFilter = make(map[string]bool)
+	err := readFilter(strings.NewReader("012345678\n876543210"), testFilter)
 	if err != nil {
 		t.Fatalf("Error: %v", err)
 	}
-	if !reflect.DeepEqual(test_filter, map[string]bool{"012345678": true, "876543210": true}) {
+	if !reflect.DeepEqual(testFilter, map[string]bool{"012345678": true, "876543210": true}) {
 		t.Fatalf("Filter not read as expected, failure")
 	}
 
-	test_filter = make(map[string]bool)
-	err = readFilter(strings.NewReader("0123456789\n876543210"), test_filter)
+	testFilter = make(map[string]bool)
+	err = readFilter(strings.NewReader("0123456789\n876543210"), testFilter)
 	if err == nil {
 		t.Fatalf("readFilter should fail on incorrect siren")
 	}

@@ -4,12 +4,13 @@ import (
 	"bufio"
 	"encoding/csv"
 	"io"
-	"opensignauxfaibles/dbmongo/lib/engine"
-	"opensignauxfaibles/dbmongo/lib/marshal"
-	"opensignauxfaibles/dbmongo/lib/misc"
 	"os"
 	"strconv"
 	"time"
+
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
 
 	"github.com/signaux-faibles/gournal"
 	"github.com/spf13/viper"

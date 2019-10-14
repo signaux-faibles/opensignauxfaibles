@@ -2,10 +2,12 @@ package main
 
 import (
 	"fmt"
-	"opensignauxfaibles/dbmongo/lib/engine"
+
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 
 	"net/http"
-	"opensignauxfaibles/dbmongo/lib/naf"
+
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/naf"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/static"
@@ -16,7 +18,7 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 
-	_ "opensignauxfaibles/dbmongo/docs"
+	_ "github.com/signaux-faibles/opensignauxfaibles/dbmongo/docs"
 )
 
 var wsupgrader = websocket.Upgrader{

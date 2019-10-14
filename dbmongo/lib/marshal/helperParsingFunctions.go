@@ -2,10 +2,12 @@ package marshal
 
 import "strings"
 
+// MappingDict ...
 var MappingDict = map[string]mappingFunc{}
 
 type mappingFunc func(...interface{}) interface{}
 
+// Departement ...
 func Departement(codePostal string) string {
 	if len(codePostal) != 5 {
 		return ""
@@ -13,6 +15,7 @@ func Departement(codePostal string) string {
 	return codePostal[0:2]
 }
 
+// StripPoint ...
 func StripPoint(APE string) string {
 	APE = strings.Replace(APE, ".", "", -1)
 	return APE

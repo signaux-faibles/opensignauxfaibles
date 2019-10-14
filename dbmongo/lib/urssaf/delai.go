@@ -4,8 +4,9 @@ import (
 	"bufio"
 	"encoding/csv"
 	"fmt"
-	"opensignauxfaibles/dbmongo/lib/engine"
-	"opensignauxfaibles/dbmongo/lib/marshal"
+
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 
 	//"errors"
 	"io"

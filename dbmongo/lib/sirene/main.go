@@ -5,12 +5,13 @@ import (
 	"encoding/csv"
 	"errors"
 	"io"
-	"opensignauxfaibles/dbmongo/lib/engine"
-	"opensignauxfaibles/dbmongo/lib/marshal"
 	"os"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 
 	"github.com/signaux-faibles/gournal"
 	"github.com/spf13/viper"

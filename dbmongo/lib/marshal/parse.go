@@ -2,13 +2,15 @@ package marshal
 
 import (
 	"errors"
-	"opensignauxfaibles/dbmongo/lib/engine"
-	"opensignauxfaibles/dbmongo/lib/misc"
 	"regexp"
 	"strconv"
 	"time"
+
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
 )
 
+// ParserDict ...
 var ParserDict = map[string]fullParser{
 	"time":          ParsePTime,
 	"urssafDate":    ParseUrssafPDate,
@@ -19,6 +21,7 @@ var ParserDict = map[string]fullParser{
 	"bool":          ParseBool,
 }
 
+// PossibleParsers ...
 func PossibleParsers() []string {
 	var possibleParsers = make([]string, len(ParserDict))
 	var i = 0

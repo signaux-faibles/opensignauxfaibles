@@ -1,18 +1,19 @@
-package sirene_ul
+package sireneul
 
 import (
 	//"bufio"
 	"encoding/csv"
 	"io"
-	"opensignauxfaibles/dbmongo/lib/engine"
-	"opensignauxfaibles/dbmongo/lib/marshal"
 	"os"
+
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 
 	"github.com/signaux-faibles/gournal"
 	"github.com/spf13/viper"
 )
 
-// Sirene informations sur les entreprises
+// SireneUL informations sur les entreprises
 type SireneUL struct {
 	Siren               string `json:"siren,omitempty" bson:"siren,omitempty"`
 	Nic                 string `json:"nic,omitempty" bson:"nic,omitempty"`
@@ -78,8 +79,8 @@ func Parser(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, ch
 					tracker.Error(err)
 				}
 				if !filtered {
-					sirene_ul := readLineEtablissement(row, &tracker)
-					outputChannel <- sirene_ul
+					sireneul := readLineEtablissement(row, &tracker)
+					outputChannel <- sireneul
 					tracker.Next()
 				}
 			}
@@ -94,9 +95,9 @@ func Parser(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, ch
 }
 
 func readLineEtablissement(row []string, tracker *gournal.Tracker) SireneUL {
-	sirene_ul := SireneUL{}
-	sirene_ul.Siren = row[0]
-	sirene_ul.RaisonSociale = row[23]
-	sirene_ul.CodeStatutJuridique = row[27]
-	return sirene_ul
+	sireneul := SireneUL{}
+	sireneul.Siren = row[0]
+	sireneul.RaisonSociale = row[23]
+	sireneul.CodeStatutJuridique = row[27]
+	return sireneul
 }
