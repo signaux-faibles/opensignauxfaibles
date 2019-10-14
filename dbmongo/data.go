@@ -58,7 +58,7 @@ func publicHandler(c *gin.Context) {
 	if params.Key == "" {
 		err = engine.Public(batch)
 	} else if len(params.Key) >= 9 {
-		err = engine.PublicOne(batch, key[0:9])
+		err = engine.PublicOne(batch, params.Key[0:9])
 	} else {
 		c.JSON(400, "la clé fait moins de 9 caractères (siren)")
 	}
