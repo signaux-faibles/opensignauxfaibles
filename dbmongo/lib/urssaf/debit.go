@@ -2,10 +2,11 @@ package urssaf
 
 import (
 	"bufio"
-	"dbmongo/lib/engine"
-	"dbmongo/lib/misc"
 	"encoding/csv"
 	"io"
+	"opensignauxfaibles/dbmongo/lib/engine"
+	"opensignauxfaibles/dbmongo/lib/marshal"
+	"opensignauxfaibles/dbmongo/lib/misc"
 	"os"
 	"strconv"
 	"time"
@@ -16,19 +17,19 @@ import (
 
 // Debit Débit – fichier Urssaf
 type Debit struct {
-	key                          string    `hash:"-"`
-	NumeroCompte                 string    `json:"numero_compte" bson:"numero_compte"`
-	NumeroEcartNegatif           string    `json:"numero_ecart_negatif" bson:"numero_ecart_negatif"`
-	DateTraitement               time.Time `json:"date_traitement" bson:"date_traitement"`
-	PartOuvriere                 float64   `json:"part_ouvriere" bson:"part_ouvriere"`
-	PartPatronale                float64   `json:"part_patronale" bson:"part_patronale"`
-	NumeroHistoriqueEcartNegatif int       `json:"numero_historique" bson:"numero_historique"`
-	EtatCompte                   int       `json:"etat_compte" bson:"etat_compte"`
-	CodeProcedureCollective      string    `json:"code_procedure_collective" bson:"code_procedure_collective"`
-	Periode                      Periode   `json:"periode" bson:"periode"`
-	CodeOperationEcartNegatif    string    `json:"code_operation_ecart_negatif" bson:"code_operation_ecart_negatif"`
-	CodeMotifEcartNegatif        string    `json:"code_motif_ecart_negatif" bson:"code_motif_ecart_negatif"`
-	DebitSuivant                 string    `json:"debit_suivant,omitempty" bson:"debit_suivant,omitempty"`
+	key                          string       `hash:"-"`
+	NumeroCompte                 string       `json:"numero_compte" bson:"numero_compte"`
+	NumeroEcartNegatif           string       `json:"numero_ecart_negatif" bson:"numero_ecart_negatif"`
+	DateTraitement               time.Time    `json:"date_traitement" bson:"date_traitement"`
+	PartOuvriere                 float64      `json:"part_ouvriere" bson:"part_ouvriere"`
+	PartPatronale                float64      `json:"part_patronale" bson:"part_patronale"`
+	NumeroHistoriqueEcartNegatif int          `json:"numero_historique" bson:"numero_historique"`
+	EtatCompte                   int          `json:"etat_compte" bson:"etat_compte"`
+	CodeProcedureCollective      string       `json:"code_procedure_collective" bson:"code_procedure_collective"`
+	Periode                      misc.Periode `json:"periode" bson:"periode"`
+	CodeOperationEcartNegatif    string       `json:"code_operation_ecart_negatif" bson:"code_operation_ecart_negatif"`
+	CodeMotifEcartNegatif        string       `json:"code_motif_ecart_negatif" bson:"code_motif_ecart_negatif"`
+	DebitSuivant                 string       `json:"debit_suivant,omitempty" bson:"debit_suivant,omitempty"`
 	// MontantMajorations           float64   `json:"montant_majorations" bson:"montant_majorations"`
 }
 
@@ -47,7 +48,7 @@ func (debit Debit) Type() string {
 	return "debit"
 }
 
-func parseDebit(batch engine.AdminBatch, mapping Comptes) (chan engine.Tuple, chan engine.Event) {
+func parseDebit(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
 	outputChannel := make(chan engine.Tuple)
 	eventChannel := make(chan engine.Event)
 
@@ -107,7 +108,7 @@ func parseDebit(batch engine.AdminBatch, mapping Comptes) (chan engine.Tuple, ch
 				period, err := urssafToPeriod(row[periodeIndex])
 				date := period.Start
 
-				if siret, err := mapping.GetSiret(row[numeroCompteIndex], date); err == nil {
+				if siret, err := marshal.GetSiret(row[numeroCompteIndex], &date, cache, batch); err == nil {
 
 					debit := Debit{
 						key:                       siret,
@@ -136,7 +137,7 @@ func parseDebit(batch engine.AdminBatch, mapping Comptes) (chan engine.Tuple, ch
 					// tracker.Error(err)
 					// debit.MontantMajorations = debit.MontantMajorations / 100
 
-					if !tracker.ErrorInCycle() {
+					if !tracker.HasErrorInCurrentCycle() {
 						outputChannel <- debit
 					}
 				} else {

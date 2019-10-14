@@ -1,7 +1,7 @@
 package main
 
 import (
-	"dbmongo/lib/engine"
+	"opensignauxfaibles/dbmongo/lib/engine"
 
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"

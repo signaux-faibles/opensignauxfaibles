@@ -2,10 +2,11 @@ package sirene
 
 import (
 	//"bufio"
-	"dbmongo/lib/engine"
 	"encoding/csv"
 	"errors"
 	"io"
+	"opensignauxfaibles/dbmongo/lib/engine"
+	"opensignauxfaibles/dbmongo/lib/marshal"
 	"os"
 	"strconv"
 	"strings"
@@ -50,7 +51,7 @@ func (sirene Sirene) Scope() string {
 }
 
 // Parser produit les données sirene à partir du fichier geosirene
-func Parser(batch engine.AdminBatch, filter map[string]bool) (chan engine.Tuple, chan engine.Event) {
+func Parser(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
 
 	outputChannel := make(chan engine.Tuple)
 	eventChannel := make(chan engine.Event)
@@ -77,7 +78,7 @@ func Parser(batch engine.AdminBatch, filter map[string]bool) (chan engine.Tuple,
 			reader.Comma = ','
 			reader.LazyQuotes = true
 
-			_, _ = reader.Read()
+			// _, _ = reader.Read()
 
 			for {
 				row, err := reader.Read()
@@ -88,8 +89,9 @@ func Parser(batch engine.AdminBatch, filter map[string]bool) (chan engine.Tuple,
 					event.Critical(tracker.Report("fatalError"))
 					break
 				}
-
-				if filter[row[0]] {
+				filtered, err := marshal.IsFiltered(row[0], cache, batch)
+				tracker.Error(err)
+				if !filtered {
 					notFiltered := (row[40] == "A")
 					// Est-ce que l'établissement est intéressant ?
 					// = Actif ou a été actif depuis dateDebut

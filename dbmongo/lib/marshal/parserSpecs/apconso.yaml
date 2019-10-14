@@ -1,0 +1,63 @@
+---
+file_type: csv
+delimiter: ","
+data_type: apconso
+struct_name: APConso
+scope: etablissement
+key: Siret
+has_header: true
+fields:
+  - go_name: ID
+    csv_name: ID_DA
+    csv_col: 0
+    json_name: id_conso
+    parser: ParseString
+    if_empty: fatal
+    if_invalid: fatal
+    validity_regex: nil
+  - go_name: Siret
+    csv_name: ETAB_SIRET
+    csv_col: 1
+    json_name: "-"
+    parser: ParseString
+    if_empty: fatal
+    if_invalid: fatal
+    validity_regex: sfregexp.RegexpDict["siret"]
+  - go_name: HeureConsommee
+    csv_name: HEURES
+    csv_col: 9
+    json_name: heure_consomme
+    parser: ParsePFloat
+    if_empty: fatal
+    if_invalid: fatal
+    validity_regex: nil
+  - go_name: Montant
+    csv_name: MONTANTS
+    csv_col: 10
+    json_name: montant
+    parser: ParsePFloat
+    if_empty: fatal
+    if_invalid: fatal
+    validity_regex: nil
+  - go_name: Effectif
+    csv_name: EFFECTIFS
+    csv_col: 11
+    json_name: effectif
+    parser: ParsePInt
+    if_empty: fatal
+    if_invalid: fatal
+    validity_regex: nil
+  - go_name: Periode
+    csv_name: MOIS
+    csv_col: 8
+    json_name: periode
+    parser: ParsePTime
+    if_empty: fatal
+    if_invalid: fatal
+    validity_regex: '"01/2006"'
+
+
+
+
+
+

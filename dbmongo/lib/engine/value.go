@@ -3,6 +3,7 @@ package engine
 import (
 	"errors"
 
+	"github.com/cnf/structhash"
 	"github.com/globalsign/mgo/bson"
 )
 
@@ -24,6 +25,11 @@ type Tuple interface {
 	Key() string
 	Scope() string
 	Type() string
+}
+
+// GetMD5 returns a MD5 signature of the Tupe
+func GetMD5(tuple Tuple) []byte {
+	return structhash.Md5(tuple, 1)
 }
 
 // Batch ensemble des données

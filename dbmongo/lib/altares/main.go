@@ -1,10 +1,10 @@
 package altares
 
 import (
-	"dbmongo/lib/engine"
-	"dbmongo/lib/misc"
 	"encoding/csv"
 	"io"
+	"opensignauxfaibles/dbmongo/lib/engine"
+	"opensignauxfaibles/dbmongo/lib/misc"
 	"os"
 	"time"
 
@@ -45,7 +45,7 @@ func sliceIndex(limit int, predicate func(i int) bool) int {
 	return -1
 }
 
-// Parser du type Altares
+// Parser  Altares
 func Parser(batch engine.AdminBatch, filter map[string]bool) (chan engine.Tuple, chan engine.Event) {
 	outputChannel := make(chan engine.Tuple)
 	eventChannel := make(chan engine.Event)
@@ -108,7 +108,7 @@ func Parser(batch engine.AdminBatch, filter map[string]bool) (chan engine.Tuple,
 					CodeJournal:   row[codeJournalIndex],
 					CodeEvenement: row[codeEvenementIndex],
 				}
-				if !tracker.ErrorInCycle() {
+				if !tracker.HasErrorInCurrentCycle() {
 					outputChannel <- altares
 				} else {
 					event.Debug(tracker.Report("errors"))

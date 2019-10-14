@@ -2,10 +2,10 @@ package crp
 
 import (
 	"bufio"
-	"dbmongo/lib/engine"
 	"encoding/csv"
 	"fmt"
 	"io"
+	"opensignauxfaibles/dbmongo/lib/engine"
 	"os"
 	"regexp"
 
@@ -104,7 +104,7 @@ func Parser(batch engine.AdminBatch, filter map[string]bool) (chan engine.Tuple,
 					crp.Statut = row[10]
 					crp.Fichier = path
 
-					if !tracker.ErrorInCycle() && crp.Key() != "000000000" {
+					if !tracker.HasErrorInCurrentCycle() && crp.Key() != "000000000" {
 						outputChannel <- crp
 					} else {
 						// event.Debug(tracker.Report("errors"))

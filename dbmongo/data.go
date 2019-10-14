@@ -1,8 +1,8 @@
 package main
 
 import (
-	"dbmongo/lib/engine"
-	"dbmongo/lib/naf"
+	"opensignauxfaibles/dbmongo/lib/engine"
+	"opensignauxfaibles/dbmongo/lib/naf"
 
 	"github.com/gin-gonic/gin"
 )
@@ -74,7 +74,6 @@ func compactHandler(c *gin.Context) {
 		c.JSON(400, err.Error())
 	}
 	//TODO: verifier comportement si batch est vide
-	//TODO: verifier comportement si types est vide
 	err = engine.Compact(params.BatchKey, params.Types)
 	if err != nil {
 		c.JSON(500, err.Error())

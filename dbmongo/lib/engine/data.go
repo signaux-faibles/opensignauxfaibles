@@ -3,6 +3,7 @@ package engine
 import (
 	"errors"
 	"fmt"
+	"opensignauxfaibles/dbmongo/lib/misc"
 	"sync"
 	"time"
 
@@ -17,6 +18,8 @@ func loadJSFunctions(directoryNames ...string) (map[string]bson.JavaScript, erro
 	functions := make(map[string]bson.JavaScript)
 	var err error
 
+	// If encountering an error at following line, you probably forgot to
+	// generate the file with "go generate" in ./lib/engine
 	for k, v := range jsFunctions["common"] {
 		functions[k] = bson.JavaScript{
 			Code: string(v),
@@ -116,16 +119,19 @@ func Compact(batchKey string, types []string) error {
 		completeTypes[b.ID.Key] = b.CompleteTypes
 		batchesID = append(batchesID, b.ID.Key)
 	}
-	// Si le numéro de batch n'est pas valide, on prend le premier
-	found := false
-	for _, batchID := range batchesID {
+	found := -1
+	for ind, batchID := range batchesID {
 		if batchID == batchKey {
-			found = true
+			found = ind
 			break
 		}
 	}
-	if !found {
-		batchKey = batchesID[0]
+	// Si le numéro de batch n'est pas valide, erreur
+	var batch AdminBatch
+	if found == -1 {
+		return errors.New("Le batch " + batchKey + "n'a pas été trouvé")
+	} else {
+		batch = batches[found]
 	}
 
 	functions, err := loadJSFunctions("compact")
@@ -144,6 +150,7 @@ func Compact(batchKey string, types []string) error {
 			"types":         types,
 			"completeTypes": completeTypes,
 			"batchKey":      batchKey,
+			"serie_periode": misc.GenereSeriePeriode(batch.Params.DateDebut, batch.Params.DateFin),
 		},
 	}
 

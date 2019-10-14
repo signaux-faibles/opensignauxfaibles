@@ -1,22 +1,20 @@
 package main
 
 import (
-	"dbmongo/lib/altares"
-	"dbmongo/lib/apartconso"
-	"dbmongo/lib/apartdemande"
-	"dbmongo/lib/bdf"
-	"dbmongo/lib/crp"
-	"dbmongo/lib/diane"
-	"dbmongo/lib/engine"
-	"dbmongo/lib/files"
-	"dbmongo/lib/interim"
-	"dbmongo/lib/repeatableorder"
-	"dbmongo/lib/sirene"
-	"dbmongo/lib/sirene_ul"
-	"dbmongo/lib/urssaf"
 	"errors"
 	"fmt"
 	"io"
+	"opensignauxfaibles/dbmongo/lib/apconso"
+	"opensignauxfaibles/dbmongo/lib/apdemande"
+	"opensignauxfaibles/dbmongo/lib/bdf"
+	"opensignauxfaibles/dbmongo/lib/diane"
+	"opensignauxfaibles/dbmongo/lib/engine"
+	"opensignauxfaibles/dbmongo/lib/files"
+	"opensignauxfaibles/dbmongo/lib/marshal"
+	"opensignauxfaibles/dbmongo/lib/reporder"
+	"opensignauxfaibles/dbmongo/lib/sirene"
+	"opensignauxfaibles/dbmongo/lib/sirene_ul"
+	"opensignauxfaibles/dbmongo/lib/urssaf"
 	"os"
 	"sort"
 
@@ -204,21 +202,6 @@ func revertBatchHandler(c *gin.Context) {
 	c.JSON(200, "ok")
 }
 
-// RegisteredParsers liste des parsers disponibles
-var registeredParsers = map[string]engine.Parser{
-	"urssaf":          urssaf.Parser,
-	"apconso":         apartconso.Parser,
-	"apdemande":       apartdemande.Parser,
-	"bdf":             bdf.Parser,
-	"altares":         altares.Parser,
-	"repeatableorder": repeatableorder.Parser,
-	"sirene":          sirene.Parser,
-	"sirene_ul":       sirene_ul.Parser,
-	"diane":           diane.Parser,
-	"interim":         interim.Parser,
-	"crp":             crp.Parser,
-}
-
 //
 func adminFilesHandler(c *gin.Context) {
 	basePath := viper.GetString("APP_DATA")
@@ -259,6 +242,26 @@ func importBatchHandler(c *gin.Context) {
 	engine.ImportBatch(batch, parsers)
 }
 
+func checkBatchHandler(c *gin.Context) {
+	var params struct {
+		BatchKey string   `json:"batch"`
+		Parsers  []string `json:"parsers"`
+	}
+	err := c.ShouldBind(&params)
+	if err != nil {
+		c.JSON(400, "Requête malformée: "+err.Error())
+		return
+	}
+	batch := engine.AdminBatch{}
+	batch.Load(params.BatchKey)
+
+	parsers, err := resolveParsers(params.Parsers)
+	if err != nil {
+		c.JSON(404, err.Error())
+	}
+	engine.CheckBatch(batch, parsers)
+}
+
 //
 func eventsHandler(c *gin.Context) {
 	logs, err := engine.GetEventsFromDB(nil, 250)
@@ -279,17 +282,50 @@ func purgeNotCompactedHandler(c *gin.Context) {
 	c.JSON(200, result)
 }
 
+// RegisteredParsers liste des parsers disponibles
+var registeredParsers = map[string]engine.Parser{
+	"urssaf":     urssaf.Parser,
+	"apconso":    apconso.Parser,
+	"apdemande":  apdemande.Parser,
+	"bdf":        bdf.Parser,
+	"repeatable": reporder.Parser,
+	"sirene":     sirene.Parser,
+	"sirene_ul":  sirene_ul.Parser,
+	"diane":      diane.Parser,
+}
+
+// encapsultateParser transforms parser options into a functional parser
+func encapsulateParser(po *marshal.ParserOptions) engine.Parser {
+	parser := func(c engine.Cache, ab *engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
+		tuple, event, _ := marshal.GenericMarshal(po, c, ab)
+		return tuple, event
+	}
+	return parser
+}
+
 // Vérifie et charge les parsers
 func resolveParsers(parserNames []string) ([]engine.Parser, error) {
 	var parsers []engine.Parser
+
+	// Lecture de tous les parsers définis en encapsulant GenericParser
+	registeredParserOptions, err := marshal.RegisteredParserOptions(viper.GetString("PARSEROPTIONS_DIR"))
+	if err != nil {
+		return parsers, err
+	}
+
 	if parserNames == nil {
 		for _, f := range registeredParsers {
 			parsers = append(parsers, f)
+		}
+		for _, po := range registeredParserOptions {
+			parsers = append(parsers, encapsulateParser(po))
 		}
 	} else {
 		for _, p := range parserNames {
 			if f, ok := registeredParsers[p]; ok {
 				parsers = append(parsers, f)
+			} else if po, ok := registeredParserOptions[p]; ok {
+				parsers = append(parsers, encapsulateParser(po))
 			} else {
 				return parsers, errors.New(p + " n'est pas un parser reconnu.")
 			}

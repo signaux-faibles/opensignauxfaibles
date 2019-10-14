@@ -2,10 +2,10 @@ package urssaf
 
 import (
 	"bufio"
-	"dbmongo/lib/engine"
-	"dbmongo/lib/misc"
 	"encoding/csv"
 	"io"
+	"opensignauxfaibles/dbmongo/lib/engine"
+	"opensignauxfaibles/dbmongo/lib/misc"
 	"os"
 	"regexp"
 	"strconv"
@@ -53,7 +53,7 @@ func parseEffectifPeriod(effectifPeriods []string) ([]time.Time, error) {
 }
 
 // Parser retourne un channel fournissant des données extraites
-func parseEffectif(batch engine.AdminBatch, mapping Comptes) (chan engine.Tuple, chan engine.Event) {
+func parseEffectif(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
 	outputChannel := make(chan engine.Tuple)
 	eventChannel := make(chan engine.Event)
 	event := engine.Event{

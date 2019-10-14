@@ -2,6 +2,7 @@ package urssaf
 
 import (
 	"errors"
+	"opensignauxfaibles/dbmongo/lib/misc"
 	"strconv"
 	"time"
 )
@@ -13,12 +14,12 @@ func urssafToDate(urssaf string) (time.Time, error) {
 
 	intUrsaff, err := strconv.Atoi(urssaf)
 	if err != nil {
-    return time.Time{}, errors.New("Valeur non autorisée pour une conversion en date: " + urssaf)
+		return time.Time{}, errors.New("Valeur non autorisée pour une conversion en date: " + urssaf)
 	}
 	strDate := strconv.Itoa(intUrsaff + 19000000)
 	date, err := time.Parse("20060102", strDate)
 	if err != nil {
-    return time.Time{}, errors.New("Valeur non autorisée pour une conversion en date: " + urssaf)
+		return time.Time{}, errors.New("Valeur non autorisée pour une conversion en date: " + urssaf)
 	}
 
 	return date, nil
@@ -30,8 +31,8 @@ func urssafToDate(urssaf string) (time.Time, error) {
 // si QM == 62 alors période annuelle sur YYYY.
 // si M == 0 alors période trimestrielle sur le trimestre Q de YYYY.
 // si 0 < M < 4 alors mois M du trimestre Q.
-func urssafToPeriod(urssaf string) (Periode, error) {
-	period := Periode{}
+func urssafToPeriod(urssaf string) (misc.Periode, error) {
+	period := misc.Periode{}
 
 	if len(urssaf) == 4 {
 		if urssaf[0:2] < "50" {
@@ -47,7 +48,7 @@ func urssafToPeriod(urssaf string) (Periode, error) {
 
 	year, err := strconv.Atoi(urssaf[0:4])
 	if err != nil {
-		return Periode{}, errors.New("Valeur non autorisée")
+		return misc.Periode{}, errors.New("Valeur non autorisée")
 	}
 
 	if urssaf[4:6] == "62" {
@@ -81,10 +82,4 @@ func sliceIndex(limit int, predicate func(i int) bool) int {
 		}
 	}
 	return -1
-}
-
-// Periode temporelle (début et fin)
-type Periode struct {
-	Start time.Time `json:"start" bson:"start"`
-	End   time.Time `json:"end" bson:"end"`
 }
