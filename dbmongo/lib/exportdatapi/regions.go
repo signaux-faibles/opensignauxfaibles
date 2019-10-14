@@ -29,7 +29,7 @@ var lienRegion = map[string][]string{
 	"Bourgogne-Franche-Comté": []string{"Bourgogne", "Franche-Comté"},
 	"Auvergne-Rhône-Alpes":    []string{"Auvergne", "Rhône-Alpes"},
 	"Nouvelle-Aquitaine":      []string{"Aquitaine", "Limousin", "Poitou-Charentes"},
-	"Grand-Est":               []string{"Alsace"},
+	"Grand-Est":               []string{"Alsace", "Lorraine", "Champagne-Ardenne"},
 }
 
 var ancienneRegion = map[string][]string{

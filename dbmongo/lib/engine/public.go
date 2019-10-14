@@ -1,6 +1,8 @@
 package engine
 
 import (
+	"errors"
+	"fmt"
 	"strconv"
 	"time"
 
@@ -11,6 +13,59 @@ import (
 	"github.com/globalsign/mgo/bson"
 	"github.com/spf13/viper"
 )
+
+// PublicOne traite le mapReduce public pour une clé unique (siren)
+func PublicOne(batch AdminBatch, key string) error {
+
+	if len(key) < 9 {
+		return errors.New("key minimal length of 9")
+	}
+
+	functions, err := loadJSFunctions("public")
+
+	naf, err := naf.LoadNAF()
+	if err != nil {
+		return err
+	}
+
+	scope := bson.M{
+		"date_debut":             batch.Params.DateDebut,
+		"date_fin":               batch.Params.DateFin,
+		"date_fin_effectif":      batch.Params.DateFinEffectif,
+		"serie_periode":          misc.GenereSeriePeriode(batch.Params.DateDebut, batch.Params.DateFin),
+		"serie_periode_annuelle": misc.GenereSeriePeriodeAnnuelle(batch.Params.DateDebut, batch.Params.DateFin),
+		"offset_effectif":        (batch.Params.DateFinEffectif.Year()-batch.Params.DateFin.Year())*12 + int(batch.Params.DateFinEffectif.Month()-batch.Params.DateFin.Month()),
+		"actual_batch":           batch.ID.Key,
+		"naf":                    naf,
+		"f":                      functions,
+		"batches":                GetBatchesID(),
+		"types":                  GetTypes(),
+	}
+
+	job := &mgo.MapReduce{
+		Map:      functions["map"].Code,
+		Reduce:   functions["reduce"].Code,
+		Finalize: functions["finalize"].Code,
+		Out:      bson.M{"replace": "Public_debug"},
+		Scope:    scope,
+	}
+
+	query := bson.M{
+		"_id": bson.M{
+			"$regex": bson.RegEx{Pattern: "^" + key[0:9],
+				Options: "",
+			},
+		},
+	}
+	_, err = Db.DB.C("RawData").Find(query).MapReduce(job, nil)
+
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	return err
+}
 
 // Public permet de supprimer un batch dans les objets de RawData
 func Public(batch AdminBatch) error {

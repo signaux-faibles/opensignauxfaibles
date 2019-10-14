@@ -1,29 +1,21 @@
 package exportdatapi
 
-import (
-	"testing"
-
-	"github.com/davecgh/go-spew/spew"
-)
-
 // func Test_GetRegions(t *testing.T) {
 // 	spew.Dump(GetRegions("1805"))
 // }
 
-func Test_Compute(t *testing.T) {
-detection := Detection{
-	ID: map[string]string{
-		"scope": "etablissement",
-		"key": "012345678901234"
-		"batch": "dummy"
-	},
-	Score: 0.312,
-	Diff: 0,
-	Alert: "Pas d'alerte",
-
-}
-}
-
+// func Test_Compute(t *testing.T) {
+// 	detection := Detection{
+// 		ID: map[string]string{
+// 			"scope": "etablissement",
+// 			"key":   "012345678901234",
+// 			"batch": "dummy",
+// 		},
+// 		Score: 0.312,
+// 		Diff:  0,
+// 		Alert: "Pas d'alerte",
+// 	}
+// }
 
 // (exportdatapi.Detection) {
 // 	ID: (map[string]string) (len=3) {

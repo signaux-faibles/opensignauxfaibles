@@ -41,6 +41,7 @@ func publicHandler(c *gin.Context) {
 	var params struct {
 		BatchKey string `json:"batch"`
 		Algo     string `json:"algo"`
+		Key      string `json:"key"`
 	}
 	err := c.ShouldBind(&params)
 	if err != nil || params.BatchKey == "" {
@@ -54,7 +55,13 @@ func publicHandler(c *gin.Context) {
 		return
 	}
 
-	err = engine.Public(batch)
+	if params.Key == "" {
+		err = engine.Public(batch)
+	} else if len(params.Key) >= 9 {
+		err = engine.PublicOne(batch, key[0:9])
+	} else {
+		c.JSON(400, "la clé fait moins de 9 caractères (siren)")
+	}
 
 	if err != nil {
 		c.JSON(500, err.Error())
