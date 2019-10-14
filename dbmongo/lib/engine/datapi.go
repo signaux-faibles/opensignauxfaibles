@@ -3,11 +3,13 @@ package engine
 import (
 	"dbmongo/lib/exportdatapi"
 	"dbmongo/lib/naf"
-	"fmt"
 	"io/ioutil"
+	"log"
 	"sort"
 	"strings"
+	"time"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/spf13/viper"
 
 	daclient "github.com/signaux-faibles/datapi/client"
@@ -123,18 +125,19 @@ func ExportDetectionToDatapi(url, user, password, batch string) error {
 
 	var datas []daclient.Object
 
-	var i int
+	// var i int
 	connus, err := readConnu()
 	if err != nil {
 		return err
 	}
 
-	fmt.Println("coucou")
+	i := 0
 	for iter.Next(&data) {
-		fmt.Println("coucou")
+		spew.Dump(data)
 		detection, err := exportdatapi.Compute(data)
+		//spew.Dump(detection)
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 			continue
 		}
 		i++
@@ -154,16 +157,11 @@ func ExportDetectionToDatapi(url, user, password, batch string) error {
 		datas = append(datas, detection...)
 		datas = append(datas, c)
 
-		if i > 3000 {
-			if datas != nil {
-				client.Connect(user, password)
-				err = client.Put("public", datas)
-				if err != nil {
-					fmt.Println(err)
-				}
-				datas = nil
-			}
+		// envoi de tronçons de 2000 entreprises
+		if i == 2000 {
 			i = 0
+			datapiSecureSend(user, password, &client, &datas)
+			datas = nil
 		}
 	}
 
@@ -171,9 +169,29 @@ func ExportDetectionToDatapi(url, user, password, batch string) error {
 		client.Connect(user, password)
 		err = client.Put("public", datas)
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 		}
 	}
 
 	return err
+}
+
+func datapiSecureSend(user string, password string, client *daclient.DatapiServer, datas *[]daclient.Object) error {
+	if datas != nil {
+		err := client.Connect(user, password)
+		for err != nil {
+			log.Println("erreur de connexion datapi: " + err.Error())
+			log.Println("tentative de reconnexion")
+			time.Sleep(5 * time.Second)
+			err = client.Connect(user, password)
+		}
+
+		err = client.Put("public", *datas)
+
+		if err != nil {
+			log.Println(err.Error())
+			return err
+		}
+	}
+	return nil
 }
