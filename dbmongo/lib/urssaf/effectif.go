@@ -53,8 +53,8 @@ func parseEffectifPeriod(effectifPeriods []string) ([]time.Time, error) {
 	return periods, nil
 }
 
-// Parser retourne un channel fournissant des données extraites
-func parseEffectif(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
+// ParserEffectif retourne un channel fournissant des données extraites
+func ParserEffectif(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
 	outputChannel := make(chan engine.Tuple)
 	eventChannel := make(chan engine.Event)
 	event := engine.Event{
@@ -142,6 +142,9 @@ func parseEffectif(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tu
 							}
 						}
 					}
+				}
+				if engine.ShouldBreak(tracker, engine.MaxParsingErrors) {
+					break
 				}
 				tracker.Next()
 			}

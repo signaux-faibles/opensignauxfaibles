@@ -64,17 +64,20 @@ func TestReadSiretMapping(t *testing.T) {
 	stdExpected1 := Comptes{
 		"abc": []SiretDate{SiretDate{"01234567891011", stdTime1}},
 	}
+
 	stdExpected2 := Comptes{
 		"abc": []SiretDate{SiretDate{"01234567891011", stdTime2}},
 	}
+
 	stdExpected3 := Comptes{
 		"abc": []SiretDate{
 			SiretDate{"01234567891011", stdTime2},
 			SiretDate{"87654321091011", stdTime1},
 		},
 	}
+
 	stdFilterCache := engine.Cache{
-		"filter": map[string]bool{"01234567891011": true},
+		"filter": map[string]bool{"012345678": true},
 	}
 
 	testCases := []struct {
@@ -91,7 +94,7 @@ func TestReadSiretMapping(t *testing.T) {
 		;;"abc";;;"01234567891011";;"1150101"`, engine.Cache{}, false, stdExpected2},
 		// With filtered siret
 		{`0;1;2;3;4;5;6;7
-		;;"abc";;;"01234567891011";;"1150101"`, stdFilterCache, false, map[string][]SiretDate{}},
+		;;"abc";;;"01234567891011";;"1150101"`, stdFilterCache, false, stdExpected2},
 		// With two entries 1
 		{`0;1;2;3;4;5;6;7
 		;;"abc";;;"01234567891011";;"1150101"
@@ -100,6 +103,10 @@ func TestReadSiretMapping(t *testing.T) {
 		{`0;1;2;3;4;5;6;7
 	    ;;"abc";;;"87654321091011";;""
 	    ;;"abc";;;"01234567891011";;"1150101"`, engine.Cache{}, false, stdExpected3},
+		// With invalid siret
+		{`0;1;2;3;4;5;6;7
+		  ;;"abc";;;"8765432109101A";;""
+	    ;;"abc";;;"01234567891011";;"1150101"`, engine.Cache{}, false, stdExpected2},
 	}
 
 	for ind, tc := range testCases {
@@ -127,12 +134,15 @@ func TestGetCompteSiretMapping(t *testing.T) {
 	stdExpected2 := Comptes{
 		"abc": []SiretDate{SiretDate{"01234567891011", stdTime2}},
 	}
+
+	// When file is read, returnd stdExpected1
 	mockOpenFile := func(s1 string, s2 string, c Comptes, ca engine.Cache, ba *engine.AdminBatch) (Comptes, error) {
 		for key := range stdExpected1 {
 			c[key] = stdExpected1[key]
 		}
 		return c, nil
 	}
+
 	testCases := []struct {
 		cache       engine.Cache
 		batch       engine.AdminBatch
@@ -140,11 +150,11 @@ func TestGetCompteSiretMapping(t *testing.T) {
 		expected    Comptes
 	}{
 		// Basic reading from file
-		{nil, engine.MockBatch("admin_urssaf", []string{"a"}), false, stdExpected1},
+		{engine.NewCache(), engine.MockBatch("admin_urssaf", []string{"a"}), false, stdExpected1},
 		// Cache superseeds reading from file
 		{engine.Cache{"comptes": stdExpected2}, engine.MockBatch("admin_urssaf", []string{"a"}), false, stdExpected2},
 		// No cache, no file = error
-		{nil, engine.MockBatch("otherStuff", []string{"a"}), true, nil},
+		{engine.NewCache(), engine.MockBatch("otherStuff", []string{"a"}), true, nil},
 	}
 
 	for ind, tc := range testCases {

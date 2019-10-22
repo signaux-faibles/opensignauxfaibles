@@ -41,8 +41,8 @@ func (procol Procol) Type() string {
 	return "procol"
 }
 
-// Parser transorme le fichier procol en data
-func parseProcol(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
+// ParserProcol transorme le fichier procol en data
+func ParserProcol(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
 	outputChannel := make(chan engine.Tuple)
 	eventChannel := make(chan engine.Event)
 
@@ -62,6 +62,8 @@ func parseProcol(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tupl
 				tracker.Error(err)
 				event.Critical(tracker.Report("fatalError"))
 				continue
+			} else {
+				event.Info(path + ": ouverture")
 			}
 
 			reader := csv.NewReader(bufio.NewReader(file))

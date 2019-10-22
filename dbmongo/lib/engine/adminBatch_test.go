@@ -48,3 +48,22 @@ func Test_isBatchID(t *testing.T) {
 		t.Log("'abcd' est bien rejeté: ")
 	}
 }
+
+func Test_CheckBatchPaths(t *testing.T) {
+	test_cases := []struct {
+		Filepath      string
+		ErrorExpected bool
+	}{
+		{"./test_data/empty_file", false},
+		{"./test_data/missing_file", true},
+	}
+	for _, tc := range test_cases {
+		mockbatch := MockBatch("debit", []string{tc.Filepath})
+		err := CheckBatchPaths(&mockbatch)
+		if (err == nil && tc.ErrorExpected) ||
+			(err != nil && !tc.ErrorExpected) {
+			t.Log(err.Error()) // delete_me
+			t.Error("Validity of path " + tc.Filepath + " is wrongly checked")
+		}
+	}
+}

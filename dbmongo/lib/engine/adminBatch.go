@@ -3,9 +3,11 @@ package engine
 import (
 	"errors"
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/globalsign/mgo/bson"
+	"github.com/spf13/viper"
 )
 
 // AdminID Collection key
@@ -120,7 +122,7 @@ func addFileToBatch() chan newFile {
 
 // ImportBatch lance tous les parsers sur le batch fourni
 func ImportBatch(batch AdminBatch, parsers []Parser) error {
-	var cache Cache
+	var cache = NewCache()
 	for _, parser := range parsers {
 		outputChannel, eventChannel := parser(cache, &batch)
 		go RelayEvents(eventChannel)
@@ -143,9 +145,30 @@ func ImportBatch(batch AdminBatch, parsers []Parser) error {
 	return nil
 }
 
+// CheckBatchPaths checks if the filepaths of batch.Files exist
+func CheckBatchPaths(batch *AdminBatch) error {
+	var ErrorString string
+	for _, filepaths := range batch.Files {
+		for _, filepath := range filepaths {
+			filepath = viper.GetString("APP_DATA") + filepath
+			if _, err := os.Stat(filepath); err != nil {
+				ErrorString += filepath + " is missing (" + err.Error() + ").\n"
+			}
+		}
+	}
+	if ErrorString != "" {
+		return errors.New(ErrorString)
+	} else {
+		return nil
+	}
+}
+
 // CheckBatch checks batch
 func CheckBatch(batch AdminBatch, parsers []Parser) error {
-	var cache Cache
+	if err := CheckBatchPaths(&batch); err != nil {
+		return err
+	}
+	var cache = NewCache()
 	for _, parser := range parsers {
 		outputChannel, eventChannel := parser(cache, &batch)
 		DiscardTuple(outputChannel)
@@ -187,7 +210,6 @@ func LastBatch() AdminBatch {
 // NextBatch crée le batch suivant le dernier batch existant
 func NextBatch() error {
 	batch := LastBatch()
-	// spew.Dump(batch)
 	newBatchID, err := NextBatchID(batch.ID.Key)
 	if err != nil {
 		return fmt.Errorf("Mauvais numéro de batch: " + err.Error())

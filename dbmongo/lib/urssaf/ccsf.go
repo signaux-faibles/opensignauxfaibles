@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"encoding/csv"
 	"errors"
-	"fmt"
 	"io"
 	"os"
 	"strconv"
@@ -57,7 +56,7 @@ func batchToTime(batch string) (time.Time, error) {
 }
 
 // Parser produit des lignes CCSF
-func parseCCSF(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
+func ParserCCSF(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
 	outputChannel := make(chan engine.Tuple)
 	eventChannel := make(chan engine.Event)
 
@@ -75,9 +74,12 @@ func parseCCSF(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple,
 
 			file, err := os.Open(viper.GetString("APP_DATA") + path)
 			if err != nil {
-				fmt.Println("Error", err)
+				tracker.Error(err)
+				event.Critical(tracker.Report("fatalError"))
+				continue
+			} else {
+				event.Info(path + ": ouverture")
 			}
-
 			reader := csv.NewReader(bufio.NewReader(file))
 			reader.Comma = ';'
 			reader.Read()
@@ -116,6 +118,7 @@ func parseCCSF(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple,
 					)
 					if err != nil {
 						// Compte filtré
+						tracker.Error(engine.NewCriticError(err, "filter"))
 						continue
 					}
 					ccsf.NumeroCompte = r[f["NumeroCompte"]]
@@ -129,6 +132,9 @@ func parseCCSF(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple,
 				} else {
 					tracker.Error(errors.New("Ligne non conforme, moins de 4 champs"))
 					event.Warning(tracker.Report("invalidLine"))
+				}
+				if engine.ShouldBreak(tracker, engine.MaxParsingErrors) {
+					break
 				}
 				tracker.Next()
 			}

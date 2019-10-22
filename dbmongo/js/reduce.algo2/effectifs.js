@@ -33,8 +33,6 @@ function effectifs (v, periodes) {
     // le cas échéant, on met à jour l'accu avec le dernier effectif disponible
     accu = map_effectif[time] || accu
 
-    // Pour le filtrage, on a besoin de savoir s'il s'agit d'un effectif reporté ou original
-    // TODO gerer le filtrage. Ici ? ailleurs ?
     output_effectif[time].effectif_reporte = map_effectif[time] ? 0 : 1
     return(accu)
   }, null)

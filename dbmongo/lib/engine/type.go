@@ -25,7 +25,7 @@ func (ca Cache) Set(name string, value interface{}) {
 
 // NewCache returns a new cache object
 func NewCache() Cache {
-	return map[string]interface{}{}
+	return make(map[string]interface{})
 }
 
 // GetTypes retourne la liste des types déclarés

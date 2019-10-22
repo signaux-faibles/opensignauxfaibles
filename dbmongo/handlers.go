@@ -16,9 +16,9 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/reporder"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sirene"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/urssaf"
 
 	sireneul "github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sirene_ul"
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/urssaf"
 
 	"github.com/davecgh/go-spew/spew"
 	"github.com/gin-gonic/gin"
@@ -261,7 +261,12 @@ func checkBatchHandler(c *gin.Context) {
 	if err != nil {
 		c.JSON(404, err.Error())
 	}
-	engine.CheckBatch(batch, parsers)
+	err = engine.CheckBatch(batch, parsers)
+	if err != nil {
+		c.JSON(417, "Erreurs détectées: "+err.Error())
+	} else {
+		c.JSON(200, true)
+	}
 }
 
 //
@@ -286,7 +291,12 @@ func purgeNotCompactedHandler(c *gin.Context) {
 
 // RegisteredParsers liste des parsers disponibles
 var registeredParsers = map[string]engine.Parser{
-	"urssaf":     urssaf.Parser,
+	"debit":      urssaf.ParserDebit,
+	"ccsf":       urssaf.ParserCCSF,
+	"cotisation": urssaf.ParserCotisation,
+	"delai":      urssaf.ParserDelai,
+	"effectif":   urssaf.ParserEffectif,
+	"procol":     urssaf.ParserProcol,
 	"apconso":    apconso.Parser,
 	"apdemande":  apdemande.Parser,
 	"bdf":        bdf.Parser,
@@ -308,11 +318,16 @@ func encapsulateParser(po *marshal.ParserOptions) engine.Parser {
 // Vérifie et charge les parsers
 func resolveParsers(parserNames []string) ([]engine.Parser, error) {
 	var parsers []engine.Parser
-
-	// Lecture de tous les parsers définis en encapsulant GenericParser
-	registeredParserOptions, err := marshal.RegisteredParserOptions(viper.GetString("PARSEROPTIONS_DIR"))
-	if err != nil {
-		return parsers, err
+	var registeredParserOptions map[string]*marshal.ParserOptions
+	parserOptionsDir := viper.GetString("PARSEROPTIONS_DIR")
+	if parserOptionsDir == "" {
+		fmt.Println("No parser options could be read. Have you set PARSEROPTIONS_DIR config ?")
+	} else {
+		aux, err := marshal.RegisteredParserOptions(parserOptionsDir)
+		if err != nil {
+			return parsers, errors.New("Parser options could not be read at " + parserOptionsDir + ": " + err.Error())
+		}
+		registeredParserOptions = aux
 	}
 
 	if parserNames == nil {

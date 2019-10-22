@@ -20,8 +20,8 @@ import (
 // GetSiret gets the siret related to a specific compte at a given point in
 // time
 func GetSiret(compte string, date *time.Time, cache engine.Cache, batch *engine.AdminBatch) (string, error) {
-
 	comptes, err := getCompteSiretMapping(cache, batch, openAndReadSiretMapping)
+
 	if err != nil {
 		return "", err
 	}
@@ -31,7 +31,7 @@ func GetSiret(compte string, date *time.Time, cache engine.Cache, batch *engine.
 			return sd.Siret, nil
 		}
 	}
-	return "", errors.New("Pas de siret associé au compte " + compte + " à cette période")
+	return "", errors.New("Pas de siret associé au compte " + compte + " à la période " + date.String())
 }
 
 // SiretDate holds a pair of a siret and a date
@@ -52,16 +52,18 @@ func getCompteSiretMapping(cache engine.Cache, batch *engine.AdminBatch, mr mapp
 		comptes, ok := value.(Comptes)
 		if ok {
 			return comptes, nil
+		} else {
+			return nil, errors.New("Wrong format from existing field comptes in cache")
 		}
 	}
 
-	compteSiretMapping := make(map[string][]SiretDate)
+	compteSiretMapping := make(Comptes)
 
 	path := batch.Files["admin_urssaf"]
 	basePath := viper.GetString("APP_DATA")
 
 	if len(path) == 0 {
-		return nil, errors.New("no admin_urssaf mapping found")
+		return nil, errors.New("No admin_urssaf mapping found")
 	}
 	for _, p := range path {
 		compteSiretMapping, err = mr(basePath, p, compteSiretMapping, cache, batch)
@@ -69,6 +71,7 @@ func getCompteSiretMapping(cache engine.Cache, batch *engine.AdminBatch, mr mapp
 			return nil, err
 		}
 	}
+	cache.Set("comptes", compteSiretMapping)
 	return compteSiretMapping, nil
 }
 
@@ -142,9 +145,11 @@ func readSiretMapping(
 		siret := row[siretIndex]
 
 		filtered, err := IsFiltered(siret, cache, batch)
+
 		if err != nil {
 			return nil, err
 		}
+
 		if sfregexp.RegexpDict["siret"].MatchString(siret) && !filtered {
 			//siret valide
 			addSiretMapping[compte] = append(addSiretMapping[compte], SiretDate{siret, fermeture})

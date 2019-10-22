@@ -20,7 +20,7 @@ func IsFiltered(id string, cache engine.Cache, batch *engine.AdminBatch) (bool, 
 	validSiret := sfregexp.RegexpDict["siret"].MatchString(id)
 	validSiren := sfregexp.RegexpDict["siren"].MatchString(id)
 	if !validSiret && !validSiren {
-		return false, errors.New(id + " is an invalid ID. Ids should be either siret or sirens")
+		return true, nil
 	}
 
 	filter, err := getSirenFilter(cache, batch, readFilterFiles)
@@ -45,6 +45,8 @@ func getSirenFilter(cache engine.Cache, batch *engine.AdminBatch, fr filterReade
 		filter, ok := value.(map[string]bool)
 		if ok {
 			return filter, nil
+		} else {
+			return nil, errors.New("Wrong format from existing field filter in cache")
 		}
 	}
 
@@ -59,7 +61,6 @@ func getSirenFilter(cache engine.Cache, batch *engine.AdminBatch, fr filterReade
 	if err != nil {
 		return nil, err
 	}
-
 	cache.Set("filter", filter)
 	return filter, nil
 }
@@ -106,7 +107,7 @@ func readFilter(reader io.Reader, filter map[string]bool) error {
 		if sfregexp.RegexpDict["siren"].MatchString(siren) {
 			filter[siren] = true
 		} else {
-			return errors.New("Format de siren incorrect trouvé")
+			return errors.New("Format de siren incorrect trouvé : " + siren)
 		}
 	}
 	return nil

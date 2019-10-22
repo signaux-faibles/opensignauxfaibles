@@ -70,7 +70,7 @@ func (pe *FilterError) Error() string {
 	return fmt.Sprintf("Error while loading or applying filter: %v", pe.err)
 }
 
-// MappingError occurs when something goes wrong while filtering
+// MappingError occurs when something goes wrong while looking for a mapping
 type MappingError struct {
 	*CriticError
 }

@@ -3,7 +3,6 @@ package urssaf
 import (
 	"bufio"
 	"encoding/csv"
-	"fmt"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
@@ -50,8 +49,8 @@ func (delai Delai) Type() string {
 	return "delai"
 }
 
-// Parser fonction d'extraction des délais
-func parseDelai(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
+// ParserDelai fonction d'extraction des délais
+func ParserDelai(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
 	outputChannel := make(chan engine.Tuple)
 	eventChannel := make(chan engine.Event)
 
@@ -87,6 +86,8 @@ func parseDelai(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple
 				tracker.Error(err)
 				event.Critical(tracker.Report("fatalError"))
 				break
+			} else {
+				event.Info(path + ": ouverture")
 			}
 
 			reader := csv.NewReader(bufio.NewReader(file))
@@ -108,15 +109,13 @@ func parseDelai(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple
 					continue
 				}
 
-				_, err = marshal.GetSiret(row[field["NumeroCompte"]], &date, cache, batch)
-				//TODO continue here
-				fmt.Println(err)
 				if siret, err := marshal.GetSiret(row[field["NumeroCompte"]], &date, cache, batch); err == nil {
 					delai, tracker := readLine(row, field, siret, tracker)
 					if !tracker.HasErrorInCurrentCycle() {
 						outputChannel <- delai
 					}
 				} else {
+					tracker.Error(err)
 					continue
 				}
 

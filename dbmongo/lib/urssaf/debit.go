@@ -49,7 +49,7 @@ func (debit Debit) Type() string {
 	return "debit"
 }
 
-func parseDebit(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
+func ParserDebit(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
 	outputChannel := make(chan engine.Tuple)
 	eventChannel := make(chan engine.Event)
 
@@ -61,13 +61,15 @@ func parseDebit(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple
 	go func() {
 		for _, path := range batch.Files["debit"] {
 			tracker := gournal.NewTracker(
-				map[string]string{"path": path},
+				map[string]string{"path": path, "MaxParsingErrors": strconv.Itoa(engine.MaxParsingErrors)},
 				engine.TrackerReports)
 
 			file, err := os.Open(viper.GetString("APP_DATA") + path)
 			if err != nil {
 				tracker.Error(err)
 				event.Critical(tracker.Report("fatalError"))
+			} else {
+				event.Info(path + ": ouverture")
 			}
 
 			reader := csv.NewReader(bufio.NewReader(file))
@@ -142,7 +144,12 @@ func parseDebit(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple
 						outputChannel <- debit
 					}
 				} else {
+					tracker.Error(engine.NewCriticError(err, "filter"))
 					continue
+				}
+
+				if engine.ShouldBreak(tracker, engine.MaxParsingErrors) {
+					break
 				}
 				tracker.Next()
 			}
