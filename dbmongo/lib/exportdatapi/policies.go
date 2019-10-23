@@ -1,6 +1,5 @@
 package exportdatapi
 
-import "fmt"
 import daclient "github.com/signaux-faibles/datapi/client"
 
 // GetPolicies returns policies to be exported in datapi
@@ -100,21 +99,4 @@ func GetPolicies(batch string) []daclient.Object {
 	})
 
 	return policies
-}
-
-// ExportPoliciesToDatapi exports standard policies to datapi
-func ExportPoliciesToDatapi(url, user, password, batch string) error {
-	var policies = GetPolicies(batch)
-
-	client := daclient.DatapiServer{
-		URL: url,
-	}
-	err := client.Connect(user, password)
-	if err != nil {
-		return err
-	}
-
-	err = client.Put("system", policies)
-	fmt.Println(err)
-	return err
 }

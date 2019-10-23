@@ -73,7 +73,7 @@ func main() {
 	if viper.GetBool("DEV") {
 		config.AllowOrigins = []string{"*"}
 	} else {
-		config.AllowOrigins = []string{"https://signaux.faibles.fr"}
+		config.AllowOrigins = []string{viper.GetString("corsDomain")}
 	}
 	config.AddAllowHeaders("Authorization")
 	config.AddAllowMethods("GET", "POST")
@@ -81,6 +81,10 @@ func main() {
 
 	r.Use(static.Serve("/", static.LocalFile("static/", true)))
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+	r.POST("/datapi/exportReference", datapiExportReferenceHandler)
+	r.POST("/datapi/exportDetection", datapiExportDetectionHandler)
+	r.POST("/datapi/exportPolicies", datapiExportPoliciesHandler)
 
 	api := r.Group("api")
 
@@ -110,14 +114,19 @@ func main() {
 
 		api.POST("/data/purge", purgeHandler)
 		api.GET("/data/purgeNotCompacted", purgeNotCompactedHandler)
-		api.POST("/data/exportReference", datapiExportReferenceHandler)
-		api.POST("/data/exportDetection", datapiExportDetectionHandler)
-		api.POST("/data/exportPolicies", datapiExportPoliciesHandler)
+
 		// TODO: mapreduce pour traiter le scope, modification des objets utilisateurs
 		// TODO: écrire l'aggrégation qui va bien
 
+		// api.GET("/debug", getChunks)
 	}
 
 	bind := viper.GetString("APP_BIND")
 	r.Run(bind)
 }
+
+// func getChunks(c *gin.Context) {
+// 	chunk, err := engine.ChunkCollection(viper.GetString("DB"), "RawData", viper.GetInt64("chunkByteSize"))
+// 	fmt.Println(err)
+// 	c.JSON(200, chunk.ToQueries(bson.M{}))
+// }

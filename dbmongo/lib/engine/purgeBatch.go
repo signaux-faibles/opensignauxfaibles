@@ -33,7 +33,7 @@ func PurgeBatch(batchKey string) error {
 	var tempDBChannel = make(chan string)
 
 	i := 0
-	for _, query := range chunks.ToQueries(nil) {
+	for _, query := range chunks.ToQueries(nil, "_id") {
 		w.waitGroup.Add(1)
 
 		dbTemp := "purgeBatch" + strconv.Itoa(i)

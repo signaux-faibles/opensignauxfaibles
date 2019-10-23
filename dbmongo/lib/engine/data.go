@@ -3,6 +3,7 @@ package engine
 import (
 	"errors"
 	"fmt"
+	"log"
 	"sync"
 	"time"
 
@@ -138,6 +139,7 @@ func Compact(batchKey string, types []string) error {
 	if err != nil {
 		return err
 	}
+
 	// Traitement MR
 	job := &mgo.MapReduce{
 		Map:      functions["map"].Code,
@@ -154,11 +156,16 @@ func Compact(batchKey string, types []string) error {
 		},
 	}
 
-	_, err = Db.DB.C("ImportedData").Find(nil).MapReduce(job, nil)
+	chunks, err := ChunkCollection(viper.GetString("DB"), "RawData", viper.GetInt64("chunkByteSize"))
 
-	if err != nil {
-		return err
+	for _, query := range chunks.ToQueries(nil, "value.key") {
+		log.Println(query)
+		_, err = Db.DB.C("ImportedData").Find(query).MapReduce(job, nil)
+		if err != nil {
+			return err
+		}
 	}
+
 	err = PurgeNotCompacted()
 	return err
 }
@@ -267,10 +274,10 @@ func ChunkCollection(db string, collection string, chunkSize int64) (Chunks, err
 }
 
 // ToQueries translates chunks into bson queries to chunk collection by siren code
-func (chunks Chunks) ToQueries(query bson.M) []bson.M {
+func (chunks Chunks) ToQueries(query bson.M, field string) []bson.M {
 	var ret []bson.M
 	ret = append(ret, bson.M{
-		"_id": bson.M{
+		field: bson.M{
 			"$lte": chunks.SplitKeys[0].ID[0:9],
 		},
 	})
@@ -278,15 +285,15 @@ func (chunks Chunks) ToQueries(query bson.M) []bson.M {
 	for i := 1; i < len(chunks.SplitKeys); i++ {
 		ret = append(ret, bson.M{
 			"$and": []bson.M{
-				bson.M{"_id": bson.M{"$gt": chunks.SplitKeys[i-1].ID[0:9]}},
-				bson.M{"_id": bson.M{"$lte": chunks.SplitKeys[i].ID[0:9]}},
+				bson.M{field: bson.M{"$gt": chunks.SplitKeys[i-1].ID[0:9]}},
+				bson.M{field: bson.M{"$lte": chunks.SplitKeys[i].ID[0:9]}},
 				query,
 			},
 		})
 	}
 
 	ret = append(ret, bson.M{
-		"_id": bson.M{
+		field: bson.M{
 			"$gt": chunks.SplitKeys[len(chunks.SplitKeys)-1].ID[0:9],
 		},
 	})

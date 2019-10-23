@@ -143,7 +143,7 @@ func Reduce(batch AdminBatch, algo string) error {
 	// chaque goroutine essaye de lancer un mapreduce
 	// voir MRthreads dans le fichier de config
 	i := 0
-	for _, query := range chunks.ToQueries(bson.M{"value.index." + algo: true}) {
+	for _, query := range chunks.ToQueries(bson.M{"value.index." + algo: true}, "_id") {
 		w.waitGroup.Add(1)
 		dbTemp := "reduce" + strconv.Itoa(i)
 

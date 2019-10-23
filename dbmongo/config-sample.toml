@@ -1,17 +1,27 @@
-# Valeurs codées en dur, décommenter pour surcharger
+# API
+DEV = true
+APP_BIND = ":5000"
 
-# APP_BIND = ":3000"
-# APP_DATA = "/home/christophe/Project/data-raw"
-# NAF_L1 =   "/home/christophe/Project/data-raw/naf/naf1.csv"
-# NAF_L2 =   "/home/christophe/Project/data-raw/naf/naf2.csv"
-# NAF_L3 =   "/home/christophe/Project/data-raw/naf/naf3.csv"
-# NAF_L4 =   "/home/christophe/Project/data-raw/naf/naf4.csv"
-# NAF_l5 =   "/home/christophe/Project/data-raw/naf/naf5.csv"
-# NAF_5to1 = "/home/christophe/Project/data-raw/naf/5to1.csv"
-# DB_HOST = "127.0.0.1"
-# DB_PORT = "27017"
-# DB = "signauxfaibles"
-# FIRST_BATCH = "1802"
-# smtpAddress = "localhost:25"
-# jwtSecret = "mettre ici le secret de votre choix pour sécuriser vos token JWT"
-# MRthreads = 2 # nombre de threads pour traiter MapReduce
+# Paramètrage de l'import
+APP_DATA = "/foo/bar/data-raw"
+NAF_L1 =   "/foo/bar/data-raw/naf/naf1.csv"
+NAF_L2 =   "/foo/bar/data-raw/naf/naf2.csv"
+NAF_L3 =   "/foo/bar/data-raw/naf/naf3.csv"
+NAF_L4 =   "/foo/bar/data-raw/naf/naf4.csv"
+NAF_l5 =   "/foo/bar/data-raw/naf/naf5.csv"
+NAF_5to1 = "/foo/bar/data-raw/naf/5to1.csv"
+
+# Connexion à la base de données
+DB_DIAL = "mongodb://localhost:27017"
+DB = "signauxfaibles"
+FIRST_BATCH = "1802"
+
+# Parallélisme du MapReduce
+MRthreads = 2
+chunkByteSize = 1000000000
+
+# connexion à datapi
+datapiURL = "http://localhost:3000/"
+datapiUser = "Some_User"
+datapiPassword = "Some_Strong_Password"
+datapiChunk = 2000 

@@ -99,7 +99,7 @@ func Public(batch AdminBatch) error {
 	var pipeChannel = make(chan string)
 
 	i := 0
-	for _, query := range chunks.ToQueries(bson.M{"value.index.algo2": true}) {
+	for _, query := range chunks.ToQueries(bson.M{"value.index.algo2": true}, "_id") {
 		w.waitGroup.Add(1)
 
 		dbTemp := "purgeBatch" + strconv.Itoa(i)

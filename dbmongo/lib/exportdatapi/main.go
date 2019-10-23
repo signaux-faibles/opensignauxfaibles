@@ -11,11 +11,19 @@ import (
 )
 
 // GetPipeline construit le pipeline d'aggregation
-func GetPipeline(batch string) (pipeline []bson.M) {
-	pipeline = append(pipeline, bson.M{"$match": bson.M{
-		"algo":  "algo",
-		"batch": batch,
-	}})
+func GetPipeline(batch, key string) (pipeline []bson.M) {
+	if key == "" {
+		pipeline = append(pipeline, bson.M{"$match": bson.M{
+			"algo":  "algo",
+			"batch": batch,
+		}})
+	} else {
+		pipeline = append(pipeline, bson.M{"$match": bson.M{
+			"algo":  "algo",
+			"batch": batch,
+			"siret": key,
+		}})
+	}
 
 	pipeline = append(pipeline, bson.M{"$sort": bson.M{
 		"siret":     1,

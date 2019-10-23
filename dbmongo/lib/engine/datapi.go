@@ -6,10 +6,10 @@ import (
 	"io/ioutil"
 	"log"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/spf13/viper"
 
 	daclient "github.com/signaux-faibles/datapi/client"
@@ -37,7 +37,14 @@ func findString(s string, a []string) bool {
 
 // ExportPoliciesToDatapi exports standard policies to datapi
 func ExportPoliciesToDatapi(url, user, password, batch string) error {
-	return exportdatapi.ExportPoliciesToDatapi(url, user, password, batch)
+	// return exportdatapi.ExportPoliciesToDatapi(url, user, password, batch)
+	var policies = exportdatapi.GetPolicies(batch)
+	client := daclient.DatapiServer{
+		URL: url,
+	}
+
+	err := datapiSecureSend(user, password, "system", &client, &policies)
+	return err
 }
 
 // ExportReferencesToDatapi pushes references (batches, types, etc.) to a datapi server
@@ -45,8 +52,6 @@ func ExportReferencesToDatapi(url string, user string, password string, batch st
 	client := daclient.DatapiServer{
 		URL: url,
 	}
-
-	err := client.Connect(user, password)
 
 	nafCodes := daclient.Object{
 		Key: map[string]string{
@@ -102,46 +107,41 @@ func ExportReferencesToDatapi(url string, user string, password string, batch st
 	data = append(data, procol)
 	data = append(data, batchObject)
 	data = append(data, exportdatapi.GetRegions(batch)...)
-	err = client.Put("reference", data)
+	err = datapiSecureSend(user, password, "reference", &client, &data)
 
 	return err
 }
 
 // ExportDetectionToDatapi sends detections with some informations to a datapi server
-func ExportDetectionToDatapi(url, user, password, batch string) error {
+func ExportDetectionToDatapi(url, user, password, batch, key string) error {
 	client := daclient.DatapiServer{
 		URL: url,
 	}
-	err := client.Connect(user, password)
-	if err != nil {
-		return err
-	}
 
-	var pipeline = exportdatapi.GetPipeline(batch)
-
+	var pipeline = exportdatapi.GetPipeline(batch, key)
 	iter := Db.DB.C("Scores").Pipe(pipeline).AllowDiskUse().Iter()
 
-	var data exportdatapi.Detection
-
-	var datas []daclient.Object
-
-	// var i int
 	connus, err := readConnu()
 	if err != nil {
 		return err
 	}
 
 	i := 0
+	var datas []daclient.Object
+	var data exportdatapi.Detection
+
 	for iter.Next(&data) {
-		spew.Dump(data)
+		i++
+
 		detection, err := exportdatapi.Compute(data)
-		//spew.Dump(detection)
 		if err != nil {
 			log.Println(err)
 			continue
 		}
-		i++
 
+		datas = append(datas, detection...)
+
+		// fast & dirty: intègre la notion de connu dans l'objet
 		c := daclient.Object{
 			Key: map[string]string{
 				"siret": data.ID["key"],
@@ -153,45 +153,55 @@ func ExportDetectionToDatapi(url, user, password, batch string) error {
 				"connu": findString(data.ID["key"], connus),
 			},
 		}
-
-		datas = append(datas, detection...)
 		datas = append(datas, c)
 
 		// envoi de tronçons de 2000 entreprises
-		if i == 2000 {
+		if i == viper.GetInt("datapiChunk") {
 			i = 0
-			datapiSecureSend(user, password, &client, &datas)
+			err := datapiSecureSend(user, password, "public", &client, &datas)
+			if err != nil {
+				return err
+			}
 			datas = nil
 		}
 	}
 
 	if datas != nil {
-		client.Connect(user, password)
-		err = client.Put("public", datas)
-		if err != nil {
-			log.Println(err)
-		}
+		err = datapiSecureSend(user, password, "public", &client, &datas)
 	}
 
 	return err
 }
 
-func datapiSecureSend(user string, password string, client *daclient.DatapiServer, datas *[]daclient.Object) error {
+func datapiSecureSend(user string, password string, bucket string, client *daclient.DatapiServer, datas *[]daclient.Object) error {
 	if datas != nil {
 		err := client.Connect(user, password)
-		for err != nil {
+
+		i := 0
+		for err != nil && i < 5 {
+			i++
 			log.Println("erreur de connexion datapi: " + err.Error())
-			log.Println("tentative de reconnexion")
 			time.Sleep(5 * time.Second)
+
+			log.Println("tentative de reconnexion: " + strconv.Itoa(i))
 			err = client.Connect(user, password)
+
+			if i == 5 {
+				return err
+			}
 		}
 
+		i = 0
 		err = client.Put("public", *datas)
+		for err != nil && i < 5 {
+			i++
+			log.Println("erreur de transmission datapi: " + err.Error())
+			time.Sleep(5 * time.Second)
 
-		if err != nil {
-			log.Println(err.Error())
-			return err
+			log.Println("tentative de réémission:" + err.Error())
+			err = client.Put(bucket, *datas)
 		}
 	}
+
 	return nil
 }
