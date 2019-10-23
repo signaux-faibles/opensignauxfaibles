@@ -291,19 +291,20 @@ func purgeNotCompactedHandler(c *gin.Context) {
 
 // RegisteredParsers liste des parsers disponibles
 var registeredParsers = map[string]engine.Parser{
-	"debit":      urssaf.ParserDebit,
-	"ccsf":       urssaf.ParserCCSF,
-	"cotisation": urssaf.ParserCotisation,
-	"delai":      urssaf.ParserDelai,
-	"effectif":   urssaf.ParserEffectif,
-	"procol":     urssaf.ParserProcol,
-	"apconso":    apconso.Parser,
-	"apdemande":  apdemande.Parser,
-	"bdf":        bdf.Parser,
-	"repeatable": reporder.Parser,
-	"sirene":     sirene.Parser,
-	"sirene_ul":  sireneul.Parser,
-	"diane":      diane.Parser,
+	"debit":        urssaf.ParserDebit,
+	"ccsf":         urssaf.ParserCCSF,
+	"cotisation":   urssaf.ParserCotisation,
+	"admin_urssaf": urssaf.ParserCompte,
+	"delai":        urssaf.ParserDelai,
+	"effectif":     urssaf.ParserEffectif,
+	"procol":       urssaf.ParserProcol,
+	"apconso":      apconso.Parser,
+	"apdemande":    apdemande.Parser,
+	"bdf":          bdf.Parser,
+	"repeatable":   reporder.Parser,
+	"sirene":       sirene.Parser,
+	"sirene_ul":    sireneul.Parser,
+	"diane":        diane.Parser,
 }
 
 // encapsultateParser transforms parser options into a functional parser

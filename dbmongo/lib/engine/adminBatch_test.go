@@ -62,7 +62,7 @@ func Test_CheckBatchPaths(t *testing.T) {
 		err := CheckBatchPaths(&mockbatch)
 		if (err == nil && tc.ErrorExpected) ||
 			(err != nil && !tc.ErrorExpected) {
-			t.Log(err.Error()) // delete_me
+			// t.Log(err.Error()) // delete_me
 			t.Error("Validity of path " + tc.Filepath + " is wrongly checked")
 		}
 	}

@@ -159,7 +159,7 @@ func TestGetCompteSiretMapping(t *testing.T) {
 
 	for ind, tc := range testCases {
 
-		actual, err := getCompteSiretMapping(tc.cache, &tc.batch, mockOpenFile)
+		actual, err := GetCompteSiretMapping(tc.cache, &tc.batch, mockOpenFile)
 		if err != nil && !tc.expectError {
 			t.Fatalf("Unexpected error during mapping request in test %d: %v", ind, err)
 		}

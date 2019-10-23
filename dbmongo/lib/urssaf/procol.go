@@ -105,7 +105,6 @@ func ParserProcol(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tup
 				)
 				if _, err := strconv.Atoi(row[siretIndex]); err == nil && len(row[siretIndex]) == 14 {
 					if !tracker.HasErrorInCurrentCycle() {
-
 						outputChannel <- procol
 					} else {
 						//event.Debug(tracker.Report("errors"))

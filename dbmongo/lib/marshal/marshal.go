@@ -156,7 +156,7 @@ func readFile(
 	}
 
 	for {
-		if engine.ShouldBreak(*tracker, engine.MaxParsingErrors) {
+		if tracker.Count%10000 == 0 && engine.ShouldBreak(*tracker, engine.MaxParsingErrors) {
 			break
 		}
 		tracker.Next()
