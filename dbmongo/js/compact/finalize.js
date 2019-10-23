@@ -15,29 +15,8 @@ function finalize(k, o) {
       o.index.algo2 = hasEffectif
       return (hasEffectif)
     })
-
-    // Complete reporder if missing
-
-    var dates = serie_periode
-    var missing = {}
-    serie_periode.forEach(p => {
-      missing[p] = true
-    })
-
-    batches.forEach(batch => {
-      let reporder = o.batch[batch].reporder || {}
-
-      Object.keys(reporder).forEach(ro => {
-        missing[reporder[ro].periode] = false
-      })
-    })
-
-    var lastBatch = batches[batches.length - 1]
-    serie_periode.filter(p => missing[p]).forEach(p => {
-      let reporder_obj = o.batch[lastBatch].reporder || {}
-      reporder_obj[p] = { random_order: Math.random(), periode: p, siret: k }
-      o.batch[lastBatch].reporder = reporder_obj
-    })
   }
+  // Complete reporder if missing
+  o = f.complete_reporder(k, o)
   return(o)
 }

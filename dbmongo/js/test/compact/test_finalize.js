@@ -1,4 +1,6 @@
 serie_periode = [new Date("2014-01-01"), new Date("2015-01-01")]
+f = {}
+f.complete_reporder = complete_reporder
 var test_cases = [
   {
     // Exemple 1: add random_order
@@ -258,6 +260,78 @@ var test_cases = [
       }
     }
 
+},
+//exemple4: partial random_order
+{
+  finalize_object: {
+    "key": "123",
+    "scope": "etablissement",
+    "batch": {
+      "1901_1repeatable" : {
+        "reporder" : {
+          "4124ad3ec7264743785e6a0b107cbc41" : {
+            "siret" : "00578004400011",
+            "periode" : new Date("2015-01-01"),
+            "random_order" : 0.5391696081492233
+          },
+        }
+      },
+      "1901_2other": {
+        "other_stuff": {
+        }
+      },
+      "1902": {
+        "apconso": {
+          "c": {
+            "bonjour": 7,
+            "aurevoir": 8
+          }
+        },
+      }
+    },
+    "index": {
+      "algo1": false,
+      "algo2": false
+    }
+  },
+  expected: {
+    "key": "123",
+    "scope": "etablissement",
+    "batch": {
+      "1902": {
+        "apconso": {
+          "c": {
+            "bonjour": 7,
+            "aurevoir": 8
+          }
+        },
+        "reporder": {
+          "Wed Jan 01 2014 01:00:00 GMT+0100 (CET)": {
+            "random_order": 0.3914977130034015,
+            "periode": "2014-01-01T00:00:00.000Z",
+            "siret": "123"
+          }
+        },
+      },
+      "1901_1repeatable": {
+        "reporder": {
+          "4124ad3ec7264743785e6a0b107cbc41": {
+            "siret" : "00578004400011",
+            "periode": "2015-01-01T00:00:00.000Z",
+            "random_order" : 0.5391696081492233
+          }
+        }
+      },
+      "1901_2other": {
+        "other_stuff": {
+        }
+      },
+    },
+    "index": {
+      "algo1": true,
+      "algo2": true
+    }
+  }
 }
 ]
 
@@ -268,5 +342,5 @@ var test_results = test_cases.map(function(tc, id) {
   return(compareIgnoreRandom(actual, tc.expected))
 })
 
-print(test_results)
+// print(test_results)
 print(test_results.every(t => t))

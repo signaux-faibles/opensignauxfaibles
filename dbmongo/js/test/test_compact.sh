@@ -10,3 +10,8 @@ if [ "$result_add" != 'true' ]; then
   exit 1
 fi
 
+result_finalize=$(jsc ../compact/currentState.js ../compact/finalize.js ../compact/complete_reporder.js ./testing.js ./compact/test_finalize.js)
+if [ "$result_finalize" != 'true' ]; then
+  echo "$result_finalize"
+  exit 1
+fi
