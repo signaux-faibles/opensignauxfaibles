@@ -40,8 +40,8 @@ func (cotisation Cotisation) Type() string {
 	return "cotisation"
 }
 
-// ParseCotisation transforme les fichiers en données à intégrer
-func parseCotisation(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
+// ParserCotisation transforme les fichiers en données à intégrer
+func ParserCotisation(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
 	outputChannel := make(chan engine.Tuple)
 	eventChannel := make(chan engine.Event)
 
@@ -70,6 +70,8 @@ func parseCotisation(cache engine.Cache, batch *engine.AdminBatch) (chan engine.
 				tracker.Error(err)
 				event.Critical(tracker.Report("fatalError"))
 				break
+			} else {
+				event.Info(path + ": ouverture")
 			}
 
 			reader := csv.NewReader(bufio.NewReader(file))
@@ -83,11 +85,13 @@ func parseCotisation(cache engine.Cache, batch *engine.AdminBatch) (chan engine.
 				if err == io.EOF {
 					break
 				} else if err != nil {
+					tracker.Error(err)
+					event.Debug(tracker.Report("invalidLine"))
+					break
 				} else {
 					periode, err := urssafToPeriod(row[field["Periode"]])
 					date := periode.Start
 					tracker.Error(err)
-					// if err != nil { date = time.Now() }
 
 					if siret, err := marshal.GetSiret(row[field["NumeroCompte"]], &date, cache, batch); err == nil {
 						cotisation := Cotisation{}
@@ -104,8 +108,13 @@ func parseCotisation(cache engine.Cache, batch *engine.AdminBatch) (chan engine.
 							outputChannel <- cotisation
 						}
 					} else {
+						tracker.Error(engine.NewCriticError(err, "filter"))
 						continue
 					}
+				}
+
+				if tracker.Count%10000 == 0 && engine.ShouldBreak(tracker, engine.MaxParsingErrors) {
+					break
 				}
 				tracker.Next()
 			}

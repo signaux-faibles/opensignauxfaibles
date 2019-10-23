@@ -110,6 +110,8 @@ func openAndReadFile(
 		tracker.Error(engine.NewCriticError(err, "fatal"))
 		event.CriticalReport("fatalError", *tracker)
 		return
+	} else {
+		event.Info(fullPath + ": ouverture")
 	}
 
 	event.Info(fullPath + ": ouverture")
@@ -154,7 +156,11 @@ func readFile(
 	}
 
 	for {
+		if tracker.Count%10000 == 0 && engine.ShouldBreak(*tracker, engine.MaxParsingErrors) {
+			break
+		}
 		tracker.Next()
+
 		row, err := reader.Read()
 		if err == io.EOF {
 			break

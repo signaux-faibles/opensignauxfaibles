@@ -12,8 +12,7 @@ import (
 // Reads all .js files in the current folder
 // and encodes them as strings maps in jsFunctions.go
 func main() {
-	// TODO: use filepath
-	jsRootDir := "../../js/"
+	jsRootDir := filepath.Join("..", "..", "js")
 	folders, err := ioutil.ReadDir(jsRootDir)
 	if err != nil {
 		log.Fatal(err)
@@ -31,7 +30,7 @@ func main() {
 
 			out.Write([]byte(`"` + folder.Name() + `"` + ":{\n"))
 
-			files, err := ioutil.ReadDir(jsRootDir + folder.Name())
+			files, err := ioutil.ReadDir(filepath.Join(jsRootDir, folder.Name()))
 			if err != nil {
 				log.Print(err)
 			}

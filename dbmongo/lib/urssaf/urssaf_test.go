@@ -23,7 +23,7 @@ func TestDebit(t *testing.T) {
 		},
 	))
 
-	marshal.TestParserTupleOutput(t, parseDebit, cache, "debit", testData, golden, *update)
+	marshal.TestParserTupleOutput(t, ParserDebit, cache, "debit", testData, golden, *update)
 }
 
 func TestDelai(t *testing.T) {
@@ -38,7 +38,7 @@ func TestDelai(t *testing.T) {
 		},
 	))
 
-	marshal.TestParserTupleOutput(t, parseDelai, cache, "delai", testData, golden, *update)
+	marshal.TestParserTupleOutput(t, ParserDelai, cache, "delai", testData, golden, *update)
 }
 
 func TestCcsf(t *testing.T) {
@@ -53,7 +53,7 @@ func TestCcsf(t *testing.T) {
 		},
 	))
 
-	marshal.TestParserTupleOutput(t, parseCCSF, cache, "ccsf", testData, golden, *update)
+	marshal.TestParserTupleOutput(t, ParserCCSF, cache, "ccsf", testData, golden, *update)
 }
 
 func TestCotisation(t *testing.T) {
@@ -68,7 +68,7 @@ func TestCotisation(t *testing.T) {
 		},
 	))
 
-	marshal.TestParserTupleOutput(t, parseCotisation, cache, "cotisation", testData, golden, *update)
+	marshal.TestParserTupleOutput(t, ParserCotisation, cache, "cotisation", testData, golden, *update)
 }
 
 func TestProcol(t *testing.T) {
@@ -83,12 +83,12 @@ func TestProcol(t *testing.T) {
 		},
 	))
 
-	marshal.TestParserTupleOutput(t, parseProcol, cache, "procol", testData, golden, *update)
+	marshal.TestParserTupleOutput(t, ParserProcol, cache, "procol", testData, golden, *update)
 }
 
 func TestEffectif(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedEffectifMD5.csv")
 	var testData = filepath.Join("testData", "effectifTestData.csv")
 	cache := engine.NewCache()
-	marshal.TestParserTupleOutput(t, parseEffectif, cache, "effectif", testData, golden, *update)
+	marshal.TestParserTupleOutput(t, ParserEffectif, cache, "effectif", testData, golden, *update)
 }

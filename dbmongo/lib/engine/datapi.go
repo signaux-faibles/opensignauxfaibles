@@ -1,14 +1,15 @@
 package engine
 
 import (
-	"dbmongo/lib/exportdatapi"
-	"dbmongo/lib/naf"
 	"io/ioutil"
 	"log"
 	"sort"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/exportdatapi"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/naf"
 
 	"github.com/spf13/viper"
 

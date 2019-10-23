@@ -92,7 +92,6 @@ func Parser(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, ch
 					break
 				} else if err != nil {
 					tracker.Error(err)
-					event.Debug(tracker.Report("invalidLine"))
 					break
 				}
 

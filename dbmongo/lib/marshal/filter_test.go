@@ -1,7 +1,6 @@
 package marshal
 
 import (
-	"fmt"
 	"reflect"
 	"strings"
 	"testing"
@@ -19,12 +18,12 @@ func TestIsFiltered(t *testing.T) {
 	}{
 		{"012345678", map[string]bool{"012345678": true}, false, false},
 		{"01234567891011", map[string]bool{"012345678": true}, false, false},
-		{"0123", map[string]bool{"012345678": true}, true, false},
-		{"0123456789", map[string]bool{"012345678": true}, true, false},
+		{"0123", map[string]bool{"012345678": true}, false, true},
+		{"0123456789", map[string]bool{"012345678": true}, false, true},
 		{"876543210", map[string]bool{"012345678": true}, false, true},
 		{"87654321091011", map[string]bool{"012345678": true}, false, true},
 		{"012345678", nil, false, false},
-		{"0123", nil, true, false},
+		{"0123", nil, false, true},
 	}
 
 	var batch = engine.AdminBatch{}
@@ -60,7 +59,7 @@ func TestGetSirenFilter(t *testing.T) {
 		{"No cache, no filter in batch 2",
 			"", "", engine.MockBatch("filter", nil), nil},
 		{"No cache, (mock)read from file",
-			"", "", engine.MockBatch("filter", []string{"at least one"}), map[string]bool{"012345678": true}}, // no filter
+			"", "", engine.MockBatch("filter", []string{"at least one"}), map[string]bool{"012345678": true}},
 		{"Cache has precedence over file",
 			"filter", map[string]bool{"876543210": true}, engine.MockBatch("filter", []string{"at least one"}), map[string]bool{"876543210": true}},
 	}
@@ -75,8 +74,8 @@ func TestGetSirenFilter(t *testing.T) {
 
 		// filter returns as expected
 		if !reflect.DeepEqual(actual, tc.expectedFilter) {
-			fmt.Println(actual)
-			fmt.Println(tc.expectedFilter)
+			t.Log(actual)
+			t.Log(tc.expectedFilter)
 			t.Fatalf("Test %d failed", ind)
 		}
 

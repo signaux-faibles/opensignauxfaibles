@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"encoding/csv"
 	"errors"
+	"fmt"
 	"io"
 	"os"
 
@@ -20,8 +21,8 @@ import (
 // GetSiret gets the siret related to a specific compte at a given point in
 // time
 func GetSiret(compte string, date *time.Time, cache engine.Cache, batch *engine.AdminBatch) (string, error) {
+	comptes, err := GetCompteSiretMapping(cache, batch, OpenAndReadSiretMapping)
 
-	comptes, err := getCompteSiretMapping(cache, batch, openAndReadSiretMapping)
 	if err != nil {
 		return "", err
 	}
@@ -31,7 +32,7 @@ func GetSiret(compte string, date *time.Time, cache engine.Cache, batch *engine.
 			return sd.Siret, nil
 		}
 	}
-	return "", errors.New("Pas de siret associé au compte " + compte + " à cette période")
+	return "", errors.New("Pas de siret associé au compte " + compte + " à la période " + date.String())
 }
 
 // SiretDate holds a pair of a siret and a date
@@ -43,25 +44,29 @@ type SiretDate struct {
 // Comptes associates a SiretDate to an urssaf account number
 type Comptes map[string][]SiretDate
 
-// getCompteSiretMapping returns the siret mapping in cache if available, else
+// GetCompteSiretMapping returns the siret mapping in cache if available, else
 // reads the file and save it in cache
-func getCompteSiretMapping(cache engine.Cache, batch *engine.AdminBatch, mr mappingReader) (Comptes, error) {
+func GetCompteSiretMapping(cache engine.Cache, batch *engine.AdminBatch, mr mappingReader) (Comptes, error) {
 
 	value, err := cache.Get("comptes")
 	if err == nil {
 		comptes, ok := value.(Comptes)
 		if ok {
 			return comptes, nil
+		} else {
+			return nil, errors.New("Wrong format from existing field comptes in cache")
 		}
 	}
 
-	compteSiretMapping := make(map[string][]SiretDate)
+	fmt.Println("Chargement des comptes urssaf")
+
+	compteSiretMapping := make(Comptes)
 
 	path := batch.Files["admin_urssaf"]
 	basePath := viper.GetString("APP_DATA")
 
 	if len(path) == 0 {
-		return nil, errors.New("no admin_urssaf mapping found")
+		return nil, errors.New("No admin_urssaf mapping found")
 	}
 	for _, p := range path {
 		compteSiretMapping, err = mr(basePath, p, compteSiretMapping, cache, batch)
@@ -69,13 +74,14 @@ func getCompteSiretMapping(cache engine.Cache, batch *engine.AdminBatch, mr mapp
 			return nil, err
 		}
 	}
+	cache.Set("comptes", compteSiretMapping)
 	return compteSiretMapping, nil
 }
 
 type mappingReader func(string, string, Comptes, engine.Cache, *engine.AdminBatch) (Comptes, error)
 
-// openAndReadSiretMapping opens files and reads their content
-func openAndReadSiretMapping(
+// OpenAndReadSiretMapping opens files and reads their content
+func OpenAndReadSiretMapping(
 	basePath string,
 	endPath string,
 	compteSiretMapping Comptes,
@@ -142,9 +148,11 @@ func readSiretMapping(
 		siret := row[siretIndex]
 
 		filtered, err := IsFiltered(siret, cache, batch)
+
 		if err != nil {
 			return nil, err
 		}
+
 		if sfregexp.RegexpDict["siret"].MatchString(siret) && !filtered {
 			//siret valide
 			addSiretMapping[compte] = append(addSiretMapping[compte], SiretDate{siret, fermeture})

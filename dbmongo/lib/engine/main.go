@@ -20,6 +20,10 @@ type Priority string
 // Code test
 type Code string
 
+// MaxParsingErrors is the number of parsing errors that are needed to
+// interrupt a parser
+var MaxParsingErrors = 200
+
 // Event est un objet de journal
 // swagger:ignore
 type Event struct {
@@ -32,7 +36,7 @@ type Event struct {
 	Channel    chan Event    `json:"-"`
 }
 
-// // Events Event serialisable pour swaggo (TODO: fix this !)
+// Events Event serialisable pour swaggo (TODO: fix this !)
 // type Events []struct {
 // 	ID       bson.ObjectId `json:"-" bson:"_id"`
 // 	Date     time.Time     `json:"date" bson:"date"`
@@ -140,49 +144,44 @@ func (event Event) CriticalReport(report string, tracker gournal.Tracker) {
 
 func reportAbstract(tracker gournal.Tracker) interface{} {
 
-	nValid := tracker.Count - tracker.CountErrorCycles()
 	var nError = 0
 	var nFiltered = 0
 	var nFatal = 0
 
+	var fatalErrors = []string{}
+	var filterErrors = []string{}
+	var errorErrors = []string{}
 	for ind := range tracker.Errors {
 		var hasError = false
 		var hasFilter = false
 		var hasFatal = false
 		for _, e := range tracker.Errors[ind] {
 			switch c := e.(type) {
-			case *ParseError:
+			case CriticityError:
 				if c.Criticity() == "fatal" {
 					hasFatal = true
+					if len(fatalErrors) < MaxParsingErrors {
+						fatalErrors = append(fatalErrors, fmt.Sprintf("Cycle %d: %v", ind, e))
+					}
 				}
 				if c.Criticity() == "error" {
 					hasError = true
+					if len(errorErrors) < MaxParsingErrors {
+						errorErrors = append(errorErrors, fmt.Sprintf("Cycle %d: %v", ind, e))
+					}
 				}
 				if c.Criticity() == "filter" {
 					hasFilter = true
-				}
-			case *MappingError:
-				if c.Criticity() == "fatal" {
-					hasFatal = true
-				}
-				if c.Criticity() == "error" {
-					hasError = true
-				}
-				if c.Criticity() == "filter" {
-					hasFilter = true
-				}
-			case *FilterError:
-				if c.Criticity() == "fatal" {
-					hasFatal = true
-				}
-				if c.Criticity() == "error" {
-					hasError = true
-				}
-				if c.Criticity() == "filter" {
-					hasFilter = true
+					if len(filterErrors) < MaxParsingErrors {
+						filterErrors = append(filterErrors, fmt.Sprintf("Cycle %d: %v", ind, e))
+					}
 				}
 			default:
 				hasFatal = true
+				if len(fatalErrors) < MaxParsingErrors {
+					fatalErrors = append(fatalErrors, fmt.Sprintf("Cycle %d: %v", ind, e))
+					fmt.Printf("Cycle %d: %v", ind, e)
+				}
 			}
 		}
 		if hasFatal {
@@ -193,6 +192,7 @@ func reportAbstract(tracker gournal.Tracker) interface{} {
 			nFiltered = nFiltered + 1
 		}
 	}
+	nValid := tracker.Count + 1 - nFatal - nError - nFiltered
 	report := fmt.Sprintf(
 		"%s: intégration terminée, %d lignes traitées, %d erreures fatales, %d rejets, %d lignes filtrées, %d lignes valides",
 		tracker.Context["path"],
@@ -203,26 +203,15 @@ func reportAbstract(tracker gournal.Tracker) interface{} {
 		nValid,
 	)
 
-	maxErrors := 100
-	count := 0
-	headErrors := []string{}
-	for c := range tracker.Errors {
-		for _, e := range tracker.Errors[c] {
-			headErrors = append(headErrors, fmt.Sprintf("Cycle %d: %v", c, e))
-			count = count + 1
-		}
-		if count > maxErrors {
-			break
-		}
-	}
-
 	return bson.M{
 		"report":      report,
 		"total":       tracker.Count,
 		"valid":       nValid,
 		"filtered":    nFiltered,
 		"error":       nError,
-		"head_errors": headErrors,
+		"headFilters": filterErrors,
+		"headErrors":  errorErrors,
+		"headFatal":   fatalErrors,
 	}
 }
 
@@ -241,6 +230,32 @@ func reportFatalError(tracker gournal.Tracker) interface{} {
 	return bson.M{
 		"report": report,
 	}
+}
+
+func ShouldBreak(tracker gournal.Tracker, maxErrors int) bool {
+	l := 0
+	hasError := false
+	for _, errs := range tracker.Errors {
+		for _, e := range errs {
+			switch c := e.(type) {
+			case CriticityError:
+				if c.Criticity() == "fatal" {
+					hasError = true
+				}
+				if c.Criticity() == "error" {
+					hasError = true
+				}
+				if c.Criticity() == "filter" {
+				}
+			default:
+				hasError = true
+			}
+		}
+		if hasError {
+			l += 1
+		}
+	}
+	return l > maxErrors
 }
 
 // TrackerReports contient les fonctions de reporting du moteur
