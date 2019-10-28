@@ -33,6 +33,8 @@ func GetPolicies(batch string) []daclient.Object {
 		},
 	})
 
+
+
 	policies = append(policies, daclient.Object{
 		Key: map[string]string{
 			"type": "policy",

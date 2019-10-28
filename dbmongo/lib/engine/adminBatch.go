@@ -158,9 +158,9 @@ func CheckBatchPaths(batch *AdminBatch) error {
 	}
 	if ErrorString != "" {
 		return errors.New(ErrorString)
-	} else {
-		return nil
 	}
+	return nil
+
 }
 
 // CheckBatch checks batch

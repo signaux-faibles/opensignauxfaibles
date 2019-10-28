@@ -232,6 +232,7 @@ func reportFatalError(tracker gournal.Tracker) interface{} {
 	}
 }
 
+// ShouldBreak returns true when there are to much errors regarding maxErrors
 func ShouldBreak(tracker gournal.Tracker, maxErrors int) bool {
 	l := 0
 	hasError := false
@@ -252,7 +253,7 @@ func ShouldBreak(tracker gournal.Tracker, maxErrors int) bool {
 			}
 		}
 		if hasError {
-			l += 1
+			l++
 		}
 	}
 	return l > maxErrors

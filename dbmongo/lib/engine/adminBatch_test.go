@@ -50,14 +50,14 @@ func Test_isBatchID(t *testing.T) {
 }
 
 func Test_CheckBatchPaths(t *testing.T) {
-	test_cases := []struct {
+	testCases := []struct {
 		Filepath      string
 		ErrorExpected bool
 	}{
 		{"./test_data/empty_file", false},
 		{"./test_data/missing_file", true},
 	}
-	for _, tc := range test_cases {
+	for _, tc := range testCases {
 		mockbatch := MockBatch("debit", []string{tc.Filepath})
 		err := CheckBatchPaths(&mockbatch)
 		if (err == nil && tc.ErrorExpected) ||

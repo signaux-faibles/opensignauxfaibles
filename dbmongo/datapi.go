@@ -11,10 +11,16 @@ func datapiExportDetectionHandler(c *gin.Context) {
 	var params struct {
 		Batch string `json:"batch"`
 		Key   string `json:"key"`
+		Algo  string `json:"algo"`
 	}
 	err := c.Bind(&params)
 	if err != nil {
 		c.JSON(400, err.Error())
+		return
+	}
+
+	if params.Algo == "" || params.Batch == "" {
+		c.JSON(400, "algo et batch obligatoires")
 		return
 	}
 
@@ -24,6 +30,7 @@ func datapiExportDetectionHandler(c *gin.Context) {
 		viper.GetString("datapiPassword"),
 		params.Batch,
 		params.Key,
+		params.Algo,
 	)
 	if err != nil {
 		c.JSON(500, err.Error())

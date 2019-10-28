@@ -2,6 +2,7 @@ package exportdatapi
 
 import (
 	"errors"
+	"log"
 	"strconv"
 	"time"
 
@@ -11,15 +12,15 @@ import (
 )
 
 // GetPipeline construit le pipeline d'aggregation
-func GetPipeline(batch, key string) (pipeline []bson.M) {
+func GetPipeline(batch, key string, algo string) (pipeline []bson.M) {
 	if key == "" {
 		pipeline = append(pipeline, bson.M{"$match": bson.M{
-			"algo":  "algo",
+			"algo":  algo,
 			"batch": batch,
 		}})
 	} else {
 		pipeline = append(pipeline, bson.M{"$match": bson.M{
-			"algo":  "algo",
+			"algo":  algo,
 			"batch": batch,
 			"siret": key,
 		}})
@@ -63,32 +64,40 @@ func GetPipeline(batch, key string) (pipeline []bson.M) {
 		},
 	})
 
-	pipeline = append(pipeline, bson.M{
-		"$project": bson.M{
-			"_id": 0,
-		},
-	})
+	// pipeline = append(pipeline, bson.M{
+	// 	"$project": bson.M{
+	// 		"_id": 0,
+	// 	},
+	// })
 
 	pipeline = append(pipeline, bson.M{"$project": bson.M{
-		"_id": bson.D{
-			{Name: "scope", Value: "etablissement"},
-			{Name: "key", Value: "$siret"},
-			{Name: "batch", Value: "$batch"},
+		"_idEtablissement": bson.M{
+			"$concat": []interface{}{
+				"$batch",
+				"_etablissement_",
+				"$siret",
+				// "_", "$algo",
+			},
 		},
-		"_idEntreprise": bson.D{
-			{Name: "scope", Value: "entreprise"},
-			{Name: "key", Value: bson.M{"$substr": []interface{}{"$siret", 0, 9}}},
-			{Name: "batch", Value: "$batch"},
+
+		"_idEntreprise": bson.M{
+			"$concat": []interface{}{
+				"$batch",
+				"_entreprise_",
+				bson.M{"$substr": []interface{}{"$siret", 0, 9}},
+				// "_", "$algo",
+			},
 		},
 		"score": "$score",
 		"alert": "$alert",
 		"diff":  "$diff",
 		"connu": "$connu",
+		"algo":  "$algo",
 	}})
 
 	pipeline = append(pipeline, bson.M{"$lookup": bson.M{
 		"from":         "Public",
-		"localField":   "_id",
+		"localField":   "_idEtablissement",
 		"foreignField": "_id",
 		"as":           "etablissement"}})
 
@@ -117,6 +126,7 @@ type Detection struct {
 	Periode       time.Time         `json:"periode" bson:"periode"`
 	Etablissement Etablissement     `json:"etablissement" bson:"etablissement"`
 	Entreprise    Entreprise        `json:"entreprise" bson:"entreprise"`
+	Algo          string            `json:"algo" bson:"algo"`
 }
 
 // CRP est une ligne de fichier CRP
@@ -139,11 +149,16 @@ type Procol struct {
 type Etablissement struct {
 	ID    map[string]string `bson:"_id"`
 	Value struct {
-		Sirene          Sirene        `json:"sirene" bson:"sirene"`
-		Cotisation      []float64     `json:"cotisation" bson:"cotisation"`
-		Debit           []Debit       `json:"debit" bson:"debit"`
-		APDemande       []APDemande   `json:"apdemande" bson:"apdemande"`
-		APConso         []APConso     `json:"apconso" bson:"apconso"`
+		Sirene     Sirene      `json:"sirene" bson:"sirene"`
+		Cotisation []float64   `json:"cotisation" bson:"cotisation"`
+		Debit      []Debit     `json:"debit" bson:"debit"`
+		APDemande  []APDemande `json:"apdemande" bson:"apdemande"`
+		APConso    []APConso   `json:"apconso" bson:"apconso"`
+		Compte     struct {
+			Siret   string    `json:"siret" bson:"siret"`
+			Numero  string    `json:"numero_compte" bson:"numero_compte"`
+			Periode time.Time `json:"periode" bson:"periode"`
+		} `json:"compte" bson:"compte"`
 		Effectif        []Effectif    `json:"effectif" bson:"effectif"`
 		DernierEffectif Effectif      `json:"dernier_effectif" bson:"dernier_effectif"`
 		Delai           []interface{} `json:"delai" bson:"delai"`
@@ -323,10 +338,16 @@ func computeDetection(detection Detection) (detections []daclient.Object) {
 	caVal, caVar, reVal, reVar, annee := computeDiane(detection)
 	dernierEffectif, variationEffectif := computeEffectif(detection)
 
+	urssaf, err := UrssafScope(detection.Etablissement.Value.Compte.Numero)
+	if err != nil {
+		log.Println(err)
+	}
+
 	key := map[string]string{
 		"siret": detection.ID["key"],
-		"batch": detection.ID["batch"],
+		"batch": detection.ID["batch"] + "." + detection.Algo,
 		"type":  "detection",
+		urssaf:  "true",
 	}
 
 	var acteurs []string
@@ -376,10 +397,13 @@ func computeDetection(detection Detection) (detections []daclient.Object) {
 }
 
 func computeEtablissement(detection Detection) (objects []daclient.Object) {
+	urssaf, _ := UrssafScope(detection.Etablissement.Value.Compte.Numero)
+
 	key := map[string]string{
-		"siret": detection.Etablissement.Value.Sirene.Siren + detection.Etablissement.Value.Sirene.Nic,
-		"siren": detection.Etablissement.Value.Sirene.Siren,
-		"batch": detection.ID["batch"],
+		"siret": detection.ID["siret"],
+		"siren": detection.ID["siret"][0:9],
+		"batch": detection.ID["batch"] + "." + detection.Algo,
+		urssaf:  "true",
 		"type":  "detail",
 	}
 
@@ -536,4 +560,12 @@ func batchToTime(batch string) (time.Time, error) {
 
 	date := time.Date(2000+year, time.Month(month), 1, 0, 0, 0, 0, time.UTC)
 	return date, err
+}
+
+func reverseMap(input map[string]string) map[string][]string {
+	var output = make(map[string][]string)
+	for k, v := range input {
+		output[v] = append(output[v], k)
+	}
+	return output
 }

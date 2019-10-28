@@ -1,8 +1,8 @@
 package engine
 
 import (
+	"dbmongo/lib/engine"
 	"errors"
-	"opensignauxfaibles/opensignauxfaibles/dbmongo/lib/engine"
 	"strconv"
 	"testing"
 
@@ -19,7 +19,7 @@ func TestShouldBreak(t *testing.T) {
 	errorError := NewCriticError(errors.New("errorError"), "error")
 	noError := []error{}
 
-	test_cases := []struct {
+	testCases := []struct {
 		errors         map[int][]error
 		expectedReport bool
 	}{
@@ -33,7 +33,7 @@ func TestShouldBreak(t *testing.T) {
 		{map[int][]error{1: []error{errorError, filterError}}, true},
 	}
 
-	for ind, tc := range test_cases {
+	for ind, tc := range testCases {
 		tracker.Errors = tc.errors
 		actual := ShouldBreak(tracker, 0)
 		if actual != tc.expectedReport {

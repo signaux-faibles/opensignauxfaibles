@@ -21,16 +21,29 @@ function map() {
     } else {
       vcmde.last_procol = {"etat": "in_bonis"}
     }
-    emit({scope: "etablissement", key: this.value.key, batch: actual_batch}, vcmde)
-    emit({scope: "entreprise", key: this.value.key.slice(0,9), batch: actual_batch}, {sirets: [this.value.key]})
+    emit(actual_batch + "_etablissement_" + this.value.key, vcmde)
+    emit(actual_batch + "_entreprise_" + this.value.key.slice(0,9), {sirets: [this.value.key]})
   }
   else if (this.value.scope == "entreprise") {
-    let v = {
-      diane: f.diane(value.diane),
-      bdf: f.bdf(value.bdf),
-      sirene_ul: (value.sirene_ul || {})[Object.keys(value.sirene_ul || {})[0] || ""],
-      crp: value.crp,
+    let v = {}
+    let diane = f.diane(value.diane)
+    let bdf = f.bdf(value.bdf)
+    let sirene_ul = (value.sirene_ul || {})[Object.keys(value.sirene_ul || {})[0] || ""]
+    let crp = value.crp
+    if (diane.length > 0) {
+      v.diane = diane
     }
-    emit({scope: "entreprise", key: this.value.key, batch: actual_batch}, v)
+    if (bdf.length > 0) {
+      v.bdf = bdf
+    }
+    if (sirene_ul) {
+      v.sirene_ul = sirene_ul
+    }
+    if (crp) {
+      v.crp = crp
+    }
+    if (Object.keys(v) != []) {
+      emit(actual_batch + "_entreprise_" + this.value.key, v)
+    }
   }
 }

@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/exportdatapi"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/naf"
 
@@ -29,7 +30,7 @@ func readConnu() ([]string, error) {
 
 func findString(s string, a []string) bool {
 	for _, v := range a {
-		if v != "" && s[0:9] == v[0:9] {
+		if len(v) > 9 && len(s) > 9 && s[0:9] == v[0:9] {
 			return true
 		}
 	}
@@ -114,12 +115,9 @@ func ExportReferencesToDatapi(url string, user string, password string, batch st
 }
 
 // ExportDetectionToDatapi sends detections with some informations to a datapi server
-func ExportDetectionToDatapi(url, user, password, batch, key string) error {
-	client := daclient.DatapiServer{
-		URL: url,
-	}
+func ExportDetectionToDatapi(url, user, password, batch, key, algo string) error {
+	var pipeline = exportdatapi.GetPipeline(batch, key, algo)
 
-	var pipeline = exportdatapi.GetPipeline(batch, key)
 	iter := Db.DB.C("Scores").Pipe(pipeline).AllowDiskUse().Iter()
 
 	connus, err := readConnu()
@@ -131,9 +129,12 @@ func ExportDetectionToDatapi(url, user, password, batch, key string) error {
 	var datas []daclient.Object
 	var data exportdatapi.Detection
 
+	// client := daclient.DatapiServer{
+	// 	URL: url,
+	// }
+
 	for iter.Next(&data) {
 		i++
-
 		detection, err := exportdatapi.Compute(data)
 		if err != nil {
 			log.Println(err)
@@ -143,11 +144,15 @@ func ExportDetectionToDatapi(url, user, password, batch, key string) error {
 		datas = append(datas, detection...)
 
 		// fast & dirty: intègre la notion de connu dans l'objet
+		urssaf, err := exportdatapi.UrssafScope(data.Etablissement.Value.Compte.Numero)
+
 		c := daclient.Object{
 			Key: map[string]string{
-				"siret": data.ID["key"],
-				"batch": data.ID["batch"],
+				"siret": data.ID["siret"],
+				"siren": data.ID["siret"][0:9],
+				"batch": data.ID["batch"] + "." + data.ID["algo"],
 				"type":  "detection",
+				urssaf:  "true",
 			},
 			Scope: []string{"detection", "score", data.Etablissement.Value.Sirene.Departement},
 			Value: map[string]interface{}{
@@ -155,20 +160,22 @@ func ExportDetectionToDatapi(url, user, password, batch, key string) error {
 			},
 		}
 		datas = append(datas, c)
-
-		// envoi de tronçons de 2000 entreprises
-		if i == viper.GetInt("datapiChunk") {
-			i = 0
-			err := datapiSecureSend(user, password, "public", &client, &datas)
-			if err != nil {
-				return err
-			}
-			datas = nil
-		}
+		// envoi de tronçons de config.datapiChunk entreprises
+		// if i == viper.GetInt("datapiChunk") {
+		// 	i = 0
+		// 	err := datapiSecureSend(user, password, "public", &client, &datas)
+		// 	if err != nil {
+		// 		return err
+		// 	}
+		// 	datas = nil
+		// }
+	}
+	for _, d := range datas {
+		spew.Dump(d.Key)
 	}
 
 	if datas != nil {
-		err = datapiSecureSend(user, password, "public", &client, &datas)
+		// err = datapiSecureSend(user, password, "public", &client, &datas)
 	}
 
 	return err
