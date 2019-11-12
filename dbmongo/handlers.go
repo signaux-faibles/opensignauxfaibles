@@ -28,7 +28,7 @@ import (
 
 //
 func adminFeature(c *gin.Context) {
-	c.JSON(200, []string{"algo1", "algo2"})
+	c.JSON(200, []string{"algo_avec_urssaf", "algo_sans_urssaf"})
 }
 
 //

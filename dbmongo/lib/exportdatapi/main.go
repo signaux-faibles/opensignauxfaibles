@@ -2,7 +2,6 @@ package exportdatapi
 
 import (
 	"errors"
-	"log"
 	"strconv"
 	"time"
 
@@ -52,6 +51,12 @@ func GetPipeline(batch, key string, algo string) (pipeline []bson.M) {
 			"timestamp": bson.M{
 				"$first": "$timestamp",
 			},
+		},
+	})
+
+	pipeline = append(pipeline, bson.M{
+		"$match": bson.M{
+			"alert": bson.M{"$ne": "Pas d'alerte"},
 		},
 	})
 
@@ -338,13 +343,11 @@ func computeDetection(detection Detection) (detections []daclient.Object) {
 	caVal, caVar, reVal, reVar, annee := computeDiane(detection)
 	dernierEffectif, variationEffectif := computeEffectif(detection)
 
-	urssaf, err := UrssafScope(detection.Etablissement.Value.Compte.Numero)
-	if err != nil {
-		log.Println(err)
-	}
+	urssaf, _ := UrssafScope(detection.Etablissement.Value.Compte.Numero)
 
 	key := map[string]string{
-		"siret": detection.ID["key"],
+		"siret": detection.ID["siret"],
+		"siren": detection.ID["siret"][0:9],
 		"batch": detection.ID["batch"] + "." + detection.Algo,
 		"type":  "detection",
 		urssaf:  "true",
@@ -471,14 +474,17 @@ func Compute(detection Detection) ([]daclient.Object, error) {
 
 	if detection.Etablissement.Value.Sirene.Departement != "" {
 		var objects []daclient.Object
-		if detection.Alert != "Pas d'alerte" {
-			objects = append(objects, computeDetection(detection)...)
-		}
+
+		// if detection.Alert != "Pas d'alerte" {
+		// b := computeDetection(detection)
+		// fmt.Println(b)
+		objects = append(objects, computeDetection(detection)...)
+		// }
 		objects = append(objects, computeEtablissement(detection)...)
 		return objects, nil
 	}
 
-	return nil, errors.New("pas d'information sirene, objet ignoré")
+	return nil, errors.New(detection.ID["siret"] + ": " + detection.Alert + " pas d'information sirene, objet ignoré")
 }
 
 func computeEffectif(detection Detection) (dernierEffectif int, variationEffectif float64) {

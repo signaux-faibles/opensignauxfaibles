@@ -33,8 +33,6 @@ func GetPolicies(batch string) []daclient.Object {
 		},
 	})
 
-
-
 	policies = append(policies, daclient.Object{
 		Key: map[string]string{
 			"type": "policy",
@@ -100,5 +98,6 @@ func GetPolicies(batch string) []daclient.Object {
 		},
 	})
 
+	policies = append(policies, urssafPolicies()...)
 	return policies
 }

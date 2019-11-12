@@ -158,13 +158,13 @@ var departement = map[string]string{
 }
 
 // GetRegions retournes les objets de référentiel liés aux régions.
-func GetRegions(batch string) (regions []daclient.Object) {
+func GetRegions(batch string, algo string) (regions []daclient.Object) {
 	for r, d := range region {
 		regions = append(regions, daclient.Object{
 			Key: map[string]string{
 				"type":   "region",
 				"region": r,
-				"batch":  batch,
+				"batch":  batch + "." + algo,
 			},
 			Scope: []string{r},
 			Value: map[string]interface{}{
@@ -178,7 +178,7 @@ func GetRegions(batch string) (regions []daclient.Object) {
 			Key: map[string]string{
 				"type":   "region",
 				"region": r,
-				"batch":  batch,
+				"batch":  batch + "." + algo,
 			},
 			Scope: []string{r},
 			Value: map[string]interface{}{
@@ -193,7 +193,7 @@ func GetRegions(batch string) (regions []daclient.Object) {
 		regions = append(regions, daclient.Object{
 			Key: map[string]string{
 				"type":  "departements",
-				"batch": batch,
+				"batch": batch + "." + algo,
 			},
 			Scope: []string{n},
 			Value: map[string]interface{}{
@@ -206,7 +206,7 @@ func GetRegions(batch string) (regions []daclient.Object) {
 		Key: map[string]string{
 			"type":   "region",
 			"region": "France entière",
-			"batch":  batch,
+			"batch":  batch + "." + algo,
 		},
 		Scope: []string{"France entière"},
 		Value: map[string]interface{}{

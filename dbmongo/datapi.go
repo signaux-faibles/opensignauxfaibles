@@ -65,10 +65,15 @@ func datapiExportPoliciesHandler(c *gin.Context) {
 func datapiExportReferenceHandler(c *gin.Context) {
 	var params struct {
 		Batch string `json:"batch"`
+		Algo  string `json:"algo"`
 	}
 	err := c.Bind(&params)
 	if err != nil {
+		c.JSON(400, err.Error())
 		return
+	}
+	if params.Algo == "" || params.Batch == "" {
+		c.JSON(400, "batch et algo obligatoire")
 	}
 
 	err = engine.ExportReferencesToDatapi(
@@ -76,6 +81,7 @@ func datapiExportReferenceHandler(c *gin.Context) {
 		viper.GetString("datapiUser"),
 		viper.GetString("datapiPassword"),
 		params.Batch,
+		params.Algo,
 	)
 	if err != nil {
 		c.JSON(500, err.Error())

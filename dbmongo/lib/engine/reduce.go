@@ -22,6 +22,9 @@ func ReduceOne(batch AdminBatch, algo string, key string) error {
 	if !isAlphaNum(algo) {
 		return errors.New("nom d'algorithme invalide, alphanumérique sans espace exigé")
 	}
+	if algo == "" {
+		return errors.New("paramètre algo obligatoire")
+	}
 
 	if len(key) < 9 {
 		return errors.New("key minimal length of 9")
@@ -105,6 +108,9 @@ func Reduce(batch AdminBatch, algo string) error {
 	isAlphaNum := regexp.MustCompile(`^[A-Za-z0-9]+$`).MatchString
 	if !isAlphaNum(algo) {
 		return errors.New("nom d'algorithme invalide, alphanumérique sans espace exigé")
+	}
+	if algo == "" {
+		return errors.New("paramètre algo obligatoire")
 	}
 
 	functions, err := loadJSFunctions("reduce." + algo)
