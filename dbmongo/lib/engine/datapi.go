@@ -8,7 +8,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/exportdatapi"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/naf"
 
@@ -50,7 +49,7 @@ func ExportPoliciesToDatapi(url, user, password, batch string) error {
 }
 
 // ExportReferencesToDatapi pushes references (batches, types, etc.) to a datapi server
-func ExportReferencesToDatapi(url string, user string, password string, batch string) error {
+func ExportReferencesToDatapi(url string, user string, password string, batch string, algo string) error {
 	client := daclient.DatapiServer{
 		URL: url,
 	}
@@ -58,7 +57,7 @@ func ExportReferencesToDatapi(url string, user string, password string, batch st
 	nafCodes := daclient.Object{
 		Key: map[string]string{
 			"key":   "naf",
-			"batch": batch,
+			"batch": batch + "." + algo,
 		},
 		Scope: []string{},
 		Value: naf.Naf.ToData(),
@@ -67,7 +66,7 @@ func ExportReferencesToDatapi(url string, user string, password string, batch st
 	procol := daclient.Object{
 		Key: map[string]string{
 			"key":   "procol",
-			"batch": batch,
+			"batch": batch + "." + algo,
 		},
 		Scope: []string{},
 		Value: map[string]interface{}{
@@ -83,7 +82,7 @@ func ExportReferencesToDatapi(url string, user string, password string, batch st
 	types := daclient.Object{
 		Key: map[string]string{
 			"key":   "types",
-			"batch": batch,
+			"batch": batch + "." + algo,
 		},
 		Scope: []string{},
 		Value: GetTypes().ToData(),
@@ -97,7 +96,7 @@ func ExportReferencesToDatapi(url string, user string, password string, batch st
 	batchObject := daclient.Object{
 		Key: map[string]string{
 			"key":   "batch",
-			"batch": batchData.ID.Key,
+			"batch": batchData.ID.Key + "." + algo,
 		},
 		Scope: []string{},
 		Value: batchData.ToData(),
@@ -108,7 +107,7 @@ func ExportReferencesToDatapi(url string, user string, password string, batch st
 	data = append(data, types)
 	data = append(data, procol)
 	data = append(data, batchObject)
-	data = append(data, exportdatapi.GetRegions(batch)...)
+	data = append(data, exportdatapi.GetRegions(batch, algo)...)
 	err = datapiSecureSend(user, password, "reference", &client, &data)
 
 	return err
@@ -129,9 +128,9 @@ func ExportDetectionToDatapi(url, user, password, batch, key, algo string) error
 	var datas []daclient.Object
 	var data exportdatapi.Detection
 
-	// client := daclient.DatapiServer{
-	// 	URL: url,
-	// }
+	client := daclient.DatapiServer{
+		URL: url,
+	}
 
 	for iter.Next(&data) {
 		i++
@@ -145,6 +144,9 @@ func ExportDetectionToDatapi(url, user, password, batch, key, algo string) error
 
 		// fast & dirty: intègre la notion de connu dans l'objet
 		urssaf, err := exportdatapi.UrssafScope(data.Etablissement.Value.Compte.Numero)
+		if err != nil {
+			log.Println(data.ID["siret"] + ": compte = '" + data.Etablissement.Value.Compte.Numero + "' -> " + err.Error())
+		}
 
 		c := daclient.Object{
 			Key: map[string]string{
@@ -160,22 +162,19 @@ func ExportDetectionToDatapi(url, user, password, batch, key, algo string) error
 			},
 		}
 		datas = append(datas, c)
-		// envoi de tronçons de config.datapiChunk entreprises
-		// if i == viper.GetInt("datapiChunk") {
-		// 	i = 0
-		// 	err := datapiSecureSend(user, password, "public", &client, &datas)
-		// 	if err != nil {
-		// 		return err
-		// 	}
-		// 	datas = nil
-		// }
-	}
-	for _, d := range datas {
-		spew.Dump(d.Key)
+
+		if i == viper.GetInt("datapiChunk") {
+			i = 0
+			err := datapiSecureSend(user, password, "public", &client, &datas)
+			if err != nil {
+				return err
+			}
+			datas = nil
+		}
 	}
 
 	if datas != nil {
-		// err = datapiSecureSend(user, password, "public", &client, &datas)
+		err = datapiSecureSend(user, password, "public", &client, &datas)
 	}
 
 	return err
@@ -200,7 +199,7 @@ func datapiSecureSend(user string, password string, bucket string, client *dacli
 		}
 
 		i = 0
-		err = client.Put("public", *datas)
+		err = client.Put(bucket, *datas)
 		for err != nil && i < 5 {
 			i++
 			log.Println("erreur de transmission datapi: " + err.Error())

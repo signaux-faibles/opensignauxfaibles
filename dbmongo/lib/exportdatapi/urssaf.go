@@ -46,7 +46,7 @@ func UrssafScope(compte string) (string, error) {
 		return "URSSAF " + scope, nil
 	}
 
-	return "", errors.New("aucun")
+	return "", errors.New("pas de correspondance pour " + urssafMapping[compte[0:3]])
 }
 
 func listeDepartement(departement map[string]string) (liste []string) {
@@ -63,11 +63,11 @@ func urssafPolicies() []daclient.Object {
 		urssafPolicies = append(urssafPolicies, daclient.Object{
 			Key: map[string]string{
 				"type": "policy",
-				"name": "Accès Urssaf " + k,
+				"name": "Accès URSSAF " + k,
 			},
 			Value: map[string]interface{}{
 				"match":   "(public|reference)",
-				"scope":   []string{"France entière"},
+				"scope":   []string{"Agent URSSAF"},
 				"promote": listeDepartement(departement),
 			},
 		})

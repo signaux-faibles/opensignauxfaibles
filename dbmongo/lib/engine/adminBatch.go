@@ -24,6 +24,7 @@ type AdminBatch struct {
 	Readonly      bool       `json:"readonly" bson:"readonly"`
 	CompleteTypes []string   `json:"complete_types" bson:"complete_types"`
 	Params        struct {
+		Algo            string    `json:"algo" bson:"algo"`
 		DateDebut       time.Time `json:"date_debut" bson:"date_debut"`
 		DateFin         time.Time `json:"date_fin" bson:"date_fin"`
 		DateFinEffectif time.Time `json:"date_fin_effectif" bson:"date_fin_effectif"`

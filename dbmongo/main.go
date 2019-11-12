@@ -118,15 +118,81 @@ func main() {
 		// TODO: mapreduce pour traiter le scope, modification des objets utilisateurs
 		// TODO: écrire l'aggrégation qui va bien
 
-		// api.GET("/debug", getChunks)
+		// api.GET("/debug", debug)
 	}
 
 	bind := viper.GetString("APP_BIND")
 	r.Run(bind)
 }
 
-// func getChunks(c *gin.Context) {
-// 	chunk, err := engine.ChunkCollection(viper.GetString("DB"), "RawData", viper.GetInt64("chunkByteSize"))
-// 	fmt.Println(err)
-// 	c.JSON(200, chunk.ToQueries(bson.M{}))
+// func debug(c *gin.Context) {
+// 	file, _ := os.Open("/home/christophe/Téléchargements/sirene_light.csv")
+
+// 	reader := csv.NewReader(file)
+// 	reader.Comma = ','
+// 	reader.LazyQuotes = true
+
+// 	for {
+// 		row, _ := reader.Read()
+
+// 		sirene := readLineEtablissement(row)
+
+// 		var obj struct {
+// 			ID    string                 `bson:"_id"`
+// 			Value map[string]interface{} `bson:"value"`
+// 		}
+
+// 		engine.Db.DB.C("Public").Find(
+// 			bson.M{"_id": "1910_8_etablissement_" + sirene.Siren + sirene.Nic},
+// 		).One(&obj)
+
+// 		obj.Value["sirene"] = sirene
+
+// 		err := engine.Db.DB.C("Public").Update(bson.M{"_id": obj.ID}, obj)
+// 		fmt.Println(sirene)
+// 		if err != nil {
+// 			fmt.Println(sirene.Siren, sirene.Nic, err)
+// 		}
+
+// 	}
+// }
+
+// func readLineEtablissement(row []string) sirene.Sirene {
+// 	sirene := sirene.Sirene{}
+// 	// for i, v := range row {
+// 	// 	fmt.Println(i, v)
+// 	// }
+// 	sirene.Siren = row[0]
+
+// 	sirene.Nic = row[1]
+// 	sirene.NumVoie = row[12]
+// 	sirene.IndRep = row[13]
+// 	sirene.TypeVoie = row[14]
+// 	sirene.CodePostal = row[20]
+// 	sirene.Cedex = row[21]
+// 	if len(sirene.CodePostal) >= 2 {
+// 		sirene.Departement = sirene.CodePostal[0:2]
+// 	}
+// 	sirene.Commune = row[17]
+// 	sirene.APE = strings.Replace(row[45], ".", "", -1)
+
+// 	loc, _ := time.LoadLocation("Europe/Paris")
+// 	creation, err := time.ParseInLocation("2006-01-02", row[4], loc)
+// 	if err == nil {
+// 		sirene.Creation = &creation
+// 	}
+// 	sirene.Siege, err = strconv.ParseBool(row[9])
+// 	long, err := strconv.ParseFloat(row[48], 64)
+// 	if err == nil {
+// 		sirene.Longitude = &long
+// 	}
+
+// 	latt, err := strconv.ParseFloat(row[49], 64)
+// 	if err == nil {
+// 		sirene.Lattitude = &latt
+// 	}
+
+// 	sirene.Adresse = [6]string{row[41], row[11], row[15], row[16], row[17], row[52]}
+
+// 	return sirene
 // }
