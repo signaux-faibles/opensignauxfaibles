@@ -7,16 +7,17 @@ function map () {
     let output_indexed = o[1]
 
     // Les periodes qui nous interessent, triées
-    let periodes = Object.keys(output_indexed).sort((a,b) => (a >= b))
+    var periodes = Object.keys(output_indexed).sort((a,b) => (a >= b))
 
     if (v.compte) {
         var output_compte = f.compte(v)
         f.add(output_compte, output_indexed)
     }
     if (v.effectif) {
-      var output_effectif = f.effectifs(v, periodes)
+      var output_effectif = f.effectifs(v.effectif, periodes, "effectif")
       f.add(output_effectif, output_indexed)
     }
+
 
     if (v.interim){
       let output_interim = f.interim(v.interim, output_indexed)
@@ -56,12 +57,15 @@ function map () {
     output_array.forEach(val => {
       let data = {}
       data[this._id] = val
+      try {
       emit(
         { 'siren': this._id.substring(0, 9),
           'batch': actual_batch,
           'periode': val.periode},
           data
-      )
+      ) } catch {
+        print("My name is " + this._id.substring(0, 9) + " and I died in reduce.algo2/map.js (etablissement)")
+      }
     })
   }
 
@@ -78,7 +82,18 @@ function map () {
       }
     })
 
+    var output_indexed = output_array.reduce(function (periode, val) {
+      periode[val.periode.getTime()] = val
+      return periode
+    }, {})
+
     if (v.sirene_ul) {f.sirene_ul(v, output_array)}
+
+    var periodes = Object.keys(output_indexed).sort((a,b) => (a >= b))
+    if (v.effectif_ent) {
+      var output_effectif_ent = f.effectifs(v.effectif_ent, periodes, "effectif_ent")
+      f.add(output_effectif_ent, output_indexed)
+    }
 
     var output_indexed = output_array.reduce(function (periode, val) {
       periode[val.periode.getTime()] = val
@@ -204,16 +219,20 @@ function map () {
       if ((periode.arrete_bilan_diane||new Date(0)).getTime() == 0){
         delete periode.arrete_bilan_diane
       }
-      emit(
-        {
-          "siren": this._id.substring(0, 9),
-          "batch": actual_batch,
-          "periode": periode.periode
-        },
-        {
-          "entreprise": periode
-        }
-      )
+      try {
+        emit(
+          {
+            "siren": this._id.substring(0, 9),
+            "batch": actual_batch,
+            "periode": periode.periode
+          },
+          {
+            "entreprise": periode
+          }
+        )
+      } catch {
+        print("My name is " + this._id.substring(0, 9) + " and I died in reduce.algo2/map.js (entreprise)")
+      }
     })
   }
 }

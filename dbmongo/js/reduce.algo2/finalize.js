@@ -42,6 +42,11 @@ function finalize(k, v) {
     }
   })
 
-  if (output.length > 0)
-    return output
+  if (output.length > 0){
+    try {
+      return output
+    } catch {
+        print("My name is " + k + " and I died in reduce.algo2/finalize.js")
+    }
+  }
 }

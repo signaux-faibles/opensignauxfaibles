@@ -14,7 +14,6 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/files"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/reporder"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sirene"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/urssaf"
 
@@ -297,11 +296,11 @@ var registeredParsers = map[string]engine.Parser{
 	"admin_urssaf": urssaf.ParserCompte,
 	"delai":        urssaf.ParserDelai,
 	"effectif":     urssaf.ParserEffectif,
+	"effectif_ent": urssaf.ParserEffectifEnt,
 	"procol":       urssaf.ParserProcol,
 	"apconso":      apconso.Parser,
 	"apdemande":    apdemande.Parser,
 	"bdf":          bdf.Parser,
-	"repeatable":   reporder.Parser,
 	"sirene":       sirene.Parser,
 	"sirene_ul":    sireneul.Parser,
 	"diane":        diane.Parser,

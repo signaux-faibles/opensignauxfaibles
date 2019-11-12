@@ -1,15 +1,18 @@
 package bdf
 
 import (
+	"bufio"
+	"encoding/csv"
+	"io"
+	"os"
 	"strings"
 	"time"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
+	"github.com/spf13/viper"
 
 	"github.com/signaux-faibles/gournal"
-	"github.com/spf13/viper"
-	"github.com/tealeg/xlsx"
 )
 
 // BDF Information Banque de France
@@ -57,71 +60,90 @@ func Parser(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, ch
 				map[string]string{"path": path},
 				engine.TrackerReports)
 
-			xlFile, err := xlsx.OpenFile(viper.GetString("APP_DATA") + path)
+			file, err := os.Open(viper.GetString("APP_DATA") + path)
 			if err != nil {
 				tracker.Error(err)
 				event.Critical(tracker.Report("fataError"))
 				continue
-			} else {
-				event.Debug(path + ": ouverture " + path)
-
-				for _, sheet := range xlFile.Sheets {
-					for _, row := range sheet.Rows[1:] {
-						bdf := BDF{}
-						bdf.Siren = strings.Replace(row.Cells[0].Value, " ", "", -1)
-						bdf.Annee, err = misc.ParsePInt(row.Cells[1].Value)
-						tracker.Error(err)
-						bdf.ArreteBilan, err = time.Parse("2006-01-02", row.Cells[2].Value)
-						tracker.Error(err)
-						bdf.RaisonSociale = row.Cells[3].Value
-						bdf.Secteur = row.Cells[6].Value
-						if len(row.Cells) > 7 {
-							bdf.PoidsFrng, err = misc.ParsePFloat(row.Cells[7].Value)
-							tracker.Error(err)
-						} else {
-							bdf.PoidsFrng = nil
-						}
-						if len(row.Cells) > 8 {
-							bdf.TauxMarge, err = misc.ParsePFloat(row.Cells[8].Value)
-							tracker.Error(err)
-						} else {
-							bdf.TauxMarge = nil
-						}
-						if len(row.Cells) > 9 {
-							bdf.DelaiFournisseur, err = misc.ParsePFloat(row.Cells[9].Value)
-							tracker.Error(err)
-						} else {
-							bdf.DelaiFournisseur = nil
-						}
-						if len(row.Cells) > 10 {
-							bdf.DetteFiscale, err = misc.ParsePFloat(row.Cells[10].Value)
-							tracker.Error(err)
-						} else {
-							bdf.DetteFiscale = nil
-						}
-						if len(row.Cells) > 11 {
-							bdf.FinancierCourtTerme, err = misc.ParsePFloat(row.Cells[11].Value)
-							tracker.Error(err)
-						} else {
-							bdf.FinancierCourtTerme = nil
-						}
-						if len(row.Cells) > 12 {
-							bdf.FraisFinancier, err = misc.ParsePFloat(row.Cells[12].Value)
-							tracker.Error(err)
-						} else {
-							bdf.FraisFinancier = nil
-						}
-
-						if !tracker.HasErrorInCurrentCycle() {
-							outputChannel <- bdf
-						} else {
-							event.Debug(tracker.Report("error"))
-						}
-						tracker.Next()
-					}
-				}
-				event.Info(tracker.Report("abstract"))
 			}
+
+			reader := csv.NewReader(bufio.NewReader(file))
+			reader.Comma = ';'
+			reader.LazyQuotes = true
+			event.Info(path + ": ouverture " + path)
+
+			for {
+				row, err := reader.Read()
+				if err == io.EOF {
+					break
+				} else if err != nil {
+					tracker.Error(err)
+					break
+				}
+				bdf := BDF{}
+				bdf.Siren = strings.Replace(row[0], " ", "", -1)
+				bdf.Annee, err = misc.ParsePInt(row[1])
+				tracker.Error(err)
+				var arrete = row[2]
+				arrete = strings.Replace(arrete, "janv", "-01-", -1)
+				arrete = strings.Replace(arrete, "févr", "-02-", -1)
+				arrete = strings.Replace(arrete, "mars", "-03-", -1)
+				arrete = strings.Replace(arrete, "avr", "-04-", -1)
+				arrete = strings.Replace(arrete, "mai", "-05-", -1)
+				arrete = strings.Replace(arrete, "juin", "-06-", -1)
+				arrete = strings.Replace(arrete, "juil", "-07-", -1)
+				arrete = strings.Replace(arrete, "août", "-08-", -1)
+				arrete = strings.Replace(arrete, "sept", "-09-", -1)
+				arrete = strings.Replace(arrete, "oct", "-10-", -1)
+				arrete = strings.Replace(arrete, "nov", "-11-", -1)
+				arrete = strings.Replace(arrete, "déc", "-12-", -1)
+				bdf.ArreteBilan, err = time.Parse("02-01-2006", arrete)
+				tracker.Error(err)
+				bdf.RaisonSociale = row[3]
+				bdf.Secteur = row[6]
+				if len(row) > 7 {
+					bdf.PoidsFrng, err = misc.ParsePFloat(row[7])
+					tracker.Error(err)
+				} else {
+					bdf.PoidsFrng = nil
+				}
+				if len(row) > 8 {
+					bdf.TauxMarge, err = misc.ParsePFloat(row[8])
+					tracker.Error(err)
+				} else {
+					bdf.TauxMarge = nil
+				}
+				if len(row) > 9 {
+					bdf.DelaiFournisseur, err = misc.ParsePFloat(row[9])
+					tracker.Error(err)
+				} else {
+					bdf.DelaiFournisseur = nil
+				}
+				if len(row) > 10 {
+					bdf.DetteFiscale, err = misc.ParsePFloat(row[10])
+					tracker.Error(err)
+				} else {
+					bdf.DetteFiscale = nil
+				}
+				if len(row) > 11 {
+					bdf.FinancierCourtTerme, err = misc.ParsePFloat(row[11])
+					tracker.Error(err)
+				} else {
+					bdf.FinancierCourtTerme = nil
+				}
+				if len(row) > 12 {
+					bdf.FraisFinancier, err = misc.ParsePFloat(row[12])
+					tracker.Error(err)
+				} else {
+					bdf.FraisFinancier = nil
+				}
+
+				if !tracker.HasErrorInCurrentCycle() {
+					outputChannel <- bdf
+				}
+				tracker.Next()
+			}
+			event.Info(tracker.Report("abstract"))
 		}
 
 		close(outputChannel)

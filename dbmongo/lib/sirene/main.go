@@ -63,7 +63,6 @@ func Parser(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, ch
 	}
 
 	go func() {
-		dateDebut := batch.Params.DateDebut
 		for _, path := range batch.Files["sirene"] {
 			tracker := gournal.NewTracker(
 				map[string]string{"path": path},
@@ -93,20 +92,9 @@ func Parser(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, ch
 				filtered, err := marshal.IsFiltered(row[0], cache, batch)
 				tracker.Error(err)
 				if !filtered {
-					notFiltered := (row[40] == "A")
-					// Est-ce que l'établissement est intéressant ?
-					// = Actif ou a été actif depuis dateDebut
-					if row[40] == "F" && row[8] != "" {
-						date, err := time.Parse("2006-01-02", row[8][0:10])
-						tracker.Error(err)
-						notFiltered = date.After(dateDebut)
-					}
-
-					if notFiltered {
-						sirene := readLineEtablissement(row, &tracker)
-						outputChannel <- sirene
-						tracker.Next()
-					}
+					sirene := readLineEtablissement(row, &tracker)
+					outputChannel <- sirene
+					tracker.Next()
 				}
 			}
 			file.Close()

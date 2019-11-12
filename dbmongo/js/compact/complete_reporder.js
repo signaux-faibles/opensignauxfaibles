@@ -4,21 +4,24 @@ function complete_reporder(key, object){
   var dates = serie_periode
   var missing = {}
   serie_periode.forEach(p => {
-    missing[p] = true
+    missing[p.getTime()] = true
   })
-  print(JSON.stringify(object, null, 2))
 
 
   batches.forEach(batch => {
     let reporder = object.batch[batch].reporder || {}
 
     Object.keys(reporder).forEach(ro => {
-      missing[reporder[ro].periode] = false
+      if (!missing[reporder[ro].periode.getTime()]){
+        delete object.batch[batch].reporder[ro]
+      } else {
+        missing[reporder[ro].periode.getTime()] = false
+      }
     })
   })
 
   var lastBatch = batches[batches.length - 1]
-  serie_periode.filter(p => missing[p]).forEach(p => {
+  serie_periode.filter(p => missing[p.getTime()]).forEach(p => {
     let reporder_obj = object.batch[lastBatch].reporder || {}
     reporder_obj[p] = { random_order: Math.random(), periode: p, siret: key }
     object.batch[lastBatch].reporder = reporder_obj

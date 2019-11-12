@@ -34,38 +34,39 @@ func (compte Compte) Type() string {
 func ParserCompte(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
 	outputChannel := make(chan engine.Tuple)
 	eventChannel := make(chan engine.Event)
-
 	go func() {
 
 		defer close(outputChannel)
 		defer close(eventChannel)
-		event := engine.Event{
-			Code:    "compteParser",
-			Channel: eventChannel,
-		}
-		tracker := gournal.NewTracker(
-			map[string]string{"path": "Admin_urssaf"},
-			engine.TrackerReports)
-
-		periode_init := batch.Params.DateDebut
-		periodes := misc.GenereSeriePeriode(periode_init, time.Now()) //[]time.Time
-		event.Info("Comptes urssaf : traitement")
-		mapping, err := marshal.GetCompteSiretMapping(cache, batch, marshal.OpenAndReadSiretMapping)
-		tracker.Error(err)
-		for c := range mapping {
-			for _, p := range periodes {
-				compte := Compte{}
-				compte.NumeroCompte = c
-				compte.Periode = p
-				var err error
-				compte.Siret, err = marshal.GetSiret(c, &p, cache, batch)
-				tracker.Error(engine.NewCriticError(err, "erreur"))
-
-				outputChannel <- compte
+		if len(batch.Files["admin_urssaf"]) > 0 {
+			event := engine.Event{
+				Code:    "compteParser",
+				Channel: eventChannel,
 			}
-			tracker.Next()
+			tracker := gournal.NewTracker(
+				map[string]string{"path": "Admin_urssaf"},
+				engine.TrackerReports)
+
+			periode_init := batch.Params.DateDebut
+			periodes := misc.GenereSeriePeriode(periode_init, time.Now()) //[]time.Time
+			event.Info("Comptes urssaf : traitement")
+			mapping, err := marshal.GetCompteSiretMapping(cache, batch, marshal.OpenAndReadSiretMapping)
+			tracker.Error(err)
+			for c := range mapping {
+				for _, p := range periodes {
+					compte := Compte{}
+					compte.NumeroCompte = c
+					compte.Periode = p
+					var err error
+					compte.Siret, err = marshal.GetSiret(c, &p, cache, batch)
+					tracker.Error(engine.NewCriticError(err, "erreur"))
+
+					outputChannel <- compte
+				}
+				tracker.Next()
+			}
+			event.Info(tracker.Report("abstract"))
 		}
-		event.Info(tracker.Report("abstract"))
 	}()
 	return outputChannel, eventChannel
 }

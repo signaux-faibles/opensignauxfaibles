@@ -15,8 +15,8 @@ function finalize(k, o) {
       o.index.algo2 = hasEffectif
       return (hasEffectif)
     })
+    // Complete reporder if missing
+    o = f.complete_reporder(k, o)
   }
-  // Complete reporder if missing
-  o = f.complete_reporder(k, o)
   return(o)
 }

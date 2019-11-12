@@ -2,7 +2,6 @@ package diane
 
 import (
 	"encoding/csv"
-	"fmt"
 	"io"
 	"os/exec"
 	"path/filepath"
@@ -132,7 +131,6 @@ func Parser(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, ch
 			cmdPath := []string{filepath.Join(viper.GetString("SCRIPTDIANE_DIR"), "convert_diane.sh"), viper.GetString("APP_DATA") + path}
 			cmd := exec.Command("/bin/bash", cmdPath...)
 			stdout, err := cmd.StdoutPipe()
-			fmt.Println(err)
 			defer stdout.Close()
 
 			if err != nil {
@@ -400,6 +398,7 @@ func Parser(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, ch
 				}
 				tracker.Next()
 			}
+			event.Debug(tracker.Report("abstract"))
 		}
 		close(eventChannel)
 		close(outputChannel)

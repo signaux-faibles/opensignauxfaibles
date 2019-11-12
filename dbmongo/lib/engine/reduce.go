@@ -72,8 +72,15 @@ func ReduceOne(batch AdminBatch, algo string, key string) error {
 	pipeline := []bson.M{
 		bson.M{
 			"$unwind": bson.M{
-				"path":                       "$value",
+				"path": "$value",
 				"preserveNullAndEmptyArrays": false,
+			},
+		},
+		bson.M{
+			"$match": bson.M{
+				"value.effectif": bson.M{
+					"$not": bson.M{"$type": 10},
+				},
 			},
 		},
 		bson.M{
@@ -177,8 +184,15 @@ func Reduce(batch AdminBatch, algo string) error {
 		pipeline := []bson.M{
 			bson.M{
 				"$unwind": bson.M{
-					"path":                       "$value",
+					"path": "$value",
 					"preserveNullAndEmptyArrays": false,
+				},
+			},
+			bson.M{
+				"$match": bson.M{
+					"value.effectif": bson.M{
+						"$not": bson.M{"$type": 10},
+					},
 				},
 			},
 			bson.M{

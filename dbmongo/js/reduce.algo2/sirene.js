@@ -18,7 +18,7 @@ function sirene (v, output_array) {
       // val.tranche_ca = sirene.tranche_ca || null
       // val.indice_monoactivite = sirene.indice_monoactivite || null
       val.date_creation = sirene.date_creation ? sirene.date_creation.getFullYear() : null
-      val.age = sirene.date_creation ? val.periode.getFullYear() - val.date_creation : null
+      val.age = (sirene.date_creation && sirene.date_creation >= new Date("1901/01/01")) ? val.periode.getFullYear() - val.date_creation : null
     }
   })
 }

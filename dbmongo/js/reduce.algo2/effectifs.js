@@ -1,10 +1,10 @@
-function effectifs (v, periodes) {
+function effectifs (effobj, periodes, effectif_name) {
 
   let output_effectif = {}
 
   // Construction d'une map[time] = effectif à cette periode
-  let map_effectif = Object.keys(v.effectif).reduce((m, hash) => {
-    var effectif = v.effectif[hash]
+  let map_effectif = Object.keys(effobj).reduce((m, hash) => {
+    var effectif = effobj[hash]
     if (effectif == null) {
       return m
     }
@@ -27,13 +27,13 @@ function effectifs (v, periodes) {
     var periode = new Date(parseInt(time))
     // si disponible on reporte l'effectif tel quel, sinon, on recupère l'accu
     output_effectif[time] = output_effectif[time] || {}
-    output_effectif[time].effectif = map_effectif[time] || (available ? accu : null)
+    output_effectif[time][effectif_name] = map_effectif[time] || (available ? accu : null)
 
 
     // le cas échéant, on met à jour l'accu avec le dernier effectif disponible
     accu = map_effectif[time] || accu
 
-    output_effectif[time].effectif_reporte = map_effectif[time] ? 0 : 1
+    output_effectif[time][effectif_name + "_reporte"] = map_effectif[time] ? 0 : 1
     return(accu)
   }, null)
 
@@ -44,7 +44,7 @@ function effectifs (v, periodes) {
       // On ajoute un offset pour partir de la dernière période où l'effectif est connu
       var time_past_lookback = f.dateAddMonth(periode, lookback - offset_effectif - 1)
 
-      var variable_name_effectif = "effectif_past_" + lookback
+      var variable_name_effectif = effectif_name + "_past_" + lookback
       output_effectif[time_past_lookback.getTime()] = output_effectif[time_past_lookback.getTime()] || {}
       output_effectif[time_past_lookback.getTime()][variable_name_effectif] = map_effectif[time]
     })
@@ -52,10 +52,9 @@ function effectifs (v, periodes) {
 
   // On supprime les effectifs 'null'
   Object.keys(output_effectif).forEach(k => {
-    if (output_effectif[k].effectif == null) {
+    if (output_effectif[k].effectif == null && output_effectif[k].effectif_ent == null) {
       delete output_effectif[k]
     }
   })
-
   return(output_effectif)
 }
