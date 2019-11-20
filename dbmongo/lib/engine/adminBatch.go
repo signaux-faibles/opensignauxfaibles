@@ -16,6 +16,20 @@ type AdminID struct {
 	Type string `json:"type" bson:"type"`
 }
 
+// AdminAlgo décrit les qualités d'un algorithme
+type AdminAlgo struct {
+	ID          AdminID  `json:"id" bson:"_id"`
+	Label       string   `json:"label" bson:"label"`
+	Description string   `json:"description" bson:"description"`
+	Scope       []string `json:"scope,omitempty" bson:"scope,omitempty"`
+}
+
+// Load charge un objet algo de la base
+func (algo *AdminAlgo) Load(algoKey string) error {
+	err := Db.DBStatus.C("Admin").Find(bson.M{"_id.type": "algo", "_id.key": algoKey}).One(algo)
+	return err
+}
+
 // AdminBatch metadata Batch
 type AdminBatch struct {
 	ID            AdminID    `json:"id" bson:"_id"`
@@ -24,7 +38,6 @@ type AdminBatch struct {
 	Readonly      bool       `json:"readonly" bson:"readonly"`
 	CompleteTypes []string   `json:"complete_types" bson:"complete_types"`
 	Params        struct {
-		Algo            string    `json:"algo" bson:"algo"`
 		DateDebut       time.Time `json:"date_debut" bson:"date_debut"`
 		DateFin         time.Time `json:"date_fin" bson:"date_fin"`
 		DateFinEffectif time.Time `json:"date_fin_effectif" bson:"date_fin_effectif"`
@@ -64,13 +77,13 @@ func (batch *AdminBatch) New(batchKey string) error {
 }
 
 // ToData exports batches to a datapi compatible format
-func (batch *AdminBatch) ToData() map[string]interface{} {
+func (batch *AdminBatch) ToData(algoLabel string) map[string]interface{} {
 	data := map[string]interface{}{
 		"key":           batch.ID.Key,
 		"data_debut":    batch.Params.DateDebut,
 		"date_fin":      batch.Params.DateFin,
 		"date_effectif": batch.Params.DateFinEffectif,
-		"name":          batch.Name,
+		"name":          batch.Name + " " + algoLabel,
 	}
 	return data
 }

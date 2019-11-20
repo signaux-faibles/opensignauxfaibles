@@ -53,7 +53,6 @@ func datapiExportPoliciesHandler(c *gin.Context) {
 		viper.GetString("datapiUrl"),
 		viper.GetString("datapiUser"),
 		viper.GetString("datapiPassword"),
-		params.Batch,
 	)
 	if err != nil {
 		c.JSON(500, err.Error())

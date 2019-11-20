@@ -216,3 +216,25 @@ func GetRegions(batch string, algo string) (regions []daclient.Object) {
 
 	return regions
 }
+
+func regionFromDepartement(departement string) string {
+	for region, departements := range region {
+		for _, d := range departements {
+			if d == departement {
+				return region
+			}
+		}
+	}
+	return ""
+}
+
+func ancienneRegionFromDepartement(departement string) string {
+	for region, departements := range ancienneRegion {
+		for _, d := range departements {
+			if d == departement {
+				return region
+			}
+		}
+	}
+	return regionFromDepartement(departement)
+}

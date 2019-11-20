@@ -23,10 +23,6 @@ func reduceHandler(c *gin.Context) {
 		c.JSON(404, "le batch "+params.BatchKey+" n'existe pas")
 	}
 
-	if params.Algo == "" {
-		params.Algo = batch.Params.Algo
-	}
-
 	if params.Key == "" {
 		err = engine.Reduce(batch, params.Algo)
 	} else {
@@ -44,7 +40,6 @@ func reduceHandler(c *gin.Context) {
 func publicHandler(c *gin.Context) {
 	var params struct {
 		BatchKey string `json:"batch"`
-		Algo     string `json:"algo"`
 		Key      string `json:"key"`
 	}
 	err := c.ShouldBind(&params)
@@ -56,15 +51,6 @@ func publicHandler(c *gin.Context) {
 	err = batch.Load(params.BatchKey)
 	if err != nil {
 		c.JSON(404, "batch non trouvé")
-		return
-	}
-
-	if params.Algo == "" {
-		params.Algo = batch.Params.Algo
-	}
-
-	if params.Algo == "" {
-		c.JSON(400, "parametre algo obligatoire")
 		return
 	}
 

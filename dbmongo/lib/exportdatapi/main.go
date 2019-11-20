@@ -69,19 +69,12 @@ func GetPipeline(batch, key string, algo string) (pipeline []bson.M) {
 		},
 	})
 
-	// pipeline = append(pipeline, bson.M{
-	// 	"$project": bson.M{
-	// 		"_id": 0,
-	// 	},
-	// })
-
 	pipeline = append(pipeline, bson.M{"$project": bson.M{
 		"_idEtablissement": bson.M{
 			"$concat": []interface{}{
 				"$batch",
 				"_etablissement_",
 				"$siret",
-				// "_", "$algo",
 			},
 		},
 
@@ -90,12 +83,11 @@ func GetPipeline(batch, key string, algo string) (pipeline []bson.M) {
 				"$batch",
 				"_entreprise_",
 				bson.M{"$substr": []interface{}{"$siret", 0, 9}},
-				// "_", "$algo",
 			},
 		},
 		"score": "$score",
 		"alert": "$alert",
-		"diff":  "$diff",
+		"diff":  "$score_diff",
 		"connu": "$connu",
 		"algo":  "$algo",
 	}})
@@ -343,7 +335,7 @@ func computeDetection(detection Detection) (detections []daclient.Object) {
 	caVal, caVar, reVal, reVar, annee := computeDiane(detection)
 	dernierEffectif, variationEffectif := computeEffectif(detection)
 
-	urssaf, _ := UrssafScope(detection.Etablissement.Value.Compte.Numero)
+	urssaf := UrssafScope(detection.Etablissement.Value.Compte.Numero, detection.Etablissement.Value.Sirene.Departement)
 
 	key := map[string]string{
 		"siret": detection.ID["siret"],
@@ -400,7 +392,7 @@ func computeDetection(detection Detection) (detections []daclient.Object) {
 }
 
 func computeEtablissement(detection Detection) (objects []daclient.Object) {
-	urssaf, _ := UrssafScope(detection.Etablissement.Value.Compte.Numero)
+	urssaf := UrssafScope(detection.Etablissement.Value.Compte.Numero, detection.Etablissement.Value.Sirene.Departement)
 
 	key := map[string]string{
 		"siret": detection.ID["siret"],

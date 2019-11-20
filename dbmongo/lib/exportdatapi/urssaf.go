@@ -1,7 +1,7 @@
 package exportdatapi
 
 import (
-	"errors"
+	"log"
 
 	daclient "github.com/signaux-faibles/datapi/client"
 )
@@ -22,6 +22,7 @@ var urssafMapping = map[string]string{
 	"427": "Alsace",
 	"437": "Franche-Comté",
 	"451": "Centre-Val de Loire",
+	"480": "Languedoc-Roussillon",
 	"527": "Pays de la Loire",
 	"537": "Bretagne",
 	"547": "Poitou-Charentes",
@@ -30,6 +31,7 @@ var urssafMapping = map[string]string{
 	"727": "Aquitaine",
 	"737": "Midi-Pyrénées",
 	"747": "Limousin",
+	"748": "Limousin",
 	"827": "Rhône-Alpes",
 	"837": "Auvergne",
 	"917": "Languedoc-Roussillon",
@@ -37,16 +39,18 @@ var urssafMapping = map[string]string{
 }
 
 // UrssafScope fournit l'identifiant du scope Urssaf
-func UrssafScope(compte string) (string, error) {
+func UrssafScope(compte string, departement string) string {
 	if len(compte) < 3 {
-		return "", errors.New("le numéro de compte est trop court")
+		log.Println("compte trop court: '" + compte + "', fallback sur le département")
+		return "URSSAF " + regionFromDepartement(departement)
 	}
 
 	if scope, ok := urssafMapping[compte[0:3]]; ok {
-		return "URSSAF " + scope, nil
+		return "URSSAF " + scope
 	}
 
-	return "", errors.New("pas de correspondance pour " + urssafMapping[compte[0:3]])
+	log.Println("pas correspondance pour " + compte[0:3])
+	return "URSSAF " + regionFromDepartement(departement)
 }
 
 func listeDepartement(departement map[string]string) (liste []string) {

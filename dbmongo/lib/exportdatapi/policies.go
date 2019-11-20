@@ -3,7 +3,7 @@ package exportdatapi
 import daclient "github.com/signaux-faibles/datapi/client"
 
 // GetPolicies returns policies to be exported in datapi
-func GetPolicies(batch string) []daclient.Object {
+func GetPolicies() []daclient.Object {
 	var policies []daclient.Object
 
 	var accesFranceEntiere []string
