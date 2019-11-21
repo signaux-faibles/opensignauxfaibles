@@ -6,6 +6,7 @@ import (
 	"errors"
 	"io"
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -124,7 +125,10 @@ func readLineEtablissement(row []string, tracker *gournal.Tracker) Sirene {
 		tracker.Error(errors.New("Code postal est manquant ou de format incorrect"))
 	}
 	sirene.Commune = row[17]
-	sirene.APE = strings.Replace(row[45], ".", "", -1)
+	ape := strings.Replace(row[45], ".", "", -1)
+	if matched, err := regexp.MatchString(`^[0-9]{4}[A-Z]$`, ape); err == nil && matched {
+		sirene.APE = ape
+	}
 
 	loc, _ := time.LoadLocation("Europe/Paris")
 	creation, err := time.ParseInLocation("2006-01-02", row[4], loc)

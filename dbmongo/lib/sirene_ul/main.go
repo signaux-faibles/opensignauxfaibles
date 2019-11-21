@@ -5,6 +5,7 @@ import (
 	"encoding/csv"
 	"io"
 	"os"
+	"time"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
@@ -15,10 +16,11 @@ import (
 
 // SireneUL informations sur les entreprises
 type SireneUL struct {
-	Siren               string `json:"siren,omitempty" bson:"siren,omitempty"`
-	Nic                 string `json:"nic,omitempty" bson:"nic,omitempty"`
-	RaisonSociale       string `json:"raison_sociale" bson:"raison_sociale"`
-	CodeStatutJuridique string `json:"statut_juridique" bson:"statut_juridique"`
+	Siren               string     `json:"siren,omitempty" bson:"siren,omitempty"`
+	Nic                 string     `json:"nic,omitempty" bson:"nic,omitempty"`
+	RaisonSociale       string     `json:"raison_sociale" bson:"raison_sociale"`
+	CodeStatutJuridique string     `json:"statut_juridique" bson:"statut_juridique"`
+	Creation            *time.Time `json:"date_creation,omitempty" bson:"date_creation,omitempty"`
 }
 
 // Key id de l'objet
@@ -99,5 +101,9 @@ func readLineEtablissement(row []string, tracker *gournal.Tracker) SireneUL {
 	sireneul.Siren = row[0]
 	sireneul.RaisonSociale = row[23]
 	sireneul.CodeStatutJuridique = row[27]
+	creation, err := time.Parse("2006-01-02", row[3])
+	if err == nil {
+		sireneul.Creation = &creation
+	}
 	return sireneul
 }
