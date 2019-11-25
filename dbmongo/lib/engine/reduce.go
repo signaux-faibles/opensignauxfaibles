@@ -16,7 +16,7 @@ import (
 )
 
 // ReduceOne lance le calcul de Features pour la clé passée en argument
-func ReduceOne(batch AdminBatch, algo string, key string) error {
+func ReduceOne(batch AdminBatch, algo string, key, from, to string) error {
 	// éviter les noms d'algo essayant de hacker l'exploration des fonctions ci-dessous
 	isAlphaNum := regexp.MustCompile(`^[A-Za-z0-9]+$`).MatchString
 	if !isAlphaNum(algo) {
@@ -26,7 +26,7 @@ func ReduceOne(batch AdminBatch, algo string, key string) error {
 		return errors.New("paramètre algo obligatoire")
 	}
 
-	if len(key) < 9 {
+	if len(key) < 9 && (from == "" && to == "") {
 		return errors.New("key minimal length of 9")
 	}
 
@@ -59,12 +59,25 @@ func ReduceOne(batch AdminBatch, algo string, key string) error {
 		Scope:    scope,
 	}
 
-	query := bson.M{
-		"_id": bson.M{
-			"$regex": bson.RegEx{Pattern: "^" + key[0:9],
-				Options: "",
+	var query bson.M
+	if key != "" {
+		query = bson.M{
+			"_id": bson.M{
+				"$regex": bson.RegEx{Pattern: "^" + key[0:9],
+					Options: "",
+				},
 			},
-		},
+		}
+	} else if from != "" && to != "" {
+		query = bson.M{
+			"$and": []bson.M{
+				bson.M{"_id": bson.M{"$gt": from}},
+				bson.M{"_id": bson.M{"$lte": to}},
+				query,
+			},
+		}
+	} else {
+		return fmt.Errorf("parametre from et to obligatoires")
 	}
 	_, err = Db.DB.C("RawData").Find(query).MapReduce(job, nil)
 
@@ -75,7 +88,7 @@ func ReduceOne(batch AdminBatch, algo string, key string) error {
 	pipeline := []bson.M{
 		bson.M{
 			"$unwind": bson.M{
-				"path": "$value",
+				"path":                       "$value",
 				"preserveNullAndEmptyArrays": false,
 			},
 		},
@@ -190,7 +203,7 @@ func Reduce(batch AdminBatch, algo string) error {
 		pipeline := []bson.M{
 			bson.M{
 				"$unwind": bson.M{
-					"path": "$value",
+					"path":                       "$value",
 					"preserveNullAndEmptyArrays": false,
 				},
 			},

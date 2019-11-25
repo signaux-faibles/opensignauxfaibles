@@ -12,7 +12,10 @@ func reduceHandler(c *gin.Context) {
 		BatchKey string `json:"batch"`
 		Algo     string `json:"algo"`
 		Key      string `json:"key"`
+		From     string `json:"from"`
+		To       string `json:"to"`
 	}
+
 	err := c.ShouldBind(&params)
 	if err != nil {
 		c.JSON(400, err.Error())
@@ -23,10 +26,10 @@ func reduceHandler(c *gin.Context) {
 		c.JSON(404, "le batch "+params.BatchKey+" n'existe pas")
 	}
 
-	if params.Key == "" {
+	if params.Key == "" && params.From == "" && params.To == "" {
 		err = engine.Reduce(batch, params.Algo)
 	} else {
-		err = engine.ReduceOne(batch, params.Algo, params.Key)
+		err = engine.ReduceOne(batch, params.Algo, params.Key, params.From, params.To)
 	}
 
 	if err != nil {
