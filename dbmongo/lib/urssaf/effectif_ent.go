@@ -118,13 +118,16 @@ func ParserEffectifEnt(cache engine.Cache, batch *engine.AdminBatch) (chan engin
 				if len(row[sirenIndex]) == 9 {
 					for i, j := range effectifEntIndexes {
 						if row[j] != "" {
-							e, err := strconv.Atoi(row[j])
+							s, err := strconv.ParseFloat(row[j], 64)
 							tracker.Error(err)
+							e := int(s)
 							if e > 0 {
 								eff := EffectifEnt{
 									Siren:       row[sirenIndex],
 									Periode:     periods[i],
-									EffectifEnt: e}
+									EffectifEnt: e,
+								}
+
 								outputChannel <- eff
 							}
 						}
