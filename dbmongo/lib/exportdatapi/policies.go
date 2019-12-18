@@ -24,6 +24,20 @@ func GetPolicies() []daclient.Object {
 	policies = append(policies, daclient.Object{
 		Key: map[string]string{
 			"type": "policy",
+			"name": "Ecriture de commentaires",
+		},
+		Value: map[string]interface{}{
+			"key": map[string]string{
+				"author": "$user.email",
+			},
+			"match":   "comment",
+			"promote": []string{"datawriter"},
+		},
+	})
+
+	policies = append(policies, daclient.Object{
+		Key: map[string]string{
+			"type": "policy",
 			"name": "Accès France Entière",
 		},
 		Value: map[string]interface{}{
@@ -79,9 +93,9 @@ func GetPolicies() []daclient.Object {
 			"name": "Limitation en écriture",
 		},
 		Value: map[string]interface{}{
-			"match":  ".*",
-			"key":    map[string]string{},
-			"writer": []string{"datawriter"},
+			"match": ".*",
+			"key":   map[string]string{},
+			"write": []string{"datawriter"},
 		},
 	})
 
@@ -91,10 +105,10 @@ func GetPolicies() []daclient.Object {
 			"name": "Limitation Accès",
 		},
 		Value: map[string]interface{}{
-			"match":  "system",
-			"key":    map[string]string{},
-			"writer": []string{"manager"},
-			"reader": []string{"manager"},
+			"match": "system",
+			"key":   map[string]string{},
+			"write": []string{"manager"},
+			"read":  []string{"manager"},
 		},
 	})
 

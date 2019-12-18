@@ -119,8 +119,6 @@ func main() {
 		api.GET("/data/purgeNotCompacted", purgeNotCompactedHandler)
 
 		api.POST("/data/copyScores", copyScores)
-		// TODO: mapreduce pour traiter le scope, modification des objets utilisateurs
-		// TODO: écrire l'aggrégation qui va bien
 
 		// api.GET("/debug", debug)
 	}
@@ -154,7 +152,6 @@ func copyScores(c *gin.Context) {
 		"algo":  params.Algo,
 	}).Count()
 
-	fmt.Println(to)
 	if to > 0 {
 		c.JSON(300, "il existe déjà des objets dans la destination")
 		return

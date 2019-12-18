@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"regexp"
 	"sort"
 	"strconv"
 	"strings"
@@ -38,14 +39,25 @@ func findString(s string, a []string) bool {
 }
 
 // ExportPoliciesToDatapi exports standard policies to datapi
-func ExportPoliciesToDatapi(url, user, password string) error {
-	// return exportdatapi.ExportPoliciesToDatapi(url, user, password, batch)
+func ExportPoliciesToDatapi(url, user, password, filter string) error {
+	re, err := regexp.Compile(filter)
+	if err != nil {
+		return err
+	}
+
 	var policies = exportdatapi.GetPolicies()
 	client := daclient.DatapiServer{
 		URL: url,
 	}
 
-	err := datapiSecureSend(user, password, "system", &client, &policies, nil)
+	var packet []daclient.Object
+	for _, p := range policies {
+		if re.MatchString(p.Key["name"]) {
+			packet = append(packet, p)
+		}
+	}
+
+	err = datapiSecureSend(user, password, "system", &client, &packet, nil)
 	return err
 }
 
@@ -178,7 +190,7 @@ func ExportDetectionToDatapi(url, user, password, batch, key, algo string) error
 			},
 			Scope: []string{"detection", "score", data.Etablissement.Value.Sirene.Departement},
 			Value: map[string]interface{}{
-				"connu": findString(data.ID["key"], connus),
+				"connu": findString(data.ID["siret"], connus),
 			},
 		}
 		datas = append(datas, c)
@@ -219,6 +231,10 @@ func datapiSecureSend(user string, password string, bucket string, client *dacli
 			log.Println("tentative de reconnexion: " + strconv.Itoa(i))
 			err = client.Connect(user, password)
 
+			if err == nil {
+				break
+			}
+
 			if i == 5 {
 				return err
 			}
@@ -232,8 +248,16 @@ func datapiSecureSend(user string, password string, bucket string, client *dacli
 			log.Println("erreur de transmission datapi: " + err.Error())
 			time.Sleep(5 * time.Second)
 
-			log.Println("tentative de réémission:" + err.Error())
+			log.Println("tentative de réémission: " + err.Error())
 			err = client.Put(bucket, sendPacket)
+
+			if err == nil {
+				break
+			}
+
+			if i == 5 {
+				return err
+			}
 		}
 	}
 

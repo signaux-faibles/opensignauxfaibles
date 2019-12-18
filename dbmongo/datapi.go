@@ -41,8 +41,9 @@ func datapiExportDetectionHandler(c *gin.Context) {
 
 func datapiExportPoliciesHandler(c *gin.Context) {
 	var params struct {
-		Batch string `json:"batch"`
+		Filter string `json:"filter"`
 	}
+
 	err := c.Bind(&params)
 	if err != nil {
 		c.JSON(400, err.Error())
@@ -53,11 +54,14 @@ func datapiExportPoliciesHandler(c *gin.Context) {
 		viper.GetString("datapiUrl"),
 		viper.GetString("datapiUser"),
 		viper.GetString("datapiPassword"),
+		params.Filter,
 	)
+
 	if err != nil {
 		c.JSON(500, err.Error())
 		return
 	}
+
 	c.JSON(200, "ok")
 }
 
@@ -82,6 +86,7 @@ func datapiExportReferenceHandler(c *gin.Context) {
 		params.Batch,
 		params.Algo,
 	)
+
 	if err != nil {
 		c.JSON(500, err.Error())
 		return
