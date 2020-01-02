@@ -1,4 +1,5 @@
 function finalize(k, v) {
+  const maxBsonSize = 16777216;
 
   //v de la forme
   // .id: {batch / siren / periode}
@@ -35,18 +36,20 @@ function finalize(k, v) {
 
   //une fois que les comptes sont faits...
   let output = []
-  Object.keys(v).forEach(siret =>{
+  let nb_connus = Object.keys(etablissements_connus).length
+  Object.keys(v).forEach(siret => {
     if (siret != "entreprise" && siret != "siren" && v[siret]) {
-      v[siret].nbr_etablissements_connus = Object.keys(etablissements_connus).length
+      v[siret].nbr_etablissements_connus = nb_connus
       output.push(v[siret])
     }
   })
 
-  if (output.length > 0){
-    try {
+  if (output.length > 0 && nb_connus <= 1500){
+    if ((Object.bsonsize(output)  + Object.bsonsize({"_id": k})) < maxBsonSize){
       return output
-    } catch {
-        print("My name is " + k + " and I died in reduce.algo2/finalize.js")
+    } else {
+      print("Warning: my name is " + JSON.stringify(key, null, 2) + " and I died in reduce.algo2/finalize.js")
+      return {"incomplete": true}
     }
   }
 }
