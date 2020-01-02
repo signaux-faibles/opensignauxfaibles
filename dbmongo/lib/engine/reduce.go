@@ -71,8 +71,8 @@ func ReduceOne(batch AdminBatch, algo string, key, from, to string) error {
 	} else if from != "" && to != "" {
 		query = bson.M{
 			"$and": []bson.M{
-				bson.M{"_id": bson.M{"$gt": from}},
-				bson.M{"_id": bson.M{"$lte": to}},
+				bson.M{"_id": bson.M{"$gte": from}},
+				bson.M{"_id": bson.M{"$lt": to}},
 				query,
 			},
 		}
@@ -88,7 +88,7 @@ func ReduceOne(batch AdminBatch, algo string, key, from, to string) error {
 	pipeline := []bson.M{
 		bson.M{
 			"$unwind": bson.M{
-				"path":                       "$value",
+				"path": "$value",
 				"preserveNullAndEmptyArrays": false,
 			},
 		},
@@ -203,7 +203,7 @@ func Reduce(batch AdminBatch, algo string) error {
 		pipeline := []bson.M{
 			bson.M{
 				"$unwind": bson.M{
-					"path":                       "$value",
+					"path": "$value",
 					"preserveNullAndEmptyArrays": false,
 				},
 			},
