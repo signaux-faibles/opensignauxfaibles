@@ -61,7 +61,9 @@ function map () {
       emit(
         { 'siren': this._id.substring(0, 9),
           'batch': actual_batch,
-          'periode': val.periode},
+          'periode': val.periode,
+          'type': 'autre'
+        },
           data
       ) } catch {
         print("My name is " + this._id.substring(0, 9) + " and I died in reduce.algo2/map.js (etablissement)")
@@ -222,16 +224,17 @@ function map () {
       try {
         emit(
           {
-            "siren": this._id.substring(0, 9),
-            "batch": actual_batch,
-            "periode": periode.periode
+            'siren': this._id.substring(0, 9),
+            'batch': actual_batch,
+            'periode': periode.periode,
+            'type': 'autre'
           },
           {
-            "entreprise": periode
+            'entreprise': periode
           }
         )
       } catch {
-        print("My name is " + this._id.substring(0, 9) + " and I died in reduce.algo2/map.js (entreprise)")
+        print('My name is ' + this._id.substring(0, 9) + ' and I died in reduce.algo2/map.js (entreprise)')
       }
     })
   }
