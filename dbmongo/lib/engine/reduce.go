@@ -216,8 +216,11 @@ func Reduce(batch AdminBatch, algo string) error {
 			},
 			bson.M{
 				"$project": bson.M{
-					"_id":   0.0,
-					"info":  "$_id",
+					"_id": bson.M{
+						"batch":   "$_id.batch",
+						"periode": "$_id.periode",
+						"siret":   "$value.siret",
+					},
 					"value": 1.0,
 				},
 			},
@@ -226,6 +229,24 @@ func Reduce(batch AdminBatch, algo string) error {
 					"into": bson.M{
 						"coll": "Features",
 						"db":   viper.GetString("DB"),
+					},
+					"whenMatched": []bson.M{
+						bson.M{
+							"$project": bson.M{
+								"_id": "$_id",
+								"value": bson.M{
+									"$mergeObjects": []bson.M{
+										bson.M{"$value"},
+										bson.M{"$$new.value"},
+									},
+								},
+							},
+						},
+						bson.M{
+							"$set": bson.M{
+								"value.total": "test",
+							},
+						},
 					},
 				},
 			},
