@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -29,17 +30,8 @@ func readConnu() ([]string, error) {
 	return sirets, nil
 }
 
-func findString(s string, a []string) bool {
-	for _, v := range a {
-		if len(v) > 9 && len(s) > 9 && s[0:9] == v[0:9] {
-			return true
-		}
-	}
-	return false
-}
-
 // ExportPoliciesToDatapi exports standard policies to datapi
-func ExportPoliciesToDatapi(url, user, password, filter string) error {
+func ExportPoliciesToDatapi(url, email, password, filter string) error {
 	re, err := regexp.Compile(filter)
 	if err != nil {
 		return err
@@ -47,7 +39,10 @@ func ExportPoliciesToDatapi(url, user, password, filter string) error {
 
 	var policies = exportdatapi.GetPolicies()
 	client := daclient.DatapiServer{
-		URL: url,
+		URL:      url,
+		Email:    email,
+		Password: password,
+		Bucket:   "system",
 	}
 
 	var packet []daclient.Object
@@ -57,12 +52,12 @@ func ExportPoliciesToDatapi(url, user, password, filter string) error {
 		}
 	}
 
-	err = datapiSecureSend(user, password, "system", &client, &packet, nil)
+	err = datapiSecureSend(client, &packet, nil)
 	return err
 }
 
 // ExportReferencesToDatapi pushes references (batches, types, etc.) to a datapi server
-func ExportReferencesToDatapi(url string, user string, password string, batch string, algo string) error {
+func ExportReferencesToDatapi(url string, email string, password string, batch string, algo string) error {
 	var adminAlgo AdminAlgo
 	err := adminAlgo.Load(algo)
 
@@ -78,7 +73,10 @@ func ExportReferencesToDatapi(url string, user string, password string, batch st
 	}
 
 	client := daclient.DatapiServer{
-		URL: url,
+		URL:      url,
+		Email:    email,
+		Password: password,
+		Bucket:   "reference",
 	}
 
 	nafCodes := daclient.Object{
@@ -131,13 +129,13 @@ func ExportReferencesToDatapi(url string, user string, password string, batch st
 	data = append(data, procol)
 	data = append(data, batchObject)
 	data = append(data, exportdatapi.GetRegions(batch, algo)...)
-	err = datapiSecureSend(user, password, "reference", &client, &data, adminAlgo.Scope)
+	err = datapiSecureSend(client, &data, adminAlgo.Scope)
 
 	return err
 }
 
 // ExportDetectionToDatapi sends detections with some informations to a datapi server
-func ExportDetectionToDatapi(url, user, password, batch, key, algo string) error {
+func ExportDetectionToDatapi(url, email, password, batch, key, algo string) error {
 	var adminAlgo AdminAlgo
 	err := adminAlgo.Load(algo)
 	if err != nil {
@@ -150,7 +148,7 @@ func ExportDetectionToDatapi(url, user, password, batch, key, algo string) error
 		return fmt.Errorf("batch %s inconnu: %s", batch, err.Error())
 	}
 
-	var pipeline = exportdatapi.GetPipeline(batch, key, algo)
+	var pipeline = exportdatapi.GetDetectionPipeline(batch, key, algo)
 
 	iter := Db.DB.C("Scores").Pipe(pipeline).AllowDiskUse().Iter()
 
@@ -164,12 +162,15 @@ func ExportDetectionToDatapi(url, user, password, batch, key, algo string) error
 	var data exportdatapi.Detection
 
 	client := daclient.DatapiServer{
-		URL: url,
+		URL:      url,
+		Email:    email,
+		Password: password,
+		Bucket:   "detection",
 	}
 
 	for iter.Next(&data) {
 		i++
-		detection, err := exportdatapi.Compute(data)
+		detection, err := exportdatapi.ComputeDetection(data, &connus)
 		if err != nil {
 			log.Println(err)
 			continue
@@ -177,27 +178,9 @@ func ExportDetectionToDatapi(url, user, password, batch, key, algo string) error
 
 		datas = append(datas, detection...)
 
-		// fast & dirty: intègre la notion de connu dans l'objet
-		urssaf := exportdatapi.UrssafScope(data.Etablissement.Value.Compte.Numero, data.Etablissement.Value.Sirene.Departement)
-
-		c := daclient.Object{
-			Key: map[string]string{
-				"siret": data.ID["siret"],
-				"siren": data.ID["siret"][0:9],
-				"batch": data.ID["batch"] + "." + data.ID["algo"],
-				"type":  "detection",
-				urssaf:  "true",
-			},
-			Scope: []string{"detection", "score", data.Etablissement.Value.Sirene.Departement},
-			Value: map[string]interface{}{
-				"connu": findString(data.ID["siret"], connus),
-			},
-		}
-		datas = append(datas, c)
-
 		if i == viper.GetInt("datapiChunk") {
 			i = 0
-			err := datapiSecureSend(user, password, "public", &client, &datas, adminAlgo.Scope)
+			err := datapiSecureSend(client, &datas, adminAlgo.Scope)
 			if err != nil {
 				return err
 			}
@@ -206,13 +189,13 @@ func ExportDetectionToDatapi(url, user, password, batch, key, algo string) error
 	}
 
 	if datas != nil {
-		err = datapiSecureSend(user, password, "public", &client, &datas, adminAlgo.Scope)
+		err = datapiSecureSend(client, &datas, adminAlgo.Scope)
 	}
 
 	return err
 }
 
-func datapiSecureSend(user string, password string, bucket string, client *daclient.DatapiServer, datas *[]daclient.Object, additionnalScope []string) error {
+func datapiSecureSend(client daclient.DatapiServer, datas *[]daclient.Object, additionnalScope []string) error {
 	var sendPacket []daclient.Object
 	for _, d := range *datas {
 		d.Scope = append(d.Scope, additionnalScope...)
@@ -220,7 +203,7 @@ func datapiSecureSend(user string, password string, bucket string, client *dacli
 	}
 
 	if sendPacket != nil {
-		err := client.Connect(user, password)
+		err := client.Connect()
 
 		i := 0
 		for err != nil && i < 5 {
@@ -229,7 +212,7 @@ func datapiSecureSend(user string, password string, bucket string, client *dacli
 			time.Sleep(5 * time.Second)
 
 			log.Println("tentative de reconnexion: " + strconv.Itoa(i))
-			err = client.Connect(user, password)
+			err = client.Connect()
 
 			if err == nil {
 				break
@@ -242,14 +225,14 @@ func datapiSecureSend(user string, password string, bucket string, client *dacli
 
 		i = 0
 
-		err = client.Put(bucket, sendPacket)
+		err = client.Put(sendPacket)
 		for err != nil && i < 5 {
 			i++
 			log.Println("erreur de transmission datapi: " + err.Error())
 			time.Sleep(5 * time.Second)
 
 			log.Println("tentative de réémission: " + err.Error())
-			err = client.Put(bucket, sendPacket)
+			err = client.Put(sendPacket)
 
 			if err == nil {
 				break
@@ -261,5 +244,43 @@ func datapiSecureSend(user string, password string, bucket string, client *dacli
 		}
 	}
 
+	return nil
+}
+
+// ExportEtablissementToDatapi exporte les objets
+func ExportEtablissementToDatapi(url, email, password, batch, key string) error {
+	connus, err := readConnu()
+	if err != nil {
+		return err
+	}
+
+	client := daclient.DatapiServer{
+		URL:      url,
+		Email:    email,
+		Password: password,
+		Bucket:   "entreprise",
+		SendSize: 1000,
+	}
+
+	pipeline := exportdatapi.GetEtablissementPipeline(batch, key)
+	iter := Db.DB.C("Public").Pipe(pipeline).AllowDiskUse().Iter()
+
+	var data exportdatapi.Etablissement
+	datapi, waiter := client.Worker()
+
+	for iter.Next(&data) {
+		if data.Value.Sirene.Departement != "" {
+			for _, d := range exportdatapi.ComputeEtablissement(data, &connus) {
+				datapi <- d
+			}
+		} else {
+			log.Println("Pas d'information Sirene, établissement ignoré")
+		}
+	}
+	close(datapi)
+	waiter.Wait()
+	if client.Errors > 0 {
+		return errors.New("Erreurs détectées, envoi incomplet, plus d'informations dans le journal")
+	}
 	return nil
 }

@@ -87,6 +87,7 @@ func main() {
 
 	r.POST("/datapi/exportReference", datapiExportReferenceHandler)
 	r.POST("/datapi/exportDetection", datapiExportDetectionHandler)
+	r.POST("/datapi/exportEtablissement", datapiExportEtablissementHandler)
 	r.POST("/datapi/exportPolicies", datapiExportPoliciesHandler)
 
 	api := r.Group("api")

@@ -2,9 +2,9 @@ function map() {
   var value = f.flatten(this.value, actual_batch)
 
   if (this.value.scope=="etablissement") {
-    // var vcrp = {}
     let vcmde = {}
-
+    vcmde.key = this.value.key
+    vcmde.batch = this.value.batch
     vcmde.effectif = f.effectifs(value)
     vcmde.dernier_effectif = vcmde.effectif[vcmde.effectif.length - 1]
     vcmde.sirene = f.sirene(f.iterable(value.sirene))
@@ -21,8 +21,10 @@ function map() {
     } else {
       vcmde.last_procol = {"etat": "in_bonis"}
     }
-    emit(actual_batch + "_etablissement_" + this.value.key, vcmde)
-    emit(actual_batch + "_entreprise_" + this.value.key.slice(0,9), {sirets: [this.value.key]})
+    vcmde.raw_procol = value.procol
+
+    emit("etablissement_" + this.value.key, vcmde)
+    emit("entreprise_" + this.value.key.slice(0,9), {sirets: [this.value.key]})
   }
   else if (this.value.scope == "entreprise") {
     let v = {}
@@ -30,6 +32,9 @@ function map() {
     let bdf = f.bdf(value.bdf)
     let sirene_ul = (value.sirene_ul || {})[Object.keys(value.sirene_ul || {})[0] || ""]
     let crp = value.crp
+    v.key = this.value.key
+    v.batch = this.value.batch
+    
     if (diane.length > 0) {
       v.diane = diane
     }
@@ -43,7 +48,7 @@ function map() {
       v.crp = crp
     }
     if (Object.keys(v) != []) {
-      emit(actual_batch + "_entreprise_" + this.value.key, v)
+      emit("entreprise_" + this.value.key, v)
     }
   }
 }
