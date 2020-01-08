@@ -93,16 +93,12 @@ func ReduceOne(batch AdminBatch, algo string, key, from, to string) error {
 			},
 		},
 		bson.M{
-			"$match": bson.M{
-				"value.effectif": bson.M{
-					"$not": bson.M{"$type": 10},
-				},
-			},
-		},
-		bson.M{
 			"$project": bson.M{
-				"_id":   0.0,
-				"info":  "$_id",
+				"_id": bson.M{
+					"batch":   "$_id.batch",
+					"periode": "$_id.periode",
+					"siret":   "$value.siret",
+				},
 				"value": 1.0,
 			},
 		},
@@ -110,6 +106,30 @@ func ReduceOne(batch AdminBatch, algo string, key, from, to string) error {
 			"$merge": bson.M{
 				"into": bson.M{
 					"coll": "Features_debug",
+					"db":   viper.GetString("DB"),
+				},
+				"whenMatched": []bson.M{
+					bson.M{
+						"$project": bson.M{
+							"_id": "$_id",
+							"value": bson.M{
+								"$mergeObjects": []string{
+									"$value",
+									"$$new.value",
+								},
+							},
+						},
+					},
+					bson.M{
+						"$set": bson.M{
+							"value.total": bson.M{
+								"$concat": []string{
+									"$value.total",
+									"test",
+								},
+							},
+						},
+					},
 				},
 			},
 		},
@@ -235,9 +255,9 @@ func Reduce(batch AdminBatch, algo string) error {
 							"$project": bson.M{
 								"_id": "$_id",
 								"value": bson.M{
-									"$mergeObjects": []bson.M{
-										bson.M{"$value"},
-										bson.M{"$$new.value"},
+									"$mergeObjects": []string{
+										"$value",
+										"$$new.value",
 									},
 								},
 							},
