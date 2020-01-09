@@ -119,6 +119,7 @@ func main() {
 		api.GET("/data/purgeNotCompacted", purgeNotCompactedHandler)
 
 		api.POST("/data/copyScores", copyScores)
+		api.POST("/data/migrateFeatures", migrateFeatures)
 
 		// api.GET("/debug", debug)
 	}
@@ -170,4 +171,53 @@ func copyScores(c *gin.Context) {
 		dest = append(dest, f)
 	}
 	engine.Db.DB.C("Scores").Insert(dest...)
+}
+
+func migrateFeatures(c *gin.Context) {
+
+	type Info struct {
+		Siren   string    `bson:"siren"`
+		Batch   string    `bson:"batch"`
+		Periode time.Time `bson:"periode"`
+	}
+
+	type Object struct {
+		ID    bson.ObjectId          `bson:"_id"`
+		Info  Info                   `bson:"info"`
+		Value map[string]interface{} `bson:"value"`
+	}
+
+	type NewID struct {
+		Siret   string    `bson:"siret"`
+		Batch   string    `bson:"batch"`
+		Periode time.Time `bson:"periode"`
+	}
+	type NewObject struct {
+		ID    NewID                  `bson:"_id"`
+		Value map[string]interface{} `bson:"value"`
+	}
+
+	from := engine.Db.DB.C("Features").Find(bson.M{
+		"info": bson.M{"$exists": 1},
+	}).Iter()
+
+	var f Object
+	var newf NewObject
+	for from.Next(&f) {
+		idToDelete := f.ID
+		newf.ID.Siret = f.Value["siret"].(string)
+		newf.ID.Batch = f.Info.Batch
+		newf.ID.Periode = f.Info.Periode
+		newf.Value = f.Value
+		err := engine.Db.DB.C("Features").Insert(newf)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		err = engine.Db.DB.C("Features").RemoveId(idToDelete)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+	}
 }
