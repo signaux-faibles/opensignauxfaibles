@@ -72,16 +72,14 @@ func GetDetectionPipeline(batch, key string, algo string) (pipeline []bson.M) {
 	pipeline = append(pipeline, bson.M{"$project": bson.M{
 		"_idEtablissement": bson.M{
 			"$concat": []interface{}{
-				"$batch",
-				"_etablissement_",
+				"etablissement_",
 				"$siret",
 			},
 		},
 
 		"_idEntreprise": bson.M{
 			"$concat": []interface{}{
-				"$batch",
-				"_entreprise_",
+				"entreprise_",
 				bson.M{"$substr": []interface{}{"$siret", 0, 9}},
 			},
 		},

@@ -248,7 +248,7 @@ func datapiSecureSend(client daclient.DatapiServer, datas *[]daclient.Object, ad
 }
 
 // ExportEtablissementToDatapi exporte les objets
-func ExportEtablissementToDatapi(url, email, password, batch, key string) error {
+func ExportEtablissementToDatapi(url, email, password, key string) error {
 	connus, err := readConnu()
 	if err != nil {
 		return err
@@ -262,7 +262,7 @@ func ExportEtablissementToDatapi(url, email, password, batch, key string) error 
 		SendSize: 1000,
 	}
 
-	pipeline := exportdatapi.GetEtablissementPipeline(batch, key)
+	pipeline := exportdatapi.GetEtablissementPipeline(key)
 	iter := Db.DB.C("Public").Pipe(pipeline).AllowDiskUse().Iter()
 
 	var data exportdatapi.Etablissement
@@ -274,11 +274,12 @@ func ExportEtablissementToDatapi(url, email, password, batch, key string) error 
 				datapi <- d
 			}
 		} else {
-			log.Println("Pas d'information Sirene, établissement ignoré")
+			log.Println("Pas d'information Sirene, établissement ignoré:", data.Value.Key)
 		}
 	}
 	close(datapi)
 	waiter.Wait()
+
 	if client.Errors > 0 {
 		return errors.New("Erreurs détectées, envoi incomplet, plus d'informations dans le journal")
 	}

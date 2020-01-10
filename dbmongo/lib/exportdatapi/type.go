@@ -1,6 +1,10 @@
 package exportdatapi
 
-import "time"
+import (
+	"time"
+
+	"github.com/globalsign/mgo/bson"
+)
 
 // Detection correspond aux données retournées pour l'export Datapi
 type Detection struct {
@@ -14,6 +18,18 @@ type Detection struct {
 	Etablissement *Etablissement    `json:"etablissement,omitempty" bson:"etablissement,omitempty"`
 	Entreprise    *Entreprise       `json:"entreprise,omitempty" bson:"entreprise,omitempty"`
 	Algo          string            `json:"algo" bson:"algo"`
+}
+
+// Score objet de la base Scores
+type Score struct {
+	ID        bson.ObjectId `json:"-" bson:"_id"`
+	Score     float64       `json:"score" bson:"score"`
+	Diff      float64       `json:"diff" bson:"diff"`
+	Timestamp time.Time     `json:"-" bson:"timestamp"`
+	Alert     string        `json:"alert" bson:"alert"`
+	Periode   string        `json:"periode" bson:"periode"`
+	Batch     string        `json:"batch" bson:"batch"`
+	Algo      string        `json:"algo" bson:"algo"`
 }
 
 // CRP est une ligne de fichier CRP
@@ -53,7 +69,7 @@ type Etablissement struct {
 		Procol          []Procol      `json:"procol" bson:"procol"`
 		LastProcol      Procol        `json:"last_procol" bson:"last_procol"`
 	} `bson:"value"`
-	Detection  []Detection `json:"detection" bson:"detection"`
+	Scores     []Score     `json:"scores" bson:"scores"`
 	Entreprise *Entreprise `json:"entreprise" bson:"entreprise"`
 }
 

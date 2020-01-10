@@ -9,19 +9,11 @@ import (
 
 func datapiExportEtablissementHandler(c *gin.Context) {
 	var params struct {
-		Key   string `json:"key"`
-		Batch string `json:"batch"`
+		Key string `json:"key"`
 	}
 	err := c.Bind(&params)
 	if err != nil {
 		c.JSON(400, err.Error())
-		return
-	}
-
-	b := engine.AdminBatch{}
-	err = b.Load(params.Batch)
-	if err != nil {
-		c.JSON(404, "batch non trouvé, vérifiez le paramètre batch")
 		return
 	}
 
@@ -34,7 +26,6 @@ func datapiExportEtablissementHandler(c *gin.Context) {
 		viper.GetString("datapiUrl"),
 		viper.GetString("datapiUser"),
 		viper.GetString("datapiPassword"),
-		params.Batch,
 		params.Key,
 	)
 	if err != nil {

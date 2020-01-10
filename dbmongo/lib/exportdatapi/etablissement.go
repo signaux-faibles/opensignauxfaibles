@@ -6,16 +6,16 @@ import (
 )
 
 // GetEtablissementPipeline produit un pipeline pour exporter les établissements vers datapi
-func GetEtablissementPipeline(batch string, key string) (pipeline []bson.M) {
+func GetEtablissementPipeline(key string) (pipeline []bson.M) {
 	if key == "" {
 		pipeline = append(pipeline, bson.M{"$match": bson.M{
 			"_id": bson.RegEx{
-				Pattern: batch + "_etablissement_.*",
+				Pattern: "etablissement_.*",
 			},
 		}})
 	} else {
 		pipeline = append(pipeline, bson.M{"$match": bson.M{
-			"_id": batch + "_etablissement_" + key,
+			"_id": "etablissement_" + key,
 		}})
 	}
 
@@ -23,16 +23,16 @@ func GetEtablissementPipeline(batch string, key string) (pipeline []bson.M) {
 		"from":         "Scores",
 		"localField":   "value.key",
 		"foreignField": "siret",
-		"as":           "detection"}})
+		"as":           "scores"}})
 
 	pipeline = append(pipeline, bson.M{"$addFields": bson.M{
-		"detectionLength": bson.M{
-			"$size": "$detection",
+		"scoresLength": bson.M{
+			"$size": "$scores",
 		},
 	}})
 
 	pipeline = append(pipeline, bson.M{"$match": bson.M{
-		"detectionLength": bson.M{
+		"scoresLength": bson.M{
 			"$gt": 0,
 		},
 	}})
@@ -40,7 +40,7 @@ func GetEtablissementPipeline(batch string, key string) (pipeline []bson.M) {
 	pipeline = append(pipeline, bson.M{"$addFields": bson.M{
 		"idEntreprise": bson.M{
 			"$concat": []interface{}{
-				batch + "_etablissement_",
+				"etablissement_",
 				bson.M{"$substr": []interface{}{"$value.key", 0, 9}},
 			},
 		},
@@ -78,11 +78,10 @@ func ComputeEtablissement(data Etablissement, connus *[]string) []daclient.Objec
 	}
 	value := make(map[string]interface{})
 
-	if data.Entreprise != nil {
-		value["sirene"] = sirene
-		value["connu"] = findString(data.Value.Key, *connus)
-		value["detection"] = data.Detection
+	value["connu"] = findString(data.Value.Key, *connus)
+	value["sirene"] = sirene
 
+	if data.Entreprise != nil {
 		if len(data.Entreprise.Value.Diane) > 0 {
 			value["diane"] = data.Entreprise.Value.Diane
 		}
@@ -102,15 +101,15 @@ func ComputeEtablissement(data Etablissement, connus *[]string) []daclient.Objec
 		Value: value,
 	}
 
-	scope := []string{data.Value.Sirene.Departement}
-	objectPrivate := daclient.Object{
+	scopeScores := []string{data.Value.Sirene.Departement, "detection", "score"}
+	objectScores := daclient.Object{
 		Key:   key,
-		Scope: scope,
+		Scope: scopeScores,
 		Value: map[string]interface{}{
-			"detection": data.Detection,
+			"scores": data.Scores,
 		},
 	}
-	objects = append(objects, objectPublic, objectPrivate)
+	objects = append(objects, objectPublic, objectScores)
 
 	if eligible(data) {
 		send := false
@@ -177,12 +176,10 @@ func ComputeEtablissement(data Etablissement, connus *[]string) []daclient.Objec
 }
 
 func eligible(data Etablissement) bool {
-	for _, i := range data.Detection {
+	for _, i := range data.Scores {
 		if i.Alert != "Pas d'alerte" {
 			return true
 		}
 	}
 	return false
 }
-
-type datapiValue map[string]interface{}
