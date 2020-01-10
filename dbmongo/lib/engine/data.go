@@ -278,23 +278,21 @@ func (chunks Chunks) ToQueries(query bson.M, field string) []bson.M {
 	var ret []bson.M
 	ret = append(ret, bson.M{
 		field: bson.M{
-			"$lte": chunks.SplitKeys[0].ID[0:9],
+			"$lt": chunks.SplitKeys[0].ID[0:9],
 		},
 	})
-
 	for i := 1; i < len(chunks.SplitKeys); i++ {
 		ret = append(ret, bson.M{
 			"$and": []bson.M{
-				bson.M{field: bson.M{"$gt": chunks.SplitKeys[i-1].ID[0:9]}},
-				bson.M{field: bson.M{"$lte": chunks.SplitKeys[i].ID[0:9]}},
+				bson.M{field: bson.M{"$gte": chunks.SplitKeys[i-1].ID[0:9]}},
+				bson.M{field: bson.M{"$lt": chunks.SplitKeys[i].ID[0:9]}},
 				query,
 			},
 		})
 	}
-
 	ret = append(ret, bson.M{
 		field: bson.M{
-			"$gt": chunks.SplitKeys[len(chunks.SplitKeys)-1].ID[0:9],
+			"$gte": chunks.SplitKeys[len(chunks.SplitKeys)-1].ID[0:9],
 		},
 	})
 	return ret
