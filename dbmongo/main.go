@@ -182,42 +182,60 @@ func migrateFeatures(c *gin.Context) {
 	}
 
 	type Object struct {
-		ID    bson.ObjectId          `bson:"_id"`
-		Info  Info                   `bson:"info"`
-		Value map[string]interface{} `bson:"value"`
+		ID    bson.ObjectId `bson:"_id"`
+		Info  Info          `bson:"info"`
+		Value bson.M        `bson:"value"`
 	}
 
-	type NewID struct {
-		Siret   string    `bson:"siret"`
-		Batch   string    `bson:"batch"`
-		Periode time.Time `bson:"periode"`
-	}
 	type NewObject struct {
-		ID    NewID                  `bson:"_id"`
-		Value map[string]interface{} `bson:"value"`
+		ID    bson.D `bson:"_id"`
+		Value bson.M `bson:"value"`
 	}
 
-	from := engine.Db.DB.C("Features").Find(bson.M{
+	iter := engine.Db.DB.C("Features").Find(bson.M{
 		"info": bson.M{"$exists": 1},
 	}).Iter()
 
 	var f Object
-	var newf NewObject
-	for from.Next(&f) {
-		idToDelete := f.ID
-		newf.ID.Siret = f.Value["siret"].(string)
-		newf.ID.Batch = f.Info.Batch
-		newf.ID.Periode = f.Info.Periode
-		newf.Value = f.Value
-		err := engine.Db.DB.C("Features").Insert(newf)
-		if err != nil {
-			fmt.Println(err)
-			return
+	var compactRes interface{}
+	maxNumRoutines := 12
+	compactRate := 10000000
+	objectsChan := make(chan Object, maxNumRoutines)
+	objCounter := 0
+
+	for i := 1; i <= maxNumRoutines; i++ {
+		go func() {
+			for current := range objectsChan {
+				var newf NewObject
+				var idToDelete = current.ID
+				newf.ID = bson.D{
+					{"batch", current.Info.Batch},
+					{"siret", current.Value["siret"].(string)},
+					{"periode", current.Info.Periode},
+				}
+				newf.Value = current.Value
+				err := engine.Db.DB.C("Features").Insert(newf)
+				if err != nil {
+					panic(err)
+				}
+				err = engine.Db.DB.C("Features").RemoveId(idToDelete)
+				if err != nil {
+					panic(err)
+				}
+			}
+		}()
+	}
+	for iter.Next(&f) {
+		// Launch the right number of routines
+		objectsChan <- f
+		objCounter++
+		if objCounter%compactRate == 0 {
+			engine.Db.DB.Run(bson.M{"compact": "Features"}, &compactRes)
+			fmt.Println(compactRes)
 		}
-		err = engine.Db.DB.C("Features").RemoveId(idToDelete)
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
+	}
+	close(objectsChan)
+	if err := iter.Close(); err != nil {
+		panic(err)
 	}
 }
