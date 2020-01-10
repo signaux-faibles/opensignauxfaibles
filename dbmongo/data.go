@@ -9,11 +9,12 @@ import (
 
 func reduceHandler(c *gin.Context) {
 	var params struct {
-		BatchKey string `json:"batch"`
-		Algo     string `json:"algo"`
-		Key      string `json:"key"`
-		From     string `json:"from"`
-		To       string `json:"to"`
+		BatchKey string   `json:"batch"`
+		Algo     string   `json:"algo"`
+		Key      string   `json:"key"`
+		From     string   `json:"from"`
+		To       string   `json:"to"`
+		Types    []string `json:"types"`
 	}
 
 	err := c.ShouldBind(&params)
@@ -27,9 +28,9 @@ func reduceHandler(c *gin.Context) {
 	}
 
 	if params.Key == "" && params.From == "" && params.To == "" {
-		err = engine.Reduce(batch, params.Algo)
+		err = engine.Reduce(batch, params.Algo, params.Types)
 	} else {
-		err = engine.ReduceOne(batch, params.Algo, params.Key, params.From, params.To)
+		err = engine.ReduceOne(batch, params.Algo, params.Key, params.From, params.To, params.Types)
 	}
 
 	if err != nil {
@@ -82,7 +83,7 @@ func compactHandler(c *gin.Context) {
 	if err != nil {
 		c.JSON(400, err.Error())
 	}
-	//TODO: verifier comportement si batch est vide
+
 	err = engine.Compact(params.BatchKey, params.Types)
 	if err != nil {
 		c.JSON(500, err.Error())
@@ -106,5 +107,4 @@ func purgeHandler(c *gin.Context) {
 		return
 	}
 	c.JSON(300, "Provide areyousure=yes")
-
 }

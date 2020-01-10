@@ -210,7 +210,7 @@ func ProcessBatch(batchList []string, parsers []Parser, types []string) error {
 	}
 
 	batch := LastBatch()
-	return Reduce(batch, "algo2")
+	return Reduce(batch, "algo2", []string{"all"})
 }
 
 // LastBatch retourne le dernier batch

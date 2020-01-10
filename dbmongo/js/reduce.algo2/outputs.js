@@ -4,17 +4,15 @@ function outputs (v, serie_periode) {
       "siret": v.key,
       "periode": e,
       "effectif": null,
-      "apart_heures_consommees": 0,
-      "apart_motif_recours": 0,
       "etat_proc_collective": "in_bonis",
       "interessante_urssaf": true,
       "outcome": false
     }
   });
-    
-  var output_indexed = output_array.reduce(function (periode, val) {
-      periode[val.periode.getTime()] = val
-      return periode
+
+  var output_indexed = output_array.reduce(function (periodes, val) {
+      periodes[val.periode.getTime()] = val
+      return periodes
   }, {})
 
   return [output_array, output_indexed]
