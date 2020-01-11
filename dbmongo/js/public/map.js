@@ -4,7 +4,7 @@ function map() {
   if (this.value.scope=="etablissement") {
     let vcmde = {}
     vcmde.key = this.value.key
-    vcmde.batch = this.value.batch
+    vcmde.batch = actual_batch
     vcmde.effectif = f.effectifs(value)
     vcmde.dernier_effectif = vcmde.effectif[vcmde.effectif.length - 1]
     vcmde.sirene = f.sirene(f.iterable(value.sirene))
@@ -33,7 +33,7 @@ function map() {
     let sirene_ul = (value.sirene_ul || {})[Object.keys(value.sirene_ul || {})[0] || ""]
     let crp = value.crp
     v.key = this.value.key
-    v.batch = this.value.batch
+    v.batch = actual_batch
     
     if (diane.length > 0) {
       v.diane = diane
