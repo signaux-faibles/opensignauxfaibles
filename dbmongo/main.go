@@ -184,12 +184,12 @@ func migrateFeatures(c *gin.Context) {
 	type Object struct {
 		ID    bson.ObjectId `bson:"_id"`
 		Info  Info          `bson:"info"`
-		Value bson.M        `bson:"value"`
+		Value bson.D        `bson:"value"`
 	}
 
 	type NewObject struct {
 		ID    bson.D `bson:"_id"`
-		Value bson.M `bson:"value"`
+		Value bson.D `bson:"value"`
 	}
 
 	iter := engine.Db.DB.C("Features").Find(bson.M{
@@ -208,9 +208,16 @@ func migrateFeatures(c *gin.Context) {
 			for current := range objectsChan {
 				var newf NewObject
 				var idToDelete = current.ID
+				var siretValue string
+				for _, v := range current.Value {
+					if v.Name == "siret" {
+						siretValue = v.Value.(string)
+						break
+					}
+				}
 				newf.ID = bson.D{
 					{"batch", current.Info.Batch},
-					{"siret", current.Value["siret"].(string)},
+					{"siret", siretValue},
 					{"periode", current.Info.Periode},
 				}
 				newf.Value = current.Value
