@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"regexp"
@@ -22,7 +23,7 @@ func ReduceOne(batch AdminBatch, algo string, key, from, to string, types []stri
 		return errors.New("key minimal length of 9")
 	}
 
-	scope, err := reduceDefineScope(algo, types)
+	scope, err := reduceDefineScope(batch, algo, types)
 	if err != nil {
 		return err
 	}
@@ -49,6 +50,7 @@ func ReduceOne(batch AdminBatch, algo string, key, from, to string, types []stri
 		return fmt.Errorf("Les paramètres key, ou la paire de paramètres from et to, sont obligatoires")
 	}
 
+	functions := scope["f"].(map[string]bson.JavaScript)
 	job := &mgo.MapReduce{
 		Map:      functions["map"].Code,
 		Reduce:   functions["reduce"].Code,
@@ -63,14 +65,14 @@ func ReduceOne(batch AdminBatch, algo string, key, from, to string, types []stri
 		fmt.Println(err)
 		return err
 	}
-	reduceFinalAggregation(viper.GetString("DB"), "TemporaryDatabase", viper.GetString("DB"), "Features_debug")
+	reduceFinalAggregation(Db.DB, "TemporaryCollection", viper.GetString("DB"), "Features_debug")
 	return err
 }
 
 // Reduce alimente la base Features
 func Reduce(batch AdminBatch, algo string, types []string) error {
 
-	scope, err := reduceDefineScope(algo, types)
+	scope, err := reduceDefineScope(batch, algo, types)
 	if err != nil {
 		return err
 	}
@@ -94,6 +96,7 @@ func Reduce(batch AdminBatch, algo string, types []string) error {
 		w.waitGroup.Add(1)
 		dbTemp := "reduce" + strconv.Itoa(i)
 
+		functions := scope["f"].(map[string]bson.JavaScript)
 		job := &mgo.MapReduce{
 			Map:      functions["map"].Code,
 			Reduce:   functions["reduce"].Code,
@@ -122,7 +125,7 @@ func Reduce(batch AdminBatch, algo string, types []string) error {
 
 	for _, dbTemp := range tempDBs {
 
-		reduceFinalAggregation(dbTemp, "TemporaryCollection", viper.GetString("DB"), "Features")
+		reduceFinalAggregation(db.DB(dbTemp), "TemporaryCollection", viper.GetString("DB"), "Features")
 
 		if err != nil {
 			w.add("errors", 1, -1)
@@ -144,14 +147,39 @@ func Reduce(batch AdminBatch, algo string, types []string) error {
 	return nil
 }
 
-func reduceFinalAggregation(tempDatabase, tempCollection, outDatabase, outCollection string) error {
-	pipeline := []bson.M{
+func reduceCrossComputations(directoryName string) ([]bson.M, error) {
+	result := []bson.M{}
+	if _, ok := jsFunctions[directoryName]; !ok {
+		return result, errors.New("Map reduce json aggregation steps could not be found for " + directoryName)
+	}
+	for _, v := range jsFunctions[directoryName] {
+		var aggregationStep bson.M
+		err := json.Unmarshal([]byte(v), &aggregationStep) // transform json string into bson.M TODO
+		if err != nil {
+			return nil, err
+		}
+		result = append(result, aggregationStep) //TODO
+	}
+	return result, nil
+}
+
+func reduceFinalAggregation(tempDatabase *mgo.Database, tempCollection, outDatabase, outCollection string) error {
+
+	setStages, err := reduceCrossComputations("crossComputation")
+	if err != nil {
+		return err
+	}
+	var pipeline []bson.M
+	pipeline = append(pipeline,
 		bson.M{
 			"$unwind": bson.M{
 				"path": "$value",
 				"preserveNullAndEmptyArrays": false,
 			},
 		},
+	)
+	pipeline = append(pipeline, setStages...)
+	pipeline = append(pipeline, []bson.M{
 		// bson.M{
 		// 	"$match": bson.M{
 		// 		"value.effectif": bson.M{
@@ -173,7 +201,7 @@ func reduceFinalAggregation(tempDatabase, tempCollection, outDatabase, outCollec
 			"$merge": bson.M{
 				"into": bson.M{
 					"coll": outCollection,
-					"db":   outDatabase, //  viper.GetString("DB"),
+					"db":   outDatabase,
 				},
 				"whenMatched": []bson.M{
 					bson.M{
@@ -195,21 +223,23 @@ func reduceFinalAggregation(tempDatabase, tempCollection, outDatabase, outCollec
 				},
 			},
 		},
-	}
+	}...,
+	)
+	fmt.Println(pipeline)
 
-	pipe := db.DB(tempDatabase).C(tempCollection).Pipe(pipeline)
+	pipe := tempDatabase.C(tempCollection).Pipe(pipeline)
 	var result []interface{}
 	err = pipe.AllowDiskUse().All(&result)
 	return err
 }
 
-func reduceDefineScope(algo string, types []string) (bson.M, error) {
+func reduceDefineScope(batch AdminBatch, algo string, types []string) (bson.M, error) {
 
 	// Limiter les caractères de nom d'algo pour éviter de hacker la fonction
 	// loadJSFunctions
 	isAlphaNum := regexp.MustCompile(`^[A-Za-z0-9]+$`).MatchString
 	if !isAlphaNum(algo) {
-		return errors.New("nom d'algorithme invalide, alphanumérique sans espace exigé")
+		return nil, errors.New("nom d'algorithme invalide, alphanumérique sans espace exigé")
 	}
 
 	if algo == "" {
