@@ -1,8 +1,8 @@
 function finalize(k, v) {
   const maxBsonSize = 16777216;
 
-  //v de la forme
-  // .id: {batch / siren / periode}
+  // v de la forme
+  // _id: {batch / siren / periode / type}
   // value: {siret1: {}, siret2: {}, "siren": {}}
   //
   ///
@@ -16,10 +16,8 @@ function finalize(k, v) {
   let entreprise = (v.entreprise || {})
 
   Object.keys(v).forEach(siret =>{
-    if (siret != "entreprise" && siret != "siren" ) {
+    if (siret != "entreprise") {
       etablissements_connus[siret] = true
-      //if (v[siret]){  // always TRUE
-      //    var time = v[siret].periode.getTime()
       if (v[siret].effectif){
         entreprise.effectif_entreprise = (entreprise.effectif_entreprise || 0) + v[siret].effectif // initialized to null
       }
@@ -31,20 +29,21 @@ function finalize(k, v) {
           (v[siret].montant_part_patronale || 0) +
           (v[siret].montant_part_ouvriere || 0)
       }
-      // not initialized
-      //}
     }
   })
 
+
   Object.keys(v).forEach(siret =>{
-    Object.assign(v[siret], entreprise)
+    if (siret != "entreprise"){
+      Object.assign(v[siret], entreprise)
+    }
   })
 
-  //une fois que les comptes sont faits...
+  // une fois que les comptes sont faits...
   let output = []
   let nb_connus = Object.keys(etablissements_connus).length
   Object.keys(v).forEach(siret => {
-    if (siret != "entreprise" && siret != "siren" && v[siret]) {
+    if (siret != "entreprise" && v[siret]) {
       v[siret].nbr_etablissements_connus = nb_connus
       output.push(v[siret])
     }

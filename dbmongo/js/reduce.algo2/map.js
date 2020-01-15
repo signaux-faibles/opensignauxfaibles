@@ -18,8 +18,9 @@ function map () {
           data[this._id].siret = this._id
           periode = new Date(Number(periode))
           emit(
-            { 'siren': this._id.substring(0, 9),
+            {
               'batch': actual_batch,
+              'siren': this._id.substring(0, 9),
               'periode': periode,
               'type': 'apart'
             },
@@ -78,8 +79,9 @@ function map () {
         let data = {}
         data[this._id] = val
         emit(
-          { 'siren': this._id.substring(0, 9),
+          {
             'batch': actual_batch,
+            'siren': this._id.substring(0, 9),
             'periode': val.periode,
             'type': 'other'
           },
@@ -91,7 +93,7 @@ function map () {
 
   if (v.scope == "entreprise") {
 
-    if (false && (include_others || {})){
+    if (includes["other"]){
       var output_array = serie_periode.map(function (e) {
         return {
           "siren": v.key,
@@ -119,6 +121,12 @@ function map () {
       var output_indexed = output_array.reduce(function (periode, val) {
         periode[val.periode.getTime()] = val
         return periode
+      }, {})
+
+      v.bdf = (v.bdf || {})
+      v.diane = (v.diane || {})
+
+      Object.keys(v.bdf).forEach(hash => {
       }, {})
 
       v.bdf = (v.bdf || {})
@@ -195,12 +203,6 @@ function map () {
         series.forEach(periode => {
           if (periode.getTime() in output_indexed){
             // Recalcul BdF si ratios bdf sont absents
-            if (!("taux_marge" in output_indexed[periode.getTime()]) && (f.tauxMarge(v.diane[hash]) !== null)){
-              output_indexed[periode.getTime()].taux_marge = f.tauxMarge(v.diane[hash])
-            }
-            if (!("financier_court_terme" in output_indexed[periode.getTime()]) && (f.financierCourtTerme(v.diane[hash]) !== null)){
-              output_indexed[periode.getTime()].financier_court_terme = f.financierCourtTerme(v.diane[hash])
-            }
             if (!("poids_frng" in output_indexed[periode.getTime()]) && (f.poidsFrng(v.diane[hash]) !== null)){
               output_indexed[periode.getTime()].poids_frng = f.poidsFrng(v.diane[hash])
             }
@@ -240,21 +242,18 @@ function map () {
         if ((periode.arrete_bilan_diane||new Date(0)).getTime() == 0){
           delete periode.arrete_bilan_diane
         }
-        try {
-          emit(
-            {
-              'siren': this._id.substring(0, 9),
-              'batch': actual_batch,
-              'periode': periode.periode,
-              'type': 'autre'
-            },
-            {
-              'entreprise': periode
-            }
-          )
-        } catch {
-          print('My name is ' + this._id.substring(0, 9) + ' and I died in reduce.algo2/map.js (entreprise)')
-        }
+
+        emit(
+          {
+            'batch': actual_batch,
+            'siren': this._id.substring(0, 9),
+            'periode': periode.periode,
+            'type': 'other'
+          },
+          {
+            'entreprise': periode
+          }
+        )
       })
     }
   }
