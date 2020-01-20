@@ -62,10 +62,9 @@ func ReduceOne(batch AdminBatch, algo string, key, from, to string, types []stri
 	_, err = Db.DB.C("RawData").Find(query).MapReduce(job, nil)
 
 	if err != nil {
-		fmt.Println(err)
 		return err
 	}
-	reduceFinalAggregation(Db.DB, "TemporaryCollection", viper.GetString("DB"), "Features_debug")
+	err = reduceFinalAggregation(Db.DB, "TemporaryCollection", viper.GetString("DB"), "Features_debug")
 	return err
 }
 
@@ -125,7 +124,7 @@ func Reduce(batch AdminBatch, algo string, types []string) error {
 
 	for _, dbTemp := range tempDBs {
 
-		reduceFinalAggregation(db.DB(dbTemp), "TemporaryCollection", viper.GetString("DB"), "Features")
+		err = reduceFinalAggregation(db.DB(dbTemp), "TemporaryCollection", viper.GetString("DB"), "Features")
 
 		if err != nil {
 			w.add("errors", 1, -1)
@@ -169,17 +168,15 @@ func reduceFinalAggregation(tempDatabase *mgo.Database, tempCollection, outDatab
 	if err != nil {
 		return err
 	}
+
 	var pipeline []bson.M
-	pipeline = append(pipeline,
+	pipeline = append(pipeline, []bson.M{
 		bson.M{
 			"$unwind": bson.M{
 				"path": "$value",
 				"preserveNullAndEmptyArrays": false,
 			},
 		},
-	)
-	pipeline = append(pipeline, setStages...)
-	pipeline = append(pipeline, []bson.M{
 		// bson.M{
 		// 	"$match": bson.M{
 		// 		"value.effectif": bson.M{
@@ -197,37 +194,41 @@ func reduceFinalAggregation(tempDatabase *mgo.Database, tempCollection, outDatab
 				"value": 1.0,
 			},
 		},
+	}...,
+	)
+
+	// Defining pipeline used to during merge stage
+	mergePipeline := []bson.M{
+		bson.M{
+			"$project": bson.M{
+				"_id": "$_id",
+				"value": bson.M{
+					"$mergeObjects": []string{
+						"$value",
+						"$$new.value",
+					},
+				},
+			},
+		},
+	}
+	mergePipeline = append(mergePipeline, setStages...)
+
+	// Merge stage
+	pipeline = append(pipeline,
 		bson.M{
 			"$merge": bson.M{
 				"into": bson.M{
 					"coll": outCollection,
 					"db":   outDatabase,
 				},
-				"whenMatched": []bson.M{
-					bson.M{
-						"$project": bson.M{
-							"_id": "$_id",
-							"value": bson.M{
-								"$mergeObjects": []string{
-									"$value",
-									"$$new.value",
-								},
-							},
-						},
-					},
-					bson.M{
-						"$set": bson.M{
-							"value.total": "test",
-						},
-					},
-				},
+				"whenMatched": mergePipeline,
 			},
 		},
-	}...,
 	)
-	fmt.Println(pipeline)
 
+	// Apply aggregation
 	pipe := tempDatabase.C(tempCollection).Pipe(pipeline)
+
 	var result []interface{}
 	err = pipe.AllowDiskUse().All(&result)
 	return err
@@ -257,8 +258,12 @@ func reduceDefineScope(batch AdminBatch, algo string, types []string) (bson.M, e
 	}
 
 	includes := map[string]bool{}
-	for _, data_type := range types {
-		includes[data_type] = true
+	if len(types) == 0 {
+		includes["all"] = true
+	} else {
+		for _, data_type := range types {
+			includes[data_type] = true
+		}
 	}
 
 	scope := bson.M{

@@ -1,23 +1,23 @@
-db.getCollection("Features").aggregate(
-	[
-		// -- Stage 1 --
-		{
-			$project: {
-			    "_id": {
-			        "batch": "$info.batch",
-			        "siret": "$value.siret",
-			        "periode": "$info.periode"
-			    },
-			    "value": "$value"
-			}
-		},
+// db.getCollection("Features").aggregate(
+// 	[
+// 		// -- Stage 1 --
+// 		{
+// 			$project: {
+// 			    "_id": {
+// 			        "batch": "$info.batch",
+// 			        "siret": "$value.siret",
+// 			        "periode": "$info.periode"
+// 			    },
+// 			    "value": "$value"
+// 			}
+// 		},
 
-		// -- Stage 2 --
-		{
-			$out: "Features"
-		},
-	]
-);
+// 		// -- Stage 2 --
+// 		{
+// 			$out: "Features"
+// 		},
+// 	]
+// );
 
 
 db.getCollection("Features").dropIndex({
@@ -35,6 +35,6 @@ db.getCollection("Features").createIndex({
     "value.random_order" : -1,
     "_id.periode" : 1,
     "value.effectif" : 1,
-    "_id.siren" : 1
+    "_id.siret" : 1
 })
 

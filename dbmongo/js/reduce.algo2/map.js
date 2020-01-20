@@ -9,7 +9,7 @@ function map () {
     // Les periodes qui nous interessent, triées
     var periodes = Object.keys(output_indexed).sort((a,b) => (a >= b))
 
-    if (includes["apart"]){
+    if (includes["apart"] || includes["all"]){
       if (v.apconso && v.apdemande) {
         let output_apart = f.apart(v.apconso, v.apdemande)
         Object.keys(output_apart).forEach(periode => {
@@ -30,7 +30,7 @@ function map () {
       }
     }
 
-    if (includes["other"]){
+    if (includes["all"]){
 
       if (v.compte) {
         var output_compte = f.compte(v)
@@ -93,7 +93,7 @@ function map () {
 
   if (v.scope == "entreprise") {
 
-    if (includes["other"]){
+    if (includes["all"]){
       var output_array = serie_periode.map(function (e) {
         return {
           "siren": v.key,

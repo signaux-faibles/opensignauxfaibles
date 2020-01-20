@@ -49,6 +49,11 @@ function finalize(k, v) {
     }
   })
 
+  // NON: Pour l'instant, filtrage a posteriori
+  // output = output.filter(siret_data => {
+  //   return(siret_data.effectif) // Only keep if there is known effectif
+  // })
+
   if (output.length > 0 && nb_connus <= 1500){
     if ((Object.bsonsize(output)  + Object.bsonsize({"_id": k})) < maxBsonSize){
       return output

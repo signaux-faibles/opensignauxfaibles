@@ -50,7 +50,6 @@ function effectifs (effobj, periodes, effectif_name) {
     })
   })
 
-  print(JSON.stringify(output_effectif, null, 2))
   // On supprime les effectifs 'null'
   Object.keys(output_effectif).forEach(k => {
     if (output_effectif[k].effectif == null && output_effectif[k].effectif_ent == null) {

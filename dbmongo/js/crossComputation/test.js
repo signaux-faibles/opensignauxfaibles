@@ -1,5 +1,0 @@
-{
-  "$set": {
-    "value.total": "test"
-  }
-}
