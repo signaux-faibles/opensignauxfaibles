@@ -31,6 +31,7 @@ type Debit struct {
 	CodeOperationEcartNegatif    string       `json:"code_operation_ecart_negatif" bson:"code_operation_ecart_negatif"`
 	CodeMotifEcartNegatif        string       `json:"code_motif_ecart_negatif" bson:"code_motif_ecart_negatif"`
 	DebitSuivant                 string       `json:"debit_suivant,omitempty" bson:"debit_suivant,omitempty"`
+	Recours                      bool         `json:"recours_en_cours" bson:"recours_en_cours"`
 	// MontantMajorations           float64   `json:"montant_majorations" bson:"montant_majorations"`
 }
 
@@ -92,6 +93,7 @@ func ParserDebit(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tupl
 			codeProcedureCollectiveIndex := misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Cd_pro_col" })
 			codeOperationEcartNegatifIndex := misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Cd_op_ecn" })
 			codeMotifEcartNegatifIndex := misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Motif_ecn" })
+			recoursIndex := misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Recours_en_cours" })
 			// montantMajorationsIndex := misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Montant majorations de retard en centimes" })
 			if misc.SliceMin(dateTraitementIndex, partOuvriereIndex, partPatronaleIndex, numeroHistoriqueEcartNegatifIndex, periodeIndex, etatCompteIndex, numeroCompteIndex, numeroEcartNegatifIndex, codeProcedureCollectiveIndex, codeOperationEcartNegatifIndex, codeMotifEcartNegatifIndex) < 0 {
 				event.Critical(path + ": CSV non conforme")
@@ -135,6 +137,8 @@ func ParserDebit(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tupl
 					debit.EtatCompte, err = strconv.Atoi(row[etatCompteIndex])
 					tracker.Error(err)
 					debit.Periode, err = urssafToPeriod(row[periodeIndex])
+					tracker.Error(err)
+					debit.Recours, err = strconv.ParseBool(row[recoursIndex])
 					tracker.Error(err)
 					// debit.MontantMajorations, err = strconv.ParseFloat(row[montantMajorationsIndex], 64)
 					// tracker.Error(err)
