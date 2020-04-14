@@ -63,13 +63,13 @@ func GetEtablissementPipeline(key string) (pipeline []bson.M) {
 func ComputeEtablissement(data Etablissement, connus *[]string) []daclient.Object {
 	var objects []daclient.Object
 
-	urssaf := UrssafScope(data.Value.Compte.Numero, data.Value.Sirene.Departement)
+	// urssaf := UrssafScope(data.Value.Compte.Numero, data.Value.Sirene.Departement)
 
 	key := map[string]string{
-		"siret": data.Value.Key,
-		"siren": data.Value.Key[0:9],
-		"urssaf":  "true",
-		"type":  "etablissement",
+		"siret":  data.Value.Key,
+		"siren":  data.Value.Key[0:9],
+		"urssaf": "true",
+		"type":   "etablissement",
 	}
 
 	sirene := data.Value.Sirene
