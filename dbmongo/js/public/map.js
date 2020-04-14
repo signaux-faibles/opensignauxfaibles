@@ -12,19 +12,14 @@ function map() {
     vcmde.debit = f.debits(value.debit)
     vcmde.apconso = f.apconso(value.apconso)
     vcmde.apdemande = f.apconso(value.apdemande)
-    vcmde.idEntreprise = f.idEntreprise(this._id)
     vcmde.delai = f.delai(value.delai)
     vcmde.compte = f.compte(value.compte)
     vcmde.procol = f.dealWithProcols(value.altares, "altares",  null).concat(f.dealWithProcols(value.procol, "procol",  null))
-    if (vcmde.procol.length >= 1){
-      vcmde.last_procol = vcmde.procol[vcmde.procol.length - 1]
-    } else {
-      vcmde.last_procol = {"etat": "in_bonis"}
-    }
-    vcmde.raw_procol = value.procol
+    vcmde.last_procol = vcmde.procol[vcmde.procol.length - 1] || {"etat": "in_bonis"}
+    vcmde.idEntreprise = "entreprise_" + this.value.key.slice(0,9)
+    vcmde.procol = value.procol
 
     emit("etablissement_" + this.value.key, vcmde)
-    emit("entreprise_" + this.value.key.slice(0,9), {sirets: [this.value.key]})
   }
   else if (this.value.scope == "entreprise") {
     let v = {}

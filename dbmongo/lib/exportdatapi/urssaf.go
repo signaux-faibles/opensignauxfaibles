@@ -49,7 +49,7 @@ func UrssafScope(compte string, departement string) string {
 		return "URSSAF " + scope
 	}
 
-	log.Println("pas correspondance pour " + compte[0:3])
+	log.Println("pas de correspondance renseignée pour " + compte[0:3] + " (lib/exportdatapi/urssaf.go)")
 	return "URSSAF " + regionFromDepartement(departement)
 }
 

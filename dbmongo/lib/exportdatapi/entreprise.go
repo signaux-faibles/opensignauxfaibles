@@ -10,12 +10,12 @@ func GetEtablissementPipeline(key string) (pipeline []bson.M) {
 	if key == "" {
 		pipeline = append(pipeline, bson.M{"$match": bson.M{
 			"_id": bson.RegEx{
-				Pattern: "etablissement_.*",
+				Pattern: "etablissement.*",
 			},
 		}})
 	} else {
 		pipeline = append(pipeline, bson.M{"$match": bson.M{
-			"_id": "etablissement_" + key,
+			"_id": "entreprise_" + key,
 		}})
 	}
 
@@ -68,7 +68,7 @@ func ComputeEtablissement(data Etablissement, connus *[]string) []daclient.Objec
 	key := map[string]string{
 		"siret": data.Value.Key,
 		"siren": data.Value.Key[0:9],
-		urssaf:  "true",
+		"urssaf":  "true",
 		"type":  "etablissement",
 	}
 
