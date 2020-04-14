@@ -44,7 +44,7 @@ func PurgeBatch(batchKey string) error {
 			Map:      functions["map"].Code,
 			Reduce:   functions["reduce"].Code,
 			Finalize: functions["finalize"].Code,
-			Out:      bson.M{"replace": "TemporaryCollection", "db": tempDbName},
+			Out:      bson.M{"merge": "RawData"},
 			Scope:    MRscope,
 		}
 		numQuery++
@@ -72,31 +72,31 @@ func PurgeBatch(batchKey string) error {
 	db, _ := mgo.Dial(viper.GetString("DB_DIAL"))
 	db.SetSocketTimeout(720000 * time.Second)
 
-	for _, tempDbName := range tempDbNames {
-		pipeline := []bson.M{
-			bson.M{
-				"$merge": bson.M{
-					"into": bson.M{
-						"coll":        "RawData",
-						"db":          viper.GetString("DB"),
-						"whenMatched": "replace",
-					},
-				},
-			},
-		}
+	// for _, tempDbName := range tempDbNames {
+	// 	pipeline := []bson.M{
+	// 		bson.M{
+	// 			"$merge": bson.M{
+	// 				"into": bson.M{
+	// 					"coll":        "RawData",
+	// 					"db":          viper.GetString("DB"),
+	// 					"whenMatched": "merge",
+	// 				},
+	// 			},
+	// 		},
+	// 	}
 
-		pipe := db.DB(tempDbName).C("TemporaryCollection").Pipe(pipeline)
-		var result []interface{}
-		err = pipe.AllowDiskUse().All(&result)
-		if err != nil {
-			w.add("errors", 1, -1)
-		} else {
-			err = db.DB(tempDbName).DropDatabase()
-			if err != nil {
-				w.add("errors", 1, -1)
-			}
-		}
-	}
+	// 	pipe := db.DB(tempDbName).C("TemporaryCollection").Pipe(pipeline)
+	// 	var result []interface{}
+	// 	err = pipe.AllowDiskUse().All(&result)
+	// 	if err != nil {
+	// 		w.add("errors", 1, -1)
+	// 	} else {
+	// 		err = db.DB(tempDbName).DropDatabase()
+	// 		if err != nil {
+	// 			w.add("errors", 1, -1)
+	// 		}
+	// 	}
+	// }
 
 	db.Close()
 

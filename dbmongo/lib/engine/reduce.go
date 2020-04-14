@@ -124,7 +124,12 @@ func Reduce(batch AdminBatch, algo string, types []string) error {
 
 	for _, dbTemp := range tempDBs {
 
-		err = reduceFinalAggregation(db.DB(dbTemp), "TemporaryCollection", viper.GetString("DB"), "Features")
+		err = reduceFinalAggregation(
+			db.DB(dbTemp),
+			"TemporaryCollection",
+			/*outDatabase = */ viper.GetString("DB"),
+			/*outCollection = */ "Features_"+batch.Name,
+		)
 
 		if err != nil {
 			w.add("errors", 1, -1)

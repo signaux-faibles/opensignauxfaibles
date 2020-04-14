@@ -64,7 +64,8 @@ func ExcelToTime(excel string) (time.Time, error) {
 	return time.Unix((excelInt-25569)*3600*24, 0), nil
 }
 
-// SliceIndex retourne la position du premier élément qui satisfait le prédicat
+// SliceIndex retourne la position du premier élément qui satisfait le
+// prédicat, -1 si aucun élément n'est trouvé.
 func SliceIndex(limit int, predicate func(i int) bool) int {
 	for i := 0; i < limit; i++ {
 		if predicate(i) {

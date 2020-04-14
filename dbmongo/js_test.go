@@ -10,7 +10,7 @@ import (
 )
 
 func Test_js(t *testing.T) {
-	scriptRE, _ := regexp.Compile(".*[.]sh")
+	scriptNameRegex, _ := regexp.Compile(".*[.]sh")
 
 	files, err := ioutil.ReadDir("js/test/")
 	if err != nil {
@@ -18,7 +18,7 @@ func Test_js(t *testing.T) {
 	}
 
 	for _, f := range files {
-		if scriptRE.MatchString(f.Name()) {
+		if scriptNameRegex.MatchString(f.Name()) {
 			cmd := exec.Command("/bin/bash", f.Name())
 			cmd.Dir = "js/test/"
 
@@ -41,7 +41,7 @@ func cmdTester(cmd *exec.Cmd) error {
 	if err := cmd.Wait(); err != nil {
 		if exiterr, ok := err.(*exec.ExitError); ok {
 			if status, ok := exiterr.Sys().(syscall.WaitStatus); ok {
-				return fmt.Errorf("Error stutus: %v", status.ExitStatus())
+				return fmt.Errorf("Error status: %v", status.ExitStatus())
 			}
 		} else {
 			return fmt.Errorf("cmd.Wait: %v", err.Error())
