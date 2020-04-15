@@ -15,6 +15,8 @@ func reduceHandler(c *gin.Context) {
 		From     string   `json:"from"`
 		To       string   `json:"to"`
 		Types    []string `json:"types"`
+		// Sélection des types de données qui vont être calculés ou recalculés.
+		// Valeurs autorisées pour l'instant: "apart", "all"
 	}
 
 	err := c.ShouldBind(&params)
