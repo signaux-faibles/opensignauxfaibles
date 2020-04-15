@@ -119,7 +119,6 @@ func main() {
 		api.GET("/data/purgeNotCompacted", purgeNotCompactedHandler)
 
 		api.POST("/data/copyScores", copyScores)
-		api.POST("/data/migrateFeatures", migrateFeatures)
 
 		// api.GET("/debug", debug)
 	}
@@ -171,78 +170,4 @@ func copyScores(c *gin.Context) {
 		dest = append(dest, f)
 	}
 	engine.Db.DB.C("Scores").Insert(dest...)
-}
-
-func migrateFeatures(c *gin.Context) {
-
-	type Info struct {
-		Siren   string    `bson:"siren"`
-		Batch   string    `bson:"batch"`
-		Periode time.Time `bson:"periode"`
-	}
-
-	type Object struct {
-		ID    bson.ObjectId `bson:"_id"`
-		Info  Info          `bson:"info"`
-		Value bson.D        `bson:"value"`
-	}
-
-	type NewObject struct {
-		ID    bson.D `bson:"_id"`
-		Value bson.D `bson:"value"`
-	}
-
-	iter := engine.Db.DB.C("Features").Find(bson.M{
-		"info": bson.M{"$exists": 1},
-	}).Iter()
-
-	var f Object
-	var compactRes interface{}
-	maxNumRoutines := 12
-	compactRate := 10000000
-	objectsChan := make(chan Object, maxNumRoutines)
-	objCounter := 0
-
-	for i := 1; i <= maxNumRoutines; i++ {
-		go func() {
-			for current := range objectsChan {
-				var newf NewObject
-				var idToDelete = current.ID
-				var siretValue string
-				for _, v := range current.Value {
-					if v.Name == "siret" {
-						siretValue = v.Value.(string)
-						break
-					}
-				}
-				newf.ID = bson.D{
-					{"batch", current.Info.Batch},
-					{"siret", siretValue},
-					{"periode", current.Info.Periode},
-				}
-				newf.Value = current.Value
-				err := engine.Db.DB.C("Features").Insert(newf)
-				if err != nil {
-					panic(err)
-				}
-				err = engine.Db.DB.C("Features").RemoveId(idToDelete)
-				if err != nil {
-					panic(err)
-				}
-			}
-		}()
-	}
-	for iter.Next(&f) {
-		// Launch the right number of routines
-		objectsChan <- f
-		objCounter++
-		if objCounter%compactRate == 0 {
-			engine.Db.DB.Run(bson.M{"compact": "Features"}, &compactRes)
-			fmt.Println(compactRes)
-		}
-	}
-	close(objectsChan)
-	if err := iter.Close(); err != nil {
-		panic(err)
-	}
 }
