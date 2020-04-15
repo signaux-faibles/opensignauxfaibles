@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"regexp"
@@ -16,54 +17,23 @@ import (
 )
 
 // ReduceOne lance le calcul de Features pour la clé passée en argument
-func ReduceOne(batch AdminBatch, algo string, key, from, to string) error {
-	// éviter les noms d'algo essayant de hacker l'exploration des fonctions ci-dessous
-	isAlphaNum := regexp.MustCompile(`^[A-Za-z0-9]+$`).MatchString
-	if !isAlphaNum(algo) {
-		return errors.New("nom d'algorithme invalide, alphanumérique sans espace exigé")
-	}
-	if algo == "" {
-		return errors.New("paramètre algo obligatoire")
-	}
+func ReduceOne(batch AdminBatch, algo string, key, from, to string, types []string) error {
 
 	if len(key) < 9 && (from == "" && to == "") {
 		return errors.New("key minimal length of 9")
 	}
 
-	functions, err := loadJSFunctions("reduce." + algo)
-
-	naf, err := naf.LoadNAF()
+	scope, err := reduceDefineScope(batch, algo, types)
 	if err != nil {
 		return err
-	}
-
-	scope := bson.M{
-		"date_debut":             batch.Params.DateDebut,
-		"date_fin":               batch.Params.DateFin,
-		"date_fin_effectif":      batch.Params.DateFinEffectif,
-		"serie_periode":          misc.GenereSeriePeriode(batch.Params.DateDebut, batch.Params.DateFin),
-		"serie_periode_annuelle": misc.GenereSeriePeriodeAnnuelle(batch.Params.DateDebut, batch.Params.DateFin),
-		"offset_effectif":        (batch.Params.DateFinEffectif.Year()-batch.Params.DateFin.Year())*12 + int(batch.Params.DateFinEffectif.Month()-batch.Params.DateFin.Month()),
-		"actual_batch":           batch.ID.Key,
-		"naf":                    naf,
-		"f":                      functions,
-		"batches":                GetBatchesID(),
-		"types":                  GetTypes(),
-	}
-
-	job := &mgo.MapReduce{
-		Map:      functions["map"].Code,
-		Reduce:   functions["reduce"].Code,
-		Finalize: functions["finalize"].Code,
-		Out:      bson.M{"replace": "TemporaryCollection"},
-		Scope:    scope,
 	}
 
 	var query bson.M
 	if key != "" {
 		query = bson.M{
 			"_id": bson.M{
-				"$regex": bson.RegEx{Pattern: "^" + key[0:9],
+				"$regex": bson.RegEx{
+					Pattern: "^" + key[0:9],
 					Options: "",
 				},
 			},
@@ -77,81 +47,33 @@ func ReduceOne(batch AdminBatch, algo string, key, from, to string) error {
 			},
 		}
 	} else {
-		return fmt.Errorf("parametre from et to obligatoires")
+		return fmt.Errorf("Les paramètres key, ou la paire de paramètres from et to, sont obligatoires")
 	}
+
+	functions := scope["f"].(map[string]bson.JavaScript)
+	job := &mgo.MapReduce{
+		Map:      functions["map"].Code,
+		Reduce:   functions["reduce"].Code,
+		Finalize: functions["finalize"].Code,
+		Out:      bson.M{"replace": "TemporaryCollection"},
+		Scope:    scope,
+	}
+
 	_, err = Db.DB.C("RawData").Find(query).MapReduce(job, nil)
 
 	if err != nil {
-		fmt.Println(err)
 		return err
 	}
-	pipeline := []bson.M{
-		bson.M{
-			"$unwind": bson.M{
-				"path": "$value",
-				"preserveNullAndEmptyArrays": false,
-			},
-		},
-		bson.M{
-			"$match": bson.M{
-				"value.effectif": bson.M{
-					"$not": bson.M{"$type": 10},
-				},
-			},
-		},
-		bson.M{
-			"$project": bson.M{
-				"_id":   0.0,
-				"info":  "$_id",
-				"value": 1.0,
-			},
-		},
-		bson.M{
-			"$merge": bson.M{
-				"into": bson.M{
-					"coll": "Features_debug",
-				},
-			},
-		},
-	}
-
-	pipe := Db.DB.C("TemporaryCollection").Pipe(pipeline)
-	var result []interface{}
-	err = pipe.AllowDiskUse().All(&result)
-
+	err = reduceFinalAggregation(Db.DB, "TemporaryCollection", viper.GetString("DB"), "Features_debug")
 	return err
 }
 
 // Reduce alimente la base Features
-func Reduce(batch AdminBatch, algo string) error {
-	// éviter les noms d'algo essayant de hacker l'exploration des fonctions ci-dessous
-	isAlphaNum := regexp.MustCompile(`^[A-Za-z0-9]+$`).MatchString
-	if !isAlphaNum(algo) {
-		return errors.New("nom d'algorithme invalide, alphanumérique sans espace exigé")
-	}
-	if algo == "" {
-		return errors.New("paramètre algo obligatoire")
-	}
+func Reduce(batch AdminBatch, algo string, types []string) error {
 
-	functions, err := loadJSFunctions("reduce." + algo)
-
-	naf, err := naf.LoadNAF()
+	scope, err := reduceDefineScope(batch, algo, types)
 	if err != nil {
 		return err
-	}
-
-	scope := bson.M{
-		"date_debut":             batch.Params.DateDebut,
-		"date_fin":               batch.Params.DateFin,
-		"date_fin_effectif":      batch.Params.DateFinEffectif,
-		"serie_periode":          misc.GenereSeriePeriode(batch.Params.DateDebut, batch.Params.DateFin),
-		"serie_periode_annuelle": misc.GenereSeriePeriodeAnnuelle(batch.Params.DateDebut, batch.Params.DateFin),
-		"offset_effectif":        (batch.Params.DateFinEffectif.Year()-batch.Params.DateFin.Year())*12 + int(batch.Params.DateFinEffectif.Month()-batch.Params.DateFin.Month()),
-		"actual_batch":           batch.ID.Key,
-		"naf":                    naf,
-		"f":                      functions,
-		"batches":                GetBatchesID(),
-		"types":                  GetTypes(),
 	}
 
 	chunks, err := ChunkCollection(viper.GetString("DB"), "RawData", viper.GetInt64("chunkByteSize"))
@@ -173,6 +95,7 @@ func Reduce(batch AdminBatch, algo string) error {
 		w.waitGroup.Add(1)
 		dbTemp := "reduce" + strconv.Itoa(i)
 
+		functions := scope["f"].(map[string]bson.JavaScript)
 		job := &mgo.MapReduce{
 			Map:      functions["map"].Code,
 			Reduce:   functions["reduce"].Code,
@@ -200,40 +123,14 @@ func Reduce(batch AdminBatch, algo string) error {
 	db.SetSocketTimeout(720000 * time.Second)
 
 	for _, dbTemp := range tempDBs {
-		pipeline := []bson.M{
-			bson.M{
-				"$unwind": bson.M{
-					"path": "$value",
-					"preserveNullAndEmptyArrays": false,
-				},
-			},
-			bson.M{
-				"$match": bson.M{
-					"value.effectif": bson.M{
-						"$not": bson.M{"$type": 10},
-					},
-				},
-			},
-			bson.M{
-				"$project": bson.M{
-					"_id":   0.0,
-					"info":  "$_id",
-					"value": 1.0,
-				},
-			},
-			bson.M{
-				"$merge": bson.M{
-					"into": bson.M{
-						"coll": "Features",
-						"db":   viper.GetString("DB"),
-					},
-				},
-			},
-		}
 
-		pipe := db.DB(dbTemp).C("TemporaryCollection").Pipe(pipeline)
-		var result []interface{}
-		err = pipe.AllowDiskUse().All(&result)
+		err = reduceFinalAggregation(
+			db.DB(dbTemp),
+			"TemporaryCollection",
+			/*outDatabase = */ viper.GetString("DB"),
+			/*outCollection = */ "Features_"+batch.Name,
+		)
+
 		if err != nil {
 			w.add("errors", 1, -1)
 		} else {
@@ -252,4 +149,141 @@ func Reduce(batch AdminBatch, algo string) error {
 	}
 
 	return nil
+}
+
+func reduceCrossComputations(directoryName string) ([]bson.M, error) {
+	result := []bson.M{}
+	if _, ok := jsFunctions[directoryName]; !ok {
+		return result, errors.New("Map reduce json aggregation steps could not be found for " + directoryName)
+	}
+	for _, v := range jsFunctions[directoryName] {
+		var aggregationStep bson.M
+		err := json.Unmarshal([]byte(v), &aggregationStep) // transform json string into bson.M TODO
+		if err != nil {
+			return nil, err
+		}
+		result = append(result, aggregationStep) //TODO
+	}
+	return result, nil
+}
+
+func reduceFinalAggregation(tempDatabase *mgo.Database, tempCollection, outDatabase, outCollection string) error {
+
+	setStages, err := reduceCrossComputations("crossComputation")
+	if err != nil {
+		return err
+	}
+
+	var pipeline []bson.M
+	pipeline = append(pipeline, []bson.M{
+		bson.M{
+			"$unwind": bson.M{
+				"path": "$value",
+				"preserveNullAndEmptyArrays": false,
+			},
+		},
+		// bson.M{
+		// 	"$match": bson.M{
+		// 		"value.effectif": bson.M{
+		// 			"$not": bson.M{"$type": 10},
+		// 		},
+		// 	},
+		// },
+		bson.M{
+			"$project": bson.M{
+				"_id": bson.D{
+					{"batch", "$_id.batch"},
+					{"siret", "$value.siret"},
+					{"periode", "$_id.periode"},
+				},
+				"value": 1.0,
+			},
+		},
+	}...,
+	)
+
+	// Defining pipeline used to during merge stage
+	mergePipeline := []bson.M{
+		bson.M{
+			"$project": bson.M{
+				"_id": "$_id",
+				"value": bson.M{
+					"$mergeObjects": []string{
+						"$value",
+						"$$new.value",
+					},
+				},
+			},
+		},
+	}
+	mergePipeline = append(mergePipeline, setStages...)
+
+	// Merge stage
+	pipeline = append(pipeline,
+		bson.M{
+			"$merge": bson.M{
+				"into": bson.M{
+					"coll": outCollection,
+					"db":   outDatabase,
+				},
+				"whenMatched": mergePipeline,
+			},
+		},
+	)
+
+	// Apply aggregation
+	pipe := tempDatabase.C(tempCollection).Pipe(pipeline)
+
+	var result []interface{}
+	err = pipe.AllowDiskUse().All(&result)
+	return err
+}
+
+func reduceDefineScope(batch AdminBatch, algo string, types []string) (bson.M, error) {
+
+	// Limiter les caractères de nom d'algo pour éviter de hacker la fonction
+	// loadJSFunctions
+	isAlphaNum := regexp.MustCompile(`^[A-Za-z0-9]+$`).MatchString
+	if !isAlphaNum(algo) {
+		return nil, errors.New("nom d'algorithme invalide, alphanumérique sans espace exigé")
+	}
+
+	if algo == "" {
+		return nil, errors.New("Veuillez spécifier un nom d'algo (par exemple avec l'option algo=algo2)")
+	}
+
+	functions, err := loadJSFunctions("reduce." + algo)
+	if err != nil {
+		return nil, err
+	}
+
+	naf, err := naf.LoadNAF()
+	if err != nil {
+		return nil, err
+	}
+
+	includes := map[string]bool{}
+	if len(types) == 0 {
+		includes["all"] = true
+	} else {
+		for _, data_type := range types {
+			includes[data_type] = true
+		}
+	}
+
+	scope := bson.M{
+		"date_debut":             batch.Params.DateDebut,
+		"date_fin":               batch.Params.DateFin,
+		"date_fin_effectif":      batch.Params.DateFinEffectif,
+		"serie_periode":          misc.GenereSeriePeriode(batch.Params.DateDebut, batch.Params.DateFin),
+		"serie_periode_annuelle": misc.GenereSeriePeriodeAnnuelle(batch.Params.DateDebut, batch.Params.DateFin),
+		"offset_effectif":        (batch.Params.DateFinEffectif.Year()-batch.Params.DateFin.Year())*12 + int(batch.Params.DateFinEffectif.Month()-batch.Params.DateFin.Month()),
+		"actual_batch":           batch.ID.Key,
+		"naf":                    naf,
+		"f":                      functions,
+		"batches":                GetBatchesID(),
+		"types":                  GetTypes(),
+		"includes":               includes,
+	}
+	return scope, nil
 }

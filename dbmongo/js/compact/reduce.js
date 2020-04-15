@@ -96,7 +96,6 @@ function reduce(key, values) {
         ...memory[type]])
     })
 
-
     Object.keys(hashToDelete).forEach(type => {
 
       // 3.a Pour chaque cle supprimee: est-ce qu'elle est bien dans la
