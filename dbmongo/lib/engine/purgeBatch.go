@@ -13,6 +13,10 @@ import (
 // PurgeBatch permet de supprimer un batch dans les objets de RawData
 func PurgeBatch(batchKey string) error {
 
+	// TODO avant de changer clearTempCollections, vérifier que le nettoyage
+	// fonctionne comme attendu
+	var clearTempCollections = false
+
 	functions, err := loadJSFunctions("purgeBatch")
 	if err != nil {
 		return err
@@ -72,31 +76,33 @@ func PurgeBatch(batchKey string) error {
 	db, _ := mgo.Dial(viper.GetString("DB_DIAL"))
 	db.SetSocketTimeout(720000 * time.Second)
 
-	// for _, tempDbName := range tempDbNames {
-	// 	pipeline := []bson.M{
-	// 		bson.M{
-	// 			"$merge": bson.M{
-	// 				"into": bson.M{
-	// 					"coll":        "RawData",
-	// 					"db":          viper.GetString("DB"),
-	// 					"whenMatched": "merge",
-	// 				},
-	// 			},
-	// 		},
-	// 	}
+	if clearTempCollections {
+		for _, tempDbName := range tempDbNames {
+			pipeline := []bson.M{
+				bson.M{
+					"$merge": bson.M{
+						"into": bson.M{
+							"coll":        "RawData",
+							"db":          viper.GetString("DB"),
+							"whenMatched": "merge",
+						},
+					},
+				},
+			}
 
-	// 	pipe := db.DB(tempDbName).C("TemporaryCollection").Pipe(pipeline)
-	// 	var result []interface{}
-	// 	err = pipe.AllowDiskUse().All(&result)
-	// 	if err != nil {
-	// 		w.add("errors", 1, -1)
-	// 	} else {
-	// 		err = db.DB(tempDbName).DropDatabase()
-	// 		if err != nil {
-	// 			w.add("errors", 1, -1)
-	// 		}
-	// 	}
-	// }
+			pipe := db.DB(tempDbName).C("TemporaryCollection").Pipe(pipeline)
+			var result []interface{}
+			err = pipe.AllowDiskUse().All(&result)
+			if err != nil {
+				w.add("errors", 1, -1)
+			} else {
+				err = db.DB(tempDbName).DropDatabase()
+				if err != nil {
+					w.add("errors", 1, -1)
+				}
+			}
+		}
+	}
 
 	db.Close()
 
