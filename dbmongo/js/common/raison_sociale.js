@@ -7,7 +7,7 @@ function raison_sociale  (
   prenom3_unite_legale,
   prenom4_unite_legale
 ){
-
+/*
   if (!nom_usage_unite_legale){
     var nom_usage_unite_legale = ''
   } else {
@@ -21,4 +21,5 @@ function raison_sociale  (
       (prenom4_unite_legale || '') + ' ').trim() + '/'
 
   return(raison_sociale)
+*/
 }
