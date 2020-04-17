@@ -3,8 +3,8 @@ function map () {
 
   if (v.scope == "etablissement") {
     let o = f.outputs(v, serie_periode)
-    let output_array = o[0]
-    let output_indexed = o[1]
+    let output_array = o[0] // [ OutputValue ] // in chronological order
+    let output_indexed = o[1] // { Periode -> OutputValue } // OutputValue: cf outputs()
 
     // Les periodes qui nous interessent, triées
     var periodes = Object.keys(output_indexed).sort((a,b) => (a >= b))
