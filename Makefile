@@ -1,7 +1,8 @@
 .DEFAULT_GOAL := help
 
 test: ## Run some tests
-	@npx typescript dbmongo/js/common/raison_sociale.ts
+	@npx typescript dbmongo/js/common/raison_sociale.ts # output: dbmongo/js/common/raison_sociale.js
+	@sed -i '' 's/  / /g' dbmongo/js/common/raison_sociale.js
 	@cd dbmongo/js/test/ && ./test_common.sh
 	@echo "✅ Tests passed."
 
