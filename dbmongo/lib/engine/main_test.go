@@ -1,10 +1,11 @@
 package engine
 
 import (
-	"dbmongo/lib/engine"
 	"errors"
 	"strconv"
 	"testing"
+
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 
 	"github.com/signaux-faibles/gournal"
 )
