@@ -30,14 +30,14 @@ jobs:
             dep ensure
         fi
 
+    - name: Generate jsFunctions.go
+      working-directory: dbmongo/lib/engine
+      run: go generate -x
+    
     - name: Build
       working-directory: dbmongo
-      run: |
-        go generate -x ./lib/engine/ # to generate jsFunctions.go
-        go build -v .
+      run: go build -v .
     
     - name: Test
       working-directory: dbmongo
-      run: |
-        cd dbmongo/
-        go test -v
+      run: go test -v
