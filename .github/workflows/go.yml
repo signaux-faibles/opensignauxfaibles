@@ -31,15 +31,12 @@ jobs:
             dep ensure
         fi
 
-    - name: Generate jsFunctions
-      run: |
-        cd dbmongo/
-        cd lib/engine/
-        go generate
-    
     - name: Build
       run: |
         cd dbmongo/
+        cd lib/engine/
+        go generate -x # to generate jsFunctions.go
+        cd -
         go build -v .
     
     - name: Test
