@@ -30,7 +30,7 @@ function runMongoMap (testData, mapFct) {
 
 // Generate a realistic test data set
 const testData = makeTestData({
-  ISODate: (dateString) => new Date(dateString),
+  ISODate: (dateString) => new Date(dateString.replace('+0000', '+00:00')), // make sure that timezone format complies with the spec
   NumberInt: (int) => int,
 });
 
