@@ -1,5 +1,17 @@
+// Context: this golden-file-based test runner was designed to prevent
+// regressions on the JS functions (common + algo2) used to compute the
+// "Features" collection from the "RawData" collection.
+// 
+// It requires the JS functions from common + algo2 (notably: map()),
+// and a makeTestData() function to generate a realistic test data set.
+//
+// => Please execute ./test_map_reduce_algo2.sh to fill these requirements
+// and run the tests.
 
+// Allow f.*() function calls to resolve to globally-defined functions 
 f = this;
+
+// Define global parameters that are required by JS functions
 actual_batch = "2002_1";
 date_debut = new Date("2014-01-01")
 date_fin = new Date("2016-01-01")
@@ -7,11 +19,12 @@ serie_periode = f.generatePeriodSerie(date_debut, date_fin);
 includes = {"all": true}
 offset_effectif = 2
 
-const notreMap = (testData) => {
-  const results = [];
-  emit = (key, value) => results.push({"_id": key, value});
-  testData.forEach(entrepriseOuEtablissement => map.call(entrepriseOuEtablissement)); // will call emit an inderminate number of times
-  // testData contains _id and value properties. testData is passed as this
+// Run a map() function designed for MongoDB, i.e. that calls emit() an
+// inderminate number of times, instead of returning one value per iteration.
+function runMongoMap (testData, mapFct) {
+  const results = []; // holds all the { _id, value } objects emitted from mapFct()
+  emit = (key, value) => results.push({"_id": key, value}); // define a emit() function that mapFct() can call
+  testData.forEach(entrepriseOuEtablissement => mapFct.call(entrepriseOuEtablissement)); // entrepriseOuEtablissement will be accessible through `this`, in mapFct()
   return results;
 };
 
@@ -21,4 +34,5 @@ const testData = makeTestData({
   NumberInt: (int) => int,
 });
 
-print(JSON.stringify(notreMap(testData), null, 2));
+// Print the output of the global map() function
+print(JSON.stringify(runMongoMap(testData, mapFct), null, 2));
