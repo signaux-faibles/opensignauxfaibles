@@ -1,7 +1,10 @@
-function map(entrepriseData){
 
 
-  return entrepriseData;
-}
+const notreMap = (testData) => {
+  const results = [];
+  emit = (result) => results.push(result);
+  map(testData); // will call emit an inderminate number of times
+  return results;
+};
 
-debug(JSON.stringify(map(testData), null, 2));
+debug(JSON.stringify(notreMap(testData), null, 2));
