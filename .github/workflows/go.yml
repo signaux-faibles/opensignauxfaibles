@@ -24,7 +24,6 @@ jobs:
 
     - name: Get dependencies
       run: |
-        cd dbmongo/
         go get -v -t -d ./...
         if [ -f Gopkg.toml ]; then
             curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
@@ -34,9 +33,7 @@ jobs:
     - name: Build
       run: |
         cd dbmongo/
-        cd lib/engine/
-        go generate -x # to generate jsFunctions.go
-        cd -
+        go generate -x ./lib/engine/ # to generate jsFunctions.go
         go build -v .
     
     - name: Test
