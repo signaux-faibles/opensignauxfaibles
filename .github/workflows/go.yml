@@ -21,6 +21,7 @@ jobs:
 
     - name: Check out code into the Go module directory
       run: |
+        export GO111MODULE="on" # see https://github.com/kubernetes/client-go/blob/master/INSTALL.md#installing-client-go
         go get github.com/signaux-faibles/opensignauxfaibles@${GITHUB_REF}
 
     - name: Build
