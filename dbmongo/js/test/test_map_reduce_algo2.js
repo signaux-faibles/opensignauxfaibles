@@ -10,9 +10,9 @@ offset_effectif = 2
 const notreMap = (testData) => {
   const results = [];
   emit = (key, value) => results.push({"_id": key, value});
-  map.call(testData); // will call emit an inderminate number of times
+  testData.forEach(entrepriseOuEtablissement => map.call(entrepriseOuEtablissement)); // will call emit an inderminate number of times
   // testData contains _id and value properties. testData is passed as this
   return results;
 };
 
-print(JSON.stringify(notreMap(testData[0]), null, 2));
+print(JSON.stringify(notreMap(testData), null, 2));
