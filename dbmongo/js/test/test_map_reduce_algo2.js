@@ -35,4 +35,4 @@ const testData = makeTestData({
 });
 
 // Print the output of the global map() function
-print(JSON.stringify(runMongoMap(testData, mapFct), null, 2));
+print(JSON.stringify(runMongoMap(testData, map), null, 2));
