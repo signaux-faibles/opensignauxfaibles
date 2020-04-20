@@ -15,4 +15,10 @@ const notreMap = (testData) => {
   return results;
 };
 
+// Generate a realistic test data set
+const testData = makeTestData({
+  ISODate: (dateString) => new Date(dateString),
+  NumberInt: (int) => int,
+});
+
 print(JSON.stringify(notreMap(testData), null, 2));
