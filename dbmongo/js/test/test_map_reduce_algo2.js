@@ -1,6 +1,7 @@
 function map(entrepriseData){
 
+
   return entrepriseData;
 }
 
-debug("hello");
+debug(JSON.stringify(map(testData), null, 2));
