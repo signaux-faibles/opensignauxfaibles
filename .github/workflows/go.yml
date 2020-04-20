@@ -31,12 +31,13 @@ jobs:
         fi
 
     - name: Build
+      working-directory: dbmongo
       run: |
-        cd dbmongo/
         go generate -x ./lib/engine/ # to generate jsFunctions.go
         go build -v .
     
     - name: Test
+      working-directory: dbmongo
       run: |
         cd dbmongo/
         go test -v
