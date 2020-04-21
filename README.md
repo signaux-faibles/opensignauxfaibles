@@ -12,7 +12,7 @@ Solution logicielle pour la détection anticipée d'entreprises en difficulté
 ## Installation
 
 ```bash
-$ go get -d -u github.com/signaux-faibles/opensignauxfaibles/dbmongo
+$ go get -v -d -u github.com/signaux-faibles/opensignauxfaibles/dbmongo
 $ cd $(go env GOPATH)/src/github.com/signaux-faibles/opensignauxfaibles/dbmongo
 $ cd lib/engine
 $ go generate # pour générer jsFunctions
