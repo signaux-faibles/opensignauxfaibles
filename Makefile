@@ -1,7 +1,9 @@
 .DEFAULT_GOAL := help
 
 test: ## Run some tests
-	@cd dbmongo/lib/engine && go generate -x # output: dbmongo/js/common/raison_sociale.js
+	@echo "Transpiling TypeScript files, and generating the jsFunctions.go bundle..."
+	@cd dbmongo/lib/engine && go generate -x
+	@echo "Running tests against the JS files (including the ones transpiled from TS)..."
 	@cd dbmongo/js/test/ && ./test_common.sh
 	@echo "✅ Tests passed."
 

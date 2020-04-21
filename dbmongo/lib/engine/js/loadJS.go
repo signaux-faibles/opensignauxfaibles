@@ -57,7 +57,7 @@ func bundleJsFunctions() {
 }
 
 func transpileTsFunctions() {
-	// TODO: convert all TS files
+	// TODO: also transpile any other TS files
 	cmd := exec.Command("npx", "typescript", "../../js/common/raison_sociale.ts") // output: dbmongo/js/common/raison_sociale.js
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
