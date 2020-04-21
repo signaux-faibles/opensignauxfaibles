@@ -35,7 +35,10 @@ jobs:
       run: |
         go generate -x
         # next, we copy the generated jsFunctions.go file to $GOPATH, so go build can find it
-        cp jsFunctions.go $(go env GOPATH)/src/github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine/
+        DEST=$(go env GOPATH)/src/github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine
+        echo "Copying jsFunctions.go to ${DEST}..."
+        cp jsFunctions.go ${DEST}/
+        cat ${DEST}/jsFunctions.go
     
     - name: Build
       working-directory: dbmongo
