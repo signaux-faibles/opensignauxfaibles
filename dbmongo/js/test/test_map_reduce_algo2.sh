@@ -1,12 +1,23 @@
-mkdir ./test_data_algo2
-scp stockage:/home/centos/opensignauxfaibles_tests/reduce_test_data.json ./test_data_algo2/
+# This golden-file-based test runner was designed to prevent
+# regressions on the JS functions (common + algo2) used to compute the
+# "Features" collection from the "RawData" collection.
 
-# Tests here
+# Download realistic data set
+TMP_PATH="./test_data_algo2"
+mkdir ${TMP_PATH}
+scp stockage:/home/centos/opensignauxfaibles_tests/reduce_test_data.json ${TMP_PATH}/
 
-echo "ISODate = (dateString) => new Date(dateString); NumberInt = (int) => int; testData = $(cat ./test_data_algo2/reduce_test_data.json)" > ./test_data_algo2/reduce_test_data.js
-cat ../common/*.js >./test_data_algo2/jsFunctions.js
-cat ../reduce.algo2/*.js >>./test_data_algo2/jsFunctions.js
-jsc ./test_data_algo2/reduce_test_data.js ./test_data_algo2/jsFunctions.js ./test_map_reduce_algo2.js > ./test_data_algo2/stdout.log
+# Prepare test data set
+JSON_TEST_DATASET="$(cat ./test_data_algo2/reduce_test_data.json)"
+echo "makeTestData = ({ ISODate, NumberInt }) => (${JSON_TEST_DATASET});" \
+  > ${TMP_PATH}/reduce_test_data.js
+
+# Run tests
+jsc ${TMP_PATH}/reduce_test_data.js ../common/*.js ../reduce.algo2/*.js ./test_map_reduce_algo2.js \
+  > ${TMP_PATH}/stdout.log
+cat ${TMP_PATH}/stdout.log
+
+# TODO: compare stdout.log with golden file, return non-zero exit code if any difference is found
 
 # Clean up
-# rm -rf ./test_data_algo2
+rm -rf ${TMP_PATH}
