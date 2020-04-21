@@ -25,20 +25,14 @@ jobs:
     - name: Get dependencies
       run: |
         go get -v -t -d ./...
-        # if [ -f Gopkg.toml ]; then
-        #     curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-        #     dep ensure
-        # fi
 
     - name: Generate jsFunctions.go
       working-directory: dbmongo/lib/engine
       run: |
         go generate -x
-        # next, we copy the generated jsFunctions.go file to $GOPATH, so go build can find it
         DEST=$(go env GOPATH)/src/github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine
-        echo "Copying jsFunctions.go to ${DEST}..."
+        echo "Copying the generated jsFunctions.go to ${DEST}, so go build can find it..."
         cp jsFunctions.go ${DEST}/
-        cat ${DEST}/jsFunctions.go
     
     - name: Build
       working-directory: dbmongo
