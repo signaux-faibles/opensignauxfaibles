@@ -9,8 +9,6 @@ import (
 	"github.com/signaux-faibles/gournal"
 )
 
-//go:generate go run js/loadJS.go
-
 // Db connecteur exportable
 var Db DB
 
