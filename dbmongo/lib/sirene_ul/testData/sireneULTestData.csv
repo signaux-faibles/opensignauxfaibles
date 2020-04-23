@@ -1,28 +1,4 @@
-
-nouveau fichier : dbmongo/lib/apconso/testData/apconsoTestData.csv
-	nouveau fichier : dbmongo/lib/apconso/testData/expectedApconsoMD5.csv
-	nouveau fichier : dbmongo/lib/apdemande/testData/apdemandeTestData.csv
-	nouveau fichier : dbmongo/lib/apdemande/testData/expectedApdemandeMD5.csv
-	nouveau fichier : dbmongo/lib/diane/testData/dianeTestData.csv
-	nouveau fichier : dbmongo/lib/diane/testData/expectedDianeMD5.csv
-	nouveau fichier : dbmongo/lib/marshal/testData/test1_md5.csv
-	nouveau fichier : dbmongo/lib/marshal/testData/test2_md5.csv
-	nouveau fichier : dbmongo/lib/reporder/testData/expectedReporderMD5.csv
-	nouveau fichier : dbmongo/lib/reporder/testData/reporderTestData.csv
-	nouveau fichier : dbmongo/lib/sirene/testData/expectedMD5.csv
-	nouveau fichier : dbmongo/lib/sirene/testData/sireneTestData.csv
-	nouveau fichier : dbmongo/lib/sirene_ul/testData/expectedMD5.csv
-	nouveau fichier : dbmongo/lib/sirene_ul/testData/sireneULTestData.csv
-	nouveau fichier : dbmongo/lib/urssaf/testData/ccsfTestData.csv
-	nouveau fichier : dbmongo/lib/urssaf/testData/comptesTestData.csv
-	nouveau fichier : dbmongo/lib/urssaf/testData/cotisationTestData.csv
-	nouveau fichier : dbmongo/lib/urssaf/testData/debitTestData.csv
-	nouveau fichier : dbmongo/lib/urssaf/testData/delaiTestData.csv
-	nouveau fichier : dbmongo/lib/urssaf/testData/effectifTestData.csv
-	nouveau fichier : dbmongo/lib/urssaf/testData/expectedCcsfMD5.csv
-	nouveau fichier : dbmongo/lib/urssaf/testData/expectedCotisationMD5.csv
-	nouveau fichier : dbmongo/lib/urssaf/testData/expectedDebitMD5.csv
-	nouveau fichier : dbmongo/lib/urssaf/testData/expectedDelaiMD5.csv
-	nouveau fichier : dbmongo/lib/urssaf/testData/expectedEffectifMD5.csv
-	nouveau fichier : dbmongo/lib/urssaf/testData/expectedProcolMD5.csv
-	nouveau fichier : dbmongo/lib/urssaf/testData/procolTestData.csv
+siren,statutDiffusionUniteLegale,unitePurgeeUniteLegale,dateCreationUniteLegale,sigleUniteLegale,sexeUniteLegale,prenom1UniteLegale,prenom2UniteLegale,prenom3UniteLegale,prenom4UniteLegale,prenomUsuelUniteLegale,pseudonymeUniteLegale,identifiantAssociationUniteLegale,trancheEffectifsUniteLegale,anneeEffectifsUniteLegale,dateDernierTraitementUniteLegale,nombrePeriodesUniteLegale,categorieEntreprise,anneeCategorieEntreprise,dateDebut,etatAdministratifUniteLegale,nomUniteLegale,nomUsageUniteLegale,denominationUniteLegale,denominationUsuelle1UniteLegale,denominationUsuelle2UniteLegale,denominationUsuelle3UniteLegale,categorieJuridiqueUniteLegale,activitePrincipaleUniteLegale,nomenclatureActivitePrincipaleUniteLegale,nicSiegeUniteLegale,economieSocialeSolidaireUniteLegale,caractereEmployeurUniteLegale
+138426539,h,,1999-11-11,,f,cuhgjdp,,,,vaghuyy,,,,,1999-12-03T05:04:95,2,vrx,2007,2005-01-02,t,jjqcmkg,,,,,,5465,41.19o,rmtzcw3,64336,,a
+789211558,i,,1999-10-25,,v,ajfwprw-qmxobv,,,,wjyyydf-vnlgte,,,,,1999-05-20T21:02:02,8,,,1999-01-31,u,fvxmjl,,,,,,5258,71.06l,cxmdbn3,70480,,c
+238307776,c,aljg,1964-01-01,,h,wwdsrst,,,,mojtlzw,,,,,,7,,,2015-01-18,j,nduxdzbou,,,,,,4263,97.90,poa,33826,,m
