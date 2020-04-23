@@ -26,7 +26,8 @@ jobs:
       working-directory: dbmongo/js/test
       run: |
         sudo apt-get update
-        sudo apt-get install libjavascriptcoregtk-3.0-bin
+        # sudo apt-get install libjavascriptcoregtk-3.0-bin
+        sudo apt-get install libjavascriptcoregtk-4.0-18
         jsc ../public/*.js ../common/*.js public/lib_public.js objects.js public/test_public.js
 
     - name: Get dependencies
