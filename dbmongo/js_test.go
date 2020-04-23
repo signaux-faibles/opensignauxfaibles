@@ -24,7 +24,7 @@ func Test_js(t *testing.T) {
 
 			err := cmdTester(cmd)
 			if err != nil {
-				t.Errorf("erreur levée par %v", f.Name())
+				t.Errorf("erreur levée par %v: "+err.Error(), f.Name())
 			} else {
 				t.Logf("execution de %v ok", f.Name())
 			}
