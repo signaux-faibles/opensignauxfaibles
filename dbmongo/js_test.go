@@ -19,12 +19,12 @@ func Test_js(t *testing.T) {
 
 	for _, f := range files {
 		if scriptNameRegex.MatchString(f.Name()) {
-			cmd := exec.Command("/bin/bash", f.Name())
+			cmd := exec.Command("/bin/sh", f.Name())
 			cmd.Dir = "js/test/"
 
 			err := cmdTester(cmd)
 			if err != nil {
-				t.Errorf("erreur levée par %v", f.Name())
+				t.Errorf("erreur levée par %v: "+err.Error(), f.Name())
 			} else {
 				t.Logf("execution de %v ok", f.Name())
 			}

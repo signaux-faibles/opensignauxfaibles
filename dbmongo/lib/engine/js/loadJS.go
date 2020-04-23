@@ -26,7 +26,7 @@ func main() {
 
 	// For each folder
 	for _, folder := range folders {
-		if folder.IsDir() && folder.Name() != "tests" {
+		if folder.IsDir() && !strings.HasPrefix(folder.Name(), "test") {
 
 			out.Write([]byte(`"` + folder.Name() + `"` + ":{\n"))
 

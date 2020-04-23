@@ -1,5 +1,6 @@
 _*
 .*
+!.github
 !.gitignore
 dist
 dist.tar.xz
