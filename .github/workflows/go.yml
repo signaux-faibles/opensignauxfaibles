@@ -29,7 +29,9 @@ jobs:
         # sudo apt-get install libjavascriptcoregtk-3.0-bin
         sudo apt-get install libjavascriptcoregtk-4.0-bin
         echo "jsc"
-        jsc ../compact/currentState.js compact/test_current_state.js
+        jsc ../compact/currentState.js ../compact/reduce.js ./testing.js ./compact/test_reduce.js
+        echo "jsc2"
+        jsc ../compact/currentState.js ../compact/finalize.js ../compact/complete_reporder.js ./testing.js ./compact/test_finalize.js
         echo "./test_compact.sh"
         chmod +x ./test_compact.sh
         ./test_compact.sh
