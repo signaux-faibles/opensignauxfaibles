@@ -9,6 +9,10 @@ Solution logicielle pour la détection anticipée d'entreprises en difficulté
 - frontend vuetify
 - mongodb
 
+## Dépendances / pré-requis
+
+- `npx` (installé avec [Node.js](https://nodejs.org/)), pour lancer la transpilation des fichiers TypeScript vers JavaScript
+
 ## Installation
 
 ```bash

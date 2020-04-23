@@ -96,6 +96,7 @@ func Reduce(batch AdminBatch, algo string, types []string) error {
 		dbTemp := "reduce" + strconv.Itoa(i)
 
 		functions := scope["f"].(map[string]bson.JavaScript)
+		// Injection des fonctions JavaScript pour exécution par MongoDB
 		job := &mgo.MapReduce{
 			Map:      functions["map"].Code,
 			Reduce:   functions["reduce"].Code,
@@ -178,7 +179,7 @@ func reduceFinalAggregation(tempDatabase *mgo.Database, tempCollection, outDatab
 	pipeline = append(pipeline, []bson.M{
 		bson.M{
 			"$unwind": bson.M{
-				"path": "$value",
+				"path":                       "$value",
 				"preserveNullAndEmptyArrays": false,
 			},
 		},

@@ -5,13 +5,14 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 )
 
 // Reads all .js files in the current folder
 // and encodes them as strings maps in jsFunctions.go
-func main() {
+func bundleJsFunctions() {
 	jsRootDir := filepath.Join("..", "..", "js")
 	folders, err := ioutil.ReadDir(jsRootDir)
 	if err != nil {
@@ -53,4 +54,20 @@ func main() {
 		}
 	}
 	out.Write([]byte("}\n"))
+}
+
+func transpileTsFunctions() {
+	// TODO: also transpile any other TS files
+	cmd := exec.Command("npx", "typescript", "../../js/common/raison_sociale.ts") // output: dbmongo/js/common/raison_sociale.js
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err := cmd.Run()
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func main() {
+	transpileTsFunctions() // convert *.ts files to .js
+	bundleJsFunctions()    // bundle *.js files to jsFunctions.go
 }
