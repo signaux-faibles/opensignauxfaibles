@@ -22,12 +22,6 @@ jobs:
     - name: Check out code into the Go module directory
       uses: actions/checkout@v2
 
-    - name: run jsc
-      working-directory: dbmongo/js/test
-      run: |
-        sudo apt-get update -y
-        sudo apt-get install -y libjavascriptcoregtk-4.0-bin
-
     - name: Get dependencies
       run: |
         go get -v -t -d ./...
@@ -43,6 +37,11 @@ jobs:
     - name: Build
       working-directory: dbmongo
       run: go build -v .
+
+    - name: Install jsc (for tests)
+      run: |
+        sudo apt-get update -y
+        sudo apt-get install -y libjavascriptcoregtk-4.0-bin
 
     - name: Test dbmongo
       working-directory: dbmongo

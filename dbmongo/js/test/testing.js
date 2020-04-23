@@ -9,14 +9,10 @@ function compare(a, b) {
 }
 
 function compareIgnoreRandom(a, b) {
-  print('--- compareIgnoreRandom:');
-  print('a:', typeof a, a);
-  print('b:', typeof b, b);
   if (Object.keys(a).length != Object.keys(b).length){
     return false
   }
   var equal = Object.keys(a).every(function(k) {
-    print('- key:', k)
     return(k == "random_order" || // Ignore random numbers
       JSON.stringify(a[k]) == JSON.stringify(b[k]) || //Compare exact match
       compareIgnoreRandom(a[k], b[k])) //Recursive call to compare if any random_order
