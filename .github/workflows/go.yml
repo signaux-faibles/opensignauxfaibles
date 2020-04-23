@@ -22,6 +22,9 @@ jobs:
     - name: Check out code into the Go module directory
       uses: actions/checkout@v2
 
+    - name: run jsc
+      run: jsc -e "print(1+1)"
+
     - name: Get dependencies
       run: |
         go get -v -t -d ./...
