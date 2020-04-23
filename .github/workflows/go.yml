@@ -26,15 +26,10 @@ jobs:
       working-directory: dbmongo/js/test
       run: |
         sudo apt-get update -y
-        # sudo apt-get install libjavascriptcoregtk-3.0-bin
         sudo apt-get install -y libjavascriptcoregtk-4.0-bin
-        echo "jsc"
-        jsc ../compact/currentState.js ../compact/reduce.js ./testing.js ./compact/test_reduce.js
-        echo "jsc2"
-        TZ=CET jsc ../compact/currentState.js ../compact/finalize.js ../compact/complete_reporder.js ./testing.js ./compact/test_finalize.js
         echo "./test_compact.sh"
         chmod +x ./test_compact.sh
-        ./test_compact.sh
+        TZ=CET ./test_compact.sh
 
     - name: Get dependencies
       run: |
@@ -54,7 +49,7 @@ jobs:
 
     - name: Test dbmongo
       working-directory: dbmongo
-      run: go test -v
+      run: TZ=CET go test -v
 
     - name: Test engine
       working-directory: dbmongo/lib/engine
