@@ -1,0 +1,28 @@
+
+nouveau fichier : dbmongo/lib/apconso/testData/apconsoTestData.csv
+	nouveau fichier : dbmongo/lib/apconso/testData/expectedApconsoMD5.csv
+	nouveau fichier : dbmongo/lib/apdemande/testData/apdemandeTestData.csv
+	nouveau fichier : dbmongo/lib/apdemande/testData/expectedApdemandeMD5.csv
+	nouveau fichier : dbmongo/lib/diane/testData/dianeTestData.csv
+	nouveau fichier : dbmongo/lib/diane/testData/expectedDianeMD5.csv
+	nouveau fichier : dbmongo/lib/marshal/testData/test1_md5.csv
+	nouveau fichier : dbmongo/lib/marshal/testData/test2_md5.csv
+	nouveau fichier : dbmongo/lib/reporder/testData/expectedReporderMD5.csv
+	nouveau fichier : dbmongo/lib/reporder/testData/reporderTestData.csv
+	nouveau fichier : dbmongo/lib/sirene/testData/expectedMD5.csv
+	nouveau fichier : dbmongo/lib/sirene/testData/sireneTestData.csv
+	nouveau fichier : dbmongo/lib/sirene_ul/testData/expectedMD5.csv
+	nouveau fichier : dbmongo/lib/sirene_ul/testData/sireneULTestData.csv
+	nouveau fichier : dbmongo/lib/urssaf/testData/ccsfTestData.csv
+	nouveau fichier : dbmongo/lib/urssaf/testData/comptesTestData.csv
+	nouveau fichier : dbmongo/lib/urssaf/testData/cotisationTestData.csv
+	nouveau fichier : dbmongo/lib/urssaf/testData/debitTestData.csv
+	nouveau fichier : dbmongo/lib/urssaf/testData/delaiTestData.csv
+	nouveau fichier : dbmongo/lib/urssaf/testData/effectifTestData.csv
+	nouveau fichier : dbmongo/lib/urssaf/testData/expectedCcsfMD5.csv
+	nouveau fichier : dbmongo/lib/urssaf/testData/expectedCotisationMD5.csv
+	nouveau fichier : dbmongo/lib/urssaf/testData/expectedDebitMD5.csv
+	nouveau fichier : dbmongo/lib/urssaf/testData/expectedDelaiMD5.csv
+	nouveau fichier : dbmongo/lib/urssaf/testData/expectedEffectifMD5.csv
+	nouveau fichier : dbmongo/lib/urssaf/testData/expectedProcolMD5.csv
+	nouveau fichier : dbmongo/lib/urssaf/testData/procolTestData.csv
