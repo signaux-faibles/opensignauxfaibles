@@ -27,9 +27,6 @@ jobs:
       run: |
         sudo apt-get update -y
         sudo apt-get install -y libjavascriptcoregtk-4.0-bin
-        echo "./test_compact.sh"
-        chmod +x ./test_compact.sh
-        TZ=CET ./test_compact.sh
 
     - name: Get dependencies
       run: |
@@ -49,7 +46,7 @@ jobs:
 
     - name: Test dbmongo
       working-directory: dbmongo
-      run: TZ=CET go test -v
+      run: TZ=CET go test -v # includes js_test.go, which relies on Date comparisons in the CET timezone
 
     - name: Test engine
       working-directory: dbmongo/lib/engine
