@@ -38,7 +38,12 @@ jobs:
       working-directory: dbmongo
       run: go build -v .
     
-    - name: Test
+    - name: Test dbmongo
       working-directory: dbmongo
       run: go test -v
-      # TODO: also run tests from dbmongo/ (we should make sure they can pass, first)
+
+    - name: Test engine
+      working-directory: dbmongo/lib/engine
+      run: go test -v
+      
+      # TODO: run all tests, with $ go test -v ./...
