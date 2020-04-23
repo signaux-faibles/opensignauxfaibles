@@ -28,7 +28,11 @@ jobs:
         sudo apt-get update
         # sudo apt-get install libjavascriptcoregtk-3.0-bin
         sudo apt-get install libjavascriptcoregtk-4.0-bin
-        jsc ../public/*.js ../common/*.js public/lib_public.js objects.js public/test_public.js
+        echo "jsc"
+        jsc ../compact/currentState.js compact/test_current_state.js
+        echo "./test_compact.sh"
+        chmod +x ./test_compact.sh
+        ./test_compact.sh
 
     - name: Get dependencies
       run: |
