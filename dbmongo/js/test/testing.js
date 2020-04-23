@@ -9,6 +9,9 @@ function compare(a, b) {
 }
 
 function compareIgnoreRandom(a, b) {
+  print('--- compareIgnoreRandom:');
+  print('a:', typeof a, a);
+  print('b:', typeof b, b);
   if (Object.keys(a).length != Object.keys(b).length){
     return false
   }
