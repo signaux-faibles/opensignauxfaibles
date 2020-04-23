@@ -25,10 +25,9 @@ jobs:
     - name: run jsc
       working-directory: dbmongo/js/test
       run: |
-        sudo apt-get update
+        sudo apt-get update -y
         # sudo apt-get install libjavascriptcoregtk-3.0-bin
-        # sudo apt-get install libjavascriptcoregtk-4.0-bin
-        sudo apt-get install libjavascriptcoregtk-4.0-bin_2.20
+        sudo apt-get install -y libjavascriptcoregtk-4.0-bin
         echo "jsc"
         jsc ../compact/currentState.js ../compact/reduce.js ./testing.js ./compact/test_reduce.js
         echo "jsc2"
