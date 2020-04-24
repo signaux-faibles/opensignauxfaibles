@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"log"
 	"strconv"
+	"strings"
 	"testing"
 	"time"
 
@@ -78,18 +79,19 @@ func TestParserTupleOutput(
 
 	engine.DiscardEvents(events)
 
-	actual := []byte{}
+	actualJsons := []string{}
 	for tuple := range tuples {
 		t.Log(tuple)
 		json, err := engine.GetJson(tuple)
 		if err != nil {
 			log.Fatal(err)
 		}
-		actual = append(actual, json...)
+		actualJsons = append(actualJsons, string(json))
 	}
 
+	actual := "[" + strings.Join(actualJsons, ",") + "]"
 	if update {
-		ioutil.WriteFile(goldenFile, actual, 0644)
+		ioutil.WriteFile(goldenFile, []byte(actual), 0644)
 	}
 
 	expected, err := ioutil.ReadFile(goldenFile)
