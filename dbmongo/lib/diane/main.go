@@ -145,6 +145,11 @@ func Parser(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, ch
 			reader.LazyQuotes = true
 			cmd.Start()
 
+			_, err = reader.Read() // Discard header
+			if err != nil {
+				event.Critical(tracker.Report("fatalError"))
+				break
+			}
 			for {
 				row, err := reader.Read()
 				tracker.Error(err)
@@ -154,7 +159,6 @@ func Parser(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, ch
 					event.Critical(tracker.Report("fatalError"))
 					break
 				}
-
 				diane := Diane{}
 
 				if len(row) >= 83 {
