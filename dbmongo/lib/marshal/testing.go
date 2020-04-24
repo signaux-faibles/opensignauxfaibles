@@ -2,6 +2,7 @@ package marshal
 
 import (
 	"io/ioutil"
+	"log"
 	"strconv"
 	"testing"
 	"time"
@@ -79,7 +80,11 @@ func TestParserTupleOutput(
 	actual := []byte{}
 	for tuple := range tuples {
 		t.Log(tuple)
-		actual = append(actual, engine.GetMD5(tuple)...)
+		json, err := engine.GetJson(tuple)
+		if err != nil {
+			log.Fatal(err)
+		}
+		actual = append(actual, json...)
 	}
 
 	if update {
