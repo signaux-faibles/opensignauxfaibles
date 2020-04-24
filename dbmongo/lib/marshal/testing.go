@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
+	"github.com/stretchr/testify/assert"
 )
 
 func compareFields(field1 Field, field2 Field) string {
@@ -95,7 +96,7 @@ func TestParserTupleOutput(
 	if err != nil {
 		t.Fatal("Could not open golden file" + err.Error())
 	}
-	if string(actual) != string(expected) {
-		t.Error("Parsed " + parserType + " is not as expected")
-	}
+
+	assert.Equal(t, string(expected), string(actual))
+
 }
