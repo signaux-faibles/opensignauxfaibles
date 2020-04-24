@@ -12,7 +12,7 @@ import (
 var update = flag.Bool("update", false, "Update the expected test values in golden file")
 
 func TestApconso(t *testing.T) {
-	var golden = filepath.Join("testData", "expectedApconsoMD5.csv")
+	var golden = filepath.Join("testData", "expectedApconso.json")
 	var testData = filepath.Join("testData", "apconsoTestData.csv")
 	marshal.TestParserTupleOutput(t, Parser, engine.NewCache(), "apconso", testData, golden, *update)
 }
