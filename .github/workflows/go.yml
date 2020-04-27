@@ -1,0 +1,54 @@
+name: Go CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Set up Go 1.14
+      uses: actions/setup-go@v1
+      with:
+        go-version: 1.14
+      id: go
+
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v2
+
+    - name: Get dependencies
+      run: |
+        go get -v -t -d ./...
+
+    - name: Generate jsFunctions.go
+      working-directory: dbmongo/lib/engine
+      run: |
+        go generate -x
+        DEST=$(go env GOPATH)/src/github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine
+        echo "Copying the generated jsFunctions.go to ${DEST}, so go build can find it..."
+        cp jsFunctions.go ${DEST}/
+
+    - name: Build
+      working-directory: dbmongo
+      run: go build -v .
+
+    - name: Install jsc (for tests)
+      run: |
+        sudo apt-get update -y
+        sudo apt-get install -y libjavascriptcoregtk-4.0-bin
+
+    - name: Test dbmongo
+      working-directory: dbmongo
+      run: TZ=CET go test -v # includes js_test.go, which relies on Date comparisons in the CET timezone
+
+    - name: Test engine
+      working-directory: dbmongo/lib/engine
+      run: go test -v
+
+      # TODO: run all tests, with $ go test -v ./...

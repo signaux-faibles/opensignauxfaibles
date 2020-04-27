@@ -1,7 +1,6 @@
 package engine
 
 import (
-	"dbmongo/lib/engine"
 	"errors"
 	"strconv"
 	"testing"
@@ -12,7 +11,7 @@ import (
 func TestShouldBreak(t *testing.T) {
 	tracker := gournal.NewTracker(
 		map[string]string{},
-		engine.TrackerReports,
+		TrackerReports,
 	)
 	filterError := NewCriticError(errors.New("filterError"), "filter")
 	fatalError := NewCriticError(errors.New("fatalError"), "fatal")

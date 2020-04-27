@@ -367,26 +367,25 @@ var test_cases = [
       }]
     ,
     expected: {
-  "key": "123",
-  "scope": "etablissement",
-  "batch": {
-    "1901": {
-      "apconso": {
-        "uneconso": {
-          "bonjour": 1,
-          "aurevoir": 2
-        }
-      },
-      "apdemande": {
-        "unedemande": {
-          "bonjour": 2,
-          "aurevoir": 1
+      "key": "123",
+      "scope": "etablissement",
+      "batch": {
+        "1901": {
+          "apconso": {
+            "uneconso": {
+              "bonjour": 1,
+              "aurevoir": 2
+            }
+          },
+          "apdemande": {
+            "unedemande": {
+              "bonjour": 2,
+              "aurevoir": 1
+            }
+          }
         }
       }
     }
-  }
-}
-
   }
 ]
 

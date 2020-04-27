@@ -9,12 +9,18 @@ Solution logicielle pour la détection anticipée d'entreprises en difficulté
 - frontend vuetify
 - mongodb
 
+## Dépendances / pré-requis
+
+- `npx` (installé avec [Node.js](https://nodejs.org/)), pour lancer la transpilation des fichiers TypeScript vers JavaScript
+
 ## Installation
 
 ```bash
-$ go get github.com/signaux-faibles/opensignauxfaibles/dbmongo
-$ cd $(go env GOPATH)/src/github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine
+$ go get -v -d -u github.com/signaux-faibles/opensignauxfaibles/dbmongo
+$ cd $(go env GOPATH)/src/github.com/signaux-faibles/opensignauxfaibles/dbmongo
+$ cd lib/engine
 $ go generate # pour générer jsFunctions
+$ cd -
 $ go build
 ```
 
