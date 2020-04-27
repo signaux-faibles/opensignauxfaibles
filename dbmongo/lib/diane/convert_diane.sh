@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e # will stop the script if any command fails with a non-zero exit code
+
 while getopts b: option; do
   case "$option" in
     b) FILES=$(echo ../"${OPTARG}"/diane/*.txt);;
@@ -58,6 +60,7 @@ FNR>1 && $1 !~ "Marquée" {
 }'
 
 # Concat all exported files /!\ FIX ME: no spaces in file_names !
-awk -F ";" 'NR == 1 || FNR >= 2' <(cat ${FILES:-$@} | iconv --from-code UTF-16LE --to-code UTF-8 | dos2unix -ascii) |
+FORMATTED_INPUT=$(cat ${FILES:-$@} | iconv --from-code UTF-16LE --to-code UTF-8 | dos2unix -ascii)
+awk -F ";" 'NR == 1 || FNR >= 2' <${FORMATTED_INPUT} |
  awk  "$AWK_SCRIPT" |
  sed 's/,/./g'
