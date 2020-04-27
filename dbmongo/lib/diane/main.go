@@ -3,6 +3,8 @@ package diane
 import (
 	"encoding/csv"
 	"io"
+	"io/ioutil"
+	"log"
 	"os/exec"
 	"path/filepath"
 	"strconv"
@@ -130,9 +132,18 @@ func Parser(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, ch
 
 			cmdPath := []string{filepath.Join(viper.GetString("SCRIPTDIANE_DIR"), "convert_diane.sh"), viper.GetString("APP_DATA") + path}
 			cmd := exec.Command("/bin/bash", cmdPath...)
+
 			stdout, err := cmd.StdoutPipe()
 			defer stdout.Close()
+			if err != nil {
+				event.Critical(path + ": erreur à l'ouverture, abandon")
+				continue
+			} else {
+				event.Debug(path + ": ouverture")
+			}
 
+			stderr, err := cmd.StderrPipe()
+			defer stderr.Close()
 			if err != nil {
 				event.Critical(path + ": erreur à l'ouverture, abandon")
 				continue
@@ -144,7 +155,18 @@ func Parser(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, ch
 			reader.Comma = ';'
 			reader.LazyQuotes = true
 			cmd.Start()
+			defer func() {
+				slurp, _ := ioutil.ReadAll(stderr)
+				if err := cmd.Wait(); err != nil {
+					log.Printf("Preprocessing script failed with %v:\n%s\n", err, slurp)
+				}
+			}()
 
+			_, err = reader.Read() // Discard header
+			if err != nil {
+				event.Critical(tracker.Report("fatalError"))
+				break
+			}
 			for {
 				row, err := reader.Read()
 				tracker.Error(err)
@@ -154,7 +176,6 @@ func Parser(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, ch
 					event.Critical(tracker.Report("fatalError"))
 					break
 				}
-
 				diane := Diane{}
 
 				if len(row) >= 83 {
@@ -397,8 +418,9 @@ func Parser(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, ch
 					event.Critical("Ligne invalide. Abandon !")
 				}
 				tracker.Next()
-			}
+			} // end of "for" loop
 			event.Debug(tracker.Report("abstract"))
+
 		}
 		close(eventChannel)
 		close(outputChannel)

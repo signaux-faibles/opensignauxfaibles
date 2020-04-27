@@ -2,11 +2,14 @@ package marshal
 
 import (
 	"io/ioutil"
+	"log"
 	"strconv"
+	"strings"
 	"testing"
 	"time"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
+	"github.com/stretchr/testify/assert"
 )
 
 func compareFields(field1 Field, field2 Field) string {
@@ -57,8 +60,8 @@ func MockComptesMapping(mapping map[string]string) Comptes {
 	return mockComptes
 }
 
-// TestParserTupleOutput helps to test the output of a Parser. It compares md5
-// of output Tuples with stored md5 in a golden file. If update = true, the
+// TestParserTupleOutput helps to test the output of a Parser. It compares
+// output Tuples with JSON stored in a golden file. If update = true, the
 // the golden file is updated.
 func TestParserTupleOutput(
 	t *testing.T,
@@ -76,21 +79,26 @@ func TestParserTupleOutput(
 
 	engine.DiscardEvents(events)
 
-	actual := []byte{}
+	actualJsons := []string{}
 	for tuple := range tuples {
 		t.Log(tuple)
-		actual = append(actual, engine.GetMD5(tuple)...)
+		json, err := engine.GetJson(tuple)
+		if err != nil {
+			log.Fatal(err)
+		}
+		actualJsons = append(actualJsons, string(json))
 	}
 
+	actual := "[" + strings.Join(actualJsons, ",") + "]"
 	if update {
-		ioutil.WriteFile(goldenFile, actual, 0644)
+		ioutil.WriteFile(goldenFile, []byte(actual), 0644)
 	}
 
 	expected, err := ioutil.ReadFile(goldenFile)
 	if err != nil {
 		t.Fatal("Could not open golden file" + err.Error())
 	}
-	if string(actual) != string(expected) {
-		t.Error("Parsed " + parserType + " is not as expected")
-	}
+
+	assert.Equal(t, string(expected), string(actual))
+
 }
