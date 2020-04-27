@@ -12,7 +12,7 @@ import (
 var update = flag.Bool("update", false, "Update the expected test values in golden file")
 
 func TestDebit(t *testing.T) {
-	var golden = filepath.Join("testData", "expectedDebitMD5.csv")
+	var golden = filepath.Join("testData", "expectedDebit.json")
 	var testData = filepath.Join("testData", "debitTestData.csv")
 	cache := engine.NewCache()
 	cache.Set("comptes", marshal.MockComptesMapping(
@@ -27,7 +27,7 @@ func TestDebit(t *testing.T) {
 }
 
 func TestDelai(t *testing.T) {
-	var golden = filepath.Join("testData", "expectedDelaiMD5.csv")
+	var golden = filepath.Join("testData", "expectedDelai.json")
 	var testData = filepath.Join("testData", "delaiTestData.csv")
 	cache := engine.NewCache()
 	cache.Set("comptes", marshal.MockComptesMapping(
@@ -42,7 +42,7 @@ func TestDelai(t *testing.T) {
 }
 
 func TestCcsf(t *testing.T) {
-	var golden = filepath.Join("testData", "expectedCcsfMD5.csv")
+	var golden = filepath.Join("testData", "expectedCcsf.json")
 	var testData = filepath.Join("testData", "ccsfTestData.csv")
 	cache := engine.NewCache()
 	cache.Set("comptes", marshal.MockComptesMapping(
@@ -57,7 +57,7 @@ func TestCcsf(t *testing.T) {
 }
 
 func TestCotisation(t *testing.T) {
-	var golden = filepath.Join("testData", "expectedCotisationMD5.csv")
+	var golden = filepath.Join("testData", "expectedCotisation.json")
 	var testData = filepath.Join("testData", "cotisationTestData.csv")
 	cache := engine.NewCache()
 	cache.Set("comptes", marshal.MockComptesMapping(
@@ -72,7 +72,7 @@ func TestCotisation(t *testing.T) {
 }
 
 func TestProcol(t *testing.T) {
-	var golden = filepath.Join("testData", "expectedProcolMD5.csv")
+	var golden = filepath.Join("testData", "expectedProcol.json")
 	var testData = filepath.Join("testData", "procolTestData.csv")
 	cache := engine.NewCache()
 	cache.Set("comptes", marshal.MockComptesMapping(
@@ -87,7 +87,7 @@ func TestProcol(t *testing.T) {
 }
 
 func TestEffectif(t *testing.T) {
-	var golden = filepath.Join("testData", "expectedEffectifMD5.csv")
+	var golden = filepath.Join("testData", "expectedEffectif.json")
 	var testData = filepath.Join("testData", "effectifTestData.csv")
 	cache := engine.NewCache()
 	marshal.TestParserTupleOutput(t, ParserEffectif, cache, "effectif", testData, golden, *update)

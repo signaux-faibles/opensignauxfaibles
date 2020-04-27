@@ -11,7 +11,7 @@ import (
 
 var update = flag.Bool("update", false, "Update the expected test values in golden file")
 
-var golden = filepath.Join("testData", "expectedMD5.csv")
+var golden = filepath.Join("testData", "expectedSireneUL.json")
 var testData = filepath.Join("testData", "sireneULTestData.csv")
 
 func TestSirene(t *testing.T) {

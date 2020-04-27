@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"encoding/json"
 	"errors"
 
 	"github.com/cnf/structhash"
@@ -30,6 +31,10 @@ type Tuple interface {
 // GetMD5 returns a MD5 signature of the Tupe
 func GetMD5(tuple Tuple) []byte {
 	return structhash.Md5(tuple, 1)
+}
+
+func GetJson(tuple Tuple) ([]byte, error) {
+	return json.Marshal(tuple)
 }
 
 // Batch ensemble des données
