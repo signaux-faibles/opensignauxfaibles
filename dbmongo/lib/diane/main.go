@@ -2,7 +2,6 @@ package diane
 
 import (
 	"encoding/csv"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
@@ -156,12 +155,12 @@ func Parser(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, ch
 			reader.Comma = ';'
 			reader.LazyQuotes = true
 			cmd.Start()
-			defer {
-				log.Printf("Command finished with error: %v", cmd.Wait())
-
+			defer func() {
 				slurp, _ := ioutil.ReadAll(stderr)
-				fmt.Printf("stderr: %s\n", slurp)
-			}
+				if err := cmd.Wait(); err != nil {
+					log.Printf("Preprocessing script failed with %v:\n%s\n", err, slurp)
+				}
+			}()
 
 			_, err = reader.Read() // Discard header
 			if err != nil {
