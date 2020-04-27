@@ -156,6 +156,9 @@ func Parser(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, ch
 			reader.LazyQuotes = true
 			cmd.Start()
 
+			slurp, _ := ioutil.ReadAll(stderr)
+			fmt.Printf("stderr: %s\n", slurp)
+
 			_, err = reader.Read() // Discard header
 			if err != nil {
 				event.Critical(tracker.Report("fatalError"))
@@ -414,9 +417,6 @@ func Parser(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, ch
 				tracker.Next()
 			} // end of "for" loop
 			event.Debug(tracker.Report("abstract"))
-
-			slurp, _ := ioutil.ReadAll(stderr)
-			fmt.Printf("stderr: %s\n", slurp)
 		}
 		close(eventChannel)
 		close(outputChannel)
