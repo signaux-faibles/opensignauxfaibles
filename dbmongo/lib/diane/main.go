@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"os/exec"
 	"path/filepath"
 	"strconv"
@@ -143,6 +144,7 @@ func Parser(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, ch
 			}
 
 			stderr, err := cmd.StderrPipe()
+			defer log.Printf("Command finished with error: %v", cmd.Wait())
 			defer stderr.Close()
 			if err != nil {
 				event.Critical(path + ": erreur à l'ouverture, abandon")
@@ -417,6 +419,7 @@ func Parser(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, ch
 				tracker.Next()
 			} // end of "for" loop
 			event.Debug(tracker.Report("abstract"))
+
 		}
 		close(eventChannel)
 		close(outputChannel)
