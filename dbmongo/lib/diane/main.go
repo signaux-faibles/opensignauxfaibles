@@ -144,7 +144,6 @@ func Parser(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, ch
 			}
 
 			stderr, err := cmd.StderrPipe()
-			defer log.Printf("Command finished with error: %v", cmd.Wait())
 			defer stderr.Close()
 			if err != nil {
 				event.Critical(path + ": erreur à l'ouverture, abandon")
@@ -157,9 +156,12 @@ func Parser(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, ch
 			reader.Comma = ';'
 			reader.LazyQuotes = true
 			cmd.Start()
+			defer {
+				log.Printf("Command finished with error: %v", cmd.Wait())
 
-			slurp, _ := ioutil.ReadAll(stderr)
-			fmt.Printf("stderr: %s\n", slurp)
+				slurp, _ := ioutil.ReadAll(stderr)
+				fmt.Printf("stderr: %s\n", slurp)
+			}
 
 			_, err = reader.Read() // Discard header
 			if err != nil {
