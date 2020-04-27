@@ -47,6 +47,19 @@ jobs:
       working-directory: dbmongo
       run: TZ=CET go test -v # includes js_test.go, which relies on Date comparisons in the CET timezone
 
+    - name: Test file parsers
+      working-directory: dbmongo/lib
+      run: |
+        go test -v ./apconso
+        go test -v ./apdemande
+        go test -v ./bdf
+        go test -v ./diane
+        go test -v ./marshal
+        go test -v ./reporder
+        go test -v ./sirene
+        go test -v ./sirene_ul
+        go test -v ./urssaf
+
     - name: Test engine
       working-directory: dbmongo/lib/engine
       run: go test -v
