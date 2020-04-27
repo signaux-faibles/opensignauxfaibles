@@ -61,6 +61,6 @@ FNR>1 && $1 !~ "Marquée" {
 
 # Concat all exported files /!\ FIX ME: no spaces in file_names !
 FORMATTED_INPUT=$(cat ${FILES:-$@} | iconv --from-code UTF-16LE --to-code UTF-8 | dos2unix -ascii)
-awk -F ";" 'NR == 1 || FNR >= 2' <${FORMATTED_INPUT} |
+echo "${FORMATTED_INPUT}" | awk -F ";" 'NR == 1 || FNR >= 2' |
  awk  "$AWK_SCRIPT" |
  sed 's/,/./g'
