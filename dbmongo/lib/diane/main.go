@@ -1,11 +1,10 @@
 package diane
 
 import (
+	"bufio"
 	"encoding/csv"
 	"errors"
 	"io"
-	"io/ioutil"
-	"log"
 	"os/exec"
 	"path/filepath"
 	"strconv"
@@ -360,6 +359,8 @@ func parseDianeFile(path string, outputChannel chan engine.Tuple, event engine.E
 		map[string]string{"path": path},
 		engine.TrackerReports)
 
+	event.Debug(path + ": ouverture")
+
 	cmdPath := []string{filepath.Join(viper.GetString("SCRIPTDIANE_DIR"), "convert_diane.sh"), viper.GetString("APP_DATA") + path}
 	cmd := exec.Command("/bin/bash", cmdPath...)
 
@@ -379,19 +380,26 @@ func parseDianeFile(path string, outputChannel chan engine.Tuple, event engine.E
 		return false, contextualizedErr
 	}
 
-	event.Debug(path + ": ouverture")
-
-	reader := csv.NewReader(stdout)
-	reader.Comma = ';'
-	reader.LazyQuotes = true
-	cmd.Start()
-	defer func() {
-		slurp, _ := ioutil.ReadAll(stderr)
-		if err := cmd.Wait(); err != nil {
-			log.Printf("Preprocessing script failed with %v:\n%s\n", err, slurp)
+	// turn lines of standard error output into events, to help debugging
+	go func() {
+		scanner := bufio.NewScanner(stderr)
+		for scanner.Scan() {
+			event.Debug("[convert_diane.sh stderr] " + scanner.Text())
 		}
 	}()
 
+	// start preprocessing script + report non-zero exit code in case of failure
+	cmd.Start()
+	defer func() {
+		if err := cmd.Wait(); err != nil {
+			tracker.Error(errors.New("[convert_diane.sh] failed with " + err.Error()))
+		}
+	}()
+
+	// process rows of data
+	reader := csv.NewReader(stdout)
+	reader.Comma = ';'
+	reader.LazyQuotes = true
 	_, err = reader.Read() // Discard header
 	if err != nil {
 		contextualizedErr := errors.New("echec de lecture de l'en-tête du fichier en sortie du script: " + err.Error())
