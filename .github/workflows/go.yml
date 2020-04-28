@@ -62,4 +62,6 @@ jobs:
       working-directory: dbmongo/lib/engine
       run: go test -v
 
-      # TODO: run all tests, with $ go test -v ./...
+    - name: Test everything
+      working-directory: dbmongo
+      run: go test -v ./...
