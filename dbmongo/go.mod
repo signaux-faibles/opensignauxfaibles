@@ -16,6 +16,7 @@ require (
 	github.com/signaux-faibles/datapi v0.0.0-20200424063016-efebe6b0ac49
 	github.com/signaux-faibles/gournal v0.0.0-20190902130422-31bc52c7b8ae
 	github.com/spf13/viper v1.6.3
+	github.com/stretchr/testify v1.4.0
 	github.com/swaggo/gin-swagger v1.2.0
 	github.com/swaggo/swag v1.6.5
 	golang.org/x/crypto v0.0.0-20200423211502-4bdfaf469ed5
