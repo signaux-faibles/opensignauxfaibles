@@ -23,15 +23,16 @@ func main() {
 	for _, file := range files {
 		po := marshal.ParserOptions{}
 		wd, _ := os.Getwd()
-		err := po.ReadOptions(filepath.Join(wd, folderName, file.Name()))
+		fileName := filepath.Join(wd, folderName, file.Name())
+		err := po.ReadOptions(fileName)
 		if err != nil {
-			log.Fatal("File could not be read: ", err.Error())
+			log.Fatal("File could not be read: ", fileName, "\n", err.Error())
 		}
 		dirName := strings.TrimSuffix(file.Name(), filepath.Ext(file.Name()))
 
 		err = os.MkdirAll(dirName, os.ModePerm)
 		if err != nil {
-			log.Fatal("Could not create directory: " + err.Error())
+			log.Fatal("Could not create directory: ", dirName, err.Error())
 		}
 		// GenerateParser(po, filepath.Join(dirName, dirName+"Parser.go"))
 	}

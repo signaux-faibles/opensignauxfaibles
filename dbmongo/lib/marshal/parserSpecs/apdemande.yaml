@@ -16,7 +16,7 @@ fields:
   - go_name: Siret
     csv_name: ETAB_SIRET
     csv_col: 0
-    json_name: -
+    json_name: "-"
     parser: ParseString
     if_empty: fatal
     if_invalid: sfregexp.RegexpDict["siret"]
@@ -47,7 +47,7 @@ fields:
     validity_regex: nil `json:"date_statut" bson:"date_statut"
   - go_name: Periode
     csv_name:
-    csv_col: 0hta
+    csv_col: 0
     json_name:
     parser: Parsemisc.Periode hta
     if_empty: fatal
@@ -109,5 +109,3 @@ fields:
     if_empty: fatal
     if_invalid: fatal
     validity_regex: nil `json:"effectif_consomme" bson:"effectif_consomme"
-
-
