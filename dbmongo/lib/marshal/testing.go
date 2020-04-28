@@ -76,12 +76,21 @@ func TestParserTupleOutput(
 	var events chan engine.Event
 	var tuples chan engine.Tuple
 	tuples, events = parser(cache, &batch)
+	var firstCriticalEvent *engine.Event = nil
 
-	engine.DiscardEvents(events)
+	// intercepter et afficher les évènements pendant l'importation
+	go func() {
+		for event := range events {
+			t.Logf("[%s] event: %v", event.Priority, event.Comment)
+			if event.Priority == engine.Critical && firstCriticalEvent == nil {
+				firstCriticalEvent = &event
+			}
+		}
+	}()
 
 	actualJsons := []string{}
 	for tuple := range tuples {
-		t.Log(tuple)
+		t.Log("tuple:", tuple)
 		json, err := engine.GetJson(tuple)
 		if err != nil {
 			log.Fatal(err)
@@ -97,6 +106,10 @@ func TestParserTupleOutput(
 	expected, err := ioutil.ReadFile(goldenFile)
 	if err != nil {
 		t.Fatal("Could not open golden file" + err.Error())
+	}
+
+	if firstCriticalEvent != nil {
+		assert.FailNow(t, "Caught Critical event: ", firstCriticalEvent.Comment)
 	}
 
 	assert.Equal(t, string(expected), string(actual))
