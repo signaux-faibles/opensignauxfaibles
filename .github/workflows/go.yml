@@ -35,17 +35,12 @@ jobs:
       working-directory: dbmongo
       run: go build -v .
 
-    - name: Install jsc (for tests)
+    - name: Install test dependencies
       run: |
         sudo apt-get update -y
-        sudo apt-get install -y libjavascriptcoregtk-4.0-bin
+        sudo apt-get install -y libjavascriptcoregtk-4.0-bin # for tests of JavaScript functions
+        sudo apt-get install -y dos2unix # for Diane tests
 
-    - name: Test dbmongo
+    - name: Tests
       working-directory: dbmongo
-      run: TZ=CET go test -v # includes js_test.go, which relies on Date comparisons in the CET timezone
-
-    - name: Test engine
-      working-directory: dbmongo/lib/engine
-      run: go test -v
-
-      # TODO: run all tests, with $ go test -v ./...
+      run: TZ=CET go test ./... # note: js_test.go relies on Date comparisons in the CET timezone
