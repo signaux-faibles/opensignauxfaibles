@@ -62,6 +62,5 @@ jobs:
       working-directory: dbmongo/lib/engine
       run: go test -v
 
-    - name: Test everything
-      working-directory: dbmongo
-      run: go test ./...
+      # TODO: run all tests, with $ go test -v ./...
+      # see https://github.com/signaux-faibles/opensignauxfaibles/issues/7
