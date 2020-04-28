@@ -20,7 +20,7 @@ $ git clone https://github.com/signaux-faibles/opensignauxfaibles.git
 $ cd opensignauxfaibles
 $ cd dbmongo
 $ go get -v -t -d ./... # pour télécharger les dépendances
-$ go generate -x ./lib/engine # pour générer jsFunctions
+$ go generate ./...
 $ go build
 ```
 
