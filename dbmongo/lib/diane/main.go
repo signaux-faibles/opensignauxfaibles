@@ -354,7 +354,7 @@ func parseDianeRow(row []string) (diane Diane) {
 }
 
 // parseDianeRow génère des objets Diane à partir d'un fichier
-func parseDianeFile(path string, outputChannel chan engine.Tuple, event engine.Event) (abort bool, err error) {
+func parseDianeFile(path string, outputChannel chan engine.Tuple, event engine.Event) (abort bool) {
 	tracker := gournal.NewTracker(
 		map[string]string{"path": path},
 		engine.TrackerReports)
@@ -367,17 +367,15 @@ func parseDianeFile(path string, outputChannel chan engine.Tuple, event engine.E
 	stdout, err := cmd.StdoutPipe()
 	defer stdout.Close()
 	if err != nil {
-		contextualizedErr := errors.New("echec de récupération de sortie standard du script: " + err.Error())
-		event.Critical(contextualizedErr.Error())
-		return false, contextualizedErr
+		event.Critical("echec de récupération de sortie standard du script: " + err.Error())
+		return false
 	}
 
 	stderr, err := cmd.StderrPipe()
 	defer stderr.Close()
 	if err != nil {
-		contextualizedErr := errors.New("echec de récupération de sortie d'erreurs du script: " + err.Error())
-		event.Critical(contextualizedErr.Error())
-		return false, contextualizedErr
+		event.Critical("echec de récupération de sortie d'erreurs du script: " + err.Error())
+		return false
 	}
 
 	// turn lines of standard error output into events, to help debugging
@@ -402,10 +400,9 @@ func parseDianeFile(path string, outputChannel chan engine.Tuple, event engine.E
 	reader.LazyQuotes = true
 	_, err = reader.Read() // Discard header
 	if err != nil {
-		contextualizedErr := errors.New("echec de lecture de l'en-tête du fichier en sortie du script: " + err.Error())
-		tracker.Error(contextualizedErr)
+		tracker.Error(errors.New("echec de lecture de l'en-tête du fichier en sortie du script: " + err.Error()))
 		event.Critical(tracker.Report("fatalError"))
-		return true, contextualizedErr
+		return true
 	}
 	for {
 		row, err := reader.Read()
@@ -427,7 +424,7 @@ func parseDianeFile(path string, outputChannel chan engine.Tuple, event engine.E
 		tracker.Next()
 	} // end of "for" loop
 	event.Debug(tracker.Report("abstract"))
-	return false, nil
+	return false
 }
 
 // Parser produit les données Diane listées dans un batch
@@ -441,7 +438,7 @@ func Parser(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, ch
 
 	go func() {
 		for _, path := range batch.Files["diane"] {
-			abort, _ := parseDianeFile(path, outputChannel, event)
+			abort := parseDianeFile(path, outputChannel, event)
 			if abort == true {
 				break
 			}
