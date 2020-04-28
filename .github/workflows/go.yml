@@ -30,9 +30,6 @@ jobs:
       working-directory: dbmongo/lib/engine
       run: |
         go generate -x
-        DEST=$(go env GOPATH)/src/github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine
-        echo "Copying the generated jsFunctions.go to ${DEST}, so go build can find it..."
-        cp jsFunctions.go ${DEST}/
 
     - name: Build
       working-directory: dbmongo
