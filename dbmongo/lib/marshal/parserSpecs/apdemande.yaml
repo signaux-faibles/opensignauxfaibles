@@ -47,7 +47,7 @@ fields:
     validity_regex: nil `json:"date_statut" bson:"date_statut"
   - go_name: Periode
     csv_name:
-    csv_col: 0hta
+    csv_col: 0
     json_name:
     parser: Parsemisc.Periode hta
     if_empty: fatal
