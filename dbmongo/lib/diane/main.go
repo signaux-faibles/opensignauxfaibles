@@ -366,17 +366,19 @@ func parseDianeFile(path string, outputChannel chan engine.Tuple, event engine.E
 	stdout, err := cmd.StdoutPipe()
 	defer stdout.Close()
 	if err != nil {
-		event.Critical(path + ": erreur à l'ouverture, abandon")
-		return false, errors.New(path + ": erreur à l'ouverture, abandon")
+		contextualizedErr := errors.New("echec de récupération de sortie standard du script: " + err.Error())
+		event.Critical(contextualizedErr.Error())
+		return false, contextualizedErr
 	}
-	event.Debug(path + ": ouverture")
 
 	stderr, err := cmd.StderrPipe()
 	defer stderr.Close()
 	if err != nil {
-		event.Critical(path + ": erreur à l'ouverture, abandon")
-		return false, errors.New(path + ": erreur à l'ouverture, abandon")
+		contextualizedErr := errors.New("echec de récupération de sortie d'erreurs du script: " + err.Error())
+		event.Critical(contextualizedErr.Error())
+		return false, contextualizedErr
 	}
+
 	event.Debug(path + ": ouverture")
 
 	reader := csv.NewReader(stdout)
@@ -392,8 +394,10 @@ func parseDianeFile(path string, outputChannel chan engine.Tuple, event engine.E
 
 	_, err = reader.Read() // Discard header
 	if err != nil {
+		contextualizedErr := errors.New("echec de lecture de l'en-tête du fichier en sortie du script: " + err.Error())
+		tracker.Error(contextualizedErr)
 		event.Critical(tracker.Report("fatalError"))
-		return true, errors.New("fatalError: lecture depuis la sortie du script")
+		return true, contextualizedErr
 	}
 	for {
 		row, err := reader.Read()
@@ -401,6 +405,8 @@ func parseDianeFile(path string, outputChannel chan engine.Tuple, event engine.E
 		if err == io.EOF {
 			break
 		} else if err != nil {
+			contextualizedErr := errors.New("erreur pendant la lecture d'une ligne diane: " + err.Error())
+			tracker.Error(contextualizedErr)
 			event.Critical(tracker.Report("fatalError"))
 			break
 		}
