@@ -390,7 +390,7 @@ func parseDianeFile(path string, outputChannel chan engine.Tuple, event engine.E
 	cmd.Start()
 	defer func() {
 		if err := cmd.Wait(); err != nil {
-			tracker.Error(errors.New("[convert_diane.sh] failed with " + err.Error()))
+			event.Debug("[convert_diane.sh] failed with " + err.Error())
 		}
 	}()
 
