@@ -20,7 +20,7 @@ func Test_js(t *testing.T) {
 
 	for _, f := range files {
 		if scriptNameRegex.MatchString(f.Name()) {
-			cmd := exec.Command("/bin/sh", f.Name())
+			cmd := exec.Command("/bin/bash", f.Name())
 			cmd.Dir = "js/test/"
 
 			err := cmdTester(cmd)
