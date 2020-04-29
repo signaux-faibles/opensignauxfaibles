@@ -14,10 +14,14 @@ echo "makeTestData = ({ ISODate, NumberInt }) => (${JSON_TEST_DATASET});" \
 
 # Run tests
 jsc ${TMP_PATH}/reduce_test_data.js ../common/*.js ../reduce.algo2/*.js ./test_map_reduce_algo2.js \
-  > ${TMP_PATH}/stdout.log
-cat ${TMP_PATH}/stdout.log
+  > ${TMP_PATH}/map_stdout.log
+cat ${TMP_PATH}/map_stdout.log
 
-# TODO: compare stdout.log with golden file, return non-zero exit code if any difference is found
+if [ "$1" == "--update" ]; then
+	echo TODO
+fi
+
+# TODO: compare map_stdout.log with golden file, return non-zero exit code if any difference is found
 
 # Clean up
 rm -rf ${TMP_PATH}
