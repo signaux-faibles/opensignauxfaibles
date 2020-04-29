@@ -1,8 +1,12 @@
 #!/bin/bash
 
+# SKIP_ON_CI
+
 # This golden-file-based test runner was designed to prevent
 # regressions on the JS functions (common + algo2) used to compute the
 # "Features" collection from the "RawData" collection.
+
+# This file is run by dbmongo/js_test.go.
 
 # Stop script and exit on error of any command
 set -e

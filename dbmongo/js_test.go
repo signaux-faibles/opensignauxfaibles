@@ -13,9 +13,6 @@ import (
 
 func Test_js(t *testing.T) {
 
-	if os.Getenv("CI") != "" {
-		t.Skip("Skipping testing in CI environment")
-	}
 	scriptNameRegex, _ := regexp.Compile(".*[.]sh")
 
 	files, err := ioutil.ReadDir("js/test/")
@@ -26,6 +23,10 @@ func Test_js(t *testing.T) {
 	for _, f := range files {
 		if scriptNameRegex.MatchString(f.Name()) {
 			t.Run(f.Name(), func(t *testing.T) {
+				if os.Getenv("CI") != "" {
+					t.Skip("Skipping testing in CI environment")
+				}
+
 				cmd := exec.Command("/bin/bash", f.Name())
 				cmd.Dir = "js/test/"
 
