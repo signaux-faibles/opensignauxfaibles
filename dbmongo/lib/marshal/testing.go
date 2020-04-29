@@ -90,7 +90,6 @@ func TestParserTupleOutput(
 
 	actualJsons := []string{}
 	for tuple := range tuples {
-		t.Log("tuple:", tuple)
 		json, err := engine.GetJson(tuple)
 		if err != nil {
 			log.Fatal(err)

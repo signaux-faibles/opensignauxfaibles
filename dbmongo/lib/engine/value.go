@@ -34,7 +34,7 @@ func GetMD5(tuple Tuple) []byte {
 }
 
 func GetJson(tuple Tuple) ([]byte, error) {
-	return json.Marshal(tuple)
+	return json.MarshalIndent(tuple, "", "  ")
 }
 
 // Batch ensemble des données
