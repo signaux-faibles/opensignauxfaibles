@@ -1,3 +1,5 @@
+# This file is run by dbmongo/js_test.go.
+
 result_add=$(jsc ../compact/currentState.js compact/test_current_state.js)
 if [ "$result_add" != 'true' ]; then
   echo "$result_add"
