@@ -6,7 +6,9 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"path"
 	"regexp"
+	"strings"
 	"syscall"
 	"testing"
 )
@@ -23,7 +25,7 @@ func Test_js(t *testing.T) {
 	for _, f := range files {
 		if scriptNameRegex.MatchString(f.Name()) {
 			t.Run(f.Name(), func(t *testing.T) {
-				if os.Getenv("CI") != "" {
+				if os.Getenv("CI") != "" && shouldSkipOnCi(t, path.Join("js/test/", f.Name())) {
 					t.Skip("Skipping testing in CI environment")
 				}
 
@@ -38,6 +40,16 @@ func Test_js(t *testing.T) {
 		}
 	}
 
+}
+
+func shouldSkipOnCi(t *testing.T, filepath string) bool {
+	data, err := ioutil.ReadFile(filepath)
+	if err != nil {
+		t.Error(err)
+	}
+	file := string(data)
+
+	return strings.Contains(file, "NOT_IN_CI")
 }
 
 func cmdTester(t *testing.T, cmd *exec.Cmd) error {
