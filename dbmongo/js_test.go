@@ -34,17 +34,13 @@ func Test_js(t *testing.T) {
 }
 
 func cmdTester(cmd *exec.Cmd) error {
-	if err := cmd.Start(); err != nil {
-		return fmt.Errorf("cmd.Start: %v", err.Error())
-	}
-
-	if err := cmd.Wait(); err != nil {
+	if err := cmd.Run(); err != nil {
 		if exiterr, ok := err.(*exec.ExitError); ok {
 			if status, ok := exiterr.Sys().(syscall.WaitStatus); ok {
 				return fmt.Errorf("Error status: %v", status.ExitStatus())
 			}
 		} else {
-			return fmt.Errorf("cmd.Wait: %v", err.Error())
+			return fmt.Errorf("cmd.Run: %v", err.Error())
 		}
 	}
 
