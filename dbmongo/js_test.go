@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"io/ioutil"
 	"os/exec"
@@ -34,10 +35,15 @@ func Test_js(t *testing.T) {
 }
 
 func cmdTester(cmd *exec.Cmd) error {
+	var cmdOutput bytes.Buffer
+	var cmdError bytes.Buffer
+	cmd.Stdout = &cmdOutput
+	cmd.Stderr = &cmdError
+
 	if err := cmd.Run(); err != nil {
 		if exiterr, ok := err.(*exec.ExitError); ok {
 			if status, ok := exiterr.Sys().(syscall.WaitStatus); ok {
-				return fmt.Errorf("Error status: %v", status.ExitStatus())
+				return fmt.Errorf("Error status: %v\nstderr: %v\nstdout: %v", status.ExitStatus(), cmdError.String(), cmdOutput.String())
 			}
 		} else {
 			return fmt.Errorf("cmd.Run: %v", err.Error())
