@@ -25,21 +25,23 @@ func Test_js(t *testing.T) {
 
 	for _, f := range files {
 		if scriptNameRegex.MatchString(f.Name()) {
-			cmd := exec.Command("/bin/bash", f.Name())
-			cmd.Dir = "js/test/"
+			t.Run(f.Name(), func(t *testing.T) {
+				cmd := exec.Command("/bin/bash", f.Name())
+				cmd.Dir = "js/test/"
 
-			err := cmdTester(cmd)
-			if err != nil {
-				t.Errorf("erreur levée par %v: "+err.Error(), f.Name())
-			} else {
-				t.Logf("execution de %v ok", f.Name())
-			}
+				err := cmdTester(t, cmd)
+				if err != nil {
+					t.Error(err)
+				}
+			})
 		}
 	}
 
 }
 
-func cmdTester(cmd *exec.Cmd) error {
+func cmdTester(t *testing.T, cmd *exec.Cmd) error {
+	t.Helper()
+
 	var cmdOutput bytes.Buffer
 	var cmdError bytes.Buffer
 	cmd.Stdout = &cmdOutput
