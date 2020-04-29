@@ -5,6 +5,7 @@ import (
 	"log"
 	"strconv"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
@@ -79,7 +80,11 @@ func TestParserTupleOutput(
 	var firstCriticalEvent *engine.Event = nil
 
 	// intercepter et afficher les évènements pendant l'importation
+	var wg sync.WaitGroup
+	wg.Add(1)
+	defer wg.Wait() // pour éviter "panic: Log in goroutine after TestEffectif has completed"
 	go func() {
+		defer wg.Done()
 		for event := range events {
 			t.Logf("[%s] event: %v", event.Priority, event.Comment)
 			if event.Priority == engine.Critical && firstCriticalEvent == nil {
