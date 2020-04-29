@@ -7,6 +7,8 @@
 # Download realistic data set
 TMP_PATH="./test_data_algo2"
 mkdir ${TMP_PATH}
+# Clean up on exit
+trap "{ rm -rf ${TMP_PATH}; echo \"Cleaned up temp directory\"; }" EXIT
 scp stockage:/home/centos/opensignauxfaibles_tests/* ${TMP_PATH}/
 
 # Prepare test data set
@@ -30,6 +32,4 @@ if [ "${DIFF}" != "" ]; then
   exit 1
 fi
 
-# Clean up
-# TODO: make sure to delete the file in the case of error.
-rm -rf ${TMP_PATH}
+exit 0
