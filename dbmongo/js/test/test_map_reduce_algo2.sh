@@ -4,6 +4,9 @@
 # regressions on the JS functions (common + algo2) used to compute the
 # "Features" collection from the "RawData" collection.
 
+# Stop script and exit on error of any command
+set -e
+
 # Download realistic data set
 TMP_PATH="./test_data_algo2"
 mkdir ${TMP_PATH}
