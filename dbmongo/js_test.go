@@ -13,11 +13,13 @@ import (
 	"testing"
 )
 
+const SKIP_ON_CI = "SKIP_ON_CI"
+
 func Test_js(t *testing.T) {
 
 	scriptNameRegex, _ := regexp.Compile(".*[.]sh")
-
-	files, err := ioutil.ReadDir("js/test/")
+	testdir := path.Join("js", "test")
+	files, err := ioutil.ReadDir(testdir)
 	if err != nil {
 		t.Errorf("scripts de test inaccessibles: %v", err.Error())
 	}
@@ -25,13 +27,13 @@ func Test_js(t *testing.T) {
 	for _, f := range files {
 		if scriptNameRegex.MatchString(f.Name()) {
 			t.Run(f.Name(), func(t *testing.T) {
-				filepath := path.Join("js", "test", f.Name())
+				filepath := path.Join(testdir, f.Name())
 				if os.Getenv("CI") != "" && shouldSkipOnCi(t, filepath) {
 					t.Skip("Skipping testing in CI environment")
 				}
 
 				cmd := exec.Command("/bin/bash", f.Name())
-				cmd.Dir = "js/test/"
+				cmd.Dir = testdir
 
 				err := cmdTester(t, cmd)
 				if err != nil {
@@ -49,7 +51,7 @@ func shouldSkipOnCi(t *testing.T, filepath string) bool {
 		t.Error(err)
 	}
 	file := string(data)
-	return strings.Contains(file, "SKIP_ON_CI")
+	return strings.Contains(file, SKIP_ON_CI)
 }
 
 func cmdTester(t *testing.T, cmd *exec.Cmd) error {
