@@ -32,4 +32,5 @@ if [ "${DIFF}" != "" ]; then
   exit 1
 fi
 
+echo "✅ Test passed"
 exit 0
