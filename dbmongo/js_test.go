@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"io/ioutil"
+	"os"
 	"os/exec"
 	"regexp"
 	"syscall"
@@ -11,6 +12,10 @@ import (
 )
 
 func Test_js(t *testing.T) {
+
+	if os.Getenv("CI") != "" {
+		t.Skip("Skipping testing in CI environment")
+	}
 	scriptNameRegex, _ := regexp.Compile(".*[.]sh")
 
 	files, err := ioutil.ReadDir("js/test/")
