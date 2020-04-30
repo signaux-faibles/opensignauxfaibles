@@ -20,12 +20,20 @@ var update = flag.Bool("update", false, "Update the expected test values in gold
 
 func Test_js(t *testing.T) {
 
+	fmt.Println("coucou")
+
 	scriptNameRegex, _ := regexp.Compile(".*[.]sh")
 	testdir := path.Join("js", "test")
 	files, err := ioutil.ReadDir(testdir)
 	if err != nil {
 		t.Errorf("scripts de test inaccessibles: %v", err.Error())
 	}
+
+	if *update {
+		t.Log("Les golden files vont être mis à jour")
+	}
+
+	t.Skip()
 
 	for _, f := range files {
 		if scriptNameRegex.MatchString(f.Name()) {
@@ -35,7 +43,12 @@ func Test_js(t *testing.T) {
 					t.Skip("Skipping testing in CI environment")
 				}
 
-				cmd := exec.Command("/bin/bash", f.Name())
+				var cmd *exec.Cmd
+				if *update {
+					cmd = exec.Command("/bin/bash", f.Name(), "--update")
+				} else {
+					cmd = exec.Command("/bin/bash", f.Name())
+				}
 				cmd.Dir = testdir
 
 				err := cmdTester(t, cmd)
