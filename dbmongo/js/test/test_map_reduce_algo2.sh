@@ -11,6 +11,8 @@
 
 # Stop script and exit on error of any command
 set -e
+# enable exclusion of test files in wildcard
+shopt -s extglob
 
 # Download realistic data set
 TMP_PATH="./test_data_algo2"
@@ -25,7 +27,7 @@ echo "makeTestData = ({ ISODate, NumberInt }) => (${JSON_TEST_DATASET});" \
   > ${TMP_PATH}/reduce_test_data.js
 
 # Run tests
-jsc ${TMP_PATH}/reduce_test_data.js ../common/*.js ../reduce.algo2/*.js ./test_map_reduce_algo2.js \
+jsc ${TMP_PATH}/reduce_test_data.js ../common/!(*_test).js ../reduce.algo2/*.js ./test_map_reduce_algo2.js \
   > ${TMP_PATH}/map_stdout.log
 
 if [ "$1" == "--update" ]; then
