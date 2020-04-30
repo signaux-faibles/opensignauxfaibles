@@ -5,8 +5,8 @@
 // It requires the JS functions from common + algo2 (notably: map()),
 // and a makeTestData() function to generate a realistic test data set.
 //
-// => Please execute ./test_algo2_map_reduce_algo2.sh to fill these requirements
-// and run the tests.
+// => Please execute ../test/test_algo2_map_reduce_algo2.sh to fill these
+// requirements and run the tests.
 
 // Allow f.*() function calls to resolve to globally-defined functions 
 f = this;
