@@ -1,3 +1,5 @@
+// initially available as /dbmongo/js/test/public/lib_public.js
+
 function ISODate(date) {
   let d = new Date(date)
   return d
@@ -53,6 +55,3 @@ function invertedReducer(array, reduce) {
     return reducer([newVal].concat(array.slice(0, array.length-2)), reduce)
   }
 }
-
-
-
