@@ -20,8 +20,6 @@ var update = flag.Bool("update", false, "Update the expected test values in gold
 
 func Test_js(t *testing.T) {
 
-	fmt.Println("coucou")
-
 	scriptNameRegex, _ := regexp.Compile(".*[.]sh")
 	testdir := path.Join("js", "test")
 	files, err := ioutil.ReadDir(testdir)
@@ -30,10 +28,8 @@ func Test_js(t *testing.T) {
 	}
 
 	if *update {
-		t.Log("Les golden files vont être mis à jour")
+		fmt.Println("Les golden files vont être mis à jour")
 	}
-
-	t.Skip()
 
 	for _, f := range files {
 		if scriptNameRegex.MatchString(f.Name()) {
