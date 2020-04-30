@@ -32,13 +32,6 @@ f = this /* = {
   ...
 }*/
 
-var pool = {}
-
-function emit(key, value) {
-  id = JSON.stringify(key)
-  pool[id] = (pool[id] || []).concat([{key, value}])
-}
-
 function reducer(array, reduce) {
   if (array.length == 1) {
     return array[0]

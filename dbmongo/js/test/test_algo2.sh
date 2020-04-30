@@ -5,7 +5,7 @@ shopt -s extglob # enable exclusion of test files in wildcard
 result_add=$(jsc \
   helpers/testing.js \
   helpers/fakes.js \
-  helpers/algo2_reducer.js \
+  helpers/fake_emit_for_algo2.js \
   ../common/!(*_test).js \
   ../reduce.algo2/!(*_test).js \
   ../reduce.algo2/add_test.js \
@@ -18,7 +18,7 @@ fi
 result_lookAhead=$(jsc \
   helpers/testing.js \
   helpers/fakes.js \
-  helpers/algo2_reducer.js \
+  helpers/fake_emit_for_algo2.js \
   ../common/!(*_test).js \
   ../reduce.algo2/!(*_test).js \
   ../reduce.algo2/lookAhead_test.js \
@@ -31,7 +31,7 @@ fi
 result_cibleApprentissage=$(jsc \
   helpers/testing.js \
   helpers/fakes.js \
-  helpers/algo2_reducer.js \
+  helpers/fake_emit_for_algo2.js \
   ../common/!(*_test).js \
   ../reduce.algo2/!(*_test).js \
   ../reduce.algo2/cibleApprentissage_test.js \
@@ -46,7 +46,7 @@ fi
 #   ../reduce.algo2/!(*_test).js \
 #   ../common/!(*_test).js \
 #   helpers/fakes.js \
-#   helpers/algo2_reducer.js \
+#   helpers/fake_emit_for_algo2.js \
 #   data/naf.js \
 #   data/objects.js \
 #   ./reduce.algo2/_test.js\
