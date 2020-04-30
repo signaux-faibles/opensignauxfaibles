@@ -1,4 +1,5 @@
-// initially available as /dbmongo/js/test/public/lib_public.js
+// common fakes from /dbmongo/js/test/public/lib_public.js
+//               and /dbmongo/js/test/algo2/lib_algo2.js
 
 function ISODate(date) {
   let d = new Date(date)
@@ -28,6 +29,7 @@ f = this /* = {
   procolToHuman,
   reduce,
   sirene,
+  ...
 }*/
 
 var pool = {}
