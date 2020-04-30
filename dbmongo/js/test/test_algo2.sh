@@ -1,38 +1,40 @@
 # This file is run by dbmongo/js_test.go.
 
-set -e # will stop on any error
 shopt -s extglob # enable exclusion of test files in wildcard
 
 result_add=$(jsc \
-  ../reduce.algo2/!(*_test).js \
-  ../common/!(*_test).js \
   helpers/testing.js \
   algo2/lib_algo2.js \
+  ../common/!(*_test).js \
+  ../reduce.algo2/!(*_test).js \
   ../reduce.algo2/add_test.js \
-  )
+  2>&1)
 if [ "$result_add" != 'true' ]; then
+  echo "$result_add"
   exit 1
 fi
 
 result_lookAhead=$(jsc \
-  ../reduce.algo2/!(*_test).js \
-  ../common/!(*_test).js \
   helpers/testing.js \
   algo2/lib_algo2.js \
+  ../common/!(*_test).js \
+  ../reduce.algo2/!(*_test).js \
   ../reduce.algo2/lookAhead_test.js \
-  )
+  2>&1)
 if [ "$result_lookAhead" != 'true' ]; then
+  echo "$result_lookAhead"
   exit 1
 fi
 
 result_cibleApprentissage=$(jsc \
-  ../reduce.algo2/!(*_test).js \
-  ../common/!(*_test).js \
   helpers/testing.js \
   algo2/lib_algo2.js \
+  ../common/!(*_test).js \
+  ../reduce.algo2/!(*_test).js \
   ../reduce.algo2/cibleApprentissage_test.js \
-  )
+  2>&1)
 if [ "$result_cibleApprentissage" != 'true' ]; then
+  echo "$result_cibleApprentissage"
   exit 1
 fi
 
@@ -44,7 +46,8 @@ fi
 #   data/naf.js \
 #   data/objects.js \
 #   ./reduce.algo2/_test.js\
-#   )
+#   2>&1)
 # if [ "$result_mapreduce" != 'true' ]; then
+#   echo "$result_mapreduce"
 #   exit 1
 # fi
