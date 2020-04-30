@@ -5,7 +5,7 @@ function ISODate(date) {
   return d
 }
 
-f = {
+f = this /* = {
   altaresToHuman,
   apconso,
   apdemande,
@@ -28,8 +28,7 @@ f = {
   procolToHuman,
   reduce,
   sirene,
-}
-
+}*/
 
 var pool = {}
 
