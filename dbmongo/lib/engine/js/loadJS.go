@@ -13,8 +13,7 @@ import (
 
 // Reads all .js files in the current folder
 // and encodes them as strings maps in jsFunctions.go
-func bundleJsFunctions() {
-	jsRootDir := filepath.Join("..", "..", "js")
+func bundleJsFunctions(jsRootDir string) {
 	folders, err := ioutil.ReadDir(jsRootDir)
 	if err != nil {
 		log.Fatal(err)
@@ -58,6 +57,7 @@ func bundleJsFunctions() {
 }
 
 func main() {
-	engine.TranspileTsFunctions() // convert *.ts files to .js
-	bundleJsFunctions()           // bundle *.js files to jsFunctions.go
+	jsRootDir := filepath.Join("..", "..", "js")
+	engine.TranspileTsFunctions(jsRootDir) // convert *.ts files to .js
+	bundleJsFunctions(jsRootDir)           // bundle *.js files to jsFunctions.go
 }

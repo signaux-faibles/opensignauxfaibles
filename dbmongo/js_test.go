@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"path/filepath"
 	"regexp"
 	"strings"
 	"syscall"
@@ -23,7 +24,8 @@ var update = flag.Bool("update", false, "Update the expected test values in gold
 // TestMain sera exécuté avant les tests
 func TestMain(m *testing.M) {
 	fmt.Println("Transpilation des fonctions JS depuis TypeScript...")
-	engine.TranspileTsFunctions()
+	jsRootDir := filepath.Join("js") // chemin vers les fichiers TS et JS (sous-répertoire)
+	engine.TranspileTsFunctions(jsRootDir)
 	code := m.Run()
 	os.Exit(code)
 }
