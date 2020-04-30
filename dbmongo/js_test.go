@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -15,6 +16,8 @@ import (
 
 const SKIP_ON_CI = "SKIP_ON_CI"
 
+var update = flag.Bool("update", false, "Update the expected test values in golden file")
+
 func Test_js(t *testing.T) {
 
 	scriptNameRegex, _ := regexp.Compile(".*[.]sh")
@@ -22,6 +25,10 @@ func Test_js(t *testing.T) {
 	files, err := ioutil.ReadDir(testdir)
 	if err != nil {
 		t.Errorf("scripts de test inaccessibles: %v", err.Error())
+	}
+
+	if *update {
+		fmt.Println("Les golden files vont être mis à jour")
 	}
 
 	for _, f := range files {
@@ -32,7 +39,12 @@ func Test_js(t *testing.T) {
 					t.Skip("Skipping testing in CI environment")
 				}
 
-				cmd := exec.Command("/bin/bash", f.Name())
+				var cmd *exec.Cmd
+				if *update {
+					cmd = exec.Command("/bin/bash", f.Name(), "--update")
+				} else {
+					cmd = exec.Command("/bin/bash", f.Name())
+				}
 				cmd.Dir = testdir
 
 				err := cmdTester(t, cmd)
@@ -42,7 +54,6 @@ func Test_js(t *testing.T) {
 			})
 		}
 	}
-
 }
 
 func shouldSkipOnCi(t *testing.T, filepath string) bool {
