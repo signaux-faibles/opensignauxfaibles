@@ -403,10 +403,9 @@ func parseDianeFile(path string, outputChannel chan engine.Tuple, event engine.E
 	reader.LazyQuotes = true
 	_, err = reader.Read() // Discard header
 	if err != nil {
-		contextualizedErr := errors.New("echec de lecture de l'en-tête du fichier en sortie du script: " + err.Error())
-		tracker.Error(contextualizedErr)
-		event.Critical(tracker.Report("fatalError"))
-		return contextualizedErr
+		errMsg := "echec de lecture de l'en-tête du fichier en sortie du script: " + err.Error()
+		event.Critical(errMsg)
+		return errors.New(errMsg)
 	}
 	for {
 		row, err := reader.Read()
