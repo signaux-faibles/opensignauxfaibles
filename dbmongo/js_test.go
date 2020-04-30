@@ -18,6 +18,14 @@ const SKIP_ON_CI = "SKIP_ON_CI"
 
 var update = flag.Bool("update", false, "Update the expected test values in golden file")
 
+// TestMain sera exécuté avant les tests
+func TestMain(m *testing.M) {
+	fmt.Println("Transpilation des fonctions JS depuis TypeScript...")
+	// typescript.TranspileTsFunctions()
+	code := m.Run()
+	os.Exit(code)
+}
+
 func Test_js(t *testing.T) {
 
 	scriptNameRegex, _ := regexp.Compile(".*[.]sh")
