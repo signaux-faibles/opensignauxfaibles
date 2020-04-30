@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -14,6 +15,8 @@ import (
 )
 
 const SKIP_ON_CI = "SKIP_ON_CI"
+
+var update = flag.Bool("update", false, "Update the expected test values in golden file")
 
 func Test_js(t *testing.T) {
 
@@ -42,7 +45,6 @@ func Test_js(t *testing.T) {
 			})
 		}
 	}
-
 }
 
 func shouldSkipOnCi(t *testing.T, filepath string) bool {
