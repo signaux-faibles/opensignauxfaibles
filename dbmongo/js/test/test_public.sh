@@ -5,8 +5,8 @@ shopt -s extglob # enable exclusion of test files in wildcard
 # TODO: use `2>&1` instead of `set -e`, in all sh tests
 result_public=$(jsc \
   helpers/fakes.js \
+  data/objects.js \
   ../common/!(*_test).js \
-  objects.js \
   ../public/!(*_test).js \
   ../public/_test.js \
   2>&1)

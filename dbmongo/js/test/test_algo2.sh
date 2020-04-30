@@ -19,7 +19,7 @@ if [ "$result_cibleApprentissage" != 'true' ]; then
 fi
 
 # TODO pourquoi ce test est commenté ?
-# result_mapreduce=$(jsc ../reduce.algo2/*.js ../common/!(*_test).js algo2/lib_algo2.js algo2/naf.js objects.js ./algo2/test_algo2.js)
+# result_mapreduce=$(jsc ../reduce.algo2/*.js ../common/!(*_test).js algo2/lib_algo2.js algo2/naf.js data/objects.js ./algo2/test_algo2.js)
 # if [ "$result_mapreduce" != 'true' ]; then
 #   exit 1
 # fi
