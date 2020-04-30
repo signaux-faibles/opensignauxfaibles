@@ -27,7 +27,7 @@ func bundleJsFunctions() {
 
 	// For each folder
 	for _, folder := range folders {
-		if folder.IsDir() && !strings.HasPrefix(folder.Name(), "test") { // TODO: remove this
+		if folder.IsDir() && !strings.HasPrefix(folder.Name(), "test") {
 
 			out.Write([]byte(`"` + folder.Name() + `"` + ":{\n"))
 
