@@ -410,27 +410,29 @@ func parseDianeFile(path string, outputChannel chan engine.Tuple, event engine.E
 		engine.TrackerReports)
 
 	// process rows of data
+	var row = []string{}
+	var readErr = (error)(nil)
 	for {
-		row, err := reader.Read()
-		if err == io.EOF {
-			// on a fini de parser le fichier => produire un rapport et sortir
-			event.Debug(tracker.Report("abstract"))
+		row, readErr = reader.Read()
+		if readErr != nil {
 			break
-		} else if err != nil {
-			// il y a eu une erreur => produire un rapport d'erreur et sortir
-			contextualizedErr := errors.New("erreur pendant la lecture d'une ligne diane: " + err.Error())
-			tracker.Error(contextualizedErr)
-			event.Critical(tracker.Report("fatalError"))
-			return contextualizedErr
 		}
-
 		if len(row) >= 83 {
 			outputChannel <- parseDianeRow(row)
 		} else {
 			event.Critical("Ligne invalide. Abandon !")
 		}
 		tracker.Next()
-	} // end of "for" loop
+	}
+
+	// return errors, if any
+	if readErr != nil && readErr != io.EOF {
+		contextualizedErr := errors.New("erreur pendant la lecture d'une ligne diane: " + readErr.Error())
+		tracker.Error(contextualizedErr)
+		event.Critical(tracker.Report("fatalError"))
+		return contextualizedErr
+	}
+	event.Debug(tracker.Report("abstract"))
 	return nil
 }
 
