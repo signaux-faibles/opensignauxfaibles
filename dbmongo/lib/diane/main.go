@@ -356,10 +356,6 @@ func parseDianeRow(row []string) (diane Diane) {
 
 // parseDianeRow génère des objets Diane à partir d'un fichier
 func parseDianeFile(path string, outputChannel chan engine.Tuple, event engine.Event) error {
-	tracker := gournal.NewTracker(
-		map[string]string{"path": path},
-		engine.TrackerReports)
-
 	event.Debug(path + ": ouverture")
 
 	cmdPath := []string{filepath.Join(viper.GetString("SCRIPTDIANE_DIR"), "convert_diane.sh"), viper.GetString("APP_DATA") + path}
@@ -397,7 +393,7 @@ func parseDianeFile(path string, outputChannel chan engine.Tuple, event engine.E
 		}
 	}()
 
-	// process rows of data
+	// init csv reader and skip header
 	reader := csv.NewReader(stdout)
 	reader.Comma = ';'
 	reader.LazyQuotes = true
@@ -407,6 +403,13 @@ func parseDianeFile(path string, outputChannel chan engine.Tuple, event engine.E
 		event.Critical(errMsg)
 		return errors.New(errMsg)
 	}
+
+	// init tracker to keep track and report parsing errors
+	tracker := gournal.NewTracker(
+		map[string]string{"path": path},
+		engine.TrackerReports)
+
+	// process rows of data
 	for {
 		row, err := reader.Read()
 		if err == io.EOF {
