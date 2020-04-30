@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
@@ -354,7 +355,7 @@ func parseDianeRow(row []string) (diane Diane) {
 }
 
 // parseDianeRow génère des objets Diane à partir d'un fichier
-func parseDianeFile(path string, outputChannel chan engine.Tuple, event engine.Event) (abort bool) {
+func parseDianeFile(path string, outputChannel chan engine.Tuple, event engine.Event) error {
 	tracker := gournal.NewTracker(
 		map[string]string{"path": path},
 		engine.TrackerReports)
@@ -367,15 +368,17 @@ func parseDianeFile(path string, outputChannel chan engine.Tuple, event engine.E
 	stdout, err := cmd.StdoutPipe()
 	defer stdout.Close()
 	if err != nil {
-		event.Critical("echec de récupération de sortie standard du script: " + err.Error())
-		return false
+		errMsg := "echec de récupération de sortie standard du script: " + err.Error()
+		event.Critical(errMsg)
+		return errors.New(errMsg)
 	}
 
 	stderr, err := cmd.StderrPipe()
 	defer stderr.Close()
 	if err != nil {
-		event.Critical("echec de récupération de sortie d'erreurs du script: " + err.Error())
-		return false
+		errMsg := "echec de récupération de sortie d'erreurs du script: " + err.Error()
+		event.Critical(errMsg)
+		return errors.New(errMsg)
 	}
 
 	// turn lines of standard error output into events, to help debugging
@@ -400,20 +403,23 @@ func parseDianeFile(path string, outputChannel chan engine.Tuple, event engine.E
 	reader.LazyQuotes = true
 	_, err = reader.Read() // Discard header
 	if err != nil {
-		tracker.Error(errors.New("echec de lecture de l'en-tête du fichier en sortie du script: " + err.Error()))
+		contextualizedErr := errors.New("echec de lecture de l'en-tête du fichier en sortie du script: " + err.Error())
+		tracker.Error(contextualizedErr)
 		event.Critical(tracker.Report("fatalError"))
-		return true
+		return contextualizedErr
 	}
 	for {
 		row, err := reader.Read()
-		tracker.Error(err)
 		if err == io.EOF {
+			// on a fini de parser le fichier => produire un rapport et sortir
+			event.Debug(tracker.Report("abstract"))
 			break
 		} else if err != nil {
+			// il y a eu une erreur => produire un rapport d'erreur et sortir
 			contextualizedErr := errors.New("erreur pendant la lecture d'une ligne diane: " + err.Error())
 			tracker.Error(contextualizedErr)
 			event.Critical(tracker.Report("fatalError"))
-			break
+			return contextualizedErr
 		}
 
 		if len(row) >= 83 {
@@ -423,8 +429,7 @@ func parseDianeFile(path string, outputChannel chan engine.Tuple, event engine.E
 		}
 		tracker.Next()
 	} // end of "for" loop
-	event.Debug(tracker.Report("abstract"))
-	return false
+	return nil
 }
 
 // Parser produit les données Diane listées dans un batch
@@ -438,7 +443,8 @@ func Parser(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, ch
 
 	go func() {
 		for _, path := range batch.Files["diane"] {
-			abort := parseDianeFile(path, outputChannel, event)
+			err := parseDianeFile(path, outputChannel, event)
+			abort := err != nil && strings.Contains(err.Error(), "echec de lecture de l'en-tête")
 			if abort == true {
 				break
 			}
