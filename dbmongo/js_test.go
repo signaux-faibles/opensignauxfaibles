@@ -12,6 +12,8 @@ import (
 	"strings"
 	"syscall"
 	"testing"
+
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 )
 
 const SKIP_ON_CI = "SKIP_ON_CI"
@@ -21,7 +23,7 @@ var update = flag.Bool("update", false, "Update the expected test values in gold
 // TestMain sera exécuté avant les tests
 func TestMain(m *testing.M) {
 	fmt.Println("Transpilation des fonctions JS depuis TypeScript...")
-	// typescript.TranspileTsFunctions()
+	engine.TranspileTsFunctions()
 	code := m.Run()
 	os.Exit(code)
 }
