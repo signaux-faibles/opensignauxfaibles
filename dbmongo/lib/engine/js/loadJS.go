@@ -27,7 +27,7 @@ func bundleJsFunctions() {
 
 	// For each folder
 	for _, folder := range folders {
-		if folder.IsDir() && !strings.HasPrefix(folder.Name(), "test") {
+		if folder.IsDir() && !strings.HasPrefix(folder.Name(), "test") { // TODO: remove this
 
 			out.Write([]byte(`"` + folder.Name() + `"` + ":{\n"))
 
@@ -38,7 +38,7 @@ func bundleJsFunctions() {
 
 			// For each file in folder
 			for _, file := range files {
-				if strings.HasSuffix(file.Name(), ".js") {
+				if strings.HasSuffix(file.Name(), ".js") && !strings.HasSuffix(file.Name(), "_test.js") {
 					out.Write([]byte(
 						`"` + strings.TrimSuffix(file.Name(), ".js") + `"` +
 							": `"))
