@@ -36,5 +36,4 @@ dbmongo/export/mongo_dump
 **/tags
 rsignauxfaibles_*.tar.gz
 script/archive/*
-dbmongo/lib/engine/jsFunctions.go
 dbmongo/js/test/test_data_algo2
