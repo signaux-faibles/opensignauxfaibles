@@ -1,16 +1,16 @@
 # This file is run by dbmongo/js_test.go.
 
-result_add=$(jsc ../reduce.algo2/*.js ../common/*.js testing.js algo2/lib_algo2.js algo2/add_test.js)
+result_add=$(jsc ../reduce.algo2/*.js ../common/*.js helpers/testing.js algo2/lib_algo2.js algo2/add_test.js)
 if [ "$result_add" != 'true' ]; then
   exit 1
 fi
 
-result_lookAhead=$(jsc ../reduce.algo2/*.js ../common/*.js testing.js algo2/lib_algo2.js algo2/lookAhead_test.js)
+result_lookAhead=$(jsc ../reduce.algo2/*.js ../common/*.js helpers/testing.js algo2/lib_algo2.js algo2/lookAhead_test.js)
 if [ "$result_lookAhead" != 'true' ]; then
   exit 1
 fi
 
-result_cibleApprentissage=$(jsc ../reduce.algo2/*.js ../common/*.js testing.js algo2/lib_algo2.js algo2/cibleApprentissage_test.js)
+result_cibleApprentissage=$(jsc ../reduce.algo2/*.js ../common/*.js helpers/testing.js algo2/lib_algo2.js algo2/cibleApprentissage_test.js)
 if [ "$result_cibleApprentissage" != 'true' ]; then
   exit 1
 fi
