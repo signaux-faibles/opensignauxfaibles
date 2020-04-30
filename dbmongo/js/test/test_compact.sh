@@ -1,5 +1,7 @@
 # This file is run by dbmongo/js_test.go.
 
+set -e
+
 result_add=$(jsc \
   ../compact/currentState.js \
   ../compact/currentState_test.js)
