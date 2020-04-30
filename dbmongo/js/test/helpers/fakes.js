@@ -1,9 +1,12 @@
+// common fakes from /dbmongo/js/test/public/lib_public.js
+//               and /dbmongo/js/test/algo2/lib_algo2.js
+
 function ISODate(date) {
   let d = new Date(date)
   return d
 }
 
-f = {
+f = this /* = {
   altaresToHuman,
   apconso,
   apdemande,
@@ -26,15 +29,8 @@ f = {
   procolToHuman,
   reduce,
   sirene,
-}
-
-
-var pool = {}
-
-function emit(key, value) {
-  id = JSON.stringify(key)
-  pool[id] = (pool[id] || []).concat([{key, value}])
-}
+  ...
+}*/
 
 function reducer(array, reduce) {
   if (array.length == 1) {
@@ -53,6 +49,3 @@ function invertedReducer(array, reduce) {
     return reducer([newVal].concat(array.slice(0, array.length-2)), reduce)
   }
 }
-
-
-

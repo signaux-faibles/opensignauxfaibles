@@ -1,9 +1,15 @@
 # This file is run by dbmongo/js_test.go.
 
-set -e # stop on errors
 shopt -s extglob # enable exclusion of test files in wildcard
 
-result_public=$(jsc ../public/*.js ../common/!(*_test).js public/lib_public.js objects.js public/test_public.js)
+result_public=$(jsc \
+  helpers/fakes.js \
+  helpers/fake_emit_for_public.js \
+  data/objects.js \
+  ../common/!(*_test).js \
+  ../public/!(*_test).js \
+  ../public/_test.js \
+  2>&1)
 if [ "$result_public" != 'true' ]; then
   echo "$result_public"
   exit 1
