@@ -1,12 +1,12 @@
-package engine 
+package engine
 
- var jsFunctions = map[string]map[string]string{
-"common":{
-"finalize": `function finalize(k, o) {
-  return(o)
+var jsFunctions = map[string]map[string]string{
+	"common": {
+		"finalize": `function finalize(k, o) {
+  return (o)
 }
 `,
-"generatePeriodSerie": `function generatePeriodSerie (date_debut, date_fin) {
+		"generatePeriodSerie": `function generatePeriodSerie (date_debut, date_fin) {
   var date_next = new Date(date_debut.getTime())
   var serie = []
   while (date_next.getTime() < date_fin.getTime()) {
@@ -15,11 +15,11 @@ package engine
   }
   return serie
 }`,
-"map": `function map() {
+		"map": `function map() {
   emit(this._id, this) 
 }
 `,
-"raison_sociale": `function raison_sociale(denomination_unite_legale, nom_unite_legale, nom_usage_unite_legale, prenom1_unite_legale, prenom2_unite_legale, prenom3_unite_legale, prenom4_unite_legale) {
+		"raison_sociale": `function raison_sociale(denomination_unite_legale, nom_unite_legale, nom_usage_unite_legale, prenom1_unite_legale, prenom2_unite_legale, prenom3_unite_legale, prenom4_unite_legale) {
     if (!nom_usage_unite_legale) {
         var nom_usage_unite_legale = "";
     }
@@ -41,10 +41,10 @@ package engine
     return raison_sociale;
 }
 `,
-"reduce": `function reduce(key, values) {
+		"reduce": `function reduce(key, values) {
   return(values.map(v => v))
 }`,
-"region": `function region(departement){
+		"region": `function region(departement){
   var reg = ""
   switch (departement){
     case "01":
@@ -173,9 +173,9 @@ package engine
   return(reg)
 }
 `,
-},
-"compact":{
-"complete_reporder": `function complete_reporder(key, object){
+	},
+	"compact": {
+		"complete_reporder": `function complete_reporder(key, object){
   var batches = Object.keys(object.batch)
   batches.sort()
   var dates = serie_periode
@@ -206,7 +206,7 @@ package engine
   return(object)
 }
 `,
-"currentState": `function currentState(batches){
+		"currentState": `function currentState(batches){
   var currentState = batches.reduce((m, batch) => {
     //1. On supprime les clés de la mémoire 
     Object.keys((batch.compact || {"delete":[]}).delete).forEach( type => {
@@ -231,7 +231,7 @@ package engine
   return(currentState)
 }
 `,
-"finalize": `function finalize(k, o) {
+		"finalize": `function finalize(k, o) {
   o.index = {"algo1":false,
     "algo2":false}
 
@@ -254,7 +254,7 @@ package engine
   return(o)
 }
 `,
-"map": `function map() {      
+		"map": `function map() {      
   try{
     if (this.value != null) {
       emit(this.value.key, this.value) 
@@ -264,7 +264,7 @@ package engine
   }
 }
 `,
-"reduce": `function reduce(key, values) {
+		"reduce": `function reduce(key, values) {
 
   // Tester si plusieurs batchs. Reduce complet uniquement si plusieurs
   // batchs. Sinon, juste fusion des attributs
@@ -469,9 +469,9 @@ package engine
   return(reduced_value)
 }
 `,
-},
-"crossComputation":{
-"apart": `{
+	},
+	"crossComputation": {
+		"apart": `{
   "$set": {
     "value.ratio_apart": {
       "$divide": [
@@ -487,9 +487,9 @@ package engine
   }
 }
 `,
-},
-"migrations":{
-"agg_change_index_Features": `// db.getCollection("Features").aggregate(
+	},
+	"migrations": {
+		"agg_change_index_Features": `// db.getCollection("Features").aggregate(
 // 	[
 // 		// -- Stage 1 --
 // 		{
@@ -530,9 +530,9 @@ db.getCollection("Features").createIndex({
 })
 
 `,
-},
-"public":{
-"altaresToHuman": `function altaresToHuman (code) {
+	},
+	"public": {
+		"altaresToHuman": `function altaresToHuman (code) {
   var codeLiquidation = ['PCL0108', 'PCL010801','PCL010802','PCL030107','PCL030307','PCL030311','PCL05010103','PCL05010204','PCL05010303','PCL05010403','PCL05010503','PCL05010703','PCL05011004','PCL05011102','PCL05011204','PCL05011206','PCL05011304','PCL05011404','PCL05011504','PCL05011604','PCL05011903','PCL05012004','PCL050204','PCL0109','PCL010901','PCL030108','PCL030308','PCL05010104','PCL05010205','PCL05010304','PCL05010404','PCL05010504','PCL05010803','PCL05011005','PCL05011103','PCL05011205','PCL05011207','PCL05011305','PCL05011405','PCL05011505','PCL05011904','PCL05011605','PCL05012005'];
   var codePlanSauvegarde = ['PCL010601','PCL0106','PCL010602','PCL030103','PCL030303','PCL03030301','PCL05010101','PCL05010202','PCL05010301','PCL05010401','PCL05010501','PCL05010506','PCL05010701','PCL05010705','PCL05010801','PCL05010805','PCL05011002','PCL05011202','PCL05011302','PCL05011402','PCL05011502','PCL05011602','PCL05011901','PCL0114','PCL030110','PCL030310'];
   var codeRedressement = ['PCL0105','PCL010501','PCL010502','PCL010503','PCL030105','PCL030305','PCL05010102','PCL05010203','PCL05010302','PCL05010402','PCL05010502','PCL05010702','PCL05010706','PCL05010802','PCL05010806','PCL05010901','PCL05011003','PCL05011101','PCL05011203','PCL05011303','PCL05011403','PCL05011503','PCL05011603','PCL05011902','PCL05012003'];
@@ -557,25 +557,25 @@ db.getCollection("Features").createIndex({
     res = 'cession';
   return res;
 }`,
-"apconso": `function apconso(apconso) {
+		"apconso": `function apconso(apconso) {
   return f.iterable(apconso).sort((p1, p2) => p1.periode < p2.periode)
 }`,
-"apdemande": `function apdemande(apdemande) {
+		"apdemande": `function apdemande(apdemande) {
   return f.iterable(apdemande).sort((p1, p2) => p1.periode < p2.periode)
 }`,
-"bdf": `function bdf(hs) {
+		"bdf": `function bdf(hs) {
   return f.iterable(hs).sort((a, b) => a.annee_bdf < b.annee_bdf)
 }`,
-"compareDebit": `function compareDebit (a,b) {
+		"compareDebit": `function compareDebit (a,b) {
   if (a.numero_historique < b.numero_historique) return -1
   if (a.numero_historique > b.numero_historique) return 1
   return 0
 }`,
-"compte": `function compte(compte) {
+		"compte": `function compte(compte) {
   const c = f.iterable(compte)
   return (c.length>0)?c[c.length-1]:undefined
 }`,
-"cotisations": `function cotisations(vcotisation) {
+		"cotisations": `function cotisations(vcotisation) {
   var offset_cotisation = 0 
   var value_cotisation = {}
   
@@ -602,17 +602,17 @@ db.getCollection("Features").createIndex({
   return(output_cotisation)
 }
 `,
-"dateAddDay": `function dateAddDay(date, nbMonth) {
+		"dateAddDay": `function dateAddDay(date, nbMonth) {
   var result = new Date(date.getTime())
   result.setDate( result.getDate() + nbMonth );
   return result
 }`,
-"dateAddMonth": `function dateAddMonth(date, nbMonth) {
+		"dateAddMonth": `function dateAddMonth(date, nbMonth) {
   var result = new Date(date.getTime())
   result.setUTCMonth(result.getUTCMonth() + nbMonth)
   return result
 }`,
-"dealWithProcols": `function dealWithProcols(data_source, altar_or_procol, output_indexed){
+		"dealWithProcols": `function dealWithProcols(data_source, altar_or_procol, output_indexed){
   return Object.keys(data_source || {}).reduce((events,hash) => {
     var the_event = data_source[hash]
 
@@ -631,7 +631,7 @@ db.getCollection("Features").createIndex({
   )
 }
 `,
-"debits": `function debits(vdebit) {
+		"debits": `function debits(vdebit) {
 
   last_treatment_day = 20
   vdebit = vdebit || {}
@@ -716,13 +716,13 @@ db.getCollection("Features").createIndex({
   return(output_dette)
 }
 `,
-"delai": `function delai(delai) {
+		"delai": `function delai(delai) {
   return f.iterable(delai)
 }`,
-"diane": `function diane(hs) {
+		"diane": `function diane(hs) {
  return f.iterable(hs).sort((a, b) => a.exercice_diane < b.exercice_diane)
 }`,
-"effectifs": `function effectifs(v) {
+		"effectifs": `function effectifs(v) {
   var mapEffectif = {}
   f.iterable(v.effectif).forEach(e => {
     mapEffectif[e.periode.getTime()] = (mapEffectif[e.periode.getTime()] || 0) + e.effectif
@@ -734,10 +734,10 @@ db.getCollection("Features").createIndex({
     }
   }).filter(p => p.effectif)
 }`,
-"finalize": `function finalize(_, v) {
+		"finalize": `function finalize(_, v) {
   return v
 }`,
-"flatten": `function flatten(v, actual_batch) {
+		"flatten": `function flatten(v, actual_batch) {
   var res = Object.keys(v.batch || {})
     .sort()
     .filter(batch => batch <= actual_batch)
@@ -766,14 +766,14 @@ db.getCollection("Features").createIndex({
   return(res)
 }
 `,
-"idEntreprise": `function idEntreprise(idEtablissement) {
+		"idEntreprise": `function idEntreprise(idEtablissement) {
   return {
     scope: 'entreprise',
     key: idEtablissement.slice(0,9),
     batch: actual_batch
   }
 }`,
-"iterable": `function iterable(dict) {
+		"iterable": `function iterable(dict) {
   try {
     return Object.keys(dict).map(h => {
       return dict[h]
@@ -783,7 +783,7 @@ db.getCollection("Features").createIndex({
   }
 }
 `,
-"map": `function map() {
+		"map": `function map() {
   var value = f.flatten(this.value, actual_batch)
 
   if (this.value.scope=="etablissement") {
@@ -833,7 +833,7 @@ db.getCollection("Features").createIndex({
   }
 }
 `,
-"procolToHuman": `function procolToHuman (action, stade) {
+		"procolToHuman": `function procolToHuman (action, stade) {
   var res = null;
   if (action == "liquidation" && stade != "abandon_procedure") 
     res = 'liquidation';
@@ -849,7 +849,7 @@ db.getCollection("Features").createIndex({
     res = 'plan_redressement';
   return res;
 }`,
-"reduce": `function reduce(key, values) {
+		"reduce": `function reduce(key, values) {
   if (key.scope="entreprise") {
     values = values.reduce((m, v) => {
       if (v.sirets) {
@@ -862,17 +862,17 @@ db.getCollection("Features").createIndex({
   }
   return values
 }`,
-"sirene": `function sirene(sireneArray) {
+		"sirene": `function sirene(sireneArray) {
   return sireneArray.reduce((accu, k) => {
     return k
   }, {})
 }`,
-},
-"purgeBatch":{
-"finalize": `function finalize(k, o) {
+	},
+	"purgeBatch": {
+		"finalize": `function finalize(k, o) {
     return o
 }`,
-"map": `function map() {
+		"map": `function map() {
   if (this.value.batch[currentBatch]){
     delete this.value.batch[currentBatch]
   }
@@ -880,12 +880,12 @@ db.getCollection("Features").createIndex({
     emit(this._id, this.value)
 }
 `,
-"reduce": `function reduce(key, values) {
+		"reduce": `function reduce(key, values) {
     return values
 }`,
-},
-"reduce.algo2":{
-"add": `function add(obj, output){
+	},
+	"reduce.algo2": {
+		"add": `function add(obj, output){
   Object.keys(output).forEach(function(periode) {
     if (periode in obj){
       Object.assign(output[periode], obj[periode])
@@ -897,7 +897,7 @@ db.getCollection("Features").createIndex({
   })
 }
 `,
-"altaresToHuman": `function altaresToHuman (code) {
+		"altaresToHuman": `function altaresToHuman (code) {
   var codeLiquidation = ['PCL0108', 'PCL010801','PCL010802','PCL030107','PCL030307','PCL030311','PCL05010103','PCL05010204','PCL05010303','PCL05010403','PCL05010503','PCL05010703','PCL05011004','PCL05011102','PCL05011204','PCL05011206','PCL05011304','PCL05011404','PCL05011504','PCL05011604','PCL05011903','PCL05012004','PCL050204','PCL0109','PCL010901','PCL030108','PCL030308','PCL05010104','PCL05010205','PCL05010304','PCL05010404','PCL05010504','PCL05010803','PCL05011005','PCL05011103','PCL05011205','PCL05011207','PCL05011305','PCL05011405','PCL05011505','PCL05011904','PCL05011605','PCL05012005'];
   var codePlanSauvegarde = ['PCL010601','PCL0106','PCL010602','PCL030103','PCL030303','PCL03030301','PCL05010101','PCL05010202','PCL05010301','PCL05010401','PCL05010501','PCL05010506','PCL05010701','PCL05010705','PCL05010801','PCL05010805','PCL05011002','PCL05011202','PCL05011302','PCL05011402','PCL05011502','PCL05011602','PCL05011901','PCL0114','PCL030110','PCL030310'];
   var codeRedressement = ['PCL0105','PCL010501','PCL010502','PCL010503','PCL030105','PCL030305','PCL05010102','PCL05010203','PCL05010302','PCL05010402','PCL05010502','PCL05010702','PCL05010706','PCL05010802','PCL05010806','PCL05010901','PCL05011003','PCL05011101','PCL05011203','PCL05011303','PCL05011403','PCL05011503','PCL05011603','PCL05011902','PCL05012003'];
@@ -922,7 +922,7 @@ db.getCollection("Features").createIndex({
     res = 'cession';
   return res;
 }`,
-"apart": `function apart (apconso, apdemande) {
+		"apart": `function apart (apconso, apdemande) {
 
   var output_apart = {}
 
@@ -998,7 +998,7 @@ db.getCollection("Features").createIndex({
   return(output_apart)
 }
 `,
-"ccsf": `function ccsf(v, output_array){
+		"ccsf": `function ccsf(v, output_array){
 
   var ccsfHashes = Object.keys(v.ccsf || {})
 
@@ -1021,7 +1021,7 @@ db.getCollection("Features").createIndex({
   })
 }
 `,
-"cibleApprentissage": `function cibleApprentissage(output_indexed, n_months) {
+		"cibleApprentissage": `function cibleApprentissage(output_indexed, n_months) {
 
   // Mock two input instead of one for future modification
   var output_cotisation = output_indexed
@@ -1056,12 +1056,12 @@ db.getCollection("Features").createIndex({
   return output_cible
 }
 `,
-"compareDebit": `function compareDebit (a,b) {
+		"compareDebit": `function compareDebit (a,b) {
   if (a.numero_historique < b.numero_historique) return -1
   if (a.numero_historique > b.numero_historique) return 1
   return 0
 }`,
-"compte": `function compte (v, periodes) {
+		"compte": `function compte (v, periodes) {
   let output_compte = {}
 
 
@@ -1076,7 +1076,7 @@ db.getCollection("Features").createIndex({
   return output_compte
 }
 `,
-"cotisation": `function cotisation(output_indexed, output_array) {
+		"cotisation": `function cotisation(output_indexed, output_array) {
   // calcul de cotisation_moyenne sur 12 mois
   Object.keys(output_indexed).forEach(k => {
     let periode_courante = output_indexed[k].periode
@@ -1128,7 +1128,7 @@ db.getCollection("Features").createIndex({
   })
 }
 `,
-"cotisationsdettes": `function cotisationsdettes(v, periodes) {
+		"cotisationsdettes": `function cotisationsdettes(v, periodes) {
 
   // Tous les débits traitées après ce jour du mois sont reportées à la période suivante
   // Permet de s'aligner avec le calendrier de fourniture des données
@@ -1282,12 +1282,12 @@ db.getCollection("Features").createIndex({
   return(output_cotisationsdettes)
 }
 `,
-"dateAddMonth": `function dateAddMonth(date, nbMonth) {
+		"dateAddMonth": `function dateAddMonth(date, nbMonth) {
   var result = new Date(date.getTime())
   result.setUTCMonth(result.getUTCMonth() + nbMonth)
   return result
 }`,
-"dealWithProcols": `function dealWithProcols(data_source, altar_or_procol, output_indexed){
+		"dealWithProcols": `function dealWithProcols(data_source, altar_or_procol, output_indexed){
   var codes  =  Object.keys(data_source).reduce((events, hash) => {
     var the_event = data_source[hash]
 
@@ -1321,14 +1321,14 @@ db.getCollection("Features").createIndex({
   )
 }
 `,
-"defaillances": `function defaillances (v, output_indexed) {
+		"defaillances": `function defaillances (v, output_indexed) {
   f.dealWithProcols(v.altares, "altares", output_indexed)
   f.dealWithProcols(v.procol, "procol", output_indexed)
 }
   
   
   `,
-"delais": `function delais (v, output_indexed) {
+		"delais": `function delais (v, output_indexed) {
   Object.keys(v.delai).map(
     function (hash) {
       var delai = v.delai[hash]
@@ -1357,7 +1357,7 @@ db.getCollection("Features").createIndex({
   )
 }
 `,
-"detteFiscale": `function detteFiscale (diane){
+		"detteFiscale": `function detteFiscale (diane){
   if  (("dette_fiscale_et_sociale" in diane) && (diane["dette_fiscale_et_sociale"] !== null) &&
       ("valeur_ajoutee" in diane) && (diane["valeur_ajoutee"] !== null) &&
       (diane["valeur_ajoutee"] != 0)){
@@ -1366,7 +1366,7 @@ db.getCollection("Features").createIndex({
     return null
   }
 }`,
-"effectifs": `function effectifs (effobj, periodes, effectif_name) {
+		"effectifs": `function effectifs (effobj, periodes, effectif_name) {
 
   let output_effectif = {}
 
@@ -1427,7 +1427,7 @@ db.getCollection("Features").createIndex({
   return(output_effectif)
 }
 `,
-"finalize": `function finalize(k, v) {
+		"finalize": `function finalize(k, v) {
   const maxBsonSize = 16777216;
 
   // v de la forme
@@ -1493,7 +1493,7 @@ db.getCollection("Features").createIndex({
   }
 }
 `,
-"financierCourtTerme": `function financierCourtTerme(diane) {
+		"financierCourtTerme": `function financierCourtTerme(diane) {
   if  (("concours_bancaire_courant" in diane) && (diane["concours_bancaire_courant"] !== null) &&
     ("ca" in diane) && (diane["ca"] !== null) &&
     (diane["ca"] != 0)){
@@ -1502,7 +1502,7 @@ db.getCollection("Features").createIndex({
     return null
   }
 }`,
-"flatten": `function flatten(v, actual_batch) {
+		"flatten": `function flatten(v, actual_batch) {
   var res = Object.keys(v.batch || {})
     .sort()
     .filter(batch => batch <= actual_batch)
@@ -1531,7 +1531,7 @@ db.getCollection("Features").createIndex({
   return(res)
 }
 `,
-"fraisFinancier": `function fraisFinancier(diane){
+		"fraisFinancier": `function fraisFinancier(diane){
   if (("interets" in diane) && (diane["interets"] !== null) &&
     ("excedent_brut_d_exploitation" in diane) && (diane["excedent_brut_d_exploitation"] !== null) &&
     ("produits_financiers" in diane) && (diane["produits_financiers"] !== null) &&
@@ -1545,7 +1545,7 @@ db.getCollection("Features").createIndex({
     return null
   }
 }`,
-"interim": `function interim (interim, output_indexed) {
+		"interim": `function interim (interim, output_indexed) {
   let output_effectif = output_indexed
   // let periodes = Object.keys(output_indexed)
   // output_indexed devra être remplacé par output_effectif, et ne contenir que les données d'effectif.
@@ -1580,7 +1580,7 @@ db.getCollection("Features").createIndex({
   return output_interim
 }
 `,
-"lookAhead": `function lookAhead(data, attr_name, n_months, past) {
+		"lookAhead": `function lookAhead(data, attr_name, n_months, past) {
   // Est-ce que l'évènement se répercute dans le passé (past = true on pourra se
   // demander: que va-t-il se passer) ou dans le future (past = false on
   // pourra se demander que s'est-il passé
@@ -1615,7 +1615,7 @@ db.getCollection("Features").createIndex({
   return output
 }
 `,
-"map": `function map () {
+		"map": `function map () {
   let v = f.flatten(this.value, actual_batch)
 
   if (v.scope == "etablissement") {
@@ -1876,7 +1876,7 @@ db.getCollection("Features").createIndex({
   }
 }
 `,
-"naf": `function naf(output_indexed, naf) {
+		"naf": `function naf(output_indexed, naf) {
   Object.keys(output_indexed).forEach(k =>{
     if (("code_ape" in output_indexed[k]) && (output_indexed[k].code_ape !== null)){
       var code_ape = output_indexed[k].code_ape
@@ -1893,7 +1893,7 @@ db.getCollection("Features").createIndex({
   })
 }
 `,
-"outputs": `function outputs (v, serie_periode) {
+		"outputs": `function outputs (v, serie_periode) {
   var output_array = serie_periode.map(function (e) {
     return {
       "siret": v.key,
@@ -1913,14 +1913,14 @@ db.getCollection("Features").createIndex({
   return [output_array, output_indexed]
 }
 `,
-"poidsFrng": `function poidsFrng(diane){
+		"poidsFrng": `function poidsFrng(diane){
   if  (("couverture_ca_fdr" in diane) && (diane["couverture_ca_fdr"] !== null)){
     return diane["couverture_ca_fdr"]/360 * 100
   } else {
     return null
   }
 }`,
-"procolToHuman": `function procolToHuman (action, stade) {
+		"procolToHuman": `function procolToHuman (action, stade) {
   var res = null;
   if (action == "liquidation" && stade != "abandon_procedure") 
     res = 'liquidation';
@@ -1936,13 +1936,13 @@ db.getCollection("Features").createIndex({
     res = 'plan_redressement';
   return res;
 }`,
-"reduce": `function reduce(key, values) {
+		"reduce": `function reduce(key, values) {
   return values.reduce((val, accu) => {
     return Object.assign(accu, val)
   }, {})
 }
 `,
-"repeatable": `function repeatable(rep){
+		"repeatable": `function repeatable(rep){
   let output_repeatable = {}
   Object.keys(rep).forEach(hash => {
     var one_rep = rep[hash]
@@ -1957,7 +1957,7 @@ db.getCollection("Features").createIndex({
 
 
 `,
-"sirene": `function sirene (v, output_array) {
+		"sirene": `function sirene (v, output_array) {
   var sireneHashes = Object.keys(v.sirene || {})
 
   output_array.forEach(val => {
@@ -1988,7 +1988,7 @@ db.getCollection("Features").createIndex({
 }
 
 `,
-"sirene_ul": `function sirene_ul(v, output_array) {
+		"sirene_ul": `function sirene_ul(v, output_array) {
   var sireneHashes = Object.keys(v.sirene_ul || {})
   output_array.forEach(val => {
     if (sireneHashes.length != 0) {
@@ -2010,7 +2010,7 @@ db.getCollection("Features").createIndex({
   })
 }
 `,
-"tauxMarge": `function tauxMarge(diane) {
+		"tauxMarge": `function tauxMarge(diane) {
   if  (("excedent_brut_d_exploitation" in diane) && (diane["excedent_brut_d_exploitation"] !== null) &&
     ("valeur_ajoutee" in diane) && (diane["valeur_ajoutee"] !== null) &&
     (diane["excedent_brut_d_exploitation"] != 0)){
@@ -2019,5 +2019,5 @@ db.getCollection("Features").createIndex({
     return null
   }
 }`,
-},
+	},
 }
