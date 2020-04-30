@@ -39,7 +39,7 @@ fi
 DIFF=$(diff ${TMP_PATH}/map_stdout.log ${TMP_PATH}/map_golden.log)
 if [ "${DIFF}" != "" ]; then
   echo "Test failed, because of diff: ${DIFF}"
-  echo "If the diff is expected, update the golden file on server by running ./test_map_reduce_algo2.js --update"
+  echo "If this diff was expected, update the golden file on server by running ./test_map_reduce_algo2.sh --update"
   exit 1
 fi
 
