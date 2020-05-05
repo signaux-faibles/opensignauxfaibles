@@ -2,13 +2,6 @@ package engine
 
  var jsFunctions = map[string]map[string]string{
 "common":{
-"finalize": `// TODO: can we get rid of that common function?
-// It seems to exists just for tests
-
-function finalize(k, o) {
-  return(o)
-}
-`,
 "generatePeriodSerie": `function generatePeriodSerie (date_debut, date_fin) {
   var date_next = new Date(date_debut.getTime())
   var serie = []
@@ -18,10 +11,6 @@ function finalize(k, o) {
   }
   return serie
 }`,
-"map": `// function map() {
-//   emit(this._id, this) 
-// }
-`,
 "raison_sociale": `function raison_sociale(denomination_unite_legale, nom_unite_legale, nom_usage_unite_legale, prenom1_unite_legale, prenom2_unite_legale, prenom3_unite_legale, prenom4_unite_legale) {
     if (!nom_usage_unite_legale) {
         var nom_usage_unite_legale = "";
@@ -44,9 +33,6 @@ function finalize(k, o) {
     return raison_sociale;
 }
 `,
-"reduce": `// function reduce(key, values) {
-//   return(values.map(v => v))
-// }`,
 "region": `function region(departement){
   var reg = ""
   switch (departement){
