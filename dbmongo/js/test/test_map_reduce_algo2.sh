@@ -9,8 +9,6 @@
 
 # This file is run by dbmongo/js_test.go.
 
-# Stop script and exit on error of any command
-set -e
 # enable exclusion of test files in wildcard
 shopt -s extglob
 
@@ -33,6 +31,7 @@ jsc \
   ./data/naf.js \
   ../reduce.algo2/!(*_test).js \
   ../reduce.algo2/map_test.js \
+  2>&1 \
   > ${TMP_PATH}/map_stdout.log
 
 if [ "$1" == "--update" ]; then
@@ -40,11 +39,8 @@ if [ "$1" == "--update" ]; then
   scp ${TMP_PATH}/map_golden.log stockage:/home/centos/opensignauxfaibles_tests/
 fi
 
-# Don't let the script stop if diff fails
-set +e
-
 # compare map_stdout.log with golden file, return non-zero exit code if any difference is found
-DIFF=$(diff ${TMP_PATH}/map_stdout.log ${TMP_PATH}/map_golden.log)
+DIFF=$(diff ${TMP_PATH}/map_golden.log ${TMP_PATH}/map_stdout.log)
 if [ "${DIFF}" != "" ]; then
   echo "Test failed, because of diff: ${DIFF}"
   echo "If this diff was expected, update the golden file on server by running ./test_map_reduce_algo2.sh --update"
