@@ -1,5 +1,7 @@
 serie_periode = [new Date("2014-01-01"), new Date("2015-01-01")]
 f = {}
+"use strict";
+
 f.complete_reporder = complete_reporder
 var test_cases =
   [
