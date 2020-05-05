@@ -35,6 +35,9 @@ if [ "$1" == "--update" ]; then
   scp ${TMP_PATH}/map_golden.log stockage:/home/centos/opensignauxfaibles_tests/
 fi
 
+# Don't let the script stop if diff fails
+set +e
+
 # compare map_stdout.log with golden file, return non-zero exit code if any difference is found
 DIFF=$(diff ${TMP_PATH}/map_stdout.log ${TMP_PATH}/map_golden.log)
 if [ "${DIFF}" != "" ]; then
