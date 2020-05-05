@@ -5,15 +5,15 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
+
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 )
 
 // Reads all .js files in the current folder
 // and encodes them as strings maps in jsFunctions.go
-func bundleJsFunctions() {
-	jsRootDir := filepath.Join("..", "..", "js")
+func bundleJsFunctions(jsRootDir string) {
 	folders, err := ioutil.ReadDir(jsRootDir)
 	if err != nil {
 		log.Fatal(err)
@@ -56,18 +56,8 @@ func bundleJsFunctions() {
 	out.Write([]byte("}\n"))
 }
 
-func transpileTsFunctions() {
-	// TODO: also transpile any other TS files
-	cmd := exec.Command("npx", "typescript", "../../js/common/raison_sociale.ts") // output: dbmongo/js/common/raison_sociale.js
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	err := cmd.Run()
-	if err != nil {
-		log.Fatal(err)
-	}
-}
-
 func main() {
-	transpileTsFunctions() // convert *.ts files to .js
-	bundleJsFunctions()    // bundle *.js files to jsFunctions.go
+	jsRootDir := filepath.Join("..", "..", "js")
+	engine.TranspileTsFunctions(jsRootDir) // convert *.ts files to .js
+	bundleJsFunctions(jsRootDir)           // bundle *.js files to jsFunctions.go
 }
