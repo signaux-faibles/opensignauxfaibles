@@ -1,3 +1,3 @@
-function map() {
-  emit(this._id, this) 
-}
+// function map() {
+//   emit(this._id, this) 
+// }
