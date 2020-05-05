@@ -354,11 +354,7 @@ func parseDianeRow(row []string) (diane Diane) {
 }
 
 // parseDianeRow génère des objets Diane à partir d'un fichier
-func parseDianeFile(path string, outputChannel chan engine.Tuple, event engine.Event) (abort bool) {
-	tracker := gournal.NewTracker(
-		map[string]string{"path": path},
-		engine.TrackerReports)
-
+func parseDianeFile(path string, outputChannel chan engine.Tuple, event engine.Event) {
 	event.Debug(path + ": ouverture")
 
 	cmdPath := []string{filepath.Join(viper.GetString("SCRIPTDIANE_DIR"), "convert_diane.sh"), viper.GetString("APP_DATA") + path}
@@ -368,14 +364,14 @@ func parseDianeFile(path string, outputChannel chan engine.Tuple, event engine.E
 	defer stdout.Close()
 	if err != nil {
 		event.Critical("echec de récupération de sortie standard du script: " + err.Error())
-		return false
+		return
 	}
 
 	stderr, err := cmd.StderrPipe()
 	defer stderr.Close()
 	if err != nil {
 		event.Critical("echec de récupération de sortie d'erreurs du script: " + err.Error())
-		return false
+		return
 	}
 
 	// turn lines of standard error output into events, to help debugging
@@ -394,37 +390,46 @@ func parseDianeFile(path string, outputChannel chan engine.Tuple, event engine.E
 		}
 	}()
 
-	// process rows of data
+	// init csv reader and skip header
 	reader := csv.NewReader(stdout)
 	reader.Comma = ';'
 	reader.LazyQuotes = true
 	_, err = reader.Read() // Discard header
 	if err != nil {
-		tracker.Error(errors.New("echec de lecture de l'en-tête du fichier en sortie du script: " + err.Error()))
-		event.Critical(tracker.Report("fatalError"))
-		return true
+		event.Critical("echec de lecture de l'en-tête du fichier en sortie du script: " + err.Error())
+		return
 	}
+
+	// init tracker to keep track and report parsing errors
+	tracker := gournal.NewTracker(
+		map[string]string{"path": path},
+		engine.TrackerReports)
+
+	// process rows of data
+	var row []string
+	var readErr error
 	for {
-		row, err := reader.Read()
-		tracker.Error(err)
-		if err == io.EOF {
-			break
-		} else if err != nil {
-			contextualizedErr := errors.New("erreur pendant la lecture d'une ligne diane: " + err.Error())
-			tracker.Error(contextualizedErr)
-			event.Critical(tracker.Report("fatalError"))
+		row, readErr = reader.Read()
+		if readErr != nil {
 			break
 		}
-
 		if len(row) >= 83 {
 			outputChannel <- parseDianeRow(row)
 		} else {
 			event.Critical("Ligne invalide. Abandon !")
 		}
 		tracker.Next()
-	} // end of "for" loop
+	}
+
+	// return errors, if any
+	if readErr != nil && readErr != io.EOF {
+		contextualizedErr := errors.New("erreur pendant la lecture d'une ligne diane: " + readErr.Error())
+		tracker.Error(contextualizedErr)
+		event.Critical(tracker.Report("fatalError"))
+		return
+	}
 	event.Debug(tracker.Report("abstract"))
-	return false
+	return
 }
 
 // Parser produit les données Diane listées dans un batch
@@ -438,10 +443,7 @@ func Parser(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, ch
 
 	go func() {
 		for _, path := range batch.Files["diane"] {
-			abort := parseDianeFile(path, outputChannel, event)
-			if abort == true {
-				break
-			}
+			parseDianeFile(path, outputChannel, event)
 		}
 		close(eventChannel)
 		close(outputChannel)
