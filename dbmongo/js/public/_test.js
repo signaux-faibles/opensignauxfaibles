@@ -11,15 +11,12 @@ objects.forEach(object => {
 })
 
 var intermediateResult = []
-
-
 Object.keys(pool).forEach(k => {
   array = pool[k]
   intermediateResult.push({key: pool[k][0].key, value: reducer(array, f.reduce)})
 })
 
 var invertedIntermediateResult = []
-
 Object.keys(pool).forEach(k => {
   array = pool[k]
   invertedIntermediateResult.push({key: pool[k][0].key, value: invertedReducer(array, f.reduce)})
@@ -31,7 +28,7 @@ intermediateResult.forEach(r => {
 })
 
 var invertedResult = []
-intermediateResult.forEach(r => {
+invertedIntermediateResult.forEach(r => {
   invertedResult.push({_id: r.key, value: f.finalize(r.key, r.value)})
 })
 
