@@ -1,6 +1,9 @@
-function debits(vdebit) {
+"use strict";
 
-  last_treatment_day = 20
+function debits(vdebit) {
+  const  { date_fin, serie_periode } = this; // parameters passed from Go Pipeline as global variables  
+
+  const last_treatment_day = 20
   vdebit = vdebit || {}
   var ecn = Object.keys(vdebit).reduce((accu, h) => {
       let debit = vdebit[h]
@@ -37,6 +40,7 @@ function debits(vdebit) {
     //Selon le jour du traitement, cela passe sur la période en cours ou sur la suivante. 
     let jour_traitement = debit.date_traitement.getUTCDate() 
     let jour_traitement_suivant = debit_suivant.date_traitement.getUTCDate()
+    let date_traitement_debut
     if (jour_traitement <= last_treatment_day){
       date_traitement_debut = new Date(
         Date.UTC(debit.date_traitement.getFullYear(), debit.date_traitement.getUTCMonth())
@@ -47,6 +51,7 @@ function debits(vdebit) {
       )
     }
 
+    let date_traitement_fin
     if (jour_traitement_suivant <= last_treatment_day) {
       date_traitement_fin = new Date(
         Date.UTC(debit_suivant.date_traitement.getFullYear(), debit_suivant.date_traitement.getUTCMonth())
@@ -67,7 +72,7 @@ function debits(vdebit) {
     })
   })    
 
-  output_dette = []
+  const output_dette = []
   serie_periode.forEach(p => {
     output_dette.push(
       (value_dette[p.getTime()] || [])

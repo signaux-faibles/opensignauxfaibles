@@ -1,4 +1,8 @@
+"use strict";
+
 function map() {
+  const  { actual_batch } = this; // functions and parameters passed from Go Pipeline as global variables  
+
   var value = f.flatten(this.value, actual_batch)
 
   if (this.value.scope=="etablissement") {

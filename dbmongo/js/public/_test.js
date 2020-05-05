@@ -1,16 +1,14 @@
 "use strict";
 
-actual_batch = "1905"
-date_debut = new Date("2014-01-01")
-date_fin = new Date("2018-02-01")
-serie_periode = f.generatePeriodSerie(new Date("2014-01-01"), new Date("2018-02-01"))
-offset_effectif = 2
+const globals = this; // global functions and parameters
 
-objects.forEach(object => {
-  f.value = object.value
-  f._id = object._id
-  f.map()
-})
+globals.actual_batch = "1905"
+globals.date_fin = new Date("2018-02-01")
+globals.serie_periode = f.generatePeriodSerie(new Date("2014-01-01"), new Date("2018-02-01"))
+
+objects.forEach(({ value, _id }) =>
+  ({ ...globals, _id, value }).map()
+)
 
 var intermediateResult = Object.values(pool).map(array => ({
   key: array[0].key,

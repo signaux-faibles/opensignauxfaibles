@@ -1,4 +1,8 @@
+"use strict";
+
 function effectifs(v) {
+  const  { serie_periode } = this; // parameters passed from Go Pipeline as global variables  
+
   var mapEffectif = {}
   f.iterable(v.effectif).forEach(e => {
     mapEffectif[e.periode.getTime()] = (mapEffectif[e.periode.getTime()] || 0) + e.effectif
