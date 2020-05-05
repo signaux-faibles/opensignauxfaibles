@@ -1,4 +1,6 @@
 function complete_reporder(key, object){
+  const { f } = this // global functions and parameters passed from Go pipeline
+
   var batches = Object.keys(object.batch)
   batches.sort()
   var dates = serie_periode

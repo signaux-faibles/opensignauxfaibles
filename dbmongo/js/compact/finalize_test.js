@@ -1,8 +1,12 @@
-serie_periode = [new Date("2014-01-01"), new Date("2015-01-01")]
-f = {}
 "use strict";
 
+const f = {}
 f.complete_reporder = complete_reporder
+
+this.f = f // global functions and parameters passed from Go pipeline
+this.serie_periode = [new Date("2014-01-01"), new Date("2015-01-01")]
+
+
 var test_cases =
   [
     {
