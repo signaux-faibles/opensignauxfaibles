@@ -1,4 +1,5 @@
 function reduce(key, values) {
+  const { completeTypes, batchKey, types, batches } = this;  const { f } = this // global parameters passed from Go pipeline
 
   // Tester si plusieurs batchs. Reduce complet uniquement si plusieurs
   // batchs. Sinon, juste fusion des attributs

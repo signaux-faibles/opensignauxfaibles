@@ -391,15 +391,19 @@ var test_cases = [
   }
 ]
 
+const f = {
+  currentState: this.currentState
+}
 
 var test_results = test_cases.map(function(tc, id) {
-  f = {}
-  f.currentState = currentState
-  completeTypes = tc.completeTypes
-  batchKey = tc.batchKey
-  types = tc.types
-  batches = tc.batches
-  var actual = reduce(tc.reduce_key, tc.reduce_values)
+  const globals = {
+    f,
+    completeTypes: tc.completeTypes,
+    batchKey: tc.batchKey,
+    types: tc.types,
+    batches: tc.batches,
+  }
+  var actual = reduce.call(globals, tc.reduce_key, tc.reduce_values)
   // print(JSON.stringify(actual, null, 2))
   return(compare(actual, tc.expected))
 })
