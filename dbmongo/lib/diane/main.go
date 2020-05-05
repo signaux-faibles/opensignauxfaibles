@@ -406,7 +406,7 @@ func parseDianeFile(path string, outputChannel chan engine.Tuple, event engine.E
 		engine.TrackerReports)
 
 	// process rows of data
-	var row = []string{}
+	var row []string
 	var readErr error
 	for {
 		row, readErr = reader.Read()
