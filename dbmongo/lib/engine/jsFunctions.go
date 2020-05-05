@@ -2,7 +2,10 @@ package engine
 
  var jsFunctions = map[string]map[string]string{
 "common":{
-"finalize": `function finalize(k, o) {
+"finalize": `// TODO: can we get rid of that common function?
+// It seems to exists just for tests
+
+function finalize(k, o) {
   return(o)
 }
 `,
@@ -15,9 +18,9 @@ package engine
   }
   return serie
 }`,
-"map": `function map() {
-  emit(this._id, this) 
-}
+"map": `// function map() {
+//   emit(this._id, this) 
+// }
 `,
 "raison_sociale": `function raison_sociale(denomination_unite_legale, nom_unite_legale, nom_usage_unite_legale, prenom1_unite_legale, prenom2_unite_legale, prenom3_unite_legale, prenom4_unite_legale) {
     if (!nom_usage_unite_legale) {
@@ -41,9 +44,9 @@ package engine
     return raison_sociale;
 }
 `,
-"reduce": `function reduce(key, values) {
-  return(values.map(v => v))
-}`,
+"reduce": `// function reduce(key, values) {
+//   return(values.map(v => v))
+// }`,
 "region": `function region(departement){
   var reg = ""
   switch (departement){
@@ -1686,7 +1689,7 @@ db.getCollection("Features").createIndex({
       if (v.ccsf) {f.ccsf(v, output_array)}
       if (v.sirene) {f.sirene(v, output_array)}
 
-      f.naf(output_indexed, naf)
+      f.populateNafAndApe(output_indexed, naf)
 
       f.cotisation(output_indexed, output_array)
 
@@ -1876,23 +1879,6 @@ db.getCollection("Features").createIndex({
   }
 }
 `,
-"naf": `function naf(output_indexed, naf) {
-  Object.keys(output_indexed).forEach(k =>{
-    if (("code_ape" in output_indexed[k]) && (output_indexed[k].code_ape !== null)){
-      var code_ape = output_indexed[k].code_ape
-      output_indexed[k].code_naf = naf.n5to1[code_ape]
-      output_indexed[k].libelle_naf = naf.n1[output_indexed[k].code_naf]
-      output_indexed[k].code_ape_niveau2 = code_ape.substring(0,2)
-      output_indexed[k].code_ape_niveau3 = code_ape.substring(0,3)
-      output_indexed[k].code_ape_niveau4 = code_ape.substring(0,4)
-      output_indexed[k].libelle_ape2 = naf.n2[output_indexed[k].code_ape_niveau2]
-      output_indexed[k].libelle_ape3 = naf.n3[output_indexed[k].code_ape_niveau3]
-      output_indexed[k].libelle_ape4 = naf.n4[output_indexed[k].code_ape_niveau4]
-      output_indexed[k].libelle_ape5 = naf.n5[code_ape]
-    }
-  })
-}
-`,
 "outputs": `function outputs (v, serie_periode) {
   var output_array = serie_periode.map(function (e) {
     return {
@@ -1920,6 +1906,23 @@ db.getCollection("Features").createIndex({
     return null
   }
 }`,
+"populateNafAndApe": `function populateNafAndApe(output_indexed, naf) {
+  Object.keys(output_indexed).forEach(k =>{
+    if (("code_ape" in output_indexed[k]) && (output_indexed[k].code_ape !== null)){
+      var code_ape = output_indexed[k].code_ape
+      output_indexed[k].code_naf = naf.n5to1[code_ape]
+      output_indexed[k].libelle_naf = naf.n1[output_indexed[k].code_naf]
+      output_indexed[k].code_ape_niveau2 = code_ape.substring(0,2)
+      output_indexed[k].code_ape_niveau3 = code_ape.substring(0,3)
+      output_indexed[k].code_ape_niveau4 = code_ape.substring(0,4)
+      output_indexed[k].libelle_ape2 = naf.n2[output_indexed[k].code_ape_niveau2]
+      output_indexed[k].libelle_ape3 = naf.n3[output_indexed[k].code_ape_niveau3]
+      output_indexed[k].libelle_ape4 = naf.n4[output_indexed[k].code_ape_niveau4]
+      output_indexed[k].libelle_ape5 = naf.n5[code_ape]
+    }
+  })
+}
+`,
 "procolToHuman": `function procolToHuman (action, stade) {
   var res = null;
   if (action == "liquidation" && stade != "abandon_procedure") 
