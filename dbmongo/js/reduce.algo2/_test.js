@@ -11,29 +11,13 @@ objects.forEach(object => {
   f.map()
 })
 
-var intermediateResult = []
+var intermediateResult = Object.values(pool).map(array => reducer(array, f.reduce))
 
-Object.keys(pool).forEach(k => {
-  array = pool[k]
-  intermediateResult.push(reducer(array, f.reduce))
-})
+var invertedIntermediateResult = Object.values(pool).map(array => invertedReducer(array, f.reduce))
 
-var invertedIntermediateResult = []
+var result = intermediateResult.map(r => f.finalize(null, r))
 
-Object.keys(pool).forEach(k => {
-  array = pool[k]
-  invertedIntermediateResult.push(invertedReducer(array, f.reduce))
-})
-
-var result = []
-intermediateResult.forEach(r => {
-  result.push(f.finalize(null, r))
-})
-
-var invertedResult = []
-invertedIntermediateResult.forEach(r => {
-  invertedResult.push(f.finalize(null, r))
-})
+var invertedResult = invertedIntermediateResult.map(r => f.finalize(null, r))
 
 print(JSON.stringify(sortObject(result)) == JSON.stringify(sortObject(invertedResult)))
 
