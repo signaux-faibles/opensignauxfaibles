@@ -31,8 +31,8 @@ intermediateResult.forEach(r => {
 })
 
 var invertedResult = []
-intermediateResult.forEach(r => {
+invertedIntermediateResult.forEach(r => {
   invertedResult.push(f.finalize(null, r))
 })
 
-print(JSON.stringify(result) == JSON.stringify(invertedResult))
+print(JSON.stringify(result.sort()) == JSON.stringify(invertedResult.sort()))
