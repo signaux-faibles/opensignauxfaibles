@@ -1,9 +1,8 @@
-function complete_reporder(key, object){
-  const { f } = this // global functions and parameters passed from Go pipeline
+"use strict";
 
+function complete_reporder(key, object){
   var batches = Object.keys(object.batch)
   batches.sort()
-  var dates = serie_periode
   var missing = {}
   serie_periode.forEach(p => {
     missing[p.getTime()] = true

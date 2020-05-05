@@ -1,3 +1,5 @@
+"use strict";
+
 function map() {      
   try{
     if (this.value != null) {

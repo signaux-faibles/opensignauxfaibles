@@ -1,8 +1,10 @@
-function finalize(k, o) {
-  const { f } = this // global functions and parameters passed from Go pipeline
+"use strict";
 
-  o.index = {"algo1":false,
-    "algo2":false}
+function finalize(k, o) {
+  o.index = {
+    "algo1": false,
+    "algo2": false
+  }
 
   if (o.scope == "entreprise") {
     o.index.algo1 = true

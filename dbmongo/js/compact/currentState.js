@@ -1,3 +1,5 @@
+"use strict";
+
 function currentState(batches){
   var currentState = batches.reduce((m, batch) => {
     //1. On supprime les clés de la mémoire 
