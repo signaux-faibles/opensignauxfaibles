@@ -35,4 +35,37 @@ invertedIntermediateResult.forEach(r => {
   invertedResult.push(f.finalize(null, r))
 })
 
-print(JSON.stringify(result.sort()) == JSON.stringify(invertedResult.sort()))
+print(JSON.stringify(sortObject(result)) == JSON.stringify(sortObject(invertedResult)))
+
+// from https://gist.github.com/ninapavlich/1697bcc107052f5b884a794d307845fe
+function sortObject(object) {
+  if (!object) {
+    return object;
+  }
+
+  const isArray = object instanceof Array;
+  var sortedObj = {};
+  if (isArray) {
+    sortedObj = object.map((item) => sortObject(item));
+  } else {
+    var keys = Object.keys(object);
+    // console.log(keys);
+    keys.sort(function(key1, key2) {
+      (key1 = key1.toLowerCase()), (key2 = key2.toLowerCase());
+      if (key1 < key2) return -1;
+      if (key1 > key2) return 1;
+      return 0;
+    });
+
+    for (var index in keys) {
+      var key = keys[index];
+      if (typeof object[key] == 'object') {
+        sortedObj[key] = sortObject(object[key]);
+      } else {
+        sortedObj[key] = object[key];
+      }
+    }
+  }
+
+  return sortedObj;
+}
