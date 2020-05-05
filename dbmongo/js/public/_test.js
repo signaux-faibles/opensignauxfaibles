@@ -10,29 +10,24 @@ objects.forEach(object => {
   f.map()
 })
 
-var intermediateResult = []
+var intermediateResult = Object.values(pool).map(array => ({
+  key: array[0].key,
+  value: reducer(array, f.reduce)
+}))
 
+var invertedIntermediateResult = Object.values(pool).map(array => ({
+  key: array[0].key,
+  value: invertedReducer(array, f.reduce)
+}))
 
-Object.keys(pool).forEach(k => {
-  array = pool[k]
-  intermediateResult.push({key: pool[k][0].key, value: reducer(array, f.reduce)})
-})
+var result = intermediateResult.map(r => ({
+  _id: r.key,
+  value: f.finalize(r.key, r.value)
+}))
 
-var invertedIntermediateResult = []
-
-Object.keys(pool).forEach(k => {
-  array = pool[k]
-  invertedIntermediateResult.push({key: pool[k][0].key, value: invertedReducer(array, f.reduce)})
-})
-
-var result = []
-intermediateResult.forEach(r => {
-  result.push({_id: r.key, value: f.finalize(r.key, r.value)})
-})
-
-var invertedResult = []
-intermediateResult.forEach(r => {
-  invertedResult.push({_id: r.key, value: f.finalize(r.key, r.value)})
-})
+var invertedResult = invertedIntermediateResult.map(r => ({
+  _id: r.key,
+  value: f.finalize(r.key, r.value)
+}))
 
 print(JSON.stringify(result) == JSON.stringify(invertedResult))

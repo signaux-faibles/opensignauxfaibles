@@ -1,6 +1,10 @@
 // common fakes from /dbmongo/js/test/public/lib_public.js
 //               and /dbmongo/js/test/algo2/lib_algo2.js
 
+Object.bsonsize = function (obj) {
+  return JSON.stringify(obj).length
+}
+
 function ISODate(date) {
   let d = new Date(date)
   return d
