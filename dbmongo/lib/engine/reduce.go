@@ -185,6 +185,8 @@ func reduceFinalAggregation(tempDatabase *mgo.Database, tempCollection, outDatab
 			},
 		},
 		// on ne garde que les établissements dont on connait l'effectif (non-null)
+		// Commenté parce que dans le cadre de la séparation des calculs par types de données,
+		// si on n'intègre pas l'effectif, cette étape filtrerait toutes les données. 
 		// bson.M{
 		// 	"$match": bson.M{
 		// 		"value.effectif": bson.M{
