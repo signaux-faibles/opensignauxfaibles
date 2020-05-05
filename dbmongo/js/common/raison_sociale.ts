@@ -1,3 +1,5 @@
+"use strict";
+
 declare function debug(string); // supported by jsc, to print in stdout
 
 function raison_sociale(

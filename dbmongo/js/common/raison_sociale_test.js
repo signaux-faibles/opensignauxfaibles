@@ -1,3 +1,5 @@
+"use strict";
+
 var test_cases = [
   {data : ["nom_entreprise", null, null, null, null, null, null],
     expected : "nom_entreprise"},
@@ -13,6 +15,6 @@ var test_cases = [
 
 test_results = test_cases.map(tc => {
   return(raison_sociale(tc.data[0], tc.data[1], tc.data[2], tc.data[3], tc.data[4], tc.data[5], tc.data[6]) == tc.expected)
-}
-)
+})
+
 print(test_results.every(t=>t))

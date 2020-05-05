@@ -1,3 +1,5 @@
+"use strict";
+
 function generatePeriodSerie (date_debut, date_fin) {
   var date_next = new Date(date_debut.getTime())
   var serie = []
