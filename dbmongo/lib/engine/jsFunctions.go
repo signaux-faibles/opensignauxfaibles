@@ -2,7 +2,9 @@ package engine
 
  var jsFunctions = map[string]map[string]string{
 "common":{
-"altaresToHuman": `function altaresToHuman (code) {
+"altaresToHuman": `"use strict";
+
+function altaresToHuman (code) {
   var codeLiquidation = ['PCL0108', 'PCL010801','PCL010802','PCL030107','PCL030307','PCL030311','PCL05010103','PCL05010204','PCL05010303','PCL05010403','PCL05010503','PCL05010703','PCL05011004','PCL05011102','PCL05011204','PCL05011206','PCL05011304','PCL05011404','PCL05011504','PCL05011604','PCL05011903','PCL05012004','PCL050204','PCL0109','PCL010901','PCL030108','PCL030308','PCL05010104','PCL05010205','PCL05010304','PCL05010404','PCL05010504','PCL05010803','PCL05011005','PCL05011103','PCL05011205','PCL05011207','PCL05011305','PCL05011405','PCL05011505','PCL05011904','PCL05011605','PCL05012005'];
   var codePlanSauvegarde = ['PCL010601','PCL0106','PCL010602','PCL030103','PCL030303','PCL03030301','PCL05010101','PCL05010202','PCL05010301','PCL05010401','PCL05010501','PCL05010506','PCL05010701','PCL05010705','PCL05010801','PCL05010805','PCL05011002','PCL05011202','PCL05011302','PCL05011402','PCL05011502','PCL05011602','PCL05011901','PCL0114','PCL030110','PCL030310'];
   var codeRedressement = ['PCL0105','PCL010501','PCL010502','PCL010503','PCL030105','PCL030305','PCL05010102','PCL05010203','PCL05010302','PCL05010402','PCL05010502','PCL05010702','PCL05010706','PCL05010802','PCL05010806','PCL05010901','PCL05011003','PCL05011101','PCL05011203','PCL05011303','PCL05011403','PCL05011503','PCL05011603','PCL05011902','PCL05012003'];
@@ -27,7 +29,9 @@ package engine
     res = 'cession';
   return res;
 }`,
-"generatePeriodSerie": `function generatePeriodSerie (date_debut, date_fin) {
+"generatePeriodSerie": `"use strict";
+
+function generatePeriodSerie (date_debut, date_fin) {
   var date_next = new Date(date_debut.getTime())
   var serie = []
   while (date_next.getTime() < date_fin.getTime()) {
@@ -36,7 +40,8 @@ package engine
   }
   return serie
 }`,
-"raison_sociale": `function raison_sociale(denomination_unite_legale, nom_unite_legale, nom_usage_unite_legale, prenom1_unite_legale, prenom2_unite_legale, prenom3_unite_legale, prenom4_unite_legale) {
+"raison_sociale": `"use strict";
+function raison_sociale(denomination_unite_legale, nom_unite_legale, nom_usage_unite_legale, prenom1_unite_legale, prenom2_unite_legale, prenom3_unite_legale, prenom4_unite_legale) {
     if (!nom_usage_unite_legale) {
         var nom_usage_unite_legale = "";
     }
@@ -58,7 +63,9 @@ package engine
     return raison_sociale;
 }
 `,
-"region": `function region(departement){
+"region": `"use strict";
+
+function region(departement){
   var reg = ""
   switch (departement){
     case "01":
@@ -189,10 +196,11 @@ package engine
 `,
 },
 "compact":{
-"complete_reporder": `function complete_reporder(key, object){
+"complete_reporder": `"use strict";
+
+function complete_reporder(key, object){
   var batches = Object.keys(object.batch)
   batches.sort()
-  var dates = serie_periode
   var missing = {}
   serie_periode.forEach(p => {
     missing[p.getTime()] = true
@@ -220,7 +228,9 @@ package engine
   return(object)
 }
 `,
-"currentState": `function currentState(batches){
+"currentState": `"use strict";
+
+function currentState(batches){
   var currentState = batches.reduce((m, batch) => {
     //1. On supprime les clés de la mémoire 
     Object.keys((batch.compact || {"delete":[]}).delete).forEach( type => {
@@ -245,10 +255,13 @@ package engine
   return(currentState)
 }
 `,
-"finalize": `function finalize(k, o) {
-  o.index = {"algo1":false,
-    "algo2":false}
+"finalize": `"use strict";
 
+function finalize(k, o) {
+  o.index = {
+    "algo1": false,
+    "algo2": false
+  }
 
   if (o.scope == "entreprise") {
     o.index.algo1 = true
@@ -268,7 +281,9 @@ package engine
   return(o)
 }
 `,
-"map": `function map() {      
+"map": `"use strict";
+
+function map() {      
   try{
     if (this.value != null) {
       emit(this.value.key, this.value) 
@@ -278,7 +293,10 @@ package engine
   }
 }
 `,
-"reduce": `function reduce(key, values) {
+"reduce": `"use strict";
+
+function reduce(key, values) {
+  const { completeTypes, batchKey, types, batches } = this // global parameters passed from Go pipeline
 
   // Tester si plusieurs batchs. Reduce complet uniquement si plusieurs
   // batchs. Sinon, juste fusion des attributs
@@ -620,9 +638,12 @@ db.getCollection("Features").createIndex({
   )
 }
 `,
-"debits": `function debits(vdebit) {
+"debits": `"use strict";
 
-  last_treatment_day = 20
+function debits(vdebit) {
+  const  { date_fin, serie_periode } = this; // parameters passed from Go Pipeline as global variables  
+
+  const last_treatment_day = 20
   vdebit = vdebit || {}
   var ecn = Object.keys(vdebit).reduce((accu, h) => {
       let debit = vdebit[h]
@@ -659,6 +680,7 @@ db.getCollection("Features").createIndex({
     //Selon le jour du traitement, cela passe sur la période en cours ou sur la suivante. 
     let jour_traitement = debit.date_traitement.getUTCDate() 
     let jour_traitement_suivant = debit_suivant.date_traitement.getUTCDate()
+    let date_traitement_debut
     if (jour_traitement <= last_treatment_day){
       date_traitement_debut = new Date(
         Date.UTC(debit.date_traitement.getFullYear(), debit.date_traitement.getUTCMonth())
@@ -669,6 +691,7 @@ db.getCollection("Features").createIndex({
       )
     }
 
+    let date_traitement_fin
     if (jour_traitement_suivant <= last_treatment_day) {
       date_traitement_fin = new Date(
         Date.UTC(debit_suivant.date_traitement.getFullYear(), debit_suivant.date_traitement.getUTCMonth())
@@ -689,7 +712,7 @@ db.getCollection("Features").createIndex({
     })
   })    
 
-  output_dette = []
+  const output_dette = []
   serie_periode.forEach(p => {
     output_dette.push(
       (value_dette[p.getTime()] || [])
@@ -711,7 +734,11 @@ db.getCollection("Features").createIndex({
 "diane": `function diane(hs) {
  return f.iterable(hs).sort((a, b) => a.exercice_diane < b.exercice_diane)
 }`,
-"effectifs": `function effectifs(v) {
+"effectifs": `"use strict";
+
+function effectifs(v) {
+  const  { serie_periode } = this; // parameters passed from Go Pipeline as global variables  
+
   var mapEffectif = {}
   f.iterable(v.effectif).forEach(e => {
     mapEffectif[e.periode.getTime()] = (mapEffectif[e.periode.getTime()] || 0) + e.effectif
@@ -772,7 +799,11 @@ db.getCollection("Features").createIndex({
   }
 }
 `,
-"map": `function map() {
+"map": `"use strict";
+
+function map() {
+  const  { actual_batch } = this; // functions and parameters passed from Go Pipeline as global variables  
+
   var value = f.flatten(this.value, actual_batch)
 
   if (this.value.scope=="etablissement") {
