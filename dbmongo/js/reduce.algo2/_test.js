@@ -3,6 +3,7 @@ date_debut = new Date("2014-01-01")
 date_fin = new Date("2018-02-01")
 serie_periode = f.generatePeriodSerie(new Date("2014-01-01"), new Date("2018-02-01"))
 offset_effectif = 2
+includes = { all: true }
 
 objects.forEach(object => {
   f.value = object.value
@@ -10,28 +11,45 @@ objects.forEach(object => {
   f.map()
 })
 
-var intermediateResult = []
+var intermediateResult = Object.values(pool).map(array => reducer(array, f.reduce))
 
-Object.keys(pool).forEach(k => {
-  array = pool[k]
-  intermediateResult.push(reducer(array, f.reduce))
-})
+var invertedIntermediateResult = Object.values(pool).map(array => invertedReducer(array, f.reduce))
 
-var invertedIntermediateResult = []
+var result = intermediateResult.map(r => f.finalize(null, r))
 
-Object.keys(pool).forEach(k => {
-  array = pool[k]
-  invertedIntermediateResult.push(invertedReducer(array, f.reduce))
-})
+var invertedResult = invertedIntermediateResult.map(r => f.finalize(null, r))
 
-var result = []
-intermediateResult.forEach(r => {
-  result.push(f.finalize(null, r))
-})
+print(JSON.stringify(sortObject(result)) == JSON.stringify(sortObject(invertedResult)))
 
-var invertedResult = []
-intermediateResult.forEach(r => {
-  invertedResult.push(f.finalize(null, r))
-})
+// from https://gist.github.com/ninapavlich/1697bcc107052f5b884a794d307845fe
+function sortObject(object) {
+  if (!object) {
+    return object;
+  }
 
-print(JSON.stringify(result) == JSON.stringify(invertedResult))
+  const isArray = object instanceof Array;
+  var sortedObj = {};
+  if (isArray) {
+    sortedObj = object.map((item) => sortObject(item));
+  } else {
+    var keys = Object.keys(object);
+    // console.log(keys);
+    keys.sort(function(key1, key2) {
+      (key1 = key1.toLowerCase()), (key2 = key2.toLowerCase());
+      if (key1 < key2) return -1;
+      if (key1 > key2) return 1;
+      return 0;
+    });
+
+    for (var index in keys) {
+      var key = keys[index];
+      if (typeof object[key] == 'object') {
+        sortedObj[key] = sortObject(object[key]);
+      } else {
+        sortedObj[key] = object[key];
+      }
+    }
+  }
+
+  return sortedObj;
+}

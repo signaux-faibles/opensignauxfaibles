@@ -11,7 +11,7 @@ result_add=$(jsc \
   ../reduce.algo2/add_test.js \
   2>&1)
 if [ "$result_add" != 'true' ]; then
-  echo "$result_add"
+  echo "add_test: $result_add"
   exit 1
 fi
 
@@ -24,7 +24,7 @@ result_lookAhead=$(jsc \
   ../reduce.algo2/lookAhead_test.js \
   2>&1)
 if [ "$result_lookAhead" != 'true' ]; then
-  echo "$result_lookAhead"
+  echo "lookAhead_test: $result_lookAhead"
   exit 1
 fi
 
@@ -37,21 +37,20 @@ result_cibleApprentissage=$(jsc \
   ../reduce.algo2/cibleApprentissage_test.js \
   2>&1)
 if [ "$result_cibleApprentissage" != 'true' ]; then
-  echo "$result_cibleApprentissage"
+  echo "cibleApprentissage_test: $result_cibleApprentissage"
   exit 1
 fi
 
-# TODO pourquoi ce test est commenté ?
-# result_mapreduce=$(jsc \
-#   ../reduce.algo2/!(*_test).js \
-#   ../common/!(*_test).js \
-#   helpers/fakes.js \
-#   helpers/fake_emit_for_algo2.js \
-#   data/naf.js \
-#   data/objects.js \
-#   ./reduce.algo2/_test.js\
-#   2>&1)
-# if [ "$result_mapreduce" != 'true' ]; then
-#   echo "$result_mapreduce"
-#   exit 1
-# fi
+result_mapreduce=$(jsc \
+  ../reduce.algo2/!(*_test).js \
+  ../common/!(*_test).js \
+  helpers/fakes.js \
+  helpers/fake_emit_for_algo2.js \
+  data/naf.js \
+  data/objects.js \
+  ../reduce.algo2/_test.js\
+  2>&1)
+if [ "$result_mapreduce" != 'true' ]; then
+  echo "map_reduce_test: $result_mapreduce"
+  exit 1
+fi
