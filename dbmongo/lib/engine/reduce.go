@@ -177,12 +177,16 @@ func reduceFinalAggregation(tempDatabase *mgo.Database, tempCollection, outDatab
 
 	var pipeline []bson.M
 	pipeline = append(pipeline, []bson.M{
+		// séparation des données par établissement
 		bson.M{
 			"$unwind": bson.M{
 				"path":                       "$value",
 				"preserveNullAndEmptyArrays": false,
 			},
 		},
+		// on ne garde que les établissements dont on connait l'effectif (non-null)
+		// Commenté parce que dans le cadre de la séparation des calculs par types de données,
+		// si on n'intègre pas l'effectif, cette étape filtrerait toutes les données. 
 		// bson.M{
 		// 	"$match": bson.M{
 		// 		"value.effectif": bson.M{
@@ -190,6 +194,7 @@ func reduceFinalAggregation(tempDatabase *mgo.Database, tempCollection, outDatab
 		// 		},
 		// 	},
 		// },
+		// on a plusieurs objets par clé => on génère un nouvel identifiant et on stocke la clé dans "info"
 		bson.M{
 			"$project": bson.M{
 				"_id": bson.D{
@@ -219,7 +224,7 @@ func reduceFinalAggregation(tempDatabase *mgo.Database, tempCollection, outDatab
 	}
 	mergePipeline = append(mergePipeline, setStages...)
 
-	// Merge stage
+	// Merge stage / insertion des données dans la collection Features
 	pipeline = append(pipeline,
 		bson.M{
 			"$merge": bson.M{
