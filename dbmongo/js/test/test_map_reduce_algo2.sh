@@ -27,7 +27,7 @@ echo "makeTestData = ({ ISODate, NumberInt }) => (${JSON_TEST_DATASET});" \
   > ${TMP_PATH}/reduce_test_data.js
 
 # Run tests
-jsc ${TMP_PATH}/reduce_test_data.js ../common/!(*_test).js ../reduce.algo2/!(*_test).js ./test_map_reduce_algo2.js \
+jsc ${TMP_PATH}/reduce_test_data.js ../common/!(*_test).js ../reduce.algo2/!(*_test).js ../reduce.algo2/map_test.js \
   > ${TMP_PATH}/map_stdout.log
 
 if [ "$1" == "--update" ]; then
@@ -39,7 +39,7 @@ fi
 DIFF=$(diff ${TMP_PATH}/map_stdout.log ${TMP_PATH}/map_golden.log)
 if [ "${DIFF}" != "" ]; then
   echo "Test failed, because of diff: ${DIFF}"
-  echo "If the diff is expected, update the golden file on server by running ./test_map_reduce_algo2.js --update"
+  echo "If this diff was expected, update the golden file on server by running ./test_map_reduce_algo2.sh --update"
   exit 1
 fi
 
