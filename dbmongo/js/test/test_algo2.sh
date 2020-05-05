@@ -42,16 +42,16 @@ if [ "$result_cibleApprentissage" != 'true' ]; then
 fi
 
 # TODO pourquoi ce test est commenté ?
-# result_mapreduce=$(jsc \
-#   ../reduce.algo2/!(*_test).js \
-#   ../common/!(*_test).js \
-#   helpers/fakes.js \
-#   helpers/fake_emit_for_algo2.js \
-#   data/naf.js \
-#   data/objects.js \
-#   ./reduce.algo2/_test.js\
-#   2>&1)
-# if [ "$result_mapreduce" != 'true' ]; then
-#   echo "$result_mapreduce"
-#   exit 1
-# fi
+result_mapreduce=$(jsc \
+  ../reduce.algo2/!(*_test).js \
+  ../common/!(*_test).js \
+  helpers/fakes.js \
+  helpers/fake_emit_for_algo2.js \
+  data/naf.js \
+  data/objects.js \
+  ../reduce.algo2/_test.js\
+  2>&1)
+if [ "$result_mapreduce" != 'true' ]; then
+  echo "$result_mapreduce"
+  exit 1
+fi
