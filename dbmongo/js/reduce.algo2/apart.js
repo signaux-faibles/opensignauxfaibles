@@ -1,3 +1,4 @@
+"use strict";
 function apart (apconso, apdemande) {
 
   var output_apart = {}

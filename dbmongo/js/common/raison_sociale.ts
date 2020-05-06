@@ -9,6 +9,7 @@ function raison_sociale(
   prenom3_unite_legale: string,
   prenom4_unite_legale: string
 ): string {
+  "use strict";
   if (!nom_usage_unite_legale) {
     var nom_usage_unite_legale = "";
   } else {

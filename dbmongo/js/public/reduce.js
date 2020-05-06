@@ -1,4 +1,5 @@
 function reduce(key, values) {
+  "use strict";
   if (key.scope="entreprise") {
     values = values.reduce((m, v) => {
       if (v.sirets) {

@@ -1,4 +1,5 @@
 function cotisations(vcotisation) {
+  "use strict";
   var offset_cotisation = 0 
   var value_cotisation = {}
   

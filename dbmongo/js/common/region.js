@@ -1,4 +1,5 @@
 function region(departement){
+  "use strict";
   var reg = ""
   switch (departement){
     case "01":

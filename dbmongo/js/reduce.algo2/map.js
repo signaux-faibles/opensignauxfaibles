@@ -1,8 +1,10 @@
+
 function map () {
+  "use strict";
   let v = f.flatten(this.value, actual_batch)
 
   if (v.scope == "etablissement") {
-    let o = f.outputs(v, serie_periode)
+    const o = f.outputs(v, serie_periode)
     let output_array = o[0] // [ OutputValue ] // in chronological order
     let output_indexed = o[1] // { Periode -> OutputValue } // OutputValue: cf outputs()
 

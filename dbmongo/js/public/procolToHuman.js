@@ -1,4 +1,5 @@
 function procolToHuman (action, stade) {
+  "use strict";
   var res = null;
   if (action == "liquidation" && stade != "abandon_procedure") 
     res = 'liquidation';

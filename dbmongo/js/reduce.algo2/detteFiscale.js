@@ -1,4 +1,5 @@
 function detteFiscale (diane){
+  "use strict";
   if  (("dette_fiscale_et_sociale" in diane) && (diane["dette_fiscale_et_sociale"] !== null) &&
       ("valeur_ajoutee" in diane) && (diane["valeur_ajoutee"] !== null) &&
       (diane["valeur_ajoutee"] != 0)){

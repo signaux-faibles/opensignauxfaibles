@@ -1,4 +1,5 @@
 function reduce(key, values) {
+  "use strict";
 
   // Tester si plusieurs batchs. Reduce complet uniquement si plusieurs
   // batchs. Sinon, juste fusion des attributs

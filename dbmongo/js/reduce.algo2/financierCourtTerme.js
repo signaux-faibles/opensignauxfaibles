@@ -1,4 +1,5 @@
 function financierCourtTerme(diane) {
+  "use strict";
   if  (("concours_bancaire_courant" in diane) && (diane["concours_bancaire_courant"] !== null) &&
     ("ca" in diane) && (diane["ca"] !== null) &&
     (diane["ca"] != 0)){
