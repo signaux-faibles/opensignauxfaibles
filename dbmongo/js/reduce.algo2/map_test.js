@@ -15,9 +15,9 @@ f = this;
 jsParams = {}
 jsParams.naf = naf; // loaded from data/naf.js
 jsParams.actual_batch = "2002_1";
-date_debut = new Date("2014-01-01");
+jsParams.date_debut = new Date("2014-01-01");
 jsParams.date_fin = new Date("2016-01-01");
-jsParams.serie_periode = f.generatePeriodSerie(date_debut, jsParams.date_fin);
+jsParams.serie_periode = f.generatePeriodSerie(jsParams.date_debut, jsParams.date_fin);
 jsParams.includes = { "all": true };
 jsParams.offset_effectif = 2;
 

@@ -278,7 +278,7 @@ func reduceDefineScope(batch AdminBatch, algo string, types []string) (bson.M, e
 	}
 
 	jsParams := bson.M{
-		"date_debut":      batch.Params.DateDebut,
+		"date_debut":      batch.Params.DateDebut,                                                                                                                        // <-- jsParams.date_debut
 		"date_fin":        batch.Params.DateFin,                                                                                                                          // <-- jsParams.date_fin
 		"serie_periode":   misc.GenereSeriePeriode(batch.Params.DateDebut, batch.Params.DateFin),                                                                         // <-- jsParams.serie_periode
 		"offset_effectif": (batch.Params.DateFinEffectif.Year()-batch.Params.DateFin.Year())*12 + int(batch.Params.DateFinEffectif.Month()-batch.Params.DateFin.Month()), // <-- jsParams.offset_effectif
