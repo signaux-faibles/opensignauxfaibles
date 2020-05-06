@@ -1,4 +1,5 @@
 function debits(vdebit) {
+  "use strict";
 
   last_treatment_day = 20
   vdebit = vdebit || {}
