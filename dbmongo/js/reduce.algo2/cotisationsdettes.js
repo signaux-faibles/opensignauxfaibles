@@ -1,11 +1,11 @@
 function cotisationsdettes(v, periodes) {
+  "use strict";
 
   // Tous les débits traitées après ce jour du mois sont reportées à la période suivante
   // Permet de s'aligner avec le calendrier de fourniture des données
   const last_treatment_day = 20
 
   var output_cotisationsdettes = {}
-
 
   // TODO Cotisations avec un mois de retard ? Bizarre, plus maintenant que l'export se fait le 20
   // var offset_cotisation = 1
@@ -69,6 +69,7 @@ function cotisationsdettes(v, periodes) {
     //Selon le jour du traitement, cela passe sur la période en cours ou sur la suivante.
     let jour_traitement = debit.date_traitement.getUTCDate()
     let jour_traitement_suivant = debit_suivant.date_traitement.getUTCDate()
+    let date_traitement_debut
     if (jour_traitement <= last_treatment_day){
       date_traitement_debut = new Date(
         Date.UTC(debit.date_traitement.getFullYear(), debit.date_traitement.getUTCMonth())
@@ -79,6 +80,7 @@ function cotisationsdettes(v, periodes) {
       )
     }
 
+    let date_traitement_fin
     if (jour_traitement_suivant <= last_treatment_day) {
       date_traitement_fin = new Date(
         Date.UTC(debit_suivant.date_traitement.getFullYear(), debit_suivant.date_traitement.getUTCMonth())

@@ -1,4 +1,5 @@
 function flatten(v, actual_batch) {
+  "use strict";
   var res = Object.keys(v.batch || {})
     .sort()
     .filter(batch => batch <= actual_batch)

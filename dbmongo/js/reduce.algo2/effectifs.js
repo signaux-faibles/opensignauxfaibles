@@ -1,4 +1,5 @@
 function effectifs (effobj, periodes, effectif_name) {
+  "use strict";
 
   let output_effectif = {}
 

@@ -1,4 +1,5 @@
 function sirene (v, output_array) {
+  "use strict";
   var sireneHashes = Object.keys(v.sirene || {})
 
   output_array.forEach(val => {

@@ -1,4 +1,5 @@
 function currentState(batches){
+  "use strict";
   var currentState = batches.reduce((m, batch) => {
     //1. On supprime les clés de la mémoire 
     Object.keys((batch.compact || {"delete":[]}).delete).forEach( type => {

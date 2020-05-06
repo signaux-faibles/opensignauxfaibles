@@ -1,4 +1,5 @@
 function populateNafAndApe(output_indexed, naf) {
+  "use strict";
   Object.keys(output_indexed).forEach(k =>{
     if (("code_ape" in output_indexed[k]) && (output_indexed[k].code_ape !== null)){
       var code_ape = output_indexed[k].code_ape

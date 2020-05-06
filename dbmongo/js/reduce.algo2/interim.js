@@ -1,4 +1,5 @@
 function interim (interim, output_indexed) {
+  "use strict";
   let output_effectif = output_indexed
   // let periodes = Object.keys(output_indexed)
   // output_indexed devra être remplacé par output_effectif, et ne contenir que les données d'effectif.

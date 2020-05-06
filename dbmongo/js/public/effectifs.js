@@ -1,4 +1,5 @@
 function effectifs(v) {
+  "use strict";
   var mapEffectif = {}
   f.iterable(v.effectif).forEach(e => {
     mapEffectif[e.periode.getTime()] = (mapEffectif[e.periode.getTime()] || 0) + e.effectif

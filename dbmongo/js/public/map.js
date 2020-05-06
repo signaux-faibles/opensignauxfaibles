@@ -1,4 +1,5 @@
 function map() {
+  "use strict";
   var value = f.flatten(this.value, jsParams.actual_batch)
 
   if (this.value.scope=="etablissement") {

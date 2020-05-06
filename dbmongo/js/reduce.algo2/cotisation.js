@@ -1,4 +1,5 @@
 function cotisation(output_indexed, output_array) {
+  "use strict";
   // calcul de cotisation_moyenne sur 12 mois
   Object.keys(output_indexed).forEach(k => {
     let periode_courante = output_indexed[k].periode

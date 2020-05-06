@@ -1,4 +1,5 @@
 function sirene_ul(v, output_array) {
+  "use strict";
   var sireneHashes = Object.keys(v.sirene_ul || {})
   output_array.forEach(val => {
     if (sireneHashes.length != 0) {

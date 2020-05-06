@@ -1,4 +1,5 @@
 function outputs (v, serie_periode) {
+  "use strict";
   var output_array = serie_periode.map(function (e) {
     return {
       "siret": v.key,

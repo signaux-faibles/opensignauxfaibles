@@ -1,4 +1,5 @@
 function delais (v, output_indexed) {
+  "use strict";
   Object.keys(v.delai).map(
     function (hash) {
       var delai = v.delai[hash]
