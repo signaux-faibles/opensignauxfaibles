@@ -15,7 +15,7 @@ function cotisations(vcotisation) {
 
   var output_cotisation = []
 
-  serie_periode.forEach(p => {
+  jsParams.serie_periode.forEach(p => {
     output_cotisation.push(
       (value_cotisation[p.getTime()] || []) 
         .reduce((m,c) => m+c, 0)

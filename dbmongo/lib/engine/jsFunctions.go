@@ -192,9 +192,9 @@ package engine
 "complete_reporder": `function complete_reporder(key, object){
   var batches = Object.keys(object.batch)
   batches.sort()
-  var dates = serie_periode
+  var dates = jsParams.serie_periode
   var missing = {}
-  serie_periode.forEach(p => {
+  jsParams.serie_periode.forEach(p => {
     missing[p.getTime()] = true
   })
 
@@ -212,7 +212,7 @@ package engine
   })
 
   var lastBatch = batches[batches.length - 1]
-  serie_periode.filter(p => missing[p.getTime()]).forEach(p => {
+  jsParams.serie_periode.filter(p => missing[p.getTime()]).forEach(p => {
     let reporder_obj = object.batch[lastBatch].reporder || {}
     reporder_obj[p] = { random_order: Math.random(), periode: p, siret: key }
     object.batch[lastBatch].reporder = reporder_obj
@@ -581,7 +581,7 @@ db.getCollection("Features").createIndex({
 
   var output_cotisation = []
 
-  serie_periode.forEach(p => {
+  jsParams.serie_periode.forEach(p => {
     output_cotisation.push(
       (value_cotisation[p.getTime()] || []) 
         .reduce((m,c) => m+c, 0)
@@ -690,7 +690,7 @@ db.getCollection("Features").createIndex({
   })    
 
   output_dette = []
-  serie_periode.forEach(p => {
+  jsParams.serie_periode.forEach(p => {
     output_dette.push(
       (value_dette[p.getTime()] || [])
         .reduce((m,c) => {
@@ -716,7 +716,7 @@ db.getCollection("Features").createIndex({
   f.iterable(v.effectif).forEach(e => {
     mapEffectif[e.periode.getTime()] = (mapEffectif[e.periode.getTime()] || 0) + e.effectif
   })
-  return serie_periode.map(p => {
+  return jsParams.serie_periode.map(p => {
     return {
       periode: p,
       effectif: mapEffectif[p.getTime()] || null
@@ -1583,7 +1583,7 @@ db.getCollection("Features").createIndex({
   let v = f.flatten(this.value, jsParams.actual_batch)
 
   if (v.scope == "etablissement") {
-    let o = f.outputs(v, serie_periode)
+    let o = f.outputs(v, jsParams.serie_periode)
     let output_array = o[0] // [ OutputValue ] // in chronological order
     let output_indexed = o[1] // { Periode -> OutputValue } // OutputValue: cf outputs()
 
@@ -1675,7 +1675,7 @@ db.getCollection("Features").createIndex({
   if (v.scope == "entreprise") {
 
     if (includes["all"]){
-      var output_array = serie_periode.map(function (e) {
+      var output_array = jsParams.serie_periode.map(function (e) {
         return {
           "siren": v.key,
           "periode": e,

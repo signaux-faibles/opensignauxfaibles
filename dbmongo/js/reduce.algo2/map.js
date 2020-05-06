@@ -2,7 +2,7 @@ function map () {
   let v = f.flatten(this.value, jsParams.actual_batch)
 
   if (v.scope == "etablissement") {
-    let o = f.outputs(v, serie_periode)
+    let o = f.outputs(v, jsParams.serie_periode)
     let output_array = o[0] // [ OutputValue ] // in chronological order
     let output_indexed = o[1] // { Periode -> OutputValue } // OutputValue: cf outputs()
 
@@ -94,7 +94,7 @@ function map () {
   if (v.scope == "entreprise") {
 
     if (includes["all"]){
-      var output_array = serie_periode.map(function (e) {
+      var output_array = jsParams.serie_periode.map(function (e) {
         return {
           "siren": v.key,
           "periode": e,

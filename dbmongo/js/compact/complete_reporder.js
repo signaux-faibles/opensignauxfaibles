@@ -1,9 +1,9 @@
 function complete_reporder(key, object){
   var batches = Object.keys(object.batch)
   batches.sort()
-  var dates = serie_periode
+  var dates = jsParams.serie_periode
   var missing = {}
-  serie_periode.forEach(p => {
+  jsParams.serie_periode.forEach(p => {
     missing[p.getTime()] = true
   })
 
@@ -21,7 +21,7 @@ function complete_reporder(key, object){
   })
 
   var lastBatch = batches[batches.length - 1]
-  serie_periode.filter(p => missing[p.getTime()]).forEach(p => {
+  jsParams.serie_periode.filter(p => missing[p.getTime()]).forEach(p => {
     let reporder_obj = object.batch[lastBatch].reporder || {}
     reporder_obj[p] = { random_order: Math.random(), periode: p, siret: key }
     object.batch[lastBatch].reporder = reporder_obj

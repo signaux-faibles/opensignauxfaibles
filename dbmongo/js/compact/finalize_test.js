@@ -1,4 +1,5 @@
-serie_periode = [new Date("2014-01-01"), new Date("2015-01-01")]
+jsParams = {}
+jsParams.serie_periode = [new Date("2014-01-01"), new Date("2015-01-01")]
 f = {}
 f.complete_reporder = complete_reporder
 var test_cases =

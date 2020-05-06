@@ -68,7 +68,7 @@ function debits(vdebit) {
   })    
 
   output_dette = []
-  serie_periode.forEach(p => {
+  jsParams.serie_periode.forEach(p => {
     output_dette.push(
       (value_dette[p.getTime()] || [])
         .reduce((m,c) => {
