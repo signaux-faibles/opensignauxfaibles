@@ -1,4 +1,5 @@
 function finalize(k, v) {
+  "use strict";
   const maxBsonSize = 16777216;
 
   // v de la forme

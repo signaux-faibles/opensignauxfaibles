@@ -1,6 +1,6 @@
 
 function map () {
-  "use strict"; // pour interdire la création implicite de variables globales, cf https://github.com/signaux-faibles/opensignauxfaibles/pull/39
+  "use strict";
   let v = f.flatten(this.value, actual_batch)
 
   if (v.scope == "etablissement") {
