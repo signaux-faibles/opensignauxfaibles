@@ -320,7 +320,7 @@ package engine
 
   // Pour tous les batchs à modifier, c'est-à-dire le batch ajouté et tous les
   // suivants.
-  var modified_batches = batches.filter( batch =>
+  var modified_batches = jsParams.batches.filter( batch =>
     batch >= batchKey
   )
 
