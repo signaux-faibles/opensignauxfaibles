@@ -140,20 +140,26 @@ func Compact(batchKey string, types []string) error {
 		return err
 	}
 
+	jsParams := bson.M{
+		"batches":       batchesID,
+		"types":         types,
+		"serie_periode": misc.GenereSeriePeriode(batch.Params.DateDebut, batch.Params.DateFin),
+	}
+
+	scope := bson.M{
+		"jsParams":      jsParams,
+		"f":             functions,
+		"completeTypes": completeTypes, // TODO: transmettre via jsParams ?
+		"batchKey":      batchKey,      // TODO: transmettre via jsParams ?
+	}
+
 	// Traitement MR
 	job := &mgo.MapReduce{
 		Map:      functions["map"].Code,
 		Reduce:   functions["reduce"].Code,
 		Finalize: functions["finalize"].Code,
 		Out:      bson.M{"reduce": "RawData"},
-		Scope: bson.M{
-			"f":             functions,
-			"batches":       batchesID,
-			"types":         types,
-			"completeTypes": completeTypes,
-			"batchKey":      batchKey,
-			"serie_periode": misc.GenereSeriePeriode(batch.Params.DateDebut, batch.Params.DateFin),
-		},
+		Scope:    scope,
 	}
 
 	chunks, err := ChunkCollection(viper.GetString("DB"), "RawData", viper.GetInt64("chunkByteSize"))

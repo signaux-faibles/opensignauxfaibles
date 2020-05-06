@@ -22,7 +22,7 @@ func PurgeBatch(batchKey string) error {
 		return err
 	}
 	MRscope := bson.M{
-		"currentBatch": batchKey,
+		"currentBatch": batchKey, // TODO: transmettre via jsParams ?
 		"f":            functions,
 	}
 
