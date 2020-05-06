@@ -1,12 +1,11 @@
 function complete_reporder(key, object){
+  "use strict";
   var batches = Object.keys(object.batch)
   batches.sort()
-  var dates = serie_periode
   var missing = {}
   serie_periode.forEach(p => {
     missing[p.getTime()] = true
   })
-
 
   batches.forEach(batch => {
     let reporder = object.batch[batch].reporder || {}

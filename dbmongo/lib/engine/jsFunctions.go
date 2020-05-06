@@ -194,14 +194,13 @@ package engine
 },
 "compact":{
 "complete_reporder": `function complete_reporder(key, object){
+  "use strict";
   var batches = Object.keys(object.batch)
   batches.sort()
-  var dates = serie_periode
   var missing = {}
   serie_periode.forEach(p => {
     missing[p.getTime()] = true
   })
-
 
   batches.forEach(batch => {
     let reporder = object.batch[batch].reporder || {}
@@ -225,6 +224,7 @@ package engine
 }
 `,
 "currentState": `function currentState(batches){
+  "use strict";
   var currentState = batches.reduce((m, batch) => {
     //1. On supprime les clés de la mémoire 
     Object.keys((batch.compact || {"delete":[]}).delete).forEach( type => {
@@ -250,6 +250,7 @@ package engine
 }
 `,
 "finalize": `function finalize(k, o) {
+  "use strict";
   o.index = {"algo1":false,
     "algo2":false}
 
@@ -273,6 +274,7 @@ package engine
 }
 `,
 "map": `function map() {      
+  "use strict";
   try{
     if (this.value != null) {
       emit(this.value.key, this.value) 
@@ -283,6 +285,7 @@ package engine
 }
 `,
 "reduce": `function reduce(key, values) {
+  "use strict";
 
   // Tester si plusieurs batchs. Reduce complet uniquement si plusieurs
   // batchs. Sinon, juste fusion des attributs

@@ -1,4 +1,5 @@
 function finalize(k, o) {
+  "use strict";
   o.index = {"algo1":false,
     "algo2":false}
 
