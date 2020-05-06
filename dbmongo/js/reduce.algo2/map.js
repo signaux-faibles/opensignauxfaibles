@@ -1,10 +1,10 @@
 
 function map () {
-  "use strict";
+  "use strict"; // pour interdire la création implicite de variables globales, cf https://github.com/signaux-faibles/opensignauxfaibles/pull/39
   let v = f.flatten(this.value, actual_batch)
 
   if (v.scope == "etablissement") {
-    var o = f.outputs(v, serie_periode)
+    const o = f.outputs(v, serie_periode)
     let output_array = o[0] // [ OutputValue ] // in chronological order
     let output_indexed = o[1] // { Periode -> OutputValue } // OutputValue: cf outputs()
 
