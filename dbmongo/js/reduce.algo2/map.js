@@ -1,5 +1,5 @@
 function map () {
-  let v = f.flatten(this.value, actual_batch)
+  let v = f.flatten(this.value, jsParams.actual_batch)
 
   if (v.scope == "etablissement") {
     let o = f.outputs(v, serie_periode)
@@ -19,7 +19,7 @@ function map () {
           periode = new Date(Number(periode))
           emit(
             {
-              'batch': actual_batch,
+              'batch': jsParams.actual_batch,
               'siren': this._id.substring(0, 9),
               'periode': periode,
               'type': 'apart'
@@ -80,7 +80,7 @@ function map () {
         data[this._id] = val
         emit(
           {
-            'batch': actual_batch,
+            'batch': jsParams.actual_batch,
             'siren': this._id.substring(0, 9),
             'periode': val.periode,
             'type': 'other'
@@ -245,7 +245,7 @@ function map () {
 
         emit(
           {
-            'batch': actual_batch,
+            'batch': jsParams.actual_batch,
             'siren': this._id.substring(0, 9),
             'periode': periode.periode,
             'type': 'other'

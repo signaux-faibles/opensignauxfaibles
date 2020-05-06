@@ -759,7 +759,7 @@ db.getCollection("Features").createIndex({
   return {
     scope: 'entreprise',
     key: idEtablissement.slice(0,9),
-    batch: actual_batch
+    batch: jsParams.actual_batch
   }
 }`,
 "iterable": `function iterable(dict) {
@@ -773,12 +773,12 @@ db.getCollection("Features").createIndex({
 }
 `,
 "map": `function map() {
-  var value = f.flatten(this.value, actual_batch)
+  var value = f.flatten(this.value, jsParams.actual_batch)
 
   if (this.value.scope=="etablissement") {
     let vcmde = {}
     vcmde.key = this.value.key
-    vcmde.batch = actual_batch
+    vcmde.batch = jsParams.actual_batch
     vcmde.effectif = f.effectifs(value)
     vcmde.dernier_effectif = vcmde.effectif[vcmde.effectif.length - 1]
     vcmde.sirene = f.sirene(f.iterable(value.sirene))
@@ -802,7 +802,7 @@ db.getCollection("Features").createIndex({
     let sirene_ul = (value.sirene_ul || {})[Object.keys(value.sirene_ul || {})[0] || ""]
     let crp = value.crp
     v.key = this.value.key
-    v.batch = actual_batch
+    v.batch = jsParams.actual_batch
     
     if (diane.length > 0) {
       v.diane = diane
@@ -1580,7 +1580,7 @@ db.getCollection("Features").createIndex({
 }
 `,
 "map": `function map () {
-  let v = f.flatten(this.value, actual_batch)
+  let v = f.flatten(this.value, jsParams.actual_batch)
 
   if (v.scope == "etablissement") {
     let o = f.outputs(v, serie_periode)
@@ -1600,7 +1600,7 @@ db.getCollection("Features").createIndex({
           periode = new Date(Number(periode))
           emit(
             {
-              'batch': actual_batch,
+              'batch': jsParams.actual_batch,
               'siren': this._id.substring(0, 9),
               'periode': periode,
               'type': 'apart'
@@ -1661,7 +1661,7 @@ db.getCollection("Features").createIndex({
         data[this._id] = val
         emit(
           {
-            'batch': actual_batch,
+            'batch': jsParams.actual_batch,
             'siren': this._id.substring(0, 9),
             'periode': val.periode,
             'type': 'other'
@@ -1826,7 +1826,7 @@ db.getCollection("Features").createIndex({
 
         emit(
           {
-            'batch': actual_batch,
+            'batch': jsParams.actual_batch,
             'siren': this._id.substring(0, 9),
             'periode': periode.periode,
             'type': 'other'
