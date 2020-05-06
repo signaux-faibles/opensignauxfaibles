@@ -281,13 +281,13 @@ func reduceDefineScope(batch AdminBatch, algo string, types []string) (bson.M, e
 		"date_debut":        batch.Params.DateDebut,
 		"date_fin":          batch.Params.DateFin,
 		"date_fin_effectif": batch.Params.DateFinEffectif,
-		"serie_periode":     misc.GenereSeriePeriode(batch.Params.DateDebut, batch.Params.DateFin), // <-- jsParams.serie_periode
-		"offset_effectif":   (batch.Params.DateFinEffectif.Year()-batch.Params.DateFin.Year())*12 + int(batch.Params.DateFinEffectif.Month()-batch.Params.DateFin.Month()),
-		"actual_batch":      batch.ID.Key,   // <-- jsParams.actual_batch
-		"naf":               naf,            // <-- jsParams.naf
-		"batches":           GetBatchesID(), // <-- jsParams.batches
-		"types":             GetTypes(),     // <-- jsParams.types
-		"includes":          includes,       // <-- jsParams.includes
+		"serie_periode":     misc.GenereSeriePeriode(batch.Params.DateDebut, batch.Params.DateFin),                                                                         // <-- jsParams.serie_periode
+		"offset_effectif":   (batch.Params.DateFinEffectif.Year()-batch.Params.DateFin.Year())*12 + int(batch.Params.DateFinEffectif.Month()-batch.Params.DateFin.Month()), // <-- jsParams.offset_effectif
+		"actual_batch":      batch.ID.Key,                                                                                                                                  // <-- jsParams.actual_batch
+		"naf":               naf,                                                                                                                                           // <-- jsParams.naf
+		"batches":           GetBatchesID(),                                                                                                                                // <-- jsParams.batches
+		"types":             GetTypes(),                                                                                                                                    // <-- jsParams.types
+		"includes":          includes,                                                                                                                                      // <-- jsParams.includes
 	}
 
 	scope := bson.M{

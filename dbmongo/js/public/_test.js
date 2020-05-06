@@ -3,7 +3,7 @@ jsParams.actual_batch = "1905"
 date_debut = new Date("2014-01-01")
 date_fin = new Date("2018-02-01")
 jsParams.serie_periode = f.generatePeriodSerie(new Date("2014-01-01"), new Date("2018-02-01"))
-offset_effectif = 2
+jsParams.offset_effectif = 2
 
 objects.forEach(object => {
   f.value = object.value

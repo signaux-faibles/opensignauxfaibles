@@ -1348,7 +1348,7 @@ db.getCollection("Features").createIndex({
   //ne reporter que si le dernier est disponible
   // 1- quelle periode doit être disponible
   var last_period = new Date(parseInt(periodes[periodes.length - 1]))
-  var last_period_offset = f.dateAddMonth(last_period, offset_effectif + 1)
+  var last_period_offset = f.dateAddMonth(last_period, jsParams.offset_effectif + 1)
   // 2- Cette période est-elle disponible ?
 
   var available = map_effectif[last_period_offset.getTime()] ? 1 : 0
@@ -1374,7 +1374,7 @@ db.getCollection("Features").createIndex({
     var past_month_offsets = [6,12,18,24]
     past_month_offsets.forEach(lookback => {
       // On ajoute un offset pour partir de la dernière période où l'effectif est connu
-      var time_past_lookback = f.dateAddMonth(periode, lookback - offset_effectif - 1)
+      var time_past_lookback = f.dateAddMonth(periode, lookback - jsParams.offset_effectif - 1)
 
       var variable_name_effectif = effectif_name + "_past_" + lookback
       output_effectif[time_past_lookback.getTime()] = output_effectif[time_past_lookback.getTime()] || {}
