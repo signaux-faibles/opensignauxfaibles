@@ -875,6 +875,7 @@ db.getCollection("Features").createIndex({
 },
 "reduce.algo2":{
 "add": `function add(obj, output){
+  "use strict";
   Object.keys(output).forEach(function(periode) {
     if (periode in obj){
       Object.assign(output[periode], obj[periode])
@@ -886,7 +887,8 @@ db.getCollection("Features").createIndex({
   })
 }
 `,
-"apart": `function apart (apconso, apdemande) {
+"apart": `"use strict";
+function apart (apconso, apdemande) {
 
   var output_apart = {}
 
@@ -963,6 +965,7 @@ db.getCollection("Features").createIndex({
 }
 `,
 "ccsf": `function ccsf(v, output_array){
+  "use strict";
 
   var ccsfHashes = Object.keys(v.ccsf || {})
 
@@ -986,6 +989,7 @@ db.getCollection("Features").createIndex({
 }
 `,
 "cibleApprentissage": `function cibleApprentissage(output_indexed, n_months) {
+  "use strict";
 
   // Mock two input instead of one for future modification
   var output_cotisation = output_indexed
@@ -1021,13 +1025,14 @@ db.getCollection("Features").createIndex({
 }
 `,
 "compareDebit": `function compareDebit (a,b) {
+  "use strict";
   if (a.numero_historique < b.numero_historique) return -1
   if (a.numero_historique > b.numero_historique) return 1
   return 0
 }`,
 "compte": `function compte (v, periodes) {
+  "use strict";
   let output_compte = {}
-
 
   //  var offset_compte = 3
   Object.keys(v.compte).forEach(hash =>{
@@ -1041,6 +1046,7 @@ db.getCollection("Features").createIndex({
 }
 `,
 "cotisation": `function cotisation(output_indexed, output_array) {
+  "use strict";
   // calcul de cotisation_moyenne sur 12 mois
   Object.keys(output_indexed).forEach(k => {
     let periode_courante = output_indexed[k].periode
@@ -1093,13 +1099,13 @@ db.getCollection("Features").createIndex({
 }
 `,
 "cotisationsdettes": `function cotisationsdettes(v, periodes) {
+  "use strict";
 
   // Tous les débits traitées après ce jour du mois sont reportées à la période suivante
   // Permet de s'aligner avec le calendrier de fourniture des données
   const last_treatment_day = 20
 
   var output_cotisationsdettes = {}
-
 
   // TODO Cotisations avec un mois de retard ? Bizarre, plus maintenant que l'export se fait le 20
   // var offset_cotisation = 1
@@ -1163,6 +1169,7 @@ db.getCollection("Features").createIndex({
     //Selon le jour du traitement, cela passe sur la période en cours ou sur la suivante.
     let jour_traitement = debit.date_traitement.getUTCDate()
     let jour_traitement_suivant = debit_suivant.date_traitement.getUTCDate()
+    let date_traitement_debut
     if (jour_traitement <= last_treatment_day){
       date_traitement_debut = new Date(
         Date.UTC(debit.date_traitement.getFullYear(), debit.date_traitement.getUTCMonth())
@@ -1173,6 +1180,7 @@ db.getCollection("Features").createIndex({
       )
     }
 
+    let date_traitement_fin
     if (jour_traitement_suivant <= last_treatment_day) {
       date_traitement_fin = new Date(
         Date.UTC(debit_suivant.date_traitement.getFullYear(), debit_suivant.date_traitement.getUTCMonth())
@@ -1247,11 +1255,13 @@ db.getCollection("Features").createIndex({
 }
 `,
 "dateAddMonth": `function dateAddMonth(date, nbMonth) {
+  "use strict";
   var result = new Date(date.getTime())
   result.setUTCMonth(result.getUTCMonth() + nbMonth)
   return result
 }`,
 "dealWithProcols": `function dealWithProcols(data_source, altar_or_procol, output_indexed){
+  "use strict";
   var codes  =  Object.keys(data_source).reduce((events, hash) => {
     var the_event = data_source[hash]
 
@@ -1286,6 +1296,7 @@ db.getCollection("Features").createIndex({
 }
 `,
 "defaillances": `function defaillances (v, output_indexed) {
+  "use strict";
   f.dealWithProcols(v.altares, "altares", output_indexed)
   f.dealWithProcols(v.procol, "procol", output_indexed)
 }
@@ -1293,6 +1304,7 @@ db.getCollection("Features").createIndex({
   
   `,
 "delais": `function delais (v, output_indexed) {
+  "use strict";
   Object.keys(v.delai).map(
     function (hash) {
       var delai = v.delai[hash]
@@ -1322,6 +1334,7 @@ db.getCollection("Features").createIndex({
 }
 `,
 "detteFiscale": `function detteFiscale (diane){
+  "use strict";
   if  (("dette_fiscale_et_sociale" in diane) && (diane["dette_fiscale_et_sociale"] !== null) &&
       ("valeur_ajoutee" in diane) && (diane["valeur_ajoutee"] !== null) &&
       (diane["valeur_ajoutee"] != 0)){
@@ -1331,6 +1344,7 @@ db.getCollection("Features").createIndex({
   }
 }`,
 "effectifs": `function effectifs (effobj, periodes, effectif_name) {
+  "use strict";
 
   let output_effectif = {}
 
@@ -1392,6 +1406,7 @@ db.getCollection("Features").createIndex({
 }
 `,
 "finalize": `function finalize(k, v) {
+  "use strict";
   const maxBsonSize = 16777216;
 
   // v de la forme
@@ -1458,6 +1473,7 @@ db.getCollection("Features").createIndex({
 }
 `,
 "financierCourtTerme": `function financierCourtTerme(diane) {
+  "use strict";
   if  (("concours_bancaire_courant" in diane) && (diane["concours_bancaire_courant"] !== null) &&
     ("ca" in diane) && (diane["ca"] !== null) &&
     (diane["ca"] != 0)){
@@ -1467,6 +1483,7 @@ db.getCollection("Features").createIndex({
   }
 }`,
 "flatten": `function flatten(v, actual_batch) {
+  "use strict";
   var res = Object.keys(v.batch || {})
     .sort()
     .filter(batch => batch <= actual_batch)
@@ -1496,6 +1513,7 @@ db.getCollection("Features").createIndex({
 }
 `,
 "fraisFinancier": `function fraisFinancier(diane){
+  "use strict";
   if (("interets" in diane) && (diane["interets"] !== null) &&
     ("excedent_brut_d_exploitation" in diane) && (diane["excedent_brut_d_exploitation"] !== null) &&
     ("produits_financiers" in diane) && (diane["produits_financiers"] !== null) &&
@@ -1510,6 +1528,7 @@ db.getCollection("Features").createIndex({
   }
 }`,
 "interim": `function interim (interim, output_indexed) {
+  "use strict";
   let output_effectif = output_indexed
   // let periodes = Object.keys(output_indexed)
   // output_indexed devra être remplacé par output_effectif, et ne contenir que les données d'effectif.
@@ -1545,6 +1564,7 @@ db.getCollection("Features").createIndex({
 }
 `,
 "lookAhead": `function lookAhead(data, attr_name, n_months, past) {
+  "use strict";
   // Est-ce que l'évènement se répercute dans le passé (past = true on pourra se
   // demander: que va-t-il se passer) ou dans le future (past = false on
   // pourra se demander que s'est-il passé
@@ -1581,7 +1601,7 @@ db.getCollection("Features").createIndex({
 `,
 "map": `
 function map () {
-  "use strict"; // pour interdire la création implicite de variables globales, cf https://github.com/signaux-faibles/opensignauxfaibles/pull/39
+  "use strict";
   let v = f.flatten(this.value, actual_batch)
 
   if (v.scope == "etablissement") {
@@ -1843,6 +1863,7 @@ function map () {
 }
 `,
 "outputs": `function outputs (v, serie_periode) {
+  "use strict";
   var output_array = serie_periode.map(function (e) {
     return {
       "siret": v.key,
@@ -1863,6 +1884,7 @@ function map () {
 }
 `,
 "poidsFrng": `function poidsFrng(diane){
+  "use strict";
   if  (("couverture_ca_fdr" in diane) && (diane["couverture_ca_fdr"] !== null)){
     return diane["couverture_ca_fdr"]/360 * 100
   } else {
@@ -1870,6 +1892,7 @@ function map () {
   }
 }`,
 "populateNafAndApe": `function populateNafAndApe(output_indexed, naf) {
+  "use strict";
   Object.keys(output_indexed).forEach(k =>{
     if (("code_ape" in output_indexed[k]) && (output_indexed[k].code_ape !== null)){
       var code_ape = output_indexed[k].code_ape
@@ -1887,6 +1910,7 @@ function map () {
 }
 `,
 "procolToHuman": `function procolToHuman (action, stade) {
+  "use strict";
   var res = null;
   if (action == "liquidation" && stade != "abandon_procedure") 
     res = 'liquidation';
@@ -1903,12 +1927,14 @@ function map () {
   return res;
 }`,
 "reduce": `function reduce(key, values) {
+  "use strict";
   return values.reduce((val, accu) => {
     return Object.assign(accu, val)
   }, {})
 }
 `,
 "repeatable": `function repeatable(rep){
+  "use strict";
   let output_repeatable = {}
   Object.keys(rep).forEach(hash => {
     var one_rep = rep[hash]
@@ -1924,6 +1950,7 @@ function map () {
 
 `,
 "sirene": `function sirene (v, output_array) {
+  "use strict";
   var sireneHashes = Object.keys(v.sirene || {})
 
   output_array.forEach(val => {
@@ -1955,6 +1982,7 @@ function map () {
 
 `,
 "sirene_ul": `function sirene_ul(v, output_array) {
+  "use strict";
   var sireneHashes = Object.keys(v.sirene_ul || {})
   output_array.forEach(val => {
     if (sireneHashes.length != 0) {
@@ -1977,6 +2005,7 @@ function map () {
 }
 `,
 "tauxMarge": `function tauxMarge(diane) {
+  "use strict";
   if  (("excedent_brut_d_exploitation" in diane) && (diane["excedent_brut_d_exploitation"] !== null) &&
     ("valeur_ajoutee" in diane) && (diane["valeur_ajoutee"] !== null) &&
     (diane["excedent_brut_d_exploitation"] != 0)){
