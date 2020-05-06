@@ -554,24 +554,30 @@ db.getCollection("Features").createIndex({
 },
 "public":{
 "apconso": `function apconso(apconso) {
+  "use strict";
   return f.iterable(apconso).sort((p1, p2) => p1.periode < p2.periode)
 }`,
 "apdemande": `function apdemande(apdemande) {
+  "use strict";
   return f.iterable(apdemande).sort((p1, p2) => p1.periode < p2.periode)
 }`,
 "bdf": `function bdf(hs) {
+  "use strict";
   return f.iterable(hs).sort((a, b) => a.annee_bdf < b.annee_bdf)
 }`,
 "compareDebit": `function compareDebit (a,b) {
+  "use strict";
   if (a.numero_historique < b.numero_historique) return -1
   if (a.numero_historique > b.numero_historique) return 1
   return 0
 }`,
 "compte": `function compte(compte) {
+  "use strict";
   const c = f.iterable(compte)
   return (c.length>0)?c[c.length-1]:undefined
 }`,
 "cotisations": `function cotisations(vcotisation) {
+  "use strict";
   var offset_cotisation = 0 
   var value_cotisation = {}
   
@@ -599,16 +605,19 @@ db.getCollection("Features").createIndex({
 }
 `,
 "dateAddDay": `function dateAddDay(date, nbMonth) {
+  "use strict";
   var result = new Date(date.getTime())
   result.setDate( result.getDate() + nbMonth );
   return result
 }`,
 "dateAddMonth": `function dateAddMonth(date, nbMonth) {
+  "use strict";
   var result = new Date(date.getTime())
   result.setUTCMonth(result.getUTCMonth() + nbMonth)
   return result
 }`,
 "dealWithProcols": `function dealWithProcols(data_source, altar_or_procol, output_indexed){
+  "use strict";
   return Object.keys(data_source || {}).reduce((events,hash) => {
     var the_event = data_source[hash]
 
@@ -628,8 +637,9 @@ db.getCollection("Features").createIndex({
 }
 `,
 "debits": `function debits(vdebit) {
+  "use strict";
 
-  last_treatment_day = 20
+  const last_treatment_day = 20
   vdebit = vdebit || {}
   var ecn = Object.keys(vdebit).reduce((accu, h) => {
       let debit = vdebit[h]
@@ -666,6 +676,7 @@ db.getCollection("Features").createIndex({
     //Selon le jour du traitement, cela passe sur la période en cours ou sur la suivante. 
     let jour_traitement = debit.date_traitement.getUTCDate() 
     let jour_traitement_suivant = debit_suivant.date_traitement.getUTCDate()
+    let date_traitement_debut
     if (jour_traitement <= last_treatment_day){
       date_traitement_debut = new Date(
         Date.UTC(debit.date_traitement.getFullYear(), debit.date_traitement.getUTCMonth())
@@ -676,6 +687,7 @@ db.getCollection("Features").createIndex({
       )
     }
 
+    let date_traitement_fin
     if (jour_traitement_suivant <= last_treatment_day) {
       date_traitement_fin = new Date(
         Date.UTC(debit_suivant.date_traitement.getFullYear(), debit_suivant.date_traitement.getUTCMonth())
@@ -696,7 +708,7 @@ db.getCollection("Features").createIndex({
     })
   })    
 
-  output_dette = []
+  const output_dette = []
   serie_periode.forEach(p => {
     output_dette.push(
       (value_dette[p.getTime()] || [])
@@ -713,12 +725,15 @@ db.getCollection("Features").createIndex({
 }
 `,
 "delai": `function delai(delai) {
+  "use strict";
   return f.iterable(delai)
 }`,
 "diane": `function diane(hs) {
+  "use strict";
  return f.iterable(hs).sort((a, b) => a.exercice_diane < b.exercice_diane)
 }`,
 "effectifs": `function effectifs(v) {
+  "use strict";
   var mapEffectif = {}
   f.iterable(v.effectif).forEach(e => {
     mapEffectif[e.periode.getTime()] = (mapEffectif[e.periode.getTime()] || 0) + e.effectif
@@ -731,9 +746,11 @@ db.getCollection("Features").createIndex({
   }).filter(p => p.effectif)
 }`,
 "finalize": `function finalize(_, v) {
+  "use strict";
   return v
 }`,
 "flatten": `function flatten(v, actual_batch) {
+  "use strict";
   var res = Object.keys(v.batch || {})
     .sort()
     .filter(batch => batch <= actual_batch)
@@ -763,6 +780,7 @@ db.getCollection("Features").createIndex({
 }
 `,
 "idEntreprise": `function idEntreprise(idEtablissement) {
+  "use strict";
   return {
     scope: 'entreprise',
     key: idEtablissement.slice(0,9),
@@ -770,6 +788,7 @@ db.getCollection("Features").createIndex({
   }
 }`,
 "iterable": `function iterable(dict) {
+  "use strict";
   try {
     return Object.keys(dict).map(h => {
       return dict[h]
@@ -780,6 +799,7 @@ db.getCollection("Features").createIndex({
 }
 `,
 "map": `function map() {
+  "use strict";
   var value = f.flatten(this.value, actual_batch)
 
   if (this.value.scope=="etablissement") {
@@ -830,6 +850,7 @@ db.getCollection("Features").createIndex({
 }
 `,
 "procolToHuman": `function procolToHuman (action, stade) {
+  "use strict";
   var res = null;
   if (action == "liquidation" && stade != "abandon_procedure") 
     res = 'liquidation';
@@ -846,6 +867,7 @@ db.getCollection("Features").createIndex({
   return res;
 }`,
 "reduce": `function reduce(key, values) {
+  "use strict";
   if (key.scope="entreprise") {
     values = values.reduce((m, v) => {
       if (v.sirets) {
@@ -859,6 +881,7 @@ db.getCollection("Features").createIndex({
   return values
 }`,
 "sirene": `function sirene(sireneArray) {
+  "use strict";
   return sireneArray.reduce((accu, k) => {
     return k
   }, {})
