@@ -56,10 +56,10 @@ function reduce(key, values) {
     var all_interesting_types = [...new Set([...stock_types, ...new_types])]
 
     // Filtrage selon les types effectivement importés
-    if (types.length > 0){
-      stock_types = stock_types.filter(type => types.includes(type))
-      new_types = new_types.filter(type => types.includes(type))
-      all_interesting_types = all_interesting_types.filter(type => types.includes(type))
+    if (jsParams.types.length > 0){
+      stock_types = stock_types.filter(type => jsParams.types.includes(type))
+      new_types = new_types.filter(type => jsParams.types.includes(type))
+      all_interesting_types = all_interesting_types.filter(type => jsParams.types.includes(type))
     }
 
     // 1. On recupère les cles ajoutes et les cles supprimes

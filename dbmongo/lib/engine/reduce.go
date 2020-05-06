@@ -287,8 +287,8 @@ func reduceDefineScope(batch AdminBatch, algo string, types []string) (bson.M, e
 		"actual_batch":           batch.ID.Key,   // <-- jsParams.actual_batch
 		"naf":                    naf,            // <-- jsParams.naf
 		"batches":                GetBatchesID(), // <-- jsParams.batches
-		"types":                  GetTypes(),
-		"includes":               includes, // <-- jsParams.includes
+		"types":                  GetTypes(),     // <-- jsParams.types
+		"includes":               includes,       // <-- jsParams.includes
 	}
 
 	scope := bson.M{

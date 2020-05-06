@@ -396,7 +396,7 @@ var test_results = test_cases.map(function(tc, id) {
   jsParams = {}
   completeTypes = tc.completeTypes
   batchKey = tc.batchKey
-  types = tc.types
+  jsParams.types = tc.types
   jsParams.batches = tc.batches
   var actual = reduce(tc.reduce_key, tc.reduce_values)
   // print(JSON.stringify(actual, null, 2))
