@@ -1,6 +1,6 @@
 function compte (v, periodes) {
+  "use strict";
   let output_compte = {}
-
 
   //  var offset_compte = 3
   Object.keys(v.compte).forEach(hash =>{

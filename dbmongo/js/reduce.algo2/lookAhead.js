@@ -1,4 +1,5 @@
 function lookAhead(data, attr_name, n_months, past) {
+  "use strict";
   // Est-ce que l'évènement se répercute dans le passé (past = true on pourra se
   // demander: que va-t-il se passer) ou dans le future (past = false on
   // pourra se demander que s'est-il passé

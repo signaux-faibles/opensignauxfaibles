@@ -1,4 +1,5 @@
 function fraisFinancier(diane){
+  "use strict";
   if (("interets" in diane) && (diane["interets"] !== null) &&
     ("excedent_brut_d_exploitation" in diane) && (diane["excedent_brut_d_exploitation"] !== null) &&
     ("produits_financiers" in diane) && (diane["produits_financiers"] !== null) &&

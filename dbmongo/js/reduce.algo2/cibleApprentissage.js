@@ -1,4 +1,5 @@
 function cibleApprentissage(output_indexed, n_months) {
+  "use strict";
 
   // Mock two input instead of one for future modification
   var output_cotisation = output_indexed

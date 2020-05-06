@@ -1,4 +1,5 @@
 function ccsf(v, output_array){
+  "use strict";
 
   var ccsfHashes = Object.keys(v.ccsf || {})
 

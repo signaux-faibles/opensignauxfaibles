@@ -1,4 +1,5 @@
 function repeatable(rep){
+  "use strict";
   let output_repeatable = {}
   Object.keys(rep).forEach(hash => {
     var one_rep = rep[hash]
