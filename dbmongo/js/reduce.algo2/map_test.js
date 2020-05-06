@@ -17,7 +17,7 @@ jsParams.actual_batch = "2002_1";
 date_debut = new Date("2014-01-01");
 date_fin = new Date("2016-01-01");
 jsParams.serie_periode = f.generatePeriodSerie(date_debut, date_fin);
-includes = { "all": true };
+jsParams.includes = { "all": true };
 offset_effectif = 2;
 
 // Run a map() function designed for MongoDB, i.e. that calls emit() an

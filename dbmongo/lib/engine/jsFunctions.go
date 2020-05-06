@@ -1590,7 +1590,7 @@ db.getCollection("Features").createIndex({
     // Les periodes qui nous interessent, triées
     var periodes = Object.keys(output_indexed).sort((a,b) => (a >= b))
 
-    if (includes["apart"] || includes["all"]){
+    if (jsParams.includes["apart"] || jsParams.includes["all"]){
       if (v.apconso && v.apdemande) {
         let output_apart = f.apart(v.apconso, v.apdemande)
         Object.keys(output_apart).forEach(periode => {
@@ -1611,7 +1611,7 @@ db.getCollection("Features").createIndex({
       }
     }
 
-    if (includes["all"]){
+    if (jsParams.includes["all"]){
 
       if (v.compte) {
         var output_compte = f.compte(v)
@@ -1674,7 +1674,7 @@ db.getCollection("Features").createIndex({
 
   if (v.scope == "entreprise") {
 
-    if (includes["all"]){
+    if (jsParams.includes["all"]){
       var output_array = jsParams.serie_periode.map(function (e) {
         return {
           "siren": v.key,
