@@ -889,9 +889,11 @@ db.getCollection("Features").createIndex({
 },
 "purgeBatch":{
 "finalize": `function finalize(k, o) {
+    "use strict";
     return o
 }`,
 "map": `function map() {
+  "use strict";
   if (this.value.batch[currentBatch]){
     delete this.value.batch[currentBatch]
   }
@@ -900,6 +902,7 @@ db.getCollection("Features").createIndex({
 }
 `,
 "reduce": `function reduce(key, values) {
+    "use strict";
     return values
 }`,
 },

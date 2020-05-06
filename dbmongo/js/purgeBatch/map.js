@@ -1,4 +1,5 @@
 function map() {
+  "use strict";
   if (this.value.batch[currentBatch]){
     delete this.value.batch[currentBatch]
   }
