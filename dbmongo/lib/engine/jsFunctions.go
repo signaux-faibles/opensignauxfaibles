@@ -654,7 +654,7 @@ db.getCollection("Features").createIndex({
   Object.keys(vdebit).forEach(function (h) {
     var debit = vdebit[h]
 
-    var debit_suivant = (vdebit[debit.debit_suivant] || {"date_traitement" : date_fin})
+    var debit_suivant = (vdebit[debit.debit_suivant] || {"date_traitement" : jsParams.date_fin})
     
     //Selon le jour du traitement, cela passe sur la période en cours ou sur la suivante. 
     let jour_traitement = debit.date_traitement.getUTCDate() 
@@ -1158,7 +1158,7 @@ db.getCollection("Features").createIndex({
   Object.keys(v.debit).forEach(function (h) {
     var debit = v.debit[h]
 
-    var debit_suivant = (v.debit[debit.debit_suivant] || {"date_traitement" : date_fin})
+    var debit_suivant = (v.debit[debit.debit_suivant] || {"date_traitement" : jsParams.date_fin})
 
     //Selon le jour du traitement, cela passe sur la période en cours ou sur la suivante.
     let jour_traitement = debit.date_traitement.getUTCDate()
