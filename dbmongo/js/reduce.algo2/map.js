@@ -69,7 +69,7 @@ function map () {
       if (v.ccsf) {f.ccsf(v, output_array)}
       if (v.sirene) {f.sirene(v, output_array)}
 
-      f.populateNafAndApe(output_indexed, naf)
+      f.populateNafAndApe(output_indexed, jsParams.naf)
 
       f.cotisation(output_indexed, output_array)
 
