@@ -337,7 +337,7 @@
           "key": {
             "type": "string"
           },
-          "features": {
+          "algo": {
             "type": "string"
           }
         }
@@ -1150,7 +1150,7 @@
               },
               "example": {
                 "batch": "1805",
-                "features": "algo2",
+                "algo": "algo2",
                 "key": "012345678901234"
               }
             }
