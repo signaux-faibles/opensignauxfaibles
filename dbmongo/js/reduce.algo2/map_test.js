@@ -1,3 +1,5 @@
+"use strict";
+
 // Context: this golden-file-based test runner was designed to prevent
 // regressions on the JS functions (common + algo2) used to compute the
 // "Features" collection from the "RawData" collection.
@@ -9,21 +11,25 @@
 // requirements and run the tests.
 
 // Allow f.*() function calls to resolve to globally-defined functions 
-f = this;
+const f = this;
 
 // Define global parameters that are required by JS functions
-actual_batch = "2002_1";
-date_debut = new Date("2014-01-01");
-date_fin = new Date("2016-01-01");
-serie_periode = f.generatePeriodSerie(date_debut, date_fin);
-includes = { "all": true };
-offset_effectif = 2;
+const jsParams = this; // => all properties of this object will become global. TODO: remove this when merging namespace (https://github.com/signaux-faibles/opensignauxfaibles/pull/40)
+jsParams.actual_batch = "2002_1";
+jsParams.date_debut = new Date("2014-01-01");
+jsParams.date_fin = new Date("2016-01-01");
+jsParams.serie_periode = f.generatePeriodSerie(date_debut, date_fin);
+jsParams.includes = { "all": true };
+jsParams.offset_effectif = 2;
+
+let emit; // global emit() function that mapFct() will call
 
 // Run a map() function designed for MongoDB, i.e. that calls emit() an
 // inderminate number of times, instead of returning one value per iteration.
 function runMongoMap (testData, mapFct) {
   const results = []; // holds all the { _id, value } objects emitted from mapFct()
-  emit = (key, value) => results.push({"_id": key, value}); // define a emit() function that mapFct() can call
+  // define a emit() function that mapFct() can call
+  emit = (key, value) => results.push({"_id": key, value});
   testData.forEach(entrepriseOuEtablissement => mapFct.call(entrepriseOuEtablissement)); // entrepriseOuEtablissement will be accessible through `this`, in mapFct()
   return results;
 };
