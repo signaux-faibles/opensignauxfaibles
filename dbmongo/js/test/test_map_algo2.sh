@@ -40,7 +40,7 @@ if [ "$1" == "--update" ]; then
 fi
 
 # compare map_stdout.log with golden file, return non-zero exit code if any difference is found
-DIFF=$(diff ${TMP_PATH}/map_golden.log ${TMP_PATH}/map_stdout.log)
+DIFF=$(diff ${TMP_PATH}/map_golden.log ${TMP_PATH}/map_stdout.log 2>&1)
 if [ "${DIFF}" != "" ]; then
   echo "Test failed, because of diff: ${DIFF}"
   echo "If this diff was expected, update the golden file on server by running ./test_map_algo2.sh --update"
