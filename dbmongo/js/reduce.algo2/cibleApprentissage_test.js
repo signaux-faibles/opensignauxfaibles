@@ -1,4 +1,6 @@
-var test_cases = [
+"use strict";
+
+const test_cases = [
   {
     data: {"2015-01-01": {tag_default: true}},
     n_months: 1,
@@ -65,15 +67,12 @@ var test_cases = [
     }
   }
 ]
+Object.freeze(test_cases)
 
-var test_results = test_cases.map(function(tc, id){
-  var actual = cibleApprentissage(tc["data"], tc["n_months"])
-
-  var test_passes = compare(actual, tc["expected"])
-  if (!test_passes){
-    return false
-  }
-  return true
+const test_results = test_cases.map(function(tc, id){
+  const actual = cibleApprentissage(tc["data"], tc["n_months"])
+  const test_passes = compare(actual, tc["expected"])
+  return test_passes
 })
 
 print(test_results.every(t => t))

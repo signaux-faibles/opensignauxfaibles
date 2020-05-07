@@ -1,9 +1,12 @@
-actual_batch = "1905"
-date_debut = new Date("2014-01-01")
-date_fin = new Date("2018-02-01")
-serie_periode = f.generatePeriodSerie(new Date("2014-01-01"), new Date("2018-02-01"))
-offset_effectif = 2
-includes = { all: true }
+"use strict";
+
+const jsParams = this; // => all properties of this object will become global. TODO: remove this when merging namespace (https://github.com/signaux-faibles/opensignauxfaibles/pull/40)
+jsParams.actual_batch = "1905"
+jsParams.date_debut = new Date("2014-01-01")
+jsParams.date_fin = new Date("2018-02-01")
+jsParams.serie_periode = f.generatePeriodSerie(new Date("2014-01-01"), new Date("2018-02-01"))
+jsParams.offset_effectif = 2
+jsParams.includes = { all: true }
 
 objects.forEach(object => {
   f.value = object.value

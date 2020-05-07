@@ -1,8 +1,10 @@
+"use strict";
+
 // from /dbmongo/js/test/public/lib_public.js
 
-var pool = {}
+const pool = {}
 
 function emit(key, value) {
-  id = JSON.stringify(key)
+  const id = JSON.stringify(key)
   pool[id] = (pool[id] || []).concat([{key, value}])
 }

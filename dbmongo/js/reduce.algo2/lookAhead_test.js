@@ -1,4 +1,6 @@
-var test_cases = [
+"use strict";
+
+const test_cases = [
   {
     data: {"2015-01-01": {outcome: true}},
     attr_name: "outcome",
@@ -98,11 +100,11 @@ var test_cases = [
     }
   }
 ]
+Object.freeze(test_cases)
 
-var test_results = test_cases.map(function(tc, id){
-  var actual = lookAhead(tc["data"], tc["attr_name"], tc["n_months"], tc["past"])
-
-  var test_passes = compare(actual, tc["expected"])
-  return(test_passes)
+const test_results = test_cases.map(function(tc, id){
+  const actual = lookAhead(tc["data"], tc["attr_name"], tc["n_months"], tc["past"])
+  const test_passes = compare(actual, tc["expected"])
+  return test_passes
 })
 print(test_results.every(t=>t))

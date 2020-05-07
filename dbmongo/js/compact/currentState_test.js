@@ -1,3 +1,5 @@
+"use strict";
+
 var actual_res = currentState([
   { "apdemande": {"a" :{}, "b":{}}, "apconso": {"c":{}}},
   { "apdemande": {"d":{}}, "compact": {"delete" : {"apdemande": ["a", "b"]}}}
