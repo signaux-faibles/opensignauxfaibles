@@ -1,4 +1,5 @@
-var objects = [
+"use strict";
+const objects = [
   {
     "_id" : "123456789",
     "value" : {

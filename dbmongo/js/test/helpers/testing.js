@@ -1,3 +1,5 @@
+"use strict";
+
 function compare(a, b) {
   if (Object.keys(a).length != Object.keys(b).length){
     return false
