@@ -3,14 +3,14 @@
 // Context: this golden-file-based test runner was designed to prevent
 // regressions on the JS functions (common + algo2) used to compute the
 // "Features" collection from the "RawData" collection.
-// 
+//
 // It requires the JS functions from common + algo2 (notably: map()),
 // and a makeTestData() function to generate a realistic test data set.
 //
 // Please execute ../test/test_finalize_algo2.sh
 // to fill these requirements and run the tests.
 
-// Allow f.*() function calls to resolve to globally-defined functions 
+// Allow f.*() function calls to resolve to globally-defined functions
 const f = this;
 
 // Define global parameters that are required by JS functions
@@ -41,4 +41,4 @@ const testData = makeTestData({
 });
 
 // Print the output of the global map() function
-print(JSON.stringify(runMongoMap(testData, map), null, 2));
+var map_result = runMongoMap(testData, map);
