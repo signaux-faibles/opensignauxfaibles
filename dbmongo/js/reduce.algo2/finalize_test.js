@@ -3,14 +3,14 @@
 // Context: this golden-file-based test runner was designed to prevent
 // regressions on the JS functions (common + algo2) used to compute the
 // "Features" collection from the "RawData" collection.
-// 
+//
 // It requires the JS functions from common + algo2 (notably: map()),
 // and a makeTestData() function to generate a realistic test data set.
 //
-// Please execute ../test/test_map_algo2.sh to fill these requirements and
-// run the tests.
+// Please execute ../test/test_finalize_algo2.sh
+// to fill these requirements and run the tests.
 
-// Allow f.*() function calls to resolve to globally-defined functions 
+// Allow f.*() function calls to resolve to globally-defined functions
 const f = this;
 
 // Define global parameters that are required by JS functions
@@ -23,6 +23,10 @@ jsParams.includes = { "all": true };
 jsParams.offset_effectif = 2;
 
 let emit; // global emit() function that mapFct() will call
+
+Object.bsonsize = function (obj) {
+  return JSON.stringify(obj).length
+}
 
 // Run a map() function designed for MongoDB, i.e. that calls emit() an
 // inderminate number of times, instead of returning one value per iteration.
@@ -41,4 +45,14 @@ const testData = makeTestData({
 });
 
 // Print the output of the global map() function
-print(JSON.stringify(runMongoMap(testData, map), null, 2));
+const mapResult = runMongoMap(testData, map); // -> [ { _id, value } ]
+const valuesPerKey = {};
+mapResult.forEach(({_id, value}) => {
+  const idString = JSON.stringify(_id)
+  valuesPerKey[idString] = valuesPerKey[idString] || [];
+  valuesPerKey[idString].push(value);
+})
+const finalizeResult = Object.keys(valuesPerKey).map(key =>
+  f.finalize(key, f.reduce(key, valuesPerKey[key]))
+);
+print(JSON.stringify(finalizeResult, null, 2))
