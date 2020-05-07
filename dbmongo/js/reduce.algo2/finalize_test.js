@@ -41,4 +41,8 @@ const testData = makeTestData({
 });
 
 // Print the output of the global map() function
-var map_result = runMongoMap(testData, map);
+var map_result = runMongoMap(testData, map); // -> [ { _id, value } ]
+const keys = map_result.map(entrepriseOuEtablissement => entrepriseOuEtablissement._id);
+const values = map_result.map(entrepriseOuEtablissement => entrepriseOuEtablissement.value);
+var reduce_result = f.reduce(keys, values); // -> { }
+var finalizeResult = f.finalize(Object.keys(reduce_result), Object.values(reduce_result));
