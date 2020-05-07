@@ -1,4 +1,6 @@
-var test_cases = [
+"use strict";
+
+const test_cases = [
   {
     ////////////////////////////////////////////////////////
     test_case_name : "Exemple1: complete type deletion",
@@ -388,15 +390,18 @@ var test_cases = [
     }
   }
 ]
+Object.freeze(test_cases)
 
+const f = { currentState }
+Object.freeze(f)
 
-var test_results = test_cases.map(function(tc, id) {
-  f = {}
-  f.currentState = currentState
-  completeTypes = tc.completeTypes
-  batchKey = tc.batchKey
-  types = tc.types
-  batches = tc.batches
+const jsParams = this // => all properties of this object will become global. TODO: remove this when merging namespace (https://github.com/signaux-faibles/opensignauxfaibles/pull/40)
+
+const test_results = test_cases.map(function(tc, id) {
+  jsParams.completeTypes = tc.completeTypes
+  jsParams.batchKey = tc.batchKey
+  jsParams.types = tc.types
+  jsParams.batches = tc.batches
   var actual = reduce(tc.reduce_key, tc.reduce_values)
   // print(JSON.stringify(actual, null, 2))
   return(compare(actual, tc.expected))

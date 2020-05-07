@@ -1,7 +1,12 @@
-serie_periode = [new Date("2014-01-01"), new Date("2015-01-01")]
-f = {}
-f.complete_reporder = complete_reporder
-var test_cases =
+"use strict";
+
+const jsParams = this // => all properties of this object will become global. TODO: remove this when merging namespace (https://github.com/signaux-faibles/opensignauxfaibles/pull/40)
+jsParams.serie_periode = [new Date("2014-01-01"), new Date("2015-01-01")]
+
+const f = { complete_reporder }
+Object.freeze(f)
+
+const test_cases =
   [
     {
       // Exemple 1: add random_order
@@ -411,12 +416,12 @@ var test_cases =
       }
     }
   ]
+Object.freeze(test_cases)
 
-
-var test_results = test_cases.map(function(tc, id) {
-  var actual = finalize("123", tc.finalize_object)
+const test_results = test_cases.map(function(tc, id) {
+  const actual = finalize("123", tc.finalize_object)
   // print(JSON.stringify(actual, null, 2))
-  return(compareIgnoreRandom(actual, tc.expected))
+  return compareIgnoreRandom(actual, tc.expected)
 })
 
 // print(test_results)
