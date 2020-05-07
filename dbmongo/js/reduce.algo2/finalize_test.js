@@ -46,11 +46,20 @@ const testData = makeTestData({
 
 // Print the output of the global map() function
 var map_result = runMongoMap(testData, map); // -> [ { _id, value } ]
+const values_per_key = {};
+map_result.forEach(({_id, value}) => {
+  var _id_string = JSON.stringify(_id)
+  values_per_key[_id_string] = values_per_key[_id_string] || [];
+  values_per_key[_id_string].push(value);
+})
+// print(JSON.stringify(values_per_key, null, 2))
+print(JSON.stringify(Object.keys(values_per_key).map(key => `${key}: ${values_per_key[key].length}`), null, 2))
+process.exit(1)
 const keys = map_result.map(entrepriseOuEtablissement => entrepriseOuEtablissement._id);
 const values = map_result.map(entrepriseOuEtablissement => entrepriseOuEtablissement.value);
 var reduce_result = f.reduce(keys, values); // -> { }
 
-print(JSON.stringify(reduce_result, null, 2))
+// print(JSON.stringify(reduce_result, null, 2))
 //var finalizeResult = f.finalize(Object.keys(reduce_result), Object.values(reduce_result));
 
 //print(JSON.stringify(finalizeResult, null, 2))
