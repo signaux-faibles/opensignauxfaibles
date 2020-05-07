@@ -45,15 +45,14 @@ const testData = makeTestData({
 });
 
 // Print the output of the global map() function
-var map_result = runMongoMap(testData, map); // -> [ { _id, value } ]
-const values_per_key = {};
-map_result.forEach(({_id, value}) => {
-  var _id_string = JSON.stringify(_id)
-  values_per_key[_id_string] = values_per_key[_id_string] || [];
-  values_per_key[_id_string].push(value);
+const mapResult = runMongoMap(testData, map); // -> [ { _id, value } ]
+const valuesPerKey = {};
+mapResult.forEach(({_id, value}) => {
+  const idString = JSON.stringify(_id)
+  valuesPerKey[idString] = valuesPerKey[idString] || [];
+  valuesPerKey[idString].push(value);
 })
-// const reduce_result = Object.keys(values_per_key).map(key => f.reduce(key, values_per_key[key])); // -> [ { siret/"entreprise" -> {} } ]
-const finalizeResult = Object.keys(values_per_key).map(key =>
-  f.finalize(key, f.reduce(key, values_per_key[key]))
+const finalizeResult = Object.keys(valuesPerKey).map(key =>
+  f.finalize(key, f.reduce(key, valuesPerKey[key]))
 );
 print(JSON.stringify(finalizeResult, null, 2))
