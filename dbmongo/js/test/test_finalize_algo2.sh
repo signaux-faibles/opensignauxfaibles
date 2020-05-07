@@ -5,7 +5,7 @@
 # This golden-file-based test runner was designed to prevent
 # regressions on the JS functions (common + algo2) used to compute the
 # "Features" collection from the "RawData" collection.
-# Usage: ./test_map_reduce_algo2.sh [--update]
+# Usage: ./test_finalize_algo2.sh [--update]
 
 # This file is run by dbmongo/js_test.go.
 
@@ -30,20 +30,20 @@ jsc \
   ${TMP_PATH}/reduce_test_data.js \
   ./data/naf.js \
   ../reduce.algo2/!(*_test).js \
-  ../reduce.algo2/map_test.js \
+  ../reduce.algo2/finalize_test.js \
   2>&1 \
-  > ${TMP_PATH}/map_stdout.log
+  > ${TMP_PATH}/finalize_stdout.log
 
 if [ "$1" == "--update" ]; then
-  cp ${TMP_PATH}/map_stdout.log ${TMP_PATH}/map_golden.log
-  scp ${TMP_PATH}/map_golden.log stockage:/home/centos/opensignauxfaibles_tests/
+  cp ${TMP_PATH}/finalize_stdout.log ${TMP_PATH}/finalize_golden.log
+  scp ${TMP_PATH}/finalize_golden.log stockage:/home/centos/opensignauxfaibles_tests/
 fi
 
-# compare map_stdout.log with golden file, return non-zero exit code if any difference is found
-DIFF=$(diff ${TMP_PATH}/map_golden.log ${TMP_PATH}/map_stdout.log)
+# compare finalize_stdout.log with golden file, return non-zero exit code if any difference is found
+DIFF=$(diff ${TMP_PATH}/finalize_golden.log ${TMP_PATH}/finalize_stdout.log)
 if [ "${DIFF}" != "" ]; then
   echo "Test failed, because of diff: ${DIFF}"
-  echo "If this diff was expected, update the golden file on server by running ./test_map_reduce_algo2.sh --update"
+  echo "If this diff was expected, update the golden file on server by running ./test_finalize_algo2.sh --update"
   exit 1
 fi
 
