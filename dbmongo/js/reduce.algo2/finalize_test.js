@@ -24,6 +24,10 @@ jsParams.offset_effectif = 2;
 
 let emit; // global emit() function that mapFct() will call
 
+Object.bsonsize = function (obj) {
+  return JSON.stringify(obj).length
+}
+
 // Run a map() function designed for MongoDB, i.e. that calls emit() an
 // inderminate number of times, instead of returning one value per iteration.
 function runMongoMap (testData, mapFct) {
@@ -45,4 +49,9 @@ var map_result = runMongoMap(testData, map); // -> [ { _id, value } ]
 const keys = map_result.map(entrepriseOuEtablissement => entrepriseOuEtablissement._id);
 const values = map_result.map(entrepriseOuEtablissement => entrepriseOuEtablissement.value);
 var reduce_result = f.reduce(keys, values); // -> { }
-var finalizeResult = f.finalize(Object.keys(reduce_result), Object.values(reduce_result));
+
+print(JSON.stringify(reduce_result, null, 2))
+//var finalizeResult = f.finalize(Object.keys(reduce_result), Object.values(reduce_result));
+
+//print(JSON.stringify(finalizeResult, null, 2))
+

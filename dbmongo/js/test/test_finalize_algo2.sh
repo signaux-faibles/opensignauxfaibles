@@ -34,6 +34,9 @@ jsc \
   2>&1 \
   > ${TMP_PATH}/finalize_stdout.log
 
+cat ${TMP_PATH}/finalize_stdout.log
+exit 1
+
 if [ "$1" == "--update" ]; then
   cp ${TMP_PATH}/finalize_stdout.log ${TMP_PATH}/finalize_golden.log
   scp ${TMP_PATH}/finalize_golden.log stockage:/home/centos/opensignauxfaibles_tests/
