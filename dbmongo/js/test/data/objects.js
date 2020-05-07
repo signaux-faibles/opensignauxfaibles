@@ -13254,3 +13254,4 @@ const objects = [
     }
   }
 ]
+Object.freeze(objects)
