@@ -1,4 +1,6 @@
-jsParams = {}
+"use strict";
+
+const jsParams = {}
 jsParams.actual_batch = "1905"
 jsParams.date_debut = new Date("2014-01-01")
 jsParams.date_fin = new Date("2018-02-01")

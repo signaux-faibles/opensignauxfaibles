@@ -1,12 +1,13 @@
-jsParams = {}
+"use strict";
+
+const jsParams = {}
 jsParams.serie_periode = [new Date("2014-01-01"), new Date("2015-01-01")]
 Object.freeze(jsParams);
 
-f = {}
-f.complete_reporder = complete_reporder
-Object.freeze(f);
+const f = { complete_reporder }
+Object.freeze(f)
 
-var test_cases =
+const test_cases =
   [
     {
       // Exemple 1: add random_order
@@ -416,12 +417,12 @@ var test_cases =
       }
     }
   ]
+Object.freeze(test_cases)
 
-
-var test_results = test_cases.map(function(tc, id) {
-  var actual = finalize("123", tc.finalize_object)
+const test_results = test_cases.map(function(tc, id) {
+  const actual = finalize("123", tc.finalize_object)
   // print(JSON.stringify(actual, null, 2))
-  return(compareIgnoreRandom(actual, tc.expected))
+  return compareIgnoreRandom(actual, tc.expected)
 })
 
 // print(test_results)

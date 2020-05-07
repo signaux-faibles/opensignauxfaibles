@@ -1,3 +1,5 @@
+"use strict";
+
 // common fakes from /dbmongo/js/test/public/lib_public.js
 //               and /dbmongo/js/test/algo2/lib_algo2.js
 
@@ -10,7 +12,7 @@ function ISODate(date) {
   return d
 }
 
-f = this /* = {
+const f = this /* = {
   altaresToHuman,
   apconso,
   apdemande,

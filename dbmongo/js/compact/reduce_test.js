@@ -1,4 +1,6 @@
-var test_cases = [
+"use strict";
+
+const test_cases = [
   {
     ////////////////////////////////////////////////////////
     test_case_name : "Exemple1: complete type deletion",
@@ -388,16 +390,20 @@ var test_cases = [
     }
   }
 ]
+Object.freeze(test_cases)
 
+const f = { currentState }
+Object.freeze(f)
 
-var test_results = test_cases.map(function(tc, id) {
-  f = {}
-  f.currentState = currentState
-  Object.freeze(f);
+let jsParams
+let batchKey // TODO: transmettre via jsParams ?
+let completeTypes // TODO: transmettre via jsParams ?
+
+const test_results = test_cases.map(function(tc, id) {
+  batchKey = tc.batchKey
+  completeTypes = tc.completeTypes
 
   jsParams = {}
-  completeTypes = tc.completeTypes
-  batchKey = tc.batchKey
   jsParams.types = tc.types
   jsParams.batches = tc.batches
   Object.freeze(jsParams);

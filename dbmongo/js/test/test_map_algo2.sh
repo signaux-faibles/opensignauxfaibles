@@ -5,7 +5,7 @@
 # This golden-file-based test runner was designed to prevent
 # regressions on the JS functions (common + algo2) used to compute the
 # "Features" collection from the "RawData" collection.
-# Usage: ./test_map_reduce_algo2.sh [--update]
+# Usage: ./test_map_algo2.sh [--update]
 
 # This file is run by dbmongo/js_test.go.
 
@@ -40,10 +40,10 @@ if [ "$1" == "--update" ]; then
 fi
 
 # compare map_stdout.log with golden file, return non-zero exit code if any difference is found
-DIFF=$(diff ${TMP_PATH}/map_golden.log ${TMP_PATH}/map_stdout.log)
+DIFF=$(diff ${TMP_PATH}/map_golden.log ${TMP_PATH}/map_stdout.log 2>&1)
 if [ "${DIFF}" != "" ]; then
   echo "Test failed, because of diff: ${DIFF}"
-  echo "If this diff was expected, update the golden file on server by running ./test_map_reduce_algo2.sh --update"
+  echo "If this diff was expected, update the golden file on server by running ./test_map_algo2.sh --update"
   exit 1
 fi
 

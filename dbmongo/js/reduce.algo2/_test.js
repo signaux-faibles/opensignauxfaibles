@@ -1,4 +1,6 @@
-jsParams = {}
+"use strict";
+
+const jsParams = {}
 jsParams.naf = naf; // loaded from data/naf.js
 jsParams.actual_batch = "1905"
 jsParams.date_debut = new Date("2014-01-01")
