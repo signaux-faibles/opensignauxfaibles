@@ -1,7 +1,11 @@
 jsParams = {}
 jsParams.serie_periode = [new Date("2014-01-01"), new Date("2015-01-01")]
+Object.freeze(jsParams);
+
 f = {}
 f.complete_reporder = complete_reporder
+Object.freeze(f);
+
 var test_cases =
   [
     {

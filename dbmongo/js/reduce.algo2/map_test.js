@@ -20,6 +20,7 @@ jsParams.date_fin = new Date("2016-01-01");
 jsParams.serie_periode = f.generatePeriodSerie(jsParams.date_debut, jsParams.date_fin);
 jsParams.includes = { "all": true };
 jsParams.offset_effectif = 2;
+Object.freeze(jsParams);
 
 // Run a map() function designed for MongoDB, i.e. that calls emit() an
 // inderminate number of times, instead of returning one value per iteration.

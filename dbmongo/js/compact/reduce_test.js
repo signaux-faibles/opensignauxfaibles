@@ -393,11 +393,15 @@ var test_cases = [
 var test_results = test_cases.map(function(tc, id) {
   f = {}
   f.currentState = currentState
+  Object.freeze(f);
+
   jsParams = {}
   completeTypes = tc.completeTypes
   batchKey = tc.batchKey
   jsParams.types = tc.types
   jsParams.batches = tc.batches
+  Object.freeze(jsParams);
+
   var actual = reduce(tc.reduce_key, tc.reduce_values)
   // print(JSON.stringify(actual, null, 2))
   return(compare(actual, tc.expected))

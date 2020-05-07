@@ -4,6 +4,7 @@ jsParams.date_debut = new Date("2014-01-01")
 jsParams.date_fin = new Date("2018-02-01")
 jsParams.serie_periode = f.generatePeriodSerie(new Date("2014-01-01"), new Date("2018-02-01"))
 jsParams.offset_effectif = 2
+Object.freeze(jsParams);
 
 objects.forEach(object => {
   f.value = object.value
