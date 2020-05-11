@@ -46,14 +46,12 @@ func bundleJsFunctions(jsRootDir string) {
 						`"` + strings.TrimSuffix(file.Name(), ".js") + `"` +
 							": `"))
 
-					content, err := ioutil.ReadFile(filepath.Join(jsRootDir, folder.Name(), file.Name()))
+					function, err := ioutil.ReadFile(filepath.Join(jsRootDir, folder.Name(), file.Name()))
 					if err != nil {
 						log.Fatal(err)
 					}
-					function := string(content)
-					//moduleAffectation :=  // `try[.\r\n]*\{[.\r\n]*module.exports.map = map;?[.\r\n]*\}[.\r\n]*catch[.\r\n]*\(err\)[.\r\n]*\{[.\r\n]*\}[.\r\n]*`
 					moduleRegex := regexp.MustCompile(`(?ms)^\}.*^try.*module.exports.map =.*`)
-					cleanFunction := moduleRegex.ReplaceAllLiteralString(function, "}")
+					cleanFunction := moduleRegex.ReplaceAllLiteralString(string(function), "}\n")
 
 					out.Write([]byte(cleanFunction))
 					out.Write([]byte("`,\n"))

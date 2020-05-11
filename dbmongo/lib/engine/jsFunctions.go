@@ -1893,7 +1893,8 @@ function map () {
       })
     }
   }
-}`,
+}
+`,
 "outputs": `function outputs (v, serie_periode) {
   "use strict";
   var output_array = serie_periode.map(function (e) {
