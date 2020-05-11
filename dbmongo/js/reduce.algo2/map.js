@@ -1,5 +1,5 @@
 
-exports.map = function map () {
+function map () {
   "use strict";
   let v = f.flatten(this.value, actual_batch)
 
@@ -260,3 +260,7 @@ exports.map = function map () {
     }
   }
 }
+
+try {
+  module.exports.map = map
+} catch (err) {}

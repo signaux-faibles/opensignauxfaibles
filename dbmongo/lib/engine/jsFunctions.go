@@ -1633,7 +1633,7 @@ function apart (apconso, apdemande) {
 }
 `,
 "map": `
-exports.map = function map () {
+function map () {
   "use strict";
   let v = f.flatten(this.value, actual_batch)
 
@@ -1894,6 +1894,10 @@ exports.map = function map () {
     }
   }
 }
+
+try {
+  module.exports.map = map
+} catch (err) {}
 `,
 "outputs": `function outputs (v, serie_periode) {
   "use strict";

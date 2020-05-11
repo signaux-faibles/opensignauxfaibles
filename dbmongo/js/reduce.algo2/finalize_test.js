@@ -44,8 +44,8 @@ const testData = makeTestData({
   NumberInt: (int) => int,
 });
 
-// Print the output of the global map() function
-const mapResult = runMongoMap(testData, map); // -> [ { _id, value } ]
+// Print the output of the f.map() function
+const mapResult = runMongoMap(testData, f.map); // -> [ { _id, value } ]
 const valuesPerKey = {};
 mapResult.forEach(({_id, value}) => {
   const idString = JSON.stringify(_id)
