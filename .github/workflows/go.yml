@@ -48,7 +48,7 @@ jobs:
       run: |
         sudo apt-get install -y nodejs
         npm install
-        TZ=CET npm run test:coverage # TODO: let's check if we can get rid of the TZ env var
+        npm run test:coverage
         npx nyc report --reporter=lcov # stores the coverage report in ./coverage/lcov.info
 
     - name: Upload coverage to codacy
