@@ -27,7 +27,10 @@ func bundleJsFunctions(jsRootDir string) {
 
 	// For each folder
 	for _, folder := range folders {
-		if folder.IsDir() && !strings.HasPrefix(folder.Name(), "test") {
+		if folder.IsDir() &&
+			folder.Name() != "node_modules" && // skip node/npm dependencies cache
+			!strings.HasPrefix(folder.Name(), ".") && // skip hidden directories, e.g. `.nyc_output`
+			!strings.HasPrefix(folder.Name(), "test") {
 
 			out.Write([]byte(`"` + folder.Name() + `"` + ":{\n"))
 
