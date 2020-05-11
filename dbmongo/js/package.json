@@ -1,0 +1,14 @@
+{
+  "name": "dbmongo-js",
+  "version": "1.0.0",
+  "description": "Functions that are involved in map-reduce operations to process data on MongoDB.",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "UNLICENSED"
+}
