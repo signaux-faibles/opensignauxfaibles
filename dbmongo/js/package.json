@@ -7,13 +7,14 @@
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "ava-ts **/*_tests.ts"
   },
   "author": "",
   "license": "MIT",
   "devDependencies": {
     "ava": "^3.8.2",
     "ava-ts": "^0.25.2",
-    "ts-node": "^8.10.1"
+    "ts-node": "^8.10.1",
+    "typescript": "^3.8.3"
   }
 }
