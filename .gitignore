@@ -2,6 +2,7 @@
 !.github
 !.gitignore
 !dbmongo/js/.nvmrc
+!dbmongo/js/.nycrc
 dist
 dist.tar.xz
 **/*.log
