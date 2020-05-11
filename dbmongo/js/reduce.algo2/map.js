@@ -1,5 +1,5 @@
 
-function map () {
+exports.map = function map () {
   "use strict";
   let v = f.flatten(this.value, actual_batch)
 
