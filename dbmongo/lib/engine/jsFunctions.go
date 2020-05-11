@@ -1,6 +1,8 @@
 package engine 
 
  var jsFunctions = map[string]map[string]string{
+".nyc_output":{
+},
 "common":{
 "altaresToHuman": `function altaresToHuman (code) {
   "use strict";
@@ -551,6 +553,8 @@ db.getCollection("Features").createIndex({
 })
 
 `,
+},
+"node_modules":{
 },
 "public":{
 "apconso": `function apconso(apconso) {
@@ -1633,7 +1637,7 @@ function apart (apconso, apdemande) {
 }
 `,
 "map": `
-function map () {
+exports.map = function map () {
   "use strict";
   let v = f.flatten(this.value, actual_batch)
 
