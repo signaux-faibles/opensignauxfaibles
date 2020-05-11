@@ -45,7 +45,10 @@ jobs:
 
     - name: New JS Tests
       working-directory: dbmongo/js
-      run: TZ=CET npm run test:coverage # TODO: let's check if we can get rid of the TZ env var
+      run: |
+        sudo apt-get install -y nodejs
+        npm install
+        TZ=CET npm run test:coverage # TODO: let's check if we can get rid of the TZ env var
 
     - name: Upload coverage to codacy
       uses: codacy/codacy-coverage-reporter-action@master
