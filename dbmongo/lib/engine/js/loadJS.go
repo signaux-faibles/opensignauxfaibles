@@ -1,11 +1,11 @@
 package main
 
 import (
-	"io"
 	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
@@ -45,11 +45,17 @@ func bundleJsFunctions(jsRootDir string) {
 					out.Write([]byte(
 						`"` + strings.TrimSuffix(file.Name(), ".js") + `"` +
 							": `"))
-					file, err := os.Open(filepath.Join(jsRootDir, folder.Name(), file.Name()))
+
+					content, err := ioutil.ReadFile(filepath.Join(jsRootDir, folder.Name(), file.Name()))
 					if err != nil {
-						log.Print(err)
+						log.Fatal(err)
 					}
-					io.Copy(out, file)
+					function := string(content)
+					//moduleAffectation :=  // `try[.\r\n]*\{[.\r\n]*module.exports.map = map;?[.\r\n]*\}[.\r\n]*catch[.\r\n]*\(err\)[.\r\n]*\{[.\r\n]*\}[.\r\n]*`
+					moduleRegex := regexp.MustCompile(`(?ms)^\}.*^try.*module.exports.map =.*`)
+					cleanFunction := moduleRegex.ReplaceAllLiteralString(function, "}")
+
+					out.Write([]byte(cleanFunction))
 					out.Write([]byte("`,\n"))
 				}
 			}

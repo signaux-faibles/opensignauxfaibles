@@ -1893,12 +1893,7 @@ function map () {
       })
     }
   }
-}
-
-try {
-  module.exports.map = map
-} catch (err) {}
-`,
+}`,
 "outputs": `function outputs (v, serie_periode) {
   "use strict";
   var output_array = serie_periode.map(function (e) {
