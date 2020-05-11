@@ -1,6 +1,7 @@
 .*
 !.github
 !.gitignore
+!dbmongo/js/.nvmrc
 dist
 dist.tar.xz
 **/*.log
