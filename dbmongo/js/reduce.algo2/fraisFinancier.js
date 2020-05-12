@@ -13,3 +13,7 @@ function fraisFinancier(diane){
     return null
   }
 }
+
+try {
+  module.exports.fraisFinancier = fraisFinancier
+} catch (err) {}

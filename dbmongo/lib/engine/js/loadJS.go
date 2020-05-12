@@ -50,8 +50,8 @@ func bundleJsFunctions(jsRootDir string) {
 					if err != nil {
 						log.Fatal(err)
 					}
-					moduleRegex := regexp.MustCompile(`(?ms)^\}.*^try.*module.exports.map =.*`)
-					cleanFunction := moduleRegex.ReplaceAllLiteralString(string(function), "}\n")
+					moduleRegex := regexp.MustCompile(`(?ms)^\}.*^try.*module.exports.*`)
+					cleanFunction := moduleRegex.ReplaceAllLiteralString(string(function), "}")
 
 					out.Write([]byte(cleanFunction))
 					out.Write([]byte("`,\n"))
