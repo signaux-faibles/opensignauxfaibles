@@ -50,10 +50,18 @@ func bundleJsFunctions(jsRootDir string) {
 					if err != nil {
 						log.Fatal(err)
 					}
+					stringFunction := string(function)
+					useStrictRegex := regexp.MustCompile(`^"use strict";?\n`)
+					stringFunction = useStrictRegex.ReplaceAllLiteralString(stringFunction, "")
+					exportRegex := regexp.MustCompile(`^exports.__esModule = true;?\n`)
+					stringFunction = exportRegex.ReplaceAllLiteralString(stringFunction, "")
 					moduleRegex := regexp.MustCompile(`(?ms)^\}.*^try.*module.exports.*`)
-					cleanFunction := moduleRegex.ReplaceAllLiteralString(string(function), "}")
+					stringFunction = moduleRegex.ReplaceAllLiteralString(stringFunction, "}")
+					finalExportRegex := regexp.MustCompile(`(?ms)^exports\..*`)
+					stringFunction = finalExportRegex.ReplaceAllLiteralString(stringFunction, "")
+					stringFunction = strings.Trim(stringFunction, "\n")
 
-					out.Write([]byte(cleanFunction))
+					out.Write([]byte(stringFunction))
 					out.Write([]byte("`,\n"))
 				}
 			}
