@@ -10,9 +10,6 @@
 // Please execute ../test/test_map_algo2.sh to fill these requirements and
 // run the tests.
 
-// Allow f.*() function calls to resolve to globally-defined functions 
-const f = this;
-
 // Define global parameters that are required by JS functions
 const jsParams = this; // => all properties of this object will become global. TODO: remove this when merging namespace (https://github.com/signaux-faibles/opensignauxfaibles/pull/40)
 jsParams.actual_batch = "2002_1";
