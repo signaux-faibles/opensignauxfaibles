@@ -15,6 +15,7 @@ module.exports = {
   },
   rules: {
     "prettier/prettier": "error",
+    "@typescript-eslint/camelcase": 0,
   },
   env: {
     node: true,
