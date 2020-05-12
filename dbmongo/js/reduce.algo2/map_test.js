@@ -40,5 +40,5 @@ const testData = makeTestData({
   NumberInt: (int) => int,
 });
 
-// Print the output of the global map() function
-print(JSON.stringify(runMongoMap(testData, map), null, 2));
+// Print the output of the f.map() function
+print(JSON.stringify(runMongoMap(testData, f.map), null, 2));

@@ -1,0 +1,22 @@
+{
+  "name": "dbmongo-js",
+  "version": "1.0.0",
+  "description": "Functions that are involved in map-reduce operations to process data on MongoDB.",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "ava-ts **/*_tests.ts",
+    "test:coverage": "nyc npm test"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "ava": "^3.8.2",
+    "ava-ts": "^0.25.2",
+    "nyc": "^15.0.1",
+    "ts-node": "^8.10.1",
+    "typescript": "^3.8.3"
+  }
+}

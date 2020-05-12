@@ -42,3 +42,17 @@ jobs:
     - name: Tests
       working-directory: dbmongo
       run: TZ=CET go test ./... # note: js_test.go relies on Date comparisons in the CET timezone
+
+    - name: New JS Tests
+      working-directory: dbmongo/js
+      run: |
+        sudo apt-get install -y nodejs
+        npm install
+        npm run test:coverage
+        npx nyc report --reporter=lcov # stores the coverage report in ./coverage/lcov.info
+
+    - name: Upload coverage to codacy
+      uses: codacy/codacy-coverage-reporter-action@master
+      with:
+        project-token: ${{ secrets.CODACY_REPOSITORY_TOKEN_FOR_COVERAGE }}
+        coverage-reports: dbmongo/js/coverage/lcov.info

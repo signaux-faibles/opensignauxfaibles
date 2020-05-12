@@ -260,3 +260,7 @@ function map () {
     }
   }
 }
+
+try {
+  module.exports.map = map
+} catch (err) {}

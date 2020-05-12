@@ -1,11 +1,11 @@
 package main
 
 import (
-	"io"
 	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
@@ -27,7 +27,10 @@ func bundleJsFunctions(jsRootDir string) {
 
 	// For each folder
 	for _, folder := range folders {
-		if folder.IsDir() && !strings.HasPrefix(folder.Name(), "test") {
+		if folder.IsDir() &&
+			folder.Name() != "node_modules" && // skip node/npm dependencies cache
+			!strings.HasPrefix(folder.Name(), ".") && // skip hidden directories, e.g. `.nyc_output`
+			!strings.HasPrefix(folder.Name(), "test") {
 
 			out.Write([]byte(`"` + folder.Name() + `"` + ":{\n"))
 
@@ -42,11 +45,15 @@ func bundleJsFunctions(jsRootDir string) {
 					out.Write([]byte(
 						`"` + strings.TrimSuffix(file.Name(), ".js") + `"` +
 							": `"))
-					file, err := os.Open(filepath.Join(jsRootDir, folder.Name(), file.Name()))
+
+					function, err := ioutil.ReadFile(filepath.Join(jsRootDir, folder.Name(), file.Name()))
 					if err != nil {
-						log.Print(err)
+						log.Fatal(err)
 					}
-					io.Copy(out, file)
+					moduleRegex := regexp.MustCompile(`(?ms)^\}.*^try.*module.exports.map =.*`)
+					cleanFunction := moduleRegex.ReplaceAllLiteralString(string(function), "}\n")
+
+					out.Write([]byte(cleanFunction))
 					out.Write([]byte("`,\n"))
 				}
 			}
