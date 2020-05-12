@@ -30,6 +30,8 @@ proprietes.forEach((propriete) =>
     const diane = fakeDiane()
     diane[propriete] = null
     t.is(fraisFinancier(diane), null)
+    delete diane[propriete]
+    t.is(fraisFinancier(diane), null)
   })
 )
 
