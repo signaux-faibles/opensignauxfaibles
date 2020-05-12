@@ -1,4 +1,3 @@
-"use strict";
 exports.__esModule = true;
 function fraisFinancier(diane) {
     "use strict";

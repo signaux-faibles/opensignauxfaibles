@@ -51,8 +51,6 @@ func bundleJsFunctions(jsRootDir string) {
 						log.Fatal(err)
 					}
 					stringFunction := string(function)
-					useStrictRegex := regexp.MustCompile(`^"use strict";?\n`)
-					stringFunction = useStrictRegex.ReplaceAllLiteralString(stringFunction, "")
 					exportRegex := regexp.MustCompile(`^exports.__esModule = true;?\n`)
 					stringFunction = exportRegex.ReplaceAllLiteralString(stringFunction, "")
 					moduleRegex := regexp.MustCompile(`(?ms)^\}.*^try.*module.exports.*`)
