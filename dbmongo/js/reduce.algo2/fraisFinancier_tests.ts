@@ -1,5 +1,5 @@
 import test from 'ava'
-import { fraisFinancier } from './fraisFinancier.js'
+import { fraisFinancier } from './fraisFinancier'
 
 const fakeDiane = () => ({
   interets: 50,

@@ -15,4 +15,11 @@ func TranspileTsFunctions(jsRootDir string) {
 	if err != nil {
 		log.Fatal(err)
 	}
+	cmd = exec.Command("npx", "typescript", jsRootDir+"/reduce.algo2/fraisFinancier.ts") // output: dbmongo/js/common/raison_sociale.js
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err = cmd.Run()
+	if err != nil {
+		log.Fatal(err)
+	}
 }
