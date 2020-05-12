@@ -1,7 +1,6 @@
 declare function debug(string) // supported by jsc, to print in stdout
 
-//eslint-disable-next-line @typescript-eslint/no-unused-vars
-function raison_sociale(
+function raison_sociale /*eslint-disable-line @typescript-eslint/no-unused-vars */(
   denomination_unite_legale: string,
   nom_unite_legale: string,
   nom_usage_unite_legale = "",
