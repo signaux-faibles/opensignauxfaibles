@@ -1,3 +1,3 @@
 module.exports = {
-  semi: false,
+  semi: false, // interdire l'usage de points-virgule après chaque instruction JS/TS
 }

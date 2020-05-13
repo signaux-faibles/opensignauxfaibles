@@ -14,10 +14,10 @@ module.exports = {
     ecmaVersion: 2019,
   },
   rules: {
-    "prettier/prettier": "error",
-    "@typescript-eslint/camelcase": 0,
+    "prettier/prettier": "error", // tout problème de formatage detecté par prettier sera reporté comme une erreur par `$ npm run lint`
+    "@typescript-eslint/camelcase": 0, // tolérer l'usage de noms en snake case (avec underscores)
   },
   env: {
-    node: true,
+    node: true, // permet l'usage du global "module"
   },
 }
