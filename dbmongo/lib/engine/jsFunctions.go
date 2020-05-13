@@ -59,8 +59,7 @@ package engine
             (prenom4_unite_legale || "") +
             " ").trim() + "/";
     return raison_sociale;
-}
-`,
+}`,
 "region": `function region(departement){
   "use strict";
   var reg = ""
@@ -189,8 +188,7 @@ package engine
       break
   }
   return(reg)
-}
-`,
+}`,
 },
 "compact":{
 "complete_reporder": `function complete_reporder(key, object){
@@ -221,8 +219,7 @@ package engine
     object.batch[lastBatch].reporder = reporder_obj
   })
   return(object)
-}
-`,
+}`,
 "currentState": `function currentState(batches){
   "use strict";
   var currentState = batches.reduce((m, batch) => {
@@ -247,8 +244,7 @@ package engine
   }, {} )
 
   return(currentState)
-}
-`,
+}`,
 "finalize": `function finalize(k, o) {
   "use strict";
   o.index = {"algo1":false,
@@ -271,8 +267,7 @@ package engine
     o = f.complete_reporder(k, o)
   }
   return(o)
-}
-`,
+}`,
 "map": `function map() {      
   "use strict";
   try{
@@ -282,8 +277,7 @@ package engine
   } catch(error) {
     print(this.value.key)
   }
-}
-`,
+}`,
 "reduce": `function reduce(key, values) {
   "use strict";
 
@@ -488,8 +482,7 @@ package engine
   })
 
   return(reduced_value)
-}
-`,
+}`,
 },
 "crossComputation":{
 "apart": `{
@@ -506,8 +499,7 @@ package engine
       ]
     }
   }
-}
-`,
+}`,
 },
 "migrations":{
 "agg_change_index_Features": `// db.getCollection("Features").aggregate(
@@ -548,9 +540,7 @@ db.getCollection("Features").createIndex({
     "_id.periode" : 1,
     "value.effectif" : 1,
     "_id.siret" : 1
-})
-
-`,
+})`,
 },
 "public":{
 "apconso": `function apconso(apconso) {
@@ -602,8 +592,7 @@ db.getCollection("Features").createIndex({
   })
 
   return(output_cotisation)
-}
-`,
+}`,
 "dateAddDay": `function dateAddDay(date, nbMonth) {
   "use strict";
   var result = new Date(date.getTime())
@@ -634,8 +623,7 @@ db.getCollection("Features").createIndex({
   },[]).sort(
     (a,b) => {return(a.date_procol.getTime() > b.date_procol.getTime())}
   )
-}
-`,
+}`,
 "debits": `function debits(vdebit) {
   "use strict";
 
@@ -722,8 +710,7 @@ db.getCollection("Features").createIndex({
   })
 
   return(output_dette)
-}
-`,
+}`,
 "delai": `function delai(delai) {
   "use strict";
   return f.iterable(delai)
@@ -777,8 +764,7 @@ db.getCollection("Features").createIndex({
     }, { "key": v.key, scope: v.scope })
 
   return(res)
-}
-`,
+}`,
 "idEntreprise": `function idEntreprise(idEtablissement) {
   "use strict";
   return {
@@ -796,8 +782,7 @@ db.getCollection("Features").createIndex({
   } catch(error) {
     return []
   }
-}
-`,
+}`,
 "map": `function map() {
   "use strict";
   var value = f.flatten(this.value, actual_batch)
@@ -847,8 +832,7 @@ db.getCollection("Features").createIndex({
       emit("entreprise_" + this.value.key, v)
     }
   }
-}
-`,
+}`,
 "procolToHuman": `function procolToHuman (action, stade) {
   "use strict";
   var res = null;
@@ -899,8 +883,7 @@ db.getCollection("Features").createIndex({
   }
   // With a merge at the end, sending a new object, even empty, is compulsary
     emit(this._id, this.value)
-}
-`,
+}`,
 "reduce": `function reduce(key, values) {
     "use strict";
     return values
@@ -918,10 +901,9 @@ db.getCollection("Features").createIndex({
       // )
     }
   })
-}
-`,
-"apart": `"use strict";
-function apart (apconso, apdemande) {
+}`,
+"apart": `function apart (apconso, apdemande) {
+  "use strict";
 
   var output_apart = {}
 
@@ -995,8 +977,7 @@ function apart (apconso, apdemande) {
   //  }
   //})
   return(output_apart)
-}
-`,
+}`,
 "ccsf": `function ccsf(v, output_array){
   "use strict";
 
@@ -1019,8 +1000,7 @@ function apart (apconso, apdemande) {
       val.date_ccsf = optccsf.date_traitement
     }
   })
-}
-`,
+}`,
 "cibleApprentissage": `function cibleApprentissage(output_indexed, n_months) {
   "use strict";
 
@@ -1055,8 +1035,7 @@ function apart (apconso, apdemande) {
   }, {})
 
   return output_cible
-}
-`,
+}`,
 "compareDebit": `function compareDebit (a,b) {
   "use strict";
   if (a.numero_historique < b.numero_historique) return -1
@@ -1076,8 +1055,7 @@ function apart (apconso, apdemande) {
   })
 
   return output_compte
-}
-`,
+}`,
 "cotisation": `function cotisation(output_indexed, output_array) {
   "use strict";
   // calcul de cotisation_moyenne sur 12 mois
@@ -1129,8 +1107,7 @@ function apart (apconso, apdemande) {
     } else
       counter = 0
   })
-}
-`,
+}`,
 "cotisationsdettes": `function cotisationsdettes(v, periodes) {
   "use strict";
 
@@ -1285,8 +1262,7 @@ function apart (apconso, apdemande) {
   })
 
   return(output_cotisationsdettes)
-}
-`,
+}`,
 "dateAddMonth": `function dateAddMonth(date, nbMonth) {
   "use strict";
   var result = new Date(date.getTime())
@@ -1326,8 +1302,7 @@ function apart (apconso, apdemande) {
       })
     }
   )
-}
-`,
+}`,
 "defaillances": `function defaillances (v, output_indexed) {
   "use strict";
   f.dealWithProcols(v.altares, "altares", output_indexed)
@@ -1364,8 +1339,7 @@ function apart (apconso, apdemande) {
       )
     }
   )
-}
-`,
+}`,
 "detteFiscale": `function detteFiscale (diane){
   "use strict";
   if  (("dette_fiscale_et_sociale" in diane) && (diane["dette_fiscale_et_sociale"] !== null) &&
@@ -1436,8 +1410,7 @@ function apart (apconso, apdemande) {
     }
   })
   return(output_effectif)
-}
-`,
+}`,
 "finalize": `function finalize(k, v) {
   "use strict";
   const maxBsonSize = 16777216;
@@ -1503,8 +1476,7 @@ function apart (apconso, apdemande) {
       return {"incomplete": true}
     }
   }
-}
-`,
+}`,
 "financierCourtTerme": `function financierCourtTerme(diane) {
   "use strict";
   if  (("concours_bancaire_courant" in diane) && (diane["concours_bancaire_courant"] !== null) &&
@@ -1543,22 +1515,22 @@ function apart (apconso, apdemande) {
     }, { "key": v.key, scope: v.scope })
 
   return(res)
-}
-`,
-"fraisFinancier": `function fraisFinancier(diane){
-  "use strict";
-  if (("interets" in diane) && (diane["interets"] !== null) &&
-    ("excedent_brut_d_exploitation" in diane) && (diane["excedent_brut_d_exploitation"] !== null) &&
-    ("produits_financiers" in diane) && (diane["produits_financiers"] !== null) &&
-    ("charges_financieres" in diane) && (diane["charges_financieres"] !== null) &&
-    ("charge_exceptionnelle" in  diane) && (diane["charge_exceptionnelle"] !== null) &&
-    ("produit_exceptionnel" in diane) && (diane["produit_exceptionnel"] !== null) &&
-    diane["excedent_brut_d_exploitation"] + diane["produits_financiers"] + diane["produit_exceptionnel"] - diane["charge_exceptionnelle"] - diane["charges_financieres"] != 0 ){
-    return diane["interets"] / (diane["excedent_brut_d_exploitation"] + diane["produits_financiers"] + diane["produit_exceptionnel"] -
-      diane["charge_exceptionnelle"] - diane["charges_financieres"] ) * 100
-  } else {
-    return null
-  }
+}`,
+"fraisFinancier": `function fraisFinancier(diane) {
+    "use strict";
+    if (("interets" in diane) && (diane["interets"] !== null) &&
+        ("excedent_brut_d_exploitation" in diane) && (diane["excedent_brut_d_exploitation"] !== null) &&
+        ("produits_financiers" in diane) && (diane["produits_financiers"] !== null) &&
+        ("charges_financieres" in diane) && (diane["charges_financieres"] !== null) &&
+        ("charge_exceptionnelle" in diane) && (diane["charge_exceptionnelle"] !== null) &&
+        ("produit_exceptionnel" in diane) && (diane["produit_exceptionnel"] !== null) &&
+        diane["excedent_brut_d_exploitation"] + diane["produits_financiers"] + diane["produit_exceptionnel"] - diane["charge_exceptionnelle"] - diane["charges_financieres"] != 0) {
+        return diane["interets"] / (diane["excedent_brut_d_exploitation"] + diane["produits_financiers"] + diane["produit_exceptionnel"] -
+            diane["charge_exceptionnelle"] - diane["charges_financieres"]) * 100;
+    }
+    else {
+        return null;
+    }
 }`,
 "interim": `function interim (interim, output_indexed) {
   "use strict";
@@ -1594,8 +1566,7 @@ function apart (apconso, apdemande) {
   })
 
   return output_interim
-}
-`,
+}`,
 "lookAhead": `function lookAhead(data, attr_name, n_months, past) {
   "use strict";
   // Est-ce que l'évènement se répercute dans le passé (past = true on pourra se
@@ -1630,10 +1601,8 @@ function apart (apconso, apdemande) {
   }, {})
 
   return output
-}
-`,
-"map": `
-function map () {
+}`,
+"map": `function map () {
   "use strict";
   let v = f.flatten(this.value, actual_batch)
 
@@ -1893,8 +1862,7 @@ function map () {
       })
     }
   }
-}
-`,
+}`,
 "outputs": `function outputs (v, serie_periode) {
   "use strict";
   var output_array = serie_periode.map(function (e) {
@@ -1914,8 +1882,7 @@ function map () {
   }, {})
 
   return [output_array, output_indexed]
-}
-`,
+}`,
 "poidsFrng": `function poidsFrng(diane){
   "use strict";
   if  (("couverture_ca_fdr" in diane) && (diane["couverture_ca_fdr"] !== null)){
@@ -1940,8 +1907,7 @@ function map () {
       output_indexed[k].libelle_ape5 = naf.n5[code_ape]
     }
   })
-}
-`,
+}`,
 "procolToHuman": `function procolToHuman (action, stade) {
   "use strict";
   var res = null;
@@ -1964,8 +1930,7 @@ function map () {
   return values.reduce((val, accu) => {
     return Object.assign(accu, val)
   }, {})
-}
-`,
+}`,
 "repeatable": `function repeatable(rep){
   "use strict";
   let output_repeatable = {}
@@ -1978,10 +1943,7 @@ function map () {
 
   return(output_repeatable)
 
-}
-
-
-`,
+}`,
 "sirene": `function sirene (v, output_array) {
   "use strict";
   var sireneHashes = Object.keys(v.sirene || {})
@@ -2011,9 +1973,7 @@ function map () {
       val.age = (sirene.date_creation && sirene.date_creation >= new Date("1901/01/01")) ? val.periode.getFullYear() - val.date_creation_etablissement : null
     }
   })
-}
-
-`,
+}`,
 "sirene_ul": `function sirene_ul(v, output_array) {
   "use strict";
   var sireneHashes = Object.keys(v.sirene_ul || {})
@@ -2035,8 +1995,7 @@ function map () {
       val.age_entreprise = (sirene.date_creation && sirene.date_creation >= new Date("1901/01/01")) ? val.periode.getFullYear() - val.date_creation_entreprise : null
     }
   })
-}
-`,
+}`,
 "tauxMarge": `function tauxMarge(diane) {
   "use strict";
   if  (("excedent_brut_d_exploitation" in diane) && (diane["excedent_brut_d_exploitation"] !== null) &&
