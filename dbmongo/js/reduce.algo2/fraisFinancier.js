@@ -1,4 +1,5 @@
 exports.__esModule = true;
+exports.fraisFinancier = void 0;
 function fraisFinancier(diane) {
     "use strict";
     if ("interets" in diane &&
