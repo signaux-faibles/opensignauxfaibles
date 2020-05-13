@@ -39,7 +39,7 @@ func DeleteTranspiledFiles(tsFiles []string) {
 		if ext != ".ts" {
 			panic("expected a .ts file, found: " + tsFile)
 		}
-		transpiledFile := tsFile[0:len(tsFile)-len(ext)] + ".js"
+		transpiledFile := strings.TrimSuffix(tsFile, ext) + ".js"
 		err := os.Remove(transpiledFile)
 		if err != nil {
 			panic("failed to delete " + transpiledFile)
