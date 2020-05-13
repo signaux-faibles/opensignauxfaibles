@@ -26,6 +26,7 @@ echo "makeTestData = ({ ISODate, NumberInt }) => (${JSON_TEST_DATASET});" \
 
 # Run tests
 jsc \
+  ./helpers/fakes.js \
   ../common/!(*_test).js \
   ${TMP_PATH}/reduce_test_data.js \
   ./data/naf.js \
