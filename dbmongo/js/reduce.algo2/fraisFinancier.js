@@ -18,7 +18,7 @@ function fraisFinancier(diane) {
             diane["produits_financiers"] +
             diane["produit_exceptionnel"] -
             diane["charge_exceptionnelle"] -
-            diane["charges_financieres"] !=
+            diane["charges_financieres"] !==
             0) {
         return ((diane["interets"] /
             (diane["excedent_brut_d_exploitation"] +

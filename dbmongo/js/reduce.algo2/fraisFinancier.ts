@@ -17,7 +17,7 @@ export function fraisFinancier(diane): number {
       diane["produits_financiers"] +
       diane["produit_exceptionnel"] -
       diane["charge_exceptionnelle"] -
-      diane["charges_financieres"] !=
+      diane["charges_financieres"] !==
       0
   ) {
     return (
