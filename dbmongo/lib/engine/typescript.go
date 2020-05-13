@@ -14,9 +14,8 @@ func ListTsFiles(jsRootDir string) []string {
 	}
 }
 
-func TranspileTsFunctions(jsRootDir string) {
+func TranspileTsFunctions(tsFiles []string) {
 	// TODO: also transpile any other TS files
-	tsFiles := ListTsFiles(jsRootDir)
 	cmd := exec.Command("npx", append([]string{"typescript", "--listFiles", "--lib", "es5", "--skipLibCheck", "--noImplicitUseStrict"}, tsFiles...)...) // output: .js files
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr

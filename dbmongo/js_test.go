@@ -25,7 +25,8 @@ var update = flag.Bool("update", false, "Update the expected test values in gold
 func TestMain(m *testing.M) {
 	fmt.Println("Transpilation des fonctions JS depuis TypeScript...")
 	jsRootDir := filepath.Join("js") // chemin vers les fichiers TS et JS (sous-répertoire)
-	engine.TranspileTsFunctions(jsRootDir)
+	tsFiles := engine.ListTsFiles(jsRootDir)
+	engine.TranspileTsFunctions(tsFiles)
 	code := m.Run()
 	os.Exit(code)
 }
