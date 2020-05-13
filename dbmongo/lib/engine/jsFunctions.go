@@ -38,18 +38,15 @@ package engine
   }
   return serie
 }`,
-"raison_sociale": `function raison_sociale(denomination_unite_legale, nom_unite_legale, nom_usage_unite_legale, prenom1_unite_legale, prenom2_unite_legale, prenom3_unite_legale, prenom4_unite_legale) {
+"raison_sociale": `function raison_sociale /*eslint-disable-line @typescript-eslint/no-unused-vars */(denomination_unite_legale, nom_unite_legale, nom_usage_unite_legale, prenom1_unite_legale, prenom2_unite_legale, prenom3_unite_legale, prenom4_unite_legale) {
     "use strict";
-    if (!nom_usage_unite_legale) {
-        var nom_usage_unite_legale = "";
-    }
-    else {
-        var nom_usage_unite_legale = nom_usage_unite_legale + "/";
-    }
+    var nomUsageUniteLegale = nom_usage_unite_legale
+        ? nom_usage_unite_legale + "/"
+        : "";
     var raison_sociale = denomination_unite_legale ||
         (nom_unite_legale +
             "*" +
-            nom_usage_unite_legale +
+            nomUsageUniteLegale +
             prenom1_unite_legale +
             " " +
             (prenom2_unite_legale || "") +
@@ -1518,15 +1515,31 @@ db.getCollection("Features").createIndex({
 }`,
 "fraisFinancier": `function fraisFinancier(diane) {
     "use strict";
-    if (("interets" in diane) && (diane["interets"] !== null) &&
-        ("excedent_brut_d_exploitation" in diane) && (diane["excedent_brut_d_exploitation"] !== null) &&
-        ("produits_financiers" in diane) && (diane["produits_financiers"] !== null) &&
-        ("charges_financieres" in diane) && (diane["charges_financieres"] !== null) &&
-        ("charge_exceptionnelle" in diane) && (diane["charge_exceptionnelle"] !== null) &&
-        ("produit_exceptionnel" in diane) && (diane["produit_exceptionnel"] !== null) &&
-        diane["excedent_brut_d_exploitation"] + diane["produits_financiers"] + diane["produit_exceptionnel"] - diane["charge_exceptionnelle"] - diane["charges_financieres"] != 0) {
-        return diane["interets"] / (diane["excedent_brut_d_exploitation"] + diane["produits_financiers"] + diane["produit_exceptionnel"] -
-            diane["charge_exceptionnelle"] - diane["charges_financieres"]) * 100;
+    if ("interets" in diane &&
+        diane["interets"] !== null &&
+        "excedent_brut_d_exploitation" in diane &&
+        diane["excedent_brut_d_exploitation"] !== null &&
+        "produits_financiers" in diane &&
+        diane["produits_financiers"] !== null &&
+        "charges_financieres" in diane &&
+        diane["charges_financieres"] !== null &&
+        "charge_exceptionnelle" in diane &&
+        diane["charge_exceptionnelle"] !== null &&
+        "produit_exceptionnel" in diane &&
+        diane["produit_exceptionnel"] !== null &&
+        diane["excedent_brut_d_exploitation"] +
+            diane["produits_financiers"] +
+            diane["produit_exceptionnel"] -
+            diane["charge_exceptionnelle"] -
+            diane["charges_financieres"] !==
+            0) {
+        return ((diane["interets"] /
+            (diane["excedent_brut_d_exploitation"] +
+                diane["produits_financiers"] +
+                diane["produit_exceptionnel"] -
+                diane["charge_exceptionnelle"] -
+                diane["charges_financieres"])) *
+            100);
     }
     else {
         return null;
