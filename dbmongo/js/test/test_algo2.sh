@@ -42,9 +42,9 @@ if [ "$result_cibleApprentissage" != 'true' ]; then
 fi
 
 result_mapreduce=$(jsc \
+  helpers/fakes.js \
   ../reduce.algo2/!(*_test).js \
   ../common/!(*_test).js \
-  helpers/fakes.js \
   helpers/fake_emit_for_algo2.js \
   data/naf.js \
   data/objects.js \
