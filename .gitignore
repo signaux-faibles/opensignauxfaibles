@@ -1,6 +1,11 @@
 .*
 !.github
 !.gitignore
+!dbmongo/js/.nvmrc
+!dbmongo/js/.nycrc
+!dbmongo/js/.editorconfig
+!dbmongo/js/.eslintrc.js
+!dbmongo/js/.prettierrc.js
 dist
 dist.tar.xz
 **/*.log

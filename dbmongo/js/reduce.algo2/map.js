@@ -260,3 +260,5 @@ function map () {
     }
   }
 }
+
+exports.map = map

@@ -38,6 +38,8 @@ const f = this /* = {
   ...
 }*/
 
+const exports = {}
+
 function reducer(array, reduce) {
   if (array.length == 1) {
     return array[0]

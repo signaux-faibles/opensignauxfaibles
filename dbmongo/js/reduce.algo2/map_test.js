@@ -10,9 +10,6 @@
 // Please execute ../test/test_map_algo2.sh to fill these requirements and
 // run the tests.
 
-// Allow f.*() function calls to resolve to globally-defined functions 
-const f = this;
-
 // Define global parameters that are required by JS functions
 const jsParams = {}
 jsParams.naf = naf; // loaded from data/naf.js
@@ -42,5 +39,5 @@ const testData = makeTestData({
   NumberInt: (int) => int,
 });
 
-// Print the output of the global map() function
-print(JSON.stringify(runMongoMap(testData, map), null, 2));
+// Print the output of the f.map() function
+print(JSON.stringify(runMongoMap(testData, f.map), null, 2));

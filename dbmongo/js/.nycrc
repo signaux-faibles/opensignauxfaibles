@@ -1,0 +1,21 @@
+{
+  "extension": [
+    ".js",
+    ".ts"
+  ],
+  "include": [
+    "**/*.ts",
+    "**/*.js"
+  ],
+  "exclude": [
+    "**/*_test*.ts",
+    "**/*_test*.js"
+  ],
+  "require": [
+    "ts-node/register"
+  ],
+  "cache": true,
+  "sourceMap": false,
+  "instrument": true,
+  "all": true
+}
