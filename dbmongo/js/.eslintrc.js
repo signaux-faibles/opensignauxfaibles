@@ -1,6 +1,6 @@
 module.exports = {
   parser: "@typescript-eslint/parser",
-  ignorePatterns: ["lib/", "node_modules/"],
+  ignorePatterns: ["node_modules/"],
   extends: [
     "eslint:recommended",
     "plugin:prettier/recommended",
@@ -10,7 +10,7 @@ module.exports = {
   ],
   plugins: ["prettier", "@typescript-eslint"],
   parserOptions: {
-    project: "./tsconfig.json",
+    tsconfigRootDir: __dirname,
     ecmaVersion: 2019,
   },
   rules: {
