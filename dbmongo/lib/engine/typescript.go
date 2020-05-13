@@ -6,14 +6,27 @@ import (
 	"os/exec"
 	"path"
 	"path/filepath"
+	"strings"
 )
 
+func shouldTranspile(filePath string) bool {
+	return !strings.Contains(filePath, "node_modules") &&
+		!strings.Contains(filePath, "_tests.ts") &&
+		path.Ext(filePath) == ".ts"
+}
+
 func ListTsFiles(jsRootDir string) []string {
-	// TODO: fetch the list of TS files by walking the file hierarchy
-	return []string{
-		filepath.Join(jsRootDir, "common", "raison_sociale.ts"),
-		filepath.Join(jsRootDir, "reduce.algo2", "fraisFinancier.ts"),
+	var files []string
+	err := filepath.Walk(jsRootDir, func(filePath string, info os.FileInfo, err error) error {
+		if err == nil && shouldTranspile(filePath) {
+			files = append(files, filePath)
+		}
+		return err
+	})
+	if err != nil {
+		log.Fatal(err)
 	}
+	return files
 }
 
 func DeleteTranspiledFiles(tsFiles []string) {
