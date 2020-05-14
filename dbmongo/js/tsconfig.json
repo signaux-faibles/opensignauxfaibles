@@ -70,6 +70,6 @@
     "forceConsistentCasingInFileNames": true /* Disallow inconsistently-cased references to the same file. */
   },
   "compileOnSave": true,
-  "include": ["globals.ts", "*/*.ts"],
+  "include": ["globals.d.ts", "*/*.ts"],
   "exclude": ["node_modules", "*/*_tests.ts"]
 }
