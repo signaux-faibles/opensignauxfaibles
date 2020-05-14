@@ -1,5 +1,3 @@
-/*global globalThis*/ // demande à Codacy de tolérer le manque de définition de globalThis
-
 // Object golang défini dans dbmongo/lib/urssaf/delai.go
 export type Delai = {
   numero_compte: string

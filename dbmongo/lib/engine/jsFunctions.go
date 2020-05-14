@@ -1308,10 +1308,7 @@ db.getCollection("Features").createIndex({
   
   
   `,
-"delais": `/*global globalThis*/ // demande à Codacy de tolérer le manque de définition de globalThis
-
-
-function delais(v, output_indexed) {
+"delais": `function delais(v, output_indexed) {
     "use strict";
     Object.keys(v.delai).map(function (hash) {
         var delai = v.delai[hash];
