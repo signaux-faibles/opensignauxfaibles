@@ -20,7 +20,7 @@ docker run \
 
 # 2. Préparation du répertoire de données
 DATA_DIR=$(pwd)/tmp-opensignauxfaibles-data-raw
-mkdir ${DATA_DIR}
+mkdir -p ${DATA_DIR}
 touch ${DATA_DIR}/dummy.csv
 
 # 3. Installation et configuration de dbmongo
