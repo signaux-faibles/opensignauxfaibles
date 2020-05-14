@@ -35,6 +35,7 @@
     // "noImplicitThis": true,                /* Raise error on 'this' expressions with an implied 'any' type. */
     // "alwaysStrict": true,                  /* Parse in strict mode and emit "use strict" for each source file. */
     "noImplicitUseStrict": true /* to not add "use strict" at the top of transpiled JS files */,
+    "skipLibCheck": true /* to speed up transpilation, when running go generate and go test */,
 
     /* Additional Checks */
     // "noUnusedLocals": true,                /* Report errors on unused locals. */
