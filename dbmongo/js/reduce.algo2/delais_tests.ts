@@ -1,5 +1,6 @@
+import { f } from "../test/helpers/globals"
 import test from "ava"
-import { delais, Delai, DelaiMap, f } from "./delais"
+import { delais, Delai, DelaiMap } from "./delais"
 
 const janvier = new Date("2014-01-01")
 const fevrier = new Date("2014-02-01")

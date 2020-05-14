@@ -38,7 +38,7 @@ const f = this /* = {
   ...
 }*/
 
-const exports = {}
+const exports = { f }
 
 function reducer(array, reduce) {
   if (array.length == 1) {

@@ -1,5 +1,6 @@
-// Object golang défini dans dbmongo/lib/urssaf/delai.go
+import { f } from "../test/helpers/globals"
 
+// Object golang défini dans dbmongo/lib/urssaf/delai.go
 export type Delai = {
   numero_compte: string
   numero_contentieux: string
@@ -16,9 +17,9 @@ export type Delai = {
 
 export type DelaiMap = { [key: string]: Delai }
 
-export const f: {
-  generatePeriodSerie: Function //(date_creation: Date, date_echeance: Date): Date[]
-} = { generatePeriodSerie: null }
+// declare const f: {
+//   generatePeriodSerie: Function //(date_creation: Date, date_echeance: Date): Date[]
+// }
 
 export function delais(v: { delai: DelaiMap }, output_indexed: object): void {
   "use strict"
