@@ -3,13 +3,15 @@
 # Test de bout en bout de l'API "reduce"
 # Source: https://github.com/signaux-faibles/documentation/blob/master/prise-en-main.md#%C3%A9tape-de-calculs-pour-populer-features
 
+# Interrompre le conteneur Docker d'une exécution précédente de ce test, si besoin
+docker stop sf-mongodb
+
 set -e # will stop the script if any command fails with a non-zero exit code
 
 # Clean up on exit
 trap "{ mv config.backup.toml config.toml; docker stop sf-mongodb; rm -rf ${DATA_DIR}; echo \"Cleaned up temp directory\"; }" EXIT
 
 # 1. Lancement de mongodb avec Docker
-docker stop sf-mongodb
 docker run \
     mongodb:4 \
     --name sf-mongodb \
