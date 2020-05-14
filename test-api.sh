@@ -9,6 +9,7 @@ docker stop sf-mongodb
 set -e # will stop the script if any command fails with a non-zero exit code
 
 # Clean up on exit
+DATA_DIR=$(pwd)/tmp-opensignauxfaibles-data-raw
 trap "{ mv config.backup.toml config.toml; docker stop sf-mongodb; rm -rf ${DATA_DIR}; echo \"Cleaned up temp directory\"; }" EXIT
 
 # 1. Lancement de mongodb avec Docker
@@ -20,7 +21,6 @@ docker run \
     mongo:4
 
 # 2. Préparation du répertoire de données
-DATA_DIR=$(pwd)/tmp-opensignauxfaibles-data-raw
 mkdir -p ${DATA_DIR}
 touch ${DATA_DIR}/dummy.csv
 
