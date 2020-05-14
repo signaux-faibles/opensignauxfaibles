@@ -47,11 +47,9 @@ func DeleteTranspiledFiles(tsFiles []string) {
 	}
 }
 
-// TranspileTsFunctions convertit les fichiers TypeScript listés dans tsFiles
-// au format JavaScript.
-func TranspileTsFunctions(tsFiles []string) {
-	// cmd := exec.Command("npx", append([]string{"typescript", "--listFiles", "--lib", "es5", "--skipLibCheck", "--noImplicitUseStrict"}, tsFiles...)...) // output: .js files
-	cmd := exec.Command("npx", append([]string{"typescript", "--listFiles", "--p", "js/tsconfig.json"})...) // output: .js files
+// TranspileTsFunctions convertit les fichiers TypeScript au format JavaScript.
+func TranspileTsFunctions(jsRootDir string) {
+	cmd := exec.Command("npx", append([]string{"typescript", "--listFiles", "--p", filepath.Join(jsRootDir, "tsconfig.json")})...) // output: .js files
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err := cmd.Run()
