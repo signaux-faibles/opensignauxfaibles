@@ -1,14 +1,15 @@
-import { f } from "../test/helpers/globals"
-import test from "ava"
-import { delais, Delai, DelaiMap } from "./delais"
-
 const janvier = new Date("2014-01-01")
 const fevrier = new Date("2014-02-01")
 const mars = new Date("2014-03-01")
 
-f.generatePeriodSerie = function (/*date_creation: Date, date_echeance: Date*/): Date[] {
-  return [janvier, fevrier, mars]
+globalThis.f = {
+  generatePeriodSerie: function (/*date_creation: Date, date_echeance: Date*/): Date[] {
+    return [janvier, fevrier, mars]
+  },
 }
+
+import test from "ava"
+import { delais, Delai, DelaiMap } from "./delais"
 
 test("delais est défini", (t) => {
   t.is(typeof delais, "function")

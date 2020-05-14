@@ -1,5 +1,3 @@
-import { f } from "../test/helpers/globals"
-
 // Object golang défini dans dbmongo/lib/urssaf/delai.go
 export type Delai = {
   numero_compte: string
@@ -17,6 +15,7 @@ export type Delai = {
 
 export type DelaiMap = { [key: string]: Delai }
 
+const f = globalThis.f
 // declare const f: {
 //   generatePeriodSerie: Function //(date_creation: Date, date_echeance: Date): Date[]
 // }
