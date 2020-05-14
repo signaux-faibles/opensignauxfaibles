@@ -1,4 +1,7 @@
-function delais(v, output_indexed) {
+declare const f: {
+  generatePeriodSerie(date_creation: Date, date_echeance: Date): Date[]
+}
+export function delais(v: { delai: object }, output_indexed: object): void {
   "use strict"
   Object.keys(v.delai).map(function (hash) {
     const delai = v.delai[hash]
