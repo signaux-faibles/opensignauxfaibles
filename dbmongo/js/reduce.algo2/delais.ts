@@ -15,11 +15,6 @@ export type Delai = {
 
 export type DelaiMap = { [key: string]: Delai }
 
-const f = globalThis.f
-// declare const f: {
-//   generatePeriodSerie: Function //(date_creation: Date, date_echeance: Date): Date[]
-// }
-
 export function delais(v: { delai: DelaiMap }, output_indexed: object): void {
   "use strict"
   Object.keys(v.delai).map(function (hash) {
@@ -48,7 +43,7 @@ export function delais(v: { delai: DelaiMap }, output_indexed: object): void {
       )
     )
     // Création d'un tableau de timestamps à raison de 1 par mois.
-    const pastYearTimes = f
+    const pastYearTimes = globalThis.f
       .generatePeriodSerie(date_creation, date_echeance)
       .map(function (date) {
         return date.getTime()

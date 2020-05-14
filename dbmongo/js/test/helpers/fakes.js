@@ -39,6 +39,7 @@ const f = this /* = {
 }*/
 
 const exports = { f }
+const globalThis = { f }
 
 function reducer(array, reduce) {
   if (array.length == 1) {
