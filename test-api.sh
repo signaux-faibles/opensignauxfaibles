@@ -33,7 +33,7 @@ sed -i '' "s,/foo/bar/data-raw,${DATA_DIR}," config.toml
 sed -i '' 's,naf/.*\.csv,dummy.csv,' config.toml
 
 # 4. Ajout de données de test
-docker exec -i sf-mongo mongo signauxfaibles << CONTENTS
+docker exec -i sf-mongodb mongo signauxfaibles << CONTENTS
   db.createCollection('RawData')
 
   db.Admin.insertOne({
@@ -76,4 +76,4 @@ sleep 5
 http :5000/api/data/reduce algo=algo2 batch=1910 key=012345678
 kill ${DBMONGO_PID}
 echo "db.Features_debug.find()" \
-  | docker exec -i sf-mongo mongo signauxfaibles
+  | docker exec -i sf-mongodb mongo signauxfaibles
