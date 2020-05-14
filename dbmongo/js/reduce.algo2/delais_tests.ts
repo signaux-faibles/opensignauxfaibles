@@ -13,7 +13,7 @@ test("delais est défini", (t) => {
   t.is(typeof delais, "function")
 })
 
-test("la propriété delai représente le nombre de mois restants du délai", (t) => {
+test("la propriété delai représente le nombre de mois complets restants du délai", (t) => {
   const delaiTest: Delai = {
     numero_compte: undefined,
     numero_contentieux: undefined,
@@ -34,6 +34,11 @@ test("la propriété delai représente le nombre de mois restants du délai", (t
   output_indexed[fevrier.getTime()] = {}
   output_indexed[mars.getTime()] = {}
   delais({ delai: delaiMap }, output_indexed)
-  t.is(output_indexed[fevrier.getTime()].delai, 1)
-  t.is(output_indexed[mars.getTime()].delai, 0)
+  t.is(output_indexed[fevrier.getTime()].delai, 1) // nombre de mois complets restants
+  t.is(output_indexed[mars.getTime()].delai, 0) // moins d'un mois
 })
+
+// TODO: refacto, dont importation des helpers dans f
+// TODO: vérifier qu'aucune période n'a été ajoutée au output_index
+// TODO: ajouter des tests sur les autres propriétés retournées
+// TODO: ajouter des tests sur les cas limites => table-based testing
