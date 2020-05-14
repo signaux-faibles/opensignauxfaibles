@@ -1,4 +1,5 @@
 {
+  /* Note: cette configuration TypeScript a été conçue pour accélerer la transpilation depuis `go generate` et `npm test` */
   "compilerOptions": {
     /* Basic Options */
     // "incremental": true,                   /* Enable incremental compilation */

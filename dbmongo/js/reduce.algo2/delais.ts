@@ -43,7 +43,7 @@ export function delais(v: { delai: DelaiMap }, output_indexed: object): void {
       )
     )
     // Création d'un tableau de timestamps à raison de 1 par mois.
-    const pastYearTimes = globalThis.f
+    const pastYearTimes = globalThis.f // variable globale f déclarée dans globals.ts
       .generatePeriodSerie(date_creation, date_echeance)
       .map(function (date) {
         return date.getTime()
