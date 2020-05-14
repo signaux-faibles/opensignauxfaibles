@@ -13,10 +13,11 @@ trap "{ mv config.backup.toml config.toml; docker stop sf-mongodb; rm -rf ${DATA
 
 # 1. Lancement de mongodb avec Docker
 docker run \
-    -d mongo:4 \
     --name sf-mongodb \
     --publish 27017:27017 \
-    --rm # retirez ce paramètre si vous voulez pouvoir réutiliser ce conteneur plus tard
+    --detach \
+    --rm \
+    mongo:4
 
 # 2. Préparation du répertoire de données
 DATA_DIR=$(pwd)/tmp-opensignauxfaibles-data-raw
