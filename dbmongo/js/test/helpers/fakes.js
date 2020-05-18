@@ -38,7 +38,6 @@ const f = this /* = {
 }*/
 
 const exports = { f }
-const globalThis = { f } // permet d'importer la variable globale f depuis les tests TypeScript
 
 function reducer(array, reduce) {
   if (array.length == 1) {

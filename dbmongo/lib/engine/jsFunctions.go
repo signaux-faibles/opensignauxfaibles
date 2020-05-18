@@ -1316,7 +1316,7 @@ db.getCollection("Features").createIndex({
         var date_creation = new Date(Date.UTC(delai.date_creation.getUTCFullYear(), delai.date_creation.getUTCMonth(), 1, 0, 0, 0, 0));
         var date_echeance = new Date(Date.UTC(delai.date_echeance.getUTCFullYear(), delai.date_echeance.getUTCMonth(), 1, 0, 0, 0, 0));
         // Création d'un tableau de timestamps à raison de 1 par mois.
-        var pastYearTimes = globalThis.f // variable globale f déclarée dans globals.ts
+        var pastYearTimes = f // variable globale f
             .generatePeriodSerie(date_creation, date_echeance)
             .map(function (date) {
             return date.getTime();
