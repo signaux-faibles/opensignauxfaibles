@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Test de bout en bout de l'API "reduce"
+# Test de bout en bout des APIs "reduce" et "public"
 # Source: https://github.com/signaux-faibles/documentation/blob/master/prise-en-main.md#%C3%A9tape-de-calculs-pour-populer-features
 
 # Interrompre le conteneur Docker d'une exécution précédente de ce test, si besoin
@@ -12,7 +12,6 @@ set -e # will stop the script if any command fails with a non-zero exit code
 DATA_DIR=$(pwd)/tmp-opensignauxfaibles-data-raw
 trap "{ [ -f config.toml ] && rm config.toml; [ -f config.backup.toml ] && mv config.backup.toml config.toml; docker stop sf-mongodb; rm -rf ${DATA_DIR}; echo \"✨ Cleaned up temp directory\"; }" EXIT
 
-# 1. Lancement de mongodb avec Docker
 echo ""
 echo "🐳 Starting MongoDB container..."
 docker run \
@@ -22,7 +21,6 @@ docker run \
     --rm \
     mongo:4
 
-# 2. Préparation du répertoire de données
 echo ""
 echo "🔧 Setting up dbmongo..."
 mkdir -p "${DATA_DIR}"
@@ -39,7 +37,6 @@ else
   sed -i 's,naf/.*\.csv,dummy.csv,' config.toml
 fi
 
-# 3. Ajout de données de test
 echo ""
 echo "📄 Inserting test data..."
 docker exec -i sf-mongodb mongo signauxfaibles << CONTENTS
@@ -79,17 +76,15 @@ docker exec -i sf-mongodb mongo signauxfaibles << CONTENTS
   })
 CONTENTS
 
-# 4. Exécution des calculs pour populer la collection "Features"
 echo ""
-echo "⚙️ Computing Features thru dbmongo API..."
+echo "⚙️ Computing Features and Public collections thru dbmongo API..."
 ./dbmongo &
 DBMONGO_PID=$!
 sleep 2 # give some time for dbmongo to start
 http --ignore-stdin :5000/api/data/reduce algo=algo2 batch=1910 key=012345678
+http --ignore-stdin :5000/api/data/public algo=algo2 batch=1910 key=012345678
 kill ${DBMONGO_PID}
 
-
-# 5. Analyse de la collection "Features" résultante
 echo ""
 echo "🕵️‍♀️ Checking resulting Features..."
 cd ..
