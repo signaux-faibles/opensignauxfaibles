@@ -10,7 +10,7 @@ set -e # will stop the script if any command fails with a non-zero exit code
 
 # Clean up on exit
 DATA_DIR=$(pwd)/tmp-opensignauxfaibles-data-raw
-trap "{ mv config.backup.toml config.toml; docker stop sf-mongodb; rm -rf ${DATA_DIR}; echo \"Cleaned up temp directory\"; }" EXIT
+trap "{ [ -f config.toml ] && rm config.toml; [ -f config.backup.toml ] && mv config.backup.toml config.toml; docker stop sf-mongodb; rm -rf ${DATA_DIR}; echo \"Cleaned up temp directory\"; }" EXIT
 
 # 1. Lancement de mongodb avec Docker
 docker run \
@@ -27,7 +27,7 @@ touch "${DATA_DIR}/dummy.csv"
 # 3. Installation et configuration de dbmongo
 cd dbmongo
 go build
-[ -f onfig.toml ] && mv config.toml config.backup.toml
+[ -f config.toml ] && mv config.toml config.backup.toml
 cp config-sample.toml config.toml
 sed -i '' "s,/foo/bar/data-raw,${DATA_DIR}," config.toml
 sed -i '' 's,naf/.*\.csv,dummy.csv,' config.toml
