@@ -27,7 +27,7 @@ touch "${DATA_DIR}/dummy.csv"
 # 3. Installation et configuration de dbmongo
 cd dbmongo
 go build
-mv config.toml config.backup.toml
+[ -f onfig.toml ] && mv config.toml config.backup.toml
 cp config-sample.toml config.toml
 sed -i '' "s,/foo/bar/data-raw,${DATA_DIR}," config.toml
 sed -i '' 's,naf/.*\.csv,dummy.csv,' config.toml
