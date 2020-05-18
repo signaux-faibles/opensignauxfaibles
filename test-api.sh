@@ -10,9 +10,11 @@ set -e # will stop the script if any command fails with a non-zero exit code
 
 # Clean up on exit
 DATA_DIR=$(pwd)/tmp-opensignauxfaibles-data-raw
-trap "{ [ -f config.toml ] && rm config.toml; [ -f config.backup.toml ] && mv config.backup.toml config.toml; docker stop sf-mongodb; rm -rf ${DATA_DIR}; echo \"Cleaned up temp directory\"; }" EXIT
+trap "{ [ -f config.toml ] && rm config.toml; [ -f config.backup.toml ] && mv config.backup.toml config.toml; docker stop sf-mongodb; rm -rf ${DATA_DIR}; echo \"✨ Cleaned up temp directory\"; }" EXIT
 
 # 1. Lancement de mongodb avec Docker
+echo ""
+echo "🐳 Starting MongoDB container..."
 docker run \
     --name sf-mongodb \
     --publish 27017:27017 \
@@ -21,10 +23,10 @@ docker run \
     mongo:4
 
 # 2. Préparation du répertoire de données
+echo ""
+echo "🔧 Setting up dbmongo..."
 mkdir -p "${DATA_DIR}"
 touch "${DATA_DIR}/dummy.csv"
-
-# 3. Installation et configuration de dbmongo
 cd dbmongo
 go build
 [ -f config.toml ] && mv config.toml config.backup.toml
@@ -37,7 +39,9 @@ else
   sed -i 's,naf/.*\.csv,dummy.csv,' config.toml
 fi
 
-# 4. Ajout de données de test
+# 3. Ajout de données de test
+echo ""
+echo "📄 Inserting test data..."
 docker exec -i sf-mongodb mongo signauxfaibles << CONTENTS
   db.createCollection('RawData')
 
@@ -74,19 +78,29 @@ docker exec -i sf-mongodb mongo signauxfaibles << CONTENTS
   })
 CONTENTS
 
-# 5. Exécution des calculs pour populer la collection "Features"
+# 4. Exécution des calculs pour populer la collection "Features"
+echo ""
+echo "⚙️ Computing Features thru dbmongo API..."
 ./dbmongo &
 DBMONGO_PID=$!
-sleep 5 
+sleep 2 # give some time for dbmongo to start
 http --ignore-stdin :5000/api/data/reduce algo=algo2 batch=1910 key=012345678
 kill ${DBMONGO_PID}
 
 
-# 6. Analyse de la collection "Features" résultante
+# 5. Analyse de la collection "Features" résultante
+echo ""
+echo "🕵️‍♀️ Checking resulting Features..."
 cd ..
 echo "db.Features_debug.find()" \
   | docker exec -i sf-mongodb mongo signauxfaibles > test-api.output.txt
+grep "^[^{]" test-api.output.txt # display mongo connection info, for troubleshooting
+grep "^{" test-api.output.txt > test-api.output-documents.txt
 
-echo "Diff between expected and actual output:"
-diff test-api.golden-master.txt test-api.output.txt
-rm test-api.output.txt
+echo ""
+echo "🆎 Diff between expected and actual output:"
+diff test-api.golden-master.txt test-api.output-documents.txt
+echo "✅ No diff. The reduce API works as usual."
+echo ""
+rm test-api.output.txt test-api.output-documents.txt
+# Now, the "trap" commands will run, to clean up.
