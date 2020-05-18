@@ -1,18 +1,16 @@
+import test from "ava"
+import "../globals"
+import { delais, Delai, DelaiMap } from "./delais"
+
 const janvier = new Date("2014-01-01")
 const fevrier = new Date("2014-02-01")
 const mars = new Date("2014-03-01")
 
-import "../globals"
-
-// La variable globale f doit être initialisée avant d'importer delais.ts
 f = {
   generatePeriodSerie: function (/*date_creation: Date, date_echeance: Date*/): Date[] {
     return [janvier, fevrier, mars]
   },
 }
-
-import test from "ava"
-import { delais, Delai, DelaiMap } from "./delais"
 
 test("delais est défini", (t) => {
   t.is(typeof delais, "function")
