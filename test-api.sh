@@ -21,8 +21,8 @@ docker run \
     mongo:4
 
 # 2. Préparation du répertoire de données
-mkdir -p ${DATA_DIR}
-touch ${DATA_DIR}/dummy.csv
+mkdir -p "${DATA_DIR}"
+touch "${DATA_DIR}/dummy.csv"
 
 # 3. Installation et configuration de dbmongo
 cd dbmongo
