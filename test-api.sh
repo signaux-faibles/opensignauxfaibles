@@ -80,5 +80,13 @@ DBMONGO_PID=$!
 sleep 5 
 http --ignore-stdin :5000/api/data/reduce algo=algo2 batch=1910 key=012345678
 kill ${DBMONGO_PID}
+
+
+# 6. Analyse de la collection "Features" résultante
+cd ..
 echo "db.Features_debug.find()" \
-  | docker exec -i sf-mongodb mongo signauxfaibles
+  | docker exec -i sf-mongodb mongo signauxfaibles > test-api.output.txt
+
+echo "Diff between expected and actual output:"
+diff test-api.golden-master.txt test-api.output.txt
+rm test-api.output.txt
