@@ -39,6 +39,7 @@ fi
 
 echo ""
 echo "📄 Inserting test data..."
+sleep 1 # give some time for MongoDB to start
 docker exec -i sf-mongodb mongo signauxfaibles << CONTENTS
   db.createCollection('RawData')
 
