@@ -78,7 +78,7 @@ CONTENTS
 ./dbmongo &
 DBMONGO_PID=$!
 sleep 5 
-http :5000/api/data/reduce algo=algo2 batch=1910 key=012345678
+http --ignore-stdin :5000/api/data/reduce algo=algo2 batch=1910 key=012345678
 kill ${DBMONGO_PID}
 echo "db.Features_debug.find()" \
   | docker exec -i sf-mongodb mongo signauxfaibles
