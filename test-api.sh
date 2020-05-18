@@ -23,16 +23,19 @@ docker run \
 # 2. Préparation du répertoire de données
 mkdir -p "${DATA_DIR}"
 touch "${DATA_DIR}/dummy.csv"
-ls -l ${TMP_PATH}
 
 # 3. Installation et configuration de dbmongo
 cd dbmongo
 go build
 [ -f config.toml ] && mv config.toml config.backup.toml
 cp config-sample.toml config.toml
-cat config.toml
-sed -i '' "s,/foo/bar/data-raw,${DATA_DIR}," config.toml
-sed -i '' 's,naf/.*\.csv,dummy.csv,' config.toml
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  sed -i '' "s,/foo/bar/data-raw,${DATA_DIR}," config.toml
+  sed -i '' 's,naf/.*\.csv,dummy.csv,' config.toml
+else
+  sed -i "s,/foo/bar/data-raw,${DATA_DIR}," config.toml
+  sed -i 's,naf/.*\.csv,dummy.csv,' config.toml
+fi
 
 # 4. Ajout de données de test
 docker exec -i sf-mongodb mongo signauxfaibles << CONTENTS
