@@ -32,4 +32,7 @@ jobs:
         run: go build -v .
 
       - name: Run end-to-end tests
-        run: bash test-api.sh
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y httpie
+          ./test-api.sh
