@@ -89,10 +89,14 @@ kill ${DBMONGO_PID}
 echo ""
 echo "🕵️‍♀️ Checking resulting Features..."
 cd ..
-echo "db.Features_debug.find()" \
-  | docker exec -i sf-mongodb mongo signauxfaibles > test-api.output.txt
-grep "^[^{]" test-api.output.txt # display mongo connection info, for troubleshooting
-grep "^{" test-api.output.txt > test-api.output-documents.txt
+docker exec -i sf-mongodb mongo signauxfaibles > test-api.output.txt << CONTENTS
+  print("// Documents from db.Features_debug, after call to /api/data/reduce:");
+  db.Features_debug.find();
+  print("// Documents from db.Public, after call to /api/data/public:");
+  db.Public.find();
+CONTENTS
+grep "^[^{/]" test-api.output.txt # display mongo connection info, for troubleshooting
+grep "^[{/]" test-api.output.txt > test-api.output-documents.txt
 
 echo ""
 echo "🆎 Diff between expected and actual output:"
