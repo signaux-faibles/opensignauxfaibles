@@ -20,13 +20,6 @@ jobs:
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
 
-      - name: Check that jsFunctions.go is up to date
-        working-directory: dbmongo/lib/engine
-        run: |
-          go generate -x
-          git diff jsFunctions.go
-          exit $(git diff jsFunctions.go | wc -l)
-
       - name: Build
         working-directory: dbmongo
         run: go build -v .
