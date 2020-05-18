@@ -70,10 +70,11 @@ docker exec -i sf-mongodb mongo signauxfaibles << CONTENTS
   db.RawData.insertOne({
     "_id": "01234567891011",
     "value": {
-        "scope": "etablissement",
-        "index": {
+      "scope": "etablissement",
+      "index": {
         "algo2": true
-        }
+      },
+      "key": "01234567891011"
     }
   })
 CONTENTS
