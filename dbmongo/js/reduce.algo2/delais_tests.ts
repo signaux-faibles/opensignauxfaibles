@@ -2,14 +2,9 @@ const janvier = new Date("2014-01-01")
 const fevrier = new Date("2014-02-01")
 const mars = new Date("2014-03-01")
 
-// La variable globale f doit être initialisée avant d'importer delais.ts
-declare global {
-  // eslint-disable-next-line no-var
-  var f: {
-    [key: string]: Function
-  }
-}
+import "../globals"
 
+// La variable globale f doit être initialisée avant d'importer delais.ts
 f = {
   generatePeriodSerie: function (/*date_creation: Date, date_echeance: Date*/): Date[] {
     return [janvier, fevrier, mars]

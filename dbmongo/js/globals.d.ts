@@ -1,1 +1,0 @@
-// Déclaration de variables globales

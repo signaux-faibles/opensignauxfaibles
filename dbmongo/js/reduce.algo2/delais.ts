@@ -1,10 +1,3 @@
-declare global {
-  // eslint-disable-next-line no-var
-  var f: {
-    [key: string]: Function
-  }
-}
-
 // Object golang défini dans dbmongo/lib/urssaf/delai.go
 export type Delai = {
   numero_compte: string
