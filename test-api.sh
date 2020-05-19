@@ -68,6 +68,9 @@ docker exec -i sf-mongodb mongo signauxfaibles << CONTENTS
   db.ImportedData.insertOne({
     "_id": "random123abc",
     "value": {
+      "batch": {
+        "1910": {}
+      },
       "scope": "etablissement",
       "index": {
         "algo2": true
@@ -76,7 +79,7 @@ docker exec -i sf-mongodb mongo signauxfaibles << CONTENTS
     }
   })
 
-  db.RawData_debug.remove({})
+  db.RawData.remove({})
   db.Features_debug.remove({})
   db.Public_debug.remove({})
 
@@ -87,7 +90,7 @@ echo "⚙️ Computing Features and Public collections thru dbmongo API..."
 ./dbmongo &
 DBMONGO_PID=$!
 sleep 2 # give some time for dbmongo to start
-http --ignore-stdin :5000/api/data/compact batch=1910 # key=012345678
+http --ignore-stdin :5000/api/data/compact batch=1910
 http --ignore-stdin :5000/api/data/reduce algo=algo2 batch=1910 key=012345678
 http --ignore-stdin :5000/api/data/public batch=1910 key=012345678
 kill ${DBMONGO_PID}
@@ -96,8 +99,8 @@ echo ""
 echo "🕵️‍♀️ Checking resulting Features..."
 cd ..
 docker exec -i sf-mongodb mongo signauxfaibles > test-api.output.txt << CONTENTS
-  print("// Documents from db.RawData_debug, after call to /api/data/compact:");
-  db.RawData_debug.find();
+  print("// Documents from db.RawData, after call to /api/data/compact:");
+  db.RawData.find();
   print("// Documents from db.Features_debug, after call to /api/data/reduce:");
   db.Features_debug.find();
   print("// Documents from db.Public_debug, after call to /api/data/public:");
