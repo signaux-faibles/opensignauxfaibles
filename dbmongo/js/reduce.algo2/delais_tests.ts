@@ -12,24 +12,31 @@ f = {
   },
 }
 
-test("delais est défini", (t) => {
-  t.is(typeof delais, "function")
-})
+const nbDays = (firstDate: Date, secondDate: Date): number => {
+  const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+  return Math.round(Math.abs((firstDate.getTime() - secondDate.getTime()) / oneDay));
+}
 
-test("la propriété delai représente le nombre de mois complets restants du délai", (t) => {
-  const delaiTest: Delai = {
+const makeDelai = (firstDate: Date, secondDate: Date): Delai => ({
     numero_compte: undefined,
     numero_contentieux: undefined,
-    date_creation: new Date("2014-01-03"),
-    date_echeance: new Date("2014-03-05"),
-    duree_delai: 61, // nombre de jours entre date_creation et date_echeance
+    date_creation: firstDate,
+    date_echeance: secondDate,
+    duree_delai: nbDays(firstDate, secondDate),
     denomination: undefined,
     indic_6m: undefined,
     annee_creation: undefined,
     montant_echeancier: 1000,
     stade: undefined,
     action: undefined,
-  }
+})
+
+test("delais est défini", (t) => {
+  t.is(typeof delais, "function")
+})
+
+test("la propriété delai représente le nombre de mois complets restants du délai", (t) => {
+  const delaiTest = makeDelai(new Date("2014-01-03"), new Date("2014-03-05"))
   const delaiMap: DelaiMap = {
     abc: delaiTest,
   }
@@ -42,19 +49,7 @@ test("la propriété delai représente le nombre de mois complets restants du d�
 })
 
 test("un délai en dehors de la période d'intérêt est ignorée", (t) => {
-  const delaiTest: Delai = {
-    numero_compte: undefined,
-    numero_contentieux: undefined,
-    date_creation: new Date("2013-01-03"),
-    date_echeance: new Date("2013-03-05"),
-    duree_delai: 61, // nombre de jours entre date_creation et date_echeance
-    denomination: undefined,
-    indic_6m: undefined,
-    annee_creation: undefined,
-    montant_echeancier: 1000,
-    stade: undefined,
-    action: undefined,
-  }
+  const delaiTest = makeDelai(new Date("2013-01-03"), new Date("2013-03-05"))
   const delaiMap: DelaiMap = {
     abc: delaiTest,
   }
