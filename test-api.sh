@@ -92,8 +92,8 @@ cd ..
 docker exec -i sf-mongodb mongo signauxfaibles > test-api.output.txt << CONTENTS
   print("// Documents from db.Features_debug, after call to /api/data/reduce:");
   db.Features_debug.find();
-  print("// Documents from db.Public, after call to /api/data/public:");
-  db.Public.find();
+  print("// Documents from db.Public_debug, after call to /api/data/public:");
+  db.Public_debug.find();
 CONTENTS
 grep "^[^{/]" test-api.output.txt # display mongo connection info, for troubleshooting
 grep "^[{/]" test-api.output.txt > test-api.output-documents.txt
