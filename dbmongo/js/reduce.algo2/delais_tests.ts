@@ -33,23 +33,6 @@ const makeDelai = (firstDate: Date, secondDate: Date): Delai => ({
   action: undefined,
 })
 
-test("delais est défini", (t) => {
-  t.is(typeof delais, "function")
-})
-
-test("la propriété delai représente le nombre de mois complets restants du délai", (t) => {
-  const delaiTest = makeDelai(new Date("2014-01-03"), new Date("2014-03-05"))
-  const delaiMap: DelaiMap = {
-    abc: delaiTest,
-  }
-  const output_indexed = {}
-  output_indexed[fevrier.getTime()] = {}
-  output_indexed[mars.getTime()] = {}
-  delais({ delai: delaiMap }, output_indexed)
-  t.is(output_indexed[fevrier.getTime()].delai, 1) // nombre de mois complets restants
-  t.is(output_indexed[mars.getTime()].delai, 0) // moins d'un mois
-})
-
 const testProperty = (
   t: any,
   propertyName: string,
@@ -68,13 +51,17 @@ const testProperty = (
   t.is(output_indexed[mars.getTime()][propertyName], expectedMarch)
 }
 
+test("la propriété delai représente le nombre de mois complets restants du délai", (t) => {
+  testProperty(t, "delai", 1, 0)
+})
+
 test("la propriété duree_delai représente la durée totale en jours du délai", (t) => {
-  testProperty(
-    t,
-    "duree_delai",
-    nbDays(new Date("2014-01-03"), new Date("2014-03-05")),
-    nbDays(new Date("2014-01-03"), new Date("2014-03-05"))
-  )
+  const dureeEnJours = nbDays(new Date("2014-01-03"), new Date("2014-03-05"))
+  testProperty(t, "duree_delai", dureeEnJours, dureeEnJours)
+})
+
+test("la propriété montant_echeancier représente le montant en euros des cotisations sociales couvertes par le délai", (t) => {
+  testProperty(t, "montant_echeancier", 1000, 1000)
 })
 
 test("un délai en dehors de la période d'intérêt est ignorée", (t) => {
