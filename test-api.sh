@@ -41,7 +41,6 @@ echo ""
 echo "📄 Inserting test data..."
 sleep 1 # give some time for MongoDB to start
 docker exec -i sf-mongodb mongo signauxfaibles << CONTENTS
-  db.createCollection('RawData')
 
   db.Admin.insertOne({
     "_id" : {
@@ -83,7 +82,7 @@ echo "⚙️ Computing Features and Public collections thru dbmongo API..."
 DBMONGO_PID=$!
 sleep 2 # give some time for dbmongo to start
 http --ignore-stdin :5000/api/data/reduce algo=algo2 batch=1910 key=012345678
-http --ignore-stdin :5000/api/data/public algo=algo2 batch=1910 key=012345678
+http --ignore-stdin :5000/api/data/public batch=1910 key=012345678
 kill ${DBMONGO_PID}
 
 echo ""
