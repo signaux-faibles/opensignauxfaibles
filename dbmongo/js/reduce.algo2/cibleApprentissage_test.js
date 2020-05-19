@@ -69,6 +69,9 @@ const test_cases = [
 ]
 Object.freeze(test_cases)
 
+// Define f as a namespace that contains all global functions
+const f = this // eslint-disable-line @typescript-eslint/no-this-alias
+
 const test_results = test_cases.map(function(tc, id){
   const actual = cibleApprentissage(tc["data"], tc["n_months"])
   const test_passes = compare(actual, tc["expected"])

@@ -1,5 +1,8 @@
 "use strict";
 
+// Define f as a namespace that contains all global functions
+const f = this // eslint-disable-line @typescript-eslint/no-this-alias
+
 const jsParams = {}
 jsParams.actual_batch = "1905"
 jsParams.date_debut = new Date("2014-01-01")

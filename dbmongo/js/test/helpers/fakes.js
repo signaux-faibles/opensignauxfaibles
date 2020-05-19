@@ -11,33 +11,7 @@ function ISODate(date) {
   return new Date(date)
 }
 
-const f = this /* = {
-  altaresToHuman,
-  apconso,
-  apdemande,
-  bdf,
-  compareDebit,
-  cotisations,
-  dateAddDay,
-  dateAddMonth,
-  dealWithProcols,
-  debits,
-  delai,
-  diane,
-  effectifs,
-  finalize,
-  flatten,
-  generatePeriodSerie,
-  idEntreprise,
-  iterable,
-  map,
-  procolToHuman,
-  reduce,
-  sirene,
-  ...
-}*/
-
-const exports = { f }
+const exports = { f: this }
 
 function reducer(array, reduce) {
   if (array.length == 1) {

@@ -10,8 +10,12 @@
 // Please execute ../test/test_map_algo2.sh to fill these requirements and
 // run the tests.
 
+// Define f as a namespace that contains all global functions
+const f = this // eslint-disable-line @typescript-eslint/no-this-alias
+
 // Define global parameters that are required by JS functions
 const jsParams = {}
+// eslint-disable-next-line no-undef
 jsParams.naf = naf; // loaded from data/naf.js
 jsParams.actual_batch = "2002_1";
 jsParams.date_debut = new Date("2014-01-01");
