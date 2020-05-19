@@ -50,7 +50,12 @@ test("la propriété delai représente le nombre de mois complets restants du d�
   t.is(output_indexed[mars.getTime()].delai, 0) // moins d'un mois
 })
 
-test("la propriété duree_delai représente la durée totale en jours du délai", (t) => {
+const testProperty = (
+  t: any,
+  propertyName: string,
+  expectedFebruary: number,
+  expectedMarch: number
+): void => {
   const delaiTest = makeDelai(new Date("2014-01-03"), new Date("2014-03-05"))
   const delaiMap: DelaiMap = {
     abc: delaiTest,
@@ -59,12 +64,15 @@ test("la propriété duree_delai représente la durée totale en jours du délai
   output_indexed[fevrier.getTime()] = {}
   output_indexed[mars.getTime()] = {}
   delais({ delai: delaiMap }, output_indexed)
-  t.is(
-    output_indexed[fevrier.getTime()].duree_delai,
-    nbDays(new Date("2014-01-03"), new Date("2014-03-05"))
-  )
-  t.is(
-    output_indexed[mars.getTime()].duree_delai,
+  t.is(output_indexed[fevrier.getTime()][propertyName], expectedFebruary)
+  t.is(output_indexed[mars.getTime()][propertyName], expectedMarch)
+}
+
+test("la propriété duree_delai représente la durée totale en jours du délai", (t) => {
+  testProperty(
+    t,
+    "duree_delai",
+    nbDays(new Date("2014-01-03"), new Date("2014-03-05")),
     nbDays(new Date("2014-01-03"), new Date("2014-03-05"))
   )
 })
