@@ -1,4 +1,5 @@
 {
+  /* Note: cette configuration TypeScript a été conçue pour accélerer la transpilation depuis `go generate` et `npm test` */
   "compilerOptions": {
     /* Basic Options */
     // "incremental": true,                   /* Enable incremental compilation */
@@ -34,6 +35,8 @@
     // "strictPropertyInitialization": true,  /* Enable strict checking of property initialization in classes. */
     // "noImplicitThis": true,                /* Raise error on 'this' expressions with an implied 'any' type. */
     // "alwaysStrict": true,                  /* Parse in strict mode and emit "use strict" for each source file. */
+    "noImplicitUseStrict": true /* to not add "use strict" at the top of transpiled JS files */,
+    "skipLibCheck": true /* to speed up transpilation, when running go generate and go test */,
 
     /* Additional Checks */
     // "noUnusedLocals": true,                /* Report errors on unused locals. */
@@ -67,6 +70,6 @@
     "forceConsistentCasingInFileNames": true /* Disallow inconsistently-cased references to the same file. */
   },
   "compileOnSave": true,
-  "include": ["*/*.ts"],
+  "include": ["**/*.ts"],
   "exclude": ["node_modules", "*/*_tests.ts"]
 }

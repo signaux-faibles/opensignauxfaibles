@@ -68,7 +68,7 @@ func bundleJsFunctions(jsRootDir string) {
 func main() {
 	jsRootDir := filepath.Join("..", "..", "js")
 	tsFiles := engine.ListTsFiles(jsRootDir)
-	engine.TranspileTsFunctions(tsFiles)  // convert *.ts files to .js
-	bundleJsFunctions(jsRootDir)          // bundle *.js files to jsFunctions.go
-	engine.DeleteTranspiledFiles(tsFiles) // delete the *.js files
+	engine.TranspileTsFunctions(jsRootDir) // convert *.ts files to .js
+	bundleJsFunctions(jsRootDir)           // bundle *.js files to jsFunctions.go
+	engine.DeleteTranspiledFiles(tsFiles)  // delete the *.js files
 }
