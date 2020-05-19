@@ -106,8 +106,17 @@ docker exec -i sf-mongodb mongo signauxfaibles > test-api.output.txt << CONTENTS
   print("// Documents from db.Public_debug, after call to /api/data/public:");
   db.Public_debug.find();
 CONTENTS
+
 grep "^[^{/]" test-api.output.txt # display mongo connection info, for troubleshooting
 grep "^[{/]" test-api.output.txt > test-api.output-documents.txt
+
+# exclude random values
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  sed -i '' 's/ "random_order" : [0-9]*\.[0-9]*, / /' test-api.output-documents.txt
+else
+  sed -i 's/ "random_order" : [0-9]*\.[0-9]*, / /' test-api.output-documents.txt
+fi
+
 
 echo ""
 echo "🆎 Diff between expected and actual output:"
