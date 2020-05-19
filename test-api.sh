@@ -41,6 +41,7 @@ echo ""
 echo "📄 Inserting test data..."
 sleep 1 # give some time for MongoDB to start
 docker exec -i sf-mongodb mongo signauxfaibles << CONTENTS
+  db.Admin.remove({})
 
   db.Admin.insertOne({
     "_id" : {
@@ -62,10 +63,10 @@ docker exec -i sf-mongodb mongo signauxfaibles << CONTENTS
     "name" : "Octobre"
   })
 
-  db.RawData.remove({})
+  db.ImportedData.remove({})
 
-  db.RawData.insertOne({
-    "_id": "01234567891011",
+  db.ImportedData.insertOne({
+    "_id": "random123abc",
     "value": {
       "scope": "etablissement",
       "index": {
@@ -74,6 +75,11 @@ docker exec -i sf-mongodb mongo signauxfaibles << CONTENTS
       "key": "01234567891011"
     }
   })
+
+  db.RawData_debug.remove({})
+  db.Features_debug.remove({})
+  db.Public_debug.remove({})
+
 CONTENTS
 
 echo ""
@@ -81,6 +87,7 @@ echo "⚙️ Computing Features and Public collections thru dbmongo API..."
 ./dbmongo &
 DBMONGO_PID=$!
 sleep 2 # give some time for dbmongo to start
+http --ignore-stdin :5000/api/data/compact batch=1910 # key=012345678
 http --ignore-stdin :5000/api/data/reduce algo=algo2 batch=1910 key=012345678
 http --ignore-stdin :5000/api/data/public batch=1910 key=012345678
 kill ${DBMONGO_PID}
@@ -89,6 +96,8 @@ echo ""
 echo "🕵️‍♀️ Checking resulting Features..."
 cd ..
 docker exec -i sf-mongodb mongo signauxfaibles > test-api.output.txt << CONTENTS
+  print("// Documents from db.RawData_debug, after call to /api/data/compact:");
+  db.RawData_debug.find();
   print("// Documents from db.Features_debug, after call to /api/data/reduce:");
   db.Features_debug.find();
   print("// Documents from db.Public_debug, after call to /api/data/public:");
