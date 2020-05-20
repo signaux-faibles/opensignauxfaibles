@@ -186,7 +186,7 @@ func reduceFinalAggregation(tempDatabase *mgo.Database, tempCollection, outDatab
 		},
 		// on ne garde que les établissements dont on connait l'effectif (non-null)
 		// Commenté parce que dans le cadre de la séparation des calculs par types de données,
-		// si on n'intègre pas l'effectif, cette étape filtrerait toutes les données. 
+		// si on n'intègre pas l'effectif, cette étape filtrerait toutes les données.
 		// bson.M{
 		// 	"$match": bson.M{
 		// 		"value.effectif": bson.M{
@@ -278,18 +278,18 @@ func reduceDefineScope(batch AdminBatch, algo string, types []string) (bson.M, e
 	}
 
 	scope := bson.M{
-		"date_debut":             batch.Params.DateDebut,
-		"date_fin":               batch.Params.DateFin,
-		"date_fin_effectif":      batch.Params.DateFinEffectif,
-		"serie_periode":          misc.GenereSeriePeriode(batch.Params.DateDebut, batch.Params.DateFin),
-		"serie_periode_annuelle": misc.GenereSeriePeriodeAnnuelle(batch.Params.DateDebut, batch.Params.DateFin),
-		"offset_effectif":        (batch.Params.DateFinEffectif.Year()-batch.Params.DateFin.Year())*12 + int(batch.Params.DateFinEffectif.Month()-batch.Params.DateFin.Month()),
-		"actual_batch":           batch.ID.Key,
-		"naf":                    naf,
-		"f":                      functions,
-		"batches":                GetBatchesID(),
-		"types":                  GetTypes(),
-		"includes":               includes,
+		"date_debut":             batch.Params.DateDebut,                                                                                                                        // ⚠️ test-api does not fail if this global is missing
+		"date_fin":               batch.Params.DateFin,                                                                                                                          // ⚠️ test-api does not fail if this global is missing
+		"date_fin_effectif":      batch.Params.DateFinEffectif,                                                                                                                  // ⚠️ test-api does not fail if this global is missing
+		"serie_periode":          misc.GenereSeriePeriode(batch.Params.DateDebut, batch.Params.DateFin),                                                                         // 👌 runtime JS error + diff if this global is missing
+		"serie_periode_annuelle": misc.GenereSeriePeriodeAnnuelle(batch.Params.DateDebut, batch.Params.DateFin),                                                                 // ⚠️ test-api does not fail if this global is missing
+		"offset_effectif":        (batch.Params.DateFinEffectif.Year()-batch.Params.DateFin.Year())*12 + int(batch.Params.DateFinEffectif.Month()-batch.Params.DateFin.Month()), // ⚠️ test-api does not fail if this global is missing
+		"actual_batch":           batch.ID.Key,                                                                                                                                  // 👌 runtime JS error + diff if this global is missing
+		"naf":                    naf,                                                                                                                                           // 👌 runtime JS error + diff if this global is missing
+		"f":                      functions,                                                                                                                                     // 👌 runtime GO error + diff if this global is missing
+		"batches":                GetBatchesID(),                                                                                                                                // ⚠️ test-api does not fail if this global is missing
+		"types":                  GetTypes(),                                                                                                                                    // ⚠️ test-api does not fail if this global is missing
+		"includes":               includes,                                                                                                                                      // 👌 runtime JS error + diff if this global is missing
 	}
 	return scope, nil
 }

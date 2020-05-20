@@ -147,12 +147,12 @@ func Compact(batchKey string, types []string) error {
 		Finalize: functions["finalize"].Code,
 		Out:      bson.M{"reduce": "RawData"},
 		Scope: bson.M{
-			"f":             functions,
-			"batches":       batchesID,
-			"types":         types,
-			"completeTypes": completeTypes,
-			"batchKey":      batchKey,
-			"serie_periode": misc.GenereSeriePeriode(batch.Params.DateDebut, batch.Params.DateFin),
+			"f":             functions,                                                             // 👌 runtime JS error + diff if this global is missing
+			"batches":       batchesID,                                                             // ⚠️ test-api does not fail if this global is missing
+			"types":         types,                                                                 // ⚠️ test-api does not fail if this global is missing
+			"completeTypes": completeTypes,                                                         // ⚠️ test-api does not fail if this global is missing
+			"batchKey":      batchKey,                                                              // ⚠️ test-api does not fail if this global is missing
+			"serie_periode": misc.GenereSeriePeriode(batch.Params.DateDebut, batch.Params.DateFin), // 👌 runtime JS error + diff if this global is missing
 		},
 	}
 

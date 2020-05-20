@@ -29,17 +29,17 @@ func PublicOne(batch AdminBatch, key string) error {
 	}
 
 	scope := bson.M{
-		"date_debut":             batch.Params.DateDebut,
-		"date_fin":               batch.Params.DateFin,
-		"date_fin_effectif":      batch.Params.DateFinEffectif,
-		"serie_periode":          misc.GenereSeriePeriode(batch.Params.DateDebut, batch.Params.DateFin),
-		"serie_periode_annuelle": misc.GenereSeriePeriodeAnnuelle(batch.Params.DateDebut, batch.Params.DateFin),
-		"offset_effectif":        (batch.Params.DateFinEffectif.Year()-batch.Params.DateFin.Year())*12 + int(batch.Params.DateFinEffectif.Month()-batch.Params.DateFin.Month()),
-		"actual_batch":           batch.ID.Key,
-		"naf":                    naf,
-		"f":                      functions,
-		"batches":                GetBatchesID(),
-		"types":                  GetTypes(),
+		"date_debut":             batch.Params.DateDebut,                                                                                                                        // ⚠️ test-api does not fail if this global is missing
+		"date_fin":               batch.Params.DateFin,                                                                                                                          // ⚠️ test-api does not fail if this global is missing
+		"date_fin_effectif":      batch.Params.DateFinEffectif,                                                                                                                  // ⚠️ test-api does not fail if this global is missing
+		"serie_periode":          misc.GenereSeriePeriode(batch.Params.DateDebut, batch.Params.DateFin),                                                                         // 👌 runtime JS error + diff if this global is missing
+		"serie_periode_annuelle": misc.GenereSeriePeriodeAnnuelle(batch.Params.DateDebut, batch.Params.DateFin),                                                                 // ⚠️ test-api does not fail if this global is missing
+		"offset_effectif":        (batch.Params.DateFinEffectif.Year()-batch.Params.DateFin.Year())*12 + int(batch.Params.DateFinEffectif.Month()-batch.Params.DateFin.Month()), // ⚠️ test-api does not fail if this global is missing
+		"actual_batch":           batch.ID.Key,                                                                                                                                  // 👌 runtime JS error + diff if this global is missing
+		"naf":                    naf,                                                                                                                                           // ⚠️ test-api does not fail if this global is missing
+		"f":                      functions,                                                                                                                                     // 👌 runtime JS error + diff if this global is missing
+		"batches":                GetBatchesID(),                                                                                                                                // ⚠️ test-api does not fail if this global is missing
+		"types":                  GetTypes(),                                                                                                                                    // ⚠️ test-api does not fail if this global is missing
 	}
 
 	job := &mgo.MapReduce{
@@ -74,17 +74,17 @@ func Public(batch AdminBatch) error {
 		return err
 	}
 	scope := bson.M{
-		"date_debut":             batch.Params.DateDebut,
-		"date_fin":               batch.Params.DateFin,
-		"date_fin_effectif":      batch.Params.DateFinEffectif,
-		"serie_periode":          misc.GenereSeriePeriode(batch.Params.DateFin.AddDate(0, -24, 0), batch.Params.DateFin),
-		"serie_periode_annuelle": misc.GenereSeriePeriodeAnnuelle(batch.Params.DateFin.AddDate(0, -24, 0), batch.Params.DateFin),
-		"offset_effectif":        (batch.Params.DateFinEffectif.Year()-batch.Params.DateFin.Year())*12 + int(batch.Params.DateFinEffectif.Month()-batch.Params.DateFin.Month()),
-		"actual_batch":           batch.ID.Key,
-		"naf":                    naf.Naf,
-		"f":                      functions,
-		"batches":                GetBatchesID(),
-		"types":                  GetTypes(),
+		"date_debut":             batch.Params.DateDebut,                                                                                                                        // ⚠️ not covered by test-api
+		"date_fin":               batch.Params.DateFin,                                                                                                                          // ⚠️ not covered by test-api
+		"date_fin_effectif":      batch.Params.DateFinEffectif,                                                                                                                  // ⚠️ not covered by test-api
+		"serie_periode":          misc.GenereSeriePeriode(batch.Params.DateFin.AddDate(0, -24, 0), batch.Params.DateFin),                                                        // ⚠️ not covered by test-api
+		"serie_periode_annuelle": misc.GenereSeriePeriodeAnnuelle(batch.Params.DateFin.AddDate(0, -24, 0), batch.Params.DateFin),                                                // ⚠️ not covered by test-api
+		"offset_effectif":        (batch.Params.DateFinEffectif.Year()-batch.Params.DateFin.Year())*12 + int(batch.Params.DateFinEffectif.Month()-batch.Params.DateFin.Month()), // ⚠️ not covered by test-api
+		"actual_batch":           batch.ID.Key,                                                                                                                                  // ⚠️ not covered by test-api
+		"naf":                    naf.Naf,                                                                                                                                       // ⚠️ not covered by test-api
+		"f":                      functions,                                                                                                                                     // ⚠️ not covered by test-api
+		"batches":                GetBatchesID(),                                                                                                                                // ⚠️ not covered by test-api
+		"types":                  GetTypes(),                                                                                                                                    // ⚠️ not covered by test-api
 	}
 
 	chunks, err := ChunkCollection(viper.GetString("DB"), "RawData", viper.GetInt64("chunkByteSize"))

@@ -22,8 +22,8 @@ func PurgeBatch(batchKey string) error {
 		return err
 	}
 	MRscope := bson.M{
-		"currentBatch": batchKey,
-		"f":            functions,
+		"currentBatch": batchKey,  // ⚠️ not covered by test-api
+		"f":            functions, // ⚠️ not covered by test-api
 	}
 
 	// Calculs parallélisés pour éviter un Out Of Memory qui se produit
