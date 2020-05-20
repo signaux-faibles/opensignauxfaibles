@@ -1308,7 +1308,9 @@ db.getCollection("Features").createIndex({
   
   
   `,
-"delais": `function delais(v, output_indexed) {
+"delais": `Object.defineProperty(exports, "__esModule", { value: true });
+
+function delais(v, output_indexed) {
     "use strict";
     Object.keys(v.delai).map(function (hash) {
         var delai = v.delai[hash];
@@ -1518,7 +1520,9 @@ db.getCollection("Features").createIndex({
 
   return(res)
 }`,
-"fraisFinancier": `function fraisFinancier(diane) {
+"fraisFinancier": `Object.defineProperty(exports, "__esModule", { value: true });
+
+function fraisFinancier(diane) {
     "use strict";
     if ("interets" in diane &&
         diane["interets"] !== null &&
