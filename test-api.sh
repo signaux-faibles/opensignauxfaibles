@@ -10,7 +10,7 @@ set -e # will stop the script if any command fails with a non-zero exit code
 
 # Clean up on exit
 DATA_DIR=$(pwd)/tmp-opensignauxfaibles-data-raw
-trap "{ [ -f config.toml ] && rm config.toml; [ -f config.backup.toml ] && mv config.backup.toml config.toml; docker stop sf-mongodb; rm -rf ${DATA_DIR}; echo \"✨ Cleaned up temp directory\"; }" EXIT
+trap "{ killall dbmongo; [ -f config.toml ] && rm config.toml; [ -f config.backup.toml ] && mv config.backup.toml config.toml; docker stop sf-mongodb; rm -rf ${DATA_DIR}; echo \"✨ Cleaned up temp directory\"; }" EXIT
 
 echo ""
 echo "🐳 Starting MongoDB container..."
@@ -88,12 +88,10 @@ CONTENTS
 echo ""
 echo "⚙️ Computing Features and Public collections thru dbmongo API..."
 ./dbmongo &
-DBMONGO_PID=$!
 sleep 2 # give some time for dbmongo to start
 http --ignore-stdin :5000/api/data/compact batch=1910
 http --ignore-stdin :5000/api/data/reduce algo=algo2 batch=1910 key=012345678
 http --ignore-stdin :5000/api/data/public batch=1910 key=012345678
-kill ${DBMONGO_PID}
 
 echo ""
 echo "🕵️‍♀️ Checking resulting Features..."
