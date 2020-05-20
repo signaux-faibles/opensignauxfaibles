@@ -1623,6 +1623,7 @@ db.getCollection("Features").createIndex({
 "map": `function map () {
   "use strict";
   /*global f, jsParams*/
+  /*eslint quotes: 0*/
   let v = f.flatten(this.value, jsParams.actual_batch)
 
   if (v.scope == "etablissement") {
