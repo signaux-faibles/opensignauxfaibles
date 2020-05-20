@@ -98,25 +98,17 @@ kill ${DBMONGO_PID}
 echo ""
 echo "🕵️‍♀️ Checking resulting Features..."
 cd ..
-docker exec -i sf-mongodb mongo signauxfaibles > test-api.output.txt << CONTENTS
+docker exec -i sf-mongodb mongo --quiet signauxfaibles > test-api.output.txt << CONTENTS
   print("// Documents from db.RawData, after call to /api/data/compact:");
-  db.RawData.find();
+  db.RawData.find().toArray();
   print("// Documents from db.Features_debug, after call to /api/data/reduce:");
-  db.Features_debug.find();
+  db.Features_debug.find().toArray();
   print("// Documents from db.Public_debug, after call to /api/data/public:");
-  db.Public_debug.find();
+  db.Public_debug.find().toArray();
 CONTENTS
 
-grep "^[^{/]" test-api.output.txt # display mongo connection info, for troubleshooting
-grep "^[{/]" test-api.output.txt > test-api.output-documents.txt
-
 # exclude random values
-if [[ "$OSTYPE" == "darwin"* ]]; then
-  sed -i '' 's/ "random_order" : [0-9]*\.[0-9]*, / /g' test-api.output-documents.txt
-else
-  sed -i 's/ "random_order" : [0-9]*\.[0-9]*, / /g' test-api.output-documents.txt
-fi
-
+grep -v '"random_order" :' test-api.output.txt > test-api.output-documents.txt
 
 echo ""
 echo "🆎 Diff between expected and actual output:"
