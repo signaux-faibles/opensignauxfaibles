@@ -1,3 +1,4 @@
+/*global f, jsParams*/
 
 function map () {
   "use strict";
