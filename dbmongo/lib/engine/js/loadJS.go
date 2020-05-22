@@ -71,6 +71,7 @@ func main() {
 	jsRootDir := filepath.Join("..", "..", "js")
 	tsFiles := engine.ListTsFiles(jsRootDir)
 	engine.TranspileTsFunctions(jsRootDir) // convert *.ts files to .js
+	engine.GlobalizeJsFunctions(jsRootDir) // remove "export" prefixes from JS functions, for jsc compatibility
 	bundleJsFunctions(jsRootDir)           // bundle *.js files to jsFunctions.go
 	engine.DeleteTranspiledFiles(tsFiles)  // delete the *.js files
 }

@@ -266,14 +266,14 @@ package engine
   return(o)
 }`,
 "map": `function map() {      
-    "use strict";
-    try {
-        if (this.value != null) {
+  "use strict";
+  try{
+    if (this.value != null) {
       emit(this.value.key, this.value) 
-        }
+    }   
   } catch(error) {
     print(this.value.key)
-    }
+  }
 }`,
 "reduce": `function reduce(key, values) {
   "use strict";
@@ -1308,7 +1308,7 @@ db.getCollection("Features").createIndex({
   
   
   `,
-"delais": `export function delais(v, output_indexed) {
+"delais": `function delais(v, output_indexed) {
     "use strict";
     Object.keys(v.delai).map(function (hash) {
         const delai = v.delai[hash];
@@ -1518,7 +1518,7 @@ db.getCollection("Features").createIndex({
 
   return(res)
 }`,
-"fraisFinancier": `export function fraisFinancier(diane) {
+"fraisFinancier": `function fraisFinancier(diane) {
     "use strict";
     if ("interets" in diane &&
         diane["interets"] !== null &&

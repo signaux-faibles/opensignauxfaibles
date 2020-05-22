@@ -27,6 +27,7 @@ func TestMain(m *testing.M) {
 	jsRootDir := filepath.Join("js") // chemin vers les fichiers TS et JS (sous-répertoire)
 	tsFiles := engine.ListTsFiles(jsRootDir)
 	engine.TranspileTsFunctions(jsRootDir) // convert *.ts files to .js
+	engine.GlobalizeJsFunctions(jsRootDir) // remove "export" prefixes from JS functions, for jsc compatibility
 	code := m.Run()
 	engine.DeleteTranspiledFiles(tsFiles) // delete the *.js files
 	os.Exit(code)
