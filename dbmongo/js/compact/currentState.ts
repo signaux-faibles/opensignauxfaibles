@@ -12,7 +12,7 @@ export function currentState(batches) {
 
     //2. On ajoute les nouvelles clés
     Object.keys(batch)
-      .filter((type) => type != "compact")
+      .filter((type) => type !== "compact")
       .forEach((type) => {
         m[type] = m[type] || new Set()
 

@@ -2,7 +2,7 @@ export function finalize(k, o) {
   "use strict"
   o.index = { algo1: false, algo2: false }
 
-  if (o.scope == "entreprise") {
+  if (o.scope === "entreprise") {
     o.index.algo1 = true
     o.index.algo2 = true
   } else {

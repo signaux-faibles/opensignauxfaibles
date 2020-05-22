@@ -76,7 +76,7 @@ export function reduce(key, values) {
 
     all_interesting_types.forEach((type) => {
       // Le type compact gère les clés supprimées
-      if (type == "compact") {
+      if (type === "compact") {
         if (reduced_value.batch[batch].compact.delete) {
           Object.keys(reduced_value.batch[batch].compact.delete).forEach(
             (delete_type) => {
@@ -198,7 +198,7 @@ export function reduce(key, values) {
     if (reduced_value.batch[batch]) {
       //types vides
       Object.keys(reduced_value.batch[batch]).forEach((type) => {
-        if (Object.keys(reduced_value.batch[batch][type]).length == 0) {
+        if (Object.keys(reduced_value.batch[batch][type]).length === 0) {
           delete reduced_value.batch[batch][type]
         }
       })
@@ -209,19 +209,19 @@ export function reduce(key, values) {
       ) {
         Object.keys(reduced_value.batch[batch].compact.delete).forEach(
           (type) => {
-            if (reduced_value.batch[batch].compact.delete[type].length == 0) {
+            if (reduced_value.batch[batch].compact.delete[type].length === 0) {
               delete reduced_value.batch[batch].compact.delete[type]
             }
           }
         )
         if (
-          Object.keys(reduced_value.batch[batch].compact.delete).length == 0
+          Object.keys(reduced_value.batch[batch].compact.delete).length === 0
         ) {
           delete reduced_value.batch[batch].compact
         }
       }
       //batchs vides
-      if (Object.keys(reduced_value.batch[batch]).length == 0) {
+      if (Object.keys(reduced_value.batch[batch]).length === 0) {
         delete reduced_value.batch[batch]
       }
     }
