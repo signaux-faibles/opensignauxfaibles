@@ -1,7 +1,5 @@
 #!/bin/bash
 
-if [[ "$OSTYPE" == "darwin"* ]]; then
-  sed -i '' 's/^export //' ./**/*.js
-else
-  sed -i 's/^export //' ./**/*.js
-fi
+# We use perl because sed adds an empty line at the end of every js file,
+# which was adding changes to git's staging, while debugging failing tests.
+perl -pi'' -e 's/^export //' ./**/*.js
