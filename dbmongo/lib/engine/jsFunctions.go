@@ -232,7 +232,7 @@ package engine
         });
         //2. On ajoute les nouvelles clés
         Object.keys(batch)
-            .filter((type) => type != "compact")
+            .filter((type) => type !== "compact")
             .forEach((type) => {
             m[type] = m[type] || new Set();
             Object.keys(batch[type]).forEach((key) => {
@@ -246,7 +246,7 @@ package engine
 "finalize": `function finalize(k, o) {
     "use strict";
     o.index = { algo1: false, algo2: false };
-    if (o.scope == "entreprise") {
+    if (o.scope === "entreprise") {
         o.index.algo1 = true;
         o.index.algo2 = true;
     }
@@ -334,7 +334,7 @@ package engine
         const hashToAdd = {};
         all_interesting_types.forEach((type) => {
             // Le type compact gère les clés supprimées
-            if (type == "compact") {
+            if (type === "compact") {
                 if (reduced_value.batch[batch].compact.delete) {
                     Object.keys(reduced_value.batch[batch].compact.delete).forEach((delete_type) => {
                         reduced_value.batch[batch].compact.delete[delete_type].forEach((hash) => {
@@ -432,7 +432,7 @@ package engine
         if (reduced_value.batch[batch]) {
             //types vides
             Object.keys(reduced_value.batch[batch]).forEach((type) => {
-                if (Object.keys(reduced_value.batch[batch][type]).length == 0) {
+                if (Object.keys(reduced_value.batch[batch][type]).length === 0) {
                     delete reduced_value.batch[batch][type];
                 }
             });
@@ -440,16 +440,16 @@ package engine
             if (reduced_value.batch[batch].compact &&
                 reduced_value.batch[batch].compact.delete) {
                 Object.keys(reduced_value.batch[batch].compact.delete).forEach((type) => {
-                    if (reduced_value.batch[batch].compact.delete[type].length == 0) {
+                    if (reduced_value.batch[batch].compact.delete[type].length === 0) {
                         delete reduced_value.batch[batch].compact.delete[type];
                     }
                 });
-                if (Object.keys(reduced_value.batch[batch].compact.delete).length == 0) {
+                if (Object.keys(reduced_value.batch[batch].compact.delete).length === 0) {
                     delete reduced_value.batch[batch].compact;
                 }
             }
             //batchs vides
-            if (Object.keys(reduced_value.batch[batch]).length == 0) {
+            if (Object.keys(reduced_value.batch[batch]).length === 0) {
                 delete reduced_value.batch[batch];
             }
         }
