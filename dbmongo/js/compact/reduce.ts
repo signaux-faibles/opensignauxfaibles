@@ -1,3 +1,5 @@
+import "../globals.ts"
+
 export function reduce(key, values) {
   "use strict"
 

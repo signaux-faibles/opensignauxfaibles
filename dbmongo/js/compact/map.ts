@@ -1,3 +1,5 @@
+import "../globals.ts"
+
 export function map() {
   "use strict"
   try {

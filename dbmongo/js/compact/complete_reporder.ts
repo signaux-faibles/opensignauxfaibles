@@ -1,3 +1,5 @@
+import "../globals.ts"
+
 export function complete_reporder(key, object) {
   "use strict"
   const batches = Object.keys(object.batch)
