@@ -6,7 +6,15 @@ declare function print(...any): void
 declare function debug(string) // supported by jsc, to print in stdout
 
 // Déclaration de variables globales
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+/* eslint-disable @typescript-eslint/no-unused-vars */
 let f: {
   [key: string]: Function
 }
+
+// Paramètres globaux utilisés par "compact"
+let batches: string[]
+let batchKey: string
+let serie_periode: Date[]
+let types: string[]
+let completeTypes: { [key: string]: string[] }
+/* eslint-enable @typescript-eslint/no-unused-vars */
