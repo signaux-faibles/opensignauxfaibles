@@ -40,10 +40,10 @@ package engine
 }`,
 "raison_sociale": `function raison_sociale /*eslint-disable-line @typescript-eslint/no-unused-vars */(denomination_unite_legale, nom_unite_legale, nom_usage_unite_legale, prenom1_unite_legale, prenom2_unite_legale, prenom3_unite_legale, prenom4_unite_legale) {
     "use strict";
-    var nomUsageUniteLegale = nom_usage_unite_legale
+    const nomUsageUniteLegale = nom_usage_unite_legale
         ? nom_usage_unite_legale + "/"
         : "";
-    var raison_sociale = denomination_unite_legale ||
+    const raison_sociale = denomination_unite_legale ||
         (nom_unite_legale +
             "*" +
             nomUsageUniteLegale +
@@ -266,14 +266,14 @@ package engine
   return(o)
 }`,
 "map": `function map() {      
-  "use strict";
-  try{
-    if (this.value != null) {
+    "use strict";
+    try {
+        if (this.value != null) {
       emit(this.value.key, this.value) 
-    }   
+        }
   } catch(error) {
     print(this.value.key)
-  }
+    }
 }`,
 "reduce": `function reduce(key, values) {
   "use strict";
@@ -1308,24 +1308,22 @@ db.getCollection("Features").createIndex({
   
   
   `,
-"delais": `Object.defineProperty(exports, "__esModule", { value: true });
-
-function delais(v, output_indexed) {
+"delais": `export function delais(v, output_indexed) {
     "use strict";
     Object.keys(v.delai).map(function (hash) {
-        var delai = v.delai[hash];
+        const delai = v.delai[hash];
         // On arrondit les dates au premier jour du mois.
-        var date_creation = new Date(Date.UTC(delai.date_creation.getUTCFullYear(), delai.date_creation.getUTCMonth(), 1, 0, 0, 0, 0));
-        var date_echeance = new Date(Date.UTC(delai.date_echeance.getUTCFullYear(), delai.date_echeance.getUTCMonth(), 1, 0, 0, 0, 0));
+        const date_creation = new Date(Date.UTC(delai.date_creation.getUTCFullYear(), delai.date_creation.getUTCMonth(), 1, 0, 0, 0, 0));
+        const date_echeance = new Date(Date.UTC(delai.date_echeance.getUTCFullYear(), delai.date_echeance.getUTCMonth(), 1, 0, 0, 0, 0));
         // Création d'un tableau de timestamps à raison de 1 par mois.
-        var pastYearTimes = f // eslint-disable-line no-undef
+        const pastYearTimes = f // eslint-disable-line no-undef
             .generatePeriodSerie(date_creation, date_echeance)
             .map(function (date) {
             return date.getTime();
         });
         pastYearTimes.map(function (time) {
             if (time in output_indexed) {
-                var remaining_months = date_echeance.getUTCMonth() -
+                const remaining_months = date_echeance.getUTCMonth() -
                     new Date(time).getUTCMonth() +
                     12 *
                         (date_echeance.getUTCFullYear() - new Date(time).getUTCFullYear());
@@ -1520,9 +1518,7 @@ function delais(v, output_indexed) {
 
   return(res)
 }`,
-"fraisFinancier": `Object.defineProperty(exports, "__esModule", { value: true });
-
-function fraisFinancier(diane) {
+"fraisFinancier": `export function fraisFinancier(diane) {
     "use strict";
     if ("interets" in diane &&
         diane["interets"] !== null &&

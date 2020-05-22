@@ -51,6 +51,8 @@ func bundleJsFunctions(jsRootDir string) {
 						log.Fatal(err)
 					}
 					stringFunction := string(function)
+					exportsDefRegex := regexp.MustCompile(`(?m)^Object.defineProperty\(exports.*$`)
+					stringFunction = exportsDefRegex.ReplaceAllLiteralString(stringFunction, "")
 					finalExportRegex := regexp.MustCompile(`(?m)^exports..*$`)
 					stringFunction = finalExportRegex.ReplaceAllLiteralString(stringFunction, "")
 					stringFunction = strings.Trim(stringFunction, "\n")
