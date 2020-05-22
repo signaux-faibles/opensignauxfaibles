@@ -1,6 +1,3 @@
-declare function emit(key: any, value: any): void
-declare function print(...any): void
-
 export function map() {
   "use strict"
   try {
