@@ -39,6 +39,7 @@ type RawDataValues = {
 type BatchValue = {
   reporder: { [periode: string]: RepOrder }
   compact: { delete: { [dataType: string]: DataHash[] } }
+  effectif: { [dataHash: string]: Effectif }
 }
 
 type DataHash = string
@@ -51,6 +52,12 @@ type RepOrder = {
   random_order: number
   periode: Periode
   siret: Siret
+}
+
+type Effectif = {
+  numero_compte: string,
+  periode: Periode,
+  effectif: number
 }
 
 type CurrentDataState = { [key: string]: Set<DataHash> }

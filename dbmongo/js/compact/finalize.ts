@@ -1,6 +1,6 @@
 import "../globals.ts"
 
-export function finalize(k, o) {
+export function finalize(k: Siret, o: RawDataValues): RawDataValues {
   "use strict"
   o.index = { algo1: false, algo2: false }
 
