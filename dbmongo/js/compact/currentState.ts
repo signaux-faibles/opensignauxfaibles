@@ -1,11 +1,9 @@
 type BatchValue = {
   reporder: { [periode: string]: RepOrder }
-  compact: { delete: { [type: string]: DataHash[] } }
+  compact: { delete: { [dataType: string]: DataHash[] } }
 }
 
 type DataHash = string
-
-type DataType = string // TODO: enumerate allowable values
 
 type Periode = Date
 
@@ -17,12 +15,11 @@ type RepOrder = {
   siret: Siret
 }
 
-type BatchValues = { [batchKey: string]: BatchValue }
+type Keys = Set<DataHash>
+type State = { [key: string]: Keys }
 
-export function currentState(batches: BatchValues) {
+export function currentState(batches: BatchValue[]): State {
   "use strict"
-  type Keys = Set<DataHash>
-  type State = { [key: string]: Keys }
   const currentState: State = batches.reduce((m: State, batch: BatchValue) => {
     //1. On supprime les clés de la mémoire
     Object.keys((batch.compact || { delete: [] }).delete).forEach((type) => {
