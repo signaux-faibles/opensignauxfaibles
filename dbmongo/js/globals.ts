@@ -53,5 +53,4 @@ type RepOrder = {
   siret: Siret
 }
 
-type Keys = Set<DataHash>
-type State = { [key: string]: Keys }
+type CurrentDataState = { [key: string]: Set<DataHash> }
