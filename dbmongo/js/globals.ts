@@ -20,6 +20,22 @@ let completeTypes: { [key: string]: string[] }
 /* eslint-enable @typescript-eslint/no-unused-vars */
 
 // Types partagés
+
+type Scope = "etablissement" | "entreprise"
+
+type ReduceIndexFlags = {
+  algo1: boolean
+  algo2: boolean
+}
+
+type BatchValues = { [batchKey: string]: BatchValue }
+
+type RawDataValues = {
+  scope: Scope
+  index: ReduceIndexFlags
+  batch: BatchValues
+}
+
 type BatchValue = {
   reporder: { [periode: string]: RepOrder }
   compact: { delete: { [dataType: string]: DataHash[] } }

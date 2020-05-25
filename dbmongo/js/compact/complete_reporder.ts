@@ -1,20 +1,5 @@
 import "../globals.ts"
 
-type Scope = "etablissement" | "entreprise"
-
-type ReduceIndexFlags = {
-  algo1: boolean
-  algo2: boolean
-}
-
-type BatchValues = { [batchKey: string]: BatchValue }
-
-type RawDataValues = {
-  scope: Scope
-  index: ReduceIndexFlags
-  batch: BatchValues
-}
-
 // complete_reporder ajoute une propriété `reporder` pour chaque couple
 // SIRET+période, afin d'assurer la reproductibilité de l'échantillonage.
 export function complete_reporder(
