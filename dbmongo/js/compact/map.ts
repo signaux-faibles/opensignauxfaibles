@@ -1,8 +1,9 @@
 import "../globals.ts"
 
-export function map() {
+export function map(): void {
   "use strict"
   try {
+    // TODO: this.value is RawDataValues ?
     if (this.value != null) {
       emit(this.value.key, this.value)
     }
