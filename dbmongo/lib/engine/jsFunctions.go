@@ -188,7 +188,9 @@ package engine
 }`,
 },
 "compact":{
-"complete_reporder": `function complete_reporder(key, object) {
+"complete_reporder": `// complete_reporder ajoute une propriété "reporder" pour chaque couple
+// SIRET+période, afin d'assurer la reproductibilité de l'échantillonage.
+function complete_reporder(siret, object) {
     "use strict";
     const batches = Object.keys(object.batch);
     batches.sort();
@@ -215,13 +217,16 @@ package engine
         reporder_obj[p.toString()] = {
             random_order: Math.random(),
             periode: p,
-            siret: key,
+            siret: siret,
         };
         object.batch[lastBatch].reporder = reporder_obj;
     });
     return object;
 }`,
-"currentState": `function currentState(batches) {
+"currentState": `// currentState() agrège un ensemble de batch, en tenant compte des suppressions
+// pour renvoyer le dernier état connu des données.
+// Note: similaire à flatten() de reduce.algo2.
+function currentState(batches) {
     "use strict";
     const currentState = batches.reduce((m, batch) => {
         //1. On supprime les clés de la mémoire
@@ -243,7 +248,12 @@ package engine
     }, {});
     return currentState;
 }`,
-"finalize": `function finalize(k, o) {
+"finalize": `// finalize permet de:
+// - indiquer les établissements à inclure dans les calculs de variables
+// (processus reduce.algo2)
+// - intégrer les reporder pour permettre la reproductibilité de
+// l'échantillonnage pour l'entraînement du modèle.
+function finalize(k, o) {
     "use strict";
     o.index = { algo1: false, algo2: false };
     if (o.scope === "entreprise") {
@@ -260,6 +270,7 @@ package engine
             return hasEffectif;
         });
         // Complete reporder if missing
+        // TODO: do not complete if all indexes are false.
         o = f.complete_reporder(k, o);
     }
     return o;
@@ -267,6 +278,7 @@ package engine
 "map": `function map() {
     "use strict";
     try {
+        // TODO: this.value is RawDataValues ?
         if (this.value != null) {
             emit(this.value.key, this.value);
         }

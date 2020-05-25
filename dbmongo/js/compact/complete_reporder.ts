@@ -1,6 +1,6 @@
 import "../globals.ts"
 
-// complete_reporder ajoute une propriété `reporder` pour chaque couple
+// complete_reporder ajoute une propriété "reporder" pour chaque couple
 // SIRET+période, afin d'assurer la reproductibilité de l'échantillonage.
 export function complete_reporder(
   siret: Siret,
