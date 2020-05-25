@@ -1,24 +1,10 @@
 import "../globals.ts"
 
-type Siret = string
-
 type Scope = "etablissement" | "entreprise"
 
 type ReduceIndexFlags = {
   algo1: boolean
   algo2: boolean
-}
-
-type Periode = Date
-
-type RepOrder = {
-  random_order: number
-  periode: Periode
-  siret: Siret
-}
-
-type BatchValue = {
-  reporder: { [periode: string]: RepOrder }
 }
 
 type BatchValues = { [batchKey: string]: BatchValue }

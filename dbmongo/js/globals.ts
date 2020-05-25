@@ -18,3 +18,24 @@ let serie_periode: Date[]
 let types: string[]
 let completeTypes: { [key: string]: string[] }
 /* eslint-enable @typescript-eslint/no-unused-vars */
+
+// Types partagés
+type BatchValue = {
+  reporder: { [periode: string]: RepOrder }
+  compact: { delete: { [dataType: string]: DataHash[] } }
+}
+
+type DataHash = string
+
+type Periode = Date
+
+type Siret = string
+
+type RepOrder = {
+  random_order: number
+  periode: Periode
+  siret: Siret
+}
+
+type Keys = Set<DataHash>
+type State = { [key: string]: Keys }

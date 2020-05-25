@@ -1,22 +1,4 @@
-type BatchValue = {
-  reporder: { [periode: string]: RepOrder }
-  compact: { delete: { [dataType: string]: DataHash[] } }
-}
-
-type DataHash = string
-
-type Periode = Date
-
-type Siret = string
-
-type RepOrder = {
-  random_order: number
-  periode: Periode
-  siret: Siret
-}
-
-type Keys = Set<DataHash>
-type State = { [key: string]: Keys }
+import "../globals.ts"
 
 export function currentState(batches: BatchValue[]): State {
   "use strict"
