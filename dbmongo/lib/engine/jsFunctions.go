@@ -782,7 +782,6 @@ db.getCollection("Features").createIndex({
 }`,
 "map": `function map() {
   "use strict";
-  if (` + "`" + `${ 1 + 1 }` + "`" + ` !== "2") throw new Error("back ticks are not working")
   var value = f.flatten(this.value, actual_batch)
 
   if (this.value.scope=="etablissement") {
