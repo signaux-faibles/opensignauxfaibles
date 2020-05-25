@@ -55,8 +55,8 @@ type RepOrder = {
 }
 
 type Effectif = {
-  numero_compte: string,
-  periode: Periode,
+  numero_compte: string
+  periode: Periode
   effectif: number
 }
 
