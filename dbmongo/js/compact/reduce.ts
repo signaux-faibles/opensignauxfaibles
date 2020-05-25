@@ -38,7 +38,7 @@ export function reduce(key, values) {
   const memory_batches = Object.keys(reduced_value.batch)
     .filter((batch) => batch < batchKey)
     .sort()
-    .reduce((m, batch) => {
+    .reduce((m: any[], batch) => {
       m.push(reduced_value.batch[batch])
       return m
     }, [])

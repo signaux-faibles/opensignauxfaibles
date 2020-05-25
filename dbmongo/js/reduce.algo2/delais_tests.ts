@@ -20,17 +20,17 @@ const nbDays = (firstDate: Date, secondDate: Date): number => {
 }
 
 const makeDelai = (firstDate: Date, secondDate: Date): Delai => ({
-  numero_compte: undefined,
-  numero_contentieux: undefined,
+  numero_compte: "__DUMMY__",
+  numero_contentieux: "__DUMMY__",
   date_creation: firstDate,
   date_echeance: secondDate,
   duree_delai: nbDays(firstDate, secondDate),
-  denomination: undefined,
-  indic_6m: undefined,
-  annee_creation: undefined,
+  denomination: "__DUMMY__",
+  indic_6m: "__DUMMY__",
+  annee_creation: 2000, // Dummy value
   montant_echeancier: 1000,
-  stade: undefined,
-  action: undefined,
+  stade: "__DUMMY__",
+  action: "__DUMMY__",
 })
 
 const testProperty = (
