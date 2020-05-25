@@ -277,15 +277,10 @@ function finalize(k, o) {
 }`,
 "map": `function map() {
     "use strict";
-    try {
-        // TODO: this.value is RawDataValues ?
-        if (this.value != null) {
-            emit(this.value.key, this.value);
-        }
+    if (typeof this.value !== "object") {
+        throw new Error("this.value should be a valid object, in compact::map()");
     }
-    catch (error) {
-        print(this.value.key);
-    }
+    emit(this.value.key, this.value);
 }`,
 "reduce": `function reduce(key, values) {
     "use strict";
