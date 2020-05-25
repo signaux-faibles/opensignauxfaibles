@@ -2,8 +2,7 @@ package engine
 
  var jsFunctions = map[string]map[string]string{
 "common":{
-"altaresToHuman": `// `go generate` will fail even after removing this comment, because of the back quotes
-function altaresToHuman (code) {
+"altaresToHuman": `function altaresToHuman (code) {
   "use strict";
   var codeLiquidation = ['PCL0108', 'PCL010801','PCL010802','PCL030107','PCL030307','PCL030311','PCL05010103','PCL05010204','PCL05010303','PCL05010403','PCL05010503','PCL05010703','PCL05011004','PCL05011102','PCL05011204','PCL05011206','PCL05011304','PCL05011404','PCL05011504','PCL05011604','PCL05011903','PCL05012004','PCL050204','PCL0109','PCL010901','PCL030108','PCL030308','PCL05010104','PCL05010205','PCL05010304','PCL05010404','PCL05010504','PCL05010803','PCL05011005','PCL05011103','PCL05011205','PCL05011207','PCL05011305','PCL05011405','PCL05011505','PCL05011904','PCL05011605','PCL05012005'];
   var codePlanSauvegarde = ['PCL010601','PCL0106','PCL010602','PCL030103','PCL030303','PCL03030301','PCL05010101','PCL05010202','PCL05010301','PCL05010401','PCL05010501','PCL05010506','PCL05010701','PCL05010705','PCL05010801','PCL05010805','PCL05011002','PCL05011202','PCL05011302','PCL05011402','PCL05011502','PCL05011602','PCL05011901','PCL0114','PCL030110','PCL030310'];
@@ -783,6 +782,7 @@ db.getCollection("Features").createIndex({
 }`,
 "map": `function map() {
   "use strict";
+  if (`${ 1 + 1 }` !== 2) throw new Error("back ticks are not working");
   var value = f.flatten(this.value, actual_batch)
 
   if (this.value.scope=="etablissement") {
