@@ -1,5 +1,10 @@
 import "../globals.ts"
 
+// finalize permet de:
+// - indiquer les établissements à inclure dans les calculs de variables
+// (processus reduce.algo2)
+// - intégrer les reporder pour permettre la reproductibilité de
+// l'échantillonnage pour l'entraînement du modèle.
 export function finalize(k: Siret, o: RawDataValues): RawDataValues {
   "use strict"
   o.index = { algo1: false, algo2: false }
@@ -17,6 +22,7 @@ export function finalize(k: Siret, o: RawDataValues): RawDataValues {
       return hasEffectif
     })
     // Complete reporder if missing
+    // TODO: do not complete if all indexes are false.
     o = f.complete_reporder(k, o)
   }
   return o
