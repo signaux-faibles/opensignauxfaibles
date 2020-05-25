@@ -1,6 +1,6 @@
 import "../globals.ts"
 
-export function map(): void {
+export function map(this: { value: RawDataValues }): void {
   "use strict"
   try {
     // TODO: this.value is RawDataValues ?

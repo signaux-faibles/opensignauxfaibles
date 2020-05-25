@@ -31,6 +31,7 @@ type ReduceIndexFlags = {
 type BatchValues = { [batchKey: string]: BatchValue }
 
 type RawDataValues = {
+  key: Siret
   scope: Scope
   index: ReduceIndexFlags
   batch: BatchValues
