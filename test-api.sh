@@ -10,7 +10,7 @@ set -e # will stop the script if any command fails with a non-zero exit code
 
 # Clean up on exit
 DATA_DIR=$(pwd)/tmp-opensignauxfaibles-data-raw
-trap "{ [ -f config.toml ] && rm config.toml; [ -f config.backup.toml ] && mv config.backup.toml config.toml; docker stop sf-mongodb; rm -rf ${DATA_DIR}; echo \"✨ Cleaned up temp directory\"; }" EXIT
+trap "{ killall dbmongo; [ -f config.toml ] && rm config.toml; [ -f config.backup.toml ] && mv config.backup.toml config.toml; docker stop sf-mongodb; rm -rf ${DATA_DIR}; echo \"✨ Cleaned up temp directory\"; }" EXIT
 
 echo ""
 echo "🐳 Starting MongoDB container..."
@@ -88,35 +88,25 @@ CONTENTS
 echo ""
 echo "⚙️ Computing Features and Public collections thru dbmongo API..."
 ./dbmongo &
-DBMONGO_PID=$!
 sleep 2 # give some time for dbmongo to start
 http --ignore-stdin :5000/api/data/compact batch=1910
 http --ignore-stdin :5000/api/data/reduce algo=algo2 batch=1910 key=012345678
 http --ignore-stdin :5000/api/data/public batch=1910 key=012345678
-kill ${DBMONGO_PID}
 
 echo ""
 echo "🕵️‍♀️ Checking resulting Features..."
 cd ..
-docker exec -i sf-mongodb mongo signauxfaibles > test-api.output.txt << CONTENTS
+docker exec -i sf-mongodb mongo --quiet signauxfaibles > test-api.output.txt << CONTENTS
   print("// Documents from db.RawData, after call to /api/data/compact:");
-  db.RawData.find();
+  db.RawData.find().toArray();
   print("// Documents from db.Features_debug, after call to /api/data/reduce:");
-  db.Features_debug.find();
+  db.Features_debug.find().toArray();
   print("// Documents from db.Public_debug, after call to /api/data/public:");
-  db.Public_debug.find();
+  db.Public_debug.find().toArray();
 CONTENTS
 
-grep "^[^{/]" test-api.output.txt # display mongo connection info, for troubleshooting
-grep "^[{/]" test-api.output.txt > test-api.output-documents.txt
-
 # exclude random values
-if [[ "$OSTYPE" == "darwin"* ]]; then
-  sed -i '' 's/ "random_order" : [0-9]*\.[0-9]*, / /g' test-api.output-documents.txt
-else
-  sed -i 's/ "random_order" : [0-9]*\.[0-9]*, / /g' test-api.output-documents.txt
-fi
-
+grep -v '"random_order" :' test-api.output.txt > test-api.output-documents.txt
 
 echo ""
 echo "🆎 Diff between expected and actual output:"
