@@ -5,7 +5,6 @@ import { delais, Delai, DelaiMap } from "./delais"
 const fevrier = new Date("2014-02-01")
 const mars = new Date("2014-03-01")
 
-
 const nbDays = (firstDate: Date, secondDate: Date): number => {
   const oneDay = 24 * 60 * 60 * 1000 // hours*minutes*seconds*milliseconds
   return Math.round(
