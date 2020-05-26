@@ -2,15 +2,9 @@ import test, { ExecutionContext } from "ava"
 import "../globals"
 import { delais, Delai, DelaiMap } from "./delais"
 
-const janvier = new Date("2014-01-01")
 const fevrier = new Date("2014-02-01")
 const mars = new Date("2014-03-01")
 
-f = {
-  generatePeriodSerie: function (/*date_creation: Date, date_echeance: Date*/): Date[] {
-    return [janvier, fevrier, mars]
-  },
-}
 
 const nbDays = (firstDate: Date, secondDate: Date): number => {
   const oneDay = 24 * 60 * 60 * 1000 // hours*minutes*seconds*milliseconds
@@ -39,7 +33,7 @@ const testProperty = (
   expectedFebruary: number,
   expectedMarch: number
 ): void => {
-  const delaiTest = makeDelai(new Date("2014-01-03"), new Date("2014-03-05"))
+  const delaiTest = makeDelai(new Date("2014-01-03"), new Date("2014-04-05"))
   const delaiMap: DelaiMap = {
     abc: delaiTest,
   }
@@ -58,11 +52,11 @@ const testProperty = (
 }
 
 test("la propriété delai représente le nombre de mois complets restants du délai", (t) => {
-  testProperty(t, "delai", 1, 0)
+  testProperty(t, "delai", 2, 1)
 })
 
 test("la propriété duree_delai représente la durée totale en jours du délai", (t) => {
-  const dureeEnJours = nbDays(new Date("2014-01-03"), new Date("2014-03-05"))
+  const dureeEnJours = nbDays(new Date("2014-01-03"), new Date("2014-04-05"))
   testProperty(t, "duree_delai", dureeEnJours, dureeEnJours)
 })
 

@@ -1,6 +1,6 @@
 import "../globals.ts"
 
-// TODO: import * as f from "currentState"
+import * as f from "currentState"
 
 // Entrée: données d'entreprises venant de ImportedData, regroupées par entreprise ou établissement.
 // Sortie: un objet fusionné par entreprise ou établissement, contenant les données historiques et les données importées, à destination de la collection RawData.

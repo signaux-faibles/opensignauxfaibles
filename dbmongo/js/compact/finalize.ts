@@ -1,5 +1,7 @@
 import "../globals.ts"
 
+import * as f from "complete_reporder"
+
 // finalize permet de:
 // - indiquer les établissements à inclure dans les calculs de variables
 // (processus reduce.algo2)

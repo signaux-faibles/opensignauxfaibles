@@ -5,13 +5,8 @@ declare function print(...any): void
 // Déclaration des fonctions globales fournies par JSC
 declare function debug(string) // supported by jsc, to print in stdout
 
-// Déclaration de variables globales
-/* eslint-disable @typescript-eslint/no-unused-vars */
-let f: {
-  [key: string]: Function
-}
-
 // Paramètres globaux utilisés par "compact"
+/* eslint-disable @typescript-eslint/no-unused-vars */
 let batches: string[]
 let batchKey: string
 let serie_periode: Date[]

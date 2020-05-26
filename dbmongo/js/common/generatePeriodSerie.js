@@ -8,3 +8,4 @@ function generatePeriodSerie (date_debut, date_fin) {
   }
   return serie
 }
+exports.generatePeriodSerie = generatePeriodSerie
