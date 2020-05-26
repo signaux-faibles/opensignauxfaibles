@@ -285,9 +285,7 @@ function finalize(k, o) {
 "reduce": `// Entrée: données d'entreprises venant de ImportedData, regroupées par entreprise ou établissement.
 // Sortie: un objet fusionné par entreprise ou établissement, contenant les données historiques et les données importées, à destination de la collection RawData.
 // Opérations: retrait des données doublons et application des corrections de données éventuelles.
-function reduce(key, //: SiretOrSiren,
-values //: CompanyDataValues[]
-) {
+function reduce(key, values) {
     "use strict";
     // Tester si plusieurs batchs. Reduce complet uniquement si plusieurs
     // batchs. Sinon, juste fusion des attributs
@@ -298,8 +296,7 @@ values //: CompanyDataValues[]
     });
     //fusion des attributs dans values
     const reduced_value = values.reduce((m, value) => {
-        Object.keys(value.batch || {}).forEach((batch) => {
-            m.batch = m.batch || {};
+        Object.keys(value.batch).forEach((batch) => {
             m.batch[batch] = m.batch[batch] || {};
             Object.keys(value.batch[batch]).forEach((type) => {
                 m.batch[batch][type] = m.batch[batch][type] || {};
@@ -307,7 +304,7 @@ values //: CompanyDataValues[]
             });
         });
         return m;
-    }, { key: key, scope: values[0].scope });
+    }, { key: key, scope: values[0].scope, batch: {} });
     // Cette fonction reduce() est appelée à deux moments:
     // 1. agregation par établissement d'objets ImportedData. Dans cet étape, on
     // ne travaille généralement que sur un seul batch.

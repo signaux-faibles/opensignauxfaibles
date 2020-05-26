@@ -1,5 +1,7 @@
 import "../globals.ts"
 
+// TODO: import * as f from "currentState"
+
 // Entrée: données d'entreprises venant de ImportedData, regroupées par entreprise ou établissement.
 // Sortie: un objet fusionné par entreprise ou établissement, contenant les données historiques et les données importées, à destination de la collection RawData.
 // Opérations: retrait des données doublons et application des corrections de données éventuelles.
@@ -47,10 +49,10 @@ export function reduce(
   //////////////////////////////////////////////////
 
   // 0. On calcule la memoire au moment du batch à modifier
-  const memory_batches = Object.keys(reduced_value.batch)
+  const memory_batches: BatchValue[] = Object.keys(reduced_value.batch)
     .filter((batch) => batch < batchKey)
     .sort()
-    .reduce((m: any[], batch) => {
+    .reduce((m: BatchValue[], batch: string) => {
       m.push(reduced_value.batch[batch])
       return m
     }, [])
