@@ -282,7 +282,12 @@ function finalize(k, o) {
     }
     emit(this.value.key, this.value);
 }`,
-"reduce": `function reduce(key, values) {
+"reduce": `// Entrée: données d'entreprises venant de ImportedData, regroupées par entreprise ou établissement.
+// Sortie: un objet fusionné par entreprise ou établissement, contenant les données historiques et les données importées, à destination de la collection RawData.
+// Opérations: retrait des données doublons et application des corrections de données éventuelles.
+function reduce(key, //: SiretOrSiren,
+values //: CompanyDataValues[]
+) {
     "use strict";
     // Tester si plusieurs batchs. Reduce complet uniquement si plusieurs
     // batchs. Sinon, juste fusion des attributs
@@ -303,12 +308,17 @@ function finalize(k, o) {
         });
         return m;
     }, { key: key, scope: values[0].scope });
+    // Cette fonction reduce() est appelée à deux moments:
+    // 1. agregation par établissement d'objets ImportedData. Dans cet étape, on
+    // ne travaille généralement que sur un seul batch.
+    // 2. agregation de ces résultats au sein de RawData, en fusionnant avec les
+    // données potentiellement présentes. Dans cette étape, on fusionne
+    // généralement les données de plusieurs batches. (données historiques)
     if (!severalBatches)
         return reduced_value;
-    ///////////////////////////////////
-    ///// ETAPES //////////////////////
-    ///////////////////////////////////
-    // Uniquement si severalBatches
+    //////////////////////////////////////////////////
+    // ETAPES DE LA FUSION AVEC DONNÉES HISTORIQUES //
+    //////////////////////////////////////////////////
     // 0. On calcule la memoire au moment du batch à modifier
     const memory_batches = Object.keys(reduced_value.batch)
         .filter((batch) => batch < batchKey)
