@@ -1,4 +1,4 @@
-import test from "ava"
+import test, { ExecutionContext } from "ava"
 import "../globals"
 import { delais, Delai, DelaiMap } from "./delais"
 
@@ -34,7 +34,7 @@ const makeDelai = (firstDate: Date, secondDate: Date): Delai => ({
 })
 
 const testProperty = (
-  t: any,
+  t: ExecutionContext,
   propertyName: string,
   expectedFebruary: number,
   expectedMarch: number
