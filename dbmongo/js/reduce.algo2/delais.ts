@@ -2,17 +2,10 @@ import * as f from "../common/generatePeriodSerie.js"
 
 // Object golang défini dans dbmongo/lib/urssaf/delai.go
 export type Delai = {
-  numero_compte: string
-  numero_contentieux: string
   date_creation: Date
   date_echeance: Date
   duree_delai: number // nombre de jours entre date_creation et date_echeance
-  denomination: string
-  indic_6m: string
-  annee_creation: number
   montant_echeancier: number // exprimé en euros
-  stade: string
-  action: string
 }
 
 export type DelaiMap = { [key: string]: Delai }
