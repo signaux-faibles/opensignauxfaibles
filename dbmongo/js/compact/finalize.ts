@@ -7,8 +7,8 @@ import "../globals.ts"
 // l'échantillonnage pour l'entraînement du modèle.
 export function finalize(
   k: SiretOrSiren,
-  o: CompanyDataValues
-): CompanyDataValues {
+  o: CompanyDataValuesWithFlags
+): CompanyDataValuesWithFlags {
   "use strict"
   o.index = { algo1: false, algo2: false }
 

@@ -33,8 +33,11 @@ type BatchValues = { [batchKey: string]: BatchValue }
 type CompanyDataValues = {
   key: SiretOrSiren
   scope: Scope
-  index: ReduceIndexFlags
   batch: BatchValues
+}
+
+type CompanyDataValuesWithFlags = CompanyDataValues & {
+  index: ReduceIndexFlags
 }
 
 type BatchValue = {

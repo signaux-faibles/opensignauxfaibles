@@ -4,8 +4,8 @@ import "../globals.ts"
 // SIRET+période, afin d'assurer la reproductibilité de l'échantillonage.
 export function complete_reporder(
   siret: SiretOrSiren,
-  object: CompanyDataValues
-): CompanyDataValues {
+  object: CompanyDataValuesWithFlags
+): CompanyDataValuesWithFlags {
   "use strict"
   const batches = Object.keys(object.batch)
   batches.sort()

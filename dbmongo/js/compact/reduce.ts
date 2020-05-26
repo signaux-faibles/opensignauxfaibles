@@ -4,8 +4,8 @@ import "../globals.ts"
 // Sortie: un objet fusionné par entreprise ou établissement, contenant les données historiques et les données importées, à destination de la collection RawData.
 // Opérations: retrait des données doublons et application des corrections de données éventuelles.
 export function reduce(
-  key, //: SiretOrSiren,
-  values //: CompanyDataValues[]
+  key: SiretOrSiren,
+  values: CompanyDataValues[]
 ): CompanyDataValues {
   "use strict"
 
@@ -19,10 +19,9 @@ export function reduce(
   })
 
   //fusion des attributs dans values
-  const reduced_value = values.reduce(
-    (m, value) => {
-      Object.keys(value.batch || {}).forEach((batch) => {
-        m.batch = m.batch || {}
+  const reduced_value: CompanyDataValues = values.reduce(
+    (m, value: CompanyDataValues) => {
+      Object.keys(value.batch).forEach((batch) => {
         m.batch[batch] = m.batch[batch] || {}
         Object.keys(value.batch[batch]).forEach((type) => {
           m.batch[batch][type] = m.batch[batch][type] || {}
@@ -31,7 +30,7 @@ export function reduce(
       })
       return m
     },
-    { key: key, scope: values[0].scope }
+    { key: key, scope: values[0].scope, batch: {} }
   )
 
   // Cette fonction reduce() est appelée à deux moments:
