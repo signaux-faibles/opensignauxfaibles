@@ -30,8 +30,8 @@ type ReduceIndexFlags = {
 
 type BatchValues = { [batchKey: string]: BatchValue }
 
-type RawDataValues = {
-  key: Siret
+type CompanyDataValues = {
+  key: SiretOrSiren
   scope: Scope
   index: ReduceIndexFlags
   batch: BatchValues
@@ -47,12 +47,12 @@ type DataHash = string
 
 type Periode = Date
 
-type Siret = string
+type SiretOrSiren = string
 
 type RepOrder = {
   random_order: number
   periode: Periode
-  siret: Siret
+  siret: SiretOrSiren
 }
 
 type Effectif = {

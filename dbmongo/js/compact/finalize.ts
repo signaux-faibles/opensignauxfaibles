@@ -5,7 +5,10 @@ import "../globals.ts"
 // (processus reduce.algo2)
 // - intégrer les reporder pour permettre la reproductibilité de
 // l'échantillonnage pour l'entraînement du modèle.
-export function finalize(k: Siret, o: RawDataValues): RawDataValues {
+export function finalize(
+  k: SiretOrSiren,
+  o: CompanyDataValues
+): CompanyDataValues {
   "use strict"
   o.index = { algo1: false, algo2: false }
 

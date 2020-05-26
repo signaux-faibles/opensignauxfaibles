@@ -3,9 +3,9 @@ import "../globals.ts"
 // complete_reporder ajoute une propriété "reporder" pour chaque couple
 // SIRET+période, afin d'assurer la reproductibilité de l'échantillonage.
 export function complete_reporder(
-  siret: Siret,
-  object: RawDataValues
-): RawDataValues {
+  siret: SiretOrSiren,
+  object: CompanyDataValues
+): CompanyDataValues {
   "use strict"
   const batches = Object.keys(object.batch)
   batches.sort()
