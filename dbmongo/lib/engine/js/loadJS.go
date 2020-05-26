@@ -51,6 +51,7 @@ func bundleJsFunctions(jsRootDir string) {
 						log.Fatal(err)
 					}
 					stringFunction := string(function)
+					stringFunction = strings.Replace(stringFunction, "`", "` + \"`\" + `", -1) // escape nested "backticks" quotes
 					finalExportRegex := regexp.MustCompile(`(?m)^exports..*$`)
 					stringFunction = finalExportRegex.ReplaceAllLiteralString(stringFunction, "")
 					stringFunction = strings.Trim(stringFunction, "\n")
