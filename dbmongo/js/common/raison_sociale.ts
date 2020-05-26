@@ -1,5 +1,3 @@
-declare function debug(string) // supported by jsc, to print in stdout
-
 function raison_sociale /*eslint-disable-line @typescript-eslint/no-unused-vars */(
   denomination_unite_legale: string,
   nom_unite_legale: string,

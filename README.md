@@ -1,4 +1,3 @@
-
 # Open Signaux Faibles
 
 Solution logicielle pour la détection anticipée d'entreprises en difficulté
@@ -7,7 +6,7 @@ Solution logicielle pour la détection anticipée d'entreprises en difficulté
 
 - backend golang
 - frontend vuetify
-- mongodb
+- MongoDB 4.0
 
 ## Dépendances / pré-requis
 

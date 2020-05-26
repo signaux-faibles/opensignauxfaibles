@@ -51,9 +51,11 @@ func bundleJsFunctions(jsRootDir string) {
 						log.Fatal(err)
 					}
 					stringFunction := string(function)
-					stringFunction = strings.Replace(stringFunction, "`", "` + \"`\" + `", -1) // escape nested "backticks" quotes
+					exportsDefRegex := regexp.MustCompile(`(?m)^Object.defineProperty\(exports.*$`)
+					stringFunction = exportsDefRegex.ReplaceAllLiteralString(stringFunction, "")
 					finalExportRegex := regexp.MustCompile(`(?m)^exports..*$`)
 					stringFunction = finalExportRegex.ReplaceAllLiteralString(stringFunction, "")
+					stringFunction = strings.Replace(stringFunction, "`", "` + \"`\" + `", -1) // escape nested "backticks" quotes
 					stringFunction = strings.Trim(stringFunction, "\n")
 
 					out.Write([]byte(stringFunction))
@@ -70,6 +72,7 @@ func main() {
 	jsRootDir := filepath.Join("..", "..", "js")
 	tsFiles := engine.ListTsFiles(jsRootDir)
 	engine.TranspileTsFunctions(jsRootDir) // convert *.ts files to .js
+	engine.GlobalizeJsFunctions(jsRootDir) // remove "export" prefixes from JS functions, for jsc compatibility
 	bundleJsFunctions(jsRootDir)           // bundle *.js files to jsFunctions.go
 	engine.DeleteTranspiledFiles(tsFiles)  // delete the *.js files
 }

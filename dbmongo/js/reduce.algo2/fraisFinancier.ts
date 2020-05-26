@@ -1,4 +1,4 @@
-export function fraisFinancier(diane): number {
+export function fraisFinancier(diane): number | null {
   "use strict"
   if (
     "interets" in diane &&

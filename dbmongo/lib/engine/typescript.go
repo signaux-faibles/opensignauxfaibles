@@ -50,7 +50,19 @@ func DeleteTranspiledFiles(tsFiles []string) {
 
 // TranspileTsFunctions convertit les fichiers TypeScript au format JavaScript.
 func TranspileTsFunctions(jsRootDir string) {
-	cmd := exec.Command("npx", append([]string{"typescript", "--listFiles", "--p", filepath.Join(jsRootDir, "tsconfig.json")})...) // output: .js files
+	cmd := exec.Command("npx", "typescript", "--p", filepath.Join(jsRootDir, "tsconfig.json")) // output: .js files
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err := cmd.Run()
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+// GlobalizeJsFunctions retire le préfixe "export" des fonctions, pour les rendre compatibles avec jsc.
+func GlobalizeJsFunctions(jsRootDir string) {
+	cmd := exec.Command("bash", "globalize-functions.sh") // output: .js files
+	cmd.Dir = jsRootDir
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err := cmd.Run()

@@ -10,7 +10,7 @@
     "lint": "eslint **/*.ts",
     "lint:fix": "eslint **/*.ts --fix",
     "test": "ava",
-    "test:coverage": "nyc npm test"
+    "test:coverage": "TS_NODE_FILES=true nyc npm test"
   },
   "author": "",
   "license": "MIT",
