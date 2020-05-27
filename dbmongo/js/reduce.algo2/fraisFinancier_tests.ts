@@ -1,14 +1,10 @@
 import test from "ava"
-import { fraisFinancier } from "./fraisFinancier"
-
-type Diane = {
-  interets: number
-  excedent_brut_d_exploitation: number
-  produits_financiers: number
-  produit_exceptionnel: number
-  charge_exceptionnelle: number
-  charges_financieres: number
-}
+import {
+  fraisFinancier,
+  Diane,
+  DianePartial,
+  DianeProperty,
+} from "./fraisFinancier"
 
 const fakeDiane = (): Diane => ({
   interets: 50,
@@ -46,9 +42,9 @@ const proprietes = [
   "charge_exceptionnelle",
   "charges_financieres",
 ]
-proprietes.forEach((propriete) =>
+proprietes.forEach((propriete: DianeProperty) =>
   test(`fraisFinancier est nul si "${propriete}" n'est pas disponible dans Diane`, (t) => {
-    const diane = fakeDiane()
+    const diane = fakeDiane() as DianePartial
     diane[propriete] = null
     t.is(fraisFinancier(diane), null)
     delete diane[propriete]
