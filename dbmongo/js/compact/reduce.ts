@@ -25,8 +25,7 @@ export function reduce(
     (m, value: CompanyDataValues) => {
       Object.keys(value.batch).forEach((batch) => {
         m.batch[batch] = m.batch[batch] || {}
-        Object.keys(value.batch[batch]).forEach((type) => {
-          m.batch[batch][type] = m.batch[batch][type] || {}
+        Object.keys(value.batch[batch]).forEach((type: keyof BatchValue) => {
           Object.assign(m.batch[batch][type], value.batch[batch][type])
         })
       })
@@ -63,7 +62,7 @@ export function reduce(
   // suivants.
   const modified_batches = batches.filter((batch) => batch >= batchKey)
 
-  modified_batches.forEach((batch) => {
+  modified_batches.forEach((batch: string) => {
     reduced_value.batch[batch] = reduced_value.batch[batch] || {}
 
     // Les types où il y  a potentiellement des suppressions
@@ -87,10 +86,10 @@ export function reduce(
     // 1. On recupère les cles ajoutes et les cles supprimes
     // -----------------------------------------------------
 
-    const hashToDelete = {}
-    const hashToAdd = {}
+    const hashToDelete: { [dataType: string]: Set<DataHash> } = {}
+    const hashToAdd: { [dataType: string]: Set<DataHash> } = {}
 
-    all_interesting_types.forEach((type) => {
+    all_interesting_types.forEach((type: keyof BatchValue) => {
       // Le type compact gère les clés supprimées
       if (type === "compact") {
         if (reduced_value.batch[batch].compact.delete) {
@@ -193,7 +192,7 @@ export function reduce(
       }
     })
 
-    new_types.forEach((type) => {
+    new_types.forEach((type: keyof BatchValue) => {
       if (hashToAdd[type]) {
         reduced_value.batch[batch][type] = Object.keys(
           reduced_value.batch[batch][type] || {}
@@ -201,8 +200,16 @@ export function reduce(
           .filter((hash) => {
             return hashToAdd[type].has(hash)
           })
-          .reduce((m, hash) => {
-            m[hash] = reduced_value.batch[batch][type][hash]
+          .reduce((m, hash: DataHash) => {
+            const batchValue = reduced_value.batch[batch]
+            const values = batchValue[type]
+            m[hash] = values[hash]
+            // TODO: the assignment above is too generic compared to the CompanyDataValues type of reduced_value / m.
+            // I.e. hash may actually be a period, a dataDash or "delete"!
+            // => Do we want to merge them all into reduced_value, including "delete"? => What should the type of m be?
+            // Note: Making CompanyDataValues less strict may have an impact on may other functions that rely on it.
+            // => We should write a TS integration test that calls map() reduce() and finalize() while checking types,
+            // to make sure that the types of all our functions are still compatible.
             return m
           }, {})
       }
@@ -213,11 +220,13 @@ export function reduce(
 
     if (reduced_value.batch[batch]) {
       //types vides
-      Object.keys(reduced_value.batch[batch]).forEach((type) => {
-        if (Object.keys(reduced_value.batch[batch][type]).length === 0) {
-          delete reduced_value.batch[batch][type]
+      Object.keys(reduced_value.batch[batch]).forEach(
+        (type: keyof BatchValue) => {
+          if (Object.keys(reduced_value.batch[batch][type]).length === 0) {
+            delete reduced_value.batch[batch][type]
+          }
         }
-      })
+      )
       //hash à supprimer vides (compact.delete)
       if (
         reduced_value.batch[batch].compact &&
