@@ -9,7 +9,7 @@ export function complete_reporder(
   "use strict"
   const batches = Object.keys(object.batch)
   batches.sort()
-  const missing = {}
+  const missing: { [key: string]: boolean } = {}
   serie_periode.forEach((p) => {
     missing[p.getTime()] = true
   })
