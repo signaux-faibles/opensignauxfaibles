@@ -39,7 +39,8 @@ type BatchValue = {
   reporder: { [periode: string]: RepOrder }
   compact: { delete: { [dataType: string]: DataHash[] } }
   effectif: { [dataHash: string]: Effectif }
-  apconso: { [key: string]: any } // TODO: définition de type à vérifier !
+  apconso: { [key: string]: any } // TODO: définir type plus précisément
+  apdemande: { [key: string]: any } // TODO: définir type plus précisément
 }
 
 type DataHash = string

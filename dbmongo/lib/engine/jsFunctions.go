@@ -296,6 +296,9 @@ function finalize(k, o) {
         case "apconso":
             batchValue[typeName] = updatedValues;
             break;
+        case "apdemande":
+            batchValue[typeName] = updatedValues;
+            break;
         default:
             // This switch should be exhaustive: cover all the keys defined in the BatchValue type.
             // => Warning TS(2345) if we miss a case, e.g. Argument of type '"new_effectif"' is not assignable to parameter of type 'never'.
