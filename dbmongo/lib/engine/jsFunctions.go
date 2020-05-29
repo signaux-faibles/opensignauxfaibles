@@ -282,7 +282,31 @@ function finalize(k, o) {
     }
     emit(this.value.key, this.value);
 }`,
-"reduce": `// Entrée: données d'entreprises venant de ImportedData, regroupées par entreprise ou établissement.
+"reduce": `const setBatchValueForType = (batchValue, typeName, updatedValues) => {
+    switch (typeName) {
+        case "reporder":
+            batchValue[typeName] = updatedValues;
+            break;
+        case "compact":
+            batchValue[typeName] = updatedValues;
+            break;
+        case "effectif":
+            batchValue[typeName] = updatedValues;
+            break;
+        case "apconso":
+            batchValue[typeName] = updatedValues;
+            break;
+        default:
+            // This switch should be exhaustive: cover all the keys defined in the BatchValue type.
+            // => Warning TS(2345) if we miss a case, e.g. Argument of type '"new_effectif"' is not assignable to parameter of type 'never'.
+            // source: https://stackoverflow.com/a/61806149/592254
+            ;
+            ((caseVal) => {
+                throw new Error(` + "`" + `case "${caseVal}" should be added to switch` + "`" + `);
+            })(typeName);
+    }
+};
+// Entrée: données d'entreprises venant de ImportedData, regroupées par entreprise ou établissement.
 // Sortie: un objet fusionné par entreprise ou établissement, contenant les données historiques et les données importées, à destination de la collection RawData.
 // Opérations: retrait des données doublons et application des corrections de données éventuelles.
 function reduce(key, values) {
@@ -300,27 +324,7 @@ function reduce(key, values) {
             m.batch[batch] = m.batch[batch] || {};
             Object.keys(value.batch[batch]).forEach((type) => {
                 const updatedValues = Object.assign(Object.assign({}, m.batch[batch][type]), value.batch[batch][type]);
-                switch (type) {
-                    case "reporder":
-                        m.batch[batch][type] = updatedValues;
-                        break;
-                    case "effectif":
-                        m.batch[batch][type] = updatedValues;
-                        break;
-                    case "compact":
-                        m.batch[batch][type] = updatedValues;
-                        break;
-                    case "apconso":
-                        m.batch[batch][type] = updatedValues;
-                        break;
-                    default:
-                        // This switch should be exhaustive: cover all the keys defined in the BatchValue type.
-                        // source: https://stackoverflow.com/a/61806149/592254
-                        ;
-                        ((caseVal) => {
-                            throw new Error(` + "`" + `case "${caseVal}" should be added to switch` + "`" + `);
-                        })(type); // => Warning TS(2345) if we miss a case, e.g. Argument of type '"new_effectif"' is not assignable to parameter of type 'never'.
-                }
+                setBatchValueForType(m.batch[batch], type, updatedValues);
             });
         });
         return m;
@@ -463,25 +467,7 @@ function reduce(key, values) {
                     m[hash] = hashedValues[hash];
                     return m;
                 }, {});
-                switch (typeName) {
-                    case "reporder":
-                        batchValue[typeName] = updatedValues;
-                        break;
-                    case "effectif":
-                        batchValue[typeName] = updatedValues;
-                        break;
-                    case "apconso":
-                        batchValue[typeName] = updatedValues;
-                        break;
-                    default:
-                        // This switch should be exhaustive: cover all the keys defined in the BatchValue type.
-                        // => Warning TS(2345) if we miss a case, e.g. Argument of type '"new_effectif"' is not assignable to parameter of type 'never'.
-                        // source: https://stackoverflow.com/a/61806149/592254
-                        ;
-                        ((caseVal) => {
-                            throw new Error(` + "`" + `case "${caseVal}" should be added to switch` + "`" + `);
-                        })(typeName);
-                }
+                setBatchValueForType(batchValue, typeName, updatedValues);
             }
         });
         // 6. nettoyage
