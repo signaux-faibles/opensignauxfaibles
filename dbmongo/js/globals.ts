@@ -1,9 +1,5 @@
 // Déclaration des fonctions globales fournies par MongoDB
 declare function emit(key: string, value: object): void
-// declare function print(...any): void
-
-// Déclaration des fonctions globales fournies par JSC
-// declare function debug(string) // supported by jsc, to print in stdout
 
 // Paramètres globaux utilisés par "compact"
 /* eslint-disable @typescript-eslint/no-unused-vars */
