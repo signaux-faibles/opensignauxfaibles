@@ -12,6 +12,7 @@ if [ "$result_currentState" != 'true' ]; then
 fi
 
 result_reduce=$(jsc \
+  ./helpers/fakes.js \
   ./helpers/testing.js \
   ../common/!(*_test).js \
   ../compact/currentState.js \
