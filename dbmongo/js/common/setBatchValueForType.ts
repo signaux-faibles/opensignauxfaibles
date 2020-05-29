@@ -1,31 +1,10 @@
-export function setBatchValueForType(
+// Cette fonction TypeScript permet de vérifier que seuls les types reconnus
+// peuvent être intégrés dans un BatchValue de destination.
+// Ex: setBatchValueForType(batchValue, "pouet", {}) cause une erreur ts(2345).
+export function setBatchValueForType<T extends keyof BatchValue>(
   batchValue: BatchValue,
-  typeName: keyof BatchValue,
-  updatedValues: BatchValue[keyof BatchValue]
+  typeName: T,
+  updatedValues: BatchValue[T]
 ): void {
-  switch (typeName) {
-    case "reporder":
-      batchValue[typeName] = updatedValues as BatchValue["reporder"]
-      break
-    case "compact":
-      batchValue[typeName] = updatedValues as BatchValue["compact"]
-      break
-    case "effectif":
-      batchValue[typeName] = updatedValues as BatchValue["effectif"]
-      break
-    case "apconso":
-      batchValue[typeName] = updatedValues as BatchValue["apconso"]
-      break
-    case "apdemande":
-      batchValue[typeName] = updatedValues as BatchValue["apdemande"]
-      break
-    default:
-      // This switch should be exhaustive: cover all the keys defined in the BatchValue type.
-      // => Warning TS(2345) if we miss a case, e.g. Argument of type '"new_effectif"' is not assignable to parameter of type 'never'.
-      // source: https://stackoverflow.com/a/61806149/592254
-      // eslint-disable-next-line no-extra-semi
-      ;((caseVal: never): void => {
-        throw new Error(`case "${caseVal}" should be added to switch`)
-      })(typeName)
-  }
+  batchValue[typeName] = updatedValues
 }

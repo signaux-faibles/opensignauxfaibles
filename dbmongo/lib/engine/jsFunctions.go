@@ -186,33 +186,11 @@ package engine
   }
   return(reg)
 }`,
-"setBatchValueForType": `function setBatchValueForType(batchValue, typeName, updatedValues) {
-    switch (typeName) {
-        case "reporder":
-            batchValue[typeName] = updatedValues;
-            break;
-        case "compact":
-            batchValue[typeName] = updatedValues;
-            break;
-        case "effectif":
-            batchValue[typeName] = updatedValues;
-            break;
-        case "apconso":
-            batchValue[typeName] = updatedValues;
-            break;
-        case "apdemande":
-            batchValue[typeName] = updatedValues;
-            break;
-        default:
-            // This switch should be exhaustive: cover all the keys defined in the BatchValue type.
-            // => Warning TS(2345) if we miss a case, e.g. Argument of type '"new_effectif"' is not assignable to parameter of type 'never'.
-            // source: https://stackoverflow.com/a/61806149/592254
-            // eslint-disable-next-line no-extra-semi
-            ;
-            ((caseVal) => {
-                throw new Error(` + "`" + `case "${caseVal}" should be added to switch` + "`" + `);
-            })(typeName);
-    }
+"setBatchValueForType": `// Cette fonction TypeScript permet de vérifier que seuls les types reconnus
+// peuvent être intégrés dans un BatchValue de destination.
+// Ex: setBatchValueForType(batchValue, "pouet", {}) cause une erreur ts(2345).
+function setBatchValueForType(batchValue, typeName, updatedValues) {
+    batchValue[typeName] = updatedValues;
 }`,
 },
 "compact":{
