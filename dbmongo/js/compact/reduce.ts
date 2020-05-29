@@ -1,37 +1,6 @@
 import "../globals.ts"
-
+import { setBatchValueForType } from "../common/setBatchValueForType"
 import * as f from "./currentState"
-
-const setBatchValueForType = (
-  batchValue: BatchValue,
-  typeName: keyof BatchValue,
-  updatedValues: BatchValue[keyof BatchValue]
-): void => {
-  switch (typeName) {
-    case "reporder":
-      batchValue[typeName] = updatedValues as BatchValue["reporder"]
-      break
-    case "compact":
-      batchValue[typeName] = updatedValues as BatchValue["compact"]
-      break
-    case "effectif":
-      batchValue[typeName] = updatedValues as BatchValue["effectif"]
-      break
-    case "apconso":
-      batchValue[typeName] = updatedValues as BatchValue["apconso"]
-      break
-    case "apdemande":
-      batchValue[typeName] = updatedValues as BatchValue["apdemande"]
-      break
-    default:
-      // This switch should be exhaustive: cover all the keys defined in the BatchValue type.
-      // => Warning TS(2345) if we miss a case, e.g. Argument of type '"new_effectif"' is not assignable to parameter of type 'never'.
-      // source: https://stackoverflow.com/a/61806149/592254
-      ;((caseVal: never): void => {
-        throw new Error(`case "${caseVal}" should be added to switch`)
-      })(typeName)
-  }
-}
 
 // Entrée: données d'entreprises venant de ImportedData, regroupées par entreprise ou établissement.
 // Sortie: un objet fusionné par entreprise ou établissement, contenant les données historiques et les données importées, à destination de la collection RawData.
