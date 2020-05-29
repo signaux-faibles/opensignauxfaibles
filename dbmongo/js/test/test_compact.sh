@@ -1,5 +1,7 @@
 # This file is run by dbmongo/js_test.go.
 
+shopt -s extglob # enable exclusion of test files in wildcard
+
 result_currentState=$(jsc \
   ../compact/currentState.js \
   ../compact/currentState_test.js\
