@@ -299,8 +299,25 @@ function reduce(key, values) {
         Object.keys(value.batch).forEach((batch) => {
             m.batch[batch] = m.batch[batch] || {};
             Object.keys(value.batch[batch]).forEach((type) => {
-                m.batch[batch][type] = m.batch[batch][type] || {};
-                Object.assign(m.batch[batch][type], value.batch[batch][type]);
+                const updatedValues = Object.assign(Object.assign({}, m.batch[batch][type]), value.batch[batch][type]);
+                switch (type) {
+                    case "reporder":
+                        m.batch[batch][type] = updatedValues;
+                        break;
+                    case "effectif":
+                        m.batch[batch][type] = updatedValues;
+                        break;
+                    case "compact":
+                        m.batch[batch][type] = updatedValues;
+                        break;
+                    default:
+                        // This switch should be exhaustive: cover all the keys defined in the BatchValue type.
+                        // source: https://stackoverflow.com/a/61806149/592254
+                        ;
+                        ((caseVal) => {
+                            throw new Error(` + "`" + `case "${caseVal}" should be added to switch` + "`" + `);
+                        })(type); // => Warning TS(2345) if we miss a case, e.g. Argument of type '"new_effectif"' is not assignable to parameter of type 'never'.
+                }
             });
         });
         return m;
@@ -429,16 +446,36 @@ function reduce(key, values) {
                 ];
             }
         });
-        new_types.forEach((type) => {
-            if (hashToAdd[type]) {
-                reduced_value.batch[batch][type] = Object.keys(reduced_value.batch[batch][type] || {})
+        new_types.forEach((typeName) => {
+            if (hashToAdd[typeName] && typeName !== "compact") {
+                const type = typeName;
+                typeof reduced_value.batch[batch][type];
+                const batchValue = reduced_value.batch[batch];
+                const hashedValues = batchValue[type];
+                const updatedValues = Object.keys(batchValue[type] || {})
                     .filter((hash) => {
                     return hashToAdd[type].has(hash);
                 })
                     .reduce((m, hash) => {
-                    m[hash] = reduced_value.batch[batch][type][hash];
+                    m[hash] = hashedValues[hash];
                     return m;
                 }, {});
+                switch (typeName) {
+                    case "reporder":
+                        batchValue[typeName] = updatedValues;
+                        break;
+                    case "effectif":
+                        batchValue[typeName] = updatedValues;
+                        break;
+                    default:
+                        // This switch should be exhaustive: cover all the keys defined in the BatchValue type.
+                        // => Warning TS(2345) if we miss a case, e.g. Argument of type '"new_effectif"' is not assignable to parameter of type 'never'.
+                        // source: https://stackoverflow.com/a/61806149/592254
+                        ;
+                        ((caseVal) => {
+                            throw new Error(` + "`" + `case "${caseVal}" should be added to switch` + "`" + `);
+                        })(typeName);
+                }
             }
         });
         // 6. nettoyage
