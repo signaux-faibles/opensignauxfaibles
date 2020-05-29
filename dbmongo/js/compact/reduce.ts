@@ -196,14 +196,11 @@ export function reduce(
       }
     })
 
-    new_types.forEach((typeName: keyof BatchValue) => {
-      if (hashToAdd[typeName] && typeName !== "compact") {
-        const type = typeName as keyof Omit<BatchValue, "compact">
-        typeof reduced_value.batch[batch][type]
-        const batchValue = reduced_value.batch[batch]
-        const hashedValues = batchValue[type]
+    new_types.forEach((type: keyof BatchValue) => {
+      if (hashToAdd[type] && type !== "compact") {
+        const hashedValues = reduced_value.batch[batch][type]
 
-        const updatedValues = Object.keys(batchValue[type] || {})
+        const updatedValues = Object.keys(hashedValues || {})
           .filter((hash) => {
             return hashToAdd[type].has(hash)
           })
@@ -212,7 +209,7 @@ export function reduce(
             return m
           }, {})
 
-        setBatchValueForType(batchValue, typeName, updatedValues)
+        setBatchValueForType(reduced_value.batch[batch], type, updatedValues)
       }
     })
 

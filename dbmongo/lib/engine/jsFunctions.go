@@ -457,13 +457,10 @@ function reduce(key, values) {
                 ];
             }
         });
-        new_types.forEach((typeName) => {
-            if (hashToAdd[typeName] && typeName !== "compact") {
-                const type = typeName;
-                typeof reduced_value.batch[batch][type];
-                const batchValue = reduced_value.batch[batch];
-                const hashedValues = batchValue[type];
-                const updatedValues = Object.keys(batchValue[type] || {})
+        new_types.forEach((type) => {
+            if (hashToAdd[type] && type !== "compact") {
+                const hashedValues = reduced_value.batch[batch][type];
+                const updatedValues = Object.keys(hashedValues || {})
                     .filter((hash) => {
                     return hashToAdd[type].has(hash);
                 })
@@ -471,7 +468,7 @@ function reduce(key, values) {
                     m[hash] = hashedValues[hash];
                     return m;
                 }, {});
-                setBatchValueForType(batchValue, typeName, updatedValues);
+                setBatchValueForType(reduced_value.batch[batch], type, updatedValues);
             }
         });
         // 6. nettoyage
