@@ -310,6 +310,9 @@ function reduce(key, values) {
                     case "compact":
                         m.batch[batch][type] = updatedValues;
                         break;
+                    case "apconso":
+                        m.batch[batch][type] = updatedValues;
+                        break;
                     default:
                         // This switch should be exhaustive: cover all the keys defined in the BatchValue type.
                         // source: https://stackoverflow.com/a/61806149/592254
@@ -465,6 +468,9 @@ function reduce(key, values) {
                         batchValue[typeName] = updatedValues;
                         break;
                     case "effectif":
+                        batchValue[typeName] = updatedValues;
+                        break;
+                    case "apconso":
                         batchValue[typeName] = updatedValues;
                         break;
                     default:

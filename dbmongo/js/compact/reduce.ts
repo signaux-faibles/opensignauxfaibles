@@ -40,6 +40,9 @@ export function reduce(
             case "compact":
               m.batch[batch][type] = updatedValues as BatchValue["compact"]
               break
+            case "apconso":
+              m.batch[batch][type] = updatedValues as BatchValue["apconso"]
+              break
             default:
               // This switch should be exhaustive: cover all the keys defined in the BatchValue type.
               // source: https://stackoverflow.com/a/61806149/592254
@@ -234,6 +237,9 @@ export function reduce(
             break
           case "effectif":
             batchValue[typeName] = updatedValues as BatchValue["effectif"]
+            break
+          case "apconso":
+            batchValue[typeName] = updatedValues as BatchValue["apconso"]
             break
           default:
             // This switch should be exhaustive: cover all the keys defined in the BatchValue type.
