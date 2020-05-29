@@ -207,6 +207,7 @@ package engine
             // This switch should be exhaustive: cover all the keys defined in the BatchValue type.
             // => Warning TS(2345) if we miss a case, e.g. Argument of type '"new_effectif"' is not assignable to parameter of type 'never'.
             // source: https://stackoverflow.com/a/61806149/592254
+            // eslint-disable-next-line no-extra-semi
             ;
             ((caseVal) => {
                 throw new Error(` + "`" + `case "${caseVal}" should be added to switch` + "`" + `);
