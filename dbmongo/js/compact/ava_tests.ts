@@ -48,10 +48,7 @@ const importedData = {
 }
 
 // output data inspired by test-api.sh
-const expectedFinalizeResults = [
-  {
-    _id: "01234567891011",
-    value: {
+const expectedFinalizeResultValue = {
       batch: {
         "1910": {
           reporder: {
@@ -72,9 +69,7 @@ const expectedFinalizeResults = [
         algo2: false,
       },
       key: "01234567891011",
-    },
-  },
-]
+} as unknown
 
 test(`exécution complète de la chaine "compact"`, (t: ExecutionContext) => {
   // 1. map
@@ -118,9 +113,8 @@ test(`exécution complète de la chaine "compact"`, (t: ExecutionContext) => {
   const index: ReduceIndexFlags = { algo1: true, algo2: true }
   const finalizeKey = reduceKey
   const finalizeValues = { ...reduceResults, index }
-  const finalizeResultValue = finalize(finalizeKey, finalizeValues)
-  const finalizeResults = [
-    { _id: finalizeKey, value: removeRandomOrder(finalizeResultValue) },
-  ]
-  t.deepEqual(finalizeResults, expectedFinalizeResults as unknown)
+  const finalizeResultValue = removeRandomOrder(
+    finalize(finalizeKey, finalizeValues)
+  )
+  t.deepEqual(finalizeResultValue, expectedFinalizeResultValue)
 })
