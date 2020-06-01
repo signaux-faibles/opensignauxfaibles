@@ -1,6 +1,7 @@
 import test, { ExecutionContext } from "ava"
 import "../globals"
 import { map } from "./map"
+import { reduce } from "./reduce"
 
 const ISODate = (date: string): Date => new Date(date)
 
@@ -316,11 +317,37 @@ const expected = [
   },
 ]
 
-test(`exécution complète de la chaine "compact"`, (t: ExecutionContext) => {
-  const results: { [key: string]: any } = {}
+const runMongoMap = (mapFct: () => void, keyVal: object): object => {
+  const results = {}
   globalThis.emit = (key: string, value: any): void => {
     results[key] = value
   }
-  map.call(importedData)
-  t.deepEqual(results, expected)
+  mapFct.call(keyVal)
+  return results
+}
+
+test(`exécution complète de la chaine "compact"`, (t: ExecutionContext) => {
+  // 1. map
+  const mapResults = runMongoMap(map, importedData)
+  t.deepEqual(mapResults, {
+    "01234567891011": {
+      batch: {
+        1910: {},
+      },
+      index: {
+        algo2: true,
+      },
+      key: "01234567891011",
+      scope: "etablissement",
+    },
+  })
+
+  // 2. reduce
+  // const reduceResults: { [key: string]: any } = {}
+  // globalThis.emit = (key: string, value: any): void => {
+  //   reduceResults[key] = value
+  // }
+  // reduce.call(importedData)
+
+  // t.deepEqual(mapResults, expected)
 })
