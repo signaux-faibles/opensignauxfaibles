@@ -12,8 +12,6 @@ import { finalize } from "./finalize"
 
 const ISODate = (date: string): Date => new Date(date)
 
-const renderedDate = (d: string): string => new Date(d).toString()
-
 const removeRandomOrder = (obj: object): object => {
   Object.keys(obj).forEach(
     (key) =>
@@ -32,10 +30,16 @@ const runMongoMap = (mapFct: () => void, keyVal: object): object => {
   return results
 }
 
-// input data from test-api.sh
+// test data inspired by test-api.sh
+
 const siret = "01234567891011"
 const scope = "etablissement"
 const batchKey = "1910"
+const dates = [
+  ISODate("2015-12-01T00:00:00.000+0000"),
+  ISODate("2016-01-01T00:00:00.000+0000"),
+]
+
 const importedData = {
   _id: "random123abc",
   value: {
@@ -50,20 +54,35 @@ const importedData = {
   },
 }
 
-// output data inspired by test-api.sh
+const expectedMapResults = {
+  [siret]: {
+    batch: {
+      [batchKey]: {},
+    },
+    index: {
+      algo2: true,
+    },
+    key: siret,
+    scope,
+  },
+}
+
+const expectedReduceResults = {
+  batch: { [batchKey]: {} },
+  key: siret,
+  scope,
+}
+
 const expectedFinalizeResultValue = {
   batch: {
     [batchKey]: {
-      reporder: {
-        [renderedDate("Tue Dec 01 2015 00:00:00 GMT+0000 (UTC)")]: {
-          periode: ISODate("2015-12-01T00:00:00Z"),
-          siret,
-        },
-        [renderedDate("Fri Jan 01 2016 00:00:00 GMT+0000 (UTC)")]: {
-          periode: ISODate("2016-01-01T00:00:00Z"),
-          siret,
-        },
-      },
+      reporder: dates.reduce(
+        (reporder, date) => ({
+          ...reporder,
+          [date.toString()]: { periode: date, siret },
+        }),
+        {}
+      ),
     },
   },
   scope,
@@ -77,29 +96,12 @@ const expectedFinalizeResultValue = {
 test(`exécution complète de la chaine "compact"`, (t: ExecutionContext) => {
   // 1. map
   const mapResults = runMongoMap(map, importedData)
-  const expectedMapResults = {
-    [siret]: {
-      batch: {
-        [batchKey]: {},
-      },
-      index: {
-        algo2: true,
-      },
-      key: siret,
-      scope,
-    },
-  }
   t.deepEqual(mapResults, expectedMapResults)
 
   // 2. reduce
   const reduceKey = importedData.value.key
   const reduceValues = [mapResults[reduceKey]]
   const reduceResults = reduce(reduceKey, reduceValues)
-  const expectedReduceResults = {
-    batch: { [batchKey]: {} },
-    key: siret,
-    scope,
-  }
   t.deepEqual(
     reduceResults,
     /*expectedFinalizeResultValue*/ expectedReduceResults as unknown // TODO: update types to match data
@@ -107,10 +109,7 @@ test(`exécution complète de la chaine "compact"`, (t: ExecutionContext) => {
 
   // 3. finalize
   const global = globalThis as any
-  global.serie_periode = [
-    ISODate("2015-12-01T00:00:00.000+0000"),
-    ISODate("2016-01-01T00:00:00.000+0000"),
-  ]
+  global.serie_periode = dates
   const index: ReduceIndexFlags = { algo1: true, algo2: true }
   const finalizeKey = reduceKey
   const finalizeValues = { ...reduceResults, index }
