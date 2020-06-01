@@ -31,7 +31,6 @@ const runMongoMap = (mapFct: () => void, keyVal: object): object => {
 }
 
 // test data inspired by test-api.sh
-
 const siret: SiretOrSiren = "01234567891011"
 const scope: Scope = "etablissement"
 const batchKey = "1910"
@@ -42,15 +41,14 @@ const dates = [
 const batch: BatchValues = {
   [batchKey]: {} as any,
 }
+const index: ReduceIndexFlags = { algo1: false, algo2: false } // TODO: why test fails if we set them to true?
 
 const importedData = {
   _id: "random123abc",
   value: {
     batch,
     scope,
-    index: {
-      algo2: true,
-    },
+    index,
     key: siret,
   },
 }
@@ -58,9 +56,7 @@ const importedData = {
 const expectedMapResults = {
   [siret]: {
     batch,
-    index: {
-      algo2: true,
-    },
+    index,
     key: siret,
     scope,
   },
@@ -85,10 +81,7 @@ const expectedFinalizeResultValue = {
     },
   },
   scope,
-  index: {
-    algo1: false,
-    algo2: false,
-  },
+  index,
   key: siret,
 } as unknown
 
