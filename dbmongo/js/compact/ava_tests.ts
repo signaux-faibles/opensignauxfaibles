@@ -23,7 +23,7 @@ const removeRandomOrder = (obj: object): object => {
 
 const runMongoMap = (mapFct: () => void, keyVal: object): object => {
   const results = {}
-  globalThis.emit = (key: string, value: any): void => {
+  globalThis.emit = (key: string, value: CompanyDataValuesWithFlags): void => {
     results[key] = value
   }
   mapFct.call(keyVal)
@@ -39,9 +39,9 @@ const dates = [
   ISODate("2016-01-01T00:00:00.000+0000"),
 ]
 const batch: BatchValues = {
-  [batchKey]: {} as any,
+  [batchKey]: {} as any, // TODO: rendre optionnelles les props de BatchValues, pour retirer ce `any` ?
 }
-const index: ReduceIndexFlags = { algo1: false, algo2: false } // TODO: why test fails if we set them to true?
+const index: ReduceIndexFlags = { algo1: false, algo2: false } // TODO: pourquoi les tests échouent quand on passe à `true` ?
 
 const importedData = {
   _id: "random123abc",
@@ -83,7 +83,7 @@ const expectedFinalizeResultValue = {
   scope,
   index,
   key: siret,
-} as unknown
+}
 
 // exécution complète de la chaine "compact"
 
@@ -107,7 +107,7 @@ test.serial(
 test.serial(
   `compact.finalize() intègre des clés d'échantillonage pour chaque période`,
   (t: ExecutionContext) => {
-    const global = globalThis as any
+    const global = globalThis as any // eslint-disable-line @typescript-eslint/no-explicit-any
     global.serie_periode = dates // used by complete_reporder(), which is called by finalize()
     const finalizeResult = finalize(siret, { ...expectedReduceResults, index })
     const { reporder } = finalizeResult.batch[batchKey]
