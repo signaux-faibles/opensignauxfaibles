@@ -1,22 +1,19 @@
 import "../globals.ts"
 
+// Pour rendre les dates au format 'Fri Apr 01 2016 00:00:00 GMT+0000 (UTC)'
+const DATE_FORMAT = new Intl.DateTimeFormat("en-US", {
+  weekday: "short",
+  day: "2-digit",
+  month: "short",
+  year: "numeric",
+  hour: "2-digit",
+  hour12: false,
+  minute: "2-digit",
+  second: "2-digit",
+  timeZone: "UTC",
+})
 const renderDate = (date: Date): string =>
-  // date.toString() // => 'Tue Oct 01 2019 02:00:00 GMT+0200 (GMT+02:00)'
-  // string => p.toUTCString() + "+0000 (UTC)" // => 'Fri, 01 Apr 2016 00:00:00 GMT+0000 (UTC)'
-  // new Intl.DateTimeFormat("en-US").format(date) // => 8/1/2019
-  new Intl.DateTimeFormat("en-US", {
-    weekday: "short",
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    hour12: false,
-    minute: "2-digit",
-    second: "2-digit",
-    timeZone: "UTC",
-  })
-    .format(date)
-    .replace(/, /g, " ") + " GMT+0000 (UTC)" // goal: 'Fri Apr 01 2016 00:00:00 GMT+0000 (UTC)'
+  DATE_FORMAT.format(date).replace(/, /g, " ") + " GMT+0000 (UTC)"
 
 // complete_reporder ajoute une propriété "reporder" pour chaque couple
 // SIRET+période, afin d'assurer la reproductibilité de l'échantillonage.
