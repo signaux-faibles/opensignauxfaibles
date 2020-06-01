@@ -343,11 +343,26 @@ test(`exécution complète de la chaine "compact"`, (t: ExecutionContext) => {
   })
 
   // 2. reduce
-  // const reduceResults: { [key: string]: any } = {}
-  // globalThis.emit = (key: string, value: any): void => {
-  //   reduceResults[key] = value
-  // }
-  // reduce.call(importedData)
-
-  // t.deepEqual(mapResults, expected)
+  const key = "01234567891011"
+  const values = [mapResults[key]]
+  const reduceResults = reduce(key, values)
+  t.deepEqual(
+    reduceResults,
+    (expected[0].value as unknown) as CompanyDataValues // TODO: update types to match data
+  )
+  // => some fields of final expected results are still missing:
+  //
+  //   {
+  //     batch: {
+  //       1910: {
+  // +       reporder: Object { … },
+  //       },
+  //     },
+  // +   index: {
+  // +     algo1: false,
+  // +     algo2: false,
+  // +   },
+  //     key: '01234567891011',
+  //     scope: 'etablissement',
+  //   }
 })
