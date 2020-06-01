@@ -32,20 +32,21 @@ const runMongoMap = (mapFct: () => void, keyVal: object): object => {
 
 // test data inspired by test-api.sh
 
-const siret = "01234567891011"
-const scope = "etablissement"
+const siret: SiretOrSiren = "01234567891011"
+const scope: Scope = "etablissement"
 const batchKey = "1910"
 const dates = [
   ISODate("2015-12-01T00:00:00.000+0000"),
   ISODate("2016-01-01T00:00:00.000+0000"),
 ]
+const batch: BatchValues = {
+  [batchKey]: {} as any,
+}
 
 const importedData = {
   _id: "random123abc",
   value: {
-    batch: {
-      [batchKey]: {},
-    },
+    batch,
     scope,
     index: {
       algo2: true,
@@ -56,9 +57,7 @@ const importedData = {
 
 const expectedMapResults = {
   [siret]: {
-    batch: {
-      [batchKey]: {},
-    },
+    batch,
     index: {
       algo2: true,
     },
@@ -68,7 +67,7 @@ const expectedMapResults = {
 }
 
 const expectedReduceResults = {
-  batch: { [batchKey]: {} },
+  batch,
   key: siret,
   scope,
 }
@@ -99,18 +98,15 @@ test(`exécution complète de la chaine "compact"`, (t: ExecutionContext) => {
   t.deepEqual(mapResults, expectedMapResults)
 
   // 2. reduce
-  const reduceValues: CompanyDataValues[] = [mapResults[siret]]
+  const reduceValues: CompanyDataValues[] = [expectedMapResults[siret]]
   const reduceResults = reduce(siret, reduceValues)
-  t.deepEqual(
-    reduceResults,
-    /*expectedFinalizeResultValue*/ expectedReduceResults as unknown // TODO: update types to match data
-  )
+  t.deepEqual(reduceResults, expectedReduceResults) // TODO: update types to match data
 
   // 3. finalize
   const global = globalThis as any
   global.serie_periode = dates
   const index: ReduceIndexFlags = { algo1: true, algo2: true }
-  const finalizeValues = { ...reduceResults, index }
+  const finalizeValues = { ...expectedReduceResults, index }
   const finalizeResultValue = removeRandomOrder(finalize(siret, finalizeValues))
   t.deepEqual(finalizeResultValue, expectedFinalizeResultValue)
 })
