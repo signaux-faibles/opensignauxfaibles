@@ -87,22 +87,37 @@ const expectedFinalizeResultValue = {
 
 // exécution complète de la chaine "compact"
 
-test.serial(`compact.map()`, (t: ExecutionContext) => {
-  const mapResults = runMongoMap(map, importedData)
-  t.deepEqual(mapResults, expectedMapResults)
-})
+test.serial(
+  `compact.map() groupe les données par siret`,
+  (t: ExecutionContext) => {
+    const mapResults = runMongoMap(map, importedData)
+    t.deepEqual(mapResults, expectedMapResults)
+  }
+)
 
-test.serial(`compact.reduce()`, (t: ExecutionContext) => {
-  const reduceValues: CompanyDataValues[] = [expectedMapResults[siret]]
-  const reduceResults = reduce(siret, reduceValues)
-  t.deepEqual(reduceResults, expectedReduceResults)
-})
+test.serial(
+  `compact.reduce() agrège les données par entreprise`,
+  (t: ExecutionContext) => {
+    const reduceValues: CompanyDataValues[] = [expectedMapResults[siret]]
+    const reduceResults = reduce(siret, reduceValues)
+    t.deepEqual(reduceResults, expectedReduceResults)
+  }
+)
 
-test.serial(`compact.finalize()`, (t: ExecutionContext) => {
-  const global = globalThis as any
-  global.serie_periode = dates // used by complete_reporder(), which is called by finalize()
-  const index: ReduceIndexFlags = { algo1: true, algo2: true }
-  const finalizeValues = { ...expectedReduceResults, index }
-  const finalizeResultValue = removeRandomOrder(finalize(siret, finalizeValues))
-  t.deepEqual(finalizeResultValue, expectedFinalizeResultValue)
-})
+test.serial(
+  `compact.finalize() intègre des clés d'échantillonage pour chaque période`,
+  (t: ExecutionContext) => {
+    const global = globalThis as any
+    global.serie_periode = dates // used by complete_reporder(), which is called by finalize()
+    const finalizeResult = finalize(siret, { ...expectedReduceResults, index })
+    const { reporder } = finalizeResult.batch[batchKey]
+    // reporder contient une propriété par periode
+    t.is(Object.keys(reporder).length, dates.length)
+    Object.keys(reporder).forEach((periodKey) => {
+      t.is(typeof reporder[periodKey].random_order, "number")
+    })
+    // vérification de la structure complète, sans les nombres aléatoires
+    const finalizeResultValue = removeRandomOrder(finalizeResult)
+    t.deepEqual(finalizeResultValue, expectedFinalizeResultValue)
+  }
+)
