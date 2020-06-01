@@ -99,9 +99,8 @@ test(`exécution complète de la chaine "compact"`, (t: ExecutionContext) => {
   t.deepEqual(mapResults, expectedMapResults)
 
   // 2. reduce
-  const reduceKey = importedData.value.key
-  const reduceValues = [mapResults[reduceKey]]
-  const reduceResults = reduce(reduceKey, reduceValues)
+  const reduceValues: CompanyDataValues[] = [mapResults[siret]]
+  const reduceResults = reduce(siret, reduceValues)
   t.deepEqual(
     reduceResults,
     /*expectedFinalizeResultValue*/ expectedReduceResults as unknown // TODO: update types to match data
@@ -111,10 +110,7 @@ test(`exécution complète de la chaine "compact"`, (t: ExecutionContext) => {
   const global = globalThis as any
   global.serie_periode = dates
   const index: ReduceIndexFlags = { algo1: true, algo2: true }
-  const finalizeKey = reduceKey
   const finalizeValues = { ...reduceResults, index }
-  const finalizeResultValue = removeRandomOrder(
-    finalize(finalizeKey, finalizeValues)
-  )
+  const finalizeResultValue = removeRandomOrder(finalize(siret, finalizeValues))
   t.deepEqual(finalizeResultValue, expectedFinalizeResultValue)
 })
