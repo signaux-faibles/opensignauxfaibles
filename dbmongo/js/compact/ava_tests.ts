@@ -49,7 +49,7 @@ const importedData = {
 }
 
 // output data inspired by test-api.sh
-const expected = [
+const expectedFinalizeResults = [
   {
     _id: "01234567891011",
     value: {
@@ -80,7 +80,7 @@ const expected = [
 test(`exécution complète de la chaine "compact"`, (t: ExecutionContext) => {
   // 1. map
   const mapResults = runMongoMap(map, importedData)
-  const potentialMapResults = {
+  const expectedMapResults = {
     "01234567891011": {
       batch: {
         1910: {},
@@ -92,13 +92,13 @@ test(`exécution complète de la chaine "compact"`, (t: ExecutionContext) => {
       scope: "etablissement",
     },
   }
-  t.deepEqual(mapResults, potentialMapResults)
+  t.deepEqual(mapResults, expectedMapResults)
 
   // 2. reduce
   const reduceKey = importedData.value.key
   const reduceValues = [mapResults[reduceKey]]
   const reduceResults = reduce(reduceKey, reduceValues)
-  const potentialReduceResults = {
+  const expectedReduceResults = {
     batch: {
       1910: {},
     },
@@ -107,7 +107,7 @@ test(`exécution complète de la chaine "compact"`, (t: ExecutionContext) => {
   }
   t.deepEqual(
     reduceResults,
-    /*expected[0].value*/ (potentialReduceResults as unknown) as CompanyDataValues // TODO: update types to match data
+    /*expectedFinalizeResults[0].value*/ (expectedReduceResults as unknown) as CompanyDataValues // TODO: update types to match data
   )
 
   // 3. finalize
@@ -123,5 +123,5 @@ test(`exécution complète de la chaine "compact"`, (t: ExecutionContext) => {
   const finalizeResults = [
     { _id: finalizeKey, value: removeRandomOrder(finalizeResultValue) },
   ]
-  t.deepEqual(finalizeResults, expected as unknown)
+  t.deepEqual(finalizeResults, expectedFinalizeResults as unknown)
 })
