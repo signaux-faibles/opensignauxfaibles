@@ -12,6 +12,15 @@ import { finalize } from "./finalize"
 
 const ISODate = (date: string): Date => new Date(date)
 
+const removeRandomOrder = (obj: object): object => {
+  Object.keys(obj).forEach(
+    (key) =>
+      (key === "random_order" && delete obj[key]) ||
+      (typeof obj[key] === "object" && removeRandomOrder(obj[key]))
+  )
+  return obj
+}
+
 // input data from test-api.sh
 const importedData = {
   _id: "random123abc",
@@ -376,7 +385,9 @@ test(`exécution complète de la chaine "compact"`, (t: ExecutionContext) => {
   const finalizeKey = reduceKey
   const finalizeValues = { ...reduceResults, index }
   const finalizeResultValue = finalize(finalizeKey, finalizeValues)
-  const finalizeResults = [{ _id: finalizeKey, value: finalizeResultValue }]
+  const finalizeResults = [
+    { _id: finalizeKey, value: removeRandomOrder(finalizeResultValue) },
+  ]
   t.deepEqual(finalizeResults, expected as unknown)
   // => sample of `actual` VS `expected`:
   //   -             'Tue Oct 01 2019 02:00:00 GMT+0200 (GMT+02:00)': {
