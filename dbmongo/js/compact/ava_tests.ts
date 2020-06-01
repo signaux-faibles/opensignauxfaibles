@@ -2,6 +2,7 @@ import test, { ExecutionContext } from "ava"
 import "../globals"
 import { map } from "./map"
 import { reduce } from "./reduce"
+import { finalize } from "./finalize"
 
 const ISODate = (date: string): Date => new Date(date)
 
@@ -344,9 +345,9 @@ test(`exécution complète de la chaine "compact"`, (t: ExecutionContext) => {
   t.deepEqual(mapResults, potentialMapResults)
 
   // 2. reduce
-  const { key } = importedData.value
-  const values = [mapResults[key]]
-  const reduceResults = reduce(key, values)
+  const reduceKey = importedData.value.key
+  const reduceValues = [mapResults[reduceKey]]
+  const reduceResults = reduce(reduceKey, reduceValues)
   const potentialReduceResults = {
     batch: {
       1910: {},
@@ -354,11 +355,39 @@ test(`exécution complète de la chaine "compact"`, (t: ExecutionContext) => {
     key: "01234567891011",
     scope: "etablissement",
   }
-
   t.deepEqual(
     reduceResults,
     /*expected[0].value*/ (potentialReduceResults as unknown) as CompanyDataValues // TODO: update types to match data
   )
-  // => some fields of final expected results are still missing:
-  //
+
+  // 3. finalize
+  ;(globalThis as any).serie_periode = [
+    ISODate("2014-01-01T00:00:00.000+0000"),
+    ISODate("2019-10-01T00:00:00.000+0000"),
+  ]
+  const index: ReduceIndexFlags = { algo1: true, algo2: true }
+  const finalizeKey = reduceKey
+  const finalizeValues = { ...reduceResults, index }
+  const finalizeResultValue = finalize(finalizeKey, finalizeValues)
+  const finalizeResults = [{ _id: finalizeKey, value: finalizeResultValue }]
+  t.deepEqual(finalizeResults, expected as unknown)
+  // => sample of `actual` VS `expected`:
+  //   -             'Tue Oct 01 2019 02:00:00 GMT+0200 (GMT+02:00)': {
+  //   -               periode: Date 2019-10-01 00:00:00 UTC {},
+  //   -               random_order: 0.19479352943685613,
+  //   -               siret: '01234567891011',
+  //   -             },
+  //   -             'Wed Jan 01 2014 01:00:00 GMT+0100 (GMT+01:00)': {
+  //   -               periode: Date 2014-01-01 00:00:00 UTC {},
+  //   -               random_order: 0.6133162030905268,
+  //   -               siret: '01234567891011',
+  //   -             },
+  //   +             'Fri Apr 01 2016 00:00:00 GMT+0000 (UTC)': {
+  //   +               periode: Date 2016-04-01 00:00:00 UTC {},
+  //   +               siret: '01234567891011',
+  //   +             },
+  //   +             'Fri Aug 01 2014 00:00:00 GMT+0000 (UTC)': {
+  //   +               periode: Date 2014-08-01 00:00:00 UTC {},
+  //   +               siret: '01234567891011',
+  //   +             },
 })
