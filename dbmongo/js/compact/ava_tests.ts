@@ -12,14 +12,10 @@ import { finalize } from "./finalize"
 
 const ISODate = (date: string): Date => new Date(date)
 
-const removeRandomOrder = (obj: any): any => {
-  Object.keys(obj).forEach(
-    (key) =>
-      (key === "random_order" && delete obj[key]) ||
-      (typeof obj[key] === "object" && removeRandomOrder(obj[key]))
-  )
-  return obj
-}
+const removeRandomOrder = (reporderProp: { [key: string]: RepOrder }): void =>
+  Object.keys(reporderProp).forEach((period) => {
+    delete reporderProp[period].random_order
+  })
 
 const runMongoMap = (mapFct: () => void, keyVal: object): object => {
   const results: { [key: string]: any } = {}
@@ -78,7 +74,7 @@ const expectedFinalizeResultValue = {
         }),
         {}
       ),
-    },
+    } as any, // TODO: rendre optionnelles les props de BatchValues, pour retirer ce `any` ?
   },
   scope,
   index,
@@ -117,7 +113,7 @@ test.serial(
       t.is(typeof reporder[periodKey].random_order, "number")
     })
     // vérification de la structure complète, sans les nombres aléatoires
-    const finalizeResultValue = removeRandomOrder(finalizeResult)
-    t.deepEqual(finalizeResultValue, expectedFinalizeResultValue)
+    removeRandomOrder(finalizeResult.batch[batchKey].reporder) // will mutate finalizeResult
+    t.deepEqual(finalizeResult, expectedFinalizeResultValue)
   }
 )
