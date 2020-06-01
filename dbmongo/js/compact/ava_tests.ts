@@ -9,6 +9,7 @@ import "../globals"
 import { map } from "./map"
 import { reduce } from "./reduce"
 import { finalize } from "./finalize"
+import * as f from "../common/generatePeriodSerie.js"
 
 const ISODate = (date: string): Date => new Date(date)
 
@@ -377,10 +378,10 @@ test(`exécution complète de la chaine "compact"`, (t: ExecutionContext) => {
 
   // 3. finalize
   const global = globalThis as any
-  global.serie_periode = [
+  global.serie_periode = f.generatePeriodSerie(
     ISODate("2014-01-01T00:00:00.000+0000"),
-    ISODate("2019-10-01T00:00:00.000+0000"),
-  ]
+    ISODate("2019-10-01T00:00:00.000+0000")
+  )
   const index: ReduceIndexFlags = { algo1: true, algo2: true }
   const finalizeKey = reduceKey
   const finalizeValues = { ...reduceResults, index }
