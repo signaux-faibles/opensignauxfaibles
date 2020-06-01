@@ -1,3 +1,9 @@
+// Objectif de cette suite de tests d'intégration:
+// Vérifier la compatibilité des types et mesurer la couverture lors du passage
+// de données entre les fonctions map(), reduce() et finalize(), en s'appuyant
+// sur le jeu de données minimal utilisé dans notre suite de bout en bout
+// définie dans test-api.sh.
+
 import test, { ExecutionContext } from "ava"
 import "../globals"
 import { map } from "./map"
@@ -361,7 +367,8 @@ test(`exécution complète de la chaine "compact"`, (t: ExecutionContext) => {
   )
 
   // 3. finalize
-  ;(globalThis as any).serie_periode = [
+  const global = globalThis as any
+  global.serie_periode = [
     ISODate("2014-01-01T00:00:00.000+0000"),
     ISODate("2019-10-01T00:00:00.000+0000"),
   ]
