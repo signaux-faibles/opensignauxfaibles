@@ -13,6 +13,8 @@ import * as f from "../common/generatePeriodSerie.js"
 
 const ISODate = (date: string): Date => new Date(date)
 
+const renderedDate = (d: string): string => new Date(d).toString()
+
 const removeRandomOrder = (obj: object): object => {
   Object.keys(obj).forEach(
     (key) =>
@@ -45,279 +47,279 @@ const expected = [
       batch: {
         "1910": {
           reporder: {
-            "Wed Jan 01 2014 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Wed Jan 01 2014 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2014-01-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Sat Feb 01 2014 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Sat Feb 01 2014 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2014-02-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Sat Mar 01 2014 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Sat Mar 01 2014 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2014-03-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Tue Apr 01 2014 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Tue Apr 01 2014 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2014-04-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Thu May 01 2014 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Thu May 01 2014 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2014-05-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Sun Jun 01 2014 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Sun Jun 01 2014 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2014-06-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Tue Jul 01 2014 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Tue Jul 01 2014 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2014-07-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Fri Aug 01 2014 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Fri Aug 01 2014 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2014-08-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Mon Sep 01 2014 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Mon Sep 01 2014 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2014-09-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Wed Oct 01 2014 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Wed Oct 01 2014 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2014-10-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Sat Nov 01 2014 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Sat Nov 01 2014 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2014-11-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Mon Dec 01 2014 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Mon Dec 01 2014 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2014-12-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Thu Jan 01 2015 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Thu Jan 01 2015 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2015-01-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Sun Feb 01 2015 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Sun Feb 01 2015 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2015-02-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Sun Mar 01 2015 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Sun Mar 01 2015 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2015-03-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Wed Apr 01 2015 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Wed Apr 01 2015 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2015-04-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Fri May 01 2015 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Fri May 01 2015 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2015-05-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Mon Jun 01 2015 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Mon Jun 01 2015 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2015-06-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Wed Jul 01 2015 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Wed Jul 01 2015 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2015-07-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Sat Aug 01 2015 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Sat Aug 01 2015 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2015-08-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Tue Sep 01 2015 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Tue Sep 01 2015 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2015-09-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Thu Oct 01 2015 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Thu Oct 01 2015 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2015-10-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Sun Nov 01 2015 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Sun Nov 01 2015 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2015-11-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Tue Dec 01 2015 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Tue Dec 01 2015 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2015-12-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Fri Jan 01 2016 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Fri Jan 01 2016 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2016-01-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Mon Feb 01 2016 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Mon Feb 01 2016 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2016-02-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Tue Mar 01 2016 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Tue Mar 01 2016 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2016-03-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Fri Apr 01 2016 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Fri Apr 01 2016 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2016-04-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Sun May 01 2016 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Sun May 01 2016 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2016-05-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Wed Jun 01 2016 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Wed Jun 01 2016 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2016-06-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Fri Jul 01 2016 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Fri Jul 01 2016 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2016-07-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Mon Aug 01 2016 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Mon Aug 01 2016 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2016-08-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Thu Sep 01 2016 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Thu Sep 01 2016 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2016-09-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Sat Oct 01 2016 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Sat Oct 01 2016 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2016-10-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Tue Nov 01 2016 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Tue Nov 01 2016 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2016-11-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Thu Dec 01 2016 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Thu Dec 01 2016 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2016-12-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Sun Jan 01 2017 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Sun Jan 01 2017 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2017-01-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Wed Feb 01 2017 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Wed Feb 01 2017 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2017-02-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Wed Mar 01 2017 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Wed Mar 01 2017 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2017-03-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Sat Apr 01 2017 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Sat Apr 01 2017 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2017-04-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Mon May 01 2017 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Mon May 01 2017 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2017-05-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Thu Jun 01 2017 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Thu Jun 01 2017 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2017-06-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Sat Jul 01 2017 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Sat Jul 01 2017 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2017-07-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Tue Aug 01 2017 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Tue Aug 01 2017 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2017-08-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Fri Sep 01 2017 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Fri Sep 01 2017 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2017-09-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Sun Oct 01 2017 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Sun Oct 01 2017 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2017-10-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Wed Nov 01 2017 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Wed Nov 01 2017 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2017-11-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Fri Dec 01 2017 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Fri Dec 01 2017 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2017-12-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Mon Jan 01 2018 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Mon Jan 01 2018 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2018-01-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Thu Feb 01 2018 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Thu Feb 01 2018 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2018-02-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Thu Mar 01 2018 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Thu Mar 01 2018 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2018-03-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Sun Apr 01 2018 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Sun Apr 01 2018 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2018-04-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Tue May 01 2018 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Tue May 01 2018 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2018-05-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Fri Jun 01 2018 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Fri Jun 01 2018 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2018-06-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Sun Jul 01 2018 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Sun Jul 01 2018 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2018-07-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Wed Aug 01 2018 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Wed Aug 01 2018 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2018-08-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Sat Sep 01 2018 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Sat Sep 01 2018 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2018-09-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Mon Oct 01 2018 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Mon Oct 01 2018 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2018-10-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Thu Nov 01 2018 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Thu Nov 01 2018 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2018-11-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Sat Dec 01 2018 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Sat Dec 01 2018 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2018-12-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Tue Jan 01 2019 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Tue Jan 01 2019 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2019-01-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Fri Feb 01 2019 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Fri Feb 01 2019 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2019-02-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Fri Mar 01 2019 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Fri Mar 01 2019 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2019-03-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Mon Apr 01 2019 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Mon Apr 01 2019 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2019-04-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Wed May 01 2019 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Wed May 01 2019 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2019-05-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Sat Jun 01 2019 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Sat Jun 01 2019 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2019-06-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Mon Jul 01 2019 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Mon Jul 01 2019 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2019-07-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Thu Aug 01 2019 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Thu Aug 01 2019 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2019-08-01T00:00:00Z"),
               siret: "01234567891011",
             },
-            "Sun Sep 01 2019 00:00:00 GMT+0000 (UTC)": {
+            [renderedDate("Sun Sep 01 2019 00:00:00 GMT+0000 (UTC)")]: {
               periode: ISODate("2019-09-01T00:00:00Z"),
               siret: "01234567891011",
             },
