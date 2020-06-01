@@ -12,7 +12,7 @@ import { finalize } from "./finalize"
 
 const ISODate = (date: string): Date => new Date(date)
 
-const removeRandomOrder = (obj: object): object => {
+const removeRandomOrder = (obj: any): any => {
   Object.keys(obj).forEach(
     (key) =>
       (key === "random_order" && delete obj[key]) ||
@@ -22,7 +22,7 @@ const removeRandomOrder = (obj: object): object => {
 }
 
 const runMongoMap = (mapFct: () => void, keyVal: object): object => {
-  const results = {}
+  const results: { [key: string]: any } = {}
   globalThis.emit = (key: string, value: CompanyDataValuesWithFlags): void => {
     results[key] = value
   }
