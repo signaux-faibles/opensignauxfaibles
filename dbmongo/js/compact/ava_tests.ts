@@ -92,19 +92,22 @@ const expectedFinalizeResultValue = {
   key: siret,
 } as unknown
 
-test(`exécution complète de la chaine "compact"`, (t: ExecutionContext) => {
-  // 1. map
+// exécution complète de la chaine "compact"
+
+test.serial(`compact.map()`, (t: ExecutionContext) => {
   const mapResults = runMongoMap(map, importedData)
   t.deepEqual(mapResults, expectedMapResults)
+})
 
-  // 2. reduce
+test.serial(`compact.reduce()`, (t: ExecutionContext) => {
   const reduceValues: CompanyDataValues[] = [expectedMapResults[siret]]
   const reduceResults = reduce(siret, reduceValues)
-  t.deepEqual(reduceResults, expectedReduceResults) // TODO: update types to match data
+  t.deepEqual(reduceResults, expectedReduceResults)
+})
 
-  // 3. finalize
+test.serial(`compact.finalize()`, (t: ExecutionContext) => {
   const global = globalThis as any
-  global.serie_periode = dates
+  global.serie_periode = dates // used by complete_reporder(), which is called by finalize()
   const index: ReduceIndexFlags = { algo1: true, algo2: true }
   const finalizeValues = { ...expectedReduceResults, index }
   const finalizeResultValue = removeRandomOrder(finalize(siret, finalizeValues))
