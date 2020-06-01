@@ -33,57 +33,60 @@ const runMongoMap = (mapFct: () => void, keyVal: object): object => {
 }
 
 // input data from test-api.sh
+const siret = "01234567891011"
+const scope = "etablissement"
+const batchKey = "1910"
 const importedData = {
   _id: "random123abc",
   value: {
     batch: {
-      "1910": {},
+      [batchKey]: {},
     },
-    scope: "etablissement",
+    scope,
     index: {
       algo2: true,
     },
-    key: "01234567891011",
+    key: siret,
   },
 }
 
 // output data inspired by test-api.sh
 const expectedFinalizeResultValue = {
-      batch: {
-        "1910": {
-          reporder: {
-            [renderedDate("Tue Dec 01 2015 00:00:00 GMT+0000 (UTC)")]: {
-              periode: ISODate("2015-12-01T00:00:00Z"),
-              siret: "01234567891011",
-            },
-            [renderedDate("Fri Jan 01 2016 00:00:00 GMT+0000 (UTC)")]: {
-              periode: ISODate("2016-01-01T00:00:00Z"),
-              siret: "01234567891011",
-            },
-          },
+  batch: {
+    [batchKey]: {
+      reporder: {
+        [renderedDate("Tue Dec 01 2015 00:00:00 GMT+0000 (UTC)")]: {
+          periode: ISODate("2015-12-01T00:00:00Z"),
+          siret,
+        },
+        [renderedDate("Fri Jan 01 2016 00:00:00 GMT+0000 (UTC)")]: {
+          periode: ISODate("2016-01-01T00:00:00Z"),
+          siret,
         },
       },
-      scope: "etablissement",
-      index: {
-        algo1: false,
-        algo2: false,
-      },
-      key: "01234567891011",
+    },
+  },
+  scope,
+  index: {
+    algo1: false,
+    algo2: false,
+  },
+  key: siret,
 } as unknown
 
 test(`exécution complète de la chaine "compact"`, (t: ExecutionContext) => {
   // 1. map
   const mapResults = runMongoMap(map, importedData)
   const expectedMapResults = {
-    "01234567891011": {
+    [siret]: {
       batch: {
-        1910: {},
+        [batchKey]: {},
       },
       index: {
         algo2: true,
       },
-      key: "01234567891011",
-      scope: "etablissement",
+      key: siret,
+      scope,
     },
   }
   t.deepEqual(mapResults, expectedMapResults)
@@ -93,15 +96,13 @@ test(`exécution complète de la chaine "compact"`, (t: ExecutionContext) => {
   const reduceValues = [mapResults[reduceKey]]
   const reduceResults = reduce(reduceKey, reduceValues)
   const expectedReduceResults = {
-    batch: {
-      1910: {},
-    },
-    key: "01234567891011",
-    scope: "etablissement",
+    batch: { [batchKey]: {} },
+    key: siret,
+    scope,
   }
   t.deepEqual(
     reduceResults,
-    /*expectedFinalizeResults[0].value*/ (expectedReduceResults as unknown) as CompanyDataValues // TODO: update types to match data
+    /*expectedFinalizeResultValue*/ expectedReduceResults as unknown // TODO: update types to match data
   )
 
   // 3. finalize
