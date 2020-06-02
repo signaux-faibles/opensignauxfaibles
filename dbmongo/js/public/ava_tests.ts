@@ -125,15 +125,6 @@ test.serial(
 )
 
 test.serial(`public.finalize()`, (t: ExecutionContext) => {
-  const global = globalThis as any // eslint-disable-line @typescript-eslint/no-explicit-any
-  global.serie_periode = dates // used by complete_reporder(), which is called by finalize()
   const finalizeResult = finalize({ scope }, expectedReduceResults)
-  const { reporder } = finalizeResult.batch[batchKey]
-  // reporder contient une propriété par periode
-  t.is(Object.keys(reporder).length, dates.length)
-  Object.keys(reporder).forEach((periodKey) => {
-    t.is(typeof reporder[periodKey].random_order, "number")
-  })
-  // vérification de la structure complète, sans les nombres aléatoires
   t.deepEqual(finalizeResult, expectedFinalizeResultValue)
 })
