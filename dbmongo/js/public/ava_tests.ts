@@ -46,6 +46,7 @@ const runMongoMap = (mapFct: () => void, keyVal: object): object => {
 }
 
 // test data inspired by test-api.sh
+const SIREN_LENGTH = 9
 const siret: SiretOrSiren = "01234567891011"
 const scope: Scope = "etablissement"
 const batchKey = "1910"
@@ -73,29 +74,22 @@ const rawData = {
   key: siret,
 }
 
-// TODO: re-exprimer cet objet attendu à l'aide des variables définies ci-dessus
 const expectedMapResults = {
-  etablissement_01234567891011: {
+  [scope + "_" + siret]: {
     apconso: [],
     apdemande: [],
-    batch: "1910",
+    batch: batchKey,
     compte: undefined,
     cotisation: [0, 0],
     debit: [
-      {
-        part_ouvriere: 0,
-        part_patronale: 0,
-      },
-      {
-        part_ouvriere: 0,
-        part_patronale: 0,
-      },
+      { part_ouvriere: 0, part_patronale: 0 },
+      { part_ouvriere: 0, part_patronale: 0 },
     ],
     delai: [],
     dernier_effectif: undefined,
     effectif: [],
-    idEntreprise: "entreprise_012345678",
-    key: "01234567891011",
+    idEntreprise: "entreprise_" + siret.substr(0, SIREN_LENGTH),
+    key: siret,
     last_procol: {
       etat: "in_bonis",
     },
