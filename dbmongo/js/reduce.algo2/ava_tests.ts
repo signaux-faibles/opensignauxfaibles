@@ -7,10 +7,26 @@
 import test, { ExecutionContext } from "ava"
 import "../globals"
 import { map } from "./map"
+import { flatten } from "./flatten.js"
+import { outputs } from "./outputs.js"
+import { repeatable } from "./repeatable.js"
+import { add } from "./add.js"
+import { defaillances } from "./defaillances.js"
+import { dealWithProcols } from "./dealWithProcols.js"
+import { populateNafAndApe } from "./populateNafAndApe.js"
 // import { reduce } from "./reduce"
 // import { finalize } from "./finalize"
 
-// const global = globalThis as any // eslint-disable-line @typescript-eslint/no-explicit-any
+const global = globalThis as any // eslint-disable-line @typescript-eslint/no-explicit-any
+global.f = {
+  flatten,
+  outputs,
+  repeatable,
+  add,
+  defaillances,
+  dealWithProcols,
+  populateNafAndApe,
+}
 
 const ISODate = (date: string): Date => new Date(date)
 
@@ -31,6 +47,10 @@ const dates = [
   ISODate("2015-12-01T00:00:00.000+0000"),
   ISODate("2016-01-01T00:00:00.000+0000"),
 ]
+global.actual_batch = batchKey // used by map()
+global.serie_periode = dates // used by map()
+global.includes = { all: true } // used by map()
+global.naf = {} // used by map()
 
 // même valeur en entrée que pour ../compact/ava_tests.ts
 const rawData = {

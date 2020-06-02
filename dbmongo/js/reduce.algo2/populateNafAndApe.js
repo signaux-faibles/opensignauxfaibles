@@ -15,3 +15,5 @@ function populateNafAndApe(output_indexed, naf) {
     }
   })
 }
+
+exports.populateNafAndApe = populateNafAndApe

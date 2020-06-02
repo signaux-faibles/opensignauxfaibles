@@ -18,3 +18,5 @@ function outputs (v, serie_periode) {
 
   return [output_array, output_indexed]
 }
+
+exports.outputs = outputs
