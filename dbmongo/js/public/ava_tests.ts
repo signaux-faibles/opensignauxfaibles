@@ -83,11 +83,8 @@ const expectedMapResults = {
     apdemande: [],
     batch: batchKey,
     compte: undefined,
-    cotisation: [0, 0],
-    debit: [
-      { part_ouvriere: 0, part_patronale: 0 },
-      { part_ouvriere: 0, part_patronale: 0 },
-    ],
+    cotisation: dates.map(() => 0),
+    debit: dates.map(() => ({ part_ouvriere: 0, part_patronale: 0 })),
     delai: [],
     dernier_effectif: undefined,
     effectif: [],
