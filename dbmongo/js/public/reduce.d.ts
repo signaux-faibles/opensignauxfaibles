@@ -1,1 +1,1 @@
-export function reduce(key: { scope: Scope }, values: any[]): any[]
+export function reduce<T>(key: { scope: Scope }, values: T[]): T
