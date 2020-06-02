@@ -1,6 +1,13 @@
 import test, { ExecutionContext } from "ava"
 import "../globals"
-import { delais, Delai, DelaiMap } from "./delais"
+import {
+  delais,
+  Delai,
+  DelaiMap,
+  DelaiComputedValues,
+  IndexedOutputExpectedValues,
+  IndexedOutputPartial,
+} from "./delais"
 
 const fevrier = new Date("2014-02-01")
 const mars = new Date("2014-03-01")
@@ -13,22 +20,23 @@ const nbDays = (firstDate: Date, secondDate: Date): number => {
 }
 
 const makeDelai = (firstDate: Date, secondDate: Date): Delai => ({
-  numero_compte: "__DUMMY__",
-  numero_contentieux: "__DUMMY__",
   date_creation: firstDate,
   date_echeance: secondDate,
   duree_delai: nbDays(firstDate, secondDate),
-  denomination: "__DUMMY__",
-  indic_6m: "__DUMMY__",
-  annee_creation: 2000, // Dummy value
   montant_echeancier: 1000,
-  stade: "__DUMMY__",
-  action: "__DUMMY__",
+})
+
+const makeOutputIndexed = ({
+  montant_part_patronale = 0,
+  montant_part_ouvriere = 0,
+} = {}): IndexedOutputExpectedValues => ({
+  montant_part_patronale,
+  montant_part_ouvriere,
 })
 
 const testProperty = (
   t: ExecutionContext,
-  propertyName: string,
+  propertyName: keyof DelaiComputedValues,
   expectedFebruary: number,
   expectedMarch: number
 ): void => {
@@ -36,15 +44,15 @@ const testProperty = (
   const delaiMap: DelaiMap = {
     abc: delaiTest,
   }
-  const output_indexed = {}
-  output_indexed[fevrier.getTime()] = {
+  const output_indexed: IndexedOutputPartial = {}
+  output_indexed[fevrier.getTime()] = makeOutputIndexed({
     montant_part_patronale: 600, // TODO: n'inclure ces valeurs que dans les tests qui en ont besoin
     montant_part_ouvriere: 0,
-  }
-  output_indexed[mars.getTime()] = {
-    montant_part_patronale: 600,
+  })
+  output_indexed[mars.getTime()] = makeOutputIndexed({
+    montant_part_patronale: 600, // TODO: n'inclure ces valeurs que dans les tests qui en ont besoin
     montant_part_ouvriere: 0,
-  }
+  })
   delais({ delai: delaiMap }, output_indexed)
   t.is(output_indexed[fevrier.getTime()][propertyName], expectedFebruary)
   t.is(output_indexed[mars.getTime()][propertyName], expectedMarch)
@@ -77,8 +85,8 @@ test("un délai en dehors de la période d'intérêt est ignorée", (t) => {
   const delaiMap: DelaiMap = {
     abc: delaiTest,
   }
-  const output_indexed = {}
-  output_indexed[fevrier.getTime()] = {}
+  const output_indexed: IndexedOutputPartial = {}
+  output_indexed[fevrier.getTime()] = makeOutputIndexed()
   delais({ delai: delaiMap }, output_indexed)
   t.deepEqual(Object.keys(output_indexed), [fevrier.getTime().toString()])
 })

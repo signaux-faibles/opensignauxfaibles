@@ -392,9 +392,6 @@ const test_cases = [
 ]
 Object.freeze(test_cases)
 
-const f = { currentState }
-Object.freeze(f)
-
 const jsParams = this // => all properties of this object will become global. TODO: remove this when merging namespace (https://github.com/signaux-faibles/opensignauxfaibles/pull/40)
 
 const test_results = test_cases.map(function(tc, id) {

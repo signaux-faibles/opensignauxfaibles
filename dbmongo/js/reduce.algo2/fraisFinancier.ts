@@ -1,4 +1,20 @@
-export function fraisFinancier(diane): number | null {
+export type DianeProperty =
+  | "interets"
+  | "excedent_brut_d_exploitation"
+  | "produits_financiers"
+  | "produit_exceptionnel"
+  | "charge_exceptionnelle"
+  | "charges_financieres"
+
+export type Diane = {
+  [prop in DianeProperty]: number
+}
+
+export type DianePartial = {
+  [prop in DianeProperty]: number | null
+}
+
+export function fraisFinancier(diane: DianePartial): number | null {
   "use strict"
   if (
     "interets" in diane &&

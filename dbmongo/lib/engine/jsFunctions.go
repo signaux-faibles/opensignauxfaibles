@@ -186,6 +186,12 @@ package engine
   }
   return(reg)
 }`,
+"setBatchValueForType": `// Cette fonction TypeScript permet de vérifier que seuls les types reconnus
+// peuvent être intégrés dans un BatchValue de destination.
+// Ex: setBatchValueForType(batchValue, "pouet", {}) cause une erreur ts(2345).
+function setBatchValueForType(batchValue, typeName, updatedValues) {
+    batchValue[typeName] = updatedValues;
+}`,
 },
 "compact":{
 "complete_reporder": `// complete_reporder ajoute une propriété "reporder" pour chaque couple
@@ -299,8 +305,8 @@ function reduce(key, values) {
         Object.keys(value.batch).forEach((batch) => {
             m.batch[batch] = m.batch[batch] || {};
             Object.keys(value.batch[batch]).forEach((type) => {
-                m.batch[batch][type] = m.batch[batch][type] || {};
-                Object.assign(m.batch[batch][type], value.batch[batch][type]);
+                const updatedValues = Object.assign(Object.assign({}, m.batch[batch][type]), value.batch[batch][type]);
+                setBatchValueForType(m.batch[batch], type, updatedValues);
             });
         });
         return m;
@@ -430,15 +436,17 @@ function reduce(key, values) {
             }
         });
         new_types.forEach((type) => {
-            if (hashToAdd[type]) {
-                reduced_value.batch[batch][type] = Object.keys(reduced_value.batch[batch][type] || {})
+            if (hashToAdd[type] && type !== "compact") {
+                const hashedValues = reduced_value.batch[batch][type];
+                const updatedValues = Object.keys(hashedValues || {})
                     .filter((hash) => {
                     return hashToAdd[type].has(hash);
                 })
                     .reduce((m, hash) => {
-                    m[hash] = reduced_value.batch[batch][type][hash];
+                    m[hash] = hashedValues[hash];
                     return m;
                 }, {});
+                setBatchValueForType(reduced_value.batch[batch], type, updatedValues);
             }
         });
         // 6. nettoyage
