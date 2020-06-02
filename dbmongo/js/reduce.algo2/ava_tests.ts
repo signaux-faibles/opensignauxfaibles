@@ -19,7 +19,7 @@ import { dateAddMonth } from "./dateAddMonth.js"
 import { generatePeriodSerie } from "../common/generatePeriodSerie.js"
 import { cibleApprentissage } from "./cibleApprentissage.js"
 import { lookAhead } from "./lookAhead.js"
-// import { reduce } from "./reduce"
+import { reduce } from "./reduce.js"
 // import { finalize } from "./finalize"
 
 const global = globalThis as any // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -41,9 +41,9 @@ global.f = {
 const ISODate = (date: string): Date => new Date(date)
 
 const runMongoMap = (mapFct: () => void, keyVal: any): any => {
-  const results: { [key: string]: any } = {}
+  const results: { _id: any; value: any }[] = []
   globalThis.emit = (key: any, value: any): void => {
-    results[JSON.stringify(key)] = value
+    results.push({ _id: key, value })
   }
   mapFct.call(keyVal)
   return results
@@ -80,36 +80,54 @@ const rawData = {
   key: siret,
 }
 
-// valeurs résultantes de l'exécution de map() => à vérifier
-const expectedMapResults = {
-  '{"batch":"1910","siren":"012345678","periode":"2015-12-01T00:00:00.000Z","type":"other"}': {
-    "01234567891011": {
-      cotisation_moy12m: 0,
-      effectif: null,
-      etat_proc_collective: "in_bonis",
-      interessante_urssaf: true,
-      outcome: false,
-      periode: new Date("2015-12-01 00:00:00 UTC"),
-      random_order: undefined,
-      siret: "01234567891011",
+// valeurs résultantes de l'exécution de map() => à vérifier et à ré-écrire de manière plus concise
+const expectedMapResults = [
+  {
+    _id: {
+      batch: "1910",
+      siren: "012345678",
+      periode: "2015-12-01T00:00:00.000Z",
+      type: "other",
+    },
+    value: {
+      "01234567891011": {
+        cotisation_moy12m: 0,
+        effectif: null,
+        etat_proc_collective: "in_bonis",
+        interessante_urssaf: true,
+        outcome: false,
+        periode: new Date("2015-12-01 00:00:00 UTC"),
+        random_order: undefined,
+        siret: "01234567891011",
+      },
     },
   },
-  '{"batch":"1910","siren":"012345678","periode":"2016-01-01T00:00:00.000Z","type":"other"}': {
-    "01234567891011": {
-      cotisation_moy12m: 0,
-      effectif: null,
-      etat_proc_collective: "in_bonis",
-      interessante_urssaf: true,
-      outcome: false,
-      periode: new Date("2016-01-01 00:00:00 UTC"),
-      random_order: undefined,
-      siret: "01234567891011",
+  {
+    _id: {
+      batch: "1910",
+      siren: "012345678",
+      periode: "2016-01-01T00:00:00.000Z",
+      type: "other",
+    },
+    value: {
+      "01234567891011": {
+        cotisation_moy12m: 0,
+        effectif: null,
+        etat_proc_collective: "in_bonis",
+        interessante_urssaf: true,
+        outcome: false,
+        periode: new Date("2016-01-01 00:00:00 UTC"),
+        random_order: undefined,
+        siret: "01234567891011",
+      },
     },
   },
-}
-/*
+]
+
+// à populer à partir de la valeur retournée par reduce()
 const expectedReduceResults = {}
 
+/*
 // extrait de test-api.golden-master.txt, pour les dates spécifiées plus haut
 const expectedFinalizeResultValue = [
   {
@@ -151,18 +169,19 @@ const expectedFinalizeResultValue = [
 
 // exécution complète de la chaine "reduce.algo2"
 
-test.serial(`reduce.algo2.map()`, (t: ExecutionContext) => {
-  const mapResults = runMongoMap(map, { _id: siret, value: rawData })
-  t.deepEqual(mapResults, expectedMapResults)
-})
-
-test.todo(
-  `reduce.algo2.reduce()` /*, (t: ExecutionContext) => {
-  const reduceValues: CompanyDataValues[] = [expectedMapResults[siret]]
-  const reduceResults = reduce(siret, reduceValues)
-  t.deepEqual(reduceResults, expectedReduceResults)
-}*/
+test.serial(
+  `reduce.algo2.map() émet un objet par période`,
+  (t: ExecutionContext) => {
+    const mapResults = runMongoMap(map, { _id: siret, value: rawData })
+    t.deepEqual(mapResults, expectedMapResults)
+  }
 )
+
+test.serial(`reduce.algo2.reduce()`, (t: ExecutionContext) => {
+  const reduceValues = expectedMapResults
+  const reduceResults = reduce(null, reduceValues)
+  t.deepEqual(reduceResults, expectedReduceResults)
+})
 
 test.todo(
   `reduce.algo2.finalize()` /*, (t: ExecutionContext) => {
