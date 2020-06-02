@@ -218,18 +218,23 @@ test.serial(
   }
 )
 
-test.serial(`reduce.algo2.reduce()`, (t: ExecutionContext) => {
-  const reduceResults = expectedMapResults.map(({ _id, value }) => {
-    // Note: on suppose qu'il n'y a qu'une valeur par clé
-    return { _id, value: reduce(_id, [value]) }
-  })
-  t.deepEqual(reduceResults, expectedReduceResults)
-})
+test.serial(
+  `reduce.algo2.reduce() émet un objet par période`,
+  (t: ExecutionContext) => {
+    const reduceResults = expectedMapResults.map(({ _id, value }) => {
+      // Note: on suppose qu'il n'y a qu'une valeur par clé
+      return { _id, value: reduce(_id, [value]) }
+    })
+    t.deepEqual(reduceResults, expectedReduceResults)
+  }
+)
 
 test.serial(`reduce.algo2.finalize()`, (t: ExecutionContext) => {
   const finalizeResult = expectedReduceResults.map(({ _id, value }) => {
     // Note: on suppose qu'il n'y a qu'une valeur par clé
-    return { _id, value: finalize(_id, value) }
+    const result = finalize(_id, value)
+    return { _id, value: "incomplete" in result ? result : result[0] } // TODO: pourquoi préciser [0] ici ? 🤔
   })
-  t.deepEqual(finalizeResult, expectedFinalizeResults as any)
+  t.log(JSON.stringify(finalizeResult, null, 2))
+  t.deepEqual(finalizeResult, expectedFinalizeResults as any) // ⚠️ Les types sont incompatibles => réparer la déclaration TS de finalize ?
 })
