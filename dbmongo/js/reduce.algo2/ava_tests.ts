@@ -14,6 +14,11 @@ import { add } from "./add.js"
 import { defaillances } from "./defaillances.js"
 import { dealWithProcols } from "./dealWithProcols.js"
 import { populateNafAndApe } from "./populateNafAndApe.js"
+import { cotisation } from "./cotisation.js"
+import { dateAddMonth } from "./dateAddMonth.js"
+import { generatePeriodSerie } from "../common/generatePeriodSerie.js"
+import { cibleApprentissage } from "./cibleApprentissage.js"
+import { lookAhead } from "./lookAhead.js"
 // import { reduce } from "./reduce"
 // import { finalize } from "./finalize"
 
@@ -26,6 +31,11 @@ global.f = {
   defaillances,
   dealWithProcols,
   populateNafAndApe,
+  cotisation,
+  dateAddMonth,
+  generatePeriodSerie,
+  cibleApprentissage,
+  lookAhead,
 }
 
 const ISODate = (date: string): Date => new Date(date)
@@ -116,7 +126,7 @@ const expectedFinalizeResultValue = [
 // exécution complète de la chaine "reduce.algo2"
 
 test.serial(`reduce.algo2.map()`, (t: ExecutionContext) => {
-  const mapResults = runMongoMap(map, { value: rawData })
+  const mapResults = runMongoMap(map, { _id: siret, value: rawData })
   t.deepEqual(mapResults, expectedMapResults)
 })
 

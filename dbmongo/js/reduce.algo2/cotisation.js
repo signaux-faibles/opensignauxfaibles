@@ -50,3 +50,5 @@ function cotisation(output_indexed, output_array) {
       counter = 0
   })
 }
+
+exports.cotisation = cotisation

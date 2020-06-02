@@ -33,3 +33,5 @@ function lookAhead(data, attr_name, n_months, past) {
 
   return output
 }
+
+exports.lookAhead = lookAhead
