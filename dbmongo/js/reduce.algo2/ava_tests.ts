@@ -20,7 +20,7 @@ import { generatePeriodSerie } from "../common/generatePeriodSerie.js"
 import { cibleApprentissage } from "./cibleApprentissage.js"
 import { lookAhead } from "./lookAhead.js"
 import { reduce } from "./reduce.js"
-// import { finalize } from "./finalize"
+import { finalize } from "./finalize.js"
 
 const global = globalThis as any // eslint-disable-line @typescript-eslint/no-explicit-any
 global.f = {
@@ -124,31 +124,52 @@ const expectedMapResults = [
   },
 ]
 
-// valeurs résultantes de l'exécution de map() => à vérifier et à ré-écrire de manière plus concise
-const expectedReduceResults = {
-  _id: {
-    batch: "1910",
-    periode: new Date("2015-12-01 00:00:00 UTC"),
-    siren: "012345678",
-    type: "other",
-  },
-  value: {
-    "01234567891011": {
-      cotisation_moy12m: 0,
-      effectif: null,
-      etat_proc_collective: "in_bonis",
-      interessante_urssaf: true,
-      outcome: false,
+// valeurs résultantes de l'exécution de reduce() => à vérifier et à ré-écrire de manière plus concise
+const expectedReduceResults = [
+  {
+    _id: {
+      batch: "1910",
       periode: new Date("2015-12-01 00:00:00 UTC"),
-      random_order: undefined,
-      siret: "01234567891011",
+      siren: "012345678",
+      type: "other",
+    },
+    value: {
+      "01234567891011": {
+        cotisation_moy12m: 0,
+        effectif: null,
+        etat_proc_collective: "in_bonis",
+        interessante_urssaf: true,
+        outcome: false,
+        periode: new Date("2015-12-01 00:00:00 UTC"),
+        random_order: undefined,
+        siret: "01234567891011",
+      },
     },
   },
-}
+  {
+    _id: {
+      batch: "1910",
+      periode: new Date("2016-01-01 00:00:00 UTC"),
+      siren: "012345678",
+      type: "other",
+    },
+    value: {
+      "01234567891011": {
+        cotisation_moy12m: 0,
+        effectif: null,
+        etat_proc_collective: "in_bonis",
+        interessante_urssaf: true,
+        outcome: false,
+        periode: new Date("2016-01-01 00:00:00 UTC"),
+        random_order: undefined,
+        siret: "01234567891011",
+      },
+    },
+  },
+]
 
-/*
 // extrait de test-api.golden-master.txt, pour les dates spécifiées plus haut
-const expectedFinalizeResultValue = [
+const expectedFinalizeResults = [
   {
     _id: {
       batch: "1910",
@@ -184,7 +205,6 @@ const expectedFinalizeResultValue = [
     },
   },
 ]
-*/
 
 // exécution complète de la chaine "reduce.algo2"
 
@@ -197,14 +217,17 @@ test.serial(
 )
 
 test.serial(`reduce.algo2.reduce()`, (t: ExecutionContext) => {
-  const reduceValues = expectedMapResults
-  const reduceResults = reduce(null, reduceValues)
+  const reduceResults = expectedMapResults.map(({ _id, value }) => {
+    // Note: on suppose qu'il n'y a qu'une valeur par clé
+    return { _id, value: reduce(_id, [value]) }
+  })
   t.deepEqual(reduceResults, expectedReduceResults)
 })
 
-test.todo(
-  `reduce.algo2.finalize()` /*, (t: ExecutionContext) => {
-  const finalizeResult = finalize(siret, expectedReduceResults)
-  t.deepEqual(finalizeResult, expectedFinalizeResultValue)
-}*/
-)
+test.serial(`reduce.algo2.finalize()`, (t: ExecutionContext) => {
+  const finalizeResult = expectedReduceResults.map(({ _id, value }) => {
+    // Note: on suppose qu'il n'y a qu'une valeur par clé
+    return { _id, value: finalize(_id, value) }
+  })
+  t.deepEqual(finalizeResult, expectedFinalizeResults as any)
+})
