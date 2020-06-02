@@ -40,6 +40,8 @@ global.f = {
 
 const ISODate = (date: string): Date => new Date(date)
 
+;(Object as any).bsonsize = (obj: any): number => JSON.stringify(obj).length // used by finalize()
+
 const runMongoMap = (mapFct: () => void, keyVal: any): any => {
   const results: { _id: any; value: any }[] = []
   globalThis.emit = (key: any, value: any): void => {
