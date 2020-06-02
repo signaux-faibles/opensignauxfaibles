@@ -9,10 +9,13 @@ import * as f from "./complete_reporder"
 // l'échantillonnage pour l'entraînement du modèle.
 export function finalize(
   k: SiretOrSiren,
-  o: CompanyDataValuesWithFlags
+  companyDataValues: CompanyDataValues
 ): CompanyDataValuesWithFlags {
   "use strict"
-  o.index = { algo1: false, algo2: false }
+  let o: CompanyDataValuesWithFlags = {
+    ...companyDataValues,
+    index: { algo1: false, algo2: false },
+  }
 
   if (o.scope === "entreprise") {
     o.index.algo1 = true
