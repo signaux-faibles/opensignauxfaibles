@@ -124,8 +124,27 @@ const expectedMapResults = [
   },
 ]
 
-// à populer à partir de la valeur retournée par reduce()
-const expectedReduceResults = {}
+// valeurs résultantes de l'exécution de map() => à vérifier et à ré-écrire de manière plus concise
+const expectedReduceResults = {
+  _id: {
+    batch: "1910",
+    periode: new Date("2015-12-01 00:00:00 UTC"),
+    siren: "012345678",
+    type: "other",
+  },
+  value: {
+    "01234567891011": {
+      cotisation_moy12m: 0,
+      effectif: null,
+      etat_proc_collective: "in_bonis",
+      interessante_urssaf: true,
+      outcome: false,
+      periode: new Date("2015-12-01 00:00:00 UTC"),
+      random_order: undefined,
+      siret: "01234567891011",
+    },
+  },
+}
 
 /*
 // extrait de test-api.golden-master.txt, pour les dates spécifiées plus haut
