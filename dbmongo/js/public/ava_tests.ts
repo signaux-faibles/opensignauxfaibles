@@ -18,7 +18,7 @@ import { delai } from "./delai.js"
 import { compte } from "./compte.js"
 import { dealWithProcols } from "./dealWithProcols.js"
 import { reduce } from "./reduce"
-// import { finalize } from "./finalize"
+import { finalize } from "./finalize"
 
 const global = globalThis as any // eslint-disable-line @typescript-eslint/no-explicit-any
 global.f = {
@@ -103,6 +103,8 @@ const expectedMapResults = {
 
 const expectedReduceResults = expectedMapResults[etablissementKey] // TODO: à confirmer
 
+const expectedFinalizeResultValue = {} // TODO: to populate
+
 // exécution complète de la chaine "public"
 
 test.serial(
@@ -113,28 +115,25 @@ test.serial(
   }
 )
 
-test.serial(`public.reduce()`, (t: ExecutionContext) => {
-  const reduceValues = [expectedMapResults[etablissementKey]]
-  const reduceResults = reduce({ scope }, reduceValues)
-  t.deepEqual(reduceResults, expectedReduceResults)
-})
-
-test.todo(
-  `public.finalize()`
-  /*
+test.serial(
+  `public.reduce() retourne les propriétés d'établissement, telles quelles`,
   (t: ExecutionContext) => {
-    const global = globalThis as any // eslint-disable-line @typescript-eslint/no-explicit-any
-    global.serie_periode = dates // used by complete_reporder(), which is called by finalize()
-    const finalizeResult = finalize(siret, expectedReduceResults)
-    const { reporder } = finalizeResult.batch[batchKey]
-    // reporder contient une propriété par periode
-    t.is(Object.keys(reporder).length, dates.length)
-    Object.keys(reporder).forEach((periodKey) => {
-      t.is(typeof reporder[periodKey].random_order, "number")
-    })
-    // vérification de la structure complète, sans les nombres aléatoires
-    removeRandomOrder(finalizeResult.batch[batchKey].reporder) // will mutate finalizeResult
-    t.deepEqual(finalizeResult, expectedFinalizeResultValue)
+    const reduceValues = [expectedMapResults[etablissementKey]]
+    const reduceResults = reduce({ scope }, reduceValues)
+    t.deepEqual(reduceResults, expectedReduceResults)
   }
-  */
 )
+
+test.serial(`public.finalize()`, (t: ExecutionContext) => {
+  const global = globalThis as any // eslint-disable-line @typescript-eslint/no-explicit-any
+  global.serie_periode = dates // used by complete_reporder(), which is called by finalize()
+  const finalizeResult = finalize({ scope }, expectedReduceResults)
+  const { reporder } = finalizeResult.batch[batchKey]
+  // reporder contient une propriété par periode
+  t.is(Object.keys(reporder).length, dates.length)
+  Object.keys(reporder).forEach((periodKey) => {
+    t.is(typeof reporder[periodKey].random_order, "number")
+  })
+  // vérification de la structure complète, sans les nombres aléatoires
+  t.deepEqual(finalizeResult, expectedFinalizeResultValue)
+})
