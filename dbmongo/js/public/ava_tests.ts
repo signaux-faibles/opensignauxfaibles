@@ -73,8 +73,36 @@ const rawData = {
   key: siret,
 }
 
-const expectedMapResults = {}
-
+// TODO: re-exprimer cet objet attendu à l'aide des variables définies ci-dessus
+const expectedMapResults = {
+  etablissement_01234567891011: {
+    apconso: [],
+    apdemande: [],
+    batch: "1910",
+    compte: undefined,
+    cotisation: [0, 0],
+    debit: [
+      {
+        part_ouvriere: 0,
+        part_patronale: 0,
+      },
+      {
+        part_ouvriere: 0,
+        part_patronale: 0,
+      },
+    ],
+    delai: [],
+    dernier_effectif: undefined,
+    effectif: [],
+    idEntreprise: "entreprise_012345678",
+    key: "01234567891011",
+    last_procol: {
+      etat: "in_bonis",
+    },
+    procol: undefined,
+    sirene: {},
+  },
+}
 // exécution complète de la chaine "public"
 
 test.serial(`public.map()`, (t: ExecutionContext) => {
