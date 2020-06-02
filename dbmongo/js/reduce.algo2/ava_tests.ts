@@ -86,7 +86,7 @@ const expectedMapResults = [
     _id: {
       batch: "1910",
       siren: "012345678",
-      periode: "2015-12-01T00:00:00.000Z",
+      periode: new Date("2015-12-01 00:00:00 UTC"),
       type: "other",
     },
     value: {
@@ -106,7 +106,7 @@ const expectedMapResults = [
     _id: {
       batch: "1910",
       siren: "012345678",
-      periode: "2016-01-01T00:00:00.000Z",
+      periode: new Date("2016-01-01 00:00:00 UTC"),
       type: "other",
     },
     value: {
