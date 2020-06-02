@@ -7,8 +7,8 @@
     "test": "test"
   },
   "scripts": {
-    "lint": "eslint **/*.ts",
-    "lint:fix": "eslint **/*.ts --fix",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix",
     "test": "ava",
     "test:coverage": "TS_NODE_FILES=true nyc npm test"
   },

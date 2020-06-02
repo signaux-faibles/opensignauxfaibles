@@ -1,23 +1,38 @@
 import * as f from "../common/generatePeriodSerie.js"
 
-// Object golang défini dans dbmongo/lib/urssaf/delai.go
+// Définition dérivée de dbmongo/lib/urssaf/delai.go (seulement propriétés nécéssaires)
 export type Delai = {
-  numero_compte: string
-  numero_contentieux: string
   date_creation: Date
   date_echeance: Date
   duree_delai: number // nombre de jours entre date_creation et date_echeance
-  denomination: string
-  indic_6m: string
-  annee_creation: number
   montant_echeancier: number // exprimé en euros
-  stade: string
-  action: string
 }
 
 export type DelaiMap = { [key: string]: Delai }
 
-export function delais(v: { delai: DelaiMap }, output_indexed: object): void {
+// Valeurs attendues dans le paramètre indexed_output passé à delais()
+export type IndexedOutputExpectedValues = {
+  montant_part_patronale: number
+  montant_part_ouvriere: number
+}
+
+// Valeurs ajoutées dans la paramètre indexed_output passé à delais()
+export type DelaiComputedValues = {
+  delai: number
+  duree_delai: number // nombre de jours entre date_creation et date_echeance
+  ratio_dette_delai: number
+  montant_echeancier: number // exprimé en euros
+}
+
+// Type du paramètre indexed_output passé à delais()
+export type IndexedOutputPartial = {
+  [time: string]: IndexedOutputExpectedValues & Partial<DelaiComputedValues>
+}
+
+export function delais(
+  v: { delai: DelaiMap },
+  output_indexed: IndexedOutputPartial
+): void {
   "use strict"
   Object.keys(v.delai).map(function (hash) {
     const delai = v.delai[hash]
@@ -47,10 +62,10 @@ export function delais(v: { delai: DelaiMap }, output_indexed: object): void {
     // Création d'un tableau de timestamps à raison de 1 par mois.
     const pastYearTimes = f
       .generatePeriodSerie(date_creation, date_echeance)
-      .map(function (date) {
+      .map(function (date: Date) {
         return date.getTime()
       })
-    pastYearTimes.map(function (time) {
+    pastYearTimes.map(function (time: number) {
       if (time in output_indexed) {
         const remaining_months =
           date_echeance.getUTCMonth() -

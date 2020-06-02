@@ -1,22 +1,26 @@
 # This file is run by dbmongo/js_test.go.
 
-result_add=$(jsc \
+shopt -s extglob # enable exclusion of test files in wildcard
+
+result_currentState=$(jsc \
   ../compact/currentState.js \
   ../compact/currentState_test.js\
   2>&1)
-if [ "$result_add" != 'true' ]; then
-  echo "$result_add"
+if [ "$result_currentState" != 'true' ]; then
+  echo "result_currentState: $result_currentState"
   exit 1
 fi
 
-result_add=$(jsc \
+result_reduce=$(jsc \
+  ./helpers/fakes.js \
   ./helpers/testing.js \
+  ../common/!(*_test).js \
   ../compact/currentState.js \
   ../compact/reduce.js \
   ../compact/reduce_test.js\
   2>&1)
-if [ "$result_add" != 'true' ]; then
-  echo "$result_add"
+if [ "$result_reduce" != 'true' ]; then
+  echo "result_reduce: $result_reduce"
   exit 1
 fi
 
