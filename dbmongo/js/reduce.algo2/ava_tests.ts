@@ -42,8 +42,8 @@ const ISODate = (date: string): Date => new Date(date)
 
 const runMongoMap = (mapFct: () => void, keyVal: any): any => {
   const results: { [key: string]: any } = {}
-  globalThis.emit = (key: string, value: any): void => {
-    results[key] = value
+  globalThis.emit = (key: any, value: any): void => {
+    results[JSON.stringify(key)] = value
   }
   mapFct.call(keyVal)
   return results
@@ -80,7 +80,33 @@ const rawData = {
   key: siret,
 }
 
-const expectedMapResults = {}
+// valeurs résultantes de l'exécution de map() => à vérifier
+const expectedMapResults = {
+  '{"batch":"1910","siren":"012345678","periode":"2015-12-01T00:00:00.000Z","type":"other"}': {
+    "01234567891011": {
+      cotisation_moy12m: 0,
+      effectif: null,
+      etat_proc_collective: "in_bonis",
+      interessante_urssaf: true,
+      outcome: false,
+      periode: new Date("2015-12-01 00:00:00 UTC"),
+      random_order: undefined,
+      siret: "01234567891011",
+    },
+  },
+  '{"batch":"1910","siren":"012345678","periode":"2016-01-01T00:00:00.000Z","type":"other"}': {
+    "01234567891011": {
+      cotisation_moy12m: 0,
+      effectif: null,
+      etat_proc_collective: "in_bonis",
+      interessante_urssaf: true,
+      outcome: false,
+      periode: new Date("2016-01-01 00:00:00 UTC"),
+      random_order: undefined,
+      siret: "01234567891011",
+    },
+  },
+}
 /*
 const expectedReduceResults = {}
 
