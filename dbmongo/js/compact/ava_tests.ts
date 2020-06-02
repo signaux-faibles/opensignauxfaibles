@@ -35,7 +35,7 @@ const dates = [
   ISODate("2016-01-01T00:00:00.000+0000"),
 ]
 const batch: BatchValues = {
-  [batchKey]: {} as any, // TODO: rendre optionnelles les props de BatchValues, pour retirer ce `any` ?
+  [batchKey]: {} as BatchValue, // TODO: rendre optionnelles les props de BatchValues, pour retirer ce cast
 }
 const index: ReduceIndexFlags = { algo1: false, algo2: false } // TODO: pourquoi les tests échouent quand on passe à `true` ?
 
@@ -74,7 +74,7 @@ const expectedFinalizeResultValue = {
         }),
         {}
       ),
-    } as any, // TODO: rendre optionnelles les props de BatchValues, pour retirer ce `any` ?
+    } as BatchValue, // TODO: rendre optionnelles les props de BatchValues, pour retirer ce cast
   },
   scope,
   index,
