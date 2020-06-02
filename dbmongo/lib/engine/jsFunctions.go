@@ -253,9 +253,9 @@ function currentState(batches) {
 // (processus reduce.algo2)
 // - intégrer les reporder pour permettre la reproductibilité de
 // l'échantillonnage pour l'entraînement du modèle.
-function finalize(k, o) {
+function finalize(k, companyDataValues) {
     "use strict";
-    o.index = { algo1: false, algo2: false };
+    let o = Object.assign(Object.assign({}, companyDataValues), { index: { algo1: false, algo2: false } });
     if (o.scope === "entreprise") {
         o.index.algo1 = true;
         o.index.algo2 = true;

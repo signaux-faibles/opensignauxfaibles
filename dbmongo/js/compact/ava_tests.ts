@@ -37,14 +37,12 @@ const dates = [
 const batch: BatchValues = {
   [batchKey]: {} as BatchValue, // TODO: rendre optionnelles les props de BatchValues, pour retirer ce cast
 }
-const index: ReduceIndexFlags = { algo1: false, algo2: false } // TODO: pourquoi les tests échouent quand on passe à `true` ?
 
 const importedData = {
   _id: "random123abc",
   value: {
     batch,
     scope,
-    index,
     key: siret,
   },
 }
@@ -52,7 +50,6 @@ const importedData = {
 const expectedMapResults = {
   [siret]: {
     batch,
-    index,
     key: siret,
     scope,
   },
@@ -77,7 +74,7 @@ const expectedFinalizeResultValue = {
     } as BatchValue, // TODO: rendre optionnelles les props de BatchValues, pour retirer ce cast
   },
   scope,
-  index,
+  index: { algo1: false, algo2: false }, // car il n'y a pas de données justifiant que l'établissement compte 10 employés ou pas
   key: siret,
 }
 
@@ -105,7 +102,7 @@ test.serial(
   (t: ExecutionContext) => {
     const global = globalThis as any // eslint-disable-line @typescript-eslint/no-explicit-any
     global.serie_periode = dates // used by complete_reporder(), which is called by finalize()
-    const finalizeResult = finalize(siret, { ...expectedReduceResults, index })
+    const finalizeResult = finalize(siret, expectedReduceResults)
     const { reporder } = finalizeResult.batch[batchKey]
     // reporder contient une propriété par periode
     t.is(Object.keys(reporder).length, dates.length)
