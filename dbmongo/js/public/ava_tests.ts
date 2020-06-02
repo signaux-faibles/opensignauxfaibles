@@ -105,31 +105,34 @@ const expectedReduceResults = expectedMapResults[etablissementKey] // TODO: à c
 
 // TODO: à comparer avec la sortie de l'API /public, définie dans test-api.sh
 const expectedFinalizeResultValue = {
-  apconso: [],
-  apdemande: [],
-  batch: "1910",
-  compte: undefined,
-  cotisation: [0, 0],
-  debit: [
-    {
-      part_ouvriere: 0,
-      part_patronale: 0,
+  _id: "etablissement_01234567891011",
+  value: {
+    key: "01234567891011",
+    batch: "1910",
+    effectif: [],
+    dernier_effectif: undefined,
+    sirene: {},
+    cotisation: [0, 0],
+    debit: [
+      {
+        part_ouvriere: 0,
+        part_patronale: 0,
+      },
+      {
+        part_ouvriere: 0,
+        part_patronale: 0,
+      },
+    ],
+    apconso: [],
+    apdemande: [],
+    delai: [],
+    compte: undefined,
+    procol: undefined,
+    last_procol: {
+      etat: "in_bonis",
     },
-    {
-      part_ouvriere: 0,
-      part_patronale: 0,
-    },
-  ],
-  delai: [],
-  dernier_effectif: undefined,
-  effectif: [],
-  idEntreprise: "entreprise_012345678",
-  key: "01234567891011",
-  last_procol: {
-    etat: "in_bonis",
+    idEntreprise: "entreprise_012345678",
   },
-  procol: undefined,
-  sirene: {},
 }
 
 // exécution complète de la chaine "public"
@@ -152,6 +155,7 @@ test.serial(
 )
 
 test.serial(`public.finalize()`, (t: ExecutionContext) => {
-  const finalizeResult = finalize({ scope }, expectedReduceResults)
+  const finalizeResultValue = finalize({ scope }, expectedReduceResults)
+  const finalizeResult = { _id: etablissementKey, value: finalizeResultValue }
   t.deepEqual(finalizeResult, expectedFinalizeResultValue)
 })
