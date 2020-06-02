@@ -4,3 +4,5 @@ function sirene(sireneArray) {
     return k
   }, {})
 }
+
+exports.sirene = sirene

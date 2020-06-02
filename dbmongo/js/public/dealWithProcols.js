@@ -17,3 +17,5 @@ function dealWithProcols(data_source, altar_or_procol, output_indexed){
     (a,b) => {return(a.date_procol.getTime() > b.date_procol.getTime())}
   )
 }
+
+exports.dealWithProcols = dealWithProcols
