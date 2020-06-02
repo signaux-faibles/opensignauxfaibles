@@ -1,4 +1,1 @@
-export function reduce(
-  key: { scope: Scope },
-  values: { sirets: any[] }[]
-): any[]
+export function reduce(key: { scope: Scope }, values: any[]): any[]

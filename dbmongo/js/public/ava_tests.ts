@@ -17,7 +17,7 @@ import { apconso } from "./apconso.js"
 import { delai } from "./delai.js"
 import { compte } from "./compte.js"
 import { dealWithProcols } from "./dealWithProcols.js"
-// import { reduce } from "./reduce"
+import { reduce } from "./reduce"
 // import { finalize } from "./finalize"
 
 const global = globalThis as any // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -74,8 +74,10 @@ const rawData = {
   key: siret,
 }
 
+const etablissementKey = scope + "_" + siret
+
 const expectedMapResults = {
-  [scope + "_" + siret]: {
+  [etablissementKey]: {
     apconso: [],
     apdemande: [],
     batch: batchKey,
@@ -97,23 +99,24 @@ const expectedMapResults = {
     sirene: {},
   },
 }
+
+const expectedReduceResults = {} // TODO: populate
+
 // exécution complète de la chaine "public"
 
-test.serial(`public.map()`, (t: ExecutionContext) => {
-  const mapResults = runMongoMap(map, { value: rawData })
-  t.deepEqual(mapResults, expectedMapResults)
-})
-
-test.todo(
-  `public.reduce()`
-  /*
+test.serial(
+  `public.map() retourne les propriétés d'établissement présentées sur le frontal`,
   (t: ExecutionContext) => {
-    const reduceValues: CompanyDataValues[] = [expectedMapResults[siret]]
-    const reduceResults = reduce(siret, reduceValues)
-    t.deepEqual(reduceResults, expectedReduceResults)
+    const mapResults = runMongoMap(map, { value: rawData })
+    t.deepEqual(mapResults, expectedMapResults)
   }
-  */
 )
+
+test.serial(`public.reduce()`, (t: ExecutionContext) => {
+  const reduceValues = [expectedMapResults[etablissementKey]]
+  const reduceResults = reduce({ scope }, reduceValues)
+  t.deepEqual(reduceResults, expectedReduceResults)
+})
 
 test.todo(
   `public.finalize()`
