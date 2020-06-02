@@ -77,6 +77,7 @@ const rawData = {
 const etablissementKey = scope + "_" + siret
 
 const expectedMapResults = {
+  // TODO: structure et valeurs à confirmer
   [etablissementKey]: {
     apconso: [],
     apdemande: [],
@@ -100,34 +101,7 @@ const expectedMapResults = {
   },
 }
 
-// TODO: re-exprimer à l'aide des variables
-const expectedReduceResults = {
-  apconso: [],
-  apdemande: [],
-  batch: "1910",
-  compte: undefined,
-  cotisation: [0, 0],
-  debit: [
-    {
-      part_ouvriere: 0,
-      part_patronale: 0,
-    },
-    {
-      part_ouvriere: 0,
-      part_patronale: 0,
-    },
-  ],
-  delai: [],
-  dernier_effectif: undefined,
-  effectif: [],
-  idEntreprise: "entreprise_012345678",
-  key: "01234567891011",
-  last_procol: {
-    etat: "in_bonis",
-  },
-  procol: undefined,
-  sirene: {},
-}
+const expectedReduceResults = expectedMapResults[etablissementKey] // TODO: à confirmer
 
 // exécution complète de la chaine "public"
 
