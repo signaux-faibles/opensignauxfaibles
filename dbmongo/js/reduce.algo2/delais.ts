@@ -1,6 +1,16 @@
 import * as f from "../common/generatePeriodSerie.js"
 
-// Définition dérivée de dbmongo/lib/urssaf/delai.go (seulement propriétés nécéssaires)
+type DeepReadonly<T> = Readonly<T> // pas vraiment, mais espoire que TS le supporte prochainement
+
+export type ParPériode<T> = { [période: string]: T }
+
+// Valeurs attendues pour chaque période, lors de l'appel à delais()
+export type DebitComputedValues = {
+  montant_part_patronale?: number
+  montant_part_ouvriere?: number
+}
+
+// Valeurs attendues par delais(), pour chaque période. (cf dbmongo/lib/urssaf/delai.go)
 export type Delai = {
   date_creation: Date
   date_echeance: Date
@@ -8,7 +18,7 @@ export type Delai = {
   montant_echeancier: number // exprimé en euros
 }
 
-// Valeurs ajoutées dans la paramètre indexed_output passé à delais()
+// Valeurs retournées par delais(), pour chaque période
 export type DelaiComputedValues = {
   delai: number
   duree_delai: number // nombre de jours entre date_creation et date_echeance
@@ -16,29 +26,12 @@ export type DelaiComputedValues = {
   montant_echeancier: number // exprimé en euros
 }
 
-export type DelaiMap = { [key: string]: Delai }
-
-// Valeurs attendues dans le paramètre indexed_output passé à delais()
-export type DebitComputedValues = {
-  montant_part_patronale?: number
-  montant_part_ouvriere?: number
-}
-
-// Type du paramètre donnéesActuellesParPériode passé à delais()
-export type DebitComputedValuesPerPeriod = {
-  [time: string]: DebitComputedValues
-}
-
-type DeepReadonly<T> = Readonly<T> // pas vraiment, mais espoire que TS le supporte prochainement
-
 export function delais(
-  v: { delai: DelaiMap },
-  donnéesActuellesParPériode: DeepReadonly<DebitComputedValuesPerPeriod>
-): { [time: string]: DelaiComputedValues } {
+  v: { delai: ParPériode<Delai> },
+  donnéesActuellesParPériode: DeepReadonly<ParPériode<DebitComputedValues>>
+): ParPériode<DelaiComputedValues> {
   "use strict"
-  const donnéesSupplémentairesParPériode: {
-    [time: string]: DelaiComputedValues
-  } = {}
+  const donnéesSupplémentairesParPériode: ParPériode<DelaiComputedValues> = {}
   Object.keys(v.delai).map(function (hash) {
     const delai = v.delai[hash]
     // On arrondit les dates au premier jour du mois.

@@ -3,10 +3,9 @@ import "../globals"
 import {
   delais,
   Delai,
-  DelaiMap,
   DelaiComputedValues,
   DebitComputedValues,
-  DebitComputedValuesPerPeriod,
+  ParPériode,
 } from "./delais"
 
 const fevrier = new Date("2014-02-01")
@@ -34,16 +33,14 @@ const makeOutputIndexed = ({
   montant_part_ouvriere,
 })
 
-type IndexedOutput = {
-  [time: string]: DebitComputedValues & DelaiComputedValues
-}
-
-const testProperty = (debits?: DebitComputedValues): IndexedOutput => {
+const testProperty = (
+  debits?: DebitComputedValues
+): ParPériode<DelaiComputedValues> => {
   const delaiTest = makeDelai(new Date("2014-01-03"), new Date("2014-04-05"))
-  const delaiMap: DelaiMap = {
+  const delaiMap: ParPériode<Delai> = {
     abc: delaiTest,
   }
-  const output_indexed: DebitComputedValuesPerPeriod = {}
+  const output_indexed: ParPériode<DebitComputedValues> = {}
   output_indexed[fevrier.getTime()] = debits ? makeOutputIndexed(debits) : {}
   output_indexed[mars.getTime()] = debits ? makeOutputIndexed(debits) : {}
   return delais({ delai: delaiMap }, output_indexed)
@@ -89,10 +86,10 @@ test("la propriété ratio_dette_delai représente la déviation du remboursemen
 
 test("un délai en dehors de la période d'intérêt est ignorée", (t) => {
   const delaiTest = makeDelai(new Date("2013-01-03"), new Date("2013-03-05"))
-  const delaiMap: DelaiMap = {
+  const delaiMap: ParPériode<Delai> = {
     abc: delaiTest,
   }
-  const donnéesParPériode: DebitComputedValuesPerPeriod = {}
+  const donnéesParPériode: ParPériode<DebitComputedValues> = {}
   donnéesParPériode[fevrier.getTime()] = makeOutputIndexed()
   const périodesComplétées = delais({ delai: delaiMap }, donnéesParPériode)
   t.deepEqual(périodesComplétées, {})
