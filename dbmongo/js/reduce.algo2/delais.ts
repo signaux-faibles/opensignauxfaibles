@@ -76,10 +76,15 @@ export function delais(
         output_indexed[time].duree_delai = delai.duree_delai
         output_indexed[time].montant_echeancier = delai.montant_echeancier
 
-        if (delai.duree_delai > 0 && output_indexed[time].montant_part_patronale !== undefined && output_indexed[time].montant_part_ouvriere !== undefined) {
+        const outputAtTime = output_indexed[time]
+        if (
+          delai.duree_delai > 0 &&
+          outputAtTime.montant_part_patronale !== undefined &&
+          outputAtTime.montant_part_ouvriere !== undefined
+        ) {
           output_indexed[time].ratio_dette_delai =
-            (output_indexed[time].montant_part_patronale +
-              output_indexed[time].montant_part_ouvriere -
+            (outputAtTime.montant_part_patronale +
+              outputAtTime.montant_part_ouvriere -
               (delai.montant_echeancier * remaining_months * 30) /
                 delai.duree_delai) /
             delai.montant_echeancier
