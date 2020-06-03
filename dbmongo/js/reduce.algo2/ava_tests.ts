@@ -94,30 +94,17 @@ const makeValue = (periode: Date): object => ({
   siret,
 })
 
-const expectedMapResults = [
-  {
-    _id: {
-      batch: batchKey,
-      siren,
-      periode: dates[0],
-      type: "other",
-    },
-    value: {
-      [siret]: makeValue(dates[0]),
-    },
+const expectedMapResults = dates.map((periode) => ({
+  _id: {
+    batch: batchKey,
+    siren,
+    periode,
+    type: "other",
   },
-  {
-    _id: {
-      batch: batchKey,
-      siren,
-      periode: dates[1],
-      type: "other",
-    },
-    value: {
-      [siret]: makeValue(dates[1]),
-    },
+  value: {
+    [siret]: makeValue(periode),
   },
-]
+}))
 
 const expectedReduceResults = expectedMapResults
 
