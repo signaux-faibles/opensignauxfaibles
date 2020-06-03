@@ -88,7 +88,7 @@ const expectedMapResults = [
     _id: {
       batch: "1910",
       siren: "012345678",
-      periode: new Date("2015-12-01 00:00:00 UTC"),
+      periode: dates[0],
       type: "other",
     },
     value: {
@@ -98,7 +98,7 @@ const expectedMapResults = [
         etat_proc_collective: "in_bonis",
         interessante_urssaf: true,
         outcome: false,
-        periode: new Date("2015-12-01 00:00:00 UTC"),
+        periode: dates[0],
         random_order: undefined,
         siret: "01234567891011",
       },
@@ -108,7 +108,7 @@ const expectedMapResults = [
     _id: {
       batch: "1910",
       siren: "012345678",
-      periode: new Date("2016-01-01 00:00:00 UTC"),
+      periode: dates[1],
       type: "other",
     },
     value: {
@@ -118,7 +118,7 @@ const expectedMapResults = [
         etat_proc_collective: "in_bonis",
         interessante_urssaf: true,
         outcome: false,
-        periode: new Date("2016-01-01 00:00:00 UTC"),
+        periode: dates[1],
         random_order: undefined,
         siret: "01234567891011",
       },
@@ -131,7 +131,7 @@ const expectedReduceResults = [
   {
     _id: {
       batch: "1910",
-      periode: new Date("2015-12-01 00:00:00 UTC"),
+      periode: dates[0],
       siren: "012345678",
       type: "other",
     },
@@ -142,7 +142,7 @@ const expectedReduceResults = [
         etat_proc_collective: "in_bonis",
         interessante_urssaf: true,
         outcome: false,
-        periode: new Date("2015-12-01 00:00:00 UTC"),
+        periode: dates[0],
         random_order: undefined,
         siret: "01234567891011",
       },
@@ -151,7 +151,7 @@ const expectedReduceResults = [
   {
     _id: {
       batch: "1910",
-      periode: new Date("2016-01-01 00:00:00 UTC"),
+      periode: dates[1],
       siren: "012345678",
       type: "other",
     },
@@ -162,7 +162,7 @@ const expectedReduceResults = [
         etat_proc_collective: "in_bonis",
         interessante_urssaf: true,
         outcome: false,
-        periode: new Date("2016-01-01 00:00:00 UTC"),
+        periode: dates[1],
         random_order: undefined,
         siret: "01234567891011",
       },
@@ -178,7 +178,7 @@ const expectedFinalizeResults = [
   {
     _id: {
       batch: "1910",
-      periode: ISODate("2015-12-01T00:00:00Z"),
+      periode: dates[0],
       siren: "012345678",
       type: "other",
     },
@@ -187,7 +187,7 @@ const expectedFinalizeResults = [
       // FYI: cross-computation retourne un document par établissement.
       {
         siret: "01234567891011",
-        periode: ISODate("2015-12-01T00:00:00Z"),
+        periode: dates[0],
         effectif: null,
         etat_proc_collective: "in_bonis",
         interessante_urssaf: true,
@@ -201,14 +201,14 @@ const expectedFinalizeResults = [
   {
     _id: {
       batch: "1910",
-      periode: ISODate("2016-01-01T00:00:00Z"),
+      periode: dates[1],
       siren: "012345678",
       type: "other",
     },
     value: [
       {
         siret: "01234567891011",
-        periode: ISODate("2016-01-01T00:00:00Z"),
+        periode: dates[1],
         effectif: null,
         etat_proc_collective: "in_bonis",
         interessante_urssaf: true,
@@ -242,10 +242,13 @@ test.serial(
   }
 )
 
-test.serial(`reduce.algo2.finalize()`, (t: ExecutionContext) => {
-  const finalizeResult = expectedReduceResults.map(({ _id, value }) => {
-    // Note: on suppose qu'il n'y a qu'une valeur par clé
-    return { _id, value: finalize(_id, value) }
-  })
-  t.deepEqual(finalizeResult, expectedFinalizeResults)
-})
+test.serial(
+  `reduce.algo2.finalize() émet un objet par période`,
+  (t: ExecutionContext) => {
+    const finalizeResult = expectedReduceResults.map(({ _id, value }) => {
+      // Note: on suppose qu'il n'y a qu'une valeur par clé
+      return { _id, value: finalize(_id, value) }
+    })
+    t.deepEqual(finalizeResult, expectedFinalizeResults)
+  }
+)
