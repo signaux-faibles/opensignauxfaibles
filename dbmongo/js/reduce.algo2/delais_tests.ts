@@ -39,7 +39,9 @@ const testProperty = (
   propertyName: keyof DelaiComputedValues,
   expectedFebruary: number,
   expectedMarch: number
-): IndexedOutputPartial => {
+): {
+  [time: string]: IndexedOutputExpectedValues & DelaiComputedValues
+} => {
   const delaiTest = makeDelai(new Date("2014-01-03"), new Date("2014-04-05"))
   const delaiMap: DelaiMap = {
     abc: delaiTest,
@@ -56,7 +58,9 @@ const testProperty = (
   delais({ delai: delaiMap }, output_indexed)
   t.is(output_indexed[fevrier.getTime()][propertyName], expectedFebruary)
   t.is(output_indexed[mars.getTime()][propertyName], expectedMarch)
-  return output_indexed
+  return output_indexed as {
+    [time: string]: IndexedOutputExpectedValues & DelaiComputedValues
+  }
 }
 
 test("la propriété delai représente le nombre de mois complets restants du délai", (t) => {
@@ -76,11 +80,23 @@ test("la propriété ratio_dette_delai représente la déviation du remboursemen
   // TODO: Inclure la formule dans la documentation de ce test
   const expectedFebruary = -0.05217391304347825
   const expectedMarch = 0.2739130434782609
-  const output_indexed = testProperty(t, "ratio_dette_delai", expectedFebruary, expectedMarch)
-
-  t.is(output_indexed[fevrier.getTime()]["ratio_dette_delai"], expectedFebruary)
-  t.is(output_indexed[mars.getTime()]["ratio_dette_delai"], expectedMarch)
-  // TODO: éviter la comparaison de nombres à virgule flottante
+  const output_indexed = testProperty(
+    t,
+    "ratio_dette_delai",
+    expectedFebruary,
+    expectedMarch
+  )
+  const tolerance = 10e-3
+  t.true(
+    Math.abs(
+      output_indexed[fevrier.getTime()]["ratio_dette_delai"] - expectedFebruary
+    ) < tolerance
+  )
+  t.true(
+    Math.abs(
+      output_indexed[mars.getTime()]["ratio_dette_delai"] - expectedMarch
+    ) < tolerance
+  )
 })
 
 test("un délai en dehors de la période d'intérêt est ignorée", (t) => {
