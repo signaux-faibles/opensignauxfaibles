@@ -6,7 +6,7 @@ import {
   DelaiMap,
   DelaiComputedValues,
   DebitComputedValues,
-  IndexedOutputPartial,
+  DebitComputedValuesPerPeriod,
 } from "./delais"
 
 const fevrier = new Date("2014-02-01")
@@ -43,7 +43,7 @@ const testProperty = (debits?: DebitComputedValues): IndexedOutput => {
   const delaiMap: DelaiMap = {
     abc: delaiTest,
   }
-  const output_indexed: IndexedOutputPartial = {}
+  const output_indexed: DebitComputedValuesPerPeriod = {}
   output_indexed[fevrier.getTime()] = debits ? makeOutputIndexed(debits) : {}
   output_indexed[mars.getTime()] = debits ? makeOutputIndexed(debits) : {}
   return delais({ delai: delaiMap }, output_indexed)
@@ -92,7 +92,7 @@ test("un délai en dehors de la période d'intérêt est ignorée", (t) => {
   const delaiMap: DelaiMap = {
     abc: delaiTest,
   }
-  const output_indexed: IndexedOutputPartial = {}
+  const output_indexed: DebitComputedValuesPerPeriod = {}
   output_indexed[fevrier.getTime()] = makeOutputIndexed()
   delais({ delai: delaiMap }, output_indexed)
   t.deepEqual(Object.keys(output_indexed), [fevrier.getTime().toString()])

@@ -24,26 +24,16 @@ export type DebitComputedValues = {
   montant_part_ouvriere?: number
 }
 
-// Type du paramètre indexed_output passé à delais()
-export type IndexedOutputPartial = {
-  [time: string]: DebitComputedValues & Partial<DelaiComputedValues>
-}
-
-// TODO: deepFreeze should throw errors in delais function, as we mutate output_indexed
-const deepFreeze = (obj: any): object => {
-  Object.keys(obj).forEach((prop) => {
-    if (typeof obj[prop] === "object" && !Object.isFrozen(obj[prop]))
-      deepFreeze(obj[prop])
-  })
-  return Object.freeze(obj)
+// Type du paramètre donnéesActuellesParPériode passé à delais()
+export type DebitComputedValuesPerPeriod = {
+  [time: string]: DebitComputedValues
 }
 
 export function delais(
   v: { delai: DelaiMap },
-  donnéesActuellesParPériode: IndexedOutputPartial
+  donnéesActuellesParPériode: Readonly<DebitComputedValuesPerPeriod>
 ): { [time: string]: DelaiComputedValues } {
   "use strict"
-  deepFreeze(donnéesActuellesParPériode) // TODO temporary
   const donnéesSupplémentairesParPériode: {
     [time: string]: DelaiComputedValues
   } = {}
