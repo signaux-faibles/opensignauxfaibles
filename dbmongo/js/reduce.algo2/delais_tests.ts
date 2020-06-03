@@ -34,7 +34,7 @@ const makeOutputIndexed = ({
   montant_part_ouvriere,
 })
 
-const testProperty = (): {
+const testProperty = (debits?: object): {
   [time: string]: IndexedOutputExpectedValues & DelaiComputedValues
 } => {
   const delaiTest = makeDelai(new Date("2014-01-03"), new Date("2014-04-05"))
@@ -42,14 +42,8 @@ const testProperty = (): {
     abc: delaiTest,
   }
   const output_indexed: IndexedOutputPartial = {}
-  output_indexed[fevrier.getTime()] = makeOutputIndexed({
-    montant_part_patronale: 600, // TODO: n'inclure ces valeurs que dans les tests qui en ont besoin
-    montant_part_ouvriere: 0,
-  })
-  output_indexed[mars.getTime()] = makeOutputIndexed({
-    montant_part_patronale: 600, // TODO: n'inclure ces valeurs que dans les tests qui en ont besoin
-    montant_part_ouvriere: 0,
-  })
+  output_indexed[fevrier.getTime()] = makeOutputIndexed(debits)
+  output_indexed[mars.getTime()] = makeOutputIndexed(debits)
   delais({ delai: delaiMap }, output_indexed)
   return output_indexed as {
     [time: string]: IndexedOutputExpectedValues & DelaiComputedValues
@@ -79,7 +73,8 @@ test("la propriété ratio_dette_delai représente la déviation du remboursemen
   // TODO: Inclure la formule dans la documentation de ce test
   const expectedFebruary = -0.052
   const expectedMarch = 0.273
-  const output_indexed = testProperty()
+  const debits =  { montant_part_patronale: 600, montant_part_ouvriere: 0 }
+  const output_indexed = testProperty(debits)
   const tolerance = 10e-3
   t.true(
     Math.abs(
