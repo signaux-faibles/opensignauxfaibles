@@ -39,7 +39,7 @@ const testProperty = (
   propertyName: keyof DelaiComputedValues,
   expectedFebruary: number,
   expectedMarch: number
-): void => {
+): IndexedOutputPartial => {
   const delaiTest = makeDelai(new Date("2014-01-03"), new Date("2014-04-05"))
   const delaiMap: DelaiMap = {
     abc: delaiTest,
@@ -56,6 +56,7 @@ const testProperty = (
   delais({ delai: delaiMap }, output_indexed)
   t.is(output_indexed[fevrier.getTime()][propertyName], expectedFebruary)
   t.is(output_indexed[mars.getTime()][propertyName], expectedMarch)
+  return output_indexed
 }
 
 test("la propriété delai représente le nombre de mois complets restants du délai", (t) => {
@@ -73,7 +74,12 @@ test("la propriété montant_echeancier représente le montant en euros des coti
 
 test("la propriété ratio_dette_delai représente la déviation du remboursement de la dette par rapport à un remboursement linéaire sur la durée du délai", (t) => {
   // TODO: Inclure la formule dans la documentation de ce test
-  testProperty(t, "ratio_dette_delai", -0.05217391304347825, 0.2739130434782609)
+  const expectedFebruary = -0.05217391304347825
+  const expectedMarch = 0.2739130434782609
+  const output_indexed = testProperty(t, "ratio_dette_delai", expectedFebruary, expectedMarch)
+
+  t.is(output_indexed[fevrier.getTime()]["ratio_dette_delai"], expectedFebruary)
+  t.is(output_indexed[mars.getTime()]["ratio_dette_delai"], expectedMarch)
   // TODO: éviter la comparaison de nombres à virgule flottante
 })
 
