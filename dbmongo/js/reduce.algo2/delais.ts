@@ -12,7 +12,7 @@ export type Delai = {
 export type DelaiComputedValues = {
   delai: number
   duree_delai: number // nombre de jours entre date_creation et date_echeance
-  ratio_dette_delai: number
+  ratio_dette_delai?: number
   montant_echeancier: number // exprimé en euros
 }
 
@@ -40,10 +40,13 @@ const deepFreeze = (obj: any): object => {
 
 export function delais(
   v: { delai: DelaiMap },
-  output_indexed: IndexedOutputPartial
-): void {
+  donnéesActuellesParPériode: IndexedOutputPartial
+): { [time: string]: DelaiComputedValues } {
   "use strict"
-  deepFreeze(output_indexed) // TODO temporary
+  deepFreeze(donnéesActuellesParPériode) // TODO temporary
+  const donnéesSupplémentairesParPériode: {
+    [time: string]: DelaiComputedValues
+  } = {}
   Object.keys(v.delai).map(function (hash) {
     const delai = v.delai[hash]
     // On arrondit les dates au premier jour du mois.
@@ -76,30 +79,33 @@ export function delais(
         return date.getTime()
       })
     pastYearTimes.map(function (time: number) {
-      if (time in output_indexed) {
-        const outputAtTime = output_indexed[time]
+      if (time in donnéesActuellesParPériode) {
         const remaining_months =
           date_echeance.getUTCMonth() -
           new Date(time).getUTCMonth() +
           12 *
             (date_echeance.getUTCFullYear() - new Date(time).getUTCFullYear())
-        outputAtTime.delai = remaining_months
-        outputAtTime.duree_delai = delai.duree_delai
-        outputAtTime.montant_echeancier = delai.montant_echeancier
-
+        const inputAtTime = donnéesActuellesParPériode[time]
+        const outputAtTime: DelaiComputedValues = {
+          delai: remaining_months,
+          duree_delai: delai.duree_delai,
+          montant_echeancier: delai.montant_echeancier,
+        }
         if (
           delai.duree_delai > 0 &&
-          outputAtTime.montant_part_patronale !== undefined &&
-          outputAtTime.montant_part_ouvriere !== undefined
+          inputAtTime.montant_part_patronale !== undefined &&
+          inputAtTime.montant_part_ouvriere !== undefined
         ) {
-          output_indexed[time].ratio_dette_delai =
-            (outputAtTime.montant_part_patronale +
-              outputAtTime.montant_part_ouvriere -
+          outputAtTime.ratio_dette_delai =
+            (inputAtTime.montant_part_patronale +
+              inputAtTime.montant_part_ouvriere -
               (delai.montant_echeancier * remaining_months * 30) /
                 delai.duree_delai) /
             delai.montant_echeancier
         }
+        donnéesSupplémentairesParPériode[time] = outputAtTime
       }
     })
   })
+  return donnéesSupplémentairesParPériode
 }
