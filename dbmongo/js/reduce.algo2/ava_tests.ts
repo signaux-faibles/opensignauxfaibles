@@ -82,7 +82,17 @@ const rawData = {
   key: siret,
 }
 
-// valeurs résultantes de l'exécution de map() => à vérifier et à ré-écrire de manière plus concise
+const makeValue = (periode: Date): object => ({
+  cotisation_moy12m: 0,
+  effectif: null,
+  etat_proc_collective: "in_bonis",
+  interessante_urssaf: true,
+  outcome: false,
+  periode,
+  random_order: undefined,
+  siret: "01234567891011",
+})
+
 const expectedMapResults = [
   {
     _id: {
@@ -92,16 +102,7 @@ const expectedMapResults = [
       type: "other",
     },
     value: {
-      "01234567891011": {
-        cotisation_moy12m: 0,
-        effectif: null,
-        etat_proc_collective: "in_bonis",
-        interessante_urssaf: true,
-        outcome: false,
-        periode: dates[0],
-        random_order: undefined,
-        siret: "01234567891011",
-      },
+      "01234567891011": makeValue(dates[0]),
     },
   },
   {
@@ -112,114 +113,26 @@ const expectedMapResults = [
       type: "other",
     },
     value: {
-      "01234567891011": {
-        cotisation_moy12m: 0,
-        effectif: null,
-        etat_proc_collective: "in_bonis",
-        interessante_urssaf: true,
-        outcome: false,
-        periode: dates[1],
-        random_order: undefined,
-        siret: "01234567891011",
-      },
+      "01234567891011": makeValue(dates[1]),
     },
   },
 ]
 
-// valeurs résultantes de l'exécution de reduce() => à vérifier et à ré-écrire de manière plus concise
-const expectedReduceResults = [
-  {
-    _id: {
-      batch: "1910",
-      periode: dates[0],
-      siren: "012345678",
-      type: "other",
-    },
-    value: {
-      "01234567891011": {
-        cotisation_moy12m: 0,
-        effectif: null,
-        etat_proc_collective: "in_bonis",
-        interessante_urssaf: true,
-        outcome: false,
-        periode: dates[0],
-        random_order: undefined,
-        siret: "01234567891011",
-      },
-    },
-  },
-  {
-    _id: {
-      batch: "1910",
-      periode: dates[1],
-      siren: "012345678",
-      type: "other",
-    },
-    value: {
-      "01234567891011": {
-        cotisation_moy12m: 0,
-        effectif: null,
-        etat_proc_collective: "in_bonis",
-        interessante_urssaf: true,
-        outcome: false,
-        periode: dates[1],
-        random_order: undefined,
-        siret: "01234567891011",
-      },
-    },
-  },
-]
+const expectedReduceResults = expectedMapResults
 
-// extrait de test-api.golden-master.txt, pour les dates spécifiées plus haut
-// puis revu avec Pierre, car l'API effectue une passe d'agrégation en plus:
-// "cross-computation" (en cours de développement, cf reduceFinalAggregation(),
-// et non implémentée en JS => hors du périmètre de ce test).
-const expectedFinalizeResults = [
-  {
-    _id: {
-      batch: "1910",
-      periode: dates[0],
-      siren: "012345678",
-      type: "other",
+// Structure légèrement différente de celle de test-api.golden-master.txt car
+// l'API effectue une passe d'agrégation en plus: "cross-computation", qui est
+// en cours de développement en Go (cf `reduceFinalAggregation`).
+const expectedFinalizeResults = expectedMapResults.map(({ _id }) => ({
+  _id,
+  value: [
+    // Un élément par établissement, alors que cross-computation retourne un document par établissement.
+    {
+      ...makeValue(_id.periode),
+      nbr_etablissements_connus: 1,
     },
-    value: [
-      // value = un élément par établissement.
-      // FYI: cross-computation retourne un document par établissement.
-      {
-        siret: "01234567891011",
-        periode: dates[0],
-        effectif: null,
-        etat_proc_collective: "in_bonis",
-        interessante_urssaf: true,
-        outcome: false,
-        cotisation_moy12m: 0,
-        nbr_etablissements_connus: 1,
-        random_order: undefined,
-      },
-    ],
-  },
-  {
-    _id: {
-      batch: "1910",
-      periode: dates[1],
-      siren: "012345678",
-      type: "other",
-    },
-    value: [
-      {
-        siret: "01234567891011",
-        periode: dates[1],
-        effectif: null,
-        etat_proc_collective: "in_bonis",
-        interessante_urssaf: true,
-        outcome: false,
-        cotisation_moy12m: 0,
-        nbr_etablissements_connus: 1,
-        random_order: undefined,
-      },
-    ],
-  },
-]
+  ],
+}))
 
 // exécution complète de la chaine "reduce.algo2"
 
