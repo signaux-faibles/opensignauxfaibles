@@ -29,11 +29,20 @@ export type IndexedOutputPartial = {
   [time: string]: DebitComputedValues & Partial<DelaiComputedValues>
 }
 
+// TODO: deepFreeze should throw errors in delais function, as we mutate output_indexed
+const deepFreeze = (obj: any): object => {
+  Object.keys(obj).forEach(prop => {
+    if (obj[prop] === 'object' && !Object.isFrozen(obj[prop])) deepFreeze(obj[prop]);
+  });
+  return Object.freeze(obj);
+};
+
 export function delais(
   v: { delai: DelaiMap },
   output_indexed: IndexedOutputPartial
 ): void {
   "use strict"
+  deepFreeze(output_indexed) // TODO temporary
   Object.keys(v.delai).map(function (hash) {
     const delai = v.delai[hash]
     // On arrondit les dates au premier jour du mois.
