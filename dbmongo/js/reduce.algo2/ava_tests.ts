@@ -53,6 +53,7 @@ const runMongoMap = (mapFct: () => void, keyVal: any): any => {
 
 // test data inspired by test-api.sh
 const siret: SiretOrSiren = "01234567891011"
+const siren = siret.substr(0, 9)
 const scope: Scope = "etablissement"
 const batchKey = "1910"
 const dates = [
@@ -90,30 +91,30 @@ const makeValue = (periode: Date): object => ({
   outcome: false,
   periode,
   random_order: undefined,
-  siret: "01234567891011",
+  siret,
 })
 
 const expectedMapResults = [
   {
     _id: {
-      batch: "1910",
-      siren: "012345678",
+      batch: batchKey,
+      siren,
       periode: dates[0],
       type: "other",
     },
     value: {
-      "01234567891011": makeValue(dates[0]),
+      [siret]: makeValue(dates[0]),
     },
   },
   {
     _id: {
-      batch: "1910",
-      siren: "012345678",
+      batch: batchKey,
+      siren,
       periode: dates[1],
       type: "other",
     },
     value: {
-      "01234567891011": makeValue(dates[1]),
+      [siret]: makeValue(dates[1]),
     },
   },
 ]
