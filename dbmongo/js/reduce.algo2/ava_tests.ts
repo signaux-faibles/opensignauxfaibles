@@ -72,7 +72,7 @@ const rawData = {
       reporder: dates.reduce(
         (reporder, date) => ({
           ...reporder,
-          [date.toString()]: { periode: date, siret },
+          [date.toString()]: { periode: date, siret }, // va résulter en l'ajout de propriétés random_order
         }),
         {}
       ),
