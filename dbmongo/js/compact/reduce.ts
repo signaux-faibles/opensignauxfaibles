@@ -1,5 +1,4 @@
 import "../globals.ts"
-import { setBatchValueForType } from "../common/setBatchValueForType"
 import * as f from "./currentState"
 
 // Entrée: données d'entreprises venant de ImportedData, regroupées par entreprise ou établissement.
@@ -197,20 +196,23 @@ export function reduce(
       }
     })
 
-    new_types.forEach((type: keyof BatchValue) => {
+    new_types.forEach(function <T extends keyof BatchValue>(type: T) {
       if (hashToAdd[type] && type !== "compact") {
-        const hashedValues = reduced_value.batch[batch][type]
+        type BatchValueTWithoutCompact = BatchValue[Exclude<T, "compact">]
+        const hashedValues = reduced_value.batch[batch][
+          type
+        ] as BatchValueTWithoutCompact
 
-        const updatedValues = Object.keys(hashedValues || {})
+        const updatedValues: BatchValue[T] = Object.keys(hashedValues || {})
           .filter((hash) => {
             return hashToAdd[type].has(hash)
           })
-          .reduce((m: typeof hashedValues, hash: string) => {
+          .reduce((m: BatchValueTWithoutCompact, hash: T) => {
             m[hash] = hashedValues[hash]
             return m
-          }, {})
+          }, {} as BatchValueTWithoutCompact)
 
-        setBatchValueForType(reduced_value.batch[batch], type, updatedValues)
+        reduced_value.batch[batch][type] = updatedValues
       }
     })
 

@@ -186,12 +186,6 @@ package engine
   }
   return(reg)
 }`,
-"setBatchValueForType": `// Cette fonction TypeScript permet de vérifier que seuls les types reconnus
-// peuvent être intégrés dans un BatchValue de destination.
-// Ex: setBatchValueForType(batchValue, "pouet", {}) cause une erreur ts(2345).
-function setBatchValueForType(batchValue, typeName, updatedValues) {
-    batchValue[typeName] = updatedValues;
-}`,
 },
 "compact":{
 "complete_reporder": `// complete_reporder ajoute une propriété "reporder" pour chaque couple
@@ -304,9 +298,8 @@ function reduce(key, values) {
     const reduced_value = values.reduce((m, value) => {
         Object.keys(value.batch).forEach((batch) => {
             m.batch[batch] = m.batch[batch] || {};
-            Object.keys(value.batch[batch]).forEach((type) => {
-                const updatedValues = Object.assign(Object.assign({}, m.batch[batch][type]), value.batch[batch][type]);
-                setBatchValueForType(m.batch[batch], type, updatedValues);
+            Object.keys(value.batch[batch]).forEach(function (type) {
+                m.batch[batch][type] = Object.assign(Object.assign({}, m.batch[batch][type]), value.batch[batch][type]);
             });
         });
         return m;
@@ -435,7 +428,7 @@ function reduce(key, values) {
                 ];
             }
         });
-        new_types.forEach((type) => {
+        new_types.forEach(function (type) {
             if (hashToAdd[type] && type !== "compact") {
                 const hashedValues = reduced_value.batch[batch][type];
                 const updatedValues = Object.keys(hashedValues || {})
@@ -446,7 +439,7 @@ function reduce(key, values) {
                     m[hash] = hashedValues[hash];
                     return m;
                 }, {});
-                setBatchValueForType(reduced_value.batch[batch], type, updatedValues);
+                reduced_value.batch[batch][type] = updatedValues;
             }
         });
         // 6. nettoyage
