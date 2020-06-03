@@ -46,10 +46,7 @@ const testProperty = (debits?: DebitComputedValues): IndexedOutput => {
   const output_indexed: IndexedOutputPartial = {}
   output_indexed[fevrier.getTime()] = debits ? makeOutputIndexed(debits) : {}
   output_indexed[mars.getTime()] = debits ? makeOutputIndexed(debits) : {}
-  delais({ delai: delaiMap }, output_indexed)
-  return output_indexed as {
-    [time: string]: DebitComputedValues & DelaiComputedValues
-  }
+  return delais({ delai: delaiMap }, output_indexed)
 }
 
 test("la propriété delai représente le nombre de mois complets restants du délai", (t) => {
@@ -78,16 +75,16 @@ test("la propriété ratio_dette_delai représente la déviation du remboursemen
   const debits = { montant_part_patronale: 600, montant_part_ouvriere: 0 }
   const output_indexed = testProperty(debits)
   const tolerance = 10e-3
-  t.true(
-    Math.abs(
-      output_indexed[fevrier.getTime()]["ratio_dette_delai"] - expectedFebruary
-    ) < tolerance
-  )
-  t.true(
-    Math.abs(
-      output_indexed[mars.getTime()]["ratio_dette_delai"] - expectedMarch
-    ) < tolerance
-  )
+  const ratioFebruary = output_indexed[fevrier.getTime()]["ratio_dette_delai"]
+  const ratioMarch = output_indexed[mars.getTime()]["ratio_dette_delai"]
+  t.is(typeof ratioFebruary, "number")
+  t.is(typeof ratioMarch, "number")
+  if (typeof ratioFebruary === "number") {
+    t.true(Math.abs(ratioFebruary - expectedFebruary) < tolerance)
+  }
+  if (typeof ratioMarch === "number") {
+    t.true(Math.abs(ratioMarch - expectedMarch) < tolerance)
+  }
 })
 
 test("un délai en dehors de la période d'intérêt est ignorée", (t) => {
