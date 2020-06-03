@@ -31,11 +31,12 @@ export type IndexedOutputPartial = {
 
 // TODO: deepFreeze should throw errors in delais function, as we mutate output_indexed
 const deepFreeze = (obj: any): object => {
-  Object.keys(obj).forEach(prop => {
-    if (obj[prop] === 'object' && !Object.isFrozen(obj[prop])) deepFreeze(obj[prop]);
-  });
-  return Object.freeze(obj);
-};
+  Object.keys(obj).forEach((prop) => {
+    if (typeof obj[prop] === "object" && !Object.isFrozen(obj[prop]))
+      deepFreeze(obj[prop])
+  })
+  return Object.freeze(obj)
+}
 
 export function delais(
   v: { delai: DelaiMap },
