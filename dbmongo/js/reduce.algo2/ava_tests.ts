@@ -245,9 +245,7 @@ test.serial(
 test.serial(`reduce.algo2.finalize()`, (t: ExecutionContext) => {
   const finalizeResult = expectedReduceResults.map(({ _id, value }) => {
     // Note: on suppose qu'il n'y a qu'une valeur par clé
-    const result = finalize(_id, value)
-    return { _id, value: "incomplete" in result ? result : result }
+    return { _id, value: finalize(_id, value) }
   })
-  t.log(JSON.stringify(finalizeResult, null, 2))
   t.deepEqual(finalizeResult, expectedFinalizeResults as any) // ⚠️ Les types sont incompatibles => réparer la déclaration TS de finalize ?
 })
