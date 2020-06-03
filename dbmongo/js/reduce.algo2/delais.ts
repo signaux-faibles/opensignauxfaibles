@@ -29,9 +29,11 @@ export type DebitComputedValuesPerPeriod = {
   [time: string]: DebitComputedValues
 }
 
+type DeepReadonly<T> = Readonly<T> // pas vraiment, mais espoire que TS le supporte prochainement
+
 export function delais(
   v: { delai: DelaiMap },
-  donnéesActuellesParPériode: Readonly<DebitComputedValuesPerPeriod>
+  donnéesActuellesParPériode: DeepReadonly<DebitComputedValuesPerPeriod>
 ): { [time: string]: DelaiComputedValues } {
   "use strict"
   const donnéesSupplémentairesParPériode: {
