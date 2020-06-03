@@ -171,40 +171,51 @@ const expectedReduceResults = [
 ]
 
 // extrait de test-api.golden-master.txt, pour les dates spécifiées plus haut
+// puis revu avec Pierre, car l'API effectue une passe d'agrégation en plus:
+// "cross-computation" (en cours de développement, cf reduceFinalAggregation(),
+// et non implémentée en JS => hors du périmètre de ce test).
 const expectedFinalizeResults = [
   {
     _id: {
       batch: "1910",
-      siret: "01234567891011",
       periode: ISODate("2015-12-01T00:00:00Z"),
+      siren: "012345678",
+      type: "other",
     },
-    value: {
-      siret: "01234567891011",
-      periode: ISODate("2015-12-01T00:00:00Z"),
-      effectif: null,
-      etat_proc_collective: "in_bonis",
-      interessante_urssaf: true,
-      outcome: false,
-      cotisation_moy12m: 0,
-      nbr_etablissements_connus: 1,
-    },
+    value: [
+      // value = un élément par établissement.
+      // FYI: cross-computation retourne un document par établissement.
+      {
+        siret: "01234567891011",
+        periode: ISODate("2015-12-01T00:00:00Z"),
+        effectif: null,
+        etat_proc_collective: "in_bonis",
+        interessante_urssaf: true,
+        outcome: false,
+        cotisation_moy12m: 0,
+        nbr_etablissements_connus: 1,
+      },
+    ],
   },
   {
     _id: {
       batch: "1910",
-      siret: "01234567891011",
       periode: ISODate("2016-01-01T00:00:00Z"),
+      siren: "012345678",
+      type: "other",
     },
-    value: {
-      siret: "01234567891011",
-      periode: ISODate("2016-01-01T00:00:00Z"),
-      effectif: null,
-      etat_proc_collective: "in_bonis",
-      interessante_urssaf: true,
-      outcome: false,
-      cotisation_moy12m: 0,
-      nbr_etablissements_connus: 1,
-    },
+    value: [
+      {
+        siret: "01234567891011",
+        periode: ISODate("2016-01-01T00:00:00Z"),
+        effectif: null,
+        etat_proc_collective: "in_bonis",
+        interessante_urssaf: true,
+        outcome: false,
+        cotisation_moy12m: 0,
+        nbr_etablissements_connus: 1,
+      },
+    ],
   },
 ]
 
@@ -233,14 +244,8 @@ test.serial(`reduce.algo2.finalize()`, (t: ExecutionContext) => {
   const finalizeResult = expectedReduceResults.map(({ _id, value }) => {
     // Note: on suppose qu'il n'y a qu'une valeur par clé
     const result = finalize(_id, value)
-    return { _id, value: "incomplete" in result ? result : result[0] } // TODO: pourquoi préciser [0] ici ? 🤔 => c'était attendu: un élément par établissment. l'agregation cross-computation va exploser ces etablissements au niveau le plus haut des données en sorties.
+    return { _id, value: "incomplete" in result ? result : result }
   })
   t.log(JSON.stringify(finalizeResult, null, 2))
   t.deepEqual(finalizeResult, expectedFinalizeResults as any) // ⚠️ Les types sont incompatibles => réparer la déclaration TS de finalize ?
 })
-
-// il manque une agregation qui sort dans la base Features_debug (_debug car on a spécifié la clé)
-// => changer la valeur attendue: récupérer la valeur intermédiaire de l'appel à /reduce au lieu de la sortie finale
-// (cette agrégation ne s'appuie pas sur des scripts JS, cf `reduceFinalAggregation()`)
-// (a.k.a. cross-computation) l'objectif était de reduce type par type, mais c'est pas fini.
-// pierre est serein sur la sortie actuelle de finalize().
