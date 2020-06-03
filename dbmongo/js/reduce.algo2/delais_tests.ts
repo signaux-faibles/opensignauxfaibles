@@ -92,9 +92,9 @@ test("un délai en dehors de la période d'intérêt est ignorée", (t) => {
   const delaiMap: DelaiMap = {
     abc: delaiTest,
   }
-  const output_indexed: DebitComputedValuesPerPeriod = {}
-  output_indexed[fevrier.getTime()] = makeOutputIndexed()
-  delais({ delai: delaiMap }, output_indexed)
+  const donnéesActuellesParPériode: DebitComputedValuesPerPeriod = {}
+  donnéesActuellesParPériode[fevrier.getTime()] = makeOutputIndexed()
+  const output_indexed = delais({ delai: delaiMap }, donnéesActuellesParPériode)
   t.deepEqual(Object.keys(output_indexed), [fevrier.getTime().toString()])
 })
 
