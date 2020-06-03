@@ -233,8 +233,14 @@ test.serial(`reduce.algo2.finalize()`, (t: ExecutionContext) => {
   const finalizeResult = expectedReduceResults.map(({ _id, value }) => {
     // Note: on suppose qu'il n'y a qu'une valeur par clé
     const result = finalize(_id, value)
-    return { _id, value: "incomplete" in result ? result : result[0] } // TODO: pourquoi préciser [0] ici ? 🤔
+    return { _id, value: "incomplete" in result ? result : result[0] } // TODO: pourquoi préciser [0] ici ? 🤔 => c'était attendu: un élément par établissment. l'agregation cross-computation va exploser ces etablissements au niveau le plus haut des données en sorties.
   })
   t.log(JSON.stringify(finalizeResult, null, 2))
   t.deepEqual(finalizeResult, expectedFinalizeResults as any) // ⚠️ Les types sont incompatibles => réparer la déclaration TS de finalize ?
 })
+
+// il manque une agregation qui sort dans la base Features_debug (_debug car on a spécifié la clé)
+// => changer la valeur attendue: récupérer la valeur intermédiaire de l'appel à /reduce au lieu de la sortie finale
+// (cette agrégation ne s'appuie pas sur des scripts JS, cf `reduceFinalAggregation()`)
+// (a.k.a. cross-computation) l'objectif était de reduce type par type, mais c'est pas fini.
+// pierre est serein sur la sortie actuelle de finalize().
