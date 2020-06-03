@@ -1,4 +1,4 @@
-import test, { ExecutionContext } from "ava"
+import test from "ava"
 import "../globals"
 import {
   delais,
@@ -34,12 +34,7 @@ const makeOutputIndexed = ({
   montant_part_ouvriere,
 })
 
-const testProperty = (
-  t: ExecutionContext,
-  propertyName: keyof DelaiComputedValues,
-  expectedFebruary: number,
-  expectedMarch: number
-): {
+const testProperty = (): {
   [time: string]: IndexedOutputExpectedValues & DelaiComputedValues
 } => {
   const delaiTest = makeDelai(new Date("2014-01-03"), new Date("2014-04-05"))
@@ -56,36 +51,35 @@ const testProperty = (
     montant_part_ouvriere: 0,
   })
   delais({ delai: delaiMap }, output_indexed)
-  t.is(output_indexed[fevrier.getTime()][propertyName], expectedFebruary)
-  t.is(output_indexed[mars.getTime()][propertyName], expectedMarch)
   return output_indexed as {
     [time: string]: IndexedOutputExpectedValues & DelaiComputedValues
   }
 }
 
 test("la propriété delai représente le nombre de mois complets restants du délai", (t) => {
-  testProperty(t, "delai", 2, 1)
+  const output_indexed = testProperty()
+  t.is(output_indexed[fevrier.getTime()]["delai"], 2)
+  t.is(output_indexed[mars.getTime()]["delai"], 1)
 })
 
 test("la propriété duree_delai représente la durée totale en jours du délai", (t) => {
   const dureeEnJours = nbDays(new Date("2014-01-03"), new Date("2014-04-05"))
-  testProperty(t, "duree_delai", dureeEnJours, dureeEnJours)
+  const output_indexed = testProperty()
+  t.is(output_indexed[fevrier.getTime()]["duree_delai"], dureeEnJours)
+  t.is(output_indexed[mars.getTime()]["duree_delai"], dureeEnJours)
 })
 
 test("la propriété montant_echeancier représente le montant en euros des cotisations sociales couvertes par le délai", (t) => {
-  testProperty(t, "montant_echeancier", 1000, 1000)
+  const output_indexed = testProperty()
+  t.is(output_indexed[fevrier.getTime()]["montant_echeancier"], 1000)
+  t.is(output_indexed[mars.getTime()]["montant_echeancier"], 1000)
 })
 
 test("la propriété ratio_dette_delai représente la déviation du remboursement de la dette par rapport à un remboursement linéaire sur la durée du délai", (t) => {
   // TODO: Inclure la formule dans la documentation de ce test
-  const expectedFebruary = -0.05217391304347825
-  const expectedMarch = 0.2739130434782609
-  const output_indexed = testProperty(
-    t,
-    "ratio_dette_delai",
-    expectedFebruary,
-    expectedMarch
-  )
+  const expectedFebruary = -0.052
+  const expectedMarch = 0.273
+  const output_indexed = testProperty()
   const tolerance = 10e-3
   t.true(
     Math.abs(
