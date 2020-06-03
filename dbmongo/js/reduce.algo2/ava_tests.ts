@@ -247,5 +247,5 @@ test.serial(`reduce.algo2.finalize()`, (t: ExecutionContext) => {
     // Note: on suppose qu'il n'y a qu'une valeur par clé
     return { _id, value: finalize(_id, value) }
   })
-  t.deepEqual(finalizeResult, expectedFinalizeResults as any) // ⚠️ Les types sont incompatibles => réparer la déclaration TS de finalize ?
+  t.deepEqual(finalizeResult, expectedFinalizeResults)
 })

@@ -1,4 +1,4 @@
-export function finalize<T extends { [siret]: any }>(
+export function finalize<T>(
   k: any,
-  v: T
+  v: { [key: string]: T }
 ): T[] | { incomplete: true }
