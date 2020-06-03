@@ -71,14 +71,11 @@ test("la propriété montant_echeancier représente le montant en euros des coti
   testProperty(t, "montant_echeancier", 1000, 1000)
 })
 
-test.todo(
-  "la propriété ratio_dette_delai représente la déviation du remboursement de la dette par rapport à un remboursement linéaire sur la durée du délai"
-  /*(t) => {
-    // TODO: Inclure la formule dans la documentation de ce test
-    // TODO: populer montant_part_patronale et montant_part_ouvriere dans output_indexed
-    testProperty(t, "ratio_dette_delai", 1000, 1000)
-  }*/
-)
+test("la propriété ratio_dette_delai représente la déviation du remboursement de la dette par rapport à un remboursement linéaire sur la durée du délai", (t) => {
+  // TODO: Inclure la formule dans la documentation de ce test
+  testProperty(t, "ratio_dette_delai", -0.05217391304347825, 0.2739130434782609)
+  // TODO: éviter la comparaison de nombres à virgule flottante
+})
 
 test("un délai en dehors de la période d'intérêt est ignorée", (t) => {
   const delaiTest = makeDelai(new Date("2013-01-03"), new Date("2013-03-05"))
