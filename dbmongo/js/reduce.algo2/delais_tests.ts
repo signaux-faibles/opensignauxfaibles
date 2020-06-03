@@ -92,10 +92,10 @@ test("un délai en dehors de la période d'intérêt est ignorée", (t) => {
   const delaiMap: DelaiMap = {
     abc: delaiTest,
   }
-  const donnéesActuellesParPériode: DebitComputedValuesPerPeriod = {}
-  donnéesActuellesParPériode[fevrier.getTime()] = makeOutputIndexed()
-  const output_indexed = delais({ delai: delaiMap }, donnéesActuellesParPériode)
-  t.deepEqual(Object.keys(output_indexed), [fevrier.getTime().toString()])
+  const donnéesParPériode: DebitComputedValuesPerPeriod = {}
+  donnéesParPériode[fevrier.getTime()] = makeOutputIndexed()
+  const périodesComplétées = delais({ delai: delaiMap }, donnéesParPériode)
+  t.deepEqual(périodesComplétées, {})
 })
 
 // TODO: ajouter des tests sur les autres propriétés retournées
