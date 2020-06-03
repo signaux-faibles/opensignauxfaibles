@@ -8,14 +8,6 @@ export type Delai = {
   montant_echeancier: number // exprimé en euros
 }
 
-export type DelaiMap = { [key: string]: Delai }
-
-// Valeurs attendues dans le paramètre indexed_output passé à delais()
-export type IndexedOutputExpectedValues = {
-  montant_part_patronale?: number
-  montant_part_ouvriere?: number
-}
-
 // Valeurs ajoutées dans la paramètre indexed_output passé à delais()
 export type DelaiComputedValues = {
   delai: number
@@ -24,9 +16,17 @@ export type DelaiComputedValues = {
   montant_echeancier: number // exprimé en euros
 }
 
+export type DelaiMap = { [key: string]: Delai }
+
+// Valeurs attendues dans le paramètre indexed_output passé à delais()
+export type DebitComputedValues = {
+  montant_part_patronale?: number
+  montant_part_ouvriere?: number
+}
+
 // Type du paramètre indexed_output passé à delais()
 export type IndexedOutputPartial = {
-  [time: string]: IndexedOutputExpectedValues & Partial<DelaiComputedValues>
+  [time: string]: DebitComputedValues & Partial<DelaiComputedValues>
 }
 
 export function delais(
@@ -67,16 +67,16 @@ export function delais(
       })
     pastYearTimes.map(function (time: number) {
       if (time in output_indexed) {
+        const outputAtTime = output_indexed[time]
         const remaining_months =
           date_echeance.getUTCMonth() -
           new Date(time).getUTCMonth() +
           12 *
             (date_echeance.getUTCFullYear() - new Date(time).getUTCFullYear())
-        output_indexed[time].delai = remaining_months
-        output_indexed[time].duree_delai = delai.duree_delai
-        output_indexed[time].montant_echeancier = delai.montant_echeancier
+        outputAtTime.delai = remaining_months
+        outputAtTime.duree_delai = delai.duree_delai
+        outputAtTime.montant_echeancier = delai.montant_echeancier
 
-        const outputAtTime = output_indexed[time]
         if (
           delai.duree_delai > 0 &&
           outputAtTime.montant_part_patronale !== undefined &&

@@ -5,7 +5,7 @@ import {
   Delai,
   DelaiMap,
   DelaiComputedValues,
-  IndexedOutputExpectedValues,
+  DebitComputedValues,
   IndexedOutputPartial,
 } from "./delais"
 
@@ -29,16 +29,16 @@ const makeDelai = (firstDate: Date, secondDate: Date): Delai => ({
 const makeOutputIndexed = ({
   montant_part_patronale = 0,
   montant_part_ouvriere = 0,
-} = {}): IndexedOutputExpectedValues => ({
+} = {}): DebitComputedValues => ({
   montant_part_patronale,
   montant_part_ouvriere,
 })
 
-const testProperty = (
-  debits?: object
-): {
-  [time: string]: IndexedOutputExpectedValues & DelaiComputedValues
-} => {
+type IndexedOutput = {
+  [time: string]: DebitComputedValues & DelaiComputedValues
+}
+
+const testProperty = (debits?: DebitComputedValues): IndexedOutput => {
   const delaiTest = makeDelai(new Date("2014-01-03"), new Date("2014-04-05"))
   const delaiMap: DelaiMap = {
     abc: delaiTest,
@@ -48,7 +48,7 @@ const testProperty = (
   output_indexed[mars.getTime()] = debits ? makeOutputIndexed(debits) : {}
   delais({ delai: delaiMap }, output_indexed)
   return output_indexed as {
-    [time: string]: IndexedOutputExpectedValues & DelaiComputedValues
+    [time: string]: DebitComputedValues & DelaiComputedValues
   }
 }
 
