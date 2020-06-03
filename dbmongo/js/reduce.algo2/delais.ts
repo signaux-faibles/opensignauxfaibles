@@ -12,8 +12,8 @@ export type DelaiMap = { [key: string]: Delai }
 
 // Valeurs attendues dans le paramètre indexed_output passé à delais()
 export type IndexedOutputExpectedValues = {
-  montant_part_patronale: number
-  montant_part_ouvriere: number
+  montant_part_patronale?: number
+  montant_part_ouvriere?: number
 }
 
 // Valeurs ajoutées dans la paramètre indexed_output passé à delais()
@@ -76,7 +76,7 @@ export function delais(
         output_indexed[time].duree_delai = delai.duree_delai
         output_indexed[time].montant_echeancier = delai.montant_echeancier
 
-        if (delai.duree_delai > 0) {
+        if (delai.duree_delai > 0 && output_indexed[time].montant_part_patronale !== undefined && output_indexed[time].montant_part_ouvriere !== undefined) {
           output_indexed[time].ratio_dette_delai =
             (output_indexed[time].montant_part_patronale +
               output_indexed[time].montant_part_ouvriere -
