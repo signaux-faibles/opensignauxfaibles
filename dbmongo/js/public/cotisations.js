@@ -25,3 +25,5 @@ function cotisations(vcotisation) {
 
   return(output_cotisation)
 }
+
+exports.cotisations = cotisations

@@ -11,3 +11,5 @@ function effectifs(v) {
     }
   }).filter(p => p.effectif)
 }
+
+exports.effectifs = effectifs
