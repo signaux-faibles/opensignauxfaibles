@@ -25,12 +25,12 @@ export function reduce(
       Object.keys(value.batch).forEach((batch) => {
         m.batch[batch] = m.batch[batch] || {}
         Object.keys(value.batch[batch]).forEach(function <
-          T extends keyof BatchValue
-        >(type: T) {
+          Type extends keyof BatchValue
+        >(type: Type) {
           m.batch[batch][type] = {
             ...m.batch[batch][type],
             ...value.batch[batch][type],
-          } as BatchValue[T]
+          } as BatchValue[Type]
         })
       })
       return m
