@@ -435,11 +435,7 @@ function reduce(key, values) {
                 delete reduced_value.batch[batch][type];
             }
             else {
-                const typedBatchValues = {};
-                for (const hash of hashToAdd[type]) {
-                    typedBatchValues[hash] = reduced_value.batch[batch][type][hash];
-                }
-                reduced_value.batch[batch][type] = typedBatchValues;
+                reduced_value.batch[batch][type] = [...hashToAdd[type]].reduce((typedBatchValues, hash) => (Object.assign(Object.assign({}, typedBatchValues), { [hash]: reduced_value.batch[batch][type][hash] })), {});
             }
         });
         // 6. nettoyage
