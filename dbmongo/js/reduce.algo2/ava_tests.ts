@@ -68,18 +68,10 @@ global.naf = {} // used by map()
 // même valeur en entrée que pour ../compact/ava_tests.ts
 const rawData = {
   batch: {
-    [batchKey]: {
-      reporder: dates.reduce(
-        (reporder, date) => ({
-          ...reporder,
-          [date.toString()]: { periode: date, siret }, // va résulter en l'ajout de propriétés random_order
-        }),
-        {}
-      ),
-    } as BatchValue, // TODO: rendre optionnelles les props de BatchValues, pour retirer ce cast
+    [batchKey]: {} as BatchValue, // TODO: rendre optionnelles les props de BatchValues, pour retirer ce cast
   },
   scope,
-  index: { algo1: false, algo2: false }, // car il n'y a pas de données justifiant que l'établissement compte 10 employés ou pas
+  index: { algo1: false, algo2: false },
   key: siret,
 }
 
@@ -90,7 +82,6 @@ const makeValue = (periode: Date): object => ({
   interessante_urssaf: true,
   outcome: false,
   periode,
-  random_order: undefined,
   siret,
 })
 
