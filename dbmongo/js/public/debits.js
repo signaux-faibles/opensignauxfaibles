@@ -85,3 +85,5 @@ function debits(vdebit) {
 
   return(output_dette)
 }
+
+exports.debits = debits
