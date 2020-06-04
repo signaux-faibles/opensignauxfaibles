@@ -200,9 +200,8 @@ export function reduce(
     Object.keys(hashToAdd)
       .filter((type) => type !== "compact" && new_types.includes(type))
       .forEach(function <Type extends AllValueTypesButCompact>(type: Type) {
-        const typedHashesToAdd = hashToAdd[type]
         const typedBatchValues: { [hash: string]: any } = {}
-        for (const hash of typedHashesToAdd) {
+        for (const hash of hashToAdd[type]) {
           typedBatchValues[hash] = reduced_value.batch[batch][type][hash]
         }
         reduced_value.batch[batch][type] = typedBatchValues
