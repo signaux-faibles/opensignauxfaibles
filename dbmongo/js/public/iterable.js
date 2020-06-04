@@ -8,3 +8,5 @@ function iterable(dict) {
     return []
   }
 }
+
+exports.iterable = iterable

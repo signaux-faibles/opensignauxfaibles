@@ -64,3 +64,5 @@ function finalize(k, v) {
     }
   }
 }
+
+exports.finalize = finalize

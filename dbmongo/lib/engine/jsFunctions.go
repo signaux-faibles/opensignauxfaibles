@@ -1304,7 +1304,7 @@ db.getCollection("Features").createIndex({
   f.dealWithProcols(v.procol, "procol", output_indexed)
 }
   
-  
+
   `,
 "delais": `function delais(v, donnéesActuellesParPériode) {
     "use strict";
