@@ -196,18 +196,18 @@ export function reduce(
       }
     })
 
-    new_types.forEach(function <T extends keyof BatchValue>(type: T) {
+    new_types.forEach(function <Type extends keyof BatchValue>(type: Type) {
       if (hashToAdd[type] && type !== "compact") {
-        type BatchValueTWithoutCompact = BatchValue[Exclude<T, "compact">]
+        type BatchValueTWithoutCompact = BatchValue[Exclude<Type, "compact">]
         const hashedValues = reduced_value.batch[batch][
           type
         ] as BatchValueTWithoutCompact
 
-        const updatedValues: BatchValue[T] = Object.keys(hashedValues || {})
+        const updatedValues: BatchValue[Type] = Object.keys(hashedValues || {})
           .filter((hash) => {
             return hashToAdd[type].has(hash)
           })
-          .reduce((m: BatchValueTWithoutCompact, hash: T) => {
+          .reduce((m: BatchValueTWithoutCompact, hash: Type) => {
             m[hash] = hashedValues[hash]
             return m
           }, {} as BatchValueTWithoutCompact)
