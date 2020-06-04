@@ -1,5 +1,4 @@
 import "../globals.ts"
-import { setBatchValueForType } from "../common/setBatchValueForType"
 import * as f from "./currentState"
 
 // Entrée: données d'entreprises venant de ImportedData, regroupées par entreprise ou établissement.
@@ -25,12 +24,13 @@ export function reduce(
     (m, value: CompanyDataValues) => {
       Object.keys(value.batch).forEach((batch) => {
         m.batch[batch] = m.batch[batch] || {}
-        Object.keys(value.batch[batch]).forEach((type: keyof BatchValue) => {
-          const updatedValues = {
+        Object.keys(value.batch[batch]).forEach(function <
+          Type extends keyof BatchValue
+        >(type: Type) {
+          m.batch[batch][type] = {
             ...m.batch[batch][type],
             ...value.batch[batch][type],
-          }
-          setBatchValueForType(m.batch[batch], type, updatedValues)
+          } as BatchValue[Type]
         })
       })
       return m
