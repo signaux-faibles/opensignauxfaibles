@@ -198,16 +198,25 @@ export function reduce(
 
     // filtrage des données en fonction de new_types et hashToAdd
     type AllValueTypesButCompact = Exclude<keyof BatchValue, "compact">
-    Object.keys(hashToAdd)
-      .filter((type) => type !== "compact" && new_types.includes(type))
-      .forEach(function <Type extends AllValueTypesButCompact>(type: Type) {
-        type ValuesPerHash = { [hash: string]: BatchValue[Type][string] }
-        const typedBatchValues: ValuesPerHash = {}
-        for (const hash of hashToAdd[type]) {
-          typedBatchValues[hash] = reduced_value.batch[batch][type][hash]
+    type ValuesPerHash = {
+      [hash: string]: BatchValue[AllValueTypesButCompact][string]
+    }
+    Object.keys(reduced_value.batch[batch]).forEach(function <
+      Type extends keyof BatchValue
+    >(type: Type) {
+      if (type === "compact") {
+        // laisser reduced_value.batch[batch][type] tel quel, conformément à reduce_tests.js ?
+      } else if (!new_types.includes(type)) {
+        delete reduced_value.batch[batch][type]
+      } else {
+        const typedBatchValues: ValuesPerHash = reduced_value.batch[batch][type]
+        for (const hash of Object.keys(typedBatchValues)) {
+          if (!hashToAdd[type].has(hash)) {
+            delete typedBatchValues[hash]
+          }
         }
-        reduced_value.batch[batch][type] = typedBatchValues
-      })
+      }
+    })
 
     // 6. nettoyage
     // ------------

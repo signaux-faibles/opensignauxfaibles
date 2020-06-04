@@ -400,7 +400,10 @@ const test_results = test_cases.map(function(tc, id) {
   jsParams.types = tc.types
   jsParams.batches = tc.batches
   var actual = reduce(tc.reduce_key, tc.reduce_values)
-  // print(JSON.stringify(actual, null, 2))
+  if (!compare(actual, tc.expected)) {
+    print("expected", id, JSON.stringify(tc.expected, null, 2))
+    print("actual", id, JSON.stringify(actual, null, 2))
+  }
   return(compare(actual, tc.expected))
 })
 

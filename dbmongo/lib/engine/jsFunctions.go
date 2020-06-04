@@ -435,14 +435,21 @@ function reduce(key, values) {
                 ];
             }
         });
-        Object.keys(hashToAdd)
-            .filter((type) => type !== "compact" && new_types.includes(type))
-            .forEach(function (type) {
-            const typedBatchValues = {};
-            for (const hash of hashToAdd[type]) {
-                typedBatchValues[hash] = reduced_value.batch[batch][type][hash];
+        Object.keys(reduced_value.batch[batch]).forEach(function (type) {
+            if (type === "compact") {
+                // laisser reduced_value.batch[batch][type] tel quel, conformément à reduce_tests.js ?
             }
-            reduced_value.batch[batch][type] = typedBatchValues;
+            else if (!new_types.includes(type)) {
+                delete reduced_value.batch[batch][type];
+            }
+            else {
+                const typedBatchValues = reduced_value.batch[batch][type];
+                for (const hash of Object.keys(typedBatchValues)) {
+                    if (!hashToAdd[type].has(hash)) {
+                        delete typedBatchValues[hash];
+                    }
+                }
+            }
         });
         // 6. nettoyage
         // ------------
