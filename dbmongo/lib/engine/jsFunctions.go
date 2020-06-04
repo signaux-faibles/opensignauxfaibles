@@ -1306,8 +1306,9 @@ db.getCollection("Features").createIndex({
   
 
   `,
-"delais": `function delais(v, output_indexed) {
+"delais": `function delais(v, donnéesActuellesParPériode) {
     "use strict";
+    const donnéesSupplémentairesParPériode = {};
     Object.keys(v.delai).map(function (hash) {
         const delai = v.delai[hash];
         // On arrondit les dates au premier jour du mois.
@@ -1320,25 +1321,32 @@ db.getCollection("Features").createIndex({
             return date.getTime();
         });
         pastYearTimes.map(function (time) {
-            if (time in output_indexed) {
+            if (time in donnéesActuellesParPériode) {
                 const remaining_months = date_echeance.getUTCMonth() -
                     new Date(time).getUTCMonth() +
                     12 *
                         (date_echeance.getUTCFullYear() - new Date(time).getUTCFullYear());
-                output_indexed[time].delai = remaining_months;
-                output_indexed[time].duree_delai = delai.duree_delai;
-                output_indexed[time].montant_echeancier = delai.montant_echeancier;
-                if (delai.duree_delai > 0) {
-                    output_indexed[time].ratio_dette_delai =
-                        (output_indexed[time].montant_part_patronale +
-                            output_indexed[time].montant_part_ouvriere -
+                const inputAtTime = donnéesActuellesParPériode[time];
+                const outputAtTime = {
+                    delai: remaining_months,
+                    duree_delai: delai.duree_delai,
+                    montant_echeancier: delai.montant_echeancier,
+                };
+                if (delai.duree_delai > 0 &&
+                    inputAtTime.montant_part_patronale !== undefined &&
+                    inputAtTime.montant_part_ouvriere !== undefined) {
+                    outputAtTime.ratio_dette_delai =
+                        (inputAtTime.montant_part_patronale +
+                            inputAtTime.montant_part_ouvriere -
                             (delai.montant_echeancier * remaining_months * 30) /
                                 delai.duree_delai) /
                             delai.montant_echeancier;
                 }
+                donnéesSupplémentairesParPériode[time] = outputAtTime;
             }
         });
     });
+    return donnéesSupplémentairesParPériode;
 }`,
 "detteFiscale": `function detteFiscale (diane){
   "use strict";
@@ -1673,7 +1681,10 @@ db.getCollection("Features").createIndex({
         f.add(output_repeatable, output_indexed)
       }
 
-      if (v.delai) {f.delais(v, output_indexed)}
+      if (v.delai) {
+        const output_delai = f.delais(v, output_indexed)
+        f.add(output_delai, output_indexed)
+      }
 
       v.altares = v.altares || {}
       v.procol = v.procol || {}
