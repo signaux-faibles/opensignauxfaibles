@@ -4,3 +4,5 @@ function reduce(key, values) {
     return Object.assign(accu, val)
   }, {})
 }
+
+exports.reduce = reduce

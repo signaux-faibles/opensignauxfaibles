@@ -27,3 +27,5 @@ function flatten(v, actual_batch) {
 
   return(res)
 }
+
+exports.flatten = flatten

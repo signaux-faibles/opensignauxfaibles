@@ -12,4 +12,4 @@ function repeatable(rep){
 
 }
 
-
+exports.repeatable = repeatable

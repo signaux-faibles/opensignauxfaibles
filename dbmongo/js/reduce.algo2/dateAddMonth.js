@@ -4,3 +4,5 @@ function dateAddMonth(date, nbMonth) {
   result.setUTCMonth(result.getUTCMonth() + nbMonth)
   return result
 }
+
+exports.dateAddMonth = dateAddMonth
