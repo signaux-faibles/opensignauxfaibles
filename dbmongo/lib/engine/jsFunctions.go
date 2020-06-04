@@ -297,10 +297,9 @@ function reduce(key, values) {
     //fusion des attributs dans values
     const reduced_value = values.reduce((m, value) => {
         Object.keys(value.batch).forEach((batch) => {
-            m.batch[batch] = m.batch[batch] || {};
-            Object.keys(value.batch[batch]).forEach(function (type) {
-                m.batch[batch][type] = Object.assign(Object.assign({}, m.batch[batch][type]), value.batch[batch][type]);
-            });
+            m.batch[batch] = Object.keys(value.batch[batch]).reduce(function (batchValues, type) {
+                return Object.assign(Object.assign({}, batchValues), { [type]: value.batch[batch][type] });
+            }, m.batch[batch] || {});
         });
         return m;
     }, { key: key, scope: values[0].scope, batch: {} });

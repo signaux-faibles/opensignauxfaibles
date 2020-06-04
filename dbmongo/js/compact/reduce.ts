@@ -23,15 +23,15 @@ export function reduce(
   const reduced_value: CompanyDataValues = values.reduce(
     (m, value: CompanyDataValues) => {
       Object.keys(value.batch).forEach((batch) => {
-        m.batch[batch] = m.batch[batch] || {}
-        Object.keys(value.batch[batch]).forEach(function <
+        m.batch[batch] = Object.keys(value.batch[batch]).reduce(function <
           Type extends keyof BatchValue
-        >(type: Type) {
-          m.batch[batch][type] = {
-            ...m.batch[batch][type],
-            ...value.batch[batch][type],
-          } as BatchValue[Type]
-        })
+        >(batchValues: BatchValue, type: Type) {
+          return {
+            ...batchValues,
+            [type]: value.batch[batch][type],
+          }
+        },
+        m.batch[batch] || {})
       })
       return m
     },
