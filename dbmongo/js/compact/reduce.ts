@@ -196,22 +196,17 @@ export function reduce(
       }
     })
 
-    new_types.forEach((type: keyof BatchValue) => {
-      if (hashToAdd[type] && type !== "compact") {
-        const hashedValues = reduced_value.batch[batch][type]
-
-        const updatedValues = Object.keys(hashedValues || {})
-          .filter((hash) => {
-            return hashToAdd[type].has(hash)
-          })
-          .reduce((m: typeof hashedValues, hash: string) => {
-            m[hash] = hashedValues[hash]
-            return m
-          }, {})
-
-        setBatchValueForType(reduced_value.batch[batch], type, updatedValues)
-      }
-    })
+    type AllValueTypesButCompact = Exclude<keyof BatchValue, "compact">
+    Object.keys(hashToAdd)
+      .filter((type) => type !== "compact")
+      .forEach(function <Type extends AllValueTypesButCompact>(type: Type) {
+        const typedHashesToAdd = hashToAdd[type]
+        const typedBatchValues: { [hash: string]: any } = {}
+        for (const hash of typedHashesToAdd) {
+          typedBatchValues[hash] = reduced_value.batch[batch][type][hash]
+        }
+        reduced_value.batch[batch][type] = typedBatchValues
+      })
 
     // 6. nettoyage
     // ------------
