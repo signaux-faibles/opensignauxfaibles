@@ -436,13 +436,18 @@ function reduce(key, values) {
             }
         });
         Object.keys(hashToAdd)
-            .filter((type) => type !== "compact" && new_types.includes(type))
+            .filter((type) => type !== "compact")
             .forEach(function (type) {
-            const typedBatchValues = {};
-            for (const hash of hashToAdd[type]) {
-                typedBatchValues[hash] = reduced_value.batch[batch][type][hash];
+            if (!new_types.includes(type)) {
+                delete reduced_value.batch[batch][type];
             }
-            reduced_value.batch[batch][type] = typedBatchValues;
+            else {
+                const typedBatchValues = {};
+                for (const hash of hashToAdd[type]) {
+                    typedBatchValues[hash] = reduced_value.batch[batch][type][hash];
+                }
+                reduced_value.batch[batch][type] = typedBatchValues;
+            }
         });
         // 6. nettoyage
         // ------------
