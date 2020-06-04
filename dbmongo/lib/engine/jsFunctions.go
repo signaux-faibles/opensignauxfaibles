@@ -436,7 +436,7 @@ function reduce(key, values) {
             }
         });
         Object.keys(hashToAdd)
-            .filter((type) => type !== "compact")
+            .filter((type) => type !== "compact" && type in new_types)
             .forEach(function (type) {
             const typedHashesToAdd = hashToAdd[type];
             const typedBatchValues = {};
