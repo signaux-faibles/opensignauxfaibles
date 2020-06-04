@@ -435,7 +435,8 @@ function reduce(key, values) {
                 ];
             }
         });
-        Object.keys(reduced_value.batch[batch]).forEach(function (type) {
+        // filtrage des données en fonction de new_types et hashToAdd
+        function deleteByType(type) {
             if (type === "compact") {
                 // laisser reduced_value.batch[batch][type] tel quel, conformément à reduce_tests.js ?
             }
@@ -443,14 +444,14 @@ function reduce(key, values) {
                 delete reduced_value.batch[batch][type];
             }
             else {
-                const typedBatchValues = reduced_value.batch[batch][type];
-                for (const hash of Object.keys(typedBatchValues)) {
+                for (const hash of Object.keys(reduced_value.batch[batch][type])) {
                     if (!hashToAdd[type].has(hash)) {
-                        delete typedBatchValues[hash];
+                        delete reduced_value.batch[batch][type][hash];
                     }
                 }
             }
-        });
+        }
+        Object.keys(reduced_value.batch[batch]).forEach(deleteByType);
         // 6. nettoyage
         // ------------
         if (reduced_value.batch[batch]) {
