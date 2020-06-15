@@ -108,10 +108,10 @@ test.serial(
     // reporder contient une propriété par periode
     t.is(Object.keys(reporder || {}).length, dates.length)
     Object.keys(reporder || {}).forEach((periodKey) => {
-      t.is(typeof reporder[periodKey].random_order, "number")
+      t.is(typeof reporder?.[periodKey]?.random_order, "number")
     })
     // vérification de la structure complète, sans les nombres aléatoires
-    removeRandomOrder(finalizeResult.batch[batchKey].reporder) // will mutate finalizeResult
+    removeRandomOrder(reporder || {}) // will mutate finalizeResult
     t.deepEqual(finalizeResult, expectedFinalizeResultValue)
   }
 )
