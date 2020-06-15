@@ -224,20 +224,14 @@ export function reduce(
         }
       )
       //hash à supprimer vides (compact.delete)
-      if (
-        reduced_value.batch[batch].compact &&
-        reduced_value.batch[batch].compact.delete
-      ) {
-        Object.keys(reduced_value.batch[batch].compact.delete).forEach(
-          (type) => {
-            if (reduced_value.batch[batch].compact.delete[type].length === 0) {
-              delete reduced_value.batch[batch].compact.delete[type]
-            }
+      const compactDelete = reduced_value.batch[batch].compact?.delete
+      if (compactDelete) {
+        Object.keys(compactDelete).forEach((type) => {
+          if (compactDelete[type].length === 0) {
+            delete compactDelete[type]
           }
-        )
-        if (
-          Object.keys(reduced_value.batch[batch].compact.delete).length === 0
-        ) {
+        })
+        if (Object.keys(compactDelete).length === 0) {
           delete reduced_value.batch[batch].compact
         }
       }
