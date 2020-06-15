@@ -8,11 +8,13 @@ export function currentState(batches: BatchValue[]): CurrentDataState {
   const currentState: CurrentDataState = batches.reduce(
     (m: CurrentDataState, batch: BatchValue) => {
       //1. On supprime les clés de la mémoire
-      Object.keys((batch.compact || { delete: [] }).delete).forEach((type) => {
-        batch.compact.delete[type].forEach((key) => {
-          m[type].delete(key) // Should never fail or collection is corrupted
-        })
-      })
+      if (batch.compact) {
+        for (const type of Object.keys(batch.compact.delete)) {
+          batch.compact.delete[type].forEach((key) => {
+            m[type].delete(key) // Should never fail or collection is corrupted
+          })
+        }
+      }
 
       //2. On ajoute les nouvelles clés
       Object.keys(batch)
