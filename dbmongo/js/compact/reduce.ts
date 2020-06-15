@@ -182,13 +182,10 @@ export function reduce(
     // -------------------------------
     stock_types.forEach((type) => {
       if (hashToDelete[type]) {
-        reduced_value.batch[batch].compact =
-          reduced_value.batch[batch].compact || {}
-        reduced_value.batch[batch].compact.delete =
-          reduced_value.batch[batch].compact.delete || {}
-        reduced_value.batch[batch].compact.delete[type] = [
-          ...hashToDelete[type],
-        ]
+        const reducedBatch = reduced_value.batch[batch]
+        reducedBatch.compact = reducedBatch.compact || { delete: {} }
+        reducedBatch.compact.delete = reducedBatch.compact.delete || {}
+        reducedBatch.compact.delete[type] = [...hashToDelete[type]]
       }
     })
 
