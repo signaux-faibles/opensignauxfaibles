@@ -96,18 +96,14 @@ export function reduce(
     all_interesting_types.forEach((type: keyof BatchValue) => {
       // Le type compact gère les clés supprimées
       if (type === "compact") {
-        if (reduced_value.batch[batch].compact.delete) {
-          Object.keys(reduced_value.batch[batch].compact.delete).forEach(
-            (delete_type) => {
-              reduced_value.batch[batch].compact.delete[delete_type].forEach(
-                (hash) => {
-                  hashToDelete[delete_type] =
-                    hashToDelete[delete_type] || new Set()
+        const compactDelete = reduced_value.batch[batch].compact?.delete
+        if (compactDelete) {
+          Object.keys(compactDelete).forEach((delete_type) => {
+            compactDelete[delete_type].forEach((hash) => {
+              hashToDelete[delete_type] = hashToDelete[delete_type] || new Set()
                   hashToDelete[delete_type].add(hash)
-                }
-              )
-            }
-          )
+            })
+          })
         }
       } else {
         Object.keys(reduced_value.batch[batch][type] || {}).forEach((hash) => {
