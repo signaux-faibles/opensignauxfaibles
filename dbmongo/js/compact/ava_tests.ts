@@ -104,9 +104,10 @@ test.serial(
     global.serie_periode = dates // used by complete_reporder(), which is called by finalize()
     const finalizeResult = finalize(siret, expectedReduceResults)
     const { reporder } = finalizeResult.batch[batchKey]
+    t.is(typeof reporder, "object")
     // reporder contient une propriété par periode
-    t.is(Object.keys(reporder).length, dates.length)
-    Object.keys(reporder).forEach((periodKey) => {
+    t.is(Object.keys(reporder || {}).length, dates.length)
+    Object.keys(reporder || {}).forEach((periodKey) => {
       t.is(typeof reporder[periodKey].random_order, "number")
     })
     // vérification de la structure complète, sans les nombres aléatoires
