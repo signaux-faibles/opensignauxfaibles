@@ -101,7 +101,7 @@ export function reduce(
           Object.keys(compactDelete).forEach((delete_type) => {
             compactDelete[delete_type].forEach((hash) => {
               hashToDelete[delete_type] = hashToDelete[delete_type] || new Set()
-                  hashToDelete[delete_type].add(hash)
+              hashToDelete[delete_type].add(hash)
             })
           })
         }
@@ -197,10 +197,13 @@ export function reduce(
           .filter((hash) => {
             return hashToAdd[type].has(hash)
           })
-          .reduce((m: typeof hashedValues, hash: string) => {
-            m[hash] = hashedValues[hash]
-            return m
-          }, {})
+          .reduce(
+            (m: typeof hashedValues, hash: string) => ({
+              ...m,
+              [hash]: hashedValues?.[hash],
+            }),
+            {}
+          )
 
         setBatchValueForType(reduced_value.batch[batch], type, updatedValues)
       }
