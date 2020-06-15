@@ -216,7 +216,9 @@ export function reduce(
       //types vides
       Object.keys(reduced_value.batch[batch]).forEach(
         (type: keyof BatchValue) => {
-          if (Object.keys(reduced_value.batch[batch][type]).length === 0) {
+          if (
+            Object.keys(reduced_value.batch[batch][type] || {}).length === 0
+          ) {
             delete reduced_value.batch[batch][type]
           }
         }
