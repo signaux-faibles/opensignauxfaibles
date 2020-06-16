@@ -1339,10 +1339,10 @@ db.getCollection("Features").createIndex({
   return output_cotisationsdettes
 }`,
 "dateAddMonth": `function dateAddMonth(date, nbMonth) {
-  "use strict"
-  var result = new Date(date.getTime())
-  result.setUTCMonth(result.getUTCMonth() + nbMonth)
-  return result
+    "use strict";
+    const result = new Date(date.getTime());
+    result.setUTCMonth(result.getUTCMonth() + nbMonth);
+    return result;
 }`,
 "dealWithProcols": `function dealWithProcols(data_source, altar_or_procol, output_indexed) {
   "use strict"
