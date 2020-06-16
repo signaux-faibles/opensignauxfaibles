@@ -1,4 +1,6 @@
-function tauxMarge(diane) {
+import { Diane } from "./fraisFinancier"
+
+export function tauxMarge(diane: Diane): number | null {
   "use strict"
   if (
     "excedent_brut_d_exploitation" in diane &&
