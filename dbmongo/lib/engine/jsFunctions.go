@@ -1068,19 +1068,16 @@ db.getCollection("Features").createIndex({
         return 1;
     return 0;
 }`,
-"compte": `function compte(v, periodes) {
-  "use strict"
-  let output_compte = {}
-
-  //  var offset_compte = 3
-  Object.keys(v.compte).forEach((hash) => {
-    var periode = v.compte[hash].periode.getTime()
-
-    output_compte[periode] = output_compte[periode] || {}
-    output_compte[periode].compte_urssaf = v.compte[hash].numero_compte
-  })
-
-  return output_compte
+"compte": `function compte(v) {
+    "use strict";
+    const output_compte = {};
+    //  var offset_compte = 3
+    Object.keys(v.compte).forEach((hash) => {
+        const periode = v.compte[hash].periode.getTime();
+        output_compte[periode] = output_compte[periode] || {};
+        output_compte[periode].compte_urssaf = v.compte[hash].numero_compte;
+    });
+    return output_compte;
 }`,
 "cotisation": `function cotisation(output_indexed, output_array) {
   "use strict"
