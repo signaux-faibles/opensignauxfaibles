@@ -1,7 +1,7 @@
 function sirene_ul(v, output_array) {
-  "use strict";
+  "use strict"
   var sireneHashes = Object.keys(v.sirene_ul || {})
-  output_array.forEach(val => {
+  output_array.forEach((val) => {
     if (sireneHashes.length != 0) {
       var sirene = v.sirene_ul[sireneHashes[sireneHashes.length - 1]]
       val.siren = val.siren
@@ -15,8 +15,13 @@ function sirene_ul(v, output_array) {
         sirene.prenom4_unite_legale
       )
       val.statut_juridique = sirene.statut_juridique || null
-      val.date_creation_entreprise = sirene.date_creation ? sirene.date_creation.getFullYear() : null
-      val.age_entreprise = (sirene.date_creation && sirene.date_creation >= new Date("1901/01/01")) ? val.periode.getFullYear() - val.date_creation_entreprise : null
+      val.date_creation_entreprise = sirene.date_creation
+        ? sirene.date_creation.getFullYear()
+        : null
+      val.age_entreprise =
+        sirene.date_creation && sirene.date_creation >= new Date("1901/01/01")
+          ? val.periode.getFullYear() - val.date_creation_entreprise
+          : null
     }
   })
 }

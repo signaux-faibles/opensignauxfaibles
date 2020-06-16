@@ -1,6 +1,6 @@
 function finalize(k, v) {
-  "use strict";
-  const maxBsonSize = 16777216;
+  "use strict"
+  const maxBsonSize = 16777216
 
   // v de la forme
   // _id: {batch / siren / periode / type}
@@ -14,28 +14,30 @@ function finalize(k, v) {
   //
 
   let etablissements_connus = []
-  let entreprise = (v.entreprise || {})
+  let entreprise = v.entreprise || {}
 
-  Object.keys(v).forEach(siret =>{
+  Object.keys(v).forEach((siret) => {
     if (siret != "entreprise") {
       etablissements_connus[siret] = true
-      if (v[siret].effectif){
-        entreprise.effectif_entreprise = (entreprise.effectif_entreprise || 0) + v[siret].effectif // initialized to null
+      if (v[siret].effectif) {
+        entreprise.effectif_entreprise =
+          (entreprise.effectif_entreprise || 0) + v[siret].effectif // initialized to null
       }
-      if (v[siret].apart_heures_consommees){
-        entreprise.apart_entreprise = (entreprise.apart_entreprise || 0) + v[siret].apart_heures_consommees // initialized to 0
+      if (v[siret].apart_heures_consommees) {
+        entreprise.apart_entreprise =
+          (entreprise.apart_entreprise || 0) + v[siret].apart_heures_consommees // initialized to 0
       }
-      if (v[siret].montant_part_patronale || v[siret].montant_part_ouvriere){
-        entreprise.debit_entreprise = (entreprise.debit_entreprise || 0) +
+      if (v[siret].montant_part_patronale || v[siret].montant_part_ouvriere) {
+        entreprise.debit_entreprise =
+          (entreprise.debit_entreprise || 0) +
           (v[siret].montant_part_patronale || 0) +
           (v[siret].montant_part_ouvriere || 0)
       }
     }
   })
 
-
-  Object.keys(v).forEach(siret =>{
-    if (siret != "entreprise"){
+  Object.keys(v).forEach((siret) => {
+    if (siret != "entreprise") {
       Object.assign(v[siret], entreprise)
     }
   })
@@ -43,7 +45,7 @@ function finalize(k, v) {
   // une fois que les comptes sont faits...
   let output = []
   let nb_connus = Object.keys(etablissements_connus).length
-  Object.keys(v).forEach(siret => {
+  Object.keys(v).forEach((siret) => {
     if (siret != "entreprise" && v[siret]) {
       v[siret].nbr_etablissements_connus = nb_connus
       output.push(v[siret])
@@ -55,12 +57,16 @@ function finalize(k, v) {
   //   return(siret_data.effectif) // Only keep if there is known effectif
   // })
 
-  if (output.length > 0 && nb_connus <= 1500){
-    if ((Object.bsonsize(output)  + Object.bsonsize({"_id": k})) < maxBsonSize){
+  if (output.length > 0 && nb_connus <= 1500) {
+    if (Object.bsonsize(output) + Object.bsonsize({ _id: k }) < maxBsonSize) {
       return output
     } else {
-      print("Warning: my name is " + JSON.stringify(key, null, 2) + " and I died in reduce.algo2/finalize.js")
-      return {"incomplete": true}
+      print(
+        "Warning: my name is " +
+          JSON.stringify(key, null, 2) +
+          " and I died in reduce.algo2/finalize.js"
+      )
+      return { incomplete: true }
     }
   }
 }

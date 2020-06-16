@@ -885,10 +885,10 @@ db.getCollection("Features").createIndex({
 }`,
 },
 "reduce.algo2":{
-"add": `function add(obj, output){
-  "use strict";
-  Object.keys(output).forEach(function(periode) {
-    if (periode in obj){
+"add": `function add(obj, output) {
+  "use strict"
+  Object.keys(output).forEach(function (periode) {
+    if (periode in obj) {
       Object.assign(output[periode], obj[periode])
     } else {
       // throw new EvalError(
@@ -897,36 +897,60 @@ db.getCollection("Features").createIndex({
     }
   })
 }`,
-"apart": `function apart (apconso, apdemande) {
-  "use strict";
+"apart": `function apart(apconso, apdemande) {
+  "use strict"
 
   var output_apart = {}
 
   // Mapping (pour l'instant vide) du hash de la demande avec les hash des consos correspondantes
   var apart = Object.keys(apdemande).reduce((apart, hash) => {
     apart[apdemande[hash].id_demande.substring(0, 9)] = {
-      "demande": hash,
-      "consommation": [],
-      "periode_debut": 0,
-      "periode_fin": 0
+      demande: hash,
+      consommation: [],
+      periode_debut: 0,
+      periode_fin: 0,
     }
     return apart
   }, {})
 
   // on note le nombre d'heures demandées dans output_apart
-  Object.keys(apdemande).forEach(hash => {
+  Object.keys(apdemande).forEach((hash) => {
     var periode_deb = apdemande[hash].periode.start
     var periode_fin = apdemande[hash].periode.end
 
     // Des periodes arrondies aux débuts de périodes
     // TODO meilleur arrondi
-    var periode_deb_floor = new Date(Date.UTC(periode_deb.getUTCFullYear(), periode_deb.getUTCMonth(), 1, 0, 0, 0, 0))
-    var periode_fin_ceil = new Date(Date.UTC(periode_fin.getUTCFullYear(), periode_fin.getUTCMonth() + 1, 1, 0, 0, 0, 0))
-    apart[apdemande[hash].id_demande.substring(0, 9)].periode_debut = periode_deb_floor
-    apart[apdemande[hash].id_demande.substring(0, 9)].periode_fin = periode_fin_ceil
+    var periode_deb_floor = new Date(
+      Date.UTC(
+        periode_deb.getUTCFullYear(),
+        periode_deb.getUTCMonth(),
+        1,
+        0,
+        0,
+        0,
+        0
+      )
+    )
+    var periode_fin_ceil = new Date(
+      Date.UTC(
+        periode_fin.getUTCFullYear(),
+        periode_fin.getUTCMonth() + 1,
+        1,
+        0,
+        0,
+        0,
+        0
+      )
+    )
+    apart[
+      apdemande[hash].id_demande.substring(0, 9)
+    ].periode_debut = periode_deb_floor
+    apart[
+      apdemande[hash].id_demande.substring(0, 9)
+    ].periode_fin = periode_fin_ceil
 
     var series = f.generatePeriodSerie(periode_deb_floor, periode_fin_ceil)
-    series.forEach( date => {
+    series.forEach((date) => {
       let time = date.getTime()
       output_apart[time] = output_apart[time] || {}
       output_apart[time].apart_heures_autorisees = apdemande[hash].hta
@@ -934,33 +958,41 @@ db.getCollection("Features").createIndex({
   })
 
   // relier les consos faites aux demandes (hashs) dans apart
-  Object.keys(apconso).forEach(hash => {
+  Object.keys(apconso).forEach((hash) => {
     var valueap = apconso[hash]
     if (valueap.id_conso.substring(0, 9) in apart) {
       apart[valueap.id_conso.substring(0, 9)].consommation.push(hash)
     }
   })
 
-  Object.keys(apart).forEach(k => {
+  Object.keys(apart).forEach((k) => {
     if (apart[k].consommation.length > 0) {
-      apart[k].consommation.sort(
-        (a,b) => (apconso[a].periode.getTime() >= apconso[b].periode.getTime())
-      ).forEach( (h) => {
-        var time = apconso[h].periode.getTime()
-        output_apart[time] = output_apart[time] || {}
-        output_apart[time].apart_heures_consommees = (output_apart[time].apart_heures_consommees || 0) + apconso[h].heure_consomme
-        output_apart[time].apart_motif_recours = apdemande[apart[k].demande].motif_recours_se
-      })
+      apart[k].consommation
+        .sort(
+          (a, b) => apconso[a].periode.getTime() >= apconso[b].periode.getTime()
+        )
+        .forEach((h) => {
+          var time = apconso[h].periode.getTime()
+          output_apart[time] = output_apart[time] || {}
+          output_apart[time].apart_heures_consommees =
+            (output_apart[time].apart_heures_consommees || 0) +
+            apconso[h].heure_consomme
+          output_apart[time].apart_motif_recours =
+            apdemande[apart[k].demande].motif_recours_se
+        })
 
       // Heures consommees cumulees sur la demande
-      let series = f.generatePeriodSerie(apart[k].periode_debut, apart[k].periode_fin)
-      series.reduce( (accu, date) => {
+      let series = f.generatePeriodSerie(
+        apart[k].periode_debut,
+        apart[k].periode_fin
+      )
+      series.reduce((accu, date) => {
         let time = date.getTime()
 
         //output_apart est déjà défini pour les heures autorisées
         accu = accu + (output_apart[time].apart_heures_consommees || 0)
         output_apart[time].apart_heures_consommees_cumulees = accu
-        return(accu)
+        return accu
       }, 0)
     }
   })
@@ -971,23 +1003,27 @@ db.getCollection("Features").createIndex({
   //    //nbr approximatif d'heures ouvrées par mois
   //  }
   //})
-  return(output_apart)
+  return output_apart
 }`,
-"ccsf": `function ccsf(v, output_array){
-  "use strict";
+"ccsf": `function ccsf(v, output_array) {
+  "use strict"
 
   var ccsfHashes = Object.keys(v.ccsf || {})
 
-  output_array.forEach(val => {
-    var optccsf = ccsfHashes.reduce( function (accu, hash) {
-      let ccsf = v.ccsf[hash]
-      if (ccsf.date_traitement.getTime() < val.periode.getTime() && ccsf.date_traitement.getTime() > accu.date_traitement.getTime()) {
-        let accu = ccsf
-      }
-      return(accu)
-    },
+  output_array.forEach((val) => {
+    var optccsf = ccsfHashes.reduce(
+      function (accu, hash) {
+        let ccsf = v.ccsf[hash]
+        if (
+          ccsf.date_traitement.getTime() < val.periode.getTime() &&
+          ccsf.date_traitement.getTime() > accu.date_traitement.getTime()
+        ) {
+          let accu = ccsf
+        }
+        return accu
+      },
       {
-        date_traitement: new Date(0)
+        date_traitement: new Date(0),
       }
     )
 
@@ -997,7 +1033,7 @@ db.getCollection("Features").createIndex({
   })
 }`,
 "cibleApprentissage": `function cibleApprentissage(output_indexed, n_months) {
-  "use strict";
+  "use strict"
 
   // Mock two input instead of one for future modification
   var output_cotisation = output_indexed
@@ -1006,22 +1042,28 @@ db.getCollection("Features").createIndex({
   var all_keys = Object.keys(output_indexed)
   //
 
-  var merged_info = all_keys.reduce(function(m, k) {
-    m[k] = {outcome: Boolean(
-      output_procol[k].tag_failure || output_cotisation[k].tag_default
-    )}
+  var merged_info = all_keys.reduce(function (m, k) {
+    m[k] = {
+      outcome: Boolean(
+        output_procol[k].tag_failure || output_cotisation[k].tag_default
+      ),
+    }
     return m
   }, {})
 
   var output_outcome = f.lookAhead(merged_info, "outcome", n_months, true)
-  var output_default = f.lookAhead(output_cotisation, "tag_default", n_months, true)
+  var output_default = f.lookAhead(
+    output_cotisation,
+    "tag_default",
+    n_months,
+    true
+  )
   var output_failure = f.lookAhead(output_procol, "tag_failure", n_months, true)
 
-  var output_cible = all_keys.reduce(function(m, k) {
+  var output_cible = all_keys.reduce(function (m, k) {
     m[k] = {}
 
-    if (output_outcome[k])
-      m[k] = output_outcome[k]
+    if (output_outcome[k]) m[k] = output_outcome[k]
     if (output_default[k])
       m[k].time_til_default = output_default[k].time_til_outcome
     if (output_failure[k])
@@ -1031,53 +1073,69 @@ db.getCollection("Features").createIndex({
 
   return output_cible
 }`,
-"compareDebit": `function compareDebit (a,b) {
-  "use strict";
+"compareDebit": `function compareDebit(a, b) {
+  "use strict"
   if (a.numero_historique < b.numero_historique) return -1
   if (a.numero_historique > b.numero_historique) return 1
   return 0
 }`,
-"compte": `function compte (v, periodes) {
-  "use strict";
+"compte": `function compte(v, periodes) {
+  "use strict"
   let output_compte = {}
 
   //  var offset_compte = 3
-  Object.keys(v.compte).forEach(hash =>{
+  Object.keys(v.compte).forEach((hash) => {
     var periode = v.compte[hash].periode.getTime()
 
-    output_compte[periode] =  output_compte[periode] || {}
-    output_compte[periode].compte_urssaf =  v.compte[hash].numero_compte
+    output_compte[periode] = output_compte[periode] || {}
+    output_compte[periode].compte_urssaf = v.compte[hash].numero_compte
   })
 
   return output_compte
 }`,
 "cotisation": `function cotisation(output_indexed, output_array) {
-  "use strict";
+  "use strict"
   // calcul de cotisation_moyenne sur 12 mois
-  Object.keys(output_indexed).forEach(k => {
+  Object.keys(output_indexed).forEach((k) => {
     let periode_courante = output_indexed[k].periode
     let periode_12_mois = f.dateAddMonth(periode_courante, 12)
     let series = f.generatePeriodSerie(periode_courante, periode_12_mois)
-    series.forEach(periode => {
-      if (periode.getTime() in output_indexed){
+    series.forEach((periode) => {
+      if (periode.getTime() in output_indexed) {
         if ("cotisation" in output_indexed[periode_courante.getTime()])
-          output_indexed[periode.getTime()].cotisation_array = (output_indexed[periode.getTime()].cotisation_array || []).concat(output_indexed[periode_courante.getTime()].cotisation)
+          output_indexed[periode.getTime()].cotisation_array = (
+            output_indexed[periode.getTime()].cotisation_array || []
+          ).concat(output_indexed[periode_courante.getTime()].cotisation)
 
-        output_indexed[periode.getTime()].montant_pp_array =
-          (output_indexed[periode.getTime()].montant_pp_array || []).concat( output_indexed[periode_courante.getTime()].montant_part_patronale)
-        output_indexed[periode.getTime()].montant_po_array =
-          (output_indexed[periode.getTime()].montant_po_array || []).concat( output_indexed[periode_courante.getTime()].montant_part_ouvriere)
+        output_indexed[periode.getTime()].montant_pp_array = (
+          output_indexed[periode.getTime()].montant_pp_array || []
+        ).concat(
+          output_indexed[periode_courante.getTime()].montant_part_patronale
+        )
+        output_indexed[periode.getTime()].montant_po_array = (
+          output_indexed[periode.getTime()].montant_po_array || []
+        ).concat(
+          output_indexed[periode_courante.getTime()].montant_part_ouvriere
+        )
       }
     })
   })
 
-  output_array.forEach(val => {
-    val.cotisation_array = (val.cotisation_array || [] )
-    val.cotisation_moy12m = val.cotisation_array.reduce( (p, c) => p + c, 0) / (val.cotisation_array.length || 1)
+  output_array.forEach((val) => {
+    val.cotisation_array = val.cotisation_array || []
+    val.cotisation_moy12m =
+      val.cotisation_array.reduce((p, c) => p + c, 0) /
+      (val.cotisation_array.length || 1)
     if (val.cotisation_moy12m > 0) {
-      val.ratio_dette = (val.montant_part_ouvriere + val.montant_part_patronale) / val.cotisation_moy12m
-      let pp_average = (val.montant_pp_array || []).reduce((p, c) => p + c, 0) / (val.montant_pp_array.length || 1)
-      let po_average =  (val.montant_po_array || []).reduce((p, c) => p + c, 0) / (val.montant_po_array.length || 1)
+      val.ratio_dette =
+        (val.montant_part_ouvriere + val.montant_part_patronale) /
+        val.cotisation_moy12m
+      let pp_average =
+        (val.montant_pp_array || []).reduce((p, c) => p + c, 0) /
+        (val.montant_pp_array.length || 1)
+      let po_average =
+        (val.montant_po_array || []).reduce((p, c) => p + c, 0) /
+        (val.montant_po_array.length || 1)
       val.ratio_dette_moy12m = (po_average + pp_average) / val.cotisation_moy12m
     }
     // Remplace dans cibleApprentissage
@@ -1091,20 +1149,20 @@ db.getCollection("Features").createIndex({
 
   // Calcul des défauts URSSAF prolongés
   var counter = 0
-  Object.keys(output_indexed).sort().forEach(k => {
-    if (output_indexed[k].ratio_dette > 0.01){
-      output_indexed[k].tag_debit = true // Survenance d'un débit d'au moins 1% des cotisations
-    }
-    if (output_indexed[k].ratio_dette > 1){
-      counter = counter + 1
-      if (counter >= 3)
-        output_indexed[k].tag_default = true
-    } else
-      counter = 0
-  })
+  Object.keys(output_indexed)
+    .sort()
+    .forEach((k) => {
+      if (output_indexed[k].ratio_dette > 0.01) {
+        output_indexed[k].tag_debit = true // Survenance d'un débit d'au moins 1% des cotisations
+      }
+      if (output_indexed[k].ratio_dette > 1) {
+        counter = counter + 1
+        if (counter >= 3) output_indexed[k].tag_default = true
+      } else counter = 0
+    })
 }`,
 "cotisationsdettes": `function cotisationsdettes(v, periodes) {
-  "use strict";
+  "use strict"
 
   // Tous les débits traitées après ce jour du mois sont reportées à la période suivante
   // Permet de s'aligner avec le calendrier de fourniture des données
@@ -1120,45 +1178,50 @@ db.getCollection("Features").createIndex({
   // Répartition des cotisations sur toute la période qu'elle concerne
   Object.keys(v.cotisation).forEach(function (h) {
     var cotisation = v.cotisation[h]
-    var periode_cotisation = f.generatePeriodSerie(cotisation.periode.start, cotisation.periode.end)
-    periode_cotisation.forEach(date_cotisation => {
+    var periode_cotisation = f.generatePeriodSerie(
+      cotisation.periode.start,
+      cotisation.periode.end
+    )
+    periode_cotisation.forEach((date_cotisation) => {
       let date_offset = f.dateAddMonth(date_cotisation, offset_cotisation)
-      value_cotisation[date_offset.getTime()] = (value_cotisation[date_offset.getTime()] || []).concat(cotisation.du / periode_cotisation.length)
+      value_cotisation[date_offset.getTime()] = (
+        value_cotisation[date_offset.getTime()] || []
+      ).concat(cotisation.du / periode_cotisation.length)
     })
   })
-
-
 
   // relier les débits
   // ecn: ecart negatif
   // map les débits: clé fabriquée maison => [{hash, numero_historique, date_traitement}, ...]
   // Pour un même compte, les débits avec le même num_ecn (chaque émission de facture) sont donc regroupés
   var ecn = Object.keys(v.debit).reduce((accu, h) => {
-      //pour chaque debit
-      let debit = v.debit[h]
+    //pour chaque debit
+    let debit = v.debit[h]
 
-      var start = debit.periode.start
-      var end = debit.periode.end
-      var num_ecn = debit.numero_ecart_negatif
-      var compte = debit.numero_compte
-      var key = start + "-" + end + "-" + num_ecn + "-" + compte
-      accu[key] = (accu[key] || []).concat([{
-          "hash": h,
-          "numero_historique": debit.numero_historique,
-          "date_traitement": debit.date_traitement
-      }])
-      return accu
+    var start = debit.periode.start
+    var end = debit.periode.end
+    var num_ecn = debit.numero_ecart_negatif
+    var compte = debit.numero_compte
+    var key = start + "-" + end + "-" + num_ecn + "-" + compte
+    accu[key] = (accu[key] || []).concat([
+      {
+        hash: h,
+        numero_historique: debit.numero_historique,
+        date_traitement: debit.date_traitement,
+      },
+    ])
+    return accu
   }, {})
 
   // Pour chaque numero_ecn, on trie et on chaîne les débits avec debit_suivant
-  Object.keys(ecn).forEach(i => {
-      ecn[i].sort(f.compareDebit)
-      var l = ecn[i].length
-      ecn[i].forEach((e, idx) => {
-          if (idx <= l - 2) {
-              v.debit[e.hash].debit_suivant = ecn[i][idx + 1].hash;
-          }
-      })
+  Object.keys(ecn).forEach((i) => {
+    ecn[i].sort(f.compareDebit)
+    var l = ecn[i].length
+    ecn[i].forEach((e, idx) => {
+      if (idx <= l - 2) {
+        v.debit[e.hash].debit_suivant = ecn[i][idx + 1].hash
+      }
+    })
   })
 
   var value_dette = {}
@@ -1169,30 +1232,44 @@ db.getCollection("Features").createIndex({
   Object.keys(v.debit).forEach(function (h) {
     var debit = v.debit[h]
 
-    var debit_suivant = (v.debit[debit.debit_suivant] || {"date_traitement" : date_fin})
+    var debit_suivant = v.debit[debit.debit_suivant] || {
+      date_traitement: date_fin,
+    }
 
     //Selon le jour du traitement, cela passe sur la période en cours ou sur la suivante.
     let jour_traitement = debit.date_traitement.getUTCDate()
     let jour_traitement_suivant = debit_suivant.date_traitement.getUTCDate()
     let date_traitement_debut
-    if (jour_traitement <= last_treatment_day){
+    if (jour_traitement <= last_treatment_day) {
       date_traitement_debut = new Date(
-        Date.UTC(debit.date_traitement.getFullYear(), debit.date_traitement.getUTCMonth())
+        Date.UTC(
+          debit.date_traitement.getFullYear(),
+          debit.date_traitement.getUTCMonth()
+        )
       )
     } else {
       date_traitement_debut = new Date(
-        Date.UTC(debit.date_traitement.getFullYear(), debit.date_traitement.getUTCMonth() + 1)
+        Date.UTC(
+          debit.date_traitement.getFullYear(),
+          debit.date_traitement.getUTCMonth() + 1
+        )
       )
     }
 
     let date_traitement_fin
     if (jour_traitement_suivant <= last_treatment_day) {
       date_traitement_fin = new Date(
-        Date.UTC(debit_suivant.date_traitement.getFullYear(), debit_suivant.date_traitement.getUTCMonth())
+        Date.UTC(
+          debit_suivant.date_traitement.getFullYear(),
+          debit_suivant.date_traitement.getUTCMonth()
+        )
       )
     } else {
       date_traitement_fin = new Date(
-        Date.UTC(debit_suivant.date_traitement.getFullYear(), debit_suivant.date_traitement.getUTCMonth() + 1)
+        Date.UTC(
+          debit_suivant.date_traitement.getFullYear(),
+          debit_suivant.date_traitement.getUTCMonth() + 1
+        )
       )
     }
 
@@ -1200,9 +1277,16 @@ db.getCollection("Features").createIndex({
     let periode_fin = date_traitement_fin
 
     //f.generatePeriodSerie exlue la dernière période
-    f.generatePeriodSerie(periode_debut, periode_fin).map(date => {
+    f.generatePeriodSerie(periode_debut, periode_fin).map((date) => {
       let time = date.getTime()
-      value_dette[time] = (value_dette[time] || []).concat([{ "periode": debit.periode.start, "part_ouvriere": debit.part_ouvriere, "part_patronale": debit.part_patronale, "montant_majorations": debit.montant_majorations}])
+      value_dette[time] = (value_dette[time] || []).concat([
+        {
+          periode: debit.periode.start,
+          part_ouvriere: debit.part_ouvriere,
+          part_patronale: debit.part_patronale,
+          montant_majorations: debit.montant_majorations,
+        },
+      ])
     })
   })
 
@@ -1217,95 +1301,119 @@ db.getCollection("Features").createIndex({
   periodes.forEach(function (time) {
     output_cotisationsdettes[time] = output_cotisationsdettes[time] || {}
     var val = output_cotisationsdettes[time]
-  //output_cotisationsdettes[time].numero_compte_urssaf = numeros_compte
-    if (time in value_cotisation){
+    //output_cotisationsdettes[time].numero_compte_urssaf = numeros_compte
+    if (time in value_cotisation) {
       // somme de toutes les cotisations dues pour une periode donnée
-      val.cotisation = value_cotisation[time].reduce((a,cot) => a + cot,0)
+      val.cotisation = value_cotisation[time].reduce((a, cot) => a + cot, 0)
     }
 
     // somme de tous les débits (part ouvriere, part patronale, montant_majorations)
-    let montant_dette = (value_dette[time] || []).reduce(function (m, dette) {
-      m.montant_part_ouvriere += dette.part_ouvriere
-      m.montant_part_patronale += dette.part_patronale
-      m.montant_majorations += dette.montant_majorations
-      return m
-    }, {"montant_part_ouvriere": 0, "montant_part_patronale": 0, "montant_majorations": 0})
+    let montant_dette = (value_dette[time] || []).reduce(
+      function (m, dette) {
+        m.montant_part_ouvriere += dette.part_ouvriere
+        m.montant_part_patronale += dette.part_patronale
+        m.montant_majorations += dette.montant_majorations
+        return m
+      },
+      {
+        montant_part_ouvriere: 0,
+        montant_part_patronale: 0,
+        montant_majorations: 0,
+      }
+    )
     val = Object.assign(val, montant_dette)
 
-
-    let past_month_offsets = [1,2,3,6,12]
+    let past_month_offsets = [1, 2, 3, 6, 12]
     let time_d = new Date(parseInt(time))
 
-    past_month_offsets.forEach(offset => {
+    past_month_offsets.forEach((offset) => {
       let time_offset = f.dateAddMonth(time_d, offset)
       let variable_name_part_ouvriere = "montant_part_ouvriere_past_" + offset
       let variable_name_part_patronale = "montant_part_patronale_past_" + offset
-      output_cotisationsdettes[time_offset.getTime()] = output_cotisationsdettes[time_offset.getTime()] || {}
+      output_cotisationsdettes[time_offset.getTime()] =
+        output_cotisationsdettes[time_offset.getTime()] || {}
       let val_offset = output_cotisationsdettes[time_offset.getTime()]
       val_offset[variable_name_part_ouvriere] = val.montant_part_ouvriere
       val_offset[variable_name_part_patronale] = val.montant_part_patronale
     })
 
     let future_month_offsets = [0, 1, 2, 3, 4, 5]
-    if (val.montant_part_ouvriere + val.montant_part_patronale > 0){
-      future_month_offsets.forEach(offset => {
+    if (val.montant_part_ouvriere + val.montant_part_patronale > 0) {
+      future_month_offsets.forEach((offset) => {
         let time_offset = f.dateAddMonth(time_d, offset)
-        output_cotisationsdettes[time_offset.getTime()] = output_cotisationsdettes[time_offset.getTime()] || {}
-        output_cotisationsdettes[time_offset.getTime()].interessante_urssaf = false
+        output_cotisationsdettes[time_offset.getTime()] =
+          output_cotisationsdettes[time_offset.getTime()] || {}
+        output_cotisationsdettes[
+          time_offset.getTime()
+        ].interessante_urssaf = false
       })
     }
   })
 
-  return(output_cotisationsdettes)
+  return output_cotisationsdettes
 }`,
 "dateAddMonth": `function dateAddMonth(date, nbMonth) {
-  "use strict";
+  "use strict"
   var result = new Date(date.getTime())
   result.setUTCMonth(result.getUTCMonth() + nbMonth)
   return result
 }`,
-"dealWithProcols": `function dealWithProcols(data_source, altar_or_procol, output_indexed){
-  "use strict";
-  var codes  =  Object.keys(data_source).reduce((events, hash) => {
-    var the_event = data_source[hash]
+"dealWithProcols": `function dealWithProcols(data_source, altar_or_procol, output_indexed) {
+  "use strict"
+  var codes = Object.keys(data_source)
+    .reduce((events, hash) => {
+      var the_event = data_source[hash]
 
-    if (altar_or_procol == "altares")
-      var etat = f.altaresToHuman(the_event.code_evenement);
-    else if (altar_or_procol == "procol")
-      var etat = f.procolToHuman(the_event.action_procol, the_event.stade_procol);
+      if (altar_or_procol == "altares")
+        var etat = f.altaresToHuman(the_event.code_evenement)
+      else if (altar_or_procol == "procol")
+        var etat = f.procolToHuman(
+          the_event.action_procol,
+          the_event.stade_procol
+        )
 
-    if (etat != null)
-      events.push({"etat": etat, "date_proc_col": new Date(the_event.date_effet)})
+      if (etat != null)
+        events.push({
+          etat: etat,
+          date_proc_col: new Date(the_event.date_effet),
+        })
 
-    return(events)
-  },[]).sort(
-    (a,b) => {return(a.date_proc_col.getTime() > b.date_proc_col.getTime())}
-  )
+      return events
+    }, [])
+    .sort((a, b) => {
+      return a.date_proc_col.getTime() > b.date_proc_col.getTime()
+    })
 
-  codes.forEach(
-    event => {
-      let periode_effet = new Date(Date.UTC(event.date_proc_col.getFullYear(), event.date_proc_col.getUTCMonth(), 1, 0, 0, 0, 0))
-      var time_til_last = Object.keys(output_indexed).filter(val => {return (val >= periode_effet)})
+  codes.forEach((event) => {
+    let periode_effet = new Date(
+      Date.UTC(
+        event.date_proc_col.getFullYear(),
+        event.date_proc_col.getUTCMonth(),
+        1,
+        0,
+        0,
+        0,
+        0
+      )
+    )
+    var time_til_last = Object.keys(output_indexed).filter((val) => {
+      return val >= periode_effet
+    })
 
-      time_til_last.forEach(time => {
-        if (time in output_indexed) {
-          output_indexed[time].etat_proc_collective = event.etat
-          output_indexed[time].date_proc_collective = event.date_proc_col
-          if (event.etat != "in_bonis")
-            output_indexed[time].tag_failure = true
-        }
-      })
-    }
-  )
+    time_til_last.forEach((time) => {
+      if (time in output_indexed) {
+        output_indexed[time].etat_proc_collective = event.etat
+        output_indexed[time].date_proc_collective = event.date_proc_col
+        if (event.etat != "in_bonis") output_indexed[time].tag_failure = true
+      }
+    })
+  })
 }`,
-"defaillances": `function defaillances (v, output_indexed) {
-  "use strict";
+"defaillances": `function defaillances(v, output_indexed) {
+  "use strict"
   f.dealWithProcols(v.altares, "altares", output_indexed)
   f.dealWithProcols(v.procol, "procol", output_indexed)
-}
-  
-
-  `,
+}`,
 "delais": `function delais(v, donnéesActuellesParPériode) {
     "use strict";
     const donnéesSupplémentairesParPériode = {};
@@ -1348,18 +1456,22 @@ db.getCollection("Features").createIndex({
     });
     return donnéesSupplémentairesParPériode;
 }`,
-"detteFiscale": `function detteFiscale (diane){
-  "use strict";
-  if  (("dette_fiscale_et_sociale" in diane) && (diane["dette_fiscale_et_sociale"] !== null) &&
-      ("valeur_ajoutee" in diane) && (diane["valeur_ajoutee"] !== null) &&
-      (diane["valeur_ajoutee"] != 0)){
-    return diane["dette_fiscale_et_sociale"]/ diane["valeur_ajoutee"] * 100
+"detteFiscale": `function detteFiscale(diane) {
+  "use strict"
+  if (
+    "dette_fiscale_et_sociale" in diane &&
+    diane["dette_fiscale_et_sociale"] !== null &&
+    "valeur_ajoutee" in diane &&
+    diane["valeur_ajoutee"] !== null &&
+    diane["valeur_ajoutee"] != 0
+  ) {
+    return (diane["dette_fiscale_et_sociale"] / diane["valeur_ajoutee"]) * 100
   } else {
     return null
   }
 }`,
-"effectifs": `function effectifs (effobj, periodes, effectif_name) {
-  "use strict";
+"effectifs": `function effectifs(effobj, periodes, effectif_name) {
+  "use strict"
 
   let output_effectif = {}
 
@@ -1382,46 +1494,55 @@ db.getCollection("Features").createIndex({
 
   var available = map_effectif[last_period_offset.getTime()] ? 1 : 0
 
-
   //pour chaque periode (elles sont triees dans l'ordre croissant)
   periodes.reduce((accu, time) => {
     var periode = new Date(parseInt(time))
     // si disponible on reporte l'effectif tel quel, sinon, on recupère l'accu
     output_effectif[time] = output_effectif[time] || {}
-    output_effectif[time][effectif_name] = map_effectif[time] || (available ? accu : null)
-
+    output_effectif[time][effectif_name] =
+      map_effectif[time] || (available ? accu : null)
 
     // le cas échéant, on met à jour l'accu avec le dernier effectif disponible
     accu = map_effectif[time] || accu
 
-    output_effectif[time][effectif_name + "_reporte"] = map_effectif[time] ? 0 : 1
-    return(accu)
+    output_effectif[time][effectif_name + "_reporte"] = map_effectif[time]
+      ? 0
+      : 1
+    return accu
   }, null)
 
-  Object.keys(map_effectif).forEach(time => {
+  Object.keys(map_effectif).forEach((time) => {
     var periode = new Date(parseInt(time))
-    var past_month_offsets = [6,12,18,24]
-    past_month_offsets.forEach(lookback => {
+    var past_month_offsets = [6, 12, 18, 24]
+    past_month_offsets.forEach((lookback) => {
       // On ajoute un offset pour partir de la dernière période où l'effectif est connu
-      var time_past_lookback = f.dateAddMonth(periode, lookback - offset_effectif - 1)
+      var time_past_lookback = f.dateAddMonth(
+        periode,
+        lookback - offset_effectif - 1
+      )
 
       var variable_name_effectif = effectif_name + "_past_" + lookback
-      output_effectif[time_past_lookback.getTime()] = output_effectif[time_past_lookback.getTime()] || {}
-      output_effectif[time_past_lookback.getTime()][variable_name_effectif] = map_effectif[time]
+      output_effectif[time_past_lookback.getTime()] =
+        output_effectif[time_past_lookback.getTime()] || {}
+      output_effectif[time_past_lookback.getTime()][variable_name_effectif] =
+        map_effectif[time]
     })
   })
 
   // On supprime les effectifs 'null'
-  Object.keys(output_effectif).forEach(k => {
-    if (output_effectif[k].effectif == null && output_effectif[k].effectif_ent == null) {
+  Object.keys(output_effectif).forEach((k) => {
+    if (
+      output_effectif[k].effectif == null &&
+      output_effectif[k].effectif_ent == null
+    ) {
       delete output_effectif[k]
     }
   })
-  return(output_effectif)
+  return output_effectif
 }`,
 "finalize": `function finalize(k, v) {
-  "use strict";
-  const maxBsonSize = 16777216;
+  "use strict"
+  const maxBsonSize = 16777216
 
   // v de la forme
   // _id: {batch / siren / periode / type}
@@ -1435,28 +1556,30 @@ db.getCollection("Features").createIndex({
   //
 
   let etablissements_connus = []
-  let entreprise = (v.entreprise || {})
+  let entreprise = v.entreprise || {}
 
-  Object.keys(v).forEach(siret =>{
+  Object.keys(v).forEach((siret) => {
     if (siret != "entreprise") {
       etablissements_connus[siret] = true
-      if (v[siret].effectif){
-        entreprise.effectif_entreprise = (entreprise.effectif_entreprise || 0) + v[siret].effectif // initialized to null
+      if (v[siret].effectif) {
+        entreprise.effectif_entreprise =
+          (entreprise.effectif_entreprise || 0) + v[siret].effectif // initialized to null
       }
-      if (v[siret].apart_heures_consommees){
-        entreprise.apart_entreprise = (entreprise.apart_entreprise || 0) + v[siret].apart_heures_consommees // initialized to 0
+      if (v[siret].apart_heures_consommees) {
+        entreprise.apart_entreprise =
+          (entreprise.apart_entreprise || 0) + v[siret].apart_heures_consommees // initialized to 0
       }
-      if (v[siret].montant_part_patronale || v[siret].montant_part_ouvriere){
-        entreprise.debit_entreprise = (entreprise.debit_entreprise || 0) +
+      if (v[siret].montant_part_patronale || v[siret].montant_part_ouvriere) {
+        entreprise.debit_entreprise =
+          (entreprise.debit_entreprise || 0) +
           (v[siret].montant_part_patronale || 0) +
           (v[siret].montant_part_ouvriere || 0)
       }
     }
   })
 
-
-  Object.keys(v).forEach(siret =>{
-    if (siret != "entreprise"){
+  Object.keys(v).forEach((siret) => {
+    if (siret != "entreprise") {
       Object.assign(v[siret], entreprise)
     }
   })
@@ -1464,7 +1587,7 @@ db.getCollection("Features").createIndex({
   // une fois que les comptes sont faits...
   let output = []
   let nb_connus = Object.keys(etablissements_connus).length
-  Object.keys(v).forEach(siret => {
+  Object.keys(v).forEach((siret) => {
     if (siret != "entreprise" && v[siret]) {
       v[siret].nbr_etablissements_connus = nb_connus
       output.push(v[siret])
@@ -1476,53 +1599,71 @@ db.getCollection("Features").createIndex({
   //   return(siret_data.effectif) // Only keep if there is known effectif
   // })
 
-  if (output.length > 0 && nb_connus <= 1500){
-    if ((Object.bsonsize(output)  + Object.bsonsize({"_id": k})) < maxBsonSize){
+  if (output.length > 0 && nb_connus <= 1500) {
+    if (Object.bsonsize(output) + Object.bsonsize({ _id: k }) < maxBsonSize) {
       return output
     } else {
-      print("Warning: my name is " + JSON.stringify(key, null, 2) + " and I died in reduce.algo2/finalize.js")
-      return {"incomplete": true}
+      print(
+        "Warning: my name is " +
+          JSON.stringify(key, null, 2) +
+          " and I died in reduce.algo2/finalize.js"
+      )
+      return { incomplete: true }
     }
   }
 }`,
 "financierCourtTerme": `function financierCourtTerme(diane) {
-  "use strict";
-  if  (("concours_bancaire_courant" in diane) && (diane["concours_bancaire_courant"] !== null) &&
-    ("ca" in diane) && (diane["ca"] !== null) &&
-    (diane["ca"] != 0)){
-    return diane["concours_bancaire_courant"]/diane["ca"] * 100
+  "use strict"
+  if (
+    "concours_bancaire_courant" in diane &&
+    diane["concours_bancaire_courant"] !== null &&
+    "ca" in diane &&
+    diane["ca"] !== null &&
+    diane["ca"] != 0
+  ) {
+    return (diane["concours_bancaire_courant"] / diane["ca"]) * 100
   } else {
     return null
   }
 }`,
 "flatten": `function flatten(v, actual_batch) {
-  "use strict";
+  "use strict"
   var res = Object.keys(v.batch || {})
     .sort()
-    .filter(batch => batch <= actual_batch)
-    .reduce((m, batch) => {
+    .filter((batch) => batch <= actual_batch)
+    .reduce(
+      (m, batch) => {
+        // Types intéressants = nouveaux types, ou types avec suppressions
+        var delete_types = Object.keys(
+          (v.batch[batch].compact || {}).delete || {}
+        )
+        var new_types = Object.keys(v.batch[batch])
+        var all_interesting_types = [
+          ...new Set([...delete_types, ...new_types]),
+        ]
 
-      // Types intéressants = nouveaux types, ou types avec suppressions
-      var delete_types = Object.keys((v.batch[batch].compact || {}).delete || {})
-      var new_types =  Object.keys(v.batch[batch])
-      var all_interesting_types = [...new Set([...delete_types, ...new_types])]
+        all_interesting_types.forEach((type) => {
+          m[type] = m[type] || {}
+          // On supprime les clés qu'il faut
+          if (
+            v.batch[batch] &&
+            v.batch[batch].compact &&
+            v.batch[batch].compact.delete &&
+            v.batch[batch].compact.delete[type] &&
+            v.batch[batch].compact.delete[type] != {}
+          ) {
+            v.batch[batch].compact.delete[type].forEach((hash) => {
+              delete m[type][hash]
+            })
+          }
+          Object.assign(m[type], v.batch[batch][type])
+        })
+        return m
+      },
+      { key: v.key, scope: v.scope }
+    )
 
-      all_interesting_types.forEach(type => {
-        m[type] = (m[type] || {})
-        // On supprime les clés qu'il faut
-        if (v.batch[batch] && v.batch[batch].compact && v.batch[batch].compact.delete &&
-          v.batch[batch].compact.delete[type] && v.batch[batch].compact.delete[type] != {}) {
-
-          v.batch[batch].compact.delete[type].forEach(hash => {
-            delete m[type][hash]
-          })
-        }
-        Object.assign(m[type], v.batch[batch][type])
-      })
-      return m
-    }, { "key": v.key, scope: v.scope })
-
-  return(res)
+  return res
 }`,
 "fraisFinancier": `function fraisFinancier(diane) {
     "use strict";
@@ -1556,8 +1697,8 @@ db.getCollection("Features").createIndex({
         return null;
     }
 }`,
-"interim": `function interim (interim, output_indexed) {
-  "use strict";
+"interim": `function interim(interim, output_indexed) {
+  "use strict"
   let output_effectif = output_indexed
   // let periodes = Object.keys(output_indexed)
   // output_indexed devra être remplacé par output_effectif, et ne contenir que les données d'effectif.
@@ -1567,24 +1708,30 @@ db.getCollection("Features").createIndex({
 
   //  var offset_interim = 3
 
-  Object.keys(interim).forEach(hash =>{
+  Object.keys(interim).forEach((hash) => {
     var one_interim = interim[hash]
     var periode = one_interim.periode.getTime()
     // var periode_d = new Date(parseInt(interimTime))
     // var time_offset = f.dateAddMonth(time_d, -offset_interim)
-    if (periode in output_effectif){
+    if (periode in output_effectif) {
       output_interim[periode] = output_interim[periode] || {}
-      output_interim[periode].interim_proportion = one_interim.etp / output_effectif[periode].effectif
+      output_interim[periode].interim_proportion =
+        one_interim.etp / output_effectif[periode].effectif
     }
 
     var past_month_offsets = [6, 12, 18, 24]
-    past_month_offsets.forEach(offset =>{
+    past_month_offsets.forEach((offset) => {
       var time_past_offset = f.dateAddMonth(one_interim.periode, offset)
       var variable_name_interim = "interim_ratio_past_" + offset
-      if (periode in output_effectif && time_past_offset.getTime() in output_effectif){
-        output_interim[time_past_offset.getTime()] =  output_interim[time_past_offset.getTime()] || {}
+      if (
+        periode in output_effectif &&
+        time_past_offset.getTime() in output_effectif
+      ) {
+        output_interim[time_past_offset.getTime()] =
+          output_interim[time_past_offset.getTime()] || {}
         var val_offset = output_interim[time_past_offset.getTime()]
-        val_offset[variable_name_interim] = one_interim.etp  / output_effectif[periode].effectif
+        val_offset[variable_name_interim] =
+          one_interim.etp / output_effectif[periode].effectif
       }
     })
   })
@@ -1592,42 +1739,48 @@ db.getCollection("Features").createIndex({
   return output_interim
 }`,
 "lookAhead": `function lookAhead(data, attr_name, n_months, past) {
-  "use strict";
+  "use strict"
   // Est-ce que l'évènement se répercute dans le passé (past = true on pourra se
   // demander: que va-t-il se passer) ou dans le future (past = false on
   // pourra se demander que s'est-il passé
-  var sorting_fun = function(a, b) { return(a >= b) }
+  var sorting_fun = function (a, b) {
+    return a >= b
+  }
   if (past) {
-    sorting_fun = function(a, b) { return(a <= b) }
+    sorting_fun = function (a, b) {
+      return a <= b
+    }
   }
 
   var counter = -1
-  var output = Object.keys(data).sort(sorting_fun).reduce(function (m, period) {
-    // Si on a déjà détecté quelque chose, on compte le nombre de périodes
-    if (counter >= 0) counter = counter + 1
+  var output = Object.keys(data)
+    .sort(sorting_fun)
+    .reduce(function (m, period) {
+      // Si on a déjà détecté quelque chose, on compte le nombre de périodes
+      if (counter >= 0) counter = counter + 1
 
-    if (data[period][attr_name]) {
-      // si l'évènement se produit on retombe à 0
-      counter = 0
-    }
-
-    if (counter >= 0) {
-      // l'évènement s'est produit
-      m[period] = m[period] || {}
-      m[period].time_til_outcome = counter
-      if (m[period].time_til_outcome <= n_months) {
-        m[period].outcome = true
-      } else {
-        m[period].outcome = false
+      if (data[period][attr_name]) {
+        // si l'évènement se produit on retombe à 0
+        counter = 0
       }
-    }
-    return m
-  }, {})
+
+      if (counter >= 0) {
+        // l'évènement s'est produit
+        m[period] = m[period] || {}
+        m[period].time_til_outcome = counter
+        if (m[period].time_til_outcome <= n_months) {
+          m[period].outcome = true
+        } else {
+          m[period].outcome = false
+        }
+      }
+      return m
+    }, {})
 
   return output
 }`,
-"map": `function map () {
-  "use strict";
+"map": `function map() {
+  "use strict"
   let v = f.flatten(this.value, actual_batch)
 
   if (v.scope == "etablissement") {
@@ -1636,22 +1789,22 @@ db.getCollection("Features").createIndex({
     let output_indexed = o[1] // { Periode -> OutputValue } // OutputValue: cf outputs()
 
     // Les periodes qui nous interessent, triées
-    var periodes = Object.keys(output_indexed).sort((a,b) => (a >= b))
+    var periodes = Object.keys(output_indexed).sort((a, b) => a >= b)
 
-    if (includes["apart"] || includes["all"]){
+    if (includes["apart"] || includes["all"]) {
       if (v.apconso && v.apdemande) {
         let output_apart = f.apart(v.apconso, v.apdemande)
-        Object.keys(output_apart).forEach(periode => {
+        Object.keys(output_apart).forEach((periode) => {
           let data = {}
           data[this._id] = output_apart[periode]
           data[this._id].siret = this._id
           periode = new Date(Number(periode))
           emit(
             {
-              'batch': actual_batch,
-              'siren': this._id.substring(0, 9),
-              'periode': periode,
-              'type': 'apart'
+              batch: actual_batch,
+              siren: this._id.substring(0, 9),
+              periode: periode,
+              type: "apart",
             },
             data
           )
@@ -1659,8 +1812,7 @@ db.getCollection("Features").createIndex({
       }
     }
 
-    if (includes["all"]){
-
+    if (includes["all"]) {
       if (v.compte) {
         var output_compte = f.compte(v)
         f.add(output_compte, output_indexed)
@@ -1671,12 +1823,12 @@ db.getCollection("Features").createIndex({
         f.add(output_effectif, output_indexed)
       }
 
-      if (v.interim){
+      if (v.interim) {
         let output_interim = f.interim(v.interim, output_indexed)
         f.add(output_interim, output_indexed)
       }
 
-      if (v.reporder){
+      if (v.reporder) {
         let output_repeatable = f.repeatable(v.reporder)
         f.add(output_repeatable, output_indexed)
       }
@@ -1698,8 +1850,12 @@ db.getCollection("Features").createIndex({
         f.add(output_cotisationsdettes, output_indexed)
       }
 
-      if (v.ccsf) {f.ccsf(v, output_array)}
-      if (v.sirene) {f.sirene(v, output_array)}
+      if (v.ccsf) {
+        f.ccsf(v, output_array)
+      }
+      if (v.sirene) {
+        f.sirene(v, output_array)
+      }
 
       f.populateNafAndApe(output_indexed, naf)
 
@@ -1707,15 +1863,15 @@ db.getCollection("Features").createIndex({
 
       let output_cible = f.cibleApprentissage(output_indexed, 18)
       f.add(output_cible, output_indexed)
-      output_array.forEach(val => {
+      output_array.forEach((val) => {
         let data = {}
         data[this._id] = val
         emit(
           {
-            'batch': actual_batch,
-            'siren': this._id.substring(0, 9),
-            'periode': val.periode,
-            'type': 'other'
+            batch: actual_batch,
+            siren: this._id.substring(0, 9),
+            periode: val.periode,
+            type: "other",
           },
           data
         )
@@ -1724,16 +1880,15 @@ db.getCollection("Features").createIndex({
   }
 
   if (v.scope == "entreprise") {
-
-    if (includes["all"]){
+    if (includes["all"]) {
       var output_array = serie_periode.map(function (e) {
         return {
-          "siren": v.key,
-          "periode": e,
-          "exercice_bdf": 0,
-          "arrete_bilan_bdf": new Date(0),
-          "exercice_diane": 0,
-          "arrete_bilan_diane": new Date(0)
+          siren: v.key,
+          periode: e,
+          exercice_bdf: 0,
+          arrete_bilan_bdf: new Date(0),
+          exercice_diane: 0,
+          arrete_bilan_diane: new Date(0),
         }
       })
 
@@ -1742,11 +1897,17 @@ db.getCollection("Features").createIndex({
         return periode
       }, {})
 
-      if (v.sirene_ul) {f.sirene_ul(v, output_array)}
+      if (v.sirene_ul) {
+        f.sirene_ul(v, output_array)
+      }
 
-      var periodes = Object.keys(output_indexed).sort((a,b) => (a >= b))
+      var periodes = Object.keys(output_indexed).sort((a, b) => a >= b)
       if (v.effectif_ent) {
-        var output_effectif_ent = f.effectifs(v.effectif_ent, periodes, "effectif_ent")
+        var output_effectif_ent = f.effectifs(
+          v.effectif_ent,
+          periodes,
+          "effectif_ent"
+        )
         f.add(output_effectif_ent, output_indexed)
       }
 
@@ -1755,227 +1916,290 @@ db.getCollection("Features").createIndex({
         return periode
       }, {})
 
-      v.bdf = (v.bdf || {})
-      v.diane = (v.diane || {})
+      v.bdf = v.bdf || {}
+      v.diane = v.diane || {}
 
-      Object.keys(v.bdf).forEach(hash => {
-      }, {})
+      Object.keys(v.bdf).forEach((hash) => {}, {})
 
-      v.bdf = (v.bdf || {})
-      v.diane = (v.diane || {})
+      v.bdf = v.bdf || {}
+      v.diane = v.diane || {}
 
-      Object.keys(v.bdf).forEach(hash => {
-        let periode_arrete_bilan = new Date(Date.UTC(v.bdf[hash].arrete_bilan_bdf.getUTCFullYear(), v.bdf[hash].arrete_bilan_bdf.getUTCMonth() +1, 1, 0, 0, 0, 0))
+      Object.keys(v.bdf).forEach((hash) => {
+        let periode_arrete_bilan = new Date(
+          Date.UTC(
+            v.bdf[hash].arrete_bilan_bdf.getUTCFullYear(),
+            v.bdf[hash].arrete_bilan_bdf.getUTCMonth() + 1,
+            1,
+            0,
+            0,
+            0,
+            0
+          )
+        )
         let periode_dispo = f.dateAddMonth(periode_arrete_bilan, 7)
         let series = f.generatePeriodSerie(
           periode_dispo,
           f.dateAddMonth(periode_dispo, 13)
         )
 
-        series.forEach(periode => {
-          Object.keys(v.bdf[hash]).filter( k => {
-            var omit = ["raison_sociale","secteur", "siren"]
-            return (v.bdf[hash][k] != null &&  !(omit.includes(k)))
-          }).forEach(k => {
-            if (periode.getTime() in output_indexed){
-              output_indexed[periode.getTime()][k] = v.bdf[hash][k]
-              output_indexed[periode.getTime()].exercice_bdf = output_indexed[periode.getTime()].annee_bdf - 1
-            }
-
-            let past_year_offset = [1,2]
-            past_year_offset.forEach( offset =>{
-              let periode_offset = f.dateAddMonth(periode, 12* offset)
-              let variable_name =  k + "_past_" + offset
-              if (periode_offset.getTime() in output_indexed &&
-                k != "arrete_bilan_bdf" &&
-                k != "exercice_bdf"){
-                output_indexed[periode_offset.getTime()][variable_name] = v.bdf[hash][k]
-              }
+        series.forEach((periode) => {
+          Object.keys(v.bdf[hash])
+            .filter((k) => {
+              var omit = ["raison_sociale", "secteur", "siren"]
+              return v.bdf[hash][k] != null && !omit.includes(k)
             })
-          })
+            .forEach((k) => {
+              if (periode.getTime() in output_indexed) {
+                output_indexed[periode.getTime()][k] = v.bdf[hash][k]
+                output_indexed[periode.getTime()].exercice_bdf =
+                  output_indexed[periode.getTime()].annee_bdf - 1
+              }
+
+              let past_year_offset = [1, 2]
+              past_year_offset.forEach((offset) => {
+                let periode_offset = f.dateAddMonth(periode, 12 * offset)
+                let variable_name = k + "_past_" + offset
+                if (
+                  periode_offset.getTime() in output_indexed &&
+                  k != "arrete_bilan_bdf" &&
+                  k != "exercice_bdf"
+                ) {
+                  output_indexed[periode_offset.getTime()][variable_name] =
+                    v.bdf[hash][k]
+                }
+              })
+            })
         })
       })
 
-      Object.keys(v.diane).filter(hash => v.diane[hash].arrete_bilan_diane).forEach(hash => {
-        //v.diane[hash].arrete_bilan_diane = new Date(Date.UTC(v.diane[hash].exercice_diane, 11, 31, 0, 0, 0, 0))
-        let periode_arrete_bilan = new Date(Date.UTC(v.diane[hash].arrete_bilan_diane.getUTCFullYear(), v.diane[hash].arrete_bilan_diane.getUTCMonth() +1, 1, 0, 0, 0, 0))
-        let periode_dispo = f.dateAddMonth(periode_arrete_bilan, 7) // 01/08 pour un bilan le 31/12, donc algo qui tourne en 01/09
-        let series = f.generatePeriodSerie(
-          periode_dispo,
-          f.dateAddMonth(periode_dispo, 14) // periode de validité d'un bilan auprès de la Banque de France: 21 mois (14+7)
-        )
-
-        series.forEach(periode => {
-          Object.keys(v.diane[hash]).filter( k => {
-            var omit = ["marquee", "nom_entreprise","numero_siren",
-              "statut_juridique", "procedure_collective"]
-            return (v.diane[hash][k] != null &&  !(omit.includes(k)))
-          }).forEach(k => {
-            if (periode.getTime() in output_indexed){
-              output_indexed[periode.getTime()][k] = v.diane[hash][k]
-            }
-
-            // Passé
-
-            let past_year_offset = [1,2]
-            past_year_offset.forEach(offset =>{
-              let periode_offset = f.dateAddMonth(periode, 12 * offset)
-              let variable_name =  k + "_past_" + offset
-
-              if (periode_offset.getTime() in output_indexed &&
-                k != "arrete_bilan_diane" &&
-                k != "exercice_diane"){
-                output_indexed[periode_offset.getTime()][variable_name] = v.diane[hash][k]
-              }
-            })
-          }
+      Object.keys(v.diane)
+        .filter((hash) => v.diane[hash].arrete_bilan_diane)
+        .forEach((hash) => {
+          //v.diane[hash].arrete_bilan_diane = new Date(Date.UTC(v.diane[hash].exercice_diane, 11, 31, 0, 0, 0, 0))
+          let periode_arrete_bilan = new Date(
+            Date.UTC(
+              v.diane[hash].arrete_bilan_diane.getUTCFullYear(),
+              v.diane[hash].arrete_bilan_diane.getUTCMonth() + 1,
+              1,
+              0,
+              0,
+              0,
+              0
+            )
           )
-        })
+          let periode_dispo = f.dateAddMonth(periode_arrete_bilan, 7) // 01/08 pour un bilan le 31/12, donc algo qui tourne en 01/09
+          let series = f.generatePeriodSerie(
+            periode_dispo,
+            f.dateAddMonth(periode_dispo, 14) // periode de validité d'un bilan auprès de la Banque de France: 21 mois (14+7)
+          )
 
-        series.forEach(periode => {
-          if (periode.getTime() in output_indexed){
-            // Recalcul BdF si ratios bdf sont absents
-            if (!("poids_frng" in output_indexed[periode.getTime()]) && (f.poidsFrng(v.diane[hash]) !== null)){
-              output_indexed[periode.getTime()].poids_frng = f.poidsFrng(v.diane[hash])
-            }
-            if (!("dette_fiscale" in output_indexed[periode.getTime()]) && (f.detteFiscale(v.diane[hash]) !== null)){
-              output_indexed[periode.getTime()].dette_fiscale = f.detteFiscale(v.diane[hash])
-            }
-            if (!("frais_financier" in output_indexed[periode.getTime()]) && (f.fraisFinancier(v.diane[hash]) !== null)){
-              output_indexed[periode.getTime()].frais_financier = f.fraisFinancier(v.diane[hash])
-            }
+          series.forEach((periode) => {
+            Object.keys(v.diane[hash])
+              .filter((k) => {
+                var omit = [
+                  "marquee",
+                  "nom_entreprise",
+                  "numero_siren",
+                  "statut_juridique",
+                  "procedure_collective",
+                ]
+                return v.diane[hash][k] != null && !omit.includes(k)
+              })
+              .forEach((k) => {
+                if (periode.getTime() in output_indexed) {
+                  output_indexed[periode.getTime()][k] = v.diane[hash][k]
+                }
 
-            var bdf_vars = ["taux_marge", "poids_frng", "dette_fiscale", "financier_court_terme", "frais_financier"]
-            let past_year_offset = [1,2]
-            bdf_vars.forEach(k =>{
-              if (k in output_indexed[periode.getTime()]){
-                past_year_offset.forEach(offset =>{
+                // Passé
+
+                let past_year_offset = [1, 2]
+                past_year_offset.forEach((offset) => {
                   let periode_offset = f.dateAddMonth(periode, 12 * offset)
-                  let variable_name =  k + "_past_" + offset
+                  let variable_name = k + "_past_" + offset
 
-                  if (periode_offset.getTime() in output_indexed){
-                    output_indexed[periode_offset.getTime()][variable_name] = output_indexed[periode.getTime()][k]
+                  if (
+                    periode_offset.getTime() in output_indexed &&
+                    k != "arrete_bilan_diane" &&
+                    k != "exercice_diane"
+                  ) {
+                    output_indexed[periode_offset.getTime()][variable_name] =
+                      v.diane[hash][k]
                   }
                 })
-              }
-            })
-          }
-        })
-      })
+              })
+          })
 
+          series.forEach((periode) => {
+            if (periode.getTime() in output_indexed) {
+              // Recalcul BdF si ratios bdf sont absents
+              if (
+                !("poids_frng" in output_indexed[periode.getTime()]) &&
+                f.poidsFrng(v.diane[hash]) !== null
+              ) {
+                output_indexed[periode.getTime()].poids_frng = f.poidsFrng(
+                  v.diane[hash]
+                )
+              }
+              if (
+                !("dette_fiscale" in output_indexed[periode.getTime()]) &&
+                f.detteFiscale(v.diane[hash]) !== null
+              ) {
+                output_indexed[
+                  periode.getTime()
+                ].dette_fiscale = f.detteFiscale(v.diane[hash])
+              }
+              if (
+                !("frais_financier" in output_indexed[periode.getTime()]) &&
+                f.fraisFinancier(v.diane[hash]) !== null
+              ) {
+                output_indexed[
+                  periode.getTime()
+                ].frais_financier = f.fraisFinancier(v.diane[hash])
+              }
+
+              var bdf_vars = [
+                "taux_marge",
+                "poids_frng",
+                "dette_fiscale",
+                "financier_court_terme",
+                "frais_financier",
+              ]
+              let past_year_offset = [1, 2]
+              bdf_vars.forEach((k) => {
+                if (k in output_indexed[periode.getTime()]) {
+                  past_year_offset.forEach((offset) => {
+                    let periode_offset = f.dateAddMonth(periode, 12 * offset)
+                    let variable_name = k + "_past_" + offset
+
+                    if (periode_offset.getTime() in output_indexed) {
+                      output_indexed[periode_offset.getTime()][variable_name] =
+                        output_indexed[periode.getTime()][k]
+                    }
+                  })
+                }
+              })
+            }
+          })
+        })
 
       output_array.forEach((periode, index) => {
-        if ((periode.arrete_bilan_bdf||new Date(0)).getTime() == 0 && (periode.arrete_bilan_diane || new Date(0)).getTime() == 0) {
+        if (
+          (periode.arrete_bilan_bdf || new Date(0)).getTime() == 0 &&
+          (periode.arrete_bilan_diane || new Date(0)).getTime() == 0
+        ) {
           delete output_array[index]
         }
-        if ((periode.arrete_bilan_bdf||new Date(0)).getTime() == 0){
+        if ((periode.arrete_bilan_bdf || new Date(0)).getTime() == 0) {
           delete periode.arrete_bilan_bdf
         }
-        if ((periode.arrete_bilan_diane||new Date(0)).getTime() == 0){
+        if ((periode.arrete_bilan_diane || new Date(0)).getTime() == 0) {
           delete periode.arrete_bilan_diane
         }
 
         emit(
           {
-            'batch': actual_batch,
-            'siren': this._id.substring(0, 9),
-            'periode': periode.periode,
-            'type': 'other'
+            batch: actual_batch,
+            siren: this._id.substring(0, 9),
+            periode: periode.periode,
+            type: "other",
           },
           {
-            'entreprise': periode
+            entreprise: periode,
           }
         )
       })
     }
   }
 }`,
-"outputs": `function outputs (v, serie_periode) {
-  "use strict";
+"outputs": `function outputs(v, serie_periode) {
+  "use strict"
   var output_array = serie_periode.map(function (e) {
     return {
-      "siret": v.key,
-      "periode": e,
-      "effectif": null,
-      "etat_proc_collective": "in_bonis",
-      "interessante_urssaf": true,
-      "outcome": false
+      siret: v.key,
+      periode: e,
+      effectif: null,
+      etat_proc_collective: "in_bonis",
+      interessante_urssaf: true,
+      outcome: false,
     }
-  });
+  })
 
   var output_indexed = output_array.reduce(function (periodes, val) {
-      periodes[val.periode.getTime()] = val
-      return periodes
+    periodes[val.periode.getTime()] = val
+    return periodes
   }, {})
 
   return [output_array, output_indexed]
 }`,
-"poidsFrng": `function poidsFrng(diane){
-  "use strict";
-  if  (("couverture_ca_fdr" in diane) && (diane["couverture_ca_fdr"] !== null)){
-    return diane["couverture_ca_fdr"]/360 * 100
+"poidsFrng": `function poidsFrng(diane) {
+  "use strict"
+  if ("couverture_ca_fdr" in diane && diane["couverture_ca_fdr"] !== null) {
+    return (diane["couverture_ca_fdr"] / 360) * 100
   } else {
     return null
   }
 }`,
 "populateNafAndApe": `function populateNafAndApe(output_indexed, naf) {
-  "use strict";
-  Object.keys(output_indexed).forEach(k =>{
-    if (("code_ape" in output_indexed[k]) && (output_indexed[k].code_ape !== null)){
+  "use strict"
+  Object.keys(output_indexed).forEach((k) => {
+    if (
+      "code_ape" in output_indexed[k] &&
+      output_indexed[k].code_ape !== null
+    ) {
       var code_ape = output_indexed[k].code_ape
       output_indexed[k].code_naf = naf.n5to1[code_ape]
       output_indexed[k].libelle_naf = naf.n1[output_indexed[k].code_naf]
-      output_indexed[k].code_ape_niveau2 = code_ape.substring(0,2)
-      output_indexed[k].code_ape_niveau3 = code_ape.substring(0,3)
-      output_indexed[k].code_ape_niveau4 = code_ape.substring(0,4)
-      output_indexed[k].libelle_ape2 = naf.n2[output_indexed[k].code_ape_niveau2]
-      output_indexed[k].libelle_ape3 = naf.n3[output_indexed[k].code_ape_niveau3]
-      output_indexed[k].libelle_ape4 = naf.n4[output_indexed[k].code_ape_niveau4]
+      output_indexed[k].code_ape_niveau2 = code_ape.substring(0, 2)
+      output_indexed[k].code_ape_niveau3 = code_ape.substring(0, 3)
+      output_indexed[k].code_ape_niveau4 = code_ape.substring(0, 4)
+      output_indexed[k].libelle_ape2 =
+        naf.n2[output_indexed[k].code_ape_niveau2]
+      output_indexed[k].libelle_ape3 =
+        naf.n3[output_indexed[k].code_ape_niveau3]
+      output_indexed[k].libelle_ape4 =
+        naf.n4[output_indexed[k].code_ape_niveau4]
       output_indexed[k].libelle_ape5 = naf.n5[code_ape]
     }
   })
 }`,
-"procolToHuman": `function procolToHuman (action, stade) {
-  "use strict";
-  var res = null;
-  if (action == "liquidation" && stade != "abandon_procedure") 
-    res = 'liquidation';
+"procolToHuman": `function procolToHuman(action, stade) {
+  "use strict"
+  var res = null
+  if (action == "liquidation" && stade != "abandon_procedure")
+    res = "liquidation"
   else if (stade == "abandon_procedure" || stade == "fin_procedure")
-    res = 'in_bonis';
+    res = "in_bonis"
   else if (action == "redressement" && stade == "plan_continuation")
-    res = 'continuation';
+    res = "continuation"
   else if (action == "sauvegarde" && stade == "plan_continuation")
-    res = 'sauvegarde';
-  else if (action == "sauvegarde")
-    res = 'plan_sauvegarde';
-  else if (action == "redressement")
-    res = 'plan_redressement';
-  return res;
+    res = "sauvegarde"
+  else if (action == "sauvegarde") res = "plan_sauvegarde"
+  else if (action == "redressement") res = "plan_redressement"
+  return res
 }`,
 "reduce": `function reduce(key, values) {
-  "use strict";
+  "use strict"
   return values.reduce((val, accu) => {
     return Object.assign(accu, val)
   }, {})
 }`,
-"repeatable": `function repeatable(rep){
-  "use strict";
+"repeatable": `function repeatable(rep) {
+  "use strict"
   let output_repeatable = {}
-  Object.keys(rep).forEach(hash => {
+  Object.keys(rep).forEach((hash) => {
     var one_rep = rep[hash]
     var periode = one_rep.periode.getTime()
     output_repeatable[periode] = output_repeatable[periode] || {}
     output_repeatable[periode].random_order = one_rep.random_order
   })
 
-  return(output_repeatable)
-
+  return output_repeatable
 }`,
-"sirene": `function sirene (v, output_array) {
-  "use strict";
+"sirene": `function sirene(v, output_array) {
+  "use strict"
   var sireneHashes = Object.keys(v.sirene || {})
 
-  output_array.forEach(val => {
+  output_array.forEach((val) => {
     // geolocalisation
 
     if (sireneHashes.length != 0) {
@@ -1984,27 +2208,32 @@ db.getCollection("Features").createIndex({
       val.latitude = sirene.lattitude || null
       val.longitude = sirene.longitude || null
       val.departement = sirene.departement || null
-      if (val.departement){
+      if (val.departement) {
         val.region = f.region(val.departement)
       }
       var regexp_naf = /^[0-9]{4}[A-Z]$/
-      if (sirene.ape && sirene.ape.match(regexp_naf)){
-        val.code_ape  = sirene.ape
+      if (sirene.ape && sirene.ape.match(regexp_naf)) {
+        val.code_ape = sirene.ape
       }
       val.raison_sociale = sirene.raison_sociale || null
       // val.activite_saisonniere = sirene.activite_saisoniere || null
       // val.productif = sirene.productif || null
       // val.tranche_ca = sirene.tranche_ca || null
       // val.indice_monoactivite = sirene.indice_monoactivite || null
-      val.date_creation_etablissement = sirene.date_creation ? sirene.date_creation.getFullYear() : null
-      val.age = (sirene.date_creation && sirene.date_creation >= new Date("1901/01/01")) ? val.periode.getFullYear() - val.date_creation_etablissement : null
+      val.date_creation_etablissement = sirene.date_creation
+        ? sirene.date_creation.getFullYear()
+        : null
+      val.age =
+        sirene.date_creation && sirene.date_creation >= new Date("1901/01/01")
+          ? val.periode.getFullYear() - val.date_creation_etablissement
+          : null
     }
   })
 }`,
 "sirene_ul": `function sirene_ul(v, output_array) {
-  "use strict";
+  "use strict"
   var sireneHashes = Object.keys(v.sirene_ul || {})
-  output_array.forEach(val => {
+  output_array.forEach((val) => {
     if (sireneHashes.length != 0) {
       var sirene = v.sirene_ul[sireneHashes[sireneHashes.length - 1]]
       val.siren = val.siren
@@ -2018,17 +2247,28 @@ db.getCollection("Features").createIndex({
         sirene.prenom4_unite_legale
       )
       val.statut_juridique = sirene.statut_juridique || null
-      val.date_creation_entreprise = sirene.date_creation ? sirene.date_creation.getFullYear() : null
-      val.age_entreprise = (sirene.date_creation && sirene.date_creation >= new Date("1901/01/01")) ? val.periode.getFullYear() - val.date_creation_entreprise : null
+      val.date_creation_entreprise = sirene.date_creation
+        ? sirene.date_creation.getFullYear()
+        : null
+      val.age_entreprise =
+        sirene.date_creation && sirene.date_creation >= new Date("1901/01/01")
+          ? val.periode.getFullYear() - val.date_creation_entreprise
+          : null
     }
   })
 }`,
 "tauxMarge": `function tauxMarge(diane) {
-  "use strict";
-  if  (("excedent_brut_d_exploitation" in diane) && (diane["excedent_brut_d_exploitation"] !== null) &&
-    ("valeur_ajoutee" in diane) && (diane["valeur_ajoutee"] !== null) &&
-    (diane["excedent_brut_d_exploitation"] != 0)){
-    return diane["excedent_brut_d_exploitation"]/diane["valeur_ajoutee"] * 100
+  "use strict"
+  if (
+    "excedent_brut_d_exploitation" in diane &&
+    diane["excedent_brut_d_exploitation"] !== null &&
+    "valeur_ajoutee" in diane &&
+    diane["valeur_ajoutee"] !== null &&
+    diane["excedent_brut_d_exploitation"] != 0
+  ) {
+    return (
+      (diane["excedent_brut_d_exploitation"] / diane["valeur_ajoutee"]) * 100
+    )
   } else {
     return null
   }

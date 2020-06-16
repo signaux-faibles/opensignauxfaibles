@@ -1,5 +1,5 @@
 function reduce(key, values) {
-  "use strict";
+  "use strict"
   return values.reduce((val, accu) => {
     return Object.assign(accu, val)
   }, {})
