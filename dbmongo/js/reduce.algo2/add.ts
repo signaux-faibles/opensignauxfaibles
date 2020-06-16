@@ -1,4 +1,7 @@
-function add(obj, output) {
+export function add<T>(
+  obj: { [periode: string]: T },
+  output: { [periode: string]: T }
+): void {
   "use strict"
   Object.keys(output).forEach(function (periode) {
     if (periode in obj) {
@@ -10,5 +13,3 @@ function add(obj, output) {
     }
   })
 }
-
-exports.add = add
