@@ -1061,10 +1061,12 @@ db.getCollection("Features").createIndex({
     return output_cible;
 }`,
 "compareDebit": `function compareDebit(a, b) {
-  "use strict"
-  if (a.numero_historique < b.numero_historique) return -1
-  if (a.numero_historique > b.numero_historique) return 1
-  return 0
+    "use strict";
+    if (a.numero_historique < b.numero_historique)
+        return -1;
+    if (a.numero_historique > b.numero_historique)
+        return 1;
+    return 0;
 }`,
 "compte": `function compte(v, periodes) {
   "use strict"
