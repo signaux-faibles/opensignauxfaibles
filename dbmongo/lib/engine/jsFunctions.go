@@ -1387,9 +1387,9 @@ db.getCollection("Features").createIndex({
   })
 }`,
 "defaillances": `function defaillances(v, output_indexed) {
-  "use strict"
-  f.dealWithProcols(v.altares, "altares", output_indexed)
-  f.dealWithProcols(v.procol, "procol", output_indexed)
+    "use strict";
+    f.dealWithProcols(v.altares, "altares", output_indexed);
+    f.dealWithProcols(v.procol, "procol", output_indexed);
 }`,
 "delais": `function delais(v, donnéesActuellesParPériode) {
     "use strict";
