@@ -1,17 +1,33 @@
-function interim(interim, output_indexed) {
+import * as f from "./dateAddMonth"
+
+type Interim = {
+  periode: Date
+  etp: number
+}
+
+type Output = {
+  effectif: number
+  interim_proportion: number
+  [interim_ratio_past_: string]: number // TODO: éviter la création dynamique de propriétés
+}
+
+export function interim(
+  interim: Record<string, Interim>,
+  output_indexed: Record<string, Output>
+): Record<string, Output> {
   "use strict"
-  let output_effectif = output_indexed
+  const output_effectif = output_indexed
   // let periodes = Object.keys(output_indexed)
   // output_indexed devra être remplacé par output_effectif, et ne contenir que les données d'effectif.
   // periodes sera passé en argument.
 
-  let output_interim = {}
+  const output_interim: Record<string, Output> = {}
 
   //  var offset_interim = 3
 
   Object.keys(interim).forEach((hash) => {
-    var one_interim = interim[hash]
-    var periode = one_interim.periode.getTime()
+    const one_interim = interim[hash]
+    const periode = one_interim.periode.getTime()
     // var periode_d = new Date(parseInt(interimTime))
     // var time_offset = f.dateAddMonth(time_d, -offset_interim)
     if (periode in output_effectif) {
@@ -20,17 +36,17 @@ function interim(interim, output_indexed) {
         one_interim.etp / output_effectif[periode].effectif
     }
 
-    var past_month_offsets = [6, 12, 18, 24]
+    const past_month_offsets = [6, 12, 18, 24]
     past_month_offsets.forEach((offset) => {
-      var time_past_offset = f.dateAddMonth(one_interim.periode, offset)
-      var variable_name_interim = "interim_ratio_past_" + offset
+      const time_past_offset = f.dateAddMonth(one_interim.periode, offset)
+      const variable_name_interim = "interim_ratio_past_" + offset
       if (
         periode in output_effectif &&
         time_past_offset.getTime() in output_effectif
       ) {
         output_interim[time_past_offset.getTime()] =
           output_interim[time_past_offset.getTime()] || {}
-        var val_offset = output_interim[time_past_offset.getTime()]
+        const val_offset = output_interim[time_past_offset.getTime()]
         val_offset[variable_name_interim] =
           one_interim.etp / output_effectif[periode].effectif
       }
