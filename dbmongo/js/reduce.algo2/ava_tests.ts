@@ -75,7 +75,7 @@ const rawData = {
   key: siret,
 }
 
-const makeValue = (periode: Date): object => ({
+const makeValue = (periode: Date) => ({
   cotisation_moy12m: 0,
   effectif: null,
   etat_proc_collective: "in_bonis",

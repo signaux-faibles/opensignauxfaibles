@@ -36,7 +36,7 @@ global.f = {
 
 const ISODate = (date: string): Date => new Date(date)
 
-const runMongoMap = (mapFct: () => void, keyVal: object): object => {
+const runMongoMap = (mapFct: () => void, keyVal: unknown): unknown => {
   const results: { [key: string]: any } = {}
   global.emit = (key: any, value: any): void => {
     results[key] = value
