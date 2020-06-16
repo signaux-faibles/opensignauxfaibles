@@ -1,17 +1,26 @@
-function ccsf(v, output_array) {
+type V = {
+  ccsf: Record<DataHash, { date_traitement: Date }>
+}
+
+type Output = {
+  periode: Date
+  date_ccsf: unknown
+}
+
+export function ccsf(v: V, output_array: Output[]): void {
   "use strict"
 
-  var ccsfHashes = Object.keys(v.ccsf || {})
+  const ccsfHashes = Object.keys(v.ccsf || {})
 
   output_array.forEach((val) => {
-    var optccsf = ccsfHashes.reduce(
+    const optccsf = ccsfHashes.reduce(
       function (accu, hash) {
-        let ccsf = v.ccsf[hash]
+        const ccsf = v.ccsf[hash]
         if (
           ccsf.date_traitement.getTime() < val.periode.getTime() &&
           ccsf.date_traitement.getTime() > accu.date_traitement.getTime()
         ) {
-          let accu = ccsf
+          accu = ccsf
         }
         return accu
       },
