@@ -17,7 +17,10 @@ const removeRandomOrder = (reporderProp: { [key: string]: RepOrder }): void =>
     delete reporderProp[period].random_order
   })
 
-const runMongoMap = (mapFct: () => void, keyVal: unknown): unknown => {
+const runMongoMap = (
+  mapFct: () => void,
+  keyVal: unknown
+): Record<string, unknown> => {
   const results: { [key: string]: unknown } = {}
   globalThis.emit = (key: string, value: CompanyDataValuesWithFlags): void => {
     results[key] = value
