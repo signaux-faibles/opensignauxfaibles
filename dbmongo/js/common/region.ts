@@ -1,7 +1,24 @@
-function region(departement){
-  "use strict";
-  var reg = ""
-  switch (departement){
+type Departement = string
+
+type Region =
+  | "Auvergne-Rhône-Alpes"
+  | "Hauts-de-France"
+  | "Provence-Alpes-Côte d'Azur"
+  | "Grand Est"
+  | "Occitanie"
+  | "Normandie"
+  | "Centre-Val de Loire"
+  | "Nouvelle-Aquitaine"
+  | "Corse"
+  | "Bourgogne-Franche-Comté"
+  | "Bretagne"
+  | "Pays de la Loire"
+  | "Île-de-France"
+
+export function region(departement: Departement): Region | "" {
+  "use strict"
+  let reg: Region | "" = ""
+  switch (departement) {
     case "01":
     case "03":
     case "07":
@@ -11,7 +28,6 @@ function region(departement){
     case "42":
     case "43":
     case "63":
-    case "69":
     case "69":
     case "73":
     case "74":
@@ -125,5 +141,5 @@ function region(departement){
       reg = "Île-de-France"
       break
   }
-  return(reg)
+  return reg
 }
