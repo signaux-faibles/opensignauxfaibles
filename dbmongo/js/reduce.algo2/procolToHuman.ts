@@ -1,6 +1,19 @@
-function procolToHuman(action, stade) {
+type ProcolToHumanRes =
+  | "liquidation"
+  | "in_bonis"
+  | "continuation"
+  | "sauvegarde"
+  | "plan_sauvegarde"
+  | "plan_redressement"
+  | null
+
+type Action = "liquidation" | "redressement" | "sauvegarde"
+
+type Stade = "abandon_procedure" | "fin_procedure" | "plan_continuation"
+
+export function procolToHuman(action: Action, stade: Stade): ProcolToHumanRes {
   "use strict"
-  var res = null
+  let res: ProcolToHumanRes = null
   if (action == "liquidation" && stade != "abandon_procedure")
     res = "liquidation"
   else if (stade == "abandon_procedure" || stade == "fin_procedure")
