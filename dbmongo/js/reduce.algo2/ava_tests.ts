@@ -7,7 +7,7 @@
 import test, { ExecutionContext } from "ava"
 import "../globals"
 import { map } from "./map"
-import { flatten } from "./flatten.js"
+import { flatten } from "./flatten"
 import { outputs } from "./outputs"
 import { repeatable } from "./repeatable"
 import { add } from "./add"

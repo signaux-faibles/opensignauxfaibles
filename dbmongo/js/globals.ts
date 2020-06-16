@@ -43,6 +43,8 @@ type BatchValue = {
   apdemande: { [key: string]: any } // TODO: définir type plus précisément
 }
 
+type BatchDataType = keyof BatchValue
+
 type DataHash = string
 
 type Periode = Date
