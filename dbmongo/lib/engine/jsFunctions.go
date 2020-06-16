@@ -2162,11 +2162,11 @@ db.getCollection("Features").createIndex({
         res = "plan_redressement";
     return res;
 }`,
-"reduce": `function reduce(key, values) {
-  "use strict"
-  return values.reduce((val, accu) => {
-    return Object.assign(accu, val)
-  }, {})
+"reduce": `function reduce(_key, values) {
+    "use strict";
+    return values.reduce((val, accu) => {
+        return Object.assign(accu, val);
+    }, {});
 }`,
 "repeatable": `function repeatable(rep) {
   "use strict"
