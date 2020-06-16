@@ -1,4 +1,6 @@
-function detteFiscale(diane) {
+import { Diane } from "./fraisFinancier"
+
+export function detteFiscale(diane: Diane): number | null {
   "use strict"
   if (
     "dette_fiscale_et_sociale" in diane &&
