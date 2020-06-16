@@ -1,4 +1,4 @@
-type Departement = string
+export type Departement = string
 
 type Region =
   | "Auvergne-Rhône-Alpes"

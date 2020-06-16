@@ -1,8 +1,6 @@
-type CodeAPE = string
 type CodeAPENiveau2 = string
 type CodeAPENiveau3 = string
 type CodeAPENiveau4 = string
-type CodeNAF = string
 
 type Output = {
   code_ape: CodeAPE

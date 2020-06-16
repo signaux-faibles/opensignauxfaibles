@@ -12,6 +12,10 @@ let completeTypes: { [key: string]: string[] }
 
 // Types partagés
 
+type CodeAPE = string
+
+type CodeNAF = string
+
 type Scope = "etablissement" | "entreprise"
 
 type ReduceIndexFlags = {
