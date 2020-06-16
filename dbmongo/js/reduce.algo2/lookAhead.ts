@@ -1,19 +1,32 @@
-function lookAhead(data, attr_name, n_months, past) {
+type Outcome = {
+  time_til_outcome: number
+  outcome: boolean
+}
+
+export function lookAhead(
+  data: { [period: string]: any },
+  attr_name: string,
+  n_months: number,
+  past: boolean
+): { [period: string]: Outcome } {
   "use strict"
   // Est-ce que l'évènement se répercute dans le passé (past = true on pourra se
   // demander: que va-t-il se passer) ou dans le future (past = false on
   // pourra se demander que s'est-il passé
-  var sorting_fun = function (a, b) {
+
+  /* eslint-disable */
+  var sorting_fun = function (a: any, b: any): any {
     return a >= b
   }
   if (past) {
-    sorting_fun = function (a, b) {
+    sorting_fun = function (a: any, b: any): any {
       return a <= b
     }
   }
+  /* eslint-enable */
 
-  var counter = -1
-  var output = Object.keys(data)
+  let counter = -1
+  const output = Object.keys(data)
     .sort(sorting_fun)
     .reduce(function (m, period) {
       // Si on a déjà détecté quelque chose, on compte le nombre de périodes
@@ -35,9 +48,7 @@ function lookAhead(data, attr_name, n_months, past) {
         }
       }
       return m
-    }, {})
+    }, {} as Record<string, Outcome>)
 
   return output
 }
-
-exports.lookAhead = lookAhead

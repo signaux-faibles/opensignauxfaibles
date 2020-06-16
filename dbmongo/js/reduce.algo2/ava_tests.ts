@@ -18,7 +18,7 @@ import { cotisation } from "./cotisation.js"
 import { dateAddMonth } from "./dateAddMonth.js"
 import { generatePeriodSerie } from "../common/generatePeriodSerie.js"
 import { cibleApprentissage } from "./cibleApprentissage.js"
-import { lookAhead } from "./lookAhead.js"
+import { lookAhead } from "./lookAhead"
 import { reduce } from "./reduce.js"
 import { finalize } from "./finalize.js"
 
