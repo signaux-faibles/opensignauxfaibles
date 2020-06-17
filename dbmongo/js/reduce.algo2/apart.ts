@@ -4,7 +4,7 @@ type ApConsoHash = string
 
 type Hash = string
 
-type Timestamp = number
+type Timestamp = string
 
 type ApConso = {
   id_conso: string

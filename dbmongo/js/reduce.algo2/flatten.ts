@@ -1,11 +1,11 @@
-type V = {
-  key: unknown
+export type V = {
+  key: SiretOrSiren
   scope: Scope
   batch: BatchValues
 }
 
 type Flattened = Partial<BatchValue> & {
-  key: unknown
+  key: SiretOrSiren
   scope: Scope
 }
 

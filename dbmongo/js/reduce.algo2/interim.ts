@@ -1,10 +1,5 @@
 import * as f from "./dateAddMonth"
 
-type Interim = {
-  periode: Date
-  etp: number
-}
-
 type Output = {
   effectif: number
   interim_proportion: number
