@@ -1,27 +1,58 @@
-function apart(apconso, apdemande) {
+import * as f from "../common/generatePeriodSerie"
+
+type ApConsoHash = string
+
+type Hash = string
+
+type Timestamp = number
+
+type ApConso = {
+  id_conso: string
+  periode: Date
+  heure_consomme: number
+}
+
+type ApDemande = {
+  id_demande: string
+  periode: { start: Date; end: Date }
+  hta: unknown
+  motif_recours_se: unknown
+}
+
+type Output = {
+  apart_heures_autorisees: unknown
+  apart_heures_consommees: number
+  apart_motif_recours: ApDemande["motif_recours_se"]
+  apart_heures_consommees_cumulees: number
+}
+
+export function apart(
+  apconso: Record<ApConsoHash, ApConso>,
+  apdemande: Record<Hash, ApDemande>
+): Record<Timestamp, Output> {
   "use strict"
 
-  var output_apart = {}
+  const output_apart: Record<Timestamp, Output> = {}
 
   // Mapping (pour l'instant vide) du hash de la demande avec les hash des consos correspondantes
-  var apart = Object.keys(apdemande).reduce((apart, hash) => {
+  const apart = Object.keys(apdemande).reduce((apart, hash) => {
     apart[apdemande[hash].id_demande.substring(0, 9)] = {
       demande: hash,
       consommation: [],
-      periode_debut: 0,
-      periode_fin: 0,
+      periode_debut: new Date(0),
+      periode_fin: new Date(0),
     }
     return apart
-  }, {})
+  }, {} as Record<string, { demande: Hash; consommation: ApConsoHash[]; periode_debut: Date; periode_fin: Date }>)
 
   // on note le nombre d'heures demandées dans output_apart
   Object.keys(apdemande).forEach((hash) => {
-    var periode_deb = apdemande[hash].periode.start
-    var periode_fin = apdemande[hash].periode.end
+    const periode_deb = apdemande[hash].periode.start
+    const periode_fin = apdemande[hash].periode.end
 
     // Des periodes arrondies aux débuts de périodes
     // TODO meilleur arrondi
-    var periode_deb_floor = new Date(
+    const periode_deb_floor = new Date(
       Date.UTC(
         periode_deb.getUTCFullYear(),
         periode_deb.getUTCMonth(),
@@ -32,7 +63,7 @@ function apart(apconso, apdemande) {
         0
       )
     )
-    var periode_fin_ceil = new Date(
+    const periode_fin_ceil = new Date(
       Date.UTC(
         periode_fin.getUTCFullYear(),
         periode_fin.getUTCMonth() + 1,
@@ -50,9 +81,9 @@ function apart(apconso, apdemande) {
       apdemande[hash].id_demande.substring(0, 9)
     ].periode_fin = periode_fin_ceil
 
-    var series = f.generatePeriodSerie(periode_deb_floor, periode_fin_ceil)
+    const series = f.generatePeriodSerie(periode_deb_floor, periode_fin_ceil)
     series.forEach((date) => {
-      let time = date.getTime()
+      const time = date.getTime()
       output_apart[time] = output_apart[time] || {}
       output_apart[time].apart_heures_autorisees = apdemande[hash].hta
     })
@@ -60,7 +91,7 @@ function apart(apconso, apdemande) {
 
   // relier les consos faites aux demandes (hashs) dans apart
   Object.keys(apconso).forEach((hash) => {
-    var valueap = apconso[hash]
+    const valueap = apconso[hash]
     if (valueap.id_conso.substring(0, 9) in apart) {
       apart[valueap.id_conso.substring(0, 9)].consommation.push(hash)
     }
@@ -69,11 +100,11 @@ function apart(apconso, apdemande) {
   Object.keys(apart).forEach((k) => {
     if (apart[k].consommation.length > 0) {
       apart[k].consommation
-        .sort(
-          (a, b) => apconso[a].periode.getTime() >= apconso[b].periode.getTime()
+        .sort((a, b) =>
+          apconso[a].periode.getTime() >= apconso[b].periode.getTime() ? 1 : 0
         )
         .forEach((h) => {
-          var time = apconso[h].periode.getTime()
+          const time = apconso[h].periode.getTime()
           output_apart[time] = output_apart[time] || {}
           output_apart[time].apart_heures_consommees =
             (output_apart[time].apart_heures_consommees || 0) +
@@ -83,12 +114,12 @@ function apart(apconso, apdemande) {
         })
 
       // Heures consommees cumulees sur la demande
-      let series = f.generatePeriodSerie(
+      const series = f.generatePeriodSerie(
         apart[k].periode_debut,
         apart[k].periode_fin
       )
       series.reduce((accu, date) => {
-        let time = date.getTime()
+        const time = date.getTime()
 
         //output_apart est déjà défini pour les heures autorisées
         accu = accu + (output_apart[time].apart_heures_consommees || 0)
