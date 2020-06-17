@@ -1,10 +1,32 @@
-function cotisation(output_indexed, output_array) {
+import { generatePeriodSerie } from "../common/generatePeriodSerie"
+import { dateAddMonth } from "./dateAddMonth"
+
+type Output = {
+  periode: Date
+  cotisation: number
+  cotisation_moy12m: number
+  cotisation_array: number[]
+  montant_part_patronale: number
+  montant_pp_array: number[]
+  montant_part_ouvriere: number
+  montant_po_array: number[]
+  ratio_dette: number
+  ratio_dette_moy12m: number
+  tag_debit: boolean
+  tag_default: boolean
+}
+
+export function cotisation(
+  output_indexed: { [k: string]: Output },
+  output_array: Output[]
+): void {
   "use strict"
+  const f = { generatePeriodSerie, dateAddMonth } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
   // calcul de cotisation_moyenne sur 12 mois
   Object.keys(output_indexed).forEach((k) => {
-    let periode_courante = output_indexed[k].periode
-    let periode_12_mois = f.dateAddMonth(periode_courante, 12)
-    let series = f.generatePeriodSerie(periode_courante, periode_12_mois)
+    const periode_courante = output_indexed[k].periode
+    const periode_12_mois = f.dateAddMonth(periode_courante, 12)
+    const series = f.generatePeriodSerie(periode_courante, periode_12_mois)
     series.forEach((periode) => {
       if (periode.getTime() in output_indexed) {
         if ("cotisation" in output_indexed[periode_courante.getTime()])
@@ -35,10 +57,10 @@ function cotisation(output_indexed, output_array) {
       val.ratio_dette =
         (val.montant_part_ouvriere + val.montant_part_patronale) /
         val.cotisation_moy12m
-      let pp_average =
+      const pp_average =
         (val.montant_pp_array || []).reduce((p, c) => p + c, 0) /
         (val.montant_pp_array.length || 1)
-      let po_average =
+      const po_average =
         (val.montant_po_array || []).reduce((p, c) => p + c, 0) /
         (val.montant_po_array.length || 1)
       val.ratio_dette_moy12m = (po_average + pp_average) / val.cotisation_moy12m
@@ -53,7 +75,7 @@ function cotisation(output_indexed, output_array) {
   })
 
   // Calcul des défauts URSSAF prolongés
-  var counter = 0
+  let counter = 0
   Object.keys(output_indexed)
     .sort()
     .forEach((k) => {
@@ -66,5 +88,3 @@ function cotisation(output_indexed, output_array) {
       } else counter = 0
     })
 }
-
-exports.cotisation = cotisation

@@ -1,4 +1,4 @@
-import * as f from "../common/generatePeriodSerie.js"
+import * as f from "../common/generatePeriodSerie"
 
 type DeepReadonly<T> = Readonly<T> // pas vraiment, mais espoire que TS le supporte prochainement
 
