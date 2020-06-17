@@ -1,28 +1,44 @@
-function map() {
+import { flatten, V } from "./flatten"
+import { outputs } from "./outputs"
+import { apart } from "./apart"
+import { compte } from "./compte"
+import { effectifs } from "./effectifs"
+import { interim } from "./interim"
+import { add } from "./add"
+
+declare const actual_batch: BatchKey
+declare const includes: Record<"all" | "apart", boolean>
+
+export function map(this: { _id: SiretOrSiren; value: V }): void {
   "use strict"
-  let v = f.flatten(this.value, actual_batch)
+  const f = { flatten, outputs, apart, compte, effectifs, interim, add } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
+  const v = f.flatten(this.value, actual_batch)
 
   if (v.scope == "etablissement") {
     const o = f.outputs(v, serie_periode)
-    let output_array = o[0] // [ OutputValue ] // in chronological order
-    let output_indexed = o[1] // { Periode -> OutputValue } // OutputValue: cf outputs()
+    const output_array = o[0] // [ OutputValue ] // in chronological order
+    const output_indexed = o[1] // { Periode -> OutputValue } // OutputValue: cf outputs()
 
     // Les periodes qui nous interessent, triées
-    var periodes = Object.keys(output_indexed).sort((a, b) => a >= b)
+    const periodes = Object.keys(output_indexed).sort((a, b) =>
+      a >= b ? 1 : 0
+    )
 
     if (includes["apart"] || includes["all"]) {
       if (v.apconso && v.apdemande) {
-        let output_apart = f.apart(v.apconso, v.apdemande)
+        const output_apart = f.apart(v.apconso, v.apdemande)
         Object.keys(output_apart).forEach((periode) => {
-          let data = {}
+          const data: Record<
+            SiretOrSiren,
+            object & { siret?: SiretOrSiren }
+          > = {}
           data[this._id] = output_apart[periode]
           data[this._id].siret = this._id
-          periode = new Date(Number(periode))
           emit(
             {
               batch: actual_batch,
               siren: this._id.substring(0, 9),
-              periode: periode,
+              periode: new Date(Number(periode)),
               type: "apart",
             },
             data
@@ -33,22 +49,22 @@ function map() {
 
     if (includes["all"]) {
       if (v.compte) {
-        var output_compte = f.compte(v)
+        const output_compte = f.compte(v)
         f.add(output_compte, output_indexed)
       }
 
       if (v.effectif) {
-        var output_effectif = f.effectifs(v.effectif, periodes, "effectif")
+        const output_effectif = f.effectifs(v.effectif, periodes, "effectif")
         f.add(output_effectif, output_indexed)
       }
 
       if (v.interim) {
-        let output_interim = f.interim(v.interim, output_indexed)
+        const output_interim = f.interim(v.interim, output_indexed)
         f.add(output_interim, output_indexed)
       }
 
       if (v.reporder) {
-        let output_repeatable = f.repeatable(v.reporder)
+        const output_repeatable = f.repeatable(v.reporder)
         f.add(output_repeatable, output_indexed)
       }
 
@@ -65,7 +81,7 @@ function map() {
       }
 
       if (v.cotisation && v.debit) {
-        let output_cotisationsdettes = f.cotisationsdettes(v, periodes)
+        const output_cotisationsdettes = f.cotisationsdettes(v, periodes)
         f.add(output_cotisationsdettes, output_indexed)
       }
 
@@ -80,10 +96,10 @@ function map() {
 
       f.cotisation(output_indexed, output_array)
 
-      let output_cible = f.cibleApprentissage(output_indexed, 18)
+      const output_cible = f.cibleApprentissage(output_indexed, 18)
       f.add(output_cible, output_indexed)
       output_array.forEach((val) => {
-        let data = {}
+        const data = {}
         data[this._id] = val
         emit(
           {
@@ -100,7 +116,7 @@ function map() {
 
   if (v.scope == "entreprise") {
     if (includes["all"]) {
-      var output_array = serie_periode.map(function (e) {
+      const output_array = serie_periode.map(function (e) {
         return {
           siren: v.key,
           periode: e,
@@ -120,9 +136,9 @@ function map() {
         f.sirene_ul(v, output_array)
       }
 
-      var periodes = Object.keys(output_indexed).sort((a, b) => a >= b)
+      const periodes = Object.keys(output_indexed).sort((a, b) => a >= b)
       if (v.effectif_ent) {
-        var output_effectif_ent = f.effectifs(
+        const output_effectif_ent = f.effectifs(
           v.effectif_ent,
           periodes,
           "effectif_ent"
@@ -144,7 +160,7 @@ function map() {
       v.diane = v.diane || {}
 
       Object.keys(v.bdf).forEach((hash) => {
-        let periode_arrete_bilan = new Date(
+        const periode_arrete_bilan = new Date(
           Date.UTC(
             v.bdf[hash].arrete_bilan_bdf.getUTCFullYear(),
             v.bdf[hash].arrete_bilan_bdf.getUTCMonth() + 1,
@@ -155,8 +171,8 @@ function map() {
             0
           )
         )
-        let periode_dispo = f.dateAddMonth(periode_arrete_bilan, 7)
-        let series = f.generatePeriodSerie(
+        const periode_dispo = f.dateAddMonth(periode_arrete_bilan, 7)
+        const series = f.generatePeriodSerie(
           periode_dispo,
           f.dateAddMonth(periode_dispo, 13)
         )
@@ -164,7 +180,7 @@ function map() {
         series.forEach((periode) => {
           Object.keys(v.bdf[hash])
             .filter((k) => {
-              var omit = ["raison_sociale", "secteur", "siren"]
+              const omit = ["raison_sociale", "secteur", "siren"]
               return v.bdf[hash][k] != null && !omit.includes(k)
             })
             .forEach((k) => {
@@ -174,10 +190,10 @@ function map() {
                   output_indexed[periode.getTime()].annee_bdf - 1
               }
 
-              let past_year_offset = [1, 2]
+              const past_year_offset = [1, 2]
               past_year_offset.forEach((offset) => {
-                let periode_offset = f.dateAddMonth(periode, 12 * offset)
-                let variable_name = k + "_past_" + offset
+                const periode_offset = f.dateAddMonth(periode, 12 * offset)
+                const variable_name = k + "_past_" + offset
                 if (
                   periode_offset.getTime() in output_indexed &&
                   k != "arrete_bilan_bdf" &&
@@ -195,7 +211,7 @@ function map() {
         .filter((hash) => v.diane[hash].arrete_bilan_diane)
         .forEach((hash) => {
           //v.diane[hash].arrete_bilan_diane = new Date(Date.UTC(v.diane[hash].exercice_diane, 11, 31, 0, 0, 0, 0))
-          let periode_arrete_bilan = new Date(
+          const periode_arrete_bilan = new Date(
             Date.UTC(
               v.diane[hash].arrete_bilan_diane.getUTCFullYear(),
               v.diane[hash].arrete_bilan_diane.getUTCMonth() + 1,
@@ -206,8 +222,8 @@ function map() {
               0
             )
           )
-          let periode_dispo = f.dateAddMonth(periode_arrete_bilan, 7) // 01/08 pour un bilan le 31/12, donc algo qui tourne en 01/09
-          let series = f.generatePeriodSerie(
+          const periode_dispo = f.dateAddMonth(periode_arrete_bilan, 7) // 01/08 pour un bilan le 31/12, donc algo qui tourne en 01/09
+          const series = f.generatePeriodSerie(
             periode_dispo,
             f.dateAddMonth(periode_dispo, 14) // periode de validité d'un bilan auprès de la Banque de France: 21 mois (14+7)
           )
@@ -215,7 +231,7 @@ function map() {
           series.forEach((periode) => {
             Object.keys(v.diane[hash])
               .filter((k) => {
-                var omit = [
+                const omit = [
                   "marquee",
                   "nom_entreprise",
                   "numero_siren",
@@ -231,10 +247,10 @@ function map() {
 
                 // Passé
 
-                let past_year_offset = [1, 2]
+                const past_year_offset = [1, 2]
                 past_year_offset.forEach((offset) => {
-                  let periode_offset = f.dateAddMonth(periode, 12 * offset)
-                  let variable_name = k + "_past_" + offset
+                  const periode_offset = f.dateAddMonth(periode, 12 * offset)
+                  const variable_name = k + "_past_" + offset
 
                   if (
                     periode_offset.getTime() in output_indexed &&
@@ -276,19 +292,19 @@ function map() {
                 ].frais_financier = f.fraisFinancier(v.diane[hash])
               }
 
-              var bdf_vars = [
+              const bdf_vars = [
                 "taux_marge",
                 "poids_frng",
                 "dette_fiscale",
                 "financier_court_terme",
                 "frais_financier",
               ]
-              let past_year_offset = [1, 2]
+              const past_year_offset = [1, 2]
               bdf_vars.forEach((k) => {
                 if (k in output_indexed[periode.getTime()]) {
                   past_year_offset.forEach((offset) => {
-                    let periode_offset = f.dateAddMonth(periode, 12 * offset)
-                    let variable_name = k + "_past_" + offset
+                    const periode_offset = f.dateAddMonth(periode, 12 * offset)
+                    const variable_name = k + "_past_" + offset
 
                     if (periode_offset.getTime() in output_indexed) {
                       output_indexed[periode_offset.getTime()][variable_name] =
@@ -330,5 +346,3 @@ function map() {
     }
   }
 }
-
-exports.map = map
