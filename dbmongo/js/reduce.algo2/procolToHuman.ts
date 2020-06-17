@@ -1,4 +1,4 @@
-type ProcolToHumanRes =
+export type ProcolToHumanRes =
   | "liquidation"
   | "in_bonis"
   | "continuation"
@@ -7,9 +7,9 @@ type ProcolToHumanRes =
   | "plan_redressement"
   | null
 
-type Action = "liquidation" | "redressement" | "sauvegarde"
+export type Action = "liquidation" | "redressement" | "sauvegarde"
 
-type Stade = "abandon_procedure" | "fin_procedure" | "plan_continuation"
+export type Stade = "abandon_procedure" | "fin_procedure" | "plan_continuation"
 
 export function procolToHuman(action: Action, stade: Stade): ProcolToHumanRes {
   "use strict"

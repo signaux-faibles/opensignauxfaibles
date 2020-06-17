@@ -1,10 +1,10 @@
 import * as f from "./dealWithProcols"
-import { Event } from "./dealWithProcols"
+import { InputEvent } from "./dealWithProcols"
 
 export function defaillances(
   v: {
-    altares: { [hash: string]: Event }
-    procol: { [hash: string]: Event }
+    altares: { [hash: string]: InputEvent }
+    procol: { [hash: string]: InputEvent }
   },
   output_indexed: {}
 ): void {
