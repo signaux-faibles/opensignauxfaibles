@@ -1,30 +1,53 @@
-function effectifs(effobj, periodes, effectif_name) {
+import * as f from "./dateAddMonth"
+
+declare const offset_effectif: number
+
+type Hash = string
+
+type Time = string
+
+type Effectif = {
+  periode: Date // { start: Date; end: Date }
+  effectif: number
+}
+
+type EffectifName = string
+
+export function effectifs(
+  effobj: Record<Hash, Effectif>,
+  periodes: string[],
+  effectif_name: EffectifName
+): unknown {
   "use strict"
 
-  let output_effectif = {}
+  const output_effectif: Record<
+    Time,
+    Record<EffectifName, ValeurEffectif | null>
+  > = {}
+
+  type ValeurEffectif = number
 
   // Construction d'une map[time] = effectif à cette periode
-  let map_effectif = Object.keys(effobj).reduce((m, hash) => {
-    var effectif = effobj[hash]
+  const map_effectif = Object.keys(effobj).reduce((m, hash) => {
+    const effectif = effobj[hash]
     if (effectif == null) {
       return m
     }
-    var effectifTime = effectif.periode.getTime()
+    const effectifTime = effectif.periode.getTime()
     m[effectifTime] = (m[effectifTime] || 0) + effectif.effectif
     return m
-  }, {})
+  }, {} as Record<Time, ValeurEffectif>)
 
   //ne reporter que si le dernier est disponible
   // 1- quelle periode doit être disponible
-  var last_period = new Date(parseInt(periodes[periodes.length - 1]))
-  var last_period_offset = f.dateAddMonth(last_period, offset_effectif + 1)
+  const last_period = new Date(parseInt(periodes[periodes.length - 1]))
+  const last_period_offset = f.dateAddMonth(last_period, offset_effectif + 1)
   // 2- Cette période est-elle disponible ?
 
-  var available = map_effectif[last_period_offset.getTime()] ? 1 : 0
+  const available = map_effectif[last_period_offset.getTime()] ? 1 : 0
 
   //pour chaque periode (elles sont triees dans l'ordre croissant)
   periodes.reduce((accu, time) => {
-    var periode = new Date(parseInt(time))
     // si disponible on reporte l'effectif tel quel, sinon, on recupère l'accu
     output_effectif[time] = output_effectif[time] || {}
     output_effectif[time][effectif_name] =
@@ -37,19 +60,19 @@ function effectifs(effobj, periodes, effectif_name) {
       ? 0
       : 1
     return accu
-  }, null)
+  }, null as ValeurEffectif | null)
 
   Object.keys(map_effectif).forEach((time) => {
-    var periode = new Date(parseInt(time))
-    var past_month_offsets = [6, 12, 18, 24]
+    const periode = new Date(parseInt(time))
+    const past_month_offsets = [6, 12, 18, 24]
     past_month_offsets.forEach((lookback) => {
       // On ajoute un offset pour partir de la dernière période où l'effectif est connu
-      var time_past_lookback = f.dateAddMonth(
+      const time_past_lookback = f.dateAddMonth(
         periode,
         lookback - offset_effectif - 1
       )
 
-      var variable_name_effectif = effectif_name + "_past_" + lookback
+      const variable_name_effectif = effectif_name + "_past_" + lookback
       output_effectif[time_past_lookback.getTime()] =
         output_effectif[time_past_lookback.getTime()] || {}
       output_effectif[time_past_lookback.getTime()][variable_name_effectif] =
