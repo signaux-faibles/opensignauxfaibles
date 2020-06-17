@@ -20,7 +20,7 @@ import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { cibleApprentissage } from "./cibleApprentissage"
 import { lookAhead } from "./lookAhead"
 import { reduce } from "./reduce"
-import { finalize } from "./finalize.js"
+import { finalize } from "./finalize"
 
 const global = globalThis as any // eslint-disable-line @typescript-eslint/no-explicit-any
 global.f = {

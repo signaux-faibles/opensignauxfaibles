@@ -1,5 +1,39 @@
-function finalize(k, v) {
+type Entreprise = {
+  effectif: number
+  effectif_entreprise: number
+  apart_heures_consommees: number
+  apart_entreprise: number
+  montant_part_patronale: number
+  montant_part_ouvriere: number
+  debit_entreprise: number
+  nbr_etablissements_connus: number
+}
+
+type Clé = {
+  batch: unknown
+  siren: SiretOrSiren
+  periode: unknown
+  type: unknown
+}
+
+type V = Record<SiretOrSiren, Entreprise> & {
+  // _id: Clé
+  // value: Record<SiretOrSiren, Etablissement>
+  entreprise: Entreprise
+}
+
+type Output = unknown[] | { incomplete: true } | undefined
+
+declare function print(str: string): void
+
+export function finalize(
+  key: Clé,
+  v: V // { _[key: string]: T }
+): Output {
   "use strict"
+  const bsonsize =
+    // @ts-expect-error: Object.bsonsize is not known by TypeScript, but it exists when the function in run by MongoDB
+    Object.bsonsize || ((obj: unknown): number => JSON.stringify(obj).length) // DO // _NOT_INCLUDE_IN_JSFUNCTIONS_GO
   const maxBsonSize = 16777216
 
   // v de la forme
@@ -13,8 +47,8 @@ function finalize(k, v) {
   ///
   //
 
-  let etablissements_connus = []
-  let entreprise = v.entreprise || {}
+  const etablissements_connus: Record<SiretOrSiren, boolean> = {}
+  const entreprise: Entreprise = v.entreprise || {}
 
   Object.keys(v).forEach((siret) => {
     if (siret != "entreprise") {
@@ -43,8 +77,8 @@ function finalize(k, v) {
   })
 
   // une fois que les comptes sont faits...
-  let output = []
-  let nb_connus = Object.keys(etablissements_connus).length
+  const output: Entreprise[] = []
+  const nb_connus = Object.keys(etablissements_connus).length
   Object.keys(v).forEach((siret) => {
     if (siret != "entreprise" && v[siret]) {
       v[siret].nbr_etablissements_connus = nb_connus
@@ -58,7 +92,7 @@ function finalize(k, v) {
   // })
 
   if (output.length > 0 && nb_connus <= 1500) {
-    if (Object.bsonsize(output) + Object.bsonsize({ _id: k }) < maxBsonSize) {
+    if (bsonsize(output) + bsonsize({ _id: key }) < maxBsonSize) {
       return output
     } else {
       print(
@@ -70,5 +104,3 @@ function finalize(k, v) {
     }
   }
 }
-
-exports.finalize = finalize
