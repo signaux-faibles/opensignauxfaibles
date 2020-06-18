@@ -1,6 +1,11 @@
 #!/bin/bash
 
-# Test de bout en bout de l'API "reduce" à l'aide de données réalistes
+# Test de bout en bout de l'API "reduce" à l'aide de données réalistes.
+#
+# Inspiré de test-api.sh et finalize_test.js.
+#
+# Ce test requiert l'accès à un serveur privé, et n'est donc pas inclus dans la
+# suite de tests exécutée en Integration Continue.
 
 # Interrompre le conteneur Docker d'une exécution précédente de ce test, si besoin
 docker stop sf-mongodb
@@ -82,6 +87,7 @@ function formatJSON {
   perl -p -e 's/ISODate\("(.*)T00:00:00Z"\)/"$1T00:00:00.000Z"/g' \
   | perl -p -e 's/"montant_majorations" : NaN,$/"montant_majorations" : null,/g' \
   | node -e "d=[];process.openStdin().on('data',c=>d.push(c)).on('end',()=>console.log(JSON.stringify(JSON.parse(d.join('')),null,2)));"
+  # (i) concernant le changement des valeurs de NaN en null pour `montant_majorations`, cf https://github.com/signaux-faibles/opensignauxfaibles/issues/72
 }
 
 echo ""
@@ -92,7 +98,6 @@ echo "db.Features_TestData.find().toArray();" \
   | formatJSON \
   | removeRandomOrder \
   > test-api-2.output.json
-  # (i) concernant le changement des valeurs de NaN en null pour `montant_majorations`, cf https://github.com/signaux-faibles/opensignauxfaibles/issues/72
 
 removeRandomOrder "${DATA_DIR}/finalize_golden.log" \
   > "${DATA_DIR}/test-api-2_golden.json"
