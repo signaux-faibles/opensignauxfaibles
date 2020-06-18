@@ -81,6 +81,10 @@ echo "⚙️ Computing Features and Public collections thru dbmongo API..."
 sleep 2 # give some time for dbmongo to start
 http --ignore-stdin :5000/api/data/reduce algo=algo2 batch=2002_1
 
+function removeRandomOrder {
+  grep -v '"random_order":'
+}
+
 echo ""
 echo "🕵️‍♀️ Checking resulting Features..."
 cd ..
@@ -89,11 +93,11 @@ echo "db.Features_TestData.find().toArray();" \
   | perl -pi'' -e 's/ISODate\((".*")\)/$1/g' \
   | perl -pi'' -e 's/T00:00:00Z/T00:00:00.000Z/g' \
   | npx prettier --stdin-filepath test-api-2.output.json \
-  | grep -v '"random_order":' \
+  | removeRandomOrder \
   > test-api-2.output.json
 
 cat "${DATA_DIR}/finalize_golden.log" \
-  | grep -v '"random_order":' \
+  | removeRandomOrder \
   > "${DATA_DIR}/test-api-2_golden.json"
 
 echo ""
