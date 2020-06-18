@@ -40,7 +40,7 @@ const runMongoMap = (
   mapFct: () => void,
   keyVal: unknown
 ): Record<string, unknown> => {
-  const results: { [key: string]: unknown } = {}
+  const results: Record<string, unknown> = {}
   global.emit = (key: string, value: unknown): void => {
     results[key] = value
   }
