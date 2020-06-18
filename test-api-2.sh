@@ -84,18 +84,15 @@ http --ignore-stdin :5000/api/data/reduce algo=algo2 batch=2002_1
 echo ""
 echo "🕵️‍♀️ Checking resulting Features..."
 cd ..
-docker exec -i sf-mongodb mongo --quiet signauxfaibles > test-api.output.txt << CONTENTS
-  print("// Documents from db.Features_TestData, after call to /api/data/reduce:");
-  db.Features_TestData.find().toArray();
-CONTENTS
-
-# exclude random values
-grep -v '"random_order" :' test-api.output.txt > test-api.output-documents.txt
+echo "db.Features_TestData.find().toArray();" \
+  | docker exec -i sf-mongodb mongo --quiet signauxfaibles \
+  | grep -v '"random_order" :' \
+  > test-api-2.output.json
 
 echo ""
 echo "🆎 Diff between expected and actual output:"
-diff "${DATA_DIR}/map_golden.log" test-api.output-documents.txt
+diff "${DATA_DIR}/finalize_golden.log" test-api-2.output.json
 echo "✅ No diff. The reduce API works as usual."
 echo ""
-rm test-api.output.txt test-api.output-documents.txt
+rm test-api-2.output.json
 # Now, the "trap" commands will run, to clean up.
