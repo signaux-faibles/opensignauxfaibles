@@ -27,18 +27,11 @@ docker run \
 
 echo ""
 echo "🔧 Setting up dbmongo..."
-touch "${DATA_DIR}/dummy.csv"
 cd dbmongo
 go build
 [ -f config.toml ] && mv config.toml config.backup.toml
 cp config-sample.toml config.toml
-if [[ "$OSTYPE" == "darwin"* ]]; then
-  sed -i '' "s,/foo/bar/data-raw,${DATA_DIR}," config.toml
-  sed -i '' 's,naf/.*\.csv,dummy.csv,' config.toml
-else
-  sed -i "s,/foo/bar/data-raw,${DATA_DIR}," config.toml
-  sed -i 's,naf/.*\.csv,dummy.csv,' config.toml
-fi
+perl -pi'' -e "s,/foo/bar/data-raw,sample-data-raw," config.toml
 
 echo ""
 echo "📄 Inserting test data..."
