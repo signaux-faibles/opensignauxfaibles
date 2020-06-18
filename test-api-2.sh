@@ -86,15 +86,19 @@ echo "🕵️‍♀️ Checking resulting Features..."
 cd ..
 echo "db.Features_TestData.find().toArray();" \
   | docker exec -i sf-mongodb mongo --quiet signauxfaibles \
-  | grep -v '"random_order" :' \
   | perl -pi'' -e 's/ISODate\((".*")\)/$1/g' \
   | perl -pi'' -e 's/T00:00:00Z/T00:00:00.000Z/g' \
   | npx prettier --stdin-filepath test-api-2.output.json \
+  | grep -v '"random_order":' \
   > test-api-2.output.json
+
+cat "${DATA_DIR}/finalize_golden.log" \
+  | grep -v '"random_order":' \
+  > "${DATA_DIR}/test-api-2_golden.json"
 
 echo ""
 echo "🆎 Diff between expected and actual output:"
-diff "${DATA_DIR}/finalize_golden.log" test-api-2.output.json
+diff "${DATA_DIR}/test-api-2_golden.json" test-api-2.output.json
 echo "✅ No diff. The reduce API works as usual."
 echo ""
 rm test-api-2.output.json
