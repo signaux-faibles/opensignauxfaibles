@@ -83,8 +83,8 @@ echo "🕵️‍♀️ Checking resulting Features..."
 cd ..
 echo "db.Features_TestData.find().toArray();" \
   | docker exec -i sf-mongodb mongo --quiet signauxfaibles \
-  | perl -pi'' -e 's/ISODate\((".*")\)/$1/g' \
-  | perl -pi'' -e 's/T00:00:00Z/T00:00:00.000Z/g' \
+  | perl -p -e 's/ISODate\((".*")\)/$1/g' \
+  | perl -p -e 's/T00:00:00Z/T00:00:00.000Z/g' \
   | npx prettier --stdin-filepath test-api-2.output.json \
   | removeRandomOrder \
   > test-api-2.output.json
