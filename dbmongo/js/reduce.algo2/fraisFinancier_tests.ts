@@ -42,12 +42,12 @@ const proprietes = [
   "charge_exceptionnelle",
   "charges_financieres",
 ]
-proprietes.forEach((propriete: DianeProperty) =>
+proprietes.forEach((propriete) =>
   test(`fraisFinancier est nul si "${propriete}" n'est pas disponible dans Diane`, (t) => {
     const diane = fakeDiane() as DianePartial
-    diane[propriete] = null
+    diane[propriete as DianeProperty] = null
     t.is(fraisFinancier(diane), null)
-    delete diane[propriete]
+    delete diane[propriete as DianeProperty]
     t.is(fraisFinancier(diane), null)
   })
 )

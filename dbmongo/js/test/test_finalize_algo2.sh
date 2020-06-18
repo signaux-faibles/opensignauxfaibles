@@ -27,10 +27,10 @@ echo "makeTestData = ({ ISODate, NumberInt }) => (${JSON_TEST_DATASET});" \
 # Run tests
 jsc \
   ./helpers/fakes.js \
-  ../common/!(*_test).js \
+  ../common/!(*_test*).js \
   ${TMP_PATH}/reduce_test_data.js \
   ./data/naf.js \
-  ../reduce.algo2/!(*_test).js \
+  ../reduce.algo2/!(*_test*).js \
   ../reduce.algo2/finalize_test.js \
   2>&1 \
   > ${TMP_PATH}/finalize_stdout.log

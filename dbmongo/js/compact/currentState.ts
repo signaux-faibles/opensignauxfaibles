@@ -17,15 +17,16 @@ export function currentState(batches: BatchValue[]): CurrentDataState {
       }
 
       //2. On ajoute les nouvelles clés
-      Object.keys(batch)
-        .filter((type) => type !== "compact")
-        .forEach((type: keyof BatchValue) => {
-          m[type] = m[type] || new Set()
+      const neyKeyTypes = Object.keys(batch).filter(
+        (type) => type !== "compact"
+      ) as (keyof BatchValue)[]
+      neyKeyTypes.forEach((type) => {
+        m[type] = m[type] || new Set()
 
-          Object.keys(batch[type] || {}).forEach((key) => {
-            m[type].add(key)
-          })
+        Object.keys(batch[type] || {}).forEach((key) => {
+          m[type].add(key)
         })
+      })
       return m
     },
     {}

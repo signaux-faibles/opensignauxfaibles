@@ -186,12 +186,6 @@ package engine
   }
   return(reg)
 }`,
-"setBatchValueForType": `// Cette fonction TypeScript permet de vérifier que seuls les types reconnus
-// peuvent être intégrés dans un BatchValue de destination.
-// Ex: setBatchValueForType(batchValue, "pouet", {}) cause une erreur ts(2345).
-function setBatchValueForType(batchValue, typeName, updatedValues) {
-    batchValue[typeName] = updatedValues;
-}`,
 },
 "compact":{
 "complete_reporder": `// complete_reporder ajoute une propriété "reporder" pour chaque couple
@@ -244,9 +238,8 @@ function currentState(batches) {
             }
         }
         //2. On ajoute les nouvelles clés
-        Object.keys(batch)
-            .filter((type) => type !== "compact")
-            .forEach((type) => {
+        const neyKeyTypes = Object.keys(batch).filter((type) => type !== "compact");
+        neyKeyTypes.forEach((type) => {
             m[type] = m[type] || new Set();
             Object.keys(batch[type] || {}).forEach((key) => {
                 m[type].add(key);
@@ -305,11 +298,7 @@ function reduce(key, values) {
     //fusion des attributs dans values
     const reduced_value = values.reduce((m, value) => {
         Object.keys(value.batch).forEach((batch) => {
-            m.batch[batch] = m.batch[batch] || {};
-            Object.keys(value.batch[batch]).forEach((type) => {
-                const updatedValues = Object.assign(Object.assign({}, m.batch[batch][type]), value.batch[batch][type]);
-                setBatchValueForType(m.batch[batch], type, updatedValues);
-            });
+            m.batch[batch] = Object.keys(value.batch[batch]).reduce((batchValues, type) => (Object.assign(Object.assign({}, batchValues), { [type]: value.batch[batch][type] })), m.batch[batch] || {});
         });
         return m;
     }, { key: key, scope: values[0].scope, batch: {} });
@@ -436,22 +425,24 @@ function reduce(key, values) {
                 reducedBatch.compact.delete[type] = [...hashToDelete[type]];
             }
         });
-        new_types.forEach((type) => {
-            if (hashToAdd[type] && type !== "compact") {
-                const hashedValues = reduced_value.batch[batch][type];
-                const updatedValues = Object.keys(hashedValues || {})
-                    .filter((hash) => {
-                    return hashToAdd[type].has(hash);
-                })
-                    .reduce((m, hash) => (Object.assign(Object.assign({}, m), { [hash]: hashedValues === null || hashedValues === void 0 ? void 0 : hashedValues[hash] })), {});
-                setBatchValueForType(reduced_value.batch[batch], type, updatedValues);
+        const typesToAdd = Object.keys(hashToAdd).filter((type) => type !== "compact");
+        typesToAdd.forEach((type) => {
+            if (!new_types.includes(type)) {
+                delete reduced_value.batch[batch][type];
+            }
+            else {
+                reduced_value.batch[batch][type] = [...hashToAdd[type]].reduce((typedBatchValues, hash) => {
+                    var _a;
+                    return (Object.assign(Object.assign({}, typedBatchValues), { [hash]: (_a = reduced_value.batch[batch][type]) === null || _a === void 0 ? void 0 : _a[hash] }));
+                }, {});
             }
         });
         // 6. nettoyage
         // ------------
         if (reduced_value.batch[batch]) {
             //types vides
-            Object.keys(reduced_value.batch[batch]).forEach((type) => {
+            Object.keys(reduced_value.batch[batch]).forEach((strType) => {
+                const type = strType;
                 if (Object.keys(reduced_value.batch[batch][type] || {}).length === 0) {
                     delete reduced_value.batch[batch][type];
                 }
