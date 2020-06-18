@@ -87,6 +87,7 @@ cd ..
 echo "db.Features_TestData.find().toArray();" \
   | docker exec -i sf-mongodb mongo --quiet signauxfaibles \
   | grep -v '"random_order" :' \
+  | npx prettier --stdin-filepath test-api-2.output.json \
   > test-api-2.output.json
 
 echo ""
