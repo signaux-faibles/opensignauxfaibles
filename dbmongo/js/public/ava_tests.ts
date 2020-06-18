@@ -59,7 +59,7 @@ global.serie_periode = dates // used by effectifs(), which is called by map()
 
 const rawData = {
   batch: {
-    [batchKey]: {} as BatchValue, // TODO: rendre optionnelles les props de BatchValues, pour retirer ce cast
+    [batchKey]: {},
   },
   scope,
   index: { algo1: false, algo2: false }, // car il n'y a pas de données justifiant que l'établissement compte 10 employés ou pas

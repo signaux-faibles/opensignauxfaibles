@@ -37,7 +37,7 @@ const dates = [
   ISODate("2016-01-01T00:00:00.000+0000"),
 ]
 const batch: BatchValues = {
-  [batchKey]: {} as BatchValue, // TODO: rendre optionnelles les props de BatchValues, pour retirer ce cast
+  [batchKey]: {},
 }
 
 const importedData = {
@@ -73,7 +73,7 @@ const expectedFinalizeResultValue = {
         }),
         {}
       ),
-    } as BatchValue, // TODO: rendre optionnelles les props de BatchValues, pour retirer ce cast
+    },
   },
   scope,
   index: { algo1: false, algo2: false }, // car il n'y a pas de données justifiant que l'établissement compte 10 employés ou pas
@@ -106,13 +106,14 @@ test.serial(
     global.serie_periode = dates // used by complete_reporder(), which is called by finalize()
     const finalizeResult = finalize(siret, expectedReduceResults)
     const { reporder } = finalizeResult.batch[batchKey]
+    t.is(typeof reporder, "object")
     // reporder contient une propriété par periode
-    t.is(Object.keys(reporder).length, dates.length)
-    Object.keys(reporder).forEach((periodKey) => {
-      t.is(typeof reporder[periodKey].random_order, "number")
+    t.is(Object.keys(reporder || {}).length, dates.length)
+    Object.keys(reporder || {}).forEach((periodKey) => {
+      t.is(typeof reporder?.[periodKey]?.random_order, "number")
     })
     // vérification de la structure complète, sans les nombres aléatoires
-    removeRandomOrder(finalizeResult.batch[batchKey].reporder) // will mutate finalizeResult
+    removeRandomOrder(reporder || {}) // will mutate finalizeResult
     t.deepEqual(finalizeResult, expectedFinalizeResultValue)
   }
 )

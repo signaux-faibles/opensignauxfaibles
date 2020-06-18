@@ -202,7 +202,7 @@ function complete_reporder(siret, object) {
         const reporder = object.batch[batch].reporder || {};
         Object.keys(reporder).forEach((ro) => {
             if (!missing[reporder[ro].periode.getTime()]) {
-                delete object.batch[batch].reporder[ro];
+                delete reporder[ro];
             }
             else {
                 missing[reporder[ro].periode.getTime()] = false;
@@ -230,17 +230,18 @@ function currentState(batches) {
     "use strict";
     const currentState = batches.reduce((m, batch) => {
         //1. On supprime les clés de la mémoire
-        Object.keys((batch.compact || { delete: [] }).delete).forEach((type) => {
-            batch.compact.delete[type].forEach((key) => {
-                m[type].delete(key); // Should never fail or collection is corrupted
-            });
-        });
+        if (batch.compact) {
+            for (const type of Object.keys(batch.compact.delete)) {
+                batch.compact.delete[type].forEach((key) => {
+                    m[type].delete(key); // Should never fail or collection is corrupted
+                });
+            }
+        }
         //2. On ajoute les nouvelles clés
-        Object.keys(batch)
-            .filter((type) => type !== "compact")
-            .forEach((type) => {
+        const neyKeyTypes = Object.keys(batch).filter((type) => type !== "compact");
+        neyKeyTypes.forEach((type) => {
             m[type] = m[type] || new Set();
-            Object.keys(batch[type]).forEach((key) => {
+            Object.keys(batch[type] || {}).forEach((key) => {
                 m[type].add(key);
             });
         });
@@ -325,6 +326,7 @@ function reduce(key, values) {
     // suivants.
     const modified_batches = batches.filter((batch) => batch >= batchKey);
     modified_batches.forEach((batch) => {
+        var _a;
         reduced_value.batch[batch] = reduced_value.batch[batch] || {};
         // Les types où il y  a potentiellement des suppressions
         let stock_types = completeTypes[batch].filter((type) => (memory[type] || new Set()).size > 0);
@@ -343,13 +345,14 @@ function reduce(key, values) {
         const hashToDelete = {};
         const hashToAdd = {};
         all_interesting_types.forEach((type) => {
+            var _a;
             // Le type compact gère les clés supprimées
             if (type === "compact") {
-                if (reduced_value.batch[batch].compact.delete) {
-                    Object.keys(reduced_value.batch[batch].compact.delete).forEach((delete_type) => {
-                        reduced_value.batch[batch].compact.delete[delete_type].forEach((hash) => {
-                            hashToDelete[delete_type] =
-                                hashToDelete[delete_type] || new Set();
+                const compactDelete = (_a = reduced_value.batch[batch].compact) === null || _a === void 0 ? void 0 : _a.delete;
+                if (compactDelete) {
+                    Object.keys(compactDelete).forEach((delete_type) => {
+                        compactDelete[delete_type].forEach((hash) => {
+                            hashToDelete[delete_type] = hashToDelete[delete_type] || new Set();
                             hashToDelete[delete_type].add(hash);
                         });
                     });
@@ -416,13 +419,10 @@ function reduce(key, values) {
         // -------------------------------
         stock_types.forEach((type) => {
             if (hashToDelete[type]) {
-                reduced_value.batch[batch].compact =
-                    reduced_value.batch[batch].compact || {};
-                reduced_value.batch[batch].compact.delete =
-                    reduced_value.batch[batch].compact.delete || {};
-                reduced_value.batch[batch].compact.delete[type] = [
-                    ...hashToDelete[type],
-                ];
+                const reducedBatch = reduced_value.batch[batch];
+                reducedBatch.compact = reducedBatch.compact || { delete: {} };
+                reducedBatch.compact.delete = reducedBatch.compact.delete || {};
+                reducedBatch.compact.delete[type] = [...hashToDelete[type]];
             }
         });
         const typesToAdd = Object.keys(hashToAdd).filter((type) => type !== "compact");
@@ -431,7 +431,10 @@ function reduce(key, values) {
                 delete reduced_value.batch[batch][type];
             }
             else {
-                reduced_value.batch[batch][type] = [...hashToAdd[type]].reduce((typedBatchValues, hash) => (Object.assign(Object.assign({}, typedBatchValues), { [hash]: reduced_value.batch[batch][type][hash] })), {});
+                reduced_value.batch[batch][type] = [...hashToAdd[type]].reduce((typedBatchValues, hash) => {
+                    var _a;
+                    return (Object.assign(Object.assign({}, typedBatchValues), { [hash]: (_a = reduced_value.batch[batch][type]) === null || _a === void 0 ? void 0 : _a[hash] }));
+                }, {});
             }
         });
         // 6. nettoyage
@@ -440,19 +443,19 @@ function reduce(key, values) {
             //types vides
             Object.keys(reduced_value.batch[batch]).forEach((strType) => {
                 const type = strType;
-                if (Object.keys(reduced_value.batch[batch][type]).length === 0) {
+                if (Object.keys(reduced_value.batch[batch][type] || {}).length === 0) {
                     delete reduced_value.batch[batch][type];
                 }
             });
             //hash à supprimer vides (compact.delete)
-            if (reduced_value.batch[batch].compact &&
-                reduced_value.batch[batch].compact.delete) {
-                Object.keys(reduced_value.batch[batch].compact.delete).forEach((type) => {
-                    if (reduced_value.batch[batch].compact.delete[type].length === 0) {
-                        delete reduced_value.batch[batch].compact.delete[type];
+            const compactDelete = (_a = reduced_value.batch[batch].compact) === null || _a === void 0 ? void 0 : _a.delete;
+            if (compactDelete) {
+                Object.keys(compactDelete).forEach((type) => {
+                    if (compactDelete[type].length === 0) {
+                        delete compactDelete[type];
                     }
                 });
-                if (Object.keys(reduced_value.batch[batch].compact.delete).length === 0) {
+                if (Object.keys(compactDelete).length === 0) {
                     delete reduced_value.batch[batch].compact;
                 }
             }
