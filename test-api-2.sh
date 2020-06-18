@@ -75,7 +75,7 @@ sleep 2 # give some time for dbmongo to start
 http --ignore-stdin :5000/api/data/reduce algo=algo2 batch=2002_1
 
 function removeRandomOrder {
-  grep -v '"random_order":'
+  grep -v '"random_order":' "$@"
 }
 
 echo ""
@@ -89,8 +89,7 @@ echo "db.Features_TestData.find().toArray();" \
   | removeRandomOrder \
   > test-api-2.output.json
 
-cat "${DATA_DIR}/finalize_golden.log" \
-  | removeRandomOrder \
+removeRandomOrder "${DATA_DIR}/finalize_golden.log" \
   > "${DATA_DIR}/test-api-2_golden.json"
 
 echo ""
