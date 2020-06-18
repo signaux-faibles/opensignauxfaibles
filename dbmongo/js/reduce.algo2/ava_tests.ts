@@ -68,7 +68,7 @@ global.naf = {} // used by map()
 // même valeur en entrée que pour ../compact/ava_tests.ts
 const rawData = {
   batch: {
-    [batchKey]: {} as BatchValue, // TODO: rendre optionnelles les props de BatchValues, pour retirer ce cast
+    [batchKey]: {},
   },
   scope,
   index: { algo1: false, algo2: false },
