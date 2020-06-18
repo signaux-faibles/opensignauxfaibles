@@ -5,7 +5,7 @@ shopt -s extglob # enable exclusion of test files in wildcard
 result_raison_sociale=$(jsc \
   helpers/testing.js \
   helpers/fakes.js \
-  ../common/!(*_test).js \
+  ../common/!(*_test*).js \
   ../common/raison_sociale_test.js \
   2>&1)
 if [ "$result_raison_sociale" != 'true' ]; then

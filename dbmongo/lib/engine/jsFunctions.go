@@ -304,7 +304,8 @@ function reduce(key, values) {
     const reduced_value = values.reduce((m, value) => {
         Object.keys(value.batch).forEach((batch) => {
             m.batch[batch] = m.batch[batch] || {};
-            Object.keys(value.batch[batch]).forEach((type) => {
+            Object.keys(value.batch[batch]).forEach((strType) => {
+                const type = strType;
                 const updatedValues = Object.assign(Object.assign({}, m.batch[batch][type]), value.batch[batch][type]);
                 setBatchValueForType(m.batch[batch], type, updatedValues);
             });
@@ -435,7 +436,8 @@ function reduce(key, values) {
                 ];
             }
         });
-        new_types.forEach((type) => {
+        new_types.forEach((strType) => {
+            const type = strType;
             if (hashToAdd[type] && type !== "compact") {
                 const hashedValues = reduced_value.batch[batch][type];
                 const updatedValues = Object.keys(hashedValues || {})
@@ -453,7 +455,8 @@ function reduce(key, values) {
         // ------------
         if (reduced_value.batch[batch]) {
             //types vides
-            Object.keys(reduced_value.batch[batch]).forEach((type) => {
+            Object.keys(reduced_value.batch[batch]).forEach((strType) => {
+                const type = strType;
                 if (Object.keys(reduced_value.batch[batch][type]).length === 0) {
                     delete reduced_value.batch[batch][type];
                 }
