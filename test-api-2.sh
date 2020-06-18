@@ -84,17 +84,24 @@ function removeRandomOrder {
 }
 
 function fixJSON {
+  # Cette fonction convertit les documents MongoDB au format JSON.
+  # (cf https://github.com/signaux-faibles/opensignauxfaibles/issues/72)
   perl -p -e 's/ISODate\("(.*)T00:00:00Z"\)/"$1T00:00:00.000Z"/g' \
   | perl -p -e 's/"montant_majorations" : NaN,$/"montant_majorations" : null,/g'
-  # (i) concernant le changement des valeurs de NaN en null pour `montant_majorations`, cf https://github.com/signaux-faibles/opensignauxfaibles/issues/72
 }
 
 function transformJSON {
+  # Cette fonction permet de rendre les documents de Features_TestData
+  # compatibles avec ceux exportés par test_finalize.js dans le golden
+  # master.
   node -e "d=[]; \
     process.openStdin() \
     .on('data', c => d.push(c)) \
     .on('end', () => { \
-      console.log(JSON.stringify(JSON.parse(d.join('')), null, 2)) \
+      const finalizeResults = JSON.parse(d.join('')).map(result => { \
+        return [ result.value ]; \
+      }); \
+      console.log(JSON.stringify(finalizeResults, null, 2)) \
     });"
 }
 
