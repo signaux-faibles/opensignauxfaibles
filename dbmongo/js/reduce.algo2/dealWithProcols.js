@@ -32,3 +32,5 @@ function dealWithProcols(data_source, altar_or_procol, output_indexed){
     }
   )
 }
+
+exports.dealWithProcols = dealWithProcols

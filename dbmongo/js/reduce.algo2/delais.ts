@@ -1,6 +1,16 @@
 import * as f from "../common/generatePeriodSerie.js"
 
-// Définition dérivée de dbmongo/lib/urssaf/delai.go (seulement propriétés nécéssaires)
+type DeepReadonly<T> = Readonly<T> // pas vraiment, mais espoire que TS le supporte prochainement
+
+export type ParPériode<T> = { [période: string]: T }
+
+// Valeurs attendues pour chaque période, lors de l'appel à delais()
+export type DebitComputedValues = {
+  montant_part_patronale?: number
+  montant_part_ouvriere?: number
+}
+
+// Valeurs attendues par delais(), pour chaque période. (cf dbmongo/lib/urssaf/delai.go)
 export type Delai = {
   date_creation: Date
   date_echeance: Date
@@ -8,32 +18,20 @@ export type Delai = {
   montant_echeancier: number // exprimé en euros
 }
 
-export type DelaiMap = { [key: string]: Delai }
-
-// Valeurs attendues dans le paramètre indexed_output passé à delais()
-export type IndexedOutputExpectedValues = {
-  montant_part_patronale: number
-  montant_part_ouvriere: number
-}
-
-// Valeurs ajoutées dans la paramètre indexed_output passé à delais()
+// Valeurs retournées par delais(), pour chaque période
 export type DelaiComputedValues = {
   delai: number
   duree_delai: number // nombre de jours entre date_creation et date_echeance
-  ratio_dette_delai: number
+  ratio_dette_delai?: number
   montant_echeancier: number // exprimé en euros
 }
 
-// Type du paramètre indexed_output passé à delais()
-export type IndexedOutputPartial = {
-  [time: string]: IndexedOutputExpectedValues & Partial<DelaiComputedValues>
-}
-
 export function delais(
-  v: { delai: DelaiMap },
-  output_indexed: IndexedOutputPartial
-): void {
+  v: { delai: ParPériode<Delai> },
+  donnéesActuellesParPériode: DeepReadonly<ParPériode<DebitComputedValues>>
+): ParPériode<DelaiComputedValues> {
   "use strict"
+  const donnéesSupplémentairesParPériode: ParPériode<DelaiComputedValues> = {}
   Object.keys(v.delai).map(function (hash) {
     const delai = v.delai[hash]
     // On arrondit les dates au premier jour du mois.
@@ -66,25 +64,33 @@ export function delais(
         return date.getTime()
       })
     pastYearTimes.map(function (time: number) {
-      if (time in output_indexed) {
+      if (time in donnéesActuellesParPériode) {
         const remaining_months =
           date_echeance.getUTCMonth() -
           new Date(time).getUTCMonth() +
           12 *
             (date_echeance.getUTCFullYear() - new Date(time).getUTCFullYear())
-        output_indexed[time].delai = remaining_months
-        output_indexed[time].duree_delai = delai.duree_delai
-        output_indexed[time].montant_echeancier = delai.montant_echeancier
-
-        if (delai.duree_delai > 0) {
-          output_indexed[time].ratio_dette_delai =
-            (output_indexed[time].montant_part_patronale +
-              output_indexed[time].montant_part_ouvriere -
+        const inputAtTime = donnéesActuellesParPériode[time]
+        const outputAtTime: DelaiComputedValues = {
+          delai: remaining_months,
+          duree_delai: delai.duree_delai,
+          montant_echeancier: delai.montant_echeancier,
+        }
+        if (
+          delai.duree_delai > 0 &&
+          inputAtTime.montant_part_patronale !== undefined &&
+          inputAtTime.montant_part_ouvriere !== undefined
+        ) {
+          outputAtTime.ratio_dette_delai =
+            (inputAtTime.montant_part_patronale +
+              inputAtTime.montant_part_ouvriere -
               (delai.montant_echeancier * remaining_months * 30) /
                 delai.duree_delai) /
             delai.montant_echeancier
         }
+        donnéesSupplémentairesParPériode[time] = outputAtTime
       }
     })
   })
+  return donnéesSupplémentairesParPériode
 }

@@ -297,9 +297,7 @@ function reduce(key, values) {
     //fusion des attributs dans values
     const reduced_value = values.reduce((m, value) => {
         Object.keys(value.batch).forEach((batch) => {
-            m.batch[batch] = Object.keys(value.batch[batch]).reduce(function (batchValues, type) {
-                return Object.assign(Object.assign({}, batchValues), { [type]: value.batch[batch][type] });
-            }, m.batch[batch] || {});
+            m.batch[batch] = Object.keys(value.batch[batch]).reduce((batchValues, type) => (Object.assign(Object.assign({}, batchValues), { [type]: value.batch[batch][type] })), m.batch[batch] || {});
         });
         return m;
     }, { key: key, scope: values[0].scope, batch: {} });
@@ -427,9 +425,8 @@ function reduce(key, values) {
                 ];
             }
         });
-        Object.keys(hashToAdd)
-            .filter((type) => type !== "compact")
-            .forEach(function (type) {
+        const typesToAdd = Object.keys(hashToAdd).filter((type) => type !== "compact");
+        typesToAdd.forEach((type) => {
             if (!new_types.includes(type)) {
                 delete reduced_value.batch[batch][type];
             }
@@ -441,7 +438,8 @@ function reduce(key, values) {
         // ------------
         if (reduced_value.batch[batch]) {
             //types vides
-            Object.keys(reduced_value.batch[batch]).forEach((type) => {
+            Object.keys(reduced_value.batch[batch]).forEach((strType) => {
+                const type = strType;
                 if (Object.keys(reduced_value.batch[batch][type]).length === 0) {
                     delete reduced_value.batch[batch][type];
                 }
@@ -1292,10 +1290,11 @@ db.getCollection("Features").createIndex({
   f.dealWithProcols(v.procol, "procol", output_indexed)
 }
   
-  
+
   `,
-"delais": `function delais(v, output_indexed) {
+"delais": `function delais(v, donnéesActuellesParPériode) {
     "use strict";
+    const donnéesSupplémentairesParPériode = {};
     Object.keys(v.delai).map(function (hash) {
         const delai = v.delai[hash];
         // On arrondit les dates au premier jour du mois.
@@ -1308,25 +1307,32 @@ db.getCollection("Features").createIndex({
             return date.getTime();
         });
         pastYearTimes.map(function (time) {
-            if (time in output_indexed) {
+            if (time in donnéesActuellesParPériode) {
                 const remaining_months = date_echeance.getUTCMonth() -
                     new Date(time).getUTCMonth() +
                     12 *
                         (date_echeance.getUTCFullYear() - new Date(time).getUTCFullYear());
-                output_indexed[time].delai = remaining_months;
-                output_indexed[time].duree_delai = delai.duree_delai;
-                output_indexed[time].montant_echeancier = delai.montant_echeancier;
-                if (delai.duree_delai > 0) {
-                    output_indexed[time].ratio_dette_delai =
-                        (output_indexed[time].montant_part_patronale +
-                            output_indexed[time].montant_part_ouvriere -
+                const inputAtTime = donnéesActuellesParPériode[time];
+                const outputAtTime = {
+                    delai: remaining_months,
+                    duree_delai: delai.duree_delai,
+                    montant_echeancier: delai.montant_echeancier,
+                };
+                if (delai.duree_delai > 0 &&
+                    inputAtTime.montant_part_patronale !== undefined &&
+                    inputAtTime.montant_part_ouvriere !== undefined) {
+                    outputAtTime.ratio_dette_delai =
+                        (inputAtTime.montant_part_patronale +
+                            inputAtTime.montant_part_ouvriere -
                             (delai.montant_echeancier * remaining_months * 30) /
                                 delai.duree_delai) /
                             delai.montant_echeancier;
                 }
+                donnéesSupplémentairesParPériode[time] = outputAtTime;
             }
         });
     });
+    return donnéesSupplémentairesParPériode;
 }`,
 "detteFiscale": `function detteFiscale (diane){
   "use strict";
@@ -1661,7 +1667,10 @@ db.getCollection("Features").createIndex({
         f.add(output_repeatable, output_indexed)
       }
 
-      if (v.delai) {f.delais(v, output_indexed)}
+      if (v.delai) {
+        const output_delai = f.delais(v, output_indexed)
+        f.add(output_delai, output_indexed)
+      }
 
       v.altares = v.altares || {}
       v.procol = v.procol || {}

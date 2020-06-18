@@ -10,3 +10,5 @@ function add(obj, output){
     }
   })
 }
+
+exports.add = add

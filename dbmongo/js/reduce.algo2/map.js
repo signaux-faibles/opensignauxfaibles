@@ -54,7 +54,10 @@ function map () {
         f.add(output_repeatable, output_indexed)
       }
 
-      if (v.delai) {f.delais(v, output_indexed)}
+      if (v.delai) {
+        const output_delai = f.delais(v, output_indexed)
+        f.add(output_delai, output_indexed)
+      }
 
       v.altares = v.altares || {}
       v.procol = v.procol || {}

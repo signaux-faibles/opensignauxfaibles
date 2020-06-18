@@ -12,3 +12,5 @@ function reduce(key, values) {
   }
   return values
 }
+
+exports.reduce = reduce

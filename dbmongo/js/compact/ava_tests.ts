@@ -10,6 +10,8 @@ import { map } from "./map"
 import { reduce } from "./reduce"
 import { finalize } from "./finalize"
 
+const global = globalThis as any // eslint-disable-line @typescript-eslint/no-explicit-any
+
 const ISODate = (date: string): Date => new Date(date)
 
 const removeRandomOrder = (reporderProp: { [key: string]: RepOrder }): void =>
@@ -19,7 +21,7 @@ const removeRandomOrder = (reporderProp: { [key: string]: RepOrder }): void =>
 
 const runMongoMap = (mapFct: () => void, keyVal: object): object => {
   const results: { [key: string]: any } = {}
-  globalThis.emit = (key: string, value: CompanyDataValuesWithFlags): void => {
+  global.emit = (key: string, value: CompanyDataValuesWithFlags): void => {
     results[key] = value
   }
   mapFct.call(keyVal)

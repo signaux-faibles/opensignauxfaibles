@@ -33,3 +33,5 @@ function cibleApprentissage(output_indexed, n_months) {
 
   return output_cible
 }
+
+exports.cibleApprentissage = cibleApprentissage

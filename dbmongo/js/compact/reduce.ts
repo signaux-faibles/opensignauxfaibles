@@ -23,15 +23,14 @@ export function reduce(
   const reduced_value: CompanyDataValues = values.reduce(
     (m, value: CompanyDataValues) => {
       Object.keys(value.batch).forEach((batch) => {
-        m.batch[batch] = Object.keys(value.batch[batch]).reduce(function <
-          Type extends keyof BatchValue
-        >(batchValues: BatchValue, type: Type) {
-          return {
+        type DataType = keyof BatchValue
+        m.batch[batch] = (Object.keys(value.batch[batch]) as DataType[]).reduce(
+          (batchValues: BatchValue, type: DataType) => ({
             ...batchValues,
             [type]: value.batch[batch][type],
-          }
-        },
-        m.batch[batch] || {})
+          }),
+          m.batch[batch] || {}
+        )
       })
       return m
     },
@@ -93,7 +92,7 @@ export function reduce(
     const hashToDelete: { [dataType: string]: Set<DataHash> } = {}
     const hashToAdd: { [dataType: string]: Set<DataHash> } = {}
 
-    all_interesting_types.forEach((type: keyof BatchValue) => {
+    all_interesting_types.forEach((type) => {
       // Le type compact gère les clés supprimées
       if (type === "compact") {
         if (reduced_value.batch[batch].compact.delete) {
@@ -110,7 +109,9 @@ export function reduce(
           )
         }
       } else {
-        Object.keys(reduced_value.batch[batch][type] || {}).forEach((hash) => {
+        Object.keys(
+          reduced_value.batch[batch][type as keyof BatchValue] || {}
+        ).forEach((hash) => {
           hashToAdd[type] = hashToAdd[type] || new Set()
           hashToAdd[type].add(hash)
         })
@@ -198,34 +199,34 @@ export function reduce(
 
     // filtrage des données en fonction de new_types et hashToAdd
     type AllValueTypesButCompact = Exclude<keyof BatchValue, "compact">
-    Object.keys(hashToAdd)
-      .filter((type) => type !== "compact")
-      .forEach(function <Type extends AllValueTypesButCompact>(type: Type) {
-        if (!new_types.includes(type)) {
-          delete reduced_value.batch[batch][type]
-        } else {
-          reduced_value.batch[batch][type] = [...hashToAdd[type]].reduce(
-            (typedBatchValues, hash) => ({
-              ...typedBatchValues,
-              [hash]: reduced_value.batch[batch][type][hash],
-            }),
-            {}
-          )
-        }
-      })
+    const typesToAdd = Object.keys(hashToAdd).filter(
+      (type) => type !== "compact"
+    ) as AllValueTypesButCompact[]
+    typesToAdd.forEach((type) => {
+      if (!new_types.includes(type)) {
+        delete reduced_value.batch[batch][type]
+      } else {
+        reduced_value.batch[batch][type] = [...hashToAdd[type]].reduce(
+          (typedBatchValues, hash) => ({
+            ...typedBatchValues,
+            [hash]: reduced_value.batch[batch][type][hash],
+          }),
+          {}
+        )
+      }
+    })
 
     // 6. nettoyage
     // ------------
 
     if (reduced_value.batch[batch]) {
       //types vides
-      Object.keys(reduced_value.batch[batch]).forEach(
-        (type: keyof BatchValue) => {
-          if (Object.keys(reduced_value.batch[batch][type]).length === 0) {
-            delete reduced_value.batch[batch][type]
-          }
+      Object.keys(reduced_value.batch[batch]).forEach((strType) => {
+        const type = strType as keyof BatchValue
+        if (Object.keys(reduced_value.batch[batch][type]).length === 0) {
+          delete reduced_value.batch[batch][type]
         }
-      )
+      })
       //hash à supprimer vides (compact.delete)
       if (
         reduced_value.batch[batch].compact &&
