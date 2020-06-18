@@ -14,7 +14,7 @@ trap "{ killall dbmongo; [ -f config.toml ] && rm config.toml; [ -f config.backu
 
 echo ""
 echo "🚚 Downloading realistic data set..."
-scp stockage:/home/centos/opensignauxfaibles_tests/* ${DATA_DIR}/
+scp "stockage:/home/centos/opensignauxfaibles_tests/*" "${DATA_DIR}/"
 
 echo ""
 echo "🐳 Starting MongoDB container..."
@@ -43,7 +43,7 @@ fi
 echo ""
 echo "📄 Inserting test data..."
 sleep 1 # give some time for MongoDB to start
-cat >${DATA_DIR}/db_popul.js << CONTENTS
+cat > "${DATA_DIR}/db_popul.js" << CONTENTS
   db.Admin.remove({})
   db.Admin.insertOne({
     "_id" : {
@@ -68,14 +68,12 @@ cat >${DATA_DIR}/db_popul.js << CONTENTS
   db.RawData.remove({})
   db.RawData.insertMany(
 CONTENTS
-cat >> ${DATA_DIR}/db_popul.js < ${DATA_DIR}/reduce_test_data.json
-cat >> ${DATA_DIR}/db_popul.js << CONTENTS
+cat >> "${DATA_DIR}/db_popul.js" < "${DATA_DIR}/reduce_test_data.json"
+cat >> "${DATA_DIR}/db_popul.js" << CONTENTS
   )
-
-  db.Features_TestData.remove({})
 CONTENTS
 
-docker exec -i sf-mongodb mongo signauxfaibles < ${DATA_DIR}/db_popul.js
+docker exec -i sf-mongodb mongo signauxfaibles < "${DATA_DIR}/db_popul.js"
 
 echo ""
 echo "⚙️ Computing Features and Public collections thru dbmongo API..."
@@ -96,7 +94,7 @@ grep -v '"random_order" :' test-api.output.txt > test-api.output-documents.txt
 
 echo ""
 echo "🆎 Diff between expected and actual output:"
-diff ${DATA_DIR}/map_golden.log test-api.output-documents.txt
+diff "${DATA_DIR}/map_golden.log" test-api.output-documents.txt
 echo "✅ No diff. The reduce API works as usual."
 echo ""
 rm test-api.output.txt test-api.output-documents.txt
