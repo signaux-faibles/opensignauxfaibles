@@ -21,9 +21,9 @@ const removeRandomOrder = (reporderProp: { [key: string]: RepOrder }): void =>
 
 const runMongoMap = (
   mapFct: () => void,
-  keyVal: object
+  keyVal: unknown
 ): Record<string, unknown> => {
-  const results: { [key: string]: any } = {}
+  const results: Record<string, unknown> = {}
   global.emit = (key: string, value: CompanyDataValuesWithFlags): void => {
     results[key] = value
   }
