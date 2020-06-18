@@ -1,5 +1,5 @@
 // Déclaration des fonctions globales fournies par MongoDB
-declare function emit(key: string, value: object): void
+declare function emit(key: string, value: unknown): void
 
 // Paramètres globaux utilisés par "compact"
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -32,11 +32,11 @@ type CompanyDataValuesWithFlags = CompanyDataValues & {
 }
 
 type BatchValue = {
-  reporder: { [periode: string]: RepOrder }
-  compact: { delete: { [dataType: string]: DataHash[] } }
-  effectif: { [dataHash: string]: Effectif }
-  apconso: { [key: string]: any } // TODO: définir type plus précisément
-  apdemande: { [key: string]: any } // TODO: définir type plus précisément
+  reporder?: { [periode: string]: RepOrder }
+  compact?: { delete: { [dataType: string]: DataHash[] } }
+  effectif?: { [dataHash: string]: Effectif }
+  apconso?: { [key: string]: any } // TODO: définir type plus précisément
+  apdemande?: { [key: string]: any } // TODO: définir type plus précisément
 }
 
 type DataHash = string

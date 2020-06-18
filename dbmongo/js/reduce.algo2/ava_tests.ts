@@ -68,14 +68,14 @@ global.naf = {} // used by map()
 // même valeur en entrée que pour ../compact/ava_tests.ts
 const rawData = {
   batch: {
-    [batchKey]: {} as BatchValue, // TODO: rendre optionnelles les props de BatchValues, pour retirer ce cast
+    [batchKey]: {},
   },
   scope,
   index: { algo1: false, algo2: false },
   key: siret,
 }
 
-const makeValue = (periode: Date): object => ({
+const makeValue = (periode: Date) => ({
   cotisation_moy12m: 0,
   effectif: null,
   etat_proc_collective: "in_bonis",

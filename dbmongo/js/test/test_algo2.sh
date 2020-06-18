@@ -6,8 +6,8 @@ result_add=$(jsc \
   helpers/testing.js \
   helpers/fakes.js \
   helpers/fake_emit_for_algo2.js \
-  ../common/!(*_test).js \
-  ../reduce.algo2/!(*_test).js \
+  ../common/!(*_test*).js \
+  ../reduce.algo2/!(*_test*).js \
   ../reduce.algo2/add_test.js \
   2>&1)
 if [ "$result_add" != 'true' ]; then
@@ -19,8 +19,8 @@ result_lookAhead=$(jsc \
   helpers/testing.js \
   helpers/fakes.js \
   helpers/fake_emit_for_algo2.js \
-  ../common/!(*_test).js \
-  ../reduce.algo2/!(*_test).js \
+  ../common/!(*_test*).js \
+  ../reduce.algo2/!(*_test*).js \
   ../reduce.algo2/lookAhead_test.js \
   2>&1)
 if [ "$result_lookAhead" != 'true' ]; then
@@ -32,8 +32,8 @@ result_cibleApprentissage=$(jsc \
   helpers/testing.js \
   helpers/fakes.js \
   helpers/fake_emit_for_algo2.js \
-  ../common/!(*_test).js \
-  ../reduce.algo2/!(*_test).js \
+  ../common/!(*_test*).js \
+  ../reduce.algo2/!(*_test*).js \
   ../reduce.algo2/cibleApprentissage_test.js \
   2>&1)
 if [ "$result_cibleApprentissage" != 'true' ]; then
@@ -43,8 +43,8 @@ fi
 
 result_mapreduce=$(jsc \
   helpers/fakes.js \
-  ../reduce.algo2/!(*_test).js \
-  ../common/!(*_test).js \
+  ../reduce.algo2/!(*_test*).js \
+  ../common/!(*_test*).js \
   helpers/fake_emit_for_algo2.js \
   data/naf.js \
   data/objects.js \

@@ -36,9 +36,12 @@ global.f = {
 
 const ISODate = (date: string): Date => new Date(date)
 
-const runMongoMap = (mapFct: () => void, keyVal: object): object => {
-  const results: { [key: string]: any } = {}
-  global.emit = (key: any, value: any): void => {
+const runMongoMap = (
+  mapFct: () => void,
+  keyVal: unknown
+): Record<string, unknown> => {
+  const results: Record<string, unknown> = {}
+  global.emit = (key: string, value: unknown): void => {
     results[key] = value
   }
   mapFct.call(keyVal)
@@ -59,7 +62,7 @@ global.serie_periode = dates // used by effectifs(), which is called by map()
 
 const rawData = {
   batch: {
-    [batchKey]: {} as BatchValue, // TODO: rendre optionnelles les props de BatchValues, pour retirer ce cast
+    [batchKey]: {},
   },
   scope,
   index: { algo1: false, algo2: false }, // car il n'y a pas de données justifiant que l'établissement compte 10 employés ou pas
