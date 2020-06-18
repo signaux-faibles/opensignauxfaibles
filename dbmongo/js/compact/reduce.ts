@@ -1,5 +1,4 @@
 import "../globals.ts"
-import { setBatchValueForType } from "../common/setBatchValueForType"
 import * as f from "./currentState"
 
 // Entrée: données d'entreprises venant de ImportedData, regroupées par entreprise ou établissement.
@@ -24,15 +23,14 @@ export function reduce(
   const reduced_value: CompanyDataValues = values.reduce(
     (m, value: CompanyDataValues) => {
       Object.keys(value.batch).forEach((batch) => {
-        m.batch[batch] = m.batch[batch] || {}
-        Object.keys(value.batch[batch]).forEach((strType) => {
-          const type = strType as keyof BatchValue
-          const updatedValues = {
-            ...m.batch[batch][type],
-            ...value.batch[batch][type],
-          }
-          setBatchValueForType(m.batch[batch], type, updatedValues)
-        })
+        type DataType = keyof BatchValue
+        m.batch[batch] = (Object.keys(value.batch[batch]) as DataType[]).reduce(
+          (batchValues: BatchValue, type: DataType) => ({
+            ...batchValues,
+            [type]: value.batch[batch][type],
+          }),
+          m.batch[batch] || {}
+        )
       })
       return m
     },
@@ -199,21 +197,22 @@ export function reduce(
       }
     })
 
-    new_types.forEach((strType) => {
-      const type = strType as keyof BatchValue
-      if (hashToAdd[type] && type !== "compact") {
-        const hashedValues = reduced_value.batch[batch][type]
-
-        const updatedValues = Object.keys(hashedValues || {})
-          .filter((hash) => {
-            return hashToAdd[type].has(hash)
-          })
-          .reduce((m: typeof hashedValues, hash: string) => {
-            m[hash] = hashedValues[hash]
-            return m
-          }, {})
-
-        setBatchValueForType(reduced_value.batch[batch], type, updatedValues)
+    // filtrage des données en fonction de new_types et hashToAdd
+    type AllValueTypesButCompact = Exclude<keyof BatchValue, "compact">
+    const typesToAdd = Object.keys(hashToAdd).filter(
+      (type) => type !== "compact"
+    ) as AllValueTypesButCompact[]
+    typesToAdd.forEach((type) => {
+      if (!new_types.includes(type)) {
+        delete reduced_value.batch[batch][type]
+      } else {
+        reduced_value.batch[batch][type] = [...hashToAdd[type]].reduce(
+          (typedBatchValues, hash) => ({
+            ...typedBatchValues,
+            [hash]: reduced_value.batch[batch][type][hash],
+          }),
+          {}
+        )
       }
     })
 
