@@ -83,11 +83,19 @@ function removeRandomOrder {
   grep -v '"random_order":' "$@"
 }
 
-function formatJSON {
+function fixJSON {
   perl -p -e 's/ISODate\("(.*)T00:00:00Z"\)/"$1T00:00:00.000Z"/g' \
-  | perl -p -e 's/"montant_majorations" : NaN,$/"montant_majorations" : null,/g' \
-  | node -e "d=[];process.openStdin().on('data',c=>d.push(c)).on('end',()=>console.log(JSON.stringify(JSON.parse(d.join('')),null,2)));"
+  | perl -p -e 's/"montant_majorations" : NaN,$/"montant_majorations" : null,/g'
   # (i) concernant le changement des valeurs de NaN en null pour `montant_majorations`, cf https://github.com/signaux-faibles/opensignauxfaibles/issues/72
+}
+
+function transformJSON {
+  node -e "d=[]; \
+    process.openStdin() \
+    .on('data', c => d.push(c)) \
+    .on('end', () => { \
+      console.log(JSON.stringify(JSON.parse(d.join('')), null, 2)) \
+    });"
 }
 
 echo ""
@@ -95,7 +103,8 @@ echo "🕵️‍♀️ Checking resulting Features..."
 cd ..
 echo "db.Features_TestData.find().toArray();" \
   | docker exec -i sf-mongodb mongo --quiet signauxfaibles \
-  | formatJSON \
+  | fixJSON \
+  | transformJSON \
   | removeRandomOrder \
   > test-api-2.output.json
 
