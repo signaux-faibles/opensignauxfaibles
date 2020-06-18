@@ -60,7 +60,7 @@ cat > "${DATA_DIR}/db_popul.js" << CONTENTS
     "param" : {
         "date_debut" : ISODate("2014-01-01T00:00:00.000+0000"),
         "date_fin" : ISODate("2016-01-01T00:00:00.000+0000"),
-        "date_fin_effectif" : ISODate("2016-01-01T00:00:00.000+0000")
+        "date_fin_effectif" : ISODate("2016-03-01T00:00:00.000+0000")
     },
     "name" : "TestData"
   })
