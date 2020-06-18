@@ -25,7 +25,8 @@ export function reduce(
     (m, value: CompanyDataValues) => {
       Object.keys(value.batch).forEach((batch) => {
         m.batch[batch] = m.batch[batch] || {}
-        Object.keys(value.batch[batch]).forEach((type: keyof BatchValue) => {
+        Object.keys(value.batch[batch]).forEach((strType) => {
+          const type = strType as keyof BatchValue
           const updatedValues = {
             ...m.batch[batch][type],
             ...value.batch[batch][type],
@@ -93,7 +94,7 @@ export function reduce(
     const hashToDelete: { [dataType: string]: Set<DataHash> } = {}
     const hashToAdd: { [dataType: string]: Set<DataHash> } = {}
 
-    all_interesting_types.forEach((type: keyof BatchValue) => {
+    all_interesting_types.forEach((type) => {
       // Le type compact gère les clés supprimées
       if (type === "compact") {
         if (reduced_value.batch[batch].compact.delete) {
@@ -110,7 +111,9 @@ export function reduce(
           )
         }
       } else {
-        Object.keys(reduced_value.batch[batch][type] || {}).forEach((hash) => {
+        Object.keys(
+          reduced_value.batch[batch][type as keyof BatchValue] || {}
+        ).forEach((hash) => {
           hashToAdd[type] = hashToAdd[type] || new Set()
           hashToAdd[type].add(hash)
         })
@@ -196,7 +199,8 @@ export function reduce(
       }
     })
 
-    new_types.forEach((type: keyof BatchValue) => {
+    new_types.forEach((strType) => {
+      const type = strType as keyof BatchValue
       if (hashToAdd[type] && type !== "compact") {
         const hashedValues = reduced_value.batch[batch][type]
 
@@ -218,13 +222,12 @@ export function reduce(
 
     if (reduced_value.batch[batch]) {
       //types vides
-      Object.keys(reduced_value.batch[batch]).forEach(
-        (type: keyof BatchValue) => {
-          if (Object.keys(reduced_value.batch[batch][type]).length === 0) {
-            delete reduced_value.batch[batch][type]
-          }
+      Object.keys(reduced_value.batch[batch]).forEach((strType) => {
+        const type = strType as keyof BatchValue
+        if (Object.keys(reduced_value.batch[batch][type]).length === 0) {
+          delete reduced_value.batch[batch][type]
         }
-      )
+      })
       //hash à supprimer vides (compact.delete)
       if (
         reduced_value.batch[batch].compact &&

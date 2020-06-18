@@ -6,8 +6,8 @@ result_public=$(jsc \
   helpers/fakes.js \
   helpers/fake_emit_for_public.js \
   data/objects.js \
-  ../common/!(*_test).js \
-  ../public/!(*_test).js \
+  ../common/!(*_test*).js \
+  ../public/!(*_test*).js \
   ../public/_test.js \
   2>&1)
 if [ "$result_public" != 'true' ]; then
