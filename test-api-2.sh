@@ -84,7 +84,7 @@ cd ..
 echo "db.Features_TestData.find().toArray();" \
   | docker exec -i sf-mongodb mongo --quiet signauxfaibles \
   | perl -p -e 's/ISODate\("(.*)T00:00:00Z"\)/"$1T00:00:00.000Z"/g' \
-  | npx prettier --stdin-filepath test-api-2.output.json \
+  | node -e "d=[];process.openStdin().on('data',c=>d.push(c)).on('end',()=>console.log(JSON.stringify(JSON.parse(d.join('')),null,2)));" \
   | removeRandomOrder \
   > test-api-2.output.json
 
