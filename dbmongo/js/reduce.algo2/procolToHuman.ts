@@ -7,10 +7,6 @@ export type ProcolToHumanRes =
   | "plan_redressement"
   | null
 
-export type Action = "liquidation" | "redressement" | "sauvegarde"
-
-export type Stade = "abandon_procedure" | "fin_procedure" | "plan_continuation"
-
 export function procolToHuman(action: Action, stade: Stade): ProcolToHumanRes {
   "use strict"
   let res: ProcolToHumanRes = null

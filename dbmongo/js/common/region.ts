@@ -1,5 +1,3 @@
-export type Departement = string
-
 type Region =
   | "Auvergne-Rhône-Alpes"
   | "Hauts-de-France"

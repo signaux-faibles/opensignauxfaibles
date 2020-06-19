@@ -1,16 +1,7 @@
-import {
-  altaresToHuman,
-  AltaresCode,
-  AltaresToHumanRes,
-} from "../common/altaresToHuman"
-import { procolToHuman, Action, Stade, ProcolToHumanRes } from "./procolToHuman"
+import { altaresToHuman, AltaresToHumanRes } from "../common/altaresToHuman"
+import { procolToHuman, ProcolToHumanRes } from "./procolToHuman"
 
-export type InputEvent = {
-  code_evenement: AltaresCode
-  action_procol: Action
-  stade_procol: Stade
-  date_effet: Date
-}
+export type InputEvent = Événement
 
 type OutputEvent = {
   etat: AltaresToHumanRes

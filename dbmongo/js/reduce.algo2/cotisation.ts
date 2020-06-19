@@ -1,7 +1,7 @@
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { dateAddMonth } from "./dateAddMonth"
 
-type Output = {
+export type Output = {
   periode: Date
   cotisation: number
   cotisation_moy12m: number

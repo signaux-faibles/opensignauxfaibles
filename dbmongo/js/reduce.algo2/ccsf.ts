@@ -1,8 +1,6 @@
-type V = {
-  ccsf: Record<DataHash, { date_traitement: Date }>
-}
+type V = DonnéesCcsf
 
-type Output = {
+export type Output = {
   periode: Date
   date_ccsf: unknown
 }

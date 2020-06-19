@@ -1,5 +1,3 @@
-export type AltaresCode = string
-
 export type AltaresToHumanRes =
   | "liquidation"
   | "in_bonis"

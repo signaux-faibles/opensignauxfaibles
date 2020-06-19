@@ -1,12 +1,13 @@
 import * as f from "./dealWithProcols"
-import { InputEvent, Output } from "./dealWithProcols"
+import { Output as ProcolOutput } from "./dealWithProcols"
+
+type V = DonnéesDefaillances
+
+export type Output = ProcolOutput
 
 export function defaillances(
-  v: {
-    altares: { [hash: string]: InputEvent }
-    procol: { [hash: string]: InputEvent }
-  },
-  output_indexed: { [time: string]: Output }
+  v: V,
+  output_indexed: Record<Periode, Output>
 ): void {
   "use strict"
   f.dealWithProcols(v.altares, "altares", output_indexed)

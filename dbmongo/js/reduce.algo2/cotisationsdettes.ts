@@ -4,20 +4,6 @@ import { compareDebit } from "./compareDebit"
 
 declare const date_fin: number
 
-type DebitHash = string
-
-type Debit = {
-  periode: { start: Date; end: Date }
-  numero_ecart_negatif: unknown
-  numero_compte: unknown
-  numero_historique: number
-  date_traitement: Date
-  debit_suivant: DebitHash
-  part_ouvriere: number
-  part_patronale: number
-  montant_majorations: number
-}
-
 type EcartNegatif = {
   hash: string
   numero_historique: Debit["numero_historique"]
@@ -31,26 +17,14 @@ type Dette = {
   montant_majorations: Debit["montant_majorations"]
 }
 
-type Cotisation = {
-  periode: { start: Date; end: Date }
-  du: number
-}
-
-type V = {
-  cotisation: Record<string, Cotisation>
-  debit: Record<string, Debit>
-}
+type V = DonnéesCotisationsDettes
 
 type Output = {
   interessante_urssaf: boolean
-}
-
-type Periode = string
-
-type CotisationsDettes = Output & {
   cotisation: number
   montant_part_ouvriere: number
   montant_part_patronale: number
+} & {
   [other: string]: number // ⚠️ ex: montant_part_ouvriere_past_* // TODO: éviter les clés dynamiques
 }
 
@@ -66,7 +40,7 @@ export function cotisationsdettes(
   // Permet de s'aligner avec le calendrier de fourniture des données
   const last_treatment_day = 20
 
-  const output_cotisationsdettes: Record<Periode, CotisationsDettes> = {}
+  const output_cotisationsdettes: Record<Periode, Output> = {}
 
   // TODO Cotisations avec un mois de retard ? Bizarre, plus maintenant que l'export se fait le 20
   // var offset_cotisation = 1

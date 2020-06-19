@@ -1,3 +1,10 @@
+import { DebitComputedValues } from "./delais"
+import { Output as DefaillancesOutput } from "./defaillances"
+import { Output as CcsfOutput } from "./ccsf"
+import { Output as SireneOutput } from "./sirene"
+import { Output as NafOutput } from "./populateNafAndApe"
+import { Output as CotisationOutput } from "./cotisation"
+
 type DonnéesAgrégées = {
   siret: SiretOrSiren
   periode: Date
@@ -5,7 +12,12 @@ type DonnéesAgrégées = {
   etat_proc_collective: "in_bonis" // ou ProcolToHumanRes ?
   interessante_urssaf: true
   outcome: false
-}
+} & DebitComputedValues &
+  DefaillancesOutput &
+  CcsfOutput &
+  SireneOutput &
+  NafOutput &
+  CotisationOutput
 
 type IndexedOutput = Record<Periode, DonnéesAgrégées>
 

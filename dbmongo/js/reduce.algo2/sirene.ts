@@ -1,20 +1,8 @@
 import * as f from "../common/region"
-import { Departement } from "../common/region"
 
-type Sirene = {
-  ape: CodeAPE
-  lattitude: unknown // TODO ⚠️ typo ?
-  longitude: unknown
-  departement: Departement
-  raison_sociale: unknown
-  date_creation: Date
-}
+type V = DonnéesSirene
 
-type V = {
-  sirene: Record<string, Sirene>
-}
-
-type MutableOutputArray = {
+export type Output = {
   periode: Date
   siret: SiretOrSiren
   siren: SiretOrSiren
@@ -26,9 +14,9 @@ type MutableOutputArray = {
   code_ape: CodeAPE
   date_creation_etablissement: number | null // année
   age: number | null // en années
-}[]
+}
 
-export function sirene(v: V, output_array: MutableOutputArray): void {
+export function sirene(v: V, output_array: Output[]): void {
   "use strict"
   const sireneHashes = Object.keys(v.sirene || {})
 

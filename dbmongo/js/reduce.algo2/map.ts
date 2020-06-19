@@ -7,7 +7,15 @@ import { interim } from "./interim"
 import { add } from "./add"
 import { repeatable } from "./repeatable"
 import { delais, V as DelaisV } from "./delais"
+import { defaillances } from "./defaillances"
+import { cotisationsdettes } from "./cotisationsdettes"
+import { ccsf } from "./ccsf"
+import { sirene } from "./sirene"
+import { populateNafAndApe, NAF } from "./populateNafAndApe"
+import { cotisation } from "./cotisation"
+import { cibleApprentissage } from "./cibleApprentissage"
 
+declare const naf: NAF
 declare const actual_batch: BatchKey
 declare const includes: Record<"all" | "apart", boolean>
 
@@ -28,7 +36,8 @@ export function map(this: {
   "use strict"
   /* DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO */ const f = {
     ...{ flatten, outputs, apart, compte, effectifs, interim, add }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
-    ...{ repeatable, delais }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
+    ...{ repeatable, delais, defaillances, cotisationsdettes, ccsf }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
+    ...{ sirene, populateNafAndApe, cotisation, cibleApprentissage }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
   } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
   const v = f.flatten(this.value, actual_batch)
 
@@ -95,19 +104,22 @@ export function map(this: {
       v.procol = v.procol || {}
 
       if (v.altares) {
-        f.defaillances(v, output_indexed)
+        f.defaillances(v as DonnéesDefaillances, output_indexed)
       }
 
       if (v.cotisation && v.debit) {
-        const output_cotisationsdettes = f.cotisationsdettes(v, periodes)
+        const output_cotisationsdettes = f.cotisationsdettes(
+          v as DonnéesCotisationsDettes,
+          periodes
+        )
         f.add(output_cotisationsdettes, output_indexed)
       }
 
       if (v.ccsf) {
-        f.ccsf(v, output_array)
+        f.ccsf(v as DonnéesCcsf, output_array)
       }
       if (v.sirene) {
-        f.sirene(v, output_array)
+        f.sirene(v as DonnéesSirene, output_array)
       }
 
       f.populateNafAndApe(output_indexed, naf)
@@ -117,7 +129,7 @@ export function map(this: {
       const output_cible = f.cibleApprentissage(output_indexed, 18)
       f.add(output_cible, output_indexed)
       output_array.forEach((val) => {
-        const data = {}
+        const data: Record<SiretOrSiren, typeof val> = {}
         data[this._id] = val
         emit(
           {
@@ -132,7 +144,7 @@ export function map(this: {
     }
   }
 
-  if (v.scope == "entreprise") {
+  if (v.scope === "entreprise") {
     if (includes["all"]) {
       const output_array = serie_periode.map(function (e) {
         return {

@@ -2,7 +2,7 @@ type CodeAPENiveau2 = string
 type CodeAPENiveau3 = string
 type CodeAPENiveau4 = string
 
-type Output = {
+export type Output = {
   code_ape: CodeAPE
   code_naf: CodeNAF
   libelle_naf: string
@@ -15,16 +15,18 @@ type Output = {
   libelle_ape5: string
 }
 
+export type NAF = {
+  n5to1: Record<CodeAPE, CodeNAF>
+  n1: Record<CodeNAF, string>
+  n2: Record<CodeAPENiveau2, string>
+  n3: Record<CodeAPENiveau3, string>
+  n4: Record<CodeAPENiveau4, string>
+  n5: Record<CodeAPE, string>
+}
+
 export function populateNafAndApe(
   output_indexed: { [k: string]: Output },
-  naf: {
-    n5to1: Record<CodeAPE, CodeNAF>
-    n1: Record<CodeNAF, string>
-    n2: Record<CodeAPENiveau2, string>
-    n3: Record<CodeAPENiveau3, string>
-    n4: Record<CodeAPENiveau4, string>
-    n5: Record<CodeAPE, string>
-  }
+  naf: NAF
 ): void {
   "use strict"
   Object.keys(output_indexed).forEach((k) => {

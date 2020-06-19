@@ -4,10 +4,10 @@ export type V = {
   batch: BatchValues
 }
 
-export type Flattened = Partial<BatchValue> & {
+export type Flattened = {
   key: SiretOrSiren
   scope: Scope
-}
+} & Partial<BatchValue>
 
 /**
  * Appelé par `map()`, `flatten()` transforme les données importées (*Batches*)
