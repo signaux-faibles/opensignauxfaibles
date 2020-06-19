@@ -1,6 +1,6 @@
-export function add<T>(
-  obj: { [periode: string]: T },
-  output: { [periode: string]: T }
+export function add(
+  obj: { [periode: string]: unknown },
+  output: { [periode: string]: unknown }
 ): void {
   "use strict"
   Object.keys(output).forEach(function (periode) {

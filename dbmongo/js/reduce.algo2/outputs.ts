@@ -1,6 +1,6 @@
 type Output = {
   siret: SiretOrSiren
-  periode: Periode
+  periode: Date
   effectif: null
   etat_proc_collective: "in_bonis" // ou ProcolToHumanRes ?
   interessante_urssaf: true
@@ -11,7 +11,7 @@ type IndexedOutput = Record<string, Output>
 
 export function outputs(
   v: { key: SiretOrSiren },
-  serie_periode: Periode[]
+  serie_periode: Date[]
 ): [Output[], IndexedOutput] {
   "use strict"
   const output_array: Output[] = serie_periode.map(function (e) {
