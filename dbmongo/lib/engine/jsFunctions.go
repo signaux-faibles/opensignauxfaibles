@@ -1130,12 +1130,8 @@ db.getCollection("Features").createIndex({
     const output_default = f.lookAhead(output_cotisation, "tag_default", n_months, true);
     const output_failure = f.lookAhead(output_procol, "tag_failure", n_months, true);
     const output_cible = all_keys.reduce(function (m, k) {
-        const outputTimes = {};
-        if (output_default[k])
-            outputTimes.time_til_default = output_default[k].time_til_outcome;
-        if (output_failure[k])
-            outputTimes.time_til_failure = output_failure[k].time_til_outcome;
-        return Object.assign(Object.assign({}, m), { [k]: Object.assign(Object.assign({}, output_outcome[k]), outputTimes) });
+        var _a, _b;
+        return Object.assign(Object.assign({}, m), { [k]: Object.assign(Object.assign({}, output_outcome[k]), { time_til_default: (_a = output_default[k]) === null || _a === void 0 ? void 0 : _a.time_til_outcome, time_til_failure: (_b = output_failure[k]) === null || _b === void 0 ? void 0 : _b.time_til_outcome }) });
     }, {});
     return output_cible;
 }`,
@@ -1612,13 +1608,12 @@ db.getCollection("Features").createIndex({
             ...new Set([...delete_types, ...new_types]),
         ];
         all_interesting_types.forEach((type) => {
+            var _a, _b;
             m[type] = m[type] || {};
             // On supprime les clés qu'il faut
-            if (v.batch[batch] &&
-                v.batch[batch].compact &&
-                v.batch[batch].compact.delete &&
-                v.batch[batch].compact.delete[type]) {
-                v.batch[batch].compact.delete[type].forEach((hash) => {
+            const batchData = v.batch[batch];
+            if ((_b = (_a = batchData === null || batchData === void 0 ? void 0 : batchData.compact) === null || _a === void 0 ? void 0 : _a.delete) === null || _b === void 0 ? void 0 : _b[type]) {
+                batchData.compact.delete[type].forEach((hash) => {
                     if (typeof m[type] === "object" && m[type][hash])
                         delete m[type][hash];
                 });

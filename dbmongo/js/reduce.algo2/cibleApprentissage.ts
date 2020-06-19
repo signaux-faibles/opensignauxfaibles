@@ -42,16 +42,12 @@ export function cibleApprentissage(
   )
 
   const output_cible = all_keys.reduce(function (m, k) {
-    const outputTimes: Partial<Times> = {}
-    if (output_default[k])
-      outputTimes.time_til_default = output_default[k].time_til_outcome
-    if (output_failure[k])
-      outputTimes.time_til_failure = output_failure[k].time_til_outcome
     return {
       ...m,
       [k]: {
         ...output_outcome[k],
-        ...outputTimes,
+        time_til_default: output_default[k]?.time_til_outcome,
+        time_til_failure: output_failure[k]?.time_til_outcome,
       },
     }
   }, {} as Record<string, Times>)
