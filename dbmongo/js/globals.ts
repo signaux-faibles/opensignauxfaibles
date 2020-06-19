@@ -49,7 +49,11 @@ type BatchValue = {
 } & Partial<DonnéesDefaillances> &
   Partial<DonnéesCotisationsDettes> &
   Partial<DonnéesCcsf> &
-  Partial<DonnéesSirene>
+  Partial<DonnéesSirene> &
+  Partial<DonnéesSireneUL> &
+  Partial<DonnéesEffectifEntreprise> &
+  Partial<DonnéesBdf> &
+  Partial<DonnéesDiane>
 
 type BatchDataType = keyof BatchValue
 
@@ -150,4 +154,43 @@ type Sirene = {
 
 type DonnéesSirene = {
   sirene: Record<string, Sirene>
+}
+
+type SireneUL = {
+  raison_sociale: string
+  nom_unite_legale: string
+  nom_usage_unite_legale: string
+  prenom1_unite_legale: string
+  prenom2_unite_legale: string
+  prenom3_unite_legale: string
+  prenom4_unite_legale: string
+  statut_juridique: unknown
+  date_creation: Date
+}
+
+type DonnéesSireneUL = {
+  sirene_ul: Record<string, SireneUL>
+}
+
+type EffectifEntreprise = Record<DataHash, Effectif>
+
+type DonnéesEffectifEntreprise = {
+  effectif_ent: EffectifEntreprise
+}
+
+type EntréeBdf = {
+  arrete_bilan_bdf: Date
+  annee_bdf: number
+}
+
+type DonnéesBdf = {
+  bdf: Record<DataHash, EntréeBdf>
+}
+
+type EntréeDiane = {
+  arrete_bilan_diane: Date
+}
+
+type DonnéesDiane = {
+  diane: Record<DataHash, EntréeDiane>
 }

@@ -1,30 +1,22 @@
 import * as f from "../common/raison_sociale"
 
-type SireneUL = {
-  raison_sociale: string
-  nom_unite_legale: string
-  nom_usage_unite_legale: string
-  prenom1_unite_legale: string
-  prenom2_unite_legale: string
-  prenom3_unite_legale: string
-  prenom4_unite_legale: string
-  statut_juridique: unknown
-  date_creation: Date
-}
+type V = DonnéesSireneUL
 
-type V = {
-  sirene_ul: Record<string, SireneUL>
-}
-
-type MutableOutputArray = {
+type Input = {
   periode: Date
+}
+
+export type Output = {
   raison_sociale: unknown
   statut_juridique: unknown
   date_creation_entreprise: number | null // année
   age_entreprise: number | null // en années
-}[]
+}
 
-export function sirene_ul(v: V, output_array: MutableOutputArray): void {
+export function sirene_ul(
+  v: V,
+  output_array: (Input & Partial<Output>)[]
+): void {
   "use strict"
   const sireneHashes = Object.keys(v.sirene_ul || {})
   output_array.forEach((val) => {

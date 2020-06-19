@@ -14,6 +14,9 @@ import { sirene } from "./sirene"
 import { populateNafAndApe, NAF } from "./populateNafAndApe"
 import { cotisation } from "./cotisation"
 import { cibleApprentissage } from "./cibleApprentissage"
+import { sirene_ul, Output as SireneULOutput } from "./sirene_ul"
+import { dateAddMonth } from "./dateAddMonth"
+import { generatePeriodSerie } from "../common/generatePeriodSerie"
 
 declare const naf: NAF
 declare const actual_batch: BatchKey
@@ -38,6 +41,7 @@ export function map(this: {
     ...{ flatten, outputs, apart, compte, effectifs, interim, add }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     ...{ repeatable, delais, defaillances, cotisationsdettes, ccsf }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     ...{ sirene, populateNafAndApe, cotisation, cibleApprentissage }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
+    ...{ sirene_ul, dateAddMonth, generatePeriodSerie }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
   } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
   const v = f.flatten(this.value, actual_batch)
 
@@ -146,6 +150,11 @@ export function map(this: {
 
   if (v.scope === "entreprise") {
     if (includes["all"]) {
+      // type Input = DonnéesBdf
+      type Output = {
+        periode: Date
+      } & Partial<SireneULOutput>
+
       const output_array = serie_periode.map(function (e) {
         return {
           siren: v.key,
@@ -155,18 +164,20 @@ export function map(this: {
           exercice_diane: 0,
           arrete_bilan_diane: new Date(0),
         }
-      })
+      }) as Output[]
 
-      var output_indexed = output_array.reduce(function (periode, val) {
+      let output_indexed = output_array.reduce(function (periode, val) {
         periode[val.periode.getTime()] = val
         return periode
-      }, {})
+      }, {} as Record<Periode, Output>)
 
       if (v.sirene_ul) {
-        f.sirene_ul(v, output_array)
+        f.sirene_ul(v as DonnéesSireneUL, output_array)
       }
 
-      const periodes = Object.keys(output_indexed).sort((a, b) => a >= b)
+      const periodes = Object.keys(output_indexed).sort((a, b) =>
+        a >= b ? 1 : 0
+      )
       if (v.effectif_ent) {
         const output_effectif_ent = f.effectifs(
           v.effectif_ent,
@@ -176,20 +187,15 @@ export function map(this: {
         f.add(output_effectif_ent, output_indexed)
       }
 
-      var output_indexed = output_array.reduce(function (periode, val) {
+      output_indexed = output_array.reduce(function (periode, val) {
         periode[val.periode.getTime()] = val
         return periode
-      }, {})
+      }, {} as Record<Periode, Output>)
 
       v.bdf = v.bdf || {}
       v.diane = v.diane || {}
 
-      Object.keys(v.bdf).forEach((hash) => {}, {})
-
-      v.bdf = v.bdf || {}
-      v.diane = v.diane || {}
-
-      Object.keys(v.bdf).forEach((hash) => {
+      for (const hash in v.bdf) {
         const periode_arrete_bilan = new Date(
           Date.UTC(
             v.bdf[hash].arrete_bilan_bdf.getUTCFullYear(),
@@ -207,35 +213,37 @@ export function map(this: {
           f.dateAddMonth(periode_dispo, 13)
         )
 
-        series.forEach((periode) => {
-          Object.keys(v.bdf[hash])
+        for (const periode of series) {
+          const bdfHashData = v.bdf[hash]
+          const outputInPeriod = output_indexed[periode.getTime()]
+          Object.keys(bdfHashData)
             .filter((k) => {
               const omit = ["raison_sociale", "secteur", "siren"]
-              return v.bdf[hash][k] != null && !omit.includes(k)
+              return k in bdfHashData && !omit.includes(k)
             })
-            .forEach((k) => {
+            .forEach((key) => {
+              const k = key as keyof Output & keyof EntréeBdf // ?
               if (periode.getTime() in output_indexed) {
-                output_indexed[periode.getTime()][k] = v.bdf[hash][k]
-                output_indexed[periode.getTime()].exercice_bdf =
-                  output_indexed[periode.getTime()].annee_bdf - 1
+                outputInPeriod[k] = bdfHashData[k]
+                outputInPeriod.exercice_bdf = outputInPeriod.annee_bdf - 1
               }
 
               const past_year_offset = [1, 2]
-              past_year_offset.forEach((offset) => {
+              for (const offset of past_year_offset) {
                 const periode_offset = f.dateAddMonth(periode, 12 * offset)
                 const variable_name = k + "_past_" + offset
                 if (
                   periode_offset.getTime() in output_indexed &&
-                  k != "arrete_bilan_bdf" &&
-                  k != "exercice_bdf"
+                  k !== "arrete_bilan_bdf" &&
+                  k !== "exercice_bdf"
                 ) {
                   output_indexed[periode_offset.getTime()][variable_name] =
                     v.bdf[hash][k]
                 }
-              })
+              }
             })
-        })
-      })
+        }
+      }
 
       Object.keys(v.diane)
         .filter((hash) => v.diane[hash].arrete_bilan_diane)

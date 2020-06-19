@@ -2,8 +2,6 @@ import * as f from "./dateAddMonth"
 
 declare const offset_effectif: number
 
-type Hash = string
-
 type Time = string
 
 type EffectifName = string
@@ -13,7 +11,7 @@ type ValeurEffectif = number
 type Output = Record<Time, Record<EffectifName, ValeurEffectif | null>>
 
 export function effectifs(
-  effobj: Record<Hash, Effectif>,
+  effobj: EffectifEntreprise,
   periodes: string[],
   effectif_name: EffectifName
 ): Output {
