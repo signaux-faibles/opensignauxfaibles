@@ -19,7 +19,7 @@ export function complete_reporder(
 
     Object.keys(reporder).forEach((ro) => {
       if (!missing[reporder[ro].periode.getTime()]) {
-        delete object.batch[batch].reporder[ro]
+        delete reporder[ro]
       } else {
         missing[reporder[ro].periode.getTime()] = false
       }
