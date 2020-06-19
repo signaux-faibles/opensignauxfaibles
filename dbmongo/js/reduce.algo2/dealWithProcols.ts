@@ -17,7 +17,7 @@ type OutputEvent = {
   date_proc_col: Date
 }
 
-type Output = {
+export type Output = {
   etat_proc_collective: unknown
   date_proc_collective: unknown
   tag_failure: boolean
