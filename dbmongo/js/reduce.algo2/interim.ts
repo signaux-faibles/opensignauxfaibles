@@ -1,14 +1,17 @@
 import * as f from "./dateAddMonth"
 
+type Input = {
+  effectif: number | null
+}
+
 type Output = {
-  effectif: number
   interim_proportion: number
   [interim_ratio_past_: string]: number // TODO: éviter la création dynamique de propriétés
 }
 
 export function interim(
   interim: Record<string, Interim>,
-  output_indexed: Record<string, Output>
+  output_indexed: Record<string, Input>
 ): Record<string, Output> {
   "use strict"
   const output_effectif = output_indexed
@@ -27,8 +30,10 @@ export function interim(
     // var time_offset = f.dateAddMonth(time_d, -offset_interim)
     if (periode in output_effectif) {
       output_interim[periode] = output_interim[periode] || {}
-      output_interim[periode].interim_proportion =
-        one_interim.etp / output_effectif[periode].effectif
+      const { effectif } = output_effectif[periode]
+      if (effectif) {
+        output_interim[periode].interim_proportion = one_interim.etp / effectif
+      }
     }
 
     const past_month_offsets = [6, 12, 18, 24]
@@ -42,8 +47,10 @@ export function interim(
         output_interim[time_past_offset.getTime()] =
           output_interim[time_past_offset.getTime()] || {}
         const val_offset = output_interim[time_past_offset.getTime()]
-        val_offset[variable_name_interim] =
-          one_interim.etp / output_effectif[periode].effectif
+        const { effectif } = output_effectif[periode]
+        if (effectif) {
+          val_offset[variable_name_interim] = one_interim.etp / effectif
+        }
       }
     })
   })

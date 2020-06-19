@@ -26,8 +26,10 @@ export type DelaiComputedValues = {
   montant_echeancier: number // exprimé en euros
 }
 
+export type V = { delai: ParPériode<Delai> }
+
 export function delais(
-  v: { delai: ParPériode<Delai> },
+  v: V,
   donnéesActuellesParPériode: DeepReadonly<ParPériode<DebitComputedValues>>
 ): ParPériode<DelaiComputedValues> {
   "use strict"

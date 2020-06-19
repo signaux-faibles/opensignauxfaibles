@@ -2,7 +2,7 @@ import "../globals.ts"
 
 type Hash = string
 
-type V = {
+export type V = {
   compte: Record<Hash, Compte>
 }
 

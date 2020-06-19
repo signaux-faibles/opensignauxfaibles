@@ -6,11 +6,6 @@ type Hash = string
 
 type Time = string
 
-type Effectif = {
-  periode: Date // { start: Date; end: Date }
-  effectif: number
-}
-
 type EffectifName = string
 
 type ValeurEffectif = number

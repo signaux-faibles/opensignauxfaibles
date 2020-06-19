@@ -1,23 +1,42 @@
-import { flatten, V } from "./flatten"
+import { flatten, V as FlattenedEntreprise } from "./flatten"
 import { outputs } from "./outputs"
 import { apart } from "./apart"
-import { compte } from "./compte"
+import { compte, V as CompteInput } from "./compte"
 import { effectifs } from "./effectifs"
 import { interim } from "./interim"
 import { add } from "./add"
+import { repeatable } from "./repeatable"
+import { delais, V as DelaisV } from "./delais"
 
 declare const actual_batch: BatchKey
 declare const includes: Record<"all" | "apart", boolean>
 
-export function map(this: { _id: SiretOrSiren; value: V }): void {
+/**
+ * `map()` est appelée pour chaque entreprise/établissement.
+ *
+ * Une entreprise/établissement est rattachée à des données de plusieurs types,
+ * groupées par *Batch* (groupements de fichiers de données importés).
+ *
+ * Pour chaque période d'un entreprise/établissement, un objet contenant toutes
+ * les données agrégées est émis (par appel à `emit()`), à destination de
+ * `reduce()`, puis de `finalize()`.
+ */
+export function map(this: {
+  _id: SiretOrSiren
+  value: FlattenedEntreprise
+}): void {
   "use strict"
-  const f = { flatten, outputs, apart, compte, effectifs, interim, add } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
+  /* DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO */ const f = {
+    ...{ flatten, outputs, apart, compte, effectifs, interim, add }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
+    ...{ repeatable, delais }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
+  } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
   const v = f.flatten(this.value, actual_batch)
 
-  if (v.scope == "etablissement") {
-    const o = f.outputs(v, serie_periode)
-    const output_array = o[0] // [ OutputValue ] // in chronological order
-    const output_indexed = o[1] // { Periode -> OutputValue } // OutputValue: cf outputs()
+  if (v.scope === "etablissement") {
+    const [
+      output_array, // [ OutputValue ], in chronological order
+      output_indexed, // { Periode -> OutputValue }
+    ] = f.outputs(v, serie_periode)
 
     // Les periodes qui nous interessent, triées
     const periodes = Object.keys(output_indexed).sort((a, b) =>
@@ -28,12 +47,11 @@ export function map(this: { _id: SiretOrSiren; value: V }): void {
       if (v.apconso && v.apdemande) {
         const output_apart = f.apart(v.apconso, v.apdemande)
         Object.keys(output_apart).forEach((periode) => {
-          const data: Record<
-            SiretOrSiren,
-            object & { siret?: SiretOrSiren }
-          > = {}
-          data[this._id] = output_apart[periode]
-          data[this._id].siret = this._id
+          const data: Record<SiretOrSiren, { siret?: SiretOrSiren }> = {}
+          data[this._id] = {
+            ...output_apart[periode],
+            siret: this._id,
+          }
           emit(
             {
               batch: actual_batch,
@@ -49,7 +67,7 @@ export function map(this: { _id: SiretOrSiren; value: V }): void {
 
     if (includes["all"]) {
       if (v.compte) {
-        const output_compte = f.compte(v)
+        const output_compte = f.compte(v as CompteInput)
         f.add(output_compte, output_indexed)
       }
 
@@ -69,7 +87,7 @@ export function map(this: { _id: SiretOrSiren; value: V }): void {
       }
 
       if (v.delai) {
-        const output_delai = f.delais(v, output_indexed)
+        const output_delai = f.delais(v as DelaisV, output_indexed)
         f.add(output_delai, output_indexed)
       }
 

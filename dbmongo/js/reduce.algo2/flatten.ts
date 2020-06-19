@@ -4,11 +4,20 @@ export type V = {
   batch: BatchValues
 }
 
-type Flattened = Partial<BatchValue> & {
+export type Flattened = Partial<BatchValue> & {
   key: SiretOrSiren
   scope: Scope
 }
 
+/**
+ * Appelé par `map()`, `flatten()` transforme les données importées (*Batches*)
+ * d'une entreprise ou établissement afin de retourner un unique objet *plat*
+ * contenant les valeurs finales de chaque type de données.
+ *
+ * Pour cela:
+ * - il supprime les clés `compact.delete` des *Batches* en entrées;
+ * - il agrège les propriétés apportées par chaque *Batch*, dans l'ordre chrono.
+ */
 export function flatten(v: V, actual_batch: string): Flattened {
   "use strict"
   const res = Object.keys(v.batch || {})

@@ -1,20 +1,26 @@
-type Output = {
+type DonnéesAgrégées = {
   siret: SiretOrSiren
   periode: Date
-  effectif: null
+  effectif: number | null
   etat_proc_collective: "in_bonis" // ou ProcolToHumanRes ?
   interessante_urssaf: true
   outcome: false
 }
 
-type IndexedOutput = Record<string, Output>
+type IndexedOutput = Record<Periode, DonnéesAgrégées>
 
+/**
+ * Appelé par `map()` pour chaque entreprise/établissement, `outputs()` retourne
+ * un tableau contenant un objet de base par période, ainsi qu'une version
+ * indexée par période de ce tableau, afin de faciliter l'agrégation progressive
+ * de données dans ces structures par `map()`.
+ */
 export function outputs(
   v: { key: SiretOrSiren },
   serie_periode: Date[]
-): [Output[], IndexedOutput] {
+): [DonnéesAgrégées[], IndexedOutput] {
   "use strict"
-  const output_array: Output[] = serie_periode.map(function (e) {
+  const output_array: DonnéesAgrégées[] = serie_periode.map(function (e) {
     return {
       siret: v.key,
       periode: e,
