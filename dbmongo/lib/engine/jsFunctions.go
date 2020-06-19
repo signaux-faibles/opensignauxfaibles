@@ -1130,8 +1130,12 @@ db.getCollection("Features").createIndex({
     const output_default = f.lookAhead(output_cotisation, "tag_default", n_months, true);
     const output_failure = f.lookAhead(output_procol, "tag_failure", n_months, true);
     const output_cible = all_keys.reduce(function (m, k) {
-        var _a, _b;
-        return Object.assign(Object.assign({}, m), { [k]: Object.assign(Object.assign({}, output_outcome[k]), { time_til_default: (_a = output_default[k]) === null || _a === void 0 ? void 0 : _a.time_til_outcome, time_til_failure: (_b = output_failure[k]) === null || _b === void 0 ? void 0 : _b.time_til_outcome }) });
+        const outputTimes = {};
+        if (output_default[k])
+            outputTimes.time_til_default = output_default[k].time_til_outcome;
+        if (output_failure[k])
+            outputTimes.time_til_failure = output_failure[k].time_til_outcome;
+        return Object.assign(Object.assign({}, m), { [k]: Object.assign(Object.assign({}, output_outcome[k]), outputTimes) });
     }, {});
     return output_cible;
 }`,
