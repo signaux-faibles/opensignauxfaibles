@@ -1532,9 +1532,10 @@ db.getCollection("Features").createIndex({
     Object.keys(v).forEach((siret) => {
         if (siret != "entreprise") {
             etablissements_connus[siret] = true;
-            if (v[siret].effectif) {
+            const { effectif } = v[siret];
+            if (effectif) {
                 entreprise.effectif_entreprise =
-                    (entreprise.effectif_entreprise || 0) + v[siret].effectif; // initialized to null
+                    (entreprise.effectif_entreprise || 0) + effectif; // initialized to null
             }
             const { apart_heures_consommees } = v[siret];
             if (apart_heures_consommees) {

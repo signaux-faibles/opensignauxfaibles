@@ -20,7 +20,7 @@ import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { cibleApprentissage } from "./cibleApprentissage"
 import { lookAhead } from "./lookAhead"
 import { reduce } from "./reduce"
-import { finalize, EntrepriseEnEntrée } from "./finalize"
+import { finalize, V } from "./finalize"
 
 const global = globalThis as any // eslint-disable-line @typescript-eslint/no-explicit-any
 global.f = {
@@ -141,7 +141,7 @@ test.serial(
       // Note: on suppose qu'il n'y a qu'une valeur par clé
       return {
         _id,
-        value: finalize(_id, value as Record<SiretOrSiren, EntrepriseEnEntrée>),
+        value: finalize(_id, value as V),
       }
     })
     t.deepEqual(finalizeResult, expectedFinalizeResults)
