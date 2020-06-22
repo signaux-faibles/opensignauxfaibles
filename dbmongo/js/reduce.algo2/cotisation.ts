@@ -1,15 +1,18 @@
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { dateAddMonth } from "./dateAddMonth"
 
-export type Output = {
+type Input = {
   periode: Date
-  cotisation: number
+  cotisation?: number
+  montant_part_patronale: number
+  montant_part_ouvriere: number
+}
+
+export type Output = {
+  montant_pp_array: number[]
+  montant_po_array: number[]
   cotisation_moy12m: number
   cotisation_array: number[]
-  montant_part_patronale: number
-  montant_pp_array: number[]
-  montant_part_ouvriere: number
-  montant_po_array: number[]
   ratio_dette: number
   ratio_dette_moy12m: number
   tag_debit: boolean
@@ -17,8 +20,8 @@ export type Output = {
 }
 
 export function cotisation(
-  output_indexed: { [k: string]: Output },
-  output_array: Output[]
+  output_indexed: { [k: string]: Input & Partial<Output> },
+  output_array: (Input & Partial<Output>)[]
 ): void {
   "use strict"
   const f = { generatePeriodSerie, dateAddMonth } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
@@ -29,26 +32,24 @@ export function cotisation(
     const series = f.generatePeriodSerie(periode_courante, periode_12_mois)
     series.forEach((periode) => {
       if (periode.getTime() in output_indexed) {
-        if ("cotisation" in output_indexed[periode_courante.getTime()])
-          output_indexed[periode.getTime()].cotisation_array = (
-            output_indexed[periode.getTime()].cotisation_array || []
-          ).concat(output_indexed[periode_courante.getTime()].cotisation)
+        const outputInPeriod = output_indexed[periode.getTime()]
+        const outputCourante = output_indexed[periode_courante.getTime()]
+        if (outputCourante.cotisation !== undefined)
+          outputInPeriod.cotisation_array = (
+            outputInPeriod.cotisation_array || []
+          ).concat(outputCourante.cotisation)
 
-        output_indexed[periode.getTime()].montant_pp_array = (
-          output_indexed[periode.getTime()].montant_pp_array || []
-        ).concat(
-          output_indexed[periode_courante.getTime()].montant_part_patronale
-        )
-        output_indexed[periode.getTime()].montant_po_array = (
-          output_indexed[periode.getTime()].montant_po_array || []
-        ).concat(
-          output_indexed[periode_courante.getTime()].montant_part_ouvriere
-        )
+        outputInPeriod.montant_pp_array = (
+          outputInPeriod.montant_pp_array || []
+        ).concat(outputCourante.montant_part_patronale)
+        outputInPeriod.montant_po_array = (
+          outputInPeriod.montant_po_array || []
+        ).concat(outputCourante.montant_part_ouvriere)
       }
     })
   })
 
-  output_array.forEach((val) => {
+  for (const val of output_array) {
     val.cotisation_array = val.cotisation_array || []
     val.cotisation_moy12m =
       val.cotisation_array.reduce((p, c) => p + c, 0) /
@@ -59,10 +60,10 @@ export function cotisation(
         val.cotisation_moy12m
       const pp_average =
         (val.montant_pp_array || []).reduce((p, c) => p + c, 0) /
-        (val.montant_pp_array.length || 1)
+        (val.montant_pp_array?.length || 1)
       const po_average =
         (val.montant_po_array || []).reduce((p, c) => p + c, 0) /
-        (val.montant_po_array.length || 1)
+        (val.montant_po_array?.length || 1)
       val.ratio_dette_moy12m = (po_average + pp_average) / val.cotisation_moy12m
     }
     // Remplace dans cibleApprentissage
@@ -72,17 +73,19 @@ export function cotisation(
     delete val.cotisation_array
     delete val.montant_pp_array
     delete val.montant_po_array
-  })
+  }
 
   // Calcul des défauts URSSAF prolongés
   let counter = 0
   Object.keys(output_indexed)
     .sort()
     .forEach((k) => {
-      if (output_indexed[k].ratio_dette > 0.01) {
+      const { ratio_dette } = output_indexed[k]
+      if (!ratio_dette) return
+      if (ratio_dette > 0.01) {
         output_indexed[k].tag_debit = true // Survenance d'un débit d'au moins 1% des cotisations
       }
-      if (output_indexed[k].ratio_dette > 1) {
+      if (ratio_dette > 1) {
         counter = counter + 1
         if (counter >= 3) output_indexed[k].tag_default = true
       } else counter = 0

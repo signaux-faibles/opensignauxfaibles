@@ -8,7 +8,7 @@ type Times = {
 
 export function cibleApprentissage(
   output_indexed: {
-    [k: string]: { tag_failure: boolean; tag_default: boolean }
+    [k: string]: { tag_failure?: boolean; tag_default?: boolean }
   },
   n_months: number
 ): { [k: string]: Partial<Times> } {
