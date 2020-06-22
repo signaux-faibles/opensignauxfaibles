@@ -1011,7 +1011,9 @@ db.getCollection("Features").createIndex({
 }`,
 },
 "reduce.algo2":{
-"add": `function add(obj, output, array) {
+"add": `function add(obj, output
+// array?: Target[]
+) {
     "use strict";
     Object.keys(output).forEach(function (periode) {
         if (periode in obj) {
@@ -1023,10 +1025,12 @@ db.getCollection("Features").createIndex({
             // )
         }
     });
+    /*
     return [
-        array,
-        output,
-    ];
+      array as (Added & Target)[],
+      output as { [periode: string]: Added & Target },
+    ]
+    */
 }`,
 "apart": `function apart(apconso, apdemande) {
     "use strict";
