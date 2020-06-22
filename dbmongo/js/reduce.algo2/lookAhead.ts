@@ -4,7 +4,7 @@ type Outcome = {
 }
 
 export function lookAhead(
-  data: { [period: string]: any },
+  data: { [period: string]: Record<string, unknown> },
   attr_name: string,
   n_months: number,
   past: boolean

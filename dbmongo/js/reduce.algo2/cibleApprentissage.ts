@@ -28,7 +28,7 @@ export function cibleApprentissage(
       ),
     }
     return m
-  }, {} as Record<string, unknown>)
+  }, {} as Record<string, Record<string, unknown>>)
 
   const output_outcome = f.lookAhead(merged_info, "outcome", n_months, true)
   const output_default = f.lookAhead(
