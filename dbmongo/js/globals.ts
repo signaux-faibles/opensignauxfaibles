@@ -161,7 +161,7 @@ type Sirene = {
   lattitude: unknown // TODO ⚠️ typo ?
   longitude: unknown
   departement: Departement
-  raison_sociale: unknown
+  raison_sociale: string
   date_creation: Date
 }
 
