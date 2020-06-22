@@ -103,6 +103,6 @@ export function finalize(k: Clé, v: V): Output {
       return { incomplete: true }
     }
   } else {
-    return undefined // ajouté pour résoudre erreur TS7030 (Not all code paths return a value)
+    return [] // ajouté pour résoudre erreur TS7030 (Not all code paths return a value)
   }
 }

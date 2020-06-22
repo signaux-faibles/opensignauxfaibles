@@ -1575,7 +1575,7 @@ db.getCollection("Features").createIndex({
         }
     }
     else {
-        return undefined; // ajouté pour résoudre erreur TS7030 (Not all code paths return a value)
+        return []; // ajouté pour résoudre erreur TS7030 (Not all code paths return a value)
     }
 }`,
 "financierCourtTerme": `function financierCourtTerme(diane) {
