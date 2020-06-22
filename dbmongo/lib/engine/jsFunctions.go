@@ -1929,7 +1929,7 @@ function map() {
                     if (periode.getTime() in output_indexed) {
                         Object.assign(outputInPeriod, rest, outputInPeriod.annee_bdf
                             ? { exercice_bdf: outputInPeriod.annee_bdf - 1 }
-                            : null);
+                            : {});
                     }
                     for (const k of Object.keys(rest)) {
                         const past_year_offset = [1, 2];
@@ -1972,9 +1972,8 @@ function map() {
                             const periode_offset = f.dateAddMonth(periode, 12 * offset);
                             const variable_name = k + "_past_" + offset;
                             if (periode_offset.getTime() in output_indexed &&
-                                k !== "arrete_bilan_diane"
-                            // && k !== "exercice_diane" // je n'ai pas trouvé de définition de cette prop
-                            ) {
+                                k !== "arrete_bilan_diane" &&
+                                k !== "exercice_diane") {
                                 output_indexed[periode_offset.getTime()][variable_name] =
                                     v.diane[hash][k];
                             }

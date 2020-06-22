@@ -332,8 +332,8 @@ export function map(this: {
 
               if (
                 periode_offset.getTime() in output_indexed &&
-                k !== "arrete_bilan_diane"
-                // && k !== "exercice_diane" // je n'ai pas trouvé de définition de cette prop
+                k !== "arrete_bilan_diane" &&
+                k !== "exercice_diane"
               ) {
                 output_indexed[periode_offset.getTime()][variable_name] =
                   v.diane[hash][k]

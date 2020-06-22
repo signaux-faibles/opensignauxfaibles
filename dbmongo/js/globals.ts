@@ -202,6 +202,7 @@ type DonnéesBdf = {
 }
 
 type EntréeDiane = {
+  exercice_diane: number
   arrete_bilan_diane: Date
   couverture_ca_fdr: number
   interets: number
