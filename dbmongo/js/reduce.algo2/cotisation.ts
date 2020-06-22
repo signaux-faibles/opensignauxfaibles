@@ -4,8 +4,8 @@ import { dateAddMonth } from "./dateAddMonth"
 type Input = {
   periode: Date
   cotisation?: number
-  montant_part_patronale: number
-  montant_part_ouvriere: number
+  montant_part_patronale?: number
+  montant_part_ouvriere?: number
 }
 
 export type Output = {
@@ -38,13 +38,14 @@ export function cotisation(
           outputInPeriod.cotisation_array = (
             outputInPeriod.cotisation_array || []
           ).concat(outputCourante.cotisation)
-
-        outputInPeriod.montant_pp_array = (
-          outputInPeriod.montant_pp_array || []
-        ).concat(outputCourante.montant_part_patronale)
-        outputInPeriod.montant_po_array = (
-          outputInPeriod.montant_po_array || []
-        ).concat(outputCourante.montant_part_ouvriere)
+        if (outputCourante.montant_part_patronale !== undefined)
+          outputInPeriod.montant_pp_array = (
+            outputInPeriod.montant_pp_array || []
+          ).concat(outputCourante.montant_part_patronale)
+        if (outputCourante.montant_part_ouvriere !== undefined)
+          outputInPeriod.montant_po_array = (
+            outputInPeriod.montant_po_array || []
+          ).concat(outputCourante.montant_part_ouvriere)
       }
     })
   })
@@ -54,7 +55,11 @@ export function cotisation(
     val.cotisation_moy12m =
       val.cotisation_array.reduce((p, c) => p + c, 0) /
       (val.cotisation_array.length || 1)
-    if (val.cotisation_moy12m > 0) {
+    if (
+      val.cotisation_moy12m > 0 &&
+      val.montant_part_ouvriere !== undefined &&
+      val.montant_part_patronale !== undefined
+    ) {
       val.ratio_dette =
         (val.montant_part_ouvriere + val.montant_part_patronale) /
         val.cotisation_moy12m

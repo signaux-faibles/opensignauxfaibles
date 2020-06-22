@@ -129,18 +129,12 @@ export function map(this: {
         f.defaillances(v as DonnéesDefaillances, output_indexed)
       }
 
-      //let augmented_array, augmented_indexed
       if (v.cotisation && v.debit) {
         const output_cotisationsdettes = f.cotisationsdettes(
           v as DonnéesCotisationsDettes,
           periodes
         )
-        /*;[augmented_array, augmented_indexed] =*/ f.add(
-          output_cotisationsdettes,
-          output_indexed
-        )
-        // output_array = augmented_array
-        // output_indexed = augmented_indexed
+        f.add(output_cotisationsdettes, output_indexed)
       }
 
       if (v.ccsf) {
@@ -152,11 +146,7 @@ export function map(this: {
 
       f.populateNafAndApe(output_indexed, naf)
 
-      // TODO: comment prouver que montant_part_patronale est bien valorisé (à priori, suite à appel à f.cotisationsdettes() et f.add())
-      f.cotisation(
-        output_indexed as any, // output_indexed as typeof output_indexed & ReturnType<typeof f.cotisationsdettes>,
-        output_array as any
-      )
+      f.cotisation(output_indexed, output_array)
 
       const output_cible = f.cibleApprentissage(output_indexed, 18)
       f.add(output_cible, output_indexed)
