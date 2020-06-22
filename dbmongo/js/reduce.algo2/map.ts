@@ -26,6 +26,17 @@ declare const naf: NAF
 declare const actual_batch: BatchKey
 declare const includes: Record<"all" | "apart", boolean>
 
+function omit<Source, Exclusions extends Array<keyof Source>>(
+  object: Source,
+  ...propNames: Exclusions
+): Omit<Source, Exclusions[number]> {
+  const result: Omit<Source, Exclusions[number]> = Object.assign({}, object)
+  for (const prop of propNames) {
+    delete (result as any)[prop]
+  }
+  return result
+}
+
 /**
  * `map()` est appelée pour chaque entreprise/établissement.
  *
@@ -235,17 +246,17 @@ export function map(this: {
         for (const periode of series) {
           const bdfHashData = v.bdf[hash]
           const outputInPeriod = output_indexed[periode.getTime()]
+          const rest = omit(
+            bdfHashData as EntréeBdf & {
+              raison_sociale: unknown
+              secteur: unknown
+              siren: unknown
+            },
+            "raison_sociale",
+            "secteur",
+            "siren"
+          )
 
-          const {
-            raison_sociale,
-            secteur,
-            siren,
-            ...rest
-          } = bdfHashData as EntréeBdf & {
-            raison_sociale: unknown
-            secteur: unknown
-            siren: unknown
-          }
           if (outputInPeriod) {
             Object.assign(outputInPeriod, rest)
             if (outputInPeriod.annee_bdf) {
@@ -292,20 +303,20 @@ export function map(this: {
         )
 
         for (const periode of series) {
-          const {
-            marquee,
-            nom_entreprise,
-            numero_siren,
-            statut_juridique,
-            procedure_collective,
-            ...rest
-          } = v.diane[hash] as EntréeDiane & {
-            marquee: unknown
-            nom_entreprise: unknown
-            numero_siren: unknown
-            statut_juridique: unknown
-            procedure_collective: unknown
-          }
+          const rest = omit(
+            v.diane[hash] as EntréeDiane & {
+              marquee: unknown
+              nom_entreprise: unknown
+              numero_siren: unknown
+              statut_juridique: unknown
+              procedure_collective: unknown
+            },
+            "marquee",
+            "nom_entreprise",
+            "numero_siren",
+            "statut_juridique",
+            "procedure_collective"
+          )
 
           if (periode.getTime() in output_indexed) {
             Object.assign(output_indexed[periode.getTime()], rest)

@@ -1763,40 +1763,13 @@ function flatten(v, actual_batch) {
     }, {});
     return output;
 }`,
-"map": `var __rest = (this && this.__rest) || function (s, e) {
-    var t = {};
-    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-        t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function")
-        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-                t[p[i]] = s[p[i]];
-        }
-    return t;
-};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+"map": `function omit(object, ...propNames) {
+    const result = Object.assign({}, object);
+    for (const prop of propNames) {
+        delete result[prop];
+    }
+    return result;
+}
 /**
  * ` + "`" + `map()` + "`" + ` est appelée pour chaque entreprise/établissement.
  *
@@ -1925,7 +1898,7 @@ function map() {
                 for (const periode of series) {
                     const bdfHashData = v.bdf[hash];
                     const outputInPeriod = output_indexed[periode.getTime()];
-                    const _a = bdfHashData, { raison_sociale, secteur, siren } = _a, rest = __rest(_a, ["raison_sociale", "secteur", "siren"]);
+                    const rest = omit(bdfHashData, "raison_sociale", "secteur", "siren");
                     if (outputInPeriod) {
                         Object.assign(outputInPeriod, rest);
                         if (outputInPeriod.annee_bdf) {
@@ -1956,7 +1929,7 @@ function map() {
                 const series = f.generatePeriodSerie(periode_dispo, f.dateAddMonth(periode_dispo, 14) // periode de validité d'un bilan auprès de la Banque de France: 21 mois (14+7)
                 );
                 for (const periode of series) {
-                    const _b = v.diane[hash], { marquee, nom_entreprise, numero_siren, statut_juridique, procedure_collective } = _b, rest = __rest(_b, ["marquee", "nom_entreprise", "numero_siren", "statut_juridique", "procedure_collective"]);
+                    const rest = omit(v.diane[hash], "marquee", "nom_entreprise", "numero_siren", "statut_juridique", "procedure_collective");
                     if (periode.getTime() in output_indexed) {
                         Object.assign(output_indexed[periode.getTime()], rest);
                     }
