@@ -40,11 +40,11 @@ global.f = {
 
 const ISODate = (date: string): Date => new Date(date)
 
-;(Object as any).bsonsize = (obj: any): number => JSON.stringify(obj).length // used by finalize()
+;(Object as any).bsonsize = (obj: unknown): number => JSON.stringify(obj).length // used by finalize()
 
-const runMongoMap = (mapFct: () => void, keyVal: any): any => {
-  const results: { _id: any; value: any }[] = []
-  globalThis.emit = (key: any, value: any): void => {
+const runMongoMap = (mapFct: () => void, keyVal: unknown): unknown => {
+  const results: { _id: unknown; value: unknown }[] = []
+  globalThis.emit = (key: unknown, value: unknown): void => {
     results.push({ _id: key, value })
   }
   mapFct.call(keyVal)
