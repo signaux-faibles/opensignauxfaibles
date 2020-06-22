@@ -1926,10 +1926,11 @@ function map() {
                     const bdfHashData = v.bdf[hash];
                     const outputInPeriod = output_indexed[periode.getTime()];
                     const _a = bdfHashData, { raison_sociale, secteur, siren } = _a, rest = __rest(_a, ["raison_sociale", "secteur", "siren"]);
-                    if (periode.getTime() in output_indexed) {
-                        Object.assign(outputInPeriod, rest, outputInPeriod.annee_bdf
-                            ? { exercice_bdf: outputInPeriod.annee_bdf - 1 }
-                            : {});
+                    if (outputInPeriod) {
+                        Object.assign(outputInPeriod, rest);
+                        if (outputInPeriod.annee_bdf) {
+                            outputInPeriod.exercice_bdf = outputInPeriod.annee_bdf - 1;
+                        }
                     }
                     for (const k of Object.keys(rest)) {
                         const past_year_offset = [1, 2];

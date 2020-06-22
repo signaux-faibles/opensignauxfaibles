@@ -246,14 +246,11 @@ export function map(this: {
             secteur: unknown
             siren: unknown
           }
-          if (periode.getTime() in output_indexed) {
-            Object.assign(
-              outputInPeriod,
-              rest,
-              outputInPeriod.annee_bdf
-                ? { exercice_bdf: outputInPeriod.annee_bdf - 1 }
-                : {}
-            )
+          if (outputInPeriod) {
+            Object.assign(outputInPeriod, rest)
+            if (outputInPeriod.annee_bdf) {
+              outputInPeriod.exercice_bdf = outputInPeriod.annee_bdf - 1
+            }
           }
 
           for (const k of Object.keys(rest) as (keyof typeof rest)[]) {
