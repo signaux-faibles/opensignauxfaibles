@@ -1967,7 +1967,9 @@ function map() {
                     }
                     for (const k of Object.keys(rest)) {
                         if (v.diane[hash][k] === null) {
-                            delete output_indexed[periode.getTime()][k];
+                            if (periode.getTime() in output_indexed) {
+                                delete output_indexed[periode.getTime()][k];
+                            }
                             continue;
                         }
                         // Passé
