@@ -181,6 +181,7 @@ type DonnéesEffectifEntreprise = {
 type EntréeBdf = {
   arrete_bilan_bdf: Date
   annee_bdf: number
+  exercice_bdf: number
 }
 
 type DonnéesBdf = {

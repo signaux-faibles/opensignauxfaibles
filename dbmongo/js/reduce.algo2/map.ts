@@ -153,7 +153,9 @@ export function map(this: {
       // type Input = DonnéesBdf
       type Output = {
         periode: Date
-      } & Partial<SireneULOutput>
+      } & Partial<SireneULOutput> &
+        Partial<EntréeBdf> &
+        Record<string, unknown> // for *_past_* props of bdf. // TODO: try to be more specific
 
       const output_array = serie_periode.map(function (e) {
         return {
@@ -216,144 +218,141 @@ export function map(this: {
         for (const periode of series) {
           const bdfHashData = v.bdf[hash]
           const outputInPeriod = output_indexed[periode.getTime()]
-          Object.keys(bdfHashData)
-            .filter((k) => {
-              const omit = ["raison_sociale", "secteur", "siren"]
-              return k in bdfHashData && !omit.includes(k)
-            })
-            .forEach((key) => {
-              const k = key as keyof Output & keyof EntréeBdf // ?
-              if (periode.getTime() in output_indexed) {
-                outputInPeriod[k] = bdfHashData[k]
-                outputInPeriod.exercice_bdf = outputInPeriod.annee_bdf - 1
-              }
 
-              const past_year_offset = [1, 2]
-              for (const offset of past_year_offset) {
-                const periode_offset = f.dateAddMonth(periode, 12 * offset)
-                const variable_name = k + "_past_" + offset
-                if (
-                  periode_offset.getTime() in output_indexed &&
-                  k !== "arrete_bilan_bdf" &&
-                  k !== "exercice_bdf"
-                ) {
-                  output_indexed[periode_offset.getTime()][variable_name] =
-                    v.bdf[hash][k]
-                }
+          const { /*raison_sociale, secteur, siren,*/ ...rest } = bdfHashData
+          if (periode.getTime() in output_indexed) {
+            Object.assign(
+              outputInPeriod,
+              rest
+              // { exercice_bdf: outputInPeriod.annee_bdf - 1 } // because it seems that annee_bdf is never set
+            )
+          }
+
+          for (const k of Object.keys(rest) as (keyof typeof rest)[]) {
+            const past_year_offset = [1, 2]
+            for (const offset of past_year_offset) {
+              const periode_offset = f.dateAddMonth(periode, 12 * offset)
+              const variable_name = k + "_past_" + offset
+              if (
+                periode_offset.getTime() in output_indexed &&
+                k !== "arrete_bilan_bdf" &&
+                k !== "exercice_bdf"
+              ) {
+                output_indexed[periode_offset.getTime()][variable_name] =
+                  v.bdf[hash][k]
               }
-            })
+            }
+          }
         }
       }
 
-      Object.keys(v.diane)
-        .filter((hash) => v.diane[hash].arrete_bilan_diane)
-        .forEach((hash) => {
-          //v.diane[hash].arrete_bilan_diane = new Date(Date.UTC(v.diane[hash].exercice_diane, 11, 31, 0, 0, 0, 0))
-          const periode_arrete_bilan = new Date(
-            Date.UTC(
-              v.diane[hash].arrete_bilan_diane.getUTCFullYear(),
-              v.diane[hash].arrete_bilan_diane.getUTCMonth() + 1,
-              1,
-              0,
-              0,
-              0,
-              0
-            )
+      for (const hash of Object.keys(v.diane)) {
+        if (!v.diane[hash].arrete_bilan_diane) continue
+        //v.diane[hash].arrete_bilan_diane = new Date(Date.UTC(v.diane[hash].exercice_diane, 11, 31, 0, 0, 0, 0))
+        const periode_arrete_bilan = new Date(
+          Date.UTC(
+            v.diane[hash].arrete_bilan_diane.getUTCFullYear(),
+            v.diane[hash].arrete_bilan_diane.getUTCMonth() + 1,
+            1,
+            0,
+            0,
+            0,
+            0
           )
-          const periode_dispo = f.dateAddMonth(periode_arrete_bilan, 7) // 01/08 pour un bilan le 31/12, donc algo qui tourne en 01/09
-          const series = f.generatePeriodSerie(
-            periode_dispo,
-            f.dateAddMonth(periode_dispo, 14) // periode de validité d'un bilan auprès de la Banque de France: 21 mois (14+7)
-          )
+        )
+        const periode_dispo = f.dateAddMonth(periode_arrete_bilan, 7) // 01/08 pour un bilan le 31/12, donc algo qui tourne en 01/09
+        const series = f.generatePeriodSerie(
+          periode_dispo,
+          f.dateAddMonth(periode_dispo, 14) // periode de validité d'un bilan auprès de la Banque de France: 21 mois (14+7)
+        )
 
-          series.forEach((periode) => {
-            Object.keys(v.diane[hash])
-              .filter((k) => {
-                const omit = [
-                  "marquee",
-                  "nom_entreprise",
-                  "numero_siren",
-                  "statut_juridique",
-                  "procedure_collective",
-                ]
-                return v.diane[hash][k] != null && !omit.includes(k)
-              })
-              .forEach((k) => {
-                if (periode.getTime() in output_indexed) {
-                  output_indexed[periode.getTime()][k] = v.diane[hash][k]
-                }
+        for (const periode of series) {
+          const {
+            // marquee,
+            // nom_entreprise,
+            // numero_siren,
+            // statut_juridique,
+            // procedure_collective,
+            ...rest
+          } = v.diane[hash]
 
-                // Passé
+          for (const k of Object.keys(rest) as (keyof typeof rest)[]) {
+            if (v.diane[hash][k] === null) continue
+            if (periode.getTime() in output_indexed) {
+              output_indexed[periode.getTime()][k] = v.diane[hash][k]
+            }
 
-                const past_year_offset = [1, 2]
+            // Passé
+
+            const past_year_offset = [1, 2]
+            for (const offset of past_year_offset) {
+              const periode_offset = f.dateAddMonth(periode, 12 * offset)
+              const variable_name = k + "_past_" + offset
+
+              if (
+                periode_offset.getTime() in output_indexed &&
+                k !== "arrete_bilan_diane" &&
+                k !== "exercice_diane"
+              ) {
+                output_indexed[periode_offset.getTime()][variable_name] =
+                  v.diane[hash][k]
+              }
+            }
+          }
+        }
+
+        series.forEach((periode) => {
+          if (periode.getTime() in output_indexed) {
+            // Recalcul BdF si ratios bdf sont absents
+            if (
+              !("poids_frng" in output_indexed[periode.getTime()]) &&
+              f.poidsFrng(v.diane[hash]) !== null
+            ) {
+              output_indexed[periode.getTime()].poids_frng = f.poidsFrng(
+                v.diane[hash]
+              )
+            }
+            if (
+              !("dette_fiscale" in output_indexed[periode.getTime()]) &&
+              f.detteFiscale(v.diane[hash]) !== null
+            ) {
+              output_indexed[periode.getTime()].dette_fiscale = f.detteFiscale(
+                v.diane[hash]
+              )
+            }
+            if (
+              !("frais_financier" in output_indexed[periode.getTime()]) &&
+              f.fraisFinancier(v.diane[hash]) !== null
+            ) {
+              output_indexed[
+                periode.getTime()
+              ].frais_financier = f.fraisFinancier(v.diane[hash])
+            }
+
+            const bdf_vars = [
+              "taux_marge",
+              "poids_frng",
+              "dette_fiscale",
+              "financier_court_terme",
+              "frais_financier",
+            ]
+            const past_year_offset = [1, 2]
+            bdf_vars.forEach((k) => {
+              if (k in output_indexed[periode.getTime()]) {
                 past_year_offset.forEach((offset) => {
                   const periode_offset = f.dateAddMonth(periode, 12 * offset)
                   const variable_name = k + "_past_" + offset
 
-                  if (
-                    periode_offset.getTime() in output_indexed &&
-                    k != "arrete_bilan_diane" &&
-                    k != "exercice_diane"
-                  ) {
+                  if (periode_offset.getTime() in output_indexed) {
                     output_indexed[periode_offset.getTime()][variable_name] =
-                      v.diane[hash][k]
+                      output_indexed[periode.getTime()][k]
                   }
                 })
-              })
-          })
-
-          series.forEach((periode) => {
-            if (periode.getTime() in output_indexed) {
-              // Recalcul BdF si ratios bdf sont absents
-              if (
-                !("poids_frng" in output_indexed[periode.getTime()]) &&
-                f.poidsFrng(v.diane[hash]) !== null
-              ) {
-                output_indexed[periode.getTime()].poids_frng = f.poidsFrng(
-                  v.diane[hash]
-                )
               }
-              if (
-                !("dette_fiscale" in output_indexed[periode.getTime()]) &&
-                f.detteFiscale(v.diane[hash]) !== null
-              ) {
-                output_indexed[
-                  periode.getTime()
-                ].dette_fiscale = f.detteFiscale(v.diane[hash])
-              }
-              if (
-                !("frais_financier" in output_indexed[periode.getTime()]) &&
-                f.fraisFinancier(v.diane[hash]) !== null
-              ) {
-                output_indexed[
-                  periode.getTime()
-                ].frais_financier = f.fraisFinancier(v.diane[hash])
-              }
-
-              const bdf_vars = [
-                "taux_marge",
-                "poids_frng",
-                "dette_fiscale",
-                "financier_court_terme",
-                "frais_financier",
-              ]
-              const past_year_offset = [1, 2]
-              bdf_vars.forEach((k) => {
-                if (k in output_indexed[periode.getTime()]) {
-                  past_year_offset.forEach((offset) => {
-                    const periode_offset = f.dateAddMonth(periode, 12 * offset)
-                    const variable_name = k + "_past_" + offset
-
-                    if (periode_offset.getTime() in output_indexed) {
-                      output_indexed[periode_offset.getTime()][variable_name] =
-                        output_indexed[periode.getTime()][k]
-                    }
-                  })
-                }
-              })
-            }
-          })
+            })
+          }
         })
+      }
 
       output_array.forEach((periode, index) => {
         if (
