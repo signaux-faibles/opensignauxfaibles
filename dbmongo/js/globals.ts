@@ -41,8 +41,8 @@ type BatchValue = {
   reporder?: { [periode: string]: RepOrder }
   compact?: { delete: { [dataType: string]: DataHash[] } }
   effectif?: { [dataHash: string]: Effectif }
-  apconso?: { [key: string]: any } // TODO: définir type plus précisément
-  apdemande?: { [key: string]: any } // TODO: définir type plus précisément
+  apconso?: Record<DataHash, ApConso>
+  apdemande?: Record<DataHash, ApDemande>
   compte?: Record<DataHash, Compte>
   interim?: Record<Periode, Interim>
   delai?: Record<DataHash, Delai>
@@ -73,6 +73,19 @@ type Événement = {
 type DonnéesDefaillances = {
   altares: Record<DataHash, Événement>
   procol: Record<DataHash, Événement>
+}
+
+type ApConso = {
+  id_conso: string
+  periode: Date
+  heure_consomme: number
+}
+
+type ApDemande = {
+  id_demande: string
+  periode: { start: Date; end: Date }
+  hta: unknown
+  motif_recours_se: unknown
 }
 
 type Compte = {

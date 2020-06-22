@@ -4,6 +4,7 @@ import { Output as CcsfOutput } from "./ccsf"
 import { Output as SireneOutput } from "./sirene"
 import { Output as NafOutput } from "./populateNafAndApe"
 import { Output as CotisationOutput } from "./cotisation"
+// import { Output as DealWithProcolsOutput } from "./dealWithProcols"
 
 type DonnéesAgrégées = {
   siret: SiretOrSiren
@@ -18,6 +19,7 @@ type DonnéesAgrégées = {
   SireneOutput &
   NafOutput &
   CotisationOutput
+// Partial<DealWithProcolsOutput>
 
 type IndexedOutput = Record<Periode, DonnéesAgrégées>
 

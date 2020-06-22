@@ -18,6 +18,8 @@ import { sirene_ul, Output as SireneULOutput } from "./sirene_ul"
 import { dateAddMonth } from "./dateAddMonth"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { poidsFrng } from "./poidsFrng"
+import { detteFiscale } from "./detteFiscale"
+import { fraisFinancier } from "./fraisFinancier"
 
 declare const naf: NAF
 declare const actual_batch: BatchKey
@@ -43,6 +45,7 @@ export function map(this: {
     ...{ repeatable, delais, defaillances, cotisationsdettes, ccsf }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     ...{ sirene, populateNafAndApe, cotisation, cibleApprentissage }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     ...{ sirene_ul, dateAddMonth, generatePeriodSerie, poidsFrng }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
+    ...{ detteFiscale, fraisFinancier }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
   } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
   const v = f.flatten(this.value, actual_batch)
 

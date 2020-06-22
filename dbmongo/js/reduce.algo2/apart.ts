@@ -6,19 +6,6 @@ type Hash = string
 
 type Timestamp = string
 
-type ApConso = {
-  id_conso: string
-  periode: Date
-  heure_consomme: number
-}
-
-type ApDemande = {
-  id_demande: string
-  periode: { start: Date; end: Date }
-  hta: unknown
-  motif_recours_se: unknown
-}
-
 type Output = {
   apart_heures_autorisees: unknown
   apart_heures_consommees: number
