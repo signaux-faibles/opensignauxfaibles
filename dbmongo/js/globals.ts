@@ -190,6 +190,13 @@ type DonnéesBdf = {
 
 type EntréeDiane = {
   arrete_bilan_diane: Date
+  couverture_ca_fdr: number
+  interets: number
+  excedent_brut_d_exploitation: number
+  produits_financiers: number
+  produit_exceptionnel: number
+  charge_exceptionnelle: number
+  charges_financieres: number
 }
 
 type DonnéesDiane = {

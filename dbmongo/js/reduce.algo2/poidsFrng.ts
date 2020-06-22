@@ -1,6 +1,4 @@
-import { Diane } from "./fraisFinancier"
-
-export function poidsFrng(diane: Diane): number | null {
+export function poidsFrng(diane: { couverture_ca_fdr: number }): number | null {
   "use strict"
   if ("couverture_ca_fdr" in diane && diane["couverture_ca_fdr"] !== null) {
     return (diane["couverture_ca_fdr"] / 360) * 100

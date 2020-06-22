@@ -17,6 +17,7 @@ import { cibleApprentissage } from "./cibleApprentissage"
 import { sirene_ul, Output as SireneULOutput } from "./sirene_ul"
 import { dateAddMonth } from "./dateAddMonth"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
+import { poidsFrng } from "./poidsFrng"
 
 declare const naf: NAF
 declare const actual_batch: BatchKey
@@ -41,7 +42,7 @@ export function map(this: {
     ...{ flatten, outputs, apart, compte, effectifs, interim, add }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     ...{ repeatable, delais, defaillances, cotisationsdettes, ccsf }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     ...{ sirene, populateNafAndApe, cotisation, cibleApprentissage }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
-    ...{ sirene_ul, dateAddMonth, generatePeriodSerie }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
+    ...{ sirene_ul, dateAddMonth, generatePeriodSerie, poidsFrng }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
   } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
   const v = f.flatten(this.value, actual_batch)
 
@@ -155,6 +156,7 @@ export function map(this: {
         periode: Date
       } & Partial<SireneULOutput> &
         Partial<EntréeBdf> &
+        Partial<EntréeDiane> &
         Record<string, unknown> // for *_past_* props of bdf. // TODO: try to be more specific
 
       const output_array = serie_periode.map(function (e) {
@@ -276,10 +278,14 @@ export function map(this: {
             ...rest
           } = v.diane[hash]
 
+          if (periode.getTime() in output_indexed) {
+            Object.assign(output_indexed[periode.getTime()], v.diane[hash])
+          }
+
           for (const k of Object.keys(rest) as (keyof typeof rest)[]) {
-            if (v.diane[hash][k] === null) continue
-            if (periode.getTime() in output_indexed) {
-              output_indexed[periode.getTime()][k] = v.diane[hash][k]
+            if (v.diane[hash][k] === null) {
+              delete output_indexed[periode.getTime()][k]
+              continue
             }
 
             // Passé
@@ -291,8 +297,8 @@ export function map(this: {
 
               if (
                 periode_offset.getTime() in output_indexed &&
-                k !== "arrete_bilan_diane" &&
-                k !== "exercice_diane"
+                k !== "arrete_bilan_diane"
+                // && k !== "exercice_diane" // je n'ai pas trouvé de définition de cette prop
               ) {
                 output_indexed[periode_offset.getTime()][variable_name] =
                   v.diane[hash][k]
@@ -301,32 +307,21 @@ export function map(this: {
           }
         }
 
-        series.forEach((periode) => {
+        for (const periode of series) {
           if (periode.getTime() in output_indexed) {
             // Recalcul BdF si ratios bdf sont absents
-            if (
-              !("poids_frng" in output_indexed[periode.getTime()]) &&
-              f.poidsFrng(v.diane[hash]) !== null
-            ) {
-              output_indexed[periode.getTime()].poids_frng = f.poidsFrng(
-                v.diane[hash]
-              )
+            const outputInPeriod = output_indexed[periode.getTime()]
+            if (!("poids_frng" in outputInPeriod)) {
+              const poids = f.poidsFrng(v.diane[hash])
+              if (poids !== null) outputInPeriod.poids_frng = poids
             }
-            if (
-              !("dette_fiscale" in output_indexed[periode.getTime()]) &&
-              f.detteFiscale(v.diane[hash]) !== null
-            ) {
-              output_indexed[periode.getTime()].dette_fiscale = f.detteFiscale(
-                v.diane[hash]
-              )
+            if (!("dette_fiscale" in outputInPeriod)) {
+              const dette = f.detteFiscale(v.diane[hash])
+              if (dette !== null) outputInPeriod.dette_fiscale = dette
             }
-            if (
-              !("frais_financier" in output_indexed[periode.getTime()]) &&
-              f.fraisFinancier(v.diane[hash]) !== null
-            ) {
-              output_indexed[
-                periode.getTime()
-              ].frais_financier = f.fraisFinancier(v.diane[hash])
+            if (!("frais_financier" in outputInPeriod)) {
+              const frais = f.fraisFinancier(v.diane[hash])
+              if (frais !== null) outputInPeriod.frais_financier = frais
             }
 
             const bdf_vars = [
@@ -338,20 +333,20 @@ export function map(this: {
             ]
             const past_year_offset = [1, 2]
             bdf_vars.forEach((k) => {
-              if (k in output_indexed[periode.getTime()]) {
+              if (k in outputInPeriod) {
                 past_year_offset.forEach((offset) => {
                   const periode_offset = f.dateAddMonth(periode, 12 * offset)
                   const variable_name = k + "_past_" + offset
 
                   if (periode_offset.getTime() in output_indexed) {
                     output_indexed[periode_offset.getTime()][variable_name] =
-                      output_indexed[periode.getTime()][k]
+                      outputInPeriod[k]
                   }
                 })
               }
             })
           }
-        })
+        }
       }
 
       output_array.forEach((periode, index) => {
