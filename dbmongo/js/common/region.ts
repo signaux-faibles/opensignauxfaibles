@@ -15,90 +15,114 @@ type Region =
 
 export function region(departement: Departement): Region | "" {
   "use strict"
-  let reg: Region | "" = ""
-  switch (departement) {
-    case "01" ||
-      "03" ||
-      "07" ||
-      "15" ||
-      "26" ||
-      "38" ||
-      "42" ||
-      "43" ||
-      "63" ||
-      "69" ||
-      "73" ||
-      "74":
-      reg = "Auvergne-Rhône-Alpes"
-      break
-    case "02" || "59" || "60" || "62" || "80":
-      reg = "Hauts-de-France"
-      break
-    case "04" || "05" || "06" || "13" || "83" || "84":
-      reg = "Provence-Alpes-Côte d'Azur"
-      break
-    case "08" ||
-      "10" ||
-      "51" ||
-      "52" ||
-      "54" ||
-      "55" ||
-      "57" ||
-      "67" ||
-      "68" ||
-      "88":
-      reg = "Grand Est"
-      break
-    case "09" ||
-      "11" ||
-      "12" ||
-      "30" ||
-      "31" ||
-      "32" ||
-      "34" ||
-      "46" ||
-      "48" ||
-      "65" ||
-      "66" ||
-      "81" ||
-      "82":
-      reg = "Occitanie"
-      break
-    case "14" || "27" || "50" || "61" || "76":
-      reg = "Normandie"
-      break
-    case "18" || "28" || "36" || "37" || "41" || "45":
-      reg = "Centre-Val de Loire"
-      break
-    case "16" ||
-      "17" ||
-      "19" ||
-      "23" ||
-      "24" ||
-      "33" ||
-      "40" ||
-      "47" ||
-      "64" ||
-      "79" ||
-      "86" ||
-      "87":
-      reg = "Nouvelle-Aquitaine"
-      break
-    case "20":
-      reg = "Corse"
-      break
-    case "21" || "25" || "39" || "58" || "70" || "71" || "89" || "90":
-      reg = "Bourgogne-Franche-Comté"
-      break
-    case "22" || "29" || "35" || "56":
-      reg = "Bretagne"
-      break
-    case "44" || "49" || "53" || "72" || "85":
-      reg = "Pays de la Loire"
-      break
-    case "75" || "77" || "78" || "91" || "92" || "93" || "94" || "95":
-      reg = "Île-de-France"
-      break
+  const corr: Record<string, Region> = {
+    "01": "Auvergne-Rhône-Alpes",
+    "03": "Auvergne-Rhône-Alpes",
+    "07": "Auvergne-Rhône-Alpes",
+    "15": "Auvergne-Rhône-Alpes",
+    "26": "Auvergne-Rhône-Alpes",
+    "38": "Auvergne-Rhône-Alpes",
+    "42": "Auvergne-Rhône-Alpes",
+    "43": "Auvergne-Rhône-Alpes",
+    "63": "Auvergne-Rhône-Alpes",
+    "69": "Auvergne-Rhône-Alpes",
+    "73": "Auvergne-Rhône-Alpes",
+    "74": "Auvergne-Rhône-Alpes",
+
+    "02": "Hauts-de-France",
+    "59": "Hauts-de-France",
+    "60": "Hauts-de-France",
+    "62": "Hauts-de-France",
+    "80": "Hauts-de-France",
+
+    "04": "Provence-Alpes-Côte d'Azur",
+    "05": "Provence-Alpes-Côte d'Azur",
+    "06": "Provence-Alpes-Côte d'Azur",
+    "13": "Provence-Alpes-Côte d'Azur",
+    "83": "Provence-Alpes-Côte d'Azur",
+    "84": "Provence-Alpes-Côte d'Azur",
+
+    "08": "Grand Est",
+    "10": "Grand Est",
+    "51": "Grand Est",
+    "52": "Grand Est",
+    "54": "Grand Est",
+    "55": "Grand Est",
+    "57": "Grand Est",
+    "67": "Grand Est",
+    "68": "Grand Est",
+    "88": "Grand Est",
+
+    "09": "Occitanie",
+    "11": "Occitanie",
+    "12": "Occitanie",
+    "30": "Occitanie",
+    "31": "Occitanie",
+    "32": "Occitanie",
+    "34": "Occitanie",
+    "46": "Occitanie",
+    "48": "Occitanie",
+    "65": "Occitanie",
+    "66": "Occitanie",
+    "81": "Occitanie",
+    "82": "Occitanie",
+
+    "14": "Normandie",
+    "27": "Normandie",
+    "50": "Normandie",
+    "61": "Normandie",
+    "76": "Normandie",
+
+    "18": "Centre-Val de Loire",
+    "28": "Centre-Val de Loire",
+    "36": "Centre-Val de Loire",
+    "37": "Centre-Val de Loire",
+    "41": "Centre-Val de Loire",
+    "45": "Centre-Val de Loire",
+
+    "16": "Nouvelle-Aquitaine",
+    "17": "Nouvelle-Aquitaine",
+    "19": "Nouvelle-Aquitaine",
+    "23": "Nouvelle-Aquitaine",
+    "24": "Nouvelle-Aquitaine",
+    "33": "Nouvelle-Aquitaine",
+    "40": "Nouvelle-Aquitaine",
+    "47": "Nouvelle-Aquitaine",
+    "64": "Nouvelle-Aquitaine",
+    "79": "Nouvelle-Aquitaine",
+    "86": "Nouvelle-Aquitaine",
+    "87": "Nouvelle-Aquitaine",
+
+    "20": "Corse",
+
+    "21": "Bourgogne-Franche-Comté",
+    "25": "Bourgogne-Franche-Comté",
+    "39": "Bourgogne-Franche-Comté",
+    "58": "Bourgogne-Franche-Comté",
+    "70": "Bourgogne-Franche-Comté",
+    "71": "Bourgogne-Franche-Comté",
+    "89": "Bourgogne-Franche-Comté",
+    "90": "Bourgogne-Franche-Comté",
+
+    "22": "Bretagne",
+    "29": "Bretagne",
+    "35": "Bretagne",
+    "56": "Bretagne",
+
+    "44": "Pays de la Loire",
+    "49": "Pays de la Loire",
+    "53": "Pays de la Loire",
+    "72": "Pays de la Loire",
+    "85": "Pays de la Loire",
+
+    "75": "Île-de-France",
+    "77": "Île-de-France",
+    "78": "Île-de-France",
+    "91": "Île-de-France",
+    "92": "Île-de-France",
+    "93": "Île-de-France",
+    "94": "Île-de-France",
+    "95": "Île-de-France",
   }
-  return reg
+  return corr[departement] || ""
 }
