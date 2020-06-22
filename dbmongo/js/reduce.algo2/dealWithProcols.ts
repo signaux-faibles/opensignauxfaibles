@@ -33,7 +33,7 @@ export function dealWithProcols(
       else if (altar_or_procol === "procol")
         etat = f.procolToHuman(the_event.action_procol, the_event.stade_procol)
 
-      if (etat != null)
+      if (etat !== null)
         events.push({
           etat: etat,
           date_proc_col: new Date(the_event.date_effet),

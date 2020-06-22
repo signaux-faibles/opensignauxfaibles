@@ -26,7 +26,7 @@ export function sirene(v: V, output_array: (Input & Partial<Output>)[]): void {
   output_array.forEach((val) => {
     // geolocalisation
 
-    if (sireneHashes.length != 0) {
+    if (sireneHashes.length !== 0) {
       const sirene = v.sirene[sireneHashes[sireneHashes.length - 1]]
       val.siren = val.siret.substring(0, 9)
       val.latitude = sirene.lattitude || null

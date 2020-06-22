@@ -30,7 +30,7 @@ export function ccsf(v: V, output_array: (Input & Partial<Output>)[]): void {
       }
     )
 
-    if (optccsf.date_traitement.getTime() != 0) {
+    if (optccsf.date_traitement.getTime() !== 0) {
       val.date_ccsf = optccsf.date_traitement
     }
   })

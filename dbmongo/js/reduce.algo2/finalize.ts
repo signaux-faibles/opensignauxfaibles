@@ -49,7 +49,7 @@ export function finalize(k: Clé, v: V): Output {
   const entreprise: Partial<EntrepriseEnSortie> = v.entreprise || {}
 
   Object.keys(v).forEach((siret) => {
-    if (siret != "entreprise") {
+    if (siret !== "entreprise") {
       etablissements_connus[siret] = true
       const { effectif } = v[siret]
       if (effectif) {
@@ -71,7 +71,7 @@ export function finalize(k: Clé, v: V): Output {
   })
 
   Object.keys(v).forEach((siret) => {
-    if (siret != "entreprise") {
+    if (siret !== "entreprise") {
       Object.assign(v[siret], entreprise)
     }
   })
@@ -80,7 +80,7 @@ export function finalize(k: Clé, v: V): Output {
   const output: EntrepriseEnEntrée[] = []
   const nb_connus = Object.keys(etablissements_connus).length
   Object.keys(v).forEach((siret) => {
-    if (siret != "entreprise" && v[siret]) {
+    if (siret !== "entreprise" && v[siret]) {
       v[siret].nbr_etablissements_connus = nb_connus
       output.push(v[siret])
     }

@@ -385,15 +385,15 @@ export function map(this: {
 
       output_array.forEach((periode, index) => {
         if (
-          (periode.arrete_bilan_bdf || new Date(0)).getTime() == 0 &&
-          (periode.arrete_bilan_diane || new Date(0)).getTime() == 0
+          (periode.arrete_bilan_bdf || new Date(0)).getTime() === 0 &&
+          (periode.arrete_bilan_diane || new Date(0)).getTime() === 0
         ) {
           delete output_array[index]
         }
-        if ((periode.arrete_bilan_bdf || new Date(0)).getTime() == 0) {
+        if ((periode.arrete_bilan_bdf || new Date(0)).getTime() === 0) {
           delete periode.arrete_bilan_bdf
         }
-        if ((periode.arrete_bilan_diane || new Date(0)).getTime() == 0) {
+        if ((periode.arrete_bilan_diane || new Date(0)).getTime() === 0) {
           delete periode.arrete_bilan_diane
         }
 

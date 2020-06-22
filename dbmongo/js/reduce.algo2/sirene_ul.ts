@@ -20,7 +20,7 @@ export function sirene_ul(
   "use strict"
   const sireneHashes = Object.keys(v.sirene_ul || {})
   output_array.forEach((val) => {
-    if (sireneHashes.length != 0) {
+    if (sireneHashes.length !== 0) {
       const sirene = v.sirene_ul[sireneHashes[sireneHashes.length - 1]]
       val.raison_sociale = f.raison_sociale(
         sirene.raison_sociale,

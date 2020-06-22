@@ -1088,7 +1088,7 @@ db.getCollection("Features").createIndex({
         }, {
             date_traitement: new Date(0),
         });
-        if (optccsf.date_traitement.getTime() != 0) {
+        if (optccsf.date_traitement.getTime() !== 0) {
             val.date_ccsf = optccsf.date_traitement;
         }
     });
@@ -1154,8 +1154,10 @@ db.getCollection("Features").createIndex({
                 const outputCourante = output_indexed[periode_courante.getTime()];
                 if (outputCourante.cotisation !== undefined)
                     outputInPeriod.cotisation_array = (outputInPeriod.cotisation_array || []).concat(outputCourante.cotisation);
-                outputInPeriod.montant_pp_array = (outputInPeriod.montant_pp_array || []).concat(outputCourante.montant_part_patronale);
-                outputInPeriod.montant_po_array = (outputInPeriod.montant_po_array || []).concat(outputCourante.montant_part_ouvriere);
+                if (outputCourante.montant_part_patronale !== undefined)
+                    outputInPeriod.montant_pp_array = (outputInPeriod.montant_pp_array || []).concat(outputCourante.montant_part_patronale);
+                if (outputCourante.montant_part_ouvriere !== undefined)
+                    outputInPeriod.montant_po_array = (outputInPeriod.montant_po_array || []).concat(outputCourante.montant_part_ouvriere);
             }
         });
     });
@@ -1164,7 +1166,9 @@ db.getCollection("Features").createIndex({
         val.cotisation_moy12m =
             val.cotisation_array.reduce((p, c) => p + c, 0) /
                 (val.cotisation_array.length || 1);
-        if (val.cotisation_moy12m > 0) {
+        if (val.cotisation_moy12m > 0 &&
+            val.montant_part_ouvriere !== undefined &&
+            val.montant_part_patronale !== undefined) {
             val.ratio_dette =
                 (val.montant_part_ouvriere + val.montant_part_patronale) /
                     val.cotisation_moy12m;
@@ -1363,7 +1367,7 @@ db.getCollection("Features").createIndex({
             etat = f.altaresToHuman(the_event.code_evenement);
         else if (altar_or_procol === "procol")
             etat = f.procolToHuman(the_event.action_procol, the_event.stade_procol);
-        if (etat != null)
+        if (etat !== null)
             events.push({
                 etat: etat,
                 date_proc_col: new Date(the_event.date_effet),
@@ -1441,7 +1445,7 @@ db.getCollection("Features").createIndex({
         diane["dette_fiscale_et_sociale"] !== null &&
         "valeur_ajoutee" in diane &&
         diane["valeur_ajoutee"] !== null &&
-        diane["valeur_ajoutee"] != 0) {
+        diane["valeur_ajoutee"] !== 0) {
         return (diane["dette_fiscale_et_sociale"] / diane["valeur_ajoutee"]) * 100;
     }
     else {
@@ -1454,7 +1458,7 @@ db.getCollection("Features").createIndex({
     // Construction d'une map[time] = effectif à cette periode
     const map_effectif = Object.keys(effobj).reduce((m, hash) => {
         const effectif = effobj[hash];
-        if (effectif == null) {
+        if (effectif === null) {
             return m;
         }
         const effectifTime = effectif.periode.getTime();
@@ -1495,8 +1499,8 @@ db.getCollection("Features").createIndex({
     });
     // On supprime les effectifs 'null'
     Object.keys(output_effectif).forEach((k) => {
-        if (output_effectif[k].effectif == null &&
-            output_effectif[k].effectif_ent == null) {
+        if (output_effectif[k].effectif === null &&
+            output_effectif[k].effectif_ent === null) {
             delete output_effectif[k];
         }
     });
@@ -1521,7 +1525,7 @@ db.getCollection("Features").createIndex({
     const etablissements_connus = {};
     const entreprise = v.entreprise || {};
     Object.keys(v).forEach((siret) => {
-        if (siret != "entreprise") {
+        if (siret !== "entreprise") {
             etablissements_connus[siret] = true;
             const { effectif } = v[siret];
             if (effectif) {
@@ -1542,7 +1546,7 @@ db.getCollection("Features").createIndex({
         }
     });
     Object.keys(v).forEach((siret) => {
-        if (siret != "entreprise") {
+        if (siret !== "entreprise") {
             Object.assign(v[siret], entreprise);
         }
     });
@@ -1550,7 +1554,7 @@ db.getCollection("Features").createIndex({
     const output = [];
     const nb_connus = Object.keys(etablissements_connus).length;
     Object.keys(v).forEach((siret) => {
-        if (siret != "entreprise" && v[siret]) {
+        if (siret !== "entreprise" && v[siret]) {
             v[siret].nbr_etablissements_connus = nb_connus;
             output.push(v[siret]);
         }
@@ -1580,7 +1584,7 @@ db.getCollection("Features").createIndex({
         diane["concours_bancaire_courant"] !== null &&
         "ca" in diane &&
         diane["ca"] !== null &&
-        diane["ca"] != 0) {
+        diane["ca"] !== 0) {
         return (diane["concours_bancaire_courant"] / diane["ca"]) * 100;
     }
     else {
@@ -1804,12 +1808,9 @@ function map() {
             if (v.altares) {
                 f.defaillances(v, output_indexed);
             }
-            //let augmented_array, augmented_indexed
             if (v.cotisation && v.debit) {
                 const output_cotisationsdettes = f.cotisationsdettes(v, periodes);
-                /*;[augmented_array, augmented_indexed] =*/ f.add(output_cotisationsdettes, output_indexed);
-                // output_array = augmented_array
-                // output_indexed = augmented_indexed
+                f.add(output_cotisationsdettes, output_indexed);
             }
             if (v.ccsf) {
                 f.ccsf(v, output_array);
@@ -1818,9 +1819,7 @@ function map() {
                 f.sirene(v, output_array);
             }
             f.populateNafAndApe(output_indexed, naf);
-            // TODO: comment prouver que montant_part_patronale est bien valorisé (à priori, suite à appel à f.cotisationsdettes() et f.add())
-            f.cotisation(output_indexed, // output_indexed as typeof output_indexed & ReturnType<typeof f.cotisationsdettes>,
-            output_array);
+            f.cotisation(output_indexed, output_array);
             const output_cible = f.cibleApprentissage(output_indexed, 18);
             f.add(output_cible, output_indexed);
             output_array.forEach((val) => {
@@ -1971,14 +1970,14 @@ function map() {
                 }
             }
             output_array.forEach((periode, index) => {
-                if ((periode.arrete_bilan_bdf || new Date(0)).getTime() == 0 &&
-                    (periode.arrete_bilan_diane || new Date(0)).getTime() == 0) {
+                if ((periode.arrete_bilan_bdf || new Date(0)).getTime() === 0 &&
+                    (periode.arrete_bilan_diane || new Date(0)).getTime() === 0) {
                     delete output_array[index];
                 }
-                if ((periode.arrete_bilan_bdf || new Date(0)).getTime() == 0) {
+                if ((periode.arrete_bilan_bdf || new Date(0)).getTime() === 0) {
                     delete periode.arrete_bilan_bdf;
                 }
-                if ((periode.arrete_bilan_diane || new Date(0)).getTime() == 0) {
+                if ((periode.arrete_bilan_diane || new Date(0)).getTime() === 0) {
                     delete periode.arrete_bilan_diane;
                 }
                 emit({
@@ -2050,17 +2049,17 @@ function outputs(v, serie_periode) {
 "procolToHuman": `function procolToHuman(action, stade) {
     "use strict";
     let res = null;
-    if (action == "liquidation" && stade != "abandon_procedure")
+    if (action === "liquidation" && stade !== "abandon_procedure")
         res = "liquidation";
-    else if (stade == "abandon_procedure" || stade == "fin_procedure")
+    else if (stade === "abandon_procedure" || stade === "fin_procedure")
         res = "in_bonis";
-    else if (action == "redressement" && stade == "plan_continuation")
+    else if (action === "redressement" && stade === "plan_continuation")
         res = "continuation";
-    else if (action == "sauvegarde" && stade == "plan_continuation")
+    else if (action === "sauvegarde" && stade === "plan_continuation")
         res = "sauvegarde";
-    else if (action == "sauvegarde")
+    else if (action === "sauvegarde")
         res = "plan_sauvegarde";
-    else if (action == "redressement")
+    else if (action === "redressement")
         res = "plan_redressement";
     return res;
 }`,
@@ -2086,7 +2085,7 @@ function outputs(v, serie_periode) {
     const sireneHashes = Object.keys(v.sirene || {});
     output_array.forEach((val) => {
         // geolocalisation
-        if (sireneHashes.length != 0) {
+        if (sireneHashes.length !== 0) {
             const sirene = v.sirene[sireneHashes[sireneHashes.length - 1]];
             val.siren = val.siret.substring(0, 9);
             val.latitude = sirene.lattitude || null;
@@ -2120,7 +2119,7 @@ function outputs(v, serie_periode) {
     "use strict";
     const sireneHashes = Object.keys(v.sirene_ul || {});
     output_array.forEach((val) => {
-        if (sireneHashes.length != 0) {
+        if (sireneHashes.length !== 0) {
             const sirene = v.sirene_ul[sireneHashes[sireneHashes.length - 1]];
             val.raison_sociale = f.raison_sociale(sirene.raison_sociale, sirene.nom_unite_legale, sirene.nom_usage_unite_legale, sirene.prenom1_unite_legale, sirene.prenom2_unite_legale, sirene.prenom3_unite_legale, sirene.prenom4_unite_legale);
             val.statut_juridique = sirene.statut_juridique || null;
@@ -2142,7 +2141,7 @@ function outputs(v, serie_periode) {
         diane["excedent_brut_d_exploitation"] !== null &&
         "valeur_ajoutee" in diane &&
         diane["valeur_ajoutee"] !== null &&
-        diane["excedent_brut_d_exploitation"] != 0) {
+        diane["excedent_brut_d_exploitation"] !== 0) {
         return ((diane["excedent_brut_d_exploitation"] / diane["valeur_ajoutee"]) * 100);
     }
     else {

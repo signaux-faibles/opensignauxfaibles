@@ -22,7 +22,7 @@ export function effectifs(
   // Construction d'une map[time] = effectif à cette periode
   const map_effectif = Object.keys(effobj).reduce((m, hash) => {
     const effectif = effobj[hash]
-    if (effectif == null) {
+    if (effectif === null) {
       return m
     }
     const effectifTime = effectif.periode.getTime()
@@ -75,8 +75,8 @@ export function effectifs(
   // On supprime les effectifs 'null'
   Object.keys(output_effectif).forEach((k) => {
     if (
-      output_effectif[k].effectif == null &&
-      output_effectif[k].effectif_ent == null
+      output_effectif[k].effectif === null &&
+      output_effectif[k].effectif_ent === null
     ) {
       delete output_effectif[k]
     }
