@@ -26,17 +26,6 @@ declare const naf: NAF
 declare const actual_batch: BatchKey
 declare const includes: Record<"all" | "apart", boolean>
 
-function omit<Source, Exclusions extends Array<keyof Source>>(
-  object: Source,
-  ...propNames: Exclusions
-): Omit<Source, Exclusions[number]> {
-  const result: Omit<Source, Exclusions[number]> = Object.assign({}, object)
-  for (const prop of propNames) {
-    delete (result as any)[prop]
-  }
-  return result
-}
-
 /**
  * `map()` est appelée pour chaque entreprise/établissement.
  *
@@ -59,6 +48,19 @@ export function map(this: {
     ...{ sirene_ul, dateAddMonth, generatePeriodSerie, poidsFrng }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     ...{ detteFiscale, fraisFinancier }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
   } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
+
+  // Fonction pour omettre des props, tout en retournant le bon type
+  function omit<Source, Exclusions extends Array<keyof Source>>(
+    object: Source,
+    ...propNames: Exclusions
+  ): Omit<Source, Exclusions[number]> {
+    const result: Omit<Source, Exclusions[number]> = Object.assign({}, object)
+    for (const prop of propNames) {
+      delete (result as any)[prop]
+    }
+    return result
+  }
+
   const v = f.flatten(this.value, actual_batch)
 
   if (v.scope === "etablissement") {

@@ -1763,14 +1763,7 @@ function flatten(v, actual_batch) {
     }, {});
     return output;
 }`,
-"map": `function omit(object, ...propNames) {
-    const result = Object.assign({}, object);
-    for (const prop of propNames) {
-        delete result[prop];
-    }
-    return result;
-}
-/**
+"map": `/**
  * ` + "`" + `map()` + "`" + ` est appelée pour chaque entreprise/établissement.
  *
  * Une entreprise/établissement est rattachée à des données de plusieurs types,
@@ -1783,6 +1776,14 @@ function flatten(v, actual_batch) {
 function map() {
     "use strict";
 
+    // Fonction pour omettre des props, tout en retournant le bon type
+    function omit(object, ...propNames) {
+        const result = Object.assign({}, object);
+        for (const prop of propNames) {
+            delete result[prop];
+        }
+        return result;
+    }
     const v = f.flatten(this.value, actual_batch);
     if (v.scope === "etablissement") {
         const [output_array, // [ OutputValue ], in chronological order
