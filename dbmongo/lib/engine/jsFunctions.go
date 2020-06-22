@@ -1925,11 +1925,11 @@ function map() {
                 for (const periode of series) {
                     const bdfHashData = v.bdf[hash];
                     const outputInPeriod = output_indexed[periode.getTime()];
-                    const /*raison_sociale, secteur, siren,*/ rest = __rest(bdfHashData, []);
+                    const _a = bdfHashData, { raison_sociale, secteur, siren } = _a, rest = __rest(_a, ["raison_sociale", "secteur", "siren"]);
                     if (periode.getTime() in output_indexed) {
-                        Object.assign(outputInPeriod, rest
-                        // { exercice_bdf: outputInPeriod.annee_bdf - 1 } // because it seems that annee_bdf is never set
-                        );
+                        Object.assign(outputInPeriod, rest, outputInPeriod.annee_bdf
+                            ? { exercice_bdf: outputInPeriod.annee_bdf - 1 }
+                            : null);
                     }
                     for (const k of Object.keys(rest)) {
                         const past_year_offset = [1, 2];
@@ -1955,15 +1955,9 @@ function map() {
                 const series = f.generatePeriodSerie(periode_dispo, f.dateAddMonth(periode_dispo, 14) // periode de validité d'un bilan auprès de la Banque de France: 21 mois (14+7)
                 );
                 for (const periode of series) {
-                    const 
-                    // marquee,
-                    // nom_entreprise,
-                    // numero_siren,
-                    // statut_juridique,
-                    // procedure_collective,
-                    rest = __rest(v.diane[hash], []);
+                    const _b = v.diane[hash], { marquee, nom_entreprise, numero_siren, statut_juridique, procedure_collective } = _b, rest = __rest(_b, ["marquee", "nom_entreprise", "numero_siren", "statut_juridique", "procedure_collective"]);
                     if (periode.getTime() in output_indexed) {
-                        Object.assign(output_indexed[periode.getTime()], v.diane[hash]);
+                        Object.assign(output_indexed[periode.getTime()], rest);
                     }
                     for (const k of Object.keys(rest)) {
                         if (v.diane[hash][k] === null) {

@@ -237,12 +237,23 @@ export function map(this: {
           const bdfHashData = v.bdf[hash]
           const outputInPeriod = output_indexed[periode.getTime()]
 
-          const { /*raison_sociale, secteur, siren,*/ ...rest } = bdfHashData
+          const {
+            raison_sociale,
+            secteur,
+            siren,
+            ...rest
+          } = bdfHashData as EntréeBdf & {
+            raison_sociale: unknown
+            secteur: unknown
+            siren: unknown
+          }
           if (periode.getTime() in output_indexed) {
             Object.assign(
               outputInPeriod,
-              rest
-              // { exercice_bdf: outputInPeriod.annee_bdf - 1 } // because it seems that annee_bdf is never set
+              rest,
+              outputInPeriod.annee_bdf
+                ? { exercice_bdf: outputInPeriod.annee_bdf - 1 }
+                : {}
             )
           }
 
@@ -286,16 +297,22 @@ export function map(this: {
 
         for (const periode of series) {
           const {
-            // marquee,
-            // nom_entreprise,
-            // numero_siren,
-            // statut_juridique,
-            // procedure_collective,
+            marquee,
+            nom_entreprise,
+            numero_siren,
+            statut_juridique,
+            procedure_collective,
             ...rest
-          } = v.diane[hash]
+          } = v.diane[hash] as EntréeDiane & {
+            marquee: unknown
+            nom_entreprise: unknown
+            numero_siren: unknown
+            statut_juridique: unknown
+            procedure_collective: unknown
+          }
 
           if (periode.getTime() in output_indexed) {
-            Object.assign(output_indexed[periode.getTime()], v.diane[hash])
+            Object.assign(output_indexed[periode.getTime()], rest)
           }
 
           for (const k of Object.keys(rest) as (keyof typeof rest)[]) {
