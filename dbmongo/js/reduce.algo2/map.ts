@@ -167,7 +167,6 @@ export function map(this: {
     if (includes["all"]) {
       type Input = {
         periode: Date
-        annee_bdf?: number
       }
       type Output = Input &
         Partial<SireneULOutput> &
@@ -175,7 +174,7 @@ export function map(this: {
         Partial<EntréeDiane> &
         Record<string, unknown> // for *_past_* props of bdf. // TODO: try to be more specific
 
-      const output_array = serie_periode.map(function (e) {
+      const output_array: Output[] = serie_periode.map(function (e) {
         return {
           siren: v.key,
           periode: e,
@@ -184,7 +183,7 @@ export function map(this: {
           exercice_diane: 0,
           arrete_bilan_diane: new Date(0),
         }
-      }) as Output[]
+      })
 
       let output_indexed = output_array.reduce(function (periode, val) {
         periode[val.periode.getTime()] = val
