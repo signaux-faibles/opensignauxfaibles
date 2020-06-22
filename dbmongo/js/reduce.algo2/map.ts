@@ -165,10 +165,12 @@ export function map(this: {
 
   if (v.scope === "entreprise") {
     if (includes["all"]) {
-      // type Input = DonnéesBdf
-      type Output = {
+      type Input = {
         periode: Date
-      } & Partial<SireneULOutput> &
+        annee_bdf?: number
+      }
+      type Output = Input &
+        Partial<SireneULOutput> &
         Partial<EntréeBdf> &
         Partial<EntréeDiane> &
         Record<string, unknown> // for *_past_* props of bdf. // TODO: try to be more specific
