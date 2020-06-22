@@ -2,9 +2,12 @@ import * as f from "../common/region"
 
 type V = DonnéesSirene
 
-export type Output = {
+type Input = {
   periode: Date
   siret: SiretOrSiren
+}
+
+export type Output = {
   siren: SiretOrSiren
   latitude: unknown
   longitude: unknown
@@ -16,7 +19,7 @@ export type Output = {
   age: number | null // en années
 }
 
-export function sirene(v: V, output_array: Output[]): void {
+export function sirene(v: V, output_array: (Input & Partial<Output>)[]): void {
   "use strict"
   const sireneHashes = Object.keys(v.sirene || {})
 

@@ -1,3 +1,4 @@
+import "../globals"
 import { flatten, V as FlattenedEntreprise } from "./flatten"
 import { outputs } from "./outputs"
 import { apart } from "./apart"

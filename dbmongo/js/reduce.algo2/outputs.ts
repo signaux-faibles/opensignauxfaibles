@@ -14,12 +14,11 @@ type DonnéesAgrégées = {
   interessante_urssaf: true
   outcome: false
 } & DebitComputedValues &
-  DefaillancesOutput &
-  CcsfOutput &
-  SireneOutput &
-  NafOutput &
-  CotisationOutput
-// Partial<DealWithProcolsOutput>
+  Partial<DefaillancesOutput> &
+  Partial<CcsfOutput> &
+  Partial<SireneOutput> &
+  Partial<NafOutput> &
+  Partial<CotisationOutput>
 
 type IndexedOutput = Record<Periode, DonnéesAgrégées>
 

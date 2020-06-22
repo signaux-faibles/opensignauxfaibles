@@ -7,7 +7,7 @@ export type Output = ProcolOutput
 
 export function defaillances(
   v: V,
-  output_indexed: Record<Periode, Output>
+  output_indexed: Record<Periode, Partial<Output>>
 ): void {
   "use strict"
   f.dealWithProcols(v.altares, "altares", output_indexed)

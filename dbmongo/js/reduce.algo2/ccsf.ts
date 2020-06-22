@@ -1,11 +1,14 @@
 type V = DonnéesCcsf
 
-export type Output = {
+type Input = {
   periode: Date
+}
+
+export type Output = {
   date_ccsf: unknown
 }
 
-export function ccsf(v: V, output_array: Output[]): void {
+export function ccsf(v: V, output_array: (Input & Partial<Output>)[]): void {
   "use strict"
 
   const ccsfHashes = Object.keys(v.ccsf || {})
