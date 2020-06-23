@@ -328,19 +328,18 @@ function reduce(key, values) {
     modified_batches.forEach((batch) => {
         var _a;
         reduced_value.batch[batch] = reduced_value.batch[batch] || {};
-        // Les types où il y  a potentiellement des suppressions
+        // Les types où il y a potentiellement des suppressions
         const stock_types = completeTypes[batch].filter((type) => (memory[type] || new Set()).size > 0);
         // Les types qui ont bougé dans le batch en cours
         const new_types = Object.keys(reduced_value.batch[batch]);
-        // On dedoublonne au besoin
-        const all_interesting_types = [...new Set([...stock_types, ...new_types])];
         // 1. On recupère les cles ajoutes et les cles supprimes
         // -----------------------------------------------------
         const hashToDelete = {};
         const hashToAdd = {};
-        all_interesting_types.forEach((type) => {
+        new_types.forEach((type) => {
             var _a;
             // Le type compact gère les clés supprimées
+            // Ce type compact existe si le batch en cours a déjà été compacté.
             if (type === "compact") {
                 const compactDelete = (_a = reduced_value.batch[batch].compact) === null || _a === void 0 ? void 0 : _a.delete;
                 if (compactDelete) {

@@ -68,14 +68,12 @@ export function reduce(
   modified_batches.forEach((batch: string) => {
     reduced_value.batch[batch] = reduced_value.batch[batch] || {}
 
-    // Les types où il y  a potentiellement des suppressions
+    // Les types où il y a potentiellement des suppressions
     const stock_types = completeTypes[batch].filter(
       (type) => (memory[type] || new Set()).size > 0
     )
     // Les types qui ont bougé dans le batch en cours
-    const new_types = Object.keys(reduced_value.batch[batch])
-    // On dedoublonne au besoin
-    const all_interesting_types = [...new Set([...stock_types, ...new_types])]
+    const new_types = Object.keys(reduced_value.batch[batch]) as (keyof BatchValue)[]
 
     // 1. On recupère les cles ajoutes et les cles supprimes
     // -----------------------------------------------------
@@ -84,8 +82,9 @@ export function reduce(
     type DataType = string
     const hashToAdd: Record<DataType, Set<DataHash>> = {}
 
-    all_interesting_types.forEach((type) => {
+    new_types.forEach((type) => {
       // Le type compact gère les clés supprimées
+      // Ce type compact existe si le batch en cours a déjà été compacté.
       if (type === "compact") {
         const compactDelete = reduced_value.batch[batch].compact?.delete
         if (compactDelete) {
