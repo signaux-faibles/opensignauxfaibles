@@ -334,7 +334,9 @@ function reduce(key, values) {
         // -----------------------------------------------------
         const hashToDelete = {};
         const hashToAdd = {};
-        // Les types qui ont bougé dans le batch en cours
+        // Itération sur les types qui ont potentiellement subi des modifications
+        // pour compléter hashToDelete et hashToAdd.
+        // Les suppressions de types complets / stock sont gérés dans le bloc suivant.
         const currentBatch = reduced_value.batch[batch];
         for (const type in currentBatch) {
             // Le type compact gère les clés supprimées
