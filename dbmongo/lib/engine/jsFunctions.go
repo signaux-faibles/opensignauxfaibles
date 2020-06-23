@@ -419,7 +419,7 @@ function reduce(key, values) {
                 reducedBatch.compact.delete[type] = [...hashToDelete[type]];
             }
         });
-        const typesToAdd = Object.keys(hashToAdd).filter((type) => type !== "compact");
+        const typesToAdd = Object.keys(hashToAdd);
         typesToAdd.forEach((type) => {
             if (!new_types.includes(type)) {
                 delete reduced_value.batch[batch][type];

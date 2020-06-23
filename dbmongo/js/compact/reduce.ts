@@ -82,7 +82,7 @@ export function reduce(
 
     const hashToDelete: { [dataType: string]: Set<DataHash> } = {}
     type DataType = string
-    const hashToAdd: Record< DataType, Set<DataHash> > = {}
+    const hashToAdd: Record<DataType, Set<DataHash>> = {}
 
     all_interesting_types.forEach((type) => {
       // Le type compact gère les clés supprimées
@@ -98,7 +98,9 @@ export function reduce(
         }
       } else {
         Object.keys(
-          reduced_value.batch[batch][type as keyof BatchValue] || {}
+          reduced_value.batch[batch][
+            type as Exclude<keyof BatchValue, "compact">
+          ] || {}
         ).forEach((hash) => {
           hashToAdd[type] = hashToAdd[type] || new Set()
           hashToAdd[type].add(hash)
@@ -184,9 +186,7 @@ export function reduce(
 
     // filtrage des données en fonction de new_types et hashToAdd
     type AllValueTypesButCompact = Exclude<keyof BatchValue, "compact">
-    const typesToAdd = Object.keys(hashToAdd).filter(
-      (type) => type !== "compact"
-    ) as AllValueTypesButCompact[]
+    const typesToAdd = Object.keys(hashToAdd) as AllValueTypesButCompact[]
     typesToAdd.forEach((type) => {
       if (!new_types.includes(type)) {
         delete reduced_value.batch[batch][type]
