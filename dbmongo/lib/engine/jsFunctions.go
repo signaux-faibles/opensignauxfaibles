@@ -353,10 +353,10 @@ function reduce(key, values) {
                 }
             }
             else {
-                Object.keys(currentBatch[type] || {}).forEach((hash) => {
+                for (const hash in currentBatch[type]) {
                     hashToAdd[type] = hashToAdd[type] || new Set();
                     hashToAdd[type].add(hash);
-                });
+                }
             }
         }
         //

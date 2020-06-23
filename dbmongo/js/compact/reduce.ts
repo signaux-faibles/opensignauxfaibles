@@ -98,12 +98,10 @@ export function reduce(
           })
         }
       } else {
-        Object.keys(currentBatch[type as keyof BatchValue] || {}).forEach(
-          (hash) => {
-            hashToAdd[type] = hashToAdd[type] || new Set()
-            hashToAdd[type].add(hash)
-          }
-        )
+        for (const hash in currentBatch[type as keyof BatchValue]) {
+          hashToAdd[type] = hashToAdd[type] || new Set()
+          hashToAdd[type].add(hash)
+        }
       }
     }
 
