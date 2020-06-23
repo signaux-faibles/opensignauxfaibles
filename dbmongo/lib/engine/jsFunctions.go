@@ -241,9 +241,9 @@ function currentState(batches) {
         const neyKeyTypes = Object.keys(batch).filter((type) => type !== "compact");
         neyKeyTypes.forEach((type) => {
             m[type] = m[type] || new Set();
-            Object.keys(batch[type] || {}).forEach((key) => {
+            for (const key in batch[type]) {
                 m[type].add(key);
-            });
+            }
         });
         return m;
     }, {});

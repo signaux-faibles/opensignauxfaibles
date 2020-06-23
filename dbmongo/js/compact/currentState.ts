@@ -22,10 +22,9 @@ export function currentState(batches: BatchValue[]): CurrentDataState {
       ) as (keyof BatchValue)[]
       neyKeyTypes.forEach((type) => {
         m[type] = m[type] || new Set()
-
-        Object.keys(batch[type] || {}).forEach((key) => {
+        for (const key in batch[type]) {
           m[type].add(key)
-        })
+        }
       })
       return m
     },
