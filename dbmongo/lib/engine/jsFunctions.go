@@ -223,7 +223,8 @@ function complete_reporder(siret, object) {
     });
     return object;
 }`,
-"currentState": `// currentState() agrège un ensemble de batch, en tenant compte des suppressions
+"currentState": `// import "core-js/es/object/from-entries"
+// currentState() agrège un ensemble de batch, en tenant compte des suppressions
 // pour renvoyer le dernier état connu des données.
 // Note: similaire à flatten() de reduce.algo2.
 function currentState(batches) {
@@ -237,13 +238,14 @@ function currentState(batches) {
                 });
             }
         }
+        const objectEntries = (obj) => Object.keys(obj).map((key) => [key, obj[key]]);
+        //;(Object as any).entries = objectEntries
         //2. On ajoute les nouvelles clés
-        for (const type in batch) {
+        for (const [type, typedBatchData] of objectEntries(batch)) {
             if (type === "compact")
                 continue;
             m[type] = m[type] || new Set();
-            for (const key in batch[type]) {
-                // note: nous ne serions pas prévenus si ` + "`" + `compact` + "`" + ` était défini dans ` + "`" + `batch` + "`" + `
+            for (const key in typedBatchData) {
                 m[type].add(key);
             }
         }

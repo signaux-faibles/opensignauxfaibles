@@ -1,4 +1,5 @@
 import "../globals.ts"
+// import "core-js/es/object/from-entries"
 
 // currentState() agrège un ensemble de batch, en tenant compte des suppressions
 // pour renvoyer le dernier état connu des données.
@@ -16,12 +17,16 @@ export function currentState(batches: BatchValue[]): CurrentDataState {
         }
       }
 
+      type ValueOf<T> = T[keyof T]
+      const objectEntries = <T>(obj: T): [keyof T, ValueOf<T>][] =>
+        (Object.keys(obj) as (keyof T)[]).map((key) => [key, obj[key]])
+      //;(Object as any).entries = objectEntries
+
       //2. On ajoute les nouvelles clés
-      for (const type in batch) {
+      for (const [type, typedBatchData] of objectEntries(batch)) {
         if (type === "compact") continue
         m[type] = m[type] || new Set()
-        for (const key in batch[type as keyof Exclude<BatchValue, "compact">]) {
-          // note: nous ne serions pas prévenus si `compact` était défini dans `batch`
+        for (const key in typedBatchData) {
           m[type].add(key)
         }
       }
