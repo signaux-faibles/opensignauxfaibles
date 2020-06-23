@@ -1,6 +1,8 @@
-function repeatable(rep) {
+export function repeatable(
+  rep: Record<Periode, RepOrder>
+): Record<Periode, { random_order: number }> {
   "use strict"
-  const output_repeatable = {}
+  const output_repeatable = {} as Record<string, { random_order: number }>
   Object.keys(rep).forEach((hash) => {
     const one_rep = rep[hash]
     const periode = one_rep.periode.getTime()
@@ -10,5 +12,3 @@ function repeatable(rep) {
 
   return output_repeatable
 }
-
-exports.repeatable = repeatable

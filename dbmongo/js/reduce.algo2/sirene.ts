@@ -1,11 +1,32 @@
-function sirene(v, output_array) {
+import * as f from "../common/region"
+
+type V = DonnéesSirene
+
+type Input = {
+  periode: Date
+  siret: SiretOrSiren
+}
+
+export type Output = {
+  siren: SiretOrSiren
+  latitude: unknown
+  longitude: unknown
+  departement: Departement | null
+  region: unknown
+  raison_sociale: unknown
+  code_ape: CodeAPE
+  date_creation_etablissement: number | null // année
+  age: number | null // en années
+}
+
+export function sirene(v: V, output_array: (Input & Partial<Output>)[]): void {
   "use strict"
   const sireneHashes = Object.keys(v.sirene || {})
 
   output_array.forEach((val) => {
     // geolocalisation
 
-    if (sireneHashes.length != 0) {
+    if (sireneHashes.length !== 0) {
       const sirene = v.sirene[sireneHashes[sireneHashes.length - 1]]
       val.siren = val.siret.substring(0, 9)
       val.latitude = sirene.lattitude || null
@@ -26,10 +47,12 @@ function sirene(v, output_array) {
       val.date_creation_etablissement = sirene.date_creation
         ? sirene.date_creation.getFullYear()
         : null
-      val.age =
-        sirene.date_creation && sirene.date_creation >= new Date("1901/01/01")
-          ? val.periode.getFullYear() - val.date_creation_etablissement
-          : null
+      if (val.date_creation_etablissement) {
+        val.age =
+          sirene.date_creation && sirene.date_creation >= new Date("1901/01/01")
+            ? val.periode.getFullYear() - val.date_creation_etablissement
+            : null
+      }
     }
   })
 }

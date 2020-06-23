@@ -1,4 +1,14 @@
-function ccsf(v, output_array) {
+type V = DonnéesCcsf
+
+type Input = {
+  periode: Date
+}
+
+export type Output = {
+  date_ccsf: unknown
+}
+
+export function ccsf(v: V, output_array: (Input & Partial<Output>)[]): void {
   "use strict"
 
   const ccsfHashes = Object.keys(v.ccsf || {})
@@ -11,7 +21,7 @@ function ccsf(v, output_array) {
           ccsf.date_traitement.getTime() < val.periode.getTime() &&
           ccsf.date_traitement.getTime() > accu.date_traitement.getTime()
         ) {
-          const accu = ccsf
+          accu = ccsf
         }
         return accu
       },
@@ -20,7 +30,7 @@ function ccsf(v, output_array) {
       }
     )
 
-    if (optccsf.date_traitement.getTime() != 0) {
+    if (optccsf.date_traitement.getTime() !== 0) {
       val.date_ccsf = optccsf.date_traitement
     }
   })

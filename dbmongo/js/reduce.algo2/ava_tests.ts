@@ -7,20 +7,20 @@
 import test, { ExecutionContext } from "ava"
 import "../globals"
 import { map } from "./map"
-import { flatten } from "./flatten.js"
-import { outputs } from "./outputs.js"
-import { repeatable } from "./repeatable.js"
-import { add } from "./add.js"
-import { defaillances } from "./defaillances.js"
-import { dealWithProcols } from "./dealWithProcols.js"
-import { populateNafAndApe } from "./populateNafAndApe.js"
-import { cotisation } from "./cotisation.js"
-import { dateAddMonth } from "./dateAddMonth.js"
-import { generatePeriodSerie } from "../common/generatePeriodSerie.js"
-import { cibleApprentissage } from "./cibleApprentissage.js"
-import { lookAhead } from "./lookAhead.js"
-import { reduce } from "./reduce.js"
-import { finalize } from "./finalize.js"
+import { flatten } from "./flatten"
+import { outputs } from "./outputs"
+import { repeatable } from "./repeatable"
+import { add } from "./add"
+import { defaillances } from "./defaillances"
+import { dealWithProcols } from "./dealWithProcols"
+import { populateNafAndApe } from "./populateNafAndApe"
+import { cotisation } from "./cotisation"
+import { dateAddMonth } from "./dateAddMonth"
+import { generatePeriodSerie } from "../common/generatePeriodSerie"
+import { cibleApprentissage } from "./cibleApprentissage"
+import { lookAhead } from "./lookAhead"
+import { reduce } from "./reduce"
+import { finalize, V } from "./finalize"
 
 const global = globalThis as any // eslint-disable-line @typescript-eslint/no-explicit-any
 global.f = {
@@ -40,11 +40,11 @@ global.f = {
 
 const ISODate = (date: string): Date => new Date(date)
 
-;(Object as any).bsonsize = (obj: any): number => JSON.stringify(obj).length // used by finalize()
+;(Object as any).bsonsize = (obj: unknown): number => JSON.stringify(obj).length // used by finalize()
 
-const runMongoMap = (mapFct: () => void, keyVal: any): any => {
-  const results: { _id: any; value: any }[] = []
-  globalThis.emit = (key: any, value: any): void => {
+const runMongoMap = (mapFct: () => void, keyVal: unknown): unknown => {
+  const results: { _id: unknown; value: unknown }[] = []
+  globalThis.emit = (key: unknown, value: unknown): void => {
     results.push({ _id: key, value })
   }
   mapFct.call(keyVal)
@@ -139,7 +139,10 @@ test.serial(
   (t: ExecutionContext) => {
     const finalizeResult = expectedReduceResults.map(({ _id, value }) => {
       // Note: on suppose qu'il n'y a qu'une valeur par clé
-      return { _id, value: finalize(_id, value) }
+      return {
+        _id,
+        value: finalize(_id, value as V),
+      }
     })
     t.deepEqual(finalizeResult, expectedFinalizeResults)
   }

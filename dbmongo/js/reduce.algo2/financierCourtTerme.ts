@@ -1,11 +1,13 @@
-function financierCourtTerme(diane) {
+import { Diane } from "./fraisFinancier"
+
+export function financierCourtTerme(diane: Diane): number | null {
   "use strict"
   if (
     "concours_bancaire_courant" in diane &&
     diane["concours_bancaire_courant"] !== null &&
     "ca" in diane &&
     diane["ca"] !== null &&
-    diane["ca"] != 0
+    diane["ca"] !== 0
   ) {
     return (diane["concours_bancaire_courant"] / diane["ca"]) * 100
   } else {

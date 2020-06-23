@@ -1,16 +1,51 @@
-function cotisationsdettes(v, periodes) {
+import { generatePeriodSerie } from "../common/generatePeriodSerie"
+import { dateAddMonth } from "./dateAddMonth"
+import { compareDebit } from "./compareDebit"
+
+declare const date_fin: number
+
+type EcartNegatif = {
+  hash: string
+  numero_historique: Debit["numero_historique"]
+  date_traitement: Debit["date_traitement"]
+}
+
+type Dette = {
+  periode: Debit["periode"]["start"]
+  part_ouvriere: Debit["part_ouvriere"]
+  part_patronale: Debit["part_patronale"]
+  montant_majorations: Debit["montant_majorations"]
+}
+
+type V = DonnéesCotisationsDettes
+
+type Output = {
+  interessante_urssaf: boolean
+  cotisation: number
+  montant_part_ouvriere: number
+  montant_part_patronale: number
+} & {
+  [other: string]: number // ⚠️ ex: montant_part_ouvriere_past_* // TODO: éviter les clés dynamiques
+}
+
+export function cotisationsdettes(
+  v: V,
+  periodes: Periode[]
+): Record<number, Output> {
   "use strict"
+
+  const f = { generatePeriodSerie, dateAddMonth, compareDebit } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
 
   // Tous les débits traitées après ce jour du mois sont reportées à la période suivante
   // Permet de s'aligner avec le calendrier de fourniture des données
   const last_treatment_day = 20
 
-  const output_cotisationsdettes = {}
+  const output_cotisationsdettes: Record<Periode, Output> = {}
 
   // TODO Cotisations avec un mois de retard ? Bizarre, plus maintenant que l'export se fait le 20
   // var offset_cotisation = 1
   const offset_cotisation = 0
-  const value_cotisation = {}
+  const value_cotisation: Record<string, number[]> = {}
 
   // Répartition des cotisations sur toute la période qu'elle concerne
   Object.keys(v.cotisation).forEach(function (h) {
@@ -23,7 +58,7 @@ function cotisationsdettes(v, periodes) {
       const date_offset = f.dateAddMonth(date_cotisation, offset_cotisation)
       value_cotisation[date_offset.getTime()] = (
         value_cotisation[date_offset.getTime()] || []
-      ).concat(cotisation.du / periode_cotisation.length)
+      ).concat([cotisation.du / periode_cotisation.length])
     })
   })
 
@@ -48,7 +83,7 @@ function cotisationsdettes(v, periodes) {
       },
     ])
     return accu
-  }, {})
+  }, {} as Record<string, EcartNegatif[]>)
 
   // Pour chaque numero_ecn, on trie et on chaîne les débits avec debit_suivant
   Object.keys(ecn).forEach((i) => {
@@ -61,7 +96,7 @@ function cotisationsdettes(v, periodes) {
     })
   })
 
-  const value_dette = {}
+  const value_dette: Record<Periode, Dette[]> = {}
   // Pour chaque objet debit:
   // debit_traitement_debut => periode de traitement du débit
   // debit_traitement_fin => periode de traitement du debit suivant, ou bien date_fin

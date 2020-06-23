@@ -2,7 +2,6 @@ import test from "ava"
 import "../globals"
 import {
   delais,
-  Delai,
   DelaiComputedValues,
   DebitComputedValues,
   ParPériode,

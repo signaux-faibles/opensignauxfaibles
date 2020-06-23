@@ -1,4 +1,8 @@
-function add(obj, output) {
+export function add<Added, Target>(
+  obj: { [periode: string]: Added },
+  output: { [periode: string]: Target }
+  // array?: Target[]
+): void /*[(Added & Target)[], { [periode: string]: Added & Target }]*/ {
   "use strict"
   Object.keys(output).forEach(function (periode) {
     if (periode in obj) {
@@ -9,6 +13,10 @@ function add(obj, output) {
       // )
     }
   })
+  /*
+  return [
+    array as (Added & Target)[],
+    output as { [periode: string]: Added & Target },
+  ]
+  */
 }
-
-exports.add = add

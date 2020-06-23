@@ -1,4 +1,17 @@
-function cibleApprentissage(output_indexed, n_months) {
+import "../globals.ts"
+import * as f from "./lookAhead"
+
+type Times = {
+  time_til_default?: number
+  time_til_failure?: number
+}
+
+export function cibleApprentissage(
+  output_indexed: {
+    [k: string]: { tag_failure?: boolean; tag_default?: boolean }
+  },
+  n_months: number
+): { [k: string]: Partial<Times> } {
   "use strict"
 
   // Mock two input instead of one for future modification
@@ -15,7 +28,7 @@ function cibleApprentissage(output_indexed, n_months) {
       ),
     }
     return m
-  }, {})
+  }, {} as Record<string, Record<string, unknown>>)
 
   const output_outcome = f.lookAhead(merged_info, "outcome", n_months, true)
   const output_default = f.lookAhead(
@@ -32,17 +45,19 @@ function cibleApprentissage(output_indexed, n_months) {
   )
 
   const output_cible = all_keys.reduce(function (m, k) {
-    m[k] = {}
-
-    if (output_outcome[k]) m[k] = output_outcome[k]
+    const outputTimes: Times = {}
     if (output_default[k])
-      m[k].time_til_default = output_default[k].time_til_outcome
+      outputTimes.time_til_default = output_default[k].time_til_outcome
     if (output_failure[k])
-      m[k].time_til_failure = output_failure[k].time_til_outcome
-    return m
-  }, {})
+      outputTimes.time_til_failure = output_failure[k].time_til_outcome
+    return {
+      ...m,
+      [k]: {
+        ...output_outcome[k],
+        ...outputTimes,
+      },
+    }
+  }, {} as Record<string, Times>)
 
   return output_cible
 }
-
-exports.cibleApprentissage = cibleApprentissage

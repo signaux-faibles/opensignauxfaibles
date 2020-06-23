@@ -1,10 +1,27 @@
-function sirene_ul(v, output_array) {
+import * as f from "../common/raison_sociale"
+
+type V = DonnéesSireneUL
+
+type Input = {
+  periode: Date
+}
+
+export type Output = {
+  raison_sociale: unknown
+  statut_juridique: unknown
+  date_creation_entreprise: number | null // année
+  age_entreprise: number | null // en années
+}
+
+export function sirene_ul(
+  v: V,
+  output_array: (Input & Partial<Output>)[]
+): void {
   "use strict"
   const sireneHashes = Object.keys(v.sirene_ul || {})
   output_array.forEach((val) => {
-    if (sireneHashes.length != 0) {
+    if (sireneHashes.length !== 0) {
       const sirene = v.sirene_ul[sireneHashes[sireneHashes.length - 1]]
-      val.siren = val.siren
       val.raison_sociale = f.raison_sociale(
         sirene.raison_sociale,
         sirene.nom_unite_legale,
@@ -18,10 +35,12 @@ function sirene_ul(v, output_array) {
       val.date_creation_entreprise = sirene.date_creation
         ? sirene.date_creation.getFullYear()
         : null
-      val.age_entreprise =
-        sirene.date_creation && sirene.date_creation >= new Date("1901/01/01")
-          ? val.periode.getFullYear() - val.date_creation_entreprise
-          : null
+      if (val.date_creation_entreprise) {
+        val.age_entreprise =
+          sirene.date_creation && sirene.date_creation >= new Date("1901/01/01")
+            ? val.periode.getFullYear() - val.date_creation_entreprise
+            : null
+      }
     }
   })
 }

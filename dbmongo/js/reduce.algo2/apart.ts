@@ -1,18 +1,36 @@
-function apart(apconso, apdemande) {
+import * as f from "../common/generatePeriodSerie"
+
+type ApConsoHash = string
+
+type Hash = string
+
+type Timestamp = string
+
+type Output = {
+  apart_heures_autorisees: unknown
+  apart_heures_consommees: number
+  apart_motif_recours: ApDemande["motif_recours_se"]
+  apart_heures_consommees_cumulees: number
+}
+
+export function apart(
+  apconso: Record<ApConsoHash, ApConso>,
+  apdemande: Record<Hash, ApDemande>
+): Record<Timestamp, Output> {
   "use strict"
 
-  const output_apart = {}
+  const output_apart: Record<Timestamp, Output> = {}
 
   // Mapping (pour l'instant vide) du hash de la demande avec les hash des consos correspondantes
   const apart = Object.keys(apdemande).reduce((apart, hash) => {
     apart[apdemande[hash].id_demande.substring(0, 9)] = {
       demande: hash,
       consommation: [],
-      periode_debut: 0,
-      periode_fin: 0,
+      periode_debut: new Date(0),
+      periode_fin: new Date(0),
     }
     return apart
-  }, {})
+  }, {} as Record<string, { demande: Hash; consommation: ApConsoHash[]; periode_debut: Date; periode_fin: Date }>)
 
   // on note le nombre d'heures demandées dans output_apart
   Object.keys(apdemande).forEach((hash) => {
@@ -69,8 +87,8 @@ function apart(apconso, apdemande) {
   Object.keys(apart).forEach((k) => {
     if (apart[k].consommation.length > 0) {
       apart[k].consommation
-        .sort(
-          (a, b) => apconso[a].periode.getTime() >= apconso[b].periode.getTime()
+        .sort((a, b) =>
+          apconso[a].periode.getTime() >= apconso[b].periode.getTime() ? 1 : 0
         )
         .forEach((h) => {
           const time = apconso[h].periode.getTime()
