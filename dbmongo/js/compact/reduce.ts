@@ -81,7 +81,8 @@ export function reduce(
     // -----------------------------------------------------
 
     const hashToDelete: { [dataType: string]: Set<DataHash> } = {}
-    const hashToAdd: { [dataType: string]: Set<DataHash> } = {}
+    type DataType = string
+    const hashToAdd: Record< DataType, Set<DataHash> > = {}
 
     all_interesting_types.forEach((type) => {
       // Le type compact gère les clés supprimées
