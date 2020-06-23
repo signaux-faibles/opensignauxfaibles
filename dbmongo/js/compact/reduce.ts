@@ -73,7 +73,9 @@ export function reduce(
       (type) => (memory[type] || new Set()).size > 0
     )
     // Les types qui ont bougé dans le batch en cours
-    const new_types = Object.keys(reduced_value.batch[batch]) as (keyof BatchValue)[]
+    const new_types = Object.keys(
+      reduced_value.batch[batch]
+    ) as (keyof BatchValue)[]
 
     // 1. On recupère les cles ajoutes et les cles supprimes
     // -----------------------------------------------------
