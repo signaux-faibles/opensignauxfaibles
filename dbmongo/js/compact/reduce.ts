@@ -72,10 +72,6 @@ export function reduce(
     const stock_types = completeTypes[batch].filter(
       (type) => (memory[type] || new Set()).size > 0
     )
-    // Les types qui ont bougé dans le batch en cours
-    const new_types = Object.keys(
-      reduced_value.batch[batch]
-    ) as (keyof BatchValue)[]
 
     // 1. On recupère les cles ajoutes et les cles supprimes
     // -----------------------------------------------------
@@ -84,7 +80,11 @@ export function reduce(
     type DataType = string
     const hashToAdd: Record<DataType, Set<DataHash>> = {}
 
-    new_types.forEach((type) => {
+    // Itération sur les types qui ont potentiellement subi des modifications
+    // pour compléter hashToDelete et hashToAdd.
+    // Les suppressions de types complets / stock sont gérés dans le bloc suivant.
+    const currentBatch = reduced_value.batch[batch]
+    for (const type in currentBatch) {
       // Le type compact gère les clés supprimées
       // Ce type compact existe si le batch en cours a déjà été compacté.
       if (type === "compact") {
@@ -98,16 +98,14 @@ export function reduce(
           })
         }
       } else {
-        Object.keys(
-          reduced_value.batch[batch][
-            type as Exclude<keyof BatchValue, "compact">
-          ] || {}
-        ).forEach((hash) => {
-          hashToAdd[type] = hashToAdd[type] || new Set()
-          hashToAdd[type].add(hash)
-        })
+        Object.keys(currentBatch[type as keyof BatchValue] || {}).forEach(
+          (hash) => {
+            hashToAdd[type] = hashToAdd[type] || new Set()
+            hashToAdd[type].add(hash)
+          }
+        )
       }
-    })
+    }
 
     //
     // 2. On ajoute aux cles supprimees les types stocks de la memoire.
@@ -189,17 +187,13 @@ export function reduce(
     type AllValueTypesButCompact = Exclude<keyof BatchValue, "compact">
     const typesToAdd = Object.keys(hashToAdd) as AllValueTypesButCompact[]
     typesToAdd.forEach((type) => {
-      if (!new_types.includes(type)) {
-        delete reduced_value.batch[batch][type]
-      } else {
-        reduced_value.batch[batch][type] = [...hashToAdd[type]].reduce(
-          (typedBatchValues, hash) => ({
-            ...typedBatchValues,
-            [hash]: reduced_value.batch[batch][type]?.[hash],
-          }),
-          {}
-        )
-      }
+      reduced_value.batch[batch][type] = [...hashToAdd[type]].reduce(
+        (typedBatchValues, hash) => ({
+          ...typedBatchValues,
+          [hash]: reduced_value.batch[batch][type]?.[hash],
+        }),
+        {}
+      )
     })
 
     // 6. nettoyage
