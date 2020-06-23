@@ -17,11 +17,11 @@ export function currentState(batches: BatchValue[]): CurrentDataState {
       }
 
       //2. On ajoute les nouvelles clés
-      let type: keyof BatchValue
-      for (type in batch) {
+      for (const type in batch) {
         if (type === "compact") continue
         m[type] = m[type] || new Set()
-        for (const key in batch[type]) {
+        for (const key in batch[type as keyof Exclude<BatchValue, "compact">]) {
+          // note: nous ne serions pas prévenus si `compact` était défini dans `batch`
           m[type].add(key)
         }
       }

@@ -238,12 +238,12 @@ function currentState(batches) {
             }
         }
         //2. On ajoute les nouvelles clés
-        let type;
-        for (type in batch) {
+        for (const type in batch) {
             if (type === "compact")
                 continue;
             m[type] = m[type] || new Set();
             for (const key in batch[type]) {
+                // note: nous ne serions pas prévenus si ` + "`" + `compact` + "`" + ` était défini dans ` + "`" + `batch` + "`" + `
                 m[type].add(key);
             }
         }
