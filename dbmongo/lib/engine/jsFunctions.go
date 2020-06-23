@@ -238,13 +238,15 @@ function currentState(batches) {
             }
         }
         //2. On ajoute les nouvelles clés
-        const neyKeyTypes = Object.keys(batch).filter((type) => type !== "compact");
-        neyKeyTypes.forEach((type) => {
+        let type;
+        for (type in batch) {
+            if (type === "compact")
+                continue;
             m[type] = m[type] || new Set();
             for (const key in batch[type]) {
                 m[type].add(key);
             }
-        });
+        }
         return m;
     }, {});
     return currentState;
