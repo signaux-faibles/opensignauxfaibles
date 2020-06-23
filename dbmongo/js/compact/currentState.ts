@@ -1,5 +1,4 @@
 import "../globals.ts"
-// import "core-js/es/object/from-entries"
 
 // currentState() agrège un ensemble de batch, en tenant compte des suppressions
 // pour renvoyer le dernier état connu des données.

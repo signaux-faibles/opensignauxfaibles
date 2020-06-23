@@ -223,8 +223,7 @@ function complete_reporder(siret, object) {
     });
     return object;
 }`,
-"currentState": `// import "core-js/es/object/from-entries"
-// currentState() agrège un ensemble de batch, en tenant compte des suppressions
+"currentState": `// currentState() agrège un ensemble de batch, en tenant compte des suppressions
 // pour renvoyer le dernier état connu des données.
 // Note: similaire à flatten() de reduce.algo2.
 function currentState(batches) {
