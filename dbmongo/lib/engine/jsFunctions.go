@@ -329,17 +329,11 @@ function reduce(key, values) {
         var _a;
         reduced_value.batch[batch] = reduced_value.batch[batch] || {};
         // Les types où il y  a potentiellement des suppressions
-        let stock_types = completeTypes[batch].filter((type) => (memory[type] || new Set()).size > 0);
+        const stock_types = completeTypes[batch].filter((type) => (memory[type] || new Set()).size > 0);
         // Les types qui ont bougé dans le batch en cours
-        let new_types = Object.keys(reduced_value.batch[batch]);
+        const new_types = Object.keys(reduced_value.batch[batch]);
         // On dedoublonne au besoin
-        let all_interesting_types = [...new Set([...stock_types, ...new_types])];
-        // Filtrage selon les types effectivement importés
-        if (types.length > 0) {
-            stock_types = stock_types.filter((type) => types.includes(type));
-            new_types = new_types.filter((type) => types.includes(type));
-            all_interesting_types = all_interesting_types.filter((type) => types.includes(type));
-        }
+        const all_interesting_types = [...new Set([...stock_types, ...new_types])];
         // 1. On recupère les cles ajoutes et les cles supprimes
         // -----------------------------------------------------
         const hashToDelete = {};

@@ -155,12 +155,11 @@ func processBatchHandler(c *gin.Context) {
 	// TODO: valider que tous les batches demandés existent
 
 	parsers, err := resolveParsers(query.Parsers)
-	types := query.Parsers
 	if err != nil {
 		c.JSON(404, err.Error())
 	}
 	sort.Strings(query.Batches)
-	err = engine.ProcessBatch(query.Batches, parsers, types)
+	err = engine.ProcessBatch(query.Batches, parsers)
 	if err != nil {
 		c.JSON(500, err.Error())
 		return
