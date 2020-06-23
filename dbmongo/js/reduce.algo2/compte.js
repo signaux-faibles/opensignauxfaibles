@@ -1,14 +1,14 @@
-function compte (v, periodes) {
-  "use strict";
-  let output_compte = {}
+function compte(v, periodes) {
+    "use strict"
+    let output_compte = {}
 
-  //  var offset_compte = 3
-  Object.keys(v.compte).forEach(hash =>{
-    var periode = v.compte[hash].periode.getTime()
+    //  var offset_compte = 3
+    Object.keys(v.compte).forEach((hash) => {
+        var periode = v.compte[hash].periode.getTime()
 
-    output_compte[periode] =  output_compte[periode] || {}
-    output_compte[periode].compte_urssaf =  v.compte[hash].numero_compte
-  })
+        output_compte[periode] = output_compte[periode] || {}
+        output_compte[periode].compte_urssaf = v.compte[hash].numero_compte
+    })
 
-  return output_compte
+    return output_compte
 }
