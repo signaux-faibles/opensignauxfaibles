@@ -1087,7 +1087,6 @@ db.getCollection("Features").createIndex({
     const output_procol = output_indexed;
     // replace with const
     const all_keys = Object.keys(output_indexed);
-    //
     const merged_info = all_keys.reduce(function (m, k) {
         m[k] = {
             outcome: Boolean(output_procol[k].tag_failure || output_cotisation[k].tag_default),

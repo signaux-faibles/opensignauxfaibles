@@ -19,7 +19,6 @@ export function cibleApprentissage(
   const output_procol = output_indexed
   // replace with const
   const all_keys = Object.keys(output_indexed)
-  //
 
   const merged_info = all_keys.reduce(function (m, k) {
     m[k] = {
@@ -28,7 +27,7 @@ export function cibleApprentissage(
       ),
     }
     return m
-  }, {} as Record<string, Record<string, unknown>>)
+  }, {} as Record<Periode, { outcome: boolean }>)
 
   const output_outcome = f.lookAhead(merged_info, "outcome", n_months, true)
   const output_default = f.lookAhead(
