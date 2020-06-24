@@ -984,9 +984,7 @@ db.getCollection("Features").createIndex({
 }`,
 },
 "reduce.algo2":{
-"add": `function add(obj, output
-// array?: Target[]
-) {
+"add": `function add(obj, output) {
     "use strict";
     Object.keys(output).forEach(function (periode) {
         if (periode in obj) {
