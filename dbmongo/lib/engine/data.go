@@ -111,7 +111,7 @@ func MRroutine(job *mgo.MapReduce, query bson.M, dbTemp string, collOrig string,
 }
 
 // Compact traite le compactage de la base RawData
-func Compact(batchKey string, types []string) error {
+func Compact(batchKey string) error {
 	// Détermination scope traitement
 	batches, _ := GetBatches()
 
@@ -149,7 +149,6 @@ func Compact(batchKey string, types []string) error {
 		Scope: bson.M{
 			"f":             functions,
 			"batches":       batchesID,
-			"types":         types,
 			"completeTypes": completeTypes,
 			"batchKey":      batchKey,
 			"serie_periode": misc.GenereSeriePeriode(batch.Params.DateDebut, batch.Params.DateFin),

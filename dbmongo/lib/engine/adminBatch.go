@@ -194,7 +194,7 @@ func CheckBatch(batch AdminBatch, parsers []Parser) error {
 }
 
 // ProcessBatch traitement ad-hoc modifiable pour les besoins du développement
-func ProcessBatch(batchList []string, parsers []Parser, types []string) error {
+func ProcessBatch(batchList []string, parsers []Parser) error {
 
 	for _, v := range batchList {
 		batch, errBatch := GetBatch(v)
@@ -203,7 +203,7 @@ func ProcessBatch(batchList []string, parsers []Parser, types []string) error {
 		}
 		ImportBatch(batch, parsers)
 		time.Sleep(5 * time.Second) // TODO: trouver une façon de synchroniser l'insert des paquets
-		err := Compact(v, types)
+		err := Compact(v)
 		if err != nil {
 			return errors.New("Erreur de compactage: " + err.Error())
 		}
