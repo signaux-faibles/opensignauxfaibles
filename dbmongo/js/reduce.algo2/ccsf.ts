@@ -21,7 +21,7 @@ export function ccsf(v: V, output_array: (Input & Partial<Output>)[]): void {
           ccsf.date_traitement.getTime() < val.periode.getTime() &&
           ccsf.date_traitement.getTime() > accu.date_traitement.getTime()
         ) {
-          accu = ccsf
+          return ccsf
         }
         return accu
       },

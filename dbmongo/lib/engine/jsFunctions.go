@@ -1069,7 +1069,7 @@ db.getCollection("Features").createIndex({
             const ccsf = v.ccsf[hash];
             if (ccsf.date_traitement.getTime() < val.periode.getTime() &&
                 ccsf.date_traitement.getTime() > accu.date_traitement.getTime()) {
-                accu = ccsf;
+                return ccsf;
             }
             return accu;
         }, {
