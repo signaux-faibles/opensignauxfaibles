@@ -237,14 +237,16 @@ function currentState(batches) {
                 });
             }
         }
+        const typedObjectKeys = (obj) => Object.keys(obj);
         //2. On ajoute les nouvelles clés
-        const neyKeyTypes = Object.keys(batch).filter((type) => type !== "compact");
-        neyKeyTypes.forEach((type) => {
+        for (const type of typedObjectKeys(batch)) {
+            if (type === "compact")
+                continue;
             m[type] = m[type] || new Set();
-            Object.keys(batch[type] || {}).forEach((key) => {
+            for (const key in batch[type]) {
                 m[type].add(key);
-            });
-        });
+            }
+        }
         return m;
     }, {});
     return currentState;
