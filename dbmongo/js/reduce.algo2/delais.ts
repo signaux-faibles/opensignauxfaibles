@@ -1,4 +1,4 @@
-import * as f from "../common/generatePeriodSerie.js"
+import * as f from "../common/generatePeriodSerie"
 
 type DeepReadonly<T> = Readonly<T> // pas vraiment, mais espoire que TS le supporte prochainement
 
@@ -10,14 +10,6 @@ export type DebitComputedValues = {
   montant_part_ouvriere?: number
 }
 
-// Valeurs attendues par delais(), pour chaque période. (cf dbmongo/lib/urssaf/delai.go)
-export type Delai = {
-  date_creation: Date
-  date_echeance: Date
-  duree_delai: number // nombre de jours entre date_creation et date_echeance
-  montant_echeancier: number // exprimé en euros
-}
-
 // Valeurs retournées par delais(), pour chaque période
 export type DelaiComputedValues = {
   delai: number
@@ -26,8 +18,10 @@ export type DelaiComputedValues = {
   montant_echeancier: number // exprimé en euros
 }
 
+export type V = { delai: ParPériode<Delai> }
+
 export function delais(
-  v: { delai: ParPériode<Delai> },
+  v: V,
   donnéesActuellesParPériode: DeepReadonly<ParPériode<DebitComputedValues>>
 ): ParPériode<DelaiComputedValues> {
   "use strict"
