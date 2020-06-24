@@ -2112,11 +2112,11 @@ function outputs(v, serie_periode) {
             val.date_creation_entreprise = sirene.date_creation
                 ? sirene.date_creation.getFullYear()
                 : null;
-            if (val.date_creation_entreprise) {
+            if (val.date_creation_entreprise &&
+                sirene.date_creation &&
+                sirene.date_creation >= new Date("1901/01/01")) {
                 val.age_entreprise =
-                    sirene.date_creation && sirene.date_creation >= new Date("1901/01/01")
-                        ? val.periode.getFullYear() - val.date_creation_entreprise
-                        : null;
+                    val.periode.getFullYear() - val.date_creation_entreprise;
             }
         }
     });

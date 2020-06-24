@@ -10,7 +10,7 @@ export type Output = {
   raison_sociale: unknown
   statut_juridique: unknown
   date_creation_entreprise: number | null // année
-  age_entreprise: number | null // en années
+  age_entreprise?: number // en années
 }
 
 export function sirene_ul(
@@ -35,11 +35,13 @@ export function sirene_ul(
       val.date_creation_entreprise = sirene.date_creation
         ? sirene.date_creation.getFullYear()
         : null
-      if (val.date_creation_entreprise) {
+      if (
+        val.date_creation_entreprise &&
+        sirene.date_creation &&
+        sirene.date_creation >= new Date("1901/01/01")
+      ) {
         val.age_entreprise =
-          sirene.date_creation && sirene.date_creation >= new Date("1901/01/01")
-            ? val.periode.getFullYear() - val.date_creation_entreprise
-            : null
+          val.periode.getFullYear() - val.date_creation_entreprise
       }
     }
   })
