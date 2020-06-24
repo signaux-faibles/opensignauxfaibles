@@ -158,7 +158,7 @@ type Departement = string
 
 type Sirene = {
   ape: CodeAPE
-  lattitude: unknown // TODO ⚠️ typo ?
+  lattitude: number // TODO: une fois que les données auront été migrées, corriger l'orthographe de cette propriété (--> latitude)
   longitude: unknown
   departement: Departement
   raison_sociale: string
