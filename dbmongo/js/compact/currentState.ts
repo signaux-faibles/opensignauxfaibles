@@ -16,12 +16,11 @@ export function currentState(batches: BatchValue[]): CurrentDataState {
         }
       }
 
-      type ValueOf<T> = T[keyof T]
-      const objectEntries = <T>(obj: T): [keyof T, ValueOf<T>][] =>
-        (Object.keys(obj) as (keyof T)[]).map((key) => [key, obj[key]])
+      const typedObjectKeys = <T>(obj: T): Array<keyof T> =>
+        Object.keys(obj) as Array<keyof T>
 
       //2. On ajoute les nouvelles clés
-      for (const [type] of objectEntries(batch)) {
+      for (const type of typedObjectKeys(batch)) {
         if (type === "compact") continue
         m[type] = m[type] || new Set()
         for (const key in batch[type]) {

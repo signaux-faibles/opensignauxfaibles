@@ -237,9 +237,9 @@ function currentState(batches) {
                 });
             }
         }
-        const objectEntries = (obj) => Object.keys(obj).map((key) => [key, obj[key]]);
+        const typedObjectKeys = (obj) => Object.keys(obj);
         //2. On ajoute les nouvelles clés
-        for (const [type] of objectEntries(batch)) {
+        for (const type of typedObjectKeys(batch)) {
             if (type === "compact")
                 continue;
             m[type] = m[type] || new Set();
