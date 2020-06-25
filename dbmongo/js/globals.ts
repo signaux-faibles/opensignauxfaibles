@@ -64,7 +64,7 @@ type DonnéesRepOrder = {
 }
 
 type DonnéesCompact = {
-  compact: { delete: { [dataType: string]: DataHash[] } } // TODO: utiliser un type Record<~BatchDataType, DataHash[]>
+  compact: { delete: { [dataType in BatchDataType]?: DataHash[] } } // TODO: utiliser un type Record<~BatchDataType, DataHash[]>
 }
 
 type DonnéesEffectif = {
