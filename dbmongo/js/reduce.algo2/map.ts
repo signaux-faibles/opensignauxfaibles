@@ -131,7 +131,7 @@ export function map(this: {
 
       if (v.cotisation && v.debit) {
         const output_cotisationsdettes = f.cotisationsdettes(
-          v as DonnéesCotisationsDettes,
+          v as DonnéesCotisation & DonnéesDebit,
           periodes
         )
         f.add(output_cotisationsdettes, output_indexed)

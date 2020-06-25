@@ -45,7 +45,8 @@ type BatchValue = Partial<
     DonnéesInterim &
     DonnéesDelai &
     DonnéesDefaillances &
-    DonnéesCotisationsDettes &
+    DonnéesCotisation &
+    DonnéesDebit &
     DonnéesCcsf &
     DonnéesSirene &
     DonnéesSireneUL &
@@ -91,13 +92,16 @@ type DonnéesDelai = {
 }
 
 type DonnéesDefaillances = {
-  altares: Record<DataHash, Événement>
-  procol: Record<DataHash, Événement>
+  altares: Record<DataHash, EntréeDefaillances>
+  procol: Record<DataHash, EntréeDefaillances>
 }
 
-type DonnéesCotisationsDettes = {
-  cotisation: Record<string, Cotisation> // TODO: utiliser un type plus précis que string
-  debit: Record<string, Debit> // TODO: utiliser un type plus précis que string
+type DonnéesCotisation = {
+  cotisation: Record<string, EntréeCotisation> // TODO: utiliser un type plus précis que string
+}
+
+type DonnéesDebit = {
+  debit: Record<string, EntréeDebit> // TODO: utiliser un type plus précis que string
 }
 
 type DonnéesCcsf = {
@@ -132,7 +136,7 @@ type Action = "liquidation" | "redressement" | "sauvegarde"
 
 type Stade = "abandon_procedure" | "fin_procedure" | "plan_continuation"
 
-type Événement = {
+type EntréeDefaillances = {
   code_evenement: AltaresCode
   action_procol: Action
   stade_procol: Stade
@@ -192,12 +196,12 @@ type CurrentDataState = { [key: string]: Set<DataHash> }
 
 type DebitHash = string
 
-type Cotisation = {
+type EntréeCotisation = {
   periode: { start: Date; end: Date }
   du: number
 }
 
-type Debit = {
+type EntréeDebit = {
   periode: { start: Date; end: Date }
   numero_ecart_negatif: unknown
   numero_compte: unknown

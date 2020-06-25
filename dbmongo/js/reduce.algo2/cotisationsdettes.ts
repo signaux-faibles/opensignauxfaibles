@@ -6,15 +6,15 @@ declare const date_fin: number
 
 type EcartNegatif = {
   hash: string
-  numero_historique: Debit["numero_historique"]
-  date_traitement: Debit["date_traitement"]
+  numero_historique: EntréeDebit["numero_historique"]
+  date_traitement: EntréeDebit["date_traitement"]
 }
 
 type Dette = {
-  periode: Debit["periode"]["start"]
-  part_ouvriere: Debit["part_ouvriere"]
-  part_patronale: Debit["part_patronale"]
-  montant_majorations: Debit["montant_majorations"]
+  periode: EntréeDebit["periode"]["start"]
+  part_ouvriere: EntréeDebit["part_ouvriere"]
+  part_patronale: EntréeDebit["part_patronale"]
+  montant_majorations: EntréeDebit["montant_majorations"]
 }
 
 type SortieCotisationsDettes = {
@@ -27,7 +27,7 @@ type SortieCotisationsDettes = {
 }
 
 export function cotisationsdettes(
-  v: DonnéesCotisationsDettes,
+  v: DonnéesCotisation & DonnéesDebit,
   periodes: Periode[]
 ): Record<number, SortieCotisationsDettes> {
   "use strict"

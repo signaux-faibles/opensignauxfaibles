@@ -1,7 +1,7 @@
 import { altaresToHuman, AltaresToHumanRes } from "../common/altaresToHuman"
 import { procolToHuman, ProcolToHumanRes } from "./procolToHuman"
 
-export type InputEvent = Événement
+export type InputEvent = EntréeDefaillances
 
 type OutputEvent = {
   etat: AltaresToHumanRes
