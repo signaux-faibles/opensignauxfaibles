@@ -6,8 +6,8 @@ declare function emit(key: unknown, value: unknown): void
 let batches: BatchKey[]
 let batchKey: BatchKey
 let serie_periode: Date[]
-let types: string[]
-let completeTypes: { [key: string]: string[] }
+let types: BatchDataType[]
+let completeTypes: Record<BatchKey, BatchDataType[]>
 /* eslint-enable @typescript-eslint/no-unused-vars */
 
 // Types partagés
