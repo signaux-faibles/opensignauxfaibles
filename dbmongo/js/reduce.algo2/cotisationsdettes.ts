@@ -6,20 +6,18 @@ declare const date_fin: number
 
 type EcartNegatif = {
   hash: string
-  numero_historique: Debit["numero_historique"]
-  date_traitement: Debit["date_traitement"]
+  numero_historique: EntréeDebit["numero_historique"]
+  date_traitement: EntréeDebit["date_traitement"]
 }
 
 type Dette = {
-  periode: Debit["periode"]["start"]
-  part_ouvriere: Debit["part_ouvriere"]
-  part_patronale: Debit["part_patronale"]
-  montant_majorations: Debit["montant_majorations"]
+  periode: EntréeDebit["periode"]["start"]
+  part_ouvriere: EntréeDebit["part_ouvriere"]
+  part_patronale: EntréeDebit["part_patronale"]
+  montant_majorations: EntréeDebit["montant_majorations"]
 }
 
-type V = DonnéesCotisationsDettes
-
-type Output = {
+type SortieCotisationsDettes = {
   interessante_urssaf: boolean
   cotisation: number
   montant_part_ouvriere: number
@@ -29,9 +27,9 @@ type Output = {
 }
 
 export function cotisationsdettes(
-  v: V,
+  v: DonnéesCotisation & DonnéesDebit,
   periodes: Periode[]
-): Record<number, Output> {
+): Record<number, SortieCotisationsDettes> {
   "use strict"
 
   const f = { generatePeriodSerie, dateAddMonth, compareDebit } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
@@ -40,7 +38,7 @@ export function cotisationsdettes(
   // Permet de s'aligner avec le calendrier de fourniture des données
   const last_treatment_day = 20
 
-  const output_cotisationsdettes: Record<Periode, Output> = {}
+  const output_cotisationsdettes: Record<Periode, SortieCotisationsDettes> = {}
 
   // TODO Cotisations avec un mois de retard ? Bizarre, plus maintenant que l'export se fait le 20
   // var offset_cotisation = 1

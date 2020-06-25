@@ -1,5 +1,5 @@
 export function effectifs(v: {
-  effectif: Effectif
+  effectif: EntréeEffectif
 }): {
   periode: Periode
   effectif: number

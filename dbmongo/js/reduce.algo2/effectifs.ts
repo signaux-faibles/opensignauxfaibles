@@ -8,16 +8,18 @@ type EffectifName = string
 
 type ValeurEffectif = number
 
-type Output = Record<Time, Record<EffectifName, ValeurEffectif | null>>
+type SortieEffectifs = Record<Time, Record<EffectifName, ValeurEffectif | null>>
+
+type EffectifEntreprise = Record<DataHash, EntréeEffectif>
 
 export function effectifs(
   effobj: EffectifEntreprise,
   periodes: string[],
   effectif_name: EffectifName
-): Output {
+): SortieEffectifs {
   "use strict"
 
-  const output_effectif: Output = {}
+  const output_effectif: SortieEffectifs = {}
 
   // Construction d'une map[time] = effectif à cette periode
   const map_effectif = Object.keys(effobj).reduce((m, hash) => {

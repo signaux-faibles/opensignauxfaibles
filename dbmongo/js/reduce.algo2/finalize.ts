@@ -19,15 +19,13 @@ type Clé = {
   type: unknown
 }
 
-export type V = Record<SiretOrSiren, EntrepriseEnEntrée> & {
-  entreprise?: EntrepriseEnEntrée
-}
+export type V = Record<SiretOrSiren | "entreprise", EntrepriseEnEntrée> // TODO: donner un nom plus explicite au type
 
-type Output = unknown[] | { incomplete: true } | undefined
+type SortieFinalize = unknown[] | { incomplete: true } | undefined
 
 declare function print(str: string): void
 
-export function finalize(k: Clé, v: V): Output {
+export function finalize(k: Clé, v: V): SortieFinalize {
   "use strict"
   const maxBsonSize = 16777216
   const bsonsize = // eslint-disable-next-line @typescript-eslint/no-explicit-any

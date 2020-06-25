@@ -2,7 +2,7 @@ import "../globals"
 import { flatten, V as FlattenedEntreprise } from "./flatten"
 import { outputs } from "./outputs"
 import { apart } from "./apart"
-import { compte, V as CompteInput } from "./compte"
+import { compte } from "./compte"
 import { effectifs } from "./effectifs"
 import { interim } from "./interim"
 import { add } from "./add"
@@ -15,7 +15,7 @@ import { sirene } from "./sirene"
 import { populateNafAndApe, NAF } from "./populateNafAndApe"
 import { cotisation } from "./cotisation"
 import { cibleApprentissage } from "./cibleApprentissage"
-import { sirene_ul, Output as SireneULOutput } from "./sirene_ul"
+import { sirene_ul, SortieSireneUL } from "./sirene_ul"
 import { dateAddMonth } from "./dateAddMonth"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { poidsFrng } from "./poidsFrng"
@@ -65,8 +65,8 @@ export function map(this: {
 
   if (v.scope === "etablissement") {
     const [
-      output_array, // [ OutputValue ], in chronological order
-      output_indexed, // { Periode -> OutputValue }
+      output_array, // DonnéesAgrégées[] dans l'ordre chronologique
+      output_indexed, // { Periode -> DonnéesAgrégées }
     ] = f.outputs(v, serie_periode)
 
     // Les periodes qui nous interessent, triées
@@ -98,7 +98,7 @@ export function map(this: {
 
     if (includes["all"]) {
       if (v.compte) {
-        const output_compte = f.compte(v as CompteInput)
+        const output_compte = f.compte(v as DonnéesCompte)
         f.add(output_compte, output_indexed)
       }
 
@@ -131,7 +131,7 @@ export function map(this: {
 
       if (v.cotisation && v.debit) {
         const output_cotisationsdettes = f.cotisationsdettes(
-          v as DonnéesCotisationsDettes,
+          v as DonnéesCotisation & DonnéesDebit,
           periodes
         )
         f.add(output_cotisationsdettes, output_indexed)
@@ -171,13 +171,15 @@ export function map(this: {
       type Input = {
         periode: Date
       }
-      type Output = Input &
-        Partial<SireneULOutput> &
+      type SortieMapEntreprise = Input &
+        Partial<SortieSireneUL> &
         Partial<EntréeBdf> &
         Partial<EntréeDiane> &
         Record<string, unknown> // for *_past_* props of bdf. // TODO: try to be more specific
 
-      const output_array: Output[] = serie_periode.map(function (e) {
+      const output_array: SortieMapEntreprise[] = serie_periode.map(function (
+        e
+      ) {
         return {
           siren: v.key,
           periode: e,
@@ -191,7 +193,7 @@ export function map(this: {
       let output_indexed = output_array.reduce(function (periode, val) {
         periode[val.periode.getTime()] = val
         return periode
-      }, {} as Record<Periode, Output>)
+      }, {} as Record<Periode, SortieMapEntreprise>)
 
       if (v.sirene_ul) {
         f.sirene_ul(v as DonnéesSireneUL, output_array)
@@ -212,7 +214,7 @@ export function map(this: {
       output_indexed = output_array.reduce(function (periode, val) {
         periode[val.periode.getTime()] = val
         return periode
-      }, {} as Record<Periode, Output>)
+      }, {} as Record<Periode, SortieMapEntreprise>)
 
       v.bdf = v.bdf || {}
       v.diane = v.diane || {}

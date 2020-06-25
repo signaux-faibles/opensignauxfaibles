@@ -1,23 +1,17 @@
 import "../globals.ts"
 
-type Hash = string
+type Periode = number // TODO: réutiliser le type Periode global ?
 
-export type V = {
-  compte: Record<Hash, Compte>
-}
-
-type Periode = number
-
-type TypeEnSortie = Record<
+type SortieCompte = Record<
   Periode,
   {
     compte_urssaf: unknown
   }
 >
 
-export function compte(v: V): TypeEnSortie {
+export function compte(v: DonnéesCompte): SortieCompte {
   "use strict"
-  const output_compte: TypeEnSortie = {}
+  const output_compte: SortieCompte = {}
 
   //  var offset_compte = 3
   Object.keys(v.compte).forEach((hash) => {

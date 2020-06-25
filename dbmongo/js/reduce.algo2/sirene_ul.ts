@@ -1,12 +1,10 @@
 import * as f from "../common/raison_sociale"
 
-type V = DonnéesSireneUL
-
 type Input = {
   periode: Date
 }
 
-export type Output = {
+export type SortieSireneUL = {
   raison_sociale: unknown
   statut_juridique: unknown
   date_creation_entreprise: number | null // année
@@ -14,8 +12,8 @@ export type Output = {
 }
 
 export function sirene_ul(
-  v: V,
-  output_array: (Input & Partial<Output>)[]
+  v: DonnéesSireneUL,
+  output_array: (Input & Partial<SortieSireneUL>)[]
 ): void {
   "use strict"
   const sireneHashes = Object.keys(v.sirene_ul || {})

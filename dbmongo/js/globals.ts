@@ -20,13 +20,6 @@ type CodeNAF = string
 
 type Scope = "etablissement" | "entreprise"
 
-type ReduceIndexFlags = {
-  algo1: boolean
-  algo2: boolean
-}
-
-type BatchValues = { [batchKey: string]: BatchValue }
-
 type CompanyDataValues = {
   key: SiretOrSiren
   scope: Scope
@@ -34,28 +27,108 @@ type CompanyDataValues = {
 }
 
 type CompanyDataValuesWithFlags = CompanyDataValues & {
-  index: ReduceIndexFlags
+  index: {
+    algo1: boolean
+    algo2: boolean
+  }
 }
 
-type BatchValue = {
-  reporder?: { [periode: string]: RepOrder }
-  compact?: { delete: { [dataType: string]: DataHash[] } }
-  effectif?: { [dataHash: string]: Effectif }
-  apconso?: Record<DataHash, ApConso>
-  apdemande?: Record<DataHash, ApDemande>
-  compte?: Record<DataHash, Compte>
-  interim?: Record<Periode, Interim>
-  delai?: Record<DataHash, Delai>
-} & Partial<DonnéesDefaillances> &
-  Partial<DonnéesCotisationsDettes> &
-  Partial<DonnéesCcsf> &
-  Partial<DonnéesSirene> &
-  Partial<DonnéesSireneUL> &
-  Partial<DonnéesEffectifEntreprise> &
-  Partial<DonnéesBdf> &
-  Partial<DonnéesDiane>
+type BatchValues = Record<BatchKey, BatchValue>
 
-type BatchDataType = keyof BatchValue
+type BatchValue = Partial<
+  DonnéesRepOrder &
+    DonnéesCompact &
+    DonnéesEffectif &
+    DonnéesApConso &
+    DonnéesApDemande &
+    DonnéesCompte &
+    DonnéesInterim &
+    DonnéesDelai &
+    DonnéesDefaillances &
+    DonnéesCotisation &
+    DonnéesDebit &
+    DonnéesCcsf &
+    DonnéesSirene &
+    DonnéesSireneUL &
+    DonnéesEffectifEntreprise &
+    DonnéesBdf &
+    DonnéesDiane
+>
+
+type BatchDataType = keyof BatchValue // => 'reporder' | 'effectif' | 'apconso' | ...
+
+// Définition des types de données
+
+type DonnéesRepOrder = {
+  reporder: Record<Periode, EntréeRepOrder>
+}
+
+type DonnéesCompact = {
+  compact: { delete: { [dataType: string]: DataHash[] } } // TODO: utiliser un type Record<~BatchDataType, DataHash[]>
+}
+
+type DonnéesEffectif = {
+  effectif: Record<DataHash, EntréeEffectif>
+}
+
+type DonnéesApConso = {
+  apconso: Record<DataHash, EntréeApConso>
+}
+
+type DonnéesApDemande = {
+  apdemande: Record<DataHash, EntréeApDemande>
+}
+
+type DonnéesCompte = {
+  compte: Record<DataHash, EntréeCompte>
+}
+
+type DonnéesInterim = {
+  interim: Record<Periode, EntréeInterim>
+}
+
+type DonnéesDelai = {
+  delai: Record<DataHash, EntréeDelai>
+}
+
+type DonnéesDefaillances = {
+  altares: Record<DataHash, EntréeDefaillances>
+  procol: Record<DataHash, EntréeDefaillances>
+}
+
+type DonnéesCotisation = {
+  cotisation: Record<string, EntréeCotisation> // TODO: utiliser un type plus précis que string
+}
+
+type DonnéesDebit = {
+  debit: Record<string, EntréeDebit> // TODO: utiliser un type plus précis que string
+}
+
+type DonnéesCcsf = {
+  ccsf: Record<DataHash, { date_traitement: Date }>
+}
+
+type DonnéesSirene = {
+  sirene: Record<string, EntréeSirene> // TODO: utiliser un type plus précis que string
+}
+
+type DonnéesSireneUL = {
+  sirene_ul: Record<string, EntréeSireneUL> // TODO: utiliser un type plus précis que string
+}
+
+type DonnéesEffectifEntreprise = {
+  effectif_ent: Record<DataHash, EntréeEffectif>
+}
+
+type DonnéesBdf = {
+  bdf: Record<DataHash, EntréeBdf>
+}
+
+type DonnéesDiane = {
+  diane: Record<DataHash, EntréeDiane>
+}
+
+// Détail des types de données
 
 type AltaresCode = string
 
@@ -63,37 +136,32 @@ type Action = "liquidation" | "redressement" | "sauvegarde"
 
 type Stade = "abandon_procedure" | "fin_procedure" | "plan_continuation"
 
-type Événement = {
+type EntréeDefaillances = {
   code_evenement: AltaresCode
   action_procol: Action
   stade_procol: Stade
   date_effet: Date
 }
 
-type DonnéesDefaillances = {
-  altares: Record<DataHash, Événement>
-  procol: Record<DataHash, Événement>
-}
-
-type ApConso = {
+type EntréeApConso = {
   id_conso: string
   periode: Date
   heure_consomme: number
 }
 
-type ApDemande = {
+type EntréeApDemande = {
   id_demande: string
   periode: { start: Date; end: Date }
   hta: unknown
   motif_recours_se: unknown
 }
 
-type Compte = {
+type EntréeCompte = {
   periode: Date
   numero_compte: number
 }
 
-type Interim = {
+type EntréeInterim = {
   periode: Date
   etp: number
 }
@@ -104,20 +172,20 @@ type Periode = string // Date
 
 type SiretOrSiren = string
 
-type RepOrder = {
+type EntréeRepOrder = {
   random_order: number
   periode: Date
   siret: SiretOrSiren
 }
 
-type Effectif = {
+type EntréeEffectif = {
   numero_compte: string
   periode: Date
   effectif: number
 }
 
 // Valeurs attendues par delais(), pour chaque période. (cf dbmongo/lib/urssaf/delai.go)
-type Delai = {
+type EntréeDelai = {
   date_creation: Date
   date_echeance: Date
   duree_delai: number // nombre de jours entre date_creation et date_echeance
@@ -128,12 +196,12 @@ type CurrentDataState = { [key: string]: Set<DataHash> }
 
 type DebitHash = string
 
-type Cotisation = {
+type EntréeCotisation = {
   periode: { start: Date; end: Date }
   du: number
 }
 
-type Debit = {
+type EntréeDebit = {
   periode: { start: Date; end: Date }
   numero_ecart_negatif: unknown
   numero_compte: unknown
@@ -145,18 +213,9 @@ type Debit = {
   montant_majorations: number
 }
 
-type DonnéesCotisationsDettes = {
-  cotisation: Record<string, Cotisation>
-  debit: Record<string, Debit>
-}
-
-type DonnéesCcsf = {
-  ccsf: Record<DataHash, { date_traitement: Date }>
-}
-
 type Departement = string
 
-type Sirene = {
+type EntréeSirene = {
   ape: CodeAPE
   lattitude: number // TODO: une fois que les données auront été migrées, corriger l'orthographe de cette propriété (--> latitude)
   longitude: unknown
@@ -165,11 +224,7 @@ type Sirene = {
   date_creation: Date
 }
 
-type DonnéesSirene = {
-  sirene: Record<string, Sirene>
-}
-
-type SireneUL = {
+type EntréeSireneUL = {
   raison_sociale: string
   nom_unite_legale: string
   nom_usage_unite_legale: string
@@ -181,24 +236,10 @@ type SireneUL = {
   date_creation: Date
 }
 
-type DonnéesSireneUL = {
-  sirene_ul: Record<string, SireneUL>
-}
-
-type EffectifEntreprise = Record<DataHash, Effectif>
-
-type DonnéesEffectifEntreprise = {
-  effectif_ent: EffectifEntreprise
-}
-
 type EntréeBdf = {
   arrete_bilan_bdf: Date
   annee_bdf: number
   exercice_bdf: number
-}
-
-type DonnéesBdf = {
-  bdf: Record<DataHash, EntréeBdf>
 }
 
 type EntréeDiane = {
@@ -211,8 +252,4 @@ type EntréeDiane = {
   produit_exceptionnel: number
   charge_exceptionnelle: number
   charges_financieres: number
-}
-
-type DonnéesDiane = {
-  diane: Record<DataHash, EntréeDiane>
 }

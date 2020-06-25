@@ -6,7 +6,7 @@ type Input = {
   code_ape: CodeAPE
 }
 
-export type Output = {
+export type SortieNAF = {
   code_naf: CodeNAF
   libelle_naf: string
   code_ape_niveau2: CodeAPENiveau2
@@ -28,7 +28,7 @@ export type NAF = {
 }
 
 export function populateNafAndApe(
-  output_indexed: { [k: string]: Partial<Input> & Partial<Output> },
+  output_indexed: { [k: string]: Partial<Input> & Partial<SortieNAF> },
   naf: NAF
 ): void {
   "use strict"
