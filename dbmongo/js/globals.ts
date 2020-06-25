@@ -20,12 +20,7 @@ type CodeNAF = string
 
 type Scope = "etablissement" | "entreprise"
 
-type ReduceIndexFlags = {
-  algo1: boolean
-  algo2: boolean
-}
-
-type BatchValues = { [batchKey: string]: BatchValue }
+type BatchValues = Record<BatchKey, BatchValue>
 
 type CompanyDataValues = {
   key: SiretOrSiren
@@ -34,19 +29,53 @@ type CompanyDataValues = {
 }
 
 type CompanyDataValuesWithFlags = CompanyDataValues & {
-  index: ReduceIndexFlags
+  index: {
+    algo1: boolean
+    algo2: boolean
+  }
 }
 
-type BatchValue = {
-  reporder?: { [periode: string]: RepOrder }
-  compact?: { delete: { [dataType: string]: DataHash[] } }
-  effectif?: { [dataHash: string]: Effectif }
-  apconso?: Record<DataHash, ApConso>
-  apdemande?: Record<DataHash, ApDemande>
-  compte?: Record<DataHash, Compte>
-  interim?: Record<Periode, Interim>
-  delai?: Record<DataHash, Delai>
-} & Partial<DonnéesDefaillances> &
+type DonnéesRepOrder = {
+  reporder: Record<Periode, RepOrder>
+}
+
+type DonnéesEffectif = {
+  effectif: Record<DataHash, Effectif>
+}
+
+type DonnéesApConso = {
+  apconso: Record<DataHash, ApConso>
+}
+
+type DonnéesApDemande = {
+  apdemande: Record<DataHash, ApDemande>
+}
+
+type DonnéesCompte = {
+  compte: Record<DataHash, Compte>
+}
+
+type DonnéesInterim = {
+  interim: Record<Periode, Interim>
+}
+
+type DonnéesDelai = {
+  delai: Record<DataHash, Delai>
+}
+
+type DonnéesCompact = {
+  compact: { delete: { [dataType: string]: DataHash[] } }
+}
+
+type BatchValue = Partial<DonnéesRepOrder> &
+  Partial<DonnéesCompact> &
+  Partial<DonnéesEffectif> &
+  Partial<DonnéesApConso> &
+  Partial<DonnéesApDemande> &
+  Partial<DonnéesCompte> &
+  Partial<DonnéesInterim> &
+  Partial<DonnéesDelai> &
+  Partial<DonnéesDefaillances> &
   Partial<DonnéesCotisationsDettes> &
   Partial<DonnéesCcsf> &
   Partial<DonnéesSirene> &
@@ -54,6 +83,9 @@ type BatchValue = {
   Partial<DonnéesEffectifEntreprise> &
   Partial<DonnéesBdf> &
   Partial<DonnéesDiane>
+
+// TODO: remove redundant Partial
+// TODO: check for redundant type defs
 
 type BatchDataType = keyof BatchValue
 
