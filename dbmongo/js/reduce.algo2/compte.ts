@@ -1,12 +1,6 @@
 import "../globals.ts"
 
-type Hash = string
-
-export type V = {
-  compte: Record<Hash, Compte>
-}
-
-type Periode = number
+type Periode = number // TODO: réutiliser le type Periode global ?
 
 type TypeEnSortie = Record<
   Periode,
@@ -15,7 +9,7 @@ type TypeEnSortie = Record<
   }
 >
 
-export function compte(v: V): TypeEnSortie {
+export function compte(v: DonnéesCompte): TypeEnSortie {
   "use strict"
   const output_compte: TypeEnSortie = {}
 

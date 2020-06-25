@@ -2,7 +2,7 @@ import "../globals"
 import { flatten, V as FlattenedEntreprise } from "./flatten"
 import { outputs } from "./outputs"
 import { apart } from "./apart"
-import { compte, V as CompteInput } from "./compte"
+import { compte } from "./compte"
 import { effectifs } from "./effectifs"
 import { interim } from "./interim"
 import { add } from "./add"
@@ -98,7 +98,7 @@ export function map(this: {
 
     if (includes["all"]) {
       if (v.compte) {
-        const output_compte = f.compte(v as CompteInput)
+        const output_compte = f.compte(v as DonnéesCompte)
         f.add(output_compte, output_indexed)
       }
 

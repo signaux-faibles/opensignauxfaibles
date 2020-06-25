@@ -1,7 +1,5 @@
 import * as f from "../common/region"
 
-type V = DonnéesSirene
-
 type Input = {
   periode: Date
   siret: SiretOrSiren
@@ -19,7 +17,10 @@ export type Output = {
   age: number | null // en années
 }
 
-export function sirene(v: V, output_array: (Input & Partial<Output>)[]): void {
+export function sirene(
+  v: DonnéesSirene,
+  output_array: (Input & Partial<Output>)[]
+): void {
   "use strict"
   const sireneHashes = Object.keys(v.sirene || {})
 

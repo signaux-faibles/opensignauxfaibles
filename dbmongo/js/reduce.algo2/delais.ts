@@ -18,7 +18,7 @@ export type DelaiComputedValues = {
   montant_echeancier: number // exprimé en euros
 }
 
-export type V = { delai: ParPériode<Delai> }
+export type V = { delai: ParPériode<Delai> } // TODO: définir ce type dans global.ts ?
 
 export function delais(
   v: V,

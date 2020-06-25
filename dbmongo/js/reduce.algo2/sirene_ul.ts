@@ -1,7 +1,5 @@
 import * as f from "../common/raison_sociale"
 
-type V = DonnéesSireneUL
-
 type Input = {
   periode: Date
 }
@@ -14,7 +12,7 @@ export type Output = {
 }
 
 export function sirene_ul(
-  v: V,
+  v: DonnéesSireneUL,
   output_array: (Input & Partial<Output>)[]
 ): void {
   "use strict"

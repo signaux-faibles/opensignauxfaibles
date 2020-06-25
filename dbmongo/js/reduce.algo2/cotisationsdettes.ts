@@ -17,8 +17,6 @@ type Dette = {
   montant_majorations: Debit["montant_majorations"]
 }
 
-type V = DonnéesCotisationsDettes
-
 type Output = {
   interessante_urssaf: boolean
   cotisation: number
@@ -29,7 +27,7 @@ type Output = {
 }
 
 export function cotisationsdettes(
-  v: V,
+  v: DonnéesCotisationsDettes,
   periodes: Periode[]
 ): Record<number, Output> {
   "use strict"

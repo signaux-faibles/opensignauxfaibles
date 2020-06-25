@@ -1,4 +1,5 @@
 export type V = {
+  // TODO: donner un nom plus explicite au type
   key: SiretOrSiren
   scope: Scope
   batch: BatchValues

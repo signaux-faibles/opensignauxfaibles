@@ -19,9 +19,7 @@ type Clé = {
   type: unknown
 }
 
-export type V = Record<SiretOrSiren, EntrepriseEnEntrée> & {
-  entreprise?: EntrepriseEnEntrée
-}
+export type V = Record<SiretOrSiren | "entreprise", EntrepriseEnEntrée> // TODO: donner un nom plus explicite au type
 
 type Output = unknown[] | { incomplete: true } | undefined
 
