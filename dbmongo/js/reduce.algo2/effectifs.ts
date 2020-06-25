@@ -10,7 +10,7 @@ type ValeurEffectif = number
 
 type SortieEffectifs = Record<Time, Record<EffectifName, ValeurEffectif | null>>
 
-type EffectifEntreprise = Record<DataHash, Effectif>
+type EffectifEntreprise = Record<DataHash, EntréeEffectif>
 
 export function effectifs(
   effobj: EffectifEntreprise,

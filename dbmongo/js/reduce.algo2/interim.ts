@@ -10,7 +10,7 @@ type SortieInterim = {
 }
 
 export function interim(
-  interim: Record<string, Interim>,
+  interim: Record<string, EntréeInterim>,
   output_indexed: Record<string, Input>
 ): Record<string, SortieInterim> {
   "use strict"

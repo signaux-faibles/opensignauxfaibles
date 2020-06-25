@@ -14,7 +14,9 @@ const global = globalThis as any // eslint-disable-line @typescript-eslint/no-ex
 
 const ISODate = (date: string): Date => new Date(date)
 
-const removeRandomOrder = (reporderProp: { [key: string]: RepOrder }): void =>
+const removeRandomOrder = (reporderProp: {
+  [key: string]: EntréeRepOrder
+}): void =>
   Object.keys(reporderProp).forEach((period) => {
     delete reporderProp[period].random_order
   })

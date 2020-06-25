@@ -17,7 +17,7 @@ const nbDays = (firstDate: Date, secondDate: Date): number => {
   )
 }
 
-const makeDelai = (firstDate: Date, secondDate: Date): Delai => ({
+const makeDelai = (firstDate: Date, secondDate: Date): EntréeDelai => ({
   date_creation: firstDate,
   date_echeance: secondDate,
   duree_delai: nbDays(firstDate, secondDate),
@@ -36,7 +36,7 @@ const testProperty = (
   debits?: DebitComputedValues
 ): ParPériode<DelaiComputedValues> => {
   const delaiTest = makeDelai(new Date("2014-01-03"), new Date("2014-04-05"))
-  const delaiMap: ParPériode<Delai> = {
+  const delaiMap: ParPériode<EntréeDelai> = {
     abc: delaiTest,
   }
   const output_indexed: ParPériode<DebitComputedValues> = {}
@@ -85,7 +85,7 @@ test("la propriété ratio_dette_delai représente la déviation du remboursemen
 
 test("un délai en dehors de la période d'intérêt est ignorée", (t) => {
   const delaiTest = makeDelai(new Date("2013-01-03"), new Date("2013-03-05"))
-  const delaiMap: ParPériode<Delai> = {
+  const delaiMap: ParPériode<EntréeDelai> = {
     abc: delaiTest,
   }
   const donnéesParPériode: ParPériode<DebitComputedValues> = {}

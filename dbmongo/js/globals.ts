@@ -59,7 +59,7 @@ type BatchDataType = keyof BatchValue // => 'reporder' | 'effectif' | 'apconso' 
 // Définition des types de données
 
 type DonnéesRepOrder = {
-  reporder: Record<Periode, RepOrder>
+  reporder: Record<Periode, EntréeRepOrder>
 }
 
 type DonnéesCompact = {
@@ -67,7 +67,7 @@ type DonnéesCompact = {
 }
 
 type DonnéesEffectif = {
-  effectif: Record<DataHash, Effectif>
+  effectif: Record<DataHash, EntréeEffectif>
 }
 
 type DonnéesApConso = {
@@ -79,15 +79,15 @@ type DonnéesApDemande = {
 }
 
 type DonnéesCompte = {
-  compte: Record<DataHash, Compte>
+  compte: Record<DataHash, EntréeCompte>
 }
 
 type DonnéesInterim = {
-  interim: Record<Periode, Interim>
+  interim: Record<Periode, EntréeInterim>
 }
 
 type DonnéesDelai = {
-  delai: Record<DataHash, Delai>
+  delai: Record<DataHash, EntréeDelai>
 }
 
 type DonnéesDefaillances = {
@@ -105,15 +105,15 @@ type DonnéesCcsf = {
 }
 
 type DonnéesSirene = {
-  sirene: Record<string, Sirene> // TODO: utiliser un type plus précis que string
+  sirene: Record<string, EntréeSirene> // TODO: utiliser un type plus précis que string
 }
 
 type DonnéesSireneUL = {
-  sirene_ul: Record<string, SireneUL> // TODO: utiliser un type plus précis que string
+  sirene_ul: Record<string, EntréeSireneUL> // TODO: utiliser un type plus précis que string
 }
 
 type DonnéesEffectifEntreprise = {
-  effectif_ent: Record<DataHash, Effectif>
+  effectif_ent: Record<DataHash, EntréeEffectif>
 }
 
 type DonnéesBdf = {
@@ -139,25 +139,25 @@ type Événement = {
   date_effet: Date
 }
 
-type ApConso = {
+type EntréeApConso = {
   id_conso: string
   periode: Date
   heure_consomme: number
 }
 
-type ApDemande = {
+type EntréeApDemande = {
   id_demande: string
   periode: { start: Date; end: Date }
   hta: unknown
   motif_recours_se: unknown
 }
 
-type Compte = {
+type EntréeCompte = {
   periode: Date
   numero_compte: number
 }
 
-type Interim = {
+type EntréeInterim = {
   periode: Date
   etp: number
 }
@@ -168,20 +168,20 @@ type Periode = string // Date
 
 type SiretOrSiren = string
 
-type RepOrder = {
+type EntréeRepOrder = {
   random_order: number
   periode: Date
   siret: SiretOrSiren
 }
 
-type Effectif = {
+type EntréeEffectif = {
   numero_compte: string
   periode: Date
   effectif: number
 }
 
 // Valeurs attendues par delais(), pour chaque période. (cf dbmongo/lib/urssaf/delai.go)
-type Delai = {
+type EntréeDelai = {
   date_creation: Date
   date_echeance: Date
   duree_delai: number // nombre de jours entre date_creation et date_echeance
@@ -211,7 +211,7 @@ type Debit = {
 
 type Departement = string
 
-type Sirene = {
+type EntréeSirene = {
   ape: CodeAPE
   lattitude: number // TODO: une fois que les données auront été migrées, corriger l'orthographe de cette propriété (--> latitude)
   longitude: unknown
@@ -220,7 +220,7 @@ type Sirene = {
   date_creation: Date
 }
 
-type SireneUL = {
+type EntréeSireneUL = {
   raison_sociale: string
   nom_unite_legale: string
   nom_usage_unite_legale: string

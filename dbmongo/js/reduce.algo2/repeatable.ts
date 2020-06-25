@@ -1,5 +1,5 @@
 export function repeatable(
-  rep: Record<Periode, RepOrder>
+  rep: Record<Periode, EntréeRepOrder>
 ): Record<Periode, { random_order: number }> {
   "use strict"
   const output_repeatable = {} as Record<string, { random_order: number }>
