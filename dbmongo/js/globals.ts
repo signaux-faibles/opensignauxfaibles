@@ -1,7 +1,14 @@
 // Déclaration des fonctions globales fournies par MongoDB
+
 declare function emit(key: unknown, value: unknown): void
 
+// Types utilitaires
+
+// Rend non optionelles les propriétés de Type.
+type MakeRequired<Type> = { [key in keyof Type]-?: Type[key] }
+
 // Paramètres globaux utilisés par "compact"
+
 /* eslint-disable @typescript-eslint/no-unused-vars */
 let batches: BatchKey[]
 let batchKey: BatchKey

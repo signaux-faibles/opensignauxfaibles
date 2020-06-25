@@ -10,10 +10,15 @@ export function reduce(
 ): CompanyDataValues {
   "use strict"
 
-  // Retourne les clés de obj, en respectant le type défini dans le type de obj.
+  // Appelle fct() pour chaque propriété définie (non undefined) de obj.
   // Contrat: obj ne doit contenir que les clés définies dans son type.
-  const typedObjectKeys = <T>(obj: T): Array<keyof T> =>
-    Object.keys(obj) as Array<keyof T>
+  const forEachPopulatedProp = <T>(
+    obj: T,
+    fct: (key: keyof T, val: MakeRequired<T>[keyof T]) => unknown
+  ) =>
+    (Object.keys(obj) as Array<keyof T>).forEach((key) => {
+      if (obj[key] !== undefined) fct(key, obj[key])
+    })
 
   // Tester si plusieurs batchs. Reduce complet uniquement si plusieurs
   // batchs. Sinon, juste fusion des attributs
@@ -95,8 +100,8 @@ export function reduce(
       if (type === "compact") {
         const compactDelete = reduced_value.batch[batch].compact?.delete
         if (compactDelete) {
-          typedObjectKeys(compactDelete).forEach((delete_type) => {
-            compactDelete[delete_type].forEach((hash) => {
+          forEachPopulatedProp(compactDelete, (delete_type, keysToDelete) => {
+            keysToDelete.forEach((hash) => {
               hashToDelete[delete_type] = hashToDelete[delete_type] || new Set()
               hashToDelete[delete_type].add(hash)
             })
@@ -213,8 +218,8 @@ export function reduce(
       //hash à supprimer vides (compact.delete)
       const compactDelete = reduced_value.batch[batch].compact?.delete
       if (compactDelete) {
-        typedObjectKeys(compactDelete).forEach((type) => {
-          if (compactDelete[type].length === 0) {
+        forEachPopulatedProp(compactDelete, (type, keysToDelete) => {
+          if (keysToDelete.length === 0) {
             delete compactDelete[type]
           }
         })

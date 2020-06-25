@@ -338,16 +338,24 @@ function complete_reporder(siret, object) {
 // Note: similaire à flatten() de reduce.algo2.
 function currentState(batches) {
     "use strict";
+    // Retourne les clés de obj, en respectant le type défini dans le type de obj.
+    // Contrat: obj ne doit contenir que les clés définies dans son type.
+    const typedObjectKeys = (obj) => Object.keys(obj);
+    // Appelle fct() pour chaque propriété définie (non undefined) de obj.
+    // Contrat: obj ne doit contenir que les clés définies dans son type.
+    const forEachPopulatedProp = (obj, fct) => Object.keys(obj).forEach((key) => {
+        if (obj[key] !== undefined)
+            fct(key, obj[key]);
+    });
     const currentState = batches.reduce((m, batch) => {
         //1. On supprime les clés de la mémoire
         if (batch.compact) {
-            for (const type of Object.keys(batch.compact.delete)) {
-                batch.compact.delete[type].forEach((key) => {
+            forEachPopulatedProp(batch.compact.delete, (type, keysToDelete) => {
+                keysToDelete.forEach((key) => {
                     m[type].delete(key); // Should never fail or collection is corrupted
                 });
-            }
+            });
         }
-        const typedObjectKeys = (obj) => Object.keys(obj);
         //2. On ajoute les nouvelles clés
         for (const type of typedObjectKeys(batch)) {
             if (type === "compact")
@@ -400,6 +408,12 @@ function finalize(k, companyDataValues) {
 // Opérations: retrait des données doublons et application des corrections de données éventuelles.
 function reduce(key, values) {
     "use strict";
+    // Appelle fct() pour chaque propriété définie (non undefined) de obj.
+    // Contrat: obj ne doit contenir que les clés définies dans son type.
+    const forEachPopulatedProp = (obj, fct) => Object.keys(obj).forEach((key) => {
+        if (obj[key] !== undefined)
+            fct(key, obj[key]);
+    });
     // Tester si plusieurs batchs. Reduce complet uniquement si plusieurs
     // batchs. Sinon, juste fusion des attributs
     const auxBatchSet = new Set();
@@ -456,8 +470,8 @@ function reduce(key, values) {
             if (type === "compact") {
                 const compactDelete = (_a = reduced_value.batch[batch].compact) === null || _a === void 0 ? void 0 : _a.delete;
                 if (compactDelete) {
-                    Object.keys(compactDelete).forEach((delete_type) => {
-                        compactDelete[delete_type].forEach((hash) => {
+                    forEachPopulatedProp(compactDelete, (delete_type, keysToDelete) => {
+                        keysToDelete.forEach((hash) => {
                             hashToDelete[delete_type] = hashToDelete[delete_type] || new Set();
                             hashToDelete[delete_type].add(hash);
                         });
@@ -551,8 +565,8 @@ function reduce(key, values) {
             //hash à supprimer vides (compact.delete)
             const compactDelete = (_b = reduced_value.batch[batch].compact) === null || _b === void 0 ? void 0 : _b.delete;
             if (compactDelete) {
-                Object.keys(compactDelete).forEach((type) => {
-                    if (compactDelete[type].length === 0) {
+                forEachPopulatedProp(compactDelete, (type, keysToDelete) => {
+                    if (keysToDelete.length === 0) {
                         delete compactDelete[type];
                     }
                 });
@@ -1594,11 +1608,10 @@ function flatten(v, actual_batch) {
             m[type] = m[type] || {};
             // On supprime les clés qu'il faut
             const batchData = v.batch[batch];
-            if ((_b = (_a = batchData === null || batchData === void 0 ? void 0 : batchData.compact) === null || _a === void 0 ? void 0 : _a.delete) === null || _b === void 0 ? void 0 : _b[type]) {
-                batchData.compact.delete[type].forEach((hash) => {
-                    if (typeof m[type] === "object" && m[type][hash])
-                        delete m[type][hash];
-                });
+            const keysToDelete = ((_b = (_a = batchData === null || batchData === void 0 ? void 0 : batchData.compact) === null || _a === void 0 ? void 0 : _a.delete) === null || _b === void 0 ? void 0 : _b[type]) || [];
+            for (const hash of keysToDelete) {
+                if (typeof m[type] === "object" && m[type][hash])
+                    delete m[type][hash];
             }
             Object.assign(m[type], v.batch[batch][type]);
         });
