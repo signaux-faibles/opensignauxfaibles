@@ -14,7 +14,7 @@ export function reduce(
   // Contrat: obj ne doit contenir que les clés définies dans son type.
   const forEachPopulatedProp = <T>(
     obj: T,
-    fct: (key: keyof T, val: MakeRequired<T>[keyof T]) => unknown
+    fct: (key: keyof T, val: Required<T>[keyof T]) => unknown
   ) =>
     (Object.keys(obj) as Array<keyof T>).forEach((key) => {
       if (obj[key] !== undefined) fct(key, obj[key])
