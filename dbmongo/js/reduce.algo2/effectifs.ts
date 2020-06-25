@@ -10,6 +10,8 @@ type ValeurEffectif = number
 
 type Output = Record<Time, Record<EffectifName, ValeurEffectif | null>>
 
+type EffectifEntreprise = Record<DataHash, Effectif>
+
 export function effectifs(
   effobj: EffectifEntreprise,
   periodes: string[],

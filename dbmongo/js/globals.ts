@@ -20,8 +20,6 @@ type CodeNAF = string
 
 type Scope = "etablissement" | "entreprise"
 
-type BatchValues = Record<BatchKey, BatchValue>
-
 type CompanyDataValues = {
   key: SiretOrSiren
   scope: Scope
@@ -35,8 +33,37 @@ type CompanyDataValuesWithFlags = CompanyDataValues & {
   }
 }
 
+type BatchValues = Record<BatchKey, BatchValue>
+
+type BatchValue = Partial<
+  DonnéesRepOrder &
+    DonnéesCompact &
+    DonnéesEffectif &
+    DonnéesApConso &
+    DonnéesApDemande &
+    DonnéesCompte &
+    DonnéesInterim &
+    DonnéesDelai &
+    DonnéesDefaillances &
+    DonnéesCotisationsDettes &
+    DonnéesCcsf &
+    DonnéesSirene &
+    DonnéesSireneUL &
+    DonnéesEffectifEntreprise &
+    DonnéesBdf &
+    DonnéesDiane
+>
+
+type BatchDataType = keyof BatchValue // => 'reporder' | 'effectif' | 'apconso' | ...
+
+// Définition des types de données
+
 type DonnéesRepOrder = {
   reporder: Record<Periode, RepOrder>
+}
+
+type DonnéesCompact = {
+  compact: { delete: { [dataType: string]: DataHash[] } } // TODO: utiliser un type Record<~BatchDataType, DataHash[]>
 }
 
 type DonnéesEffectif = {
@@ -63,31 +90,41 @@ type DonnéesDelai = {
   delai: Record<DataHash, Delai>
 }
 
-type DonnéesCompact = {
-  compact: { delete: { [dataType: string]: DataHash[] } }
+type DonnéesDefaillances = {
+  altares: Record<DataHash, Événement>
+  procol: Record<DataHash, Événement>
 }
 
-type BatchValue = Partial<DonnéesRepOrder> &
-  Partial<DonnéesCompact> &
-  Partial<DonnéesEffectif> &
-  Partial<DonnéesApConso> &
-  Partial<DonnéesApDemande> &
-  Partial<DonnéesCompte> &
-  Partial<DonnéesInterim> &
-  Partial<DonnéesDelai> &
-  Partial<DonnéesDefaillances> &
-  Partial<DonnéesCotisationsDettes> &
-  Partial<DonnéesCcsf> &
-  Partial<DonnéesSirene> &
-  Partial<DonnéesSireneUL> &
-  Partial<DonnéesEffectifEntreprise> &
-  Partial<DonnéesBdf> &
-  Partial<DonnéesDiane>
+type DonnéesCotisationsDettes = {
+  cotisation: Record<string, Cotisation> // TODO: utiliser un type plus précis que string
+  debit: Record<string, Debit> // TODO: utiliser un type plus précis que string
+}
 
-// TODO: remove redundant Partial
-// TODO: check for redundant type defs
+type DonnéesCcsf = {
+  ccsf: Record<DataHash, { date_traitement: Date }>
+}
 
-type BatchDataType = keyof BatchValue
+type DonnéesSirene = {
+  sirene: Record<string, Sirene> // TODO: utiliser un type plus précis que string
+}
+
+type DonnéesSireneUL = {
+  sirene_ul: Record<string, SireneUL> // TODO: utiliser un type plus précis que string
+}
+
+type DonnéesEffectifEntreprise = {
+  effectif_ent: Record<DataHash, Effectif>
+}
+
+type DonnéesBdf = {
+  bdf: Record<DataHash, EntréeBdf>
+}
+
+type DonnéesDiane = {
+  diane: Record<DataHash, EntréeDiane>
+}
+
+// Détail des types de données
 
 type AltaresCode = string
 
@@ -100,11 +137,6 @@ type Événement = {
   action_procol: Action
   stade_procol: Stade
   date_effet: Date
-}
-
-type DonnéesDefaillances = {
-  altares: Record<DataHash, Événement>
-  procol: Record<DataHash, Événement>
 }
 
 type ApConso = {
@@ -177,15 +209,6 @@ type Debit = {
   montant_majorations: number
 }
 
-type DonnéesCotisationsDettes = {
-  cotisation: Record<string, Cotisation>
-  debit: Record<string, Debit>
-}
-
-type DonnéesCcsf = {
-  ccsf: Record<DataHash, { date_traitement: Date }>
-}
-
 type Departement = string
 
 type Sirene = {
@@ -195,10 +218,6 @@ type Sirene = {
   departement: Departement
   raison_sociale: string
   date_creation: Date
-}
-
-type DonnéesSirene = {
-  sirene: Record<string, Sirene>
 }
 
 type SireneUL = {
@@ -213,24 +232,10 @@ type SireneUL = {
   date_creation: Date
 }
 
-type DonnéesSireneUL = {
-  sirene_ul: Record<string, SireneUL>
-}
-
-type EffectifEntreprise = Record<DataHash, Effectif>
-
-type DonnéesEffectifEntreprise = {
-  effectif_ent: EffectifEntreprise
-}
-
 type EntréeBdf = {
   arrete_bilan_bdf: Date
   annee_bdf: number
   exercice_bdf: number
-}
-
-type DonnéesBdf = {
-  bdf: Record<DataHash, EntréeBdf>
 }
 
 type EntréeDiane = {
@@ -243,8 +248,4 @@ type EntréeDiane = {
   produit_exceptionnel: number
   charge_exceptionnelle: number
   charges_financieres: number
-}
-
-type DonnéesDiane = {
-  diane: Record<DataHash, EntréeDiane>
 }
