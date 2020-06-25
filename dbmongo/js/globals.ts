@@ -104,11 +104,11 @@ type DonnéesDefaillances = {
 }
 
 type DonnéesCotisation = {
-  cotisation: Record<string, EntréeCotisation> // TODO: utiliser un type plus précis que string
+  cotisation: Record<DataHash, EntréeCotisation>
 }
 
 type DonnéesDebit = {
-  debit: Record<string, EntréeDebit> // TODO: utiliser un type plus précis que string
+  debit: Record<DataHash, EntréeDebit>
 }
 
 type DonnéesCcsf = {
@@ -116,11 +116,11 @@ type DonnéesCcsf = {
 }
 
 type DonnéesSirene = {
-  sirene: Record<string, EntréeSirene> // TODO: utiliser un type plus précis que string
+  sirene: Record<DataHash, EntréeSirene>
 }
 
 type DonnéesSireneUL = {
-  sirene_ul: Record<string, EntréeSireneUL> // TODO: utiliser un type plus précis que string
+  sirene_ul: Record<DataHash, EntréeSireneUL>
 }
 
 type DonnéesEffectifEntreprise = {
