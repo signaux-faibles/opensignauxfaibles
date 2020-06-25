@@ -6,7 +6,7 @@ type Hash = string
 
 type Timestamp = string
 
-type Output = {
+type SortieAPart = {
   apart_heures_autorisees: unknown
   apart_heures_consommees: number
   apart_motif_recours: ApDemande["motif_recours_se"]
@@ -16,10 +16,10 @@ type Output = {
 export function apart(
   apconso: Record<ApConsoHash, ApConso>,
   apdemande: Record<Hash, ApDemande>
-): Record<Timestamp, Output> {
+): Record<Timestamp, SortieAPart> {
   "use strict"
 
-  const output_apart: Record<Timestamp, Output> = {}
+  const output_apart: Record<Timestamp, SortieAPart> = {}
 
   // Mapping (pour l'instant vide) du hash de la demande avec les hash des consos correspondantes
   const apart = Object.keys(apdemande).reduce((apart, hash) => {

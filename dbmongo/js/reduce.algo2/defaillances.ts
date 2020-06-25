@@ -1,11 +1,11 @@
 import * as f from "./dealWithProcols"
-import { Output as ProcolOutput } from "./dealWithProcols"
+import { SortieProcols } from "./dealWithProcols"
 
-export type Output = ProcolOutput
+export type SortieDefaillances = SortieProcols
 
 export function defaillances(
   v: DonnéesDefaillances,
-  output_indexed: Record<Periode, Partial<Output>>
+  output_indexed: Record<Periode, Partial<SortieDefaillances>>
 ): void {
   "use strict"
   f.dealWithProcols(v.altares, "altares", output_indexed)

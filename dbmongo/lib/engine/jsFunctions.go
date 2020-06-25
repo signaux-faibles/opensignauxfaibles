@@ -1740,7 +1740,7 @@ function map() {
     }
     const v = f.flatten(this.value, actual_batch);
     if (v.scope === "etablissement") {
-        const [output_array, // [ OutputValue ], in chronological order
+        const [output_array, // DonnéesAgrégées[] dans l'ordre chronologique
         output_indexed,] = f.outputs(v, serie_periode);
         // Les periodes qui nous interessent, triées
         const periodes = Object.keys(output_indexed).sort((a, b) => a >= b ? 1 : 0);

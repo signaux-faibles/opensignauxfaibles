@@ -8,7 +8,7 @@ type OutputEvent = {
   date_proc_col: Date
 }
 
-export type Output = {
+export type SortieProcols = {
   etat_proc_collective: unknown
   date_proc_collective: unknown
   tag_failure: boolean
@@ -18,7 +18,7 @@ export function dealWithProcols(
   data_source: { [hash: string]: InputEvent },
   altar_or_procol: "altares" | "procol",
   output_indexed: {
-    [time: string]: Partial<Output>
+    [time: string]: Partial<SortieProcols>
   }
 ): void {
   "use strict"

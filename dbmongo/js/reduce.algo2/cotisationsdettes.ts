@@ -17,7 +17,7 @@ type Dette = {
   montant_majorations: Debit["montant_majorations"]
 }
 
-type Output = {
+type SortieCotisationsDettes = {
   interessante_urssaf: boolean
   cotisation: number
   montant_part_ouvriere: number
@@ -29,7 +29,7 @@ type Output = {
 export function cotisationsdettes(
   v: DonnéesCotisationsDettes,
   periodes: Periode[]
-): Record<number, Output> {
+): Record<number, SortieCotisationsDettes> {
   "use strict"
 
   const f = { generatePeriodSerie, dateAddMonth, compareDebit } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
@@ -38,7 +38,7 @@ export function cotisationsdettes(
   // Permet de s'aligner avec le calendrier de fourniture des données
   const last_treatment_day = 20
 
-  const output_cotisationsdettes: Record<Periode, Output> = {}
+  const output_cotisationsdettes: Record<Periode, SortieCotisationsDettes> = {}
 
   // TODO Cotisations avec un mois de retard ? Bizarre, plus maintenant que l'export se fait le 20
   // var offset_cotisation = 1

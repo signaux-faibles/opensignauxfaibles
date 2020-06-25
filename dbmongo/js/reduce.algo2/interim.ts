@@ -4,7 +4,7 @@ type Input = {
   effectif: number | null
 }
 
-type Output = {
+type SortieInterim = {
   interim_proportion: number
   [interim_ratio_past_: string]: number // TODO: éviter la création dynamique de propriétés
 }
@@ -12,14 +12,14 @@ type Output = {
 export function interim(
   interim: Record<string, Interim>,
   output_indexed: Record<string, Input>
-): Record<string, Output> {
+): Record<string, SortieInterim> {
   "use strict"
   const output_effectif = output_indexed
   // let periodes = Object.keys(output_indexed)
   // output_indexed devra être remplacé par output_effectif, et ne contenir que les données d'effectif.
   // periodes sera passé en argument.
 
-  const output_interim: Record<string, Output> = {}
+  const output_interim: Record<string, SortieInterim> = {}
 
   //  var offset_interim = 3
 

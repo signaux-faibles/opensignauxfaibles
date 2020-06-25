@@ -8,7 +8,7 @@ type Input = {
   montant_part_ouvriere?: number
 }
 
-export type Output = {
+export type SortieCotisation = {
   montant_pp_array: number[]
   montant_po_array: number[]
   cotisation_moy12m: number
@@ -20,8 +20,8 @@ export type Output = {
 }
 
 export function cotisation(
-  output_indexed: { [k: string]: Input & Partial<Output> },
-  output_array: (Input & Partial<Output>)[]
+  output_indexed: { [k: string]: Input & Partial<SortieCotisation> },
+  output_array: (Input & Partial<SortieCotisation>)[]
 ): void {
   "use strict"
   const f = { generatePeriodSerie, dateAddMonth } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO

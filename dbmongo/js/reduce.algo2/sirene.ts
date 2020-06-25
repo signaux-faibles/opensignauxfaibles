@@ -5,7 +5,7 @@ type Input = {
   siret: SiretOrSiren
 }
 
-export type Output = {
+export type SortieSirene = {
   siren: SiretOrSiren
   latitude: unknown
   longitude: unknown
@@ -19,7 +19,7 @@ export type Output = {
 
 export function sirene(
   v: DonnéesSirene,
-  output_array: (Input & Partial<Output>)[]
+  output_array: (Input & Partial<SortieSirene>)[]
 ): void {
   "use strict"
   const sireneHashes = Object.keys(v.sirene || {})

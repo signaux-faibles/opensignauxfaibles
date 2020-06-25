@@ -1,10 +1,9 @@
 import { DebitComputedValues } from "./delais"
-import { Output as DefaillancesOutput } from "./defaillances"
-import { Output as CcsfOutput } from "./ccsf"
-import { Output as SireneOutput } from "./sirene"
-import { Output as NafOutput } from "./populateNafAndApe"
-import { Output as CotisationOutput } from "./cotisation"
-// import { Output as DealWithProcolsOutput } from "./dealWithProcols"
+import { SortieDefaillances } from "./defaillances"
+import { SortieCcsf } from "./ccsf"
+import { SortieSirene } from "./sirene"
+import { SortieNAF } from "./populateNafAndApe"
+import { SortieCotisation } from "./cotisation"
 
 type DonnéesAgrégées = {
   siret: SiretOrSiren
@@ -14,13 +13,13 @@ type DonnéesAgrégées = {
   interessante_urssaf: true
   outcome: false
 } & DebitComputedValues &
-  Partial<DefaillancesOutput> &
-  Partial<CcsfOutput> &
-  Partial<SireneOutput> &
-  Partial<NafOutput> &
-  Partial<CotisationOutput>
+  Partial<SortieDefaillances> &
+  Partial<SortieCcsf> &
+  Partial<SortieSirene> &
+  Partial<SortieNAF> &
+  Partial<SortieCotisation>
 
-type IndexedOutput = Record<Periode, DonnéesAgrégées>
+type IndexDonnéesAgrégées = Record<Periode, DonnéesAgrégées>
 
 /**
  * Appelé par `map()` pour chaque entreprise/établissement, `outputs()` retourne
@@ -31,7 +30,7 @@ type IndexedOutput = Record<Periode, DonnéesAgrégées>
 export function outputs(
   v: { key: SiretOrSiren },
   serie_periode: Date[]
-): [DonnéesAgrégées[], IndexedOutput] {
+): [DonnéesAgrégées[], IndexDonnéesAgrégées] {
   "use strict"
   const output_array: DonnéesAgrégées[] = serie_periode.map(function (e) {
     return {
@@ -47,7 +46,7 @@ export function outputs(
   const output_indexed = output_array.reduce(function (periodes, val) {
     periodes[val.periode.getTime()] = val
     return periodes
-  }, {} as IndexedOutput)
+  }, {} as IndexDonnéesAgrégées)
 
   return [output_array, output_indexed]
 }
