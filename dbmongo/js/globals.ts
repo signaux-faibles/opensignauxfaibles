@@ -55,7 +55,7 @@ type BatchValue = Partial<
     DonnéesDiane
 >
 
-type BatchDataType = keyof BatchValue // => 'reporder' | 'effectif' | 'apconso' | ...
+type BatchDataType = Exclude<keyof BatchValue, "compact"> // => 'reporder' | 'effectif' | 'apconso' | ...
 
 // Définition des types de données
 
