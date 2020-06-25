@@ -71,7 +71,7 @@ type DonnéesRepOrder = {
 }
 
 type DonnéesCompact = {
-  compact: { delete: { [dataType in BatchDataType]?: DataHash[] } } // TODO: utiliser un type Record<~BatchDataType, DataHash[]>
+  compact: { delete: Partial<Record<BatchDataType, DataHash[]>> }
 }
 
 type DonnéesEffectif = {
