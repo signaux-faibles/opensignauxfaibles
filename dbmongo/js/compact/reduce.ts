@@ -10,6 +10,11 @@ export function reduce(
 ): CompanyDataValues {
   "use strict"
 
+  // Retourne les clés de obj, en respectant le type défini dans le type de obj.
+  // Contrat: obj ne doit contenir que les clés définies dans son type.
+  const typedObjectKeys = <T>(obj: T): Array<keyof T> =>
+    Object.keys(obj) as Array<keyof T>
+
   // Tester si plusieurs batchs. Reduce complet uniquement si plusieurs
   // batchs. Sinon, juste fusion des attributs
   const auxBatchSet = new Set()
@@ -90,7 +95,7 @@ export function reduce(
       if (type === "compact") {
         const compactDelete = reduced_value.batch[batch].compact?.delete
         if (compactDelete) {
-          Object.keys(compactDelete).forEach((delete_type) => {
+          typedObjectKeys(compactDelete).forEach((delete_type) => {
             compactDelete[delete_type].forEach((hash) => {
               hashToDelete[delete_type] = hashToDelete[delete_type] || new Set()
               hashToDelete[delete_type].add(hash)
@@ -208,7 +213,7 @@ export function reduce(
       //hash à supprimer vides (compact.delete)
       const compactDelete = reduced_value.batch[batch].compact?.delete
       if (compactDelete) {
-        Object.keys(compactDelete).forEach((type) => {
+        typedObjectKeys(compactDelete).forEach((type) => {
           if (compactDelete[type].length === 0) {
             delete compactDelete[type]
           }

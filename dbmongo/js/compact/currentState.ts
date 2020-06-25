@@ -5,19 +5,22 @@ import "../globals.ts"
 // Note: similaire à flatten() de reduce.algo2.
 export function currentState(batches: BatchValue[]): CurrentDataState {
   "use strict"
+
+  // Retourne les clés de obj, en respectant le type défini dans le type de obj.
+  // Contrat: obj ne doit contenir que les clés définies dans son type.
+  const typedObjectKeys = <T>(obj: T): Array<keyof T> =>
+    Object.keys(obj) as Array<keyof T>
+
   const currentState: CurrentDataState = batches.reduce(
     (m: CurrentDataState, batch: BatchValue) => {
       //1. On supprime les clés de la mémoire
       if (batch.compact) {
-        for (const type of Object.keys(batch.compact.delete)) {
+        for (const type of typedObjectKeys(batch.compact.delete)) {
           batch.compact.delete[type].forEach((key) => {
             m[type].delete(key) // Should never fail or collection is corrupted
           })
         }
       }
-
-      const typedObjectKeys = <T>(obj: T): Array<keyof T> =>
-        Object.keys(obj) as Array<keyof T>
 
       //2. On ajoute les nouvelles clés
       for (const type of typedObjectKeys(batch)) {
