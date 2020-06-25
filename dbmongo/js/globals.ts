@@ -71,11 +71,11 @@ type DonnéesEffectif = {
 }
 
 type DonnéesApConso = {
-  apconso: Record<DataHash, ApConso>
+  apconso: Record<DataHash, EntréeApConso>
 }
 
 type DonnéesApDemande = {
-  apdemande: Record<DataHash, ApDemande>
+  apdemande: Record<DataHash, EntréeApDemande>
 }
 
 type DonnéesCompte = {

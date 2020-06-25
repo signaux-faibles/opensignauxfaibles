@@ -9,13 +9,13 @@ type Timestamp = string
 type SortieAPart = {
   apart_heures_autorisees: unknown
   apart_heures_consommees: number
-  apart_motif_recours: ApDemande["motif_recours_se"]
+  apart_motif_recours: EntréeApDemande["motif_recours_se"]
   apart_heures_consommees_cumulees: number
 }
 
 export function apart(
-  apconso: Record<ApConsoHash, ApConso>,
-  apdemande: Record<Hash, ApDemande>
+  apconso: Record<ApConsoHash, EntréeApConso>,
+  apdemande: Record<Hash, EntréeApDemande>
 ): Record<Timestamp, SortieAPart> {
   "use strict"
 
