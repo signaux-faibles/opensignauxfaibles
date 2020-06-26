@@ -45,8 +45,6 @@ export function reduce(
 
   if (!severalBatches) return naivelyMergedCompanyData
 
-  const reduced_value = { ...naivelyMergedCompanyData } // TODO: on ne devrait plus avoir besoin de cloner cette objet, une fois que tous les traitements seront purs
-
   //////////////////////////////////////////////////
   // ETAPES DE LA FUSION AVEC DONNÉES HISTORIQUES //
   //////////////////////////////////////////////////
@@ -62,7 +60,11 @@ export function reduce(
       return m
     }, [])
 
+  // Memory conserve les données aplaties de tous les batches jusqu'à batchKey
+  // puis sera enrichie au fur et à mesure du traitements des batches suivants.
   const memory = f.currentState(memory_batches)
+
+  const reduced_value = { ...naivelyMergedCompanyData } // TODO: on ne devrait plus avoir besoin de cloner cette objet, une fois que tous les traitements seront purs
 
   // Pour tous les batchs à modifier, c'est-à-dire le batch ajouté et tous les
   // suivants.
@@ -70,6 +72,7 @@ export function reduce(
 
   modified_batches.forEach((batch: string) => {
     reduced_value.batch[batch] = reduced_value.batch[batch] || {}
+    const currentBatch = reduced_value.batch[batch]
 
     // Les types où il y a potentiellement des suppressions
     const stock_types = completeTypes[batch].filter(
@@ -86,12 +89,11 @@ export function reduce(
     // Itération sur les types qui ont potentiellement subi des modifications
     // pour compléter hashToDelete et hashToAdd.
     // Les suppressions de types complets / stock sont gérés dans le bloc suivant.
-    const currentBatch = reduced_value.batch[batch]
     for (const type in currentBatch) {
       // Le type compact gère les clés supprimées
       // Ce type compact existe si le batch en cours a déjà été compacté.
       if (type === "compact") {
-        const compactDelete = reduced_value.batch[batch].compact?.delete
+        const compactDelete = currentBatch.compact?.delete
         if (compactDelete) {
           Object.keys(compactDelete).forEach((delete_type) => {
             compactDelete[delete_type].forEach((hash) => {
@@ -177,10 +179,9 @@ export function reduce(
     // -------------------------------
     stock_types.forEach((type) => {
       if (hashToDelete[type]) {
-        const reducedBatch = reduced_value.batch[batch]
-        reducedBatch.compact = reducedBatch.compact || { delete: {} }
-        reducedBatch.compact.delete = reducedBatch.compact.delete || {}
-        reducedBatch.compact.delete[type] = [...hashToDelete[type]]
+        currentBatch.compact = currentBatch.compact || { delete: {} }
+        currentBatch.compact.delete = currentBatch.compact.delete || {}
+        currentBatch.compact.delete[type] = [...hashToDelete[type]]
       }
     })
 
@@ -188,10 +189,10 @@ export function reduce(
     type AllValueTypesButCompact = Exclude<keyof BatchValue, "compact">
     const typesToAdd = Object.keys(hashToAdd) as AllValueTypesButCompact[]
     typesToAdd.forEach((type) => {
-      reduced_value.batch[batch][type] = [...hashToAdd[type]].reduce(
+      currentBatch[type] = [...hashToAdd[type]].reduce(
         (typedBatchValues, hash) => ({
           ...typedBatchValues,
-          [hash]: reduced_value.batch[batch][type]?.[hash],
+          [hash]: currentBatch[type]?.[hash],
         }),
         {}
       )
@@ -200,16 +201,16 @@ export function reduce(
     // 6. nettoyage
     // ------------
 
-    if (reduced_value.batch[batch]) {
+    if (currentBatch) {
       //types vides
-      Object.keys(reduced_value.batch[batch]).forEach((strType) => {
+      Object.keys(currentBatch).forEach((strType) => {
         const type = strType as keyof BatchValue
-        if (Object.keys(reduced_value.batch[batch][type] || {}).length === 0) {
-          delete reduced_value.batch[batch][type]
+        if (Object.keys(currentBatch[type] || {}).length === 0) {
+          delete currentBatch[type]
         }
       })
       //hash à supprimer vides (compact.delete)
-      const compactDelete = reduced_value.batch[batch].compact?.delete
+      const compactDelete = currentBatch.compact?.delete
       if (compactDelete) {
         Object.keys(compactDelete).forEach((type) => {
           if (compactDelete[type].length === 0) {
@@ -217,11 +218,11 @@ export function reduce(
           }
         })
         if (Object.keys(compactDelete).length === 0) {
-          delete reduced_value.batch[batch].compact
+          delete currentBatch.compact
         }
       }
       //batchs vides
-      if (Object.keys(reduced_value.batch[batch]).length === 0) {
+      if (Object.keys(currentBatch).length === 0) {
         delete reduced_value.batch[batch]
       }
     }

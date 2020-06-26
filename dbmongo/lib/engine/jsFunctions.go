@@ -423,7 +423,6 @@ function reduce(key, values // chaque element contient plusieurs batches pour ce
     // généralement les données de plusieurs batches. (données historiques)
     if (!severalBatches)
         return naivelyMergedCompanyData;
-    const reduced_value = Object.assign({}, naivelyMergedCompanyData); // TODO: on ne devrait plus avoir besoin de cloner cette objet, une fois que tous les traitements seront purs
     //////////////////////////////////////////////////
     // ETAPES DE LA FUSION AVEC DONNÉES HISTORIQUES //
     //////////////////////////////////////////////////
@@ -435,13 +434,17 @@ function reduce(key, values // chaque element contient plusieurs batches pour ce
         m.push(naivelyMergedCompanyData.batch[batch]);
         return m;
     }, []);
+    // Memory conserve les données aplaties de tous les batches jusqu'à batchKey
+    // puis sera enrichie au fur et à mesure du traitements des batches suivants.
     const memory = f.currentState(memory_batches);
+    const reduced_value = Object.assign({}, naivelyMergedCompanyData); // TODO: on ne devrait plus avoir besoin de cloner cette objet, une fois que tous les traitements seront purs
     // Pour tous les batchs à modifier, c'est-à-dire le batch ajouté et tous les
     // suivants.
     const modified_batches = batches.filter((batch) => batch >= batchKey);
     modified_batches.forEach((batch) => {
         var _a, _b;
         reduced_value.batch[batch] = reduced_value.batch[batch] || {};
+        const currentBatch = reduced_value.batch[batch];
         // Les types où il y a potentiellement des suppressions
         const stock_types = completeTypes[batch].filter((type) => (memory[type] || new Set()).size > 0);
         // 1. On recupère les cles ajoutes et les cles supprimes
@@ -451,12 +454,11 @@ function reduce(key, values // chaque element contient plusieurs batches pour ce
         // Itération sur les types qui ont potentiellement subi des modifications
         // pour compléter hashToDelete et hashToAdd.
         // Les suppressions de types complets / stock sont gérés dans le bloc suivant.
-        const currentBatch = reduced_value.batch[batch];
         for (const type in currentBatch) {
             // Le type compact gère les clés supprimées
             // Ce type compact existe si le batch en cours a déjà été compacté.
             if (type === "compact") {
-                const compactDelete = (_a = reduced_value.batch[batch].compact) === null || _a === void 0 ? void 0 : _a.delete;
+                const compactDelete = (_a = currentBatch.compact) === null || _a === void 0 ? void 0 : _a.delete;
                 if (compactDelete) {
                     Object.keys(compactDelete).forEach((delete_type) => {
                         compactDelete[delete_type].forEach((hash) => {
@@ -527,31 +529,30 @@ function reduce(key, values // chaque element contient plusieurs batches pour ce
         // -------------------------------
         stock_types.forEach((type) => {
             if (hashToDelete[type]) {
-                const reducedBatch = reduced_value.batch[batch];
-                reducedBatch.compact = reducedBatch.compact || { delete: {} };
-                reducedBatch.compact.delete = reducedBatch.compact.delete || {};
-                reducedBatch.compact.delete[type] = [...hashToDelete[type]];
+                currentBatch.compact = currentBatch.compact || { delete: {} };
+                currentBatch.compact.delete = currentBatch.compact.delete || {};
+                currentBatch.compact.delete[type] = [...hashToDelete[type]];
             }
         });
         const typesToAdd = Object.keys(hashToAdd);
         typesToAdd.forEach((type) => {
-            reduced_value.batch[batch][type] = [...hashToAdd[type]].reduce((typedBatchValues, hash) => {
+            currentBatch[type] = [...hashToAdd[type]].reduce((typedBatchValues, hash) => {
                 var _a;
-                return (Object.assign(Object.assign({}, typedBatchValues), { [hash]: (_a = reduced_value.batch[batch][type]) === null || _a === void 0 ? void 0 : _a[hash] }));
+                return (Object.assign(Object.assign({}, typedBatchValues), { [hash]: (_a = currentBatch[type]) === null || _a === void 0 ? void 0 : _a[hash] }));
             }, {});
         });
         // 6. nettoyage
         // ------------
-        if (reduced_value.batch[batch]) {
+        if (currentBatch) {
             //types vides
-            Object.keys(reduced_value.batch[batch]).forEach((strType) => {
+            Object.keys(currentBatch).forEach((strType) => {
                 const type = strType;
-                if (Object.keys(reduced_value.batch[batch][type] || {}).length === 0) {
-                    delete reduced_value.batch[batch][type];
+                if (Object.keys(currentBatch[type] || {}).length === 0) {
+                    delete currentBatch[type];
                 }
             });
             //hash à supprimer vides (compact.delete)
-            const compactDelete = (_b = reduced_value.batch[batch].compact) === null || _b === void 0 ? void 0 : _b.delete;
+            const compactDelete = (_b = currentBatch.compact) === null || _b === void 0 ? void 0 : _b.delete;
             if (compactDelete) {
                 Object.keys(compactDelete).forEach((type) => {
                     if (compactDelete[type].length === 0) {
@@ -559,11 +560,11 @@ function reduce(key, values // chaque element contient plusieurs batches pour ce
                     }
                 });
                 if (Object.keys(compactDelete).length === 0) {
-                    delete reduced_value.batch[batch].compact;
+                    delete currentBatch.compact;
                 }
             }
             //batchs vides
-            if (Object.keys(reduced_value.batch[batch]).length === 0) {
+            if (Object.keys(currentBatch).length === 0) {
                 delete reduced_value.batch[batch];
             }
         }
