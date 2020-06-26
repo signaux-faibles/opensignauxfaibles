@@ -10,67 +10,7 @@ export function reduce(
 ): CompanyDataValues {
   "use strict"
 
-  // Tester si plusieurs batchs. Reduce complet uniquement si plusieurs
-  // batchs. Sinon, juste fusion des attributs
-  const auxBatchSet = new Set()
-  const severalBatches = values.some((value) => {
-    auxBatchSet.add(Object.keys(value.batch || {}))
-    return auxBatchSet.size > 1
-  })
-
-  // Fusion batch par batch des types de données sans se préoccuper des doublons.
-  const naivelyMergedCompanyData: CompanyDataValues = values.reduce(
-    (m, value: CompanyDataValues) => {
-      Object.keys(value.batch).forEach((batch) => {
-        type DataType = keyof BatchValue
-        m.batch[batch] = (Object.keys(value.batch[batch]) as DataType[]).reduce(
-          (batchValues: BatchValue, type: DataType) => ({
-            ...batchValues,
-            [type]: value.batch[batch][type],
-          }),
-          m.batch[batch] || {}
-        )
-      })
-      return m
-    },
-    { key: key, scope: values[0].scope, batch: {} }
-  )
-
-  // Cette fonction reduce() est appelée à deux moments:
-  // 1. agregation par établissement d'objets ImportedData. Dans cet étape, on
-  // ne travaille généralement que sur un seul batch.
-  // 2. agregation de ces résultats au sein de RawData, en fusionnant avec les
-  // données potentiellement présentes. Dans cette étape, on fusionne
-  // généralement les données de plusieurs batches. (données historiques)
-
-  if (!severalBatches) return naivelyMergedCompanyData
-
-  //////////////////////////////////////////////////
-  // ETAPES DE LA FUSION AVEC DONNÉES HISTORIQUES //
-  //////////////////////////////////////////////////
-
-  // 0. On calcule la memoire au moment du batch à modifier
-  const memory_batches: BatchValue[] = Object.keys(
-    naivelyMergedCompanyData.batch
-  )
-    .filter((batch) => batch < batchKey)
-    .sort()
-    .reduce((m: BatchValue[], batch: string) => {
-      m.push(naivelyMergedCompanyData.batch[batch])
-      return m
-    }, [])
-
-  // Memory conserve les données aplaties de tous les batches jusqu'à batchKey
-  // puis sera enrichie au fur et à mesure du traitements des batches suivants.
-  const memory = f.currentState(memory_batches)
-
-  const reduced_value = { ...naivelyMergedCompanyData } // TODO: on ne devrait plus avoir besoin de cloner cette objet, une fois que tous les traitements seront purs
-
-  // Pour tous les batchs à modifier, c'est-à-dire le batch ajouté et tous les
-  // suivants.
-  const modified_batches = batches.filter((batch) => batch >= batchKey)
-
-  modified_batches.forEach((batch: string) => {
+  function consolidateBatch(batch: string): void {
     reduced_value.batch[batch] = reduced_value.batch[batch] || {}
     const currentBatch = reduced_value.batch[batch]
 
@@ -226,7 +166,68 @@ export function reduce(
         delete reduced_value.batch[batch]
       }
     }
+  }
+
+  // Tester si plusieurs batchs. Reduce complet uniquement si plusieurs
+  // batchs. Sinon, juste fusion des attributs
+  const auxBatchSet = new Set()
+  const severalBatches = values.some((value) => {
+    auxBatchSet.add(Object.keys(value.batch || {}))
+    return auxBatchSet.size > 1
   })
+
+  // Fusion batch par batch des types de données sans se préoccuper des doublons.
+  const naivelyMergedCompanyData: CompanyDataValues = values.reduce(
+    (m, value: CompanyDataValues) => {
+      Object.keys(value.batch).forEach((batch) => {
+        type DataType = keyof BatchValue
+        m.batch[batch] = (Object.keys(value.batch[batch]) as DataType[]).reduce(
+          (batchValues: BatchValue, type: DataType) => ({
+            ...batchValues,
+            [type]: value.batch[batch][type],
+          }),
+          m.batch[batch] || {}
+        )
+      })
+      return m
+    },
+    { key: key, scope: values[0].scope, batch: {} }
+  )
+
+  // Cette fonction reduce() est appelée à deux moments:
+  // 1. agregation par établissement d'objets ImportedData. Dans cet étape, on
+  // ne travaille généralement que sur un seul batch.
+  // 2. agregation de ces résultats au sein de RawData, en fusionnant avec les
+  // données potentiellement présentes. Dans cette étape, on fusionne
+  // généralement les données de plusieurs batches. (données historiques)
+
+  if (!severalBatches) return naivelyMergedCompanyData
+
+  //////////////////////////////////////////////////
+  // ETAPES DE LA FUSION AVEC DONNÉES HISTORIQUES //
+  //////////////////////////////////////////////////
+
+  // 0. On calcule la memoire au moment du batch à modifier
+  const memory_batches: BatchValue[] = Object.keys(
+    naivelyMergedCompanyData.batch
+  )
+    .filter((batch) => batch < batchKey)
+    .sort()
+    .reduce((m: BatchValue[], batch: string) => {
+      m.push(naivelyMergedCompanyData.batch[batch])
+      return m
+    }, [])
+
+  // Memory conserve les données aplaties de tous les batches jusqu'à batchKey
+  // puis sera enrichie au fur et à mesure du traitements des batches suivants.
+  const memory = f.currentState(memory_batches)
+
+  const reduced_value = { ...naivelyMergedCompanyData } // TODO: on ne devrait plus avoir besoin de cloner cette objet, une fois que tous les traitements seront purs
+
+  // On itère sur chaque batch à partir de batchKey pour les consolider.
+  // Il est possible qu'il y ait moins de batch en sortie que le nombre traité
+  // dans la boucle, si ces batchs n'apportent aucune information nouvelle.
+  batches.filter((batch) => batch >= batchKey).forEach(consolidateBatch)
 
   return reduced_value
 }
