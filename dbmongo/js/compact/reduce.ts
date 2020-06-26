@@ -6,21 +6,20 @@ import * as f from "./currentState"
 // Opérations: retrait des données doublons et application des corrections de données éventuelles.
 export function reduce(
   key: SiretOrSiren,
-  values: CompanyDataValues[]
+  values: CompanyDataValues[] // chaque element contient plusieurs batches pour cette entreprise ou établissement
 ): CompanyDataValues {
   "use strict"
 
   // Tester si plusieurs batchs. Reduce complet uniquement si plusieurs
   // batchs. Sinon, juste fusion des attributs
   const auxBatchSet = new Set()
-
   const severalBatches = values.some((value) => {
     auxBatchSet.add(Object.keys(value.batch || {}))
     return auxBatchSet.size > 1
   })
 
-  //fusion des attributs dans values
-  const reduced_value: CompanyDataValues = values.reduce(
+  // Fusion batch par batch des types de données sans se préoccuper des doublons.
+  const naivelyMergedCompanyData: CompanyDataValues = values.reduce(
     (m, value: CompanyDataValues) => {
       Object.keys(value.batch).forEach((batch) => {
         type DataType = keyof BatchValue
@@ -36,6 +35,8 @@ export function reduce(
     },
     { key: key, scope: values[0].scope, batch: {} }
   )
+
+  const reduced_value = naivelyMergedCompanyData
 
   // Cette fonction reduce() est appelée à deux moments:
   // 1. agregation par établissement d'objets ImportedData. Dans cet étape, on
