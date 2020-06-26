@@ -1,5 +1,10 @@
 import "../globals.ts"
 
+/**
+ * Appelée par reduce(), consolidateBatch() va générer un diff entre les
+ * données de batch et les données précédentes fournies par memory.
+ * Pré-requis: les batches précédents doivent avoir été consolidés.
+ */
 export function consolidateBatch(
   reduced_value: CompanyDataValues,
   memory: CurrentDataState,
