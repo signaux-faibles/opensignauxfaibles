@@ -1,3 +1,9 @@
+// Types utilitaires
+// Rendre un type profondément immutable, par récursion.
+type MakeReadOnly<Type> = {
+  readonly [Key in keyof Type]: MakeReadOnly<Type[Key]>;
+};
+
 // Déclaration des fonctions globales fournies par MongoDB
 declare function emit(key: unknown, value: unknown): void
 

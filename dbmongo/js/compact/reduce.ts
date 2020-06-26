@@ -19,7 +19,7 @@ export function reduce(
   })
 
   // Fusion batch par batch des types de données sans se préoccuper des doublons.
-  const naivelyMergedCompanyData: CompanyDataValues = values.reduce(
+  const naivelyMergedCompanyData: MakeReadOnly<CompanyDataValues> = values.reduce(
     (m, value: CompanyDataValues) => {
       Object.keys(value.batch).forEach((batch) => {
         type DataType = keyof BatchValue
@@ -34,9 +34,7 @@ export function reduce(
       return m
     },
     { key: key, scope: values[0].scope, batch: {} }
-  )
-
-  const reduced_value = naivelyMergedCompanyData
+  ) as MakeReadOnly<CompanyDataValues>
 
   // Cette fonction reduce() est appelée à deux moments:
   // 1. agregation par établissement d'objets ImportedData. Dans cet étape, on
@@ -45,7 +43,9 @@ export function reduce(
   // données potentiellement présentes. Dans cette étape, on fusionne
   // généralement les données de plusieurs batches. (données historiques)
 
-  if (!severalBatches) return reduced_value
+  if (!severalBatches) return naivelyMergedCompanyData as CompanyDataValues
+
+  const reduced_value = {...naivelyMergedCompanyData} as CompanyDataValues
 
   //////////////////////////////////////////////////
   // ETAPES DE LA FUSION AVEC DONNÉES HISTORIQUES //
