@@ -15,8 +15,7 @@ result_reduce=$(jsc \
   ./helpers/fakes.js \
   ./helpers/testing.js \
   ../common/!(*_test*).js \
-  ../compact/currentState.js \
-  ../compact/reduce.js \
+  ../compact/!(*_test*).js \
   ../compact/reduce_test.js\
   2>&1)
 if [ "$result_reduce" != 'true' ]; then
