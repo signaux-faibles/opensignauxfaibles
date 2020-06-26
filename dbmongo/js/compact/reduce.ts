@@ -45,18 +45,20 @@ export function reduce(
 
   if (!severalBatches) return naivelyMergedCompanyData as CompanyDataValues
 
-  const reduced_value = {...naivelyMergedCompanyData} as CompanyDataValues
+  const reduced_value = { ...naivelyMergedCompanyData } as CompanyDataValues // TODO: on ne devrait plus avoir besoin de cloner cette objet, une fois que tous les traitements seront purs
 
   //////////////////////////////////////////////////
   // ETAPES DE LA FUSION AVEC DONNÉES HISTORIQUES //
   //////////////////////////////////////////////////
 
   // 0. On calcule la memoire au moment du batch à modifier
-  const memory_batches: BatchValue[] = Object.keys(reduced_value.batch)
+  const memory_batches: BatchValue[] = Object.keys(
+    naivelyMergedCompanyData.batch
+  )
     .filter((batch) => batch < batchKey)
     .sort()
     .reduce((m: BatchValue[], batch: string) => {
-      m.push(reduced_value.batch[batch])
+      m.push(naivelyMergedCompanyData.batch[batch])
       return m
     }, [])
 

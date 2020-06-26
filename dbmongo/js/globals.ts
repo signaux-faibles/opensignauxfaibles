@@ -1,8 +1,8 @@
 // Types utilitaires
 // Rendre un type profondément immutable, par récursion.
 type MakeReadOnly<Type> = {
-  readonly [Key in keyof Type]: MakeReadOnly<Type[Key]>;
-};
+  readonly [Key in keyof Type]: MakeReadOnly<Type[Key]>
+}
 
 // Déclaration des fonctions globales fournies par MongoDB
 declare function emit(key: unknown, value: unknown): void
@@ -41,7 +41,7 @@ type CompanyDataValuesWithFlags = CompanyDataValues & {
 
 type BatchValues = Record<BatchKey, BatchValue>
 
-type BatchValue = Partial<
+type MutableBatchValue = Partial<
   DonnéesRepOrder &
     DonnéesCompact &
     DonnéesEffectif &
@@ -60,6 +60,8 @@ type BatchValue = Partial<
     DonnéesBdf &
     DonnéesDiane
 >
+
+type BatchValue = MutableBatchValue | MakeReadOnly<MutableBatchValue>
 
 type BatchDataType = keyof BatchValue // => 'reporder' | 'effectif' | 'apconso' | ...
 
