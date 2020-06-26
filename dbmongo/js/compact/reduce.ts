@@ -1,5 +1,5 @@
 import "../globals.ts"
-import { consolidateBatch } from "./consolidateBatch"
+import { compactBatch } from "./compactBatch"
 import * as f from "./currentState"
 
 // Entrée: données d'entreprises venant de ImportedData, regroupées par entreprise ou établissement.
@@ -67,7 +67,7 @@ export function reduce(
 
   const reduced_value = { ...naivelyMergedCompanyData } // TODO: on ne devrait plus avoir besoin de cloner cette objet, une fois que tous les traitements seront purs
 
-  // On itère sur chaque batch à partir de batchKey pour les consolider.
+  // On itère sur chaque batch à partir de batchKey pour les compacter.
   // Il est possible qu'il y ait moins de batch en sortie que le nombre traité
   // dans la boucle, si ces batchs n'apportent aucune information nouvelle.
   batches
@@ -75,11 +75,11 @@ export function reduce(
     .forEach((batch) => {
       reduced_value.batch[batch] = reduced_value.batch[batch] || {}
       const currentBatch = reduced_value.batch[batch]
-      const consolidatedBatch = consolidateBatch(currentBatch, memory, batch)
-      if (Object.keys(consolidatedBatch).length === 0) {
+      const compactedBatch = compactBatch(currentBatch, memory, batch)
+      if (Object.keys(compactedBatch).length === 0) {
         delete reduced_value.batch[batch]
       } else {
-        reduced_value.batch[batch] = consolidatedBatch
+        reduced_value.batch[batch] = compactedBatch
       }
     })
 

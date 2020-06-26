@@ -298,47 +298,12 @@ package engine
 }`,
 },
 "compact":{
-"complete_reporder": `// complete_reporder ajoute une propriété "reporder" pour chaque couple
-// SIRET+période, afin d'assurer la reproductibilité de l'échantillonage.
-function complete_reporder(siret, object) {
-    "use strict";
-    const batches = Object.keys(object.batch);
-    batches.sort();
-    const missing = {};
-    serie_periode.forEach((p) => {
-        missing[p.getTime()] = true;
-    });
-    batches.forEach((batch) => {
-        const reporder = object.batch[batch].reporder || {};
-        Object.keys(reporder).forEach((ro) => {
-            if (!missing[reporder[ro].periode.getTime()]) {
-                delete reporder[ro];
-            }
-            else {
-                missing[reporder[ro].periode.getTime()] = false;
-            }
-        });
-    });
-    const lastBatch = batches[batches.length - 1];
-    serie_periode
-        .filter((p) => missing[p.getTime()])
-        .forEach((p) => {
-        const reporder_obj = object.batch[lastBatch].reporder || {};
-        reporder_obj[p.toString()] = {
-            random_order: Math.random(),
-            periode: p,
-            siret: siret,
-        };
-        object.batch[lastBatch].reporder = reporder_obj;
-    });
-    return object;
-}`,
-"consolidateBatch": `/**
+"compactBatch": `/**
  * Appelée par reduce(), consolidateBatch() va générer un diff entre les
  * données de batch et les données précédentes fournies par memory.
  * Pré-requis: les batches précédents doivent avoir été consolidés.
  */
-function consolidateBatch(currentBatch, memory, batch) {
+function compactBatch(currentBatch, memory, batch) {
     var _a, _b;
     // Les types où il y a potentiellement des suppressions
     const stock_types = completeTypes[batch].filter((type) => (memory[type] || new Set()).size > 0);
@@ -461,6 +426,41 @@ function consolidateBatch(currentBatch, memory, batch) {
     }
     return currentBatch;
 }`,
+"complete_reporder": `// complete_reporder ajoute une propriété "reporder" pour chaque couple
+// SIRET+période, afin d'assurer la reproductibilité de l'échantillonage.
+function complete_reporder(siret, object) {
+    "use strict";
+    const batches = Object.keys(object.batch);
+    batches.sort();
+    const missing = {};
+    serie_periode.forEach((p) => {
+        missing[p.getTime()] = true;
+    });
+    batches.forEach((batch) => {
+        const reporder = object.batch[batch].reporder || {};
+        Object.keys(reporder).forEach((ro) => {
+            if (!missing[reporder[ro].periode.getTime()]) {
+                delete reporder[ro];
+            }
+            else {
+                missing[reporder[ro].periode.getTime()] = false;
+            }
+        });
+    });
+    const lastBatch = batches[batches.length - 1];
+    serie_periode
+        .filter((p) => missing[p.getTime()])
+        .forEach((p) => {
+        const reporder_obj = object.batch[lastBatch].reporder || {};
+        reporder_obj[p.toString()] = {
+            random_order: Math.random(),
+            periode: p,
+            siret: siret,
+        };
+        object.batch[lastBatch].reporder = reporder_obj;
+    });
+    return object;
+}`,
 "currentState": `// currentState() agrège un ensemble de batch, en tenant compte des suppressions
 // pour renvoyer le dernier état connu des données.
 // Note: similaire à flatten() de reduce.algo2.
@@ -574,7 +574,7 @@ function reduce(key, values // chaque element contient plusieurs batches pour ce
         .forEach((batch) => {
         reduced_value.batch[batch] = reduced_value.batch[batch] || {};
         const currentBatch = reduced_value.batch[batch];
-        const consolidatedBatch = consolidateBatch(currentBatch, memory, batch);
+        const consolidatedBatch = compactBatch(currentBatch, memory, batch);
         if (Object.keys(consolidatedBatch).length === 0) {
             delete reduced_value.batch[batch];
         }

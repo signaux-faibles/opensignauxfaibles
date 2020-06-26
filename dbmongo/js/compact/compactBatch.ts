@@ -1,11 +1,11 @@
 import "../globals.ts"
 
 /**
- * Appelée par reduce(), consolidateBatch() va générer un diff entre les
+ * Appelée par reduce(), compactBatch() va générer un diff entre les
  * données de batch et les données précédentes fournies par memory.
- * Pré-requis: les batches précédents doivent avoir été consolidés.
+ * Pré-requis: les batches précédents doivent avoir été compactés.
  */
-export function consolidateBatch(
+export function compactBatch(
   currentBatch: BatchValue,
   memory: CurrentDataState,
   batch: string
