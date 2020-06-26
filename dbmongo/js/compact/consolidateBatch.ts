@@ -6,13 +6,10 @@ import "../globals.ts"
  * Pré-requis: les batches précédents doivent avoir été consolidés.
  */
 export function consolidateBatch(
-  reduced_value: CompanyDataValues,
+  currentBatch: BatchValue,
   memory: CurrentDataState,
   batch: string
-): void {
-  reduced_value.batch[batch] = reduced_value.batch[batch] || {}
-  const currentBatch = reduced_value.batch[batch]
-
+): BatchValue {
   // Les types où il y a potentiellement des suppressions
   const stock_types = completeTypes[batch].filter(
     (type) => (memory[type] || new Set()).size > 0
@@ -160,9 +157,6 @@ export function consolidateBatch(
         delete currentBatch.compact
       }
     }
-    //batchs vides
-    if (Object.keys(currentBatch).length === 0) {
-      delete reduced_value.batch[batch]
-    }
   }
+  return currentBatch
 }

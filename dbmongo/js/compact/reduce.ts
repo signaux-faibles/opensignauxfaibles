@@ -72,7 +72,16 @@ export function reduce(
   // dans la boucle, si ces batchs n'apportent aucune information nouvelle.
   batches
     .filter((batch) => batch >= batchKey)
-    .forEach((batch) => consolidateBatch(reduced_value, memory, batch))
+    .forEach((batch) => {
+      reduced_value.batch[batch] = reduced_value.batch[batch] || {}
+      const currentBatch = reduced_value.batch[batch]
+      const consolidatedBatch = consolidateBatch(currentBatch, memory, batch)
+      if (Object.keys(consolidatedBatch).length === 0) {
+        delete reduced_value.batch[batch]
+      } else {
+        reduced_value.batch[batch] = consolidatedBatch
+      }
+    })
 
   return reduced_value
 }

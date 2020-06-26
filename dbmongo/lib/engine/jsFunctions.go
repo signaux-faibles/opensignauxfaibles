@@ -333,10 +333,13 @@ function complete_reporder(siret, object) {
     });
     return object;
 }`,
-"consolidateBatch": `function consolidateBatch(reduced_value, memory, batch) {
+"consolidateBatch": `/**
+ * Appelée par reduce(), consolidateBatch() va générer un diff entre les
+ * données de batch et les données précédentes fournies par memory.
+ * Pré-requis: les batches précédents doivent avoir été consolidés.
+ */
+function consolidateBatch(currentBatch, memory, batch) {
     var _a, _b;
-    reduced_value.batch[batch] = reduced_value.batch[batch] || {};
-    const currentBatch = reduced_value.batch[batch];
     // Les types où il y a potentiellement des suppressions
     const stock_types = completeTypes[batch].filter((type) => (memory[type] || new Set()).size > 0);
     // 1. On recupère les cles ajoutes et les cles supprimes
@@ -455,11 +458,8 @@ function complete_reporder(siret, object) {
                 delete currentBatch.compact;
             }
         }
-        //batchs vides
-        if (Object.keys(currentBatch).length === 0) {
-            delete reduced_value.batch[batch];
-        }
     }
+    return currentBatch;
 }`,
 "currentState": `// currentState() agrège un ensemble de batch, en tenant compte des suppressions
 // pour renvoyer le dernier état connu des données.
@@ -571,7 +571,17 @@ function reduce(key, values // chaque element contient plusieurs batches pour ce
     // dans la boucle, si ces batchs n'apportent aucune information nouvelle.
     batches
         .filter((batch) => batch >= batchKey)
-        .forEach((batch) => consolidateBatch(reduced_value, memory, batch));
+        .forEach((batch) => {
+        reduced_value.batch[batch] = reduced_value.batch[batch] || {};
+        const currentBatch = reduced_value.batch[batch];
+        const consolidatedBatch = consolidateBatch(currentBatch, memory, batch);
+        if (Object.keys(consolidatedBatch).length === 0) {
+            delete reduced_value.batch[batch];
+        }
+        else {
+            reduced_value.batch[batch] = consolidatedBatch;
+        }
+    });
     return reduced_value;
 }`,
 },
