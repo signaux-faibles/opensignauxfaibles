@@ -299,9 +299,9 @@ package engine
 },
 "compact":{
 "compactBatch": `/**
- * Appelée par reduce(), consolidateBatch() va générer un diff entre les
+ * Appelée par reduce(), compactBatch() va générer un diff entre les
  * données de batch et les données précédentes fournies par memory.
- * Pré-requis: les batches précédents doivent avoir été consolidés.
+ * Pré-requis: les batches précédents doivent avoir été compactés.
  */
 function compactBatch(currentBatch, memory, batch) {
     var _a, _b;
@@ -565,8 +565,8 @@ function reduce(key, values // chaque element contient plusieurs batches pour ce
     // Memory conserve les données aplaties de tous les batches jusqu'à batchKey
     // puis sera enrichie au fur et à mesure du traitements des batches suivants.
     const memory = f.currentState(memory_batches);
-    const reduced_value = Object.assign({}, naivelyMergedCompanyData); // TODO: on ne devrait plus avoir besoin de cloner cette objet, une fois que tous les traitements seront purs
-    // On itère sur chaque batch à partir de batchKey pour les consolider.
+    const reduced_value = naivelyMergedCompanyData;
+    // On itère sur chaque batch à partir de batchKey pour les compacter.
     // Il est possible qu'il y ait moins de batch en sortie que le nombre traité
     // dans la boucle, si ces batchs n'apportent aucune information nouvelle.
     batches
@@ -574,12 +574,12 @@ function reduce(key, values // chaque element contient plusieurs batches pour ce
         .forEach((batch) => {
         reduced_value.batch[batch] = reduced_value.batch[batch] || {};
         const currentBatch = reduced_value.batch[batch];
-        const consolidatedBatch = compactBatch(currentBatch, memory, batch);
-        if (Object.keys(consolidatedBatch).length === 0) {
+        const compactedBatch = compactBatch(currentBatch, memory, batch);
+        if (Object.keys(compactedBatch).length === 0) {
             delete reduced_value.batch[batch];
         }
         else {
-            reduced_value.batch[batch] = consolidatedBatch;
+            reduced_value.batch[batch] = compactedBatch;
         }
     });
     return reduced_value;

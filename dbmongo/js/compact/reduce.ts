@@ -65,7 +65,7 @@ export function reduce(
   // puis sera enrichie au fur et à mesure du traitements des batches suivants.
   const memory = f.currentState(memory_batches)
 
-  const reduced_value = { ...naivelyMergedCompanyData } // TODO: on ne devrait plus avoir besoin de cloner cette objet, une fois que tous les traitements seront purs
+  const reduced_value = naivelyMergedCompanyData
 
   // On itère sur chaque batch à partir de batchKey pour les compacter.
   // Il est possible qu'il y ait moins de batch en sortie que le nombre traité
