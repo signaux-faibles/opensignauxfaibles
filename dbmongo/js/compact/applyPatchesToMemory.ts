@@ -7,14 +7,14 @@ export function applyPatchesToMemory(
   hashToDelete: Record<DataType, Set<DataHash>>,
   memory: CurrentDataState
 ): void {
-  // On retire les cles restantes de la memoire.
+  // Prise en compte des suppressions de clés dans la mémoire
   Object.keys(hashToDelete).forEach((type) => {
     hashToDelete[type].forEach((hash) => {
       memory[type].delete(hash)
     })
   })
 
-  // Pour chaque cle ajoutee restante: on ajoute à la memoire.
+  // Prise en compte des ajouts de clés dans la mémoire
   Object.keys(hashToAdd).forEach((type) => {
     hashToAdd[type].forEach((hash) => {
       memory[type] = memory[type] || new Set()
