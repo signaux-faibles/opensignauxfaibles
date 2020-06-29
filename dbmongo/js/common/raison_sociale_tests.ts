@@ -1,6 +1,14 @@
-"use strict"
+import test, { ExecutionContext } from "ava"
+import { raison_sociale } from "./raison_sociale"
 
-const test_cases = [
+type Param = string | null | undefined
+
+type TestCase = {
+  data: [Param, Param, Param, Param, Param, Param, Param]
+  expected: string
+}
+
+const testCases: TestCase[] = [
   {
     data: ["nom_entreprise", null, null, null, null, null, null],
     expected: "nom_entreprise",
@@ -23,18 +31,14 @@ const test_cases = [
   },
 ]
 
-const test_results = test_cases.map((tc) => {
-  return (
-    raison_sociale(
-      tc.data[0],
-      tc.data[1],
-      tc.data[2],
-      tc.data[3],
-      tc.data[4],
-      tc.data[5],
-      tc.data[6]
-    ) == tc.expected
+testCases.forEach(({ data, expected }) => {
+  test.serial(
+    `raison_sociale(${data.map((param) =>
+      param ? param.toString() : typeof param
+    )}) === ${expected}`,
+    (t: ExecutionContext) => {
+      const actualResults = raison_sociale(...data)
+      t.deepEqual(actualResults, expected)
+    }
   )
 })
-
-print(test_results.every((t) => t))
