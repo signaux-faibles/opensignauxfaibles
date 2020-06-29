@@ -1,16 +1,18 @@
 import "../globals.ts"
 
+type DataType = string // TODO: use BatchDataType instead
+
 export function listHashesToAddAndDelete(
   currentBatch: BatchValue
 ): {
-  hashToAdd: Record<string, Set<DataHash>>
-    hashToDelete: { [dataType: string]: Set<DataHash> }
+  hashToAdd: Record<DataType, Set<DataHash>>
+  hashToDelete: Record<DataType, Set<DataHash>>
 } {
   // 1. On recupère les cles ajoutes et les cles supprimes
   // -----------------------------------------------------
 
-  const hashToDelete: { [dataType: string]: Set<DataHash> } = {}
-  const hashToAdd: Record<string, Set<DataHash>> = {}
+  const hashToDelete: Record<DataType, Set<DataHash>> = {}
+  const hashToAdd: Record<DataType, Set<DataHash>> = {}
 
   // Itération sur les types qui ont potentiellement subi des modifications
   // pour compléter hashToDelete et hashToAdd.
