@@ -72,7 +72,7 @@ export function reduce(
   }
 
   // Copie telle quelle des batches jusqu'à batchKey.
-  Object.keys(naivelyMergedCompanyData)
+  Object.keys(naivelyMergedCompanyData.batch)
     .filter((batch) => batch < batchKey)
     .forEach((batch) => {
       reduced_value.batch[batch] = naivelyMergedCompanyData.batch[batch]
@@ -84,12 +84,9 @@ export function reduce(
   batches
     .filter((batch) => batch >= batchKey)
     .forEach((batch) => {
-      reduced_value.batch[batch] = reduced_value.batch[batch] || {}
-      const currentBatch = reduced_value.batch[batch]
+      const currentBatch = naivelyMergedCompanyData.batch[batch]
       const compactedBatch = compactBatch(currentBatch, memory, batch)
-      if (Object.keys(compactedBatch).length === 0) {
-        delete reduced_value.batch[batch]
-      } else {
+      if (Object.keys(compactedBatch).length > 0) {
         reduced_value.batch[batch] = compactedBatch
       }
     })
