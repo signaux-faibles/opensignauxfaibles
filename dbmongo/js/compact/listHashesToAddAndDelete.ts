@@ -8,7 +8,7 @@ type DataType = string // TODO: use BatchDataType instead
  */
 export function listHashesToAddAndDelete(
   currentBatch: BatchValue,
-  stock_types: DataType[],
+  stockTypes: DataType[],
   memory: CurrentDataState
 ): {
   hashToAdd: Record<DataType, Set<DataHash>>
@@ -40,7 +40,7 @@ export function listHashesToAddAndDelete(
     }
   }
 
-  stock_types.forEach((type) => {
+  stockTypes.forEach((type) => {
     hashToDelete[type] = new Set([
       ...(hashToDelete[type] || new Set()),
       ...memory[type],

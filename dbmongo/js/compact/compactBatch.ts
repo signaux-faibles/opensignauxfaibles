@@ -13,13 +13,13 @@ export function compactBatch(
   batchKey: string
 ): BatchValue {
   // Les types où il y a potentiellement des suppressions
-  const stock_types = completeTypes[batchKey].filter(
+  const stockTypes = completeTypes[batchKey].filter(
     (type) => (memory[type] || new Set()).size > 0
   )
 
   const { hashToAdd, hashToDelete } = listHashesToAddAndDelete(
     currentBatch,
-    stock_types,
+    stockTypes,
     memory
   )
 
@@ -79,7 +79,7 @@ export function compactBatch(
 
   // 5. On met à jour reduced_value
   // -------------------------------
-  stock_types.forEach((type) => {
+  stockTypes.forEach((type) => {
     if (hashToDelete[type]) {
       currentBatch.compact = currentBatch.compact || { delete: {} }
       currentBatch.compact.delete = currentBatch.compact.delete || {}
