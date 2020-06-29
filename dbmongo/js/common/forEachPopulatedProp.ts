@@ -5,6 +5,6 @@ export function forEachPopulatedProp<T>(
   fct: (key: keyof T, val: Required<T>[keyof T]) => unknown
 ): void {
   ;(Object.keys(obj) as Array<keyof T>).forEach((key) => {
-    if (obj[key] !== undefined) fct(key, obj[key])
+    if (typeof obj[key] !== "undefined") fct(key, obj[key])
   })
 }

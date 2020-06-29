@@ -171,7 +171,7 @@ package engine
 function forEachPopulatedProp(obj, fct) {
     ;
     Object.keys(obj).forEach((key) => {
-        if (obj[key] !== undefined)
+        if (typeof obj[key] !== "undefined")
             fct(key, obj[key]);
     });
 }`,
