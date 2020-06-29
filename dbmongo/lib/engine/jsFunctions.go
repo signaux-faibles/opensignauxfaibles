@@ -508,13 +508,13 @@ function fixRedundantPatches(hashToAdd, hashToDelete, memory) {
  * On ajoute aux clés supprimées les types stocks de la memoire.
  */
 function listHashesToAddAndDelete(currentBatch, stockTypes, memory) {
-    var _a;
     const hashToDelete = {};
     const hashToAdd = {};
     // Itération sur les types qui ont potentiellement subi des modifications
     // pour compléter hashToDelete et hashToAdd.
     // Les suppressions de types complets / stock sont gérés dans le bloc suivant.
-    for (const type in currentBatch) {
+    forEachPopulatedProp(currentBatch, (type) => {
+        var _a;
         // Le type compact gère les clés supprimées
         // Ce type compact existe si le batch en cours a déjà été compacté.
         if (type === "compact") {
@@ -522,8 +522,9 @@ function listHashesToAddAndDelete(currentBatch, stockTypes, memory) {
             if (compactDelete) {
                 forEachPopulatedProp(compactDelete, (deleteType, keysToDelete) => {
                     keysToDelete.forEach((hash) => {
-                        hashToDelete[deleteType] = hashToDelete[deleteType] || new Set();
-                        hashToDelete[deleteType].add(hash);
+                        ;
+                        (hashToDelete[deleteType] =
+                            hashToDelete[deleteType] || new Set()).add(hash);
                     });
                 });
             }
@@ -534,7 +535,7 @@ function listHashesToAddAndDelete(currentBatch, stockTypes, memory) {
                 (hashToAdd[type] = hashToAdd[type] || new Set()).add(hash);
             }
         }
-    }
+    });
     stockTypes.forEach((type) => {
         hashToDelete[type] = new Set([
             ...(hashToDelete[type] || new Set()),

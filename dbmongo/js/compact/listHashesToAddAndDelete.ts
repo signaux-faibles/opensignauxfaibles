@@ -9,7 +9,7 @@ type DataType = string // TODO: use BatchDataType instead
  */
 export function listHashesToAddAndDelete(
   currentBatch: BatchValue,
-  stockTypes: DataType[],
+  stockTypes: BatchDataType[],
   memory: CurrentDataState
 ): {
   hashToAdd: Record<DataType, Set<DataHash>>
@@ -21,7 +21,7 @@ export function listHashesToAddAndDelete(
   // Itération sur les types qui ont potentiellement subi des modifications
   // pour compléter hashToDelete et hashToAdd.
   // Les suppressions de types complets / stock sont gérés dans le bloc suivant.
-  for (const type in currentBatch) {
+  forEachPopulatedProp(currentBatch, (type) => {
     // Le type compact gère les clés supprimées
     // Ce type compact existe si le batch en cours a déjà été compacté.
     if (type === "compact") {
@@ -29,17 +29,17 @@ export function listHashesToAddAndDelete(
       if (compactDelete) {
         forEachPopulatedProp(compactDelete, (deleteType, keysToDelete) => {
           keysToDelete.forEach((hash) => {
-            hashToDelete[deleteType] = hashToDelete[deleteType] || new Set()
-            hashToDelete[deleteType].add(hash)
+            ;(hashToDelete[deleteType] =
+              hashToDelete[deleteType] || new Set()).add(hash)
           })
         })
       }
     } else {
-      for (const hash in currentBatch[type as keyof BatchValue]) {
+      for (const hash in currentBatch[type]) {
         ;(hashToAdd[type] = hashToAdd[type] || new Set()).add(hash)
       }
     }
-  }
+  })
 
   stockTypes.forEach((type) => {
     hashToDelete[type] = new Set([
