@@ -3,6 +3,7 @@
 shopt -s extglob # enable exclusion of test files in wildcard
 
 result_currentState=$(jsc \
+  ../common/!(*_test*).js \
   ../compact/currentState.js \
   ../compact/currentState_test.js\
   2>&1)

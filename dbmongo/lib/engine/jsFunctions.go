@@ -419,12 +419,6 @@ function currentState(batches) {
     // Retourne les clés de obj, en respectant le type défini dans le type de obj.
     // Contrat: obj ne doit contenir que les clés définies dans son type.
     const typedObjectKeys = (obj) => Object.keys(obj);
-    // Appelle fct() pour chaque propriété définie (non undefined) de obj.
-    // Contrat: obj ne doit contenir que les clés définies dans son type.
-    const forEachPopulatedProp = (obj, fct) => Object.keys(obj).forEach((key) => {
-        if (obj[key] !== undefined)
-            fct(key, obj[key]);
-    });
     const currentState = batches.reduce((m, batch) => {
         //1. On supprime les clés de la mémoire
         if (batch.compact) {
