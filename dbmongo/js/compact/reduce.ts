@@ -51,7 +51,7 @@ export function reduce(
   //////////////////////////////////////////////////
 
   // 0. On calcule la memoire au moment du batch à modifier
-  const memory_batches: BatchValue[] = Object.keys(
+  const memoryBatches: BatchValue[] = Object.keys(
     naivelyMergedCompanyData.batch
   )
     .filter((batch) => batch < batchKey)
@@ -62,10 +62,21 @@ export function reduce(
     }, [])
 
   // Memory conserve les données aplaties de tous les batches jusqu'à batchKey
-  // puis sera enrichie au fur et à mesure du traitements des batches suivants.
-  const memory = f.currentState(memory_batches)
+  // puis sera enrichie au fur et à mesure du traitement des batches suivants.
+  const memory = f.currentState(memoryBatches)
 
-  const reduced_value = naivelyMergedCompanyData
+  const reducedValue: CompanyDataValues = {
+    key: naivelyMergedCompanyData.key,
+    scope: naivelyMergedCompanyData.scope,
+    batch: {},
+  }
+
+  // Copie telle quelle des batches jusqu'à batchKey.
+  Object.keys(naivelyMergedCompanyData.batch)
+    .filter((batch) => batch < batchKey)
+    .forEach((batch) => {
+      reducedValue.batch[batch] = naivelyMergedCompanyData.batch[batch]
+    })
 
   // On itère sur chaque batch à partir de batchKey pour les compacter.
   // Il est possible qu'il y ait moins de batch en sortie que le nombre traité
@@ -73,15 +84,12 @@ export function reduce(
   batches
     .filter((batch) => batch >= batchKey)
     .forEach((batch) => {
-      reduced_value.batch[batch] = reduced_value.batch[batch] || {}
-      const currentBatch = reduced_value.batch[batch]
+      const currentBatch = naivelyMergedCompanyData.batch[batch]
       const compactedBatch = compactBatch(currentBatch, memory, batch)
-      if (Object.keys(compactedBatch).length === 0) {
-        delete reduced_value.batch[batch]
-      } else {
-        reduced_value.batch[batch] = compactedBatch
+      if (Object.keys(compactedBatch).length > 0) {
+        reducedValue.batch[batch] = compactedBatch
       }
     })
 
-  return reduced_value
+  return reducedValue
 }
