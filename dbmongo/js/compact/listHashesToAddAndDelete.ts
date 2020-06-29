@@ -2,15 +2,18 @@ import "../globals.ts"
 
 type DataType = string // TODO: use BatchDataType instead
 
+/**
+ * On recupère les clés ajoutées et les clés supprimées depuis currentBatch.
+ * On ajoute aux clés supprimées les types stocks de la memoire.
+ */
 export function listHashesToAddAndDelete(
-  currentBatch: BatchValue
+  currentBatch: BatchValue,
+  stock_types: DataType[],
+  memory: CurrentDataState
 ): {
   hashToAdd: Record<DataType, Set<DataHash>>
   hashToDelete: Record<DataType, Set<DataHash>>
 } {
-  // 1. On recupère les cles ajoutes et les cles supprimes
-  // -----------------------------------------------------
-
   const hashToDelete: Record<DataType, Set<DataHash>> = {}
   const hashToAdd: Record<DataType, Set<DataHash>> = {}
 
@@ -23,10 +26,10 @@ export function listHashesToAddAndDelete(
     if (type === "compact") {
       const compactDelete = currentBatch.compact?.delete
       if (compactDelete) {
-        Object.keys(compactDelete).forEach((delete_type) => {
-          compactDelete[delete_type].forEach((hash) => {
-            hashToDelete[delete_type] = hashToDelete[delete_type] || new Set()
-            hashToDelete[delete_type].add(hash)
+        Object.keys(compactDelete).forEach((deleteType) => {
+          compactDelete[deleteType].forEach((hash) => {
+            hashToDelete[deleteType] = hashToDelete[deleteType] || new Set()
+            hashToDelete[deleteType].add(hash)
           })
         })
       }
@@ -36,6 +39,14 @@ export function listHashesToAddAndDelete(
       }
     }
   }
+
+  stock_types.forEach((type) => {
+    hashToDelete[type] = new Set([
+      ...(hashToDelete[type] || new Set()),
+      ...memory[type],
+    ])
+  })
+
   return {
     hashToAdd,
     hashToDelete,

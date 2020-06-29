@@ -17,18 +17,11 @@ export function compactBatch(
     (type) => (memory[type] || new Set()).size > 0
   )
 
-  const { hashToAdd, hashToDelete } = listHashesToAddAndDelete(currentBatch)
-
-  //
-  // 2. On ajoute aux cles supprimees les types stocks de la memoire.
-  // ----------------------------------------------------------------
-
-  stock_types.forEach((type) => {
-    hashToDelete[type] = new Set([
-      ...(hashToDelete[type] || new Set()),
-      ...memory[type],
-    ])
-  })
+  const { hashToAdd, hashToDelete } = listHashesToAddAndDelete(
+    currentBatch,
+    stock_types,
+    memory
+  )
 
   Object.keys(hashToDelete).forEach((type) => {
     // 3.a Pour chaque cle supprimee: est-ce qu'elle est bien dans la
