@@ -42,4 +42,15 @@ export function fixRedundantPatches(
       memory[type].delete(hash)
     })
   })
+
+  Object.keys(hashToAdd).forEach((type) => {
+    // 4.a Pour chaque cle ajoutee: est-ce qu'elle est dans la memoire ? Si oui on filtre cette cle
+    // i.e. on herite de la memoire. (pas de maj de la memoire)
+    // ---------------------------------------------------------------------------------------------
+    hashToAdd[type] = new Set(
+      [...hashToAdd[type]].filter((hash) => {
+        return !(memory[type] || new Set()).has(hash)
+      })
+    )
+  })
 }

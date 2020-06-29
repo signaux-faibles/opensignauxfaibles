@@ -26,24 +26,7 @@ export function compactBatch(
 
   fixRedundantPatches(hashToAdd, hashToDelete, memory)
 
-  Object.keys(hashToAdd).forEach((type) => {
-    // 4.a Pour chaque cle ajoutee: est-ce qu'elle est dans la memoire ? Si oui on filtre cette cle
-    // i.e. on herite de la memoire. (pas de maj de la memoire)
-    // ---------------------------------------------------------------------------------------------
-    hashToAdd[type] = new Set(
-      [...hashToAdd[type]].filter((hash) => {
-        return !(memory[type] || new Set()).has(hash)
-      })
-    )
-
-    // 4.b Pour chaque cle ajoutee restante: on ajoute à la memoire.
-    // -------------------------------------------------------------
-
-    hashToAdd[type].forEach((hash) => {
-      memory[type] = memory[type] || new Set()
-      memory[type].add(hash)
-    })
-  })
+  // TODO: call apply...
 
   // 5. On met à jour reduced_value
   // -------------------------------
