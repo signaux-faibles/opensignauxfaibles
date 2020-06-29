@@ -3,6 +3,7 @@ import "../globals.ts"
 import { listHashesToAddAndDelete } from "./listHashesToAddAndDelete"
 import { fixRedundantPatches } from "./fixRedundantPatches"
 import { applyPatchesToMemory } from "./applyPatchesToMemory"
+import { applyPatchesToBatch } from "./applyPatchesToBatch"
 
 /**
  * Appelée par reduce(), compactBatch() va générer un diff entre les
@@ -27,29 +28,7 @@ export function compactBatch(
 
   fixRedundantPatches(hashToAdd, hashToDelete, memory)
   applyPatchesToMemory(hashToAdd, hashToDelete, memory)
-
-  // 5. On met à jour reduced_value
-  // -------------------------------
-  stockTypes.forEach((type) => {
-    if (hashToDelete[type]) {
-      currentBatch.compact = currentBatch.compact || { delete: {} }
-      currentBatch.compact.delete = currentBatch.compact.delete || {}
-      currentBatch.compact.delete[type] = [...hashToDelete[type]]
-    }
-  })
-
-  // filtrage des données en fonction de new_types et hashToAdd
-  type AllValueTypesButCompact = Exclude<keyof BatchValue, "compact">
-  const typesToAdd = Object.keys(hashToAdd) as AllValueTypesButCompact[]
-  typesToAdd.forEach((type) => {
-    currentBatch[type] = [...hashToAdd[type]].reduce(
-      (typedBatchValues, hash) => ({
-        ...typedBatchValues,
-        [hash]: currentBatch[type]?.[hash],
-      }),
-      {}
-    )
-  })
+  applyPatchesToBatch(hashToAdd, hashToDelete, stockTypes, currentBatch)
 
   // 6. nettoyage
   // ------------

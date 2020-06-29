@@ -7,7 +7,7 @@ export function applyPatchesToBatch(
   hashToDelete: Record<DataType, Set<DataHash>>,
   stockTypes: DataType[],
   currentBatch: BatchValue
-) {
+): void {
   // 5. On met à jour reduced_value
   // -------------------------------
   stockTypes.forEach((type) => {

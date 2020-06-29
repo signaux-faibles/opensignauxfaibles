@@ -7,7 +7,7 @@ export function fixRedundantPatches(
   hashToAdd: Record<DataType, Set<DataHash>>,
   hashToDelete: Record<DataType, Set<DataHash>>,
   memory: CurrentDataState
-) {
+): void {
   Object.keys(hashToDelete).forEach((type) => {
     // 3.a Pour chaque cle supprimee: est-ce qu'elle est bien dans la
     // memoire ? sinon on la retire de la liste des clés supprimées (pas de
@@ -35,7 +35,6 @@ export function fixRedundantPatches(
         return !also_added
       })
     )
-
   })
 
   Object.keys(hashToAdd).forEach((type) => {

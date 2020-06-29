@@ -7,7 +7,6 @@ export function applyPatchesToMemory(
   hashToDelete: Record<DataType, Set<DataHash>>,
   memory: CurrentDataState
 ): void {
-
   // On retire les cles restantes de la memoire.
   Object.keys(hashToDelete).forEach((type) => {
     hashToDelete[type].forEach((hash) => {
