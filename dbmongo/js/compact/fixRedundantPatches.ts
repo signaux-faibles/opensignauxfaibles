@@ -1,12 +1,11 @@
-type DataType = string // TODO: use BatchDataType instead
 import { forEachPopulatedProp } from "../common/forEachPopulatedProp"
 
 /**
  * Modification de hashToAdd et hashToDelete pour retirer les redondances.
  **/
 export function fixRedundantPatches(
-  hashToAdd: Record<DataType, Set<DataHash>>,
-  hashToDelete: Record<DataType, Set<DataHash>>,
+  hashToAdd: Partial<Record<BatchDataType, Set<DataHash>>>,
+  hashToDelete: Partial<Record<BatchDataType, Set<DataHash>>>,
   memory: CurrentDataState
 ): void {
   forEachPopulatedProp(hashToDelete, (type, hashesToDelete) => {
@@ -27,7 +26,7 @@ export function fixRedundantPatches(
     // i.e. on herite de la memoire. (pas de maj de la memoire)
     // ------------------------------------------------------------------------------
     hashToDelete[type] = new Set(
-      [...hashToDelete[type]].filter((hash) => {
+      [...(hashToDelete[type] || new Set())].filter((hash) => {
         const hashesToAdd = hashToAdd[type] || new Set()
         const also_added = hashesToAdd.has(hash)
         if (also_added) {

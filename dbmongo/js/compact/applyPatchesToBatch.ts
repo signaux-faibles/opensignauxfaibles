@@ -1,29 +1,25 @@
 import "../globals"
 import { forEachPopulatedProp } from "../common/forEachPopulatedProp"
 
-type DataType = string // TODO: use BatchDataType instead
-
 export function applyPatchesToBatch(
-  hashToAdd: Record<DataType, Set<DataHash>>,
-  hashToDelete: Record<DataType, Set<DataHash>>,
-  stockTypes: DataType[],
+  hashToAdd: Partial<Record<BatchDataType, Set<DataHash>>>,
+  hashToDelete: Partial<Record<BatchDataType, Set<DataHash>>>,
+  stockTypes: BatchDataType[],
   currentBatch: BatchValue
 ): void {
   // Application des suppressions
-  stockTypes.forEach((t) => {
-    const type = t as BatchDataType
-    if (hashToDelete[type]) {
+  stockTypes.forEach((type) => {
+    const hashesToDelete = hashToDelete[type]
+    if (hashesToDelete) {
       currentBatch.compact = currentBatch.compact || { delete: {} }
       currentBatch.compact.delete = currentBatch.compact.delete || {}
-      currentBatch.compact.delete[type] = [...hashToDelete[type]]
+      currentBatch.compact.delete[type] = [...hashesToDelete]
     }
   })
 
   // Application des ajouts
-  type AllValueTypesButCompact = Exclude<keyof BatchValue, "compact">
-  const typesToAdd = Object.keys(hashToAdd) as AllValueTypesButCompact[]
-  typesToAdd.forEach((type) => {
-    currentBatch[type] = [...hashToAdd[type]].reduce(
+  forEachPopulatedProp(hashToAdd, (type, hashesToAdd) => {
+    currentBatch[type] = [...hashesToAdd].reduce(
       (typedBatchValues, hash) => ({
         ...typedBatchValues,
         [hash]: currentBatch[type]?.[hash],
@@ -46,9 +42,8 @@ export function applyPatchesToBatch(
     }
   }
   // - types vides
-  Object.keys(currentBatch).forEach((strType) => {
-    const type = strType as keyof BatchValue
-    if (Object.keys(currentBatch[type] || {}).length === 0) {
+  forEachPopulatedProp(currentBatch, (type, typedBatchData) => {
+    if (Object.keys(typedBatchData).length === 0) {
       delete currentBatch[type]
     }
   })

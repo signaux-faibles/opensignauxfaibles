@@ -1,8 +1,6 @@
 import "../globals.ts"
 import { forEachPopulatedProp } from "../common/forEachPopulatedProp"
 
-type DataType = string // TODO: use BatchDataType instead
-
 /**
  * On recupère les clés ajoutées et les clés supprimées depuis currentBatch.
  * On ajoute aux clés supprimées les types stocks de la memoire.
@@ -12,11 +10,11 @@ export function listHashesToAddAndDelete(
   stockTypes: BatchDataType[],
   memory: CurrentDataState
 ): {
-  hashToAdd: Record<DataType, Set<DataHash>>
-  hashToDelete: Record<DataType, Set<DataHash>>
+  hashToAdd: Partial<Record<BatchDataType, Set<DataHash>>>
+  hashToDelete: Partial<Record<BatchDataType, Set<DataHash>>>
 } {
-  const hashToDelete: Record<DataType, Set<DataHash>> = {}
-  const hashToAdd: Record<DataType, Set<DataHash>> = {}
+  const hashToDelete: Partial<Record<BatchDataType, Set<DataHash>>> = {}
+  const hashToAdd: Partial<Record<BatchDataType, Set<DataHash>>> = {}
 
   // Itération sur les types qui ont potentiellement subi des modifications
   // pour compléter hashToDelete et hashToAdd.

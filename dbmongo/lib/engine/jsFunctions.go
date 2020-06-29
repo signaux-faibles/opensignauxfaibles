@@ -310,17 +310,17 @@ function forEachPopulatedProp(obj, fct) {
 "applyPatchesToBatch": `function applyPatchesToBatch(hashToAdd, hashToDelete, stockTypes, currentBatch) {
     var _a;
     // Application des suppressions
-    stockTypes.forEach((t) => {
-        const type = t;
-        if (hashToDelete[type]) {
+    stockTypes.forEach((type) => {
+        const hashesToDelete = hashToDelete[type];
+        if (hashesToDelete) {
             currentBatch.compact = currentBatch.compact || { delete: {} };
             currentBatch.compact.delete = currentBatch.compact.delete || {};
-            currentBatch.compact.delete[type] = [...hashToDelete[type]];
+            currentBatch.compact.delete[type] = [...hashesToDelete];
         }
     });
-    const typesToAdd = Object.keys(hashToAdd);
-    typesToAdd.forEach((type) => {
-        currentBatch[type] = [...hashToAdd[type]].reduce((typedBatchValues, hash) => {
+    // Application des ajouts
+    forEachPopulatedProp(hashToAdd, (type, hashesToAdd) => {
+        currentBatch[type] = [...hashesToAdd].reduce((typedBatchValues, hash) => {
             var _a;
             return (Object.assign(Object.assign({}, typedBatchValues), { [hash]: (_a = currentBatch[type]) === null || _a === void 0 ? void 0 : _a[hash] }));
         }, {});
@@ -339,23 +339,22 @@ function forEachPopulatedProp(obj, fct) {
         }
     }
     // - types vides
-    Object.keys(currentBatch).forEach((strType) => {
-        const type = strType;
-        if (Object.keys(currentBatch[type] || {}).length === 0) {
+    forEachPopulatedProp(currentBatch, (type, typedBatchData) => {
+        if (Object.keys(typedBatchData).length === 0) {
             delete currentBatch[type];
         }
     });
 }`,
 "applyPatchesToMemory": `function applyPatchesToMemory(hashToAdd, hashToDelete, memory) {
     // Prise en compte des suppressions de clés dans la mémoire
-    Object.keys(hashToDelete).forEach((type) => {
-        hashToDelete[type].forEach((hash) => {
+    forEachPopulatedProp(hashToDelete, (type, hashesToDelete) => {
+        hashesToDelete.forEach((hash) => {
             memory[type].delete(hash);
         });
     });
     // Prise en compte des ajouts de clés dans la mémoire
-    Object.keys(hashToAdd).forEach((type) => {
-        hashToAdd[type].forEach((hash) => {
+    forEachPopulatedProp(hashToAdd, (type, hashesToAdd) => {
+        hashesToAdd.forEach((hash) => {
             memory[type] = memory[type] || new Set();
             memory[type].add(hash);
         });
@@ -486,7 +485,7 @@ function fixRedundantPatches(hashToAdd, hashToDelete, memory) {
         // et supprimées
         // i.e. on herite de la memoire. (pas de maj de la memoire)
         // ------------------------------------------------------------------------------
-        hashToDelete[type] = new Set([...hashToDelete[type]].filter((hash) => {
+        hashToDelete[type] = new Set([...(hashToDelete[type] || new Set())].filter((hash) => {
             const hashesToAdd = hashToAdd[type] || new Set();
             const also_added = hashesToAdd.has(hash);
             if (also_added) {
