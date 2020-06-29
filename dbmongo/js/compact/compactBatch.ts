@@ -2,6 +2,7 @@ import "../globals.ts"
 
 import { listHashesToAddAndDelete } from "./listHashesToAddAndDelete"
 import { fixRedundantPatches } from "./fixRedundantPatches"
+import { applyPatchesToMemory } from "./applyPatchesToMemory"
 
 /**
  * Appelée par reduce(), compactBatch() va générer un diff entre les
@@ -25,8 +26,7 @@ export function compactBatch(
   )
 
   fixRedundantPatches(hashToAdd, hashToDelete, memory)
-
-  // TODO: call apply...
+  applyPatchesToMemory(hashToAdd, hashToDelete, memory)
 
   // 5. On met à jour reduced_value
   // -------------------------------
