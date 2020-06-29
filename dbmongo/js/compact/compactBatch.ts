@@ -8,10 +8,10 @@ import "../globals.ts"
 export function compactBatch(
   currentBatch: BatchValue,
   memory: CurrentDataState,
-  batch: string
+  batchKey: string
 ): BatchValue {
   // Les types où il y a potentiellement des suppressions
-  const stock_types = completeTypes[batch].filter(
+  const stock_types = completeTypes[batchKey].filter(
     (type) => (memory[type] || new Set()).size > 0
   )
 
