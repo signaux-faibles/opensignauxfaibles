@@ -8,19 +8,15 @@ export function applyPatchesToMemory(
   memory: CurrentDataState
 ): void {
 
+  // On retire les cles restantes de la memoire.
   Object.keys(hashToDelete).forEach((type) => {
-    // 3.c On retire les cles restantes de la memoire.
-    // --------------------------------------------------
     hashToDelete[type].forEach((hash) => {
       memory[type].delete(hash)
     })
   })
 
+  // Pour chaque cle ajoutee restante: on ajoute à la memoire.
   Object.keys(hashToAdd).forEach((type) => {
-    //
-    // 4.b Pour chaque cle ajoutee restante: on ajoute à la memoire.
-    // -------------------------------------------------------------
-
     hashToAdd[type].forEach((hash) => {
       memory[type] = memory[type] || new Set()
       memory[type].add(hash)
