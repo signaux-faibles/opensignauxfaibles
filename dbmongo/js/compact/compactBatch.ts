@@ -18,20 +18,19 @@ export function compactBatch(
   function listHashesToAddAndDelete(
     currentBatch: BatchValue
   ): {
-    hashToAdd: Partial<Record<BatchDataType, Set<DataHash>>>
+    hashToAdd: Record<string, Set<DataHash>>
     hashToDelete: { [dataType: string]: Set<DataHash> }
   } {
     // 1. On recupère les cles ajoutes et les cles supprimes
     // -----------------------------------------------------
 
     const hashToDelete: { [dataType: string]: Set<DataHash> } = {}
-    const hashToAdd: Partial<Record<BatchDataType, Set<DataHash>>> = {}
+    const hashToAdd: Record<string, Set<DataHash>> = {}
 
     // Itération sur les types qui ont potentiellement subi des modifications
     // pour compléter hashToDelete et hashToAdd.
     // Les suppressions de types complets / stock sont gérés dans le bloc suivant.
-    for (const t in currentBatch) {
-      const type = t as BatchDataType
+    for (const type in currentBatch) {
       // Le type compact gère les clés supprimées
       // Ce type compact existe si le batch en cours a déjà été compacté.
       if (type === "compact") {
@@ -45,7 +44,7 @@ export function compactBatch(
           })
         }
       } else {
-        for (const hash in currentBatch[type]) {
+        for (const hash in currentBatch[type as keyof BatchValue]) {
           ;(hashToAdd[type] = hashToAdd[type] || new Set()).add(hash)
         }
       }
