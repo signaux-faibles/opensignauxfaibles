@@ -51,7 +51,7 @@ export function reduce(
   //////////////////////////////////////////////////
 
   // 0. On calcule la memoire au moment du batch à modifier
-  const memory_batches: BatchValue[] = Object.keys(
+  const memoryBatches: BatchValue[] = Object.keys(
     naivelyMergedCompanyData.batch
   )
     .filter((batch) => batch < batchKey)
@@ -63,9 +63,9 @@ export function reduce(
 
   // Memory conserve les données aplaties de tous les batches jusqu'à batchKey
   // puis sera enrichie au fur et à mesure du traitements des batches suivants.
-  const memory = f.currentState(memory_batches)
+  const memory = f.currentState(memoryBatches)
 
-  const reduced_value: CompanyDataValues = {
+  const reducedValue: CompanyDataValues = {
     key: naivelyMergedCompanyData.key,
     scope: naivelyMergedCompanyData.scope,
     batch: {},
@@ -75,7 +75,7 @@ export function reduce(
   Object.keys(naivelyMergedCompanyData.batch)
     .filter((batch) => batch < batchKey)
     .forEach((batch) => {
-      reduced_value.batch[batch] = naivelyMergedCompanyData.batch[batch]
+      reducedValue.batch[batch] = naivelyMergedCompanyData.batch[batch]
     })
 
   // On itère sur chaque batch à partir de batchKey pour les compacter.
@@ -87,9 +87,9 @@ export function reduce(
       const currentBatch = naivelyMergedCompanyData.batch[batch]
       const compactedBatch = compactBatch(currentBatch, memory, batch)
       if (Object.keys(compactedBatch).length > 0) {
-        reduced_value.batch[batch] = compactedBatch
+        reducedValue.batch[batch] = compactedBatch
       }
     })
 
-  return reduced_value
+  return reducedValue
 }
