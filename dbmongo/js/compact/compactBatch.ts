@@ -15,36 +15,47 @@ export function compactBatch(
     (type) => (memory[type] || new Set()).size > 0
   )
 
-  // 1. On recupère les cles ajoutes et les cles supprimes
-  // -----------------------------------------------------
+  function listHashesToAddAndDelete(
+    currentBatch: BatchValue
+  ): {
+    hashToAdd: Partial<Record<BatchDataType, Set<DataHash>>>
+    hashToDelete: { [dataType: string]: Set<DataHash> }
+  } {
+    // 1. On recupère les cles ajoutes et les cles supprimes
+    // -----------------------------------------------------
 
-  const hashToDelete: { [dataType: string]: Set<DataHash> } = {}
-  type DataType = string
-  const hashToAdd: Record<DataType, Set<DataHash>> = {}
+    const hashToDelete: { [dataType: string]: Set<DataHash> } = {}
+    const hashToAdd: Partial<Record<BatchDataType, Set<DataHash>>> = {}
 
-  // Itération sur les types qui ont potentiellement subi des modifications
-  // pour compléter hashToDelete et hashToAdd.
-  // Les suppressions de types complets / stock sont gérés dans le bloc suivant.
-  for (const type in currentBatch) {
-    // Le type compact gère les clés supprimées
-    // Ce type compact existe si le batch en cours a déjà été compacté.
-    if (type === "compact") {
-      const compactDelete = currentBatch.compact?.delete
-      if (compactDelete) {
-        Object.keys(compactDelete).forEach((delete_type) => {
-          compactDelete[delete_type].forEach((hash) => {
-            hashToDelete[delete_type] = hashToDelete[delete_type] || new Set()
-            hashToDelete[delete_type].add(hash)
+    // Itération sur les types qui ont potentiellement subi des modifications
+    // pour compléter hashToDelete et hashToAdd.
+    // Les suppressions de types complets / stock sont gérés dans le bloc suivant.
+    for (const t in currentBatch) {
+      const type = t as BatchDataType
+      // Le type compact gère les clés supprimées
+      // Ce type compact existe si le batch en cours a déjà été compacté.
+      if (type === "compact") {
+        const compactDelete = currentBatch.compact?.delete
+        if (compactDelete) {
+          Object.keys(compactDelete).forEach((delete_type) => {
+            compactDelete[delete_type].forEach((hash) => {
+              hashToDelete[delete_type] = hashToDelete[delete_type] || new Set()
+              hashToDelete[delete_type].add(hash)
+            })
           })
-        })
-      }
-    } else {
-      for (const hash in currentBatch[type as keyof BatchValue]) {
-        hashToAdd[type] = hashToAdd[type] || new Set()
-        hashToAdd[type].add(hash)
+        }
+      } else {
+        for (const hash in currentBatch[type]) {
+          ;(hashToAdd[type] = hashToAdd[type] || new Set()).add(hash)
+        }
       }
     }
+    return {
+      hashToAdd,
+      hashToDelete,
+    }
   }
+  const { hashToAdd, hashToDelete } = listHashesToAddAndDelete(currentBatch)
 
   //
   // 2. On ajoute aux cles supprimees les types stocks de la memoire.
