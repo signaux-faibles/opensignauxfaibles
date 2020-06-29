@@ -8,8 +8,7 @@ export function applyPatchesToBatch(
   stockTypes: DataType[],
   currentBatch: BatchValue
 ): void {
-  // 5. On met à jour reduced_value
-  // -------------------------------
+  // Application des suppressions
   stockTypes.forEach((type) => {
     if (hashToDelete[type]) {
       currentBatch.compact = currentBatch.compact || { delete: {} }
@@ -18,7 +17,7 @@ export function applyPatchesToBatch(
     }
   })
 
-  // filtrage des données en fonction de new_types et hashToAdd
+  // Application des ajouts
   type AllValueTypesButCompact = Exclude<keyof BatchValue, "compact">
   const typesToAdd = Object.keys(hashToAdd) as AllValueTypesButCompact[]
   typesToAdd.forEach((type) => {
@@ -30,4 +29,26 @@ export function applyPatchesToBatch(
       {}
     )
   })
+
+  // Retrait des propriété vides
+  // - types vides
+  Object.keys(currentBatch).forEach((strType) => {
+    const type = strType as keyof BatchValue
+    if (Object.keys(currentBatch[type] || {}).length === 0) {
+      delete currentBatch[type]
+    }
+  })
+  // - compact.delete vides
+  const compactDelete = currentBatch.compact?.delete
+  if (compactDelete) {
+    Object.keys(compactDelete).forEach((type) => {
+      if (compactDelete[type].length === 0) {
+        delete compactDelete[type]
+      }
+    })
+    if (Object.keys(compactDelete).length === 0) {
+      delete currentBatch.compact
+    }
+  }
+  // TODO: nettoyer le batch ?
 }

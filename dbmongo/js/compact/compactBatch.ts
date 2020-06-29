@@ -8,6 +8,7 @@ import { applyPatchesToBatch } from "./applyPatchesToBatch"
 /**
  * Appelée par reduce(), compactBatch() va générer un diff entre les
  * données de batch et les données précédentes fournies par memory.
+ * Paramètres modifiés: currentBatch et memory.
  * Pré-requis: les batches précédents doivent avoir été compactés.
  */
 export function compactBatch(
@@ -30,29 +31,5 @@ export function compactBatch(
   applyPatchesToMemory(hashToAdd, hashToDelete, memory)
   applyPatchesToBatch(hashToAdd, hashToDelete, stockTypes, currentBatch)
 
-  // 6. nettoyage
-  // ------------
-
-  if (currentBatch) {
-    //types vides
-    Object.keys(currentBatch).forEach((strType) => {
-      const type = strType as keyof BatchValue
-      if (Object.keys(currentBatch[type] || {}).length === 0) {
-        delete currentBatch[type]
-      }
-    })
-    //hash à supprimer vides (compact.delete)
-    const compactDelete = currentBatch.compact?.delete
-    if (compactDelete) {
-      Object.keys(compactDelete).forEach((type) => {
-        if (compactDelete[type].length === 0) {
-          delete compactDelete[type]
-        }
-      })
-      if (Object.keys(compactDelete).length === 0) {
-        delete currentBatch.compact
-      }
-    }
-  }
   return currentBatch
 }
