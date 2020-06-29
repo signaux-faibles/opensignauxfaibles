@@ -36,11 +36,6 @@ export function fixRedundantPatches(
       })
     )
 
-    // 3.c On retire les cles restantes de la memoire.
-    // --------------------------------------------------
-    hashToDelete[type].forEach((hash) => {
-      memory[type].delete(hash)
-    })
   })
 
   Object.keys(hashToAdd).forEach((type) => {
