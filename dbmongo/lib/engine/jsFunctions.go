@@ -335,16 +335,15 @@ package engine
             delete currentBatch[type];
         }
     });
-    // TODO: nettoyer le batch ?
 }`,
 "applyPatchesToMemory": `function applyPatchesToMemory(hashToAdd, hashToDelete, memory) {
-    // On retire les cles restantes de la memoire.
+    // Prise en compte des suppressions de clés dans la mémoire
     Object.keys(hashToDelete).forEach((type) => {
         hashToDelete[type].forEach((hash) => {
             memory[type].delete(hash);
         });
     });
-    // Pour chaque cle ajoutee restante: on ajoute à la memoire.
+    // Prise en compte des ajouts de clés dans la mémoire
     Object.keys(hashToAdd).forEach((type) => {
         hashToAdd[type].forEach((hash) => {
             memory[type] = memory[type] || new Set();
@@ -462,14 +461,14 @@ function finalize(k, companyDataValues) {
  **/
 function fixRedundantPatches(hashToAdd, hashToDelete, memory) {
     Object.keys(hashToDelete).forEach((type) => {
-        // 3.a Pour chaque cle supprimee: est-ce qu'elle est bien dans la
+        // Pour chaque cle supprimee: est-ce qu'elle est bien dans la
         // memoire ? sinon on la retire de la liste des clés supprimées (pas de
         // maj memoire)
         // -----------------------------------------------------------------------------------------------------------------
         hashToDelete[type] = new Set([...hashToDelete[type]].filter((hash) => {
             return (memory[type] || new Set()).has(hash);
         }));
-        // 3.b Est-ce qu'elle a ete egalement ajoutee en même temps que
+        // Est-ce qu'elle a ete egalement ajoutee en même temps que
         // supprimée ? (par exemple remplacement d'un stock complet à
         // l'identique) Dans ce cas là, on retire cette clé des valeurs ajoutées
         // et supprimées
@@ -484,7 +483,7 @@ function fixRedundantPatches(hashToAdd, hashToDelete, memory) {
         }));
     });
     Object.keys(hashToAdd).forEach((type) => {
-        // 4.a Pour chaque cle ajoutee: est-ce qu'elle est dans la memoire ? Si oui on filtre cette cle
+        // Pour chaque cle ajoutee: est-ce qu'elle est dans la memoire ? Si oui on filtre cette cle
         // i.e. on herite de la memoire. (pas de maj de la memoire)
         // ---------------------------------------------------------------------------------------------
         hashToAdd[type] = new Set([...hashToAdd[type]].filter((hash) => {
@@ -582,7 +581,7 @@ function reduce(key, values // chaque element contient plusieurs batches pour ce
         return m;
     }, []);
     // Memory conserve les données aplaties de tous les batches jusqu'à batchKey
-    // puis sera enrichie au fur et à mesure du traitements des batches suivants.
+    // puis sera enrichie au fur et à mesure du traitement des batches suivants.
     const memory = f.currentState(memoryBatches);
     const reducedValue = {
         key: naivelyMergedCompanyData.key,
