@@ -31,13 +31,6 @@ export function applyPatchesToBatch(
   })
 
   // Retrait des propriété vides
-  // - types vides
-  Object.keys(currentBatch).forEach((strType) => {
-    const type = strType as keyof BatchValue
-    if (Object.keys(currentBatch[type] || {}).length === 0) {
-      delete currentBatch[type]
-    }
-  })
   // - compact.delete vides
   const compactDelete = currentBatch.compact?.delete
   if (compactDelete) {
@@ -50,5 +43,12 @@ export function applyPatchesToBatch(
       delete currentBatch.compact
     }
   }
+  // - types vides
+  Object.keys(currentBatch).forEach((strType) => {
+    const type = strType as keyof BatchValue
+    if (Object.keys(currentBatch[type] || {}).length === 0) {
+      delete currentBatch[type]
+    }
+  })
   // TODO: nettoyer le batch ?
 }
