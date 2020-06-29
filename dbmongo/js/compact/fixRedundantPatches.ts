@@ -1,10 +1,8 @@
-
-
 type DataType = string // TODO: use BatchDataType instead
 
 /**
  * Modification de hashToAdd et hashToDelete pour retirer les redondances.
-**/
+ **/
 export function fixRedundantPatches(
   hashToAdd: Record<DataType, Set<DataHash>>,
   hashToDelete: Record<DataType, Set<DataHash>>,
