@@ -1,5 +1,7 @@
 "use strict"
 
+/*global print, compare, reduce*/
+
 const test_cases = [
   {
     ////////////////////////////////////////////////////////
@@ -379,7 +381,7 @@ Object.freeze(test_cases)
 
 const jsParams = this // => all properties of this object will become global. TODO: remove this when merging namespace (https://github.com/signaux-faibles/opensignauxfaibles/pull/40)
 
-const test_results = test_cases.map(function (tc, id) {
+const test_results = test_cases.map((tc) => {
   jsParams.completeTypes = tc.completeTypes
   jsParams.batchKey = tc.batchKey
   jsParams.types = tc.types
