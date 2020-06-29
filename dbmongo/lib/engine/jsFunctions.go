@@ -166,6 +166,15 @@ package engine
         res = "cession";
     return res;
 }`,
+"forEachPopulatedProp": `// Appelle fct() pour chaque propriété définie (non undefined) de obj.
+// Contrat: obj ne doit contenir que les clés définies dans son type.
+function forEachPopulatedProp(obj, fct) {
+    ;
+    Object.keys(obj).forEach((key) => {
+        if (obj[key] !== undefined)
+            fct(key, obj[key]);
+    });
+}`,
 "generatePeriodSerie": `function generatePeriodSerie(date_debut, date_fin) {
     "use strict";
     const date_next = new Date(date_debut.getTime());
@@ -298,6 +307,76 @@ package engine
 }`,
 },
 "compact":{
+"applyPatchesToBatch": `function applyPatchesToBatch(hashToAdd, hashToDelete, stockTypes, currentBatch) {
+    var _a;
+    // Application des suppressions
+    stockTypes.forEach((t) => {
+        const type = t;
+        if (hashToDelete[type]) {
+            currentBatch.compact = currentBatch.compact || { delete: {} };
+            currentBatch.compact.delete = currentBatch.compact.delete || {};
+            currentBatch.compact.delete[type] = [...hashToDelete[type]];
+        }
+    });
+    const typesToAdd = Object.keys(hashToAdd);
+    typesToAdd.forEach((type) => {
+        currentBatch[type] = [...hashToAdd[type]].reduce((typedBatchValues, hash) => {
+            var _a;
+            return (Object.assign(Object.assign({}, typedBatchValues), { [hash]: (_a = currentBatch[type]) === null || _a === void 0 ? void 0 : _a[hash] }));
+        }, {});
+    });
+    // Retrait des propriété vides
+    // - compact.delete vides
+    const compactDelete = (_a = currentBatch.compact) === null || _a === void 0 ? void 0 : _a.delete;
+    if (compactDelete) {
+        forEachPopulatedProp(compactDelete, (type, keysToDelete) => {
+            if (keysToDelete.length === 0) {
+                delete compactDelete[type];
+            }
+        });
+        if (Object.keys(compactDelete).length === 0) {
+            delete currentBatch.compact;
+        }
+    }
+    // - types vides
+    Object.keys(currentBatch).forEach((strType) => {
+        const type = strType;
+        if (Object.keys(currentBatch[type] || {}).length === 0) {
+            delete currentBatch[type];
+        }
+    });
+    // TODO: nettoyer le batch ?
+}`,
+"applyPatchesToMemory": `function applyPatchesToMemory(hashToAdd, hashToDelete, memory) {
+    // On retire les cles restantes de la memoire.
+    Object.keys(hashToDelete).forEach((type) => {
+        hashToDelete[type].forEach((hash) => {
+            memory[type].delete(hash);
+        });
+    });
+    // Pour chaque cle ajoutee restante: on ajoute à la memoire.
+    Object.keys(hashToAdd).forEach((type) => {
+        hashToAdd[type].forEach((hash) => {
+            memory[type] = memory[type] || new Set();
+            memory[type].add(hash);
+        });
+    });
+}`,
+"compactBatch": `/**
+ * Appelée par reduce(), compactBatch() va générer un diff entre les
+ * données de batch et les données précédentes fournies par memory.
+ * Paramètres modifiés: currentBatch et memory.
+ * Pré-requis: les batches précédents doivent avoir été compactés.
+ */
+function compactBatch(currentBatch, memory, batchKey) {
+    // Les types où il y a potentiellement des suppressions
+    const stockTypes = completeTypes[batchKey].filter((type) => (memory[type] || new Set()).size > 0);
+    const { hashToAdd, hashToDelete } = listHashesToAddAndDelete(currentBatch, stockTypes, memory);
+    fixRedundantPatches(hashToAdd, hashToDelete, memory);
+    applyPatchesToMemory(hashToAdd, hashToDelete, memory);
+    applyPatchesToBatch(hashToAdd, hashToDelete, stockTypes, currentBatch);
+    return currentBatch;
+}`,
 "complete_reporder": `// complete_reporder ajoute une propriété "reporder" pour chaque couple
 // SIRET+période, afin d'assurer la reproductibilité de l'échantillonage.
 function complete_reporder(siret, object) {
@@ -396,6 +475,84 @@ function finalize(k, companyDataValues) {
     }
     return o;
 }`,
+"fixRedundantPatches": `/**
+ * Modification de hashToAdd et hashToDelete pour retirer les redondances.
+ **/
+function fixRedundantPatches(hashToAdd, hashToDelete, memory) {
+    Object.keys(hashToDelete).forEach((type) => {
+        // 3.a Pour chaque cle supprimee: est-ce qu'elle est bien dans la
+        // memoire ? sinon on la retire de la liste des clés supprimées (pas de
+        // maj memoire)
+        // -----------------------------------------------------------------------------------------------------------------
+        hashToDelete[type] = new Set([...hashToDelete[type]].filter((hash) => {
+            return (memory[type] || new Set()).has(hash);
+        }));
+        // 3.b Est-ce qu'elle a ete egalement ajoutee en même temps que
+        // supprimée ? (par exemple remplacement d'un stock complet à
+        // l'identique) Dans ce cas là, on retire cette clé des valeurs ajoutées
+        // et supprimées
+        // i.e. on herite de la memoire. (pas de maj de la memoire)
+        // ------------------------------------------------------------------------------
+        hashToDelete[type] = new Set([...hashToDelete[type]].filter((hash) => {
+            const also_added = (hashToAdd[type] || new Set()).has(hash);
+            if (also_added) {
+                hashToAdd[type].delete(hash);
+            }
+            return !also_added;
+        }));
+    });
+    Object.keys(hashToAdd).forEach((type) => {
+        // 4.a Pour chaque cle ajoutee: est-ce qu'elle est dans la memoire ? Si oui on filtre cette cle
+        // i.e. on herite de la memoire. (pas de maj de la memoire)
+        // ---------------------------------------------------------------------------------------------
+        hashToAdd[type] = new Set([...hashToAdd[type]].filter((hash) => {
+            return !(memory[type] || new Set()).has(hash);
+        }));
+    });
+}`,
+"listHashesToAddAndDelete": `/**
+ * On recupère les clés ajoutées et les clés supprimées depuis currentBatch.
+ * On ajoute aux clés supprimées les types stocks de la memoire.
+ */
+function listHashesToAddAndDelete(currentBatch, stockTypes, memory) {
+    var _a;
+    const hashToDelete = {};
+    const hashToAdd = {};
+    // Itération sur les types qui ont potentiellement subi des modifications
+    // pour compléter hashToDelete et hashToAdd.
+    // Les suppressions de types complets / stock sont gérés dans le bloc suivant.
+    for (const type in currentBatch) {
+        // Le type compact gère les clés supprimées
+        // Ce type compact existe si le batch en cours a déjà été compacté.
+        if (type === "compact") {
+            const compactDelete = (_a = currentBatch.compact) === null || _a === void 0 ? void 0 : _a.delete;
+            if (compactDelete) {
+                forEachPopulatedProp(compactDelete, (deleteType, keysToDelete) => {
+                    keysToDelete.forEach((hash) => {
+                        hashToDelete[deleteType] = hashToDelete[deleteType] || new Set();
+                        hashToDelete[deleteType].add(hash);
+                    });
+                });
+            }
+        }
+        else {
+            for (const hash in currentBatch[type]) {
+                ;
+                (hashToAdd[type] = hashToAdd[type] || new Set()).add(hash);
+            }
+        }
+    }
+    stockTypes.forEach((type) => {
+        hashToDelete[type] = new Set([
+            ...(hashToDelete[type] || new Set()),
+            ...memory[type],
+        ]);
+    });
+    return {
+        hashToAdd,
+        hashToDelete,
+    };
+}`,
 "map": `function map() {
     "use strict";
     if (typeof this.value !== "object") {
@@ -406,14 +563,9 @@ function finalize(k, companyDataValues) {
 "reduce": `// Entrée: données d'entreprises venant de ImportedData, regroupées par entreprise ou établissement.
 // Sortie: un objet fusionné par entreprise ou établissement, contenant les données historiques et les données importées, à destination de la collection RawData.
 // Opérations: retrait des données doublons et application des corrections de données éventuelles.
-function reduce(key, values) {
+function reduce(key, values // chaque element contient plusieurs batches pour cette entreprise ou établissement
+) {
     "use strict";
-    // Appelle fct() pour chaque propriété définie (non undefined) de obj.
-    // Contrat: obj ne doit contenir que les clés définies dans son type.
-    const forEachPopulatedProp = (obj, fct) => Object.keys(obj).forEach((key) => {
-        if (obj[key] !== undefined)
-            fct(key, obj[key]);
-    });
     // Tester si plusieurs batchs. Reduce complet uniquement si plusieurs
     // batchs. Sinon, juste fusion des attributs
     const auxBatchSet = new Set();
@@ -421,8 +573,8 @@ function reduce(key, values) {
         auxBatchSet.add(Object.keys(value.batch || {}));
         return auxBatchSet.size > 1;
     });
-    //fusion des attributs dans values
-    const reduced_value = values.reduce((m, value) => {
+    // Fusion batch par batch des types de données sans se préoccuper des doublons.
+    const naivelyMergedCompanyData = values.reduce((m, value) => {
         Object.keys(value.batch).forEach((batch) => {
             m.batch[batch] = Object.keys(value.batch[batch]).reduce((batchValues, type) => (Object.assign(Object.assign({}, batchValues), { [type]: value.batch[batch][type] })), m.batch[batch] || {});
         });
@@ -435,152 +587,45 @@ function reduce(key, values) {
     // données potentiellement présentes. Dans cette étape, on fusionne
     // généralement les données de plusieurs batches. (données historiques)
     if (!severalBatches)
-        return reduced_value;
+        return naivelyMergedCompanyData;
     //////////////////////////////////////////////////
     // ETAPES DE LA FUSION AVEC DONNÉES HISTORIQUES //
     //////////////////////////////////////////////////
     // 0. On calcule la memoire au moment du batch à modifier
-    const memory_batches = Object.keys(reduced_value.batch)
+    const memoryBatches = Object.keys(naivelyMergedCompanyData.batch)
         .filter((batch) => batch < batchKey)
         .sort()
         .reduce((m, batch) => {
-        m.push(reduced_value.batch[batch]);
+        m.push(naivelyMergedCompanyData.batch[batch]);
         return m;
     }, []);
-    const memory = f.currentState(memory_batches);
-    // Pour tous les batchs à modifier, c'est-à-dire le batch ajouté et tous les
-    // suivants.
-    const modified_batches = batches.filter((batch) => batch >= batchKey);
-    modified_batches.forEach((batch) => {
-        var _a, _b;
-        reduced_value.batch[batch] = reduced_value.batch[batch] || {};
-        // Les types où il y a potentiellement des suppressions
-        const stock_types = completeTypes[batch].filter((type) => (memory[type] || new Set()).size > 0);
-        // 1. On recupère les cles ajoutes et les cles supprimes
-        // -----------------------------------------------------
-        const hashToDelete = {};
-        const hashToAdd = {};
-        // Itération sur les types qui ont potentiellement subi des modifications
-        // pour compléter hashToDelete et hashToAdd.
-        // Les suppressions de types complets / stock sont gérés dans le bloc suivant.
-        const currentBatch = reduced_value.batch[batch];
-        for (const type in currentBatch) {
-            // Le type compact gère les clés supprimées
-            // Ce type compact existe si le batch en cours a déjà été compacté.
-            if (type === "compact") {
-                const compactDelete = (_a = reduced_value.batch[batch].compact) === null || _a === void 0 ? void 0 : _a.delete;
-                if (compactDelete) {
-                    forEachPopulatedProp(compactDelete, (delete_type, keysToDelete) => {
-                        keysToDelete.forEach((hash) => {
-                            hashToDelete[delete_type] = hashToDelete[delete_type] || new Set();
-                            hashToDelete[delete_type].add(hash);
-                        });
-                    });
-                }
-            }
-            else {
-                for (const hash in currentBatch[type]) {
-                    hashToAdd[type] = hashToAdd[type] || new Set();
-                    hashToAdd[type].add(hash);
-                }
-            }
-        }
-        //
-        // 2. On ajoute aux cles supprimees les types stocks de la memoire.
-        // ----------------------------------------------------------------
-        stock_types.forEach((type) => {
-            hashToDelete[type] = new Set([
-                ...(hashToDelete[type] || new Set()),
-                ...memory[type],
-            ]);
-        });
-        Object.keys(hashToDelete).forEach((type) => {
-            // 3.a Pour chaque cle supprimee: est-ce qu'elle est bien dans la
-            // memoire ? sinon on la retire de la liste des clés supprimées (pas de
-            // maj memoire)
-            // -----------------------------------------------------------------------------------------------------------------
-            hashToDelete[type] = new Set([...hashToDelete[type]].filter((hash) => {
-                return (memory[type] || new Set()).has(hash);
-            }));
-            // 3.b Est-ce qu'elle a ete egalement ajoutee en même temps que
-            // supprimée ? (par exemple remplacement d'un stock complet à
-            // l'identique) Dans ce cas là, on retire cette clé des valeurs ajoutées
-            // et supprimées
-            // i.e. on herite de la memoire. (pas de maj de la memoire)
-            // ------------------------------------------------------------------------------
-            hashToDelete[type] = new Set([...hashToDelete[type]].filter((hash) => {
-                const also_added = (hashToAdd[type] || new Set()).has(hash);
-                if (also_added) {
-                    hashToAdd[type].delete(hash);
-                }
-                return !also_added;
-            }));
-            // 3.c On retire les cles restantes de la memoire.
-            // --------------------------------------------------
-            hashToDelete[type].forEach((hash) => {
-                memory[type].delete(hash);
-            });
-        });
-        Object.keys(hashToAdd).forEach((type) => {
-            // 4.a Pour chaque cle ajoutee: est-ce qu'elle est dans la memoire ? Si oui on filtre cette cle
-            // i.e. on herite de la memoire. (pas de maj de la memoire)
-            // ---------------------------------------------------------------------------------------------
-            hashToAdd[type] = new Set([...hashToAdd[type]].filter((hash) => {
-                return !(memory[type] || new Set()).has(hash);
-            }));
-            // 4.b Pour chaque cle ajoutee restante: on ajoute à la memoire.
-            // -------------------------------------------------------------
-            hashToAdd[type].forEach((hash) => {
-                memory[type] = memory[type] || new Set();
-                memory[type].add(hash);
-            });
-        });
-        // 5. On met à jour reduced_value
-        // -------------------------------
-        stock_types.forEach((type) => {
-            if (hashToDelete[type]) {
-                const reducedBatch = reduced_value.batch[batch];
-                reducedBatch.compact = reducedBatch.compact || { delete: {} };
-                reducedBatch.compact.delete = reducedBatch.compact.delete || {};
-                reducedBatch.compact.delete[type] = [...hashToDelete[type]];
-            }
-        });
-        const typesToAdd = Object.keys(hashToAdd);
-        typesToAdd.forEach((type) => {
-            reduced_value.batch[batch][type] = [...hashToAdd[type]].reduce((typedBatchValues, hash) => {
-                var _a;
-                return (Object.assign(Object.assign({}, typedBatchValues), { [hash]: (_a = reduced_value.batch[batch][type]) === null || _a === void 0 ? void 0 : _a[hash] }));
-            }, {});
-        });
-        // 6. nettoyage
-        // ------------
-        if (reduced_value.batch[batch]) {
-            //types vides
-            Object.keys(reduced_value.batch[batch]).forEach((strType) => {
-                const type = strType;
-                if (Object.keys(reduced_value.batch[batch][type] || {}).length === 0) {
-                    delete reduced_value.batch[batch][type];
-                }
-            });
-            //hash à supprimer vides (compact.delete)
-            const compactDelete = (_b = reduced_value.batch[batch].compact) === null || _b === void 0 ? void 0 : _b.delete;
-            if (compactDelete) {
-                forEachPopulatedProp(compactDelete, (type, keysToDelete) => {
-                    if (keysToDelete.length === 0) {
-                        delete compactDelete[type];
-                    }
-                });
-                if (Object.keys(compactDelete).length === 0) {
-                    delete reduced_value.batch[batch].compact;
-                }
-            }
-            //batchs vides
-            if (Object.keys(reduced_value.batch[batch]).length === 0) {
-                delete reduced_value.batch[batch];
-            }
+    // Memory conserve les données aplaties de tous les batches jusqu'à batchKey
+    // puis sera enrichie au fur et à mesure du traitements des batches suivants.
+    const memory = f.currentState(memoryBatches);
+    const reducedValue = {
+        key: naivelyMergedCompanyData.key,
+        scope: naivelyMergedCompanyData.scope,
+        batch: {},
+    };
+    // Copie telle quelle des batches jusqu'à batchKey.
+    Object.keys(naivelyMergedCompanyData.batch)
+        .filter((batch) => batch < batchKey)
+        .forEach((batch) => {
+        reducedValue.batch[batch] = naivelyMergedCompanyData.batch[batch];
+    });
+    // On itère sur chaque batch à partir de batchKey pour les compacter.
+    // Il est possible qu'il y ait moins de batch en sortie que le nombre traité
+    // dans la boucle, si ces batchs n'apportent aucune information nouvelle.
+    batches
+        .filter((batch) => batch >= batchKey)
+        .forEach((batch) => {
+        const currentBatch = naivelyMergedCompanyData.batch[batch];
+        const compactedBatch = compactBatch(currentBatch, memory, batch);
+        if (Object.keys(compactedBatch).length > 0) {
+            reducedValue.batch[batch] = compactedBatch;
         }
     });
-    return reduced_value;
+    return reducedValue;
 }`,
 },
 "crossComputation":{
