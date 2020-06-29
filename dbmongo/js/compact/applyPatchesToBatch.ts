@@ -52,5 +52,4 @@ export function applyPatchesToBatch(
       delete currentBatch[type]
     }
   })
-  // TODO: nettoyer le batch ?
 }

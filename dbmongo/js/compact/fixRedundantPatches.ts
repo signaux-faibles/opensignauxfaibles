@@ -9,7 +9,7 @@ export function fixRedundantPatches(
   memory: CurrentDataState
 ): void {
   Object.keys(hashToDelete).forEach((type) => {
-    // 3.a Pour chaque cle supprimee: est-ce qu'elle est bien dans la
+    // Pour chaque cle supprimee: est-ce qu'elle est bien dans la
     // memoire ? sinon on la retire de la liste des clés supprimées (pas de
     // maj memoire)
     // -----------------------------------------------------------------------------------------------------------------
@@ -19,7 +19,7 @@ export function fixRedundantPatches(
       })
     )
 
-    // 3.b Est-ce qu'elle a ete egalement ajoutee en même temps que
+    // Est-ce qu'elle a ete egalement ajoutee en même temps que
     // supprimée ? (par exemple remplacement d'un stock complet à
     // l'identique) Dans ce cas là, on retire cette clé des valeurs ajoutées
     // et supprimées
@@ -38,7 +38,7 @@ export function fixRedundantPatches(
   })
 
   Object.keys(hashToAdd).forEach((type) => {
-    // 4.a Pour chaque cle ajoutee: est-ce qu'elle est dans la memoire ? Si oui on filtre cette cle
+    // Pour chaque cle ajoutee: est-ce qu'elle est dans la memoire ? Si oui on filtre cette cle
     // i.e. on herite de la memoire. (pas de maj de la memoire)
     // ---------------------------------------------------------------------------------------------
     hashToAdd[type] = new Set(

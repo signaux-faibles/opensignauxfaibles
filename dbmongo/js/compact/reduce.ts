@@ -62,7 +62,7 @@ export function reduce(
     }, [])
 
   // Memory conserve les données aplaties de tous les batches jusqu'à batchKey
-  // puis sera enrichie au fur et à mesure du traitements des batches suivants.
+  // puis sera enrichie au fur et à mesure du traitement des batches suivants.
   const memory = f.currentState(memoryBatches)
 
   const reducedValue: CompanyDataValues = {

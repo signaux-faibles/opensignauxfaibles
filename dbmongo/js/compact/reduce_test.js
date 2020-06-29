@@ -1,4 +1,4 @@
-"use strict"
+/*global print, compare, reduce*/
 
 const test_cases = [
   {
