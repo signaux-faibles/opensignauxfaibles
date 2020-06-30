@@ -39,11 +39,10 @@ export function flatten(v: V, actual_batch: string): Flattened {
           m[type] = m[type] || ({} as any)
           // On supprime les clés qu'il faut
           const batchData = v.batch[batch]
-          if (batchData?.compact?.delete?.[type]) {
-            batchData.compact.delete[type].forEach((hash) => {
-              if (typeof m[type] === "object" && (m[type] as any)[hash])
-                delete (m[type] as any)[hash]
-            })
+          const keysToDelete = batchData?.compact?.delete?.[type] || []
+          for (const hash of keysToDelete) {
+            if (typeof m[type] === "object" && (m[type] as any)[hash])
+              delete (m[type] as any)[hash]
           }
           Object.assign(m[type], v.batch[batch][type])
         })

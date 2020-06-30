@@ -1,13 +1,15 @@
 // Déclaration des fonctions globales fournies par MongoDB
+
 declare function emit(key: unknown, value: unknown): void
 
 // Paramètres globaux utilisés par "compact"
+
 /* eslint-disable @typescript-eslint/no-unused-vars */
 let batches: BatchKey[]
 let batchKey: BatchKey
 let serie_periode: Date[]
-let types: string[]
-let completeTypes: { [key: string]: string[] }
+let types: BatchDataType[]
+let completeTypes: Record<BatchKey, BatchDataType[]>
 /* eslint-enable @typescript-eslint/no-unused-vars */
 
 // Types partagés
@@ -55,7 +57,7 @@ type BatchValue = Partial<
     DonnéesDiane
 >
 
-type BatchDataType = keyof BatchValue // => 'reporder' | 'effectif' | 'apconso' | ...
+type BatchDataType = Exclude<keyof BatchValue, "compact"> // => 'reporder' | 'effectif' | 'apconso' | ...
 
 // Définition des types de données
 
@@ -64,7 +66,7 @@ type DonnéesRepOrder = {
 }
 
 type DonnéesCompact = {
-  compact: { delete: { [dataType: string]: DataHash[] } } // TODO: utiliser un type Record<~BatchDataType, DataHash[]>
+  compact: { delete: Partial<Record<BatchDataType, DataHash[]>> }
 }
 
 type DonnéesEffectif = {
@@ -97,11 +99,11 @@ type DonnéesDefaillances = {
 }
 
 type DonnéesCotisation = {
-  cotisation: Record<string, EntréeCotisation> // TODO: utiliser un type plus précis que string
+  cotisation: Record<DataHash, EntréeCotisation>
 }
 
 type DonnéesDebit = {
-  debit: Record<string, EntréeDebit> // TODO: utiliser un type plus précis que string
+  debit: Record<DataHash, EntréeDebit>
 }
 
 type DonnéesCcsf = {
@@ -109,11 +111,11 @@ type DonnéesCcsf = {
 }
 
 type DonnéesSirene = {
-  sirene: Record<string, EntréeSirene> // TODO: utiliser un type plus précis que string
+  sirene: Record<DataHash, EntréeSirene>
 }
 
 type DonnéesSireneUL = {
-  sirene_ul: Record<string, EntréeSireneUL> // TODO: utiliser un type plus précis que string
+  sirene_ul: Record<DataHash, EntréeSireneUL>
 }
 
 type DonnéesEffectifEntreprise = {
