@@ -2,6 +2,10 @@ import "../globals.ts"
 import { compactBatch } from "./compactBatch"
 import * as f from "./currentState"
 
+// Paramètres globaux utilisés par "compact"
+declare const batches: BatchKey[]
+declare const batchKey: BatchKey
+
 // Entrée: données d'entreprises venant de ImportedData, regroupées par entreprise ou établissement.
 // Sortie: un objet fusionné par entreprise ou établissement, contenant les données historiques et les données importées, à destination de la collection RawData.
 // Opérations: retrait des données doublons et application des corrections de données éventuelles.

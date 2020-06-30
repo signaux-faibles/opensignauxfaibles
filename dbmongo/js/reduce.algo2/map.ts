@@ -12,7 +12,7 @@ import { defaillances } from "./defaillances"
 import { cotisationsdettes } from "./cotisationsdettes"
 import { ccsf } from "./ccsf"
 import { sirene } from "./sirene"
-import { populateNafAndApe, NAF } from "./populateNafAndApe"
+import { populateNafAndApe } from "./populateNafAndApe"
 import { cotisation } from "./cotisation"
 import { cibleApprentissage } from "./cibleApprentissage"
 import { sirene_ul, SortieSireneUL } from "./sirene_ul"
@@ -22,9 +22,11 @@ import { poidsFrng } from "./poidsFrng"
 import { detteFiscale } from "./detteFiscale"
 import { fraisFinancier } from "./fraisFinancier"
 
+// Paramètres globaux utilisés par "reduce.algo2"
 declare const naf: NAF
 declare const actual_batch: BatchKey
 declare const includes: Record<"all" | "apart", boolean>
+declare const serie_periode: Date[]
 
 /**
  * `map()` est appelée pour chaque entreprise/établissement.

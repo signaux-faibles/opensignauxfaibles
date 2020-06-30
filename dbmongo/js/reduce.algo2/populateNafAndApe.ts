@@ -1,7 +1,3 @@
-type CodeAPENiveau2 = string
-type CodeAPENiveau3 = string
-type CodeAPENiveau4 = string
-
 type Input = {
   code_ape: CodeAPE
 }
@@ -16,15 +12,6 @@ export type SortieNAF = {
   libelle_ape3: string
   libelle_ape4: string
   libelle_ape5: string
-}
-
-export type NAF = {
-  n5to1: Record<CodeAPE, CodeNAF>
-  n1: Record<CodeNAF, string>
-  n2: Record<CodeAPENiveau2, string>
-  n3: Record<CodeAPENiveau3, string>
-  n4: Record<CodeAPENiveau4, string>
-  n5: Record<CodeAPE, string>
 }
 
 export function populateNafAndApe(

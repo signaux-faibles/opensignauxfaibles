@@ -1,22 +1,25 @@
 // Déclaration des fonctions globales fournies par MongoDB
 declare function emit(key: unknown, value: unknown): void
 
-// Paramètres globaux utilisés par "compact"
-/* eslint-disable @typescript-eslint/no-unused-vars */
-let batches: BatchKey[]
-let batchKey: BatchKey
-let serie_periode: Date[]
-let types: string[]
-let completeTypes: { [key: string]: string[] }
-/* eslint-enable @typescript-eslint/no-unused-vars */
-
 // Types partagés
 
 type BatchKey = string
 
 type CodeAPE = string
+type CodeAPENiveau2 = string
+type CodeAPENiveau3 = string
+type CodeAPENiveau4 = string
 
 type CodeNAF = string
+
+type NAF = {
+  n5to1: Record<CodeAPE, CodeNAF>
+  n1: Record<CodeNAF, string>
+  n2: Record<CodeAPENiveau2, string>
+  n3: Record<CodeAPENiveau3, string>
+  n4: Record<CodeAPENiveau4, string>
+  n5: Record<CodeAPE, string>
+}
 
 type Scope = "etablissement" | "entreprise"
 

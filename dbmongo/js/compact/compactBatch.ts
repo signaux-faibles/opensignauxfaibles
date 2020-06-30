@@ -5,6 +5,9 @@ import { fixRedundantPatches } from "./fixRedundantPatches"
 import { applyPatchesToMemory } from "./applyPatchesToMemory"
 import { applyPatchesToBatch } from "./applyPatchesToBatch"
 
+// Paramètres globaux utilisés par "compact"
+declare const completeTypes: Record<BatchKey, BatchDataType[]>
+
 /**
  * Appelée par reduce(), compactBatch() va générer un diff entre les
  * données de batch et les données précédentes fournies par memory.
