@@ -1,5 +1,6 @@
 import * as f from "./dateAddMonth"
 
+// Paramètres globaux utilisés par "reduce.algo2"
 declare const offset_effectif: number
 
 type Time = string

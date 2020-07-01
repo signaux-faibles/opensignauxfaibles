@@ -2,6 +2,7 @@ import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { dateAddMonth } from "./dateAddMonth"
 import { compareDebit } from "./compareDebit"
 
+// Paramètres globaux utilisés par "reduce.algo2"
 declare const date_fin: number
 
 type EcartNegatif = {
