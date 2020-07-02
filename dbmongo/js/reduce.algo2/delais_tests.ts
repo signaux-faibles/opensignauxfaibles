@@ -1,5 +1,5 @@
-import test, {ExecutionContext} from "ava" // TODO: résoudre erreur dans ide
-import {nbDays} from "./nbDays"
+import test, { ExecutionContext } from "ava" // TODO: résoudre erreur dans ide
+import { nbDays } from "./nbDays"
 import "../globals"
 import {
   delais,

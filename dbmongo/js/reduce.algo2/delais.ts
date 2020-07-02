@@ -1,5 +1,5 @@
 import * as f from "../common/generatePeriodSerie"
-import {nbDays} from "./nbDays"
+import { nbDays } from "./nbDays"
 
 type DeepReadonly<T> = Readonly<T> // pas vraiment, mais espoire que TS le supporte prochainement
 
