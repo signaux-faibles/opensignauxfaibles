@@ -58,10 +58,10 @@ test("la propriété delai_nb_jours_total représente la durée totale en jours 
   t.is(output_indexed[mars.getTime()]["delai_nb_jours_total"], dureeEnJours)
 })
 
-test("la propriété montant_echeancier représente le montant en euros des cotisations sociales couvertes par le délai", (t) => {
+test("la propriété delai_montant_echeancier représente le montant en euros des cotisations sociales couvertes par le délai", (t) => {
   const output_indexed = testProperty()
-  t.is(output_indexed[fevrier.getTime()]["montant_echeancier"], 1000)
-  t.is(output_indexed[mars.getTime()]["montant_echeancier"], 1000)
+  t.is(output_indexed[fevrier.getTime()]["delai_montant_echeancier"], 1000)
+  t.is(output_indexed[mars.getTime()]["delai_montant_echeancier"], 1000)
 })
 
 test("la propriété ratio_dette_delai représente la déviation du remboursement de la dette par rapport à un remboursement linéaire sur la durée du délai", (t) => {

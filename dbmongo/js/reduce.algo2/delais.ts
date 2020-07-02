@@ -15,7 +15,7 @@ export type DelaiComputedValues = {
   delai_nb_jours_restants: number
   delai_nb_jours_total: number // nombre de jours entre date_creation et date_echeance
   ratio_dette_delai?: number
-  montant_echeancier: number // exprimé en euros
+  delai_montant_echeancier: number // exprimé en euros
 }
 
 export type V = { delai: ParPériode<EntréeDelai> } // TODO: définir ce type dans global.ts ?
@@ -68,7 +68,7 @@ export function delais(
         const outputAtTime: DelaiComputedValues = {
           delai_nb_jours_restants: remaining_months,
           delai_nb_jours_total: delai.duree_delai,
-          montant_echeancier: delai.montant_echeancier,
+          delai_montant_echeancier: delai.montant_echeancier,
         }
         if (
           delai.duree_delai > 0 &&
