@@ -65,49 +65,46 @@ test("la propriété delai_montant_echeancier représente le montant en euros de
   t.is(output_indexed[mars.getTime()]["delai_montant_echeancier"], 1000)
 })
 
-test("la propriété delai_deviation_remboursement représente:\n" +
-     "(dette actuelle - dette hypothétique en cas de remboursement linéaire) / dette initiale\n" +
-     "Elle représente la déviation par rapport à un remboursement linéaire de la dette " +
-     "en pourcentage de la dette initialement dû", (t) => {
-  const expectedFebruary = -0.052
-  const expectedMarch = 0.273
-  const debits = { montant_part_patronale: 600, montant_part_ouvriere: 0 }
-  const output_indexed = testProperty(debits)
-  const tolerance = 10e-3
-  const ratioFebruary = output_indexed[fevrier.getTime()]["delai_deviation_remboursement"]
-  const ratioMarch = output_indexed[mars.getTime()]["delai_deviation_remboursement"]
-  t.is(typeof ratioFebruary, "number")
-  t.is(typeof ratioMarch, "number")
-  if (typeof ratioFebruary === "number") {
-    t.true(Math.abs(ratioFebruary - expectedFebruary) < tolerance)
+test(
+  "la propriété delai_deviation_remboursement représente:\n" +
+    "(dette actuelle - dette hypothétique en cas de remboursement linéaire) / dette initiale\n" +
+    "Elle représente la déviation par rapport à un remboursement linéaire de la dette " +
+    "en pourcentage de la dette initialement dû",
+  (t) => {
+    const expectedFebruary = -0.052
+    const expectedMarch = 0.273
+    const debits = { montant_part_patronale: 600, montant_part_ouvriere: 0 }
+    const output_indexed = testProperty(debits)
+    const tolerance = 10e-3
+    const ratioFebruary =
+      output_indexed[fevrier.getTime()]["delai_deviation_remboursement"]
+    const ratioMarch =
+      output_indexed[mars.getTime()]["delai_deviation_remboursement"]
+    t.is(typeof ratioFebruary, "number")
+    t.is(typeof ratioMarch, "number")
+    if (typeof ratioFebruary === "number") {
+      t.true(Math.abs(ratioFebruary - expectedFebruary) < tolerance)
+    }
+    if (typeof ratioMarch === "number") {
+      t.true(Math.abs(ratioMarch - expectedMarch) < tolerance)
+    }
   }
-  if (typeof ratioMarch === "number") {
-    t.true(Math.abs(ratioMarch - expectedMarch) < tolerance)
-  }
-})
+)
 
 test("la propriété delai_deviation_remboursement n'est pas créée si la durée du délai est nulle", (t) => {
-  const expectedFebruary = -0.052
-  const expectedMarch = 0.273
   // const debits = { montant_part_patronale: 600, montant_part_ouvriere: 0 }
-  const delaiTest = makeDelai(new Date("2014-01-03"), new Date("2014-01-03"))
+  const delaiTest = makeDelai(new Date("2014-02-03"), new Date("2014-02-03"))
   const delaiMap: ParPériode<EntréeDelai> = {
     abc: delaiTest,
   }
-  let output_indexed: ParPériode<DelaiComputedValues> = {}
-  // output_indexed[fevrier.getTime()] = debits ? makeOutputIndexed(debits) : {}
-  output_indexed = delais({ delai: delaiMap }, output_indexed)
-  const tolerance = 10e-3
-  const ratioFebruary = output_indexed[fevrier.getTime()]["delai_deviation_remboursement"]
-  const ratioMarch = output_indexed[mars.getTime()]["delai_deviation_remboursement"]
-  t.is(typeof ratioFebruary, "number")
-  t.is(typeof ratioMarch, "number")
-  if (typeof ratioFebruary === "number") {
-    t.true(Math.abs(ratioFebruary - expectedFebruary) < tolerance)
+  const input_indexed: ParPériode<DebitComputedValues> = {
+    [fevrier.getTime()]: {},
   }
-  if (typeof ratioMarch === "number") {
-    t.true(Math.abs(ratioMarch - expectedMarch) < tolerance)
-  }
+  const output_indexed = delais({ delai: delaiMap }, input_indexed)
+  t.is(Object.keys(output_indexed).length, 1)
+  const ratioFebruary =
+    output_indexed[fevrier.getTime()]["delai_deviation_remboursement"]
+  t.is(typeof ratioFebruary, "undefined")
 })
 
 test("un délai en dehors de la période d'intérêt est ignorée", (t) => {
