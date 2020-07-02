@@ -91,22 +91,6 @@ test(
   }
 )
 
-test("la propriété delai_deviation_remboursement n'est pas créée si la durée du délai est nulle", (t) => {
-  // const debits = { montant_part_patronale: 600, montant_part_ouvriere: 0 }
-  const delaiTest = makeDelai(new Date("2014-02-03"), new Date("2014-02-03"))
-  const delaiMap: ParPériode<EntréeDelai> = {
-    abc: delaiTest,
-  }
-  const input_indexed: ParPériode<DebitComputedValues> = {
-    [fevrier.getTime()]: {},
-  }
-  const output_indexed = delais({ delai: delaiMap }, input_indexed)
-  t.is(Object.keys(output_indexed).length, 1)
-  const ratioFebruary =
-    output_indexed[fevrier.getTime()]["delai_deviation_remboursement"]
-  t.is(typeof ratioFebruary, "undefined")
-})
-
 test("un délai en dehors de la période d'intérêt est ignorée", (t) => {
   const delaiTest = makeDelai(new Date("2013-01-03"), new Date("2013-03-05"))
   const delaiMap: ParPériode<EntréeDelai> = {
@@ -117,5 +101,3 @@ test("un délai en dehors de la période d'intérêt est ignorée", (t) => {
   const périodesComplétées = delais({ delai: delaiMap }, donnéesParPériode)
   t.deepEqual(périodesComplétées, {})
 })
-
-// TODO: ajouter des tests sur les cas limites: denominateurs nuls dans calcul de delai_deviation_remboursement
