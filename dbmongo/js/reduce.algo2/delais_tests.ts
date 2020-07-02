@@ -18,7 +18,7 @@ const makeDelai = (firstDate: Date, secondDate: Date): EntréeDelai => ({
   montant_echeancier: 1000,
 })
 
-const makeOutputIndexed = ({
+const makeDebitParPériode = ({
   montant_part_patronale = 0,
   montant_part_ouvriere = 0,
 } = {}): DebitComputedValues => ({
@@ -26,43 +26,42 @@ const makeOutputIndexed = ({
   montant_part_ouvriere,
 })
 
-// TODO: renommer cette fonction
-const testProperty = (
+const runDelais = (
   debits?: DebitComputedValues
 ): ParPériode<DelaiComputedValues> => {
   const delaiTest = makeDelai(new Date("2014-01-03"), new Date("2014-04-05"))
   const delaiMap: ParPériode<EntréeDelai> = {
     abc: delaiTest,
   }
-  const output_indexed: ParPériode<DebitComputedValues> = {}
-  output_indexed[fevrier.getTime()] = debits ? makeOutputIndexed(debits) : {}
-  output_indexed[mars.getTime()] = debits ? makeOutputIndexed(debits) : {}
-  return delais({ delai: delaiMap }, output_indexed)
+  const debitParPériode: ParPériode<DebitComputedValues> = {}
+  debitParPériode[fevrier.getTime()] = debits ? makeDebitParPériode(debits) : {}
+  debitParPériode[mars.getTime()] = debits ? makeDebitParPériode(debits) : {}
+  return delais({ delai: delaiMap }, debitParPériode)
 }
 
 test("la propriété delai_nb_jours_restants représente le nombre de jours restants du délai", (t: ExecutionContext) => {
-  const output_indexed = testProperty()
+  const outputDelai = runDelais()
   t.is(
-    output_indexed[fevrier.getTime()]["delai_nb_jours_restants"],
+    outputDelai[fevrier.getTime()]["delai_nb_jours_restants"],
     nbDays(new Date("2014-02-01"), new Date("2014-04-05"))
   )
   t.is(
-    output_indexed[mars.getTime()]["delai_nb_jours_restants"],
+    outputDelai[mars.getTime()]["delai_nb_jours_restants"],
     nbDays(new Date("2014-03-01"), new Date("2014-04-05"))
   )
 })
 
 test("la propriété delai_nb_jours_total représente la durée totale en jours du délai", (t: ExecutionContext) => {
   const dureeEnJours = nbDays(new Date("2014-01-03"), new Date("2014-04-05"))
-  const output_indexed = testProperty()
-  t.is(output_indexed[fevrier.getTime()]["delai_nb_jours_total"], dureeEnJours)
-  t.is(output_indexed[mars.getTime()]["delai_nb_jours_total"], dureeEnJours)
+  const outputDelai = runDelais()
+  t.is(outputDelai[fevrier.getTime()]["delai_nb_jours_total"], dureeEnJours)
+  t.is(outputDelai[mars.getTime()]["delai_nb_jours_total"], dureeEnJours)
 })
 
 test("la propriété delai_montant_echeancier représente le montant en euros des cotisations sociales couvertes par le délai", (t: ExecutionContext) => {
-  const output_indexed = testProperty()
-  t.is(output_indexed[fevrier.getTime()]["delai_montant_echeancier"], 1000)
-  t.is(output_indexed[mars.getTime()]["delai_montant_echeancier"], 1000)
+  const outputDelai = runDelais()
+  t.is(outputDelai[fevrier.getTime()]["delai_montant_echeancier"], 1000)
+  t.is(outputDelai[mars.getTime()]["delai_montant_echeancier"], 1000)
 })
 
 test(
@@ -74,12 +73,12 @@ test(
     const expectedFebruary = -0.0848
     const expectedMarch = 0.22
     const debits = { montant_part_patronale: 600, montant_part_ouvriere: 0 }
-    const output_indexed = testProperty(debits)
+    const outputDelai = runDelais(debits)
     const tolerance = 10e-3
     const ratioFebruary =
-      output_indexed[fevrier.getTime()]["delai_deviation_remboursement"]
+      outputDelai[fevrier.getTime()]["delai_deviation_remboursement"]
     const ratioMarch =
-      output_indexed[mars.getTime()]["delai_deviation_remboursement"]
+      outputDelai[mars.getTime()]["delai_deviation_remboursement"]
     t.is(typeof ratioFebruary, "number")
     t.is(typeof ratioMarch, "number")
     if (typeof ratioFebruary === "number") {
@@ -97,7 +96,7 @@ test("un délai en dehors de la période d'intérêt est ignorée", (t: Executio
     abc: delaiTest,
   }
   const donnéesParPériode: ParPériode<DebitComputedValues> = {}
-  donnéesParPériode[fevrier.getTime()] = makeOutputIndexed()
+  donnéesParPériode[fevrier.getTime()] = makeDebitParPériode()
   const périodesComplétées = delais({ delai: delaiMap }, donnéesParPériode)
   t.deepEqual(périodesComplétées, {})
 })
