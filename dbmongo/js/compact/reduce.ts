@@ -4,7 +4,7 @@ import * as f from "./currentState"
 
 // Paramètres globaux utilisés par "compact"
 declare const batches: BatchKey[]
-declare const batchKey: BatchKey
+declare const fromBatchKey: BatchKey
 
 // Entrée: données d'entreprises venant de ImportedData, regroupées par entreprise ou établissement.
 // Sortie: un objet fusionné par entreprise ou établissement, contenant les données historiques et les données importées, à destination de la collection RawData.
@@ -58,14 +58,14 @@ export function reduce(
   const memoryBatches: BatchValue[] = Object.keys(
     naivelyMergedCompanyData.batch
   )
-    .filter((batch) => batch < batchKey)
+    .filter((batch) => batch < fromBatchKey)
     .sort()
     .reduce((m: BatchValue[], batch: string) => {
       m.push(naivelyMergedCompanyData.batch[batch])
       return m
     }, [])
 
-  // Memory conserve les données aplaties de tous les batches jusqu'à batchKey
+  // Memory conserve les données aplaties de tous les batches jusqu'à fromBatchKey
   // puis sera enrichie au fur et à mesure du traitement des batches suivants.
   const memory = f.currentState(memoryBatches)
 
@@ -75,18 +75,18 @@ export function reduce(
     batch: {},
   }
 
-  // Copie telle quelle des batches jusqu'à batchKey.
+  // Copie telle quelle des batches jusqu'à fromBatchKey.
   Object.keys(naivelyMergedCompanyData.batch)
-    .filter((batch) => batch < batchKey)
+    .filter((batch) => batch < fromBatchKey)
     .forEach((batch) => {
       reducedValue.batch[batch] = naivelyMergedCompanyData.batch[batch]
     })
 
-  // On itère sur chaque batch à partir de batchKey pour les compacter.
+  // On itère sur chaque batch à partir de fromBatchKey pour les compacter.
   // Il est possible qu'il y ait moins de batch en sortie que le nombre traité
   // dans la boucle, si ces batchs n'apportent aucune information nouvelle.
   batches
-    .filter((batch) => batch >= batchKey)
+    .filter((batch) => batch >= fromBatchKey)
     .forEach((batch) => {
       const currentBatch = naivelyMergedCompanyData.batch[batch]
       const compactedBatch = compactBatch(currentBatch, memory, batch)

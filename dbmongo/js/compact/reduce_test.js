@@ -5,7 +5,7 @@ const test_cases = [
     ////////////////////////////////////////////////////////
     test_case_name: "Exemple1: complete type deletion",
     completeTypes: { "1902": ["apconso"] },
-    batchKey: "1902",
+    fromBatchKey: "1902",
     types: "",
     batches: ["1901", "1902"],
     reduce_key: "123",
@@ -69,7 +69,7 @@ const test_cases = [
     ////////////////////////////////////////////////////////
     test_case_name: "Exemple2: order independence",
     completeTypes: { "1902": ["apconso"] },
-    batchKey: "1902",
+    fromBatchKey: "1902",
     types: "",
     batches: ["1901", "1902"],
     reduce_key: "123",
@@ -136,7 +136,7 @@ const test_cases = [
       "1901": ["apconso"],
       "1902": ["apconso"],
     },
-    batchKey: "1901",
+    fromBatchKey: "1901",
     types: "",
     batches: ["1812", "1901", "1902"],
     reduce_key: "123",
@@ -223,7 +223,7 @@ const test_cases = [
     ////////////////////////////////////////////////////////
     test_case_name: "Exemple4: added after removed same key",
     completeTypes: { "1901": ["apconso"] },
-    batchKey: "1901",
+    fromBatchKey: "1901",
     types: "",
     batches: ["1812", "1901"],
     reduce_key: "123",
@@ -275,7 +275,7 @@ const test_cases = [
     ////////////////////////////////////////////////////////
     test_case_name: "Exemple5: deletion without complete types",
     completeTypes: { "1901": ["apconso"] },
-    batchKey: "1901",
+    fromBatchKey: "1901",
     types: "",
     batches: ["1812", "1901"],
     reduce_key: "123",
@@ -327,7 +327,7 @@ const test_cases = [
     ////////////////////////////////////////////////////////
     test_case_name: "Exemple6: only one batch",
     completeTypes: { "1901": [] },
-    batchKey: "1901",
+    fromBatchKey: "1901",
     types: "",
     batches: ["1901"],
     reduce_key: "123",
@@ -381,7 +381,7 @@ const jsParams = this // => all properties of this object will become global. TO
 
 const test_results = test_cases.map(function (tc, id) {
   jsParams.completeTypes = tc.completeTypes
-  jsParams.batchKey = tc.batchKey
+  jsParams.fromBatchKey = tc.fromBatchKey
   jsParams.types = tc.types
   jsParams.batches = tc.batches
   var actual = reduce(tc.reduce_key, tc.reduce_values)

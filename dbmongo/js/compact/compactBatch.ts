@@ -17,10 +17,10 @@ declare const completeTypes: Record<BatchKey, DataType[]>
 export function compactBatch(
   currentBatch: BatchValue,
   memory: CurrentDataState,
-  batchKey: string
+  fromBatchKey: string
 ): BatchValue {
   // Les types où il y a potentiellement des suppressions
-  const stockTypes = completeTypes[batchKey].filter(
+  const stockTypes = completeTypes[fromBatchKey].filter(
     (type) => (memory[type] || new Set()).size > 0
   )
 

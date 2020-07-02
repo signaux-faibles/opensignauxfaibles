@@ -111,7 +111,7 @@ func MRroutine(job *mgo.MapReduce, query bson.M, dbTemp string, collOrig string,
 }
 
 // Compact traite le compactage de la base RawData
-func Compact(batchKey string) error {
+func Compact(fromBatchKey string) error {
 	// Détermination scope traitement
 	batches, _ := GetBatches()
 
@@ -123,7 +123,7 @@ func Compact(batchKey string) error {
 	}
 	found := -1
 	for ind, batchID := range batchesID {
-		if batchID == batchKey {
+		if batchID == fromBatchKey {
 			found = ind
 			break
 		}
@@ -131,7 +131,7 @@ func Compact(batchKey string) error {
 	// Si le numéro de batch n'est pas valide, erreur
 	var batch AdminBatch
 	if found == -1 {
-		return errors.New("Le batch " + batchKey + "n'a pas été trouvé")
+		return errors.New("Le batch " + fromBatchKey + "n'a pas été trouvé")
 	}
 	batch = batches[found]
 
@@ -150,7 +150,7 @@ func Compact(batchKey string) error {
 			"f":             functions,
 			"batches":       batchesID,
 			"completeTypes": completeTypes,
-			"batchKey":      batchKey,
+			"fromBatchKey":  fromBatchKey,
 			"serie_periode": misc.GenereSeriePeriode(batch.Params.DateDebut, batch.Params.DateFin),
 		},
 	}
