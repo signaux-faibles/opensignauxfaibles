@@ -32,6 +32,7 @@ const makeOutputIndexed = ({
   montant_part_ouvriere,
 })
 
+// TODO: renommer cette fonction
 const testProperty = (
   debits?: DebitComputedValues
 ): ParPériode<DelaiComputedValues> => {
@@ -72,6 +73,30 @@ test("la propriété delai_deviation_remboursement représente:\n" +
   const expectedMarch = 0.273
   const debits = { montant_part_patronale: 600, montant_part_ouvriere: 0 }
   const output_indexed = testProperty(debits)
+  const tolerance = 10e-3
+  const ratioFebruary = output_indexed[fevrier.getTime()]["delai_deviation_remboursement"]
+  const ratioMarch = output_indexed[mars.getTime()]["delai_deviation_remboursement"]
+  t.is(typeof ratioFebruary, "number")
+  t.is(typeof ratioMarch, "number")
+  if (typeof ratioFebruary === "number") {
+    t.true(Math.abs(ratioFebruary - expectedFebruary) < tolerance)
+  }
+  if (typeof ratioMarch === "number") {
+    t.true(Math.abs(ratioMarch - expectedMarch) < tolerance)
+  }
+})
+
+test("la propriété delai_deviation_remboursement n'est pas créée si la durée du délai est nulle", (t) => {
+  const expectedFebruary = -0.052
+  const expectedMarch = 0.273
+  // const debits = { montant_part_patronale: 600, montant_part_ouvriere: 0 }
+  const delaiTest = makeDelai(new Date("2014-01-03"), new Date("2014-01-03"))
+  const delaiMap: ParPériode<EntréeDelai> = {
+    abc: delaiTest,
+  }
+  let output_indexed: ParPériode<DelaiComputedValues> = {}
+  // output_indexed[fevrier.getTime()] = debits ? makeOutputIndexed(debits) : {}
+  output_indexed = delais({ delai: delaiMap }, output_indexed)
   const tolerance = 10e-3
   const ratioFebruary = output_indexed[fevrier.getTime()]["delai_deviation_remboursement"]
   const ratioMarch = output_indexed[mars.getTime()]["delai_deviation_remboursement"]
