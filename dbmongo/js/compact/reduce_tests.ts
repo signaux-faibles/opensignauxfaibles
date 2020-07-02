@@ -3,13 +3,11 @@ import "../globals"
 import { reduce } from "./reduce"
 
 // Paramètres globaux utilisés par "compact"
-const jsParams = globalThis as any // => all properties of this object will become global. TODO: remove this when merging namespace (https://github.com/signaux-faibles/opensignauxfaibles/pull/40)
-/*
-declare const completeTypes: Record<BatchKey, DataType[]>
-declare const serie_periode: Date[]
-declare const batches: BatchKey[]
-declare const batchKey: BatchKey // TODO: à renommer, après fusion de https://github.com/signaux-faibles/opensignauxfaibles/pull/90
-*/
+declare let completeTypes: Record<BatchKey, DataType[]>
+declare let batches: BatchKey[]
+declare let batchKey: BatchKey // TODO: à renommer, après fusion de https://github.com/signaux-faibles/opensignauxfaibles/pull/90
+
+const REDUCE_KEY = "123"
 
 const AP_CONSO = {
   id_conso: "",
@@ -26,11 +24,9 @@ const AP_DEMANDE = {
 
 type TestCase = {
   testCaseName: string
-  completeTypes: unknown
+  completeTypes: typeof completeTypes
   batchKey: string
-  types: string
   batches: string[]
-  reduce_key: string
   reduce_values: CompanyDataValues[]
   expected: unknown
 }
@@ -41,12 +37,10 @@ const testCases: TestCase[] = [
     testCaseName: "Exemple1: complete type deletion",
     completeTypes: { "1902": ["apconso"] },
     batchKey: "1902",
-    types: "",
     batches: ["1901", "1902"],
-    reduce_key: "123",
     reduce_values: [
       {
-        key: "123",
+        key: REDUCE_KEY,
         batch: {
           "1901": {
             apconso: {
@@ -58,7 +52,7 @@ const testCases: TestCase[] = [
         scope: "etablissement",
       },
       {
-        key: "123",
+        key: REDUCE_KEY,
         batch: {
           "1902": {
             apconso: {
@@ -71,7 +65,7 @@ const testCases: TestCase[] = [
       },
     ],
     expected: {
-      key: "123",
+      key: REDUCE_KEY,
       scope: "etablissement",
       batch: {
         "1901": {
@@ -98,12 +92,10 @@ const testCases: TestCase[] = [
     testCaseName: "Exemple2: order independence",
     completeTypes: { "1902": ["apconso"] },
     batchKey: "1902",
-    types: "",
     batches: ["1901", "1902"],
-    reduce_key: "123",
     reduce_values: [
       {
-        key: "123",
+        key: REDUCE_KEY,
         batch: {
           "1902": {
             apconso: {
@@ -115,7 +107,7 @@ const testCases: TestCase[] = [
         scope: "etablissement",
       },
       {
-        key: "123",
+        key: REDUCE_KEY,
         batch: {
           "1901": {
             apconso: {
@@ -128,7 +120,7 @@ const testCases: TestCase[] = [
       },
     ],
     expected: {
-      key: "123",
+      key: REDUCE_KEY,
       scope: "etablissement",
       batch: {
         "1901": {
@@ -158,12 +150,10 @@ const testCases: TestCase[] = [
       "1902": ["apconso"],
     },
     batchKey: "1901",
-    types: "",
     batches: ["1812", "1901", "1902"],
-    reduce_key: "123",
     reduce_values: [
       {
-        key: "123",
+        key: REDUCE_KEY,
         batch: {
           "1812": {
             apconso: {
@@ -185,7 +175,7 @@ const testCases: TestCase[] = [
         scope: "etablissement",
       },
       {
-        key: "123",
+        key: REDUCE_KEY,
         batch: {
           "1901": {
             apconso: {
@@ -198,7 +188,7 @@ const testCases: TestCase[] = [
       },
     ],
     expected: {
-      key: "123",
+      key: REDUCE_KEY,
       scope: "etablissement",
       batch: {
         "1812": {
@@ -235,12 +225,10 @@ const testCases: TestCase[] = [
     testCaseName: "Exemple4: added after removed same key",
     completeTypes: { "1901": ["apconso"] },
     batchKey: "1901",
-    types: "",
     batches: ["1812", "1901"],
-    reduce_key: "123",
     reduce_values: [
       {
-        key: "123",
+        key: REDUCE_KEY,
         batch: {
           "1812": {
             apconso: {
@@ -258,7 +246,7 @@ const testCases: TestCase[] = [
         scope: "etablissement",
       },
       {
-        key: "123",
+        key: REDUCE_KEY,
         batch: {
           "1901": {
             apconso: {
@@ -270,7 +258,7 @@ const testCases: TestCase[] = [
       },
     ],
     expected: {
-      key: "123",
+      key: REDUCE_KEY,
       scope: "etablissement",
       batch: {
         "1812": {
@@ -286,12 +274,10 @@ const testCases: TestCase[] = [
     testCaseName: "Exemple5: deletion without complete types",
     completeTypes: { "1901": ["apconso"] },
     batchKey: "1901",
-    types: "",
     batches: ["1812", "1901"],
-    reduce_key: "123",
     reduce_values: [
       {
-        key: "123",
+        key: REDUCE_KEY,
         batch: {
           "1812": {
             apconso: {
@@ -309,7 +295,7 @@ const testCases: TestCase[] = [
         scope: "etablissement",
       },
       {
-        key: "123",
+        key: REDUCE_KEY,
         batch: {
           "1901": {
             apconso: {
@@ -321,7 +307,7 @@ const testCases: TestCase[] = [
       },
     ],
     expected: {
-      key: "123",
+      key: REDUCE_KEY,
       scope: "etablissement",
       batch: {
         "1812": {
@@ -337,12 +323,10 @@ const testCases: TestCase[] = [
     testCaseName: "Exemple6: only one batch",
     completeTypes: { "1901": [] },
     batchKey: "1901",
-    types: "",
     batches: ["1901"],
-    reduce_key: "123",
     reduce_values: [
       {
-        key: "123",
+        key: REDUCE_KEY,
         batch: {
           "1901": {
             apconso: {
@@ -353,7 +337,7 @@ const testCases: TestCase[] = [
         scope: "etablissement",
       },
       {
-        key: "123",
+        key: REDUCE_KEY,
         batch: {
           "1901": {
             apdemande: {
@@ -365,7 +349,7 @@ const testCases: TestCase[] = [
       },
     ],
     expected: {
-      key: "123",
+      key: REDUCE_KEY,
       scope: "etablissement",
       batch: {
         "1901": {
@@ -383,12 +367,12 @@ const testCases: TestCase[] = [
 
 testCases.forEach(({ testCaseName, expected, ...testCase }) => {
   test.serial(`reduce: ${testCaseName}`, (t: ExecutionContext) => {
-    jsParams.completeTypes = testCase.completeTypes
-    jsParams.batchKey = testCase.batchKey
-    jsParams.types = testCase.types
-    jsParams.batches = testCase.batches
-
-    const actualResults = reduce(testCase.reduce_key, testCase.reduce_values)
-    t.deepEqual(actualResults, expected) // au lieu d'appel à compare()
+    // définition des valeurs de paramètres globaux utilisés par les fonctions de "compact"
+    completeTypes = testCase.completeTypes
+    batchKey = testCase.batchKey
+    batches = testCase.batches
+    // exécution du test
+    const actualResults = reduce(REDUCE_KEY, testCase.reduce_values)
+    t.deepEqual(actualResults, expected)
   })
 })
