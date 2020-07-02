@@ -14,7 +14,7 @@ export type DebitComputedValues = {
 export type DelaiComputedValues = {
   delai_nb_jours_restants: number
   delai_nb_jours_total: number // nombre de jours entre date_creation et date_echeance
-  ratio_dette_delai?: number
+  delai_deviation_remboursement?: number
   delai_montant_echeancier: number // exprimé en euros
 }
 
@@ -75,7 +75,7 @@ export function delais(
           inputAtTime.montant_part_patronale !== undefined &&
           inputAtTime.montant_part_ouvriere !== undefined
         ) {
-          outputAtTime.ratio_dette_delai =
+          outputAtTime.delai_deviation_remboursement =
             (inputAtTime.montant_part_patronale +
               inputAtTime.montant_part_ouvriere -
               (delai.montant_echeancier * remaining_months * 30) /

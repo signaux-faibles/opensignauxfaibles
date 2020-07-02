@@ -64,15 +64,17 @@ test("la propriété delai_montant_echeancier représente le montant en euros de
   t.is(output_indexed[mars.getTime()]["delai_montant_echeancier"], 1000)
 })
 
-test("la propriété ratio_dette_delai représente la déviation du remboursement de la dette par rapport à un remboursement linéaire sur la durée du délai", (t) => {
-  // TODO: Inclure la formule dans la documentation de ce test
+test("la propriété delai_deviation_remboursement représente:\n" +
+     "(dette actuelle - dette hypothétique en cas de remboursement linéaire) / dette initiale\n" +
+     "Elle représente la déviation par rapport à un remboursement linéaire de la dette " +
+     "en pourcentage de la dette initialement dû", (t) => {
   const expectedFebruary = -0.052
   const expectedMarch = 0.273
   const debits = { montant_part_patronale: 600, montant_part_ouvriere: 0 }
   const output_indexed = testProperty(debits)
   const tolerance = 10e-3
-  const ratioFebruary = output_indexed[fevrier.getTime()]["ratio_dette_delai"]
-  const ratioMarch = output_indexed[mars.getTime()]["ratio_dette_delai"]
+  const ratioFebruary = output_indexed[fevrier.getTime()]["delai_deviation_remboursement"]
+  const ratioMarch = output_indexed[mars.getTime()]["delai_deviation_remboursement"]
   t.is(typeof ratioFebruary, "number")
   t.is(typeof ratioMarch, "number")
   if (typeof ratioFebruary === "number") {
@@ -94,4 +96,4 @@ test("un délai en dehors de la période d'intérêt est ignorée", (t) => {
   t.deepEqual(périodesComplétées, {})
 })
 
-// TODO: ajouter des tests sur les cas limites: denominateurs nuls dans calcul de ratio_dette_delai
+// TODO: ajouter des tests sur les cas limites: denominateurs nuls dans calcul de delai_deviation_remboursement
