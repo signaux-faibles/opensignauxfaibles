@@ -45,10 +45,10 @@ const testProperty = (
   return delais({ delai: delaiMap }, output_indexed)
 }
 
-test("la propriété delai représente le nombre de mois complets restants du délai", (t) => {
+test("la propriété delai_nb_jours_restants représente le nombre de jours restants du délai", (t) => {
   const output_indexed = testProperty()
-  t.is(output_indexed[fevrier.getTime()]["delai"], 2)
-  t.is(output_indexed[mars.getTime()]["delai"], 1)
+  t.is(output_indexed[fevrier.getTime()]["delai_nb_jours_restants"], 2)
+  t.is(output_indexed[mars.getTime()]["delai_nb_jours_restants"], 1)
 })
 
 test("la propriété duree_delai représente la durée totale en jours du délai", (t) => {
