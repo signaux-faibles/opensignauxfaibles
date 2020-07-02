@@ -1,4 +1,5 @@
 import * as f from "../common/generatePeriodSerie"
+import {nbDays} from "./nbDays"
 
 type DeepReadonly<T> = Readonly<T> // pas vraiment, mais espoire que TS le supporte prochainement
 
@@ -19,13 +20,6 @@ export type DelaiComputedValues = {
 }
 
 export type V = { delai: ParPériode<EntréeDelai> } // TODO: définir ce type dans global.ts ?
-
-const nbDays = (firstDate: Date, secondDate: Date): number => {
-  const oneDay = 24 * 60 * 60 * 1000 // hours*minutes*seconds*milliseconds
-  return Math.round(
-    Math.abs((firstDate.getTime() - secondDate.getTime()) / oneDay)
-  )
-}
 
 export function delais(
   v: V,

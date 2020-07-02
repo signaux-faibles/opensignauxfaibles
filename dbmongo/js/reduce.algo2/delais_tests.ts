@@ -1,4 +1,5 @@
-import test from "ava"
+import test, {ExecutionContext} from "ava" // TODO: résoudre erreur dans ide
+import {nbDays} from "./nbDays"
 import "../globals"
 import {
   delais,
@@ -9,13 +10,6 @@ import {
 
 const fevrier = new Date("2014-02-01")
 const mars = new Date("2014-03-01")
-
-const nbDays = (firstDate: Date, secondDate: Date): number => {
-  const oneDay = 24 * 60 * 60 * 1000 // hours*minutes*seconds*milliseconds
-  return Math.round(
-    Math.abs((firstDate.getTime() - secondDate.getTime()) / oneDay)
-  )
-}
 
 const makeDelai = (firstDate: Date, secondDate: Date): EntréeDelai => ({
   date_creation: firstDate,
@@ -46,7 +40,7 @@ const testProperty = (
   return delais({ delai: delaiMap }, output_indexed)
 }
 
-test("la propriété delai_nb_jours_restants représente le nombre de jours restants du délai", (t) => {
+test("la propriété delai_nb_jours_restants représente le nombre de jours restants du délai", (t: ExecutionContext) => {
   const output_indexed = testProperty()
   t.is(
     output_indexed[fevrier.getTime()]["delai_nb_jours_restants"],
@@ -58,14 +52,14 @@ test("la propriété delai_nb_jours_restants représente le nombre de jours rest
   )
 })
 
-test("la propriété delai_nb_jours_total représente la durée totale en jours du délai", (t) => {
+test("la propriété delai_nb_jours_total représente la durée totale en jours du délai", (t: ExecutionContext) => {
   const dureeEnJours = nbDays(new Date("2014-01-03"), new Date("2014-04-05"))
   const output_indexed = testProperty()
   t.is(output_indexed[fevrier.getTime()]["delai_nb_jours_total"], dureeEnJours)
   t.is(output_indexed[mars.getTime()]["delai_nb_jours_total"], dureeEnJours)
 })
 
-test("la propriété delai_montant_echeancier représente le montant en euros des cotisations sociales couvertes par le délai", (t) => {
+test("la propriété delai_montant_echeancier représente le montant en euros des cotisations sociales couvertes par le délai", (t: ExecutionContext) => {
   const output_indexed = testProperty()
   t.is(output_indexed[fevrier.getTime()]["delai_montant_echeancier"], 1000)
   t.is(output_indexed[mars.getTime()]["delai_montant_echeancier"], 1000)
@@ -76,7 +70,7 @@ test(
     "(dette actuelle - dette hypothétique en cas de remboursement linéaire) / dette initiale\n" +
     "Elle représente la déviation par rapport à un remboursement linéaire de la dette " +
     "en pourcentage de la dette initialement dû",
-  (t) => {
+  (t: ExecutionContext) => {
     const expectedFebruary = -0.0848
     const expectedMarch = 0.22
     const debits = { montant_part_patronale: 600, montant_part_ouvriere: 0 }
@@ -97,7 +91,7 @@ test(
   }
 )
 
-test("un délai en dehors de la période d'intérêt est ignorée", (t) => {
+test("un délai en dehors de la période d'intérêt est ignorée", (t: ExecutionContext) => {
   const delaiTest = makeDelai(new Date("2013-01-03"), new Date("2013-03-05"))
   const delaiMap: ParPériode<EntréeDelai> = {
     abc: delaiTest,
