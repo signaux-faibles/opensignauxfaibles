@@ -94,5 +94,4 @@ test("un délai en dehors de la période d'intérêt est ignorée", (t) => {
   t.deepEqual(périodesComplétées, {})
 })
 
-// TODO: ajouter des tests sur les autres propriétés retournées
-// TODO: ajouter des tests sur les cas limites => table-based testing
+// TODO: ajouter des tests sur les cas limites: denominateurs nuls dans calcul de ratio_dette_delai
