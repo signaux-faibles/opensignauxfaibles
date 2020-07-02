@@ -33,7 +33,7 @@ export function flatten(v: V, actual_batch: string): Flattened {
         const new_types = Object.keys(v.batch[batch])
         const all_interesting_types = [
           ...new Set([...delete_types, ...new_types]),
-        ] as BatchDataType[]
+        ] as DataType[]
 
         all_interesting_types.forEach((type) => {
           m[type] = m[type] || ({} as any)

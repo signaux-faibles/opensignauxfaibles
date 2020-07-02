@@ -2,9 +2,9 @@ import "../globals"
 import { forEachPopulatedProp } from "../common/forEachPopulatedProp"
 
 export function applyPatchesToBatch(
-  hashToAdd: Partial<Record<BatchDataType, Set<DataHash>>>,
-  hashToDelete: Partial<Record<BatchDataType, Set<DataHash>>>,
-  stockTypes: BatchDataType[],
+  hashToAdd: Partial<Record<DataType, Set<DataHash>>>,
+  hashToDelete: Partial<Record<DataType, Set<DataHash>>>,
+  stockTypes: DataType[],
   currentBatch: BatchValue
 ): void {
   // Application des suppressions

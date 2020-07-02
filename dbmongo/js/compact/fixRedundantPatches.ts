@@ -4,8 +4,8 @@ import { forEachPopulatedProp } from "../common/forEachPopulatedProp"
  * Modification de hashToAdd et hashToDelete pour retirer les redondances.
  **/
 export function fixRedundantPatches(
-  hashToAdd: Partial<Record<BatchDataType, Set<DataHash>>>,
-  hashToDelete: Partial<Record<BatchDataType, Set<DataHash>>>,
+  hashToAdd: Partial<Record<DataType, Set<DataHash>>>,
+  hashToDelete: Partial<Record<DataType, Set<DataHash>>>,
   memory: CurrentDataState
 ): void {
   forEachPopulatedProp(hashToDelete, (type, hashesToDelete) => {
