@@ -1427,7 +1427,7 @@ db.getCollection("Features").createIndex({
     f.dealWithProcols(v.altares, "altares", output_indexed);
     f.dealWithProcols(v.procol, "procol", output_indexed);
 }`,
-"delais": `function delais(v, donnéesActuellesParPériode) {
+"delais": `function delais(v, debitParPériode) {
     "use strict";
     const donnéesSupplémentairesParPériode = {};
     Object.keys(v.delai).map(function (hash) {
@@ -1442,10 +1442,10 @@ db.getCollection("Features").createIndex({
             return date.getTime();
         });
         pastYearTimes.map(function (time) {
-            if (time in donnéesActuellesParPériode) {
+            if (time in debitParPériode) {
                 const debutDeMois = new Date(time);
                 const remainingDays = nbDays(debutDeMois, delai.date_echeance);
-                const inputAtTime = donnéesActuellesParPériode[time];
+                const inputAtTime = debitParPériode[time];
                 const outputAtTime = {
                     delai_nb_jours_restants: remainingDays,
                     delai_nb_jours_total: delai.duree_delai,

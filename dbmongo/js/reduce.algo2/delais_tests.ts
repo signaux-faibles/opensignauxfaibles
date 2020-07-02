@@ -1,12 +1,7 @@
 import test, { ExecutionContext } from "ava" // TODO: résoudre erreur dans ide
 import { nbDays } from "./nbDays"
 import "../globals"
-import {
-  delais,
-  DelaiComputedValues,
-  DebitComputedValues,
-  ParPériode,
-} from "./delais"
+import { delais, DelaiComputedValues, DebitComputedValues } from "./delais"
 
 const fevrier = new Date("2014-02-01")
 const mars = new Date("2014-03-01")

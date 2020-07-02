@@ -7,7 +7,7 @@ import { effectifs } from "./effectifs"
 import { interim } from "./interim"
 import { add } from "./add"
 import { repeatable } from "./repeatable"
-import { delais } from "./delais"
+import { delais, DebitComputedValues } from "./delais"
 import { defaillances } from "./defaillances"
 import { cotisationsdettes } from "./cotisationsdettes"
 import { ccsf } from "./ccsf"
@@ -120,7 +120,10 @@ export function map(this: {
       }
 
       if (v.delai) {
-        const output_delai = f.delais(v as DonnéesDelai, output_indexed)
+        const output_delai = f.delais(
+          v as DonnéesDelai,
+          output_indexed as ParPériode<DebitComputedValues> // TODO: vérifier que les données débit sont déjà calculées
+        )
         f.add(output_delai, output_indexed)
       }
 

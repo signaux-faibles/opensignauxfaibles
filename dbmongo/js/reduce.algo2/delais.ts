@@ -3,8 +3,6 @@ import { nbDays } from "./nbDays"
 
 type DeepReadonly<T> = Readonly<T> // pas vraiment, mais espoire que TS le supporte prochainement
 
-export type ParPériode<T> = { [période: string]: T }
-
 // Valeurs attendues pour chaque période, lors de l'appel à delais()
 export type DebitComputedValues = {
   montant_part_patronale?: number
@@ -21,7 +19,7 @@ export type DelaiComputedValues = {
 
 export function delais(
   v: DonnéesDelai,
-  donnéesActuellesParPériode: DeepReadonly<ParPériode<DebitComputedValues>>
+  debitParPériode: DeepReadonly<ParPériode<DebitComputedValues>>
 ): ParPériode<DelaiComputedValues> {
   "use strict"
   const donnéesSupplémentairesParPériode: ParPériode<DelaiComputedValues> = {}
@@ -57,10 +55,10 @@ export function delais(
         return date.getTime()
       })
     pastYearTimes.map(function (time: number) {
-      if (time in donnéesActuellesParPériode) {
+      if (time in debitParPériode) {
         const debutDeMois = new Date(time)
         const remainingDays = nbDays(debutDeMois, delai.date_echeance)
-        const inputAtTime = donnéesActuellesParPériode[time]
+        const inputAtTime = debitParPériode[time]
         const outputAtTime: DelaiComputedValues = {
           delai_nb_jours_restants: remainingDays,
           delai_nb_jours_total: delai.duree_delai,
