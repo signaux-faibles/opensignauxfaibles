@@ -2,18 +2,6 @@
 
 shopt -s extglob # enable exclusion of test files in wildcard
 
-result_reduce=$(jsc \
-  ./helpers/fakes.js \
-  ./helpers/testing.js \
-  ../common/!(*_test*).js \
-  ../compact/!(*_test*).js \
-  ../compact/reduce_test.js\
-  2>&1)
-if [ "$result_reduce" != 'true' ]; then
-  echo "result_reduce: $result_reduce"
-  exit 1
-fi
-
 result_finalize=$(jsc \
   ./helpers/testing.js \
   ../compact/currentState.js \
