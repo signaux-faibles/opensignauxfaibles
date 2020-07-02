@@ -2,8 +2,8 @@ import "../globals"
 import { forEachPopulatedProp } from "../common/forEachPopulatedProp"
 
 export function applyPatchesToMemory(
-  hashToAdd: Partial<Record<BatchDataType, Set<DataHash>>>,
-  hashToDelete: Partial<Record<BatchDataType, Set<DataHash>>>,
+  hashToAdd: Partial<Record<DataType, Set<DataHash>>>,
+  hashToDelete: Partial<Record<DataType, Set<DataHash>>>,
   memory: CurrentDataState
 ): void {
   // Prise en compte des suppressions de clés dans la mémoire

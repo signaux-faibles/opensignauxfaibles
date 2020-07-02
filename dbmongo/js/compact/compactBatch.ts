@@ -6,7 +6,7 @@ import { applyPatchesToMemory } from "./applyPatchesToMemory"
 import { applyPatchesToBatch } from "./applyPatchesToBatch"
 
 // Paramètres globaux utilisés par "compact"
-declare const completeTypes: Record<BatchKey, BatchDataType[]>
+declare const completeTypes: Record<BatchKey, DataType[]>
 
 /**
  * Appelée par reduce(), compactBatch() va générer un diff entre les
