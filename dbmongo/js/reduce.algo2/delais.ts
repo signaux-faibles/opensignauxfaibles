@@ -20,6 +20,13 @@ export type DelaiComputedValues = {
 
 export type V = { delai: ParPériode<EntréeDelai> } // TODO: définir ce type dans global.ts ?
 
+const nbDays = (firstDate: Date, secondDate: Date): number => {
+  const oneDay = 24 * 60 * 60 * 1000 // hours*minutes*seconds*milliseconds
+  return Math.round(
+    Math.abs((firstDate.getTime() - secondDate.getTime()) / oneDay)
+  )
+}
+
 export function delais(
   v: V,
   donnéesActuellesParPériode: DeepReadonly<ParPériode<DebitComputedValues>>
@@ -59,14 +66,11 @@ export function delais(
       })
     pastYearTimes.map(function (time: number) {
       if (time in donnéesActuellesParPériode) {
-        const remaining_months =
-          date_echeance.getUTCMonth() -
-          new Date(time).getUTCMonth() +
-          12 *
-            (date_echeance.getUTCFullYear() - new Date(time).getUTCFullYear())
+        const debutDeMois = new Date(time)
+        const remainingDays = nbDays(debutDeMois, delai.date_echeance)
         const inputAtTime = donnéesActuellesParPériode[time]
         const outputAtTime: DelaiComputedValues = {
-          delai_nb_jours_restants: remaining_months,
+          delai_nb_jours_restants: remainingDays,
           delai_nb_jours_total: delai.duree_delai,
           delai_montant_echeancier: delai.montant_echeancier,
         }
@@ -78,8 +82,7 @@ export function delais(
           outputAtTime.delai_deviation_remboursement =
             (inputAtTime.montant_part_patronale +
               inputAtTime.montant_part_ouvriere -
-              (delai.montant_echeancier * remaining_months * 30) /
-                delai.duree_delai) /
+              (delai.montant_echeancier * remainingDays) / delai.duree_delai) /
             delai.montant_echeancier
         }
         donnéesSupplémentairesParPériode[time] = outputAtTime

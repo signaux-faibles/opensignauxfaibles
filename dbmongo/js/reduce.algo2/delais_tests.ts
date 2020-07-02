@@ -48,8 +48,14 @@ const testProperty = (
 
 test("la propriété delai_nb_jours_restants représente le nombre de jours restants du délai", (t) => {
   const output_indexed = testProperty()
-  t.is(output_indexed[fevrier.getTime()]["delai_nb_jours_restants"], 2)
-  t.is(output_indexed[mars.getTime()]["delai_nb_jours_restants"], 1)
+  t.is(
+    output_indexed[fevrier.getTime()]["delai_nb_jours_restants"],
+    nbDays(new Date("2014-02-01"), new Date("2014-04-05"))
+  )
+  t.is(
+    output_indexed[mars.getTime()]["delai_nb_jours_restants"],
+    nbDays(new Date("2014-03-01"), new Date("2014-04-05"))
+  )
 })
 
 test("la propriété delai_nb_jours_total représente la durée totale en jours du délai", (t) => {
@@ -71,8 +77,8 @@ test(
     "Elle représente la déviation par rapport à un remboursement linéaire de la dette " +
     "en pourcentage de la dette initialement dû",
   (t) => {
-    const expectedFebruary = -0.052
-    const expectedMarch = 0.273
+    const expectedFebruary = -0.0848
+    const expectedMarch = 0.22
     const debits = { montant_part_patronale: 600, montant_part_ouvriere: 0 }
     const output_indexed = testProperty(debits)
     const tolerance = 10e-3
