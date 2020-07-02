@@ -19,10 +19,8 @@ export type DelaiComputedValues = {
   delai_montant_echeancier: number // exprimé en euros
 }
 
-export type V = { delai: ParPériode<EntréeDelai> } // TODO: définir ce type dans global.ts ?
-
 export function delais(
-  v: V,
+  v: DonnéesDelai,
   donnéesActuellesParPériode: DeepReadonly<ParPériode<DebitComputedValues>>
 ): ParPériode<DelaiComputedValues> {
   "use strict"
