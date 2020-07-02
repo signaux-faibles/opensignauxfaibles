@@ -35,6 +35,16 @@ func datapiExportEtablissementHandler(c *gin.Context) {
 	c.JSON(200, "ok")
 }
 
+func datapiExportEntrepriseHandler(c *gin.Context) {
+	var filepath = "./entreprise_output.json" // TODO
+	err = engine.ExportEntrepriseToFile(filepath)
+	if err != nil {
+		c.JSON(500, err.Error())
+		return
+	}
+	c.JSON(200, filepath)
+}
+
 func datapiExportDetectionHandler(c *gin.Context) {
 	var params struct {
 		Batch string `json:"batch"`

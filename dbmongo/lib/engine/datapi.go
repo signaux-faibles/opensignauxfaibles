@@ -285,3 +285,24 @@ func ExportEtablissementToDatapi(url, email, password, key string) error {
 	}
 	return nil
 }
+
+// ExportEntrepriseToFile exporte les entreprises et etablissements avec leurs
+// scores, dans un fichier.
+func ExportEntrepriseToFile(filepath string) error {
+	pipeline := exportdatapi.GetEtablissementPipeline() // TODO: make a new dedicated function here.
+	iter := Db.DB.C("Public").Pipe(pipeline).AllowDiskUse().Iter()
+
+	var data exportdatapi.Etablissement
+
+	for iter.Next(&data) {
+		for _, d := range exportdatapi.ComputeEtablissement(data) { // TODO: make a new dedicated function here.
+			datapi <- d // TODO: stocker dans le fichier.
+		}
+	}
+	/*
+		if client.Errors > 0 {
+			return errors.New("Erreurs détectées, envoi incomplet, plus d'informations dans le journal")
+		}
+	*/
+	return nil
+}
