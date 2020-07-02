@@ -12,7 +12,7 @@ export type DebitComputedValues = {
 
 // Valeurs retournées par delais(), pour chaque période
 export type DelaiComputedValues = {
-  delai: number
+  delai_nb_jours_restants: number
   duree_delai: number // nombre de jours entre date_creation et date_echeance
   ratio_dette_delai?: number
   montant_echeancier: number // exprimé en euros
@@ -66,7 +66,7 @@ export function delais(
             (date_echeance.getUTCFullYear() - new Date(time).getUTCFullYear())
         const inputAtTime = donnéesActuellesParPériode[time]
         const outputAtTime: DelaiComputedValues = {
-          delai: remaining_months,
+          delai_nb_jours_restants: remaining_months,
           duree_delai: delai.duree_delai,
           montant_echeancier: delai.montant_echeancier,
         }
