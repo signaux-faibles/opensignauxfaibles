@@ -1827,7 +1827,8 @@ function map() {
                 f.add(output_repeatable, output_indexed);
             }
             if (v.delai) {
-                const output_delai = f.delais(v, output_indexed);
+                const output_delai = f.delais(v, output_indexed // TODO: vérifier que les données débit sont déjà calculées
+                );
                 f.add(output_delai, output_indexed);
             }
             v.altares = v.altares || {};
