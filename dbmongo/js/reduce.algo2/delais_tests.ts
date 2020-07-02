@@ -51,11 +51,11 @@ test("la propriété delai_nb_jours_restants représente le nombre de jours rest
   t.is(output_indexed[mars.getTime()]["delai_nb_jours_restants"], 1)
 })
 
-test("la propriété duree_delai représente la durée totale en jours du délai", (t) => {
+test("la propriété delai_nb_jours_total représente la durée totale en jours du délai", (t) => {
   const dureeEnJours = nbDays(new Date("2014-01-03"), new Date("2014-04-05"))
   const output_indexed = testProperty()
-  t.is(output_indexed[fevrier.getTime()]["duree_delai"], dureeEnJours)
-  t.is(output_indexed[mars.getTime()]["duree_delai"], dureeEnJours)
+  t.is(output_indexed[fevrier.getTime()]["delai_nb_jours_total"], dureeEnJours)
+  t.is(output_indexed[mars.getTime()]["delai_nb_jours_total"], dureeEnJours)
 })
 
 test("la propriété montant_echeancier représente le montant en euros des cotisations sociales couvertes par le délai", (t) => {
