@@ -79,10 +79,13 @@ export function delais(
           inputAtTime.montant_part_patronale !== undefined &&
           inputAtTime.montant_part_ouvriere !== undefined
         ) {
+          const detteActuelle =
+            inputAtTime.montant_part_patronale +
+            inputAtTime.montant_part_ouvriere
+          const detteHypothétiqueRemboursementLinéaire =
+            (delai.montant_echeancier * remainingDays) / delai.duree_delai
           outputAtTime.delai_deviation_remboursement =
-            (inputAtTime.montant_part_patronale +
-              inputAtTime.montant_part_ouvriere -
-              (delai.montant_echeancier * remainingDays) / delai.duree_delai) /
+            (detteActuelle - detteHypothétiqueRemboursementLinéaire) /
             delai.montant_echeancier
         }
         donnéesSupplémentairesParPériode[time] = outputAtTime
