@@ -7,6 +7,11 @@ import (
 
 // GetEntreprisePipeline produit un pipeline pour exporter les entreprises vers datapi
 func GetEntreprisePipeline() (pipeline []bson.M) {
+	pipeline = append(pipeline, bson.M{"$match": bson.M{
+		"_id": bson.RegEx{
+			Pattern: "entreprise_*",
+		},
+	}})
 	return pipeline
 }
 
