@@ -78,7 +78,8 @@ echo "⚙️ Computing Features and Public collections thru dbmongo API..."
 ./dbmongo &
 sleep 2 # give some time for dbmongo to start
 http --ignore-stdin :5000/api/data/public batch=2002_1
-EXPORT_FILE=$(http --ignore-stdin :5000/api/datapi/exportEntreprise batch=2002_1)
+EXPORT_FILE=$(http --ignore-stdin :5000/datapi/exportEntreprise batch=2002_1)
+echo "👉 Exported file: ${EXPORT_FILE}"
 
 echo ""
 echo "🆎 Diff between expected and actual output:"
