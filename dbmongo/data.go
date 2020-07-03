@@ -78,14 +78,14 @@ func publicHandler(c *gin.Context) {
 
 func compactHandler(c *gin.Context) {
 	var params struct {
-		BatchKey string `json:"batch"`
+		FromBatchKey string `json:"fromBatchKey"`
 	}
 	err := c.ShouldBind(&params)
 	if err != nil {
 		c.JSON(400, err.Error())
 	}
 
-	err = engine.Compact(params.BatchKey)
+	err = engine.Compact(params.FromBatchKey)
 	if err != nil {
 		c.JSON(500, err.Error())
 		return

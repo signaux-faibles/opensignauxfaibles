@@ -366,9 +366,9 @@ function forEachPopulatedProp(obj, fct) {
  * Paramètres modifiés: currentBatch et memory.
  * Pré-requis: les batches précédents doivent avoir été compactés.
  */
-function compactBatch(currentBatch, memory, batchKey) {
+function compactBatch(currentBatch, memory, fromBatchKey) {
     // Les types où il y a potentiellement des suppressions
-    const stockTypes = completeTypes[batchKey].filter((type) => (memory[type] || new Set()).size > 0);
+    const stockTypes = completeTypes[fromBatchKey].filter((type) => (memory[type] || new Set()).size > 0);
     const { hashToAdd, hashToDelete } = listHashesToAddAndDelete(currentBatch, stockTypes, memory);
     fixRedundantPatches(hashToAdd, hashToDelete, memory);
     applyPatchesToMemory(hashToAdd, hashToDelete, memory);
@@ -587,13 +587,13 @@ function reduce(key, values // chaque element contient plusieurs batches pour ce
     //////////////////////////////////////////////////
     // 0. On calcule la memoire au moment du batch à modifier
     const memoryBatches = Object.keys(naivelyMergedCompanyData.batch)
-        .filter((batch) => batch < batchKey)
+        .filter((batch) => batch < fromBatchKey)
         .sort()
         .reduce((m, batch) => {
         m.push(naivelyMergedCompanyData.batch[batch]);
         return m;
     }, []);
-    // Memory conserve les données aplaties de tous les batches jusqu'à batchKey
+    // Memory conserve les données aplaties de tous les batches jusqu'à fromBatchKey
     // puis sera enrichie au fur et à mesure du traitement des batches suivants.
     const memory = f.currentState(memoryBatches);
     const reducedValue = {
@@ -601,17 +601,17 @@ function reduce(key, values // chaque element contient plusieurs batches pour ce
         scope: naivelyMergedCompanyData.scope,
         batch: {},
     };
-    // Copie telle quelle des batches jusqu'à batchKey.
+    // Copie telle quelle des batches jusqu'à fromBatchKey.
     Object.keys(naivelyMergedCompanyData.batch)
-        .filter((batch) => batch < batchKey)
+        .filter((batch) => batch < fromBatchKey)
         .forEach((batch) => {
         reducedValue.batch[batch] = naivelyMergedCompanyData.batch[batch];
     });
-    // On itère sur chaque batch à partir de batchKey pour les compacter.
+    // On itère sur chaque batch à partir de fromBatchKey pour les compacter.
     // Il est possible qu'il y ait moins de batch en sortie que le nombre traité
     // dans la boucle, si ces batchs n'apportent aucune information nouvelle.
     batches
-        .filter((batch) => batch >= batchKey)
+        .filter((batch) => batch >= fromBatchKey)
         .forEach((batch) => {
         const currentBatch = naivelyMergedCompanyData.batch[batch];
         const compactedBatch = compactBatch(currentBatch, memory, batch);

@@ -84,7 +84,7 @@ echo ""
 echo "⚙️ Computing Features and Public collections thru dbmongo API..."
 ./dbmongo &
 sleep 2 # give some time for dbmongo to start
-http --ignore-stdin :5000/api/data/compact batch=1910
+http --ignore-stdin :5000/api/data/compact fromBatchKey=1910
 http --ignore-stdin :5000/api/data/reduce algo=algo2 batch=1910 key=012345678
 http --ignore-stdin :5000/api/data/public batch=1910 key=012345678
 
