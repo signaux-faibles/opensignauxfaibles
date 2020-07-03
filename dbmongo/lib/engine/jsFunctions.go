@@ -1427,7 +1427,7 @@ db.getCollection("Features").createIndex({
     f.dealWithProcols(v.altares, "altares", output_indexed);
     f.dealWithProcols(v.procol, "procol", output_indexed);
 }`,
-"delais": `function delais(v, donnéesActuellesParPériode) {
+"delais": `function delais(v, debitParPériode) {
     "use strict";
     const donnéesSupplémentairesParPériode = {};
     Object.keys(v.delai).map(function (hash) {
@@ -1442,25 +1442,23 @@ db.getCollection("Features").createIndex({
             return date.getTime();
         });
         pastYearTimes.map(function (time) {
-            if (time in donnéesActuellesParPériode) {
-                const remaining_months = date_echeance.getUTCMonth() -
-                    new Date(time).getUTCMonth() +
-                    12 *
-                        (date_echeance.getUTCFullYear() - new Date(time).getUTCFullYear());
-                const inputAtTime = donnéesActuellesParPériode[time];
+            if (time in debitParPériode) {
+                const debutDeMois = new Date(time);
+                const remainingDays = nbDays(debutDeMois, delai.date_echeance);
+                const inputAtTime = debitParPériode[time];
                 const outputAtTime = {
-                    delai: remaining_months,
-                    duree_delai: delai.duree_delai,
-                    montant_echeancier: delai.montant_echeancier,
+                    delai_nb_jours_restants: remainingDays,
+                    delai_nb_jours_total: delai.duree_delai,
+                    delai_montant_echeancier: delai.montant_echeancier,
                 };
                 if (delai.duree_delai > 0 &&
                     inputAtTime.montant_part_patronale !== undefined &&
                     inputAtTime.montant_part_ouvriere !== undefined) {
-                    outputAtTime.ratio_dette_delai =
-                        (inputAtTime.montant_part_patronale +
-                            inputAtTime.montant_part_ouvriere -
-                            (delai.montant_echeancier * remaining_months * 30) /
-                                delai.duree_delai) /
+                    const detteActuelle = inputAtTime.montant_part_patronale +
+                        inputAtTime.montant_part_ouvriere;
+                    const detteHypothétiqueRemboursementLinéaire = (delai.montant_echeancier * remainingDays) / delai.duree_delai;
+                    outputAtTime.delai_deviation_remboursement =
+                        (detteActuelle - detteHypothétiqueRemboursementLinéaire) /
                             delai.montant_echeancier;
                 }
                 donnéesSupplémentairesParPériode[time] = outputAtTime;
@@ -1829,7 +1827,8 @@ function map() {
                 f.add(output_repeatable, output_indexed);
             }
             if (v.delai) {
-                const output_delai = f.delais(v, output_indexed);
+                const output_delai = f.delais(v, output_indexed // TODO: vérifier que les données débit sont déjà calculées
+                );
                 f.add(output_delai, output_indexed);
             }
             v.altares = v.altares || {};
@@ -2021,6 +2020,10 @@ function map() {
         }
     }
 }`,
+"nbDays": `const nbDays = (firstDate, secondDate) => {
+    const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+    return Math.round(Math.abs((firstDate.getTime() - secondDate.getTime()) / oneDay));
+};`,
 "outputs": `/**
  * Appelé par ` + "`" + `map()` + "`" + ` pour chaque entreprise/établissement, ` + "`" + `outputs()` + "`" + ` retourne
  * un tableau contenant un objet de base par période, ainsi qu'une version
