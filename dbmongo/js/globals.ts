@@ -4,6 +4,8 @@ declare function emit(key: unknown, value: unknown): void
 
 // Types partagés
 
+type ParPériode<T> = { [période: string]: T }
+
 type BatchKey = string
 
 type CodeAPE = string
@@ -59,7 +61,7 @@ type BatchValue = Partial<
     DonnéesDiane
 >
 
-type BatchDataType = Exclude<keyof BatchValue, "compact"> // => 'reporder' | 'effectif' | 'apconso' | ...
+type DataType = Exclude<keyof BatchValue, "compact"> // => 'reporder' | 'effectif' | 'apconso' | ...
 
 // Définition des types de données
 
@@ -68,7 +70,7 @@ type DonnéesRepOrder = {
 }
 
 type DonnéesCompact = {
-  compact: { delete: Partial<Record<BatchDataType, DataHash[]>> }
+  compact: { delete: Partial<Record<DataType, DataHash[]>> }
 }
 
 type DonnéesEffectif = {

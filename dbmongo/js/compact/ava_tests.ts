@@ -36,13 +36,13 @@ const runMongoMap = (
 // test data inspired by test-api.sh
 const siret: SiretOrSiren = "01234567891011"
 const scope: Scope = "etablissement"
-const batchKey = "1910"
+const fromBatchKey = "1910"
 const dates = [
   ISODate("2015-12-01T00:00:00.000+0000"),
   ISODate("2016-01-01T00:00:00.000+0000"),
 ]
 const batch: BatchValues = {
-  [batchKey]: {},
+  [fromBatchKey]: {},
 }
 
 const importedData = {
@@ -70,7 +70,7 @@ const expectedReduceResults = {
 
 const expectedFinalizeResultValue = {
   batch: {
-    [batchKey]: {
+    [fromBatchKey]: {
       reporder: dates.reduce(
         (reporder, date) => ({
           ...reporder,
@@ -110,7 +110,7 @@ test.serial(
     const global = globalThis as any // eslint-disable-line @typescript-eslint/no-explicit-any
     global.serie_periode = dates // used by complete_reporder(), which is called by finalize()
     const finalizeResult = finalize(siret, expectedReduceResults)
-    const { reporder } = finalizeResult.batch[batchKey]
+    const { reporder } = finalizeResult.batch[fromBatchKey]
     t.is(typeof reporder, "object")
     // reporder contient une propriété par periode
     t.is(Object.keys(reporder || {}).length, dates.length)

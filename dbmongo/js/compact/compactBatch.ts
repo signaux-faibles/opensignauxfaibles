@@ -6,7 +6,7 @@ import { applyPatchesToMemory } from "./applyPatchesToMemory"
 import { applyPatchesToBatch } from "./applyPatchesToBatch"
 
 // Paramètres globaux utilisés par "compact"
-declare const completeTypes: Record<BatchKey, BatchDataType[]>
+declare const completeTypes: Record<BatchKey, DataType[]>
 
 /**
  * Appelée par reduce(), compactBatch() va générer un diff entre les
@@ -17,10 +17,10 @@ declare const completeTypes: Record<BatchKey, BatchDataType[]>
 export function compactBatch(
   currentBatch: BatchValue,
   memory: CurrentDataState,
-  batchKey: string
+  fromBatchKey: string
 ): BatchValue {
   // Les types où il y a potentiellement des suppressions
-  const stockTypes = completeTypes[batchKey].filter(
+  const stockTypes = completeTypes[fromBatchKey].filter(
     (type) => (memory[type] || new Set()).size > 0
   )
 

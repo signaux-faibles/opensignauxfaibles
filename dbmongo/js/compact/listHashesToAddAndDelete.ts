@@ -7,14 +7,14 @@ import { forEachPopulatedProp } from "../common/forEachPopulatedProp"
  */
 export function listHashesToAddAndDelete(
   currentBatch: BatchValue,
-  stockTypes: BatchDataType[],
+  stockTypes: DataType[],
   memory: CurrentDataState
 ): {
-  hashToAdd: Partial<Record<BatchDataType, Set<DataHash>>>
-  hashToDelete: Partial<Record<BatchDataType, Set<DataHash>>>
+  hashToAdd: Partial<Record<DataType, Set<DataHash>>>
+  hashToDelete: Partial<Record<DataType, Set<DataHash>>>
 } {
-  const hashToDelete: Partial<Record<BatchDataType, Set<DataHash>>> = {}
-  const hashToAdd: Partial<Record<BatchDataType, Set<DataHash>>> = {}
+  const hashToDelete: Partial<Record<DataType, Set<DataHash>>> = {}
+  const hashToAdd: Partial<Record<DataType, Set<DataHash>>> = {}
 
   // Itération sur les types qui ont potentiellement subi des modifications
   // pour compléter hashToDelete et hashToAdd.
