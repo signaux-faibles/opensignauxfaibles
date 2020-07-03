@@ -291,8 +291,8 @@ const testCases: TestCase[] = [
         },
       },
       index: {
-        algo1: true,
-        algo2: true,
+        algo1: false,
+        algo2: false,
       },
     },
   },
@@ -360,8 +360,8 @@ const testCases: TestCase[] = [
         },
       },
       index: {
-        algo1: true,
-        algo2: true,
+        algo1: false,
+        algo2: false,
       },
     },
   },
