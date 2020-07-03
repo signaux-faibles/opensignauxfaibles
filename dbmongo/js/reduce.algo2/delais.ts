@@ -1,8 +1,7 @@
 import * as f from "../common/generatePeriodSerie"
+import { nbDays } from "./nbDays"
 
 type DeepReadonly<T> = Readonly<T> // pas vraiment, mais espoire que TS le supporte prochainement
-
-export type ParPériode<T> = { [période: string]: T }
 
 // Valeurs attendues pour chaque période, lors de l'appel à delais()
 export type DebitComputedValues = {
@@ -12,17 +11,15 @@ export type DebitComputedValues = {
 
 // Valeurs retournées par delais(), pour chaque période
 export type DelaiComputedValues = {
-  delai: number
-  duree_delai: number // nombre de jours entre date_creation et date_echeance
-  ratio_dette_delai?: number
-  montant_echeancier: number // exprimé en euros
+  delai_nb_jours_restants: number
+  delai_nb_jours_total: number // nombre de jours entre date_creation et date_echeance
+  delai_deviation_remboursement?: number
+  delai_montant_echeancier: number // exprimé en euros
 }
 
-export type V = { delai: ParPériode<EntréeDelai> } // TODO: définir ce type dans global.ts ?
-
 export function delais(
-  v: V,
-  donnéesActuellesParPériode: DeepReadonly<ParPériode<DebitComputedValues>>
+  v: DonnéesDelai,
+  debitParPériode: DeepReadonly<ParPériode<DebitComputedValues>>
 ): ParPériode<DelaiComputedValues> {
   "use strict"
   const donnéesSupplémentairesParPériode: ParPériode<DelaiComputedValues> = {}
@@ -58,28 +55,27 @@ export function delais(
         return date.getTime()
       })
     pastYearTimes.map(function (time: number) {
-      if (time in donnéesActuellesParPériode) {
-        const remaining_months =
-          date_echeance.getUTCMonth() -
-          new Date(time).getUTCMonth() +
-          12 *
-            (date_echeance.getUTCFullYear() - new Date(time).getUTCFullYear())
-        const inputAtTime = donnéesActuellesParPériode[time]
+      if (time in debitParPériode) {
+        const debutDeMois = new Date(time)
+        const remainingDays = nbDays(debutDeMois, delai.date_echeance)
+        const inputAtTime = debitParPériode[time]
         const outputAtTime: DelaiComputedValues = {
-          delai: remaining_months,
-          duree_delai: delai.duree_delai,
-          montant_echeancier: delai.montant_echeancier,
+          delai_nb_jours_restants: remainingDays,
+          delai_nb_jours_total: delai.duree_delai,
+          delai_montant_echeancier: delai.montant_echeancier,
         }
         if (
           delai.duree_delai > 0 &&
           inputAtTime.montant_part_patronale !== undefined &&
           inputAtTime.montant_part_ouvriere !== undefined
         ) {
-          outputAtTime.ratio_dette_delai =
-            (inputAtTime.montant_part_patronale +
-              inputAtTime.montant_part_ouvriere -
-              (delai.montant_echeancier * remaining_months * 30) /
-                delai.duree_delai) /
+          const detteActuelle =
+            inputAtTime.montant_part_patronale +
+            inputAtTime.montant_part_ouvriere
+          const detteHypothétiqueRemboursementLinéaire =
+            (delai.montant_echeancier * remainingDays) / delai.duree_delai
+          outputAtTime.delai_deviation_remboursement =
+            (detteActuelle - detteHypothétiqueRemboursementLinéaire) /
             delai.montant_echeancier
         }
         donnéesSupplémentairesParPériode[time] = outputAtTime

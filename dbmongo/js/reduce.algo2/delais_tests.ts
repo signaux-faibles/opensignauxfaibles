@@ -1,21 +1,10 @@
-import test from "ava"
+import test, { ExecutionContext } from "ava" // TODO: résoudre erreur dans ide
+import { nbDays } from "./nbDays"
 import "../globals"
-import {
-  delais,
-  DelaiComputedValues,
-  DebitComputedValues,
-  ParPériode,
-} from "./delais"
+import { delais, DelaiComputedValues, DebitComputedValues } from "./delais"
 
 const fevrier = new Date("2014-02-01")
 const mars = new Date("2014-03-01")
-
-const nbDays = (firstDate: Date, secondDate: Date): number => {
-  const oneDay = 24 * 60 * 60 * 1000 // hours*minutes*seconds*milliseconds
-  return Math.round(
-    Math.abs((firstDate.getTime() - secondDate.getTime()) / oneDay)
-  )
-}
 
 const makeDelai = (firstDate: Date, secondDate: Date): EntréeDelai => ({
   date_creation: firstDate,
@@ -24,7 +13,7 @@ const makeDelai = (firstDate: Date, secondDate: Date): EntréeDelai => ({
   montant_echeancier: 1000,
 })
 
-const makeOutputIndexed = ({
+const makeDebitParPériode = ({
   montant_part_patronale = 0,
   montant_part_ouvriere = 0,
 } = {}): DebitComputedValues => ({
@@ -32,67 +21,77 @@ const makeOutputIndexed = ({
   montant_part_ouvriere,
 })
 
-const testProperty = (
+const runDelais = (
   debits?: DebitComputedValues
 ): ParPériode<DelaiComputedValues> => {
   const delaiTest = makeDelai(new Date("2014-01-03"), new Date("2014-04-05"))
   const delaiMap: ParPériode<EntréeDelai> = {
     abc: delaiTest,
   }
-  const output_indexed: ParPériode<DebitComputedValues> = {}
-  output_indexed[fevrier.getTime()] = debits ? makeOutputIndexed(debits) : {}
-  output_indexed[mars.getTime()] = debits ? makeOutputIndexed(debits) : {}
-  return delais({ delai: delaiMap }, output_indexed)
+  const debitParPériode: ParPériode<DebitComputedValues> = {}
+  debitParPériode[fevrier.getTime()] = debits ? makeDebitParPériode(debits) : {}
+  debitParPériode[mars.getTime()] = debits ? makeDebitParPériode(debits) : {}
+  return delais({ delai: delaiMap }, debitParPériode)
 }
 
-test("la propriété delai représente le nombre de mois complets restants du délai", (t) => {
-  const output_indexed = testProperty()
-  t.is(output_indexed[fevrier.getTime()]["delai"], 2)
-  t.is(output_indexed[mars.getTime()]["delai"], 1)
+test("la propriété delai_nb_jours_restants représente le nombre de jours restants du délai", (t: ExecutionContext) => {
+  const outputDelai = runDelais()
+  t.is(
+    outputDelai[fevrier.getTime()]["delai_nb_jours_restants"],
+    nbDays(new Date("2014-02-01"), new Date("2014-04-05"))
+  )
+  t.is(
+    outputDelai[mars.getTime()]["delai_nb_jours_restants"],
+    nbDays(new Date("2014-03-01"), new Date("2014-04-05"))
+  )
 })
 
-test("la propriété duree_delai représente la durée totale en jours du délai", (t) => {
+test("la propriété delai_nb_jours_total représente la durée totale en jours du délai", (t: ExecutionContext) => {
   const dureeEnJours = nbDays(new Date("2014-01-03"), new Date("2014-04-05"))
-  const output_indexed = testProperty()
-  t.is(output_indexed[fevrier.getTime()]["duree_delai"], dureeEnJours)
-  t.is(output_indexed[mars.getTime()]["duree_delai"], dureeEnJours)
+  const outputDelai = runDelais()
+  t.is(outputDelai[fevrier.getTime()]["delai_nb_jours_total"], dureeEnJours)
+  t.is(outputDelai[mars.getTime()]["delai_nb_jours_total"], dureeEnJours)
 })
 
-test("la propriété montant_echeancier représente le montant en euros des cotisations sociales couvertes par le délai", (t) => {
-  const output_indexed = testProperty()
-  t.is(output_indexed[fevrier.getTime()]["montant_echeancier"], 1000)
-  t.is(output_indexed[mars.getTime()]["montant_echeancier"], 1000)
+test("la propriété delai_montant_echeancier représente le montant en euros des cotisations sociales couvertes par le délai", (t: ExecutionContext) => {
+  const outputDelai = runDelais()
+  t.is(outputDelai[fevrier.getTime()]["delai_montant_echeancier"], 1000)
+  t.is(outputDelai[mars.getTime()]["delai_montant_echeancier"], 1000)
 })
 
-test("la propriété ratio_dette_delai représente la déviation du remboursement de la dette par rapport à un remboursement linéaire sur la durée du délai", (t) => {
-  // TODO: Inclure la formule dans la documentation de ce test
-  const expectedFebruary = -0.052
-  const expectedMarch = 0.273
-  const debits = { montant_part_patronale: 600, montant_part_ouvriere: 0 }
-  const output_indexed = testProperty(debits)
-  const tolerance = 10e-3
-  const ratioFebruary = output_indexed[fevrier.getTime()]["ratio_dette_delai"]
-  const ratioMarch = output_indexed[mars.getTime()]["ratio_dette_delai"]
-  t.is(typeof ratioFebruary, "number")
-  t.is(typeof ratioMarch, "number")
-  if (typeof ratioFebruary === "number") {
-    t.true(Math.abs(ratioFebruary - expectedFebruary) < tolerance)
+test(
+  "la propriété delai_deviation_remboursement représente:\n" +
+    "(dette actuelle - dette hypothétique en cas de remboursement linéaire) / dette initiale\n" +
+    "Elle représente la déviation par rapport à un remboursement linéaire de la dette " +
+    "en pourcentage de la dette initialement dû",
+  (t: ExecutionContext) => {
+    const expectedFebruary = -0.0848
+    const expectedMarch = 0.22
+    const debits = { montant_part_patronale: 600, montant_part_ouvriere: 0 }
+    const outputDelai = runDelais(debits)
+    const tolerance = 10e-3
+    const ratioFebruary =
+      outputDelai[fevrier.getTime()]["delai_deviation_remboursement"]
+    const ratioMarch =
+      outputDelai[mars.getTime()]["delai_deviation_remboursement"]
+    t.is(typeof ratioFebruary, "number")
+    t.is(typeof ratioMarch, "number")
+    if (typeof ratioFebruary === "number") {
+      t.true(Math.abs(ratioFebruary - expectedFebruary) < tolerance)
+    }
+    if (typeof ratioMarch === "number") {
+      t.true(Math.abs(ratioMarch - expectedMarch) < tolerance)
+    }
   }
-  if (typeof ratioMarch === "number") {
-    t.true(Math.abs(ratioMarch - expectedMarch) < tolerance)
-  }
-})
+)
 
-test("un délai en dehors de la période d'intérêt est ignorée", (t) => {
+test("un délai en dehors de la période d'intérêt est ignorée", (t: ExecutionContext) => {
   const delaiTest = makeDelai(new Date("2013-01-03"), new Date("2013-03-05"))
   const delaiMap: ParPériode<EntréeDelai> = {
     abc: delaiTest,
   }
   const donnéesParPériode: ParPériode<DebitComputedValues> = {}
-  donnéesParPériode[fevrier.getTime()] = makeOutputIndexed()
+  donnéesParPériode[fevrier.getTime()] = makeDebitParPériode()
   const périodesComplétées = delais({ delai: delaiMap }, donnéesParPériode)
   t.deepEqual(périodesComplétées, {})
 })
-
-// TODO: ajouter des tests sur les autres propriétés retournées
-// TODO: ajouter des tests sur les cas limites => table-based testing

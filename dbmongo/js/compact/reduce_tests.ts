@@ -5,7 +5,7 @@ import { reduce } from "./reduce"
 // Paramètres globaux utilisés par "compact"
 declare let completeTypes: Record<BatchKey, DataType[]>
 declare let batches: BatchKey[]
-declare let batchKey: BatchKey // TODO: à renommer, après fusion de https://github.com/signaux-faibles/opensignauxfaibles/pull/90
+declare let fromBatchKey: BatchKey
 
 const REDUCE_KEY = "123"
 
@@ -25,7 +25,7 @@ const AP_DEMANDE = {
 type TestCase = {
   testCaseName: string
   completeTypes: typeof completeTypes
-  batchKey: string
+  fromBatchKey: string
   batches: string[]
   reduce_values: CompanyDataValues[]
   expected: unknown
@@ -36,7 +36,7 @@ const testCases: TestCase[] = [
     ////////////////////////////////////////////////////////
     testCaseName: "Exemple1: complete type deletion",
     completeTypes: { "1902": ["apconso"] },
-    batchKey: "1902",
+    fromBatchKey: "1902",
     batches: ["1901", "1902"],
     reduce_values: [
       {
@@ -91,7 +91,7 @@ const testCases: TestCase[] = [
     ////////////////////////////////////////////////////////
     testCaseName: "Exemple2: order independence",
     completeTypes: { "1902": ["apconso"] },
-    batchKey: "1902",
+    fromBatchKey: "1902",
     batches: ["1901", "1902"],
     reduce_values: [
       {
@@ -149,7 +149,7 @@ const testCases: TestCase[] = [
       "1901": ["apconso"],
       "1902": ["apconso"],
     },
-    batchKey: "1901",
+    fromBatchKey: "1901",
     batches: ["1812", "1901", "1902"],
     reduce_values: [
       {
@@ -224,7 +224,7 @@ const testCases: TestCase[] = [
     ////////////////////////////////////////////////////////
     testCaseName: "Exemple4: added after removed same key",
     completeTypes: { "1901": ["apconso"] },
-    batchKey: "1901",
+    fromBatchKey: "1901",
     batches: ["1812", "1901"],
     reduce_values: [
       {
@@ -273,7 +273,7 @@ const testCases: TestCase[] = [
     ////////////////////////////////////////////////////////
     testCaseName: "Exemple5: deletion without complete types",
     completeTypes: { "1901": ["apconso"] },
-    batchKey: "1901",
+    fromBatchKey: "1901",
     batches: ["1812", "1901"],
     reduce_values: [
       {
@@ -322,7 +322,7 @@ const testCases: TestCase[] = [
     ////////////////////////////////////////////////////////
     testCaseName: "Exemple6: only one batch",
     completeTypes: { "1901": [] },
-    batchKey: "1901",
+    fromBatchKey: "1901",
     batches: ["1901"],
     reduce_values: [
       {
@@ -369,7 +369,7 @@ testCases.forEach(({ testCaseName, expected, ...testCase }) => {
   test.serial(`reduce: ${testCaseName}`, (t: ExecutionContext) => {
     // définition des valeurs de paramètres globaux utilisés par les fonctions de "compact"
     completeTypes = testCase.completeTypes
-    batchKey = testCase.batchKey
+    fromBatchKey = testCase.fromBatchKey
     batches = testCase.batches
     // exécution du test
     const actualResults = reduce(REDUCE_KEY, testCase.reduce_values)

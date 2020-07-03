@@ -4,6 +4,8 @@ declare function emit(key: unknown, value: unknown): void
 
 // Types partagés
 
+type ParPériode<T> = { [période: string]: T }
+
 type BatchKey = string
 
 type CodeAPE = string

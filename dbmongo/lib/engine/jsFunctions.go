@@ -366,9 +366,9 @@ function forEachPopulatedProp(obj, fct) {
  * Paramètres modifiés: currentBatch et memory.
  * Pré-requis: les batches précédents doivent avoir été compactés.
  */
-function compactBatch(currentBatch, memory, batchKey) {
+function compactBatch(currentBatch, memory, fromBatchKey) {
     // Les types où il y a potentiellement des suppressions
-    const stockTypes = completeTypes[batchKey].filter((type) => (memory[type] || new Set()).size > 0);
+    const stockTypes = completeTypes[fromBatchKey].filter((type) => (memory[type] || new Set()).size > 0);
     const { hashToAdd, hashToDelete } = listHashesToAddAndDelete(currentBatch, stockTypes, memory);
     fixRedundantPatches(hashToAdd, hashToDelete, memory);
     applyPatchesToMemory(hashToAdd, hashToDelete, memory);
@@ -587,13 +587,13 @@ function reduce(key, values // chaque element contient plusieurs batches pour ce
     //////////////////////////////////////////////////
     // 0. On calcule la memoire au moment du batch à modifier
     const memoryBatches = Object.keys(naivelyMergedCompanyData.batch)
-        .filter((batch) => batch < batchKey)
+        .filter((batch) => batch < fromBatchKey)
         .sort()
         .reduce((m, batch) => {
         m.push(naivelyMergedCompanyData.batch[batch]);
         return m;
     }, []);
-    // Memory conserve les données aplaties de tous les batches jusqu'à batchKey
+    // Memory conserve les données aplaties de tous les batches jusqu'à fromBatchKey
     // puis sera enrichie au fur et à mesure du traitement des batches suivants.
     const memory = f.currentState(memoryBatches);
     const reducedValue = {
@@ -601,17 +601,17 @@ function reduce(key, values // chaque element contient plusieurs batches pour ce
         scope: naivelyMergedCompanyData.scope,
         batch: {},
     };
-    // Copie telle quelle des batches jusqu'à batchKey.
+    // Copie telle quelle des batches jusqu'à fromBatchKey.
     Object.keys(naivelyMergedCompanyData.batch)
-        .filter((batch) => batch < batchKey)
+        .filter((batch) => batch < fromBatchKey)
         .forEach((batch) => {
         reducedValue.batch[batch] = naivelyMergedCompanyData.batch[batch];
     });
-    // On itère sur chaque batch à partir de batchKey pour les compacter.
+    // On itère sur chaque batch à partir de fromBatchKey pour les compacter.
     // Il est possible qu'il y ait moins de batch en sortie que le nombre traité
     // dans la boucle, si ces batchs n'apportent aucune information nouvelle.
     batches
-        .filter((batch) => batch >= batchKey)
+        .filter((batch) => batch >= fromBatchKey)
         .forEach((batch) => {
         const currentBatch = naivelyMergedCompanyData.batch[batch];
         const compactedBatch = compactBatch(currentBatch, memory, batch);
@@ -1427,7 +1427,7 @@ db.getCollection("Features").createIndex({
     f.dealWithProcols(v.altares, "altares", output_indexed);
     f.dealWithProcols(v.procol, "procol", output_indexed);
 }`,
-"delais": `function delais(v, donnéesActuellesParPériode) {
+"delais": `function delais(v, debitParPériode) {
     "use strict";
     const donnéesSupplémentairesParPériode = {};
     Object.keys(v.delai).map(function (hash) {
@@ -1442,25 +1442,23 @@ db.getCollection("Features").createIndex({
             return date.getTime();
         });
         pastYearTimes.map(function (time) {
-            if (time in donnéesActuellesParPériode) {
-                const remaining_months = date_echeance.getUTCMonth() -
-                    new Date(time).getUTCMonth() +
-                    12 *
-                        (date_echeance.getUTCFullYear() - new Date(time).getUTCFullYear());
-                const inputAtTime = donnéesActuellesParPériode[time];
+            if (time in debitParPériode) {
+                const debutDeMois = new Date(time);
+                const remainingDays = nbDays(debutDeMois, delai.date_echeance);
+                const inputAtTime = debitParPériode[time];
                 const outputAtTime = {
-                    delai: remaining_months,
-                    duree_delai: delai.duree_delai,
-                    montant_echeancier: delai.montant_echeancier,
+                    delai_nb_jours_restants: remainingDays,
+                    delai_nb_jours_total: delai.duree_delai,
+                    delai_montant_echeancier: delai.montant_echeancier,
                 };
                 if (delai.duree_delai > 0 &&
                     inputAtTime.montant_part_patronale !== undefined &&
                     inputAtTime.montant_part_ouvriere !== undefined) {
-                    outputAtTime.ratio_dette_delai =
-                        (inputAtTime.montant_part_patronale +
-                            inputAtTime.montant_part_ouvriere -
-                            (delai.montant_echeancier * remaining_months * 30) /
-                                delai.duree_delai) /
+                    const detteActuelle = inputAtTime.montant_part_patronale +
+                        inputAtTime.montant_part_ouvriere;
+                    const detteHypothétiqueRemboursementLinéaire = (delai.montant_echeancier * remainingDays) / delai.duree_delai;
+                    outputAtTime.delai_deviation_remboursement =
+                        (detteActuelle - detteHypothétiqueRemboursementLinéaire) /
                             delai.montant_echeancier;
                 }
                 donnéesSupplémentairesParPériode[time] = outputAtTime;
@@ -1829,7 +1827,8 @@ function map() {
                 f.add(output_repeatable, output_indexed);
             }
             if (v.delai) {
-                const output_delai = f.delais(v, output_indexed);
+                const output_delai = f.delais(v, output_indexed // TODO: vérifier que les données débit sont déjà calculées
+                );
                 f.add(output_delai, output_indexed);
             }
             v.altares = v.altares || {};
@@ -2021,6 +2020,10 @@ function map() {
         }
     }
 }`,
+"nbDays": `const nbDays = (firstDate, secondDate) => {
+    const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+    return Math.round(Math.abs((firstDate.getTime() - secondDate.getTime()) / oneDay));
+};`,
 "outputs": `/**
  * Appelé par ` + "`" + `map()` + "`" + ` pour chaque entreprise/établissement, ` + "`" + `outputs()` + "`" + ` retourne
  * un tableau contenant un objet de base par période, ainsi qu'une version
