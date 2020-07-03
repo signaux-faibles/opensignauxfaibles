@@ -1,10 +1,12 @@
 package engine
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
+	"os"
 	"regexp"
 	"sort"
 	"strconv"
@@ -289,6 +291,12 @@ func ExportEtablissementToDatapi(url, email, password, key string) error {
 // ExportEntrepriseToFile exporte les entreprises et etablissements avec leurs
 // scores, dans un fichier.
 func ExportEntrepriseToFile(filepath string) error {
+	file, err := os.Create(filepath)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
 	var connus []string
 	pipeline := exportdatapi.GetEntreprisePipeline()
 	iter := Db.DB.C("Public").Pipe(pipeline).AllowDiskUse().Iter()
@@ -296,14 +304,21 @@ func ExportEntrepriseToFile(filepath string) error {
 	var data exportdatapi.Etablissement
 	for iter.Next(&data) {
 		for _, d := range exportdatapi.ComputeEtablissement(data, &connus) {
-			fmt.Println(d)
-			// datapi <- d // TODO: stocker dans le fichier.
+			bytesToWrite, err := json.Marshal(d)
+			if err != nil {
+				return err
+			}
+			nbBytesWritten := 0
+			for nbBytesWritten < len(bytesToWrite) {
+				bytesToWrite = bytesToWrite[nbBytesWritten:]
+				nbBytesWritten, err = file.Write(bytesToWrite)
+				fmt.Println("Printed", nbBytesWritten, "bytes /", len(bytesToWrite))
+				if err != nil {
+					return err
+				}
+			}
+			file.Write([]byte("\n"))
 		}
 	}
-	/*
-		if client.Errors > 0 {
-			return errors.New("Erreurs détectées, envoi incomplet, plus d'informations dans le journal")
-		}
-	*/
 	return nil
 }

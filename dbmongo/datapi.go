@@ -36,7 +36,7 @@ func datapiExportEtablissementHandler(c *gin.Context) {
 }
 
 func datapiExportEntrepriseHandler(c *gin.Context) {
-	var filepath = "./entreprise_output.json" // TODO
+	var filepath = "entreprise_output.json" // TODO: integrer timestamp dans le nom de fichier
 	err := engine.ExportEntrepriseToFile(filepath)
 	if err != nil {
 		c.JSON(500, err.Error())
