@@ -20,6 +20,10 @@ func GetEntreprisePipeline() (pipeline []bson.M) {
 			},
 		},
 	}})
+	pipeline = append(pipeline, bson.M{"$group": bson.M{
+		"_id":            "$idEntreprise",
+		"etablissements": bson.M{"$push": "$$ROOT"},
+	}})
 	return pipeline
 }
 
