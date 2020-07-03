@@ -1,0 +1,6 @@
+[
+{"key":{"siren":"012345678","siret":"012345678","type":"etablissement","urssaf":"true"},"scope":[],"value":{"connu":false,"sirene":{"region":"","commune":"","raison_sociale":"","type_voie":"","siren":"","code_postal":"","lattitude":0,"adresse":null,"departement":"","nature_juridique":"","numero_voie":"","ape":"","longitude":0,"nic":"","nic_siege":""}}},
+{"key":{"siren":"012345678","siret":"012345678","type":"etablissement","urssaf":"true"},"scope":["","detection","score"],"value":{"scores":null}},
+{"key":{"siren":"012345678","siret":"01234567891011","type":"etablissement","urssaf":"true"},"scope":[],"value":{"connu":false,"sirene":{"region":"","commune":"CHAMPIGNAC","raison_sociale":"","type_voie":"RTE","siren":"012345678","code_postal":"75020","lattitude":55,"adresse":[],"departement":"75","nature_juridique":"","numero_voie":"3","ape":"0113Z","longitude":-3,"nic":"91011","nic_siege":""}}},
+{"key":{"siren":"012345678","siret":"01234567891011","type":"etablissement","urssaf":"true"},"scope":["75","detection","score"],"value":{"scores":null}},
+]

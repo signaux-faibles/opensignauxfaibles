@@ -297,6 +297,11 @@ func ExportEntrepriseToFile(filepath string) error {
 	}
 	defer file.Close()
 
+	_, err = file.Write([]byte("[\n"))
+	if err != nil {
+		return err
+	}
+
 	var connus []string
 	pipeline := exportdatapi.GetEntreprisePipeline()
 	iter := Db.DB.C("Public").Pipe(pipeline).AllowDiskUse().Iter()
@@ -312,13 +317,21 @@ func ExportEntrepriseToFile(filepath string) error {
 			for nbBytesWritten < len(bytesToWrite) {
 				bytesToWrite = bytesToWrite[nbBytesWritten:]
 				nbBytesWritten, err = file.Write(bytesToWrite)
-				fmt.Println("Printed", nbBytesWritten, "bytes /", len(bytesToWrite))
+				_, err = fmt.Println("Printed", nbBytesWritten, "bytes /", len(bytesToWrite))
 				if err != nil {
 					return err
 				}
 			}
-			file.Write([]byte("\n"))
+			_, err = file.Write([]byte(",\n")) // TODO: pour que le JSON soit valide, ne pas ajouter de virgule au dernier élément
+			if err != nil {
+				return err
+			}
 		}
 	}
+	file.Write([]byte("]\n"))
+	if err != nil {
+		return err
+	}
+
 	return nil
 }

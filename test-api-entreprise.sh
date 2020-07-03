@@ -79,12 +79,11 @@ echo "⚙️ Computing Features and Public collections thru dbmongo API..."
 sleep 2 # give some time for dbmongo to start
 http --ignore-stdin :5000/api/data/public batch=2002_1
 EXPORT_FILE=$(http --ignore-stdin :5000/datapi/exportEntreprise batch=2002_1 | tr -d '"')
-echo "👉 Exported file: ${EXPORT_FILE}"
-cat "${EXPORT_FILE}"
 
 echo ""
 echo "🆎 Diff between expected and actual output:"
-diff "${DATA_DIR}/test-api-entreprise_golden.json" "${EXPORT_FILE}"
+# diff "${DATA_DIR}/test-api-entreprise_golden.json" "${EXPORT_FILE}"
+diff "entreprise_golden.json" "${EXPORT_FILE}" # (diff provisoire)
 echo "✅ No diff. The reduce API works as usual."
 echo ""
 rm "${EXPORT_FILE}"
