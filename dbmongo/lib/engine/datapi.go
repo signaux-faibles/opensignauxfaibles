@@ -302,30 +302,27 @@ func ExportEntrepriseToFile(filepath string) error {
 		return err
 	}
 
-	var connus []string
 	pipeline := exportdatapi.GetEntreprisePipeline()
 	iter := Db.DB.C("Public").Pipe(pipeline).AllowDiskUse().Iter()
 
-	var data exportdatapi.Etablissement
-	for iter.Next(&data) {
-		for _, d := range exportdatapi.ComputeEtablissement(data, &connus) {
-			bytesToWrite, err := json.Marshal(d)
+	var etablissement exportdatapi.Etablissement
+	for iter.Next(&etablissement) {
+		bytesToWrite, err := json.Marshal(etablissement)
+		if err != nil {
+			return err
+		}
+		nbBytesWritten := 0
+		for nbBytesWritten < len(bytesToWrite) {
+			bytesToWrite = bytesToWrite[nbBytesWritten:]
+			nbBytesWritten, err = file.Write(bytesToWrite)
+			_, err = fmt.Println("Printed", nbBytesWritten, "bytes /", len(bytesToWrite))
 			if err != nil {
 				return err
 			}
-			nbBytesWritten := 0
-			for nbBytesWritten < len(bytesToWrite) {
-				bytesToWrite = bytesToWrite[nbBytesWritten:]
-				nbBytesWritten, err = file.Write(bytesToWrite)
-				_, err = fmt.Println("Printed", nbBytesWritten, "bytes /", len(bytesToWrite))
-				if err != nil {
-					return err
-				}
-			}
-			_, err = file.Write([]byte(",\n")) // TODO: pour que le JSON soit valide, ne pas ajouter de virgule au dernier élément
-			if err != nil {
-				return err
-			}
+		}
+		_, err = file.Write([]byte(",\n")) // TODO: pour que le JSON soit valide, ne pas ajouter de virgule au dernier élément
+		if err != nil {
+			return err
 		}
 	}
 	file.Write([]byte("]\n"))
