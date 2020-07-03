@@ -1,32 +1,63 @@
-/*global print, compare, reduce*/
+import test, { ExecutionContext } from "ava"
+import "../globals"
+import { reduce } from "./reduce"
 
-const test_cases = [
+// Paramètres globaux utilisés par "compact"
+declare let completeTypes: Record<BatchKey, DataType[]>
+declare let batches: BatchKey[]
+declare let fromBatchKey: BatchKey
+
+const REDUCE_KEY = "123"
+
+const AP_CONSO = {
+  id_conso: "",
+  periode: new Date(),
+  heure_consomme: 0,
+}
+
+const AP_DEMANDE = {
+  id_demande: "",
+  periode: { start: new Date(), end: new Date() },
+  hta: null,
+  motif_recours_se: null,
+}
+
+type TestCase = {
+  testCaseName: string
+  completeTypes: typeof completeTypes
+  fromBatchKey: string
+  batches: string[]
+  reduce_values: CompanyDataValues[]
+  expected: unknown
+}
+
+const testCases: TestCase[] = [
   {
     ////////////////////////////////////////////////////////
-    test_case_name: "Exemple1: complete type deletion",
+    testCaseName: "Exemple1: complete type deletion",
     completeTypes: { "1902": ["apconso"] },
     fromBatchKey: "1902",
-    types: "",
     batches: ["1901", "1902"],
-    reduce_key: "123",
     reduce_values: [
       {
+        key: REDUCE_KEY,
         batch: {
           "1901": {
             apconso: {
-              a: { bonjour: 3, aurevoir: 4 },
-              b: { bonjour: 5, aurevoir: 6 },
+              a: AP_CONSO,
+              b: AP_CONSO,
             },
           },
         },
         scope: "etablissement",
       },
       {
+        key: REDUCE_KEY,
         batch: {
           "1902": {
             apconso: {
-              a: { bonjour: 3, aurevoir: 4 },
-              c: { bonjour: 7, aurevoir: 8 },
+              a: AP_CONSO,
+              c: AP_CONSO,
             },
           },
         },
@@ -34,27 +65,18 @@ const test_cases = [
       },
     ],
     expected: {
-      key: "123",
+      key: REDUCE_KEY,
       scope: "etablissement",
       batch: {
         "1901": {
           apconso: {
-            a: {
-              bonjour: 3,
-              aurevoir: 4,
-            },
-            b: {
-              bonjour: 5,
-              aurevoir: 6,
-            },
+            a: AP_CONSO,
+            b: AP_CONSO,
           },
         },
         "1902": {
           apconso: {
-            c: {
-              bonjour: 7,
-              aurevoir: 8,
-            },
+            c: AP_CONSO,
           },
           compact: {
             delete: {
@@ -67,30 +89,30 @@ const test_cases = [
   },
   {
     ////////////////////////////////////////////////////////
-    test_case_name: "Exemple2: order independence",
+    testCaseName: "Exemple2: order independence",
     completeTypes: { "1902": ["apconso"] },
     fromBatchKey: "1902",
-    types: "",
     batches: ["1901", "1902"],
-    reduce_key: "123",
     reduce_values: [
       {
+        key: REDUCE_KEY,
         batch: {
           "1902": {
             apconso: {
-              a: { bonjour: 3, aurevoir: 4 },
-              c: { bonjour: 7, aurevoir: 8 },
+              a: AP_CONSO,
+              c: AP_CONSO,
             },
           },
         },
         scope: "etablissement",
       },
       {
+        key: REDUCE_KEY,
         batch: {
           "1901": {
             apconso: {
-              a: { bonjour: 3, aurevoir: 4 },
-              b: { bonjour: 5, aurevoir: 6 },
+              a: AP_CONSO,
+              b: AP_CONSO,
             },
           },
         },
@@ -98,27 +120,18 @@ const test_cases = [
       },
     ],
     expected: {
-      key: "123",
+      key: REDUCE_KEY,
       scope: "etablissement",
       batch: {
         "1901": {
           apconso: {
-            a: {
-              bonjour: 3,
-              aurevoir: 4,
-            },
-            b: {
-              bonjour: 5,
-              aurevoir: 6,
-            },
+            a: AP_CONSO,
+            b: AP_CONSO,
           },
         },
         "1902": {
           apconso: {
-            c: {
-              bonjour: 7,
-              aurevoir: 8,
-            },
+            c: AP_CONSO,
           },
           compact: {
             delete: {
@@ -131,27 +144,26 @@ const test_cases = [
   },
   {
     ////////////////////////////////////////////////////////
-    test_case_name: "Exemple3: batch insertion between preexisting",
+    testCaseName: "Exemple3: batch insertion between preexisting",
     completeTypes: {
       "1901": ["apconso"],
       "1902": ["apconso"],
     },
     fromBatchKey: "1901",
-    types: "",
     batches: ["1812", "1901", "1902"],
-    reduce_key: "123",
     reduce_values: [
       {
+        key: REDUCE_KEY,
         batch: {
           "1812": {
             apconso: {
-              deleteme: { bonjour: 1, aurevoir: 2 },
+              deleteme: AP_CONSO,
             },
           },
           "1902": {
             apconso: {
-              a: { bonjour: 3, aurevoir: 4 },
-              c: { bonjour: 7, aurevoir: 8 },
+              a: AP_CONSO,
+              c: AP_CONSO,
             },
             compact: {
               delete: {
@@ -163,11 +175,12 @@ const test_cases = [
         scope: "etablissement",
       },
       {
+        key: REDUCE_KEY,
         batch: {
           "1901": {
             apconso: {
-              a: { bonjour: 3, aurevoir: 4 },
-              b: { bonjour: 5, aurevoir: 6 },
+              a: AP_CONSO,
+              b: AP_CONSO,
             },
           },
         },
@@ -175,27 +188,18 @@ const test_cases = [
       },
     ],
     expected: {
-      key: "123",
+      key: REDUCE_KEY,
       scope: "etablissement",
       batch: {
         "1812": {
           apconso: {
-            deleteme: {
-              bonjour: 1,
-              aurevoir: 2,
-            },
+            deleteme: AP_CONSO,
           },
         },
         "1901": {
           apconso: {
-            a: {
-              bonjour: 3,
-              aurevoir: 4,
-            },
-            b: {
-              bonjour: 5,
-              aurevoir: 6,
-            },
+            a: AP_CONSO,
+            b: AP_CONSO,
           },
           compact: {
             delete: {
@@ -205,10 +209,7 @@ const test_cases = [
         },
         "1902": {
           apconso: {
-            c: {
-              bonjour: 7,
-              aurevoir: 8,
-            },
+            c: AP_CONSO,
           },
           compact: {
             delete: {
@@ -221,18 +222,17 @@ const test_cases = [
   },
   {
     ////////////////////////////////////////////////////////
-    test_case_name: "Exemple4: added after removed same key",
+    testCaseName: "Exemple4: added after removed same key",
     completeTypes: { "1901": ["apconso"] },
     fromBatchKey: "1901",
-    types: "",
     batches: ["1812", "1901"],
-    reduce_key: "123",
     reduce_values: [
       {
+        key: REDUCE_KEY,
         batch: {
           "1812": {
             apconso: {
-              deleteme: { bonjour: 1, aurevoir: 2 },
+              deleteme: AP_CONSO,
             },
           },
           "1901": {
@@ -246,10 +246,11 @@ const test_cases = [
         scope: "etablissement",
       },
       {
+        key: REDUCE_KEY,
         batch: {
           "1901": {
             apconso: {
-              deleteme: { bonjour: 1, aurevoir: 2 },
+              deleteme: AP_CONSO,
             },
           },
         },
@@ -257,15 +258,12 @@ const test_cases = [
       },
     ],
     expected: {
-      key: "123",
+      key: REDUCE_KEY,
       scope: "etablissement",
       batch: {
         "1812": {
           apconso: {
-            deleteme: {
-              bonjour: 1,
-              aurevoir: 2,
-            },
+            deleteme: AP_CONSO,
           },
         },
       },
@@ -273,18 +271,17 @@ const test_cases = [
   },
   {
     ////////////////////////////////////////////////////////
-    test_case_name: "Exemple5: deletion without complete types",
+    testCaseName: "Exemple5: deletion without complete types",
     completeTypes: { "1901": ["apconso"] },
     fromBatchKey: "1901",
-    types: "",
     batches: ["1812", "1901"],
-    reduce_key: "123",
     reduce_values: [
       {
+        key: REDUCE_KEY,
         batch: {
           "1812": {
             apconso: {
-              deleteme: { bonjour: 1, aurevoir: 2 },
+              deleteme: AP_CONSO,
             },
           },
           "1901": {
@@ -298,10 +295,11 @@ const test_cases = [
         scope: "etablissement",
       },
       {
+        key: REDUCE_KEY,
         batch: {
           "1901": {
             apconso: {
-              deleteme: { bonjour: 1, aurevoir: 2 },
+              deleteme: AP_CONSO,
             },
           },
         },
@@ -309,15 +307,12 @@ const test_cases = [
       },
     ],
     expected: {
-      key: "123",
+      key: REDUCE_KEY,
       scope: "etablissement",
       batch: {
         "1812": {
           apconso: {
-            deleteme: {
-              bonjour: 1,
-              aurevoir: 2,
-            },
+            deleteme: AP_CONSO,
           },
         },
       },
@@ -325,28 +320,28 @@ const test_cases = [
   },
   {
     ////////////////////////////////////////////////////////
-    test_case_name: "Exemple6: only one batch",
+    testCaseName: "Exemple6: only one batch",
     completeTypes: { "1901": [] },
     fromBatchKey: "1901",
-    types: "",
     batches: ["1901"],
-    reduce_key: "123",
     reduce_values: [
       {
+        key: REDUCE_KEY,
         batch: {
           "1901": {
             apconso: {
-              uneconso: { bonjour: 1, aurevoir: 2 },
+              uneconso: AP_CONSO,
             },
           },
         },
         scope: "etablissement",
       },
       {
+        key: REDUCE_KEY,
         batch: {
           "1901": {
             apdemande: {
-              unedemande: { bonjour: 2, aurevoir: 1 },
+              unedemande: AP_DEMANDE,
             },
           },
         },
@@ -354,44 +349,30 @@ const test_cases = [
       },
     ],
     expected: {
-      key: "123",
+      key: REDUCE_KEY,
       scope: "etablissement",
       batch: {
         "1901": {
           apconso: {
-            uneconso: {
-              bonjour: 1,
-              aurevoir: 2,
-            },
+            uneconso: AP_CONSO,
           },
           apdemande: {
-            unedemande: {
-              bonjour: 2,
-              aurevoir: 1,
-            },
+            unedemande: AP_DEMANDE,
           },
         },
       },
     },
   },
 ]
-Object.freeze(test_cases)
 
-const jsParams = this // => all properties of this object will become global. TODO: remove this when merging namespace (https://github.com/signaux-faibles/opensignauxfaibles/pull/40)
-
-const test_results = test_cases.map(function (tc, id) {
-  jsParams.completeTypes = tc.completeTypes
-  jsParams.fromBatchKey = tc.fromBatchKey
-  jsParams.types = tc.types
-  jsParams.batches = tc.batches
-  var actual = reduce(tc.reduce_key, tc.reduce_values)
-
-  const success = compare(actual, tc.expected)
-  if (!success) {
-    print("expected:", JSON.stringify(tc.expected, null, 2))
-    print("actual:", JSON.stringify(actual, null, 2))
-  }
-  return success
+testCases.forEach(({ testCaseName, expected, ...testCase }) => {
+  test.serial(`reduce: ${testCaseName}`, (t: ExecutionContext) => {
+    // définition des valeurs de paramètres globaux utilisés par les fonctions de "compact"
+    completeTypes = testCase.completeTypes
+    fromBatchKey = testCase.fromBatchKey
+    batches = testCase.batches
+    // exécution du test
+    const actualResults = reduce(REDUCE_KEY, testCase.reduce_values)
+    t.deepEqual(actualResults, expected)
+  })
 })
-
-print(test_results.every((t) => t))
