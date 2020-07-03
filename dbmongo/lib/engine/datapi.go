@@ -289,14 +289,15 @@ func ExportEtablissementToDatapi(url, email, password, key string) error {
 // ExportEntrepriseToFile exporte les entreprises et etablissements avec leurs
 // scores, dans un fichier.
 func ExportEntrepriseToFile(filepath string) error {
-	pipeline := exportdatapi.GetEtablissementPipeline() // TODO: make a new dedicated function here.
+	var connus []string
+	pipeline := exportdatapi.GetEntreprisePipeline()
 	iter := Db.DB.C("Public").Pipe(pipeline).AllowDiskUse().Iter()
 
 	var data exportdatapi.Etablissement
-
 	for iter.Next(&data) {
-		for _, d := range exportdatapi.ComputeEtablissement(data) { // TODO: make a new dedicated function here.
-			datapi <- d // TODO: stocker dans le fichier.
+		for _, d := range exportdatapi.ComputeEtablissement(data, &connus) {
+			fmt.Println(d)
+			// datapi <- d // TODO: stocker dans le fichier.
 		}
 	}
 	/*
