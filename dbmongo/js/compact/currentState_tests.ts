@@ -15,7 +15,7 @@ const makeApConso = (): EntréeApConso => ({
   heure_consomme: 0,
 })
 
-test(`currentState`, (t: ExecutionContext) => {
+test("currentState", (t: ExecutionContext) => {
   const actualRes = currentState([
     {
       apdemande: { a: makeApDemande(), b: makeApDemande() },
