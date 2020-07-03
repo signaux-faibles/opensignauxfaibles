@@ -12,6 +12,14 @@ func GetEntreprisePipeline() (pipeline []bson.M) {
 			Pattern: "entreprise_*",
 		},
 	}})
+	pipeline = append(pipeline, bson.M{"$addFields": bson.M{
+		"idEntreprise": bson.M{
+			"$concat": []interface{}{
+				"etablissement_",
+				bson.M{"$substr": []interface{}{"$value.key", 0, 9}},
+			},
+		},
+	}})
 	return pipeline
 }
 
