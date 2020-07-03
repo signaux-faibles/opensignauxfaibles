@@ -37,7 +37,7 @@ func datapiExportEtablissementHandler(c *gin.Context) {
 
 func datapiExportEntrepriseHandler(c *gin.Context) {
 	var filepath = "./entreprise_output.json" // TODO
-	err = engine.ExportEntrepriseToFile(filepath)
+	err := engine.ExportEntrepriseToFile(filepath)
 	if err != nil {
 		c.JSON(500, err.Error())
 		return
