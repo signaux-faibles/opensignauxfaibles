@@ -1,4 +1,4 @@
-import "../globals.ts"
+import "../globals"
 import * as f from "./lookAhead"
 
 type Times = {
