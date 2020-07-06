@@ -1,4 +1,5 @@
-"use strict";
+declare const ISODate: (date: string) => Date
+
 const objects = [
   {
     "_id" : "123456789",
