@@ -4,6 +4,7 @@ shopt -s extglob # enable exclusion of test files in wildcard
 
 result_public=$(jsc \
   helpers/fakes.js \
+  helpers/reducers.js \
   helpers/fake_emit_for_public.js \
   data/objects.js \
   ../common/!(*_test*).js \

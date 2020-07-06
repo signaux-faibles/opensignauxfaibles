@@ -7,6 +7,7 @@ import { finalize } from "./finalize"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { objects as testCases } from "../test/data/objects"
 import { naf as nafValues } from "../test/data/naf"
+import { reducer, invertedReducer } from "../test/helpers/reducers"
 
 // Paramètres globaux utilisés par "reduce.algo2"
 declare let emit: unknown // called by map()
@@ -67,6 +68,8 @@ test("l'ordre de traitement des données n'influe pas sur les résultats", (t: E
   })
 })
 
+// Helpers
+
 const objectValues = <T>(obj: Record<string, T>): T[] =>
   Object.keys(obj).map((key) => obj[key])
 
@@ -101,27 +104,4 @@ function sortObject(object: any): any {
   }
 
   return sortedObj
-}
-
-// Fonctions globales temporairement importées depuis fakes.js
-
-function reducer(array: any[], reduce: any): any {
-  if (array.length == 1) {
-    return array[0]
-  } else {
-    const newVal = reduce(array[0].key, [array[0].value, array[1].value])
-    return reducer([newVal].concat(array.slice(2, array.length)), reduce)
-  }
-}
-
-function invertedReducer(array: any[], reduce: any): any {
-  if (array.length == 1) {
-    return array[0]
-  } else {
-    const newVal = reduce(array[0].key, [
-      array[array.length - 1].value,
-      array[array.length - 2].value,
-    ])
-    return reducer([newVal].concat(array.slice(0, array.length - 2)), reduce)
-  }
 }
