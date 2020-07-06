@@ -49,8 +49,8 @@ testCases.forEach(({ expected, ...testCase }, number) => {
     if (testCase.error_expected) {
       const result = add(testCase["data_to_add"], testCase["data"])
       t.is(typeof result, "undefined")
-    } else {
-      // TODO: also run this check when error_expected is present ?
+    }
+    if (expected) {
       add(testCase["data_to_add"], testCase["data"])
       t.true(compare(testCase["data"], expected))
     }
