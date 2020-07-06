@@ -2,19 +2,6 @@
 
 shopt -s extglob # enable exclusion of test files in wildcard
 
-result_add=$(jsc \
-  helpers/testing.js \
-  helpers/fakes.js \
-  helpers/fake_emit_for_algo2.js \
-  ../common/!(*_test*).js \
-  ../reduce.algo2/!(*_test*).js \
-  ../reduce.algo2/add_test.js \
-  2>&1)
-if [ "$result_add" != 'true' ]; then
-  echo "add_test: $result_add"
-  exit 1
-fi
-
 result_lookAhead=$(jsc \
   helpers/testing.js \
   helpers/fakes.js \

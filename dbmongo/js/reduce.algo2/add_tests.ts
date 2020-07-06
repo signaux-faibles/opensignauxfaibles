@@ -4,31 +4,37 @@ import { add } from "./add"
 
 const testCases = [
   {
+    name: "the data does not change when adding an empty object",
     data: { "2015-01-01": { any_value: true } },
-    data_to_add: {},
+    additions: {},
     expected: { "2015-01-01": { any_value: true } },
   },
   {
+    name:
+      "the data does not change when adding an empty object for a given period",
     data: { "2015-01-01": { any_value: true } },
-    data_to_add: { "2015-01-01": {} },
+    additions: { "2015-01-01": {} },
     expected: { "2015-01-01": { any_value: true } },
   },
   {
+    name: "the data changes when overwriting a property for a given period",
     data: { "2015-01-01": { any_value: true } },
-    data_to_add: { "2015-01-01": { any_value: false } },
+    additions: { "2015-01-01": { any_value: false } },
     expected: { "2015-01-01": { any_value: false } },
   },
   {
+    name: "properties are merged for any given period",
     data: { "2015-01-01": { any_value: true } },
-    data_to_add: { "2015-01-01": { other_value: false } },
+    additions: { "2015-01-01": { other_value: false } },
     expected: { "2015-01-01": { any_value: true, other_value: false } },
   },
   {
+    name: "properties are merged for more than one given period",
     data: {
       "2015-01-01": { any_value: true },
       "2015-02-01": { any_value: true },
     },
-    data_to_add: {
+    additions: {
       "2015-01-01": { other_value: false },
       "2015-02-01": { other_value: false },
     },
@@ -39,9 +45,9 @@ const testCases = [
   },
 ]
 
-testCases.forEach(({ expected, ...testCase }, number) => {
-  test.serial(`add(): case #${number}`, (t: ExecutionContext) => {
-    add(testCase["data_to_add"], testCase["data"])
-    t.deepEqual(testCase["data"], expected)
+testCases.forEach(({ name, data, additions, expected }) => {
+  test.serial(`add(): ${name}`, (t: ExecutionContext) => {
+    add(additions, data)
+    t.deepEqual(data, expected)
   })
 })
