@@ -5,13 +5,10 @@ import { map } from "./map"
 import { reduce } from "./reduce"
 import { finalize } from "./finalize"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
-
-// Importation du jeu de données
 import { objects as testCases } from "../test/data/objects"
 import { naf as nafValues } from "../test/data/naf"
 
 // Paramètres globaux utilisés par "reduce.algo2"
-declare let f: unknown //{ generatePeriodSerie: Function; map: Function }
 declare let emit: unknown // called by map()
 declare let naf: NAF
 declare let actual_batch: BatchKey
@@ -21,27 +18,37 @@ declare let serie_periode: Date[]
 declare let offset_effectif: number
 declare let includes: Record<"all", boolean>
 
-test("algo2_tests depuis objects", (t: ExecutionContext) => {
+// preparation de l'environnement d'exécution de map()
+function setupMapCollector() {
+  const pool: Record<any, any> = {}
+  emit = (key: any, value: any) => {
+    const id = key.siren + key.batch + key.periode.getTime()
+    pool[id] = (pool[id] || []).concat([{ key, value }])
+  }
+  return pool
+}
+
+// initialisation des paramètres globaux de reduce.algo2
+function initGlobalParams() {
+  naf = nafValues
+  actual_batch = "1905"
+  date_debut = new Date("2014-01-01")
+  date_fin = new Date("2018-02-01")
+  serie_periode = generatePeriodSerie(
+    new Date("2014-01-01"),
+    new Date("2018-02-01")
+  )
+  offset_effectif = 2
+  includes = { all: true }
+}
+
+test("l'ordre de traitement des données n'influe pas sur les résultats", (t: ExecutionContext) => {
   testCases.forEach(({ _id, value }) => {
-    // preparation de l'environnement d'exécution de map()
-    const pool: Record<any, any> = {}
-    emit = (key: any, value: any) => {
-      const id = key.siren + key.batch + key.periode.getTime()
-      pool[id] = (pool[id] || []).concat([{ key, value }])
-    }
-    // initialisation des paramètres globaux de reduce.algo2
-    naf = nafValues
-    actual_batch = "1905"
-    date_debut = new Date("2014-01-01")
-    date_fin = new Date("2018-02-01")
-    serie_periode = generatePeriodSerie(
-      new Date("2014-01-01"),
-      new Date("2018-02-01")
-    )
-    offset_effectif = 2
-    includes = { all: true }
-    // exécution du test
-    map.call({ _id, value /*, ...f*/ }) // will populate pool
+    initGlobalParams()
+
+    const pool = setupMapCollector()
+    map.call({ _id, value }) // will populate pool
+
     const intermediateResult = objectValues(pool).map((array) =>
       reducer(array, reduce)
     )
@@ -60,9 +67,8 @@ test("algo2_tests depuis objects", (t: ExecutionContext) => {
   })
 })
 
-function objectValues<T>(obj: Record<string, T>): T[] {
-  return Object.keys(obj).map((key) => obj[key])
-}
+const objectValues = <T>(obj: Record<string, T>): T[] =>
+  Object.keys(obj).map((key) => obj[key])
 
 // from https://gist.github.com/ninapavlich/1697bcc107052f5b884a794d307845fe
 function sortObject(object: any): any {
