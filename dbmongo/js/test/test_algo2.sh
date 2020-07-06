@@ -2,19 +2,6 @@
 
 shopt -s extglob # enable exclusion of test files in wildcard
 
-result_lookAhead=$(jsc \
-  helpers/testing.js \
-  helpers/fakes.js \
-  helpers/fake_emit_for_algo2.js \
-  ../common/!(*_test*).js \
-  ../reduce.algo2/!(*_test*).js \
-  ../reduce.algo2/lookAhead_test.js \
-  2>&1)
-if [ "$result_lookAhead" != 'true' ]; then
-  echo "lookAhead_test: $result_lookAhead"
-  exit 1
-fi
-
 result_cibleApprentissage=$(jsc \
   helpers/testing.js \
   helpers/fakes.js \
