@@ -1733,11 +1733,11 @@ function flatten(v, actual_batch) {
     // pourra se demander que s'est-il passé
     /* eslint-disable */
     var sorting_fun = function (a, b) {
-        return a >= b;
+        return a >= b ? 1 : -1; // TODO: normally, a sorting comparator should return a number, possibly including zero. => the TS version of the test has failed until we added ` + "`" + `? 1 : -1` + "`" + ` here
     };
     if (past) {
         sorting_fun = function (a, b) {
-            return a <= b;
+            return a <= b ? 1 : -1; // TODO: normally, a sorting comparator should return a number, possibly including zero. => the TS version of the test has failed until we added ` + "`" + `? 1 : -1` + "`" + ` here
         };
     }
     /* eslint-enable */
