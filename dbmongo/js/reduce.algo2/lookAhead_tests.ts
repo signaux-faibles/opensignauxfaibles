@@ -1,16 +1,19 @@
 import test, { ExecutionContext } from "ava"
-import "../globals"
 import { lookAhead } from "./lookAhead"
 
 type TestCase = {
+  name: string
   data: Parameters<typeof lookAhead>[0]
   attr_name: Parameters<typeof lookAhead>[1]
   n_months: Parameters<typeof lookAhead>[2]
   past: Parameters<typeof lookAhead>[3]
   expected: unknown
 }
+
 const testCases: Array<TestCase> = [
   {
+    name:
+      "la période indique une échéance immédiate, si celle-ci est deja atteinte dans l'unique période fournie",
     data: { "2015-01-01": { outcome: true } },
     attr_name: "outcome",
     n_months: 1,
@@ -18,6 +21,8 @@ const testCases: Array<TestCase> = [
     expected: { "2015-01-01": { time_til_outcome: 0, outcome: true } },
   },
   {
+    name:
+      "aucune période n'est retournée si l'échéance n'est pas atteinte dans la période fournie",
     data: { "2015-01-01": { outcome: false } },
     attr_name: "outcome",
     n_months: 1,
@@ -25,6 +30,8 @@ const testCases: Array<TestCase> = [
     expected: {},
   },
   {
+    name:
+      "aucune période n'est retournée si l'échéance n'est jamais atteinte dans les données fournies",
     data: {
       "2015-01-01": { outcome: false },
       "2015-02-01": { outcome: false },
@@ -36,6 +43,8 @@ const testCases: Array<TestCase> = [
     expected: {},
   },
   {
+    name:
+      "l'échéance est marquée comme atteinte immédiatement pour chaque période, si outcome est vrai pour chaque période fournie",
     data: {
       "2015-01-01": { outcome: true },
       "2015-02-01": { outcome: true },
@@ -51,6 +60,8 @@ const testCases: Array<TestCase> = [
     },
   },
   {
+    name:
+      "compte à rebours jusqu'à l'échéance déclarée en dernière période fournie",
     data: {
       "2015-01-01": { outcome: false },
       "2015-02-01": { outcome: false },
@@ -66,6 +77,7 @@ const testCases: Array<TestCase> = [
     },
   },
   {
+    name: "les périodes suivant l'échéance ne sont pas retournées",
     data: {
       "2015-01-01": { outcome: true },
       "2015-02-01": { outcome: false },
@@ -79,6 +91,8 @@ const testCases: Array<TestCase> = [
     },
   },
   {
+    name:
+      "si l'échéance se répercute dans le futur, les périodes suivantes sont retournées",
     data: {
       "2015-01-01": { outcome: true },
       "2015-02-01": { outcome: false },
@@ -94,6 +108,8 @@ const testCases: Array<TestCase> = [
     },
   },
   {
+    name:
+      "si l'échéance se répercute dans le futur, les périodes suivantes sont retournées, même si aucune donnée n'est fournie dans les périodes suivant l'échéance",
     data: {
       "2015-01-01": { outcome: true },
       "2015-02-01": {},
@@ -110,8 +126,8 @@ const testCases: Array<TestCase> = [
   },
 ]
 
-testCases.forEach(({ expected, ...tc }, number) => {
-  test.serial(`add(): case #${number}`, (t: ExecutionContext) => {
+testCases.forEach(({ name, expected, ...tc }) => {
+  test.serial(`lookAhead(): ${name}`, (t: ExecutionContext) => {
     const actual = lookAhead(
       tc["data"],
       tc["attr_name"],
