@@ -2,19 +2,6 @@
 
 shopt -s extglob # enable exclusion of test files in wildcard
 
-result_cibleApprentissage=$(jsc \
-  helpers/testing.js \
-  helpers/fakes.js \
-  helpers/fake_emit_for_algo2.js \
-  ../common/!(*_test*).js \
-  ../reduce.algo2/!(*_test*).js \
-  ../reduce.algo2/cibleApprentissage_test.js \
-  2>&1)
-if [ "$result_cibleApprentissage" != 'true' ]; then
-  echo "cibleApprentissage_test: $result_cibleApprentissage"
-  exit 1
-fi
-
 result_mapreduce=$(jsc \
   helpers/fakes.js \
   ../reduce.algo2/!(*_test*).js \
