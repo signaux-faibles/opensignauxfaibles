@@ -1236,7 +1236,11 @@ db.getCollection("Features").createIndex({
             counter = 0;
     });
 }`,
-"cotisationsdettes": `function cotisationsdettes(v, periodes) {
+"cotisationsdettes": `/**
+ * Calcule les variables liées aux cotisations sociales et dettes sur ces
+ * cotisations.
+ */
+function cotisationsdettes(v, periodes) {
     "use strict";
 
     // Tous les débits traitées après ce jour du mois sont reportées à la période suivante
@@ -1427,7 +1431,17 @@ db.getCollection("Features").createIndex({
     f.dealWithProcols(v.altares, "altares", output_indexed);
     f.dealWithProcols(v.procol, "procol", output_indexed);
 }`,
-"delais": `function delais(v, debitParPériode) {
+"delais": `/**
+ * Calcule pour chaque période le nombre de jours restants du délai accordé et
+ * un indicateur de la déviation par rapport à un remboursement linéaire du
+ * montant couvert par le délai. Un "délai" étant une demande accordée de délai
+ * de paiement des cotisations sociales, pour un certain montant
+ * (delai_montant_echeancier) et pendant une certaine période
+ * (delai_nb_jours_total).
+ * Contrat: cette fonction ne devrait être appelée que s'il y a eu au moins une
+ * demande de délai.
+ */
+function delais(v, debitParPériode) {
     "use strict";
     const donnéesSupplémentairesParPériode = {};
     Object.keys(v.delai).map(function (hash) {

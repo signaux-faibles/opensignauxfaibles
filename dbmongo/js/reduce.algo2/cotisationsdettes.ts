@@ -18,7 +18,7 @@ type Dette = {
   montant_majorations: EntréeDebit["montant_majorations"]
 }
 
-type SortieCotisationsDettes = {
+export type SortieCotisationsDettes = {
   interessante_urssaf: boolean // true: si l'entreprise n'a pas eu de débit (dette) sur les 6 derniers mois
   cotisation: number // montant (€) des mensualités de règlement des cotisations sociales
   montant_part_ouvriere: number // montant (€) de la dette imputable au réglement des cotisatisations sociales des employés

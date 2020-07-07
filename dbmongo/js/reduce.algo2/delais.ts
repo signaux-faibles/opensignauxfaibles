@@ -5,8 +5,8 @@ type DeepReadonly<T> = Readonly<T> // pas vraiment, mais espoire que TS le suppo
 
 // Valeurs attendues pour chaque période, lors de l'appel à delais()
 export type DebitComputedValues = {
-  montant_part_patronale?: number
-  montant_part_ouvriere?: number
+  montant_part_patronale: number
+  montant_part_ouvriere: number
 }
 
 // Valeurs retournées par delais(), pour chaque période
