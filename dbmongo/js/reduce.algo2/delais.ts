@@ -31,7 +31,8 @@ export type DelaiComputedValues = {
  */
 export function delais(
   v: DonnéesDelai,
-  debitParPériode: DeepReadonly<ParPériode<DebitComputedValues>>
+  debitParPériode: DeepReadonly<ParPériode<DebitComputedValues>>,
+  sériePériode: Date[]
 ): ParPériode<DelaiComputedValues> {
   "use strict"
   const donnéesSupplémentairesParPériode: ParPériode<DelaiComputedValues> = {}
@@ -63,14 +64,11 @@ export function delais(
     // Création d'un tableau de timestamps à raison de 1 par mois.
     const pastYearTimes = f
       .generatePeriodSerie(date_creation, date_echeance)
-      .map(function (date: Date) {
-        return date.getTime()
-      })
-    pastYearTimes.map(function (time: number) {
-      if (time in debitParPériode) {
+    pastYearTimes.map(function (time: Date) {
+      if (sériePériode.includes(time)) {
         const debutDeMois = new Date(time)
         const remainingDays = nbDays(debutDeMois, delai.date_echeance)
-        const inputAtTime = debitParPériode[time]
+        const inputAtTime = debitParPériode[time.getTime()]
         const outputAtTime: DelaiComputedValues = {
           delai_nb_jours_restants: remainingDays,
           delai_nb_jours_total: delai.duree_delai,
@@ -90,7 +88,7 @@ export function delais(
             (detteActuelle - detteHypothétiqueRemboursementLinéaire) /
             delai.montant_echeancier
         }
-        donnéesSupplémentairesParPériode[time] = outputAtTime
+        donnéesSupplémentairesParPériode[time.getTime()] = outputAtTime
       }
     })
   })

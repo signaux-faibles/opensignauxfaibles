@@ -131,7 +131,8 @@ export function map(this: {
       if (v.delai) {
         const output_delai = f.delais(
           v as DonnéesDelai,
-          output_cotisationsdettes || {}
+          output_cotisationsdettes || {},
+          serie_periode
         )
         f.add(output_delai, output_indexed)
       }
