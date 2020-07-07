@@ -22,9 +22,17 @@ export type SortieCotisationsDettes = {
   interessante_urssaf: boolean // true: si l'entreprise n'a pas eu de débit (dette) sur les 6 derniers mois
   cotisation: number // montant (€) des mensualités de règlement des cotisations sociales
   montant_part_ouvriere: number // montant (€) de la dette imputable au réglement des cotisatisations sociales des employés
+  montant_part_ouvriere_past_1: number
+  montant_part_ouvriere_past_2: number
+  montant_part_ouvriere_past_3: number
+  montant_part_ouvriere_past_6: number
+  montant_part_ouvriere_past_12: number
   montant_part_patronale: number // montant (€) de la dette imputable au réglement des cotisatisations sociales des dirigeants
-} & {
-  [other: string]: number // ⚠️ ex: montant_part_ouvriere_past_* // TODO: éviter les clés dynamiques
+  montant_part_patronale_past_1: number
+  montant_part_patronale_past_2: number
+  montant_part_patronale_past_3: number
+  montant_part_patronale_past_6: number
+  montant_part_patronale_past_12: number
 }
 
 /**
@@ -204,8 +212,8 @@ export function cotisationsdettes(
     past_month_offsets.forEach((offset) => {
       const time_offset = f.dateAddMonth(time_d, offset)
       const variable_name_part_ouvriere = "montant_part_ouvriere_past_" + offset
-      const variable_name_part_patronale =
-        "montant_part_patronale_past_" + offset
+      const variable_name_part_patronale = ("montant_part_patronale_past_" +
+        offset) as keyof SortieCotisationsDettes
       output_cotisationsdettes[time_offset.getTime()] =
         output_cotisationsdettes[time_offset.getTime()] || {}
       const val_offset = output_cotisationsdettes[time_offset.getTime()]

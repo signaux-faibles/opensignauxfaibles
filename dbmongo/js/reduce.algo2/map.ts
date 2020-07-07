@@ -119,10 +119,19 @@ export function map(this: {
         f.add(output_repeatable, output_indexed)
       }
 
+      let output_cotisationsdettes
+      if (v.cotisation && v.debit) {
+        output_cotisationsdettes = f.cotisationsdettes(
+          v as DonnéesCotisation & DonnéesDebit,
+          periodes
+        )
+        f.add(output_cotisationsdettes, output_indexed)
+      }
+
       if (v.delai) {
         const output_delai = f.delais(
           v as DonnéesDelai,
-          output_indexed // TODO: vérifier que les données débit sont déjà calculées
+          output_cotisationsdettes || {}
         )
         f.add(output_delai, output_indexed)
       }
@@ -132,14 +141,6 @@ export function map(this: {
 
       if (v.altares) {
         f.defaillances(v as DonnéesDefaillances, output_indexed)
-      }
-
-      if (v.cotisation && v.debit) {
-        const output_cotisationsdettes = f.cotisationsdettes(
-          v as DonnéesCotisation & DonnéesDebit,
-          periodes
-        )
-        f.add(output_cotisationsdettes, output_indexed)
       }
 
       if (v.ccsf) {

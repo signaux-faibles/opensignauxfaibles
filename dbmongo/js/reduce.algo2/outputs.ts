@@ -12,8 +12,7 @@ type DonnéesAgrégées = {
   etat_proc_collective: "in_bonis" // ou ProcolToHumanRes ?
   interessante_urssaf: true
   outcome: false
-} &
-  Partial<SortieCotisationsDettes> &
+} & Partial<SortieCotisationsDettes> &
   Partial<SortieDefaillances> &
   Partial<SortieCcsf> &
   Partial<SortieSirene> &
