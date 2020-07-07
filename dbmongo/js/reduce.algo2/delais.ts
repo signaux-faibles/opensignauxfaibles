@@ -11,12 +11,24 @@ export type DebitComputedValues = {
 
 // Valeurs retournées par delais(), pour chaque période
 export type DelaiComputedValues = {
-  delai_nb_jours_restants: number
+  // valeurs fournies, reportées par delais() dans chaque période:
   delai_nb_jours_total: number // nombre de jours entre date_creation et date_echeance
-  delai_deviation_remboursement?: number
   delai_montant_echeancier: number // exprimé en euros
+  // valeurs calculées par delais():
+  delai_nb_jours_restants: number
+  delai_deviation_remboursement?: number // ratio entre remboursement linéaire et effectif, à condition d'avoir le montant des parts ouvrière et patronale
 }
 
+/**
+ * Calcule pour chaque période le nombre de jours restants du délai accordé et
+ * un indicateur de la déviation par rapport à un remboursement linéaire du
+ * montant couvert par le délai. Un "délai" étant une demande accordée de délai
+ * de paiement des cotisations sociales, pour un certain montant
+ * (delai_montant_echeancier) et pendant une certaine période
+ * (delai_nb_jours_total).
+ * Contrat: cette fonction ne devrait être appelée que s'il y a eu au moins une
+ * demande de délai.
+ */
 export function delais(
   v: DonnéesDelai,
   debitParPériode: DeepReadonly<ParPériode<DebitComputedValues>>
