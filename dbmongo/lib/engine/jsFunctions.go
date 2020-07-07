@@ -1446,8 +1446,11 @@ function cotisationsdettes(v, periodes) {
 function delais(v, debitParPériode, intervalleTraitement) {
     "use strict";
     const donnéesDélaiParPériode = {};
-    Object.keys(v.delai).map(function (hash) {
+    Object.keys(v.delai).forEach(function (hash) {
         const delai = v.delai[hash];
+        if (delai.duree_delai <= 0) {
+            return;
+        }
         // On arrondit les dates au premier jour du mois.
         const date_creation = new Date(Date.UTC(delai.date_creation.getUTCFullYear(), delai.date_creation.getUTCMonth(), 1, 0, 0, 0, 0));
         const date_echeance = new Date(Date.UTC(delai.date_echeance.getUTCFullYear(), delai.date_echeance.getUTCMonth(), 1, 0, 0, 0, 0));
@@ -1464,8 +1467,7 @@ function delais(v, debitParPériode, intervalleTraitement) {
                 delai_nb_jours_total: delai.duree_delai,
                 delai_montant_echeancier: delai.montant_echeancier,
             };
-            if (delai.duree_delai > 0 &&
-                (inputAtTime === null || inputAtTime === void 0 ? void 0 : inputAtTime.montant_part_patronale) !== undefined &&
+            if ((inputAtTime === null || inputAtTime === void 0 ? void 0 : inputAtTime.montant_part_patronale) !== undefined &&
                 (inputAtTime === null || inputAtTime === void 0 ? void 0 : inputAtTime.montant_part_ouvriere) !== undefined) {
                 const detteActuelle = inputAtTime.montant_part_patronale +
                     inputAtTime.montant_part_ouvriere;

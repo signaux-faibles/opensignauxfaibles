@@ -36,8 +36,12 @@ export function delais(
 ): ParPériode<DelaiComputedValues> {
   "use strict"
   const donnéesDélaiParPériode: ParPériode<DelaiComputedValues> = {}
-  Object.keys(v.delai).map(function (hash) {
+  Object.keys(v.delai).forEach(function (hash) {
     const delai = v.delai[hash]
+    if (delai.duree_delai <= 0) {
+      return
+    }
+
     // On arrondit les dates au premier jour du mois.
     const date_creation = new Date(
       Date.UTC(
@@ -78,7 +82,6 @@ export function delais(
           delai_montant_echeancier: delai.montant_echeancier,
         }
         if (
-          delai.duree_delai > 0 &&
           inputAtTime?.montant_part_patronale !== undefined &&
           inputAtTime?.montant_part_ouvriere !== undefined
         ) {
