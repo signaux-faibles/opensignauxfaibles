@@ -35,7 +35,7 @@ export function delais(
   sériePériode: Date[]
 ): ParPériode<DelaiComputedValues> {
   "use strict"
-  const donnéesSupplémentairesParPériode: ParPériode<DelaiComputedValues> = {}
+  const donnéesDélaiParPériode: ParPériode<DelaiComputedValues> = {}
   Object.keys(v.delai).map(function (hash) {
     const delai = v.delai[hash]
     // On arrondit les dates au premier jour du mois.
@@ -62,11 +62,12 @@ export function delais(
       )
     )
     // Création d'un tableau de timestamps à raison de 1 par mois.
-    f
-      .generatePeriodSerie(date_creation, date_echeance)
+    f.generatePeriodSerie(date_creation, date_echeance)
       .map((date) => date.getTime())
-      .filter((time) => sériePériode.map((date) => date.getTime()).includes(time))
-        // TODO: ne pas convertir sériePériode à chaque fois
+      .filter((time) =>
+        sériePériode.map((date) => date.getTime()).includes(time)
+      )
+      // TODO: ne pas convertir sériePériode à chaque fois
       .map(function (time: number) {
         const debutDeMois = new Date(time)
         const remainingDays = nbDays(debutDeMois, delai.date_echeance)
@@ -91,8 +92,8 @@ export function delais(
             (detteActuelle - detteHypothétiqueRemboursementLinéaire) /
             delai.montant_echeancier
         }
-        donnéesSupplémentairesParPériode[time] = outputAtTime
+        donnéesDélaiParPériode[time] = outputAtTime
       })
   })
-  return donnéesSupplémentairesParPériode
+  return donnéesDélaiParPériode
 }
