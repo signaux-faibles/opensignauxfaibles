@@ -17,6 +17,11 @@ func GetEntreprisePipeline() (pipeline []bson.M) {
 	pipeline = append(pipeline, bson.M{"$addFields": bson.M{
 		"idEntreprise": bson.M{"$substr": []interface{}{"$value.key", 0, 9}},
 	}})
+	pipeline = append(pipeline, bson.M{"$lookup": bson.M{
+		"from":         "Scores",
+		"localField":   "value.key",
+		"foreignField": "siret",
+		"as":           "scores"}})
 	pipeline = append(pipeline, bson.M{"$group": bson.M{
 		"_id":            "$idEntreprise",
 		"etablissements": bson.M{"$push": "$$ROOT"},
