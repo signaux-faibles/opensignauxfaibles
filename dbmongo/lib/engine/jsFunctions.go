@@ -1360,12 +1360,14 @@ function cotisationsdettes(v, periodes) {
             montant_majorations: 0,
         });
         val = Object.assign(val, montant_dette);
-        const past_month_offsets = [1, 2, 3, 6, 12];
+        const past_month_offsets = [1, 2, 3, 6, 12]; // Penser à mettre à jour le type CotisationsDettesPassees pour tout changement
         const time_d = new Date(parseInt(time));
         past_month_offsets.forEach((offset) => {
             const time_offset = f.dateAddMonth(time_d, offset);
-            const variable_name_part_ouvriere = "montant_part_ouvriere_past_" + offset;
-            const variable_name_part_patronale = "montant_part_patronale_past_" + offset;
+            const variable_name_part_ouvriere = ("montant_part_ouvriere_past_" +
+                offset);
+            const variable_name_part_patronale = ("montant_part_patronale_past_" +
+                offset);
             output_cotisationsdettes[time_offset.getTime()] =
                 output_cotisationsdettes[time_offset.getTime()] || {};
             const val_offset = output_cotisationsdettes[time_offset.getTime()];
@@ -1441,7 +1443,7 @@ function cotisationsdettes(v, periodes) {
  * Contrat: cette fonction ne devrait être appelée que s'il y a eu au moins une
  * demande de délai.
  */
-function delais(v, debitParPériode) {
+function delais(v, debitParPériode, sériePériode) {
     "use strict";
     const donnéesSupplémentairesParPériode = {};
     Object.keys(v.delai).map(function (hash) {
@@ -1452,11 +1454,9 @@ function delais(v, debitParPériode) {
         // Création d'un tableau de timestamps à raison de 1 par mois.
         const pastYearTimes = f
             .generatePeriodSerie(date_creation, date_echeance)
-            .map(function (date) {
-            return date.getTime();
-        });
+            .map((date) => date.getTime());
         pastYearTimes.map(function (time) {
-            if (time in debitParPériode) {
+            if (sériePériode.map((date) => date.getTime()).includes(time)) {
                 const debutDeMois = new Date(time);
                 const remainingDays = nbDays(debutDeMois, delai.date_echeance);
                 const inputAtTime = debitParPériode[time];
@@ -1840,19 +1840,19 @@ function map() {
                 const output_repeatable = f.repeatable(v.reporder);
                 f.add(output_repeatable, output_indexed);
             }
+            let output_cotisationsdettes;
+            if (v.cotisation && v.debit) {
+                output_cotisationsdettes = f.cotisationsdettes(v, periodes);
+                f.add(output_cotisationsdettes, output_indexed);
+            }
             if (v.delai) {
-                const output_delai = f.delais(v, output_indexed // TODO: vérifier que les données débit sont déjà calculées
-                );
+                const output_delai = f.delais(v, output_cotisationsdettes || {}, serie_periode);
                 f.add(output_delai, output_indexed);
             }
             v.altares = v.altares || {};
             v.procol = v.procol || {};
             if (v.altares) {
                 f.defaillances(v, output_indexed);
-            }
-            if (v.cotisation && v.debit) {
-                const output_cotisationsdettes = f.cotisationsdettes(v, periodes);
-                f.add(output_cotisationsdettes, output_indexed);
             }
             if (v.ccsf) {
                 f.ccsf(v, output_array);

@@ -95,6 +95,10 @@ test("un délai en dehors de la période d'intérêt est ignorée", (t: Executio
   }
   const donnéesParPériode: ParPériode<DebitComputedValues> = {}
   donnéesParPériode[fevrier.getTime()] = makeDebitParPériode()
-  const périodesComplétées = delais({ delai: delaiMap }, donnéesParPériode, serie_periode)
+  const périodesComplétées = delais(
+    { delai: delaiMap },
+    donnéesParPériode,
+    serie_periode
+  )
   t.deepEqual(périodesComplétées, {})
 })

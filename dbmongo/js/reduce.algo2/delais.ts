@@ -64,11 +64,13 @@ export function delais(
     // Création d'un tableau de timestamps à raison de 1 par mois.
     const pastYearTimes = f
       .generatePeriodSerie(date_creation, date_echeance)
-    pastYearTimes.map(function (time: Date) {
-      if (sériePériode.includes(time)) {
+      .map((date) => date.getTime())
+    pastYearTimes.map(function (time: number) {
+      if (sériePériode.map((date) => date.getTime()).includes(time)) {
+        // TODO: ne pas convertir sériePériode à chaque fois
         const debutDeMois = new Date(time)
         const remainingDays = nbDays(debutDeMois, delai.date_echeance)
-        const inputAtTime = debitParPériode[time.getTime()]
+        const inputAtTime = debitParPériode[time]
         const outputAtTime: DelaiComputedValues = {
           delai_nb_jours_restants: remainingDays,
           delai_nb_jours_total: delai.duree_delai,
@@ -88,7 +90,7 @@ export function delais(
             (detteActuelle - detteHypothétiqueRemboursementLinéaire) /
             delai.montant_echeancier
         }
-        donnéesSupplémentairesParPériode[time.getTime()] = outputAtTime
+        donnéesSupplémentairesParPériode[time] = outputAtTime
       }
     })
   })
