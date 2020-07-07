@@ -132,7 +132,10 @@ export function map(this: {
         const output_delai = f.delais(
           v as DonnéesDelai,
           output_cotisationsdettes || {},
-          serie_periode
+          {
+            premièreDate: serie_periode[0],
+            dernièreDate: serie_periode[serie_periode.length - 1],
+          }
         )
         f.add(output_delai, output_indexed)
       }

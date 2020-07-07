@@ -5,7 +5,6 @@ import { delais, DelaiComputedValues, DebitComputedValues } from "./delais"
 
 const fevrier = new Date("2014-02-01")
 const mars = new Date("2014-03-01")
-const serie_periode = [fevrier, mars]
 
 const makeDelai = (firstDate: Date, secondDate: Date): EntréeDelai => ({
   date_creation: firstDate,
@@ -34,7 +33,10 @@ const runDelais = (
     debitParPériode[fevrier.getTime()] = makeDebitParPériode(debits)
     debitParPériode[mars.getTime()] = makeDebitParPériode(debits)
   }
-  return delais({ delai: delaiMap }, debitParPériode, serie_periode)
+  return delais({ delai: delaiMap }, debitParPériode, {
+    premièreDate: fevrier,
+    dernièreDate: mars,
+  })
 }
 
 test("la propriété delai_nb_jours_restants représente le nombre de jours restants du délai", (t: ExecutionContext) => {
@@ -95,10 +97,9 @@ test("un délai en dehors de la période d'intérêt est ignorée", (t: Executio
   }
   const donnéesParPériode: ParPériode<DebitComputedValues> = {}
   donnéesParPériode[fevrier.getTime()] = makeDebitParPériode()
-  const périodesComplétées = delais(
-    { delai: delaiMap },
-    donnéesParPériode,
-    serie_periode
-  )
+  const périodesComplétées = delais({ delai: delaiMap }, donnéesParPériode, {
+    premièreDate: fevrier,
+    dernièreDate: mars,
+  })
   t.deepEqual(périodesComplétées, {})
 })

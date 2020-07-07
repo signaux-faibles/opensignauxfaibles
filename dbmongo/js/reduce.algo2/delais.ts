@@ -32,7 +32,7 @@ export type DelaiComputedValues = {
 export function delais(
   v: DonnéesDelai,
   debitParPériode: DeepReadonly<ParPériode<DebitComputedValues>>,
-  sériePériode: Date[]
+  intervalleTraitement: { premièreDate: Date; dernièreDate: Date }
 ): ParPériode<DelaiComputedValues> {
   "use strict"
   const donnéesDélaiParPériode: ParPériode<DelaiComputedValues> = {}
@@ -63,13 +63,13 @@ export function delais(
     )
     // Création d'un tableau de timestamps à raison de 1 par mois.
     f.generatePeriodSerie(date_creation, date_echeance)
-      .map((date) => date.getTime())
-      .filter((time) =>
-        sériePériode.map((date) => date.getTime()).includes(time)
+      .filter(
+        (date) =>
+          date >= intervalleTraitement.premièreDate &&
+          date <= intervalleTraitement.dernièreDate
       )
-      // TODO: ne pas convertir sériePériode à chaque fois
-      .map(function (time: number) {
-        const debutDeMois = new Date(time)
+      .map(function (debutDeMois) {
+        const time = debutDeMois.getTime()
         const remainingDays = nbDays(debutDeMois, delai.date_echeance)
         const inputAtTime = debitParPériode[time]
         const outputAtTime: DelaiComputedValues = {
