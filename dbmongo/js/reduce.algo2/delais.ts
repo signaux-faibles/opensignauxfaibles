@@ -82,8 +82,8 @@ export function delais(
           delai_montant_echeancier: delai.montant_echeancier,
         }
         if (
-          inputAtTime?.montant_part_patronale !== undefined &&
-          inputAtTime?.montant_part_ouvriere !== undefined
+          typeof inputAtTime?.montant_part_patronale !== "undefined" &&
+          typeof inputAtTime?.montant_part_ouvriere !== "undefined"
         ) {
           const detteActuelle =
             inputAtTime.montant_part_patronale +

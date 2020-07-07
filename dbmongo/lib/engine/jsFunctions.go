@@ -1467,8 +1467,8 @@ function delais(v, debitParPériode, intervalleTraitement) {
                 delai_nb_jours_total: delai.duree_delai,
                 delai_montant_echeancier: delai.montant_echeancier,
             };
-            if ((inputAtTime === null || inputAtTime === void 0 ? void 0 : inputAtTime.montant_part_patronale) !== undefined &&
-                (inputAtTime === null || inputAtTime === void 0 ? void 0 : inputAtTime.montant_part_ouvriere) !== undefined) {
+            if (typeof (inputAtTime === null || inputAtTime === void 0 ? void 0 : inputAtTime.montant_part_patronale) !== "undefined" &&
+                typeof (inputAtTime === null || inputAtTime === void 0 ? void 0 : inputAtTime.montant_part_ouvriere) !== "undefined") {
                 const detteActuelle = inputAtTime.montant_part_patronale +
                     inputAtTime.montant_part_ouvriere;
                 const detteHypothétiqueRemboursementLinéaire = (delai.montant_echeancier * remainingDays) / delai.duree_delai;
