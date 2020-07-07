@@ -42,7 +42,27 @@ echo ""
 echo "📄 Inserting test data..."
 sleep 1 # give some time for MongoDB to start
 cat > "${DATA_DIR}/db_popul.js" << CONTENTS
-  db.Score.remove({})
+  db.Scores.remove({})
+  db.Scores.insertMany([
+    {
+        "siret" : "01234567891011",
+        "periode" : "2014-01-01",
+        "score" : 0.97,
+        "batch" : "2002_1",
+        "timestamp" : ISODate("2014-01-01T00:00:00.000+0000"),
+        "algo" : "algo_avec_urssaf",
+        "alert" : "Alerte seuil F1"
+    },
+    {
+        "siret" : "01234567891011",
+        "periode" : "2015-01-01",
+        "score" : 0.98,
+        "batch" : "2002_1",
+        "timestamp" : ISODate("2015-01-01T00:00:00.000+0000"),
+        "algo" : "algo_avec_urssaf",
+        "alert" : "Alerte seuil F1"
+    },
+  ])
 
   db.Admin.remove({})
   db.Admin.insertOne({

@@ -5,6 +5,7 @@
       {
         "_id": "entreprise_012345678",
         "idEntreprise": "012345678",
+        "scores": [],
         "value": {
           "batch": "2002_1",
           "bdf": [
@@ -1232,6 +1233,28 @@
       {
         "_id": "etablissement_01234567891011",
         "idEntreprise": "012345678",
+        "scores": [
+          {
+            "_id": "5f049cd7b6250899df406097",
+            "alert": "Alerte seuil F1",
+            "algo": "algo_avec_urssaf",
+            "batch": "2002_1",
+            "periode": "2014-01-01",
+            "score": 0.97,
+            "siret": "01234567891011",
+            "timestamp": "2014-01-01T00:00:00Z"
+          },
+          {
+            "_id": "5f049cd7b6250899df406098",
+            "alert": "Alerte seuil F1",
+            "algo": "algo_avec_urssaf",
+            "batch": "2002_1",
+            "periode": "2015-01-01",
+            "score": 0.98,
+            "siret": "01234567891011",
+            "timestamp": "2015-01-01T00:00:00Z"
+          }
+        ],
         "value": {
           "apconso": [],
           "apdemande": [],
