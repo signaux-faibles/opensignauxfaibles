@@ -79,9 +79,8 @@ export function delais(
         }
         if (
           delai.duree_delai > 0 &&
-          inputAtTime !== undefined &&
-          inputAtTime.montant_part_patronale !== undefined &&
-          inputAtTime.montant_part_ouvriere !== undefined
+          inputAtTime?.montant_part_patronale !== undefined &&
+          inputAtTime?.montant_part_ouvriere !== undefined
         ) {
           const detteActuelle =
             inputAtTime.montant_part_patronale +
