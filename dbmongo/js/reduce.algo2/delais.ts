@@ -62,37 +62,37 @@ export function delais(
       )
     )
     // Création d'un tableau de timestamps à raison de 1 par mois.
-    const pastYearTimes = f
+    f
       .generatePeriodSerie(date_creation, date_echeance)
       .map((date) => date.getTime())
       .filter((time) => sériePériode.map((date) => date.getTime()).includes(time))
         // TODO: ne pas convertir sériePériode à chaque fois
-    pastYearTimes.map(function (time: number) {
-      const debutDeMois = new Date(time)
-      const remainingDays = nbDays(debutDeMois, delai.date_echeance)
-      const inputAtTime = debitParPériode[time]
-      const outputAtTime: DelaiComputedValues = {
-        delai_nb_jours_restants: remainingDays,
-        delai_nb_jours_total: delai.duree_delai,
-        delai_montant_echeancier: delai.montant_echeancier,
-      }
-      if (
-        delai.duree_delai > 0 &&
-        inputAtTime !== undefined &&
-        inputAtTime.montant_part_patronale !== undefined &&
-        inputAtTime.montant_part_ouvriere !== undefined
-      ) {
-        const detteActuelle =
-          inputAtTime.montant_part_patronale +
-          inputAtTime.montant_part_ouvriere
-        const detteHypothétiqueRemboursementLinéaire =
-          (delai.montant_echeancier * remainingDays) / delai.duree_delai
-        outputAtTime.delai_deviation_remboursement =
-          (detteActuelle - detteHypothétiqueRemboursementLinéaire) /
-          delai.montant_echeancier
-      }
-      donnéesSupplémentairesParPériode[time] = outputAtTime
-    })
+      .map(function (time: number) {
+        const debutDeMois = new Date(time)
+        const remainingDays = nbDays(debutDeMois, delai.date_echeance)
+        const inputAtTime = debitParPériode[time]
+        const outputAtTime: DelaiComputedValues = {
+          delai_nb_jours_restants: remainingDays,
+          delai_nb_jours_total: delai.duree_delai,
+          delai_montant_echeancier: delai.montant_echeancier,
+        }
+        if (
+          delai.duree_delai > 0 &&
+          inputAtTime !== undefined &&
+          inputAtTime.montant_part_patronale !== undefined &&
+          inputAtTime.montant_part_ouvriere !== undefined
+        ) {
+          const detteActuelle =
+            inputAtTime.montant_part_patronale +
+            inputAtTime.montant_part_ouvriere
+          const detteHypothétiqueRemboursementLinéaire =
+            (delai.montant_echeancier * remainingDays) / delai.duree_delai
+          outputAtTime.delai_deviation_remboursement =
+            (detteActuelle - detteHypothétiqueRemboursementLinéaire) /
+            delai.montant_echeancier
+        }
+        donnéesSupplémentairesParPériode[time] = outputAtTime
+      })
   })
   return donnéesSupplémentairesParPériode
 }
