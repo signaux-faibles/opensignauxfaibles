@@ -297,6 +297,8 @@ func ExportEntrepriseToFile(filepath string) error {
 	}
 	defer file.Close()
 
+	const indent = "  "
+
 	_, err = file.Write([]byte("[\n"))
 	if err != nil {
 		return err
@@ -316,9 +318,20 @@ func ExportEntrepriseToFile(filepath string) error {
 		}
 	*/
 
+	var wroteOneElement = false
 	var entreprise interface{} //EntrepriseAvecEtablissements
 	for iter.Next(&entreprise) {
-		bytesToWrite, err := json.Marshal(entreprise)
+		if wroteOneElement {
+			_, err = file.Write([]byte(",\n"))
+			if err != nil {
+				return err
+			}
+		}
+		_, err = file.Write([]byte(indent))
+		if err != nil {
+			return err
+		}
+		bytesToWrite, err := json.MarshalIndent(entreprise, indent, indent)
 		if err != nil {
 			return err
 		}
@@ -331,12 +344,9 @@ func ExportEntrepriseToFile(filepath string) error {
 				return err
 			}
 		}
-		_, err = file.Write([]byte(",\n")) // TODO: pour que le JSON soit valide, ne pas ajouter de virgule au dernier élément
-		if err != nil {
-			return err
-		}
+		wroteOneElement = true
 	}
-	file.Write([]byte("]\n"))
+	file.Write([]byte("\n]\n"))
 	if err != nil {
 		return err
 	}
