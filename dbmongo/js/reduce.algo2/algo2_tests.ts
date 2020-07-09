@@ -9,6 +9,8 @@ import { objects as testCases } from "../test/data/objects"
 import { naf as nafValues } from "../test/data/naf"
 import { reducer, invertedReducer } from "../test/helpers/reducers"
 
+const DAY_IN_MS = 24 * 60 * 60 * 1000
+
 // Paramètres globaux utilisés par "reduce.algo2"
 declare let emit: unknown // called by map()
 declare let naf: NAF
@@ -110,11 +112,12 @@ test("delai_deviation_remboursement est calculé si un délai de règlement de c
   const dateDebut = new Date("2018-01-01")
   const datePlusUnMois = new Date("2018-02-01")
   initGlobalParams(dateDebut, datePlusUnMois)
-
+  const siret = "012345678901234"
+  const duréeDelai = 60 // en jours
   const input = {
-    _id: "012345678901234",
+    _id: siret,
     value: {
-      key: "012345678901234",
+      key: siret,
       scope: "etablissement" as Scope,
       batch: {
         "1905": {
@@ -136,9 +139,9 @@ test("delai_deviation_remboursement est calculé si un délai de règlement de c
             hash2: {
               date_creation: dateDebut,
               date_echeance: new Date(
-                dateDebut.getTime() + 60 * 24 * 60 * 60 * 1000
+                dateDebut.getTime() + duréeDelai * DAY_IN_MS
               ),
-              duree_delai: 60 * 24 * 60 * 60 * 1000,
+              duree_delai: duréeDelai,
               montant_echeancier: 100,
             },
           },
@@ -152,34 +155,8 @@ test("delai_deviation_remboursement est calculé si un délai de règlement de c
 
   const values = objectValues(pool)
   t.is(values.length, 1)
-  t.deepEqual(values[0], [
-    {
-      key: {
-        batch: "1905",
-        periode: dateDebut,
-        siren: "012345678",
-        type: "other",
-      },
-      value: {
-        "012345678901234": {
-          cotisation: 100,
-          cotisation_moy12m: 100,
-          delai_deviation_remboursement: -1.1574074074074074e-8,
-          delai_montant_echeancier: 100,
-          delai_nb_jours_restants: 60,
-          delai_nb_jours_total: 5184000000,
-          effectif: null,
-          etat_proc_collective: "in_bonis",
-          interessante_urssaf: true,
-          montant_part_ouvriere: 0,
-          montant_part_patronale: 0,
-          outcome: false,
-          periode: dateDebut,
-          ratio_dette: 0,
-          ratio_dette_moy12m: 0,
-          siret: "012345678901234",
-        },
-      },
-    },
-  ])
+  t.is(values[0].length, 1)
+  t.deepEqual(Object.keys(values[0][0].value), [siret])
+  const finalCompanyData = values[0][0].value[siret]
+  t.is(typeof finalCompanyData.delai_deviation_remboursement, "number")
 })
