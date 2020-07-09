@@ -1728,19 +1728,11 @@ function flatten(v, actual_batch) {
     // Est-ce que l'évènement se répercute dans le passé (past = true on pourra se
     // demander: que va-t-il se passer) ou dans le future (past = false on
     // pourra se demander que s'est-il passé
-    /* eslint-disable */
-    var sorting_fun = function (a, b) {
-        return a >= b ? 1 : -1; // TODO: normally, a sorting comparator should return a number, possibly including zero. => the TS version of the test has failed until we added ` + "`" + `? 1 : -1` + "`" + ` here
-    };
-    if (past) {
-        sorting_fun = function (a, b) {
-            return a <= b ? 1 : -1; // TODO: normally, a sorting comparator should return a number, possibly including zero. => the TS version of the test has failed until we added ` + "`" + `? 1 : -1` + "`" + ` here
-        };
-    }
-    /* eslint-enable */
+    const chronologic = (a, b) => (a > b ? 1 : -1);
+    const reverse = (a, b) => (b > a ? 1 : -1);
     let counter = -1;
     const output = Object.keys(data)
-        .sort(sorting_fun)
+        .sort(past ? reverse : chronologic)
         .reduce(function (m, period) {
         // Si on a déjà détecté quelque chose, on compte le nombre de périodes
         if (counter >= 0)
