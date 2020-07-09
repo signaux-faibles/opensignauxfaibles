@@ -73,7 +73,7 @@ export function map(this: {
 
     // Les periodes qui nous interessent, triées
     const periodes = Object.keys(output_indexed)
-      .sort((a, b) => (a >= b ? 1 : 0))
+      .sort()
       .map((timestamp) => parseInt(timestamp))
 
     if (includes["apart"] || includes["all"]) {
@@ -210,7 +210,7 @@ export function map(this: {
       }
 
       const periodes = Object.keys(output_indexed)
-        .sort((a, b) => (a >= b ? 1 : 0))
+        .sort()
         .map((timestamp) => parseInt(timestamp))
       if (v.effectif_ent) {
         const output_effectif_ent = f.effectifs(

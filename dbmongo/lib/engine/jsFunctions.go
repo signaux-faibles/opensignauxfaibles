@@ -1791,7 +1791,7 @@ function map() {
         output_indexed,] = f.outputs(v, serie_periode);
         // Les periodes qui nous interessent, triées
         const periodes = Object.keys(output_indexed)
-            .sort((a, b) => (a >= b ? 1 : 0))
+            .sort()
             .map((timestamp) => parseInt(timestamp));
         if (includes["apart"] || includes["all"]) {
             if (v.apconso && v.apdemande) {
@@ -1884,7 +1884,7 @@ function map() {
                 f.sirene_ul(v, output_array);
             }
             const periodes = Object.keys(output_indexed)
-                .sort((a, b) => (a >= b ? 1 : 0))
+                .sort()
                 .map((timestamp) => parseInt(timestamp));
             if (v.effectif_ent) {
                 const output_effectif_ent = f.effectifs(v.effectif_ent, periodes, "effectif_ent");
