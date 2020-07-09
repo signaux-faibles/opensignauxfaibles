@@ -30,15 +30,15 @@ function setupMapCollector() {
 }
 
 // initialisation des paramètres globaux de reduce.algo2
-function initGlobalParams() {
+function initGlobalParams(
+  dateDebut = new Date("2014-01-01"),
+  dateFin = new Date("2018-02-01")
+) {
   naf = nafValues
   actual_batch = "1905"
-  date_debut = new Date("2014-01-01")
-  date_fin = new Date("2018-02-01")
-  serie_periode = generatePeriodSerie(
-    new Date("2014-01-01"),
-    new Date("2018-02-01")
-  )
+  date_debut = dateDebut
+  date_fin = dateFin
+  serie_periode = generatePeriodSerie(dateDebut, dateFin)
   offset_effectif = 2
   includes = { all: true }
 }
@@ -105,3 +105,79 @@ function sortObject(object: any): any {
 
   return sortedObj
 }
+
+test("delai_deviation_remboursement est calculé si un délai de règlement de cotisations sociales a été demandé", (t: ExecutionContext) => {
+  const dateDebut = new Date("2018-01-01")
+  const datePlusUnMois = new Date("2018-02-01")
+  initGlobalParams(dateDebut, datePlusUnMois)
+
+  const input = {
+    _id: "012345678901234",
+    value: {
+      key: "012345678901234",
+      scope: "etablissement" as Scope,
+      batch: {
+        "1905": {
+          cotisation: {
+            hash0: {
+              periode: { start: dateDebut, end: datePlusUnMois },
+              du: 100,
+            },
+          },
+          debit: {},
+          /*
+          dettes: {
+            hash1: {
+              periode: dateDebut,
+              part_ouvriere: 100,
+              part_patronale: 0,
+            },
+          },
+          delai: {
+            hash2: {
+              date_creation: dateDebut,
+              date_echeance: new Date(
+                dateDebut.getTime() + 2 * 24 * 60 * 60 * 1000
+                ),
+                duree_delai: 2,
+                montant_echeancier: 100,
+              },
+            },
+            */
+        },
+      },
+    } as CompanyDataValues,
+  }
+
+  const pool = setupMapCollector()
+  map.call(input) // will populate pool
+
+  const values = objectValues(pool)
+  t.is(values.length, 1)
+  t.deepEqual(values[0], [
+    {
+      key: {
+        batch: "1905",
+        periode: dateDebut,
+        siren: "012345678",
+        type: "other",
+      },
+      value: {
+        "012345678901234": {
+          cotisation: 100,
+          cotisation_moy12m: 100,
+          effectif: null,
+          etat_proc_collective: "in_bonis",
+          interessante_urssaf: true,
+          montant_part_ouvriere: 0,
+          montant_part_patronale: 0,
+          outcome: false,
+          periode: dateDebut,
+          ratio_dette: 0,
+          ratio_dette_moy12m: 0,
+          siret: "012345678901234",
+        },
+      },
+    },
+  ])
+})
