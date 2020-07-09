@@ -105,7 +105,7 @@ export function cotisationsdettes(
     })
   })
 
-  const value_dette: Record<Periode, Dette[]> = {}
+  const value_dette: Record<string, Dette[]> = {}
   // Pour chaque objet debit:
   // debit_traitement_debut => periode de traitement du débit
   // debit_traitement_fin => periode de traitement du debit suivant, ou bien date_fin
