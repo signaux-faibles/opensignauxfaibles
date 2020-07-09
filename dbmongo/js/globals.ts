@@ -220,7 +220,6 @@ type EntréeDebit = {
   // le montant est ventilé entre ces trois valeurs, exprimées en euros (€):
   part_ouvriere: number
   part_patronale: number
-  montant_majorations: number
 }
 
 type Departement = string

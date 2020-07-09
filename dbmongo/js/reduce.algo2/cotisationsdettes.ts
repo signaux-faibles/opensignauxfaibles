@@ -15,7 +15,6 @@ type Dette = {
   periode: EntréeDebit["periode"]["start"]
   part_ouvriere: EntréeDebit["part_ouvriere"]
   part_patronale: EntréeDebit["part_patronale"]
-  montant_majorations: EntréeDebit["montant_majorations"]
 }
 
 type CotisationsDettesPassees = {
@@ -170,7 +169,6 @@ export function cotisationsdettes(
           periode: debit.periode.start,
           part_ouvriere: debit.part_ouvriere,
           part_patronale: debit.part_patronale,
-          montant_majorations: debit.montant_majorations,
         },
       ])
     })
@@ -193,18 +191,16 @@ export function cotisationsdettes(
       val.cotisation = value_cotisation[time].reduce((a, cot) => a + cot, 0)
     }
 
-    // somme de tous les débits (part ouvriere, part patronale, montant_majorations)
+    // somme de tous les débits (part ouvriere, part patronale)
     const montant_dette = (value_dette[time] || []).reduce(
       function (m, dette) {
         m.montant_part_ouvriere += dette.part_ouvriere
         m.montant_part_patronale += dette.part_patronale
-        m.montant_majorations += dette.montant_majorations
         return m
       },
       {
         montant_part_ouvriere: 0,
         montant_part_patronale: 0,
-        montant_majorations: 0,
       }
     )
     val = Object.assign(val, montant_dette)
