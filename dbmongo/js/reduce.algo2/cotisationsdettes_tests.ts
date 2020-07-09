@@ -4,7 +4,8 @@ import { cotisationsdettes, SortieCotisationsDettes } from "./cotisationsdettes"
 
 test.only(`La variable cotisation représente les cotisations sociales dues à une période donnée`, (t: ExecutionContext) => {
   const date = new Date("2018-01-01")
-  const periode = { start: date, end: date }
+  const datePlusUnMois = new Date("2018-02-01")
+  const periode = { start: date, end: datePlusUnMois }
   const v: DonnéesCotisation & DonnéesDebit = {
     cotisation: {
       hash1: {
