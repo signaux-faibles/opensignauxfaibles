@@ -39,7 +39,7 @@ export function effectifs(
   const last_period_offset = f.dateAddMonth(last_period, offset_effectif + 1)
   // 2- Cette période est-elle disponible ?
 
-  const available = map_effectif[last_period_offset.getTime()] ? 1 : 0
+  const available = last_period_offset.getTime() in map_effectif
 
   //pour chaque periode (elles sont triees dans l'ordre croissant)
   periodes.reduce((accu, time) => {
