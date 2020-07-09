@@ -166,6 +166,14 @@ package engine
         res = "cession";
     return res;
 }`,
+"compareDebit": `function compareDebit(a, b) {
+    "use strict";
+    if (a.numero_historique < b.numero_historique)
+        return -1;
+    if (a.numero_historique > b.numero_historique)
+        return 1;
+    return 0;
+}`,
 "forEachPopulatedProp": `// Appelle fct() pour chaque propriété définie (non undefined) de obj.
 // Contrat: obj ne doit contenir que les clés définies dans son type.
 function forEachPopulatedProp(obj, fct) {
@@ -693,12 +701,6 @@ db.getCollection("Features").createIndex({
   "use strict";
   return f.iterable(hs).sort((a, b) => a.annee_bdf < b.annee_bdf)
 }`,
-"compareDebit": `function compareDebit (a,b) {
-  "use strict";
-  if (a.numero_historique < b.numero_historique) return -1
-  if (a.numero_historique > b.numero_historique) return 1
-  return 0
-}`,
 "compte": `function compte(compte) {
   "use strict";
   const c = f.iterable(compte)
@@ -1149,14 +1151,6 @@ db.getCollection("Features").createIndex({
         return Object.assign(Object.assign({}, m), { [k]: Object.assign(Object.assign({}, output_outcome[k]), outputTimes) });
     }, {});
     return output_cible;
-}`,
-"compareDebit": `function compareDebit(a, b) {
-    "use strict";
-    if (a.numero_historique < b.numero_historique)
-        return -1;
-    if (a.numero_historique > b.numero_historique)
-        return 1;
-    return 0;
 }`,
 "compte": `function compte(v) {
     "use strict";
