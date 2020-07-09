@@ -87,8 +87,8 @@ export function apart(
   Object.keys(apart).forEach((k) => {
     if (apart[k].consommation.length > 0) {
       apart[k].consommation
-        .sort((a, b) =>
-          apconso[a].periode.getTime() >= apconso[b].periode.getTime() ? 1 : 0
+        .sort(
+          (a, b) => apconso[a].periode.getTime() - apconso[b].periode.getTime()
         )
         .forEach((h) => {
           const time = apconso[h].periode.getTime()

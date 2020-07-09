@@ -1078,7 +1078,7 @@ db.getCollection("Features").createIndex({
     Object.keys(apart).forEach((k) => {
         if (apart[k].consommation.length > 0) {
             apart[k].consommation
-                .sort((a, b) => apconso[a].periode.getTime() >= apconso[b].periode.getTime() ? 1 : 0)
+                .sort((a, b) => apconso[a].periode.getTime() - apconso[b].periode.getTime())
                 .forEach((h) => {
                 const time = apconso[h].periode.getTime();
                 output_apart[time] = output_apart[time] || {};
@@ -1394,7 +1394,7 @@ function cotisationsdettes(v, periodes) {
         return events;
     }, [])
         .sort((a, b) => {
-        return a.date_proc_col.getTime() > b.date_proc_col.getTime() ? 1 : 0;
+        return a.date_proc_col.getTime() - b.date_proc_col.getTime();
     });
     codes.forEach((event) => {
         const periode_effet = new Date(Date.UTC(event.date_proc_col.getFullYear(), event.date_proc_col.getUTCMonth(), 1, 0, 0, 0, 0));

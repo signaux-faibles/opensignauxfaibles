@@ -42,7 +42,7 @@ export function dealWithProcols(
       return events
     }, [] as OutputEvent[])
     .sort((a, b) => {
-      return a.date_proc_col.getTime() > b.date_proc_col.getTime() ? 1 : 0
+      return a.date_proc_col.getTime() - b.date_proc_col.getTime()
     })
 
   codes.forEach((event) => {
