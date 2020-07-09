@@ -1348,7 +1348,7 @@ function cotisationsdettes(v, periodes) {
         });
         val = Object.assign(val, montant_dette);
         const past_month_offsets = [1, 2, 3, 6, 12]; // Penser à mettre à jour le type CotisationsDettesPassees pour tout changement
-        const time_d = new Date(parseInt(time));
+        const time_d = new Date(time);
         past_month_offsets.forEach((offset) => {
             const time_offset = f.dateAddMonth(time_d, offset);
             const variable_name_part_ouvriere = ("montant_part_ouvriere_past_" +
@@ -1496,7 +1496,7 @@ function delais(v, debitParPériode, intervalleTraitement) {
     }, {});
     //ne reporter que si le dernier est disponible
     // 1- quelle periode doit être disponible
-    const last_period = new Date(parseInt(periodes[periodes.length - 1]));
+    const last_period = new Date(periodes[periodes.length - 1]);
     const last_period_offset = f.dateAddMonth(last_period, offset_effectif + 1);
     // 2- Cette période est-elle disponible ?
     const available = map_effectif[last_period_offset.getTime()] ? 1 : 0;
@@ -1794,7 +1794,9 @@ function map() {
         const [output_array, // DonnéesAgrégées[] dans l'ordre chronologique
         output_indexed,] = f.outputs(v, serie_periode);
         // Les periodes qui nous interessent, triées
-        const periodes = Object.keys(output_indexed).sort((a, b) => a >= b ? 1 : 0);
+        const periodes = Object.keys(output_indexed)
+            .sort((a, b) => (a >= b ? 1 : 0))
+            .map((timestamp) => parseInt(timestamp));
         if (includes["apart"] || includes["all"]) {
             if (v.apconso && v.apdemande) {
                 const output_apart = f.apart(v.apconso, v.apdemande);
@@ -1885,7 +1887,9 @@ function map() {
             if (v.sirene_ul) {
                 f.sirene_ul(v, output_array);
             }
-            const periodes = Object.keys(output_indexed).sort((a, b) => a >= b ? 1 : 0);
+            const periodes = Object.keys(output_indexed)
+                .sort((a, b) => (a >= b ? 1 : 0))
+                .map((timestamp) => parseInt(timestamp));
             if (v.effectif_ent) {
                 const output_effectif_ent = f.effectifs(v.effectif_ent, periodes, "effectif_ent");
                 f.add(output_effectif_ent, output_indexed);

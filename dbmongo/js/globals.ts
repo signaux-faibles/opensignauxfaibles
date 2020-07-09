@@ -174,7 +174,8 @@ type EntréeInterim = {
 
 type DataHash = string
 
-type Periode = string // Date
+type Periode = string // Date.toString()
+type Timestamp = number // Date.getTime()
 
 type SiretOrSiren = string
 

@@ -43,7 +43,7 @@ export type SortieCotisationsDettes = {
  */
 export function cotisationsdettes(
   v: DonnéesCotisation & DonnéesDebit,
-  periodes: Periode[]
+  periodes: Timestamp[]
 ): Record<number, SortieCotisationsDettes> {
   "use strict"
 
@@ -202,7 +202,7 @@ export function cotisationsdettes(
     val = Object.assign(val, montant_dette)
 
     const past_month_offsets = [1, 2, 3, 6, 12] // Penser à mettre à jour le type CotisationsDettesPassees pour tout changement
-    const time_d = new Date(parseInt(time))
+    const time_d = new Date(time)
 
     past_month_offsets.forEach((offset) => {
       const time_offset = f.dateAddMonth(time_d, offset)
