@@ -1,6 +1,6 @@
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { dateAddMonth } from "./dateAddMonth"
-import { compareDebit } from "./compareDebit"
+import { compareDebit } from "../common/compareDebit"
 
 // Paramètres globaux utilisés par "reduce.algo2"
 declare const date_fin: number
