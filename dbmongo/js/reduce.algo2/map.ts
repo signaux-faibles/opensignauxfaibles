@@ -1,5 +1,5 @@
 import "../globals"
-import { flatten, V as FlattenedEntreprise } from "./flatten"
+import { flatten } from "./flatten"
 import { outputs } from "./outputs"
 import { apart } from "./apart"
 import { compte } from "./compte"
@@ -40,7 +40,7 @@ declare const serie_periode: Date[]
  */
 export function map(this: {
   _id: SiretOrSiren
-  value: FlattenedEntreprise
+  value: CompanyDataValues
 }): void {
   "use strict"
   /* DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO */ const f = {

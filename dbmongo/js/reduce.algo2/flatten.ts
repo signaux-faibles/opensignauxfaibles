@@ -1,11 +1,4 @@
-export type V = {
-  // TODO: donner un nom plus explicite au type
-  key: SiretOrSiren
-  scope: Scope
-  batch: BatchValues
-}
-
-export type Flattened = {
+export type FlattenedImportedData = {
   key: SiretOrSiren
   scope: Scope
 } & Partial<BatchValue>
@@ -19,7 +12,10 @@ export type Flattened = {
  * - il supprime les clés `compact.delete` des *Batches* en entrées;
  * - il agrège les propriétés apportées par chaque *Batch*, dans l'ordre chrono.
  */
-export function flatten(v: V, actual_batch: string): Flattened {
+export function flatten(
+  v: CompanyDataValues,
+  actual_batch: string
+): FlattenedImportedData {
   "use strict"
   const res = Object.keys(v.batch || {})
     .sort()
@@ -48,7 +44,7 @@ export function flatten(v: V, actual_batch: string): Flattened {
         })
         return m
       },
-      { key: v.key, scope: v.scope } as Flattened
+      { key: v.key, scope: v.scope } as FlattenedImportedData
     )
 
   return res
