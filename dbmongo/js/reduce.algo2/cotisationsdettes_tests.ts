@@ -98,3 +98,73 @@ test("Le montant de dette d'une période est rapporté dans les périodes suivan
   t.deepEqual(actual[dateAddMonth(dateDebut, 11).getTime()], montantsSixMois)
   t.deepEqual(actual[dateAddMonth(dateDebut, 12).getTime()], montantsDouzeMois)
 })
+
+test("interessante_urssaf est vrai quand l'entreprise n'a pas eu de débit (dette) sur les 6 derniers mois", (t: ExecutionContext) => {
+  const dateDebut = new Date("2018-01-01")
+  const periode = generatePeriodSerie(
+    dateDebut,
+    dateAddMonth(dateDebut, 8)
+  ).map((date) => date.getTime())
+
+  ;(globalThis as any).date_fin = dateAddMonth(dateDebut, 8) // utilisé par cotisationsdettes lors du traitement des débits
+
+  const v = {
+    cotisation: {
+      hash1: {
+        periode: { start: dateDebut, end: dateAddMonth(dateDebut, 1) },
+        du: 60,
+      },
+    },
+    debit: {
+      // tentative de répartition du montant de la dette (part ouvrière: 100%)
+      [dateDebut.getTime()]: {
+        periode: {
+          start: dateDebut,
+          end: dateAddMonth(dateDebut, 1),
+        },
+        numero_ecart_negatif: 1,
+        numero_historique: 2,
+        numero_compte: "3",
+        date_traitement: dateDebut,
+        debit_suivant: dateAddMonth(dateDebut, 1).toString(),
+        part_ouvriere: 60,
+        part_patronale: 0,
+      },
+      // tentative de remboursement la dette
+      [dateAddMonth(dateDebut, 1).getTime()]: {
+        periode: {
+          start: dateAddMonth(dateDebut, 1),
+          end: dateAddMonth(dateDebut, 2),
+        },
+        numero_ecart_negatif: 1,
+        numero_historique: 2,
+        numero_compte: "3",
+        date_traitement: dateAddMonth(dateDebut, 1),
+        debit_suivant: "",
+        part_ouvriere: 0,
+        part_patronale: 0,
+      },
+    },
+    /*
+    dettes: {
+      hash1: {
+        periode: dateDebut,
+        part_ouvriere: 30,
+        part_patronale: 0,
+      },
+    },
+    */
+  }
+
+  const actual = cotisationsdettes(v, periode)
+
+  t.log(actual)
+
+  t.true(actual[dateAddMonth(dateDebut, 7).getTime()].interessante_urssaf)
+
+  for (const month of [0, 1, 2, 3, 4, 5, 6]) {
+    t.false(
+      actual[dateAddMonth(dateDebut, month).getTime()].interessante_urssaf
+    )
+  }
+})
