@@ -2,7 +2,7 @@ import "../globals"
 import test, { ExecutionContext } from "ava"
 import { cotisationsdettes, SortieCotisationsDettes } from "./cotisationsdettes"
 
-test(`La variable cotisation représente les cotisations sociales dues à une période donnée`, (t: ExecutionContext) => {
+test("La variable cotisation représente les cotisations sociales dues à une période donnée", (t: ExecutionContext) => {
   const date = new Date("2018-01-01")
   const datePlusUnMois = new Date("2018-02-01")
   const periode = { start: date, end: datePlusUnMois }
