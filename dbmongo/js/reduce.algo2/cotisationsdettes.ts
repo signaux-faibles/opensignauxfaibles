@@ -206,6 +206,9 @@ export function cotisationsdettes(
 
     past_month_offsets.forEach((offset) => {
       const time_offset = f.dateAddMonth(time_d, offset)
+      if (!periodes.includes(time_offset.getTime())) {
+        return
+      }
 
       const variable_name_part_ouvriere = ("montant_part_ouvriere_past_" +
         offset) as keyof CotisationsDettesPassees
