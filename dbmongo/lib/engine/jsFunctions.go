@@ -1236,7 +1236,11 @@ db.getCollection("Features").createIndex({
             counter = 0;
     });
 }`,
-"cotisationsdettes": `function cotisationsdettes(v, periodes) {
+"cotisationsdettes": `/**
+ * Calcule les variables liées aux cotisations sociales et dettes sur ces
+ * cotisations.
+ */
+function cotisationsdettes(v, periodes) {
     "use strict";
 
     // Tous les débits traitées après ce jour du mois sont reportées à la période suivante
@@ -1356,12 +1360,14 @@ db.getCollection("Features").createIndex({
             montant_majorations: 0,
         });
         val = Object.assign(val, montant_dette);
-        const past_month_offsets = [1, 2, 3, 6, 12];
+        const past_month_offsets = [1, 2, 3, 6, 12]; // Penser à mettre à jour le type CotisationsDettesPassees pour tout changement
         const time_d = new Date(parseInt(time));
         past_month_offsets.forEach((offset) => {
             const time_offset = f.dateAddMonth(time_d, offset);
-            const variable_name_part_ouvriere = "montant_part_ouvriere_past_" + offset;
-            const variable_name_part_patronale = "montant_part_patronale_past_" + offset;
+            const variable_name_part_ouvriere = ("montant_part_ouvriere_past_" +
+                offset);
+            const variable_name_part_patronale = ("montant_part_patronale_past_" +
+                offset);
             output_cotisationsdettes[time_offset.getTime()] =
                 output_cotisationsdettes[time_offset.getTime()] || {};
             const val_offset = output_cotisationsdettes[time_offset.getTime()];
@@ -1427,45 +1433,53 @@ db.getCollection("Features").createIndex({
     f.dealWithProcols(v.altares, "altares", output_indexed);
     f.dealWithProcols(v.procol, "procol", output_indexed);
 }`,
-"delais": `function delais(v, debitParPériode) {
+"delais": `/**
+ * Calcule pour chaque période le nombre de jours restants du délai accordé et
+ * un indicateur de la déviation par rapport à un remboursement linéaire du
+ * montant couvert par le délai. Un "délai" étant une demande accordée de délai
+ * de paiement des cotisations sociales, pour un certain montant
+ * (delai_montant_echeancier) et pendant une certaine période
+ * (delai_nb_jours_total).
+ * Contrat: cette fonction ne devrait être appelée que s'il y a eu au moins une
+ * demande de délai.
+ */
+function delais(v, debitParPériode, intervalleTraitement) {
     "use strict";
-    const donnéesSupplémentairesParPériode = {};
-    Object.keys(v.delai).map(function (hash) {
+    const donnéesDélaiParPériode = {};
+    Object.keys(v.delai).forEach(function (hash) {
         const delai = v.delai[hash];
+        if (delai.duree_delai <= 0) {
+            return;
+        }
         // On arrondit les dates au premier jour du mois.
         const date_creation = new Date(Date.UTC(delai.date_creation.getUTCFullYear(), delai.date_creation.getUTCMonth(), 1, 0, 0, 0, 0));
         const date_echeance = new Date(Date.UTC(delai.date_echeance.getUTCFullYear(), delai.date_echeance.getUTCMonth(), 1, 0, 0, 0, 0));
         // Création d'un tableau de timestamps à raison de 1 par mois.
-        const pastYearTimes = f
-            .generatePeriodSerie(date_creation, date_echeance)
-            .map(function (date) {
-            return date.getTime();
-        });
-        pastYearTimes.map(function (time) {
-            if (time in debitParPériode) {
-                const debutDeMois = new Date(time);
-                const remainingDays = nbDays(debutDeMois, delai.date_echeance);
-                const inputAtTime = debitParPériode[time];
-                const outputAtTime = {
-                    delai_nb_jours_restants: remainingDays,
-                    delai_nb_jours_total: delai.duree_delai,
-                    delai_montant_echeancier: delai.montant_echeancier,
-                };
-                if (delai.duree_delai > 0 &&
-                    inputAtTime.montant_part_patronale !== undefined &&
-                    inputAtTime.montant_part_ouvriere !== undefined) {
-                    const detteActuelle = inputAtTime.montant_part_patronale +
-                        inputAtTime.montant_part_ouvriere;
-                    const detteHypothétiqueRemboursementLinéaire = (delai.montant_echeancier * remainingDays) / delai.duree_delai;
-                    outputAtTime.delai_deviation_remboursement =
-                        (detteActuelle - detteHypothétiqueRemboursementLinéaire) /
-                            delai.montant_echeancier;
-                }
-                donnéesSupplémentairesParPériode[time] = outputAtTime;
+        f.generatePeriodSerie(date_creation, date_echeance)
+            .filter((date) => date >= intervalleTraitement.premièreDate &&
+            date <= intervalleTraitement.dernièreDate)
+            .map(function (debutDeMois) {
+            const time = debutDeMois.getTime();
+            const remainingDays = nbDays(debutDeMois, delai.date_echeance);
+            const inputAtTime = debitParPériode[time];
+            const outputAtTime = {
+                delai_nb_jours_restants: remainingDays,
+                delai_nb_jours_total: delai.duree_delai,
+                delai_montant_echeancier: delai.montant_echeancier,
+            };
+            if (typeof (inputAtTime === null || inputAtTime === void 0 ? void 0 : inputAtTime.montant_part_patronale) !== "undefined" &&
+                typeof (inputAtTime === null || inputAtTime === void 0 ? void 0 : inputAtTime.montant_part_ouvriere) !== "undefined") {
+                const detteActuelle = inputAtTime.montant_part_patronale +
+                    inputAtTime.montant_part_ouvriere;
+                const detteHypothétiqueRemboursementLinéaire = (delai.montant_echeancier * remainingDays) / delai.duree_delai;
+                outputAtTime.delai_deviation_remboursement =
+                    (detteActuelle - detteHypothétiqueRemboursementLinéaire) /
+                        delai.montant_echeancier;
             }
+            donnéesDélaiParPériode[time] = outputAtTime;
         });
     });
-    return donnéesSupplémentairesParPériode;
+    return donnéesDélaiParPériode;
 }`,
 "detteFiscale": `function detteFiscale(diane) {
     "use strict";
@@ -1826,19 +1840,22 @@ function map() {
                 const output_repeatable = f.repeatable(v.reporder);
                 f.add(output_repeatable, output_indexed);
             }
+            let output_cotisationsdettes;
+            if (v.cotisation && v.debit) {
+                output_cotisationsdettes = f.cotisationsdettes(v, periodes);
+                f.add(output_cotisationsdettes, output_indexed);
+            }
             if (v.delai) {
-                const output_delai = f.delais(v, output_indexed // TODO: vérifier que les données débit sont déjà calculées
-                );
+                const output_delai = f.delais(v, output_cotisationsdettes || {}, {
+                    premièreDate: serie_periode[0],
+                    dernièreDate: serie_periode[serie_periode.length - 1],
+                });
                 f.add(output_delai, output_indexed);
             }
             v.altares = v.altares || {};
             v.procol = v.procol || {};
             if (v.altares) {
                 f.defaillances(v, output_indexed);
-            }
-            if (v.cotisation && v.debit) {
-                const output_cotisationsdettes = f.cotisationsdettes(v, periodes);
-                f.add(output_cotisationsdettes, output_indexed);
             }
             if (v.ccsf) {
                 f.ccsf(v, output_array);

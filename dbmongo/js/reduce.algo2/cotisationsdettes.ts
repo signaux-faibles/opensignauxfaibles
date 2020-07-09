@@ -18,15 +18,30 @@ type Dette = {
   montant_majorations: EntréeDebit["montant_majorations"]
 }
 
-type SortieCotisationsDettes = {
-  interessante_urssaf: boolean
-  cotisation: number
-  montant_part_ouvriere: number
-  montant_part_patronale: number
-} & {
-  [other: string]: number // ⚠️ ex: montant_part_ouvriere_past_* // TODO: éviter les clés dynamiques
+type CotisationsDettesPassees = {
+  montant_part_ouvriere_past_1: number
+  montant_part_ouvriere_past_2: number
+  montant_part_ouvriere_past_3: number
+  montant_part_ouvriere_past_6: number
+  montant_part_ouvriere_past_12: number
+  montant_part_patronale_past_1: number
+  montant_part_patronale_past_2: number
+  montant_part_patronale_past_3: number
+  montant_part_patronale_past_6: number
+  montant_part_patronale_past_12: number
 }
 
+export type SortieCotisationsDettes = {
+  interessante_urssaf: boolean // true: si l'entreprise n'a pas eu de débit (dette) sur les 6 derniers mois
+  cotisation: number // montant (€) des mensualités de règlement des cotisations sociales
+  montant_part_ouvriere: number // montant (€) de la dette imputable au réglement des cotisatisations sociales des employés
+  montant_part_patronale: number // montant (€) de la dette imputable au réglement des cotisatisations sociales des dirigeants
+} & CotisationsDettesPassees
+
+/**
+ * Calcule les variables liées aux cotisations sociales et dettes sur ces
+ * cotisations.
+ */
 export function cotisationsdettes(
   v: DonnéesCotisation & DonnéesDebit,
   periodes: Periode[]
@@ -194,14 +209,17 @@ export function cotisationsdettes(
     )
     val = Object.assign(val, montant_dette)
 
-    const past_month_offsets = [1, 2, 3, 6, 12]
+    const past_month_offsets = [1, 2, 3, 6, 12] // Penser à mettre à jour le type CotisationsDettesPassees pour tout changement
     const time_d = new Date(parseInt(time))
 
     past_month_offsets.forEach((offset) => {
       const time_offset = f.dateAddMonth(time_d, offset)
-      const variable_name_part_ouvriere = "montant_part_ouvriere_past_" + offset
-      const variable_name_part_patronale =
-        "montant_part_patronale_past_" + offset
+
+      const variable_name_part_ouvriere = ("montant_part_ouvriere_past_" +
+        offset) as keyof CotisationsDettesPassees
+      const variable_name_part_patronale = ("montant_part_patronale_past_" +
+        offset) as keyof CotisationsDettesPassees
+
       output_cotisationsdettes[time_offset.getTime()] =
         output_cotisationsdettes[time_offset.getTime()] || {}
       const val_offset = output_cotisationsdettes[time_offset.getTime()]
