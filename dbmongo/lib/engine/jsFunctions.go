@@ -1347,27 +1347,22 @@ function cotisationsdettes(v, periodes) {
             montant_part_patronale: 0,
         });
         val = Object.assign(val, montant_dette);
-        const past_month_offsets = [1, 2, 3, 6, 12]; // Penser à mettre à jour le type CotisationsDettesPassees pour tout changement
-        const time_d = new Date(time);
-        past_month_offsets.forEach((offset) => {
-            const time_offset = f.dateAddMonth(time_d, offset);
-            const variable_name_part_ouvriere = ("montant_part_ouvriere_past_" +
-                offset);
-            const variable_name_part_patronale = ("montant_part_patronale_past_" +
-                offset);
-            sortieCotisationsDettes[time_offset.getTime()] =
-                sortieCotisationsDettes[time_offset.getTime()] || {};
-            const val_offset = sortieCotisationsDettes[time_offset.getTime()];
-            val_offset[variable_name_part_ouvriere] = val.montant_part_ouvriere;
-            val_offset[variable_name_part_patronale] = val.montant_part_patronale;
+        const futureTimestamps = [1, 2, 3, 6, 12] // Penser à mettre à jour le type CotisationsDettesPassees pour tout changement
+            .map((offset) => ({
+            offset,
+            timestamp: f.dateAddMonth(new Date(time), offset).getTime(),
+        }))
+            .filter(({ timestamp }) => periodes.includes(timestamp));
+        futureTimestamps.forEach(({ offset, timestamp }) => {
+            sortieCotisationsDettes[timestamp] = Object.assign(Object.assign({}, sortieCotisationsDettes[timestamp]), { ["montant_part_ouvriere_past_" + offset]: val.montant_part_ouvriere, ["montant_part_patronale_past_" + offset]: val.montant_part_patronale });
         });
         const future_month_offsets = [0, 1, 2, 3, 4, 5];
         if (val.montant_part_ouvriere + val.montant_part_patronale > 0) {
             future_month_offsets.forEach((offset) => {
-                const time_offset = f.dateAddMonth(time_d, offset);
-                sortieCotisationsDettes[time_offset.getTime()] =
-                    sortieCotisationsDettes[time_offset.getTime()] || {};
-                sortieCotisationsDettes[time_offset.getTime()].interessante_urssaf = false;
+                const time_offset = f.dateAddMonth(new Date(time), offset).getTime();
+                sortieCotisationsDettes[time_offset] =
+                    sortieCotisationsDettes[time_offset] || {};
+                sortieCotisationsDettes[time_offset].interessante_urssaf = false;
             });
         }
     });

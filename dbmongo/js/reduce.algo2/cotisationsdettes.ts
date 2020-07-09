@@ -201,31 +201,26 @@ export function cotisationsdettes(
     )
     val = Object.assign(val, montant_dette)
 
-    const past_month_offsets = [1, 2, 3, 6, 12] // Penser à mettre à jour le type CotisationsDettesPassees pour tout changement
-    const time_d = new Date(time)
+    const futureTimestamps = [1, 2, 3, 6, 12] // Penser à mettre à jour le type CotisationsDettesPassees pour tout changement
+      .map((offset) => ({
+        offset,
+        timestamp: f.dateAddMonth(new Date(time), offset).getTime(),
+      }))
+      .filter(({ timestamp }) => periodes.includes(timestamp))
 
-    past_month_offsets.forEach((offset) => {
-      const time_offset = f.dateAddMonth(time_d, offset).getTime()
-      if (!periodes.includes(time_offset)) {
-        return
+    futureTimestamps.forEach(({ offset, timestamp }) => {
+      sortieCotisationsDettes[timestamp] = {
+        ...sortieCotisationsDettes[timestamp],
+        ["montant_part_ouvriere_past_" + offset]: val.montant_part_ouvriere,
+        ["montant_part_patronale_past_" + offset]: val.montant_part_patronale,
       }
-
-      const variable_name_part_ouvriere = ("montant_part_ouvriere_past_" +
-        offset) as keyof CotisationsDettesPassees
-      const variable_name_part_patronale = ("montant_part_patronale_past_" +
-        offset) as keyof CotisationsDettesPassees
-
-      sortieCotisationsDettes[time_offset] =
-        sortieCotisationsDettes[time_offset] || {}
-      const val_offset = sortieCotisationsDettes[time_offset]
-      val_offset[variable_name_part_ouvriere] = val.montant_part_ouvriere
-      val_offset[variable_name_part_patronale] = val.montant_part_patronale
     })
 
+    // TODO: apply same logic as above (map+filter) + re-use also in effectif and cotisations
     const future_month_offsets = [0, 1, 2, 3, 4, 5]
     if (val.montant_part_ouvriere + val.montant_part_patronale > 0) {
       future_month_offsets.forEach((offset) => {
-        const time_offset = f.dateAddMonth(time_d, offset).getTime()
+        const time_offset = f.dateAddMonth(new Date(time), offset).getTime()
         sortieCotisationsDettes[time_offset] =
           sortieCotisationsDettes[time_offset] || {}
         sortieCotisationsDettes[time_offset].interessante_urssaf = false
