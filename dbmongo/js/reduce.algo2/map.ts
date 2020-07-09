@@ -72,9 +72,9 @@ export function map(this: {
     ] = f.outputs(v, serie_periode)
 
     // Les periodes qui nous interessent, triées
-    const periodes = Object.keys(output_indexed).sort((a, b) =>
-      a >= b ? 1 : 0
-    )
+    const periodes = Object.keys(output_indexed)
+      .sort((a, b) => (a >= b ? 1 : 0))
+      .map((timestamp) => parseInt(timestamp))
 
     if (includes["apart"] || includes["all"]) {
       if (v.apconso && v.apdemande) {
@@ -209,9 +209,9 @@ export function map(this: {
         f.sirene_ul(v as DonnéesSireneUL, output_array)
       }
 
-      const periodes = Object.keys(output_indexed).sort((a, b) =>
-        a >= b ? 1 : 0
-      )
+      const periodes = Object.keys(output_indexed)
+        .sort((a, b) => (a >= b ? 1 : 0))
+        .map((timestamp) => parseInt(timestamp))
       if (v.effectif_ent) {
         const output_effectif_ent = f.effectifs(
           v.effectif_ent,

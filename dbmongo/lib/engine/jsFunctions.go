@@ -166,6 +166,14 @@ package engine
         res = "cession";
     return res;
 }`,
+"compareDebit": `function compareDebit(a, b) {
+    "use strict";
+    if (a.numero_historique < b.numero_historique)
+        return -1;
+    if (a.numero_historique > b.numero_historique)
+        return 1;
+    return 0;
+}`,
 "forEachPopulatedProp": `// Appelle fct() pour chaque propriété définie (non undefined) de obj.
 // Contrat: obj ne doit contenir que les clés définies dans son type.
 function forEachPopulatedProp(obj, fct) {
@@ -693,12 +701,6 @@ db.getCollection("Features").createIndex({
   "use strict";
   return f.iterable(hs).sort((a, b) => a.annee_bdf < b.annee_bdf)
 }`,
-"compareDebit": `function compareDebit (a,b) {
-  "use strict";
-  if (a.numero_historique < b.numero_historique) return -1
-  if (a.numero_historique > b.numero_historique) return 1
-  return 0
-}`,
 "compte": `function compte(compte) {
   "use strict";
   const c = f.iterable(compte)
@@ -1150,14 +1152,6 @@ db.getCollection("Features").createIndex({
     }, {});
     return output_cible;
 }`,
-"compareDebit": `function compareDebit(a, b) {
-    "use strict";
-    if (a.numero_historique < b.numero_historique)
-        return -1;
-    if (a.numero_historique > b.numero_historique)
-        return 1;
-    return 0;
-}`,
 "compte": `function compte(v) {
     "use strict";
     const output_compte = {};
@@ -1245,19 +1239,15 @@ function cotisationsdettes(v, periodes) {
 
     // Tous les débits traitées après ce jour du mois sont reportées à la période suivante
     // Permet de s'aligner avec le calendrier de fourniture des données
-    const last_treatment_day = 20;
-    const output_cotisationsdettes = {};
-    // TODO Cotisations avec un mois de retard ? Bizarre, plus maintenant que l'export se fait le 20
-    // var offset_cotisation = 1
-    const offset_cotisation = 0;
+    const lastAccountedDay = 20;
+    const sortieCotisationsDettes = {};
     const value_cotisation = {};
     // Répartition des cotisations sur toute la période qu'elle concerne
     Object.keys(v.cotisation).forEach(function (h) {
         const cotisation = v.cotisation[h];
         const periode_cotisation = f.generatePeriodSerie(cotisation.periode.start, cotisation.periode.end);
         periode_cotisation.forEach((date_cotisation) => {
-            const date_offset = f.dateAddMonth(date_cotisation, offset_cotisation);
-            value_cotisation[date_offset.getTime()] = (value_cotisation[date_offset.getTime()] || []).concat([cotisation.du / periode_cotisation.length]);
+            value_cotisation[date_cotisation.getTime()] = (value_cotisation[date_cotisation.getTime()] || []).concat([cotisation.du / periode_cotisation.length]);
         });
     });
     // relier les débits
@@ -1305,14 +1295,14 @@ function cotisationsdettes(v, periodes) {
         const jour_traitement = debit.date_traitement.getUTCDate();
         const jour_traitement_suivant = debit_suivant.date_traitement.getUTCDate();
         let date_traitement_debut;
-        if (jour_traitement <= last_treatment_day) {
+        if (jour_traitement <= lastAccountedDay) {
             date_traitement_debut = new Date(Date.UTC(debit.date_traitement.getFullYear(), debit.date_traitement.getUTCMonth()));
         }
         else {
             date_traitement_debut = new Date(Date.UTC(debit.date_traitement.getFullYear(), debit.date_traitement.getUTCMonth() + 1));
         }
         let date_traitement_fin;
-        if (jour_traitement_suivant <= last_treatment_day) {
+        if (jour_traitement_suivant <= lastAccountedDay) {
             date_traitement_fin = new Date(Date.UTC(debit_suivant.date_traitement.getFullYear(), debit_suivant.date_traitement.getUTCMonth()));
         }
         else {
@@ -1328,7 +1318,6 @@ function cotisationsdettes(v, periodes) {
                     periode: debit.periode.start,
                     part_ouvriere: debit.part_ouvriere,
                     part_patronale: debit.part_patronale,
-                    montant_majorations: debit.montant_majorations,
                 },
             ]);
         });
@@ -1341,50 +1330,44 @@ function cotisationsdettes(v, periodes) {
     //  })
     //))
     periodes.forEach(function (time) {
-        output_cotisationsdettes[time] = output_cotisationsdettes[time] || {};
-        let val = output_cotisationsdettes[time];
+        sortieCotisationsDettes[time] = sortieCotisationsDettes[time] || {};
+        let val = sortieCotisationsDettes[time];
         //output_cotisationsdettes[time].numero_compte_urssaf = numeros_compte
         if (time in value_cotisation) {
             // somme de toutes les cotisations dues pour une periode donnée
             val.cotisation = value_cotisation[time].reduce((a, cot) => a + cot, 0);
         }
-        // somme de tous les débits (part ouvriere, part patronale, montant_majorations)
+        // somme de tous les débits (part ouvriere, part patronale)
         const montant_dette = (value_dette[time] || []).reduce(function (m, dette) {
             m.montant_part_ouvriere += dette.part_ouvriere;
             m.montant_part_patronale += dette.part_patronale;
-            m.montant_majorations += dette.montant_majorations;
             return m;
         }, {
             montant_part_ouvriere: 0,
             montant_part_patronale: 0,
-            montant_majorations: 0,
         });
         val = Object.assign(val, montant_dette);
-        const past_month_offsets = [1, 2, 3, 6, 12]; // Penser à mettre à jour le type CotisationsDettesPassees pour tout changement
-        const time_d = new Date(parseInt(time));
-        past_month_offsets.forEach((offset) => {
-            const time_offset = f.dateAddMonth(time_d, offset);
-            const variable_name_part_ouvriere = ("montant_part_ouvriere_past_" +
-                offset);
-            const variable_name_part_patronale = ("montant_part_patronale_past_" +
-                offset);
-            output_cotisationsdettes[time_offset.getTime()] =
-                output_cotisationsdettes[time_offset.getTime()] || {};
-            const val_offset = output_cotisationsdettes[time_offset.getTime()];
-            val_offset[variable_name_part_ouvriere] = val.montant_part_ouvriere;
-            val_offset[variable_name_part_patronale] = val.montant_part_patronale;
+        const futureTimestamps = [1, 2, 3, 6, 12] // Penser à mettre à jour le type CotisationsDettesPassees pour tout changement
+            .map((offset) => ({
+            offset,
+            timestamp: f.dateAddMonth(new Date(time), offset).getTime(),
+        }))
+            .filter(({ timestamp }) => periodes.includes(timestamp));
+        futureTimestamps.forEach(({ offset, timestamp }) => {
+            sortieCotisationsDettes[timestamp] = Object.assign(Object.assign({}, sortieCotisationsDettes[timestamp]), { ["montant_part_ouvriere_past_" + offset]: val.montant_part_ouvriere, ["montant_part_patronale_past_" + offset]: val.montant_part_patronale });
         });
+        // TODO: apply same logic as above (map+filter) + re-use also in effectif and cotisations
         const future_month_offsets = [0, 1, 2, 3, 4, 5];
         if (val.montant_part_ouvriere + val.montant_part_patronale > 0) {
             future_month_offsets.forEach((offset) => {
-                const time_offset = f.dateAddMonth(time_d, offset);
-                output_cotisationsdettes[time_offset.getTime()] =
-                    output_cotisationsdettes[time_offset.getTime()] || {};
-                output_cotisationsdettes[time_offset.getTime()].interessante_urssaf = false;
+                const time_offset = f.dateAddMonth(new Date(time), offset).getTime();
+                sortieCotisationsDettes[time_offset] =
+                    sortieCotisationsDettes[time_offset] || {};
+                sortieCotisationsDettes[time_offset].interessante_urssaf = false;
             });
         }
     });
-    return output_cotisationsdettes;
+    return sortieCotisationsDettes;
 }`,
 "dateAddMonth": `function dateAddMonth(date, nbMonth) {
     "use strict";
@@ -1509,7 +1492,7 @@ function delais(v, debitParPériode, intervalleTraitement) {
     }, {});
     //ne reporter que si le dernier est disponible
     // 1- quelle periode doit être disponible
-    const last_period = new Date(parseInt(periodes[periodes.length - 1]));
+    const last_period = new Date(periodes[periodes.length - 1]);
     const last_period_offset = f.dateAddMonth(last_period, offset_effectif + 1);
     // 2- Cette période est-elle disponible ?
     const available = map_effectif[last_period_offset.getTime()] ? 1 : 0;
@@ -1807,7 +1790,9 @@ function map() {
         const [output_array, // DonnéesAgrégées[] dans l'ordre chronologique
         output_indexed,] = f.outputs(v, serie_periode);
         // Les periodes qui nous interessent, triées
-        const periodes = Object.keys(output_indexed).sort((a, b) => a >= b ? 1 : 0);
+        const periodes = Object.keys(output_indexed)
+            .sort((a, b) => (a >= b ? 1 : 0))
+            .map((timestamp) => parseInt(timestamp));
         if (includes["apart"] || includes["all"]) {
             if (v.apconso && v.apdemande) {
                 const output_apart = f.apart(v.apconso, v.apdemande);
@@ -1898,7 +1883,9 @@ function map() {
             if (v.sirene_ul) {
                 f.sirene_ul(v, output_array);
             }
-            const periodes = Object.keys(output_indexed).sort((a, b) => a >= b ? 1 : 0);
+            const periodes = Object.keys(output_indexed)
+                .sort((a, b) => (a >= b ? 1 : 0))
+                .map((timestamp) => parseInt(timestamp));
             if (v.effectif_ent) {
                 const output_effectif_ent = f.effectifs(v.effectif_ent, periodes, "effectif_ent");
                 f.add(output_effectif_ent, output_indexed);

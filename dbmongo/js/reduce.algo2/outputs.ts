@@ -19,7 +19,7 @@ type DonnéesAgrégées = {
   Partial<SortieNAF> &
   Partial<SortieCotisation>
 
-type IndexDonnéesAgrégées = Record<Periode, DonnéesAgrégées>
+type IndexDonnéesAgrégées = Record<Timestamp, DonnéesAgrégées>
 
 /**
  * Appelé par `map()` pour chaque entreprise/établissement, `outputs()` retourne
