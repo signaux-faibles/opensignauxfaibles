@@ -1356,6 +1356,7 @@ function cotisationsdettes(v, periodes) {
         futureTimestamps.forEach(({ offset, timestamp }) => {
             sortieCotisationsDettes[timestamp] = Object.assign(Object.assign({}, sortieCotisationsDettes[timestamp]), { ["montant_part_ouvriere_past_" + offset]: val.montant_part_ouvriere, ["montant_part_patronale_past_" + offset]: val.montant_part_patronale });
         });
+        // TODO: apply same logic as above (map+filter) + re-use also in effectif and cotisations
         const future_month_offsets = [0, 1, 2, 3, 4, 5];
         if (val.montant_part_ouvriere + val.montant_part_patronale > 0) {
             future_month_offsets.forEach((offset) => {
