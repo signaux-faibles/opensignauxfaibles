@@ -205,8 +205,8 @@ export function cotisationsdettes(
     const time_d = new Date(time)
 
     past_month_offsets.forEach((offset) => {
-      const time_offset = f.dateAddMonth(time_d, offset)
-      if (!periodes.includes(time_offset.getTime())) {
+      const time_offset = f.dateAddMonth(time_d, offset).getTime()
+      if (!periodes.includes(time_offset)) {
         return
       }
 
@@ -215,9 +215,9 @@ export function cotisationsdettes(
       const variable_name_part_patronale = ("montant_part_patronale_past_" +
         offset) as keyof CotisationsDettesPassees
 
-      sortieCotisationsDettes[time_offset.getTime()] =
-        sortieCotisationsDettes[time_offset.getTime()] || {}
-      const val_offset = sortieCotisationsDettes[time_offset.getTime()]
+      sortieCotisationsDettes[time_offset] =
+        sortieCotisationsDettes[time_offset] || {}
+      const val_offset = sortieCotisationsDettes[time_offset]
       val_offset[variable_name_part_ouvriere] = val.montant_part_ouvriere
       val_offset[variable_name_part_patronale] = val.montant_part_patronale
     })
@@ -225,12 +225,10 @@ export function cotisationsdettes(
     const future_month_offsets = [0, 1, 2, 3, 4, 5]
     if (val.montant_part_ouvriere + val.montant_part_patronale > 0) {
       future_month_offsets.forEach((offset) => {
-        const time_offset = f.dateAddMonth(time_d, offset)
-        sortieCotisationsDettes[time_offset.getTime()] =
-          sortieCotisationsDettes[time_offset.getTime()] || {}
-        sortieCotisationsDettes[
-          time_offset.getTime()
-        ].interessante_urssaf = false
+        const time_offset = f.dateAddMonth(time_d, offset).getTime()
+        sortieCotisationsDettes[time_offset] =
+          sortieCotisationsDettes[time_offset] || {}
+        sortieCotisationsDettes[time_offset].interessante_urssaf = false
       })
     }
   })
