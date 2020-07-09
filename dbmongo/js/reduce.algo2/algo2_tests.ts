@@ -125,7 +125,6 @@ test("delai_deviation_remboursement est calculé si un délai de règlement de c
             },
           },
           debit: {},
-          /*
           dettes: {
             hash1: {
               periode: dateDebut,
@@ -137,13 +136,12 @@ test("delai_deviation_remboursement est calculé si un délai de règlement de c
             hash2: {
               date_creation: dateDebut,
               date_echeance: new Date(
-                dateDebut.getTime() + 2 * 24 * 60 * 60 * 1000
-                ),
-                duree_delai: 2,
-                montant_echeancier: 100,
-              },
+                dateDebut.getTime() + 60 * 24 * 60 * 60 * 1000
+              ),
+              duree_delai: 60 * 24 * 60 * 60 * 1000,
+              montant_echeancier: 100,
             },
-            */
+          },
         },
       },
     } as CompanyDataValues,
@@ -166,6 +164,10 @@ test("delai_deviation_remboursement est calculé si un délai de règlement de c
         "012345678901234": {
           cotisation: 100,
           cotisation_moy12m: 100,
+          delai_deviation_remboursement: -1.1574074074074074e-8,
+          delai_montant_echeancier: 100,
+          delai_nb_jours_restants: 60,
+          delai_nb_jours_total: 5184000000,
           effectif: null,
           etat_proc_collective: "in_bonis",
           interessante_urssaf: true,
