@@ -42,13 +42,15 @@ test("Le montant de dette d'une période est reporté dans les périodes suivant
   ;(globalThis as any).date_fin = dateFin // TODO: transformer ce parametre en parametre local de fonction
 
   const moisRemboursement = 4
+  const partOuvrière = 100
+  const partPatronale = 200
   const v: DonnéesCotisation & DonnéesDebit = {
     cotisation: {},
     debit: {
       hash1: {
         periode: { start: dateDebut, end: dateAddMonth(dateDebut, 1) },
-        part_ouvriere: 100,
-        part_patronale: 200,
+        part_ouvriere: partOuvrière,
+        part_patronale: partPatronale,
         date_traitement: dateDebut,
         debit_suivant: "",
         numero_compte: "",
@@ -71,11 +73,11 @@ test("Le montant de dette d'une période est reporté dans les périodes suivant
   const actual = cotisationsdettes(v, periode)
 
   const expPartOuvrière = Array(moisRemboursement)
-    .fill(100)
+    .fill(partOuvrière)
     .concat(Array(dureeEnMois - moisRemboursement).fill(0))
 
   const expPartPatronale = Array(moisRemboursement)
-    .fill(200)
+    .fill(partPatronale)
     .concat(Array(dureeEnMois - moisRemboursement).fill(0))
 
   const expectedInteressanteUrssaf = Array(9)
