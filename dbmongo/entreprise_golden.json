@@ -1235,7 +1235,7 @@
         "idEntreprise": "012345678",
         "scores": [
           {
-            "_id": "5f049cd7b6250899df406097",
+            "_id": "score1",
             "alert": "Alerte seuil F1",
             "algo": "algo_avec_urssaf",
             "batch": "2002_1",
@@ -1245,7 +1245,7 @@
             "timestamp": "2014-01-01T00:00:00Z"
           },
           {
-            "_id": "5f049cd7b6250899df406098",
+            "_id": "score2",
             "alert": "Alerte seuil F1",
             "algo": "algo_avec_urssaf",
             "batch": "2002_1",

@@ -45,6 +45,7 @@ cat > "${DATA_DIR}/db_popul.js" << CONTENTS
   db.Scores.remove({})
   db.Scores.insertMany([
     {
+        "_id": "score1",
         "siret" : "01234567891011",
         "periode" : "2014-01-01",
         "score" : 0.97,
@@ -54,6 +55,7 @@ cat > "${DATA_DIR}/db_popul.js" << CONTENTS
         "alert" : "Alerte seuil F1"
     },
     {
+        "_id": "score2",
         "siret" : "01234567891011",
         "periode" : "2015-01-01",
         "score" : 0.98,
