@@ -111,7 +111,6 @@ test("Le montant de dette d'une période est reporté dans les périodes suivant
   }
 })
 
-// TODO: comportement surprenant avec debut_suivant, le test passe a moitié avec valeur non nulle mais echoue avec chaine vide
 test("interessante_urssaf est vrai quand l'entreprise n'a pas eu de débit (dette) sur les 6 derniers mois", (t: ExecutionContext) => {
   const dateDebut = new Date("2018-01-01")
   const periode = generatePeriodSerie(
@@ -130,7 +129,7 @@ test("interessante_urssaf est vrai quand l'entreprise n'a pas eu de débit (dett
     },
     debit: {
       // dette initiale
-      hash1: {
+      hashDetteInitiale: {
         periode: {
           start: dateDebut,
           end: dateAddMonth(dateDebut, 1),
@@ -139,12 +138,12 @@ test("interessante_urssaf est vrai quand l'entreprise n'a pas eu de débit (dett
         numero_historique: 2,
         numero_compte: "3",
         date_traitement: dateDebut,
-        debit_suivant: dateAddMonth(dateDebut, 1).toString(),
+        debit_suivant: "hashRemboursement",
         part_ouvriere: 60,
         part_patronale: 0,
       },
       // remboursement la dette
-      hash2: {
+      hashRemboursement: {
         periode: {
           start: dateDebut,
           end: dateAddMonth(dateDebut, 1),
