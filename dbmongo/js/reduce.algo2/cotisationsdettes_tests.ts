@@ -1,6 +1,6 @@
 import "../globals"
 import test, { ExecutionContext } from "ava"
-import { cotisationsdettes } from "./cotisationsdettes"
+import { cotisationsdettes, SortieCotisationsDettes } from "./cotisationsdettes"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { dateAddMonth } from "./dateAddMonth"
 
@@ -53,52 +53,63 @@ test.only("Le montant de dette d'une période est reporté dans les périodes su
         numero_ecart_negatif: 1,
         numero_historique: 2,
       },
+      hash2: {
+        periode: { start: dateDebut, end: dateAddMonth(dateDebut, 1) },
+        part_ouvriere: 0,
+        part_patronale: 0,
+        date_traitement: dateAddMonth(dateDebut, 4),
+        debit_suivant: "",
+        numero_compte: "",
+        numero_ecart_negatif: 1,
+        numero_historique: 3,
+      },
     },
   }
 
   const actual = cotisationsdettes(v, periode)
 
   const montants = {
-    montant_part_ouvriere: 0,
-    montant_part_patronale: 0,
+    montant_part_ouvriere: 100,
+    montant_part_patronale: 200,
+    interessante_urssaf: false,
   }
 
   const montantsUnMois = {
     ...montants,
-    montant_part_ouvriere_past_1: 0,
-    montant_part_patronale_past_1: 0,
+    montant_part_ouvriere_past_1: 100,
+    montant_part_patronale_past_1: 200,
   }
 
   const montantsDeuxMois = {
     ...montantsUnMois,
-    montant_part_ouvriere_past_2: 0,
-    montant_part_patronale_past_2: 0,
+    montant_part_ouvriere_past_2: 100,
+    montant_part_patronale_past_2: 200,
   }
 
   const montantsTroisMois = {
     ...montantsDeuxMois,
-    montant_part_ouvriere_past_3: 0,
-    montant_part_patronale_past_3: 0,
+    montant_part_ouvriere_past_3: 100,
+    montant_part_patronale_past_3: 200,
   }
 
   const montantsSixMois = {
     ...montantsTroisMois,
-    montant_part_ouvriere_past_6: 0,
-    montant_part_patronale_past_6: 0,
+    montant_part_ouvriere_past_6: 100,
+    montant_part_patronale_past_6: 200,
   }
 
   const montantsDouzeMois = {
     ...montantsSixMois,
-    montant_part_ouvriere_past_12: 0,
-    montant_part_patronale_past_12: 0,
+    montant_part_ouvriere_past_12: 100,
+    montant_part_patronale_past_12: 200,
   }
 
   t.deepEqual(actual[dateAddMonth(dateDebut, 1).getTime()], montantsUnMois)
   t.deepEqual(actual[dateAddMonth(dateDebut, 2).getTime()], montantsDeuxMois)
   t.deepEqual(actual[dateAddMonth(dateDebut, 3).getTime()], montantsTroisMois)
-  t.deepEqual(actual[dateAddMonth(dateDebut, 4).getTime()], montantsTroisMois)
-  t.deepEqual(actual[dateAddMonth(dateDebut, 5).getTime()], montantsTroisMois)
-  t.deepEqual(actual[dateAddMonth(dateDebut, 6).getTime()], montantsSixMois)
+  t.deepEqual(actual[dateAddMonth(dateDebut, 4).getTime()], {...montantsTroisMois, montant_part_ouvriere: 0, montant_part_patronale: 0} as SortieCotisationsDettes)
+  t.deepEqual(actual[dateAddMonth(dateDebut, 5).getTime()], {...montantsTroisMois, montant_part_ouvriere: 0, montant_part_patronale: 0} as SortieCotisationsDettes)
+  t.deepEqual(actual[dateAddMonth(dateDebut, 6).getTime()], {...montantsSixMois, montant_part_ouvriere: 0, montant_part_patronale: 0} as SortieCotisationsDettes)
   t.deepEqual(actual[dateAddMonth(dateDebut, 7).getTime()], montantsSixMois)
   t.deepEqual(actual[dateAddMonth(dateDebut, 8).getTime()], montantsSixMois)
   t.deepEqual(actual[dateAddMonth(dateDebut, 9).getTime()], montantsSixMois)
