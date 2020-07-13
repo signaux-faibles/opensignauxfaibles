@@ -129,7 +129,7 @@ test("interessante_urssaf est vrai quand l'entreprise n'a pas eu de débit (dett
         },
         numero_ecart_negatif: 1,
         numero_historique: 2,
-        numero_compte: "3",
+        numero_compte: "",
         date_traitement: dateDebut,
         debit_suivant: "hashRemboursement",
         part_ouvriere: 60,
@@ -141,9 +141,9 @@ test("interessante_urssaf est vrai quand l'entreprise n'a pas eu de débit (dett
           start: dateDebut,
           end: dateAddMonth(dateDebut, 1),
         },
-        numero_ecart_negatif: 1,
-        numero_historique: 3,
-        numero_compte: "3",
+        numero_ecart_negatif: 1, // même valeur que pour le débit précédent
+        numero_historique: 3, // incrémentation depuis le débit précédent
+        numero_compte: "",
         date_traitement: dateAddMonth(dateDebut, 1),
         debit_suivant: "",
         part_ouvriere: 0,
