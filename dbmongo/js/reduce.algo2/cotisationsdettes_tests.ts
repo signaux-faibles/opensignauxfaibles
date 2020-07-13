@@ -74,32 +74,18 @@ test.only("Le montant de dette d'une période est reporté dans les périodes su
 
   const actual = cotisationsdettes(v, periode)
 
-  const expectedMontantPartOuvrière = Array(moisRemboursement).fill(100).concat(
-    Array(dureeEnMois - moisRemboursement).fill(0))
+  const expPartOuvrière = Array(moisRemboursement)
+    .fill(100)
+    .concat(Array(dureeEnMois - moisRemboursement).fill(0))
 
-  const expectedMontantPartPatronale = Array(moisRemboursement).fill(200).concat(
-    Array(dureeEnMois - moisRemboursement).fill(0))
+  const expectedMontantPartPatronale = Array(moisRemboursement)
+    .fill(200)
+    .concat(Array(dureeEnMois - moisRemboursement).fill(0))
 
-  const expectedMontantPartOuvrièrePast1 = décaler(
-    expectedMontantPartOuvrière,
-    1
-  )
-  const expectedMontantPartOuvrièrePast2 = décaler(
-    expectedMontantPartOuvrière,
-    2
-  )
-  const expectedMontantPartOuvrièrePast3 = décaler(
-    expectedMontantPartOuvrière,
-    3
-  )
-  const expectedMontantPartOuvrièrePast6 = décaler(
-    expectedMontantPartOuvrière,
-    6
-  )
-  const expectedMontantPartOuvrièrePast12 = décaler(
-    expectedMontantPartOuvrière,
-    12
-  )
+  const expectedMontantPartOuvrièrePast2 = décaler(expPartOuvrière, 2)
+  const expectedMontantPartOuvrièrePast3 = décaler(expPartOuvrière, 3)
+  const expectedMontantPartOuvrièrePast6 = décaler(expPartOuvrière, 6)
+  const expectedMontantPartOuvrièrePast12 = décaler(expPartOuvrière, 12)
   const expectedMontantPartPatronalePast1 = décaler(
     expectedMontantPartPatronale,
     1
@@ -121,6 +107,14 @@ test.only("Le montant de dette d'une période est reporté dans les périodes su
     12
   )
 
+  function dettePassée(
+    tableau: number[],
+    période: number,
+    décalageEnMois: number
+  ): number {
+    return décaler(tableau, décalageEnMois)[période]
+  }
+
   const expectedInteressanteUrssaf = Array(9)
     .fill(false)
     .concat(Array(4).fill(undefined))
@@ -129,9 +123,9 @@ test.only("Le montant de dette d'une période est reporté dans les périodes su
     t.log({ période }, actual[dateAddMonth(dateDebut, période).getTime()])
     const expected = {
       interessante_urssaf: expectedInteressanteUrssaf[période],
-      montant_part_ouvriere: expectedMontantPartOuvrière[période],
+      montant_part_ouvriere: expPartOuvrière[période],
       montant_part_patronale: expectedMontantPartPatronale[période],
-      montant_part_ouvriere_past_1: expectedMontantPartOuvrièrePast1[période],
+      montant_part_ouvriere_past_1: dettePassée(expPartOuvrière, période, 1),
       montant_part_patronale_past_1: expectedMontantPartPatronalePast1[période],
       montant_part_ouvriere_past_2: expectedMontantPartOuvrièrePast2[période],
       montant_part_patronale_past_2: expectedMontantPartPatronalePast2[période],
