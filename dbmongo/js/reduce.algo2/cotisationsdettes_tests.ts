@@ -78,64 +78,38 @@ test.only("Le montant de dette d'une période est reporté dans les périodes su
     .fill(100)
     .concat(Array(dureeEnMois - moisRemboursement).fill(0))
 
-  const expectedMontantPartPatronale = Array(moisRemboursement)
+  const expPartPatronale = Array(moisRemboursement)
     .fill(200)
     .concat(Array(dureeEnMois - moisRemboursement).fill(0))
 
-  const expectedMontantPartOuvrièrePast2 = décaler(expPartOuvrière, 2)
-  const expectedMontantPartOuvrièrePast3 = décaler(expPartOuvrière, 3)
-  const expectedMontantPartOuvrièrePast6 = décaler(expPartOuvrière, 6)
-  const expectedMontantPartOuvrièrePast12 = décaler(expPartOuvrière, 12)
-  const expectedMontantPartPatronalePast1 = décaler(
-    expectedMontantPartPatronale,
-    1
-  )
-  const expectedMontantPartPatronalePast2 = décaler(
-    expectedMontantPartPatronale,
-    2
-  )
-  const expectedMontantPartPatronalePast3 = décaler(
-    expectedMontantPartPatronale,
-    3
-  )
-  const expectedMontantPartPatronalePast6 = décaler(
-    expectedMontantPartPatronale,
-    6
-  )
-  const expectedMontantPartPatronalePast12 = décaler(
-    expectedMontantPartPatronale,
-    12
-  )
-
   function dettePassée(
     tableau: number[],
-    période: number,
+    mois: number,
     décalageEnMois: number
   ): number {
-    return décaler(tableau, décalageEnMois)[période]
+    return décaler(tableau, décalageEnMois)[mois]
   }
 
   const expectedInteressanteUrssaf = Array(9)
     .fill(false)
     .concat(Array(4).fill(undefined))
 
-  for (let période = 0; période < 13; ++période) {
-    t.log({ période }, actual[dateAddMonth(dateDebut, période).getTime()])
+  for (let mois = 0; mois < 13; ++mois) {
+    t.log({ période: mois }, actual[dateAddMonth(dateDebut, mois).getTime()])
     const expected = {
-      interessante_urssaf: expectedInteressanteUrssaf[période],
-      montant_part_ouvriere: expPartOuvrière[période],
-      montant_part_patronale: expectedMontantPartPatronale[période],
-      montant_part_ouvriere_past_1: dettePassée(expPartOuvrière, période, 1),
-      montant_part_patronale_past_1: expectedMontantPartPatronalePast1[période],
-      montant_part_ouvriere_past_2: expectedMontantPartOuvrièrePast2[période],
-      montant_part_patronale_past_2: expectedMontantPartPatronalePast2[période],
-      montant_part_ouvriere_past_3: expectedMontantPartOuvrièrePast3[période],
-      montant_part_patronale_past_3: expectedMontantPartPatronalePast3[période],
-      montant_part_ouvriere_past_6: expectedMontantPartOuvrièrePast6[période],
-      montant_part_patronale_past_6: expectedMontantPartPatronalePast6[période],
-      montant_part_ouvriere_past_12: expectedMontantPartOuvrièrePast12[période],
-      montant_part_patronale_past_12:
-        expectedMontantPartPatronalePast12[période],
+      interessante_urssaf: expectedInteressanteUrssaf[mois],
+      montant_part_ouvriere: expPartOuvrière[mois],
+      montant_part_patronale: expPartPatronale[mois],
+      montant_part_ouvriere_past_1: dettePassée(expPartOuvrière, mois, 1),
+      montant_part_patronale_past_1: dettePassée(expPartPatronale, mois, 1),
+      montant_part_ouvriere_past_2: dettePassée(expPartOuvrière, mois, 2),
+      montant_part_patronale_past_2: dettePassée(expPartPatronale, mois, 2),
+      montant_part_ouvriere_past_3: dettePassée(expPartOuvrière, mois, 3),
+      montant_part_patronale_past_3: dettePassée(expPartPatronale, mois, 3),
+      montant_part_ouvriere_past_6: dettePassée(expPartOuvrière, mois, 6),
+      montant_part_patronale_past_6: dettePassée(expPartPatronale, mois, 6),
+      montant_part_ouvriere_past_12: dettePassée(expPartOuvrière, mois, 12),
+      montant_part_patronale_past_12: dettePassée(expPartPatronale, mois, 12),
     }
     Object.keys(expected).forEach((p) => {
       const prop = p as keyof typeof expected
@@ -143,7 +117,7 @@ test.only("Le montant de dette d'une période est reporté dans les périodes su
         delete expected[prop]
       }
     })
-    t.deepEqual(actual[dateAddMonth(dateDebut, période).getTime()], expected)
+    t.deepEqual(actual[dateAddMonth(dateDebut, mois).getTime()], expected)
   }
 })
 
