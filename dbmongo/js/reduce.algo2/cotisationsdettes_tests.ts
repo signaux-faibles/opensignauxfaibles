@@ -4,6 +4,12 @@ import { cotisationsdettes } from "./cotisationsdettes"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { dateAddMonth } from "./dateAddMonth"
 
+// Supprime les propriétés de obj dont la valeur est indéfinie.
+const deleteUndefinedProps = <T>(obj: T): void =>
+  (Object.keys(obj) as Array<keyof T>).forEach((prop) =>
+    typeof obj[prop] === "undefined" ? delete obj[prop] : {}
+  )
+
 test("La variable cotisation représente les cotisations sociales dues à une période donnée", (t: ExecutionContext) => {
   const date = new Date("2018-01-01")
   const datePlusUnMois = new Date("2018-02-01")
@@ -70,7 +76,7 @@ test("Le montant de dette d'une période est reporté dans les périodes suivant
     },
   }
 
-  const actual = cotisationsdettes(v, periode)
+  const output = cotisationsdettes(v, periode)
 
   const expPartOuvrière = Array(moisRemboursement)
     .fill(partOuvrière)
@@ -80,14 +86,8 @@ test("Le montant de dette d'une période est reporté dans les périodes suivant
     .fill(partPatronale)
     .concat(Array(dureeEnMois - moisRemboursement).fill(0))
 
-  const expectedInteressanteUrssaf = Array(9)
-    .fill(false)
-    .concat(Array(4).fill(undefined))
-
   for (let mois = 0; mois < 13; ++mois) {
-    t.log({ période: mois }, actual[dateAddMonth(dateDebut, mois).getTime()])
     const expected = {
-      interessante_urssaf: expectedInteressanteUrssaf[mois],
       montant_part_ouvriere: expPartOuvrière[mois],
       montant_part_patronale: expPartPatronale[mois],
       montant_part_ouvriere_past_1: expPartOuvrière[mois - 1],
@@ -101,13 +101,10 @@ test("Le montant de dette d'une période est reporté dans les périodes suivant
       montant_part_ouvriere_past_12: expPartOuvrière[mois - 12],
       montant_part_patronale_past_12: expPartPatronale[mois - 12],
     }
-    Object.keys(expected).forEach((p) => {
-      const prop = p as keyof typeof expected
-      if (typeof expected[prop] === "undefined") {
-        delete expected[prop]
-      }
-    })
-    t.deepEqual(actual[dateAddMonth(dateDebut, mois).getTime()], expected)
+    deleteUndefinedProps(expected)
+    const actual = output[dateAddMonth(dateDebut, mois).getTime()]
+    delete actual.interessante_urssaf // exclure interessante_urssaf car cette prop est considérée par un autre test
+    t.deepEqual(actual, expected)
   }
 })
 
@@ -171,7 +168,7 @@ test("interessante_urssaf est vrai quand l'entreprise n'a pas eu de débit (dett
   t.is(
     actual[dateAddMonth(dateDebut, 6).getTime()].interessante_urssaf,
     undefined
-    )
+  )
   t.is(
     actual[dateAddMonth(dateDebut, 7).getTime()].interessante_urssaf,
     undefined
