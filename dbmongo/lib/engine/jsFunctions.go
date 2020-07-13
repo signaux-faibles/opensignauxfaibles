@@ -1234,7 +1234,8 @@ db.getCollection("Features").createIndex({
  * Calcule les variables liées aux cotisations sociales et dettes sur ces
  * cotisations.
  */
-function cotisationsdettes(v, periodes) {
+function cotisationsdettes(v, periodes, finPériode // correspond à la variable globale date_fin
+) {
     "use strict";
 
     // Tous les débits traitées après ce jour du mois sont reportées à la période suivante
@@ -1284,12 +1285,12 @@ function cotisationsdettes(v, periodes) {
     const value_dette = {};
     // Pour chaque objet debit:
     // debit_traitement_debut => periode de traitement du débit
-    // debit_traitement_fin => periode de traitement du debit suivant, ou bien date_fin
+    // debit_traitement_fin => periode de traitement du debit suivant, ou bien finPériode
     // Entre ces deux dates, c'est cet objet qui est le plus à jour.
     Object.keys(v.debit).forEach(function (h) {
         const debit = v.debit[h];
         const debit_suivant = v.debit[debit.debit_suivant] || {
-            date_traitement: date_fin,
+            date_traitement: finPériode,
         };
         //Selon le jour du traitement, cela passe sur la période en cours ou sur la suivante.
         const jour_traitement = debit.date_traitement.getUTCDate();
@@ -1819,7 +1820,7 @@ function map() {
             }
             let output_cotisationsdettes;
             if (v.cotisation && v.debit) {
-                output_cotisationsdettes = f.cotisationsdettes(v, periodes);
+                output_cotisationsdettes = f.cotisationsdettes(v, periodes, date_fin);
                 f.add(output_cotisationsdettes, output_indexed);
             }
             if (v.delai) {
