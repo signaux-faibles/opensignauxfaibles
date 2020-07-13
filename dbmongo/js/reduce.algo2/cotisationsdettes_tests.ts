@@ -166,11 +166,11 @@ test("interessante_urssaf est vrai quand l'entreprise n'a pas eu de débit (dett
   t.false(actual[dateAddMonth(dateDebut, 5).getTime()].interessante_urssaf)
 
   t.is(
-    actual[dateAddMonth(dateDebut, 6).getTime()].interessante_urssaf,
-    undefined
+    typeof actual[dateAddMonth(dateDebut, 6).getTime()].interessante_urssaf,
+    "undefined"
   )
   t.is(
-    actual[dateAddMonth(dateDebut, 7).getTime()].interessante_urssaf,
-    undefined
+    typeof actual[dateAddMonth(dateDebut, 7).getTime()].interessante_urssaf,
+    "undefined"
   )
 })
