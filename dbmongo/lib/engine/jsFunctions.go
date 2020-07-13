@@ -1230,7 +1230,7 @@ db.getCollection("Features").createIndex({
             counter = 0;
     });
 }
-// TODO: appliquer même logique d'itération sur futureTimestamps que dans cotisationsdettes.ts`,
+/* TODO: appliquer même logique d'itération sur futureTimestamps que dans cotisationsdettes.ts */`,
 "cotisationsdettes": `/**
  * Calcule les variables liées aux cotisations sociales et dettes sur ces
  * cotisations.
@@ -1530,7 +1530,7 @@ function delais(v, debitParPériode, intervalleTraitement) {
     });
     return output_effectif;
 }
-// TODO: appliquer même logique d'itération sur futureTimestamps que dans cotisationsdettes.ts`,
+/* TODO: appliquer même logique d'itération sur futureTimestamps que dans cotisationsdettes.ts */`,
 "finalize": `function finalize(k, v) {
     "use strict";
     const maxBsonSize = 16777216;
