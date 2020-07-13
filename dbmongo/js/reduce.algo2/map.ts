@@ -7,7 +7,7 @@ import { effectifs } from "./effectifs"
 import { interim } from "./interim"
 import { add } from "./add"
 import { repeatable } from "./repeatable"
-import { delais, DebitComputedValues } from "./delais"
+import { delais } from "./delais"
 import { defaillances } from "./defaillances"
 import { cotisationsdettes } from "./cotisationsdettes"
 import { ccsf } from "./ccsf"
@@ -72,9 +72,9 @@ export function map(this: {
     ] = f.outputs(v, serie_periode)
 
     // Les periodes qui nous interessent, triées
-    const periodes = Object.keys(output_indexed).sort((a, b) =>
-      a >= b ? 1 : 0
-    )
+    const periodes = Object.keys(output_indexed)
+      .sort((a, b) => (a >= b ? 1 : 0))
+      .map((timestamp) => parseInt(timestamp))
 
     if (includes["apart"] || includes["all"]) {
       if (v.apconso && v.apdemande) {
@@ -119,10 +119,23 @@ export function map(this: {
         f.add(output_repeatable, output_indexed)
       }
 
+      let output_cotisationsdettes
+      if (v.cotisation && v.debit) {
+        output_cotisationsdettes = f.cotisationsdettes(
+          v as DonnéesCotisation & DonnéesDebit,
+          periodes
+        )
+        f.add(output_cotisationsdettes, output_indexed)
+      }
+
       if (v.delai) {
         const output_delai = f.delais(
           v as DonnéesDelai,
-          output_indexed as ParPériode<DebitComputedValues> // TODO: vérifier que les données débit sont déjà calculées
+          output_cotisationsdettes || {},
+          {
+            premièreDate: serie_periode[0],
+            dernièreDate: serie_periode[serie_periode.length - 1],
+          }
         )
         f.add(output_delai, output_indexed)
       }
@@ -132,14 +145,6 @@ export function map(this: {
 
       if (v.altares) {
         f.defaillances(v as DonnéesDefaillances, output_indexed)
-      }
-
-      if (v.cotisation && v.debit) {
-        const output_cotisationsdettes = f.cotisationsdettes(
-          v as DonnéesCotisation & DonnéesDebit,
-          periodes
-        )
-        f.add(output_cotisationsdettes, output_indexed)
       }
 
       if (v.ccsf) {
@@ -204,9 +209,9 @@ export function map(this: {
         f.sirene_ul(v as DonnéesSireneUL, output_array)
       }
 
-      const periodes = Object.keys(output_indexed).sort((a, b) =>
-        a >= b ? 1 : 0
-      )
+      const periodes = Object.keys(output_indexed)
+        .sort((a, b) => (a >= b ? 1 : 0))
+        .map((timestamp) => parseInt(timestamp))
       if (v.effectif_ent) {
         const output_effectif_ent = f.effectifs(
           v.effectif_ent,

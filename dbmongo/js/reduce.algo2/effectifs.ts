@@ -15,7 +15,7 @@ type EffectifEntreprise = Record<DataHash, EntréeEffectif>
 
 export function effectifs(
   effobj: EffectifEntreprise,
-  periodes: string[],
+  periodes: Timestamp[],
   effectif_name: EffectifName
 ): SortieEffectifs {
   "use strict"
@@ -35,7 +35,7 @@ export function effectifs(
 
   //ne reporter que si le dernier est disponible
   // 1- quelle periode doit être disponible
-  const last_period = new Date(parseInt(periodes[periodes.length - 1]))
+  const last_period = new Date(periodes[periodes.length - 1])
   const last_period_offset = f.dateAddMonth(last_period, offset_effectif + 1)
   // 2- Cette période est-elle disponible ?
 

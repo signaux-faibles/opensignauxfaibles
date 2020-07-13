@@ -29,9 +29,14 @@ const runDelais = (
     abc: delaiTest,
   }
   const debitParPériode: ParPériode<DebitComputedValues> = {}
-  debitParPériode[fevrier.getTime()] = debits ? makeDebitParPériode(debits) : {}
-  debitParPériode[mars.getTime()] = debits ? makeDebitParPériode(debits) : {}
-  return delais({ delai: delaiMap }, debitParPériode)
+  if (debits) {
+    debitParPériode[fevrier.getTime()] = makeDebitParPériode(debits)
+    debitParPériode[mars.getTime()] = makeDebitParPériode(debits)
+  }
+  return delais({ delai: delaiMap }, debitParPériode, {
+    premièreDate: fevrier,
+    dernièreDate: mars,
+  })
 }
 
 test("la propriété delai_nb_jours_restants représente le nombre de jours restants du délai", (t: ExecutionContext) => {
@@ -92,6 +97,9 @@ test("un délai en dehors de la période d'intérêt est ignorée", (t: Executio
   }
   const donnéesParPériode: ParPériode<DebitComputedValues> = {}
   donnéesParPériode[fevrier.getTime()] = makeDebitParPériode()
-  const périodesComplétées = delais({ delai: delaiMap }, donnéesParPériode)
+  const périodesComplétées = delais({ delai: delaiMap }, donnéesParPériode, {
+    premièreDate: fevrier,
+    dernièreDate: mars,
+  })
   t.deepEqual(périodesComplétées, {})
 })

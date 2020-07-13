@@ -5,26 +5,43 @@ type DeepReadonly<T> = Readonly<T> // pas vraiment, mais espoire que TS le suppo
 
 // Valeurs attendues pour chaque période, lors de l'appel à delais()
 export type DebitComputedValues = {
-  montant_part_patronale?: number
-  montant_part_ouvriere?: number
+  montant_part_patronale: number
+  montant_part_ouvriere: number
 }
 
 // Valeurs retournées par delais(), pour chaque période
 export type DelaiComputedValues = {
-  delai_nb_jours_restants: number
+  // valeurs fournies, reportées par delais() dans chaque période:
   delai_nb_jours_total: number // nombre de jours entre date_creation et date_echeance
-  delai_deviation_remboursement?: number
   delai_montant_echeancier: number // exprimé en euros
+  // valeurs calculées par delais():
+  delai_nb_jours_restants: number
+  delai_deviation_remboursement?: number // ratio entre remboursement linéaire et effectif, à condition d'avoir le montant des parts ouvrière et patronale
 }
 
+/**
+ * Calcule pour chaque période le nombre de jours restants du délai accordé et
+ * un indicateur de la déviation par rapport à un remboursement linéaire du
+ * montant couvert par le délai. Un "délai" étant une demande accordée de délai
+ * de paiement des cotisations sociales, pour un certain montant
+ * (delai_montant_echeancier) et pendant une certaine période
+ * (delai_nb_jours_total).
+ * Contrat: cette fonction ne devrait être appelée que s'il y a eu au moins une
+ * demande de délai.
+ */
 export function delais(
   v: DonnéesDelai,
-  debitParPériode: DeepReadonly<ParPériode<DebitComputedValues>>
+  debitParPériode: DeepReadonly<ParPériode<DebitComputedValues>>,
+  intervalleTraitement: { premièreDate: Date; dernièreDate: Date }
 ): ParPériode<DelaiComputedValues> {
   "use strict"
-  const donnéesSupplémentairesParPériode: ParPériode<DelaiComputedValues> = {}
-  Object.keys(v.delai).map(function (hash) {
+  const donnéesDélaiParPériode: ParPériode<DelaiComputedValues> = {}
+  Object.keys(v.delai).forEach(function (hash) {
     const delai = v.delai[hash]
+    if (delai.duree_delai <= 0) {
+      return
+    }
+
     // On arrondit les dates au premier jour du mois.
     const date_creation = new Date(
       Date.UTC(
@@ -49,14 +66,14 @@ export function delais(
       )
     )
     // Création d'un tableau de timestamps à raison de 1 par mois.
-    const pastYearTimes = f
-      .generatePeriodSerie(date_creation, date_echeance)
-      .map(function (date: Date) {
-        return date.getTime()
-      })
-    pastYearTimes.map(function (time: number) {
-      if (time in debitParPériode) {
-        const debutDeMois = new Date(time)
+    f.generatePeriodSerie(date_creation, date_echeance)
+      .filter(
+        (date) =>
+          date >= intervalleTraitement.premièreDate &&
+          date <= intervalleTraitement.dernièreDate
+      )
+      .map(function (debutDeMois) {
+        const time = debutDeMois.getTime()
         const remainingDays = nbDays(debutDeMois, delai.date_echeance)
         const inputAtTime = debitParPériode[time]
         const outputAtTime: DelaiComputedValues = {
@@ -65,9 +82,8 @@ export function delais(
           delai_montant_echeancier: delai.montant_echeancier,
         }
         if (
-          delai.duree_delai > 0 &&
-          inputAtTime.montant_part_patronale !== undefined &&
-          inputAtTime.montant_part_ouvriere !== undefined
+          typeof inputAtTime?.montant_part_patronale !== "undefined" &&
+          typeof inputAtTime?.montant_part_ouvriere !== "undefined"
         ) {
           const detteActuelle =
             inputAtTime.montant_part_patronale +
@@ -78,9 +94,8 @@ export function delais(
             (detteActuelle - detteHypothétiqueRemboursementLinéaire) /
             delai.montant_echeancier
         }
-        donnéesSupplémentairesParPériode[time] = outputAtTime
-      }
-    })
+        donnéesDélaiParPériode[time] = outputAtTime
+      })
   })
-  return donnéesSupplémentairesParPériode
+  return donnéesDélaiParPériode
 }

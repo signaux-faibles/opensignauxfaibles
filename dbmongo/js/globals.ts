@@ -174,7 +174,8 @@ type EntréeInterim = {
 
 type DataHash = string
 
-type Periode = string // Date
+type Periode = string // Date.toString()
+type Timestamp = number // Date.getTime()
 
 type SiretOrSiren = string
 
@@ -207,16 +208,19 @@ type EntréeCotisation = {
   du: number
 }
 
+/**
+ * Représente un reste à payer (dette) sur cotisation sociale ou autre.
+ */
 type EntréeDebit = {
   periode: { start: Date; end: Date }
-  numero_ecart_negatif: unknown
-  numero_compte: unknown
-  numero_historique: number
+  numero_ecart_negatif: number // identifiant du débit pour une période donnée (comme une sorte de numéro de facture)
+  numero_historique: number // identifiant d'un remboursement (partiel ou complet) d'un débit
+  numero_compte: string // identifiant URSSAF d'établissement (équivalent du SIRET)
   date_traitement: Date
   debit_suivant: DebitHash
+  // le montant est ventilé entre ces trois valeurs, exprimées en euros (€):
   part_ouvriere: number
   part_patronale: number
-  montant_majorations: number
 }
 
 type Departement = string

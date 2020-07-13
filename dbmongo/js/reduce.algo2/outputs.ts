@@ -1,4 +1,4 @@
-import { DebitComputedValues } from "./delais"
+import { SortieCotisationsDettes } from "./cotisationsdettes"
 import { SortieDefaillances } from "./defaillances"
 import { SortieCcsf } from "./ccsf"
 import { SortieSirene } from "./sirene"
@@ -12,14 +12,14 @@ type DonnéesAgrégées = {
   etat_proc_collective: "in_bonis" // ou ProcolToHumanRes ?
   interessante_urssaf: true
   outcome: false
-} & DebitComputedValues &
+} & Partial<SortieCotisationsDettes> &
   Partial<SortieDefaillances> &
   Partial<SortieCcsf> &
   Partial<SortieSirene> &
   Partial<SortieNAF> &
   Partial<SortieCotisation>
 
-type IndexDonnéesAgrégées = Record<Periode, DonnéesAgrégées>
+type IndexDonnéesAgrégées = Record<Timestamp, DonnéesAgrégées>
 
 /**
  * Appelé par `map()` pour chaque entreprise/établissement, `outputs()` retourne
