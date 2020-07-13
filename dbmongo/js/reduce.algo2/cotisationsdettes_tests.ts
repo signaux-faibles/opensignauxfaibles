@@ -31,7 +31,7 @@ test("La variable cotisation représente les cotisations sociales dues à une p�
   t.deepEqual(actual, expected)
 })
 
-test("Le montant de dette d'une période est rapporté dans les périodes suivantes", (t: ExecutionContext) => {
+test(" Le montant de dette d'une période est rapporté dans les périodes suivantes", (t: ExecutionContext) => {
   const dateDebut = new Date("2018-01-01")
   const periode = generatePeriodSerie(
     dateDebut,
