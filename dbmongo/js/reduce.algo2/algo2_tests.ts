@@ -112,7 +112,7 @@ test("delai_deviation_remboursement est calculé si un délai de règlement de c
   const dateDebut = new Date("2018-01-01")
   const datePlusUnMois = new Date("2018-02-01")
   initGlobalParams(dateDebut, datePlusUnMois)
-  const siret = "012345678901234"
+  const siret = "12345678901234"
   const duréeDelai = 60 // en jours
   const input = {
     _id: siret,

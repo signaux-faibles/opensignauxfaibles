@@ -26,7 +26,7 @@ type NAF = {
 
 type Scope = "etablissement" | "entreprise"
 
-// Données importées pour une entreprise ou établissement, sur une période donnée.
+// Données importées pour une entreprise ou établissement
 type CompanyDataValues = {
   key: SiretOrSiren
   scope: Scope
