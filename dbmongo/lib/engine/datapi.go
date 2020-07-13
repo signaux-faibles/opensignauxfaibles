@@ -307,19 +307,8 @@ func ExportEntrepriseToFile(filepath string) error {
 	pipeline := exportdatapi.GetEntreprisePipeline()
 	iter := Db.DB.C("Public").Pipe(pipeline).AllowDiskUse().Iter()
 
-	/*
-		type EntrepriseAvecEtablissements struct {
-			ID    map[string]string `json:"_id" bson:"_id"`
-			Value struct {
-				Key            string                       `json:"key" bson:"key"`
-				IDEntreprise   string                       `json:"idEntreprise" bson:"idEntreprise"`
-				Etablissements []exportdatapi.Etablissement `json:"etablissements" bson:"etablissements"`
-			} `bson:"value"`
-		}
-	*/
-
 	var wroteOneElement = false
-	var entreprise interface{} //EntrepriseAvecEtablissements
+	var entreprise interface{}
 	for iter.Next(&entreprise) {
 		if wroteOneElement {
 			_, err = file.Write([]byte(",\n"))

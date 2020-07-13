@@ -104,7 +104,7 @@ EXPORT_FILE=$(http --ignore-stdin :5000/datapi/exportEntreprise batch=2002_1 | t
 
 echo ""
 echo "🆎 Diff between expected and actual output:"
-# diff "${DATA_DIR}/test-api-entreprise_golden.json" "${EXPORT_FILE}"
+# TODO: diff "${DATA_DIR}/test-api-entreprise_golden.json" "${EXPORT_FILE}"
 diff --brief "entreprise_golden.json" "${EXPORT_FILE}" # (diff provisoire)
 echo "✅ No diff. The reduce API works as usual."
 echo ""
