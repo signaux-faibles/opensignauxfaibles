@@ -121,15 +121,10 @@ test("delai_deviation_remboursement est calculé si un délai de règlement de c
       scope: "etablissement" as Scope,
       batch: {
         "1905": {
-          cotisation: {
-            hash0: {
-              periode: { start: dateDebut, end: datePlusUnMois },
-              du: 100,
-            },
-          },
+          cotisation: {},
           debit: {},
           delai: {
-            hash2: {
+            hash: {
               date_creation: dateDebut,
               date_echeance: new Date(
                 dateDebut.getTime() + duréeDelai * DAY_IN_MS
@@ -140,7 +135,7 @@ test("delai_deviation_remboursement est calculé si un délai de règlement de c
           },
         },
       },
-    } as CompanyDataValues,
+    },
   }
 
   const pool = setupMapCollector()
@@ -152,4 +147,5 @@ test("delai_deviation_remboursement est calculé si un délai de règlement de c
   t.deepEqual(Object.keys(values[0][0].value), [siret])
   const finalCompanyData = values[0][0].value[siret]
   t.is(typeof finalCompanyData.delai_deviation_remboursement, "number")
+  t.is(finalCompanyData.delai_deviation_remboursement, -1)
 })
