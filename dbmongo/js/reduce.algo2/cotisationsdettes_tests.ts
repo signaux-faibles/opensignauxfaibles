@@ -45,8 +45,6 @@ test("Le montant de dette d'une période est reporté dans les périodes suivant
     date.getTime()
   )
 
-  ;(globalThis as any).date_fin = dateFin // TODO: transformer ce parametre en parametre local de fonction
-
   const moisRemboursement = 4
   const partOuvrière = 100
   const partPatronale = 200
@@ -76,7 +74,7 @@ test("Le montant de dette d'une période est reporté dans les périodes suivant
     },
   }
 
-  const output = cotisationsdettes(v, periode)
+  const output = cotisationsdettes(v, periode, dateFin)
 
   const expPartOuvrière = Array(moisRemboursement)
     .fill(partOuvrière)
@@ -110,12 +108,10 @@ test("Le montant de dette d'une période est reporté dans les périodes suivant
 
 test("interessante_urssaf est vrai quand l'entreprise n'a pas eu de débit (dette) sur les 6 derniers mois", (t: ExecutionContext) => {
   const dateDebut = new Date("2018-01-01")
-  const periode = generatePeriodSerie(
-    dateDebut,
-    dateAddMonth(dateDebut, 8)
-  ).map((date) => date.getTime())
-
-  ;(globalThis as any).date_fin = dateAddMonth(dateDebut, 8) // utilisé par cotisationsdettes lors du traitement des débits
+  const dateFin = dateAddMonth(dateDebut, 8) // utilisé par cotisationsdettes lors du traitement des débits
+  const periode = generatePeriodSerie(dateDebut, dateFin).map((date) =>
+    date.getTime()
+  )
 
   const v = {
     cotisation: {
@@ -156,7 +152,7 @@ test("interessante_urssaf est vrai quand l'entreprise n'a pas eu de débit (dett
     },
   }
 
-  const actual = cotisationsdettes(v, periode)
+  const actual = cotisationsdettes(v, periode, dateFin)
 
   t.false(actual[dateAddMonth(dateDebut, 0).getTime()].interessante_urssaf)
   t.false(actual[dateAddMonth(dateDebut, 1).getTime()].interessante_urssaf)

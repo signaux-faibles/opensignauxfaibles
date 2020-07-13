@@ -2,9 +2,6 @@ import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { dateAddMonth } from "./dateAddMonth"
 import { compareDebit } from "../common/compareDebit"
 
-// Paramètres globaux utilisés par "reduce.algo2"
-declare const date_fin: number
-
 type EcartNegatif = {
   hash: string
   numero_historique: EntréeDebit["numero_historique"]
@@ -43,7 +40,8 @@ export type SortieCotisationsDettes = {
  */
 export function cotisationsdettes(
   v: DonnéesCotisation & DonnéesDebit,
-  periodes: Timestamp[]
+  periodes: Timestamp[],
+  finPériode?: Date // correspond à la variable globale date_fin
 ): Record<number, SortieCotisationsDettes> {
   "use strict"
 
@@ -108,13 +106,13 @@ export function cotisationsdettes(
   const value_dette: Record<string, Dette[]> = {}
   // Pour chaque objet debit:
   // debit_traitement_debut => periode de traitement du débit
-  // debit_traitement_fin => periode de traitement du debit suivant, ou bien date_fin
+  // debit_traitement_fin => periode de traitement du debit suivant, ou bien finPériode
   // Entre ces deux dates, c'est cet objet qui est le plus à jour.
   Object.keys(v.debit).forEach(function (h) {
     const debit = v.debit[h]
 
     const debit_suivant = v.debit[debit.debit_suivant] || {
-      date_traitement: date_fin,
+      date_traitement: finPériode,
     }
 
     //Selon le jour du traitement, cela passe sur la période en cours ou sur la suivante.
