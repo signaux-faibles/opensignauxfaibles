@@ -128,13 +128,6 @@ test("delai_deviation_remboursement est calculé si un délai de règlement de c
             },
           },
           debit: {},
-          dettes: {
-            hash1: {
-              periode: dateDebut,
-              part_ouvriere: 100,
-              part_patronale: 0,
-            },
-          },
           delai: {
             hash2: {
               date_creation: dateDebut,
