@@ -4,8 +4,12 @@ import { cotisationsdettes } from "./cotisationsdettes"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { dateAddMonth } from "./dateAddMonth"
 
-function décaler(tableau: number[], décalage: number): number[] {
-  return Array(décalage).fill(undefined).concat(tableau).slice(0, -décalage)
+function dettePassée(
+  tableau: number[],
+  mois: number,
+  décalageEnMois: number
+): number | undefined {
+  return tableau[mois - décalageEnMois]
 }
 
 test("La variable cotisation représente les cotisations sociales dues à une période donnée", (t: ExecutionContext) => {
@@ -81,14 +85,6 @@ test.only("Le montant de dette d'une période est reporté dans les périodes su
   const expPartPatronale = Array(moisRemboursement)
     .fill(200)
     .concat(Array(dureeEnMois - moisRemboursement).fill(0))
-
-  function dettePassée(
-    tableau: number[],
-    mois: number,
-    décalageEnMois: number
-  ): number {
-    return décaler(tableau, décalageEnMois)[mois]
-  }
 
   const expectedInteressanteUrssaf = Array(9)
     .fill(false)
