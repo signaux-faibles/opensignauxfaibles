@@ -214,14 +214,14 @@ export function cotisationsdettes(
       }
     })
 
-    // TODO: apply same logic as above (map+filter) + re-use also in effectif and cotisations
-    const future_month_offsets = [0, 1, 2, 3, 4, 5]
     if (val.montant_part_ouvriere + val.montant_part_patronale > 0) {
-      future_month_offsets.forEach((offset) => {
-        const time_offset = f.dateAddMonth(new Date(time), offset).getTime()
-        sortieCotisationsDettes[time_offset] =
-          sortieCotisationsDettes[time_offset] || {}
-        sortieCotisationsDettes[time_offset].interessante_urssaf = false
+      const futureTimestamps = [0, 1, 2, 3, 4, 5]
+      futureTimestamps.forEach((offset) => {
+        const période = f.dateAddMonth(new Date(time), offset).getTime()
+        sortieCotisationsDettes[période] = {
+          ...sortieCotisationsDettes[période],
+          interessante_urssaf: false,
+        }
       })
     }
   })

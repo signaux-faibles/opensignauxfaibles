@@ -86,3 +86,5 @@ export function effectifs(
   })
   return output_effectif
 }
+
+// TODO: appliquer même logique d'itération sur futureTimestamps que dans cotisationsdettes.ts

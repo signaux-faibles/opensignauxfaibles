@@ -1229,7 +1229,8 @@ db.getCollection("Features").createIndex({
         else
             counter = 0;
     });
-}`,
+}
+// TODO: appliquer même logique d'itération sur futureTimestamps que dans cotisationsdettes.ts`,
 "cotisationsdettes": `/**
  * Calcule les variables liées aux cotisations sociales et dettes sur ces
  * cotisations.
@@ -1357,14 +1358,11 @@ function cotisationsdettes(v, periodes, finPériode // correspond à la variable
         futureTimestamps.forEach(({ offset, timestamp }) => {
             sortieCotisationsDettes[timestamp] = Object.assign(Object.assign({}, sortieCotisationsDettes[timestamp]), { ["montant_part_ouvriere_past_" + offset]: val.montant_part_ouvriere, ["montant_part_patronale_past_" + offset]: val.montant_part_patronale });
         });
-        // TODO: apply same logic as above (map+filter) + re-use also in effectif and cotisations
-        const future_month_offsets = [0, 1, 2, 3, 4, 5];
         if (val.montant_part_ouvriere + val.montant_part_patronale > 0) {
-            future_month_offsets.forEach((offset) => {
-                const time_offset = f.dateAddMonth(new Date(time), offset).getTime();
-                sortieCotisationsDettes[time_offset] =
-                    sortieCotisationsDettes[time_offset] || {};
-                sortieCotisationsDettes[time_offset].interessante_urssaf = false;
+            const futureTimestamps = [0, 1, 2, 3, 4, 5];
+            futureTimestamps.forEach((offset) => {
+                const période = f.dateAddMonth(new Date(time), offset).getTime();
+                sortieCotisationsDettes[période] = Object.assign(Object.assign({}, sortieCotisationsDettes[période]), { interessante_urssaf: false });
             });
         }
     });
@@ -1531,7 +1529,8 @@ function delais(v, debitParPériode, intervalleTraitement) {
         }
     });
     return output_effectif;
-}`,
+}
+// TODO: appliquer même logique d'itération sur futureTimestamps que dans cotisationsdettes.ts`,
 "finalize": `function finalize(k, v) {
     "use strict";
     const maxBsonSize = 16777216;
