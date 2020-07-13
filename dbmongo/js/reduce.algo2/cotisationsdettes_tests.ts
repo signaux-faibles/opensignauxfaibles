@@ -161,14 +161,17 @@ test("interessante_urssaf est vrai quand l'entreprise n'a pas eu de débit (dett
 
   const actual = cotisationsdettes(v, periode)
 
-  t.log(actual)
+  t.false(actual[dateAddMonth(dateDebut, 0).getTime()].interessante_urssaf)
+  t.false(actual[dateAddMonth(dateDebut, 1).getTime()].interessante_urssaf)
+  t.false(actual[dateAddMonth(dateDebut, 2).getTime()].interessante_urssaf)
+  t.false(actual[dateAddMonth(dateDebut, 3).getTime()].interessante_urssaf)
+  t.false(actual[dateAddMonth(dateDebut, 4).getTime()].interessante_urssaf)
+  t.false(actual[dateAddMonth(dateDebut, 5).getTime()].interessante_urssaf)
 
-  for (const month of [0, 1, 2, 3, 4, 5, 6]) {
-    t.false(
-      actual[dateAddMonth(dateDebut, month).getTime()].interessante_urssaf
+  t.is(
+    actual[dateAddMonth(dateDebut, 6).getTime()].interessante_urssaf,
+    undefined
     )
-  }
-
   t.is(
     actual[dateAddMonth(dateDebut, 7).getTime()].interessante_urssaf,
     undefined
