@@ -4,14 +4,6 @@ import { cotisationsdettes } from "./cotisationsdettes"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { dateAddMonth } from "./dateAddMonth"
 
-function dettePassée(
-  tableau: number[],
-  mois: number,
-  décalageEnMois: number
-): number | undefined {
-  return tableau[mois - décalageEnMois]
-}
-
 test("La variable cotisation représente les cotisations sociales dues à une période donnée", (t: ExecutionContext) => {
   const date = new Date("2018-01-01")
   const datePlusUnMois = new Date("2018-02-01")
@@ -96,16 +88,16 @@ test.only("Le montant de dette d'une période est reporté dans les périodes su
       interessante_urssaf: expectedInteressanteUrssaf[mois],
       montant_part_ouvriere: expPartOuvrière[mois],
       montant_part_patronale: expPartPatronale[mois],
-      montant_part_ouvriere_past_1: dettePassée(expPartOuvrière, mois, 1),
-      montant_part_patronale_past_1: dettePassée(expPartPatronale, mois, 1),
-      montant_part_ouvriere_past_2: dettePassée(expPartOuvrière, mois, 2),
-      montant_part_patronale_past_2: dettePassée(expPartPatronale, mois, 2),
-      montant_part_ouvriere_past_3: dettePassée(expPartOuvrière, mois, 3),
-      montant_part_patronale_past_3: dettePassée(expPartPatronale, mois, 3),
-      montant_part_ouvriere_past_6: dettePassée(expPartOuvrière, mois, 6),
-      montant_part_patronale_past_6: dettePassée(expPartPatronale, mois, 6),
-      montant_part_ouvriere_past_12: dettePassée(expPartOuvrière, mois, 12),
-      montant_part_patronale_past_12: dettePassée(expPartPatronale, mois, 12),
+      montant_part_ouvriere_past_1: expPartOuvrière[mois - 1],
+      montant_part_patronale_past_1: expPartPatronale[mois - 1],
+      montant_part_ouvriere_past_2: expPartOuvrière[mois - 2],
+      montant_part_patronale_past_2: expPartPatronale[mois - 2],
+      montant_part_ouvriere_past_3: expPartOuvrière[mois - 3],
+      montant_part_patronale_past_3: expPartPatronale[mois - 3],
+      montant_part_ouvriere_past_6: expPartOuvrière[mois - 6],
+      montant_part_patronale_past_6: expPartPatronale[mois - 6],
+      montant_part_ouvriere_past_12: expPartOuvrière[mois - 12],
+      montant_part_patronale_past_12: expPartPatronale[mois - 12],
     }
     Object.keys(expected).forEach((p) => {
       const prop = p as keyof typeof expected
