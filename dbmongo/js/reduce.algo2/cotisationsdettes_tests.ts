@@ -4,6 +4,10 @@ import { cotisationsdettes } from "./cotisationsdettes"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { dateAddMonth } from "./dateAddMonth"
 
+function décaler(tableau: number[], décalage: number): number[] {
+  return Array(décalage).fill(undefined).concat(tableau).slice(0, -décalage)
+}
+
 test("La variable cotisation représente les cotisations sociales dues à une période donnée", (t: ExecutionContext) => {
   const date = new Date("2018-01-01")
   const datePlusUnMois = new Date("2018-02-01")
@@ -32,14 +36,16 @@ test("La variable cotisation représente les cotisations sociales dues à une p�
 })
 
 test.only("Le montant de dette d'une période est reporté dans les périodes suivantes", (t: ExecutionContext) => {
+  const dureeEnMois = 13
   const dateDebut = new Date("2018-01-01")
-  const dateFin = dateAddMonth(dateDebut, 13)
+  const dateFin = dateAddMonth(dateDebut, dureeEnMois)
   const periode = generatePeriodSerie(dateDebut, dateFin).map((date) =>
     date.getTime()
   )
 
   ;(globalThis as any).date_fin = dateFin // TODO: transformer ce parametre en parametre local de fonction
 
+  const moisRemboursement = 4
   const v: DonnéesCotisation & DonnéesDebit = {
     cotisation: {},
     debit: {
@@ -57,7 +63,7 @@ test.only("Le montant de dette d'une période est reporté dans les périodes su
         periode: { start: dateDebut, end: dateAddMonth(dateDebut, 1) },
         part_ouvriere: 0,
         part_patronale: 0,
-        date_traitement: dateAddMonth(dateDebut, 4),
+        date_traitement: dateAddMonth(dateDebut, moisRemboursement),
         debit_suivant: "",
         numero_compte: "",
         numero_ecart_negatif: 1,
@@ -68,41 +74,11 @@ test.only("Le montant de dette d'une période est reporté dans les périodes su
 
   const actual = cotisationsdettes(v, periode)
 
-  const expectedMontantPartOuvrière = [
-    100,
-    100,
-    100,
-    100,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-  ]
+  const expectedMontantPartOuvrière = Array(moisRemboursement).fill(100).concat(
+    Array(dureeEnMois - moisRemboursement).fill(0))
 
-  const expectedMontantPartPatronale = [
-    200,
-    200,
-    200,
-    200,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-  ]
-
-  function décaler(tableau: number[], décalage: number): number[] {
-    return Array(décalage).fill(undefined).concat(tableau).slice(0, -décalage)
-  }
+  const expectedMontantPartPatronale = Array(moisRemboursement).fill(200).concat(
+    Array(dureeEnMois - moisRemboursement).fill(0))
 
   const expectedMontantPartOuvrièrePast1 = décaler(
     expectedMontantPartOuvrière,
@@ -175,31 +151,6 @@ test.only("Le montant de dette d'une période est reporté dans les périodes su
     })
     t.deepEqual(actual[dateAddMonth(dateDebut, période).getTime()], expected)
   }
-
-  // t.deepEqual(actual[dateAddMonth(dateDebut, 1).getTime()], montantsUnMois)
-  // t.deepEqual(actual[dateAddMonth(dateDebut, 2).getTime()], montantsDeuxMois)
-  // t.deepEqual(actual[dateAddMonth(dateDebut, 3).getTime()], montantsTroisMois)
-  // t.deepEqual(actual[dateAddMonth(dateDebut, 4).getTime()], {
-  //   ...montantsTroisMois,
-  //   montant_part_ouvriere: 0,
-  //   montant_part_patronale: 0,
-  // } as SortieCotisationsDettes)
-  // t.deepEqual(actual[dateAddMonth(dateDebut, 5).getTime()], {
-  //   ...montantsTroisMois,
-  //   montant_part_ouvriere: 0,
-  //   montant_part_patronale: 0,
-  // } as SortieCotisationsDettes)
-  // t.deepEqual(actual[dateAddMonth(dateDebut, 6).getTime()], {
-  //   ...montantsSixMois,
-  //   montant_part_ouvriere: 0,
-  //   montant_part_patronale: 0,
-  // } as SortieCotisationsDettes)
-  // t.deepEqual(actual[dateAddMonth(dateDebut, 7).getTime()], montantsSixMois)
-  // t.deepEqual(actual[dateAddMonth(dateDebut, 8).getTime()], montantsSixMois)
-  // t.deepEqual(actual[dateAddMonth(dateDebut, 9).getTime()], montantsSixMois)
-  // t.deepEqual(actual[dateAddMonth(dateDebut, 10).getTime()], montantsSixMois)
-  // t.deepEqual(actual[dateAddMonth(dateDebut, 11).getTime()], montantsSixMois)
-  // t.deepEqual(actual[dateAddMonth(dateDebut, 12).getTime()], montantsDouzeMois)
 })
 
 test("interessante_urssaf est vrai quand l'entreprise n'a pas eu de débit (dette) sur les 6 derniers mois", (t: ExecutionContext) => {
