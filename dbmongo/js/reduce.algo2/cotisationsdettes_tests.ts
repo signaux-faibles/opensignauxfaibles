@@ -104,12 +104,132 @@ test.only("Le montant de dette d'une période est reporté dans les périodes su
     montant_part_patronale_past_12: 200,
   }
 
+  const expectedMontantPartOuvrière = [
+    100,
+    100,
+    100,
+    100,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+  ]
+
+  const expectedMontantPartPatronale = [
+    200,
+    200,
+    200,
+    200,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+  ]
+
+  function décaler(tableau: number[], décalage: number): number[] {
+    return Array(décalage).fill(undefined).concat(tableau).slice(0, -décalage)
+  }
+
+  const expectedMontantPartOuvrièrePast1 = décaler(
+    expectedMontantPartOuvrière,
+    1
+  )
+  const expectedMontantPartOuvrièrePast2 = décaler(
+    expectedMontantPartOuvrière,
+    2
+  )
+  const expectedMontantPartOuvrièrePast3 = décaler(
+    expectedMontantPartOuvrière,
+    3
+  )
+  const expectedMontantPartOuvrièrePast6 = décaler(
+    expectedMontantPartOuvrière,
+    6
+  )
+  const expectedMontantPartOuvrièrePast12 = décaler(
+    expectedMontantPartOuvrière,
+    12
+  )
+  const expectedMontantPartPatronalePast1 = décaler(
+    expectedMontantPartPatronale,
+    1
+  )
+  const expectedMontantPartPatronalePast2 = décaler(
+    expectedMontantPartPatronale,
+    2
+  )
+  const expectedMontantPartPatronalePast3 = décaler(
+    expectedMontantPartPatronale,
+    3
+  )
+  const expectedMontantPartPatronalePast6 = décaler(
+    expectedMontantPartPatronale,
+    6
+  )
+  const expectedMontantPartPatronalePast12 = décaler(
+    expectedMontantPartPatronale,
+    12
+  )
+
+  const expectedInteressanteUrssaf = Array(9)
+    .fill(false)
+    .concat(Array(4).fill(undefined))
+
+  for (let période = 0; période < 13; ++période) {
+    t.log({ période }, actual[dateAddMonth(dateDebut, période).getTime()])
+    const expected = {
+      interessante_urssaf: expectedInteressanteUrssaf[période],
+      montant_part_ouvriere: expectedMontantPartOuvrière[période],
+      montant_part_patronale: expectedMontantPartPatronale[période],
+      montant_part_ouvriere_past_1: expectedMontantPartOuvrièrePast1[période],
+      montant_part_patronale_past_1: expectedMontantPartPatronalePast1[période],
+      montant_part_ouvriere_past_2: expectedMontantPartOuvrièrePast2[période],
+      montant_part_patronale_past_2: expectedMontantPartPatronalePast2[période],
+      montant_part_ouvriere_past_3: expectedMontantPartOuvrièrePast3[période],
+      montant_part_patronale_past_3: expectedMontantPartPatronalePast3[période],
+      montant_part_ouvriere_past_6: expectedMontantPartOuvrièrePast6[période],
+      montant_part_patronale_past_6: expectedMontantPartPatronalePast6[période],
+      montant_part_ouvriere_past_12: expectedMontantPartOuvrièrePast12[période],
+      montant_part_patronale_past_12:
+        expectedMontantPartPatronalePast12[période],
+    }
+    Object.keys(expected).forEach((p) => {
+      const prop = p as keyof typeof expected
+      if (typeof expected[prop] === "undefined") {
+        delete expected[prop]
+      }
+    })
+    t.deepEqual(actual[dateAddMonth(dateDebut, période).getTime()], expected)
+  }
+
   t.deepEqual(actual[dateAddMonth(dateDebut, 1).getTime()], montantsUnMois)
   t.deepEqual(actual[dateAddMonth(dateDebut, 2).getTime()], montantsDeuxMois)
   t.deepEqual(actual[dateAddMonth(dateDebut, 3).getTime()], montantsTroisMois)
-  t.deepEqual(actual[dateAddMonth(dateDebut, 4).getTime()], {...montantsTroisMois, montant_part_ouvriere: 0, montant_part_patronale: 0} as SortieCotisationsDettes)
-  t.deepEqual(actual[dateAddMonth(dateDebut, 5).getTime()], {...montantsTroisMois, montant_part_ouvriere: 0, montant_part_patronale: 0} as SortieCotisationsDettes)
-  t.deepEqual(actual[dateAddMonth(dateDebut, 6).getTime()], {...montantsSixMois, montant_part_ouvriere: 0, montant_part_patronale: 0} as SortieCotisationsDettes)
+  t.deepEqual(actual[dateAddMonth(dateDebut, 4).getTime()], {
+    ...montantsTroisMois,
+    montant_part_ouvriere: 0,
+    montant_part_patronale: 0,
+  } as SortieCotisationsDettes)
+  t.deepEqual(actual[dateAddMonth(dateDebut, 5).getTime()], {
+    ...montantsTroisMois,
+    montant_part_ouvriere: 0,
+    montant_part_patronale: 0,
+  } as SortieCotisationsDettes)
+  t.deepEqual(actual[dateAddMonth(dateDebut, 6).getTime()], {
+    ...montantsSixMois,
+    montant_part_ouvriere: 0,
+    montant_part_patronale: 0,
+  } as SortieCotisationsDettes)
   t.deepEqual(actual[dateAddMonth(dateDebut, 7).getTime()], montantsSixMois)
   t.deepEqual(actual[dateAddMonth(dateDebut, 8).getTime()], montantsSixMois)
   t.deepEqual(actual[dateAddMonth(dateDebut, 9).getTime()], montantsSixMois)
