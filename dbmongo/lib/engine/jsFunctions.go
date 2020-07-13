@@ -1359,10 +1359,13 @@ function cotisationsdettes(v, periodes, finPériode // correspond à la variable
             sortieCotisationsDettes[timestamp] = Object.assign(Object.assign({}, sortieCotisationsDettes[timestamp]), { ["montant_part_ouvriere_past_" + offset]: val.montant_part_ouvriere, ["montant_part_patronale_past_" + offset]: val.montant_part_patronale });
         });
         if (val.montant_part_ouvriere + val.montant_part_patronale > 0) {
-            const futureTimestamps = [0, 1, 2, 3, 4, 5];
-            futureTimestamps.forEach((offset) => {
-                const période = f.dateAddMonth(new Date(time), offset).getTime();
-                sortieCotisationsDettes[période] = Object.assign(Object.assign({}, sortieCotisationsDettes[période]), { interessante_urssaf: false });
+            const futureTimestamps = [0, 1, 2, 3, 4, 5]
+                .map((offset) => ({
+                timestamp: f.dateAddMonth(new Date(time), offset).getTime(),
+            }))
+                .filter(({ timestamp }) => periodes.includes(timestamp));
+            futureTimestamps.forEach(({ timestamp }) => {
+                sortieCotisationsDettes[timestamp] = Object.assign(Object.assign({}, sortieCotisationsDettes[timestamp]), { interessante_urssaf: false });
             });
         }
     });

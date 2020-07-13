@@ -216,10 +216,14 @@ export function cotisationsdettes(
 
     if (val.montant_part_ouvriere + val.montant_part_patronale > 0) {
       const futureTimestamps = [0, 1, 2, 3, 4, 5]
-      futureTimestamps.forEach((offset) => {
-        const période = f.dateAddMonth(new Date(time), offset).getTime()
-        sortieCotisationsDettes[période] = {
-          ...sortieCotisationsDettes[période],
+        .map((offset) => ({
+          timestamp: f.dateAddMonth(new Date(time), offset).getTime(),
+        }))
+        .filter(({ timestamp }) => periodes.includes(timestamp))
+
+      futureTimestamps.forEach(({ timestamp }) => {
+        sortieCotisationsDettes[timestamp] = {
+          ...sortieCotisationsDettes[timestamp],
           interessante_urssaf: false,
         }
       })
