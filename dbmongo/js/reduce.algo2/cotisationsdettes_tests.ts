@@ -31,21 +31,29 @@ test("La variable cotisation représente les cotisations sociales dues à une p�
   t.deepEqual(actual, expected)
 })
 
-test("Le montant de dette d'une période est rapporté dans les périodes suivantes", (t: ExecutionContext) => {
+test.only("Le montant de dette d'une période est reporté dans les périodes suivantes", (t: ExecutionContext) => {
   const dateDebut = new Date("2018-01-01")
-  const periode = generatePeriodSerie(
-    dateDebut,
-    dateAddMonth(dateDebut, 13)
-  ).map((date) => date.getTime())
+  const dateFin = dateAddMonth(dateDebut, 13)
+  const periode = generatePeriodSerie(dateDebut, dateFin).map((date) =>
+    date.getTime()
+  )
+
+  ;(globalThis as any).date_fin = dateFin // TODO: transformer ce parametre en parametre local de fonction
 
   const v: DonnéesCotisation & DonnéesDebit = {
-    cotisation: {
+    cotisation: {},
+    debit: {
       hash1: {
         periode: { start: dateDebut, end: dateAddMonth(dateDebut, 1) },
-        du: 100,
+        part_ouvriere: 100,
+        part_patronale: 200,
+        date_traitement: dateDebut,
+        debit_suivant: "",
+        numero_compte: "",
+        numero_ecart_negatif: 1,
+        numero_historique: 2,
       },
     },
-    debit: {},
   }
 
   const actual = cotisationsdettes(v, periode)
