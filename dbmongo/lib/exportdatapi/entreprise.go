@@ -7,7 +7,7 @@ import (
 
 // GetEntreprisePipeline produit un pipeline pour exporter les entreprises vers datapi
 func GetEntreprisePipeline() (pipeline []bson.M) {
-	// Classer les entreprises en 1er
+	// Classer les entreprises en 1er, de manière à simplifier la projection ($project) depuis le tableau d'établissements, plus bas
 	pipeline = append(pipeline, bson.M{"$sort": bson.M{
 		"_id": 1,
 	}})
@@ -29,21 +29,10 @@ func GetEntreprisePipeline() (pipeline []bson.M) {
 	// Sortir l'entreprise de chaque tableau `etablissements`
 	pipeline = append(pipeline, bson.M{"$project": bson.M{
 		"entreprise": bson.M{
-			"$arrayElemAt": []interface{}{"$etablissements", 0},
+			"$arrayElemAt": []interface{}{"$etablissements", 0}, // 1er élément = entreprise
 		},
 		"etablissements": bson.M{
-			"$filter": bson.M{
-				"input": "$etablissements",
-				"as":    "item",
-				"cond": bson.M{
-					"$regexMatch": bson.M{
-						"input": "$$item._id",
-						"regex": bson.RegEx{
-							Pattern: "^etablissement",
-						},
-					},
-				},
-			},
+			"$slice": []interface{}{"$etablissements", 1, bson.M{"$size": "$etablissements"}}, // éléments suivants = établissements
 		},
 	}})
 	// Classer les entreprises par SIRET (pour reproductibilité de l'export)
