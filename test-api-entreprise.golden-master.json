@@ -3,7 +3,6 @@
     "_id": "012345678",
     "entreprise": {
       "_id": "entreprise_012345678",
-      "idEntreprise": "012345678",
       "scores": [],
       "value": {
         "batch": "2002_1",
@@ -13,7 +12,6 @@
     "etablissements": [
       {
         "_id": "etablissement_01234567891011",
-        "idEntreprise": "012345678",
         "scores": [
           {
             "_id": "score1",
@@ -69,7 +67,6 @@
       },
       {
         "_id": "etablissement_01234567891012",
-        "idEntreprise": "012345678",
         "scores": [],
         "value": {
           "apconso": [],
@@ -108,7 +105,6 @@
     "_id": "212345678",
     "entreprise": {
       "_id": "entreprise_212345678",
-      "idEntreprise": "212345678",
       "scores": [],
       "value": {
         "batch": "2002_1",
@@ -118,7 +114,6 @@
     "etablissements": [
       {
         "_id": "etablissement_21234567891011",
-        "idEntreprise": "212345678",
         "scores": [],
         "value": {
           "apconso": [],

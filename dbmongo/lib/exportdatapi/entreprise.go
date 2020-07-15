@@ -11,10 +11,6 @@ func GetEntreprisePipeline() (pipeline []bson.M) {
 	pipeline = append(pipeline, bson.M{"$sort": bson.M{
 		"_id": 1,
 	}})
-	// Stockage du SIRET d'entreprise dans `idEntreprise`
-	pipeline = append(pipeline, bson.M{"$addFields": bson.M{
-		"idEntreprise": bson.M{"$substr": []interface{}{"$value.key", 0, 9}},
-	}})
 	// Rappatriement des scores pour chaque établissement
 	pipeline = append(pipeline, bson.M{"$lookup": bson.M{
 		"from":         "Scores",
@@ -23,7 +19,7 @@ func GetEntreprisePipeline() (pipeline []bson.M) {
 		"as":           "scores"}})
 	// Regroupement de l'entreprise et de ses établissements dans le tableau `etablissements`
 	pipeline = append(pipeline, bson.M{"$group": bson.M{
-		"_id":            "$idEntreprise",
+		"_id":            bson.M{"$substr": []interface{}{"$value.key", 0, 9}}, // a.k.a. `idEntreprise`
 		"etablissements": bson.M{"$push": "$$ROOT"},
 	}})
 	// Sortir l'entreprise de chaque tableau `etablissements`
