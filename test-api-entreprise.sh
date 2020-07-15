@@ -140,13 +140,16 @@ sleep 2 # give some time for dbmongo to start
 echo "- POST /api/data/compact 👉 $(http --print=b --ignore-stdin :5000/api/data/compact fromBatchKey=2002_1)"
 echo "- POST /api/data/public 👉 $(http --print=b --ignore-stdin :5000/api/data/public batch=2002_1 key=.........)"
 
-docker exec -i sf-mongodb mongo --quiet signauxfaibles > test-api.output.txt << CONTENTS
-  db.Public_debug.renameCollection("Public"); // only required if key was provided when calling POST /api/data/public
-  print("// Documents from db.RawData, after call to /api/data/compact:");
-  db.RawData.find().toArray();
-  print("// Documents from db.Public, after call to /api/data/public:");
-  db.Public.find().toArray();
-CONTENTS
+# This step is required only if key was provided when calling POST /api/data/public
+RENAME_RESULT=$(echo 'db.Public_debug.renameCollection("Public");' | docker exec -i sf-mongodb mongo --quiet signauxfaibles)
+echo "- rename 'Public_debug' collection to 'Public' 👉 ${RENAME_RESULT}"
+
+# docker exec -i sf-mongodb mongo --quiet signauxfaibles > test-api.output.txt << CONTENTS
+#   print("// Documents from db.RawData, after call to /api/data/compact:");
+#   db.RawData.find().toArray();
+#   print("// Documents from db.Public, after call to /api/data/public:");
+#   db.Public.find().toArray();
+# CONTENTS
 
 echo ""
 echo "🚚 Asking API to export enterprise data..."
