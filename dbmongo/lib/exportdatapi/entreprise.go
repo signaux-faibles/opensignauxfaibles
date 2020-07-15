@@ -7,6 +7,14 @@ import (
 
 // GetEntreprisePipeline produit un pipeline pour exporter les entreprises vers datapi
 func GetEntreprisePipeline() (pipeline []bson.M) {
+	/*
+		// Exclure les entreprises, pour ne garder que les établissements
+		pipeline = append(pipeline, bson.M{"$match": bson.M{
+			"_id": bson.RegEx{
+				Pattern: "etablissement.*",
+			},
+		}})
+	*/
 	// Stockage du SIRET d'entreprise dans `idEntreprise`
 	pipeline = append(pipeline, bson.M{"$addFields": bson.M{
 		"idEntreprise": bson.M{"$substr": []interface{}{"$value.key", 0, 9}},
@@ -21,6 +29,26 @@ func GetEntreprisePipeline() (pipeline []bson.M) {
 	pipeline = append(pipeline, bson.M{"$group": bson.M{
 		"_id":            "$idEntreprise",
 		"etablissements": bson.M{"$push": "$$ROOT"},
+	}})
+	// Sortir l'entreprise de chaque tableau `etablissements`
+	pipeline = append(pipeline, bson.M{"$project": bson.M{
+		"entreprise": bson.M{
+			"$arrayElemAt": []interface{}{"$etablissements", 0},
+		},
+		"etablissements": bson.M{
+			"$filter": bson.M{
+				"input": "$etablissements",
+				"as":    "item",
+				"cond": bson.M{
+					"$regexMatch": bson.M{
+						"input": "$$item._id",
+						"regex": bson.RegEx{
+							Pattern: "^etablissement",
+						},
+					},
+				},
+			},
+		},
 	}})
 	return pipeline
 }
