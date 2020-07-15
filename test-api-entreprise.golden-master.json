@@ -3,6 +3,15 @@
     "_id": "012345678",
     "etablissements": [
       {
+        "_id": "entreprise_012345678",
+        "idEntreprise": "012345678",
+        "scores": [],
+        "value": {
+          "batch": "2002_1",
+          "key": "012345678"
+        }
+      },
+      {
         "_id": "etablissement_01234567891011",
         "idEntreprise": "012345678",
         "scores": [

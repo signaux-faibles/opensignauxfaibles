@@ -59,6 +59,19 @@ cat > "${DATA_DIR}/db_popul.js" << CONTENTS
   db.ImportedData.remove({})
   db.ImportedData.insertMany([
     {
+        "_id": "entr1",
+        "value": {
+            "batch": {
+                "2002_1": {}
+            },
+            "scope": "entreprise",
+            "index": {
+                "algo2": true
+            },
+            "key": "012345678"
+        }
+    },
+    {
         "_id": "etab1",
         "value": {
             "batch": {
