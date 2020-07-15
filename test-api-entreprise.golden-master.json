@@ -66,6 +66,41 @@
           "procol": {},
           "sirene": {}
         }
+      },
+      {
+        "_id": "etablissement_01234567891012",
+        "idEntreprise": "012345678",
+        "scores": [],
+        "value": {
+          "apconso": [],
+          "apdemande": [],
+          "batch": "2002_1",
+          "compte": {},
+          "cotisation": [
+            0,
+            0
+          ],
+          "debit": [
+            {
+              "part_ouvriere": 0,
+              "part_patronale": 0
+            },
+            {
+              "part_ouvriere": 0,
+              "part_patronale": 0
+            }
+          ],
+          "delai": [],
+          "dernier_effectif": {},
+          "effectif": [],
+          "idEntreprise": "entreprise_012345678",
+          "key": "01234567891012",
+          "last_procol": {
+            "etat": "in_bonis"
+          },
+          "procol": {},
+          "sirene": {}
+        }
       }
     ]
   }

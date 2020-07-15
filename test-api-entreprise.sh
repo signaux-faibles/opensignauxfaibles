@@ -69,6 +69,16 @@ cat > "${DATA_DIR}/db_popul.js" << CONTENTS
             "scope": "etablissement",
             "key": "01234567891011"
         }
+    },
+    {
+        "_id": "etab2",
+        "value": {
+            "batch": {
+                "2002_1": {}
+            },
+            "scope": "etablissement",
+            "key": "01234567891012"
+        }
     }
   ])
 
