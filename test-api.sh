@@ -105,7 +105,7 @@ grep -v '"random_order" :' test-api.output.txt > test-api.output-documents.txt
 
 echo ""
 echo "🆎 Diff between expected and actual output:"
-diff test-api.golden-master.txt test-api.output-documents.txt
+diff --brief test-api.golden-master.txt test-api.output-documents.txt
 echo "✅ No diff. The reduce API works as usual."
 echo ""
 rm test-api.output.txt test-api.output-documents.txt

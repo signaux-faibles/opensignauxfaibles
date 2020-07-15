@@ -118,7 +118,7 @@ removeRandomOrder "${DATA_DIR}/finalize_golden.log" \
 
 echo ""
 echo "🆎 Diff between expected and actual output:"
-diff "${DATA_DIR}/test-api-2_golden.json" test-api-2.output.json
+diff --brief "${DATA_DIR}/test-api-2_golden.json" test-api-2.output.json
 echo "✅ No diff. The reduce API works as usual."
 echo ""
 rm test-api-2.output.json
