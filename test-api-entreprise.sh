@@ -98,7 +98,7 @@ cat > "${DATA_DIR}/db_popul.js" << CONTENTS
             },
             "scope": "etablissement",
             "key": "21234567891011"
-    }
+        }
     },
   ])
 
@@ -157,10 +157,17 @@ EXPORT_FILE=$(http --ignore-stdin :5000/datapi/exportEntreprise batch=2002_1 | t
 echo "- POST /datapi/exportEntreprise 👉 ${EXPORT_FILE}"
 
 echo ""
-# Diff between expected and actual output
 cd ..
-diff --brief "test-api-entreprise.golden-master.json" "dbmongo/${EXPORT_FILE}"
-echo "✅ No diff. The export worked as expected."
+# Check if the --update flag was passed
+if [[ "$*" == *--update* ]]
+then
+    echo "🖼  Updating golden master file using ${EXPORT_FILE}..."
+    cp "dbmongo/${EXPORT_FILE}" "test-api-entreprise.golden-master.json"
+else
+    # Diff between expected and actual output
+    diff --brief "test-api-entreprise.golden-master.json" "dbmongo/${EXPORT_FILE}"
+    echo "✅ No diff. The export worked as expected."
+fi
 echo ""
 rm "dbmongo/${EXPORT_FILE}"
 # Now, the "trap" commands will run, to clean up.
