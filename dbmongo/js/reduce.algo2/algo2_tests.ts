@@ -108,7 +108,7 @@ function sortObject(object: any): any {
   return sortedObj
 }
 
-test("delai_deviation_remboursement est calculé si un délai de règlement de cotisations sociales a été demandé", (t: ExecutionContext) => {
+test("delai_deviation_remboursement est calculé à partir d'un débit et d'une demande de délai de règlement de cotisations sociales", (t: ExecutionContext) => {
   const dateDebut = new Date("2018-01-01")
   const datePlusUnMois = new Date("2018-02-01")
   initGlobalParams(dateDebut, datePlusUnMois)
@@ -122,9 +122,23 @@ test("delai_deviation_remboursement est calculé si un délai de règlement de c
       batch: {
         "1905": {
           cotisation: {},
-          debit: {},
+          debit: {
+            hashDette: {
+              periode: {
+                start: dateDebut,
+                end: datePlusUnMois,
+              },
+              numero_ecart_negatif: 1,
+              numero_historique: 2,
+              numero_compte: "",
+              date_traitement: dateDebut,
+              debit_suivant: "",
+              part_ouvriere: 60,
+              part_patronale: 0,
+            },
+          },
           delai: {
-            hash: {
+            hashDelai: {
               date_creation: dateDebut,
               date_echeance: new Date(
                 dateDebut.getTime() + duréeDelai * DAY_IN_MS
@@ -147,5 +161,5 @@ test("delai_deviation_remboursement est calculé si un délai de règlement de c
   t.deepEqual(Object.keys(values[0][0].value), [siret])
   const finalCompanyData = values[0][0].value[siret]
   t.is(typeof finalCompanyData.delai_deviation_remboursement, "number")
-  t.is(finalCompanyData.delai_deviation_remboursement, -1)
+  t.is(finalCompanyData.delai_deviation_remboursement, -0.4)
 })
