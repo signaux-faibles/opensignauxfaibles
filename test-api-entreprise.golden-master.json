@@ -103,5 +103,54 @@
         }
       }
     ]
+  },
+  {
+    "_id": "212345678",
+    "etablissements": [
+      {
+        "_id": "entreprise_212345678",
+        "idEntreprise": "212345678",
+        "scores": [],
+        "value": {
+          "batch": "2002_1",
+          "key": "212345678"
+        }
+      },
+      {
+        "_id": "etablissement_21234567891011",
+        "idEntreprise": "212345678",
+        "scores": [],
+        "value": {
+          "apconso": [],
+          "apdemande": [],
+          "batch": "2002_1",
+          "compte": {},
+          "cotisation": [
+            0,
+            0
+          ],
+          "debit": [
+            {
+              "part_ouvriere": 0,
+              "part_patronale": 0
+            },
+            {
+              "part_ouvriere": 0,
+              "part_patronale": 0
+            }
+          ],
+          "delai": [],
+          "dernier_effectif": {},
+          "effectif": [],
+          "idEntreprise": "entreprise_212345678",
+          "key": "21234567891011",
+          "last_procol": {
+            "etat": "in_bonis"
+          },
+          "procol": {},
+          "sirene": {}
+        }
+      }
+    ]
   }
 ]

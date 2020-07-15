@@ -79,7 +79,27 @@ cat > "${DATA_DIR}/db_popul.js" << CONTENTS
             "scope": "etablissement",
             "key": "01234567891012"
         }
+    },
+    {
+        "_id": "entr2",
+        "value": {
+            "batch": {
+                "2002_1": {}
+            },
+            "scope": "entreprise",
+            "key": "212345678"
+        }
+    },
+    {
+        "_id": "etab21",
+        "value": {
+            "batch": {
+                "2002_1": {}
+            },
+            "scope": "etablissement",
+            "key": "21234567891011"
     }
+    },
   ])
 
   db.Scores.remove({})
@@ -118,7 +138,7 @@ echo "💎 Computing Features and Public collections thru dbmongo API..."
 sh -c "./dbmongo &>/dev/null &" # we run in a separate shell to hide the "terminated" message when the process is killed by trap
 sleep 2 # give some time for dbmongo to start
 echo "- POST /api/data/compact 👉 $(http --print=b --ignore-stdin :5000/api/data/compact fromBatchKey=2002_1)"
-echo "- POST /api/data/public 👉 $(http --print=b --ignore-stdin :5000/api/data/public batch=2002_1 key=012345678)"
+echo "- POST /api/data/public 👉 $(http --print=b --ignore-stdin :5000/api/data/public batch=2002_1 key=.........)"
 
 docker exec -i sf-mongodb mongo --quiet signauxfaibles > test-api.output.txt << CONTENTS
   db.Public_debug.renameCollection("Public"); // only required if key was provided when calling POST /api/data/public
