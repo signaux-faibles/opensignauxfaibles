@@ -1078,7 +1078,7 @@ db.getCollection("Features").createIndex({
     Object.keys(apart).forEach((k) => {
         if (apart[k].consommation.length > 0) {
             apart[k].consommation
-                .sort((a, b) => apconso[a].periode.getTime() >= apconso[b].periode.getTime() ? 1 : 0)
+                .sort((a, b) => apconso[a].periode.getTime() - apconso[b].periode.getTime())
                 .forEach((h) => {
                 const time = apconso[h].periode.getTime();
                 output_apart[time] = output_apart[time] || {};
@@ -1229,12 +1229,14 @@ db.getCollection("Features").createIndex({
         else
             counter = 0;
     });
-}`,
+}
+/* TODO: appliquer même logique d'itération sur futureTimestamps que dans cotisationsdettes.ts */`,
 "cotisationsdettes": `/**
  * Calcule les variables liées aux cotisations sociales et dettes sur ces
  * cotisations.
  */
-function cotisationsdettes(v, periodes) {
+function cotisationsdettes(v, periodes, finPériode // correspond à la variable globale date_fin
+) {
     "use strict";
 
     // Tous les débits traitées après ce jour du mois sont reportées à la période suivante
@@ -1284,12 +1286,12 @@ function cotisationsdettes(v, periodes) {
     const value_dette = {};
     // Pour chaque objet debit:
     // debit_traitement_debut => periode de traitement du débit
-    // debit_traitement_fin => periode de traitement du debit suivant, ou bien date_fin
+    // debit_traitement_fin => periode de traitement du debit suivant, ou bien finPériode
     // Entre ces deux dates, c'est cet objet qui est le plus à jour.
     Object.keys(v.debit).forEach(function (h) {
         const debit = v.debit[h];
         const debit_suivant = v.debit[debit.debit_suivant] || {
-            date_traitement: date_fin,
+            date_traitement: finPériode,
         };
         //Selon le jour du traitement, cela passe sur la période en cours ou sur la suivante.
         const jour_traitement = debit.date_traitement.getUTCDate();
@@ -1356,14 +1358,14 @@ function cotisationsdettes(v, periodes) {
         futureTimestamps.forEach(({ offset, timestamp }) => {
             sortieCotisationsDettes[timestamp] = Object.assign(Object.assign({}, sortieCotisationsDettes[timestamp]), { ["montant_part_ouvriere_past_" + offset]: val.montant_part_ouvriere, ["montant_part_patronale_past_" + offset]: val.montant_part_patronale });
         });
-        // TODO: apply same logic as above (map+filter) + re-use also in effectif and cotisations
-        const future_month_offsets = [0, 1, 2, 3, 4, 5];
         if (val.montant_part_ouvriere + val.montant_part_patronale > 0) {
-            future_month_offsets.forEach((offset) => {
-                const time_offset = f.dateAddMonth(new Date(time), offset).getTime();
-                sortieCotisationsDettes[time_offset] =
-                    sortieCotisationsDettes[time_offset] || {};
-                sortieCotisationsDettes[time_offset].interessante_urssaf = false;
+            const futureTimestamps = [0, 1, 2, 3, 4, 5]
+                .map((offset) => ({
+                timestamp: f.dateAddMonth(new Date(time), offset).getTime(),
+            }))
+                .filter(({ timestamp }) => periodes.includes(timestamp));
+            futureTimestamps.forEach(({ timestamp }) => {
+                sortieCotisationsDettes[timestamp] = Object.assign(Object.assign({}, sortieCotisationsDettes[timestamp]), { interessante_urssaf: false });
             });
         }
     });
@@ -1394,7 +1396,7 @@ function cotisationsdettes(v, periodes) {
         return events;
     }, [])
         .sort((a, b) => {
-        return a.date_proc_col.getTime() > b.date_proc_col.getTime() ? 1 : 0;
+        return a.date_proc_col.getTime() - b.date_proc_col.getTime();
     });
     codes.forEach((event) => {
         const periode_effet = new Date(Date.UTC(event.date_proc_col.getFullYear(), event.date_proc_col.getUTCMonth(), 1, 0, 0, 0, 0));
@@ -1495,7 +1497,7 @@ function delais(v, debitParPériode, intervalleTraitement) {
     const last_period = new Date(periodes[periodes.length - 1]);
     const last_period_offset = f.dateAddMonth(last_period, offset_effectif + 1);
     // 2- Cette période est-elle disponible ?
-    const available = map_effectif[last_period_offset.getTime()] ? 1 : 0;
+    const available = last_period_offset.getTime() in map_effectif;
     //pour chaque periode (elles sont triees dans l'ordre croissant)
     periodes.reduce((accu, time) => {
         // si disponible on reporte l'effectif tel quel, sinon, on recupère l'accu
@@ -1530,7 +1532,8 @@ function delais(v, debitParPériode, intervalleTraitement) {
         }
     });
     return output_effectif;
-}`,
+}
+/* TODO: appliquer même logique d'itération sur futureTimestamps que dans cotisationsdettes.ts */`,
 "finalize": `function finalize(k, v) {
     "use strict";
     const maxBsonSize = 16777216;
@@ -1728,19 +1731,11 @@ function flatten(v, actual_batch) {
     // Est-ce que l'évènement se répercute dans le passé (past = true on pourra se
     // demander: que va-t-il se passer) ou dans le future (past = false on
     // pourra se demander que s'est-il passé
-    /* eslint-disable */
-    var sorting_fun = function (a, b) {
-        return a >= b ? 1 : -1; // TODO: normally, a sorting comparator should return a number, possibly including zero. => the TS version of the test has failed until we added ` + "`" + `? 1 : -1` + "`" + ` here
-    };
-    if (past) {
-        sorting_fun = function (a, b) {
-            return a <= b ? 1 : -1; // TODO: normally, a sorting comparator should return a number, possibly including zero. => the TS version of the test has failed until we added ` + "`" + `? 1 : -1` + "`" + ` here
-        };
-    }
-    /* eslint-enable */
+    const chronologic = (a, b) => (a > b ? 1 : -1);
+    const reverse = (a, b) => (b > a ? 1 : -1);
     let counter = -1;
     const output = Object.keys(data)
-        .sort(sorting_fun)
+        .sort(past ? reverse : chronologic)
         .reduce(function (m, period) {
         // Si on a déjà détecté quelque chose, on compte le nombre de périodes
         if (counter >= 0)
@@ -1791,7 +1786,7 @@ function map() {
         output_indexed,] = f.outputs(v, serie_periode);
         // Les periodes qui nous interessent, triées
         const periodes = Object.keys(output_indexed)
-            .sort((a, b) => (a >= b ? 1 : 0))
+            .sort()
             .map((timestamp) => parseInt(timestamp));
         if (includes["apart"] || includes["all"]) {
             if (v.apconso && v.apdemande) {
@@ -1827,7 +1822,7 @@ function map() {
             }
             let output_cotisationsdettes;
             if (v.cotisation && v.debit) {
-                output_cotisationsdettes = f.cotisationsdettes(v, periodes);
+                output_cotisationsdettes = f.cotisationsdettes(v, periodes, date_fin);
                 f.add(output_cotisationsdettes, output_indexed);
             }
             if (v.delai) {
@@ -1884,7 +1879,7 @@ function map() {
                 f.sirene_ul(v, output_array);
             }
             const periodes = Object.keys(output_indexed)
-                .sort((a, b) => (a >= b ? 1 : 0))
+                .sort()
                 .map((timestamp) => parseInt(timestamp));
             if (v.effectif_ent) {
                 const output_effectif_ent = f.effectifs(v.effectif_ent, periodes, "effectif_ent");

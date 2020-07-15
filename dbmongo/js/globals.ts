@@ -213,13 +213,13 @@ type EntréeCotisation = {
  * Représente un reste à payer (dette) sur cotisation sociale ou autre.
  */
 type EntréeDebit = {
-  periode: { start: Date; end: Date }
+  periode: { start: Date; end: Date } // Periode pour laquelle la cotisation était attendue
   numero_ecart_negatif: number // identifiant du débit pour une période donnée (comme une sorte de numéro de facture)
   numero_historique: number // identifiant d'un remboursement (partiel ou complet) d'un débit
   numero_compte: string // identifiant URSSAF d'établissement (équivalent du SIRET)
-  date_traitement: Date
+  date_traitement: Date // Date de constatation du débit (exemple: remboursement, majoration ou autre modification du montant)
   debit_suivant: DebitHash
-  // le montant est ventilé entre ces trois valeurs, exprimées en euros (€):
+  // le montant est ventilé entre ces deux valeurs, exprimées en euros (€):
   part_ouvriere: number
   part_patronale: number
 }

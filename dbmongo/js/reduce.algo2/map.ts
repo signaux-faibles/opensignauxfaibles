@@ -27,6 +27,7 @@ declare const naf: NAF
 declare const actual_batch: BatchKey
 declare const includes: Record<"all" | "apart", boolean>
 declare const serie_periode: Date[]
+declare const date_fin: Date
 
 /**
  * `map()` est appelée pour chaque entreprise/établissement.
@@ -73,7 +74,7 @@ export function map(this: {
 
     // Les periodes qui nous interessent, triées
     const periodes = Object.keys(output_indexed)
-      .sort((a, b) => (a >= b ? 1 : 0))
+      .sort()
       .map((timestamp) => parseInt(timestamp))
 
     if (includes["apart"] || includes["all"]) {
@@ -123,7 +124,8 @@ export function map(this: {
       if (v.cotisation && v.debit) {
         output_cotisationsdettes = f.cotisationsdettes(
           v as DonnéesCotisation & DonnéesDebit,
-          periodes
+          periodes,
+          date_fin
         )
         f.add(output_cotisationsdettes, output_indexed)
       }
@@ -210,7 +212,7 @@ export function map(this: {
       }
 
       const periodes = Object.keys(output_indexed)
-        .sort((a, b) => (a >= b ? 1 : 0))
+        .sort()
         .map((timestamp) => parseInt(timestamp))
       if (v.effectif_ent) {
         const output_effectif_ent = f.effectifs(

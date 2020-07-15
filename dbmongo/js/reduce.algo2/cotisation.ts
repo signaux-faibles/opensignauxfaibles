@@ -96,3 +96,5 @@ export function cotisation(
       } else counter = 0
     })
 }
+
+/* TODO: appliquer même logique d'itération sur futureTimestamps que dans cotisationsdettes.ts */

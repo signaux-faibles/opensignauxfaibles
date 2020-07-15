@@ -14,20 +14,12 @@ export function lookAhead(
   // demander: que va-t-il se passer) ou dans le future (past = false on
   // pourra se demander que s'est-il passé
 
-  /* eslint-disable */
-  var sorting_fun = function (a: any, b: any): any {
-    return a >= b ? 1 : -1 // TODO: normally, a sorting comparator should return a number, possibly including zero. => the TS version of the test has failed until we added `? 1 : -1` here
-  }
-  if (past) {
-    sorting_fun = function (a: any, b: any): any {
-      return a <= b ? 1 : -1 // TODO: normally, a sorting comparator should return a number, possibly including zero. => the TS version of the test has failed until we added `? 1 : -1` here
-    }
-  }
-  /* eslint-enable */
+  const chronologic = (a: string, b: string) => (a > b ? 1 : -1)
+  const reverse = (a: string, b: string) => (b > a ? 1 : -1)
 
   let counter = -1
   const output = Object.keys(data)
-    .sort(sorting_fun)
+    .sort(past ? reverse : chronologic)
     .reduce(function (m, period) {
       // Si on a déjà détecté quelque chose, on compte le nombre de périodes
       if (counter >= 0) counter = counter + 1
