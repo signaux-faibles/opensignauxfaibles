@@ -111,7 +111,7 @@ echo "- POST /api/data/compact 👉 $(http --print=b --ignore-stdin :5000/api/da
 echo "- POST /api/data/public 👉 $(http --print=b --ignore-stdin :5000/api/data/public batch=2002_1 key=012345678)"
 
 docker exec -i sf-mongodb mongo --quiet signauxfaibles > test-api.output.txt << CONTENTS
-  db.Public_debug.renameCollection("Public")
+  db.Public_debug.renameCollection("Public"); // only required if key was provided when calling POST /api/data/public
   print("// Documents from db.RawData, after call to /api/data/compact:");
   db.RawData.find().toArray();
   print("// Documents from db.Public, after call to /api/data/public:");
