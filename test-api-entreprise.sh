@@ -49,7 +49,38 @@ cat > "${DATA_DIR}/db_popul.js" << CONTENTS
   })
 
   db.ImportedData.remove({})
+  // The random order of documents is intentional, to make sure that the output is correctly sorted no matter what
   db.ImportedData.insertMany([
+    {
+        "_id": "etab2",
+        "value": {
+            "batch": {
+                "2002_1": {}
+            },
+            "scope": "etablissement",
+            "key": "01234567891012"
+        }
+    },
+    {
+        "_id": "etab21",
+        "value": {
+            "batch": {
+                "2002_1": {}
+            },
+            "scope": "etablissement",
+            "key": "21234567891011"
+        }
+    },
+    {
+        "_id": "entr2",
+        "value": {
+            "batch": {
+                "2002_1": {}
+            },
+            "scope": "entreprise",
+            "key": "212345678"
+        }
+    },
     {
         "_id": "entr1",
         "value": {
@@ -68,36 +99,6 @@ cat > "${DATA_DIR}/db_popul.js" << CONTENTS
             },
             "scope": "etablissement",
             "key": "01234567891011"
-        }
-    },
-    {
-        "_id": "etab2",
-        "value": {
-            "batch": {
-                "2002_1": {}
-            },
-            "scope": "etablissement",
-            "key": "01234567891012"
-        }
-    },
-    {
-        "_id": "entr2",
-        "value": {
-            "batch": {
-                "2002_1": {}
-            },
-            "scope": "entreprise",
-            "key": "212345678"
-        }
-    },
-    {
-        "_id": "etab21",
-        "value": {
-            "batch": {
-                "2002_1": {}
-            },
-            "scope": "etablissement",
-            "key": "21234567891011"
         }
     },
   ])
