@@ -42,19 +42,10 @@ cat > "${DATA_DIR}/db_popul.js" << CONTENTS
         "key" : "2002_1",
         "type" : "batch"
     },
-    "files" : {
-        "bdf" : [
-            "/1910/bdf_1910.csv"
-        ]
-    },
-    "complete_types" : [
-    ],
     "param" : {
         "date_debut" : ISODate("2014-01-01T00:00:00.000+0000"),
-        "date_fin" : ISODate("2014-03-01T00:00:00.000+0000"),
-        "date_fin_effectif" : ISODate("2014-03-01T00:00:00.000+0000")
-    },
-    "name" : "TestData"
+        "date_fin" : ISODate("2014-03-01T00:00:00.000+0000")
+    }
   })
 
   db.ImportedData.remove({})
@@ -66,9 +57,6 @@ cat > "${DATA_DIR}/db_popul.js" << CONTENTS
                 "2002_1": {}
             },
             "scope": "entreprise",
-            "index": {
-                "algo2": true
-            },
             "key": "012345678"
         }
     },
@@ -79,9 +67,6 @@ cat > "${DATA_DIR}/db_popul.js" << CONTENTS
                 "2002_1": {}
             },
             "scope": "etablissement",
-            "index": {
-                "algo2": true
-            },
             "key": "01234567891011"
         }
     }
@@ -112,9 +97,7 @@ cat > "${DATA_DIR}/db_popul.js" << CONTENTS
   ])
 
   db.RawData.remove({})
-  db.Features.remove({})
   db.Public.remove({})
-  db.Features_debug.remove({})
   db.Public_debug.remove({})
 CONTENTS
 
@@ -128,9 +111,9 @@ echo "- POST /api/data/compact 👉 $(http --print=b --ignore-stdin :5000/api/da
 echo "- POST /api/data/public 👉 $(http --print=b --ignore-stdin :5000/api/data/public batch=2002_1 key=012345678)"
 
 docker exec -i sf-mongodb mongo --quiet signauxfaibles > test-api.output.txt << CONTENTS
+  db.Public_debug.renameCollection("Public")
   print("// Documents from db.RawData, after call to /api/data/compact:");
   db.RawData.find().toArray();
-  db.Public_debug.renameCollection("Public")
   print("// Documents from db.Public, after call to /api/data/public:");
   db.Public.find().toArray();
 CONTENTS
