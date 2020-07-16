@@ -139,8 +139,7 @@ const setupCompanyValuesForMontant = (dateDebut: Date) => ({
       numero_historique: 3,
     },
   },
-}
-)
+})
 
 const setupCompanyValues = (dateDebut: Date) => ({
   cotisation: {
