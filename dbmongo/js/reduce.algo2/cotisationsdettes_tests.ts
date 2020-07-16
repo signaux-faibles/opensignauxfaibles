@@ -107,8 +107,9 @@ test("Le montant de dette d'une période est reporté dans les périodes suivant
 })
 
 test("interessante_urssaf est vrai quand l'entreprise n'a pas eu de débit (dette) sur les 6 derniers mois", (t: ExecutionContext) => {
+  const dureeEnMois = 13
   const dateDebut = new Date("2018-01-01")
-  const dateFin = dateAddMonth(dateDebut, 8) // utilisé par cotisationsdettes lors du traitement des débits
+  const dateFin = dateAddMonth(dateDebut, dureeEnMois)
   const periode = generatePeriodSerie(dateDebut, dateFin).map((date) =>
     date.getTime()
   )
@@ -152,21 +153,13 @@ test("interessante_urssaf est vrai quand l'entreprise n'a pas eu de débit (dett
     },
   }
 
+  const expected = Array(6).fill(false).concat(Array(2)).fill(undefined)
+
   const actual = cotisationsdettes(v, periode, dateFin)
 
-  t.false(actual[dateAddMonth(dateDebut, 0).getTime()].interessante_urssaf)
-  t.false(actual[dateAddMonth(dateDebut, 1).getTime()].interessante_urssaf)
-  t.false(actual[dateAddMonth(dateDebut, 2).getTime()].interessante_urssaf)
-  t.false(actual[dateAddMonth(dateDebut, 3).getTime()].interessante_urssaf)
-  t.false(actual[dateAddMonth(dateDebut, 4).getTime()].interessante_urssaf)
-  t.false(actual[dateAddMonth(dateDebut, 5).getTime()].interessante_urssaf)
+  expected.forEach( (expectedValue, mois) => {
+    t.log(mois, expectedValue, actual[dateAddMonth(dateDebut, mois).getTime()].interessante_urssaf)
+    t.is(actual[dateAddMonth(dateDebut, mois).getTime()].interessante_urssaf, expectedValue)
+  })
 
-  t.is(
-    typeof actual[dateAddMonth(dateDebut, 6).getTime()].interessante_urssaf,
-    "undefined"
-  )
-  t.is(
-    typeof actual[dateAddMonth(dateDebut, 7).getTime()].interessante_urssaf,
-    "undefined"
-  )
 })
