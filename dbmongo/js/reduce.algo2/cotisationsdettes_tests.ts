@@ -113,7 +113,7 @@ const setupPeriodes = () => {
   const periode = generatePeriodSerie(dateDebut, dateFin).map((date) =>
     date.getTime()
   )
-  return {dateDebut, dateFin, periode}
+  return { dateDebut, dateFin, periode }
 }
 
 const setupCompanyValues = (dateDebut: Date) => ({
@@ -155,23 +155,26 @@ const setupCompanyValues = (dateDebut: Date) => ({
   },
 })
 
-
 const testedProps = [
-  {assertion: "interessante_urssaf est vrai quand l'entreprise n'a pas eu de débit (dette) sur les 6 derniers mois", name: 'interessante_urssaf', expected: Array(6).fill(false).concat(Array(2).fill(undefined))},
+  {
+    assertion:
+      "interessante_urssaf est vrai quand l'entreprise n'a pas eu de débit (dette) sur les 6 derniers mois",
+    name: "interessante_urssaf",
+    expected: Array(6).fill(false).concat(Array(2).fill(undefined)),
+  },
 ]
 
-testedProps.forEach(testedProp => {
-  test(testedProp.assertion, t =>{
-
+testedProps.forEach((testedProp) => {
+  test(testedProp.assertion, (t) => {
     const { dateDebut, dateFin, periode } = setupPeriodes()
     const v = setupCompanyValues(dateDebut)
     const actual = cotisationsdettes(v, periode, dateFin)
 
     testedProp.expected.forEach((expectedValue, indiceMois) => {
       const actualValue =
-        actual[dateAddMonth(dateDebut, indiceMois).getTime()].interessante_urssaf
+        actual[dateAddMonth(dateDebut, indiceMois).getTime()]
+          .interessante_urssaf
       t.is(actualValue, expectedValue, `mois: #${indiceMois}`)
     })
   })
 })
-
