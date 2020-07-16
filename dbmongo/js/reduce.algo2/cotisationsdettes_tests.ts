@@ -187,8 +187,7 @@ const partPatronale = 200
 
 const expPartOuvrière = (
   partOuvrière: number,
-  moisRemboursement: number,
-  dureeEnMois: number
+  moisRemboursement: number
 ) =>
   Array(moisRemboursement)
     .fill(partOuvrière)
@@ -204,13 +203,12 @@ const generatePastTestCase = (
   name: `montant_part_${ouvrièreOuPatronale}_past_${décalageEnMois}`,
   input: setupCompanyValuesForMontant(dateDebut),
   expected: [
-    undefined,
+    ...Array(décalageEnMois).fill(undefined),
     ...expPartOuvrière(
       partOuvrière,
-      moisRemboursement,
-      dureeEnMois - décalageEnMois
+      moisRemboursement
     ),
-  ],
+  ].slice(0, dureeEnMois),
 })
 
 const generatePastTestCases = (
@@ -222,7 +220,7 @@ const generatePastTestCases = (
   )
 
 const testedProps = [
-  ...generatePastTestCases("ouvriere", [1, 2]),
+  ...generatePastTestCases("ouvriere", [1, 2, 3, 6, 12]),
   {
     assertion:
       "interessante_urssaf est vrai quand l'entreprise n'a pas eu de débit (dette) sur les 6 derniers mois",
@@ -241,7 +239,7 @@ testedProps.forEach((testedProp) => {
       t.is(
         actualValue[testedProp.name as keyof SortieCotisationsDettes],
         expectedPropValue,
-        `mois: #${indiceMois}`
+        `mois: #${indiceMois}, expected: ${expectedPropValue}`
       )
     })
   })
