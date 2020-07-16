@@ -106,65 +106,72 @@ test("Le montant de dette d'une période est reporté dans les périodes suivant
   }
 })
 
-test("interessante_urssaf est vrai quand l'entreprise n'a pas eu de débit (dette) sur les 6 derniers mois", (t: ExecutionContext) => {
+const setupPeriodes = () => {
   const dureeEnMois = 13
   const dateDebut = new Date("2018-01-01")
   const dateFin = dateAddMonth(dateDebut, dureeEnMois)
   const periode = generatePeriodSerie(dateDebut, dateFin).map((date) =>
     date.getTime()
   )
+  return {dateDebut, dateFin, periode}
+}
 
-  const v = {
-    cotisation: {
-      hash1: {
-        periode: { start: dateDebut, end: dateAddMonth(dateDebut, 1) },
-        du: 60,
-      },
+const setupCompanyValues = (dateDebut: Date) => ({
+  cotisation: {
+    hash1: {
+      periode: { start: dateDebut, end: dateAddMonth(dateDebut, 1) },
+      du: 60,
     },
-    debit: {
-      // dette initiale
-      hashDetteInitiale: {
-        periode: {
-          start: dateDebut,
-          end: dateAddMonth(dateDebut, 1),
-        },
-        numero_ecart_negatif: 1,
-        numero_historique: 2,
-        numero_compte: "",
-        date_traitement: dateDebut,
-        debit_suivant: "hashRemboursement",
-        part_ouvriere: 60,
-        part_patronale: 0,
+  },
+  debit: {
+    // dette initiale
+    hashDetteInitiale: {
+      periode: {
+        start: dateDebut,
+        end: dateAddMonth(dateDebut, 1),
       },
-      // remboursement la dette
-      hashRemboursement: {
-        periode: {
-          start: dateDebut,
-          end: dateAddMonth(dateDebut, 1),
-        },
-        numero_ecart_negatif: 1, // même valeur que pour le débit précédent
-        numero_historique: 3, // incrémentation depuis le débit précédent
-        numero_compte: "",
-        date_traitement: dateAddMonth(dateDebut, 1),
-        debit_suivant: "",
-        part_ouvriere: 0,
-        part_patronale: 0,
-      },
+      numero_ecart_negatif: 1,
+      numero_historique: 2,
+      numero_compte: "",
+      date_traitement: dateDebut,
+      debit_suivant: "hashRemboursement",
+      part_ouvriere: 60,
+      part_patronale: 0,
     },
-  }
+    // remboursement la dette
+    hashRemboursement: {
+      periode: {
+        start: dateDebut,
+        end: dateAddMonth(dateDebut, 1),
+      },
+      numero_ecart_negatif: 1, // même valeur que pour le débit précédent
+      numero_historique: 3, // incrémentation depuis le débit précédent
+      numero_compte: "",
+      date_traitement: dateAddMonth(dateDebut, 1),
+      debit_suivant: "",
+      part_ouvriere: 0,
+      part_patronale: 0,
+    },
+  },
+})
 
-  const expected = Array(6).fill(false).concat(Array(2).fill(undefined))
 
-  const actual = cotisationsdettes(v, periode, dateFin)
+const testedProps = [
+  {assertion: "interessante_urssaf est vrai quand l'entreprise n'a pas eu de débit (dette) sur les 6 derniers mois", name: 'interessante_urssaf', expected: Array(6).fill(false).concat(Array(2).fill(undefined))},
+]
 
-  expected.forEach((expectedValue, indiceMois) => {
-    const actualValue =
-      actual[dateAddMonth(dateDebut, indiceMois).getTime()].interessante_urssaf
-    t.is(actualValue, expectedValue, `mois: #${indiceMois}`)
+testedProps.forEach(testedProp => {
+  test(testedProp.assertion, t =>{
+
+    const { dateDebut, dateFin, periode } = setupPeriodes()
+    const v = setupCompanyValues(dateDebut)
+    const actual = cotisationsdettes(v, periode, dateFin)
+
+    testedProp.expected.forEach((expectedValue, indiceMois) => {
+      const actualValue =
+        actual[dateAddMonth(dateDebut, indiceMois).getTime()].interessante_urssaf
+      t.is(actualValue, expectedValue, `mois: #${indiceMois}`)
+    })
   })
 })
-/*
-[ 
-  {prop: 'interessante_urssaf', expectedInteressanteUrssaf},
-].forEach (test('prop'=>'t.is'))
-*/
+
