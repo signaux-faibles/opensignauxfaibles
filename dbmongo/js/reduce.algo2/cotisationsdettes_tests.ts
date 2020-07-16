@@ -157,15 +157,14 @@ test("interessante_urssaf est vrai quand l'entreprise n'a pas eu de débit (dett
 
   const actual = cotisationsdettes(v, periode, dateFin)
 
-  expected.forEach((expectedValue, mois) => {
-    t.log(
-      mois,
-      expectedValue,
-      actual[dateAddMonth(dateDebut, mois).getTime()].interessante_urssaf
-    )
-    t.is(
-      actual[dateAddMonth(dateDebut, mois).getTime()].interessante_urssaf,
-      expectedValue
-    )
+  expected.forEach((expectedValue, indiceMois) => {
+    const actualValue =
+      actual[dateAddMonth(dateDebut, indiceMois).getTime()].interessante_urssaf
+    t.is(actualValue, expectedValue, `mois: #${indiceMois}`)
   })
 })
+/*
+[ 
+  {prop: 'interessante_urssaf', expectedInteressanteUrssaf},
+].forEach (test('prop'=>'t.is'))
+*/
