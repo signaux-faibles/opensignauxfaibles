@@ -1,6 +1,6 @@
 import "../globals"
 import test, { ExecutionContext } from "ava"
-import { cotisationsdettes } from "./cotisationsdettes"
+import { cotisationsdettes, SortieCotisationsDettes } from "./cotisationsdettes"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { dateAddMonth } from "./dateAddMonth"
 
@@ -155,7 +155,29 @@ const setupCompanyValues = (dateDebut: Date) => ({
   },
 })
 
+const dureeEnMois = 13
+const moisRemboursement = 4
+const partOuvrière = 100
+
+const expPartOuvrière = (
+  partOuvrière: number,
+  moisRemboursement: number,
+  dureeEnMois: number
+) =>
+  Array(moisRemboursement)
+    .fill(partOuvrière)
+    .concat(Array(dureeEnMois - moisRemboursement).fill(0))
+
 const testedProps = [
+  {
+    assertion:
+      "Le montant de part ouvrière d'une période est reporté dans montant_part_ouvriere_past_1",
+    name: "montant_part_ouvriere_past_1",
+    expected: [
+      undefined,
+      ...expPartOuvrière(partOuvrière, moisRemboursement, dureeEnMois - 1),
+    ],
+  },
   {
     assertion:
       "interessante_urssaf est vrai quand l'entreprise n'a pas eu de débit (dette) sur les 6 derniers mois",
@@ -170,11 +192,13 @@ testedProps.forEach((testedProp) => {
     const v = setupCompanyValues(dateDebut)
     const actual = cotisationsdettes(v, periode, dateFin)
 
-    testedProp.expected.forEach((expectedValue, indiceMois) => {
-      const actualValue =
-        actual[dateAddMonth(dateDebut, indiceMois).getTime()]
-          .interessante_urssaf
-      t.is(actualValue, expectedValue, `mois: #${indiceMois}`)
+    testedProp.expected.forEach((expectedPropValue, indiceMois) => {
+      const actualValue = actual[dateAddMonth(dateDebut, indiceMois).getTime()]
+      t.is(
+        actualValue[testedProp.name as keyof SortieCotisationsDettes],
+        expectedPropValue,
+        `mois: #${indiceMois}`
+      )
     })
   })
 })
