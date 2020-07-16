@@ -328,17 +328,19 @@ func ExportEntrepriseToFile(filepath string) error {
 		for nbBytesWritten < len(bytesToWrite) {
 			bytesToWrite = bytesToWrite[nbBytesWritten:]
 			nbBytesWritten, err = file.Write(bytesToWrite)
-			_, err = fmt.Println("Printed", nbBytesWritten, "bytes /", len(bytesToWrite))
 			if err != nil {
 				return err
 			}
+			fmt.Fprintln(os.Stderr, "Printed", nbBytesWritten, "bytes /", len(bytesToWrite))
 		}
 		wroteOneElement = true
 	}
-	file.Write([]byte("\n]\n"))
+	err = iter.Err()
 	if err != nil {
+		fmt.Fprintln(os.Stderr, err.Error())
 		return err
 	}
 
-	return nil
+	_, err = file.Write([]byte("\n]\n"))
+	return err
 }
