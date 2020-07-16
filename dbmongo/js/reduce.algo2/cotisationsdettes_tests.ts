@@ -4,12 +4,6 @@ import { cotisationsdettes, SortieCotisationsDettes } from "./cotisationsdettes"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { dateAddMonth } from "./dateAddMonth"
 
-// Supprime les propriétés de obj dont la valeur est indéfinie.
-const deleteUndefinedProps = <T>(obj: T): void =>
-  (Object.keys(obj) as Array<keyof T>).forEach((prop) =>
-    typeof obj[prop] === "undefined" ? delete obj[prop] : {}
-  )
-
 test("La variable cotisation représente les cotisations sociales dues à une période donnée", (t: ExecutionContext) => {
   const date = new Date("2018-01-01")
   const datePlusUnMois = new Date("2018-02-01")
@@ -35,75 +29,6 @@ test("La variable cotisation représente les cotisations sociales dues à une p�
   }
 
   t.deepEqual(actual, expected)
-})
-
-test("Le montant de dette d'une période est reporté dans les périodes suivantes", (t: ExecutionContext) => {
-  const dureeEnMois = 13
-  const dateDebut = new Date("2018-01-01")
-  const dateFin = dateAddMonth(dateDebut, dureeEnMois)
-  const periode = generatePeriodSerie(dateDebut, dateFin).map((date) =>
-    date.getTime()
-  )
-
-  const moisRemboursement = 4
-  const partOuvrière = 100
-  const partPatronale = 200
-  const v: DonnéesCotisation & DonnéesDebit = {
-    cotisation: {},
-    debit: {
-      hash1: {
-        periode: { start: dateDebut, end: dateAddMonth(dateDebut, 1) },
-        part_ouvriere: partOuvrière,
-        part_patronale: partPatronale,
-        date_traitement: dateDebut,
-        debit_suivant: "",
-        numero_compte: "",
-        numero_ecart_negatif: 1,
-        numero_historique: 2,
-      },
-      hash2: {
-        periode: { start: dateDebut, end: dateAddMonth(dateDebut, 1) },
-        part_ouvriere: 0,
-        part_patronale: 0,
-        date_traitement: dateAddMonth(dateDebut, moisRemboursement),
-        debit_suivant: "",
-        numero_compte: "",
-        numero_ecart_negatif: 1,
-        numero_historique: 3,
-      },
-    },
-  }
-
-  const output = cotisationsdettes(v, periode, dateFin)
-
-  const expPartOuvrière = Array(moisRemboursement)
-    .fill(partOuvrière)
-    .concat(Array(dureeEnMois - moisRemboursement).fill(0))
-
-  const expPartPatronale = Array(moisRemboursement)
-    .fill(partPatronale)
-    .concat(Array(dureeEnMois - moisRemboursement).fill(0))
-
-  for (let mois = 0; mois < 13; ++mois) {
-    const expected = {
-      montant_part_ouvriere: expPartOuvrière[mois],
-      montant_part_patronale: expPartPatronale[mois],
-      montant_part_ouvriere_past_1: expPartOuvrière[mois - 1],
-      montant_part_patronale_past_1: expPartPatronale[mois - 1],
-      montant_part_ouvriere_past_2: expPartOuvrière[mois - 2],
-      montant_part_patronale_past_2: expPartPatronale[mois - 2],
-      montant_part_ouvriere_past_3: expPartOuvrière[mois - 3],
-      montant_part_patronale_past_3: expPartPatronale[mois - 3],
-      montant_part_ouvriere_past_6: expPartOuvrière[mois - 6],
-      montant_part_patronale_past_6: expPartPatronale[mois - 6],
-      montant_part_ouvriere_past_12: expPartOuvrière[mois - 12],
-      montant_part_patronale_past_12: expPartPatronale[mois - 12],
-    }
-    deleteUndefinedProps(expected)
-    const actual = output[dateAddMonth(dateDebut, mois).getTime()]
-    delete actual.interessante_urssaf // exclure interessante_urssaf car cette prop est considérée par un autre test
-    t.deepEqual(actual, expected)
-  }
 })
 
 const setupPeriodes = () => {
@@ -207,6 +132,20 @@ const generatePastTestCase = (
 })
 
 const testedProps = [
+  {
+    assertion:
+      "montant_part_patronale est annulé après le remboursement de la dette",
+    name: "montant_part_patronale",
+    input: setupCompanyValuesForMontant(dateDebut),
+    expected: expectedDette(montantPartPatronale, moisRemboursement),
+  },
+  {
+    assertion:
+      "montant_part_ouvriere est annulé après le remboursement de la dette",
+    name: "montant_part_ouvriere",
+    input: setupCompanyValuesForMontant(dateDebut),
+    expected: expectedDette(montantPartOuvrière, moisRemboursement),
+  },
   ...[1, 2, 3, 6, 12].map((décalageEnMois) =>
     generatePastTestCase("ouvriere", montantPartOuvrière, décalageEnMois)
   ),
