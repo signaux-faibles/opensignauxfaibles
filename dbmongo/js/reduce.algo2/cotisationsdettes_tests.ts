@@ -120,8 +120,8 @@ const setupCompanyValuesForMontant = (dateDebut: Date) => ({
   debit: {
     hash1: {
       periode: { start: dateDebut, end: dateAddMonth(dateDebut, 1) },
-      part_ouvriere: partOuvrière,
-      part_patronale: partPatronale,
+      part_ouvriere: montantPartOuvrière,
+      part_patronale: montantPartPatronale,
       date_traitement: dateDebut,
       debit_suivant: "",
       numero_compte: "",
@@ -182,18 +182,19 @@ const setupCompanyValues = (dateDebut: Date) => ({
 
 const dureeEnMois = 13
 const moisRemboursement = 4
-const partOuvrière = 100
-const partPatronale = 200
+const montantPartOuvrière = 100
+const montantPartPatronale = 200
 
-const expPartOuvrière = (partOuvrière: number, moisRemboursement: number) =>
+const expectedDette = (montant: number, moisRemboursement: number) =>
   Array(moisRemboursement)
-    .fill(partOuvrière)
+    .fill(montant)
     .concat(Array(dureeEnMois - moisRemboursement).fill(0))
 
 const { dateDebut, dateFin, periode } = setupPeriodes()
 
 const generatePastTestCase = (
   ouvrièreOuPatronale: "ouvriere" | "patronale",
+  montantDette: number,
   décalageEnMois: number
 ) => ({
   assertion: `Le montant de part ${ouvrièreOuPatronale} d'une période est reporté dans montant_part_${ouvrièreOuPatronale}_past_${décalageEnMois}`,
@@ -201,20 +202,22 @@ const generatePastTestCase = (
   input: setupCompanyValuesForMontant(dateDebut),
   expected: [
     ...Array(décalageEnMois).fill(undefined),
-    ...expPartOuvrière(partOuvrière, moisRemboursement),
+    ...expectedDette(montantDette, moisRemboursement),
   ].slice(0, dureeEnMois),
 })
 
 const generatePastTestCases = (
   ouvrièreOuPatronale: "ouvriere" | "patronale",
+  montantDette: number,
   décalagesEnMois: number[]
 ) =>
   décalagesEnMois.map((décalageEnMois) =>
-    generatePastTestCase(ouvrièreOuPatronale, décalageEnMois)
+    generatePastTestCase(ouvrièreOuPatronale, montantDette, décalageEnMois)
   )
 
 const testedProps = [
-  ...generatePastTestCases("ouvriere", [1, 2, 3, 6, 12]),
+  ...generatePastTestCases("ouvriere", montantPartOuvrière, [1, 2, 3, 6, 12]),
+  ...generatePastTestCases("patronale", montantPartPatronale, [1, 2, 3, 6, 12]),
   {
     assertion:
       "interessante_urssaf est vrai quand l'entreprise n'a pas eu de débit (dette) sur les 6 derniers mois",
