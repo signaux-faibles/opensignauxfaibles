@@ -185,10 +185,7 @@ const moisRemboursement = 4
 const partOuvrière = 100
 const partPatronale = 200
 
-const expPartOuvrière = (
-  partOuvrière: number,
-  moisRemboursement: number
-) =>
+const expPartOuvrière = (partOuvrière: number, moisRemboursement: number) =>
   Array(moisRemboursement)
     .fill(partOuvrière)
     .concat(Array(dureeEnMois - moisRemboursement).fill(0))
@@ -204,10 +201,7 @@ const generatePastTestCase = (
   input: setupCompanyValuesForMontant(dateDebut),
   expected: [
     ...Array(décalageEnMois).fill(undefined),
-    ...expPartOuvrière(
-      partOuvrière,
-      moisRemboursement
-    ),
+    ...expPartOuvrière(partOuvrière, moisRemboursement),
   ].slice(0, dureeEnMois),
 })
 
