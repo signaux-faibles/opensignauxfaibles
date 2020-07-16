@@ -195,17 +195,34 @@ const expPartOuvrière = (
     .concat(Array(dureeEnMois - moisRemboursement).fill(0))
 
 const { dateDebut, dateFin, periode } = setupPeriodes()
+
+const generatePastTestCase = (
+  ouvrièreOuPatronale: "ouvriere" | "patronale",
+  décalageEnMois: number
+) => ({
+  assertion: `Le montant de part ${ouvrièreOuPatronale} d'une période est reporté dans montant_part_${ouvrièreOuPatronale}_past_${décalageEnMois}`,
+  name: `montant_part_${ouvrièreOuPatronale}_past_${décalageEnMois}`,
+  input: setupCompanyValuesForMontant(dateDebut),
+  expected: [
+    undefined,
+    ...expPartOuvrière(
+      partOuvrière,
+      moisRemboursement,
+      dureeEnMois - décalageEnMois
+    ),
+  ],
+})
+
+const generatePastTestCases = (
+  ouvrièreOuPatronale: "ouvriere" | "patronale",
+  décalagesEnMois: number[]
+) =>
+  décalagesEnMois.map((décalageEnMois) =>
+    generatePastTestCase(ouvrièreOuPatronale, décalageEnMois)
+  )
+
 const testedProps = [
-  {
-    assertion:
-      "Le montant de part ouvrière d'une période est reporté dans montant_part_ouvriere_past_1",
-    name: "montant_part_ouvriere_past_1",
-    input: setupCompanyValuesForMontant(dateDebut),
-    expected: [
-      undefined,
-      ...expPartOuvrière(partOuvrière, moisRemboursement, dureeEnMois - 1),
-    ],
-  },
+  ...generatePastTestCases("ouvriere", [1, 2]),
   {
     assertion:
       "interessante_urssaf est vrai quand l'entreprise n'a pas eu de débit (dette) sur les 6 derniers mois",
