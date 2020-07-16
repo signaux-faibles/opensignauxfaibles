@@ -206,18 +206,13 @@ const generatePastTestCase = (
   ].slice(0, dureeEnMois),
 })
 
-const generatePastTestCases = (
-  ouvrièreOuPatronale: "ouvriere" | "patronale",
-  montantDette: number,
-  décalagesEnMois: number[]
-) =>
-  décalagesEnMois.map((décalageEnMois) =>
-    generatePastTestCase(ouvrièreOuPatronale, montantDette, décalageEnMois)
-  )
-
 const testedProps = [
-  ...generatePastTestCases("ouvriere", montantPartOuvrière, [1, 2, 3, 6, 12]),
-  ...generatePastTestCases("patronale", montantPartPatronale, [1, 2, 3, 6, 12]),
+  ...[1, 2, 3, 6, 12].map((décalageEnMois) =>
+    generatePastTestCase("ouvriere", montantPartOuvrière, décalageEnMois)
+  ),
+  ...[1, 2, 3, 6, 12].map((décalageEnMois) =>
+    generatePastTestCase("patronale", montantPartPatronale, décalageEnMois)
+  ),
   {
     assertion:
       "interessante_urssaf est vrai quand l'entreprise n'a pas eu de débit (dette) sur les 6 derniers mois",
