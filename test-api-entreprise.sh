@@ -145,16 +145,9 @@ echo "- POST /api/data/public 👉 $(http --print=b --ignore-stdin :5000/api/dat
 RENAME_RESULT=$(echo 'db.Public_debug.renameCollection("Public");' | docker exec -i sf-mongodb mongo --quiet signauxfaibles)
 echo "- rename 'Public_debug' collection to 'Public' 👉 ${RENAME_RESULT}"
 
-# docker exec -i sf-mongodb mongo --quiet signauxfaibles > test-api.output.txt << CONTENTS
-#   print("// Documents from db.RawData, after call to /api/data/compact:");
-#   db.RawData.find().toArray();
-#   print("// Documents from db.Public, after call to /api/data/public:");
-#   db.Public.find().toArray();
-# CONTENTS
-
 echo ""
 echo "🚚 Asking API to export enterprise data..."
-EXPORT_FILE=$(http --ignore-stdin :5000/datapi/exportEntreprise batch=2002_1 | tr -d '"')
+EXPORT_FILE=$(http POST :5000/datapi/exportEntreprise | tr -d '"')
 echo "- POST /datapi/exportEntreprise 👉 ${EXPORT_FILE}"
 
 echo ""
