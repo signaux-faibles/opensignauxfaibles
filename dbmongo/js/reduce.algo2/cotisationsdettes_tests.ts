@@ -115,6 +115,32 @@ const setupPeriodes = () => {
   )
   return { dateDebut, dateFin, periode }
 }
+const setupCompanyValuesForMontant = (dateDebut: Date) => ({
+  cotisation: {},
+  debit: {
+    hash1: {
+      periode: { start: dateDebut, end: dateAddMonth(dateDebut, 1) },
+      part_ouvriere: partOuvrière,
+      part_patronale: partPatronale,
+      date_traitement: dateDebut,
+      debit_suivant: "",
+      numero_compte: "",
+      numero_ecart_negatif: 1,
+      numero_historique: 2,
+    },
+    hash2: {
+      periode: { start: dateDebut, end: dateAddMonth(dateDebut, 1) },
+      part_ouvriere: 0,
+      part_patronale: 0,
+      date_traitement: dateAddMonth(dateDebut, moisRemboursement),
+      debit_suivant: "",
+      numero_compte: "",
+      numero_ecart_negatif: 1,
+      numero_historique: 3,
+    },
+  },
+}
+)
 
 const setupCompanyValues = (dateDebut: Date) => ({
   cotisation: {
@@ -158,6 +184,7 @@ const setupCompanyValues = (dateDebut: Date) => ({
 const dureeEnMois = 13
 const moisRemboursement = 4
 const partOuvrière = 100
+const partPatronale = 200
 
 const expPartOuvrière = (
   partOuvrière: number,
@@ -168,11 +195,13 @@ const expPartOuvrière = (
     .fill(partOuvrière)
     .concat(Array(dureeEnMois - moisRemboursement).fill(0))
 
+const { dateDebut, dateFin, periode } = setupPeriodes()
 const testedProps = [
   {
     assertion:
       "Le montant de part ouvrière d'une période est reporté dans montant_part_ouvriere_past_1",
     name: "montant_part_ouvriere_past_1",
+    input: setupCompanyValuesForMontant(dateDebut),
     expected: [
       undefined,
       ...expPartOuvrière(partOuvrière, moisRemboursement, dureeEnMois - 1),
@@ -182,15 +211,14 @@ const testedProps = [
     assertion:
       "interessante_urssaf est vrai quand l'entreprise n'a pas eu de débit (dette) sur les 6 derniers mois",
     name: "interessante_urssaf",
+    input: setupCompanyValues(dateDebut),
     expected: Array(6).fill(false).concat(Array(2).fill(undefined)),
   },
 ]
 
 testedProps.forEach((testedProp) => {
   test(testedProp.assertion, (t) => {
-    const { dateDebut, dateFin, periode } = setupPeriodes()
-    const v = setupCompanyValues(dateDebut)
-    const actual = cotisationsdettes(v, periode, dateFin)
+    const actual = cotisationsdettes(testedProp.input, periode, dateFin)
 
     testedProp.expected.forEach((expectedPropValue, indiceMois) => {
       const actualValue = actual[dateAddMonth(dateDebut, indiceMois).getTime()]
