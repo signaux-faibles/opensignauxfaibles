@@ -4,13 +4,14 @@
 # Source: https://github.com/signaux-faibles/documentation/blob/master/prise-en-main.md#%C3%A9tape-de-calculs-pour-populer-features
 
 # Interrompre le conteneur Docker d'une exécution précédente de ce test, si besoin
-docker stop sf-mongodb
+docker stop sf-mongodb &>/dev/null
 
 set -e # will stop the script if any command fails with a non-zero exit code
 
 # Clean up on exit
 DATA_DIR=$(pwd)/tmp-opensignauxfaibles-data-raw
-trap "{ killall dbmongo; [ -f config.toml ] && rm config.toml; [ -f config.backup.toml ] && mv config.backup.toml config.toml; docker stop sf-mongodb; rm -rf ${DATA_DIR}; echo \"✨ Cleaned up temp directory\"; }" EXIT
+mkdir -p "${DATA_DIR}"
+trap "{ killall dbmongo >/dev/null; [ -f config.toml ] && rm config.toml; [ -f config.backup.toml ] && mv config.backup.toml config.toml; docker stop sf-mongodb >/dev/null; rm -rf ${DATA_DIR}; echo \"✨ Cleaned up temp directory\"; }" EXIT
 
 echo ""
 echo "🐳 Starting MongoDB container..."
@@ -19,47 +20,34 @@ docker run \
     --publish 27017:27017 \
     --detach \
     --rm \
-    mongo:4
+    mongo:4 \
+    >/dev/null
 
 echo ""
 echo "🔧 Setting up dbmongo..."
-mkdir -p "${DATA_DIR}"
-touch "${DATA_DIR}/dummy.csv"
 cd dbmongo
 go build
 [ -f config.toml ] && mv config.toml config.backup.toml
 cp config-sample.toml config.toml
-perl -pi'' -e "s,/foo/bar/data-raw,${DATA_DIR}," config.toml
-perl -pi'' -e 's,naf/.*\.csv,dummy.csv,' config.toml
+perl -pi'' -e "s,/foo/bar/data-raw,sample-data-raw," config.toml
 
 echo ""
-echo "📄 Inserting test data..."
+echo "📝 Inserting test data..."
 sleep 1 # give some time for MongoDB to start
-docker exec -i sf-mongodb mongo signauxfaibles << CONTENTS
+docker exec -i sf-mongodb mongo signauxfaibles  > /dev/null << CONTENTS
   db.Admin.remove({})
-
   db.Admin.insertOne({
     "_id" : {
         "key" : "1910",
         "type" : "batch"
     },
-    "files" : {
-        "bdf" : [
-            "/1910/bdf_1910.csv"
-        ]
-    },
-    "complete_types" : [
-    ],
     "param" : {
         "date_debut" : ISODate("2014-01-01T00:00:00.000+0000"),
-        "date_fin" : ISODate("2019-10-01T00:00:00.000+0000"),
-        "date_fin_effectif" : ISODate("2019-07-01T00:00:00.000+0000")
-    },
-    "name" : "Octobre"
+        "date_fin" : ISODate("2019-10-01T00:00:00.000+0000")
+    }
   })
 
   db.ImportedData.remove({})
-
   db.ImportedData.insertOne({
     "_id": "random123abc",
     "value": {
@@ -81,12 +69,12 @@ docker exec -i sf-mongodb mongo signauxfaibles << CONTENTS
 CONTENTS
 
 echo ""
-echo "⚙️ Computing Features and Public collections thru dbmongo API..."
-./dbmongo &
+echo "💎 Computing Features and Public collections thru dbmongo API..."
+sh -c "./dbmongo &>/dev/null &" # we run in a separate shell to hide the "terminated" message when the process is killed by trap
 sleep 2 # give some time for dbmongo to start
-http --ignore-stdin :5000/api/data/compact fromBatchKey=1910
-http --ignore-stdin :5000/api/data/reduce algo=algo2 batch=1910 key=012345678
-http --ignore-stdin :5000/api/data/public batch=1910 key=012345678
+echo "- POST /api/data/compact 👉 $(http --print=b --ignore-stdin :5000/api/data/compact fromBatchKey=1910)"
+echo "- POST /api/data/reduce 👉 $(http --print=b --ignore-stdin :5000/api/data/reduce algo=algo2 batch=1910 key=012345678)"
+echo "- POST /api/data/public 👉 $(http --print=b --ignore-stdin :5000/api/data/public batch=1910 key=012345678)"
 
 echo ""
 echo "🕵️‍♀️ Checking resulting Features..."
@@ -104,9 +92,16 @@ CONTENTS
 grep -v '"random_order" :' test-api.output.txt > test-api.output-documents.txt
 
 echo ""
-echo "🆎 Diff between expected and actual output:"
-diff test-api.golden-master.txt test-api.output-documents.txt
-echo "✅ No diff. The reduce API works as usual."
+# Check if the --update flag was passed
+if [[ "$*" == *--update* ]]
+then
+    echo "🖼  Updating golden master file..."
+    cp "test-api.output-documents.txt" "test-api.golden-master.txt"
+else
+    # Diff between expected and actual output
+    diff --brief test-api.golden-master.txt test-api.output-documents.txt
+    echo "✅ No diff. The export worked as expected."
+fi
 echo ""
 rm test-api.output.txt test-api.output-documents.txt
 # Now, the "trap" commands will run, to clean up.
