@@ -4,15 +4,22 @@ import { cotisationsdettes, SortieCotisationsDettes } from "./cotisationsdettes"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { dateAddMonth } from "./dateAddMonth"
 
-const setupPeriodes = () => {
-  const dureeEnMois = 13
-  const dateDebut = new Date("2018-01-01")
-  const dateFin = dateAddMonth(dateDebut, dureeEnMois)
-  const periode = generatePeriodSerie(dateDebut, dateFin).map((date) =>
-    date.getTime()
-  )
-  return { dateDebut, dateFin, periode }
-}
+const dureeEnMois = 13
+const moisRemboursement = 4
+const dateDebut = new Date("2018-01-01")
+const dateFin = dateAddMonth(dateDebut, dureeEnMois)
+const periode = generatePeriodSerie(dateDebut, dateFin).map((date) =>
+  date.getTime()
+)
+
+const montantCotisation = 100
+const montantPartOuvrière = 100
+const montantPartPatronale = 200
+
+const expectedDette = (montant: number, moisRemboursement: number): number[] =>
+  Array(moisRemboursement)
+    .fill(montant)
+    .concat(Array(dureeEnMois - moisRemboursement).fill(0))
 
 const setupCompanyValuesWithCotisation = (
   dateDebut: Date,
@@ -92,18 +99,6 @@ const setupCompanyValues = (dateDebut: Date) => ({
   },
 })
 
-const dureeEnMois = 13
-const moisRemboursement = 4
-const montantPartOuvrière = 100
-const montantPartPatronale = 200
-
-const expectedDette = (montant: number, moisRemboursement: number) =>
-  Array(moisRemboursement)
-    .fill(montant)
-    .concat(Array(dureeEnMois - moisRemboursement).fill(0))
-
-const { dateDebut, dateFin, periode } = setupPeriodes()
-
 const generatePastTestCase = (
   ouvrièreOuPatronale: "ouvriere" | "patronale",
   montantDette: number,
@@ -117,8 +112,6 @@ const generatePastTestCase = (
     ...expectedDette(montantDette, moisRemboursement),
   ].slice(0, dureeEnMois),
 })
-
-const montantCotisation = 100
 
 const testedProps = [
   {
