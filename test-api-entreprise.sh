@@ -141,12 +141,15 @@ sleep 2 # give some time for dbmongo to start
 echo "- POST /api/data/compact 👉 $(http --print=b --ignore-stdin :5000/api/data/compact fromBatchKey=2002_1)"
 echo "- POST /api/data/public 👉 $(http --print=b --ignore-stdin :5000/api/data/public batch=2002_1 key=.........)"
 
+echo ""
+echo "🚚 Asking API to export enterprise data..."
 # This step is required only if key was provided when calling POST /api/data/public
 RENAME_RESULT=$(echo 'db.Public_debug.renameCollection("Public");' | docker exec -i sf-mongodb mongo --quiet signauxfaibles)
 echo "- rename 'Public_debug' collection to 'Public' 👉 ${RENAME_RESULT}"
-
-echo ""
-echo "🚚 Asking API to export enterprise data..."
+# Make sure that the export only relies on Score and Public collections => clear collections that were populated for/by other endpoints
+CLEAN_RESULT=$(echo 'db.Admin.drop(); db.ImportedData.drop(); db.RawData.drop();' | docker exec -i sf-mongodb mongo --quiet signauxfaibles)
+echo "- drop other db collections 👉 ${RENAME_RESULT}"
+# Export enterprise data
 EXPORT_FILE=$(http POST :5000/datapi/exportEntreprise | tr -d '"')
 echo "- POST /datapi/exportEntreprise 👉 ${EXPORT_FILE}"
 
