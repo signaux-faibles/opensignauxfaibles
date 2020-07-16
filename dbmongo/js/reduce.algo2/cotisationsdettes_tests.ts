@@ -1,35 +1,8 @@
 import "../globals"
-import test, { ExecutionContext } from "ava"
+import test from "ava"
 import { cotisationsdettes, SortieCotisationsDettes } from "./cotisationsdettes"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { dateAddMonth } from "./dateAddMonth"
-
-test("La variable cotisation représente les cotisations sociales dues à une période donnée", (t: ExecutionContext) => {
-  const date = new Date("2018-01-01")
-  const datePlusUnMois = new Date("2018-02-01")
-
-  const v: DonnéesCotisation & DonnéesDebit = {
-    cotisation: {
-      hash1: {
-        periode: { start: date, end: datePlusUnMois },
-        du: 100,
-      },
-    },
-    debit: {},
-  }
-
-  const actual = cotisationsdettes(v, [date.getTime()])
-
-  const expected = {
-    [date.getTime()]: {
-      montant_part_ouvriere: 0,
-      montant_part_patronale: 0,
-      cotisation: 100,
-    },
-  }
-
-  t.deepEqual(actual, expected)
-})
 
 const setupPeriodes = () => {
   const dureeEnMois = 13
@@ -40,6 +13,20 @@ const setupPeriodes = () => {
   )
   return { dateDebut, dateFin, periode }
 }
+
+const setupCompanyValuesWithCotisation = (
+  dateDebut: Date,
+  montantCotisation: number
+) => ({
+  cotisation: {
+    hash1: {
+      periode: { start: dateDebut, end: dateAddMonth(dateDebut, 1) },
+      du: montantCotisation,
+    },
+  },
+  debit: {},
+})
+
 const setupCompanyValuesForMontant = (dateDebut: Date) => ({
   cotisation: {},
   debit: {
@@ -131,7 +118,16 @@ const generatePastTestCase = (
   ].slice(0, dureeEnMois),
 })
 
+const montantCotisation = 100
+
 const testedProps = [
+  {
+    assertion:
+      "La variable cotisation représente les cotisations sociales dues à une période donnée",
+    name: "cotisation",
+    input: setupCompanyValuesWithCotisation(dateDebut, montantCotisation),
+    expected: [montantCotisation],
+  },
   {
     assertion:
       "montant_part_patronale est annulé après le remboursement de la dette",
