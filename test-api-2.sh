@@ -8,14 +8,14 @@
 # suite de tests exécutée en Integration Continue.
 
 # Interrompre le conteneur Docker d'une exécution précédente de ce test, si besoin
-docker stop sf-mongodb
+docker stop sf-mongodb &>/dev/null
 
 set -e # will stop the script if any command fails with a non-zero exit code
 
 # Clean up on exit
 DATA_DIR=$(pwd)/tmp-opensignauxfaibles-data-raw
 mkdir -p "${DATA_DIR}"
-trap "{ killall dbmongo; [ -f config.toml ] && rm config.toml; [ -f config.backup.toml ] && mv config.backup.toml config.toml; docker stop sf-mongodb; rm -rf ${DATA_DIR}; echo \"✨ Cleaned up temp directory\"; }" EXIT
+trap "{ killall dbmongo >/dev/null; [ -f config.toml ] && rm config.toml; [ -f config.backup.toml ] && mv config.backup.toml config.toml; docker stop sf-mongodb >/dev/null; rm -rf ${DATA_DIR}; echo \"✨ Cleaned up temp directory\"; }" EXIT
 
 echo ""
 echo "🚚 Downloading realistic data set..."
@@ -28,7 +28,8 @@ docker run \
     --publish 27017:27017 \
     --detach \
     --rm \
-    mongo:4
+    mongo:4 \
+    >/dev/null
 
 echo ""
 echo "🔧 Setting up dbmongo..."
@@ -39,7 +40,7 @@ cp config-sample.toml config.toml
 perl -pi'' -e "s,/foo/bar/data-raw,sample-data-raw," config.toml
 
 echo ""
-echo "📄 Inserting test data..."
+echo "📝 Inserting test data..."
 sleep 1 # give some time for MongoDB to start
 cat > "${DATA_DIR}/db_popul.js" << CONTENTS
   db.Admin.remove({})
@@ -48,13 +49,6 @@ cat > "${DATA_DIR}/db_popul.js" << CONTENTS
         "key" : "2002_1",
         "type" : "batch"
     },
-    "files" : {
-        "bdf" : [
-            "/1910/bdf_1910.csv"
-        ]
-    },
-    "complete_types" : [
-    ],
     "param" : {
         "date_debut" : ISODate("2014-01-01T00:00:00.000+0000"),
         "date_fin" : ISODate("2016-01-01T00:00:00.000+0000"),
@@ -63,19 +57,21 @@ cat > "${DATA_DIR}/db_popul.js" << CONTENTS
     "name" : "TestData"
   })
 
+  db.Features_TestData.remove({})
+
   db.RawData.remove({})
   db.RawData.insertMany(
 CONTENTS
 cat >> "${DATA_DIR}/db_popul.js" < "${DATA_DIR}/reduce_test_data.json"
 echo ")" >> "${DATA_DIR}/db_popul.js"
 
-docker exec -i sf-mongodb mongo signauxfaibles < "${DATA_DIR}/db_popul.js"
+docker exec -i sf-mongodb mongo signauxfaibles > /dev/null < "${DATA_DIR}/db_popul.js"
 
 echo ""
-echo "⚙️ Computing Features and Public collections thru dbmongo API..."
-./dbmongo &
+echo "💎 Computing Features and Public collections thru dbmongo API..."
+sh -c "./dbmongo &>/dev/null &" # we run in a separate shell to hide the "terminated" message when the process is killed by trap
 sleep 2 # give some time for dbmongo to start
-http --ignore-stdin :5000/api/data/reduce algo=algo2 batch=2002_1
+echo "- POST /api/data/reduce 👉 $(http --print=b --ignore-stdin :5000/api/data/reduce algo=algo2 batch=2002_1)"
 
 function removeRandomOrder {
   grep -v '"random_order":' "$@"
@@ -117,9 +113,17 @@ removeRandomOrder "${DATA_DIR}/finalize_golden.log" \
   > "${DATA_DIR}/test-api-2_golden.json"
 
 echo ""
-echo "🆎 Diff between expected and actual output:"
-diff --brief "${DATA_DIR}/test-api-2_golden.json" test-api-2.output.json
-echo "✅ No diff. The reduce API works as usual."
+# Check if the --update flag was passed
+if [[ "$*" == *--update* ]]
+then
+    echo "🖼  Updating golden master file..."
+    cp test-api-2.output.json "${DATA_DIR}/test-api-2_golden.json"
+    scp "${DATA_DIR}/test-api-2_golden.json" "stockage:/home/centos/opensignauxfaibles_tests/"
+else
+    # Diff between expected and actual output
+    diff --brief "${DATA_DIR}/test-api-2_golden.json" test-api-2.output.json
+    echo "✅ No diff. The reduce API works as usual."
+fi
 echo ""
 rm test-api-2.output.json
 # Now, the "trap" commands will run, to clean up.
