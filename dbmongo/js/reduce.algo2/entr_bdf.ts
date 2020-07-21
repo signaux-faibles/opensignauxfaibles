@@ -38,7 +38,7 @@ export function entr_bdf(
     outputBdf[p] = {}
   }
 
-  for (const hash in donnéesBdf) {
+  for (const hash of Object.keys(donnéesBdf)) {
     const bdfHashData = donnéesBdf[hash]
     const periode_arrete_bilan = new Date(
       Date.UTC(

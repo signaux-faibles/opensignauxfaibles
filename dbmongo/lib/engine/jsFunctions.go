@@ -1549,7 +1549,7 @@ function delais(v, debitParPériode, intervalleTraitement) {
     for (const p of periodes) {
         outputBdf[p] = {};
     }
-    for (const hash in donnéesBdf) {
+    for (const hash of Object.keys(donnéesBdf)) {
         const bdfHashData = donnéesBdf[hash];
         const periode_arrete_bilan = new Date(Date.UTC(bdfHashData.arrete_bilan_bdf.getUTCFullYear(), bdfHashData.arrete_bilan_bdf.getUTCMonth() + 1, 1, 0, 0, 0, 0));
         const periode_dispo = f.dateAddMonth(periode_arrete_bilan, 7);
