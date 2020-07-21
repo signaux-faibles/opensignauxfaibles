@@ -6,25 +6,24 @@ type SortieBdf = {
   annee_bdf: number
   exercice_bdf: number // année
   // TODO: enumération des ratios.
-} & RatiosBdf
-  & RatiosBdfPassés
+} & RatiosBdf &
+  RatiosBdfPassés
 
 // Synchroniser les propriétés avec celles de RatiosBdf
 type RatiosBdfPassés = {
-  poids_frng_past_1: number,
-  taux_marge_past_1: number,
-  delai_fournisseur_past_1: number,
-  dette_fiscale_past_1: number,
-  financier_court_terme_past_1: number,
+  poids_frng_past_1: number
+  taux_marge_past_1: number
+  delai_fournisseur_past_1: number
+  dette_fiscale_past_1: number
+  financier_court_terme_past_1: number
   frais_financier_past_1: number
-  poids_frng_past_2: number,
-  taux_marge_past_2: number,
-  delai_fournisseur_past_2: number,
-  dette_fiscale_past_2: number,
-  financier_court_terme_past_2: number,
+  poids_frng_past_2: number
+  taux_marge_past_2: number
+  delai_fournisseur_past_2: number
+  dette_fiscale_past_2: number
+  financier_court_terme_past_2: number
   frais_financier_past_2: number
 }
-
 
 export function entr_bdf(entréeBdf: DonnéesBdf): ParPériode<SortieBdf> {
   const outputBdf: ParPériode<SortieBdf> = {}
@@ -70,12 +69,7 @@ export function entr_bdf(entréeBdf: DonnéesBdf): ParPériode<SortieBdf> {
     for (const periode of series) {
       const bdfHashData = entréeBdf.bdf[hash]
       const outputInPeriod = outputBdf[periode.getTime()]
-      const rest = omit(
-        bdfHashData,
-        "raison_sociale",
-        "secteur",
-        "siren"
-      )
+      const rest = omit(bdfHashData, "raison_sociale", "secteur", "siren")
 
       if (outputInPeriod) {
         Object.assign(outputInPeriod, rest)
@@ -98,7 +92,7 @@ export function entr_bdf(entréeBdf: DonnéesBdf): ParPériode<SortieBdf> {
           ) {
             outputBdf[periode_offset.getTime()] = {
               ...outputBdf[periode_offset.getTime()],
-              [variable_name]: entréeBdf.bdf[hash][k]
+              [variable_name]: entréeBdf.bdf[hash][k],
             }
           }
         }

@@ -257,11 +257,11 @@ type EntréeBdf = {
 } & RatiosBdf
 
 type RatiosBdf = {
-  poids_frng: number,
-  taux_marge: number,
-  delai_fournisseur: number,
-  dette_fiscale: number,
-  financier_court_terme: number,
+  poids_frng: number
+  taux_marge: number
+  delai_fournisseur: number
+  dette_fiscale: number
+  financier_court_terme: number
   frais_financier: number
 }
 
