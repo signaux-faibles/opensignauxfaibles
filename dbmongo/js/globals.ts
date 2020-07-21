@@ -251,6 +251,18 @@ type EntréeBdf = {
   arrete_bilan_bdf: Date
   annee_bdf: number
   exercice_bdf: number
+  raison_sociale: unknown
+  secteur: unknown
+  siren: unknown
+} & RatiosBdf
+
+type RatiosBdf = {
+  poids_frng: number,
+  taux_marge: number,
+  delai_fournisseur: number,
+  dette_fiscale: number,
+  financier_court_terme: number,
+  frais_financier: number
 }
 
 type EntréeDiane = {

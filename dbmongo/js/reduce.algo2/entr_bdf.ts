@@ -5,7 +5,26 @@ import { dateAddMonth } from "./dateAddMonth"
 type SortieBdf = {
   annee_bdf: number
   exercice_bdf: number // année
+  // TODO: enumération des ratios.
+} & RatiosBdf
+  & RatiosBdfPassés
+
+// Synchroniser les propriétés avec celles de RatiosBdf
+type RatiosBdfPassés = {
+  poids_frng_past_1: number,
+  taux_marge_past_1: number,
+  delai_fournisseur_past_1: number,
+  dette_fiscale_past_1: number,
+  financier_court_terme_past_1: number,
+  frais_financier_past_1: number
+  poids_frng_past_2: number,
+  taux_marge_past_2: number,
+  delai_fournisseur_past_2: number,
+  dette_fiscale_past_2: number,
+  financier_court_terme_past_2: number,
+  frais_financier_past_2: number
 }
+
 
 export function entr_bdf(entréeBdf: DonnéesBdf): ParPériode<SortieBdf> {
   const outputBdf: ParPériode<SortieBdf> = {}
@@ -52,11 +71,7 @@ export function entr_bdf(entréeBdf: DonnéesBdf): ParPériode<SortieBdf> {
       const bdfHashData = entréeBdf.bdf[hash]
       const outputInPeriod = outputBdf[periode.getTime()]
       const rest = omit(
-        bdfHashData as EntréeBdf & {
-          raison_sociale: unknown
-          secteur: unknown
-          siren: unknown
-        },
+        bdfHashData,
         "raison_sociale",
         "secteur",
         "siren"
@@ -76,11 +91,15 @@ export function entr_bdf(entréeBdf: DonnéesBdf): ParPériode<SortieBdf> {
           const variable_name = k + "_past_" + offset
           if (
             periode_offset.getTime() in outputBdf &&
+            // TODO: `in periodes` en récupérant un paramètre périodes.
             k !== "arrete_bilan_bdf" &&
             k !== "exercice_bdf"
+            // TODO: props à inclure dans le omit ci-dessus
           ) {
-            outputBdf[periode_offset.getTime()][variable_name] =
-              entréeBdf.bdf[hash][k]
+            outputBdf[periode_offset.getTime()] = {
+              ...outputBdf[periode_offset.getTime()],
+              [variable_name]: entréeBdf.bdf[hash][k]
+            }
           }
         }
       }
