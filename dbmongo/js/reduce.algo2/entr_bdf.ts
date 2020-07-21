@@ -27,8 +27,8 @@ type RatiosBdfPassés = {
 
 export function entr_bdf(
   v: DonnéesBdf, // TODO: prendre ParPériode<EntréeBdf> au lieu de DonnéesBdf
-  output_indexed: ParPériode<Partial<SortieBdf>>
-  // periodes: Timestamp[]
+  output_indexed: ParPériode<Partial<SortieBdf>>,
+  periodes: Timestamp[]
 ): ParPériode<Partial<SortieBdf>> {
   "use strict"
   const outputBdf: ParPériode<Partial<SortieBdf>> = { ...output_indexed }
@@ -89,7 +89,7 @@ export function entr_bdf(
           const periode_offset = f.dateAddMonth(periode, 12 * offset)
           const variable_name = k + "_past_" + offset
           if (
-            periode_offset.getTime() in output_indexed &&
+            periode_offset.getTime() in periodes &&
             // TODO: `in periodes` en récupérant un paramètre périodes.
             k !== "arrete_bilan_bdf" &&
             k !== "exercice_bdf"
@@ -97,12 +97,6 @@ export function entr_bdf(
           ) {
             output_indexed[periode_offset.getTime()][variable_name] =
               v.bdf[hash][k]
-            /*
-            output_indexed[periode_offset.getTime()] = {
-              ...output_indexed[periode_offset.getTime()],
-              [variable_name]: v.bdf[hash][k],
-            }
-            */
           }
         }
       }

@@ -1535,9 +1535,7 @@ function delais(v, debitParPériode, intervalleTraitement) {
 }
 /* TODO: appliquer même logique d'itération sur futureTimestamps que dans cotisationsdettes.ts */`,
 "entr_bdf": `function entr_bdf(v, // TODO: prendre ParPériode<EntréeBdf> au lieu de DonnéesBdf
-output_indexed
-// periodes: Timestamp[]
-) {
+output_indexed, periodes) {
     "use strict";
     const outputBdf = Object.assign({}, output_indexed);
 
@@ -1575,7 +1573,7 @@ output_indexed
                 for (const offset of past_year_offset) {
                     const periode_offset = f.dateAddMonth(periode, 12 * offset);
                     const variable_name = k + "_past_" + offset;
-                    if (periode_offset.getTime() in output_indexed &&
+                    if (periode_offset.getTime() in periodes &&
                         // TODO: ` + "`" + `in periodes` + "`" + ` en récupérant un paramètre périodes.
                         k !== "arrete_bilan_bdf" &&
                         k !== "exercice_bdf"
@@ -1583,12 +1581,6 @@ output_indexed
                     ) {
                         output_indexed[periode_offset.getTime()][variable_name] =
                             v.bdf[hash][k];
-                        /*
-                        output_indexed[periode_offset.getTime()] = {
-                          ...output_indexed[periode_offset.getTime()],
-                          [variable_name]: v.bdf[hash][k],
-                        }
-                        */
                     }
                 }
             }
@@ -1970,9 +1962,7 @@ function map() {
             v.bdf = v.bdf || {};
             v.diane = v.diane || {};
             if (v.bdf) {
-                const outputBdf = f.entr_bdf(v, output_indexed
-                // periodes
-                );
+                const outputBdf = f.entr_bdf(v, output_indexed, periodes);
                 f.add(outputBdf, output_indexed);
             }
             for (const hash of Object.keys(v.diane)) {
