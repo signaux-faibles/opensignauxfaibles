@@ -1,6 +1,7 @@
 import "../globals"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { dateAddMonth } from "./dateAddMonth"
+import { omit } from "../common/omit"
 
 export type SortieBdf = {
   annee_bdf: number
@@ -35,19 +36,6 @@ export function entr_bdf(
   const outputBdf: ParPériode<Partial<SortieBdf>> = { ...output_indexed }
 
   const f = { generatePeriodSerie, dateAddMonth } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
-
-  // Fonction pour omettre des props, tout en retournant le bon type
-  function omit<Source, Exclusions extends Array<keyof Source>>(
-    object: Source,
-    ...propNames: Exclusions
-  ): Omit<Source, Exclusions[number]> {
-    const result: Omit<Source, Exclusions[number]> = Object.assign({}, object)
-    for (const prop of propNames) {
-      delete (result as any)[prop]
-    }
-    return result
-  }
-  // TODO: [refacto] extraire dans common/ ou reduce.algo2/
 
   for (const hash in v.bdf) {
     const bdfHashData = v.bdf[hash]

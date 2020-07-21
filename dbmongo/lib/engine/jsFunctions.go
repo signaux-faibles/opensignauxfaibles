@@ -193,6 +193,14 @@ function forEachPopulatedProp(obj, fct) {
     }
     return serie;
 }`,
+"omit": `// Fonction pour omettre des props, tout en retournant le bon type
+function omit(object, ...propNames) {
+    const result = Object.assign({}, object);
+    for (const prop of propNames) {
+        delete result[prop];
+    }
+    return result;
+}`,
 "raison_sociale": `function raison_sociale /*eslint-disable-line @typescript-eslint/no-unused-vars */(denomination_unite_legale, nom_unite_legale, nom_usage_unite_legale, prenom1_unite_legale, prenom2_unite_legale, prenom3_unite_legale, prenom4_unite_legale) {
     "use strict";
     const nomUsageUniteLegale = nom_usage_unite_legale
@@ -1540,15 +1548,6 @@ output_indexed, periodes) {
     periodes;
     const outputBdf = Object.assign({}, output_indexed);
 
-    // Fonction pour omettre des props, tout en retournant le bon type
-    function omit(object, ...propNames) {
-        const result = Object.assign({}, object);
-        for (const prop of propNames) {
-            delete result[prop];
-        }
-        return result;
-    }
-    // TODO: [refacto] extraire dans common/ ou reduce.algo2/
     for (const hash in v.bdf) {
         const bdfHashData = v.bdf[hash];
         const periode_arrete_bilan = new Date(Date.UTC(bdfHashData.arrete_bilan_bdf.getUTCFullYear(), bdfHashData.arrete_bilan_bdf.getUTCMonth() + 1, 1, 0, 0, 0, 0));
@@ -1837,14 +1836,6 @@ function flatten(v, actual_batch) {
 function map() {
     "use strict";
 
-    // Fonction pour omettre des props, tout en retournant le bon type
-    function omit(object, ...propNames) {
-        const result = Object.assign({}, object);
-        for (const prop of propNames) {
-            delete result[prop];
-        }
-        return result;
-    }
     const v = f.flatten(this.value, actual_batch);
     if (v.scope === "etablissement") {
         const [output_array, // DonnéesAgrégées[] dans l'ordre chronologique

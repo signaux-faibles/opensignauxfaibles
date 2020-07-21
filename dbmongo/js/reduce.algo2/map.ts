@@ -22,6 +22,7 @@ import { poidsFrng } from "./poidsFrng"
 import { detteFiscale } from "./detteFiscale"
 import { fraisFinancier } from "./fraisFinancier"
 import { entr_bdf, SortieBdf } from "./entr_bdf"
+import { omit } from "../common/omit"
 
 // Paramètres globaux utilisés par "reduce.algo2"
 declare const naf: NAF
@@ -52,18 +53,6 @@ export function map(this: {
     ...{ entr_sirene, dateAddMonth, generatePeriodSerie, poidsFrng }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     ...{ detteFiscale, fraisFinancier, entr_bdf }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
   } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
-
-  // Fonction pour omettre des props, tout en retournant le bon type
-  function omit<Source, Exclusions extends Array<keyof Source>>(
-    object: Source,
-    ...propNames: Exclusions
-  ): Omit<Source, Exclusions[number]> {
-    const result: Omit<Source, Exclusions[number]> = Object.assign({}, object)
-    for (const prop of propNames) {
-      delete (result as any)[prop]
-    }
-    return result
-  }
 
   const v = f.flatten(this.value, actual_batch)
 
