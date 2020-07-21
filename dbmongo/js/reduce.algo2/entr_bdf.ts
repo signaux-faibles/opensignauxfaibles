@@ -94,7 +94,7 @@ export function entr_bdf(
             // TODO: `in periodes` en récupérant un paramètre périodes.
             k !== "arrete_bilan_bdf" &&
             k !== "exercice_bdf"
-            // TODO: props à inclure dans le omit ci-dessus
+            // TODO: props à inclure dans le omit ci-dessus ?
           ) {
             output_indexed[periode_offset.getTime()][variable_name] =
               v.bdf[hash][k]

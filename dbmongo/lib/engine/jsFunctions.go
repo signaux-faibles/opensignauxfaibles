@@ -1580,7 +1580,7 @@ output_indexed
                         // TODO: ` + "`" + `in periodes` + "`" + ` en récupérant un paramètre périodes.
                         k !== "arrete_bilan_bdf" &&
                         k !== "exercice_bdf"
-                    // TODO: props à inclure dans le omit ci-dessus
+                    // TODO: props à inclure dans le omit ci-dessus ?
                     ) {
                         output_indexed[periode_offset.getTime()][variable_name] =
                             v.bdf[hash][k];
@@ -1954,7 +1954,7 @@ function map() {
                     arrete_bilan_diane: new Date(0),
                 };
             });
-            let output_indexed = output_array.reduce(function (periode, val) {
+            const output_indexed = output_array.reduce(function (periode, val) {
                 periode[val.periode.getTime()] = val;
                 return periode;
             }, {});
@@ -1968,10 +1968,6 @@ function map() {
                 const output_effectif_ent = f.effectifs(v.effectif_ent, periodes, "effectif_ent");
                 f.add(output_effectif_ent, output_indexed);
             }
-            output_indexed = output_array.reduce(function (periode, val) {
-                periode[val.periode.getTime()] = val;
-                return periode;
-            }, {});
             v.bdf = v.bdf || {};
             v.diane = v.diane || {};
             if (v.bdf) {
