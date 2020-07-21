@@ -56,7 +56,7 @@ type BatchValue = Partial<
     DonnéesDebit &
     DonnéesCcsf &
     DonnéesSirene &
-    DonnéesSireneUL &
+    DonnéesSireneEntreprise &
     DonnéesEffectifEntreprise &
     DonnéesBdf &
     DonnéesDiane
@@ -119,8 +119,8 @@ type DonnéesSirene = {
   sirene: Record<DataHash, EntréeSirene>
 }
 
-type DonnéesSireneUL = {
-  sirene_ul: Record<DataHash, EntréeSireneUL>
+type DonnéesSireneEntreprise = {
+  sirene_ul: Record<DataHash, EntréeSireneEntreprise>
 }
 
 type DonnéesEffectifEntreprise = {
@@ -235,7 +235,7 @@ type EntréeSirene = {
   date_creation: Date
 }
 
-type EntréeSireneUL = {
+type EntréeSireneEntreprise = {
   raison_sociale: string
   nom_unite_legale: string
   nom_usage_unite_legale: string
@@ -243,7 +243,7 @@ type EntréeSireneUL = {
   prenom2_unite_legale: string
   prenom3_unite_legale: string
   prenom4_unite_legale: string
-  statut_juridique: unknown
+  statut_juridique: string | null // code numérique sérialisé en chaine de caractères
   date_creation: Date
 }
 

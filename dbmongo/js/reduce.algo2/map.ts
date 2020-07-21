@@ -15,7 +15,7 @@ import { sirene } from "./sirene"
 import { populateNafAndApe } from "./populateNafAndApe"
 import { cotisation } from "./cotisation"
 import { cibleApprentissage } from "./cibleApprentissage"
-import { entr_sirene, SortieSireneUL } from "./entr_sirene"
+import { entr_sirene, SortieSireneEntreprise } from "./entr_sirene"
 import { dateAddMonth } from "./dateAddMonth"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { poidsFrng } from "./poidsFrng"
@@ -184,7 +184,7 @@ export function map(this: {
         periode: Date
       }
       type SortieMapEntreprise = Input &
-        Partial<SortieSireneUL> &
+        Partial<SortieSireneEntreprise> &
         Partial<EntréeBdf> &
         Partial<EntréeDiane> &
         Record<string, unknown> // for *_past_* props of bdf. // TODO: try to be more specific
@@ -208,7 +208,7 @@ export function map(this: {
       }, {} as Record<Periode, SortieMapEntreprise>)
 
       if (v.sirene_ul) {
-        f.entr_sirene(v as DonnéesSireneUL, output_array)
+        f.entr_sirene(v as DonnéesSireneEntreprise, output_array)
       }
 
       const periodes = Object.keys(output_indexed)
