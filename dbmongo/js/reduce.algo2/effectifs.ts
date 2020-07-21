@@ -5,18 +5,18 @@ declare const offset_effectif: number
 
 type Time = string
 
-type EffectifName = string
+type PropertyName = "effectif_ent" | "effectif" // effectif entreprise ou établissement
 
 type ValeurEffectif = number
 
-type SortieEffectifs = Record<Time, Record<EffectifName, ValeurEffectif | null>>
+type SortieEffectifs = Record<Time, Record<PropertyName, ValeurEffectif | null>>
 
 type EffectifEntreprise = Record<DataHash, EntréeEffectif>
 
 export function effectifs(
   effobj: EffectifEntreprise,
   periodes: Timestamp[],
-  effectif_name: EffectifName
+  propertyName: PropertyName
 ): SortieEffectifs {
   "use strict"
 
@@ -45,13 +45,13 @@ export function effectifs(
   periodes.reduce((accu, time) => {
     // si disponible on reporte l'effectif tel quel, sinon, on recupère l'accu
     output_effectif[time] = output_effectif[time] || {}
-    output_effectif[time][effectif_name] =
+    output_effectif[time][propertyName] =
       map_effectif[time] || (available ? accu : null)
 
     // le cas échéant, on met à jour l'accu avec le dernier effectif disponible
     accu = map_effectif[time] || accu
 
-    output_effectif[time][effectif_name + "_reporte"] = map_effectif[time]
+    output_effectif[time][propertyName + "_reporte"] = map_effectif[time]
       ? 0
       : 1
     return accu
@@ -67,7 +67,7 @@ export function effectifs(
         lookback - offset_effectif - 1
       )
 
-      const variable_name_effectif = effectif_name + "_past_" + lookback
+      const variable_name_effectif = propertyName + "_past_" + lookback
       output_effectif[time_past_lookback.getTime()] =
         output_effectif[time_past_lookback.getTime()] || {}
       output_effectif[time_past_lookback.getTime()][variable_name_effectif] =
