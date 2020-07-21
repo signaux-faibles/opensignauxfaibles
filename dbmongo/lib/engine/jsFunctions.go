@@ -1561,7 +1561,7 @@ output_indexed, periodes) {
         const periode_dispo = f.dateAddMonth(periode_arrete_bilan, 7);
         const series = f.generatePeriodSerie(periode_dispo, f.dateAddMonth(periode_dispo, 13));
         for (const periode of series) {
-            const outputInPeriod = output_indexed[periode.getTime()];
+            const outputInPeriod = (outputBdf[periode.getTime()] = outputBdf[periode.getTime()] || Object.assign({}, output_indexed[periode.getTime()]));
             const rest = omit(bdfHashData, "raison_sociale", "secteur", "siren");
             if (outputInPeriod /*periode.getTime() in periodes*/) {
                 Object.assign(outputInPeriod, rest);
