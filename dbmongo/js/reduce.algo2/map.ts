@@ -236,7 +236,7 @@ export function map(this: {
       if (v.bdf) {
         /*const outputBdf =*/ f.entr_bdf(
           v as DonnéesBdf,
-          output_indexed as Record<Periode, Record<string, number>>
+          output_indexed
           //, periodes
         )
         //f.add(outputBdf, output_indexed)

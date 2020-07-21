@@ -1,7 +1,7 @@
 import "../globals"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { dateAddMonth } from "./dateAddMonth"
-/*
+
 type SortieBdf = {
   annee_bdf: number
   exercice_bdf: number // année
@@ -23,10 +23,10 @@ type RatiosBdfPassés = {
   financier_court_terme_past_2: number
   frais_financier_past_2: number
 }
-*/
+
 export function entr_bdf(
-  entréeBdf: DonnéesBdf, // TODO: prendre ParPériode<EntréeBdf> au lieu de DonnéesBdf
-  output_indexed: Record<Periode, Record<string, number>> // for *_past_* props of bdf. // TODO: try to be more specific
+  v: DonnéesBdf, // TODO: prendre ParPériode<EntréeBdf> au lieu de DonnéesBdf
+  output_indexed: Record<Periode, Partial<SortieBdf>>
   // periodes: Timestamp[]
 ): void /*ParPériode<SortieBdf>*/ {
   // const outputBdf: ParPériode<SortieBdf> = {}
@@ -52,8 +52,8 @@ export function entr_bdf(
   }
   // TODO: [refacto] extraire dans common/ ou reduce.algo2/
 
-  for (const hash in /*of typedObjectKeys*/ entréeBdf.bdf) {
-    const bdfHashData = entréeBdf.bdf[hash]
+  for (const hash in /*of typedObjectKeys*/ v.bdf) {
+    const bdfHashData = v.bdf[hash]
     const periode_arrete_bilan = new Date(
       Date.UTC(
         bdfHashData.arrete_bilan_bdf.getUTCFullYear(),
@@ -96,7 +96,7 @@ export function entr_bdf(
           ) {
             output_indexed[periode_offset.getTime()] = {
               ...output_indexed[periode_offset.getTime()],
-              [variable_name]: entréeBdf.bdf[hash][k],
+              [variable_name]: v.bdf[hash][k],
             }
           }
         }

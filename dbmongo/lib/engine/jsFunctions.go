@@ -1534,31 +1534,8 @@ function delais(v, debitParPériode, intervalleTraitement) {
     return output_effectif;
 }
 /* TODO: appliquer même logique d'itération sur futureTimestamps que dans cotisationsdettes.ts */`,
-"entr_bdf": `/*
-type SortieBdf = {
-  annee_bdf: number
-  exercice_bdf: number // année
-} & RatiosBdf &
-  RatiosBdfPassés
-
-// Synchroniser les propriétés avec celles de RatiosBdf
-type RatiosBdfPassés = {
-  poids_frng_past_1: number
-  taux_marge_past_1: number
-  delai_fournisseur_past_1: number
-  dette_fiscale_past_1: number
-  financier_court_terme_past_1: number
-  frais_financier_past_1: number
-  poids_frng_past_2: number
-  taux_marge_past_2: number
-  delai_fournisseur_past_2: number
-  dette_fiscale_past_2: number
-  financier_court_terme_past_2: number
-  frais_financier_past_2: number
-}
-*/
-function entr_bdf(entréeBdf, // TODO: prendre ParPériode<EntréeBdf> au lieu de DonnéesBdf
-output_indexed // for *_past_* props of bdf. // TODO: try to be more specific
+"entr_bdf": `function entr_bdf(v, // TODO: prendre ParPériode<EntréeBdf> au lieu de DonnéesBdf
+output_indexed
 // periodes: Timestamp[]
 ) {
     // const outputBdf: ParPériode<SortieBdf> = {}
@@ -1579,8 +1556,8 @@ output_indexed // for *_past_* props of bdf. // TODO: try to be more specific
         return result;
     }
     // TODO: [refacto] extraire dans common/ ou reduce.algo2/
-    for (const hash in /*of typedObjectKeys*/ entréeBdf.bdf) {
-        const bdfHashData = entréeBdf.bdf[hash];
+    for (const hash in /*of typedObjectKeys*/ v.bdf) {
+        const bdfHashData = v.bdf[hash];
         const periode_arrete_bilan = new Date(Date.UTC(bdfHashData.arrete_bilan_bdf.getUTCFullYear(), bdfHashData.arrete_bilan_bdf.getUTCMonth() + 1, 1, 0, 0, 0, 0));
         const periode_dispo = f.dateAddMonth(periode_arrete_bilan, 7);
         const series = f.generatePeriodSerie(periode_dispo, f.dateAddMonth(periode_dispo, 13));
@@ -1604,7 +1581,7 @@ output_indexed // for *_past_* props of bdf. // TODO: try to be more specific
                         k !== "exercice_bdf"
                     // TODO: props à inclure dans le omit ci-dessus
                     ) {
-                        output_indexed[periode_offset.getTime()] = Object.assign(Object.assign({}, output_indexed[periode_offset.getTime()]), { [variable_name]: entréeBdf.bdf[hash][k] });
+                        output_indexed[periode_offset.getTime()] = Object.assign(Object.assign({}, output_indexed[periode_offset.getTime()]), { [variable_name]: v.bdf[hash][k] });
                     }
                 }
             }
