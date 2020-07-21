@@ -1548,11 +1548,6 @@ output_indexed, periodes) {
         }
         return result;
     }
-    // Fonction pour omettre des props, tout en retournant le bon type
-    function omitProps(object, ...propNames) {
-        const result = omit(object, ...propNames);
-        return Object.keys(result);
-    }
     // TODO: [refacto] extraire dans common/ ou reduce.algo2/
     for (const hash in v.bdf) {
         const bdfHashData = v.bdf[hash];
@@ -1562,20 +1557,15 @@ output_indexed, periodes) {
         for (const periode of series) {
             const outputInPeriod = (outputBdf[periode.getTime()] =
                 outputBdf[periode.getTime()] || {});
+            const periodData = omit(bdfHashData, "raison_sociale", "secteur", "siren");
             //if (outputInPeriod || periode.getTime() in periodes) {
-            Object.assign(outputInPeriod, omit(bdfHashData, "raison_sociale", "secteur", "siren"));
+            Object.assign(outputInPeriod, periodData);
             if (outputInPeriod.annee_bdf) {
                 outputInPeriod.exercice_bdf = outputInPeriod.annee_bdf - 1;
             }
             //}
-            const excludedProps = [
-                "raison_sociale",
-                "secteur",
-                "siren",
-                "arrete_bilan_bdf",
-                "exercice_bdf",
-            ];
-            for (const prop of omitProps(bdfHashData, ...excludedProps)) {
+            const pastData = omit(periodData, "arrete_bilan_bdf", "exercice_bdf");
+            for (const prop of Object.keys(pastData)) {
                 const past_year_offset = [1, 2];
                 for (const offset of past_year_offset) {
                     const periode_offset = f.dateAddMonth(periode, 12 * offset);

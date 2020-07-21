@@ -47,14 +47,6 @@ export function entr_bdf(
     }
     return result
   }
-  // Fonction pour omettre des props, tout en retournant le bon type
-  function omitProps<Source, Exclusions extends Array<keyof Source>>(
-    object: Source,
-    ...propNames: Exclusions
-  ): Array<keyof Omit<Source, Exclusions[number]>> {
-    const result = omit(object, ...propNames)
-    return Object.keys(result) as (keyof typeof result)[]
-  }
   // TODO: [refacto] extraire dans common/ ou reduce.algo2/
 
   for (const hash in v.bdf) {
@@ -80,25 +72,18 @@ export function entr_bdf(
       const outputInPeriod = (outputBdf[periode.getTime()] =
         outputBdf[periode.getTime()] || {})
 
+      const periodData = omit(bdfHashData, "raison_sociale", "secteur", "siren")
+
       //if (outputInPeriod || periode.getTime() in periodes) {
-      Object.assign(
-        outputInPeriod,
-        omit(bdfHashData, "raison_sociale", "secteur", "siren")
-      )
+      Object.assign(outputInPeriod, periodData)
       if (outputInPeriod.annee_bdf) {
         outputInPeriod.exercice_bdf = outputInPeriod.annee_bdf - 1
       }
       //}
 
-      const excludedProps = [
-        "raison_sociale",
-        "secteur",
-        "siren",
-        "arrete_bilan_bdf",
-        "exercice_bdf",
-      ] as const
+      const pastData = omit(periodData, "arrete_bilan_bdf", "exercice_bdf")
 
-      for (const prop of omitProps(bdfHashData, ...excludedProps)) {
+      for (const prop of Object.keys(pastData) as (keyof typeof pastData)[]) {
         const past_year_offset = [1, 2]
         for (const offset of past_year_offset) {
           const periode_offset = f.dateAddMonth(periode, 12 * offset)
