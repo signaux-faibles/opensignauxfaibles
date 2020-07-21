@@ -202,7 +202,7 @@ export function map(this: {
         }
       })
 
-      let output_indexed = output_array.reduce(function (periode, val) {
+      const output_indexed = output_array.reduce(function (periode, val) {
         periode[val.periode.getTime()] = val
         return periode
       }, {} as Record<Periode, SortieMapEntreprise>)
@@ -214,6 +214,7 @@ export function map(this: {
       const periodes = Object.keys(output_indexed)
         .sort()
         .map((timestamp) => parseInt(timestamp))
+
       if (v.effectif_ent) {
         const output_effectif_ent = f.effectifs(
           v.effectif_ent,
@@ -223,70 +224,10 @@ export function map(this: {
         f.add(output_effectif_ent, output_indexed)
       }
 
-      output_indexed = output_array.reduce(function (periode, val) {
-        periode[val.periode.getTime()] = val
-        return periode
-      }, {} as Record<Periode, SortieMapEntreprise>)
-
       v.bdf = v.bdf || {}
       v.diane = v.diane || {}
 
-      for (const hash in v.bdf) {
-        const periode_arrete_bilan = new Date(
-          Date.UTC(
-            v.bdf[hash].arrete_bilan_bdf.getUTCFullYear(),
-            v.bdf[hash].arrete_bilan_bdf.getUTCMonth() + 1,
-            1,
-            0,
-            0,
-            0,
-            0
-          )
-        )
-        const periode_dispo = f.dateAddMonth(periode_arrete_bilan, 7)
-        const series = f.generatePeriodSerie(
-          periode_dispo,
-          f.dateAddMonth(periode_dispo, 13)
-        )
-
-        for (const periode of series) {
-          const bdfHashData = v.bdf[hash]
-          const outputInPeriod = output_indexed[periode.getTime()]
-          const rest = omit(
-            bdfHashData as EntréeBdf & {
-              raison_sociale: unknown
-              secteur: unknown
-              siren: unknown
-            },
-            "raison_sociale",
-            "secteur",
-            "siren"
-          )
-
-          if (outputInPeriod) {
-            Object.assign(outputInPeriod, rest)
-            if (outputInPeriod.annee_bdf) {
-              outputInPeriod.exercice_bdf = outputInPeriod.annee_bdf - 1
-            }
-          }
-
-          for (const k of Object.keys(rest) as (keyof typeof rest)[]) {
-            const past_year_offset = [1, 2]
-            for (const offset of past_year_offset) {
-              const periode_offset = f.dateAddMonth(periode, 12 * offset)
-              const variable_name = k + "_past_" + offset
-              if (
-                periode_offset.getTime() in output_indexed &&
-                k !== "arrete_bilan_bdf" &&
-                k !== "exercice_bdf"
-              ) {
-                output_indexed[periode_offset.getTime()][variable_name] =
-                  v.bdf[hash][k]
-              }
-            }
-          }
-        }
-      }
+      // TODO: appeler entr_bdf()
 
       for (const hash of Object.keys(v.diane)) {
         if (!v.diane[hash].arrete_bilan_diane) continue
