@@ -1570,7 +1570,9 @@ output_indexed, periodes) {
                     const periode_offset = f.dateAddMonth(periode, 12 * offset);
                     const outputInPast = outputBdf[periode_offset.getTime()];
                     if (outputInPast) {
-                        outputInPast[prop + "_past_" + offset] = v.bdf[hash][prop];
+                        Object.assign(outputInPast, {
+                            [prop + "_past_" + offset]: v.bdf[hash][prop],
+                        });
                     }
                 }
             }

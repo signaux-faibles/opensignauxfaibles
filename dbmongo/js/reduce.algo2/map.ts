@@ -178,7 +178,8 @@ export function map(this: {
         Partial<EntréeBdf> &
         Partial<EntréeDiane> &
         Partial<EntréeBdf> &
-        Partial<SortieBdf>
+        Partial<SortieBdf> &
+        Record<string, unknown> // for *_past_* props of diane. // TODO: try to be more specific
 
       const output_array: SortieMapEntreprise[] = serie_periode.map(function (
         e

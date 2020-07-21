@@ -7,8 +7,7 @@ export type SortieBdf = {
   annee_bdf: number
   exercice_bdf: number // année
 } & RatiosBdf &
-  RatiosBdfPassés &
-  Record<string, unknown> // for *_past_* props of bdf. // TODO: try to be more specific
+  RatiosBdfPassés
 
 // Synchroniser les propriétés avec celles de RatiosBdf
 type RatiosBdfPassés = {
@@ -77,7 +76,9 @@ export function entr_bdf(
           const periode_offset = f.dateAddMonth(periode, 12 * offset)
           const outputInPast = outputBdf[periode_offset.getTime()]
           if (outputInPast) {
-            outputInPast[prop + "_past_" + offset] = v.bdf[hash][prop]
+            Object.assign(outputInPast, {
+              [prop + "_past_" + offset]: v.bdf[hash][prop],
+            })
           }
         }
       }
