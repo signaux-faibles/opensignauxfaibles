@@ -1582,7 +1582,14 @@ output_indexed
                         k !== "exercice_bdf"
                     // TODO: props à inclure dans le omit ci-dessus
                     ) {
-                        output_indexed[periode_offset.getTime()] = Object.assign(Object.assign({}, output_indexed[periode_offset.getTime()]), { [variable_name]: v.bdf[hash][k] });
+                        output_indexed[periode_offset.getTime()][variable_name] =
+                            v.bdf[hash][k];
+                        /*
+                        output_indexed[periode_offset.getTime()] = {
+                          ...output_indexed[periode_offset.getTime()],
+                          [variable_name]: v.bdf[hash][k],
+                        }
+                        */
                     }
                 }
             }
