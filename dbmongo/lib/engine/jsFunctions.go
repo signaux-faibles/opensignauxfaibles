@@ -1575,7 +1575,8 @@ output_indexed, periodes) {
                 for (const offset of past_year_offset) {
                     const periode_offset = f.dateAddMonth(periode, 12 * offset);
                     const variable_name = k + "_past_" + offset;
-                    if (periode_offset.getTime() in output_indexed &&
+                    if (outputBdf[periode_offset.getTime()] &&
+                        // periode_offset.getTime() in output_indexed &&
                         // TODO: ` + "`" + `in periodes` + "`" + ` en récupérant un paramètre périodes.
                         k !== "arrete_bilan_bdf" &&
                         k !== "exercice_bdf"
