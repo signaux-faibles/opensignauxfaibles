@@ -1540,12 +1540,6 @@ output_indexed, periodes) {
     periodes;
     const outputBdf = Object.assign({}, output_indexed);
 
-    /*
-    // Retourne les clés de obj, en respectant le type défini dans le type de obj.
-    // Contrat: obj ne doit contenir que les clés définies dans son type.
-    const typedObjectKeys = <T>(obj: T): Array<keyof T> =>
-      Object.keys(obj) as Array<keyof T>
-    */
     // Fonction pour omettre des props, tout en retournant le bon type
     function omit(object, ...propNames) {
         const result = Object.assign({}, object);
@@ -1553,6 +1547,11 @@ output_indexed, periodes) {
             delete result[prop];
         }
         return result;
+    }
+    // Fonction pour omettre des props, tout en retournant le bon type
+    function omitProps(object, ...propNames) {
+        const result = omit(object, ...propNames);
+        return Object.keys(result);
     }
     // TODO: [refacto] extraire dans common/ ou reduce.algo2/
     for (const hash in v.bdf) {
@@ -1563,23 +1562,25 @@ output_indexed, periodes) {
         for (const periode of series) {
             const outputInPeriod = (outputBdf[periode.getTime()] =
                 outputBdf[periode.getTime()] || {});
-            const rest = omit(bdfHashData, "raison_sociale", "secteur", "siren");
             //if (outputInPeriod || periode.getTime() in periodes) {
-            Object.assign(outputInPeriod, rest);
+            Object.assign(outputInPeriod, omit(bdfHashData, "raison_sociale", "secteur", "siren"));
             if (outputInPeriod.annee_bdf) {
                 outputInPeriod.exercice_bdf = outputInPeriod.annee_bdf - 1;
             }
             //}
-            for (const prop of Object.keys(rest)) {
+            const excludedProps = [
+                "raison_sociale",
+                "secteur",
+                "siren",
+                "arrete_bilan_bdf",
+                "exercice_bdf",
+            ];
+            for (const prop of omitProps(bdfHashData, ...excludedProps)) {
                 const past_year_offset = [1, 2];
                 for (const offset of past_year_offset) {
                     const periode_offset = f.dateAddMonth(periode, 12 * offset);
                     const outputInPast = outputBdf[periode_offset.getTime()];
-                    if (outputInPast &&
-                        prop !== "arrete_bilan_bdf" &&
-                        prop !== "exercice_bdf"
-                    // TODO: props à inclure dans le omit ci-dessus ?
-                    ) {
+                    if (outputInPast) {
                         outputInPast[prop + "_past_" + offset] = v.bdf[hash][prop];
                     }
                 }
