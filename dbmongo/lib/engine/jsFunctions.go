@@ -1534,6 +1534,26 @@ function delais(v, debitParPériode, intervalleTraitement) {
     return output_effectif;
 }
 /* TODO: appliquer même logique d'itération sur futureTimestamps que dans cotisationsdettes.ts */`,
+"entr_sirene": `function entr_sirene(v, output_array) {
+    "use strict";
+    const sireneHashes = Object.keys(v.sirene_ul || {});
+    output_array.forEach((val) => {
+        if (sireneHashes.length !== 0) {
+            const sirene = v.sirene_ul[sireneHashes[sireneHashes.length - 1]];
+            val.raison_sociale = f.raison_sociale(sirene.raison_sociale, sirene.nom_unite_legale, sirene.nom_usage_unite_legale, sirene.prenom1_unite_legale, sirene.prenom2_unite_legale, sirene.prenom3_unite_legale, sirene.prenom4_unite_legale);
+            val.statut_juridique = sirene.statut_juridique || null;
+            val.date_creation_entreprise = sirene.date_creation
+                ? sirene.date_creation.getFullYear()
+                : null;
+            if (val.date_creation_entreprise &&
+                sirene.date_creation &&
+                sirene.date_creation >= new Date("1901/01/01")) {
+                val.age_entreprise =
+                    val.periode.getFullYear() - val.date_creation_entreprise;
+            }
+        }
+    });
+}`,
 "finalize": `function finalize(k, v) {
     "use strict";
     const maxBsonSize = 16777216;
@@ -1876,7 +1896,7 @@ function map() {
                 return periode;
             }, {});
             if (v.sirene_ul) {
-                f.sirene_ul(v, output_array);
+                f.entr_sirene(v, output_array);
             }
             const periodes = Object.keys(output_indexed)
                 .sort()
@@ -2142,26 +2162,6 @@ function outputs(v, serie_periode) {
                     sirene.date_creation && sirene.date_creation >= new Date("1901/01/01")
                         ? val.periode.getFullYear() - val.date_creation_etablissement
                         : null;
-            }
-        }
-    });
-}`,
-"sirene_ul": `function sirene_ul(v, output_array) {
-    "use strict";
-    const sireneHashes = Object.keys(v.sirene_ul || {});
-    output_array.forEach((val) => {
-        if (sireneHashes.length !== 0) {
-            const sirene = v.sirene_ul[sireneHashes[sireneHashes.length - 1]];
-            val.raison_sociale = f.raison_sociale(sirene.raison_sociale, sirene.nom_unite_legale, sirene.nom_usage_unite_legale, sirene.prenom1_unite_legale, sirene.prenom2_unite_legale, sirene.prenom3_unite_legale, sirene.prenom4_unite_legale);
-            val.statut_juridique = sirene.statut_juridique || null;
-            val.date_creation_entreprise = sirene.date_creation
-                ? sirene.date_creation.getFullYear()
-                : null;
-            if (val.date_creation_entreprise &&
-                sirene.date_creation &&
-                sirene.date_creation >= new Date("1901/01/01")) {
-                val.age_entreprise =
-                    val.periode.getFullYear() - val.date_creation_entreprise;
             }
         }
     });
