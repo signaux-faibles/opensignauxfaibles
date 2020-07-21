@@ -1562,17 +1562,14 @@ output_indexed, periodes) {
         const series = f.generatePeriodSerie(periode_dispo, f.dateAddMonth(periode_dispo, 13));
         for (const periode of series) {
             const outputInPeriod = (outputBdf[periode.getTime()] =
-                outputBdf[periode.getTime()] ||
-                    {
-                    /*...output_indexed[periode.getTime()]*/
-                    });
+                outputBdf[periode.getTime()] || {});
             const rest = omit(bdfHashData, "raison_sociale", "secteur", "siren");
-            if (outputInPeriod /*periode.getTime() in periodes*/) {
-                Object.assign(outputInPeriod, rest);
-                if (outputInPeriod.annee_bdf) {
-                    outputInPeriod.exercice_bdf = outputInPeriod.annee_bdf - 1;
-                }
+            //if (outputInPeriod || periode.getTime() in periodes) {
+            Object.assign(outputInPeriod, rest);
+            if (outputInPeriod.annee_bdf) {
+                outputInPeriod.exercice_bdf = outputInPeriod.annee_bdf - 1;
             }
+            //}
             for (const k of Object.keys(rest)) {
                 const past_year_offset = [1, 2];
                 for (const offset of past_year_offset) {

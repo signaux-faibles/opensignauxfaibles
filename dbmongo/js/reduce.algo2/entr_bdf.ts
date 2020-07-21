@@ -75,18 +75,15 @@ export function entr_bdf(
 
     for (const periode of series) {
       const outputInPeriod = (outputBdf[periode.getTime()] =
-        outputBdf[periode.getTime()] ||
-        {
-          /*...output_indexed[periode.getTime()]*/
-        })
+        outputBdf[periode.getTime()] || {})
       const rest = omit(bdfHashData, "raison_sociale", "secteur", "siren")
 
-      if (outputInPeriod /*periode.getTime() in periodes*/) {
-        Object.assign(outputInPeriod, rest)
-        if (outputInPeriod.annee_bdf) {
-          outputInPeriod.exercice_bdf = outputInPeriod.annee_bdf - 1
-        }
+      //if (outputInPeriod || periode.getTime() in periodes) {
+      Object.assign(outputInPeriod, rest)
+      if (outputInPeriod.annee_bdf) {
+        outputInPeriod.exercice_bdf = outputInPeriod.annee_bdf - 1
       }
+      //}
 
       for (const k of Object.keys(rest) as (keyof typeof rest)[]) {
         const past_year_offset = [1, 2]
