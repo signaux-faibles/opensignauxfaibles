@@ -26,7 +26,7 @@ type RatiosBdfPassés = {
 }
 
 export function entr_bdf(
-  donnéesBdf: ParPériode<EntréeBdf>,
+  donnéesBdf: Record<DataHash, EntréeBdf>,
   periodes: Timestamp[]
 ): ParPériode<Partial<SortieBdf>> {
   "use strict"
