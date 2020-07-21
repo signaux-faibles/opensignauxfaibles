@@ -31,6 +31,7 @@ export function entr_bdf(
   periodes: Timestamp[]
 ): ParPériode<Partial<SortieBdf>> {
   "use strict"
+  periodes
   const outputBdf: ParPériode<Partial<SortieBdf>> = { ...output_indexed }
 
   const f = { generatePeriodSerie, dateAddMonth } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
@@ -89,14 +90,13 @@ export function entr_bdf(
           const periode_offset = f.dateAddMonth(periode, 12 * offset)
           const variable_name = k + "_past_" + offset
           if (
-            periode_offset.getTime() in periodes &&
+            periode_offset.getTime() in output_indexed &&
             // TODO: `in periodes` en récupérant un paramètre périodes.
             k !== "arrete_bilan_bdf" &&
             k !== "exercice_bdf"
             // TODO: props à inclure dans le omit ci-dessus ?
           ) {
-            output_indexed[periode_offset.getTime()][variable_name] =
-              v.bdf[hash][k]
+            outputBdf[periode_offset.getTime()][variable_name] = v.bdf[hash][k]
           }
         }
       }

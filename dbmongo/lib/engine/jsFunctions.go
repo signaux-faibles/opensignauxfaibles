@@ -1537,6 +1537,7 @@ function delais(v, debitParPériode, intervalleTraitement) {
 "entr_bdf": `function entr_bdf(v, // TODO: prendre ParPériode<EntréeBdf> au lieu de DonnéesBdf
 output_indexed, periodes) {
     "use strict";
+    periodes;
     const outputBdf = Object.assign({}, output_indexed);
 
     /*
@@ -1573,14 +1574,13 @@ output_indexed, periodes) {
                 for (const offset of past_year_offset) {
                     const periode_offset = f.dateAddMonth(periode, 12 * offset);
                     const variable_name = k + "_past_" + offset;
-                    if (periode_offset.getTime() in periodes &&
+                    if (periode_offset.getTime() in output_indexed &&
                         // TODO: ` + "`" + `in periodes` + "`" + ` en récupérant un paramètre périodes.
                         k !== "arrete_bilan_bdf" &&
                         k !== "exercice_bdf"
                     // TODO: props à inclure dans le omit ci-dessus ?
                     ) {
-                        output_indexed[periode_offset.getTime()][variable_name] =
-                            v.bdf[hash][k];
+                        outputBdf[periode_offset.getTime()][variable_name] = v.bdf[hash][k];
                     }
                 }
             }
