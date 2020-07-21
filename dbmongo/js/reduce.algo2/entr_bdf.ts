@@ -27,14 +27,16 @@ type RatiosBdfPassés = {
 
 export function entr_bdf(
   v: DonnéesBdf, // TODO: prendre ParPériode<EntréeBdf> au lieu de DonnéesBdf
-  output_indexed: ParPériode<Partial<SortieBdf>>,
   periodes: Timestamp[]
 ): ParPériode<Partial<SortieBdf>> {
   "use strict"
-  periodes
-  const outputBdf: ParPériode<Partial<SortieBdf>> = { ...output_indexed }
 
   const f = { generatePeriodSerie, dateAddMonth } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
+
+  const outputBdf: ParPériode<Partial<SortieBdf>> = {}
+  for (const p of periodes) {
+    outputBdf[p] = {}
+  }
 
   for (const hash in v.bdf) {
     const bdfHashData = v.bdf[hash]

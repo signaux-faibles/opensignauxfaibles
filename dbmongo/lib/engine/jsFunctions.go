@@ -1543,11 +1543,13 @@ function delais(v, debitParPériode, intervalleTraitement) {
 }
 /* TODO: appliquer même logique d'itération sur futureTimestamps que dans cotisationsdettes.ts */`,
 "entr_bdf": `function entr_bdf(v, // TODO: prendre ParPériode<EntréeBdf> au lieu de DonnéesBdf
-output_indexed, periodes) {
+periodes) {
     "use strict";
-    periodes;
-    const outputBdf = Object.assign({}, output_indexed);
 
+    const outputBdf = {};
+    for (const p of periodes) {
+        outputBdf[p] = {};
+    }
     for (const hash in v.bdf) {
         const bdfHashData = v.bdf[hash];
         const periode_arrete_bilan = new Date(Date.UTC(bdfHashData.arrete_bilan_bdf.getUTCFullYear(), bdfHashData.arrete_bilan_bdf.getUTCMonth() + 1, 1, 0, 0, 0, 0));
@@ -1946,7 +1948,7 @@ function map() {
             v.bdf = v.bdf || {};
             v.diane = v.diane || {};
             if (v.bdf) {
-                const outputBdf = f.entr_bdf(v, output_indexed, periodes);
+                const outputBdf = f.entr_bdf(v, periodes);
                 f.add(outputBdf, output_indexed);
             }
             for (const hash of Object.keys(v.diane)) {
