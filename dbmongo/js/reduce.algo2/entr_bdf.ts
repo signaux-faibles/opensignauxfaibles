@@ -1,7 +1,7 @@
 import "../globals"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { dateAddMonth } from "./dateAddMonth"
-
+/*
 type SortieBdf = {
   annee_bdf: number
   exercice_bdf: number // année
@@ -23,20 +23,22 @@ type RatiosBdfPassés = {
   financier_court_terme_past_2: number
   frais_financier_past_2: number
 }
-
+*/
 export function entr_bdf(
   entréeBdf: DonnéesBdf, // TODO: prendre ParPériode<EntréeBdf> au lieu de DonnéesBdf
-  periodes: Timestamp[]
-): ParPériode<SortieBdf> {
-  const outputBdf: ParPériode<SortieBdf> = {}
+  output_indexed: Record<Periode, Record<string, number>> // for *_past_* props of bdf. // TODO: try to be more specific
+  // periodes: Timestamp[]
+): void /*ParPériode<SortieBdf>*/ {
+  // const outputBdf: ParPériode<SortieBdf> = {}
+  // const outputBdf = entréeBdf.bdf
 
   const f = { generatePeriodSerie, dateAddMonth } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
-
+  /*
   // Retourne les clés de obj, en respectant le type défini dans le type de obj.
   // Contrat: obj ne doit contenir que les clés définies dans son type.
   const typedObjectKeys = <T>(obj: T): Array<keyof T> =>
     Object.keys(obj) as Array<keyof T>
-
+  */
   // Fonction pour omettre des props, tout en retournant le bon type
   function omit<Source, Exclusions extends Array<keyof Source>>(
     object: Source,
@@ -50,7 +52,7 @@ export function entr_bdf(
   }
   // TODO: [refacto] extraire dans common/ ou reduce.algo2/
 
-  for (const hash of typedObjectKeys(entréeBdf.bdf)) {
+  for (const hash in /*of typedObjectKeys*/ entréeBdf.bdf) {
     const bdfHashData = entréeBdf.bdf[hash]
     const periode_arrete_bilan = new Date(
       Date.UTC(
@@ -70,10 +72,10 @@ export function entr_bdf(
     )
 
     for (const periode of series) {
-      const outputInPeriod = outputBdf[periode.getTime()]
+      const outputInPeriod = output_indexed[periode.getTime()]
       const rest = omit(bdfHashData, "raison_sociale", "secteur", "siren")
 
-      if (periode.getTime() in periodes) {
+      if (outputInPeriod /*periode.getTime() in periodes*/) {
         Object.assign(outputInPeriod, rest)
         if (outputInPeriod.annee_bdf) {
           outputInPeriod.exercice_bdf = outputInPeriod.annee_bdf - 1
@@ -86,14 +88,14 @@ export function entr_bdf(
           const periode_offset = f.dateAddMonth(periode, 12 * offset)
           const variable_name = k + "_past_" + offset
           if (
-            periode_offset.getTime() in outputBdf &&
+            periode_offset.getTime() in output_indexed &&
             // TODO: `in periodes` en récupérant un paramètre périodes.
             k !== "arrete_bilan_bdf" &&
             k !== "exercice_bdf"
             // TODO: props à inclure dans le omit ci-dessus
           ) {
-            outputBdf[periode_offset.getTime()] = {
-              ...outputBdf[periode_offset.getTime()],
+            output_indexed[periode_offset.getTime()] = {
+              ...output_indexed[periode_offset.getTime()],
               [variable_name]: entréeBdf.bdf[hash][k],
             }
           }
@@ -102,5 +104,5 @@ export function entr_bdf(
     }
   }
 
-  return outputBdf
+  // return outputBdf
 }

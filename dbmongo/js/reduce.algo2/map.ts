@@ -203,7 +203,7 @@ export function map(this: {
         }
       })
 
-      const output_indexed = output_array.reduce(function (periode, val) {
+      let output_indexed = output_array.reduce(function (periode, val) {
         periode[val.periode.getTime()] = val
         return periode
       }, {} as Record<Periode, SortieMapEntreprise>)
@@ -225,12 +225,21 @@ export function map(this: {
         f.add(output_effectif_ent, output_indexed)
       }
 
+      output_indexed = output_array.reduce(function (periode, val) {
+        periode[val.periode.getTime()] = val
+        return periode
+      }, {} as Record<Periode, SortieMapEntreprise>)
+
       v.bdf = v.bdf || {}
       v.diane = v.diane || {}
 
       if (v.bdf) {
-        const outputBdf = f.entr_bdf(v as DonnéesBdf, periodes)
-        f.add(outputBdf, output_indexed)
+        /*const outputBdf =*/ f.entr_bdf(
+          v as DonnéesBdf,
+          output_indexed as Record<Periode, Record<string, number>>
+          //, periodes
+        )
+        //f.add(outputBdf, output_indexed)
       }
 
       for (const hash of Object.keys(v.diane)) {

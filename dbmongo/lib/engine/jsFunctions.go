@@ -1534,13 +1534,42 @@ function delais(v, debitParPériode, intervalleTraitement) {
     return output_effectif;
 }
 /* TODO: appliquer même logique d'itération sur futureTimestamps que dans cotisationsdettes.ts */`,
-"entr_bdf": `function entr_bdf(entréeBdf, // TODO: prendre ParPériode<EntréeBdf> au lieu de DonnéesBdf
-periodes) {
-    const outputBdf = {};
+"entr_bdf": `/*
+type SortieBdf = {
+  annee_bdf: number
+  exercice_bdf: number // année
+} & RatiosBdf &
+  RatiosBdfPassés
 
+// Synchroniser les propriétés avec celles de RatiosBdf
+type RatiosBdfPassés = {
+  poids_frng_past_1: number
+  taux_marge_past_1: number
+  delai_fournisseur_past_1: number
+  dette_fiscale_past_1: number
+  financier_court_terme_past_1: number
+  frais_financier_past_1: number
+  poids_frng_past_2: number
+  taux_marge_past_2: number
+  delai_fournisseur_past_2: number
+  dette_fiscale_past_2: number
+  financier_court_terme_past_2: number
+  frais_financier_past_2: number
+}
+*/
+function entr_bdf(entréeBdf, // TODO: prendre ParPériode<EntréeBdf> au lieu de DonnéesBdf
+output_indexed // for *_past_* props of bdf. // TODO: try to be more specific
+// periodes: Timestamp[]
+) {
+    // const outputBdf: ParPériode<SortieBdf> = {}
+    // const outputBdf = entréeBdf.bdf
+
+    /*
     // Retourne les clés de obj, en respectant le type défini dans le type de obj.
     // Contrat: obj ne doit contenir que les clés définies dans son type.
-    const typedObjectKeys = (obj) => Object.keys(obj);
+    const typedObjectKeys = <T>(obj: T): Array<keyof T> =>
+      Object.keys(obj) as Array<keyof T>
+    */
     // Fonction pour omettre des props, tout en retournant le bon type
     function omit(object, ...propNames) {
         const result = Object.assign({}, object);
@@ -1550,15 +1579,15 @@ periodes) {
         return result;
     }
     // TODO: [refacto] extraire dans common/ ou reduce.algo2/
-    for (const hash of typedObjectKeys(entréeBdf.bdf)) {
+    for (const hash in /*of typedObjectKeys*/ entréeBdf.bdf) {
         const bdfHashData = entréeBdf.bdf[hash];
         const periode_arrete_bilan = new Date(Date.UTC(bdfHashData.arrete_bilan_bdf.getUTCFullYear(), bdfHashData.arrete_bilan_bdf.getUTCMonth() + 1, 1, 0, 0, 0, 0));
         const periode_dispo = f.dateAddMonth(periode_arrete_bilan, 7);
         const series = f.generatePeriodSerie(periode_dispo, f.dateAddMonth(periode_dispo, 13));
         for (const periode of series) {
-            const outputInPeriod = outputBdf[periode.getTime()];
+            const outputInPeriod = output_indexed[periode.getTime()];
             const rest = omit(bdfHashData, "raison_sociale", "secteur", "siren");
-            if (periode.getTime() in periodes) {
+            if (outputInPeriod /*periode.getTime() in periodes*/) {
                 Object.assign(outputInPeriod, rest);
                 if (outputInPeriod.annee_bdf) {
                     outputInPeriod.exercice_bdf = outputInPeriod.annee_bdf - 1;
@@ -1569,19 +1598,19 @@ periodes) {
                 for (const offset of past_year_offset) {
                     const periode_offset = f.dateAddMonth(periode, 12 * offset);
                     const variable_name = k + "_past_" + offset;
-                    if (periode_offset.getTime() in outputBdf &&
+                    if (periode_offset.getTime() in output_indexed &&
                         // TODO: ` + "`" + `in periodes` + "`" + ` en récupérant un paramètre périodes.
                         k !== "arrete_bilan_bdf" &&
                         k !== "exercice_bdf"
                     // TODO: props à inclure dans le omit ci-dessus
                     ) {
-                        outputBdf[periode_offset.getTime()] = Object.assign(Object.assign({}, outputBdf[periode_offset.getTime()]), { [variable_name]: entréeBdf.bdf[hash][k] });
+                        output_indexed[periode_offset.getTime()] = Object.assign(Object.assign({}, output_indexed[periode_offset.getTime()]), { [variable_name]: entréeBdf.bdf[hash][k] });
                     }
                 }
             }
         }
     }
-    return outputBdf;
+    // return outputBdf
 }`,
 "entr_sirene": `function entr_sirene(v, output_array) {
     "use strict";
@@ -1940,7 +1969,7 @@ function map() {
                     arrete_bilan_diane: new Date(0),
                 };
             });
-            const output_indexed = output_array.reduce(function (periode, val) {
+            let output_indexed = output_array.reduce(function (periode, val) {
                 periode[val.periode.getTime()] = val;
                 return periode;
             }, {});
@@ -1954,11 +1983,17 @@ function map() {
                 const output_effectif_ent = f.effectifs(v.effectif_ent, periodes, "effectif_ent");
                 f.add(output_effectif_ent, output_indexed);
             }
+            output_indexed = output_array.reduce(function (periode, val) {
+                periode[val.periode.getTime()] = val;
+                return periode;
+            }, {});
             v.bdf = v.bdf || {};
             v.diane = v.diane || {};
             if (v.bdf) {
-                const outputBdf = f.entr_bdf(v, periodes);
-                f.add(outputBdf, output_indexed);
+                /*const outputBdf =*/ f.entr_bdf(v, output_indexed
+                //, periodes
+                );
+                //f.add(outputBdf, output_indexed)
             }
             for (const hash of Object.keys(v.diane)) {
                 if (!v.diane[hash].arrete_bilan_diane)
