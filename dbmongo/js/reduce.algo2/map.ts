@@ -21,6 +21,7 @@ import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { poidsFrng } from "./poidsFrng"
 import { detteFiscale } from "./detteFiscale"
 import { fraisFinancier } from "./fraisFinancier"
+import { entr_bdf } from "./entr_bdf"
 
 // Paramètres globaux utilisés par "reduce.algo2"
 declare const naf: NAF
@@ -49,7 +50,7 @@ export function map(this: {
     ...{ repeatable, delais, defaillances, cotisationsdettes, ccsf }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     ...{ sirene, populateNafAndApe, cotisation, cibleApprentissage }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     ...{ entr_sirene, dateAddMonth, generatePeriodSerie, poidsFrng }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
-    ...{ detteFiscale, fraisFinancier }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
+    ...{ detteFiscale, fraisFinancier, entr_bdf }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
   } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
 
   // Fonction pour omettre des props, tout en retournant le bon type
@@ -227,7 +228,10 @@ export function map(this: {
       v.bdf = v.bdf || {}
       v.diane = v.diane || {}
 
-      // TODO: appeler entr_bdf()
+      if (v.bdf) {
+         const outputBdf = f.entr_bdf(v as DonnéesBdf)
+        f.add(outputBdf, output_indexed)
+      }
 
       for (const hash of Object.keys(v.diane)) {
         if (!v.diane[hash].arrete_bilan_diane) continue
