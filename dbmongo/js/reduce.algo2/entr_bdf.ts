@@ -26,7 +26,7 @@ type RatiosBdfPassés = {
 }
 
 export function entr_bdf(
-  v: DonnéesBdf, // TODO: prendre ParPériode<EntréeBdf> au lieu de DonnéesBdf
+  donnéesBdf: ParPériode<EntréeBdf>,
   periodes: Timestamp[]
 ): ParPériode<Partial<SortieBdf>> {
   "use strict"
@@ -38,8 +38,8 @@ export function entr_bdf(
     outputBdf[p] = {}
   }
 
-  for (const hash in v.bdf) {
-    const bdfHashData = v.bdf[hash]
+  for (const hash in donnéesBdf) {
+    const bdfHashData = donnéesBdf[hash]
     const periode_arrete_bilan = new Date(
       Date.UTC(
         bdfHashData.arrete_bilan_bdf.getUTCFullYear(),
@@ -79,7 +79,7 @@ export function entr_bdf(
           const outputInPast = outputBdf[periode_offset.getTime()]
           if (outputInPast) {
             Object.assign(outputInPast, {
-              [prop + "_past_" + offset]: v.bdf[hash][prop],
+              [prop + "_past_" + offset]: donnéesBdf[hash][prop],
             })
           }
         }

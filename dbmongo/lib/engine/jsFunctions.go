@@ -1542,16 +1542,15 @@ function delais(v, debitParPériode, intervalleTraitement) {
     return output_effectif;
 }
 /* TODO: appliquer même logique d'itération sur futureTimestamps que dans cotisationsdettes.ts */`,
-"entr_bdf": `function entr_bdf(v, // TODO: prendre ParPériode<EntréeBdf> au lieu de DonnéesBdf
-periodes) {
+"entr_bdf": `function entr_bdf(donnéesBdf, periodes) {
     "use strict";
 
     const outputBdf = {};
     for (const p of periodes) {
         outputBdf[p] = {};
     }
-    for (const hash in v.bdf) {
-        const bdfHashData = v.bdf[hash];
+    for (const hash in donnéesBdf) {
+        const bdfHashData = donnéesBdf[hash];
         const periode_arrete_bilan = new Date(Date.UTC(bdfHashData.arrete_bilan_bdf.getUTCFullYear(), bdfHashData.arrete_bilan_bdf.getUTCMonth() + 1, 1, 0, 0, 0, 0));
         const periode_dispo = f.dateAddMonth(periode_arrete_bilan, 7);
         const series = f.generatePeriodSerie(periode_dispo, f.dateAddMonth(periode_dispo, 13));
@@ -1573,7 +1572,7 @@ periodes) {
                     const outputInPast = outputBdf[periode_offset.getTime()];
                     if (outputInPast) {
                         Object.assign(outputInPast, {
-                            [prop + "_past_" + offset]: v.bdf[hash][prop],
+                            [prop + "_past_" + offset]: donnéesBdf[hash][prop],
                         });
                     }
                 }
@@ -1948,7 +1947,7 @@ function map() {
             v.bdf = v.bdf || {};
             v.diane = v.diane || {};
             if (v.bdf) {
-                const outputBdf = f.entr_bdf(v, periodes);
+                const outputBdf = f.entr_bdf(v.bdf, periodes);
                 f.add(outputBdf, output_indexed);
             }
             for (const hash of Object.keys(v.diane)) {

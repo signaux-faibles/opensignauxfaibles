@@ -220,7 +220,7 @@ export function map(this: {
       v.diane = v.diane || {}
 
       if (v.bdf) {
-        const outputBdf = f.entr_bdf(v as DonnéesBdf, periodes)
+        const outputBdf = f.entr_bdf(v.bdf, periodes)
         f.add(outputBdf, output_indexed)
       }
 
