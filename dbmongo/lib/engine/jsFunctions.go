@@ -1595,7 +1595,7 @@ output_indexed
             }
         }
     }
-    // return outputBdf
+    return output_indexed;
 }`,
 "entr_sirene": `function entr_sirene(v, output_array) {
     "use strict";
@@ -1971,10 +1971,10 @@ function map() {
             v.bdf = v.bdf || {};
             v.diane = v.diane || {};
             if (v.bdf) {
-                /*const outputBdf =*/ f.entr_bdf(v, output_indexed
+                const outputBdf = f.entr_bdf(v, output_indexed
                 //, periodes
                 );
-                //f.add(outputBdf, output_indexed)
+                f.add(outputBdf, output_indexed);
             }
             for (const hash of Object.keys(v.diane)) {
                 if (!v.diane[hash].arrete_bilan_diane)

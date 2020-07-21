@@ -230,12 +230,12 @@ export function map(this: {
       v.diane = v.diane || {}
 
       if (v.bdf) {
-        /*const outputBdf =*/ f.entr_bdf(
+        const outputBdf = f.entr_bdf(
           v as DonnéesBdf,
           output_indexed
           //, periodes
         )
-        //f.add(outputBdf, output_indexed)
+        f.add(outputBdf, output_indexed)
       }
 
       for (const hash of Object.keys(v.diane)) {

@@ -29,7 +29,7 @@ export function entr_bdf(
   v: DonnéesBdf, // TODO: prendre ParPériode<EntréeBdf> au lieu de DonnéesBdf
   output_indexed: Record<Periode, Partial<SortieBdf>>
   // periodes: Timestamp[]
-): void /*ParPériode<SortieBdf>*/ {
+): Record<Periode, Partial<SortieBdf>> {
   "use strict"
   // const outputBdf: ParPériode<SortieBdf> = {}
   // const outputBdf = entréeBdf.bdf
@@ -110,5 +110,5 @@ export function entr_bdf(
     }
   }
 
-  // return outputBdf
+  return output_indexed
 }
