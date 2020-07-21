@@ -5,7 +5,6 @@ import { dateAddMonth } from "./dateAddMonth"
 type SortieBdf = {
   annee_bdf: number
   exercice_bdf: number // année
-  // TODO: enumération des ratios.
 } & RatiosBdf &
   RatiosBdfPassés
 
@@ -25,7 +24,10 @@ type RatiosBdfPassés = {
   frais_financier_past_2: number
 }
 
-export function entr_bdf(entréeBdf: DonnéesBdf): ParPériode<SortieBdf> {
+export function entr_bdf(
+  entréeBdf: DonnéesBdf, // TODO: prendre ParPériode<EntréeBdf> au lieu de DonnéesBdf
+  periodes: Timestamp[]
+): ParPériode<SortieBdf> {
   const outputBdf: ParPériode<SortieBdf> = {}
 
   const f = { generatePeriodSerie, dateAddMonth } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
@@ -49,10 +51,11 @@ export function entr_bdf(entréeBdf: DonnéesBdf): ParPériode<SortieBdf> {
   // TODO: [refacto] extraire dans common/ ou reduce.algo2/
 
   for (const hash of typedObjectKeys(entréeBdf.bdf)) {
+    const bdfHashData = entréeBdf.bdf[hash]
     const periode_arrete_bilan = new Date(
       Date.UTC(
-        entréeBdf.bdf[hash].arrete_bilan_bdf.getUTCFullYear(),
-        entréeBdf.bdf[hash].arrete_bilan_bdf.getUTCMonth() + 1,
+        bdfHashData.arrete_bilan_bdf.getUTCFullYear(),
+        bdfHashData.arrete_bilan_bdf.getUTCMonth() + 1,
         1,
         0,
         0,
@@ -67,11 +70,10 @@ export function entr_bdf(entréeBdf: DonnéesBdf): ParPériode<SortieBdf> {
     )
 
     for (const periode of series) {
-      const bdfHashData = entréeBdf.bdf[hash]
       const outputInPeriod = outputBdf[periode.getTime()]
       const rest = omit(bdfHashData, "raison_sociale", "secteur", "siren")
 
-      if (outputInPeriod) {
+      if (periode.getTime() in periodes) {
         Object.assign(outputInPeriod, rest)
         if (outputInPeriod.annee_bdf) {
           outputInPeriod.exercice_bdf = outputInPeriod.annee_bdf - 1

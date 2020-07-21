@@ -1534,7 +1534,8 @@ function delais(v, debitParPériode, intervalleTraitement) {
     return output_effectif;
 }
 /* TODO: appliquer même logique d'itération sur futureTimestamps que dans cotisationsdettes.ts */`,
-"entr_bdf": `function entr_bdf(entréeBdf) {
+"entr_bdf": `function entr_bdf(entréeBdf, // TODO: prendre ParPériode<EntréeBdf> au lieu de DonnéesBdf
+periodes) {
     const outputBdf = {};
 
     // Retourne les clés de obj, en respectant le type défini dans le type de obj.
@@ -1550,14 +1551,14 @@ function delais(v, debitParPériode, intervalleTraitement) {
     }
     // TODO: [refacto] extraire dans common/ ou reduce.algo2/
     for (const hash of typedObjectKeys(entréeBdf.bdf)) {
-        const periode_arrete_bilan = new Date(Date.UTC(entréeBdf.bdf[hash].arrete_bilan_bdf.getUTCFullYear(), entréeBdf.bdf[hash].arrete_bilan_bdf.getUTCMonth() + 1, 1, 0, 0, 0, 0));
+        const bdfHashData = entréeBdf.bdf[hash];
+        const periode_arrete_bilan = new Date(Date.UTC(bdfHashData.arrete_bilan_bdf.getUTCFullYear(), bdfHashData.arrete_bilan_bdf.getUTCMonth() + 1, 1, 0, 0, 0, 0));
         const periode_dispo = f.dateAddMonth(periode_arrete_bilan, 7);
         const series = f.generatePeriodSerie(periode_dispo, f.dateAddMonth(periode_dispo, 13));
         for (const periode of series) {
-            const bdfHashData = entréeBdf.bdf[hash];
             const outputInPeriod = outputBdf[periode.getTime()];
             const rest = omit(bdfHashData, "raison_sociale", "secteur", "siren");
-            if (outputInPeriod) {
+            if (periode.getTime() in periodes) {
                 Object.assign(outputInPeriod, rest);
                 if (outputInPeriod.annee_bdf) {
                     outputInPeriod.exercice_bdf = outputInPeriod.annee_bdf - 1;
@@ -1956,7 +1957,7 @@ function map() {
             v.bdf = v.bdf || {};
             v.diane = v.diane || {};
             if (v.bdf) {
-                const outputBdf = f.entr_bdf(v);
+                const outputBdf = f.entr_bdf(v, periodes);
                 f.add(outputBdf, output_indexed);
             }
             for (const hash of Object.keys(v.diane)) {
