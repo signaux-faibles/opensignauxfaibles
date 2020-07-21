@@ -27,8 +27,8 @@ type RatiosBdfPassés = {
 
 export function entr_bdf(
   v: DonnéesBdf, // TODO: prendre ParPériode<EntréeBdf> au lieu de DonnéesBdf
-  output_indexed: ParPériode<Partial<SortieBdf>>,
-  periodes: Timestamp[]
+  output_indexed: ParPériode<Partial<SortieBdf>>
+  // periodes: Timestamp[]
 ): ParPériode<Partial<SortieBdf>> {
   "use strict"
   const outputBdf: ParPériode<Partial<SortieBdf>> = { ...output_indexed }

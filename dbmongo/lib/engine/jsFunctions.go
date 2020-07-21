@@ -1539,8 +1539,7 @@ output_indexed
 // periodes: Timestamp[]
 ) {
     "use strict";
-    // const outputBdf: ParPériode<SortieBdf> = {}
-    // const outputBdf = entréeBdf.bdf
+    const outputBdf = Object.assign({}, output_indexed);
 
     /*
     // Retourne les clés de obj, en respectant le type défini dans le type de obj.
@@ -1557,7 +1556,7 @@ output_indexed
         return result;
     }
     // TODO: [refacto] extraire dans common/ ou reduce.algo2/
-    for (const hash in /*of typedObjectKeys*/ v.bdf) {
+    for (const hash in v.bdf) {
         const bdfHashData = v.bdf[hash];
         const periode_arrete_bilan = new Date(Date.UTC(bdfHashData.arrete_bilan_bdf.getUTCFullYear(), bdfHashData.arrete_bilan_bdf.getUTCMonth() + 1, 1, 0, 0, 0, 0));
         const periode_dispo = f.dateAddMonth(periode_arrete_bilan, 7);
@@ -1595,7 +1594,7 @@ output_indexed
             }
         }
     }
-    return output_indexed;
+    return outputBdf;
 }`,
 "entr_sirene": `function entr_sirene(v, output_array) {
     "use strict";
@@ -1972,7 +1971,7 @@ function map() {
             v.diane = v.diane || {};
             if (v.bdf) {
                 const outputBdf = f.entr_bdf(v, output_indexed
-                //, periodes
+                // periodes
                 );
                 f.add(outputBdf, output_indexed);
             }
