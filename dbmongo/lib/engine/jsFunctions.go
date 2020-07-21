@@ -1538,6 +1538,7 @@ function delais(v, debitParPériode, intervalleTraitement) {
 output_indexed
 // periodes: Timestamp[]
 ) {
+    "use strict";
     // const outputBdf: ParPériode<SortieBdf> = {}
     // const outputBdf = entréeBdf.bdf
 

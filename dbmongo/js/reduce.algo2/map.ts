@@ -21,7 +21,7 @@ import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { poidsFrng } from "./poidsFrng"
 import { detteFiscale } from "./detteFiscale"
 import { fraisFinancier } from "./fraisFinancier"
-import { entr_bdf } from "./entr_bdf"
+import { entr_bdf, SortieBdf } from "./entr_bdf"
 
 // Paramètres globaux utilisés par "reduce.algo2"
 declare const naf: NAF
@@ -188,7 +188,8 @@ export function map(this: {
         Partial<SortieSireneEntreprise> &
         Partial<EntréeBdf> &
         Partial<EntréeDiane> &
-        Record<string, unknown> // for *_past_* props of bdf. // TODO: try to be more specific
+        Partial<EntréeBdf> &
+        Partial<SortieBdf>
 
       const output_array: SortieMapEntreprise[] = serie_periode.map(function (
         e

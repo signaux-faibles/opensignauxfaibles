@@ -2,11 +2,12 @@ import "../globals"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { dateAddMonth } from "./dateAddMonth"
 
-type SortieBdf = {
+export type SortieBdf = {
   annee_bdf: number
   exercice_bdf: number // année
 } & RatiosBdf &
-  RatiosBdfPassés
+  RatiosBdfPassés &
+  Record<string, unknown> // for *_past_* props of bdf. // TODO: try to be more specific
 
 // Synchroniser les propriétés avec celles de RatiosBdf
 type RatiosBdfPassés = {
@@ -29,6 +30,7 @@ export function entr_bdf(
   output_indexed: Record<Periode, Partial<SortieBdf>>
   // periodes: Timestamp[]
 ): void /*ParPériode<SortieBdf>*/ {
+  "use strict"
   // const outputBdf: ParPériode<SortieBdf> = {}
   // const outputBdf = entréeBdf.bdf
 
