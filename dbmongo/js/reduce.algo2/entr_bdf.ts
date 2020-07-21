@@ -85,20 +85,18 @@ export function entr_bdf(
       }
       //}
 
-      for (const k of Object.keys(rest) as (keyof typeof rest)[]) {
+      for (const prop of Object.keys(rest) as (keyof typeof rest)[]) {
         const past_year_offset = [1, 2]
         for (const offset of past_year_offset) {
           const periode_offset = f.dateAddMonth(periode, 12 * offset)
-          const variable_name = k + "_past_" + offset
+          const outputInPast = outputBdf[periode_offset.getTime()]
           if (
-            outputBdf[periode_offset.getTime()] &&
-            // periode_offset.getTime() in output_indexed &&
-            // TODO: `in periodes` en récupérant un paramètre périodes.
-            k !== "arrete_bilan_bdf" &&
-            k !== "exercice_bdf"
+            outputInPast &&
+            prop !== "arrete_bilan_bdf" &&
+            prop !== "exercice_bdf"
             // TODO: props à inclure dans le omit ci-dessus ?
           ) {
-            outputBdf[periode_offset.getTime()][variable_name] = v.bdf[hash][k]
+            outputInPast[prop + "_past_" + offset] = v.bdf[hash][prop]
           }
         }
       }
