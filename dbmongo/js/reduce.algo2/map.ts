@@ -15,7 +15,7 @@ import { sirene } from "./sirene"
 import { populateNafAndApe } from "./populateNafAndApe"
 import { cotisation } from "./cotisation"
 import { cibleApprentissage } from "./cibleApprentissage"
-import { sirene_ul, SortieSireneUL } from "./sirene_ul"
+import { entr_sirene, SortieSireneUL } from "./entr_sirene"
 import { dateAddMonth } from "./dateAddMonth"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { poidsFrng } from "./poidsFrng"
@@ -48,7 +48,7 @@ export function map(this: {
     ...{ flatten, outputs, apart, compte, effectifs, interim, add }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     ...{ repeatable, delais, defaillances, cotisationsdettes, ccsf }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     ...{ sirene, populateNafAndApe, cotisation, cibleApprentissage }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
-    ...{ sirene_ul, dateAddMonth, generatePeriodSerie, poidsFrng }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
+    ...{ entr_sirene, dateAddMonth, generatePeriodSerie, poidsFrng }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     ...{ detteFiscale, fraisFinancier }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
   } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
 
@@ -208,7 +208,7 @@ export function map(this: {
       }, {} as Record<Periode, SortieMapEntreprise>)
 
       if (v.sirene_ul) {
-        f.sirene_ul(v as DonnéesSireneUL, output_array)
+        f.entr_sirene(v as DonnéesSireneUL, output_array)
       }
 
       const periodes = Object.keys(output_indexed)

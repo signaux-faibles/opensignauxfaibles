@@ -11,7 +11,7 @@ export type SortieSireneUL = {
   age_entreprise?: number // en années
 }
 
-export function sirene_ul(
+export function entr_sirene(
   v: DonnéesSireneUL,
   output_array: (Input & Partial<SortieSireneUL>)[]
 ): void {
