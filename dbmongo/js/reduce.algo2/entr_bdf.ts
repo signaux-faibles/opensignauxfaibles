@@ -27,12 +27,11 @@ type RatiosBdfPassés = {
 
 export function entr_bdf(
   v: DonnéesBdf, // TODO: prendre ParPériode<EntréeBdf> au lieu de DonnéesBdf
-  output_indexed: Record<Periode, Partial<SortieBdf>>
-  // periodes: Timestamp[]
-): Record<Periode, Partial<SortieBdf>> {
+  output_indexed: ParPériode<Partial<SortieBdf>>,
+  periodes: Timestamp[]
+): ParPériode<Partial<SortieBdf>> {
   "use strict"
-  // const outputBdf: ParPériode<SortieBdf> = {}
-  // const outputBdf = entréeBdf.bdf
+  const outputBdf: ParPériode<Partial<SortieBdf>> = { ...output_indexed }
 
   const f = { generatePeriodSerie, dateAddMonth } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
   /*
@@ -54,7 +53,7 @@ export function entr_bdf(
   }
   // TODO: [refacto] extraire dans common/ ou reduce.algo2/
 
-  for (const hash in /*of typedObjectKeys*/ v.bdf) {
+  for (const hash in v.bdf) {
     const bdfHashData = v.bdf[hash]
     const periode_arrete_bilan = new Date(
       Date.UTC(
@@ -110,5 +109,5 @@ export function entr_bdf(
     }
   }
 
-  return output_indexed
+  return outputBdf
 }
