@@ -4,16 +4,16 @@ type Input = {
   periode: Date
 }
 
-export type SortieSireneUL = {
-  raison_sociale: unknown
-  statut_juridique: unknown
+export type SortieSireneEntreprise = {
+  raison_sociale: string // nom de l'entreprise
+  statut_juridique: string | null // code numérique sérialisé en chaine de caractères
   date_creation_entreprise: number | null // année
   age_entreprise?: number // en années
 }
 
-export function sirene_ul(
-  v: DonnéesSireneUL,
-  output_array: (Input & Partial<SortieSireneUL>)[]
+export function entr_sirene(
+  v: DonnéesSireneEntreprise,
+  output_array: (Input & Partial<SortieSireneEntreprise>)[]
 ): void {
   "use strict"
   const sireneHashes = Object.keys(v.sirene_ul || {})
