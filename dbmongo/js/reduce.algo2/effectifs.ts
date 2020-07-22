@@ -4,15 +4,28 @@ import * as f from "./dateAddMonth"
 declare const offset_effectif: number
 
 type PropertyName = "effectif_ent" | "effectif" // effectif entreprise ou établissement
-
-type PropertyNameÉtendu = string /*
-  | PropertyName
-  | "effectif_ent_reporte"
-  | "effectif_reporte"*/
+type PropertyNameReporté = "effectif_ent_reporte" | "effectif_reporte"
+type PastPropertyName =
+  | "effectif_past_6"
+  | "effectif_past_12"
+  | "effectif_past_18"
+  | "effectif_past_24"
+  | "effectif_ent_past_6"
+  | "effectif_ent_past_12"
+  | "effectif_ent_past_18"
+  | "effectif_ent_past_24"
 
 type ValeurEffectif = number
 
-type SortieEffectifs = Record<PropertyNameÉtendu, ValeurEffectif | null>
+type SortieEffectifs = {
+  [propName in PropertyName]: ValeurEffectif | null
+} &
+  {
+    [propName in PropertyNameReporté]: 1 | 0
+  } &
+  {
+    [propName in PastPropertyName]: ValeurEffectif
+  }
 
 type EffectifEntreprise = Record<DataHash, EntréeEffectif>
 
@@ -54,15 +67,14 @@ export function effectifs(
     // le cas échéant, on met à jour l'accu avec le dernier effectif disponible
     accu = map_effectif[time] || accu
 
-    output_effectif[time][propertyName + "_reporte"] = map_effectif[time]
-      ? 0
-      : 1
+    const propNameReporté = (propertyName + "_reporte") as PropertyNameReporté
+    output_effectif[time][propNameReporté] = map_effectif[time] ? 0 : 1
     return accu
   }, null as ValeurEffectif | null)
 
   Object.keys(map_effectif).forEach((time) => {
     const periode = new Date(parseInt(time))
-    const past_month_offsets = [6, 12, 18, 24]
+    const past_month_offsets = [6, 12, 18, 24] // Note: à garder en synchro avec la définition du type PastPropertyName
     past_month_offsets.forEach((lookback) => {
       // On ajoute un offset pour partir de la dernière période où l'effectif est connu
       const time_past_lookback = f.dateAddMonth(
@@ -70,7 +82,9 @@ export function effectifs(
         lookback - offset_effectif - 1
       )
 
-      const variable_name_effectif = propertyName + "_past_" + lookback
+      const variable_name_effectif = (propertyName +
+        "_past_" +
+        lookback) as PastPropertyName
       output_effectif[time_past_lookback.getTime()] =
         output_effectif[time_past_lookback.getTime()] || {}
       output_effectif[time_past_lookback.getTime()][variable_name_effectif] =
