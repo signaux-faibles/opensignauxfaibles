@@ -1559,12 +1559,11 @@ function delais(v, debitParPériode, intervalleTraitement) {
             const outputInPeriod = (outputBdf[periode.getTime()] =
                 outputBdf[periode.getTime()] || {});
             const periodData = f.omit(entréeBdf, "raison_sociale", "secteur", "siren");
-            //if (outputInPeriod || periode.getTime() in periodes) {
+            // TODO: Éviter d'ajouter des données en dehors de ` + "`" + `periodes` + "`" + `, sans fausser le calcul des données passées (plus bas)
             Object.assign(outputInPeriod, periodData);
             if (outputInPeriod.annee_bdf) {
                 outputInPeriod.exercice_bdf = outputInPeriod.annee_bdf - 1;
             }
-            //}
             const pastData = f.omit(periodData, "arrete_bilan_bdf", "exercice_bdf");
             for (const prop of Object.keys(pastData)) {
                 const past_year_offset = [1, 2];
