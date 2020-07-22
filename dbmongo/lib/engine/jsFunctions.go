@@ -1479,7 +1479,7 @@ function delais(v, debitParPériode, intervalleTraitement) {
         return null;
     }
 }`,
-"effectifs": `function effectifs(effobj, periodes, effectif_name) {
+"effectifs": `function effectifs(effobj, periodes, propertyName) {
     "use strict";
     const output_effectif = {};
     // Construction d'une map[time] = effectif à cette periode
@@ -1502,22 +1502,23 @@ function delais(v, debitParPériode, intervalleTraitement) {
     periodes.reduce((accu, time) => {
         // si disponible on reporte l'effectif tel quel, sinon, on recupère l'accu
         output_effectif[time] = output_effectif[time] || {};
-        output_effectif[time][effectif_name] =
+        output_effectif[time][propertyName] =
             map_effectif[time] || (available ? accu : null);
         // le cas échéant, on met à jour l'accu avec le dernier effectif disponible
         accu = map_effectif[time] || accu;
-        output_effectif[time][effectif_name + "_reporte"] = map_effectif[time]
-            ? 0
-            : 1;
+        const propNameReporté = (propertyName + "_reporte");
+        output_effectif[time][propNameReporté] = map_effectif[time] ? 0 : 1;
         return accu;
     }, null);
     Object.keys(map_effectif).forEach((time) => {
         const periode = new Date(parseInt(time));
-        const past_month_offsets = [6, 12, 18, 24];
+        const past_month_offsets = [6, 12, 18, 24]; // Note: à garder en synchro avec la définition du type PastPropertyName
         past_month_offsets.forEach((lookback) => {
             // On ajoute un offset pour partir de la dernière période où l'effectif est connu
             const time_past_lookback = f.dateAddMonth(periode, lookback - offset_effectif - 1);
-            const variable_name_effectif = effectif_name + "_past_" + lookback;
+            const variable_name_effectif = (propertyName +
+                "_past_" +
+                lookback);
             output_effectif[time_past_lookback.getTime()] =
                 output_effectif[time_past_lookback.getTime()] || {};
             output_effectif[time_past_lookback.getTime()][variable_name_effectif] =
