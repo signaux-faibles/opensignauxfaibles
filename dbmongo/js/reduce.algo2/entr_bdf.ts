@@ -31,7 +31,7 @@ export function entr_bdf(
 ): ParPériode<Partial<SortieBdf>> {
   "use strict"
 
-  const f = { generatePeriodSerie, dateAddMonth } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
+  const f = { generatePeriodSerie, dateAddMonth, omit } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
 
   const outputBdf: ParPériode<Partial<SortieBdf>> = {}
   for (const p of periodes) {
@@ -39,11 +39,11 @@ export function entr_bdf(
   }
 
   for (const hash of Object.keys(donnéesBdf)) {
-    const bdfHashData = donnéesBdf[hash]
+    const entréeBdf = donnéesBdf[hash]
     const periode_arrete_bilan = new Date(
       Date.UTC(
-        bdfHashData.arrete_bilan_bdf.getUTCFullYear(),
-        bdfHashData.arrete_bilan_bdf.getUTCMonth() + 1,
+        entréeBdf.arrete_bilan_bdf.getUTCFullYear(),
+        entréeBdf.arrete_bilan_bdf.getUTCMonth() + 1,
         1,
         0,
         0,
@@ -61,7 +61,7 @@ export function entr_bdf(
       const outputInPeriod = (outputBdf[periode.getTime()] =
         outputBdf[periode.getTime()] || {})
 
-      const periodData = omit(bdfHashData, "raison_sociale", "secteur", "siren")
+      const periodData = f.omit(entréeBdf, "raison_sociale", "secteur", "siren")
 
       //if (outputInPeriod || periode.getTime() in periodes) {
       Object.assign(outputInPeriod, periodData)
@@ -70,7 +70,7 @@ export function entr_bdf(
       }
       //}
 
-      const pastData = omit(periodData, "arrete_bilan_bdf", "exercice_bdf")
+      const pastData = f.omit(periodData, "arrete_bilan_bdf", "exercice_bdf")
 
       for (const prop of Object.keys(pastData) as (keyof typeof pastData)[]) {
         const past_year_offset = [1, 2]

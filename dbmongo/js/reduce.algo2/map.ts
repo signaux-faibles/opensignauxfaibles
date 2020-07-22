@@ -51,7 +51,7 @@ export function map(this: {
     ...{ repeatable, delais, defaillances, cotisationsdettes, ccsf }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     ...{ sirene, populateNafAndApe, cotisation, cibleApprentissage }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     ...{ entr_sirene, dateAddMonth, generatePeriodSerie, poidsFrng }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
-    ...{ detteFiscale, fraisFinancier, entr_bdf }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
+    ...{ detteFiscale, fraisFinancier, entr_bdf, omit }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
   } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
 
   const v = f.flatten(this.value, actual_batch)
@@ -245,7 +245,7 @@ export function map(this: {
         )
 
         for (const periode of series) {
-          const rest = omit(
+          const rest = f.omit(
             v.diane[hash] as EntréeDiane & {
               marquee: unknown
               nom_entreprise: unknown
