@@ -5,4 +5,5 @@
 (cd dbmongo && go test) && \
 (killall dbmongo; cd dbmongo && go build) && \
 ./test-api.sh && \
+./test-api-reduce.sh && \
 ./test-api-2.sh
