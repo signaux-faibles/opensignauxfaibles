@@ -1959,7 +1959,7 @@ function map() {
                 const series = f.generatePeriodSerie(periode_dispo, f.dateAddMonth(periode_dispo, 14) // periode de validité d'un bilan auprès de la Banque de France: 21 mois (14+7)
                 );
                 for (const periode of series) {
-                    const rest = f.omit(v.diane[hash], "marquee", "nom_entreprise", "numero_siren", "statut_juridique", "procedure_collective");
+                    const rest = omit(v.diane[hash], "marquee", "nom_entreprise", "numero_siren", "statut_juridique", "procedure_collective");
                     if (periode.getTime() in output_indexed) {
                         Object.assign(output_indexed[periode.getTime()], rest);
                     }
