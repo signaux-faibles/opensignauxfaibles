@@ -82,7 +82,7 @@ cd ..
 echo "db.Features_TestData.find().toArray();" \
   | docker exec -i sf-mongodb mongo --quiet signauxfaibles \
   | fixJSON \
-  > "${DATA_DIR}/test-api-reduce.output-documents.json"
+  > "test-api-reduce.output-documents.json"
 
 # Display JS errors logged by MongoDB, if any
 docker logs sf-mongodb | grep --color=always "uncaught exception" || true
@@ -92,11 +92,12 @@ echo ""
 if [[ "$*" == *--update* ]]
 then
     echo "🖼  Updating golden master file..."
-    cp "${DATA_DIR}/test-api-reduce.output-documents.json" "test-api-reduce.golden-master.json"
+    cp "test-api-reduce.output-documents.json" "test-api-reduce.golden-master.json"
 else
     # Diff between expected and actual output
-    diff --brief "test-api-reduce.golden-master.json" "${DATA_DIR}/test-api-reduce.output-documents.json"
+    diff --brief "test-api-reduce.golden-master.json" "test-api-reduce.output-documents.json"
     echo "✅ No diff. The reduce API works as usual."
 fi
 echo ""
+rm "test-api-reduce.output-documents.json"
 # Now, the "trap" commands will run, to clean up.
