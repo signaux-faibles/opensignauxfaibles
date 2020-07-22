@@ -170,42 +170,34 @@ export function map(this: {
 
   if (v.scope === "entreprise") {
     if (includes["all"]) {
-      type Input = {
+      type SortieMapEntreprise = {
         periode: Date
-      }
-      type SortieMapEntreprise = Input &
-        Partial<SortieSireneEntreprise> &
+      } & Partial<SortieSireneEntreprise> &
         Partial<EntréeBdf> &
         Partial<EntréeDiane> &
         Partial<EntréeBdf> &
         Partial<SortieBdf> &
         Record<string, unknown> // for *_past_* props of diane. // TODO: try to be more specific
 
-      const output_array: SortieMapEntreprise[] = serie_periode.map(function (
-        e
-      ) {
-        return {
+      const output_indexed: Record<Periode, SortieMapEntreprise> = {}
+
+      for (const periode of serie_periode) {
+        output_indexed[periode.getTime()] = {
           siren: v.key,
-          periode: e,
+          periode,
           exercice_bdf: 0,
           arrete_bilan_bdf: new Date(0),
           exercice_diane: 0,
           arrete_bilan_diane: new Date(0),
         }
-      })
-
-      const output_indexed = output_array.reduce(function (periode, val) {
-        periode[val.periode.getTime()] = val
-        return periode
-      }, {} as Record<Periode, SortieMapEntreprise>)
-
-      if (v.sirene_ul) {
-        f.entr_sirene(v as DonnéesSireneEntreprise, output_array)
       }
 
-      const periodes = Object.keys(output_indexed)
-        .sort()
-        .map((timestamp) => parseInt(timestamp))
+      if (v.sirene_ul) {
+        const outputEntrSirene = f.entr_sirene(v.sirene_ul, serie_periode)
+        f.add(outputEntrSirene, output_indexed)
+      }
+
+      const periodes = serie_periode.map((date) => date.getTime())
 
       if (v.effectif_ent) {
         const output_effectif_ent = f.effectifs(
@@ -333,12 +325,13 @@ export function map(this: {
         }
       }
 
-      output_array.forEach((periode, index) => {
+      serie_periode.forEach((date) => {
+        const periode = output_indexed[date.getTime()]
         if (
           (periode.arrete_bilan_bdf || new Date(0)).getTime() === 0 &&
           (periode.arrete_bilan_diane || new Date(0)).getTime() === 0
         ) {
-          delete output_array[index]
+          delete output_indexed[date.getTime()]
         }
         if ((periode.arrete_bilan_bdf || new Date(0)).getTime() === 0) {
           delete periode.arrete_bilan_bdf
