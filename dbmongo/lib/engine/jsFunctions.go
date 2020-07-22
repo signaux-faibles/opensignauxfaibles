@@ -1924,20 +1924,17 @@ function map() {
     }
     if (v.scope === "entreprise") {
         if (includes["all"]) {
-            const output_array = serie_periode.map(function (e) {
-                return {
+            const output_indexed = {};
+            for (const periode of serie_periode) {
+                output_indexed[periode.getTime()] = {
                     siren: v.key,
-                    periode: e,
+                    periode,
                     exercice_bdf: 0,
                     arrete_bilan_bdf: new Date(0),
                     exercice_diane: 0,
                     arrete_bilan_diane: new Date(0),
                 };
-            });
-            const output_indexed = output_array.reduce(function (periode, val) {
-                periode[val.periode.getTime()] = val;
-                return periode;
-            }, {});
+            }
             if (v.sirene_ul) {
                 const outputEntrSirene = f.entr_sirene(v.sirene_ul, serie_periode);
                 f.add(outputEntrSirene, output_indexed);
@@ -2029,10 +2026,11 @@ function map() {
                     }
                 }
             }
-            output_array.forEach((periode, index) => {
+            serie_periode.forEach((date) => {
+                const periode = output_indexed[date.getTime()];
                 if ((periode.arrete_bilan_bdf || new Date(0)).getTime() === 0 &&
                     (periode.arrete_bilan_diane || new Date(0)).getTime() === 0) {
-                    delete output_array[index];
+                    delete output_indexed[date.getTime()];
                 }
                 if ((periode.arrete_bilan_bdf || new Date(0)).getTime() === 0) {
                     delete periode.arrete_bilan_bdf;
