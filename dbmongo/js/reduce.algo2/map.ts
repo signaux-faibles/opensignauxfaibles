@@ -237,7 +237,7 @@ export function map(this: {
         )
 
         for (const periode of series) {
-          const rest = omit(
+          const rest = f.omit(
             v.diane[hash] as EntréeDiane & {
               marquee: unknown
               nom_entreprise: unknown
