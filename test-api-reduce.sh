@@ -80,28 +80,12 @@ function fixJSON {
   | perl -p -e 's/"montant_majorations" : NaN,$/"montant_majorations" : null,/g'
 }
 
-function transformJSON {
-  # Cette fonction permet de rendre les documents de Features_TestData
-  # compatibles avec ceux exportés par test_finalize.js dans le golden
-  # master.
-  node -e "d=[]; \
-    process.openStdin() \
-    .on('data', c => d.push(c)) \
-    .on('end', () => { \
-      const finalizeResults = JSON.parse(d.join('')).map(result => { \
-        return [ result.value ]; \
-      }); \
-      console.log(JSON.stringify(finalizeResults, null, 2)) \
-    });"
-}
-
 echo ""
 echo "🕵️‍♀️ Checking resulting Features..."
 cd ..
 echo "db.Features_TestData.find().toArray();" \
   | docker exec -i sf-mongodb mongo --quiet signauxfaibles \
   | fixJSON \
-  | transformJSON \
   | removeRandomOrder \
   > "${DATA_DIR}/test-api-reduce.output-documents.json"
 
