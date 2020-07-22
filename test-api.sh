@@ -88,6 +88,9 @@ docker exec -i sf-mongodb mongo --quiet signauxfaibles > test-api.output.txt << 
   db.Public_debug.find().toArray();
 CONTENTS
 
+# Display JS errors logged by MongoDB, if any
+docker logs sf-mongodb | grep --color=always "Error"
+
 # exclude random values
 grep -v '"random_order" :' test-api.output.txt > test-api.output-documents.txt
 
