@@ -3,13 +3,11 @@ import * as f from "./dateAddMonth"
 // Paramètres globaux utilisés par "reduce.algo2"
 declare const offset_effectif: number
 
-type Time = string
-
 type PropertyName = "effectif_ent" | "effectif" // effectif entreprise ou établissement
 
 type ValeurEffectif = number
 
-type SortieEffectifs = Record<Time, Record<PropertyName, ValeurEffectif | null>>
+type SortieEffectifs = Record<string, ValeurEffectif | null> // TODO: spécifier les propriétés
 
 type EffectifEntreprise = Record<DataHash, EntréeEffectif>
 
@@ -17,10 +15,10 @@ export function effectifs(
   effobj: EffectifEntreprise,
   periodes: Timestamp[],
   propertyName: PropertyName
-): SortieEffectifs {
+): ParPériode<SortieEffectifs> {
   "use strict"
 
-  const output_effectif: SortieEffectifs = {}
+  const output_effectif: ParPériode<SortieEffectifs> = {}
 
   // Construction d'une map[time] = effectif à cette periode
   const map_effectif = Object.keys(effobj).reduce((m, hash) => {
@@ -31,7 +29,7 @@ export function effectifs(
     const effectifTime = effectif.periode.getTime()
     m[effectifTime] = (m[effectifTime] || 0) + effectif.effectif
     return m
-  }, {} as Record<Time, ValeurEffectif>)
+  }, {} as SortieEffectifs)
 
   //ne reporter que si le dernier est disponible
   // 1- quelle periode doit être disponible
