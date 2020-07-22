@@ -170,11 +170,9 @@ export function map(this: {
 
   if (v.scope === "entreprise") {
     if (includes["all"]) {
-      type Input = {
+      type SortieMapEntreprise = {
         periode: Date
-      }
-      type SortieMapEntreprise = Input &
-        Partial<SortieSireneEntreprise> &
+      } & Partial<SortieSireneEntreprise> &
         Partial<EntréeBdf> &
         Partial<EntréeDiane> &
         Partial<EntréeBdf> &
@@ -204,10 +202,7 @@ export function map(this: {
         f.add(outputEntrSirene, output_indexed)
       }
 
-      // TODO: calculer à partir de serie_periode (Date[]) au lieu de output_indexed
-      const periodes = Object.keys(output_indexed)
-        .sort()
-        .map((timestamp) => parseInt(timestamp))
+      const periodes = serie_periode.map((date) => date.getTime())
 
       if (v.effectif_ent) {
         const output_effectif_ent = f.effectifs(
