@@ -200,7 +200,7 @@ export function map(this: {
       }, {} as Record<Periode, SortieMapEntreprise>)
 
       if (v.sirene_ul) {
-        f.entr_sirene(v as DonnéesSireneEntreprise, output_array)
+        f.entr_sirene(v.sirene_ul, output_array)
       }
 
       const periodes = Object.keys(output_indexed)

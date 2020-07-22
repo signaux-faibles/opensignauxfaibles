@@ -1581,12 +1581,12 @@ function delais(v, debitParPériode, intervalleTraitement) {
     }
     return outputBdf;
 }`,
-"entr_sirene": `function entr_sirene(v, output_array) {
+"entr_sirene": `function entr_sirene(sirene_ul, output_array) {
     "use strict";
-    const sireneHashes = Object.keys(v.sirene_ul || {});
+    const sireneHashes = Object.keys(sirene_ul || {});
     output_array.forEach((val) => {
         if (sireneHashes.length !== 0) {
-            const sirene = v.sirene_ul[sireneHashes[sireneHashes.length - 1]];
+            const sirene = sirene_ul[sireneHashes[sireneHashes.length - 1]];
             val.raison_sociale = f.raison_sociale(sirene.raison_sociale, sirene.nom_unite_legale, sirene.nom_usage_unite_legale, sirene.prenom1_unite_legale, sirene.prenom2_unite_legale, sirene.prenom3_unite_legale, sirene.prenom4_unite_legale);
             val.statut_juridique = sirene.statut_juridique || null;
             val.date_creation_entreprise = sirene.date_creation
@@ -1935,7 +1935,7 @@ function map() {
                 return periode;
             }, {});
             if (v.sirene_ul) {
-                f.entr_sirene(v, output_array);
+                f.entr_sirene(v.sirene_ul, output_array);
             }
             const periodes = Object.keys(output_indexed)
                 .sort()

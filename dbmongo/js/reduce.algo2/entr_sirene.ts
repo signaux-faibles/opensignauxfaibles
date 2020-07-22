@@ -12,14 +12,14 @@ export type SortieSireneEntreprise = {
 }
 
 export function entr_sirene(
-  v: DonnéesSireneEntreprise,
+  sirene_ul: Record<DataHash, EntréeSireneEntreprise>,
   output_array: (Input & Partial<SortieSireneEntreprise>)[]
 ): void {
   "use strict"
-  const sireneHashes = Object.keys(v.sirene_ul || {})
+  const sireneHashes = Object.keys(sirene_ul || {})
   output_array.forEach((val) => {
     if (sireneHashes.length !== 0) {
-      const sirene = v.sirene_ul[sireneHashes[sireneHashes.length - 1]]
+      const sirene = sirene_ul[sireneHashes[sireneHashes.length - 1]]
       val.raison_sociale = f.raison_sociale(
         sirene.raison_sociale,
         sirene.nom_unite_legale,
