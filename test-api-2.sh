@@ -110,7 +110,7 @@ echo "db.Features_TestData.find().toArray();" \
   > test-api-2.output.json
 
 # Display JS errors logged by MongoDB, if any
-docker logs sf-mongodb | grep --color=always "Error" || true
+docker logs sf-mongodb | grep --color=always "uncaught exception" || true
 
 removeRandomOrder "${DATA_DIR}/finalize_golden.log" \
   > "${DATA_DIR}/test-api-2_golden.json"

@@ -106,7 +106,7 @@ echo "db.Features_TestData.find().toArray();" \
   > "${DATA_DIR}/test-api-reduce.output-documents.json"
 
 # Display JS errors logged by MongoDB, if any
-docker logs sf-mongodb | grep --color=always "Error" || true
+docker logs sf-mongodb | grep --color=always "uncaught exception" || true
 
 echo ""
 # Check if the --update flag was passed
