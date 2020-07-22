@@ -5,9 +5,14 @@ declare const offset_effectif: number
 
 type PropertyName = "effectif_ent" | "effectif" // effectif entreprise ou établissement
 
+type PropertyNameÉtendu = string /*
+  | PropertyName
+  | "effectif_ent_reporte"
+  | "effectif_reporte"*/
+
 type ValeurEffectif = number
 
-type SortieEffectifs = Record<string, ValeurEffectif | null> // TODO: spécifier les propriétés
+type SortieEffectifs = Record<PropertyNameÉtendu, ValeurEffectif | null>
 
 type EffectifEntreprise = Record<DataHash, EntréeEffectif>
 
@@ -29,7 +34,7 @@ export function effectifs(
     const effectifTime = effectif.periode.getTime()
     m[effectifTime] = (m[effectifTime] || 0) + effectif.effectif
     return m
-  }, {} as SortieEffectifs)
+  }, {} as Record<Periode, number>)
 
   //ne reporter que si le dernier est disponible
   // 1- quelle periode doit être disponible
