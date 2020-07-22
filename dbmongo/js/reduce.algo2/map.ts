@@ -200,9 +200,11 @@ export function map(this: {
       }, {} as Record<Periode, SortieMapEntreprise>)
 
       if (v.sirene_ul) {
-        f.entr_sirene(v.sirene_ul, output_array)
+        const outputEntrSirene = f.entr_sirene(v.sirene_ul, serie_periode)
+        f.add(outputEntrSirene, output_indexed)
       }
 
+      // TODO: calculer à partir de serie_periode (Date[]) au lieu de output_indexed
       const periodes = Object.keys(output_indexed)
         .sort()
         .map((timestamp) => parseInt(timestamp))

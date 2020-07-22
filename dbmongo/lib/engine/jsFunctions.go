@@ -1581,11 +1581,13 @@ function delais(v, debitParPériode, intervalleTraitement) {
     }
     return outputBdf;
 }`,
-"entr_sirene": `function entr_sirene(sirene_ul, output_array) {
+"entr_sirene": `function entr_sirene(sirene_ul, sériePériode) {
     "use strict";
+    const retourEntrSirene = {};
     const sireneHashes = Object.keys(sirene_ul || {});
-    output_array.forEach((val) => {
+    sériePériode.forEach((période) => {
         if (sireneHashes.length !== 0) {
+            const val = {};
             const sirene = sirene_ul[sireneHashes[sireneHashes.length - 1]];
             val.raison_sociale = f.raison_sociale(sirene.raison_sociale, sirene.nom_unite_legale, sirene.nom_usage_unite_legale, sirene.prenom1_unite_legale, sirene.prenom2_unite_legale, sirene.prenom3_unite_legale, sirene.prenom4_unite_legale);
             val.statut_juridique = sirene.statut_juridique || null;
@@ -1596,10 +1598,12 @@ function delais(v, debitParPériode, intervalleTraitement) {
                 sirene.date_creation &&
                 sirene.date_creation >= new Date("1901/01/01")) {
                 val.age_entreprise =
-                    val.periode.getFullYear() - val.date_creation_entreprise;
+                    période.getFullYear() - val.date_creation_entreprise;
             }
+            retourEntrSirene[période.getTime()] = val;
         }
     });
+    return retourEntrSirene;
 }`,
 "finalize": `function finalize(k, v) {
     "use strict";
@@ -1935,8 +1939,10 @@ function map() {
                 return periode;
             }, {});
             if (v.sirene_ul) {
-                f.entr_sirene(v.sirene_ul, output_array);
+                const outputEntrSirene = f.entr_sirene(v.sirene_ul, serie_periode);
+                f.add(outputEntrSirene, output_indexed);
             }
+            // TODO: calculer à partir de serie_periode (Date[]) au lieu de output_indexed
             const periodes = Object.keys(output_indexed)
                 .sort()
                 .map((timestamp) => parseInt(timestamp));

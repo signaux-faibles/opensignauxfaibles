@@ -1,9 +1,5 @@
 import * as f from "../common/raison_sociale"
 
-type Input = {
-  periode: Date
-}
-
 export type SortieSireneEntreprise = {
   raison_sociale: string // nom de l'entreprise
   statut_juridique: string | null // code numérique sérialisé en chaine de caractères
@@ -13,12 +9,14 @@ export type SortieSireneEntreprise = {
 
 export function entr_sirene(
   sirene_ul: Record<DataHash, EntréeSireneEntreprise>,
-  output_array: (Input & Partial<SortieSireneEntreprise>)[]
-): void {
+  sériePériode: Date[]
+): ParPériode<Partial<SortieSireneEntreprise>> {
   "use strict"
+  const retourEntrSirene: ParPériode<Partial<SortieSireneEntreprise>> = {}
   const sireneHashes = Object.keys(sirene_ul || {})
-  output_array.forEach((val) => {
+  sériePériode.forEach((période) => {
     if (sireneHashes.length !== 0) {
+      const val: Partial<SortieSireneEntreprise> = {}
       const sirene = sirene_ul[sireneHashes[sireneHashes.length - 1]]
       val.raison_sociale = f.raison_sociale(
         sirene.raison_sociale,
@@ -39,8 +37,10 @@ export function entr_sirene(
         sirene.date_creation >= new Date("1901/01/01")
       ) {
         val.age_entreprise =
-          val.periode.getFullYear() - val.date_creation_entreprise
+          période.getFullYear() - val.date_creation_entreprise
       }
+      retourEntrSirene[période.getTime()] = val
     }
   })
+  return retourEntrSirene
 }
