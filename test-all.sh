@@ -4,6 +4,6 @@
 (cd dbmongo/js && npm run lint && npm test) && \
 (cd dbmongo && go test) && \
 (killall dbmongo; cd dbmongo && go build) && \
-./test-api.sh && \
-./test-api-reduce.sh && \
-./test-api-2.sh
+echo "./test-api.sh" && ./test-api.sh && \
+echo "./test-api-reduce.sh" && ./test-api-reduce.sh && \
+echo "./test-api-2.sh" && ./test-api-2.sh
