@@ -3,7 +3,7 @@
 function heading {
   echo ""
   echo "–––––"
-  echo $1
+  echo "$1"
   echo "–––––"
 }
 
