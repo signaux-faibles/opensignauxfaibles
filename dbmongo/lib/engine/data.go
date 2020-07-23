@@ -304,7 +304,7 @@ func (chunks Chunks) ToQueries(query bson.M, field string) []bson.M {
 	}
 }
 
-func writeJsonLine(file *os.File, data interface{}) error {
+func writeLine(file *os.File, data interface{}) error {
 	bytesToWrite, err := json.Marshal(data)
 	if err != nil {
 		return err
@@ -322,19 +322,14 @@ func writeJsonLine(file *os.File, data interface{}) error {
 	return err
 }
 
-// ExportEtablissements exporte les établissements dans un fichier.
-func ExportEtablissements(key, filepath string) error {
+func streamItemsToFile(filepath string, iter *mgo.Iter) error {
 	file, err := os.Create(filepath)
 	if err != nil {
 		return err
 	}
-
-	pipeline := exportdatapi.GetEtablissementWithScoresPipeline(key)
-	iter := Db.DB.C("Public").Pipe(pipeline).AllowDiskUse().Iter()
-
 	var data interface{}
 	for iter.Next(&data) {
-		err = writeJsonLine(file, data)
+		err = writeLine(file, data)
 		if err != nil {
 			return err
 		}
@@ -343,34 +338,20 @@ func ExportEtablissements(key, filepath string) error {
 	if err != nil {
 		return err
 	}
-
 	err = file.Close()
 	return err
 }
 
+// ExportEtablissements exporte les établissements dans un fichier.
+func ExportEtablissements(key, filepath string) error {
+	pipeline := exportdatapi.GetEtablissementWithScoresPipeline(key)
+	iter := Db.DB.C("Public").Pipe(pipeline).AllowDiskUse().Iter()
+	return streamItemsToFile(filepath, iter)
+}
+
 // ExportEntreprises exporte les entreprises dans un fichier.
 func ExportEntreprises(key, filepath string) error {
-	file, err := os.Create(filepath)
-	if err != nil {
-		return err
-	}
-
 	pipeline := exportdatapi.GetEntreprisePipeline(key)
 	iter := Db.DB.C("Public").Pipe(pipeline).AllowDiskUse().Iter()
-
-	var data interface{}
-	for iter.Next(&data) {
-		err = writeJsonLine(file, data)
-		if err != nil {
-			return err
-		}
-	}
-	err = iter.Err()
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err.Error())
-		return err
-	}
-
-	err = file.Close()
-	return err
+	return streamItemsToFile(filepath, iter)
 }
