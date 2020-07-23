@@ -153,22 +153,27 @@ echo "- rename 'Public_debug' collection to 'Public' 👉 ${RENAME_RESULT}"
 CLEAN_RESULT=$(echo 'db.Admin.drop(); db.ImportedData.drop(); db.RawData.drop();' | docker exec -i sf-mongodb mongo --quiet signauxfaibles)
 echo "- drop other db collections 👉 ${CLEAN_RESULT}"
 # Export enterprise data
-EXPORT_FILE=$(http --print=b --ignore-stdin GET :5000/api/data/etablissements | tr -d '"')
-echo "- GET /api/data/etablissements 👉 ${EXPORT_FILE}"
+ETABLISSEMENTS_FILE=$(http --print=b --ignore-stdin GET :5000/api/data/etablissements | tr -d '"')
+echo "- GET /api/data/etablissements 👉 ${ETABLISSEMENTS_FILE}"
+ENTREPRISES_FILE=$(http --print=b --ignore-stdin GET :5000/api/data/entreprises | tr -d '"')
+echo "- GET /api/data/entreprises 👉 ${ENTREPRISES_FILE}"
 
 echo ""
 # Check if the --update flag was passed
 if [[ "$*" == *--update* ]]
 then
-    echo "🖼  Updating golden master file using ${EXPORT_FILE}..."
-    cp "${EXPORT_FILE}" "../test-api-export-etablissements.golden-master.json"
+    echo "🖼  Updating golden master file using ${ETABLISSEMENTS_FILE}..."
+    cp "${ETABLISSEMENTS_FILE}" "../test-api-export-etablissements.golden-master.json"
+    echo "🖼  Updating golden master file using ${ENTREPRISES_FILE}..."
+    cp "${ENTREPRISES_FILE}" "../test-api-export-entreprises.golden-master.json"
 else
     # Diff between expected and actual output
     echo -e "${COLOR_YELLOW}"
-    diff --brief "../test-api-export-etablissements.golden-master.json" "${EXPORT_FILE}" # will stop the script if files are different
+    diff --brief "../test-api-export-etablissements.golden-master.json" "${ETABLISSEMENTS_FILE}" # will stop the script if files are different
+    diff --brief "../test-api-export-entreprises.golden-master.json" "${ENTREPRISES_FILE}" # will stop the script if files are different
     echo -e "${COLOR_DEFAULT}"
     echo "✅ No diff. The export worked as expected."
 fi
 echo ""
-rm "${EXPORT_FILE}"
+rm "${ETABLISSEMENTS_FILE}" "${ENTREPRISES_FILE}"
 # Now, the "trap" commands will run, to clean up.
