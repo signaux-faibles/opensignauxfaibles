@@ -10,7 +10,7 @@
 // Please execute ../test/test_algo2.sh to fill these requirements and
 // run the tests.
 
-import { makeTestData } from "./test_data_algo2/makeTestData"
+import { makeTestData } from "./test_algo2_testdata"
 import { naf } from "../test/data/naf"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { map } from "../reduce.algo2/map"

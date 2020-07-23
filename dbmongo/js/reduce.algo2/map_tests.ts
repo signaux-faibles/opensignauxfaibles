@@ -58,7 +58,6 @@ test("map() retourne les même données que d'habitude", (t) => {
   testData.forEach(({ _id, value }) => {
     initGlobalParams(DATE_DEBUT, DATE_FIN)
     f.map.call({ _id, value }) // will append to results
-    t.log("results:", Object.keys(results))
     return results
   })
   t.snapshot(results)

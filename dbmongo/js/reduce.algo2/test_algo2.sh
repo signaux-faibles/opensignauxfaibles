@@ -20,9 +20,11 @@ scp stockage:/home/centos/opensignauxfaibles_tests/* ${TMP_PATH}/
 # Prepare test data set
 JSON_TEST_DATASET="$(cat ./test_data_algo2/reduce_test_data.json)"
 echo "export const makeTestData = ({ ISODate, NumberInt }: { ISODate: (date: string) => Date, NumberInt: (i: number) => number }) => (${JSON_TEST_DATASET});" \
-  > ${TMP_PATH}/makeTestData.ts
+  > ./test_algo2_testdata.ts
 
-npx ts-node ../reduce.algo2/algo2_test.ts 2>&1 > "${TMP_PATH}/algo2_stdout.log"
+npx ts-node ../reduce.algo2/test_algo2.ts 2>&1 > "${TMP_PATH}/algo2_stdout.log"
+
+cp ./test_algo2_testdata.backup.ts ./test_algo2_testdata.ts
 
 # TODO:
 # if [ "$1" == "--update" ]; then
