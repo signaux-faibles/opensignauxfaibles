@@ -1,6 +1,11 @@
 package main
 
 import (
+	"fmt"
+	"os"
+	"strconv"
+	"time"
+
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/naf"
 
@@ -110,6 +115,10 @@ func purgeHandler(c *gin.Context) {
 	c.JSON(300, "Provide areyousure=yes")
 }
 
+func getTimestamp() string {
+	return strconv.FormatInt(time.Now().Unix(), 10)
+}
+
 func exportEtablissementsHandler(c *gin.Context) {
 	var params struct {
 		Key string `json:"key"`
@@ -125,13 +134,14 @@ func exportEtablissementsHandler(c *gin.Context) {
 		return
 	}
 
-	var filepath = "dbmongo-data-export-etablissements.json" // TODO: integrer timestamp dans le nom de fichier
+	// On retourne le nom de fichier avant la fin du traitement, pour éviter erreur "Request timed out"
+	var filepath = "dbmongo-data-export-etablissements-" + getTimestamp() + ".json"
+	c.JSON(200, filepath)
+
 	err = engine.ExportEtablissements(params.Key, filepath)
 	if err != nil {
-		c.JSON(500, err.Error())
-		return
+		fmt.Fprintln(os.Stderr, "ExportEtablissements error: ", err.Error())
 	}
-	c.JSON(200, filepath)
 }
 
 func exportEntreprisesHandler(c *gin.Context) {
@@ -149,11 +159,12 @@ func exportEntreprisesHandler(c *gin.Context) {
 		return
 	}
 
-	var filepath = "dbmongo-data-export-entreprises.json" // TODO: integrer timestamp dans le nom de fichier
-	err = engine.ExportEntreprises(params.Key, filepath)  // TODO
-	if err != nil {
-		c.JSON(500, err.Error())
-		return
-	}
+	// On retourne le nom de fichier avant la fin du traitement, pour éviter erreur "Request timed out"
+	var filepath = "dbmongo-data-export-entreprises-" + getTimestamp() + ".json"
 	c.JSON(200, filepath)
+
+	err = engine.ExportEntreprises(params.Key, filepath)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "ExportEntreprises error: ", err.Error())
+	}
 }
