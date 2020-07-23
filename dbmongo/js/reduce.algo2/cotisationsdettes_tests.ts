@@ -99,6 +99,9 @@ const setupCompanyValues = (dateDebut: Date) => ({
   },
 })
 
+// TODO: refactoriser les générateurs de données de tests pour éviter la
+// redondance et faciliter les tests futurs.
+
 const generatePastTestCase = (
   ouvrièreOuPatronale: "ouvriere" | "patronale",
   montantDette: number,

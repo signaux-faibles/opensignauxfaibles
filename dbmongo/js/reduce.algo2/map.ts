@@ -15,12 +15,14 @@ import { sirene } from "./sirene"
 import { populateNafAndApe } from "./populateNafAndApe"
 import { cotisation } from "./cotisation"
 import { cibleApprentissage } from "./cibleApprentissage"
-import { sirene_ul, SortieSireneUL } from "./sirene_ul"
+import { entr_sirene, SortieSireneEntreprise } from "./entr_sirene"
 import { dateAddMonth } from "./dateAddMonth"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { poidsFrng } from "./poidsFrng"
 import { detteFiscale } from "./detteFiscale"
 import { fraisFinancier } from "./fraisFinancier"
+import { entr_bdf, SortieBdf } from "./entr_bdf"
+import { omit } from "../common/omit"
 
 // Paramètres globaux utilisés par "reduce.algo2"
 declare const naf: NAF
@@ -48,21 +50,9 @@ export function map(this: {
     ...{ flatten, outputs, apart, compte, effectifs, interim, add }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     ...{ repeatable, delais, defaillances, cotisationsdettes, ccsf }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     ...{ sirene, populateNafAndApe, cotisation, cibleApprentissage }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
-    ...{ sirene_ul, dateAddMonth, generatePeriodSerie, poidsFrng }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
-    ...{ detteFiscale, fraisFinancier }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
+    ...{ entr_sirene, dateAddMonth, generatePeriodSerie, poidsFrng }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
+    ...{ detteFiscale, fraisFinancier, entr_bdf, omit }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
   } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
-
-  // Fonction pour omettre des props, tout en retournant le bon type
-  function omit<Source, Exclusions extends Array<keyof Source>>(
-    object: Source,
-    ...propNames: Exclusions
-  ): Omit<Source, Exclusions[number]> {
-    const result: Omit<Source, Exclusions[number]> = Object.assign({}, object)
-    for (const prop of propNames) {
-      delete (result as any)[prop]
-    }
-    return result
-  }
 
   const v = f.flatten(this.value, actual_batch)
 
@@ -180,40 +170,35 @@ export function map(this: {
 
   if (v.scope === "entreprise") {
     if (includes["all"]) {
-      type Input = {
+      type SortieMapEntreprise = {
         periode: Date
-      }
-      type SortieMapEntreprise = Input &
-        Partial<SortieSireneUL> &
+      } & Partial<SortieSireneEntreprise> &
         Partial<EntréeBdf> &
         Partial<EntréeDiane> &
-        Record<string, unknown> // for *_past_* props of bdf. // TODO: try to be more specific
+        Partial<EntréeBdf> &
+        Partial<SortieBdf> &
+        Record<string, unknown> // for *_past_* props of diane. // TODO: try to be more specific
 
-      const output_array: SortieMapEntreprise[] = serie_periode.map(function (
-        e
-      ) {
-        return {
+      const output_indexed: Record<Periode, SortieMapEntreprise> = {}
+
+      for (const periode of serie_periode) {
+        output_indexed[periode.getTime()] = {
           siren: v.key,
-          periode: e,
+          periode,
           exercice_bdf: 0,
           arrete_bilan_bdf: new Date(0),
           exercice_diane: 0,
           arrete_bilan_diane: new Date(0),
         }
-      })
-
-      let output_indexed = output_array.reduce(function (periode, val) {
-        periode[val.periode.getTime()] = val
-        return periode
-      }, {} as Record<Periode, SortieMapEntreprise>)
-
-      if (v.sirene_ul) {
-        f.sirene_ul(v as DonnéesSireneUL, output_array)
       }
 
-      const periodes = Object.keys(output_indexed)
-        .sort()
-        .map((timestamp) => parseInt(timestamp))
+      if (v.sirene_ul) {
+        const outputEntrSirene = f.entr_sirene(v.sirene_ul, serie_periode)
+        f.add(outputEntrSirene, output_indexed)
+      }
+
+      const periodes = serie_periode.map((date) => date.getTime())
+
       if (v.effectif_ent) {
         const output_effectif_ent = f.effectifs(
           v.effectif_ent,
@@ -223,69 +208,12 @@ export function map(this: {
         f.add(output_effectif_ent, output_indexed)
       }
 
-      output_indexed = output_array.reduce(function (periode, val) {
-        periode[val.periode.getTime()] = val
-        return periode
-      }, {} as Record<Periode, SortieMapEntreprise>)
-
       v.bdf = v.bdf || {}
       v.diane = v.diane || {}
 
-      for (const hash in v.bdf) {
-        const periode_arrete_bilan = new Date(
-          Date.UTC(
-            v.bdf[hash].arrete_bilan_bdf.getUTCFullYear(),
-            v.bdf[hash].arrete_bilan_bdf.getUTCMonth() + 1,
-            1,
-            0,
-            0,
-            0,
-            0
-          )
-        )
-        const periode_dispo = f.dateAddMonth(periode_arrete_bilan, 7)
-        const series = f.generatePeriodSerie(
-          periode_dispo,
-          f.dateAddMonth(periode_dispo, 13)
-        )
-
-        for (const periode of series) {
-          const bdfHashData = v.bdf[hash]
-          const outputInPeriod = output_indexed[periode.getTime()]
-          const rest = omit(
-            bdfHashData as EntréeBdf & {
-              raison_sociale: unknown
-              secteur: unknown
-              siren: unknown
-            },
-            "raison_sociale",
-            "secteur",
-            "siren"
-          )
-
-          if (outputInPeriod) {
-            Object.assign(outputInPeriod, rest)
-            if (outputInPeriod.annee_bdf) {
-              outputInPeriod.exercice_bdf = outputInPeriod.annee_bdf - 1
-            }
-          }
-
-          for (const k of Object.keys(rest) as (keyof typeof rest)[]) {
-            const past_year_offset = [1, 2]
-            for (const offset of past_year_offset) {
-              const periode_offset = f.dateAddMonth(periode, 12 * offset)
-              const variable_name = k + "_past_" + offset
-              if (
-                periode_offset.getTime() in output_indexed &&
-                k !== "arrete_bilan_bdf" &&
-                k !== "exercice_bdf"
-              ) {
-                output_indexed[periode_offset.getTime()][variable_name] =
-                  v.bdf[hash][k]
-              }
-            }
-          }
-        }
+      if (v.bdf) {
+        const outputBdf = f.entr_bdf(v.bdf, periodes)
+        f.add(outputBdf, output_indexed)
       }
 
       for (const hash of Object.keys(v.diane)) {
@@ -309,7 +237,7 @@ export function map(this: {
         )
 
         for (const periode of series) {
-          const rest = omit(
+          const rest = f.omit(
             v.diane[hash] as EntréeDiane & {
               marquee: unknown
               nom_entreprise: unknown
@@ -397,12 +325,13 @@ export function map(this: {
         }
       }
 
-      output_array.forEach((periode, index) => {
+      serie_periode.forEach((date) => {
+        const periode = output_indexed[date.getTime()]
         if (
           (periode.arrete_bilan_bdf || new Date(0)).getTime() === 0 &&
           (periode.arrete_bilan_diane || new Date(0)).getTime() === 0
         ) {
-          delete output_array[index]
+          delete output_indexed[date.getTime()]
         }
         if ((periode.arrete_bilan_bdf || new Date(0)).getTime() === 0) {
           delete periode.arrete_bilan_bdf
