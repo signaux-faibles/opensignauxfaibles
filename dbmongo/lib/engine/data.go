@@ -314,7 +314,7 @@ func ExportEtablissements(key, filepath string) error {
 	pipeline := exportdatapi.GetEtablissementWithScoresPipeline(key)
 	iter := Db.DB.C("Public").Pipe(pipeline).AllowDiskUse().Iter()
 
-	var data exportdatapi.Etablissement
+	var data interface{}
 	for iter.Next(&data) {
 		bytesToWrite, err := json.Marshal(data)
 		if err != nil {
