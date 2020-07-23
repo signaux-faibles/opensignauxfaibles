@@ -11,7 +11,7 @@ import (
 
 func shouldTranspile(filePath string) bool {
 	return !strings.Contains(filePath, "node_modules") &&
-		!strings.Contains(filePath, "_tests.ts") &&
+		!strings.Contains(filePath, "test") &&
 		!strings.Contains(filePath, ".d.ts") &&
 		path.Ext(filePath) == ".ts"
 }
