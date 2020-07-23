@@ -150,5 +150,10 @@ func exportEntreprisesHandler(c *gin.Context) {
 	}
 
 	var filepath = "dbmongo-data-export-entreprises.json" // TODO: integrer timestamp dans le nom de fichier
+	err = engine.ExportEntreprises(params.Key, filepath)  // TODO
+	if err != nil {
+		c.JSON(500, err.Error())
+		return
+	}
 	c.JSON(200, filepath)
 }

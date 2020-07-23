@@ -5,6 +5,17 @@ import (
 	daclient "github.com/signaux-faibles/datapi/client"
 )
 
+// GetEntreprisePipeline produit un pipeline pour exporter les établissements avec leur scores.
+func GetEntreprisePipeline(key string) (pipeline []bson.M) {
+	pipeline = append(pipeline, bson.M{"$match": bson.M{
+		"_id": bson.RegEx{
+			Pattern: "entreprise_" + key,
+		},
+	}})
+
+	return pipeline
+}
+
 // GetEtablissementWithScoresPipeline produit un pipeline pour exporter les établissements avec leur scores.
 func GetEtablissementWithScoresPipeline(key string) (pipeline []bson.M) {
 	pipeline = append(pipeline, bson.M{"$match": bson.M{

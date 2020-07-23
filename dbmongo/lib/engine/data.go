@@ -343,3 +343,43 @@ func ExportEtablissements(key, filepath string) error {
 	err = file.Close()
 	return err
 }
+
+// ExportEntreprises exporte les entreprises dans un fichier.
+func ExportEntreprises(key, filepath string) error {
+	file, err := os.Create(filepath)
+	if err != nil {
+		return err
+	}
+
+	pipeline := exportdatapi.GetEntreprisePipeline(key)
+	iter := Db.DB.C("Public").Pipe(pipeline).AllowDiskUse().Iter()
+
+	var data interface{}
+	for iter.Next(&data) {
+		bytesToWrite, err := json.Marshal(data)
+		if err != nil {
+			return err
+		}
+		nbBytesWritten := 0
+		for nbBytesWritten < len(bytesToWrite) {
+			bytesToWrite = bytesToWrite[nbBytesWritten:]
+			nbBytesWritten, err = file.Write(bytesToWrite)
+			if err != nil {
+				return err
+			}
+			fmt.Fprintln(os.Stderr, "Printed", nbBytesWritten, "bytes /", len(bytesToWrite))
+		}
+		_, err = file.Write([]byte("\n"))
+		if err != nil {
+			return err
+		}
+	}
+	err = iter.Err()
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err.Error())
+		return err
+	}
+
+	err = file.Close()
+	return err
+}
