@@ -1,6 +1,6 @@
 "use strict";
 
-const objects = (ISODate => ([
+const makeObjects = ISODate => ([
   {
     "_id" : "123456789",
     "value" : {
@@ -13254,7 +13254,10 @@ const objects = (ISODate => ([
         }
     }
   }
-]))(date => new Date(date))
+])
+
+const objects = makeObjects(date => new Date(date))
 Object.freeze(objects)
 
 exports.objects = objects
+exports.makeObjects = makeObjects

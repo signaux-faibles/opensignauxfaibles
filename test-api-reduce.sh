@@ -1,7 +1,10 @@
 #!/bin/bash
 
-# Test de bout en bout des APIs "reduce" et "public"
-# Source: https://github.com/signaux-faibles/documentation/blob/master/prise-en-main.md#%C3%A9tape-de-calculs-pour-populer-features
+# Test de bout en bout de l'API "reduce" à l'aide de données publiques.
+#
+# Inspiré de test-api-2.sh et algo2_tests.ts. Exécutable en CI.
+#
+# TODO: Refactoriser les tests fonctionnels pour réduire la duplication.
 
 # Interrompre le conteneur Docker d'une exécution précédente de ce test, si besoin
 docker stop sf-mongodb &>/dev/null
@@ -34,77 +37,59 @@ perl -pi'' -e "s,/foo/bar/data-raw,sample-data-raw," config.toml
 echo ""
 echo "📝 Inserting test data..."
 sleep 1 # give some time for MongoDB to start
-docker exec -i sf-mongodb mongo signauxfaibles  > /dev/null << CONTENTS
+cat > "${DATA_DIR}/db_popul.js" << CONTENTS
   db.Admin.remove({})
   db.Admin.insertOne({
     "_id" : {
-        "key" : "1910",
+        "key" : "1905",
         "type" : "batch"
     },
     "param" : {
         "date_debut" : ISODate("2014-01-01T00:00:00.000+0000"),
-        "date_fin" : ISODate("2019-10-01T00:00:00.000+0000")
-    }
+        "date_fin" : ISODate("2016-01-01T00:00:00.000+0000"),
+        "date_fin_effectif" : ISODate("2016-03-01T00:00:00.000+0000")
+    },
+    "name" : "TestData"
   })
 
-  db.ImportedData.remove({})
-  db.ImportedData.insertOne({
-    "_id": "random123abc",
-    "value": {
-      "batch": {
-        "1910": {}
-      },
-      "scope": "etablissement",
-      "index": {
-        "algo2": true
-      },
-      "key": "01234567891011"
-    }
-  })
+  db.Features_TestData.remove({})
 
   db.RawData.remove({})
-  db.Features_debug.remove({})
-  db.Public_debug.remove({})
-
+  db.RawData.insertMany(
 CONTENTS
+node -e "console.log(require('./js/test/data/objects.js').makeObjects.toString().replace('ISODate => ([', '[').replace('])', ']'))" \
+  >> "${DATA_DIR}/db_popul.js"
+echo ")" >> "${DATA_DIR}/db_popul.js"
+
+docker exec -i sf-mongodb mongo signauxfaibles > /dev/null < "${DATA_DIR}/db_popul.js"
 
 echo ""
 echo "💎 Computing Features and Public collections thru dbmongo API..."
 sh -c "./dbmongo &>/dev/null &" # we run in a separate shell to hide the "terminated" message when the process is killed by trap
 sleep 2 # give some time for dbmongo to start
-echo "- POST /api/data/compact 👉 $(http --print=b --ignore-stdin :5000/api/data/compact fromBatchKey=1910)"
-echo "- POST /api/data/reduce 👉 $(http --print=b --ignore-stdin :5000/api/data/reduce algo=algo2 batch=1910 key=012345678)"
-echo "- POST /api/data/public 👉 $(http --print=b --ignore-stdin :5000/api/data/public batch=1910 key=012345678)"
+echo "- POST /api/data/reduce 👉 $(http --print=b --ignore-stdin :5000/api/data/reduce algo=algo2 batch=1905)"
 
 echo ""
 echo "🕵️‍♀️ Checking resulting Features..."
 cd ..
-docker exec -i sf-mongodb mongo --quiet signauxfaibles > test-api.output.txt << CONTENTS
-  print("// Documents from db.RawData, after call to /api/data/compact:");
-  db.RawData.find().toArray();
-  print("// Documents from db.Features_debug, after call to /api/data/reduce:");
-  db.Features_debug.find().toArray();
-  print("// Documents from db.Public_debug, after call to /api/data/public:");
-  db.Public_debug.find().toArray();
-CONTENTS
+echo "db.Features_TestData.find().toArray();" \
+  | docker exec -i sf-mongodb mongo --quiet signauxfaibles \
+  > "test-api-reduce.output-documents.json"
 
 # Display JS errors logged by MongoDB, if any
 docker logs sf-mongodb | grep --color=always "uncaught exception" || true
-
-# exclude random values
-grep -v '"random_order" :' test-api.output.txt > test-api.output-documents.txt
 
 echo ""
 # Check if the --update flag was passed
 if [[ "$*" == *--update* ]]
 then
     echo "🖼  Updating golden master file..."
-    cp "test-api.output-documents.txt" "test-api.golden-master.txt"
+    cp "test-api-reduce.output-documents.json" "test-api-reduce.golden-master.json"
 else
     # Diff between expected and actual output
-    diff --brief test-api.golden-master.txt test-api.output-documents.txt
-    echo "✅ No diff. The export worked as expected."
+    diff --brief "test-api-reduce.golden-master.json" "test-api-reduce.output-documents.json"
+    echo "✅ No diff. The reduce API works as usual."
 fi
 echo ""
-rm test-api.output.txt test-api.output-documents.txt
+rm "test-api-reduce.output-documents.json"
 # Now, the "trap" commands will run, to clean up.
