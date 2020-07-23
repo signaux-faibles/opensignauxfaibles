@@ -10,14 +10,11 @@ import (
 	"path"
 	"path/filepath"
 	"regexp"
-	"strings"
 	"syscall"
 	"testing"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 )
-
-const SKIP_ON_CI = "SKIP_ON_CI"
 
 var update = flag.Bool("update", false, "Update the expected test values in golden file")
 
@@ -49,11 +46,6 @@ func Test_js(t *testing.T) {
 	for _, f := range files {
 		if scriptNameRegex.MatchString(f.Name()) {
 			t.Run(f.Name(), func(t *testing.T) {
-				filepath := path.Join(testdir, f.Name())
-				if os.Getenv("CI") != "" && shouldSkipOnCi(t, filepath) {
-					t.Skip("Skipping testing in CI environment")
-				}
-
 				var cmd *exec.Cmd
 				if *update {
 					cmd = exec.Command("/bin/bash", f.Name(), "--update")
@@ -69,15 +61,6 @@ func Test_js(t *testing.T) {
 			})
 		}
 	}
-}
-
-func shouldSkipOnCi(t *testing.T, filepath string) bool {
-	data, err := ioutil.ReadFile(filepath)
-	if err != nil {
-		t.Error(err)
-	}
-	file := string(data)
-	return strings.Contains(file, SKIP_ON_CI)
 }
 
 func cmdTester(t *testing.T, cmd *exec.Cmd) error {

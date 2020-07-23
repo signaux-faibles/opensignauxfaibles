@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# SKIP_ON_CI
-
 # This golden-file-based test runner was designed to prevent
 # regressions on the JS functions (common + algo2) used to compute the
 # "Features" collection from the "RawData" collection.
