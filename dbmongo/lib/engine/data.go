@@ -304,6 +304,24 @@ func (chunks Chunks) ToQueries(query bson.M, field string) []bson.M {
 	}
 }
 
+func writeJsonLine(file *os.File, data interface{}) error {
+	bytesToWrite, err := json.Marshal(data)
+	if err != nil {
+		return err
+	}
+	nbBytesWritten := 0
+	for nbBytesWritten < len(bytesToWrite) {
+		bytesToWrite = bytesToWrite[nbBytesWritten:]
+		nbBytesWritten, err = file.Write(bytesToWrite)
+		if err != nil {
+			return err
+		}
+		fmt.Fprintln(os.Stderr, "Printed", nbBytesWritten, "bytes /", len(bytesToWrite))
+	}
+	_, err = file.Write([]byte("\n"))
+	return err
+}
+
 // ExportEtablissements exporte les établissements dans un fichier.
 func ExportEtablissements(key, filepath string) error {
 	file, err := os.Create(filepath)
@@ -316,27 +334,13 @@ func ExportEtablissements(key, filepath string) error {
 
 	var data interface{}
 	for iter.Next(&data) {
-		bytesToWrite, err := json.Marshal(data)
-		if err != nil {
-			return err
-		}
-		nbBytesWritten := 0
-		for nbBytesWritten < len(bytesToWrite) {
-			bytesToWrite = bytesToWrite[nbBytesWritten:]
-			nbBytesWritten, err = file.Write(bytesToWrite)
-			if err != nil {
-				return err
-			}
-			fmt.Fprintln(os.Stderr, "Printed", nbBytesWritten, "bytes /", len(bytesToWrite))
-		}
-		_, err = file.Write([]byte("\n"))
+		err = writeJsonLine(file, data)
 		if err != nil {
 			return err
 		}
 	}
 	err = iter.Err()
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err.Error())
 		return err
 	}
 
@@ -356,20 +360,7 @@ func ExportEntreprises(key, filepath string) error {
 
 	var data interface{}
 	for iter.Next(&data) {
-		bytesToWrite, err := json.Marshal(data)
-		if err != nil {
-			return err
-		}
-		nbBytesWritten := 0
-		for nbBytesWritten < len(bytesToWrite) {
-			bytesToWrite = bytesToWrite[nbBytesWritten:]
-			nbBytesWritten, err = file.Write(bytesToWrite)
-			if err != nil {
-				return err
-			}
-			fmt.Fprintln(os.Stderr, "Printed", nbBytesWritten, "bytes /", len(bytesToWrite))
-		}
-		_, err = file.Write([]byte("\n"))
+		err = writeJsonLine(file, data)
 		if err != nil {
 			return err
 		}
