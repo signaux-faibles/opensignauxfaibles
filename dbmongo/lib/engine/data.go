@@ -1,12 +1,15 @@
 package engine
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
+	"os"
 	"sync"
 	"time"
 
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/exportdatapi"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
 
 	"github.com/globalsign/mgo"
@@ -299,4 +302,40 @@ func (chunks Chunks) ToQueries(query bson.M, field string) []bson.M {
 	} else {
 		return []bson.M{query}
 	}
+}
+
+// ExportEtablissements exporte les établissements dans un fichier.
+func ExportEtablissements(key, filepath string) error {
+	file, err := os.Create(filepath)
+	if err != nil {
+		return err
+	}
+
+	pipeline := exportdatapi.GetEtablissementWithScoresPipeline(key)
+	iter := Db.DB.C("Public").Pipe(pipeline).AllowDiskUse().Iter()
+
+	var data exportdatapi.Etablissement
+	for iter.Next(&data) {
+		bytesToWrite, err := json.Marshal(data)
+		if err != nil {
+			return err
+		}
+		nbBytesWritten := 0
+		for nbBytesWritten < len(bytesToWrite) {
+			bytesToWrite = bytesToWrite[nbBytesWritten:]
+			nbBytesWritten, err = file.Write(bytesToWrite)
+			if err != nil {
+				return err
+			}
+			fmt.Fprintln(os.Stderr, "Printed", nbBytesWritten, "bytes /", len(bytesToWrite))
+		}
+	}
+	err = iter.Err()
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err.Error())
+		return err
+	}
+
+	err = file.Close()
+	return err
 }
