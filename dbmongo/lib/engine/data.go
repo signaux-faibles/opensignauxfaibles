@@ -329,6 +329,10 @@ func ExportEtablissements(key, filepath string) error {
 			}
 			fmt.Fprintln(os.Stderr, "Printed", nbBytesWritten, "bytes /", len(bytesToWrite))
 		}
+		_, err = file.Write([]byte("\n"))
+		if err != nil {
+			return err
+		}
 	}
 	err = iter.Err()
 	if err != nil {
