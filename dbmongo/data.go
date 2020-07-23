@@ -133,3 +133,22 @@ func exportEtablissementsHandler(c *gin.Context) {
 	}
 	c.JSON(200, filepath)
 }
+
+func exportEntreprisesHandler(c *gin.Context) {
+	var params struct {
+		Key string `json:"key"`
+	}
+	err := c.Bind(&params)
+	if err != nil {
+		c.JSON(400, err.Error())
+		return
+	}
+
+	if !(len(params.Key) == 14 || len(params.Key) == 0) {
+		c.JSON(400, "siret de 14 caractères obligatoire si fourni")
+		return
+	}
+
+	var filepath = "dbmongo-data-export-entreprises.json" // TODO: integrer timestamp dans le nom de fichier
+	c.JSON(200, filepath)
+}

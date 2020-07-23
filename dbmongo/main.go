@@ -122,7 +122,7 @@ func main() {
 		api.POST("/data/copyScores", copyScores)
 
 		api.GET("/data/etablissements", exportEtablissementsHandler)
-		// api.GET("/data/entreprises", exportEntreprisesHandler) // TODO
+		api.GET("/data/entreprises", exportEntreprisesHandler)
 
 		// api.GET("/debug", debug)
 	}
