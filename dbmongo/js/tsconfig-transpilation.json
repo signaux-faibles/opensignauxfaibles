@@ -1,4 +1,4 @@
 {
   "extends": "./tsconfig.json",
-  "exclude": ["node_modules", "*/*_tests.ts"]
+  "exclude": ["node_modules", "*/*_tests.ts", "reduce.algo2/algo2_test.ts"]
 }
