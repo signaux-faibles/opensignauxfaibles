@@ -29,3 +29,4 @@ jobs:
           sudo apt-get update -y
           sudo apt-get install -y httpie
           ./test-api.sh
+          ./test-api-export.sh
