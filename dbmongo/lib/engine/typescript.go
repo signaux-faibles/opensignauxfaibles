@@ -34,7 +34,8 @@ func ListTsFiles(jsRootDir string) []string {
 
 // DeleteTranspiledFiles supprime les fichiers JavaScript résultant de la
 // transpilation des fichiers TypeScript listés dans tsFiles.
-func DeleteTranspiledFiles(tsFiles []string) {
+func DeleteTranspiledFiles(jsRootDir string) {
+	tsFiles := ListTsFiles(jsRootDir)
 	for _, tsFile := range tsFiles {
 		ext := path.Ext(tsFile)
 		if ext != ".ts" {

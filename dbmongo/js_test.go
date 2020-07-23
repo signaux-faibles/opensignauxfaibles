@@ -21,12 +21,11 @@ var update = flag.Bool("update", false, "Update the expected test values in gold
 // TestMain sera exécuté avant les tests
 func TestMain(m *testing.M) {
 	fmt.Println("Transpilation des fonctions JS depuis TypeScript...")
-	jsRootDir := filepath.Join("js") // chemin vers les fichiers TS et JS (sous-répertoire)
-	tsFiles := engine.ListTsFiles(jsRootDir)
+	jsRootDir := filepath.Join("js")       // chemin vers les fichiers TS et JS (sous-répertoire)
 	engine.TranspileTsFunctions(jsRootDir) // convert *.ts files to .js
 	engine.GlobalizeJsFunctions(jsRootDir) // remove "export" prefixes from JS functions, for jsc compatibility
 	code := m.Run()
-	engine.DeleteTranspiledFiles(tsFiles) // delete the *.js files
+	engine.DeleteTranspiledFiles(jsRootDir) // delete the *.js files
 	os.Exit(code)
 }
 
