@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"strconv"
@@ -119,18 +120,25 @@ func getTimestamp() string {
 	return strconv.FormatInt(time.Now().Unix(), 10)
 }
 
-func exportEtablissementsHandler(c *gin.Context) {
+func getKeyParam(c *gin.Context) (string, error) {
 	var params struct {
 		Key string `json:"key"`
 	}
 	err := c.Bind(&params)
 	if err != nil {
-		c.JSON(400, err.Error())
-		return
+		return "", err
 	}
 
 	if !(len(params.Key) == 14 || len(params.Key) == 0) {
-		c.JSON(400, "siret de 14 caractères obligatoire si fourni")
+		err = errors.New("siret de 14 caractères obligatoire si fourni")
+	}
+	return params.Key, err
+}
+
+func exportEtablissementsHandler(c *gin.Context) {
+	key, err := getKeyParam(c)
+	if err != nil {
+		c.JSON(400, err.Error())
 		return
 	}
 
@@ -138,24 +146,16 @@ func exportEtablissementsHandler(c *gin.Context) {
 	var filepath = "dbmongo-data-export-etablissements-" + getTimestamp() + ".json"
 	c.JSON(200, filepath)
 
-	err = engine.ExportEtablissements(params.Key, filepath)
+	err = engine.ExportEtablissements(key, filepath)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "ExportEtablissements error: ", err.Error())
 	}
 }
 
 func exportEntreprisesHandler(c *gin.Context) {
-	var params struct {
-		Key string `json:"key"`
-	}
-	err := c.Bind(&params)
+	key, err := getKeyParam(c)
 	if err != nil {
 		c.JSON(400, err.Error())
-		return
-	}
-
-	if !(len(params.Key) == 14 || len(params.Key) == 0) {
-		c.JSON(400, "siret de 14 caractères obligatoire si fourni")
 		return
 	}
 
@@ -163,7 +163,7 @@ func exportEntreprisesHandler(c *gin.Context) {
 	var filepath = "dbmongo-data-export-entreprises-" + getTimestamp() + ".json"
 	c.JSON(200, filepath)
 
-	err = engine.ExportEntreprises(params.Key, filepath)
+	err = engine.ExportEntreprises(key, filepath)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "ExportEntreprises error: ", err.Error())
 	}
