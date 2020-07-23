@@ -7,8 +7,8 @@
 // It requires the JS functions from common + algo2 (notably: map()),
 // and a makeTestData() function to generate a realistic test data set.
 //
-// Please execute ../test/test_finalize_algo2.sh
-// to fill these requirements and run the tests.
+// Please execute ../test/test_algo2.sh to fill these requirements and
+// run the tests.
 
 // Define global parameters that are required by JS functions
 const jsParams = this // => all properties of this object will become global. TODO: remove this when merging namespace (https://github.com/signaux-faibles/opensignauxfaibles/pull/40)
@@ -43,8 +43,11 @@ const testData = makeTestData({
   NumberInt: (int) => int,
 })
 
-// Print the output of the f.map() function
 const mapResult = runMongoMap(testData, f.map) // -> [ { _id, value } ]
+
+// Print the output of the f.map() function
+print(JSON.stringify(mapResult, null, 2))
+
 const valuesPerKey = {}
 mapResult.forEach(({ _id, value }) => {
   const idString = JSON.stringify(_id)
@@ -54,4 +57,6 @@ mapResult.forEach(({ _id, value }) => {
 const finalizeResult = Object.keys(valuesPerKey).map((key) =>
   f.finalize(key, f.reduce(key, valuesPerKey[key]))
 )
+
+// Print the output of the f.finalize() function
 print(JSON.stringify(finalizeResult, null, 2))
