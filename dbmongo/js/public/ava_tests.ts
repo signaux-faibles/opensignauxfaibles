@@ -19,6 +19,7 @@ import { compte } from "./compte.js"
 import { dealWithProcols } from "./dealWithProcols.js"
 import { reduce } from "./reduce"
 import { finalize } from "./finalize"
+import { runMongoMap } from "../test/helpers/mongodb"
 
 const global = globalThis as any // eslint-disable-line @typescript-eslint/no-explicit-any
 global.f = {
@@ -35,18 +36,6 @@ global.f = {
 }
 
 const ISODate = (date: string): Date => new Date(date)
-
-const runMongoMap = (
-  mapFct: () => void,
-  keyVal: unknown
-): Record<string, unknown> => {
-  const results: Record<string, unknown> = {}
-  global.emit = (key: string, value: unknown): void => {
-    results[key] = value
-  }
-  mapFct.call(keyVal)
-  return results
-}
 
 // test data inspired by test-api.sh
 const SIREN_LENGTH = 9

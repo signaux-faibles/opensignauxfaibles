@@ -9,8 +9,7 @@ import "../globals"
 import { map } from "./map"
 import { reduce } from "./reduce"
 import { finalize } from "./finalize"
-
-const global = globalThis as any // eslint-disable-line @typescript-eslint/no-explicit-any
+import { runMongoMap } from "../test/helpers/mongodb"
 
 const ISODate = (date: string): Date => new Date(date)
 
@@ -20,18 +19,6 @@ const removeRandomOrder = (reporderProp: {
   Object.keys(reporderProp).forEach((period) => {
     delete reporderProp[period].random_order
   })
-
-const runMongoMap = (
-  mapFct: () => void,
-  keyVal: unknown
-): Record<string, unknown> => {
-  const results: Record<string, unknown> = {}
-  global.emit = (key: string, value: CompanyDataValuesWithFlags): void => {
-    results[key] = value
-  }
-  mapFct.call(keyVal)
-  return results
-}
 
 // test data inspired by test-api.sh
 const siret: SiretOrSiren = "01234567891011"
