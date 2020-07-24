@@ -110,7 +110,7 @@ const expectedFinalizeResults = expectedMapResults.map(({ _id }) => ({
 test.serial(
   `reduce.algo2.map() émet un objet par période`,
   (t: ExecutionContext) => {
-    const mapResults = runMongoMap(map, { _id: siret, value: rawData })
+    const mapResults = runMongoMap(map, [{ _id: siret, value: rawData }])
     t.deepEqual(mapResults, expectedMapResults)
   }
 )

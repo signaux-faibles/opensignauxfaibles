@@ -16,6 +16,8 @@ import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { map } from "../reduce.algo2/map"
 import { finalize } from "../reduce.algo2/finalize"
 import { reduce } from "../reduce.algo2/reduce"
+import { runMongoMap } from "../test/helpers/mongodb"
+
 const f = {
   /*
   ...require("../common/generatePeriodSerie.ts"),
@@ -46,28 +48,16 @@ jsParams.naf = naf
 declare let emit: (key: unknown, value: unknown) => void
 ;(Object as any).bsonsize = (obj: unknown) => JSON.stringify(obj).length
 
-type MapItem = { _id: unknown; value: unknown }
-
-// Run a map() function designed for MongoDB, i.e. that calls emit() an
-// inderminate number of times, instead of returning one value per iteration.
-function runMongoMap(testData: unknown[], mapFct: () => void): MapItem[] {
-  const results: MapItem[] = [] // holds all the { _id, value } objects emitted from mapFct()
-  // define a emit() function that mapFct() can call
-  ;(globalThis as any).emit = (key: unknown, value: unknown) =>
-    results.push({ _id: key, value })
-  testData.forEach((entrepriseOuEtablissement) =>
-    mapFct.call(entrepriseOuEtablissement)
-  ) // entrepriseOuEtablissement will be accessible through `this`, in mapFct()
-  return results
-}
-
 // Generate a realistic test data set
 const testData = makeTestData({
   ISODate: (date: string) => new Date(date.replace("+0000", "+00:00")), // make sure that timezone format complies with the spec
   NumberInt: (int: number) => int,
 })
 
-const mapResult = runMongoMap(testData, f.map) // -> [ { _id, value } ]
+const mapResult = runMongoMap(
+  f.map,
+  testData as { _id: string; value: CompanyDataValues }[]
+) // -> [ { _id, value } ]
 
 // Print the output of the f.map() function
 console.log(JSON.stringify(mapResult, null, 2))
