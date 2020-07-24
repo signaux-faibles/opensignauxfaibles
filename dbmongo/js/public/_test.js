@@ -1,13 +1,5 @@
 "use strict"
 
-function ISODate(date) {
-  return new Date(date)
-}
-
-const f = this
-
-const exports = { f }
-
 const jsParams = this // => all properties of this object will become global.
 jsParams.actual_batch = "1905"
 jsParams.date_debut = new Date("2014-01-01")
