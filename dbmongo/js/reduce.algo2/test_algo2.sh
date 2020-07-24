@@ -5,26 +5,13 @@
 # "Features" collection from the "RawData" collection.
 # Usage: ./test_algo2.sh [--update]
 
-# This file is run by dbmongo/js_test.go.
+TMP_PATH="../test_data_algo2"
+mkdir "${TMP_PATH}"
 
-# enable exclusion of test files in wildcard
-shopt -s extglob
-
-# Download realistic data set
-TMP_PATH="./test_data_algo2"
-mkdir ${TMP_PATH}
 # Clean up on exit
 trap "{ rm -rf ${TMP_PATH}; echo \"Cleaned up temp directory\"; }" EXIT
-scp stockage:/home/centos/opensignauxfaibles_tests/* ${TMP_PATH}/
 
-# Prepare test data set
-JSON_TEST_DATASET="$(cat ./test_data_algo2/reduce_test_data.json)"
-echo "export const makeTestData = ({ ISODate, NumberInt }: { ISODate: (date: string) => Date, NumberInt: (i: number) => number }) => (${JSON_TEST_DATASET});" \
-  > ./test_algo2_testdata.ts
-
-npx ts-node ../reduce.algo2/test_algo2.ts 2>&1 > "${TMP_PATH}/algo2_stdout.log"
-
-cp ./test_algo2_testdata.backup.ts ./test_algo2_testdata.ts
+npx ava ./test_algo2_tests.ts 2>&1 # > "${TMP_PATH}/algo2_stdout.log"
 
 # TODO:
 # if [ "$1" == "--update" ]; then

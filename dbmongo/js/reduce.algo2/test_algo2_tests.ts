@@ -6,16 +6,12 @@
 // regressions on the JS functions (common + algo2) used to compute the
 // "Features" collection from the "RawData" collection.
 //
-// It requires the JS functions from common + algo2 (notably: map()),
-// and a makeTestData() function to generate a realistic test data set.
-//
-// Please execute ../test/test_algo2.sh to fill these requirements and
-// run the tests.
+// Please execute ./test_algo2.sh to run this test suite.
 
-import test /*, { before }*/ from "ava"
+import test, { before, after } from "ava"
+import * as fs from "fs"
+import * as util from "util"
 import * as childProcess from "child_process"
-/*
-import { makeTestData } from "./test_algo2_testdata"
 import { naf } from "../test/data/naf"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { map } from "../reduce.algo2/map"
@@ -23,89 +19,128 @@ import { finalize } from "../reduce.algo2/finalize"
 import { reduce } from "../reduce.algo2/reduce"
 import { runMongoMap } from "../test/helpers/mongodb"
 
-const global = globalThis as any // eslint-disable-line @typescript-eslint/no-explicit-any
-
-const f = {
-  generatePeriodSerie,
-  map,
-  finalize,
-  reduce,
-}
-*/
-declare const console: any
-declare const process: any
-/*
-// Define global parameters that are required by JS functions
-const jsParams = global
-jsParams.actual_batch = "2002_1"
-jsParams.date_debut = new Date("2014-01-01")
-jsParams.date_fin = new Date("2016-01-01")
-jsParams.serie_periode = f.generatePeriodSerie(
-  jsParams.date_debut,
-  jsParams.date_fin
-)
-jsParams.includes = { all: true }
-jsParams.offset_effectif = 2
-jsParams.naf = naf
-
-// Generate a realistic test data set
-const testData = makeTestData({
-  ISODate: (date: string) => new Date(date.replace("+0000", "+00:00")), // make sure that timezone format complies with the spec
-  NumberInt: (int: number) => int,
-})
-
-const mapResult = runMongoMap(
-  f.map,
-  testData as any[] // TODO: as { _id: string; value: CompanyDataValuesWithFlags }[]
-) // -> [ { _id, value } ]
-
-// Print the output of the f.map() function
-console.log(JSON.stringify(mapResult, null, 2))
-
-const valuesPerKey: Record<string, unknown[]> = {}
-mapResult.forEach(({ _id, value }) => {
-  const idString = JSON.stringify(_id)
-  valuesPerKey[idString] = valuesPerKey[idString] || []
-  valuesPerKey[idString].push(value)
-})
-
-const finalizeResult = Object.keys(valuesPerKey).map((key) =>
-  f.finalize(JSON.parse(key), f.reduce(key, valuesPerKey[key]))
-)
-
-// Print the output of the f.finalize() function
-console.log(JSON.stringify(finalizeResult, null, 2))
-*/
 const serialOrSkip = process.env.CI ? "skip" : "serial"
 
+const exec = (command: string) =>
+  new Promise((resolve, reject) =>
+    childProcess.exec(
+      command,
+      (err: Error | null, stdout: string, stderr: string) =>
+        err ? reject(err) : resolve({ stdout, stderr })
+    )
+  )
+
 const context = (() => {
-  const goldenFileContent: Record<string, string> = {}
-  // const goldenPath = "./test_data_algo2"
+  const remotePath = "stockage:/home/centos/opensignauxfaibles_tests"
+  const goldenPath = "./test_data_algo2"
+  const outFile = `${goldenPath}/algo2_stdout.log`
+  // const goldenFileContent: Record<string, string> = {}
   // const promisedDownload: Promise<void> | null = null
 
-  const getGoldenFile = async (filename: string) => {
-    if (goldenFileContent[filename]) return goldenFileContent[filename]
+  const getGoldenFile = async (filename: string): Promise<string> => {
     /*
+    if (goldenFileContent[filename]) return goldenFileContent[filename]
     if (!promisedDownload) {
       promisedDownload = null
     }
     await promiseToDownload
     */
-    return new Promise((resolve, reject) =>
-      childProcess.exec(
-        "ls",
-        (err: Error | null, stdout: string, stderr: string) =>
-          err ? reject(err) : resolve({ stdout, stderr })
-      )
-    )
+    return util.promisify(fs.readFile)(`${goldenPath}/${filename}`, "utf8")
   }
 
+  const print = async (content: string) =>
+    util.promisify(fs.appendFile)(outFile, content + "\n")
+
   return {
+    setup: async () => {
+      await exec(`mkdir ${goldenPath} | true`)
+      const command = `scp ${remotePath}/* ${goldenPath}`
+      console.warn(`$ ${command}`)
+      const res = (await exec(command)) as { stderr: string }
+      if (res.stderr) console.error(res.stderr)
+      // prepare the outFile
+      util.promisify(fs.writeFile)(outFile, "")
+    },
+    tearDown: () => exec(`rm -r ${goldenPath}`),
     getGoldenFile,
+    print,
   }
 })()
 
-test[serialOrSkip]("dummy test with private data", async (t) => {
-  console.log(await context.getGoldenFile("test"))
-  t.pass()
+const loadTestData = async (filename: string) => {
+  const content = await context.getGoldenFile(filename)
+  return JSON.parse(
+    content
+      .replace(/ISODate\("([^"]+)"\)/g, '{ "_ISODate": "$1" }') // TODO: use a reviver to generate a Date object
+      .replace(/NumberInt\(([^)]+)\)/g, "$1"),
+    (_key, value: unknown) =>
+      value && typeof value === "object" && (value as any)._ISODate
+        ? new Date((value as any)._ISODate)
+        : value
+  )
+  // TODO: ISODate: (date: string) => new Date(date.replace("+0000", "+00:00")), // make sure that timezone format complies with the spec
+}
+
+before("préparation des golden files", async () => {
+  await context.setup()
 })
+
+after("libération des golden files", async () => {
+  // await context.tearDown() // TODO
+})
+
+test[serialOrSkip](
+  "l'application de reduce.algo2 sur reduce_test_data.json donne le même résultat que d'habitude",
+  async (t) => {
+    const testData = await loadTestData("reduce_test_data.json")
+    // console.log(util.inspect(testData, { depth: Infinity, colors: true }))
+
+    const global = globalThis as any // eslint-disable-line @typescript-eslint/no-explicit-any
+
+    const f = {
+      generatePeriodSerie,
+      map,
+      finalize,
+      reduce,
+    }
+
+    // Define global parameters that are required by JS functions
+    const jsParams = global
+    jsParams.actual_batch = "2002_1"
+    jsParams.date_debut = new Date("2014-01-01")
+    jsParams.date_fin = new Date("2016-01-01")
+    jsParams.serie_periode = f.generatePeriodSerie(
+      jsParams.date_debut,
+      jsParams.date_fin
+    )
+    jsParams.includes = { all: true }
+    jsParams.offset_effectif = 2
+    jsParams.naf = naf
+
+    const mapResult = runMongoMap(
+      f.map,
+      testData as any[] // TODO: as { _id: string; value: CompanyDataValuesWithFlags }[]
+    ) // -> [ { _id, value } ]
+
+    // Print the output of the f.map() function
+    await context.print(JSON.stringify(mapResult, null, 2))
+
+    const valuesPerKey: Record<string, unknown[]> = {}
+    mapResult.forEach(({ _id, value }) => {
+      const idString = JSON.stringify(_id)
+      valuesPerKey[idString] = valuesPerKey[idString] || []
+      valuesPerKey[idString].push(value)
+    })
+
+    const finalizeResult = Object.keys(valuesPerKey).map((key) =>
+      f.finalize(JSON.parse(key), f.reduce(key, valuesPerKey[key]))
+    )
+
+    // Print the output of the f.finalize() function
+    await context.print(JSON.stringify(finalizeResult, null, 2))
+
+    // await new Promise((resolve) => setTimeout(resolve, 2000))
+
+    t.pass()
+  }
+)
