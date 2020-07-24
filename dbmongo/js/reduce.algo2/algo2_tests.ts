@@ -8,11 +8,11 @@ import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { objects as testCases } from "../test/data/objects"
 import { naf as nafValues } from "../test/data/naf"
 import { reducer, invertedReducer } from "../test/helpers/reducers"
+import { runMongoMap } from "../test/helpers/mongodb"
 
 const DAY_IN_MS = 24 * 60 * 60 * 1000
 
 // Paramètres globaux utilisés par "reduce.algo2"
-declare let emit: unknown // called by map()
 declare let naf: NAF
 declare let actual_batch: BatchKey
 declare let date_debut: Date
@@ -20,16 +20,6 @@ declare let date_fin: Date
 declare let serie_periode: Date[]
 declare let offset_effectif: number
 declare let includes: Record<"all", boolean>
-
-// preparation de l'environnement d'exécution de map()
-function setupMapCollector() {
-  const pool: Record<any, any> = {}
-  emit = (key: any, value: any) => {
-    const id = key.siren + key.batch + key.periode.getTime()
-    pool[id] = (pool[id] || []).concat([{ key, value }])
-  }
-  return pool
-}
 
 // initialisation des paramètres globaux de reduce.algo2
 function initGlobalParams(
@@ -49,14 +39,28 @@ test("l'ordre de traitement des données n'influe pas sur les résultats", (t: E
   testCases.forEach(({ _id, value }) => {
     initGlobalParams()
 
+    /*
     const pool = setupMapCollector()
     map.call({ _id, value }) // will populate pool
+    */
 
-    const intermediateResult = objectValues(pool).map((array) =>
-      reducer(array, reduce)
-    )
+    const flatValues = runMongoMap(map, [{ _id, value }])
 
-    const invertedIntermediateResult = objectValues(pool).map((array) =>
+    type MapResultingValue = unknown
+
+    const groupedValues = flatValues.reduce((acc, { _id, value }) => {
+      const id = _id as { siren: string; batch: string; periode: Date }
+      const key = id.siren + id.batch + id.periode.getTime()
+      acc[key] = acc[key] || []
+      acc[key].push({ key: _id, value: value as MapResultingValue })
+      return acc
+    }, {} as Record<string, { key: unknown; value: MapResultingValue }[]>)
+
+    const values = objectValues(groupedValues) // map()'s resulting values, grouped by key, without the keys
+
+    const intermediateResult = values.map((array) => reducer(array, reduce))
+
+    const invertedIntermediateResult = values.map((array) =>
       invertedReducer(array, reduce)
     )
 
@@ -152,10 +156,23 @@ test("delai_deviation_remboursement est calculé à partir d'un débit et d'une 
     },
   }
 
-  const pool = setupMapCollector()
-  map.call(input) // will populate pool
+  type MapResultingValue = Record<
+    SiretOrSiren,
+    { delai_deviation_remboursement: number }
+  >
 
-  const values = objectValues(pool)
+  const flatValues = runMongoMap(map, [input])
+
+  const groupedValues = flatValues.reduce((acc, { _id, value }) => {
+    const id = _id as { siren: string; batch: string; periode: Date }
+    const key = id.siren + id.batch + id.periode.getTime()
+    acc[key] = acc[key] || []
+    acc[key].push({ key: _id, value: value as MapResultingValue })
+    return acc
+  }, {} as Record<string, { key: unknown; value: MapResultingValue }[]>)
+
+  const values = objectValues(groupedValues) // map()'s resulting values, grouped by key, without the keys
+
   t.is(values.length, 1)
   t.is(values[0].length, 1)
   t.deepEqual(Object.keys(values[0][0].value), [siret])
