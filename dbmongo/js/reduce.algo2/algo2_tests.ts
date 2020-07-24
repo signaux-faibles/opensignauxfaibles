@@ -7,7 +7,7 @@ import { finalize } from "./finalize"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { objects as testCases } from "../test/data/objects"
 import { naf as nafValues } from "../test/data/naf"
-import { reducer, invertedReducer } from "../test/helpers/reducers"
+import { reducer, invertedReducer } from "../test/helpers/reducers" // TODO: move these functions to this file
 import { runMongoMap } from "../test/helpers/mongodb"
 
 const DAY_IN_MS = 24 * 60 * 60 * 1000
@@ -63,7 +63,7 @@ test("l'ordre de traitement des données n'influe pas sur les résultats", (t: E
       finalize(null as any, r)
     )
 
-    t.deepEqual(sortObject(result), sortObject(invertedResult))
+    t.deepEqual(result, invertedResult)
   })
 })
 
@@ -71,39 +71,6 @@ test("l'ordre de traitement des données n'influe pas sur les résultats", (t: E
 
 const objectValues = <T>(obj: Record<string, T>): T[] =>
   Object.keys(obj).map((key) => obj[key])
-
-// from https://gist.github.com/ninapavlich/1697bcc107052f5b884a794d307845fe
-function sortObject(object: any): any {
-  if (!object) {
-    return object
-  }
-
-  const isArray = object instanceof Array
-  let sortedObj: Record<string, unknown> = {}
-  if (isArray) {
-    sortedObj = object.map((item: any) => sortObject(item))
-  } else {
-    const keys = Object.keys(object)
-    // console.log(keys);
-    keys.sort(function (key1, key2) {
-      ;(key1 = key1.toLowerCase()), (key2 = key2.toLowerCase())
-      if (key1 < key2) return -1
-      if (key1 > key2) return 1
-      return 0
-    })
-
-    for (const index in keys) {
-      const key = keys[index]
-      if (typeof object[key] === "object") {
-        sortedObj[key] = sortObject(object[key])
-      } else {
-        sortedObj[key] = object[key]
-      }
-    }
-  }
-
-  return sortedObj
-}
 
 test("delai_deviation_remboursement est calculé à partir d'un débit et d'une demande de délai de règlement de cotisations sociales", (t: ExecutionContext) => {
   const dateDebut = new Date("2018-01-01")
