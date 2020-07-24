@@ -1,6 +1,6 @@
-declare let emit: (_id: unknown, value: unknown) => void
-
 const global = globalThis as any // eslint-disable-line @typescript-eslint/no-explicit-any
+
+;(Object as any).bsonsize = (obj: unknown): number => JSON.stringify(obj).length // eslint-disable-line @typescript-eslint/no-explicit-any
 
 type Document = Record<string, unknown>
 type MapResult<K, V> = { _id: K; value: V }

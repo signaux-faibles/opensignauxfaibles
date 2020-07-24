@@ -41,8 +41,6 @@ global.f = {
 
 const ISODate = (date: string): Date => new Date(date)
 
-;(Object as any).bsonsize = (obj: unknown): number => JSON.stringify(obj).length // used by finalize()
-
 // test data inspired by test-api.sh
 const siret: SiretOrSiren = "01234567891011"
 const siren = siret.substr(0, 9)

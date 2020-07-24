@@ -41,7 +41,6 @@ jsParams.serie_periode = f.generatePeriodSerie(
 jsParams.includes = { all: true }
 jsParams.offset_effectif = 2
 jsParams.naf = naf
-;(Object as any).bsonsize = (obj: unknown) => JSON.stringify(obj).length
 
 // Generate a realistic test data set
 const testData = makeTestData({
