@@ -1,5 +1,7 @@
 "use strict"
 
+// Combinaison des tests de map_test.js et finalize.js.
+
 // Context: this golden-file-based test runner was designed to prevent
 // regressions on the JS functions (common + algo2) used to compute the
 // "Features" collection from the "RawData" collection.

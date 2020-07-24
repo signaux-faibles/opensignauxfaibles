@@ -1,5 +1,7 @@
 "use strict"
 
+// TODO: Convert to TypeScript / AVA => get rid of test/**/*.js|sh files and jsc
+
 const jsParams = this // => all properties of this object will become global.
 jsParams.actual_batch = "1905"
 jsParams.date_debut = new Date("2014-01-01")
