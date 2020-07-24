@@ -8,7 +8,7 @@ import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { objects as testCases } from "../test/data/objects"
 import { naf as nafValues } from "../test/data/naf"
 import { reducer, invertedReducer } from "../test/helpers/reducers" // TODO: move these functions to this file
-import { runMongoMap } from "../test/helpers/mongodb"
+import { runMongoMap, indexMapResultsByKey } from "../test/helpers/mongodb"
 
 const DAY_IN_MS = 24 * 60 * 60 * 1000
 
@@ -20,14 +20,6 @@ declare let date_fin: Date
 declare let serie_periode: Date[]
 declare let offset_effectif: number
 declare let includes: Record<"all", boolean>
-
-const indexMapResultsByKey = <K, V>(flatValues: { _id: K; value: V }[]) =>
-  flatValues.reduce((acc, { _id, value }) => {
-    const key = JSON.stringify(_id) // as { siren: string; batch: string; periode: Date }
-    acc[key] = acc[key] || []
-    acc[key].push({ key: _id, value: value })
-    return acc
-  }, {} as Record<string, { key: K; value: V }[]>)
 
 // initialisation des paramètres globaux de reduce.algo2
 function initGlobalParams(
