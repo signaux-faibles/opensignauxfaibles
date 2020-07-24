@@ -1,6 +1,6 @@
 import "../globals"
 import { flatten } from "./flatten"
-import { outputs } from "./outputs"
+import { outputs, DonnéesAgrégées } from "./outputs"
 import { apart } from "./apart"
 import { compte } from "./compte"
 import { effectifs } from "./effectifs"
@@ -23,6 +23,35 @@ import { detteFiscale } from "./detteFiscale"
 import { fraisFinancier } from "./fraisFinancier"
 import { entr_bdf, SortieBdf } from "./entr_bdf"
 import { omit } from "../common/omit"
+
+type Siret = string
+
+type SortieMapEntreprise = {
+  periode: Date
+} & Partial<SortieSireneEntreprise> &
+  Partial<EntréeBdf> &
+  Partial<EntréeDiane> &
+  Partial<EntréeBdf> &
+  Partial<SortieBdf> &
+  Record<string, unknown> // for *_past_* props of diane. // TODO: try to be more specific
+
+type CompanyDataKey = unknown /*{
+  batch: BatchKey
+  siren: SiretOrSiren
+  periode: Date
+  type: "apart" | "other"
+}*/
+
+type EtablissementData = Partial<DonnéesAgrégées> //{ siret?: SiretOrSiren }
+
+type SortieMap =
+  | { entreprise: SortieMapEntreprise }
+  | Record<Siret, EtablissementData>
+
+declare function emit(
+  key: CompanyDataKey,
+  value: SortieMap //CompanyDataValuesWithFlags & { siret: SiretOrSiren }
+): void
 
 // Paramètres globaux utilisés par "reduce.algo2"
 declare const naf: NAF
@@ -71,7 +100,7 @@ export function map(this: {
       if (v.apconso && v.apdemande) {
         const output_apart = f.apart(v.apconso, v.apdemande)
         Object.keys(output_apart).forEach((periode) => {
-          const data: Record<SiretOrSiren, { siret?: SiretOrSiren }> = {}
+          const data: SortieMap = {}
           data[this._id] = {
             ...output_apart[periode],
             siret: this._id,
@@ -153,7 +182,7 @@ export function map(this: {
       const output_cible = f.cibleApprentissage(output_indexed, 18)
       f.add(output_cible, output_indexed)
       output_array.forEach((val) => {
-        const data: Record<SiretOrSiren, typeof val> = {}
+        const data: SortieMap = {}
         data[this._id] = val
         emit(
           {
@@ -170,15 +199,6 @@ export function map(this: {
 
   if (v.scope === "entreprise") {
     if (includes["all"]) {
-      type SortieMapEntreprise = {
-        periode: Date
-      } & Partial<SortieSireneEntreprise> &
-        Partial<EntréeBdf> &
-        Partial<EntréeDiane> &
-        Partial<EntréeBdf> &
-        Partial<SortieBdf> &
-        Record<string, unknown> // for *_past_* props of diane. // TODO: try to be more specific
-
       const output_indexed: Record<Periode, SortieMapEntreprise> = {}
 
       for (const periode of serie_periode) {

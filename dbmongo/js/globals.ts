@@ -1,7 +1,3 @@
-// Déclaration des fonctions globales fournies par MongoDB
-
-declare function emit(key: unknown, value: unknown): void // TODO: declare only where it's called
-
 // Types partagés
 
 type ParPériode<T> = { [période: string]: T }
