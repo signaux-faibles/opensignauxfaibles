@@ -35,6 +35,11 @@ function initGlobalParams(
   includes = { all: true }
 }
 
+const objectValues = <T>(obj: Record<string, T>): T[] =>
+  Object.keys(obj).map((key) => obj[key])
+
+// Tests
+
 test("l'ordre de traitement des données n'influe pas sur les résultats", (t: ExecutionContext) => {
   testCases.forEach(({ _id, value }) => {
     initGlobalParams()
@@ -58,11 +63,6 @@ test("l'ordre de traitement des données n'influe pas sur les résultats", (t: E
     t.deepEqual(result, invertedResult)
   })
 })
-
-// Helpers
-
-const objectValues = <T>(obj: Record<string, T>): T[] =>
-  Object.keys(obj).map((key) => obj[key])
 
 test("delai_deviation_remboursement est calculé à partir d'un débit et d'une demande de délai de règlement de cotisations sociales", (t: ExecutionContext) => {
   const dateDebut = new Date("2018-01-01")
