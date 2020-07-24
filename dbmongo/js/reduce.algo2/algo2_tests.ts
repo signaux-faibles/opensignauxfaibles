@@ -21,12 +21,9 @@ declare let serie_periode: Date[]
 declare let offset_effectif: number
 declare let includes: Record<"all", boolean>
 
-const indexMapResultsByKey = <K extends unknown, V>(
-  flatValues: { _id: K; value: V }[]
-) =>
+const indexMapResultsByKey = <K, V>(flatValues: { _id: K; value: V }[]) =>
   flatValues.reduce((acc, { _id, value }) => {
-    const id = _id as { siren: string; batch: string; periode: Date }
-    const key = id.siren + id.batch + id.periode.getTime()
+    const key = JSON.stringify(_id) // as { siren: string; batch: string; periode: Date }
     acc[key] = acc[key] || []
     acc[key].push({ key: _id, value: value })
     return acc
@@ -51,10 +48,8 @@ test("l'ordre de traitement des données n'influe pas sur les résultats", (t: E
     initGlobalParams()
 
     const flatValues = runMongoMap(map, [{ _id, value }])
-
     const groupedValues = indexMapResultsByKey(flatValues)
-
-    const values = objectValues(groupedValues) // map()'s resulting values, grouped by key, without the keys
+    const values = objectValues(groupedValues)
 
     const intermediateResult = values.map((array) => reducer(array, reduce))
 
@@ -154,19 +149,14 @@ test("delai_deviation_remboursement est calculé à partir d'un débit et d'une 
     },
   }
 
-  type MapResultingValue = Record<
-    SiretOrSiren,
-    { delai_deviation_remboursement: number }
-  >
-
   const flatValues = runMongoMap(map, [input]) as {
     _id: unknown
-    value: MapResultingValue
+    value: Record<SiretOrSiren, { delai_deviation_remboursement: number }>
   }[]
 
   const groupedValues = indexMapResultsByKey(flatValues)
 
-  const values = objectValues(groupedValues) // map()'s resulting values, grouped by key, without the keys
+  const values = objectValues(groupedValues)
 
   t.is(values.length, 1)
   t.is(values[0].length, 1)
