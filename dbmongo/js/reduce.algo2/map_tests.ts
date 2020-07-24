@@ -45,7 +45,7 @@ const f = { generatePeriodSerie, map }
 
 test("map() retourne les même données que d'habitude", (t) => {
   initGlobalParams(DATE_DEBUT, DATE_FIN)
-  const results: Record<string, unknown[]> = {}
+  const results: Record<string, { key: unknown; value: unknown }[]> = {}
   runMongoMap(f.map, testData).forEach(({ _id, value }) => {
     const id = JSON.stringify(_id) //key.siren + key.batch + key.periode.getTime()
     results[id] = (results[id] || []).concat([{ key: _id, value }])
