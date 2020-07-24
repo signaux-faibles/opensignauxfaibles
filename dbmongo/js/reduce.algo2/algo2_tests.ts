@@ -21,6 +21,17 @@ declare let serie_periode: Date[]
 declare let offset_effectif: number
 declare let includes: Record<"all", boolean>
 
+const indexMapResultsByKey = <K extends unknown, V>(
+  flatValues: { _id: K; value: V }[]
+) =>
+  flatValues.reduce((acc, { _id, value }) => {
+    const id = _id as { siren: string; batch: string; periode: Date }
+    const key = id.siren + id.batch + id.periode.getTime()
+    acc[key] = acc[key] || []
+    acc[key].push({ key: _id, value: value })
+    return acc
+  }, {} as Record<string, { key: K; value: V }[]>)
+
 // initialisation des paramètres globaux de reduce.algo2
 function initGlobalParams(
   dateDebut = new Date("2014-01-01"),
@@ -39,22 +50,9 @@ test("l'ordre de traitement des données n'influe pas sur les résultats", (t: E
   testCases.forEach(({ _id, value }) => {
     initGlobalParams()
 
-    /*
-    const pool = setupMapCollector()
-    map.call({ _id, value }) // will populate pool
-    */
-
     const flatValues = runMongoMap(map, [{ _id, value }])
 
-    type MapResultingValue = unknown
-
-    const groupedValues = flatValues.reduce((acc, { _id, value }) => {
-      const id = _id as { siren: string; batch: string; periode: Date }
-      const key = id.siren + id.batch + id.periode.getTime()
-      acc[key] = acc[key] || []
-      acc[key].push({ key: _id, value: value as MapResultingValue })
-      return acc
-    }, {} as Record<string, { key: unknown; value: MapResultingValue }[]>)
+    const groupedValues = indexMapResultsByKey(flatValues)
 
     const values = objectValues(groupedValues) // map()'s resulting values, grouped by key, without the keys
 
@@ -161,15 +159,12 @@ test("delai_deviation_remboursement est calculé à partir d'un débit et d'une 
     { delai_deviation_remboursement: number }
   >
 
-  const flatValues = runMongoMap(map, [input])
+  const flatValues = runMongoMap(map, [input]) as {
+    _id: unknown
+    value: MapResultingValue
+  }[]
 
-  const groupedValues = flatValues.reduce((acc, { _id, value }) => {
-    const id = _id as { siren: string; batch: string; periode: Date }
-    const key = id.siren + id.batch + id.periode.getTime()
-    acc[key] = acc[key] || []
-    acc[key].push({ key: _id, value: value as MapResultingValue })
-    return acc
-  }, {} as Record<string, { key: unknown; value: MapResultingValue }[]>)
+  const groupedValues = indexMapResultsByKey(flatValues)
 
   const values = objectValues(groupedValues) // map()'s resulting values, grouped by key, without the keys
 
