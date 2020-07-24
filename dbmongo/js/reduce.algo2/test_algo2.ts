@@ -51,7 +51,7 @@ const testData = makeTestData({
 
 const mapResult = runMongoMap(
   f.map,
-  testData as { _id: string; value: CompanyDataValues }[]
+  testData as any[] // TODO: as { _id: string; value: CompanyDataValuesWithFlags }[]
 ) // -> [ { _id, value } ]
 
 // Print the output of the f.map() function
