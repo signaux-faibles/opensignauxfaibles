@@ -18,12 +18,9 @@ import { finalize } from "../reduce.algo2/finalize"
 import { reduce } from "../reduce.algo2/reduce"
 import { runMongoMap } from "../test/helpers/mongodb"
 
+const global = globalThis as any // eslint-disable-line @typescript-eslint/no-explicit-any
+
 const f = {
-  /*
-  ...require("../common/generatePeriodSerie.ts"),
-  ...require("../reduce.algo2/map.ts"),
-  ...require("../reduce.algo2/finalize.ts"),
-  */
   generatePeriodSerie,
   map,
   finalize,
@@ -33,7 +30,7 @@ const f = {
 declare const console: any
 
 // Define global parameters that are required by JS functions
-const jsParams = globalThis as any // => all properties of this object will become global. TODO: remove this when merging namespace (https://github.com/signaux-faibles/opensignauxfaibles/pull/40)
+const jsParams = global
 jsParams.actual_batch = "2002_1"
 jsParams.date_debut = new Date("2014-01-01")
 jsParams.date_fin = new Date("2016-01-01")
@@ -44,8 +41,6 @@ jsParams.serie_periode = f.generatePeriodSerie(
 jsParams.includes = { all: true }
 jsParams.offset_effectif = 2
 jsParams.naf = naf
-
-declare let emit: (key: unknown, value: unknown) => void
 ;(Object as any).bsonsize = (obj: unknown) => JSON.stringify(obj).length
 
 // Generate a realistic test data set

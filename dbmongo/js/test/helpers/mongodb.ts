@@ -1,3 +1,5 @@
+declare let emit: (_id: unknown, value: unknown) => void
+
 const global = globalThis as any // eslint-disable-line @typescript-eslint/no-explicit-any
 
 type DocumentId = unknown // can be an ObjectID, or other
