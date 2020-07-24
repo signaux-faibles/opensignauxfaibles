@@ -35,21 +35,21 @@ type SortieMapEntreprise = {
   Partial<SortieBdf> &
   Record<string, unknown> // for *_past_* props of diane. // TODO: try to be more specific
 
-type CompanyDataKey = unknown /*{
+type SortieMapEtablissement = Partial<DonnéesAgrégées>
+
+type SortieMap =
+  | { entreprise: SortieMapEntreprise }
+  | Record<Siret, SortieMapEtablissement>
+
+type CléSortieMap = {
   batch: BatchKey
   siren: SiretOrSiren
   periode: Date
   type: "apart" | "other"
-}*/
-
-type EtablissementData = Partial<DonnéesAgrégées> //{ siret?: SiretOrSiren }
-
-type SortieMap =
-  | { entreprise: SortieMapEntreprise }
-  | Record<Siret, EtablissementData>
+}
 
 declare function emit(
-  key: CompanyDataKey,
+  key: CléSortieMap,
   value: SortieMap //CompanyDataValuesWithFlags & { siret: SiretOrSiren }
 ): void
 
