@@ -21,6 +21,7 @@ import { cibleApprentissage } from "./cibleApprentissage"
 import { lookAhead } from "./lookAhead"
 import { reduce } from "./reduce"
 import { finalize, V } from "./finalize"
+import { runMongoMap } from "../test/helpers/mongodb"
 
 const global = globalThis as any // eslint-disable-line @typescript-eslint/no-explicit-any
 global.f = {
@@ -41,15 +42,6 @@ global.f = {
 const ISODate = (date: string): Date => new Date(date)
 
 ;(Object as any).bsonsize = (obj: unknown): number => JSON.stringify(obj).length // used by finalize()
-
-const runMongoMap = (mapFct: () => void, keyVal: unknown): unknown => {
-  const results: { _id: unknown; value: unknown }[] = []
-  globalThis.emit = (key: unknown, value: unknown): void => {
-    results.push({ _id: key, value })
-  }
-  mapFct.call(keyVal)
-  return results
-}
 
 // test data inspired by test-api.sh
 const siret: SiretOrSiren = "01234567891011"

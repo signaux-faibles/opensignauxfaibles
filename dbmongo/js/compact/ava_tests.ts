@@ -77,7 +77,10 @@ const expectedFinalizeResultValue = {
 test.serial(
   `compact.map() groupe les données par siret`,
   (t: ExecutionContext) => {
-    const mapResults = runMongoMap(map, importedData)
+    const mapResults: Record<string, unknown> = {}
+    runMongoMap(map, {
+      value: { ...importedData.value } as CompanyDataValuesWithFlags,
+    }).map(({ _id, value }) => (mapResults[_id as string] = value))
     t.deepEqual(mapResults, expectedMapResults)
   }
 )

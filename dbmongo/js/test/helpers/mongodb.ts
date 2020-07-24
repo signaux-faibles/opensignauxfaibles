@@ -1,13 +1,17 @@
 const global = globalThis as any // eslint-disable-line @typescript-eslint/no-explicit-any
 
-export const runMongoMap = (
-  mapFct: () => void,
-  keyVal: unknown
-): Record<string, unknown> => {
-  const results: Record<string, unknown> = {}
-  global.emit = (key: string, value: CompanyDataValuesWithFlags): void => {
-    results[key] = value
+type DocumentId = unknown // can be an ObjectID, or other
+type Document = Record<string, unknown>
+type MapResult = { _id: DocumentId; value: Document }
+
+export const runMongoMap = <Doc extends Document>(
+  mapFct: (this: Doc) => void, // will call global emit()
+  document: Doc
+): MapResult[] => {
+  const results: MapResult[] = []
+  global.emit = (_id: DocumentId, value: Document): void => {
+    results.push({ _id, value })
   }
-  mapFct.call(keyVal)
+  mapFct.call(document)
   return results
 }
