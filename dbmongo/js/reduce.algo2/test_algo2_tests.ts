@@ -12,8 +12,8 @@
 // Please execute ../test/test_algo2.sh to fill these requirements and
 // run the tests.
 
-import test from "ava"
-// import childProcess from "child_process"
+import test /*, { before }*/ from "ava"
+import * as childProcess from "child_process"
 /*
 import { makeTestData } from "./test_algo2_testdata"
 import { naf } from "../test/data/naf"
@@ -78,4 +78,34 @@ console.log(JSON.stringify(finalizeResult, null, 2))
 */
 const serialOrSkip = process.env.CI ? "skip" : "serial"
 
-test[serialOrSkip]("dummy test with private data", (t) => t.pass())
+const context = (() => {
+  const goldenFileContent: Record<string, string> = {}
+  // const goldenPath = "./test_data_algo2"
+  // const promisedDownload: Promise<void> | null = null
+
+  const getGoldenFile = async (filename: string) => {
+    if (goldenFileContent[filename]) return goldenFileContent[filename]
+    /*
+    if (!promisedDownload) {
+      promisedDownload = null
+    }
+    await promiseToDownload
+    */
+    return new Promise((resolve, reject) =>
+      childProcess.exec(
+        "ls",
+        (err: Error | null, stdout: string, stderr: string) =>
+          err ? reject(err) : resolve({ stdout, stderr })
+      )
+    )
+  }
+
+  return {
+    getGoldenFile,
+  }
+})()
+
+test[serialOrSkip]("dummy test with private data", async (t) => {
+  console.log(await context.getGoldenFile("test"))
+  t.pass()
+})
