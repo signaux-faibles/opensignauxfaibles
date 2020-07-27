@@ -21,9 +21,12 @@ export function cotisation(
 ): ParPériode<SortieCotisation> {
   "use strict"
 
+  const sortieCotisation: ParPériode<SortieCotisation> = {}
+
   const f = { generatePeriodSerie, dateAddMonth } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
 
-  const sortieCotisation: ParPériode<SortieCotisation> = {}
+  const moyenne = (valeurs: number[] = []): number =>
+    valeurs.reduce((p, c) => p + c, 0) / (valeurs.length || 1)
 
   // calcul de cotisation_moyenne sur 12 mois
   const futureArrays: ParPériode<{
@@ -36,6 +39,7 @@ export function cotisation(
     const input = output_indexed[periode]
     const periode_courante = output_indexed[periode].periode
 
+    // Accumulation de cotisations sur les 12 mois à venir, pour calcul des moyennes
     const periode_12_mois = f.dateAddMonth(periode_courante, 12)
     const series = f.generatePeriodSerie(periode_courante, periode_12_mois)
     series.forEach((periodeFuture) => {
@@ -55,13 +59,11 @@ export function cotisation(
         outputInFuture.montant_po_array.push(input.montant_part_ouvriere)
     })
 
+    // Calcul des cotisations moyennes à partir des valeurs accumulées ci-dessus
     const arraysInPeriod = futureArrays[periode]
     const outputInPeriod = (sortieCotisation[periode] =
       sortieCotisation[periode] || {})
-    arraysInPeriod.cotisation_array = arraysInPeriod.cotisation_array || []
-    outputInPeriod.cotisation_moy12m =
-      arraysInPeriod.cotisation_array.reduce((p, c) => p + c, 0) /
-      (arraysInPeriod.cotisation_array.length || 1)
+    outputInPeriod.cotisation_moy12m = moyenne(arraysInPeriod.cotisation_array)
     if (
       outputInPeriod.cotisation_moy12m > 0 &&
       input.montant_part_ouvriere !== undefined &&
@@ -70,12 +72,8 @@ export function cotisation(
       outputInPeriod.ratio_dette =
         (input.montant_part_ouvriere + input.montant_part_patronale) /
         outputInPeriod.cotisation_moy12m
-      const pp_average =
-        (arraysInPeriod.montant_pp_array || []).reduce((p, c) => p + c, 0) /
-        (arraysInPeriod.montant_pp_array?.length || 1)
-      const po_average =
-        (arraysInPeriod.montant_po_array || []).reduce((p, c) => p + c, 0) /
-        (arraysInPeriod.montant_po_array?.length || 1)
+      const pp_average = moyenne(arraysInPeriod.montant_pp_array)
+      const po_average = moyenne(arraysInPeriod.montant_po_array)
       outputInPeriod.ratio_dette_moy12m =
         (po_average + pp_average) / outputInPeriod.cotisation_moy12m
     }
