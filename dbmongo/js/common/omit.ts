@@ -3,9 +3,9 @@ export function omit<Source, Exclusions extends Array<keyof Source>>(
   object: Source,
   ...propNames: Exclusions
 ): Omit<Source, Exclusions[number]> {
-  const result: Omit<Source, Exclusions[number]> = Object.assign({}, object)
+  const result = Object.assign({}, object)
   for (const prop of propNames) {
-    delete (result as any)[prop]
+    delete result[prop]
   }
-  return result
+  return result as Omit<Source, Exclusions[number]>
 }
