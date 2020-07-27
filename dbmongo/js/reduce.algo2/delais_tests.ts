@@ -1,4 +1,4 @@
-import test, { ExecutionContext } from "ava" // TODO: résoudre erreur dans ide
+import test, { ExecutionContext } from "ava"
 import { nbDays } from "./nbDays"
 import "../globals"
 import { delais, DelaiComputedValues, DebitComputedValues } from "./delais"
