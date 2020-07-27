@@ -1,6 +1,8 @@
 {
   "extends": "./tsconfig.json",
-  "types": ["!node"], // les définitions de type de node ne sont pas nécéssaires pour les fichiers à transpiler
+  "compilerOptions": {
+    "types": [] // les définitions de type de node ne sont pas nécéssaires pour les fichiers à transpiler
+  },
   "exclude": [
     "node_modules",
     "*/*_tests.ts",
