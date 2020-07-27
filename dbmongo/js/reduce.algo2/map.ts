@@ -48,10 +48,7 @@ type CléSortieMap = {
   type: "apart" | "other"
 }
 
-declare function emit(
-  key: CléSortieMap,
-  value: SortieMap //CompanyDataValuesWithFlags & { siret: SiretOrSiren }
-): void
+declare function emit(key: CléSortieMap, value: SortieMap): void
 
 // Paramètres globaux utilisés par "reduce.algo2"
 declare const naf: NAF
