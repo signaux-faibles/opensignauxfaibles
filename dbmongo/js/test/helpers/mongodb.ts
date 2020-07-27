@@ -28,7 +28,7 @@ export const indexMapResultsByKey = <K, V>(
   mapResults: MapResult<K, V>[]
 ): Indexed<K, V> =>
   mapResults.reduce((acc, { _id, value }) => {
-    const key = JSON.stringify(_id) // as { siren: string; batch: string; periode: Date }
+    const key = JSON.stringify(_id) // e.g. _id: { siren; batch; periode }
     acc[key] = acc[key] || []
     acc[key].push({ key: _id, value })
     return acc
