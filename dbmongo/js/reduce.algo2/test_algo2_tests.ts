@@ -71,7 +71,7 @@ const loadTestData = async (filename: string) => {
   const content = await context.getGoldenFile(filename)
   return JSON.parse(
     content
-      .replace(/ISODate\("([^"]+)"\)/g, '{ "_ISODate": "$1" }') // TODO: use a reviver to generate a Date object
+      .replace(/ISODate\("([^"]+)"\)/g, `{ "_ISODate": "$1" }`)
       .replace(/NumberInt\(([^)]+)\)/g, "$1"),
     (_key, value: unknown) =>
       value && typeof value === "object" && (value as any)._ISODate
