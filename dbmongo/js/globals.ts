@@ -229,7 +229,7 @@ type Departement = string
 type EntréeSirene = {
   ape: CodeAPE
   lattitude: number // TODO: une fois que les données auront été migrées, corriger l'orthographe de cette propriété (--> latitude)
-  longitude: unknown
+  longitude: number
   departement: Departement
   raison_sociale: string
   date_creation: Date
@@ -251,9 +251,9 @@ type EntréeBdf = {
   arrete_bilan_bdf: Date
   annee_bdf: number
   exercice_bdf: number
-  raison_sociale: unknown
+  raison_sociale: string
   secteur: unknown
-  siren: unknown
+  siren: SiretOrSiren
 } & RatiosBdf
 
 type RatiosBdf = {
