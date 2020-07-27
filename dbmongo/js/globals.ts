@@ -159,8 +159,8 @@ type EntréeApConso = {
 type EntréeApDemande = {
   id_demande: string
   periode: { start: Date; end: Date }
-  hta: unknown
-  motif_recours_se: unknown
+  hta: number /* Nombre total d'heures autorisées */
+  motif_recours_se: number /* Cause d'activité partielle */
 }
 
 type EntréeCompte = {
