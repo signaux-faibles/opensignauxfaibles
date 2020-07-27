@@ -52,12 +52,12 @@ const context = (() => {
     util.promisify(fs.appendFile)(outFile, content + "\n")
 
   return {
-    setup: async () => {
+    setup: async (t) => {
       await exec(`mkdir ${goldenPath} | true`)
       const command = `scp ${remotePath}/* ${goldenPath}`
-      console.warn(`$ ${command}`)
-      const res = (await exec(command)) as { stderr: string }
-      if (res.stderr) console.error(res.stderr)
+      console.warn(`$ ${command}`) // eslint-disable-line no-console
+      const { stderr } = (await exec(command)) as { stderr: string }
+      t.error(new Error(stderr))
       // prepare the outFile
       util.promisify(fs.writeFile)(outFile, "")
     },

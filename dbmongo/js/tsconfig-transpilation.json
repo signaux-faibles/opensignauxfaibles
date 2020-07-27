@@ -3,6 +3,8 @@
   "compilerOptions": {
     "types": [] // les définitions de type de node ne sont pas nécéssaires pour les fichiers à transpiler
   },
+  // autre moyen de définir plusieurs fichiers tsconfig.js:
+
   "exclude": [
     "node_modules",
     "*/*_tests.ts",
