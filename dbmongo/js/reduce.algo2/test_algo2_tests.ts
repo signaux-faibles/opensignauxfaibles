@@ -32,45 +32,27 @@ const exec = (command: string) =>
 
 const context = (() => {
   const remotePath = "stockage:/home/centos/opensignauxfaibles_tests"
-  const goldenPath = "./test_data_algo2"
-  const outFile = `${goldenPath}/algo2_stdout.log`
-  // const goldenFileContent: Record<string, string> = {}
-  // const promisedDownload: Promise<void> | null = null
+  const localPath = "./test_data_algo2"
 
-  const getGoldenFile = async (filename: string): Promise<string> => {
-    /*
-    if (goldenFileContent[filename]) return goldenFileContent[filename]
-    if (!promisedDownload) {
-      promisedDownload = null
-    }
-    await promiseToDownload
-    */
-    return util.promisify(fs.readFile)(`${goldenPath}/${filename}`, "utf8")
-  }
-
-  const print = async (content: string) =>
-    util.promisify(fs.appendFile)(outFile, content + "\n")
+  const readFile = async (filename: string): Promise<string> =>
+    util.promisify(fs.readFile)(`${localPath}/${filename}`, "utf8")
 
   return {
     setup: async () => {
-      await exec(`mkdir ${goldenPath} | true`)
-      const command = `scp ${remotePath}/* ${goldenPath}`
+      await exec(`mkdir ${localPath} | true`)
+      const command = `scp ${remotePath}/* ${localPath}`
       console.warn(`$ ${command}`) // eslint-disable-line no-console
       const { stderr } = (await exec(command)) as { stderr: string }
       if (stderr) throw new Error(stderr)
-      // prepare the outFile
-      util.promisify(fs.writeFile)(outFile, "")
     },
-    tearDown: () => exec(`rm -r ${goldenPath}`),
-    getGoldenFile,
-    print,
+    tearDown: () => exec(`rm -r ${localPath}`),
+    readFile,
   }
 })()
 
-const loadTestData = async (filename: string) => {
-  const content = await context.getGoldenFile(filename)
-  return JSON.parse(
-    content
+const loadTestData = async (filename: string) =>
+  JSON.parse(
+    (await context.readFile(filename))
       .replace(/ISODate\("([^"]+)"\)/g, `{ "_ISODate": "$1" }`)
       .replace(/NumberInt\(([^)]+)\)/g, "$1"),
     (_key, value: unknown) =>
@@ -78,15 +60,13 @@ const loadTestData = async (filename: string) => {
         ? new Date((value as any)._ISODate)
         : value
   )
-  // TODO: ISODate: (date: string) => new Date(date.replace("+0000", "+00:00")), // make sure that timezone format complies with the spec
-}
 
-before("préparation des golden files", async () => {
+before("récupération des données", async () => {
   await context.setup() // step will fail in case of error while downloading golden files
 })
 
-after("libération des golden files", async () => {
-  // await context.tearDown() // TODO
+after("suppression des données temporaires", async () => {
+  await context.tearDown()
 })
 
 test[serialOrSkip](
@@ -94,8 +74,6 @@ test[serialOrSkip](
   async (t) => {
     const testData = await loadTestData("reduce_test_data.json")
     // console.log(util.inspect(testData, { depth: Infinity, colors: true }))
-
-    const global = globalThis as any // eslint-disable-line @typescript-eslint/no-explicit-any
 
     const f = {
       generatePeriodSerie,
@@ -105,7 +83,7 @@ test[serialOrSkip](
     }
 
     // Define global parameters that are required by JS functions
-    const jsParams = global
+    const jsParams = globalThis as any // eslint-disable-line @typescript-eslint/no-explicit-any
     jsParams.actual_batch = "2002_1"
     jsParams.date_debut = new Date("2014-01-01")
     jsParams.date_fin = new Date("2016-01-01")
@@ -122,8 +100,9 @@ test[serialOrSkip](
       testData as any[] // TODO: as { _id: string; value: CompanyDataValuesWithFlags }[]
     ) // -> [ { _id, value } ]
 
-    // Print the output of the f.map() function
-    await context.print(JSON.stringify(mapResult, null, 2))
+    const mapOutput = JSON.stringify(mapResult, null, 2)
+    const mapExpected = await context.readFile("map_golden.log")
+    t.deepEqual(mapOutput, mapExpected.trim())
 
     const valuesPerKey: Record<string, unknown[]> = {}
     mapResult.forEach(({ _id, value }) => {
@@ -136,11 +115,8 @@ test[serialOrSkip](
       f.finalize(JSON.parse(key), f.reduce(key, valuesPerKey[key]))
     )
 
-    // Print the output of the f.finalize() function
-    await context.print(JSON.stringify(finalizeResult, null, 2))
-
-    // await new Promise((resolve) => setTimeout(resolve, 2000))
-
-    t.pass()
+    const finalizeOutput = JSON.stringify(finalizeResult, null, 2)
+    const finalizeExpected = await context.readFile("finalize_golden.log")
+    t.deepEqual(finalizeOutput, finalizeExpected.trim())
   }
 )
