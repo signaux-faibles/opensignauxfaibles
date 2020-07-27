@@ -1,6 +1,8 @@
-"use strict";
+"use strict"
 
-const jsParams = this; // => all properties of this object will become global. TODO: remove this when merging namespace (https://github.com/signaux-faibles/opensignauxfaibles/pull/40)
+// TODO: Convert to TypeScript / AVA => get rid of test/**/*.js|sh files and jsc
+
+const jsParams = this // => all properties of this object will become global.
 jsParams.actual_batch = "1905"
 jsParams.date_debut = new Date("2014-01-01")
 jsParams.date_fin = new Date("2018-02-01")

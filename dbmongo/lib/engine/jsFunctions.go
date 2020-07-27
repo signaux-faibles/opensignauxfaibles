@@ -1855,8 +1855,9 @@ function map() {
             if (v.apconso && v.apdemande) {
                 const output_apart = f.apart(v.apconso, v.apdemande);
                 Object.keys(output_apart).forEach((periode) => {
-                    const data = {};
-                    data[this._id] = Object.assign(Object.assign({}, output_apart[periode]), { siret: this._id });
+                    const data = {
+                        [this._id]: Object.assign(Object.assign({}, output_apart[periode]), { siret: this._id }),
+                    };
                     emit({
                         batch: actual_batch,
                         siren: this._id.substring(0, 9),
@@ -1911,8 +1912,9 @@ function map() {
             const output_cible = f.cibleApprentissage(output_indexed, 18);
             f.add(output_cible, output_indexed);
             output_array.forEach((val) => {
-                const data = {};
-                data[this._id] = val;
+                const data = {
+                    [this._id]: val,
+                };
                 emit({
                     batch: actual_batch,
                     siren: this._id.substring(0, 9),

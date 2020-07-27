@@ -14,13 +14,13 @@ import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { map } from "./map"
 import { objects as testData } from "../test/data/objects"
 import { naf as nafValues } from "../test/data/naf"
+import { runMongoMap, indexMapResultsByKey } from "../test/helpers/mongodb"
 
 // Constantes
 const DATE_DEBUT = new Date("2014-01-01")
 const DATE_FIN = new Date("2016-01-01")
 
 // Paramètres globaux utilisés par "reduce.algo2"
-declare let emit: unknown // called by map()
 declare let naf: NAF
 declare let actual_batch: BatchKey
 declare let date_debut: Date
@@ -28,16 +28,6 @@ declare let date_fin: Date
 declare let serie_periode: Date[]
 declare let offset_effectif: number
 declare let includes: Record<"all", boolean>
-
-// preparation de l'environnement d'exécution de map()
-function setupMapCollector() {
-  const pool: Record<any, any> = {}
-  emit = (key: any, value: any) => {
-    const id = JSON.stringify(key) //key.siren + key.batch + key.periode.getTime()
-    pool[id] = (pool[id] || []).concat([{ key, value }])
-  }
-  return pool
-}
 
 // initialisation des paramètres globaux de reduce.algo2
 function initGlobalParams(dateDebut: Date, dateFin: Date) {
@@ -54,12 +44,7 @@ function initGlobalParams(dateDebut: Date, dateFin: Date) {
 const f = { generatePeriodSerie, map }
 
 test("map() retourne les même données que d'habitude", (t) => {
-  const results = setupMapCollector()
-  testData.forEach(({ _id, value }) => {
-    initGlobalParams(DATE_DEBUT, DATE_FIN)
-    f.map.call({ _id, value }) // will append to results
-    t.log("results:", Object.keys(results))
-    return results
-  })
+  initGlobalParams(DATE_DEBUT, DATE_FIN)
+  const results = indexMapResultsByKey(runMongoMap(f.map, testData))
   t.snapshot(results)
 })
