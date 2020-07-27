@@ -1,10 +1,10 @@
 /*global globalThis*/
 
-// Combinaison des tests de map_test.js et finalize.js.
-
-// Context: this golden-file-based test runner was designed to prevent
-// regressions on the JS functions (common + algo2) used to compute the
-// "Features" collection from the "RawData" collection.
+// Combinaison des tests de map_test.js et finalize_test.js.
+//
+// Golden-file-based tests to prevent regressions on the JS functions
+// (common + algo2) used to compute the "Features" collection from the
+// "RawData" collection.
 //
 // Please execute ./test_algo2.sh to run this test suite.
 
@@ -19,34 +19,27 @@ import { finalize } from "../reduce.algo2/finalize"
 import { reduce } from "../reduce.algo2/reduce"
 import { runMongoMap } from "../test/helpers/mongodb"
 
+// En Intégration Continue, certains tests seront ignorés.
 const serialOrSkip = process.env.CI ? "skip" : "serial"
 
-const exec = (command: string) =>
-  new Promise((resolve, reject) =>
-    childProcess.exec(
-      command,
-      (err: Error | null, stdout: string, stderr: string) =>
-        err ? reject(err) : resolve({ stdout, stderr })
-    )
-  )
+const exec = (command: string): Promise<{ stdout: string; stderr: string }> =>
+  util.promisify(childProcess.exec)(command)
 
 const context = (() => {
   const remotePath = "stockage:/home/centos/opensignauxfaibles_tests"
   const localPath = "./test_data_algo2"
-
-  const readFile = async (filename: string): Promise<string> =>
-    util.promisify(fs.readFile)(`${localPath}/${filename}`, "utf8")
 
   return {
     setup: async () => {
       await exec(`mkdir ${localPath} | true`)
       const command = `scp ${remotePath}/* ${localPath}`
       console.warn(`$ ${command}`) // eslint-disable-line no-console
-      const { stderr } = (await exec(command)) as { stderr: string }
+      const { stderr } = await exec(command)
       if (stderr) throw new Error(stderr)
     },
     tearDown: () => exec(`rm -r ${localPath}`),
-    readFile,
+    readFile: async (filename: string): Promise<string> =>
+      util.promisify(fs.readFile)(`${localPath}/${filename}`, "utf8"),
   }
 })()
 
@@ -73,7 +66,6 @@ test[serialOrSkip](
   "l'application de reduce.algo2 sur reduce_test_data.json donne le même résultat que d'habitude",
   async (t) => {
     const testData = await loadTestData("reduce_test_data.json")
-    // console.log(util.inspect(testData, { depth: Infinity, colors: true }))
 
     const f = {
       generatePeriodSerie,
