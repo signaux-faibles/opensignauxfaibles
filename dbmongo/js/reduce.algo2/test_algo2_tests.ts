@@ -6,7 +6,7 @@
 // (common + algo2) used to compute the "Features" collection from the
 // "RawData" collection.
 //
-// Please execute ./test_algo2.sh to run this test suite.
+// To update golden files: `$ npx ava test_algo2_tests.ts -- --update`
 
 import test, { before, after } from "ava"
 import * as fs from "fs"
@@ -21,6 +21,8 @@ import { runMongoMap } from "../test/helpers/mongodb"
 
 // En Intégration Continue, certains tests seront ignorés.
 const serialOrSkip = process.env.CI ? "skip" : "serial"
+
+const updateGoldenFiles = process.argv.slice(2).includes("--update")
 
 const exec = (command: string): Promise<{ stdout: string; stderr: string }> =>
   util.promisify(childProcess.exec)(command)
@@ -40,6 +42,10 @@ const context = (() => {
     tearDown: () => exec(`rm -r ${localPath}`),
     readFile: async (filename: string): Promise<string> =>
       util.promisify(fs.readFile)(`${localPath}/${filename}`, "utf8"),
+    writeFile: async (filename: string, data: string): Promise<void> => {
+      await util.promisify(fs.writeFile)(`${localPath}/${filename}`, data)
+      await exec(`scp ${localPath}/${filename} ${remotePath}/`)
+    },
   }
 })()
 
@@ -91,8 +97,12 @@ test[serialOrSkip](
       f.map,
       testData as any[] // TODO: as { _id: string; value: CompanyDataValuesWithFlags }[]
     ) // -> [ { _id, value } ]
-
     const mapOutput = JSON.stringify(mapResult, null, 2)
+
+    if (updateGoldenFiles) {
+      await context.writeFile("map_golden.log", mapOutput)
+    }
+
     const mapExpected = await context.readFile("map_golden.log")
     t.deepEqual(mapOutput, mapExpected)
 
@@ -106,8 +116,12 @@ test[serialOrSkip](
     const finalizeResult = Object.keys(valuesPerKey).map((key) =>
       f.finalize(JSON.parse(key), f.reduce(key, valuesPerKey[key]))
     )
-
     const finalizeOutput = JSON.stringify(finalizeResult, null, 2)
+
+    if (updateGoldenFiles) {
+      await context.writeFile("finalize_golden.log", finalizeOutput)
+    }
+
     const finalizeExpected = await context.readFile("finalize_golden.log")
     t.deepEqual(finalizeOutput, finalizeExpected)
   }
