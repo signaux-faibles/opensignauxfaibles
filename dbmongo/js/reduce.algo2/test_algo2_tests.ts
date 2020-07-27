@@ -94,7 +94,7 @@ test[serialOrSkip](
 
     const mapOutput = JSON.stringify(mapResult, null, 2)
     const mapExpected = await context.readFile("map_golden.log")
-    t.deepEqual(mapOutput, mapExpected.trim())
+    t.deepEqual(mapOutput, mapExpected)
 
     const valuesPerKey: Record<string, unknown[]> = {}
     mapResult.forEach(({ _id, value }) => {
@@ -109,6 +109,6 @@ test[serialOrSkip](
 
     const finalizeOutput = JSON.stringify(finalizeResult, null, 2)
     const finalizeExpected = await context.readFile("finalize_golden.log")
-    t.deepEqual(finalizeOutput, finalizeExpected.trim())
+    t.deepEqual(finalizeOutput, finalizeExpected)
   }
 )
