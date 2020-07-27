@@ -25,6 +25,21 @@ jobs:
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
 
+      - name: Use cache for Node/npm dependencies
+        uses: actions/cache@v1
+        with:
+          path: node_modules
+          key: ${{ runner.OS }}-build-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.OS }}-build-${{ env.cache-name }}-
+            ${{ runner.OS }}-build-
+
+      - name: Install Node/npm dependencies
+        working-directory: dbmongo/js
+        env:
+          CI: true
+        run: npm install --prefer-offline --no-audit
+
       - name: Check that jsFunctions.go is up to date
         working-directory: dbmongo/lib/engine
         run: |
