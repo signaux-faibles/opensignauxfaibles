@@ -148,10 +148,12 @@ export function map(this: {
 
       f.populateNafAndApe(output_indexed, naf)
 
-      f.cotisation(output_indexed, output_array)
+      const output_cotisation = f.cotisation(output_indexed, output_array)
+      f.add(output_cotisation, output_indexed)
 
       const output_cible = f.cibleApprentissage(output_indexed, 18)
       f.add(output_cible, output_indexed)
+
       output_array.forEach((val) => {
         const data: Record<SiretOrSiren, typeof val> = {}
         data[this._id] = val

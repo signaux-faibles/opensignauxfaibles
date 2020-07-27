@@ -22,9 +22,12 @@ export type SortieCotisation = {
 export function cotisation(
   output_indexed: { [k: string]: Input & Partial<SortieCotisation> },
   output_array: (Input & Partial<SortieCotisation>)[]
-): void {
+): ParPériode<SortieCotisation> {
   "use strict"
   const f = { generatePeriodSerie, dateAddMonth } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
+
+  const sortieCotisation: ParPériode<SortieCotisation> = {}
+
   // calcul de cotisation_moyenne sur 12 mois
   Object.keys(output_indexed).forEach((k) => {
     const periode_courante = output_indexed[k].periode
@@ -32,69 +35,77 @@ export function cotisation(
     const series = f.generatePeriodSerie(periode_courante, periode_12_mois)
     series.forEach((periode) => {
       if (periode.getTime() in output_indexed) {
-        const outputInPeriod = output_indexed[periode.getTime()]
-        const outputCourante = output_indexed[periode_courante.getTime()]
-        if (outputCourante.cotisation !== undefined)
-          outputInPeriod.cotisation_array = (
-            outputInPeriod.cotisation_array || []
-          ).concat(outputCourante.cotisation)
-        if (outputCourante.montant_part_patronale !== undefined)
-          outputInPeriod.montant_pp_array = (
-            outputInPeriod.montant_pp_array || []
-          ).concat(outputCourante.montant_part_patronale)
-        if (outputCourante.montant_part_ouvriere !== undefined)
-          outputInPeriod.montant_po_array = (
-            outputInPeriod.montant_po_array || []
-          ).concat(outputCourante.montant_part_ouvriere)
+        const inputCourante = output_indexed[periode_courante.getTime()]
+        const outputInPeriod = (sortieCotisation[
+          periode.getTime()
+        ] = sortieCotisation[periode.getTime()] || {
+          cotisation_array: [],
+          montant_pp_array: [],
+          montant_po_array: [],
+        })
+        if (inputCourante.cotisation !== undefined)
+          outputInPeriod.cotisation_array.push(inputCourante.cotisation)
+        if (inputCourante.montant_part_patronale !== undefined)
+          outputInPeriod.montant_pp_array.push(
+            inputCourante.montant_part_patronale
+          )
+        if (inputCourante.montant_part_ouvriere !== undefined)
+          outputInPeriod.montant_po_array.push(
+            inputCourante.montant_part_ouvriere
+          )
       }
     })
   })
 
-  for (const val of output_array) {
-    val.cotisation_array = val.cotisation_array || []
-    val.cotisation_moy12m =
-      val.cotisation_array.reduce((p, c) => p + c, 0) /
-      (val.cotisation_array.length || 1)
+  for (const input of output_array) {
+    const outputInPeriod = sortieCotisation[input.periode.getTime()]
+    outputInPeriod.cotisation_array = outputInPeriod.cotisation_array || []
+    outputInPeriod.cotisation_moy12m =
+      outputInPeriod.cotisation_array.reduce((p, c) => p + c, 0) /
+      (outputInPeriod.cotisation_array.length || 1)
     if (
-      val.cotisation_moy12m > 0 &&
-      val.montant_part_ouvriere !== undefined &&
-      val.montant_part_patronale !== undefined
+      outputInPeriod.cotisation_moy12m > 0 &&
+      input.montant_part_ouvriere !== undefined &&
+      input.montant_part_patronale !== undefined
     ) {
-      val.ratio_dette =
-        (val.montant_part_ouvriere + val.montant_part_patronale) /
-        val.cotisation_moy12m
+      outputInPeriod.ratio_dette =
+        (input.montant_part_ouvriere + input.montant_part_patronale) /
+        outputInPeriod.cotisation_moy12m
       const pp_average =
-        (val.montant_pp_array || []).reduce((p, c) => p + c, 0) /
-        (val.montant_pp_array?.length || 1)
+        (outputInPeriod.montant_pp_array || []).reduce((p, c) => p + c, 0) /
+        (outputInPeriod.montant_pp_array?.length || 1)
       const po_average =
-        (val.montant_po_array || []).reduce((p, c) => p + c, 0) /
-        (val.montant_po_array?.length || 1)
-      val.ratio_dette_moy12m = (po_average + pp_average) / val.cotisation_moy12m
+        (outputInPeriod.montant_po_array || []).reduce((p, c) => p + c, 0) /
+        (outputInPeriod.montant_po_array?.length || 1)
+      outputInPeriod.ratio_dette_moy12m =
+        (po_average + pp_average) / outputInPeriod.cotisation_moy12m
     }
     // Remplace dans cibleApprentissage
     //val.dette_any_12m = (val.montant_pp_array || []).reduce((p,c) => (c >=
     //100) || p, false) || (val.montant_po_array || []).reduce((p, c) => (c >=
     //100) || p, false)
-    delete val.cotisation_array
-    delete val.montant_pp_array
-    delete val.montant_po_array
+    delete outputInPeriod.cotisation_array
+    delete outputInPeriod.montant_pp_array
+    delete outputInPeriod.montant_po_array
   }
 
   // Calcul des défauts URSSAF prolongés
   let counter = 0
-  Object.keys(output_indexed)
+  Object.keys(sortieCotisation)
     .sort()
     .forEach((k) => {
-      const { ratio_dette } = output_indexed[k]
+      const { ratio_dette } = sortieCotisation[k]
       if (!ratio_dette) return
       if (ratio_dette > 0.01) {
-        output_indexed[k].tag_debit = true // Survenance d'un débit d'au moins 1% des cotisations
+        sortieCotisation[k].tag_debit = true // Survenance d'un débit d'au moins 1% des cotisations
       }
       if (ratio_dette > 1) {
         counter = counter + 1
-        if (counter >= 3) output_indexed[k].tag_default = true
+        if (counter >= 3) sortieCotisation[k].tag_default = true
       } else counter = 0
     })
+
+  return sortieCotisation
 }
 
 /* TODO: appliquer même logique d'itération sur futureTimestamps que dans cotisationsdettes.ts */
