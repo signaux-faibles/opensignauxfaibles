@@ -14,7 +14,7 @@ import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { map } from "./map"
 import { objects as testData } from "../test/data/objects"
 import { naf as nafValues } from "../test/data/naf"
-import { runMongoMap } from "../test/helpers/mongodb"
+import { runMongoMap, indexMapResultsByKey } from "../test/helpers/mongodb"
 
 // Constantes
 const DATE_DEBUT = new Date("2014-01-01")
@@ -45,10 +45,6 @@ const f = { generatePeriodSerie, map }
 
 test("map() retourne les même données que d'habitude", (t) => {
   initGlobalParams(DATE_DEBUT, DATE_FIN)
-  const results: Record<string, { key: unknown; value: unknown }[]> = {}
-  runMongoMap(f.map, testData).forEach(({ _id, value }) => {
-    const id = JSON.stringify(_id) //key.siren + key.batch + key.periode.getTime()
-    results[id] = (results[id] || []).concat([{ key: _id, value }])
-  })
+  const results = indexMapResultsByKey(runMongoMap(f.map, testData))
   t.snapshot(results)
 })
