@@ -1165,7 +1165,7 @@ db.getCollection("Features").createIndex({
     const output_compte = {};
     //  var offset_compte = 3
     Object.keys(v.compte).forEach((hash) => {
-        const periode = v.compte[hash].periode.getTime();
+        const periode = v.compte[hash].periode.getTime().toString();
         output_compte[periode] = output_compte[periode] || {};
         output_compte[periode].compte_urssaf = v.compte[hash].numero_compte;
     });
