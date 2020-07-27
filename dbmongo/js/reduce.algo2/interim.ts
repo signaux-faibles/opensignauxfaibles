@@ -6,7 +6,10 @@ type Input = {
 
 type SortieInterim = {
   interim_proportion: number
-  [interim_ratio_past_: string]: number // TODO: éviter la création dynamique de propriétés
+  interim_ratio_past_6: number
+  interim_ratio_past_12: number
+  interim_ratio_past_18: number
+  interim_ratio_past_24: number
 }
 
 export function interim(
@@ -36,10 +39,9 @@ export function interim(
       }
     }
 
-    const past_month_offsets = [6, 12, 18, 24]
+    const past_month_offsets = [6, 12, 18, 24] // En cas de changement, penser à mettre à jour le type SortieInterim
     past_month_offsets.forEach((offset) => {
       const time_past_offset = f.dateAddMonth(one_interim.periode, offset)
-      const variable_name_interim = "interim_ratio_past_" + offset
       if (
         periode in output_effectif &&
         time_past_offset.getTime() in output_effectif
@@ -49,7 +51,9 @@ export function interim(
         const val_offset = output_interim[time_past_offset.getTime()]
         const { effectif } = output_effectif[periode]
         if (effectif) {
-          val_offset[variable_name_interim] = one_interim.etp / effectif
+          Object.assign(val_offset, {
+            [`interim_ratio_past_${offset}`]: one_interim.etp / effectif,
+          })
         }
       }
     })

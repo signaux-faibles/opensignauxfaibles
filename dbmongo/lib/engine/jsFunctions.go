@@ -1779,10 +1779,9 @@ function flatten(v, actual_batch) {
                 output_interim[periode].interim_proportion = one_interim.etp / effectif;
             }
         }
-        const past_month_offsets = [6, 12, 18, 24];
+        const past_month_offsets = [6, 12, 18, 24]; // En cas de changement, penser à mettre à jour le type SortieInterim
         past_month_offsets.forEach((offset) => {
             const time_past_offset = f.dateAddMonth(one_interim.periode, offset);
-            const variable_name_interim = "interim_ratio_past_" + offset;
             if (periode in output_effectif &&
                 time_past_offset.getTime() in output_effectif) {
                 output_interim[time_past_offset.getTime()] =
@@ -1790,7 +1789,9 @@ function flatten(v, actual_batch) {
                 const val_offset = output_interim[time_past_offset.getTime()];
                 const { effectif } = output_effectif[periode];
                 if (effectif) {
-                    val_offset[variable_name_interim] = one_interim.etp / effectif;
+                    Object.assign(val_offset, {
+                        [` + "`" + `interim_ratio_past_${offset}` + "`" + `]: one_interim.etp / effectif,
+                    });
                 }
             }
         });
