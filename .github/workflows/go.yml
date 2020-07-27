@@ -17,35 +17,8 @@ jobs:
           go-version: 1.14
         id: go
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v1
-        with:
-          node-version: 12
-
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
-
-      - name: Use cache for Node/npm dependencies
-        uses: actions/cache@v1
-        with:
-          path: node_modules
-          key: ${{ runner.OS }}-build-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.OS }}-build-${{ env.cache-name }}-
-            ${{ runner.OS }}-build-
-
-      - name: Install Node/npm dependencies
-        working-directory: dbmongo/js
-        env:
-          CI: true
-        run: npm install --prefer-offline --no-audit
-
-      - name: Check that jsFunctions.go is up to date
-        working-directory: dbmongo/lib/engine
-        run: |
-          go generate -x
-          git diff jsFunctions.go
-          exit $(git diff jsFunctions.go | wc -l)
 
       - name: Build
         working-directory: dbmongo
@@ -60,18 +33,3 @@ jobs:
       - name: Tests
         working-directory: dbmongo
         run: TZ=CET go test ./... # note: js_test.go relies on Date comparisons in the CET timezone
-
-      - name: New JS Tests
-        working-directory: dbmongo/js
-        run: |
-          sudo apt-get install -y nodejs
-          npm install
-          npm run lint
-          npm run test:coverage
-          npx nyc report --reporter=lcov # stores the coverage report in ./coverage/lcov.info
-
-      - name: Upload coverage to codacy
-        uses: codacy/codacy-coverage-reporter-action@master
-        with:
-          project-token: ${{ secrets.CODACY_REPOSITORY_TOKEN_FOR_COVERAGE }}
-          coverage-reports: dbmongo/js/coverage/lcov.info
