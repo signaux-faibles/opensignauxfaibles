@@ -34,13 +34,17 @@ export const indexMapResultsByKey = <K, V>(
     return acc
   }, {} as Indexed<K, V>)
 
+type SerializedDate = { _ISODate: string }
+
+// Converts a "JSON" object returned by MongoDB (including mentions to ISODate
+// and NumberInt) into a valid JavaScript object with Date instances.
 export const parseMongoObject = (serializedObj: string): unknown =>
   JSON.parse(
     serializedObj
       .replace(/ISODate\("([^"]+)"\)/g, `{ "_ISODate": "$1" }`)
       .replace(/NumberInt\(([^)]+)\)/g, "$1"),
-    (_key, value: unknown) =>
-      value && typeof value === "object" && (value as any)._ISODate
-        ? new Date((value as any)._ISODate)
+    (_key, value: SerializedDate | unknown) =>
+      value && typeof value === "object" && (value as SerializedDate)._ISODate
+        ? new Date((value as SerializedDate)._ISODate)
         : value
   )
