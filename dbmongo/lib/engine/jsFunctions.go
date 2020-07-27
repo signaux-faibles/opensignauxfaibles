@@ -1188,36 +1188,33 @@ db.getCollection("Features").createIndex({
         // Accumulation de cotisations sur les 12 mois à venir, pour calcul des moyennes
         douzeMoisÀVenir.forEach(({ timestamp }) => {
             const future = (futureArrays[timestamp] = futureArrays[timestamp] || {
-                cotisation_array: [],
-                montant_pp_array: [],
-                montant_po_array: [],
+                cotisations: [],
+                montantsPP: [],
+                montantsPO: [],
             });
             if (input.cotisation !== undefined)
-                future.cotisation_array.push(input.cotisation);
+                future.cotisations.push(input.cotisation);
             if (input.montant_part_patronale !== undefined)
-                future.montant_pp_array.push(input.montant_part_patronale);
+                future.montantsPP.push(input.montant_part_patronale);
             if (input.montant_part_ouvriere !== undefined)
-                future.montant_po_array.push(input.montant_part_ouvriere);
+                future.montantsPO.push(input.montant_part_ouvriere);
         });
         // Calcul des cotisations moyennes à partir des valeurs accumulées ci-dessus
-        const arraysInPeriod = futureArrays[periode];
-        const outputInPeriod = (sortieCotisation[periode] =
-            sortieCotisation[periode] || {});
-        outputInPeriod.cotisation_moy12m = moyenne(arraysInPeriod.cotisation_array);
-        if (outputInPeriod.cotisation_moy12m > 0 &&
+        const { cotisations, montantsPO, montantsPP } = futureArrays[periode];
+        const out = (sortieCotisation[periode] = sortieCotisation[periode] || {});
+        out.cotisation_moy12m = moyenne(cotisations);
+        if (out.cotisation_moy12m > 0 &&
             input.montant_part_ouvriere !== undefined &&
             input.montant_part_patronale !== undefined) {
-            outputInPeriod.ratio_dette =
+            out.ratio_dette =
                 (input.montant_part_ouvriere + input.montant_part_patronale) /
-                    outputInPeriod.cotisation_moy12m;
-            const pp_average = moyenne(arraysInPeriod.montant_pp_array);
-            const po_average = moyenne(arraysInPeriod.montant_po_array);
-            outputInPeriod.ratio_dette_moy12m =
-                (po_average + pp_average) / outputInPeriod.cotisation_moy12m;
+                    out.cotisation_moy12m;
+            out.ratio_dette_moy12m =
+                (moyenne(montantsPO) + moyenne(montantsPP)) / out.cotisation_moy12m;
         }
         // Remplace dans cibleApprentissage
-        //val.dette_any_12m = (val.montant_pp_array || []).reduce((p,c) => (c >=
-        //100) || p, false) || (val.montant_po_array || []).reduce((p, c) => (c >=
+        //val.dette_any_12m = (val.montantsPA || []).reduce((p,c) => (c >=
+        //100) || p, false) || (val.montantsPO || []).reduce((p, c) => (c >=
         //100) || p, false)
     });
     // Calcul des défauts URSSAF prolongés
