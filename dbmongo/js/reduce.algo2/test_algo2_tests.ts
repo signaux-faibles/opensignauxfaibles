@@ -1,4 +1,4 @@
-"use strict"
+/*global globalThis*/
 
 // Combinaison des tests de map_test.js et finalize.js.
 

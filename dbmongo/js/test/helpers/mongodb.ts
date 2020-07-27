@@ -1,3 +1,5 @@
+/*global globalThis*/
+
 const global = globalThis as any // eslint-disable-line @typescript-eslint/no-explicit-any
 
 ;(Object as any).bsonsize = (obj: unknown): number => JSON.stringify(obj).length // eslint-disable-line @typescript-eslint/no-explicit-any
