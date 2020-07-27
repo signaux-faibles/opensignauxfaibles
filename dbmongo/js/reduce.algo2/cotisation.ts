@@ -20,45 +20,40 @@ export type SortieCotisation = {
 }
 
 export function cotisation(
-  output_indexed: { [k: string]: Input & Partial<SortieCotisation> },
-  output_array: (Input & Partial<SortieCotisation>)[]
+  output_indexed: ParPériode<Input & Partial<SortieCotisation>>
 ): ParPériode<SortieCotisation> {
   "use strict"
+
   const f = { generatePeriodSerie, dateAddMonth } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
 
   const sortieCotisation: ParPériode<SortieCotisation> = {}
 
   // calcul de cotisation_moyenne sur 12 mois
-  Object.keys(output_indexed).forEach((k) => {
-    const periode_courante = output_indexed[k].periode
+  Object.keys(output_indexed).forEach((periode) => {
+    const input = output_indexed[periode]
+    const periode_courante = output_indexed[periode].periode
+
     const periode_12_mois = f.dateAddMonth(periode_courante, 12)
     const series = f.generatePeriodSerie(periode_courante, periode_12_mois)
-    series.forEach((periode) => {
-      if (periode.getTime() in output_indexed) {
-        const inputCourante = output_indexed[periode_courante.getTime()]
-        const outputInPeriod = (sortieCotisation[
-          periode.getTime()
-        ] = sortieCotisation[periode.getTime()] || {
+    series.forEach((periodeFuture) => {
+      if (periodeFuture.getTime() in output_indexed) {
+        const outputInFuture = (sortieCotisation[
+          periodeFuture.getTime()
+        ] = sortieCotisation[periodeFuture.getTime()] || {
           cotisation_array: [],
           montant_pp_array: [],
           montant_po_array: [],
         })
-        if (inputCourante.cotisation !== undefined)
-          outputInPeriod.cotisation_array.push(inputCourante.cotisation)
-        if (inputCourante.montant_part_patronale !== undefined)
-          outputInPeriod.montant_pp_array.push(
-            inputCourante.montant_part_patronale
-          )
-        if (inputCourante.montant_part_ouvriere !== undefined)
-          outputInPeriod.montant_po_array.push(
-            inputCourante.montant_part_ouvriere
-          )
+        if (input.cotisation !== undefined)
+          outputInFuture.cotisation_array.push(input.cotisation)
+        if (input.montant_part_patronale !== undefined)
+          outputInFuture.montant_pp_array.push(input.montant_part_patronale)
+        if (input.montant_part_ouvriere !== undefined)
+          outputInFuture.montant_po_array.push(input.montant_part_ouvriere)
       }
     })
-  })
 
-  for (const input of output_array) {
-    const outputInPeriod = sortieCotisation[input.periode.getTime()]
+    const outputInPeriod = sortieCotisation[periode]
     outputInPeriod.cotisation_array = outputInPeriod.cotisation_array || []
     outputInPeriod.cotisation_moy12m =
       outputInPeriod.cotisation_array.reduce((p, c) => p + c, 0) /
@@ -87,7 +82,7 @@ export function cotisation(
     delete outputInPeriod.cotisation_array
     delete outputInPeriod.montant_pp_array
     delete outputInPeriod.montant_po_array
-  }
+  })
 
   // Calcul des défauts URSSAF prolongés
   let counter = 0

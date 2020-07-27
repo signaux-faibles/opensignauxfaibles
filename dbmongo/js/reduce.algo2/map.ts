@@ -148,7 +148,7 @@ export function map(this: {
 
       f.populateNafAndApe(output_indexed, naf)
 
-      const output_cotisation = f.cotisation(output_indexed, output_array)
+      const output_cotisation = f.cotisation(output_indexed)
       f.add(output_cotisation, output_indexed)
 
       const output_cible = f.cibleApprentissage(output_indexed, 18)
