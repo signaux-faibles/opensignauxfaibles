@@ -37,26 +37,26 @@ export function cotisation(
 
   Object.keys(output_indexed).forEach((periode) => {
     const input = output_indexed[periode]
-    const periode_courante = output_indexed[periode].periode
+
+    const périodeCourante = output_indexed[periode].periode
+    const douzeMoisÀVenir = f
+      .generatePeriodSerie(périodeCourante, f.dateAddMonth(périodeCourante, 12))
+      .map((periodeFuture) => ({ timestamp: periodeFuture.getTime() }))
+      .filter(({ timestamp }) => timestamp in output_indexed)
 
     // Accumulation de cotisations sur les 12 mois à venir, pour calcul des moyennes
-    const periode_12_mois = f.dateAddMonth(periode_courante, 12)
-    const series = f.generatePeriodSerie(periode_courante, periode_12_mois)
-    series.forEach((periodeFuture) => {
-      if (!(periodeFuture.getTime() in output_indexed)) return
-      const outputInFuture = (futureArrays[
-        periodeFuture.getTime()
-      ] = futureArrays[periodeFuture.getTime()] || {
+    douzeMoisÀVenir.forEach(({ timestamp }) => {
+      const future = (futureArrays[timestamp] = futureArrays[timestamp] || {
         cotisation_array: [],
         montant_pp_array: [],
         montant_po_array: [],
       })
       if (input.cotisation !== undefined)
-        outputInFuture.cotisation_array.push(input.cotisation)
+        future.cotisation_array.push(input.cotisation)
       if (input.montant_part_patronale !== undefined)
-        outputInFuture.montant_pp_array.push(input.montant_part_patronale)
+        future.montant_pp_array.push(input.montant_part_patronale)
       if (input.montant_part_ouvriere !== undefined)
-        outputInFuture.montant_po_array.push(input.montant_part_ouvriere)
+        future.montant_po_array.push(input.montant_part_ouvriere)
     })
 
     // Calcul des cotisations moyennes à partir des valeurs accumulées ci-dessus
@@ -101,5 +101,3 @@ export function cotisation(
 
   return sortieCotisation
 }
-
-/* TODO: appliquer même logique d'itération sur futureTimestamps que dans cotisationsdettes.ts */
