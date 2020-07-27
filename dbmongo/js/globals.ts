@@ -67,7 +67,7 @@ type DataType = Exclude<keyof BatchValue, "compact"> // => 'reporder' | 'effecti
 // Définition des types de données
 
 type DonnéesRepOrder = {
-  reporder: Record<Periode, EntréeRepOrder> // Question: DataHash au lieu de Periode ?
+  reporder: Record<Periode, EntréeRepOrder> // RepOrder est généré, et non importé => Usage de Periode en guise de hash d'indexation
 }
 
 type DonnéesCompact = {
@@ -91,7 +91,7 @@ type DonnéesCompte = {
 }
 
 type DonnéesInterim = {
-  interim: Record<Periode, EntréeInterim> // Question: DataHash au lieu de Periode ?
+  interim: Record<DataHash, EntréeInterim>
 }
 
 type DonnéesDelai = {
