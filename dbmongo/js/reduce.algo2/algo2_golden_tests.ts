@@ -64,9 +64,10 @@ after("suppression des données temporaires", async () => {
 test[serialOrSkip](
   "l'application de reduce.algo2 sur reduce_test_data.json donne le même résultat que d'habitude",
   async (t) => {
+    type TestDataItem = { _id: string; value: CompanyDataValuesWithFlags }
     const testData = parseMongoObject(
       await context.readFile(INPUT_FILE)
-    ) as any[] // TODO: as { _id: string; value: CompanyDataValuesWithFlags }[]
+    ) as TestDataItem[]
 
     const f = {
       generatePeriodSerie,
@@ -88,7 +89,7 @@ test[serialOrSkip](
     jsParams.offset_effectif = 2
     jsParams.naf = naf
 
-    const mapResult = runMongoMap(f.map, testData) // -> [ { _id, value } ]
+    const mapResult = runMongoMap(f.map, testData)
     const mapOutput = JSON.stringify(mapResult, null, 2)
 
     if (updateGoldenFiles) {
