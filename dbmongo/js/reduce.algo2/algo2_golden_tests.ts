@@ -17,7 +17,11 @@ import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { map } from "./map"
 import { finalize } from "./finalize"
 import { reduce } from "./reduce"
-import { runMongoMap } from "../test/helpers/mongodb"
+import { runMongoMap, parseMongoObject } from "../test/helpers/mongodb"
+
+const INPUT_FILE = "reduce_test_data.json"
+const MAP_GOLDEN_FILE = "map_golden.log"
+const FINALIZE_GOLDEN_FILE = "finalize_golden.log"
 
 // En Intégration Continue, certains tests seront ignorés.
 const serialOrSkip = process.env.CI ? "skip" : "serial"
@@ -49,17 +53,6 @@ const context = (() => {
   }
 })()
 
-const loadTestData = async (filename: string) =>
-  JSON.parse(
-    (await context.readFile(filename))
-      .replace(/ISODate\("([^"]+)"\)/g, `{ "_ISODate": "$1" }`)
-      .replace(/NumberInt\(([^)]+)\)/g, "$1"),
-    (_key, value: unknown) =>
-      value && typeof value === "object" && (value as any)._ISODate
-        ? new Date((value as any)._ISODate)
-        : value
-  )
-
 before("récupération des données", async () => {
   await context.setup() // step will fail in case of error while downloading golden files
 })
@@ -71,7 +64,9 @@ after("suppression des données temporaires", async () => {
 test[serialOrSkip](
   "l'application de reduce.algo2 sur reduce_test_data.json donne le même résultat que d'habitude",
   async (t) => {
-    const testData = await loadTestData("reduce_test_data.json")
+    const testData = parseMongoObject(
+      await context.readFile(INPUT_FILE)
+    ) as any[] // TODO: as { _id: string; value: CompanyDataValuesWithFlags }[]
 
     const f = {
       generatePeriodSerie,
@@ -93,17 +88,14 @@ test[serialOrSkip](
     jsParams.offset_effectif = 2
     jsParams.naf = naf
 
-    const mapResult = runMongoMap(
-      f.map,
-      testData as any[] // TODO: as { _id: string; value: CompanyDataValuesWithFlags }[]
-    ) // -> [ { _id, value } ]
+    const mapResult = runMongoMap(f.map, testData) // -> [ { _id, value } ]
     const mapOutput = JSON.stringify(mapResult, null, 2)
 
     if (updateGoldenFiles) {
-      await context.writeFile("map_golden.log", mapOutput)
+      await context.writeFile(MAP_GOLDEN_FILE, mapOutput)
     }
 
-    const mapExpected = await context.readFile("map_golden.log")
+    const mapExpected = await context.readFile(MAP_GOLDEN_FILE)
     t.deepEqual(mapOutput, mapExpected)
 
     const valuesPerKey: Record<string, unknown[]> = {}
@@ -119,10 +111,10 @@ test[serialOrSkip](
     const finalizeOutput = JSON.stringify(finalizeResult, null, 2)
 
     if (updateGoldenFiles) {
-      await context.writeFile("finalize_golden.log", finalizeOutput)
+      await context.writeFile(FINALIZE_GOLDEN_FILE, finalizeOutput)
     }
 
-    const finalizeExpected = await context.readFile("finalize_golden.log")
+    const finalizeExpected = await context.readFile(FINALIZE_GOLDEN_FILE)
     t.deepEqual(finalizeOutput, finalizeExpected)
   }
 )
