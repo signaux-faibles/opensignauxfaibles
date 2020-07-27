@@ -6,7 +6,7 @@
 // (common + algo2) used to compute the "Features" collection from the
 // "RawData" collection.
 //
-// To update golden files: `$ npx ava test_algo2_tests.ts -- --update`
+// To update golden files: `$ npx ava algo2_golden_tests.ts -- --update`
 
 import test, { before, after } from "ava"
 import * as fs from "fs"
@@ -14,9 +14,9 @@ import * as util from "util"
 import * as childProcess from "child_process"
 import { naf } from "../test/data/naf"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
-import { map } from "../reduce.algo2/map"
-import { finalize } from "../reduce.algo2/finalize"
-import { reduce } from "../reduce.algo2/reduce"
+import { map } from "./map"
+import { finalize } from "./finalize"
+import { reduce } from "./reduce"
 import { runMongoMap } from "../test/helpers/mongodb"
 
 // En Intégration Continue, certains tests seront ignorés.
