@@ -238,7 +238,8 @@ export function map(this: {
       }
 
       if (v.diane) {
-        f.entr_diane(v.diane, output_indexed)
+        const outputDiane = f.entr_diane(v.diane, output_indexed)
+        f.add(outputDiane, output_indexed)
       }
 
       serie_periode.forEach((date) => {

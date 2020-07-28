@@ -11,7 +11,7 @@ export type SortieDiane = Record<string, unknown> // for *_past_* props of diane
 export function entr_diane(
   donnéesDiane: Record<DataHash, EntréeDiane>,
   output_indexed: ParPériode<SortieDiane>
-) {
+): ParPériode<SortieDiane> {
   /* DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO */ const f = {
     ...{ generatePeriodSerie, dateAddMonth, omit, poidsFrng, detteFiscale }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     ...{ fraisFinancier }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
@@ -125,4 +125,5 @@ export function entr_diane(
       }
     }
   }
+  return output_indexed
 }
