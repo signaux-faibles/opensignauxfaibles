@@ -10,7 +10,8 @@ export type SortieDiane = Record<string, unknown> // for *_past_* props of diane
 
 export function entr_diane(
   donnéesDiane: Record<DataHash, EntréeDiane>,
-  output_indexed: ParPériode<SortieDiane>
+  output_indexed: ParPériode<SortieDiane>,
+  periodes: Timestamp[]
 ): ParPériode<SortieDiane> {
   /* DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO */ const f = {
     ...{ generatePeriodSerie, dateAddMonth, omit, poidsFrng, detteFiscale }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
@@ -53,13 +54,13 @@ export function entr_diane(
         "procedure_collective"
       )
 
-      if (periode.getTime() in output_indexed) {
+      if (periodes.includes(periode.getTime())) {
         Object.assign(output_indexed[periode.getTime()], rest)
       }
 
       for (const k of Object.keys(rest) as (keyof typeof rest)[]) {
         if (donnéesDiane[hash][k] === null) {
-          if (periode.getTime() in output_indexed) {
+          if (periodes.includes(periode.getTime())) {
             delete output_indexed[periode.getTime()][k]
           }
           continue
@@ -85,7 +86,7 @@ export function entr_diane(
     }
 
     for (const periode of series) {
-      if (periode.getTime() in output_indexed) {
+      if (periodes.includes(periode.getTime())) {
         // Recalcul BdF si ratios bdf sont absents
         const outputInPeriod = output_indexed[periode.getTime()]
         if (!("poids_frng" in outputInPeriod)) {
@@ -116,7 +117,7 @@ export function entr_diane(
               const periode_offset = f.dateAddMonth(periode, 12 * offset)
               const variable_name = k + "_past_" + offset
 
-              if (periode_offset.getTime() in output_indexed) {
+              if (periodes.includes(periode_offset.getTime())) {
                 output_indexed[periode_offset.getTime()][variable_name] =
                   outputInPeriod[k]
               }

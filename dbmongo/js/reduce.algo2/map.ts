@@ -238,7 +238,7 @@ export function map(this: {
       }
 
       if (v.diane) {
-        const outputDiane = f.entr_diane(v.diane, output_indexed)
+        const outputDiane = f.entr_diane(v.diane, output_indexed, periodes)
         f.add(outputDiane, output_indexed)
       }
 
