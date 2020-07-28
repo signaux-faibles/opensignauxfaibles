@@ -7,7 +7,6 @@
 // "RawData" collection.
 //
 // To update golden files: `$ npx ava algo2_golden_tests.ts -- --update`
-//                      or `$ npm run test:update-golden-files`
 
 import test, { before, after } from "ava"
 import * as fs from "fs"
