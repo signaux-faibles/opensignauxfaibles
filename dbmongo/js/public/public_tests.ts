@@ -1,8 +1,15 @@
 /*global globalThis*/
 
-import "../globals"
-declare function emit(k: unknown, v: unknown): void
+// Version TypeScript / AVA de public/_test.js, précedemment exécuté par jsc,
+// lors de l'appel à `go test`, via dbmongo/js/test/test_public.sh.
+//
+// Usage: $ npx ava public/public_tests.ts
+//     ou $ npm test
+
 declare const f: any
+const global = globalThis as any
+
+import "../globals"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { flatten } from "./flatten"
 import { diane } from "./diane"
@@ -20,8 +27,14 @@ import { compte } from "./compte"
 import { procolToHuman } from "../common/procolToHuman"
 import { dealWithProcols } from "./dealWithProcols"
 import { map } from "./map"
+import { reduce } from "./reduce"
 import { finalize } from "./finalize"
-;(globalThis as any).f = {
+import { objects as testCases } from "../test/data/objects"
+import { reducer, invertedReducer } from "../test/helpers/reducers"
+import { runMongoMap, indexMapResultsByKey } from "../test/helpers/mongodb"
+import test from "ava"
+
+global.f = {
   generatePeriodSerie,
   flatten,
   diane,
@@ -39,26 +52,20 @@ import { finalize } from "./finalize"
   procolToHuman,
   dealWithProcols,
   map,
+  reduce,
   finalize,
 }
 
-import test from "ava"
-import "./reduce"
-import "./finalize"
-import { objects as testCases } from "../test/data/objects"
-import { reducer, invertedReducer } from "../test/helpers/reducers"
-import { runMongoMap, indexMapResultsByKey } from "../test/helpers/mongodb"
-
 test("la chaine d'intégration 'public' donne le même résultat que d'habitude", (t) => {
-  const jsParams = globalThis as any // => all properties of this object will become global.
+  const jsParams = global
+  jsParams.offset_effectif = 2
   jsParams.actual_batch = "1905"
   jsParams.date_debut = new Date("2014-01-01")
   jsParams.date_fin = new Date("2018-02-01")
   jsParams.serie_periode = f.generatePeriodSerie(
-    new Date("2014-01-01"),
-    new Date("2018-02-01")
+    jsParams.date_debut,
+    jsParams.date_fin
   )
-  jsParams.offset_effectif = 2
 
   const pool = indexMapResultsByKey(runMongoMap(f.map, testCases))
 
