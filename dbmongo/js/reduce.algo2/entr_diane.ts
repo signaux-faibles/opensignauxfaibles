@@ -58,10 +58,10 @@ export function entr_diane(
         Object.assign(output_indexed[periode.getTime()], rest)
       }
 
-      for (const k of Object.keys(rest) as (keyof typeof rest)[]) {
-        if (donnéesDiane[hash][k] === null) {
+      for (const ratio of Object.keys(rest) as (keyof typeof rest)[]) {
+        if (donnéesDiane[hash][ratio] === null) {
           if (periodes.includes(periode.getTime())) {
-            delete output_indexed[periode.getTime()][k]
+            delete output_indexed[periode.getTime()][ratio]
           }
           continue
         }
@@ -71,15 +71,15 @@ export function entr_diane(
         const past_year_offset = [1, 2]
         for (const offset of past_year_offset) {
           const periode_offset = f.dateAddMonth(periode, 12 * offset)
-          const variable_name = k + "_past_" + offset
+          const variable_name = ratio + "_past_" + offset
 
           if (
             periode_offset.getTime() in output_indexed &&
-            k !== "arrete_bilan_diane" &&
-            k !== "exercice_diane"
+            ratio !== "arrete_bilan_diane" &&
+            ratio !== "exercice_diane"
           ) {
             output_indexed[periode_offset.getTime()][variable_name] =
-              donnéesDiane[hash][k]
+              donnéesDiane[hash][ratio]
           }
         }
       }
@@ -88,16 +88,17 @@ export function entr_diane(
     for (const periode of series) {
       if (periodes.includes(periode.getTime())) {
         // Recalcul BdF si ratios bdf sont absents
+        const inputInPeriod = output_indexed[periode.getTime()]
         const outputInPeriod = output_indexed[periode.getTime()]
-        if (!("poids_frng" in outputInPeriod)) {
+        if (!("poids_frng" in inputInPeriod)) {
           const poids = f.poidsFrng(donnéesDiane[hash])
           if (poids !== null) outputInPeriod.poids_frng = poids
         }
-        if (!("dette_fiscale" in outputInPeriod)) {
+        if (!("dette_fiscale" in inputInPeriod)) {
           const dette = f.detteFiscale(donnéesDiane[hash])
           if (dette !== null) outputInPeriod.dette_fiscale = dette
         }
-        if (!("frais_financier" in outputInPeriod)) {
+        if (!("frais_financier" in inputInPeriod)) {
           const frais = f.fraisFinancier(donnéesDiane[hash])
           if (frais !== null) outputInPeriod.frais_financier = frais
         }
