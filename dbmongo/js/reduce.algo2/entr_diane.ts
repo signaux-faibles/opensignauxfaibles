@@ -18,11 +18,6 @@ export function entr_diane(
     ...{ fraisFinancier }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
   } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
 
-  const sortieDiane: ParPériode<Partial<SortieDiane>> = {}
-  for (const periode of periodes) {
-    sortieDiane[periode] = {}
-  }
-
   for (const hash of Object.keys(donnéesDiane)) {
     if (!donnéesDiane[hash].arrete_bilan_diane) continue
     //donnéesDiane[hash].arrete_bilan_diane = new Date(Date.UTC(donnéesDiane[hash].exercice_diane, 11, 31, 0, 0, 0, 0))
@@ -60,13 +55,13 @@ export function entr_diane(
       )
 
       if (periodes.includes(periode.getTime())) {
-        Object.assign(sortieDiane[periode.getTime()], rest)
+        Object.assign(output_indexed[periode.getTime()], rest)
       }
 
       for (const ratio of Object.keys(rest) as (keyof typeof rest)[]) {
         if (donnéesDiane[hash][ratio] === null) {
           if (periodes.includes(periode.getTime())) {
-            delete sortieDiane[periode.getTime()][ratio]
+            delete output_indexed[periode.getTime()][ratio]
           }
           continue
         }
@@ -79,11 +74,11 @@ export function entr_diane(
           const variable_name = ratio + "_past_" + offset
 
           if (
-            periode_offset.getTime() in sortieDiane &&
+            periode_offset.getTime() in output_indexed &&
             ratio !== "arrete_bilan_diane" &&
             ratio !== "exercice_diane"
           ) {
-            sortieDiane[periode_offset.getTime()][variable_name] =
+            output_indexed[periode_offset.getTime()][variable_name] =
               donnéesDiane[hash][ratio]
           }
         }
@@ -94,7 +89,7 @@ export function entr_diane(
       if (periodes.includes(periode.getTime())) {
         // Recalcul BdF si ratios bdf sont absents
         const inputInPeriod = output_indexed[periode.getTime()]
-        const outputInPeriod = sortieDiane[periode.getTime()]
+        const outputInPeriod = output_indexed[periode.getTime()]
         if (!("poids_frng" in inputInPeriod)) {
           const poids = f.poidsFrng(donnéesDiane[hash])
           if (poids !== null) outputInPeriod.poids_frng = poids
@@ -124,7 +119,7 @@ export function entr_diane(
               const variable_name = k + "_past_" + offset
 
               if (periodes.includes(periode_offset.getTime())) {
-                sortieDiane[periode_offset.getTime()][variable_name] =
+                output_indexed[periode_offset.getTime()][variable_name] =
                   outputInPeriod[k]
               }
             })
@@ -133,5 +128,5 @@ export function entr_diane(
       }
     }
   }
-  return sortieDiane
+  return output_indexed
 }
