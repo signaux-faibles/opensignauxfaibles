@@ -1582,10 +1582,6 @@ function delais(v, debitParPériode, intervalleTraitement) {
 }`,
 "entr_diane": `function entr_diane(donnéesDiane, output_indexed, periodes) {
 
-    const sortieDiane = {};
-    for (const periode of periodes) {
-        sortieDiane[periode] = {};
-    }
     for (const hash of Object.keys(donnéesDiane)) {
         if (!donnéesDiane[hash].arrete_bilan_diane)
             continue;
@@ -1597,12 +1593,12 @@ function delais(v, debitParPériode, intervalleTraitement) {
         for (const periode of series) {
             const rest = f.omit(donnéesDiane[hash], "marquee", "nom_entreprise", "numero_siren", "statut_juridique", "procedure_collective");
             if (periodes.includes(periode.getTime())) {
-                Object.assign(sortieDiane[periode.getTime()], rest);
+                Object.assign(output_indexed[periode.getTime()], rest);
             }
             for (const ratio of Object.keys(rest)) {
                 if (donnéesDiane[hash][ratio] === null) {
                     if (periodes.includes(periode.getTime())) {
-                        delete sortieDiane[periode.getTime()][ratio];
+                        delete output_indexed[periode.getTime()][ratio];
                     }
                     continue;
                 }
@@ -1611,10 +1607,10 @@ function delais(v, debitParPériode, intervalleTraitement) {
                 for (const offset of past_year_offset) {
                     const periode_offset = f.dateAddMonth(periode, 12 * offset);
                     const variable_name = ratio + "_past_" + offset;
-                    if (periode_offset.getTime() in sortieDiane &&
+                    if (periode_offset.getTime() in output_indexed &&
                         ratio !== "arrete_bilan_diane" &&
                         ratio !== "exercice_diane") {
-                        sortieDiane[periode_offset.getTime()][variable_name] =
+                        output_indexed[periode_offset.getTime()][variable_name] =
                             donnéesDiane[hash][ratio];
                     }
                 }
@@ -1624,7 +1620,7 @@ function delais(v, debitParPériode, intervalleTraitement) {
             if (periodes.includes(periode.getTime())) {
                 // Recalcul BdF si ratios bdf sont absents
                 const inputInPeriod = output_indexed[periode.getTime()];
-                const outputInPeriod = sortieDiane[periode.getTime()];
+                const outputInPeriod = output_indexed[periode.getTime()];
                 if (!("poids_frng" in inputInPeriod)) {
                     const poids = f.poidsFrng(donnéesDiane[hash]);
                     if (poids !== null)
@@ -1655,7 +1651,7 @@ function delais(v, debitParPériode, intervalleTraitement) {
                             const periode_offset = f.dateAddMonth(periode, 12 * offset);
                             const variable_name = k + "_past_" + offset;
                             if (periodes.includes(periode_offset.getTime())) {
-                                sortieDiane[periode_offset.getTime()][variable_name] =
+                                output_indexed[periode_offset.getTime()][variable_name] =
                                     outputInPeriod[k];
                             }
                         });
@@ -1664,7 +1660,7 @@ function delais(v, debitParPériode, intervalleTraitement) {
             }
         }
     }
-    return sortieDiane;
+    return output_indexed;
 }`,
 "entr_sirene": `function entr_sirene(sirene_ul, sériePériode) {
     "use strict";
