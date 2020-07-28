@@ -10,6 +10,7 @@
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "test": "ava",
+    "test:update": "ava --update-snapshots",
     "test:coverage": "TS_NODE_FILES=true nyc npm test"
   },
   "author": "",
