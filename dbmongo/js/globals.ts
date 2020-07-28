@@ -12,6 +12,9 @@ type CodeAPENiveau4 = string
 type CodeNAF = string
 
 type NAF = {
+  n2to1: Record<CodeAPENiveau2, CodeNAF>
+  n3to1: Record<CodeAPENiveau3, CodeNAF>
+  n4to1: Record<CodeAPENiveau4, CodeNAF>
   n5to1: Record<CodeAPE, CodeNAF>
   n1: Record<CodeNAF, string>
   n2: Record<CodeAPENiveau2, string>
