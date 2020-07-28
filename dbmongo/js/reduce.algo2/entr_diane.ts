@@ -2,6 +2,9 @@ import "../globals"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { dateAddMonth } from "./dateAddMonth"
 import { omit } from "../common/omit"
+import { poidsFrng } from "./poidsFrng"
+import { detteFiscale } from "./detteFiscale"
+import { fraisFinancier } from "./fraisFinancier"
 
 export type SortieDiane = Record<string, unknown> // for *_past_* props of diane. // TODO: try to be more specific
 
@@ -9,7 +12,7 @@ export function entr_diane(
   donnéesDiane: Record<DataHash, EntréeDiane>,
   output_indexed: ParPériode<SortieDiane>
 ) {
-  const f = { generatePeriodSerie, dateAddMonth, omit } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
+  const f = { generatePeriodSerie, dateAddMonth, omit, poidsFrng, detteFiscale, fraisFinancier } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
 
   for (const hash of Object.keys(donnéesDiane)) {
     if (!donnéesDiane[hash].arrete_bilan_diane) continue

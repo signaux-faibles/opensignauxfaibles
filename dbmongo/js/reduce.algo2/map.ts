@@ -1,4 +1,3 @@
-import "../globals"
 import { flatten } from "./flatten"
 import { outputs, DonnéesAgrégées } from "./outputs"
 import { apart } from "./apart"
@@ -78,7 +77,7 @@ export function map(this: {
     ...{ repeatable, delais, defaillances, cotisationsdettes, ccsf }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     ...{ sirene, populateNafAndApe, cotisation, cibleApprentissage }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     ...{ entr_sirene, dateAddMonth, generatePeriodSerie, poidsFrng }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
-    ...{ detteFiscale, fraisFinancier, entr_bdf, omit }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
+    ...{ detteFiscale, fraisFinancier, entr_bdf, omit, entr_diane }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
   } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
 
   const v = f.flatten(this.value, actual_batch)
@@ -238,7 +237,9 @@ export function map(this: {
         f.add(outputBdf, output_indexed)
       }
 
-      // STOP
+      if (v.diane) {
+        f.entr_diane(v.diane, output_indexed)
+      }
 
       serie_periode.forEach((date) => {
         const periode = output_indexed[date.getTime()]
