@@ -63,7 +63,7 @@ type DataType = Exclude<keyof BatchValue, "compact"> // => 'reporder' | 'effecti
 // Définition des types de données
 
 type DonnéesRepOrder = {
-  reporder: Record<Periode, EntréeRepOrder>
+  reporder: Record<Periode, EntréeRepOrder> // RepOrder est généré, et non importé => Usage de Periode en guise de hash d'indexation
 }
 
 type DonnéesCompact = {
@@ -87,7 +87,7 @@ type DonnéesCompte = {
 }
 
 type DonnéesInterim = {
-  interim: Record<Periode, EntréeInterim>
+  interim: Record<DataHash, EntréeInterim>
 }
 
 type DonnéesDelai = {
@@ -155,8 +155,8 @@ type EntréeApConso = {
 type EntréeApDemande = {
   id_demande: string
   periode: { start: Date; end: Date }
-  hta: unknown
-  motif_recours_se: unknown
+  hta: number /* Nombre total d'heures autorisées */
+  motif_recours_se: number /* Cause d'activité partielle */
 }
 
 type EntréeCompte = {
@@ -225,7 +225,7 @@ type Departement = string
 type EntréeSirene = {
   ape: CodeAPE
   lattitude: number // TODO: une fois que les données auront été migrées, corriger l'orthographe de cette propriété (--> latitude)
-  longitude: unknown
+  longitude: number
   departement: Departement
   raison_sociale: string
   date_creation: Date
@@ -247,9 +247,9 @@ type EntréeBdf = {
   arrete_bilan_bdf: Date
   annee_bdf: number
   exercice_bdf: number
-  raison_sociale: unknown
+  raison_sociale: string
   secteur: unknown
-  siren: unknown
+  siren: SiretOrSiren
 } & RatiosBdf
 
 type RatiosBdf = {
