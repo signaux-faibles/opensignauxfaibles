@@ -1,5 +1,10 @@
 import "../globals.ts"
 
+declare function emit(
+  key: SiretOrSiren,
+  value: CompanyDataValuesWithFlags
+): void
+
 export function map(this: { value: CompanyDataValuesWithFlags }): void {
   "use strict"
   if (typeof this.value !== "object") {

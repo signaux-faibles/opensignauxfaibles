@@ -1,0 +1,75 @@
+name: JavaScript Functions CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Go 1.14
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.14
+        id: go
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+
+      - name: Use cache for Node/npm dependencies
+        uses: actions/cache@v1
+        with:
+          path: node_modules
+          key: ${{ runner.OS }}-build-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.OS }}-build-${{ env.cache-name }}-
+            ${{ runner.OS }}-build-
+
+      - name: Install Node/npm dependencies
+        working-directory: dbmongo/js
+        env:
+          CI: true
+        run: npm install --prefer-offline --no-audit
+
+      - name: Check that jsFunctions.go is up to date
+        working-directory: dbmongo/lib/engine
+        run: |
+          go generate -x
+          git diff jsFunctions.go
+          exit $(git diff jsFunctions.go | wc -l)
+
+      - name: Install test dependencies
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y libjavascriptcoregtk-4.0-bin # jsc, for tests of JavaScript functions
+          sudo apt-get install -y dos2unix # for Diane tests
+
+      - name: JS Linter
+        working-directory: dbmongo/js
+        run: |
+          npm run lint
+
+      - name: JS Tests driven by Node/AVA
+        working-directory: dbmongo/js
+        run: |
+          npm run test:coverage
+          npx nyc report --reporter=lcov # stores the coverage report in ./coverage/lcov.info
+
+      - name: JS Tests driven by Go
+        working-directory: dbmongo
+        run: TZ=CET go test . # just run JS tests. note: js_test.go relies on Date comparisons in the CET timezone
+
+      - name: Upload coverage to codacy
+        uses: codacy/codacy-coverage-reporter-action@master
+        with:
+          project-token: ${{ secrets.CODACY_REPOSITORY_TOKEN_FOR_COVERAGE }}
+          coverage-reports: dbmongo/js/coverage/lcov.info

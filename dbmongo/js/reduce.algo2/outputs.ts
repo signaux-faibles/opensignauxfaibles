@@ -5,7 +5,7 @@ import { SortieSirene } from "./sirene"
 import { SortieNAF } from "./populateNafAndApe"
 import { SortieCotisation } from "./cotisation"
 
-type DonnéesAgrégées = {
+export type DonnéesAgrégées = {
   siret: SiretOrSiren
   periode: Date
   effectif: number | null
