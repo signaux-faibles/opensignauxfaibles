@@ -45,19 +45,9 @@ import "./reduce"
 import "./finalize"
 import { objects as testCases } from "../test/data/objects"
 import { reducer, invertedReducer } from "../test/helpers/reducers"
-// import { runMongoMap, indexMapResultsByKey } from "../test/helpers/mongodb"
+import { runMongoMap, indexMapResultsByKey } from "../test/helpers/mongodb"
 
 test("la chaine d'intégration 'public' donne le même résultat que d'habitude", (t) => {
-  // from test_env_for_public
-  const ISODate = (date: string) => new Date(date)
-  const pool: Record<string, { key: unknown; value: unknown }[]> = {}
-  ;(globalThis as any).emit = function (key: unknown, value: unknown) {
-    const id = JSON.stringify(key)
-    pool[id] = (pool[id] || []).concat([{ key, value }])
-  }
-  ISODate
-  emit
-
   const jsParams = globalThis as any // => all properties of this object will become global.
   jsParams.actual_batch = "1905"
   jsParams.date_debut = new Date("2014-01-01")
@@ -68,12 +58,7 @@ test("la chaine d'intégration 'public' donne le même résultat que d'habitude"
   )
   jsParams.offset_effectif = 2
 
-  testCases.forEach((testCase) =>
-    f.map.call({
-      _id: testCase._id,
-      value: testCase.value,
-    })
-  )
+  const pool = indexMapResultsByKey(runMongoMap(f.map, testCases))
 
   const intermediateResult = Object.values(pool).map((array) => ({
     key: array[0].key,
