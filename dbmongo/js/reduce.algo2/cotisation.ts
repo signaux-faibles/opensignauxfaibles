@@ -1,5 +1,5 @@
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
-import { dateAddMonth } from "./dateAddMonth"
+import { dateAddMonth } from "../common/dateAddMonth"
 
 type Input = {
   periode: Date

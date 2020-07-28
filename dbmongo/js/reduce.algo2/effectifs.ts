@@ -1,4 +1,4 @@
-import * as f from "./dateAddMonth"
+import * as f from "../common/dateAddMonth"
 
 // Paramètres globaux utilisés par "reduce.algo2"
 declare const offset_effectif: number
