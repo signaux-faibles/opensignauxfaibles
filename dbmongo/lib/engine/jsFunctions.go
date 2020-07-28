@@ -174,6 +174,12 @@ package engine
         return 1;
     return 0;
 }`,
+"dateAddMonth": `function dateAddMonth(date, nbMonth) {
+    "use strict";
+    const result = new Date(date.getTime());
+    result.setUTCMonth(result.getUTCMonth() + nbMonth);
+    return result;
+}`,
 "forEachPopulatedProp": `// Appelle fct() pour chaque propriété définie (non undefined) de obj.
 // Contrat: obj ne doit contenir que les clés définies dans son type.
 function forEachPopulatedProp(obj, fct) {
@@ -200,6 +206,23 @@ function omit(object, ...propNames) {
         delete result[prop];
     }
     return result;
+}`,
+"procolToHuman": `function procolToHuman(action, stade) {
+    "use strict";
+    let res = null;
+    if (action === "liquidation" && stade !== "abandon_procedure")
+        res = "liquidation";
+    else if (stade === "abandon_procedure" || stade === "fin_procedure")
+        res = "in_bonis";
+    else if (action === "redressement" && stade === "plan_continuation")
+        res = "continuation";
+    else if (action === "sauvegarde" && stade === "plan_continuation")
+        res = "sauvegarde";
+    else if (action === "sauvegarde")
+        res = "plan_sauvegarde";
+    else if (action === "redressement")
+        res = "plan_redressement";
+    return res;
 }`,
 "raison_sociale": `function raison_sociale /*eslint-disable-line @typescript-eslint/no-unused-vars */(denomination_unite_legale, nom_unite_legale, nom_usage_unite_legale, prenom1_unite_legale, prenom2_unite_legale, prenom3_unite_legale, prenom4_unite_legale) {
     "use strict";
@@ -706,8 +729,10 @@ db.getCollection("Features").createIndex({
   return f.iterable(apdemande).sort((p1, p2) => p1.periode < p2.periode)
 }`,
 "bdf": `function bdf(hs) {
-  "use strict";
-  return f.iterable(hs).sort((a, b) => a.annee_bdf < b.annee_bdf)
+    "use strict";
+    return f
+        .iterable(hs)
+        .sort((a, b) => (a.annee_bdf < b.annee_bdf ? 1 : -1));
 }`,
 "compte": `function compte(compte) {
   "use strict";
@@ -741,17 +766,11 @@ db.getCollection("Features").createIndex({
 
   return(output_cotisation)
 }`,
-"dateAddDay": `function dateAddDay(date, nbMonth) {
-  "use strict";
-  var result = new Date(date.getTime())
-  result.setDate( result.getDate() + nbMonth );
-  return result
-}`,
-"dateAddMonth": `function dateAddMonth(date, nbMonth) {
-  "use strict";
-  var result = new Date(date.getTime())
-  result.setUTCMonth(result.getUTCMonth() + nbMonth)
-  return result
+"dateAddDay": `function dateAddDay(date, nbDays) {
+    "use strict";
+    const result = new Date(date.getTime());
+    result.setDate(result.getDate() + nbDays);
+    return result;
 }`,
 "dealWithProcols": `function dealWithProcols(data_source, altar_or_procol, output_indexed){
   "use strict";
@@ -864,8 +883,10 @@ db.getCollection("Features").createIndex({
   return f.iterable(delai)
 }`,
 "diane": `function diane(hs) {
-  "use strict";
- return f.iterable(hs).sort((a, b) => a.exercice_diane < b.exercice_diane)
+    "use strict";
+    return f
+        .iterable(hs)
+        .sort((a, b) => (a.exercice_diane < b.exercice_diane ? 1 : -1));
 }`,
 "effectifs": `function effectifs(v) {
   "use strict";
@@ -980,23 +1001,6 @@ db.getCollection("Features").createIndex({
       emit("entreprise_" + this.value.key, v)
     }
   }
-}`,
-"procolToHuman": `function procolToHuman (action, stade) {
-  "use strict";
-  var res = null;
-  if (action == "liquidation" && stade != "abandon_procedure") 
-    res = 'liquidation';
-  else if (stade == "abandon_procedure" || stade == "fin_procedure")
-    res = 'in_bonis';
-  else if (action == "redressement" && stade == "plan_continuation")
-    res = 'continuation';
-  else if (action == "sauvegarde" && stade == "plan_continuation")
-    res = 'sauvegarde';
-  else if (action == "sauvegarde")
-    res = 'plan_sauvegarde';
-  else if (action == "redressement")
-    res = 'plan_redressement';
-  return res;
 }`,
 "reduce": `function reduce(key, values) {
   "use strict";
@@ -1378,12 +1382,6 @@ function cotisationsdettes(v, periodes, finPériode // correspond à la variable
         }
     });
     return sortieCotisationsDettes;
-}`,
-"dateAddMonth": `function dateAddMonth(date, nbMonth) {
-    "use strict";
-    const result = new Date(date.getTime());
-    result.setUTCMonth(result.getUTCMonth() + nbMonth);
-    return result;
 }`,
 "dealWithProcols": `function dealWithProcols(data_source, altar_or_procol, output_indexed) {
     "use strict";
@@ -2109,23 +2107,6 @@ function outputs(v, serie_periode) {
             output_indexed[k].libelle_ape5 = naf.n5[code_ape];
         }
     });
-}`,
-"procolToHuman": `function procolToHuman(action, stade) {
-    "use strict";
-    let res = null;
-    if (action === "liquidation" && stade !== "abandon_procedure")
-        res = "liquidation";
-    else if (stade === "abandon_procedure" || stade === "fin_procedure")
-        res = "in_bonis";
-    else if (action === "redressement" && stade === "plan_continuation")
-        res = "continuation";
-    else if (action === "sauvegarde" && stade === "plan_continuation")
-        res = "sauvegarde";
-    else if (action === "sauvegarde")
-        res = "plan_sauvegarde";
-    else if (action === "redressement")
-        res = "plan_redressement";
-    return res;
 }`,
 "reduce": `function reduce(_key, values) {
     "use strict";
