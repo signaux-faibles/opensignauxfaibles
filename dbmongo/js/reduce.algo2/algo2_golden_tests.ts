@@ -17,6 +17,7 @@ import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { map } from "./map"
 import { finalize } from "./finalize"
 import { reduce } from "./reduce"
+import { TestDataItem } from "../test/data/objects"
 import { runMongoMap, parseMongoObject } from "../test/helpers/mongodb"
 
 const INPUT_FILE = "reduce_test_data.json"
@@ -64,7 +65,6 @@ after("suppression des données temporaires", async () => {
 test[serialOrSkip](
   "l'application de reduce.algo2 sur reduce_test_data.json donne le même résultat que d'habitude",
   async (t) => {
-    type TestDataItem = { _id: string; value: CompanyDataValuesWithFlags }
     const testData = parseMongoObject(
       await context.readFile(INPUT_FILE)
     ) as TestDataItem[]
