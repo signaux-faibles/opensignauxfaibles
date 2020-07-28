@@ -12,13 +12,9 @@ export function entr_diane(
   donnéesDiane: Record<DataHash, EntréeDiane>,
   output_indexed: ParPériode<SortieDiane>
 ) {
-  const f = {
-    generatePeriodSerie,
-    dateAddMonth,
-    omit,
-    poidsFrng,
-    detteFiscale,
-    fraisFinancier,
+  /* DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO */ const f = {
+    ...{ generatePeriodSerie, dateAddMonth, omit, poidsFrng, detteFiscale }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
+    ...{ fraisFinancier }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
   } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
 
   for (const hash of Object.keys(donnéesDiane)) {
