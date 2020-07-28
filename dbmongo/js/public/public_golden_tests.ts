@@ -1,3 +1,5 @@
+/*global globalThis*/
+
 import "../globals"
 declare function emit(k: unknown, v: unknown): void
 declare const f: any
