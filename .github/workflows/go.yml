@@ -31,4 +31,4 @@ jobs:
 
       - name: Tests
         working-directory: dbmongo
-        run: TZ=CET go test ./... # note: js_test.go relies on Date comparisons in the CET timezone
+        run: go test ./...

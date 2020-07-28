@@ -47,11 +47,6 @@ jobs:
           git diff jsFunctions.go
           exit $(git diff jsFunctions.go | wc -l)
 
-      - name: Install test dependencies
-        run: |
-          sudo apt-get update -y
-          sudo apt-get install -y dos2unix # for Diane tests
-
       - name: JS Linter
         working-directory: dbmongo/js
         run: |
@@ -62,10 +57,6 @@ jobs:
         run: |
           npm run test:coverage
           npx nyc report --reporter=lcov # stores the coverage report in ./coverage/lcov.info
-
-      - name: JS Tests driven by Go
-        working-directory: dbmongo
-        run: TZ=CET go test . # just run JS tests. note: js_test.go relies on Date comparisons in the CET timezone
 
       - name: Upload coverage to codacy
         uses: codacy/codacy-coverage-reporter-action@master
