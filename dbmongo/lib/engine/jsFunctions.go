@@ -1616,49 +1616,6 @@ function delais(v, debitParPériode, intervalleTraitement) {
                 }
             }
         }
-        for (const periode of series) {
-            if (periodes.includes(periode.getTime())) {
-                // Recalcul BdF si ratios bdf sont absents
-                const inputInPeriod = output_indexed[periode.getTime()];
-                const outputInPeriod = output_indexed[periode.getTime()];
-                if (!("poids_frng" in inputInPeriod)) {
-                    const poids = f.poidsFrng(donnéesDiane[hash]);
-                    if (poids !== null)
-                        outputInPeriod.poids_frng = poids;
-                }
-                if (!("dette_fiscale" in inputInPeriod)) {
-                    const dette = f.detteFiscale(donnéesDiane[hash]);
-                    if (dette !== null)
-                        outputInPeriod.dette_fiscale = dette;
-                }
-                if (!("frais_financier" in inputInPeriod)) {
-                    const frais = f.fraisFinancier(donnéesDiane[hash]);
-                    if (frais !== null)
-                        outputInPeriod.frais_financier = frais;
-                }
-                // TODO: mettre en commun population des champs _past_ avec bdf ?
-                const bdf_vars = [
-                    "taux_marge",
-                    "poids_frng",
-                    "dette_fiscale",
-                    "financier_court_terme",
-                    "frais_financier",
-                ];
-                const past_year_offset = [1, 2];
-                bdf_vars.forEach((k) => {
-                    if (k in outputInPeriod) {
-                        past_year_offset.forEach((offset) => {
-                            const periode_offset = f.dateAddMonth(periode, 12 * offset);
-                            const variable_name = k + "_past_" + offset;
-                            if (periodes.includes(periode_offset.getTime())) {
-                                output_indexed[periode_offset.getTime()][variable_name] =
-                                    outputInPeriod[k];
-                            }
-                        });
-                    }
-                });
-            }
-        }
     }
     return output_indexed;
 }`,
@@ -2038,6 +1995,59 @@ function map() {
             if (v.diane) {
                 const outputDiane = f.entr_diane(v.diane, output_indexed, periodes);
                 f.add(outputDiane, output_indexed);
+                const donnéesDiane = v.diane;
+                for (const hash of Object.keys(donnéesDiane)) {
+                    if (!donnéesDiane[hash].arrete_bilan_diane)
+                        continue;
+                    //donnéesDiane[hash].arrete_bilan_diane = new Date(Date.UTC(donnéesDiane[hash].exercice_diane, 11, 31, 0, 0, 0, 0))
+                    const periode_arrete_bilan = new Date(Date.UTC(donnéesDiane[hash].arrete_bilan_diane.getUTCFullYear(), donnéesDiane[hash].arrete_bilan_diane.getUTCMonth() + 1, 1, 0, 0, 0, 0));
+                    const periode_dispo = f.dateAddMonth(periode_arrete_bilan, 7); // 01/08 pour un bilan le 31/12, donc algo qui tourne en 01/09
+                    const series = f.generatePeriodSerie(periode_dispo, f.dateAddMonth(periode_dispo, 14) // periode de validité d'un bilan auprès de la Banque de France: 21 mois (14+7)
+                    );
+                    for (const periode of series) {
+                        if (periodes.includes(periode.getTime())) {
+                            // Recalcul BdF si ratios bdf sont absents
+                            const inputInPeriod = output_indexed[periode.getTime()];
+                            const outputInPeriod = output_indexed[periode.getTime()];
+                            if (!("poids_frng" in inputInPeriod)) {
+                                const poids = f.poidsFrng(donnéesDiane[hash]);
+                                if (poids !== null)
+                                    outputInPeriod.poids_frng = poids;
+                            }
+                            if (!("dette_fiscale" in inputInPeriod)) {
+                                const dette = f.detteFiscale(donnéesDiane[hash]);
+                                if (dette !== null)
+                                    outputInPeriod.dette_fiscale = dette;
+                            }
+                            if (!("frais_financier" in inputInPeriod)) {
+                                const frais = f.fraisFinancier(donnéesDiane[hash]);
+                                if (frais !== null)
+                                    outputInPeriod.frais_financier = frais;
+                            }
+                            // TODO: mettre en commun population des champs _past_ avec bdf ?
+                            const bdf_vars = [
+                                "taux_marge",
+                                "poids_frng",
+                                "dette_fiscale",
+                                "financier_court_terme",
+                                "frais_financier",
+                            ];
+                            const past_year_offset = [1, 2];
+                            bdf_vars.forEach((k) => {
+                                if (k in outputInPeriod) {
+                                    past_year_offset.forEach((offset) => {
+                                        const periode_offset = f.dateAddMonth(periode, 12 * offset);
+                                        const variable_name = k + "_past_" + offset;
+                                        if (periodes.includes(periode_offset.getTime())) {
+                                            output_indexed[periode_offset.getTime()][variable_name] =
+                                                outputInPeriod[k];
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    }
+                }
             }
             serie_periode.forEach((date) => {
                 const periode = output_indexed[date.getTime()];

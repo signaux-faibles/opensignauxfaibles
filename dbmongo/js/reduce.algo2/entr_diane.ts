@@ -84,49 +84,6 @@ export function entr_diane(
         }
       }
     }
-
-    for (const periode of series) {
-      if (periodes.includes(periode.getTime())) {
-        // Recalcul BdF si ratios bdf sont absents
-        const inputInPeriod = output_indexed[periode.getTime()]
-        const outputInPeriod = output_indexed[periode.getTime()]
-        if (!("poids_frng" in inputInPeriod)) {
-          const poids = f.poidsFrng(donnéesDiane[hash])
-          if (poids !== null) outputInPeriod.poids_frng = poids
-        }
-        if (!("dette_fiscale" in inputInPeriod)) {
-          const dette = f.detteFiscale(donnéesDiane[hash])
-          if (dette !== null) outputInPeriod.dette_fiscale = dette
-        }
-        if (!("frais_financier" in inputInPeriod)) {
-          const frais = f.fraisFinancier(donnéesDiane[hash])
-          if (frais !== null) outputInPeriod.frais_financier = frais
-        }
-
-        // TODO: mettre en commun population des champs _past_ avec bdf ?
-        const bdf_vars = [
-          "taux_marge",
-          "poids_frng",
-          "dette_fiscale",
-          "financier_court_terme",
-          "frais_financier",
-        ]
-        const past_year_offset = [1, 2]
-        bdf_vars.forEach((k) => {
-          if (k in outputInPeriod) {
-            past_year_offset.forEach((offset) => {
-              const periode_offset = f.dateAddMonth(periode, 12 * offset)
-              const variable_name = k + "_past_" + offset
-
-              if (periodes.includes(periode_offset.getTime())) {
-                output_indexed[periode_offset.getTime()][variable_name] =
-                  outputInPeriod[k]
-              }
-            })
-          }
-        })
-      }
-    }
   }
   return output_indexed
 }
