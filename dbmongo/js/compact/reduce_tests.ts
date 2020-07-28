@@ -18,8 +18,8 @@ const AP_CONSO = {
 const AP_DEMANDE = {
   id_demande: "",
   periode: { start: new Date(), end: new Date() },
-  hta: null,
-  motif_recours_se: null,
+  hta: 0,
+  motif_recours_se: 0,
 }
 
 type TestCase = {

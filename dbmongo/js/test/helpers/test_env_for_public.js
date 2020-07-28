@@ -1,4 +1,10 @@
-"use strict";
+"use strict"
+
+// globals
+
+const f = this
+const exports = { f }
+const ISODate = (date) => new Date(date)
 
 // from /dbmongo/js/test/public/lib_public.js
 

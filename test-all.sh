@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -o pipefail # so any failing test can stop the script despite piping to indent
+
 function heading {
   echo ""
   echo "–––––"

@@ -19,6 +19,7 @@ import { compte } from "./compte.js"
 import { dealWithProcols } from "./dealWithProcols.js"
 import { reduce } from "./reduce"
 import { finalize } from "./finalize"
+import { runMongoMap } from "../test/helpers/mongodb"
 
 const global = globalThis as any // eslint-disable-line @typescript-eslint/no-explicit-any
 global.f = {
@@ -35,18 +36,6 @@ global.f = {
 }
 
 const ISODate = (date: string): Date => new Date(date)
-
-const runMongoMap = (
-  mapFct: () => void,
-  keyVal: unknown
-): Record<string, unknown> => {
-  const results: Record<string, unknown> = {}
-  global.emit = (key: string, value: unknown): void => {
-    results[key] = value
-  }
-  mapFct.call(keyVal)
-  return results
-}
 
 // test data inspired by test-api.sh
 const SIREN_LENGTH = 9
@@ -102,7 +91,10 @@ const expectedFinalizeResultValue = expectedMapResults[etablissementKey] // TODO
 test.serial(
   `public.map() retourne les propriétés d'établissement présentées sur le frontal`,
   (t: ExecutionContext) => {
-    const mapResults = runMongoMap(map, { value: rawData })
+    const mapResults: Record<string, unknown> = {}
+    runMongoMap(map, [{ value: rawData }]).map(
+      ({ _id, value }) => (mapResults[_id as string] = value)
+    )
     t.deepEqual(mapResults, expectedMapResults)
   }
 )
