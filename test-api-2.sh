@@ -81,7 +81,7 @@ function fixJSON {
   # Cette fonction convertit les documents MongoDB au format JSON.
   # (cf https://github.com/signaux-faibles/opensignauxfaibles/issues/72)
   perl -p -e 's/ISODate\("(.*)T00:00:00Z"\)/"$1T00:00:00.000Z"/g' \
-  | perl -p -e 's/"montant_majorations" : NaN,$/"montant_majorations" : null,/g'
+  | perl -p -e 's/ : NaN,$/ : null,/g'
 }
 
 function transformJSON {
