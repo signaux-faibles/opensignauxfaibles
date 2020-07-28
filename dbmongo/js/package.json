@@ -11,6 +11,7 @@
     "lint:fix": "eslint . --ext .ts --fix",
     "test": "ava",
     "test:update": "ava --update-snapshots",
+    "test:update-golden-files": "ava -- --update",
     "test:coverage": "TS_NODE_FILES=true nyc npm test"
   },
   "author": "",
