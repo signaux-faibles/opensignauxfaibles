@@ -101,6 +101,7 @@ export function entr_diane(
           if (frais !== null) outputInPeriod.frais_financier = frais
         }
 
+        // TODO: mettre en commun population des champs _past_ avec bdf ?
         const bdf_vars = [
           "taux_marge",
           "poids_frng",
