@@ -20,19 +20,19 @@ const forEachMonth = (
     {}
   )
 
-const testedProps = [
+const testCases = [
   {
     assertion:
       "La variable cotisation_moy12m de chaque mois est égale au montant de cotisation, quand celui-ci est stable sur tout la période",
-    name: "cotisation_moy12m",
     input: forEachMonth(() => ({ cotisation: 10 })),
+    propName: "cotisation_moy12m",
     expected: new Array(periodeSerie.length).fill(10),
   },
   {
     assertion:
       "La variable cotisation_moy12m décroit quand une cotisation est passée",
-    name: "cotisation_moy12m",
     input: forEachMonth(({ month }) => ({ cotisation: month === 0 ? 10 : 0 })),
+    propName: "cotisation_moy12m",
     expected: [
       10 / 1,
       10 / 2,
@@ -52,10 +52,10 @@ const testedProps = [
   {
     assertion:
       "La variable cotisation_moy12m est nulle jusqu'à ce qu'une cotisation soit présente",
-    name: "cotisation_moy12m",
     input: forEachMonth(({ month }) => ({
       cotisation: month === 12 ? 10 : 0,
     })),
+    propName: "cotisation_moy12m",
     expected: new Array(12).fill(0).concat([10 / 12]),
   },
 ]
@@ -66,13 +66,13 @@ test("cotisation retourne les mêmes périodes que fournies en entrée", (t) => 
   t.deepEqual(Object.keys(actual), Object.keys(input))
 })
 
-testedProps.forEach((testedProp) => {
-  test(testedProp.assertion, (t) => {
-    const actual = cotisation(testedProp.input)
-    testedProp.expected.forEach((expectedPropValue, indiceMois) => {
+testCases.forEach(({ assertion, input, propName, expected }) => {
+  test(assertion, (t) => {
+    const actual = cotisation(input)
+    expected.forEach((expectedPropValue, indiceMois) => {
       const actualValue = actual[dateAddMonth(dateDebut, indiceMois).getTime()]
       t.is(
-        actualValue[testedProp.name as keyof SortieCotisation],
+        actualValue[propName as keyof SortieCotisation],
         expectedPropValue,
         `mois: #${indiceMois}, expected: ${expectedPropValue}`
       )
