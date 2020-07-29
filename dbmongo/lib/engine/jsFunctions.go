@@ -1175,7 +1175,9 @@ db.getCollection("Features").createIndex({
     "use strict";
     const sortieCotisation = {};
 
-    const moyenne = (valeurs = []) => valeurs.reduce((p, c) => p + c, 0) / (valeurs.length || 1);
+    const moyenne = (valeurs = []) => valeurs.some((val) => typeof val === "undefined")
+        ? undefined
+        : valeurs.reduce((p, c) => p + c, 0) / (valeurs.length || 1);
     // calcul de cotisation_moyenne sur 12 mois
     const futureArrays = {};
     Object.keys(output_indexed).forEach((periode) => {
@@ -1192,25 +1194,24 @@ db.getCollection("Features").createIndex({
                 montantsPP: [],
                 montantsPO: [],
             });
-            if (input.cotisation !== undefined)
-                future.cotisations.push(input.cotisation);
-            if (input.montant_part_patronale !== undefined)
-                future.montantsPP.push(input.montant_part_patronale);
-            if (input.montant_part_ouvriere !== undefined)
-                future.montantsPO.push(input.montant_part_ouvriere);
+            future.cotisations.push(input.cotisation);
+            future.montantsPP.push(input.montant_part_patronale || 0);
+            future.montantsPO.push(input.montant_part_ouvriere || 0);
         });
         // Calcul des cotisations moyennes à partir des valeurs accumulées ci-dessus
         const { cotisations, montantsPO, montantsPP } = futureArrays[periode];
         const out = (sortieCotisation[periode] = sortieCotisation[periode] || {});
         out.cotisation_moy12m = moyenne(cotisations);
-        if (out.cotisation_moy12m > 0 &&
-            input.montant_part_ouvriere !== undefined &&
-            input.montant_part_patronale !== undefined) {
+        if (typeof out.cotisation_moy12m !== "undefined" &&
+            out.cotisation_moy12m > 0) {
             out.ratio_dette =
-                (input.montant_part_ouvriere + input.montant_part_patronale) /
+                ((input.montant_part_ouvriere || 0) +
+                    (input.montant_part_patronale || 0)) /
                     out.cotisation_moy12m;
-            out.ratio_dette_moy12m =
-                (moyenne(montantsPO) + moyenne(montantsPP)) / out.cotisation_moy12m;
+            const [moyPO, moyPP] = [moyenne(montantsPO), moyenne(montantsPP)];
+            if (typeof moyPO === "number" && typeof moyPP === "number") {
+                out.ratio_dette_moy12m = (moyPO + moyPP) / out.cotisation_moy12m;
+            }
         }
         // Remplace dans cibleApprentissage
         //val.dette_any_12m = (val.montantsPA || []).reduce((p,c) => (c >=
