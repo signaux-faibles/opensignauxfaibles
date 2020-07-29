@@ -56,7 +56,7 @@ const testCases = [
       cotisation: month === 12 ? 10 : 0,
     })),
     propName: "cotisation_moy12m",
-    expected: new Array(12).fill(0).concat([10 / 12]),
+    expected: [...new Array(12).fill(0), 10 / 12],
   },
   {
     assertion:
@@ -65,7 +65,7 @@ const testCases = [
       cotisation: month === 0 ? undefined : 10,
     })),
     propName: "cotisation_moy12m",
-    expected: new Array(12).fill(undefined).concat([10]),
+    expected: [...new Array(12).fill(undefined), 10],
   },
   {
     assertion:
@@ -87,19 +87,19 @@ const testCases = [
       montant_part_patronale: 5,
     })),
     propName: "ratio_dette",
-    expected: new Array(12).fill(undefined).concat([(5 + 5) / 10]),
+    expected: [...new Array(12).fill(undefined), (5 + 5) / 10],
   },
   {
     assertion:
       "La variable ratio_dette considère tout montant de part ouvrière ou patronale manquant comme nul",
     input: forEachMonth(({ month }) => ({
       cotisation: 10,
-      montant_part_ouvriere: [undefined].concat(
-        new Array(11).fill(10).concat([undefined])
-      )[month],
-      montant_part_patronale: [undefined, undefined].concat(
-        new Array(11).fill(10)
-      )[month],
+      montant_part_ouvriere: [undefined, ...new Array(11).fill(10), undefined][
+        month
+      ],
+      montant_part_patronale: [undefined, undefined, ...new Array(11).fill(10)][
+        month
+      ],
     })),
     propName: "ratio_dette",
     expected: [0, 1, ...new Array(10).fill(2), 1],
