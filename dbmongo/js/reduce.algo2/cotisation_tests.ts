@@ -78,6 +78,17 @@ const testCases = [
     propName: "ratio_dette",
     expected: [1, 1, 1, 1, 1, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1, 1, 1],
   },
+  {
+    assertion:
+      "La variable ratio_dette n'est pas calculée s'il manque un montant de cotisation au sein de la période",
+    input: forEachMonth(({ month }) => ({
+      cotisation: month === 0 ? undefined : 10,
+      montant_part_ouvriere: 5,
+      montant_part_patronale: 5,
+    })),
+    propName: "ratio_dette",
+    expected: new Array(12).fill(undefined).concat([(5 + 5) / 10]),
+  },
 ]
 
 testCases.forEach(({ assertion, input, propName, expected }) => {
