@@ -58,6 +58,17 @@ const testCases = [
     propName: "cotisation_moy12m",
     expected: new Array(12).fill(0).concat([10 / 12]),
   },
+  {
+    assertion:
+      "La variable ratio_dette divise montant_part_ouvriere et montant_part_patronale par cotisation_moy12m",
+    input: forEachMonth(({ month }) => ({
+      cotisation: [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10][month],
+      montant_part_ouvriere: [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5][month],
+      montant_part_patronale: [5, 5, 5, 5, 5, 0, 0, 0, 0, 0, 5, 5, 5][month],
+    })),
+    propName: "ratio_dette",
+    expected: [1, 1, 1, 1, 1, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1, 1, 1],
+  },
 ]
 
 testCases.forEach(({ assertion, input, propName, expected }) => {
