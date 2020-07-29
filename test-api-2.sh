@@ -112,9 +112,6 @@ echo "db.Features_TestData.find().toArray();" \
 # Display JS errors logged by MongoDB, if any
 docker logs sf-mongodb | grep --color=always "uncaught exception" || true
 
-removeRandomOrder "${DATA_DIR}/finalize_golden.log" \
-  > "${DATA_DIR}/test-api-2_golden.json"
-
 echo ""
 # Check if the --update flag was passed
 if [[ "$*" == *--update* ]]
