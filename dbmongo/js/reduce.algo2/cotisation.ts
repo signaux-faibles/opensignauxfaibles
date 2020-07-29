@@ -33,8 +33,8 @@ export function cotisation(
   // calcul de cotisation_moyenne sur 12 mois
   const futureArrays: ParPériode<{
     cotisations: (number | undefined)[]
-    montantsPP: (number | undefined)[]
-    montantsPO: (number | undefined)[]
+    montantsPP: number[]
+    montantsPO: number[]
   }> = {}
 
   Object.keys(output_indexed).forEach((periode) => {
