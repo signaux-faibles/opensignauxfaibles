@@ -54,8 +54,8 @@ export function cotisation(
         montantsPO: [],
       })
       future.cotisations.push(input.cotisation)
-      future.montantsPP.push(input.montant_part_patronale)
-      future.montantsPO.push(input.montant_part_ouvriere)
+      future.montantsPP.push(input.montant_part_patronale || 0)
+      future.montantsPO.push(input.montant_part_ouvriere || 0)
     })
 
     // Calcul des cotisations moyennes à partir des valeurs accumulées ci-dessus
