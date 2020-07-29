@@ -60,6 +60,15 @@ const testCases = [
   },
   {
     assertion:
+      "La variable cotisation_moy12m n'est pas calculée s'il manque un montant de cotisation au sein de la période",
+    input: forEachMonth(({ month }) => ({
+      cotisation: month === 0 ? undefined : 10,
+    })),
+    propName: "cotisation_moy12m",
+    expected: new Array(12).fill(undefined).concat([10]),
+  },
+  {
+    assertion:
       "La variable ratio_dette divise montant_part_ouvriere et montant_part_patronale par cotisation_moy12m",
     input: forEachMonth(({ month }) => ({
       cotisation: [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10][month],
