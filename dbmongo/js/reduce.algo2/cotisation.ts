@@ -64,12 +64,11 @@ export function cotisation(
     out.cotisation_moy12m = moyenne(cotisations)
     if (
       typeof out.cotisation_moy12m !== "undefined" &&
-      out.cotisation_moy12m > 0 &&
-      input.montant_part_ouvriere !== undefined &&
-      input.montant_part_patronale !== undefined
+      out.cotisation_moy12m > 0
     ) {
       out.ratio_dette =
-        (input.montant_part_ouvriere + input.montant_part_patronale) /
+        ((input.montant_part_ouvriere || 0) +
+          (input.montant_part_patronale || 0)) /
         out.cotisation_moy12m
       const [moyPO, moyPP] = [moyenne(montantsPO), moyenne(montantsPP)]
       if (typeof moyPO === "number" && typeof moyPP === "number") {
