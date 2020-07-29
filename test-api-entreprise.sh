@@ -148,7 +148,7 @@ RENAME_RESULT=$(echo 'db.Public_debug.renameCollection("Public");' | docker exec
 echo "- rename 'Public_debug' collection to 'Public' 👉 ${RENAME_RESULT}"
 # Make sure that the export only relies on Score and Public collections => clear collections that were populated for/by other endpoints
 CLEAN_RESULT=$(echo 'db.Admin.drop(); db.ImportedData.drop(); db.RawData.drop();' | docker exec -i sf-mongodb mongo --quiet signauxfaibles)
-echo "- drop other db collections 👉 ${RENAME_RESULT}"
+echo "- drop other db collections 👉 ${CLEAN_RESULT}"
 # Export enterprise data
 EXPORT_FILE=$(http POST :5000/datapi/exportEntreprise | tr -d '"')
 echo "- POST /datapi/exportEntreprise 👉 ${EXPORT_FILE}"
