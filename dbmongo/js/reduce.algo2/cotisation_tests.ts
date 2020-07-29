@@ -104,6 +104,17 @@ const testCases = [
     propName: "ratio_dette",
     expected: [0, 1, ...new Array(10).fill(2), 1],
   },
+  {
+    assertion:
+      "La variable ratio_dette_moy12m considère tout montant de part ouvrière ou patronale manquant comme nul",
+    input: forEachMonth(({ month }) => ({
+      cotisation: 10,
+      montant_part_ouvriere: undefined,
+      montant_part_patronale: month < 12 ? 10 : undefined,
+    })),
+    propName: "ratio_dette_moy12m",
+    expected: [...new Array(12).fill(1), 0.9166666666666666],
+  },
 ]
 
 testCases.forEach(({ assertion, input, propName, expected }) => {
