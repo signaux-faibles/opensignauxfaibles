@@ -1209,7 +1209,8 @@ db.getCollection("Features").createIndex({
             out.ratio_dette =
                 (input.montant_part_ouvriere + input.montant_part_patronale) /
                     out.cotisation_moy12m;
-            out.ratio_dette_moy12m = moyenne(montantsPO.map((_, i) => (montantsPO[i] + montantsPP[i]) / cotisations[i]));
+            out.ratio_dette_moy12m =
+                (moyenne(montantsPO) + moyenne(montantsPP)) / out.cotisation_moy12m;
         }
         // Remplace dans cibleApprentissage
         //val.dette_any_12m = (val.montantsPA || []).reduce((p,c) => (c >=
