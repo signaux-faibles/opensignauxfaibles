@@ -51,6 +51,12 @@ const testedProps = [
   },
 ]
 
+test("cotisation retourne les mêmes périodes que fournies en entrée", (t) => {
+  const input = forEachMonth(() => ({}))
+  const actual = cotisation(input)
+  t.deepEqual(Object.keys(actual), Object.keys(input))
+})
+
 testedProps.forEach((testedProp) => {
   test(testedProp.assertion, (t) => {
     const actual = cotisation(testedProp.input)
