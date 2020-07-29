@@ -33,21 +33,7 @@ const testCases = [
       "La variable cotisation_moy12m décroit quand une cotisation est passée",
     input: forEachMonth(({ month }) => ({ cotisation: month === 0 ? 10 : 0 })),
     propName: "cotisation_moy12m",
-    expected: [
-      10 / 1,
-      10 / 2,
-      10 / 3,
-      10 / 4,
-      10 / 5,
-      10 / 6,
-      10 / 7,
-      10 / 8,
-      10 / 9,
-      10 / 10,
-      10 / 11,
-      10 / 12,
-      0,
-    ],
+    expected: [...periodeSerie.slice(0, 12).map((_, m) => 10 / (m + 1)), 0],
   },
   {
     assertion:
