@@ -60,12 +60,6 @@ const testCases = [
   },
 ]
 
-test("cotisation retourne les mêmes périodes que fournies en entrée", (t) => {
-  const input = forEachMonth(() => ({}))
-  const actual = cotisation(input)
-  t.deepEqual(Object.keys(actual), Object.keys(input))
-})
-
 testCases.forEach(({ assertion, input, propName, expected }) => {
   test(assertion, (t) => {
     const actual = cotisation(input)
@@ -78,4 +72,10 @@ testCases.forEach(({ assertion, input, propName, expected }) => {
       )
     })
   })
+})
+
+test("cotisation retourne les mêmes périodes que fournies en entrée", (t) => {
+  const input = forEachMonth(() => ({}))
+  const actual = cotisation(input)
+  t.deepEqual(Object.keys(actual), Object.keys(input))
 })
