@@ -7,7 +7,7 @@ import { dateAddMonth } from "./dateAddMonth"
 const dureeEnMois = 13
 const dateDebut = new Date("2018-01-01")
 const dateFin = dateAddMonth(dateDebut, dureeEnMois)
-const periodeSerie = generatePeriodSerie(dateDebut, dateFin)
+const periodeSerie = generatePeriodSerie(dateDebut, dateFin) // => length === dureeEnMois
 
 const forEachMonth = (
   fct: ({ periode, month }: { periode: Date; month: number }) => Partial<Input>
@@ -34,7 +34,7 @@ const testedProps = [
     name: "cotisation_moy12m",
     input: forEachMonth(({ month }) => ({ cotisation: month === 0 ? 10 : 0 })),
     expected: [
-      10,
+      10 / 1,
       10 / 2,
       10 / 3,
       10 / 4,
@@ -48,6 +48,15 @@ const testedProps = [
       10 / 12,
       0,
     ],
+  },
+  {
+    assertion:
+      "La variable cotisation_moy12m est nulle jusqu'à ce qu'une cotisation soit présente",
+    name: "cotisation_moy12m",
+    input: forEachMonth(({ month }) => ({
+      cotisation: month === 12 ? 10 : 0,
+    })),
+    expected: new Array(12).fill(0).concat([10 / 12]),
   },
 ]
 
