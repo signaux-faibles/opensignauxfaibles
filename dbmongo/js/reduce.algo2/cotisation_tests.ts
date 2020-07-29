@@ -91,14 +91,18 @@ const testCases = [
   },
   {
     assertion:
-      "La variable ratio_dette est nulle s'il manque un montant de part ouvrière ou patronale au sein de la période",
+      "La variable ratio_dette considère tout montant de part ouvrière ou patronale manquant comme nul",
     input: forEachMonth(({ month }) => ({
       cotisation: 10,
-      montant_part_ouvriere: new Array(12).fill(10).concat([undefined])[month],
-      montant_part_patronale: [undefined].concat(new Array(12).fill(10))[month],
+      montant_part_ouvriere: [undefined].concat(
+        new Array(11).fill(10).concat([undefined])
+      )[month],
+      montant_part_patronale: [undefined, undefined].concat(
+        new Array(11).fill(10)
+      )[month],
     })),
     propName: "ratio_dette",
-    expected: [0, ...new Array(11).fill(undefined), 0],
+    expected: [0, 1, ...new Array(10).fill(2), 1],
   },
 ]
 
