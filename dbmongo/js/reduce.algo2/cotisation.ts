@@ -1,7 +1,7 @@
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { dateAddMonth } from "./dateAddMonth"
 
-type Input = {
+export type Input = {
   periode: Date
   cotisation?: number
   montant_part_patronale?: number
