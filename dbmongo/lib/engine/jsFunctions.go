@@ -1169,80 +1169,79 @@ db.getCollection("Features").createIndex({
     const output_compte = {};
     //  var offset_compte = 3
     Object.keys(v.compte).forEach((hash) => {
-        const periode = v.compte[hash].periode.getTime();
+        const periode = v.compte[hash].periode.getTime().toString();
         output_compte[periode] = output_compte[periode] || {};
         output_compte[periode].compte_urssaf = v.compte[hash].numero_compte;
     });
     return output_compte;
 }`,
-"cotisation": `function cotisation(output_indexed, output_array) {
+"cotisation": `function cotisation(output_indexed) {
     "use strict";
-    var _a, _b;
+    const sortieCotisation = {};
 
+    const moyenne = (valeurs = []) => valeurs.reduce((p, c) => p + c, 0) / (valeurs.length || 1);
     // calcul de cotisation_moyenne sur 12 mois
-    Object.keys(output_indexed).forEach((k) => {
-        const periode_courante = output_indexed[k].periode;
-        const periode_12_mois = f.dateAddMonth(periode_courante, 12);
-        const series = f.generatePeriodSerie(periode_courante, periode_12_mois);
-        series.forEach((periode) => {
-            if (periode.getTime() in output_indexed) {
-                const outputInPeriod = output_indexed[periode.getTime()];
-                const outputCourante = output_indexed[periode_courante.getTime()];
-                if (outputCourante.cotisation !== undefined)
-                    outputInPeriod.cotisation_array = (outputInPeriod.cotisation_array || []).concat(outputCourante.cotisation);
-                if (outputCourante.montant_part_patronale !== undefined)
-                    outputInPeriod.montant_pp_array = (outputInPeriod.montant_pp_array || []).concat(outputCourante.montant_part_patronale);
-                if (outputCourante.montant_part_ouvriere !== undefined)
-                    outputInPeriod.montant_po_array = (outputInPeriod.montant_po_array || []).concat(outputCourante.montant_part_ouvriere);
-            }
+    const futureArrays = {};
+    Object.keys(output_indexed).forEach((periode) => {
+        const input = output_indexed[periode];
+        const périodeCourante = output_indexed[periode].periode;
+        const douzeMoisÀVenir = f
+            .generatePeriodSerie(périodeCourante, f.dateAddMonth(périodeCourante, 12))
+            .map((periodeFuture) => ({ timestamp: periodeFuture.getTime() }))
+            .filter(({ timestamp }) => timestamp in output_indexed);
+        // Accumulation de cotisations sur les 12 mois à venir, pour calcul des moyennes
+        douzeMoisÀVenir.forEach(({ timestamp }) => {
+            const future = (futureArrays[timestamp] = futureArrays[timestamp] || {
+                cotisations: [],
+                montantsPP: [],
+                montantsPO: [],
+            });
+            if (input.cotisation !== undefined)
+                future.cotisations.push(input.cotisation);
+            if (input.montant_part_patronale !== undefined)
+                future.montantsPP.push(input.montant_part_patronale);
+            if (input.montant_part_ouvriere !== undefined)
+                future.montantsPO.push(input.montant_part_ouvriere);
         });
-    });
-    for (const val of output_array) {
-        val.cotisation_array = val.cotisation_array || [];
-        val.cotisation_moy12m =
-            val.cotisation_array.reduce((p, c) => p + c, 0) /
-                (val.cotisation_array.length || 1);
-        if (val.cotisation_moy12m > 0 &&
-            val.montant_part_ouvriere !== undefined &&
-            val.montant_part_patronale !== undefined) {
-            val.ratio_dette =
-                (val.montant_part_ouvriere + val.montant_part_patronale) /
-                    val.cotisation_moy12m;
-            const pp_average = (val.montant_pp_array || []).reduce((p, c) => p + c, 0) /
-                (((_a = val.montant_pp_array) === null || _a === void 0 ? void 0 : _a.length) || 1);
-            const po_average = (val.montant_po_array || []).reduce((p, c) => p + c, 0) /
-                (((_b = val.montant_po_array) === null || _b === void 0 ? void 0 : _b.length) || 1);
-            val.ratio_dette_moy12m = (po_average + pp_average) / val.cotisation_moy12m;
+        // Calcul des cotisations moyennes à partir des valeurs accumulées ci-dessus
+        const { cotisations, montantsPO, montantsPP } = futureArrays[periode];
+        const out = (sortieCotisation[periode] = sortieCotisation[periode] || {});
+        out.cotisation_moy12m = moyenne(cotisations);
+        if (out.cotisation_moy12m > 0 &&
+            input.montant_part_ouvriere !== undefined &&
+            input.montant_part_patronale !== undefined) {
+            out.ratio_dette =
+                (input.montant_part_ouvriere + input.montant_part_patronale) /
+                    out.cotisation_moy12m;
+            out.ratio_dette_moy12m =
+                (moyenne(montantsPO) + moyenne(montantsPP)) / out.cotisation_moy12m;
         }
         // Remplace dans cibleApprentissage
-        //val.dette_any_12m = (val.montant_pp_array || []).reduce((p,c) => (c >=
-        //100) || p, false) || (val.montant_po_array || []).reduce((p, c) => (c >=
+        //val.dette_any_12m = (val.montantsPA || []).reduce((p,c) => (c >=
+        //100) || p, false) || (val.montantsPO || []).reduce((p, c) => (c >=
         //100) || p, false)
-        delete val.cotisation_array;
-        delete val.montant_pp_array;
-        delete val.montant_po_array;
-    }
+    });
     // Calcul des défauts URSSAF prolongés
     let counter = 0;
-    Object.keys(output_indexed)
+    Object.keys(sortieCotisation)
         .sort()
         .forEach((k) => {
-        const { ratio_dette } = output_indexed[k];
+        const { ratio_dette } = sortieCotisation[k];
         if (!ratio_dette)
             return;
         if (ratio_dette > 0.01) {
-            output_indexed[k].tag_debit = true; // Survenance d'un débit d'au moins 1% des cotisations
+            sortieCotisation[k].tag_debit = true; // Survenance d'un débit d'au moins 1% des cotisations
         }
         if (ratio_dette > 1) {
             counter = counter + 1;
             if (counter >= 3)
-                output_indexed[k].tag_default = true;
+                sortieCotisation[k].tag_default = true;
         }
         else
             counter = 0;
     });
-}
-/* TODO: appliquer même logique d'itération sur futureTimestamps que dans cotisationsdettes.ts */`,
+    return sortieCotisation;
+}`,
 "cotisationsdettes": `/**
  * Calcule les variables liées aux cotisations sociales et dettes sur ces
  * cotisations.
@@ -1777,10 +1776,9 @@ function flatten(v, actual_batch) {
                 output_interim[periode].interim_proportion = one_interim.etp / effectif;
             }
         }
-        const past_month_offsets = [6, 12, 18, 24];
+        const past_month_offsets = [6, 12, 18, 24]; // En cas de changement, penser à mettre à jour le type SortieInterim
         past_month_offsets.forEach((offset) => {
             const time_past_offset = f.dateAddMonth(one_interim.periode, offset);
-            const variable_name_interim = "interim_ratio_past_" + offset;
             if (periode in output_effectif &&
                 time_past_offset.getTime() in output_effectif) {
                 output_interim[time_past_offset.getTime()] =
@@ -1788,7 +1786,9 @@ function flatten(v, actual_batch) {
                 const val_offset = output_interim[time_past_offset.getTime()];
                 const { effectif } = output_effectif[periode];
                 if (effectif) {
-                    val_offset[variable_name_interim] = one_interim.etp / effectif;
+                    Object.assign(val_offset, {
+                        [` + "`" + `interim_ratio_past_${offset}` + "`" + `]: one_interim.etp / effectif,
+                    });
                 }
             }
         });
@@ -1906,7 +1906,8 @@ function map() {
                 f.sirene(v, output_array);
             }
             f.populateNafAndApe(output_indexed, naf);
-            f.cotisation(output_indexed, output_array);
+            const output_cotisation = f.cotisation(output_indexed);
+            f.add(output_cotisation, output_indexed);
             const output_cible = f.cibleApprentissage(output_indexed, 18);
             f.add(output_cible, output_indexed);
             output_array.forEach((val) => {
