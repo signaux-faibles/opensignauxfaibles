@@ -26,7 +26,8 @@ const MAP_GOLDEN_FILE = "map_golden.log"
 const FINALIZE_GOLDEN_FILE = "finalize_golden.log"
 
 // En Intégration Continue, certains tests seront ignorés.
-const serialOrSkip = process.env.CI ? "skip" : "serial"
+const serialOrSkip =
+  process.env.CI || process.env.SKIP_PRIVATE ? "skip" : "serial"
 
 const updateGoldenFiles = process.argv.slice(2).includes("--update")
 

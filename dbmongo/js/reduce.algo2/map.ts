@@ -1,4 +1,3 @@
-import "../globals"
 import { flatten } from "./flatten"
 import { outputs, DonnéesAgrégées } from "./outputs"
 import { apart } from "./apart"
@@ -23,17 +22,18 @@ import { detteFiscale } from "./detteFiscale"
 import { fraisFinancier } from "./fraisFinancier"
 import { entr_bdf, SortieBdf } from "./entr_bdf"
 import { omit } from "../common/omit"
+import { entr_diane, SortieDiane } from "./entr_diane"
 
 type Siret = string
 
 type SortieMapEntreprise = {
   periode: Date
 } & Partial<SortieSireneEntreprise> &
-  Partial<EntréeBdf> &
+  Partial<EntréeBdf> & // TODO: est-ce nécéssaire d'inclure les types d'entrée ?
   Partial<EntréeDiane> &
   Partial<EntréeBdf> &
   Partial<SortieBdf> &
-  Record<string, unknown> // for *_past_* props of diane. // TODO: try to be more specific
+  Partial<SortieDiane>
 
 type SortieMapEtablissement = Partial<DonnéesAgrégées>
 
@@ -77,7 +77,7 @@ export function map(this: {
     ...{ repeatable, delais, defaillances, cotisationsdettes, ccsf }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     ...{ sirene, populateNafAndApe, cotisation, cibleApprentissage }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     ...{ entr_sirene, dateAddMonth, generatePeriodSerie, poidsFrng }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
-    ...{ detteFiscale, fraisFinancier, entr_bdf, omit }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
+    ...{ detteFiscale, fraisFinancier, entr_bdf, omit, entr_diane }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
   } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
 
   const v = f.flatten(this.value, actual_batch)
@@ -200,7 +200,7 @@ export function map(this: {
 
   if (v.scope === "entreprise") {
     if (includes["all"]) {
-      const output_indexed: Record<Periode, SortieMapEntreprise> = {}
+      const output_indexed: ParPériode<SortieMapEntreprise> = {}
 
       for (const periode of serie_periode) {
         output_indexed[periode.getTime()] = {
@@ -237,113 +237,9 @@ export function map(this: {
         f.add(outputBdf, output_indexed)
       }
 
-      for (const hash of Object.keys(v.diane)) {
-        if (!v.diane[hash].arrete_bilan_diane) continue
-        //v.diane[hash].arrete_bilan_diane = new Date(Date.UTC(v.diane[hash].exercice_diane, 11, 31, 0, 0, 0, 0))
-        const periode_arrete_bilan = new Date(
-          Date.UTC(
-            v.diane[hash].arrete_bilan_diane.getUTCFullYear(),
-            v.diane[hash].arrete_bilan_diane.getUTCMonth() + 1,
-            1,
-            0,
-            0,
-            0,
-            0
-          )
-        )
-        const periode_dispo = f.dateAddMonth(periode_arrete_bilan, 7) // 01/08 pour un bilan le 31/12, donc algo qui tourne en 01/09
-        const series = f.generatePeriodSerie(
-          periode_dispo,
-          f.dateAddMonth(periode_dispo, 14) // periode de validité d'un bilan auprès de la Banque de France: 21 mois (14+7)
-        )
-
-        for (const periode of series) {
-          const rest = f.omit(
-            v.diane[hash] as EntréeDiane & {
-              marquee: unknown
-              nom_entreprise: unknown
-              numero_siren: unknown
-              statut_juridique: unknown
-              procedure_collective: unknown
-            },
-            "marquee",
-            "nom_entreprise",
-            "numero_siren",
-            "statut_juridique",
-            "procedure_collective"
-          )
-
-          if (periode.getTime() in output_indexed) {
-            Object.assign(output_indexed[periode.getTime()], rest)
-          }
-
-          for (const k of Object.keys(rest) as (keyof typeof rest)[]) {
-            if (v.diane[hash][k] === null) {
-              if (periode.getTime() in output_indexed) {
-                delete output_indexed[periode.getTime()][k]
-              }
-              continue
-            }
-
-            // Passé
-
-            const past_year_offset = [1, 2]
-            for (const offset of past_year_offset) {
-              const periode_offset = f.dateAddMonth(periode, 12 * offset)
-              const variable_name = k + "_past_" + offset
-
-              if (
-                periode_offset.getTime() in output_indexed &&
-                k !== "arrete_bilan_diane" &&
-                k !== "exercice_diane"
-              ) {
-                output_indexed[periode_offset.getTime()][variable_name] =
-                  v.diane[hash][k]
-              }
-            }
-          }
-        }
-
-        for (const periode of series) {
-          if (periode.getTime() in output_indexed) {
-            // Recalcul BdF si ratios bdf sont absents
-            const outputInPeriod = output_indexed[periode.getTime()]
-            if (!("poids_frng" in outputInPeriod)) {
-              const poids = f.poidsFrng(v.diane[hash])
-              if (poids !== null) outputInPeriod.poids_frng = poids
-            }
-            if (!("dette_fiscale" in outputInPeriod)) {
-              const dette = f.detteFiscale(v.diane[hash])
-              if (dette !== null) outputInPeriod.dette_fiscale = dette
-            }
-            if (!("frais_financier" in outputInPeriod)) {
-              const frais = f.fraisFinancier(v.diane[hash])
-              if (frais !== null) outputInPeriod.frais_financier = frais
-            }
-
-            const bdf_vars = [
-              "taux_marge",
-              "poids_frng",
-              "dette_fiscale",
-              "financier_court_terme",
-              "frais_financier",
-            ]
-            const past_year_offset = [1, 2]
-            bdf_vars.forEach((k) => {
-              if (k in outputInPeriod) {
-                past_year_offset.forEach((offset) => {
-                  const periode_offset = f.dateAddMonth(periode, 12 * offset)
-                  const variable_name = k + "_past_" + offset
-
-                  if (periode_offset.getTime() in output_indexed) {
-                    output_indexed[periode_offset.getTime()][variable_name] =
-                      outputInPeriod[k]
-                  }
-                })
-              }
-            })
-          }
-        }
+      if (v.diane) {
+        const outputDiane = f.entr_diane(v.diane, output_indexed, periodes)
+        f.add(outputDiane, output_indexed)
       }
 
       serie_periode.forEach((date) => {

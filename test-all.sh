@@ -13,10 +13,10 @@ function indent {
   sed 's/^/  /'
 }
 
-heading "npm test" && (cd dbmongo/js && npm run lint && npm test) | indent && \
-heading "go test" && (cd dbmongo && go test ./...) | indent && \
-heading "go generate" && (cd dbmongo/lib/engine && go generate .) | indent && \
-heading "go build" && (killall dbmongo; cd dbmongo && go build) | indent && \
+heading "npm test" && (cd ./dbmongo/js && npm run lint && npm test) | indent && \
+heading "go test" && (cd ./dbmongo && go test ./...) | indent && \
+heading "go generate" && (cd ./dbmongo/lib/engine && go generate .) | indent && \
+heading "go build" && (killall dbmongo >/dev/null; cd ./dbmongo && go build) | indent && \
 heading "test-api.sh" && ./test-api.sh | indent && \
 heading "test-api-reduce.sh" && ./test-api-reduce.sh | indent && \
 heading "test-api-2.sh" && ./test-api-2.sh | indent
