@@ -46,3 +46,4 @@ dbmongo/js/test/test_data_algo2
 test-reduce-data.json
 test-reduce-finalize_golden.json
 test-reduce-map_golden.json
+test-api-2_golden.json
