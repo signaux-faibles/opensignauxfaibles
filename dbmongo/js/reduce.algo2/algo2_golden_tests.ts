@@ -9,10 +9,9 @@
 // To update golden files: `$ npx ava algo2_golden_tests.ts -- --update`
 //                      or `$ npm run test:update-golden-files`
 
-import test, { before, after, ExecutionContext as ExecCtx } from "ava"
+import test, { ExecutionContext as ExecCtx } from "ava"
 import * as fs from "fs"
 import * as util from "util"
-// import * as childProcess from "child_process"
 import { naf } from "../test/data/naf"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { map } from "./map"
@@ -28,8 +27,7 @@ const PRIVATE_LINE_DIFF_THRESHOLD = 30
 // En Intégration Continue, certains tests seront ignorés.
 const serialOrSkip = process.env.SKIP_PRIVATE ? "skip" : "serial"
 
-const updateGoldenFiles =
-  !process.env.CI && process.argv.slice(2).includes("--update")
+const updateGoldenFiles = process.argv.slice(2).includes("--update")
 
 const countLines = (str: string) => str.split(/[\r\n]+/).length
 
@@ -51,42 +49,16 @@ const safeDeepEqual = (t: ExecCtx, actual: string, expected: string) => {
 
 const context = (() => {
   const localPath = "../.."
-
   return {
-    setup: async () => {
-      /*
-      const command = `git secret reveal`
-      console.warn(`$ ${command}`) // eslint-disable-line no-console
-      const { stderr } = await exec(command)
-      if (stderr) throw new Error(stderr)
-      */
-    },
-    tearDown: async () => {
-      /*
-      const command = `git secret hide`
-      console.warn(`$ ${command}`) // eslint-disable-line no-console
-      const { stderr } = await exec(`rm -r ${localPath}`)
-      if (stderr) throw new Error(stderr)
-      */
-    },
     readFile: async (filename: string): Promise<string> =>
       util.promisify(fs.readFile)(`${localPath}/${filename}`, "utf8"),
     writeFile: async (filename: string, data: string): Promise<void> => {
-      await util.promisify(fs.writeFile)(`${localPath}/${filename}`, data)
-      // await exec(`scp ${localPath}/${filename} ${remotePath}/`)
-      // TODO: run `git secret hide` to encrypt the updated golden file
-      // TODO: forbid update of golden file, when running on CI
+      const filePath = `${localPath}/${filename}`
+      await util.promisify(fs.writeFile)(`${filePath}`, data)
+      console.warn(`ℹ️ Updated ${filePath} => run: $ git secret hide`) // eslint-disable-line no-console
     },
   }
 })()
-
-before("récupération des données", async () => {
-  await context.setup() // step will fail in case of error while decrypting golden files
-})
-
-after("suppression des données temporaires", async () => {
-  await context.tearDown()
-})
 
 test[serialOrSkip](
   "l'application de reduce.algo2 sur reduce_test_data.json donne le même résultat que d'habitude",
