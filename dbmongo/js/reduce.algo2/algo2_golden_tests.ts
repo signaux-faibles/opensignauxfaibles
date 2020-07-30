@@ -23,6 +23,7 @@ import { runMongoMap, parseMongoObject } from "../test/helpers/mongodb"
 const INPUT_FILE = "reduce_test_data.json"
 const MAP_GOLDEN_FILE = "map_golden.log"
 const FINALIZE_GOLDEN_FILE = "finalize_golden.log"
+const PRIVATE_LINE_DIFF_THRESHOLD = 30
 
 // En Intégration Continue, certains tests seront ignorés.
 const serialOrSkip = process.env.SKIP_PRIVATE ? "skip" : "serial"
@@ -117,15 +118,15 @@ test[serialOrSkip](
       await context.writeFile(FINALIZE_GOLDEN_FILE, finalizeOutput)
     }
 
-    const finalizeExpected = await context.readFile(FINALIZE_GOLDEN_FILE)
+    const finalizeExpected = "" // await context.readFile(FINALIZE_GOLDEN_FILE)
     if (process.env.CI) {
-      t.true(
-        Math.abs(
-          finalizeExpected.split(/[\r\n]+/).length -
-            finalizeOutput.split(/[\r\n]+/).length
-        ) < 30,
-        "the diff is too large => not displaying on CI"
-      )
+      const [expectedLines, actualLines] = [
+        finalizeExpected,
+        finalizeOutput,
+      ].map((str) => str.split(/[\r\n]+/).length)
+      if (Math.abs(expectedLines - actualLines) > PRIVATE_LINE_DIFF_THRESHOLD) {
+        t.fail("the diff is too large => not displaying on CI")
+      }
     }
     t.deepEqual(finalizeOutput, finalizeExpected)
   }
