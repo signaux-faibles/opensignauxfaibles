@@ -25,10 +25,10 @@ const MAP_GOLDEN_FILE = "map_golden.log"
 const FINALIZE_GOLDEN_FILE = "finalize_golden.log"
 
 // En Intégration Continue, certains tests seront ignorés.
-const serialOrSkip =
-  process.env.CI || process.env.SKIP_PRIVATE ? "skip" : "serial"
+const serialOrSkip = process.env.SKIP_PRIVATE ? "skip" : "serial"
 
-const updateGoldenFiles = process.argv.slice(2).includes("--update")
+const updateGoldenFiles =
+  !process.env.CI && process.argv.slice(2).includes("--update")
 
 const exec = (command: string): Promise<{ stdout: string; stderr: string }> =>
   util.promisify(childProcess.exec)(command)
@@ -118,6 +118,15 @@ test[serialOrSkip](
     }
 
     const finalizeExpected = await context.readFile(FINALIZE_GOLDEN_FILE)
+    if (process.env.CI) {
+      t.true(
+        Math.abs(
+          finalizeExpected.split(/[\r\n]+/).length -
+            finalizeOutput.split(/[\r\n]+/).length
+        ) < 30,
+        "the diff is too large => not displaying on CI"
+      )
+    }
     t.deepEqual(finalizeOutput, finalizeExpected)
   }
 )
