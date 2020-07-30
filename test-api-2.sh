@@ -18,10 +18,6 @@ mkdir -p "${DATA_DIR}"
 trap "{ killall dbmongo >/dev/null; [ -f config.toml ] && rm config.toml; [ -f config.backup.toml ] && mv config.backup.toml config.toml; sudo docker stop sf-mongodb >/dev/null; rm -rf ${DATA_DIR}; echo \"✨ Cleaned up temp directory\"; }" EXIT
 
 echo ""
-echo "🚚 Downloading realistic data set..."
-scp "stockage:/home/centos/opensignauxfaibles_tests/*" "${DATA_DIR}/"
-
-echo ""
 echo "🐳 Starting MongoDB container..."
 sudo docker run \
     --name sf-mongodb \
@@ -119,8 +115,8 @@ echo ""
 if [[ "$*" == *--update* ]]
 then
     echo "🖼  Updating golden master file..."
-    cp test-api-2.output.json "${DATA_DIR}/test-api-2_golden.json"
-    scp "${DATA_DIR}/test-api-2_golden.json" "stockage:/home/centos/opensignauxfaibles_tests/"
+    cp test-api-2.output.json test-api-2_golden.json
+    git secret hide # to re-encrypt the golden master file, after having updated it
 else
     # Diff between expected and actual output
     diff --brief "${DATA_DIR}/test-api-2_golden.json" test-api-2.output.json
