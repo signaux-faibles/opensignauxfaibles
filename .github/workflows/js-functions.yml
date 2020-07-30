@@ -52,11 +52,18 @@ jobs:
           sudo apt-get update -y
           sudo apt-get install -y libjavascriptcoregtk-4.0-bin # jsc, for tests of JavaScript functions
           sudo apt-get install -y dos2unix # for Diane tests
+          sudo apt-get install git-secret # to decrypt golden master files, for tests
 
       - name: JS Linter
         working-directory: dbmongo/js
         run: |
           npm run lint
+
+      - name: Reveal golden master files for tests
+        run: |
+          echo ${{ secrets.GPG_PRIVATE_KEY_FOR_GIT_SECRET }} > ./private_key.gpg
+          gpg --import ./private_key.gpg
+          git secret reveal
 
       - name: JS Tests driven by Node/AVA
         working-directory: dbmongo/js
