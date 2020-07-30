@@ -12,7 +12,7 @@
 import test, { before, after, ExecutionContext as ExecCtx } from "ava"
 import * as fs from "fs"
 import * as util from "util"
-import * as childProcess from "child_process"
+// import * as childProcess from "child_process"
 import { naf } from "../test/data/naf"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { map } from "./map"
@@ -20,9 +20,9 @@ import { finalize } from "./finalize"
 import { reduce } from "./reduce"
 import { runMongoMap, parseMongoObject } from "../test/helpers/mongodb"
 
-const INPUT_FILE = "reduce_test_data.json"
-const MAP_GOLDEN_FILE = "map_golden.log"
-const FINALIZE_GOLDEN_FILE = "finalize_golden.log"
+const INPUT_FILE = "test-reduce-data.json"
+const MAP_GOLDEN_FILE = "test-reduce-map_golden.json"
+const FINALIZE_GOLDEN_FILE = "test-reduce-finalize_golden.json"
 const PRIVATE_LINE_DIFF_THRESHOLD = 30
 
 // En Intégration Continue, certains tests seront ignorés.
@@ -46,11 +46,10 @@ const safeDeepEqual = (t: ExecCtx, actual: string, expected: string) => {
   t.deepEqual(actual, expected)
 }
 
-const exec = (command: string): Promise<{ stdout: string; stderr: string }> =>
-  util.promisify(childProcess.exec)(command)
+// const exec = (command: string): Promise<{ stdout: string; stderr: string }> =>
+//   util.promisify(childProcess.exec)(command)
 
 const context = (() => {
-  const remotePath = "stockage:/home/centos/opensignauxfaibles_tests"
   const localPath = "../.."
 
   return {

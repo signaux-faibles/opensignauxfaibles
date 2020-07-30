@@ -63,7 +63,7 @@ cat > "${DATA_DIR}/db_popul.js" << CONTENTS
   db.RawData.remove({})
   db.RawData.insertMany(
 CONTENTS
-cat >> "${DATA_DIR}/db_popul.js" < "${DATA_DIR}/reduce_test_data.json"
+cat >> "${DATA_DIR}/db_popul.js" < "${DATA_DIR}/test-reduce-data.json"
 echo ")" >> "${DATA_DIR}/db_popul.js"
 
 sudo docker exec -i sf-mongodb mongo signauxfaibles > /dev/null < "${DATA_DIR}/db_popul.js"
