@@ -51,28 +51,38 @@ const exec = (command: string): Promise<{ stdout: string; stderr: string }> =>
 
 const context = (() => {
   const remotePath = "stockage:/home/centos/opensignauxfaibles_tests"
-  const localPath = "./test_data_algo2"
+  const localPath = "../.."
 
   return {
     setup: async () => {
-      await exec(`mkdir ${localPath} | true`)
-      const command = `scp ${remotePath}/* ${localPath}`
+      /*
+      const command = `git secret reveal`
       console.warn(`$ ${command}`) // eslint-disable-line no-console
       const { stderr } = await exec(command)
       if (stderr) throw new Error(stderr)
+      */
     },
-    tearDown: () => exec(`rm -r ${localPath}`),
+    tearDown: async () => {
+      /*
+      const command = `git secret hide`
+      console.warn(`$ ${command}`) // eslint-disable-line no-console
+      const { stderr } = await exec(`rm -r ${localPath}`)
+      if (stderr) throw new Error(stderr)
+      */
+    },
     readFile: async (filename: string): Promise<string> =>
       util.promisify(fs.readFile)(`${localPath}/${filename}`, "utf8"),
     writeFile: async (filename: string, data: string): Promise<void> => {
       await util.promisify(fs.writeFile)(`${localPath}/${filename}`, data)
-      await exec(`scp ${localPath}/${filename} ${remotePath}/`)
+      // await exec(`scp ${localPath}/${filename} ${remotePath}/`)
+      // TODO: run `git secret hide` to encrypt the updated golden file
+      // TODO: forbid update of golden file, when running on CI
     },
   }
 })()
 
 before("récupération des données", async () => {
-  await context.setup() // step will fail in case of error while downloading golden files
+  await context.setup() // step will fail in case of error while decrypting golden files
 })
 
 after("suppression des données temporaires", async () => {
