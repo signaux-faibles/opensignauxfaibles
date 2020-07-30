@@ -25,7 +25,7 @@ sudo docker run \
 
 echo ""
 echo "🔧 Setting up dbmongo..."
-cd dbmongo
+cd ./dbmongo
 go build
 [ -f config.toml ] && mv config.toml config.backup.toml
 cp config-sample.toml config.toml
