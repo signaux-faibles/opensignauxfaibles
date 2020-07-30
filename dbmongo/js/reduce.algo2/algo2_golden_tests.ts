@@ -9,7 +9,7 @@
 // To update golden files: `$ npx ava algo2_golden_tests.ts -- --update`
 //                      or `$ npm run test:update-golden-files`
 
-import test, { before, after } from "ava"
+import test, { before, after, ExecutionContext as ExecCtx } from "ava"
 import * as fs from "fs"
 import * as util from "util"
 import * as childProcess from "child_process"
@@ -30,6 +30,21 @@ const serialOrSkip = process.env.SKIP_PRIVATE ? "skip" : "serial"
 
 const updateGoldenFiles =
   !process.env.CI && process.argv.slice(2).includes("--update")
+
+const countLines = (str: string) => str.split(/[\r\n]+/).length
+
+// N'affichera le diff complet que si les tests ne tournent pas en CI.
+// (pour éviter une fuite de données privée des fichiers golden master)
+const safeDeepEqual = (t: ExecCtx, actual: string, expected: string) => {
+  if (process.env.CI) {
+    const [expectedLines, actualLines] = [expected, actual].map(countLines)
+    if (Math.abs(expectedLines - actualLines) > PRIVATE_LINE_DIFF_THRESHOLD) {
+      t.fail("the diff is too large => not displaying on CI")
+      return
+    }
+  }
+  t.deepEqual(actual, expected)
+}
 
 const exec = (command: string): Promise<{ stdout: string; stderr: string }> =>
   util.promisify(childProcess.exec)(command)
@@ -100,7 +115,7 @@ test[serialOrSkip](
     }
 
     const mapExpected = await context.readFile(MAP_GOLDEN_FILE)
-    t.deepEqual(mapOutput, mapExpected)
+    safeDeepEqual(t, mapOutput, mapExpected)
 
     const valuesPerKey: Record<string, unknown[]> = {}
     mapResult.forEach(({ _id, value }) => {
@@ -118,16 +133,7 @@ test[serialOrSkip](
       await context.writeFile(FINALIZE_GOLDEN_FILE, finalizeOutput)
     }
 
-    const finalizeExpected = "" // await context.readFile(FINALIZE_GOLDEN_FILE)
-    if (process.env.CI) {
-      const [expectedLines, actualLines] = [
-        finalizeExpected,
-        finalizeOutput,
-      ].map((str) => str.split(/[\r\n]+/).length)
-      if (Math.abs(expectedLines - actualLines) > PRIVATE_LINE_DIFF_THRESHOLD) {
-        t.fail("the diff is too large => not displaying on CI")
-      }
-    }
-    t.deepEqual(finalizeOutput, finalizeExpected)
+    const finalizeExpected = await context.readFile(FINALIZE_GOLDEN_FILE)
+    safeDeepEqual(t, finalizeOutput, finalizeExpected)
   }
 )
