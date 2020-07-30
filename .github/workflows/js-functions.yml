@@ -64,7 +64,7 @@ jobs:
           GPG_PRIVATE_KEY_FOR_GIT_SECRET: ${{ secrets.GPG_PRIVATE_KEY_FOR_GIT_SECRET }}
         run: |
           echo "${GPG_PRIVATE_KEY_FOR_GIT_SECRET}" > ./private_key.gpg
-          gpg --import ./private_key.gpg
+          gpg --import --no-tty --batch --yes ./private_key.gpg
           git secret reveal
 
       - name: JS Tests driven by Node/AVA
