@@ -60,8 +60,10 @@ jobs:
           npm run lint
 
       - name: Reveal golden master files for tests
+        env:
+          GPG_PRIVATE_KEY_FOR_GIT_SECRET: ${{ secrets.GPG_PRIVATE_KEY_FOR_GIT_SECRET }}
         run: |
-          echo ${{ secrets.GPG_PRIVATE_KEY_FOR_GIT_SECRET }} > ./private_key.gpg
+          echo "${GPG_PRIVATE_KEY_FOR_GIT_SECRET}" > ./private_key.gpg
           gpg --import ./private_key.gpg
           git secret reveal
 
