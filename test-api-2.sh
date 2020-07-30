@@ -59,7 +59,7 @@ cat > "${DATA_DIR}/db_popul.js" << CONTENTS
   db.RawData.remove({})
   db.RawData.insertMany(
 CONTENTS
-cat >> "${DATA_DIR}/db_popul.js" < "${DATA_DIR}/test-reduce-data.json"
+cat >> "${DATA_DIR}/db_popul.js" < ../test-reduce-data.json
 echo ")" >> "${DATA_DIR}/db_popul.js"
 
 sudo docker exec -i sf-mongodb mongo signauxfaibles > /dev/null < "${DATA_DIR}/db_popul.js"
@@ -119,7 +119,7 @@ then
     git secret hide # to re-encrypt the golden master file, after having updated it
 else
     # Diff between expected and actual output
-    diff --brief "${DATA_DIR}/test-api-2_golden.json" test-api-2.output.json
+    diff --brief test-api-2_golden.json test-api-2.output.json
     echo "✅ No diff. The reduce API works as usual."
 fi
 echo ""
