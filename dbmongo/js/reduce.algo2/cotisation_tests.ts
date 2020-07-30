@@ -66,7 +66,7 @@ const testCases = [
   },
   {
     assertion:
-      "La variable ratio_dette n'est pas calculée s'il manque un montant de cotisation au sein de la période",
+      "La variable ratio_dette n'est pas calculée si on n'a pas 12 mois d'historique de cotisations",
     input: forEachMonth(({ month }) => ({
       cotisation: month === 0 ? undefined : 10,
       montant_part_ouvriere: 5,
