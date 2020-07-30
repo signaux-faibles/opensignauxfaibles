@@ -8,14 +8,14 @@
 # suite de tests exécutée en Integration Continue.
 
 # Interrompre le conteneur Docker d'une exécution précédente de ce test, si besoin
-docker stop sf-mongodb &>/dev/null
+sudo docker stop sf-mongodb &>/dev/null
 
 set -e # will stop the script if any command fails with a non-zero exit code
 
 # Clean up on exit
 DATA_DIR=$(pwd)/tmp-opensignauxfaibles-data-raw
 mkdir -p "${DATA_DIR}"
-trap "{ killall dbmongo >/dev/null; [ -f config.toml ] && rm config.toml; [ -f config.backup.toml ] && mv config.backup.toml config.toml; docker stop sf-mongodb >/dev/null; rm -rf ${DATA_DIR}; echo \"✨ Cleaned up temp directory\"; }" EXIT
+trap "{ killall dbmongo >/dev/null; [ -f config.toml ] && rm config.toml; [ -f config.backup.toml ] && mv config.backup.toml config.toml; sudo docker stop sf-mongodb >/dev/null; rm -rf ${DATA_DIR}; echo \"✨ Cleaned up temp directory\"; }" EXIT
 
 echo ""
 echo "🚚 Downloading realistic data set..."
@@ -23,9 +23,9 @@ scp "stockage:/home/centos/opensignauxfaibles_tests/*" "${DATA_DIR}/"
 
 echo ""
 echo "🐳 Starting MongoDB container..."
-docker run \
+sudo docker run \
     --name sf-mongodb \
-    --publish 27017:27017 \
+    --publish 27016:27017 \
     --detach \
     --rm \
     mongo:4 \
@@ -38,6 +38,7 @@ go build
 [ -f config.toml ] && mv config.toml config.backup.toml
 cp config-sample.toml config.toml
 perl -pi'' -e "s,/foo/bar/data-raw,sample-data-raw," config.toml
+perl -pi'' -e "s,27017,27016," config.toml
 
 echo ""
 echo "📝 Inserting test data..."
@@ -65,7 +66,7 @@ CONTENTS
 cat >> "${DATA_DIR}/db_popul.js" < "${DATA_DIR}/reduce_test_data.json"
 echo ")" >> "${DATA_DIR}/db_popul.js"
 
-docker exec -i sf-mongodb mongo signauxfaibles > /dev/null < "${DATA_DIR}/db_popul.js"
+sudo docker exec -i sf-mongodb mongo signauxfaibles > /dev/null < "${DATA_DIR}/db_popul.js"
 
 echo ""
 echo "💎 Computing Features and Public collections thru dbmongo API..."
@@ -103,14 +104,14 @@ echo ""
 echo "🕵️‍♀️ Checking resulting Features..."
 cd ..
 echo "db.Features_TestData.find().toArray();" \
-  | docker exec -i sf-mongodb mongo --quiet signauxfaibles \
+  | sudo docker exec -i sf-mongodb mongo --quiet signauxfaibles \
   | fixJSON \
   | transformJSON \
   | removeRandomOrder \
   > test-api-2.output.json
 
 # Display JS errors logged by MongoDB, if any
-docker logs sf-mongodb | grep --color=always "uncaught exception" || true
+sudo docker logs sf-mongodb | grep --color=always "uncaught exception" || true
 
 removeRandomOrder "${DATA_DIR}/finalize_golden.log" \
   > "${DATA_DIR}/test-api-2_golden.json"
