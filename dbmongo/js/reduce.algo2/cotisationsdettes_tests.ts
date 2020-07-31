@@ -2,7 +2,7 @@ import "../globals"
 import test from "ava"
 import { cotisationsdettes, SortieCotisationsDettes } from "./cotisationsdettes"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
-import { dateAddMonth } from "./dateAddMonth"
+import { dateAddMonth } from "../common/dateAddMonth"
 
 const dureeEnMois = 13
 const moisRemboursement = 4
