@@ -1205,16 +1205,20 @@ db.getCollection("Features").createIndex({
         // Calcul des cotisations moyennes à partir des valeurs accumulées ci-dessus
         const { cotisations, montantsPO, montantsPP } = futureArrays[periode];
         const out = (sortieCotisation[periode] = sortieCotisation[periode] || {});
-        out.cotisation_moy12m = moyenne(cotisations);
-        if (typeof out.cotisation_moy12m !== "undefined" &&
-            out.cotisation_moy12m > 0) {
+        if (cotisations.length >= 12) {
+            out.cotisation_moy12m = moyenne(cotisations);
+        }
+        if (typeof out.cotisation_moy12m === "undefined") {
+            delete out.cotisation_moy12m;
+        }
+        else if (out.cotisation_moy12m > 0) {
             out.ratio_dette =
                 ((input.montant_part_ouvriere || 0) +
                     (input.montant_part_patronale || 0)) /
                     out.cotisation_moy12m;
-            const moyPO = moyenne(montantsPO); // à condition que montantsPO ne contienne que des number
-            const moyPP = moyenne(montantsPP); // à condition que montantsPP ne contienne que des number
-            out.ratio_dette_moy12m = (moyPO + moyPP) / out.cotisation_moy12m;
+            if (!cotisations.includes(undefined) && !cotisations.includes(0)) {
+                out.ratio_dette_moy12m = moyenne(montantsPO.map((_, i) => (montantsPO[i] + montantsPP[i]) / cotisations[i]));
+            }
         }
         // Remplace dans cibleApprentissage
         //val.dette_any_12m = (val.montantsPA || []).reduce((p,c) => (c >=
