@@ -4,8 +4,11 @@
 #
 # Inspiré de test-api.sh et finalize_test.js.
 #
-# Ce test requiert l'accès à un serveur privé, et n'est donc pas inclus dans la
-# suite de tests exécutée en Integration Continue.
+# To update golden files: `$ ./test-api-2.sh --update`
+# 
+# These tests require the presence of private files => Make sure to:
+# - run `$ git secret reveal` before running these tests;
+# - run `$ git secret hide` (to encrypt changes) after updating.
 
 # Interrompre le conteneur Docker d'une exécution précédente de ce test, si besoin
 sudo docker stop sf-mongodb &>/dev/null
