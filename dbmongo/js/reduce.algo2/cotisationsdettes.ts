@@ -1,5 +1,5 @@
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
-import { dateAddMonth } from "./dateAddMonth"
+import { dateAddMonth } from "../common/dateAddMonth"
 import { compareDebit } from "../common/compareDebit"
 
 type EcartNegatif = {

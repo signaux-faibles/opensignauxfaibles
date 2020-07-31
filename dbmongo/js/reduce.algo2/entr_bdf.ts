@@ -1,6 +1,6 @@
 import "../globals"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
-import { dateAddMonth } from "./dateAddMonth"
+import { dateAddMonth } from "../common/dateAddMonth"
 import { omit } from "../common/omit"
 
 export type SortieBdf = {

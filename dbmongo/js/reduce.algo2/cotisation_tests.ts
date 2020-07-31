@@ -2,7 +2,7 @@ import "../globals"
 import test from "ava"
 import { cotisation, Input, SortieCotisation } from "./cotisation"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
-import { dateAddMonth } from "./dateAddMonth"
+import { dateAddMonth } from "../common/dateAddMonth"
 
 const dureeEnMois = 13
 const dateDebut = new Date("2018-01-01")

@@ -1,5 +1,5 @@
 import { altaresToHuman, AltaresToHumanRes } from "../common/altaresToHuman"
-import { procolToHuman, ProcolToHumanRes } from "./procolToHuman"
+import { procolToHuman, ProcolToHumanRes } from "../common/procolToHuman"
 
 export type InputEvent = EntréeDefaillances
 
