@@ -4,8 +4,11 @@
 #
 # Inspiré de test-api.sh et finalize_test.js.
 #
-# Ce test requiert l'accès à un serveur privé, et n'est donc pas inclus dans la
-# suite de tests exécutée en Integration Continue.
+# To update golden files: `$ ./test-api-2.sh --update`
+# 
+# These tests require the presence of private files => Make sure to:
+# - run `$ git secret reveal` before running these tests;
+# - run `$ git secret hide` (to encrypt changes) after updating.
 
 # Interrompre le conteneur Docker d'une exécution précédente de ce test, si besoin
 sudo docker stop sf-mongodb &>/dev/null
@@ -18,17 +21,13 @@ mkdir -p "${DATA_DIR}"
 trap "{ killall dbmongo >/dev/null; [ -f config.toml ] && rm config.toml; [ -f config.backup.toml ] && mv config.backup.toml config.toml; sudo docker stop sf-mongodb >/dev/null; rm -rf ${DATA_DIR}; echo \"✨ Cleaned up temp directory\"; }" EXIT
 
 echo ""
-echo "🚚 Downloading realistic data set..."
-scp "stockage:/home/centos/opensignauxfaibles_tests/*" "${DATA_DIR}/"
-
-echo ""
 echo "🐳 Starting MongoDB container..."
 sudo docker run \
     --name sf-mongodb \
     --publish 27016:27017 \
     --detach \
     --rm \
-    mongo:4 \
+    mongo:4.2@sha256:1c2243a5e21884ffa532ca9d20c221b170d7b40774c235619f98e2f6eaec520a \
     >/dev/null
 
 echo ""
@@ -63,7 +62,7 @@ cat > "${DATA_DIR}/db_popul.js" << CONTENTS
   db.RawData.remove({})
   db.RawData.insertMany(
 CONTENTS
-cat >> "${DATA_DIR}/db_popul.js" < "${DATA_DIR}/reduce_test_data.json"
+cat >> "${DATA_DIR}/db_popul.js" < ../test-reduce-data.json
 echo ")" >> "${DATA_DIR}/db_popul.js"
 
 sudo docker exec -i sf-mongodb mongo signauxfaibles > /dev/null < "${DATA_DIR}/db_popul.js"
@@ -118,11 +117,11 @@ echo ""
 if [[ "$*" == *--update* ]]
 then
     echo "🖼  Updating golden master file..."
-    cp test-api-2.output.json "${DATA_DIR}/test-api-2_golden.json"
-    scp "${DATA_DIR}/test-api-2_golden.json" "stockage:/home/centos/opensignauxfaibles_tests/"
+    cp test-api-2.output.json test-api-2_golden.json
+    echo "ℹ️  Updated test-api-2_golden.json => run: $ git secret hide" # to re-encrypt the golden master file, after having updated it
 else
     # Diff between expected and actual output
-    diff --brief "${DATA_DIR}/test-api-2_golden.json" test-api-2.output.json
+    diff --brief test-api-2_golden.json test-api-2.output.json
     echo "✅ No diff. The reduce API works as usual."
 fi
 echo ""
