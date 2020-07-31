@@ -7,32 +7,33 @@
 # TODO: Refactoriser les tests fonctionnels pour réduire la duplication.
 
 # Interrompre le conteneur Docker d'une exécution précédente de ce test, si besoin
-docker stop sf-mongodb &>/dev/null
+sudo docker stop sf-mongodb &>/dev/null
 
 set -e # will stop the script if any command fails with a non-zero exit code
 
 # Clean up on exit
 DATA_DIR=$(pwd)/tmp-opensignauxfaibles-data-raw
 mkdir -p "${DATA_DIR}"
-trap "{ killall dbmongo >/dev/null; [ -f config.toml ] && rm config.toml; [ -f config.backup.toml ] && mv config.backup.toml config.toml; docker stop sf-mongodb >/dev/null; rm -rf ${DATA_DIR}; echo \"✨ Cleaned up temp directory\"; }" EXIT
+trap "{ killall dbmongo >/dev/null; [ -f config.toml ] && rm config.toml; [ -f config.backup.toml ] && mv config.backup.toml config.toml; sudo docker stop sf-mongodb >/dev/null; rm -rf ${DATA_DIR}; echo \"✨ Cleaned up temp directory\"; }" EXIT
 
 echo ""
 echo "🐳 Starting MongoDB container..."
-docker run \
+sudo docker run \
     --name sf-mongodb \
-    --publish 27017:27017 \
+    --publish 27016:27017 \
     --detach \
     --rm \
-    mongo:4 \
+    mongo:4.2@sha256:1c2243a5e21884ffa532ca9d20c221b170d7b40774c235619f98e2f6eaec520a \
     >/dev/null
 
 echo ""
 echo "🔧 Setting up dbmongo..."
-cd dbmongo
+cd ./dbmongo
 go build
 [ -f config.toml ] && mv config.toml config.backup.toml
 cp config-sample.toml config.toml
 perl -pi'' -e "s,/foo/bar/data-raw,sample-data-raw," config.toml
+perl -pi'' -e "s,27017,27016," config.toml
 
 echo ""
 echo "📝 Inserting test data..."
@@ -61,7 +62,7 @@ node -e "console.log(require('./js/test/data/objects.js').makeObjects.toString()
   >> "${DATA_DIR}/db_popul.js"
 echo ")" >> "${DATA_DIR}/db_popul.js"
 
-docker exec -i sf-mongodb mongo signauxfaibles > /dev/null < "${DATA_DIR}/db_popul.js"
+sudo docker exec -i sf-mongodb mongo signauxfaibles > /dev/null < "${DATA_DIR}/db_popul.js"
 
 echo ""
 echo "💎 Computing Features and Public collections thru dbmongo API..."
@@ -73,11 +74,11 @@ echo ""
 echo "🕵️‍♀️ Checking resulting Features..."
 cd ..
 echo "db.Features_TestData.find().toArray();" \
-  | docker exec -i sf-mongodb mongo --quiet signauxfaibles \
+  | sudo docker exec -i sf-mongodb mongo --quiet signauxfaibles \
   > "test-api-reduce.output-documents.json"
 
 # Display JS errors logged by MongoDB, if any
-docker logs sf-mongodb | grep --color=always "uncaught exception" || true
+sudo docker logs sf-mongodb | grep --color=always "uncaught exception" || true
 
 echo ""
 # Check if the --update flag was passed
