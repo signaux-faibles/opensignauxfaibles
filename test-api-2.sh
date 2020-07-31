@@ -121,6 +121,7 @@ then
     echo "ℹ️  Updated test-api-2_golden.json => run: $ git secret hide" # to re-encrypt the golden master file, after having updated it
 else
     # Diff between expected and actual output
+    diff test-api-2_golden.json test-api-2.output.json | head
     diff --brief test-api-2_golden.json test-api-2.output.json
     echo "✅ No diff. The reduce API works as usual."
 fi
