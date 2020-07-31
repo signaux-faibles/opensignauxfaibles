@@ -2,17 +2,20 @@
 
 // Combinaison des tests de map_test.js et finalize_test.js.
 //
-// Golden-file-based tests to prevent regressions on the JS functions
-// (common + algo2) used to compute the "Features" collection from the
-// "RawData" collection.
+// Tests to prevent regressions on the JS functions (reduce.algo2 + common)
+// used to compute the "Features" collection from the "RawData" collection.
 //
 // To update golden files: `$ npx ava algo2_golden_tests.ts -- --update`
 //                      or `$ npm run test:update-golden-files`
+//
+// These tests require the presence of private files specified in the constants
+// below. => Make sure to:
+// - run `$ git secret reveal` before running these tests;
+// - run `$ git secret hide` (to encrypt changes) after updating.
 
-import test, { before, after } from "ava"
+import test, { ExecutionContext as ExecCtx } from "ava"
 import * as fs from "fs"
 import * as util from "util"
-import * as childProcess from "child_process"
 import { naf } from "../test/data/naf"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { map } from "./map"
@@ -21,54 +24,45 @@ import { reduce } from "./reduce"
 import { TestDataItem } from "../test/data/objects"
 import { runMongoMap, parseMongoObject } from "../test/helpers/mongodb"
 
-const INPUT_FILE = "reduce_test_data.json"
-const MAP_GOLDEN_FILE = "map_golden.log"
-const FINALIZE_GOLDEN_FILE = "finalize_golden.log"
+const INPUT_FILE = "../../test-reduce-data.json"
+const MAP_GOLDEN_FILE = "../../test-reduce-map_golden.json"
+const FINALIZE_GOLDEN_FILE = "../../test-reduce-finalize_golden.json"
+
+const PRIVATE_LINE_DIFF_THRESHOLD = 30
 
 // En Intégration Continue, certains tests seront ignorés.
-const serialOrSkip =
-  process.env.CI || process.env.SKIP_PRIVATE ? "skip" : "serial"
+const serialOrSkip = process.env.SKIP_PRIVATE ? "skip" : "serial"
 
 const updateGoldenFiles = process.argv.slice(2).includes("--update")
 
-const exec = (command: string): Promise<{ stdout: string; stderr: string }> =>
-  util.promisify(childProcess.exec)(command)
+const readFile = async (filename: string): Promise<string> =>
+  util.promisify(fs.readFile)(filename, "utf8")
 
-const context = (() => {
-  const remotePath = "stockage:/home/centos/opensignauxfaibles_tests"
-  const localPath = "./test_data_algo2"
+const writeFile = async (filename: string, data: string): Promise<void> => {
+  await util.promisify(fs.writeFile)(filename, data)
+  console.warn(`ℹ️ Updated ${filename} => run: $ git secret hide`) // eslint-disable-line no-console
+}
 
-  return {
-    setup: async () => {
-      await exec(`mkdir ${localPath} | true`)
-      const command = `scp ${remotePath}/* ${localPath}`
-      console.warn(`$ ${command}`) // eslint-disable-line no-console
-      const { stderr } = await exec(command)
-      if (stderr) throw new Error(stderr)
-    },
-    tearDown: () => exec(`rm -r ${localPath}`),
-    readFile: async (filename: string): Promise<string> =>
-      util.promisify(fs.readFile)(`${localPath}/${filename}`, "utf8"),
-    writeFile: async (filename: string, data: string): Promise<void> => {
-      await util.promisify(fs.writeFile)(`${localPath}/${filename}`, data)
-      await exec(`scp ${localPath}/${filename} ${remotePath}/`)
-    },
+const countLines = (str: string) => str.split(/[\r\n]+/).length
+
+// N'affichera le diff complet que si les tests ne tournent pas en CI.
+// (pour éviter une fuite de données privée des fichiers golden master)
+const safeDeepEqual = (t: ExecCtx, actual: string, expected: string) => {
+  if (process.env.CI) {
+    const [expectedLines, actualLines] = [expected, actual].map(countLines)
+    if (Math.abs(expectedLines - actualLines) > PRIVATE_LINE_DIFF_THRESHOLD) {
+      t.fail("the diff is too large => not displaying on CI")
+      return
+    }
   }
-})()
-
-before("récupération des données", async () => {
-  await context.setup() // step will fail in case of error while downloading golden files
-})
-
-after("suppression des données temporaires", async () => {
-  await context.tearDown()
-})
+  t.deepEqual(actual, expected)
+}
 
 test[serialOrSkip](
   "l'application de reduce.algo2 sur reduce_test_data.json donne le même résultat que d'habitude",
   async (t) => {
     const testData = parseMongoObject(
-      await context.readFile(INPUT_FILE)
+      await readFile(INPUT_FILE)
     ) as TestDataItem[]
 
     const f = {
@@ -95,11 +89,11 @@ test[serialOrSkip](
     const mapOutput = JSON.stringify(mapResult, null, 2)
 
     if (updateGoldenFiles) {
-      await context.writeFile(MAP_GOLDEN_FILE, mapOutput)
+      await writeFile(MAP_GOLDEN_FILE, mapOutput)
     }
 
-    const mapExpected = await context.readFile(MAP_GOLDEN_FILE)
-    t.deepEqual(mapOutput, mapExpected)
+    const mapExpected = await readFile(MAP_GOLDEN_FILE)
+    safeDeepEqual(t, mapOutput, mapExpected)
 
     const valuesPerKey: Record<string, unknown[]> = {}
     mapResult.forEach(({ _id, value }) => {
@@ -114,10 +108,10 @@ test[serialOrSkip](
     const finalizeOutput = JSON.stringify(finalizeResult, null, 2)
 
     if (updateGoldenFiles) {
-      await context.writeFile(FINALIZE_GOLDEN_FILE, finalizeOutput)
+      await writeFile(FINALIZE_GOLDEN_FILE, finalizeOutput)
     }
 
-    const finalizeExpected = await context.readFile(FINALIZE_GOLDEN_FILE)
-    t.deepEqual(finalizeOutput, finalizeExpected)
+    const finalizeExpected = await readFile(FINALIZE_GOLDEN_FILE)
+    safeDeepEqual(t, finalizeOutput, finalizeExpected)
   }
 )
