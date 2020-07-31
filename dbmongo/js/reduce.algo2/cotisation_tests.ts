@@ -94,6 +94,17 @@ const testCases = [
     propName: "ratio_dette_moy12m",
     expected: [...new Array(11).fill(undefined), 1, 0.9166666666666666],
   },
+  {
+    assertion:
+      "La variable ratio_dette_moy12m n'est pas calculée si une cotisation nulle est trouvée dans les 12 mois passés",
+    input: forEachMonth(({ month }) => ({
+      cotisation: month === 0 ? 0 : 10,
+      montant_part_ouvriere: 5,
+      montant_part_patronale: 5,
+    })),
+    propName: "ratio_dette_moy12m",
+    expected: [...new Array(12).fill(undefined), 1],
+  },
 ]
 
 testCases.forEach(({ assertion, input, propName, expected }) => {
