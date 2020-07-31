@@ -62,10 +62,9 @@ export function cotisation(
     const { cotisations, montantsPO, montantsPP } = futureArrays[periode]
     const out = (sortieCotisation[periode] = sortieCotisation[periode] || {})
     out.cotisation_moy12m = moyenne(cotisations)
-    if (
-      typeof out.cotisation_moy12m !== "undefined" &&
-      out.cotisation_moy12m > 0
-    ) {
+    if (typeof out.cotisation_moy12m === "undefined") {
+      delete out.cotisation_moy12m
+    } else if (out.cotisation_moy12m > 0) {
       out.ratio_dette =
         ((input.montant_part_ouvriere || 0) +
           (input.montant_part_patronale || 0)) /
