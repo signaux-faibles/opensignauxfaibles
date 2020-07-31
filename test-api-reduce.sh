@@ -23,7 +23,7 @@ sudo docker run \
     --publish 27016:27017 \
     --detach \
     --rm \
-    mongo:4 \
+    mongo:4.2@sha256:1c2243a5e21884ffa532ca9d20c221b170d7b40774c235619f98e2f6eaec520a \
     >/dev/null
 
 echo ""
