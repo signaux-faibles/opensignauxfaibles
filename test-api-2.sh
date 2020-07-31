@@ -116,7 +116,7 @@ if [[ "$*" == *--update* ]]
 then
     echo "🖼  Updating golden master file..."
     cp test-api-2.output.json test-api-2_golden.json
-    git secret hide # to re-encrypt the golden master file, after having updated it
+    echo "ℹ️  Updated test-api-2_golden.json => run: $ git secret hide" # to re-encrypt the golden master file, after having updated it
 else
     # Diff between expected and actual output
     diff --brief test-api-2_golden.json test-api-2.output.json
