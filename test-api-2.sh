@@ -4,40 +4,40 @@
 #
 # Inspiré de test-api.sh et finalize_test.js.
 #
-# Ce test requiert l'accès à un serveur privé, et n'est donc pas inclus dans la
-# suite de tests exécutée en Integration Continue.
+# To update golden files: `$ ./test-api-2.sh --update`
+# 
+# These tests require the presence of private files => Make sure to:
+# - run `$ git secret reveal` before running these tests;
+# - run `$ git secret hide` (to encrypt changes) after updating.
 
 # Interrompre le conteneur Docker d'une exécution précédente de ce test, si besoin
-docker stop sf-mongodb &>/dev/null
+sudo docker stop sf-mongodb &>/dev/null
 
 set -e # will stop the script if any command fails with a non-zero exit code
 
 # Clean up on exit
 DATA_DIR=$(pwd)/tmp-opensignauxfaibles-data-raw
 mkdir -p "${DATA_DIR}"
-trap "{ killall dbmongo >/dev/null; [ -f config.toml ] && rm config.toml; [ -f config.backup.toml ] && mv config.backup.toml config.toml; docker stop sf-mongodb >/dev/null; rm -rf ${DATA_DIR}; echo \"✨ Cleaned up temp directory\"; }" EXIT
-
-echo ""
-echo "🚚 Downloading realistic data set..."
-scp "stockage:/home/centos/opensignauxfaibles_tests/*" "${DATA_DIR}/"
+trap "{ killall dbmongo >/dev/null; [ -f config.toml ] && rm config.toml; [ -f config.backup.toml ] && mv config.backup.toml config.toml; sudo docker stop sf-mongodb >/dev/null; rm -rf ${DATA_DIR}; echo \"✨ Cleaned up temp directory\"; }" EXIT
 
 echo ""
 echo "🐳 Starting MongoDB container..."
-docker run \
+sudo docker run \
     --name sf-mongodb \
-    --publish 27017:27017 \
+    --publish 27016:27017 \
     --detach \
     --rm \
-    mongo:4 \
+    mongo:4.2@sha256:1c2243a5e21884ffa532ca9d20c221b170d7b40774c235619f98e2f6eaec520a \
     >/dev/null
 
 echo ""
 echo "🔧 Setting up dbmongo..."
-cd dbmongo
+cd ./dbmongo
 go build
 [ -f config.toml ] && mv config.toml config.backup.toml
 cp config-sample.toml config.toml
 perl -pi'' -e "s,/foo/bar/data-raw,sample-data-raw," config.toml
+perl -pi'' -e "s,27017,27016," config.toml
 
 echo ""
 echo "📝 Inserting test data..."
@@ -62,10 +62,10 @@ cat > "${DATA_DIR}/db_popul.js" << CONTENTS
   db.RawData.remove({})
   db.RawData.insertMany(
 CONTENTS
-cat >> "${DATA_DIR}/db_popul.js" < "${DATA_DIR}/reduce_test_data.json"
+cat >> "${DATA_DIR}/db_popul.js" < ../test-reduce-data.json
 echo ")" >> "${DATA_DIR}/db_popul.js"
 
-docker exec -i sf-mongodb mongo signauxfaibles > /dev/null < "${DATA_DIR}/db_popul.js"
+sudo docker exec -i sf-mongodb mongo signauxfaibles > /dev/null < "${DATA_DIR}/db_popul.js"
 
 echo ""
 echo "💎 Computing Features and Public collections thru dbmongo API..."
@@ -81,6 +81,7 @@ function fixJSON {
   # Cette fonction convertit les documents MongoDB au format JSON.
   # (cf https://github.com/signaux-faibles/opensignauxfaibles/issues/72)
   perl -p -e 's/ISODate\("(.*)T00:00:00Z"\)/"$1T00:00:00.000Z"/g' \
+  | perl -p -e 's/"cotisation_moy12m" : undefined,$/"cotisation_moy12m" : null,/g' \
   | perl -p -e 's/"montant_majorations" : NaN,$/"montant_majorations" : null,/g'
 }
 
@@ -103,28 +104,25 @@ echo ""
 echo "🕵️‍♀️ Checking resulting Features..."
 cd ..
 echo "db.Features_TestData.find().toArray();" \
-  | docker exec -i sf-mongodb mongo --quiet signauxfaibles \
+  | sudo docker exec -i sf-mongodb mongo --quiet signauxfaibles \
   | fixJSON \
   | transformJSON \
   | removeRandomOrder \
   > test-api-2.output.json
 
 # Display JS errors logged by MongoDB, if any
-docker logs sf-mongodb | grep --color=always "uncaught exception" || true
-
-removeRandomOrder "${DATA_DIR}/finalize_golden.log" \
-  > "${DATA_DIR}/test-api-2_golden.json"
+sudo docker logs sf-mongodb | grep --color=always "uncaught exception" || true
 
 echo ""
 # Check if the --update flag was passed
 if [[ "$*" == *--update* ]]
 then
     echo "🖼  Updating golden master file..."
-    cp test-api-2.output.json "${DATA_DIR}/test-api-2_golden.json"
-    scp "${DATA_DIR}/test-api-2_golden.json" "stockage:/home/centos/opensignauxfaibles_tests/"
+    cp test-api-2.output.json test-api-2_golden.json
+    echo "ℹ️  Updated test-api-2_golden.json => run: $ git secret hide" # to re-encrypt the golden master file, after having updated it
 else
     # Diff between expected and actual output
-    diff --brief "${DATA_DIR}/test-api-2_golden.json" test-api-2.output.json
+    diff --brief test-api-2_golden.json test-api-2.output.json
     echo "✅ No diff. The reduce API works as usual."
 fi
 echo ""

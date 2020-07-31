@@ -24,10 +24,24 @@ jobs:
         working-directory: dbmongo
         run: go build -v .
 
-      - name: Run end-to-end tests
+      - name: Install test dependencies
         run: |
           sudo apt-get update -y
           sudo apt-get install -y httpie
-          ./test-api.sh
-          ./test-api-reduce.sh
-          ./test-api-export.sh
+          sudo apt-get install git-secret # to decrypt golden master files, for tests
+
+      - name: Reveal golden master files for tests
+        env:
+          GPG_PRIVATE_KEY_FOR_GIT_SECRET: ${{ secrets.GPG_PRIVATE_KEY_FOR_GIT_SECRET }}
+        run: |
+          echo "${GPG_PRIVATE_KEY_FOR_GIT_SECRET}" > ./private_key.gpg
+          gpg --import --no-tty --batch --yes ./private_key.gpg
+          git secret reveal
+
+      - run: ./test-api.sh
+
+      - run: ./test-api-2.sh # relies on golden master files
+
+      - run: ./test-api-reduce.sh
+
+      - run: ./test-api-export.sh

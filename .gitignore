@@ -1,4 +1,3 @@
-.*
 !.github
 !.gitignore
 !dbmongo/js/.nvmrc
@@ -17,7 +16,7 @@ output/*
 keys.json
 dbmongo/data-raw
 dbmongo/dbmongo
-.vscode/*
+**/.vscode
 dbmongo/static/*
 archive/*
 rsignauxfaibles/RData/*
@@ -36,8 +35,15 @@ dbmongo/dbmongo
 *.rdb
 *.patch
 dbmongo/js/node_modules
+dbmongo/js/.nyc_output
 dbmongo/export/mongo_dump
 **/tags
 rsignauxfaibles_*.tar.gz
 script/archive/*
 dbmongo/js/test/test_data_algo2
+.gitsecret/keys/random_seed
+!*.secret
+test-reduce-data.json
+test-reduce-finalize_golden.json
+test-reduce-map_golden.json
+test-api-2_golden.json
