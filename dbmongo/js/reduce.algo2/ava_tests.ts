@@ -66,7 +66,6 @@ const rawData = {
 }
 
 const makeValue = (periode: Date) => ({
-  cotisation_moy12m: undefined,
   effectif: null,
   etat_proc_collective: "in_bonis",
   interessante_urssaf: true,
