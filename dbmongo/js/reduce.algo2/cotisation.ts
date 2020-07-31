@@ -61,7 +61,9 @@ export function cotisation(
     // Calcul des cotisations moyennes à partir des valeurs accumulées ci-dessus
     const { cotisations, montantsPO, montantsPP } = futureArrays[periode]
     const out = (sortieCotisation[periode] = sortieCotisation[periode] || {})
+    if (cotisations.length >= 12) {
     out.cotisation_moy12m = moyenne(cotisations)
+    }
     if (typeof out.cotisation_moy12m === "undefined") {
       delete out.cotisation_moy12m
     } else if (out.cotisation_moy12m > 0) {
