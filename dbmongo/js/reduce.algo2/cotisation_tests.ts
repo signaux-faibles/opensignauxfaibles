@@ -23,26 +23,19 @@ const forEachMonth = (
 const testCases = [
   {
     assertion:
-      "La variable cotisation_moy12m de chaque mois est égale au montant de cotisation, quand celui-ci est stable sur tout la période",
+      "La variable cotisation_moy12m est calculée sur la base de 12 mois de données, pas moins",
     input: forEachMonth(() => ({ cotisation: 10 })),
     propName: "cotisation_moy12m",
-    expected: new Array(periodeSerie.length).fill(10),
+    expected: [...new Array(11).fill(undefined), 10, 10],
   },
   {
     assertion:
-      "La variable cotisation_moy12m décroit quand une cotisation est passée",
-    input: forEachMonth(({ month }) => ({ cotisation: month === 0 ? 10 : 0 })),
-    propName: "cotisation_moy12m",
-    expected: [...periodeSerie.slice(0, 12).map((_, m) => 10 / (m + 1)), 0],
-  },
-  {
-    assertion:
-      "La variable cotisation_moy12m est nulle jusqu'à ce qu'une cotisation soit présente",
+      "La variable cotisation_moy12m est nulle jusqu'à la présence d'une cotisation non nulle",
     input: forEachMonth(({ month }) => ({
       cotisation: month === 12 ? 10 : 0,
     })),
     propName: "cotisation_moy12m",
-    expected: [...new Array(12).fill(0), 10 / 12],
+    expected: [...new Array(11).fill(undefined), 0, 10 / 12],
   },
   {
     assertion:
@@ -58,11 +51,11 @@ const testCases = [
       "La variable ratio_dette divise montant_part_ouvriere et montant_part_patronale par cotisation_moy12m",
     input: forEachMonth(({ month }) => ({
       cotisation: [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10][month],
-      montant_part_ouvriere: [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5][month],
-      montant_part_patronale: [5, 5, 5, 5, 5, 0, 0, 0, 0, 0, 5, 5, 5][month],
+      montant_part_ouvriere: 5,
+      montant_part_patronale: [...new Array(12).fill(0), 5][month],
     })),
     propName: "ratio_dette",
-    expected: [1, 1, 1, 1, 1, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1 / 2, 1, 1, 1],
+    expected: [...new Array(11).fill(undefined), 1 / 2, 1],
   },
   {
     assertion:
@@ -88,7 +81,7 @@ const testCases = [
       ],
     })),
     propName: "ratio_dette",
-    expected: [0, 1, ...new Array(10).fill(2), 1],
+    expected: [...new Array(11).fill(undefined), 2, 1],
   },
   {
     assertion:
@@ -99,7 +92,7 @@ const testCases = [
       montant_part_patronale: month < 12 ? 10 : undefined,
     })),
     propName: "ratio_dette_moy12m",
-    expected: [...new Array(12).fill(1), 0.9166666666666666],
+    expected: [...new Array(11).fill(undefined), 1, 0.9166666666666666],
   },
 ]
 
