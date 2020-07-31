@@ -2,12 +2,16 @@
 
 // Combinaison des tests de map_test.js et finalize_test.js.
 //
-// Golden-file-based tests to prevent regressions on the JS functions
-// (common + algo2) used to compute the "Features" collection from the
-// "RawData" collection.
+// Tests to prevent regressions on the JS functions (reduce.algo2 + common)
+// used to compute the "Features" collection from the "RawData" collection.
 //
 // To update golden files: `$ npx ava algo2_golden_tests.ts -- --update`
 //                      or `$ npm run test:update-golden-files`
+//
+// These tests require the presence of private files specified in the constants
+// below. => Make sure to:
+// - run `$ git secret reveal` before running these tests;
+// - run `$ git secret hide` (to encrypt changes) after updating.
 
 import test, { ExecutionContext as ExecCtx } from "ava"
 import * as fs from "fs"
@@ -19,9 +23,10 @@ import { finalize } from "./finalize"
 import { reduce } from "./reduce"
 import { runMongoMap, parseMongoObject } from "../test/helpers/mongodb"
 
-const INPUT_FILE = "test-reduce-data.json"
-const MAP_GOLDEN_FILE = "test-reduce-map_golden.json"
-const FINALIZE_GOLDEN_FILE = "test-reduce-finalize_golden.json"
+const INPUT_FILE = "../../test-reduce-data.json"
+const MAP_GOLDEN_FILE = "../../test-reduce-map_golden.json"
+const FINALIZE_GOLDEN_FILE = "../../test-reduce-finalize_golden.json"
+
 const PRIVATE_LINE_DIFF_THRESHOLD = 30
 
 // En Intégration Continue, certains tests seront ignorés.
@@ -44,18 +49,13 @@ const safeDeepEqual = (t: ExecCtx, actual: string, expected: string) => {
   t.deepEqual(actual, expected)
 }
 
-// const exec = (command: string): Promise<{ stdout: string; stderr: string }> =>
-//   util.promisify(childProcess.exec)(command)
-
 const context = (() => {
-  const localPath = "../.."
   return {
     readFile: async (filename: string): Promise<string> =>
-      util.promisify(fs.readFile)(`${localPath}/${filename}`, "utf8"),
+      util.promisify(fs.readFile)(filename, "utf8"),
     writeFile: async (filename: string, data: string): Promise<void> => {
-      const filePath = `${localPath}/${filename}`
-      await util.promisify(fs.writeFile)(`${filePath}`, data)
-      console.warn(`ℹ️ Updated ${filePath} => run: $ git secret hide`) // eslint-disable-line no-console
+      await util.promisify(fs.writeFile)(filename, data)
+      console.warn(`ℹ️ Updated ${filename} => run: $ git secret hide`) // eslint-disable-line no-console
     },
   }
 })()
