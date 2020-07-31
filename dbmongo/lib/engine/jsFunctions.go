@@ -1210,9 +1210,8 @@ db.getCollection("Features").createIndex({
                 ((input.montant_part_ouvriere || 0) +
                     (input.montant_part_patronale || 0)) /
                     out.cotisation_moy12m;
-            const moyPO = moyenne(montantsPO); // à condition que montantsPO ne contienne que des number
-            const moyPP = moyenne(montantsPP); // à condition que montantsPP ne contienne que des number
-            out.ratio_dette_moy12m = (moyPO + moyPP) / out.cotisation_moy12m;
+            out.ratio_dette_moy12m = moyenne(montantsPO.map((_, i) => (montantsPO[i] + montantsPP[i]) / (cotisations[i] || 0) // cotisations ne contient pas de undefined si cotisation_moy12m !== undefined
+            ));
         }
         // Remplace dans cibleApprentissage
         //val.dette_any_12m = (val.montantsPA || []).reduce((p,c) => (c >=
