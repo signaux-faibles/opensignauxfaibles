@@ -60,7 +60,7 @@ func TranspileTsFunctions(jsRootDir string) {
 	}
 }
 
-// GlobalizeJsFunctions retire le préfixe "export" des fonctions, pour les rendre compatibles avec jsc.
+// GlobalizeJsFunctions retire le préfixe "export" des fonctions, pour les rendre compatibles avec mongodb.
 func GlobalizeJsFunctions(jsRootDir string) {
 	cmd := exec.Command("bash", "globalize-functions.sh") // output: .js files
 	cmd.Dir = jsRootDir
