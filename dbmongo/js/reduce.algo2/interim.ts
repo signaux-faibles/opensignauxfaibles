@@ -1,4 +1,4 @@
-import * as f from "./dateAddMonth"
+import * as f from "../common/dateAddMonth"
 
 type Input = {
   effectif: number | null
