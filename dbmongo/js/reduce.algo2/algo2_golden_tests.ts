@@ -34,6 +34,14 @@ const serialOrSkip = process.env.SKIP_PRIVATE ? "skip" : "serial"
 
 const updateGoldenFiles = process.argv.slice(2).includes("--update")
 
+const readFile = async (filename: string): Promise<string> =>
+  util.promisify(fs.readFile)(filename, "utf8")
+
+const writeFile = async (filename: string, data: string): Promise<void> => {
+  await util.promisify(fs.writeFile)(filename, data)
+  console.warn(`ℹ️ Updated ${filename} => run: $ git secret hide`) // eslint-disable-line no-console
+}
+
 const countLines = (str: string) => str.split(/[\r\n]+/).length
 
 // N'affichera le diff complet que si les tests ne tournent pas en CI.
@@ -49,23 +57,12 @@ const safeDeepEqual = (t: ExecCtx, actual: string, expected: string) => {
   t.deepEqual(actual, expected)
 }
 
-const context = (() => {
-  return {
-    readFile: async (filename: string): Promise<string> =>
-      util.promisify(fs.readFile)(filename, "utf8"),
-    writeFile: async (filename: string, data: string): Promise<void> => {
-      await util.promisify(fs.writeFile)(filename, data)
-      console.warn(`ℹ️ Updated ${filename} => run: $ git secret hide`) // eslint-disable-line no-console
-    },
-  }
-})()
-
 test[serialOrSkip](
   "l'application de reduce.algo2 sur reduce_test_data.json donne le même résultat que d'habitude",
   async (t) => {
     type TestDataItem = { _id: string; value: CompanyDataValuesWithFlags }
     const testData = parseMongoObject(
-      await context.readFile(INPUT_FILE)
+      await readFile(INPUT_FILE)
     ) as TestDataItem[]
 
     const f = {
@@ -92,10 +89,10 @@ test[serialOrSkip](
     const mapOutput = JSON.stringify(mapResult, null, 2)
 
     if (updateGoldenFiles) {
-      await context.writeFile(MAP_GOLDEN_FILE, mapOutput)
+      await writeFile(MAP_GOLDEN_FILE, mapOutput)
     }
 
-    const mapExpected = await context.readFile(MAP_GOLDEN_FILE)
+    const mapExpected = await readFile(MAP_GOLDEN_FILE)
     safeDeepEqual(t, mapOutput, mapExpected)
 
     const valuesPerKey: Record<string, unknown[]> = {}
@@ -111,10 +108,10 @@ test[serialOrSkip](
     const finalizeOutput = JSON.stringify(finalizeResult, null, 2)
 
     if (updateGoldenFiles) {
-      await context.writeFile(FINALIZE_GOLDEN_FILE, finalizeOutput)
+      await writeFile(FINALIZE_GOLDEN_FILE, finalizeOutput)
     }
 
-    const finalizeExpected = await context.readFile(FINALIZE_GOLDEN_FILE)
+    const finalizeExpected = await readFile(FINALIZE_GOLDEN_FILE)
     safeDeepEqual(t, finalizeOutput, finalizeExpected)
   }
 )
