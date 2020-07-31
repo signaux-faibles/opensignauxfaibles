@@ -309,7 +309,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -326,7 +325,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -343,7 +341,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -360,7 +357,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -377,7 +373,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -394,7 +389,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -411,7 +405,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -428,7 +421,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -445,7 +437,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -462,7 +453,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -479,7 +469,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -496,7 +485,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -513,7 +501,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -530,7 +517,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -547,7 +533,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -564,7 +549,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -581,7 +565,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -598,7 +581,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -615,7 +597,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -632,7 +613,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -649,7 +629,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -666,7 +645,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -683,7 +661,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -700,7 +677,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -717,7 +693,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -734,7 +709,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -751,7 +725,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -768,7 +741,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -785,7 +757,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -802,7 +773,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -819,7 +789,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -836,7 +805,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -853,7 +821,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -870,7 +837,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -887,7 +853,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -904,7 +869,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -921,7 +885,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -938,7 +901,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -955,7 +917,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -972,7 +933,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -989,7 +949,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -1006,7 +965,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -1023,7 +981,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -1040,7 +997,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -1057,7 +1013,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -1074,7 +1029,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -1091,7 +1045,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -1108,7 +1061,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -1125,7 +1077,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -1142,7 +1093,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -1159,7 +1109,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -1176,7 +1125,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -1193,7 +1141,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -1210,7 +1157,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -1227,7 +1173,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -1244,7 +1189,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -1261,7 +1205,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -1278,7 +1221,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -1295,7 +1237,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -1312,7 +1253,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -1329,7 +1269,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -1346,7 +1285,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -1363,7 +1301,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -1380,7 +1317,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -1397,7 +1333,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -1414,7 +1349,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -1431,7 +1365,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -1448,7 +1381,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	},
@@ -1465,7 +1397,6 @@
 			"etat_proc_collective" : "in_bonis",
 			"interessante_urssaf" : true,
 			"outcome" : false,
-			"cotisation_moy12m" : undefined,
 			"nbr_etablissements_connus" : 1
 		}
 	}
