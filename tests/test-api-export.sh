@@ -23,7 +23,7 @@ echo ""
 echo "🐳 Starting MongoDB container..."
 sudo docker run \
     --name sf-mongodb \
-    --publish 27017:27017 \
+    --publish 27016:27017 \
     --detach \
     --rm \
     mongo:4.2@sha256:1c2243a5e21884ffa532ca9d20c221b170d7b40774c235619f98e2f6eaec520a \
@@ -35,6 +35,7 @@ cd dbmongo
 [ -f config.toml ] && mv config.toml config.backup.toml
 cp config-sample.toml config.toml
 perl -pi'' -e "s,/foo/bar/data-raw,sample-data-raw," config.toml
+perl -pi'' -e "s,27017,27016," config.toml
 
 echo ""
 echo "📝 Inserting test data..."
