@@ -25,7 +25,7 @@ import { TestDataItem } from "../test/data/objects"
 import {
   runMongoMap,
   parseMongoObject,
-  convertToMongoObject,
+  serializeAsMongoObject,
 } from "../test/helpers/mongodb"
 
 const INPUT_FILE = "../../tests/input-data/RawData.sample.json"
@@ -126,7 +126,7 @@ test[serialOrSkip](
     })
 
     if (updateGoldenFiles) {
-      const finalizeOutput = convertToMongoObject(finalResult)
+      const finalizeOutput = serializeAsMongoObject(finalResult)
       await writeFile(FINALIZE_GOLDEN_FILE, finalizeOutput)
     }
 

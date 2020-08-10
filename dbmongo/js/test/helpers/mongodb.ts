@@ -49,20 +49,23 @@ export const parseMongoObject = (serializedObj: string): unknown =>
         : value
   )
 
-// const isDate = (date: Date | unknown) =>
-//   date instanceof Date && !isNaN(date.valueOf())
+const isStringifiedDate = (date: string | unknown) =>
+  typeof date === "string" && /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}.*Z/.test(date)
 
-// Converts an object into MongoDB's format (including mentions to ISODate).
-export const convertToMongoObject = (obj: unknown): string =>
-  JSON.stringify(
-    obj,
-    (_key, value: string) =>
-      typeof value === "string" &&
-      /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}.*Z/.test(value)
-        ? `ISODate_${value.replace(/\.000Z/, "Z")}`
-        : value,
-    2
+// Converts an object into the same format as the one returned by the
+// `find().toArray()` command when executed from  MongoDB's mongo shell.
+// E.g. Dates are serialized as ISODate() instances.
+export const serializeAsMongoObject = (obj: unknown): string => {
+  const INDENT_SPACES = 2
+  return (
+    JSON.stringify(
+      obj,
+      (_, val) =>
+        isStringifiedDate(val) ? `ISODate_${val.replace(/\.000Z/, "Z")}` : val,
+      INDENT_SPACES
+    )
+      .replace(/"ISODate_([^"]+)"/g, `ISODate("$1")`) // replace ISODate strings by function calls
+      .replace(/":/g, `" :`) // formatting: add a space before property assignments
+      .replace(new RegExp(` {${INDENT_SPACES}}`, "g"), "\t") + "\n" // formatting: tabs and trailing line break
   )
-    .replace(/ {2}/g, "\t")
-    .replace(/"ISODate_([^"]+)"/g, `ISODate("$1")`)
-    .replace(/":/g, `" :`) + "\n"
+}
