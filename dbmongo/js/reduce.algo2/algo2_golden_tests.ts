@@ -126,7 +126,7 @@ test[serialOrSkip](
     })
 
     if (updateGoldenFiles) {
-      const finalizeOutput = serializeAsMongoObject(finalResult)
+      const finalizeOutput = serializeAsMongoObject(finalResult) // finalizeOutput doit être parfaitement identique au golden master qui serait mis à jour depuis test-api-reduce-2.sh => d'où l'appel à serializeAsMongoObject()
       await writeFile(FINALIZE_GOLDEN_FILE, finalizeOutput)
     }
 
