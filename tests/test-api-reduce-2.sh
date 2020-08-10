@@ -75,10 +75,6 @@ sh -c "./dbmongo &>/dev/null &" # we run in a separate shell to hide the "termin
 sleep 2 # give some time for dbmongo to start
 echo "- POST /api/data/reduce 👉 $(http --print=b --ignore-stdin :5000/api/data/reduce algo=algo2 batch=2002_1)"
 
-function removeRandomOrder {
-  grep -v '"random_order":' "$@"
-}
-
 function fixJSON {
   # Cette fonction convertit les documents MongoDB au format JSON.
   # (cf https://github.com/signaux-faibles/opensignauxfaibles/issues/72)
@@ -108,7 +104,7 @@ echo "db.Features_TestData.find().toArray();" \
   | sudo docker exec -i sf-mongodb mongo --quiet signauxfaibles \
   | fixJSON \
   | transformJSON \
-  | removeRandomOrder \
+  | tests/helpers/remove-random_order.sh \
   > test-api-2.output.json
 
 # Display JS errors logged by MongoDB, if any

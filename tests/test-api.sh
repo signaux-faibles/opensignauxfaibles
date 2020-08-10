@@ -83,7 +83,8 @@ echo "- POST /api/data/public 👉 $(http --print=b --ignore-stdin :5000/api/dat
 echo ""
 echo "🕵️‍♀️ Checking resulting Features..."
 cd ..
-sudo docker exec -i sf-mongodb mongo --quiet signauxfaibles > test-api.output.txt << CONTENTS
+(sudo docker exec -i sf-mongodb mongo --quiet signauxfaibles | tests/helpers/remove-random_order.sh > test-api.output.txt) \
+<< CONTENTS
   print("// Documents from db.RawData, after call to /api/data/compact:");
   db.RawData.find().toArray();
   print("// Documents from db.Features_debug, after call to /api/data/reduce:");
@@ -95,20 +96,17 @@ CONTENTS
 # Display JS errors logged by MongoDB, if any
 sudo docker logs sf-mongodb | grep --color=always "uncaught exception" || true
 
-# exclude random values
-grep -v '"random_order" :' test-api.output.txt > test-api.output-documents.txt
-
 echo ""
 # Check if the --update flag was passed
 if [[ "$*" == *--update* ]]
 then
     echo "🖼  Updating golden master file..."
-    cp "test-api.output-documents.txt" "${GOLDEN_FILE}"
+    cp "test-api.output.txt" "${GOLDEN_FILE}"
 else
     # Diff between expected and actual output
-    diff --brief "${GOLDEN_FILE}" test-api.output-documents.txt
+    diff --brief "${GOLDEN_FILE}" test-api.output.txt
     echo "✅ No diff. The export worked as expected."
 fi
 echo ""
-rm test-api.output.txt test-api.output-documents.txt
+rm test-api.output.txt
 # Now, the "trap" commands will run, to clean up.
