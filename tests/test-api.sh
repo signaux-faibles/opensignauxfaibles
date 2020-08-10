@@ -10,7 +10,7 @@ sudo docker stop sf-mongodb &>/dev/null
 set -e # will stop the script if any command fails with a non-zero exit code
 
 # Setup
-GOLDEN_FILE="test-api.golden-master.txt"
+GOLDEN_FILE="tests/output-snapshots/test-api.golden.txt"
 DATA_DIR=$(pwd)/tmp-opensignauxfaibles-data-raw
 mkdir -p "${DATA_DIR}"
 

@@ -10,7 +10,7 @@ sudo docker stop sf-mongodb &>/dev/null
 set -e # will stop the script if any command fails with a non-zero exit code
 
 # Setup
-GOLDEN_FILE="test-api-reduce.golden-master.json"
+GOLDEN_FILE="tests/output-snapshots/test-api-reduce.golden.json"
 DATA_DIR=$(pwd)/tmp-opensignauxfaibles-data-raw
 mkdir -p "${DATA_DIR}"
 
