@@ -15,9 +15,12 @@ sudo docker stop sf-mongodb &>/dev/null
 
 set -e # will stop the script if any command fails with a non-zero exit code
 
-# Clean up on exit
+# Setup
+GOLDEN_FILE="tests/output-snapshots/reduce-Features.golden.json"
 DATA_DIR=$(pwd)/tmp-opensignauxfaibles-data-raw
 mkdir -p "${DATA_DIR}"
+
+# Clean up on exit
 trap "{ killall dbmongo >/dev/null; [ -f config.toml ] && rm config.toml; [ -f config.backup.toml ] && mv config.backup.toml config.toml; sudo docker stop sf-mongodb >/dev/null; rm -rf ${DATA_DIR}; echo \"✨ Cleaned up temp directory\"; }" EXIT
 
 echo ""
@@ -117,11 +120,11 @@ echo ""
 if [[ "$*" == *--update* ]]
 then
     echo "🖼  Updating golden master file..."
-    cp test-api-2.output.json test-api-2_golden.json
-    echo "ℹ️  Updated test-api-2_golden.json => run: $ git secret hide" # to re-encrypt the golden master file, after having updated it
+    cp test-api-2.output.json "${GOLDEN_FILE}"
+    echo "ℹ️  Updated ${GOLDEN_FILE} => run: $ git secret hide" # to re-encrypt the golden master file, after having updated it
 else
     # Diff between expected and actual output
-    diff --brief test-api-2_golden.json test-api-2.output.json
+    diff --brief "${GOLDEN_FILE}" test-api-2.output.json
     echo "✅ No diff. The reduce API works as usual."
 fi
 echo ""
