@@ -43,3 +43,5 @@ jobs:
       - run: ./test-api-2.sh # relies on golden master files
 
       - run: ./test-api-reduce.sh
+
+      - run: ./test-api-export.sh

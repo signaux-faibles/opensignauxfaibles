@@ -5,6 +5,34 @@ import (
 	daclient "github.com/signaux-faibles/datapi/client"
 )
 
+// GetEntreprisePipeline produit un pipeline pour exporter les établissements avec leur scores.
+func GetEntreprisePipeline(key string) (pipeline []bson.M) {
+	pipeline = append(pipeline, bson.M{"$match": bson.M{
+		"_id": bson.RegEx{
+			Pattern: "entreprise_" + key,
+		},
+	}})
+
+	return pipeline
+}
+
+// GetEtablissementWithScoresPipeline produit un pipeline pour exporter les établissements avec leur scores.
+func GetEtablissementWithScoresPipeline(key string) (pipeline []bson.M) {
+	pipeline = append(pipeline, bson.M{"$match": bson.M{
+		"_id": bson.RegEx{
+			Pattern: "etablissement_" + key + ".*",
+		},
+	}})
+
+	pipeline = append(pipeline, bson.M{"$lookup": bson.M{
+		"from":         "Scores",
+		"localField":   "value.key",
+		"foreignField": "siret",
+		"as":           "scores"}})
+
+	return pipeline
+}
+
 // GetEtablissementPipeline produit un pipeline pour exporter les établissements vers datapi
 func GetEtablissementPipeline(key string) (pipeline []bson.M) {
 	if key == "" {
@@ -59,7 +87,7 @@ func GetEtablissementPipeline(key string) (pipeline []bson.M) {
 	return pipeline
 }
 
-// ComputeEtablissement transforme un établissiment au format public en objet datapi
+// ComputeEtablissement transforme un établissement au format public en objet datapi
 func ComputeEtablissement(data Etablissement, connus *[]string) []daclient.Object {
 	var objects []daclient.Object
 
