@@ -43,7 +43,7 @@ script/archive/*
 dbmongo/js/test/test_data_algo2
 .gitsecret/keys/random_seed
 !*.secret
-test-reduce-finalize_golden.json
-test-reduce-map_golden.json
 tests/input-data/RawData.sample.json
 tests/output-snapshots/reduce-Features.golden.json
+tests/output-snapshots/reduce-map-output.golden.json
+tests/output-snapshots/reduce-finalize-output.golden.json

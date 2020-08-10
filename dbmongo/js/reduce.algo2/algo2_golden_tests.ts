@@ -25,8 +25,10 @@ import { TestDataItem } from "../test/data/objects"
 import { runMongoMap, parseMongoObject } from "../test/helpers/mongodb"
 
 const INPUT_FILE = "../../tests/input-data/RawData.sample.json"
-const MAP_GOLDEN_FILE = "../../test-reduce-map_golden.json"
-const FINALIZE_GOLDEN_FILE = "../../test-reduce-finalize_golden.json"
+const MAP_GOLDEN_FILE =
+  "../../tests/output-snapshots/reduce-map-output.golden.json"
+const FINALIZE_GOLDEN_FILE =
+  "../../tests/output-snapshots/reduce-finalize-output.golden.json"
 
 const PRIVATE_LINE_DIFF_THRESHOLD = 30
 
