@@ -108,24 +108,24 @@ test[serialOrSkip](
       valuesPerKey[idString].push(value)
     })
 
-    const finalizeResult = Object.keys(valuesPerKey).map((key) =>
-      f.finalize(JSON.parse(key), f.reduce(key, valuesPerKey[key]))
-    )
+    const finalizeResult = Object.keys(valuesPerKey)
+      .map((key) =>
+        f.finalize(JSON.parse(key), f.reduce(key, valuesPerKey[key]))
+      )
+      .map((finalizedEntry) => {
+        const value = (finalizedEntry as any[])[0]
+        delete value.random_order
+        return {
+          _id: {
+            batch: jsParams.actual_batch,
+            siret: value.siret,
+            periode: value.periode,
+          },
+          value,
+        }
+      })
 
-    const finalResult = finalizeResult.map((finalizedEntry) => {
-      const value = (finalizedEntry as any[])[0]
-      delete value.random_order
-      return {
-        _id: {
-          batch: jsParams.actual_batch,
-          siret: value.siret,
-          periode: value.periode,
-        },
-        value,
-      }
-    })
-
-    const finalizeOutput = serializeAsMongoObject(finalResult) // finalizeOutput doit être parfaitement identique au golden master qui serait mis à jour depuis test-api-reduce-2.sh => d'où l'appel à serializeAsMongoObject()
+    const finalizeOutput = serializeAsMongoObject(finalizeResult) // finalizeOutput doit être parfaitement identique au golden master qui serait mis à jour depuis test-api-reduce-2.sh => d'où l'appel à serializeAsMongoObject()
 
     if (updateGoldenFiles) {
       await writeFile(FINALIZE_GOLDEN_FILE, finalizeOutput)
