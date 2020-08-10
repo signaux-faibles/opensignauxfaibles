@@ -83,8 +83,10 @@ echo "- POST /api/data/public 👉 $(http --print=b --ignore-stdin :5000/api/dat
 echo ""
 echo "🕵️‍♀️ Checking resulting Features..."
 cd ..
-(sudo docker exec -i sf-mongodb mongo --quiet signauxfaibles | tests/helpers/remove-random_order.sh > test-api.output.txt) \
-<< CONTENTS
+(sudo docker exec -i sf-mongodb mongo --quiet signauxfaibles \
+  | tests/helpers/remove-random_order.sh \
+  > test-api.output.txt \
+) << CONTENTS
   print("// Documents from db.RawData, after call to /api/data/compact:");
   db.RawData.find().toArray();
   print("// Documents from db.Features_debug, after call to /api/data/reduce:");
