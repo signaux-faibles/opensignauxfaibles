@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Test de bout en bout de l'API "reduce" à l'aide de données réalistes.
-#
 # Inspiré de test-api.sh et finalize_test.js.
+# Ce script doit être exécuté depuis la racine du projet. Ex: par test-all.sh.
 #
-# To update golden files: `$ ./test-api-2.sh --update`
+# To update golden files: `$ ./test-api-reduce-2.sh --update`
 # 
 # These tests require the presence of private files => Make sure to:
 # - run `$ git secret reveal` before running these tests;

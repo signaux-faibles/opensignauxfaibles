@@ -2,6 +2,7 @@
 
 # Test de bout en bout de l'API "reduce" à l'aide de données publiques.
 # Inspiré de test-api-reduce-2.sh et algo2_tests.ts.
+# Ce script doit être exécuté depuis la racine du projet. Ex: par test-all.sh.
 
 # Interrompre le conteneur Docker d'une exécution précédente de ce test, si besoin
 sudo docker stop sf-mongodb &>/dev/null
