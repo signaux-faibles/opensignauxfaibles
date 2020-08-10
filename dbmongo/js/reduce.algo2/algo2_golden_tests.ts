@@ -125,16 +125,14 @@ test[serialOrSkip](
       }
     })
 
+    const finalizeOutput = serializeAsMongoObject(finalResult) // finalizeOutput doit être parfaitement identique au golden master qui serait mis à jour depuis test-api-reduce-2.sh => d'où l'appel à serializeAsMongoObject()
+
     if (updateGoldenFiles) {
-      const finalizeOutput = serializeAsMongoObject(finalResult) // finalizeOutput doit être parfaitement identique au golden master qui serait mis à jour depuis test-api-reduce-2.sh => d'où l'appel à serializeAsMongoObject()
       await writeFile(FINALIZE_GOLDEN_FILE, finalizeOutput)
     }
 
-    const finalizeExpected = parseMongoObject(
-      await readFile(FINALIZE_GOLDEN_FILE)
-    )
+    const finalizeExpected = await readFile(FINALIZE_GOLDEN_FILE)
 
-    t.deepEqual(finalResult, finalizeExpected)
-    // TODO: safeDeepEqual(t, finalizeOutput, finalizeExpected)
+    safeDeepEqual(t, finalizeOutput, finalizeExpected)
   }
 )
