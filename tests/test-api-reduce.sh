@@ -9,9 +9,12 @@ sudo docker stop sf-mongodb &>/dev/null
 
 set -e # will stop the script if any command fails with a non-zero exit code
 
-# Clean up on exit
+# Setup
+GOLDEN_FILE="test-api-reduce.golden-master.json"
 DATA_DIR=$(pwd)/tmp-opensignauxfaibles-data-raw
 mkdir -p "${DATA_DIR}"
+
+# Clean up on exit
 trap "{ killall dbmongo >/dev/null; [ -f config.toml ] && rm config.toml; [ -f config.backup.toml ] && mv config.backup.toml config.toml; sudo docker stop sf-mongodb >/dev/null; rm -rf ${DATA_DIR}; echo \"✨ Cleaned up temp directory\"; }" EXIT
 
 echo ""
@@ -83,10 +86,10 @@ echo ""
 if [[ "$*" == *--update* ]]
 then
     echo "🖼  Updating golden master file..."
-    cp "test-api-reduce.output-documents.json" "test-api-reduce.golden-master.json"
+    cp "test-api-reduce.output-documents.json" "${GOLDEN_FILE}"
 else
     # Diff between expected and actual output
-    diff --brief "test-api-reduce.golden-master.json" "test-api-reduce.output-documents.json"
+    diff --brief "${GOLDEN_FILE}" "test-api-reduce.output-documents.json"
     echo "✅ No diff. The reduce API works as usual."
 fi
 echo ""

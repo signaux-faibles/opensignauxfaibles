@@ -9,9 +9,12 @@ sudo docker stop sf-mongodb &>/dev/null
 
 set -e # will stop the script if any command fails with a non-zero exit code
 
-# Clean up on exit
+# Setup
+GOLDEN_FILE="test-api.golden-master.txt"
 DATA_DIR=$(pwd)/tmp-opensignauxfaibles-data-raw
 mkdir -p "${DATA_DIR}"
+
+# Clean up on exit
 trap "{ killall dbmongo >/dev/null; [ -f config.toml ] && rm config.toml; [ -f config.backup.toml ] && mv config.backup.toml config.toml; sudo docker stop sf-mongodb >/dev/null; rm -rf ${DATA_DIR}; echo \"✨ Cleaned up temp directory\"; }" EXIT
 
 echo ""
@@ -101,10 +104,10 @@ echo ""
 if [[ "$*" == *--update* ]]
 then
     echo "🖼  Updating golden master file..."
-    cp "test-api.output-documents.txt" "test-api.golden-master.txt"
+    cp "test-api.output-documents.txt" "${GOLDEN_FILE}"
 else
     # Diff between expected and actual output
-    diff --brief test-api.golden-master.txt test-api.output-documents.txt
+    diff --brief "${GOLDEN_FILE}" test-api.output-documents.txt
     echo "✅ No diff. The export worked as expected."
 fi
 echo ""
