@@ -100,12 +100,14 @@ function transformJSON {
 echo ""
 echo "🕵️‍♀️ Checking resulting Features..."
 cd ..
-echo "db.Features_TestData.find().toArray();" \
-  | sudo docker exec -i sf-mongodb mongo --quiet signauxfaibles \
+(sudo docker exec -i sf-mongodb mongo --quiet signauxfaibles \
   | fixJSON \
   | transformJSON \
   | tests/helpers/remove-random_order.sh \
-  > test-api-2.output.json
+  > test-api-2.output.json \
+) << CONTENT
+  db.Features_TestData.find().toArray();
+CONTENT
 
 # Display JS errors logged by MongoDB, if any
 sudo docker logs sf-mongodb | grep --color=always "uncaught exception" || true

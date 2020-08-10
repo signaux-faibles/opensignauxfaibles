@@ -73,9 +73,11 @@ echo "- POST /api/data/reduce 👉 $(http --print=b --ignore-stdin :5000/api/dat
 echo ""
 echo "🕵️‍♀️ Checking resulting Features..."
 cd ..
-echo "db.Features_TestData.find().toArray();" \
-  | sudo docker exec -i sf-mongodb mongo --quiet signauxfaibles \
-  > "test-api-reduce.output-documents.json"
+(sudo docker exec -i sf-mongodb mongo --quiet signauxfaibles \
+  > "test-api-reduce.output-documents.json" \
+) << CONTENT
+  db.Features_TestData.find().toArray();
+CONTENT
 
 # Display JS errors logged by MongoDB, if any
 sudo docker logs sf-mongodb | grep --color=always "uncaught exception" || true
