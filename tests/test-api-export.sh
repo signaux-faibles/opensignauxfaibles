@@ -2,6 +2,7 @@
 
 # Test de bout en bout de GET /api/data/entreprise et /api/data/etablissement.
 # Inspiré de test-api.sh.
+# Ce script doit être exécuté depuis la racine du projet. Ex: par test-all.sh.
 
 # Interrompre le conteneur Docker d'une exécution précédente de ce test, si besoin
 sudo docker stop sf-mongodb &>/dev/null
