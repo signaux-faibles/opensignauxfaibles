@@ -34,7 +34,7 @@ jobs:
 
       - run: ./tests/test-api-reduce.sh
 
-      - run: ./test-api-export.sh
+      - run: ./tests/test-api-export.sh
 
       - name: Reveal golden master files for tests
         env:
