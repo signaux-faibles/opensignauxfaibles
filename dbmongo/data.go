@@ -1,6 +1,12 @@
 package main
 
 import (
+	"errors"
+	"fmt"
+	"os"
+	"strconv"
+	"time"
+
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/naf"
 
@@ -108,4 +114,57 @@ func purgeHandler(c *gin.Context) {
 		return
 	}
 	c.JSON(300, "Provide areyousure=yes")
+}
+
+func getTimestamp() string {
+	return strconv.FormatInt(time.Now().Unix(), 10)
+}
+
+func getKeyParam(c *gin.Context) (string, error) {
+	var params struct {
+		Key string `json:"key"`
+	}
+	err := c.Bind(&params)
+	if err != nil {
+		return "", err
+	}
+
+	if !(len(params.Key) == 14 || len(params.Key) == 0) {
+		err = errors.New("siret de 14 caractères obligatoire si fourni")
+	}
+	return params.Key, err
+}
+
+func exportEtablissementsHandler(c *gin.Context) {
+	key, err := getKeyParam(c)
+	if err != nil {
+		c.JSON(400, err.Error())
+		return
+	}
+
+	// On retourne le nom de fichier avant la fin du traitement, pour éviter erreur "Request timed out"
+	var filepath = "dbmongo-data-export-etablissements-" + getTimestamp() + ".json"
+	c.JSON(200, filepath)
+
+	err = engine.ExportEtablissements(key, filepath)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "ExportEtablissements error: ", err.Error())
+	}
+}
+
+func exportEntreprisesHandler(c *gin.Context) {
+	key, err := getKeyParam(c)
+	if err != nil {
+		c.JSON(400, err.Error())
+		return
+	}
+
+	// On retourne le nom de fichier avant la fin du traitement, pour éviter erreur "Request timed out"
+	var filepath = "dbmongo-data-export-entreprises-" + getTimestamp() + ".json"
+	c.JSON(200, filepath)
+
+	err = engine.ExportEntreprises(key, filepath)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "ExportEntreprises error: ", err.Error())
+	}
 }
