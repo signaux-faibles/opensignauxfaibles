@@ -30,7 +30,6 @@ sudo docker run \
 echo ""
 echo "🔧 Setting up dbmongo..."
 cd ./dbmongo
-go build
 [ -f config.toml ] && mv config.toml config.backup.toml
 cp config-sample.toml config.toml
 perl -pi'' -e "s,/foo/bar/data-raw,sample-data-raw," config.toml
