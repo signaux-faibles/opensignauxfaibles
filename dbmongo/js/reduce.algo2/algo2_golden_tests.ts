@@ -22,7 +22,11 @@ import { map } from "./map"
 import { finalize } from "./finalize"
 import { reduce } from "./reduce"
 import { TestDataItem } from "../test/data/objects"
-import { runMongoMap, parseMongoObject } from "../test/helpers/mongodb"
+import {
+  runMongoMap,
+  parseMongoObject,
+  convertToMongoObject,
+} from "../test/helpers/mongodb"
 
 const INPUT_FILE = "../../tests/input-data/RawData.sample.json"
 const MAP_GOLDEN_FILE =
@@ -114,15 +118,15 @@ test[serialOrSkip](
       return {
         _id: {
           batch: jsParams.actual_batch,
-          periode: value.periode,
           siret: value.siret,
+          periode: value.periode,
         },
         value,
       }
     })
 
     if (updateGoldenFiles) {
-      const finalizeOutput = JSON.stringify(finalResult, null, 2)
+      const finalizeOutput = convertToMongoObject(finalResult)
       await writeFile(FINALIZE_GOLDEN_FILE, finalizeOutput)
     }
 

@@ -48,3 +48,21 @@ export const parseMongoObject = (serializedObj: string): unknown =>
         ? new Date((value as SerializedDate)._ISODate)
         : value
   )
+
+// const isDate = (date: Date | unknown) =>
+//   date instanceof Date && !isNaN(date.valueOf())
+
+// Converts an object into MongoDB's format (including mentions to ISODate).
+export const convertToMongoObject = (obj: unknown): string =>
+  JSON.stringify(
+    obj,
+    (_key, value: string) =>
+      typeof value === "string" &&
+      /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}.*Z/.test(value)
+        ? `ISODate_${value.replace(/\.000Z/, "Z")}`
+        : value,
+    2
+  )
+    .replace(/ {2}/g, "\t")
+    .replace(/"ISODate_([^"]+)"/g, `ISODate("$1")`)
+    .replace(/":/g, `" :`) + "\n"
