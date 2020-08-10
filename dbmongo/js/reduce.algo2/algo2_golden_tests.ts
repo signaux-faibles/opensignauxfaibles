@@ -28,7 +28,7 @@ const INPUT_FILE = "../../tests/input-data/RawData.sample.json"
 const MAP_GOLDEN_FILE =
   "../../tests/output-snapshots/reduce-map-output.golden.json"
 const FINALIZE_GOLDEN_FILE =
-  "../../tests/output-snapshots/reduce-finalize-output.golden.json"
+  "../../tests/output-snapshots/reduce-Features.golden.json"
 
 const PRIVATE_LINE_DIFF_THRESHOLD = 30
 
@@ -107,13 +107,30 @@ test[serialOrSkip](
     const finalizeResult = Object.keys(valuesPerKey).map((key) =>
       f.finalize(JSON.parse(key), f.reduce(key, valuesPerKey[key]))
     )
-    const finalizeOutput = JSON.stringify(finalizeResult, null, 2)
+
+    const finalResult = finalizeResult.map((finalizedEntry) => {
+      const value = (finalizedEntry as any[])[0]
+      delete value.random_order
+      return {
+        _id: {
+          batch: jsParams.actual_batch,
+          periode: value.periode,
+          siret: value.siret,
+        },
+        value,
+      }
+    })
 
     if (updateGoldenFiles) {
+      const finalizeOutput = JSON.stringify(finalResult, null, 2)
       await writeFile(FINALIZE_GOLDEN_FILE, finalizeOutput)
     }
 
-    const finalizeExpected = await readFile(FINALIZE_GOLDEN_FILE)
-    safeDeepEqual(t, finalizeOutput, finalizeExpected)
+    const finalizeExpected = parseMongoObject(
+      await readFile(FINALIZE_GOLDEN_FILE)
+    )
+
+    t.deepEqual(finalResult, finalizeExpected)
+    // TODO: safeDeepEqual(t, finalizeOutput, finalizeExpected)
   }
 )
