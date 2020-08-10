@@ -1,10 +1,7 @@
 #!/bin/bash
 
 # Test de bout en bout de l'API "reduce" à l'aide de données publiques.
-#
-# Inspiré de test-api-2.sh et algo2_tests.ts. Exécutable en CI.
-#
-# TODO: Refactoriser les tests fonctionnels pour réduire la duplication.
+# Inspiré de test-api-reduce-2.sh et algo2_tests.ts.
 
 # Interrompre le conteneur Docker d'une exécution précédente de ce test, si besoin
 sudo docker stop sf-mongodb &>/dev/null
