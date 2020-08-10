@@ -4,7 +4,7 @@
 # Inspiré de test-api.sh.
 
 # Interrompre le conteneur Docker d'une exécution précédente de ce test, si besoin
-docker stop sf-mongodb &>/dev/null
+sudo docker stop sf-mongodb &>/dev/null
 
 set -e # will stop the script if any command fails with a non-zero exit code
 
@@ -17,11 +17,11 @@ DATA_DIR=$(pwd)/tmp-opensignauxfaibles-data-raw
 mkdir -p "${DATA_DIR}"
 
 # Clean up on exit
-trap "{ echo -e \"${COLOR_DEFAULT}\"; killall dbmongo >/dev/null; [ -f config.toml ] && rm config.toml; [ -f config.backup.toml ] && mv config.backup.toml config.toml; docker stop sf-mongodb >/dev/null; rm -rf ${DATA_DIR}; echo \"✨ Cleaned up temp directory\"; }" EXIT
+trap "{ echo -e \"${COLOR_DEFAULT}\"; killall dbmongo >/dev/null; [ -f config.toml ] && rm config.toml; [ -f config.backup.toml ] && mv config.backup.toml config.toml; sudo docker stop sf-mongodb >/dev/null; rm -rf ${DATA_DIR}; echo \"✨ Cleaned up temp directory\"; }" EXIT
 
 echo ""
 echo "🐳 Starting MongoDB container..."
-docker run \
+sudo docker run \
     --name sf-mongodb \
     --publish 27017:27017 \
     --detach \
@@ -137,7 +137,7 @@ cat > "${DATA_DIR}/db_popul.js" << CONTENTS
   db.Public_debug.remove({})
 CONTENTS
 
-docker exec -i sf-mongodb mongo signauxfaibles < "${DATA_DIR}/db_popul.js" >/dev/null
+sudo docker exec -i sf-mongodb mongo signauxfaibles < "${DATA_DIR}/db_popul.js" >/dev/null
 
 echo ""
 echo "💎 Computing Features and Public collections thru dbmongo API..."
@@ -149,10 +149,10 @@ echo "- POST /api/data/public 👉 $(http --print=b --ignore-stdin :5000/api/dat
 echo ""
 echo "🚚 Asking API to export enterprise data..."
 # This step is required only if key was provided when calling POST /api/data/public
-RENAME_RESULT=$(echo 'db.Public_debug.renameCollection("Public");' | docker exec -i sf-mongodb mongo --quiet signauxfaibles)
+RENAME_RESULT=$(echo 'db.Public_debug.renameCollection("Public");' | sudo docker exec -i sf-mongodb mongo --quiet signauxfaibles)
 echo "- rename 'Public_debug' collection to 'Public' 👉 ${RENAME_RESULT}"
 # Make sure that the export only relies on Score and Public collections => clear collections that were populated for/by other endpoints
-CLEAN_RESULT=$(echo 'db.Admin.drop(); db.ImportedData.drop(); db.RawData.drop();' | docker exec -i sf-mongodb mongo --quiet signauxfaibles)
+CLEAN_RESULT=$(echo 'db.Admin.drop(); db.ImportedData.drop(); db.RawData.drop();' | sudo docker exec -i sf-mongodb mongo --quiet signauxfaibles)
 echo "- drop other db collections 👉 ${CLEAN_RESULT}"
 # Export enterprise data
 ETABLISSEMENTS_FILE=$(http --print=b --ignore-stdin GET :5000/api/data/etablissements | tr -d '"')
