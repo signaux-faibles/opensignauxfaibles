@@ -75,34 +75,10 @@ sh -c "./dbmongo &>/dev/null &" # we run in a separate shell to hide the "termin
 sleep 2 # give some time for dbmongo to start
 echo "- POST /api/data/reduce 👉 $(http --print=b --ignore-stdin :5000/api/data/reduce algo=algo2 batch=2002_1)"
 
-function fixJSON {
-  # Cette fonction convertit les documents MongoDB au format JSON.
-  # (cf https://github.com/signaux-faibles/opensignauxfaibles/issues/72)
-  perl -p -e 's/ISODate\("(.*)T00:00:00Z"\)/"$1T00:00:00.000Z"/g' \
-  | perl -p -e 's/"montant_majorations" : NaN,$/"montant_majorations" : null,/g'
-}
-
-function transformJSON {
-  # Cette fonction permet de rendre les documents de Features_TestData
-  # compatibles avec ceux exportés par test_finalize.js dans le golden
-  # master.
-  node -e "d=[]; \
-    process.openStdin() \
-    .on('data', c => d.push(c)) \
-    .on('end', () => { \
-      const finalizeResults = JSON.parse(d.join('')).map(result => { \
-        return [ result.value ]; \
-      }); \
-      console.log(JSON.stringify(finalizeResults, null, 2)) \
-    });"
-}
-
 echo ""
 echo "🕵️‍♀️ Checking resulting Features..."
 cd ..
 (sudo docker exec -i sf-mongodb mongo --quiet signauxfaibles \
-  | fixJSON \
-  | transformJSON \
   | tests/helpers/remove-random_order.sh \
   > test-api-2.output.json \
 ) << CONTENT
