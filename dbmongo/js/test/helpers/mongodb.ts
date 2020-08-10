@@ -57,17 +57,12 @@ const isStringifiedDate = (date: string | unknown) =>
 // E.g. Dates are serialized as ISODate() instances.
 // Thanks to this function, algo2_golden_tests.ts and test-api-reduce-2.sh
 // can produce the exact same content, when updating.
-export const serializeAsMongoObject = (obj: unknown): string => {
-  const INDENT_SPACES = 2
-  return (
-    JSON.stringify(
-      obj,
-      (_, val) =>
-        isStringifiedDate(val) ? `ISODate_${val.replace(/\.000Z/, "Z")}` : val,
-      INDENT_SPACES
-    )
-      .replace(/"ISODate_([^"]+)"/g, `ISODate("$1")`) // replace ISODate strings by function calls
-      .replace(/":/g, `" :`) // formatting: add a space before property assignments
-      .replace(new RegExp(` {${INDENT_SPACES}}`, "g"), "\t") + "\n" // formatting: tabs and trailing line break
+export const serializeAsMongoObject = (obj: unknown): string =>
+  JSON.stringify(
+    obj,
+    (_, val) =>
+      isStringifiedDate(val) ? `ISODate_${val.replace(/\.000Z/, "Z")}` : val,
+    "\t"
   )
-}
+    .replace(/"ISODate_([^"]+)"/g, `ISODate("$1")`) // replace ISODate strings by function calls
+    .replace(/":/g, `" :`) + "\n" // formatting: add a space before property assignments + trailing line break
