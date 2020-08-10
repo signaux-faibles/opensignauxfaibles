@@ -34,7 +34,7 @@ heading "go generate"
 (cd ./dbmongo/lib/engine && go generate .) 2>&1 | indent
 
 heading "go build"
-(killall dbmongo 2>/dev/null || true; cd ./dbmongo && go build) 2>&1 | indent
+(killall dbmongo 2>/dev/null || true; cd ./dbmongo && go build && echo "📦 dbmongo/dbmongo") 2>&1 | indent
 
 heading "test-api.sh"
 ./tests/test-api.sh 2>&1 | indent
