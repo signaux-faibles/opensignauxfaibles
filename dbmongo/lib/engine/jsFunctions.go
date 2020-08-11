@@ -736,9 +736,8 @@ db.getCollection("Features").createIndex({
         .sort((a, b) => (a.annee_bdf < b.annee_bdf ? 1 : -1));
 }`,
 "compte": `function compte(compte) {
-  "use strict";
-  const c = f.iterable(compte)
-  return (c.length>0)?c[c.length-1]:undefined
+    const c = f.iterable(compte);
+    return c.length > 0 ? c[c.length - 1] : undefined;
 }`,
 "cotisations": `function cotisations(vcotisation) {
   "use strict";
@@ -877,8 +876,7 @@ db.getCollection("Features").createIndex({
   return(output_dette)
 }`,
 "delai": `function delai(delai) {
-  "use strict";
-  return f.iterable(delai)
+    return f.iterable(delai);
 }`,
 "diane": `function diane(hs) {
     "use strict";
