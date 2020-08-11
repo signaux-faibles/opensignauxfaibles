@@ -157,7 +157,7 @@ CLEAN_RESULT=$(echo 'db.Admin.drop(); db.ImportedData.drop(); db.RawData.drop();
 echo "- drop other db collections 👉 ${CLEAN_RESULT}"
 
 # Failure cases
-INVALID_ETAB=$(http --print=b --ignore-stdin GET :5000/api/data/etablissements key=invalid | (grep "invalid" && echo "OK" || echo -e "${COLOR_YELLOW}failed${COLOR_DEFAULT}"))
+INVALID_ETAB=$(http --print=b --ignore-stdin GET :5000/api/data/etablissements key=="invalid" | (grep "key doit être un numéro SIREN" || echo -e "${COLOR_YELLOW}failed${COLOR_DEFAULT}"))
 echo "- GET /api/data/etablissements with invalid key 👉 ${INVALID_ETAB}"
 if [[ "${INVALID_ETAB}" == *failed* ]]
 then
