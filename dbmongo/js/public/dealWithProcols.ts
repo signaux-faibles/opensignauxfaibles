@@ -23,7 +23,7 @@ export function dealWithProcols(
         etat = f.procolToHuman(the_event.action_procol, the_event.stade_procol)
 
       if (etat !== null)
-        events.push({ etat: etat, date_procol: new Date(the_event.date_effet) })
+        events.push({ etat, date_procol: new Date(the_event.date_effet) })
 
       return events
     }, [] as Result[])
