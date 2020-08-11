@@ -11,7 +11,7 @@ Solution logicielle pour la détection anticipée d'entreprises en difficulté.
 ## Dépendances / pré-requis
 
 - [Node.js](https://nodejs.org/) (voir version spécifiée dans `dbmongo/js/.nvmrc`), pour transpiler les fonctions map-reduce de TypeScript vers JavaScript et exécuter les tests automatisés, après toute modification de ces fonctions.
-- [git-secret](https://git-secret.io/), pour (dé)chiffrer les fichiers de données privées utilisés dans certains tests automatisés. (voir description de https://github.com/signaux-faibles/opensignauxfaibles/pull/113)
+- [git secret](https://git-secret.io/), pour (dé)chiffrer les fichiers de données privées utilisés dans certains tests automatisés.
 
 ## Installation
 
