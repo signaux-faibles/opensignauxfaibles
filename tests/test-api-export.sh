@@ -156,19 +156,20 @@ echo "- rename 'Public_debug' collection to 'Public' 👉 ${RENAME_RESULT}"
 CLEAN_RESULT=$(echo 'db.Admin.drop(); db.ImportedData.drop(); db.RawData.drop();' | sudo docker exec -i sf-mongodb mongo --quiet signauxfaibles)
 echo "- drop other db collections 👉 ${CLEAN_RESULT}"
 
+function stopIfFailed {
+    if [[ "$1" == *failed* ]]
+    then
+        exit 1
+    fi
+}
+
 # Parameter validation
 RESULT=$(http --print=b --ignore-stdin GET :5000/api/data/etablissements key=="invalid" | (grep "key doit être un numéro SIREN" || echo -e "${COLOR_YELLOW}failed${COLOR_DEFAULT}"))
 echo "- GET /api/data/etablissements with invalid key 👉 ${RESULT}"
-if [[ "${RESULT}" == *failed* ]]
-then
-    exit 1
-fi
+stopIfFailed "${RESULT}"
 RESULT=$(http --print=b --ignore-stdin GET :5000/api/data/entreprises key=="invalid" | (grep "key doit être un numéro SIREN" || echo -e "${COLOR_YELLOW}failed${COLOR_DEFAULT}"))
 echo "- GET /api/data/entreprises with invalid key 👉 ${RESULT}"
-if [[ "${RESULT}" == *failed* ]]
-then
-    exit 1
-fi
+stopIfFailed "${RESULT}"
 
 # Export enterprise data
 ETABLISSEMENTS_FILE=$(http --print=b --ignore-stdin GET :5000/api/data/etablissements | tr -d '"')
