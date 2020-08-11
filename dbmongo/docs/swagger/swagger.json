@@ -137,7 +137,7 @@
                     "batch": {
                         "type": "string"
                     },
-                    "siret": {
+                    "key": {
                         "type": "string"
                     }
                 }
@@ -1037,7 +1037,7 @@
         },
         "/api/data/public": {
             "post": {
-                "description": "Alimente la collection Public avec les objets calculés pour le batch cité en paramètre, à partir de la collection RawData.  \nLe traitement prend en paramètre la clé du batch (obligatoire) et un SIREN (optionnel). Lorsque le SIRET n'est pas précisé, tous les objets lié au batch sont traités, à conditions qu'ils soient dans le périmètre de scoring \"algo2\".\nCette collection sera ensuite accédée par les utilisateurs pour consulter les données des entreprises.  \nDes niveaux d'accéditation fins (ligne ou colonne) pour la consultation de ces données peuvent être mis en oeuvre.  \nCes filtrages sont effectués grace à la notion de scope. Les objets et les utilisateurs disposent d'un ensemble de tags et les objets partageant au moins un tag avec les utilisateurs peuvent être consultés par ceux-ci.  \nCes tags sont exploités pour traiter la notion de région (ligne) mais aussi les permissions (colonne).",
+                "description": "Alimente la collection Public avec les objets calculés pour le batch cité en paramètre, à partir de la collection RawData.  \nLe traitement prend en paramètre la clé du batch (obligatoire) et un SIREN (optionnel). Lorsque le SIREN n'est pas précisé, tous les objets lié au batch sont traités, à conditions qu'ils soient dans le périmètre de scoring \"algo2\".\nCette collection sera ensuite accédée par les utilisateurs pour consulter les données des entreprises.  \nDes niveaux d'accéditation fins (ligne ou colonne) pour la consultation de ces données peuvent être mis en oeuvre.  \nCes filtrages sont effectués grace à la notion de scope. Les objets et les utilisateurs disposent d'un ensemble de tags et les objets partageant au moins un tag avec les utilisateurs peuvent être consultés par ceux-ci.  \nCes tags sont exploités pour traiter la notion de région (ligne) mais aussi les permissions (colonne).",
                 "requestBody": {
                     "content": {
                         "application/json": {

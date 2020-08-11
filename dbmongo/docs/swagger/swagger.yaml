@@ -89,7 +89,7 @@ components:
       properties:
         batch: 
           type: string
-        siret:
+        key:
           type: string
     Event:
       properties:
@@ -695,7 +695,7 @@ paths:
     post:
       description: |- 
         Alimente la collection Public avec les objets calculés pour le batch cité en paramètre, à partir de la collection RawData.  
-        Le traitement prend en paramètre la clé du batch (obligatoire) et un SIREN (optionnel). Lorsque le SIRET n'est pas précisé, tous les objets lié au batch sont traités, à conditions qu'ils soient dans le périmètre de scoring "algo2".
+        Le traitement prend en paramètre la clé du batch (obligatoire) et un SIREN (optionnel). Lorsque le SIREN n'est pas précisé, tous les objets lié au batch sont traités, à conditions qu'ils soient dans le périmètre de scoring "algo2".
         Cette collection sera ensuite accédée par les utilisateurs pour consulter les données des entreprises.  
         Des niveaux d'accéditation fins (ligne ou colonne) pour la consultation de ces données peuvent être mis en oeuvre.  
         Ces filtrages sont effectués grace à la notion de scope. Les objets et les utilisateurs disposent d'un ensemble de tags et les objets partageant au moins un tag avec les utilisateurs peuvent être consultés par ceux-ci.  
