@@ -155,6 +155,15 @@ echo "- rename 'Public_debug' collection to 'Public' 👉 ${RENAME_RESULT}"
 # Make sure that the export only relies on Score and Public collections => clear collections that were populated for/by other endpoints
 CLEAN_RESULT=$(echo 'db.Admin.drop(); db.ImportedData.drop(); db.RawData.drop();' | sudo docker exec -i sf-mongodb mongo --quiet signauxfaibles)
 echo "- drop other db collections 👉 ${CLEAN_RESULT}"
+
+# Failure cases
+INVALID_ETAB=$(http --print=b --ignore-stdin GET :5000/api/data/etablissements key=invalid | (grep "invalid" && echo "OK" || echo -e "${COLOR_YELLOW}failed${COLOR_DEFAULT}"))
+echo "- GET /api/data/etablissements with invalid key 👉 ${INVALID_ETAB}"
+if [[ "${INVALID_ETAB}" == *failed* ]]
+then
+    exit 1
+fi
+
 # Export enterprise data
 ETABLISSEMENTS_FILE=$(http --print=b --ignore-stdin GET :5000/api/data/etablissements | tr -d '"')
 echo "- GET /api/data/etablissements 👉 ${ETABLISSEMENTS_FILE}"
