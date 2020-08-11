@@ -67,7 +67,7 @@ func PublicOne(batch AdminBatch, key string) error {
 	return err
 }
 
-// Public permet de supprimer un batch dans les objets de RawData
+// Public traite le mapReduce public pour les entreprises et établissements du perimètre "algo2".
 func Public(batch AdminBatch) error {
 	functions, err := loadJSFunctions("public")
 	if err != nil {
