@@ -145,7 +145,7 @@ echo "💎 Computing Features and Public collections thru dbmongo API..."
 sh -c "./dbmongo &>/dev/null &" # we run in a separate shell to hide the "terminated" message when the process is killed by trap
 sleep 2 # give some time for dbmongo to start
 echo "- POST /api/data/compact 👉 $(http --print=b --ignore-stdin :5000/api/data/compact fromBatchKey=2002_1)"
-echo "- POST /api/data/public 👉 $(http --print=b --ignore-stdin :5000/api/data/public batch=2002_1 key=.........)"
+echo "- POST /api/data/public 👉 $(http --print=b --ignore-stdin :5000/api/data/public batch=2002_1 key=.........)" # we specify a placeholder value as key, so that PublicOne() is run instead of Public(), so the data is generated for etablissements that don't have effectif values, and therefore are outside of the "algo2" scope.
 
 echo ""
 echo "🚚 Asking API to export enterprise data..."

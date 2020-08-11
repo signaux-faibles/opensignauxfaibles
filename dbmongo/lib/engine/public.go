@@ -98,8 +98,10 @@ func Public(batch AdminBatch) error {
 	var pipes []string
 	var pipeChannel = make(chan string)
 
+	filter := bson.M{"value.index.algo2": true} // on exclue les établissements et entreprises hors périmètre "algo2", pour lesquelles aucun score ne sera calculé.
+
 	i := 0
-	for _, query := range chunks.ToQueries(bson.M{"value.index.algo2": true}, "_id") {
+	for _, query := range chunks.ToQueries(filter, "_id") {
 		w.waitGroup.Add(1)
 
 		dbTemp := "purgeBatch" + strconv.Itoa(i)
