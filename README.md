@@ -1,11 +1,10 @@
 # Open Signaux Faibles
 
-Solution logicielle pour la détection anticipée d'entreprises en difficulté
+Solution logicielle pour la détection anticipée d'entreprises en difficulté.
 
 ## Architecture
 
 - Back-end: golang
-- Front-end: vuetify
 - MongoDB 4.2
 - Fonctions map-reduce: TypeScript (TS) et JavaScript (JS)
 
@@ -30,8 +29,6 @@ Dans l'arbre de sources de l'installation go, vous trouverez tous les répertoir
 TODO:
 
 - linker correctement les procédures R avec le core golang
-- provoquer l'installation des modules npm et la compilation webpack pour compiler l'exécutable golang tout compris.
-- intégrer toutes les dépendances fichier dans l'exécutable golang pour le rendre plus portable et faciliter l'installation
 
 ## Configuration
 
