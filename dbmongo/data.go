@@ -121,18 +121,11 @@ func getTimestamp() string {
 }
 
 func getKeyParam(c *gin.Context) (string, error) {
-	var params struct {
-		Key string `json:"key"`
+	key := c.Query("key")
+	if !(len(key) == 9 || len(key) == 0) {
+		return "", errors.New("si fourni, key doit être un numéro SIREN (9 chiffres)")
 	}
-	err := c.Bind(&params)
-	if err != nil {
-		return "", err
-	}
-
-	if !(len(params.Key) == 14 || len(params.Key) == 0) {
-		err = errors.New("siret de 14 caractères obligatoire si fourni")
-	}
-	return params.Key, err
+	return key, nil
 }
 
 func exportEtablissementsHandler(c *gin.Context) {
