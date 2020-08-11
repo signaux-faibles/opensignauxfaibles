@@ -721,8 +721,9 @@ db.getCollection("Features").createIndex({
 },
 "public":{
 "apconso": `function apconso(apconso) {
-  "use strict";
-  return f.iterable(apconso).sort((p1, p2) => p1.periode < p2.periode)
+    return f
+        .iterable(apconso)
+        .sort((p1, p2) => (p1.periode < p2.periode ? 1 : -1));
 }`,
 "apdemande": `function apdemande(apdemande) {
   "use strict";
@@ -943,12 +944,12 @@ db.getCollection("Features").createIndex({
   }
 }`,
 "iterable": `function iterable(dict) {
-  try {
+    try {
         return Object.keys(dict).map((h) => dict[h]);
     }
     catch (error) {
         return [];
-  }
+    }
 }`,
 "map": `function map() {
   "use strict";
