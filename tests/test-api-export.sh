@@ -155,6 +155,46 @@ echo "- rename 'Public_debug' collection to 'Public' 👉 ${RENAME_RESULT}"
 # Make sure that the export only relies on Score and Public collections => clear collections that were populated for/by other endpoints
 CLEAN_RESULT=$(echo 'db.Admin.drop(); db.ImportedData.drop(); db.RawData.drop();' | sudo docker exec -i sf-mongodb mongo --quiet signauxfaibles)
 echo "- drop other db collections 👉 ${CLEAN_RESULT}"
+
+function stopIfFailed {
+    if [[ "$1" == *failed* ]]
+    then
+        exit 1
+    fi
+}
+
+# Parameter validation
+RESULT=$(http --print=b --ignore-stdin GET :5000/api/data/etablissements key=="invalid" | (grep "key doit être un numéro SIREN" || echo -e "${COLOR_YELLOW}failed${COLOR_DEFAULT}"))
+echo "- GET /api/data/etablissements with invalid key 👉 ${RESULT}"
+stopIfFailed "${RESULT}"
+RESULT=$(http --print=b --ignore-stdin GET :5000/api/data/entreprises key=="invalid" | (grep "key doit être un numéro SIREN" || echo -e "${COLOR_YELLOW}failed${COLOR_DEFAULT}"))
+echo "- GET /api/data/entreprises with invalid key 👉 ${RESULT}"
+stopIfFailed "${RESULT}"
+
+# GET /api/data/etablissements with key=212345678 should return just one match
+FILE=$(http --print=b --ignore-stdin GET :5000/api/data/etablissements key=="212345678" | tr -d '"')
+MATCH=$(grep --quiet "etablissement_21234567891011" "${FILE}" && echo "found etablissement_21234567891011" || echo -e "${COLOR_YELLOW}failed${COLOR_DEFAULT}")
+COUNT=$(wc -l <"${FILE}")
+rm "${FILE}"
+echo "- GET /api/data/etablissements with key=212345678 👉 ${MATCH}, ${COUNT} result(s)"
+stopIfFailed "${MATCH}"
+if [[ "${COUNT}" -ne "1" ]]
+then
+    exit 1
+fi
+
+# GET /api/data/entreprises with key=212345678 should return just one match
+FILE=$(http --print=b --ignore-stdin GET :5000/api/data/entreprises key=="212345678" | tr -d '"')
+MATCH=$(grep --quiet "entreprise_212345678" "${FILE}" && echo "found entreprise_212345678" || echo -e "${COLOR_YELLOW}failed${COLOR_DEFAULT}")
+COUNT=$(wc -l <"${FILE}")
+rm "${FILE}"
+echo "- GET /api/data/entreprises with key=212345678 👉 ${MATCH}, ${COUNT} result(s)"
+stopIfFailed "${MATCH}"
+if [[ "${COUNT}" -ne "1" ]]
+then
+    exit 1
+fi
+
 # Export enterprise data
 ETABLISSEMENTS_FILE=$(http --print=b --ignore-stdin GET :5000/api/data/etablissements | tr -d '"')
 echo "- GET /api/data/etablissements 👉 ${ETABLISSEMENTS_FILE}"
