@@ -885,17 +885,19 @@ db.getCollection("Features").createIndex({
         .sort((a, b) => (a.exercice_diane < b.exercice_diane ? 1 : -1));
 }`,
 "effectifs": `function effectifs(v) {
-  "use strict";
-  var mapEffectif = {}
-  f.iterable(v.effectif).forEach(e => {
-    mapEffectif[e.periode.getTime()] = (mapEffectif[e.periode.getTime()] || 0) + e.effectif
-  })
-  return serie_periode.map(p => {
-    return {
-      periode: p,
-      effectif: mapEffectif[p.getTime()] || null
-    }
-  }).filter(p => p.effectif)
+    const mapEffectif = {};
+    f.iterable(v.effectif).forEach((e) => {
+        mapEffectif[e.periode.getTime()] =
+            (mapEffectif[e.periode.getTime()] || 0) + e.effectif;
+    });
+    return serie_periode
+        .map((p) => {
+        return {
+            periode: p,
+            effectif: mapEffectif[p.getTime()] || null,
+        };
+    })
+        .filter((p) => p.effectif);
 }`,
 "finalize": `function finalize(_, v) {
   "use strict";
