@@ -39,6 +39,9 @@ heading "go build"
 heading "test-api.sh"
 ./tests/test-api.sh 2>&1 | indent
 
+heading "test-api-public.sh"
+./tests/test-api-public.sh 2>&1 | indent
+
 heading "test-api-reduce.sh"
 ./tests/test-api-reduce.sh 2>&1 | indent
 
