@@ -1,7 +1,6 @@
 #!/bin/bash
 
-# Test de bout en bout de l'API "reduce" à l'aide de données publiques.
-# Inspiré de test-api-reduce-2.sh et algo2_tests.ts.
+# Test de bout en bout de l'API "/public". Inspiré de test-api-public.sh.
 # Ce script doit être exécuté depuis la racine du projet. Ex: par test-all.sh.
 
 # Interrompre le conteneur Docker d'une exécution précédente de ce test, si besoin
@@ -10,7 +9,8 @@ sudo docker stop sf-mongodb &>/dev/null
 set -e # will stop the script if any command fails with a non-zero exit code
 
 # Setup
-GOLDEN_FILE="tests/output-snapshots/test-api-reduce.golden.json"
+GOLDEN_FILE="tests/output-snapshots/test-api-public.golden.json"
+OUTPUT_FILE="test-api-public.output.json"
 DATA_DIR=$(pwd)/tmp-opensignauxfaibles-data-raw
 mkdir -p "${DATA_DIR}"
 
@@ -65,18 +65,18 @@ echo ")" >> "${DATA_DIR}/db_popul.js"
 sudo docker exec -i sf-mongodb mongo signauxfaibles > /dev/null < "${DATA_DIR}/db_popul.js"
 
 echo ""
-echo "💎 Computing the Features collection thru dbmongo API..."
+echo "💎 Computing the Public collection thru dbmongo API..."
 sh -c "./dbmongo &>/dev/null &" # we run in a separate shell to hide the "terminated" message when the process is killed by trap
 sleep 2 # give some time for dbmongo to start
-echo "- POST /api/data/reduce 👉 $(http --print=b --ignore-stdin :5000/api/data/reduce algo=algo2 batch=1905)"
+echo "- POST /api/data/public 👉 $(http --print=b --ignore-stdin :5000/api/data/public batch=1905)"
 
 echo ""
 echo "🕵️‍♀️ Checking resulting Features..."
 cd ..
 (sudo docker exec -i sf-mongodb mongo --quiet signauxfaibles \
-  > "test-api-reduce.output-documents.json" \
+  > "${OUTPUT_FILE}" \
 ) << CONTENT
-  db.Features_TestData.find().toArray();
+  db.Public.find().toArray();
 CONTENT
 
 # Display JS errors logged by MongoDB, if any
@@ -87,12 +87,12 @@ echo ""
 if [[ "$*" == *--update* ]]
 then
     echo "🖼  Updating golden master file..."
-    cp "test-api-reduce.output-documents.json" "${GOLDEN_FILE}"
+    cp "${OUTPUT_FILE}" "${GOLDEN_FILE}"
 else
     # Diff between expected and actual output
-    diff --brief "${GOLDEN_FILE}" "test-api-reduce.output-documents.json"
+    diff --brief "${GOLDEN_FILE}" "${OUTPUT_FILE}"
     echo "✅ No diff. The reduce API works as usual."
 fi
 echo ""
-rm "test-api-reduce.output-documents.json"
+rm "${OUTPUT_FILE}"
 # Now, the "trap" commands will run, to clean up.
