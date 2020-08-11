@@ -1016,11 +1016,9 @@ function flatten(v, actual_batch) {
   }
   return values
 }`,
-"sirene": `function sirene(sireneArray) {
-  "use strict";
-  return sireneArray.reduce((accu, k) => {
-    return k
-  }, {})
+"sirene": `// Cette fonction retourne les données sirene les plus récentes
+function sirene(sireneArray) {
+    return sireneArray[sireneArray.length - 1] || {}; // TODO: vérifier que sireneArray est bien classé dans l'ordre chronologique
 }`,
 },
 "purgeBatch":{
