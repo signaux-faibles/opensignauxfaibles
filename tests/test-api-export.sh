@@ -171,6 +171,31 @@ RESULT=$(http --print=b --ignore-stdin GET :5000/api/data/entreprises key=="inva
 echo "- GET /api/data/entreprises with invalid key 👉 ${RESULT}"
 stopIfFailed "${RESULT}"
 
+# GET /api/data/etablissements with key=212345678 should return just one match
+FILE=$(http --print=b --ignore-stdin GET :5000/api/data/etablissements key=="212345678" | tr -d '"')
+MATCH=$(grep --quiet "etablissement_21234567891011" "${FILE}" && echo "found etablissement_21234567891011" || echo -e "${COLOR_YELLOW}failed${COLOR_DEFAULT}")
+COUNT=$(wc -l <"${FILE}")
+rm "${FILE}"
+echo "- GET /api/data/etablissements with key=212345678 👉 ${MATCH}, ${COUNT} result(s)"
+stopIfFailed "${MATCH}"
+if [[ "${COUNT}" -ne "1" ]]
+then
+    exit 1
+fi
+
+# GET /api/data/entreprises with key=212345678 should return just one match
+FILE=$(http --print=b --ignore-stdin GET :5000/api/data/entreprises key=="212345678" | tr -d '"')
+cat $FILE
+MATCH=$(grep --quiet "entreprise_212345678" "${FILE}" && echo "found entreprise_212345678" || echo -e "${COLOR_YELLOW}failed${COLOR_DEFAULT}")
+COUNT=$(wc -l <"${FILE}")
+rm "${FILE}"
+echo "- GET /api/data/entreprises with key=212345678 👉 ${MATCH}, ${COUNT} result(s)"
+stopIfFailed "${MATCH}"
+if [[ "${COUNT}" -ne "1" ]]
+then
+    exit 1
+fi
+
 # Export enterprise data
 ETABLISSEMENTS_FILE=$(http --print=b --ignore-stdin GET :5000/api/data/etablissements | tr -d '"')
 echo "- GET /api/data/etablissements 👉 ${ETABLISSEMENTS_FILE}"
