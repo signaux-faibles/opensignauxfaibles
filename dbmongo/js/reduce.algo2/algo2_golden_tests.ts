@@ -22,11 +22,17 @@ import { map } from "./map"
 import { finalize } from "./finalize"
 import { reduce } from "./reduce"
 import { TestDataItem } from "../test/data/objects"
-import { runMongoMap, parseMongoObject } from "../test/helpers/mongodb"
+import {
+  runMongoMap,
+  parseMongoObject,
+  serializeAsMongoObject,
+} from "../test/helpers/mongodb"
 
-const INPUT_FILE = "../../test-reduce-data.json"
-const MAP_GOLDEN_FILE = "../../test-reduce-map_golden.json"
-const FINALIZE_GOLDEN_FILE = "../../test-reduce-finalize_golden.json"
+const INPUT_FILE = "../../tests/input-data/RawData.sample.json"
+const MAP_GOLDEN_FILE =
+  "../../tests/output-snapshots/reduce-map-output.golden.json"
+const FINALIZE_GOLDEN_FILE =
+  "../../tests/output-snapshots/reduce-Features.golden.json"
 
 const PRIVATE_LINE_DIFF_THRESHOLD = 30
 
@@ -102,16 +108,31 @@ test[serialOrSkip](
       valuesPerKey[idString].push(value)
     })
 
-    const finalizeResult = Object.keys(valuesPerKey).map((key) =>
-      f.finalize(JSON.parse(key), f.reduce(key, valuesPerKey[key]))
-    )
-    const finalizeOutput = JSON.stringify(finalizeResult, null, 2)
+    const finalizeResult = Object.keys(valuesPerKey)
+      .map((key) =>
+        f.finalize(JSON.parse(key), f.reduce(key, valuesPerKey[key]))
+      )
+      .map((finalizedEntry) => {
+        const value = (finalizedEntry as any[])[0]
+        delete value.random_order
+        return {
+          _id: {
+            batch: jsParams.actual_batch,
+            siret: value.siret,
+            periode: value.periode,
+          },
+          value,
+        }
+      })
+
+    const finalizeOutput = serializeAsMongoObject(finalizeResult) // finalizeOutput doit être parfaitement identique au golden master qui serait mis à jour depuis test-api-reduce-2.sh => d'où l'appel à serializeAsMongoObject()
 
     if (updateGoldenFiles) {
       await writeFile(FINALIZE_GOLDEN_FILE, finalizeOutput)
     }
 
     const finalizeExpected = await readFile(FINALIZE_GOLDEN_FILE)
+
     safeDeepEqual(t, finalizeOutput, finalizeExpected)
   }
 )

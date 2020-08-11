@@ -2,15 +2,19 @@
 
 # Test de bout en bout des APIs "reduce" et "public"
 # Source: https://github.com/signaux-faibles/documentation/blob/master/prise-en-main.md#%C3%A9tape-de-calculs-pour-populer-features
+# Ce script doit être exécuté depuis la racine du projet. Ex: par test-all.sh.
 
 # Interrompre le conteneur Docker d'une exécution précédente de ce test, si besoin
 sudo docker stop sf-mongodb &>/dev/null
 
 set -e # will stop the script if any command fails with a non-zero exit code
 
-# Clean up on exit
+# Setup
+GOLDEN_FILE="tests/output-snapshots/test-api.golden.txt"
 DATA_DIR=$(pwd)/tmp-opensignauxfaibles-data-raw
 mkdir -p "${DATA_DIR}"
+
+# Clean up on exit
 trap "{ killall dbmongo >/dev/null; [ -f config.toml ] && rm config.toml; [ -f config.backup.toml ] && mv config.backup.toml config.toml; sudo docker stop sf-mongodb >/dev/null; rm -rf ${DATA_DIR}; echo \"✨ Cleaned up temp directory\"; }" EXIT
 
 echo ""
@@ -26,7 +30,6 @@ sudo docker run \
 echo ""
 echo "🔧 Setting up dbmongo..."
 cd ./dbmongo
-go build
 [ -f config.toml ] && mv config.toml config.backup.toml
 cp config-sample.toml config.toml
 perl -pi'' -e "s,/foo/bar/data-raw,sample-data-raw," config.toml
@@ -80,7 +83,10 @@ echo "- POST /api/data/public 👉 $(http --print=b --ignore-stdin :5000/api/dat
 echo ""
 echo "🕵️‍♀️ Checking resulting Features..."
 cd ..
-sudo docker exec -i sf-mongodb mongo --quiet signauxfaibles > test-api.output.txt << CONTENTS
+(sudo docker exec -i sf-mongodb mongo --quiet signauxfaibles \
+  | tests/helpers/remove-random_order.sh \
+  > test-api.output.txt \
+) << CONTENTS
   print("// Documents from db.RawData, after call to /api/data/compact:");
   db.RawData.find().toArray();
   print("// Documents from db.Features_debug, after call to /api/data/reduce:");
@@ -92,20 +98,17 @@ CONTENTS
 # Display JS errors logged by MongoDB, if any
 sudo docker logs sf-mongodb | grep --color=always "uncaught exception" || true
 
-# exclude random values
-grep -v '"random_order" :' test-api.output.txt > test-api.output-documents.txt
-
 echo ""
 # Check if the --update flag was passed
 if [[ "$*" == *--update* ]]
 then
     echo "🖼  Updating golden master file..."
-    cp "test-api.output-documents.txt" "test-api.golden-master.txt"
+    cp "test-api.output.txt" "${GOLDEN_FILE}"
 else
     # Diff between expected and actual output
-    diff --brief test-api.golden-master.txt test-api.output-documents.txt
+    diff --brief "${GOLDEN_FILE}" test-api.output.txt
     echo "✅ No diff. The export worked as expected."
 fi
 echo ""
-rm test-api.output.txt test-api.output-documents.txt
+rm test-api.output.txt
 # Now, the "trap" commands will run, to clean up.

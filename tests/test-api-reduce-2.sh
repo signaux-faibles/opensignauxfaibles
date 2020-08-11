@@ -1,19 +1,26 @@
 #!/bin/bash
 
-# Test de bout en bout de l'API "reduce" à l'aide de données publiques.
+# Test de bout en bout de l'API "reduce" à l'aide de données réalistes.
+# Inspiré de test-api.sh et finalize_test.js.
+# Ce script doit être exécuté depuis la racine du projet. Ex: par test-all.sh.
 #
-# Inspiré de test-api-2.sh et algo2_tests.ts. Exécutable en CI.
-#
-# TODO: Refactoriser les tests fonctionnels pour réduire la duplication.
+# To update golden files: `$ ./test-api-reduce-2.sh --update`
+# 
+# These tests require the presence of private files => Make sure to:
+# - run `$ git secret reveal` before running these tests;
+# - run `$ git secret hide` (to encrypt changes) after updating.
 
 # Interrompre le conteneur Docker d'une exécution précédente de ce test, si besoin
 sudo docker stop sf-mongodb &>/dev/null
 
 set -e # will stop the script if any command fails with a non-zero exit code
 
-# Clean up on exit
+# Setup
+GOLDEN_FILE="tests/output-snapshots/reduce-Features.golden.json"
 DATA_DIR=$(pwd)/tmp-opensignauxfaibles-data-raw
 mkdir -p "${DATA_DIR}"
+
+# Clean up on exit
 trap "{ killall dbmongo >/dev/null; [ -f config.toml ] && rm config.toml; [ -f config.backup.toml ] && mv config.backup.toml config.toml; sudo docker stop sf-mongodb >/dev/null; rm -rf ${DATA_DIR}; echo \"✨ Cleaned up temp directory\"; }" EXIT
 
 echo ""
@@ -29,7 +36,6 @@ sudo docker run \
 echo ""
 echo "🔧 Setting up dbmongo..."
 cd ./dbmongo
-go build
 [ -f config.toml ] && mv config.toml config.backup.toml
 cp config-sample.toml config.toml
 perl -pi'' -e "s,/foo/bar/data-raw,sample-data-raw," config.toml
@@ -42,7 +48,7 @@ cat > "${DATA_DIR}/db_popul.js" << CONTENTS
   db.Admin.remove({})
   db.Admin.insertOne({
     "_id" : {
-        "key" : "1905",
+        "key" : "2002_1",
         "type" : "batch"
     },
     "param" : {
@@ -58,8 +64,7 @@ cat > "${DATA_DIR}/db_popul.js" << CONTENTS
   db.RawData.remove({})
   db.RawData.insertMany(
 CONTENTS
-node -e "console.log(require('./js/test/data/objects.js').makeObjects.toString().replace('ISODate => ([', '[').replace('])', ']'))" \
-  >> "${DATA_DIR}/db_popul.js"
+cat >> "${DATA_DIR}/db_popul.js" < ../tests/input-data/RawData.sample.json
 echo ")" >> "${DATA_DIR}/db_popul.js"
 
 sudo docker exec -i sf-mongodb mongo signauxfaibles > /dev/null < "${DATA_DIR}/db_popul.js"
@@ -68,14 +73,17 @@ echo ""
 echo "💎 Computing Features and Public collections thru dbmongo API..."
 sh -c "./dbmongo &>/dev/null &" # we run in a separate shell to hide the "terminated" message when the process is killed by trap
 sleep 2 # give some time for dbmongo to start
-echo "- POST /api/data/reduce 👉 $(http --print=b --ignore-stdin :5000/api/data/reduce algo=algo2 batch=1905)"
+echo "- POST /api/data/reduce 👉 $(http --print=b --ignore-stdin :5000/api/data/reduce algo=algo2 batch=2002_1)"
 
 echo ""
 echo "🕵️‍♀️ Checking resulting Features..."
 cd ..
-echo "db.Features_TestData.find().toArray();" \
-  | sudo docker exec -i sf-mongodb mongo --quiet signauxfaibles \
-  > "test-api-reduce.output-documents.json"
+(sudo docker exec -i sf-mongodb mongo --quiet signauxfaibles \
+  | tests/helpers/remove-random_order.sh \
+  > test-api-2.output.json \
+) << CONTENT
+  db.Features_TestData.find().toArray();
+CONTENT
 
 # Display JS errors logged by MongoDB, if any
 sudo docker logs sf-mongodb | grep --color=always "uncaught exception" || true
@@ -85,12 +93,13 @@ echo ""
 if [[ "$*" == *--update* ]]
 then
     echo "🖼  Updating golden master file..."
-    cp "test-api-reduce.output-documents.json" "test-api-reduce.golden-master.json"
+    cp test-api-2.output.json "${GOLDEN_FILE}"
+    echo "ℹ️  Updated ${GOLDEN_FILE} => run: $ git secret hide" # to re-encrypt the golden master file, after having updated it
 else
     # Diff between expected and actual output
-    diff --brief "test-api-reduce.golden-master.json" "test-api-reduce.output-documents.json"
+    diff --brief "${GOLDEN_FILE}" test-api-2.output.json
     echo "✅ No diff. The reduce API works as usual."
 fi
 echo ""
-rm "test-api-reduce.output-documents.json"
+rm test-api-2.output.json
 # Now, the "trap" commands will run, to clean up.

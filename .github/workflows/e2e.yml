@@ -30,6 +30,12 @@ jobs:
           sudo apt-get install -y httpie
           sudo apt-get install git-secret # to decrypt golden master files, for tests
 
+      - run: ./tests/test-api.sh
+
+      - run: ./tests/test-api-reduce.sh
+
+      - run: ./tests/test-api-export.sh
+
       - name: Reveal golden master files for tests
         env:
           GPG_PRIVATE_KEY_FOR_GIT_SECRET: ${{ secrets.GPG_PRIVATE_KEY_FOR_GIT_SECRET }}
@@ -38,10 +44,4 @@ jobs:
           gpg --import --no-tty --batch --yes ./private_key.gpg
           git secret reveal
 
-      - run: ./test-api.sh
-
-      - run: ./test-api-2.sh # relies on golden master files
-
-      - run: ./test-api-reduce.sh
-
-      - run: ./test-api-export.sh
+      - run: ./tests/test-api-reduce-2.sh # relies on encrypted golden master files

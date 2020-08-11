@@ -48,3 +48,21 @@ export const parseMongoObject = (serializedObj: string): unknown =>
         ? new Date((value as SerializedDate)._ISODate)
         : value
   )
+
+const isStringifiedDate = (date: string | unknown) =>
+  typeof date === "string" && /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}.*Z/.test(date)
+
+// Converts an object into the same format as the one returned by the
+// `find().toArray()` command when executed from  MongoDB's mongo shell.
+// E.g. Dates are serialized as ISODate() instances.
+// Thanks to this function, algo2_golden_tests.ts and test-api-reduce-2.sh
+// can produce the exact same content, when updating.
+export const serializeAsMongoObject = (obj: unknown): string =>
+  JSON.stringify(
+    obj,
+    (_, val) =>
+      isStringifiedDate(val) ? `ISODate_${val.replace(/\.000Z/, "Z")}` : val,
+    "\t"
+  )
+    .replace(/"ISODate_([^"]+)"/g, `ISODate("$1")`) // replace ISODate strings by function calls
+    .replace(/":/g, `" :`) + "\n" // formatting: add a space before property assignments + trailing line break
