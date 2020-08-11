@@ -1,0 +1,1108 @@
+[
+	{
+		"_id" : "entreprise_123456789",
+		"value" : {
+			"key" : "123456789",
+			"batch" : "1905",
+			"diane" : [
+				{
+					"exercice_diane" : 2017,
+					"nom_entreprise" : "MUHMUH",
+					"numero_siren" : "123456789",
+					"statut_juridique" : "Actif",
+					"procedure_collective" : false,
+					"effectif_consolide" : 47,
+					"dette_fiscale_et_sociale" : null,
+					"frais_de_RetD" : 0,
+					"conces_brev_et_droits_sim" : 8,
+					"note_preface" : 7.5,
+					"nombre_etab_secondaire" : 0,
+					"nombre_filiale" : 0,
+					"taille_compo_groupe" : 2,
+					"arrete_bilan_diane" : ISODate("2017-12-31T00:00:00Z"),
+					"nombre_mois" : 12,
+					"concours_bancaire_courant" : 1,
+					"equilibre_financier" : 1.71,
+					"independance_financiere" : 54.47,
+					"endettement" : 4.48,
+					"autonomie_financiere" : 45.57,
+					"degre_immo_corporelle" : 71.98,
+					"financement_actif_circulant" : 0.43,
+					"liquidite_generale" : 1.72,
+					"liquidite_reduite" : 1.5,
+					"rotation_stocks" : 20,
+					"credit_client" : 44,
+					"credit_fournisseur" : 80,
+					"ca_apar_effectif" : 204,
+					"taux_interet_financier" : 0.2,
+					"taux_interet_sur_ca" : 0.2,
+					"endettement_global" : 96,
+					"taux_endettement" : 8.26,
+					"capacite_remboursement" : 0.16,
+					"capacite_autofinancement" : 12.33,
+					"couverture_ca_fdr" : 65,
+					"couverture_ca_besoin_fdr" : 18,
+					"poids_bfr_exploitation" : 29.77,
+					"exportation" : 53.84,
+					"efficacite_economique" : 73,
+					"productivite_potentiel_production" : 1.42,
+					"productivite_capital_financier" : 0.84,
+					"productivite_capital_investi" : 0.52,
+					"taux_d_investissement_productif" : 7.27,
+					"rentabilite_economique" : 15.94,
+					"performance" : 13.3,
+					"rendement_brut_fonds_propres" : 96.34,
+					"rentabilite_nette" : 9.99,
+					"rendement_capitaux_propres" : 72.35,
+					"rendement_ressources_durables" : 49,
+					"taux_marge_commerciale" : -5.89,
+					"taux_valeur_ajoutee" : 35.67,
+					"part_salaries" : 50.08,
+					"part_etat" : 14.73,
+					"part_preteur" : 0.57,
+					"part_autofinancement" : 34.55,
+					"ca" : 9585,
+					"ca_exportation" : 5160,
+					"achat_marchandises" : 3997,
+					"achat_matieres_premieres" : 917,
+					"production" : 6916,
+					"marge_commerciale" : -172,
+					"consommation" : 3326,
+					"autres_achats_charges_externes" : 2407,
+					"valeur_ajoutee" : 3419,
+					"charge_personnel" : 1712,
+					"impots_taxes" : 179,
+					"subventions_d_exploitation" : 0,
+					"excedent_brut_d_exploitation" : 1528,
+					"autres_produits_charges_reprises" : 120,
+					"dotation_amortissement" : 355,
+					"resultat_expl" : 1293,
+					"operations_commun" : 0,
+					"produits_financiers" : 1,
+					"charges_financieres" : 19,
+					"interets" : 19,
+					"resultat_avant_impot" : 1275,
+					"produit_exceptionnel" : 17,
+					"charge_exceptionnelle" : 9,
+					"participation_salaries" : 0,
+					"impot_benefice" : 325,
+					"benefice_ou_perte" : 957
+				},
+				{
+					"exercice_diane" : 2016,
+					"nom_entreprise" : "MUHMUH",
+					"numero_siren" : "123456789",
+					"statut_juridique" : "Actif",
+					"procedure_collective" : false,
+					"effectif_consolide" : null,
+					"dette_fiscale_et_sociale" : null,
+					"frais_de_RetD" : null,
+					"conces_brev_et_droits_sim" : null,
+					"note_preface" : null,
+					"nombre_etab_secondaire" : 0,
+					"nombre_filiale" : 0,
+					"taille_compo_groupe" : 2,
+					"arrete_bilan_diane" : ISODate("2016-09-30T00:00:00Z"),
+					"nombre_mois" : 12,
+					"concours_bancaire_courant" : null,
+					"equilibre_financier" : null,
+					"independance_financiere" : null,
+					"endettement" : null,
+					"autonomie_financiere" : null,
+					"degre_immo_corporelle" : null,
+					"financement_actif_circulant" : null,
+					"liquidite_generale" : null,
+					"liquidite_reduite" : null,
+					"rotation_stocks" : null,
+					"credit_client" : null,
+					"credit_fournisseur" : null,
+					"ca_apar_effectif" : null,
+					"taux_interet_financier" : null,
+					"taux_interet_sur_ca" : null,
+					"endettement_global" : null,
+					"taux_endettement" : null,
+					"capacite_remboursement" : null,
+					"capacite_autofinancement" : null,
+					"couverture_ca_fdr" : null,
+					"couverture_ca_besoin_fdr" : null,
+					"poids_bfr_exploitation" : null,
+					"exportation" : null,
+					"efficacite_economique" : null,
+					"productivite_potentiel_production" : null,
+					"productivite_capital_financier" : null,
+					"productivite_capital_investi" : null,
+					"taux_d_investissement_productif" : null,
+					"rentabilite_economique" : null,
+					"performance" : null,
+					"rendement_brut_fonds_propres" : null,
+					"rentabilite_nette" : null,
+					"rendement_capitaux_propres" : null,
+					"rendement_ressources_durables" : null,
+					"taux_marge_commerciale" : null,
+					"taux_valeur_ajoutee" : null,
+					"part_salaries" : null,
+					"part_etat" : null,
+					"part_preteur" : null,
+					"part_autofinancement" : null,
+					"ca" : null,
+					"ca_exportation" : null,
+					"achat_marchandises" : null,
+					"achat_matieres_premieres" : null,
+					"production" : null,
+					"marge_commerciale" : null,
+					"consommation" : null,
+					"autres_achats_charges_externes" : null,
+					"valeur_ajoutee" : null,
+					"charge_personnel" : null,
+					"impots_taxes" : null,
+					"subventions_d_exploitation" : null,
+					"excedent_brut_d_exploitation" : null,
+					"autres_produits_charges_reprises" : null,
+					"dotation_amortissement" : null,
+					"resultat_expl" : null,
+					"operations_commun" : null,
+					"produits_financiers" : null,
+					"charges_financieres" : null,
+					"interets" : null,
+					"resultat_avant_impot" : null,
+					"produit_exceptionnel" : null,
+					"charge_exceptionnelle" : null,
+					"participation_salaries" : null,
+					"impot_benefice" : null,
+					"benefice_ou_perte" : null
+				},
+				{
+					"exercice_diane" : 2015,
+					"nom_entreprise" : "MUHMUH",
+					"numero_siren" : "123456789",
+					"statut_juridique" : "Actif",
+					"procedure_collective" : false,
+					"effectif_consolide" : 57,
+					"dette_fiscale_et_sociale" : 785,
+					"frais_de_RetD" : 0,
+					"conces_brev_et_droits_sim" : 7,
+					"note_preface" : 7,
+					"nombre_etab_secondaire" : 0,
+					"nombre_filiale" : 0,
+					"taille_compo_groupe" : 2,
+					"arrete_bilan_diane" : ISODate("2015-09-30T00:00:00Z"),
+					"nombre_mois" : 12,
+					"concours_bancaire_courant" : 4,
+					"equilibre_financier" : 1.38,
+					"independance_financiere" : 49.09,
+					"endettement" : 3.93,
+					"autonomie_financiere" : 39.19,
+					"degre_immo_corporelle" : 75.24,
+					"financement_actif_circulant" : 0.28,
+					"liquidite_generale" : 1.36,
+					"liquidite_reduite" : 1.22,
+					"rotation_stocks" : 10,
+					"credit_client" : 32,
+					"credit_fournisseur" : 56,
+					"ca_apar_effectif" : 192,
+					"taux_interet_financier" : 0.15,
+					"taux_interet_sur_ca" : 0.15,
+					"endettement_global" : 76,
+					"taux_endettement" : 8.27,
+					"capacite_remboursement" : 0.14,
+					"capacite_autofinancement" : 7.98,
+					"couverture_ca_fdr" : 27,
+					"couverture_ca_besoin_fdr" : null,
+					"poids_bfr_exploitation" : 14.96,
+					"exportation" : 60.44,
+					"efficacite_economique" : 59,
+					"productivite_potentiel_production" : 1.54,
+					"productivite_capital_financier" : 1.12,
+					"productivite_capital_investi" : 0.64,
+					"taux_d_investissement_productif" : 4.31,
+					"rentabilite_economique" : 12.43,
+					"performance" : 10.5,
+					"rendement_brut_fonds_propres" : 146.4,
+					"rentabilite_nette" : 6.45,
+					"rendement_capitaux_propres" : 89.86,
+					"rendement_ressources_durables" : 72.38,
+					"taux_marge_commerciale" : 0.71,
+					"taux_valeur_ajoutee" : 30.45,
+					"part_salaries" : 58.83,
+					"part_etat" : 13.96,
+					"part_preteur" : 0.48,
+					"part_autofinancement" : 26.2,
+					"ca" : 10969,
+					"ca_exportation" : 6630,
+					"achat_marchandises" : 4848,
+					"achat_matieres_premieres" : 960,
+					"production" : 7055,
+					"marge_commerciale" : 28,
+					"consommation" : 3743,
+					"autres_achats_charges_externes" : 2747,
+					"valeur_ajoutee" : 3340,
+					"charge_personnel" : 1838,
+					"impots_taxes" : 139,
+					"subventions_d_exploitation" : 0,
+					"excedent_brut_d_exploitation" : 1363,
+					"autres_produits_charges_reprises" : 7,
+					"dotation_amortissement" : 206,
+					"resultat_expl" : 1164,
+					"operations_commun" : 0,
+					"produits_financiers" : 4,
+					"charges_financieres" : 16,
+					"interets" : 16,
+					"resultat_avant_impot" : 1152,
+					"produit_exceptionnel" : 22,
+					"charge_exceptionnelle" : 13,
+					"participation_salaries" : 127,
+					"impot_benefice" : 327,
+					"benefice_ou_perte" : 707
+				},
+				{
+					"exercice_diane" : 2014,
+					"nom_entreprise" : "MUHMUH",
+					"numero_siren" : "123456789",
+					"statut_juridique" : "Actif",
+					"procedure_collective" : false,
+					"effectif_consolide" : 51,
+					"dette_fiscale_et_sociale" : 735,
+					"frais_de_RetD" : 0,
+					"conces_brev_et_droits_sim" : 7,
+					"note_preface" : 6.5,
+					"nombre_etab_secondaire" : 0,
+					"nombre_filiale" : 0,
+					"taille_compo_groupe" : 2,
+					"arrete_bilan_diane" : ISODate("2014-09-30T00:00:00Z"),
+					"nombre_mois" : 12,
+					"concours_bancaire_courant" : 1,
+					"equilibre_financier" : 1.03,
+					"independance_financiere" : 35.45,
+					"endettement" : 5.34,
+					"autonomie_financiere" : 24.17,
+					"degre_immo_corporelle" : 70.58,
+					"financement_actif_circulant" : 0.03,
+					"liquidite_generale" : 1.02,
+					"liquidite_reduite" : 0.88,
+					"rotation_stocks" : 12,
+					"credit_client" : 32,
+					"credit_fournisseur" : 65,
+					"ca_apar_effectif" : 200,
+					"taux_interet_financier" : 0.27,
+					"taux_interet_sur_ca" : 0.27,
+					"endettement_global" : 87,
+					"taux_endettement" : 15.24,
+					"capacite_remboursement" : 0.2,
+					"capacite_autofinancement" : 5.97,
+					"couverture_ca_fdr" : 3,
+					"couverture_ca_besoin_fdr" : null,
+					"poids_bfr_exploitation" : 15.36,
+					"exportation" : 55.25,
+					"efficacite_economique" : 55,
+					"productivite_potentiel_production" : 1.32,
+					"productivite_capital_financier" : 1.17,
+					"productivite_capital_investi" : 0.61,
+					"taux_d_investissement_productif" : 4.46,
+					"rentabilite_economique" : 8.66,
+					"performance" : 6.32,
+					"rendement_brut_fonds_propres" : 170.09,
+					"rentabilite_nette" : 4.05,
+					"rendement_capitaux_propres" : 108.88,
+					"rendement_ressources_durables" : 72.28,
+					"taux_marge_commerciale" : -0.79,
+					"taux_valeur_ajoutee" : 27.47,
+					"part_salaries" : 65.72,
+					"part_etat" : 12.16,
+					"part_preteur" : 0.97,
+					"part_autofinancement" : 21.72,
+					"ca" : 10222,
+					"ca_exportation" : 5648,
+					"achat_marchandises" : 4188,
+					"achat_matieres_premieres" : 1080,
+					"production" : 7070,
+					"marge_commerciale" : -24,
+					"consommation" : 4237,
+					"autres_achats_charges_externes" : 3177,
+					"valeur_ajoutee" : 2808,
+					"charge_personnel" : 1764,
+					"impots_taxes" : 159,
+					"subventions_d_exploitation" : 0,
+					"excedent_brut_d_exploitation" : 886,
+					"autres_produits_charges_reprises" : 3,
+					"dotation_amortissement" : 216,
+					"resultat_expl" : 672,
+					"operations_commun" : 0,
+					"produits_financiers" : 2,
+					"charges_financieres" : 27,
+					"interets" : 27,
+					"resultat_avant_impot" : 646,
+					"produit_exceptionnel" : 44,
+					"charge_exceptionnelle" : 12,
+					"participation_salaries" : 82,
+					"impot_benefice" : 183,
+					"benefice_ou_perte" : 414
+				},
+				{
+					"exercice_diane" : 2013,
+					"nom_entreprise" : "MUHMUH",
+					"numero_siren" : "123456789",
+					"statut_juridique" : "Actif",
+					"procedure_collective" : false,
+					"effectif_consolide" : null,
+					"dette_fiscale_et_sociale" : 732,
+					"frais_de_RetD" : 0,
+					"conces_brev_et_droits_sim" : 1,
+					"note_preface" : 5.88,
+					"nombre_etab_secondaire" : 0,
+					"nombre_filiale" : 0,
+					"taille_compo_groupe" : 2,
+					"arrete_bilan_diane" : ISODate("2013-09-30T00:00:00Z"),
+					"nombre_mois" : 12,
+					"concours_bancaire_courant" : 19,
+					"equilibre_financier" : 0.85,
+					"independance_financiere" : 27.25,
+					"endettement" : 7.99,
+					"autonomie_financiere" : 16.58,
+					"degre_immo_corporelle" : 64.69,
+					"financement_actif_circulant" : -0.15,
+					"liquidite_generale" : 0.86,
+					"liquidite_reduite" : 0.69,
+					"rotation_stocks" : 16,
+					"credit_client" : 49,
+					"credit_fournisseur" : 46,
+					"ca_apar_effectif" : null,
+					"taux_interet_financier" : 0.53,
+					"taux_interet_sur_ca" : 0.53,
+					"endettement_global" : 99,
+					"taux_endettement" : 33.33,
+					"capacite_remboursement" : 0.37,
+					"capacite_autofinancement" : 4.3,
+					"couverture_ca_fdr" : -12,
+					"couverture_ca_besoin_fdr" : null,
+					"poids_bfr_exploitation" : 21.25,
+					"exportation" : 60.16,
+					"efficacite_economique" : null,
+					"productivite_potentiel_production" : 1.21,
+					"productivite_capital_financier" : 1.26,
+					"productivite_capital_investi" : 0.61,
+					"taux_d_investissement_productif" : 12,
+					"rentabilite_economique" : 7.79,
+					"performance" : 5.36,
+					"rendement_brut_fonds_propres" : 193.33,
+					"rentabilite_nette" : 2.73,
+					"rendement_capitaux_propres" : 98.42,
+					"rendement_ressources_durables" : 82.54,
+					"taux_marge_commerciale" : -0.63,
+					"taux_valeur_ajoutee" : 28.06,
+					"part_salaries" : 70.18,
+					"part_etat" : 10.36,
+					"part_preteur" : 1.9,
+					"part_autofinancement" : 15.31,
+					"ca" : 8794,
+					"ca_exportation" : 5291,
+					"achat_marchandises" : 3711,
+					"achat_matieres_premieres" : 954,
+					"production" : 6090,
+					"marge_commerciale" : -17,
+					"consommation" : 3606,
+					"autres_achats_charges_externes" : 2750,
+					"valeur_ajoutee" : 2467,
+					"charge_personnel" : 1663,
+					"impots_taxes" : 119,
+					"subventions_d_exploitation" : 0,
+					"excedent_brut_d_exploitation" : 685,
+					"autres_produits_charges_reprises" : 18,
+					"dotation_amortissement" : 185,
+					"resultat_expl" : 518,
+					"operations_commun" : 0,
+					"produits_financiers" : 0,
+					"charges_financieres" : 47,
+					"interets" : 47,
+					"resultat_avant_impot" : 471,
+					"produit_exceptionnel" : 0,
+					"charge_exceptionnelle" : 26,
+					"participation_salaries" : 69,
+					"impot_benefice" : 136,
+					"benefice_ou_perte" : 240
+				},
+				{
+					"exercice_diane" : 2012,
+					"nom_entreprise" : "MUHMUH",
+					"numero_siren" : "123456789",
+					"statut_juridique" : "Actif",
+					"procedure_collective" : false,
+					"effectif_consolide" : null,
+					"dette_fiscale_et_sociale" : 558,
+					"frais_de_RetD" : 0,
+					"conces_brev_et_droits_sim" : 0,
+					"note_preface" : 5,
+					"nombre_etab_secondaire" : 0,
+					"nombre_filiale" : 0,
+					"taille_compo_groupe" : 2,
+					"arrete_bilan_diane" : ISODate("2012-09-30T00:00:00Z"),
+					"nombre_mois" : 12,
+					"concours_bancaire_courant" : 25,
+					"equilibre_financier" : 0.66,
+					"independance_financiere" : 10.1,
+					"endettement" : 7.81,
+					"autonomie_financiere" : 5.55,
+					"degre_immo_corporelle" : 65.08,
+					"financement_actif_circulant" : -0.47,
+					"liquidite_generale" : 0.68,
+					"liquidite_reduite" : 0.55,
+					"rotation_stocks" : 11,
+					"credit_client" : 35,
+					"credit_fournisseur" : 50,
+					"ca_apar_effectif" : null,
+					"taux_interet_financier" : 0.74,
+					"taux_interet_sur_ca" : 0.74,
+					"endettement_global" : 93,
+					"taux_endettement" : 98.73,
+					"capacite_remboursement" : 0.14,
+					"capacite_autofinancement" : 8.49,
+					"couverture_ca_fdr" : -28,
+					"couverture_ca_besoin_fdr" : null,
+					"poids_bfr_exploitation" : 15.49,
+					"exportation" : 71.22,
+					"efficacite_economique" : null,
+					"productivite_potentiel_production" : 1.49,
+					"productivite_capital_financier" : 1.98,
+					"productivite_capital_investi" : 0.83,
+					"taux_d_investissement_productif" : 12.18,
+					"rentabilite_economique" : 10.58,
+					"performance" : 8.27,
+					"rendement_brut_fonds_propres" : null,
+					"rentabilite_nette" : 6.65,
+					"rendement_capitaux_propres" : null,
+					"rendement_ressources_durables" : 330.52,
+					"taux_marge_commerciale" : 0.02,
+					"taux_valeur_ajoutee" : 33.16,
+					"part_salaries" : 62.83,
+					"part_etat" : 7.83,
+					"part_preteur" : 2.25,
+					"part_autofinancement" : 25.61,
+					"ca" : 7802,
+					"ca_exportation" : 5556,
+					"achat_marchandises" : 3114,
+					"achat_matieres_premieres" : 578,
+					"production" : 5310,
+					"marge_commerciale" : 1,
+					"consommation" : 2724,
+					"autres_achats_charges_externes" : 2145,
+					"valeur_ajoutee" : 2587,
+					"charge_personnel" : 1625,
+					"impots_taxes" : 136,
+					"subventions_d_exploitation" : 0,
+					"excedent_brut_d_exploitation" : 826,
+					"autres_produits_charges_reprises" : 53,
+					"dotation_amortissement" : 176,
+					"resultat_expl" : 703,
+					"operations_commun" : 0,
+					"produits_financiers" : 0,
+					"charges_financieres" : 58,
+					"interets" : 58,
+					"resultat_avant_impot" : 645,
+					"produit_exceptionnel" : 4,
+					"charge_exceptionnelle" : 64,
+					"participation_salaries" : 0,
+					"impot_benefice" : 67,
+					"benefice_ou_perte" : 519
+				}
+			],
+			"bdf" : [
+				{
+					"siren" : "123456789",
+					"annee_bdf" : 2018,
+					"arrete_bilan_bdf" : ISODate("2017-12-31T00:00:00Z"),
+					"raison_sociale" : "MUHMUH",
+					"secteur" : "01 Industrie et Transports (Hors TRM)",
+					"poids_frng" : 18.6208659363589,
+					"taux_marge" : 39.7937661120225,
+					"delai_fournisseur" : 77.4105102817974,
+					"dette_fiscale" : 15.3737989219592,
+					"financier_court_terme" : 0.0104329681794471,
+					"frais_financier" : 2.2059925093633
+				},
+				{
+					"siren" : "123456789",
+					"annee_bdf" : 2016,
+					"arrete_bilan_bdf" : ISODate("2016-09-30T00:00:00Z"),
+					"raison_sociale" : "MUHMUH",
+					"secteur" : "01 Industrie et Transports (Hors TRM)",
+					"poids_frng" : 18.095379601227,
+					"taux_marge" : 37.0882040382572,
+					"delai_fournisseur" : 46.4984002843939,
+					"dette_fiscale" : 16.5568544102019,
+					"financier_court_terme" : 0.00958588957055215,
+					"frais_financier" : 2.07039106145251
+				},
+				{
+					"siren" : "123456789",
+					"annee_bdf" : 2015,
+					"arrete_bilan_bdf" : ISODate("2015-09-30T00:00:00Z"),
+					"raison_sociale" : "MUHMUH",
+					"secteur" : "01 Industrie et Transports (Hors TRM)",
+					"poids_frng" : 7.96581274500866,
+					"taux_marge" : 30.3884414969209,
+					"delai_fournisseur" : 55.651253835573,
+					"dette_fiscale" : 18.3799147323543,
+					"financier_court_terme" : 0.0364664053240952,
+					"frais_financier" : 2.17892342683851
+				},
+				{
+					"siren" : "123456789",
+					"annee_bdf" : 2014,
+					"arrete_bilan_bdf" : ISODate("2013-09-30T00:00:00Z"),
+					"raison_sociale" : "MUHMUH",
+					"secteur" : "01 Industrie et Transports (Hors TRM)",
+					"poids_frng" : -2.71878553559245,
+					"taux_marge" : 17.2025723472669,
+					"delai_fournisseur" : 45,
+					"dette_fiscale" : 19.6141479099678,
+					"financier_court_terme" : 0.216056402092336,
+					"frais_financier" : 7.54819277108434
+				}
+			]
+		}
+	},
+	{
+		"_id" : "etablissement_12345678901234",
+		"value" : {
+			"key" : "12345678901234",
+			"batch" : "1905",
+			"effectif" : [
+				{
+					"periode" : ISODate("2014-01-01T00:00:00Z"),
+					"effectif" : 49
+				},
+				{
+					"periode" : ISODate("2014-02-01T00:00:00Z"),
+					"effectif" : 49
+				},
+				{
+					"periode" : ISODate("2014-03-01T00:00:00Z"),
+					"effectif" : 47
+				},
+				{
+					"periode" : ISODate("2014-04-01T00:00:00Z"),
+					"effectif" : 47
+				},
+				{
+					"periode" : ISODate("2014-05-01T00:00:00Z"),
+					"effectif" : 46
+				},
+				{
+					"periode" : ISODate("2014-06-01T00:00:00Z"),
+					"effectif" : 45
+				},
+				{
+					"periode" : ISODate("2014-07-01T00:00:00Z"),
+					"effectif" : 44
+				},
+				{
+					"periode" : ISODate("2014-08-01T00:00:00Z"),
+					"effectif" : 44
+				},
+				{
+					"periode" : ISODate("2014-09-01T00:00:00Z"),
+					"effectif" : 42
+				},
+				{
+					"periode" : ISODate("2014-10-01T00:00:00Z"),
+					"effectif" : 42
+				},
+				{
+					"periode" : ISODate("2014-11-01T00:00:00Z"),
+					"effectif" : 42
+				},
+				{
+					"periode" : ISODate("2014-12-01T00:00:00Z"),
+					"effectif" : 41
+				},
+				{
+					"periode" : ISODate("2015-01-01T00:00:00Z"),
+					"effectif" : 38
+				},
+				{
+					"periode" : ISODate("2015-02-01T00:00:00Z"),
+					"effectif" : 38
+				},
+				{
+					"periode" : ISODate("2015-03-01T00:00:00Z"),
+					"effectif" : 39
+				},
+				{
+					"periode" : ISODate("2015-04-01T00:00:00Z"),
+					"effectif" : 39
+				},
+				{
+					"periode" : ISODate("2015-05-01T00:00:00Z"),
+					"effectif" : 36
+				},
+				{
+					"periode" : ISODate("2015-06-01T00:00:00Z"),
+					"effectif" : 36
+				},
+				{
+					"periode" : ISODate("2015-07-01T00:00:00Z"),
+					"effectif" : 35
+				},
+				{
+					"periode" : ISODate("2015-08-01T00:00:00Z"),
+					"effectif" : 35
+				},
+				{
+					"periode" : ISODate("2015-09-01T00:00:00Z"),
+					"effectif" : 35
+				},
+				{
+					"periode" : ISODate("2015-10-01T00:00:00Z"),
+					"effectif" : 35
+				},
+				{
+					"periode" : ISODate("2015-11-01T00:00:00Z"),
+					"effectif" : 35
+				},
+				{
+					"periode" : ISODate("2015-12-01T00:00:00Z"),
+					"effectif" : 35
+				}
+			],
+			"dernier_effectif" : {
+				"periode" : ISODate("2015-12-01T00:00:00Z"),
+				"effectif" : 35
+			},
+			"sirene" : {
+				"siren" : "005480546",
+				"nic" : "00018",
+				"raison_sociale" : "LA COMPAGNIE DES LAPINS BLEUS",
+				"type_voie" : "",
+				"code_postal" : "",
+				"region" : "",
+				"departement" : "",
+				"commune" : "",
+				"ape" : "1712Z",
+				"nature_activite" : "NR",
+				"activite_saisoniere" : "P",
+				"modalite_activite" : "S",
+				"productif" : "O",
+				"nature_juridique" : "SAS, société par actions simplifiée",
+				"categorie" : "ETI",
+				"date_creation" : ISODate("1958-01-01T00:00:00Z"),
+				"indice_monoactivite" : 1,
+				"tranche_ca" : 3,
+				"sigle" : "",
+				"longitude" : -2.438672,
+				"lattitude" : 47.2884,
+				"adresse" : [
+					"LA COMPAGNIE DES LAPINS BLEURS",
+					"",
+					"",
+					"",
+					"",
+					"",
+					""
+				]
+			},
+			"cotisation" : [
+				59669,
+				54744,
+				51725,
+				52377,
+				48299,
+				64618,
+				51682,
+				56947,
+				45988,
+				47565,
+				49368,
+				64012,
+				38581,
+				43129,
+				55624,
+				48759,
+				42856,
+				62832,
+				44551,
+				44309,
+				38980,
+				43580,
+				40834,
+				46286
+			],
+			"debit" : [
+				{
+					"part_ouvriere" : 0,
+					"part_patronale" : 0,
+					"periode" : ISODate("2014-01-31T00:00:00Z")
+				},
+				{
+					"part_ouvriere" : 0,
+					"part_patronale" : 80057,
+					"periode" : ISODate("2014-02-28T00:00:00Z")
+				},
+				{
+					"part_ouvriere" : 2,
+					"part_patronale" : 94512,
+					"periode" : ISODate("2014-03-31T00:00:00Z")
+				},
+				{
+					"part_ouvriere" : 0,
+					"part_patronale" : 105342.88,
+					"periode" : ISODate("2014-04-30T00:00:00Z")
+				},
+				{
+					"part_ouvriere" : 2,
+					"part_patronale" : 147147.88,
+					"periode" : ISODate("2014-05-31T00:00:00Z")
+				},
+				{
+					"part_ouvriere" : 0,
+					"part_patronale" : 122109.88,
+					"periode" : ISODate("2014-06-30T00:00:00Z")
+				},
+				{
+					"part_ouvriere" : 1,
+					"part_patronale" : 163747.88,
+					"periode" : ISODate("2014-07-31T00:00:00Z")
+				},
+				{
+					"part_ouvriere" : 1,
+					"part_patronale" : 165272.88,
+					"periode" : ISODate("2014-08-31T00:00:00Z")
+				},
+				{
+					"part_ouvriere" : 1,
+					"part_patronale" : 140767.88,
+					"periode" : ISODate("2014-09-30T00:00:00Z")
+				},
+				{
+					"part_ouvriere" : 11470,
+					"part_patronale" : 169797.88,
+					"periode" : ISODate("2014-10-31T00:00:00Z")
+				},
+				{
+					"part_ouvriere" : 1,
+					"part_patronale" : 188728,
+					"periode" : ISODate("2014-11-30T00:00:00Z")
+				},
+				{
+					"part_ouvriere" : 0,
+					"part_patronale" : 171019.88,
+					"periode" : ISODate("2014-12-31T00:00:00Z")
+				},
+				{
+					"part_ouvriere" : 19726,
+					"part_patronale" : 214715.88,
+					"periode" : ISODate("2015-01-31T00:00:00Z")
+				},
+				{
+					"part_ouvriere" : 35235,
+					"part_patronale" : 241162.88,
+					"periode" : ISODate("2015-02-28T00:00:00Z")
+				},
+				{
+					"part_ouvriere" : 3,
+					"part_patronale" : 268341.88,
+					"periode" : ISODate("2015-03-31T00:00:00Z")
+				},
+				{
+					"part_ouvriere" : 4,
+					"part_patronale" : 304091.88,
+					"periode" : ISODate("2015-04-30T00:00:00Z")
+				},
+				{
+					"part_ouvriere" : 15533,
+					"part_patronale" : 312409.88,
+					"periode" : ISODate("2015-05-31T00:00:00Z")
+				},
+				{
+					"part_ouvriere" : 13034,
+					"part_patronale" : 332045.88,
+					"periode" : ISODate("2015-06-30T00:00:00Z")
+				},
+				{
+					"part_ouvriere" : 13033,
+					"part_patronale" : 328813.88,
+					"periode" : ISODate("2015-07-31T00:00:00Z")
+				},
+				{
+					"part_ouvriere" : 28757,
+					"part_patronale" : 347895.88,
+					"periode" : ISODate("2015-08-31T00:00:00Z")
+				},
+				{
+					"part_ouvriere" : 15728,
+					"part_patronale" : 359805.88,
+					"periode" : ISODate("2015-09-30T00:00:00Z")
+				},
+				{
+					"part_ouvriere" : 4,
+					"part_patronale" : 384111.88,
+					"periode" : ISODate("2015-10-31T00:00:00Z")
+				},
+				{
+					"part_ouvriere" : 4,
+					"part_patronale" : 346831.88,
+					"periode" : ISODate("2015-11-30T00:00:00Z")
+				},
+				{
+					"part_ouvriere" : 4,
+					"part_patronale" : 372567.88,
+					"periode" : ISODate("2015-12-31T00:00:00Z")
+				}
+			],
+			"apconso" : [
+				{
+					"id_conso" : "S044130482",
+					"heure_consomme" : 51,
+					"montant" : 399.23,
+					"effectif" : 3,
+					"periode" : ISODate("2014-04-01T00:00:00Z")
+				},
+				{
+					"id_conso" : "S044130482",
+					"heure_consomme" : 133,
+					"montant" : 1032.52,
+					"effectif" : 3,
+					"periode" : ISODate("2014-03-01T00:00:00Z")
+				},
+				{
+					"id_conso" : "S044130482",
+					"heure_consomme" : 133,
+					"montant" : 1031.9,
+					"effectif" : 2,
+					"periode" : ISODate("2014-02-01T00:00:00Z")
+				},
+				{
+					"id_conso" : "S044130482",
+					"heure_consomme" : 188,
+					"montant" : 1456.2,
+					"effectif" : 8,
+					"periode" : ISODate("2014-01-01T00:00:00Z")
+				},
+				{
+					"id_conso" : "S044130482",
+					"heure_consomme" : 326,
+					"montant" : 2530.13,
+					"effectif" : 20,
+					"periode" : ISODate("2013-12-01T00:00:00Z")
+				},
+				{
+					"id_conso" : "S044130482",
+					"heure_consomme" : 190,
+					"montant" : 1477.88,
+					"effectif" : 7,
+					"periode" : ISODate("2013-11-01T00:00:00Z")
+				},
+				{
+					"id_conso" : "S044130239",
+					"heure_consomme" : 62,
+					"montant" : 301.39,
+					"effectif" : 5,
+					"periode" : ISODate("2013-10-01T00:00:00Z")
+				},
+				{
+					"id_conso" : "S044130482",
+					"heure_consomme" : 112,
+					"montant" : 868.74,
+					"effectif" : 9,
+					"periode" : ISODate("2013-10-01T00:00:00Z")
+				},
+				{
+					"id_conso" : "S044130238",
+					"heure_consomme" : 37,
+					"montant" : 181.5,
+					"effectif" : 1,
+					"periode" : ISODate("2013-10-01T00:00:00Z")
+				},
+				{
+					"id_conso" : "S044130239",
+					"heure_consomme" : 252,
+					"montant" : 1221.28,
+					"effectif" : 16,
+					"periode" : ISODate("2013-09-01T00:00:00Z")
+				},
+				{
+					"id_conso" : "S044130238",
+					"heure_consomme" : 172,
+					"montant" : 834.9,
+					"effectif" : 17,
+					"periode" : ISODate("2013-09-01T00:00:00Z")
+				},
+				{
+					"id_conso" : "S044130238",
+					"heure_consomme" : 382,
+					"montant" : 1851.3,
+					"effectif" : 17,
+					"periode" : ISODate("2013-08-01T00:00:00Z")
+				},
+				{
+					"id_conso" : "S044130239",
+					"heure_consomme" : 315,
+					"montant" : 1525.96,
+					"effectif" : 16,
+					"periode" : ISODate("2013-08-01T00:00:00Z")
+				},
+				{
+					"id_conso" : "S044130238",
+					"heure_consomme" : 570,
+					"montant" : 2758.8,
+					"effectif" : 16,
+					"periode" : ISODate("2013-07-01T00:00:00Z")
+				},
+				{
+					"id_conso" : "S044130239",
+					"heure_consomme" : 533,
+					"montant" : 2581.85,
+					"effectif" : 15,
+					"periode" : ISODate("2013-07-01T00:00:00Z")
+				},
+				{
+					"id_conso" : "S044130237",
+					"heure_consomme" : 368,
+					"montant" : 1783.54,
+					"effectif" : 17,
+					"periode" : ISODate("2013-06-01T00:00:00Z")
+				},
+				{
+					"id_conso" : "S044130239",
+					"heure_consomme" : 453,
+					"montant" : 2196.1,
+					"effectif" : 16,
+					"periode" : ISODate("2013-06-01T00:00:00Z")
+				},
+				{
+					"id_conso" : "S044130237",
+					"heure_consomme" : 554,
+					"montant" : 2683.78,
+					"effectif" : 17,
+					"periode" : ISODate("2013-05-01T00:00:00Z")
+				},
+				{
+					"id_conso" : "S044130239",
+					"heure_consomme" : 451,
+					"montant" : 2185.79,
+					"effectif" : 16,
+					"periode" : ISODate("2013-05-01T00:00:00Z")
+				},
+				{
+					"id_conso" : "S044130239",
+					"heure_consomme" : 215,
+					"montant" : 1045.34,
+					"effectif" : 16,
+					"periode" : ISODate("2013-04-01T00:00:00Z")
+				},
+				{
+					"id_conso" : "S044130237",
+					"heure_consomme" : 170,
+					"montant" : 822.8,
+					"effectif" : 17,
+					"periode" : ISODate("2013-04-01T00:00:00Z")
+				},
+				{
+					"id_conso" : "S044070052",
+					"heure_consomme" : 0,
+					"montant" : 0,
+					"effectif" : 0,
+					"periode" : ISODate("2007-08-01T00:00:00Z")
+				},
+				{
+					"id_conso" : "S044070052",
+					"heure_consomme" : 0,
+					"montant" : 0,
+					"effectif" : 0,
+					"periode" : ISODate("2007-07-01T00:00:00Z")
+				},
+				{
+					"id_conso" : "S044070052",
+					"heure_consomme" : 0,
+					"montant" : 0,
+					"effectif" : 0,
+					"periode" : ISODate("2007-06-01T00:00:00Z")
+				},
+				{
+					"id_conso" : "S044070052",
+					"heure_consomme" : 0,
+					"montant" : 0,
+					"effectif" : 0,
+					"periode" : ISODate("2007-05-01T00:00:00Z")
+				},
+				{
+					"id_conso" : "S044070052",
+					"heure_consomme" : 0,
+					"montant" : 0,
+					"effectif" : 0,
+					"periode" : ISODate("2007-04-01T00:00:00Z")
+				},
+				{
+					"id_conso" : "S044070028",
+					"heure_consomme" : 0,
+					"montant" : 0,
+					"effectif" : 0,
+					"periode" : ISODate("2007-04-01T00:00:00Z")
+				},
+				{
+					"id_conso" : "S044070028",
+					"heure_consomme" : 0,
+					"montant" : 0,
+					"effectif" : 0,
+					"periode" : ISODate("2007-03-01T00:00:00Z")
+				},
+				{
+					"id_conso" : "S044070028",
+					"heure_consomme" : 636,
+					"montant" : 1551.84,
+					"effectif" : 18,
+					"periode" : ISODate("2007-02-01T00:00:00Z")
+				},
+				{
+					"id_conso" : "S044070028",
+					"heure_consomme" : 195,
+					"montant" : 475.8,
+					"effectif" : 8,
+					"periode" : ISODate("2007-01-01T00:00:00Z")
+				}
+			],
+			"apdemande" : [ ],
+			"delai" : [
+				{
+					"numero_compte" : "123456789012345678",
+					"numero_contentieux" : "GNAGNA",
+					"date_creation" : ISODate("2016-05-26T00:00:00Z"),
+					"date_echeance" : ISODate("2018-04-30T00:00:00Z"),
+					"duree_delai" : 704,
+					"denomination" : "LA COMPAGNIE DES LAPINS BLEUS",
+					"indic_6m" : "SUP",
+					"annee_creation" : 2016,
+					"montant_echeancier" : 445500.79,
+					"numero_structure" : "GNAGNA",
+					"stade" : "APPROB",
+					"action" : "SUR PO"
+				}
+			],
+			"compte" : {
+				"siret" : "12345678901234",
+				"numero_compte" : "123456789012345678",
+				"periode" : ISODate("2019-05-01T00:00:00Z")
+			},
+			"procol" : {
+				"e7da557c81a83b6eca936ef9f514a625" : {
+					"date_effet" : ISODate("2014-03-26T00:00:00Z"),
+					"action_procol" : "sauvegarde",
+					"stade_procol" : "solde_procedure"
+				},
+				"de23097a12d0de1604a5b609adcbc47b" : {
+					"date_effet" : ISODate("2017-10-25T00:00:00Z"),
+					"action_procol" : "redressement",
+					"stade_procol" : "ouverture"
+				},
+				"626d39c82c5411b183e2e84a6e288c11" : {
+					"date_effet" : ISODate("2018-04-25T00:00:00Z"),
+					"action_procol" : "liquidation",
+					"stade_procol" : "ouverture"
+				}
+			},
+			"last_procol" : {
+				"etat" : "liquidation",
+				"date_procol" : ISODate("2018-04-25T00:00:00Z")
+			},
+			"idEntreprise" : "entreprise_123456789"
+		}
+	}
+]

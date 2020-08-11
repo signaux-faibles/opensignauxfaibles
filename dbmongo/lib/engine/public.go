@@ -67,7 +67,7 @@ func PublicOne(batch AdminBatch, key string) error {
 	return err
 }
 
-// Public permet de supprimer un batch dans les objets de RawData
+// Public traite le mapReduce public pour les entreprises et établissements du perimètre "algo2".
 func Public(batch AdminBatch) error {
 	functions, err := loadJSFunctions("public")
 	if err != nil {
@@ -98,8 +98,10 @@ func Public(batch AdminBatch) error {
 	var pipes []string
 	var pipeChannel = make(chan string)
 
+	filter := bson.M{"value.index.algo2": true} // on exclue les établissements et entreprises hors périmètre "algo2", pour lesquelles aucun score ne sera calculé.
+
 	i := 0
-	for _, query := range chunks.ToQueries(bson.M{"value.index.algo2": true}, "_id") {
+	for _, query := range chunks.ToQueries(filter, "_id") {
 		w.waitGroup.Add(1)
 
 		dbTemp := "purgeBatch" + strconv.Itoa(i)
