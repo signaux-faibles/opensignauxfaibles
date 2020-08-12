@@ -726,8 +726,9 @@ db.getCollection("Features").createIndex({
         .sort((p1, p2) => (p1.periode < p2.periode ? 1 : -1));
 }`,
 "apdemande": `function apdemande(apdemande) {
-  "use strict";
-  return f.iterable(apdemande).sort((p1, p2) => p1.periode < p2.periode)
+    return f
+        .iterable(apdemande)
+        .sort((p1, p2) => (p1.periode < p2.periode ? 1 : -1));
 }`,
 "bdf": `function bdf(hs) {
     "use strict";
@@ -884,9 +885,9 @@ db.getCollection("Features").createIndex({
         .iterable(hs)
         .sort((a, b) => (a.exercice_diane < b.exercice_diane ? 1 : -1));
 }`,
-"effectifs": `function effectifs(v) {
+"effectifs": `function effectifs(effectif) {
     const mapEffectif = {};
-    f.iterable(v.effectif).forEach((e) => {
+    f.iterable(effectif).forEach((e) => {
         mapEffectif[e.periode.getTime()] =
             (mapEffectif[e.periode.getTime()] || 0) + e.effectif;
     });
@@ -999,7 +1000,7 @@ function flatten(v, actual_batch) {
   }
 }`,
 "reduce": `function reduce(_key, values) {
-    // if (key.scope === "entreprise") {
+    // if (key.scope = "entreprise") { // TODO: cette expression est toujours vraie var elle affecte "entreprise" à key.scope => à corriger
     return values.reduce((m, v) => {
         if (v.sirets) {
             // TODO: je n'ai pas trouvé d'affectation de valeur dans la propriété "sirets" => est-elle toujours d'actualité ?
