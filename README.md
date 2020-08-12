@@ -74,9 +74,9 @@ $ git secret hide -d # pour chiffrer puis effacer les fichiers privés *en clair
 
 Instructions à suivre par le développeur demandant l'accès aux données privées:
 
-1. installer `git secret` (cf https://git-secret.io/installation, ex: `sudo apt-get install git-secret`) et `gpg` (si ce n'est pas encore le cas) sur votre machine
-2. créer une clé GPG avec `$ gpg --gen-key` (cf https://git-secret.io/#using-gpg)
-3. exporter la clé publique (`$ gpg --export --armor your.email@address.com > my-public-key.gpg`) puis l'envoyer à une personne ayant déjà accès aux fichiers chiffrés, pour qu'elle puisse vous y donner droit également (cf https://git-secret.io/#usage-adding-someone-to-a-repository-using-git-secret, instructions à suivre par un des développeurs ayant déjà accès)
+1. installer `git secret` (cf [instructions](https://git-secret.io/installation), ex: `sudo apt-get install git-secret`) et `gpg` (si ce n'est pas encore le cas) sur votre machine
+2. créer une clé GPG avec `$ gpg --gen-key` (cf [using GPG](https://git-secret.io/#using-gpg))
+3. exporter la clé publique (`$ gpg --export --armor your.email@address.com > my-public-key.gpg`) puis l'envoyer à une personne ayant déjà accès aux fichiers chiffrés, pour qu'elle puisse vous y donner droit également (cf [adding someone to a repository](https://git-secret.io/#usage-adding-someone-to-a-repository-using-git-secret), instructions à suivre par un des développeurs ayant déjà accès)
 4. une fois que le fichier `.gitsecret/keys/pubring.kbx` a bien été mis à jour, récupérer la dernière version de cette branche (`$ git pull`)
 5. exécuter `$ git secret reveal` => les fichiers listés dans `.gitsecret/paths/mapping.cfg` seront déchiffrés
 6. pour vérifier que le chiffrage fonctionne également: `$ git secret hide` va modifier les fichiers avec l'extension `.secret`. (vous n'avez pas besoin de créer un commit si vous n'avez pas modifié les fichiers de données après l'étape précédente)
