@@ -1,75 +1,6 @@
 {
     "components": {
         "schemas": {
-            "Login": {
-                "properties": {
-                    "email": {
-                        "type": "string"
-                    },
-                    "password": {
-                        "type": "string"
-                    },
-                    "browserToken": {
-                        "type": "string"
-                    }
-                }
-            },
-            "LoginResponse": {
-                "properties": {
-                    "code": {
-                        "type": "integer"
-                    },
-                    "expire": {
-                        "type": "string"
-                    },
-                    "token": {
-                        "type": "string"
-                    }
-                }
-            },
-            "LoginCheck": {
-                "properties": {
-                    "email": {
-                        "type": "string"
-                    },
-                    "password": {
-                        "type": "string"
-                    },
-                    "checkCode": {
-                        "type": "string"
-                    }
-                }
-            },
-            "LoginCheckResponse": {
-                "properties": {
-                    "browserToken": {
-                        "type": "string"
-                    }
-                }
-            },
-            "LoginGet": {
-                "properties": {
-                    "email": {
-                        "type": "string"
-                    },
-                    "password": {
-                        "type": "string"
-                    }
-                }
-            },
-            "LoginRecoveryGet": {
-                "properties": {
-                    "email": {
-                        "type": "string"
-                    },
-                    "browsertoken": {
-                        "type": "string"
-                    }
-                }
-            },
-            "LoginRecoveryGetResponse": {
-                "type": "string"
-            },
             "AdminBatch": {
                 "items": {
                     "properties": {
@@ -185,16 +116,6 @@
                     }
                 },
                 "type": "object"
-            },
-            "LoginFail": {
-                "properties": {
-                    "code": {
-                        "type": "integer"
-                    },
-                    "message": {
-                        "type": "string"
-                    }
-                }
             },
             "Import": {
                 "properties": {
@@ -355,7 +276,7 @@
             "name": "contact support",
             "email": "contact@signaux-faibles.beta.gouv.fr"
         },
-        "description": "Cette API centralise toutes les fonctionnalités du module de traitement de données [openSignauxFaibles](https://github.com/entrepreneur-interet-general/opensignauxfaibles)  \nCe [projet](https://beta.gouv.fr/startups/signaux-faibles.html) fournit une plateforme technique à l'exploitation des signaux faibles pour anticiper les difficultés des entreprises  \n\nLa plateforme fournit les services suivants    \n- Authentification  \n- Gestion des batches d'intégration  \n- Lancement/ordonnancement des traitements  \n- Consultation des données  \n\nToutes les erreurs rencontrées lors du traitement seront signalées par le statut `HTTP 500` assorti du message d'erreur ayant provoqué le défaut du traitement.  \nPar ailleurs, tous les services authentifiés sont succeptibles de renvoyer le statut `HTTP 401` dans le cas où l'authentification est erronée.  Le code `HTTP 403` est également communiqué lorsque les attributions sont insuffisantes pour traiter la requête.  \nDans le cas où une requête est malformée, le code `HTTP 400` sera renvoyé assorti d'un message indiquant l'erreur rencontrée dans l'analyse du corps de la requête  ",
+        "description": "Cette API centralise toutes les fonctionnalités du module de traitement de données [openSignauxFaibles](https://github.com/entrepreneur-interet-general/opensignauxfaibles)  \nCe [projet](https://beta.gouv.fr/startups/signaux-faibles.html) fournit une plateforme technique à l'exploitation des signaux faibles pour anticiper les difficultés des entreprises  \n\nLa plateforme fournit les services suivants    \n- Gestion des batches d'intégration  \n- Lancement/ordonnancement des traitements  \n- Consultation des données  \n\nToutes les erreurs rencontrées lors du traitement seront signalées par le statut `HTTP 500` assorti du message d'erreur ayant provoqué le défaut du traitement.  \nPar ailleurs, tous les services authentifiés sont succeptibles de renvoyer le statut `HTTP 401` dans le cas où l'authentification est erronée.  Le code `HTTP 403` est également communiqué lorsque les attributions sont insuffisantes pour traiter la requête.  \nDans le cas où une requête est malformée, le code `HTTP 400` sera renvoyé assorti d'un message indiquant l'erreur rencontrée dans l'analyse du corps de la requête",
         "license": {
             "name": "Licence MIT",
             "url": "https://raw.githubusercontent.com/entrepreneur-interet-general/opensignauxfaibles/master/LICENSE"
@@ -364,208 +285,6 @@
         "version": "1.1"
     },
     "paths": {
-        "/login": {
-            "post": {
-                "description": "L'authentification se base sur la fourniture de 3 champs\n- email\n- mot de passe \n- jeton du navigateur\n\nLe service retourne un jeton temporaire valide pour une durée déterminée.  \nCette validité peut être prolongée avec le service /api/refreshToken  \n\nCe token doit être utilisé dans l'entête `Authorization`",
-                "requestBody": {
-                    "description": "Les informations d'identification",
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/Login"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "retourne un token et une date de validité",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/LoginResponse"
-                                },
-                                "example": {
-                                    "code": 200,
-                                    "expire": "2018-12-31 23:30:12",
-                                    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9…"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "retourne la raison de l'échec",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/LoginFail"
-                                },
-                                "example": {
-                                    "code": 401,
-                                    "message": "Please provide good credentials sir."
-                                }
-                            }
-                        }
-                    }
-                },
-                "summary": "obtenir un jeton temporaire de session",
-                "tags": [
-                    "Authentification"
-                ]
-            }
-        },
-        "/login/get": {
-            "post": {
-                "summary": "demander l'envoi d'un code de vérification",
-                "description": "Renvoie un code de vérification sur la base d'un email et d'un mot de passe  \nLe code n'est envoyé que si le mot de passe est valide, le cas échéant, un email avertissant d'une tentative est envoyé.  \nPour éviter les tentatives de forçage de mot de passe, ce service ne renvoie jamais d'échec.  ",
-                "requestBody": {
-                    "description": "Email et mot de passe",
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/LoginGet"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "ok"
-                    }
-                },
-                "tags": [
-                    "Authentification"
-                ]
-            }
-        },
-        "/login/check": {
-            "post": {
-                "description": "Le service permet de valider le code de vérification envoyé à l'utilisateur  \nIl donne en retour un jeton de navigateur qui pourra être réutilisé comme facteur d'authentification (browserToken)  ",
-                "requestBody": {
-                    "description": "Les informations d'identification",
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/LoginCheck"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "retourne un browserToken",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/LoginCheckResponse"
-                                },
-                                "example": {
-                                    "browserToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9…"
-                                }
-                            }
-                        }
-                    }
-                },
-                "summary": "valider un code de vérification",
-                "tags": [
-                    "Authentification"
-                ]
-            }
-        },
-        "/login/recovery/get": {
-            "post": {
-                "description": "Dans le cas d'un oubli du mot de passe, on peut fixer un nouveau mot de passe à partir d'un navigateur identifié  \nIl faut dans ce cas pouvoir recevoir un code de vérification par mail  \nCe schéma d'authentification se base sur la fourniture d'un browserToken valide associé à l'utilisateur avec lequel il a été obtenu ainsi qu'un code de vérification transmis par email",
-                "requestBody": {
-                    "description": "Les informations d'identification",
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/LoginRecoveryGet"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "retourne un browserToken",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/LoginRecoveryGetResponse"
-                                },
-                                "example": {
-                                    "email": "test@domain.com",
-                                    "browserToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9…"
-                                }
-                            }
-                        }
-                    }
-                },
-                "summary": "demander une récupération de mot de passe",
-                "tags": [
-                    "Authentification"
-                ]
-            }
-        },
-        "/login/recovery/setPassword": {
-            "post": {
-                "summary": "changer un mot de passe",
-                "description": "Permet de fixer un nouveau de passe en étant muni d'un browserToken et d'un code de vérification fourni par email\nCe code est validé en utilisant le hash (bcrypt) stocké en base lors de son envoi par le service /login/recovery/get",
-                "responses": {
-                    "200": {
-                        "description": "ok"
-                    }
-                },
-                "tags": [
-                    "Authentification"
-                ]
-            }
-        },
-        "/api/refreshToken": {
-            "get": {
-                "summary": "renouveler le jeton de session",
-                "description": "Fournit un nouveau jeton temporaire de session en échange d'un jeton encore valide.  \nCe service demande d'être authentifié mais ne nécessite aucun paramètre.  \nL'authentification est réalisée avec l'entête HTTP Authorization.  \nExemple:  \n```Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9…```",
-                "responses": {
-                    "200": {
-                        "description": "Renouvellement autorisé",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/LoginResponse"
-                                },
-                                "example": {
-                                    "code": 200,
-                                    "expire": "2019-02-01 12:00:05",
-                                    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9…"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Renouvellement refusé",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/LoginFail"
-                                },
-                                "example": {
-                                    "code": 401,
-                                    "message": "cookie token is empty"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "tags": [
-                    "Authentification"
-                ]
-            }
-        },
         "/api/admin/batch": {
             "get": {
                 "description": "Retourne tous les objets de type AdminBatch de la collection Admin trié par ordre de clé de batch.",
@@ -757,7 +476,7 @@
         },
         "/api/admin/batch/next": {
             "get": {
-                "description": "Clôture le dernier batch et crée la référence de batch suivante dans la collection admin  \nL'ordre des batches est alphanumérique, la numérotation est effectuée en mois année (YYMM)\nPar exemple, le batch suivant 1812 est 1901.  \nIl est possible de créer des batches intermédiaires (par exemple 1812-correction), cela ne perturbe pas la création du batch 1901.  \nLe nouveau batch créé est vide, le service renvoie la liste des objets AdminBatch ainsi nouvellement constituée.  \nCette liste est également communiquée à tous les clients connectés via le connecteur webservice avec l'attribution admin (WIP).  ",
+                "description": "Clôture le dernier batch et crée la référence de batch suivante dans la collection admin  \nL'ordre des batches est alphanumérique, la numérotation est effectuée en mois année (YYMM)\nPar exemple, le batch suivant 1812 est 1901.  \nIl est possible de créer des batches intermédiaires (par exemple 1812-correction), cela ne perturbe pas la création du batch 1901.  \nLe nouveau batch créé est vide, le service renvoie la liste des objets AdminBatch ainsi nouvellement constituée.  \nCette liste est également communiquée à tous les clients connectés via le connecteur webservice avec l'attribution admin (WIP).",
                 "responses": {
                     "200": {
                         "description": "Traitement effectué avec succès",
@@ -810,7 +529,7 @@
         },
         "/api/admin/events": {
             "get": {
-                "description": "Liste les 250 derniers évènements du journal  ",
+                "description": "Liste les 250 derniers évènements du journal",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -927,7 +646,7 @@
         },
         "/api/admin/features": {
             "get": {
-                "description": "Liste des traitements de production de variables connus de dbmongo  \nCes références sont à utiliser auprès du service `/data/reduce`  ",
+                "description": "Liste des traitements de production de variables connus de dbmongo  \nCes références sont à utiliser auprès du service `/data/reduce`",
                 "responses": {
                     "200": {
                         "description": "liste des traitements",
@@ -1141,7 +860,7 @@
         },
         "/api/data/reduce": {
             "post": {
-                "description": "Alimente la collection Features en calculant les variables avec le traitement mapreduce demandé dans la propriété `features`  \nLe traitement remplace les objets similaires en sortie du calcul dans la collection Features, les objets non concernés par le traitement ne seront ainsi pas remplacés, de sorte que si un seul siret est demandé le calcul ne remplacera qu'un seul objet.  \nCes traitements ne prennent en compte que les objets déjà compactés.  ",
+                "description": "Alimente la collection Features en calculant les variables avec le traitement mapreduce demandé dans la propriété `features`  \nLe traitement remplace les objets similaires en sortie du calcul dans la collection Features, les objets non concernés par le traitement ne seront ainsi pas remplacés, de sorte que si un seul siret est demandé le calcul ne remplacera qu'un seul objet.  \nCes traitements ne prennent en compte que les objets déjà compactés.",
                 "requestBody": {
                     "content": {
                         "application/json": {
