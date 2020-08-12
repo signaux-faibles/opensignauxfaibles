@@ -740,12 +740,11 @@ db.getCollection("Features").createIndex({
     const c = f.iterable(compte);
     return c.length > 0 ? c[c.length - 1] : undefined;
 }`,
-"cotisations": `function cotisations(vcotisation) {
+"cotisations": `function cotisations(vcotisation = {}) {
 
     const offset_cotisation = 0;
     const value_cotisation = {};
     // Répartition des cotisations sur toute la période qu'elle concerne
-    vcotisation = vcotisation || {};
     Object.keys(vcotisation).forEach(function (h) {
         const cotisation = vcotisation[h];
         const periode_cotisation = f.generatePeriodSerie(cotisation.periode.start, cotisation.periode.end);
@@ -782,10 +781,9 @@ db.getCollection("Features").createIndex({
     }, [])
         .sort((a, b) => a.date_procol.getTime() - b.date_procol.getTime());
 }`,
-"debits": `function debits(vdebit) {
+"debits": `function debits(vdebit = {}) {
 
     const last_treatment_day = 20;
-    vdebit = vdebit || {};
     const ecn = Object.keys(vdebit).reduce((accu, h) => {
         const debit = vdebit[h];
         const start = debit.periode.start;

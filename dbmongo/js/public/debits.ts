@@ -26,11 +26,12 @@ type SortieDebit = {
 declare let date_fin: Date
 declare let serie_periode: Date[]
 
-export function debits(vdebit: Record<DataHash, EntréeDebit>): SortieDebit[] {
+export function debits(
+  vdebit: Record<DataHash, EntréeDebit> = {}
+): SortieDebit[] {
   const f = { compareDebit, generatePeriodSerie, dateAddMonth, dateAddDay } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
 
   const last_treatment_day = 20
-  vdebit = vdebit || {}
   const ecn = Object.keys(vdebit).reduce((accu, h) => {
     const debit = vdebit[h]
     const start = debit.periode.start

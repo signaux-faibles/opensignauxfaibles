@@ -48,11 +48,9 @@ export function map(this: { value: CompanyDataValues }): void {
     vcmde.effectif = value.effectif ? f.effectifs(value.effectif) : []
     vcmde.dernier_effectif = vcmde.effectif[vcmde.effectif.length - 1]
     vcmde.sirene = value.sirene ? f.sirene(f.iterable(value.sirene)) : {}
-    vcmde.cotisation = f.cotisations(
-      value.cotisation as Record<string, EntréeCotisation>
-    )
+    vcmde.cotisation = f.cotisations(value.cotisation)
     vcmde.apconso = value.apconso ? f.apconso(value.apconso) : []
-    vcmde.debit = f.debits(value.debit as Record<string, EntréeDebit>)
+    vcmde.debit = f.debits(value.debit)
     vcmde.apdemande = value.apdemande ? f.apdemande(value.apdemande) : []
     vcmde.delai = value.delai ? f.delai(value.delai) : []
     vcmde.compte = value.compte ? f.compte(value.compte) : undefined

@@ -5,7 +5,7 @@ import { generatePeriodSerie } from "../common/generatePeriodSerie"
 declare const serie_periode: Date[]
 
 export function cotisations(
-  vcotisation: Record<DataHash, EntréeCotisation>
+  vcotisation: Record<DataHash, EntréeCotisation> = {}
 ): number[] {
   const f = { generatePeriodSerie, dateAddMonth } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
 
@@ -13,7 +13,6 @@ export function cotisations(
   const value_cotisation: Record<number, number[]> = {}
 
   // Répartition des cotisations sur toute la période qu'elle concerne
-  vcotisation = vcotisation || {}
   Object.keys(vcotisation).forEach(function (h) {
     const cotisation = vcotisation[h]
     const periode_cotisation = f.generatePeriodSerie(
