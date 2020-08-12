@@ -9,7 +9,7 @@ export type SortieEffectif = {
 }
 
 export function effectifs(
-  effectif: Record<DataHash, EntréeEffectif>
+  effectif?: Record<DataHash, EntréeEffectif>
 ): SortieEffectif[] {
   const mapEffectif: ParPériode<number> = {}
   f.iterable(effectif).forEach((e) => {

@@ -926,15 +926,15 @@ function flatten(v, actual_batch) {
         const vcmde = {};
         vcmde.key = this.value.key;
         vcmde.batch = actual_batch;
-        vcmde.effectif = value.effectif ? f.effectifs(value.effectif) : [];
+        vcmde.effectif = f.effectifs(value.effectif);
         vcmde.dernier_effectif = vcmde.effectif[vcmde.effectif.length - 1];
-        vcmde.sirene = value.sirene ? f.sirene(f.iterable(value.sirene)) : {};
+        vcmde.sirene = f.sirene(f.iterable(value.sirene));
         vcmde.cotisation = f.cotisations(value.cotisation);
         vcmde.debit = f.debits(value.debit);
         vcmde.apconso = f.apconso(value.apconso);
-        vcmde.apdemande = value.apdemande ? f.apdemande(value.apdemande) : [];
-        vcmde.delai = value.delai ? f.delai(value.delai) : [];
-        vcmde.compte = value.compte ? f.compte(value.compte) : undefined;
+        vcmde.apdemande = f.apdemande(value.apdemande);
+        vcmde.delai = f.delai(value.delai);
+        vcmde.compte = f.compte(value.compte);
         vcmde.procol = undefined; // Note: initialement, l'expression ci-dessous était affectée à vcmde.procol, puis écrasée plus bas. J'initialise quand même vcmde.procol ici pour ne pas faire échouer test-api.sh sur l'ordre des propriétés.
         const procol = [
             ...f.dealWithProcols(value.altares, "altares"),

@@ -1,7 +1,7 @@
 import * as f from "./iterable"
 
 export function apdemande(
-  apdemande: Record<DataHash, EntréeApDemande>
+  apdemande?: Record<DataHash, EntréeApDemande>
 ): EntréeApDemande[] {
   return f
     .iterable(apdemande)
