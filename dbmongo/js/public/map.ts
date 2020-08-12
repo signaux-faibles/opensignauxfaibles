@@ -17,8 +17,8 @@ import { omit } from "../common/omit"
 
 export type SortieMap = {
   effectif: SortieEffectif[]
-  procol: Record<DataHash, EntréeDefaillances> // ou SortieProcols ?
-  crp: unknown // TODO: à définir
+  procol: Record<DataHash, EntréeDefaillances>
+  crp: unknown
 } & Record<string, unknown> // TODO: à expliciter, cf reduce.algo2/map.ts
 
 // Paramètres globaux utilisés par "public"
