@@ -6,7 +6,7 @@
 
 import test, { ExecutionContext } from "ava"
 import "../globals"
-import { map } from "./map.js"
+import { map } from "./map"
 import { flatten } from "./flatten"
 import { effectifs } from "./effectifs"
 import { iterable } from "./iterable"
@@ -103,8 +103,8 @@ test.serial(
   `public.reduce() retourne les propriétés d'établissement, telles quelles`,
   (t: ExecutionContext) => {
     const reduceValues = [expectedMapResults[etablissementKey]]
-    const reduceResults = reduce({ scope }, reduceValues)
-    t.deepEqual(reduceResults, expectedReduceResults)
+    const reduceResults = reduce({ scope }, reduceValues as any)
+    t.deepEqual(reduceResults, expectedReduceResults as any)
   }
 )
 
