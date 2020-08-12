@@ -926,14 +926,6 @@ function flatten(v, actual_batch) {
     }, { key: v.key, scope: v.scope });
     return res;
 }`,
-"idEntreprise": `function idEntreprise(idEtablissement) {
-  "use strict";
-  return {
-    scope: 'entreprise',
-    key: idEtablissement.slice(0,9),
-    batch: actual_batch
-  }
-}`,
 "iterable": `function iterable(dict) {
     try {
         return Object.keys(dict).map((h) => dict[h]);
