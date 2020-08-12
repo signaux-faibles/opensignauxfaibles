@@ -899,9 +899,8 @@ db.getCollection("Features").createIndex({
     })
         .filter((p) => p.effectif);
 }`,
-"finalize": `function finalize(_, v) {
-  "use strict";
-  return v
+"finalize": `function finalize(_key, val) {
+    return val;
 }`,
 "flatten": `// Note: cette fonction a été copiée depuis reduce.algo2/flatten.ts
 // TODO: déplacer reduce.algo2/flatten.ts dans common/ puis la réutiliser aux deux endroits
@@ -999,19 +998,19 @@ function flatten(v, actual_batch) {
     }
   }
 }`,
-"reduce": `function reduce(key, values) {
-  "use strict";
-  if (key.scope="entreprise") {
-    values = values.reduce((m, v) => {
-      if (v.sirets) {
-        m.sirets = (m.sirets || []).concat(v.sirets)
-        delete v.sirets
-      }
-      Object.assign(m, v)
-      return m
-    }, {})
-  }
-  return values
+"reduce": `function reduce(_key, values) {
+    // if (key.scope === "entreprise") {
+    return values.reduce((m, v) => {
+        if (v.sirets) {
+            // TODO: je n'ai pas trouvé d'affectation de valeur dans la propriété "sirets" => est-elle toujours d'actualité ?
+            m.sirets = (m.sirets || []).concat(v.sirets);
+            delete v.sirets;
+        }
+        Object.assign(m, v);
+        return m;
+    }, {});
+    // }
+    // return (values as unknown) as V // TODO: veut-on vraiment retourner values tel quel ? (tableau de type V[] au lieu d'objet de type V)
 }`,
 "sirene": `// Cette fonction retourne les données sirene les plus récentes
 function sirene(sireneArray) {
