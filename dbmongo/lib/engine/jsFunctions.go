@@ -935,8 +935,8 @@ function flatten(v, actual_batch) {
         vcmde.dernier_effectif = vcmde.effectif[vcmde.effectif.length - 1];
         vcmde.sirene = value.sirene ? f.sirene(f.iterable(value.sirene)) : {};
         vcmde.cotisation = f.cotisations(value.cotisation);
-        vcmde.apconso = value.apconso ? f.apconso(value.apconso) : [];
         vcmde.debit = f.debits(value.debit);
+        vcmde.apconso = value.apconso ? f.apconso(value.apconso) : [];
         vcmde.apdemande = value.apdemande ? f.apdemande(value.apdemande) : [];
         vcmde.delai = value.delai ? f.delai(value.delai) : [];
         vcmde.compte = value.compte ? f.compte(value.compte) : undefined;
