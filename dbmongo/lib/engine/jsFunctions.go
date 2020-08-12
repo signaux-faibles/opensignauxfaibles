@@ -847,17 +847,11 @@ db.getCollection("Features").createIndex({
             ]);
         });
     });
-    const output_dette = [];
-    serie_periode.forEach((p) => {
-        output_dette.push(
-        // TODO: utiliser map() au lieu de forEach+push
-        (value_dette[p.getTime()] || []).reduce((m, c) => ({
-            part_ouvriere: m.part_ouvriere + c.part_ouvriere,
-            part_patronale: m.part_patronale + c.part_patronale,
-            periode: f.dateAddDay(f.dateAddMonth(p, 1), -1),
-        }), { part_ouvriere: 0, part_patronale: 0 }));
-    });
-    return output_dette;
+    return serie_periode.map((p) => (value_dette[p.getTime()] || []).reduce((m, c) => ({
+        part_ouvriere: m.part_ouvriere + c.part_ouvriere,
+        part_patronale: m.part_patronale + c.part_patronale,
+        periode: f.dateAddDay(f.dateAddMonth(p, 1), -1),
+    }), { part_ouvriere: 0, part_patronale: 0 }));
 }`,
 "delai": `function delai(delai) {
     return f.iterable(delai);
