@@ -13,7 +13,6 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/naf"
 
 	"github.com/gin-contrib/cors"
-	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"github.com/spf13/viper"
@@ -82,8 +81,7 @@ func main() {
 	config.AddAllowMethods("GET", "POST")
 	r.Use(cors.New(config))
 
-	r.Use(static.Serve("/", static.LocalFile("static/", true)))
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler)) // serves interactive API documentation on http://localhost:5000/swagger/index.html
 
 	r.POST("/datapi/exportReference", datapiExportReferenceHandler)
 	r.POST("/datapi/exportDetection", datapiExportDetectionHandler)
