@@ -917,12 +917,7 @@ function flatten(v, actual_batch) {
     return res;
 }`,
 "iterable": `function iterable(dict) {
-    try {
-        return Object.keys(dict).map((h) => dict[h]);
-    }
-    catch (error) {
-        return [];
-    }
+    return typeof dict === "object" ? Object.keys(dict).map((h) => dict[h]) : [];
 }`,
 "map": `function map() {
 
@@ -936,7 +931,7 @@ function flatten(v, actual_batch) {
         vcmde.sirene = value.sirene ? f.sirene(f.iterable(value.sirene)) : {};
         vcmde.cotisation = f.cotisations(value.cotisation);
         vcmde.debit = f.debits(value.debit);
-        vcmde.apconso = value.apconso ? f.apconso(value.apconso) : [];
+        vcmde.apconso = f.apconso(value.apconso);
         vcmde.apdemande = value.apdemande ? f.apdemande(value.apdemande) : [];
         vcmde.delai = value.delai ? f.delai(value.delai) : [];
         vcmde.compte = value.compte ? f.compte(value.compte) : undefined;

@@ -1,7 +1,7 @@
 import * as f from "./iterable"
 
 export function apconso(
-  apconso: Record<DataHash, EntréeApConso>
+  apconso?: Record<DataHash, EntréeApConso>
 ): EntréeApConso[] {
   return f
     .iterable(apconso)

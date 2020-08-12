@@ -1,7 +1,3 @@
-export function iterable<T>(dict: Record<string | number, T>): T[] {
-  try {
-    return Object.keys(dict).map((h) => dict[h])
-  } catch (error) {
-    return []
-  }
+export function iterable<T>(dict?: Record<string | number, T>): T[] {
+  return typeof dict === "object" ? Object.keys(dict).map((h) => dict[h]) : []
 }
