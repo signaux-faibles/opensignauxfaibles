@@ -1,7 +1,8 @@
 export type FlattenedImportedData = {
   key: SiretOrSiren
   scope: Scope
-} & Partial<BatchValue>
+  crp?: unknown // TODO: à définir
+} & BatchValue
 
 // Note: cette fonction a été copiée depuis reduce.algo2/flatten.ts
 // TODO: déplacer reduce.algo2/flatten.ts dans common/ puis la réutiliser aux deux endroits

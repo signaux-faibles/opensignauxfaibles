@@ -3,16 +3,16 @@ import * as f from "./iterable"
 // Paramètres globaux utilisés par "public"
 declare const serie_periode: Date[]
 
-type Result = {
+export type SortieEffectif = {
   periode: Date
   effectif: number | null
 }
 
-export function effectifs(v: {
+export function effectifs(
   effectif: Record<DataHash, EntréeEffectif>
-}): Result[] {
+): SortieEffectif[] {
   const mapEffectif: ParPériode<number> = {}
-  f.iterable(v.effectif).forEach((e) => {
+  f.iterable(effectif).forEach((e) => {
     mapEffectif[e.periode.getTime()] =
       (mapEffectif[e.periode.getTime()] || 0) + e.effectif
   })

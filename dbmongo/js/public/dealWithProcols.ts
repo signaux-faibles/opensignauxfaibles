@@ -1,7 +1,7 @@
 import { altaresToHuman, AltaresToHumanRes } from "../common/altaresToHuman"
 import { procolToHuman, ProcolToHumanRes } from "../common/procolToHuman"
 
-type Result = {
+export type SortieProcols = {
   etat: AltaresToHumanRes | ProcolToHumanRes
   date_procol: Date
 }
@@ -9,7 +9,7 @@ type Result = {
 export function dealWithProcols(
   data_source: Record<DataHash, EntréeDefaillances>,
   altar_or_procol: "altares" | "procol"
-): Result[] {
+): SortieProcols[] {
   const f = { altaresToHuman, procolToHuman } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
 
   return Object.keys(data_source || {})
@@ -26,6 +26,6 @@ export function dealWithProcols(
         events.push({ etat, date_procol: new Date(the_event.date_effet) })
 
       return events
-    }, [] as Result[])
+    }, [] as SortieProcols[])
     .sort((a, b) => a.date_procol.getTime() - b.date_procol.getTime())
 }

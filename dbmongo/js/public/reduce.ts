@@ -1,6 +1,6 @@
-import { PublicMapResult } from "./map"
+import { SortieMap } from "./map"
 
-type V = PublicMapResult & { sirets?: unknown[] }
+type V = SortieMap & { sirets?: unknown[] }
 
 export function reduce(_key: { scope: Scope }, values: V[]): V {
   // if (key.scope = "entreprise") { // TODO: cette expression est toujours vraie var elle affecte "entreprise" à key.scope => à corriger
