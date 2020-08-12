@@ -221,6 +221,7 @@ type EntréeDebit = {
   // le montant est ventilé entre ces deux valeurs, exprimées en euros (€):
   part_ouvriere: number
   part_patronale: number
+  montant_majorations?: number // exploité par map-reduce "public", mais pas par "reduce.algo2"
 }
 
 type Departement = string
