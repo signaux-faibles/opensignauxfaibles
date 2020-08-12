@@ -7,12 +7,12 @@ export type SortieProcols = {
 }
 
 export function dealWithProcols(
-  data_source: Record<DataHash, EntréeDefaillances>,
+  data_source: Record<DataHash, EntréeDefaillances> = {},
   altar_or_procol: "altares" | "procol"
 ): SortieProcols[] {
   const f = { altaresToHuman, procolToHuman } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
 
-  return Object.keys(data_source || {})
+  return Object.keys(data_source)
     .reduce((events, hash) => {
       const the_event = data_source[hash]
 

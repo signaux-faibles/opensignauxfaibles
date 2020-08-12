@@ -55,12 +55,10 @@ export function map(this: { value: CompanyDataValues }): void {
     vcmde.delai = value.delai ? f.delai(value.delai) : []
     vcmde.compte = value.compte ? f.compte(value.compte) : undefined
     vcmde.procol = undefined // Note: initialement, l'expression ci-dessous était affectée à vcmde.procol, puis écrasée plus bas. J'initialise quand même vcmde.procol ici pour ne pas faire échouer test-api.sh sur l'ordre des propriétés.
-    const procol =
-      value.altares && value.procol
-        ? f
-            .dealWithProcols(value.altares, "altares")
-            .concat(f.dealWithProcols(value.procol, "procol"))
-        : []
+    const procol = [
+      ...f.dealWithProcols(value.altares, "altares"),
+      ...f.dealWithProcols(value.procol, "procol"),
+    ]
     vcmde.last_procol = procol[procol.length - 1] || { etat: "in_bonis" }
     vcmde.idEntreprise = "entreprise_" + this.value.key.slice(0, 9)
     vcmde.procol = value.procol

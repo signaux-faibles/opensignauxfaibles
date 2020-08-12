@@ -765,9 +765,9 @@ db.getCollection("Features").createIndex({
     result.setDate(result.getDate() + nbDays);
     return result;
 }`,
-"dealWithProcols": `function dealWithProcols(data_source, altar_or_procol) {
+"dealWithProcols": `function dealWithProcols(data_source = {}, altar_or_procol) {
 
-    return Object.keys(data_source || {})
+    return Object.keys(data_source)
         .reduce((events, hash) => {
         const the_event = data_source[hash];
         let etat = null;
@@ -936,11 +936,10 @@ function flatten(v, actual_batch) {
         vcmde.delai = value.delai ? f.delai(value.delai) : [];
         vcmde.compte = value.compte ? f.compte(value.compte) : undefined;
         vcmde.procol = undefined; // Note: initialement, l'expression ci-dessous était affectée à vcmde.procol, puis écrasée plus bas. J'initialise quand même vcmde.procol ici pour ne pas faire échouer test-api.sh sur l'ordre des propriétés.
-        const procol = value.altares && value.procol
-            ? f
-                .dealWithProcols(value.altares, "altares")
-                .concat(f.dealWithProcols(value.procol, "procol"))
-            : [];
+        const procol = [
+            ...f.dealWithProcols(value.altares, "altares"),
+            ...f.dealWithProcols(value.procol, "procol"),
+        ];
         vcmde.last_procol = procol[procol.length - 1] || { etat: "in_bonis" };
         vcmde.idEntreprise = "entreprise_" + this.value.key.slice(0, 9);
         vcmde.procol = value.procol;
