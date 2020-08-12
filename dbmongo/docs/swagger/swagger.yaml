@@ -39,6 +39,10 @@ components:
               ...:
                 type: string
       type: array
+    Compact:
+      properties:
+        fromBatchKey:
+          type: string
     Public:
       properties:
         batch:
@@ -432,12 +436,19 @@ paths:
       tags:
         - Administration
   /api/data/compact:
-    get:
+    post:
       summary: compacter la base de données
       description: |-
         Ce traitement permet le compactage de la base de données.  
         Ce compactage a pour effet de réduire tous les objets en clé uniques comportant dans la même arborescence toutes les données en rapport avec ces clés.  
         Ce traitement est nécessaire pour rendre disponible les données à /api/data/reduce les nouvelles données importées.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Compact"
+            example:
+              fromBatchKey: 1802
       responses:
         "200":
           description: Le traitement s'est bien déroulé
