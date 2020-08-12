@@ -26,10 +26,6 @@ $ go test ./...
 
 Dans l'arbre de sources de l'installation go, vous trouverez tous les répertoires nécessaires à l'exécution.
 
-TODO:
-
-- linker correctement les procédures R avec le core golang
-
 ## Configuration
 
 Voir `config-sample.toml` dans les sources.
