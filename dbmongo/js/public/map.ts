@@ -1,25 +1,48 @@
 import { iterable } from "./iterable"
-import { debits } from "./debits"
+import { debits, SortieDebit } from "./debits"
 import { apconso } from "./apconso"
 import { apdemande } from "./apdemande"
 import { flatten } from "./flatten"
 import { compte } from "./compte"
 import { effectifs, SortieEffectif } from "./effectifs"
 import { delai } from "./delai"
-import { bdf } from "./bdf"
+import { bdf, Bdf } from "./bdf"
 import { diane } from "./diane"
 import { sirene } from "./sirene"
 import { cotisations } from "./cotisations"
 import { dateAddDay } from "./dateAddDay"
-import { dealWithProcols } from "./dealWithProcols"
+import { dealWithProcols, SortieProcols } from "./dealWithProcols"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { omit } from "../common/omit"
 
-export type SortieMap = {
+type SortieMapCommon = {
+  key: string
+  batch: string
+}
+
+type SortieMapEtablissement = SortieMapCommon & {
   effectif: SortieEffectif[]
+  dernier_effectif: SortieEffectif
+  sirene: unknown
+  cotisation: number[]
+  debit: SortieDebit[]
+  apconso: EntréeApConso[]
+  apdemande: EntréeApDemande[]
+  delai: EntréeDelai[]
+  compte: unknown
   procol: Record<DataHash, EntréeDefaillances>
+  last_procol: SortieProcols
+  idEntreprise: string
+}
+
+type SortieMapEntreprise = SortieMapCommon & {
+  diane: EntréeDiane[]
+  bdf: Bdf[]
+  sirene_ul: unknown
   crp: unknown
-} & Record<string, unknown> // TODO: à expliciter, cf reduce.algo2/map.ts
+}
+
+export type SortieMap = SortieMapEtablissement | SortieMapEntreprise
 
 // Paramètres globaux utilisés par "public"
 declare let actual_batch: BatchKey
@@ -36,7 +59,7 @@ export function map(this: { value: CompanyDataValues }): void {
   const value = f.flatten(this.value, actual_batch)
 
   if (this.value.scope === "etablissement") {
-    const vcmde: Partial<SortieMap> = {}
+    const vcmde: Partial<SortieMapEtablissement> = {}
     vcmde.key = this.value.key
     vcmde.batch = actual_batch
     vcmde.effectif = f.effectifs(value.effectif)
@@ -59,7 +82,7 @@ export function map(this: { value: CompanyDataValues }): void {
 
     emit("etablissement_" + this.value.key, vcmde)
   } else if (this.value.scope === "entreprise") {
-    const v: Partial<SortieMap> = {}
+    const v: Partial<SortieMapEntreprise> = {}
     const diane = f.diane(value.diane)
     const bdf = f.bdf(value.bdf)
     const sirene_ul = (value.sirene_ul || {})[

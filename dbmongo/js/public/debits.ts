@@ -16,7 +16,7 @@ type DetteItem = {
   montant_majorations: number
 }
 
-type SortieDebit = {
+export type SortieDebit = {
   part_ouvriere: number
   part_patronale: number
   periode?: Date
