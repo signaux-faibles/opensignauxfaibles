@@ -50,3 +50,6 @@ heading "test-api-reduce-2.sh"
 
 heading "test-api-export.sh"
 ./tests/test-api-export.sh 2>&1 | indent
+
+heading "test-api-swagger.sh"
+./tests/test-api-swagger.sh 2>&1 | indent
