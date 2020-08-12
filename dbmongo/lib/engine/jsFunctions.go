@@ -957,7 +957,7 @@ function flatten(v, actual_batch) {
     let vcmde = {}
     vcmde.key = this.value.key
     vcmde.batch = actual_batch
-    vcmde.effectif = f.effectifs(value)
+    vcmde.effectif = f.effectifs(value.effectif)
     vcmde.dernier_effectif = vcmde.effectif[vcmde.effectif.length - 1]
     vcmde.sirene = f.sirene(f.iterable(value.sirene))
     vcmde.cotisation = f.cotisations(value.cotisation)
