@@ -23,12 +23,6 @@ export type SortieMap = {
 
 // Paramètres globaux utilisés par "public"
 declare let actual_batch: BatchKey
-// declare let naf: NAF
-// declare let date_debut: Date
-// declare let date_fin: Date
-// declare let serie_periode: Date[]
-// declare let offset_effectif: number
-// declare let includes: Record<"all", boolean>
 
 declare function emit(key: string, value: Partial<SortieMap>): void
 
