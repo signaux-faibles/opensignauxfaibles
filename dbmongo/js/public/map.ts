@@ -66,8 +66,8 @@ export function map(this: { value: CompanyDataValues }): void {
     emit("etablissement_" + this.value.key, vcmde)
   } else if (this.value.scope === "entreprise") {
     const v: Partial<SortieMap> = {}
-    const diane = value.diane ? f.diane(value.diane) : []
-    const bdf = value.bdf ? f.bdf(value.bdf) : []
+    const diane = f.diane(value.diane)
+    const bdf = f.bdf(value.bdf)
     const sirene_ul = (value.sirene_ul || {})[
       Object.keys(value.sirene_ul || {})[0] || ""
     ]

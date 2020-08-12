@@ -947,8 +947,8 @@ function flatten(v, actual_batch) {
     }
     else if (this.value.scope === "entreprise") {
         const v = {};
-        const diane = value.diane ? f.diane(value.diane) : [];
-        const bdf = value.bdf ? f.bdf(value.bdf) : [];
+        const diane = f.diane(value.diane);
+        const bdf = f.bdf(value.bdf);
         const sirene_ul = (value.sirene_ul || {})[Object.keys(value.sirene_ul || {})[0] || ""];
         const crp = value.crp;
         v.key = this.value.key;
