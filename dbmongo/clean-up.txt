@@ -22,13 +22,6 @@ lib/engine/main.go:247:5: empty branch (SA9003)
 lib/engine/public.go:24:2: this value of err is never used (SA4006)
 lib/engine/reduce.go:50:10: error strings should not be capitalized (ST1005)
 lib/engine/reduce.go:258:15: error strings should not be capitalized (ST1005)
-
-## Files to remove?
-
-lib/engine/R.go
-
-## TODO
-
 lib/marshal/filter.go:49:16: error strings should not be capitalized (ST1005)
 lib/marshal/filter.go:76:3: should check returned error before deferring file.Close() (SA5001)
 lib/marshal/mapping.go:57:16: error strings should not be capitalized (ST1005)
@@ -37,7 +30,13 @@ lib/marshal/mapping.go:93:2: should check returned error before deferring file.C
 lib/marshal/mapping_test.go:41:3: this value of err is never used (SA4006)
 lib/marshal/marshal.go:107:2: should check returned error before deferring file.Close() (SA5001)
 lib/marshal/marshal.go:196:40: error strings should not be capitalized (ST1005)
-lib/marshal/parse.go:25:6: func PossibleParsers is unused (U1001)
+
+## Files to remove?
+
+lib/engine/R.go
+
+## TODO
+
 lib/marshal/parse.go:120:2: should merge variable declaration with assignment on next line (S1021)
 lib/marshal/parse.go:139:2: should merge variable declaration with assignment on next line (S1021)
 lib/marshal/parse.go:176:2: should merge variable declaration with assignment on next line (S1021)
