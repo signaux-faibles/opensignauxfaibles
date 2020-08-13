@@ -26,18 +26,6 @@ func predictionBrowseHandler(c *gin.Context) {
 	c.JSON(200, result)
 }
 
-func etablissementBrowseHandler(c *gin.Context) {
-	var params engine.EtablissementBrowseParams
-	c.Bind(&params)
-
-	etablissement, err := engine.EtablissementBrowse(params)
-	if err != nil {
-		c.JSON(500, err)
-		return
-	}
-	c.JSON(200, etablissement)
-}
-
 func searchHandler(c *gin.Context) {
 	var params engine.SearchParams
 	err := c.ShouldBind(&params)

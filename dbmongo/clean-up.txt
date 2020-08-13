@@ -1,7 +1,6 @@
 $ go run honnef.co/go/tools/cmd/staticcheck --unused.whole-program=true -- ./...
 
 browse.go:11:6: func predictionBrowseHandler is unused (U1001)
-browse.go:29:6: func etablissementBrowseHandler is unused (U1001)
 handlers.go:40:2: this value of err is never used (SA4006)
 handlers.go:95:6: func sp is unused (U1001)
 handlers.go:353:6: func getCommentsHandler is unused (U1001)
