@@ -12,6 +12,8 @@ lib/diane/main.go:364:2: should check returned error before deferring stdout.Clo
 lib/diane/main.go:371:2: should check returned error before deferring stderr.Close() (SA5001)
 lib/diane/main.go:432:2: redundant return statement (S1023)
 lib/engine/adminBatch.go:71:10: error strings should not be capitalized (ST1005)
+lib/engine/data.go:161:2: this value of err is never used (SA4006)
+lib/engine/datapi.go:284:10: error strings should not be capitalized (ST1005)
 
 ## Files to remove?
 
@@ -19,11 +21,6 @@ lib/engine/R.go
 
 ## TODO
 
-lib/engine/data.go:61:2: field mergeLock is unused (U1001)
-lib/engine/data.go:161:2: this value of err is never used (SA4006)
-lib/engine/data.go:175:6: type object is unused (U1001)
-lib/engine/data.go:185:6: func ToDatapi is unused (U1001)
-lib/engine/datapi.go:284:10: error strings should not be capitalized (ST1005)
 lib/engine/db.go:30:23: func (*Status).Read is unused (U1001)
 lib/engine/db.go:39:23: func (*Status).Write is unused (U1001)
 lib/engine/db.go:46:23: func (*Status).SetDBStatus is unused (U1001)
