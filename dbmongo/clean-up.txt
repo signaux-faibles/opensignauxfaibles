@@ -29,8 +29,6 @@ lib/engine/R.go
 
 ## TODO
 
-lib/exportdatapi/regions.go:28:5: var lienRegion is unused (U1001)
-lib/exportdatapi/regions.go:231:6: func ancienneRegionFromDepartement is unused (U1001)
 lib/exportdatapi/type.go:237:6: type DatapiDetection is unused (U1001)
 lib/marshal/filter.go:49:16: error strings should not be capitalized (ST1005)
 lib/marshal/filter.go:76:3: should check returned error before deferring file.Close() (SA5001)
