@@ -6,7 +6,6 @@ import (
 	"errors"
 	"io"
 	"os"
-	"strconv"
 	"time"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
@@ -22,7 +21,7 @@ type CCSF struct {
 	NumeroCompte   string    `json:"-" bson:"-"`
 	DateTraitement time.Time `json:"date_traitement" bson:"date_traitement"`
 	Stade          string    `json:"stade" bson:"stade"`
-	Action         string    `json:"action" json:"action"`
+	Action         string    `json:"action" bson:"action"`
 }
 
 // Key _id de l'objet
@@ -40,22 +39,7 @@ func (ccsf CCSF) Type() string {
 	return "ccsf"
 }
 
-func batchToTime(batch string) (time.Time, error) {
-	year, err := strconv.Atoi(batch[0:2])
-	if err != nil {
-		return time.Time{}, err
-	}
-
-	month, err := strconv.Atoi(batch[2:4])
-	if err != nil {
-		return time.Time{}, err
-	}
-
-	date := time.Date(2000+year, time.Month(month), 1, 0, 0, 0, 0, time.UTC)
-	return date, err
-}
-
-// Parser produit des lignes CCSF
+// ParserCCSF produit des lignes CCSF
 func ParserCCSF(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
 	outputChannel := make(chan engine.Tuple)
 	eventChannel := make(chan engine.Event)
