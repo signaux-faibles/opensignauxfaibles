@@ -30,13 +30,6 @@ lib/marshal/mapping.go:93:2: should check returned error before deferring file.C
 lib/marshal/mapping_test.go:41:3: this value of err is never used (SA4006)
 lib/marshal/marshal.go:107:2: should check returned error before deferring file.Close() (SA5001)
 lib/marshal/marshal.go:196:40: error strings should not be capitalized (ST1005)
-
-## Files to remove?
-
-lib/engine/R.go
-
-## TODO
-
 lib/marshal/parse.go:120:2: should merge variable declaration with assignment on next line (S1021)
 lib/marshal/parse.go:139:2: should merge variable declaration with assignment on next line (S1021)
 lib/marshal/parse.go:176:2: should merge variable declaration with assignment on next line (S1021)
@@ -45,18 +38,13 @@ lib/marshal/parse.go:213:2: should merge variable declaration with assignment on
 lib/marshal/parse.go:295:18: error strings should not be capitalized (ST1005)
 lib/marshal/parse.go:300:26: error strings should not be capitalized (ST1005)
 lib/marshal/readOptions.go:68:11: error strings should not be capitalized (ST1005)
-lib/marshal/testing.go:16:6: func compareFields is unused (U1001)
-lib/misc/main.go:62:23: error strings should not be capitalized (ST1005)
 lib/naf/main.go:78:10: empty branch (SA9003)
 lib/naf/main.go:98:10: empty branch (SA9003)
 lib/naf/main.go:118:10: empty branch (SA9003)
 lib/naf/main.go:137:10: empty branch (SA9003)
 lib/naf/main.go:156:10: empty branch (SA9003)
-lib/naf/main.go:187:6: func Naf5from1 is unused (U1001)
-lib/sfregexp/regexp.go:11:6: func PossibleRegexp is unused (U1001)
+lib/misc/main.go:62:23: error strings should not be capitalized (ST1005)
 lib/sirene/main.go:125:17: error strings should not be capitalized (ST1005)
-lib/urssaf/ccsf.go:25:27: duplicate struct tag "json" (SA5008)
-lib/urssaf/ccsf.go:43:6: func batchToTime is unused (U1001)
 lib/urssaf/ccsf.go:128:13: empty branch (SA9003)
 lib/urssaf/ccsf.go:133:20: error strings should not be capitalized (ST1005)
 lib/urssaf/cotisation.go:67:4: should check returned error before deferring file.Close() (SA5001)
@@ -64,7 +52,18 @@ lib/urssaf/debit.go:113:5: this value of err is never used (SA4006)
 lib/urssaf/delai.go:145:2: this value of err is never used (SA4006)
 lib/urssaf/misc.go:47:18: error strings should not be capitalized (ST1005)
 lib/urssaf/misc.go:52:26: error strings should not be capitalized (ST1005)
-lib/urssaf/misc.go:79:6: func sliceIndex is unused (U1001)
 lib/urssaf/procol.go:109:13: empty branch (SA9003)
+
+## Files to remove?
+
+lib/engine/R.go
+
+## TODO
+
+lib/naf/main.go:187:6: func Naf5from1 is unused (U1001)
+lib/sfregexp/regexp.go:11:6: func PossibleRegexp is unused (U1001)
+lib/urssaf/ccsf.go:25:27: duplicate struct tag "json" (SA5008)
+lib/urssaf/ccsf.go:43:6: func batchToTime is unused (U1001)
+lib/urssaf/misc.go:79:6: func sliceIndex is unused (U1001)
 lib/urssaf/procol.go:136:2: this value of dateFormatee is never used (SA4006)
 main.go:38:6: func wshandler is unused (U1001)
