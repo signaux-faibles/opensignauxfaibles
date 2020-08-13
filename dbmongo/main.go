@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/globalsign/mgo/bson"
@@ -32,21 +31,6 @@ var wsupgrader = websocket.Upgrader{
 
 func checkOrigin(r *http.Request) bool {
 	return true
-}
-
-// wshandler connecteur WebSocket
-func wshandler(w http.ResponseWriter, r *http.Request, jwt string) {
-	conn, err := wsupgrader.Upgrade(w, r, nil)
-	if err != nil {
-		fmt.Printf("Failed to set websocket upgrade: %+v", err)
-		return
-	}
-	channel := make(chan engine.SocketMessage)
-	engine.AddClientChannel <- channel
-
-	for event := range channel {
-		conn.WriteJSON(event)
-	}
 }
 
 // main Fonction Principale

@@ -57,7 +57,3 @@ lib/urssaf/procol.go:109:13: empty branch (SA9003)
 ## Files to remove?
 
 lib/engine/R.go
-
-## TODO
-
-main.go:38:6: func wshandler is unused (U1001)
