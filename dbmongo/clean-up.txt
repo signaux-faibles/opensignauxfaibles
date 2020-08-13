@@ -1,28 +1,24 @@
 $ go run honnef.co/go/tools/cmd/staticcheck --unused.whole-program=true -- ./...
 
+## To fix
+
 handlers.go:40:2: this value of err is never used (SA4006)
-lib/altares/main.go:40:6: func sliceIndex is unused (U1001)
-lib/altares/main.go:50:6: func Parser is unused (U1001)
 lib/altares/main.go:75:4: this value of err is never used (SA4006)
+lib/crp/main.go:79:4: this value of err is never used (SA4006)
 lib/apconso/main.go:114:13: empty branch (SA9003)
 lib/apdemande/main.go:154:13: empty branch (SA9003)
-lib/crp/main.go:18:6: type CRP is unused (U1001)
-lib/crp/main.go:50:6: func Parser is unused (U1001)
-lib/crp/main.go:79:4: this value of err is never used (SA4006)
 lib/crp/main.go:110:13: empty branch (SA9003)
 lib/diane/main.go:364:2: should check returned error before deferring stdout.Close() (SA5001)
 lib/diane/main.go:371:2: should check returned error before deferring stderr.Close() (SA5001)
 lib/diane/main.go:432:2: redundant return statement (S1023)
-lib/engine/R.go:15:6: type Algo1 is unused (U1001)
-lib/engine/R.go:20:6: func algo1 is unused (U1001)
-lib/engine/R.go:22:2: this value of err is never used (SA4006)
-lib/engine/R.go:26:2: this value of err is never used (SA4006)
-lib/engine/R.go:27:2: this value of err is never used (SA4006)
-lib/engine/R.go:42:2: this value of err is never used (SA4006)
-lib/engine/R.go:48:6: func r is unused (U1001)
-lib/engine/adminBatch.go:50:6: type newFile is unused (U1001)
-lib/engine/adminBatch.go:69:26: func (*AdminBatch).New is unused (U1001)
 lib/engine/adminBatch.go:71:10: error strings should not be capitalized (ST1005)
+
+## Files to remove?
+
+lib/engine/R.go
+
+## TODO
+
 lib/engine/adminBatch.go:112:6: func addFileToBatch is unused (U1001)
 lib/engine/browse.go:31:6: type BrowseParams is unused (U1001)
 lib/engine/browse.go:44:6: func PredictionBrowse is unused (U1001)
