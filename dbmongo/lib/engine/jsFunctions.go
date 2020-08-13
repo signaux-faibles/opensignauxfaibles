@@ -180,6 +180,43 @@ package engine
     result.setUTCMonth(result.getUTCMonth() + nbMonth);
     return result;
 }`,
+"flatten": `/**
+ * Appelé par ` + "`" + `map()` + "`" + `, ` + "`" + `flatten()` + "`" + ` transforme les données importées (*Batches*)
+ * d'une entreprise ou établissement afin de retourner un unique objet *plat*
+ * contenant les valeurs finales de chaque type de données.
+ *
+ * Pour cela:
+ * - il supprime les clés ` + "`" + `compact.delete` + "`" + ` des *Batches* en entrées;
+ * - il agrège les propriétés apportées par chaque *Batch*, dans l'ordre chrono.
+ */
+function flatten(v, actual_batch) {
+    "use strict";
+    const res = Object.keys(v.batch || {})
+        .sort()
+        .filter((batch) => batch <= actual_batch)
+        .reduce((m, batch) => {
+        // Types intéressants = nouveaux types, ou types avec suppressions
+        const delete_types = Object.keys((v.batch[batch].compact || {}).delete || {});
+        const new_types = Object.keys(v.batch[batch]);
+        const all_interesting_types = [
+            ...new Set([...delete_types, ...new_types]),
+        ];
+        all_interesting_types.forEach((type) => {
+            var _a, _b;
+            m[type] = m[type] || {};
+            // On supprime les clés qu'il faut
+            const batchData = v.batch[batch];
+            const keysToDelete = ((_b = (_a = batchData === null || batchData === void 0 ? void 0 : batchData.compact) === null || _a === void 0 ? void 0 : _a.delete) === null || _b === void 0 ? void 0 : _b[type]) || [];
+            for (const hash of keysToDelete) {
+                if (typeof m[type] === "object" && m[type][hash])
+                    delete m[type][hash];
+            }
+            Object.assign(m[type], v.batch[batch][type]);
+        });
+        return m;
+    }, { key: v.key, scope: v.scope });
+    return res;
+}`,
 "forEachPopulatedProp": `// Appelle fct() pour chaque propriété définie (non undefined) de obj.
 // Contrat: obj ne doit contenir que les clés définies dans son type.
 function forEachPopulatedProp(obj, fct) {
@@ -879,36 +916,6 @@ db.getCollection("Features").createIndex({
 }`,
 "finalize": `function finalize(_key, val) {
     return val;
-}`,
-"flatten": `// Note: cette fonction a été copiée depuis reduce.algo2/flatten.ts
-// TODO: déplacer reduce.algo2/flatten.ts dans common/ puis la réutiliser aux deux endroits
-function flatten(v, actual_batch) {
-    "use strict";
-    const res = Object.keys(v.batch || {})
-        .sort()
-        .filter((batch) => batch <= actual_batch)
-        .reduce((m, batch) => {
-        // Types intéressants = nouveaux types, ou types avec suppressions
-        const delete_types = Object.keys((v.batch[batch].compact || {}).delete || {});
-        const new_types = Object.keys(v.batch[batch]);
-        const all_interesting_types = [
-            ...new Set([...delete_types, ...new_types]),
-        ];
-        all_interesting_types.forEach((type) => {
-            var _a, _b;
-            m[type] = m[type] || {};
-            // On supprime les clés qu'il faut
-            const batchData = v.batch[batch];
-            const keysToDelete = ((_b = (_a = batchData === null || batchData === void 0 ? void 0 : batchData.compact) === null || _a === void 0 ? void 0 : _a.delete) === null || _b === void 0 ? void 0 : _b[type]) || [];
-            for (const hash of keysToDelete) {
-                if (typeof m[type] === "object" && m[type][hash])
-                    delete m[type][hash];
-            }
-            Object.assign(m[type], v.batch[batch][type]);
-        });
-        return m;
-    }, { key: v.key, scope: v.scope });
-    return res;
 }`,
 "iterable": `function iterable(dict) {
     return typeof dict === "object" ? Object.keys(dict).map((h) => dict[h]) : [];
@@ -1729,43 +1736,6 @@ function delais(v, debitParPériode, intervalleTraitement) {
     else {
         return null;
     }
-}`,
-"flatten": `/**
- * Appelé par ` + "`" + `map()` + "`" + `, ` + "`" + `flatten()` + "`" + ` transforme les données importées (*Batches*)
- * d'une entreprise ou établissement afin de retourner un unique objet *plat*
- * contenant les valeurs finales de chaque type de données.
- *
- * Pour cela:
- * - il supprime les clés ` + "`" + `compact.delete` + "`" + ` des *Batches* en entrées;
- * - il agrège les propriétés apportées par chaque *Batch*, dans l'ordre chrono.
- */
-function flatten(v, actual_batch) {
-    "use strict";
-    const res = Object.keys(v.batch || {})
-        .sort()
-        .filter((batch) => batch <= actual_batch)
-        .reduce((m, batch) => {
-        // Types intéressants = nouveaux types, ou types avec suppressions
-        const delete_types = Object.keys((v.batch[batch].compact || {}).delete || {});
-        const new_types = Object.keys(v.batch[batch]);
-        const all_interesting_types = [
-            ...new Set([...delete_types, ...new_types]),
-        ];
-        all_interesting_types.forEach((type) => {
-            var _a, _b;
-            m[type] = m[type] || {};
-            // On supprime les clés qu'il faut
-            const batchData = v.batch[batch];
-            const keysToDelete = ((_b = (_a = batchData === null || batchData === void 0 ? void 0 : batchData.compact) === null || _a === void 0 ? void 0 : _a.delete) === null || _b === void 0 ? void 0 : _b[type]) || [];
-            for (const hash of keysToDelete) {
-                if (typeof m[type] === "object" && m[type][hash])
-                    delete m[type][hash];
-            }
-            Object.assign(m[type], v.batch[batch][type]);
-        });
-        return m;
-    }, { key: v.key, scope: v.scope });
-    return res;
 }`,
 "fraisFinancier": `function fraisFinancier(diane) {
     "use strict";

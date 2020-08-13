@@ -7,7 +7,7 @@
 import test, { ExecutionContext } from "ava"
 import "../globals"
 import { map } from "./map"
-import { flatten } from "./flatten"
+import { flatten } from "../common/flatten"
 import { effectifs } from "./effectifs"
 import { iterable } from "./iterable"
 import { sirene } from "./sirene"

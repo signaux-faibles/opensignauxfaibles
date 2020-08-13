@@ -11,7 +11,7 @@ const global = globalThis as any
 
 import "../globals"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
-import { flatten } from "./flatten"
+import { flatten } from "../common/flatten"
 import { diane } from "./diane"
 import { bdf } from "./bdf"
 import { iterable } from "./iterable"

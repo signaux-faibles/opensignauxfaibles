@@ -1,11 +1,18 @@
 export type FlattenedImportedData = {
   key: SiretOrSiren
   scope: Scope
-  crp?: unknown
+  crp?: unknown // exploité par le map-reduce "public" seulement
 } & BatchValue
 
-// Note: cette fonction a été copiée depuis reduce.algo2/flatten.ts
-// TODO: déplacer reduce.algo2/flatten.ts dans common/ puis la réutiliser aux deux endroits
+/**
+ * Appelé par `map()`, `flatten()` transforme les données importées (*Batches*)
+ * d'une entreprise ou établissement afin de retourner un unique objet *plat*
+ * contenant les valeurs finales de chaque type de données.
+ *
+ * Pour cela:
+ * - il supprime les clés `compact.delete` des *Batches* en entrées;
+ * - il agrège les propriétés apportées par chaque *Batch*, dans l'ordre chrono.
+ */
 export function flatten(
   v: CompanyDataValues,
   actual_batch: string
