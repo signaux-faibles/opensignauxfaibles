@@ -965,7 +965,6 @@ function flatten(v, actual_batch) {
     }
 }`,
 "reduce": `function reduce(_key, values) {
-    // if (key.scope = "entreprise") { // TODO: cette expression est toujours vraie var elle affecte "entreprise" à key.scope => à corriger
     return values.reduce((m, v) => {
         if (v.sirets) {
             // TODO: je n'ai pas trouvé d'affectation de valeur dans la propriété "sirets" => est-elle toujours d'actualité ?
@@ -975,8 +974,6 @@ function flatten(v, actual_batch) {
         Object.assign(m, v);
         return m;
     }, {});
-    // }
-    // return (values as unknown) as V // TODO: veut-on vraiment retourner values tel quel ? (tableau de type V[] au lieu d'objet de type V)
 }`,
 "sirene": `// Cette fonction retourne les données sirene les plus récentes
 function sirene(sireneArray) {
