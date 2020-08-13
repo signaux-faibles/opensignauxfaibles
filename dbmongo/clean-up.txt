@@ -29,7 +29,6 @@ lib/engine/R.go
 
 ## TODO
 
-lib/exportdatapi/detection.go:167:6: func computeEtablissement is unused (U1001)
 lib/exportdatapi/regions.go:28:5: var lienRegion is unused (U1001)
 lib/exportdatapi/regions.go:231:6: func ancienneRegionFromDepartement is unused (U1001)
 lib/exportdatapi/type.go:237:6: type DatapiDetection is unused (U1001)
