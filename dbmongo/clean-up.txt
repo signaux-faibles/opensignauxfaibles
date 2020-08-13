@@ -60,5 +60,4 @@ lib/engine/R.go
 
 ## TODO
 
-lib/urssaf/procol.go:136:2: this value of dateFormatee is never used (SA4006)
 main.go:38:6: func wshandler is unused (U1001)
