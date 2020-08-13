@@ -19,10 +19,6 @@ lib/engine/R.go
 
 ## TODO
 
-lib/engine/comments.go:6:6: type Comment is unused (U1001)
-lib/engine/comments.go:18:6: func GetComments is unused (U1001)
-lib/engine/comments.go:25:6: func GetCommentHistory is unused (U1001)
-lib/engine/comments.go:35:6: func SetComment is unused (U1001)
 lib/engine/data.go:61:2: field mergeLock is unused (U1001)
 lib/engine/data.go:161:2: this value of err is never used (SA4006)
 lib/engine/data.go:175:6: type object is unused (U1001)
