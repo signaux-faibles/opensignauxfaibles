@@ -60,7 +60,6 @@ lib/engine/R.go
 
 ## TODO
 
-lib/sfregexp/regexp.go:11:6: func PossibleRegexp is unused (U1001)
 lib/urssaf/ccsf.go:25:27: duplicate struct tag "json" (SA5008)
 lib/urssaf/ccsf.go:43:6: func batchToTime is unused (U1001)
 lib/urssaf/misc.go:79:6: func sliceIndex is unused (U1001)
