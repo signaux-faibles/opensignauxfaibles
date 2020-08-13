@@ -18,6 +18,10 @@ lib/engine/db.go:102:2: this value of err is never used (SA4006)
 lib/engine/db.go:48:10: error strings should not be capitalized (ST1005)
 lib/engine/event.go:42:10: error strings should not be capitalized (ST1005)
 lib/engine/filter.go:48:17: error strings should not be capitalized (ST1005)
+lib/engine/main.go:247:5: empty branch (SA9003)
+lib/engine/public.go:24:2: this value of err is never used (SA4006)
+lib/engine/reduce.go:50:10: error strings should not be capitalized (ST1005)
+lib/engine/reduce.go:258:15: error strings should not be capitalized (ST1005)
 
 ## Files to remove?
 
@@ -25,12 +29,6 @@ lib/engine/R.go
 
 ## TODO
 
-lib/engine/main.go:120:20: func Event.DebugReport is unused (U1001)
-lib/engine/main.go:132:20: func Event.WarningReport is unused (U1001)
-lib/engine/main.go:247:5: empty branch (SA9003)
-lib/engine/public.go:24:2: this value of err is never used (SA4006)
-lib/engine/reduce.go:50:10: error strings should not be capitalized (ST1005)
-lib/engine/reduce.go:258:15: error strings should not be capitalized (ST1005)
 lib/engine/tasks.go:9:6: func getTasks is unused (U1001)
 lib/engine/testing.go:10:6: func DiscardEvents is unused (U1001)
 lib/engine/testing.go:27:6: func AnalyseEvents is unused (U1001)
