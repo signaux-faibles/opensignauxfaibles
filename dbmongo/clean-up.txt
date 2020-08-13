@@ -1,8 +1,6 @@
 $ go run honnef.co/go/tools/cmd/staticcheck --unused.whole-program=true -- ./...
 
-browse.go:11:6: func predictionBrowseHandler is unused (U1001)
 handlers.go:40:2: this value of err is never used (SA4006)
-lib/altares/main.go:17:6: type Altares is unused (U1001)
 lib/altares/main.go:40:6: func sliceIndex is unused (U1001)
 lib/altares/main.go:50:6: func Parser is unused (U1001)
 lib/altares/main.go:75:4: this value of err is never used (SA4006)
