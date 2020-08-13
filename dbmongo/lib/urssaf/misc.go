@@ -74,13 +74,3 @@ func urssafToPeriod(urssaf string) (misc.Periode, error) {
 	}
 	return period, nil
 }
-
-// sliceIndex retourne la position du premier élément qui satisfait le prédicat
-func sliceIndex(limit int, predicate func(i int) bool) int {
-	for i := 0; i < limit; i++ {
-		if predicate(i) {
-			return i
-		}
-	}
-	return -1
-}
