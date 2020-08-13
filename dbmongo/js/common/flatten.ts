@@ -1,7 +1,8 @@
 export type FlattenedImportedData = {
   key: SiretOrSiren
   scope: Scope
-} & Partial<BatchValue>
+  crp?: unknown // exploité par le map-reduce "public" seulement
+} & BatchValue
 
 /**
  * Appelé par `map()`, `flatten()` transforme les données importées (*Batches*)

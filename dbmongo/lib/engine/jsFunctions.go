@@ -180,6 +180,43 @@ package engine
     result.setUTCMonth(result.getUTCMonth() + nbMonth);
     return result;
 }`,
+"flatten": `/**
+ * Appelé par ` + "`" + `map()` + "`" + `, ` + "`" + `flatten()` + "`" + ` transforme les données importées (*Batches*)
+ * d'une entreprise ou établissement afin de retourner un unique objet *plat*
+ * contenant les valeurs finales de chaque type de données.
+ *
+ * Pour cela:
+ * - il supprime les clés ` + "`" + `compact.delete` + "`" + ` des *Batches* en entrées;
+ * - il agrège les propriétés apportées par chaque *Batch*, dans l'ordre chrono.
+ */
+function flatten(v, actual_batch) {
+    "use strict";
+    const res = Object.keys(v.batch || {})
+        .sort()
+        .filter((batch) => batch <= actual_batch)
+        .reduce((m, batch) => {
+        // Types intéressants = nouveaux types, ou types avec suppressions
+        const delete_types = Object.keys((v.batch[batch].compact || {}).delete || {});
+        const new_types = Object.keys(v.batch[batch]);
+        const all_interesting_types = [
+            ...new Set([...delete_types, ...new_types]),
+        ];
+        all_interesting_types.forEach((type) => {
+            var _a, _b;
+            m[type] = m[type] || {};
+            // On supprime les clés qu'il faut
+            const batchData = v.batch[batch];
+            const keysToDelete = ((_b = (_a = batchData === null || batchData === void 0 ? void 0 : batchData.compact) === null || _a === void 0 ? void 0 : _a.delete) === null || _b === void 0 ? void 0 : _b[type]) || [];
+            for (const hash of keysToDelete) {
+                if (typeof m[type] === "object" && m[type][hash])
+                    delete m[type][hash];
+            }
+            Object.assign(m[type], v.batch[batch][type]);
+        });
+        return m;
+    }, { key: v.key, scope: v.scope });
+    return res;
+}`,
 "forEachPopulatedProp": `// Appelle fct() pour chaque propriété définie (non undefined) de obj.
 // Contrat: obj ne doit contenir que les clés définies dans son type.
 function forEachPopulatedProp(obj, fct) {
@@ -721,12 +758,14 @@ db.getCollection("Features").createIndex({
 },
 "public":{
 "apconso": `function apconso(apconso) {
-  "use strict";
-  return f.iterable(apconso).sort((p1, p2) => p1.periode < p2.periode)
+    return f
+        .iterable(apconso)
+        .sort((p1, p2) => (p1.periode < p2.periode ? 1 : -1));
 }`,
 "apdemande": `function apdemande(apdemande) {
-  "use strict";
-  return f.iterable(apdemande).sort((p1, p2) => p1.periode < p2.periode)
+    return f
+        .iterable(apdemande)
+        .sort((p1, p2) => (p1.periode < p2.periode ? 1 : -1));
 }`,
 "bdf": `function bdf(hs) {
     "use strict";
@@ -735,36 +774,27 @@ db.getCollection("Features").createIndex({
         .sort((a, b) => (a.annee_bdf < b.annee_bdf ? 1 : -1));
 }`,
 "compte": `function compte(compte) {
-  "use strict";
-  const c = f.iterable(compte)
-  return (c.length>0)?c[c.length-1]:undefined
+    const c = f.iterable(compte);
+    return c.length > 0 ? c[c.length - 1] : undefined;
 }`,
-"cotisations": `function cotisations(vcotisation) {
-  "use strict";
-  var offset_cotisation = 0 
-  var value_cotisation = {}
-  
-  // Répartition des cotisations sur toute la période qu'elle concerne
-  vcotisation = vcotisation || {}
-  Object.keys(vcotisation).forEach(function (h) {
-    var cotisation = vcotisation[h]
-    var periode_cotisation = f.generatePeriodSerie(cotisation.periode.start, cotisation.periode.end)
-    periode_cotisation.forEach(date_cotisation => {
-      let date_offset = f.dateAddMonth(date_cotisation, offset_cotisation)
-      value_cotisation[date_offset.getTime()] = (value_cotisation[date_offset.getTime()] || []).concat(cotisation.du / periode_cotisation.length)
-    })
-  })
+"cotisations": `function cotisations(vcotisation = {}) {
 
-  var output_cotisation = []
-
-  serie_periode.forEach(p => {
-    output_cotisation.push(
-      (value_cotisation[p.getTime()] || []) 
-        .reduce((m,c) => m+c, 0)
-    )
-  })
-
-  return(output_cotisation)
+    const offset_cotisation = 0;
+    const value_cotisation = {};
+    // Répartition des cotisations sur toute la période qu'elle concerne
+    Object.keys(vcotisation).forEach(function (h) {
+        const cotisation = vcotisation[h];
+        const periode_cotisation = f.generatePeriodSerie(cotisation.periode.start, cotisation.periode.end);
+        periode_cotisation.forEach((date_cotisation) => {
+            const date_offset = f.dateAddMonth(date_cotisation, offset_cotisation);
+            value_cotisation[date_offset.getTime()] = (value_cotisation[date_offset.getTime()] || []).concat([cotisation.du / periode_cotisation.length]);
+        });
+    });
+    const output_cotisation = [];
+    serie_periode.forEach((p) => {
+        output_cotisation.push((value_cotisation[p.getTime()] || []).reduce((m, c) => m + c, 0));
+    });
+    return output_cotisation;
 }`,
 "dateAddDay": `function dateAddDay(date, nbDays) {
     "use strict";
@@ -772,115 +802,96 @@ db.getCollection("Features").createIndex({
     result.setDate(result.getDate() + nbDays);
     return result;
 }`,
-"dealWithProcols": `function dealWithProcols(data_source, altar_or_procol, output_indexed){
-  "use strict";
-  return Object.keys(data_source || {}).reduce((events,hash) => {
-    var the_event = data_source[hash]
+"dealWithProcols": `function dealWithProcols(data_source = {}, altar_or_procol) {
 
-    let etat = {}
-    if (altar_or_procol == "altares")
-      etat = f.altaresToHuman(the_event.code_evenement);
-    else if (altar_or_procol == "procol")
-      etat = f.procolToHuman(the_event.action_procol, the_event.stade_procol);
-
-    if (etat != null)
-      events.push({"etat": etat, "date_procol": new Date(the_event.date_effet)})
-
-    return(events)
-  },[]).sort(
-    (a,b) => {return(a.date_procol.getTime() > b.date_procol.getTime())}
-  )
+    return Object.keys(data_source)
+        .reduce((events, hash) => {
+        const the_event = data_source[hash];
+        let etat = null;
+        if (altar_or_procol === "altares")
+            etat = f.altaresToHuman(the_event.code_evenement);
+        else if (altar_or_procol === "procol")
+            etat = f.procolToHuman(the_event.action_procol, the_event.stade_procol);
+        if (etat !== null)
+            events.push({ etat, date_procol: new Date(the_event.date_effet) });
+        return events;
+    }, [])
+        .sort((a, b) => a.date_procol.getTime() - b.date_procol.getTime());
 }`,
-"debits": `function debits(vdebit) {
-  "use strict";
+"debits": `function debits(vdebit = {}) {
 
-  const last_treatment_day = 20
-  vdebit = vdebit || {}
-  var ecn = Object.keys(vdebit).reduce((accu, h) => {
-      let debit = vdebit[h]
-      var start = debit.periode.start
-      var end = debit.periode.end
-      var num_ecn = debit.numero_ecart_negatif
-      var compte = debit.numero_compte
-      var key = start + "-" + end + "-" + num_ecn + "-" + compte
-      accu[key] = (accu[key] || []).concat([{
-          "hash": h,
-          "numero_historique": debit.numero_historique,
-          "date_traitement": debit.date_traitement
-      }]) 
-      return accu
-  }, {})
-
-  Object.keys(ecn).forEach(i => {
-      ecn[i].sort(f.compareDebit)
-      var l = ecn[i].length
-      ecn[i].forEach((e, idx) => {
-          if (idx <= l - 2) {
-              vdebit[e.hash].debit_suivant = ecn[i][idx + 1].hash;
-          }
-      })
-  })
-
-  var value_dette = {}
-
-  Object.keys(vdebit).forEach(function (h) {
-    var debit = vdebit[h]
-
-    var debit_suivant = (vdebit[debit.debit_suivant] || {"date_traitement" : date_fin})
-    
-    //Selon le jour du traitement, cela passe sur la période en cours ou sur la suivante. 
-    let jour_traitement = debit.date_traitement.getUTCDate() 
-    let jour_traitement_suivant = debit_suivant.date_traitement.getUTCDate()
-    let date_traitement_debut
-    if (jour_traitement <= last_treatment_day){
-      date_traitement_debut = new Date(
-        Date.UTC(debit.date_traitement.getFullYear(), debit.date_traitement.getUTCMonth())
-      )
-    } else {
-      date_traitement_debut = new Date(
-        Date.UTC(debit.date_traitement.getFullYear(), debit.date_traitement.getUTCMonth() + 1)
-      )
-    }
-
-    let date_traitement_fin
-    if (jour_traitement_suivant <= last_treatment_day) {
-      date_traitement_fin = new Date(
-        Date.UTC(debit_suivant.date_traitement.getFullYear(), debit_suivant.date_traitement.getUTCMonth())
-      )
-    } else {
-      date_traitement_fin = new Date(
-        Date.UTC(debit_suivant.date_traitement.getFullYear(), debit_suivant.date_traitement.getUTCMonth() + 1)
-      )
-    }
-
-    let periode_debut = date_traitement_debut
-    let periode_fin = date_traitement_fin
-
-    //generatePeriodSerie exlue la dernière période
-    f.generatePeriodSerie(periode_debut, periode_fin).map(date => {
-      let time = date.getTime()
-      value_dette[time] = (value_dette[time] || []).concat([{ "periode": debit.periode.start, "part_ouvriere": debit.part_ouvriere, "part_patronale": debit.part_patronale, "montant_majorations": debit.montant_majorations}])
-    })
-  })    
-
-  const output_dette = []
-  serie_periode.forEach(p => {
-    output_dette.push(
-      (value_dette[p.getTime()] || [])
-        .reduce((m,c) => {
-          return {
-            part_ouvriere: m.part_ouvriere + c.part_ouvriere,
-            part_patronale: m.part_patronale + c.part_patronale,
-            periode: f.dateAddDay(f.dateAddMonth(p,1),-1) }
-          }, {part_ouvriere: 0, part_patronale: 0})
-    )
-  })
-
-  return(output_dette)
+    const last_treatment_day = 20;
+    const ecn = Object.keys(vdebit).reduce((accu, h) => {
+        const debit = vdebit[h];
+        const start = debit.periode.start;
+        const end = debit.periode.end;
+        const num_ecn = debit.numero_ecart_negatif;
+        const compte = debit.numero_compte;
+        const key = start + "-" + end + "-" + num_ecn + "-" + compte;
+        accu[key] = (accu[key] || []).concat([
+            {
+                hash: h,
+                numero_historique: debit.numero_historique,
+                date_traitement: debit.date_traitement,
+            },
+        ]);
+        return accu;
+    }, {});
+    Object.keys(ecn).forEach((i) => {
+        ecn[i].sort(f.compareDebit);
+        const l = ecn[i].length;
+        ecn[i].forEach((e, idx) => {
+            if (idx <= l - 2) {
+                vdebit[e.hash].debit_suivant = ecn[i][idx + 1].hash;
+            }
+        });
+    });
+    const value_dette = {};
+    Object.keys(vdebit).forEach(function (h) {
+        const debit = vdebit[h];
+        const debit_suivant = vdebit[debit.debit_suivant] || {
+            date_traitement: date_fin,
+        };
+        //Selon le jour du traitement, cela passe sur la période en cours ou sur la suivante.
+        const jour_traitement = debit.date_traitement.getUTCDate();
+        const jour_traitement_suivant = debit_suivant.date_traitement.getUTCDate();
+        let date_traitement_debut;
+        if (jour_traitement <= last_treatment_day) {
+            date_traitement_debut = new Date(Date.UTC(debit.date_traitement.getFullYear(), debit.date_traitement.getUTCMonth()));
+        }
+        else {
+            date_traitement_debut = new Date(Date.UTC(debit.date_traitement.getFullYear(), debit.date_traitement.getUTCMonth() + 1));
+        }
+        let date_traitement_fin;
+        if (jour_traitement_suivant <= last_treatment_day) {
+            date_traitement_fin = new Date(Date.UTC(debit_suivant.date_traitement.getFullYear(), debit_suivant.date_traitement.getUTCMonth()));
+        }
+        else {
+            date_traitement_fin = new Date(Date.UTC(debit_suivant.date_traitement.getFullYear(), debit_suivant.date_traitement.getUTCMonth() + 1));
+        }
+        const periode_debut = date_traitement_debut;
+        const periode_fin = date_traitement_fin;
+        //generatePeriodSerie exlue la dernière période
+        f.generatePeriodSerie(periode_debut, periode_fin).map((date) => {
+            const time = date.getTime();
+            value_dette[time] = (value_dette[time] || []).concat([
+                {
+                    periode: debit.periode.start,
+                    part_ouvriere: debit.part_ouvriere,
+                    part_patronale: debit.part_patronale,
+                    montant_majorations: debit.montant_majorations || 0,
+                },
+            ]);
+        });
+    });
+    return serie_periode.map((p) => (value_dette[p.getTime()] || []).reduce((m, c) => ({
+        part_ouvriere: m.part_ouvriere + c.part_ouvriere,
+        part_patronale: m.part_patronale + c.part_patronale,
+        periode: f.dateAddDay(f.dateAddMonth(p, 1), -1),
+    }), { part_ouvriere: 0, part_patronale: 0 }));
 }`,
 "delai": `function delai(delai) {
-  "use strict";
-  return f.iterable(delai)
+    return f.iterable(delai);
 }`,
 "diane": `function diane(hs) {
     "use strict";
@@ -888,139 +899,92 @@ db.getCollection("Features").createIndex({
         .iterable(hs)
         .sort((a, b) => (a.exercice_diane < b.exercice_diane ? 1 : -1));
 }`,
-"effectifs": `function effectifs(v) {
-  "use strict";
-  var mapEffectif = {}
-  f.iterable(v.effectif).forEach(e => {
-    mapEffectif[e.periode.getTime()] = (mapEffectif[e.periode.getTime()] || 0) + e.effectif
-  })
-  return serie_periode.map(p => {
-    return {
-      periode: p,
-      effectif: mapEffectif[p.getTime()] || null
-    }
-  }).filter(p => p.effectif)
+"effectifs": `function effectifs(effectif) {
+    const mapEffectif = {};
+    f.iterable(effectif).forEach((e) => {
+        mapEffectif[e.periode.getTime()] =
+            (mapEffectif[e.periode.getTime()] || 0) + e.effectif;
+    });
+    return serie_periode
+        .map((p) => {
+        return {
+            periode: p,
+            effectif: mapEffectif[p.getTime()] || null,
+        };
+    })
+        .filter((p) => p.effectif);
 }`,
-"finalize": `function finalize(_, v) {
-  "use strict";
-  return v
-}`,
-"flatten": `function flatten(v, actual_batch) {
-  "use strict";
-  var res = Object.keys(v.batch || {})
-    .sort()
-    .filter(batch => batch <= actual_batch)
-    .reduce((m, batch) => {
-
-      // Types intéressants = nouveaux types, ou types avec suppressions
-      var delete_types = Object.keys((v.batch[batch].compact || {}).delete || {})
-      var new_types =  Object.keys(v.batch[batch])
-      var all_interesting_types = [...new Set([...delete_types, ...new_types])]
-
-      all_interesting_types.forEach(type => {
-        m[type] = (m[type] || {})
-        // On supprime les clés qu'il faut
-        if (v.batch[batch] && v.batch[batch].compact && v.batch[batch].compact.delete &&
-          v.batch[batch].compact.delete[type] && v.batch[batch].compact.delete[type] != {}) {
-
-          v.batch[batch].compact.delete[type].forEach(hash => {
-            delete m[type][hash]
-          })
-        }
-        Object.assign(m[type], v.batch[batch][type])
-      })
-      return m
-    }, { "key": v.key, scope: v.scope })
-
-  return(res)
-}`,
-"idEntreprise": `function idEntreprise(idEtablissement) {
-  "use strict";
-  return {
-    scope: 'entreprise',
-    key: idEtablissement.slice(0,9),
-    batch: actual_batch
-  }
+"finalize": `function finalize(_key, val) {
+    return val;
 }`,
 "iterable": `function iterable(dict) {
-  "use strict";
-  try {
-    return Object.keys(dict).map(h => {
-      return dict[h]
-    })
-  } catch(error) {
-    return []
-  }
+    return typeof dict === "object" ? Object.keys(dict).map((h) => dict[h]) : [];
 }`,
 "map": `function map() {
-  "use strict";
-  var value = f.flatten(this.value, actual_batch)
 
-  if (this.value.scope=="etablissement") {
-    let vcmde = {}
-    vcmde.key = this.value.key
-    vcmde.batch = actual_batch
-    vcmde.effectif = f.effectifs(value)
-    vcmde.dernier_effectif = vcmde.effectif[vcmde.effectif.length - 1]
-    vcmde.sirene = f.sirene(f.iterable(value.sirene))
-    vcmde.cotisation = f.cotisations(value.cotisation)
-    vcmde.debit = f.debits(value.debit)
-    vcmde.apconso = f.apconso(value.apconso)
-    vcmde.apdemande = f.apconso(value.apdemande)
-    vcmde.delai = f.delai(value.delai)
-    vcmde.compte = f.compte(value.compte)
-    vcmde.procol = f.dealWithProcols(value.altares, "altares",  null).concat(f.dealWithProcols(value.procol, "procol",  null))
-    vcmde.last_procol = vcmde.procol[vcmde.procol.length - 1] || {"etat": "in_bonis"}
-    vcmde.idEntreprise = "entreprise_" + this.value.key.slice(0,9)
-    vcmde.procol = value.procol
-
-    emit("etablissement_" + this.value.key, vcmde)
-  }
-  else if (this.value.scope == "entreprise") {
-    let v = {}
-    let diane = f.diane(value.diane)
-    let bdf = f.bdf(value.bdf)
-    let sirene_ul = (value.sirene_ul || {})[Object.keys(value.sirene_ul || {})[0] || ""]
-    let crp = value.crp
-    v.key = this.value.key
-    v.batch = actual_batch
-    
-    if (diane.length > 0) {
-      v.diane = diane
+    const value = f.flatten(this.value, actual_batch);
+    if (this.value.scope === "etablissement") {
+        const vcmde = {};
+        vcmde.key = this.value.key;
+        vcmde.batch = actual_batch;
+        vcmde.effectif = f.effectifs(value.effectif);
+        vcmde.dernier_effectif = vcmde.effectif[vcmde.effectif.length - 1];
+        vcmde.sirene = f.sirene(f.iterable(value.sirene));
+        vcmde.cotisation = f.cotisations(value.cotisation);
+        vcmde.debit = f.debits(value.debit);
+        vcmde.apconso = f.apconso(value.apconso);
+        vcmde.apdemande = f.apdemande(value.apdemande);
+        vcmde.delai = f.delai(value.delai);
+        vcmde.compte = f.compte(value.compte);
+        vcmde.procol = undefined; // Note: initialement, l'expression ci-dessous était affectée à vcmde.procol, puis écrasée plus bas. J'initialise quand même vcmde.procol ici pour ne pas faire échouer test-api.sh sur l'ordre des propriétés.
+        const procol = [
+            ...f.dealWithProcols(value.altares, "altares"),
+            ...f.dealWithProcols(value.procol, "procol"),
+        ];
+        vcmde.last_procol = procol[procol.length - 1] || { etat: "in_bonis" };
+        vcmde.idEntreprise = "entreprise_" + this.value.key.slice(0, 9);
+        vcmde.procol = value.procol;
+        emit("etablissement_" + this.value.key, vcmde);
     }
-    if (bdf.length > 0) {
-      v.bdf = bdf
+    else if (this.value.scope === "entreprise") {
+        const v = {};
+        const diane = f.diane(value.diane);
+        const bdf = f.bdf(value.bdf);
+        const sirene_ul = (value.sirene_ul || {})[Object.keys(value.sirene_ul || {})[0] || ""];
+        const crp = value.crp;
+        v.key = this.value.key;
+        v.batch = actual_batch;
+        if (diane.length > 0) {
+            v.diane = diane;
+        }
+        if (bdf.length > 0) {
+            v.bdf = bdf;
+        }
+        if (sirene_ul) {
+            v.sirene_ul = sirene_ul;
+        }
+        if (crp) {
+            v.crp = crp;
+        }
+        if (Object.keys(v) !== []) {
+            emit("entreprise_" + this.value.key, v);
+        }
     }
-    if (sirene_ul) {
-      v.sirene_ul = sirene_ul
-    }
-    if (crp) {
-      v.crp = crp
-    }
-    if (Object.keys(v) != []) {
-      emit("entreprise_" + this.value.key, v)
-    }
-  }
 }`,
-"reduce": `function reduce(key, values) {
-  "use strict";
-  if (key.scope="entreprise") {
-    values = values.reduce((m, v) => {
-      if (v.sirets) {
-        m.sirets = (m.sirets || []).concat(v.sirets)
-        delete v.sirets
-      }
-      Object.assign(m, v)
-      return m
-    }, {})
-  }
-  return values
+"reduce": `function reduce(_key, values) {
+    return values.reduce((m, v) => {
+        if (v.sirets) {
+            // TODO: je n'ai pas trouvé d'affectation de valeur dans la propriété "sirets" => est-elle toujours d'actualité ?
+            m.sirets = (m.sirets || []).concat(v.sirets);
+            delete v.sirets;
+        }
+        Object.assign(m, v);
+        return m;
+    }, {});
 }`,
-"sirene": `function sirene(sireneArray) {
-  "use strict";
-  return sireneArray.reduce((accu, k) => {
-    return k
-  }, {})
+"sirene": `// Cette fonction retourne les données sirene les plus récentes
+function sirene(sireneArray) {
+    return sireneArray[sireneArray.length - 1] || {}; // TODO: vérifier que sireneArray est bien classé dans l'ordre chronologique
 }`,
 },
 "purgeBatch":{
@@ -1772,43 +1736,6 @@ function delais(v, debitParPériode, intervalleTraitement) {
     else {
         return null;
     }
-}`,
-"flatten": `/**
- * Appelé par ` + "`" + `map()` + "`" + `, ` + "`" + `flatten()` + "`" + ` transforme les données importées (*Batches*)
- * d'une entreprise ou établissement afin de retourner un unique objet *plat*
- * contenant les valeurs finales de chaque type de données.
- *
- * Pour cela:
- * - il supprime les clés ` + "`" + `compact.delete` + "`" + ` des *Batches* en entrées;
- * - il agrège les propriétés apportées par chaque *Batch*, dans l'ordre chrono.
- */
-function flatten(v, actual_batch) {
-    "use strict";
-    const res = Object.keys(v.batch || {})
-        .sort()
-        .filter((batch) => batch <= actual_batch)
-        .reduce((m, batch) => {
-        // Types intéressants = nouveaux types, ou types avec suppressions
-        const delete_types = Object.keys((v.batch[batch].compact || {}).delete || {});
-        const new_types = Object.keys(v.batch[batch]);
-        const all_interesting_types = [
-            ...new Set([...delete_types, ...new_types]),
-        ];
-        all_interesting_types.forEach((type) => {
-            var _a, _b;
-            m[type] = m[type] || {};
-            // On supprime les clés qu'il faut
-            const batchData = v.batch[batch];
-            const keysToDelete = ((_b = (_a = batchData === null || batchData === void 0 ? void 0 : batchData.compact) === null || _a === void 0 ? void 0 : _a.delete) === null || _b === void 0 ? void 0 : _b[type]) || [];
-            for (const hash of keysToDelete) {
-                if (typeof m[type] === "object" && m[type][hash])
-                    delete m[type][hash];
-            }
-            Object.assign(m[type], v.batch[batch][type]);
-        });
-        return m;
-    }, { key: v.key, scope: v.scope });
-    return res;
 }`,
 "fraisFinancier": `function fraisFinancier(diane) {
     "use strict";
