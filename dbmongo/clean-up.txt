@@ -29,9 +29,6 @@ lib/engine/R.go
 
 ## TODO
 
-lib/engine/testing.go:10:6: func DiscardEvents is unused (U1001)
-lib/engine/testing.go:27:6: func AnalyseEvents is unused (U1001)
-lib/engine/testing.go:29:7: type abstractData is unused (U1001)
 lib/engine/type.go:80:6: type Browseable is unused (U1001)
 lib/exportdatapi/detection.go:167:6: func computeEtablissement is unused (U1001)
 lib/exportdatapi/regions.go:28:5: var lienRegion is unused (U1001)
