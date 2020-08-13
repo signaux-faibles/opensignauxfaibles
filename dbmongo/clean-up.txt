@@ -25,7 +25,6 @@ lib/engine/R.go
 
 ## TODO
 
-lib/engine/groupSectors.go:8:6: func groupSectorsAggregation is unused (U1001)
 lib/engine/main.go:120:20: func Event.DebugReport is unused (U1001)
 lib/engine/main.go:132:20: func Event.WarningReport is unused (U1001)
 lib/engine/main.go:247:5: empty branch (SA9003)
