@@ -1,4 +1,4 @@
-import { flatten } from "./flatten"
+import { flatten } from "../common/flatten"
 import { outputs, DonnéesAgrégées } from "./outputs"
 import { apart } from "./apart"
 import { compte } from "./compte"
