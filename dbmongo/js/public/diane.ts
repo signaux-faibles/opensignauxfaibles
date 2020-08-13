@@ -1,10 +1,8 @@
 import * as f from "./iterable"
 
-type Diane = { exercice_diane: number }
-
-export function diane(hs: Record<string | number, Diane>): Diane[] {
+export function diane(hs?: Record<string, EntréeDiane>): EntréeDiane[] {
   "use strict"
   return f
-    .iterable<Diane>(hs)
+    .iterable<EntréeDiane>(hs)
     .sort((a, b) => (a.exercice_diane < b.exercice_diane ? 1 : -1))
 }
