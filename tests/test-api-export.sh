@@ -137,7 +137,7 @@ CONTENTS
 tests/helpers/mongodb-container.sh run < "${DATA_DIR}/db_popul.js" >/dev/null
 
 echo ""
-echo "💎 Computing Features and Public collections thru dbmongo API..."
+echo "💎 Computing the Public collection thru dbmongo API..."
 tests/helpers/dbmongo-server.sh start
 echo "- POST /api/data/compact 👉 $(http --print=b --ignore-stdin :5000/api/data/compact fromBatchKey=2002_1)"
 echo "- POST /api/data/public 👉 $(http --print=b --ignore-stdin :5000/api/data/public batch=2002_1 key=.........)" # we specify a placeholder value as key, so that PublicOne() is run instead of Public(), so the data is generated for etablissements that don't have effectif values, and therefore are outside of the "algo2" scope.
