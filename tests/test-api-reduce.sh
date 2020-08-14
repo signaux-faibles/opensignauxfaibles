@@ -18,7 +18,6 @@ function teardown {
     tests/helpers/dbmongo-server.sh stop || true # keep tearing down, even if "No matching processes belonging to you were found"
     tests/helpers/mongodb-container.sh stop
     rm -rf "${DATA_DIR}"
-    echo "✨ Cleaned up temp directory"
 }
 trap teardown EXIT
 
