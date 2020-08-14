@@ -70,8 +70,7 @@ echo "🕵️‍♀️ Checking resulting Features..."
 CONTENT
 
 # Display JS errors logged by MongoDB, if any
-sudo docker logs sf-mongodb | grep --color=always "uncaught exception" || true
-# TODO extract to tests/helpers/mongodb-container.sh
+tests/helpers/mongodb-container.sh exceptions || true
 
 echo ""
 # Check if the --update flag was passed
