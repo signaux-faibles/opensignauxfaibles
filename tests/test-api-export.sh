@@ -9,6 +9,7 @@ tests/helpers/mongodb-container.sh stop
 set -e # will stop the script if any command fails with a non-zero exit code
 
 # Setup
+FLAGS="$*" # the script will update the golden file if "--update" flag was provided as 1st argument
 COLOR_YELLOW='\033[1;33m'
 COLOR_DEFAULT='\033[0m'
 ETAB_GOLDEN_FILE="tests/output-snapshots/test-api-export-etablissements.golden.json"
@@ -183,22 +184,8 @@ echo "- GET /api/data/etablissements 👉 ${ETABLISSEMENTS_FILE}"
 ENTREPRISES_FILE=dbmongo/$(http --print=b --ignore-stdin GET :5000/api/data/entreprises | tr -d '"')
 echo "- GET /api/data/entreprises 👉 ${ENTREPRISES_FILE}"
 
-echo ""
-# Check if the --update flag was passed
-if [[ "$*" == *--update* ]]
-then
-    echo "🖼  Updating golden master file using ${ETABLISSEMENTS_FILE}..."
-    cp "${ETABLISSEMENTS_FILE}" "${ETAB_GOLDEN_FILE}"
-    echo "🖼  Updating golden master file using ${ENTREPRISES_FILE}..."
-    cp "${ENTREPRISES_FILE}" "${ENTR_GOLDEN_FILE}"
-else
-    # Diff between expected and actual output
-    echo -e "${COLOR_YELLOW}"
-    diff --brief "${ETAB_GOLDEN_FILE}" "${ETABLISSEMENTS_FILE}" # will stop the script if files are different
-    diff --brief "${ENTR_GOLDEN_FILE}" "${ENTREPRISES_FILE}" # will stop the script if files are different
-    echo -e "${COLOR_DEFAULT}"
-    echo "✅ No diff. The export worked as expected."
-fi
+tests/helpers/diff-or-update-golden-master.sh "${FLAGS}" "${ETAB_GOLDEN_FILE}" "${ETABLISSEMENTS_FILE}"
+tests/helpers/diff-or-update-golden-master.sh "${FLAGS}" "${ENTR_GOLDEN_FILE}" "${ENTREPRISES_FILE}"
 
 rm "${ETABLISSEMENTS_FILE}" "${ENTREPRISES_FILE}"
 rm -rf "${TMP_DIR}"
