@@ -7,6 +7,9 @@ CONTAINER="sf-mongodb"
 IMAGE="mongo:4.2@sha256:1c2243a5e21884ffa532ca9d20c221b170d7b40774c235619f98e2f6eaec520a"
 DATABASE="signauxfaibles"
 
+# Add prefix to stderr stream
+exec 2> >(sed 's/^/[DB]/' >&2)
+
 case ${COMMAND} in
   stop) sudo docker stop "${CONTAINER}" &>/dev/null; exit ;;
   start) sudo docker run --name "${CONTAINER}" --publish "${PORT}:27017" --detach --rm "${IMAGE}" >/dev/null; exit ;;
