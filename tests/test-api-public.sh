@@ -27,28 +27,8 @@ MONGODB_PORT="27016" tests/helpers/dbmongo-server.sh setup
 echo ""
 echo "📝 Inserting test data..."
 sleep 1 # give some time for MongoDB to start
-
-cat > "${TMP_DIR}/db_popul.js" << CONTENTS
-  db.Admin.insertOne({
-    "_id" : {
-        "key" : "1905",
-        "type" : "batch"
-    },
-    "param" : {
-        "date_debut" : ISODate("2014-01-01T00:00:00.000+0000"),
-        "date_fin" : ISODate("2016-01-01T00:00:00.000+0000"),
-        "date_fin_effectif" : ISODate("2016-03-01T00:00:00.000+0000")
-    },
-    "name" : "TestData"
-  })
-
-  db.RawData.insertMany(
-CONTENTS
-node -e "console.log(require('./dbmongo/js/test/data/objects.js').makeObjects.toString().replace('ISODate => ([', '[').replace('])', ']'))" \
-  >> "${TMP_DIR}/db_popul.js"
-echo ")" >> "${TMP_DIR}/db_popul.js"
-
-tests/helpers/mongodb-container.sh run < "${TMP_DIR}/db_popul.js" >/dev/null
+tests/helpers/populate-from-objects.sh \
+  | tests/helpers/mongodb-container.sh run >/dev/null
 
 echo ""
 echo "💎 Computing the Public collection thru dbmongo API..."
