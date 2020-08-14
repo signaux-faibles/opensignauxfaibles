@@ -35,7 +35,6 @@ echo ""
 echo "📝 Inserting test data..."
 sleep 1 # give some time for MongoDB to start
 cat > "${TMP_DIR}/db_popul.js" << CONTENTS
-  db.Admin.remove({})
   db.Admin.insertOne({
     "_id" : {
         "key" : "2002_1",
@@ -49,9 +48,6 @@ cat > "${TMP_DIR}/db_popul.js" << CONTENTS
     "name" : "TestData"
   })
 
-  db.Features_TestData.remove({})
-
-  db.RawData.remove({})
   db.RawData.insertMany(
 CONTENTS
 cat >> "${TMP_DIR}/db_popul.js" < tests/input-data/RawData.sample.json

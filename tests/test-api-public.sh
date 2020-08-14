@@ -29,7 +29,6 @@ echo "📝 Inserting test data..."
 sleep 1 # give some time for MongoDB to start
 
 cat > "${TMP_DIR}/db_popul.js" << CONTENTS
-  db.Admin.remove({})
   db.Admin.insertOne({
     "_id" : {
         "key" : "1905",
@@ -43,9 +42,6 @@ cat > "${TMP_DIR}/db_popul.js" << CONTENTS
     "name" : "TestData"
   })
 
-  db.Features_TestData.remove({})
-
-  db.RawData.remove({})
   db.RawData.insertMany(
 CONTENTS
 node -e "console.log(require('./dbmongo/js/test/data/objects.js').makeObjects.toString().replace('ISODate => ([', '[').replace('])', ']'))" \

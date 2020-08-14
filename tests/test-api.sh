@@ -30,7 +30,6 @@ echo "📝 Inserting test data..."
 sleep 1 # give some time for MongoDB to start
 
 tests/helpers/mongodb-container.sh run > /dev/null << CONTENTS
-  db.Admin.remove({})
   db.Admin.insertOne({
     "_id" : {
         "key" : "1910",
@@ -42,7 +41,6 @@ tests/helpers/mongodb-container.sh run > /dev/null << CONTENTS
     }
   })
 
-  db.ImportedData.remove({})
   db.ImportedData.insertOne({
     "_id": "random123abc",
     "value": {
@@ -56,11 +54,6 @@ tests/helpers/mongodb-container.sh run > /dev/null << CONTENTS
       "key": "01234567891011"
     }
   })
-
-  db.RawData.remove({})
-  db.Features_debug.remove({})
-  db.Public_debug.remove({})
-
 CONTENTS
 
 echo ""

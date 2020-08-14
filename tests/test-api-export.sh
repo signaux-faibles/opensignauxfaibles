@@ -32,7 +32,6 @@ echo ""
 echo "📝 Inserting test data..."
 sleep 1 # give some time for MongoDB to start
 cat > "${TMP_DIR}/db_popul.js" << CONTENTS
-  db.Admin.remove({})
   db.Admin.insertOne({
     "_id" : {
         "key" : "2002_1",
@@ -44,7 +43,6 @@ cat > "${TMP_DIR}/db_popul.js" << CONTENTS
     }
   })
 
-  db.ImportedData.remove({})
   // The random order of documents is intentional, to make sure that the output is correctly sorted no matter what
   db.ImportedData.insertMany([
     {
@@ -99,7 +97,6 @@ cat > "${TMP_DIR}/db_popul.js" << CONTENTS
     },
   ])
 
-  db.Scores.remove({})
   db.Scores.insertMany([
     {
         "_id": "score1",
@@ -122,10 +119,6 @@ cat > "${TMP_DIR}/db_popul.js" << CONTENTS
         "alert" : "Alerte seuil F1"
     },
   ])
-
-  db.RawData.remove({})
-  db.Public.remove({})
-  db.Public_debug.remove({})
 CONTENTS
 
 tests/helpers/mongodb-container.sh run < "${TMP_DIR}/db_popul.js" >/dev/null
