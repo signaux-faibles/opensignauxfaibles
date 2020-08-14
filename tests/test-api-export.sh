@@ -17,7 +17,14 @@ DATA_DIR=$(pwd)/tmp-opensignauxfaibles-data-raw
 mkdir -p "${DATA_DIR}"
 
 # Clean up on exit
-trap "{ echo -e \"${COLOR_DEFAULT}\"; tests/helpers/dbmongo-server.sh stop; tests/helpers/mongodb-container.sh stop; rm -rf ${DATA_DIR}; echo \"✨ Cleaned up temp directory\"; }" EXIT
+function teardown {
+    echo -e "${COLOR_DEFAULT}"
+    tests/helpers/dbmongo-server.sh stop || true # keep tearing down, even if "No matching processes belonging to you were found"
+    tests/helpers/mongodb-container.sh stop
+    rm -rf ${DATA_DIR}
+    echo "✨ Cleaned up temp directory"
+}
+trap teardown EXIT
 
 echo ""
 echo "🐳 Starting MongoDB container..."
