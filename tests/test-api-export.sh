@@ -4,8 +4,7 @@
 # Inspiré de test-api.sh.
 # Ce script doit être exécuté depuis la racine du projet. Ex: par test-all.sh.
 
-# Interrompre le conteneur Docker d'une exécution précédente de ce test, si besoin
-sudo docker stop sf-mongodb &>/dev/null
+tests/helpers/mongodb-container.sh stop
 
 set -e # will stop the script if any command fails with a non-zero exit code
 
@@ -18,25 +17,18 @@ DATA_DIR=$(pwd)/tmp-opensignauxfaibles-data-raw
 mkdir -p "${DATA_DIR}"
 
 # Clean up on exit
-trap "{ echo -e \"${COLOR_DEFAULT}\"; killall dbmongo >/dev/null; [ -f config.toml ] && rm config.toml; [ -f config.backup.toml ] && mv config.backup.toml config.toml; sudo docker stop sf-mongodb >/dev/null; rm -rf ${DATA_DIR}; echo \"✨ Cleaned up temp directory\"; }" EXIT
+trap "{ echo -e \"${COLOR_DEFAULT}\"; killall dbmongo >/dev/null; [ -f config.toml ] && rm config.toml; [ -f config.backup.toml ] && mv config.backup.toml config.toml; tests/helpers/mongodb-container.sh stop; rm -rf ${DATA_DIR}; echo \"✨ Cleaned up temp directory\"; }" EXIT
 
 echo ""
 echo "🐳 Starting MongoDB container..."
-sudo docker run \
-    --name sf-mongodb \
-    --publish 27016:27017 \
-    --detach \
-    --rm \
-    mongo:4.2@sha256:1c2243a5e21884ffa532ca9d20c221b170d7b40774c235619f98e2f6eaec520a \
-    >/dev/null
+tests/helpers/mongodb-container.sh start
 
 echo ""
 echo "🔧 Setting up dbmongo..."
-cd dbmongo
-[ -f config.toml ] && mv config.toml config.backup.toml
-cp config-sample.toml config.toml
-perl -pi'' -e "s,/foo/bar/data-raw,sample-data-raw," config.toml
-perl -pi'' -e "s,27017,27016," config.toml
+[ -f dbmongo/config.toml ] && mv dbmongo/config.toml dbmongo/config.backup.toml
+cp dbmongo/config-sample.toml dbmongo/config.toml
+perl -pi'' -e "s,/foo/bar/data-raw,sample-data-raw," dbmongo/config.toml
+perl -pi'' -e "s,27017,27016," dbmongo/config.toml
 
 echo ""
 echo "📝 Inserting test data..."
@@ -138,11 +130,11 @@ cat > "${DATA_DIR}/db_popul.js" << CONTENTS
   db.Public_debug.remove({})
 CONTENTS
 
-sudo docker exec -i sf-mongodb mongo signauxfaibles < "${DATA_DIR}/db_popul.js" >/dev/null
+tests/helpers/mongodb-container.sh run < "${DATA_DIR}/db_popul.js" >/dev/null
 
 echo ""
 echo "💎 Computing Features and Public collections thru dbmongo API..."
-sh -c "./dbmongo &>/dev/null &" # we run in a separate shell to hide the "terminated" message when the process is killed by trap
+(cd dbmongo && sh -c "./dbmongo &>/dev/null &") # we run in a separate shell to hide the "terminated" message when the process is killed by trap
 sleep 2 # give some time for dbmongo to start
 echo "- POST /api/data/compact 👉 $(http --print=b --ignore-stdin :5000/api/data/compact fromBatchKey=2002_1)"
 echo "- POST /api/data/public 👉 $(http --print=b --ignore-stdin :5000/api/data/public batch=2002_1 key=.........)" # we specify a placeholder value as key, so that PublicOne() is run instead of Public(), so the data is generated for etablissements that don't have effectif values, and therefore are outside of the "algo2" scope.
@@ -150,10 +142,10 @@ echo "- POST /api/data/public 👉 $(http --print=b --ignore-stdin :5000/api/dat
 echo ""
 echo "🚚 Asking API to export enterprise data..."
 # This step is required only if key was provided when calling POST /api/data/public
-RENAME_RESULT=$(echo 'db.Public_debug.renameCollection("Public");' | sudo docker exec -i sf-mongodb mongo --quiet signauxfaibles)
+RENAME_RESULT=$(tests/helpers/mongodb-container.sh run <<< 'db.Public_debug.renameCollection("Public");')
 echo "- rename 'Public_debug' collection to 'Public' 👉 ${RENAME_RESULT}"
 # Make sure that the export only relies on Score and Public collections => clear collections that were populated for/by other endpoints
-CLEAN_RESULT=$(echo 'db.Admin.drop(); db.ImportedData.drop(); db.RawData.drop();' | sudo docker exec -i sf-mongodb mongo --quiet signauxfaibles)
+CLEAN_RESULT=$(tests/helpers/mongodb-container.sh run <<< 'db.Admin.drop(); db.ImportedData.drop(); db.RawData.drop();')
 echo "- drop other db collections 👉 ${CLEAN_RESULT}"
 
 function stopIfFailed {
@@ -172,7 +164,7 @@ echo "- GET /api/data/entreprises with invalid key 👉 ${RESULT}"
 stopIfFailed "${RESULT}"
 
 # GET /api/data/etablissements with key=212345678 should return just one match
-FILE=$(http --print=b --ignore-stdin GET :5000/api/data/etablissements key=="212345678" | tr -d '"')
+FILE=dbmongo/$(http --print=b --ignore-stdin GET :5000/api/data/etablissements key=="212345678" | tr -d '"')
 MATCH=$(grep --quiet "etablissement_21234567891011" "${FILE}" && echo "found etablissement_21234567891011" || echo -e "${COLOR_YELLOW}failed${COLOR_DEFAULT}")
 COUNT=$(wc -l <"${FILE}")
 rm "${FILE}"
@@ -184,7 +176,7 @@ then
 fi
 
 # GET /api/data/entreprises with key=212345678 should return just one match
-FILE=$(http --print=b --ignore-stdin GET :5000/api/data/entreprises key=="212345678" | tr -d '"')
+FILE=dbmongo/$(http --print=b --ignore-stdin GET :5000/api/data/entreprises key=="212345678" | tr -d '"')
 MATCH=$(grep --quiet "entreprise_212345678" "${FILE}" && echo "found entreprise_212345678" || echo -e "${COLOR_YELLOW}failed${COLOR_DEFAULT}")
 COUNT=$(wc -l <"${FILE}")
 rm "${FILE}"
@@ -196,9 +188,9 @@ then
 fi
 
 # Export enterprise data
-ETABLISSEMENTS_FILE=$(http --print=b --ignore-stdin GET :5000/api/data/etablissements | tr -d '"')
+ETABLISSEMENTS_FILE=dbmongo/$(http --print=b --ignore-stdin GET :5000/api/data/etablissements | tr -d '"')
 echo "- GET /api/data/etablissements 👉 ${ETABLISSEMENTS_FILE}"
-ENTREPRISES_FILE=$(http --print=b --ignore-stdin GET :5000/api/data/entreprises | tr -d '"')
+ENTREPRISES_FILE=dbmongo/$(http --print=b --ignore-stdin GET :5000/api/data/entreprises | tr -d '"')
 echo "- GET /api/data/entreprises 👉 ${ENTREPRISES_FILE}"
 
 echo ""
@@ -206,14 +198,14 @@ echo ""
 if [[ "$*" == *--update* ]]
 then
     echo "🖼  Updating golden master file using ${ETABLISSEMENTS_FILE}..."
-    cp "${ETABLISSEMENTS_FILE}" "../${ETAB_GOLDEN_FILE}"
+    cp "${ETABLISSEMENTS_FILE}" "${ETAB_GOLDEN_FILE}"
     echo "🖼  Updating golden master file using ${ENTREPRISES_FILE}..."
-    cp "${ENTREPRISES_FILE}" "../${ENTR_GOLDEN_FILE}"
+    cp "${ENTREPRISES_FILE}" "${ENTR_GOLDEN_FILE}"
 else
     # Diff between expected and actual output
     echo -e "${COLOR_YELLOW}"
-    diff --brief "../${ETAB_GOLDEN_FILE}" "${ETABLISSEMENTS_FILE}" # will stop the script if files are different
-    diff --brief "../${ENTR_GOLDEN_FILE}" "${ENTREPRISES_FILE}" # will stop the script if files are different
+    diff --brief "${ETAB_GOLDEN_FILE}" "${ETABLISSEMENTS_FILE}" # will stop the script if files are different
+    diff --brief "${ENTR_GOLDEN_FILE}" "${ENTREPRISES_FILE}" # will stop the script if files are different
     echo -e "${COLOR_DEFAULT}"
     echo "✅ No diff. The export worked as expected."
 fi
