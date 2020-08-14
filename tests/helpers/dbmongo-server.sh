@@ -23,8 +23,8 @@ case ${COMMAND} in
     bash -c "./dbmongo &>/dev/null &" # we run in a separate shell to hide the "terminated" message when the process is killed by trap
     sleep 2 # give some time for dbmongo to start
     exit ;;
-  help) ;;
-  ?) echo "error: ${COMMAND} is not a recognized command" ;;
+  ?)
+    echo "error: ${COMMAND} is not a recognized command" ;;
 esac
 
-echo "usage: $0 stop|setup|start|help"
+echo "usage: $0 stop|setup|start"
