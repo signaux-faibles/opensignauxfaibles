@@ -17,18 +17,15 @@ DATA_DIR=$(pwd)/tmp-opensignauxfaibles-data-raw
 mkdir -p "${DATA_DIR}"
 
 # Clean up on exit
-trap "{ echo -e \"${COLOR_DEFAULT}\"; killall dbmongo >/dev/null; [ -f config.toml ] && rm config.toml; [ -f config.backup.toml ] && mv config.backup.toml config.toml; tests/helpers/mongodb-container.sh stop; rm -rf ${DATA_DIR}; echo \"✨ Cleaned up temp directory\"; }" EXIT
+trap "{ echo -e \"${COLOR_DEFAULT}\"; tests/helpers/dbmongo-server.sh stop; tests/helpers/mongodb-container.sh stop; rm -rf ${DATA_DIR}; echo \"✨ Cleaned up temp directory\"; }" EXIT
 
 echo ""
 echo "🐳 Starting MongoDB container..."
-tests/helpers/mongodb-container.sh start
+PORT="27016" tests/helpers/mongodb-container.sh start
 
 echo ""
 echo "🔧 Setting up dbmongo..."
-[ -f dbmongo/config.toml ] && mv dbmongo/config.toml dbmongo/config.backup.toml
-cp dbmongo/config-sample.toml dbmongo/config.toml
-perl -pi'' -e "s,/foo/bar/data-raw,sample-data-raw," dbmongo/config.toml
-perl -pi'' -e "s,27017,27016," dbmongo/config.toml
+MONGODB_PORT="27016" tests/helpers/dbmongo-server.sh setup
 
 echo ""
 echo "📝 Inserting test data..."
@@ -134,8 +131,7 @@ tests/helpers/mongodb-container.sh run < "${DATA_DIR}/db_popul.js" >/dev/null
 
 echo ""
 echo "💎 Computing Features and Public collections thru dbmongo API..."
-(cd dbmongo && sh -c "./dbmongo &>/dev/null &") # we run in a separate shell to hide the "terminated" message when the process is killed by trap
-sleep 2 # give some time for dbmongo to start
+tests/helpers/dbmongo-server.sh start
 echo "- POST /api/data/compact 👉 $(http --print=b --ignore-stdin :5000/api/data/compact fromBatchKey=2002_1)"
 echo "- POST /api/data/public 👉 $(http --print=b --ignore-stdin :5000/api/data/public batch=2002_1 key=.........)" # we specify a placeholder value as key, so that PublicOne() is run instead of Public(), so the data is generated for etablissements that don't have effectif values, and therefore are outside of the "algo2" scope.
 
