@@ -16,14 +16,13 @@ set -e # will stop the script if any command fails with a non-zero exit code
 
 # Setup
 GOLDEN_FILE="tests/output-snapshots/reduce-Features.golden.json"
-DATA_DIR=$(pwd)/tmp-opensignauxfaibles-data-raw
-mkdir -p "${DATA_DIR}"
+TMP_DIR="tests/tmp-test-execution-files"
+mkdir -p "${TMP_DIR}"
 
 # Clean up on exit
 function teardown {
     tests/helpers/dbmongo-server.sh stop || true # keep tearing down, even if "No matching processes belonging to you were found"
     tests/helpers/mongodb-container.sh stop
-    rm -rf "${DATA_DIR}"
 }
 trap teardown EXIT
 
@@ -34,7 +33,7 @@ MONGODB_PORT="27016" tests/helpers/dbmongo-server.sh setup
 echo ""
 echo "📝 Inserting test data..."
 sleep 1 # give some time for MongoDB to start
-cat > "${DATA_DIR}/db_popul.js" << CONTENTS
+cat > "${TMP_DIR}/db_popul.js" << CONTENTS
   db.Admin.remove({})
   db.Admin.insertOne({
     "_id" : {
@@ -54,10 +53,10 @@ cat > "${DATA_DIR}/db_popul.js" << CONTENTS
   db.RawData.remove({})
   db.RawData.insertMany(
 CONTENTS
-cat >> "${DATA_DIR}/db_popul.js" < tests/input-data/RawData.sample.json
-echo ")" >> "${DATA_DIR}/db_popul.js"
+cat >> "${TMP_DIR}/db_popul.js" < tests/input-data/RawData.sample.json
+echo ")" >> "${TMP_DIR}/db_popul.js"
 
-tests/helpers/mongodb-container.sh run < "${DATA_DIR}/db_popul.js" >/dev/null
+tests/helpers/mongodb-container.sh run < "${TMP_DIR}/db_popul.js" >/dev/null
 
 echo ""
 echo "💎 Computing the Features collection thru dbmongo API..."
@@ -86,4 +85,5 @@ else
 fi
 echo ""
 rm test-api-2.output.json
-# Now, the "trap" commands will run, to clean up.
+rm -rf "${TMP_DIR}"
+# Now, the "trap" commands will clean up the rest.
