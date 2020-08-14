@@ -20,7 +20,8 @@ case ${COMMAND} in
     perl -pi'' -e "s,27017,${MONGODB_PORT}," dbmongo/config.toml
     exit ;;
   start)
-    (cd dbmongo && sh -c "./dbmongo &>/dev/null &") # we run in a separate shell to hide the "terminated" message when the process is killed by trap
+    cd dbmongo
+    bash -c "./dbmongo &>/dev/null &" # we run in a separate shell to hide the "terminated" message when the process is killed by trap
     sleep 2 # give some time for dbmongo to start
     exit ;;
   help) ;;
