@@ -9,8 +9,9 @@ tests/helpers/mongodb-container.sh stop
 set -e # will stop the script if any command fails with a non-zero exit code
 
 # Setup
-GOLDEN_FILE="tests/output-snapshots/test-api-reduce.golden.json"
 TMP_DIR="tests/tmp-test-execution-files"
+OUTPUT_FILE="${TMP_DIR}/test-api-reduce.output.json"
+GOLDEN_FILE="tests/output-snapshots/test-api-reduce.golden.json"
 mkdir -p "${TMP_DIR}"
 
 # Clean up on exit
@@ -59,7 +60,7 @@ tests/helpers/dbmongo-server.sh start
 echo "- POST /api/data/reduce 👉 $(http --print=b --ignore-stdin :5000/api/data/reduce algo=algo2 batch=1905)"
 
 (tests/helpers/mongodb-container.sh run \
-  > "test-api-reduce.output-documents.json" \
+  > "${OUTPUT_FILE}" \
 ) <<< 'db.Features_TestData.find().toArray();'
 
 # Display JS errors logged by MongoDB, if any
@@ -70,13 +71,12 @@ echo ""
 if [[ "$*" == *--update* ]]
 then
     echo "🖼  Updating golden master file..."
-    cp "test-api-reduce.output-documents.json" "${GOLDEN_FILE}"
+    cp "${OUTPUT_FILE}" "${GOLDEN_FILE}"
 else
     # Diff between expected and actual output
-    diff --brief "${GOLDEN_FILE}" "test-api-reduce.output-documents.json"
+    diff --brief "${GOLDEN_FILE}" "${OUTPUT_FILE}"
     echo "✅ No diff. The reduce API works as usual."
 fi
-echo ""
-rm "test-api-reduce.output-documents.json"
+
 rm -rf "${TMP_DIR}"
 # Now, the "trap" commands will clean up the rest.

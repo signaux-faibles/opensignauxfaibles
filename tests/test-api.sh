@@ -9,8 +9,9 @@ tests/helpers/mongodb-container.sh stop
 set -e # will stop the script if any command fails with a non-zero exit code
 
 # Setup
-GOLDEN_FILE="tests/output-snapshots/test-api.golden.txt"
 TMP_DIR="tests/tmp-test-execution-files"
+OUTPUT_FILE="${TMP_DIR}/test-api.output.txt"
+GOLDEN_FILE="tests/output-snapshots/test-api.golden.txt"
 mkdir -p "${TMP_DIR}"
 
 # Clean up on exit
@@ -71,7 +72,7 @@ echo "- POST /api/data/public 👉 $(http --print=b --ignore-stdin :5000/api/dat
 
 (tests/helpers/mongodb-container.sh run \
   | tests/helpers/remove-random_order.sh \
-  > test-api.output.txt \
+  > "${OUTPUT_FILE}" \
 ) << CONTENTS
   print("// Documents from db.RawData, after call to /api/data/compact:");
   db.RawData.find().toArray();
@@ -89,13 +90,12 @@ echo ""
 if [[ "$*" == *--update* ]]
 then
     echo "🖼  Updating golden master file..."
-    cp "test-api.output.txt" "${GOLDEN_FILE}"
+    cp "${OUTPUT_FILE}" "${GOLDEN_FILE}"
 else
     # Diff between expected and actual output
-    diff --brief "${GOLDEN_FILE}" test-api.output.txt
+    diff --brief "${GOLDEN_FILE}" "${OUTPUT_FILE}"
     echo "✅ No diff. The export worked as expected."
 fi
-echo ""
-rm test-api.output.txt
+
 rm -rf "${TMP_DIR}"
 # Now, the "trap" commands will clean up the rest.

@@ -206,7 +206,7 @@ else
     echo -e "${COLOR_DEFAULT}"
     echo "✅ No diff. The export worked as expected."
 fi
-echo ""
+
 rm "${ETABLISSEMENTS_FILE}" "${ENTREPRISES_FILE}"
 rm -rf "${TMP_DIR}"
 # Now, the "trap" commands will clean up the rest.

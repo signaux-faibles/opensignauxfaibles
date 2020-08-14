@@ -8,9 +8,9 @@ tests/helpers/mongodb-container.sh stop
 set -e # will stop the script if any command fails with a non-zero exit code
 
 # Setup
-GOLDEN_FILE="tests/output-snapshots/test-api-public.golden.json"
-OUTPUT_FILE="test-api-public.output.json"
 TMP_DIR="tests/tmp-test-execution-files"
+OUTPUT_FILE="${TMP_DIR}/test-api-public.output.json"
+GOLDEN_FILE="tests/output-snapshots/test-api-public.golden.json"
 mkdir -p "${TMP_DIR}"
 
 # Clean up on exit
@@ -77,7 +77,6 @@ else
     diff --brief "${GOLDEN_FILE}" "${OUTPUT_FILE}"
     echo "✅ No diff. The reduce API works as usual."
 fi
-echo ""
-rm "${OUTPUT_FILE}"
+
 rm -rf "${TMP_DIR}"
 # Now, the "trap" commands will clean up the rest.

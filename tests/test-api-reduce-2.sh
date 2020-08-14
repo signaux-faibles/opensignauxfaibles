@@ -15,8 +15,9 @@ tests/helpers/mongodb-container.sh stop
 set -e # will stop the script if any command fails with a non-zero exit code
 
 # Setup
-GOLDEN_FILE="tests/output-snapshots/reduce-Features.golden.json"
 TMP_DIR="tests/tmp-test-execution-files"
+OUTPUT_FILE="${TMP_DIR}/reduce-Features.output.json"
+GOLDEN_FILE="tests/output-snapshots/reduce-Features.golden.json"
 mkdir -p "${TMP_DIR}"
 
 # Clean up on exit
@@ -65,7 +66,7 @@ echo "- POST /api/data/reduce 👉 $(http --print=b --ignore-stdin :5000/api/dat
 
 (tests/helpers/mongodb-container.sh run \
   | tests/helpers/remove-random_order.sh \
-  > test-api-2.output.json \
+  > "${OUTPUT_FILE}" \
 ) <<< 'db.Features_TestData.find().toArray();'
 
 # Display JS errors logged by MongoDB, if any
@@ -76,14 +77,13 @@ echo ""
 if [[ "$*" == *--update* ]]
 then
     echo "🖼  Updating golden master file..."
-    cp test-api-2.output.json "${GOLDEN_FILE}"
+    cp "${OUTPUT_FILE}" "${GOLDEN_FILE}"
     echo "ℹ️  Updated ${GOLDEN_FILE} => run: $ git secret hide" # to re-encrypt the golden master file, after having updated it
 else
     # Diff between expected and actual output
-    diff --brief "${GOLDEN_FILE}" test-api-2.output.json
+    diff --brief "${GOLDEN_FILE}" "${OUTPUT_FILE}"
     echo "✅ No diff. The reduce API works as usual."
 fi
-echo ""
-rm test-api-2.output.json
+
 rm -rf "${TMP_DIR}"
 # Now, the "trap" commands will clean up the rest.
