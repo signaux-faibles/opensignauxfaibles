@@ -10,7 +10,6 @@ exec 2> >(sed 's/^/[API] /' >&2)
 case ${COMMAND} in
   stop)
     killall dbmongo >/dev/null
-    [ -f dbmongo/config.toml ] && rm dbmongo/config.toml
     [ -f dbmongo/config.backup.toml ] && mv dbmongo/config.backup.toml dbmongo/config.toml
     exit ;;
   setup)
