@@ -65,14 +65,10 @@ echo "💎 Computing the Features collection thru dbmongo API..."
 tests/helpers/dbmongo-server.sh start
 echo "- POST /api/data/reduce 👉 $(http --print=b --ignore-stdin :5000/api/data/reduce algo=algo2 batch=2002_1)"
 
-echo ""
-echo "🕵️‍♀️ Checking resulting Features..."
 (tests/helpers/mongodb-container.sh run \
   | tests/helpers/remove-random_order.sh \
   > test-api-2.output.json \
-) << CONTENT
-  db.Features_TestData.find().toArray();
-CONTENT
+) <<< 'db.Features_TestData.find().toArray();'
 
 # Display JS errors logged by MongoDB, if any
 tests/helpers/mongodb-container.sh exceptions || true

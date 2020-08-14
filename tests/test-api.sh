@@ -71,8 +71,6 @@ echo "- POST /api/data/compact 👉 $(http --print=b --ignore-stdin :5000/api/da
 echo "- POST /api/data/reduce 👉 $(http --print=b --ignore-stdin :5000/api/data/reduce algo=algo2 batch=1910 key=012345678)"
 echo "- POST /api/data/public 👉 $(http --print=b --ignore-stdin :5000/api/data/public batch=1910 key=012345678)"
 
-echo ""
-echo "🕵️‍♀️ Checking resulting Features..."
 (tests/helpers/mongodb-container.sh run \
   | tests/helpers/remove-random_order.sh \
   > test-api.output.txt \

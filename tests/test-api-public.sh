@@ -61,13 +61,9 @@ echo "💎 Computing the Public collection thru dbmongo API..."
 tests/helpers/dbmongo-server.sh start
 echo "- POST /api/data/public 👉 $(http --print=b --ignore-stdin :5000/api/data/public batch=1905)"
 
-echo ""
-echo "🕵️‍♀️ Checking resulting Features..."
 (tests/helpers/mongodb-container.sh run \
   > "${OUTPUT_FILE}" \
-) << CONTENT
-  db.Public.find().toArray();
-CONTENT
+) <<< 'db.Public.find().toArray();'
 
 # Display JS errors logged by MongoDB, if any
 tests/helpers/mongodb-container.sh exceptions || true
