@@ -37,7 +37,7 @@ echo "- POST /api/data/public 👉 $(http --print=b --ignore-stdin :5000/api/dat
 
 (tests/helpers/mongodb-container.sh run \
   > "${OUTPUT_FILE}" \
-) <<< 'db.Public.find().toArray();'
+) <<< 'printjson(db.Public.find().toArray());'
 
 # Display JS errors logged by MongoDB, if any
 tests/helpers/mongodb-container.sh exceptions || true

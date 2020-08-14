@@ -68,11 +68,11 @@ echo "- POST /api/data/public 👉 $(http --print=b --ignore-stdin :5000/api/dat
   > "${OUTPUT_FILE}" \
 ) << CONTENTS
   print("// Documents from db.RawData, after call to /api/data/compact:");
-  db.RawData.find().toArray();
+  printjson(db.RawData.find().toArray());
   print("// Documents from db.Features_debug, after call to /api/data/reduce:");
-  db.Features_debug.find().toArray();
+  printjson(db.Features_debug.find().toArray());
   print("// Documents from db.Public_debug, after call to /api/data/public:");
-  db.Public_debug.find().toArray();
+  printjson(db.Public_debug.find().toArray());
 CONTENTS
 
 # Display JS errors logged by MongoDB, if any

@@ -63,7 +63,7 @@ echo "- POST /api/data/reduce 👉 $(http --print=b --ignore-stdin :5000/api/dat
 (tests/helpers/mongodb-container.sh run \
   | tests/helpers/remove-random_order.sh \
   > "${OUTPUT_FILE}" \
-) <<< 'db.Features_TestData.find().toArray();'
+) <<< 'printjson(db.Features_TestData.find().toArray());'
 
 # Display JS errors logged by MongoDB, if any
 tests/helpers/mongodb-container.sh exceptions || true

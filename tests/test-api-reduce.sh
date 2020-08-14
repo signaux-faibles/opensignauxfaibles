@@ -29,9 +29,7 @@ echo ""
 echo "📝 Inserting test data..."
 sleep 1 # give some time for MongoDB to start
 tests/helpers/populate-from-objects.sh \
-  | tests/helpers/mongodb-container.sh run >/dev/null
-
-tests/helpers/mongodb-container.sh run < "${TMP_DIR}/db_popul.js" >/dev/null
+  | tests/helpers/mongodb-container.sh run
 
 echo ""
 echo "💎 Computing the Features collection thru dbmongo API..."
@@ -40,7 +38,7 @@ echo "- POST /api/data/reduce 👉 $(http --print=b --ignore-stdin :5000/api/dat
 
 (tests/helpers/mongodb-container.sh run \
   > "${OUTPUT_FILE}" \
-) <<< 'db.Features_TestData.find().toArray();'
+) <<< 'printjson(db.Features_TestData.find().toArray());'
 
 # Display JS errors logged by MongoDB, if any
 tests/helpers/mongodb-container.sh exceptions || true
