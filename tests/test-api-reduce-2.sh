@@ -28,12 +28,8 @@ function teardown {
 }
 trap teardown EXIT
 
-echo ""
-echo "🐳 Starting MongoDB container..."
 PORT="27016" tests/helpers/mongodb-container.sh start
 
-echo ""
-echo "🔧 Setting up dbmongo..."
 MONGODB_PORT="27016" tests/helpers/dbmongo-server.sh setup
 
 echo ""
