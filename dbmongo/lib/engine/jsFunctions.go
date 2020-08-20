@@ -765,12 +765,22 @@ db.getCollection("Features").createIndex({
 "apdemande": `function apdemande(apdemande) {
     return f
         .iterable(apdemande)
-        .sort((p1, p2) => (p1.periode < p2.periode ? 1 : -1));
+        .sort((p1, p2) => p1.periode.start.getTime() < p2.periode.start.getTime() ? 1 : -1);
 }`,
 "bdf": `function bdf(hs) {
     "use strict";
+    // return f
+    //   .iterable<Bdf>(hs)
+    //   .sort((a, b) => (a.annee_bdf < b.annee_bdf ? 1 : -1))
+    //   "use strict"
+    const bdf = {};
+    f.iterable(hs)
+        .filter((b) => b.arrete_bilan_bdf)
+        .forEach((b) => {
+        bdf[b.arrete_bilan_bdf.toISOString()] = b;
+    });
     return f
-        .iterable(hs)
+        .iterable(bdf)
         .sort((a, b) => (a.annee_bdf < b.annee_bdf ? 1 : -1));
 }`,
 "compte": `function compte(compte) {
@@ -884,19 +894,31 @@ db.getCollection("Features").createIndex({
             ]);
         });
     });
-    return serie_periode.map((p) => (value_dette[p.getTime()] || []).reduce((m, c) => ({
-        part_ouvriere: m.part_ouvriere + c.part_ouvriere,
-        part_patronale: m.part_patronale + c.part_patronale,
+    return serie_periode.map((p) => (value_dette[p.getTime()] || []).reduce((m, c) => {
+        m.part_ouvriere += c.part_ouvriere;
+        m.part_patronale += c.part_patronale;
+        m.montant_majorations += c.montant_majorations;
+        return m;
+    }, {
+        part_ouvriere: 0,
+        part_patronale: 0,
+        montant_majorations: 0,
         periode: f.dateAddDay(f.dateAddMonth(p, 1), -1),
-    }), { part_ouvriere: 0, part_patronale: 0 }));
+    }));
 }`,
 "delai": `function delai(delai) {
     return f.iterable(delai);
 }`,
 "diane": `function diane(hs) {
     "use strict";
+    const diane = {};
+    f.iterable(hs)
+        .filter((d) => d.arrete_bilan_diane)
+        .forEach((d) => {
+        diane[d.arrete_bilan_diane.toISOString()] = d;
+    });
     return f
-        .iterable(hs)
+        .iterable(diane)
         .sort((a, b) => (a.exercice_diane < b.exercice_diane ? 1 : -1));
 }`,
 "effectifs": `function effectifs(effectif) {
@@ -920,6 +942,24 @@ db.getCollection("Features").createIndex({
 "iterable": `function iterable(dict) {
     return typeof dict === "object" ? Object.keys(dict).map((h) => dict[h]) : [];
 }`,
+"joinUrssaf": `function joinUrssaf(effectif, debit) {
+    const result = {
+        effectif: [],
+        part_patronale: [],
+        part_ouvriere: [],
+        montant_majorations: [],
+    };
+    debit.forEach((d) => {
+        const e = effectif.filter((e) => d.periode.getTime() === e.periode.getTime());
+        if (e.length > 0) {
+            result.effectif.push(e[0].effectif);
+        }
+        result.part_patronale.push(d.part_patronale);
+        result.part_ouvriere.push(d.part_ouvriere);
+        result.montant_majorations.push(d.montant_majorations);
+    });
+    return result;
+}`,
 "map": `function map() {
 
     const value = f.flatten(this.value, actual_batch);
@@ -927,11 +967,16 @@ db.getCollection("Features").createIndex({
         const vcmde = {};
         vcmde.key = this.value.key;
         vcmde.batch = actual_batch;
-        vcmde.effectif = f.effectifs(value.effectif);
-        vcmde.dernier_effectif = vcmde.effectif[vcmde.effectif.length - 1];
         vcmde.sirene = f.sirene(f.iterable(value.sirene));
+        vcmde.periodes = serie_periode;
+        const effectif = f.effectifs(value.effectif);
+        const debit = f.debits(value.debit);
+        const join = f.joinUrssaf(effectif, debit);
+        vcmde.debit_part_patronale = join.part_patronale;
+        vcmde.debit_part_ouvriere = join.part_ouvriere;
+        vcmde.debit_montant_majorations = join.montant_majorations;
+        vcmde.effectif = join.effectif;
         vcmde.cotisation = f.cotisations(value.cotisation);
-        vcmde.debit = f.debits(value.debit);
         vcmde.apconso = f.apconso(value.apconso);
         vcmde.apdemande = f.apdemande(value.apdemande);
         vcmde.delai = f.delai(value.delai);

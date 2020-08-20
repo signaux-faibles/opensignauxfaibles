@@ -4,7 +4,8 @@ import { apconso } from "./apconso"
 import { apdemande } from "./apdemande"
 import { flatten } from "../common/flatten"
 import { compte } from "./compte"
-import { effectifs, SortieEffectif } from "./effectifs"
+import { effectifs } from "./effectifs"
+import { joinUrssaf } from "./joinUrssaf"
 import { delai } from "./delai"
 import { bdf, Bdf } from "./bdf"
 import { diane } from "./diane"
@@ -21,10 +22,7 @@ type SortieMapCommon = {
 }
 
 type SortieMapEtablissement = SortieMapCommon & {
-  effectif: SortieEffectif[]
-  dernier_effectif: SortieEffectif
   sirene: unknown
-  cotisation: number[]
   debit: SortieDebit[]
   apconso: EntréeApConso[]
   apdemande: EntréeApDemande[]
@@ -32,6 +30,12 @@ type SortieMapEtablissement = SortieMapCommon & {
   compte: unknown
   procol: Record<DataHash, EntréeDefaillances>
   last_procol: SortieProcols
+  periodes: Date[]
+  effectif: (number | null)[]
+  cotisation: number[]
+  debit_part_patronale: number[]
+  debit_part_ouvriere: number[]
+  debit_montant_majorations: number[]
   idEntreprise: string
 }
 
@@ -46,14 +50,14 @@ export type SortieMap = SortieMapEtablissement | SortieMapEntreprise
 
 // Paramètres globaux utilisés par "public"
 declare let actual_batch: BatchKey
-
+declare let serie_periode: Date[]
 declare function emit(key: string, value: Partial<SortieMap>): void
 
 export function map(this: { value: CompanyDataValues }): void {
   /* DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO */ const f = {
     ...{ iterable, debits, apconso, apdemande, flatten, compte, effectifs }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     ...{ delai, dealWithProcols, sirene, cotisations, dateAddDay, omit }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
-    ...{ generatePeriodSerie, diane, bdf }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
+    ...{ generatePeriodSerie, diane, bdf, joinUrssaf }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
   } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
 
   const value = f.flatten(this.value, actual_batch)
@@ -62,11 +66,16 @@ export function map(this: { value: CompanyDataValues }): void {
     const vcmde: Partial<SortieMapEtablissement> = {}
     vcmde.key = this.value.key
     vcmde.batch = actual_batch
-    vcmde.effectif = f.effectifs(value.effectif)
-    vcmde.dernier_effectif = vcmde.effectif[vcmde.effectif.length - 1]
     vcmde.sirene = f.sirene(f.iterable(value.sirene))
+    vcmde.periodes = serie_periode
+    const effectif = f.effectifs(value.effectif)
+    const debit = f.debits(value.debit)
+    const join = f.joinUrssaf(effectif, debit)
+    vcmde.debit_part_patronale = join.part_patronale
+    vcmde.debit_part_ouvriere = join.part_ouvriere
+    vcmde.debit_montant_majorations = join.montant_majorations
+    vcmde.effectif = join.effectif
     vcmde.cotisation = f.cotisations(value.cotisation)
-    vcmde.debit = f.debits(value.debit)
     vcmde.apconso = f.apconso(value.apconso)
     vcmde.apdemande = f.apdemande(value.apdemande)
     vcmde.delai = f.delai(value.delai)
