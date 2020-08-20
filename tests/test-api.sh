@@ -4,42 +4,33 @@
 # Source: https://github.com/signaux-faibles/documentation/blob/master/prise-en-main.md#%C3%A9tape-de-calculs-pour-populer-features
 # Ce script doit être exécuté depuis la racine du projet. Ex: par test-all.sh.
 
-# Interrompre le conteneur Docker d'une exécution précédente de ce test, si besoin
-sudo docker stop sf-mongodb &>/dev/null
+tests/helpers/mongodb-container.sh stop
 
 set -e # will stop the script if any command fails with a non-zero exit code
 
 # Setup
+FLAGS="$*" # the script will update the golden file if "--update" flag was provided as 1st argument
+TMP_DIR="tests/tmp-test-execution-files"
+OUTPUT_FILE="${TMP_DIR}/test-api.output.txt"
 GOLDEN_FILE="tests/output-snapshots/test-api.golden.txt"
-DATA_DIR=$(pwd)/tmp-opensignauxfaibles-data-raw
-mkdir -p "${DATA_DIR}"
+mkdir -p "${TMP_DIR}"
 
 # Clean up on exit
-trap "{ killall dbmongo >/dev/null; [ -f config.toml ] && rm config.toml; [ -f config.backup.toml ] && mv config.backup.toml config.toml; sudo docker stop sf-mongodb >/dev/null; rm -rf ${DATA_DIR}; echo \"✨ Cleaned up temp directory\"; }" EXIT
+function teardown {
+    tests/helpers/dbmongo-server.sh stop || true # keep tearing down, even if "No matching processes belonging to you were found"
+    tests/helpers/mongodb-container.sh stop
+}
+trap teardown EXIT
 
-echo ""
-echo "🐳 Starting MongoDB container..."
-sudo docker run \
-    --name sf-mongodb \
-    --publish 27016:27017 \
-    --detach \
-    --rm \
-    mongo:4.2@sha256:1c2243a5e21884ffa532ca9d20c221b170d7b40774c235619f98e2f6eaec520a \
-    >/dev/null
+PORT="27016" tests/helpers/mongodb-container.sh start
 
-echo ""
-echo "🔧 Setting up dbmongo..."
-cd ./dbmongo
-[ -f config.toml ] && mv config.toml config.backup.toml
-cp config-sample.toml config.toml
-perl -pi'' -e "s,/foo/bar/data-raw,sample-data-raw," config.toml
-perl -pi'' -e "s,27017,27016," config.toml
+MONGODB_PORT="27016" tests/helpers/dbmongo-server.sh setup
 
 echo ""
 echo "📝 Inserting test data..."
 sleep 1 # give some time for MongoDB to start
-sudo docker exec -i sf-mongodb mongo signauxfaibles  > /dev/null << CONTENTS
-  db.Admin.remove({})
+
+tests/helpers/mongodb-container.sh run > /dev/null << CONTENTS
   db.Admin.insertOne({
     "_id" : {
         "key" : "1910",
@@ -51,7 +42,6 @@ sudo docker exec -i sf-mongodb mongo signauxfaibles  > /dev/null << CONTENTS
     }
   })
 
-  db.ImportedData.remove({})
   db.ImportedData.insertOne({
     "_id": "random123abc",
     "value": {
@@ -65,50 +55,31 @@ sudo docker exec -i sf-mongodb mongo signauxfaibles  > /dev/null << CONTENTS
       "key": "01234567891011"
     }
   })
-
-  db.RawData.remove({})
-  db.Features_debug.remove({})
-  db.Public_debug.remove({})
-
 CONTENTS
 
 echo ""
 echo "💎 Computing Features and Public collections thru dbmongo API..."
-sh -c "./dbmongo &>/dev/null &" # we run in a separate shell to hide the "terminated" message when the process is killed by trap
-sleep 2 # give some time for dbmongo to start
+tests/helpers/dbmongo-server.sh start
 echo "- POST /api/data/compact 👉 $(http --print=b --ignore-stdin :5000/api/data/compact fromBatchKey=1910)"
 echo "- POST /api/data/reduce 👉 $(http --print=b --ignore-stdin :5000/api/data/reduce algo=algo2 batch=1910 key=012345678)"
 echo "- POST /api/data/public 👉 $(http --print=b --ignore-stdin :5000/api/data/public batch=1910 key=012345678)"
 
-echo ""
-echo "🕵️‍♀️ Checking resulting Features..."
-cd ..
-(sudo docker exec -i sf-mongodb mongo --quiet signauxfaibles \
+(tests/helpers/mongodb-container.sh run \
   | tests/helpers/remove-random_order.sh \
-  > test-api.output.txt \
+  > "${OUTPUT_FILE}" \
 ) << CONTENTS
   print("// Documents from db.RawData, after call to /api/data/compact:");
-  db.RawData.find().toArray();
+  printjson(db.RawData.find().toArray());
   print("// Documents from db.Features_debug, after call to /api/data/reduce:");
-  db.Features_debug.find().toArray();
+  printjson(db.Features_debug.find().toArray());
   print("// Documents from db.Public_debug, after call to /api/data/public:");
-  db.Public_debug.find().toArray();
+  printjson(db.Public_debug.find().toArray());
 CONTENTS
 
 # Display JS errors logged by MongoDB, if any
-sudo docker logs sf-mongodb | grep --color=always "uncaught exception" || true
+tests/helpers/mongodb-container.sh exceptions || true
 
-echo ""
-# Check if the --update flag was passed
-if [[ "$*" == *--update* ]]
-then
-    echo "🖼  Updating golden master file..."
-    cp "test-api.output.txt" "${GOLDEN_FILE}"
-else
-    # Diff between expected and actual output
-    diff --brief "${GOLDEN_FILE}" test-api.output.txt
-    echo "✅ No diff. The export worked as expected."
-fi
-echo ""
-rm test-api.output.txt
-# Now, the "trap" commands will run, to clean up.
+tests/helpers/diff-or-update-golden-master.sh "${FLAGS}" "${GOLDEN_FILE}" "${OUTPUT_FILE}"
+
+rm -rf "${TMP_DIR}"
+# Now, the "trap" commands will clean up the rest.

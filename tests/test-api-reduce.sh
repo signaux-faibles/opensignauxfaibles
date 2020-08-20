@@ -4,95 +4,47 @@
 # Inspiré de test-api-reduce-2.sh et algo2_tests.ts.
 # Ce script doit être exécuté depuis la racine du projet. Ex: par test-all.sh.
 
-# Interrompre le conteneur Docker d'une exécution précédente de ce test, si besoin
-sudo docker stop sf-mongodb &>/dev/null
+tests/helpers/mongodb-container.sh stop
 
 set -e # will stop the script if any command fails with a non-zero exit code
 
 # Setup
+FLAGS="$*" # the script will update the golden file if "--update" flag was provided as 1st argument
+TMP_DIR="tests/tmp-test-execution-files"
+OUTPUT_FILE="${TMP_DIR}/test-api-reduce.output.json"
 GOLDEN_FILE="tests/output-snapshots/test-api-reduce.golden.json"
-DATA_DIR=$(pwd)/tmp-opensignauxfaibles-data-raw
-mkdir -p "${DATA_DIR}"
+mkdir -p "${TMP_DIR}"
 
 # Clean up on exit
-trap "{ killall dbmongo >/dev/null; [ -f config.toml ] && rm config.toml; [ -f config.backup.toml ] && mv config.backup.toml config.toml; sudo docker stop sf-mongodb >/dev/null; rm -rf ${DATA_DIR}; echo \"✨ Cleaned up temp directory\"; }" EXIT
+function teardown {
+    tests/helpers/dbmongo-server.sh stop || true # keep tearing down, even if "No matching processes belonging to you were found"
+    tests/helpers/mongodb-container.sh stop
+}
+trap teardown EXIT
 
-echo ""
-echo "🐳 Starting MongoDB container..."
-sudo docker run \
-    --name sf-mongodb \
-    --publish 27016:27017 \
-    --detach \
-    --rm \
-    mongo:4.2@sha256:1c2243a5e21884ffa532ca9d20c221b170d7b40774c235619f98e2f6eaec520a \
-    >/dev/null
+PORT="27016" tests/helpers/mongodb-container.sh start
 
-echo ""
-echo "🔧 Setting up dbmongo..."
-cd ./dbmongo
-[ -f config.toml ] && mv config.toml config.backup.toml
-cp config-sample.toml config.toml
-perl -pi'' -e "s,/foo/bar/data-raw,sample-data-raw," config.toml
-perl -pi'' -e "s,27017,27016," config.toml
+MONGODB_PORT="27016" tests/helpers/dbmongo-server.sh setup
 
 echo ""
 echo "📝 Inserting test data..."
 sleep 1 # give some time for MongoDB to start
-cat > "${DATA_DIR}/db_popul.js" << CONTENTS
-  db.Admin.remove({})
-  db.Admin.insertOne({
-    "_id" : {
-        "key" : "1905",
-        "type" : "batch"
-    },
-    "param" : {
-        "date_debut" : ISODate("2014-01-01T00:00:00.000+0000"),
-        "date_fin" : ISODate("2016-01-01T00:00:00.000+0000"),
-        "date_fin_effectif" : ISODate("2016-03-01T00:00:00.000+0000")
-    },
-    "name" : "TestData"
-  })
-
-  db.Features_TestData.remove({})
-
-  db.RawData.remove({})
-  db.RawData.insertMany(
-CONTENTS
-node -e "console.log(require('./js/test/data/objects.js').makeObjects.toString().replace('ISODate => ([', '[').replace('])', ']'))" \
-  >> "${DATA_DIR}/db_popul.js"
-echo ")" >> "${DATA_DIR}/db_popul.js"
-
-sudo docker exec -i sf-mongodb mongo signauxfaibles > /dev/null < "${DATA_DIR}/db_popul.js"
+tests/helpers/populate-from-objects.sh \
+  | tests/helpers/mongodb-container.sh run
 
 echo ""
 echo "💎 Computing the Features collection thru dbmongo API..."
-sh -c "./dbmongo &>/dev/null &" # we run in a separate shell to hide the "terminated" message when the process is killed by trap
-sleep 2 # give some time for dbmongo to start
+tests/helpers/dbmongo-server.sh start
 echo "- POST /api/data/reduce 👉 $(http --print=b --ignore-stdin :5000/api/data/reduce algo=algo2 batch=1905)"
 
-echo ""
-echo "🕵️‍♀️ Checking resulting Features..."
-cd ..
-(sudo docker exec -i sf-mongodb mongo --quiet signauxfaibles \
-  > "test-api-reduce.output-documents.json" \
-) << CONTENT
-  db.Features_TestData.find().toArray();
-CONTENT
+(tests/helpers/mongodb-container.sh run \
+  > "${OUTPUT_FILE}" \
+) <<< 'printjson(db.Features_TestData.find().toArray());'
 
 # Display JS errors logged by MongoDB, if any
-sudo docker logs sf-mongodb | grep --color=always "uncaught exception" || true
+tests/helpers/mongodb-container.sh exceptions || true
 
-echo ""
-# Check if the --update flag was passed
-if [[ "$*" == *--update* ]]
-then
-    echo "🖼  Updating golden master file..."
-    cp "test-api-reduce.output-documents.json" "${GOLDEN_FILE}"
-else
-    # Diff between expected and actual output
-    diff --brief "${GOLDEN_FILE}" "test-api-reduce.output-documents.json"
-    echo "✅ No diff. The reduce API works as usual."
-fi
-echo ""
-rm "test-api-reduce.output-documents.json"
-# Now, the "trap" commands will run, to clean up.
+tests/helpers/diff-or-update-golden-master.sh "${FLAGS}" "${GOLDEN_FILE}" "${OUTPUT_FILE}"
+
+rm -rf "${TMP_DIR}"
+# Now, the "trap" commands will clean up the rest.
