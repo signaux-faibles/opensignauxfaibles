@@ -182,14 +182,3 @@ func LoadNAF() (NAF, error) {
 
 	return naf, nil
 }
-
-// Naf5from1 retourne la liste des codes niveau 5 depuis un code niveau 1
-func Naf5from1(naf1 string) []string {
-	var result = []string{}
-	for n5, n1 := range Naf.N5to1 {
-		if n1 == naf1 {
-			result = append(result, n5)
-		}
-	}
-	return result
-}

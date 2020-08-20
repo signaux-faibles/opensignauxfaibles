@@ -3,7 +3,6 @@ package marshal
 import (
 	"io/ioutil"
 	"log"
-	"strconv"
 	"strings"
 	"sync"
 	"testing"
@@ -12,35 +11,6 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 	"github.com/stretchr/testify/assert"
 )
-
-func compareFields(field1 Field, field2 Field) string {
-	var res string
-	if field1.GoName != field2.GoName {
-		res = res + "Different struct fields GoName; " + field1.GoName + ", " + field2.GoName
-	}
-	if field1.CSVName != field2.CSVName {
-		res = res + "Different struct fields CSVName; " + field1.CSVName + ", " + field2.CSVName
-	}
-	if field1.CSVCol != field2.CSVCol {
-		res = res + "Different struct fields CSVCol; " + strconv.Itoa(field1.CSVCol) + ", " + strconv.Itoa(field2.CSVCol)
-	}
-	if field1.JSONName != field2.JSONName {
-		res = res + "Different struct fields JSONName; " + field1.JSONName + ", " + field2.JSONName
-	}
-	if field1.Parser != field2.Parser {
-		res = res + "Different struct fields Parser; " + field1.Parser + ", " + field2.Parser
-	}
-	if field1.IfEmpty != field2.IfEmpty {
-		res = res + "Different struct fields IfEmpty; " + field1.IfEmpty + ", " + field2.IfEmpty
-	}
-	if field1.IfInvalid != field2.IfInvalid {
-		res = res + "Different struct fields IfInvalid; " + field1.IfInvalid + ", " + field2.IfInvalid
-	}
-	if field1.ValidityRegex != field2.ValidityRegex {
-		res = res + "Different struct fields ValidityRegex; " + field1.ValidityRegex + ", " + field2.ValidityRegex
-	}
-	return res
-}
 
 // MockComptesMapping ...
 func MockComptesMapping(mapping map[string]string) Comptes {

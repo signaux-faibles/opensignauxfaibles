@@ -132,8 +132,6 @@ func readLineProcol(
 	procol := Procol{}
 	var err error
 
-	dateFormatee := row[dateEffetIndex]
-	dateFormatee = dateFormatee[:3] + strings.ToLower(dateFormatee[4:5]) + dateFormatee[6:]
 	procol.DateEffet, err = time.Parse("02Jan2006", row[dateEffetIndex])
 	tracker.Error(err)
 	procol.Siret = row[siretIndex]

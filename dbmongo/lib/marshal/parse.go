@@ -21,17 +21,6 @@ var ParserDict = map[string]fullParser{
 	"bool":          ParseBool,
 }
 
-// PossibleParsers ...
-func PossibleParsers() []string {
-	var possibleParsers = make([]string, len(ParserDict))
-	var i = 0
-	for k := range ParserDict {
-		possibleParsers[i] = k
-		i++
-	}
-	return possibleParsers
-}
-
 // Interface to parse strings that are not empty and seem valid
 type parser func(string, ...string) (interface{}, error)
 type fullParser func(string, string, string, *regexp.Regexp, ...string) (interface{}, error)
