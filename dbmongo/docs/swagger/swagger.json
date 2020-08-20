@@ -250,85 +250,6 @@
                     }
                 }
             },
-            "Browse": {
-                "properties": {
-                    "batch": {
-                        "type": "string"
-                    },
-                    "siret": {
-                        "type": "string"
-                    },
-                    "sort": {
-                        "type": "string"
-                    },
-                    "offset": {
-                        "type": "integer"
-                    },
-                    "length": {
-                        "type": "integer"
-                    }
-                }
-            },
-            "Browseable": {
-                "properties": {
-                    "id": {
-                        "properties": {
-                            "key": {
-                                "type": "string"
-                            },
-                            "scope": {
-                                "type": "array",
-                                "items": {
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    },
-                    "value": {
-                        "properties": {
-                            "field1": {
-                                "oneOf": [
-                                    {
-                                        "type": "string"
-                                    },
-                                    {
-                                        "type": "number"
-                                    },
-                                    {
-                                        "type": "integer"
-                                    }
-                                ]
-                            },
-                            "field2": {
-                                "oneOf": [
-                                    {
-                                        "type": "string"
-                                    },
-                                    {
-                                        "type": "number"
-                                    },
-                                    {
-                                        "type": "integer"
-                                    }
-                                ]
-                            },
-                            "...": {
-                                "oneOf": [
-                                    {
-                                        "type": "string"
-                                    },
-                                    {
-                                        "type": "number"
-                                    },
-                                    {
-                                        "type": "integer"
-                                    }
-                                ]
-                            }
-                        }
-                    }
-                }
-            },
             "Reduce": {
                 "properties": {
                     "batch": {
@@ -355,7 +276,7 @@
             "name": "contact support",
             "email": "contact@signaux-faibles.beta.gouv.fr"
         },
-        "description": "Cette API centralise toutes les fonctionnalités du module de traitement de données [openSignauxFaibles](https://github.com/entrepreneur-interet-general/opensignauxfaibles)  \nCe [projet](https://beta.gouv.fr/startups/signaux-faibles.html) fournit une plateforme technique à l'exploitation des signaux faibles pour anticiper les difficultés des entreprises  \n\nLa plateforme fournit les services suivants    \n- Authentification  \n- Gestion des batches d'intégration  \n- Lancement/ordonnancement des traitements  \n- Consultation des données  \n\nToutes les erreurs rencontrées lors du traitement seront signalées par le statut `HTTP 500` assorti du message d'erreur ayant provoqué le défaut du traitement.  \nPar ailleurs, tous les services authentifiés sont succeptibles de renvoyer le statut `HTTP 401` dans le cas où l'authentification est erronée.  Le code `HTTP 403` est également communiqué lorsque les attributions sont insuffisantes pour traiter la requête.  \nDans le cas où une requête est malformée, le code `HTTP 400` sera renvoyé assorti d'un message indiquant l'erreur rencontrée dans l'analyse du corps de la requête  ",
+        "description": "Cette API centralise toutes les fonctionnalités du module de traitement de données [openSignauxFaibles](https://github.com/entrepreneur-interet-general/opensignauxfaibles)  \nCe [projet](https://beta.gouv.fr/startups/signaux-faibles.html) fournit une plateforme technique à l'exploitation des signaux faibles pour anticiper les difficultés des entreprises  \n\nLa plateforme fournit les services suivants    \n- Authentification  \n- Gestion des batches d'intégration  \n- Lancement/ordonnancement des traitements  \n- Consultation des données  \n\nToutes les erreurs rencontrées lors du traitement seront signalées par le statut `HTTP 500` assorti du message d'erreur ayant provoqué le défaut du traitement.  \nPar ailleurs, tous les services authentifiés sont succeptibles de renvoyer le statut `HTTP 401` dans le cas où l'authentification est erronée.  Le code `HTTP 403` est également communiqué lorsque les attributions sont insuffisantes pour traiter la requête.  \nDans le cas où une requête est malformée, le code `HTTP 400` sera renvoyé assorti d'un message indiquant l'erreur rencontrée dans l'analyse du corps de la requête",
         "license": {
             "name": "Licence MIT",
             "url": "https://raw.githubusercontent.com/entrepreneur-interet-general/opensignauxfaibles/master/LICENSE"
@@ -417,7 +338,7 @@
         "/login/get": {
             "post": {
                 "summary": "demander l'envoi d'un code de vérification",
-                "description": "Renvoie un code de vérification sur la base d'un email et d'un mot de passe  \nLe code n'est envoyé que si le mot de passe est valide, le cas échéant, un email avertissant d'une tentative est envoyé.  \nPour éviter les tentatives de forçage de mot de passe, ce service ne renvoie jamais d'échec.  ",
+                "description": "Renvoie un code de vérification sur la base d'un email et d'un mot de passe  \nLe code n'est envoyé que si le mot de passe est valide, le cas échéant, un email avertissant d'une tentative est envoyé.  \nPour éviter les tentatives de forçage de mot de passe, ce service ne renvoie jamais d'échec.",
                 "requestBody": {
                     "description": "Email et mot de passe",
                     "content": {
@@ -440,7 +361,7 @@
         },
         "/login/check": {
             "post": {
-                "description": "Le service permet de valider le code de vérification envoyé à l'utilisateur  \nIl donne en retour un jeton de navigateur qui pourra être réutilisé comme facteur d'authentification (browserToken)  ",
+                "description": "Le service permet de valider le code de vérification envoyé à l'utilisateur  \nIl donne en retour un jeton de navigateur qui pourra être réutilisé comme facteur d'authentification (browserToken)",
                 "requestBody": {
                     "description": "Les informations d'identification",
                     "content": {
@@ -757,7 +678,7 @@
         },
         "/api/admin/batch/next": {
             "get": {
-                "description": "Clôture le dernier batch et crée la référence de batch suivante dans la collection admin  \nL'ordre des batches est alphanumérique, la numérotation est effectuée en mois année (YYMM)\nPar exemple, le batch suivant 1812 est 1901.  \nIl est possible de créer des batches intermédiaires (par exemple 1812-correction), cela ne perturbe pas la création du batch 1901.  \nLe nouveau batch créé est vide, le service renvoie la liste des objets AdminBatch ainsi nouvellement constituée.  \nCette liste est également communiquée à tous les clients connectés via le connecteur webservice avec l'attribution admin (WIP).  ",
+                "description": "Clôture le dernier batch et crée la référence de batch suivante dans la collection admin  \nL'ordre des batches est alphanumérique, la numérotation est effectuée en mois année (YYMM)\nPar exemple, le batch suivant 1812 est 1901.  \nIl est possible de créer des batches intermédiaires (par exemple 1812-correction), cela ne perturbe pas la création du batch 1901.  \nLe nouveau batch créé est vide, le service renvoie la liste des objets AdminBatch ainsi nouvellement constituée.  \nCette liste est également communiquée à tous les clients connectés via le connecteur webservice avec l'attribution admin (WIP).",
                 "responses": {
                     "200": {
                         "description": "Traitement effectué avec succès",
@@ -810,7 +731,7 @@
         },
         "/api/admin/events": {
             "get": {
-                "description": "Liste les 250 derniers évènements du journal  ",
+                "description": "Liste les 250 derniers évènements du journal",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -927,7 +848,7 @@
         },
         "/api/admin/features": {
             "get": {
-                "description": "Liste des traitements de production de variables connus de dbmongo  \nCes références sont à utiliser auprès du service `/data/reduce`  ",
+                "description": "Liste des traitements de production de variables connus de dbmongo  \nCes références sont à utiliser auprès du service `/data/reduce`",
                 "responses": {
                     "200": {
                         "description": "liste des traitements",
@@ -1075,44 +996,6 @@
                 ]
             }
         },
-        "/api/data/browse": {
-            "post": {
-                "description": "Ce service permet d'accéder à la collection Public en appliquant les filtrages sécuritaires nécessaires.\nLe scope de l'utilisateur est automatiquement déduit de son jeton de session et ainsi ne sont retournés que les objets qui satisfont les critères de sécurités demandés dans le traitement Public",
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/Browse"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Liste d'objets de type Browseable renvoyée au client",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/Browseable"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "summary": "consulter les données",
-                "tags": [
-                    "Traitements"
-                ]
-            }
-        },
         "/api/data/purge": {
             "get": {
                 "description": "Suppression de tous les objets de données brutes contenus dans les collections RawData, Features, Journal et Public  \n**Ceci est une opération de remise à zéro de la base de données**  \n**Seule la configuration des batches est conservée**  \n**Cette opération est irréversible et dangereuse et ne devrait être utilisée qu'à des fins de développement**  \n\n**!!! SI VOUS NE SAVEZ PAS CE QUE VOUS FAITES ICI, PASSEZ VOTRE CHEMIN !!!**",
@@ -1141,7 +1024,7 @@
         },
         "/api/data/reduce": {
             "post": {
-                "description": "Alimente la collection Features en calculant les variables avec le traitement mapreduce demandé dans la propriété `features`  \nLe traitement remplace les objets similaires en sortie du calcul dans la collection Features, les objets non concernés par le traitement ne seront ainsi pas remplacés, de sorte que si un seul siret est demandé le calcul ne remplacera qu'un seul objet.  \nCes traitements ne prennent en compte que les objets déjà compactés.  ",
+                "description": "Alimente la collection Features en calculant les variables avec le traitement mapreduce demandé dans la propriété `features`  \nLe traitement remplace les objets similaires en sortie du calcul dans la collection Features, les objets non concernés par le traitement ne seront ainsi pas remplacés, de sorte que si un seul siret est demandé le calcul ne remplacera qu'un seul objet.  \nCes traitements ne prennent en compte que les objets déjà compactés.",
                 "requestBody": {
                     "content": {
                         "application/json": {

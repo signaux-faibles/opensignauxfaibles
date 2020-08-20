@@ -2,18 +2,10 @@ package engine
 
 import (
 	"encoding/json"
-	"errors"
 	"log"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/files"
 )
-
-// PlugEvents connecte deux chan Event
-func PlugEvents(source chan Event, dest chan Event) {
-	for s := range source {
-		dest <- s
-	}
-}
 
 // SocketMessage permet la diffusion d'information vers tous les clients
 type SocketMessage struct {
@@ -34,22 +26,6 @@ func (message SocketMessage) MarshalJSON() ([]byte, error) {
 	tmp.Features = message.Features
 	tmp.Files = message.Files
 	return json.Marshal(tmp)
-}
-
-// Send transmet le message
-func (message SocketMessage) Send() error {
-	if message.Channel == nil {
-		return errors.New("Aucun channel défini")
-	}
-	message.Channel <- message
-	return nil
-}
-
-// PlugTuples connecte deux chan Tuple
-func PlugTuples(source chan Tuple, dest chan Tuple) {
-	for s := range source {
-		dest <- s
-	}
 }
 
 // GetEventsFromDB retourne les n derniers enregistrements correspondant à la requête

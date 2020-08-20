@@ -92,10 +92,6 @@ func nextBatchHandler(c *gin.Context) {
 	c.JSON(200, batches)
 }
 
-func sp(s string) *string {
-	return &s
-}
-
 //
 func upsertBatchHandler(c *gin.Context) {
 	var batch engine.AdminBatch
@@ -348,34 +344,4 @@ func resolveParsers(parserNames []string) ([]engine.Parser, error) {
 		}
 	}
 	return parsers, nil
-}
-
-func getCommentsHandler(c *gin.Context) {
-	var params struct {
-		Siret string `json:"siret"`
-	}
-	err := c.Bind(&params)
-	if err != nil {
-		return
-	}
-	comments, err := engine.GetComments(params.Siret)
-	if err != nil {
-		c.JSON(500, err.Error())
-		return
-	}
-	c.JSON(200, comments)
-}
-
-func getCommentHistoryHandler(c *gin.Context) {
-	var comment engine.Comment
-	err := c.Bind(&comment)
-	if err != nil {
-		return
-	}
-	comments, err := engine.GetCommentHistory(comment)
-	if err != nil {
-		c.JSON(500, err.Error())
-		return
-	}
-	c.JSON(200, comments)
 }

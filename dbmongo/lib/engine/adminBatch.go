@@ -47,12 +47,6 @@ type AdminBatch struct {
 // BatchFiles fichiers mappés par type
 type BatchFiles map[string][]string
 
-type newFile struct {
-	FileName string `json:"filename"`
-	Type     string `json:"type"`
-	BatchKey string `json:"batch"`
-}
-
 // Load charge les données d'un batch depuis la base de données
 func (batch *AdminBatch) Load(batchKey string) error {
 	err := Db.DB.C("Admin").Find(bson.M{"_id.type": "batch", "_id.key": batchKey}).One(batch)
@@ -107,31 +101,6 @@ func NextBatchID(batchID string) (string, error) {
 	}
 	nextBatchTime := time.Date(batchTime.Year(), time.Month(batchTime.Month()+1), 1, 0, 0, 0, 0, time.UTC)
 	return nextBatchTime.Format("0601"), err
-}
-
-func addFileToBatch() chan newFile {
-	channel := make(chan newFile)
-
-	go func() {
-		for file := range channel {
-			batch, _ := GetBatch(file.BatchKey)
-			batch.Files[file.Type] = append(batch.Files[file.Type], file.FileName)
-			batch.Save()
-			batches, _ := GetBatches()
-
-			MainMessageChannel <- SocketMessage{
-				JournalEvent: Event{
-					Code:     "addFileToBatch",
-					Priority: Info,
-					Date:     time.Now(),
-					Comment:  file.FileName + ": ajout de type" + file.Type + " au batch " + batch.ID.Key,
-				},
-				Batches: batches,
-			}
-		}
-	}()
-
-	return channel
 }
 
 // ImportBatch lance tous les parsers sur le batch fourni

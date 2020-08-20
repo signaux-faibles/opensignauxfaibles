@@ -25,13 +25,6 @@ var region = map[string][]string{
 	"Corse":                      []string{"2A", "2B"},
 }
 
-var lienRegion = map[string][]string{
-	"Bourgogne-Franche-Comté": []string{"Bourgogne", "Franche-Comté"},
-	"Auvergne-Rhône-Alpes":    []string{"Auvergne", "Rhône-Alpes"},
-	"Nouvelle-Aquitaine":      []string{"Aquitaine", "Limousin", "Poitou-Charentes"},
-	"Grand-Est":               []string{"Alsace", "Lorraine", "Champagne-Ardenne"},
-}
-
 var ancienneRegion = map[string][]string{
 	"Alsace":               []string{"67", "68"},
 	"Aquitaine":            []string{"24", "33", "40", "47", "64"},
@@ -226,15 +219,4 @@ func regionFromDepartement(departement string) string {
 		}
 	}
 	return ""
-}
-
-func ancienneRegionFromDepartement(departement string) string {
-	for region, departements := range ancienneRegion {
-		for _, d := range departements {
-			if d == departement {
-				return region
-			}
-		}
-	}
-	return regionFromDepartement(departement)
 }

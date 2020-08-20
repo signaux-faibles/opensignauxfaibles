@@ -232,10 +232,3 @@ type Sirene struct {
 	Nic             string   `json:"nic" bson:"nic"`
 	NicSiege        string   `json:"nic_siege" bson:"nic_siege"`
 }
-
-// DatapiDetection résultat de l'aggregation
-type DatapiDetection struct {
-	Key   map[string]string
-	Scope []string
-	Value map[string]interface{}
-}
