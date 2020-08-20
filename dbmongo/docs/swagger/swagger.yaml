@@ -109,45 +109,6 @@ components:
               type: string
             error:
               type: string
-    Browse:
-      properties:
-        batch:
-          type: string
-        siret:
-          type: string
-        sort:
-          type: string
-        offset:
-          type: integer
-        length:
-          type: integer
-    Browseable:
-      properties:
-        id:
-          properties:
-            key:
-              type: string
-            scope:
-              type: array
-              items:
-                type: string
-        value:
-          properties:
-            field1:
-              oneOf:
-                - type: string
-                - type: number
-                - type: integer
-            field2:
-              oneOf:
-                - type: string
-                - type: number
-                - type: integer
-            ...:
-              oneOf:
-                - type: string
-                - type: number
-                - type: integer
     Reduce:
       properties:
         batch:
@@ -526,30 +487,6 @@ paths:
       summary: publier les données
       tags:
         - Traitements
-  /api/data/browse:
-    post:
-      description: |-
-        Ce service permet d'accéder à la collection Public en appliquant les filtrages sécuritaires nécessaires.
-        Le scope de l'utilisateur est automatiquement déduit de son jeton de session et ainsi ne sont retournés que les objets qui satisfont les critères de sécurités demandés dans le traitement Public
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Browse"
-      responses:
-        "200":
-          description: Liste d'objets de type Browseable renvoyée au client
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Browseable"
-      security:
-        - BearerAuth: []
-      summary: consulter les données
-      tags:
-        - Traitements
   /api/data/purge:
     get:
       description: |-
@@ -635,7 +572,6 @@ paths:
                 type: string
       security:
         - BearerAuth: []
-      summary: rechercher une entreprise
       tags:
         - Traitements
   /api/data/entreprises:
@@ -657,7 +593,6 @@ paths:
                 type: string
       security:
         - BearerAuth: []
-      summary: rechercher une entreprise
       tags:
         - Traitements
 openapi: "3.0.0"

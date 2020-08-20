@@ -58,7 +58,6 @@ type MRWait struct {
 	waitGroup sync.WaitGroup
 	running   sync.Map
 	lock      sync.Mutex
-	mergeLock sync.Mutex
 }
 
 func (w *MRWait) init() {
@@ -170,30 +169,6 @@ func Compact(fromBatchKey string) error {
 
 	err = PurgeNotCompacted()
 	return err
-}
-
-type object struct {
-	Key struct {
-		Siret string `json:"key" bson:"key"`
-		Batch string `json:"batch" bson:"batch"`
-	} `json:"key"`
-	Value map[string]interface{} `json:"value" bson:"value"`
-	Scope []string               `json:"scope" value:"scope"`
-}
-
-// ToDatapi exports data from database to datapi instance
-func ToDatapi(batchKey string) error {
-
-	prediction := Db.DB.C("Public").Find(bson.M{"_id.batch": batchKey})
-	predictions := prediction.Iter()
-	var p interface{}
-
-	for predictions.Next(&p) {
-		fmt.Println(p)
-	}
-	// public := Db.DB.C("Public").Find(bson.M{"_id.batch": batchKey})
-
-	return nil
 }
 
 // GetBatches retourne tous les objets AdminBatch de la base triés par ID
