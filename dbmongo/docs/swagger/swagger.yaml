@@ -171,7 +171,7 @@ info:
     La plateforme fournit les services suivants    
     - Gestion des batches d'intégration  
     - Lancement/ordonnancement des traitements  
-    - Consultation des données  
+    - Export et consultation des données  
 
     Toutes les erreurs rencontrées lors du traitement seront signalées par le statut `HTTP 500` assorti du message d'erreur ayant provoqué le défaut du traitement.  
     Par ailleurs, tous les services authentifiés sont succeptibles de renvoyer le statut `HTTP 401` dans le cas où l'authentification est erronée.  Le code `HTTP 403` est également communiqué lorsque les attributions sont insuffisantes pour traiter la requête.  

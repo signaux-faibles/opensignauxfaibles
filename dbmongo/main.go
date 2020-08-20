@@ -81,7 +81,7 @@ func main() {
 	config.AddAllowMethods("GET", "POST")
 	r.Use(cors.New(config))
 
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler)) // serves interactive API documentation on http://localhost:5000/swagger/index.html
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler)) // serves interactive API documentation on /swagger/index.html
 
 	r.POST("/datapi/exportReference", datapiExportReferenceHandler)
 	r.POST("/datapi/exportDetection", datapiExportDetectionHandler)
