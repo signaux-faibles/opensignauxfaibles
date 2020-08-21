@@ -56,7 +56,18 @@ global.f = {
   finalize,
 }
 
-test("la chaine d'intégration 'public' donne le même résultat que d'habitude", (t) => {
+// initialisation des paramètres globaux de reduce.algo2
+function initGlobalParams(dateDebut: Date, dateFin: Date) {
+  const jsParams = global
+  jsParams.offset_effectif = 2
+  jsParams.actual_batch = "2002_1"
+  jsParams.date_debut = dateDebut
+  jsParams.date_fin = dateFin
+  jsParams.serie_periode = f.generatePeriodSerie(dateDebut, dateFin)
+}
+
+test("l'ordre de traitement des données n'influe pas sur les résultats", (t) => {
+  // TODO: re-use initGlobalParams()
   const jsParams = global
   jsParams.offset_effectif = 2
   jsParams.actual_batch = "1905"
@@ -90,4 +101,11 @@ test("la chaine d'intégration 'public' donne le même résultat que d'habitude"
   }))
 
   t.deepEqual(result, invertedResult)
+})
+
+// inspiré par reduce.algo2/map_tests.ts
+test("map() retourne les même données que d'habitude", (t) => {
+  initGlobalParams(new Date("2014-01-01"), new Date("2016-01-01"))
+  const results = indexMapResultsByKey(runMongoMap(f.map, testCases))
+  t.snapshot(results)
 })
