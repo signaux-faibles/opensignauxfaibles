@@ -73,10 +73,8 @@ func InitDB() DB {
 
 	// firstBatch, err := getBatch(db, firstBatchID)
 	var firstBatch AdminBatch
-	err = db.C("Admin").Find(bson.M{"_id.type": "batch", "_id.key": firstBatchID}).One(&firstBatch)
-	if err != nil {
-		panic("Impossible d'accéder à la base Admin: " + err.Error())
-	}
+	db.C("Admin").Find(bson.M{"_id.type": "batch", "_id.key": firstBatchID}).One(&firstBatch)
+	// Si la table Admin n'existe pas, elle sera créée lors de l'insertion, ci-dessous
 
 	if firstBatch.ID.Type == "" {
 		firstBatch = AdminBatch{
