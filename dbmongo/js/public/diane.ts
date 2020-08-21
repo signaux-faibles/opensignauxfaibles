@@ -5,6 +5,7 @@ export function diane(hs?: Record<string, EntréeDiane>): EntréeDiane[] {
 
   const diane: Record<string, EntréeDiane> = {}
 
+  // Déduplication par arrete_bilan_diane
   f.iterable(hs)
     .filter((d) => d.arrete_bilan_diane)
     .forEach((d) => {

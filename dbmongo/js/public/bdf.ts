@@ -4,14 +4,10 @@ export type Bdf = { annee_bdf: number; arrete_bilan_bdf: Date }
 
 export function bdf(hs?: Record<string | number, Bdf>): Bdf[] {
   "use strict"
-  // return f
-  //   .iterable<Bdf>(hs)
-  //   .sort((a, b) => (a.annee_bdf < b.annee_bdf ? 1 : -1))
-
-  //   "use strict"
 
   const bdf: Record<string, Bdf> = {}
 
+  // Déduplication par arrete_bilan_bdf
   f.iterable<Bdf>(hs)
     .filter((b) => b.arrete_bilan_bdf)
     .forEach((b) => {

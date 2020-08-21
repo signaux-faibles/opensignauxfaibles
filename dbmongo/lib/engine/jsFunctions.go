@@ -769,11 +769,8 @@ db.getCollection("Features").createIndex({
 }`,
 "bdf": `function bdf(hs) {
     "use strict";
-    // return f
-    //   .iterable<Bdf>(hs)
-    //   .sort((a, b) => (a.annee_bdf < b.annee_bdf ? 1 : -1))
-    //   "use strict"
     const bdf = {};
+    // Déduplication par arrete_bilan_bdf
     f.iterable(hs)
         .filter((b) => b.arrete_bilan_bdf)
         .forEach((b) => {
@@ -912,6 +909,7 @@ db.getCollection("Features").createIndex({
 "diane": `function diane(hs) {
     "use strict";
     const diane = {};
+    // Déduplication par arrete_bilan_diane
     f.iterable(hs)
         .filter((d) => d.arrete_bilan_diane)
         .forEach((d) => {
