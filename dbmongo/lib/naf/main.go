@@ -75,8 +75,6 @@ func LoadNAF() (NAF, error) {
 		row, error := NAF1reader.Read()
 		if error == io.EOF {
 			break
-		} else if error != nil {
-			// log.Fatal(error)
 		}
 		naf.N1[row[0]] = row[1]
 	}
@@ -95,7 +93,6 @@ func LoadNAF() (NAF, error) {
 		row, error := NAF2reader.Read()
 		if error == io.EOF {
 			break
-		} else if error != nil {
 		}
 		naf.N2[row[0]] = row[1]
 	}
@@ -115,7 +112,6 @@ func LoadNAF() (NAF, error) {
 		row, error := NAF3reader.Read()
 		if error == io.EOF {
 			break
-		} else if error != nil {
 		}
 		naf.N3[row[0]] = row[1]
 	}
@@ -134,7 +130,6 @@ func LoadNAF() (NAF, error) {
 		row, error := NAF4reader.Read()
 		if error == io.EOF {
 			break
-		} else if error != nil {
 		}
 		naf.N4[row[0]] = row[1]
 	}
@@ -153,8 +148,6 @@ func LoadNAF() (NAF, error) {
 		row, error := NAF5reader.Read()
 		if error == io.EOF {
 			break
-		} else if error != nil {
-			// log.Fatal(error)
 		}
 
 		naf.N5[row[0]] = row[1]

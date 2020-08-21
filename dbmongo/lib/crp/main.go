@@ -76,7 +76,7 @@ func Parser(batch engine.AdminBatch, filter map[string]bool) (chan engine.Tuple,
 			event.Info(path + ": ouverture")
 
 			// 2 lignes de titre
-			_, err = reader.Read()
+			reader.Read()
 			_, err = reader.Read()
 
 			if err != nil {

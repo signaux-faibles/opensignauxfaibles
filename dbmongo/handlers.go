@@ -38,6 +38,10 @@ func listTypesHandler(c *gin.Context) {
 //
 func addFile(c *gin.Context) {
 	file, err := c.FormFile("file")
+	if err != nil {
+		c.JSON(500, err.Error())
+		return
+	}
 	batch := c.Request.FormValue("batch")
 	fileType := c.Request.FormValue("type")
 
