@@ -361,18 +361,18 @@ func parseDianeFile(path string, outputChannel chan engine.Tuple, event engine.E
 	cmd := exec.Command("/bin/bash", cmdPath...)
 
 	stdout, err := cmd.StdoutPipe()
-	defer stdout.Close()
 	if err != nil {
 		event.Critical("echec de récupération de sortie standard du script: " + err.Error())
 		return
 	}
+	defer stdout.Close()
 
 	stderr, err := cmd.StderrPipe()
-	defer stderr.Close()
 	if err != nil {
 		event.Critical("echec de récupération de sortie d'erreurs du script: " + err.Error())
 		return
 	}
+	defer stderr.Close()
 
 	// turn lines of standard error output into events, to help debugging
 	go func() {
@@ -429,7 +429,6 @@ func parseDianeFile(path string, outputChannel chan engine.Tuple, event engine.E
 		return
 	}
 	event.Debug(tracker.Report("abstract"))
-	return
 }
 
 // Parser produit les données Diane listées dans un batch

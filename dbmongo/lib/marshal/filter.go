@@ -73,10 +73,10 @@ func readFilterFiles(basePath string, filenames []string) (map[string]bool, erro
 	filter := make(map[string]bool)
 	for _, p := range filenames {
 		file, err := os.Open(filepath.Join(basePath, p))
-		defer file.Close()
 		if err != nil {
 			return nil, errors.New("Erreur à l'ouverture du fichier, " + err.Error())
 		}
+		defer file.Close()
 		err = readFilter(bufio.NewReader(file), filter)
 		if err != nil {
 			return nil, errors.New("Erreur à la lecture du fichier, " + err.Error())

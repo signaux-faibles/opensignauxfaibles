@@ -106,9 +106,7 @@ func CheckParameter(parameter string) error {
 // pFloatParser parses a valid float as a pointer. No option.
 func pFloatParser(s string, options ...string) (interface{}, error) {
 	f, err := strconv.ParseFloat(s, 64)
-	var i interface{}
-	i = &f
-	return i, err
+	return &f, err
 }
 
 // ParsePFloat parses a float as a pointer and deals with missing and invalid
@@ -125,9 +123,7 @@ func ParsePFloat(s string, ifEmpty string, ifInvalid string, validityRegex *rege
 // pIntParser parses a valid int as a pointer. No option.
 func pIntParser(s string, options ...string) (interface{}, error) {
 	in, err := strconv.Atoi(s)
-	var i interface{}
-	i = &in
-	return i, err
+	return &in, err
 }
 
 // ParsePInt parses a int as a pointer and deals with missing and invalid
@@ -162,9 +158,7 @@ func pTimeParser(s string, options ...string) (interface{}, error) {
 		panic("PTime parsing requires one option: the time.Parse layout")
 	}
 	t, err := time.Parse(options[0], s)
-	var i interface{}
-	i = &t
-	return i, err
+	return &t, err
 }
 
 // ParsePTime parses a time as a pointer
@@ -181,9 +175,7 @@ func ParsePTime(s string, ifEmpty string, ifInvalid string, validityRegex *regex
 // the period start. No option.
 func urssafPPeriodParser(s string, options ...string) (interface{}, error) {
 	p, err := urssafToPeriod(s)
-	var i interface{}
-	i = &(p.Start)
-	return i, err
+	return &(p.Start), err
 }
 
 // ParseUrssafPPeriod parses a urssaf period time as a pointer.
@@ -199,9 +191,7 @@ func ParseUrssafPPeriod(s string, ifEmpty string, ifInvalid string, validityRege
 // urssafPDateParser parses a urssaf date. No option.
 func urssafPDateParser(s string, options ...string) (interface{}, error) {
 	p, err := urssafToDate(s)
-	var i interface{}
-	i = &p
-	return i, err
+	return &p, err
 }
 
 // ParseUrssafPDate parses a urssaf date time as a pointer, and deals with

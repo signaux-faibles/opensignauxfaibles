@@ -22,6 +22,9 @@ func PublicOne(batch AdminBatch, key string) error {
 	}
 
 	functions, err := loadJSFunctions("public")
+	if err != nil {
+		return err
+	}
 
 	naf, err := naf.LoadNAF()
 	if err != nil {
