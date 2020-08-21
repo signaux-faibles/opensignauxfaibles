@@ -97,6 +97,7 @@ test("l'ordre de traitement des données n'influe pas sur les résultats", (t) =
 // inspiré par reduce.algo2/map_tests.ts
 test("map() retourne les même données que d'habitude", (t) => {
   initGlobalParams(new Date("2014-01-01"), new Date("2016-01-01"))
-  const results = indexMapResultsByKey(runMongoMap(f.map, testCases))
-  t.snapshot(results)
+
+  const mapResult = runMongoMap(f.map, testCases)
+  t.snapshot(mapResult)
 })
