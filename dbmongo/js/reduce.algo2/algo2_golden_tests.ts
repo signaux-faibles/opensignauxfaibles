@@ -19,7 +19,7 @@ import * as util from "util"
 import { naf } from "../test/data/naf"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { map } from "./map"
-import { finalize, Clé, V } from "./finalize"
+import { finalize, Clé, V, EntrepriseEnEntrée } from "./finalize"
 import { reduce } from "./reduce"
 import { TestDataItem } from "../test/data/objects"
 import {
@@ -114,7 +114,10 @@ test[serialOrSkip](
       value: f.reduce(key, valuesPerKey[key]),
     }))
     */
-    const reduceResult = runMongoReduce(f.reduce, mapResult)
+    const reduceResult = runMongoReduce(
+      f.reduce,
+      mapResult as { _id: unknown; value: Record<string, EntrepriseEnEntrée> }[]
+    )
 
     const finalizeResult = reduceResult
       .map(({ _id, value }) => f.finalize(_id as Clé, value as V)) // TODO: retirer conversions de types
