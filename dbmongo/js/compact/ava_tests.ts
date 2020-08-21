@@ -79,7 +79,10 @@ test.serial(
   (t: ExecutionContext) => {
     const mapResults: Record<string, unknown> = {}
     runMongoMap(map, [
-      { value: { ...importedData.value } as CompanyDataValuesWithFlags },
+      {
+        _id: null,
+        value: { ...importedData.value } as CompanyDataValuesWithFlags,
+      },
     ]).map(({ _id, value }) => (mapResults[_id as string] = value))
     t.deepEqual(mapResults, expectedMapResults)
   }

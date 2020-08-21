@@ -94,7 +94,7 @@ test.serial(
   `public.map() retourne les propriétés d'établissement présentées sur le frontal`,
   (t: ExecutionContext) => {
     const mapResults: Record<string, unknown> = {}
-    runMongoMap(map, [{ value: rawData }]).map(
+    runMongoMap(map, [{ _id: null, value: rawData }]).map(
       ({ _id, value }) => (mapResults[_id as string] = value)
     )
     t.deepEqual(mapResults, expectedMapResults)
