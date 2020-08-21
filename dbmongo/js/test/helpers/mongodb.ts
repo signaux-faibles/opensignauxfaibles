@@ -71,20 +71,25 @@ export const serializeAsMongoObject = (obj: unknown): string =>
     .replace(/"ISODate_([^"]+)"/g, `ISODate("$1")`) // replace ISODate strings by function calls
     .replace(/":/g, `" :`) + "\n" // formatting: add a space before property assignments + trailing line break
 
+type Grouped<K, V> = Record<string, { key: K; values: V[] }>
+
+const groupMapValuesByKey = <K, V>(
+  mapResults: MapResult<K, V>[]
+): Grouped<K, V> =>
+  mapResults.reduce((acc, { _id, value }) => {
+    const key = JSON.stringify(_id)
+    acc[key] = acc[key] || { _id, values: [] }
+    acc[key].values.push(value)
+    return acc
+  }, {} as Grouped<K, V>)
+
 // Run a reduce() function designed for MongoDB, based on the values returned
 // by runMongoMap().
 export const runMongoReduce = <Key, Doc>(
   reduceFct: (_key: Key, values: Doc[]) => Doc,
   mapResults: MapResult<Key, Doc>[]
-): MapResult<Key, Doc>[] => {
-  const valuesPerKey: Record<string, { _id: Key; values: Doc[] }> = {}
-  mapResults.forEach(({ _id, value }) => {
-    const idString = JSON.stringify(_id)
-    valuesPerKey[idString] = valuesPerKey[idString] || { _id, values: [] }
-    valuesPerKey[idString].values.push(value as Doc)
-  })
-  return Object.values(valuesPerKey).map(({ _id, values }) => ({
-    _id,
-    value: reduceFct(_id, values),
+): MapResult<Key, Doc>[] =>
+  Object.values(groupMapValuesByKey(mapResults)).map(({ key, values }) => ({
+    _id: key,
+    value: reduceFct(key, values),
   }))
-}
