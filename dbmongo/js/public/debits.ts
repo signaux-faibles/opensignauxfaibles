@@ -19,7 +19,8 @@ type DetteItem = {
 export type SortieDebit = {
   part_ouvriere: number
   part_patronale: number
-  periode?: Date
+  montant_majorations: number
+  periode: Date
 }
 
 // Paramètres globaux utilisés par "public"
@@ -124,12 +125,18 @@ export function debits(
 
   return serie_periode.map((p) =>
     (value_dette[p.getTime()] || []).reduce(
-      (m, c) => ({
-        part_ouvriere: m.part_ouvriere + c.part_ouvriere,
-        part_patronale: m.part_patronale + c.part_patronale,
+      (m, c) => {
+        m.part_ouvriere += c.part_ouvriere
+        m.part_patronale += c.part_patronale
+        m.montant_majorations += c.montant_majorations
+        return m
+      },
+      {
+        part_ouvriere: 0,
+        part_patronale: 0,
+        montant_majorations: 0,
         periode: f.dateAddDay(f.dateAddMonth(p, 1), -1),
-      }),
-      { part_ouvriere: 0, part_patronale: 0 } as SortieDebit
+      } as SortieDebit
     )
   )
 }
