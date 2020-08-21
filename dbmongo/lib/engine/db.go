@@ -1,7 +1,6 @@
 package engine
 
 import (
-	"errors"
 	"log"
 	"time"
 
@@ -24,31 +23,6 @@ type DB struct {
 	DBStatus *mgo.Database
 	Status   Status
 	ChanData chan *Value
-}
-
-// Read actualise l'état de la base de données
-func (status *Status) Read() error {
-	var tempStatus Status
-	err := status.DB.C("Admin").Find(bson.M{"_id.key": "status", "_id.type": "status"}).One(&tempStatus)
-	status.ID = tempStatus.ID
-	status.Status = tempStatus.Status
-	return err
-}
-
-// Write inscrit l'état dans la base de données
-func (status *Status) Write() error {
-	status.Epoch++
-	_, err := status.DB.C("Admin").Upsert(bson.M{"_id": bson.M{"key": "status", "type": "status"}}, status)
-	return err
-}
-
-// SetDBStatus fixe un nouveau statut dans la base de données
-func (status *Status) SetDBStatus(message *string) error {
-	if status.Status != nil && message != nil {
-		return errors.New("Ne peut remplacer une activité en cours")
-	}
-	status.Status = message
-	return status.Write()
 }
 
 func loadConfig() {

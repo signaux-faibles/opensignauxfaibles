@@ -116,22 +116,10 @@ func (event Event) Critical(comment interface{}) {
 	event.throw(comment, "critical")
 }
 
-// DebugReport produit un rapport de niveau Debug
-func (event Event) DebugReport(report string, tracker gournal.Tracker) {
-	event.ReportType = report
-	event.Debug(tracker.Report(report))
-}
-
 // InfoReport produit un rapport de niveau Info
 func (event Event) InfoReport(report string, tracker gournal.Tracker) {
 	event.ReportType = report
 	event.Info(tracker.Report(report))
-}
-
-// WarningReport produit un rapport de niveau Warning
-func (event Event) WarningReport(report string, tracker gournal.Tracker) {
-	event.ReportType = report
-	event.Warning(tracker.Report(report))
 }
 
 // CriticalReport produit un rapport de niveau Critical

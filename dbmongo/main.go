@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/globalsign/mgo/bson"
@@ -13,7 +12,6 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/naf"
 
 	"github.com/gin-contrib/cors"
-	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"github.com/spf13/viper"
@@ -32,21 +30,6 @@ var wsupgrader = websocket.Upgrader{
 
 func checkOrigin(r *http.Request) bool {
 	return true
-}
-
-// wshandler connecteur WebSocket
-func wshandler(w http.ResponseWriter, r *http.Request, jwt string) {
-	conn, err := wsupgrader.Upgrade(w, r, nil)
-	if err != nil {
-		fmt.Printf("Failed to set websocket upgrade: %+v", err)
-		return
-	}
-	channel := make(chan engine.SocketMessage)
-	engine.AddClientChannel <- channel
-
-	for event := range channel {
-		conn.WriteJSON(event)
-	}
 }
 
 // main Fonction Principale
@@ -82,8 +65,7 @@ func main() {
 	config.AddAllowMethods("GET", "POST")
 	r.Use(cors.New(config))
 
-	r.Use(static.Serve("/", static.LocalFile("static/", true)))
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler)) // serves interactive API documentation on /swagger/index.html
 
 	r.POST("/datapi/exportReference", datapiExportReferenceHandler)
 	r.POST("/datapi/exportDetection", datapiExportDetectionHandler)
