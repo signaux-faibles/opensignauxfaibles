@@ -22,7 +22,10 @@ export type Clé = {
   type: unknown
 }
 
-export type V = Record<SiretOrSiren | "entreprise", EntrepriseEnEntrée> // TODO: donner un nom plus explicite au type
+export type EntréeFinalize = Record<
+  SiretOrSiren | "entreprise",
+  EntrepriseEnEntrée
+>
 
 type SortieFinalize =
   | Partial<EntrepriseEnSortie>[]
@@ -31,7 +34,7 @@ type SortieFinalize =
 
 declare function print(str: string): void
 
-export function finalize(k: Clé, v: V): SortieFinalize {
+export function finalize(k: Clé, v: EntréeFinalize): SortieFinalize {
   "use strict"
   const maxBsonSize = 16777216
   const bsonsize = // eslint-disable-next-line @typescript-eslint/no-explicit-any
