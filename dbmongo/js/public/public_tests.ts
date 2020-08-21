@@ -31,7 +31,11 @@ import { reduce } from "./reduce"
 import { finalize } from "./finalize"
 import { objects as testCases } from "../test/data/objects"
 import { reducer, invertedReducer } from "../test/helpers/reducers"
-import { runMongoMap, indexMapResultsByKey } from "../test/helpers/mongodb"
+import {
+  runMongoMap,
+  runMongoReduce,
+  indexMapResultsByKey,
+} from "../test/helpers/mongodb"
 import test from "ava"
 
 global.f = {
@@ -94,10 +98,13 @@ test("l'ordre de traitement des données n'influe pas sur les résultats", (t) =
   t.deepEqual(result, invertedResult)
 })
 
-// inspiré par reduce.algo2/map_tests.ts
-test("map() retourne les même données que d'habitude", (t) => {
+// inspiré par reduce.algo2/map_tests.ts et reduce.algo2/algo2_golden_tests.ts
+test("map() et reduce() retournent les même données que d'habitude", (t) => {
   initGlobalParams(new Date("2014-01-01"), new Date("2016-01-01"))
 
   const mapResult = runMongoMap(f.map, testCases)
   t.snapshot(mapResult)
+
+  const reduceResult = runMongoReduce(f.reduce, mapResult)
+  t.snapshot(reduceResult)
 })
