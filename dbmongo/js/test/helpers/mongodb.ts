@@ -4,18 +4,22 @@ const global = globalThis as any // eslint-disable-line @typescript-eslint/no-ex
 
 ;(Object as any).bsonsize = (obj: unknown): number => JSON.stringify(obj).length // eslint-disable-line @typescript-eslint/no-explicit-any
 
-type Document = Record<string, unknown>
+type Document<K> = { _id: K } & Record<string, unknown>
 type MapResult<K, V> = { _id: K; value: V }
 
 // Run a map() function designed for MongoDB, i.e. that calls emit() an
 // inderminate number of times, instead of returning one value per iteration.
-export const runMongoMap = <DocumentId, Doc extends Document>(
-  mapFct: (this: Doc) => void, // will call global emit()
-  documents: Doc[]
-): MapResult<DocumentId, Document>[] => {
-  const results: MapResult<DocumentId, Document>[] = [] // holds all the { _id, value } objects emitted from mapFct()
+export const runMongoMap = <
+  Key,
+  InDoc extends Document<Key>,
+  OutDoc extends Document<Key>
+>(
+  mapFct: (this: InDoc) => void, // will call global emit()
+  documents: InDoc[]
+): MapResult<Key, OutDoc>[] => {
+  const results: MapResult<Key, OutDoc>[] = [] // holds all the { _id, value } objects emitted from mapFct()
   // define a emit() function that mapFct() can call
-  global.emit = (_id: DocumentId, value: Document): void => {
+  global.emit = (_id: Key, value: OutDoc): void => {
     results.push({ _id, value })
   }
   documents.forEach((doc) => mapFct.call(doc))
@@ -69,16 +73,15 @@ export const serializeAsMongoObject = (obj: unknown): string =>
 
 // Run a reduce() function designed for MongoDB, based on the values returned
 // by runMongoMap().
-export const runMongoReduce = <DocumentId, Document>(
-  reduceFct: (_key: DocumentId, values: Document[]) => Document,
-  mapResults: MapResult<DocumentId, Document>[]
-  // TODO: simplifier types
-): MapResult<DocumentId, Document>[] => {
-  const valuesPerKey: Record<string, MapResult<DocumentId, Document[]>> = {}
+export const runMongoReduce = <Key, Doc extends Document<Key>>(
+  reduceFct: (_key: Key, values: Doc[]) => Doc,
+  mapResults: MapResult<Key, Doc>[]
+): MapResult<Key, Doc>[] => {
+  const valuesPerKey: Record<string, MapResult<Key, Doc[]>> = {}
   mapResults.forEach(({ _id, value }) => {
     const idString = JSON.stringify(_id)
     valuesPerKey[idString] = valuesPerKey[idString] || { _id, value: [] } // TODO: renommer `value` --> `values`
-    valuesPerKey[idString].value.push(value)
+    valuesPerKey[idString].value.push(value as Doc)
   })
   return Object.values(valuesPerKey).map(({ _id, value }) => ({
     _id,
