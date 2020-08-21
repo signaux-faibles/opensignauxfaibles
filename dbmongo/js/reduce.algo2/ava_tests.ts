@@ -20,7 +20,7 @@ import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { cibleApprentissage } from "./cibleApprentissage"
 import { lookAhead } from "./lookAhead"
 import { reduce } from "./reduce"
-import { finalize, V, EntrepriseEnEntrée } from "./finalize"
+import { finalize, EntréeFinalize, EntrepriseEnEntrée } from "./finalize"
 import { runMongoMap } from "../test/helpers/mongodb"
 
 const global = globalThis as any // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -131,7 +131,7 @@ test.serial(
       // Note: on suppose qu'il n'y a qu'une valeur par clé
       return {
         _id,
-        value: finalize(_id, value as V),
+        value: finalize(_id, value as EntréeFinalize),
       }
     })
     t.deepEqual(finalizeResult, expectedFinalizeResults)
