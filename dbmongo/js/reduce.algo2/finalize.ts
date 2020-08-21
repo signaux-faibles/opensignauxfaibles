@@ -12,7 +12,7 @@ type EntrepriseEnSortie = {
   nbr_etablissements_connus: number
 }
 
-type Clé = {
+export type Clé = {
   batch: unknown
   siren: SiretOrSiren
   periode: unknown

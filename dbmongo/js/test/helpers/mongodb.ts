@@ -66,3 +66,22 @@ export const serializeAsMongoObject = (obj: unknown): string =>
   )
     .replace(/"ISODate_([^"]+)"/g, `ISODate("$1")`) // replace ISODate strings by function calls
     .replace(/":/g, `" :`) + "\n" // formatting: add a space before property assignments + trailing line break
+
+// Run a reduce() function designed for MongoDB, based on the values returned
+// by runMongoMap().
+export const runMongoReduce = <DocumentId, Document>(
+  reduceFct: (_key: DocumentId, values: Document[]) => Document,
+  mapResults: MapResult<DocumentId, Document>[]
+  // TODO: simplifier types
+): MapResult<DocumentId, Document>[] => {
+  const valuesPerKey: Record<string, MapResult<DocumentId, Document[]>> = {}
+  mapResults.forEach(({ _id, value }) => {
+    const idString = JSON.stringify(_id)
+    valuesPerKey[idString] = valuesPerKey[idString] || { _id, value: [] } // TODO: renommer `value` --> `values`
+    valuesPerKey[idString].value.push(value)
+  })
+  return Object.values(valuesPerKey).map(({ _id, value }) => ({
+    _id,
+    value: reduceFct(_id, value),
+  }))
+}
