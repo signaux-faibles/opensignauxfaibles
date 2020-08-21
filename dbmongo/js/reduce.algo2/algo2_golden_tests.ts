@@ -108,9 +108,14 @@ test[serialOrSkip](
       valuesPerKey[idString].push(value)
     })
 
-    const finalizeResult = Object.keys(valuesPerKey)
-      .map((key) =>
-        f.finalize(JSON.parse(key), f.reduce(key, valuesPerKey[key]))
+    const reduceResults = Object.keys(valuesPerKey).map((key) => ({
+      key,
+      value: f.reduce(key, valuesPerKey[key]),
+    }))
+
+    const finalizeResult = reduceResults
+      .map(({ key, value: reducedValue }) =>
+        f.finalize(JSON.parse(key), reducedValue)
       )
       .map((finalizedEntry) => {
         const value = (finalizedEntry as any[])[0]
