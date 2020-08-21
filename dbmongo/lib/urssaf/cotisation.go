@@ -64,8 +64,6 @@ func ParserCotisation(cache engine.Cache, batch *engine.AdminBatch) (chan engine
 				engine.TrackerReports)
 
 			file, err := os.Open(viper.GetString("APP_DATA") + path)
-			defer file.Close()
-
 			if err != nil {
 				tracker.Error(err)
 				event.Critical(tracker.Report("fatalError"))
@@ -73,6 +71,7 @@ func ParserCotisation(cache engine.Cache, batch *engine.AdminBatch) (chan engine
 			} else {
 				event.Info(path + ": ouverture")
 			}
+			defer file.Close()
 
 			reader := csv.NewReader(bufio.NewReader(file))
 			reader.Comma = ';'

@@ -71,9 +71,12 @@ func InitDB() DB {
 		panic("Paramètre FIRST_BATCH incorrect, vérifiez la configuration.")
 	}
 
+	db.C("RawData").Create(&mgo.CollectionInfo{})
+
 	// firstBatch, err := getBatch(db, firstBatchID)
 	var firstBatch AdminBatch
-	err = db.C("Admin").Find(bson.M{"_id.type": "batch", "_id.key": firstBatchID}).One(&firstBatch)
+	db.C("Admin").Find(bson.M{"_id.type": "batch", "_id.key": firstBatchID}).One(&firstBatch)
+	// Si la table Admin n'existe pas, elle sera créée lors de l'insertion, ci-dessous
 
 	if firstBatch.ID.Type == "" {
 		firstBatch = AdminBatch{
