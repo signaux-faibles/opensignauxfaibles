@@ -67,16 +67,7 @@ function initGlobalParams(dateDebut: Date, dateFin: Date) {
 }
 
 test("l'ordre de traitement des données n'influe pas sur les résultats", (t) => {
-  // TODO: re-use initGlobalParams()
-  const jsParams = global
-  jsParams.offset_effectif = 2
-  jsParams.actual_batch = "1905"
-  jsParams.date_debut = new Date("2014-01-01")
-  jsParams.date_fin = new Date("2018-02-01")
-  jsParams.serie_periode = f.generatePeriodSerie(
-    jsParams.date_debut,
-    jsParams.date_fin
-  )
+  initGlobalParams(new Date("2014-01-01"), new Date("2018-02-01"))
 
   const pool = indexMapResultsByKey(runMongoMap(f.map, testCases))
 
