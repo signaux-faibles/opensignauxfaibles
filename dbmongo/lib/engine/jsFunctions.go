@@ -931,10 +931,10 @@ db.getCollection("Features").createIndex({
         .map((p) => {
         return {
             periode: p,
-            effectif: mapEffectif[p.getTime()] || null,
+            effectif: mapEffectif[p.getTime()] || -1,
         };
     })
-        .filter((p) => p.effectif);
+        .filter((p) => p.effectif >= 0);
 }`,
 "finalize": `function finalize(_key, val) {
     return val;
@@ -949,10 +949,13 @@ db.getCollection("Features").createIndex({
         part_ouvriere: [],
         montant_majorations: [],
     };
-    debit.forEach((d) => {
-        const e = effectif.filter((e) => d.periode.getTime() === e.periode.getTime());
+    debit.forEach((d, i) => {
+        const e = effectif.filter((e) => serie_periode[i].getTime() === e.periode.getTime());
         if (e.length > 0) {
             result.effectif.push(e[0].effectif);
+        }
+        else {
+            result.effectif.push(null);
         }
         result.part_patronale.push(d.part_patronale);
         result.part_ouvriere.push(d.part_ouvriere);

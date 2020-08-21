@@ -22,12 +22,14 @@ export function joinUrssaf(
     montant_majorations: [],
   } as SortieJoinUrssaf
 
-  debit.forEach((d) => {
+  debit.forEach((d, i) => {
     const e = effectif.filter(
-      (e) => d.periode.getTime() === e.periode.getTime()
+      (e) => serie_periode[i].getTime() === e.periode.getTime()
     )
     if (e.length > 0) {
       result.effectif.push(e[0].effectif)
+    } else {
+      result.effectif.push(null)
     }
     result.part_patronale.push(d.part_patronale)
     result.part_ouvriere.push(d.part_ouvriere)
