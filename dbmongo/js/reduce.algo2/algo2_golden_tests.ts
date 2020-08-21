@@ -19,12 +19,12 @@ import * as util from "util"
 import { naf } from "../test/data/naf"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { map } from "./map"
-import { finalize, Clé, V, EntrepriseEnEntrée } from "./finalize"
+import { finalize, /* Clé, V,*/ EntrepriseEnEntrée } from "./finalize"
 import { reduce } from "./reduce"
 import { TestDataItem } from "../test/data/objects"
 import {
   runMongoMap,
-  runMongoReduce,
+  // runMongoReduce,
   parseMongoObject,
   serializeAsMongoObject,
 } from "../test/helpers/mongodb"
@@ -101,7 +101,7 @@ test[serialOrSkip](
 
     const mapExpected = await readFile(MAP_GOLDEN_FILE)
     safeDeepEqual(t, mapOutput, mapExpected)
-    /*
+
     const valuesPerKey: Record<string, unknown[]> = {}
     mapResult.forEach(({ _id, value }) => {
       const idString = JSON.stringify(_id)
@@ -111,16 +111,21 @@ test[serialOrSkip](
 
     const reduceResult = Object.keys(valuesPerKey).map((key) => ({
       _id: JSON.parse(key),
-      value: f.reduce(key, valuesPerKey[key]),
+      value: f.reduce(
+        key,
+        valuesPerKey[key] as Record<string, EntrepriseEnEntrée>[]
+      ),
     }))
-    */
+    /*
     const reduceResult = runMongoReduce(
       f.reduce,
       mapResult as { _id: unknown; value: Record<string, EntrepriseEnEntrée> }[]
     )
+    */
 
     const finalizeResult = reduceResult
-      .map(({ _id, value }) => f.finalize(_id as Clé, value as V)) // TODO: retirer conversions de types
+      // .map(({ _id, value }) => f.finalize(_id as Clé, value as V)) // TODO: retirer conversions de types
+      .map(({ _id, value }) => f.finalize(_id, value))
       .map((finalizedEntry) => {
         const value = (finalizedEntry as any[])[0]
         delete value.random_order
