@@ -110,7 +110,13 @@ test[serialOrSkip](
     const finalizeResult = reduceResult
       .map(({ _id, value }) => f.finalize(_id, value))
       .map((finalizedEntry) => {
-        const value = (finalizedEntry as any[])[0]
+        if (
+          typeof finalizedEntry === "undefined" ||
+          "incomplete" in finalizedEntry
+        ) {
+          return {}
+        }
+        const value = finalizedEntry[0]
         delete value.random_order
         return {
           _id: {
