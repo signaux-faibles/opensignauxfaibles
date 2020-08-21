@@ -104,8 +104,6 @@ func openAndReadFile(
 	}
 
 	file, err := os.Open(fullPath)
-	defer file.Close()
-
 	if err != nil {
 		tracker.Error(engine.NewCriticError(err, "fatal"))
 		event.CriticalReport("fatalError", *tracker)
@@ -113,6 +111,7 @@ func openAndReadFile(
 	} else {
 		event.Info(fullPath + ": ouverture")
 	}
+	defer file.Close()
 
 	event.Info(fullPath + ": ouverture")
 

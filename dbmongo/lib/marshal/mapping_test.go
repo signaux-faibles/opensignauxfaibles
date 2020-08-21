@@ -38,7 +38,7 @@ func TestGetSiret(t *testing.T) {
 
 		var cache = engine.Cache{"comptes": tc.mapping}
 
-		time, err := time.Parse("2006-02-01", tc.date)
+		time, _ := time.Parse("2006-02-01", tc.date)
 		actual, err := GetSiret(tc.compte, &time, cache, &batch)
 		if err != nil && !tc.expectError {
 			t.Fatalf("Unexpected error during cache request in test %d: %v", ind, err)

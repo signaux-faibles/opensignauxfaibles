@@ -90,10 +90,10 @@ func OpenAndReadSiretMapping(
 ) (Comptes, error) {
 
 	file, err := os.Open(basePath + endPath)
-	defer file.Close()
 	if err != nil {
 		return nil, errors.New("Erreur à l'ouverture du fichier, " + err.Error())
 	}
+	defer file.Close()
 
 	addSiretMapping, err := readSiretMapping(bufio.NewReader(file), cache, batch)
 	if err != nil {

@@ -158,6 +158,9 @@ func Compact(fromBatchKey string) error {
 	}
 
 	chunks, err := ChunkCollection(viper.GetString("DB"), "RawData", viper.GetInt64("chunkByteSize"))
+	if err != nil {
+		return err
+	}
 
 	for _, query := range chunks.ToQueries(nil, "value.key") {
 		log.Println(query)
