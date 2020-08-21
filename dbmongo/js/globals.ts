@@ -160,14 +160,14 @@ type EntréeApDemande = {
   periode: { start: Date; end: Date }
   hta: number /* Nombre total d'heures autorisées */
   motif_recours_se: number /* Cause d'activité partielle */
-  effectif_entreprise: number
-  effectif: number
-  date_statut: Date
-  mta: number
-  effectif_autorise: number
-  heure_consomme: number
-  montant_consomme: number
-  effectif_consomme: number
+  effectif_entreprise?: number
+  effectif?: number
+  date_statut?: Date
+  mta?: number
+  effectif_autorise?: number
+  heure_consomme?: number
+  montant_consomme?: number
+  effectif_consomme?: number
 }
 
 type EntréeCompte = {
