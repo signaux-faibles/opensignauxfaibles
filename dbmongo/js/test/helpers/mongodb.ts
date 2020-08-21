@@ -73,18 +73,18 @@ export const serializeAsMongoObject = (obj: unknown): string =>
 
 // Run a reduce() function designed for MongoDB, based on the values returned
 // by runMongoMap().
-export const runMongoReduce = <Key, Doc extends Document<Key>>(
+export const runMongoReduce = <Key, Doc>(
   reduceFct: (_key: Key, values: Doc[]) => Doc,
   mapResults: MapResult<Key, Doc>[]
 ): MapResult<Key, Doc>[] => {
-  const valuesPerKey: Record<string, MapResult<Key, Doc[]>> = {}
+  const valuesPerKey: Record<string, { _id: Key; values: Doc[] }> = {}
   mapResults.forEach(({ _id, value }) => {
     const idString = JSON.stringify(_id)
-    valuesPerKey[idString] = valuesPerKey[idString] || { _id, value: [] } // TODO: renommer `value` --> `values`
-    valuesPerKey[idString].value.push(value as Doc)
+    valuesPerKey[idString] = valuesPerKey[idString] || { _id, values: [] }
+    valuesPerKey[idString].values.push(value as Doc)
   })
-  return Object.values(valuesPerKey).map(({ _id, value }) => ({
+  return Object.values(valuesPerKey).map(({ _id, values }) => ({
     _id,
-    value: reduceFct(_id, value),
+    value: reduceFct(_id, values),
   }))
 }
