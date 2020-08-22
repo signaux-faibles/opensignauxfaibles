@@ -2,8 +2,6 @@ package main
 
 import (
 	"errors"
-	"fmt"
-	"os"
 	"strconv"
 	"time"
 
@@ -138,12 +136,9 @@ func exportEtablissementsHandler(c *gin.Context) {
 
 	// On retourne le nom de fichier avant la fin du traitement, pour éviter erreur "Request timed out"
 	var filepath = viper.GetString("exportPath") + "dbmongo-data-export-etablissements-" + getTimestamp() + ".json.gz"
-	c.JSON(200, filepath)
+	c.JSON(200, "background job, check dbmongo console for details")
 
-	err = engine.ExportEtablissements(key, filepath)
-	if err != nil {
-		fmt.Fprintln(os.Stderr, "ExportEtablissements error: ", err.Error())
-	}
+	go engine.ExportEtablissements(key, filepath)
 }
 
 func exportEntreprisesHandler(c *gin.Context) {
@@ -155,10 +150,7 @@ func exportEntreprisesHandler(c *gin.Context) {
 
 	// On retourne le nom de fichier avant la fin du traitement, pour éviter erreur "Request timed out"
 	var filepath = viper.GetString("exportPath") + "dbmongo-data-export-entreprises-" + getTimestamp() + ".json"
-	c.JSON(200, filepath)
+	c.JSON(200, "background job, check dbmongo console for details")
 
-	err = engine.ExportEntreprises(key, filepath)
-	if err != nil {
-		fmt.Fprintln(os.Stderr, "ExportEntreprises error: ", err.Error())
-	}
+	engine.ExportEntreprises(key, filepath)
 }

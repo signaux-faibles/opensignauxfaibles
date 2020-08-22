@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"compress/gzip"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -282,54 +283,51 @@ func (chunks Chunks) ToQueries(query bson.M, field string) []bson.M {
 	}
 }
 
-func writeLine(file *os.File, data interface{}) error {
-	bytesToWrite, err := json.Marshal(data)
-	if err != nil {
-		return err
-	}
-	nbBytesWritten := 0
-	for nbBytesWritten < len(bytesToWrite) {
-		bytesToWrite = bytesToWrite[nbBytesWritten:]
-		nbBytesWritten, err = file.Write(bytesToWrite)
+func getItemChannelToGzip(filepath string) chan *interface{} {
+	c := make(chan *interface{}, 1000)
+	go func() {
+		file, err := os.Create(filepath)
 		if err != nil {
-			return err
+			log.Printf("Unable to open to file %s, reason:\n%s", filepath, err.Error())
+			// dépletion du channel pour permettre une fermeture propre de l'itérateur
+			for range c {
+				continue
+			}
+			return
 		}
-		fmt.Fprintln(os.Stderr, "Printed", nbBytesWritten, "bytes /", len(bytesToWrite))
-	}
-	_, err = file.Write([]byte("\n"))
-	return err
-}
 
-func streamItemsToFile(filepath string, iter *mgo.Iter) error {
-	file, err := os.Create(filepath)
-	if err != nil {
-		return err
-	}
-	var data interface{}
-	for iter.Next(&data) {
-		err = writeLine(file, data)
-		if err != nil {
-			return err
+		w := gzip.NewWriter(file)
+		j := json.NewEncoder(w)
+		defer w.Close()
+		defer file.Close()
+		i := 0
+		for item := range c {
+			j.Encode(item)
+			fmt.Printf("\033[2K\r%d objects written", i)
 		}
-	}
-	err = iter.Err()
-	if err != nil {
-		return err
-	}
-	err = file.Close()
-	return err
+	}()
+
+	return c
 }
 
 // ExportEtablissements exporte les établissements dans un fichier.
-func ExportEtablissements(key, filepath string) error {
+func ExportEtablissements(key, filepath string) {
 	pipeline := exportdatapi.GetEtablissementWithScoresPipeline(key)
 	iter := Db.DB.C("Public").Pipe(pipeline).AllowDiskUse().Iter()
-	return streamItemsToFile(filepath, iter)
+	gzipWriter := getItemChannelToGzip(filepath)
+	var item interface{}
+	for iter.Next(&item) {
+		gzipWriter <- &item
+	}
 }
 
 // ExportEntreprises exporte les entreprises dans un fichier.
-func ExportEntreprises(key, filepath string) error {
+func ExportEntreprises(key, filepath string) {
 	pipeline := exportdatapi.GetEntreprisePipeline(key)
 	iter := Db.DB.C("Public").Pipe(pipeline).AllowDiskUse().Iter()
-	return streamItemsToFile(filepath, iter)
+	gzipWriter := getItemChannelToGzip(filepath)
+	var item interface{}
+	for iter.Next(&item) {
+		gzipWriter <- &item
+	}
 }
