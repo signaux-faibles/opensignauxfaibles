@@ -46,3 +46,4 @@ dbmongo/js/test/test_data_algo2
 tests/input-data/RawData.sample.json
 tests/output-snapshots/reduce-Features.golden.json
 tests/output-snapshots/reduce-map-output.golden.json
+build-container/dbmongo.tar.gz
