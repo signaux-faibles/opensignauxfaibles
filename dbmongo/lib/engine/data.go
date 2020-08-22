@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"bufio"
 	"compress/gzip"
 	"encoding/json"
 	"errors"
@@ -297,15 +298,17 @@ func getItemChannelToGzip(filepath string) chan interface{} {
 			return
 		}
 
-		w := gzip.NewWriter(file)
+		buffer := bufio.NewWriter(file)
+		w := gzip.NewWriter(buffer)
 		j := json.NewEncoder(w)
 		defer w.Close()
+		defer buffer.Flush()
 		defer file.Close()
 		i := 0
 		for item := range c {
 			j.Encode(item)
 			i++
-			fmt.Printf("\033[2K\r%d objects written", i)
+			fmt.Printf("\033[2K\r%s: %d objects written", filepath, i)
 		}
 	}()
 
