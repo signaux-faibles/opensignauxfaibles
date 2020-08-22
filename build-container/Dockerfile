@@ -1,4 +1,4 @@
-FROM alpine
+FROM alpine:latest
 ARG dbmongoDir
 COPY ./$dbmongoDir/dbmongo /app/dbmongo
 RUN chmod 555 /app/dbmongo
