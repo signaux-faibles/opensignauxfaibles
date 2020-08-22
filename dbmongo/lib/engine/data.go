@@ -283,8 +283,9 @@ func (chunks Chunks) ToQueries(query bson.M, field string) []bson.M {
 	}
 }
 
-func getItemChannelToGzip(filepath string) chan *interface{} {
-	c := make(chan *interface{}, 1000)
+func getItemChannelToGzip(filepath string) chan interface{} {
+	c := make(chan interface{}, 10000)
+
 	go func() {
 		file, err := os.Create(filepath)
 		if err != nil {
@@ -303,6 +304,7 @@ func getItemChannelToGzip(filepath string) chan *interface{} {
 		i := 0
 		for item := range c {
 			j.Encode(item)
+			i++
 			fmt.Printf("\033[2K\r%d objects written", i)
 		}
 	}()
@@ -317,7 +319,7 @@ func ExportEtablissements(key, filepath string) {
 	gzipWriter := getItemChannelToGzip(filepath)
 	var item interface{}
 	for iter.Next(&item) {
-		gzipWriter <- &item
+		gzipWriter <- item
 	}
 }
 
@@ -328,6 +330,6 @@ func ExportEntreprises(key, filepath string) {
 	gzipWriter := getItemChannelToGzip(filepath)
 	var item interface{}
 	for iter.Next(&item) {
-		gzipWriter <- &item
+		gzipWriter <- item
 	}
 }

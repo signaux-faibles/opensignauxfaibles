@@ -149,8 +149,8 @@ func exportEntreprisesHandler(c *gin.Context) {
 	}
 
 	// On retourne le nom de fichier avant la fin du traitement, pour éviter erreur "Request timed out"
-	var filepath = viper.GetString("exportPath") + "dbmongo-data-export-entreprises-" + getTimestamp() + ".json"
+	var filepath = viper.GetString("exportPath") + "dbmongo-data-export-entreprises-" + getTimestamp() + ".json.gz"
 	c.JSON(200, "background job, check dbmongo console for details")
 
-	engine.ExportEntreprises(key, filepath)
+	go engine.ExportEntreprises(key, filepath)
 }
