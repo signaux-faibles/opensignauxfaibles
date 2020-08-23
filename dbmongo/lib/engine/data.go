@@ -299,10 +299,8 @@ func getItemChannelToGzip(filepath string, wait *sync.WaitGroup) chan interface{
 			return
 		}
 
-		// buffer := bufio.NewWriter(file)
 		w := gzip.NewWriter(file)
 		j := json.NewEncoder(w)
-		// defer buffer.Flush()
 		i := 0
 		for item := range c {
 			j.Encode(item)
