@@ -20,6 +20,9 @@ FIRST_BATCH = "1802"
 MRthreads = 2
 chunkByteSize = 1000000000
 
+# Traitement d'export public
+exportPath = "/foo/bar/exportData"
+
 # connexion à datapi
 datapiURL = "http://localhost:3000/"
 datapiUser = "Some_User"
