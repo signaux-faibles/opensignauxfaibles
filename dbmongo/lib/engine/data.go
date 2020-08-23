@@ -1,7 +1,6 @@
 package engine
 
 import (
-	"bufio"
 	"compress/gzip"
 	"encoding/json"
 	"errors"
@@ -284,10 +283,12 @@ func (chunks Chunks) ToQueries(query bson.M, field string) []bson.M {
 	}
 }
 
-func getItemChannelToGzip(filepath string) chan interface{} {
-	c := make(chan interface{}, 10000)
-
+func getItemChannelToGzip(filepath string, wait *sync.WaitGroup) chan interface{} {
+	c := make(chan interface{})
+	wait.Add(1)
 	go func() {
+		defer wait.Done()
+
 		file, err := os.Create(filepath)
 		if err != nil {
 			log.Printf("Unable to open to file %s, reason:\n%s", filepath, err.Error())
@@ -298,18 +299,20 @@ func getItemChannelToGzip(filepath string) chan interface{} {
 			return
 		}
 
-		buffer := bufio.NewWriter(file)
-		w := gzip.NewWriter(buffer)
+		// buffer := bufio.NewWriter(file)
+		w := gzip.NewWriter(file)
 		j := json.NewEncoder(w)
-		defer w.Close()
-		defer buffer.Flush()
-		defer file.Close()
+		// defer buffer.Flush()
 		i := 0
 		for item := range c {
 			j.Encode(item)
 			i++
 			fmt.Printf("\033[2K\r%s: %d objects written", filepath, i)
 		}
+		w.Close()
+		file.Sync()
+		file.Close()
+
 	}()
 
 	return c
@@ -319,20 +322,26 @@ func getItemChannelToGzip(filepath string) chan interface{} {
 func ExportEtablissements(key, filepath string) {
 	pipeline := exportdatapi.GetEtablissementWithScoresPipeline(key)
 	iter := Db.DB.C("Public").Pipe(pipeline).AllowDiskUse().Iter()
-	gzipWriter := getItemChannelToGzip(filepath)
+	wait := sync.WaitGroup{}
+	gzipWriter := getItemChannelToGzip(filepath, &wait)
 	var item interface{}
 	for iter.Next(&item) {
 		gzipWriter <- item
 	}
+	close(gzipWriter)
+	wait.Wait()
 }
 
 // ExportEntreprises exporte les entreprises dans un fichier.
 func ExportEntreprises(key, filepath string) {
 	pipeline := exportdatapi.GetEntreprisePipeline(key)
 	iter := Db.DB.C("Public").Pipe(pipeline).AllowDiskUse().Iter()
-	gzipWriter := getItemChannelToGzip(filepath)
+	w := sync.WaitGroup{}
+	gzipWriter := getItemChannelToGzip(filepath, &w)
 	var item interface{}
 	for iter.Next(&item) {
 		gzipWriter <- item
 	}
+	close(gzipWriter)
+	w.Wait()
 }
