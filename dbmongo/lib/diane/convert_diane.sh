@@ -15,17 +15,19 @@ AWK_SCRIPT='
 BEGIN { # Semi-column separated csv as input and output
   FS = ";"
   OFS = ";"
+  RE_YEAR = "[[:digit:]][[:digit:]][[:digit:]][[:digit:]]"
+  RE_YEAR_SUFFIX = / ([[:digit:]][[:digit:]][[:digit:]][[:digit:]])$/
 }
 FNR==1 { # Heading row: Change field names
   printf "%s", "\"Annee\""
 
   for (field = 1; field <= NF; ++field) {
 
-    if ($field !~ "201") { # Field without year
+    if ($field !~ RE_YEAR_SUFFIX) { # Field without year
       to_print[++nf] = field
       printf "%s%s",  OFS, $field
     } else { # Field with year
-      match($field, "20..", year)
+      match($field, RE_YEAR, year)
       field_name = gensub(" "year[0], "", "g", $field) # Remove year from column name
       field_name = gensub("\r", "", "g", field_name)
       if (!printed[field_name]) {
