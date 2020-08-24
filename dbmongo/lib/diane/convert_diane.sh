@@ -24,18 +24,18 @@ FNR==1 { # Heading row: Change field names
   for (field = 1; field <= NF; ++field) {
 
     if ($field !~ RE_YEAR_SUFFIX) { # Field without year
-      to_print[++nf] = field
+      to_print[++remaining] = field
       printf "%s%s",  OFS, $field
     } else { # Field with year
       match($field, RE_YEAR, year)
       field_name = gensub(" "year[0], "", "g", $field) # Remove year from column name
       field_name = gensub("\r", "", "g", field_name)
       if (!printed[field_name]) {
-        ++nf
+        ++remaining
         ++printed[field_name]
         printf "%s%s", OFS, field_name;
       }
-      to_print[nf , year[0]] = field
+      to_print[remaining , year[0]] = field
     }
   }
   printf "%s", ORS
@@ -45,7 +45,7 @@ FNR>1 && $1 !~ "Marquée" { # Data row
   today_year = strftime("%Y")
   for (current_year = first_year; current_year <= today_year; ++current_year) {
     printf "%i", current_year
-    for (field = 1; field <= nf; ++field) {
+    for (field = 1; field <= remaining; ++field) {
       if (to_print[field]) {
         if (to_print[field])
           printf "%s%s", OFS, $(to_print[field]);
