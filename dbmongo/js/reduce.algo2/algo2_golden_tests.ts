@@ -19,11 +19,12 @@ import * as util from "util"
 import { naf } from "../test/data/naf"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { map } from "./map"
-import { finalize } from "./finalize"
+import { finalize, Clé, EntrepriseEnEntrée } from "./finalize"
 import { reduce } from "./reduce"
 import { TestDataItem } from "../test/data/objects"
 import {
   runMongoMap,
+  runMongoReduce,
   parseMongoObject,
   serializeAsMongoObject,
 } from "../test/helpers/mongodb"
@@ -101,19 +102,21 @@ test[serialOrSkip](
     const mapExpected = await readFile(MAP_GOLDEN_FILE)
     safeDeepEqual(t, mapOutput, mapExpected)
 
-    const valuesPerKey: Record<string, unknown[]> = {}
-    mapResult.forEach(({ _id, value }) => {
-      const idString = JSON.stringify(_id)
-      valuesPerKey[idString] = valuesPerKey[idString] || []
-      valuesPerKey[idString].push(value)
-    })
+    const reduceResult = runMongoReduce(
+      f.reduce,
+      mapResult as { _id: Clé; value: Record<string, EntrepriseEnEntrée> }[]
+    )
 
-    const finalizeResult = Object.keys(valuesPerKey)
-      .map((key) =>
-        f.finalize(JSON.parse(key), f.reduce(key, valuesPerKey[key]))
-      )
+    const finalizeResult = reduceResult
+      .map(({ _id, value }) => f.finalize(_id, value))
       .map((finalizedEntry) => {
-        const value = (finalizedEntry as any[])[0]
+        if (
+          typeof finalizedEntry === "undefined" ||
+          "incomplete" in finalizedEntry
+        ) {
+          return {}
+        }
+        const value = finalizedEntry[0]
         delete value.random_order
         return {
           _id: {
