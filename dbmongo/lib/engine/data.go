@@ -10,7 +10,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/export"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
 
 	"github.com/globalsign/mgo"
