@@ -58,7 +58,7 @@ FNR>1 && $1 !~ "Marquée" { # Data row
 }'
 
 # Concat all exported files /!\ FIX ME: no spaces in file_names !
-cat ${FILES:-$@} |
+cat "${FILES:-$@}" |
  iconv --from-code UTF-16LE --to-code UTF-8 |
  dos2unix -ascii |
  awk "${AWK_SCRIPT}" |
