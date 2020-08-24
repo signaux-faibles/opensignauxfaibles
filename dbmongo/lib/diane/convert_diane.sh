@@ -41,8 +41,8 @@ FNR==1 { # Heading row: Change field names
 FNR>1 && $1 !~ "Marquée" { # Data row
   first_year = 2012
   today_year = strftime("%Y")
-  for (current_y = first_year; current_y <= today_year; ++current_y) {
-    printf "%i", current_y
+  for (current_year = first_year; current_year <= today_year; ++current_year) {
+    printf "%i", current_year
     for (i=1; i<=nf; ++i) {
       if (f[i]) {
         if (f[i])
@@ -51,8 +51,8 @@ FNR>1 && $1 !~ "Marquée" { # Data row
           printf "%s%s", OFS, "\"\"";
       } else {
         # Only print fields relative to current year
-        if (f[i, current_y])
-          printf "%s%s", OFS, $(f[i, current_y]);
+        if (f[i, current_year])
+          printf "%s%s", OFS, $(f[i, current_year]);
         else
           printf "%s%s", OFS, "\"\"";
       }
