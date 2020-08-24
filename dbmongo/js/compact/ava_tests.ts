@@ -14,7 +14,7 @@ import { runMongoMap } from "../test/helpers/mongodb"
 const ISODate = (date: string): Date => new Date(date)
 
 const removeRandomOrder = (reporderProp: {
-  [key: string]: EntréeRepOrder
+  [key: string]: Partial<EntréeRepOrder>
 }): void =>
   Object.keys(reporderProp).forEach((period) => {
     delete reporderProp[period].random_order
