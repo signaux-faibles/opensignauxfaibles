@@ -47,7 +47,7 @@ FNR>1 && $1 !~ "Marquée" { # Data row
     printf "%i", current_year
     for (field = 1; field <= remaining; ++field) {
       if (to_print[field]) {
-        if (to_print[field])
+        if ($(to_print[field]))
           printf "%s%s", OFS, $(to_print[field]);
         else
           printf "%s%s", OFS, "\"\"";
