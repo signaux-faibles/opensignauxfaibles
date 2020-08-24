@@ -204,10 +204,10 @@
             "name": "contact support",
             "email": "contact@signaux-faibles.beta.gouv.fr"
         },
-        "description": "Cette API centralise toutes les fonctionnalités du module de traitement de données [openSignauxFaibles](https://github.com/entrepreneur-interet-general/opensignauxfaibles)  \nCe [projet](https://beta.gouv.fr/startups/signaux-faibles.html) fournit une plateforme technique à l'exploitation des signaux faibles pour anticiper les difficultés des entreprises  \n\nLa plateforme fournit les services suivants    \n- Gestion des batches d'intégration  \n- Lancement/ordonnancement des traitements  \n- Export et consultation des données  \n\nToutes les erreurs rencontrées lors du traitement seront signalées par le statut `HTTP 500` assorti du message d'erreur ayant provoqué le défaut du traitement.  \nPar ailleurs, tous les services authentifiés sont succeptibles de renvoyer le statut `HTTP 401` dans le cas où l'authentification est erronée.  Le code `HTTP 403` est également communiqué lorsque les attributions sont insuffisantes pour traiter la requête.  \nDans le cas où une requête est malformée, le code `HTTP 400` sera renvoyé assorti d'un message indiquant l'erreur rencontrée dans l'analyse du corps de la requête",
+        "description": "Cette API centralise toutes les fonctionnalités du module de traitement de données [openSignauxFaibles](https://github.com/signaux-faibles/opensignauxfaibles)  \nCe [projet](https://beta.gouv.fr/startups/signaux-faibles.html) fournit une plateforme technique à l'exploitation des signaux faibles pour anticiper les difficultés des entreprises  \n\nLa plateforme fournit les services suivants    \n- Gestion des batches d'intégration  \n- Lancement/ordonnancement des traitements  \n- Export et consultation des données  \n\nToutes les erreurs rencontrées lors du traitement seront signalées par le statut `HTTP 500` assorti du message d'erreur ayant provoqué le défaut du traitement.  \nPar ailleurs, tous les services authentifiés sont succeptibles de renvoyer le statut `HTTP 401` dans le cas où l'authentification est erronée.  Le code `HTTP 403` est également communiqué lorsque les attributions sont insuffisantes pour traiter la requête.  \nDans le cas où une requête est malformée, le code `HTTP 400` sera renvoyé assorti d'un message indiquant l'erreur rencontrée dans l'analyse du corps de la requête",
         "license": {
             "name": "Licence MIT",
-            "url": "https://raw.githubusercontent.com/entrepreneur-interet-general/opensignauxfaibles/master/LICENSE"
+            "url": "https://raw.githubusercontent.com/signaux-faibles/opensignauxfaibles/master/LICENSE"
         },
         "title": "API openSignauxFaibles",
         "version": "1.1"
@@ -829,7 +829,7 @@
         },
         "/api/data/etablissements": {
             "get": {
-                "description": "Exporte la liste des établissements depuis la collection Public vers un fichier contenant une ligne JSON par document.",
+                "description": "Exporte la liste des établissements depuis la collection Public vers un fichier compressé au format gzip contenant une ligne JSON par document.",
                 "parameters": [
                     {
                         "in": "query",
@@ -865,7 +865,7 @@
         },
         "/api/data/entreprises": {
             "get": {
-                "description": "Exporte la liste des entreprises depuis la collection Public vers un fichier contenant une ligne JSON par document.",
+                "description": "Exporte la liste des entreprises depuis la collection Public vers un fichier compressé au format gzip contenant une ligne JSON par document.",
                 "parameters": [
                     {
                         "in": "query",
