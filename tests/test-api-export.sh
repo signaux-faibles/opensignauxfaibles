@@ -157,7 +157,7 @@ stopIfFailed "${RESULT}"
 # GET /api/data/etablissements with key=212345678 should return just one match
 FILE=dbmongo/$(http --print=b --ignore-stdin GET :5000/api/data/etablissements key=="212345678" | tr -d '"')
 MATCH=$(zgrep --quiet "etablissement_21234567891011" "${FILE}" && echo "found etablissement_21234567891011" || echo -e "${COLOR_YELLOW}failed${COLOR_DEFAULT}")
-COUNT=$(zcat "${FILE}" | wc -l)
+COUNT=$(zcat < "${FILE}" | wc -l)
 rm "${FILE}"
 echo "- GET /api/data/etablissements with key=212345678 👉 ${MATCH}, ${COUNT} result(s)"
 stopIfFailed "${MATCH}"
@@ -169,7 +169,7 @@ fi
 # GET /api/data/entreprises with key=212345678 should return just one match
 FILE=dbmongo/$(http --print=b --ignore-stdin GET :5000/api/data/entreprises key=="212345678" | tr -d '"')
 MATCH=$(zgrep --quiet "entreprise_212345678" "${FILE}" && echo "found entreprise_212345678" || echo -e "${COLOR_YELLOW}failed${COLOR_DEFAULT}")
-COUNT=$(zcat "$FILE" | wc -l)
+COUNT=$(zcat < "$FILE" | wc -l)
 rm "${FILE}"
 echo "- GET /api/data/entreprises with key=212345678 👉 ${MATCH}, ${COUNT} result(s)"
 stopIfFailed "${MATCH}"
