@@ -126,7 +126,7 @@ info:
     name: "contact support"
     email: "contact@signaux-faibles.beta.gouv.fr"
   description: |-
-    Cette API centralise toutes les fonctionnalités du module de traitement de données [openSignauxFaibles](https://github.com/entrepreneur-interet-general/opensignauxfaibles)  
+    Cette API centralise toutes les fonctionnalités du module de traitement de données [openSignauxFaibles](https://github.com/signaux-faibles/opensignauxfaibles)  
     Ce [projet](https://beta.gouv.fr/startups/signaux-faibles.html) fournit une plateforme technique à l'exploitation des signaux faibles pour anticiper les difficultés des entreprises  
 
     La plateforme fournit les services suivants    
@@ -139,7 +139,7 @@ info:
     Dans le cas où une requête est malformée, le code `HTTP 400` sera renvoyé assorti d'un message indiquant l'erreur rencontrée dans l'analyse du corps de la requête
   license:
     name: Licence MIT
-    url: https://raw.githubusercontent.com/entrepreneur-interet-general/opensignauxfaibles/master/LICENSE
+    url: https://raw.githubusercontent.com/signaux-faibles/opensignauxfaibles/master/LICENSE
   title: API openSignauxFaibles
   version: "1.1"
 paths:
@@ -555,7 +555,7 @@ paths:
         - Traitements
   /api/data/etablissements:
     get:
-      description: Exporte la liste des établissements depuis la collection Public vers un fichier contenant une ligne JSON par document.
+      description: Exporte la liste des établissements depuis la collection Public vers un fichier compressé au format gzip contenant une ligne JSON par document.
       parameters:
         - in: query
           name: key
@@ -576,7 +576,7 @@ paths:
         - Traitements
   /api/data/entreprises:
     get:
-      description: Exporte la liste des entreprises depuis la collection Public vers un fichier contenant une ligne JSON par document.
+      description: Exporte la liste des entreprises depuis la collection Public vers un fichier compressé au format gzip contenant une ligne JSON par document.
       parameters:
         - in: query
           name: key
