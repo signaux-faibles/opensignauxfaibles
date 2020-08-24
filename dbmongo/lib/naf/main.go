@@ -23,21 +23,6 @@ type NAF struct {
 	N5to1 map[string]string `json:"n5to1" bson:"n5to1"`
 }
 
-// ToData translates NAF to map[string]interface{} (for datapi)
-func (n NAF) ToData() map[string]interface{} {
-	var naf = make(map[string]interface{})
-	naf["n1"] = n.N1
-	naf["n2"] = n.N2
-	naf["n2to1"] = n.N2to1
-	naf["n3"] = n.N3
-	naf["n3to1"] = n.N3to1
-	naf["n4"] = n.N4
-	naf["n4to1"] = n.N4to1
-	naf["n5"] = n.N5
-	naf["n5to1"] = n.N5to1
-	return naf
-}
-
 // Naf contient le descriptif des codes naf
 var Naf NAF
 

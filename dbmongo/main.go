@@ -67,11 +67,6 @@ func main() {
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler)) // serves interactive API documentation on /swagger/index.html
 
-	r.POST("/datapi/exportReference", datapiExportReferenceHandler)
-	r.POST("/datapi/exportDetection", datapiExportDetectionHandler)
-	r.POST("/datapi/exportEtablissement", datapiExportEtablissementHandler)
-	r.POST("/datapi/exportPolicies", datapiExportPoliciesHandler)
-
 	api := r.Group("api")
 
 	{
