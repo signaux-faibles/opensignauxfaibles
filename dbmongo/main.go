@@ -7,13 +7,10 @@ import (
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 
-	"net/http"
-
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/naf"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/gorilla/websocket"
 	"github.com/spf13/viper"
 
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -21,16 +18,6 @@ import (
 
 	_ "github.com/signaux-faibles/opensignauxfaibles/dbmongo/docs"
 )
-
-var wsupgrader = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
-	CheckOrigin:     checkOrigin,
-}
-
-func checkOrigin(r *http.Request) bool {
-	return true
-}
 
 // main Fonction Principale
 func main() {
