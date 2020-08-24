@@ -5,7 +5,7 @@ declare const serie_periode: Date[]
 
 export type SortieEffectif = {
   periode: Date
-  effectif: number | null
+  effectif: number
 }
 
 export function effectifs(
@@ -20,8 +20,8 @@ export function effectifs(
     .map((p) => {
       return {
         periode: p,
-        effectif: mapEffectif[p.getTime()] || null,
+        effectif: mapEffectif[p.getTime()] || -1,
       }
     })
-    .filter((p) => p.effectif)
+    .filter((p) => p.effectif >= 0)
 }
