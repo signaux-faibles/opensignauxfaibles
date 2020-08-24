@@ -40,7 +40,7 @@ printf "%s", ORS
 }
 FNR>1 && $1 !~ "Marquée" {
   first_year = 2012
-  today_year = 2018
+  today_year = 2019
   for (current_y = first_year; current_y <= today_year; ++current_y){
     printf "%i", current_y
     for (i=1; i<=nf; ++i) {
