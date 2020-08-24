@@ -19,21 +19,21 @@ BEGIN { # Semi-column separated csv as input and output
 FNR==1 { # Heading row: Change field names
   printf "%s", "\"Annee\""
 
-  for (i=1; i<=NF; ++i) {
+  for (field = 1; field <= NF; ++field) {
 
-    if ($i !~ "201") { # Field without year
-      f[++nf] = i
-      printf "%s%s",  OFS, $i
+    if ($field !~ "201") { # Field without year
+      f[++nf] = field
+      printf "%s%s",  OFS, $field
     } else { # Field with year
-      match($i, "20..", year)
-      field_name = gensub(" "year[0],"","g",$i) # Remove year from column name
+      match($field, "20..", year)
+      field_name = gensub(" "year[0],"","g",$field) # Remove year from column name
       field_name = gensub("\r","","g",field_name)
       if (!visited[field_name]){
         ++nf
         ++visited[field_name]
         printf "%s%s", OFS, field_name;
       }
-      f[nf , year[0]] = i
+      f[nf , year[0]] = field
     }
   }
   printf "%s", ORS
@@ -46,7 +46,7 @@ FNR>1 && $1 !~ "Marquée" { # Data row
     for (i=1; i<=nf; ++i) {
       if (f[i]) {
         if (f[i])
-          printf "%s%s", OFS, $(f[i]);
+        printf "%s%s", OFS, $(f[i]);
         else
           printf "%s%s", OFS, "\"\"";
       } else {
