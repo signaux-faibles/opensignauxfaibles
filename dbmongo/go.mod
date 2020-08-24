@@ -10,7 +10,6 @@ require (
 	github.com/gin-gonic/gin v1.6.2
 	github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8
 	github.com/gorilla/websocket v1.4.2
-	github.com/signaux-faibles/datapi v0.0.0-20200424063016-efebe6b0ac49
 	github.com/signaux-faibles/gournal v0.0.0-20190902130422-31bc52c7b8ae
 	github.com/spf13/viper v1.6.3
 	github.com/stretchr/testify v1.4.0

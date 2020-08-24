@@ -70,18 +70,6 @@ func (batch *AdminBatch) New(batchKey string) error {
 	return nil
 }
 
-// ToData exports batches to a datapi compatible format
-func (batch *AdminBatch) ToData(algoLabel string) map[string]interface{} {
-	data := map[string]interface{}{
-		"key":           batch.ID.Key,
-		"data_debut":    batch.Params.DateDebut,
-		"date_fin":      batch.Params.DateFin,
-		"date_effectif": batch.Params.DateFinEffectif,
-		"name":          batch.Name + " " + algoLabel,
-	}
-	return data
-}
-
 func isBatchID(batchID string) bool {
 	if len(batchID) < 4 {
 		return false

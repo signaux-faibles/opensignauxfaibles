@@ -60,17 +60,5 @@ type Type struct {
 // Types is a Type array
 type Types []Type
 
-// ToData transforms Types to datapi compatible type
-func (t Types) ToData() map[string]interface{} {
-	r := make(map[string]interface{})
-	for _, v := range t {
-		r[v.Type] = map[string]string{
-			"text":   v.Libelle,
-			"filter": v.Filter,
-		}
-	}
-	return r
-}
-
 // Parser fonction de traitement de données en entrée
 type Parser func(Cache, *AdminBatch) (chan Tuple, chan Event)
