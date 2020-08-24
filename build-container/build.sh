@@ -1,7 +1,7 @@
 #!/bin/sh
 
 if [ "$#" -ne 1 ]; then
-    echo "build.sh: construit l'application datapi dans une image"
+    echo "build.sh: construit l'application dbmongo dans une image"
     echo "usage: build.sh branch"
     echo "exemple: ./build.sh master"
     exit 255
