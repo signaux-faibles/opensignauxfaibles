@@ -39,7 +39,9 @@ FNR==1 { # Change field names
 printf "%s", ORS
 }
 FNR>1 && $1 !~ "Marquée" {
-  for (current_y=2012; current_y<=2020; ++current_y){ # FIX ME: years hardcoded
+  first_year = 2012
+  today_year = strftime("%Y")
+  for (current_y = first_year; current_y <= today_year; ++current_y){
     printf "%i", current_y
     for (i=1; i<=nf; ++i) {
       if (f[i])
