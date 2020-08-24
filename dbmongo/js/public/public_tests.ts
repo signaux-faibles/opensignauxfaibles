@@ -31,7 +31,11 @@ import { reduce } from "./reduce"
 import { finalize } from "./finalize"
 import { objects as testCases } from "../test/data/objects"
 import { reducer, invertedReducer } from "../test/helpers/reducers"
-import { runMongoMap, indexMapResultsByKey } from "../test/helpers/mongodb"
+import {
+  runMongoMap,
+  runMongoReduce,
+  indexMapResultsByKey,
+} from "../test/helpers/mongodb"
 import test from "ava"
 
 global.f = {
@@ -56,16 +60,18 @@ global.f = {
   finalize,
 }
 
-test("la chaine d'intégration 'public' donne le même résultat que d'habitude", (t) => {
+// initialisation des paramètres globaux de reduce.algo2
+function initGlobalParams(dateDebut: Date, dateFin: Date) {
   const jsParams = global
   jsParams.offset_effectif = 2
-  jsParams.actual_batch = "1905"
-  jsParams.date_debut = new Date("2014-01-01")
-  jsParams.date_fin = new Date("2018-02-01")
-  jsParams.serie_periode = f.generatePeriodSerie(
-    jsParams.date_debut,
-    jsParams.date_fin
-  )
+  jsParams.actual_batch = "2002_1"
+  jsParams.date_debut = dateDebut
+  jsParams.date_fin = dateFin
+  jsParams.serie_periode = f.generatePeriodSerie(dateDebut, dateFin)
+}
+
+test("l'ordre de traitement des données n'influe pas sur les résultats", (t) => {
+  initGlobalParams(new Date("2014-01-01"), new Date("2018-02-01"))
 
   const pool = indexMapResultsByKey(runMongoMap(f.map, testCases))
 
@@ -90,4 +96,20 @@ test("la chaine d'intégration 'public' donne le même résultat que d'habitude"
   }))
 
   t.deepEqual(result, invertedResult)
+})
+
+// inspiré par reduce.algo2/map_tests.ts et reduce.algo2/algo2_golden_tests.ts
+test("map(), reduce() et finalize() retournent les même données que d'habitude", (t) => {
+  initGlobalParams(new Date("2014-01-01"), new Date("2016-01-01"))
+
+  const mapResult = runMongoMap(f.map, testCases)
+  t.snapshot(mapResult)
+
+  const reduceResult = runMongoReduce(f.reduce, mapResult)
+  t.snapshot(reduceResult)
+
+  const finalizeResult = reduceResult.map(({ _id, value }) =>
+    f.finalize(_id, value)
+  )
+  t.snapshot(finalizeResult)
 })
