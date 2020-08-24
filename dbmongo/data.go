@@ -2,13 +2,12 @@ package main
 
 import (
 	"errors"
-	"fmt"
-	"os"
 	"strconv"
 	"time"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/naf"
+	"github.com/spf13/viper"
 
 	"github.com/gin-gonic/gin"
 )
@@ -136,12 +135,12 @@ func exportEtablissementsHandler(c *gin.Context) {
 	}
 
 	// On retourne le nom de fichier avant la fin du traitement, pour éviter erreur "Request timed out"
-	var filepath = "dbmongo-data-export-etablissements-" + getTimestamp() + ".json"
+	var filepath = viper.GetString("exportPath") + "dbmongo-data-export-etablissements-" + getTimestamp() + ".json.gz"
 	c.JSON(200, filepath)
 
 	err = engine.ExportEtablissements(key, filepath)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, "ExportEtablissements error: ", err.Error())
+		c.AbortWithError(500, err)
 	}
 }
 
@@ -153,11 +152,11 @@ func exportEntreprisesHandler(c *gin.Context) {
 	}
 
 	// On retourne le nom de fichier avant la fin du traitement, pour éviter erreur "Request timed out"
-	var filepath = "dbmongo-data-export-entreprises-" + getTimestamp() + ".json"
+	var filepath = viper.GetString("exportPath") + "dbmongo-data-export-entreprises-" + getTimestamp() + ".json.gz"
 	c.JSON(200, filepath)
 
 	err = engine.ExportEntreprises(key, filepath)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, "ExportEntreprises error: ", err.Error())
+		c.AbortWithError(500, err)
 	}
 }
