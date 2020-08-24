@@ -10,7 +10,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/exportdatapi"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/export"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
 
 	"github.com/globalsign/mgo"
@@ -318,7 +318,7 @@ func getItemChannelToGzip(filepath string, wait *sync.WaitGroup) chan interface{
 
 // ExportEtablissements exporte les établissements dans un fichier.
 func ExportEtablissements(key, filepath string) error {
-	pipeline := exportdatapi.GetEtablissementWithScoresPipeline(key)
+	pipeline := export.GetEtablissementWithScoresPipeline(key)
 	iter := Db.DB.C("Public").Pipe(pipeline).AllowDiskUse().Iter()
 	wait := sync.WaitGroup{}
 	gzipWriter := getItemChannelToGzip(filepath, &wait)
@@ -336,7 +336,7 @@ func ExportEtablissements(key, filepath string) error {
 
 // ExportEntreprises exporte les entreprises dans un fichier.
 func ExportEntreprises(key, filepath string) error {
-	pipeline := exportdatapi.GetEntreprisePipeline(key)
+	pipeline := export.GetEntreprisePipeline(key)
 	iter := Db.DB.C("Public").Pipe(pipeline).AllowDiskUse().Iter()
 	w := sync.WaitGroup{}
 	gzipWriter := getItemChannelToGzip(filepath, &w)
