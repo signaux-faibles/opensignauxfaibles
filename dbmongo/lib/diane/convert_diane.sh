@@ -22,18 +22,18 @@ FNR==1 { # Heading row: Change field names
   for (field = 1; field <= NF; ++field) {
 
     if ($field !~ "201") { # Field without year
-      f[++nf] = field
+      to_print[++nf] = field
       printf "%s%s",  OFS, $field
     } else { # Field with year
       match($field, "20..", year)
-      field_name = gensub(" "year[0],"","g",$field) # Remove year from column name
-      field_name = gensub("\r","","g",field_name)
-      if (!visited[field_name]){
+      field_name = gensub(" "year[0], "", "g", $field) # Remove year from column name
+      field_name = gensub("\r", "", "g", field_name)
+      if (!printed[field_name]) {
         ++nf
-        ++visited[field_name]
+        ++printed[field_name]
         printf "%s%s", OFS, field_name;
       }
-      f[nf , year[0]] = field
+      to_print[nf , year[0]] = field
     }
   }
   printf "%s", ORS
@@ -44,16 +44,15 @@ FNR>1 && $1 !~ "Marquée" { # Data row
   for (current_year = first_year; current_year <= today_year; ++current_year) {
     printf "%i", current_year
     for (field = 1; field <= nf; ++field) {
-      if (f[field]) {
-        # Field without year => print as is
-        if (f[field])
-          printf "%s%s", OFS, $(f[field]);
+      if (to_print[field]) {
+        if (to_print[field])
+          printf "%s%s", OFS, $(to_print[field]);
         else
           printf "%s%s", OFS, "\"\"";
       } else {
         # Only print fields relative to current year
-        if (f[field, current_year])
-          printf "%s%s", OFS, $(f[field, current_year]);
+        if (to_print[field, current_year])
+          printf "%s%s", OFS, $(to_print[field, current_year]);
         else
           printf "%s%s", OFS, "\"\"";
       }
