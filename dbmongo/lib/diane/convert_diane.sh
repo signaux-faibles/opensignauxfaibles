@@ -16,40 +16,40 @@ BEGIN { # Semi-column separated csv as input and output
   FS = ";"
   OFS = ";"
 }
-FNR==1 { # Change field names
+FNR==1 { # Heading row: Change field names
   printf "%s", "\"Annee\""
 
   for (i=1; i<=NF; ++i) {
 
-    if ($i !~ "201"){ # Field without year
+    if ($i !~ "201") { # Field without year
       f[++nf] = i
       printf "%s%s",  OFS, $i
     } else { # Field with year
-    match($i, "20..", year)
-    field_name = gensub(" "year[0],"","g",$i) # Remove year from column name
-    field_name = gensub("\r","","g",field_name)
-    if (!visited[field_name]){
-      ++nf
-      ++visited[field_name]
-      printf "%s%s", OFS, field_name;
+      match($i, "20..", year)
+      field_name = gensub(" "year[0],"","g",$i) # Remove year from column name
+      field_name = gensub("\r","","g",field_name)
+      if (!visited[field_name]){
+        ++nf
+        ++visited[field_name]
+        printf "%s%s", OFS, field_name;
+      }
+      f[nf , year[0]] = i
     }
-    f[nf , year[0]] = i
   }
+  printf "%s", ORS
 }
-printf "%s", ORS
-}
-FNR>1 && $1 !~ "Marquée" {
+FNR>1 && $1 !~ "Marquée" { # Data row
   first_year = 2012
   today_year = strftime("%Y")
-  for (current_y = first_year; current_y <= today_year; ++current_y){
+  for (current_y = first_year; current_y <= today_year; ++current_y) {
     printf "%i", current_y
     for (i=1; i<=nf; ++i) {
-      if (f[i])
+      if (f[i]) {
         if (f[i])
           printf "%s%s", OFS, $(f[i]);
         else
           printf "%s%s", OFS, "\"\"";
-      else {
+      } else {
         # Only print fields relative to current year
         if (f[i, current_y])
           printf "%s%s", OFS, $(f[i, current_y]);
