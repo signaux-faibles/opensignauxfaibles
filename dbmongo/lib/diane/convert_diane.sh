@@ -43,16 +43,17 @@ FNR>1 && $1 !~ "Marquée" { # Data row
   today_year = strftime("%Y")
   for (current_year = first_year; current_year <= today_year; ++current_year) {
     printf "%i", current_year
-    for (i=1; i<=nf; ++i) {
-      if (f[i]) {
-        if (f[i])
-        printf "%s%s", OFS, $(f[i]);
+    for (field = 1; field <= nf; ++field) {
+      if (f[field]) {
+        # Field without year => print as is
+        if (f[field])
+          printf "%s%s", OFS, $(f[field]);
         else
           printf "%s%s", OFS, "\"\"";
       } else {
         # Only print fields relative to current year
-        if (f[i, current_year])
-          printf "%s%s", OFS, $(f[i, current_year]);
+        if (f[field, current_year])
+          printf "%s%s", OFS, $(f[field, current_year]);
         else
           printf "%s%s", OFS, "\"\"";
       }
