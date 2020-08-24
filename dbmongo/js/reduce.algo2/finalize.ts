@@ -10,7 +10,7 @@ type EntrepriseEnSortie = {
   montant_part_ouvriere: number
   debit_entreprise: number
   nbr_etablissements_connus: number
-  random_order: number
+  random_order?: number
   siret: SiretOrSiren
   periode: unknown
 }
