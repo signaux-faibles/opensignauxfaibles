@@ -1,5 +1,7 @@
 #!/bin/bash
 
+FLAGS="$*" # the script will update the golden file if "--update" flag was provided as 1st argument
+
 function heading {
   echo ""
   echo "–––––"
@@ -25,7 +27,7 @@ heading "npm install"
 (cd ./dbmongo/js && npm install) 2>&1 | indent
 
 heading "npm test"
-(cd ./dbmongo/js && npm run lint && npm test) 2>&1 | indent
+(cd ./dbmongo/js && npm run lint && npm test -- -- "${FLAGS}") 2>&1 | indent
 
 heading "go test"
 (cd ./dbmongo && go test ./...) 2>&1 | indent && \
@@ -37,19 +39,25 @@ heading "go build"
 (killall dbmongo 2>/dev/null || true; cd ./dbmongo && go build && echo "📦 dbmongo/dbmongo") 2>&1 | indent
 
 heading "test-api.sh"
-./tests/test-api.sh 2>&1 | indent
+./tests/test-api.sh "${FLAGS}" 2>&1 | indent
 
 heading "test-api-public.sh"
-./tests/test-api-public.sh 2>&1 | indent
+./tests/test-api-public.sh "${FLAGS}" 2>&1 | indent
 
 heading "test-api-reduce.sh"
-./tests/test-api-reduce.sh 2>&1 | indent
+./tests/test-api-reduce.sh "${FLAGS}" 2>&1 | indent
 
 heading "test-api-reduce-2.sh"
-./tests/test-api-reduce-2.sh 2>&1 | indent
+./tests/test-api-reduce-2.sh "${FLAGS}" 2>&1 | indent
 
 heading "test-api-export.sh"
-./tests/test-api-export.sh 2>&1 | indent
+./tests/test-api-export.sh "${FLAGS}" 2>&1 | indent
 
 heading "test-api-swagger.sh"
-./tests/test-api-swagger.sh 2>&1 | indent
+./tests/test-api-swagger.sh "${FLAGS}" 2>&1 | indent
+
+# Check if the --update flag was passed
+if [[ "${FLAGS}" == *--update* ]]
+then
+    echo "ℹ️  Golden master files were updated => you may have to run: $ git secret hide" # to re-encrypt the golden master files
+fi
