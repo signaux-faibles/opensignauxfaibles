@@ -10,22 +10,31 @@ type EntrepriseEnSortie = {
   montant_part_ouvriere: number
   debit_entreprise: number
   nbr_etablissements_connus: number
+  random_order: number
+  siret: SiretOrSiren
+  periode: unknown
 }
 
-type Clé = {
+export type Clé = {
   batch: unknown
   siren: SiretOrSiren
   periode: unknown
   type: unknown
 }
 
-export type V = Record<SiretOrSiren | "entreprise", EntrepriseEnEntrée> // TODO: donner un nom plus explicite au type
+export type EntréeFinalize = Record<
+  SiretOrSiren | "entreprise",
+  EntrepriseEnEntrée
+>
 
-type SortieFinalize = unknown[] | { incomplete: true } | undefined
+type SortieFinalize =
+  | Partial<EntrepriseEnSortie>[]
+  | { incomplete: true }
+  | undefined
 
 declare function print(str: string): void
 
-export function finalize(k: Clé, v: V): SortieFinalize {
+export function finalize(k: Clé, v: EntréeFinalize): SortieFinalize {
   "use strict"
   const maxBsonSize = 16777216
   const bsonsize = // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -75,7 +84,7 @@ export function finalize(k: Clé, v: V): SortieFinalize {
   })
 
   // une fois que les comptes sont faits...
-  const output: EntrepriseEnEntrée[] = []
+  const output: Partial<EntrepriseEnSortie>[] = []
   const nb_connus = Object.keys(etablissements_connus).length
   Object.keys(v).forEach((siret) => {
     if (siret !== "entreprise" && v[siret]) {

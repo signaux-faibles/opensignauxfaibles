@@ -4,18 +4,22 @@ const global = globalThis as any // eslint-disable-line @typescript-eslint/no-ex
 
 ;(Object as any).bsonsize = (obj: unknown): number => JSON.stringify(obj).length // eslint-disable-line @typescript-eslint/no-explicit-any
 
-type Document = Record<string, unknown>
+type Document<K> = { _id: K } & Record<string, unknown>
 type MapResult<K, V> = { _id: K; value: V }
 
 // Run a map() function designed for MongoDB, i.e. that calls emit() an
 // inderminate number of times, instead of returning one value per iteration.
-export const runMongoMap = <DocumentId, Doc extends Document>(
-  mapFct: (this: Doc) => void, // will call global emit()
-  documents: Doc[]
-): MapResult<DocumentId, Document>[] => {
-  const results: MapResult<DocumentId, Document>[] = [] // holds all the { _id, value } objects emitted from mapFct()
+export const runMongoMap = <
+  Key,
+  InDoc extends Document<Key>,
+  OutDoc extends Document<Key>
+>(
+  mapFct: (this: InDoc) => void, // will call global emit()
+  documents: InDoc[]
+): MapResult<Key, OutDoc>[] => {
+  const results: MapResult<Key, OutDoc>[] = [] // holds all the { _id, value } objects emitted from mapFct()
   // define a emit() function that mapFct() can call
-  global.emit = (_id: DocumentId, value: Document): void => {
+  global.emit = (_id: Key, value: OutDoc): void => {
     results.push({ _id, value })
   }
   documents.forEach((doc) => mapFct.call(doc))
@@ -66,3 +70,26 @@ export const serializeAsMongoObject = (obj: unknown): string =>
   )
     .replace(/"ISODate_([^"]+)"/g, `ISODate("$1")`) // replace ISODate strings by function calls
     .replace(/":/g, `" :`) + "\n" // formatting: add a space before property assignments + trailing line break
+
+type Grouped<K, V> = Record<string, { key: K; values: V[] }>
+
+const groupMapValuesByKey = <K, V>(
+  mapResults: MapResult<K, V>[]
+): Grouped<K, V> =>
+  mapResults.reduce((acc, { _id, value }) => {
+    const key = JSON.stringify(_id)
+    acc[key] = acc[key] || { _id, values: [] }
+    acc[key].values.push(value)
+    return acc
+  }, {} as Grouped<K, V>)
+
+// Run a reduce() function designed for MongoDB, based on the values returned
+// by runMongoMap().
+export const runMongoReduce = <Key, Doc>(
+  reduceFct: (_key: Key, values: Doc[]) => Doc,
+  mapResults: MapResult<Key, Doc>[]
+): MapResult<Key, Doc>[] =>
+  Object.values(groupMapValuesByKey(mapResults)).map(({ key, values }) => ({
+    _id: key,
+    value: reduceFct(key, values),
+  }))

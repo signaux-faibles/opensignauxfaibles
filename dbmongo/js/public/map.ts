@@ -53,7 +53,7 @@ declare let actual_batch: BatchKey
 declare let serie_periode: Date[]
 declare function emit(key: string, value: Partial<SortieMap>): void
 
-export function map(this: { value: CompanyDataValues }): void {
+export function map(this: { _id: unknown; value: CompanyDataValues }): void {
   /* DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO */ const f = {
     ...{ iterable, debits, apconso, apdemande, flatten, compte, effectifs }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     ...{ delai, dealWithProcols, sirene, cotisations, dateAddDay, omit }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
