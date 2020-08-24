@@ -29,7 +29,6 @@ FNR==1 { # Heading row: Change field names
     } else { # Field with year
       match($field, RE_YEAR, year)
       field_name = gensub(" "year[0], "", "g", $field) # Remove year from column name
-      field_name = gensub("\r", "", "g", field_name)
       if (!printed[field_name]) {
         ++remaining
         ++printed[field_name]
