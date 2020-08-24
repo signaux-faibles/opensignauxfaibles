@@ -138,7 +138,10 @@ func exportEtablissementsHandler(c *gin.Context) {
 	var filepath = viper.GetString("exportPath") + "dbmongo-data-export-etablissements-" + getTimestamp() + ".json.gz"
 	c.JSON(200, filepath)
 
-	engine.ExportEtablissements(key, filepath)
+	err = engine.ExportEtablissements(key, filepath)
+	if err != nil {
+		c.AbortWithError(500, err)
+	}
 }
 
 func exportEntreprisesHandler(c *gin.Context) {
@@ -152,5 +155,8 @@ func exportEntreprisesHandler(c *gin.Context) {
 	var filepath = viper.GetString("exportPath") + "dbmongo-data-export-entreprises-" + getTimestamp() + ".json.gz"
 	c.JSON(200, filepath)
 
-	engine.ExportEntreprises(key, filepath)
+	err = engine.ExportEntreprises(key, filepath)
+	if err != nil {
+		c.AbortWithError(500, err)
+	}
 }

@@ -317,29 +317,37 @@ func getItemChannelToGzip(filepath string, wait *sync.WaitGroup) chan interface{
 }
 
 // ExportEtablissements exporte les établissements dans un fichier.
-func ExportEtablissements(key, filepath string) {
+func ExportEtablissements(key, filepath string) error {
 	pipeline := exportdatapi.GetEtablissementWithScoresPipeline(key)
 	iter := Db.DB.C("Public").Pipe(pipeline).AllowDiskUse().Iter()
 	wait := sync.WaitGroup{}
 	gzipWriter := getItemChannelToGzip(filepath, &wait)
 	var item interface{}
 	for iter.Next(&item) {
+		if err := iter.Err(); err != nil {
+			return err
+		}
 		gzipWriter <- item
 	}
 	close(gzipWriter)
 	wait.Wait()
+	return nil
 }
 
 // ExportEntreprises exporte les entreprises dans un fichier.
-func ExportEntreprises(key, filepath string) {
+func ExportEntreprises(key, filepath string) error {
 	pipeline := exportdatapi.GetEntreprisePipeline(key)
 	iter := Db.DB.C("Public").Pipe(pipeline).AllowDiskUse().Iter()
 	w := sync.WaitGroup{}
 	gzipWriter := getItemChannelToGzip(filepath, &w)
 	var item interface{}
 	for iter.Next(&item) {
+		if err := iter.Err(); err != nil {
+			return err
+		}
 		gzipWriter <- item
 	}
 	close(gzipWriter)
 	w.Wait()
+	return nil
 }
