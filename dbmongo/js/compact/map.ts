@@ -5,7 +5,10 @@ declare function emit(
   value: CompanyDataValuesWithFlags
 ): void
 
-export function map(this: { value: CompanyDataValuesWithFlags }): void {
+export function map(this: {
+  _id: unknown
+  value: CompanyDataValuesWithFlags
+}): void {
   "use strict"
   if (typeof this.value !== "object") {
     throw new Error("this.value should be a valid object, in compact::map()")
