@@ -11,12 +11,14 @@ shift $(($OPTIND -1))
 
 [ -z "$1" ] && echo "Please insert files as argument" && exit 1
 
+# This awk spreads company data so that each year of data has its own row.
 AWK_SCRIPT='
 BEGIN { # Semi-column separated csv as input and output
   FS = ";"
   OFS = ";"
   RE_YEAR = "[[:digit:]][[:digit:]][[:digit:]][[:digit:]]"
   RE_YEAR_SUFFIX = / ([[:digit:]][[:digit:]][[:digit:]][[:digit:]])$/
+  first_year = last_year = 0
 }
 FNR==1 { # Heading row => coalesce yearly fields
   printf "%s", "\"Annee\""
@@ -27,6 +29,8 @@ FNR==1 { # Heading row => coalesce yearly fields
     } else { # Field with year
       match($field, RE_YEAR, year)
       field_name = gensub(" "year[0], "", "g", $field) # Remove year from column name
+      first_year = !first_year || year[0] < first_year ? year[0] : first_year
+      last_year = !last_year || year[0] > last_year ? year[0] : last_year
       if (!yearly_fields[field_name]) {
         ++nb_fields
         ++yearly_fields[field_name]
@@ -38,9 +42,7 @@ FNR==1 { # Heading row => coalesce yearly fields
   printf "%s", ORS
 }
 FNR>1 && $1 !~ "Marquée" { # Data row
-  first_year = 2012
-  today_year = strftime("%Y")
-  for (current_year = first_year; current_year <= today_year; ++current_year) {
+  for (current_year = first_year; current_year <= last_year; ++current_year) {
     printf "%i", current_year
     for (field = 1; field <= nb_fields; ++field) {
       if (fields[field, current_year] && $(fields[field, current_year])) {
@@ -61,5 +63,3 @@ cat ${FILES:-$@} |
  dos2unix -ascii |
  awk "${AWK_SCRIPT}" |
  sed 's/,/./g'
-
-# Test with: $ go test -v -update && diff -b realData/Diane_Expected_Conversion_1.csv realData/Diane_Expected_Conversion_1.txt
