@@ -2018,7 +2018,7 @@ function map() {
                 const periode = output_indexed[date.getTime()];
                 if (typeof periode.arrete_bilan_bdf === "undefined" &&
                     typeof periode.arrete_bilan_diane === "undefined") {
-                    delete output_indexed[date.getTime()];
+                    return; // skip to next periode
                 }
                 if (typeof periode.arrete_bilan_bdf === "undefined") {
                     delete periode.arrete_bilan_bdf;
