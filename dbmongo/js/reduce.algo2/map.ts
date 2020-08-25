@@ -207,8 +207,6 @@ export function map(this: {
           siren: v.key,
           periode,
           exercice_bdf: 0,
-          arrete_bilan_bdf: undefined,
-          exercice_diane: 0,
         }
       }
 
