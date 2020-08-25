@@ -209,7 +209,6 @@ export function map(this: {
           exercice_bdf: 0,
           arrete_bilan_bdf: undefined,
           exercice_diane: 0,
-          arrete_bilan_diane: undefined,
         }
       }
 
