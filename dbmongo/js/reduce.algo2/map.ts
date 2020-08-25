@@ -232,8 +232,9 @@ export function map(this: {
       }
 
       if (v.diane) {
-        const outputDiane = f.entr_diane(v.diane, output_indexed, periodes)
-        f.add(outputDiane, output_indexed)
+        /*const outputDiane =*/ f.entr_diane(v.diane, output_indexed, periodes)
+        // f.add(outputDiane, output_indexed)
+        // TODO: rendre f.entr_diane() pure, c.a.d. faire en sorte qu'elle ne modifie plus output_indexed directement
       }
 
       serie_periode.forEach((date) => {
