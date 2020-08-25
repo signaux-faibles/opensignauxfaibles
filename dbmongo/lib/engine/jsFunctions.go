@@ -2013,18 +2013,17 @@ function map() {
             }
             serie_periode.forEach((date) => {
                 const periode = output_indexed[date.getTime()];
-                if (typeof periode.arrete_bilan_bdf === "undefined" &&
-                    typeof periode.arrete_bilan_diane === "undefined") {
-                    return; // skip to next periode
+                if (typeof periode.arrete_bilan_bdf !== "undefined" ||
+                    typeof periode.arrete_bilan_diane !== "undefined") {
+                    emit({
+                        batch: actual_batch,
+                        siren: this._id.substring(0, 9),
+                        periode: periode.periode,
+                        type: "other",
+                    }, {
+                        entreprise: periode,
+                    });
                 }
-                emit({
-                    batch: actual_batch,
-                    siren: this._id.substring(0, 9),
-                    periode: periode.periode,
-                    type: "other",
-                }, {
-                    entreprise: periode,
-                });
             });
         }
     }
