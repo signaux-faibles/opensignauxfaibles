@@ -62,7 +62,7 @@ const safeDeepEqual = (t: ExecCtx, actual: string, expected: string) => {
       return
     }
   }
-  t.deepEqual(actual, expected)
+  t.deepEqual(parseMongoObject(actual), parseMongoObject(expected)) // parseMongoObject() permet de normaliser les objets, de manière à ce que un ordre différent d'énumération des propriétés ne fasse pas échouer la comparaison
 }
 
 test[serialOrSkip](
