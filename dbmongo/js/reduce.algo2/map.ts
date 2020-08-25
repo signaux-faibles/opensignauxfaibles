@@ -247,12 +247,6 @@ export function map(this: {
         ) {
           return // skip to next periode
         }
-        if (typeof periode.arrete_bilan_bdf === "undefined") {
-          delete periode.arrete_bilan_bdf
-        }
-        if (typeof periode.arrete_bilan_diane === "undefined") {
-          delete periode.arrete_bilan_diane
-        }
 
         emit(
           {
