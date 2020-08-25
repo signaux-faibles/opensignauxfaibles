@@ -209,7 +209,7 @@ export function map(this: {
           exercice_bdf: 0,
           arrete_bilan_bdf: new Date(0),
           exercice_diane: 0,
-          arrete_bilan_diane: new Date(0),
+          arrete_bilan_diane: undefined, //new Date(0),
         }
       }
 
@@ -253,7 +253,7 @@ export function map(this: {
         if ((periode.arrete_bilan_bdf || new Date(0)).getTime() === 0) {
           delete periode.arrete_bilan_bdf
         }
-        if ((periode.arrete_bilan_diane || new Date(0)).getTime() === 0) {
+        if (typeof periode.arrete_bilan_diane === "undefined") {
           delete periode.arrete_bilan_diane
         }
 
