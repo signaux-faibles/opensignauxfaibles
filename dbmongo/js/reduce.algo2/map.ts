@@ -29,9 +29,6 @@ type Siret = string
 type SortieMapEntreprise = {
   periode: Date
 } & Partial<SortieSireneEntreprise> &
-  Partial<EntréeBdf> & // TODO: est-ce nécéssaire d'inclure les types d'entrée ?
-  Partial<EntréeDiane> &
-  Partial<EntréeBdf> &
   Partial<SortieBdf> &
   Partial<SortieDiane>
 
