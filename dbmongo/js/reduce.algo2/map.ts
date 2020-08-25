@@ -207,9 +207,9 @@ export function map(this: {
           siren: v.key,
           periode,
           exercice_bdf: 0,
-          arrete_bilan_bdf: new Date(0),
+          arrete_bilan_bdf: undefined,
           exercice_diane: 0,
-          arrete_bilan_diane: undefined, //new Date(0),
+          arrete_bilan_diane: undefined,
         }
       }
 
@@ -245,12 +245,12 @@ export function map(this: {
       serie_periode.forEach((date) => {
         const periode = output_indexed[date.getTime()]
         if (
-          (periode.arrete_bilan_bdf || new Date(0)).getTime() === 0 &&
-          (periode.arrete_bilan_diane || new Date(0)).getTime() === 0
+          typeof periode.arrete_bilan_bdf === "undefined" &&
+          typeof periode.arrete_bilan_diane === "undefined"
         ) {
           delete output_indexed[date.getTime()]
         }
-        if ((periode.arrete_bilan_bdf || new Date(0)).getTime() === 0) {
+        if (typeof periode.arrete_bilan_bdf === "undefined") {
           delete periode.arrete_bilan_bdf
         }
         if (typeof periode.arrete_bilan_diane === "undefined") {
