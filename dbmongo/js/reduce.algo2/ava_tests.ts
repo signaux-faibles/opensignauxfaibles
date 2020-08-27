@@ -23,21 +23,7 @@ import { reduce } from "./reduce"
 import { finalize, EntréeFinalize, EntrepriseEnEntrée } from "./finalize"
 import { runMongoMap } from "../test/helpers/mongodb"
 
-const global = globalThis as any // eslint-disable-line @typescript-eslint/no-explicit-any
-global.f = {
-  flatten,
-  outputs,
-  repeatable,
-  add,
-  defaillances,
-  dealWithProcols,
-  populateNafAndApe,
-  cotisation,
-  dateAddMonth,
-  generatePeriodSerie,
-  cibleApprentissage,
-  lookAhead,
-}
+declare let f: unknown
 
 // test data inspired by test-api.sh
 const siret: SiretOrSiren = "01234567891011"
@@ -51,13 +37,29 @@ const dates = [
 
 const setGlobals = (globals: unknown) => Object.assign(globalThis, globals)
 
-setGlobals({
-  // used by map()
-  actual_batch: batchKey,
-  serie_periode: dates,
-  includes: { all: true },
-  naf: {},
-})
+;(() => {
+  f = {
+    flatten,
+    outputs,
+    repeatable,
+    add,
+    defaillances,
+    dealWithProcols,
+    populateNafAndApe,
+    cotisation,
+    dateAddMonth,
+    generatePeriodSerie,
+    cibleApprentissage,
+    lookAhead,
+  }
+  setGlobals({
+    // used by map()
+    actual_batch: batchKey,
+    serie_periode: dates,
+    includes: { all: true },
+    naf: {},
+  })
+})()
 
 // même valeur en entrée que pour ../compact/ava_tests.ts
 const rawData = {
