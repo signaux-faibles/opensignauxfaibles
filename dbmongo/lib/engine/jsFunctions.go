@@ -1786,29 +1786,14 @@ function delais(v, debitParPériode, intervalleTraitement) {
 }`,
 "fraisFinancier": `function fraisFinancier(diane) {
     "use strict";
-    if (typeof diane["interets"] === "number" &&
-        typeof diane["excedent_brut_d_exploitation"] === "number" &&
-        typeof diane["produits_financiers"] === "number" &&
-        typeof diane["charges_financieres"] === "number" &&
-        typeof diane["charge_exceptionnelle"] === "number" &&
-        typeof diane["produit_exceptionnel"] === "number" &&
-        diane["excedent_brut_d_exploitation"] +
-            diane["produits_financiers"] +
-            diane["produit_exceptionnel"] -
-            diane["charge_exceptionnelle"] -
-            diane["charges_financieres"] !==
-            0) {
-        return ((diane["interets"] /
-            (diane["excedent_brut_d_exploitation"] +
-                diane["produits_financiers"] +
-                diane["produit_exceptionnel"] -
-                diane["charge_exceptionnelle"] -
-                diane["charges_financieres"])) *
-            100);
-    }
-    else {
-        return null;
-    }
+    var _a, _b, _c, _d, _e, _f;
+    const ratio = ((_a = diane["interets"]) !== null && _a !== void 0 ? _a : NaN) /
+        (((_b = diane["excedent_brut_d_exploitation"]) !== null && _b !== void 0 ? _b : NaN) +
+            ((_c = diane["produits_financiers"]) !== null && _c !== void 0 ? _c : NaN) +
+            ((_d = diane["produit_exceptionnel"]) !== null && _d !== void 0 ? _d : NaN) -
+            ((_e = diane["charge_exceptionnelle"]) !== null && _e !== void 0 ? _e : NaN) -
+            ((_f = diane["charges_financieres"]) !== null && _f !== void 0 ? _f : NaN));
+    return isNaN(ratio) ? null : ratio * 100;
 }`,
 "interim": `function interim(interim, output_indexed) {
     "use strict";
