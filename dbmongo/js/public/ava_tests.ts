@@ -10,8 +10,7 @@ import { map } from "./map"
 import { reduce } from "./reduce"
 import { finalize } from "./finalize"
 import { runMongoMap } from "../test/helpers/mongodb"
-
-const global = globalThis as any // eslint-disable-line @typescript-eslint/no-explicit-any
+import { setGlobals } from "../test/helpers/setGlobals"
 
 // test data inspired by test-api.sh
 const SIREN_LENGTH = 9
@@ -22,8 +21,10 @@ const dates = [
   new Date("2015-12-01T00:00:00.000+0000"),
   new Date("2016-01-01T00:00:00.000+0000"),
 ]
-global.actual_batch = batchKey // used by map()
-global.serie_periode = dates // used by effectifs(), which is called by map()
+setGlobals({
+  actual_batch: batchKey, // used by map()
+  serie_periode: dates, // used by effectifs(), which is called by map()
+})
 
 const rawData = {
   batch: {

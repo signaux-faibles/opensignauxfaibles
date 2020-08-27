@@ -10,6 +10,7 @@ import { map } from "./map"
 import { reduce } from "./reduce"
 import { finalize } from "./finalize"
 import { runMongoMap } from "../test/helpers/mongodb"
+import { setGlobals } from "../test/helpers/setGlobals"
 
 const removeRandomOrder = (reporderProp: {
   [key: string]: Partial<EntréeRepOrder>
@@ -98,8 +99,7 @@ test.serial(
 test.serial(
   `compact.finalize() intègre des clés d'échantillonage pour chaque période`,
   (t: ExecutionContext) => {
-    const global = globalThis as any // eslint-disable-line @typescript-eslint/no-explicit-any
-    global.serie_periode = dates // used by complete_reporder(), which is called by finalize()
+    setGlobals({ serie_periode: dates }) // used by complete_reporder(), which is called by finalize()
     const finalizeResult = finalize(siret, expectedReduceResults)
     const { reporder } = finalizeResult.batch[fromBatchKey]
     t.is(typeof reporder, "object")

@@ -10,6 +10,7 @@ import { map } from "./map"
 import { reduce, V } from "./reduce"
 import { finalize } from "./finalize"
 import { objects as testCases } from "../test/data/objects"
+import { setGlobals } from "../test/helpers/setGlobals"
 import { reducer, invertedReducer } from "../test/helpers/reducers"
 import {
   runMongoMap,
@@ -17,8 +18,6 @@ import {
   indexMapResultsByKey,
 } from "../test/helpers/mongodb"
 import test from "ava"
-
-const setGlobals = (globals: unknown) => Object.assign(globalThis, globals)
 
 // initialisation des paramètres globaux de reduce.algo2
 const initGlobalParams = (dateDebut: Date, dateFin: Date) =>

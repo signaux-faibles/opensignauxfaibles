@@ -9,6 +9,7 @@ import "../globals"
 import { map } from "./map"
 import { reduce } from "./reduce"
 import { finalize, EntréeFinalize, EntrepriseEnEntrée } from "./finalize"
+import { setGlobals } from "../test/helpers/setGlobals"
 import { runMongoMap } from "../test/helpers/mongodb"
 
 // test data inspired by test-api.sh
@@ -20,8 +21,6 @@ const dates = [
   new Date("2015-12-01T00:00:00.000+0000"),
   new Date("2016-01-01T00:00:00.000+0000"),
 ]
-
-const setGlobals = (globals: unknown) => Object.assign(globalThis, globals)
 
 setGlobals({
   // used by map()

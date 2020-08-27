@@ -1,7 +1,4 @@
-/*global globalThis*/
-
-const global = globalThis as any // eslint-disable-line @typescript-eslint/no-explicit-any
-
+import { setGlobals } from "./setGlobals"
 ;(Object as any).bsonsize = (obj: unknown): number => JSON.stringify(obj).length // eslint-disable-line @typescript-eslint/no-explicit-any
 
 type Document<K> = { _id: K } & Record<string, unknown>
@@ -19,9 +16,11 @@ export const runMongoMap = <
 ): MapResult<Key, OutDoc>[] => {
   const results: MapResult<Key, OutDoc>[] = [] // holds all the { _id, value } objects emitted from mapFct()
   // define a emit() function that mapFct() can call
-  global.emit = (_id: Key, value: OutDoc): void => {
-    results.push({ _id, value })
-  }
+  setGlobals({
+    emit: (_id: Key, value: OutDoc): void => {
+      results.push({ _id, value })
+    },
+  })
   documents.forEach((doc) => mapFct.call(doc))
   return results
 }

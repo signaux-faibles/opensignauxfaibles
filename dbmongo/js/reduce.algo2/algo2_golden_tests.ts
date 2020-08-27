@@ -1,5 +1,3 @@
-/*global globalThis*/
-
 // Combinaison des tests de map_test.js et finalize_test.js.
 //
 // Tests to prevent regressions on the JS functions (reduce.algo2 + common)
@@ -22,6 +20,7 @@ import { map } from "./map"
 import { finalize, Clé, EntrepriseEnEntrée } from "./finalize"
 import { reduce } from "./reduce"
 import { TestDataItem } from "../test/data/objects"
+import { setGlobals } from "../test/helpers/setGlobals"
 import {
   runMongoMap,
   runMongoReduce,
@@ -73,17 +72,18 @@ test[serialOrSkip](
     ) as TestDataItem[]
 
     // Define global parameters that are required by JS functions
-    const jsParams = globalThis as any // eslint-disable-line @typescript-eslint/no-explicit-any
-    jsParams.actual_batch = "2002_1"
-    jsParams.date_debut = new Date("2014-01-01")
-    jsParams.date_fin = new Date("2016-01-01")
-    jsParams.serie_periode = generatePeriodSerie(
-      jsParams.date_debut,
-      jsParams.date_fin
-    )
-    jsParams.includes = { all: true }
-    jsParams.offset_effectif = 2
-    jsParams.naf = naf
+    const date_debut = new Date("2014-01-01")
+    const date_fin = new Date("2016-01-01")
+    const jsParams = {
+      actual_batch: "2002_1",
+      date_debut,
+      date_fin,
+      serie_periode: generatePeriodSerie(date_debut, date_fin),
+      includes: { all: true },
+      offset_effectif: 2,
+      naf: naf,
+    }
+    setGlobals(jsParams)
 
     const mapResult = runMongoMap(map, testData)
     const mapOutput = JSON.stringify(mapResult, null, 2)
