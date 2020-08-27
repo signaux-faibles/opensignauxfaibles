@@ -104,11 +104,11 @@ const testCases: TestCase[] = [
           reporder: {
             [DATE_DEBUT.toString()]: {
               periode: DATE_DEBUT,
-            },
+            } as EntréeRepOrder,
             [DATE_FIN.toString()]: {
               periode: DATE_FIN,
-            },
-          } as any,
+            } as EntréeRepOrder,
+          },
         },
         "1902": {
           apconso: {
@@ -174,8 +174,8 @@ const testCases: TestCase[] = [
           reporder: {
             [DATE_DEBUT.toString()]: {
               periode: DATE_DEBUT,
-            },
-          } as any,
+            } as EntréeRepOrder,
+          },
         },
         "1902": {
           apconso: {
@@ -249,7 +249,7 @@ const testCases: TestCase[] = [
         },
         "1901_2other": {
           other_stuff: {},
-        } as any,
+        } as BatchValue,
         "1902": {
           apconso: {
             c: AP_CONSO,
