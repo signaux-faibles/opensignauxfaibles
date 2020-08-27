@@ -37,9 +37,7 @@ declare function print(str: string): void
 export function finalize(k: Clé, v: EntréeFinalize): SortieFinalize {
   "use strict"
   const maxBsonSize = 16777216
-  const bsonsize = // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (Object as any).bsonsize ||
-    ((obj: unknown): number => JSON.stringify(obj).length)
+  const bsonsize = (obj: unknown): number => JSON.stringify(obj).length // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
 
   // v de la forme
   // _id: {batch / siren / periode / type}

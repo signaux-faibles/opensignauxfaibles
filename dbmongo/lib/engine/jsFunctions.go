@@ -1701,9 +1701,7 @@ function delais(v, debitParPériode, intervalleTraitement) {
 "finalize": `function finalize(k, v) {
     "use strict";
     const maxBsonSize = 16777216;
-    const bsonsize = // eslint-disable-next-line @typescript-eslint/no-explicit-any
-     Object.bsonsize ||
-        ((obj) => JSON.stringify(obj).length);
+
     // v de la forme
     // _id: {batch / siren / periode / type}
     // value: {siret1: {}, siret2: {}, "siren": {}}
