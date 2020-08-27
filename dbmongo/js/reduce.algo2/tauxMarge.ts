@@ -1,6 +1,6 @@
-import { Diane } from "./fraisFinancier"
+import "../globals"
 
-export function tauxMarge(diane: Diane): number | null {
+export function tauxMarge(diane: EntréeDiane): number | null {
   "use strict"
   if (
     "excedent_brut_d_exploitation" in diane &&

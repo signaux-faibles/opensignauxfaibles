@@ -1,6 +1,6 @@
-import { Diane } from "./fraisFinancier"
+import "../globals"
 
-export function financierCourtTerme(diane: Diane): number | null {
+export function financierCourtTerme(diane: EntréeDiane): number | null {
   "use strict"
   if (
     "concours_bancaire_courant" in diane &&

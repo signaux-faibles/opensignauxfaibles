@@ -1,12 +1,8 @@
+import "../globals"
 import test from "ava"
-import {
-  fraisFinancier,
-  Diane,
-  DianePartial,
-  DianeProperty,
-} from "./fraisFinancier"
+import { fraisFinancier, DianePartial, DianeProperty } from "./fraisFinancier"
 
-const fakeDiane = (): Diane => ({
+const fakeDiane = (): DianePartial => ({
   interets: 50,
   excedent_brut_d_exploitation: 1000,
   produits_financiers: 100,
@@ -22,7 +18,7 @@ test(`fraisFinancier est calculé selon la formule:
   produit_exceptionnel -
   charge_exceptionnelle -
   charges_financieres ) * 100`, (t) => {
-  const diane = fakeDiane()
+  const diane = fakeDiane() as EntréeDiane
   const resultat =
     (diane.interets /
       (diane.excedent_brut_d_exploitation +
@@ -34,7 +30,7 @@ test(`fraisFinancier est calculé selon la formule:
   t.is(fraisFinancier(diane), resultat)
 })
 
-const proprietes = [
+const proprietes: DianeProperty[] = [
   "interets",
   "excedent_brut_d_exploitation",
   "produits_financiers",
@@ -44,10 +40,10 @@ const proprietes = [
 ]
 proprietes.forEach((propriete) =>
   test(`fraisFinancier est nul si "${propriete}" n'est pas disponible dans Diane`, (t) => {
-    const diane = fakeDiane() as DianePartial
-    diane[propriete as DianeProperty] = null
+    const diane = fakeDiane()
+    diane[propriete] = null
     t.is(fraisFinancier(diane), null)
-    delete diane[propriete as DianeProperty]
+    delete diane[propriete]
     t.is(fraisFinancier(diane), null)
   })
 )

@@ -1,6 +1,6 @@
-import { Diane } from "./fraisFinancier"
+import "../globals"
 
-export function detteFiscale(diane: Diane): number | null {
+export function detteFiscale(diane: EntréeDiane): number | null {
   "use strict"
   if (
     "dette_fiscale_et_sociale" in diane &&

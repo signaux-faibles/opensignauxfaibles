@@ -6,13 +6,7 @@ export type DianeProperty =
   | "charge_exceptionnelle"
   | "charges_financieres"
 
-export type Diane = {
-  [prop in DianeProperty]: number
-}
-
-export type DianePartial = {
-  [prop in DianeProperty]: number | null
-}
+export type DianePartial = Record<DianeProperty, number | null>
 
 export function fraisFinancier(diane: DianePartial): number | null {
   "use strict"
