@@ -17,18 +17,12 @@ export type DianePartial = {
 export function fraisFinancier(diane: DianePartial): number | null {
   "use strict"
   if (
-    "interets" in diane &&
-    diane["interets"] !== null &&
-    "excedent_brut_d_exploitation" in diane &&
-    diane["excedent_brut_d_exploitation"] !== null &&
-    "produits_financiers" in diane &&
-    diane["produits_financiers"] !== null &&
-    "charges_financieres" in diane &&
-    diane["charges_financieres"] !== null &&
-    "charge_exceptionnelle" in diane &&
-    diane["charge_exceptionnelle"] !== null &&
-    "produit_exceptionnel" in diane &&
-    diane["produit_exceptionnel"] !== null &&
+    typeof diane["interets"] === "number" &&
+    typeof diane["excedent_brut_d_exploitation"] === "number" &&
+    typeof diane["produits_financiers"] === "number" &&
+    typeof diane["charges_financieres"] === "number" &&
+    typeof diane["charge_exceptionnelle"] === "number" &&
+    typeof diane["produit_exceptionnel"] === "number" &&
     diane["excedent_brut_d_exploitation"] +
       diane["produits_financiers"] +
       diane["produit_exceptionnel"] -
