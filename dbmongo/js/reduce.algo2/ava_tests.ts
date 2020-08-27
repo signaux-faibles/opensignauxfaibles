@@ -39,16 +39,14 @@ global.f = {
   lookAhead,
 }
 
-const ISODate = (date: string): Date => new Date(date)
-
 // test data inspired by test-api.sh
 const siret: SiretOrSiren = "01234567891011"
 const siren = siret.substr(0, 9)
 const scope: Scope = "etablissement"
 const batchKey = "1910"
 const dates = [
-  ISODate("2015-12-01T00:00:00.000+0000"),
-  ISODate("2016-01-01T00:00:00.000+0000"),
+  new Date("2015-12-01T00:00:00.000+0000"),
+  new Date("2016-01-01T00:00:00.000+0000"),
 ]
 global.actual_batch = batchKey // used by map()
 global.serie_periode = dates // used by map()

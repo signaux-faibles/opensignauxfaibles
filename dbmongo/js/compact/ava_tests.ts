@@ -11,8 +11,6 @@ import { reduce } from "./reduce"
 import { finalize } from "./finalize"
 import { runMongoMap } from "../test/helpers/mongodb"
 
-const ISODate = (date: string): Date => new Date(date)
-
 const removeRandomOrder = (reporderProp: {
   [key: string]: Partial<EntréeRepOrder>
 }): void =>
@@ -25,8 +23,8 @@ const siret: SiretOrSiren = "01234567891011"
 const scope: Scope = "etablissement"
 const fromBatchKey = "1910"
 const dates = [
-  ISODate("2015-12-01T00:00:00.000+0000"),
-  ISODate("2016-01-01T00:00:00.000+0000"),
+  new Date("2015-12-01T00:00:00.000+0000"),
+  new Date("2016-01-01T00:00:00.000+0000"),
 ]
 const batch: BatchValues = {
   [fromBatchKey]: {},
