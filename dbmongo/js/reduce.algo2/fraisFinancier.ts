@@ -6,9 +6,7 @@ export type DianeProperty =
   | "charge_exceptionnelle"
   | "charges_financieres"
 
-export type DianePartial = Record<DianeProperty, number | null>
-
-export function fraisFinancier(diane: DianePartial): number | null {
+export function fraisFinancier(diane: EntréeDiane): number | null {
   "use strict"
   const ratio =
     (diane["interets"] ?? NaN) /
