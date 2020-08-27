@@ -7,23 +7,9 @@
 import test, { ExecutionContext } from "ava"
 import "../globals"
 import { map } from "./map"
-import { flatten } from "../common/flatten"
-import { outputs } from "./outputs"
-import { repeatable } from "./repeatable"
-import { add } from "./add"
-import { defaillances } from "./defaillances"
-import { dealWithProcols } from "./dealWithProcols"
-import { populateNafAndApe } from "./populateNafAndApe"
-import { cotisation } from "./cotisation"
-import { dateAddMonth } from "../common/dateAddMonth"
-import { generatePeriodSerie } from "../common/generatePeriodSerie"
-import { cibleApprentissage } from "./cibleApprentissage"
-import { lookAhead } from "./lookAhead"
 import { reduce } from "./reduce"
 import { finalize, EntréeFinalize, EntrepriseEnEntrée } from "./finalize"
 import { runMongoMap } from "../test/helpers/mongodb"
-
-declare let f: unknown
 
 // test data inspired by test-api.sh
 const siret: SiretOrSiren = "01234567891011"
@@ -37,29 +23,13 @@ const dates = [
 
 const setGlobals = (globals: unknown) => Object.assign(globalThis, globals)
 
-;(() => {
-  f = {
-    flatten,
-    outputs,
-    repeatable,
-    add,
-    defaillances,
-    dealWithProcols,
-    populateNafAndApe,
-    cotisation,
-    dateAddMonth,
-    generatePeriodSerie,
-    cibleApprentissage,
-    lookAhead,
-  }
-  setGlobals({
-    // used by map()
-    actual_batch: batchKey,
-    serie_periode: dates,
-    includes: { all: true },
-    naf: {},
-  })
-})()
+setGlobals({
+  // used by map()
+  actual_batch: batchKey,
+  serie_periode: dates,
+  includes: { all: true },
+  naf: {},
+})
 
 // même valeur en entrée que pour ../compact/ava_tests.ts
 const rawData = {

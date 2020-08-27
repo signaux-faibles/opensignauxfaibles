@@ -1,6 +1,6 @@
 import { SortieMap } from "./map"
 
-type V = Partial<SortieMap> & { sirets?: unknown[] }
+export type V = Partial<SortieMap> & { sirets?: unknown[] }
 
 export function reduce(_key: { scope: Scope }, values: V[]): V {
   return values.reduce((m, v) => {

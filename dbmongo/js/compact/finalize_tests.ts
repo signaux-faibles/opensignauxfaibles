@@ -1,6 +1,5 @@
 import test, { ExecutionContext } from "ava"
 import "../globals"
-import { complete_reporder } from "./complete_reporder"
 import { finalize } from "./finalize"
 
 // Paramètres globaux utilisés par "compact"
@@ -386,8 +385,6 @@ function excludeRandomOrder(obj: any): unknown {
 
 testCases.forEach(({ testCaseName, expected, finalizeObject }) => {
   test.serial(`finalize: ${testCaseName}`, (t: ExecutionContext) => {
-    // définition des valeurs de paramètres globaux utilisés par les fonctions de "compact"
-    f = { complete_reporder }
     serie_periode = [DATE_DEBUT, DATE_FIN]
     // exécution du test
     const actual = finalize(SIRET, finalizeObject)

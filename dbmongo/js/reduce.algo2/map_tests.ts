@@ -40,11 +40,8 @@ function initGlobalParams(dateDebut: Date, dateFin: Date) {
   includes = { all: true }
 }
 
-// Define global parameters that are required by JS functions
-const f = { generatePeriodSerie, map }
-
 test("map() retourne les même données que d'habitude", (t) => {
   initGlobalParams(DATE_DEBUT, DATE_FIN)
-  const results = indexMapResultsByKey(runMongoMap(f.map, testData))
+  const results = indexMapResultsByKey(runMongoMap(map, testData))
   t.snapshot(results)
 })

@@ -72,19 +72,12 @@ test[serialOrSkip](
       await readFile(INPUT_FILE)
     ) as TestDataItem[]
 
-    const f = {
-      generatePeriodSerie,
-      map,
-      finalize,
-      reduce,
-    }
-
     // Define global parameters that are required by JS functions
     const jsParams = globalThis as any // eslint-disable-line @typescript-eslint/no-explicit-any
     jsParams.actual_batch = "2002_1"
     jsParams.date_debut = new Date("2014-01-01")
     jsParams.date_fin = new Date("2016-01-01")
-    jsParams.serie_periode = f.generatePeriodSerie(
+    jsParams.serie_periode = generatePeriodSerie(
       jsParams.date_debut,
       jsParams.date_fin
     )
@@ -92,7 +85,7 @@ test[serialOrSkip](
     jsParams.offset_effectif = 2
     jsParams.naf = naf
 
-    const mapResult = runMongoMap(f.map, testData)
+    const mapResult = runMongoMap(map, testData)
     const mapOutput = JSON.stringify(mapResult, null, 2)
 
     if (updateGoldenFiles) {
@@ -103,12 +96,12 @@ test[serialOrSkip](
     safeDeepEqual(t, mapOutput, mapExpected)
 
     const reduceResult = runMongoReduce(
-      f.reduce,
+      reduce,
       mapResult as { _id: Clé; value: Record<string, EntrepriseEnEntrée> }[]
     )
 
     const finalizeResult = reduceResult
-      .map(({ _id, value }) => f.finalize(_id, value))
+      .map(({ _id, value }) => finalize(_id, value))
       .map((finalizedEntry) => {
         if (
           typeof finalizedEntry === "undefined" ||
