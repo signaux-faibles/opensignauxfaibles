@@ -38,7 +38,7 @@ export function reduce(
       })
       return m
     },
-    { key: key, scope: values[0].scope, batch: {} }
+    { key, scope: values[0].scope, batch: {} }
   )
 
   // Cette fonction reduce() est appelée à deux moments:

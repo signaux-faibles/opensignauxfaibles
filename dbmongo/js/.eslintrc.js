@@ -17,6 +17,7 @@ module.exports = {
     "prettier/prettier": "error", // tout problème de formatage detecté par prettier sera reporté comme une erreur par `$ npm run lint`
     "@typescript-eslint/camelcase": 0, // tolérer l'usage de noms en snake case (avec underscores)
     eqeqeq: ["warn", "always"], // pour encourager l'usage de opérateurs d'égalité stricts (=== au lieu de ==, et !== au lieu de !=)
+    "object-shorthand": ["warn", "always"], // pour s'aligner avec codacy
   },
   env: {
     node: true, // permet l'usage du global "module"

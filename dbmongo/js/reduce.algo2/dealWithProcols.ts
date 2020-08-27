@@ -35,7 +35,7 @@ export function dealWithProcols(
 
       if (etat !== null)
         events.push({
-          etat: etat,
+          etat,
           date_proc_col: new Date(the_event.date_effet),
         })
 
