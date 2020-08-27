@@ -203,15 +203,19 @@ function flatten(v, actual_batch) {
         ];
         all_interesting_types.forEach((type) => {
             var _a, _b;
-            m[type] = m[type] || {};
+            const typedData = m[type];
             // On supprime les clés qu'il faut
             const batchData = v.batch[batch];
             const keysToDelete = ((_b = (_a = batchData === null || batchData === void 0 ? void 0 : batchData.compact) === null || _a === void 0 ? void 0 : _a.delete) === null || _b === void 0 ? void 0 : _b[type]) || [];
-            for (const hash of keysToDelete) {
-                if (typeof m[type] === "object" && m[type][hash])
-                    delete m[type][hash];
+            if (typeof typedData === "object") {
+                for (const hash of keysToDelete) {
+                    delete typedData[hash];
+                }
             }
-            Object.assign(m[type], v.batch[batch][type]);
+            else {
+                m[type] = {};
+            }
+            Object.assign(m[type], batchData[type]);
         });
         return m;
     }, { key: v.key, scope: v.scope });

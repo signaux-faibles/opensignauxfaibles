@@ -33,15 +33,18 @@ export function flatten(
         ] as DataType[]
 
         all_interesting_types.forEach((type) => {
-          m[type] = m[type] || ({} as any)
+          const typedData = m[type]
           // On supprime les clés qu'il faut
           const batchData = v.batch[batch]
           const keysToDelete = batchData?.compact?.delete?.[type] || []
-          for (const hash of keysToDelete) {
-            if (typeof m[type] === "object" && (m[type] as any)[hash])
-              delete (m[type] as any)[hash]
+          if (typeof typedData === "object") {
+            for (const hash of keysToDelete) {
+              delete typedData[hash]
+            }
+          } else {
+            m[type] = {}
           }
-          Object.assign(m[type], v.batch[batch][type])
+          Object.assign(m[type], batchData[type])
         })
         return m
       },
