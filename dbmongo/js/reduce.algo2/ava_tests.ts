@@ -48,10 +48,16 @@ const dates = [
   new Date("2015-12-01T00:00:00.000+0000"),
   new Date("2016-01-01T00:00:00.000+0000"),
 ]
-global.actual_batch = batchKey // used by map()
-global.serie_periode = dates // used by map()
-global.includes = { all: true } // used by map()
-global.naf = {} // used by map()
+
+const setGlobals = (globals: unknown) => Object.assign(globalThis, globals)
+
+setGlobals({
+  // used by map()
+  actual_batch: batchKey,
+  serie_periode: dates,
+  includes: { all: true },
+  naf: {},
+})
 
 // même valeur en entrée que pour ../compact/ava_tests.ts
 const rawData = {

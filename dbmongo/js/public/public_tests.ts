@@ -60,15 +60,17 @@ global.f = {
   finalize,
 }
 
+const setGlobals = (globals: unknown) => Object.assign(globalThis, globals)
+
 // initialisation des paramètres globaux de reduce.algo2
-function initGlobalParams(dateDebut: Date, dateFin: Date) {
-  const jsParams = global
-  jsParams.offset_effectif = 2
-  jsParams.actual_batch = "2002_1"
-  jsParams.date_debut = dateDebut
-  jsParams.date_fin = dateFin
-  jsParams.serie_periode = f.generatePeriodSerie(dateDebut, dateFin)
-}
+const initGlobalParams = (dateDebut: Date, dateFin: Date) =>
+  setGlobals({
+    offset_effectif: 2,
+    actual_batch: "2002_1",
+    date_debut: dateDebut,
+    date_fin: dateFin,
+    serie_periode: f.generatePeriodSerie(dateDebut, dateFin),
+  })
 
 test("l'ordre de traitement des données n'influe pas sur les résultats", (t) => {
   initGlobalParams(new Date("2014-01-01"), new Date("2018-02-01"))
