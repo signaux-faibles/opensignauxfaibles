@@ -1,5 +1,5 @@
 function reducer(array, reduce) {
-  if (array.length == 1) {
+  if (array.length === 1) {
     return array[0]
   } else {
     const newVal = reduce(array[0].key, [array[0].value, array[1].value])
@@ -8,7 +8,7 @@ function reducer(array, reduce) {
 }
 
 function invertedReducer(array, reduce) {
-  if (array.length == 1) {
+  if (array.length === 1) {
     return array[0]
   } else {
     const newVal = reduce(array[0].key, [
