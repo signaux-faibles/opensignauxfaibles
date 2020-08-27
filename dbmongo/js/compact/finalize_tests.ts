@@ -365,22 +365,20 @@ const testCases: TestCase[] = [
   },
 ]
 
-type Obj = Record<string, { constructor?: ObjectConstructor }>
-function excludeRandomOrder(obj: unknown): unknown {
-  return Object.keys(obj as Record<string, unknown>).reduce((acc, prop) => {
-    const objProp = (obj as Obj)[prop]
-    return prop === "random_order"
-      ? acc
-      : {
-          ...acc,
-          [prop]:
-            typeof objProp === "object" &&
-            objProp.constructor?.name === "Object" // to make sure it's an object, but not an array, nor a Date instance
-              ? excludeRandomOrder((objProp as unknown) as Obj)
-              : objProp,
-        }
-  }, {})
-}
+const excludeRandomOrder = (obj: unknown): unknown =>
+  Object.entries(obj as Record<string, unknown>).reduce(
+    (acc, [prop, val]) =>
+      prop === "random_order"
+        ? acc
+        : {
+            ...acc,
+            [prop]:
+              typeof val === "object" && val?.constructor?.name === "Object" // to make sure it's an object, but not an array, nor a Date instance
+                ? excludeRandomOrder(val)
+                : val,
+          },
+    {}
+  )
 
 testCases.forEach(({ testCaseName, expected, finalizeObject }) => {
   test.serial(`finalize: ${testCaseName}`, (t: ExecutionContext) => {
