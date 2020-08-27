@@ -1490,16 +1490,10 @@ function delais(v, debitParPériode, intervalleTraitement) {
 }`,
 "detteFiscale": `function detteFiscale(diane) {
     "use strict";
-    if ("dette_fiscale_et_sociale" in diane &&
-        diane["dette_fiscale_et_sociale"] !== null &&
-        "valeur_ajoutee" in diane &&
-        diane["valeur_ajoutee"] !== null &&
-        diane["valeur_ajoutee"] !== 0) {
-        return (diane["dette_fiscale_et_sociale"] / diane["valeur_ajoutee"]) * 100;
-    }
-    else {
-        return null;
-    }
+    var _a, _b;
+    const ratio = ((_a = diane["dette_fiscale_et_sociale"]) !== null && _a !== void 0 ? _a : NaN) /
+        ((_b = diane["valeur_ajoutee"]) !== null && _b !== void 0 ? _b : NaN);
+    return isNaN(ratio) ? null : ratio * 100;
 }`,
 "effectifs": `function effectifs(effobj, periodes, propertyName) {
     "use strict";
@@ -1773,16 +1767,9 @@ function delais(v, debitParPériode, intervalleTraitement) {
 }`,
 "financierCourtTerme": `function financierCourtTerme(diane) {
     "use strict";
-    if ("concours_bancaire_courant" in diane &&
-        diane["concours_bancaire_courant"] !== null &&
-        "ca" in diane &&
-        diane["ca"] !== null &&
-        diane["ca"] !== 0) {
-        return (diane["concours_bancaire_courant"] / diane["ca"]) * 100;
-    }
-    else {
-        return null;
-    }
+    var _a, _b;
+    const ratio = ((_a = diane["concours_bancaire_courant"]) !== null && _a !== void 0 ? _a : NaN) / ((_b = diane["ca"]) !== null && _b !== void 0 ? _b : NaN);
+    return isNaN(ratio) ? null : ratio * 100;
 }`,
 "fraisFinancier": `function fraisFinancier(diane) {
     "use strict";
@@ -2048,12 +2035,9 @@ function outputs(v, serie_periode) {
 }`,
 "poidsFrng": `function poidsFrng(diane) {
     "use strict";
-    if ("couverture_ca_fdr" in diane && diane["couverture_ca_fdr"] !== null) {
-        return (diane["couverture_ca_fdr"] / 360) * 100;
-    }
-    else {
-        return null;
-    }
+    return typeof diane["couverture_ca_fdr"] === "number"
+        ? (diane["couverture_ca_fdr"] / 360) * 100
+        : null;
 }`,
 "populateNafAndApe": `function populateNafAndApe(output_indexed, naf) {
     "use strict";
@@ -2130,16 +2114,10 @@ function outputs(v, serie_periode) {
 }`,
 "tauxMarge": `function tauxMarge(diane) {
     "use strict";
-    if ("excedent_brut_d_exploitation" in diane &&
-        diane["excedent_brut_d_exploitation"] !== null &&
-        "valeur_ajoutee" in diane &&
-        diane["valeur_ajoutee"] !== null &&
-        diane["excedent_brut_d_exploitation"] !== 0) {
-        return ((diane["excedent_brut_d_exploitation"] / diane["valeur_ajoutee"]) * 100);
-    }
-    else {
-        return null;
-    }
+    var _a, _b;
+    const ratio = ((_a = diane["excedent_brut_d_exploitation"]) !== null && _a !== void 0 ? _a : NaN) /
+        ((_b = diane["valeur_ajoutee"]) !== null && _b !== void 0 ? _b : NaN);
+    return isNaN(ratio) ? null : ratio * 100;
 }`,
 },
 }
