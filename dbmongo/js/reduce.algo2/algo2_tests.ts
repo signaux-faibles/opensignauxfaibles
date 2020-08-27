@@ -3,7 +3,7 @@
 import test, { ExecutionContext } from "ava"
 import { map } from "./map"
 import { reduce } from "./reduce"
-import { finalize } from "./finalize"
+import { finalize, Clé, EntrepriseEnEntrée } from "./finalize"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { objects as testCases } from "../test/data/objects"
 import { naf as nafValues } from "../test/data/naf"
@@ -54,10 +54,12 @@ test("l'ordre de traitement des données n'influe pas sur les résultats", (t: E
       invertedReducer(array, reduce)
     )
 
-    const result = intermediateResult.map((r) => finalize(null as any, r))
+    const result = intermediateResult.map((r) =>
+      finalize({} as Clé, r as Record<string, EntrepriseEnEntrée>)
+    )
 
     const invertedResult = invertedIntermediateResult.map((r) =>
-      finalize(null as any, r)
+      finalize({} as Clé, r as Record<string, EntrepriseEnEntrée>)
     )
 
     t.deepEqual(result, invertedResult)
