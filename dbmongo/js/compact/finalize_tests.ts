@@ -4,20 +4,19 @@ import { finalize } from "./finalize"
 
 // Paramètres globaux utilisés par "compact"
 declare let serie_periode: unknown
-declare let f: unknown
 
 const SIRET = "123"
 const DATE_DEBUT = new Date("2014-01-01")
 const DATE_FIN = new Date("2015-01-01")
 
-const AP_CONSO: /*EntréeApConso*/ any = {
-  // periode: DATE_DEBUT,
+const AP_CONSO = {
+  periode: DATE_DEBUT,
   id_conso: "",
   heure_consomme: 0,
 }
 
-const EFFECTIF: /*EntréeEffectif*/ any = {
-  // periode: DATE_DEBUT,
+const EFFECTIF = {
+  periode: DATE_DEBUT,
   effectif: 1,
   numero_compte: "456",
 }
