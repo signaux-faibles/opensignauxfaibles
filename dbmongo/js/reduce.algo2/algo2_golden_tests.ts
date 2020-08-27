@@ -81,7 +81,7 @@ test[serialOrSkip](
       serie_periode: generatePeriodSerie(date_debut, date_fin),
       includes: { all: true },
       offset_effectif: 2,
-      naf: naf,
+      naf,
     }
     setGlobals(jsParams)
 
