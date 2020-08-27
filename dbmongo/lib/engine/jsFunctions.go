@@ -483,7 +483,7 @@ function complete_reporder(siret, object) {
         reporder_obj[p.toString()] = {
             random_order: Math.random(),
             periode: p,
-            siret: siret,
+            siret,
         };
         object.batch[lastBatch].reporder = reporder_obj;
     });
@@ -652,7 +652,7 @@ function reduce(key, values // chaque element contient plusieurs batches pour ce
             m.batch[batch] = Object.keys(value.batch[batch]).reduce((batchValues, type) => (Object.assign(Object.assign({}, batchValues), { [type]: value.batch[batch][type] })), m.batch[batch] || {});
         });
         return m;
-    }, { key: key, scope: values[0].scope, batch: {} });
+    }, { key, scope: values[0].scope, batch: {} });
     // Cette fonction reduce() est appelée à deux moments:
     // 1. agregation par établissement d'objets ImportedData. Dans cet étape, on
     // ne travaille généralement que sur un seul batch.
@@ -1412,7 +1412,7 @@ function cotisationsdettes(v, periodes, finPériode // correspond à la variable
             etat = f.procolToHuman(the_event.action_procol, the_event.stade_procol);
         if (etat !== null)
             events.push({
-                etat: etat,
+                etat,
                 date_proc_col: new Date(the_event.date_effet),
             });
         return events;
