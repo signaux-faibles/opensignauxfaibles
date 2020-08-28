@@ -15,12 +15,12 @@ export function joinUrssaf(
   effectif: SortieEffectif[],
   debit: SortieDebit[]
 ): SortieJoinUrssaf {
-  const result = {
+  const result: SortieJoinUrssaf = {
     effectif: [],
     part_patronale: [],
     part_ouvriere: [],
     montant_majorations: [],
-  } as SortieJoinUrssaf
+  }
 
   debit.forEach((d, i) => {
     const e = effectif.filter(

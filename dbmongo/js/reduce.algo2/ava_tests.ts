@@ -6,9 +6,9 @@
 
 import test, { ExecutionContext } from "ava"
 import "../globals"
-import { map } from "./map"
+import { map, Siret, SortieMapEtablissement } from "./map"
 import { reduce } from "./reduce"
-import { finalize, EntréeFinalize, EntrepriseEnEntrée } from "./finalize"
+import { finalize } from "./finalize"
 import { setGlobals } from "../test/helpers/setGlobals"
 import { runMongoMap } from "../test/helpers/mongodb"
 
@@ -58,7 +58,7 @@ const expectedMapResults = dates.map((periode) => ({
   },
   value: {
     [siret]: makeValue(periode),
-  },
+  } as Record<Siret, SortieMapEtablissement>,
 }))
 
 const expectedReduceResults = expectedMapResults
@@ -82,9 +82,8 @@ const expectedFinalizeResults = expectedMapResults.map(({ _id }) => ({
 test.serial(
   `reduce.algo2.map() émet un objet par période`,
   (t: ExecutionContext) => {
-    type MapResult = { _id: unknown; value: Record<string, EntrepriseEnEntrée> }
     const mapResults = runMongoMap(map, [{ _id: siret, value: rawData }])
-    t.deepEqual(mapResults as MapResult[], expectedMapResults)
+    t.deepEqual(mapResults, expectedMapResults)
   }
 )
 
@@ -106,7 +105,7 @@ test.serial(
       // Note: on suppose qu'il n'y a qu'une valeur par clé
       return {
         _id,
-        value: finalize(_id, value as EntréeFinalize),
+        value: finalize(_id, value),
       }
     })
     t.deepEqual(finalizeResult, expectedFinalizeResults)

@@ -1522,8 +1522,9 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
             map_effectif[time] || (available ? accu : null);
         // le cas échéant, on met à jour l'accu avec le dernier effectif disponible
         accu = map_effectif[time] || accu;
-        const propNameReporté = (propertyName + "_reporte");
-        output_effectif[time][propNameReporté] = map_effectif[time] ? 0 : 1;
+        Object.assign(output_effectif[time], {
+            [propertyName + "_reporte"]: map_effectif[time] ? 0 : 1,
+        });
         return accu;
     }, null);
     Object.keys(map_effectif).forEach((time) => {
@@ -1532,13 +1533,11 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
         past_month_offsets.forEach((lookback) => {
             // On ajoute un offset pour partir de la dernière période où l'effectif est connu
             const time_past_lookback = f.dateAddMonth(periode, lookback - offset_effectif - 1);
-            const variable_name_effectif = (propertyName +
-                "_past_" +
-                lookback);
             output_effectif[time_past_lookback.getTime()] =
                 output_effectif[time_past_lookback.getTime()] || {};
-            output_effectif[time_past_lookback.getTime()][variable_name_effectif] =
-                map_effectif[time];
+            Object.assign(output_effectif[time_past_lookback.getTime()], {
+                [propertyName + "_past_" + lookback]: map_effectif[time],
+            });
         });
     });
     // On supprime les effectifs 'null'
@@ -1695,8 +1694,9 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
     });
     return retourEntrSirene;
 }`,
-"finalize": `function finalize(k, v) {
+"finalize": `function finalize(k, mapV) {
     "use strict";
+    const v = mapV; // TODO: améliorer l'alignement avec type SortieMap
     const maxBsonSize = 16777216;
 
     // v de la forme

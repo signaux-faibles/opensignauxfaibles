@@ -1,4 +1,6 @@
-export type EntrepriseEnEntrée = {
+import { SortieMap } from "./map"
+
+type EntrepriseEnEntrée = {
   effectif: number | null
 } & Partial<EntrepriseEnSortie>
 
@@ -22,10 +24,7 @@ export type Clé = {
   type: unknown
 }
 
-export type EntréeFinalize = Record<
-  SiretOrSiren | "entreprise",
-  EntrepriseEnEntrée
->
+type EntréeFinalize = Record<SiretOrSiren | "entreprise", EntrepriseEnEntrée>
 
 type SortieFinalize =
   | Partial<EntrepriseEnSortie>[]
@@ -34,8 +33,10 @@ type SortieFinalize =
 
 declare function print(str: string): void
 
-export function finalize(k: Clé, v: EntréeFinalize): SortieFinalize {
+export function finalize(k: Clé, mapV: SortieMap): SortieFinalize {
   "use strict"
+  const v = mapV as EntréeFinalize // TODO: améliorer l'alignement avec type SortieMap
+
   const maxBsonSize = 16777216
   const bsonsize = (obj: unknown): number => JSON.stringify(obj).length // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
 

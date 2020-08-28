@@ -1,3 +1,11 @@
-type Doc = { key: unknown; value: unknown }
-export function reducer(array: Doc[], reduce: unknown): unknown
-export function invertedReducer(array: Doc[], reduce: unknown): unknown
+type Doc<T> = { key: unknown; value: T }
+
+export function reducer<T>(
+  array: Doc<T>[],
+  reduce: (key: unknown, values: T[]) => T
+): T
+
+export function invertedReducer<T>(
+  array: Doc<T>[],
+  reduce: (key: unknown, values: T[]) => T
+): T

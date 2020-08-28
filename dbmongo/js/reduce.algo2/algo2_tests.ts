@@ -1,9 +1,9 @@
 // Converted to TS from _test.js
 
 import test, { ExecutionContext } from "ava"
-import { map } from "./map"
+import { map, EntréeMap, CléSortieMap, SortieMap } from "./map"
 import { reduce } from "./reduce"
-import { finalize, Clé, EntrepriseEnEntrée } from "./finalize"
+import { finalize, Clé } from "./finalize"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { objects as testCases } from "../test/data/objects"
 import { naf as nafValues } from "../test/data/naf"
@@ -44,7 +44,9 @@ test("l'ordre de traitement des données n'influe pas sur les résultats", (t: E
   testCases.forEach(({ _id, value }) => {
     initGlobalParams()
 
-    const flatValues = runMongoMap(map, [{ _id, value }])
+    const flatValues = runMongoMap<EntréeMap, CléSortieMap, SortieMap>(map, [
+      { _id, value },
+    ])
     const groupedValues = indexMapResultsByKey(flatValues)
     const values = objectValues(groupedValues)
 
@@ -54,12 +56,10 @@ test("l'ordre de traitement des données n'influe pas sur les résultats", (t: E
       invertedReducer(array, reduce)
     )
 
-    const result = intermediateResult.map((r) =>
-      finalize({} as Clé, r as Record<string, EntrepriseEnEntrée>)
-    )
+    const result = intermediateResult.map((r) => finalize({} as Clé, r))
 
     const invertedResult = invertedIntermediateResult.map((r) =>
-      finalize({} as Clé, r as Record<string, EntrepriseEnEntrée>)
+      finalize({} as Clé, r)
     )
 
     t.deepEqual(result, invertedResult)

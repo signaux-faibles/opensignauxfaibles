@@ -24,7 +24,7 @@ import { entr_bdf, SortieBdf } from "./entr_bdf"
 import { omit } from "../common/omit"
 import { entr_diane, SortieDiane } from "./entr_diane"
 
-type Siret = string
+export type Siret = string
 
 type SortieMapEntreprise = {
   periode: Date
@@ -35,17 +35,22 @@ type SortieMapEntreprise = {
   Partial<SortieBdf> &
   Partial<SortieDiane>
 
-type SortieMapEtablissement = Partial<DonnéesAgrégées>
+export type SortieMapEtablissement = Partial<DonnéesAgrégées>
 
-type SortieMap =
+export type SortieMap =
   | { entreprise: SortieMapEntreprise }
   | Record<Siret, SortieMapEtablissement>
 
-type CléSortieMap = {
+export type CléSortieMap = {
   batch: BatchKey
   siren: SiretOrSiren
   periode: Date
   type: "apart" | "other"
+}
+
+export type EntréeMap = {
+  _id: SiretOrSiren
+  value: CompanyDataValues
 }
 
 declare function emit(key: CléSortieMap, value: SortieMap): void
@@ -67,10 +72,7 @@ declare const date_fin: Date
  * les données agrégées est émis (par appel à `emit()`), à destination de
  * `reduce()`, puis de `finalize()`.
  */
-export function map(this: {
-  _id: SiretOrSiren
-  value: CompanyDataValues
-}): void {
+export function map(this: EntréeMap): void {
   "use strict"
   /* DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO */ const f = {
     ...{ flatten, outputs, apart, compte, effectifs, interim, add }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO

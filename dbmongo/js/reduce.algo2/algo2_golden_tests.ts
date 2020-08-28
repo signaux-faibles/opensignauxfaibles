@@ -16,8 +16,8 @@ import * as fs from "fs"
 import * as util from "util"
 import { naf } from "../test/data/naf"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
-import { map } from "./map"
-import { finalize, Clé, EntrepriseEnEntrée } from "./finalize"
+import { map, EntréeMap, CléSortieMap, SortieMap } from "./map"
+import { finalize } from "./finalize"
 import { reduce } from "./reduce"
 import { TestDataItem } from "../test/data/objects"
 import { setGlobals } from "../test/helpers/setGlobals"
@@ -85,7 +85,10 @@ test[serialOrSkip](
     }
     setGlobals(jsParams)
 
-    const mapResult = runMongoMap(map, testData)
+    const mapResult = runMongoMap<EntréeMap, CléSortieMap, SortieMap>(
+      map,
+      testData
+    )
     const mapOutput = JSON.stringify(mapResult, null, 2)
 
     if (updateGoldenFiles) {
@@ -95,10 +98,7 @@ test[serialOrSkip](
     const mapExpected = await readFile(MAP_GOLDEN_FILE)
     safeDeepEqual(t, mapOutput, mapExpected)
 
-    const reduceResult = runMongoReduce(
-      reduce,
-      mapResult as { _id: Clé; value: Record<string, EntrepriseEnEntrée> }[]
-    )
+    const reduceResult = runMongoReduce(reduce, mapResult)
 
     const finalizeResult = reduceResult
       .map(({ _id, value }) => finalize(_id, value))

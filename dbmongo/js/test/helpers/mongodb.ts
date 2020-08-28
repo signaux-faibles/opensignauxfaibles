@@ -46,7 +46,7 @@ export const parseMongoObject = (serializedObj: string): unknown =>
       .replace(/ISODate\("([^"]+)"\)/g, `{ "_ISODate": "$1" }`)
       .replace(/NumberInt\(([^)]+)\)/g, "$1"),
     (_key, value: SerializedDate | unknown) =>
-      value && typeof value === "object" && (value as SerializedDate)._ISODate
+      value && typeof value === "object" && "_ISODate" in value
         ? new Date((value as SerializedDate)._ISODate)
         : value
   )

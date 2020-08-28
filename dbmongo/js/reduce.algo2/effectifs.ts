@@ -67,8 +67,10 @@ export function effectifs(
     // le cas échéant, on met à jour l'accu avec le dernier effectif disponible
     accu = map_effectif[time] || accu
 
-    const propNameReporté = (propertyName + "_reporte") as PropertyNameReporté
-    output_effectif[time][propNameReporté] = map_effectif[time] ? 0 : 1
+    Object.assign(output_effectif[time], {
+      [propertyName + "_reporte"]: map_effectif[time] ? 0 : 1,
+    })
+
     return accu
   }, null as ValeurEffectif | null)
 
@@ -82,13 +84,11 @@ export function effectifs(
         lookback - offset_effectif - 1
       )
 
-      const variable_name_effectif = (propertyName +
-        "_past_" +
-        lookback) as PastPropertyName
       output_effectif[time_past_lookback.getTime()] =
         output_effectif[time_past_lookback.getTime()] || {}
-      output_effectif[time_past_lookback.getTime()][variable_name_effectif] =
-        map_effectif[time]
+      Object.assign(output_effectif[time_past_lookback.getTime()], {
+        [propertyName + "_past_" + lookback]: map_effectif[time],
+      })
     })
   })
 
