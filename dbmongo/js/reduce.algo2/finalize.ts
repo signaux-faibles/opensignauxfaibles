@@ -28,7 +28,7 @@ type SortieFinalize =
 
 declare function print(str: string): void
 
-export function finalize(k: Clé, mapV: SortieMap): SortieFinalize {
+export function finalize(k: Clé, v: SortieMap): SortieFinalize {
   "use strict"
 
   const maxBsonSize = 16777216
@@ -47,50 +47,46 @@ export function finalize(k: Clé, mapV: SortieMap): SortieFinalize {
 
   const etablissements_connus: Record<SiretOrSiren, boolean> = {}
 
-  // extraction de l'entreprise et des établissements depuis mapV
-
-  const entreprise: Partial<EntrepriseEnSortie> = mapV.entreprise || {}
-  const v: Record<
+  // extraction de l'entreprise et des établissements depuis v
+  const entreprise: Partial<EntrepriseEnSortie> = v.entreprise || {}
+  const etab: Record<
     Siret,
     SortieMapEtablissement & Partial<EntrepriseEnSortie>
-  > = f.omit(mapV, "entreprise")
+  > = f.omit(v, "entreprise")
 
-  Object.keys(v).forEach((siret) => {
-    if (siret !== "entreprise") {
-      etablissements_connus[siret] = true
-      const { effectif } = v[siret]
-      if (effectif) {
-        entreprise.effectif_entreprise =
-          (entreprise.effectif_entreprise || 0) + effectif // initialized to null
-      }
-      const { apart_heures_consommees } = v[siret]
-      if (apart_heures_consommees) {
-        entreprise.apart_entreprise =
-          (entreprise.apart_entreprise || 0) + apart_heures_consommees // initialized to 0
-      }
-      if (v[siret].montant_part_patronale || v[siret].montant_part_ouvriere) {
-        entreprise.debit_entreprise =
-          (entreprise.debit_entreprise || 0) +
-          (v[siret].montant_part_patronale || 0) +
-          (v[siret].montant_part_ouvriere || 0)
-      }
+  Object.keys(etab).forEach((siret) => {
+    etablissements_connus[siret] = true
+    const { effectif } = etab[siret]
+    if (effectif) {
+      entreprise.effectif_entreprise =
+        (entreprise.effectif_entreprise || 0) + effectif // initialized to null
+    }
+    const { apart_heures_consommees } = etab[siret]
+    if (apart_heures_consommees) {
+      entreprise.apart_entreprise =
+        (entreprise.apart_entreprise || 0) + apart_heures_consommees // initialized to 0
+    }
+    if (
+      etab[siret].montant_part_patronale ||
+      etab[siret].montant_part_ouvriere
+    ) {
+      entreprise.debit_entreprise =
+        (entreprise.debit_entreprise || 0) +
+        (etab[siret].montant_part_patronale || 0) +
+        (etab[siret].montant_part_ouvriere || 0)
     }
   })
 
-  Object.keys(v).forEach((siret) => {
-    if (siret !== "entreprise") {
-      Object.assign(v[siret], entreprise)
-    }
+  Object.keys(etab).forEach((siret) => {
+    Object.assign(etab[siret], entreprise)
   })
 
   // une fois que les comptes sont faits...
   const output: Partial<EntrepriseEnSortie>[] = []
   const nb_connus = Object.keys(etablissements_connus).length
-  Object.keys(v).forEach((siret) => {
-    if (siret !== "entreprise" && v[siret]) {
-      v[siret].nbr_etablissements_connus = nb_connus
-      output.push(v[siret])
-    }
+  Object.keys(etab).forEach((siret) => {
+    etab[siret].nbr_etablissements_connus = nb_connus
+    output.push(etab[siret])
   })
 
   // NON: Pour l'instant, filtrage a posteriori

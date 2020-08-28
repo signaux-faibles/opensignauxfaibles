@@ -1694,7 +1694,7 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
     });
     return retourEntrSirene;
 }`,
-"finalize": `function finalize(k, mapV) {
+"finalize": `function finalize(k, v) {
     "use strict";
     const maxBsonSize = 16777216;
 
@@ -1709,43 +1709,38 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
     ///
     //
     const etablissements_connus = {};
-    // extraction de l'entreprise et des établissements depuis mapV
-    const entreprise = mapV.entreprise || {};
-    const v = f.omit(mapV, "entreprise");
-    Object.keys(v).forEach((siret) => {
-        if (siret !== "entreprise") {
-            etablissements_connus[siret] = true;
-            const { effectif } = v[siret];
-            if (effectif) {
-                entreprise.effectif_entreprise =
-                    (entreprise.effectif_entreprise || 0) + effectif; // initialized to null
-            }
-            const { apart_heures_consommees } = v[siret];
-            if (apart_heures_consommees) {
-                entreprise.apart_entreprise =
-                    (entreprise.apart_entreprise || 0) + apart_heures_consommees; // initialized to 0
-            }
-            if (v[siret].montant_part_patronale || v[siret].montant_part_ouvriere) {
-                entreprise.debit_entreprise =
-                    (entreprise.debit_entreprise || 0) +
-                        (v[siret].montant_part_patronale || 0) +
-                        (v[siret].montant_part_ouvriere || 0);
-            }
+    // extraction de l'entreprise et des établissements depuis v
+    const entreprise = v.entreprise || {};
+    const etab = f.omit(v, "entreprise");
+    Object.keys(etab).forEach((siret) => {
+        etablissements_connus[siret] = true;
+        const { effectif } = etab[siret];
+        if (effectif) {
+            entreprise.effectif_entreprise =
+                (entreprise.effectif_entreprise || 0) + effectif; // initialized to null
+        }
+        const { apart_heures_consommees } = etab[siret];
+        if (apart_heures_consommees) {
+            entreprise.apart_entreprise =
+                (entreprise.apart_entreprise || 0) + apart_heures_consommees; // initialized to 0
+        }
+        if (etab[siret].montant_part_patronale ||
+            etab[siret].montant_part_ouvriere) {
+            entreprise.debit_entreprise =
+                (entreprise.debit_entreprise || 0) +
+                    (etab[siret].montant_part_patronale || 0) +
+                    (etab[siret].montant_part_ouvriere || 0);
         }
     });
-    Object.keys(v).forEach((siret) => {
-        if (siret !== "entreprise") {
-            Object.assign(v[siret], entreprise);
-        }
+    Object.keys(etab).forEach((siret) => {
+        Object.assign(etab[siret], entreprise);
     });
     // une fois que les comptes sont faits...
     const output = [];
     const nb_connus = Object.keys(etablissements_connus).length;
-    Object.keys(v).forEach((siret) => {
-        if (siret !== "entreprise" && v[siret]) {
-            v[siret].nbr_etablissements_connus = nb_connus;
-            output.push(v[siret]);
-        }
+    Object.keys(etab).forEach((siret) => {
+        etab[siret].nbr_etablissements_connus = nb_connus;
+        output.push(etab[siret]);
     });
     // NON: Pour l'instant, filtrage a posteriori
     // output = output.filter(siret_data => {
