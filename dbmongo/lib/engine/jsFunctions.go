@@ -1132,12 +1132,12 @@ function sirene(sireneArray) {
     //})
     return output_apart;
 }`,
-"ccsf": `function ccsf(v, output_array) {
+"ccsf": `function ccsf(vCcsf, output_array) {
     "use strict";
-    const ccsfHashes = Object.keys(v.ccsf || {});
+    const ccsfHashes = Object.keys(vCcsf || {});
     output_array.forEach((val) => {
         const optccsf = ccsfHashes.reduce(function (accu, hash) {
-            const ccsf = v.ccsf[hash];
+            const ccsf = vCcsf[hash];
             if (ccsf.date_traitement.getTime() < val.periode.getTime() &&
                 ccsf.date_traitement.getTime() > accu.date_traitement.getTime()) {
                 return ccsf;
@@ -1177,14 +1177,14 @@ function sirene(sireneArray) {
     }, {});
     return output_cible;
 }`,
-"compte": `function compte(v) {
+"compte": `function compte(compte) {
     "use strict";
     const output_compte = {};
     //  var offset_compte = 3
-    Object.keys(v.compte).forEach((hash) => {
-        const periode = v.compte[hash].periode.getTime().toString();
+    Object.keys(compte).forEach((hash) => {
+        const periode = compte[hash].periode.getTime().toString();
         output_compte[periode] = output_compte[periode] || {};
-        output_compte[periode].compte_urssaf = v.compte[hash].numero_compte;
+        output_compte[periode].compte_urssaf = compte[hash].numero_compte;
     });
     return output_compte;
 }`,
@@ -1263,7 +1263,7 @@ function sirene(sireneArray) {
  * Calcule les variables liées aux cotisations sociales et dettes sur ces
  * cotisations.
  */
-function cotisationsdettes(v, periodes, finPériode // correspond à la variable globale date_fin
+function cotisationsdettes(vCotisation, vDebit, periodes, finPériode // correspond à la variable globale date_fin
 ) {
     "use strict";
 
@@ -1273,8 +1273,8 @@ function cotisationsdettes(v, periodes, finPériode // correspond à la variable
     const sortieCotisationsDettes = {};
     const value_cotisation = {};
     // Répartition des cotisations sur toute la période qu'elle concerne
-    Object.keys(v.cotisation).forEach(function (h) {
-        const cotisation = v.cotisation[h];
+    Object.keys(vCotisation).forEach(function (h) {
+        const cotisation = vCotisation[h];
         const periode_cotisation = f.generatePeriodSerie(cotisation.periode.start, cotisation.periode.end);
         periode_cotisation.forEach((date_cotisation) => {
             value_cotisation[date_cotisation.getTime()] = (value_cotisation[date_cotisation.getTime()] || []).concat([cotisation.du / periode_cotisation.length]);
@@ -1284,9 +1284,9 @@ function cotisationsdettes(v, periodes, finPériode // correspond à la variable
     // ecn: ecart negatif
     // map les débits: clé fabriquée maison => [{hash, numero_historique, date_traitement}, ...]
     // Pour un même compte, les débits avec le même num_ecn (chaque émission de facture) sont donc regroupés
-    const ecn = Object.keys(v.debit).reduce((accu, h) => {
+    const ecn = Object.keys(vDebit).reduce((accu, h) => {
         //pour chaque debit
-        const debit = v.debit[h];
+        const debit = vDebit[h];
         const start = debit.periode.start;
         const end = debit.periode.end;
         const num_ecn = debit.numero_ecart_negatif;
@@ -1307,7 +1307,7 @@ function cotisationsdettes(v, periodes, finPériode // correspond à la variable
         const l = ecn[i].length;
         ecn[i].forEach((e, idx) => {
             if (idx <= l - 2) {
-                v.debit[e.hash].debit_suivant = ecn[i][idx + 1].hash;
+                vDebit[e.hash].debit_suivant = ecn[i][idx + 1].hash;
             }
         });
     });
@@ -1316,9 +1316,9 @@ function cotisationsdettes(v, periodes, finPériode // correspond à la variable
     // debit_traitement_debut => periode de traitement du débit
     // debit_traitement_fin => periode de traitement du debit suivant, ou bien finPériode
     // Entre ces deux dates, c'est cet objet qui est le plus à jour.
-    Object.keys(v.debit).forEach(function (h) {
-        const debit = v.debit[h];
-        const debit_suivant = v.debit[debit.debit_suivant] || {
+    Object.keys(vDebit).forEach(function (h) {
+        const debit = vDebit[h];
+        const debit_suivant = vDebit[debit.debit_suivant] || {
             date_traitement: finPériode,
         };
         //Selon le jour du traitement, cela passe sur la période en cours ou sur la suivante.
@@ -1355,8 +1355,8 @@ function cotisationsdettes(v, periodes, finPériode // correspond à la variable
     // TODO faire numero de compte ailleurs
     // Array des numeros de compte
     //var numeros_compte = Array.from(new Set(
-    //  Object.keys(v.cotisation).map(function (h) {
-    //    return(v.cotisation[h].numero_compte)
+    //  Object.keys(vCotisation).map(function (h) {
+    //    return(vCotisation[h].numero_compte)
     //  })
     //))
     periodes.forEach(function (time) {
@@ -1435,10 +1435,10 @@ function cotisationsdettes(v, periodes, finPériode // correspond à la variable
         });
     });
 }`,
-"defaillances": `function defaillances(v, output_indexed) {
+"defaillances": `function defaillances(altares, procol, output_indexed) {
     "use strict";
-    f.dealWithProcols(v.altares, "altares", output_indexed);
-    f.dealWithProcols(v.procol, "procol", output_indexed);
+    f.dealWithProcols(altares, "altares", output_indexed);
+    f.dealWithProcols(procol, "procol", output_indexed);
 }`,
 "delais": `/**
  * Calcule pour chaque période le nombre de jours restants du délai accordé et
@@ -1450,11 +1450,11 @@ function cotisationsdettes(v, periodes, finPériode // correspond à la variable
  * Contrat: cette fonction ne devrait être appelée que s'il y a eu au moins une
  * demande de délai.
  */
-function delais(v, debitParPériode, intervalleTraitement) {
+function delais(vDelai, debitParPériode, intervalleTraitement) {
     "use strict";
     const donnéesDélaiParPériode = {};
-    Object.keys(v.delai).forEach(function (hash) {
-        const delai = v.delai[hash];
+    Object.keys(vDelai).forEach(function (hash) {
+        const delai = vDelai[hash];
         if (delai.duree_delai <= 0) {
             return;
         }
@@ -1893,7 +1893,7 @@ function map() {
         }
         if (includes["all"]) {
             if (v.compte) {
-                const output_compte = f.compte(v);
+                const output_compte = f.compte(v.compte);
                 f.add(output_compte, output_indexed);
             }
             if (v.effectif) {
@@ -1910,11 +1910,11 @@ function map() {
             }
             let output_cotisationsdettes;
             if (v.cotisation && v.debit) {
-                output_cotisationsdettes = f.cotisationsdettes(v, periodes, date_fin);
+                output_cotisationsdettes = f.cotisationsdettes(v.cotisation, v.debit, periodes, date_fin);
                 f.add(output_cotisationsdettes, output_indexed);
             }
             if (v.delai) {
-                const output_delai = f.delais(v, output_cotisationsdettes || {}, {
+                const output_delai = f.delais(v.delai, output_cotisationsdettes || {}, {
                     premièreDate: serie_periode[0],
                     dernièreDate: serie_periode[serie_periode.length - 1],
                 });
@@ -1923,13 +1923,13 @@ function map() {
             v.altares = v.altares || {};
             v.procol = v.procol || {};
             if (v.altares) {
-                f.defaillances(v, output_indexed);
+                f.defaillances(v.altares, v.procol, output_indexed);
             }
             if (v.ccsf) {
-                f.ccsf(v, output_array);
+                f.ccsf(v.ccsf, output_array);
             }
             if (v.sirene) {
-                f.sirene(v, output_array);
+                f.sirene(v.sirene, output_array);
             }
             f.populateNafAndApe(output_indexed, naf);
             const output_cotisation = f.cotisation(output_indexed);
@@ -2077,13 +2077,13 @@ function outputs(v, serie_periode) {
     });
     return output_repeatable;
 }`,
-"sirene": `function sirene(v, output_array) {
+"sirene": `function sirene(vSirene, output_array) {
     "use strict";
-    const sireneHashes = Object.keys(v.sirene || {});
+    const sireneHashes = Object.keys(vSirene || {});
     output_array.forEach((val) => {
         // geolocalisation
         if (sireneHashes.length !== 0) {
-            const sirene = v.sirene[sireneHashes[sireneHashes.length - 1]];
+            const sirene = vSirene[sireneHashes[sireneHashes.length - 1]];
             val.siren = val.siret.substring(0, 9);
             val.latitude = sirene.lattitude || null;
             val.longitude = sirene.longitude || null;

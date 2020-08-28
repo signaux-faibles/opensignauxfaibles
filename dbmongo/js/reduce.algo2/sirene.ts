@@ -18,17 +18,17 @@ export type SortieSirene = {
 }
 
 export function sirene(
-  v: DonnéesSirene,
+  vSirene: Record<string, EntréeSirene>,
   output_array: (Input & Partial<SortieSirene>)[]
 ): void {
   "use strict"
-  const sireneHashes = Object.keys(v.sirene || {})
+  const sireneHashes = Object.keys(vSirene || {})
 
   output_array.forEach((val) => {
     // geolocalisation
 
     if (sireneHashes.length !== 0) {
-      const sirene = v.sirene[sireneHashes[sireneHashes.length - 1]]
+      const sirene = vSirene[sireneHashes[sireneHashes.length - 1]]
       val.siren = val.siret.substring(0, 9)
       val.latitude = sirene.lattitude || null
       val.longitude = sirene.longitude || null

@@ -118,7 +118,7 @@ export function map(this: {
 
     if (includes["all"]) {
       if (v.compte) {
-        const output_compte = f.compte(v as DonnéesCompte)
+        const output_compte = f.compte(v.compte)
         f.add(output_compte, output_indexed)
       }
 
@@ -140,7 +140,8 @@ export function map(this: {
       let output_cotisationsdettes
       if (v.cotisation && v.debit) {
         output_cotisationsdettes = f.cotisationsdettes(
-          v as DonnéesCotisation & DonnéesDebit,
+          v.cotisation,
+          v.debit,
           periodes,
           date_fin
         )
@@ -148,14 +149,10 @@ export function map(this: {
       }
 
       if (v.delai) {
-        const output_delai = f.delais(
-          v as DonnéesDelai,
-          output_cotisationsdettes || {},
-          {
-            premièreDate: serie_periode[0],
-            dernièreDate: serie_periode[serie_periode.length - 1],
-          }
-        )
+        const output_delai = f.delais(v.delai, output_cotisationsdettes || {}, {
+          premièreDate: serie_periode[0],
+          dernièreDate: serie_periode[serie_periode.length - 1],
+        })
         f.add(output_delai, output_indexed)
       }
 
@@ -163,14 +160,14 @@ export function map(this: {
       v.procol = v.procol || {}
 
       if (v.altares) {
-        f.defaillances(v as DonnéesDefaillances, output_indexed)
+        f.defaillances(v.altares, v.procol, output_indexed)
       }
 
       if (v.ccsf) {
-        f.ccsf(v as DonnéesCcsf, output_array)
+        f.ccsf(v.ccsf, output_array)
       }
       if (v.sirene) {
-        f.sirene(v as DonnéesSirene, output_array)
+        f.sirene(v.sirene, output_array)
       }
 
       f.populateNafAndApe(output_indexed, naf)
