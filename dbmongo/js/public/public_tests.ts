@@ -6,8 +6,8 @@
 
 import "../globals"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
-import { map } from "./map"
-import { reduce, V } from "./reduce"
+import { map, Input, OutKey, OutValue } from "./map"
+import { reduce } from "./reduce"
 import { finalize } from "./finalize"
 import { objects as testCases } from "../test/data/objects"
 import { setGlobals } from "../test/helpers/setGlobals"
@@ -32,7 +32,9 @@ const initGlobalParams = (dateDebut: Date, dateFin: Date) =>
 test("l'ordre de traitement des données n'influe pas sur les résultats", (t) => {
   initGlobalParams(new Date("2014-01-01"), new Date("2018-02-01"))
 
-  const pool = indexMapResultsByKey(runMongoMap(map, testCases))
+  const pool = indexMapResultsByKey(
+    runMongoMap<Input, OutKey, OutValue>(map, testCases)
+  )
 
   const intermediateResult = Object.values(pool).map((array) => ({
     key: array[0].key,
@@ -61,13 +63,10 @@ test("l'ordre de traitement des données n'influe pas sur les résultats", (t) =
 test("map(), reduce() et finalize() retournent les même données que d'habitude", (t) => {
   initGlobalParams(new Date("2014-01-01"), new Date("2016-01-01"))
 
-  const mapResult = runMongoMap(map, testCases)
+  const mapResult = runMongoMap<Input, OutKey, OutValue>(map, testCases)
   t.snapshot(mapResult)
 
-  const reduceResult = runMongoReduce(
-    reduce,
-    mapResult as { _id: unknown; value: Record<string, V> }[]
-  )
+  const reduceResult = runMongoReduce(reduce, mapResult)
   t.snapshot(reduceResult)
 
   const finalizeResult = reduceResult.map(({ _id, value }) =>

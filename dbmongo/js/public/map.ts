@@ -51,9 +51,14 @@ export type SortieMap = SortieMapEtablissement | SortieMapEntreprise
 // Paramètres globaux utilisés par "public"
 declare let actual_batch: BatchKey
 declare let serie_periode: Date[]
-declare function emit(key: string, value: Partial<SortieMap>): void
 
-export function map(this: { _id: unknown; value: CompanyDataValues }): void {
+// Types de données en entrée et sortie
+export type Input = { _id: unknown; value: CompanyDataValues }
+export type OutKey = string
+export type OutValue = Partial<SortieMap>
+declare function emit(key: string, value: OutValue): void
+
+export function map(this: Input): void {
   /* DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO */ const f = {
     ...{ iterable, debits, apconso, apdemande, flatten, compte, effectifs }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     ...{ delai, dealWithProcols, sirene, cotisations, dateAddDay, omit }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO

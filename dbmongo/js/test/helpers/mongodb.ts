@@ -1,23 +1,22 @@
 import { setGlobals } from "./setGlobals"
 ;(Object as any).bsonsize = (obj: unknown): number => JSON.stringify(obj).length // eslint-disable-line @typescript-eslint/no-explicit-any
 
-type Document<K> = { _id: K } & Record<string, unknown>
-type MapResult<K, V> = { _id: K; value: V }
+type MapEntry<K, V> = { _id: K; value: V }
 
 // Run a map() function designed for MongoDB, i.e. that calls emit() an
 // inderminate number of times, instead of returning one value per iteration.
 export const runMongoMap = <
-  Key,
-  InDoc extends Document<Key>,
-  OutDoc extends Document<Key>
+  MapInput extends { _id: unknown; value: unknown },
+  OutKey,
+  OutValue
 >(
-  mapFct: (this: InDoc) => void, // will call global emit()
-  documents: InDoc[]
-): MapResult<Key, OutDoc>[] => {
-  const results: MapResult<Key, OutDoc>[] = [] // holds all the { _id, value } objects emitted from mapFct()
+  mapFct: (this: MapInput) => void, // will call global emit()
+  documents: MapInput[]
+): MapEntry<OutKey, OutValue>[] => {
+  const results: MapEntry<OutKey, OutValue>[] = [] // holds all the { _id, value } objects emitted from mapFct()
   // define a emit() function that mapFct() can call
   setGlobals({
-    emit: (_id: Key, value: OutDoc): void => {
+    emit: (_id: OutKey, value: OutValue): void => {
       results.push({ _id, value })
     },
   })
@@ -28,7 +27,7 @@ export const runMongoMap = <
 type Indexed<K, V> = Record<string, { key: K; value: V }[]>
 
 export const indexMapResultsByKey = <K, V>(
-  mapResults: MapResult<K, V>[]
+  mapResults: MapEntry<K, V>[]
 ): Indexed<K, V> =>
   mapResults.reduce((acc, { _id, value }) => {
     const key = JSON.stringify(_id) // e.g. _id: { siren; batch; periode }
@@ -73,7 +72,7 @@ export const serializeAsMongoObject = (obj: unknown): string =>
 type Grouped<K, V> = Record<string, { key: K; values: V[] }>
 
 const groupMapValuesByKey = <K, V>(
-  mapResults: MapResult<K, V>[]
+  mapResults: MapEntry<K, V>[]
 ): Grouped<K, V> =>
   mapResults.reduce((acc, { _id, value }) => {
     const key = JSON.stringify(_id)
@@ -86,8 +85,8 @@ const groupMapValuesByKey = <K, V>(
 // by runMongoMap().
 export const runMongoReduce = <Key, Doc>(
   reduceFct: (_key: Key, values: Doc[]) => Doc,
-  mapResults: MapResult<Key, Doc>[]
-): MapResult<Key, Doc>[] =>
+  mapResults: MapEntry<Key, Doc>[]
+): MapEntry<Key, Doc>[] =>
   Object.values(groupMapValuesByKey(mapResults)).map(({ key, values }) => ({
     _id: key,
     value: reduceFct(key, values),
