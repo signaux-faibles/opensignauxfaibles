@@ -1709,40 +1709,32 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
     ///
     //
     // extraction de l'entreprise et des établissements depuis v
-    const entreprise = v.entreprise || {};
     const etab = f.omit(v, "entreprise");
-    Object.keys(etab).forEach((siret) => {
+    const entr = Object.assign({}, v.entreprise);
+    const output = Object.keys(etab).map((siret) => {
         const { effectif } = etab[siret];
         if (effectif) {
-            entreprise.effectif_entreprise =
-                (entreprise.effectif_entreprise || 0) + effectif; // initialized to null
+            entr.effectif_entreprise = entr.effectif_entreprise || 0 + effectif;
         }
         const { apart_heures_consommees } = etab[siret];
         if (apart_heures_consommees) {
-            entreprise.apart_entreprise =
-                (entreprise.apart_entreprise || 0) + apart_heures_consommees; // initialized to 0
+            entr.apart_entreprise =
+                (entr.apart_entreprise || 0) + apart_heures_consommees;
         }
         if (etab[siret].montant_part_patronale ||
             etab[siret].montant_part_ouvriere) {
-            entreprise.debit_entreprise =
-                (entreprise.debit_entreprise || 0) +
+            entr.debit_entreprise =
+                (entr.debit_entreprise || 0) +
                     (etab[siret].montant_part_patronale || 0) +
                     (etab[siret].montant_part_ouvriere || 0);
         }
-        Object.assign(etab[siret], entreprise);
-    });
-    // une fois que les comptes sont faits...
-    const output = [];
-    const nb_connus = Object.keys(etab).length;
-    Object.keys(etab).forEach((siret) => {
-        etab[siret].nbr_etablissements_connus = nb_connus;
-        output.push(etab[siret]);
+        return Object.assign(Object.assign(Object.assign({}, etab[siret]), entr), { nbr_etablissements_connus: Object.keys(etab).length });
     });
     // NON: Pour l'instant, filtrage a posteriori
     // output = output.filter(siret_data => {
     //   return(siret_data.effectif) // Only keep if there is known effectif
     // })
-    if (output.length > 0 && nb_connus <= 1500) {
+    if (output.length > 0 && output.length <= 1500) {
         if (bsonsize(output) + bsonsize({ _id: k }) < maxBsonSize) {
             return output;
         }
