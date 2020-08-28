@@ -21,10 +21,7 @@ export type Clé = {
   type: unknown
 }
 
-type SortieFinalize =
-  | Partial<EntrepriseEnSortie>[]
-  | { incomplete: true }
-  | undefined
+type SortieFinalize = Partial<EntrepriseEnSortie>[] | { incomplete: true }
 
 declare function print(str: string): void
 
@@ -45,8 +42,6 @@ export function finalize(k: Clé, v: SortieMap): SortieFinalize {
   ///
   //
 
-  const etablissements_connus: Record<SiretOrSiren, boolean> = {}
-
   // extraction de l'entreprise et des établissements depuis v
   const entreprise: Partial<EntrepriseEnSortie> = v.entreprise || {}
   const etab: Record<
@@ -55,7 +50,6 @@ export function finalize(k: Clé, v: SortieMap): SortieFinalize {
   > = f.omit(v, "entreprise")
 
   Object.keys(etab).forEach((siret) => {
-    etablissements_connus[siret] = true
     const { effectif } = etab[siret]
     if (effectif) {
       entreprise.effectif_entreprise =
@@ -75,15 +69,13 @@ export function finalize(k: Clé, v: SortieMap): SortieFinalize {
         (etab[siret].montant_part_patronale || 0) +
         (etab[siret].montant_part_ouvriere || 0)
     }
-  })
 
-  Object.keys(etab).forEach((siret) => {
     Object.assign(etab[siret], entreprise)
   })
 
   // une fois que les comptes sont faits...
   const output: Partial<EntrepriseEnSortie>[] = []
-  const nb_connus = Object.keys(etablissements_connus).length
+  const nb_connus = Object.keys(etab).length
   Object.keys(etab).forEach((siret) => {
     etab[siret].nbr_etablissements_connus = nb_connus
     output.push(etab[siret])

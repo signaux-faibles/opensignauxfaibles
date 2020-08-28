@@ -1708,12 +1708,10 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
     ///////////////////////////////////////////////
     ///
     //
-    const etablissements_connus = {};
     // extraction de l'entreprise et des établissements depuis v
     const entreprise = v.entreprise || {};
     const etab = f.omit(v, "entreprise");
     Object.keys(etab).forEach((siret) => {
-        etablissements_connus[siret] = true;
         const { effectif } = etab[siret];
         if (effectif) {
             entreprise.effectif_entreprise =
@@ -1731,13 +1729,11 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
                     (etab[siret].montant_part_patronale || 0) +
                     (etab[siret].montant_part_ouvriere || 0);
         }
-    });
-    Object.keys(etab).forEach((siret) => {
         Object.assign(etab[siret], entreprise);
     });
     // une fois que les comptes sont faits...
     const output = [];
-    const nb_connus = Object.keys(etablissements_connus).length;
+    const nb_connus = Object.keys(etab).length;
     Object.keys(etab).forEach((siret) => {
         etab[siret].nbr_etablissements_connus = nb_connus;
         output.push(etab[siret]);
