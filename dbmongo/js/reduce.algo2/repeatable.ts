@@ -1,6 +1,8 @@
+export type SortieRepeatable = { random_order: number }
+
 export function repeatable(
   rep: Record<Periode, EntréeRepOrder>
-): Record<Periode, { random_order: number }> {
+): Record<Periode, SortieRepeatable> {
   "use strict"
   const output_repeatable: Record<string, { random_order: number }> = {}
   Object.keys(rep).forEach((hash) => {

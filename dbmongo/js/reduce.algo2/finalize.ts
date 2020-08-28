@@ -1,18 +1,14 @@
 import { Siret, SortieMap, SortieMapEtablissement } from "./map"
 import * as f from "../common/omit"
 
-type EntrepriseEnSortie = {
+type Accumulateurs = {
   effectif_entreprise: number
-  apart_heures_consommees: number
   apart_entreprise: number
-  montant_part_patronale: number
-  montant_part_ouvriere: number
   debit_entreprise: number
   nbr_etablissements_connus: number
-  random_order?: number
-  siret: SiretOrSiren
-  periode: unknown
 }
+
+export type EntrepriseEnSortie = SortieMapEtablissement & Accumulateurs
 
 export type Clé = {
   batch: unknown
@@ -43,10 +39,7 @@ export function finalize(k: Clé, v: SortieMap): SortieFinalize {
   //
 
   // extraction de l'entreprise et des établissements depuis v
-  const etab: Record<
-    Siret,
-    SortieMapEtablissement & Partial<EntrepriseEnSortie>
-  > = f.omit(v, "entreprise")
+  const etab: Record<Siret, SortieMapEtablissement> = f.omit(v, "entreprise")
   const entr: Partial<EntrepriseEnSortie> = { ...v.entreprise }
 
   const output: Partial<EntrepriseEnSortie>[] = Object.keys(etab).map(
