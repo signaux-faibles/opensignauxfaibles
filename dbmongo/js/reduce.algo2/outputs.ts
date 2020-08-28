@@ -1,3 +1,4 @@
+import { SortieAPart } from "./apart"
 import { SortieCotisationsDettes } from "./cotisationsdettes"
 import { SortieDefaillances } from "./defaillances"
 import { SortieCcsf } from "./ccsf"
@@ -17,6 +18,7 @@ export type DonnéesAgrégées = {
   Partial<SortieCcsf> &
   Partial<SortieSirene> &
   Partial<SortieNAF> &
+  Partial<SortieAPart> &
   Partial<SortieCotisation>
 
 type IndexDonnéesAgrégées = Record<Timestamp, DonnéesAgrégées>

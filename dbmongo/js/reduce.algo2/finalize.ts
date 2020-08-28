@@ -1,8 +1,5 @@
-import { SortieMap } from "./map"
-
-type EntrepriseEnEntrée = {
-  effectif: number | null
-} & Partial<EntrepriseEnSortie>
+import { Siret, SortieMap, SortieMapEtablissement } from "./map"
+import * as f from "../common/omit"
 
 type EntrepriseEnSortie = {
   effectif_entreprise: number
@@ -24,8 +21,6 @@ export type Clé = {
   type: unknown
 }
 
-type EntréeFinalize = Record<SiretOrSiren | "entreprise", EntrepriseEnEntrée>
-
 type SortieFinalize =
   | Partial<EntrepriseEnSortie>[]
   | { incomplete: true }
@@ -35,7 +30,6 @@ declare function print(str: string): void
 
 export function finalize(k: Clé, mapV: SortieMap): SortieFinalize {
   "use strict"
-  const v = mapV as EntréeFinalize // TODO: améliorer l'alignement avec type SortieMap
 
   const maxBsonSize = 16777216
   const bsonsize = (obj: unknown): number => JSON.stringify(obj).length // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
@@ -52,7 +46,14 @@ export function finalize(k: Clé, mapV: SortieMap): SortieFinalize {
   //
 
   const etablissements_connus: Record<SiretOrSiren, boolean> = {}
-  const entreprise: Partial<EntrepriseEnSortie> = v.entreprise || {}
+
+  // extraction de l'entreprise et des établissements depuis mapV
+
+  const entreprise: Partial<EntrepriseEnSortie> = mapV.entreprise || {}
+  const v: Record<
+    Siret,
+    SortieMapEtablissement & Partial<EntrepriseEnSortie>
+  > = f.omit(mapV, "entreprise")
 
   Object.keys(v).forEach((siret) => {
     if (siret !== "entreprise") {

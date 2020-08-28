@@ -6,7 +6,7 @@ type Hash = string
 
 type Timestamp = string
 
-type SortieAPart = {
+export type SortieAPart = {
   apart_heures_autorisees: unknown
   apart_heures_consommees: number
   apart_motif_recours: EntréeApDemande["motif_recours_se"]

@@ -37,9 +37,11 @@ type SortieMapEntreprise = {
 
 export type SortieMapEtablissement = Partial<DonnéesAgrégées>
 
-export type SortieMap =
-  | { entreprise: SortieMapEntreprise }
-  | Record<Siret, SortieMapEtablissement>
+type SortieMapEtablissements = Record<Siret, SortieMapEtablissement>
+
+export type SortieMap = {
+  entreprise?: SortieMapEntreprise
+} & SortieMapEtablissements
 
 export type CléSortieMap = {
   batch: BatchKey
@@ -99,7 +101,7 @@ export function map(this: EntréeMap): void {
       if (v.apconso && v.apdemande) {
         const output_apart = f.apart(v.apconso, v.apdemande)
         Object.keys(output_apart).forEach((periode) => {
-          const data: SortieMap = {
+          const data: SortieMapEtablissements = {
             [this._id]: {
               ...output_apart[periode],
               siret: this._id,

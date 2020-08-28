@@ -1696,7 +1696,6 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
 }`,
 "finalize": `function finalize(k, mapV) {
     "use strict";
-    const v = mapV; // TODO: améliorer l'alignement avec type SortieMap
     const maxBsonSize = 16777216;
 
     // v de la forme
@@ -1710,7 +1709,9 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
     ///
     //
     const etablissements_connus = {};
-    const entreprise = v.entreprise || {};
+    // extraction de l'entreprise et des établissements depuis mapV
+    const entreprise = mapV.entreprise || {};
+    const v = f.omit(mapV, "entreprise");
     Object.keys(v).forEach((siret) => {
         if (siret !== "entreprise") {
             etablissements_connus[siret] = true;
