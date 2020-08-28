@@ -46,12 +46,12 @@ test("l'ordre de traitement des données n'influe pas sur les résultats", (t) =
 
   const result = intermediateResult.map((r) => ({
     _id: r.key,
-    value: finalize(r.key as { scope: Scope }, r.value),
+    value: finalize(r.key, r.value),
   }))
 
   const invertedResult = invertedIntermediateResult.map((r) => ({
     _id: r.key,
-    value: finalize(r.key as { scope: Scope }, r.value),
+    value: finalize(r.key, r.value),
   }))
 
   t.deepEqual(result, invertedResult)
@@ -66,7 +66,7 @@ test("map(), reduce() et finalize() retournent les même données que d'habitude
 
   const reduceResult = runMongoReduce(
     reduce,
-    mapResult as { _id: { scope: Scope }; value: Record<string, V> }[]
+    mapResult as { _id: unknown; value: Record<string, V> }[]
   )
   t.snapshot(reduceResult)
 

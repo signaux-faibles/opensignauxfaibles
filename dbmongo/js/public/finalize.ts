@@ -1,3 +1,3 @@
-export function finalize<T>(_key: { scope: Scope }, val: T): T {
+export function finalize<T>(_key: unknown, val: T): T {
   return val
 }

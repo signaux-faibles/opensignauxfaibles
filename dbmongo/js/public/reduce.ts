@@ -2,7 +2,7 @@ import { SortieMap } from "./map"
 
 export type V = Partial<SortieMap> & { sirets?: unknown[] }
 
-export function reduce(_key: { scope: Scope }, values: V[]): V {
+export function reduce(_key: unknown, values: V[]): V {
   return values.reduce((m, v) => {
     if (v.sirets) {
       // TODO: je n'ai pas trouvé d'affectation de valeur dans la propriété "sirets" => est-elle toujours d'actualité ?
