@@ -1455,9 +1455,6 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
     const donnéesDélaiParPériode = {};
     Object.keys(vDelai).forEach(function (hash) {
         const delai = vDelai[hash];
-        if (delai.duree_delai <= 0) {
-            return;
-        }
         // On arrondit les dates au premier jour du mois.
         const date_creation = new Date(Date.UTC(delai.date_creation.getUTCFullYear(), delai.date_creation.getUTCMonth(), 1, 0, 0, 0, 0));
         const date_echeance = new Date(Date.UTC(delai.date_echeance.getUTCFullYear(), delai.date_echeance.getUTCMonth(), 1, 0, 0, 0, 0));
