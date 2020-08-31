@@ -1,11 +1,7 @@
 import test, { ExecutionContext } from "ava"
 import "../globals"
 import { reduce } from "./reduce"
-
-// Paramètres globaux utilisés par "compact"
-declare let completeTypes: Record<BatchKey, DataType[]>
-declare let batches: BatchKey[]
-declare let fromBatchKey: BatchKey
+import { setGlobals } from "../test/helpers/setGlobals"
 
 const REDUCE_KEY = "123"
 
@@ -24,7 +20,7 @@ const AP_DEMANDE = {
 
 type TestCase = {
   testCaseName: string
-  completeTypes: typeof completeTypes
+  completeTypes: Record<BatchKey, DataType[]>
   fromBatchKey: string
   batches: string[]
   reduce_values: CompanyDataValues[]
@@ -368,9 +364,11 @@ const testCases: TestCase[] = [
 testCases.forEach(({ testCaseName, expected, ...testCase }) => {
   test.serial(`reduce: ${testCaseName}`, (t: ExecutionContext) => {
     // définition des valeurs de paramètres globaux utilisés par les fonctions de "compact"
-    completeTypes = testCase.completeTypes
-    fromBatchKey = testCase.fromBatchKey
-    batches = testCase.batches
+    setGlobals({
+      completeTypes: testCase.completeTypes,
+      fromBatchKey: testCase.fromBatchKey,
+      batches: testCase.batches,
+    })
     // exécution du test
     const actualResults = reduce(REDUCE_KEY, testCase.reduce_values)
     t.deepEqual(actualResults, expected)

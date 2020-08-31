@@ -1,9 +1,7 @@
 import test, { ExecutionContext } from "ava"
 import "../globals"
 import { finalize } from "./finalize"
-
-// Paramètres globaux utilisés par "compact"
-declare let serie_periode: unknown
+import { setGlobals } from "../test/helpers/setGlobals"
 
 const SIRET = "123"
 const DATE_DEBUT = new Date("2014-01-01")
@@ -382,7 +380,7 @@ const excludeRandomOrder = (obj: unknown): unknown =>
 
 testCases.forEach(({ testCaseName, expected, finalizeObject }) => {
   test.serial(`finalize: ${testCaseName}`, (t: ExecutionContext) => {
-    serie_periode = [DATE_DEBUT, DATE_FIN]
+    setGlobals({ serie_periode: [DATE_DEBUT, DATE_FIN] })
     // exécution du test
     const actual = finalize(SIRET, finalizeObject)
     t.deepEqual(excludeRandomOrder(actual), expected)
