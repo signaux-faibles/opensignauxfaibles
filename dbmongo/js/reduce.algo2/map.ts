@@ -29,9 +29,6 @@ type Siret = string
 type SortieMapEntreprise = {
   periode: Date
 } & Partial<SortieSireneEntreprise> &
-  Partial<EntréeBdf> & // TODO: est-ce nécéssaire d'inclure les types d'entrée ?
-  Partial<EntréeDiane> &
-  Partial<EntréeBdf> &
   Partial<SortieBdf> &
   Partial<SortieDiane>
 
@@ -207,9 +204,6 @@ export function map(this: {
           siren: v.key,
           periode,
           exercice_bdf: 0,
-          arrete_bilan_bdf: new Date(0),
-          exercice_diane: 0,
-          arrete_bilan_diane: new Date(0),
         }
       }
 
@@ -238,36 +232,29 @@ export function map(this: {
       }
 
       if (v.diane) {
-        const outputDiane = f.entr_diane(v.diane, output_indexed, periodes)
-        f.add(outputDiane, output_indexed)
+        /*const outputDiane =*/ f.entr_diane(v.diane, output_indexed, periodes)
+        // f.add(outputDiane, output_indexed)
+        // TODO: rendre f.entr_diane() pure, c.a.d. faire en sorte qu'elle ne modifie plus output_indexed directement
       }
 
       serie_periode.forEach((date) => {
         const periode = output_indexed[date.getTime()]
         if (
-          (periode.arrete_bilan_bdf || new Date(0)).getTime() === 0 &&
-          (periode.arrete_bilan_diane || new Date(0)).getTime() === 0
+          typeof periode.arrete_bilan_bdf !== "undefined" ||
+          typeof periode.arrete_bilan_diane !== "undefined"
         ) {
-          delete output_indexed[date.getTime()]
+          emit(
+            {
+              batch: actual_batch,
+              siren: this._id.substring(0, 9),
+              periode: periode.periode,
+              type: "other",
+            },
+            {
+              entreprise: periode,
+            }
+          )
         }
-        if ((periode.arrete_bilan_bdf || new Date(0)).getTime() === 0) {
-          delete periode.arrete_bilan_bdf
-        }
-        if ((periode.arrete_bilan_diane || new Date(0)).getTime() === 0) {
-          delete periode.arrete_bilan_diane
-        }
-
-        emit(
-          {
-            batch: actual_batch,
-            siren: this._id.substring(0, 9),
-            periode: periode.periode,
-            type: "other",
-          },
-          {
-            entreprise: periode,
-          }
-        )
       })
     }
   }

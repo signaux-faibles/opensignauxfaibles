@@ -62,11 +62,11 @@ jobs:
           gpg --import --no-tty --batch --yes ./private_key.gpg
           git secret reveal
 
-      - name: JS Tests driven by Node/AVA
+      - name: Tests driven by Node/AVA
         working-directory: dbmongo/js
         run: |
           npm run test:coverage
-          npx nyc report --reporter=lcov # stores the coverage report in ./coverage/lcov.info
+          npx nyc report --reporter=lcov --include="**/*.ts" --exclude="**/*.js" # stores the coverage report in ./coverage/lcov.info
 
       - name: Upload coverage to codacy
         uses: codacy/codacy-coverage-reporter-action@master

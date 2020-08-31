@@ -28,14 +28,13 @@ import {
   parseMongoObject,
   serializeAsMongoObject,
 } from "../test/helpers/mongodb"
+import { compare } from "concordance"
 
 const INPUT_FILE = "../../tests/input-data/RawData.sample.json"
 const MAP_GOLDEN_FILE =
   "../../tests/output-snapshots/reduce-map-output.golden.json"
 const FINALIZE_GOLDEN_FILE =
   "../../tests/output-snapshots/reduce-Features.golden.json"
-
-const PRIVATE_LINE_DIFF_THRESHOLD = 30
 
 // En Intégration Continue, certains tests seront ignorés.
 const serialOrSkip = process.env.SKIP_PRIVATE ? "skip" : "serial"
@@ -50,15 +49,15 @@ const writeFile = async (filename: string, data: string): Promise<void> => {
   console.warn(`ℹ️ Updated ${filename} => run: $ git secret hide`) // eslint-disable-line no-console
 }
 
-const countLines = (str: string) => str.split(/[\r\n]+/).length
-
 // N'affichera le diff complet que si les tests ne tournent pas en CI.
 // (pour éviter une fuite de données privée des fichiers golden master)
-const safeDeepEqual = (t: ExecCtx, actual: string, expected: string) => {
+const safeDeepEqual = (t: ExecCtx, actual: unknown, expected: unknown) => {
   if (process.env.CI) {
-    const [expectedLines, actualLines] = [expected, actual].map(countLines)
-    if (Math.abs(expectedLines - actualLines) > PRIVATE_LINE_DIFF_THRESHOLD) {
-      t.fail("the diff is too large => not displaying on CI")
+    const { pass } = compare(actual, expected)
+    if (!pass) {
+      t.fail(
+        "Results don't match the snapshot. Diff of private data forbidden on CI."
+      )
       return
     }
   }
@@ -100,7 +99,7 @@ test[serialOrSkip](
     }
 
     const mapExpected = await readFile(MAP_GOLDEN_FILE)
-    safeDeepEqual(t, mapOutput, mapExpected)
+    safeDeepEqual(t, parseMongoObject(mapOutput), parseMongoObject(mapExpected))
 
     const reduceResult = runMongoReduce(
       f.reduce,
@@ -129,13 +128,15 @@ test[serialOrSkip](
       })
 
     const finalizeOutput = serializeAsMongoObject(finalizeResult) // finalizeOutput doit être parfaitement identique au golden master qui serait mis à jour depuis test-api-reduce-2.sh => d'où l'appel à serializeAsMongoObject()
-
     if (updateGoldenFiles) {
       await writeFile(FINALIZE_GOLDEN_FILE, finalizeOutput)
     }
 
     const finalizeExpected = await readFile(FINALIZE_GOLDEN_FILE)
-
-    safeDeepEqual(t, finalizeOutput, finalizeExpected)
+    safeDeepEqual(
+      t,
+      parseMongoObject(finalizeOutput),
+      parseMongoObject(finalizeExpected)
+    )
   }
 )
