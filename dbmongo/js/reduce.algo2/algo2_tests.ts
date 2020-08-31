@@ -104,19 +104,8 @@ test("delai_deviation_remboursement est calculé à partir d'un débit et d'une 
     },
   }
 
-  const flatValues = runMongoMap(map, [input]) as {
-    _id: unknown
-    value: Record<SiretOrSiren, { delai_deviation_remboursement: number }>
-  }[]
-
-  const groupedValues = indexMapResultsByKey(flatValues)
-
-  const values = objectValues(groupedValues)
-
-  t.is(values.length, 1)
-  t.is(values[0].length, 1)
-  t.deepEqual(Object.keys(values[0][0].value), [siret])
-  const finalCompanyData = values[0][0].value[siret]
+  const [res] = runMongoMap<EntréeMap, CléSortieMap, SortieMap>(map, [input])
+  const finalCompanyData = Object.values(res.value)[0]
   t.is(typeof finalCompanyData.delai_deviation_remboursement, "number")
   t.is(finalCompanyData.delai_deviation_remboursement, -0.4)
 })
