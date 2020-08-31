@@ -109,3 +109,47 @@ test("delai_deviation_remboursement est calculé à partir d'un débit et d'une 
   t.is(typeof finalCompanyData.delai_deviation_remboursement, "number")
   t.is(finalCompanyData.delai_deviation_remboursement, -0.4)
 })
+
+test("validation: le traitement est interrompu si duree_delai vaut zero", (t: ExecutionContext) => {
+  const dateDebut = new Date("2018-01-01")
+  const datePlusUnMois = new Date("2018-02-01")
+  initGlobalParams(dateDebut, datePlusUnMois)
+  const siret = "12345678901234"
+  const input = {
+    _id: siret,
+    value: {
+      key: siret,
+      scope: "etablissement" as Scope,
+      batch: {
+        "1905": {
+          cotisation: {},
+          debit: {
+            hashDette: {
+              periode: {
+                start: dateDebut,
+                end: datePlusUnMois,
+              },
+              numero_ecart_negatif: 1,
+              numero_historique: 2,
+              numero_compte: "",
+              date_traitement: dateDebut,
+              debit_suivant: "",
+              part_ouvriere: 60,
+              part_patronale: 0,
+            },
+          },
+          delai: {
+            hashDelai: {
+              date_creation: dateDebut,
+              date_echeance: new Date(dateDebut.getTime() + 60 * DAY_IN_MS),
+              duree_delai: 0, // !
+              montant_echeancier: 100,
+            },
+          },
+        },
+      },
+    },
+  }
+
+  t.throws(() => runMongoMap<EntréeMap, CléSortieMap, SortieMap>(map, [input])) // validation error
+})
