@@ -7,35 +7,10 @@
 import test, { ExecutionContext } from "ava"
 import "../globals"
 import { map } from "./map"
-import { flatten } from "../common/flatten"
-import { effectifs } from "./effectifs"
-import { iterable } from "./iterable"
-import { sirene } from "./sirene"
-import { cotisations } from "./cotisations"
-import { debits } from "./debits"
-import { apconso } from "./apconso"
-import { delai } from "./delai"
-import { compte } from "./compte"
-import { dealWithProcols } from "./dealWithProcols"
 import { reduce } from "./reduce"
 import { finalize } from "./finalize"
 import { runMongoMap } from "../test/helpers/mongodb"
-
-const global = globalThis as any // eslint-disable-line @typescript-eslint/no-explicit-any
-global.f = {
-  flatten,
-  effectifs,
-  iterable,
-  sirene,
-  cotisations,
-  debits,
-  apconso,
-  delai,
-  compte,
-  dealWithProcols,
-}
-
-const ISODate = (date: string): Date => new Date(date)
+import { setGlobals } from "../test/helpers/setGlobals"
 
 // test data inspired by test-api.sh
 const SIREN_LENGTH = 9
@@ -43,11 +18,13 @@ const siret: SiretOrSiren = "01234567891011"
 const scope: Scope = "etablissement"
 const batchKey = "1910"
 const dates = [
-  ISODate("2015-12-01T00:00:00.000+0000"),
-  ISODate("2016-01-01T00:00:00.000+0000"),
+  new Date("2015-12-01T00:00:00.000+0000"),
+  new Date("2016-01-01T00:00:00.000+0000"),
 ]
-global.actual_batch = batchKey // used by map()
-global.serie_periode = dates // used by effectifs(), which is called by map()
+setGlobals({
+  actual_batch: batchKey, // used by map()
+  serie_periode: dates, // used by effectifs(), which is called by map()
+})
 
 const rawData = {
   batch: {

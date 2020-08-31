@@ -276,11 +276,15 @@ type RatiosBdf = {
 type EntréeDiane = {
   exercice_diane: number
   arrete_bilan_diane: Date
-  couverture_ca_fdr: number
-  interets: number
-  excedent_brut_d_exploitation: number
-  produits_financiers: number
-  produit_exceptionnel: number
-  charge_exceptionnelle: number
-  charges_financieres: number
+  couverture_ca_fdr?: number | null
+  interets?: number | null
+  excedent_brut_d_exploitation?: number | null
+  produits_financiers?: number | null
+  produit_exceptionnel?: number | null
+  charge_exceptionnelle?: number | null
+  charges_financieres?: number | null
+  ca?: number | null
+  concours_bancaire_courant?: number | null
+  valeur_ajoutee?: number | null
+  dette_fiscale_et_sociale?: number | null
 }

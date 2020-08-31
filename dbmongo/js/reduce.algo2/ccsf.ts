@@ -7,17 +7,17 @@ export type SortieCcsf = {
 }
 
 export function ccsf(
-  v: DonnéesCcsf,
+  vCcsf: Record<string, { date_traitement: Date }>,
   output_array: (Input & Partial<SortieCcsf>)[]
 ): void {
   "use strict"
 
-  const ccsfHashes = Object.keys(v.ccsf || {})
+  const ccsfHashes = Object.keys(vCcsf || {})
 
   output_array.forEach((val) => {
     const optccsf = ccsfHashes.reduce(
       function (accu, hash) {
-        const ccsf = v.ccsf[hash]
+        const ccsf = vCcsf[hash]
         if (
           ccsf.date_traitement.getTime() < val.periode.getTime() &&
           ccsf.date_traitement.getTime() > accu.date_traitement.getTime()

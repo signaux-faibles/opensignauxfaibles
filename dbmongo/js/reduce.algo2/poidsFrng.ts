@@ -1,8 +1,9 @@
-export function poidsFrng(diane: { couverture_ca_fdr: number }): number | null {
+import "../globals"
+
+export function poidsFrng(diane: EntréeDiane): number | null {
   "use strict"
-  if ("couverture_ca_fdr" in diane && diane["couverture_ca_fdr"] !== null) {
-    return (diane["couverture_ca_fdr"] / 360) * 100
-  } else {
-    return null
-  }
+
+  return typeof diane["couverture_ca_fdr"] === "number"
+    ? (diane["couverture_ca_fdr"] / 360) * 100
+    : null
 }

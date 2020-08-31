@@ -30,14 +30,14 @@ export type DelaiComputedValues = {
  * demande de délai.
  */
 export function delais(
-  v: DonnéesDelai,
+  vDelai: Record<string, EntréeDelai>,
   debitParPériode: DeepReadonly<ParPériode<DebitComputedValues>>,
   intervalleTraitement: { premièreDate: Date; dernièreDate: Date }
 ): ParPériode<DelaiComputedValues> {
   "use strict"
   const donnéesDélaiParPériode: ParPériode<DelaiComputedValues> = {}
-  Object.keys(v.delai).forEach(function (hash) {
-    const delai = v.delai[hash]
+  Object.keys(vDelai).forEach(function (hash) {
+    const delai = vDelai[hash]
     if (delai.duree_delai <= 0) {
       return
     }

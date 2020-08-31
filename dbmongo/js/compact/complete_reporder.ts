@@ -37,7 +37,7 @@ export function complete_reporder(
       reporder_obj[p.toString()] = {
         random_order: Math.random(),
         periode: p,
-        siret: siret,
+        siret,
       }
       object.batch[lastBatch].reporder = reporder_obj
     })

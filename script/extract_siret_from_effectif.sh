@@ -1,3 +1,5 @@
+#!/bin/bash
+
 cat "$@" |
    # keep only siret and effectif
    csvcut -d";" -c 2,6-117 |

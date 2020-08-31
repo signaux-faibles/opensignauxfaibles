@@ -202,14 +202,17 @@ function flatten(v, actual_batch) {
             ...new Set([...delete_types, ...new_types]),
         ];
         all_interesting_types.forEach((type) => {
-            var _a, _b;
-            m[type] = m[type] || {};
-            // On supprime les clés qu'il faut
-            const batchData = v.batch[batch];
-            const keysToDelete = ((_b = (_a = batchData === null || batchData === void 0 ? void 0 : batchData.compact) === null || _a === void 0 ? void 0 : _a.delete) === null || _b === void 0 ? void 0 : _b[type]) || [];
-            for (const hash of keysToDelete) {
-                if (typeof m[type] === "object" && m[type][hash])
-                    delete m[type][hash];
+            var _a, _b, _c;
+            const typedData = m[type];
+            if (typeof typedData === "object") {
+                // On supprime les clés qu'il faut
+                const keysToDelete = ((_c = (_b = (_a = v.batch[batch]) === null || _a === void 0 ? void 0 : _a.compact) === null || _b === void 0 ? void 0 : _b.delete) === null || _c === void 0 ? void 0 : _c[type]) || [];
+                for (const hash of keysToDelete) {
+                    delete typedData[hash];
+                }
+            }
+            else {
+                m[type] = {};
             }
             Object.assign(m[type], v.batch[batch][type]);
         });
@@ -480,7 +483,7 @@ function complete_reporder(siret, object) {
         reporder_obj[p.toString()] = {
             random_order: Math.random(),
             periode: p,
-            siret: siret,
+            siret,
         };
         object.batch[lastBatch].reporder = reporder_obj;
     });
@@ -649,7 +652,7 @@ function reduce(key, values // chaque element contient plusieurs batches pour ce
             m.batch[batch] = Object.keys(value.batch[batch]).reduce((batchValues, type) => (Object.assign(Object.assign({}, batchValues), { [type]: value.batch[batch][type] })), m.batch[batch] || {});
         });
         return m;
-    }, { key: key, scope: values[0].scope, batch: {} });
+    }, { key, scope: values[0].scope, batch: {} });
     // Cette fonction reduce() est appelée à deux moments:
     // 1. agregation par établissement d'objets ImportedData. Dans cet étape, on
     // ne travaille généralement que sur un seul batch.
@@ -1129,12 +1132,12 @@ function sirene(sireneArray) {
     //})
     return output_apart;
 }`,
-"ccsf": `function ccsf(v, output_array) {
+"ccsf": `function ccsf(vCcsf, output_array) {
     "use strict";
-    const ccsfHashes = Object.keys(v.ccsf || {});
+    const ccsfHashes = Object.keys(vCcsf || {});
     output_array.forEach((val) => {
         const optccsf = ccsfHashes.reduce(function (accu, hash) {
-            const ccsf = v.ccsf[hash];
+            const ccsf = vCcsf[hash];
             if (ccsf.date_traitement.getTime() < val.periode.getTime() &&
                 ccsf.date_traitement.getTime() > accu.date_traitement.getTime()) {
                 return ccsf;
@@ -1174,14 +1177,14 @@ function sirene(sireneArray) {
     }, {});
     return output_cible;
 }`,
-"compte": `function compte(v) {
+"compte": `function compte(compte) {
     "use strict";
     const output_compte = {};
     //  var offset_compte = 3
-    Object.keys(v.compte).forEach((hash) => {
-        const periode = v.compte[hash].periode.getTime().toString();
+    Object.keys(compte).forEach((hash) => {
+        const periode = compte[hash].periode.getTime().toString();
         output_compte[periode] = output_compte[periode] || {};
-        output_compte[periode].compte_urssaf = v.compte[hash].numero_compte;
+        output_compte[periode].compte_urssaf = compte[hash].numero_compte;
     });
     return output_compte;
 }`,
@@ -1260,7 +1263,7 @@ function sirene(sireneArray) {
  * Calcule les variables liées aux cotisations sociales et dettes sur ces
  * cotisations.
  */
-function cotisationsdettes(v, periodes, finPériode // correspond à la variable globale date_fin
+function cotisationsdettes(vCotisation, vDebit, periodes, finPériode // correspond à la variable globale date_fin
 ) {
     "use strict";
 
@@ -1270,8 +1273,8 @@ function cotisationsdettes(v, periodes, finPériode // correspond à la variable
     const sortieCotisationsDettes = {};
     const value_cotisation = {};
     // Répartition des cotisations sur toute la période qu'elle concerne
-    Object.keys(v.cotisation).forEach(function (h) {
-        const cotisation = v.cotisation[h];
+    Object.keys(vCotisation).forEach(function (h) {
+        const cotisation = vCotisation[h];
         const periode_cotisation = f.generatePeriodSerie(cotisation.periode.start, cotisation.periode.end);
         periode_cotisation.forEach((date_cotisation) => {
             value_cotisation[date_cotisation.getTime()] = (value_cotisation[date_cotisation.getTime()] || []).concat([cotisation.du / periode_cotisation.length]);
@@ -1281,9 +1284,9 @@ function cotisationsdettes(v, periodes, finPériode // correspond à la variable
     // ecn: ecart negatif
     // map les débits: clé fabriquée maison => [{hash, numero_historique, date_traitement}, ...]
     // Pour un même compte, les débits avec le même num_ecn (chaque émission de facture) sont donc regroupés
-    const ecn = Object.keys(v.debit).reduce((accu, h) => {
+    const ecn = Object.keys(vDebit).reduce((accu, h) => {
         //pour chaque debit
-        const debit = v.debit[h];
+        const debit = vDebit[h];
         const start = debit.periode.start;
         const end = debit.periode.end;
         const num_ecn = debit.numero_ecart_negatif;
@@ -1304,7 +1307,7 @@ function cotisationsdettes(v, periodes, finPériode // correspond à la variable
         const l = ecn[i].length;
         ecn[i].forEach((e, idx) => {
             if (idx <= l - 2) {
-                v.debit[e.hash].debit_suivant = ecn[i][idx + 1].hash;
+                vDebit[e.hash].debit_suivant = ecn[i][idx + 1].hash;
             }
         });
     });
@@ -1313,9 +1316,9 @@ function cotisationsdettes(v, periodes, finPériode // correspond à la variable
     // debit_traitement_debut => periode de traitement du débit
     // debit_traitement_fin => periode de traitement du debit suivant, ou bien finPériode
     // Entre ces deux dates, c'est cet objet qui est le plus à jour.
-    Object.keys(v.debit).forEach(function (h) {
-        const debit = v.debit[h];
-        const debit_suivant = v.debit[debit.debit_suivant] || {
+    Object.keys(vDebit).forEach(function (h) {
+        const debit = vDebit[h];
+        const debit_suivant = vDebit[debit.debit_suivant] || {
             date_traitement: finPériode,
         };
         //Selon le jour du traitement, cela passe sur la période en cours ou sur la suivante.
@@ -1352,8 +1355,8 @@ function cotisationsdettes(v, periodes, finPériode // correspond à la variable
     // TODO faire numero de compte ailleurs
     // Array des numeros de compte
     //var numeros_compte = Array.from(new Set(
-    //  Object.keys(v.cotisation).map(function (h) {
-    //    return(v.cotisation[h].numero_compte)
+    //  Object.keys(vCotisation).map(function (h) {
+    //    return(vCotisation[h].numero_compte)
     //  })
     //))
     periodes.forEach(function (time) {
@@ -1409,7 +1412,7 @@ function cotisationsdettes(v, periodes, finPériode // correspond à la variable
             etat = f.procolToHuman(the_event.action_procol, the_event.stade_procol);
         if (etat !== null)
             events.push({
-                etat: etat,
+                etat,
                 date_proc_col: new Date(the_event.date_effet),
             });
         return events;
@@ -1432,10 +1435,10 @@ function cotisationsdettes(v, periodes, finPériode // correspond à la variable
         });
     });
 }`,
-"defaillances": `function defaillances(v, output_indexed) {
+"defaillances": `function defaillances(altares, procol, output_indexed) {
     "use strict";
-    f.dealWithProcols(v.altares, "altares", output_indexed);
-    f.dealWithProcols(v.procol, "procol", output_indexed);
+    f.dealWithProcols(altares, "altares", output_indexed);
+    f.dealWithProcols(procol, "procol", output_indexed);
 }`,
 "delais": `/**
  * Calcule pour chaque période le nombre de jours restants du délai accordé et
@@ -1447,11 +1450,11 @@ function cotisationsdettes(v, periodes, finPériode // correspond à la variable
  * Contrat: cette fonction ne devrait être appelée que s'il y a eu au moins une
  * demande de délai.
  */
-function delais(v, debitParPériode, intervalleTraitement) {
+function delais(vDelai, debitParPériode, intervalleTraitement) {
     "use strict";
     const donnéesDélaiParPériode = {};
-    Object.keys(v.delai).forEach(function (hash) {
-        const delai = v.delai[hash];
+    Object.keys(vDelai).forEach(function (hash) {
+        const delai = vDelai[hash];
         if (delai.duree_delai <= 0) {
             return;
         }
@@ -1487,16 +1490,10 @@ function delais(v, debitParPériode, intervalleTraitement) {
 }`,
 "detteFiscale": `function detteFiscale(diane) {
     "use strict";
-    if ("dette_fiscale_et_sociale" in diane &&
-        diane["dette_fiscale_et_sociale"] !== null &&
-        "valeur_ajoutee" in diane &&
-        diane["valeur_ajoutee"] !== null &&
-        diane["valeur_ajoutee"] !== 0) {
-        return (diane["dette_fiscale_et_sociale"] / diane["valeur_ajoutee"]) * 100;
-    }
-    else {
-        return null;
-    }
+    var _a, _b;
+    const ratio = ((_a = diane["dette_fiscale_et_sociale"]) !== null && _a !== void 0 ? _a : NaN) /
+        ((_b = diane["valeur_ajoutee"]) !== null && _b !== void 0 ? _b : NaN);
+    return isNaN(ratio) ? null : ratio * 100;
 }`,
 "effectifs": `function effectifs(effobj, periodes, propertyName) {
     "use strict";
@@ -1525,8 +1522,9 @@ function delais(v, debitParPériode, intervalleTraitement) {
             map_effectif[time] || (available ? accu : null);
         // le cas échéant, on met à jour l'accu avec le dernier effectif disponible
         accu = map_effectif[time] || accu;
-        const propNameReporté = (propertyName + "_reporte");
-        output_effectif[time][propNameReporté] = map_effectif[time] ? 0 : 1;
+        Object.assign(output_effectif[time], {
+            [propertyName + "_reporte"]: map_effectif[time] ? 0 : 1,
+        });
         return accu;
     }, null);
     Object.keys(map_effectif).forEach((time) => {
@@ -1535,13 +1533,11 @@ function delais(v, debitParPériode, intervalleTraitement) {
         past_month_offsets.forEach((lookback) => {
             // On ajoute un offset pour partir de la dernière période où l'effectif est connu
             const time_past_lookback = f.dateAddMonth(periode, lookback - offset_effectif - 1);
-            const variable_name_effectif = (propertyName +
-                "_past_" +
-                lookback);
             output_effectif[time_past_lookback.getTime()] =
                 output_effectif[time_past_lookback.getTime()] || {};
-            output_effectif[time_past_lookback.getTime()][variable_name_effectif] =
-                map_effectif[time];
+            Object.assign(output_effectif[time_past_lookback.getTime()], {
+                [propertyName + "_past_" + lookback]: map_effectif[time],
+            });
         });
     });
     // On supprime les effectifs 'null'
@@ -1701,9 +1697,7 @@ function delais(v, debitParPériode, intervalleTraitement) {
 "finalize": `function finalize(k, v) {
     "use strict";
     const maxBsonSize = 16777216;
-    const bsonsize = // eslint-disable-next-line @typescript-eslint/no-explicit-any
-     Object.bsonsize ||
-        ((obj) => JSON.stringify(obj).length);
+
     // v de la forme
     // _id: {batch / siren / periode / type}
     // value: {siret1: {}, siret2: {}, "siren": {}}
@@ -1714,48 +1708,33 @@ function delais(v, debitParPériode, intervalleTraitement) {
     ///////////////////////////////////////////////
     ///
     //
-    const etablissements_connus = {};
-    const entreprise = v.entreprise || {};
-    Object.keys(v).forEach((siret) => {
-        if (siret !== "entreprise") {
-            etablissements_connus[siret] = true;
-            const { effectif } = v[siret];
-            if (effectif) {
-                entreprise.effectif_entreprise =
-                    (entreprise.effectif_entreprise || 0) + effectif; // initialized to null
-            }
-            const { apart_heures_consommees } = v[siret];
-            if (apart_heures_consommees) {
-                entreprise.apart_entreprise =
-                    (entreprise.apart_entreprise || 0) + apart_heures_consommees; // initialized to 0
-            }
-            if (v[siret].montant_part_patronale || v[siret].montant_part_ouvriere) {
-                entreprise.debit_entreprise =
-                    (entreprise.debit_entreprise || 0) +
-                        (v[siret].montant_part_patronale || 0) +
-                        (v[siret].montant_part_ouvriere || 0);
-            }
+    // extraction de l'entreprise et des établissements depuis v
+    const etab = f.omit(v, "entreprise");
+    const entr = Object.assign({}, v.entreprise);
+    const output = Object.keys(etab).map((siret) => {
+        const { effectif } = etab[siret];
+        if (effectif) {
+            entr.effectif_entreprise = entr.effectif_entreprise || 0 + effectif;
         }
-    });
-    Object.keys(v).forEach((siret) => {
-        if (siret !== "entreprise") {
-            Object.assign(v[siret], entreprise);
+        const { apart_heures_consommees } = etab[siret];
+        if (apart_heures_consommees) {
+            entr.apart_entreprise =
+                (entr.apart_entreprise || 0) + apart_heures_consommees;
         }
-    });
-    // une fois que les comptes sont faits...
-    const output = [];
-    const nb_connus = Object.keys(etablissements_connus).length;
-    Object.keys(v).forEach((siret) => {
-        if (siret !== "entreprise" && v[siret]) {
-            v[siret].nbr_etablissements_connus = nb_connus;
-            output.push(v[siret]);
+        if (etab[siret].montant_part_patronale ||
+            etab[siret].montant_part_ouvriere) {
+            entr.debit_entreprise =
+                (entr.debit_entreprise || 0) +
+                    (etab[siret].montant_part_patronale || 0) +
+                    (etab[siret].montant_part_ouvriere || 0);
         }
+        return Object.assign(Object.assign(Object.assign({}, etab[siret]), entr), { nbr_etablissements_connus: Object.keys(etab).length });
     });
     // NON: Pour l'instant, filtrage a posteriori
     // output = output.filter(siret_data => {
     //   return(siret_data.effectif) // Only keep if there is known effectif
     // })
-    if (output.length > 0 && nb_connus <= 1500) {
+    if (output.length > 0 && output.length <= 1500) {
         if (bsonsize(output) + bsonsize({ _id: k }) < maxBsonSize) {
             return output;
         }
@@ -1772,48 +1751,20 @@ function delais(v, debitParPériode, intervalleTraitement) {
 }`,
 "financierCourtTerme": `function financierCourtTerme(diane) {
     "use strict";
-    if ("concours_bancaire_courant" in diane &&
-        diane["concours_bancaire_courant"] !== null &&
-        "ca" in diane &&
-        diane["ca"] !== null &&
-        diane["ca"] !== 0) {
-        return (diane["concours_bancaire_courant"] / diane["ca"]) * 100;
-    }
-    else {
-        return null;
-    }
+    var _a, _b;
+    const ratio = ((_a = diane["concours_bancaire_courant"]) !== null && _a !== void 0 ? _a : NaN) / ((_b = diane["ca"]) !== null && _b !== void 0 ? _b : NaN);
+    return isNaN(ratio) ? null : ratio * 100;
 }`,
 "fraisFinancier": `function fraisFinancier(diane) {
     "use strict";
-    if ("interets" in diane &&
-        diane["interets"] !== null &&
-        "excedent_brut_d_exploitation" in diane &&
-        diane["excedent_brut_d_exploitation"] !== null &&
-        "produits_financiers" in diane &&
-        diane["produits_financiers"] !== null &&
-        "charges_financieres" in diane &&
-        diane["charges_financieres"] !== null &&
-        "charge_exceptionnelle" in diane &&
-        diane["charge_exceptionnelle"] !== null &&
-        "produit_exceptionnel" in diane &&
-        diane["produit_exceptionnel"] !== null &&
-        diane["excedent_brut_d_exploitation"] +
-            diane["produits_financiers"] +
-            diane["produit_exceptionnel"] -
-            diane["charge_exceptionnelle"] -
-            diane["charges_financieres"] !==
-            0) {
-        return ((diane["interets"] /
-            (diane["excedent_brut_d_exploitation"] +
-                diane["produits_financiers"] +
-                diane["produit_exceptionnel"] -
-                diane["charge_exceptionnelle"] -
-                diane["charges_financieres"])) *
-            100);
-    }
-    else {
-        return null;
-    }
+    var _a, _b, _c, _d, _e, _f;
+    const ratio = ((_a = diane["interets"]) !== null && _a !== void 0 ? _a : NaN) /
+        (((_b = diane["excedent_brut_d_exploitation"]) !== null && _b !== void 0 ? _b : NaN) +
+            ((_c = diane["produits_financiers"]) !== null && _c !== void 0 ? _c : NaN) +
+            ((_d = diane["produit_exceptionnel"]) !== null && _d !== void 0 ? _d : NaN) -
+            ((_e = diane["charge_exceptionnelle"]) !== null && _e !== void 0 ? _e : NaN) -
+            ((_f = diane["charges_financieres"]) !== null && _f !== void 0 ? _f : NaN));
+    return isNaN(ratio) ? null : ratio * 100;
 }`,
 "interim": `function interim(interim, output_indexed) {
     "use strict";
@@ -1926,7 +1877,7 @@ function map() {
         }
         if (includes["all"]) {
             if (v.compte) {
-                const output_compte = f.compte(v);
+                const output_compte = f.compte(v.compte);
                 f.add(output_compte, output_indexed);
             }
             if (v.effectif) {
@@ -1943,11 +1894,11 @@ function map() {
             }
             let output_cotisationsdettes;
             if (v.cotisation && v.debit) {
-                output_cotisationsdettes = f.cotisationsdettes(v, periodes, date_fin);
+                output_cotisationsdettes = f.cotisationsdettes(v.cotisation, v.debit, periodes, date_fin);
                 f.add(output_cotisationsdettes, output_indexed);
             }
             if (v.delai) {
-                const output_delai = f.delais(v, output_cotisationsdettes || {}, {
+                const output_delai = f.delais(v.delai, output_cotisationsdettes || {}, {
                     premièreDate: serie_periode[0],
                     dernièreDate: serie_periode[serie_periode.length - 1],
                 });
@@ -1956,13 +1907,13 @@ function map() {
             v.altares = v.altares || {};
             v.procol = v.procol || {};
             if (v.altares) {
-                f.defaillances(v, output_indexed);
+                f.defaillances(v.altares, v.procol, output_indexed);
             }
             if (v.ccsf) {
-                f.ccsf(v, output_array);
+                f.ccsf(v.ccsf, output_array);
             }
             if (v.sirene) {
-                f.sirene(v, output_array);
+                f.sirene(v.sirene, output_array);
             }
             f.populateNafAndApe(output_indexed, naf);
             const output_cotisation = f.cotisation(output_indexed);
@@ -2059,12 +2010,9 @@ function outputs(v, serie_periode) {
 }`,
 "poidsFrng": `function poidsFrng(diane) {
     "use strict";
-    if ("couverture_ca_fdr" in diane && diane["couverture_ca_fdr"] !== null) {
-        return (diane["couverture_ca_fdr"] / 360) * 100;
-    }
-    else {
-        return null;
-    }
+    return typeof diane["couverture_ca_fdr"] === "number"
+        ? (diane["couverture_ca_fdr"] / 360) * 100
+        : null;
 }`,
 "populateNafAndApe": `function populateNafAndApe(output_indexed, naf) {
     "use strict";
@@ -2104,13 +2052,13 @@ function outputs(v, serie_periode) {
     });
     return output_repeatable;
 }`,
-"sirene": `function sirene(v, output_array) {
+"sirene": `function sirene(vSirene, output_array) {
     "use strict";
-    const sireneHashes = Object.keys(v.sirene || {});
+    const sireneHashes = Object.keys(vSirene || {});
     output_array.forEach((val) => {
         // geolocalisation
         if (sireneHashes.length !== 0) {
-            const sirene = v.sirene[sireneHashes[sireneHashes.length - 1]];
+            const sirene = vSirene[sireneHashes[sireneHashes.length - 1]];
             val.siren = val.siret.substring(0, 9);
             val.latitude = sirene.lattitude || null;
             val.longitude = sirene.longitude || null;
@@ -2141,16 +2089,10 @@ function outputs(v, serie_periode) {
 }`,
 "tauxMarge": `function tauxMarge(diane) {
     "use strict";
-    if ("excedent_brut_d_exploitation" in diane &&
-        diane["excedent_brut_d_exploitation"] !== null &&
-        "valeur_ajoutee" in diane &&
-        diane["valeur_ajoutee"] !== null &&
-        diane["excedent_brut_d_exploitation"] !== 0) {
-        return ((diane["excedent_brut_d_exploitation"] / diane["valeur_ajoutee"]) * 100);
-    }
-    else {
-        return null;
-    }
+    var _a, _b;
+    const ratio = ((_a = diane["excedent_brut_d_exploitation"]) !== null && _a !== void 0 ? _a : NaN) /
+        ((_b = diane["valeur_ajoutee"]) !== null && _b !== void 0 ? _b : NaN);
+    return isNaN(ratio) ? null : ratio * 100;
 }`,
 },
 }

@@ -1,24 +1,20 @@
 import test, { ExecutionContext } from "ava"
 import "../globals"
-import { complete_reporder } from "./complete_reporder"
 import { finalize } from "./finalize"
-
-// Paramètres globaux utilisés par "compact"
-declare let serie_periode: unknown
-declare let f: unknown
+import { setGlobals } from "../test/helpers/setGlobals"
 
 const SIRET = "123"
 const DATE_DEBUT = new Date("2014-01-01")
 const DATE_FIN = new Date("2015-01-01")
 
-const AP_CONSO: /*EntréeApConso*/ any = {
-  // periode: DATE_DEBUT,
+const AP_CONSO = {
+  periode: DATE_DEBUT,
   id_conso: "",
   heure_consomme: 0,
 }
 
-const EFFECTIF: /*EntréeEffectif*/ any = {
-  // periode: DATE_DEBUT,
+const EFFECTIF = {
+  periode: DATE_DEBUT,
   effectif: 1,
   numero_compte: "456",
 }
@@ -106,11 +102,11 @@ const testCases: TestCase[] = [
           reporder: {
             [DATE_DEBUT.toString()]: {
               periode: DATE_DEBUT,
-            },
+            } as EntréeRepOrder,
             [DATE_FIN.toString()]: {
               periode: DATE_FIN,
-            },
-          } as any,
+            } as EntréeRepOrder,
+          },
         },
         "1902": {
           apconso: {
@@ -176,8 +172,8 @@ const testCases: TestCase[] = [
           reporder: {
             [DATE_DEBUT.toString()]: {
               periode: DATE_DEBUT,
-            },
-          } as any,
+            } as EntréeRepOrder,
+          },
         },
         "1902": {
           apconso: {
@@ -251,7 +247,7 @@ const testCases: TestCase[] = [
         },
         "1901_2other": {
           other_stuff: {},
-        } as any,
+        } as BatchValue,
         "1902": {
           apconso: {
             c: AP_CONSO,
@@ -367,28 +363,24 @@ const testCases: TestCase[] = [
   },
 ]
 
-function excludeRandomOrder(obj: any): unknown {
-  return Object.keys(obj).reduce(
-    (acc, prop) =>
+const excludeRandomOrder = (obj: unknown): unknown =>
+  Object.entries(obj as Record<string, unknown>).reduce(
+    (acc, [prop, val]) =>
       prop === "random_order"
         ? acc
         : {
             ...acc,
             [prop]:
-              typeof obj[prop] === "object" &&
-              obj[prop].constructor.name === "Object" // to make sure it's an object, but not an array, nor a Date instance
-                ? excludeRandomOrder(obj[prop])
-                : obj[prop],
+              typeof val === "object" && val?.constructor?.name === "Object" // to make sure it's an object, but not an array, nor a Date instance
+                ? excludeRandomOrder(val)
+                : val,
           },
     {}
   )
-}
 
 testCases.forEach(({ testCaseName, expected, finalizeObject }) => {
   test.serial(`finalize: ${testCaseName}`, (t: ExecutionContext) => {
-    // définition des valeurs de paramètres globaux utilisés par les fonctions de "compact"
-    f = { complete_reporder }
-    serie_periode = [DATE_DEBUT, DATE_FIN]
+    setGlobals({ serie_periode: [DATE_DEBUT, DATE_FIN] })
     // exécution du test
     const actual = finalize(SIRET, finalizeObject)
     t.deepEqual(excludeRandomOrder(actual), expected)

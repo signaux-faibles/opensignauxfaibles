@@ -33,7 +33,7 @@ const runDelais = (
     debitParPériode[fevrier.getTime()] = makeDebitParPériode(debits)
     debitParPériode[mars.getTime()] = makeDebitParPériode(debits)
   }
-  return delais({ delai: delaiMap }, debitParPériode, {
+  return delais(delaiMap, debitParPériode, {
     premièreDate: fevrier,
     dernièreDate: mars,
   })
@@ -97,7 +97,7 @@ test("un délai en dehors de la période d'intérêt est ignorée", (t: Executio
   }
   const donnéesParPériode: ParPériode<DebitComputedValues> = {}
   donnéesParPériode[fevrier.getTime()] = makeDebitParPériode()
-  const périodesComplétées = delais({ delai: delaiMap }, donnéesParPériode, {
+  const périodesComplétées = delais(delaiMap, donnéesParPériode, {
     premièreDate: fevrier,
     dernièreDate: mars,
   })

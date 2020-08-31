@@ -39,7 +39,8 @@ export type SortieCotisationsDettes = {
  * cotisations.
  */
 export function cotisationsdettes(
-  v: DonnéesCotisation & DonnéesDebit,
+  vCotisation: Record<string, EntréeCotisation>,
+  vDebit: Record<string, EntréeDebit>,
   periodes: Timestamp[],
   finPériode?: Date // correspond à la variable globale date_fin
 ): Record<number, SortieCotisationsDettes> {
@@ -56,8 +57,8 @@ export function cotisationsdettes(
   const value_cotisation: Record<string, number[]> = {}
 
   // Répartition des cotisations sur toute la période qu'elle concerne
-  Object.keys(v.cotisation).forEach(function (h) {
-    const cotisation = v.cotisation[h]
+  Object.keys(vCotisation).forEach(function (h) {
+    const cotisation = vCotisation[h]
     const periode_cotisation = f.generatePeriodSerie(
       cotisation.periode.start,
       cotisation.periode.end
@@ -73,9 +74,9 @@ export function cotisationsdettes(
   // ecn: ecart negatif
   // map les débits: clé fabriquée maison => [{hash, numero_historique, date_traitement}, ...]
   // Pour un même compte, les débits avec le même num_ecn (chaque émission de facture) sont donc regroupés
-  const ecn = Object.keys(v.debit).reduce((accu, h) => {
+  const ecn = Object.keys(vDebit).reduce((accu, h) => {
     //pour chaque debit
-    const debit = v.debit[h]
+    const debit = vDebit[h]
 
     const start = debit.periode.start
     const end = debit.periode.end
@@ -98,7 +99,7 @@ export function cotisationsdettes(
     const l = ecn[i].length
     ecn[i].forEach((e, idx) => {
       if (idx <= l - 2) {
-        v.debit[e.hash].debit_suivant = ecn[i][idx + 1].hash
+        vDebit[e.hash].debit_suivant = ecn[i][idx + 1].hash
       }
     })
   })
@@ -108,10 +109,10 @@ export function cotisationsdettes(
   // debit_traitement_debut => periode de traitement du débit
   // debit_traitement_fin => periode de traitement du debit suivant, ou bien finPériode
   // Entre ces deux dates, c'est cet objet qui est le plus à jour.
-  Object.keys(v.debit).forEach(function (h) {
-    const debit = v.debit[h]
+  Object.keys(vDebit).forEach(function (h) {
+    const debit = vDebit[h]
 
-    const debit_suivant = v.debit[debit.debit_suivant] || {
+    const debit_suivant = vDebit[debit.debit_suivant] || {
       date_traitement: finPériode,
     }
 
@@ -171,8 +172,8 @@ export function cotisationsdettes(
   // TODO faire numero de compte ailleurs
   // Array des numeros de compte
   //var numeros_compte = Array.from(new Set(
-  //  Object.keys(v.cotisation).map(function (h) {
-  //    return(v.cotisation[h].numero_compte)
+  //  Object.keys(vCotisation).map(function (h) {
+  //    return(vCotisation[h].numero_compte)
   //  })
   //))
 

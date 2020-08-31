@@ -1,16 +1,10 @@
-import { Diane } from "./fraisFinancier"
+import "../globals"
 
-export function detteFiscale(diane: Diane): number | null {
+export function detteFiscale(diane: EntréeDiane): number | null {
   "use strict"
-  if (
-    "dette_fiscale_et_sociale" in diane &&
-    diane["dette_fiscale_et_sociale"] !== null &&
-    "valeur_ajoutee" in diane &&
-    diane["valeur_ajoutee"] !== null &&
-    diane["valeur_ajoutee"] !== 0
-  ) {
-    return (diane["dette_fiscale_et_sociale"] / diane["valeur_ajoutee"]) * 100
-  } else {
-    return null
-  }
+
+  const ratio =
+    (diane["dette_fiscale_et_sociale"] ?? NaN) /
+    (diane["valeur_ajoutee"] ?? NaN)
+  return isNaN(ratio) ? null : ratio * 100
 }

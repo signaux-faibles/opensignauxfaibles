@@ -24,7 +24,7 @@ import { entr_bdf, SortieBdf } from "./entr_bdf"
 import { omit } from "../common/omit"
 import { entr_diane, SortieDiane } from "./entr_diane"
 
-type Siret = string
+export type Siret = string
 
 type SortieMapEntreprise = {
   periode: Date
@@ -32,17 +32,24 @@ type SortieMapEntreprise = {
   Partial<SortieBdf> &
   Partial<SortieDiane>
 
-type SortieMapEtablissement = Partial<DonnéesAgrégées>
+export type SortieMapEtablissement = Partial<DonnéesAgrégées>
 
-type SortieMap =
-  | { entreprise: SortieMapEntreprise }
-  | Record<Siret, SortieMapEtablissement>
+type SortieMapEtablissements = Record<Siret, SortieMapEtablissement>
 
-type CléSortieMap = {
+export type SortieMap = {
+  entreprise?: SortieMapEntreprise
+} & SortieMapEtablissements
+
+export type CléSortieMap = {
   batch: BatchKey
   siren: SiretOrSiren
   periode: Date
   type: "apart" | "other"
+}
+
+export type EntréeMap = {
+  _id: SiretOrSiren
+  value: CompanyDataValues
 }
 
 declare function emit(key: CléSortieMap, value: SortieMap): void
@@ -64,10 +71,7 @@ declare const date_fin: Date
  * les données agrégées est émis (par appel à `emit()`), à destination de
  * `reduce()`, puis de `finalize()`.
  */
-export function map(this: {
-  _id: SiretOrSiren
-  value: CompanyDataValues
-}): void {
+export function map(this: EntréeMap): void {
   "use strict"
   /* DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO */ const f = {
     ...{ flatten, outputs, apart, compte, effectifs, interim, add }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
@@ -94,7 +98,7 @@ export function map(this: {
       if (v.apconso && v.apdemande) {
         const output_apart = f.apart(v.apconso, v.apdemande)
         Object.keys(output_apart).forEach((periode) => {
-          const data: SortieMap = {
+          const data: SortieMapEtablissements = {
             [this._id]: {
               ...output_apart[periode],
               siret: this._id,
@@ -115,7 +119,7 @@ export function map(this: {
 
     if (includes["all"]) {
       if (v.compte) {
-        const output_compte = f.compte(v as DonnéesCompte)
+        const output_compte = f.compte(v.compte)
         f.add(output_compte, output_indexed)
       }
 
@@ -137,7 +141,8 @@ export function map(this: {
       let output_cotisationsdettes
       if (v.cotisation && v.debit) {
         output_cotisationsdettes = f.cotisationsdettes(
-          v as DonnéesCotisation & DonnéesDebit,
+          v.cotisation,
+          v.debit,
           periodes,
           date_fin
         )
@@ -145,14 +150,10 @@ export function map(this: {
       }
 
       if (v.delai) {
-        const output_delai = f.delais(
-          v as DonnéesDelai,
-          output_cotisationsdettes || {},
-          {
-            premièreDate: serie_periode[0],
-            dernièreDate: serie_periode[serie_periode.length - 1],
-          }
-        )
+        const output_delai = f.delais(v.delai, output_cotisationsdettes || {}, {
+          premièreDate: serie_periode[0],
+          dernièreDate: serie_periode[serie_periode.length - 1],
+        })
         f.add(output_delai, output_indexed)
       }
 
@@ -160,14 +161,14 @@ export function map(this: {
       v.procol = v.procol || {}
 
       if (v.altares) {
-        f.defaillances(v as DonnéesDefaillances, output_indexed)
+        f.defaillances(v.altares, v.procol, output_indexed)
       }
 
       if (v.ccsf) {
-        f.ccsf(v as DonnéesCcsf, output_array)
+        f.ccsf(v.ccsf, output_array)
       }
       if (v.sirene) {
-        f.sirene(v as DonnéesSirene, output_array)
+        f.sirene(v.sirene, output_array)
       }
 
       f.populateNafAndApe(output_indexed, naf)

@@ -1,19 +1,14 @@
-export type EntrepriseEnEntrée = {
-  effectif: number | null
-} & Partial<EntrepriseEnSortie>
+import { Siret, SortieMap, SortieMapEtablissement } from "./map"
+import * as f from "../common/omit"
 
-type EntrepriseEnSortie = {
+type Accumulateurs = {
   effectif_entreprise: number
-  apart_heures_consommees: number
   apart_entreprise: number
-  montant_part_patronale: number
-  montant_part_ouvriere: number
   debit_entreprise: number
   nbr_etablissements_connus: number
-  random_order?: number
-  siret: SiretOrSiren
-  periode: unknown
 }
+
+export type EntrepriseEnSortie = SortieMapEtablissement & Accumulateurs
 
 export type Clé = {
   batch: unknown
@@ -22,24 +17,15 @@ export type Clé = {
   type: unknown
 }
 
-export type EntréeFinalize = Record<
-  SiretOrSiren | "entreprise",
-  EntrepriseEnEntrée
->
-
-type SortieFinalize =
-  | Partial<EntrepriseEnSortie>[]
-  | { incomplete: true }
-  | undefined
+type SortieFinalize = Partial<EntrepriseEnSortie>[] | { incomplete: true }
 
 declare function print(str: string): void
 
-export function finalize(k: Clé, v: EntréeFinalize): SortieFinalize {
+export function finalize(k: Clé, v: SortieMap): SortieFinalize {
   "use strict"
+
   const maxBsonSize = 16777216
-  const bsonsize = // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (Object as any).bsonsize ||
-    ((obj: unknown): number => JSON.stringify(obj).length)
+  const bsonsize = (obj: unknown): number => JSON.stringify(obj).length // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
 
   // v de la forme
   // _id: {batch / siren / periode / type}
@@ -52,53 +38,45 @@ export function finalize(k: Clé, v: EntréeFinalize): SortieFinalize {
   ///
   //
 
-  const etablissements_connus: Record<SiretOrSiren, boolean> = {}
-  const entreprise: Partial<EntrepriseEnSortie> = v.entreprise || {}
+  // extraction de l'entreprise et des établissements depuis v
+  const etab: Record<Siret, SortieMapEtablissement> = f.omit(v, "entreprise")
+  const entr: Partial<EntrepriseEnSortie> = { ...v.entreprise }
 
-  Object.keys(v).forEach((siret) => {
-    if (siret !== "entreprise") {
-      etablissements_connus[siret] = true
-      const { effectif } = v[siret]
+  const output: Partial<EntrepriseEnSortie>[] = Object.keys(etab).map(
+    (siret) => {
+      const { effectif } = etab[siret]
       if (effectif) {
-        entreprise.effectif_entreprise =
-          (entreprise.effectif_entreprise || 0) + effectif // initialized to null
+        entr.effectif_entreprise = entr.effectif_entreprise || 0 + effectif
       }
-      const { apart_heures_consommees } = v[siret]
+      const { apart_heures_consommees } = etab[siret]
       if (apart_heures_consommees) {
-        entreprise.apart_entreprise =
-          (entreprise.apart_entreprise || 0) + apart_heures_consommees // initialized to 0
+        entr.apart_entreprise =
+          (entr.apart_entreprise || 0) + apart_heures_consommees
       }
-      if (v[siret].montant_part_patronale || v[siret].montant_part_ouvriere) {
-        entreprise.debit_entreprise =
-          (entreprise.debit_entreprise || 0) +
-          (v[siret].montant_part_patronale || 0) +
-          (v[siret].montant_part_ouvriere || 0)
+      if (
+        etab[siret].montant_part_patronale ||
+        etab[siret].montant_part_ouvriere
+      ) {
+        entr.debit_entreprise =
+          (entr.debit_entreprise || 0) +
+          (etab[siret].montant_part_patronale || 0) +
+          (etab[siret].montant_part_ouvriere || 0)
+      }
+
+      return {
+        ...etab[siret],
+        ...entr,
+        nbr_etablissements_connus: Object.keys(etab).length,
       }
     }
-  })
-
-  Object.keys(v).forEach((siret) => {
-    if (siret !== "entreprise") {
-      Object.assign(v[siret], entreprise)
-    }
-  })
-
-  // une fois que les comptes sont faits...
-  const output: Partial<EntrepriseEnSortie>[] = []
-  const nb_connus = Object.keys(etablissements_connus).length
-  Object.keys(v).forEach((siret) => {
-    if (siret !== "entreprise" && v[siret]) {
-      v[siret].nbr_etablissements_connus = nb_connus
-      output.push(v[siret])
-    }
-  })
+  )
 
   // NON: Pour l'instant, filtrage a posteriori
   // output = output.filter(siret_data => {
   //   return(siret_data.effectif) // Only keep if there is known effectif
   // })
 
-  if (output.length > 0 && nb_connus <= 1500) {
+  if (output.length > 0 && output.length <= 1500) {
     if (bsonsize(output) + bsonsize({ _id: k }) < maxBsonSize) {
       return output
     } else {

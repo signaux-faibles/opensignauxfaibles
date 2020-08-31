@@ -1,38 +1,32 @@
 // Converted to TS from _test.js
 
 import test, { ExecutionContext } from "ava"
-import { map } from "./map"
+import { map, EntréeMap, CléSortieMap, SortieMap } from "./map"
 import { reduce } from "./reduce"
-import { finalize } from "./finalize"
+import { finalize, Clé } from "./finalize"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { objects as testCases } from "../test/data/objects"
 import { naf as nafValues } from "../test/data/naf"
 import { reducer, invertedReducer } from "../test/helpers/reducers"
 import { runMongoMap, indexMapResultsByKey } from "../test/helpers/mongodb"
+import { setGlobals } from "../test/helpers/setGlobals"
 
 const DAY_IN_MS = 24 * 60 * 60 * 1000
-
-// Paramètres globaux utilisés par "reduce.algo2"
-declare let naf: NAF
-declare let actual_batch: BatchKey
-declare let date_debut: Date
-declare let date_fin: Date
-declare let serie_periode: Date[]
-declare let offset_effectif: number
-declare let includes: Record<"all", boolean>
 
 // initialisation des paramètres globaux de reduce.algo2
 function initGlobalParams(
   dateDebut = new Date("2014-01-01"),
   dateFin = new Date("2018-02-01")
 ) {
-  naf = nafValues
-  actual_batch = "1905"
-  date_debut = dateDebut
-  date_fin = dateFin
-  serie_periode = generatePeriodSerie(dateDebut, dateFin)
-  offset_effectif = 2
-  includes = { all: true }
+  setGlobals({
+    naf: nafValues,
+    actual_batch: "1905",
+    date_debut: dateDebut,
+    date_fin: dateFin,
+    serie_periode: generatePeriodSerie(dateDebut, dateFin),
+    offset_effectif: 2,
+    includes: { all: true },
+  })
 }
 
 const objectValues = <T>(obj: Record<string, T>): T[] =>
@@ -44,7 +38,9 @@ test("l'ordre de traitement des données n'influe pas sur les résultats", (t: E
   testCases.forEach(({ _id, value }) => {
     initGlobalParams()
 
-    const flatValues = runMongoMap(map, [{ _id, value }])
+    const flatValues = runMongoMap<EntréeMap, CléSortieMap, SortieMap>(map, [
+      { _id, value },
+    ])
     const groupedValues = indexMapResultsByKey(flatValues)
     const values = objectValues(groupedValues)
 
@@ -54,10 +50,10 @@ test("l'ordre de traitement des données n'influe pas sur les résultats", (t: E
       invertedReducer(array, reduce)
     )
 
-    const result = intermediateResult.map((r) => finalize(null as any, r))
+    const result = intermediateResult.map((r) => finalize({} as Clé, r))
 
     const invertedResult = invertedIntermediateResult.map((r) =>
-      finalize(null as any, r)
+      finalize({} as Clé, r)
     )
 
     t.deepEqual(result, invertedResult)

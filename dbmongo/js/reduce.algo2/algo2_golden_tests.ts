@@ -1,5 +1,3 @@
-/*global globalThis*/
-
 // Combinaison des tests de map_test.js et finalize_test.js.
 //
 // Tests to prevent regressions on the JS functions (reduce.algo2 + common)
@@ -18,10 +16,11 @@ import * as fs from "fs"
 import * as util from "util"
 import { naf } from "../test/data/naf"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
-import { map } from "./map"
-import { finalize, Clé, EntrepriseEnEntrée } from "./finalize"
+import { map, EntréeMap, CléSortieMap, SortieMap } from "./map"
+import { finalize } from "./finalize"
 import { reduce } from "./reduce"
 import { TestDataItem } from "../test/data/objects"
+import { setGlobals } from "../test/helpers/setGlobals"
 import {
   runMongoMap,
   runMongoReduce,
@@ -71,27 +70,24 @@ test[serialOrSkip](
       await readFile(INPUT_FILE)
     ) as TestDataItem[]
 
-    const f = {
-      generatePeriodSerie,
-      map,
-      finalize,
-      reduce,
-    }
-
     // Define global parameters that are required by JS functions
-    const jsParams = globalThis as any // eslint-disable-line @typescript-eslint/no-explicit-any
-    jsParams.actual_batch = "2002_1"
-    jsParams.date_debut = new Date("2014-01-01")
-    jsParams.date_fin = new Date("2016-01-01")
-    jsParams.serie_periode = f.generatePeriodSerie(
-      jsParams.date_debut,
-      jsParams.date_fin
-    )
-    jsParams.includes = { all: true }
-    jsParams.offset_effectif = 2
-    jsParams.naf = naf
+    const date_debut = new Date("2014-01-01")
+    const date_fin = new Date("2016-01-01")
+    const jsParams = {
+      actual_batch: "2002_1",
+      date_debut,
+      date_fin,
+      serie_periode: generatePeriodSerie(date_debut, date_fin),
+      includes: { all: true },
+      offset_effectif: 2,
+      naf,
+    }
+    setGlobals(jsParams)
 
-    const mapResult = runMongoMap(f.map, testData)
+    const mapResult = runMongoMap<EntréeMap, CléSortieMap, SortieMap>(
+      map,
+      testData
+    )
     const mapOutput = JSON.stringify(mapResult, null, 2)
 
     if (updateGoldenFiles) {
@@ -101,13 +97,10 @@ test[serialOrSkip](
     const mapExpected = await readFile(MAP_GOLDEN_FILE)
     safeDeepEqual(t, parseMongoObject(mapOutput), parseMongoObject(mapExpected))
 
-    const reduceResult = runMongoReduce(
-      f.reduce,
-      mapResult as { _id: Clé; value: Record<string, EntrepriseEnEntrée> }[]
-    )
+    const reduceResult = runMongoReduce(reduce, mapResult)
 
     const finalizeResult = reduceResult
-      .map(({ _id, value }) => f.finalize(_id, value))
+      .map(({ _id, value }) => finalize(_id, value))
       .map((finalizedEntry) => {
         if (
           typeof finalizedEntry === "undefined" ||

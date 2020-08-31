@@ -6,40 +6,11 @@
 
 import test, { ExecutionContext } from "ava"
 import "../globals"
-import { map } from "./map"
-import { flatten } from "../common/flatten"
-import { outputs } from "./outputs"
-import { repeatable } from "./repeatable"
-import { add } from "./add"
-import { defaillances } from "./defaillances"
-import { dealWithProcols } from "./dealWithProcols"
-import { populateNafAndApe } from "./populateNafAndApe"
-import { cotisation } from "./cotisation"
-import { dateAddMonth } from "../common/dateAddMonth"
-import { generatePeriodSerie } from "../common/generatePeriodSerie"
-import { cibleApprentissage } from "./cibleApprentissage"
-import { lookAhead } from "./lookAhead"
+import { map, EntréeMap, CléSortieMap, SortieMap } from "./map"
 import { reduce } from "./reduce"
-import { finalize, EntréeFinalize, EntrepriseEnEntrée } from "./finalize"
+import { finalize, EntrepriseEnSortie } from "./finalize"
+import { setGlobals } from "../test/helpers/setGlobals"
 import { runMongoMap } from "../test/helpers/mongodb"
-
-const global = globalThis as any // eslint-disable-line @typescript-eslint/no-explicit-any
-global.f = {
-  flatten,
-  outputs,
-  repeatable,
-  add,
-  defaillances,
-  dealWithProcols,
-  populateNafAndApe,
-  cotisation,
-  dateAddMonth,
-  generatePeriodSerie,
-  cibleApprentissage,
-  lookAhead,
-}
-
-const ISODate = (date: string): Date => new Date(date)
 
 // test data inspired by test-api.sh
 const siret: SiretOrSiren = "01234567891011"
@@ -47,13 +18,17 @@ const siren = siret.substr(0, 9)
 const scope: Scope = "etablissement"
 const batchKey = "1910"
 const dates = [
-  ISODate("2015-12-01T00:00:00.000+0000"),
-  ISODate("2016-01-01T00:00:00.000+0000"),
+  new Date("2015-12-01T00:00:00.000+0000"),
+  new Date("2016-01-01T00:00:00.000+0000"),
 ]
-global.actual_batch = batchKey // used by map()
-global.serie_periode = dates // used by map()
-global.includes = { all: true } // used by map()
-global.naf = {} // used by map()
+
+setGlobals({
+  // used by map()
+  actual_batch: batchKey,
+  serie_periode: dates,
+  includes: { all: true },
+  naf: {},
+})
 
 // même valeur en entrée que pour ../compact/ava_tests.ts
 const rawData = {
@@ -83,7 +58,7 @@ const expectedMapResults = dates.map((periode) => ({
   },
   value: {
     [siret]: makeValue(periode),
-  },
+  } as SortieMap,
 }))
 
 const expectedReduceResults = expectedMapResults
@@ -98,7 +73,7 @@ const expectedFinalizeResults = expectedMapResults.map(({ _id }) => ({
     {
       ...makeValue(_id.periode),
       nbr_etablissements_connus: 1,
-    },
+    } as EntrepriseEnSortie,
   ],
 }))
 
@@ -107,9 +82,10 @@ const expectedFinalizeResults = expectedMapResults.map(({ _id }) => ({
 test.serial(
   `reduce.algo2.map() émet un objet par période`,
   (t: ExecutionContext) => {
-    type MapResult = { _id: unknown; value: Record<string, EntrepriseEnEntrée> }
-    const mapResults = runMongoMap(map, [{ _id: siret, value: rawData }])
-    t.deepEqual(mapResults as MapResult[], expectedMapResults)
+    const mapResults = runMongoMap<EntréeMap, CléSortieMap, SortieMap>(map, [
+      { _id: siret, value: rawData },
+    ])
+    t.deepEqual(mapResults, expectedMapResults)
   }
 )
 
@@ -131,7 +107,7 @@ test.serial(
       // Note: on suppose qu'il n'y a qu'une valeur par clé
       return {
         _id,
-        value: finalize(_id, value as EntréeFinalize),
+        value: finalize(_id, value),
       }
     })
     t.deepEqual(finalizeResult, expectedFinalizeResults)
