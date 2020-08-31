@@ -36,8 +36,11 @@ export function delais(
 ): ParPériode<DelaiComputedValues> {
   "use strict"
   const donnéesDélaiParPériode: ParPériode<DelaiComputedValues> = {}
-  Object.keys(vDelai).forEach(function (hash) {
-    const delai = vDelai[hash]
+  Object.values(vDelai).forEach((delai) => {
+    // validation simple des données
+    if (delai.duree_delai <= 0) {
+      throw new Error(`duree_delai invalide: ${delai.duree_delai}`)
+    }
 
     // On arrondit les dates au premier jour du mois.
     const date_creation = new Date(

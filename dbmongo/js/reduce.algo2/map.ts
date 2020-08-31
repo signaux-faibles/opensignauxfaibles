@@ -150,13 +150,6 @@ export function map(this: EntréeMap): void {
       }
 
       if (v.delai) {
-        // validation simple de v.delai
-        Object.values(v.delai).forEach((d) => {
-          if (d.duree_delai <= 0) {
-            throw new Error(`duree_delai invalide: ${d.duree_delai}`)
-          }
-        })
-
         const output_delai = f.delais(v.delai, output_cotisationsdettes || {}, {
           premièreDate: serie_periode[0],
           dernièreDate: serie_periode[serie_periode.length - 1],
