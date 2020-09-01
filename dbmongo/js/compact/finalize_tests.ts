@@ -2,6 +2,11 @@ import test, { ExecutionContext } from "ava"
 import "../globals"
 import { finalize } from "./finalize"
 import { setGlobals } from "../test/helpers/setGlobals"
+import {
+  CompanyDataValues,
+  CompanyDataValuesWithFlags,
+  BatchValue,
+} from "../RawDataTypes"
 
 const SIRET = "123"
 const DATE_DEBUT = new Date("2014-01-01")

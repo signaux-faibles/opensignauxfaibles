@@ -25,45 +25,6 @@ type NAF = {
 
 type Scope = "etablissement" | "entreprise"
 
-// Données importées pour une entreprise ou établissement
-type CompanyDataValues = {
-  key: SiretOrSiren
-  scope: Scope
-  batch: BatchValues
-}
-
-type CompanyDataValuesWithFlags = CompanyDataValues & {
-  index: {
-    algo1: boolean
-    algo2: boolean
-  }
-}
-
-type BatchValues = Record<BatchKey, BatchValue>
-
-type BatchValue = Partial<{
-  reporder: Record<Periode, EntréeRepOrder> // RepOrder est généré, et non importé => Usage de Periode en guise de hash d'indexation
-  compact: { delete: Partial<Record<DataType, DataHash[]>> }
-  effectif: Record<DataHash, EntréeEffectif>
-  apconso: Record<DataHash, EntréeApConso>
-  apdemande: Record<DataHash, EntréeApDemande>
-  compte: Record<DataHash, EntréeCompte>
-  interim: Record<DataHash, EntréeInterim>
-  delai: Record<DataHash, EntréeDelai>
-  altares: Record<DataHash, EntréeDefaillances>
-  procol: Record<DataHash, EntréeDefaillances>
-  cotisation: Record<DataHash, EntréeCotisation>
-  debit: Record<DataHash, EntréeDebit>
-  ccsf: Record<DataHash, { date_traitement: Date }>
-  sirene: Record<DataHash, EntréeSirene>
-  sirene_ul: Record<DataHash, EntréeSireneEntreprise>
-  effectif_ent: Record<DataHash, EntréeEffectif>
-  bdf: Record<DataHash, EntréeBdf>
-  diane: Record<DataHash, EntréeDiane>
-}>
-
-type DataType = Exclude<keyof BatchValue, "compact"> // => 'reporder' | 'effectif' | 'apconso' | ...
-
 // Détail des types de données
 
 type AltaresCode = string

@@ -1,4 +1,5 @@
 import "../globals.ts"
+import { CompanyDataValuesWithFlags } from "../RawDataTypes"
 
 declare function emit(
   key: SiretOrSiren,

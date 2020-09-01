@@ -1,5 +1,6 @@
 import "../globals.ts"
 import { forEachPopulatedProp } from "../common/forEachPopulatedProp"
+import { BatchValue, DataType } from "../RawDataTypes"
 
 /**
  * On recupère les clés ajoutées et les clés supprimées depuis currentBatch.

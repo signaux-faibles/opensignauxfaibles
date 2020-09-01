@@ -1,5 +1,6 @@
 import "../globals.ts"
 import { forEachPopulatedProp } from "../common/forEachPopulatedProp"
+import { BatchValue } from "../RawDataTypes"
 
 // currentState() agrège un ensemble de batch, en tenant compte des suppressions
 // pour renvoyer le dernier état connu des données.

@@ -1,5 +1,6 @@
 import "../globals"
 import { forEachPopulatedProp } from "../common/forEachPopulatedProp"
+import { DataType, BatchValue } from "../RawDataTypes"
 
 export function applyPatchesToBatch(
   hashToAdd: Partial<Record<DataType, Set<DataHash>>>,

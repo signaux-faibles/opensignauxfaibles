@@ -1,4 +1,5 @@
 import "../globals.ts"
+import { CompanyDataValuesWithFlags } from "../RawDataTypes"
 
 // Paramètres globaux utilisés par "compact"
 declare const serie_periode: Date[]
