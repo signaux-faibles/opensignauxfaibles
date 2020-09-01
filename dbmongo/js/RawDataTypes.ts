@@ -10,7 +10,9 @@ export type CompanyDataValues = {
   batch: BatchValues
 }
 
-export type CompanyDataValuesWithFlags = CompanyDataValues & {
+export type CompanyDataValuesWithFlags = CompanyDataValues & IndexFlags
+
+export type IndexFlags = {
   index: {
     algo1: boolean
     algo2: boolean
@@ -25,10 +27,10 @@ export type BatchValues = Record<BatchKey, BatchValue>
 
 export type DataType = keyof BatchValueProps // => 'reporder' | 'effectif' | 'apconso' | ...
 
-export type BatchValue = Partial<CompactProps & BatchValueProps>
+export type BatchValue = Partial<BatchValueProps>
 
 type BatchValueProps = {
-  reporder: Record<Periode, EntréeRepOrder> // RepOrder est généré, et non importé => Usage de Periode en guise de hash d'indexation
+  reporder: Record<Periode, EntréeRepOrder> // RepOrder est généré par "compact", et non importé => Usage de Periode en guise de hash d'indexation
   effectif: ParHash<EntréeEffectif>
   apconso: ParHash<EntréeApConso>
   apdemande: ParHash<EntréeApDemande>
@@ -45,8 +47,4 @@ type BatchValueProps = {
   effectif_ent: ParHash<EntréeEffectif>
   bdf: ParHash<EntréeBdf>
   diane: ParHash<EntréeDiane>
-}
-
-type CompactProps = {
-  compact: { delete: Partial<Record<DataType, DataHash[]>> }
 }

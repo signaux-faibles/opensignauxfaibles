@@ -1,12 +1,28 @@
 import "../globals"
 import { forEachPopulatedProp } from "../common/forEachPopulatedProp"
-import { DataType, BatchValue } from "../RawDataTypes"
+import {
+  DataType,
+  BatchKey,
+  BatchValue,
+  Scope,
+  IndexFlags,
+} from "../RawDataTypes"
+
+export type BatchValueWithCompact = BatchValue & {
+  compact?: { delete: Partial<Record<DataType, DataHash[]>> }
+}
+
+export type CompanyDataValuesWithCompact = {
+  key: SiretOrSiren
+  scope: Scope
+  batch: Record<BatchKey, BatchValueWithCompact>
+} & Partial<IndexFlags>
 
 export function applyPatchesToBatch(
   hashToAdd: Partial<Record<DataType, Set<DataHash>>>,
   hashToDelete: Partial<Record<DataType, Set<DataHash>>>,
   stockTypes: DataType[],
-  currentBatch: BatchValue
+  currentBatch: BatchValueWithCompact
 ): void {
   // Application des suppressions
   stockTypes.forEach((type) => {

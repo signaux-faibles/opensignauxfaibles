@@ -1,14 +1,15 @@
 import "../globals.ts"
 import { forEachPopulatedProp } from "../common/forEachPopulatedProp"
-import { BatchValue, DataType } from "../RawDataTypes"
+import { DataType } from "../RawDataTypes"
 import { CurrentDataState } from "./currentState"
+import { BatchValueWithCompact } from "./applyPatchesToBatch"
 
 /**
  * On recupère les clés ajoutées et les clés supprimées depuis currentBatch.
  * On ajoute aux clés supprimées les types stocks de la memoire.
  */
 export function listHashesToAddAndDelete(
-  currentBatch: BatchValue,
+  currentBatch: BatchValueWithCompact,
   stockTypes: DataType[],
   memory: CurrentDataState
 ): {

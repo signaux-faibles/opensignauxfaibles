@@ -3,10 +3,9 @@ import "../globals"
 import { finalize } from "./finalize"
 import { setGlobals } from "../test/helpers/setGlobals"
 import {
-  CompanyDataValues,
-  CompanyDataValuesWithFlags,
-  BatchValue,
-} from "../RawDataTypes"
+  CompanyDataValuesWithCompact,
+  BatchValueWithCompact,
+} from "./applyPatchesToBatch"
 
 const SIRET = "123"
 const DATE_DEBUT = new Date("2014-01-01")
@@ -26,7 +25,7 @@ const EFFECTIF = {
 
 type TestCase = {
   testCaseName: string
-  finalizeObject: CompanyDataValues | CompanyDataValuesWithFlags
+  finalizeObject: CompanyDataValuesWithCompact
   expected: unknown
 }
 
@@ -252,7 +251,7 @@ const testCases: TestCase[] = [
         },
         "1901_2other": {
           other_stuff: {},
-        } as BatchValue,
+        } as BatchValueWithCompact,
         "1902": {
           apconso: {
             c: AP_CONSO,

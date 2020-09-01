@@ -3,7 +3,10 @@ import "../globals.ts"
 import { listHashesToAddAndDelete } from "./listHashesToAddAndDelete"
 import { fixRedundantPatches } from "./fixRedundantPatches"
 import { applyPatchesToMemory } from "./applyPatchesToMemory"
-import { applyPatchesToBatch } from "./applyPatchesToBatch"
+import {
+  applyPatchesToBatch,
+  BatchValueWithCompact,
+} from "./applyPatchesToBatch"
 import { DataType, BatchValue, BatchKey } from "../RawDataTypes"
 import { CurrentDataState } from "./currentState"
 
@@ -17,7 +20,7 @@ declare const completeTypes: Record<BatchKey, DataType[]>
  * Pré-requis: les batches précédents doivent avoir été compactés.
  */
 export function compactBatch(
-  currentBatch: BatchValue,
+  currentBatch: BatchValueWithCompact,
   memory: CurrentDataState,
   fromBatchKey: string
 ): BatchValue {

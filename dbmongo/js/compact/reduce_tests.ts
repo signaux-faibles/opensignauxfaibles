@@ -2,7 +2,8 @@ import test, { ExecutionContext } from "ava"
 import "../globals"
 import { reduce } from "./reduce"
 import { setGlobals } from "../test/helpers/setGlobals"
-import { CompanyDataValues, DataType, BatchKey } from "../RawDataTypes"
+import { DataType, BatchKey } from "../RawDataTypes"
+import { CompanyDataValuesWithCompact } from "./applyPatchesToBatch"
 
 const REDUCE_KEY = "123"
 
@@ -24,7 +25,7 @@ type TestCase = {
   completeTypes: Record<BatchKey, DataType[]>
   fromBatchKey: string
   batches: string[]
-  reduce_values: CompanyDataValues[]
+  reduce_values: CompanyDataValuesWithCompact[]
   expected: unknown
 }
 
