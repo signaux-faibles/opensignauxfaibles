@@ -16,6 +16,7 @@ import { dealWithProcols, SortieProcols } from "./dealWithProcols"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { omit } from "../common/omit"
 import { CompanyDataValues, BatchKey } from "../RawDataTypes"
+import { EntréeDelai } from "../common/validDelai"
 
 type SortieMapCommon = {
   key: string
