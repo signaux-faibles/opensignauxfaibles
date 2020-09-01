@@ -1,10 +1,13 @@
 // Types partagés
 
+type Periode = string // Date.toString()
+type Timestamp = number // Date.getTime()
+
 type ParPériode<T> = Record<Periode, T>
 
-type CodeAPE = string
+type Departement = string
 
-// Détail des types de données
+type SiretOrSiren = string
 
 type CodeAPE = string
 
@@ -50,13 +53,6 @@ type EntréeInterim = {
   etp: number
 }
 
-type DataHash = string
-
-type Periode = string // Date.toString()
-type Timestamp = number // Date.getTime()
-
-type SiretOrSiren = string
-
 type EntréeRepOrder = {
   random_order: number
   periode: Date
@@ -77,8 +73,6 @@ type EntréeDelai = {
   montant_echeancier: number // exprimé en euros
 }
 
-type DebitHash = string
-
 type EntréeCotisation = {
   periode: { start: Date; end: Date }
   du: number
@@ -93,14 +87,12 @@ type EntréeDebit = {
   numero_historique: number // identifiant d'un remboursement (partiel ou complet) d'un débit
   numero_compte: string // identifiant URSSAF d'établissement (équivalent du SIRET)
   date_traitement: Date // Date de constatation du débit (exemple: remboursement, majoration ou autre modification du montant)
-  debit_suivant: DebitHash
+  debit_suivant: string // Hash d'un autre débit
   // le montant est ventilé entre ces deux valeurs, exprimées en euros (€):
   part_ouvriere: number
   part_patronale: number
   montant_majorations?: number // exploité par map-reduce "public", mais pas par "reduce.algo2"
 }
-
-type Departement = string
 
 type EntréeSirene = {
   ape: CodeAPE
