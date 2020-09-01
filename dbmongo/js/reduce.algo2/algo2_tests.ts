@@ -114,6 +114,8 @@ test("delai_deviation_remboursement est calculé à partir d'un débit et d'une 
   t.is(finalCompanyData.delai_deviation_remboursement, -0.4)
 })
 
+const matches = (str: string) => new RegExp(str.replace(/ /, " ?")) // because spaces may have been be stripped when bundling the rule functions
+
 test("validation: le traitement est interrompu si duree_delai vaut zero", (t: ExecutionContext) => {
   const dateDebut = new Date("2018-01-01")
   const dateFin = new Date("2018-02-01")
@@ -122,7 +124,7 @@ test("validation: le traitement est interrompu si duree_delai vaut zero", (t: Ex
 
   t.throws(
     () => runMongoMap<EntréeMap, CléSortieMap, SortieMap>(map, [input]),
-    { message: /duree_delai > 0/ } // validation error
+    { message: matches("duree_delai > 0") } // validation error
   )
 })
 
@@ -134,6 +136,6 @@ test("validation: le traitement est interrompu si montant_echeancier vaut zero",
 
   t.throws(
     () => runMongoMap<EntréeMap, CléSortieMap, SortieMap>(map, [input]),
-    { message: /montant_echeancier > 0/ } // validation error
+    { message: matches("montant_echeancier > 0") } // validation error
   )
 })
