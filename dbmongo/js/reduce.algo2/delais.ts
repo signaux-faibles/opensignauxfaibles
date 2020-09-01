@@ -30,7 +30,7 @@ export type DelaiComputedValues = {
  * demande de délai.
  */
 export function delais(
-  vDelai: Record<string, EntréeDelai>,
+  vDelai: ParHash<EntréeDelai>,
   debitParPériode: DeepReadonly<ParPériode<DebitComputedValues>>,
   intervalleTraitement: { premièreDate: Date; dernièreDate: Date }
 ): ParPériode<DelaiComputedValues> {

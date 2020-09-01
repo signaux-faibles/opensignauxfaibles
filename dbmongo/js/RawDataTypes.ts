@@ -24,22 +24,22 @@ export type BatchValues = Record<BatchKey, BatchValue>
 export type BatchValue = Partial<{
   reporder: Record<Periode, EntréeRepOrder> // RepOrder est généré, et non importé => Usage de Periode en guise de hash d'indexation
   compact: { delete: Partial<Record<DataType, DataHash[]>> }
-  effectif: Record<DataHash, EntréeEffectif>
-  apconso: Record<DataHash, EntréeApConso>
-  apdemande: Record<DataHash, EntréeApDemande>
-  compte: Record<DataHash, EntréeCompte>
-  interim: Record<DataHash, EntréeInterim>
-  delai: Record<DataHash, EntréeDelai>
-  altares: Record<DataHash, EntréeDefaillances>
-  procol: Record<DataHash, EntréeDefaillances>
-  cotisation: Record<DataHash, EntréeCotisation>
-  debit: Record<DataHash, EntréeDebit>
-  ccsf: Record<DataHash, { date_traitement: Date }>
-  sirene: Record<DataHash, EntréeSirene>
-  sirene_ul: Record<DataHash, EntréeSireneEntreprise>
-  effectif_ent: Record<DataHash, EntréeEffectif>
-  bdf: Record<DataHash, EntréeBdf>
-  diane: Record<DataHash, EntréeDiane>
+  effectif: ParHash<EntréeEffectif>
+  apconso: ParHash<EntréeApConso>
+  apdemande: ParHash<EntréeApDemande>
+  compte: ParHash<EntréeCompte>
+  interim: ParHash<EntréeInterim>
+  delai: ParHash<EntréeDelai>
+  altares: ParHash<EntréeDefaillances>
+  procol: ParHash<EntréeDefaillances>
+  cotisation: ParHash<EntréeCotisation>
+  debit: ParHash<EntréeDebit>
+  ccsf: ParHash<{ date_traitement: Date }>
+  sirene: ParHash<EntréeSirene>
+  sirene_ul: ParHash<EntréeSireneEntreprise>
+  effectif_ent: ParHash<EntréeEffectif>
+  bdf: ParHash<EntréeBdf>
+  diane: ParHash<EntréeDiane>
 }>
 
 export type DataType = Exclude<keyof BatchValue, "compact"> // => 'reporder' | 'effectif' | 'apconso' | ...

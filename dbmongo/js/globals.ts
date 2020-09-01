@@ -11,6 +11,7 @@ type SiretOrSiren = Siret | string
 type CodeAPE = string
 
 type DataHash = string
+type ParHash<T> = Record<DataHash, T>
 
 // Détail des types de données
 
