@@ -149,5 +149,8 @@ test("validation: le traitement est interrompu si duree_delai vaut zero", (t: Ex
     },
   }
 
-  t.throws(() => runMongoMap<EntréeMap, CléSortieMap, SortieMap>(map, [input])) // validation error
+  t.throws(
+    () => runMongoMap<EntréeMap, CléSortieMap, SortieMap>(map, [input]),
+    { message: /duree_delai > 0/ } // validation error
+  )
 })
