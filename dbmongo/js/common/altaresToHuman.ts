@@ -8,6 +8,8 @@ export type AltaresToHumanRes =
   | "cession"
   | null
 
+type AltaresCode = EntréeDefaillances["code_evenement"]
+
 export function altaresToHuman(code: AltaresCode): AltaresToHumanRes {
   "use strict"
   const codeLiquidation = [

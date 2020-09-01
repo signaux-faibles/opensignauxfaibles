@@ -7,6 +7,10 @@ export type ProcolToHumanRes =
   | "plan_redressement"
   | null
 
+type Action = EntréeDefaillances["action_procol"]
+
+type Stade = EntréeDefaillances["stade_procol"]
+
 export function procolToHuman(action: Action, stade: Stade): ProcolToHumanRes {
   "use strict"
   let res: ProcolToHumanRes = null

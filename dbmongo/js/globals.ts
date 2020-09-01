@@ -6,16 +6,16 @@ type CodeAPE = string
 
 // Détail des types de données
 
-type AltaresCode = string
+type CodeAPE = string
 
-type Action = "liquidation" | "redressement" | "sauvegarde"
+type DataHash = string
 
-type Stade = "abandon_procedure" | "fin_procedure" | "plan_continuation"
+// Détail des types de données
 
 type EntréeDefaillances = {
-  code_evenement: AltaresCode
-  action_procol: Action
-  stade_procol: Stade
+  code_evenement: string
+  action_procol: "liquidation" | "redressement" | "sauvegarde"
+  stade_procol: "abandon_procedure" | "fin_procedure" | "plan_continuation"
   date_effet: Date
 }
 
