@@ -9,8 +9,11 @@ export type EntréeDelai = {
 export function validDelai(delai: EntréeDelai): void {
   const règles: Array<(delai: EntréeDelai) => boolean> = [
     ({ duree_delai }) => duree_delai > 0,
+    ({ montant_echeancier }) => montant_echeancier > 0,
   ]
-  if (!règles[0](delai)) {
-    throw new Error(`delai invalide, règle: ${règles[0].toString()}`)
-  }
+  règles.forEach((règle) => {
+    if (!règle(delai)) {
+      throw new Error(`delai invalide, règle: ${règle.toString()}`)
+    }
+  })
 }
