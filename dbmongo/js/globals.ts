@@ -77,8 +77,6 @@ type EntréeDelai = {
   montant_echeancier: number // exprimé en euros
 }
 
-type CurrentDataState = { [key: string]: Set<DataHash> }
-
 type DebitHash = string
 
 type EntréeCotisation = {

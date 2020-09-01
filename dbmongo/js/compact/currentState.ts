@@ -2,6 +2,8 @@ import "../globals.ts"
 import { forEachPopulatedProp } from "../common/forEachPopulatedProp"
 import { BatchValue } from "../RawDataTypes"
 
+export type CurrentDataState = { [key: string]: Set<DataHash> }
+
 // currentState() agrège un ensemble de batch, en tenant compte des suppressions
 // pour renvoyer le dernier état connu des données.
 // Note: similaire à flatten() de reduce.algo2.

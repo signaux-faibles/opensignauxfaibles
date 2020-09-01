@@ -5,6 +5,7 @@ import { fixRedundantPatches } from "./fixRedundantPatches"
 import { applyPatchesToMemory } from "./applyPatchesToMemory"
 import { applyPatchesToBatch } from "./applyPatchesToBatch"
 import { DataType, BatchValue, BatchKey } from "../RawDataTypes"
+import { CurrentDataState } from "./currentState"
 
 // Paramètres globaux utilisés par "compact"
 declare const completeTypes: Record<BatchKey, DataType[]>
