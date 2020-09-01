@@ -1,4 +1,4 @@
-import { Siret, SortieMap, SortieMapEtablissement } from "./map"
+import { SortieMap, SortieMapEtablissement } from "./map"
 import * as f from "../common/omit"
 
 type Accumulateurs = {

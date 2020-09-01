@@ -25,8 +25,6 @@ import { omit } from "../common/omit"
 import { entr_diane, SortieDiane } from "./entr_diane"
 import { CompanyDataValues, BatchKey } from "../RawDataTypes"
 
-export type Siret = string
-
 type SortieMapEntreprise = {
   periode: Date
 } & Partial<SortieSireneEntreprise> &
