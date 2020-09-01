@@ -4,7 +4,7 @@ import { listHashesToAddAndDelete } from "./listHashesToAddAndDelete"
 import { fixRedundantPatches } from "./fixRedundantPatches"
 import { applyPatchesToMemory } from "./applyPatchesToMemory"
 import { applyPatchesToBatch } from "./applyPatchesToBatch"
-import { DataType, BatchValue } from "../RawDataTypes"
+import { DataType, BatchValue, BatchKey } from "../RawDataTypes"
 
 // Paramètres globaux utilisés par "compact"
 declare const completeTypes: Record<BatchKey, DataType[]>

@@ -1,8 +1,6 @@
 // Types partagés
 
-type ParPériode<T> = { [période: string]: T }
-
-type BatchKey = string
+type ParPériode<T> = Record<Periode, T>
 
 type CodeAPE = string
 type CodeAPENiveau2 = string

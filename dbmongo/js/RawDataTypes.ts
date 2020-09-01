@@ -15,6 +15,8 @@ export type CompanyDataValuesWithFlags = CompanyDataValues & {
 
 // Données importées par les parseurs, pour chaque source de données
 
+export type BatchKey = string
+
 export type BatchValues = Record<BatchKey, BatchValue>
 
 export type BatchValue = Partial<{

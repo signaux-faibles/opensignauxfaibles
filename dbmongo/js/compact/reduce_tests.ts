@@ -2,7 +2,7 @@ import test, { ExecutionContext } from "ava"
 import "../globals"
 import { reduce } from "./reduce"
 import { setGlobals } from "../test/helpers/setGlobals"
-import { CompanyDataValues, DataType } from "../RawDataTypes"
+import { CompanyDataValues, DataType, BatchKey } from "../RawDataTypes"
 
 const REDUCE_KEY = "123"
 

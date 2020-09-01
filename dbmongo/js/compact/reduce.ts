@@ -1,7 +1,7 @@
 import "../globals.ts"
 import { compactBatch } from "./compactBatch"
 import * as f from "./currentState"
-import { CompanyDataValues, BatchValue } from "../RawDataTypes"
+import { CompanyDataValues, BatchValue, BatchKey } from "../RawDataTypes"
 
 // Paramètres globaux utilisés par "compact"
 declare const batches: BatchKey[]
