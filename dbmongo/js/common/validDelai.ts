@@ -11,6 +11,6 @@ export function validDelai(delai: EntréeDelai): void {
     ({ duree_delai }) => duree_delai > 0,
   ]
   if (!règles[0](delai)) {
-    throw new Error(`delai invalide: ${delai}`)
+    throw new Error(`delai invalide, règle: ${règles[0].toString()}`)
   }
 }
