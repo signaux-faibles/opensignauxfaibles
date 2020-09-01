@@ -41,98 +41,28 @@ type CompanyDataValuesWithFlags = CompanyDataValues & {
 
 type BatchValues = Record<BatchKey, BatchValue>
 
-type BatchValue = Partial<
-  DonnéesRepOrder &
-    DonnéesCompact &
-    DonnéesEffectif &
-    DonnéesApConso &
-    DonnéesApDemande &
-    DonnéesCompte &
-    DonnéesInterim &
-    DonnéesDelai &
-    DonnéesDefaillances &
-    DonnéesCotisation &
-    DonnéesDebit &
-    DonnéesCcsf &
-    DonnéesSirene &
-    DonnéesSireneEntreprise &
-    DonnéesEffectifEntreprise &
-    DonnéesBdf &
-    DonnéesDiane
->
-
-type DataType = Exclude<keyof BatchValue, "compact"> // => 'reporder' | 'effectif' | 'apconso' | ...
-
-// Définition des types de données
-
-type DonnéesRepOrder = {
+type BatchValue = Partial<{
   reporder: Record<Periode, EntréeRepOrder> // RepOrder est généré, et non importé => Usage de Periode en guise de hash d'indexation
-}
-
-type DonnéesCompact = {
   compact: { delete: Partial<Record<DataType, DataHash[]>> }
-}
-
-type DonnéesEffectif = {
   effectif: Record<DataHash, EntréeEffectif>
-}
-
-type DonnéesApConso = {
   apconso: Record<DataHash, EntréeApConso>
-}
-
-type DonnéesApDemande = {
   apdemande: Record<DataHash, EntréeApDemande>
-}
-
-type DonnéesCompte = {
   compte: Record<DataHash, EntréeCompte>
-}
-
-type DonnéesInterim = {
   interim: Record<DataHash, EntréeInterim>
-}
-
-type DonnéesDelai = {
   delai: Record<DataHash, EntréeDelai>
-}
-
-type DonnéesDefaillances = {
   altares: Record<DataHash, EntréeDefaillances>
   procol: Record<DataHash, EntréeDefaillances>
-}
-
-type DonnéesCotisation = {
   cotisation: Record<DataHash, EntréeCotisation>
-}
-
-type DonnéesDebit = {
   debit: Record<DataHash, EntréeDebit>
-}
-
-type DonnéesCcsf = {
   ccsf: Record<DataHash, { date_traitement: Date }>
-}
-
-type DonnéesSirene = {
   sirene: Record<DataHash, EntréeSirene>
-}
-
-type DonnéesSireneEntreprise = {
   sirene_ul: Record<DataHash, EntréeSireneEntreprise>
-}
-
-type DonnéesEffectifEntreprise = {
   effectif_ent: Record<DataHash, EntréeEffectif>
-}
-
-type DonnéesBdf = {
   bdf: Record<DataHash, EntréeBdf>
-}
-
-type DonnéesDiane = {
   diane: Record<DataHash, EntréeDiane>
-}
+}>
+
+type DataType = Exclude<keyof BatchValue, "compact"> // => 'reporder' | 'effectif' | 'apconso' | ...
 
 // Détail des types de données
 
