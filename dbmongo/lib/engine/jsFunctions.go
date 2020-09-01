@@ -1453,8 +1453,11 @@ function cotisationsdettes(vCotisation, vDebit, periodes, finPériode // corresp
 function delais(vDelai, debitParPériode, intervalleTraitement) {
     "use strict";
     const donnéesDélaiParPériode = {};
-    Object.keys(vDelai).forEach(function (hash) {
-        const delai = vDelai[hash];
+    Object.values(vDelai).forEach((delai) => {
+        // validation simple des données
+        if (delai.duree_delai <= 0) {
+            throw new Error(` + "`" + `duree_delai invalide: ${delai.duree_delai}` + "`" + `);
+        }
         // On arrondit les dates au premier jour du mois.
         const date_creation = new Date(Date.UTC(delai.date_creation.getUTCFullYear(), delai.date_creation.getUTCMonth(), 1, 0, 0, 0, 0));
         const date_echeance = new Date(Date.UTC(delai.date_echeance.getUTCFullYear(), delai.date_echeance.getUTCMonth(), 1, 0, 0, 0, 0));
