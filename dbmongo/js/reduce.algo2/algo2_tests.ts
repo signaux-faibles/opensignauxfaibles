@@ -114,7 +114,7 @@ test("delai_deviation_remboursement est calculé à partir d'un débit et d'une 
   t.is(finalCompanyData.delai_deviation_remboursement, -0.4)
 })
 
-const matches = (str: string) => new RegExp(str.replace(/ /, " ?")) // because spaces may have been be stripped when bundling the rule functions
+const matches = (str: string) => new RegExp(str.replace(/ /g, " ?")) // because spaces may have been be stripped when bundling the rule functions
 
 test("validation: le traitement est interrompu si duree_delai vaut zero", (t: ExecutionContext) => {
   const dateDebut = new Date("2018-01-01")
