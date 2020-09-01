@@ -125,3 +125,15 @@ test("validation: le traitement est interrompu si duree_delai vaut zero", (t: Ex
     { message: /duree_delai > 0/ } // validation error
   )
 })
+
+test("validation: le traitement est interrompu si montant_echeancier vaut zero", (t: ExecutionContext) => {
+  const dateDebut = new Date("2018-01-01")
+  const dateFin = new Date("2018-02-01")
+  initGlobalParams(dateDebut, dateFin)
+  const input = makeInput(dateDebut, dateFin, { montant_echeancier: 0 })
+
+  t.throws(
+    () => runMongoMap<EntréeMap, CléSortieMap, SortieMap>(map, [input]),
+    { message: /montant_echeancier > 0/ } // validation error
+  )
+})
