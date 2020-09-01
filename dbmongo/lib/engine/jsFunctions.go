@@ -385,10 +385,15 @@ function omit(object, ...propNames) {
     return corr[departement] || "";
 }`,
 "validDelai": `function validDelai(delai) {
-    // validation simple des données
-    if (delai.duree_delai <= 0) {
-        throw new Error(` + "`" + `duree_delai invalide: ${delai.duree_delai}` + "`" + `);
-    }
+    const règles = [
+        ({ duree_delai }) => duree_delai > 0,
+        ({ montant_echeancier }) => montant_echeancier > 0,
+    ];
+    règles.forEach((règle) => {
+        if (!règle(delai)) {
+            throw new Error(` + "`" + `delai invalide, règle: ${règle.toString()}` + "`" + `);
+        }
+    });
 }`,
 },
 "compact":{
