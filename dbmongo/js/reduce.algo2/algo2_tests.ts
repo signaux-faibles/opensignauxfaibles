@@ -29,20 +29,17 @@ function initGlobalParams(
   })
 }
 
-const objectValues = <T>(obj: Record<string, T>): T[] =>
-  Object.keys(obj).map((key) => obj[key])
-
 // Tests
 
 test("l'ordre de traitement des données n'influe pas sur les résultats", (t: ExecutionContext) => {
   testCases.forEach(({ _id, value }) => {
     initGlobalParams()
 
-    const flatValues = runMongoMap<EntréeMap, CléSortieMap, SortieMap>(map, [
-      { _id, value },
-    ])
-    const groupedValues = indexMapResultsByKey(flatValues)
-    const values = objectValues(groupedValues)
+    const values = Object.values(
+      indexMapResultsByKey(
+        runMongoMap<EntréeMap, CléSortieMap, SortieMap>(map, [{ _id, value }])
+      )
+    )
 
     const intermediateResult = values.map((array) => reducer(array, reduce))
 
