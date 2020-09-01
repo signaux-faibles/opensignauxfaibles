@@ -1,3 +1,21 @@
+type CodeAPENiveau2 = string
+type CodeAPENiveau3 = string
+type CodeAPENiveau4 = string
+
+type CodeNAF = string
+
+export type NAF = {
+  n2to1: Record<CodeAPENiveau2, CodeNAF>
+  n3to1: Record<CodeAPENiveau3, CodeNAF>
+  n4to1: Record<CodeAPENiveau4, CodeNAF>
+  n5to1: Record<CodeAPE, CodeNAF>
+  n1: Record<CodeNAF, string>
+  n2: Record<CodeAPENiveau2, string>
+  n3: Record<CodeAPENiveau3, string>
+  n4: Record<CodeAPENiveau4, string>
+  n5: Record<CodeAPE, string>
+}
+
 type Input = {
   code_ape: CodeAPE
 }
