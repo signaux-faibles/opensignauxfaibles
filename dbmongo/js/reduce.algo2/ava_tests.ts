@@ -11,6 +11,7 @@ import { reduce } from "./reduce"
 import { finalize, EntrepriseEnSortie } from "./finalize"
 import { setGlobals } from "../test/helpers/setGlobals"
 import { runMongoMap } from "../test/helpers/mongodb"
+import { Scope } from "../RawDataTypes"
 
 // test data inspired by test-api.sh
 const siret: SiretOrSiren = "01234567891011"

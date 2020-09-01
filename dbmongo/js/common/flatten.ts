@@ -1,4 +1,4 @@
-import { BatchValue, CompanyDataValues, DataType } from "../RawDataTypes"
+import { BatchValue, CompanyDataValues, DataType, Scope } from "../RawDataTypes"
 
 export type FlattenedImportedData = {
   key: SiretOrSiren

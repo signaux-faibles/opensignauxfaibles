@@ -2,8 +2,6 @@
 
 type ParPériode<T> = Record<Periode, T>
 
-type Scope = "etablissement" | "entreprise"
-
 type CodeAPE = string
 
 // Détail des types de données

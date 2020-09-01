@@ -1,5 +1,7 @@
 // Données importées pour une entreprise ou établissement
 
+export type Scope = "etablissement" | "entreprise"
+
 export type CompanyDataValues = {
   key: SiretOrSiren
   scope: Scope

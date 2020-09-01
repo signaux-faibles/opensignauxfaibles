@@ -11,6 +11,7 @@ import { reduce } from "./reduce"
 import { finalize } from "./finalize"
 import { runMongoMap } from "../test/helpers/mongodb"
 import { setGlobals } from "../test/helpers/setGlobals"
+import { Scope } from "../RawDataTypes"
 
 // test data inspired by test-api.sh
 const SIREN_LENGTH = 9

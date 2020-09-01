@@ -15,6 +15,7 @@ import {
   BatchValues,
   CompanyDataValuesWithFlags,
   CompanyDataValues,
+  Scope,
 } from "../RawDataTypes"
 
 const removeRandomOrder = (reporderProp: {
