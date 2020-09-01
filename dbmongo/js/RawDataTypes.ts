@@ -23,9 +23,12 @@ export type BatchKey = string
 
 export type BatchValues = Record<BatchKey, BatchValue>
 
-export type BatchValue = Partial<{
+export type DataType = keyof BatchValueProps // => 'reporder' | 'effectif' | 'apconso' | ...
+
+export type BatchValue = Partial<CompactProps & BatchValueProps>
+
+type BatchValueProps = {
   reporder: Record<Periode, EntréeRepOrder> // RepOrder est généré, et non importé => Usage de Periode en guise de hash d'indexation
-  compact: { delete: Partial<Record<DataType, DataHash[]>> }
   effectif: ParHash<EntréeEffectif>
   apconso: ParHash<EntréeApConso>
   apdemande: ParHash<EntréeApDemande>
@@ -42,6 +45,8 @@ export type BatchValue = Partial<{
   effectif_ent: ParHash<EntréeEffectif>
   bdf: ParHash<EntréeBdf>
   diane: ParHash<EntréeDiane>
-}>
+}
 
-export type DataType = Exclude<keyof BatchValue, "compact"> // => 'reporder' | 'effectif' | 'apconso' | ...
+type CompactProps = {
+  compact: { delete: Partial<Record<DataType, DataHash[]>> }
+}
