@@ -6,7 +6,7 @@ import { omit } from "../common/omit"
 export type SortieBdf = {
   annee_bdf: number
   exercice_bdf: number // année
-} & RatiosBdf &
+} & EntréeBdfRatios &
   RatiosBdfPassés
 
 // Synchroniser les propriétés avec celles de RatiosBdf

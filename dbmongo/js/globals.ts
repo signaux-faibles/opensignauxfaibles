@@ -130,9 +130,9 @@ type EntréeBdf = {
   raison_sociale: string
   secteur: unknown
   siren: SiretOrSiren
-} & RatiosBdf
+} & EntréeBdfRatios
 
-type RatiosBdf = {
+type EntréeBdfRatios = {
   poids_frng: number
   taux_marge: number
   delai_fournisseur: number
