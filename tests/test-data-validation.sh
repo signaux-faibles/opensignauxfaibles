@@ -48,7 +48,21 @@ tests/helpers/mongodb-container.sh run << 'CONTENT' # single quotes => don't let
     { $project: { _id: 1, batchKey: 1, dataType: "$dataPerHash.k", "dataPerHash": { $objectToArray: "$dataPerHash.v" } } }, // => { _id, batchKey, dataType, dataPerHash: Array<{ k: Hash, v: Data }> }
     { $unwind: { path: "$dataPerHash", preserveNullAndEmptyArrays: false } }, // => { _id, batchKey, dataPerHash: { k: DataType, v: ParHash<Data> } }, // => { _id, batchKey, dataType, dataPerHash: { k: Hash, v: Data } }
     { $project: { _id: 1, batchKey: 1, dataType: 1, dataHash: "$dataPerHash.k", "dataObject": "$dataPerHash.v" } }, // => { _id, batchKey, dataType, dataHash, dataObject: Data }
-  ]).toArray()) // .length = 945 results
+    { $match: { dataType: "bdf", $jsonSchema: {
+      bsonType: "object",
+      properties: {
+        dataObject: {
+          bsonType: "object",
+          properties: {
+            poids_frng: {
+              bsonType: "number",
+              minimum: 50
+            }
+          }
+        }
+      }
+    } } },
+  ]).toArray().length) // .length = 8 / 13 / 945 results
 CONTENT
 
 # Display JS errors logged by MongoDB, if any
