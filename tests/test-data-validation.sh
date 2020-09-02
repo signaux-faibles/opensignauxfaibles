@@ -56,13 +56,13 @@ tests/helpers/mongodb-container.sh run << 'CONTENT' # single quotes => don't let
           properties: {
             poids_frng: {
               bsonType: "number",
-              minimum: 50
+              minimum: 52
             }
           }
         }
       }
     } } },
-  ]).toArray().length) // .length = 8 / 13 / 945 results
+  ]).toArray()) // .length = 2 / 13 / 945 results
 CONTENT
 
 # Display JS errors logged by MongoDB, if any
