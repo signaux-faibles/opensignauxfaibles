@@ -17,7 +17,7 @@ type CléSortieEffectifPassé =
 
 type ValeurEffectif = number
 
-type SortieEffectifs = Record<CléSortieEffectif, ValeurEffectif | null>  &
+type SortieEffectifs = Record<CléSortieEffectif, ValeurEffectif | null> &
   Record<CléSortieEffectifReporté, 1 | 0> &
   Record<CléSortieEffectifPassé, ValeurEffectif>
 
@@ -43,20 +43,21 @@ export function effectifs(
     return m
   }, {} as Record<Periode, number>)
 
-  //ne reporter que si le dernier est disponible
-  // 1- quelle periode doit être disponible
-  const last_period = new Date(periodes[periodes.length - 1])
-  const last_period_offset = f.dateAddMonth(last_period, offset_effectif + 1)
-  // 2- Cette période est-elle disponible ?
-
-  const available = last_period_offset.getTime() in map_effectif
+  // Ne reporter que si le dernier effectif est disponible
+  // On reporte dans les dernières périodes le dernier effectif connu
+  const dernièrePériodeAvecEffectifConnu = f.dateAddMonth(
+    new Date(periodes[periodes.length - 1]),
+    offset_effectif + 1
+  )
+  const dernièrePériodeDisponible =
+    dernièrePériodeAvecEffectifConnu.getTime() in map_effectif
 
   //pour chaque periode (elles sont triees dans l'ordre croissant)
   periodes.reduce((accu, time) => {
     // si disponible on reporte l'effectif tel quel, sinon, on recupère l'accu
     sortieEffectif[time] = sortieEffectif[time] || {}
     sortieEffectif[time][propertyName] =
-      map_effectif[time] || (available ? accu : null)
+      map_effectif[time] || (dernièrePériodeDisponible ? accu : null)
 
     // le cas échéant, on met à jour l'accu avec le dernier effectif disponible
     accu = map_effectif[time] || accu
