@@ -17,6 +17,8 @@ set -e # will stop the script if any command fails with a non-zero exit code
 # Setup
 FLAGS="$*" # the script will update the golden file if "--update" flag was provided as 1st argument
 TMP_DIR="tests/tmp-test-execution-files"
+OUTPUT_FILE="${TMP_DIR}/test-data-validation.output.json"
+GOLDEN_FILE="tests/output-snapshots/test-data-validation.golden.json"
 mkdir -p "${TMP_DIR}"
 
 # Clean up on exit
@@ -45,7 +47,7 @@ AGGREG_PREPARATION='
     { $unwind: { path: "$dataPerHash", preserveNullAndEmptyArrays: false } }, // => { _id, batchKey, dataPerHash: { k: DataType, v: ParHash<Data> } }, // => { _id, batchKey, dataType, dataPerHash: { k: Hash, v: Data } }
     { $project: { _id: 1, batchKey: 1, dataType: 1, dataHash: "$dataPerHash.k", "dataObject": "$dataPerHash.v" } }, // => { _id, batchKey, dataType, dataHash, dataObject: Data }
 '
-tests/helpers/mongodb-container.sh run << CONTENT
+tests/helpers/mongodb-container.sh run > "${OUTPUT_FILE}" << CONTENT
   printjson(db.RawData.aggregate([
     ${AGGREG_PREPARATION}
     {
@@ -100,7 +102,7 @@ CONTENT
 # Display JS errors logged by MongoDB, if any
 tests/helpers/mongodb-container.sh exceptions || true
 
-# tests/helpers/diff-or-update-golden-master.sh "${FLAGS}" "${GOLDEN_FILE}" "${OUTPUT_FILE}"
+tests/helpers/diff-or-update-golden-master.sh "${FLAGS}" "${GOLDEN_FILE}" "${OUTPUT_FILE}"
 
 rm -rf "${TMP_DIR}"
 # Now, the "trap" commands will clean up the rest.
