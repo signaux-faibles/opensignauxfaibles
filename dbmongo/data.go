@@ -31,7 +31,7 @@ func reduceHandler(c *gin.Context) {
 
 	batch, err := engine.GetBatch(params.BatchKey)
 	if err != nil {
-		c.JSON(404, "le batch "+params.BatchKey+" n'existe pas")
+		c.JSON(404, "Batch inexistant: "+err.Error())
 	}
 
 	if params.Key == "" && params.From == "" && params.To == "" {
