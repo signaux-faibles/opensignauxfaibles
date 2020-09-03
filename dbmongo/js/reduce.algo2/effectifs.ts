@@ -75,20 +75,20 @@ export function effectifs(
   }, null as ValeurEffectif | null)
 
   Object.keys(map_effectif).forEach((time) => {
-    const periode = new Date(parseInt(time))
-    const past_month_offsets = [6, 12, 18, 24] // Note: à garder en synchro avec la définition du type PastPropertyName
-    past_month_offsets.forEach((lookback) => {
-      // On ajoute un offset pour partir de la dernière période où l'effectif est connu
-      const time_past_lookback = f.dateAddMonth(
-        periode,
-        lookback - offset_effectif - 1
-      )
+    const futureTimestamps = [6, 12, 18, 24] // Penser à mettre à jour le type PastPropertyName pour tout changement
+      .map((offset) => ({
+        offset,
+        timestamp: f
+          .dateAddMonth(new Date(parseInt(time)), offset - offset_effectif - 1)
+          .getTime(),
+      }))
+      .filter(({ timestamp }) => periodes.includes(timestamp))
 
-      output_effectif[time_past_lookback.getTime()] =
-        output_effectif[time_past_lookback.getTime()] || {}
-      Object.assign(output_effectif[time_past_lookback.getTime()], {
-        [propertyName + "_past_" + lookback]: map_effectif[time],
-      })
+    futureTimestamps.forEach(({ offset, timestamp }) => {
+      output_effectif[timestamp] = {
+        ...output_effectif[timestamp],
+        [propertyName + "_past_" + offset]: map_effectif[time],
+      }
     })
   })
 
@@ -103,5 +103,3 @@ export function effectifs(
   })
   return output_effectif
 }
-
-/* TODO: appliquer même logique d'itération sur futureTimestamps que dans cotisationsdettes.ts */
