@@ -1,8 +1,15 @@
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { nbDays } from "./nbDays"
-import { EntréeDelai, validDelai } from "../common/validDelai"
 
 type DeepReadonly<T> = Readonly<T> // pas vraiment, mais espoire que TS le supporte prochainement
+
+// Valeurs attendues par delais(), pour chaque période. (cf dbmongo/lib/urssaf/delai.go)
+export type EntréeDelai = {
+  date_creation: Date
+  date_echeance: Date
+  duree_delai: number // nombre de jours entre date_creation et date_echeance
+  montant_echeancier: number // exprimé en euros
+}
 
 // Valeurs attendues pour chaque période, lors de l'appel à delais()
 export type DebitComputedValues = {
@@ -36,10 +43,12 @@ export function delais(
   intervalleTraitement: { premièreDate: Date; dernièreDate: Date }
 ): ParPériode<DelaiComputedValues> {
   "use strict"
-  const f = { validDelai, generatePeriodSerie } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
+  const f = { generatePeriodSerie } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
   const donnéesDélaiParPériode: ParPériode<DelaiComputedValues> = {}
   Object.values(vDelai).forEach((delai) => {
-    f.validDelai(delai) // may throw an exception
+    if (delai.duree_delai <= 0) {
+      return
+    }
 
     // On arrondit les dates au premier jour du mois.
     const date_creation = new Date(
