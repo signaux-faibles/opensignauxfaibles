@@ -1528,16 +1528,16 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
         return accu;
     }, null);
     Object.keys(map_effectif).forEach((time) => {
-        const periode = new Date(parseInt(time));
-        const past_month_offsets = [6, 12, 18, 24]; // Note: à garder en synchro avec la définition du type PastPropertyName
-        past_month_offsets.forEach((lookback) => {
-            // On ajoute un offset pour partir de la dernière période où l'effectif est connu
-            const time_past_lookback = f.dateAddMonth(periode, lookback - offset_effectif - 1);
-            output_effectif[time_past_lookback.getTime()] =
-                output_effectif[time_past_lookback.getTime()] || {};
-            Object.assign(output_effectif[time_past_lookback.getTime()], {
-                [propertyName + "_past_" + lookback]: map_effectif[time],
-            });
+        const futureTimestamps = [6, 12, 18, 24] // Penser à mettre à jour le type PastPropertyName pour tout changement
+            .map((offset) => ({
+            offset,
+            timestamp: f
+                .dateAddMonth(new Date(parseInt(time)), offset - offset_effectif - 1)
+                .getTime(),
+        }))
+            .filter(({ timestamp }) => periodes.includes(timestamp));
+        futureTimestamps.forEach(({ offset, timestamp }) => {
+            output_effectif[timestamp] = Object.assign(Object.assign({}, output_effectif[timestamp]), { [propertyName + "_past_" + offset]: map_effectif[time] });
         });
     });
     // On supprime les effectifs 'null'
@@ -1548,8 +1548,7 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
         }
     });
     return output_effectif;
-}
-/* TODO: appliquer même logique d'itération sur futureTimestamps que dans cotisationsdettes.ts */`,
+}`,
 "entr_bdf": `function entr_bdf(donnéesBdf, periodes) {
     "use strict";
 
