@@ -384,17 +384,6 @@ function omit(object, ...propNames) {
     };
     return corr[departement] || "";
 }`,
-"validDelai": `function validDelai(delai) {
-    const règles = [
-        ({ duree_delai }) => duree_delai > 0,
-        ({ montant_echeancier }) => montant_echeancier > 0,
-    ];
-    règles.forEach((règle) => {
-        if (!règle(delai)) {
-            throw new Error(` + "`" + `delai invalide, règle: ${règle.toString()}` + "`" + `);
-        }
-    });
-}`,
 },
 "compact":{
 "applyPatchesToBatch": `function applyPatchesToBatch(hashToAdd, hashToDelete, stockTypes, currentBatch) {
@@ -1466,7 +1455,9 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
 
     const donnéesDélaiParPériode = {};
     Object.values(vDelai).forEach((delai) => {
-        f.validDelai(delai); // may throw an exception
+        if (delai.duree_delai <= 0) {
+            return;
+        }
         // On arrondit les dates au premier jour du mois.
         const date_creation = new Date(Date.UTC(delai.date_creation.getUTCFullYear(), delai.date_creation.getUTCMonth(), 1, 0, 0, 0, 0));
         const date_echeance = new Date(Date.UTC(delai.date_echeance.getUTCFullYear(), delai.date_echeance.getUTCMonth(), 1, 0, 0, 0, 0));
