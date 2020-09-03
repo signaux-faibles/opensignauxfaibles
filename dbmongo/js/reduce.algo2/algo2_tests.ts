@@ -112,29 +112,3 @@ test("delai_deviation_remboursement est calculé à partir d'un débit et d'une 
   t.is(typeof finalCompanyData.delai_deviation_remboursement, "number")
   t.is(finalCompanyData.delai_deviation_remboursement, -0.4)
 })
-
-const matches = (str: string) => new RegExp(str.replace(/ /g, " ?")) // because spaces may have been be stripped when bundling the rule functions
-
-test("validation: le traitement est interrompu si duree_delai vaut zero", (t: ExecutionContext) => {
-  const dateDebut = new Date("2018-01-01")
-  const dateFin = new Date("2018-02-01")
-  initGlobalParams(dateDebut, dateFin)
-  const input = makeInput(dateDebut, dateFin, { duree_delai: 0 })
-
-  t.throws(
-    () => runMongoMap<EntréeMap, CléSortieMap, SortieMap>(map, [input]),
-    { message: matches("duree_delai > 0") } // validation error
-  )
-})
-
-test("validation: le traitement est interrompu si montant_echeancier vaut zero", (t: ExecutionContext) => {
-  const dateDebut = new Date("2018-01-01")
-  const dateFin = new Date("2018-02-01")
-  initGlobalParams(dateDebut, dateFin)
-  const input = makeInput(dateDebut, dateFin, { montant_echeancier: 0 })
-
-  t.throws(
-    () => runMongoMap<EntréeMap, CléSortieMap, SortieMap>(map, [input]),
-    { message: matches("montant_echeancier > 0") } // validation error
-  )
-})
