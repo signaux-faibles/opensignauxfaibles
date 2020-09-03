@@ -3,9 +3,9 @@ import * as f from "../common/dateAddMonth"
 // Paramètres globaux utilisés par "reduce.algo2"
 declare const offset_effectif: number
 
-type PropertyName = "effectif_ent" | "effectif" // effectif entreprise ou établissement
-type PropertyNameReporté = "effectif_ent_reporte" | "effectif_reporte"
-type PastPropertyName =
+type CléSortieEffectif = "effectif_ent" | "effectif" // effectif entreprise ou établissement
+type CléSortieEffectifReporté = "effectif_ent_reporte" | "effectif_reporte"
+type CléSortieEffectifPassé =
   | "effectif_past_6"
   | "effectif_past_12"
   | "effectif_past_18"
@@ -17,26 +17,20 @@ type PastPropertyName =
 
 type ValeurEffectif = number
 
-type SortieEffectifs = {
-  [propName in PropertyName]: ValeurEffectif | null
-} &
-  {
-    [propName in PropertyNameReporté]: 1 | 0
-  } &
-  {
-    [propName in PastPropertyName]: ValeurEffectif
-  }
+type SortieEffectifs = Record<CléSortieEffectif, ValeurEffectif | null>  &
+  Record<CléSortieEffectifReporté, 1 | 0> &
+  Record<CléSortieEffectifPassé, ValeurEffectif>
 
 type EffectifEntreprise = Record<DataHash, EntréeEffectif>
 
 export function effectifs(
   effobj: EffectifEntreprise,
   periodes: Timestamp[],
-  propertyName: PropertyName
+  propertyName: CléSortieEffectif
 ): ParPériode<SortieEffectifs> {
   "use strict"
 
-  const output_effectif: ParPériode<SortieEffectifs> = {}
+  const sortieEffectif: ParPériode<SortieEffectifs> = {}
 
   // Construction d'une map[time] = effectif à cette periode
   const map_effectif = Object.keys(effobj).reduce((m, hash) => {
@@ -60,14 +54,14 @@ export function effectifs(
   //pour chaque periode (elles sont triees dans l'ordre croissant)
   periodes.reduce((accu, time) => {
     // si disponible on reporte l'effectif tel quel, sinon, on recupère l'accu
-    output_effectif[time] = output_effectif[time] || {}
-    output_effectif[time][propertyName] =
+    sortieEffectif[time] = sortieEffectif[time] || {}
+    sortieEffectif[time][propertyName] =
       map_effectif[time] || (available ? accu : null)
 
     // le cas échéant, on met à jour l'accu avec le dernier effectif disponible
     accu = map_effectif[time] || accu
 
-    Object.assign(output_effectif[time], {
+    Object.assign(sortieEffectif[time], {
       [propertyName + "_reporte"]: map_effectif[time] ? 0 : 1,
     })
 
@@ -85,21 +79,21 @@ export function effectifs(
       .filter(({ timestamp }) => periodes.includes(timestamp))
 
     futureTimestamps.forEach(({ offset, timestamp }) => {
-      output_effectif[timestamp] = {
-        ...output_effectif[timestamp],
+      sortieEffectif[timestamp] = {
+        ...sortieEffectif[timestamp],
         [propertyName + "_past_" + offset]: map_effectif[time],
       }
     })
   })
 
   // On supprime les effectifs 'null'
-  Object.keys(output_effectif).forEach((k) => {
+  Object.keys(sortieEffectif).forEach((k) => {
     if (
-      output_effectif[k].effectif === null &&
-      output_effectif[k].effectif_ent === null
+      sortieEffectif[k].effectif === null &&
+      sortieEffectif[k].effectif_ent === null
     ) {
-      delete output_effectif[k]
+      delete sortieEffectif[k]
     }
   })
-  return output_effectif
+  return sortieEffectif
 }
