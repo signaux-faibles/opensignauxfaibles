@@ -45,22 +45,20 @@ AGGREG_PREPARATION='
     { $unwind: { path: "$dataPerHash", preserveNullAndEmptyArrays: false } }, // => { _id, batchKey, dataPerHash: { k: DataType, v: ParHash<Data> } }, // => { _id, batchKey, dataType, dataPerHash: { k: Hash, v: Data } }
     { $project: { _id: 1, batchKey: 1, dataType: 1, dataHash: "$dataPerHash.k", "dataObject": "$dataPerHash.v" } }, // => { _id, batchKey, dataType, dataHash, dataObject: Data }
 '
-AGGREG_VALIDATION="
+tests/helpers/mongodb-container.sh run << CONTENT
+  printjson(db.RawData.aggregate([
+    ${AGGREG_PREPARATION}
     {
       \$match: {
-        dataType: \"delai\",
+        dataType: "delai",
         \$jsonSchema: {
-          bsonType: \"object\",
-      properties: {
+          bsonType: "object",
+          properties: {
             dataObject: $(cat dbmongo/validation/delai.schema.json)
           }
         }
       }
-    },"
-tests/helpers/mongodb-container.sh run << CONTENT
-  printjson(db.RawData.aggregate([
-    ${AGGREG_PREPARATION}
-    ${AGGREG_VALIDATION}
+    },
   ]).toArray()) // .length = 2 / 13 / 945 results
 CONTENT
 
