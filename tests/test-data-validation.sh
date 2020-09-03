@@ -31,7 +31,7 @@ echo ""
 echo "📝 Inserting test data..."
 sleep 1 # give some time for MongoDB to start
 tests/helpers/mongodb-container.sh run << CONTENT
-  db.RawData.insertMany($(cat tests/input-data/RawData.sample.json))
+  db.RawData.insertMany($(cat tests/input-data/RawData.validation.json))
 CONTENT
 
 echo ""
@@ -45,22 +45,18 @@ AGGREG_PREPARATION='
     { $unwind: { path: "$dataPerHash", preserveNullAndEmptyArrays: false } }, // => { _id, batchKey, dataPerHash: { k: DataType, v: ParHash<Data> } }, // => { _id, batchKey, dataType, dataPerHash: { k: Hash, v: Data } }
     { $project: { _id: 1, batchKey: 1, dataType: 1, dataHash: "$dataPerHash.k", "dataObject": "$dataPerHash.v" } }, // => { _id, batchKey, dataType, dataHash, dataObject: Data }
 '
-AGGREG_VALIDATION='
-    { $match: { dataType: "bdf", $jsonSchema: {
-      bsonType: "object",
+AGGREG_VALIDATION="
+    {
+      \$match: {
+        dataType: \"delai\",
+        \$jsonSchema: {
+          bsonType: \"object\",
       properties: {
-        dataObject: {
-          bsonType: "object",
-          properties: {
-            poids_frng: {
-              bsonType: "number",
-              minimum: 52
-            }
+            dataObject: $(cat dbmongo/validation/delai.schema.json)
           }
         }
       }
-    } } },
-'
+    },"
 tests/helpers/mongodb-container.sh run << CONTENT
   printjson(db.RawData.aggregate([
     ${AGGREG_PREPARATION}
