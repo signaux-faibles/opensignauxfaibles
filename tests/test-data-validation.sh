@@ -36,8 +36,7 @@ CONTENT
 
 echo ""
 echo "💎 Validating data..."
-tests/helpers/mongodb-container.sh run << 'CONTENT' # single quotes => don't let bash interpret $ characters
-  printjson(db.RawData.aggregate([
+AGGREG_PREPARATION='
     { $project: { _id: 1, batches: { $objectToArray: "$value.batch" } } }, // => { _id, batches: Array<{ k: BatchKey, v: BatchValues }> }
     { $unwind: { path: "$batches", preserveNullAndEmptyArrays: false } }, // => { _id, batches: { k: BatchKey, v: BatchValues } }
     { $project: { _id: 1, batchKey: "$batches.k", "dataPerHash": { $objectToArray: "$batches.v" } } }, // => { _id, batchKey, dataPerHash: Array<{ k: DataType, v: ParHash<Data> }> }
@@ -45,6 +44,8 @@ tests/helpers/mongodb-container.sh run << 'CONTENT' # single quotes => don't let
     { $project: { _id: 1, batchKey: 1, dataType: "$dataPerHash.k", "dataPerHash": { $objectToArray: "$dataPerHash.v" } } }, // => { _id, batchKey, dataType, dataPerHash: Array<{ k: Hash, v: Data }> }
     { $unwind: { path: "$dataPerHash", preserveNullAndEmptyArrays: false } }, // => { _id, batchKey, dataPerHash: { k: DataType, v: ParHash<Data> } }, // => { _id, batchKey, dataType, dataPerHash: { k: Hash, v: Data } }
     { $project: { _id: 1, batchKey: 1, dataType: 1, dataHash: "$dataPerHash.k", "dataObject": "$dataPerHash.v" } }, // => { _id, batchKey, dataType, dataHash, dataObject: Data }
+'
+AGGREG_VALIDATION='
     { $match: { dataType: "bdf", $jsonSchema: {
       bsonType: "object",
       properties: {
@@ -59,6 +60,11 @@ tests/helpers/mongodb-container.sh run << 'CONTENT' # single quotes => don't let
         }
       }
     } } },
+'
+tests/helpers/mongodb-container.sh run << CONTENT
+  printjson(db.RawData.aggregate([
+    ${AGGREG_PREPARATION}
+    ${AGGREG_VALIDATION}
   ]).toArray()) // .length = 2 / 13 / 945 results
 CONTENT
 
