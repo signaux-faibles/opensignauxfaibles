@@ -26,7 +26,7 @@ type EffectifEntreprise = Record<DataHash, EntréeEffectif>
 export function effectifs(
   effobj: EffectifEntreprise,
   periodes: Timestamp[],
-  propertyName: CléSortieEffectif
+  clé: CléSortieEffectif
 ): ParPériode<SortieEffectifs> {
   "use strict"
 
@@ -49,18 +49,14 @@ export function effectifs(
     new Date(periodes[periodes.length - 1]),
     offset_effectif + 1
   )
-  const dernièrePériodeDisponible =
-    dernièrePériodeAvecEffectifConnu.getTime() in map_effectif
-  const dernierEffectifConnu =
-    map_effectif[dernièrePériodeAvecEffectifConnu.getTime()]
+  const effectifÀReporter =
+    map_effectif[dernièrePériodeAvecEffectifConnu.getTime()] ?? null
 
-  //pour chaque periode (elles sont triees dans l'ordre croissant)
-  periodes.forEach(time => {
-    // si disponible on reporte l'effectif tel quel, sinon, on recupère l'accu
+  periodes.forEach((time) => {
     sortieEffectif[time] = {
       ...sortieEffectif[time],
-      [propertyName]: map_effectif[time] || (dernièrePériodeDisponible ? dernierEffectifConnu : null),
-      [propertyName + "_reporte"]: map_effectif[time] ? 0 : 1
+      [clé]: map_effectif[time] || effectifÀReporter,
+      [clé + "_reporte"]: map_effectif[time] ? 0 : 1,
     }
   })
 
@@ -77,7 +73,7 @@ export function effectifs(
     futureTimestamps.forEach(({ offset, timestamp }) => {
       sortieEffectif[timestamp] = {
         ...sortieEffectif[timestamp],
-        [propertyName + "_past_" + offset]: map_effectif[time],
+        [clé + "_past_" + offset]: map_effectif[time],
       }
     })
   })

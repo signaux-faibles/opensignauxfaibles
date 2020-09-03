@@ -1495,8 +1495,9 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
         ((_b = diane["valeur_ajoutee"]) !== null && _b !== void 0 ? _b : NaN);
     return isNaN(ratio) ? null : ratio * 100;
 }`,
-"effectifs": `function effectifs(effobj, periodes, propertyName) {
+"effectifs": `function effectifs(effobj, periodes, clé) {
     "use strict";
+    var _a;
     const sortieEffectif = {};
     // Construction d'une map[time] = effectif à cette periode
     const map_effectif = Object.keys(effobj).reduce((m, hash) => {
@@ -1511,12 +1512,9 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
     // On reporte dans les dernières périodes le dernier effectif connu
     // Ne reporter que si le dernier effectif est disponible
     const dernièrePériodeAvecEffectifConnu = f.dateAddMonth(new Date(periodes[periodes.length - 1]), offset_effectif + 1);
-    const dernièrePériodeDisponible = dernièrePériodeAvecEffectifConnu.getTime() in map_effectif;
-    const dernierEffectifConnu = map_effectif[dernièrePériodeAvecEffectifConnu.getTime()];
-    //pour chaque periode (elles sont triees dans l'ordre croissant)
-    periodes.forEach(time => {
-        // si disponible on reporte l'effectif tel quel, sinon, on recupère l'accu
-        sortieEffectif[time] = Object.assign(Object.assign({}, sortieEffectif[time]), { [propertyName]: map_effectif[time] || (dernièrePériodeDisponible ? dernierEffectifConnu : null), [propertyName + "_reporte"]: map_effectif[time] ? 0 : 1 });
+    const effectifÀReporter = (_a = map_effectif[dernièrePériodeAvecEffectifConnu.getTime()]) !== null && _a !== void 0 ? _a : null;
+    periodes.forEach((time) => {
+        sortieEffectif[time] = Object.assign(Object.assign({}, sortieEffectif[time]), { [clé]: map_effectif[time] || effectifÀReporter, [clé + "_reporte"]: map_effectif[time] ? 0 : 1 });
     });
     Object.keys(map_effectif).forEach((time) => {
         const futureTimestamps = [6, 12, 18, 24] // Penser à mettre à jour le type PastPropertyName pour tout changement
@@ -1528,7 +1526,7 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
         }))
             .filter(({ timestamp }) => periodes.includes(timestamp));
         futureTimestamps.forEach(({ offset, timestamp }) => {
-            sortieEffectif[timestamp] = Object.assign(Object.assign({}, sortieEffectif[timestamp]), { [propertyName + "_past_" + offset]: map_effectif[time] });
+            sortieEffectif[timestamp] = Object.assign(Object.assign({}, sortieEffectif[timestamp]), { [clé + "_past_" + offset]: map_effectif[time] });
         });
     });
     // On supprime les effectifs 'null'
