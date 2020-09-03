@@ -49,24 +49,54 @@ tests/helpers/mongodb-container.sh run << CONTENT
   printjson(db.RawData.aggregate([
     ${AGGREG_PREPARATION}
     {
-      \$match: {
-        dataType: "delai",
-        \$jsonSchema: {
-          bsonType: "object",
-          properties: {
-            dataObject: $(cat dbmongo/validation/delai.schema.json)
+      \$facet: {
+        "valid": [
+          {
+            \$match: {
+              \$jsonSchema: {
+                bsonType: "object",
+                properties: {
+                  dataObject: $(cat dbmongo/validation/delai.schema.json)
+                }
+              }
+            }
+          },
+          {
+            \$project: {
+              _id: 0,
+              dataHash: 1
+            }
           }
-        }
+        ],
+        "invalid": [
+          {
+            \$match: {
+              \$nor: [
+                {
+                  \$jsonSchema: {
+                    bsonType: "object",
+                    properties: {
+                      dataObject: $(cat dbmongo/validation/delai.schema.json)
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            \$project: {
+              _id: 0,
+              dataHash: 1
+            }
+          }
+        ]
       }
     },
-  ]).toArray()) // .length = 2 / 13 / 945 results
+  ]).toArray())
 CONTENT
 
 # Display JS errors logged by MongoDB, if any
 tests/helpers/mongodb-container.sh exceptions || true
-
-# Interactive shell
-# tests/helpers/mongodb-container.sh client
 
 # tests/helpers/diff-or-update-golden-master.sh "${FLAGS}" "${GOLDEN_FILE}" "${OUTPUT_FILE}"
 
