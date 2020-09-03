@@ -38,7 +38,7 @@ export function effectifs(
   Object.keys(entréeEffectif).forEach((hash) => {
     const effectif = entréeEffectif[hash]
     if (effectif !== null) {
-       mapEffectif[effectif.periode.getTime()] = effectif.effectif
+      mapEffectif[effectif.periode.getTime()] = effectif.effectif
     }
   })
 
