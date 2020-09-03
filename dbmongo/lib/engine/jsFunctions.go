@@ -1497,7 +1497,7 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
 }`,
 "effectifs": `function effectifs(effobj, periodes, propertyName) {
     "use strict";
-    const output_effectif = {};
+    const sortieEffectif = {};
     // Construction d'une map[time] = effectif à cette periode
     const map_effectif = Object.keys(effobj).reduce((m, hash) => {
         const effectif = effobj[hash];
@@ -1508,21 +1508,19 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
         m[effectifTime] = (m[effectifTime] || 0) + effectif.effectif;
         return m;
     }, {});
-    //ne reporter que si le dernier est disponible
-    // 1- quelle periode doit être disponible
-    const last_period = new Date(periodes[periodes.length - 1]);
-    const last_period_offset = f.dateAddMonth(last_period, offset_effectif + 1);
-    // 2- Cette période est-elle disponible ?
-    const available = last_period_offset.getTime() in map_effectif;
+    // Ne reporter que si le dernier effectif est disponible
+    // On reporte dans les dernières périodes le dernier effectif connu
+    const dernièrePériodeAvecEffectifConnu = f.dateAddMonth(new Date(periodes[periodes.length - 1]), offset_effectif + 1);
+    const dernièrePériodeDisponible = dernièrePériodeAvecEffectifConnu.getTime() in map_effectif;
     //pour chaque periode (elles sont triees dans l'ordre croissant)
     periodes.reduce((accu, time) => {
         // si disponible on reporte l'effectif tel quel, sinon, on recupère l'accu
-        output_effectif[time] = output_effectif[time] || {};
-        output_effectif[time][propertyName] =
-            map_effectif[time] || (available ? accu : null);
+        sortieEffectif[time] = sortieEffectif[time] || {};
+        sortieEffectif[time][propertyName] =
+            map_effectif[time] || (dernièrePériodeDisponible ? accu : null);
         // le cas échéant, on met à jour l'accu avec le dernier effectif disponible
         accu = map_effectif[time] || accu;
-        Object.assign(output_effectif[time], {
+        Object.assign(sortieEffectif[time], {
             [propertyName + "_reporte"]: map_effectif[time] ? 0 : 1,
         });
         return accu;
@@ -1537,17 +1535,17 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
         }))
             .filter(({ timestamp }) => periodes.includes(timestamp));
         futureTimestamps.forEach(({ offset, timestamp }) => {
-            output_effectif[timestamp] = Object.assign(Object.assign({}, output_effectif[timestamp]), { [propertyName + "_past_" + offset]: map_effectif[time] });
+            sortieEffectif[timestamp] = Object.assign(Object.assign({}, sortieEffectif[timestamp]), { [propertyName + "_past_" + offset]: map_effectif[time] });
         });
     });
     // On supprime les effectifs 'null'
-    Object.keys(output_effectif).forEach((k) => {
-        if (output_effectif[k].effectif === null &&
-            output_effectif[k].effectif_ent === null) {
-            delete output_effectif[k];
+    Object.keys(sortieEffectif).forEach((k) => {
+        if (sortieEffectif[k].effectif === null &&
+            sortieEffectif[k].effectif_ent === null) {
+            delete sortieEffectif[k];
         }
     });
-    return output_effectif;
+    return sortieEffectif;
 }`,
 "entr_bdf": `function entr_bdf(donnéesBdf, periodes) {
     "use strict";
