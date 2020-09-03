@@ -30,15 +30,12 @@ PORT="27016" tests/helpers/mongodb-container.sh start
 echo ""
 echo "📝 Inserting test data..."
 sleep 1 # give some time for MongoDB to start
-echo "db.RawData.insertMany(" > "${TMP_DIR}/db_commands.js"
-cat >> "${TMP_DIR}/db_commands.js" < tests/input-data/RawData.sample.json
-echo ")" >> "${TMP_DIR}/db_commands.js"
-
-tests/helpers/mongodb-container.sh run < "${TMP_DIR}/db_commands.js" >/dev/null
+tests/helpers/mongodb-container.sh run << CONTENT
+  db.RawData.insertMany($(cat tests/input-data/RawData.sample.json))
+CONTENT
 
 echo ""
 echo "💎 Validating data..."
-
 tests/helpers/mongodb-container.sh run << 'CONTENT' # single quotes => don't let bash interpret $ characters
   printjson(db.RawData.aggregate([
     { $project: { _id: 1, batches: { $objectToArray: "$value.batch" } } }, // => { _id, batches: Array<{ k: BatchKey, v: BatchValues }> }
