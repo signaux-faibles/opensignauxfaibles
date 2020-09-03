@@ -65,6 +65,14 @@ type EntréeEffectif = {
   effectif: number
 }
 
+// Valeurs attendues par delais(), pour chaque période. (cf dbmongo/lib/urssaf/delai.go)
+type EntréeDelai = {
+  date_creation: Date
+  date_echeance: Date
+  duree_delai: number // nombre de jours entre date_creation et date_echeance
+  montant_echeancier: number // exprimé en euros
+}
+
 type EntréeCotisation = {
   periode: { start: Date; end: Date }
   du: number

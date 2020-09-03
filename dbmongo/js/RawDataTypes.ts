@@ -1,5 +1,3 @@
-import { EntréeDelai } from "./common/validDelai"
-
 // Données importées pour une entreprise ou établissement
 
 export type Scope = "etablissement" | "entreprise"

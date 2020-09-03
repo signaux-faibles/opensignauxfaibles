@@ -11,7 +11,6 @@ import { reducer, invertedReducer } from "../test/helpers/reducers"
 import { runMongoMap, indexMapResultsByKey } from "../test/helpers/mongodb"
 import { setGlobals } from "../test/helpers/setGlobals"
 import { Scope } from "../RawDataTypes"
-import { EntréeDelai } from "../common/validDelai"
 
 const DAY_IN_MS = 24 * 60 * 60 * 1000
 
