@@ -64,6 +64,7 @@ tests/helpers/mongodb-container.sh run << CONTENT
           {
             \$project: {
               _id: 0,
+              dataType: 1,
               dataHash: 1
             }
           }
@@ -86,13 +87,14 @@ tests/helpers/mongodb-container.sh run << CONTENT
           {
             \$project: {
               _id: 0,
+              dataType: 1,
               dataHash: 1
             }
           }
         ]
       }
     },
-  ]).toArray())
+  ]).toArray()[0])
 CONTENT
 
 # Display JS errors logged by MongoDB, if any
