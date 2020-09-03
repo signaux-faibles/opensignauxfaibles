@@ -1508,23 +1508,16 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
         m[effectifTime] = (m[effectifTime] || 0) + effectif.effectif;
         return m;
     }, {});
-    // Ne reporter que si le dernier effectif est disponible
     // On reporte dans les dernières périodes le dernier effectif connu
+    // Ne reporter que si le dernier effectif est disponible
     const dernièrePériodeAvecEffectifConnu = f.dateAddMonth(new Date(periodes[periodes.length - 1]), offset_effectif + 1);
     const dernièrePériodeDisponible = dernièrePériodeAvecEffectifConnu.getTime() in map_effectif;
+    const dernierEffectifConnu = map_effectif[dernièrePériodeAvecEffectifConnu.getTime()];
     //pour chaque periode (elles sont triees dans l'ordre croissant)
-    periodes.reduce((accu, time) => {
+    periodes.forEach(time => {
         // si disponible on reporte l'effectif tel quel, sinon, on recupère l'accu
-        sortieEffectif[time] = sortieEffectif[time] || {};
-        sortieEffectif[time][propertyName] =
-            map_effectif[time] || (dernièrePériodeDisponible ? accu : null);
-        // le cas échéant, on met à jour l'accu avec le dernier effectif disponible
-        accu = map_effectif[time] || accu;
-        Object.assign(sortieEffectif[time], {
-            [propertyName + "_reporte"]: map_effectif[time] ? 0 : 1,
-        });
-        return accu;
-    }, null);
+        sortieEffectif[time] = Object.assign(Object.assign({}, sortieEffectif[time]), { [propertyName]: map_effectif[time] || (dernièrePériodeDisponible ? dernierEffectifConnu : null), [propertyName + "_reporte"]: map_effectif[time] ? 0 : 1 });
+    });
     Object.keys(map_effectif).forEach((time) => {
         const futureTimestamps = [6, 12, 18, 24] // Penser à mettre à jour le type PastPropertyName pour tout changement
             .map((offset) => ({
