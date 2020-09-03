@@ -1495,61 +1495,40 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
         ((_b = diane["valeur_ajoutee"]) !== null && _b !== void 0 ? _b : NaN);
     return isNaN(ratio) ? null : ratio * 100;
 }`,
-"effectifs": `function effectifs(effobj, periodes, propertyName) {
+"effectifs": `function effectifs(entréeEffectif, periodes, clé) {
     "use strict";
-    const output_effectif = {};
+    var _a;
+    const sortieEffectif = {};
     // Construction d'une map[time] = effectif à cette periode
-    const map_effectif = Object.keys(effobj).reduce((m, hash) => {
-        const effectif = effobj[hash];
-        if (effectif === null) {
-            return m;
-        }
-        const effectifTime = effectif.periode.getTime();
-        m[effectifTime] = (m[effectifTime] || 0) + effectif.effectif;
-        return m;
-    }, {});
-    //ne reporter que si le dernier est disponible
-    // 1- quelle periode doit être disponible
-    const last_period = new Date(periodes[periodes.length - 1]);
-    const last_period_offset = f.dateAddMonth(last_period, offset_effectif + 1);
-    // 2- Cette période est-elle disponible ?
-    const available = last_period_offset.getTime() in map_effectif;
-    //pour chaque periode (elles sont triees dans l'ordre croissant)
-    periodes.reduce((accu, time) => {
-        // si disponible on reporte l'effectif tel quel, sinon, on recupère l'accu
-        output_effectif[time] = output_effectif[time] || {};
-        output_effectif[time][propertyName] =
-            map_effectif[time] || (available ? accu : null);
-        // le cas échéant, on met à jour l'accu avec le dernier effectif disponible
-        accu = map_effectif[time] || accu;
-        Object.assign(output_effectif[time], {
-            [propertyName + "_reporte"]: map_effectif[time] ? 0 : 1,
-        });
-        return accu;
-    }, null);
-    Object.keys(map_effectif).forEach((time) => {
-        const periode = new Date(parseInt(time));
-        const past_month_offsets = [6, 12, 18, 24]; // Note: à garder en synchro avec la définition du type PastPropertyName
-        past_month_offsets.forEach((lookback) => {
-            // On ajoute un offset pour partir de la dernière période où l'effectif est connu
-            const time_past_lookback = f.dateAddMonth(periode, lookback - offset_effectif - 1);
-            output_effectif[time_past_lookback.getTime()] =
-                output_effectif[time_past_lookback.getTime()] || {};
-            Object.assign(output_effectif[time_past_lookback.getTime()], {
-                [propertyName + "_past_" + lookback]: map_effectif[time],
-            });
-        });
-    });
-    // On supprime les effectifs 'null'
-    Object.keys(output_effectif).forEach((k) => {
-        if (output_effectif[k].effectif === null &&
-            output_effectif[k].effectif_ent === null) {
-            delete output_effectif[k];
+    const mapEffectif = {};
+    Object.keys(entréeEffectif).forEach((hash) => {
+        const effectif = entréeEffectif[hash];
+        if (effectif !== null) {
+            mapEffectif[effectif.periode.getTime()] = effectif.effectif;
         }
     });
-    return output_effectif;
-}
-/* TODO: appliquer même logique d'itération sur futureTimestamps que dans cotisationsdettes.ts */`,
+    // On reporte dans les dernières périodes le dernier effectif connu
+    // Ne reporter que si le dernier effectif est disponible
+    const dernièrePériodeAvecEffectifConnu = f.dateAddMonth(new Date(periodes[periodes.length - 1]), offset_effectif + 1);
+    const effectifÀReporter = (_a = mapEffectif[dernièrePériodeAvecEffectifConnu.getTime()]) !== null && _a !== void 0 ? _a : null;
+    periodes.forEach((time) => {
+        sortieEffectif[time] = Object.assign(Object.assign({}, sortieEffectif[time]), { [clé]: mapEffectif[time] || effectifÀReporter, [clé + "_reporte"]: mapEffectif[time] ? 0 : 1 });
+    });
+    Object.keys(mapEffectif).forEach((time) => {
+        const futureTimestamps = [6, 12, 18, 24] // Penser à mettre à jour le type PastPropertyName pour tout changement
+            .map((offset) => ({
+            offset,
+            timestamp: f
+                .dateAddMonth(new Date(parseInt(time)), offset - offset_effectif - 1)
+                .getTime(),
+        }))
+            .filter(({ timestamp }) => periodes.includes(timestamp));
+        futureTimestamps.forEach(({ offset, timestamp }) => {
+            sortieEffectif[timestamp] = Object.assign(Object.assign({}, sortieEffectif[timestamp]), { [clé + "_past_" + offset]: mapEffectif[time] });
+        });
+    });
+    return sortieEffectif;
+}`,
 "entr_bdf": `function entr_bdf(donnéesBdf, periodes) {
     "use strict";
 

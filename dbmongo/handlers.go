@@ -152,8 +152,6 @@ func processBatchHandler(c *gin.Context) {
 		query.Batches = engine.GetBatchesID()
 	}
 
-	// TODO: valider que tous les batches demandés existent
-
 	parsers, err := resolveParsers(query.Parsers)
 	if err != nil {
 		c.JSON(404, err.Error())
@@ -233,7 +231,10 @@ func importBatchHandler(c *gin.Context) {
 		return
 	}
 	batch := engine.AdminBatch{}
-	batch.Load(params.BatchKey)
+	err = batch.Load(params.BatchKey)
+	if err != nil {
+		c.JSON(404, "Batch inexistant: "+err.Error())
+	}
 
 	parsers, err := resolveParsers(params.Parsers)
 	if err != nil {
