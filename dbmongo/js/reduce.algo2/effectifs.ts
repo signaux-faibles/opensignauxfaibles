@@ -24,7 +24,7 @@ type SortieEffectifs = Record<CléSortieEffectif, ValeurEffectif | null> &
 type EffectifEntreprise = Record<DataHash, EntréeEffectif>
 
 export function effectifs(
-  effobj: EffectifEntreprise,
+  entréeEffectif: EffectifEntreprise,
   periodes: Timestamp[],
   clé: CléSortieEffectif
 ): ParPériode<SortieEffectifs> {
@@ -33,15 +33,15 @@ export function effectifs(
   const sortieEffectif: ParPériode<SortieEffectifs> = {}
 
   // Construction d'une map[time] = effectif à cette periode
-  const map_effectif = Object.keys(effobj).reduce((m, hash) => {
-    const effectif = effobj[hash]
-    if (effectif === null) {
-      return m
+  const map_effectif: Record<Periode, number> = {}
+
+  Object.keys(entréeEffectif).forEach((hash) => {
+    const effectif = entréeEffectif[hash]
+    if (effectif !== null) {
+      const effectifTime = effectif.periode.getTime()
+      map_effectif[effectifTime] = effectif.effectif
     }
-    const effectifTime = effectif.periode.getTime()
-    m[effectifTime] = (m[effectifTime] || 0) + effectif.effectif
-    return m
-  }, {} as Record<Periode, number>)
+  })
 
   // On reporte dans les dernières périodes le dernier effectif connu
   // Ne reporter que si le dernier effectif est disponible

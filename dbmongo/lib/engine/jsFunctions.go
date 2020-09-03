@@ -1495,20 +1495,19 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
         ((_b = diane["valeur_ajoutee"]) !== null && _b !== void 0 ? _b : NaN);
     return isNaN(ratio) ? null : ratio * 100;
 }`,
-"effectifs": `function effectifs(effobj, periodes, clé) {
+"effectifs": `function effectifs(entréeEffectif, periodes, clé) {
     "use strict";
     var _a;
     const sortieEffectif = {};
     // Construction d'une map[time] = effectif à cette periode
-    const map_effectif = Object.keys(effobj).reduce((m, hash) => {
-        const effectif = effobj[hash];
-        if (effectif === null) {
-            return m;
+    const map_effectif = {};
+    Object.keys(entréeEffectif).forEach((hash) => {
+        const effectif = entréeEffectif[hash];
+        if (effectif !== null) {
+            const effectifTime = effectif.periode.getTime();
+            map_effectif[effectifTime] = effectif.effectif;
         }
-        const effectifTime = effectif.periode.getTime();
-        m[effectifTime] = (m[effectifTime] || 0) + effectif.effectif;
-        return m;
-    }, {});
+    });
     // On reporte dans les dernières périodes le dernier effectif connu
     // Ne reporter que si le dernier effectif est disponible
     const dernièrePériodeAvecEffectifConnu = f.dateAddMonth(new Date(periodes[periodes.length - 1]), offset_effectif + 1);
