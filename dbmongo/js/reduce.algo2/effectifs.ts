@@ -33,13 +33,12 @@ export function effectifs(
   const sortieEffectif: ParPériode<SortieEffectifs> = {}
 
   // Construction d'une map[time] = effectif à cette periode
-  const map_effectif: Record<Periode, number> = {}
+  const mapEffectif: Record<Periode, ValeurEffectif> = {}
 
   Object.keys(entréeEffectif).forEach((hash) => {
     const effectif = entréeEffectif[hash]
     if (effectif !== null) {
-      const effectifTime = effectif.periode.getTime()
-      map_effectif[effectifTime] = effectif.effectif
+       mapEffectif[effectif.periode.getTime()] = effectif.effectif
     }
   })
 
@@ -50,17 +49,17 @@ export function effectifs(
     offset_effectif + 1
   )
   const effectifÀReporter =
-    map_effectif[dernièrePériodeAvecEffectifConnu.getTime()] ?? null
+    mapEffectif[dernièrePériodeAvecEffectifConnu.getTime()] ?? null
 
   periodes.forEach((time) => {
     sortieEffectif[time] = {
       ...sortieEffectif[time],
-      [clé]: map_effectif[time] || effectifÀReporter,
-      [clé + "_reporte"]: map_effectif[time] ? 0 : 1,
+      [clé]: mapEffectif[time] || effectifÀReporter,
+      [clé + "_reporte"]: mapEffectif[time] ? 0 : 1,
     }
   })
 
-  Object.keys(map_effectif).forEach((time) => {
+  Object.keys(mapEffectif).forEach((time) => {
     const futureTimestamps = [6, 12, 18, 24] // Penser à mettre à jour le type PastPropertyName pour tout changement
       .map((offset) => ({
         offset,
@@ -73,19 +72,9 @@ export function effectifs(
     futureTimestamps.forEach(({ offset, timestamp }) => {
       sortieEffectif[timestamp] = {
         ...sortieEffectif[timestamp],
-        [clé + "_past_" + offset]: map_effectif[time],
+        [clé + "_past_" + offset]: mapEffectif[time],
       }
     })
-  })
-
-  // On supprime les effectifs 'null'
-  Object.keys(sortieEffectif).forEach((k) => {
-    if (
-      sortieEffectif[k].effectif === null &&
-      sortieEffectif[k].effectif_ent === null
-    ) {
-      delete sortieEffectif[k]
-    }
   })
   return sortieEffectif
 }

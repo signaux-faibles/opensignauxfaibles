@@ -1500,22 +1500,21 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
     var _a;
     const sortieEffectif = {};
     // Construction d'une map[time] = effectif à cette periode
-    const map_effectif = {};
+    const mapEffectif = {};
     Object.keys(entréeEffectif).forEach((hash) => {
         const effectif = entréeEffectif[hash];
         if (effectif !== null) {
-            const effectifTime = effectif.periode.getTime();
-            map_effectif[effectifTime] = effectif.effectif;
+            mapEffectif[effectif.periode.getTime()] = effectif.effectif;
         }
     });
     // On reporte dans les dernières périodes le dernier effectif connu
     // Ne reporter que si le dernier effectif est disponible
     const dernièrePériodeAvecEffectifConnu = f.dateAddMonth(new Date(periodes[periodes.length - 1]), offset_effectif + 1);
-    const effectifÀReporter = (_a = map_effectif[dernièrePériodeAvecEffectifConnu.getTime()]) !== null && _a !== void 0 ? _a : null;
+    const effectifÀReporter = (_a = mapEffectif[dernièrePériodeAvecEffectifConnu.getTime()]) !== null && _a !== void 0 ? _a : null;
     periodes.forEach((time) => {
-        sortieEffectif[time] = Object.assign(Object.assign({}, sortieEffectif[time]), { [clé]: map_effectif[time] || effectifÀReporter, [clé + "_reporte"]: map_effectif[time] ? 0 : 1 });
+        sortieEffectif[time] = Object.assign(Object.assign({}, sortieEffectif[time]), { [clé]: mapEffectif[time] || effectifÀReporter, [clé + "_reporte"]: mapEffectif[time] ? 0 : 1 });
     });
-    Object.keys(map_effectif).forEach((time) => {
+    Object.keys(mapEffectif).forEach((time) => {
         const futureTimestamps = [6, 12, 18, 24] // Penser à mettre à jour le type PastPropertyName pour tout changement
             .map((offset) => ({
             offset,
@@ -1525,15 +1524,8 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
         }))
             .filter(({ timestamp }) => periodes.includes(timestamp));
         futureTimestamps.forEach(({ offset, timestamp }) => {
-            sortieEffectif[timestamp] = Object.assign(Object.assign({}, sortieEffectif[timestamp]), { [clé + "_past_" + offset]: map_effectif[time] });
+            sortieEffectif[timestamp] = Object.assign(Object.assign({}, sortieEffectif[timestamp]), { [clé + "_past_" + offset]: mapEffectif[time] });
         });
-    });
-    // On supprime les effectifs 'null'
-    Object.keys(sortieEffectif).forEach((k) => {
-        if (sortieEffectif[k].effectif === null &&
-            sortieEffectif[k].effectif_ent === null) {
-            delete sortieEffectif[k];
-        }
     });
     return sortieEffectif;
 }`,
