@@ -526,7 +526,6 @@ function currentState(batches) {
 // l'échantillonnage pour l'entraînement du modèle.
 function finalize(k, companyDataValues) {
     "use strict";
-
     let o = Object.assign(Object.assign({}, companyDataValues), { index: { algo1: false, algo2: false } });
     if (o.scope === "entreprise") {
         o.index.algo1 = true;
@@ -640,7 +639,6 @@ function listHashesToAddAndDelete(currentBatch, stockTypes, memory) {
 function reduce(key, values // chaque element contient plusieurs batches pour cette entreprise ou établissement
 ) {
     "use strict";
-
     // Tester si plusieurs batchs. Reduce complet uniquement si plusieurs
     // batchs. Sinon, juste fusion des attributs
     const auxBatchSet = new Set();
@@ -763,20 +761,17 @@ db.getCollection("Features").createIndex({
 },
 "public":{
 "apconso": `function apconso(apconso) {
-
     return f
         .iterable(apconso)
         .sort((p1, p2) => (p1.periode < p2.periode ? 1 : -1));
 }`,
 "apdemande": `function apdemande(apdemande) {
-
     return f
         .iterable(apdemande)
         .sort((p1, p2) => p1.periode.start.getTime() < p2.periode.start.getTime() ? 1 : -1);
 }`,
 "bdf": `function bdf(hs) {
     "use strict";
-
     const bdf = {};
     // Déduplication par arrete_bilan_bdf
     f.iterable(hs)
@@ -789,12 +784,10 @@ db.getCollection("Features").createIndex({
         .sort((a, b) => (a.annee_bdf < b.annee_bdf ? 1 : -1));
 }`,
 "compte": `function compte(compte) {
-
     const c = f.iterable(compte);
     return c.length > 0 ? c[c.length - 1] : undefined;
 }`,
 "cotisations": `function cotisations(vcotisation = {}) {
-
     const offset_cotisation = 0;
     const value_cotisation = {};
     // Répartition des cotisations sur toute la période qu'elle concerne
@@ -819,7 +812,6 @@ db.getCollection("Features").createIndex({
     return result;
 }`,
 "dealWithProcols": `function dealWithProcols(data_source = {}, altar_or_procol) {
-
     return Object.keys(data_source)
         .reduce((events, hash) => {
         const the_event = data_source[hash];
@@ -835,7 +827,6 @@ db.getCollection("Features").createIndex({
         .sort((a, b) => a.date_procol.getTime() - b.date_procol.getTime());
 }`,
 "debits": `function debits(vdebit = {}) {
-
     const last_treatment_day = 20;
     const ecn = Object.keys(vdebit).reduce((accu, h) => {
         const debit = vdebit[h];
@@ -913,12 +904,10 @@ db.getCollection("Features").createIndex({
     }));
 }`,
 "delai": `function delai(delai) {
-
     return f.iterable(delai);
 }`,
 "diane": `function diane(hs) {
     "use strict";
-
     const diane = {};
     // Déduplication par arrete_bilan_diane
     f.iterable(hs)
@@ -931,7 +920,6 @@ db.getCollection("Features").createIndex({
         .sort((a, b) => (a.exercice_diane < b.exercice_diane ? 1 : -1));
 }`,
 "effectifs": `function effectifs(effectif) {
-
     const mapEffectif = {};
     f.iterable(effectif).forEach((e) => {
         mapEffectif[e.periode.getTime()] =
@@ -974,7 +962,6 @@ db.getCollection("Features").createIndex({
     return result;
 }`,
 "map": `function map() {
-
     const value = f.flatten(this.value, actual_batch);
     if (this.value.scope === "etablissement") {
         const vcmde = {};
@@ -1074,7 +1061,6 @@ function sirene(sireneArray) {
 }`,
 "apart": `function apart(apconso, apdemande) {
     "use strict";
-
     const output_apart = {};
     // Mapping (pour l'instant vide) du hash de la demande avec les hash des consos correspondantes
     const apart = Object.keys(apdemande).reduce((apart, hash) => {
@@ -1163,7 +1149,6 @@ function sirene(sireneArray) {
 }`,
 "cibleApprentissage": `function cibleApprentissage(output_indexed, n_months) {
     "use strict";
-
     // Mock two input instead of one for future modification
     const output_cotisation = output_indexed;
     const output_procol = output_indexed;
@@ -1202,7 +1187,6 @@ function sirene(sireneArray) {
 "cotisation": `function cotisation(output_indexed) {
     "use strict";
     const sortieCotisation = {};
-
     const moyenne = (valeurs = []) => valeurs.some((val) => typeof val === "undefined")
         ? undefined
         : valeurs.reduce((p, c) => p + c, 0) / (valeurs.length || 1);
@@ -1277,7 +1261,6 @@ function sirene(sireneArray) {
 function cotisationsdettes(vCotisation, vDebit, periodes, finPériode // correspond à la variable globale date_fin
 ) {
     "use strict";
-
     // Tous les débits traitées après ce jour du mois sont reportées à la période suivante
     // Permet de s'aligner avec le calendrier de fourniture des données
     const lastAccountedDay = 20;
@@ -1412,7 +1395,6 @@ function cotisationsdettes(vCotisation, vDebit, periodes, finPériode // corresp
 }`,
 "dealWithProcols": `function dealWithProcols(data_source, altar_or_procol, output_indexed) {
     "use strict";
-
     const codes = Object.keys(data_source)
         .reduce((events, hash) => {
         const the_event = data_source[hash];
@@ -1448,7 +1430,6 @@ function cotisationsdettes(vCotisation, vDebit, periodes, finPériode // corresp
 }`,
 "defaillances": `function defaillances(altares, procol, output_indexed) {
     "use strict";
-
     f.dealWithProcols(altares, "altares", output_indexed);
     f.dealWithProcols(procol, "procol", output_indexed);
 }`,
@@ -1464,7 +1445,6 @@ function cotisationsdettes(vCotisation, vDebit, periodes, finPériode // corresp
  */
 function delais(vDelai, debitParPériode, intervalleTraitement) {
     "use strict";
-
     const donnéesDélaiParPériode = {};
     Object.keys(vDelai).forEach(function (hash) {
         const delai = vDelai[hash];
@@ -1511,7 +1491,6 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
 "effectifs": `function effectifs(entréeEffectif, periodes, clé) {
     "use strict";
     var _a;
-
     const sortieEffectif = {};
     // Construction d'une map[time] = effectif à cette periode
     const mapEffectif = {};
@@ -1545,7 +1524,6 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
 }`,
 "entr_bdf": `function entr_bdf(donnéesBdf, periodes) {
     "use strict";
-
     const outputBdf = {};
     for (const p of periodes) {
         outputBdf[p] = {};
@@ -1582,7 +1560,6 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
     return outputBdf;
 }`,
 "entr_diane": `function entr_diane(donnéesDiane, output_indexed, periodes) {
-
     for (const hash of Object.keys(donnéesDiane)) {
         if (!donnéesDiane[hash].arrete_bilan_diane)
             continue;
@@ -1665,7 +1642,6 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
 }`,
 "entr_sirene": `function entr_sirene(sirene_ul, sériePériode) {
     "use strict";
-
     const retourEntrSirene = {};
     const sireneHashes = Object.keys(sirene_ul || {});
     sériePériode.forEach((période) => {
@@ -1690,9 +1666,7 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
 }`,
 "finalize": `function finalize(k, v) {
     "use strict";
-
     const maxBsonSize = 16777216;
-
     // v de la forme
     // _id: {batch / siren / periode / type}
     // value: {siret1: {}, siret2: {}, "siren": {}}
@@ -1763,7 +1737,6 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
 }`,
 "interim": `function interim(interim, output_indexed) {
     "use strict";
-
     const output_effectif = output_indexed;
     // let periodes = Object.keys(output_indexed)
     // output_indexed devra être remplacé par output_effectif, et ne contenir que les données d'effectif.
@@ -1846,7 +1819,6 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
  */
 function map() {
     "use strict";
-
     const v = f.flatten(this.value, actual_batch);
     if (v.scope === "etablissement") {
         const [output_array, // DonnéesAgrégées[] dans l'ordre chronologique
@@ -2050,7 +2022,6 @@ function outputs(v, serie_periode) {
 }`,
 "sirene": `function sirene(vSirene, output_array) {
     "use strict";
-
     const sireneHashes = Object.keys(vSirene || {});
     output_array.forEach((val) => {
         // geolocalisation
