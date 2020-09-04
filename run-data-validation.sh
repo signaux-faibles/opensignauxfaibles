@@ -10,6 +10,7 @@ mongo "${DATABASE}" <<< "db.RawData.count()" # => 6929282 documents
 echo ""
 echo "💎 Validating data..."
 AGGREG_PREPARATION='
+    { $limit: 1000 }, // on ne traite que les 1000 premiers documents de RawData (TODO: à retirer)
     { $project: { _id: 1, batches: { $objectToArray: "$value.batch" } } }, // => { _id, batches: Array<{ k: BatchKey, v: BatchValues }> }
     { $unwind: { path: "$batches", preserveNullAndEmptyArrays: false } }, // => { _id, batches: { k: BatchKey, v: BatchValues } }
     { $project: { _id: 1, batchKey: "$batches.k", "dataPerHash": { $objectToArray: "$batches.v" } } }, // => { _id, batchKey, dataPerHash: Array<{ k: DataType, v: ParHash<Data> }> }
@@ -23,26 +24,6 @@ cat > "dbvalid.js" << CONTENT
     ${AGGREG_PREPARATION}
     {
       \$facet: {
-        "valid": [
-          {
-            \$match: {
-              dataType: "delai",
-              \$jsonSchema: {
-                bsonType: "object",
-                properties: {
-                  dataObject: $(cat dbmongo/validation/delai.schema.json)
-                }
-              }
-            }
-          },
-          {
-            \$project: {
-              _id: 0,
-              dataType: 1,
-              dataHash: 1
-            }
-          }
-        ],
         "invalid": [
           {
             \$match: {
@@ -58,18 +39,11 @@ cat > "dbvalid.js" << CONTENT
                 }
               ]
             }
-          },
-          {
-            \$project: {
-              _id: 0,
-              dataType: 1,
-              dataHash: 1
-            }
           }
         ]
       }
     },
-  ]).toArray()[0])
+  ]).maxTimeMS(10 * 60 * 1000).toArray()[0]) // on limite la durée d'execution à 10 minutes max (TODO: à retirer)
 CONTENT
 
 cat "dbvalid.js"
