@@ -1,7 +1,7 @@
   print("invalid records:");
   db.RawData.aggregate([
     
-    { $limit: 100000 }, // on ne traite que les 100000 premiers documents de RawData (TODO: à retirer)
+    { $limit: 1000000 }, // on ne traite que les 1000000 premiers documents de RawData (TODO: à retirer)
     { $project: { _id: 1, batches: { $objectToArray: "$value.batch" } } }, // => { _id, batches: Array<{ k: BatchKey, v: BatchValues }> }
     { $unwind: { path: "$batches", preserveNullAndEmptyArrays: false } }, // => { _id, batches: { k: BatchKey, v: BatchValues } }
     { $project: { _id: 1, batchKey: "$batches.k", "dataPerHash": { $objectToArray: "$batches.v" } } }, // => { _id, batchKey, dataPerHash: Array<{ k: DataType, v: ParHash<Data> }> }
