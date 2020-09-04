@@ -1,6 +1,5 @@
-import "../globals.ts"
 import { forEachPopulatedProp } from "../common/forEachPopulatedProp"
-import { DataType } from "../RawDataTypes"
+import { DataType, DataHash } from "../RawDataTypes"
 import { CurrentDataState } from "./currentState"
 import { BatchValueWithCompact } from "./applyPatchesToBatch"
 

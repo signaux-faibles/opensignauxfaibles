@@ -23,6 +23,7 @@ import {
   EntréeDelai,
   EntréeDefaillances,
   EntréeDiane,
+  ParHash,
 } from "../RawDataTypes"
 
 type SortieMapCommon = {
@@ -37,7 +38,7 @@ type SortieMapEtablissement = SortieMapCommon & {
   apdemande: EntréeApDemande[]
   delai: EntréeDelai[]
   compte: unknown
-  procol: Record<DataHash, EntréeDefaillances>
+  procol: ParHash<EntréeDefaillances>
   last_procol: SortieProcols
   periodes: Date[]
   effectif: (number | null)[]

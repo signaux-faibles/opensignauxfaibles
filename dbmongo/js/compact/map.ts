@@ -1,5 +1,4 @@
-import "../globals.ts"
-import { CompanyDataValuesWithFlags } from "../RawDataTypes"
+import { CompanyDataValuesWithFlags, SiretOrSiren } from "../RawDataTypes"
 
 declare function emit(
   key: SiretOrSiren,

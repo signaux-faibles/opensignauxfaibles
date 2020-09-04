@@ -1,5 +1,10 @@
 import * as f from "../common/region"
-import { EntréeSirene } from "../RawDataTypes"
+import {
+  EntréeSirene,
+  SiretOrSiren,
+  Departement,
+  CodeAPE,
+} from "../RawDataTypes"
 
 type Input = {
   periode: Date

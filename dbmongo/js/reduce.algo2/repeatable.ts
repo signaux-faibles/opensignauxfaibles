@@ -1,4 +1,4 @@
-import { EntréeRepOrder } from "../RawDataTypes"
+import { EntréeRepOrder, Periode } from "../RawDataTypes"
 
 export type SortieRepeatable = { random_order: number }
 

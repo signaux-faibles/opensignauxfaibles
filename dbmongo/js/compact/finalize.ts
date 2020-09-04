@@ -1,7 +1,9 @@
-import "../globals.ts"
-
 import * as f from "./complete_reporder"
-import { CompanyDataValues, CompanyDataValuesWithFlags } from "../RawDataTypes"
+import {
+  CompanyDataValues,
+  CompanyDataValuesWithFlags,
+  SiretOrSiren,
+} from "../RawDataTypes"
 
 // finalize permet de:
 // - indiquer les établissements à inclure dans les calculs de variables

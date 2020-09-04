@@ -1,4 +1,4 @@
-import { BatchValue, DataType, Scope } from "../RawDataTypes"
+import { BatchValue, DataType, Scope, SiretOrSiren } from "../RawDataTypes"
 import { CompanyDataValuesWithCompact } from "../compact/applyPatchesToBatch"
 
 export type FlattenedImportedData = {

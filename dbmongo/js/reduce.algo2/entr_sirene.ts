@@ -1,5 +1,5 @@
 import * as f from "../common/raison_sociale"
-import { EntréeSireneEntreprise } from "../RawDataTypes"
+import { EntréeSireneEntreprise, DataHash, ParPériode } from "../RawDataTypes"
 
 export type SortieSireneEntreprise = {
   raison_sociale: string // nom de l'entreprise

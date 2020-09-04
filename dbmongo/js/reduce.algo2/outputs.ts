@@ -7,6 +7,7 @@ import { SortieSirene } from "./sirene"
 import { SortieNAF } from "./populateNafAndApe"
 import { DelaiComputedValues } from "./delais"
 import { SortieCotisation } from "./cotisation"
+import { SiretOrSiren, Timestamp } from "../RawDataTypes"
 
 export type DonnéesAgrégées = {
   siret: SiretOrSiren

@@ -1,5 +1,5 @@
 import * as f from "./iterable"
-import { EntréeApDemande } from "../RawDataTypes"
+import { EntréeApDemande, DataHash } from "../RawDataTypes"
 
 export function apdemande(
   apdemande?: Record<DataHash, EntréeApDemande>

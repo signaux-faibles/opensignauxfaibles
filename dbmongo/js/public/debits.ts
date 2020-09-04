@@ -2,7 +2,7 @@ import { dateAddDay } from "./dateAddDay"
 import { compareDebit } from "../common/compareDebit"
 import { dateAddMonth } from "../common/dateAddMonth"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
-import { EntréeDebit } from "../RawDataTypes"
+import { EntréeDebit, DataHash } from "../RawDataTypes"
 
 type AccuItem = {
   hash: string

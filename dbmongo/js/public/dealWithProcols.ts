@@ -1,6 +1,6 @@
 import { altaresToHuman, AltaresToHumanRes } from "../common/altaresToHuman"
 import { procolToHuman, ProcolToHumanRes } from "../common/procolToHuman"
-import { EntréeDefaillances } from "../RawDataTypes"
+import { EntréeDefaillances, DataHash } from "../RawDataTypes"
 
 export type SortieProcols = {
   etat: AltaresToHumanRes | ProcolToHumanRes

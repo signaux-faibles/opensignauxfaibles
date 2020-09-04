@@ -1,8 +1,13 @@
-import "../globals"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { dateAddMonth } from "../common/dateAddMonth"
 import { omit } from "../common/omit"
-import { EntréeBdfRatios, EntréeBdf } from "../RawDataTypes"
+import {
+  EntréeBdfRatios,
+  EntréeBdf,
+  DataHash,
+  Timestamp,
+  ParPériode,
+} from "../RawDataTypes"
 
 export type SortieBdf = {
   annee_bdf: number

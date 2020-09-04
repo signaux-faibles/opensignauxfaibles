@@ -1,5 +1,5 @@
 import * as f from "./iterable"
-import { EntréeEffectif } from "../RawDataTypes"
+import { EntréeEffectif, DataHash, ParPériode } from "../RawDataTypes"
 
 // Paramètres globaux utilisés par "public"
 declare const serie_periode: Date[]

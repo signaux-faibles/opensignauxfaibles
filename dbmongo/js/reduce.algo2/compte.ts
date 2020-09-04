@@ -1,5 +1,4 @@
-import "../globals.ts"
-import { EntréeCompte } from "../RawDataTypes"
+import { EntréeCompte, ParPériode, Periode } from "../RawDataTypes"
 
 type SortieCompte = ParPériode<{ compte_urssaf: unknown }>
 

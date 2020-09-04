@@ -1,5 +1,4 @@
 import test, { ExecutionContext } from "ava"
-import "../globals"
 import { add } from "./add"
 
 const testCases = [

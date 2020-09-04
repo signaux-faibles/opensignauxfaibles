@@ -1,5 +1,4 @@
 import test, { ExecutionContext } from "ava"
-import "../globals"
 import { currentState } from "./currentState"
 import { EntréeApDemande, EntréeApConso } from "../RawDataTypes"
 

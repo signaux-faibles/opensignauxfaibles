@@ -1,3 +1,5 @@
+import { CodeAPE } from "../RawDataTypes"
+
 type CodeAPENiveau2 = string
 type CodeAPENiveau3 = string
 type CodeAPENiveau4 = string

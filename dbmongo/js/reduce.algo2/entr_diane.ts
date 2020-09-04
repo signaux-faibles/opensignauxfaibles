@@ -1,11 +1,10 @@
-import "../globals"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { dateAddMonth } from "../common/dateAddMonth"
 import { omit } from "../common/omit"
 import { poidsFrng } from "./poidsFrng"
 import { detteFiscale } from "./detteFiscale"
 import { fraisFinancier } from "./fraisFinancier"
-import { EntréeDiane } from "../RawDataTypes"
+import { EntréeDiane, DataHash, ParPériode, Timestamp } from "../RawDataTypes"
 
 export type SortieDiane = Record<string, unknown> // for *_past_* props of diane. // TODO: try to be more specific
 

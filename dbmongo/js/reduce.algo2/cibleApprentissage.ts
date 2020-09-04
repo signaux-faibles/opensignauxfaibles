@@ -1,5 +1,5 @@
-import "../globals"
 import * as f from "./lookAhead"
+import { ParPériode } from "../RawDataTypes"
 
 type Times = {
   time_til_default?: number
@@ -27,7 +27,7 @@ export function cibleApprentissage(
       ),
     }
     return m
-  }, {} as Record<Periode, { outcome: boolean }>)
+  }, {} as ParPériode<{ outcome: boolean }>)
 
   const output_outcome = f.lookAhead(merged_info, "outcome", n_months, true)
   const output_default = f.lookAhead(

@@ -23,7 +23,13 @@ import { fraisFinancier } from "./fraisFinancier"
 import { entr_bdf, SortieBdf } from "./entr_bdf"
 import { omit } from "../common/omit"
 import { entr_diane, SortieDiane } from "./entr_diane"
-import { CompanyDataValues, BatchKey } from "../RawDataTypes"
+import {
+  CompanyDataValues,
+  BatchKey,
+  Siret,
+  SiretOrSiren,
+  ParPériode,
+} from "../RawDataTypes"
 
 type SortieMapEntreprise = {
   periode: Date

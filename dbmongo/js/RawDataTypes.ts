@@ -1,3 +1,18 @@
+// Types de données de base
+
+export type Periode = string // Date.toString()
+export type Timestamp = number // Date.getTime()
+export type ParPériode<T> = Record<Periode, T>
+
+export type Departement = string
+
+export type Siret = string
+export type SiretOrSiren = Siret | string
+export type CodeAPE = string
+
+export type DataHash = string
+export type ParHash<T> = Record<DataHash, T>
+
 // Données importées pour une entreprise ou établissement
 
 export type Scope = "etablissement" | "entreprise"

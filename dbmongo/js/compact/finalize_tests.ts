@@ -1,5 +1,4 @@
 import test, { ExecutionContext } from "ava"
-import "../globals"
 import { finalize } from "./finalize"
 import { setGlobals } from "../test/helpers/setGlobals"
 import {

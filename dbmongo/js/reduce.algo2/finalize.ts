@@ -1,5 +1,6 @@
 import { SortieMap, SortieMapEtablissement } from "./map"
 import * as f from "../common/omit"
+import { SiretOrSiren, Siret } from "../RawDataTypes"
 
 type Accumulateurs = {
   effectif_entreprise: number

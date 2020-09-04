@@ -1,4 +1,3 @@
-import "../globals"
 import { forEachPopulatedProp } from "../common/forEachPopulatedProp"
 import {
   DataType,
@@ -6,6 +5,8 @@ import {
   BatchValue,
   Scope,
   IndexFlags,
+  DataHash,
+  SiretOrSiren,
 } from "../RawDataTypes"
 
 export type BatchValueWithCompact = BatchValue & {

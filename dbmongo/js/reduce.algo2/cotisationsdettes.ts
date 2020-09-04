@@ -1,7 +1,12 @@
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { dateAddMonth } from "../common/dateAddMonth"
 import { compareDebit } from "../common/compareDebit"
-import { EntréeDebit, EntréeCotisation } from "../RawDataTypes"
+import {
+  EntréeDebit,
+  EntréeCotisation,
+  Timestamp,
+  Periode,
+} from "../RawDataTypes"
 
 type EcartNegatif = {
   hash: string

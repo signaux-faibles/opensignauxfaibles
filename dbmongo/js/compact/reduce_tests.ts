@@ -1,5 +1,4 @@
 import test, { ExecutionContext } from "ava"
-import "../globals"
 import { reduce } from "./reduce"
 import { setGlobals } from "../test/helpers/setGlobals"
 import { DataType, BatchKey } from "../RawDataTypes"

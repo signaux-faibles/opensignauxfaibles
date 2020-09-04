@@ -5,7 +5,6 @@
 // définie dans test-api.sh.
 
 import test, { ExecutionContext } from "ava"
-import "../globals"
 import { map } from "./map"
 import { reduce } from "./reduce"
 import { finalize } from "./finalize"
@@ -17,6 +16,7 @@ import {
   CompanyDataValues,
   Scope,
   EntréeRepOrder,
+  SiretOrSiren,
 } from "../RawDataTypes"
 
 const removeRandomOrder = (reporderProp: {

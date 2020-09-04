@@ -1,5 +1,11 @@
 import * as f from "../common/dateAddMonth"
-import { EntréeEffectif } from "../RawDataTypes"
+import {
+  EntréeEffectif,
+  DataHash,
+  Timestamp,
+  ParPériode,
+  Periode,
+} from "../RawDataTypes"
 
 // Paramètres globaux utilisés par "reduce.algo2"
 declare const offset_effectif: number

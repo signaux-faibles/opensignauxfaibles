@@ -1,5 +1,3 @@
-import "../globals.ts"
-
 import { listHashesToAddAndDelete } from "./listHashesToAddAndDelete"
 import { fixRedundantPatches } from "./fixRedundantPatches"
 import { applyPatchesToMemory } from "./applyPatchesToMemory"

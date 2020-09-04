@@ -1,4 +1,3 @@
-import "../globals"
 import { EntréeDiane } from "../RawDataTypes"
 
 export function tauxMarge(diane: EntréeDiane): number | null {
