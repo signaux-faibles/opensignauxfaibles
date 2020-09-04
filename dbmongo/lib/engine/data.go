@@ -194,7 +194,7 @@ func GetBatchesID() []string {
 // GetBatch retourne le batch correspondant à la clé batchKey
 func GetBatch(batchKey string) (AdminBatch, error) {
 	var batch AdminBatch
-	err := Db.DB.C("Admin").Find(bson.M{"_id.type": "batch", "_id.key": batchKey}).One(&batch)
+	err := batch.Load(batchKey)
 	return batch, err
 }
 
