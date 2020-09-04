@@ -2,6 +2,6 @@ Chaque fichier de ce répertoire décrit les règles de validation qui doivent s
 
 Par exemple, le fichier `delai.schema.json` décrit les champs de l'entrée `delai` générée par le parseur des données URSSAF.
 
-Ces règles sont exprimées dans la version étendue par MongoDB de JSON Schema, décrite dans cette documentation de référence: https://docs.mongodb.com/manual/reference/operator/query/jsonSchema.
+Ces règles sont exprimées dans la [version étendue par MongoDB de JSON Schema](https://docs.mongodb.com/manual/reference/operator/query/jsonSchema).
 
 Après chaque modification d'un schema, penser à mettre à jour les définitions de types correspondants dans les fichiers `.go` et `.ts`.
