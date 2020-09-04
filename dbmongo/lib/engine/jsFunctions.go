@@ -1074,6 +1074,7 @@ function sirene(sireneArray) {
 }`,
 "apart": `function apart(apconso, apdemande) {
     "use strict";
+
     const output_apart = {};
     // Mapping (pour l'instant vide) du hash de la demande avec les hash des consos correspondantes
     const apart = Object.keys(apdemande).reduce((apart, hash) => {
@@ -1162,6 +1163,7 @@ function sirene(sireneArray) {
 }`,
 "cibleApprentissage": `function cibleApprentissage(output_indexed, n_months) {
     "use strict";
+
     // Mock two input instead of one for future modification
     const output_cotisation = output_indexed;
     const output_procol = output_indexed;
@@ -1446,6 +1448,7 @@ function cotisationsdettes(vCotisation, vDebit, periodes, finPériode // corresp
 }`,
 "defaillances": `function defaillances(altares, procol, output_indexed) {
     "use strict";
+
     f.dealWithProcols(altares, "altares", output_indexed);
     f.dealWithProcols(procol, "procol", output_indexed);
 }`,
@@ -1461,6 +1464,7 @@ function cotisationsdettes(vCotisation, vDebit, periodes, finPériode // corresp
  */
 function delais(vDelai, debitParPériode, intervalleTraitement) {
     "use strict";
+
     const donnéesDélaiParPériode = {};
     Object.keys(vDelai).forEach(function (hash) {
         const delai = vDelai[hash];
@@ -1507,6 +1511,7 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
 "effectifs": `function effectifs(entréeEffectif, periodes, clé) {
     "use strict";
     var _a;
+
     const sortieEffectif = {};
     // Construction d'une map[time] = effectif à cette periode
     const mapEffectif = {};
@@ -1660,6 +1665,7 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
 }`,
 "entr_sirene": `function entr_sirene(sirene_ul, sériePériode) {
     "use strict";
+
     const retourEntrSirene = {};
     const sireneHashes = Object.keys(sirene_ul || {});
     sériePériode.forEach((période) => {
@@ -1684,6 +1690,7 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
 }`,
 "finalize": `function finalize(k, v) {
     "use strict";
+
     const maxBsonSize = 16777216;
 
     // v de la forme
@@ -1756,6 +1763,7 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
 }`,
 "interim": `function interim(interim, output_indexed) {
     "use strict";
+
     const output_effectif = output_indexed;
     // let periodes = Object.keys(output_indexed)
     // output_indexed devra être remplacé par output_effectif, et ne contenir que les données d'effectif.
@@ -2042,6 +2050,7 @@ function outputs(v, serie_periode) {
 }`,
 "sirene": `function sirene(vSirene, output_array) {
     "use strict";
+
     const sireneHashes = Object.keys(vSirene || {});
     output_array.forEach((val) => {
         // geolocalisation
