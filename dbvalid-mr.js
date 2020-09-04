@@ -32,7 +32,6 @@
   printjson(db.RawData.mapReduce(
     mapFunction,
     reduceFunction, {
-      limit: 1000000,
       out: { inline: 1 }
     }
   ));
