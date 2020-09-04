@@ -1,3 +1,5 @@
+import { ParHash } from "../RawDataTypes"
+
 type Input = {
   periode: Date
 }
@@ -7,7 +9,7 @@ export type SortieCcsf = {
 }
 
 export function ccsf(
-  vCcsf: Record<string, { date_traitement: Date }>,
+  vCcsf: ParHash<{ date_traitement: Date }>,
   output_array: (Input & Partial<SortieCcsf>)[]
 ): void {
   "use strict"

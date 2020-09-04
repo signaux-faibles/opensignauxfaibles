@@ -42,7 +42,7 @@ export function lookAhead(
         }
       }
       return m
-    }, {} as Record<string, Outcome>)
+    }, {} as ParPériode<Outcome>)
 
   return output
 }

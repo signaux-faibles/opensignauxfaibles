@@ -54,7 +54,7 @@ export function cibleApprentissage(
         ...outputTimes,
       },
     }
-  }, {} as Record<string, Times>)
+  }, {} as ParPériode<Times>)
 
   return output_cible
 }

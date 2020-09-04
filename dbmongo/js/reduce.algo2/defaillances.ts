@@ -1,12 +1,12 @@
 import * as f from "./dealWithProcols"
 import { SortieProcols } from "./dealWithProcols"
-import { EntréeDefaillances, ParPériode } from "../RawDataTypes"
+import { EntréeDefaillances, ParPériode, ParHash } from "../RawDataTypes"
 
 export type SortieDefaillances = SortieProcols
 
 export function defaillances(
-  altares: Record<string, EntréeDefaillances>,
-  procol: Record<string, EntréeDefaillances>,
+  altares: ParHash<EntréeDefaillances>,
+  procol: ParHash<EntréeDefaillances>,
   output_indexed: ParPériode<Partial<SortieDefaillances>>
 ): void {
   "use strict"

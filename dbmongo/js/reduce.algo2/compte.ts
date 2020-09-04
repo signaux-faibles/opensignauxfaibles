@@ -1,8 +1,8 @@
-import { EntréeCompte, ParPériode, Periode } from "../RawDataTypes"
+import { EntréeCompte, ParPériode, Periode, ParHash } from "../RawDataTypes"
 
 type SortieCompte = ParPériode<{ compte_urssaf: unknown }>
 
-export function compte(compte: Record<string, EntréeCompte>): SortieCompte {
+export function compte(compte: ParHash<EntréeCompte>): SortieCompte {
   "use strict"
   const output_compte: SortieCompte = {}
 
