@@ -1,3 +1,5 @@
+import { EntréeRepOrder } from "../RawDataTypes"
+
 export type SortieRepeatable = { random_order: number }
 
 export function repeatable(

@@ -1,4 +1,5 @@
 import * as f from "../common/region"
+import { EntréeSirene } from "../RawDataTypes"
 
 type Input = {
   periode: Date

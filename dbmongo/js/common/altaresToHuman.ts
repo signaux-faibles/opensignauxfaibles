@@ -1,3 +1,5 @@
+import { EntréeDefaillances } from "../RawDataTypes"
+
 export type AltaresToHumanRes =
   | "liquidation"
   | "in_bonis"

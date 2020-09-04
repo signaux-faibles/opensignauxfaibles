@@ -16,6 +16,7 @@ import {
   CompanyDataValuesWithFlags,
   CompanyDataValues,
   Scope,
+  EntréeRepOrder,
 } from "../RawDataTypes"
 
 const removeRandomOrder = (reporderProp: {

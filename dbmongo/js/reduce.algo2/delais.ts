@@ -1,5 +1,6 @@
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { nbDays } from "./nbDays"
+import { EntréeDelai } from "../RawDataTypes"
 
 type DeepReadonly<T> = Readonly<T> // pas vraiment, mais espoire que TS le supporte prochainement
 

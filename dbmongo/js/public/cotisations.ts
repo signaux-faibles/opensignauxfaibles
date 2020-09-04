@@ -1,5 +1,6 @@
 import { dateAddMonth } from "../common/dateAddMonth"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
+import { EntréeCotisation } from "../RawDataTypes"
 
 // Paramètres globaux utilisés par "public"
 declare const serie_periode: Date[]

@@ -15,7 +15,15 @@ import { dateAddDay } from "./dateAddDay"
 import { dealWithProcols, SortieProcols } from "./dealWithProcols"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { omit } from "../common/omit"
-import { CompanyDataValues, BatchKey } from "../RawDataTypes"
+import {
+  CompanyDataValues,
+  BatchKey,
+  EntréeApConso,
+  EntréeApDemande,
+  EntréeDelai,
+  EntréeDefaillances,
+  EntréeDiane,
+} from "../RawDataTypes"
 
 type SortieMapCommon = {
   key: string

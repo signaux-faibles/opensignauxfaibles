@@ -1,5 +1,6 @@
 import * as f from "./dealWithProcols"
 import { SortieProcols } from "./dealWithProcols"
+import { EntréeDefaillances } from "../RawDataTypes"
 
 export type SortieDefaillances = SortieProcols
 

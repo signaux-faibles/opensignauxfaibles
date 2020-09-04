@@ -1,4 +1,5 @@
 import * as f from "./iterable"
+import { EntréeApConso } from "../RawDataTypes"
 
 export function apconso(
   apconso?: Record<DataHash, EntréeApConso>

@@ -1,4 +1,5 @@
 import "../globals.ts"
+import { EntréeCompte } from "../RawDataTypes"
 
 type SortieCompte = ParPériode<{ compte_urssaf: unknown }>
 

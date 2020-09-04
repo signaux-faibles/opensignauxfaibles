@@ -1,3 +1,5 @@
+import { EntréeDefaillances } from "../RawDataTypes"
+
 export type ProcolToHumanRes =
   | "liquidation"
   | "in_bonis"

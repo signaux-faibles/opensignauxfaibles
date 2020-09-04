@@ -1,4 +1,5 @@
 import * as f from "../common/dateAddMonth"
+import { EntréeInterim } from "../RawDataTypes"
 
 type Input = {
   effectif: number | null

@@ -1,4 +1,5 @@
 import * as f from "../common/generatePeriodSerie"
+import { EntréeApDemande, EntréeApConso } from "../RawDataTypes"
 
 type ApConsoHash = string
 

@@ -6,6 +6,7 @@ import {
   CompanyDataValuesWithCompact,
   BatchValueWithCompact,
 } from "./applyPatchesToBatch"
+import { EntréeRepOrder } from "../RawDataTypes"
 
 const SIRET = "123"
 const DATE_DEBUT = new Date("2014-01-01")

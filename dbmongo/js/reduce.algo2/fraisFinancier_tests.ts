@@ -1,6 +1,7 @@
 import "../globals"
 import test from "ava"
 import { fraisFinancier, DianeProperty } from "./fraisFinancier"
+import { EntréeDiane } from "../RawDataTypes"
 
 const fakeDiane = () => ({
   interets: 50,

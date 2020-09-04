@@ -1,3 +1,5 @@
+import { EntréeDiane } from "../RawDataTypes"
+
 export type DianeProperty =
   | "interets"
   | "excedent_brut_d_exploitation"
