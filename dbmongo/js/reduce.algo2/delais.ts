@@ -1,4 +1,4 @@
-import * as f from "../common/generatePeriodSerie"
+import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { nbDays } from "./nbDays"
 
 type DeepReadonly<T> = Readonly<T> // pas vraiment, mais espoire que TS le supporte prochainement
@@ -35,6 +35,7 @@ export function delais(
   intervalleTraitement: { premièreDate: Date; dernièreDate: Date }
 ): ParPériode<DelaiComputedValues> {
   "use strict"
+  const f = { generatePeriodSerie } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
   const donnéesDélaiParPériode: ParPériode<DelaiComputedValues> = {}
   Object.keys(vDelai).forEach(function (hash) {
     const delai = vDelai[hash]

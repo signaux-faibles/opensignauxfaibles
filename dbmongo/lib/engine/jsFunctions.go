@@ -526,6 +526,7 @@ function currentState(batches) {
 // l'échantillonnage pour l'entraînement du modèle.
 function finalize(k, companyDataValues) {
     "use strict";
+
     let o = Object.assign(Object.assign({}, companyDataValues), { index: { algo1: false, algo2: false } });
     if (o.scope === "entreprise") {
         o.index.algo1 = true;
@@ -639,6 +640,7 @@ function listHashesToAddAndDelete(currentBatch, stockTypes, memory) {
 function reduce(key, values // chaque element contient plusieurs batches pour cette entreprise ou établissement
 ) {
     "use strict";
+
     // Tester si plusieurs batchs. Reduce complet uniquement si plusieurs
     // batchs. Sinon, juste fusion des attributs
     const auxBatchSet = new Set();
@@ -761,17 +763,20 @@ db.getCollection("Features").createIndex({
 },
 "public":{
 "apconso": `function apconso(apconso) {
+
     return f
         .iterable(apconso)
         .sort((p1, p2) => (p1.periode < p2.periode ? 1 : -1));
 }`,
 "apdemande": `function apdemande(apdemande) {
+
     return f
         .iterable(apdemande)
         .sort((p1, p2) => p1.periode.start.getTime() < p2.periode.start.getTime() ? 1 : -1);
 }`,
 "bdf": `function bdf(hs) {
     "use strict";
+
     const bdf = {};
     // Déduplication par arrete_bilan_bdf
     f.iterable(hs)
@@ -784,6 +789,7 @@ db.getCollection("Features").createIndex({
         .sort((a, b) => (a.annee_bdf < b.annee_bdf ? 1 : -1));
 }`,
 "compte": `function compte(compte) {
+
     const c = f.iterable(compte);
     return c.length > 0 ? c[c.length - 1] : undefined;
 }`,
@@ -907,10 +913,12 @@ db.getCollection("Features").createIndex({
     }));
 }`,
 "delai": `function delai(delai) {
+
     return f.iterable(delai);
 }`,
 "diane": `function diane(hs) {
     "use strict";
+
     const diane = {};
     // Déduplication par arrete_bilan_diane
     f.iterable(hs)
@@ -923,6 +931,7 @@ db.getCollection("Features").createIndex({
         .sort((a, b) => (a.exercice_diane < b.exercice_diane ? 1 : -1));
 }`,
 "effectifs": `function effectifs(effectif) {
+
     const mapEffectif = {};
     f.iterable(effectif).forEach((e) => {
         mapEffectif[e.periode.getTime()] =

@@ -1,4 +1,4 @@
-import * as f from "../common/dateAddMonth"
+import { dateAddMonth } from "../common/dateAddMonth"
 
 type Input = {
   effectif: number | null
@@ -17,6 +17,8 @@ export function interim(
   output_indexed: Record<string, Input>
 ): Record<string, SortieInterim> {
   "use strict"
+  const f = { dateAddMonth } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
+
   const output_effectif = output_indexed
   // let periodes = Object.keys(output_indexed)
   // output_indexed devra être remplacé par output_effectif, et ne contenir que les données d'effectif.

@@ -1,5 +1,5 @@
 import "../globals"
-import * as f from "./lookAhead"
+import { lookAhead } from "./lookAhead"
 
 type Times = {
   time_til_default?: number
@@ -13,6 +13,7 @@ export function cibleApprentissage(
   n_months: number
 ): { [k: string]: Partial<Times> } {
   "use strict"
+  const f = { lookAhead } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
 
   // Mock two input instead of one for future modification
   const output_cotisation = output_indexed
