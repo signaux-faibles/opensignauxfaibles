@@ -1,8 +1,8 @@
 import * as f from "./iterable"
-import { EntréeApDemande, DataHash } from "../RawDataTypes"
+import { EntréeApDemande, ParHash } from "../RawDataTypes"
 
 export function apdemande(
-  apdemande?: Record<DataHash, EntréeApDemande>
+  apdemande?: ParHash<EntréeApDemande>
 ): EntréeApDemande[] {
   return f
     .iterable(apdemande)

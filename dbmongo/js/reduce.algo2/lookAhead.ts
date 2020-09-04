@@ -1,14 +1,16 @@
+import { ParPériode } from "../RawDataTypes"
+
 type Outcome = {
   time_til_outcome: number
   outcome: boolean
 }
 
 export function lookAhead(
-  data: { [period: string]: Record<string, unknown> },
+  data: ParPériode<Record<string, unknown>>,
   attr_name: string,
   n_months: number,
   past: boolean
-): { [period: string]: Outcome } {
+): ParPériode<Outcome> {
   "use strict"
   // Est-ce que l'évènement se répercute dans le passé (past = true on pourra se
   // demander: que va-t-il se passer) ou dans le future (past = false on

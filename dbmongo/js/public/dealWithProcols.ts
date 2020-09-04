@@ -1,6 +1,6 @@
 import { altaresToHuman, AltaresToHumanRes } from "../common/altaresToHuman"
 import { procolToHuman, ProcolToHumanRes } from "../common/procolToHuman"
-import { EntréeDefaillances, DataHash } from "../RawDataTypes"
+import { EntréeDefaillances, ParHash } from "../RawDataTypes"
 
 export type SortieProcols = {
   etat: AltaresToHumanRes | ProcolToHumanRes
@@ -8,7 +8,7 @@ export type SortieProcols = {
 }
 
 export function dealWithProcols(
-  data_source: Record<DataHash, EntréeDefaillances> = {},
+  data_source: ParHash<EntréeDefaillances> = {},
   altar_or_procol: "altares" | "procol"
 ): SortieProcols[] {
   const f = { altaresToHuman, procolToHuman } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO

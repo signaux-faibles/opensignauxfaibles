@@ -2,7 +2,7 @@ import { forEachPopulatedProp } from "../common/forEachPopulatedProp"
 import { BatchValueWithCompact } from "./applyPatchesToBatch"
 import { DataHash } from "../RawDataTypes"
 
-export type CurrentDataState = { [key: string]: Set<DataHash> }
+export type CurrentDataState = Record<string, Set<DataHash>>
 
 // currentState() agrège un ensemble de batch, en tenant compte des suppressions
 // pour renvoyer le dernier état connu des données.

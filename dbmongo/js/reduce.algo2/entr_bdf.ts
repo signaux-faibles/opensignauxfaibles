@@ -4,7 +4,7 @@ import { omit } from "../common/omit"
 import {
   EntréeBdfRatios,
   EntréeBdf,
-  DataHash,
+  ParHash,
   Timestamp,
   ParPériode,
 } from "../RawDataTypes"
@@ -32,7 +32,7 @@ type RatiosBdfPassés = {
 }
 
 export function entr_bdf(
-  donnéesBdf: Record<DataHash, EntréeBdf>,
+  donnéesBdf: ParHash<EntréeBdf>,
   periodes: Timestamp[]
 ): ParPériode<Partial<SortieBdf>> {
   "use strict"

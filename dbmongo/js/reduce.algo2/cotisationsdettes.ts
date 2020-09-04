@@ -5,7 +5,7 @@ import {
   EntréeDebit,
   EntréeCotisation,
   Timestamp,
-  Periode,
+  ParPériode,
 } from "../RawDataTypes"
 
 type EcartNegatif = {
@@ -58,7 +58,7 @@ export function cotisationsdettes(
   // Permet de s'aligner avec le calendrier de fourniture des données
   const lastAccountedDay = 20
 
-  const sortieCotisationsDettes: Record<Periode, SortieCotisationsDettes> = {}
+  const sortieCotisationsDettes: ParPériode<SortieCotisationsDettes> = {}
 
   const value_cotisation: Record<string, number[]> = {}
 

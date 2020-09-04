@@ -4,12 +4,12 @@ import { omit } from "../common/omit"
 import { poidsFrng } from "./poidsFrng"
 import { detteFiscale } from "./detteFiscale"
 import { fraisFinancier } from "./fraisFinancier"
-import { EntréeDiane, DataHash, ParPériode, Timestamp } from "../RawDataTypes"
+import { EntréeDiane, ParHash, ParPériode, Timestamp } from "../RawDataTypes"
 
 export type SortieDiane = Record<string, unknown> // for *_past_* props of diane. // TODO: try to be more specific
 
 export function entr_diane(
-  donnéesDiane: Record<DataHash, EntréeDiane>,
+  donnéesDiane: ParHash<EntréeDiane>,
   output_indexed: ParPériode<SortieDiane>,
   periodes: Timestamp[]
 ): ParPériode<SortieDiane> {

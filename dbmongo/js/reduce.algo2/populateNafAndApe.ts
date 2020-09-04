@@ -1,4 +1,4 @@
-import { CodeAPE } from "../RawDataTypes"
+import { CodeAPE, ParPériode } from "../RawDataTypes"
 
 type CodeAPENiveau2 = string
 type CodeAPENiveau3 = string
@@ -35,7 +35,7 @@ export type SortieNAF = {
 }
 
 export function populateNafAndApe(
-  output_indexed: { [k: string]: Partial<Input> & Partial<SortieNAF> },
+  output_indexed: ParPériode<Partial<Input> & Partial<SortieNAF>>,
   naf: NAF
 ): void {
   "use strict"

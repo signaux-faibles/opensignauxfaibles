@@ -7,11 +7,9 @@ type Times = {
 }
 
 export function cibleApprentissage(
-  output_indexed: {
-    [k: string]: { tag_failure?: boolean; tag_default?: boolean }
-  },
+  output_indexed: ParPériode<{ tag_failure?: boolean; tag_default?: boolean }>,
   n_months: number
-): { [k: string]: Partial<Times> } {
+): ParPériode<Partial<Times>> {
   "use strict"
 
   // Mock two input instead of one for future modification

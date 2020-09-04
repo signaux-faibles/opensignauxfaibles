@@ -1,5 +1,5 @@
 import * as f from "./iterable"
-import { EntréeEffectif, DataHash, ParPériode } from "../RawDataTypes"
+import { EntréeEffectif, ParHash, ParPériode } from "../RawDataTypes"
 
 // Paramètres globaux utilisés par "public"
 declare const serie_periode: Date[]
@@ -10,7 +10,7 @@ export type SortieEffectif = {
 }
 
 export function effectifs(
-  effectif?: Record<DataHash, EntréeEffectif>
+  effectif?: ParHash<EntréeEffectif>
 ): SortieEffectif[] {
   const mapEffectif: ParPériode<number> = {}
   f.iterable(effectif).forEach((e) => {

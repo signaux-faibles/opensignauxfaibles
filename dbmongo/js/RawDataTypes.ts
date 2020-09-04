@@ -43,7 +43,7 @@ export type DataType = keyof BatchValueProps // => 'reporder' | 'effectif' | 'ap
 export type BatchValue = Partial<BatchValueProps>
 
 export type BatchValueProps = {
-  reporder: Record<Periode, EntréeRepOrder> // RepOrder est généré par "compact", et non importé => Usage de Periode en guise de hash d'indexation
+  reporder: ParPériode<EntréeRepOrder> // RepOrder est généré par "compact", et non importé => Usage de Periode en guise de hash d'indexation
   effectif: ParHash<EntréeEffectif>
   apconso: ParHash<EntréeApConso>
   apdemande: ParHash<EntréeApDemande>

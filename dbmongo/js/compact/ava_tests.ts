@@ -19,9 +19,9 @@ import {
   SiretOrSiren,
 } from "../RawDataTypes"
 
-const removeRandomOrder = (reporderProp: {
-  [key: string]: Partial<EntréeRepOrder>
-}): void =>
+const removeRandomOrder = (
+  reporderProp: Record<string, Partial<EntréeRepOrder>>
+): void =>
   Object.keys(reporderProp).forEach((period) => {
     delete reporderProp[period].random_order
   })

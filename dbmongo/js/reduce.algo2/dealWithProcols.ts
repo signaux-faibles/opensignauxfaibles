@@ -1,6 +1,6 @@
 import { altaresToHuman, AltaresToHumanRes } from "../common/altaresToHuman"
 import { procolToHuman, ProcolToHumanRes } from "../common/procolToHuman"
-import { EntréeDefaillances } from "../RawDataTypes"
+import { EntréeDefaillances, ParHash, ParPériode } from "../RawDataTypes"
 
 export type InputEvent = EntréeDefaillances
 
@@ -16,11 +16,9 @@ export type SortieProcols = {
 }
 
 export function dealWithProcols(
-  data_source: { [hash: string]: InputEvent },
+  data_source: ParHash<InputEvent>,
   altar_or_procol: "altares" | "procol",
-  output_indexed: {
-    [time: string]: Partial<SortieProcols>
-  }
+  output_indexed: ParPériode<Partial<SortieProcols>>
 ): void {
   "use strict"
   const f = { altaresToHuman, procolToHuman } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO

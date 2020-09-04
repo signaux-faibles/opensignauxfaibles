@@ -1,11 +1,5 @@
 import * as f from "../common/dateAddMonth"
-import {
-  EntréeEffectif,
-  DataHash,
-  Timestamp,
-  ParPériode,
-  Periode,
-} from "../RawDataTypes"
+import { EntréeEffectif, ParHash, Timestamp, ParPériode } from "../RawDataTypes"
 
 // Paramètres globaux utilisés par "reduce.algo2"
 declare const offset_effectif: number
@@ -28,7 +22,7 @@ type SortieEffectifs = Record<CléSortieEffectif, ValeurEffectif | null> &
   Record<CléSortieEffectifReporté, 1 | 0> &
   Record<CléSortieEffectifPassé, ValeurEffectif>
 
-type EffectifEntreprise = Record<DataHash, EntréeEffectif>
+type EffectifEntreprise = ParHash<EntréeEffectif>
 
 export function effectifs(
   entréeEffectif: EffectifEntreprise,
@@ -40,7 +34,7 @@ export function effectifs(
   const sortieEffectif: ParPériode<SortieEffectifs> = {}
 
   // Construction d'une map[time] = effectif à cette periode
-  const mapEffectif: Record<Periode, ValeurEffectif> = {}
+  const mapEffectif: ParPériode<ValeurEffectif> = {}
 
   Object.keys(entréeEffectif).forEach((hash) => {
     const effectif = entréeEffectif[hash]
