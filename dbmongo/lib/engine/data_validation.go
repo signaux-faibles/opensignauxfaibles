@@ -38,7 +38,6 @@ func LoadJSONSchemaFiles() (jsonSchema map[string]bson.M, err error) {
 
 // GetRawDataValidationPipeline produit un pipeline pour retourner la listes des documents invalides depuis RawData.
 func GetRawDataValidationPipeline(jsonSchema map[string]bson.M) (pipeline []bson.M, err error) {
-	dataType := "delai"
 
 	flattenPipeline, err := parseJSONArray("validation/flatten_RawData.pipeline.json")
 	if err != nil {
@@ -47,36 +46,26 @@ func GetRawDataValidationPipeline(jsonSchema map[string]bson.M) (pipeline []bson
 
 	pipeline = append(pipeline, flattenPipeline...)
 
-	pipeline = append(pipeline, bson.M{
-		"$match": bson.M{
-			"$or": []bson.M{
+	matchers := []bson.M{}
+	for dataType, schema := range jsonSchema {
+		matchers = append(matchers, bson.M{
+			"dataType": dataType,
+			"$nor": []bson.M{
 				{
-					"dataType": dataType,
-					"$nor": []bson.M{
-						{
-							"$jsonSchema": bson.M{
-								"bsonType": "object",
-								"properties": bson.M{
-									"dataObject": jsonSchema[dataType],
-								},
-							},
-						},
-					},
-				},
-				{
-					"dataType": "bdf",
-					"$nor": []bson.M{
-						{
-							"$jsonSchema": bson.M{
-								"bsonType": "object",
-								"properties": bson.M{
-									"dataObject": jsonSchema["bdf"],
-								},
-							},
+					"$jsonSchema": bson.M{
+						"bsonType": "object",
+						"properties": bson.M{
+							"dataObject": schema,
 						},
 					},
 				},
 			},
+		})
+	}
+
+	pipeline = append(pipeline, bson.M{
+		"$match": bson.M{
+			"$or": matchers,
 		},
 	})
 	return pipeline, nil
