@@ -164,9 +164,16 @@ func exportEntreprisesHandler(c *gin.Context) {
 func validateHandler(c *gin.Context) {
 	// On retourne le nom de fichier avant la fin du traitement, pour éviter erreur "Request timed out"
 	var filepath = viper.GetString("exportPath") + "dbmongo-rawdata-validation-" + getTimestamp() + ".json.gz"
-	c.JSON(200, filepath)
 
-	err := engine.ValidateRawData(filepath)
+	jsonSchema, err := engine.LoadJSONSchemaFiles()
+	if err != nil {
+		c.JSON(500, err)
+		return
+	} else {
+		c.JSON(200, filepath)
+	}
+
+	err = engine.ValidateRawData(filepath, jsonSchema)
 	if err != nil {
 		c.AbortWithError(500, err)
 	}

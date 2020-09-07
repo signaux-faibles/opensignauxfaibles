@@ -23,21 +23,28 @@ func parseJSONArray(filename string) (array []bson.M, err error) {
 	return array, err
 }
 
+func LoadJSONSchemaFiles() (jsonSchema map[string]bson.M, err error) {
+	jsonSchema = make(map[string]bson.M)
+
+	dataType := "delai"
+	jsonSchema[dataType], err = parseJSONObject("validation/" + dataType + ".schema.json")
+	if err != nil {
+		return nil, err
+	}
+
+	jsonSchema["bdf"], err = parseJSONObject("validation/bdSf.schema.json")
+	if err != nil {
+		return nil, err
+	}
+
+	return jsonSchema, nil
+}
+
 // GetRawDataValidationPipeline produit un pipeline pour retourner la listes des documents invalides depuis RawData.
-func GetRawDataValidationPipeline() (pipeline []bson.M, err error) {
+func GetRawDataValidationPipeline(jsonSchema map[string]bson.M) (pipeline []bson.M, err error) {
 	dataType := "delai"
 
 	flattenPipeline, err := parseJSONArray("validation/flatten_RawData.pipeline.json")
-	if err != nil {
-		return nil, err
-	}
-
-	jsonSchema, err := parseJSONObject("validation/" + dataType + ".schema.json")
-	if err != nil {
-		return nil, err
-	}
-
-	jsonSchemaBdf, err := parseJSONObject("validation/bdf.schema.json")
 	if err != nil {
 		return nil, err
 	}
@@ -54,7 +61,7 @@ func GetRawDataValidationPipeline() (pipeline []bson.M, err error) {
 							"$jsonSchema": bson.M{
 								"bsonType": "object",
 								"properties": bson.M{
-									"dataObject": jsonSchema,
+									"dataObject": jsonSchema[dataType],
 								},
 							},
 						},
@@ -67,7 +74,7 @@ func GetRawDataValidationPipeline() (pipeline []bson.M, err error) {
 							"$jsonSchema": bson.M{
 								"bsonType": "object",
 								"properties": bson.M{
-									"dataObject": jsonSchemaBdf,
+									"dataObject": jsonSchema["bdf"],
 								},
 							},
 						},
