@@ -10,8 +10,6 @@ set -e # will stop the script if any command fails with a non-zero exit code
 
 # Setup
 FLAGS="$*" # the script will update the golden file if "--update" flag was provided as 1st argument
-COLOR_YELLOW='\033[1;33m'
-COLOR_DEFAULT='\033[0m'
 INPUT_FILE="tests/input-data/RawData.validation.json"
 GOLDEN_FILE="tests/output-snapshots/test-api-validate.golden.json"
 TMP_DIR="tests/tmp-test-execution-files"
@@ -19,7 +17,6 @@ mkdir -p "${TMP_DIR}"
 
 # Clean up on exit
 function teardown {
-    echo -e "${COLOR_DEFAULT}"
     tests/helpers/dbmongo-server.sh stop || true # keep tearing down, even if "No matching processes belonging to you were found"
     tests/helpers/mongodb-container.sh stop
 }
