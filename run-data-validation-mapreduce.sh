@@ -46,7 +46,8 @@ cat > "dbvalid-mr.js" << CONTENT
   printjson(db.RawData.mapReduce(
     mapFunction,
     reduceFunction, {
-      limit: 1000000,
+      limit: 100000,
+      allowDiskUse: true,
       out: { inline: 1 }
     }
   ));
