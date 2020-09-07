@@ -350,3 +350,24 @@ func ExportEntreprises(key, filepath string) error {
 	w.Wait()
 	return nil
 }
+
+// ValidateRawData cherche les entrées de données invalides puis les retourne dans un fichier.
+func ValidateRawData(filepath string) error {
+	pipeline, err := GetRawDataValidationPipeline()
+	if err != nil {
+		return err
+	}
+	iter := Db.DB.C("RawData").Pipe(pipeline).AllowDiskUse().Iter()
+	w := sync.WaitGroup{}
+	gzipWriter := getItemChannelToGzip(filepath, &w)
+	var item interface{}
+	for iter.Next(&item) {
+		if err := iter.Err(); err != nil {
+			return err
+		}
+		gzipWriter <- item
+	}
+	close(gzipWriter)
+	w.Wait()
+	return nil
+}

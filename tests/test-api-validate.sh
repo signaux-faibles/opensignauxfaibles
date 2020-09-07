@@ -39,11 +39,13 @@ CONTENT
 echo ""
 echo "💎 Computing the Public collection thru dbmongo API..."
 tests/helpers/dbmongo-server.sh start
-OUTPUT_FILE=dbmongo/$(http --print=b --ignore-stdin :5000/api/data/validate collection=RawData | tr -d '"')
-echo "- POST /api/data/validate 👉 ${OUTPUT_FILE}"
+OUTPUT_GZ_FILE=dbmongo/$(http --print=b --ignore-stdin :5000/api/data/validate collection=RawData | tr -d '"')
+echo "- POST /api/data/validate 👉 ${OUTPUT_GZ_FILE}"
+OUTPUT_FILE="${TMP_DIR}/output.json"
+zcat < "${OUTPUT_GZ_FILE}" > "${OUTPUT_FILE}"
 
 tests/helpers/diff-or-update-golden-master.sh "${FLAGS}" "${GOLDEN_FILE}" "${OUTPUT_FILE}"
 
-rm "${OUTPUT_FILE}"
+rm "${OUTPUT_GZ_FILE}"
 rm -rf "${TMP_DIR}"
 # Now, the "trap" commands will clean up the rest.

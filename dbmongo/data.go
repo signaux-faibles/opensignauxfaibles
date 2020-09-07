@@ -160,3 +160,14 @@ func exportEntreprisesHandler(c *gin.Context) {
 		c.AbortWithError(500, err)
 	}
 }
+
+func validateHandler(c *gin.Context) {
+	// On retourne le nom de fichier avant la fin du traitement, pour éviter erreur "Request timed out"
+	var filepath = viper.GetString("exportPath") + "dbmongo-rawdata-validation-" + getTimestamp() + ".json.gz"
+	c.JSON(200, filepath)
+
+	err := engine.ValidateRawData(filepath)
+	if err != nil {
+		c.AbortWithError(500, err)
+	}
+}
