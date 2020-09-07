@@ -2,6 +2,15 @@
 
 # This helper generates JS commands for mongo shell to add sample data from objects.js.
 
+function raw_data_documents {
+  node --print -e '
+    const { makeObjects } = require("./dbmongo/js/test/data/objects.js");
+    makeObjects.toString()
+      .replace("ISODate => ([", "[")
+      .replace("])", "]");
+  '
+}
+
 cat << CONTENTS
   db.Admin.insertOne({
     "_id" : {
@@ -15,7 +24,8 @@ cat << CONTENTS
     },
     "name" : "TestData"
   })
-CONTENTS
 
-RAW_DATA_DOCUMENTS=$(node --print -e "require('./dbmongo/js/test/data/objects.js').makeObjects.toString().replace('ISODate => ([', '[').replace('])', ']')")
-echo "db.RawData.insertMany(${RAW_DATA_DOCUMENTS})"
+  db.RawData.insertMany(
+    $(raw_data_documents)
+  )
+CONTENTS
