@@ -25,7 +25,7 @@ func parseJSONArray(filename string) (array []bson.M, err error) {
 
 // GetRawDataValidationPipeline produit un pipeline pour retourner la listes des documents invalides depuis RawData.
 func GetRawDataValidationPipeline() (pipeline []bson.M, err error) {
-	// dataType := "delai"
+	dataType := "delai"
 
 	flattenPipeline, err := parseJSONArray("validation/flatten_RawData.pipeline.json")
 	if err != nil {
@@ -40,18 +40,16 @@ func GetRawDataValidationPipeline() (pipeline []bson.M, err error) {
 	// fmt.Printf("jsonSchema: %s", jsonSchema)
 
 	pipeline = append(pipeline, flattenPipeline...)
-	// pipeline = append(pipeline, bson.M{
-	// 	"$match": []bson.M{
-	// 		bson.M{
-	// 			"dataType": dataType,
-	// 			"$jsonSchema": bson.M{
-	// 				"bsonType": "object",
-	// 				"properties": bson.M{
-	// 					"dataObject": jsonSchema,
-	// 				},
-	// 			},
-	// 		},
-	// 	},
-	// })
+	pipeline = append(pipeline, bson.M{
+		"$match": bson.M{
+			"dataType": dataType,
+			// 			"$jsonSchema": bson.M{
+			// 				"bsonType": "object",
+			// 				"properties": bson.M{
+			// 					"dataObject": jsonSchema,
+			// 				},
+			// 			},
+		},
+	})
 	return pipeline, nil
 }
