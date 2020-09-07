@@ -23,20 +23,16 @@ func parseJSONArray(filename string) (array []bson.M, err error) {
 	return array, err
 }
 
+// LoadJSONSchemaFiles cherche les Schemas JSON pour GetRawDataValidationPipeline.
 func LoadJSONSchemaFiles() (jsonSchema map[string]bson.M, err error) {
 	jsonSchema = make(map[string]bson.M)
-
-	dataType := "delai"
-	jsonSchema[dataType], err = parseJSONObject("validation/" + dataType + ".schema.json")
-	if err != nil {
-		return nil, err
+	dataTypes := []string{"bdf", "delai"}
+	for _, dataType := range dataTypes {
+		jsonSchema[dataType], err = parseJSONObject("validation/" + dataType + ".schema.json")
+		if err != nil {
+			return nil, err
+		}
 	}
-
-	jsonSchema["bdf"], err = parseJSONObject("validation/bdSf.schema.json")
-	if err != nil {
-		return nil, err
-	}
-
 	return jsonSchema, nil
 }
 
