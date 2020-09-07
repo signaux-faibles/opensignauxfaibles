@@ -3,6 +3,9 @@ package engine
 import (
 	"encoding/json"
 	"io/ioutil"
+	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/globalsign/mgo/bson"
 )
@@ -23,12 +26,32 @@ func parseJSONArray(filename string) (array []bson.M, err error) {
 	return array, err
 }
 
+// listJSONSchemaFiles retourne la liste des fichiers JSON Schema présents dans le répertoire validation.
+func listJSONSchemaFiles() ([]string, error) {
+	var files []string
+	rootDir := "validation"
+	err := filepath.Walk(rootDir, func(filePath string, info os.FileInfo, err error) error {
+		if err == nil && strings.Contains(filePath, ".schema.json") {
+			files = append(files, filePath)
+		}
+		return err
+	})
+	if err != nil {
+		return nil, err
+	}
+	return files, nil
+}
+
 // LoadJSONSchemaFiles cherche les Schemas JSON pour GetRawDataValidationPipeline.
 func LoadJSONSchemaFiles() (jsonSchema map[string]bson.M, err error) {
 	jsonSchema = make(map[string]bson.M)
-	dataTypes := []string{"bdf", "delai"}
-	for _, dataType := range dataTypes {
-		jsonSchema[dataType], err = parseJSONObject("validation/" + dataType + ".schema.json")
+	files, err := listJSONSchemaFiles()
+	if err != nil {
+		return nil, err
+	}
+	for _, filePath := range files {
+		dataType := strings.Replace(filepath.Base(filePath), ".schema.json", "", 1)
+		jsonSchema[dataType], err = parseJSONObject(filePath)
 		if err != nil {
 			return nil, err
 		}
