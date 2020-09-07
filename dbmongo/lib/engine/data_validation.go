@@ -27,10 +27,10 @@ func parseJSONArray(filename string) (array []bson.M, err error) {
 func GetRawDataValidationPipeline() (pipeline []bson.M, err error) {
 	// dataType := "delai"
 
-	// flattenPipeline, err := parseJSONArray("validation/flatten_RawData.pipeline.json")
-	// if err != nil {
-	// 	return nil, err
-	// }
+	flattenPipeline, err := parseJSONArray("validation/flatten_RawData.pipeline.json")
+	if err != nil {
+		return nil, err
+	}
 	// fmt.Printf("flattenPipeline: %s", flattenPipeline)
 
 	// jsonSchema, err := parseJSONObject("validation/" + dataType + ".schema.json")
@@ -39,7 +39,7 @@ func GetRawDataValidationPipeline() (pipeline []bson.M, err error) {
 	// }
 	// fmt.Printf("jsonSchema: %s", jsonSchema)
 
-	//pipeline = append(pipeline, flattenPipeline...)
+	pipeline = append(pipeline, flattenPipeline...)
 	// pipeline = append(pipeline, bson.M{
 	// 	"$match": []bson.M{
 	// 		bson.M{

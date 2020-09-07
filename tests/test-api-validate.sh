@@ -13,7 +13,7 @@ FLAGS="$*" # the script will update the golden file if "--update" flag was provi
 COLOR_YELLOW='\033[1;33m'
 COLOR_DEFAULT='\033[0m'
 INPUT_FILE="tests/input-data/RawData.validation.json"
-GOLDEN_FILE="tests/output-snapshots/test-data-validation.golden.json"
+GOLDEN_FILE="tests/output-snapshots/test-api-validate.golden.json"
 TMP_DIR="tests/tmp-test-execution-files"
 mkdir -p "${TMP_DIR}"
 
