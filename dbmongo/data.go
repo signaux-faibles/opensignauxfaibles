@@ -169,9 +169,8 @@ func validateHandler(c *gin.Context) {
 	if err != nil {
 		c.JSON(500, err)
 		return
-	} else {
-		c.JSON(200, filepath)
 	}
+	c.JSON(200, filepath)
 
 	err = engine.ValidateRawData(filepath, jsonSchema)
 	if err != nil {
