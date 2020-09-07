@@ -31,15 +31,14 @@ func GetRawDataValidationPipeline() (pipeline []bson.M, err error) {
 	if err != nil {
 		return nil, err
 	}
-	// fmt.Printf("flattenPipeline: %s", flattenPipeline)
 
 	jsonSchema, err := parseJSONObject("validation/" + dataType + ".schema.json")
 	if err != nil {
 		return nil, err
 	}
-	// fmt.Printf("jsonSchema: %s", jsonSchema)
 
 	pipeline = append(pipeline, flattenPipeline...)
+
 	pipeline = append(pipeline, bson.M{
 		"$match": bson.M{
 			"dataType": dataType,
