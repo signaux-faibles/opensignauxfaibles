@@ -37,17 +37,39 @@ func GetRawDataValidationPipeline() (pipeline []bson.M, err error) {
 		return nil, err
 	}
 
+	jsonSchemaBdf, err := parseJSONObject("validation/bdf.schema.json")
+	if err != nil {
+		return nil, err
+	}
+
 	pipeline = append(pipeline, flattenPipeline...)
 
 	pipeline = append(pipeline, bson.M{
 		"$match": bson.M{
-			"dataType": dataType,
-			"$nor": []bson.M{
+			"$or": []bson.M{
 				{
-					"$jsonSchema": bson.M{
-						"bsonType": "object",
-						"properties": bson.M{
-							"dataObject": jsonSchema,
+					"dataType": dataType,
+					"$nor": []bson.M{
+						{
+							"$jsonSchema": bson.M{
+								"bsonType": "object",
+								"properties": bson.M{
+									"dataObject": jsonSchema,
+								},
+							},
+						},
+					},
+				},
+				{
+					"dataType": "bdf",
+					"$nor": []bson.M{
+						{
+							"$jsonSchema": bson.M{
+								"bsonType": "object",
+								"properties": bson.M{
+									"dataObject": jsonSchemaBdf,
+								},
+							},
 						},
 					},
 				},

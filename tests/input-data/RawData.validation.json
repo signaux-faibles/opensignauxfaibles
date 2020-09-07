@@ -22,6 +22,16 @@
           }
         },
         "1803": {
+          "bdf": {
+            "hash-siren-manquant": {
+            },
+            "hash-siren-invalide": {
+              "siren": "123"
+            },
+            "hash-siren-valide": {
+              "siren": "123456789"
+            }
+          },
           "delai": {
             "hash-date-manquante": {
               "date_echeance": ISODate("2016-09-01T00:00:00.000+0000"),
