@@ -32,6 +32,8 @@ jobs:
 
       - run: ./tests/test-api.sh
 
+      - run: ./tests/test-api-validate.sh
+
       - run: ./tests/test-api-export.sh
 
       - run: ./tests/test-api-public.sh
