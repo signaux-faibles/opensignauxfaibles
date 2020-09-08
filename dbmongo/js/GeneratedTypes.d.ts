@@ -8,10 +8,10 @@
  * - then, run generate-types.sh to regenerate this file.
  */
 
-export interface EntreeBdf {
+export interface EntréeBdf {
   siren: string
 }
-export interface EntreeDelai {
+export interface EntréeDelai {
   date_creation: Date
   date_echeance: Date
   /**
