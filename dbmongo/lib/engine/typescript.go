@@ -71,3 +71,15 @@ func GlobalizeJsFunctions(jsRootDir string) {
 		log.Fatal(err)
 	}
 }
+
+// GenerateDataTypes génère les types TypeScript à partir des fichiers JSON Schema.
+func GenerateDataTypes(jsRootDir string) {
+	cmd := exec.Command("bash", "generate-types.sh") // output: .js files
+	cmd.Dir = jsRootDir
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err := cmd.Run()
+	if err != nil {
+		log.Fatal(err)
+	}
+}
