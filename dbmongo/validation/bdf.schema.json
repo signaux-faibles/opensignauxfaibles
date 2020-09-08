@@ -1,4 +1,5 @@
 {
+  "title": "EntréeBdf",
   "bsonType": "object",
   "required": ["siren"],
   "properties": {
