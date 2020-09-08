@@ -20,5 +20,6 @@
       "minimum": 0.01,
       "description": "doit valoir plus que 0 euros"
     }
-  }
+  },
+  "additionalProperties": false
 }

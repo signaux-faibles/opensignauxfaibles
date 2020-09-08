@@ -10,7 +10,6 @@
 
 export interface EntreeBdf {
   siren: string
-  [k: string]: unknown
 }
 export interface EntreeDelai {
   date_creation: Date
@@ -23,5 +22,4 @@ export interface EntreeDelai {
    * doit valoir plus que 0 euros
    */
   montant_echeancier: number
-  [k: string]: unknown
 }

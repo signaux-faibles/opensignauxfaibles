@@ -7,5 +7,6 @@
       "bsonType": "string",
       "pattern": "^[0-9]{9}$"
     }
-  }
+  },
+  "additionalProperties": false
 }
