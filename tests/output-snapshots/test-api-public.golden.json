@@ -987,28 +987,23 @@
 				"numero_compte" : "123456789012345678",
 				"periode" : ISODate("2019-05-01T00:00:00Z")
 			},
-			"procol" : {
-				"e7da557c81a83b6eca936ef9f514a625" : {
+			"procol" : [
+				{
 					"date_effet" : ISODate("2014-03-26T00:00:00Z"),
 					"action_procol" : "sauvegarde",
 					"stade_procol" : "solde_procedure"
 				},
-				"de23097a12d0de1604a5b609adcbc47b" : {
+				{
 					"date_effet" : ISODate("2017-10-25T00:00:00Z"),
 					"action_procol" : "redressement",
 					"stade_procol" : "ouverture"
 				},
-				"626d39c82c5411b183e2e84a6e288c11" : {
+				{
 					"date_effet" : ISODate("2018-04-25T00:00:00Z"),
 					"action_procol" : "liquidation",
 					"stade_procol" : "ouverture"
 				}
-			},
-			"last_procol" : {
-				"etat" : "liquidation",
-				"date_procol" : ISODate("2018-04-25T00:00:00Z")
-			},
-			"idEntreprise" : "entreprise_123456789"
+			]
 		}
 	}
 ]

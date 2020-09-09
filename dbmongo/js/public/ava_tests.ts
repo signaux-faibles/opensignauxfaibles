@@ -13,7 +13,6 @@ import { runMongoMap } from "../test/helpers/mongodb"
 import { setGlobals } from "../test/helpers/setGlobals"
 
 // test data inspired by test-api.sh
-const SIREN_LENGTH = 9
 const siret: SiretOrSiren = "01234567891011"
 const scope: Scope = "etablissement"
 const batchKey = "1910"
@@ -38,7 +37,6 @@ const rawData = {
 const etablissementKey = scope + "_" + siret
 
 const expectedMapResults = {
-  // TODO: structure et valeurs à confirmer
   [etablissementKey]: {
     apconso: [],
     apdemande: [],
@@ -50,20 +48,16 @@ const expectedMapResults = {
     debit_part_patronale: dates.map(() => 0),
     delai: [],
     effectif: [null, null],
-    idEntreprise: "entreprise_" + siret.substr(0, SIREN_LENGTH),
     key: siret,
-    last_procol: {
-      etat: "in_bonis",
-    },
     periodes: dates,
-    procol: undefined,
+    procol: [],
     sirene: {},
   },
 }
 
-const expectedReduceResults = expectedMapResults[etablissementKey] // TODO: à confirmer
+const expectedReduceResults = expectedMapResults[etablissementKey]
 
-const expectedFinalizeResultValue = expectedMapResults[etablissementKey] // TODO: à confirmer
+const expectedFinalizeResultValue = expectedMapResults[etablissementKey]
 
 // exécution complète de la chaine "public"
 
