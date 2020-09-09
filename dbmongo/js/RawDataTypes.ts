@@ -1,3 +1,5 @@
+/* eslint-disable no-use-before-define */
+
 // Types de données de base
 
 export type Periode = string // Date.toString()
