@@ -12,7 +12,6 @@ import { diane } from "./diane"
 import { sirene } from "./sirene"
 import { cotisations } from "./cotisations"
 import { dateAddDay } from "./dateAddDay"
-import { dealWithProcols, SortieProcols } from "./dealWithProcols"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { omit } from "../common/omit"
 
@@ -28,8 +27,7 @@ type SortieMapEtablissement = SortieMapCommon & {
   apdemande: EntréeApDemande[]
   delai: EntréeDelai[]
   compte: unknown
-  procol: Record<DataHash, EntréeDefaillances>
-  last_procol: SortieProcols
+  procol: EntréeDefaillances[]
   periodes: Date[]
   effectif: (number | null)[]
   cotisation: number[]
@@ -61,7 +59,7 @@ declare function emit(key: string, value: OutValue): void
 export function map(this: Input): void {
   /* DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO */ const f = {
     ...{ iterable, debits, apconso, apdemande, flatten, compte, effectifs }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
-    ...{ delai, dealWithProcols, sirene, cotisations, dateAddDay, omit }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
+    ...{ delai, sirene, cotisations, dateAddDay, omit }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     ...{ generatePeriodSerie, diane, bdf, joinUrssaf }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
   } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
 
@@ -85,14 +83,7 @@ export function map(this: Input): void {
     vcmde.apdemande = f.apdemande(value.apdemande)
     vcmde.delai = f.delai(value.delai)
     vcmde.compte = f.compte(value.compte)
-    vcmde.procol = undefined // Note: initialement, l'expression ci-dessous était affectée à vcmde.procol, puis écrasée plus bas. J'initialise quand même vcmde.procol ici pour ne pas faire échouer test-api.sh sur l'ordre des propriétés.
-    const procol = [
-      ...f.dealWithProcols(value.altares, "altares"),
-      ...f.dealWithProcols(value.procol, "procol"),
-    ]
-    vcmde.last_procol = procol[procol.length - 1] || { etat: "in_bonis" }
-    vcmde.idEntreprise = "entreprise_" + this.value.key.slice(0, 9)
-    vcmde.procol = value.procol
+    vcmde.procol = f.iterable(value.procol)
 
     emit("etablissement_" + this.value.key, vcmde)
   } else if (this.value.scope === "entreprise") {
