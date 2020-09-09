@@ -1841,11 +1841,7 @@
 			"apdemande" : [ ],
 			"delai" : [ ],
 			"compte" : undefined,
-			"procol" : undefined,
-			"last_procol" : {
-				"etat" : "in_bonis"
-			},
-			"idEntreprise" : "entreprise_012345678"
+			"procol" : [ ]
 		}
 	}
 ]
