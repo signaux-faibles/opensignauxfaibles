@@ -15,7 +15,7 @@ import (
 	"github.com/signaux-faibles/gournal"
 )
 
-// BDF Information Banque de France, à synchroniser avec validation/bdf.schema.json
+// BDF Information Banque de France
 type BDF struct {
 	Siren               string    `json:"siren" bson:"siren"`
 	Annee               *int      `json:"annee_bdf" bson:"annee_bdf"`

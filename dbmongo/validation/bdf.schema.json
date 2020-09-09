@@ -1,34 +1,12 @@
 {
   "title": "EntréeBdf",
   "bsonType": "object",
-  "required": [
-    "siren",
-    "annee_bdf",
-    "arrete_bilan_bdf",
-    "raison_sociale",
-    "secteur",
-    "poids_frng",
-    "taux_marge",
-    "delai_fournisseur",
-    "dette_fiscale",
-    "financier_court_terme",
-    "frais_financier"
-  ],
+  "required": ["siren"],
   "properties": {
     "siren": {
       "bsonType": "string",
       "pattern": "^[0-9]{9}$"
-    },
-    "annee_bdf": { "bsonType": "number" },
-    "arrete_bilan_bdf": { "bsonType": "date" },
-    "raison_sociale": { "bsonType": "string" },
-    "secteur": { "bsonType": "string" },
-    "poids_frng": { "bsonType": "number" },
-    "taux_marge": { "bsonType": "number" },
-    "delai_fournisseur": { "bsonType": "number" },
-    "dette_fiscale": { "bsonType": "number" },
-    "financier_court_terme": { "bsonType": "number" },
-    "frais_financier": { "bsonType": "number" }
+    }
   },
   "additionalProperties": false
 }

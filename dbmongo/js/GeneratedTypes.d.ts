@@ -10,16 +10,6 @@
 
 export interface EntréeBdf {
   siren: string
-  annee_bdf: number
-  arrete_bilan_bdf: Date
-  raison_sociale: string
-  secteur: string
-  poids_frng: number
-  taux_marge: number
-  delai_fournisseur: number
-  dette_fiscale: number
-  financier_court_terme: number
-  frais_financier: number
 }
 export interface EntréeDelai {
   date_creation: Date
