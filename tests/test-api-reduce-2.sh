@@ -35,7 +35,7 @@ MONGODB_PORT="27016" tests/helpers/dbmongo-server.sh setup
 echo ""
 echo "📝 Inserting test data..."
 sleep 1 # give some time for MongoDB to start
-cat > "${TMP_DIR}/db_popul.js" << CONTENTS
+tests/helpers/mongodb-container.sh run > /dev/null << CONTENTS
   db.Admin.insertOne({
     "_id" : {
         "key" : "2002_1",
@@ -50,11 +50,9 @@ cat > "${TMP_DIR}/db_popul.js" << CONTENTS
   })
 
   db.RawData.insertMany(
+    $(cat tests/input-data/RawData.sample.json)
+  )
 CONTENTS
-cat >> "${TMP_DIR}/db_popul.js" < tests/input-data/RawData.sample.json
-echo ")" >> "${TMP_DIR}/db_popul.js"
-
-tests/helpers/mongodb-container.sh run < "${TMP_DIR}/db_popul.js" >/dev/null
 
 echo ""
 echo "💎 Computing the Features collection thru dbmongo API..."
