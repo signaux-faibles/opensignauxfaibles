@@ -3,8 +3,7 @@
 # Usage:
 # $ git secret reveal                 # pour déchiffrer les données utilisées par les tests (golden files, etc...)
 # $ ./test-all.sh                     # pour éxecuter tous les tests
-# $ ./test-all.sh --update-snapshots  # pour éxecuter tous les tests et mettre à jour les snapshots des tests "ava"
-# $ ./test-all.sh --update            # pour éxecuter tous les tests et mettre à jour les golden files des tests de bout en bout
+# $ ./test-all.sh --update-snapshots  # pour éxecuter tous les tests et mettre à jour les snapshots des tests "ava" + les golden files des tests de bout en bout
 # $ git secret changes                # pour visualiser les modifications éventuellement apportées aux golden files
 # $ git secret hide                   # pour chiffrer les golden files suite à leur modification
 
