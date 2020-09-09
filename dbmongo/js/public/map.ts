@@ -22,7 +22,6 @@ import {
   EntréeDelai,
   EntréeDefaillances,
   EntréeDiane,
-  ParHash,
 } from "../RawDataTypes"
 
 type SortieMapCommon = {
