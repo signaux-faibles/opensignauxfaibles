@@ -27,7 +27,7 @@ heading "npm install"
 (cd ./dbmongo/js && npm install) 2>&1 | indent
 
 heading "npm test"
-(cd ./dbmongo/js && npm run lint && npm test -- -- "${FLAGS}") 2>&1 | indent
+(cd ./dbmongo/js && npm run lint && npm test -- "${FLAGS}") 2>&1 | indent
 
 heading "go test"
 (cd ./dbmongo && go test ./...) 2>&1 | indent && \
