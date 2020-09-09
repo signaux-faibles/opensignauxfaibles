@@ -17,4 +17,4 @@ echo > "${OUT_FILE}" "\
 
 ${TS_TYPES}"
 
-npm run lint:fix -- "${OUT_FILE}"
+$(npm bin)/eslint "${OUT_FILE}" --fix
