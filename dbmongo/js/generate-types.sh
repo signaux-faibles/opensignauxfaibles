@@ -18,3 +18,28 @@ echo > "${OUT_FILE}" "\
 ${TS_TYPES}"
 
 $(npm bin)/eslint "${OUT_FILE}" --fix
+
+## WIP / EXPERIMENTAL: conversion de JSON Schema en types Golang
+
+# modules repérés pour la conversion:
+# * https://github.com/idubinskiy/schematyper
+# * https://github.com/a-h/generate
+# * https://github.com/atombender/go-jsonschema
+# * https://github.com/metaleap/go-fromjsonschema
+# * https://github.com/schorsch/go-json-schema-tools
+
+# documents de référence utiles:
+# * https://json-schema.org/understanding-json-schema/reference/string.html
+# * https://json-schema.org/understanding-json-schema/reference/numeric.html
+
+cat "../validation/delai.schema.json" \
+  | sed "s/bsonType/type/g" \
+  > "delai.tmp.schema.json"
+
+go run github.com/idubinskiy/schematyper --out-file="delai.generated.go" "delai.tmp.schema.json"
+git checkout -- ../go.*
+rm "delai.tmp.schema.json"
+
+perl -pi'' -e 's,`json:"([^"]+)"`,`json:"$1" bson:"$1"`,' "delai.generated.go"
+cat "delai.generated.go"
+rm "delai.generated.go"
