@@ -46,6 +46,9 @@ heading "go build"
 heading "test-api.sh"
 ./tests/test-api.sh $@ 2>&1 | indent
 
+heading "test-api-validate.sh"
+./tests/test-api.sh "${FLAGS}" 2>&1 | indent
+
 heading "test-api-public.sh"
 ./tests/test-api-public.sh $@ 2>&1 | indent
 

@@ -87,6 +87,7 @@ func main() {
 
 		api.GET("/data/etablissements", exportEtablissementsHandler)
 		api.GET("/data/entreprises", exportEntreprisesHandler)
+		api.POST("/data/validate", validateHandler)
 
 		// api.GET("/debug", debug)
 	}
