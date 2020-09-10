@@ -1,3 +1,5 @@
+import { EntréeDefaillances } from "../RawDataTypes"
+
 export type AltaresToHumanRes =
   | "liquidation"
   | "in_bonis"
@@ -7,6 +9,8 @@ export type AltaresToHumanRes =
   | "plan_redressement"
   | "cession"
   | null
+
+type AltaresCode = EntréeDefaillances["code_evenement"]
 
 export function altaresToHuman(code: AltaresCode): AltaresToHumanRes {
   "use strict"

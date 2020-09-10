@@ -1,3 +1,5 @@
+import { Departement } from "../RawDataTypes"
+
 type Region =
   | "Auvergne-Rhône-Alpes"
   | "Hauts-de-France"

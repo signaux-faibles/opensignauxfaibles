@@ -1,4 +1,4 @@
-import "../globals"
+import { EntréeDiane } from "../RawDataTypes"
 
 export function poidsFrng(diane: EntréeDiane): number | null {
   "use strict"

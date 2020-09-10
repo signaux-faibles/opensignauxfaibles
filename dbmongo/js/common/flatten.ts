@@ -1,3 +1,6 @@
+import { BatchValue, DataType, Scope, SiretOrSiren } from "../RawDataTypes"
+import { CompanyDataValuesWithCompact } from "../compact/applyPatchesToBatch"
+
 export type FlattenedImportedData = {
   key: SiretOrSiren
   scope: Scope
@@ -14,7 +17,7 @@ export type FlattenedImportedData = {
  * - il agrège les propriétés apportées par chaque *Batch*, dans l'ordre chrono.
  */
 export function flatten(
-  v: CompanyDataValues,
+  v: CompanyDataValuesWithCompact,
   actual_batch: string
 ): FlattenedImportedData {
   "use strict"

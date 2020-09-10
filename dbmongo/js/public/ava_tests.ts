@@ -5,12 +5,12 @@
 // définie dans test-api.sh.
 
 import test, { ExecutionContext } from "ava"
-import "../globals"
 import { map } from "./map"
 import { reduce } from "./reduce"
 import { finalize } from "./finalize"
 import { runMongoMap } from "../test/helpers/mongodb"
 import { setGlobals } from "../test/helpers/setGlobals"
+import { Scope, SiretOrSiren } from "../RawDataTypes"
 
 // test data inspired by test-api.sh
 const siret: SiretOrSiren = "01234567891011"

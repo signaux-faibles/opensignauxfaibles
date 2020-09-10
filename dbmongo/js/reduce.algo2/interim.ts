@@ -1,3 +1,4 @@
+import { EntréeInterim, ParPériode, ParHash } from "../RawDataTypes"
 import { dateAddMonth } from "../common/dateAddMonth"
 
 type Input = {
@@ -13,9 +14,9 @@ type SortieInterim = {
 }
 
 export function interim(
-  interim: Record<string, EntréeInterim>,
-  output_indexed: Record<string, Input>
-): Record<string, SortieInterim> {
+  interim: ParHash<EntréeInterim>,
+  output_indexed: ParPériode<Input>
+): ParPériode<SortieInterim> {
   "use strict"
   const f = { dateAddMonth } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
 
@@ -24,7 +25,7 @@ export function interim(
   // output_indexed devra être remplacé par output_effectif, et ne contenir que les données d'effectif.
   // periodes sera passé en argument.
 
-  const output_interim: Record<string, SortieInterim> = {}
+  const output_interim: ParPériode<SortieInterim> = {}
 
   //  var offset_interim = 3
 

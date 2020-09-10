@@ -1,3 +1,10 @@
+import {
+  EntréeSirene,
+  SiretOrSiren,
+  Departement,
+  CodeAPE,
+  ParHash,
+} from "../RawDataTypes"
 import { region } from "../common/region"
 
 type Input = {
@@ -18,7 +25,7 @@ export type SortieSirene = {
 }
 
 export function sirene(
-  vSirene: Record<string, EntréeSirene>,
+  vSirene: ParHash<EntréeSirene>,
   output_array: (Input & Partial<SortieSirene>)[]
 ): void {
   "use strict"

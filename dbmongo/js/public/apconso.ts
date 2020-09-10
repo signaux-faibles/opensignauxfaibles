@@ -1,8 +1,7 @@
+import { EntréeApConso, ParHash } from "../RawDataTypes"
 import { iterable } from "./iterable"
 
-export function apconso(
-  apconso?: Record<DataHash, EntréeApConso>
-): EntréeApConso[] {
+export function apconso(apconso?: ParHash<EntréeApConso>): EntréeApConso[] {
   const f = { iterable } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
   return f
     .iterable(apconso)

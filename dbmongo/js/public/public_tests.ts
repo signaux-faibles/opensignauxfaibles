@@ -4,7 +4,6 @@
 // Usage: $ npx ava public/public_tests.ts
 //     ou $ npm test
 
-import "../globals"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { map, Input, OutKey, OutValue } from "./map"
 import { reduce } from "./reduce"

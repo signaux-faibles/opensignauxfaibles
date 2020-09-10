@@ -1,6 +1,13 @@
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { dateAddMonth } from "../common/dateAddMonth"
 import { compareDebit } from "../common/compareDebit"
+import {
+  EntréeDebit,
+  EntréeCotisation,
+  Timestamp,
+  ParPériode,
+  ParHash,
+} from "../RawDataTypes"
 
 type EcartNegatif = {
   hash: string
@@ -39,11 +46,11 @@ export type SortieCotisationsDettes = {
  * cotisations.
  */
 export function cotisationsdettes(
-  vCotisation: Record<string, EntréeCotisation>,
-  vDebit: Record<string, EntréeDebit>,
+  vCotisation: ParHash<EntréeCotisation>,
+  vDebit: ParHash<EntréeDebit>,
   periodes: Timestamp[],
   finPériode?: Date // correspond à la variable globale date_fin
-): Record<number, SortieCotisationsDettes> {
+): ParPériode<SortieCotisationsDettes> {
   "use strict"
 
   const f = { generatePeriodSerie, dateAddMonth, compareDebit } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
@@ -52,9 +59,9 @@ export function cotisationsdettes(
   // Permet de s'aligner avec le calendrier de fourniture des données
   const lastAccountedDay = 20
 
-  const sortieCotisationsDettes: Record<Periode, SortieCotisationsDettes> = {}
+  const sortieCotisationsDettes: ParPériode<SortieCotisationsDettes> = {}
 
-  const value_cotisation: Record<string, number[]> = {}
+  const value_cotisation: Record<Timestamp, number[]> = {}
 
   // Répartition des cotisations sur toute la période qu'elle concerne
   Object.keys(vCotisation).forEach(function (h) {
@@ -91,7 +98,7 @@ export function cotisationsdettes(
       },
     ])
     return accu
-  }, {} as Record<string, EcartNegatif[]>)
+  }, {} as ParHash<EcartNegatif[]>)
 
   // Pour chaque numero_ecn, on trie et on chaîne les débits avec debit_suivant
   Object.keys(ecn).forEach((i) => {

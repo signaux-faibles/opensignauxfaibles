@@ -1,5 +1,8 @@
-import "../globals.ts"
-
+import {
+  CompanyDataValues,
+  CompanyDataValuesWithFlags,
+  SiretOrSiren,
+} from "../RawDataTypes"
 import { complete_reporder } from "./complete_reporder"
 
 // finalize permet de:

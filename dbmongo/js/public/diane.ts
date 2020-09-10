@@ -1,4 +1,5 @@
 import { iterable } from "./iterable"
+import { EntréeDiane } from "../RawDataTypes"
 
 export function diane(hs?: Record<string, EntréeDiane>): EntréeDiane[] {
   "use strict"

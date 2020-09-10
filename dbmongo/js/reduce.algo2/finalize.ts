@@ -1,4 +1,5 @@
-import { Siret, SortieMap, SortieMapEtablissement } from "./map"
+import { SiretOrSiren, Siret } from "../RawDataTypes"
+import { SortieMap, SortieMapEtablissement } from "./map"
 import { omit } from "../common/omit"
 
 type Accumulateurs = {

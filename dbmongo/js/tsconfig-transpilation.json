@@ -1,8 +1,5 @@
 {
   "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "types": [] // les définitions de type de node ne sont pas nécéssaires pour les fichiers à transpiler
-  },
   // autre moyen de définir plusieurs fichiers tsconfig.js: https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-9.html#support-for-solution-style-tsconfigjson-files
   "exclude": ["node_modules", "*/*_tests.ts", "**/test/**/*.ts"]
 }

@@ -1,6 +1,8 @@
+import { ParPériode } from "../RawDataTypes"
+
 export function add(
-  obj: { [periode: string]: unknown },
-  output: { [periode: string]: unknown }
+  obj: ParPériode<unknown>,
+  output: ParPériode<unknown>
 ): void {
   "use strict"
   Object.keys(output).forEach(function (periode) {

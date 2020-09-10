@@ -1,3 +1,4 @@
+import { EntréeSireneEntreprise, ParHash, ParPériode } from "../RawDataTypes"
 import { raison_sociale } from "../common/raison_sociale"
 
 export type SortieSireneEntreprise = {
@@ -8,7 +9,7 @@ export type SortieSireneEntreprise = {
 }
 
 export function entr_sirene(
-  sirene_ul: Record<DataHash, EntréeSireneEntreprise>,
+  sirene_ul: ParHash<EntréeSireneEntreprise>,
   sériePériode: Date[]
 ): ParPériode<Partial<SortieSireneEntreprise>> {
   "use strict"

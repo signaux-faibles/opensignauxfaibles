@@ -1,10 +1,15 @@
-import "../globals.ts"
 import { forEachPopulatedProp } from "../common/forEachPopulatedProp"
+import { BatchValueWithCompact } from "./applyPatchesToBatch"
+import { DataHash } from "../RawDataTypes"
+
+export type CurrentDataState = Record<string, Set<DataHash>>
 
 // currentState() agrège un ensemble de batch, en tenant compte des suppressions
 // pour renvoyer le dernier état connu des données.
 // Note: similaire à flatten() de reduce.algo2.
-export function currentState(batches: BatchValue[]): CurrentDataState {
+export function currentState(
+  batches: BatchValueWithCompact[]
+): CurrentDataState {
   "use strict"
 
   // Retourne les clés de obj, en respectant le type défini dans le type de obj.
@@ -13,7 +18,7 @@ export function currentState(batches: BatchValue[]): CurrentDataState {
     Object.keys(obj) as Array<keyof T>
 
   const currentState: CurrentDataState = batches.reduce(
-    (m: CurrentDataState, batch: BatchValue) => {
+    (m: CurrentDataState, batch: BatchValueWithCompact) => {
       //1. On supprime les clés de la mémoire
       if (batch.compact) {
         forEachPopulatedProp(batch.compact.delete, (type, keysToDelete) => {

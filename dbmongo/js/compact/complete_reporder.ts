@@ -1,4 +1,8 @@
-import "../globals.ts"
+import {
+  CompanyDataValuesWithFlags,
+  SiretOrSiren,
+  Timestamp,
+} from "../RawDataTypes"
 
 // Paramètres globaux utilisés par "compact"
 declare const serie_periode: Date[]
@@ -12,7 +16,7 @@ export function complete_reporder(
   "use strict"
   const batches = Object.keys(object.batch)
   batches.sort()
-  const missing: { [key: string]: boolean } = {}
+  const missing: Record<Timestamp, boolean> = {}
   serie_periode.forEach((p) => {
     missing[p.getTime()] = true
   })

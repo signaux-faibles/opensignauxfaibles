@@ -1,4 +1,6 @@
 import { forEachPopulatedProp } from "../common/forEachPopulatedProp"
+import { DataType, DataHash } from "../RawDataTypes"
+import { CurrentDataState } from "./currentState"
 
 /**
  * Modification de hashToAdd et hashToDelete pour retirer les redondances.
