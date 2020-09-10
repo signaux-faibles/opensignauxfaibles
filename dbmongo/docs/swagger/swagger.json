@@ -898,6 +898,31 @@
                     "Traitements"
                 ]
             }
+        },
+        "/api/data/validate": {
+            "post": {
+                "description": "Valide les entrées de données contenues dans les documents de la collection RawData.",
+                "responses": {
+                    "200": {
+                        "description": "Les entrées invalides ont été exportées dans le fichier fourni en réponse.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "Traitements"
+                ]
+            }
         }
     },
     "openapi": "3.0.0"
