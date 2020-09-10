@@ -22,12 +22,11 @@ export function compactBatch(
   memory: CurrentDataState,
   fromBatchKey: string
 ): BatchValue {
-
-  const f = { /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/
-    listHashesToAddAndDelete, /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/
-    applyPatchesToBatch, /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/
-    applyPatchesToMemory,  /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/
-    fixRedundantPatches, /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/
+  /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/ const f = {
+    listHashesToAddAndDelete /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/,
+    applyPatchesToBatch /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/,
+    applyPatchesToMemory /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/,
+    fixRedundantPatches /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/,
   } /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/
 
   // Les types où il y a potentiellement des suppressions

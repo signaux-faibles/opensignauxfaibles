@@ -388,7 +388,6 @@ function omit(object, ...propNames) {
 "compact":{
 "applyPatchesToBatch": `function applyPatchesToBatch(hashToAdd, hashToDelete, stockTypes, currentBatch) {
     var _a;
-
     // Application des suppressions
     stockTypes.forEach((type) => {
         const hashesToDelete = hashToDelete[type];
@@ -426,7 +425,6 @@ function omit(object, ...propNames) {
     });
 }`,
 "applyPatchesToMemory": `function applyPatchesToMemory(hashToAdd, hashToDelete, memory) {
-
     // Prise en compte des suppressions de clés dans la mémoire
     f.forEachPopulatedProp(hashToDelete, (type, hashesToDelete) => {
         hashesToDelete.forEach((hash) => {
@@ -448,12 +446,6 @@ function omit(object, ...propNames) {
  * Pré-requis: les batches précédents doivent avoir été compactés.
  */
 function compactBatch(currentBatch, memory, fromBatchKey) {
-    const f = {
-        listHashesToAddAndDelete,
-        applyPatchesToBatch,
-        applyPatchesToMemory,
-        fixRedundantPatches,
-
     // Les types où il y a potentiellement des suppressions
     const stockTypes = completeTypes[fromBatchKey].filter((type) => (memory[type] || new Set()).size > 0);
     const { hashToAdd, hashToDelete } = f.listHashesToAddAndDelete(currentBatch, stockTypes, memory);
@@ -502,7 +494,6 @@ function complete_reporder(siret, object) {
 // Note: similaire à flatten() de reduce.algo2.
 function currentState(batches) {
     "use strict";
-
     // Retourne les clés de obj, en respectant le type défini dans le type de obj.
     // Contrat: obj ne doit contenir que les clés définies dans son type.
     const typedObjectKeys = (obj) => Object.keys(obj);
@@ -559,7 +550,6 @@ function finalize(k, companyDataValues) {
  * Modification de hashToAdd et hashToDelete pour retirer les redondances.
  **/
 function fixRedundantPatches(hashToAdd, hashToDelete, memory) {
-
     f.forEachPopulatedProp(hashToDelete, (type, hashesToDelete) => {
         // Pour chaque cle supprimee: est-ce qu'elle est bien dans la
         // memoire ? sinon on la retire de la liste des clés supprimées (pas de
@@ -597,7 +587,6 @@ function fixRedundantPatches(hashToAdd, hashToDelete, memory) {
  * On ajoute aux clés supprimées les types stocks de la memoire.
  */
 function listHashesToAddAndDelete(currentBatch, stockTypes, memory) {
-
     const hashToDelete = {};
     const hashToAdd = {};
     // Itération sur les types qui ont potentiellement subi des modifications
@@ -650,10 +639,6 @@ function listHashesToAddAndDelete(currentBatch, stockTypes, memory) {
 function reduce(key, values // chaque element contient plusieurs batches pour cette entreprise ou établissement
 ) {
     "use strict";
-
-        compactBatch,
-        currentState,
-
     // Tester si plusieurs batchs. Reduce complet uniquement si plusieurs
     // batchs. Sinon, juste fusion des attributs
     const auxBatchSet = new Set();
