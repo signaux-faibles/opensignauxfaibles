@@ -55,7 +55,7 @@ func bundleJsFunctions(jsRootDir string) {
 					exportsDefRegex := regexp.MustCompile(`(?m)^Object.defineProperty\(exports.*$`)
 					stringFunction = exportsDefRegex.ReplaceAllLiteralString(stringFunction, "")
 					finalExportRegex := regexp.MustCompile(`(?m)^exports..*$`)
-					skipLineRegex := regexp.MustCompile(`(?m)^.*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO.*$`)
+					skipLineRegex := regexp.MustCompile(`(?m)^.*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO.*$[\r\n]*`)
 					stringFunction = skipLineRegex.ReplaceAllLiteralString(stringFunction, "")
 					stringFunction = finalExportRegex.ReplaceAllLiteralString(stringFunction, "")
 					stringFunction = strings.Replace(stringFunction, "`", "` + \"`\" + `", -1) // escape nested "backticks" quotes

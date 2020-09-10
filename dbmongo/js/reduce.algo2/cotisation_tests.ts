@@ -1,4 +1,3 @@
-import "../globals"
 import test from "ava"
 import { cotisation, Input, SortieCotisation } from "./cotisation"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"

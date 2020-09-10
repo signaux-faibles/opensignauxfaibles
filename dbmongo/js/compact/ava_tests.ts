@@ -5,16 +5,23 @@
 // définie dans test-api.sh.
 
 import test, { ExecutionContext } from "ava"
-import "../globals"
 import { map } from "./map"
 import { reduce } from "./reduce"
 import { finalize } from "./finalize"
 import { runMongoMap } from "../test/helpers/mongodb"
 import { setGlobals } from "../test/helpers/setGlobals"
+import {
+  BatchValues,
+  CompanyDataValuesWithFlags,
+  CompanyDataValues,
+  Scope,
+  EntréeRepOrder,
+  SiretOrSiren,
+} from "../RawDataTypes"
 
-const removeRandomOrder = (reporderProp: {
-  [key: string]: Partial<EntréeRepOrder>
-}): void =>
+const removeRandomOrder = (
+  reporderProp: Record<string, Partial<EntréeRepOrder>>
+): void =>
   Object.keys(reporderProp).forEach((period) => {
     delete reporderProp[period].random_order
   })

@@ -11,7 +11,7 @@ import { defaillances } from "./defaillances"
 import { cotisationsdettes } from "./cotisationsdettes"
 import { ccsf } from "./ccsf"
 import { sirene } from "./sirene"
-import { populateNafAndApe } from "./populateNafAndApe"
+import { populateNafAndApe, NAF } from "./populateNafAndApe"
 import { cotisation } from "./cotisation"
 import { cibleApprentissage } from "./cibleApprentissage"
 import { entr_sirene, SortieSireneEntreprise } from "./entr_sirene"
@@ -23,8 +23,13 @@ import { fraisFinancier } from "./fraisFinancier"
 import { entr_bdf, SortieBdf } from "./entr_bdf"
 import { omit } from "../common/omit"
 import { entr_diane, SortieDiane } from "./entr_diane"
-
-export type Siret = string
+import {
+  CompanyDataValues,
+  BatchKey,
+  Siret,
+  SiretOrSiren,
+  ParPériode,
+} from "../RawDataTypes"
 
 type SortieMapEntreprise = {
   periode: Date

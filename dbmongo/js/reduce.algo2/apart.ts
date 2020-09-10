@@ -1,4 +1,5 @@
-import * as f from "../common/generatePeriodSerie"
+import { EntréeApDemande, EntréeApConso } from "../RawDataTypes"
+import { generatePeriodSerie } from "../common/generatePeriodSerie"
 
 type ApConsoHash = string
 
@@ -18,6 +19,8 @@ export function apart(
   apdemande: Record<Hash, EntréeApDemande>
 ): Record<Timestamp, SortieAPart> {
   "use strict"
+
+  const f = { generatePeriodSerie } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
 
   const output_apart: Record<Timestamp, SortieAPart> = {}
 

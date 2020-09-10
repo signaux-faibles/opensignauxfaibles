@@ -1,11 +1,29 @@
-import "../globals"
 import { forEachPopulatedProp } from "../common/forEachPopulatedProp"
+import {
+  DataType,
+  BatchKey,
+  BatchValue,
+  Scope,
+  IndexFlags,
+  DataHash,
+  SiretOrSiren,
+} from "../RawDataTypes"
+
+export type BatchValueWithCompact = BatchValue & {
+  compact?: { delete: Partial<Record<DataType, DataHash[]>> }
+}
+
+export type CompanyDataValuesWithCompact = {
+  key: SiretOrSiren
+  scope: Scope
+  batch: Record<BatchKey, BatchValueWithCompact>
+} & Partial<IndexFlags>
 
 export function applyPatchesToBatch(
   hashToAdd: Partial<Record<DataType, Set<DataHash>>>,
   hashToDelete: Partial<Record<DataType, Set<DataHash>>>,
   stockTypes: DataType[],
-  currentBatch: BatchValue
+  currentBatch: BatchValueWithCompact
 ): void {
   const f = { forEachPopulatedProp } /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/
   // Application des suppressions

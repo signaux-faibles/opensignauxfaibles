@@ -1,3 +1,5 @@
+import { EntréeDefaillances } from "../RawDataTypes"
+
 export type ProcolToHumanRes =
   | "liquidation"
   | "in_bonis"
@@ -6,6 +8,10 @@ export type ProcolToHumanRes =
   | "plan_sauvegarde"
   | "plan_redressement"
   | null
+
+type Action = EntréeDefaillances["action_procol"]
+
+type Stade = EntréeDefaillances["stade_procol"]
 
 export function procolToHuman(action: Action, stade: Stade): ProcolToHumanRes {
   "use strict"

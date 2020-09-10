@@ -5,7 +5,9 @@ import { SortieDefaillances } from "./defaillances"
 import { SortieCcsf } from "./ccsf"
 import { SortieSirene } from "./sirene"
 import { SortieNAF } from "./populateNafAndApe"
+import { DelaiComputedValues } from "./delais"
 import { SortieCotisation } from "./cotisation"
+import { SiretOrSiren, Timestamp } from "../RawDataTypes"
 
 export type DonnéesAgrégées = {
   siret: SiretOrSiren
@@ -21,6 +23,7 @@ export type DonnéesAgrégées = {
   Partial<SortieNAF> &
   Partial<SortieAPart> &
   Partial<SortieRepeatable> &
+  Partial<DelaiComputedValues> &
   Partial<SortieCotisation>
 
 type IndexDonnéesAgrégées = Record<Timestamp, DonnéesAgrégées>

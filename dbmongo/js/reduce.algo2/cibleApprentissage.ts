@@ -1,5 +1,5 @@
-import "../globals"
-import * as f from "./lookAhead"
+import { ParPériode } from "../RawDataTypes"
+import { lookAhead } from "./lookAhead"
 
 type Times = {
   time_til_default?: number
@@ -7,12 +7,11 @@ type Times = {
 }
 
 export function cibleApprentissage(
-  output_indexed: {
-    [k: string]: { tag_failure?: boolean; tag_default?: boolean }
-  },
+  output_indexed: ParPériode<{ tag_failure?: boolean; tag_default?: boolean }>,
   n_months: number
-): { [k: string]: Partial<Times> } {
+): ParPériode<Partial<Times>> {
   "use strict"
+  const f = { lookAhead } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
 
   // Mock two input instead of one for future modification
   const output_cotisation = output_indexed
@@ -27,7 +26,7 @@ export function cibleApprentissage(
       ),
     }
     return m
-  }, {} as Record<Periode, { outcome: boolean }>)
+  }, {} as ParPériode<{ outcome: boolean }>)
 
   const output_outcome = f.lookAhead(merged_info, "outcome", n_months, true)
   const output_default = f.lookAhead(
@@ -56,7 +55,7 @@ export function cibleApprentissage(
         ...outputTimes,
       },
     }
-  }, {} as Record<string, Times>)
+  }, {} as ParPériode<Times>)
 
   return output_cible
 }

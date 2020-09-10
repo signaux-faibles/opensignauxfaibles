@@ -1,4 +1,9 @@
-import "../globals.ts"
+import {
+  CompanyDataValues,
+  BatchValue,
+  BatchKey,
+  SiretOrSiren,
+} from "../RawDataTypes"
 import { compactBatch } from "./compactBatch"
 import { currentState } from "./currentState"
 

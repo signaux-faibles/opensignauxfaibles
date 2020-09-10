@@ -2,6 +2,7 @@ import { dateAddDay } from "./dateAddDay"
 import { compareDebit } from "../common/compareDebit"
 import { dateAddMonth } from "../common/dateAddMonth"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
+import { EntréeDebit, ParHash, Timestamp } from "../RawDataTypes"
 
 type AccuItem = {
   hash: string
@@ -27,9 +28,7 @@ export type SortieDebit = {
 declare let date_fin: Date
 declare let serie_periode: Date[]
 
-export function debits(
-  vdebit: Record<DataHash, EntréeDebit> = {}
-): SortieDebit[] {
+export function debits(vdebit: ParHash<EntréeDebit> = {}): SortieDebit[] {
   const f = { compareDebit, generatePeriodSerie, dateAddMonth, dateAddDay } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
 
   const last_treatment_day = 20
@@ -60,7 +59,7 @@ export function debits(
     })
   })
 
-  const value_dette: Record<number, DetteItem[]> = {}
+  const value_dette: Record<Timestamp, DetteItem[]> = {}
 
   Object.keys(vdebit).forEach(function (h) {
     const debit = vdebit[h]
