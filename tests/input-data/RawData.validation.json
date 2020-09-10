@@ -1,0 +1,56 @@
+[
+  {
+    "_id": "01234567891011",
+    "value": {
+      "key": "01234567891011",
+      "scope": "etablissement",
+      "batch": {
+        "1802": {
+          "delai": {
+            "hash-données-valides": {
+              "date_creation": ISODate("2016-09-01T00:00:00.000+0000"),
+              "date_echeance": ISODate("2016-09-01T00:00:00.000+0000"),
+              "duree_delai": 1,
+              "montant_echeancier": 10
+            },
+            "hash-délai-nul": {
+              "date_creation": ISODate("2016-09-01T00:00:00.000+0000"),
+              "date_echeance": ISODate("2016-09-01T00:00:00.000+0000"),
+              "duree_delai": 0,
+              "montant_echeancier": 10
+            }
+          }
+        },
+        "1803": {
+          "bdf": {
+            "hash-siren-manquant": {
+            },
+            "hash-siren-invalide": {
+              "siren": "123"
+            },
+            "hash-siren-valide": {
+              "siren": "123456789"
+            }
+          },
+          "delai": {
+            "hash-date-manquante": {
+              "date_echeance": ISODate("2016-09-01T00:00:00.000+0000"),
+              "duree_delai": 1,
+              "montant_echeancier": 10
+            },
+            "hash-montant-nul": {
+              "date_creation": ISODate("2016-09-01T00:00:00.000+0000"),
+              "date_echeance": ISODate("2016-09-01T00:00:00.000+0000"),
+              "duree_delai": 1,
+              "montant_echeancier": 0
+            }
+          }
+        }
+      },
+      "index": {
+        "algo1": true,
+        "algo2": true
+      }
+    }
+  }
+]
