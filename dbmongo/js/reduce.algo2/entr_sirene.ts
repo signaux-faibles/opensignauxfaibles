@@ -1,5 +1,5 @@
-import * as f from "../common/raison_sociale"
 import { EntréeSireneEntreprise, ParHash, ParPériode } from "../RawDataTypes"
+import { raison_sociale } from "../common/raison_sociale"
 
 export type SortieSireneEntreprise = {
   raison_sociale: string // nom de l'entreprise
@@ -13,6 +13,7 @@ export function entr_sirene(
   sériePériode: Date[]
 ): ParPériode<Partial<SortieSireneEntreprise>> {
   "use strict"
+  const f = { raison_sociale } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
   const retourEntrSirene: ParPériode<Partial<SortieSireneEntreprise>> = {}
   const sireneHashes = Object.keys(sirene_ul || {})
   sériePériode.forEach((période) => {

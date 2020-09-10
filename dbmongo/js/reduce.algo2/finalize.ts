@@ -1,6 +1,6 @@
-import { SortieMap, SortieMapEtablissement } from "./map"
-import * as f from "../common/omit"
 import { SiretOrSiren, Siret } from "../RawDataTypes"
+import { SortieMap, SortieMapEtablissement } from "./map"
+import { omit } from "../common/omit"
 
 type Accumulateurs = {
   effectif_entreprise: number
@@ -24,6 +24,7 @@ declare function print(str: string): void
 
 export function finalize(k: Clé, v: SortieMap): SortieFinalize {
   "use strict"
+  const f = { omit } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
 
   const maxBsonSize = 16777216
   const bsonsize = (obj: unknown): number => JSON.stringify(obj).length // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
