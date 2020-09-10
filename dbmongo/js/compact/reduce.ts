@@ -1,6 +1,6 @@
 import "../globals.ts"
 import { compactBatch } from "./compactBatch"
-import * as f from "./currentState"
+import { currentState } from "./currentState"
 
 // Paramètres globaux utilisés par "compact"
 declare const batches: BatchKey[]
@@ -14,6 +14,8 @@ export function reduce(
   values: CompanyDataValues[] // chaque element contient plusieurs batches pour cette entreprise ou établissement
 ): CompanyDataValues {
   "use strict"
+
+  const f = { currentState } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
 
   // Tester si plusieurs batchs. Reduce complet uniquement si plusieurs
   // batchs. Sinon, juste fusion des attributs

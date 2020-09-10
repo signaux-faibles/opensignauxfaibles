@@ -1,4 +1,4 @@
-import * as f from "../common/dateAddMonth"
+import { dateAddMonth } from "../common/dateAddMonth"
 
 // Paramètres globaux utilisés par "reduce.algo2"
 declare const offset_effectif: number
@@ -29,6 +29,7 @@ export function effectifs(
   clé: CléSortieEffectif
 ): ParPériode<SortieEffectifs> {
   "use strict"
+  const f = { dateAddMonth } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
 
   const sortieEffectif: ParPériode<SortieEffectifs> = {}
 
