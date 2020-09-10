@@ -1,0 +1,25 @@
+{
+  "title": "EntréeDelai",
+  "bsonType": "object",
+  "required": [
+    "date_creation",
+    "date_echeance",
+    "duree_delai",
+    "montant_echeancier"
+  ],
+  "properties": {
+    "date_creation": { "bsonType": "date" },
+    "date_echeance": { "bsonType": "date" },
+    "duree_delai": {
+      "bsonType": "number",
+      "description": "Doit valoir 1 ou plus:",
+      "minimum": 1
+    },
+    "montant_echeancier": {
+      "bsonType": "number",
+      "description": "Doit valoir plus que 0 euros:",
+      "minimum": 0.01
+    }
+  },
+  "additionalProperties": false
+}

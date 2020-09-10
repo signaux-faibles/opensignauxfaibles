@@ -1,0 +1,12 @@
+{
+  "title": "EntréeBdf",
+  "bsonType": "object",
+  "required": ["siren"],
+  "properties": {
+    "siren": {
+      "bsonType": "string",
+      "pattern": "^[0-9]{9}$"
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,34 @@
+[
+  { "$project": { "_id": 1, "batches": { "$objectToArray": "$value.batch" } } },
+  { "$unwind": { "path": "$batches", "preserveNullAndEmptyArrays": false } },
+  {
+    "$project": {
+      "_id": 1,
+      "batchKey": "$batches.k",
+      "dataPerHash": { "$objectToArray": "$batches.v" }
+    }
+  },
+  {
+    "$unwind": { "path": "$dataPerHash", "preserveNullAndEmptyArrays": false }
+  },
+  {
+    "$project": {
+      "_id": 1,
+      "batchKey": 1,
+      "dataType": "$dataPerHash.k",
+      "dataPerHash": { "$objectToArray": "$dataPerHash.v" }
+    }
+  },
+  {
+    "$unwind": { "path": "$dataPerHash", "preserveNullAndEmptyArrays": false }
+  },
+  {
+    "$project": {
+      "_id": 1,
+      "batchKey": 1,
+      "dataType": 1,
+      "dataHash": "$dataPerHash.k",
+      "dataObject": "$dataPerHash.v"
+    }
+  }
+]
