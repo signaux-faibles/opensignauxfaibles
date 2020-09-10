@@ -1438,7 +1438,6 @@ function cotisationsdettes(vCotisation, vDebit, periodes, finPériode // corresp
  */
 function delais(vDelai, debitParPériode, intervalleTraitement) {
     "use strict";
-
     const donnéesDélaiParPériode = {};
     Object.values(vDelai).forEach((delai) => {
         if (delai.duree_delai <= 0) {
