@@ -15,10 +15,10 @@ export function reduce(
 ): CompanyDataValues {
   "use strict"
 
-  const f = { /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/
-    compactBatch, /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/
-    currentState, /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/
-  } /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/
+  /* DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO */ const f = {
+    compactBatch, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
+    currentState, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
+  } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
 
   // Tester si plusieurs batchs. Reduce complet uniquement si plusieurs
   // batchs. Sinon, juste fusion des attributs

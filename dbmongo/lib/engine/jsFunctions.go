@@ -419,7 +419,7 @@ function omit(object, ...propNames) {
         }
     }
     // - types vides
-    forEachPopulatedProp(currentBatch, (type, typedBatchData) => {
+    f.forEachPopulatedProp(currentBatch, (type, typedBatchData) => {
         if (Object.keys(typedBatchData).length === 0) {
             delete currentBatch[type];
         }
@@ -502,13 +502,14 @@ function complete_reporder(siret, object) {
 // Note: similaire à flatten() de reduce.algo2.
 function currentState(batches) {
     "use strict";
+
     // Retourne les clés de obj, en respectant le type défini dans le type de obj.
     // Contrat: obj ne doit contenir que les clés définies dans son type.
     const typedObjectKeys = (obj) => Object.keys(obj);
     const currentState = batches.reduce((m, batch) => {
         //1. On supprime les clés de la mémoire
         if (batch.compact) {
-            forEachPopulatedProp(batch.compact.delete, (type, keysToDelete) => {
+            f.forEachPopulatedProp(batch.compact.delete, (type, keysToDelete) => {
                 keysToDelete.forEach((key) => {
                     m[type].delete(key); // Should never fail or collection is corrupted
                 });
@@ -649,7 +650,7 @@ function listHashesToAddAndDelete(currentBatch, stockTypes, memory) {
 function reduce(key, values // chaque element contient plusieurs batches pour cette entreprise ou établissement
 ) {
     "use strict";
-    const f = {
+
         compactBatch,
         currentState,
 

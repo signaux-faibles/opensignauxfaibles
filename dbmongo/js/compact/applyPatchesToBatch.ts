@@ -43,7 +43,7 @@ export function applyPatchesToBatch(
     }
   }
   // - types vides
-  forEachPopulatedProp(currentBatch, (type, typedBatchData) => {
+  f.forEachPopulatedProp(currentBatch, (type, typedBatchData) => {
     if (Object.keys(typedBatchData).length === 0) {
       delete currentBatch[type]
     }

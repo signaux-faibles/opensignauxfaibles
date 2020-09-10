@@ -7,6 +7,8 @@ import { forEachPopulatedProp } from "../common/forEachPopulatedProp"
 export function currentState(batches: BatchValue[]): CurrentDataState {
   "use strict"
 
+  const f = { forEachPopulatedProp } /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/
+
   // Retourne les clés de obj, en respectant le type défini dans le type de obj.
   // Contrat: obj ne doit contenir que les clés définies dans son type.
   const typedObjectKeys = <T>(obj: T): Array<keyof T> =>
@@ -16,7 +18,7 @@ export function currentState(batches: BatchValue[]): CurrentDataState {
     (m: CurrentDataState, batch: BatchValue) => {
       //1. On supprime les clés de la mémoire
       if (batch.compact) {
-        forEachPopulatedProp(batch.compact.delete, (type, keysToDelete) => {
+        f.forEachPopulatedProp(batch.compact.delete, (type, keysToDelete) => {
           keysToDelete.forEach((key) => {
             m[type].delete(key) // Should never fail or collection is corrupted
           })
