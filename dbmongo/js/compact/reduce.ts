@@ -1,6 +1,6 @@
 import "../globals.ts"
 import { compactBatch } from "./compactBatch"
-import * as f from "./currentState"
+import { currentState } from "./currentState"
 
 // Paramètres globaux utilisés par "compact"
 declare const batches: BatchKey[]
@@ -14,6 +14,11 @@ export function reduce(
   values: CompanyDataValues[] // chaque element contient plusieurs batches pour cette entreprise ou établissement
 ): CompanyDataValues {
   "use strict"
+
+  const f = { /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/
+    compactBatch, /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/
+    currentState, /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/
+  } /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/
 
   // Tester si plusieurs batchs. Reduce complet uniquement si plusieurs
   // batchs. Sinon, juste fusion des attributs
@@ -89,7 +94,7 @@ export function reduce(
     .filter((batch) => batch >= fromBatchKey)
     .forEach((batch) => {
       const currentBatch = naivelyMergedCompanyData.batch[batch]
-      const compactedBatch = compactBatch(currentBatch, memory, batch)
+      const compactedBatch = f.compactBatch(currentBatch, memory, batch)
       if (Object.keys(compactedBatch).length > 0) {
         reducedValue.batch[batch] = compactedBatch
       }

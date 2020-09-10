@@ -7,6 +7,7 @@ export function applyPatchesToBatch(
   stockTypes: DataType[],
   currentBatch: BatchValue
 ): void {
+  const f = { forEachPopulatedProp } /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/
   // Application des suppressions
   stockTypes.forEach((type) => {
     const hashesToDelete = hashToDelete[type]
@@ -18,7 +19,7 @@ export function applyPatchesToBatch(
   })
 
   // Application des ajouts
-  forEachPopulatedProp(hashToAdd, (type, hashesToAdd) => {
+  f.forEachPopulatedProp(hashToAdd, (type, hashesToAdd) => {
     currentBatch[type] = [...hashesToAdd].reduce(
       (typedBatchValues, hash) => ({
         ...typedBatchValues,
@@ -32,7 +33,7 @@ export function applyPatchesToBatch(
   // - compact.delete vides
   const compactDelete = currentBatch.compact?.delete
   if (compactDelete) {
-    forEachPopulatedProp(compactDelete, (type, keysToDelete) => {
+    f.forEachPopulatedProp(compactDelete, (type, keysToDelete) => {
       if (keysToDelete.length === 0) {
         delete compactDelete[type]
       }

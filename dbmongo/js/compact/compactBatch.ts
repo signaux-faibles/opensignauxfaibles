@@ -19,20 +19,28 @@ export function compactBatch(
   memory: CurrentDataState,
   fromBatchKey: string
 ): BatchValue {
+
+  const f = { /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/
+    listHashesToAddAndDelete, /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/
+    applyPatchesToBatch, /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/
+    applyPatchesToMemory,  /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/
+    fixRedundantPatches, /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/
+  } /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/
+
   // Les types où il y a potentiellement des suppressions
   const stockTypes = completeTypes[fromBatchKey].filter(
     (type) => (memory[type] || new Set()).size > 0
   )
 
-  const { hashToAdd, hashToDelete } = listHashesToAddAndDelete(
+  const { hashToAdd, hashToDelete } = f.listHashesToAddAndDelete(
     currentBatch,
     stockTypes,
     memory
   )
 
-  fixRedundantPatches(hashToAdd, hashToDelete, memory)
-  applyPatchesToMemory(hashToAdd, hashToDelete, memory)
-  applyPatchesToBatch(hashToAdd, hashToDelete, stockTypes, currentBatch)
+  f.fixRedundantPatches(hashToAdd, hashToDelete, memory)
+  f.applyPatchesToMemory(hashToAdd, hashToDelete, memory)
+  f.applyPatchesToBatch(hashToAdd, hashToDelete, stockTypes, currentBatch)
 
   return currentBatch
 }

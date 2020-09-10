@@ -13,19 +13,20 @@ export function listHashesToAddAndDelete(
   hashToAdd: Partial<Record<DataType, Set<DataHash>>>
   hashToDelete: Partial<Record<DataType, Set<DataHash>>>
 } {
+  const f = { forEachPopulatedProp } /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/
   const hashToDelete: Partial<Record<DataType, Set<DataHash>>> = {}
   const hashToAdd: Partial<Record<DataType, Set<DataHash>>> = {}
 
   // Itération sur les types qui ont potentiellement subi des modifications
   // pour compléter hashToDelete et hashToAdd.
   // Les suppressions de types complets / stock sont gérés dans le bloc suivant.
-  forEachPopulatedProp(currentBatch, (type) => {
+  f.forEachPopulatedProp(currentBatch, (type) => {
     // Le type compact gère les clés supprimées
     // Ce type compact existe si le batch en cours a déjà été compacté.
     if (type === "compact") {
       const compactDelete = currentBatch.compact?.delete
       if (compactDelete) {
-        forEachPopulatedProp(compactDelete, (deleteType, keysToDelete) => {
+        f.forEachPopulatedProp(compactDelete, (deleteType, keysToDelete) => {
           keysToDelete.forEach((hash) => {
             ;(hashToDelete[deleteType] =
               hashToDelete[deleteType] || new Set()).add(hash)
