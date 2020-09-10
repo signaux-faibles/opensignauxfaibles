@@ -15,11 +15,11 @@ export interface EntréeDelai {
   date_creation: Date
   date_echeance: Date
   /**
-   * doit valoir 1 ou plus
+   * Doit valoir 1 ou plus:
    */
   duree_delai: number
   /**
-   * doit valoir plus que 0 euros
+   * Doit valoir plus que 0 euros:
    */
   montant_echeancier: number
 }

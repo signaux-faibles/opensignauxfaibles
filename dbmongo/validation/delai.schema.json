@@ -12,13 +12,13 @@
     "date_echeance": { "bsonType": "date" },
     "duree_delai": {
       "bsonType": "number",
-      "minimum": 1,
-      "description": "doit valoir 1 ou plus"
+      "description": "Doit valoir 1 ou plus:",
+      "minimum": 1
     },
     "montant_echeancier": {
       "bsonType": "number",
-      "minimum": 0.01,
-      "description": "doit valoir plus que 0 euros"
+      "description": "Doit valoir plus que 0 euros:",
+      "minimum": 0.01
     }
   },
   "additionalProperties": false
