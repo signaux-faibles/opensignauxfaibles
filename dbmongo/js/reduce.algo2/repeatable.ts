@@ -1,10 +1,12 @@
+import { EntréeRepOrder, ParPériode } from "../RawDataTypes"
+
 export type SortieRepeatable = { random_order: number }
 
 export function repeatable(
-  rep: Record<Periode, EntréeRepOrder>
-): Record<Periode, SortieRepeatable> {
+  rep: ParPériode<EntréeRepOrder>
+): ParPériode<SortieRepeatable> {
   "use strict"
-  const output_repeatable: Record<string, { random_order: number }> = {}
+  const output_repeatable: ParPériode<{ random_order: number }> = {}
   Object.keys(rep).forEach((hash) => {
     const one_rep = rep[hash]
     const periode = one_rep.periode.getTime()

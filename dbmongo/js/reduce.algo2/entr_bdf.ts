@@ -1,12 +1,18 @@
-import "../globals"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { dateAddMonth } from "../common/dateAddMonth"
 import { omit } from "../common/omit"
+import {
+  EntréeBdfRatios,
+  EntréeBdf,
+  ParHash,
+  Timestamp,
+  ParPériode,
+} from "../RawDataTypes"
 
 export type SortieBdf = {
   annee_bdf: number
   exercice_bdf: number // année
-} & RatiosBdf &
+} & EntréeBdfRatios &
   RatiosBdfPassés
 
 // Synchroniser les propriétés avec celles de RatiosBdf
@@ -26,7 +32,7 @@ type RatiosBdfPassés = {
 }
 
 export function entr_bdf(
-  donnéesBdf: Record<DataHash, EntréeBdf>,
+  donnéesBdf: ParHash<EntréeBdf>,
   periodes: Timestamp[]
 ): ParPériode<Partial<SortieBdf>> {
   "use strict"

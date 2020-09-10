@@ -1,5 +1,6 @@
-import * as f from "../common/generatePeriodSerie"
+import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { nbDays } from "./nbDays"
+import { EntréeDelai, ParHash, ParPériode } from "../RawDataTypes"
 
 type DeepReadonly<T> = Readonly<T> // pas vraiment, mais espoire que TS le supporte prochainement
 
@@ -30,14 +31,14 @@ export type DelaiComputedValues = {
  * demande de délai.
  */
 export function delais(
-  vDelai: Record<string, EntréeDelai>,
+  vDelai: ParHash<EntréeDelai>,
   debitParPériode: DeepReadonly<ParPériode<DebitComputedValues>>,
   intervalleTraitement: { premièreDate: Date; dernièreDate: Date }
 ): ParPériode<DelaiComputedValues> {
   "use strict"
+  const f = { generatePeriodSerie } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
   const donnéesDélaiParPériode: ParPériode<DelaiComputedValues> = {}
-  Object.keys(vDelai).forEach(function (hash) {
-    const delai = vDelai[hash]
+  Object.values(vDelai).forEach((delai) => {
     if (delai.duree_delai <= 0) {
       return
     }

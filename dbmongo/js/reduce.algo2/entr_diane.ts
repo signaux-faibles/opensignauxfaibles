@@ -1,15 +1,15 @@
-import "../globals"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { dateAddMonth } from "../common/dateAddMonth"
 import { omit } from "../common/omit"
 import { poidsFrng } from "./poidsFrng"
 import { detteFiscale } from "./detteFiscale"
 import { fraisFinancier } from "./fraisFinancier"
+import { EntréeDiane, ParHash, ParPériode, Timestamp } from "../RawDataTypes"
 
-export type SortieDiane = Record<string, unknown> // for *_past_* props of diane. // TODO: try to be more specific
+export type SortieDiane = Record<string, unknown> // for *_past_* props of diane. // TODO: définir les props de manière plus précise à l'aide de cette fonctionnalité TS, quand elle sera prête: https://github.com/microsoft/TypeScript/pull/40336
 
 export function entr_diane(
-  donnéesDiane: Record<DataHash, EntréeDiane>,
+  donnéesDiane: ParHash<EntréeDiane>,
   output_indexed: ParPériode<SortieDiane>,
   periodes: Timestamp[]
 ): ParPériode<SortieDiane> {

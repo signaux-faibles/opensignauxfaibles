@@ -803,7 +803,6 @@ db.getCollection("Features").createIndex({
     return c.length > 0 ? c[c.length - 1] : undefined;
 }`,
 "cotisations": `function cotisations(vcotisation = {}) {
-
     const offset_cotisation = 0;
     const value_cotisation = {};
     // Répartition des cotisations sur toute la période qu'elle concerne
@@ -828,7 +827,6 @@ db.getCollection("Features").createIndex({
     return result;
 }`,
 "dealWithProcols": `function dealWithProcols(data_source = {}, altar_or_procol) {
-
     return Object.keys(data_source)
         .reduce((events, hash) => {
         const the_event = data_source[hash];
@@ -844,7 +842,6 @@ db.getCollection("Features").createIndex({
         .sort((a, b) => a.date_procol.getTime() - b.date_procol.getTime());
 }`,
 "debits": `function debits(vdebit = {}) {
-
     const last_treatment_day = 20;
     const ecn = Object.keys(vdebit).reduce((accu, h) => {
         const debit = vdebit[h];
@@ -980,7 +977,6 @@ db.getCollection("Features").createIndex({
     return result;
 }`,
 "map": `function map() {
-
     const value = f.flatten(this.value, actual_batch);
     if (this.value.scope === "etablissement") {
         const vcmde = {};
@@ -1199,7 +1195,6 @@ function sirene(sireneArray) {
 "cotisation": `function cotisation(output_indexed) {
     "use strict";
     const sortieCotisation = {};
-
     const moyenne = (valeurs = []) => valeurs.some((val) => typeof val === "undefined")
         ? undefined
         : valeurs.reduce((p, c) => p + c, 0) / (valeurs.length || 1);
@@ -1274,7 +1269,6 @@ function sirene(sireneArray) {
 function cotisationsdettes(vCotisation, vDebit, periodes, finPériode // correspond à la variable globale date_fin
 ) {
     "use strict";
-
     // Tous les débits traitées après ce jour du mois sont reportées à la période suivante
     // Permet de s'aligner avec le calendrier de fourniture des données
     const lastAccountedDay = 20;
@@ -1409,7 +1403,6 @@ function cotisationsdettes(vCotisation, vDebit, periodes, finPériode // corresp
 }`,
 "dealWithProcols": `function dealWithProcols(data_source, altar_or_procol, output_indexed) {
     "use strict";
-
     const codes = Object.keys(data_source)
         .reduce((events, hash) => {
         const the_event = data_source[hash];
@@ -1461,8 +1454,7 @@ function cotisationsdettes(vCotisation, vDebit, periodes, finPériode // corresp
 function delais(vDelai, debitParPériode, intervalleTraitement) {
     "use strict";
     const donnéesDélaiParPériode = {};
-    Object.keys(vDelai).forEach(function (hash) {
-        const delai = vDelai[hash];
+    Object.values(vDelai).forEach((delai) => {
         if (delai.duree_delai <= 0) {
             return;
         }
@@ -1539,7 +1531,6 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
 }`,
 "entr_bdf": `function entr_bdf(donnéesBdf, periodes) {
     "use strict";
-
     const outputBdf = {};
     for (const p of periodes) {
         outputBdf[p] = {};
@@ -1576,7 +1567,6 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
     return outputBdf;
 }`,
 "entr_diane": `function entr_diane(donnéesDiane, output_indexed, periodes) {
-
     for (const hash of Object.keys(donnéesDiane)) {
         if (!donnéesDiane[hash].arrete_bilan_diane)
             continue;
@@ -1684,7 +1674,6 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
 "finalize": `function finalize(k, v) {
     "use strict";
     const maxBsonSize = 16777216;
-
     // v de la forme
     // _id: {batch / siren / periode / type}
     // value: {siret1: {}, siret2: {}, "siren": {}}
@@ -1837,7 +1826,6 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
  */
 function map() {
     "use strict";
-
     const v = f.flatten(this.value, actual_batch);
     if (v.scope === "etablissement") {
         const [output_array, // DonnéesAgrégées[] dans l'ordre chronologique

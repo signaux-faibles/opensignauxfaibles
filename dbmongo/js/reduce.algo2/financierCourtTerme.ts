@@ -1,3 +1,5 @@
+import { EntréeDiane } from "../RawDataTypes"
+
 export function financierCourtTerme(diane: EntréeDiane): number | null {
   "use strict"
 

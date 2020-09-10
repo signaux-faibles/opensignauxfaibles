@@ -1,5 +1,6 @@
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { dateAddMonth } from "../common/dateAddMonth"
+import { ParPériode } from "../RawDataTypes"
 
 export type Input = {
   periode: Date

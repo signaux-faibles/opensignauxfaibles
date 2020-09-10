@@ -1,7 +1,7 @@
 import test, { ExecutionContext } from "ava"
 import { nbDays } from "./nbDays"
-import "../globals"
 import { delais, DelaiComputedValues, DebitComputedValues } from "./delais"
+import { EntréeDelai, ParPériode } from "../RawDataTypes"
 
 const fevrier = new Date("2014-02-01")
 const mars = new Date("2014-03-01")
