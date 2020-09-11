@@ -6,14 +6,20 @@ import { ParPériode } from "../RawDataTypes"
 function assertEffectif(
   t: ExecutionContext,
   résultat: ParPériode<SortieEffectifs>,
-  effectifsAttendus: Array<number | null>
+  effectifsAttendus: Array<[number | null, boolean]>,
+
 ): void {
   const périodes = Object.keys(résultat)
   for (let i = 0; i < périodes.length; i++) {
-    t.deepEqual(
+    t.is(
       résultat[périodes[i]].effectif,
-      effectifsAttendus[i],
+      effectifsAttendus[i][0],
       `valeur inattendue pour la période ${i}`
+    )
+    t.is(
+      résultat[périodes[i]].effectif_reporte,
+      effectifsAttendus[i][1]?1:0,
+      `flag de report inattendu pour la période ${i}`
     )
   }
 }
@@ -37,8 +43,8 @@ test.serial(
       clé
     )
     assertEffectif(t, résultat, [
-      entréeEffectif["hash_periode0"].effectif,
-      entréeEffectif["hash_periode0"].effectif,
+      [entréeEffectif["hash_periode0"].effectif, false],
+      [entréeEffectif["hash_periode0"].effectif, true],
     ])
   }
 )
@@ -66,9 +72,9 @@ test.serial(
       clé
     )
     assertEffectif(t, résultat, [
-      entréeEffectif["hash_periode0"].effectif,
-      null,
-      null,
+      [entréeEffectif["hash_periode0"].effectif, false],
+      [null, true], // TODO: reporté devrait être false
+      [null, true],
     ])
   }
 )
@@ -102,10 +108,10 @@ test.serial(
       clé
     )
     assertEffectif(t, résultat, [
-      entréeEffectif["hash_periode0"].effectif,
-      entréeEffectif["hash_periode1"].effectif,
-      entréeEffectif["hash_periode1"].effectif,
-      entréeEffectif["hash_periode1"].effectif,
+      [entréeEffectif["hash_periode0"].effectif, false],
+      [entréeEffectif["hash_periode1"].effectif, false],
+      [entréeEffectif["hash_periode1"].effectif, true],
+      [entréeEffectif["hash_periode1"].effectif, true],
     ])
   }
 )
