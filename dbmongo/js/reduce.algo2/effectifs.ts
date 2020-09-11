@@ -18,7 +18,7 @@ type CléSortieEffectifPassé =
 
 type ValeurEffectif = number
 
-type SortieEffectifs = Record<CléSortieEffectif, ValeurEffectif | null> &
+export type SortieEffectifs = Record<CléSortieEffectif, ValeurEffectif | null> &
   Record<CléSortieEffectifReporté, 1 | 0> &
   Record<CléSortieEffectifPassé, ValeurEffectif>
 
