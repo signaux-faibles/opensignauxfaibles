@@ -67,6 +67,11 @@ export function effectifs(
         offset,
         timestamp: f
           .dateAddMonth(new Date(parseInt(time)), offset - offset_effectif - 1)
+        // TODO: réfléchir à si l'offset est nécessaire pour l'algo.
+        // Ces valeurs permettent de calculer les dernières variations réelles
+        // d'effectif sur la période donnée (par exemple: 6 mois),
+        // en excluant les valeurs reportées qui
+        // pourraient conduire à des variations = 0
           .getTime(),
       }))
       .filter(({ timestamp }) => periodes.includes(timestamp))
