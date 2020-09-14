@@ -10,7 +10,8 @@ export function fixRedundantPatches(
   hashToDelete: Partial<Record<DataType, Set<DataHash>>>,
   memory: CurrentDataState
 ): void {
-  forEachPopulatedProp(hashToDelete, (type, hashesToDelete) => {
+  const f = { forEachPopulatedProp } /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/
+  f.forEachPopulatedProp(hashToDelete, (type, hashesToDelete) => {
     // Pour chaque cle supprimee: est-ce qu'elle est bien dans la
     // memoire ? sinon on la retire de la liste des clés supprimées (pas de
     // maj memoire)
@@ -39,7 +40,7 @@ export function fixRedundantPatches(
     )
   })
 
-  forEachPopulatedProp(hashToAdd, (type, hashesToAdd) => {
+  f.forEachPopulatedProp(hashToAdd, (type, hashesToAdd) => {
     // Pour chaque cle ajoutee: est-ce qu'elle est dans la memoire ? Si oui on filtre cette cle
     // i.e. on herite de la memoire. (pas de maj de la memoire)
     // ---------------------------------------------------------------------------------------------
