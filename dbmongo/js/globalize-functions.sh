@@ -8,10 +8,20 @@ perl -pi'' -e 's/^const .*$//g' ./**/*.js
 perl -pi'' -e 's/^export //' ./**/*.js
 perl -pi'' -e 's/^import .*$//g' ./**/*.js
 
-# Check that JS files only call functions through the f global variable.
-GLOBALS="f,emit,fromBatchKey,batches,serie_periode,completeTypes" && $(npm bin)/eslint --no-eslintrc --parser-options=ecmaVersion:6 --env es6 --global "${GLOBALS}" --rule "no-undef:2" --quiet --ignore-pattern functions.js compact/*.js
-GLOBALS="f,emit,fromBatchKey,batches,serie_periode,completeTypes,date_fin,actual_batch" && $(npm bin)/eslint --no-eslintrc --parser-options=ecmaVersion:6 --env es6 --global "${GLOBALS}" --rule "no-undef:2" --quiet --ignore-pattern functions.js public/*.js
-GLOBALS="f,print,emit,bsonsize,fromBatchKey,batches,serie_periode,completeTypes,date_fin,actual_batch,offset_effectif,includes,naf" && $(npm bin)/eslint --no-eslintrc --parser-options=ecmaVersion:6 --env es6 --global "${GLOBALS}" --rule "no-undef:2" --quiet --ignore-pattern functions.js reduce.algo2/*.js
+function checkJS {
+  FILES="$1"
+  GLOBALS="$2"
+  $(npm bin)/eslint --no-eslintrc \
+    --parser-options=ecmaVersion:6 --env es6 \
+    --rule "no-undef:2" --quiet \
+    --ignore-pattern "functions.js" \
+    --global "${GLOBALS}" \
+    "${FILES}"
+}
 
-# TODO: extract a function, to reduce code duplication
+# Check that JS files only call functions through the f global variable.
+checkJS "compact/*.js" "f,emit,fromBatchKey,batches,serie_periode,completeTypes"
+checkJS "public/*.js" "f,emit,fromBatchKey,batches,serie_periode,completeTypes,date_fin,actual_batch"
+checkJS "reduce.algo2/*.js" "f,print,emit,bsonsize,fromBatchKey,batches,serie_periode,completeTypes,date_fin,actual_batch,offset_effectif,includes,naf"
+
 # TODO: extract globals from code
