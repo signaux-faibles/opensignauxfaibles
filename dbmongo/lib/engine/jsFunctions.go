@@ -937,6 +937,24 @@ db.getCollection("Features").createIndex({
 "finalize": `function finalize(_key, val) {
     return val;
 }`,
+"functions": `const f = {
+    iterable,
+    debits,
+    apconso,
+    apdemande,
+    flatten,
+    compte,
+    effectifs,
+    delai,
+    sirene,
+    cotisations,
+    dateAddDay,
+    omit,
+    generatePeriodSerie,
+    diane,
+    bdf,
+    joinUrssaf,
+};`,
 "iterable": `function iterable(dict) {
     return typeof dict === "object" ? Object.keys(dict).map((h) => dict[h]) : [];
 }`,
