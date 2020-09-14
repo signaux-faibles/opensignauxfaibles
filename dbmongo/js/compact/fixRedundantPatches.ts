@@ -1,4 +1,4 @@
-import { forEachPopulatedProp } from "../common/forEachPopulatedProp"
+import { f } from "./functions"
 import { DataType, DataHash } from "../RawDataTypes"
 import { CurrentDataState } from "./currentState"
 
@@ -10,7 +10,6 @@ export function fixRedundantPatches(
   hashToDelete: Partial<Record<DataType, Set<DataHash>>>,
   memory: CurrentDataState
 ): void {
-  const f = { forEachPopulatedProp } /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/
   f.forEachPopulatedProp(hashToDelete, (type, hashesToDelete) => {
     // Pour chaque cle supprimee: est-ce qu'elle est bien dans la
     // memoire ? sinon on la retire de la liste des clés supprimées (pas de

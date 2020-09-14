@@ -388,7 +388,6 @@ function omit(object, ...propNames) {
 "compact":{
 "applyPatchesToBatch": `function applyPatchesToBatch(hashToAdd, hashToDelete, stockTypes, currentBatch) {
     var _a;
-    const f = { forEachPopulatedProp }; /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/
     // Application des suppressions
     stockTypes.forEach((type) => {
         const hashesToDelete = hashToDelete[type];
@@ -426,7 +425,6 @@ function omit(object, ...propNames) {
     });
 }`,
 "applyPatchesToMemory": `function applyPatchesToMemory(hashToAdd, hashToDelete, memory) {
-    const f = { forEachPopulatedProp }; /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/
     // Prise en compte des suppressions de clés dans la mémoire
     f.forEachPopulatedProp(hashToDelete, (type, hashesToDelete) => {
         hashesToDelete.forEach((hash) => {
@@ -448,12 +446,6 @@ function omit(object, ...propNames) {
  * Pré-requis: les batches précédents doivent avoir été compactés.
  */
 function compactBatch(currentBatch, memory, fromBatchKey) {
-    /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/ const f = {
-        listHashesToAddAndDelete /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/,
-        applyPatchesToBatch /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/,
-        applyPatchesToMemory /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/,
-        fixRedundantPatches /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/,
-    }; /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/
     // Les types où il y a potentiellement des suppressions
     const stockTypes = completeTypes[fromBatchKey].filter((type) => (memory[type] || new Set()).size > 0);
     const { hashToAdd, hashToDelete } = f.listHashesToAddAndDelete(currentBatch, stockTypes, memory);
@@ -502,7 +494,6 @@ function complete_reporder(siret, object) {
 // Note: similaire à flatten() de reduce.algo2.
 function currentState(batches) {
     "use strict";
-    const f = { forEachPopulatedProp }; /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/
     // Retourne les clés de obj, en respectant le type défini dans le type de obj.
     // Contrat: obj ne doit contenir que les clés définies dans son type.
     const typedObjectKeys = (obj) => Object.keys(obj);
@@ -535,7 +526,6 @@ function currentState(batches) {
 // l'échantillonnage pour l'entraînement du modèle.
 function finalize(k, companyDataValues) {
     "use strict";
-    const f = { complete_reporder }; // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     let o = Object.assign(Object.assign({}, companyDataValues), { index: { algo1: false, algo2: false } });
     if (o.scope === "entreprise") {
         o.index.algo1 = true;
@@ -560,7 +550,6 @@ function finalize(k, companyDataValues) {
  * Modification de hashToAdd et hashToDelete pour retirer les redondances.
  **/
 function fixRedundantPatches(hashToAdd, hashToDelete, memory) {
-    const f = { forEachPopulatedProp }; /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/
     f.forEachPopulatedProp(hashToDelete, (type, hashesToDelete) => {
         // Pour chaque cle supprimee: est-ce qu'elle est bien dans la
         // memoire ? sinon on la retire de la liste des clés supprimées (pas de
@@ -598,7 +587,6 @@ function fixRedundantPatches(hashToAdd, hashToDelete, memory) {
  * On ajoute aux clés supprimées les types stocks de la memoire.
  */
 function listHashesToAddAndDelete(currentBatch, stockTypes, memory) {
-    const f = { forEachPopulatedProp }; /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/
     const hashToDelete = {};
     const hashToAdd = {};
     // Itération sur les types qui ont potentiellement subi des modifications
@@ -651,7 +639,6 @@ function listHashesToAddAndDelete(currentBatch, stockTypes, memory) {
 function reduce(key, values // chaque element contient plusieurs batches pour cette entreprise ou établissement
 ) {
     "use strict";
-    const f = { compactBatch, currentState }; // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     // Tester si plusieurs batchs. Reduce complet uniquement si plusieurs
     // batchs. Sinon, juste fusion des attributs
     const auxBatchSet = new Set();
@@ -774,20 +761,17 @@ db.getCollection("Features").createIndex({
 },
 "public":{
 "apconso": `function apconso(apconso) {
-    const f = { iterable }; // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     return f
         .iterable(apconso)
         .sort((p1, p2) => (p1.periode < p2.periode ? 1 : -1));
 }`,
 "apdemande": `function apdemande(apdemande) {
-    const f = { iterable }; // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     return f
         .iterable(apdemande)
         .sort((p1, p2) => p1.periode.start.getTime() < p2.periode.start.getTime() ? 1 : -1);
 }`,
 "bdf": `function bdf(hs) {
     "use strict";
-    const f = { iterable }; // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     const bdf = {};
     // Déduplication par arrete_bilan_bdf
     f.iterable(hs)
@@ -800,12 +784,10 @@ db.getCollection("Features").createIndex({
         .sort((a, b) => (a.annee_bdf < b.annee_bdf ? 1 : -1));
 }`,
 "compte": `function compte(compte) {
-    const f = { iterable }; // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     const c = f.iterable(compte);
     return c.length > 0 ? c[c.length - 1] : undefined;
 }`,
 "cotisations": `function cotisations(vcotisation = {}) {
-    const f = { generatePeriodSerie, dateAddMonth }; // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     const offset_cotisation = 0;
     const value_cotisation = {};
     // Répartition des cotisations sur toute la période qu'elle concerne
@@ -830,7 +812,6 @@ db.getCollection("Features").createIndex({
     return result;
 }`,
 "dealWithProcols": `function dealWithProcols(data_source = {}, altar_or_procol) {
-    const f = { altaresToHuman, procolToHuman }; // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     return Object.keys(data_source)
         .reduce((events, hash) => {
         const the_event = data_source[hash];
@@ -846,7 +827,6 @@ db.getCollection("Features").createIndex({
         .sort((a, b) => a.date_procol.getTime() - b.date_procol.getTime());
 }`,
 "debits": `function debits(vdebit = {}) {
-    const f = { compareDebit, generatePeriodSerie, dateAddMonth, dateAddDay }; // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     const last_treatment_day = 20;
     const ecn = Object.keys(vdebit).reduce((accu, h) => {
         const debit = vdebit[h];
@@ -924,12 +904,10 @@ db.getCollection("Features").createIndex({
     }));
 }`,
 "delai": `function delai(delai) {
-    const f = { iterable }; // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     return f.iterable(delai);
 }`,
 "diane": `function diane(hs) {
     "use strict";
-    const f = { iterable }; // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     const diane = {};
     // Déduplication par arrete_bilan_diane
     f.iterable(hs)
@@ -942,7 +920,6 @@ db.getCollection("Features").createIndex({
         .sort((a, b) => (a.exercice_diane < b.exercice_diane ? 1 : -1));
 }`,
 "effectifs": `function effectifs(effectif) {
-    const f = { iterable }; // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     const mapEffectif = {};
     f.iterable(effectif).forEach((e) => {
         mapEffectif[e.periode.getTime()] =
@@ -1077,7 +1054,6 @@ function sirene(sireneArray) {
 }`,
 "apart": `function apart(apconso, apdemande) {
     "use strict";
-    const f = { generatePeriodSerie }; // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     const output_apart = {};
     // Mapping (pour l'instant vide) du hash de la demande avec les hash des consos correspondantes
     const apart = Object.keys(apdemande).reduce((apart, hash) => {
@@ -1166,7 +1142,6 @@ function sirene(sireneArray) {
 }`,
 "cibleApprentissage": `function cibleApprentissage(output_indexed, n_months) {
     "use strict";
-    const f = { lookAhead }; // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     // Mock two input instead of one for future modification
     const output_cotisation = output_indexed;
     const output_procol = output_indexed;
@@ -1205,7 +1180,6 @@ function sirene(sireneArray) {
 "cotisation": `function cotisation(output_indexed) {
     "use strict";
     const sortieCotisation = {};
-    const f = { generatePeriodSerie, dateAddMonth }; // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     const moyenne = (valeurs = []) => valeurs.some((val) => typeof val === "undefined")
         ? undefined
         : valeurs.reduce((p, c) => p + c, 0) / (valeurs.length || 1);
@@ -1280,7 +1254,6 @@ function sirene(sireneArray) {
 function cotisationsdettes(vCotisation, vDebit, periodes, finPériode // correspond à la variable globale date_fin
 ) {
     "use strict";
-    const f = { generatePeriodSerie, dateAddMonth, compareDebit }; // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     // Tous les débits traitées après ce jour du mois sont reportées à la période suivante
     // Permet de s'aligner avec le calendrier de fourniture des données
     const lastAccountedDay = 20;
@@ -1415,7 +1388,6 @@ function cotisationsdettes(vCotisation, vDebit, periodes, finPériode // corresp
 }`,
 "dealWithProcols": `function dealWithProcols(data_source, altar_or_procol, output_indexed) {
     "use strict";
-    const f = { altaresToHuman, procolToHuman }; // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     const codes = Object.keys(data_source)
         .reduce((events, hash) => {
         const the_event = data_source[hash];
@@ -1451,7 +1423,6 @@ function cotisationsdettes(vCotisation, vDebit, periodes, finPériode // corresp
 }`,
 "defaillances": `function defaillances(altares, procol, output_indexed) {
     "use strict";
-    const f = { dealWithProcols }; // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     f.dealWithProcols(altares, "altares", output_indexed);
     f.dealWithProcols(procol, "procol", output_indexed);
 }`,
@@ -1467,7 +1438,6 @@ function cotisationsdettes(vCotisation, vDebit, periodes, finPériode // corresp
  */
 function delais(vDelai, debitParPériode, intervalleTraitement) {
     "use strict";
-    const f = { generatePeriodSerie }; // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     const donnéesDélaiParPériode = {};
     Object.values(vDelai).forEach((delai) => {
         if (delai.duree_delai <= 0) {
@@ -1513,7 +1483,6 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
 "effectifs": `function effectifs(entréeEffectif, periodes, clé) {
     "use strict";
     var _a;
-    const f = { dateAddMonth }; // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     const sortieEffectif = {};
     // Construction d'une map[time] = effectif à cette periode
     const mapEffectif = {};
@@ -1547,7 +1516,6 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
 }`,
 "entr_bdf": `function entr_bdf(donnéesBdf, periodes) {
     "use strict";
-    const f = { generatePeriodSerie, dateAddMonth, omit }; // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     const outputBdf = {};
     for (const p of periodes) {
         outputBdf[p] = {};
@@ -1584,7 +1552,6 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
     return outputBdf;
 }`,
 "entr_diane": `function entr_diane(donnéesDiane, output_indexed, periodes) {
-    /* DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO */ const f = Object.assign({ generatePeriodSerie, dateAddMonth, omit, poidsFrng, detteFiscale }, { fraisFinancier }); // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     for (const hash of Object.keys(donnéesDiane)) {
         if (!donnéesDiane[hash].arrete_bilan_diane)
             continue;
@@ -1667,7 +1634,6 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
 }`,
 "entr_sirene": `function entr_sirene(sirene_ul, sériePériode) {
     "use strict";
-    const f = { raison_sociale }; // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     const retourEntrSirene = {};
     const sireneHashes = Object.keys(sirene_ul || {});
     sériePériode.forEach((période) => {
@@ -1690,11 +1656,10 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
     });
     return retourEntrSirene;
 }`,
-"finalize": `function finalize(k, v) {
+"finalize": `const bsonsize = (obj) => JSON.stringify(obj).length; // will not be included in jsFunctions.go
+function finalize(k, v) {
     "use strict";
-    const f = { omit }; // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     const maxBsonSize = 16777216;
-    const bsonsize = (obj) => JSON.stringify(obj).length; // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     // v de la forme
     // _id: {batch / siren / periode / type}
     // value: {siret1: {}, siret2: {}, "siren": {}}
@@ -1765,7 +1730,6 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
 }`,
 "interim": `function interim(interim, output_indexed) {
     "use strict";
-    const f = { dateAddMonth }; // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     const output_effectif = output_indexed;
     // let periodes = Object.keys(output_indexed)
     // output_indexed devra être remplacé par output_effectif, et ne contenir que les données d'effectif.
@@ -1848,7 +1812,6 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
  */
 function map() {
     "use strict";
-    /* DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO */ const f = Object.assign(Object.assign(Object.assign(Object.assign({ flatten, outputs, apart, compte, effectifs, interim, add }, { repeatable, delais, defaillances, cotisationsdettes, ccsf }), { sirene, populateNafAndApe, cotisation, cibleApprentissage }), { entr_sirene, dateAddMonth, generatePeriodSerie, poidsFrng }), { detteFiscale, fraisFinancier, entr_bdf, omit, entr_diane }); // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     const v = f.flatten(this.value, actual_batch);
     if (v.scope === "etablissement") {
         const [output_array, // DonnéesAgrégées[] dans l'ordre chronologique
@@ -2052,7 +2015,6 @@ function outputs(v, serie_periode) {
 }`,
 "sirene": `function sirene(vSirene, output_array) {
     "use strict";
-    const f = { region }; // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
     const sireneHashes = Object.keys(vSirene || {});
     output_array.forEach((val) => {
         // geolocalisation

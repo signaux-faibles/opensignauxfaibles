@@ -1,3 +1,4 @@
+import { f } from "./functions"
 import {
   CompanyDataValues,
   BatchKey,
@@ -9,7 +10,6 @@ import {
 } from "../RawDataTypes"
 import { SortieDebit } from "./debits"
 import { Bdf } from "./bdf"
-import { f } from "./functions"
 
 type SortieMapCommon = {
   key: string

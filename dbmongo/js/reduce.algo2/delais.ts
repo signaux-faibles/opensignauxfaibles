@@ -1,5 +1,5 @@
-import { generatePeriodSerie } from "../common/generatePeriodSerie"
-import { nbDays } from "./nbDays"
+import { f } from "./functions"
+import { nbDays } from "./nbDays" // TODO: regression non identifiée ICI ! // => essayer de faire provoquer un warning par typescript
 import { EntréeDelai, ParHash, ParPériode } from "../RawDataTypes"
 
 type DeepReadonly<T> = Readonly<T> // pas vraiment, mais espoire que TS le supporte prochainement
@@ -36,7 +36,6 @@ export function delais(
   intervalleTraitement: { premièreDate: Date; dernièreDate: Date }
 ): ParPériode<DelaiComputedValues> {
   "use strict"
-  const f = { generatePeriodSerie } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
   const donnéesDélaiParPériode: ParPériode<DelaiComputedValues> = {}
   Object.values(vDelai).forEach((delai) => {
     if (delai.duree_delai <= 0) {

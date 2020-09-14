@@ -1,28 +1,4 @@
-import { flatten } from "../common/flatten"
-import { outputs, DonnéesAgrégées } from "./outputs"
-import { apart } from "./apart"
-import { compte } from "./compte"
-import { effectifs } from "./effectifs"
-import { interim } from "./interim"
-import { add } from "./add"
-import { repeatable } from "./repeatable"
-import { delais } from "./delais"
-import { defaillances } from "./defaillances"
-import { cotisationsdettes } from "./cotisationsdettes"
-import { ccsf } from "./ccsf"
-import { sirene } from "./sirene"
-import { populateNafAndApe, NAF } from "./populateNafAndApe"
-import { cotisation } from "./cotisation"
-import { cibleApprentissage } from "./cibleApprentissage"
-import { entr_sirene, SortieSireneEntreprise } from "./entr_sirene"
-import { dateAddMonth } from "../common/dateAddMonth"
-import { generatePeriodSerie } from "../common/generatePeriodSerie"
-import { poidsFrng } from "./poidsFrng"
-import { detteFiscale } from "./detteFiscale"
-import { fraisFinancier } from "./fraisFinancier"
-import { entr_bdf, SortieBdf } from "./entr_bdf"
-import { omit } from "../common/omit"
-import { entr_diane, SortieDiane } from "./entr_diane"
+import { f } from "./functions"
 import {
   CompanyDataValues,
   BatchKey,
@@ -30,6 +6,11 @@ import {
   SiretOrSiren,
   ParPériode,
 } from "../RawDataTypes"
+import { SortieBdf } from "./entr_bdf"
+import { SortieDiane } from "./entr_diane"
+import { SortieSireneEntreprise } from "./entr_sirene"
+import { DonnéesAgrégées } from "./outputs"
+import { NAF } from "./populateNafAndApe"
 
 type SortieMapEntreprise = {
   periode: Date
@@ -78,13 +59,6 @@ declare const date_fin: Date
  */
 export function map(this: EntréeMap): void {
   "use strict"
-  /* DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO */ const f = {
-    ...{ flatten, outputs, apart, compte, effectifs, interim, add }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
-    ...{ repeatable, delais, defaillances, cotisationsdettes, ccsf }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
-    ...{ sirene, populateNafAndApe, cotisation, cibleApprentissage }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
-    ...{ entr_sirene, dateAddMonth, generatePeriodSerie, poidsFrng }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
-    ...{ detteFiscale, fraisFinancier, entr_bdf, omit, entr_diane }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
-  } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
 
   const v = f.flatten(this.value, actual_batch)
 

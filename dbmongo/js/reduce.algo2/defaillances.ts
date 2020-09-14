@@ -1,4 +1,4 @@
-import { dealWithProcols } from "./dealWithProcols"
+import { f } from "./functions"
 import { SortieProcols } from "./dealWithProcols"
 import { EntréeDefaillances, ParPériode, ParHash } from "../RawDataTypes"
 
@@ -10,7 +10,6 @@ export function defaillances(
   output_indexed: ParPériode<Partial<SortieDefaillances>>
 ): void {
   "use strict"
-  const f = { dealWithProcols } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
   f.dealWithProcols(altares, "altares", output_indexed)
   f.dealWithProcols(procol, "procol", output_indexed)
 }

@@ -1,22 +1,27 @@
-import { iterable } from "./iterable"
-import { debits } from "./debits"
-import { apconso } from "./apconso"
-import { apdemande } from "./apdemande"
+import { altaresToHuman } from "../common/altaresToHuman"
+import { compareDebit } from "../common/compareDebit"
+import { dateAddMonth } from "../common/dateAddMonth"
 import { flatten } from "../common/flatten"
-import { compte } from "./compte"
-import { effectifs } from "./effectifs"
-import { joinUrssaf } from "./joinUrssaf"
-import { delai } from "./delai"
-import { bdf } from "./bdf"
-import { diane } from "./diane"
-import { sirene } from "./sirene"
-import { cotisations } from "./cotisations"
-import { dateAddDay } from "./dateAddDay"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { omit } from "../common/omit"
+import { procolToHuman } from "../common/procolToHuman"
+import { apconso } from "./apconso"
+import { apdemande } from "./apdemande"
+import { bdf } from "./bdf"
+import { compte } from "./compte"
+import { cotisations } from "./cotisations"
+import { dateAddDay } from "./dateAddDay"
+import { debits } from "./debits"
+import { delai } from "./delai"
+import { diane } from "./diane"
+import { effectifs } from "./effectifs"
+import { iterable } from "./iterable"
+import { joinUrssaf } from "./joinUrssaf"
+import { sirene } from "./sirene"
 
 export const f = {
   iterable,
+  dateAddMonth,
   debits,
   apconso,
   apdemande,
@@ -32,4 +37,7 @@ export const f = {
   diane,
   bdf,
   joinUrssaf,
+  altaresToHuman,
+  procolToHuman,
+  compareDebit,
 }

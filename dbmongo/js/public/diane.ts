@@ -1,9 +1,8 @@
-import { iterable } from "./iterable"
+import { f } from "./functions"
 import { EntréeDiane } from "../RawDataTypes"
 
 export function diane(hs?: Record<string, EntréeDiane>): EntréeDiane[] {
   "use strict"
-  const f = { iterable } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
 
   const diane: Record<string, EntréeDiane> = {}
 
