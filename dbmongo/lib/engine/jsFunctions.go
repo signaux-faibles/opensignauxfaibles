@@ -1452,7 +1452,7 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
             date <= intervalleTraitement.dernièreDate)
             .map(function (debutDeMois) {
             const time = debutDeMois.getTime();
-            const remainingDays = nbDays(debutDeMois, delai.date_echeance);
+            const remainingDays = f.nbDays(debutDeMois, delai.date_echeance);
             const inputAtTime = debitParPériode[time];
             const outputAtTime = {
                 delai_nb_jours_restants: remainingDays,
