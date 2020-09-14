@@ -1656,8 +1656,7 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
     });
     return retourEntrSirene;
 }`,
-"finalize": `const bsonsize = (obj) => JSON.stringify(obj).length; // will not be included in jsFunctions.go
-function finalize(k, v) {
+"finalize": `function finalize(k, v) {
     "use strict";
     const maxBsonSize = 16777216;
     // v de la forme
