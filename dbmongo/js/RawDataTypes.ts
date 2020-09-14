@@ -2,7 +2,7 @@
 
 // Types de données de base
 
-export type Periode = string // Date.toString()
+export type Periode = string // Date.getTime().toString()
 export type Timestamp = number // Date.getTime()
 export type ParPériode<T> = Record<Periode, T>
 
