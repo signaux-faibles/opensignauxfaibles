@@ -6,8 +6,7 @@ import { ParPériode } from "../RawDataTypes"
 function assertEffectif(
   t: ExecutionContext,
   résultat: ParPériode<SortieEffectifs>,
-  effectifsAttendus: Array<[number | null, boolean]>,
-
+  effectifsAttendus: Array<[number | null, boolean]>
 ): void {
   const périodes = Object.keys(résultat)
   for (let i = 0; i < périodes.length; i++) {
@@ -18,7 +17,7 @@ function assertEffectif(
     )
     t.is(
       résultat[périodes[i]].effectif_reporte,
-      effectifsAttendus[i][1]?1:0,
+      effectifsAttendus[i][1] ? 1 : 0,
       `flag de report inattendu pour la période ${i}`
     )
   }
