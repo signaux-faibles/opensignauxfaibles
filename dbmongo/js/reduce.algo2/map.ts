@@ -1,12 +1,5 @@
 import { f } from "./functions"
 import {
-  naf,
-  actual_batch,
-  includes,
-  serie_periode,
-  date_fin,
-} from "./js_params"
-import {
   CompanyDataValues,
   BatchKey,
   Siret,
@@ -17,6 +10,7 @@ import { SortieBdf } from "./entr_bdf"
 import { SortieDiane } from "./entr_diane"
 import { SortieSireneEntreprise } from "./entr_sirene"
 import { DonnéesAgrégées } from "./outputs"
+import { NAF } from "./populateNafAndApe"
 
 type SortieMapEntreprise = {
   periode: Date
@@ -45,6 +39,13 @@ export type EntréeMap = {
 }
 
 declare function emit(key: CléSortieMap, value: SortieMap): void
+
+// Paramètres globaux utilisés par "reduce.algo2"
+declare const naf: NAF
+declare const actual_batch: BatchKey
+declare const includes: Record<"all" | "apart", boolean>
+declare const serie_periode: Date[]
+declare const date_fin: Date
 
 /**
  * `map()` est appelée pour chaque entreprise/établissement.

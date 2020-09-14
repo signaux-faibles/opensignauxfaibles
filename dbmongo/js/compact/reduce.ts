@@ -1,6 +1,14 @@
 import { f } from "./functions"
-import { fromBatchKey, batches } from "./js_params"
-import { CompanyDataValues, BatchValue, SiretOrSiren } from "../RawDataTypes"
+import {
+  CompanyDataValues,
+  BatchValue,
+  BatchKey,
+  SiretOrSiren,
+} from "../RawDataTypes"
+
+// Paramètres globaux utilisés par "compact"
+declare const batches: BatchKey[]
+declare const fromBatchKey: BatchKey
 
 // Entrée: données d'entreprises venant de ImportedData, regroupées par entreprise ou établissement.
 // Sortie: un objet fusionné par entreprise ou établissement, contenant les données historiques et les données importées, à destination de la collection RawData.

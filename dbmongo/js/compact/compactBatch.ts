@@ -1,8 +1,10 @@
 import { f } from "./functions"
-import { completeTypes } from "./js_params"
 import { BatchValueWithCompact } from "./applyPatchesToBatch"
-import { BatchValue } from "../RawDataTypes"
+import { DataType, BatchValue, BatchKey } from "../RawDataTypes"
 import { CurrentDataState } from "./currentState"
+
+// Paramètres globaux utilisés par "compact"
+declare const completeTypes: Record<BatchKey, DataType[]>
 
 /**
  * Appelée par reduce(), compactBatch() va générer un diff entre les

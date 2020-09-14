@@ -1,5 +1,4 @@
 import { f } from "./functions"
-import { date_fin, serie_periode } from "./js_params"
 import { EntréeDebit, ParHash, Timestamp } from "../RawDataTypes"
 
 type AccuItem = {
@@ -21,6 +20,10 @@ export type SortieDebit = {
   montant_majorations: number
   periode: Date
 }
+
+// Paramètres globaux utilisés par "public"
+declare let date_fin: Date
+declare let serie_periode: Date[]
 
 export function debits(vdebit: ParHash<EntréeDebit> = {}): SortieDebit[] {
   const last_treatment_day = 20
