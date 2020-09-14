@@ -43,8 +43,8 @@ type SortieMapEntreprise = SortieMapCommon & {
 export type SortieMap = SortieMapEtablissement | SortieMapEntreprise
 
 // Paramètres globaux utilisés par "public"
-declare let actual_batch: BatchKey
-declare let serie_periode: Date[]
+declare const actual_batch: BatchKey
+declare const serie_periode: Date[]
 
 // Types de données en entrée et sortie
 export type Input = { _id: unknown; value: CompanyDataValues }

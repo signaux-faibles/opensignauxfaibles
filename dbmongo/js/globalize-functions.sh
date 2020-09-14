@@ -8,6 +8,15 @@ perl -pi'' -e 's/^const .*$//g' ./**/*.js
 perl -pi'' -e 's/^export //' ./**/*.js
 perl -pi'' -e 's/^import .*$//g' ./**/*.js
 
+function getGlobals {
+  grep -F --no-filename 'declare const' $1 \
+    | cut -d' ' -f3 \
+    | cut -d':' -f1 \
+    | sort -u \
+    | uniq \
+    | paste -sd "," -
+}
+
 function checkJS {
   FILES="$1"
   GLOBALS="$2"
@@ -20,8 +29,9 @@ function checkJS {
 }
 
 # Check that JS files only call functions through the f global variable.
-checkJS "compact/*.js" "f,emit,fromBatchKey,batches,serie_periode,completeTypes"
-checkJS "public/*.js" "f,emit,fromBatchKey,batches,serie_periode,completeTypes,date_fin,actual_batch"
-checkJS "reduce.algo2/*.js" "f,print,emit,bsonsize,fromBatchKey,batches,serie_periode,completeTypes,date_fin,actual_batch,offset_effectif,includes,naf"
 
-# TODO: extract globals from code
+checkJS "compact/*.js" "f,emit,$(getGlobals 'compact/*.ts')"
+checkJS "public/*.js" "f,emit,$(getGlobals 'public/*.ts')"
+checkJS "reduce.algo2/*.js" "f,print,emit,bsonsize,$(getGlobals 'reduce.algo2/*.ts')"
+
+# TODO: also extract global functions from code?

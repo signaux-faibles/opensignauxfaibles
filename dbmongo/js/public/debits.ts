@@ -22,8 +22,8 @@ export type SortieDebit = {
 }
 
 // Paramètres globaux utilisés par "public"
-declare let date_fin: Date
-declare let serie_periode: Date[]
+declare const date_fin: Date
+declare const serie_periode: Date[]
 
 export function debits(vdebit: ParHash<EntréeDebit> = {}): SortieDebit[] {
   const last_treatment_day = 20
