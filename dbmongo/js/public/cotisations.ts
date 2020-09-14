@@ -1,8 +1,6 @@
 import { f } from "./functions"
+import { serie_periode } from "./js_params"
 import { EntréeCotisation, ParHash } from "../RawDataTypes"
-
-// Paramètres globaux utilisés par "public"
-declare const serie_periode: Date[]
 
 export function cotisations(
   vcotisation: ParHash<EntréeCotisation> = {}

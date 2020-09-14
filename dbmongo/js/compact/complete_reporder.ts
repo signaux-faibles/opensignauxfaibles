@@ -1,11 +1,9 @@
+import { serie_periode } from "./js_params"
 import {
   CompanyDataValuesWithFlags,
   SiretOrSiren,
   Timestamp,
 } from "../RawDataTypes"
-
-// Paramètres globaux utilisés par "compact"
-declare const serie_periode: Date[]
 
 // complete_reporder ajoute une propriété "reporder" pour chaque couple
 // SIRET+période, afin d'assurer la reproductibilité de l'échantillonage.

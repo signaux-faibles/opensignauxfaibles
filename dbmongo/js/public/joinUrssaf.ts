@@ -1,8 +1,6 @@
+import { serie_periode } from "./js_params"
 import { SortieEffectif } from "./effectifs"
 import { SortieDebit } from "./debits"
-
-// Paramètres globaux utilisés par "public"
-declare const serie_periode: Date[]
 
 export type SortieJoinUrssaf = {
   effectif: (number | null)[]

@@ -1,8 +1,6 @@
 import { f } from "./functions"
+import { offset_effectif } from "./js_params"
 import { EntréeEffectif, ParHash, Timestamp, ParPériode } from "../RawDataTypes"
-
-// Paramètres globaux utilisés par "reduce.algo2"
-declare const offset_effectif: number
 
 type CléSortieEffectif = "effectif_ent" | "effectif" // effectif entreprise ou établissement
 type CléSortieEffectifReporté = "effectif_ent_reporte" | "effectif_reporte"

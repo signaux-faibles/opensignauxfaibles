@@ -1,7 +1,7 @@
 import { f } from "./functions"
+import { actual_batch, serie_periode } from "./js_params"
 import {
   CompanyDataValues,
-  BatchKey,
   EntréeApConso,
   EntréeApDemande,
   EntréeDelai,
@@ -41,10 +41,6 @@ type SortieMapEntreprise = SortieMapCommon & {
 }
 
 export type SortieMap = SortieMapEtablissement | SortieMapEntreprise
-
-// Paramètres globaux utilisés par "public"
-declare let actual_batch: BatchKey
-declare let serie_periode: Date[]
 
 // Types de données en entrée et sortie
 export type Input = { _id: unknown; value: CompanyDataValues }
