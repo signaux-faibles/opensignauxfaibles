@@ -1,11 +1,5 @@
 import { f } from "./functions"
-import {
-  naf,
-  actual_batch,
-  includes,
-  serie_periode,
-  date_fin,
-} from "./js_params"
+import "./js_params"
 import {
   CompanyDataValues,
   BatchKey,

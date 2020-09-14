@@ -1,5 +1,5 @@
 import { f } from "./functions"
-import { offset_effectif } from "./js_params"
+import "./js_params"
 import { EntréeEffectif, ParHash, Timestamp, ParPériode } from "../RawDataTypes"
 
 type CléSortieEffectif = "effectif_ent" | "effectif" // effectif entreprise ou établissement
