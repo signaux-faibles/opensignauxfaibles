@@ -9,7 +9,7 @@ perl -pi'' -e 's/^export //' ./**/*.js
 perl -pi'' -e 's/^import .*$//g' ./**/*.js
 
 function getGlobals {
-  grep -F --no-filename 'declare const' $1 \
+  grep -F --no-filename 'declare const' $@ \
     | cut -d' ' -f3 \
     | cut -d':' -f1 \
     | sort -u \
