@@ -5,7 +5,6 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"regexp"
 	"strings"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
@@ -52,10 +51,6 @@ func bundleJsFunctions(jsRootDir string) {
 						log.Fatal(err)
 					}
 					stringFunction := string(function)
-					exportsDefRegex := regexp.MustCompile(`(?m)^Object.defineProperty\(exports.*$`)
-					stringFunction = exportsDefRegex.ReplaceAllLiteralString(stringFunction, "")
-					finalExportRegex := regexp.MustCompile(`(?m)^exports..*$`)
-					stringFunction = finalExportRegex.ReplaceAllLiteralString(stringFunction, "")
 					stringFunction = strings.Replace(stringFunction, "`", "` + \"`\" + `", -1) // escape nested "backticks" quotes
 					stringFunction = strings.Trim(stringFunction, "\n")
 
