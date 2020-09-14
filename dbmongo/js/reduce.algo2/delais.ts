@@ -1,5 +1,4 @@
 import { f } from "./functions"
-import { nbDays } from "./nbDays" // TODO: regression non identifiée ICI ! // => essayer de faire provoquer un warning par typescript
 import { EntréeDelai, ParHash, ParPériode } from "../RawDataTypes"
 
 type DeepReadonly<T> = Readonly<T> // pas vraiment, mais espoire que TS le supporte prochainement
@@ -74,7 +73,7 @@ export function delais(
       )
       .map(function (debutDeMois) {
         const time = debutDeMois.getTime()
-        const remainingDays = nbDays(debutDeMois, delai.date_echeance)
+        const remainingDays = f.nbDays(debutDeMois, delai.date_echeance)
         const inputAtTime = debitParPériode[time]
         const outputAtTime: DelaiComputedValues = {
           delai_nb_jours_restants: remainingDays,

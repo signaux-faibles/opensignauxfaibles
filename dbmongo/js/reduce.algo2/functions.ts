@@ -25,6 +25,7 @@ import { entr_sirene } from "./entr_sirene"
 import { fraisFinancier } from "./fraisFinancier"
 import { interim } from "./interim"
 import { lookAhead } from "./lookAhead"
+import { nbDays } from "./nbDays"
 import { outputs } from "./outputs"
 import { poidsFrng } from "./poidsFrng"
 import { populateNafAndApe } from "./populateNafAndApe"
@@ -64,4 +65,5 @@ export const f = {
   dealWithProcols,
   raison_sociale,
   region,
+  nbDays,
 }

@@ -33,5 +33,3 @@ function checkJS {
 checkJS "compact/*.js" "f,emit,$(getGlobals 'compact/*.ts')"
 checkJS "public/*.js" "f,emit,$(getGlobals 'public/*.ts')"
 checkJS "reduce.algo2/*.js" "f,print,emit,bsonsize,$(getGlobals 'reduce.algo2/*.ts')"
-
-# TODO: also extract global functions from code?
