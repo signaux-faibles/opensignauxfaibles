@@ -42,7 +42,7 @@ func bundleJsFunctions(jsRootDir string) {
 
 			// For each file in folder
 			for _, file := range files {
-				if strings.HasSuffix(file.Name(), ".js") && !strings.HasSuffix(file.Name(), "_test.js") {
+				if strings.HasSuffix(file.Name(), ".js") && file.Name() != "functions.js" && !strings.HasSuffix(file.Name(), "_test.js") {
 					out.Write([]byte(
 						`"` + strings.TrimSuffix(file.Name(), ".js") + `"` +
 							": `"))
