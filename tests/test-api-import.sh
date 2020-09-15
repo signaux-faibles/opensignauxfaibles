@@ -37,6 +37,9 @@ tests/helpers/mongodb-container.sh run > /dev/null << CONTENTS
         "type" : "batch"
     },
     "files": {
+      "admin_urssaf": [
+        "/../lib/urssaf/testData/comptesTestData.csv"
+      ],
       "delai": [
         "/../lib/urssaf/testData/delaiTestData.csv"
       ]
