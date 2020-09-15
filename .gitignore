@@ -47,3 +47,4 @@ tests/input-data/RawData.sample.json
 tests/output-snapshots/reduce-Features.golden.json
 tests/output-snapshots/reduce-map-output.golden.json
 build-container/dbmongo.tar.gz
+tests/output-snapshots/test-api-compact.golden.json

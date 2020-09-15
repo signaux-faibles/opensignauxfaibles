@@ -48,4 +48,6 @@ jobs:
           gpg --import --no-tty --batch --yes ./private_key.gpg
           git secret reveal
 
-      - run: ./tests/test-api-reduce-2.sh # relies on encrypted golden master files
+      - run: ./tests/test-api-compact.sh # relies on encrypted files
+
+      - run: ./tests/test-api-reduce-2.sh # relies on encrypted files
