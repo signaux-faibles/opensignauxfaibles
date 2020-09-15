@@ -1,6 +1,5 @@
 [
 	{
-		"_id" : ObjectId("5f60ba5a18e0d039556c03ab"),
 		"value" : {
 			"scope" : "etablissement",
 			"key" : "00000000000000",
@@ -26,7 +25,6 @@
 		}
 	},
 	{
-		"_id" : ObjectId("5f60ba5a18e0d039556c03ac"),
 		"value" : {
 			"scope" : "etablissement",
 			"key" : "11111111111111",
