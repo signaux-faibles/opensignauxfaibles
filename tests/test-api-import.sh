@@ -38,7 +38,7 @@ tests/helpers/mongodb-container.sh run > /dev/null << CONTENTS
     },
     "files": {
       "delai": [
-        "/dbmongo/lib/urssaf/testData/delaiTestData.csv"
+        "/../lib/urssaf/testData/delaiTestData.csv"
       ]
     },
     "param" : {
@@ -51,7 +51,9 @@ CONTENTS
 echo ""
 echo "💎 Parsing and importing data thru dbmongo API..."
 tests/helpers/dbmongo-server.sh start
-echo "- POST /api/data/import 👉 $(http --print=b --ignore-stdin :5000/api/data/import batch=1910)"
+echo "- POST /api/data/import 👉 $(http --print=b --ignore-stdin :5000/api/data/import batch=1910 parsers:='["delai"]')"
+
+sleep 1 # give some time for dbmongo to parse and import data
 
 (tests/helpers/mongodb-container.sh run \
   | tests/helpers/remove-random_order.sh \
