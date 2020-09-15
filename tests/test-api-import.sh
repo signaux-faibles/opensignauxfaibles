@@ -59,7 +59,7 @@ echo "- POST /api/data/import 👉 $(http --print=b --ignore-stdin :5000/api/dat
 (tests/helpers/mongodb-container.sh run \
   | tests/helpers/remove-object_id.sh \
   > "${OUTPUT_FILE}" \
-) <<< 'printjson(db.ImportedData.find().toArray());'
+) <<< 'printjson(db.ImportedData.find().sort({"value.key":1}).toArray());'
 
 # Display JS errors logged by MongoDB, if any
 tests/helpers/mongodb-container.sh exceptions || true
