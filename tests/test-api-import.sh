@@ -64,6 +64,7 @@ echo "- POST /api/data/import 👉 $(http --print=b --ignore-stdin :5000/api/dat
 # Display JS errors logged by MongoDB, if any
 tests/helpers/mongodb-container.sh exceptions || true
 
+diff "${GOLDEN_FILE}" "${OUTPUT_FILE}" # if differences are found, the script will exit with a non-zero exit code
 tests/helpers/diff-or-update-golden-master.sh "${FLAGS}" "${GOLDEN_FILE}" "${OUTPUT_FILE}"
 
 rm -rf "${TMP_DIR}"
