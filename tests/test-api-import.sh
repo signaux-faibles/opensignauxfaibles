@@ -56,16 +56,26 @@ echo "💎 Parsing and importing data thru dbmongo API..."
 tests/helpers/dbmongo-server.sh start
 echo "- POST /api/data/import 👉 $(http --print=b --ignore-stdin :5000/api/data/import batch=1910 parsers:='["delai"]')"
 
+OUTPUT_GZ_FILE=dbmongo/$(http --print=b --ignore-stdin :5000/api/data/validate collection=ImportedData | tr -d '"')
+echo "- POST /api/data/validate 👉 ${OUTPUT_GZ_FILE}"
+
 (tests/helpers/mongodb-container.sh run \
   | perl -p -e 's/"[0-9a-z]{32}"/"______________Hash______________"/' \
   | perl -p -e 's/"[0-9a-z]{24}"/"________ObjectId________"/' \
   > "${OUTPUT_FILE}" \
-) <<< 'printjson(db.ImportedData.find().sort({"value.key":1}).toArray());'
+) << CONTENT
+print("// Documents from db.ImportedData, after call to /api/data/import:");
+printjson(db.ImportedData.find().sort({"value.key":1}).toArray());
+print("// Results of call to /api/data/validate:");
+CONTENT
+
+zcat < "${OUTPUT_GZ_FILE}" >> "${OUTPUT_FILE}"
 
 # Display JS errors logged by MongoDB, if any
 tests/helpers/mongodb-container.sh exceptions || true
 
 tests/helpers/diff-or-update-golden-master.sh "${FLAGS}" "${GOLDEN_FILE}" "${OUTPUT_FILE}"
 
+rm "${OUTPUT_GZ_FILE}"
 rm -rf "${TMP_DIR}"
 # Now, the "trap" commands will clean up the rest.
