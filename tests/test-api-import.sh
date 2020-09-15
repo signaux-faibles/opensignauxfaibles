@@ -56,8 +56,6 @@ echo "💎 Parsing and importing data thru dbmongo API..."
 tests/helpers/dbmongo-server.sh start
 echo "- POST /api/data/import 👉 $(http --print=b --ignore-stdin :5000/api/data/import batch=1910 parsers:='["delai"]')"
 
-sleep 1 # give some time for dbmongo to parse and import data
-
 (tests/helpers/mongodb-container.sh run \
   | tests/helpers/remove-object_id.sh \
   > "${OUTPUT_FILE}" \
