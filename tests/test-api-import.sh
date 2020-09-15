@@ -57,14 +57,14 @@ tests/helpers/dbmongo-server.sh start
 echo "- POST /api/data/import 👉 $(http --print=b --ignore-stdin :5000/api/data/import batch=1910 parsers:='["delai"]')"
 
 (tests/helpers/mongodb-container.sh run \
-  | tests/helpers/remove-object_id.sh \
+  | perl -p -e 's/"[0-9a-z]{32}"/"______________Hash______________"/' \
+  | perl -p -e 's/"[0-9a-z]{24}"/"________ObjectId________"/' \
   > "${OUTPUT_FILE}" \
 ) <<< 'printjson(db.ImportedData.find().sort({"value.key":1}).toArray());'
 
 # Display JS errors logged by MongoDB, if any
 tests/helpers/mongodb-container.sh exceptions || true
 
-diff "${GOLDEN_FILE}" "${OUTPUT_FILE}" # if differences are found, the script will exit with a non-zero exit code
 tests/helpers/diff-or-update-golden-master.sh "${FLAGS}" "${GOLDEN_FILE}" "${OUTPUT_FILE}"
 
 rm -rf "${TMP_DIR}"

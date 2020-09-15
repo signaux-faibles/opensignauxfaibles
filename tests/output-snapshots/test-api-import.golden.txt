@@ -1,12 +1,13 @@
 [
 	{
+		"_id" : ObjectId("________ObjectId________"),
 		"value" : {
 			"scope" : "etablissement",
 			"key" : "00000000000000",
 			"batch" : {
 				"1910" : {
 					"delai" : {
-						"e41e35569306a79024ecd76809a49e34" : {
+						"______________Hash______________" : {
 							"numero_compte" : "111982477292496174",
 							"numero_contentieux" : "5856690802766",
 							"date_creation" : ISODate("1999-12-31T23:00:00Z"),
@@ -25,13 +26,14 @@
 		}
 	},
 	{
+		"_id" : ObjectId("________ObjectId________"),
 		"value" : {
 			"scope" : "etablissement",
 			"key" : "11111111111111",
 			"batch" : {
 				"1910" : {
 					"delai" : {
-						"e4e38cb7759185bca72f9ca85e34d57b" : {
+						"______________Hash______________" : {
 							"numero_compte" : "636043216536562844",
 							"numero_contentieux" : "8981265766679",
 							"date_creation" : ISODate("2000-03-02T23:00:00Z"),
