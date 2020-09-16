@@ -1,4 +1,4 @@
-import { forEachPopulatedProp } from "../common/forEachPopulatedProp"
+import { f } from "./functions"
 import { BatchValueWithCompact } from "./applyPatchesToBatch"
 import { DataHash } from "../RawDataTypes"
 
@@ -11,8 +11,6 @@ export function currentState(
   batches: BatchValueWithCompact[]
 ): CurrentDataState {
   "use strict"
-
-  const f = { forEachPopulatedProp } /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/
 
   // Retourne les clés de obj, en respectant le type défini dans le type de obj.
   // Contrat: obj ne doit contenir que les clés définies dans son type.

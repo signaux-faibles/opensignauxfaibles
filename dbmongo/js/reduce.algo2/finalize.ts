@@ -1,6 +1,6 @@
+import { f } from "./functions"
 import { SiretOrSiren, Siret } from "../RawDataTypes"
 import { SortieMap, SortieMapEtablissement } from "./map"
-import { omit } from "../common/omit"
 
 type Accumulateurs = {
   effectif_entreprise: number
@@ -22,12 +22,12 @@ type SortieFinalize = Partial<EntrepriseEnSortie>[] | { incomplete: true }
 
 declare function print(str: string): void
 
+const bsonsize = (obj: unknown): number => JSON.stringify(obj).length // will not be included in jsFunctions.go
+
 export function finalize(k: Clé, v: SortieMap): SortieFinalize {
   "use strict"
-  const f = { omit } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
 
   const maxBsonSize = 16777216
-  const bsonsize = (obj: unknown): number => JSON.stringify(obj).length // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
 
   // v de la forme
   // _id: {batch / siren / periode / type}

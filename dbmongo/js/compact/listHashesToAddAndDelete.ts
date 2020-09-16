@@ -1,4 +1,4 @@
-import { forEachPopulatedProp } from "../common/forEachPopulatedProp"
+import { f } from "./functions"
 import { DataType, DataHash } from "../RawDataTypes"
 import { CurrentDataState } from "./currentState"
 import { BatchValueWithCompact } from "./applyPatchesToBatch"
@@ -15,7 +15,6 @@ export function listHashesToAddAndDelete(
   hashToAdd: Partial<Record<DataType, Set<DataHash>>>
   hashToDelete: Partial<Record<DataType, Set<DataHash>>>
 } {
-  const f = { forEachPopulatedProp } /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/
   const hashToDelete: Partial<Record<DataType, Set<DataHash>>> = {}
   const hashToAdd: Partial<Record<DataType, Set<DataHash>>> = {}
 

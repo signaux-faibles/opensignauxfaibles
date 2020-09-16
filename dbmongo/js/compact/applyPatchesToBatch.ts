@@ -1,4 +1,4 @@
-import { forEachPopulatedProp } from "../common/forEachPopulatedProp"
+import { f } from "./functions"
 import {
   DataType,
   BatchKey,
@@ -25,7 +25,6 @@ export function applyPatchesToBatch(
   stockTypes: DataType[],
   currentBatch: BatchValueWithCompact
 ): void {
-  const f = { forEachPopulatedProp } /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/
   // Application des suppressions
   stockTypes.forEach((type) => {
     const hashesToDelete = hashToDelete[type]

@@ -1,5 +1,4 @@
-import { generatePeriodSerie } from "../common/generatePeriodSerie"
-import { nbDays } from "./nbDays"
+import { f } from "./functions"
 import { EntréeDelai, ParHash, ParPériode } from "../RawDataTypes"
 
 type DeepReadonly<T> = Readonly<T> // pas vraiment, mais espoire que TS le supporte prochainement
@@ -36,7 +35,6 @@ export function delais(
   intervalleTraitement: { premièreDate: Date; dernièreDate: Date }
 ): ParPériode<DelaiComputedValues> {
   "use strict"
-  const f = { generatePeriodSerie } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
   const donnéesDélaiParPériode: ParPériode<DelaiComputedValues> = {}
   Object.values(vDelai).forEach((delai) => {
     if (delai.duree_delai <= 0) {
@@ -75,7 +73,7 @@ export function delais(
       )
       .map(function (debutDeMois) {
         const time = debutDeMois.getTime()
-        const remainingDays = nbDays(debutDeMois, delai.date_echeance)
+        const remainingDays = f.nbDays(debutDeMois, delai.date_echeance)
         const inputAtTime = debitParPériode[time]
         const outputAtTime: DelaiComputedValues = {
           delai_nb_jours_restants: remainingDays,

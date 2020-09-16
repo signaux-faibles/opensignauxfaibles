@@ -1,3 +1,4 @@
+import { f } from "./functions"
 import {
   EntréeSirene,
   SiretOrSiren,
@@ -5,7 +6,6 @@ import {
   CodeAPE,
   ParHash,
 } from "../RawDataTypes"
-import { region } from "../common/region"
 
 type Input = {
   periode: Date
@@ -29,7 +29,6 @@ export function sirene(
   output_array: (Input & Partial<SortieSirene>)[]
 ): void {
   "use strict"
-  const f = { region } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
 
   const sireneHashes = Object.keys(vSirene || {})
 

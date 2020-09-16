@@ -1,5 +1,4 @@
-import { dateAddMonth } from "../common/dateAddMonth"
-import { generatePeriodSerie } from "../common/generatePeriodSerie"
+import { f } from "./functions"
 import { EntréeCotisation, ParHash } from "../RawDataTypes"
 
 // Paramètres globaux utilisés par "public"
@@ -8,8 +7,6 @@ declare const serie_periode: Date[]
 export function cotisations(
   vcotisation: ParHash<EntréeCotisation> = {}
 ): number[] {
-  const f = { generatePeriodSerie, dateAddMonth } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
-
   const offset_cotisation = 0
   const value_cotisation: Record<number, number[]> = {}
 
