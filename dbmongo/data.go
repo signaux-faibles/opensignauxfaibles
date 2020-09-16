@@ -127,6 +127,21 @@ func getKeyParam(c *gin.Context) (string, error) {
 	return key, nil
 }
 
+func getCollectionParam(c *gin.Context) (string, error) {
+	var params struct {
+		Collection string `json:"collection"`
+	}
+	err := c.ShouldBind(&params)
+	if err != nil {
+		c.JSON(400, err.Error())
+	}
+
+	if params.Collection != "RawData" {
+		return "", errors.New("la seule valeur supportée pour le paramètre collection est: RawData")
+	}
+	return params.Collection, nil
+}
+
 func exportEtablissementsHandler(c *gin.Context) {
 	key, err := getKeyParam(c)
 	if err != nil {
@@ -162,6 +177,12 @@ func exportEntreprisesHandler(c *gin.Context) {
 }
 
 func validateHandler(c *gin.Context) {
+	_, err := getCollectionParam(c)
+	if err != nil {
+		c.JSON(400, err.Error())
+		return
+	}
+
 	// On retourne le nom de fichier avant la fin du traitement, pour éviter erreur "Request timed out"
 	var filepath = viper.GetString("exportPath") + "dbmongo-rawdata-validation-" + getTimestamp() + ".json.gz"
 
