@@ -69,7 +69,10 @@ printjson(db.ImportedData.find().sort({"value.key":1}).toArray());
 print("// Results of call to /api/data/validate:");
 CONTENT
 
-zcat < "${OUTPUT_GZ_FILE}" >> "${OUTPUT_FILE}"
+zcat < "${OUTPUT_GZ_FILE}" \
+  | perl -p -e 's/"[0-9a-z]{32}"/"______________Hash______________"/' \
+  | perl -p -e 's/"[0-9a-z]{24}"/"________ObjectId________"/' \
+  >> "${OUTPUT_FILE}"
 
 # Display JS errors logged by MongoDB, if any
 tests/helpers/mongodb-container.sh exceptions || true
