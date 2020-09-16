@@ -83,6 +83,15 @@ export function map(this: Input): void {
     const sirene_ul = (value.sirene_ul || {})[
       Object.keys(value.sirene_ul || {})[0] || ""
     ]
+    sirene_ul.raison_sociale = f.raison_sociale(
+      sirene_ul.raison_sociale,
+      sirene_ul.nom_unite_legale,
+      sirene_ul.nom_usage_unite_legale,
+      sirene_ul.prenom1_unite_legale,
+      sirene_ul.prenom2_unite_legale,
+      sirene_ul.prenom3_unite_legale,
+      sirene_ul.prenom4_unite_legale
+    )
     const crp = value.crp
     v.key = this.value.key
     v.batch = actual_batch
