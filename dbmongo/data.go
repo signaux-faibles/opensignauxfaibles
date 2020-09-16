@@ -193,7 +193,7 @@ func validateHandler(c *gin.Context) {
 	}
 	c.JSON(200, filepath)
 
-	err = engine.ValidateRawData(filepath, jsonSchema, collection)
+	err = engine.ValidateDataEntries(filepath, jsonSchema, collection)
 	if err != nil {
 		c.AbortWithError(500, err)
 	}

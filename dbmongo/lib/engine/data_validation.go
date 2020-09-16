@@ -62,7 +62,7 @@ func LoadJSONSchemaFiles() (jsonSchema map[string]bson.M, err error) {
 // GetDataValidationPipeline produit un pipeline pour retourner la listes des documents invalides depuis RawData ou ImportedData.
 func GetDataValidationPipeline(jsonSchema map[string]bson.M, collection string) (pipeline []bson.M, err error) {
 
-	flattenPipeline, err := parseJSONArray("validation/flatten_RawData.pipeline.json")
+	flattenPipeline, err := parseJSONArray("validation/flatten_data_entries.pipeline.json")
 	if err != nil {
 		return nil, err
 	}

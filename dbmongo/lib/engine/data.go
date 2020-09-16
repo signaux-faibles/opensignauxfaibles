@@ -351,8 +351,8 @@ func ExportEntreprises(key, filepath string) error {
 	return nil
 }
 
-// ValidateRawData cherche les entrées de données invalides puis les retourne dans un fichier.
-func ValidateRawData(filepath string, jsonSchema map[string]bson.M, collection string) error {
+// ValidateDataEntries retourne dans un fichier les entrées de données invalides détectées dans la collection spécifiée.
+func ValidateDataEntries(filepath string, jsonSchema map[string]bson.M, collection string) error {
 	pipeline, err := GetDataValidationPipeline(jsonSchema, collection)
 	if err != nil {
 		return err
