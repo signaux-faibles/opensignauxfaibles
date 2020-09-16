@@ -67,14 +67,17 @@ echo "- POST /api/data/validate 👉 ${OUTPUT_GZ_FILE}"
 print("// Documents from db.ImportedData, after call to /api/data/import:");
 printjson(db.ImportedData.find().sort({"value.key":1}).toArray());
 print("// Documents from db.Journal:");
-printjson(db.Journal.find({ "event.report": { "\$exists": true } }, {
-  "_id": 0,
-  "code": 1,
-  "event.headFilters": "$event.headFilters", 
-  "event.headErrors": "$event.headErrors", 
-  "event.headFatal": "$event.headFatal", 
-  "event.report": "$event.report", 
-}).toArray());
+printjson(db.Journal.find({ "event.report": { "\$exists": true } }).toArray().map(doc => ({
+  // note: we use map() to force the order of properties at every run of this test
+  event: {
+    headFilters: doc.event.headFilters,
+    headErrors: doc.event.headErrors,
+    headFatal: doc.event.headFatal,
+    report: doc.event.report
+  },
+  code: doc.code
+})));
+
 print("// Results of call to /api/data/validate:");
 CONTENT
 
