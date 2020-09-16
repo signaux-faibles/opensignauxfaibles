@@ -72,6 +72,7 @@ CONTENT
 zcat < "${OUTPUT_GZ_FILE}" \
   | perl -p -e 's/"[0-9a-z]{32}"/"______________Hash______________"/' \
   | perl -p -e 's/"[0-9a-z]{24}"/"________ObjectId________"/' \
+  | sort \
   >> "${OUTPUT_FILE}"
 
 # Display JS errors logged by MongoDB, if any
