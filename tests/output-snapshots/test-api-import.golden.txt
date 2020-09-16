@@ -1,3 +1,4 @@
+// Documents from db.ImportedData, after call to /api/data/import:
 [
 	{
 		"_id" : ObjectId("________ObjectId________"),
@@ -52,3 +53,6 @@
 		}
 	}
 ]
+// Results of call to /api/data/validate:
+{"_id":"5f61f8285de284783e50bb4e","batchKey":"1910","dataHash":"e41e35569306a79024ecd76809a49e34","dataObject":{"action":"cya ng","annee_creation":5647,"date_creation":"1999-12-31T23:00:00Z","date_echeance":"2001-01-03T23:00:00Z","denomination":"etmlgcthph ecoowixknaae se","duree_delai":456,"indic_6m":"lhm","montant_echeancier":5065.79,"numero_compte":"111982477292496174","numero_contentieux":"5856690802766","stade":"nbz sk"},"dataType":"delai"}
+{"_id":"5f61f8285de284783e50bb50","batchKey":"1910","dataHash":"e4e38cb7759185bca72f9ca85e34d57b","dataObject":{"action":"bad mu","annee_creation":9941,"date_creation":"2000-03-02T23:00:00Z","date_echeance":"2001-05-04T22:00:00Z","denomination":"mtj n.p. eg saxjoc","duree_delai":758,"indic_6m":"uqu","montant_echeancier":74825.41,"numero_compte":"636043216536562844","numero_contentieux":"8981265766679","stade":"qh"},"dataType":"delai"}

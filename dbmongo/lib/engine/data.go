@@ -352,12 +352,12 @@ func ExportEntreprises(key, filepath string) error {
 }
 
 // ValidateRawData cherche les entrées de données invalides puis les retourne dans un fichier.
-func ValidateRawData(filepath string, jsonSchema map[string]bson.M) error {
-	pipeline, err := GetRawDataValidationPipeline(jsonSchema)
+func ValidateRawData(filepath string, jsonSchema map[string]bson.M, collection string) error {
+	pipeline, err := GetDataValidationPipeline(jsonSchema, collection)
 	if err != nil {
 		return err
 	}
-	iter := Db.DB.C("RawData").Pipe(pipeline).AllowDiskUse().Iter()
+	iter := Db.DB.C(collection).Pipe(pipeline).AllowDiskUse().Iter()
 	w := sync.WaitGroup{}
 	gzipWriter := getItemChannelToGzip(filepath, &w)
 	var item interface{}
