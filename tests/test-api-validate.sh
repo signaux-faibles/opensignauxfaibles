@@ -34,7 +34,7 @@ tests/helpers/mongodb-container.sh run << CONTENT
 CONTENT
 
 echo ""
-echo "💎 Computing the Public collection thru dbmongo API..."
+echo "💎 Testing the dbmongo API..."
 tests/helpers/dbmongo-server.sh start
 OUTPUT_GZ_FILE=dbmongo/$(http --print=b --ignore-stdin :5000/api/data/validate collection=RawData | tr -d '"')
 echo "- POST /api/data/validate 👉 ${OUTPUT_GZ_FILE}"

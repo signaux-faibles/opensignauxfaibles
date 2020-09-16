@@ -162,8 +162,18 @@ func exportEntreprisesHandler(c *gin.Context) {
 }
 
 func validateHandler(c *gin.Context) {
+
+	var params struct {
+		Collection string `json:"collection"`
+	}
+	c.ShouldBind(&params)
+	if params.Collection != "RawData" && params.Collection != "ImportedData" {
+		c.JSON(400, "le paramètre collection doit valoir RawData ou ImportedData")
+		return
+	}
+
 	// On retourne le nom de fichier avant la fin du traitement, pour éviter erreur "Request timed out"
-	var filepath = viper.GetString("exportPath") + "dbmongo-rawdata-validation-" + getTimestamp() + ".json.gz"
+	var filepath = viper.GetString("exportPath") + "dbmongo-" + params.Collection + "-validation-" + getTimestamp() + ".json.gz"
 
 	jsonSchema, err := engine.LoadJSONSchemaFiles()
 	if err != nil {
@@ -172,7 +182,7 @@ func validateHandler(c *gin.Context) {
 	}
 	c.JSON(200, filepath)
 
-	err = engine.ValidateRawData(filepath, jsonSchema)
+	err = engine.ValidateDataEntries(filepath, jsonSchema, params.Collection)
 	if err != nil {
 		c.AbortWithError(500, err)
 	}

@@ -49,6 +49,9 @@ heading "test-api.sh"
 heading "test-api-validate.sh"
 ./tests/test-api-validate.sh $@ 2>&1 | indent
 
+heading "test-api-import.sh"
+./tests/test-api-import.sh $@ 2>&1 | indent
+
 heading "test-api-compact.sh"
 ./tests/test-api-compact.sh $@ 2>&1 | indent
 
