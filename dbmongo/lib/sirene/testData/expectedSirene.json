@@ -2,57 +2,42 @@
   "siren": "956520573",
   "nic": "44947",
   "type_voie": "he",
+  "voie": "dguylittc",
   "code_postal": "64276",
   "departement": "64",
   "commune": "rjkxla",
+  "code_activite": "94.7h",
+  "nomen_activite": "NAFRev1",
   "date_creation": "2007-04-20T00:00:00+02:00",
   "longitude": 6.1256,
-  "lattitude": 14.106745,
-  "adresse": [
-    "",
-    "",
-    "dguylittc",
-    "64276",
-    "rjkxla",
-    "pycqborak26441jvefqp"
-  ]
+  "latitude": 14.106745
 },{
   "siren": "969792769",
   "nic": "56291",
   "siege": true,
   "numero_voie": "192",
   "type_voie": "ns",
+  "voie": "oyrdvmle",
   "code_postal": "08079",
   "departement": "08",
   "commune": "qxszfpieiukzzxr",
+  "code_activite": "00.9u",
+  "nomen_activite": "NAFRev1",
   "longitude": 6.140122,
-  "lattitude": 58.817057,
-  "adresse": [
-    "",
-    "",
-    "oyrdvmle",
-    "08079",
-    "qxszfpieiukzzxr",
-    "658rlgsnmkdnivive34903nbadioa-ynj-qmiut"
-  ]
+  "latitude": 58.817057
 },{
   "siren": "497888333",
   "nic": "27462",
   "siege": true,
   "numero_voie": "55",
   "type_voie": "trx",
+  "voie": "demnbujm",
   "code_postal": "83699",
   "departement": "83",
   "commune": "hzvnctxvbgkms",
+  "code_activite": "28.4x",
+  "nomen_activite": "NAFRev1",
   "date_creation": "2007-04-20T00:00:00+02:00",
   "longitude": 5.52488,
-  "lattitude": 65.448048,
-  "adresse": [
-    "",
-    "",
-    "demnbujm",
-    "83699",
-    "hzvnctxvbgkms",
-    "46nedbgkhufai93571ekakr-oj-jncdyj"
-  ]
+  "latitude": 65.448048
 }]

@@ -31,7 +31,7 @@ type Sirene struct {
 	Cedex                *string    `json:"cedex,omitempty" bson:"cedex,omitempty"`
 	Departement          *string    `json:"departement,omitempty" bson:"departement,omitempty"`
 	Commune              *string    `json:"commune,omitempty" bson:"commune,omitempty"`
-	DistributionSpeciale *string    `json:"distribution_speciale" bson:"distribution_speciale"`
+	DistributionSpeciale *string    `json:"distribution_speciale,omitempty" bson:"distribution_speciale,omitempty"`
 	APE                  *string    `json:"ape,omitempty" bson:"ape,omitempty"`
 	CodeActivite         *string    `json:"code_activite,omitempty" bson:"code_activite,omitempty"`
 	NomenActivite        *string    `json:"nomen_activite,omitempty" bson:"nomen_activite,omitempty"`
