@@ -73,7 +73,8 @@ printjson(db.Journal.find({ "event.report": { "\$exists": true } }).toArray().ma
     headFilters: doc.event.headFilters,
     headErrors: doc.event.headErrors,
     headFatal: doc.event.headFatal,
-    report: doc.event.report
+    report: doc.event.report,
+    batchKey: doc.event.batchKey
   },
   code: doc.code
 })));

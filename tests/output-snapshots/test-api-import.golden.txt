@@ -62,7 +62,8 @@
 			],
 			"headErrors" : [ ],
 			"headFatal" : [ ],
-			"report" : "/../lib/urssaf/testData/delaiTestData.csv: intégration terminée, 2 lignes traitées, 0 erreures fatales, 0 rejets, 1 lignes filtrées, 2 lignes valides"
+			"report" : "/../lib/urssaf/testData/delaiTestData.csv: intégration terminée, 2 lignes traitées, 0 erreures fatales, 0 rejets, 1 lignes filtrées, 2 lignes valides",
+			"batchKey" : "1910"
 		},
 		"code" : "delaiParser"
 	}
