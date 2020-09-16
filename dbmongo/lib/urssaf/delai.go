@@ -115,7 +115,7 @@ func ParserDelai(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tupl
 						outputChannel <- delai
 					}
 				} else {
-					tracker.Error(err)
+					tracker.Error(engine.NewFilterError(err, "filter"))
 					continue
 				}
 

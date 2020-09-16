@@ -57,12 +57,12 @@
 [
 	{
 		"event" : {
-			"headFilters" : [ ],
-			"headErrors" : [ ],
-			"headFatal" : [
-				"Cycle 2: Pas de siret associé au compte 450359886246036238 à la période 2019-01-23 00:00:00 +0000 UTC"
+			"headFatal" : [ ],
+			"report" : "/../lib/urssaf/testData/delaiTestData.csv: intégration terminée, 2 lignes traitées, 0 erreures fatales, 0 rejets, 1 lignes filtrées, 2 lignes valides",
+			"headFilters" : [
+				"Cycle 2: Error while loading or applying filter: Pas de siret associé au compte 450359886246036238 à la période 2019-01-23 00:00:00 +0000 UTC"
 			],
-			"report" : "/../lib/urssaf/testData/delaiTestData.csv: intégration terminée, 2 lignes traitées, 1 erreures fatales, 0 rejets, 0 lignes filtrées, 2 lignes valides"
+			"headErrors" : [ ]
 		},
 		"code" : "delaiParser"
 	}
