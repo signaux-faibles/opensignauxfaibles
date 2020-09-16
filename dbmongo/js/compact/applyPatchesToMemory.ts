@@ -1,4 +1,4 @@
-import { forEachPopulatedProp } from "../common/forEachPopulatedProp"
+import { f } from "./functions"
 import { DataType, DataHash } from "../RawDataTypes"
 import { CurrentDataState } from "./currentState"
 
@@ -7,7 +7,6 @@ export function applyPatchesToMemory(
   hashToDelete: Partial<Record<DataType, Set<DataHash>>>,
   memory: CurrentDataState
 ): void {
-  const f = { forEachPopulatedProp } /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/
   // Prise en compte des suppressions de clés dans la mémoire
   f.forEachPopulatedProp(hashToDelete, (type, hashesToDelete) => {
     hashesToDelete.forEach((hash) => {

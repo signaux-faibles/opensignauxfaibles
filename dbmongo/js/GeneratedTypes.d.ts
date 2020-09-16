@@ -8,9 +8,15 @@
  * - then, run generate-types.sh to regenerate this file.
  */
 
+/**
+ * Note: CE SCHEMA EST INCOMPLET POUR L'INSTANT. Cf https://github.com/signaux-faibles/opensignauxfaibles/pull/143
+ */
 export interface EntréeBdf {
   siren: string
 }
+/**
+ * Note: CE SCHEMA EST INCOMPLET POUR L'INSTANT. Cf https://github.com/signaux-faibles/opensignauxfaibles/pull/143
+ */
 export interface EntréeDelai {
   date_creation: Date
   date_echeance: Date

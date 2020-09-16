@@ -190,6 +190,14 @@
                         "type": "string"
                     }
                 }
+            },
+            "Validate": {
+                "properties": {
+                    "collection": {
+                        "type": "string",
+                        "description": "RawData ou ImportedData"
+                    }
+                }
             }
         },
         "securitySchemes": {
@@ -901,7 +909,19 @@
         },
         "/api/data/validate": {
             "post": {
-                "description": "Valide les entrées de données contenues dans les documents de la collection RawData.",
+                "description": "Vérifie la validité des entrées de données contenues dans les documents de la collection RawData ou ImportedData.",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Validate"
+                            },
+                            "example": {
+                                "collection": "RawData"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
                         "description": "Les entrées invalides ont été exportées dans le fichier fourni en réponse.",

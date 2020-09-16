@@ -1,11 +1,9 @@
-import { iterable } from "./iterable"
+import { f } from "./functions"
 
 export type Bdf = { annee_bdf: number; arrete_bilan_bdf: Date }
 
 export function bdf(hs?: Record<string | number, Bdf>): Bdf[] {
   "use strict"
-
-  const f = { iterable } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
 
   const bdf: Record<string, Bdf> = {}
 

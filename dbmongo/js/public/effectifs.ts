@@ -1,4 +1,4 @@
-import { iterable } from "./iterable"
+import { f } from "./functions"
 import { EntréeEffectif, ParHash, ParPériode } from "../RawDataTypes"
 
 // Paramètres globaux utilisés par "public"
@@ -12,8 +12,6 @@ export type SortieEffectif = {
 export function effectifs(
   effectif?: ParHash<EntréeEffectif>
 ): SortieEffectif[] {
-  const f = { iterable } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
-
   const mapEffectif: ParPériode<number> = {}
   f.iterable(effectif).forEach((e) => {
     mapEffectif[e.periode.getTime()] =

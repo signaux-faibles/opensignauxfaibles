@@ -1,6 +1,4 @@
-import { generatePeriodSerie } from "../common/generatePeriodSerie"
-import { dateAddMonth } from "../common/dateAddMonth"
-import { compareDebit } from "../common/compareDebit"
+import { f } from "./functions"
 import {
   EntréeDebit,
   EntréeCotisation,
@@ -52,8 +50,6 @@ export function cotisationsdettes(
   finPériode?: Date // correspond à la variable globale date_fin
 ): ParPériode<SortieCotisationsDettes> {
   "use strict"
-
-  const f = { generatePeriodSerie, dateAddMonth, compareDebit } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
 
   // Tous les débits traitées après ce jour du mois sont reportées à la période suivante
   // Permet de s'aligner avec le calendrier de fourniture des données

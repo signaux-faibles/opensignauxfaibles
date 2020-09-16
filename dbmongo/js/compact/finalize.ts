@@ -1,9 +1,9 @@
+import { f } from "./functions"
 import {
   CompanyDataValues,
   CompanyDataValuesWithFlags,
   SiretOrSiren,
 } from "../RawDataTypes"
-import { complete_reporder } from "./complete_reporder"
 
 // finalize permet de:
 // - indiquer les établissements à inclure dans les calculs de variables
@@ -15,8 +15,6 @@ export function finalize(
   companyDataValues: CompanyDataValues
 ): CompanyDataValuesWithFlags {
   "use strict"
-
-  const f = { complete_reporder } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
 
   let o: CompanyDataValuesWithFlags = {
     ...companyDataValues,
