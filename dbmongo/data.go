@@ -127,21 +127,6 @@ func getKeyParam(c *gin.Context) (string, error) {
 	return key, nil
 }
 
-func getCollectionParam(c *gin.Context) (string, error) {
-	var params struct {
-		Collection string `json:"collection"`
-	}
-	err := c.ShouldBind(&params)
-	if err != nil {
-		c.JSON(400, err.Error())
-	}
-
-	if params.Collection != "RawData" && params.Collection != "ImportedData" {
-		return "", errors.New("le paramètre collection doit valoir RawData ou ImportedData")
-	}
-	return params.Collection, nil
-}
-
 func exportEtablissementsHandler(c *gin.Context) {
 	key, err := getKeyParam(c)
 	if err != nil {
@@ -177,14 +162,18 @@ func exportEntreprisesHandler(c *gin.Context) {
 }
 
 func validateHandler(c *gin.Context) {
-	collection, err := getCollectionParam(c)
-	if err != nil {
-		c.JSON(400, err.Error())
+
+	var params struct {
+		Collection string `json:"collection"`
+	}
+	c.ShouldBind(&params)
+	if params.Collection != "RawData" && params.Collection != "ImportedData" {
+		c.JSON(400, "le paramètre collection doit valoir RawData ou ImportedData")
 		return
 	}
 
 	// On retourne le nom de fichier avant la fin du traitement, pour éviter erreur "Request timed out"
-	var filepath = viper.GetString("exportPath") + "dbmongo-" + collection + "-validation-" + getTimestamp() + ".json.gz"
+	var filepath = viper.GetString("exportPath") + "dbmongo-" + params.Collection + "-validation-" + getTimestamp() + ".json.gz"
 
 	jsonSchema, err := engine.LoadJSONSchemaFiles()
 	if err != nil {
@@ -193,7 +182,7 @@ func validateHandler(c *gin.Context) {
 	}
 	c.JSON(200, filepath)
 
-	err = engine.ValidateDataEntries(filepath, jsonSchema, collection)
+	err = engine.ValidateDataEntries(filepath, jsonSchema, params.Collection)
 	if err != nil {
 		c.AbortWithError(500, err)
 	}
