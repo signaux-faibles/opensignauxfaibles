@@ -1,6 +1,4 @@
-import { generatePeriodSerie } from "../common/generatePeriodSerie"
-import { dateAddMonth } from "../common/dateAddMonth"
-import { omit } from "../common/omit"
+import { f } from "./functions"
 import {
   EntréeBdfRatios,
   EntréeBdf,
@@ -36,8 +34,6 @@ export function entr_bdf(
   periodes: Timestamp[]
 ): ParPériode<Partial<SortieBdf>> {
   "use strict"
-
-  const f = { generatePeriodSerie, dateAddMonth, omit } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
 
   const outputBdf: ParPériode<Partial<SortieBdf>> = {}
   for (const p of periodes) {

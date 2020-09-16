@@ -1,10 +1,5 @@
-import { listHashesToAddAndDelete } from "./listHashesToAddAndDelete"
-import { fixRedundantPatches } from "./fixRedundantPatches"
-import { applyPatchesToMemory } from "./applyPatchesToMemory"
-import {
-  applyPatchesToBatch,
-  BatchValueWithCompact,
-} from "./applyPatchesToBatch"
+import { f } from "./functions"
+import { BatchValueWithCompact } from "./applyPatchesToBatch"
 import { DataType, BatchValue, BatchKey } from "../RawDataTypes"
 import { CurrentDataState } from "./currentState"
 
@@ -22,13 +17,6 @@ export function compactBatch(
   memory: CurrentDataState,
   fromBatchKey: string
 ): BatchValue {
-  /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/ const f = {
-    listHashesToAddAndDelete /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/,
-    applyPatchesToBatch /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/,
-    applyPatchesToMemory /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/,
-    fixRedundantPatches /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/,
-  } /*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO*/
-
   // Les types où il y a potentiellement des suppressions
   const stockTypes = completeTypes[fromBatchKey].filter(
     (type) => (memory[type] || new Set()).size > 0

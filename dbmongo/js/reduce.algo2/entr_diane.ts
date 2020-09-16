@@ -1,9 +1,4 @@
-import { generatePeriodSerie } from "../common/generatePeriodSerie"
-import { dateAddMonth } from "../common/dateAddMonth"
-import { omit } from "../common/omit"
-import { poidsFrng } from "./poidsFrng"
-import { detteFiscale } from "./detteFiscale"
-import { fraisFinancier } from "./fraisFinancier"
+import { f } from "./functions"
 import { EntréeDiane, ParHash, ParPériode, Timestamp } from "../RawDataTypes"
 
 export type SortieDiane = Record<string, unknown> // for *_past_* props of diane. // TODO: définir les props de manière plus précise à l'aide de cette fonctionnalité TS, quand elle sera prête: https://github.com/microsoft/TypeScript/pull/40336
@@ -13,11 +8,6 @@ export function entr_diane(
   output_indexed: ParPériode<SortieDiane>,
   periodes: Timestamp[]
 ): ParPériode<SortieDiane> {
-  /* DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO */ const f = {
-    ...{ generatePeriodSerie, dateAddMonth, omit, poidsFrng, detteFiscale }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
-    ...{ fraisFinancier }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
-  } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
-
   for (const hash of Object.keys(donnéesDiane)) {
     if (!donnéesDiane[hash].arrete_bilan_diane) continue
     //donnéesDiane[hash].arrete_bilan_diane = new Date(Date.UTC(donnéesDiane[hash].exercice_diane, 11, 31, 0, 0, 0, 0))

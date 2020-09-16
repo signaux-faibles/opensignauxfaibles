@@ -1,19 +1,4 @@
-import { iterable } from "./iterable"
-import { debits, SortieDebit } from "./debits"
-import { apconso } from "./apconso"
-import { apdemande } from "./apdemande"
-import { flatten } from "../common/flatten"
-import { compte } from "./compte"
-import { effectifs } from "./effectifs"
-import { joinUrssaf } from "./joinUrssaf"
-import { delai } from "./delai"
-import { bdf, Bdf } from "./bdf"
-import { diane } from "./diane"
-import { sirene } from "./sirene"
-import { cotisations } from "./cotisations"
-import { dateAddDay } from "./dateAddDay"
-import { generatePeriodSerie } from "../common/generatePeriodSerie"
-import { omit } from "../common/omit"
+import { f } from "./functions"
 import {
   CompanyDataValues,
   BatchKey,
@@ -23,6 +8,8 @@ import {
   EntréeDefaillances,
   EntréeDiane,
 } from "../RawDataTypes"
+import { SortieDebit } from "./debits"
+import { Bdf } from "./bdf"
 
 type SortieMapCommon = {
   key: string
@@ -56,8 +43,8 @@ type SortieMapEntreprise = SortieMapCommon & {
 export type SortieMap = SortieMapEtablissement | SortieMapEntreprise
 
 // Paramètres globaux utilisés par "public"
-declare let actual_batch: BatchKey
-declare let serie_periode: Date[]
+declare const actual_batch: BatchKey
+declare const serie_periode: Date[]
 
 // Types de données en entrée et sortie
 export type Input = { _id: unknown; value: CompanyDataValues }
@@ -66,12 +53,6 @@ export type OutValue = Partial<SortieMap>
 declare function emit(key: string, value: OutValue): void
 
 export function map(this: Input): void {
-  /* DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO */ const f = {
-    ...{ iterable, debits, apconso, apdemande, flatten, compte, effectifs }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
-    ...{ delai, sirene, cotisations, dateAddDay, omit }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
-    ...{ generatePeriodSerie, diane, bdf, joinUrssaf }, // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
-  } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
-
   const value = f.flatten(this.value, actual_batch)
 
   if (this.value.scope === "etablissement") {

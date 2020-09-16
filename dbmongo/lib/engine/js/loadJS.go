@@ -5,7 +5,6 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"regexp"
 	"strings"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
@@ -42,7 +41,7 @@ func bundleJsFunctions(jsRootDir string) {
 
 			// For each file in folder
 			for _, file := range files {
-				if strings.HasSuffix(file.Name(), ".js") && !strings.HasSuffix(file.Name(), "_test.js") {
+				if strings.HasSuffix(file.Name(), ".js") && file.Name() != "functions.js" && !strings.HasSuffix(file.Name(), "_test.js") {
 					out.Write([]byte(
 						`"` + strings.TrimSuffix(file.Name(), ".js") + `"` +
 							": `"))
@@ -52,12 +51,6 @@ func bundleJsFunctions(jsRootDir string) {
 						log.Fatal(err)
 					}
 					stringFunction := string(function)
-					exportsDefRegex := regexp.MustCompile(`(?m)^Object.defineProperty\(exports.*$`)
-					stringFunction = exportsDefRegex.ReplaceAllLiteralString(stringFunction, "")
-					finalExportRegex := regexp.MustCompile(`(?m)^exports..*$`)
-					skipLineRegex := regexp.MustCompile(`(?m)^.*DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO.*$[\r\n]*`)
-					stringFunction = skipLineRegex.ReplaceAllLiteralString(stringFunction, "")
-					stringFunction = finalExportRegex.ReplaceAllLiteralString(stringFunction, "")
 					stringFunction = strings.Replace(stringFunction, "`", "` + \"`\" + `", -1) // escape nested "backticks" quotes
 					stringFunction = strings.Trim(stringFunction, "\n")
 

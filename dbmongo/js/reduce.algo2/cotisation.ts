@@ -1,5 +1,4 @@
-import { generatePeriodSerie } from "../common/generatePeriodSerie"
-import { dateAddMonth } from "../common/dateAddMonth"
+import { f } from "./functions"
 import { ParPériode } from "../RawDataTypes"
 
 export type Input = {
@@ -23,8 +22,6 @@ export function cotisation(
   "use strict"
 
   const sortieCotisation: ParPériode<SortieCotisation> = {}
-
-  const f = { generatePeriodSerie, dateAddMonth } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
 
   const moyenne = (valeurs: (number | undefined)[] = []): number | undefined =>
     valeurs.some((val) => typeof val === "undefined")

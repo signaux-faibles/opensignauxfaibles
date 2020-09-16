@@ -1,7 +1,4 @@
-import { dateAddDay } from "./dateAddDay"
-import { compareDebit } from "../common/compareDebit"
-import { dateAddMonth } from "../common/dateAddMonth"
-import { generatePeriodSerie } from "../common/generatePeriodSerie"
+import { f } from "./functions"
 import { EntréeDebit, ParHash, Timestamp } from "../RawDataTypes"
 
 type AccuItem = {
@@ -25,12 +22,10 @@ export type SortieDebit = {
 }
 
 // Paramètres globaux utilisés par "public"
-declare let date_fin: Date
-declare let serie_periode: Date[]
+declare const date_fin: Date
+declare const serie_periode: Date[]
 
 export function debits(vdebit: ParHash<EntréeDebit> = {}): SortieDebit[] {
-  const f = { compareDebit, generatePeriodSerie, dateAddMonth, dateAddDay } // DO_NOT_INCLUDE_IN_JSFUNCTIONS_GO
-
   const last_treatment_day = 20
   const ecn = Object.keys(vdebit).reduce((accu, h) => {
     const debit = vdebit[h]
