@@ -6,7 +6,7 @@ set -e # will stop the script if any command fails with a non-zero exit code
 ./generate-types.sh
 
 # Run typescript transpiler, to generate .js files from .ts files.
-time npx typescript --p "tsconfig-transpilation.json"
+$(npm bin)/tsc --p "tsconfig-transpilation.json"
 
 # Clean-up JS functions, for mongodb compatibility.
 perl -pi'' -e 's/^const .*$//g' ./**/*.js
