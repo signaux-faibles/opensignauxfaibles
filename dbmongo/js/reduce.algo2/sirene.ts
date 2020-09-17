@@ -14,8 +14,8 @@ type Input = {
 
 export type SortieSirene = {
   siren: SiretOrSiren
-  latitude: unknown
-  longitude: unknown
+  latitude: number | null
+  longitude: number | null
   departement: Departement | null
   region: unknown
   raison_sociale: unknown
