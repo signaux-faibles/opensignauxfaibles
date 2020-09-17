@@ -147,7 +147,7 @@ export type EntréeDebit = {
 
 export type EntréeSirene = {
   ape: CodeAPE
-  latitude: number // TODO: une fois que les données auront été migrées, corriger l'orthographe de cette propriété (--> latitude)
+  latitude: number
   longitude: number
   departement: Departement
   raison_sociale: string
