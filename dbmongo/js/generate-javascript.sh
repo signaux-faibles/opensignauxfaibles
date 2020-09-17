@@ -9,9 +9,7 @@ set -e # will stop the script if any command fails with a non-zero exit code
 $(npm bin)/tsc --p "tsconfig-transpilation.json"
 
 # Clean-up JS functions, for mongodb compatibility.
-perl -pi'' -e 's/^const .*$//g' ./**/*.js
-perl -pi'' -e 's/^export //' ./**/*.js
-perl -pi'' -e 's/^import .*$//g' ./**/*.js
+perl -pi'' -e 's/^const .*$//g;' -e 's/^export //;' -e 's/^import .*$//g' ./**/*.js
 # Note: We use perl because sed adds an empty line at the end of every js file,
 # which was adding changes to git's staging, while debugging failing tests.
 
