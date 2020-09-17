@@ -81,9 +81,7 @@ export function map(this: Input): void {
     const v: Partial<SortieMapEntreprise> = {}
     const diane = f.diane(value.diane)
     const bdf = f.bdf(value.bdf)
-    const sirene_ul =
-      f.iterable(value.sirene_ul)[0] ||
-      ((null as unknown) as EntréeSireneEntreprise)
+    const sirene_ul = f.iterable(value.sirene_ul)[0] || null
     if (sirene_ul) {
       sirene_ul.raison_sociale = f.raison_sociale(
         sirene_ul.raison_sociale,
