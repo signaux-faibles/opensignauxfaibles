@@ -310,6 +310,13 @@ paths:
     get:
       description: |-
         Liste les 250 derniers évènements du journal
+      parameters:
+        - in: query
+          name: batchKey
+          schema:
+            type: string
+          required: false
+          description: Identifiant de batch d'importation, pour filtrer les résultats.
       responses:
         "200":
           description: OK

@@ -53,6 +53,21 @@
 		}
 	}
 ]
+// Documents from db.Journal:
+[
+	{
+		"event" : {
+			"headFilters" : [
+				"Cycle 2: Error while loading or applying filter: Pas de siret associé au compte 450359886246036238 à la période 2019-01-23 00:00:00 +0000 UTC"
+			],
+			"headErrors" : [ ],
+			"headFatal" : [ ],
+			"report" : "/../lib/urssaf/testData/delaiTestData.csv: intégration terminée, 2 lignes traitées, 0 erreures fatales, 0 rejets, 1 lignes filtrées, 2 lignes valides",
+			"batchKey" : "1910"
+		},
+		"code" : "delaiParser"
+	}
+]
 // Results of call to /api/data/validate:
 {"_id":"________ObjectId________","batchKey":"1910","dataHash":"______________Hash______________","dataObject":{"action":"bad mu","annee_creation":9941,"date_creation":"2000-03-02T23:00:00Z","date_echeance":"2001-05-04T22:00:00Z","denomination":"mtj n.p. eg saxjoc","duree_delai":758,"indic_6m":"uqu","montant_echeancier":74825.41,"numero_compte":"636043216536562844","numero_contentieux":"8981265766679","stade":"qh"},"dataType":"delai"}
 {"_id":"________ObjectId________","batchKey":"1910","dataHash":"______________Hash______________","dataObject":{"action":"cya ng","annee_creation":5647,"date_creation":"1999-12-31T23:00:00Z","date_echeance":"2001-01-03T23:00:00Z","denomination":"etmlgcthph ecoowixknaae se","duree_delai":456,"indic_6m":"lhm","montant_echeancier":5065.79,"numero_compte":"111982477292496174","numero_contentieux":"5856690802766","stade":"nbz sk"},"dataType":"delai"}
