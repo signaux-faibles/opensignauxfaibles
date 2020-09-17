@@ -38,7 +38,7 @@ export function sirene(
     if (sireneHashes.length !== 0) {
       const sirene = vSirene[sireneHashes[sireneHashes.length - 1]]
       val.siren = val.siret.substring(0, 9)
-      val.latitude = sirene.lattitude || null
+      val.latitude = sirene.latitude || null
       val.longitude = sirene.longitude || null
       val.departement = sirene.departement || null
       if (val.departement) {

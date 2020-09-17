@@ -7,7 +7,6 @@ import {
   EntréeDelai,
   EntréeDefaillances,
   EntréeDiane,
-  EntréeSireneEntreprise,
 } from "../RawDataTypes"
 import { SortieDebit } from "./debits"
 import { Bdf } from "./bdf"

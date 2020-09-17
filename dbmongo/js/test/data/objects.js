@@ -1441,7 +1441,7 @@ const makeObjects = ISODate => ([
                         "tranche_ca" : 3,
                         "sigle" : "PATAPON",
                         "longitude" : -2.440848,
-                        "lattitude" : 47.289717,
+                        "latitude" : 47.289717,
                         "adresse" : [ 
                             "LA COMPAGNIE DES LAPINS BLEUS", 
                             "", 
@@ -12929,7 +12929,7 @@ const makeObjects = ISODate => ([
                         "tranche_ca" : 3,
                         "sigle" : "",
                         "longitude" : -2.438672,
-                        "lattitude" : 47.2884,
+                        "latitude" : 47.2884,
                         "adresse" : [ 
                             "LA COMPAGNIE DES LAPINS BLEURS", 
                             "", 

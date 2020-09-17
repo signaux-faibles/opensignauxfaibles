@@ -988,8 +988,7 @@ db.getCollection("Features").createIndex({
         const v = {};
         const diane = f.diane(value.diane);
         const bdf = f.bdf(value.bdf);
-        const sirene_ul = f.iterable(value.sirene_ul)[0] ||
-            null;
+        const sirene_ul = f.iterable(value.sirene_ul)[0] || null;
         if (sirene_ul) {
             sirene_ul.raison_sociale = f.raison_sociale(sirene_ul.raison_sociale, sirene_ul.nom_unite_legale, sirene_ul.nom_usage_unite_legale, sirene_ul.prenom1_unite_legale, sirene_ul.prenom2_unite_legale, sirene_ul.prenom3_unite_legale, sirene_ul.prenom4_unite_legale);
         }
@@ -2029,7 +2028,7 @@ function outputs(v, serie_periode) {
         if (sireneHashes.length !== 0) {
             const sirene = vSirene[sireneHashes[sireneHashes.length - 1]];
             val.siren = val.siret.substring(0, 9);
-            val.latitude = sirene.lattitude || null;
+            val.latitude = sirene.latitude || null;
             val.longitude = sirene.longitude || null;
             val.departement = sirene.departement || null;
             if (val.departement) {
