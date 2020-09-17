@@ -138,47 +138,37 @@ func reportAbstract(tracker gournal.Tracker) interface{} {
 	var filterErrors = []string{}
 	var errorErrors = []string{}
 	for ind := range tracker.Errors {
-		var hasError = false
-		var hasFilter = false
-		var hasFatal = false
 		for _, e := range tracker.Errors[ind] {
 			switch c := e.(type) {
 			case CriticityError:
 				if c.Criticity() == "fatal" {
-					hasFatal = true
+					nFatal++
 					if len(fatalErrors) < MaxParsingErrors {
 						fatalErrors = append(fatalErrors, fmt.Sprintf("Cycle %d: %v", ind, e))
 					}
 				}
 				if c.Criticity() == "error" {
-					hasError = true
+					nError++
 					if len(errorErrors) < MaxParsingErrors {
 						errorErrors = append(errorErrors, fmt.Sprintf("Cycle %d: %v", ind, e))
 					}
 				}
 				if c.Criticity() == "filter" {
-					hasFilter = true
+					nFiltered++
 					if len(filterErrors) < MaxParsingErrors {
 						filterErrors = append(filterErrors, fmt.Sprintf("Cycle %d: %v", ind, e))
 					}
 				}
 			default:
-				hasFatal = true
+				nFatal++
 				if len(fatalErrors) < MaxParsingErrors {
 					fatalErrors = append(fatalErrors, fmt.Sprintf("Cycle %d: %v", ind, e))
 					fmt.Printf("Cycle %d: %v", ind, e)
 				}
 			}
 		}
-		if hasFatal {
-			nFatal = nFatal + 1
-		} else if hasError {
-			nError = nError + 1
-		} else if hasFilter {
-			nFiltered = nFiltered + 1
-		}
 	}
-	nValid := tracker.Count + 1 - nFatal - nError - nFiltered
+	nValid := tracker.Count - nFatal - nError - nFiltered
 	report := fmt.Sprintf(
 		"%s: intégration terminée, %d lignes traitées, %d erreures fatales, %d rejets, %d lignes filtrées, %d lignes valides",
 		tracker.Context["path"],
