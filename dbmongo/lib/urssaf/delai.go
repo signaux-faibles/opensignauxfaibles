@@ -77,7 +77,7 @@ func ParserDelai(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tupl
 
 		for _, path := range batch.Files["delai"] {
 			tracker := gournal.NewTracker(
-				map[string]string{"path": path},
+				map[string]string{"path": path, "batchKey": batch.ID.Key},
 				engine.TrackerReports)
 
 			file, err := os.Open(viper.GetString("APP_DATA") + path)
@@ -115,7 +115,7 @@ func ParserDelai(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tupl
 						outputChannel <- delai
 					}
 				} else {
-					tracker.Error(err)
+					tracker.Error(engine.NewFilterError(err, "filter"))
 					continue
 				}
 

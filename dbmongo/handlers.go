@@ -270,7 +270,12 @@ func checkBatchHandler(c *gin.Context) {
 
 //
 func eventsHandler(c *gin.Context) {
-	logs, err := engine.GetEventsFromDB(nil, 250)
+	batchKey := c.Query("batchKey")
+	var query interface{}
+	if batchKey != "" {
+		query = bson.M{"event.batchKey": batchKey}
+	}
+	logs, err := engine.GetEventsFromDB(query, 250)
 	if err != nil {
 		c.JSON(500, err.Error())
 	} else {
