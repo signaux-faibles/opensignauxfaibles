@@ -190,6 +190,7 @@ func reportAbstract(tracker gournal.Tracker) interface{} {
 	)
 
 	return bson.M{
+		"batchKey":    tracker.Context["batchKey"],
 		"report":      report,
 		"total":       tracker.Count,
 		"valid":       nValid,
