@@ -15,6 +15,6 @@ echo > "${OUT_FILE}" "\
  * - then, run generate-types.sh to regenerate this file.
  */
 
-$(${NODE_BIN}/mongodb-json-schema-to-typescript --input "../validation/*.schema.json" --bannerComment '')"
+$("${NODE_BIN}/mongodb-json-schema-to-typescript" --input "../validation/*.schema.json" --bannerComment '')"
 
 "${NODE_BIN}/eslint" "${OUT_FILE}" --fix
