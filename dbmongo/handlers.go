@@ -271,7 +271,7 @@ func checkBatchHandler(c *gin.Context) {
 //
 func eventsHandler(c *gin.Context) {
 	batchKey := c.Query("batchKey")
-	var query interface{} = nil
+	var query interface{}
 	if batchKey != "" {
 		query = bson.M{"event.batchKey": batchKey}
 	}
