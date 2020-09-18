@@ -102,19 +102,6 @@ func nafHandler(c *gin.Context) {
 	c.JSON(200, naf.Naf)
 }
 
-func purgeHandler(c *gin.Context) {
-	var params struct {
-		AreYouSure string `json:"areyousure"`
-	}
-	c.Bind(&params)
-	if params.AreYouSure == "yes" {
-		info := engine.Purge()
-		c.JSON(200, info)
-		return
-	}
-	c.JSON(300, "Provide areyousure=yes")
-}
-
 func getTimestamp() string {
 	return strconv.FormatInt(time.Now().Unix(), 10)
 }

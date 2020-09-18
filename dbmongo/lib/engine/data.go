@@ -198,40 +198,6 @@ func GetBatch(batchKey string) (AdminBatch, error) {
 	return batch, err
 }
 
-// Purge réinitialise la base, à utiliser avec modération
-func Purge() interface{} {
-	infoImportedData, errImportedData := Db.DB.C("ImportedData").RemoveAll(nil)
-	infoRawData, errRawData := Db.DB.C("RawData").RemoveAll(nil)
-	infoJournal, errJournal := Db.DB.C("Journal").RemoveAll(nil)
-	infoFeatures, errFeatures := Db.DB.C("Features").RemoveAll(nil)
-	infoPublic, errPublic := Db.DB.C("Public").RemoveAll(nil)
-
-	returnData := map[string]map[string]interface{}{
-		"ImportedData": map[string]interface{}{
-			"info":  infoImportedData,
-			"error": errImportedData,
-		},
-		"RawData": map[string]interface{}{
-			"info":  infoRawData,
-			"error": errRawData,
-		},
-		"Journal": map[string]interface{}{
-			"info":  infoJournal,
-			"error": errJournal,
-		},
-		"Features": map[string]interface{}{
-			"info":  infoFeatures,
-			"error": errFeatures,
-		},
-		"Public": map[string]interface{}{
-			"info":  infoPublic,
-			"error": errPublic,
-		},
-	}
-
-	return returnData
-}
-
 // Chunks est le retour de la fonction mongodb SplitKeys
 type Chunks struct {
 	OK        int `bson:"ok"`

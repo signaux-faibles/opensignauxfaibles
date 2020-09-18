@@ -80,7 +80,6 @@ func main() {
 
 		api.POST("/data/search", searchHandler)
 
-		api.POST("/data/purge", purgeHandler)
 		api.GET("/data/purgeNotCompacted", purgeNotCompactedHandler)
 
 		api.POST("/data/copyScores", copyScores)
