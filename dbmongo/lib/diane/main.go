@@ -354,7 +354,7 @@ func parseDianeRow(row []string) (diane Diane) {
 }
 
 // parseDianeRow génère des objets Diane à partir d'un fichier
-func parseDianeFile(path string, outputChannel chan engine.Tuple, event engine.Event) {
+func parseDianeFile(batch *engine.AdminBatch, path string, outputChannel chan engine.Tuple, event engine.Event) {
 	event.Debug(path + ": ouverture")
 
 	cmdPath := []string{filepath.Join(viper.GetString("SCRIPTDIANE_DIR"), "convert_diane.sh"), viper.GetString("APP_DATA") + path}
@@ -402,7 +402,7 @@ func parseDianeFile(path string, outputChannel chan engine.Tuple, event engine.E
 
 	// init tracker to keep track and report parsing errors
 	tracker := gournal.NewTracker(
-		map[string]string{"path": path},
+		map[string]string{"path": path, "batchKey": batch.ID.Key},
 		engine.TrackerReports)
 
 	// process rows of data
@@ -442,7 +442,7 @@ func Parser(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, ch
 
 	go func() {
 		for _, path := range batch.Files["diane"] {
-			parseDianeFile(path, outputChannel, event)
+			parseDianeFile(batch, path, outputChannel, event)
 		}
 		close(eventChannel)
 		close(outputChannel)

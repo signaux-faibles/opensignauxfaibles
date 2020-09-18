@@ -62,7 +62,7 @@ func ParserDebit(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tupl
 	go func() {
 		for _, path := range batch.Files["debit"] {
 			tracker := gournal.NewTracker(
-				map[string]string{"path": path, "MaxParsingErrors": strconv.Itoa(engine.MaxParsingErrors)},
+				map[string]string{"path": path, "batchKey": batch.ID.Key, "MaxParsingErrors": strconv.Itoa(engine.MaxParsingErrors)},
 				engine.TrackerReports)
 
 			file, err := os.Open(viper.GetString("APP_DATA") + path)
