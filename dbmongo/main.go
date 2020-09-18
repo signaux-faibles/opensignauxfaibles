@@ -6,7 +6,6 @@ import (
 	"github.com/globalsign/mgo/bson"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sirene"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/naf"
 
@@ -90,24 +89,13 @@ func main() {
 		api.GET("/data/entreprises", exportEntreprisesHandler)
 		api.POST("/data/validate", validateHandler)
 
-		api.GET("/debug", debug)
+		// api.GET("/debug", debug)
 	}
 
 	bind := viper.GetString("APP_BIND")
 	r.Run(bind)
 }
 
-func debug(c *gin.Context) {
-	b, _ := engine.GetBatch("1802")
-	s, e := sirene.Parser(nil, &b)
-	go func() {
-		for range e {
-		}
-	}()
-
-	for range s {
-	}
-}
 func copyScores(c *gin.Context) {
 	var params struct {
 		From string `json:"from"`
