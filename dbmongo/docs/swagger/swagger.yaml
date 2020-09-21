@@ -83,32 +83,6 @@ components:
           type: string
         parsers:
           type: string
-    Purge:
-      properties:
-        RawData:
-          properties:
-            info:
-              type: string
-            error:
-              type: string
-        Journal:
-          properties:
-            info:
-              type: string
-            error:
-              type: string
-        Features:
-          properties:
-            info:
-              type: string
-            error:
-              type: string
-        Public:
-          properties:
-            info:
-              type: string
-            error:
-              type: string
     Reduce:
       properties:
         batch:
