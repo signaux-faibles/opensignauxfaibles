@@ -13,7 +13,6 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/diane"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/files"
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sirene"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/urssaf"
 
@@ -311,43 +310,17 @@ var registeredParsers = map[string]engine.Parser{
 	"diane":        diane.Parser,
 }
 
-// encapsultateParser transforms parser options into a functional parser
-func encapsulateParser(po *marshal.ParserOptions) engine.Parser {
-	parser := func(c engine.Cache, ab *engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
-		tuple, event, _ := marshal.GenericMarshal(po, c, ab)
-		return tuple, event
-	}
-	return parser
-}
-
 // Vérifie et charge les parsers
 func resolveParsers(parserNames []string) ([]engine.Parser, error) {
 	var parsers []engine.Parser
-	var registeredParserOptions map[string]*marshal.ParserOptions
-	parserOptionsDir := viper.GetString("PARSEROPTIONS_DIR")
-	if parserOptionsDir == "" {
-		fmt.Println("No parser options could be read. Have you set PARSEROPTIONS_DIR config ?")
-	} else {
-		aux, err := marshal.RegisteredParserOptions(parserOptionsDir)
-		if err != nil {
-			return parsers, errors.New("Parser options could not be read at " + parserOptionsDir + ": " + err.Error())
-		}
-		registeredParserOptions = aux
-	}
-
 	if parserNames == nil {
 		for _, f := range registeredParsers {
 			parsers = append(parsers, f)
-		}
-		for _, po := range registeredParserOptions {
-			parsers = append(parsers, encapsulateParser(po))
 		}
 	} else {
 		for _, p := range parserNames {
 			if f, ok := registeredParsers[p]; ok {
 				parsers = append(parsers, f)
-			} else if po, ok := registeredParserOptions[p]; ok {
-				parsers = append(parsers, encapsulateParser(po))
 			} else {
 				return parsers, errors.New(p + " n'est pas un parser reconnu.")
 			}

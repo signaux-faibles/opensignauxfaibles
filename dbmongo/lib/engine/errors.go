@@ -58,11 +58,11 @@ type FilterError struct {
 }
 
 // NewFilterError returns a filter error
-func NewFilterError(err error, criticity string) *FilterError {
+func NewFilterError(err error) *FilterError {
 	if err == nil {
 		return nil
 	}
-	c := NewCriticError(err, criticity)
+	c := NewCriticError(err, "filter")
 	return &FilterError{c.(*CriticError)}
 }
 
