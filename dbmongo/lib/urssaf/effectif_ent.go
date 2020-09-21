@@ -113,10 +113,12 @@ func ParserEffectifEnt(cache engine.Cache, batch *engine.AdminBatch) (chan engin
 					break
 				}
 
+				notDigit := regexp.MustCompile("[^0-9]")
 				if len(row[sirenIndex]) == 9 {
 					for i, j := range effectifEntIndexes {
 						if row[j] != "" {
-							s, err := strconv.ParseFloat(row[j], 64)
+							noThousandsSep := notDigit.ReplaceAllString(row[j], "")
+							s, err := strconv.ParseFloat(noThousandsSep, 64)
 							tracker.Error(err)
 							e := int(s)
 							if e > 0 {
