@@ -121,10 +121,12 @@ func ParserEffectif(cache engine.Cache, batch *engine.AdminBatch) (chan engine.T
 					break
 				}
 
+				notDigit := regexp.MustCompile("[^0-9]")
 				if len(row[siretIndex]) == 14 {
 					for i, j := range effectifIndexes {
 						if row[j] != "" {
-							e, err := strconv.Atoi(row[j])
+							noThousandsSep := notDigit.ReplaceAllString(row[j], "")
+							e, err := strconv.Atoi(noThousandsSep)
 							tracker.Error(err)
 							if e > 0 {
 								eff := Effectif{
