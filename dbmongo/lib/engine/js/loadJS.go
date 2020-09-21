@@ -66,9 +66,7 @@ func bundleJsFunctions(jsRootDir string) {
 
 func main() {
 	jsRootDir := filepath.Join("..", "..", "js")
-	engine.GenerateDataTypes(jsRootDir)     // convert *.schema.json files to .ts
 	engine.TranspileTsFunctions(jsRootDir)  // convert *.ts files to .js
-	engine.GlobalizeJsFunctions(jsRootDir)  // remove "export" prefixes from JS functions, for mongodb compatibility
 	bundleJsFunctions(jsRootDir)            // bundle *.js files to jsFunctions.go
 	engine.DeleteTranspiledFiles(jsRootDir) // delete the *.js files
 }
