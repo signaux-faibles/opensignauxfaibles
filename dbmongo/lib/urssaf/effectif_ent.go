@@ -134,6 +134,8 @@ func ParserEffectifEnt(cache engine.Cache, batch *engine.AdminBatch) (chan engin
 					tracker.Error(errors.New("Format de siren incorrect : " + row[sirenIndex]))
 				}
 				if engine.ShouldBreak(tracker, engine.MaxParsingErrors) {
+					tracker.Error(engine.NewCriticError(errors.New("Parser interrompu: trop d'erreurs"), "fatal"))
+					event.Critical(tracker.Report("fatalError"))
 					break
 				}
 				tracker.Next()
