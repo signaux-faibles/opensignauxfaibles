@@ -51,30 +51,7 @@ func DeleteTranspiledFiles(jsRootDir string) {
 
 // TranspileTsFunctions convertit les fichiers TypeScript au format JavaScript.
 func TranspileTsFunctions(jsRootDir string) {
-	cmd := exec.Command("npx", "typescript", "--p", filepath.Join(jsRootDir, "tsconfig-transpilation.json")) // output: .js files
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	err := cmd.Run()
-	if err != nil {
-		log.Fatal(err)
-	}
-}
-
-// GlobalizeJsFunctions retire le préfixe "export" des fonctions, pour les rendre compatibles avec mongodb.
-func GlobalizeJsFunctions(jsRootDir string) {
-	cmd := exec.Command("bash", "globalize-functions.sh") // output: .js files
-	cmd.Dir = jsRootDir
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	err := cmd.Run()
-	if err != nil {
-		log.Fatal(err)
-	}
-}
-
-// GenerateDataTypes génère les types TypeScript à partir des fichiers JSON Schema.
-func GenerateDataTypes(jsRootDir string) {
-	cmd := exec.Command("bash", "generate-types.sh") // output: .js files
+	cmd := exec.Command("bash", "generate-javascript.sh") // output: .js files
 	cmd.Dir = jsRootDir
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr

@@ -2,7 +2,7 @@
 
 OUT_FILE="GeneratedTypes.d.ts"
 
-TS_TYPES=$(npx mongodb-json-schema-to-typescript --input "../validation/*.schema.json" --bannerComment '')
+NODE_BIN=$(npm bin)
 
 echo > "${OUT_FILE}" "\
 /**
@@ -15,6 +15,6 @@ echo > "${OUT_FILE}" "\
  * - then, run generate-types.sh to regenerate this file.
  */
 
-${TS_TYPES}"
+$("${NODE_BIN}/mongodb-json-schema-to-typescript" --input "../validation/*.schema.json" --bannerComment '')"
 
-$(npm bin)/eslint "${OUT_FILE}" --fix
+"${NODE_BIN}/eslint" "${OUT_FILE}" --fix
