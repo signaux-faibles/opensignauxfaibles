@@ -2,6 +2,7 @@ import { altaresToHuman } from "../common/altaresToHuman"
 import { compareDebit } from "../common/compareDebit"
 import { dateAddMonth } from "../common/dateAddMonth"
 import { flatten } from "../common/flatten"
+import { raison_sociale } from "../common/raison_sociale"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { omit } from "../common/omit"
 import { procolToHuman } from "../common/procolToHuman"
@@ -40,4 +41,5 @@ export const f = {
   altaresToHuman,
   procolToHuman,
   compareDebit,
+  raison_sociale,
 }
