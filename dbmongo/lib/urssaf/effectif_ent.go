@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
 
 	"github.com/signaux-faibles/gournal"
@@ -113,8 +114,13 @@ func ParserEffectifEnt(cache engine.Cache, batch *engine.AdminBatch) (chan engin
 					break
 				}
 
+				siren := row[sirenIndex]
+				filtered, err := marshal.IsFiltered(siren, cache, batch)
+				tracker.Error(err)
 				notDigit := regexp.MustCompile("[^0-9]")
-				if len(row[sirenIndex]) == 9 {
+				if len(siren) != 9 {
+					tracker.Error(errors.New("Format de siren incorrect : " + row[sirenIndex]))
+				} else if !filtered {
 					for i, j := range effectifEntIndexes {
 						if row[j] != "" {
 							noThousandsSep := notDigit.ReplaceAllString(row[j], "")
@@ -132,9 +138,8 @@ func ParserEffectifEnt(cache engine.Cache, batch *engine.AdminBatch) (chan engin
 							}
 						}
 					}
-				} else {
-					tracker.Error(errors.New("Format de siren incorrect : " + row[sirenIndex]))
 				}
+
 				if engine.ShouldBreak(tracker, engine.MaxParsingErrors) {
 					tracker.Error(engine.NewCriticError(errors.New("Parser interrompu: trop d'erreurs"), "fatal"))
 					event.Critical(tracker.Report("fatalError"))

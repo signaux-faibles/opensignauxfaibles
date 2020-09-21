@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
 
 	"github.com/signaux-faibles/gournal"
@@ -122,7 +123,10 @@ func ParserEffectif(cache engine.Cache, batch *engine.AdminBatch) (chan engine.T
 				}
 
 				notDigit := regexp.MustCompile("[^0-9]")
-				if len(row[siretIndex]) == 14 {
+				siret := row[siretIndex]
+				filtered, err := marshal.IsFiltered(siret, cache, batch)
+				tracker.Error(err)
+				if len(siret) == 14 && !filtered {
 					for i, j := range effectifIndexes {
 						if row[j] != "" {
 							noThousandsSep := notDigit.ReplaceAllString(row[j], "")
@@ -130,7 +134,7 @@ func ParserEffectif(cache engine.Cache, batch *engine.AdminBatch) (chan engine.T
 							tracker.Error(err)
 							if e > 0 {
 								eff := Effectif{
-									Siret:        row[siretIndex],
+									Siret:        siret,
 									NumeroCompte: row[compteIndex],
 									Periode:      periods[i],
 									Effectif:     e}
