@@ -83,32 +83,6 @@ components:
           type: string
         parsers:
           type: string
-    Purge:
-      properties:
-        RawData:
-          properties:
-            info:
-              type: string
-            error:
-              type: string
-        Journal:
-          properties:
-            info:
-              type: string
-            error:
-              type: string
-        Features:
-          properties:
-            info:
-              type: string
-            error:
-              type: string
-        Public:
-          properties:
-            info:
-              type: string
-            error:
-              type: string
     Reduce:
       properties:
         batch:
@@ -497,27 +471,6 @@ paths:
       security:
         - BearerAuth: []
       summary: publier les données
-      tags:
-        - Traitements
-  /api/data/purge:
-    get:
-      description: |-
-        Suppression de tous les objets de données brutes contenus dans les collections RawData, Features, Journal et Public  
-        **Ceci est une opération de remise à zéro de la base de données**  
-        **Seule la configuration des batches est conservée**  
-        **Cette opération est irréversible et dangereuse et ne devrait être utilisée qu'à des fins de développement**  
-
-        **!!! SI VOUS NE SAVEZ PAS CE QUE VOUS FAITES ICI, PASSEZ VOTRE CHEMIN !!!**
-      responses:
-        "200":
-          description: statistiques de suppression
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Purge"
-      security:
-        - BearerAuth: []
-      summary: remettre à zéro les données /!\
       tags:
         - Traitements
   /api/data/reduce:

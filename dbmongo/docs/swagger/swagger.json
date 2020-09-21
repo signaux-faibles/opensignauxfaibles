@@ -134,50 +134,6 @@
                     }
                 }
             },
-            "Purge": {
-                "properties": {
-                    "RawData": {
-                        "properties": {
-                            "info": {
-                                "type": "string"
-                            },
-                            "error": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "Journal": {
-                        "properties": {
-                            "info": {
-                                "type": "string"
-                            },
-                            "error": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "Features": {
-                        "properties": {
-                            "info": {
-                                "type": "string"
-                            },
-                            "error": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "Public": {
-                        "properties": {
-                            "info": {
-                                "type": "string"
-                            },
-                            "error": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                }
-            },
             "Reduce": {
                 "properties": {
                     "batch": {
@@ -748,32 +704,6 @@
                     }
                 ],
                 "summary": "publier les données",
-                "tags": [
-                    "Traitements"
-                ]
-            }
-        },
-        "/api/data/purge": {
-            "get": {
-                "description": "Suppression de tous les objets de données brutes contenus dans les collections RawData, Features, Journal et Public  \n**Ceci est une opération de remise à zéro de la base de données**  \n**Seule la configuration des batches est conservée**  \n**Cette opération est irréversible et dangereuse et ne devrait être utilisée qu'à des fins de développement**  \n\n**!!! SI VOUS NE SAVEZ PAS CE QUE VOUS FAITES ICI, PASSEZ VOTRE CHEMIN !!!**",
-                "responses": {
-                    "200": {
-                        "description": "statistiques de suppression",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Purge"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "summary": "remettre à zéro les données /!\\",
                 "tags": [
                     "Traitements"
                 ]
