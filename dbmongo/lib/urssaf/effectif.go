@@ -64,7 +64,7 @@ func ParserEffectif(cache engine.Cache, batch *engine.AdminBatch) (chan engine.T
 	go func() {
 		for _, path := range batch.Files["effectif"] {
 			tracker := gournal.NewTracker(
-				map[string]string{"path": path},
+				map[string]string{"path": path, "batchKey": batch.ID.Key},
 				engine.TrackerReports)
 
 			file, err := os.Open(viper.GetString("APP_DATA") + path)

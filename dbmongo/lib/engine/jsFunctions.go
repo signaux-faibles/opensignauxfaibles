@@ -988,7 +988,10 @@ db.getCollection("Features").createIndex({
         const v = {};
         const diane = f.diane(value.diane);
         const bdf = f.bdf(value.bdf);
-        const sirene_ul = (value.sirene_ul || {})[Object.keys(value.sirene_ul || {})[0] || ""];
+        const sirene_ul = f.iterable(value.sirene_ul)[0] || null;
+        if (sirene_ul) {
+            sirene_ul.raison_sociale = f.raison_sociale(sirene_ul.raison_sociale, sirene_ul.nom_unite_legale, sirene_ul.nom_usage_unite_legale, sirene_ul.prenom1_unite_legale, sirene_ul.prenom2_unite_legale, sirene_ul.prenom3_unite_legale, sirene_ul.prenom4_unite_legale);
+        }
         const crp = value.crp;
         v.key = this.value.key;
         v.batch = actual_batch;
@@ -1022,7 +1025,7 @@ db.getCollection("Features").createIndex({
 }`,
 "sirene": `// Cette fonction retourne les données sirene les plus récentes
 function sirene(sireneArray) {
-    return sireneArray[sireneArray.length - 1] || {}; // TODO: vérifier que sireneArray est bien classé dans l'ordre chronologique
+    return sireneArray[sireneArray.length - 1] || {}; // TODO: vérifier que sireneArray est bien classé dans l'ordre chronologique -> c'est sûr qu'il ne l'est pas, vérifier que pour toute la base on a bien un objet sirene unique !
 }`,
 },
 "purgeBatch":{
@@ -2025,7 +2028,7 @@ function outputs(v, serie_periode) {
         if (sireneHashes.length !== 0) {
             const sirene = vSirene[sireneHashes[sireneHashes.length - 1]];
             val.siren = val.siret.substring(0, 9);
-            val.latitude = sirene.lattitude || null;
+            val.latitude = sirene.latitude || null;
             val.longitude = sirene.longitude || null;
             val.departement = sirene.departement || null;
             if (val.departement) {

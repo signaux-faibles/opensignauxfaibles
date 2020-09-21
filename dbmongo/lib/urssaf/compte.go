@@ -44,7 +44,7 @@ func ParserCompte(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tup
 				Channel: eventChannel,
 			}
 			tracker := gournal.NewTracker(
-				map[string]string{"path": "Admin_urssaf"},
+				map[string]string{"path": "Admin_urssaf", "batchKey": batch.ID.Key},
 				engine.TrackerReports)
 
 			periode_init := batch.Params.DateDebut

@@ -106,17 +106,13 @@ func ParserDelai(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tupl
 				date, err := time.Parse("02/01/2006", row[field["DateCreation"]])
 				if err != nil {
 					tracker.Error(err)
-					continue
-				}
-
-				if siret, err := marshal.GetSiret(row[field["NumeroCompte"]], &date, cache, batch); err == nil {
+				} else if siret, err := marshal.GetSiret(row[field["NumeroCompte"]], &date, cache, batch); err == nil {
 					delai, tracker := readLine(row, field, siret, tracker)
 					if !tracker.HasErrorInCurrentCycle() {
 						outputChannel <- delai
 					}
 				} else {
 					tracker.Error(engine.NewFilterError(err))
-					continue
 				}
 
 				tracker.Next()

@@ -50,7 +50,7 @@ func Parser(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, ch
 	go func() {
 		for _, path := range batch.Files["reporder"] {
 			tracker := gournal.NewTracker(
-				map[string]string{"path": path},
+				map[string]string{"path": path, "batchKey": batch.ID.Key},
 				engine.TrackerReports)
 			// get current file name
 
