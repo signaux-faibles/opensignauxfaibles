@@ -3,6 +3,7 @@ package urssaf
 import (
 	"bufio"
 	"encoding/csv"
+	"errors"
 	"io"
 	"os"
 	"regexp"
@@ -113,13 +114,6 @@ func ParserEffectif(cache engine.Cache, batch *engine.AdminBatch) (chan engine.T
 			for {
 				row, err := reader.Read()
 				if err == io.EOF {
-					// if tracker.Errors != nil {
-					// 	event.Warning(bson.M{
-					// 		"errorReport": tracker.Errors,
-					// 	})
-					// }
-					event.Info(tracker.Report("abstract"))
-					file.Close()
 					break
 				} else if err != nil {
 					tracker.Error(err)
@@ -144,11 +138,14 @@ func ParserEffectif(cache engine.Cache, batch *engine.AdminBatch) (chan engine.T
 					}
 				}
 				if engine.ShouldBreak(tracker, engine.MaxParsingErrors) {
+					tracker.Error(engine.NewCriticError(errors.New("Parser interrompu: trop d'erreurs"), "fatal"))
+					event.Critical(tracker.Report("fatalError"))
 					break
 				}
 				tracker.Next()
 			}
 			file.Close()
+			event.Debug(tracker.Report("abstract"))
 		}
 		close(outputChannel)
 		close(eventChannel)
