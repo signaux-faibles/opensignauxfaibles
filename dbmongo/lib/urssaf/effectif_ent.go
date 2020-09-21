@@ -119,7 +119,7 @@ func ParserEffectifEnt(cache engine.Cache, batch *engine.AdminBatch) (chan engin
 				tracker.Error(err)
 				notDigit := regexp.MustCompile("[^0-9]")
 				if len(siren) != 9 {
-					tracker.Error(errors.New("Format de siren incorrect : " + row[sirenIndex]))
+					tracker.Error(errors.New("Format de siren incorrect : " + siren))
 				} else if !filtered {
 					for i, j := range effectifEntIndexes {
 						if row[j] != "" {
@@ -129,7 +129,7 @@ func ParserEffectifEnt(cache engine.Cache, batch *engine.AdminBatch) (chan engin
 							e := int(s)
 							if e > 0 {
 								eff := EffectifEnt{
-									Siren:       row[sirenIndex],
+									Siren:       siren,
 									Periode:     periods[i],
 									EffectifEnt: e,
 								}
