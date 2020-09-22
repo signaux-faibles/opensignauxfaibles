@@ -27,10 +27,8 @@ func TestIsFiltered(t *testing.T) {
 		{"0123", nil, true, true},
 	}
 
-	var batch = engine.AdminBatch{}
 	for ind, tc := range testCases {
-		var cache = engine.Cache{"filter": tc.filter}
-		actual, err := IsFiltered(tc.siret, cache, &batch)
+		actual, err := IsFiltered(tc.siret, tc.filter)
 		if err != nil && !tc.expectError {
 			log.Println(tc.siret)
 			t.Fatalf("Unexpected error during cache request in test %d: %v", ind, err)
