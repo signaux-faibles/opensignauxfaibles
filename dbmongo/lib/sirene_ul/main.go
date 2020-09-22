@@ -3,12 +3,14 @@ package sireneul
 import (
 	//"bufio"
 	"encoding/csv"
+	"errors"
 	"io"
 	"os"
 	"time"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sfregexp"
 
 	"github.com/signaux-faibles/gournal"
 	"github.com/spf13/viper"
@@ -82,6 +84,11 @@ func Parser(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, ch
 					break
 				}
 
+				validSiren := sfregexp.RegexpDict["siren"].MatchString(row[0])
+				if !validSiren {
+					tracker.Error(errors.New("siren invalide : " + row[0]))
+					continue // TODO: exécuter tracker.Next() un fois le TODO ci-dessous traité.
+				}
 				filtered, err := marshal.IsFiltered(row[0], cache, batch)
 				if err != nil {
 					tracker.Error(err)
@@ -89,7 +96,9 @@ func Parser(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, ch
 				if !filtered {
 					sireneul := readLineEtablissement(row, &tracker)
 					outputChannel <- sireneul
-					tracker.Next()
+					tracker.Next() // TODO: garantir que le compteur de lignes
+					// correspond au nombre de lignes du fichier. => appeler même si le
+					// siren est filtré
 				}
 			}
 			file.Close()
