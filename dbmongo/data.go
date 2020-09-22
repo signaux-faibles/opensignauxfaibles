@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/naf"
 	"github.com/spf13/viper"
@@ -58,8 +59,8 @@ func publicHandler(c *gin.Context) {
 		c.JSON(400, err.Error())
 	}
 
-	batch := engine.AdminBatch{}
-	err = batch.Load(params.BatchKey)
+	batch := base.AdminBatch{}
+	err = engine.Load(&batch, params.BatchKey)
 	if err != nil {
 		c.JSON(404, "batch non trouvé")
 		return

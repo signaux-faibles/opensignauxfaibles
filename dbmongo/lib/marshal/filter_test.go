@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 )
 
@@ -49,13 +50,13 @@ func TestGetSirenFilter(t *testing.T) {
 		experimentName string
 		cacheKey       string
 		cacheValue     interface{}
-		batch          engine.AdminBatch
+		batch          base.AdminBatch
 		expectedFilter map[string]bool
 	}{
 		{"existing cache",
-			"filter", map[string]bool{"012345678": true}, engine.AdminBatch{}, map[string]bool{"012345678": true}},
+			"filter", map[string]bool{"012345678": true}, base.AdminBatch{}, map[string]bool{"012345678": true}},
 		{"No cache, no filter in batch 1",
-			"", "", engine.AdminBatch{}, nil},
+			"", "", base.AdminBatch{}, nil},
 		{"No cache, no filter in batch 2",
 			"", "", engine.MockBatch("filter", nil), nil},
 		{"No cache, (mock)read from file",

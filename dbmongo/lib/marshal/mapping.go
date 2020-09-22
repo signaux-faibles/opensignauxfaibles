@@ -8,6 +8,7 @@ import (
 	"io"
 	"os"
 
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sfregexp"
 
@@ -20,7 +21,7 @@ import (
 
 // GetSiret gets the siret related to a specific compte at a given point in
 // time
-func GetSiret(compte string, date *time.Time, cache engine.Cache, batch *engine.AdminBatch) (string, error) {
+func GetSiret(compte string, date *time.Time, cache engine.Cache, batch *base.AdminBatch) (string, error) {
 	comptes, err := GetCompteSiretMapping(cache, batch, OpenAndReadSiretMapping)
 
 	if err != nil {
@@ -46,7 +47,7 @@ type Comptes map[string][]SiretDate
 
 // GetCompteSiretMapping returns the siret mapping in cache if available, else
 // reads the file and save it in cache
-func GetCompteSiretMapping(cache engine.Cache, batch *engine.AdminBatch, mr mappingReader) (Comptes, error) {
+func GetCompteSiretMapping(cache engine.Cache, batch *base.AdminBatch, mr mappingReader) (Comptes, error) {
 
 	value, err := cache.Get("comptes")
 	if err == nil {
@@ -78,7 +79,7 @@ func GetCompteSiretMapping(cache engine.Cache, batch *engine.AdminBatch, mr mapp
 	return compteSiretMapping, nil
 }
 
-type mappingReader func(string, string, Comptes, engine.Cache, *engine.AdminBatch) (Comptes, error)
+type mappingReader func(string, string, Comptes, engine.Cache, *base.AdminBatch) (Comptes, error)
 
 // OpenAndReadSiretMapping opens files and reads their content
 func OpenAndReadSiretMapping(
@@ -86,7 +87,7 @@ func OpenAndReadSiretMapping(
 	endPath string,
 	compteSiretMapping Comptes,
 	cache engine.Cache,
-	batch *engine.AdminBatch,
+	batch *base.AdminBatch,
 ) (Comptes, error) {
 
 	file, err := os.Open(basePath + endPath)
@@ -109,7 +110,7 @@ func OpenAndReadSiretMapping(
 func readSiretMapping(
 	reader io.Reader,
 	cache engine.Cache,
-	batch *engine.AdminBatch,
+	batch *base.AdminBatch,
 ) (Comptes, error) {
 
 	var addSiretMapping = make(map[string][]SiretDate)

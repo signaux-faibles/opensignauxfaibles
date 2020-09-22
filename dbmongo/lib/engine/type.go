@@ -2,6 +2,8 @@ package engine
 
 import (
 	"errors"
+
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 )
 
 // Cache saves values in memory
@@ -61,4 +63,4 @@ type Type struct {
 type Types []Type
 
 // Parser fonction de traitement de données en entrée
-type Parser func(Cache, *AdminBatch) (chan Tuple, chan Event)
+type Parser func(Cache, *base.AdminBatch) (chan Tuple, chan Event)

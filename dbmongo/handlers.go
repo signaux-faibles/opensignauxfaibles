@@ -9,6 +9,7 @@ import (
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/apconso"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/apdemande"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/bdf"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/diane"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
@@ -97,14 +98,14 @@ func nextBatchHandler(c *gin.Context) {
 
 //
 func upsertBatchHandler(c *gin.Context) {
-	var batch engine.AdminBatch
+	var batch base.AdminBatch
 	err := c.ShouldBind(&batch)
 	if err != nil {
 		c.JSON(400, err.Error)
 		return
 	}
 
-	err = batch.Save()
+	err = engine.Save(&batch)
 	if err != nil {
 		c.JSON(500, "Erreur à l'enregistrement: "+err.Error())
 		return
@@ -120,7 +121,7 @@ func upsertBatchHandler(c *gin.Context) {
 
 //
 func listBatchHandler(c *gin.Context) {
-	var batch []engine.AdminBatch
+	var batch []base.AdminBatch
 	err := engine.Db.DB.C("Admin").Find(bson.M{"_id.type": "batch"}).Sort("-_id.key").All(&batch)
 	if err != nil {
 		spew.Dump(err)
@@ -229,8 +230,8 @@ func importBatchHandler(c *gin.Context) {
 		c.JSON(400, "Requête malformée: "+err.Error())
 		return
 	}
-	batch := engine.AdminBatch{}
-	err = batch.Load(params.BatchKey)
+	batch := base.AdminBatch{}
+	err = engine.Load(&batch, params.BatchKey)
 	if err != nil {
 		c.JSON(404, "Batch inexistant: "+err.Error())
 	}
@@ -252,8 +253,8 @@ func checkBatchHandler(c *gin.Context) {
 		c.JSON(400, "Requête malformée: "+err.Error())
 		return
 	}
-	batch := engine.AdminBatch{}
-	err = batch.Load(params.BatchKey)
+	batch := base.AdminBatch{}
+	err = engine.Load(&batch, params.BatchKey)
 	if err != nil {
 		c.JSON(404, "Batch inexistant: "+err.Error())
 	}

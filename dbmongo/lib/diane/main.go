@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 
 	"github.com/signaux-faibles/gournal"
@@ -354,7 +355,7 @@ func parseDianeRow(row []string) (diane Diane) {
 }
 
 // parseDianeRow génère des objets Diane à partir d'un fichier
-func parseDianeFile(batch *engine.AdminBatch, path string, outputChannel chan engine.Tuple, event engine.Event) {
+func parseDianeFile(batch *base.AdminBatch, path string, outputChannel chan engine.Tuple, event engine.Event) {
 	event.Debug(path + ": ouverture")
 
 	cmdPath := []string{filepath.Join(viper.GetString("SCRIPTDIANE_DIR"), "convert_diane.sh"), viper.GetString("APP_DATA") + path}
@@ -432,7 +433,7 @@ func parseDianeFile(batch *engine.AdminBatch, path string, outputChannel chan en
 }
 
 // Parser produit les données Diane listées dans un batch
-func Parser(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
+func Parser(cache engine.Cache, batch *base.AdminBatch) (chan engine.Tuple, chan engine.Event) {
 	outputChannel := make(chan engine.Tuple)
 	eventChannel := make(chan engine.Event)
 	event := engine.Event{

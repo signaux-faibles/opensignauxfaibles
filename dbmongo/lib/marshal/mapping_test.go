@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 )
 
@@ -19,7 +20,7 @@ func TestGetSiret(t *testing.T) {
 			SiretDate{"87654321091011", stdTime2},
 		},
 	}
-	var batch = engine.AdminBatch{}
+	var batch = base.AdminBatch{}
 	testCases := []struct {
 		compte      string
 		date        string
@@ -57,7 +58,7 @@ func TestGetSiret(t *testing.T) {
 
 func TestReadSiretMapping(t *testing.T) {
 
-	var batch = engine.AdminBatch{}
+	var batch = base.AdminBatch{}
 
 	stdTime1, _ := time.Parse("2006-02-01", "2899-01-01")
 	stdTime2, _ := time.Parse("2006-02-01", "2015-01-01")
@@ -136,7 +137,7 @@ func TestGetCompteSiretMapping(t *testing.T) {
 	}
 
 	// When file is read, returnd stdExpected1
-	mockOpenFile := func(s1 string, s2 string, c Comptes, ca engine.Cache, ba *engine.AdminBatch) (Comptes, error) {
+	mockOpenFile := func(s1 string, s2 string, c Comptes, ca engine.Cache, ba *base.AdminBatch) (Comptes, error) {
 		for key := range stdExpected1 {
 			c[key] = stdExpected1[key]
 		}
@@ -145,7 +146,7 @@ func TestGetCompteSiretMapping(t *testing.T) {
 
 	testCases := []struct {
 		cache       engine.Cache
-		batch       engine.AdminBatch
+		batch       base.AdminBatch
 		expectError bool
 		expected    Comptes
 	}{

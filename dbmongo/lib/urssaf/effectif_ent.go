@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
 
@@ -54,7 +55,7 @@ func parseEffectifEntPeriod(effectifEntPeriods []string) ([]time.Time, error) {
 }
 
 // ParserEffectifEnt retourne un channel fournissant des données extraites
-func ParserEffectifEnt(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
+func ParserEffectifEnt(cache engine.Cache, batch *base.AdminBatch) (chan engine.Tuple, chan engine.Event) {
 	outputChannel := make(chan engine.Tuple)
 	eventChannel := make(chan engine.Event)
 	event := engine.Event{

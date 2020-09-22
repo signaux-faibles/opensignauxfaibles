@@ -4,13 +4,14 @@ import (
 	"encoding/json"
 	"log"
 
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/files"
 )
 
 // SocketMessage permet la diffusion d'information vers tous les clients
 type SocketMessage struct {
 	JournalEvent Event               `json:"journalEvent" bson:"journalEvent"`
-	Batches      []AdminBatch        `json:"batches,omitempty" bson:"batches,omitempty"`
+	Batches      []base.AdminBatch   `json:"batches,omitempty" bson:"batches,omitempty"`
 	Types        []Type              `json:"types,omitempty" bson:"types,omitempty"`
 	Features     []string            `json:"features,omitempty" bson:"features,omitempty"`
 	Files        []files.FileSummary `json:"files,omitempty" bson:"files,omitempty"`

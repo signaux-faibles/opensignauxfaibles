@@ -2,6 +2,8 @@ package engine
 
 import (
 	"testing"
+
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 )
 
 func Test_NextBatchID(t *testing.T) {
@@ -26,23 +28,23 @@ func Test_NextBatchID(t *testing.T) {
 	}
 }
 
-func Test_isBatchID(t *testing.T) {
-	if !isBatchID("1801") {
+func Test_IsBatchID(t *testing.T) {
+	if !base.IsBatchID("1801") {
 		t.Error("1801 devrait être un ID de batch")
 	}
 
-	if isBatchID("") {
+	if base.IsBatchID("") {
 		t.Error("'' ne devrait pas être considéré comme un ID de batch")
 	}
 
-	if isBatchID("190193039") {
+	if base.IsBatchID("190193039") {
 		t.Error("'190193039' ne devrait pas être considéré comme un ID de batch")
 	}
-	if !isBatchID("1901_93039") {
+	if !base.IsBatchID("1901_93039") {
 		t.Error("'190193039'  devrait être considéré comme un ID de batch")
 	}
 
-	if isBatchID("abcd") {
+	if base.IsBatchID("abcd") {
 		t.Error("'abcd' ne devrait pas être considéré comme un ID de batch")
 	} else {
 		t.Log("'abcd' est bien rejeté: ")
@@ -74,7 +76,7 @@ func Test_ImportBatch(t *testing.T) {
 		for range Db.ChanData {
 		}
 	}()
-	batch := AdminBatch{}
+	batch := base.AdminBatch{}
 	err := ImportBatch(batch, []Parser{})
 	if err == nil {
 		t.Error("ImportBatch devrait nous empêcher d'importer sans filtre")
