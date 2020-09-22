@@ -15,17 +15,12 @@ import (
 )
 
 // IsFiltered determines if the siret must be filtered or not
-func IsFiltered(id string, cache engine.Cache, batch *engine.AdminBatch) (bool, error) {
+func IsFiltered(id string, filter map[string]bool) (bool, error) {
 
 	validSiret := sfregexp.RegexpDict["siret"].MatchString(id)
 	validSiren := sfregexp.RegexpDict["siren"].MatchString(id)
 	if !validSiret && !validSiren {
-		return true, errors.New("Le siret/siren est invalide")
-	}
-
-	filter, err := getSirenFilter(cache, batch, readFilterFiles)
-	if err != nil {
-		return false, err
+		return true, errors.New("Le siret/siren est invalide") // TODO: retirer la validation de cette fonction
 	}
 
 	// if no filter, then all ids pass
@@ -33,6 +28,12 @@ func IsFiltered(id string, cache engine.Cache, batch *engine.AdminBatch) (bool, 
 		return false, nil
 	}
 	return !filter[id[0:9]], nil
+}
+
+// GetSirenFilter reads the filter from cache if it cans, or else it reads it
+// from input files and stores it in cache
+func GetSirenFilter(cache engine.Cache, batch *engine.AdminBatch) (map[string]bool, error) {
+	return getSirenFilter(cache, batch, readFilterFiles)
 }
 
 // getSirenFilter reads the filter from cache if it cans, or else it reads it

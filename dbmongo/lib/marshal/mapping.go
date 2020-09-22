@@ -151,8 +151,12 @@ func readSiretMapping(
 			continue
 		}
 
-		filtered, err := IsFiltered(siret, cache, batch)
+		filter, err := GetSirenFilter(cache, batch)
+		if err != nil {
+			return nil, err
+		}
 
+		filtered, err := IsFiltered(siret, filter)
 		if err != nil {
 			return nil, err
 		}
