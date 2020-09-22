@@ -93,7 +93,18 @@ func Parser(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, ch
 					Periode:     periode,
 					RandomOrder: randomOrder,
 				}
-				filtered, err := marshal.IsFiltered(reporder.Siret[0:9], cache, batch)
+				filter, err := marshal.GetSirenFilter(cache, batch)
+				// if filter == nil {
+				// 	tracker.Error(errors.New("Veuillez spécifier un fichier filtre SIREN"))
+				// 	event.Critical(tracker.Report("fatalError"))
+				// 	break
+				// }
+				if err != nil {
+					tracker.Error(err)
+					event.Critical(tracker.Report("fatalError"))
+					break
+				}
+				filtered, err := marshal.IsFiltered(reporder.Siret[0:9], filter)
 				if err != nil {
 					tracker.Error(err)
 				}
