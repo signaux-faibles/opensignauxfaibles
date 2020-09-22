@@ -49,7 +49,8 @@ func NextBatchID(batchID string) (string, error) {
 
 // ImportBatch lance tous les parsers sur le batch fourni
 func ImportBatch(batch base.AdminBatch, parsers []Parser) error {
-	var cache = NewCache()
+	var cache = base.NewCache()
+	// TODO
 	// _, err := marshal.GetSirenFilter(cache, &batch)
 	// if err != nil {
 	// 	return err
@@ -99,7 +100,7 @@ func CheckBatch(batch base.AdminBatch, parsers []Parser) error {
 	if err := CheckBatchPaths(&batch); err != nil {
 		return err
 	}
-	var cache = NewCache()
+	var cache = base.NewCache()
 	for _, parser := range parsers {
 		outputChannel, eventChannel := parser(cache, &batch)
 		DiscardTuple(outputChannel)

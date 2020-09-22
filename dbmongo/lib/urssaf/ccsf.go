@@ -41,7 +41,7 @@ func (ccsf CCSF) Type() string {
 }
 
 // ParserCCSF produit des lignes CCSF
-func ParserCCSF(cache engine.Cache, batch *base.AdminBatch) (chan engine.Tuple, chan engine.Event) {
+func ParserCCSF(cache base.Cache, batch *base.AdminBatch) (chan engine.Tuple, chan engine.Event) {
 	outputChannel := make(chan engine.Tuple)
 	eventChannel := make(chan engine.Event)
 

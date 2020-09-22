@@ -43,7 +43,7 @@ func (procol Procol) Type() string {
 }
 
 // ParserProcol transorme le fichier procol en data
-func ParserProcol(cache engine.Cache, batch *base.AdminBatch) (chan engine.Tuple, chan engine.Event) {
+func ParserProcol(cache base.Cache, batch *base.AdminBatch) (chan engine.Tuple, chan engine.Event) {
 	outputChannel := make(chan engine.Tuple)
 	eventChannel := make(chan engine.Event)
 

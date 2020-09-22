@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 )
 
@@ -15,5 +15,5 @@ var golden = filepath.Join("testData", "expectedSirene.json")
 var testData = filepath.Join("testData", "sireneTestData.csv")
 
 func TestSirene(t *testing.T) {
-	marshal.TestParserTupleOutput(t, Parser, engine.NewCache(), "sirene", testData, golden, *update)
+	marshal.TestParserTupleOutput(t, Parser, base.NewCache(), "sirene", testData, golden, *update)
 }

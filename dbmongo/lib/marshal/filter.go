@@ -9,7 +9,6 @@ import (
 	"path/filepath"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sfregexp"
 
 	"github.com/spf13/viper"
@@ -33,13 +32,13 @@ func IsFiltered(id string, filter map[string]bool) (bool, error) {
 
 // GetSirenFilter reads the filter from cache if it cans, or else it reads it
 // from input files and stores it in cache
-func GetSirenFilter(cache engine.Cache, batch *base.AdminBatch) (map[string]bool, error) {
+func GetSirenFilter(cache base.Cache, batch *base.AdminBatch) (map[string]bool, error) {
 	return getSirenFilter(cache, batch, readFilterFiles)
 }
 
 // getSirenFilter reads the filter from cache if it cans, or else it reads it
 // from input files and stores it in cache
-func getSirenFilter(cache engine.Cache, batch *base.AdminBatch, fr filterReader) (map[string]bool, error) {
+func getSirenFilter(cache base.Cache, batch *base.AdminBatch, fr filterReader) (map[string]bool, error) {
 
 	value, err := cache.Get("filter")
 

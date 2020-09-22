@@ -8,6 +8,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 	"github.com/stretchr/testify/assert"
 )
@@ -37,7 +38,7 @@ func MockComptesMapping(mapping map[string]string) Comptes {
 func TestParserTupleOutput(
 	t *testing.T,
 	parser engine.Parser,
-	cache engine.Cache,
+	cache base.Cache,
 	parserType string,
 	inputFile string,
 	goldenFile string,

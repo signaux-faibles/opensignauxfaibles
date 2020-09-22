@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 )
 
@@ -14,7 +14,7 @@ var update = flag.Bool("update", false, "Update the expected test values in gold
 func TestDebit(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedDebit.json")
 	var testData = filepath.Join("testData", "debitTestData.csv")
-	cache := engine.NewCache()
+	cache := base.NewCache()
 	cache.Set("comptes", marshal.MockComptesMapping(
 		map[string]string{
 			"111982477292496174": "000000000000000",
@@ -29,7 +29,7 @@ func TestDebit(t *testing.T) {
 func TestDelai(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedDelai.json")
 	var testData = filepath.Join("testData", "delaiTestData.csv")
-	cache := engine.NewCache()
+	cache := base.NewCache()
 	cache.Set("comptes", marshal.MockComptesMapping(
 		map[string]string{
 			"111982477292496174": "000000000000000",
@@ -44,7 +44,7 @@ func TestDelai(t *testing.T) {
 func TestCcsf(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedCcsf.json")
 	var testData = filepath.Join("testData", "ccsfTestData.csv")
-	cache := engine.NewCache()
+	cache := base.NewCache()
 	cache.Set("comptes", marshal.MockComptesMapping(
 		map[string]string{
 			"111982477292496174": "000000000000000",
@@ -59,7 +59,7 @@ func TestCcsf(t *testing.T) {
 func TestCotisation(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedCotisation.json")
 	var testData = filepath.Join("testData", "cotisationTestData.csv")
-	cache := engine.NewCache()
+	cache := base.NewCache()
 	cache.Set("comptes", marshal.MockComptesMapping(
 		map[string]string{
 			"111982477292496174": "000000000000000",
@@ -74,7 +74,7 @@ func TestCotisation(t *testing.T) {
 func TestProcol(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedProcol.json")
 	var testData = filepath.Join("testData", "procolTestData.csv")
-	cache := engine.NewCache()
+	cache := base.NewCache()
 	cache.Set("comptes", marshal.MockComptesMapping(
 		map[string]string{
 			"111982477292496174": "000000000000000",
@@ -89,6 +89,6 @@ func TestProcol(t *testing.T) {
 func TestEffectif(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedEffectif.json")
 	var testData = filepath.Join("testData", "effectifTestData.csv")
-	cache := engine.NewCache()
+	cache := base.NewCache()
 	marshal.TestParserTupleOutput(t, ParserEffectif, cache, "effectif", testData, golden, *update)
 }

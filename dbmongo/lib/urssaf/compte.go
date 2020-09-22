@@ -32,7 +32,7 @@ func (compte Compte) Type() string {
 	return "compte"
 }
 
-func ParserCompte(cache engine.Cache, batch *base.AdminBatch) (chan engine.Tuple, chan engine.Event) {
+func ParserCompte(cache base.Cache, batch *base.AdminBatch) (chan engine.Tuple, chan engine.Event) {
 	outputChannel := make(chan engine.Tuple)
 	eventChannel := make(chan engine.Event)
 	go func() {

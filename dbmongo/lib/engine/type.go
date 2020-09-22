@@ -1,34 +1,8 @@
 package engine
 
 import (
-	"errors"
-
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 )
-
-// Cache saves values in memory
-type Cache map[string]interface{}
-
-// Get gets a value from the cache
-func (ca Cache) Get(name string) (interface{}, error) {
-	if ca == nil {
-		return nil, errors.New("Entry not found: " + name)
-	}
-	if _, ok := ca[name]; !ok {
-		return nil, errors.New("Entry not found: " + name)
-	}
-	return ca[name], nil
-}
-
-// Set writes a value to the Cache
-func (ca Cache) Set(name string, value interface{}) {
-	ca[name] = value
-}
-
-// NewCache returns a new cache object
-func NewCache() Cache {
-	return make(map[string]interface{})
-}
 
 // GetTypes retourne la liste des types déclarés
 func GetTypes() Types {
@@ -63,4 +37,4 @@ type Type struct {
 type Types []Type
 
 // Parser fonction de traitement de données en entrée
-type Parser func(Cache, *base.AdminBatch) (chan Tuple, chan Event)
+type Parser func(base.Cache, *base.AdminBatch) (chan Tuple, chan Event)
