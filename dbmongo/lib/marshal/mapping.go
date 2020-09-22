@@ -147,6 +147,10 @@ func readSiretMapping(
 		compte := row[compteIndex]
 		siret := row[siretIndex]
 
+		if !sfregexp.RegexpDict["siret"].MatchString(siret) {
+			continue
+		}
+
 		filtered, err := IsFiltered(siret, cache, batch)
 
 		if err != nil {

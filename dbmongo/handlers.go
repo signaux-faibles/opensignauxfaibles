@@ -253,12 +253,16 @@ func checkBatchHandler(c *gin.Context) {
 		return
 	}
 	batch := engine.AdminBatch{}
-	batch.Load(params.BatchKey)
+	err = batch.Load(params.BatchKey)
+	if err != nil {
+		c.JSON(404, "Batch inexistant: "+err.Error())
+	}
 
 	parsers, err := resolveParsers(params.Parsers)
 	if err != nil {
 		c.JSON(404, err.Error())
 	}
+
 	err = engine.CheckBatch(batch, parsers)
 	if err != nil {
 		c.JSON(417, "Erreurs détectées: "+err.Error())
