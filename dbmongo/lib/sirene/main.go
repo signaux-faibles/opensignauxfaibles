@@ -13,6 +13,7 @@ import (
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sfregexp"
 
 	"github.com/signaux-faibles/gournal"
 	"github.com/spf13/viper"
@@ -210,7 +211,12 @@ func Parser(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, ch
 					event.Critical(tracker.Report("fatalError"))
 					break
 				}
-				filtered, err := marshal.IsFiltered(row[0], cache, batch)
+				validSiren := sfregexp.RegexpDict["siren"].MatchString(row[f["siren"]])
+				if !validSiren {
+					tracker.Error(errors.New("siren invalide : " + row[f["siren"]]))
+					continue // TODO: exécuter tracker.Next() un fois le TODO ci-dessous traité.
+				}
+				filtered, err := marshal.IsFiltered(row[f["siren"]], cache, batch)
 				tracker.Error(err)
 				if !filtered {
 					sirene := readLineEtablissement(row, &tracker)
