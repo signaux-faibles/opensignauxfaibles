@@ -20,7 +20,7 @@ func IsFiltered(id string, cache engine.Cache, batch *engine.AdminBatch) (bool, 
 	validSiret := sfregexp.RegexpDict["siret"].MatchString(id)
 	validSiren := sfregexp.RegexpDict["siren"].MatchString(id)
 	if !validSiret && !validSiren {
-		return true, nil
+		return true, errors.New("Le siret/siren est invalide")
 	}
 
 	filter, err := getSirenFilter(cache, batch, readFilterFiles)
