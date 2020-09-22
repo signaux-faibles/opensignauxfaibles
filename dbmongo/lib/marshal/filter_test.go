@@ -18,12 +18,12 @@ func TestIsFiltered(t *testing.T) {
 	}{
 		{"012345678", map[string]bool{"012345678": true}, false, false},
 		{"01234567891011", map[string]bool{"012345678": true}, false, false},
-		{"0123", map[string]bool{"012345678": true}, false, true},
-		{"0123456789", map[string]bool{"012345678": true}, false, true},
+		{"0123", map[string]bool{"012345678": true}, true, true},
+		{"0123456789", map[string]bool{"012345678": true}, true, true},
 		{"876543210", map[string]bool{"012345678": true}, false, true},
 		{"87654321091011", map[string]bool{"012345678": true}, false, true},
 		{"012345678", nil, false, false},
-		{"0123", nil, false, true},
+		{"0123", nil, true, true},
 	}
 
 	var batch = engine.AdminBatch{}
