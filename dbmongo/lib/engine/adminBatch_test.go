@@ -67,3 +67,16 @@ func Test_CheckBatchPaths(t *testing.T) {
 		}
 	}
 }
+
+func Test_ImportBatch(t *testing.T) {
+	Db.ChanData = make(chan *Value)
+	go func() {
+		for range Db.ChanData {
+		}
+	}()
+	batch := AdminBatch{}
+	err := ImportBatch(batch, []Parser{})
+	if err == nil {
+		t.Error("ImportBatch devrait nous empêcher d'importer sans filtre")
+	}
+}
