@@ -9,7 +9,6 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/stretchr/testify/assert"
 )
@@ -21,7 +20,7 @@ func TestDiane(t *testing.T) {
 	t.Run("Diane parser (JSON output)", func(t *testing.T) {
 		var golden = filepath.Join("testData", "expectedDiane.json")
 		var testData = filepath.Join("testData", "dianeTestData.txt")
-		marshal.TestParserTupleOutput(t, Parser, engine.NewCache(), "diane", testData, golden, *update)
+		marshal.TestParserTupleOutput(t, Parser, marshal.NewCache(), "diane", testData, golden, *update)
 	})
 
 	t.Run("Diane converter (CSV output)", func(t *testing.T) {

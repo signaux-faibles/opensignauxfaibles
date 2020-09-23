@@ -6,6 +6,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
@@ -38,14 +39,16 @@ func (rep RepeatableOrder) Type() string {
 }
 
 // Parser fonction qui retourne data et journaux
-func Parser(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
-	outputChannel := make(chan engine.Tuple)
-	eventChannel := make(chan engine.Event)
+func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
+	outputChannel := make(chan marshal.Tuple)
+	eventChannel := make(chan marshal.Event)
 
-	event := engine.Event{
+	event := marshal.Event{
 		Code:    "parserRepeatableOrder",
 		Channel: eventChannel,
 	}
+
+	filter := marshal.GetSirenFilterFromCache(cache)
 
 	go func() {
 		for _, path := range batch.Files["reporder"] {
@@ -93,7 +96,7 @@ func Parser(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, ch
 					Periode:     periode,
 					RandomOrder: randomOrder,
 				}
-				filtered, err := marshal.IsFiltered(reporder.Siret[0:9], cache, batch)
+				filtered, err := marshal.IsFiltered(reporder.Siret[0:9], filter)
 				if err != nil {
 					tracker.Error(err)
 				}

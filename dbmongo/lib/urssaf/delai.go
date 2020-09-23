@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"encoding/csv"
 
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 
@@ -50,9 +51,9 @@ func (delai Delai) Type() string {
 }
 
 // ParserDelai fonction d'extraction des délais
-func ParserDelai(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
-	outputChannel := make(chan engine.Tuple)
-	eventChannel := make(chan engine.Event)
+func ParserDelai(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
+	outputChannel := make(chan marshal.Tuple)
+	eventChannel := make(chan marshal.Event)
 
 	field := map[string]int{
 		"NumeroCompte":      2,
@@ -68,7 +69,7 @@ func ParserDelai(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tupl
 		"Action":            12,
 	}
 
-	event := engine.Event{
+	event := marshal.Event{
 		Code:    "delaiParser",
 		Channel: eventChannel,
 	}
@@ -112,7 +113,7 @@ func ParserDelai(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tupl
 						outputChannel <- delai
 					}
 				} else {
-					tracker.Error(engine.NewFilterError(err))
+					tracker.Error(base.NewFilterError(err))
 				}
 
 				tracker.Next()

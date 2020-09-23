@@ -5,35 +5,34 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
 )
 
 // UrssafToDate convertit le format de date urssaf en type Date.
 // Les dates urssaf sont au format YYYMMJJ tels que YYY = YYYY - 1900 (e.g: 118 signifie
 // 2018)
-func urssafToDate(urssaf string) (time.Time, error) {
+func UrssafToDate(urssaf string) (time.Time, error) {
 
 	intUrsaff, err := strconv.Atoi(urssaf)
 	if err != nil {
-		return time.Time{}, engine.NewCriticError(errors.New("Valeur non autorisée pour une conversion en date: "+urssaf), "fatal")
+		return time.Time{}, errors.New("Valeur non autorisée pour une conversion en date: " + urssaf)
 	}
 	strDate := strconv.Itoa(intUrsaff + 19000000)
 	date, err := time.Parse("20060102", strDate)
 	if err != nil {
-		return time.Time{}, engine.NewCriticError(errors.New("Valeur non autorisée pour une conversion en date: "+urssaf), "fatal")
+		return time.Time{}, errors.New("Valeur non autorisée pour une conversion en date: " + urssaf)
 	}
 
 	return date, nil
 }
 
-// UrssafToPeriod convertit le format de période urssaf en type misc.Periode. On trouve ces
+// UrssafToPeriod convertit le format de période urssaf en type Periode. On trouve ces
 // périodes formatées en 4 ou 6 caractère (YYQM ou YYYYQM).
 // si YY < 50 alors YYYY = 20YY sinon YYYY = 19YY.
 // si QM == 62 alors période annuelle sur YYYY.
 // si M == 0 alors période trimestrielle sur le trimestre Q de YYYY.
 // si 0 < M < 4 alors mois M du trimestre Q.
-func urssafToPeriod(urssaf string) (misc.Periode, error) {
+func UrssafToPeriod(urssaf string) (misc.Periode, error) {
 	period := misc.Periode{}
 
 	if len(urssaf) == 4 {

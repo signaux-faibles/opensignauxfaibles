@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
@@ -41,9 +42,9 @@ func (cotisation Cotisation) Type() string {
 }
 
 // ParserCotisation transforme les fichiers en données à intégrer
-func ParserCotisation(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
-	outputChannel := make(chan engine.Tuple)
-	eventChannel := make(chan engine.Event)
+func ParserCotisation(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
+	outputChannel := make(chan marshal.Tuple)
+	eventChannel := make(chan marshal.Event)
 
 	field := map[string]int{
 		"NumeroCompte": 2,
@@ -53,7 +54,7 @@ func ParserCotisation(cache engine.Cache, batch *engine.AdminBatch) (chan engine
 	}
 
 	go func() {
-		event := engine.Event{
+		event := marshal.Event{
 			Code:    "cotisationParser",
 			Channel: eventChannel,
 		}
@@ -88,7 +89,7 @@ func ParserCotisation(cache engine.Cache, batch *engine.AdminBatch) (chan engine
 					event.Debug(tracker.Report("invalidLine"))
 					break
 				} else {
-					periode, err := urssafToPeriod(row[field["Periode"]])
+					periode, err := marshal.UrssafToPeriod(row[field["Periode"]])
 					date := periode.Start
 					tracker.Error(err)
 
@@ -96,7 +97,7 @@ func ParserCotisation(cache engine.Cache, batch *engine.AdminBatch) (chan engine
 						cotisation := Cotisation{}
 						cotisation.key = siret
 						cotisation.NumeroCompte = row[field["NumeroCompte"]]
-						cotisation.Periode, err = urssafToPeriod(row[field["Periode"]])
+						cotisation.Periode, err = marshal.UrssafToPeriod(row[field["Periode"]])
 						tracker.Error(err)
 						cotisation.Encaisse, err = strconv.ParseFloat(strings.Replace(row[field["Encaisse"]], ",", ".", -1), 64)
 						tracker.Error(err)
@@ -107,7 +108,7 @@ func ParserCotisation(cache engine.Cache, batch *engine.AdminBatch) (chan engine
 							outputChannel <- cotisation
 						}
 					} else {
-						tracker.Error(engine.NewCriticError(err, "filter"))
+						tracker.Error(base.NewCriticError(err, "filter"))
 						continue
 					}
 				}

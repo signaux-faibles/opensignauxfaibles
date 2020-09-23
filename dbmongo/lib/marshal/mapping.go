@@ -8,7 +8,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sfregexp"
 
 	//"strconv"
@@ -20,7 +20,7 @@ import (
 
 // GetSiret gets the siret related to a specific compte at a given point in
 // time
-func GetSiret(compte string, date *time.Time, cache engine.Cache, batch *engine.AdminBatch) (string, error) {
+func GetSiret(compte string, date *time.Time, cache Cache, batch *base.AdminBatch) (string, error) {
 	comptes, err := GetCompteSiretMapping(cache, batch, OpenAndReadSiretMapping)
 
 	if err != nil {
@@ -46,7 +46,7 @@ type Comptes map[string][]SiretDate
 
 // GetCompteSiretMapping returns the siret mapping in cache if available, else
 // reads the file and save it in cache
-func GetCompteSiretMapping(cache engine.Cache, batch *engine.AdminBatch, mr mappingReader) (Comptes, error) {
+func GetCompteSiretMapping(cache Cache, batch *base.AdminBatch, mr mappingReader) (Comptes, error) {
 
 	value, err := cache.Get("comptes")
 	if err == nil {
@@ -78,15 +78,15 @@ func GetCompteSiretMapping(cache engine.Cache, batch *engine.AdminBatch, mr mapp
 	return compteSiretMapping, nil
 }
 
-type mappingReader func(string, string, Comptes, engine.Cache, *engine.AdminBatch) (Comptes, error)
+type mappingReader func(string, string, Comptes, Cache, *base.AdminBatch) (Comptes, error)
 
 // OpenAndReadSiretMapping opens files and reads their content
 func OpenAndReadSiretMapping(
 	basePath string,
 	endPath string,
 	compteSiretMapping Comptes,
-	cache engine.Cache,
-	batch *engine.AdminBatch,
+	cache Cache,
+	batch *base.AdminBatch,
 ) (Comptes, error) {
 
 	file, err := os.Open(basePath + endPath)
@@ -108,8 +108,8 @@ func OpenAndReadSiretMapping(
 //readSiretMapping reads a admin_urssaf file
 func readSiretMapping(
 	reader io.Reader,
-	cache engine.Cache,
-	batch *engine.AdminBatch,
+	cache Cache,
+	batch *base.AdminBatch,
 ) (Comptes, error) {
 
 	var addSiretMapping = make(map[string][]SiretDate)
@@ -138,17 +138,25 @@ func readSiretMapping(
 			row[fermetureIndex] = maxTime
 		} // compte non fermé
 
-		// fermeture, err := urssafToDate(row[fermetureIndex])
-		fermeture, err := urssafToDate(row[fermetureIndex])
+		// fermeture, err := UrssafToDate(row[fermetureIndex])
+		fermeture, err := UrssafToDate(row[fermetureIndex])
 		if err != nil {
-			return nil, err // fermeture n'a pas pu être lue ou convertie en date
+			return nil, base.NewCriticError(err, "fatal") // fermeture n'a pas pu être lue ou convertie en date
 		}
 
 		compte := row[compteIndex]
 		siret := row[siretIndex]
 
-		filtered, err := IsFiltered(siret, cache, batch)
+		if !sfregexp.RegexpDict["siret"].MatchString(siret) {
+			continue
+		}
 
+		filter, err := GetSirenFilter(cache, batch)
+		if err != nil {
+			return nil, err
+		}
+
+		filtered, err := IsFiltered(siret, filter)
 		if err != nil {
 			return nil, err
 		}

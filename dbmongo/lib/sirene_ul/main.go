@@ -3,12 +3,15 @@ package sireneul
 import (
 	//"bufio"
 	"encoding/csv"
+	"errors"
 	"io"
 	"os"
 	"time"
 
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sfregexp"
 
 	"github.com/signaux-faibles/gournal"
 	"github.com/spf13/viper"
@@ -45,14 +48,16 @@ func (sirene_ul SireneUL) Scope() string {
 }
 
 // Parser produit les données sirene à partir du fichier geosirene
-func Parser(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
-	outputChannel := make(chan engine.Tuple)
-	eventChannel := make(chan engine.Event)
+func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
+	outputChannel := make(chan marshal.Tuple)
+	eventChannel := make(chan marshal.Event)
 
-	event := engine.Event{
+	event := marshal.Event{
 		Code:    "sireneULParser",
 		Channel: eventChannel,
 	}
+
+	filter := marshal.GetSirenFilterFromCache(cache)
 
 	go func() {
 		for _, path := range batch.Files["sirene_ul"] {
@@ -82,14 +87,22 @@ func Parser(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, ch
 					break
 				}
 
-				filtered, err := marshal.IsFiltered(row[0], cache, batch)
+				validSiren := sfregexp.RegexpDict["siren"].MatchString(row[0])
+				if !validSiren {
+					tracker.Error(errors.New("siren invalide : " + row[0]))
+					continue // TODO: exécuter tracker.Next() un fois le TODO ci-dessous traité.
+				}
+
+				filtered, err := marshal.IsFiltered(row[0], filter)
 				if err != nil {
 					tracker.Error(err)
 				}
 				if !filtered {
 					sireneul := readLineEtablissement(row, &tracker)
 					outputChannel <- sireneul
-					tracker.Next()
+					tracker.Next() // TODO: garantir que le compteur de lignes
+					// correspond au nombre de lignes du fichier. => appeler même si le
+					// siren est filtré
 				}
 			}
 			file.Close()

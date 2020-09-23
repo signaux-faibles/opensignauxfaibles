@@ -81,6 +81,9 @@ components:
       properties:
         batch:
           type: string
+        noFilter:
+          type: boolean
+          description: Permet de poursuivre l'importation même si aucun filtre n'est fourni
         parsers:
           type: string
     Reduce:

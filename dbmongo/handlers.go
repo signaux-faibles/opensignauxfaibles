@@ -9,10 +9,12 @@ import (
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/apconso"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/apdemande"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/bdf"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/diane"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/files"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sirene"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/urssaf"
 
@@ -97,14 +99,14 @@ func nextBatchHandler(c *gin.Context) {
 
 //
 func upsertBatchHandler(c *gin.Context) {
-	var batch engine.AdminBatch
+	var batch base.AdminBatch
 	err := c.ShouldBind(&batch)
 	if err != nil {
 		c.JSON(400, err.Error)
 		return
 	}
 
-	err = batch.Save()
+	err = engine.Save(&batch)
 	if err != nil {
 		c.JSON(500, "Erreur à l'enregistrement: "+err.Error())
 		return
@@ -120,7 +122,7 @@ func upsertBatchHandler(c *gin.Context) {
 
 //
 func listBatchHandler(c *gin.Context) {
-	var batch []engine.AdminBatch
+	var batch []base.AdminBatch
 	err := engine.Db.DB.C("Admin").Find(bson.M{"_id.type": "batch"}).Sort("-_id.key").All(&batch)
 	if err != nil {
 		spew.Dump(err)
@@ -223,14 +225,15 @@ func importBatchHandler(c *gin.Context) {
 	var params struct {
 		BatchKey string   `json:"batch"`
 		Parsers  []string `json:"parsers"`
+		NoFilter bool     `json:"noFilter"`
 	}
 	err := c.ShouldBind(&params)
 	if err != nil {
 		c.JSON(400, "Requête malformée: "+err.Error())
 		return
 	}
-	batch := engine.AdminBatch{}
-	err = batch.Load(params.BatchKey)
+	batch := base.AdminBatch{}
+	err = engine.Load(&batch, params.BatchKey)
 	if err != nil {
 		c.JSON(404, "Batch inexistant: "+err.Error())
 	}
@@ -239,7 +242,10 @@ func importBatchHandler(c *gin.Context) {
 	if err != nil {
 		c.JSON(404, err.Error())
 	}
-	engine.ImportBatch(batch, parsers)
+	err = engine.ImportBatch(batch, parsers, params.NoFilter)
+	if err != nil {
+		c.JSON(500, err.Error())
+	}
 }
 
 func checkBatchHandler(c *gin.Context) {
@@ -252,13 +258,17 @@ func checkBatchHandler(c *gin.Context) {
 		c.JSON(400, "Requête malformée: "+err.Error())
 		return
 	}
-	batch := engine.AdminBatch{}
-	batch.Load(params.BatchKey)
+	batch := base.AdminBatch{}
+	err = engine.Load(&batch, params.BatchKey)
+	if err != nil {
+		c.JSON(404, "Batch inexistant: "+err.Error())
+	}
 
 	parsers, err := resolveParsers(params.Parsers)
 	if err != nil {
 		c.JSON(404, err.Error())
 	}
+
 	err = engine.CheckBatch(batch, parsers)
 	if err != nil {
 		c.JSON(417, "Erreurs détectées: "+err.Error())
@@ -293,7 +303,7 @@ func purgeNotCompactedHandler(c *gin.Context) {
 }
 
 // RegisteredParsers liste des parsers disponibles
-var registeredParsers = map[string]engine.Parser{
+var registeredParsers = map[string]marshal.Parser{
 	"debit":        urssaf.ParserDebit,
 	"ccsf":         urssaf.ParserCCSF,
 	"cotisation":   urssaf.ParserCotisation,
@@ -311,8 +321,8 @@ var registeredParsers = map[string]engine.Parser{
 }
 
 // Vérifie et charge les parsers
-func resolveParsers(parserNames []string) ([]engine.Parser, error) {
-	var parsers []engine.Parser
+func resolveParsers(parserNames []string) ([]marshal.Parser, error) {
+	var parsers []marshal.Parser
 	if parserNames == nil {
 		for _, f := range registeredParsers {
 			parsers = append(parsers, f)
