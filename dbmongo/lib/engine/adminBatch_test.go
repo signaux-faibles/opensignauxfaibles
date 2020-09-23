@@ -67,3 +67,16 @@ func Test_CheckBatchPaths(t *testing.T) {
 		}
 	}
 }
+
+func Test_ImportBatchWithUnreadableFilter(t *testing.T) {
+	Db.ChanData = make(chan *Value)
+	go func() {
+		for range Db.ChanData {
+		}
+	}()
+	batch := MockBatch("filter", []string{"this_file_does_not_exist"})
+	err := ImportBatch(batch, []Parser{})
+	if err == nil {
+		t.Error("ImportBatch devrait échouer en tentant d'ouvrir un fichier filtre illisible")
+	}
+}
