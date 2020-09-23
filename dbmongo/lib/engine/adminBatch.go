@@ -7,21 +7,17 @@ import (
 	"time"
 
 	"github.com/globalsign/mgo/bson"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/spf13/viper"
 )
 
-// AdminID Collection key
-type AdminID struct {
-	Key  string `json:"key" bson:"key"`
-	Type string `json:"type" bson:"type"`
-}
-
 // AdminAlgo décrit les qualités d'un algorithme
 type AdminAlgo struct {
-	ID          AdminID  `json:"id" bson:"_id"`
-	Label       string   `json:"label" bson:"label"`
-	Description string   `json:"description" bson:"description"`
-	Scope       []string `json:"scope,omitempty" bson:"scope,omitempty"`
+	ID          base.AdminID `json:"id" bson:"_id"`
+	Label       string       `json:"label" bson:"label"`
+	Description string       `json:"description" bson:"description"`
+	Scope       []string     `json:"scope,omitempty" bson:"scope,omitempty"`
 }
 
 // Load charge un objet algo de la base
@@ -30,55 +26,16 @@ func (algo *AdminAlgo) Load(algoKey string) error {
 	return err
 }
 
-// AdminBatch metadata Batch
-type AdminBatch struct {
-	ID            AdminID    `json:"id" bson:"_id"`
-	Files         BatchFiles `json:"files" bson:"files"`
-	Name          string     `json:"name" bson:"name"`
-	Readonly      bool       `json:"readonly" bson:"readonly"`
-	CompleteTypes []string   `json:"complete_types" bson:"complete_types"`
-	Params        struct {
-		DateDebut       time.Time `json:"date_debut" bson:"date_debut"`
-		DateFin         time.Time `json:"date_fin" bson:"date_fin"`
-		DateFinEffectif time.Time `json:"date_fin_effectif" bson:"date_fin_effectif"`
-	} `json:"params" bson:"param"`
-}
-
-// BatchFiles fichiers mappés par type
-type BatchFiles map[string][]string
-
 // Load charge les données d'un batch depuis la base de données
-func (batch *AdminBatch) Load(batchKey string) error {
+func Load(batch *base.AdminBatch, batchKey string) error {
 	err := Db.DB.C("Admin").Find(bson.M{"_id.type": "batch", "_id.key": batchKey}).One(batch)
 	return err
 }
 
 // Save écrit les données d'un batch vers la base de données
-func (batch *AdminBatch) Save() error {
+func Save(batch *base.AdminBatch) error {
 	_, err := Db.DB.C("Admin").Upsert(bson.M{"_id": batch.ID}, batch)
 	return err
-}
-
-// New crée un nouveau batch
-func (batch *AdminBatch) New(batchKey string) error {
-	if !isBatchID(batchKey) {
-		return errors.New("Valeur de batch non autorisée")
-	}
-	batch.ID.Key = batchKey
-	batch.ID.Type = "batch"
-	batch.Files = BatchFiles{}
-	return nil
-}
-
-func isBatchID(batchID string) bool {
-	if len(batchID) < 4 {
-		return false
-	}
-	_, err := time.Parse("0601", batchID[0:4])
-	if len(batchID) > 4 && batchID[4] != '_' {
-		return false
-	}
-	return err == nil
 }
 
 // NextBatchID génère le batchKey suivant à partir d'un batchKey
@@ -92,8 +49,15 @@ func NextBatchID(batchID string) (string, error) {
 }
 
 // ImportBatch lance tous les parsers sur le batch fourni
-func ImportBatch(batch AdminBatch, parsers []Parser) error {
-	var cache = NewCache()
+func ImportBatch(batch base.AdminBatch, parsers []marshal.Parser, skipFilter bool) error {
+	var cache = marshal.NewCache()
+	filter, err := marshal.GetSirenFilter(cache, &batch)
+	if err != nil {
+		return err
+	}
+	if !skipFilter && filter == nil {
+		return errors.New("Veuillez inclure un filtre")
+	}
 	for _, parser := range parsers {
 		outputChannel, eventChannel := parser(cache, &batch)
 		go RelayEvents(eventChannel)
@@ -105,7 +69,7 @@ func ImportBatch(batch AdminBatch, parsers []Parser) error {
 					Key:   tuple.Key(),
 					Batch: map[string]Batch{
 						batch.ID.Key: Batch{
-							tuple.Type(): map[string]Tuple{
+							tuple.Type(): map[string]marshal.Tuple{
 								hash: tuple,
 							}}}}}
 			Db.ChanData <- &value
@@ -117,7 +81,7 @@ func ImportBatch(batch AdminBatch, parsers []Parser) error {
 }
 
 // CheckBatchPaths checks if the filepaths of batch.Files exist
-func CheckBatchPaths(batch *AdminBatch) error {
+func CheckBatchPaths(batch *base.AdminBatch) error {
 	var ErrorString string
 	for _, filepaths := range batch.Files {
 		for _, filepath := range filepaths {
@@ -135,11 +99,11 @@ func CheckBatchPaths(batch *AdminBatch) error {
 }
 
 // CheckBatch checks batch
-func CheckBatch(batch AdminBatch, parsers []Parser) error {
+func CheckBatch(batch base.AdminBatch, parsers []marshal.Parser) error {
 	if err := CheckBatchPaths(&batch); err != nil {
 		return err
 	}
-	var cache = NewCache()
+	var cache = marshal.NewCache()
 	for _, parser := range parsers {
 		outputChannel, eventChannel := parser(cache, &batch)
 		DiscardTuple(outputChannel)
@@ -151,14 +115,17 @@ func CheckBatch(batch AdminBatch, parsers []Parser) error {
 }
 
 // ProcessBatch traitement ad-hoc modifiable pour les besoins du développement
-func ProcessBatch(batchList []string, parsers []Parser) error {
+func ProcessBatch(batchList []string, parsers []marshal.Parser) error {
 
 	for _, v := range batchList {
 		batch, errBatch := GetBatch(v)
 		if errBatch != nil {
 			return errors.New("Erreur de lecture du batch: " + errBatch.Error())
 		}
-		ImportBatch(batch, parsers)
+		importErr := ImportBatch(batch, parsers, false)
+		if importErr != nil {
+			return importErr
+		}
 		time.Sleep(5 * time.Second) // TODO: trouver une façon de synchroniser l'insert des paquets
 		err := Compact(v)
 		if err != nil {
@@ -171,7 +138,7 @@ func ProcessBatch(batchList []string, parsers []Parser) error {
 }
 
 // LastBatch retourne le dernier batch
-func LastBatch() AdminBatch {
+func LastBatch() base.AdminBatch {
 	batches, _ := GetBatches()
 	l := len(batches)
 	batch := batches[l-1]
@@ -185,8 +152,8 @@ func NextBatch() error {
 	if err != nil {
 		return fmt.Errorf("Mauvais numéro de batch: " + err.Error())
 	}
-	newBatch := AdminBatch{
-		ID: AdminID{
+	newBatch := base.AdminBatch{
+		ID: base.AdminID{
 			Key:  newBatchID,
 			Type: "batch",
 		},
@@ -195,12 +162,12 @@ func NextBatch() error {
 
 	batch.Readonly = true
 
-	err = batch.Save()
+	err = Save(&batch)
 	if err != nil {
 		return fmt.Errorf("Erreur readonly Batch: " + err.Error())
 	}
 
-	err = newBatch.Save()
+	err = Save(&newBatch)
 	if err != nil {
 		return fmt.Errorf("Erreur newBatch: " + err.Error())
 	}
@@ -226,13 +193,4 @@ func RevertBatch() error {
 func DropBatch(batchKey string) error {
 	_, err := Db.DB.C("Admin").RemoveAll(bson.M{"_id.key": batchKey, "_id.type": "batch"})
 	return err
-}
-
-// MockBatch with a map[type][]filepaths
-func MockBatch(filetype string, filepaths []string) AdminBatch {
-	fileMap := map[string][]string{filetype: filepaths}
-	batch := AdminBatch{
-		Files: BatchFiles(fileMap),
-	}
-	return batch
 }

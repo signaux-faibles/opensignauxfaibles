@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/signaux-faibles/gournal"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 )
 
 func TestShouldBreak(t *testing.T) {
@@ -13,9 +14,9 @@ func TestShouldBreak(t *testing.T) {
 		map[string]string{},
 		TrackerReports,
 	)
-	filterError := NewCriticError(errors.New("filterError"), "filter")
-	fatalError := NewCriticError(errors.New("fatalError"), "fatal")
-	errorError := NewCriticError(errors.New("errorError"), "error")
+	filterError := base.NewCriticError(errors.New("filterError"), "filter")
+	fatalError := base.NewCriticError(errors.New("fatalError"), "fatal")
+	errorError := base.NewCriticError(errors.New("errorError"), "error")
 	noError := []error{}
 
 	testCases := []struct {

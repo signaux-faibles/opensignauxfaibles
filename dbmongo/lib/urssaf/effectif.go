@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
@@ -48,7 +49,7 @@ func parseEffectifPeriod(effectifPeriods []string) ([]time.Time, error) {
 	periods := []time.Time{}
 	for _, period := range effectifPeriods {
 		urssaf := period[3:9]
-		date, _ := urssafToPeriod(urssaf)
+		date, _ := marshal.UrssafToPeriod(urssaf)
 		periods = append(periods, date.Start)
 	}
 
@@ -56,13 +57,14 @@ func parseEffectifPeriod(effectifPeriods []string) ([]time.Time, error) {
 }
 
 // ParserEffectif retourne un channel fournissant des données extraites
-func ParserEffectif(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
-	outputChannel := make(chan engine.Tuple)
-	eventChannel := make(chan engine.Event)
-	event := engine.Event{
+func ParserEffectif(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
+	outputChannel := make(chan marshal.Tuple)
+	eventChannel := make(chan marshal.Event)
+	event := marshal.Event{
 		Code:    "effectifParser",
 		Channel: eventChannel,
 	}
+	filter := marshal.GetSirenFilterFromCache(cache)
 	go func() {
 		for _, path := range batch.Files["effectif"] {
 			tracker := gournal.NewTracker(
@@ -124,7 +126,7 @@ func ParserEffectif(cache engine.Cache, batch *engine.AdminBatch) (chan engine.T
 
 				notDigit := regexp.MustCompile("[^0-9]")
 				siret := row[siretIndex]
-				filtered, err := marshal.IsFiltered(siret, cache, batch)
+				filtered, err := marshal.IsFiltered(siret, filter)
 				tracker.Error(err)
 				if len(siret) == 14 && !filtered {
 					for i, j := range effectifIndexes {
@@ -144,7 +146,7 @@ func ParserEffectif(cache engine.Cache, batch *engine.AdminBatch) (chan engine.T
 					}
 				}
 				if engine.ShouldBreak(tracker, engine.MaxParsingErrors) {
-					tracker.Error(engine.NewCriticError(errors.New("Parser interrompu: trop d'erreurs"), "fatal"))
+					tracker.Error(base.NewCriticError(errors.New("Parser interrompu: trop d'erreurs"), "fatal"))
 					event.Critical(tracker.Report("fatalError"))
 					break
 				}

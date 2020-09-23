@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/naf"
 
@@ -15,7 +16,7 @@ import (
 )
 
 // PublicOne traite le mapReduce public pour une clé unique (siren)
-func PublicOne(batch AdminBatch, key string) error {
+func PublicOne(batch base.AdminBatch, key string) error {
 
 	if len(key) < 9 {
 		return errors.New("key minimal length of 9")
@@ -71,7 +72,7 @@ func PublicOne(batch AdminBatch, key string) error {
 }
 
 // Public traite le mapReduce public pour les entreprises et établissements du perimètre "algo2".
-func Public(batch AdminBatch) error {
+func Public(batch base.AdminBatch) error {
 	functions, err := loadJSFunctions("public")
 	if err != nil {
 		return err

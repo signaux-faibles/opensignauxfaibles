@@ -6,12 +6,13 @@ import (
 
 	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/spf13/viper"
 )
 
 // Status statut de la base de données
 type Status struct {
-	ID     AdminID       `json:"id" bson:"_id"`
+	ID     base.AdminID  `json:"id" bson:"_id"`
 	Status *string       `json:"status" bson:"status"`
 	Epoch  int           `json:"epoch" bson:"epoch"`
 	DB     *mgo.Database `json:"-" bson:"-"`
@@ -67,20 +68,20 @@ func InitDB() DB {
 	db := mongodb.DB(dbDatabase)
 
 	firstBatchID := viper.GetString("FIRST_BATCH")
-	if !isBatchID(firstBatchID) {
+	if !base.IsBatchID(firstBatchID) {
 		panic("Paramètre FIRST_BATCH incorrect, vérifiez la configuration.")
 	}
 
 	db.C("RawData").Create(&mgo.CollectionInfo{})
 
 	// firstBatch, err := getBatch(db, firstBatchID)
-	var firstBatch AdminBatch
+	var firstBatch base.AdminBatch
 	db.C("Admin").Find(bson.M{"_id.type": "batch", "_id.key": firstBatchID}).One(&firstBatch)
 	// Si la table Admin n'existe pas, elle sera créée lors de l'insertion, ci-dessous
 
 	if firstBatch.ID.Type == "" {
-		firstBatch = AdminBatch{
-			ID: AdminID{
+		firstBatch = base.AdminBatch{
+			ID: base.AdminID{
 				Key:  firstBatchID,
 				Type: "batch",
 			},

@@ -10,6 +10,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
 
 	"github.com/globalsign/mgo"
@@ -131,7 +132,7 @@ func Compact(fromBatchKey string) error {
 		}
 	}
 	// Si le numéro de batch n'est pas valide, erreur
-	var batch AdminBatch
+	var batch base.AdminBatch
 	if found == -1 {
 		return errors.New("Le batch " + fromBatchKey + "n'a pas été trouvé")
 	}
@@ -174,9 +175,9 @@ func Compact(fromBatchKey string) error {
 	return err
 }
 
-// GetBatches retourne tous les objets AdminBatch de la base triés par ID
-func GetBatches() ([]AdminBatch, error) {
-	var batches []AdminBatch
+// GetBatches retourne tous les objets base.AdminBatch de la base triés par ID
+func GetBatches() ([]base.AdminBatch, error) {
+	var batches []base.AdminBatch
 	err := Db.DB.C("Admin").Find(bson.M{"_id.type": "batch"}).Sort("_id.key").All(&batches)
 	return batches, err
 }
@@ -192,9 +193,9 @@ func GetBatchesID() []string {
 }
 
 // GetBatch retourne le batch correspondant à la clé batchKey
-func GetBatch(batchKey string) (AdminBatch, error) {
-	var batch AdminBatch
-	err := batch.Load(batchKey)
+func GetBatch(batchKey string) (base.AdminBatch, error) {
+	var batch base.AdminBatch
+	err := Load(&batch, batchKey)
 	return batch, err
 }
 

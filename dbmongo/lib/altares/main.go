@@ -6,7 +6,9 @@ import (
 	"os"
 	"time"
 
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
 
 	"github.com/signaux-faibles/gournal"
@@ -47,11 +49,11 @@ func sliceIndex(limit int, predicate func(i int) bool) int {
 }
 
 // Parser  Altares
-func Parser(batch engine.AdminBatch, filter map[string]bool) (chan engine.Tuple, chan engine.Event) {
-	outputChannel := make(chan engine.Tuple)
-	eventChannel := make(chan engine.Event)
+func Parser(batch base.AdminBatch, filter map[string]bool) (chan marshal.Tuple, chan marshal.Event) {
+	outputChannel := make(chan marshal.Tuple)
+	eventChannel := make(chan marshal.Event)
 
-	event := engine.Event{
+	event := marshal.Event{
 		Code:    "altaresParser",
 		Channel: eventChannel,
 	}

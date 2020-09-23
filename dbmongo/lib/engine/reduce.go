@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/naf"
 
@@ -17,7 +18,7 @@ import (
 )
 
 // ReduceOne lance le calcul de Features pour la clé passée en argument
-func ReduceOne(batch AdminBatch, algo string, key, from, to string, types []string) error {
+func ReduceOne(batch base.AdminBatch, algo string, key, from, to string, types []string) error {
 
 	if len(key) < 9 && (from == "" && to == "") {
 		return errors.New("key minimal length of 9")
@@ -69,7 +70,7 @@ func ReduceOne(batch AdminBatch, algo string, key, from, to string, types []stri
 }
 
 // Reduce alimente la base Features
-func Reduce(batch AdminBatch, algo string, types []string) error {
+func Reduce(batch base.AdminBatch, algo string, types []string) error {
 
 	scope, err := reduceDefineScope(batch, algo, types)
 	if err != nil {
@@ -186,7 +187,7 @@ func reduceFinalAggregation(tempDatabase *mgo.Database, tempCollection, outDatab
 		},
 		// on ne garde que les établissements dont on connait l'effectif (non-null)
 		// Commenté parce que dans le cadre de la séparation des calculs par types de données,
-		// si on n'intègre pas l'effectif, cette étape filtrerait toutes les données. 
+		// si on n'intègre pas l'effectif, cette étape filtrerait toutes les données.
 		// bson.M{
 		// 	"$match": bson.M{
 		// 		"value.effectif": bson.M{
@@ -245,7 +246,7 @@ func reduceFinalAggregation(tempDatabase *mgo.Database, tempCollection, outDatab
 	return err
 }
 
-func reduceDefineScope(batch AdminBatch, algo string, types []string) (bson.M, error) {
+func reduceDefineScope(batch base.AdminBatch, algo string, types []string) (bson.M, error) {
 
 	// Limiter les caractères de nom d'algo pour éviter de hacker la fonction
 	// loadJSFunctions

@@ -8,7 +8,9 @@ import (
 	"os"
 	"regexp"
 
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 
 	"github.com/signaux-faibles/gournal"
 	"github.com/spf13/viper"
@@ -47,10 +49,10 @@ func (crp CRP) Scope() string {
 }
 
 // Parser produit des lignes de consommation d'activité partielle
-func Parser(batch engine.AdminBatch, filter map[string]bool) (chan engine.Tuple, chan engine.Event) {
-	outputChannel := make(chan engine.Tuple)
-	eventChannel := make(chan engine.Event)
-	event := engine.Event{
+func Parser(batch base.AdminBatch, filter map[string]bool) (chan marshal.Tuple, chan marshal.Event) {
+	outputChannel := make(chan marshal.Tuple)
+	eventChannel := make(chan marshal.Event)
+	event := marshal.Event{
 		Code:    "parserApconso",
 		Channel: eventChannel,
 	}

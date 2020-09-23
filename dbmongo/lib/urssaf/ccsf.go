@@ -8,6 +8,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 
@@ -40,11 +41,11 @@ func (ccsf CCSF) Type() string {
 }
 
 // ParserCCSF produit des lignes CCSF
-func ParserCCSF(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
-	outputChannel := make(chan engine.Tuple)
-	eventChannel := make(chan engine.Event)
+func ParserCCSF(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
+	outputChannel := make(chan marshal.Tuple)
+	eventChannel := make(chan marshal.Event)
 
-	event := engine.Event{
+	event := marshal.Event{
 		Code:    "ccsfParser",
 		Channel: eventChannel,
 	}
@@ -88,7 +89,7 @@ func ParserCCSF(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple
 
 					ccsf.Action = r[f["Action"]]
 					ccsf.Stade = r[f["Stade"]]
-					ccsf.DateTraitement, err = urssafToDate(r[f["DateTraitement"]])
+					ccsf.DateTraitement, err = marshal.UrssafToDate(r[f["DateTraitement"]])
 					tracker.Error(err)
 					if err != nil {
 						tracker.Next()
@@ -102,7 +103,7 @@ func ParserCCSF(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple
 					)
 					if err != nil {
 						// Compte filtré
-						tracker.Error(engine.NewCriticError(err, "filter"))
+						tracker.Error(base.NewCriticError(err, "filter"))
 						continue
 					}
 					ccsf.NumeroCompte = r[f["NumeroCompte"]]
