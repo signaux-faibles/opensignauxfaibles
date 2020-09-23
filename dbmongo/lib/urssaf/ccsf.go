@@ -41,11 +41,11 @@ func (ccsf CCSF) Type() string {
 }
 
 // ParserCCSF produit des lignes CCSF
-func ParserCCSF(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
+func ParserCCSF(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan base.Event) {
 	outputChannel := make(chan marshal.Tuple)
-	eventChannel := make(chan marshal.Event)
+	eventChannel := make(chan base.Event)
 
-	event := marshal.Event{
+	event := base.Event{
 		Code:    "ccsfParser",
 		Channel: eventChannel,
 	}

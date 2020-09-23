@@ -41,10 +41,10 @@ func (apconso APConso) Scope() string {
 }
 
 // Parser produit des lignes de consommation d'activité partielle
-func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
+func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan base.Event) {
 	outputChannel := make(chan marshal.Tuple)
-	eventChannel := make(chan marshal.Event)
-	event := marshal.Event{
+	eventChannel := make(chan base.Event)
+	event := base.Event{
 		Code:    "parserApconso",
 		Channel: eventChannel,
 	}

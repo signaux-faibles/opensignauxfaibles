@@ -44,10 +44,10 @@ func TestParserTupleOutput(
 	update bool,
 ) {
 	batch := base.MockBatch(parserType, []string{inputFile})
-	var events chan Event
+	var events chan base.Event
 	var tuples chan Tuple
 	tuples, events = parser(cache, &batch)
-	var firstCriticalEvent *Event = nil
+	var firstCriticalEvent *base.Event = nil
 
 	// intercepter et afficher les évènements pendant l'importation
 	var wg sync.WaitGroup
@@ -57,7 +57,7 @@ func TestParserTupleOutput(
 		defer wg.Done()
 		for event := range events {
 			t.Logf("[%s] event: %v", event.Priority, event.Comment)
-			if event.Priority == Critical && firstCriticalEvent == nil {
+			if event.Priority == base.Critical && firstCriticalEvent == nil {
 				firstCriticalEvent = &event
 			}
 		}
