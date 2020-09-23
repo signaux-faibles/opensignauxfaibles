@@ -224,6 +224,7 @@ func importBatchHandler(c *gin.Context) {
 	var params struct {
 		BatchKey string   `json:"batch"`
 		Parsers  []string `json:"parsers"`
+		NoFilter bool     `json:"noFilter"`
 	}
 	err := c.ShouldBind(&params)
 	if err != nil {
@@ -240,7 +241,7 @@ func importBatchHandler(c *gin.Context) {
 	if err != nil {
 		c.JSON(404, err.Error())
 	}
-	err = engine.ImportBatch(batch, parsers)
+	err = engine.ImportBatch(batch, parsers, params.NoFilter)
 	if err != nil {
 		c.JSON(500, err.Error())
 	}

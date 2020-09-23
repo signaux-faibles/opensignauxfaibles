@@ -49,13 +49,13 @@ func NextBatchID(batchID string) (string, error) {
 }
 
 // ImportBatch lance tous les parsers sur le batch fourni
-func ImportBatch(batch base.AdminBatch, parsers []base.Parser) error {
+func ImportBatch(batch base.AdminBatch, parsers []base.Parser, skipFilter bool) error {
 	var cache = base.NewCache()
 	filter, err := marshal.GetSirenFilter(cache, &batch)
 	if err != nil {
 		return err
 	}
-	if filter == nil {
+	if !skipFilter && filter == nil {
 		return errors.New("Veuillez inclure un filtre")
 	}
 	for _, parser := range parsers {
@@ -122,7 +122,7 @@ func ProcessBatch(batchList []string, parsers []base.Parser) error {
 		if errBatch != nil {
 			return errors.New("Erreur de lecture du batch: " + errBatch.Error())
 		}
-		ImportBatch(batch, parsers)
+		ImportBatch(batch, parsers, false)
 		time.Sleep(5 * time.Second) // TODO: trouver une façon de synchroniser l'insert des paquets
 		err := Compact(v)
 		if err != nil {
