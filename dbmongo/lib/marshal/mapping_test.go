@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 )
 
 func TestGetSiret(t *testing.T) {
@@ -151,11 +150,11 @@ func TestGetCompteSiretMapping(t *testing.T) {
 		expected    Comptes
 	}{
 		// Basic reading from file
-		{base.NewCache(), engine.MockBatch("admin_urssaf", []string{"a"}), false, stdExpected1},
+		{base.NewCache(), base.MockBatch("admin_urssaf", []string{"a"}), false, stdExpected1},
 		// Cache superseeds reading from file
-		{base.Cache{"comptes": stdExpected2}, engine.MockBatch("admin_urssaf", []string{"a"}), false, stdExpected2},
+		{base.Cache{"comptes": stdExpected2}, base.MockBatch("admin_urssaf", []string{"a"}), false, stdExpected2},
 		// No cache, no file = error
-		{base.NewCache(), engine.MockBatch("otherStuff", []string{"a"}), true, nil},
+		{base.NewCache(), base.MockBatch("otherStuff", []string{"a"}), true, nil},
 	}
 
 	for ind, tc := range testCases {

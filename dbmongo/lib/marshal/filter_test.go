@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 )
 
 func TestIsFiltered(t *testing.T) {
@@ -58,11 +57,11 @@ func TestGetSirenFilter(t *testing.T) {
 		{"No cache, no filter in batch 1",
 			"", "", base.AdminBatch{}, nil},
 		{"No cache, no filter in batch 2",
-			"", "", engine.MockBatch("filter", nil), nil},
+			"", "", base.MockBatch("filter", nil), nil},
 		{"No cache, (mock)read from file",
-			"", "", engine.MockBatch("filter", []string{"at least one"}), map[string]bool{"012345678": true}},
+			"", "", base.MockBatch("filter", []string{"at least one"}), map[string]bool{"012345678": true}},
 		{"Cache has precedence over file",
-			"filter", map[string]bool{"876543210": true}, engine.MockBatch("filter", []string{"at least one"}), map[string]bool{"876543210": true}},
+			"filter", map[string]bool{"876543210": true}, base.MockBatch("filter", []string{"at least one"}), map[string]bool{"876543210": true}},
 	}
 
 	for ind, tc := range testCases {

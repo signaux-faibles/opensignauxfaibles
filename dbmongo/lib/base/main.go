@@ -49,3 +49,12 @@ type AdminID struct {
 
 // BatchFiles fichiers mappés par type
 type BatchFiles map[string][]string
+
+// MockBatch with a map[type][]filepaths
+func MockBatch(filetype string, filepaths []string) AdminBatch {
+	fileMap := map[string][]string{filetype: filepaths}
+	batch := AdminBatch{
+		Files: BatchFiles(fileMap),
+	}
+	return batch
+}

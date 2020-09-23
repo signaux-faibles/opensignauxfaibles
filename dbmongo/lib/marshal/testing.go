@@ -44,7 +44,7 @@ func TestParserTupleOutput(
 	goldenFile string,
 	update bool,
 ) {
-	batch := engine.MockBatch(parserType, []string{inputFile})
+	batch := base.MockBatch(parserType, []string{inputFile})
 	var events chan base.Event
 	var tuples chan base.Tuple
 	tuples, events = parser(cache, &batch)

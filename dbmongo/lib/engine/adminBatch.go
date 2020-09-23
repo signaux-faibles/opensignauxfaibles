@@ -188,12 +188,3 @@ func DropBatch(batchKey string) error {
 	_, err := Db.DB.C("Admin").RemoveAll(bson.M{"_id.key": batchKey, "_id.type": "batch"})
 	return err
 }
-
-// MockBatch with a map[type][]filepaths
-func MockBatch(filetype string, filepaths []string) base.AdminBatch {
-	fileMap := map[string][]string{filetype: filepaths}
-	batch := base.AdminBatch{
-		Files: base.BatchFiles(fileMap),
-	}
-	return batch
-}
