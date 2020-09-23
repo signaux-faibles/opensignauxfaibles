@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 )
 
 func Test_NextBatchID(t *testing.T) {
@@ -77,7 +78,7 @@ func Test_ImportBatch(t *testing.T) {
 		}
 	}()
 	batch := base.AdminBatch{}
-	err := ImportBatch(batch, []base.Parser{}, false)
+	err := ImportBatch(batch, []marshal.Parser{}, false)
 	if err == nil {
 		t.Error("ImportBatch devrait nous empêcher d'importer sans filtre")
 	}

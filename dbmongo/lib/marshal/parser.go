@@ -1,4 +1,4 @@
-package base
+package marshal
 
 import (
 	"encoding/json"
@@ -6,10 +6,11 @@ import (
 
 	"github.com/globalsign/mgo/bson"
 	"github.com/signaux-faibles/gournal"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 )
 
 // Parser fonction de traitement de données en entrée
-type Parser func(Cache, *AdminBatch) (chan Tuple, chan Event)
+type Parser func(Cache, *base.AdminBatch) (chan Tuple, chan Event)
 
 // Tuple unité de donnée à insérer dans un type
 type Tuple interface {
@@ -28,8 +29,8 @@ type Priority string
 // Code test
 type Code string
 
-// base.Events base.Event serialisable pour swaggo (TODO: fix this !)
-// type base.Events []struct {
+// Events Event serialisable pour swaggo (TODO: fix this !)
+// type Events []struct {
 // 	ID       bson.ObjectId `json:"-" bson:"_id"`
 // 	Date     time.Time     `json:"date" bson:"date"`
 // 	Comment  interface{}   `json:"event" bson:"event"`
@@ -49,7 +50,7 @@ type Event struct {
 	Channel    chan Event    `json:"-"`
 }
 
-// GetBSON retourne l'objet base.Event sous une forme sérialisable
+// GetBSON retourne l'objet Event sous une forme sérialisable
 func (event Event) GetBSON() (interface{}, error) {
 	var tmp struct {
 		ID       bson.ObjectId `json:"id" bson:"_id"`

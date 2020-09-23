@@ -65,7 +65,7 @@ func TestGetSirenFilter(t *testing.T) {
 	}
 
 	for ind, tc := range testCases {
-		cache := base.NewCache()
+		cache := NewCache()
 		cache.Set(tc.cacheKey, tc.cacheValue)
 		actual, err := getSirenFilter(cache, &tc.batch, mockReadFilter)
 		if err != nil {

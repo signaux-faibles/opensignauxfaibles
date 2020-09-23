@@ -8,6 +8,7 @@ import (
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
 
 	"github.com/signaux-faibles/gournal"
@@ -48,11 +49,11 @@ func sliceIndex(limit int, predicate func(i int) bool) int {
 }
 
 // Parser  Altares
-func Parser(batch base.AdminBatch, filter map[string]bool) (chan base.Tuple, chan base.Event) {
-	outputChannel := make(chan base.Tuple)
-	eventChannel := make(chan base.Event)
+func Parser(batch base.AdminBatch, filter map[string]bool) (chan marshal.Tuple, chan marshal.Event) {
+	outputChannel := make(chan marshal.Tuple)
+	eventChannel := make(chan marshal.Event)
 
-	event := base.Event{
+	event := marshal.Event{
 		Code:    "altaresParser",
 		Channel: eventChannel,
 	}

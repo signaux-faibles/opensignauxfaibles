@@ -31,7 +31,7 @@ func IsFiltered(id string, filter map[string]bool) (bool, error) {
 }
 
 // GetSirenFilterFromCache reads the filter from cache.
-func GetSirenFilterFromCache(cache base.Cache) map[string]bool {
+func GetSirenFilterFromCache(cache Cache) map[string]bool {
 	value, err := cache.Get("filter")
 	if err == nil {
 		filter, ok := value.(map[string]bool)
@@ -44,13 +44,13 @@ func GetSirenFilterFromCache(cache base.Cache) map[string]bool {
 
 // GetSirenFilter reads the filter from cache if it cans, or else it reads it
 // from input files and stores it in cache
-func GetSirenFilter(cache base.Cache, batch *base.AdminBatch) (map[string]bool, error) {
+func GetSirenFilter(cache Cache, batch *base.AdminBatch) (map[string]bool, error) {
 	return getSirenFilter(cache, batch, readFilterFiles)
 }
 
 // getSirenFilter reads the filter from cache if it cans, or else it reads it
 // from input files and stores it in cache
-func getSirenFilter(cache base.Cache, batch *base.AdminBatch, fr filterReader) (map[string]bool, error) {
+func getSirenFilter(cache Cache, batch *base.AdminBatch, fr filterReader) (map[string]bool, error) {
 
 	value, err := cache.Get("filter")
 

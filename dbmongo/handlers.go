@@ -14,6 +14,7 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/diane"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/files"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sirene"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/urssaf"
 
@@ -302,7 +303,7 @@ func purgeNotCompactedHandler(c *gin.Context) {
 }
 
 // RegisteredParsers liste des parsers disponibles
-var registeredParsers = map[string]base.Parser{
+var registeredParsers = map[string]marshal.Parser{
 	"debit":        urssaf.ParserDebit,
 	"ccsf":         urssaf.ParserCCSF,
 	"cotisation":   urssaf.ParserCotisation,
@@ -320,8 +321,8 @@ var registeredParsers = map[string]base.Parser{
 }
 
 // Vérifie et charge les parsers
-func resolveParsers(parserNames []string) ([]base.Parser, error) {
-	var parsers []base.Parser
+func resolveParsers(parserNames []string) ([]marshal.Parser, error) {
+	var parsers []marshal.Parser
 	if parserNames == nil {
 		for _, f := range registeredParsers {
 			parsers = append(parsers, f)

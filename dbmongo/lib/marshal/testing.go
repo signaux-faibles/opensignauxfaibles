@@ -36,18 +36,18 @@ func MockComptesMapping(mapping map[string]string) Comptes {
 // the golden file is updated.
 func TestParserTupleOutput(
 	t *testing.T,
-	parser base.Parser,
-	cache base.Cache,
+	parser Parser,
+	cache Cache,
 	parserType string,
 	inputFile string,
 	goldenFile string,
 	update bool,
 ) {
 	batch := base.MockBatch(parserType, []string{inputFile})
-	var events chan base.Event
-	var tuples chan base.Tuple
+	var events chan Event
+	var tuples chan Tuple
 	tuples, events = parser(cache, &batch)
-	var firstCriticalEvent *base.Event = nil
+	var firstCriticalEvent *Event = nil
 
 	// intercepter et afficher les évènements pendant l'importation
 	var wg sync.WaitGroup
@@ -57,7 +57,7 @@ func TestParserTupleOutput(
 		defer wg.Done()
 		for event := range events {
 			t.Logf("[%s] event: %v", event.Priority, event.Comment)
-			if event.Priority == base.Critical && firstCriticalEvent == nil {
+			if event.Priority == Critical && firstCriticalEvent == nil {
 				firstCriticalEvent = &event
 			}
 		}
@@ -65,7 +65,7 @@ func TestParserTupleOutput(
 
 	actualJsons := []string{}
 	for tuple := range tuples {
-		json, err := base.GetJson(tuple)
+		json, err := GetJson(tuple)
 		if err != nil {
 			log.Fatal(err)
 		}

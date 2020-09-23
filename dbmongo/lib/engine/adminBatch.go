@@ -49,8 +49,8 @@ func NextBatchID(batchID string) (string, error) {
 }
 
 // ImportBatch lance tous les parsers sur le batch fourni
-func ImportBatch(batch base.AdminBatch, parsers []base.Parser, skipFilter bool) error {
-	var cache = base.NewCache()
+func ImportBatch(batch base.AdminBatch, parsers []marshal.Parser, skipFilter bool) error {
+	var cache = marshal.NewCache()
 	filter, err := marshal.GetSirenFilter(cache, &batch)
 	if err != nil {
 		return err
@@ -69,7 +69,7 @@ func ImportBatch(batch base.AdminBatch, parsers []base.Parser, skipFilter bool) 
 					Key:   tuple.Key(),
 					Batch: map[string]Batch{
 						batch.ID.Key: Batch{
-							tuple.Type(): map[string]base.Tuple{
+							tuple.Type(): map[string]marshal.Tuple{
 								hash: tuple,
 							}}}}}
 			Db.ChanData <- &value
@@ -99,11 +99,11 @@ func CheckBatchPaths(batch *base.AdminBatch) error {
 }
 
 // CheckBatch checks batch
-func CheckBatch(batch base.AdminBatch, parsers []base.Parser) error {
+func CheckBatch(batch base.AdminBatch, parsers []marshal.Parser) error {
 	if err := CheckBatchPaths(&batch); err != nil {
 		return err
 	}
-	var cache = base.NewCache()
+	var cache = marshal.NewCache()
 	for _, parser := range parsers {
 		outputChannel, eventChannel := parser(cache, &batch)
 		DiscardTuple(outputChannel)
@@ -115,7 +115,7 @@ func CheckBatch(batch base.AdminBatch, parsers []base.Parser) error {
 }
 
 // ProcessBatch traitement ad-hoc modifiable pour les besoins du développement
-func ProcessBatch(batchList []string, parsers []base.Parser) error {
+func ProcessBatch(batchList []string, parsers []marshal.Parser) error {
 
 	for _, v := range batchList {
 		batch, errBatch := GetBatch(v)

@@ -5,7 +5,6 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 )
 
@@ -14,5 +13,5 @@ var update = flag.Bool("update", false, "Update the expected test values in gold
 func TestApdemande(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedApdemande.json")
 	var testData = filepath.Join("testData", "apdemandeTestData.csv")
-	marshal.TestParserTupleOutput(t, Parser, base.NewCache(), "apdemande", testData, golden, *update)
+	marshal.TestParserTupleOutput(t, Parser, marshal.NewCache(), "apdemande", testData, golden, *update)
 }

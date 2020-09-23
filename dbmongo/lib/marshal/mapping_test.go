@@ -36,7 +36,7 @@ func TestGetSiret(t *testing.T) {
 
 	for ind, tc := range testCases {
 
-		var cache = base.Cache{"comptes": tc.mapping}
+		var cache = Cache{"comptes": tc.mapping}
 
 		time, _ := time.Parse("2006-02-01", tc.date)
 		actual, err := GetSiret(tc.compte, &time, cache, &batch)
@@ -76,37 +76,37 @@ func TestReadSiretMapping(t *testing.T) {
 		},
 	}
 
-	stdFilterCache := base.Cache{
+	stdFilterCache := Cache{
 		"filter": map[string]bool{"012345678": true},
 	}
 
 	testCases := []struct {
 		csv         string
-		cache       base.Cache
+		cache       Cache
 		expectError bool
 		expected    Comptes
 	}{
 		// No closing date
 		{`0;1;2;3;4;5;6;7
-		;;"abc";;;"01234567891011";;""`, base.Cache{}, false, stdExpected1},
+		;;"abc";;;"01234567891011";;""`, Cache{}, false, stdExpected1},
 		// With closing date
 		{`0;1;2;3;4;5;6;7
-		;;"abc";;;"01234567891011";;"1150101"`, base.Cache{}, false, stdExpected2},
+		;;"abc";;;"01234567891011";;"1150101"`, Cache{}, false, stdExpected2},
 		// With filtered siret
 		{`0;1;2;3;4;5;6;7
 		;;"abc";;;"01234567891011";;"1150101"`, stdFilterCache, false, stdExpected2},
 		// With two entries 1
 		{`0;1;2;3;4;5;6;7
 		;;"abc";;;"01234567891011";;"1150101"
-		;;"abc";;;"87654321091011";;""`, base.Cache{}, false, stdExpected3},
+		;;"abc";;;"87654321091011";;""`, Cache{}, false, stdExpected3},
 		// With two entries 2: different order
 		{`0;1;2;3;4;5;6;7
 	    ;;"abc";;;"87654321091011";;""
-	    ;;"abc";;;"01234567891011";;"1150101"`, base.Cache{}, false, stdExpected3},
+	    ;;"abc";;;"01234567891011";;"1150101"`, Cache{}, false, stdExpected3},
 		// With invalid siret
 		{`0;1;2;3;4;5;6;7
 		  ;;"abc";;;"8765432109101A";;""
-	    ;;"abc";;;"01234567891011";;"1150101"`, base.Cache{}, false, stdExpected2},
+	    ;;"abc";;;"01234567891011";;"1150101"`, Cache{}, false, stdExpected2},
 	}
 
 	for ind, tc := range testCases {
@@ -136,7 +136,7 @@ func TestGetCompteSiretMapping(t *testing.T) {
 	}
 
 	// When file is read, returnd stdExpected1
-	mockOpenFile := func(s1 string, s2 string, c Comptes, ca base.Cache, ba *base.AdminBatch) (Comptes, error) {
+	mockOpenFile := func(s1 string, s2 string, c Comptes, ca Cache, ba *base.AdminBatch) (Comptes, error) {
 		for key := range stdExpected1 {
 			c[key] = stdExpected1[key]
 		}
@@ -144,17 +144,17 @@ func TestGetCompteSiretMapping(t *testing.T) {
 	}
 
 	testCases := []struct {
-		cache       base.Cache
+		cache       Cache
 		batch       base.AdminBatch
 		expectError bool
 		expected    Comptes
 	}{
 		// Basic reading from file
-		{base.NewCache(), base.MockBatch("admin_urssaf", []string{"a"}), false, stdExpected1},
+		{NewCache(), base.MockBatch("admin_urssaf", []string{"a"}), false, stdExpected1},
 		// Cache superseeds reading from file
-		{base.Cache{"comptes": stdExpected2}, base.MockBatch("admin_urssaf", []string{"a"}), false, stdExpected2},
+		{Cache{"comptes": stdExpected2}, base.MockBatch("admin_urssaf", []string{"a"}), false, stdExpected2},
 		// No cache, no file = error
-		{base.NewCache(), base.MockBatch("otherStuff", []string{"a"}), true, nil},
+		{NewCache(), base.MockBatch("otherStuff", []string{"a"}), true, nil},
 	}
 
 	for ind, tc := range testCases {

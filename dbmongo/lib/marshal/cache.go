@@ -1,8 +1,6 @@
-package base
+package marshal
 
 import "errors"
-
-// TODO: à déplacer dans marshal
 
 // Cache saves values in memory
 type Cache map[string]interface{}

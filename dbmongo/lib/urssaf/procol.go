@@ -13,6 +13,7 @@ import (
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
 
 	"github.com/signaux-faibles/gournal"
@@ -43,11 +44,11 @@ func (procol Procol) Type() string {
 }
 
 // ParserProcol transorme le fichier procol en data
-func ParserProcol(cache base.Cache, batch *base.AdminBatch) (chan base.Tuple, chan base.Event) {
-	outputChannel := make(chan base.Tuple)
-	eventChannel := make(chan base.Event)
+func ParserProcol(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
+	outputChannel := make(chan marshal.Tuple)
+	eventChannel := make(chan marshal.Event)
 
-	event := base.Event{
+	event := marshal.Event{
 		Code:    "procolParser",
 		Channel: eventChannel,
 	}

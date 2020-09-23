@@ -51,11 +51,11 @@ func (debit Debit) Type() string {
 	return "debit"
 }
 
-func ParserDebit(cache base.Cache, batch *base.AdminBatch) (chan base.Tuple, chan base.Event) {
-	outputChannel := make(chan base.Tuple)
-	eventChannel := make(chan base.Event)
+func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
+	outputChannel := make(chan marshal.Tuple)
+	eventChannel := make(chan marshal.Event)
 
-	event := base.Event{
+	event := marshal.Event{
 		Code:    "debitParser",
 		Channel: eventChannel,
 	}

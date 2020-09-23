@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 )
 
 type Test struct {
@@ -18,25 +18,25 @@ func (test Test) Type() string  { return "" }
 func Test_mergeBatch(t *testing.T) {
 
 	batch1 := Batch{
-		"test1": map[string]base.Tuple{
+		"test1": map[string]marshal.Tuple{
 			"hash1": Test{"test1"},
 		},
 	}
 
 	batch2 := Batch{
-		"test2": map[string]base.Tuple{
+		"test2": map[string]marshal.Tuple{
 			"hash2": Test{"test2"},
 		},
 	}
 
 	batch3 := Batch{
-		"test1": map[string]base.Tuple{
+		"test1": map[string]marshal.Tuple{
 			"hash2": Test{"test2"},
 		},
 	}
 
 	batch4 := Batch{
-		"test1": map[string]base.Tuple{
+		"test1": map[string]marshal.Tuple{
 			"hash1": Test{"test2"},
 		},
 	}
