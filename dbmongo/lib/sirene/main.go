@@ -176,12 +176,12 @@ func (sirene Sirene) Scope() string {
 }
 
 // Parser produit les données sirene à partir du fichier geosirene
-func Parser(cache base.Cache, batch *base.AdminBatch) (chan engine.Tuple, chan engine.Event) {
+func Parser(cache base.Cache, batch *base.AdminBatch) (chan base.Tuple, chan base.Event) {
 
-	outputChannel := make(chan engine.Tuple)
-	eventChannel := make(chan engine.Event)
+	outputChannel := make(chan base.Tuple)
+	eventChannel := make(chan base.Event)
 
-	event := engine.Event{
+	event := base.Event{
 		Code:    "sireneParser",
 		Channel: eventChannel,
 	}

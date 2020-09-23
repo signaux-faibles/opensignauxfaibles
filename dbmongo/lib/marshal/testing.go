@@ -37,7 +37,7 @@ func MockComptesMapping(mapping map[string]string) Comptes {
 // the golden file is updated.
 func TestParserTupleOutput(
 	t *testing.T,
-	parser engine.Parser,
+	parser base.Parser,
 	cache base.Cache,
 	parserType string,
 	inputFile string,
@@ -45,10 +45,10 @@ func TestParserTupleOutput(
 	update bool,
 ) {
 	batch := engine.MockBatch(parserType, []string{inputFile})
-	var events chan engine.Event
-	var tuples chan engine.Tuple
+	var events chan base.Event
+	var tuples chan base.Tuple
 	tuples, events = parser(cache, &batch)
-	var firstCriticalEvent *engine.Event = nil
+	var firstCriticalEvent *base.Event = nil
 
 	// intercepter et afficher les évènements pendant l'importation
 	var wg sync.WaitGroup

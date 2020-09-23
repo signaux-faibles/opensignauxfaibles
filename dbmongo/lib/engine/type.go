@@ -1,9 +1,5 @@
 package engine
 
-import (
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
-)
-
 // GetTypes retourne la liste des types déclarés
 func GetTypes() Types {
 	return []Type{
@@ -35,6 +31,3 @@ type Type struct {
 
 // Types is a Type array
 type Types []Type
-
-// Parser fonction de traitement de données en entrée
-type Parser func(base.Cache, *base.AdminBatch) (chan Tuple, chan Event)

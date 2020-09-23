@@ -48,10 +48,10 @@ func (crp CRP) Scope() string {
 }
 
 // Parser produit des lignes de consommation d'activité partielle
-func Parser(batch base.AdminBatch, filter map[string]bool) (chan engine.Tuple, chan engine.Event) {
-	outputChannel := make(chan engine.Tuple)
-	eventChannel := make(chan engine.Event)
-	event := engine.Event{
+func Parser(batch base.AdminBatch, filter map[string]bool) (chan base.Tuple, chan base.Event) {
+	outputChannel := make(chan base.Tuple)
+	eventChannel := make(chan base.Event)
+	event := base.Event{
 		Code:    "parserApconso",
 		Channel: eventChannel,
 	}

@@ -298,7 +298,7 @@ func purgeNotCompactedHandler(c *gin.Context) {
 }
 
 // RegisteredParsers liste des parsers disponibles
-var registeredParsers = map[string]engine.Parser{
+var registeredParsers = map[string]base.Parser{
 	"debit":        urssaf.ParserDebit,
 	"ccsf":         urssaf.ParserCCSF,
 	"cotisation":   urssaf.ParserCotisation,
@@ -316,8 +316,8 @@ var registeredParsers = map[string]engine.Parser{
 }
 
 // Vérifie et charge les parsers
-func resolveParsers(parserNames []string) ([]engine.Parser, error) {
-	var parsers []engine.Parser
+func resolveParsers(parserNames []string) ([]base.Parser, error) {
+	var parsers []base.Parser
 	if parserNames == nil {
 		for _, f := range registeredParsers {
 			parsers = append(parsers, f)

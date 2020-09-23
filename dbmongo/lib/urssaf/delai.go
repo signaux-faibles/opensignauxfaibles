@@ -51,9 +51,9 @@ func (delai Delai) Type() string {
 }
 
 // ParserDelai fonction d'extraction des délais
-func ParserDelai(cache base.Cache, batch *base.AdminBatch) (chan engine.Tuple, chan engine.Event) {
-	outputChannel := make(chan engine.Tuple)
-	eventChannel := make(chan engine.Event)
+func ParserDelai(cache base.Cache, batch *base.AdminBatch) (chan base.Tuple, chan base.Event) {
+	outputChannel := make(chan base.Tuple)
+	eventChannel := make(chan base.Event)
 
 	field := map[string]int{
 		"NumeroCompte":      2,
@@ -69,7 +69,7 @@ func ParserDelai(cache base.Cache, batch *base.AdminBatch) (chan engine.Tuple, c
 		"Action":            12,
 	}
 
-	event := engine.Event{
+	event := base.Event{
 		Code:    "delaiParser",
 		Channel: eventChannel,
 	}

@@ -30,8 +30,8 @@ func (message SocketMessage) MarshalJSON() ([]byte, error) {
 }
 
 // GetEventsFromDB retourne les n derniers enregistrements correspondant à la requête
-func GetEventsFromDB(query interface{}, n int) ([]Event, error) {
-	var logs []Event
+func GetEventsFromDB(query interface{}, n int) ([]base.Event, error) {
+	var logs []base.Event
 	err := Db.DB.C("Journal").Find(query).Sort("-date").Limit(n).All(&logs)
 	return logs, err
 }
@@ -72,7 +72,7 @@ func messageDispatch() chan SocketMessage {
 }
 
 // RelayEvents transmet les messages
-func RelayEvents(eventChannel chan Event) {
+func RelayEvents(eventChannel chan base.Event) {
 	if eventChannel == nil {
 		return
 	}

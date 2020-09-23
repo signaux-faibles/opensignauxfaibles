@@ -55,10 +55,10 @@ func parseEffectifEntPeriod(effectifEntPeriods []string) ([]time.Time, error) {
 }
 
 // ParserEffectifEnt retourne un channel fournissant des données extraites
-func ParserEffectifEnt(cache base.Cache, batch *base.AdminBatch) (chan engine.Tuple, chan engine.Event) {
-	outputChannel := make(chan engine.Tuple)
-	eventChannel := make(chan engine.Event)
-	event := engine.Event{
+func ParserEffectifEnt(cache base.Cache, batch *base.AdminBatch) (chan base.Tuple, chan base.Event) {
+	outputChannel := make(chan base.Tuple)
+	eventChannel := make(chan base.Event)
+	event := base.Event{
 		Code:    "effectifEntParser",
 		Channel: eventChannel,
 	}

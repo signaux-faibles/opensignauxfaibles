@@ -6,6 +6,7 @@ import (
 
 	"github.com/cnf/structhash"
 	"github.com/globalsign/mgo/bson"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 )
 
 // Value structure pour un établissement
@@ -21,24 +22,17 @@ type Data struct {
 	Batch map[string]Batch `json:"batch,omitempty" bson:"batch,omitempty"`
 }
 
-// Tuple unité de donnée à insérer dans un type
-type Tuple interface {
-	Key() string
-	Scope() string
-	Type() string
-}
-
 // GetMD5 returns a MD5 signature of the Tupe
-func GetMD5(tuple Tuple) []byte {
+func GetMD5(tuple base.Tuple) []byte {
 	return structhash.Md5(tuple, 1)
 }
 
-func GetJson(tuple Tuple) ([]byte, error) {
+func GetJson(tuple base.Tuple) ([]byte, error) {
 	return json.MarshalIndent(tuple, "", "  ")
 }
 
 // Batch ensemble des données
-type Batch map[string]map[string]Tuple
+type Batch map[string]map[string]base.Tuple
 
 // Merge union de deux objets Batch
 func (batch1 Batch) Merge(batch2 Batch) {

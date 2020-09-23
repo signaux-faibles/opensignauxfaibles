@@ -32,15 +32,15 @@ func (compte Compte) Type() string {
 	return "compte"
 }
 
-func ParserCompte(cache base.Cache, batch *base.AdminBatch) (chan engine.Tuple, chan engine.Event) {
-	outputChannel := make(chan engine.Tuple)
-	eventChannel := make(chan engine.Event)
+func ParserCompte(cache base.Cache, batch *base.AdminBatch) (chan base.Tuple, chan base.Event) {
+	outputChannel := make(chan base.Tuple)
+	eventChannel := make(chan base.Event)
 	go func() {
 
 		defer close(outputChannel)
 		defer close(eventChannel)
 		if len(batch.Files["admin_urssaf"]) > 0 {
-			event := engine.Event{
+			event := base.Event{
 				Code:    "compteParser",
 				Channel: eventChannel,
 			}

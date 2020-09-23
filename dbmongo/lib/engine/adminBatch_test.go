@@ -77,7 +77,7 @@ func Test_ImportBatch(t *testing.T) {
 		}
 	}()
 	batch := base.AdminBatch{}
-	err := ImportBatch(batch, []Parser{})
+	err := ImportBatch(batch, []base.Parser{})
 	if err == nil {
 		t.Error("ImportBatch devrait nous empêcher d'importer sans filtre")
 	}

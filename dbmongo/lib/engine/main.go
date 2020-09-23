@@ -7,6 +7,7 @@ import (
 
 	"github.com/globalsign/mgo/bson"
 	"github.com/signaux-faibles/gournal"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 )
 
 // Db connecteur exportable
@@ -22,20 +23,8 @@ type Code string
 // interrupt a parser
 var MaxParsingErrors = 200
 
-// Event est un objet de journal
-// swagger:ignore
-type Event struct {
-	ID         bson.ObjectId `json:"-" bson:"_id"`
-	Date       time.Time     `json:"date" bson:"date"`
-	Comment    interface{}   `json:"event" bson:"event"`
-	Priority   Priority      `json:"priority" bson:"priority"`
-	Code       Code          `json:"code" bson:"code"`
-	ReportType string        `json:"report_type" bson:"record_type"`
-	Channel    chan Event    `json:"-"`
-}
-
-// Events Event serialisable pour swaggo (TODO: fix this !)
-// type Events []struct {
+// base.Events base.Event serialisable pour swaggo (TODO: fix this !)
+// type base.Events []struct {
 // 	ID       bson.ObjectId `json:"-" bson:"_id"`
 // 	Date     time.Time     `json:"date" bson:"date"`
 // 	Comment  interface{}   `json:"event" bson:"event"`
@@ -43,8 +32,8 @@ type Event struct {
 // 	Code     Code          `json:"code" bson:"code"`
 // }
 
-// GetBSON retourne l'objet Event sous une forme sérialisable
-func (event Event) GetBSON() (interface{}, error) {
+// GetBSON retourne l'objet base.Event sous une forme sérialisable
+func (event base.Event) GetBSON() (interface{}, error) {
 	var tmp struct {
 		ID       bson.ObjectId `json:"id" bson:"_id"`
 		Date     time.Time     `json:"date" bson:"date"`
@@ -74,7 +63,7 @@ var Critical = Priority("critical")
 
 var unknownCode = Code("unknown")
 
-func (event Event) throw(comment interface{}, logLevel string) {
+func (event base.Event) throw(comment interface{}, logLevel string) {
 	event.ID = bson.NewObjectId()
 	event.Date = time.Now()
 	event.Comment = comment
@@ -97,33 +86,33 @@ func (event Event) throw(comment interface{}, logLevel string) {
 }
 
 // Debug produit un évènement de niveau Debug
-func (event Event) Debug(comment interface{}) {
+func (event base.Event) Debug(comment interface{}) {
 	event.throw(comment, "debug")
 }
 
 // Info produit un évènement de niveau Info
-func (event Event) Info(comment interface{}) {
+func (event base.Event) Info(comment interface{}) {
 	event.throw(comment, "info")
 }
 
 // Warning produit un évènement de niveau Warning
-func (event Event) Warning(comment interface{}) {
+func (event base.Event) Warning(comment interface{}) {
 	event.throw(comment, "warning")
 }
 
 // Critical produit un évènement de niveau Critical
-func (event Event) Critical(comment interface{}) {
+func (event base.Event) Critical(comment interface{}) {
 	event.throw(comment, "critical")
 }
 
 // InfoReport produit un rapport de niveau Info
-func (event Event) InfoReport(report string, tracker gournal.Tracker) {
+func (event base.Event) InfoReport(report string, tracker gournal.Tracker) {
 	event.ReportType = report
 	event.Info(tracker.Report(report))
 }
 
 // CriticalReport produit un rapport de niveau Critical
-func (event Event) CriticalReport(report string, tracker gournal.Tracker) {
+func (event base.Event) CriticalReport(report string, tracker gournal.Tracker) {
 	event.ReportType = report
 	event.Critical(tracker.Report(report))
 }

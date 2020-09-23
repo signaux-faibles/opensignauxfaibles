@@ -355,7 +355,7 @@ func parseDianeRow(row []string) (diane Diane) {
 }
 
 // parseDianeRow génère des objets Diane à partir d'un fichier
-func parseDianeFile(batch *base.AdminBatch, path string, outputChannel chan engine.Tuple, event engine.Event) {
+func parseDianeFile(batch *base.AdminBatch, path string, outputChannel chan base.Tuple, event base.Event) {
 	event.Debug(path + ": ouverture")
 
 	cmdPath := []string{filepath.Join(viper.GetString("SCRIPTDIANE_DIR"), "convert_diane.sh"), viper.GetString("APP_DATA") + path}
@@ -433,10 +433,10 @@ func parseDianeFile(batch *base.AdminBatch, path string, outputChannel chan engi
 }
 
 // Parser produit les données Diane listées dans un batch
-func Parser(cache base.Cache, batch *base.AdminBatch) (chan engine.Tuple, chan engine.Event) {
-	outputChannel := make(chan engine.Tuple)
-	eventChannel := make(chan engine.Event)
-	event := engine.Event{
+func Parser(cache base.Cache, batch *base.AdminBatch) (chan base.Tuple, chan base.Event) {
+	outputChannel := make(chan base.Tuple)
+	eventChannel := make(chan base.Event)
+	event := base.Event{
 		Code:    "dianeParser",
 		Channel: eventChannel,
 	}
