@@ -95,6 +95,12 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 					continue // TODO: exécuter tracker.Next() un fois le TODO ci-dessous traité.
 				}
 
+				filtered, err := marshal.IsFiltered(bdf.Siren, filter)
+				tracker.Error(err)
+				if filtered {
+					continue
+				}
+
 				bdf.Annee, err = misc.ParsePInt(row[1])
 				tracker.Error(err)
 				var arrete = row[2]
