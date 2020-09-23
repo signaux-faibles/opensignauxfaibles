@@ -1,7 +1,6 @@
 package marshal
 
 import (
-	"log"
 	"reflect"
 	"strings"
 	"testing"
@@ -30,7 +29,6 @@ func TestIsFiltered(t *testing.T) {
 	for ind, tc := range testCases {
 		actual, err := IsFiltered(tc.siret, tc.filter)
 		if err != nil && !tc.expectError {
-			log.Println(tc.siret)
 			t.Fatalf("Unexpected error during cache request in test %d: %v", ind, err)
 		}
 		if err == nil && tc.expectError {
