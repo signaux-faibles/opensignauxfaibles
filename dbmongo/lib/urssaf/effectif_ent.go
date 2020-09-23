@@ -13,6 +13,7 @@ import (
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
 
 	"github.com/signaux-faibles/gournal"
@@ -107,8 +108,6 @@ func ParserEffectifEnt(cache base.Cache, batch *base.AdminBatch) (chan base.Tupl
 			for {
 				row, err := reader.Read()
 				if err == io.EOF {
-					event.Info(tracker.Report("abstract"))
-					file.Close()
 					break
 				} else if err != nil {
 					tracker.Error(err)
@@ -116,15 +115,22 @@ func ParserEffectifEnt(cache base.Cache, batch *base.AdminBatch) (chan base.Tupl
 					break
 				}
 
-				if len(row[sirenIndex]) == 9 {
+				siren := row[sirenIndex]
+				filtered, err := marshal.IsFiltered(siren, cache, batch)
+				tracker.Error(err)
+				notDigit := regexp.MustCompile("[^0-9]")
+				if len(siren) != 9 {
+					tracker.Error(errors.New("Format de siren incorrect : " + siren))
+				} else if !filtered {
 					for i, j := range effectifEntIndexes {
 						if row[j] != "" {
-							s, err := strconv.ParseFloat(row[j], 64)
+							noThousandsSep := notDigit.ReplaceAllString(row[j], "")
+							s, err := strconv.ParseFloat(noThousandsSep, 64)
 							tracker.Error(err)
 							e := int(s)
 							if e > 0 {
 								eff := EffectifEnt{
-									Siren:       row[sirenIndex],
+									Siren:       siren,
 									Periode:     periods[i],
 									EffectifEnt: e,
 								}
@@ -133,15 +139,17 @@ func ParserEffectifEnt(cache base.Cache, batch *base.AdminBatch) (chan base.Tupl
 							}
 						}
 					}
-				} else {
-					tracker.Error(errors.New("Format de siren incorrect : " + row[sirenIndex]))
 				}
+
 				if engine.ShouldBreak(tracker, engine.MaxParsingErrors) {
+					tracker.Error(engine.NewCriticError(errors.New("Parser interrompu: trop d'erreurs"), "fatal"))
+					event.Critical(tracker.Report("fatalError"))
 					break
 				}
 				tracker.Next()
 			}
 			file.Close()
+			event.Debug(tracker.Report("abstract"))
 		}
 		close(outputChannel)
 		close(eventChannel)
