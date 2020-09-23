@@ -10,7 +10,7 @@ import (
 
 // SocketMessage permet la diffusion d'information vers tous les clients
 type SocketMessage struct {
-	JournalEvent Event               `json:"journalEvent" bson:"journalEvent"`
+	JournalEvent base.Event          `json:"journalEvent" bson:"journalEvent"`
 	Batches      []base.AdminBatch   `json:"batches,omitempty" bson:"batches,omitempty"`
 	Types        []Type              `json:"types,omitempty" bson:"types,omitempty"`
 	Features     []string            `json:"features,omitempty" bson:"features,omitempty"`

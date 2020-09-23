@@ -58,7 +58,7 @@ func TestParserTupleOutput(
 		defer wg.Done()
 		for event := range events {
 			t.Logf("[%s] event: %v", event.Priority, event.Comment)
-			if event.Priority == engine.Critical && firstCriticalEvent == nil {
+			if event.Priority == base.Critical && firstCriticalEvent == nil {
 				firstCriticalEvent = &event
 			}
 		}
