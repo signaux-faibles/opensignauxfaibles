@@ -89,7 +89,7 @@ func ParserCotisation(cache marshal.Cache, batch *base.AdminBatch) (chan marshal
 					event.Debug(tracker.Report("invalidLine"))
 					break
 				} else {
-					periode, err := urssafToPeriod(row[field["Periode"]])
+					periode, err := marshal.UrssafToPeriod(row[field["Periode"]])
 					date := periode.Start
 					tracker.Error(err)
 
@@ -97,7 +97,7 @@ func ParserCotisation(cache marshal.Cache, batch *base.AdminBatch) (chan marshal
 						cotisation := Cotisation{}
 						cotisation.key = siret
 						cotisation.NumeroCompte = row[field["NumeroCompte"]]
-						cotisation.Periode, err = urssafToPeriod(row[field["Periode"]])
+						cotisation.Periode, err = marshal.UrssafToPeriod(row[field["Periode"]])
 						tracker.Error(err)
 						cotisation.Encaisse, err = strconv.ParseFloat(strings.Replace(row[field["Encaisse"]], ",", ".", -1), 64)
 						tracker.Error(err)

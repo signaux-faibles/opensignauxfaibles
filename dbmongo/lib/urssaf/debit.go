@@ -111,7 +111,7 @@ func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 					break
 				}
 
-				period, err := urssafToPeriod(row[periodeIndex])
+				period, err := marshal.UrssafToPeriod(row[periodeIndex])
 				date := period.Start
 
 				if siret, err := marshal.GetSiret(row[numeroCompteIndex], &date, cache, batch); err == nil {
@@ -125,7 +125,7 @@ func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 						CodeMotifEcartNegatif:     row[codeMotifEcartNegatifIndex],
 					}
 
-					debit.DateTraitement, err = urssafToDate(row[dateTraitementIndex])
+					debit.DateTraitement, err = marshal.UrssafToDate(row[dateTraitementIndex])
 					tracker.Error(err)
 					debit.PartOuvriere, err = strconv.ParseFloat(row[partOuvriereIndex], 64)
 					tracker.Error(err)
@@ -137,7 +137,7 @@ func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 					tracker.Error(err)
 					debit.EtatCompte, err = strconv.Atoi(row[etatCompteIndex])
 					tracker.Error(err)
-					debit.Periode, err = urssafToPeriod(row[periodeIndex])
+					debit.Periode, err = marshal.UrssafToPeriod(row[periodeIndex])
 					tracker.Error(err)
 					debit.Recours, err = strconv.ParseBool(row[recoursIndex])
 					tracker.Error(err)

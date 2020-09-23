@@ -49,7 +49,7 @@ func parseEffectifPeriod(effectifPeriods []string) ([]time.Time, error) {
 	periods := []time.Time{}
 	for _, period := range effectifPeriods {
 		urssaf := period[3:9]
-		date, _ := urssafToPeriod(urssaf)
+		date, _ := marshal.UrssafToPeriod(urssaf)
 		periods = append(periods, date.Start)
 	}
 

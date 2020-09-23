@@ -89,7 +89,7 @@ func ParserCCSF(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple
 
 					ccsf.Action = r[f["Action"]]
 					ccsf.Stade = r[f["Stade"]]
-					ccsf.DateTraitement, err = urssafToDate(r[f["DateTraitement"]])
+					ccsf.DateTraitement, err = marshal.UrssafToDate(r[f["DateTraitement"]])
 					tracker.Error(err)
 					if err != nil {
 						tracker.Next()
