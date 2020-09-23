@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -66,7 +65,7 @@ func TestParserTupleOutput(
 
 	actualJsons := []string{}
 	for tuple := range tuples {
-		json, err := engine.GetJson(tuple)
+		json, err := base.GetJson(tuple)
 		if err != nil {
 			log.Fatal(err)
 		}

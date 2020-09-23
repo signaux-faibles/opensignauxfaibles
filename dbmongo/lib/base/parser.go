@@ -1,6 +1,7 @@
 package base
 
 import (
+	"encoding/json"
 	"time"
 
 	"github.com/globalsign/mgo/bson"
@@ -15,6 +16,10 @@ type Tuple interface {
 	Key() string
 	Scope() string
 	Type() string
+}
+
+func GetJson(tuple Tuple) ([]byte, error) {
+	return json.MarshalIndent(tuple, "", "  ")
 }
 
 // Priority test
