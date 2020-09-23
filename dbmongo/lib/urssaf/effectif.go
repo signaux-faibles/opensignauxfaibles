@@ -3,6 +3,7 @@ package urssaf
 import (
 	"bufio"
 	"encoding/csv"
+	"errors"
 	"io"
 	"os"
 	"regexp"
@@ -11,6 +12,7 @@ import (
 	"time"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
 
 	"github.com/signaux-faibles/gournal"
@@ -113,13 +115,6 @@ func ParserEffectif(cache engine.Cache, batch *engine.AdminBatch) (chan engine.T
 			for {
 				row, err := reader.Read()
 				if err == io.EOF {
-					// if tracker.Errors != nil {
-					// 	event.Warning(bson.M{
-					// 		"errorReport": tracker.Errors,
-					// 	})
-					// }
-					event.Info(tracker.Report("abstract"))
-					file.Close()
 					break
 				} else if err != nil {
 					tracker.Error(err)
@@ -127,14 +122,19 @@ func ParserEffectif(cache engine.Cache, batch *engine.AdminBatch) (chan engine.T
 					break
 				}
 
-				if len(row[siretIndex]) == 14 {
+				notDigit := regexp.MustCompile("[^0-9]")
+				siret := row[siretIndex]
+				filtered, err := marshal.IsFiltered(siret, cache, batch)
+				tracker.Error(err)
+				if len(siret) == 14 && !filtered {
 					for i, j := range effectifIndexes {
 						if row[j] != "" {
-							e, err := strconv.Atoi(row[j])
+							noThousandsSep := notDigit.ReplaceAllString(row[j], "")
+							e, err := strconv.Atoi(noThousandsSep)
 							tracker.Error(err)
 							if e > 0 {
 								eff := Effectif{
-									Siret:        row[siretIndex],
+									Siret:        siret,
 									NumeroCompte: row[compteIndex],
 									Periode:      periods[i],
 									Effectif:     e}
@@ -144,11 +144,14 @@ func ParserEffectif(cache engine.Cache, batch *engine.AdminBatch) (chan engine.T
 					}
 				}
 				if engine.ShouldBreak(tracker, engine.MaxParsingErrors) {
+					tracker.Error(engine.NewCriticError(errors.New("Parser interrompu: trop d'erreurs"), "fatal"))
+					event.Critical(tracker.Report("fatalError"))
 					break
 				}
 				tracker.Next()
 			}
 			file.Close()
+			event.Debug(tracker.Report("abstract"))
 		}
 		close(outputChannel)
 		close(eventChannel)
