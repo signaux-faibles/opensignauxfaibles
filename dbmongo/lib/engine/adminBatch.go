@@ -122,7 +122,8 @@ func ProcessBatch(batchList []string, parsers []marshal.Parser) error {
 		if errBatch != nil {
 			return errors.New("Erreur de lecture du batch: " + errBatch.Error())
 		}
-		ImportBatch(batch, parsers, false)
+		importErr := ImportBatch(batch, parsers, false)
+		if importErr != nil { return importErr }
 		time.Sleep(5 * time.Second) // TODO: trouver une façon de synchroniser l'insert des paquets
 		err := Compact(v)
 		if err != nil {
