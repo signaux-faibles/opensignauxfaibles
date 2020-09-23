@@ -186,6 +186,8 @@ func Parser(cache base.Cache, batch *base.AdminBatch) (chan base.Tuple, chan bas
 		Channel: eventChannel,
 	}
 
+	filter := marshal.GetSirenFilterFromCache(cache)
+
 	go func() {
 		for _, path := range batch.Files["sirene"] {
 			tracker := gournal.NewTracker(
@@ -216,17 +218,6 @@ func Parser(cache base.Cache, batch *base.AdminBatch) (chan base.Tuple, chan bas
 				if !validSiren {
 					tracker.Error(errors.New("siren invalide : " + row[f["siren"]]))
 					continue // TODO: exécuter tracker.Next() un fois le TODO ci-dessous traité.
-				}
-				filter, err := marshal.GetSirenFilter(cache, batch)
-				// if filter == nil {
-				// 	tracker.Error(errors.New("Veuillez spécifier un fichier filtre SIREN"))
-				// 	event.Critical(tracker.Report("fatalError"))
-				// 	break
-				// }
-				if err != nil {
-					tracker.Error(err)
-					event.Critical(tracker.Report("fatalError"))
-					break
 				}
 				filtered, err := marshal.IsFiltered(row[f["siren"]], filter)
 				tracker.Error(err)

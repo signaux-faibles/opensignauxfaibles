@@ -30,6 +30,18 @@ func IsFiltered(id string, filter map[string]bool) (bool, error) {
 	return !filter[id[0:9]], nil
 }
 
+// GetSirenFilterFromCache reads the filter from cache.
+func GetSirenFilterFromCache(cache base.Cache) map[string]bool {
+	value, err := cache.Get("filter")
+	if err == nil {
+		filter, ok := value.(map[string]bool)
+		if ok {
+			return filter
+		}
+	}
+	return nil
+}
+
 // GetSirenFilter reads the filter from cache if it cans, or else it reads it
 // from input files and stores it in cache
 func GetSirenFilter(cache base.Cache, batch *base.AdminBatch) (map[string]bool, error) {

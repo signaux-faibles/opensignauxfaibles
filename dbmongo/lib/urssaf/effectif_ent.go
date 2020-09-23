@@ -63,6 +63,7 @@ func ParserEffectifEnt(cache base.Cache, batch *base.AdminBatch) (chan base.Tupl
 		Code:    "effectifEntParser",
 		Channel: eventChannel,
 	}
+	filter := marshal.GetSirenFilterFromCache(cache)
 	go func() {
 		for _, path := range batch.Files["effectif_ent"] {
 			tracker := gournal.NewTracker(
@@ -114,19 +115,6 @@ func ParserEffectifEnt(cache base.Cache, batch *base.AdminBatch) (chan base.Tupl
 					event.Critical(tracker.Report("fatalError"))
 					break
 				}
-
-				filter, err := marshal.GetSirenFilter(cache, batch)
-				// if filter == nil {
-				// 	tracker.Error(errors.New("Veuillez spécifier un fichier filtre SIREN"))
-				// 	event.Critical(tracker.Report("fatalError"))
-				// 	break
-				// }
-				if err != nil {
-					tracker.Error(err)
-					event.Critical(tracker.Report("fatalError"))
-					break
-				}
-
 				siren := row[sirenIndex]
 				filtered, err := marshal.IsFiltered(siren, filter)
 				tracker.Error(err)
