@@ -1,0 +1,36 @@
+[
+  {
+    "numero_compte": "111982477292496174",
+    "numero_ecart_negatif": "659",
+    "date_traitement": "1999-05-05T00:00:00Z",
+    "part_ouvriere": 1959.07,
+    "part_patronale": 8644.97,
+    "numero_historique": 9,
+    "etat_compte": 5,
+    "code_procedure_collective": "0",
+    "periode": {
+      "start": "2017-02-01T00:00:00Z",
+      "end": "2017-03-01T00:00:00Z"
+    },
+    "code_operation_ecart_negatif": "3",
+    "code_motif_ecart_negatif": "74",
+    "recours_en_cours": false
+  },
+  {
+    "numero_compte": "450359886246036238",
+    "numero_ecart_negatif": "738",
+    "date_traitement": "2012-10-18T00:00:00Z",
+    "part_ouvriere": 0.01,
+    "part_patronale": 0.02,
+    "numero_historique": 4,
+    "etat_compte": 1,
+    "code_procedure_collective": "1",
+    "periode": {
+      "start": "1999-01-01T00:00:00Z",
+      "end": "1999-02-01T00:00:00Z"
+    },
+    "code_operation_ecart_negatif": "43",
+    "code_motif_ecart_negatif": "40",
+    "recours_en_cours": true
+  }
+]

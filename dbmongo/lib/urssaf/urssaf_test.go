@@ -26,6 +26,21 @@ func TestDebit(t *testing.T) {
 	marshal.TestParserTupleOutput(t, ParserDebit, cache, "debit", testData, golden, *update)
 }
 
+func TestDebitCorrompu(t *testing.T) {
+	var golden = filepath.Join("testData", "expectedDebitCorrompu.json")
+	var testData = filepath.Join("testData", "debitCorrompuTestData.csv")
+	cache := engine.NewCache()
+	cache.Set("comptes", marshal.MockComptesMapping(
+		map[string]string{
+			"111982477292496174": "000000000000000",
+			"636043216536562844": "111111111111111",
+			"450359886246036238": "222222222222222",
+		},
+	))
+
+	marshal.TestParserTupleOutput(t, ParserDebit, cache, "debit", testData, golden, *update)
+}
+
 func TestDelai(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedDelai.json")
 	var testData = filepath.Join("testData", "delaiTestData.csv")
