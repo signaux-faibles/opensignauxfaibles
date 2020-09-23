@@ -47,7 +47,7 @@ func TestParserTupleOutput(
 	var events chan base.Event
 	var tuples chan Tuple
 	tuples, events = parser(cache, &batch)
-	var firstCriticalEvent *base.Event = nil
+	var firstCriticalEvent *base.Event
 
 	// intercepter et afficher les évènements pendant l'importation
 	var wg sync.WaitGroup
