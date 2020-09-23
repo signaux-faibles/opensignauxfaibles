@@ -42,9 +42,9 @@ func (cotisation Cotisation) Type() string {
 }
 
 // ParserCotisation transforme les fichiers en données à intégrer
-func ParserCotisation(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan base.Event) {
+func ParserCotisation(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
 	outputChannel := make(chan marshal.Tuple)
-	eventChannel := make(chan base.Event)
+	eventChannel := make(chan marshal.Event)
 
 	field := map[string]int{
 		"NumeroCompte": 2,
@@ -54,7 +54,7 @@ func ParserCotisation(cache marshal.Cache, batch *base.AdminBatch) (chan marshal
 	}
 
 	go func() {
-		event := base.Event{
+		event := marshal.Event{
 			Code:    "cotisationParser",
 			Channel: eventChannel,
 		}

@@ -7,7 +7,7 @@ import (
 )
 
 // Parser fonction de traitement de données en entrée
-type Parser func(Cache, *base.AdminBatch) (chan Tuple, chan base.Event)
+type Parser func(Cache, *base.AdminBatch) (chan Tuple, chan Event)
 
 // Tuple unité de donnée à insérer dans un type
 type Tuple interface {

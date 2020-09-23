@@ -48,10 +48,10 @@ func (bdf BDF) Scope() string {
 }
 
 // Parser produit les datas BDF à partir des fichiers source
-func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan base.Event) {
+func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
 	outputChannel := make(chan marshal.Tuple)
-	eventChannel := make(chan base.Event)
-	event := base.Event{
+	eventChannel := make(chan marshal.Event)
+	event := marshal.Event{
 		Code:    "bdfParser",
 		Channel: eventChannel,
 	}

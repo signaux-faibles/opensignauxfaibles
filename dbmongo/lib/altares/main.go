@@ -49,11 +49,11 @@ func sliceIndex(limit int, predicate func(i int) bool) int {
 }
 
 // Parser  Altares
-func Parser(batch base.AdminBatch, filter map[string]bool) (chan marshal.Tuple, chan base.Event) {
+func Parser(batch base.AdminBatch, filter map[string]bool) (chan marshal.Tuple, chan marshal.Event) {
 	outputChannel := make(chan marshal.Tuple)
-	eventChannel := make(chan base.Event)
+	eventChannel := make(chan marshal.Event)
 
-	event := base.Event{
+	event := marshal.Event{
 		Code:    "altaresParser",
 		Channel: eventChannel,
 	}

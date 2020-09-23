@@ -52,10 +52,10 @@ func (apdemande APDemande) Scope() string {
 }
 
 // Parser produit les lignes
-func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan base.Event) {
+func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
 	outputChannel := make(chan marshal.Tuple)
-	eventChannel := make(chan base.Event)
-	event := base.Event{
+	eventChannel := make(chan marshal.Event)
+	event := marshal.Event{
 		Code:    "parserApdemande",
 		Channel: eventChannel,
 	}
