@@ -240,7 +240,10 @@ func importBatchHandler(c *gin.Context) {
 	if err != nil {
 		c.JSON(404, err.Error())
 	}
-	engine.ImportBatch(batch, parsers)
+	err = engine.ImportBatch(batch, parsers)
+	if err != nil {
+		c.JSON(500, err.Error())
+	}
 }
 
 func checkBatchHandler(c *gin.Context) {
