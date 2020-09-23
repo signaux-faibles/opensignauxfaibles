@@ -16,7 +16,7 @@ type Tuple interface {
 	Type() string
 }
 
-// GetJson sérialise un tuple au format JSON.
-func GetJson(tuple Tuple) ([]byte, error) {
+// GetJSON sérialise un tuple au format JSON.
+func GetJSON(tuple Tuple) ([]byte, error) {
 	return json.MarshalIndent(tuple, "", "  ")
 }
