@@ -6,6 +6,7 @@ import (
 
 	"github.com/globalsign/mgo/bson"
 	"github.com/signaux-faibles/gournal"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 )
 
 // Db connecteur exportable
@@ -27,7 +28,7 @@ func reportAbstract(tracker gournal.Tracker) interface{} {
 	for ind := range tracker.Errors {
 		for _, e := range tracker.Errors[ind] {
 			switch c := e.(type) {
-			case CriticityError:
+			case base.CriticityError:
 				if c.Criticity() == "fatal" {
 					nFatal++
 					if len(fatalErrors) < MaxParsingErrors {
@@ -103,7 +104,7 @@ func ShouldBreak(tracker gournal.Tracker, maxErrors int) bool {
 	for _, errs := range tracker.Errors {
 		for _, e := range errs {
 			switch c := e.(type) {
-			case CriticityError:
+			case base.CriticityError:
 				if c.Criticity() == "fatal" {
 					hasError = true
 				}

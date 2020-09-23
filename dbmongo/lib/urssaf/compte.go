@@ -60,7 +60,7 @@ func ParserCompte(cache base.Cache, batch *base.AdminBatch) (chan base.Tuple, ch
 					compte.Periode = p
 					var err error
 					compte.Siret, err = marshal.GetSiret(c, &p, cache, batch)
-					tracker.Error(engine.NewCriticError(err, "erreur"))
+					tracker.Error(base.NewCriticError(err, "erreur"))
 
 					outputChannel <- compte
 				}

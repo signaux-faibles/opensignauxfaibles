@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
 )
 
@@ -16,12 +16,12 @@ func urssafToDate(urssaf string) (time.Time, error) {
 
 	intUrsaff, err := strconv.Atoi(urssaf)
 	if err != nil {
-		return time.Time{}, engine.NewCriticError(errors.New("Valeur non autorisée pour une conversion en date: "+urssaf), "fatal")
+		return time.Time{}, base.NewCriticError(errors.New("Valeur non autorisée pour une conversion en date: "+urssaf), "fatal")
 	}
 	strDate := strconv.Itoa(intUrsaff + 19000000)
 	date, err := time.Parse("20060102", strDate)
 	if err != nil {
-		return time.Time{}, engine.NewCriticError(errors.New("Valeur non autorisée pour une conversion en date: "+urssaf), "fatal")
+		return time.Time{}, base.NewCriticError(errors.New("Valeur non autorisée pour une conversion en date: "+urssaf), "fatal")
 	}
 
 	return date, nil

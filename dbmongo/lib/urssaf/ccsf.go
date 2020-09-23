@@ -103,7 +103,7 @@ func ParserCCSF(cache base.Cache, batch *base.AdminBatch) (chan base.Tuple, chan
 					)
 					if err != nil {
 						// Compte filtré
-						tracker.Error(engine.NewCriticError(err, "filter"))
+						tracker.Error(base.NewCriticError(err, "filter"))
 						continue
 					}
 					ccsf.NumeroCompte = r[f["NumeroCompte"]]
