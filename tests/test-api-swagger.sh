@@ -5,11 +5,8 @@
 
 set -e # will stop the script if any command fails with a non-zero exit code
 
-# Check that swagger.yaml is valid
-npx @apidevtools/swagger-cli validate dbmongo/docs/swagger/swagger.yaml
-
 # Convert swagger.yaml to swagger.json
-(cd dbmongo/docs/swagger && ./convert-yaml-to-json.sh)
+(cd dbmongo/docs && ./convert-yaml-to-json.sh)
 
 # Check if swagger.json has changes that need to be committed
 PENDING_CHANGES=$(git diff dbmongo/docs/swagger/swagger.json | wc -l)

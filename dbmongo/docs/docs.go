@@ -6,14 +6,13 @@ package docs
 
 import (
 	"bytes"
-	"io/ioutil"
 
 	"github.com/alecthomas/template"
 	"github.com/swaggo/swag"
 )
 
-var jsonDoc, _ = ioutil.ReadFile("docs/swagger/swagger.json")
-var doc = string(jsonDoc)
+// var jsonDoc, _ = ioutil.ReadFile("docs/swagger/swagger.json")
+// var doc = string(jsonDoc)
 
 type swaggerInfo struct {
 	Version     string
