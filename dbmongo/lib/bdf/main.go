@@ -78,6 +78,10 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 			reader.LazyQuotes = true
 			event.Info(path + ": ouverture " + path)
 
+			// Lecture en-tête
+			_, err = reader.Read()
+			tracker.Error(err)
+
 			for {
 				row, err := reader.Read()
 				if err == io.EOF {
@@ -92,12 +96,14 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 				validSiren := sfregexp.RegexpDict["siren"].MatchString(bdf.Siren)
 				if !validSiren {
 					tracker.Error(errors.New("siren invalide : " + bdf.Siren))
-					continue // TODO: exécuter tracker.Next() un fois le TODO ci-dessous traité.
+					tracker.Next()
+					continue
 				}
 
 				filtered, err := marshal.IsFiltered(bdf.Siren, filter)
 				tracker.Error(err)
 				if filtered {
+					tracker.Next()
 					continue
 				}
 
