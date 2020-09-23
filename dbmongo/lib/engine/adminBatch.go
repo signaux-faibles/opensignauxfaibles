@@ -8,6 +8,7 @@ import (
 
 	"github.com/globalsign/mgo/bson"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/spf13/viper"
 )
 
@@ -50,11 +51,13 @@ func NextBatchID(batchID string) (string, error) {
 // ImportBatch lance tous les parsers sur le batch fourni
 func ImportBatch(batch base.AdminBatch, parsers []base.Parser) error {
 	var cache = base.NewCache()
-	// TODO
-	// _, err := marshal.GetSirenFilter(cache, &batch)
-	// if err != nil {
-	// 	return err
-	// }
+	filter, err := marshal.GetSirenFilter(cache, &batch)
+	if err != nil {
+		return err
+	}
+	if filter == nil {
+		return errors.New("Veuillez inclure un filtre")
+	}
 	for _, parser := range parsers {
 		outputChannel, eventChannel := parser(cache, &batch)
 		go RelayEvents(eventChannel)
