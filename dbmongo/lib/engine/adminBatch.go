@@ -57,7 +57,7 @@ func ImportBatch(batch base.AdminBatch, parsers []base.Parser) error {
 	// }
 	for _, parser := range parsers {
 		outputChannel, eventChannel := parser(cache, &batch)
-		go Relaybase.Events(eventChannel)
+		go RelayEvents(eventChannel)
 		for tuple := range outputChannel {
 			hash := fmt.Sprintf("%x", GetMD5(tuple))
 			value := Value{
@@ -104,7 +104,7 @@ func CheckBatch(batch base.AdminBatch, parsers []base.Parser) error {
 	for _, parser := range parsers {
 		outputChannel, eventChannel := parser(cache, &batch)
 		DiscardTuple(outputChannel)
-		Relaybase.Events(eventChannel)
+		RelayEvents(eventChannel)
 	}
 
 	Db.ChanData <- &Value{}
