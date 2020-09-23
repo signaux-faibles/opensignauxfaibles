@@ -60,7 +60,7 @@ func Test_CheckBatchPaths(t *testing.T) {
 		{"./test_data/missing_file", true},
 	}
 	for _, tc := range testCases {
-		mockbatch := MockBatch("debit", []string{tc.Filepath})
+		mockbatch := base.MockBatch("debit", []string{tc.Filepath})
 		err := CheckBatchPaths(&mockbatch)
 		if (err == nil && tc.ErrorExpected) ||
 			(err != nil && !tc.ErrorExpected) {
