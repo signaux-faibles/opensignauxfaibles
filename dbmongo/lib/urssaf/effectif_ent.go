@@ -121,6 +121,11 @@ func ParserEffectifEnt(cache base.Cache, batch *base.AdminBatch) (chan base.Tupl
 				// 	event.Critical(tracker.Report("fatalError"))
 				// 	break
 				// }
+				if err != nil {
+					tracker.Error(err)
+					event.Critical(tracker.Report("fatalError"))
+					break
+				}
 
 				siren := row[sirenIndex]
 				filtered, err := marshal.IsFiltered(siren, filter)
