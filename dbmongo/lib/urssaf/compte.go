@@ -32,6 +32,7 @@ func (compte Compte) Type() string {
 	return "compte"
 }
 
+// ParserCompte retourne les comptes lus depuis un fichier admin_urssaf.
 func ParserCompte(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan base.Event) {
 	outputChannel := make(chan marshal.Tuple)
 	eventChannel := make(chan base.Event)

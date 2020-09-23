@@ -51,6 +51,7 @@ func (debit Debit) Type() string {
 	return "debit"
 }
 
+// ParserDebit retourne les entrées lues depuis un fichier "débit" de l'URSSAF.
 func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan base.Event) {
 	outputChannel := make(chan marshal.Tuple)
 	eventChannel := make(chan base.Event)

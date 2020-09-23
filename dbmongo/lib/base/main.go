@@ -30,6 +30,7 @@ func (batch *AdminBatch) New(batchKey string) error {
 	return nil
 }
 
+// IsBatchID retourne `true` si `batchID` est un identifiant de Batch.
 func IsBatchID(batchID string) bool {
 	if len(batchID) < 4 {
 		return false
