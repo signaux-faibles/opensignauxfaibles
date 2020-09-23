@@ -75,6 +75,7 @@ func ParserDebit(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tupl
 
 			reader := csv.NewReader(bufio.NewReader(file))
 			reader.Comma = ';'
+			reader.FieldsPerRecord = -1 // ignore rows with wrong number of fields
 			// ligne de titre
 			fields, err := reader.Read()
 			if err != nil {
@@ -82,6 +83,7 @@ func ParserDebit(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tupl
 				event.Critical(tracker.Report("fatalError"))
 			}
 
+			nbFields := len(fields)
 			dateTraitementIndex := misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Dt_trt_ecn" })
 			partOuvriereIndex := misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Mt_PO" })
 			partPatronaleIndex := misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Mt_PP" })
@@ -108,6 +110,11 @@ func ParserDebit(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tupl
 					tracker.Error(err)
 					event.Critical(tracker.Report("fatalError"))
 					break
+				}
+
+				if len(row) != nbFields {
+					//tracker.Error(errors.New("ligne debit corrompue"))
+					continue
 				}
 
 				period, err := urssafToPeriod(row[periodeIndex])
