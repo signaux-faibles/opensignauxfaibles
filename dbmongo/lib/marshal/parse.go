@@ -4,8 +4,6 @@ import (
 	"errors"
 	"strconv"
 	"time"
-
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 )
 
 // UrssafToDate convertit le format de date urssaf en type Date.
@@ -15,12 +13,12 @@ func urssafToDate(urssaf string) (time.Time, error) {
 
 	intUrsaff, err := strconv.Atoi(urssaf)
 	if err != nil {
-		return time.Time{}, base.NewCriticError(errors.New("Valeur non autorisée pour une conversion en date: "+urssaf), "fatal")
+		return time.Time{}, errors.New("Valeur non autorisée pour une conversion en date: " + urssaf)
 	}
 	strDate := strconv.Itoa(intUrsaff + 19000000)
 	date, err := time.Parse("20060102", strDate)
 	if err != nil {
-		return time.Time{}, base.NewCriticError(errors.New("Valeur non autorisée pour une conversion en date: "+urssaf), "fatal")
+		return time.Time{}, errors.New("Valeur non autorisée pour une conversion en date: " + urssaf)
 	}
 
 	return date, nil
