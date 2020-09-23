@@ -3,6 +3,7 @@ package bdf
 import (
 	"bufio"
 	"encoding/csv"
+	"errors"
 	"io"
 	"os"
 	"strings"
@@ -12,6 +13,7 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sfregexp"
 	"github.com/spf13/viper"
 
 	"github.com/signaux-faibles/gournal"
@@ -56,6 +58,8 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 		Channel: eventChannel,
 	}
 
+	filter := marshal.GetSirenFilterFromCache(cache)
+
 	go func() {
 		for _, path := range batch.Files["bdf"] {
 			tracker := gournal.NewTracker(
@@ -84,6 +88,13 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 				}
 				bdf := BDF{}
 				bdf.Siren = strings.Replace(row[0], " ", "", -1)
+
+				validSiren := sfregexp.RegexpDict["siren"].MatchString(bdf.Siren)
+				if !validSiren {
+					tracker.Error(errors.New("siren invalide : " + bdf.Siren))
+					continue // TODO: exécuter tracker.Next() un fois le TODO ci-dessous traité.
+				}
+
 				bdf.Annee, err = misc.ParsePInt(row[1])
 				tracker.Error(err)
 				var arrete = row[2]
