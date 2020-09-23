@@ -124,8 +124,16 @@ func ParserEffectif(cache base.Cache, batch *base.AdminBatch) (chan base.Tuple, 
 				}
 
 				notDigit := regexp.MustCompile("[^0-9]")
+
+				filter, err := marshal.GetSirenFilter(cache, batch)
+				// if filter == nil {
+				// 	tracker.Error(errors.New("Veuillez spécifier un fichier filtre SIREN"))
+				// 	event.Critical(tracker.Report("fatalError"))
+				// 	break
+				// }
+
 				siret := row[siretIndex]
-				filtered, err := marshal.IsFiltered(siret, cache, batch)
+				filtered, err := marshal.IsFiltered(siret, filter)
 				tracker.Error(err)
 				if len(siret) == 14 && !filtered {
 					for i, j := range effectifIndexes {
@@ -145,7 +153,7 @@ func ParserEffectif(cache base.Cache, batch *base.AdminBatch) (chan base.Tuple, 
 					}
 				}
 				if engine.ShouldBreak(tracker, engine.MaxParsingErrors) {
-					tracker.Error(engine.NewCriticError(errors.New("Parser interrompu: trop d'erreurs"), "fatal"))
+					tracker.Error(base.NewCriticError(errors.New("Parser interrompu: trop d'erreurs"), "fatal"))
 					event.Critical(tracker.Report("fatalError"))
 					break
 				}
