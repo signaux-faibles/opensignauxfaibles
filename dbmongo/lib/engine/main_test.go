@@ -41,36 +41,3 @@ func TestShouldBreak(t *testing.T) {
 		}
 	}
 }
-
-// func TestAbstractReport(t *testing.T) {
-// 	tracker := gournal.NewTracker(
-// 		map[string]string{},
-// 		engine.TrackerReports,
-// 	)
-// 	filterError := NewFilterError(errors.New("filterError"))
-// 	fatalError := NewCriticError(errors.New("fatalError"), "fatal")
-// 	errorError := NewCriticError(errors.New("errorError"), "error")
-// 	noError := []error{}
-
-// 	test_cases := []struct {
-// 		errors map[int][]error
-// 	}{
-// 		{map[int][]error{1: []error{filterError}}},
-// 		{map[int][]error{1: []error{fatalError}}},
-// 		{map[int][]error{1: []error{errorError}}},
-// 		{map[int][]error{1: noError, 2: []error{filterError}}},
-// 		{map[int][]error{1: noError, 2: []error{fatalError}}},
-// 		{map[int][]error{1: noError, 2: []error{errorError}}},
-// 		{map[int][]error{1: []error{filterError, fatalError}}},
-// 		{map[int][]error{1: []error{errorError, filterError}}},
-// 	}
-
-// 	for _, tc := range test_cases {
-// 		tracker.Errors = tc.errors
-// 		actual := tracker.Report("abstract")
-// 		fmt.Println("fatal/error/filter")
-// 		fmt.Println(actual.(bson.M)["headFatal"])
-// 		fmt.Println(actual.(bson.M)["headErrors"])
-// 		fmt.Println(actual.(bson.M)["headFilters"])
-// 	}
-// }
