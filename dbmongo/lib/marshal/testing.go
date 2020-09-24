@@ -82,10 +82,10 @@ func TestParserTupleOutput(
 		t.Fatal("Could not open golden file" + err.Error())
 	}
 
+	assert.Equal(t, string(expected), string(actual))
+
 	if firstCriticalEvent != nil {
 		assert.FailNow(t, "Caught Critical event: ", firstCriticalEvent.Comment)
 	}
-
-	assert.Equal(t, string(expected), string(actual))
 
 }
