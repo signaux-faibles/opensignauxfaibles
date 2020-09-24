@@ -91,26 +91,23 @@ func TestParserTupleOutput(
 
 }
 
-// TestParserOutput compares output Tuples and output Events with JSON stored
-// in a golden file. If update = true, the the golden file is updated.
-func TestParserOutput(
-	t *testing.T,
+type TuplesAndEvents = struct {
+	Tuples []Tuple `json:"tuples"`
+	Events []Event `json:"events"`
+}
+
+// RunParser returns Tuples and Events resulting from the execution of a
+// Parser on a given input file.
+func RunParser(
 	parser Parser,
 	cache Cache,
 	parserType string,
 	inputFile string,
-	goldenFile string,
-	update bool,
-) {
+) (output TuplesAndEvents) {
 	batch := base.MockBatch(parserType, []string{inputFile})
 	var events chan Event
 	var tuples chan Tuple
 	tuples, events = parser(cache, &batch)
-
-	var output struct {
-		Tuples []Tuple `json:"tuples"`
-		Events []Event `json:"events"`
-	}
 
 	// intercepter et afficher les évènements pendant l'importation
 	var wg sync.WaitGroup
@@ -128,11 +125,27 @@ func TestParserOutput(
 	}
 
 	wg.Wait()
-	actual, err := json.MarshalIndent(output, "", "  ")
+	return output
+}
 
+// TestParserOutput compares output Tuples and output Events with JSON stored
+// in a golden file. If update = true, the the golden file is updated.
+func TestParserOutput(
+	t *testing.T,
+	parser Parser,
+	cache Cache,
+	parserType string,
+	inputFile string,
+	goldenFile string,
+	update bool,
+) {
+	var output = RunParser(parser, cache, parserType, inputFile)
+
+	actual, err := json.MarshalIndent(output, "", "  ")
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	if update {
 		ioutil.WriteFile(goldenFile, []byte(actual), 0644)
 	}
