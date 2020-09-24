@@ -1,6 +1,7 @@
 package marshal
 
 import (
+	"encoding/json"
 	"io/ioutil"
 	"log"
 	"strings"
@@ -88,4 +89,57 @@ func TestParserTupleOutput(
 
 	assert.Equal(t, string(expected), string(actual))
 
+}
+
+// TestParserOutput compares output Tuples and output Events with JSON stored
+// in a golden file. If update = true, the the golden file is updated.
+func TestParserOutput(
+	t *testing.T,
+	parser Parser,
+	cache Cache,
+	parserType string,
+	inputFile string,
+	goldenFile string,
+	update bool,
+) {
+	batch := base.MockBatch(parserType, []string{inputFile})
+	var events chan Event
+	var tuples chan Tuple
+	tuples, events = parser(cache, &batch)
+
+	var output struct {
+		Tuples []Tuple `json:"tuples"`
+		Events []Event `json:"events"`
+	}
+
+	// intercepter et afficher les évènements pendant l'importation
+	var wg sync.WaitGroup
+	wg.Add(1)
+	defer wg.Wait() // pour éviter "panic: Log in goroutine after TestEffectif has completed"
+	go func() {
+		defer wg.Done()
+		for event := range events {
+			output.Events = append(output.Events, event)
+		}
+	}()
+
+	for tuple := range tuples {
+		output.Tuples = append(output.Tuples, tuple)
+	}
+
+	actual, err := json.MarshalIndent(output, "", "  ")
+
+	if err != nil {
+		log.Fatal(err)
+	}
+	if update {
+		ioutil.WriteFile(goldenFile, []byte(actual), 0644)
+	}
+
+	expected, err := ioutil.ReadFile(goldenFile)
+	if err != nil {
+		t.Fatal("Could not open golden file" + err.Error())
+	}
+
+	assert.Equal(t, string(expected), string(actual))
 }
