@@ -3,6 +3,7 @@ package bdf
 import (
 	"bufio"
 	"encoding/csv"
+	"errors"
 	"io"
 	"os"
 	"strings"
@@ -12,6 +13,7 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sfregexp"
 	"github.com/spf13/viper"
 
 	"github.com/signaux-faibles/gournal"
@@ -56,6 +58,8 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 		Channel: eventChannel,
 	}
 
+	filter := marshal.GetSirenFilterFromCache(cache)
+
 	go func() {
 		for _, path := range batch.Files["bdf"] {
 			tracker := gournal.NewTracker(
@@ -74,6 +78,10 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 			reader.LazyQuotes = true
 			event.Info(path + ": ouverture " + path)
 
+			// Lecture en-tête
+			_, err = reader.Read()
+			tracker.Error(err)
+
 			for {
 				row, err := reader.Read()
 				if err == io.EOF {
@@ -84,6 +92,22 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 				}
 				bdf := BDF{}
 				bdf.Siren = strings.Replace(row[0], " ", "", -1)
+
+				validSiren := sfregexp.RegexpDict["siren"].MatchString(bdf.Siren)
+				if !validSiren {
+					tracker.Error(errors.New("siren invalide : " + bdf.Siren))
+					tracker.Next()
+					continue
+				}
+
+				filtered, err := marshal.IsFiltered(bdf.Siren, filter)
+				tracker.Error(err)
+				if filtered {
+					tracker.Error(base.NewFilterError(err))
+					tracker.Next()
+					continue
+				}
+
 				bdf.Annee, err = misc.ParsePInt(row[1])
 				tracker.Error(err)
 				var arrete = row[2]
