@@ -58,7 +58,7 @@ type FilterError struct {
 }
 
 // NewFilterError returns a filter error
-func NewFilterError(err error) *FilterError {
+func NewFilterError(err error) error {
 	if err == nil {
 		return nil
 	}
