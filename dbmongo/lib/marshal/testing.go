@@ -115,7 +115,6 @@ func TestParserOutput(
 	// intercepter et afficher les évènements pendant l'importation
 	var wg sync.WaitGroup
 	wg.Add(1)
-	defer wg.Wait() // pour éviter "panic: Log in goroutine after TestEffectif has completed"
 	go func() {
 		defer wg.Done()
 		for event := range events {
@@ -128,6 +127,7 @@ func TestParserOutput(
 		output.Tuples = append(output.Tuples, tuple)
 	}
 
+	wg.Wait()
 	actual, err := json.MarshalIndent(output, "", "  ")
 
 	if err != nil {
