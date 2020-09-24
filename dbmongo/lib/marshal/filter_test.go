@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 )
 
 func TestIsFiltered(t *testing.T) {
@@ -18,18 +18,16 @@ func TestIsFiltered(t *testing.T) {
 	}{
 		{"012345678", map[string]bool{"012345678": true}, false, false},
 		{"01234567891011", map[string]bool{"012345678": true}, false, false},
-		{"0123", map[string]bool{"012345678": true}, false, true},
-		{"0123456789", map[string]bool{"012345678": true}, false, true},
+		{"0123", map[string]bool{"012345678": true}, true, true},
+		{"0123456789", map[string]bool{"012345678": true}, true, true},
 		{"876543210", map[string]bool{"012345678": true}, false, true},
 		{"87654321091011", map[string]bool{"012345678": true}, false, true},
 		{"012345678", nil, false, false},
-		{"0123", nil, false, true},
+		{"0123", nil, true, true},
 	}
 
-	var batch = engine.AdminBatch{}
 	for ind, tc := range testCases {
-		var cache = engine.Cache{"filter": tc.filter}
-		actual, err := IsFiltered(tc.siret, cache, &batch)
+		actual, err := IsFiltered(tc.siret, tc.filter)
 		if err != nil && !tc.expectError {
 			t.Fatalf("Unexpected error during cache request in test %d: %v", ind, err)
 		}
@@ -49,23 +47,23 @@ func TestGetSirenFilter(t *testing.T) {
 		experimentName string
 		cacheKey       string
 		cacheValue     interface{}
-		batch          engine.AdminBatch
+		batch          base.AdminBatch
 		expectedFilter map[string]bool
 	}{
 		{"existing cache",
-			"filter", map[string]bool{"012345678": true}, engine.AdminBatch{}, map[string]bool{"012345678": true}},
+			"filter", map[string]bool{"012345678": true}, base.AdminBatch{}, map[string]bool{"012345678": true}},
 		{"No cache, no filter in batch 1",
-			"", "", engine.AdminBatch{}, nil},
+			"", "", base.AdminBatch{}, nil},
 		{"No cache, no filter in batch 2",
-			"", "", engine.MockBatch("filter", nil), nil},
+			"", "", base.MockBatch("filter", nil), nil},
 		{"No cache, (mock)read from file",
-			"", "", engine.MockBatch("filter", []string{"at least one"}), map[string]bool{"012345678": true}},
+			"", "", base.MockBatch("filter", []string{"at least one"}), map[string]bool{"012345678": true}},
 		{"Cache has precedence over file",
-			"filter", map[string]bool{"876543210": true}, engine.MockBatch("filter", []string{"at least one"}), map[string]bool{"876543210": true}},
+			"filter", map[string]bool{"876543210": true}, base.MockBatch("filter", []string{"at least one"}), map[string]bool{"876543210": true}},
 	}
 
 	for ind, tc := range testCases {
-		cache := engine.NewCache()
+		cache := NewCache()
 		cache.Set(tc.cacheKey, tc.cacheValue)
 		actual, err := getSirenFilter(cache, &tc.batch, mockReadFilter)
 		if err != nil {

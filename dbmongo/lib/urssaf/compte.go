@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/signaux-faibles/gournal"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
@@ -31,15 +32,16 @@ func (compte Compte) Type() string {
 	return "compte"
 }
 
-func ParserCompte(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
-	outputChannel := make(chan engine.Tuple)
-	eventChannel := make(chan engine.Event)
+// ParserCompte retourne les comptes lus depuis un fichier admin_urssaf.
+func ParserCompte(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
+	outputChannel := make(chan marshal.Tuple)
+	eventChannel := make(chan marshal.Event)
 	go func() {
 
 		defer close(outputChannel)
 		defer close(eventChannel)
 		if len(batch.Files["admin_urssaf"]) > 0 {
-			event := engine.Event{
+			event := marshal.Event{
 				Code:    "compteParser",
 				Channel: eventChannel,
 			}
@@ -59,7 +61,7 @@ func ParserCompte(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tup
 					compte.Periode = p
 					var err error
 					compte.Siret, err = marshal.GetSiret(c, &p, cache, batch)
-					tracker.Error(engine.NewCriticError(err, "erreur"))
+					tracker.Error(base.NewCriticError(err, "erreur"))
 
 					outputChannel <- compte
 				}

@@ -8,24 +8,19 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sfregexp"
 
 	"github.com/spf13/viper"
 )
 
 // IsFiltered determines if the siret must be filtered or not
-func IsFiltered(id string, cache engine.Cache, batch *engine.AdminBatch) (bool, error) {
+func IsFiltered(id string, filter map[string]bool) (bool, error) {
 
 	validSiret := sfregexp.RegexpDict["siret"].MatchString(id)
 	validSiren := sfregexp.RegexpDict["siren"].MatchString(id)
 	if !validSiret && !validSiren {
-		return true, nil
-	}
-
-	filter, err := getSirenFilter(cache, batch, readFilterFiles)
-	if err != nil {
-		return false, err
+		return true, errors.New("Le siret/siren est invalide") // TODO: retirer la validation de cette fonction
 	}
 
 	// if no filter, then all ids pass
@@ -35,9 +30,27 @@ func IsFiltered(id string, cache engine.Cache, batch *engine.AdminBatch) (bool, 
 	return !filter[id[0:9]], nil
 }
 
+// GetSirenFilterFromCache reads the filter from cache.
+func GetSirenFilterFromCache(cache Cache) map[string]bool {
+	value, err := cache.Get("filter")
+	if err == nil {
+		filter, ok := value.(map[string]bool)
+		if ok {
+			return filter
+		}
+	}
+	return nil
+}
+
+// GetSirenFilter reads the filter from cache if it cans, or else it reads it
+// from input files and stores it in cache
+func GetSirenFilter(cache Cache, batch *base.AdminBatch) (map[string]bool, error) {
+	return getSirenFilter(cache, batch, readFilterFiles)
+}
+
 // getSirenFilter reads the filter from cache if it cans, or else it reads it
 // from input files and stores it in cache
-func getSirenFilter(cache engine.Cache, batch *engine.AdminBatch, fr filterReader) (map[string]bool, error) {
+func getSirenFilter(cache Cache, batch *base.AdminBatch, fr filterReader) (map[string]bool, error) {
 
 	value, err := cache.Get("filter")
 

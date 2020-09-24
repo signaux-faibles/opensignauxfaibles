@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
@@ -50,11 +51,12 @@ func (debit Debit) Type() string {
 	return "debit"
 }
 
-func ParserDebit(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tuple, chan engine.Event) {
-	outputChannel := make(chan engine.Tuple)
-	eventChannel := make(chan engine.Event)
+// ParserDebit retourne les entrées lues depuis un fichier "débit" de l'URSSAF.
+func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
+	outputChannel := make(chan marshal.Tuple)
+	eventChannel := make(chan marshal.Event)
 
-	event := engine.Event{
+	event := marshal.Event{
 		Code:    "debitParser",
 		Channel: eventChannel,
 	}
@@ -117,7 +119,7 @@ func ParserDebit(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tupl
 					continue
 				}
 
-				period, err := urssafToPeriod(row[periodeIndex])
+				period, err := marshal.UrssafToPeriod(row[periodeIndex])
 				date := period.Start
 
 				if siret, err := marshal.GetSiret(row[numeroCompteIndex], &date, cache, batch); err == nil {
@@ -131,7 +133,7 @@ func ParserDebit(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tupl
 						CodeMotifEcartNegatif:     row[codeMotifEcartNegatifIndex],
 					}
 
-					debit.DateTraitement, err = urssafToDate(row[dateTraitementIndex])
+					debit.DateTraitement, err = marshal.UrssafToDate(row[dateTraitementIndex])
 					tracker.Error(err)
 					debit.PartOuvriere, err = strconv.ParseFloat(row[partOuvriereIndex], 64)
 					tracker.Error(err)
@@ -143,7 +145,7 @@ func ParserDebit(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tupl
 					tracker.Error(err)
 					debit.EtatCompte, err = strconv.Atoi(row[etatCompteIndex])
 					tracker.Error(err)
-					debit.Periode, err = urssafToPeriod(row[periodeIndex])
+					debit.Periode, err = marshal.UrssafToPeriod(row[periodeIndex])
 					tracker.Error(err)
 					debit.Recours, err = strconv.ParseBool(row[recoursIndex])
 					tracker.Error(err)
@@ -155,7 +157,7 @@ func ParserDebit(cache engine.Cache, batch *engine.AdminBatch) (chan engine.Tupl
 						outputChannel <- debit
 					}
 				} else {
-					tracker.Error(engine.NewCriticError(err, "filter"))
+					tracker.Error(base.NewCriticError(err, "filter"))
 					continue
 				}
 

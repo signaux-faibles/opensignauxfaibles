@@ -2,6 +2,9 @@ package engine
 
 import (
 	"testing"
+
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 )
 
 func Test_NextBatchID(t *testing.T) {
@@ -26,23 +29,23 @@ func Test_NextBatchID(t *testing.T) {
 	}
 }
 
-func Test_isBatchID(t *testing.T) {
-	if !isBatchID("1801") {
+func Test_IsBatchID(t *testing.T) {
+	if !base.IsBatchID("1801") {
 		t.Error("1801 devrait être un ID de batch")
 	}
 
-	if isBatchID("") {
+	if base.IsBatchID("") {
 		t.Error("'' ne devrait pas être considéré comme un ID de batch")
 	}
 
-	if isBatchID("190193039") {
+	if base.IsBatchID("190193039") {
 		t.Error("'190193039' ne devrait pas être considéré comme un ID de batch")
 	}
-	if !isBatchID("1901_93039") {
+	if !base.IsBatchID("1901_93039") {
 		t.Error("'190193039'  devrait être considéré comme un ID de batch")
 	}
 
-	if isBatchID("abcd") {
+	if base.IsBatchID("abcd") {
 		t.Error("'abcd' ne devrait pas être considéré comme un ID de batch")
 	} else {
 		t.Log("'abcd' est bien rejeté: ")
@@ -58,12 +61,38 @@ func Test_CheckBatchPaths(t *testing.T) {
 		{"./test_data/missing_file", true},
 	}
 	for _, tc := range testCases {
-		mockbatch := MockBatch("debit", []string{tc.Filepath})
+		mockbatch := base.MockBatch("debit", []string{tc.Filepath})
 		err := CheckBatchPaths(&mockbatch)
 		if (err == nil && tc.ErrorExpected) ||
 			(err != nil && !tc.ErrorExpected) {
 			// t.Log(err.Error()) // delete_me
 			t.Error("Validity of path " + tc.Filepath + " is wrongly checked")
 		}
+	}
+}
+
+func Test_ImportBatch(t *testing.T) {
+	Db.ChanData = make(chan *Value)
+	go func() {
+		for range Db.ChanData {
+		}
+	}()
+	batch := base.AdminBatch{}
+	err := ImportBatch(batch, []marshal.Parser{}, false)
+	if err == nil {
+		t.Error("ImportBatch devrait nous empêcher d'importer sans filtre")
+	}
+}
+
+func Test_ImportBatchWithUnreadableFilter(t *testing.T) {
+	Db.ChanData = make(chan *Value)
+	go func() {
+		for range Db.ChanData {
+		}
+	}()
+	batch := base.MockBatch("filter", []string{"this_file_does_not_exist"})
+	err := ImportBatch(batch, []marshal.Parser{}, false)
+	if err == nil {
+		t.Error("ImportBatch devrait échouer en tentant d'ouvrir un fichier filtre illisible")
 	}
 }
