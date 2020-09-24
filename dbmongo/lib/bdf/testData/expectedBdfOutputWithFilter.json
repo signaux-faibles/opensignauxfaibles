@@ -40,13 +40,15 @@
       "event": {
         "batchKey": "",
         "error": 0,
-        "filtered": 0,
+        "filtered": 1,
         "headErrors": [],
         "headFatal": [],
-        "headFilters": [],
-        "report": "testData/bdfTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
+        "headFilters": [
+          "Cycle 1: ligne filtrée"
+        ],
+        "report": "testData/bdfTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 1 lignes filtrées, 2 lignes valides",
         "total": 3,
-        "valid": 3
+        "valid": 2
       },
       "priority": "info",
       "code": "bdfParser",

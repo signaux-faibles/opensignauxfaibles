@@ -22,6 +22,4 @@ func TestBdfOutputWithFilter(t *testing.T) {
 	cache.Set("filter", map[string]bool{"000111222": true, "000111224": true})
 	var golden = filepath.Join("testData", "expectedBdfOutputWithFilter.json")
 	marshal.TestParserOutput(t, Parser, cache, "bdf", testData, golden, *update)
-	t.Log("on devrait avoir 1 ligne filtrée dans le rapport de events")
-	t.FailNow()
 }

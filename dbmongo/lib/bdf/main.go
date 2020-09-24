@@ -103,7 +103,7 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 				filtered, err := marshal.IsFiltered(bdf.Siren, filter)
 				tracker.Error(err)
 				if filtered {
-					tracker.Error(base.NewFilterError(err))
+					tracker.Error(base.NewFilterNotice())
 					tracker.Next()
 					continue
 				}

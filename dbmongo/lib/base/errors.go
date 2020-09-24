@@ -1,6 +1,9 @@
 package base
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
 // CriticityError object
 type CriticityError interface {
@@ -57,17 +60,17 @@ type FilterError struct {
 	*CriticError
 }
 
+// NewFilterNotice returns a filter error
+func NewFilterNotice() error {
+	return NewFilterError(errors.New("ligne filtrée"))
+}
+
 // NewFilterError returns a filter error
 func NewFilterError(err error) error {
 	if err == nil {
 		return nil
 	}
-	c := NewCriticError(err, "filter")
-	return &FilterError{c.(*CriticError)}
-}
-
-func (pe *FilterError) Error() string {
-	return fmt.Sprintf("Error while loading or applying filter: %v", pe.err)
+	return NewCriticError(err, "filter")
 }
 
 // MappingError occurs when something goes wrong while looking for a mapping
