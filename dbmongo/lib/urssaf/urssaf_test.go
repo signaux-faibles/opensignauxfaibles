@@ -28,7 +28,7 @@ func TestDebit(t *testing.T) {
 func TestDebitCorrompu(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedDebitCorrompu.json")
 	var testData = filepath.Join("testData", "debitCorrompuTestData.csv")
-	cache := engine.NewCache()
+	cache := marshal.NewCache()
 	cache.Set("comptes", marshal.MockComptesMapping(
 		map[string]string{
 			"111982477292496174": "000000000000000",
