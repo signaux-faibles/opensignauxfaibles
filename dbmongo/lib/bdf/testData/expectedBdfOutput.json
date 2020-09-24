@@ -1,0 +1,69 @@
+{
+  "tuples": [
+    {
+      "siren": "000111222",
+      "annee_bdf": 2013,
+      "arrete_bilan_bdf": "2012-12-31T00:00:00Z",
+      "raison_sociale": "SOCIETE",
+      "secteur": "01 Industrie et Transports (Hors TRM)",
+      "poids_frng": -37.5,
+      "taux_marge": -63.1,
+      "delai_fournisseur": 88.5,
+      "dette_fiscale": 561,
+      "financier_court_terme": 5.2,
+      "frais_financier": -9.4
+    },
+    {
+      "siren": "000111223",
+      "annee_bdf": 2014,
+      "arrete_bilan_bdf": "2013-12-31T00:00:00Z",
+      "raison_sociale": "SOCIETE",
+      "secteur": "01 Industrie et Transports (Hors TRM)",
+      "poids_frng": -77.1,
+      "taux_marge": -13.9,
+      "delai_fournisseur": 203.8,
+      "dette_fiscale": 204,
+      "financier_court_terme": 9.2,
+      "frais_financier": 7.3
+    },
+    {
+      "siren": "000111224",
+      "annee_bdf": 2015,
+      "arrete_bilan_bdf": "2014-12-31T00:00:00Z",
+      "raison_sociale": "SOCIETE",
+      "secteur": "01 Industrie et Transports (Hors TRM)",
+      "poids_frng": 64.5,
+      "taux_marge": 103.5,
+      "delai_fournisseur": 22.9,
+      "dette_fiscale": 235,
+      "financier_court_terme": 7.3,
+      "frais_financier": 20.3
+    }
+  ],
+  "events": [
+    {
+      "date": "0001-01-01T00:00:00Z",
+      "event": "testData/bdfTestData.csv: ouverture testData/bdfTestData.csv",
+      "priority": "info",
+      "code": "bdfParser",
+      "report_type": ""
+    },
+    {
+      "date": "0001-01-01T00:00:00Z",
+      "event": {
+        "batchKey": "",
+        "error": 0,
+        "filtered": 0,
+        "headErrors": [],
+        "headFatal": [],
+        "headFilters": [],
+        "report": "testData/bdfTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
+        "total": 3,
+        "valid": 3
+      },
+      "priority": "info",
+      "code": "bdfParser",
+      "report_type": ""
+    }
+  ]
+}

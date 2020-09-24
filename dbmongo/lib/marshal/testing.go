@@ -119,6 +119,7 @@ func TestParserOutput(
 	go func() {
 		defer wg.Done()
 		for event := range events {
+			event.Date = time.Time{}
 			output.Events = append(output.Events, event)
 		}
 	}()
