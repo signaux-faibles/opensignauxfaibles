@@ -14,7 +14,7 @@ func TestShouldBreak(t *testing.T) {
 		map[string]string{},
 		TrackerReports,
 	)
-	filterError := base.NewCriticError(errors.New("filterError"), "filter")
+	filterError := base.NewFilterError(errors.New("filterError"))
 	fatalError := base.NewCriticError(errors.New("fatalError"), "fatal")
 	errorError := base.NewCriticError(errors.New("errorError"), "error")
 	noError := []error{}
@@ -47,7 +47,7 @@ func TestShouldBreak(t *testing.T) {
 // 		map[string]string{},
 // 		engine.TrackerReports,
 // 	)
-// 	filterError := NewCriticError(errors.New("filterError"), "filter")
+// 	filterError := NewFilterError(errors.New("filterError"))
 // 	fatalError := NewCriticError(errors.New("fatalError"), "fatal")
 // 	errorError := NewCriticError(errors.New("errorError"), "error")
 // 	noError := []error{}
