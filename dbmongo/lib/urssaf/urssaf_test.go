@@ -37,7 +37,7 @@ func TestDebitCorrompu(t *testing.T) {
 		},
 	))
 
-	marshal.TestParserTupleOutput(t, ParserDebit, cache, "debit", testData, golden, *update)
+	marshal.TestParserOutput(t, ParserDebit, cache, "debit", testData, golden, *update)
 }
 
 func TestDelai(t *testing.T) {
