@@ -53,11 +53,9 @@ CONTENTS
 echo ""
 echo "💎 Parsing data thru dbmongo API..."
 tests/helpers/dbmongo-server.sh start
-echo "- POST /api/data/check 👉 $(http --print=b --ignore-stdin :5000/api/data/check batch=1910 noFilter:=true parsers:='["debit"]')"
+echo "- POST /api/data/check 👉 $(http --print=b --ignore-stdin :5000/api/data/check batch=1910 parsers:='["debit"]')"
 
 (tests/helpers/mongodb-container.sh run \
-  | perl -p -e 's/"[0-9a-z]{32}"/"______________Hash______________"/' \
-  | perl -p -e 's/"[0-9a-z]{24}"/"________ObjectId________"/' \
   > "${OUTPUT_FILE}" \
 ) << CONTENT
 print("// Documents from db.Journal:");
