@@ -53,7 +53,8 @@ CONTENTS
 echo ""
 echo "💎 Parsing data thru dbmongo API..."
 tests/helpers/dbmongo-server.sh start
-echo "- POST /api/data/check 👉 $(http --print=b --ignore-stdin :5000/api/data/check batch=1910 parsers:='["debit"]')"
+API_RESULT=$(http --print=b --ignore-stdin :5000/api/data/check batch=1910 parsers:='["debit"]')
+echo "- POST /api/data/check 👉 ${API_RESULT}"
 
 (tests/helpers/mongodb-container.sh run \
   > "${OUTPUT_FILE}" \
@@ -71,8 +72,8 @@ printjson(db.Journal.find({ "event.report": { "\$exists": true } }).toArray().ma
   code: doc.code
 })));
 
-print("// Standard output from call to /api/data/check:");
-print("// TODO");
+print("// Response body from /api/data/check:");
+print("${API_RESULT}");
 CONTENT
 
 # Display JS errors logged by MongoDB, if any

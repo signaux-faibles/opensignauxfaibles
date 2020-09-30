@@ -11,5 +11,5 @@
 		"code" : "debitParser"
 	}
 ]
-// Standard output from call to /api/data/check:
-// TODO
+// Response body from /api/data/check:
+true
