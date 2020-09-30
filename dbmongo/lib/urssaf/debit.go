@@ -158,7 +158,7 @@ func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 						outputChannel <- debit
 					}
 				} else {
-					tracker.Error(base.NewCriticError(err, "filter"))
+					tracker.Error(base.NewFilterError(err))
 					continue
 				}
 

@@ -108,7 +108,7 @@ func ParserCotisation(cache marshal.Cache, batch *base.AdminBatch) (chan marshal
 							outputChannel <- cotisation
 						}
 					} else {
-						tracker.Error(base.NewCriticError(err, "filter"))
+						tracker.Error(base.NewFilterError(err))
 						continue
 					}
 				}
