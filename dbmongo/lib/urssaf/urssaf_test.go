@@ -10,7 +10,7 @@ import (
 
 var update = flag.Bool("update", false, "Update the expected test values in golden file")
 
-func MakeCacheWithComptesMapping() marshal.Cache {
+func makeCacheWithComptesMapping() marshal.Cache {
 	cache := marshal.NewCache()
 	cache.Set("comptes", marshal.MockComptesMapping(
 		map[string]string{
@@ -22,7 +22,7 @@ func MakeCacheWithComptesMapping() marshal.Cache {
 	return cache
 }
 
-var cache = MakeCacheWithComptesMapping()
+var cache = makeCacheWithComptesMapping()
 
 func TestDebit(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedDebit.json")
