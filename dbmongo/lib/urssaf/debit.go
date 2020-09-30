@@ -116,7 +116,7 @@ func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 				}
 
 				if len(row) != nbFields {
-					tracker.Error(errors.New("ligne debit corrompue"))
+					tracker.Error(base.NewCriticError(errors.New("ligne debit corrompue"), "error"))
 					continue
 				}
 
