@@ -3,9 +3,11 @@
 	{
 		"event" : {
 			"headFilters" : [ ],
-			"headErrors" : [ ],
+			"headErrors" : [
+				"Cycle 1: Error while parsing /../lib/urssaf/testData/debitCorrompuTestData.csv: corrupted line"
+			],
 			"headFatal" : [ ],
-			"report" : "/../lib/urssaf/testData/debitCorrompuTestData.csv: intégration terminée, 2 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 2 lignes valides",
+			"report" : "/../lib/urssaf/testData/debitCorrompuTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 1 rejets, 0 lignes filtrées, 2 lignes valides",
 			"batchKey" : "1910"
 		},
 		"code" : "debitParser"
