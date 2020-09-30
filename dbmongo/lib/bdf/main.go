@@ -78,109 +78,7 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 			reader.LazyQuotes = true
 			event.Info(path + ": ouverture " + path)
 
-			// Lecture en-tête
-			_, err = reader.Read()
-			tracker.Error(err)
-
-			for {
-				row, err := reader.Read()
-				if err == io.EOF {
-					break
-				} else if err != nil {
-					tracker.Error(err)
-					break
-				}
-				bdf := BDF{}
-				bdf.Siren = strings.Replace(row[0], " ", "", -1)
-
-				validSiren := sfregexp.RegexpDict["siren"].MatchString(bdf.Siren)
-				if !validSiren {
-					tracker.Error(errors.New("siren invalide : " + bdf.Siren))
-					tracker.Next()
-					continue
-				}
-
-				filtered, err := marshal.IsFiltered(bdf.Siren, filter)
-				tracker.Error(err)
-				if filtered {
-					tracker.Error(base.NewFilterNotice())
-					tracker.Next()
-					continue
-				}
-
-				bdf.Annee, err = misc.ParsePInt(row[1])
-				tracker.Error(err)
-				var arrete = row[2]
-				arrete = strings.Replace(arrete, "janv", "-01-", -1)
-				arrete = strings.Replace(arrete, "JAN", "-01-", -1)
-				arrete = strings.Replace(arrete, "févr", "-02-", -1)
-				arrete = strings.Replace(arrete, "FEB", "-02-", -1)
-				arrete = strings.Replace(arrete, "mars", "-03-", -1)
-				arrete = strings.Replace(arrete, "MAR", "-03-", -1)
-				arrete = strings.Replace(arrete, "avr", "-04-", -1)
-				arrete = strings.Replace(arrete, "APR", "-04-", -1)
-				arrete = strings.Replace(arrete, "mai", "-05-", -1)
-				arrete = strings.Replace(arrete, "MAY", "-05-", -1)
-				arrete = strings.Replace(arrete, "juin", "-06-", -1)
-				arrete = strings.Replace(arrete, "JUN", "-06-", -1)
-				arrete = strings.Replace(arrete, "juil", "-07-", -1)
-				arrete = strings.Replace(arrete, "JUL", "-07-", -1)
-				arrete = strings.Replace(arrete, "août", "-08-", -1)
-				arrete = strings.Replace(arrete, "AUG", "-08-", -1)
-				arrete = strings.Replace(arrete, "sept", "-09-", -1)
-				arrete = strings.Replace(arrete, "SEP", "-09-", -1)
-				arrete = strings.Replace(arrete, "oct", "-10-", -1)
-				arrete = strings.Replace(arrete, "OCT", "-10-", -1)
-				arrete = strings.Replace(arrete, "nov", "-11-", -1)
-				arrete = strings.Replace(arrete, "NOV", "-11-", -1)
-				arrete = strings.Replace(arrete, "déc", "-12-", -1)
-				arrete = strings.Replace(arrete, "DEC", "-12-", -1)
-				bdf.ArreteBilan, err = time.Parse("02-01-2006", arrete)
-				tracker.Error(err)
-				bdf.RaisonSociale = row[3]
-				bdf.Secteur = row[6]
-				if len(row) > 7 {
-					bdf.PoidsFrng, err = misc.ParsePFloat(row[7])
-					tracker.Error(err)
-				} else {
-					bdf.PoidsFrng = nil
-				}
-				if len(row) > 8 {
-					bdf.TauxMarge, err = misc.ParsePFloat(row[8])
-					tracker.Error(err)
-				} else {
-					bdf.TauxMarge = nil
-				}
-				if len(row) > 9 {
-					bdf.DelaiFournisseur, err = misc.ParsePFloat(row[9])
-					tracker.Error(err)
-				} else {
-					bdf.DelaiFournisseur = nil
-				}
-				if len(row) > 10 {
-					bdf.DetteFiscale, err = misc.ParsePFloat(row[10])
-					tracker.Error(err)
-				} else {
-					bdf.DetteFiscale = nil
-				}
-				if len(row) > 11 {
-					bdf.FinancierCourtTerme, err = misc.ParsePFloat(row[11])
-					tracker.Error(err)
-				} else {
-					bdf.FinancierCourtTerme = nil
-				}
-				if len(row) > 12 {
-					bdf.FraisFinancier, err = misc.ParsePFloat(row[12])
-					tracker.Error(err)
-				} else {
-					bdf.FraisFinancier = nil
-				}
-
-				if !tracker.HasErrorInCurrentCycle() {
-					outputChannel <- bdf
-				}
-				tracker.Next()
-			}
+			parseBdfFile(reader, filter, &tracker, outputChannel)
 			event.Info(tracker.Report("abstract"))
 		}
 
@@ -189,4 +87,131 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 
 	}()
 	return outputChannel, eventChannel
+}
+
+var field = map[string]int{
+	"siren":               0,
+	"année":               1,
+	"arrêtéBilan":         2,
+	"raisonSociale":       3,
+	"secteur":             6,
+	"poidsFrng":           7,
+	"tauxMarge":           8,
+	"delaiFournisseur":    9,
+	"detteFiscale":        10,
+	"financierCourtTerme": 11,
+	"fraisFinancier":      12,
+}
+
+func parseBdfLine(row []string, tracker *gournal.Tracker, filter map[string]bool) BDF {
+	bdf := BDF{}
+	bdf.Siren = strings.Replace(row[field["siren"]], " ", "", -1)
+
+	validSiren := sfregexp.RegexpDict["siren"].MatchString(bdf.Siren)
+	if !validSiren {
+		tracker.Error(errors.New("siren invalide : " + bdf.Siren))
+		return BDF{}
+	}
+
+	filtered, err := marshal.IsFiltered(bdf.Siren, filter)
+	tracker.Error(err)
+	if filtered {
+		tracker.Error(base.NewFilterNotice())
+		return BDF{}
+	}
+
+	bdf.Annee, err = misc.ParsePInt(row[field["année"]])
+	tracker.Error(err)
+	var arrete = row[field["arrêtéBilan"]]
+	arrete = strings.Replace(arrete, "janv", "-01-", -1)
+	arrete = strings.Replace(arrete, "JAN", "-01-", -1)
+	arrete = strings.Replace(arrete, "févr", "-02-", -1)
+	arrete = strings.Replace(arrete, "FEB", "-02-", -1)
+	arrete = strings.Replace(arrete, "mars", "-03-", -1)
+	arrete = strings.Replace(arrete, "MAR", "-03-", -1)
+	arrete = strings.Replace(arrete, "avr", "-04-", -1)
+	arrete = strings.Replace(arrete, "APR", "-04-", -1)
+	arrete = strings.Replace(arrete, "mai", "-05-", -1)
+	arrete = strings.Replace(arrete, "MAY", "-05-", -1)
+	arrete = strings.Replace(arrete, "juin", "-06-", -1)
+	arrete = strings.Replace(arrete, "JUN", "-06-", -1)
+	arrete = strings.Replace(arrete, "juil", "-07-", -1)
+	arrete = strings.Replace(arrete, "JUL", "-07-", -1)
+	arrete = strings.Replace(arrete, "août", "-08-", -1)
+	arrete = strings.Replace(arrete, "AUG", "-08-", -1)
+	arrete = strings.Replace(arrete, "sept", "-09-", -1)
+	arrete = strings.Replace(arrete, "SEP", "-09-", -1)
+	arrete = strings.Replace(arrete, "oct", "-10-", -1)
+	arrete = strings.Replace(arrete, "OCT", "-10-", -1)
+	arrete = strings.Replace(arrete, "nov", "-11-", -1)
+	arrete = strings.Replace(arrete, "NOV", "-11-", -1)
+	arrete = strings.Replace(arrete, "déc", "-12-", -1)
+	arrete = strings.Replace(arrete, "DEC", "-12-", -1)
+	bdf.ArreteBilan, err = time.Parse("02-01-2006", arrete)
+	tracker.Error(err)
+	bdf.RaisonSociale = row[field["raisonSociale"]]
+	bdf.Secteur = row[field["secteur"]]
+	if len(row) > field["poidsFrng"] {
+		bdf.PoidsFrng, err = misc.ParsePFloat(row[field["poidsFrng"]])
+		tracker.Error(err)
+	} else {
+		bdf.PoidsFrng = nil
+	}
+	if len(row) > field["tauxMarge"] {
+		bdf.TauxMarge, err = misc.ParsePFloat(row[field["tauxMarge"]])
+		tracker.Error(err)
+	} else {
+		bdf.TauxMarge = nil
+	}
+	if len(row) > field["delaiFournisseur"] {
+		bdf.DelaiFournisseur, err = misc.ParsePFloat(row[field["delaiFournisseur"]])
+		tracker.Error(err)
+	} else {
+		bdf.DelaiFournisseur = nil
+	}
+	if len(row) > field["detteFiscale"] {
+		bdf.DetteFiscale, err = misc.ParsePFloat(row[field["detteFiscale"]])
+		tracker.Error(err)
+	} else {
+		bdf.DetteFiscale = nil
+	}
+	if len(row) > field["financierCourtTerme"] {
+		bdf.FinancierCourtTerme, err = misc.ParsePFloat(row[field["financierCourtTerme"]])
+		tracker.Error(err)
+	} else {
+		bdf.FinancierCourtTerme = nil
+	}
+	if len(row) > field["fraisFinancier"] {
+		bdf.FraisFinancier, err = misc.ParsePFloat(row[field["fraisFinancier"]])
+		tracker.Error(err)
+	} else {
+		bdf.FraisFinancier = nil
+	}
+
+	return bdf
+}
+
+func parseBdfFile(reader *csv.Reader, filter map[string]bool, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+	// Lecture en-tête
+	_, err := reader.Read()
+	tracker.Error(err)
+
+	for {
+		row, err := reader.Read()
+		if err == io.EOF {
+			break
+		} else if err != nil {
+			tracker.Error(err)
+			break
+		}
+
+		bdf := parseBdfLine(row, tracker, filter)
+
+		var errorInCurrentCycle = tracker.HasErrorInCurrentCycle()
+		if !errorInCurrentCycle {
+			outputChannel <- bdf
+		}
+
+		tracker.Next()
+	}
 }
