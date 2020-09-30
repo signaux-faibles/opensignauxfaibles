@@ -90,8 +90,13 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 					tracker.Error(err)
 					break
 				}
-
-				outputChannel <- parseBdfLine(row, &tracker, filter)
+				bdf, err := parseBdfLine(row, &tracker, filter)
+				if err != nil {
+					tracker.Error(err)
+				} else {
+					outputChannel <- bdf
+				}
+				tracker.Next()
 			}
 			event.Info(tracker.Report("abstract"))
 		}
@@ -103,23 +108,19 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 	return outputChannel, eventChannel
 }
 
-func parseBdfLine(row []string, tracker *gournal.Tracker, filter map[string]bool) BDF {
+func parseBdfLine(row []string, tracker *gournal.Tracker, filter map[string]bool) (BDF, error) {
 	bdf := BDF{}
 	bdf.Siren = strings.Replace(row[0], " ", "", -1)
 
 	validSiren := sfregexp.RegexpDict["siren"].MatchString(bdf.Siren)
 	if !validSiren {
-		tracker.Error(errors.New("siren invalide : " + bdf.Siren))
-		tracker.Next()
-		return BDF{} // TODO: on devrait retourner une erreur au lieu de ca
+		return BDF{}, errors.New("siren invalide : " + bdf.Siren)
 	}
 
 	filtered, err := marshal.IsFiltered(bdf.Siren, filter)
 	tracker.Error(err)
 	if filtered {
-		tracker.Error(base.NewFilterNotice())
-		tracker.Next()
-		return BDF{} // TODO: on devrait retourner une erreur au lieu de ca
+		return BDF{}, base.NewFilterNotice()
 	}
 
 	bdf.Annee, err = misc.ParsePInt(row[1])
@@ -191,10 +192,10 @@ func parseBdfLine(row []string, tracker *gournal.Tracker, filter map[string]bool
 	}
 
 	var errorInCurrentCycle = tracker.HasErrorInCurrentCycle()
-	tracker.Next()
 	if !errorInCurrentCycle {
-		return bdf
+		return bdf, nil
 	} else {
-		return BDF{} // TODO: on devrait retourner une erreur au lieu de ca
+		return BDF{}, errors.New("error in current cycle")
+		// TODO: Retirer cette erreur artificielle.
 	}
 }
