@@ -58,7 +58,7 @@
 	{
 		"event" : {
 			"headFilters" : [
-				"Cycle 2: Error while loading or applying filter: Pas de siret associé au compte 450359886246036238 à la période 2019-01-23 00:00:00 +0000 UTC"
+				"Cycle 2: Pas de siret associé au compte 450359886246036238 à la période 2019-01-23 00:00:00 +0000 UTC"
 			],
 			"headErrors" : [ ],
 			"headFatal" : [ ],
