@@ -88,7 +88,6 @@ func TestParserTupleOutput(
 	}
 
 	assert.Equal(t, string(expected), string(actual))
-
 }
 
 type tuplesAndEvents = struct {

@@ -77,6 +77,7 @@ func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 
 			reader := csv.NewReader(bufio.NewReader(file))
 			reader.Comma = ';'
+			reader.FieldsPerRecord = -1 // ignore rows with wrong number of fields
 			// ligne de titre
 			fields, err := reader.Read()
 			if err != nil {
@@ -84,6 +85,7 @@ func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 				event.Critical(tracker.Report("fatalError"))
 			}
 
+			nbFields := len(fields)
 			dateTraitementIndex := misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Dt_trt_ecn" })
 			partOuvriereIndex := misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Mt_PO" })
 			partPatronaleIndex := misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Mt_PP" })
@@ -110,6 +112,12 @@ func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 					tracker.Error(err)
 					event.Critical(tracker.Report("fatalError"))
 					break
+				}
+
+				if len(row) != nbFields {
+					tracker.Error(base.NewCorruptedRowError(path))
+					tracker.Next()
+					continue
 				}
 
 				period, err := marshal.UrssafToPeriod(row[periodeIndex])

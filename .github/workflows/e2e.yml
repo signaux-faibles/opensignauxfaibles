@@ -34,6 +34,8 @@ jobs:
 
       - run: ./tests/test-api-validate.sh
 
+      - run: ./tests/test-api-check.sh
+
       - run: ./tests/test-api-import.sh
 
       - run: ./tests/test-api-export.sh
