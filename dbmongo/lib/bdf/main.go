@@ -89,9 +89,23 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 	return outputChannel, eventChannel
 }
 
+var field = map[string]int{
+	"siren":               0,
+	"année":               1,
+	"arrêtéBilan":         2,
+	"raisonSociale":       3,
+	"secteur":             6,
+	"poidsFrng":           7,
+	"tauxMarge":           8,
+	"delaiFournisseur":    9,
+	"detteFiscale":        10,
+	"financierCourtTerme": 11,
+	"fraisFinancier":      12,
+}
+
 func parseBdfLine(row []string, tracker *gournal.Tracker, filter map[string]bool) BDF {
 	bdf := BDF{}
-	bdf.Siren = strings.Replace(row[0], " ", "", -1)
+	bdf.Siren = strings.Replace(row[field["siren"]], " ", "", -1)
 
 	validSiren := sfregexp.RegexpDict["siren"].MatchString(bdf.Siren)
 	if !validSiren {
@@ -106,9 +120,9 @@ func parseBdfLine(row []string, tracker *gournal.Tracker, filter map[string]bool
 		return BDF{}
 	}
 
-	bdf.Annee, err = misc.ParsePInt(row[1])
+	bdf.Annee, err = misc.ParsePInt(row[field["année"]])
 	tracker.Error(err)
-	var arrete = row[2]
+	var arrete = row[field["arrêtéBilan"]]
 	arrete = strings.Replace(arrete, "janv", "-01-", -1)
 	arrete = strings.Replace(arrete, "JAN", "-01-", -1)
 	arrete = strings.Replace(arrete, "févr", "-02-", -1)
@@ -135,40 +149,40 @@ func parseBdfLine(row []string, tracker *gournal.Tracker, filter map[string]bool
 	arrete = strings.Replace(arrete, "DEC", "-12-", -1)
 	bdf.ArreteBilan, err = time.Parse("02-01-2006", arrete)
 	tracker.Error(err)
-	bdf.RaisonSociale = row[3]
-	bdf.Secteur = row[6]
-	if len(row) > 7 {
-		bdf.PoidsFrng, err = misc.ParsePFloat(row[7])
+	bdf.RaisonSociale = row[field["raisonSociale"]]
+	bdf.Secteur = row[field["secteur"]]
+	if len(row) > field["poidsFrng"] {
+		bdf.PoidsFrng, err = misc.ParsePFloat(row[field["poidsFrng"]])
 		tracker.Error(err)
 	} else {
 		bdf.PoidsFrng = nil
 	}
-	if len(row) > 8 {
-		bdf.TauxMarge, err = misc.ParsePFloat(row[8])
+	if len(row) > field["tauxMarge"] {
+		bdf.TauxMarge, err = misc.ParsePFloat(row[field["tauxMarge"]])
 		tracker.Error(err)
 	} else {
 		bdf.TauxMarge = nil
 	}
-	if len(row) > 9 {
-		bdf.DelaiFournisseur, err = misc.ParsePFloat(row[9])
+	if len(row) > field["delaiFournisseur"] {
+		bdf.DelaiFournisseur, err = misc.ParsePFloat(row[field["delaiFournisseur"]])
 		tracker.Error(err)
 	} else {
 		bdf.DelaiFournisseur = nil
 	}
-	if len(row) > 10 {
-		bdf.DetteFiscale, err = misc.ParsePFloat(row[10])
+	if len(row) > field["detteFiscale"] {
+		bdf.DetteFiscale, err = misc.ParsePFloat(row[field["detteFiscale"]])
 		tracker.Error(err)
 	} else {
 		bdf.DetteFiscale = nil
 	}
-	if len(row) > 11 {
-		bdf.FinancierCourtTerme, err = misc.ParsePFloat(row[11])
+	if len(row) > field["financierCourtTerme"] {
+		bdf.FinancierCourtTerme, err = misc.ParsePFloat(row[field["financierCourtTerme"]])
 		tracker.Error(err)
 	} else {
 		bdf.FinancierCourtTerme = nil
 	}
-	if len(row) > 12 {
-		bdf.FraisFinancier, err = misc.ParsePFloat(row[12])
+	if len(row) > field["fraisFinancier"] {
+		bdf.FraisFinancier, err = misc.ParsePFloat(row[field["fraisFinancier"]])
 		tracker.Error(err)
 	} else {
 		bdf.FraisFinancier = nil
