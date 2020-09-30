@@ -91,7 +91,7 @@ func TestParserTupleOutput(
 
 }
 
-type TuplesAndEvents = struct {
+type tuplesAndEvents = struct {
 	Tuples []Tuple `json:"tuples"`
 	Events []Event `json:"events"`
 }
@@ -103,7 +103,7 @@ func RunParser(
 	cache Cache,
 	parserType string,
 	inputFile string,
-) (output TuplesAndEvents) {
+) (output tuplesAndEvents) {
 	batch := base.MockBatch(parserType, []string{inputFile})
 	var events chan Event
 	var tuples chan Tuple
