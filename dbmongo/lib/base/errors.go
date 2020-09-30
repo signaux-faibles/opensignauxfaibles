@@ -1,6 +1,9 @@
 package base
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
 // CriticityError object
 type CriticityError interface {
@@ -37,19 +40,25 @@ func (pe *CriticError) Error() string {
 // ParseError occurs when something goes wrong while parsing
 type ParseError struct {
 	*CriticError
-	ParsedVariable string
+	Filename string
+}
+
+// NewCorruptedRowError creates an error for when a corrupted row is encountered.
+func NewCorruptedRowError(Filename string) error {
+	return NewParseError(errors.New("corrupted line"), Filename)
 }
 
 // NewParseError error parser
-func NewParseError(err *CriticError, ParsedVariable string) error {
+func NewParseError(err error, Filename string) error {
 	if err == nil {
 		return nil
 	}
-	return &ParseError{err, ParsedVariable}
+	c := NewCriticError(err, "error")
+	return &ParseError{c.(*CriticError), Filename}
 }
 
 func (pe *ParseError) Error() string {
-	return fmt.Sprintf("Error while parsing %s: %v", pe.ParsedVariable, pe.err)
+	return fmt.Sprintf("Error while parsing %s: %v", pe.Filename, pe.err)
 }
 
 // FilterError occurs when something goes wrong while filtering

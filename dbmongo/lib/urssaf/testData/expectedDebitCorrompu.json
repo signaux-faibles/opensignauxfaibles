@@ -50,7 +50,7 @@
         "error": 1,
         "filtered": 0,
         "headErrors": [
-          "Cycle 1: ligne debit corrompue"
+          "Cycle 1: Error while parsing testData/debitCorrompuTestData.csv: corrupted line"
         ],
         "headFatal": [],
         "headFilters": [],
