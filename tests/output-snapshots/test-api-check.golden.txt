@@ -1,0 +1,15 @@
+// Documents from db.Journal:
+[
+	{
+		"event" : {
+			"headFilters" : [ ],
+			"headErrors" : [ ],
+			"headFatal" : [ ],
+			"report" : "/../lib/urssaf/testData/debitCorrompuTestData.csv: intégration terminée, 2 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 2 lignes valides",
+			"batchKey" : "1910"
+		},
+		"code" : "debitParser"
+	}
+]
+// Standard output from call to /api/data/check:
+// TODO
