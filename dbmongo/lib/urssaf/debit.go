@@ -3,6 +3,7 @@ package urssaf
 import (
 	"bufio"
 	"encoding/csv"
+	"errors"
 	"io"
 	"os"
 	"strconv"
@@ -115,7 +116,7 @@ func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 				}
 
 				if len(row) != nbFields {
-					//tracker.Error(errors.New("ligne debit corrompue"))
+					tracker.Error(errors.New("ligne debit corrompue"))
 					continue
 				}
 
