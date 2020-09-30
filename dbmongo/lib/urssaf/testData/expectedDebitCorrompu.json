@@ -47,13 +47,15 @@
       "date": "0001-01-01T00:00:00Z",
       "event": {
         "batchKey": "",
-        "error": 0,
+        "error": 1,
         "filtered": 0,
-        "headErrors": [],
+        "headErrors": [
+          "Cycle 1: ligne debit corrompue"
+        ],
         "headFatal": [],
         "headFilters": [],
-        "report": "testData/debitCorrompuTestData.csv: intégration terminée, 2 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 2 lignes valides",
-        "total": 2,
+        "report": "testData/debitCorrompuTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 1 rejets, 0 lignes filtrées, 2 lignes valides",
+        "total": 3,
         "valid": 2
       },
       "priority": "debug",
