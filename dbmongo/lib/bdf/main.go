@@ -90,96 +90,8 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 					tracker.Error(err)
 					break
 				}
-				bdf := BDF{}
-				bdf.Siren = strings.Replace(row[0], " ", "", -1)
 
-				validSiren := sfregexp.RegexpDict["siren"].MatchString(bdf.Siren)
-				if !validSiren {
-					tracker.Error(errors.New("siren invalide : " + bdf.Siren))
-					tracker.Next()
-					continue
-				}
-
-				filtered, err := marshal.IsFiltered(bdf.Siren, filter)
-				tracker.Error(err)
-				if filtered {
-					tracker.Error(base.NewFilterNotice())
-					tracker.Next()
-					continue
-				}
-
-				bdf.Annee, err = misc.ParsePInt(row[1])
-				tracker.Error(err)
-				var arrete = row[2]
-				arrete = strings.Replace(arrete, "janv", "-01-", -1)
-				arrete = strings.Replace(arrete, "JAN", "-01-", -1)
-				arrete = strings.Replace(arrete, "févr", "-02-", -1)
-				arrete = strings.Replace(arrete, "FEB", "-02-", -1)
-				arrete = strings.Replace(arrete, "mars", "-03-", -1)
-				arrete = strings.Replace(arrete, "MAR", "-03-", -1)
-				arrete = strings.Replace(arrete, "avr", "-04-", -1)
-				arrete = strings.Replace(arrete, "APR", "-04-", -1)
-				arrete = strings.Replace(arrete, "mai", "-05-", -1)
-				arrete = strings.Replace(arrete, "MAY", "-05-", -1)
-				arrete = strings.Replace(arrete, "juin", "-06-", -1)
-				arrete = strings.Replace(arrete, "JUN", "-06-", -1)
-				arrete = strings.Replace(arrete, "juil", "-07-", -1)
-				arrete = strings.Replace(arrete, "JUL", "-07-", -1)
-				arrete = strings.Replace(arrete, "août", "-08-", -1)
-				arrete = strings.Replace(arrete, "AUG", "-08-", -1)
-				arrete = strings.Replace(arrete, "sept", "-09-", -1)
-				arrete = strings.Replace(arrete, "SEP", "-09-", -1)
-				arrete = strings.Replace(arrete, "oct", "-10-", -1)
-				arrete = strings.Replace(arrete, "OCT", "-10-", -1)
-				arrete = strings.Replace(arrete, "nov", "-11-", -1)
-				arrete = strings.Replace(arrete, "NOV", "-11-", -1)
-				arrete = strings.Replace(arrete, "déc", "-12-", -1)
-				arrete = strings.Replace(arrete, "DEC", "-12-", -1)
-				bdf.ArreteBilan, err = time.Parse("02-01-2006", arrete)
-				tracker.Error(err)
-				bdf.RaisonSociale = row[3]
-				bdf.Secteur = row[6]
-				if len(row) > 7 {
-					bdf.PoidsFrng, err = misc.ParsePFloat(row[7])
-					tracker.Error(err)
-				} else {
-					bdf.PoidsFrng = nil
-				}
-				if len(row) > 8 {
-					bdf.TauxMarge, err = misc.ParsePFloat(row[8])
-					tracker.Error(err)
-				} else {
-					bdf.TauxMarge = nil
-				}
-				if len(row) > 9 {
-					bdf.DelaiFournisseur, err = misc.ParsePFloat(row[9])
-					tracker.Error(err)
-				} else {
-					bdf.DelaiFournisseur = nil
-				}
-				if len(row) > 10 {
-					bdf.DetteFiscale, err = misc.ParsePFloat(row[10])
-					tracker.Error(err)
-				} else {
-					bdf.DetteFiscale = nil
-				}
-				if len(row) > 11 {
-					bdf.FinancierCourtTerme, err = misc.ParsePFloat(row[11])
-					tracker.Error(err)
-				} else {
-					bdf.FinancierCourtTerme = nil
-				}
-				if len(row) > 12 {
-					bdf.FraisFinancier, err = misc.ParsePFloat(row[12])
-					tracker.Error(err)
-				} else {
-					bdf.FraisFinancier = nil
-				}
-
-				if !tracker.HasErrorInCurrentCycle() {
-					outputChannel <- bdf
-				}
-				tracker.Next()
+				outputChannel <- parseBdfLine(row, &tracker, filter)
 			}
 			event.Info(tracker.Report("abstract"))
 		}
@@ -189,4 +101,100 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 
 	}()
 	return outputChannel, eventChannel
+}
+
+func parseBdfLine(row []string, tracker *gournal.Tracker, filter map[string]bool) BDF {
+	bdf := BDF{}
+	bdf.Siren = strings.Replace(row[0], " ", "", -1)
+
+	validSiren := sfregexp.RegexpDict["siren"].MatchString(bdf.Siren)
+	if !validSiren {
+		tracker.Error(errors.New("siren invalide : " + bdf.Siren))
+		tracker.Next()
+		return BDF{} // TODO: on devrait retourner une erreur au lieu de ca
+	}
+
+	filtered, err := marshal.IsFiltered(bdf.Siren, filter)
+	tracker.Error(err)
+	if filtered {
+		tracker.Error(base.NewFilterNotice())
+		tracker.Next()
+		return BDF{} // TODO: on devrait retourner une erreur au lieu de ca
+	}
+
+	bdf.Annee, err = misc.ParsePInt(row[1])
+	tracker.Error(err)
+	var arrete = row[2]
+	arrete = strings.Replace(arrete, "janv", "-01-", -1)
+	arrete = strings.Replace(arrete, "JAN", "-01-", -1)
+	arrete = strings.Replace(arrete, "févr", "-02-", -1)
+	arrete = strings.Replace(arrete, "FEB", "-02-", -1)
+	arrete = strings.Replace(arrete, "mars", "-03-", -1)
+	arrete = strings.Replace(arrete, "MAR", "-03-", -1)
+	arrete = strings.Replace(arrete, "avr", "-04-", -1)
+	arrete = strings.Replace(arrete, "APR", "-04-", -1)
+	arrete = strings.Replace(arrete, "mai", "-05-", -1)
+	arrete = strings.Replace(arrete, "MAY", "-05-", -1)
+	arrete = strings.Replace(arrete, "juin", "-06-", -1)
+	arrete = strings.Replace(arrete, "JUN", "-06-", -1)
+	arrete = strings.Replace(arrete, "juil", "-07-", -1)
+	arrete = strings.Replace(arrete, "JUL", "-07-", -1)
+	arrete = strings.Replace(arrete, "août", "-08-", -1)
+	arrete = strings.Replace(arrete, "AUG", "-08-", -1)
+	arrete = strings.Replace(arrete, "sept", "-09-", -1)
+	arrete = strings.Replace(arrete, "SEP", "-09-", -1)
+	arrete = strings.Replace(arrete, "oct", "-10-", -1)
+	arrete = strings.Replace(arrete, "OCT", "-10-", -1)
+	arrete = strings.Replace(arrete, "nov", "-11-", -1)
+	arrete = strings.Replace(arrete, "NOV", "-11-", -1)
+	arrete = strings.Replace(arrete, "déc", "-12-", -1)
+	arrete = strings.Replace(arrete, "DEC", "-12-", -1)
+	bdf.ArreteBilan, err = time.Parse("02-01-2006", arrete)
+	tracker.Error(err)
+	bdf.RaisonSociale = row[3]
+	bdf.Secteur = row[6]
+	if len(row) > 7 {
+		bdf.PoidsFrng, err = misc.ParsePFloat(row[7])
+		tracker.Error(err)
+	} else {
+		bdf.PoidsFrng = nil
+	}
+	if len(row) > 8 {
+		bdf.TauxMarge, err = misc.ParsePFloat(row[8])
+		tracker.Error(err)
+	} else {
+		bdf.TauxMarge = nil
+	}
+	if len(row) > 9 {
+		bdf.DelaiFournisseur, err = misc.ParsePFloat(row[9])
+		tracker.Error(err)
+	} else {
+		bdf.DelaiFournisseur = nil
+	}
+	if len(row) > 10 {
+		bdf.DetteFiscale, err = misc.ParsePFloat(row[10])
+		tracker.Error(err)
+	} else {
+		bdf.DetteFiscale = nil
+	}
+	if len(row) > 11 {
+		bdf.FinancierCourtTerme, err = misc.ParsePFloat(row[11])
+		tracker.Error(err)
+	} else {
+		bdf.FinancierCourtTerme = nil
+	}
+	if len(row) > 12 {
+		bdf.FraisFinancier, err = misc.ParsePFloat(row[12])
+		tracker.Error(err)
+	} else {
+		bdf.FraisFinancier = nil
+	}
+
+	var errorInCurrentCycle = tracker.HasErrorInCurrentCycle()
+	tracker.Next()
+	if !errorInCurrentCycle {
+		return bdf
+	} else {
+		return BDF{} // TODO: on devrait retourner une erreur au lieu de ca
+	}
 }
