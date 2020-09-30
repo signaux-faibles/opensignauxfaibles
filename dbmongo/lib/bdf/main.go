@@ -78,28 +78,7 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 			reader.LazyQuotes = true
 			event.Info(path + ": ouverture " + path)
 
-			// Lecture en-tête
-			_, err = reader.Read()
-			tracker.Error(err)
-
-			for {
-				row, err := reader.Read()
-				if err == io.EOF {
-					break
-				} else if err != nil {
-					tracker.Error(err)
-					break
-				}
-
-				bdf := parseBdfLine(row, &tracker, filter)
-
-				var errorInCurrentCycle = tracker.HasErrorInCurrentCycle()
-				if !errorInCurrentCycle {
-					outputChannel <- bdf
-				}
-
-				tracker.Next()
-			}
+			parseBdfFile(reader, filter, &tracker, outputChannel)
 			event.Info(tracker.Report("abstract"))
 		}
 
@@ -196,4 +175,29 @@ func parseBdfLine(row []string, tracker *gournal.Tracker, filter map[string]bool
 	}
 
 	return bdf
+}
+
+func parseBdfFile(reader *csv.Reader, filter map[string]bool, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+	// Lecture en-tête
+	_, err := reader.Read()
+	tracker.Error(err)
+
+	for {
+		row, err := reader.Read()
+		if err == io.EOF {
+			break
+		} else if err != nil {
+			tracker.Error(err)
+			break
+		}
+
+		bdf := parseBdfLine(row, tracker, filter)
+
+		var errorInCurrentCycle = tracker.HasErrorInCurrentCycle()
+		if !errorInCurrentCycle {
+			outputChannel <- bdf
+		}
+
+		tracker.Next()
+	}
 }
