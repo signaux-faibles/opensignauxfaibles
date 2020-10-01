@@ -69,7 +69,7 @@ func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 
 			file, err := os.Open(viper.GetString("APP_DATA") + path)
 			if err != nil {
-				tracker.Error(err)
+				tracker.Add(err)
 				event.Critical(tracker.Report("fatalError"))
 			} else {
 				event.Info(path + ": ouverture")
@@ -81,7 +81,7 @@ func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 			// ligne de titre
 			fields, err := reader.Read()
 			if err != nil {
-				tracker.Error(err)
+				tracker.Add(err)
 				event.Critical(tracker.Report("fatalError"))
 			}
 
@@ -109,13 +109,13 @@ func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 				if err == io.EOF {
 					break
 				} else if err != nil {
-					tracker.Error(err)
+					tracker.Add(err)
 					event.Critical(tracker.Report("fatalError"))
 					break
 				}
 
 				if len(row) != nbFields {
-					tracker.Error(base.NewCorruptedRowError(path))
+					tracker.Add(base.NewCorruptedRowError(path))
 					tracker.Next()
 					continue
 				}
@@ -135,21 +135,21 @@ func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 					}
 
 					debit.DateTraitement, err = marshal.UrssafToDate(row[dateTraitementIndex])
-					tracker.Error(err)
+					tracker.Add(err)
 					debit.PartOuvriere, err = strconv.ParseFloat(row[partOuvriereIndex], 64)
-					tracker.Error(err)
+					tracker.Add(err)
 					debit.PartOuvriere = debit.PartOuvriere / 100
 					debit.PartPatronale, err = strconv.ParseFloat(row[partPatronaleIndex], 64)
-					tracker.Error(err)
+					tracker.Add(err)
 					debit.PartPatronale = debit.PartPatronale / 100
 					debit.NumeroHistoriqueEcartNegatif, err = strconv.Atoi(row[numeroHistoriqueEcartNegatifIndex])
-					tracker.Error(err)
+					tracker.Add(err)
 					debit.EtatCompte, err = strconv.Atoi(row[etatCompteIndex])
-					tracker.Error(err)
+					tracker.Add(err)
 					debit.Periode, err = marshal.UrssafToPeriod(row[periodeIndex])
-					tracker.Error(err)
+					tracker.Add(err)
 					debit.Recours, err = strconv.ParseBool(row[recoursIndex])
-					tracker.Error(err)
+					tracker.Add(err)
 					// debit.MontantMajorations, err = strconv.ParseFloat(row[montantMajorationsIndex], 64)
 					// tracker.Error(err)
 					// debit.MontantMajorations = debit.MontantMajorations / 100
@@ -158,7 +158,7 @@ func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 						outputChannel <- debit
 					}
 				} else {
-					tracker.Error(base.NewFilterError(err))
+					tracker.Add(base.NewFilterError(err))
 					continue
 				}
 

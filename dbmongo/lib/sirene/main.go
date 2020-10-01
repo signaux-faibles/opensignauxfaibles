@@ -197,7 +197,7 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 			file, err := os.Open(viper.GetString("APP_DATA") + path)
 
 			if err != nil {
-				tracker.Error(err)
+				tracker.Add(err)
 				tracker.Report("fatalError")
 			}
 			event.Info(path + ": ouverture")
@@ -210,17 +210,17 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 				if err == io.EOF {
 					break
 				} else if err != nil {
-					tracker.Error(err)
+					tracker.Add(err)
 					event.Critical(tracker.Report("fatalError"))
 					break
 				}
 				validSiren := sfregexp.RegexpDict["siren"].MatchString(row[f["siren"]])
 				if !validSiren {
-					tracker.Error(errors.New("siren invalide : " + row[f["siren"]]))
+					tracker.Add(errors.New("siren invalide : " + row[f["siren"]]))
 					continue // TODO: exécuter tracker.Next() un fois le TODO ci-dessous traité.
 				}
 				filtered, err := marshal.IsFiltered(row[f["siren"]], filter)
-				tracker.Error(err)
+				tracker.Add(err)
 				if !filtered {
 					sirene := readLineEtablissement(row, &tracker)
 					outputChannel <- sirene
@@ -243,7 +243,7 @@ func readLineEtablissement(row []string, tracker *gournal.Tracker) Sirene {
 	sirene.Siren = row[f["siren"]]
 	sirene.Nic = row[f["nic"]]
 	sirene.Siege, err = strconv.ParseBool(row[f["etablissementSiege"]])
-	tracker.Error(err)
+	tracker.Add(err)
 
 	sirene.ComplementAdresse = row[f["complementAdresseEtablissement"]]
 	sirene.NumVoie = row[f["numeroVoieEtablissement"]]
@@ -270,7 +270,7 @@ func readLineEtablissement(row []string, tracker *gournal.Tracker) Sirene {
 		}
 		sirene.Departement = departement
 	} else {
-		tracker.Error(errors.New("Code postal est manquant ou de format incorrect"))
+		tracker.Add(errors.New("Code postal est manquant ou de format incorrect"))
 	}
 
 	if row[f["activitePrincipaleEtablissement"]] != "" {
@@ -290,14 +290,14 @@ func readLineEtablissement(row []string, tracker *gournal.Tracker) Sirene {
 	if err == nil {
 		sirene.Creation = &creation
 	}
-	tracker.Error(err)
+	tracker.Add(err)
 
 	long, err := strconv.ParseFloat(row[f["longitude"]], 64)
 	if err == nil {
 		sirene.Longitude = long
 	}
 	if row[48] != "" {
-		tracker.Error(err)
+		tracker.Add(err)
 	}
 
 	lat, err := strconv.ParseFloat(row[f["latitude"]], 64)
@@ -305,7 +305,7 @@ func readLineEtablissement(row []string, tracker *gournal.Tracker) Sirene {
 		sirene.Latitude = lat
 	}
 	if row[49] != "" {
-		tracker.Error(err)
+		tracker.Add(err)
 	}
 
 	return sirene
