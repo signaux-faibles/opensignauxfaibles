@@ -50,7 +50,7 @@
         "error": 1,
         "filtered": 0,
         "headErrors": [
-          "Cycle 1: Error while parsing testData/debitCorrompuTestData.csv: corrupted line"
+          "Cycle 1: Error while parsing line 2: incomplete csv row"
         ],
         "headFatal": [],
         "headFilters": [],
