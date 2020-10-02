@@ -37,31 +37,6 @@ func (pe *CriticError) Error() string {
 	return pe.err.Error()
 }
 
-// ParseError occurs when something goes wrong while parsing
-type ParseError struct {
-	*CriticError
-	Filename string
-	LineNumber int
-}
-
-// NewIncompleteCsvRowError creates an error for when a corrupted row is encountered.
-func NewIncompleteCsvRowError(Filename string, LineNumber int) error {
-	return NewParseError(errors.New("incomplete csv row"), Filename, LineNumber)
-}
-
-// NewParseError error parser
-func NewParseError(err error, Filename string, LineNumber int) error {
-	if err == nil {
-		return nil
-	}
-	c := NewCriticError(err, "error")
-	return &ParseError{c.(*CriticError), Filename, LineNumber}
-}
-
-func (pe *ParseError) Error() string {
-	return fmt.Sprintf("Error while parsing line %d: %v", pe.LineNumber, pe.err)
-}
-
 // FilterError occurs when something goes wrong while filtering
 type FilterError struct {
 	*CriticError
