@@ -35,7 +35,7 @@ heading "npm test"
 (cd ./dbmongo/js && npm run lint && npm test -- $@) 2>&1 | indent
 
 heading "go test"
-(cd ./dbmongo && go test ./...) 2>&1 | indent && \
+(cd ./dbmongo && go test ./...) 2>&1 | indent
 
 heading "go generate"
 (cd ./dbmongo/lib/engine && go generate .) 2>&1 | indent
