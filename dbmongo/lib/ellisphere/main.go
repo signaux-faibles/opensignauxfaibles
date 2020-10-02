@@ -51,6 +51,8 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 		Channel: eventChannel,
 	}
 
+	filter := marshal.GetSirenFilterFromCache(cache)
+
 	go func() {
 		defer close(outputChannel)
 		defer close(eventChannel)
@@ -60,19 +62,33 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 				map[string]string{"path": path, "batchKey": batch.ID.Key},
 				engine.TrackerReports)
 
-			xlsxFile, err := xlsx.OpenFile(viper.GetString("APP_DATA") + path)
-			tracker.Error(err)
+			path := viper.GetString("APP_DATA") + path
+
+			event.Info(path + ": Opening file")
+			xlsxFile, err := xlsx.OpenFile(path)
+			if err != nil {
+				event.Critical(path + ": erreur à l'ouverture du fichier: " + err.Error())
+				continue
+			}
 
 			if len(xlsxFile.Sheets) != 1 {
 				tracker.Error(errors.Errorf("the source has %d sheets, should have only 1", len(xlsxFile.Sheets)))
+				event.Critical(tracker.Report("abstract"))
 				continue
 			}
+
 			sheet := xlsxFile.Sheets[0]
 			sheet.ForEachRow(
 				func(row *xlsx.Row) error {
 					var ellisphere Ellisphere
 					err := row.ReadStruct(&ellisphere)
-					if err == nil {
+
+					filtered, errFilter := marshal.IsFiltered(ellisphere.Siren, filter)
+					if errFilter != nil {
+						tracker.Error(errFilter)
+					}
+
+					if err == nil && !filtered {
 						outputChannel <- ellisphere
 					}
 					tracker.Error(err)
