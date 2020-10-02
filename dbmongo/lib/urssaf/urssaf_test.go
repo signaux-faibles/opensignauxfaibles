@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
+	"github.com/stretchr/testify/assert"
 )
 
 var update = flag.Bool("update", false, "Update the expected test values in golden file")
@@ -34,6 +35,16 @@ func TestDebitCorrompu(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedDebitCorrompu.json")
 	var testData = filepath.Join("testData", "debitCorrompuTestData.csv")
 	marshal.TestParserOutput(t, ParserDebit, cache, "debit", testData, golden, *update)
+}
+
+func TestDebitEncoding(t *testing.T) {
+	var utf8Input = filepath.Join("testData", "debitUtf8TestData.csv")
+	var isoInput = filepath.Join("testData", "debitIsoTestData.csv")
+	var outputFromUtf8 = marshal.RunParser(ParserDebit, cache, "debit", utf8Input)
+	var outputFromIso = marshal.RunParser(ParserDebit, cache, "debit", isoInput)
+	assert.Equal(t, 1, len(outputFromUtf8.Tuples))
+	assert.Equal(t, 1, len(outputFromIso.Tuples))
+	assert.Equal(t, outputFromUtf8.Tuples[0], outputFromIso.Tuples[0])
 }
 
 func TestDelai(t *testing.T) {
