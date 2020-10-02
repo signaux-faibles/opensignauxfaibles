@@ -64,16 +64,15 @@
       "date": "0001-01-01T00:00:00Z",
       "event": {
         "batchKey": "",
-        "error": 1,
+        "error": 0,
         "filtered": 0,
-        "headErrors": [
-          "Cycle 1: Error while parsing line 2: incomplete csv row"
-        ],
+        "headErrors": [],
         "headFatal": [
+          "Cycle 1: record on line 3: wrong number of fields",
           "Cycle 3: parse error on line 5, column 1: bare \" in non-quoted-field"
         ],
         "headFilters": [],
-        "report": "testData/debitCorrompuTestData.csv: intégration terminée, 5 lignes traitées, 1 erreures fatales, 1 rejets, 0 lignes filtrées, 3 lignes valides",
+        "report": "testData/debitCorrompuTestData.csv: intégration terminée, 5 lignes traitées, 2 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
         "total": 5,
         "valid": 3
       },
