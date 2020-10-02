@@ -12,7 +12,6 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/bdf"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/diane"
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/ellisphere"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/files"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
@@ -319,7 +318,6 @@ var registeredParsers = map[string]marshal.Parser{
 	"sirene":       sirene.Parser,
 	"sirene_ul":    sireneul.Parser,
 	"diane":        diane.Parser,
-	"ellisphere":   ellisphere.Parser,
 }
 
 // Vérifie et charge les parsers
