@@ -1,12 +1,4 @@
 [{
-  "siren": "FIL SIREN 9",
-  "code_groupe": "GRP Code",
-  "siren_groupe": "GRP SIREN 9",
-  "refid_groupe": "GRP RefID",
-  "raison_sociale_groupe": "GRP Raison Sociale",
-  "adresse_groupe": "GRP Adresse",
-  "personne_pou_m_groupe": "GRP Personne PouM"
-},{
   "siren": "151515151",
   "code_groupe": "1234567",
   "siren_groupe": "525343432",
