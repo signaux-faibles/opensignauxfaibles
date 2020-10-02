@@ -112,8 +112,13 @@ func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 					break
 				} else if err != nil {
 					tracker.Error(err)
-					event.Critical(tracker.Report("fatalError"))
-					break
+					_, ok := err.(*csv.ParseError)
+					if !ok {
+						// we tolerate CSV parsing errors, but we generate a fatalError report for others, in order to interrupt the whole import process
+						event.Critical(tracker.Report("fatalError"))
+					}
+					tracker.Next()
+					continue
 				}
 
 				if len(row) != nbFields {
