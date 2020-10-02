@@ -1,12 +1,15 @@
 package marshal
 
 import (
+	"flag"
 	"reflect"
 	"strings"
 	"testing"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 )
+
+var update = flag.Bool("update", false, "Update the expected test values in golden file") // please keep this line until https://github.com/kubernetes-sigs/service-catalog/issues/2319#issuecomment-425200065 is fixed
 
 func TestIsFiltered(t *testing.T) {
 
