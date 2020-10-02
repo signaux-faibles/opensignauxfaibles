@@ -4,7 +4,7 @@
 		"event" : {
 			"headFilters" : [ ],
 			"headErrors" : [
-				"Cycle 1: Error while parsing /../lib/urssaf/testData/debitCorrompuTestData.csv: corrupted line"
+				"Cycle 1: Error while parsing line 2: incomplete csv row"
 			],
 			"headFatal" : [ ],
 			"report" : "/../lib/urssaf/testData/debitCorrompuTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 1 rejets, 0 lignes filtrées, 2 lignes valides",
