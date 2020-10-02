@@ -104,7 +104,9 @@ func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 				continue
 			}
 
+			var lineNumber = 0 // starting with the header
 			for {
+				lineNumber++
 				row, err := reader.Read()
 				if err == io.EOF {
 					break
@@ -115,7 +117,7 @@ func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 				}
 
 				if len(row) != nbFields {
-					tracker.Error(base.NewCorruptedRowError(path))
+					tracker.Error(base.NewIncompleteCsvRowError(path, lineNumber))
 					tracker.Next()
 					continue
 				}
