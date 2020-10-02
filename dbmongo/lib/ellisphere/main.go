@@ -1,4 +1,4 @@
-package apdemande
+package ellisphere
 
 import (
 	"github.com/pkg/errors"
