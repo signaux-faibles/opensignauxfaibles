@@ -7,6 +7,7 @@ import {
   EntréeDelai,
   EntréeDefaillances,
   EntréeDiane,
+  Ellisphere,
 } from "../RawDataTypes"
 import { SortieDebit } from "./debits"
 import { Bdf } from "./bdf"
@@ -37,7 +38,7 @@ type SortieMapEntreprise = SortieMapCommon & {
   diane: EntréeDiane[]
   bdf: Bdf[]
   sirene_ul: unknown
-  crp: unknown
+  ellisphere: Ellisphere
 }
 
 export type SortieMap = SortieMapEtablissement | SortieMapEntreprise
@@ -81,6 +82,7 @@ export function map(this: Input): void {
     const diane = f.diane(value.diane)
     const bdf = f.bdf(value.bdf)
     const sirene_ul = f.iterable(value.sirene_ul)[0] || null
+    const ellisphere = f.iterable(value.ellisphere)[0] || null
     if (sirene_ul) {
       sirene_ul.raison_sociale = f.raison_sociale(
         sirene_ul.raison_sociale,
@@ -92,7 +94,6 @@ export function map(this: Input): void {
         sirene_ul.prenom4_unite_legale
       )
     }
-    const crp = value.crp
     v.key = this.value.key
     v.batch = actual_batch
 
@@ -105,9 +106,10 @@ export function map(this: Input): void {
     if (sirene_ul) {
       v.sirene_ul = sirene_ul
     }
-    if (crp) {
-      v.crp = crp
+    if (ellisphere) {
+      v.ellisphere = ellisphere
     }
+    
     if (Object.keys(v) !== []) {
       emit("entreprise_" + this.value.key, v)
     }

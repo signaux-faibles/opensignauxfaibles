@@ -62,6 +62,7 @@ export type BatchValueProps = {
   effectif_ent: ParHash<EntréeEffectif>
   bdf: ParHash<EntréeBdf>
   diane: ParHash<EntréeDiane>
+  ellisphere: ParHash<Ellisphere>
 }
 
 // Détail des types de données
@@ -198,4 +199,19 @@ export type EntréeDiane = {
   concours_bancaire_courant?: number | null
   valeur_ajoutee?: number | null
   dette_fiscale_et_sociale?: number | null
+}
+
+export type Ellisphere = {
+  siren: string,
+  code_groupe: string,
+  siren_groupe: string,
+  refid_groupe: string,
+  raison_sociale_groupe: string,
+  adresse_groupe: string,
+  personne_pou_m_groupe: string,
+  niveau_detention: number,
+  part_financiere: number,
+  code_filiere: string,
+  refid_filiere: string,
+  personne_pou_m_filiere: string,
 }
