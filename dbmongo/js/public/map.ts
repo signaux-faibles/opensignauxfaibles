@@ -109,7 +109,6 @@ export function map(this: Input): void {
     if (ellisphere) {
       v.ellisphere = ellisphere
     }
-    
     if (Object.keys(v) !== []) {
       emit("entreprise_" + this.value.key, v)
     }

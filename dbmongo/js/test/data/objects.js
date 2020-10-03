@@ -548,6 +548,21 @@ const makeObjects = ISODate => ([
                         "financier_court_terme" : 0.00958588957055215,
                         "frais_financier" : 2.07039106145251
                     }
+                },
+                "ellisphere": {
+                    "0bdfec56d76ba80d5f929dcb66196c28": {
+                        "code_groupe": "1234567",
+                        "siren_groupe": "525343432",
+                        "refid_groupe": "1234567",
+                        "raison_sociale_groupe": "GROUPE A",
+                        "adresse_groupe": "quelque part",
+                        "personne_pou_m_groupe": "M",
+                        "niveau_detention": 1,
+                        "part_financiere": 90.2,
+                        "code_filiere": "1000000",
+                        "refid_filiere": "AKES38748",
+                        "personne_pou_m_filiere": "M"
+                    }
                 }
             },
             "1810" : {
