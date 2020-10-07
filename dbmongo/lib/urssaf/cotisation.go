@@ -66,7 +66,7 @@ func ParserCotisation(cache marshal.Cache, batch *base.AdminBatch) (chan marshal
 
 			file, err := os.Open(viper.GetString("APP_DATA") + path)
 			if err != nil {
-				tracker.Error(err)
+				tracker.Add(err)
 				event.Critical(tracker.Report("fatalError"))
 				break
 			} else {
@@ -85,30 +85,30 @@ func ParserCotisation(cache marshal.Cache, batch *base.AdminBatch) (chan marshal
 				if err == io.EOF {
 					break
 				} else if err != nil {
-					tracker.Error(err)
+					tracker.Add(err)
 					event.Debug(tracker.Report("invalidLine"))
 					break
 				} else {
 					periode, err := marshal.UrssafToPeriod(row[field["Periode"]])
 					date := periode.Start
-					tracker.Error(err)
+					tracker.Add(err)
 
 					if siret, err := marshal.GetSiret(row[field["NumeroCompte"]], &date, cache, batch); err == nil {
 						cotisation := Cotisation{}
 						cotisation.key = siret
 						cotisation.NumeroCompte = row[field["NumeroCompte"]]
 						cotisation.Periode, err = marshal.UrssafToPeriod(row[field["Periode"]])
-						tracker.Error(err)
+						tracker.Add(err)
 						cotisation.Encaisse, err = strconv.ParseFloat(strings.Replace(row[field["Encaisse"]], ",", ".", -1), 64)
-						tracker.Error(err)
+						tracker.Add(err)
 						cotisation.Du, err = strconv.ParseFloat(strings.Replace(row[field["Du"]], ",", ".", -1), 64)
-						tracker.Error(err)
+						tracker.Add(err)
 
 						if !tracker.HasErrorInCurrentCycle() {
 							outputChannel <- cotisation
 						}
 					} else {
-						tracker.Error(base.NewFilterError(err))
+						tracker.Add(base.NewFilterError(err))
 						continue
 					}
 				}

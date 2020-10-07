@@ -72,7 +72,7 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 			}
 
 			if len(xlsxFile.Sheets) != 1 {
-				tracker.Error(errors.Errorf("the source has %d sheets, should have only 1", len(xlsxFile.Sheets)))
+				tracker.Add(errors.Errorf("the source has %d sheets, should have only 1", len(xlsxFile.Sheets)))
 				event.Critical(tracker.Report("abstract"))
 				continue
 			}
@@ -85,13 +85,13 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 
 					filtered, errFilter := marshal.IsFiltered(ellisphere.Siren, filter)
 					if errFilter != nil {
-						tracker.Error(errFilter)
+						tracker.Add(errFilter)
 					}
 
 					if err == nil && !filtered {
 						outputChannel <- ellisphere
 					}
-					tracker.Error(err)
+					tracker.Add(err)
 					tracker.Next()
 					return nil
 				},

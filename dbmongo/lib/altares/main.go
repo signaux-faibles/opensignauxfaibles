@@ -100,9 +100,9 @@ func Parser(batch base.AdminBatch, filter map[string]bool) (chan marshal.Tuple, 
 				}
 
 				dateEffet, err := time.Parse("2006-01-02", row[dateEffetIndex])
-				tracker.Error(err)
+				tracker.Add(err)
 				dateParution, err := time.Parse("2006-01-02", row[dateParutionIndex])
-				tracker.Error(err)
+				tracker.Add(err)
 
 				altares := Altares{
 					Siret:         row[siretIndex],

@@ -53,7 +53,7 @@ func ParserCompte(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tup
 			periodes := misc.GenereSeriePeriode(periode_init, time.Now()) //[]time.Time
 			event.Info("Comptes urssaf : traitement")
 			mapping, err := marshal.GetCompteSiretMapping(cache, batch, marshal.OpenAndReadSiretMapping)
-			tracker.Error(err)
+			tracker.Add(err)
 			for c := range mapping {
 				for _, p := range periodes {
 					compte := Compte{}
@@ -61,7 +61,7 @@ func ParserCompte(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tup
 					compte.Periode = p
 					var err error
 					compte.Siret, err = marshal.GetSiret(c, &p, cache, batch)
-					tracker.Error(base.NewCriticError(err, "erreur"))
+					tracker.Add(base.NewCriticError(err, "erreur"))
 
 					outputChannel <- compte
 				}

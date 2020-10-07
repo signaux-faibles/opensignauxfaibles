@@ -71,7 +71,7 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 
 			fields, err := reader.Read()
 			if err != nil {
-				tracker.Error(err)
+				tracker.Add(err)
 				event.Debug(tracker.Report("invalidLine"))
 				break
 			}
@@ -93,7 +93,7 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 				if err == io.EOF {
 					break
 				} else if err != nil {
-					tracker.Error(err)
+					tracker.Add(err)
 					break
 				}
 
@@ -103,13 +103,13 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 					apconso.ID = row[idxID]
 					apconso.Siret = row[idxSiret]
 					apconso.Periode, err = time.Parse("01/2006", row[idxPeriode])
-					tracker.Error(err)
+					tracker.Add(err)
 					apconso.HeureConsommee, err = misc.ParsePFloat(row[idxHeureConsommee])
-					tracker.Error(err)
+					tracker.Add(err)
 					apconso.Montant, err = misc.ParsePFloat(row[idxMontants])
-					tracker.Error(err)
+					tracker.Add(err)
 					apconso.Effectif, err = misc.ParsePInt(row[idxEffectifs])
-					tracker.Error(err)
+					tracker.Add(err)
 
 					if !tracker.HasErrorInCurrentCycle() && apconso.Siret != "" {
 						outputChannel <- apconso

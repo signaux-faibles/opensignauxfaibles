@@ -111,22 +111,22 @@ func ParserEffectifEnt(cache marshal.Cache, batch *base.AdminBatch) (chan marsha
 				if err == io.EOF {
 					break
 				} else if err != nil {
-					tracker.Error(err)
+					tracker.Add(err)
 					event.Critical(tracker.Report("fatalError"))
 					break
 				}
 				siren := row[sirenIndex]
 				filtered, err := marshal.IsFiltered(siren, filter)
-				tracker.Error(err)
+				tracker.Add(err)
 				notDigit := regexp.MustCompile("[^0-9]")
 				if len(siren) != 9 {
-					tracker.Error(errors.New("Format de siren incorrect : " + siren))
+					tracker.Add(errors.New("Format de siren incorrect : " + siren))
 				} else if !filtered {
 					for i, j := range effectifEntIndexes {
 						if row[j] != "" {
 							noThousandsSep := notDigit.ReplaceAllString(row[j], "")
 							s, err := strconv.ParseFloat(noThousandsSep, 64)
-							tracker.Error(err)
+							tracker.Add(err)
 							e := int(s)
 							if e > 0 {
 								eff := EffectifEnt{
@@ -142,7 +142,7 @@ func ParserEffectifEnt(cache marshal.Cache, batch *base.AdminBatch) (chan marsha
 				}
 
 				if engine.ShouldBreak(tracker, engine.MaxParsingErrors) {
-					tracker.Error(base.NewCriticError(errors.New("Parser interrompu: trop d'erreurs"), "fatal"))
+					tracker.Add(base.NewCriticError(errors.New("Parser interrompu: trop d'erreurs"), "fatal"))
 					event.Critical(tracker.Report("fatalError"))
 					break
 				}
