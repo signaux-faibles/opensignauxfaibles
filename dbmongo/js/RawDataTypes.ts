@@ -62,7 +62,7 @@ export type BatchValueProps = {
   effectif_ent: ParHash<EntréeEffectif>
   bdf: ParHash<EntréeBdf>
   diane: ParHash<EntréeDiane>
-  ellisphere: ParHash<Ellisphere>
+  ellisphere: ParHash<EntréeEllisphere>
 }
 
 // Détail des types de données
