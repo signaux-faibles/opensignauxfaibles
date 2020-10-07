@@ -59,7 +59,7 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 
 			file, err := os.Open(viper.GetString("APP_DATA") + path)
 			if err != nil {
-				tracker.Error(err)
+				tracker.Add(err)
 				event.Critical(tracker.Report("fatalError"))
 				continue
 			}
@@ -70,7 +70,7 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 			reader.Comma = ','
 
 			if err != nil {
-				tracker.Error(err)
+				tracker.Add(err)
 				event.Critical(tracker.Report("fatalError"))
 				continue
 			}
@@ -87,9 +87,9 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 				}
 
 				periode, err := time.Parse("2006-01-02", row[1])
-				tracker.Error(err)
+				tracker.Add(err)
 				randomOrder, err := misc.ParsePFloat(row[2])
-				tracker.Error(err)
+				tracker.Add(err)
 
 				reporder := RepeatableOrder{
 					Siret:       row[0],
@@ -98,7 +98,7 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 				}
 				filtered, err := marshal.IsFiltered(reporder.Siret[0:9], filter)
 				if err != nil {
-					tracker.Error(err)
+					tracker.Add(err)
 				}
 				if !tracker.HasErrorInCurrentCycle() && !filtered {
 					outputChannel <- reporder

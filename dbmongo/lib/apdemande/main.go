@@ -82,7 +82,7 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 
 			header, err := reader.Read()
 			if err != nil {
-				tracker.Error(err)
+				tracker.Add(err)
 				event.Debug(tracker.Report("invalidLine"))
 				break
 			}
@@ -117,7 +117,7 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 				if err == io.EOF {
 					break
 				} else if err != nil {
-					tracker.Error(err)
+					tracker.Add(err)
 					event.Debug(tracker.Report("invalidLine"))
 					break
 				}
@@ -127,30 +127,30 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 					apdemande.ID = row[f["ID_DA"]]
 					apdemande.Siret = row[f["ETAB_SIRET"]]
 					apdemande.EffectifEntreprise, err = misc.ParsePInt(row[f["EFF_ENT"]])
-					tracker.Error(err)
+					tracker.Add(err)
 					apdemande.Effectif, err = misc.ParsePInt(row[f["EFF_ETAB"]])
-					tracker.Error(err)
+					tracker.Add(err)
 					apdemande.DateStatut, err = time.Parse("02/01/2006", row[f["DATE_STATUT"]])
-					tracker.Error(err)
+					tracker.Add(err)
 					apdemande.Periode = misc.Periode{}
 					apdemande.Periode.Start, err = time.Parse("02/01/2006", row[f["DATE_DEB"]])
-					tracker.Error(err)
+					tracker.Add(err)
 					apdemande.Periode.End, err = time.Parse("02/01/2006", row[f["DATE_FIN"]])
-					tracker.Error(err)
+					tracker.Add(err)
 					apdemande.HTA, err = misc.ParsePFloat(row[f["HTA"]])
-					tracker.Error(err)
+					tracker.Add(err)
 					apdemande.MTA, err = misc.ParsePFloat(strings.ReplaceAll(row[f["MTA"]], ",", "."))
-					tracker.Error(err)
+					tracker.Add(err)
 					apdemande.EffectifAutorise, err = misc.ParsePInt(row[f["EFF_AUTO"]])
-					tracker.Error(err)
+					tracker.Add(err)
 					apdemande.MotifRecoursSE, err = misc.ParsePInt(row[f["MOTIF_RECOURS_SE"]])
-					tracker.Error(err)
+					tracker.Add(err)
 					apdemande.HeureConsommee, err = misc.ParsePFloat(row[f["S_HEURE_CONSOM_TOT"]])
-					tracker.Error(err)
+					tracker.Add(err)
 					apdemande.EffectifConsomme, err = misc.ParsePInt(row[f["S_EFF_CONSOM_TOT"]])
-					tracker.Error(err)
+					tracker.Add(err)
 					apdemande.MontantConsomme, err = misc.ParsePFloat(strings.ReplaceAll(row[f["S_MONTANT_CONSOM_TOT"]], ",", "."))
-					tracker.Error(err)
+					tracker.Add(err)
 					if !tracker.HasErrorInCurrentCycle() {
 						outputChannel <- apdemande
 					} else {

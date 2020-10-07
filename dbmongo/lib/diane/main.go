@@ -426,7 +426,7 @@ func parseDianeFile(batch *base.AdminBatch, path string, outputChannel chan mars
 	// return errors, if any
 	if readErr != nil && readErr != io.EOF {
 		contextualizedErr := errors.New("erreur pendant la lecture d'une ligne diane: " + readErr.Error())
-		tracker.Error(contextualizedErr)
+		tracker.Add(contextualizedErr)
 		event.Critical(tracker.Report("fatalError"))
 		return
 	}

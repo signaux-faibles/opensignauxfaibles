@@ -67,7 +67,7 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 
 			file, err := os.Open(viper.GetString("APP_DATA") + path)
 			if err != nil {
-				tracker.Error(err)
+				tracker.Add(err)
 				tracker.Report("fatalError")
 			}
 			event.Info(path + ": ouverture")
@@ -82,20 +82,20 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 				if err == io.EOF {
 					break
 				} else if err != nil {
-					tracker.Error(err)
+					tracker.Add(err)
 					event.Critical(tracker.Report("fatalError"))
 					break
 				}
 
 				validSiren := sfregexp.RegexpDict["siren"].MatchString(row[0])
 				if !validSiren {
-					tracker.Error(errors.New("siren invalide : " + row[0]))
+					tracker.Add(errors.New("siren invalide : " + row[0]))
 					continue // TODO: exécuter tracker.Next() un fois le TODO ci-dessous traité.
 				}
 
 				filtered, err := marshal.IsFiltered(row[0], filter)
 				if err != nil {
-					tracker.Error(err)
+					tracker.Add(err)
 				}
 				if !filtered {
 					sireneul := readLineEtablissement(row, &tracker)
@@ -130,6 +130,6 @@ func readLineEtablissement(row []string, tracker *gournal.Tracker) SireneUL {
 	if err == nil {
 		sireneul.Creation = &creation
 	}
-	tracker.Error(err)
+	tracker.Add(err)
 	return sireneul
 }

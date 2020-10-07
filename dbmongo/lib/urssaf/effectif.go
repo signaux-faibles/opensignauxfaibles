@@ -119,7 +119,7 @@ func ParserEffectif(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.T
 				if err == io.EOF {
 					break
 				} else if err != nil {
-					tracker.Error(err)
+					tracker.Add(err)
 					event.Critical(tracker.Report("fatalError"))
 					break
 				}
@@ -127,13 +127,13 @@ func ParserEffectif(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.T
 				notDigit := regexp.MustCompile("[^0-9]")
 				siret := row[siretIndex]
 				filtered, err := marshal.IsFiltered(siret, filter)
-				tracker.Error(err)
+				tracker.Add(err)
 				if len(siret) == 14 && !filtered {
 					for i, j := range effectifIndexes {
 						if row[j] != "" {
 							noThousandsSep := notDigit.ReplaceAllString(row[j], "")
 							e, err := strconv.Atoi(noThousandsSep)
-							tracker.Error(err)
+							tracker.Add(err)
 							if e > 0 {
 								eff := Effectif{
 									Siret:        siret,
@@ -146,7 +146,7 @@ func ParserEffectif(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.T
 					}
 				}
 				if engine.ShouldBreak(tracker, engine.MaxParsingErrors) {
-					tracker.Error(base.NewCriticError(errors.New("Parser interrompu: trop d'erreurs"), "fatal"))
+					tracker.Add(base.NewCriticError(errors.New("Parser interrompu: trop d'erreurs"), "fatal"))
 					event.Critical(tracker.Report("fatalError"))
 					break
 				}
