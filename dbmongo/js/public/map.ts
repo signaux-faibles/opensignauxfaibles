@@ -7,7 +7,7 @@ import {
   EntréeDelai,
   EntréeDefaillances,
   EntréeDiane,
-  Ellisphere,
+  EntréeEllisphere,
 } from "../RawDataTypes"
 import { SortieDebit } from "./debits"
 import { Bdf } from "./bdf"
@@ -38,7 +38,7 @@ type SortieMapEntreprise = SortieMapCommon & {
   diane: EntréeDiane[]
   bdf: Bdf[]
   sirene_ul: unknown
-  ellisphere: Ellisphere
+  ellisphere: EntréeEllisphere
 }
 
 export type SortieMap = SortieMapEtablissement | SortieMapEntreprise

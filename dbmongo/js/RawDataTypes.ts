@@ -201,7 +201,7 @@ export type EntréeDiane = {
   dette_fiscale_et_sociale?: number | null
 }
 
-export type Ellisphere = {
+export type EntréeEllisphere = {
   siren: string
   code_groupe: string
   siren_groupe: string
