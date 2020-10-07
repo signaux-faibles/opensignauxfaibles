@@ -1,5 +1,4 @@
 [{
-  "siren": "151515151",
   "code_groupe": "1234567",
   "siren_groupe": "525343432",
   "refid_groupe": "1234567",
@@ -12,7 +11,6 @@
   "refid_filiere": "AKES38748",
   "personne_pou_m_filiere": "M"
 },{
-  "siren": "151515152",
   "code_groupe": "2345678",
   "siren_groupe": "592839489",
   "refid_groupe": "2345678",
@@ -25,7 +23,6 @@
   "refid_filiere": "BKES38748",
   "personne_pou_m_filiere": "M"
 },{
-  "siren": "151515153",
   "code_groupe": "3456789",
   "siren_groupe": "235935959",
   "refid_groupe": "3456789",
@@ -38,7 +35,6 @@
   "refid_filiere": "CKES38748",
   "personne_pou_m_filiere": "M"
 },{
-  "siren": "151515154",
   "code_groupe": "4567890",
   "refid_groupe": "4567890",
   "raison_sociale_groupe": "GROUPE A",
@@ -50,7 +46,6 @@
   "refid_filiere": "DKES38748",
   "personne_pou_m_filiere": "M"
 },{
-  "siren": "151515155",
   "code_groupe": "5678901",
   "refid_groupe": "5678901",
   "raison_sociale_groupe": "GROUPE B",
@@ -62,7 +57,6 @@
   "refid_filiere": "EKES38748",
   "personne_pou_m_filiere": "M"
 },{
-  "siren": "151515156",
   "code_groupe": "6789012",
   "refid_groupe": "6789012",
   "raison_sociale_groupe": "GROUPE C",

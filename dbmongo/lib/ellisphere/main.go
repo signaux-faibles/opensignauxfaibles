@@ -13,7 +13,7 @@ import (
 
 // Ellisphere informations groupe pour une entreprise
 type Ellisphere struct {
-	Siren               string  `json:"siren" bson:"-" xlsx:"14"`
+	Siren               string  `json:"-" bson:"-" xlsx:"14"`
 	CodeGroupe          string  `json:"code_groupe,omitempty" bson:"code_groupe,omitempty" xlsx:"0"`
 	SirenGroupe         string  `json:"siren_groupe,omitempty" bson:"siren_groupe,omitempty" xlsx:"2"`
 	RefIDGroupe         string  `json:"refid_groupe,omitempty" bson:"refid_groupe,omitempty" xlsx:"3"`
