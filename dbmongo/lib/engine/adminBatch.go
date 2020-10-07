@@ -99,19 +99,20 @@ func CheckBatchPaths(batch *base.AdminBatch) error {
 }
 
 // CheckBatch checks batch
-func CheckBatch(batch base.AdminBatch, parsers []marshal.Parser) error {
+func CheckBatch(batch base.AdminBatch, parsers []marshal.Parser) (reports []string, err error) {
 	if err := CheckBatchPaths(&batch); err != nil {
-		return err
+		return nil, err
 	}
 	var cache = marshal.NewCache()
 	for _, parser := range parsers {
 		outputChannel, eventChannel := parser(cache, &batch)
 		DiscardTuple(outputChannel)
-		RelayEvents(eventChannel)
+		lastReport := RelayEvents(eventChannel)
+		reports = append(reports, lastReport)
 	}
 
 	Db.ChanData <- &Value{}
-	return nil
+	return reports, nil
 }
 
 // ProcessBatch traitement ad-hoc modifiable pour les besoins du développement
