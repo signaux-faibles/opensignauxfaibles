@@ -84,7 +84,7 @@ func ParserDelai(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 			file, err := os.Open(viper.GetString("APP_DATA") + path)
 
 			if err != nil {
-				tracker.Error(err)
+				tracker.Add(err)
 				event.Critical(tracker.Report("fatalError"))
 				break
 			} else {
@@ -99,21 +99,21 @@ func ParserDelai(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 				if err == io.EOF {
 					break
 				} else if err != nil {
-					tracker.Error(err)
+					tracker.Add(err)
 					event.Debug(tracker.Report("invalidLine"))
 					break
 				}
 
 				date, err := time.Parse("02/01/2006", row[field["DateCreation"]])
 				if err != nil {
-					tracker.Error(err)
+					tracker.Add(err)
 				} else if siret, err := marshal.GetSiret(row[field["NumeroCompte"]], &date, cache, batch); err == nil {
 					delai, tracker := readLine(row, field, siret, tracker)
 					if !tracker.HasErrorInCurrentCycle() {
 						outputChannel <- delai
 					}
 				} else {
-					tracker.Error(base.NewFilterError(err))
+					tracker.Add(base.NewFilterError(err))
 				}
 
 				tracker.Next()
@@ -136,16 +136,16 @@ func readLine(row []string, field map[string]int, siret string, tracker gournal.
 	delai.NumeroCompte = row[field["NumeroCompte"]]
 	delai.NumeroContentieux = row[field["NumeroContentieux"]]
 	delai.DateCreation, err = time.ParseInLocation("02/01/2006", row[field["DateCreation"]], loc)
-	tracker.Error(err)
+	tracker.Add(err)
 	delai.DateEcheance, err = time.ParseInLocation("02/01/2006", row[field["DateEcheance"]], loc)
-	tracker.Error(err)
+	tracker.Add(err)
 	delai.DureeDelai, err = strconv.Atoi(row[field["DureeDelai"]])
 	delai.Denomination = row[field["Denomination"]]
 	delai.Indic6m = row[field["Indic6m"]]
 	delai.AnneeCreation, err = strconv.Atoi(row[field["AnneeCreation"]])
-	tracker.Error(err)
+	tracker.Add(err)
 	delai.MontantEcheancier, err = strconv.ParseFloat(strings.Replace(row[field["MontantEcheancier"]], ",", ".", -1), 64)
-	tracker.Error(err)
+	tracker.Add(err)
 	delai.Stade = row[field["Stade"]]
 	delai.Action = row[field["Action"]]
 	return delai, tracker

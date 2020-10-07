@@ -61,7 +61,7 @@ func ParserProcol(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tup
 
 			file, err := os.Open(viper.GetString("APP_DATA") + path)
 			if err != nil {
-				tracker.Error(err)
+				tracker.Add(err)
 				event.Critical(tracker.Report("fatalError"))
 				continue
 			} else {
@@ -73,7 +73,7 @@ func ParserProcol(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tup
 			reader.LazyQuotes = true
 			fields, err := reader.Read()
 			if err != nil {
-				tracker.Error(err)
+				tracker.Add(err)
 				event.Critical(tracker.Report("fatalError"))
 				continue
 			}
@@ -83,7 +83,7 @@ func ParserProcol(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tup
 			siretIndex := misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "siret" })
 
 			if misc.SliceMin(dateEffetIndex, actionStadeIndex, siretIndex) == -1 {
-				tracker.Error(errors.New("format de fichier incorrect"))
+				tracker.Add(errors.New("format de fichier incorrect"))
 				event.Critical(tracker.Report("fatalError"))
 				continue
 			}
@@ -135,13 +135,13 @@ func readLineProcol(
 	var err error
 
 	procol.DateEffet, err = time.Parse("02Jan2006", row[dateEffetIndex])
-	tracker.Error(err)
+	tracker.Add(err)
 	procol.Siret = row[siretIndex]
 	splitted := strings.Split(strings.ToLower(row[actionStadeIndex]), "_")
 
 	for i, v := range splitted {
 		r, err := regexp.Compile("liquidation|redressement|sauvegarde")
-		tracker.Error(err)
+		tracker.Add(err)
 		if match := r.MatchString(v); match {
 			procol.ActionProcol = v
 			procol.StadeProcol = strings.Join(append(splitted[:i], splitted[i+1:]...), "_")

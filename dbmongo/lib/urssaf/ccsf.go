@@ -59,7 +59,7 @@ func ParserCCSF(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple
 
 			file, err := os.Open(viper.GetString("APP_DATA") + path)
 			if err != nil {
-				tracker.Error(err)
+				tracker.Add(err)
 				event.Critical(tracker.Report("fatalError"))
 				continue
 			} else {
@@ -90,7 +90,7 @@ func ParserCCSF(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple
 					ccsf.Action = r[f["Action"]]
 					ccsf.Stade = r[f["Stade"]]
 					ccsf.DateTraitement, err = marshal.UrssafToDate(r[f["DateTraitement"]])
-					tracker.Error(err)
+					tracker.Add(err)
 					if err != nil {
 						tracker.Next()
 						continue
@@ -103,7 +103,7 @@ func ParserCCSF(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple
 					)
 					if err != nil {
 						// Compte filtré
-						tracker.Error(base.NewFilterError(err))
+						tracker.Add(base.NewFilterError(err))
 						continue
 					}
 					ccsf.NumeroCompte = r[f["NumeroCompte"]]
@@ -115,7 +115,7 @@ func ParserCCSF(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple
 					}
 
 				} else {
-					tracker.Error(errors.New("Ligne non conforme, moins de 4 champs"))
+					tracker.Add(errors.New("Ligne non conforme, moins de 4 champs"))
 					event.Warning(tracker.Report("invalidLine"))
 				}
 				if tracker.Count%10000 == 0 && engine.ShouldBreak(tracker, engine.MaxParsingErrors) {

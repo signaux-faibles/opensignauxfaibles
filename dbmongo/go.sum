@@ -177,8 +177,8 @@ github.com/satori/go.uuid v1.2.0/go.mod h1:dA0hQrYB0VpLJoorglMZABFdXlWrHn1NEOzdh
 github.com/shabbyrobe/xmlwriter v0.0.0-20200208144257-9fca06d00ffa h1:2cO3RojjYl3hVTbEvJVqrMaFmORhL6O06qdW42toftk=
 github.com/shabbyrobe/xmlwriter v0.0.0-20200208144257-9fca06d00ffa/go.mod h1:Yjr3bdWaVWyME1kha7X0jsz3k2DgXNa1Pj3XGyUAbx8=
 github.com/shurcooL/sanitized_anchor_name v1.0.0/go.mod h1:1NzhyTcUVG4SuEtjjoZeVRXNmyL/1OwPU0+IJeTBvfc=
-github.com/signaux-faibles/gournal v0.0.0-20190902130422-31bc52c7b8ae h1:VJsJ+wieH2VV35L0vGp+3uLVRtrwRlVTbCVxcP49Hcg=
-github.com/signaux-faibles/gournal v0.0.0-20190902130422-31bc52c7b8ae/go.mod h1:x7m2yWqJu2K2oKL1QPmiBxBIPorLtnnjPQ8GMVcK+hA=
+github.com/signaux-faibles/gournal v0.0.0-20201001084617-2ef7eb62eefe h1:Hbg30lLVkVy3LHkvc4qLsgxL+4wXUW8Zg1PLnRp1UG8=
+github.com/signaux-faibles/gournal v0.0.0-20201001084617-2ef7eb62eefe/go.mod h1:x7m2yWqJu2K2oKL1QPmiBxBIPorLtnnjPQ8GMVcK+hA=
 github.com/sirupsen/logrus v1.2.0/go.mod h1:LxeOpSwHxABJmUn/MG1IvRgCAasNZTLOkJPxbbu5VWo=
 github.com/smartystreets/assertions v0.0.0-20180927180507-b2de0cb4f26d h1:zE9ykElWQ6/NYmHa3jpm/yHnI4xSofP+UP6SpjHcSeM=
 github.com/smartystreets/assertions v0.0.0-20180927180507-b2de0cb4f26d/go.mod h1:OnSkiWE9lh6wB0YB77sQom3nweQdgAjqCqsofrRNTgc=

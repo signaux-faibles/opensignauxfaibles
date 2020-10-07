@@ -68,7 +68,7 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 
 			file, err := os.Open(viper.GetString("APP_DATA") + path)
 			if err != nil {
-				tracker.Error(err)
+				tracker.Add(err)
 				event.Critical(tracker.Report("fatalError"))
 				continue
 			}
@@ -109,19 +109,19 @@ func parseBdfLine(row []string, tracker *gournal.Tracker, filter map[string]bool
 
 	validSiren := sfregexp.RegexpDict["siren"].MatchString(bdf.Siren)
 	if !validSiren {
-		tracker.Error(errors.New("siren invalide : " + bdf.Siren))
+		tracker.Add(errors.New("siren invalide : " + bdf.Siren))
 		return BDF{}
 	}
 
 	filtered, err := marshal.IsFiltered(bdf.Siren, filter)
-	tracker.Error(err)
+	tracker.Add(err)
 	if filtered {
-		tracker.Error(base.NewFilterNotice())
+		tracker.Add(base.NewFilterNotice())
 		return BDF{}
 	}
 
 	bdf.Annee, err = misc.ParsePInt(row[field["année"]])
-	tracker.Error(err)
+	tracker.Add(err)
 	var arrete = row[field["arrêtéBilan"]]
 	arrete = strings.Replace(arrete, "janv", "-01-", -1)
 	arrete = strings.Replace(arrete, "JAN", "-01-", -1)
@@ -148,42 +148,42 @@ func parseBdfLine(row []string, tracker *gournal.Tracker, filter map[string]bool
 	arrete = strings.Replace(arrete, "déc", "-12-", -1)
 	arrete = strings.Replace(arrete, "DEC", "-12-", -1)
 	bdf.ArreteBilan, err = time.Parse("02-01-2006", arrete)
-	tracker.Error(err)
+	tracker.Add(err)
 	bdf.RaisonSociale = row[field["raisonSociale"]]
 	bdf.Secteur = row[field["secteur"]]
 	if len(row) > field["poidsFrng"] {
 		bdf.PoidsFrng, err = misc.ParsePFloat(row[field["poidsFrng"]])
-		tracker.Error(err)
+		tracker.Add(err)
 	} else {
 		bdf.PoidsFrng = nil
 	}
 	if len(row) > field["tauxMarge"] {
 		bdf.TauxMarge, err = misc.ParsePFloat(row[field["tauxMarge"]])
-		tracker.Error(err)
+		tracker.Add(err)
 	} else {
 		bdf.TauxMarge = nil
 	}
 	if len(row) > field["delaiFournisseur"] {
 		bdf.DelaiFournisseur, err = misc.ParsePFloat(row[field["delaiFournisseur"]])
-		tracker.Error(err)
+		tracker.Add(err)
 	} else {
 		bdf.DelaiFournisseur = nil
 	}
 	if len(row) > field["detteFiscale"] {
 		bdf.DetteFiscale, err = misc.ParsePFloat(row[field["detteFiscale"]])
-		tracker.Error(err)
+		tracker.Add(err)
 	} else {
 		bdf.DetteFiscale = nil
 	}
 	if len(row) > field["financierCourtTerme"] {
 		bdf.FinancierCourtTerme, err = misc.ParsePFloat(row[field["financierCourtTerme"]])
-		tracker.Error(err)
+		tracker.Add(err)
 	} else {
 		bdf.FinancierCourtTerme = nil
 	}
 	if len(row) > field["fraisFinancier"] {
 		bdf.FraisFinancier, err = misc.ParsePFloat(row[field["fraisFinancier"]])
-		tracker.Error(err)
+		tracker.Add(err)
 	} else {
 		bdf.FraisFinancier = nil
 	}
@@ -194,14 +194,14 @@ func parseBdfLine(row []string, tracker *gournal.Tracker, filter map[string]bool
 func parseBdfFile(reader *csv.Reader, filter map[string]bool, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
 	// Lecture en-tête
 	_, err := reader.Read()
-	tracker.Error(err)
+	tracker.Add(err)
 
 	for {
 		row, err := reader.Read()
 		if err == io.EOF {
 			break
 		} else if err != nil {
-			tracker.Error(err)
+			tracker.Add(err)
 			break
 		}
 

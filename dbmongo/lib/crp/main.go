@@ -82,7 +82,7 @@ func Parser(batch base.AdminBatch, filter map[string]bool) (chan marshal.Tuple, 
 			_, err = reader.Read()
 
 			if err != nil {
-				tracker.Error(err)
+				tracker.Add(err)
 				event.Debug(tracker.Report("invalidLine"))
 				break
 			}
@@ -93,7 +93,7 @@ func Parser(batch base.AdminBatch, filter map[string]bool) (chan marshal.Tuple, 
 				if err == io.EOF {
 					break
 				} else if err != nil {
-					tracker.Error(err)
+					tracker.Add(err)
 					event.Debug(tracker.Report("invalidLine"))
 					break
 				}
