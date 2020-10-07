@@ -4,7 +4,6 @@ import { CompanyDataValuesWithCompact } from "../compact/applyPatchesToBatch"
 export type FlattenedImportedData = {
   key: SiretOrSiren
   scope: Scope
-  crp?: unknown // exploité par le map-reduce "public" seulement
 } & BatchValue
 
 /**
