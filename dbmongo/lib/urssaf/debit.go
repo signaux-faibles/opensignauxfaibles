@@ -77,7 +77,6 @@ func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 
 			reader := csv.NewReader(bufio.NewReader(file))
 			reader.Comma = ';'
-			reader.FieldsPerRecord = -1 // ignore rows with wrong number of fields
 			// ligne de titre
 			fields, err := reader.Read()
 			if err != nil {
@@ -85,7 +84,6 @@ func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 				event.Critical(tracker.Report("fatalError"))
 			}
 
-			nbFields := len(fields)
 			dateTraitementIndex := misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Dt_trt_ecn" })
 			partOuvriereIndex := misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Mt_PO" })
 			partPatronaleIndex := misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Mt_PP" })
@@ -110,12 +108,11 @@ func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 					break
 				} else if err != nil {
 					tracker.Add(err)
-					event.Critical(tracker.Report("fatalError"))
-					break
-				}
-
-				if len(row) != nbFields {
-					tracker.Add(base.NewCorruptedRowError(path))
+					_, ok := err.(*csv.ParseError)
+					if !ok {
+						// we tolerate CSV parsing errors, but we generate a fatalError report for others, in order to interrupt the whole import process
+						event.Critical(tracker.Report("fatalError"))
+					}
 					tracker.Next()
 					continue
 				}

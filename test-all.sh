@@ -3,7 +3,7 @@
 # Usage:
 # $ git secret reveal                 # pour déchiffrer les données utilisées par les tests (golden files, etc...)
 # $ ./test-all.sh                     # pour éxecuter tous les tests
-# $ ./test-all.sh --update-snapshots  # pour éxecuter tous les tests et mettre à jour les snapshots des tests "ava" + les golden files des tests de bout en bout
+# $ ./test-all.sh --update-snapshots  # pour éxecuter tous les tests et mettre à jour les snapshots des tests go + "ava" + les golden files des tests de bout en bout
 # $ git secret changes                # pour visualiser les modifications éventuellement apportées aux golden files
 # $ git secret hide                   # pour chiffrer les golden files suite à leur modification
 
@@ -35,7 +35,12 @@ heading "npm test"
 (cd ./dbmongo/js && npm run lint && npm test -- $@) 2>&1 | indent
 
 heading "go test"
-(cd ./dbmongo && go test ./...) 2>&1 | indent && \
+if [[ "$*" == *--update* ]]
+then
+    (cd ./dbmongo && go test ./... -update) 2>&1 | indent
+else
+    (cd ./dbmongo && go test ./...) 2>&1 | indent
+fi
 
 heading "go generate"
 (cd ./dbmongo/lib/engine && go generate .) 2>&1 | indent
