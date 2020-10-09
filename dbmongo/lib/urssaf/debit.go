@@ -147,7 +147,7 @@ func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 					continue
 				}
 
-				justParse := true
+				justParse := false
 				if !justParse {
 					period, _ := marshal.UrssafToPeriod(row[periodeIndex])
 					date := period.Start
