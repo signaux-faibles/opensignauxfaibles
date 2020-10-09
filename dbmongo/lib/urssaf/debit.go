@@ -103,7 +103,23 @@ func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 				continue
 			}
 
+			var lineNumber = 0 // starting with the header
+
+			ctx, stopTheTimer := context.WithCancel(context.Background())
+			go func(ctx context.Context) {
+				for range time.Tick(time.Second * 2) {
+					select {
+					case <-ctx.Done():
+						return
+					default:
+					}
+					fmt.Printf("Reading csv line %d\n", lineNumber)
+				}
+			}(ctx)
+			defer stopTheTimer()
+
 			for {
+				lineNumber++
 				row, err := reader.Read()
 				if err == io.EOF {
 					break
