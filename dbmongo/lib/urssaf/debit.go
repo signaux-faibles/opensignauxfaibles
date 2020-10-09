@@ -106,7 +106,12 @@ func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 
 			var shouldBreak = false
 			var lineNumber = 0 // starting with the header
+
 			var maxParsingErrors = engine.MaxParsingErrors
+			val, _ := cache.Get("maxParsingErrors")
+			if intVal, ok := val.(int); ok {
+				maxParsingErrors = intVal
+			}
 
 			ctx, stopTheTimer := context.WithCancel(context.Background())
 			go func(ctx context.Context) {

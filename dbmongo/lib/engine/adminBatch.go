@@ -104,6 +104,7 @@ func CheckBatch(batch base.AdminBatch, parsers []marshal.Parser) (reports []stri
 		return nil, err
 	}
 	var cache = marshal.NewCache()
+	cache.Set("maxParsingErrors", -1) // read the whole file even if the number of parse errors > MaxParsingErrors, for parsers that support this override
 	for _, parser := range parsers {
 		outputChannel, eventChannel := parser(cache, &batch)
 		DiscardTuple(outputChannel)
