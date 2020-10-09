@@ -126,7 +126,7 @@ func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 				period, _ := marshal.UrssafToPeriod(row[periodeIndex])
 				date := period.Start
 
-				if _, err := marshal.GetSiretFromComptesMapping(row[numeroCompteIndex], &date, comptes); err == nil {
+				if siret, err := marshal.GetSiretFromComptesMapping(row[numeroCompteIndex], &date, comptes); err == nil {
 
 					debit := Debit{
 						key:                       siret,
