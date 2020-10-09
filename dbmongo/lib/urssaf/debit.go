@@ -194,22 +194,30 @@ func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 	return outputChannel, eventChannel
 }
 
-// StopAfterTooManyErrors vérifie toutes les 2s le nombre d'erreurs de parsing
-// et passe shouldStop à true si la limite est dépassée.
-func StopAfterTooManyErrors(tracker gournal.Tracker, maxErrors int, shouldStop *bool) (stop context.CancelFunc) {
+// Cron exécute function régulièrement, avec l'interval fourni.
+// Il retourne une fonction stop().
+func Cron(interval time.Duration, function func()) (stop context.CancelFunc) {
 	ctx, stop := context.WithCancel(context.Background())
 	go func(ctx context.Context) {
-		for range time.Tick(time.Second * 2) {
+		for range time.Tick(interval) {
 			select {
 			case <-ctx.Done():
 				return
 			default:
 			}
-			*shouldStop = engine.ShouldBreak(tracker, maxErrors)
-			if *shouldStop {
-				fmt.Printf("Reached %d parsing errors => stopping.\n", maxErrors)
-			}
+			function()
 		}
 	}(ctx)
 	return stop
+}
+
+// StopAfterTooManyErrors vérifie toutes les 2s le nombre d'erreurs de parsing
+// et passe shouldStop à true si la limite est dépassée.
+func StopAfterTooManyErrors(tracker gournal.Tracker, maxErrors int, shouldStop *bool) (stop context.CancelFunc) {
+	return Cron(time.Second*2, func() {
+		*shouldStop = engine.ShouldBreak(tracker, maxErrors)
+		if *shouldStop {
+			fmt.Printf("Reached %d parsing errors => stopping.\n", maxErrors)
+		}
+	})
 }
