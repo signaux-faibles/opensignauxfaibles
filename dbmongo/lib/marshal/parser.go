@@ -26,16 +26,7 @@ func GetJSON(tuple Tuple) ([]byte, error) {
 
 // LogProgress affiche le numéro de ligne en cours de parsing, toutes les 2s.
 func LogProgress(lineNumber *int) (stop context.CancelFunc) {
-	ctx, stop := context.WithCancel(context.Background())
-	go func(ctx context.Context) {
-		for range time.Tick(time.Second * 2) {
-			select {
-			case <-ctx.Done():
-				return
-			default:
-			}
-			fmt.Printf("Reading csv line %d\n", *lineNumber)
-		}
-	}(ctx)
-	return stop
+	return base.Cron(time.Second*2, func() {
+		fmt.Printf("Reading csv line %d\n", *lineNumber)
+	})
 }
