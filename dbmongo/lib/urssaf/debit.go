@@ -111,7 +111,7 @@ func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 				maxParsingErrors = intVal
 			}
 			if maxParsingErrors > 0 {
-				stopErrorLimiter := StopAfterTooManyErrors(tracker, maxParsingErrors, &shouldBreak)
+				stopErrorLimiter := engine.StopAfterTooManyErrors(tracker, maxParsingErrors, &shouldBreak)
 				defer stopErrorLimiter()
 			}
 
