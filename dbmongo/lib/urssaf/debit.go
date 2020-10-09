@@ -147,49 +147,46 @@ func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 					continue
 				}
 
-				justParse := false
-				if !justParse {
-					period, _ := marshal.UrssafToPeriod(row[periodeIndex])
-					date := period.Start
+				period, _ := marshal.UrssafToPeriod(row[periodeIndex])
+				date := period.Start
 
-					if siret, err := marshal.GetSiret(row[numeroCompteIndex], &date, cache, batch); err == nil {
+				if siret, err := marshal.GetSiret(row[numeroCompteIndex], &date, cache, batch); err == nil {
 
-						debit := Debit{
-							key:                       siret,
-							NumeroCompte:              row[numeroCompteIndex],
-							NumeroEcartNegatif:        row[numeroEcartNegatifIndex],
-							CodeProcedureCollective:   row[codeProcedureCollectiveIndex],
-							CodeOperationEcartNegatif: row[codeOperationEcartNegatifIndex],
-							CodeMotifEcartNegatif:     row[codeMotifEcartNegatifIndex],
-						}
-
-						debit.DateTraitement, err = marshal.UrssafToDate(row[dateTraitementIndex])
-						tracker.Add(err)
-						debit.PartOuvriere, err = strconv.ParseFloat(row[partOuvriereIndex], 64)
-						tracker.Add(err)
-						debit.PartOuvriere = debit.PartOuvriere / 100
-						debit.PartPatronale, err = strconv.ParseFloat(row[partPatronaleIndex], 64)
-						tracker.Add(err)
-						debit.PartPatronale = debit.PartPatronale / 100
-						debit.NumeroHistoriqueEcartNegatif, err = strconv.Atoi(row[numeroHistoriqueEcartNegatifIndex])
-						tracker.Add(err)
-						debit.EtatCompte, err = strconv.Atoi(row[etatCompteIndex])
-						tracker.Add(err)
-						debit.Periode, err = marshal.UrssafToPeriod(row[periodeIndex])
-						tracker.Add(err)
-						debit.Recours, err = strconv.ParseBool(row[recoursIndex])
-						tracker.Add(err)
-						// debit.MontantMajorations, err = strconv.ParseFloat(row[montantMajorationsIndex], 64)
-						// tracker.Error(err)
-						// debit.MontantMajorations = debit.MontantMajorations / 100
-
-						if !tracker.HasErrorInCurrentCycle() {
-							outputChannel <- debit
-						}
-					} else {
-						tracker.Add(base.NewFilterError(err))
-						continue
+					debit := Debit{
+						key:                       siret,
+						NumeroCompte:              row[numeroCompteIndex],
+						NumeroEcartNegatif:        row[numeroEcartNegatifIndex],
+						CodeProcedureCollective:   row[codeProcedureCollectiveIndex],
+						CodeOperationEcartNegatif: row[codeOperationEcartNegatifIndex],
+						CodeMotifEcartNegatif:     row[codeMotifEcartNegatifIndex],
 					}
+
+					debit.DateTraitement, err = marshal.UrssafToDate(row[dateTraitementIndex])
+					tracker.Add(err)
+					debit.PartOuvriere, err = strconv.ParseFloat(row[partOuvriereIndex], 64)
+					tracker.Add(err)
+					debit.PartOuvriere = debit.PartOuvriere / 100
+					debit.PartPatronale, err = strconv.ParseFloat(row[partPatronaleIndex], 64)
+					tracker.Add(err)
+					debit.PartPatronale = debit.PartPatronale / 100
+					debit.NumeroHistoriqueEcartNegatif, err = strconv.Atoi(row[numeroHistoriqueEcartNegatifIndex])
+					tracker.Add(err)
+					debit.EtatCompte, err = strconv.Atoi(row[etatCompteIndex])
+					tracker.Add(err)
+					debit.Periode, err = marshal.UrssafToPeriod(row[periodeIndex])
+					tracker.Add(err)
+					debit.Recours, err = strconv.ParseBool(row[recoursIndex])
+					tracker.Add(err)
+					// debit.MontantMajorations, err = strconv.ParseFloat(row[montantMajorationsIndex], 64)
+					// tracker.Error(err)
+					// debit.MontantMajorations = debit.MontantMajorations / 100
+
+					if !tracker.HasErrorInCurrentCycle() {
+						outputChannel <- debit
+					}
+				} else {
+					tracker.Add(base.NewFilterError(err))
+					continue
 				}
 
 				if shouldBreak {
