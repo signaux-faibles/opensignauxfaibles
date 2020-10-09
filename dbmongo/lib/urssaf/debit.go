@@ -3,6 +3,7 @@ package urssaf
 import (
 	"bufio"
 	"encoding/csv"
+	"fmt"
 	"io"
 	"os"
 	"strconv"
