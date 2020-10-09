@@ -34,12 +34,7 @@ func LogProgress(lineNumber *int) (stop context.CancelFunc) {
 				return
 			default:
 			}
-			// shouldBreak = maxParsingErrors > 0 && engine.ShouldBreak(tracker, maxParsingErrors)
-			// if shouldBreak {
-			// 	fmt.Printf("Reached %d parsing errors => stopping.\n", maxParsingErrors)
-			// } else {
 			fmt.Printf("Reading csv line %d\n", *lineNumber)
-			// }
 		}
 	}(ctx)
 	return stop

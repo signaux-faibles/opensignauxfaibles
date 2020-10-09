@@ -2,7 +2,9 @@ package urssaf
 
 import (
 	"bufio"
+	"context"
 	"encoding/csv"
+	"fmt"
 	"io"
 	"os"
 	"strconv"
@@ -105,11 +107,13 @@ func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 			var shouldBreak = false
 			var lineNumber = 0 // starting with the header
 
-			// var maxParsingErrors = engine.MaxParsingErrors
-			// val, _ := cache.Get("maxParsingErrors")
-			// if intVal, ok := val.(int); ok {
-			// 	maxParsingErrors = intVal
-			// }
+			var maxParsingErrors = engine.MaxParsingErrors
+			val, _ := cache.Get("maxParsingErrors")
+			if intVal, ok := val.(int); ok {
+				maxParsingErrors = intVal
+			}
+			stopErrorLimiter := StopAfterTooManyErrors(tracker, maxParsingErrors, &shouldBreak)
+			defer stopErrorLimiter()
 
 			stopProgressLogger := marshal.LogProgress(&lineNumber)
 			defer stopProgressLogger()
@@ -130,46 +134,49 @@ func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 					continue
 				}
 
-				period, _ := marshal.UrssafToPeriod(row[periodeIndex])
-				date := period.Start
+				justParse := true
+				if !justParse {
+					period, _ := marshal.UrssafToPeriod(row[periodeIndex])
+					date := period.Start
 
-				if siret, err := marshal.GetSiret(row[numeroCompteIndex], &date, cache, batch); err == nil {
+					if siret, err := marshal.GetSiret(row[numeroCompteIndex], &date, cache, batch); err == nil {
 
-					debit := Debit{
-						key:                       siret,
-						NumeroCompte:              row[numeroCompteIndex],
-						NumeroEcartNegatif:        row[numeroEcartNegatifIndex],
-						CodeProcedureCollective:   row[codeProcedureCollectiveIndex],
-						CodeOperationEcartNegatif: row[codeOperationEcartNegatifIndex],
-						CodeMotifEcartNegatif:     row[codeMotifEcartNegatifIndex],
+						debit := Debit{
+							key:                       siret,
+							NumeroCompte:              row[numeroCompteIndex],
+							NumeroEcartNegatif:        row[numeroEcartNegatifIndex],
+							CodeProcedureCollective:   row[codeProcedureCollectiveIndex],
+							CodeOperationEcartNegatif: row[codeOperationEcartNegatifIndex],
+							CodeMotifEcartNegatif:     row[codeMotifEcartNegatifIndex],
+						}
+
+						debit.DateTraitement, err = marshal.UrssafToDate(row[dateTraitementIndex])
+						tracker.Add(err)
+						debit.PartOuvriere, err = strconv.ParseFloat(row[partOuvriereIndex], 64)
+						tracker.Add(err)
+						debit.PartOuvriere = debit.PartOuvriere / 100
+						debit.PartPatronale, err = strconv.ParseFloat(row[partPatronaleIndex], 64)
+						tracker.Add(err)
+						debit.PartPatronale = debit.PartPatronale / 100
+						debit.NumeroHistoriqueEcartNegatif, err = strconv.Atoi(row[numeroHistoriqueEcartNegatifIndex])
+						tracker.Add(err)
+						debit.EtatCompte, err = strconv.Atoi(row[etatCompteIndex])
+						tracker.Add(err)
+						debit.Periode, err = marshal.UrssafToPeriod(row[periodeIndex])
+						tracker.Add(err)
+						debit.Recours, err = strconv.ParseBool(row[recoursIndex])
+						tracker.Add(err)
+						// debit.MontantMajorations, err = strconv.ParseFloat(row[montantMajorationsIndex], 64)
+						// tracker.Error(err)
+						// debit.MontantMajorations = debit.MontantMajorations / 100
+
+						if !tracker.HasErrorInCurrentCycle() {
+							outputChannel <- debit
+						}
+					} else {
+						tracker.Add(base.NewFilterError(err))
+						continue
 					}
-
-					debit.DateTraitement, err = marshal.UrssafToDate(row[dateTraitementIndex])
-					tracker.Add(err)
-					debit.PartOuvriere, err = strconv.ParseFloat(row[partOuvriereIndex], 64)
-					tracker.Add(err)
-					debit.PartOuvriere = debit.PartOuvriere / 100
-					debit.PartPatronale, err = strconv.ParseFloat(row[partPatronaleIndex], 64)
-					tracker.Add(err)
-					debit.PartPatronale = debit.PartPatronale / 100
-					debit.NumeroHistoriqueEcartNegatif, err = strconv.Atoi(row[numeroHistoriqueEcartNegatifIndex])
-					tracker.Add(err)
-					debit.EtatCompte, err = strconv.Atoi(row[etatCompteIndex])
-					tracker.Add(err)
-					debit.Periode, err = marshal.UrssafToPeriod(row[periodeIndex])
-					tracker.Add(err)
-					debit.Recours, err = strconv.ParseBool(row[recoursIndex])
-					tracker.Add(err)
-					// debit.MontantMajorations, err = strconv.ParseFloat(row[montantMajorationsIndex], 64)
-					// tracker.Error(err)
-					// debit.MontantMajorations = debit.MontantMajorations / 100
-
-					if !tracker.HasErrorInCurrentCycle() {
-						outputChannel <- debit
-					}
-				} else {
-					tracker.Add(base.NewFilterError(err))
-					continue
 				}
 
 				if shouldBreak {
@@ -186,4 +193,24 @@ func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 	}()
 
 	return outputChannel, eventChannel
+}
+
+// StopAfterTooManyErrors vérifie toutes les 2s le nombre d'erreurs de parsing
+// et passe shouldStop à true si la limite est dépassée.
+func StopAfterTooManyErrors(tracker gournal.Tracker, maxErrors int, shouldStop *bool) (stop context.CancelFunc) {
+	ctx, stop := context.WithCancel(context.Background())
+	go func(ctx context.Context) {
+		for range time.Tick(time.Second * 2) {
+			select {
+			case <-ctx.Done():
+				return
+			default:
+			}
+			*shouldStop = maxErrors > 0 && engine.ShouldBreak(tracker, maxErrors)
+			if *shouldStop {
+				fmt.Printf("Reached %d parsing errors => stopping.\n", maxErrors)
+			}
+		}
+	}(ctx)
+	return stop
 }
