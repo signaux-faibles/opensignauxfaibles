@@ -2,9 +2,7 @@ package urssaf
 
 import (
 	"bufio"
-	"context"
 	"encoding/csv"
-	"fmt"
 	"io"
 	"os"
 	"strconv"
@@ -192,15 +190,4 @@ func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 	}()
 
 	return outputChannel, eventChannel
-}
-
-// StopAfterTooManyErrors vérifie toutes les 2s le nombre d'erreurs de parsing
-// et passe shouldStop à true si la limite est dépassée.
-func StopAfterTooManyErrors(tracker gournal.Tracker, maxErrors int, shouldStop *bool) (stop context.CancelFunc) {
-	return base.Cron(time.Second*2, func() {
-		*shouldStop = engine.ShouldBreak(tracker, maxErrors)
-		if *shouldStop {
-			fmt.Printf("Reached %d parsing errors => stopping.\n", maxErrors)
-		}
-	})
 }
