@@ -2,9 +2,7 @@ package urssaf
 
 import (
 	"bufio"
-	"context"
 	"encoding/csv"
-	"fmt"
 	"io"
 	"os"
 	"strconv"
@@ -107,29 +105,14 @@ func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 			var shouldBreak = false
 			var lineNumber = 0 // starting with the header
 
-			var maxParsingErrors = engine.MaxParsingErrors
-			val, _ := cache.Get("maxParsingErrors")
-			if intVal, ok := val.(int); ok {
-				maxParsingErrors = intVal
-			}
+			// var maxParsingErrors = engine.MaxParsingErrors
+			// val, _ := cache.Get("maxParsingErrors")
+			// if intVal, ok := val.(int); ok {
+			// 	maxParsingErrors = intVal
+			// }
 
-			ctx, stopTheTimer := context.WithCancel(context.Background())
-			go func(ctx context.Context) {
-				for range time.Tick(time.Second * 2) {
-					select {
-					case <-ctx.Done():
-						return
-					default:
-					}
-					shouldBreak = maxParsingErrors > 0 && engine.ShouldBreak(tracker, maxParsingErrors)
-					if shouldBreak {
-						fmt.Printf("Reached %d parsing errors => stopping.\n", maxParsingErrors)
-					} else {
-						fmt.Printf("Reading csv line %d\n", lineNumber)
-					}
-				}
-			}(ctx)
-			defer stopTheTimer()
+			stopProgressLogger := marshal.LogProgress(&lineNumber)
+			defer stopProgressLogger()
 
 			for {
 				lineNumber++
