@@ -112,8 +112,10 @@ func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 			if intVal, ok := val.(int); ok {
 				maxParsingErrors = intVal
 			}
-			stopErrorLimiter := StopAfterTooManyErrors(tracker, maxParsingErrors, &shouldBreak)
-			defer stopErrorLimiter()
+			if maxParsingErrors > 0 {
+				stopErrorLimiter := StopAfterTooManyErrors(tracker, maxParsingErrors, &shouldBreak)
+				defer stopErrorLimiter()
+			}
 
 			stopProgressLogger := marshal.LogProgress(&lineNumber)
 			defer stopProgressLogger()
@@ -203,7 +205,7 @@ func StopAfterTooManyErrors(tracker gournal.Tracker, maxErrors int, shouldStop *
 				return
 			default:
 			}
-			*shouldStop = maxErrors > 0 && engine.ShouldBreak(tracker, maxErrors)
+			*shouldStop = engine.ShouldBreak(tracker, maxErrors)
 			if *shouldStop {
 				fmt.Printf("Reached %d parsing errors => stopping.\n", maxErrors)
 			}
