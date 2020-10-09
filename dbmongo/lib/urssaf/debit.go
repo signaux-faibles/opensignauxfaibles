@@ -106,6 +106,7 @@ func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 
 			var shouldBreak = false
 			var lineNumber = 0 // starting with the header
+			var maxParsingErrors = engine.MaxParsingErrors
 
 			ctx, stopTheTimer := context.WithCancel(context.Background())
 			go func(ctx context.Context) {
@@ -115,9 +116,9 @@ func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 						return
 					default:
 					}
-					shouldBreak = engine.ShouldBreak(tracker, engine.MaxParsingErrors)
+					shouldBreak = maxParsingErrors > 0 && engine.ShouldBreak(tracker, maxParsingErrors)
 					if shouldBreak {
-						fmt.Printf("Reached %d parsing errors => stopping.\n", engine.MaxParsingErrors)
+						fmt.Printf("Reached %d parsing errors => stopping.\n", maxParsingErrors)
 					} else {
 						fmt.Printf("Reading csv line %d\n", lineNumber)
 					}
