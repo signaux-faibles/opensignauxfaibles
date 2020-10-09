@@ -38,7 +38,7 @@ func LogProgress(lineNumber *int) (stop context.CancelFunc) {
 			// if shouldBreak {
 			// 	fmt.Printf("Reached %d parsing errors => stopping.\n", maxParsingErrors)
 			// } else {
-			fmt.Printf("Reading csv line %d\n", lineNumber)
+			fmt.Printf("Reading csv line %d\n", *lineNumber)
 			// }
 		}
 	}(ctx)
