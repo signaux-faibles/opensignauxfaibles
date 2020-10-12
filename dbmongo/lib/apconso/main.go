@@ -2,6 +2,7 @@ package apconso
 
 import (
 	"encoding/csv"
+	"errors"
 	"io"
 	"os"
 	"time"
@@ -70,53 +71,58 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 			reader.Comma = ','
 
 			event.Info(path + ": ouverture")
-
-			fields, err := reader.Read()
-			if err != nil {
-				tracker.Add(err)
-				event.Debug(tracker.Report("invalidLine"))
-				break
-			}
-			var idx = colMapping{}
-			idx["ID"] = misc.SliceIndex(35, func(i int) bool { return fields[i] == "ID_DA" })
-			idx["Siret"] = misc.SliceIndex(35, func(i int) bool { return fields[i] == "ETAB_SIRET" })
-			idx["Periode"] = misc.SliceIndex(35, func(i int) bool { return fields[i] == "MOIS" })
-			idx["HeureConsommee"] = misc.SliceIndex(35, func(i int) bool { return fields[i] == "HEURES" })
-			idx["Montants"] = misc.SliceIndex(35, func(i int) bool { return fields[i] == "MONTANTS" })
-			idx["Effectifs"] = misc.SliceIndex(35, func(i int) bool { return fields[i] == "EFFECTIFS" })
-
-			if misc.SliceMin(idx["ID"], idx["Siret"], idx["Periode"], idx["HeureConsommee"], idx["Montants"], idx["Effectifs"]) == -1 {
-				event.Critical(path + ": entête non conforme, fichier ignoré")
-				continue
-			}
-
-			for {
-				row, err := reader.Read()
-
-				if err == io.EOF {
-					break
-				} else if err != nil {
-					tracker.Add(err)
-					break
-				}
-
-				if len(row) > 0 {
-					apconso := parseApConsoLine(row, &tracker, idx)
-
-					if !tracker.HasErrorInCurrentCycle() && apconso.Siret != "" {
-						outputChannel <- apconso
-					} else {
-						// event.Debug(tracker.Report("errors"))
-					}
-					tracker.Next()
-				}
-
-			}
+			parseApConsoFile(reader, &tracker, outputChannel)
 			event.Info(tracker.Report("abstract"))
 		}
 	}()
 
 	return outputChannel, eventChannel
+}
+
+func parseApConsoFile(reader *csv.Reader, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+	fields, err := reader.Read()
+	if err != nil {
+		tracker.Add(err)
+		return
+	}
+	var idx = colMapping{}
+	idx["ID"] = misc.SliceIndex(35, func(i int) bool { return fields[i] == "ID_DA" })
+	idx["Siret"] = misc.SliceIndex(35, func(i int) bool { return fields[i] == "ETAB_SIRET" })
+	idx["Periode"] = misc.SliceIndex(35, func(i int) bool { return fields[i] == "MOIS" })
+	idx["HeureConsommee"] = misc.SliceIndex(35, func(i int) bool { return fields[i] == "HEURES" })
+	idx["Montants"] = misc.SliceIndex(35, func(i int) bool { return fields[i] == "MONTANTS" })
+	idx["Effectifs"] = misc.SliceIndex(35, func(i int) bool { return fields[i] == "EFFECTIFS" })
+
+	if misc.SliceMin(idx["ID"], idx["Siret"], idx["Periode"], idx["HeureConsommee"], idx["Montants"], idx["Effectifs"]) == -1 {
+		tracker.Add(errors.New("entête non conforme, fichier ignoré"))
+		return
+	}
+
+	for {
+		row, err := reader.Read()
+
+		if err == io.EOF {
+			break
+		} else if err != nil {
+			tracker.Add(err)
+			break
+		}
+
+		// TODO: filtrer et/ou valider siret ?
+
+		if len(row) > 0 {
+			apconso := parseApConsoLine(row, tracker, idx)
+
+			if !tracker.HasErrorInCurrentCycle() && apconso.Siret != "" {
+				outputChannel <- apconso
+			} /* else {
+				event.Debug(tracker.Report("errors"))
+			} */
+
+			tracker.Next() // TODO: executer même si len(row) === 0 ?
+		}
+
+	}
 }
 
 func parseApConsoLine(row []string, tracker *gournal.Tracker, idx colMapping) APConso {
