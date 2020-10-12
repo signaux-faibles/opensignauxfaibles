@@ -130,7 +130,7 @@ func ParserEffectif(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.T
 
 				validSiret := sfregexp.RegexpDict["siret"].MatchString(siret)
 				if !validSiret {
-					tracker.Add(errors.New("Le siret/siren est invalide")) // TODO: ne pas générer une erreur fatale pour si peu
+					tracker.Add(base.NewRegularError(errors.New("Le siret/siren est invalide")))
 				} else if filter != nil || !marshal.FilterHas(siret, filter) {
 					for i, j := range effectifIndexes {
 						if row[j] != "" {
