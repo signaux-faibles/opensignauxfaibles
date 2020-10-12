@@ -52,7 +52,7 @@ func NewFilterError(err error) error {
 	return NewCriticError(err, "filter")
 }
 
-// NewError creates a regular error
+// NewRegularError creates a regular error
 func NewRegularError(err error) error {
 	return NewCriticError(err, "error")
 }
