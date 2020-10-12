@@ -41,8 +41,6 @@ func (apconso APConso) Scope() string {
 	return "etablissement"
 }
 
-type colMapping map[string]int
-
 // Parser produit des lignes de consommation d'activité partielle
 func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
 	outputChannel := make(chan marshal.Tuple)
@@ -78,6 +76,8 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 
 	return outputChannel, eventChannel
 }
+
+type colMapping map[string]int
 
 func parseApConsoFile(reader *csv.Reader, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
 	fields, err := reader.Read()
