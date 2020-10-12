@@ -15,6 +15,7 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sfregexp"
 
 	"github.com/signaux-faibles/gournal"
 	//"github.com/globalsign/mgo/bson"
@@ -124,11 +125,13 @@ func ParserEffectif(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.T
 					break
 				}
 
-				notDigit := regexp.MustCompile("[^0-9]")
+				notDigit := regexp.MustCompile("[^0-9]") // TODO: compiler une fois pour toutes
 				siret := row[siretIndex]
-				filtered, err := marshal.IsFiltered(siret, filter)
-				tracker.Add(err)
-				if len(siret) == 14 && !filtered {
+
+				validSiret := sfregexp.RegexpDict["siret"].MatchString(siret)
+				if !validSiret {
+					tracker.Add(errors.New("Le siret/siren est invalide")) // TODO: ne pas générer une erreur fatale pour si peu
+				} else if filter != nil || !marshal.FilterHas(siret, filter) {
 					for i, j := range effectifIndexes {
 						if row[j] != "" {
 							noThousandsSep := notDigit.ReplaceAllString(row[j], "")
