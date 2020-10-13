@@ -1,4 +1,4 @@
-ID_DA,ETAB_SIRET,DEP,REG,CODENAF2,CODE_NAF2_2,EFF_ENT,EFF_ETAB,MOIS,HEURES,MONTANTS,EFFECTIFS,SOURCE,CODE_NAF_21,CODE_NAF_TP,EFF_ENT_TR_TDB,Date_Payement_Annee,Date_Payement_Mois,Date_Payement_Annee_Mois,Date_Payement_Annee_Trim,Naf5_code,Naf5_libelle,Naf38_code,Naf38_libelle
-d363954866,61433760225578,587,55,4148g,09,5,1,12/2004,311.54,214,0,lokzrtm,b,sxbfsw,3.yycykqw81yiqihybr,2005,6,5562_95,5458_6,5,fltcmhrq,qe,pgkwjzzyyqznihqpasytxyeve
-u90q913412,65272073959845,71k,87,4585m,15,1,6,01/2019,44.11,659,2,wezbhfg,f,japndz,3.enzdchp32ssfjhnmd,2006,8,2613_97,3669_8,0,dppiokyy,hn,cbaftovgvlcktvnkilxmxcsrd
-p95a076375,53312397597505,48h,79,1864k,07,8,1,05/1999,06.25,27,7,rzeedds,c,ttymyj,9.ulvvdkj29asgyfgby,2007,2,8321_94,5287_0,3,qijwbutb,bd,qzxaqpfrsopafswornbqonrgg
+Siret,Date d'effet,Date parution,Code du journal,Code de la nature de l'événement
+61433760225578,2001-02-03,2011-12-29,CJ1,CN1
+65272073959845,2002-02-03,2012-12-30,CJ2,CN2
+53312397597505,2003-02-03,2013-12-31,CJ3,CN3

@@ -1,1 +1,48 @@
-{}
+{
+  "tuples": [
+    {
+      "date_effet": "2001-02-03T00:00:00Z",
+      "date_parution": "2011-12-29T00:00:00Z",
+      "code_journal": "CJ1",
+      "code_evenement": "CN1"
+    },
+    {
+      "date_effet": "2002-02-03T00:00:00Z",
+      "date_parution": "2012-12-30T00:00:00Z",
+      "code_journal": "CJ2",
+      "code_evenement": "CN2"
+    },
+    {
+      "date_effet": "2003-02-03T00:00:00Z",
+      "date_parution": "2013-12-31T00:00:00Z",
+      "code_journal": "CJ3",
+      "code_evenement": "CN3"
+    }
+  ],
+  "events": [
+    {
+      "date": "0001-01-01T00:00:00Z",
+      "event": "testData/altaresTestData.csv: ouverture",
+      "priority": "info",
+      "code": "altaresParser",
+      "report_type": ""
+    },
+    {
+      "date": "0001-01-01T00:00:00Z",
+      "event": {
+        "batchKey": "",
+        "error": 0,
+        "filtered": 0,
+        "headErrors": [],
+        "headFatal": [],
+        "headFilters": [],
+        "report": "testData/altaresTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
+        "total": 3,
+        "valid": 3
+      },
+      "priority": "info",
+      "code": "altaresParser",
+      "report_type": ""
+    }
+  ]
+}
