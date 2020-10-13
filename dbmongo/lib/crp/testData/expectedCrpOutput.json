@@ -1,0 +1,46 @@
+{
+  "tuples": [
+    {
+      "siret": "65272073959845",
+      "difficulte": "Difficult2",
+      "etat_dossier": "EtatDossie2",
+      "actions": "Action2",
+      "statut": "Statu2",
+      "fichier": "testData/crpTestData.csv"
+    },
+    {
+      "siret": "53312397597505",
+      "difficulte": "Difficult3",
+      "etat_dossier": "EtatDossie3",
+      "actions": "Action3",
+      "statut": "Statu3",
+      "fichier": "testData/crpTestData.csv"
+    }
+  ],
+  "events": [
+    {
+      "date": "0001-01-01T00:00:00Z",
+      "event": "testData/crpTestData.csv: ouverture",
+      "priority": "info",
+      "code": "parserApconso",
+      "report_type": ""
+    },
+    {
+      "date": "0001-01-01T00:00:00Z",
+      "event": {
+        "batchKey": "",
+        "error": 0,
+        "filtered": 0,
+        "headErrors": [],
+        "headFatal": [],
+        "headFilters": [],
+        "report": "testData/crpTestData.csv: intégration terminée, 2 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 2 lignes valides",
+        "total": 2,
+        "valid": 2
+      },
+      "priority": "info",
+      "code": "parserApconso",
+      "report_type": ""
+    }
+  ]
+}
