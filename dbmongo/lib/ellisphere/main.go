@@ -77,29 +77,32 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 				continue
 			}
 
-			sheet := xlsxFile.Sheets[0]
-			sheet.ForEachRow(
-				func(row *xlsx.Row) error {
-					var ellisphere Ellisphere
-					err := row.ReadStruct(&ellisphere)
-
-					filtered, errFilter := marshal.IsFiltered(ellisphere.Siren, filter)
-					if errFilter != nil {
-						tracker.Add(errFilter)
-					}
-
-					if err == nil && !filtered {
-						outputChannel <- ellisphere
-					}
-					tracker.Add(err)
-					tracker.Next()
-					return nil
-				},
-			)
+			parseEllisphereSheet(xlsxFile.Sheets[0], filter, &tracker, outputChannel)
 
 			event.Info(tracker.Report("abstract"))
 		}
 	}()
 
 	return outputChannel, eventChannel
+}
+
+func parseEllisphereSheet(sheet *xlsx.Sheet, filter map[string]bool, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+	sheet.ForEachRow(
+		func(row *xlsx.Row) error {
+			var ellisphere Ellisphere
+			err := row.ReadStruct(&ellisphere)
+
+			filtered, errFilter := marshal.IsFiltered(ellisphere.Siren, filter)
+			if errFilter != nil {
+				tracker.Add(errFilter)
+			}
+
+			if err == nil && !filtered {
+				outputChannel <- ellisphere
+			}
+			tracker.Add(err)
+			tracker.Next()
+			return nil
+		},
+	)
 }
