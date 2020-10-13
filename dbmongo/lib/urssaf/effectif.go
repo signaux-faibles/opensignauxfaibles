@@ -125,7 +125,6 @@ func ParserEffectif(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.T
 					break
 				}
 
-				notDigit := regexp.MustCompile("[^0-9]") // TODO: compiler une fois pour toutes
 				siret := row[siretIndex]
 
 				validSiret := sfregexp.RegexpDict["siret"].MatchString(siret)
@@ -134,7 +133,7 @@ func ParserEffectif(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.T
 				} else if filter != nil || !marshal.FilterHas(siret, filter) {
 					for i, j := range effectifIndexes {
 						if row[j] != "" {
-							noThousandsSep := notDigit.ReplaceAllString(row[j], "")
+							noThousandsSep := sfregexp.RegexpDict["notDigit"].ReplaceAllString(row[j], "")
 							e, err := strconv.Atoi(noThousandsSep)
 							tracker.Add(err)
 							if e > 0 {
