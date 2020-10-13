@@ -26,32 +26,32 @@ func reportAbstract(tracker gournal.Tracker) interface{} {
 	var filterErrors = []string{}
 	var errorErrors = []string{}
 	for cycle := range tracker.Errors {
-		for _, e := range tracker.Errors[cycle] {
-			switch c := e.(type) {
+		for _, err := range tracker.Errors[cycle] {
+			switch c := err.(type) {
 			case base.CriticityError:
 				if c.Criticity() == "fatal" {
 					nFatal++
 					if len(fatalErrors) < MaxParsingErrors {
-						fatalErrors = append(fatalErrors, fmt.Sprintf("Cycle %d: %v", cycle, e))
+						fatalErrors = append(fatalErrors, fmt.Sprintf("Cycle %d: %v", cycle, err))
 					}
 				}
 				if c.Criticity() == "error" {
 					nError++
 					if len(errorErrors) < MaxParsingErrors {
-						errorErrors = append(errorErrors, fmt.Sprintf("Cycle %d: %v", cycle, e))
+						errorErrors = append(errorErrors, fmt.Sprintf("Cycle %d: %v", cycle, err))
 					}
 				}
 				if c.Criticity() == "filter" {
 					nFiltered++
 					if len(filterErrors) < MaxParsingErrors {
-						filterErrors = append(filterErrors, fmt.Sprintf("Cycle %d: %v", cycle, e))
+						filterErrors = append(filterErrors, fmt.Sprintf("Cycle %d: %v", cycle, err))
 					}
 				}
 			default:
 				nFatal++
 				if len(fatalErrors) < MaxParsingErrors {
-					fatalErrors = append(fatalErrors, fmt.Sprintf("Cycle %d: %v", cycle, e))
-					fmt.Printf("Cycle %d: %v", cycle, e)
+					fatalErrors = append(fatalErrors, fmt.Sprintf("Cycle %d: %v", cycle, err))
+					fmt.Printf("Cycle %d: %v", cycle, err)
 				}
 			}
 		}
