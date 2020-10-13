@@ -26,7 +26,17 @@ func reportAbstract(tracker gournal.Tracker) interface{} {
 	var fatalErrors = []string{}
 	var filterErrors = []string{}
 	var errorErrors = []string{}
+
+	// En Golang, l'ordre des clés d'un map n'est pas garanti. (https://blog.golang.org/maps)
+	// => On ordonne les erreurs par numéro de cycle, pour permettre la reproductibilité.
+	// cf https://github.com/signaux-faibles/opensignauxfaibles/issues/181
+	var cycles []int
 	for cycle := range tracker.Errors {
+		cycles = append(cycles, cycle)
+	}
+	sort.Ints(cycles)
+
+	for _, cycle := range cycles {
 		for _, err := range tracker.Errors[cycle] {
 			switch c := err.(type) {
 			case base.CriticityError:
@@ -57,13 +67,6 @@ func reportAbstract(tracker gournal.Tracker) interface{} {
 			}
 		}
 	}
-
-	// En Golang, l'ordre des clés d'un map n'est pas garanti. (https://blog.golang.org/maps)
-	// => On ordonne les erreurs pour permettre la reproductibilité.
-	// cf https://github.com/signaux-faibles/opensignauxfaibles/issues/181
-	sort.Strings(fatalErrors)
-	sort.Strings(filterErrors)
-	sort.Strings(errorErrors)
 
 	nValid := tracker.Count - nFatal - nError - nFiltered
 	report := fmt.Sprintf(
