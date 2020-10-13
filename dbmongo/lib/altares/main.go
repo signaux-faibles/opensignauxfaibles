@@ -49,7 +49,8 @@ func sliceIndex(limit int, predicate func(i int) bool) int {
 }
 
 // Parser  Altares
-func Parser(batch base.AdminBatch, filter map[string]bool) (chan marshal.Tuple, chan marshal.Event) {
+func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
+	// TODO: appliquer filtre, après appel à marshal.GetSirenFilterFromCache(cache)
 	outputChannel := make(chan marshal.Tuple)
 	eventChannel := make(chan marshal.Event)
 
