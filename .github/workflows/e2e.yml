@@ -1,4 +1,4 @@
-name: CI
+name: End-to-end CI
 
 on:
   push:
@@ -7,8 +7,8 @@ on:
     branches: [master]
 
 jobs:
-  e2e:
-    name: End-to-end
+  build:
+    name: Build
     runs-on: ubuntu-latest
     steps:
       - name: Set up Go 1.14
