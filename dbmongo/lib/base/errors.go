@@ -17,7 +17,7 @@ type CriticError struct {
 	criticity string
 }
 
-// NewCriticError creates a critical error
+// NewCriticError creates an error with the provided criticity
 func NewCriticError(err error, criticity string) error {
 	if err == nil {
 		return nil
@@ -49,10 +49,17 @@ func NewFilterNotice() error {
 
 // NewFilterError returns a filter error
 func NewFilterError(err error) error {
-	if err == nil {
-		return nil
-	}
 	return NewCriticError(err, "filter")
+}
+
+// NewRegularError creates a regular error
+func NewRegularError(err error) error {
+	return NewCriticError(err, "error")
+}
+
+// NewFatalError creates a fatal error
+func NewFatalError(err error) error {
+	return NewCriticError(err, "fatal")
 }
 
 // MappingError occurs when something goes wrong while looking for a mapping
