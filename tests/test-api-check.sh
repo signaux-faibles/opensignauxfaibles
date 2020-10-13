@@ -73,8 +73,9 @@ printjson(db.Journal.find({ "event.report": { "\$exists": true } }).toArray().ma
 })));
 
 print("// Response body from /api/data/check:");
-print("${API_RESULT}");
 CONTENT
+
+echo "${API_RESULT}" >> "${OUTPUT_FILE}"
 
 # Display JS errors logged by MongoDB, if any
 tests/helpers/mongodb-container.sh exceptions || true
