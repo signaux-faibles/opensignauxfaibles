@@ -32,7 +32,10 @@ func IsFiltered(id string, filter map[string]bool) (bool, error) {
 
 // FilterHas tells if the siret/siren is listed in the filter, or not.
 func FilterHas(siretOrSiren string, filter map[string]bool) bool {
-	return filter[siretOrSiren[0:9]]
+	if len(sirenOrSiren) >= 9 {
+                return filter[siretOrSiren[0:9]]
+	}
+	return false
 }
 
 // GetSirenFilterFromCache reads the filter from cache.
