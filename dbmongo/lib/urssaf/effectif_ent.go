@@ -15,6 +15,7 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sfregexp"
 
 	"github.com/signaux-faibles/gournal"
 	//"github.com/globalsign/mgo/bson"
@@ -118,13 +119,12 @@ func ParserEffectifEnt(cache marshal.Cache, batch *base.AdminBatch) (chan marsha
 				siren := row[sirenIndex]
 				filtered, err := marshal.IsFiltered(siren, filter)
 				tracker.Add(err)
-				notDigit := regexp.MustCompile("[^0-9]")
 				if len(siren) != 9 {
 					tracker.Add(errors.New("Format de siren incorrect : " + siren))
 				} else if !filtered {
 					for i, j := range effectifEntIndexes {
 						if row[j] != "" {
-							noThousandsSep := notDigit.ReplaceAllString(row[j], "")
+							noThousandsSep := sfregexp.RegexpDict["notDigit"].ReplaceAllString(row[j], "")
 							s, err := strconv.ParseFloat(noThousandsSep, 64)
 							tracker.Add(err)
 							e := int(s)
