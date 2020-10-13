@@ -2,6 +2,7 @@ package engine
 
 import (
 	"fmt"
+	"sort"
 	"strconv"
 
 	"github.com/globalsign/mgo/bson"
@@ -56,6 +57,14 @@ func reportAbstract(tracker gournal.Tracker) interface{} {
 			}
 		}
 	}
+
+	// En Golang, l'ordre des clés d'un map n'est pas garanti. (https://blog.golang.org/maps)
+	// => On ordonne les erreurs pour permettre la reproductibilité.
+	// cf https://github.com/signaux-faibles/opensignauxfaibles/issues/181
+	sort.Strings(fatalErrors)
+	sort.Strings(filterErrors)
+	sort.Strings(errorErrors)
+
 	nValid := tracker.Count - nFatal - nError - nFiltered
 	report := fmt.Sprintf(
 		"%s: intégration terminée, %d lignes traitées, %d erreures fatales, %d rejets, %d lignes filtrées, %d lignes valides",
