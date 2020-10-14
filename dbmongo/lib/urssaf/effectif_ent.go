@@ -126,36 +126,31 @@ func parseEffectifEntFile(reader *csv.Reader, filter map[string]bool, tracker *g
 			tracker.Add(err)
 			break
 		}
+		siren := row[sirenIndex]
+		filtered, err := marshal.IsFiltered(siren, filter)
+		tracker.Add(err)
+		if len(siren) != 9 {
+			tracker.Add(errors.New("Format de siren incorrect : " + siren))
+		} else if !filtered {
+			for i, j := range effectifEntIndexes {
+				if row[j] != "" {
+					noThousandsSep := sfregexp.RegexpDict["notDigit"].ReplaceAllString(row[j], "")
+					s, err := strconv.ParseFloat(noThousandsSep, 64)
+					tracker.Add(err)
+					e := int(s)
+					if e > 0 {
+						eff := EffectifEnt{
+							Siren:       siren,
+							Periode:     periods[i],
+							EffectifEnt: e,
+						}
 
-		eff := parseEffectifEntLine(effectifEntIndexes, periods, row, colMapping{"siren": sirenIndex}, filter, tracker)
-		outputChannel <- eff
-		tracker.Next()
-	}
-}
-
-func parseEffectifEntLine(effectifEntIndexes []int, periods []time.Time, row []string, idx colMapping, filter map[string]bool, tracker *gournal.Tracker) EffectifEnt {
-	siren := row[idx["siren"]]
-	filtered, err := marshal.IsFiltered(siren, filter)
-	tracker.Add(err)
-	if len(siren) != 9 {
-		tracker.Add(errors.New("Format de siren incorrect : " + siren))
-	} else if !filtered {
-		for i, j := range effectifEntIndexes {
-			if row[j] != "" {
-				noThousandsSep := sfregexp.RegexpDict["notDigit"].ReplaceAllString(row[j], "")
-				s, err := strconv.ParseFloat(noThousandsSep, 64)
-				tracker.Add(err)
-				e := int(s)
-				if e > 0 {
-					return EffectifEnt{
-						Siren:       siren,
-						Periode:     periods[i],
-						EffectifEnt: e,
+						outputChannel <- eff
 					}
-
 				}
 			}
 		}
+
+		tracker.Next()
 	}
-	return EffectifEnt{}
 }
