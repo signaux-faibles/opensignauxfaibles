@@ -55,20 +55,6 @@ func ParserDelai(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 	outputChannel := make(chan marshal.Tuple)
 	eventChannel := make(chan marshal.Event)
 
-	idx := colMapping{
-		"NumeroCompte":      2,
-		"NumeroContentieux": 3,
-		"DateCreation":      4,
-		"DateEcheance":      5,
-		"DureeDelai":        6,
-		"Denomination":      7,
-		"Indic6m":           8,
-		"AnneeCreation":     9,
-		"MontantEcheancier": 10,
-		"Stade":             11,
-		"Action":            12,
-	}
-
 	event := marshal.Event{
 		Code:    "delaiParser",
 		Channel: eventChannel,
@@ -91,33 +77,15 @@ func ParserDelai(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 				event.Info(path + ": ouverture")
 			}
 
-			reader := csv.NewReader(bufio.NewReader(file))
-			reader.Comma = ';'
-			reader.Read()
-			for {
-				row, err := reader.Read()
-				if err == io.EOF {
-					break
-				} else if err != nil {
-					tracker.Add(err)
-					event.Debug(tracker.Report("invalidLine"))
-					break
-				}
-
-				date, err := time.Parse("02/01/2006", row[idx["DateCreation"]])
-				if err != nil {
-					tracker.Add(err)
-				} else if siret, err := marshal.GetSiret(row[idx["NumeroCompte"]], &date, cache, batch); err == nil {
-					delai := parseDelaiLine(row, idx, siret, tracker)
-					if !tracker.HasErrorInCurrentCycle() {
-						outputChannel <- delai
-					}
-				} else {
-					tracker.Add(base.NewFilterError(err))
-				}
-
-				tracker.Next()
+			comptes, err := marshal.GetCompteSiretMapping(cache, batch, marshal.OpenAndReadSiretMapping)
+			if err != nil {
+				tracker.Add(err)
+			} else {
+				reader := csv.NewReader(bufio.NewReader(file))
+				reader.Comma = ';'
+				parseDelaiFile(reader, &comptes, &tracker, outputChannel)
 			}
+
 			file.Close()
 			event.Debug(tracker.Report("abstract"))
 		}
@@ -128,7 +96,49 @@ func ParserDelai(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 	return outputChannel, eventChannel
 }
 
-func parseDelaiLine(row []string, idx map[string]int, siret string, tracker gournal.Tracker) Delai {
+func parseDelaiFile(reader *csv.Reader, comptes *marshal.Comptes, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+
+	var idx = colMapping{
+		"NumeroCompte":      2,
+		"NumeroContentieux": 3,
+		"DateCreation":      4,
+		"DateEcheance":      5,
+		"DureeDelai":        6,
+		"Denomination":      7,
+		"Indic6m":           8,
+		"AnneeCreation":     9,
+		"MontantEcheancier": 10,
+		"Stade":             11,
+		"Action":            12,
+	}
+
+	reader.Read()
+	for {
+		row, err := reader.Read()
+		if err == io.EOF {
+			break
+		} else if err != nil {
+			tracker.Add(err)
+			break
+		}
+
+		date, err := time.Parse("02/01/2006", row[idx["DateCreation"]])
+		if err != nil {
+			tracker.Add(err)
+		} else if siret, err := marshal.GetSiretFromComptesMapping(row[idx["NumeroCompte"]], &date, *comptes); err == nil {
+			delai := parseDelaiLine(row, idx, siret, tracker)
+			if !tracker.HasErrorInCurrentCycle() {
+				outputChannel <- delai
+			}
+		} else {
+			tracker.Add(base.NewFilterError(err))
+		}
+
+		tracker.Next()
+	}
+}
+
+func parseDelaiLine(row []string, idx map[string]int, siret string, tracker *gournal.Tracker) Delai {
 	var err error
 	loc, _ := time.LoadLocation("Europe/Paris")
 	delai := Delai{}
