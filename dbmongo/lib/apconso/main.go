@@ -93,12 +93,12 @@ func parseApConsoFile(reader *csv.Reader, tracker *gournal.Tracker, outputChanne
 		return
 	}
 	var idx = colMapping{}
-	idx.ID = misc.SliceIndex(35, func(i int) bool { return header[i] == "ID_DA" })
-	idx.Siret = misc.SliceIndex(35, func(i int) bool { return header[i] == "ETAB_SIRET" })
-	idx.Periode = misc.SliceIndex(35, func(i int) bool { return header[i] == "MOIS" })
-	idx.HeureConsommee = misc.SliceIndex(35, func(i int) bool { return header[i] == "HEURES" })
-	idx.Montant = misc.SliceIndex(35, func(i int) bool { return header[i] == "MONTANTS" })
-	idx.Effectif = misc.SliceIndex(35, func(i int) bool { return header[i] == "EFFECTIFS" })
+	idx.ID = misc.SliceIndex(len(header), func(i int) bool { return header[i] == "ID_DA" })
+	idx.Siret = misc.SliceIndex(len(header), func(i int) bool { return header[i] == "ETAB_SIRET" })
+	idx.Periode = misc.SliceIndex(len(header), func(i int) bool { return header[i] == "MOIS" })
+	idx.HeureConsommee = misc.SliceIndex(len(header), func(i int) bool { return header[i] == "HEURES" })
+	idx.Montant = misc.SliceIndex(len(header), func(i int) bool { return header[i] == "MONTANTS" })
+	idx.Effectif = misc.SliceIndex(len(header), func(i int) bool { return header[i] == "EFFECTIFS" })
 
 	if misc.SliceMin(idx.ID, idx.Siret, idx.Periode, idx.HeureConsommee, idx.Montant, idx.Effectif) == -1 {
 		tracker.Add(errors.New("entête non conforme, fichier ignoré"))
