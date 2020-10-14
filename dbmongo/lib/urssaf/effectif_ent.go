@@ -49,7 +49,7 @@ type periodCol struct {
 	colIndex  int
 }
 
-// ParseEffectifEntPeriod Transforme un tableau de périodes telles qu'écrites dans l'entête du tableau d'effectifEnt urssaf en date de début
+// ParseEffectifEntPeriod extrait les périodes depuis une liste de noms de colonnes csv.
 func parseEffectifEntPeriod(fields []string) []periodCol {
 	periods := []periodCol{}
 	re, _ := regexp.Compile("^eff")
