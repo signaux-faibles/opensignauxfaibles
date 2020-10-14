@@ -26,15 +26,6 @@ type APConso struct {
 	Periode        time.Time `json:"periode"          bson:"periode"`
 }
 
-type colMapping struct {
-	ID             int
-	Siret          int
-	HeureConsommee int
-	Montant        int
-	Effectif       int
-	Periode        int
-}
-
 // Key id de l'objet
 func (apconso APConso) Key() string {
 	return apconso.Siret
@@ -86,6 +77,8 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 	return outputChannel, eventChannel
 }
 
+type colMapping map[string]int
+
 func parseApConsoFile(reader *csv.Reader, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
 	header, err := reader.Read()
 	if err != nil {
@@ -93,14 +86,14 @@ func parseApConsoFile(reader *csv.Reader, tracker *gournal.Tracker, outputChanne
 		return
 	}
 	var idx = colMapping{}
-	idx.ID = misc.SliceIndex(len(header), func(i int) bool { return header[i] == "ID_DA" })
-	idx.Siret = misc.SliceIndex(len(header), func(i int) bool { return header[i] == "ETAB_SIRET" })
-	idx.Periode = misc.SliceIndex(len(header), func(i int) bool { return header[i] == "MOIS" })
-	idx.HeureConsommee = misc.SliceIndex(len(header), func(i int) bool { return header[i] == "HEURES" })
-	idx.Montant = misc.SliceIndex(len(header), func(i int) bool { return header[i] == "MONTANTS" })
-	idx.Effectif = misc.SliceIndex(len(header), func(i int) bool { return header[i] == "EFFECTIFS" })
+	idx["ID"] = misc.SliceIndex(len(header), func(i int) bool { return header[i] == "ID_DA" })
+	idx["Siret"] = misc.SliceIndex(len(header), func(i int) bool { return header[i] == "ETAB_SIRET" })
+	idx["Periode"] = misc.SliceIndex(len(header), func(i int) bool { return header[i] == "MOIS" })
+	idx["HeureConsommee"] = misc.SliceIndex(len(header), func(i int) bool { return header[i] == "HEURES" })
+	idx["Montant"] = misc.SliceIndex(len(header), func(i int) bool { return header[i] == "MONTANTS" })
+	idx["Effectif"] = misc.SliceIndex(len(header), func(i int) bool { return header[i] == "EFFECTIFS" })
 
-	if misc.SliceMin(idx.ID, idx.Siret, idx.Periode, idx.HeureConsommee, idx.Montant, idx.Effectif) == -1 {
+	if misc.SliceMin(idx["ID"], idx["Siret"], idx["Periode"], idx["HeureConsommee"], idx["Montant"], idx["Effectif"]) == -1 {
 		tracker.Add(errors.New("entête non conforme, fichier ignoré"))
 		return
 	}
@@ -132,16 +125,16 @@ func parseApConsoFile(reader *csv.Reader, tracker *gournal.Tracker, outputChanne
 
 func parseApConsoLine(row []string, tracker *gournal.Tracker, idx colMapping) APConso {
 	apconso := APConso{}
-	apconso.ID = row[idx.ID]
-	apconso.Siret = row[idx.Siret]
+	apconso.ID = row[idx["ID"]]
+	apconso.Siret = row[idx["Siret"]]
 	var err error
-	apconso.Periode, err = time.Parse("01/2006", row[idx.Periode])
+	apconso.Periode, err = time.Parse("01/2006", row[idx["Periode"]])
 	tracker.Add(err)
-	apconso.HeureConsommee, err = misc.ParsePFloat(row[idx.HeureConsommee])
+	apconso.HeureConsommee, err = misc.ParsePFloat(row[idx["HeureConsommee"]])
 	tracker.Add(err)
-	apconso.Montant, err = misc.ParsePFloat(row[idx.Montant])
+	apconso.Montant, err = misc.ParsePFloat(row[idx["Montant"]])
 	tracker.Add(err)
-	apconso.Effectif, err = misc.ParsePInt(row[idx.Effectif])
+	apconso.Effectif, err = misc.ParsePInt(row[idx["Effectif"]])
 	tracker.Add(err)
 	return apconso
 }
