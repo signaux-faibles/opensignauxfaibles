@@ -3,6 +3,7 @@ package urssaf
 import (
 	"bufio"
 	"encoding/csv"
+	"errors"
 	"io"
 	"os"
 	"strconv"
@@ -51,6 +52,8 @@ func (debit Debit) Type() string {
 	return "debit"
 }
 
+type colMapping map[string]int
+
 // ParserDebit retourne les entrées lues depuis un fichier "débit" de l'URSSAF.
 func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
 	outputChannel := make(chan marshal.Tuple)
@@ -64,7 +67,7 @@ func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 	go func() {
 		for _, path := range batch.Files["debit"] {
 			tracker := gournal.NewTracker(
-				map[string]string{"path": path, "batchKey": batch.ID.Key, "MaxParsingErrors": strconv.Itoa(engine.MaxParsingErrors)},
+				map[string]string{"path": path, "batchKey": batch.ID.Key},
 				engine.TrackerReports)
 
 			file, err := os.Open(viper.GetString("APP_DATA") + path)
@@ -75,119 +78,16 @@ func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 				event.Info(path + ": ouverture")
 			}
 
-			reader := csv.NewReader(bufio.NewReader(file))
-			reader.Comma = ';'
-			// ligne de titre
-			fields, err := reader.Read()
-			if err != nil {
-				tracker.Add(err)
-				event.Critical(tracker.Report("fatalError"))
-			}
-
-			dateTraitementIndex := misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Dt_trt_ecn" })
-			partOuvriereIndex := misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Mt_PO" })
-			partPatronaleIndex := misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Mt_PP" })
-			numeroHistoriqueEcartNegatifIndex := misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Num_Hist_Ecn" })
-			periodeIndex := misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Periode" })
-			etatCompteIndex := misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Etat_cpte" })
-			numeroCompteIndex := misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "num_cpte" })
-			numeroEcartNegatifIndex := misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Num_Ecn" })
-			codeProcedureCollectiveIndex := misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Cd_pro_col" })
-			codeOperationEcartNegatifIndex := misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Cd_op_ecn" })
-			codeMotifEcartNegatifIndex := misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Motif_ecn" })
-			recoursIndex := misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Recours_en_cours" })
-			// montantMajorationsIndex := misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Montant majorations de retard en centimes" })
-			if misc.SliceMin(dateTraitementIndex, partOuvriereIndex, partPatronaleIndex, numeroHistoriqueEcartNegatifIndex, periodeIndex, etatCompteIndex, numeroCompteIndex, numeroEcartNegatifIndex, codeProcedureCollectiveIndex, codeOperationEcartNegatifIndex, codeMotifEcartNegatifIndex) < 0 {
-				event.Critical(path + ": CSV non conforme")
-				continue
-			}
-
 			comptes, err := marshal.GetCompteSiretMapping(cache, batch, marshal.OpenAndReadSiretMapping)
 			if err != nil {
-				event.Critical(err)
-				continue
+				tracker.Add(err)
+				return
 			}
 
-			var shouldBreak = false
-			var lineNumber = 0 // starting with the header
+			reader := csv.NewReader(bufio.NewReader(file))
+			reader.Comma = ';'
 
-			var maxParsingErrors = engine.MaxParsingErrors
-			val, _ := cache.Get("maxParsingErrors")
-			if intVal, ok := val.(int); ok {
-				maxParsingErrors = intVal
-			}
-			if maxParsingErrors > 0 {
-				stopErrorLimiter := engine.StopAfterTooManyErrors(tracker, maxParsingErrors, &shouldBreak)
-				defer stopErrorLimiter()
-			}
-
-			stopProgressLogger := marshal.LogProgress(&lineNumber)
-			defer stopProgressLogger()
-
-			for {
-				lineNumber++
-				row, err := reader.Read()
-				if err == io.EOF {
-					break
-				} else if err != nil {
-					tracker.Add(err)
-					_, ok := err.(*csv.ParseError)
-					if !ok {
-						// we tolerate CSV parsing errors, but we generate a fatalError report for others, in order to interrupt the whole import process
-						event.Critical(tracker.Report("fatalError"))
-					}
-					tracker.Next()
-					continue
-				}
-
-				period, _ := marshal.UrssafToPeriod(row[periodeIndex])
-				date := period.Start
-
-				if siret, err := marshal.GetSiretFromComptesMapping(row[numeroCompteIndex], &date, comptes); err == nil {
-
-					debit := Debit{
-						key:                       siret,
-						NumeroCompte:              row[numeroCompteIndex],
-						NumeroEcartNegatif:        row[numeroEcartNegatifIndex],
-						CodeProcedureCollective:   row[codeProcedureCollectiveIndex],
-						CodeOperationEcartNegatif: row[codeOperationEcartNegatifIndex],
-						CodeMotifEcartNegatif:     row[codeMotifEcartNegatifIndex],
-					}
-
-					debit.DateTraitement, err = marshal.UrssafToDate(row[dateTraitementIndex])
-					tracker.Add(err)
-					debit.PartOuvriere, err = strconv.ParseFloat(row[partOuvriereIndex], 64)
-					tracker.Add(err)
-					debit.PartOuvriere = debit.PartOuvriere / 100
-					debit.PartPatronale, err = strconv.ParseFloat(row[partPatronaleIndex], 64)
-					tracker.Add(err)
-					debit.PartPatronale = debit.PartPatronale / 100
-					debit.NumeroHistoriqueEcartNegatif, err = strconv.Atoi(row[numeroHistoriqueEcartNegatifIndex])
-					tracker.Add(err)
-					debit.EtatCompte, err = strconv.Atoi(row[etatCompteIndex])
-					tracker.Add(err)
-					debit.Periode, err = marshal.UrssafToPeriod(row[periodeIndex])
-					tracker.Add(err)
-					debit.Recours, err = strconv.ParseBool(row[recoursIndex])
-					tracker.Add(err)
-					// debit.MontantMajorations, err = strconv.ParseFloat(row[montantMajorationsIndex], 64)
-					// tracker.Error(err)
-					// debit.MontantMajorations = debit.MontantMajorations / 100
-
-					if !tracker.HasErrorInCurrentCycle() {
-						outputChannel <- debit
-					}
-				} else {
-					tracker.Add(base.NewFilterError(err))
-					continue
-				}
-
-				if shouldBreak {
-					break
-				}
-				tracker.Next()
-			}
-
+			parseDebitFile(reader, &comptes, &tracker, outputChannel)
 			event.Debug(tracker.Report("abstract"))
 			file.Close()
 		}
@@ -196,4 +96,95 @@ func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 	}()
 
 	return outputChannel, eventChannel
+}
+
+func parseDebitFile(reader *csv.Reader, comptes *marshal.Comptes, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+	// ligne de titre
+	fields, err := reader.Read()
+	if err != nil {
+		tracker.Add(err)
+		return
+	}
+
+	var idx = colMapping{
+		"dateTraitement":               misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Dt_trt_ecn" }),
+		"partOuvriere":                 misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Mt_PO" }),
+		"partPatronale":                misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Mt_PP" }),
+		"numeroHistoriqueEcartNegatif": misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Num_Hist_Ecn" }),
+		"periode":                      misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Periode" }),
+		"etatCompte":                   misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Etat_cpte" }),
+		"numeroCompte":                 misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "num_cpte" }),
+		"numeroEcartNegatif":           misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Num_Ecn" }),
+		"codeProcedureCollective":      misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Cd_pro_col" }),
+		"codeOperationEcartNegatif":    misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Cd_op_ecn" }),
+		"codeMotifEcartNegatif":        misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Motif_ecn" }),
+		"recours":                      misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Recours_en_cours" }),
+	}
+	// montantMajorationsIndex := misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Montant majorations de retard en centimes" })
+	if misc.SliceMin(idx["dateTraitement"], idx["partOuvriere"], idx["partPatronale"], idx["numeroHistoriqueEcartNegatif"], idx["periode"], idx["etatCompte"], idx["numeroCompte"], idx["numeroEcartNegatif"], idx["codeProcedureCollective"], idx["codeOperationEcartNegatif"], idx["codeMotifEcartNegatif"]) < 0 {
+		tracker.Add(errors.New("CSV non conforme"))
+		return
+	}
+
+	var lineNumber = 0 // starting with the header
+	stopProgressLogger := marshal.LogProgress(&lineNumber)
+	defer stopProgressLogger()
+
+	for {
+		lineNumber++
+		row, err := reader.Read()
+		if err == io.EOF {
+			break
+		} else if err != nil {
+			tracker.Add(err)
+		} else {
+			period, _ := marshal.UrssafToPeriod(row[idx["periode"]])
+			date := period.Start
+
+			if siret, err := marshal.GetSiretFromComptesMapping(row[idx["numeroCompte"]], &date, *comptes); err == nil {
+				debit := parseDebitLine(siret, row, tracker, idx)
+				if !tracker.HasErrorInCurrentCycle() {
+					outputChannel <- debit
+				}
+			} else {
+				tracker.Add(base.NewFilterError(err))
+			}
+		}
+
+		tracker.Next()
+	}
+}
+
+func parseDebitLine(siret string, row []string, tracker *gournal.Tracker, idx colMapping) Debit {
+
+	debit := Debit{
+		key:                       siret,
+		NumeroCompte:              row[idx["numeroCompte"]],
+		NumeroEcartNegatif:        row[idx["numeroEcartNegatif"]],
+		CodeProcedureCollective:   row[idx["codeProcedureCollective"]],
+		CodeOperationEcartNegatif: row[idx["codeOperationEcartNegatif"]],
+		CodeMotifEcartNegatif:     row[idx["codeMotifEcartNegatif"]],
+	}
+
+	var err error
+	debit.DateTraitement, err = marshal.UrssafToDate(row[idx["dateTraitement"]])
+	tracker.Add(err)
+	debit.PartOuvriere, err = strconv.ParseFloat(row[idx["partOuvriere"]], 64)
+	tracker.Add(err)
+	debit.PartOuvriere = debit.PartOuvriere / 100
+	debit.PartPatronale, err = strconv.ParseFloat(row[idx["partPatronale"]], 64)
+	tracker.Add(err)
+	debit.PartPatronale = debit.PartPatronale / 100
+	debit.NumeroHistoriqueEcartNegatif, err = strconv.Atoi(row[idx["numeroHistoriqueEcartNegatif"]])
+	tracker.Add(err)
+	debit.EtatCompte, err = strconv.Atoi(row[idx["etatCompte"]])
+	tracker.Add(err)
+	debit.Periode, err = marshal.UrssafToPeriod(row[idx["periode"]])
+	tracker.Add(err)
+	debit.Recours, err = strconv.ParseBool(row[idx["recours"]])
+	tracker.Add(err)
+	// debit.MontantMajorations, err = strconv.ParseFloat(row[idx["montantMajorations"]], 64)
+	// tracker.Error(err)
+	// debit.MontantMajorations = debit.MontantMajorations / 100
+	return debit
 }

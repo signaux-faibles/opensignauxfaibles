@@ -1,49 +1,81 @@
-[{
-  "id_demande": "f288626887",
-  "effectif_entreprise": 559,
-  "effectif": 0,
-  "date_statut": "2012-02-11T00:00:00Z",
-  "periode": {
-    "start": "2017-08-09T00:00:00Z",
-    "end": "2017-09-09T00:00:00Z"
-  },
-  "hta": 42078.52,
-  "mta": 666113.56,
-  "effectif_autorise": 99,
-  "motif_recours_se": 8,
-  "heure_consommee": 48512,
-  "montant_consommee": 689663.3,
-  "effectif_consomme": 319
-},{
-  "id_demande": "j354624024",
-  "effectif_entreprise": 20,
-  "effectif": 82,
-  "date_statut": "2012-03-11T00:00:00Z",
-  "periode": {
-    "start": "2005-08-29T00:00:00Z",
-    "end": "2005-09-29T00:00:00Z"
-  },
-  "hta": 178.53,
-  "mta": 953.96,
-  "effectif_autorise": 9,
-  "motif_recours_se": 3,
-  "heure_consommee": 81,
-  "montant_consommee": 820.94,
-  "effectif_consomme": 8
-},{
-  "id_demande": "m80v947695",
-  "effectif_entreprise": 949,
-  "effectif": 535,
-  "date_statut": "2012-04-11T00:00:00Z",
-  "periode": {
-    "start": "2014-04-29T00:00:00Z",
-    "end": "2014-05-29T00:00:00Z"
-  },
-  "hta": 8921.61,
-  "mta": 72697.76,
-  "effectif_autorise": 83,
-  "motif_recours_se": 7,
-  "heure_consommee": 6165,
-  "montant_consommee": 1456.27,
-  "effectif_consomme": 64
-}]
+{
+  "tuples": [
+    {
+      "id_demande": "f288626887",
+      "effectif_entreprise": 559,
+      "effectif": 0,
+      "date_statut": "2012-02-11T00:00:00Z",
+      "periode": {
+        "start": "2017-08-09T00:00:00Z",
+        "end": "2017-09-09T00:00:00Z"
+      },
+      "hta": 42078.52,
+      "mta": 666113.56,
+      "effectif_autorise": 99,
+      "motif_recours_se": 8,
+      "heure_consommee": 48512,
+      "montant_consommee": 689663.3,
+      "effectif_consomme": 319
+    },
+    {
+      "id_demande": "j354624024",
+      "effectif_entreprise": 20,
+      "effectif": 82,
+      "date_statut": "2012-03-11T00:00:00Z",
+      "periode": {
+        "start": "2005-08-29T00:00:00Z",
+        "end": "2005-09-29T00:00:00Z"
+      },
+      "hta": 178.53,
+      "mta": 953.96,
+      "effectif_autorise": 9,
+      "motif_recours_se": 3,
+      "heure_consommee": 81,
+      "montant_consommee": 820.94,
+      "effectif_consomme": 8
+    },
+    {
+      "id_demande": "m80v947695",
+      "effectif_entreprise": 949,
+      "effectif": 535,
+      "date_statut": "2012-04-11T00:00:00Z",
+      "periode": {
+        "start": "2014-04-29T00:00:00Z",
+        "end": "2014-05-29T00:00:00Z"
+      },
+      "hta": 8921.61,
+      "mta": 72697.76,
+      "effectif_autorise": 83,
+      "motif_recours_se": 7,
+      "heure_consommee": 6165,
+      "montant_consommee": 1456.27,
+      "effectif_consomme": 64
+    }
+  ],
+  "events": [
+    {
+      "date": "0001-01-01T00:00:00Z",
+      "event": "testData/apdemandeTestData.csv: ouverture",
+      "priority": "info",
+      "code": "parserApdemande",
+      "report_type": ""
+    },
+    {
+      "date": "0001-01-01T00:00:00Z",
+      "event": {
+        "batchKey": "",
+        "error": 0,
+        "filtered": 0,
+        "headErrors": [],
+        "headFatal": [],
+        "headFilters": [],
+        "report": "testData/apdemandeTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
+        "total": 3,
+        "valid": 3
+      },
+      "priority": "info",
+      "code": "parserApdemande",
+      "report_type": ""
+    }
+  ]
+}

@@ -1,11 +1,9 @@
 package engine
 
 import (
-	"context"
 	"fmt"
 	"sort"
 	"strconv"
-	"time"
 
 	"github.com/globalsign/mgo/bson"
 	"github.com/signaux-faibles/gournal"
@@ -15,8 +13,7 @@ import (
 // Db connecteur exportable
 var Db DB
 
-// MaxParsingErrors is the number of parsing errors that are needed to
-// interrupt a parser
+// MaxParsingErrors is the number of parsing errors to report per file.
 var MaxParsingErrors = 200
 
 func reportAbstract(tracker gournal.Tracker) interface{} {
@@ -111,47 +108,9 @@ func reportFatalError(tracker gournal.Tracker) interface{} {
 	}
 }
 
-// ShouldBreak returns true when there are to much errors regarding maxErrors
-func ShouldBreak(tracker gournal.Tracker, maxErrors int) bool {
-	l := 0
-	hasError := false
-	for _, errs := range tracker.Errors {
-		for _, e := range errs {
-			switch c := e.(type) {
-			case base.CriticityError:
-				if c.Criticity() == "fatal" {
-					hasError = true
-				}
-				if c.Criticity() == "error" {
-					hasError = true
-				}
-				if c.Criticity() == "filter" {
-				}
-			default:
-				hasError = true
-			}
-		}
-		if hasError {
-			l++
-		}
-	}
-	return l > maxErrors
-}
-
 // TrackerReports contient les fonctions de reporting du moteur
 var TrackerReports = map[string]gournal.ReportFunction{
 	"abstract":   reportAbstract,
 	"errors":     reportCycleErrors,
 	"fatalError": reportFatalError,
-}
-
-// StopAfterTooManyErrors vérifie toutes les 2s le nombre d'erreurs de parsing
-// et passe shouldStop à true si la limite est dépassée.
-func StopAfterTooManyErrors(tracker gournal.Tracker, maxErrors int, shouldStop *bool) (stop context.CancelFunc) {
-	return base.Cron(time.Second*2, func() {
-		*shouldStop = ShouldBreak(tracker, maxErrors)
-		if *shouldStop {
-			fmt.Printf("Reached %d parsing errors => stopping.\n", maxErrors)
-		}
-	})
 }

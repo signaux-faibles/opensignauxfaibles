@@ -1,17 +1,50 @@
-[{
-  "siret": "11111111111111",
-  "periode": "2015-01-01T00:00:00Z",
-  "random_order": 0.9664535356921388
-},{
-  "siret": "11111111111111",
-  "periode": "2015-02-01T00:00:00Z",
-  "random_order": 0.4407325991753527
-},{
-  "siret": "11111111111111",
-  "periode": "2015-03-01T00:00:00Z",
-  "random_order": 0.007491470058587191
-},{
-  "siret": "11111111111111",
-  "periode": "2015-04-01T00:00:00Z",
-  "random_order": 0.9109759624491242
-}]
+{
+  "tuples": [
+    {
+      "siret": "11111111111111",
+      "periode": "2015-01-01T00:00:00Z",
+      "random_order": 0.9664535356921388
+    },
+    {
+      "siret": "11111111111111",
+      "periode": "2015-02-01T00:00:00Z",
+      "random_order": 0.4407325991753527
+    },
+    {
+      "siret": "11111111111111",
+      "periode": "2015-03-01T00:00:00Z",
+      "random_order": 0.007491470058587191
+    },
+    {
+      "siret": "11111111111111",
+      "periode": "2015-04-01T00:00:00Z",
+      "random_order": 0.9109759624491242
+    }
+  ],
+  "events": [
+    {
+      "date": "0001-01-01T00:00:00Z",
+      "event": "testData/reporderTestData.csv: ouverture",
+      "priority": "info",
+      "code": "parserRepeatableOrder",
+      "report_type": ""
+    },
+    {
+      "date": "0001-01-01T00:00:00Z",
+      "event": {
+        "batchKey": "",
+        "error": 0,
+        "filtered": 0,
+        "headErrors": [],
+        "headFatal": [],
+        "headFilters": [],
+        "report": "testData/reporderTestData.csv: intégration terminée, 4 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 4 lignes valides",
+        "total": 4,
+        "valid": 4
+      },
+      "priority": "info",
+      "code": "parserRepeatableOrder",
+      "report_type": ""
+    }
+  ]
+}
