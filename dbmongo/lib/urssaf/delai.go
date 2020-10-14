@@ -136,7 +136,7 @@ func parseDelaiFile(reader *csv.Reader, comptes *marshal.Comptes, tracker *gourn
 	}
 }
 
-func parseDelaiLine(row []string, idx map[string]int, siret string, tracker *gournal.Tracker) Delai {
+func parseDelaiLine(row []string, idx colMapping, siret string, tracker *gournal.Tracker) Delai {
 	var err error
 	loc, _ := time.LoadLocation("Europe/Paris")
 	delai := Delai{}
