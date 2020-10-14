@@ -115,9 +115,7 @@ func parseApConsoFile(reader *csv.Reader, tracker *gournal.Tracker, outputChanne
 
 			if !tracker.HasErrorInCurrentCycle() && apconso.Siret != "" {
 				outputChannel <- apconso
-			} /* else {
-				event.Debug(tracker.Report("errors"))
-			} */
+			}
 
 			tracker.Next() // TODO: executer même si len(row) === 0 ?
 		}
