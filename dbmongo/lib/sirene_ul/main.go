@@ -116,7 +116,7 @@ func parseSireneULFile(reader *csv.Reader, filter map[string]bool, tracker *gour
 			tracker.Add(err)
 		}
 		if !filtered {
-			sireneul := readLineEtablissement(row, tracker)
+			sireneul := parseSireneUlLine(row, tracker)
 			outputChannel <- sireneul
 			tracker.Next() // TODO: garantir que le compteur de lignes
 			// correspond au nombre de lignes du fichier. => appeler même si le
@@ -125,7 +125,7 @@ func parseSireneULFile(reader *csv.Reader, filter map[string]bool, tracker *gour
 	}
 }
 
-func readLineEtablissement(row []string, tracker *gournal.Tracker) SireneUL {
+func parseSireneUlLine(row []string, tracker *gournal.Tracker) SireneUL {
 	sireneul := SireneUL{}
 	sireneul.Siren = row[0]
 	sireneul.RaisonSociale = row[23]

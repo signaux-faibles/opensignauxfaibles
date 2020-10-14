@@ -98,7 +98,7 @@ func ParserProcol(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tup
 					// Journal(critical, "importProcol", "Erreur de lecture pendant l'import du fichier "+path+". Abandon.")
 					close(outputChannel)
 				}
-				procol := readLineProcol(
+				procol := parseProcolLine(
 					row,
 					&tracker,
 					dateEffetIndex,
@@ -123,7 +123,7 @@ func ParserProcol(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tup
 	return outputChannel, eventChannel
 }
 
-func readLineProcol(
+func parseProcolLine(
 	row []string,
 	tracker *gournal.Tracker,
 	dateEffetIndex int,
