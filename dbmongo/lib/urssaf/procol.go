@@ -101,17 +101,16 @@ func parseProcolFile(reader *csv.Reader, tracker *gournal.Tracker, outputChannel
 
 	for {
 		row, err := reader.Read()
-
 		if err == io.EOF {
 			break
 		} else if err != nil {
-			// Journal(critical, "importProcol", "Erreur de lecture pendant l'import du fichier "+path+". Abandon.")
-			close(outputChannel)
-		}
-		procol := parseProcolLine(row, tracker, idx)
-		if _, err := strconv.Atoi(row[idx["siret"]]); err == nil && len(row[idx["siret"]]) == 14 {
-			if !tracker.HasErrorInCurrentCycle() {
-				outputChannel <- procol
+			tracker.Add(err)
+		} else {
+			procol := parseProcolLine(row, tracker, idx)
+			if _, err := strconv.Atoi(row[idx["siret"]]); err == nil && len(row[idx["siret"]]) == 14 {
+				if !tracker.HasErrorInCurrentCycle() {
+					outputChannel <- procol
+				}
 			}
 		}
 		tracker.Next()
