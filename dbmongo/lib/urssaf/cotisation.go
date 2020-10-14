@@ -86,16 +86,16 @@ func ParserCotisation(cache marshal.Cache, batch *base.AdminBatch) (chan marshal
 	return outputChannel, eventChannel
 }
 
-var field = colMapping{
-	"NumeroCompte": 2,
-	"Periode":      3,
-	"Encaisse":     5,
-	"Du":           6,
-}
-
 func parseCotisationFile(reader *csv.Reader, comptes *marshal.Comptes, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
 	// ligne de titre
 	reader.Read()
+
+	var field = colMapping{
+		"NumeroCompte": 2,
+		"Periode":      3,
+		"Encaisse":     5,
+		"Du":           6,
+	}
 
 	for {
 		row, err := reader.Read()
@@ -105,7 +105,7 @@ func parseCotisationFile(reader *csv.Reader, comptes *marshal.Comptes, tracker *
 			tracker.Add(err)
 			break
 		} else {
-			cotisation := parseCotisationLine(row, tracker, comptes)
+			cotisation := parseCotisationLine(row, tracker, comptes, field)
 			if !tracker.HasErrorInCurrentCycle() {
 				outputChannel <- cotisation
 			}
@@ -114,7 +114,7 @@ func parseCotisationFile(reader *csv.Reader, comptes *marshal.Comptes, tracker *
 	}
 }
 
-func parseCotisationLine(row []string, tracker *gournal.Tracker, comptes *marshal.Comptes) Cotisation {
+func parseCotisationLine(row []string, tracker *gournal.Tracker, comptes *marshal.Comptes, field colMapping) Cotisation {
 	cotisation := Cotisation{}
 
 	periode, err := marshal.UrssafToPeriod(row[field["Periode"]])

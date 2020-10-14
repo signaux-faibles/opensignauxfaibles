@@ -83,15 +83,16 @@ func ParserCCSF(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple
 	return outputChannel, eventChannel
 }
 
-var idx = colMapping{
-	"NumeroCompte":   2,
-	"DateTraitement": 3,
-	"Stade":          4,
-	"Action":         5,
-}
-
 func parseCcsfFile(reader *csv.Reader, comptes *marshal.Comptes, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
 	reader.Read() // en-tête du fichier
+
+	var idx = colMapping{
+		"NumeroCompte":   2,
+		"DateTraitement": 3,
+		"Stade":          4,
+		"Action":         5,
+	}
+
 	for {
 		row, err := reader.Read()
 		if err == io.EOF {
@@ -101,7 +102,7 @@ func parseCcsfFile(reader *csv.Reader, comptes *marshal.Comptes, tracker *gourna
 			continue
 		}
 
-		ccsf := parseCcsfLine(row, tracker, comptes)
+		ccsf := parseCcsfLine(row, tracker, comptes, idx)
 		if !tracker.HasErrorInCurrentCycle() {
 			outputChannel <- ccsf
 		}
@@ -109,7 +110,7 @@ func parseCcsfFile(reader *csv.Reader, comptes *marshal.Comptes, tracker *gourna
 	}
 }
 
-func parseCcsfLine(row []string, tracker *gournal.Tracker, comptes *marshal.Comptes) CCSF {
+func parseCcsfLine(row []string, tracker *gournal.Tracker, comptes *marshal.Comptes, idx colMapping) CCSF {
 	var err error
 	ccsf := CCSF{}
 	if len(row) >= 4 {
