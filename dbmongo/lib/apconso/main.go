@@ -2,6 +2,7 @@ package apconso
 
 import (
 	"encoding/csv"
+	"errors"
 	"io"
 	"os"
 	"time"
@@ -68,60 +69,72 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 			reader.Comma = ','
 
 			event.Info(path + ": ouverture")
-
-			fields, err := reader.Read()
-			if err != nil {
-				tracker.Add(err)
-				event.Debug(tracker.Report("invalidLine"))
-				break
-			}
-			idxID := misc.SliceIndex(35, func(i int) bool { return fields[i] == "ID_DA" })
-			idxSiret := misc.SliceIndex(35, func(i int) bool { return fields[i] == "ETAB_SIRET" })
-			idxPeriode := misc.SliceIndex(35, func(i int) bool { return fields[i] == "MOIS" })
-			idxHeureConsommee := misc.SliceIndex(35, func(i int) bool { return fields[i] == "HEURES" })
-			idxMontants := misc.SliceIndex(35, func(i int) bool { return fields[i] == "MONTANTS" })
-			idxEffectifs := misc.SliceIndex(35, func(i int) bool { return fields[i] == "EFFECTIFS" })
-
-			if misc.SliceMin(idxID, idxSiret, idxPeriode, idxHeureConsommee, idxMontants, idxEffectifs) == -1 {
-				event.Critical(path + ": entête non conforme, fichier ignoré")
-				continue
-			}
-
-			for {
-				row, err := reader.Read()
-
-				if err == io.EOF {
-					break
-				} else if err != nil {
-					tracker.Add(err)
-					break
-				}
-
-				if len(row) > 0 {
-					apconso := APConso{}
-
-					apconso.ID = row[idxID]
-					apconso.Siret = row[idxSiret]
-					apconso.Periode, err = time.Parse("01/2006", row[idxPeriode])
-					tracker.Add(err)
-					apconso.HeureConsommee, err = misc.ParsePFloat(row[idxHeureConsommee])
-					tracker.Add(err)
-					apconso.Montant, err = misc.ParsePFloat(row[idxMontants])
-					tracker.Add(err)
-					apconso.Effectif, err = misc.ParsePInt(row[idxEffectifs])
-					tracker.Add(err)
-
-					if !tracker.HasErrorInCurrentCycle() && apconso.Siret != "" {
-						outputChannel <- apconso
-					} else {
-						// event.Debug(tracker.Report("errors"))
-					}
-					tracker.Next()
-				}
-			}
+			parseApConsoFile(reader, &tracker, outputChannel)
 			event.Info(tracker.Report("abstract"))
 		}
 	}()
 
 	return outputChannel, eventChannel
+}
+
+type colMapping map[string]int
+
+func parseApConsoFile(reader *csv.Reader, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+	fields, err := reader.Read()
+	if err != nil {
+		tracker.Add(err)
+		return
+	}
+	var idx = colMapping{}
+	idx["ID"] = misc.SliceIndex(35, func(i int) bool { return fields[i] == "ID_DA" })
+	idx["Siret"] = misc.SliceIndex(35, func(i int) bool { return fields[i] == "ETAB_SIRET" })
+	idx["Periode"] = misc.SliceIndex(35, func(i int) bool { return fields[i] == "MOIS" })
+	idx["HeureConsommee"] = misc.SliceIndex(35, func(i int) bool { return fields[i] == "HEURES" })
+	idx["Montant"] = misc.SliceIndex(35, func(i int) bool { return fields[i] == "MONTANTS" })
+	idx["Effectif"] = misc.SliceIndex(35, func(i int) bool { return fields[i] == "EFFECTIFS" })
+
+	if misc.SliceMin(idx["ID"], idx["Siret"], idx["Periode"], idx["HeureConsommee"], idx["Montant"], idx["Effectif"]) == -1 {
+		tracker.Add(errors.New("entête non conforme, fichier ignoré"))
+		return
+	}
+
+	for {
+		row, err := reader.Read()
+
+		if err == io.EOF {
+			break
+		} else if err != nil {
+			tracker.Add(err)
+			break
+		}
+
+		// TODO: filtrer et/ou valider siret ?
+
+		if len(row) > 0 {
+			apconso := parseApConsoLine(row, tracker, idx)
+
+			if !tracker.HasErrorInCurrentCycle() && apconso.Siret != "" {
+				outputChannel <- apconso
+			}
+
+			tracker.Next() // TODO: executer même si len(row) === 0 ?
+		}
+
+	}
+}
+
+func parseApConsoLine(row []string, tracker *gournal.Tracker, idx colMapping) APConso {
+	apconso := APConso{}
+	apconso.ID = row[idx["ID"]]
+	apconso.Siret = row[idx["Siret"]]
+	var err error
+	apconso.Periode, err = time.Parse("01/2006", row[idx["Periode"]])
+	tracker.Add(err)
+	apconso.HeureConsommee, err = misc.ParsePFloat(row[idx["HeureConsommee"]])
+	tracker.Add(err)
+	apconso.Montant, err = misc.ParsePFloat(row[idx["Montant"]])
+	tracker.Add(err)
+	apconso.Effectif, err = misc.ParsePInt(row[idx["Effectif"]])
+	tracker.Add(err)
+	return apconso
 }
