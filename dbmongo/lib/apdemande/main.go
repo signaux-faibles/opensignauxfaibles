@@ -97,9 +97,9 @@ func parseApDemandeFile(reader *csv.Reader, tracker *gournal.Tracker, outputChan
 		return
 	}
 
-	var f = colMapping{}
-	for idx, field := range header {
-		f[field] = idx
+	var idx = colMapping{}
+	for i, field := range header {
+		idx[field] = i
 	}
 	fields := []string{
 		"ID_DA",
@@ -117,7 +117,7 @@ func parseApDemandeFile(reader *csv.Reader, tracker *gournal.Tracker, outputChan
 	}
 
 	for _, field := range fields {
-		if _, found := f[field]; !found {
+		if _, found := idx[field]; !found {
 			tracker.Add(errors.New("Colonne " + field + " non trouvée. Abandon."))
 			return
 		}
@@ -133,8 +133,8 @@ func parseApDemandeFile(reader *csv.Reader, tracker *gournal.Tracker, outputChan
 
 		// TODO: filtrer et/ou valider siret ?
 
-		if row[f["ETAB_SIRET"]] != "" {
-			apdemande := parseApDemandeLine(row, tracker, f)
+		if row[idx["ETAB_SIRET"]] != "" {
+			apdemande := parseApDemandeLine(row, tracker, idx)
 			if !tracker.HasErrorInCurrentCycle() {
 				outputChannel <- apdemande
 			}
@@ -145,35 +145,35 @@ func parseApDemandeFile(reader *csv.Reader, tracker *gournal.Tracker, outputChan
 	}
 }
 
-func parseApDemandeLine(row []string, tracker *gournal.Tracker, f colMapping) APDemande {
+func parseApDemandeLine(row []string, tracker *gournal.Tracker, idx colMapping) APDemande {
 	apdemande := APDemande{}
-	apdemande.ID = row[f["ID_DA"]]
-	apdemande.Siret = row[f["ETAB_SIRET"]]
+	apdemande.ID = row[idx["ID_DA"]]
+	apdemande.Siret = row[idx["ETAB_SIRET"]]
 	var err error
-	apdemande.EffectifEntreprise, err = misc.ParsePInt(row[f["EFF_ENT"]])
+	apdemande.EffectifEntreprise, err = misc.ParsePInt(row[idx["EFF_ENT"]])
 	tracker.Add(err)
-	apdemande.Effectif, err = misc.ParsePInt(row[f["EFF_ETAB"]])
+	apdemande.Effectif, err = misc.ParsePInt(row[idx["EFF_ETAB"]])
 	tracker.Add(err)
-	apdemande.DateStatut, err = time.Parse("02/01/2006", row[f["DATE_STATUT"]])
+	apdemande.DateStatut, err = time.Parse("02/01/2006", row[idx["DATE_STATUT"]])
 	tracker.Add(err)
 	apdemande.Periode = misc.Periode{}
-	apdemande.Periode.Start, err = time.Parse("02/01/2006", row[f["DATE_DEB"]])
+	apdemande.Periode.Start, err = time.Parse("02/01/2006", row[idx["DATE_DEB"]])
 	tracker.Add(err)
-	apdemande.Periode.End, err = time.Parse("02/01/2006", row[f["DATE_FIN"]])
+	apdemande.Periode.End, err = time.Parse("02/01/2006", row[idx["DATE_FIN"]])
 	tracker.Add(err)
-	apdemande.HTA, err = misc.ParsePFloat(row[f["HTA"]])
+	apdemande.HTA, err = misc.ParsePFloat(row[idx["HTA"]])
 	tracker.Add(err)
-	apdemande.MTA, err = misc.ParsePFloat(strings.ReplaceAll(row[f["MTA"]], ",", "."))
+	apdemande.MTA, err = misc.ParsePFloat(strings.ReplaceAll(row[idx["MTA"]], ",", "."))
 	tracker.Add(err)
-	apdemande.EffectifAutorise, err = misc.ParsePInt(row[f["EFF_AUTO"]])
+	apdemande.EffectifAutorise, err = misc.ParsePInt(row[idx["EFF_AUTO"]])
 	tracker.Add(err)
-	apdemande.MotifRecoursSE, err = misc.ParsePInt(row[f["MOTIF_RECOURS_SE"]])
+	apdemande.MotifRecoursSE, err = misc.ParsePInt(row[idx["MOTIF_RECOURS_SE"]])
 	tracker.Add(err)
-	apdemande.HeureConsommee, err = misc.ParsePFloat(row[f["S_HEURE_CONSOM_TOT"]])
+	apdemande.HeureConsommee, err = misc.ParsePFloat(row[idx["S_HEURE_CONSOM_TOT"]])
 	tracker.Add(err)
-	apdemande.EffectifConsomme, err = misc.ParsePInt(row[f["S_EFF_CONSOM_TOT"]])
+	apdemande.EffectifConsomme, err = misc.ParsePInt(row[idx["S_EFF_CONSOM_TOT"]])
 	tracker.Add(err)
-	apdemande.MontantConsomme, err = misc.ParsePFloat(strings.ReplaceAll(row[f["S_MONTANT_CONSOM_TOT"]], ",", "."))
+	apdemande.MontantConsomme, err = misc.ParsePFloat(strings.ReplaceAll(row[idx["S_MONTANT_CONSOM_TOT"]], ",", "."))
 	tracker.Add(err)
 	return apdemande
 }
