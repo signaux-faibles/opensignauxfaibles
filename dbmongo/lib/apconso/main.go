@@ -90,10 +90,10 @@ func parseApConsoFile(reader *csv.Reader, tracker *gournal.Tracker, outputChanne
 	idx["Siret"] = misc.SliceIndex(35, func(i int) bool { return fields[i] == "ETAB_SIRET" })
 	idx["Periode"] = misc.SliceIndex(35, func(i int) bool { return fields[i] == "MOIS" })
 	idx["HeureConsommee"] = misc.SliceIndex(35, func(i int) bool { return fields[i] == "HEURES" })
-	idx["Montants"] = misc.SliceIndex(35, func(i int) bool { return fields[i] == "MONTANTS" })
-	idx["Effectifs"] = misc.SliceIndex(35, func(i int) bool { return fields[i] == "EFFECTIFS" })
+	idx["Montant"] = misc.SliceIndex(35, func(i int) bool { return fields[i] == "Montant" })
+	idx["Effectif"] = misc.SliceIndex(35, func(i int) bool { return fields[i] == "Effectif" })
 
-	if misc.SliceMin(idx["ID"], idx["Siret"], idx["Periode"], idx["HeureConsommee"], idx["Montants"], idx["Effectifs"]) == -1 {
+	if misc.SliceMin(idx["ID"], idx["Siret"], idx["Periode"], idx["HeureConsommee"], idx["Montant"], idx["Effectif"]) == -1 {
 		tracker.Add(errors.New("entête non conforme, fichier ignoré"))
 		return
 	}
@@ -132,9 +132,9 @@ func parseApConsoLine(row []string, tracker *gournal.Tracker, idx colMapping) AP
 	tracker.Add(err)
 	apconso.HeureConsommee, err = misc.ParsePFloat(row[idx["HeureConsommee"]])
 	tracker.Add(err)
-	apconso.Montant, err = misc.ParsePFloat(row[idx["Montants"]])
+	apconso.Montant, err = misc.ParsePFloat(row[idx["Montant"]])
 	tracker.Add(err)
-	apconso.Effectif, err = misc.ParsePInt(row[idx["Effectifs"]])
+	apconso.Effectif, err = misc.ParsePInt(row[idx["Effectif"]])
 	tracker.Add(err)
 	return apconso
 }
