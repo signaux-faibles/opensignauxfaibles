@@ -45,15 +45,14 @@ func (effectifEnt EffectifEnt) Type() string {
 }
 
 // ParseEffectifEntPeriod Transforme un tableau de périodes telles qu'écrites dans l'entête du tableau d'effectifEnt urssaf en date de début
-func parseEffectifEntPeriod(effectifEntPeriods []string) ([]time.Time, error) {
+func parseEffectifEntPeriod(effectifEntPeriods []string) []time.Time {
 	periods := []time.Time{}
 	for _, period := range effectifEntPeriods {
 		urssaf := period[3:9]
 		date, _ := marshal.UrssafToPeriod(urssaf)
 		periods = append(periods, date.Start)
 	}
-
-	return periods, nil
+	return periods
 }
 
 // ParserEffectifEnt retourne un channel fournissant des données extraites
@@ -113,11 +112,7 @@ func parseEffectifEntFile(reader *csv.Reader, filter map[string]bool, tracker *g
 		}
 	}
 
-	periods, err := parseEffectifEntPeriod(effectifEntFields)
-	if err != nil {
-		tracker.Add(err)
-		return
-	}
+	periods := parseEffectifEntPeriod(effectifEntFields)
 
 	for {
 		row, err := reader.Read()
