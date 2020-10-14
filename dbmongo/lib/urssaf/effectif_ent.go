@@ -67,24 +67,23 @@ func ParserEffectifEnt(cache marshal.Cache, batch *base.AdminBatch) (chan marsha
 	filter := marshal.GetSirenFilterFromCache(cache)
 	go func() {
 		for _, path := range batch.Files["effectif_ent"] {
-			tracker := gournal.NewTracker(
-				map[string]string{"path": path, "batchKey": batch.ID.Key},
-				engine.TrackerReports)
 
 			file, err := os.Open(viper.GetString("APP_DATA") + path)
 			if err != nil {
 				event.Critical(path + ": erreur à l'ouverture du fichier, abandon: " + err.Error())
-				continue
 			} else {
+				tracker := gournal.NewTracker(
+					map[string]string{"path": path, "batchKey": batch.ID.Key},
+					engine.TrackerReports)
+
 				event.Info(path + ": ouverture")
+				reader := csv.NewReader(bufio.NewReader(file))
+				reader.Comma = ';'
+
+				parseEffectifEntFile(reader, filter, &tracker, outputChannel)
+				file.Close()
+				event.Debug(tracker.Report("abstract"))
 			}
-
-			reader := csv.NewReader(bufio.NewReader(file))
-			reader.Comma = ';'
-
-			parseEffectifEntFile(reader, filter, &tracker, outputChannel)
-			file.Close()
-			event.Debug(tracker.Report("abstract"))
 		}
 		close(outputChannel)
 		close(eventChannel)
