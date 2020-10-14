@@ -35,6 +35,17 @@ func GetSiret(compte string, date *time.Time, cache Cache, batch *base.AdminBatc
 	return "", errors.New("Pas de siret associé au compte " + compte + " à la période " + date.String())
 }
 
+// GetSiretFromComptesMapping gets the siret related to a specific compte at a
+// given point in time
+func GetSiretFromComptesMapping(compte string, date *time.Time, comptes Comptes) (string, error) {
+	for _, sd := range comptes[compte] {
+		if date.Before(sd.Date) {
+			return sd.Siret, nil
+		}
+	}
+	return "", errors.New("Pas de siret associé au compte " + compte + " à la période " + date.String())
+}
+
 // SiretDate holds a pair of a siret and a date
 type SiretDate struct {
 	Siret string

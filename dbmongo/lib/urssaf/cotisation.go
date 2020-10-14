@@ -3,6 +3,7 @@ package urssaf
 import (
 	"bufio"
 	"encoding/csv"
+	"fmt"
 	"io"
 	"os"
 	"strconv"
@@ -109,14 +110,15 @@ func ParserCotisation(cache marshal.Cache, batch *base.AdminBatch) (chan marshal
 						}
 					} else {
 						tracker.Add(base.NewFilterError(err))
-						continue
 					}
 				}
 
+				tracker.Next()
+
 				if tracker.Count%10000 == 0 && engine.ShouldBreak(tracker, engine.MaxParsingErrors) {
+					fmt.Printf("Reached %d parsing errors => stopping.\n", engine.MaxParsingErrors)
 					break
 				}
-				tracker.Next()
 			}
 			event.Info(tracker.Report("abstract"))
 			file.Close()
