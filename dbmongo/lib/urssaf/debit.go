@@ -51,6 +51,8 @@ func (debit Debit) Type() string {
 	return "debit"
 }
 
+type colMapping map[string]int
+
 // ParserDebit retourne les entrées lues depuis un fichier "débit" de l'URSSAF.
 func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
 	outputChannel := make(chan marshal.Tuple)
@@ -84,20 +86,22 @@ func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 				event.Critical(tracker.Report("fatalError"))
 			}
 
-			dateTraitementIndex := misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Dt_trt_ecn" })
-			partOuvriereIndex := misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Mt_PO" })
-			partPatronaleIndex := misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Mt_PP" })
-			numeroHistoriqueEcartNegatifIndex := misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Num_Hist_Ecn" })
-			periodeIndex := misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Periode" })
-			etatCompteIndex := misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Etat_cpte" })
-			numeroCompteIndex := misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "num_cpte" })
-			numeroEcartNegatifIndex := misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Num_Ecn" })
-			codeProcedureCollectiveIndex := misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Cd_pro_col" })
-			codeOperationEcartNegatifIndex := misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Cd_op_ecn" })
-			codeMotifEcartNegatifIndex := misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Motif_ecn" })
-			recoursIndex := misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Recours_en_cours" })
+			var idx = colMapping{
+				"dateTraitement":               misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Dt_trt_ecn" }),
+				"partOuvriere":                 misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Mt_PO" }),
+				"partPatronale":                misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Mt_PP" }),
+				"numeroHistoriqueEcartNegatif": misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Num_Hist_Ecn" }),
+				"periode":                      misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Periode" }),
+				"etatCompte":                   misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Etat_cpte" }),
+				"numeroCompte":                 misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "num_cpte" }),
+				"numeroEcartNegatif":           misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Num_Ecn" }),
+				"codeProcedureCollective":      misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Cd_pro_col" }),
+				"codeOperationEcartNegatif":    misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Cd_op_ecn" }),
+				"codeMotifEcartNegatif":        misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Motif_ecn" }),
+				"recours":                      misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Recours_en_cours" }),
+			}
 			// montantMajorationsIndex := misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Montant majorations de retard en centimes" })
-			if misc.SliceMin(dateTraitementIndex, partOuvriereIndex, partPatronaleIndex, numeroHistoriqueEcartNegatifIndex, periodeIndex, etatCompteIndex, numeroCompteIndex, numeroEcartNegatifIndex, codeProcedureCollectiveIndex, codeOperationEcartNegatifIndex, codeMotifEcartNegatifIndex) < 0 {
+			if misc.SliceMin(idx["dateTraitement"], idx["partOuvriere"], idx["partPatronale"], idx["numeroHistoriqueEcartNegatif"], idx["periode"], idx["etatCompte"], idx["numeroCompte"], idx["numeroEcartNegatif"], idx["codeProcedureCollective"], idx["codeOperationEcartNegatif"], idx["codeMotifEcartNegatif"]) < 0 {
 				event.Critical(path + ": CSV non conforme")
 				continue
 			}
@@ -109,7 +113,6 @@ func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 			}
 
 			var lineNumber = 0 // starting with the header
-
 			stopProgressLogger := marshal.LogProgress(&lineNumber)
 			defer stopProgressLogger()
 
@@ -129,37 +132,37 @@ func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 					continue
 				}
 
-				period, _ := marshal.UrssafToPeriod(row[periodeIndex])
+				period, _ := marshal.UrssafToPeriod(row[idx["periode"]])
 				date := period.Start
 
-				if siret, err := marshal.GetSiretFromComptesMapping(row[numeroCompteIndex], &date, comptes); err == nil {
+				if siret, err := marshal.GetSiretFromComptesMapping(row[idx["numeroCompte"]], &date, comptes); err == nil {
 
 					debit := Debit{
 						key:                       siret,
-						NumeroCompte:              row[numeroCompteIndex],
-						NumeroEcartNegatif:        row[numeroEcartNegatifIndex],
-						CodeProcedureCollective:   row[codeProcedureCollectiveIndex],
-						CodeOperationEcartNegatif: row[codeOperationEcartNegatifIndex],
-						CodeMotifEcartNegatif:     row[codeMotifEcartNegatifIndex],
+						NumeroCompte:              row[idx["numeroCompte"]],
+						NumeroEcartNegatif:        row[idx["numeroEcartNegatif"]],
+						CodeProcedureCollective:   row[idx["codeProcedureCollective"]],
+						CodeOperationEcartNegatif: row[idx["codeOperationEcartNegatif"]],
+						CodeMotifEcartNegatif:     row[idx["codeMotifEcartNegatif"]],
 					}
 
-					debit.DateTraitement, err = marshal.UrssafToDate(row[dateTraitementIndex])
+					debit.DateTraitement, err = marshal.UrssafToDate(row[idx["dateTraitement"]])
 					tracker.Add(err)
-					debit.PartOuvriere, err = strconv.ParseFloat(row[partOuvriereIndex], 64)
+					debit.PartOuvriere, err = strconv.ParseFloat(row[idx["partOuvriere"]], 64)
 					tracker.Add(err)
 					debit.PartOuvriere = debit.PartOuvriere / 100
-					debit.PartPatronale, err = strconv.ParseFloat(row[partPatronaleIndex], 64)
+					debit.PartPatronale, err = strconv.ParseFloat(row[idx["partPatronale"]], 64)
 					tracker.Add(err)
 					debit.PartPatronale = debit.PartPatronale / 100
-					debit.NumeroHistoriqueEcartNegatif, err = strconv.Atoi(row[numeroHistoriqueEcartNegatifIndex])
+					debit.NumeroHistoriqueEcartNegatif, err = strconv.Atoi(row[idx["numeroHistoriqueEcartNegatif"]])
 					tracker.Add(err)
-					debit.EtatCompte, err = strconv.Atoi(row[etatCompteIndex])
+					debit.EtatCompte, err = strconv.Atoi(row[idx["etatCompte"]])
 					tracker.Add(err)
-					debit.Periode, err = marshal.UrssafToPeriod(row[periodeIndex])
+					debit.Periode, err = marshal.UrssafToPeriod(row[idx["periode"]])
 					tracker.Add(err)
-					debit.Recours, err = strconv.ParseBool(row[recoursIndex])
+					debit.Recours, err = strconv.ParseBool(row[idx["recours"]])
 					tracker.Add(err)
-					// debit.MontantMajorations, err = strconv.ParseFloat(row[montantMajorationsIndex], 64)
+					// debit.MontantMajorations, err = strconv.ParseFloat(row[idx["montantMajorations"]], 64)
 					// tracker.Error(err)
 					// debit.MontantMajorations = debit.MontantMajorations / 100
 
