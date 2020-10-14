@@ -10,7 +10,6 @@ func GetTypes() Types {
 		{"delai", "Délais URSSAF", "delais|Délais"},
 		{"dpae", "Déclaration Préalable à l'embauche", "DPAE"},
 		{"interim", "Base Interim", "interim"},
-		{"altares", "Base Altarès", "ALTARES"},
 		{"procol", "Procédures collectives", "procol"},
 		{"apdemande", "Demande Activité Partielle", "dde"},
 		{"ccsf", "Stock CCSF à date", "ccsf"},
