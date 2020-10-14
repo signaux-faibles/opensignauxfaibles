@@ -27,7 +27,7 @@ var cache = makeCacheWithComptesMapping()
 func TestDebit(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedDebit.json")
 	var testData = filepath.Join("testData", "debitTestData.csv")
-	marshal.TestParserTupleOutput(t, ParserDebit, cache, "debit", testData, golden, *update)
+	marshal.TestParserOutput(t, ParserDebit, cache, "debit", testData, golden, *update)
 }
 
 func TestDebitCorrompu(t *testing.T) {

@@ -118,9 +118,6 @@ func ParserCCSF(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple
 					tracker.Add(errors.New("Ligne non conforme, moins de 4 champs"))
 					event.Warning(tracker.Report("invalidLine"))
 				}
-				if tracker.Count%10000 == 0 && engine.ShouldBreak(tracker, engine.MaxParsingErrors) {
-					break
-				}
 				tracker.Next()
 			}
 
