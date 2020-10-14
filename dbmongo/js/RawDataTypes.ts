@@ -52,7 +52,6 @@ export type BatchValueProps = {
   compte: ParHash<EntréeCompte>
   interim: ParHash<EntréeInterim>
   delai: ParHash<EntréeDelai>
-  altares: ParHash<EntréeDefaillances>
   procol: ParHash<EntréeDefaillances>
   cotisation: ParHash<EntréeCotisation>
   debit: ParHash<EntréeDebit>
