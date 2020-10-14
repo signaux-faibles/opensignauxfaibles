@@ -35,7 +35,7 @@ func MockComptesMapping(mapping map[string]string) Comptes {
 // TestParserTupleOutput helps to test the output of a Parser. It compares
 // output Tuples with JSON stored in a golden file. If update = true, the
 // the golden file is updated.
-func TestParserTupleOutput(
+func TestParserTupleOutput( // TODO: à supprimer
 	t *testing.T,
 	parser Parser,
 	cache Cache,
