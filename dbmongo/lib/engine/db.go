@@ -67,6 +67,13 @@ func InitDB() DB {
 	dbstatus := mongostatus.DB(dbDatabase)
 	db := mongodb.DB(dbDatabase)
 
+	// Création d'index sur la collection ImportedData
+	db.C("ImportedData").EnsureIndex(mgo.Index{
+		Key:      []string{"value.siret"},
+		Unique:   true,
+		DropDups: true,
+	})
+
 	firstBatchID := viper.GetString("FIRST_BATCH")
 	if !base.IsBatchID(firstBatchID) {
 		panic("Paramètre FIRST_BATCH incorrect, vérifiez la configuration.")
