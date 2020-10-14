@@ -71,49 +71,8 @@ func ParserProcol(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tup
 			reader := csv.NewReader(bufio.NewReader(file))
 			reader.Comma = ';'
 			reader.LazyQuotes = true
-			fields, err := reader.Read()
-			if err != nil {
-				tracker.Add(err)
-				event.Critical(tracker.Report("fatalError"))
-				continue
-			}
 
-			dateEffetIndex := misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "dt_effet" })
-			actionStadeIndex := misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "lib_actx_stdx" })
-			siretIndex := misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "siret" })
-
-			if misc.SliceMin(dateEffetIndex, actionStadeIndex, siretIndex) == -1 {
-				tracker.Add(errors.New("format de fichier incorrect"))
-				event.Critical(tracker.Report("fatalError"))
-				continue
-			}
-
-			for {
-
-				row, err := reader.Read()
-
-				if err == io.EOF {
-					break
-				} else if err != nil {
-					// Journal(critical, "importProcol", "Erreur de lecture pendant l'import du fichier "+path+". Abandon.")
-					close(outputChannel)
-				}
-				procol := parseProcolLine(
-					row,
-					&tracker,
-					dateEffetIndex,
-					siretIndex,
-					actionStadeIndex,
-				)
-				if _, err := strconv.Atoi(row[siretIndex]); err == nil && len(row[siretIndex]) == 14 {
-					if !tracker.HasErrorInCurrentCycle() {
-						outputChannel <- procol
-					} else {
-						//event.Debug(tracker.Report("errors"))
-					}
-				}
-				tracker.Next()
-			}
+			parseProcolFile(reader, &tracker, outputChannel)
 			event.Info(tracker.Report("abstract"))
 			file.Close()
 		}
@@ -121,6 +80,49 @@ func ParserProcol(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tup
 		close(eventChannel)
 	}()
 	return outputChannel, eventChannel
+}
+
+func parseProcolFile(reader *csv.Reader, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+
+	fields, err := reader.Read()
+	if err != nil {
+		tracker.Add(err)
+		return
+	}
+
+	dateEffetIndex := misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "dt_effet" })
+	actionStadeIndex := misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "lib_actx_stdx" })
+	siretIndex := misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "siret" })
+
+	if misc.SliceMin(dateEffetIndex, actionStadeIndex, siretIndex) == -1 {
+		tracker.Add(errors.New("format de fichier incorrect"))
+		return
+	}
+
+	for {
+
+		row, err := reader.Read()
+
+		if err == io.EOF {
+			break
+		} else if err != nil {
+			// Journal(critical, "importProcol", "Erreur de lecture pendant l'import du fichier "+path+". Abandon.")
+			close(outputChannel)
+		}
+		procol := parseProcolLine(
+			row,
+			tracker,
+			dateEffetIndex,
+			siretIndex,
+			actionStadeIndex,
+		)
+		if _, err := strconv.Atoi(row[siretIndex]); err == nil && len(row[siretIndex]) == 14 {
+			if !tracker.HasErrorInCurrentCycle() {
+				outputChannel <- procol
+			}
+		}
+		tracker.Next()
+	}
 }
 
 func parseProcolLine(
