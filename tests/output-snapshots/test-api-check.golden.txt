@@ -15,4 +15,4 @@
 	}
 ]
 // Response body from /api/data/check:
-true
+{"reports":["/../lib/urssaf/testData/debitCorrompuTestData.csv: intégration terminée, 5 lignes traitées, 2 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides"]}
