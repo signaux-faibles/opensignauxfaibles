@@ -109,14 +109,12 @@ func parseEffectifFile(reader *csv.Reader, filter map[string]bool, tracker *gour
 			break
 		} else if err != nil {
 			tracker.Add(err)
-			break
+		} else {
+			effectifs := parseEffectifLine(periods, row, idx, filter, tracker)
+			for _, eff := range effectifs {
+				outputChannel <- eff
+			}
 		}
-
-		effectifs := parseEffectifLine(periods, row, idx, filter, tracker)
-		for _, eff := range effectifs {
-			outputChannel <- eff
-		}
-
 		tracker.Next()
 	}
 }
