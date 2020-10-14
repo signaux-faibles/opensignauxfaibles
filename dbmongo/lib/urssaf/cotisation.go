@@ -90,7 +90,7 @@ func parseCotisationFile(reader *csv.Reader, comptes *marshal.Comptes, tracker *
 	// ligne de titre
 	reader.Read()
 
-	var field = colMapping{
+	var idx = colMapping{
 		"NumeroCompte": 2,
 		"Periode":      3,
 		"Encaisse":     5,
@@ -105,7 +105,7 @@ func parseCotisationFile(reader *csv.Reader, comptes *marshal.Comptes, tracker *
 			tracker.Add(err)
 			break
 		} else {
-			cotisation := parseCotisationLine(row, tracker, comptes, field)
+			cotisation := parseCotisationLine(row, tracker, comptes, idx)
 			if !tracker.HasErrorInCurrentCycle() {
 				outputChannel <- cotisation
 			}
@@ -114,24 +114,24 @@ func parseCotisationFile(reader *csv.Reader, comptes *marshal.Comptes, tracker *
 	}
 }
 
-func parseCotisationLine(row []string, tracker *gournal.Tracker, comptes *marshal.Comptes, field colMapping) Cotisation {
+func parseCotisationLine(row []string, tracker *gournal.Tracker, comptes *marshal.Comptes, idx colMapping) Cotisation {
 	cotisation := Cotisation{}
 
-	periode, err := marshal.UrssafToPeriod(row[field["Periode"]])
+	periode, err := marshal.UrssafToPeriod(row[idx["Periode"]])
 	date := periode.Start
 	tracker.Add(err)
 
-	siret, err := marshal.GetSiretFromComptesMapping(row[field["NumeroCompte"]], &date, *comptes)
+	siret, err := marshal.GetSiretFromComptesMapping(row[idx["NumeroCompte"]], &date, *comptes)
 	if err != nil {
 		tracker.Add(base.NewFilterError(err))
 	} else {
 		cotisation.key = siret
-		cotisation.NumeroCompte = row[field["NumeroCompte"]]
-		cotisation.Periode, err = marshal.UrssafToPeriod(row[field["Periode"]])
+		cotisation.NumeroCompte = row[idx["NumeroCompte"]]
+		cotisation.Periode, err = marshal.UrssafToPeriod(row[idx["Periode"]])
 		tracker.Add(err)
-		cotisation.Encaisse, err = strconv.ParseFloat(strings.Replace(row[field["Encaisse"]], ",", ".", -1), 64)
+		cotisation.Encaisse, err = strconv.ParseFloat(strings.Replace(row[idx["Encaisse"]], ",", ".", -1), 64)
 		tracker.Add(err)
-		cotisation.Du, err = strconv.ParseFloat(strings.Replace(row[field["Du"]], ",", ".", -1), 64)
+		cotisation.Du, err = strconv.ParseFloat(strings.Replace(row[idx["Du"]], ",", ".", -1), 64)
 		tracker.Add(err)
 	}
 	return cotisation
