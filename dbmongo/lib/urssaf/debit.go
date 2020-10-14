@@ -108,18 +108,7 @@ func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 				continue
 			}
 
-			var shouldBreak = false
 			var lineNumber = 0 // starting with the header
-
-			var maxParsingErrors = engine.MaxParsingErrors
-			val, _ := cache.Get("maxParsingErrors")
-			if intVal, ok := val.(int); ok {
-				maxParsingErrors = intVal
-			}
-			if maxParsingErrors > 0 {
-				stopErrorLimiter := engine.StopAfterTooManyErrors(tracker, maxParsingErrors, &shouldBreak)
-				defer stopErrorLimiter()
-			}
 
 			stopProgressLogger := marshal.LogProgress(&lineNumber)
 			defer stopProgressLogger()
@@ -182,9 +171,6 @@ func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 					continue
 				}
 
-				if shouldBreak {
-					break
-				}
 				tracker.Next()
 			}
 
