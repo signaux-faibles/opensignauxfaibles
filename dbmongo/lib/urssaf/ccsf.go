@@ -62,21 +62,17 @@ func ParserCCSF(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple
 				tracker.Add(err)
 				event.Critical(tracker.Report("fatalError"))
 				continue
-			} else {
-				event.Info(path + ": ouverture")
 			}
 
+			event.Info(path + ": ouverture")
 			comptes, err := marshal.GetCompteSiretMapping(cache, batch, marshal.OpenAndReadSiretMapping)
 			if err != nil {
 				tracker.Add(err)
-				return
+			} else {
+				reader := csv.NewReader(bufio.NewReader(file))
+				reader.Comma = ';'
+				parseCcsfFile(reader, &comptes, &tracker, outputChannel)
 			}
-
-			reader := csv.NewReader(bufio.NewReader(file))
-			reader.Comma = ';'
-			reader.Read()
-
-			parseCcsfFile(reader, &comptes, &tracker, outputChannel)
 			event.Info(tracker.Report("abstract"))
 
 			file.Close()
@@ -95,6 +91,7 @@ var idx = colMapping{
 }
 
 func parseCcsfFile(reader *csv.Reader, comptes *marshal.Comptes, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+	reader.Read() // en-tête du fichier
 	for {
 		row, err := reader.Read()
 		if err == io.EOF {
