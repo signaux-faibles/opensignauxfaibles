@@ -69,39 +69,36 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 			reader := csv.NewReader(file)
 			reader.Comma = ','
 
-			if err != nil {
-				tracker.Add(err)
-				event.Critical(tracker.Report("fatalError"))
-				continue
-			}
-
-			for {
-				row, err := reader.Read()
-				if err == io.EOF {
-					file.Close()
-					break
-				} else if err != nil {
-					file.Close()
-					event.Critical(path + ": abandon suite à un problème de lecture du fichier: " + err.Error())
-					break
-				}
-				reporder := parseReporderLine(row, &tracker)
-				filtered, err := marshal.IsFiltered(reporder.Siret[0:9], filter)
-				if err != nil {
-					tracker.Add(err)
-				}
-				if !tracker.HasErrorInCurrentCycle() && !filtered {
-					outputChannel <- reporder
-					tracker.Next()
-				}
-
-			}
+			parseReporderFile(reader, filter, &tracker, outputChannel)
 			event.Info(tracker.Report("abstract"))
+			file.Close()
 		}
+
 		close(eventChannel)
 		close(outputChannel)
 	}()
 	return outputChannel, eventChannel
+}
+
+func parseReporderFile(reader *csv.Reader, filter map[string]bool, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+	for {
+		row, err := reader.Read()
+		if err == io.EOF {
+			break
+		} else if err != nil {
+			tracker.Add(err)
+			break
+		}
+		reporder := parseReporderLine(row, tracker)
+		filtered, err := marshal.IsFiltered(reporder.Siret[0:9], filter)
+		if err != nil {
+			tracker.Add(err)
+		}
+		if !tracker.HasErrorInCurrentCycle() && !filtered {
+			outputChannel <- reporder
+			tracker.Next()
+		}
+	}
 }
 
 func parseReporderLine(row []string, tracker *gournal.Tracker) RepeatableOrder {
