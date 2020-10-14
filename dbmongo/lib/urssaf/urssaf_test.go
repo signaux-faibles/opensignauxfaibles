@@ -39,30 +39,30 @@ func TestDebitCorrompu(t *testing.T) {
 func TestDelai(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedDelai.json")
 	var testData = filepath.Join("testData", "delaiTestData.csv")
-	marshal.TestParserTupleOutput(t, ParserDelai, cache, "delai", testData, golden, *update)
+	marshal.TestParserOutput(t, ParserDelai, cache, "delai", testData, golden, *update)
 }
 
 func TestCcsf(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedCcsf.json")
 	var testData = filepath.Join("testData", "ccsfTestData.csv")
-	marshal.TestParserTupleOutput(t, ParserCCSF, cache, "ccsf", testData, golden, *update)
+	marshal.TestParserOutput(t, ParserCCSF, cache, "ccsf", testData, golden, *update)
 }
 
 func TestCotisation(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedCotisation.json")
 	var testData = filepath.Join("testData", "cotisationTestData.csv")
-	marshal.TestParserTupleOutput(t, ParserCotisation, cache, "cotisation", testData, golden, *update)
+	marshal.TestParserOutput(t, ParserCotisation, cache, "cotisation", testData, golden, *update)
 }
 
 func TestProcol(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedProcol.json")
 	var testData = filepath.Join("testData", "procolTestData.csv")
-	marshal.TestParserTupleOutput(t, ParserProcol, cache, "procol", testData, golden, *update)
+	marshal.TestParserOutput(t, ParserProcol, cache, "procol", testData, golden, *update)
 }
 
 func TestEffectif(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedEffectif.json")
 	var testData = filepath.Join("testData", "effectifTestData.csv")
 	cache := marshal.NewCache()
-	marshal.TestParserTupleOutput(t, ParserEffectif, cache, "effectif", testData, golden, *update)
+	marshal.TestParserOutput(t, ParserEffectif, cache, "effectif", testData, golden, *update)
 }

@@ -1,27 +1,60 @@
-[{
-  "siren": "138426539",
-  "raison_sociale": "",
-  "prenom1_unite_legale": "cuhgjdp",
-  "nom_unite_legale": "jjqcmkg",
-  "statut_juridique": "5465",
-  "date_creation": "1999-11-11T00:00:00Z"
-},{
-  "siren": "789211558",
-  "raison_sociale": "",
-  "prenom1_unite_legale": "ajfwprw-qmxobv",
-  "nom_unite_legale": "fvxmjl",
-  "statut_juridique": "5258",
-  "date_creation": "1999-10-25T00:00:00Z"
-},{
-  "siren": "238307776",
-  "raison_sociale": "",
-  "prenom1_unite_legale": "wwdsrst",
-  "nom_unite_legale": "nduxdzbou",
-  "statut_juridique": "4263",
-  "date_creation": "1964-01-01T00:00:00Z"
-},{
-  "siren": "112233445",
-  "raison_sociale": "companyname",
-  "statut_juridique": "5422",
-  "date_creation": "1967-01-01T00:00:00Z"
-}]
+{
+  "tuples": [
+    {
+      "siren": "138426539",
+      "raison_sociale": "",
+      "prenom1_unite_legale": "cuhgjdp",
+      "nom_unite_legale": "jjqcmkg",
+      "statut_juridique": "5465",
+      "date_creation": "1999-11-11T00:00:00Z"
+    },
+    {
+      "siren": "789211558",
+      "raison_sociale": "",
+      "prenom1_unite_legale": "ajfwprw-qmxobv",
+      "nom_unite_legale": "fvxmjl",
+      "statut_juridique": "5258",
+      "date_creation": "1999-10-25T00:00:00Z"
+    },
+    {
+      "siren": "238307776",
+      "raison_sociale": "",
+      "prenom1_unite_legale": "wwdsrst",
+      "nom_unite_legale": "nduxdzbou",
+      "statut_juridique": "4263",
+      "date_creation": "1964-01-01T00:00:00Z"
+    },
+    {
+      "siren": "112233445",
+      "raison_sociale": "companyname",
+      "statut_juridique": "5422",
+      "date_creation": "1967-01-01T00:00:00Z"
+    }
+  ],
+  "events": [
+    {
+      "date": "0001-01-01T00:00:00Z",
+      "event": "testData/sireneULTestData.csv: ouverture",
+      "priority": "info",
+      "code": "sireneULParser",
+      "report_type": ""
+    },
+    {
+      "date": "0001-01-01T00:00:00Z",
+      "event": {
+        "batchKey": "",
+        "error": 0,
+        "filtered": 0,
+        "headErrors": [],
+        "headFatal": [],
+        "headFilters": [],
+        "report": "testData/sireneULTestData.csv: intégration terminée, 4 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 4 lignes valides",
+        "total": 4,
+        "valid": 4
+      },
+      "priority": "info",
+      "code": "sireneULParser",
+      "report_type": ""
+    }
+  ]
+}
