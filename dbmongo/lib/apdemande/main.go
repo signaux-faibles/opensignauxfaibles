@@ -137,10 +137,7 @@ func parseApDemandeFile(reader *csv.Reader, tracker *gournal.Tracker, outputChan
 			apdemande := parseApDemandeLine(row, tracker, f)
 			if !tracker.HasErrorInCurrentCycle() {
 				outputChannel <- apdemande
-			} /* else {
-				event.Debug(tracker.Report("error"))
-			} */
-
+			}
 		} else {
 			tracker.Add(errors.New("invalidLine"))
 		}
