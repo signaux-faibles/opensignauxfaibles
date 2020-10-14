@@ -88,7 +88,13 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 }
 
 func parseSireneULFile(reader *csv.Reader, filter map[string]bool, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
-	_, _ = reader.Read()
+	_, err := reader.Read()
+	if err == io.EOF {
+		return
+	} else if err != nil {
+		tracker.Add(err)
+		return
+	}
 
 	for {
 		row, err := reader.Read()
