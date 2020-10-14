@@ -44,13 +44,20 @@ func (effectifEnt EffectifEnt) Type() string {
 	return "effectif_ent"
 }
 
+type periodCol struct {
+	dateStart time.Time
+	colIndex  int
+}
+
 // ParseEffectifEntPeriod Transforme un tableau de périodes telles qu'écrites dans l'entête du tableau d'effectifEnt urssaf en date de début
-func parseEffectifEntPeriod(effectifEntPeriods []string) []time.Time {
-	periods := []time.Time{}
-	for _, period := range effectifEntPeriods {
-		urssaf := period[3:9]
-		date, _ := marshal.UrssafToPeriod(urssaf)
-		periods = append(periods, date.Start)
+func parseEffectifEntPeriod(fields []string) []periodCol {
+	periods := []periodCol{}
+	re, _ := regexp.Compile("^eff")
+	for index, field := range fields {
+		if re.MatchString(field) {
+			date, _ := marshal.UrssafToPeriod(field[3:9])
+			periods = append(periods, periodCol{dateStart: date.Start, colIndex: index})
+		}
 	}
 	return periods
 }
@@ -102,17 +109,7 @@ func parseEffectifEntFile(reader *csv.Reader, filter map[string]bool, tracker *g
 	}
 
 	// Dans quels champs lire l'effectifEnt
-	re, _ := regexp.Compile("^eff")
-	var effectifEntFields []string
-	var effectifEntIndexes []int
-	for ind, field := range fields {
-		if re.MatchString(field) {
-			effectifEntFields = append(effectifEntFields, field)
-			effectifEntIndexes = append(effectifEntIndexes, ind)
-		}
-	}
-
-	periods := parseEffectifEntPeriod(effectifEntFields)
+	periods := parseEffectifEntPeriod(fields)
 
 	for {
 		row, err := reader.Read()
@@ -123,7 +120,7 @@ func parseEffectifEntFile(reader *csv.Reader, filter map[string]bool, tracker *g
 			break
 		}
 
-		effectifs := parseEffectifEntLine(effectifEntIndexes, periods, row, idx, filter, tracker)
+		effectifs := parseEffectifEntLine(periods, row, idx, filter, tracker)
 		for _, eff := range effectifs {
 			outputChannel <- eff
 		}
@@ -131,7 +128,7 @@ func parseEffectifEntFile(reader *csv.Reader, filter map[string]bool, tracker *g
 	}
 }
 
-func parseEffectifEntLine(effectifEntIndexes []int, periods []time.Time, row []string, idx colMapping, filter map[string]bool, tracker *gournal.Tracker) []EffectifEnt {
+func parseEffectifEntLine(periods []periodCol, row []string, idx colMapping, filter map[string]bool, tracker *gournal.Tracker) []EffectifEnt {
 	var effectifs = []EffectifEnt{}
 	siren := row[idx["siren"]]
 	filtered, err := marshal.IsFiltered(siren, filter)
@@ -139,16 +136,17 @@ func parseEffectifEntLine(effectifEntIndexes []int, periods []time.Time, row []s
 	if len(siren) != 9 {
 		tracker.Add(errors.New("Format de siren incorrect : " + siren))
 	} else if !filtered {
-		for i, j := range effectifEntIndexes {
-			if row[j] != "" {
-				noThousandsSep := sfregexp.RegexpDict["notDigit"].ReplaceAllString(row[j], "")
+		for _, period := range periods {
+			value := row[period.colIndex]
+			if value != "" {
+				noThousandsSep := sfregexp.RegexpDict["notDigit"].ReplaceAllString(value, "")
 				s, err := strconv.ParseFloat(noThousandsSep, 64)
 				tracker.Add(err)
 				e := int(s)
 				if e > 0 {
 					effectifs = append(effectifs, EffectifEnt{
 						Siren:       siren,
-						Periode:     periods[i],
+						Periode:     period.dateStart,
 						EffectifEnt: e,
 					})
 				}
