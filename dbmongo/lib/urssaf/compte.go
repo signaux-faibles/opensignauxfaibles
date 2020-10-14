@@ -49,8 +49,7 @@ func ParserCompte(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tup
 				map[string]string{"path": "Admin_urssaf", "batchKey": batch.ID.Key},
 				engine.TrackerReports)
 
-			periode_init := batch.Params.DateDebut
-			periodes := misc.GenereSeriePeriode(periode_init, time.Now()) //[]time.Time
+			periodes := misc.GenereSeriePeriode(batch.Params.DateDebut, time.Now()) //[]time.Time
 			event.Info("Comptes urssaf : traitement")
 			mapping, err := marshal.GetCompteSiretMapping(cache, batch, marshal.OpenAndReadSiretMapping)
 			tracker.Add(err)
