@@ -103,31 +103,37 @@ func parseCcsfFile(reader *csv.Reader, comptes *marshal.Comptes, tracker *gourna
 			tracker.Add(err)
 			continue
 		}
-		if len(r) >= 4 {
-			ccsf := CCSF{}
-			ccsf.Action = r[idx["Action"]]
-			ccsf.Stade = r[idx["Stade"]]
-			ccsf.DateTraitement, err = marshal.UrssafToDate(r[idx["DateTraitement"]])
-			tracker.Add(err)
-			if err != nil {
-				tracker.Next()
-				continue
-			}
 
-			ccsf.key, err = marshal.GetSiretFromComptesMapping(r[idx["NumeroCompte"]], &ccsf.DateTraitement, *comptes)
-			if err != nil {
-				// Compte filtré
-				tracker.Add(base.NewFilterError(err))
-				continue
-			}
-			ccsf.NumeroCompte = r[idx["NumeroCompte"]]
-
-			if !tracker.HasErrorInCurrentCycle() {
-				outputChannel <- ccsf
-			}
-		} else {
-			tracker.Add(errors.New("Ligne non conforme, moins de 4 champs"))
+		ccsf := parseCcsfLine(r, tracker, idx, comptes)
+		if !tracker.HasErrorInCurrentCycle() {
+			outputChannel <- ccsf
 		}
 		tracker.Next()
 	}
+}
+
+func parseCcsfLine(r []string, tracker *gournal.Tracker, idx colMapping, comptes *marshal.Comptes) CCSF {
+	var err error
+	ccsf := CCSF{}
+	if len(r) >= 4 {
+		ccsf.Action = r[idx["Action"]]
+		ccsf.Stade = r[idx["Stade"]]
+		ccsf.DateTraitement, err = marshal.UrssafToDate(r[idx["DateTraitement"]])
+		tracker.Add(err)
+		if err != nil {
+			return ccsf
+		}
+
+		ccsf.key, err = marshal.GetSiretFromComptesMapping(r[idx["NumeroCompte"]], &ccsf.DateTraitement, *comptes)
+		if err != nil {
+			// Compte filtré
+			tracker.Add(base.NewFilterError(err))
+			return ccsf
+		}
+		ccsf.NumeroCompte = r[idx["NumeroCompte"]]
+
+	} else {
+		tracker.Add(errors.New("Ligne non conforme, moins de 4 champs"))
+	}
+	return ccsf
 }
