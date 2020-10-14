@@ -87,7 +87,7 @@ func ParserCCSF(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple
 	return outputChannel, eventChannel
 }
 
-var idx = map[string]int{
+var idx = colMapping{
 	"NumeroCompte":   2,
 	"DateTraitement": 3,
 	"Stade":          4,
@@ -96,7 +96,7 @@ var idx = map[string]int{
 
 func parseCcsfFile(reader *csv.Reader, comptes *marshal.Comptes, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
 	for {
-		r, err := reader.Read()
+		row, err := reader.Read()
 		if err == io.EOF {
 			break
 		} else if err != nil {
@@ -104,7 +104,7 @@ func parseCcsfFile(reader *csv.Reader, comptes *marshal.Comptes, tracker *gourna
 			continue
 		}
 
-		ccsf := parseCcsfLine(r, tracker, comptes)
+		ccsf := parseCcsfLine(row, tracker, comptes)
 		if !tracker.HasErrorInCurrentCycle() {
 			outputChannel <- ccsf
 		}
@@ -112,25 +112,25 @@ func parseCcsfFile(reader *csv.Reader, comptes *marshal.Comptes, tracker *gourna
 	}
 }
 
-func parseCcsfLine(r []string, tracker *gournal.Tracker, comptes *marshal.Comptes) CCSF {
+func parseCcsfLine(row []string, tracker *gournal.Tracker, comptes *marshal.Comptes) CCSF {
 	var err error
 	ccsf := CCSF{}
-	if len(r) >= 4 {
-		ccsf.Action = r[idx["Action"]]
-		ccsf.Stade = r[idx["Stade"]]
-		ccsf.DateTraitement, err = marshal.UrssafToDate(r[idx["DateTraitement"]])
+	if len(row) >= 4 {
+		ccsf.Action = row[idx["Action"]]
+		ccsf.Stade = row[idx["Stade"]]
+		ccsf.DateTraitement, err = marshal.UrssafToDate(row[idx["DateTraitement"]])
 		tracker.Add(err)
 		if err != nil {
 			return ccsf
 		}
 
-		ccsf.key, err = marshal.GetSiretFromComptesMapping(r[idx["NumeroCompte"]], &ccsf.DateTraitement, *comptes)
+		ccsf.key, err = marshal.GetSiretFromComptesMapping(row[idx["NumeroCompte"]], &ccsf.DateTraitement, *comptes)
 		if err != nil {
 			// Compte filtré
 			tracker.Add(base.NewFilterError(err))
 			return ccsf
 		}
-		ccsf.NumeroCompte = r[idx["NumeroCompte"]]
+		ccsf.NumeroCompte = row[idx["NumeroCompte"]]
 
 	} else {
 		tracker.Add(errors.New("Ligne non conforme, moins de 4 champs"))
