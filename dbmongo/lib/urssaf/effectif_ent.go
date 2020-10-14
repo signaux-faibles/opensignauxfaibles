@@ -81,8 +81,68 @@ func ParserEffectifEnt(cache marshal.Cache, batch *base.AdminBatch) (chan marsha
 
 			reader := csv.NewReader(bufio.NewReader(file))
 			reader.Comma = ';'
+			fields, err := reader.Read()
 
-			parseEffectifEntFile(reader, filter, &tracker, outputChannel)
+			if err != nil {
+				event.Critical(path + ": erreur à la lecture du fichier, abandon: " + err.Error())
+				continue
+			}
+
+			sirenIndex := misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "siren" })
+
+			// Dans quels champs lire l'effectifEnt
+			re, _ := regexp.Compile("^eff")
+			var effectifEntFields []string
+			var effectifEntIndexes []int
+			for ind, field := range fields {
+				if re.MatchString(field) {
+					effectifEntFields = append(effectifEntFields, field)
+					effectifEntIndexes = append(effectifEntIndexes, ind)
+				}
+			}
+
+			periods, err := parseEffectifEntPeriod(effectifEntFields)
+			if err != nil {
+				event.Critical(path + ": erreur a l'analyse du fichier, abandon: " + err.Error())
+				continue
+			}
+
+			for {
+				row, err := reader.Read()
+				if err == io.EOF {
+					break
+				} else if err != nil {
+					tracker.Add(err)
+					event.Critical(tracker.Report("fatalError"))
+					break
+				}
+				siren := row[sirenIndex]
+				filtered, err := marshal.IsFiltered(siren, filter)
+				tracker.Add(err)
+				if len(siren) != 9 {
+					tracker.Add(errors.New("Format de siren incorrect : " + siren))
+				} else if !filtered {
+					for i, j := range effectifEntIndexes {
+						if row[j] != "" {
+							noThousandsSep := sfregexp.RegexpDict["notDigit"].ReplaceAllString(row[j], "")
+							s, err := strconv.ParseFloat(noThousandsSep, 64)
+							tracker.Add(err)
+							e := int(s)
+							if e > 0 {
+								eff := EffectifEnt{
+									Siren:       siren,
+									Periode:     periods[i],
+									EffectifEnt: e,
+								}
+
+								outputChannel <- eff
+							}
+						}
+					}
+				}
+
+				tracker.Next()
+			}
 			file.Close()
 			event.Debug(tracker.Report("abstract"))
 		}
@@ -90,67 +150,4 @@ func ParserEffectifEnt(cache marshal.Cache, batch *base.AdminBatch) (chan marsha
 		close(eventChannel)
 	}()
 	return outputChannel, eventChannel
-}
-
-func parseEffectifEntFile(reader *csv.Reader, filter map[string]bool, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
-	fields, err := reader.Read()
-	if err != nil {
-		tracker.Add(err)
-		return
-	}
-
-	sirenIndex := misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "siren" })
-
-	// Dans quels champs lire l'effectifEnt
-	re, _ := regexp.Compile("^eff")
-	var effectifEntFields []string
-	var effectifEntIndexes []int
-	for ind, field := range fields {
-		if re.MatchString(field) {
-			effectifEntFields = append(effectifEntFields, field)
-			effectifEntIndexes = append(effectifEntIndexes, ind)
-		}
-	}
-
-	periods, err := parseEffectifEntPeriod(effectifEntFields)
-	if err != nil {
-		tracker.Add(err)
-		return
-	}
-
-	for {
-		row, err := reader.Read()
-		if err == io.EOF {
-			break
-		} else if err != nil {
-			tracker.Add(err)
-			break
-		}
-		siren := row[sirenIndex]
-		filtered, err := marshal.IsFiltered(siren, filter)
-		tracker.Add(err)
-		if len(siren) != 9 {
-			tracker.Add(errors.New("Format de siren incorrect : " + siren))
-		} else if !filtered {
-			for i, j := range effectifEntIndexes {
-				if row[j] != "" {
-					noThousandsSep := sfregexp.RegexpDict["notDigit"].ReplaceAllString(row[j], "")
-					s, err := strconv.ParseFloat(noThousandsSep, 64)
-					tracker.Add(err)
-					e := int(s)
-					if e > 0 {
-						eff := EffectifEnt{
-							Siren:       siren,
-							Periode:     periods[i],
-							EffectifEnt: e,
-						}
-
-						outputChannel <- eff
-					}
-				}
-			}
-		}
-
-		tracker.Next()
-	}
 }
