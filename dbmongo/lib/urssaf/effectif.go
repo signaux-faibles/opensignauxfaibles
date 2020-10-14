@@ -100,13 +100,16 @@ func parseEffectifFile(reader *csv.Reader, filter map[string]bool, tracker *gour
 		return
 	}
 
-	siretIndex := misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "siret" })
-	compteIndex := misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "compte" })
-	if misc.SliceMin(siretIndex, compteIndex) == -1 {
+	var idx = colMapping{
+		"siret":  misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "siret" }),
+		"compte": misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "compte" }),
+	}
+
+	if misc.SliceMin(idx["siret"], idx["compte"]) == -1 {
 		tracker.Add(errors.New("erreur à l'analyse du fichier, abandon, l'un " +
 			"des champs obligatoires n'a pu etre trouve:" +
-			" siretIndex = " + strconv.Itoa(siretIndex) +
-			", compteIndex = " + strconv.Itoa(compteIndex)))
+			" siretIndex = " + strconv.Itoa(idx["siret"]) +
+			", compteIndex = " + strconv.Itoa(idx["compte"])))
 		return
 	}
 
@@ -136,28 +139,36 @@ func parseEffectifFile(reader *csv.Reader, filter map[string]bool, tracker *gour
 			break
 		}
 
-		siret := row[siretIndex]
+		effectifs := parseEffectifLine(effectifIndexes, periods, row, idx, filter, tracker)
+		for _, eff := range effectifs {
+			outputChannel <- eff
+		}
 
-		validSiret := sfregexp.RegexpDict["siret"].MatchString(siret)
-		if !validSiret {
-			tracker.Add(base.NewRegularError(errors.New("Le siret/siren est invalide")))
-		} else if filter != nil || !marshal.FilterHas(siret, filter) {
-			for i, j := range effectifIndexes {
-				if row[j] != "" {
-					noThousandsSep := sfregexp.RegexpDict["notDigit"].ReplaceAllString(row[j], "")
-					e, err := strconv.Atoi(noThousandsSep)
-					tracker.Add(err)
-					if e > 0 {
-						eff := Effectif{
-							Siret:        siret,
-							NumeroCompte: row[compteIndex],
-							Periode:      periods[i],
-							Effectif:     e}
-						outputChannel <- eff
-					}
+		tracker.Next()
+	}
+}
+
+func parseEffectifLine(effectifIndexes []int, periods []time.Time, row []string, idx colMapping, filter map[string]bool, tracker *gournal.Tracker) []Effectif {
+	var effectifs = []Effectif{}
+	siret := row[idx["siret"]]
+	validSiret := sfregexp.RegexpDict["siret"].MatchString(siret)
+	if !validSiret {
+		tracker.Add(base.NewRegularError(errors.New("Le siret/siren est invalide")))
+	} else if filter != nil || !marshal.FilterHas(siret, filter) {
+		for i, j := range effectifIndexes {
+			if row[j] != "" {
+				noThousandsSep := sfregexp.RegexpDict["notDigit"].ReplaceAllString(row[j], "")
+				e, err := strconv.Atoi(noThousandsSep)
+				tracker.Add(err)
+				if e > 0 {
+					effectifs = append(effectifs, Effectif{
+						Siret:        siret,
+						NumeroCompte: row[idx["compte"]],
+						Periode:      periods[i],
+						Effectif:     e})
 				}
 			}
 		}
-		tracker.Next()
 	}
+	return effectifs
 }
