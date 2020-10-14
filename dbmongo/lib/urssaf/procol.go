@@ -63,18 +63,16 @@ func ParserProcol(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tup
 			if err != nil {
 				tracker.Add(err)
 				event.Critical(tracker.Report("fatalError"))
-				continue
 			} else {
 				event.Info(path + ": ouverture")
+				reader := csv.NewReader(bufio.NewReader(file))
+				reader.Comma = ';'
+				reader.LazyQuotes = true
+
+				parseProcolFile(reader, &tracker, outputChannel)
+				event.Info(tracker.Report("abstract"))
+				file.Close()
 			}
-
-			reader := csv.NewReader(bufio.NewReader(file))
-			reader.Comma = ';'
-			reader.LazyQuotes = true
-
-			parseProcolFile(reader, &tracker, outputChannel)
-			event.Info(tracker.Report("abstract"))
-			file.Close()
 		}
 		close(outputChannel)
 		close(eventChannel)
