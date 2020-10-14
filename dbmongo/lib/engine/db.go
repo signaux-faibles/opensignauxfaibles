@@ -69,7 +69,7 @@ func InitDB() DB {
 
 	// Création d'index sur la collection ImportedData
 	db.C("ImportedData").EnsureIndex(mgo.Index{
-		Key:      []string{"value.siret"},
+		Key:      []string{"value.key"}, // numéro SIRET ou SIREN
 		Unique:   true,
 		DropDups: true,
 	})
