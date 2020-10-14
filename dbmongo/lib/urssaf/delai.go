@@ -119,21 +119,19 @@ func parseDelaiFile(reader *csv.Reader, comptes *marshal.Comptes, tracker *gourn
 			break
 		} else if err != nil {
 			tracker.Add(err)
-			break
-		}
-
-		date, err := time.Parse("02/01/2006", row[idx["DateCreation"]])
-		if err != nil {
-			tracker.Add(err)
-		} else if siret, err := marshal.GetSiretFromComptesMapping(row[idx["NumeroCompte"]], &date, *comptes); err == nil {
-			delai := parseDelaiLine(row, idx, siret, tracker)
-			if !tracker.HasErrorInCurrentCycle() {
-				outputChannel <- delai
-			}
 		} else {
-			tracker.Add(base.NewFilterError(err))
+			date, err := time.Parse("02/01/2006", row[idx["DateCreation"]])
+			if err != nil {
+				tracker.Add(err)
+			} else if siret, err := marshal.GetSiretFromComptesMapping(row[idx["NumeroCompte"]], &date, *comptes); err == nil {
+				delai := parseDelaiLine(row, idx, siret, tracker)
+				if !tracker.HasErrorInCurrentCycle() {
+					outputChannel <- delai
+				}
+			} else {
+				tracker.Add(base.NewFilterError(err))
+			}
 		}
-
 		tracker.Next()
 	}
 }
