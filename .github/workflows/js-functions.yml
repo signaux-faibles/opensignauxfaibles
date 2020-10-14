@@ -56,7 +56,6 @@ jobs:
         env:
           GPG_PRIVATE_KEY_FOR_GIT_SECRET: ${{ secrets.GPG_PRIVATE_KEY_FOR_GIT_SECRET }}
         run: |
-          sudo apt-get update -y
           sudo apt-get install git-secret # to decrypt golden master files, for tests
           echo "${GPG_PRIVATE_KEY_FOR_GIT_SECRET}" > ./private_key.gpg
           gpg --import --no-tty --batch --yes ./private_key.gpg
