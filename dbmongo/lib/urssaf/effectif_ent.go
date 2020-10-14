@@ -98,7 +98,9 @@ func parseEffectifEntFile(reader *csv.Reader, filter map[string]bool, tracker *g
 		return
 	}
 
-	sirenIndex := misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "siren" })
+	var idx = colMapping{
+		"siren": misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "siren" }),
+	}
 
 	// Dans quels champs lire l'effectifEnt
 	re, _ := regexp.Compile("^eff")
@@ -126,7 +128,7 @@ func parseEffectifEntFile(reader *csv.Reader, filter map[string]bool, tracker *g
 			break
 		}
 
-		effectifs := parseEffectifEntLine(effectifEntIndexes, periods, row, colMapping{"siren": sirenIndex}, filter, tracker)
+		effectifs := parseEffectifEntLine(effectifEntIndexes, periods, row, idx, filter, tracker)
 		for _, eff := range effectifs {
 			outputChannel <- eff
 		}
