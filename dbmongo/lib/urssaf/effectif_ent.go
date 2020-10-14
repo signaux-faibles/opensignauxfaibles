@@ -72,7 +72,6 @@ func ParserEffectifEnt(cache marshal.Cache, batch *base.AdminBatch) (chan marsha
 	filter := marshal.GetSirenFilterFromCache(cache)
 	go func() {
 		for _, path := range batch.Files["effectif_ent"] {
-
 			file, err := os.Open(viper.GetString("APP_DATA") + path)
 			if err != nil {
 				event.Critical(path + ": erreur à l'ouverture du fichier, abandon: " + err.Error())
