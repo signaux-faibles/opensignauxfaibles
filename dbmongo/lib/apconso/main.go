@@ -90,8 +90,8 @@ func parseApConsoFile(reader *csv.Reader, tracker *gournal.Tracker, outputChanne
 	idx["Siret"] = misc.SliceIndex(35, func(i int) bool { return fields[i] == "ETAB_SIRET" })
 	idx["Periode"] = misc.SliceIndex(35, func(i int) bool { return fields[i] == "MOIS" })
 	idx["HeureConsommee"] = misc.SliceIndex(35, func(i int) bool { return fields[i] == "HEURES" })
-	idx["Montant"] = misc.SliceIndex(35, func(i int) bool { return fields[i] == "Montant" })
-	idx["Effectif"] = misc.SliceIndex(35, func(i int) bool { return fields[i] == "Effectif" })
+	idx["Montant"] = misc.SliceIndex(35, func(i int) bool { return fields[i] == "MONTANTS" })
+	idx["Effectif"] = misc.SliceIndex(35, func(i int) bool { return fields[i] == "EFFECTIFS" })
 
 	if misc.SliceMin(idx["ID"], idx["Siret"], idx["Periode"], idx["HeureConsommee"], idx["Montant"], idx["Effectif"]) == -1 {
 		tracker.Add(errors.New("entête non conforme, fichier ignoré"))
