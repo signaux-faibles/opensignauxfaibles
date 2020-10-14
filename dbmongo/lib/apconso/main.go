@@ -80,18 +80,18 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 type colMapping map[string]int
 
 func parseApConsoFile(reader *csv.Reader, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
-	fields, err := reader.Read()
+	header, err := reader.Read()
 	if err != nil {
 		tracker.Add(err)
 		return
 	}
 	var idx = colMapping{}
-	idx["ID"] = misc.SliceIndex(35, func(i int) bool { return fields[i] == "ID_DA" })
-	idx["Siret"] = misc.SliceIndex(35, func(i int) bool { return fields[i] == "ETAB_SIRET" })
-	idx["Periode"] = misc.SliceIndex(35, func(i int) bool { return fields[i] == "MOIS" })
-	idx["HeureConsommee"] = misc.SliceIndex(35, func(i int) bool { return fields[i] == "HEURES" })
-	idx["Montant"] = misc.SliceIndex(35, func(i int) bool { return fields[i] == "MONTANTS" })
-	idx["Effectif"] = misc.SliceIndex(35, func(i int) bool { return fields[i] == "EFFECTIFS" })
+	idx["ID"] = misc.SliceIndex(len(header), func(i int) bool { return header[i] == "ID_DA" })
+	idx["Siret"] = misc.SliceIndex(len(header), func(i int) bool { return header[i] == "ETAB_SIRET" })
+	idx["Periode"] = misc.SliceIndex(len(header), func(i int) bool { return header[i] == "MOIS" })
+	idx["HeureConsommee"] = misc.SliceIndex(len(header), func(i int) bool { return header[i] == "HEURES" })
+	idx["Montant"] = misc.SliceIndex(len(header), func(i int) bool { return header[i] == "MONTANTS" })
+	idx["Effectif"] = misc.SliceIndex(len(header), func(i int) bool { return header[i] == "EFFECTIFS" })
 
 	if misc.SliceMin(idx["ID"], idx["Siret"], idx["Periode"], idx["HeureConsommee"], idx["Montant"], idx["Effectif"]) == -1 {
 		tracker.Add(errors.New("entête non conforme, fichier ignoré"))
