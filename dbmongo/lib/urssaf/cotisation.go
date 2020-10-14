@@ -105,30 +105,34 @@ func parseCotisationFile(reader *csv.Reader, comptes *marshal.Comptes, tracker *
 			tracker.Add(err)
 			break
 		} else {
-			periode, err := marshal.UrssafToPeriod(row[field["Periode"]])
-			date := periode.Start
-			tracker.Add(err)
-
-			siret, err := marshal.GetSiretFromComptesMapping(row[field["NumeroCompte"]], &date, *comptes)
-			if err != nil {
-				tracker.Add(base.NewFilterError(err))
-			} else {
-				cotisation := Cotisation{}
-				cotisation.key = siret
-				cotisation.NumeroCompte = row[field["NumeroCompte"]]
-				cotisation.Periode, err = marshal.UrssafToPeriod(row[field["Periode"]])
-				tracker.Add(err)
-				cotisation.Encaisse, err = strconv.ParseFloat(strings.Replace(row[field["Encaisse"]], ",", ".", -1), 64)
-				tracker.Add(err)
-				cotisation.Du, err = strconv.ParseFloat(strings.Replace(row[field["Du"]], ",", ".", -1), 64)
-				tracker.Add(err)
-
-				if !tracker.HasErrorInCurrentCycle() {
-					outputChannel <- cotisation
-				}
+			cotisation := parseCotisationLine(row, tracker, comptes)
+			if !tracker.HasErrorInCurrentCycle() {
+				outputChannel <- cotisation
 			}
 		}
-
 		tracker.Next()
 	}
+}
+
+func parseCotisationLine(row []string, tracker *gournal.Tracker, comptes *marshal.Comptes) Cotisation {
+	cotisation := Cotisation{}
+
+	periode, err := marshal.UrssafToPeriod(row[field["Periode"]])
+	date := periode.Start
+	tracker.Add(err)
+
+	siret, err := marshal.GetSiretFromComptesMapping(row[field["NumeroCompte"]], &date, *comptes)
+	if err != nil {
+		tracker.Add(base.NewFilterError(err))
+	} else {
+		cotisation.key = siret
+		cotisation.NumeroCompte = row[field["NumeroCompte"]]
+		cotisation.Periode, err = marshal.UrssafToPeriod(row[field["Periode"]])
+		tracker.Add(err)
+		cotisation.Encaisse, err = strconv.ParseFloat(strings.Replace(row[field["Encaisse"]], ",", ".", -1), 64)
+		tracker.Add(err)
+		cotisation.Du, err = strconv.ParseFloat(strings.Replace(row[field["Du"]], ",", ".", -1), 64)
+		tracker.Add(err)
+	}
+	return cotisation
 }
