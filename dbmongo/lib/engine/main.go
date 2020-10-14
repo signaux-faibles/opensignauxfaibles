@@ -13,8 +13,7 @@ import (
 // Db connecteur exportable
 var Db DB
 
-// MaxParsingErrors is the number of parsing errors that are needed to
-// interrupt a parser
+// MaxParsingErrors is the number of parsing errors to report per file.
 var MaxParsingErrors = 200
 
 func reportAbstract(tracker gournal.Tracker) interface{} {
