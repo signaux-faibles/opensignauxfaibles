@@ -137,21 +137,18 @@ func parseDebitFile(reader *csv.Reader, comptes *marshal.Comptes, tracker *gourn
 			break
 		} else if err != nil {
 			tracker.Add(err)
-			tracker.Next()
-			continue
-		}
-
-		period, _ := marshal.UrssafToPeriod(row[idx["periode"]])
-		date := period.Start
-
-		if siret, err := marshal.GetSiretFromComptesMapping(row[idx["numeroCompte"]], &date, *comptes); err == nil {
-			debit := parseDebitLine(siret, row, tracker, idx)
-			if !tracker.HasErrorInCurrentCycle() {
-				outputChannel <- debit
-			}
 		} else {
-			tracker.Add(base.NewFilterError(err))
-			continue
+			period, _ := marshal.UrssafToPeriod(row[idx["periode"]])
+			date := period.Start
+
+			if siret, err := marshal.GetSiretFromComptesMapping(row[idx["numeroCompte"]], &date, *comptes); err == nil {
+				debit := parseDebitLine(siret, row, tracker, idx)
+				if !tracker.HasErrorInCurrentCycle() {
+					outputChannel <- debit
+				}
+			} else {
+				tracker.Add(base.NewFilterError(err))
+			}
 		}
 
 		tracker.Next()
