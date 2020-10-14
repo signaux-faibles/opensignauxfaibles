@@ -87,17 +87,15 @@ func parseReporderFile(reader *csv.Reader, filter map[string]bool, tracker *gour
 			break
 		} else if err != nil {
 			tracker.Add(err)
-			break
-		}
-		reporder := parseReporderLine(row, tracker)
-		filtered, err := marshal.IsFiltered(reporder.Siret[0:9], filter)
-		if err != nil {
+		} else {
+			reporder := parseReporderLine(row, tracker)
+			filtered, err := marshal.IsFiltered(reporder.Siret[0:9], filter)
 			tracker.Add(err)
+			if !tracker.HasErrorInCurrentCycle() && !filtered {
+				outputChannel <- reporder
+			}
 		}
-		if !tracker.HasErrorInCurrentCycle() && !filtered {
-			outputChannel <- reporder
-			tracker.Next()
-		}
+		tracker.Next()
 	}
 }
 
