@@ -104,7 +104,7 @@ func parseCcsfFile(reader *csv.Reader, comptes *marshal.Comptes, tracker *gourna
 			continue
 		}
 
-		ccsf := parseCcsfLine(r, tracker, idx, comptes)
+		ccsf := parseCcsfLine(r, tracker, comptes)
 		if !tracker.HasErrorInCurrentCycle() {
 			outputChannel <- ccsf
 		}
@@ -112,7 +112,7 @@ func parseCcsfFile(reader *csv.Reader, comptes *marshal.Comptes, tracker *gourna
 	}
 }
 
-func parseCcsfLine(r []string, tracker *gournal.Tracker, idx colMapping, comptes *marshal.Comptes) CCSF {
+func parseCcsfLine(r []string, tracker *gournal.Tracker, comptes *marshal.Comptes) CCSF {
 	var err error
 	ccsf := CCSF{}
 	if len(r) >= 4 {
