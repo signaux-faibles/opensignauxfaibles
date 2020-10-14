@@ -141,11 +141,6 @@ func ParserEffectifEnt(cache marshal.Cache, batch *base.AdminBatch) (chan marsha
 					}
 				}
 
-				if engine.ShouldBreak(tracker, engine.MaxParsingErrors) {
-					tracker.Add(base.NewCriticError(errors.New("Parser interrompu: trop d'erreurs"), "fatal"))
-					event.Critical(tracker.Report("fatalError"))
-					break
-				}
 				tracker.Next()
 			}
 			file.Close()

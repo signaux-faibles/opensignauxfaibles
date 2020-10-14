@@ -109,33 +109,6 @@ func reportFatalError(tracker gournal.Tracker) interface{} {
 	}
 }
 
-// ShouldBreak returns true when there are to much errors regarding maxErrors
-func ShouldBreak(tracker gournal.Tracker, maxErrors int) bool {
-	l := 0
-	hasError := false
-	for _, errs := range tracker.Errors {
-		for _, e := range errs {
-			switch c := e.(type) {
-			case base.CriticityError:
-				if c.Criticity() == "fatal" {
-					hasError = true
-				}
-				if c.Criticity() == "error" {
-					hasError = true
-				}
-				if c.Criticity() == "filter" {
-				}
-			default:
-				hasError = true
-			}
-		}
-		if hasError {
-			l++
-		}
-	}
-	return l > maxErrors
-}
-
 // TrackerReports contient les fonctions de reporting du moteur
 var TrackerReports = map[string]gournal.ReportFunction{
 	"abstract":   reportAbstract,
