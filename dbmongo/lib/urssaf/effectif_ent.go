@@ -127,13 +127,16 @@ func parseEffectifEntFile(reader *csv.Reader, filter map[string]bool, tracker *g
 			break
 		}
 
-		eff := parseEffectifEntLine(effectifEntIndexes, periods, row, colMapping{"siren": sirenIndex}, filter, tracker)
-		outputChannel <- eff
+		effectifs := parseEffectifEntLine(effectifEntIndexes, periods, row, colMapping{"siren": sirenIndex}, filter, tracker)
+		for _, eff := range effectifs {
+			outputChannel <- eff
+		}
 		tracker.Next()
 	}
 }
 
-func parseEffectifEntLine(effectifEntIndexes []int, periods []time.Time, row []string, idx colMapping, filter map[string]bool, tracker *gournal.Tracker) EffectifEnt {
+func parseEffectifEntLine(effectifEntIndexes []int, periods []time.Time, row []string, idx colMapping, filter map[string]bool, tracker *gournal.Tracker) []EffectifEnt {
+	var effectifs = []EffectifEnt{}
 	siren := row[idx["siren"]]
 	filtered, err := marshal.IsFiltered(siren, filter)
 	tracker.Add(err)
@@ -147,15 +150,14 @@ func parseEffectifEntLine(effectifEntIndexes []int, periods []time.Time, row []s
 				tracker.Add(err)
 				e := int(s)
 				if e > 0 {
-					return EffectifEnt{
+					effectifs = append(effectifs, EffectifEnt{
 						Siren:       siren,
 						Periode:     periods[i],
 						EffectifEnt: e,
-					}
-
+					})
 				}
 			}
 		}
 	}
-	return EffectifEnt{}
+	return effectifs
 }
