@@ -65,62 +65,18 @@ func ParserCCSF(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple
 			} else {
 				event.Info(path + ": ouverture")
 			}
+
+			comptes, err := marshal.GetCompteSiretMapping(cache, batch, marshal.OpenAndReadSiretMapping)
+			if err != nil {
+				tracker.Add(err)
+				return
+			}
+
 			reader := csv.NewReader(bufio.NewReader(file))
 			reader.Comma = ';'
 			reader.Read()
 
-			f := map[string]int{
-				"NumeroCompte":   2,
-				"DateTraitement": 3,
-				"Stade":          4,
-				"Action":         5,
-			}
-
-			for {
-				r, err := reader.Read()
-				if err == io.EOF {
-					break
-				} else if err != nil {
-					event.Critical(path + "Erreur à la lecture, abandon: " + err.Error())
-					continue
-				}
-				if len(r) >= 4 {
-					ccsf := CCSF{}
-
-					ccsf.Action = r[f["Action"]]
-					ccsf.Stade = r[f["Stade"]]
-					ccsf.DateTraitement, err = marshal.UrssafToDate(r[f["DateTraitement"]])
-					tracker.Add(err)
-					if err != nil {
-						tracker.Next()
-						continue
-					}
-					ccsf.key, err = marshal.GetSiret(
-						r[f["NumeroCompte"]],
-						&ccsf.DateTraitement,
-						cache,
-						batch,
-					)
-					if err != nil {
-						// Compte filtré
-						tracker.Add(base.NewFilterError(err))
-						continue
-					}
-					ccsf.NumeroCompte = r[f["NumeroCompte"]]
-
-					if !tracker.HasErrorInCurrentCycle() {
-						outputChannel <- ccsf
-					} else {
-						//event.Debug(tracker.Report("error"))
-					}
-
-				} else {
-					tracker.Add(errors.New("Ligne non conforme, moins de 4 champs"))
-					event.Warning(tracker.Report("invalidLine"))
-				}
-				tracker.Next()
-			}
-
+			parseCcsfFile(reader, &comptes, &tracker, outputChannel)
 			event.Info(tracker.Report("abstract"))
 
 			file.Close()
@@ -129,4 +85,49 @@ func ParserCCSF(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple
 		close(eventChannel)
 	}()
 	return outputChannel, eventChannel
+}
+
+var idx = map[string]int{
+	"NumeroCompte":   2,
+	"DateTraitement": 3,
+	"Stade":          4,
+	"Action":         5,
+}
+
+func parseCcsfFile(reader *csv.Reader, comptes *marshal.Comptes, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+	for {
+		r, err := reader.Read()
+		if err == io.EOF {
+			break
+		} else if err != nil {
+			tracker.Add(err)
+			continue
+		}
+		if len(r) >= 4 {
+			ccsf := CCSF{}
+			ccsf.Action = r[idx["Action"]]
+			ccsf.Stade = r[idx["Stade"]]
+			ccsf.DateTraitement, err = marshal.UrssafToDate(r[idx["DateTraitement"]])
+			tracker.Add(err)
+			if err != nil {
+				tracker.Next()
+				continue
+			}
+
+			ccsf.key, err = marshal.GetSiretFromComptesMapping(r[idx["NumeroCompte"]], &ccsf.DateTraitement, *comptes)
+			if err != nil {
+				// Compte filtré
+				tracker.Add(base.NewFilterError(err))
+				continue
+			}
+			ccsf.NumeroCompte = r[idx["NumeroCompte"]]
+
+			if !tracker.HasErrorInCurrentCycle() {
+				outputChannel <- ccsf
+			}
+		} else {
+			tracker.Add(errors.New("Ligne non conforme, moins de 4 champs"))
+		}
+		tracker.Next()
+	}
 }
