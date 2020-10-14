@@ -108,7 +108,7 @@ func ParserDelai(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 				if err != nil {
 					tracker.Add(err)
 				} else if siret, err := marshal.GetSiret(row[idx["NumeroCompte"]], &date, cache, batch); err == nil {
-					delai, tracker := readLine(row, idx, siret, tracker)
+					delai := parseDelaiLine(row, idx, siret, tracker)
 					if !tracker.HasErrorInCurrentCycle() {
 						outputChannel <- delai
 					}
@@ -128,7 +128,7 @@ func ParserDelai(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 	return outputChannel, eventChannel
 }
 
-func readLine(row []string, idx map[string]int, siret string, tracker gournal.Tracker) (Delai, gournal.Tracker) {
+func parseDelaiLine(row []string, idx map[string]int, siret string, tracker gournal.Tracker) Delai {
 	var err error
 	loc, _ := time.LoadLocation("Europe/Paris")
 	delai := Delai{}
@@ -148,5 +148,5 @@ func readLine(row []string, idx map[string]int, siret string, tracker gournal.Tr
 	tracker.Add(err)
 	delai.Stade = row[idx["Stade"]]
 	delai.Action = row[idx["Action"]]
-	return delai, tracker
+	return delai
 }
