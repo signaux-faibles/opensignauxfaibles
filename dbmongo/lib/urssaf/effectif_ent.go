@@ -48,8 +48,8 @@ type periodCol struct {
 	colIndex  int
 }
 
-// ParseEffectifEntPeriod extrait les périodes depuis une liste de noms de colonnes csv.
-func parseEffectifEntPeriod(fields []string) []periodCol {
+// ParseEffectifPeriod extrait les périodes depuis une liste de noms de colonnes csv.
+func parseEffectifPeriod(fields []string) []periodCol {
 	periods := []periodCol{}
 	re, _ := regexp.Compile("^eff")
 	for index, field := range fields {
@@ -108,7 +108,7 @@ func parseEffectifEntFile(reader *csv.Reader, filter map[string]bool, tracker *g
 	}
 
 	// Dans quels champs lire l'effectifEnt
-	periods := parseEffectifEntPeriod(fields)
+	periods := parseEffectifPeriod(fields)
 
 	for {
 		row, err := reader.Read()

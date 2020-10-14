@@ -6,7 +6,6 @@ import (
 	"errors"
 	"io"
 	"os"
-	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -42,18 +41,6 @@ func (effectif Effectif) Scope() string {
 // Type de l'objet
 func (effectif Effectif) Type() string {
 	return "effectif"
-}
-
-// ParseEffectifPeriod Transforme un tableau de périodes telles qu'écrites dans l'entête du tableau d'effectif urssaf en date de début
-func parseEffectifPeriod(effectifPeriods []string) ([]time.Time, error) {
-	periods := []time.Time{}
-	for _, period := range effectifPeriods {
-		urssaf := period[3:9]
-		date, _ := marshal.UrssafToPeriod(urssaf)
-		periods = append(periods, date.Start)
-	}
-
-	return periods, nil
 }
 
 // ParserEffectif retourne un channel fournissant des données extraites
@@ -114,21 +101,7 @@ func parseEffectifFile(reader *csv.Reader, filter map[string]bool, tracker *gour
 	}
 
 	// Dans quels champs lire l'effectif
-	re, _ := regexp.Compile("^eff")
-	var effectifFields []string
-	var effectifIndexes []int
-	for ind, field := range fields {
-		if re.MatchString(field) {
-			effectifFields = append(effectifFields, field)
-			effectifIndexes = append(effectifIndexes, ind)
-		}
-	}
-
-	periods, err := parseEffectifPeriod(effectifFields)
-	if err != nil {
-		tracker.Add(err)
-		return
-	}
+	periods := parseEffectifPeriod(fields)
 
 	for {
 		row, err := reader.Read()
@@ -139,7 +112,7 @@ func parseEffectifFile(reader *csv.Reader, filter map[string]bool, tracker *gour
 			break
 		}
 
-		effectifs := parseEffectifLine(effectifIndexes, periods, row, idx, filter, tracker)
+		effectifs := parseEffectifLine(periods, row, idx, filter, tracker)
 		for _, eff := range effectifs {
 			outputChannel <- eff
 		}
@@ -148,24 +121,26 @@ func parseEffectifFile(reader *csv.Reader, filter map[string]bool, tracker *gour
 	}
 }
 
-func parseEffectifLine(effectifIndexes []int, periods []time.Time, row []string, idx colMapping, filter map[string]bool, tracker *gournal.Tracker) []Effectif {
+func parseEffectifLine(periods []periodCol, row []string, idx colMapping, filter map[string]bool, tracker *gournal.Tracker) []Effectif {
 	var effectifs = []Effectif{}
 	siret := row[idx["siret"]]
 	validSiret := sfregexp.RegexpDict["siret"].MatchString(siret)
 	if !validSiret {
 		tracker.Add(base.NewRegularError(errors.New("Le siret/siren est invalide")))
 	} else if filter != nil || !marshal.FilterHas(siret, filter) {
-		for i, j := range effectifIndexes {
-			if row[j] != "" {
-				noThousandsSep := sfregexp.RegexpDict["notDigit"].ReplaceAllString(row[j], "")
+		for _, period := range periods {
+			value := row[period.colIndex]
+			if value != "" {
+				noThousandsSep := sfregexp.RegexpDict["notDigit"].ReplaceAllString(value, "")
 				e, err := strconv.Atoi(noThousandsSep)
 				tracker.Add(err)
 				if e > 0 {
 					effectifs = append(effectifs, Effectif{
 						Siret:        siret,
 						NumeroCompte: row[idx["compte"]],
-						Periode:      periods[i],
-						Effectif:     e})
+						Periode:      period.dateStart,
+						Effectif:     e,
+					})
 				}
 			}
 		}
