@@ -89,12 +89,12 @@ func parseProcolFile(reader *csv.Reader, tracker *gournal.Tracker, outputChannel
 	}
 
 	var idx = colMapping{
-		"dateEffet":   misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "dt_effet" }),
-		"actionStade": misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "lib_actx_stdx" }),
-		"siret":       misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "siret" }),
+		"dt_effet":      misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "dt_effet" }),
+		"lib_actx_stdx": misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "lib_actx_stdx" }),
+		"siret":         misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "siret" }),
 	}
 
-	if misc.SliceMin(idx["dateEffet"], idx["actionStade"], idx["siret"]) == -1 {
+	if misc.SliceMin(idx["dt_effet"], idx["lib_actx_stdx"], idx["siret"]) == -1 {
 		tracker.Add(errors.New("format de fichier incorrect"))
 		return
 	}
@@ -119,15 +119,13 @@ func parseProcolFile(reader *csv.Reader, tracker *gournal.Tracker, outputChannel
 }
 
 func parseProcolLine(row []string, tracker *gournal.Tracker, idx colMapping) Procol {
-
-	procol := Procol{}
 	var err error
-
-	procol.DateEffet, err = time.Parse("02Jan2006", row[idx["dateEffet"]])
+	procol := Procol{}
+	procol.DateEffet, err = time.Parse("02Jan2006", row[idx["dt_effet"]])
 	tracker.Add(err)
 	procol.Siret = row[idx["siret"]]
-	splitted := strings.Split(strings.ToLower(row[idx["actionStade"]]), "_")
-
+	actionStade := row[idx["lib_actx_stdx"]]
+	splitted := strings.Split(strings.ToLower(actionStade), "_")
 	for i, v := range splitted {
 		r, err := regexp.Compile("liquidation|redressement|sauvegarde")
 		tracker.Add(err)
