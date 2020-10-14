@@ -18,7 +18,6 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sfregexp"
 
 	"github.com/signaux-faibles/gournal"
-	//"github.com/globalsign/mgo/bson"
 	"github.com/spf13/viper"
 )
 
@@ -117,12 +116,11 @@ func parseEffectifEntFile(reader *csv.Reader, filter map[string]bool, tracker *g
 			break
 		} else if err != nil {
 			tracker.Add(err)
-			break
-		}
-
-		effectifs := parseEffectifEntLine(periods, row, idx, filter, tracker)
-		for _, eff := range effectifs {
-			outputChannel <- eff
+		} else {
+			effectifs := parseEffectifEntLine(periods, row, idx, filter, tracker)
+			for _, eff := range effectifs {
+				outputChannel <- eff
+			}
 		}
 		tracker.Next()
 	}
