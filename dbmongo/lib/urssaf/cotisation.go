@@ -46,13 +46,6 @@ func ParserCotisation(cache marshal.Cache, batch *base.AdminBatch) (chan marshal
 	outputChannel := make(chan marshal.Tuple)
 	eventChannel := make(chan marshal.Event)
 
-	field := map[string]int{
-		"NumeroCompte": 2,
-		"Periode":      3,
-		"Encaisse":     5,
-		"Du":           6,
-	}
-
 	go func() {
 		event := marshal.Event{
 			Code:    "cotisationParser",
@@ -74,46 +67,16 @@ func ParserCotisation(cache marshal.Cache, batch *base.AdminBatch) (chan marshal
 			}
 			defer file.Close()
 
-			reader := csv.NewReader(bufio.NewReader(file))
-			reader.Comma = ';'
-			reader.LazyQuotes = true
-			// ligne de titre
-			reader.Read()
-
-			for {
-				row, err := reader.Read()
-				if err == io.EOF {
-					break
-				} else if err != nil {
-					tracker.Add(err)
-					event.Debug(tracker.Report("invalidLine"))
-					break
-				} else {
-					periode, err := marshal.UrssafToPeriod(row[field["Periode"]])
-					date := periode.Start
-					tracker.Add(err)
-
-					if siret, err := marshal.GetSiret(row[field["NumeroCompte"]], &date, cache, batch); err == nil {
-						cotisation := Cotisation{}
-						cotisation.key = siret
-						cotisation.NumeroCompte = row[field["NumeroCompte"]]
-						cotisation.Periode, err = marshal.UrssafToPeriod(row[field["Periode"]])
-						tracker.Add(err)
-						cotisation.Encaisse, err = strconv.ParseFloat(strings.Replace(row[field["Encaisse"]], ",", ".", -1), 64)
-						tracker.Add(err)
-						cotisation.Du, err = strconv.ParseFloat(strings.Replace(row[field["Du"]], ",", ".", -1), 64)
-						tracker.Add(err)
-
-						if !tracker.HasErrorInCurrentCycle() {
-							outputChannel <- cotisation
-						}
-					} else {
-						tracker.Add(base.NewFilterError(err))
-					}
-				}
-
-				tracker.Next()
+			comptes, err := marshal.GetCompteSiretMapping(cache, batch, marshal.OpenAndReadSiretMapping)
+			if err != nil {
+				tracker.Add(err)
+			} else {
+				reader := csv.NewReader(bufio.NewReader(file))
+				reader.Comma = ';'
+				reader.LazyQuotes = true
+				parseCotisationFile(reader, &comptes, &tracker, outputChannel)
 			}
+
 			event.Info(tracker.Report("abstract"))
 			file.Close()
 		}
@@ -121,4 +84,51 @@ func ParserCotisation(cache marshal.Cache, batch *base.AdminBatch) (chan marshal
 		close(outputChannel)
 	}()
 	return outputChannel, eventChannel
+}
+
+var field = colMapping{
+	"NumeroCompte": 2,
+	"Periode":      3,
+	"Encaisse":     5,
+	"Du":           6,
+}
+
+func parseCotisationFile(reader *csv.Reader, comptes *marshal.Comptes, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+	// ligne de titre
+	reader.Read()
+
+	for {
+		row, err := reader.Read()
+		if err == io.EOF {
+			break
+		} else if err != nil {
+			tracker.Add(err)
+			break
+		} else {
+			periode, err := marshal.UrssafToPeriod(row[field["Periode"]])
+			date := periode.Start
+			tracker.Add(err)
+
+			siret, err := marshal.GetSiretFromComptesMapping(row[field["NumeroCompte"]], &date, *comptes)
+			if err != nil {
+				tracker.Add(base.NewFilterError(err))
+			} else {
+				cotisation := Cotisation{}
+				cotisation.key = siret
+				cotisation.NumeroCompte = row[field["NumeroCompte"]]
+				cotisation.Periode, err = marshal.UrssafToPeriod(row[field["Periode"]])
+				tracker.Add(err)
+				cotisation.Encaisse, err = strconv.ParseFloat(strings.Replace(row[field["Encaisse"]], ",", ".", -1), 64)
+				tracker.Add(err)
+				cotisation.Du, err = strconv.ParseFloat(strings.Replace(row[field["Du"]], ",", ".", -1), 64)
+				tracker.Add(err)
+
+				if !tracker.HasErrorInCurrentCycle() {
+					outputChannel <- cotisation
+				}
+			}
+		}
+
+		tracker.Next()
+	}
 }
