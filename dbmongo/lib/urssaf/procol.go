@@ -88,17 +88,18 @@ func parseProcolFile(reader *csv.Reader, tracker *gournal.Tracker, outputChannel
 		return
 	}
 
-	dateEffetIndex := misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "dt_effet" })
-	actionStadeIndex := misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "lib_actx_stdx" })
-	siretIndex := misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "siret" })
+	var idx = colMapping{
+		"dateEffet":   misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "dt_effet" }),
+		"actionStade": misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "lib_actx_stdx" }),
+		"siret":       misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "siret" }),
+	}
 
-	if misc.SliceMin(dateEffetIndex, actionStadeIndex, siretIndex) == -1 {
+	if misc.SliceMin(idx["dateEffet"], idx["actionStade"], idx["siret"]) == -1 {
 		tracker.Add(errors.New("format de fichier incorrect"))
 		return
 	}
 
 	for {
-
 		row, err := reader.Read()
 
 		if err == io.EOF {
@@ -107,14 +108,8 @@ func parseProcolFile(reader *csv.Reader, tracker *gournal.Tracker, outputChannel
 			// Journal(critical, "importProcol", "Erreur de lecture pendant l'import du fichier "+path+". Abandon.")
 			close(outputChannel)
 		}
-		procol := parseProcolLine(
-			row,
-			tracker,
-			dateEffetIndex,
-			siretIndex,
-			actionStadeIndex,
-		)
-		if _, err := strconv.Atoi(row[siretIndex]); err == nil && len(row[siretIndex]) == 14 {
+		procol := parseProcolLine(row, tracker, idx)
+		if _, err := strconv.Atoi(row[idx["siret"]]); err == nil && len(row[idx["siret"]]) == 14 {
 			if !tracker.HasErrorInCurrentCycle() {
 				outputChannel <- procol
 			}
@@ -123,21 +118,15 @@ func parseProcolFile(reader *csv.Reader, tracker *gournal.Tracker, outputChannel
 	}
 }
 
-func parseProcolLine(
-	row []string,
-	tracker *gournal.Tracker,
-	dateEffetIndex int,
-	siretIndex int,
-	actionStadeIndex int,
-) Procol {
+func parseProcolLine(row []string, tracker *gournal.Tracker, idx colMapping) Procol {
 
 	procol := Procol{}
 	var err error
 
-	procol.DateEffet, err = time.Parse("02Jan2006", row[dateEffetIndex])
+	procol.DateEffet, err = time.Parse("02Jan2006", row[idx["dateEffet"]])
 	tracker.Add(err)
-	procol.Siret = row[siretIndex]
-	splitted := strings.Split(strings.ToLower(row[actionStadeIndex]), "_")
+	procol.Siret = row[idx["siret"]]
+	splitted := strings.Split(strings.ToLower(row[idx["actionStade"]]), "_")
 
 	for i, v := range splitted {
 		r, err := regexp.Compile("liquidation|redressement|sauvegarde")
