@@ -85,17 +85,7 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 					event.Critical(path + ": abandon suite à un problème de lecture du fichier: " + err.Error())
 					break
 				}
-
-				periode, err := time.Parse("2006-01-02", row[1])
-				tracker.Add(err)
-				randomOrder, err := misc.ParsePFloat(row[2])
-				tracker.Add(err)
-
-				reporder := RepeatableOrder{
-					Siret:       row[0],
-					Periode:     periode,
-					RandomOrder: randomOrder,
-				}
+				reporder := parseReporderLine(row, &tracker)
 				filtered, err := marshal.IsFiltered(reporder.Siret[0:9], filter)
 				if err != nil {
 					tracker.Add(err)
@@ -104,6 +94,7 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 					outputChannel <- reporder
 					tracker.Next()
 				}
+
 			}
 			event.Info(tracker.Report("abstract"))
 		}
@@ -111,4 +102,16 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 		close(outputChannel)
 	}()
 	return outputChannel, eventChannel
+}
+
+func parseReporderLine(row []string, tracker *gournal.Tracker) RepeatableOrder {
+	periode, err := time.Parse("2006-01-02", row[1])
+	tracker.Add(err)
+	randomOrder, err := misc.ParsePFloat(row[2])
+	tracker.Add(err)
+	return RepeatableOrder{
+		Siret:       row[0],
+		Periode:     periode,
+		RandomOrder: randomOrder,
+	}
 }
