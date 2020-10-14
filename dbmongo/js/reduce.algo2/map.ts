@@ -136,12 +136,9 @@ export function map(this: EntréeMap): void {
         f.add(output_delai, output_indexed)
       }
 
-      v.altares = v.altares || {}
       v.procol = v.procol || {}
 
-      if (v.altares) {
-        f.defaillances(v.altares, v.procol, output_indexed)
-      }
+      f.defaillances(v.procol, output_indexed)
 
       if (v.ccsf) {
         f.ccsf(v.ccsf, output_array)
