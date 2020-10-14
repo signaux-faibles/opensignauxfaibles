@@ -1,19 +1,51 @@
-[{
-  "id_conso": "d363954866",
-  "heure_consomme": 311.54,
-  "montant": 214,
-  "effectif": 0,
-  "periode": "2004-12-01T00:00:00Z"
-},{
-  "id_conso": "u90q913412",
-  "heure_consomme": 44.11,
-  "montant": 659,
-  "effectif": 2,
-  "periode": "2019-01-01T00:00:00Z"
-},{
-  "id_conso": "p95a076375",
-  "heure_consomme": 6.25,
-  "montant": 27,
-  "effectif": 7,
-  "periode": "1999-05-01T00:00:00Z"
-}]
+{
+  "tuples": [
+    {
+      "id_conso": "d363954866",
+      "heure_consomme": 311.54,
+      "montant": 214,
+      "effectif": 0,
+      "periode": "2004-12-01T00:00:00Z"
+    },
+    {
+      "id_conso": "u90q913412",
+      "heure_consomme": 44.11,
+      "montant": 659,
+      "effectif": 2,
+      "periode": "2019-01-01T00:00:00Z"
+    },
+    {
+      "id_conso": "p95a076375",
+      "heure_consomme": 6.25,
+      "montant": 27,
+      "effectif": 7,
+      "periode": "1999-05-01T00:00:00Z"
+    }
+  ],
+  "events": [
+    {
+      "date": "0001-01-01T00:00:00Z",
+      "event": "testData/apconsoTestData.csv: ouverture",
+      "priority": "info",
+      "code": "parserApconso",
+      "report_type": ""
+    },
+    {
+      "date": "0001-01-01T00:00:00Z",
+      "event": {
+        "batchKey": "",
+        "error": 0,
+        "filtered": 0,
+        "headErrors": [],
+        "headFatal": [],
+        "headFilters": [],
+        "report": "testData/apconsoTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
+        "total": 3,
+        "valid": 3
+      },
+      "priority": "info",
+      "code": "parserApconso",
+      "report_type": ""
+    }
+  ]
+}
