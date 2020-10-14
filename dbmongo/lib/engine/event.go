@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 
+	"github.com/globalsign/mgo/bson"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/files"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
@@ -73,13 +74,19 @@ func messageDispatch() chan SocketMessage {
 }
 
 // RelayEvents transmet les messages
-func RelayEvents(eventChannel chan marshal.Event) {
+func RelayEvents(eventChannel chan marshal.Event) (lastReport string) {
 	if eventChannel == nil {
 		return
 	}
 	for e := range eventChannel {
+		if reportContainer, ok := e.Comment.(bson.M); ok {
+			if strReport, ok := reportContainer["report"].(string); ok {
+				lastReport = strReport
+			}
+		}
 		MainMessageChannel <- SocketMessage{
 			JournalEvent: e,
 		}
 	}
+	return lastReport
 }
