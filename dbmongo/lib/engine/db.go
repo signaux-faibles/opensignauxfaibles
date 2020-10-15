@@ -74,7 +74,7 @@ func InitDB() DB {
 
 	// Création d'index sur la collection ImportedData, pour le découpage du map-reduce de Compact
 	db.C("ImportedData").EnsureIndex(mgo.Index{
-		Key:      []string{"value.key"}, // numéro SIRET ou SIREN
+		Key: []string{"value.key"}, // numéro SIRET ou SIREN
 	})
 
 	firstBatchID := viper.GetString("FIRST_BATCH")
@@ -83,6 +83,12 @@ func InitDB() DB {
 	}
 
 	db.C("RawData").Create(&mgo.CollectionInfo{})
+
+	// Création d'index sur la collection RawData, pour le filtrage du map-reduce de Public et Reduce
+	db.C("RawData").EnsureIndex(mgo.Index{
+		Key:    []string{"value.index.algo2"}, // booléen
+		Sparse: true,
+	})
 
 	// firstBatch, err := getBatch(db, firstBatchID)
 	var firstBatch base.AdminBatch
