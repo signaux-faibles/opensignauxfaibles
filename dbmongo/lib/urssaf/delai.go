@@ -55,20 +55,6 @@ func ParserDelai(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 	outputChannel := make(chan marshal.Tuple)
 	eventChannel := make(chan marshal.Event)
 
-	field := map[string]int{
-		"NumeroCompte":      2,
-		"NumeroContentieux": 3,
-		"DateCreation":      4,
-		"DateEcheance":      5,
-		"DureeDelai":        6,
-		"Denomination":      7,
-		"Indic6m":           8,
-		"AnneeCreation":     9,
-		"MontantEcheancier": 10,
-		"Stade":             11,
-		"Action":            12,
-	}
-
 	event := marshal.Event{
 		Code:    "delaiParser",
 		Channel: eventChannel,
@@ -91,33 +77,15 @@ func ParserDelai(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 				event.Info(path + ": ouverture")
 			}
 
-			reader := csv.NewReader(bufio.NewReader(file))
-			reader.Comma = ';'
-			reader.Read()
-			for {
-				row, err := reader.Read()
-				if err == io.EOF {
-					break
-				} else if err != nil {
-					tracker.Add(err)
-					event.Debug(tracker.Report("invalidLine"))
-					break
-				}
-
-				date, err := time.Parse("02/01/2006", row[field["DateCreation"]])
-				if err != nil {
-					tracker.Add(err)
-				} else if siret, err := marshal.GetSiret(row[field["NumeroCompte"]], &date, cache, batch); err == nil {
-					delai, tracker := readLine(row, field, siret, tracker)
-					if !tracker.HasErrorInCurrentCycle() {
-						outputChannel <- delai
-					}
-				} else {
-					tracker.Add(base.NewFilterError(err))
-				}
-
-				tracker.Next()
+			comptes, err := marshal.GetCompteSiretMapping(cache, batch, marshal.OpenAndReadSiretMapping)
+			if err != nil {
+				tracker.Add(err)
+			} else {
+				reader := csv.NewReader(bufio.NewReader(file))
+				reader.Comma = ';'
+				parseDelaiFile(reader, &comptes, &tracker, outputChannel)
 			}
+
 			file.Close()
 			event.Debug(tracker.Report("abstract"))
 		}
@@ -128,25 +96,65 @@ func ParserDelai(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 	return outputChannel, eventChannel
 }
 
-func readLine(row []string, field map[string]int, siret string, tracker gournal.Tracker) (Delai, gournal.Tracker) {
+func parseDelaiFile(reader *csv.Reader, comptes *marshal.Comptes, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+
+	var idx = colMapping{
+		"NumeroCompte":      2,
+		"NumeroContentieux": 3,
+		"DateCreation":      4,
+		"DateEcheance":      5,
+		"DureeDelai":        6,
+		"Denomination":      7,
+		"Indic6m":           8,
+		"AnneeCreation":     9,
+		"MontantEcheancier": 10,
+		"Stade":             11,
+		"Action":            12,
+	}
+
+	reader.Read()
+	for {
+		row, err := reader.Read()
+		if err == io.EOF {
+			break
+		} else if err != nil {
+			tracker.Add(err)
+		} else {
+			date, err := time.Parse("02/01/2006", row[idx["DateCreation"]])
+			if err != nil {
+				tracker.Add(err)
+			} else if siret, err := marshal.GetSiretFromComptesMapping(row[idx["NumeroCompte"]], &date, *comptes); err == nil {
+				delai := parseDelaiLine(row, idx, siret, tracker)
+				if !tracker.HasErrorInCurrentCycle() {
+					outputChannel <- delai
+				}
+			} else {
+				tracker.Add(base.NewFilterError(err))
+			}
+		}
+		tracker.Next()
+	}
+}
+
+func parseDelaiLine(row []string, idx colMapping, siret string, tracker *gournal.Tracker) Delai {
 	var err error
 	loc, _ := time.LoadLocation("Europe/Paris")
 	delai := Delai{}
 	delai.key = siret
-	delai.NumeroCompte = row[field["NumeroCompte"]]
-	delai.NumeroContentieux = row[field["NumeroContentieux"]]
-	delai.DateCreation, err = time.ParseInLocation("02/01/2006", row[field["DateCreation"]], loc)
+	delai.NumeroCompte = row[idx["NumeroCompte"]]
+	delai.NumeroContentieux = row[idx["NumeroContentieux"]]
+	delai.DateCreation, err = time.ParseInLocation("02/01/2006", row[idx["DateCreation"]], loc)
 	tracker.Add(err)
-	delai.DateEcheance, err = time.ParseInLocation("02/01/2006", row[field["DateEcheance"]], loc)
+	delai.DateEcheance, err = time.ParseInLocation("02/01/2006", row[idx["DateEcheance"]], loc)
 	tracker.Add(err)
-	delai.DureeDelai, err = strconv.Atoi(row[field["DureeDelai"]])
-	delai.Denomination = row[field["Denomination"]]
-	delai.Indic6m = row[field["Indic6m"]]
-	delai.AnneeCreation, err = strconv.Atoi(row[field["AnneeCreation"]])
+	delai.DureeDelai, err = strconv.Atoi(row[idx["DureeDelai"]])
+	delai.Denomination = row[idx["Denomination"]]
+	delai.Indic6m = row[idx["Indic6m"]]
+	delai.AnneeCreation, err = strconv.Atoi(row[idx["AnneeCreation"]])
 	tracker.Add(err)
-	delai.MontantEcheancier, err = strconv.ParseFloat(strings.Replace(row[field["MontantEcheancier"]], ",", ".", -1), 64)
+	delai.MontantEcheancier, err = strconv.ParseFloat(strings.Replace(row[idx["MontantEcheancier"]], ",", ".", -1), 64)
 	tracker.Add(err)
-	delai.Stade = row[field["Stade"]]
-	delai.Action = row[field["Action"]]
-	return delai, tracker
+	delai.Stade = row[idx["Stade"]]
+	delai.Action = row[idx["Action"]]
+	return delai
 }

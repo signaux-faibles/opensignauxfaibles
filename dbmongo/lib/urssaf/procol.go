@@ -63,59 +63,16 @@ func ParserProcol(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tup
 			if err != nil {
 				tracker.Add(err)
 				event.Critical(tracker.Report("fatalError"))
-				continue
 			} else {
 				event.Info(path + ": ouverture")
+				reader := csv.NewReader(bufio.NewReader(file))
+				reader.Comma = ';'
+				reader.LazyQuotes = true
+
+				parseProcolFile(reader, &tracker, outputChannel)
+				event.Info(tracker.Report("abstract"))
+				file.Close()
 			}
-
-			reader := csv.NewReader(bufio.NewReader(file))
-			reader.Comma = ';'
-			reader.LazyQuotes = true
-			fields, err := reader.Read()
-			if err != nil {
-				tracker.Add(err)
-				event.Critical(tracker.Report("fatalError"))
-				continue
-			}
-
-			dateEffetIndex := misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "dt_effet" })
-			actionStadeIndex := misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "lib_actx_stdx" })
-			siretIndex := misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "siret" })
-
-			if misc.SliceMin(dateEffetIndex, actionStadeIndex, siretIndex) == -1 {
-				tracker.Add(errors.New("format de fichier incorrect"))
-				event.Critical(tracker.Report("fatalError"))
-				continue
-			}
-
-			for {
-
-				row, err := reader.Read()
-
-				if err == io.EOF {
-					break
-				} else if err != nil {
-					// Journal(critical, "importProcol", "Erreur de lecture pendant l'import du fichier "+path+". Abandon.")
-					close(outputChannel)
-				}
-				procol := readLineProcol(
-					row,
-					&tracker,
-					dateEffetIndex,
-					siretIndex,
-					actionStadeIndex,
-				)
-				if _, err := strconv.Atoi(row[siretIndex]); err == nil && len(row[siretIndex]) == 14 {
-					if !tracker.HasErrorInCurrentCycle() {
-						outputChannel <- procol
-					} else {
-						//event.Debug(tracker.Report("errors"))
-					}
-				}
-				tracker.Next()
-			}
-			event.Info(tracker.Report("abstract"))
-			file.Close()
 		}
 		close(outputChannel)
 		close(eventChannel)
@@ -123,22 +80,51 @@ func ParserProcol(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tup
 	return outputChannel, eventChannel
 }
 
-func readLineProcol(
-	row []string,
-	tracker *gournal.Tracker,
-	dateEffetIndex int,
-	siretIndex int,
-	actionStadeIndex int,
-) Procol {
+func parseProcolFile(reader *csv.Reader, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
 
-	procol := Procol{}
+	fields, err := reader.Read()
+	if err != nil {
+		tracker.Add(err)
+		return
+	}
+
+	var idx = colMapping{
+		"dt_effet":      misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "dt_effet" }),
+		"lib_actx_stdx": misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "lib_actx_stdx" }),
+		"siret":         misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "siret" }),
+	}
+
+	if misc.SliceMin(idx["dt_effet"], idx["lib_actx_stdx"], idx["siret"]) == -1 {
+		tracker.Add(errors.New("format de fichier incorrect"))
+		return
+	}
+
+	for {
+		row, err := reader.Read()
+		if err == io.EOF {
+			break
+		} else if err != nil {
+			tracker.Add(err)
+		} else {
+			procol := parseProcolLine(row, tracker, idx)
+			if _, err := strconv.Atoi(row[idx["siret"]]); err == nil && len(row[idx["siret"]]) == 14 {
+				if !tracker.HasErrorInCurrentCycle() {
+					outputChannel <- procol
+				}
+			}
+		}
+		tracker.Next()
+	}
+}
+
+func parseProcolLine(row []string, tracker *gournal.Tracker, idx colMapping) Procol {
 	var err error
-
-	procol.DateEffet, err = time.Parse("02Jan2006", row[dateEffetIndex])
+	procol := Procol{}
+	procol.DateEffet, err = time.Parse("02Jan2006", row[idx["dt_effet"]])
 	tracker.Add(err)
-	procol.Siret = row[siretIndex]
-	splitted := strings.Split(strings.ToLower(row[actionStadeIndex]), "_")
-
+	procol.Siret = row[idx["siret"]]
+	actionStade := row[idx["lib_actx_stdx"]]
+	splitted := strings.Split(strings.ToLower(actionStade), "_")
 	for i, v := range splitted {
 		r, err := regexp.Compile("liquidation|redressement|sauvegarde")
 		tracker.Add(err)
