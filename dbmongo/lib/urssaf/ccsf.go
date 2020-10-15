@@ -99,12 +99,11 @@ func parseCcsfFile(reader *csv.Reader, comptes *marshal.Comptes, tracker *gourna
 			break
 		} else if err != nil {
 			tracker.Add(err)
-			continue
-		}
-
-		ccsf := parseCcsfLine(row, tracker, comptes, idx)
-		if !tracker.HasErrorInCurrentCycle() {
-			outputChannel <- ccsf
+		} else {
+			ccsf := parseCcsfLine(row, tracker, comptes, idx)
+			if !tracker.HasErrorInCurrentCycle() {
+				outputChannel <- ccsf
+			}
 		}
 		tracker.Next()
 	}

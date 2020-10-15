@@ -103,7 +103,6 @@ func parseCotisationFile(reader *csv.Reader, comptes *marshal.Comptes, tracker *
 			break
 		} else if err != nil {
 			tracker.Add(err)
-			break
 		} else {
 			cotisation := parseCotisationLine(row, tracker, comptes, idx)
 			if !tracker.HasErrorInCurrentCycle() {
