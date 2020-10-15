@@ -19,6 +19,11 @@ type Tuple interface {
 	Type() string
 }
 
+// ParseFilesFromBatch parse tous les fichiers spécifiés dans batch pour un parseur donné.
+func ParseFilesFromBatch(parser Parser, cache Cache, batch *base.AdminBatch) (chan Tuple, chan Event) {
+	return parser(cache, batch)
+}
+
 // GetJSON sérialise un tuple au format JSON.
 func GetJSON(tuple Tuple) ([]byte, error) {
 	return json.MarshalIndent(tuple, "", "  ")
