@@ -67,6 +67,11 @@ func InitDB() DB {
 	dbstatus := mongostatus.DB(dbDatabase)
 	db := mongodb.DB(dbDatabase)
 
+	// Création d'index sur la collection Admin, pour selection et tri de GetBatches()
+	db.C("Admin").EnsureIndex(mgo.Index{
+		Key: []string{"_id.type", "_id.key"},
+	})
+
 	// Création d'index sur la collection ImportedData, pour le découpage du map-reduce de Compact
 	db.C("ImportedData").EnsureIndex(mgo.Index{
 		Key:      []string{"value.key"}, // numéro SIRET ou SIREN
