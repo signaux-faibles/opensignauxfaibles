@@ -1,0 +1,1290 @@
+{
+  "tuples": [
+    {
+      "periode": "2010-01-01T00:00:00Z",
+      "effectif": 629
+    },
+    {
+      "periode": "2010-02-01T00:00:00Z",
+      "effectif": 536
+    },
+    {
+      "periode": "2010-03-01T00:00:00Z",
+      "effectif": 209
+    },
+    {
+      "periode": "2010-04-01T00:00:00Z",
+      "effectif": 801
+    },
+    {
+      "periode": "2010-05-01T00:00:00Z",
+      "effectif": 585
+    },
+    {
+      "periode": "2010-06-01T00:00:00Z",
+      "effectif": 835
+    },
+    {
+      "periode": "2010-07-01T00:00:00Z",
+      "effectif": 89
+    },
+    {
+      "periode": "2010-08-01T00:00:00Z",
+      "effectif": 69
+    },
+    {
+      "periode": "2010-09-01T00:00:00Z",
+      "effectif": 806
+    },
+    {
+      "periode": "2010-10-01T00:00:00Z",
+      "effectif": 348
+    },
+    {
+      "periode": "2010-11-01T00:00:00Z",
+      "effectif": 928
+    },
+    {
+      "periode": "2010-12-01T00:00:00Z",
+      "effectif": 292
+    },
+    {
+      "periode": "2011-01-01T00:00:00Z",
+      "effectif": 303
+    },
+    {
+      "periode": "2011-02-01T00:00:00Z",
+      "effectif": 247
+    },
+    {
+      "periode": "2011-03-01T00:00:00Z",
+      "effectif": 43
+    },
+    {
+      "periode": "2011-04-01T00:00:00Z",
+      "effectif": 303
+    },
+    {
+      "periode": "2011-05-01T00:00:00Z",
+      "effectif": 5
+    },
+    {
+      "periode": "2011-06-01T00:00:00Z",
+      "effectif": 734
+    },
+    {
+      "periode": "2011-07-01T00:00:00Z",
+      "effectif": 58
+    },
+    {
+      "periode": "2011-08-01T00:00:00Z",
+      "effectif": 887
+    },
+    {
+      "periode": "2011-09-01T00:00:00Z",
+      "effectif": 951
+    },
+    {
+      "periode": "2011-10-01T00:00:00Z",
+      "effectif": 606
+    },
+    {
+      "periode": "2011-11-01T00:00:00Z",
+      "effectif": 763
+    },
+    {
+      "periode": "2011-12-01T00:00:00Z",
+      "effectif": 779
+    },
+    {
+      "periode": "2012-01-01T00:00:00Z",
+      "effectif": 855
+    },
+    {
+      "periode": "2012-02-01T00:00:00Z",
+      "effectif": 394
+    },
+    {
+      "periode": "2012-03-01T00:00:00Z",
+      "effectif": 116
+    },
+    {
+      "periode": "2012-04-01T00:00:00Z",
+      "effectif": 105
+    },
+    {
+      "periode": "2012-05-01T00:00:00Z",
+      "effectif": 273
+    },
+    {
+      "periode": "2012-06-01T00:00:00Z",
+      "effectif": 82
+    },
+    {
+      "periode": "2012-07-01T00:00:00Z",
+      "effectif": 852
+    },
+    {
+      "periode": "2012-08-01T00:00:00Z",
+      "effectif": 987
+    },
+    {
+      "periode": "2012-09-01T00:00:00Z",
+      "effectif": 74
+    },
+    {
+      "periode": "2012-10-01T00:00:00Z",
+      "effectif": 923
+    },
+    {
+      "periode": "2012-11-01T00:00:00Z",
+      "effectif": 774
+    },
+    {
+      "periode": "2012-12-01T00:00:00Z",
+      "effectif": 325
+    },
+    {
+      "periode": "2013-01-01T00:00:00Z",
+      "effectif": 406
+    },
+    {
+      "periode": "2013-02-01T00:00:00Z",
+      "effectif": 47
+    },
+    {
+      "periode": "2013-03-01T00:00:00Z",
+      "effectif": 709
+    },
+    {
+      "periode": "2013-04-01T00:00:00Z",
+      "effectif": 281
+    },
+    {
+      "periode": "2013-05-01T00:00:00Z",
+      "effectif": 214
+    },
+    {
+      "periode": "2013-06-01T00:00:00Z",
+      "effectif": 549
+    },
+    {
+      "periode": "2013-07-01T00:00:00Z",
+      "effectif": 359
+    },
+    {
+      "periode": "2013-08-01T00:00:00Z",
+      "effectif": 561
+    },
+    {
+      "periode": "2013-09-01T00:00:00Z",
+      "effectif": 606
+    },
+    {
+      "periode": "2013-10-01T00:00:00Z",
+      "effectif": 582
+    },
+    {
+      "periode": "2013-11-01T00:00:00Z",
+      "effectif": 592
+    },
+    {
+      "periode": "2013-12-01T00:00:00Z",
+      "effectif": 495
+    },
+    {
+      "periode": "2014-01-01T00:00:00Z",
+      "effectif": 198
+    },
+    {
+      "periode": "2014-02-01T00:00:00Z",
+      "effectif": 353
+    },
+    {
+      "periode": "2014-03-01T00:00:00Z",
+      "effectif": 279
+    },
+    {
+      "periode": "2014-04-01T00:00:00Z",
+      "effectif": 195
+    },
+    {
+      "periode": "2014-05-01T00:00:00Z",
+      "effectif": 302
+    },
+    {
+      "periode": "2014-06-01T00:00:00Z",
+      "effectif": 152
+    },
+    {
+      "periode": "2014-07-01T00:00:00Z",
+      "effectif": 432
+    },
+    {
+      "periode": "2014-08-01T00:00:00Z",
+      "effectif": 664
+    },
+    {
+      "periode": "2014-09-01T00:00:00Z",
+      "effectif": 925
+    },
+    {
+      "periode": "2014-10-01T00:00:00Z",
+      "effectif": 450
+    },
+    {
+      "periode": "2014-11-01T00:00:00Z",
+      "effectif": 941
+    },
+    {
+      "periode": "2014-12-01T00:00:00Z",
+      "effectif": 123
+    },
+    {
+      "periode": "2015-01-01T00:00:00Z",
+      "effectif": 745
+    },
+    {
+      "periode": "2015-02-01T00:00:00Z",
+      "effectif": 256
+    },
+    {
+      "periode": "2015-03-01T00:00:00Z",
+      "effectif": 542
+    },
+    {
+      "periode": "2015-04-01T00:00:00Z",
+      "effectif": 653
+    },
+    {
+      "periode": "2015-05-01T00:00:00Z",
+      "effectif": 379
+    },
+    {
+      "periode": "2015-06-01T00:00:00Z",
+      "effectif": 264
+    },
+    {
+      "periode": "2015-07-01T00:00:00Z",
+      "effectif": 212
+    },
+    {
+      "periode": "2015-08-01T00:00:00Z",
+      "effectif": 220
+    },
+    {
+      "periode": "2015-09-01T00:00:00Z",
+      "effectif": 128
+    },
+    {
+      "periode": "2015-10-01T00:00:00Z",
+      "effectif": 361
+    },
+    {
+      "periode": "2015-11-01T00:00:00Z",
+      "effectif": 369
+    },
+    {
+      "periode": "2015-12-01T00:00:00Z",
+      "effectif": 391
+    },
+    {
+      "periode": "2016-01-01T00:00:00Z",
+      "effectif": 113
+    },
+    {
+      "periode": "2016-02-01T00:00:00Z",
+      "effectif": 586
+    },
+    {
+      "periode": "2016-03-01T00:00:00Z",
+      "effectif": 485
+    },
+    {
+      "periode": "2016-04-01T00:00:00Z",
+      "effectif": 323
+    },
+    {
+      "periode": "2016-05-01T00:00:00Z",
+      "effectif": 809
+    },
+    {
+      "periode": "2016-06-01T00:00:00Z",
+      "effectif": 888
+    },
+    {
+      "periode": "2016-07-01T00:00:00Z",
+      "effectif": 593
+    },
+    {
+      "periode": "2016-08-01T00:00:00Z",
+      "effectif": 131
+    },
+    {
+      "periode": "2016-09-01T00:00:00Z",
+      "effectif": 816
+    },
+    {
+      "periode": "2016-10-01T00:00:00Z",
+      "effectif": 675
+    },
+    {
+      "periode": "2016-12-01T00:00:00Z",
+      "effectif": 503
+    },
+    {
+      "periode": "2017-01-01T00:00:00Z",
+      "effectif": 878
+    },
+    {
+      "periode": "2017-02-01T00:00:00Z",
+      "effectif": 873
+    },
+    {
+      "periode": "2017-03-01T00:00:00Z",
+      "effectif": 988
+    },
+    {
+      "periode": "2017-04-01T00:00:00Z",
+      "effectif": 94
+    },
+    {
+      "periode": "2017-05-01T00:00:00Z",
+      "effectif": 65
+    },
+    {
+      "periode": "2017-06-01T00:00:00Z",
+      "effectif": 30
+    },
+    {
+      "periode": "2017-07-01T00:00:00Z",
+      "effectif": 397
+    },
+    {
+      "periode": "2017-08-01T00:00:00Z",
+      "effectif": 619
+    },
+    {
+      "periode": "2017-09-01T00:00:00Z",
+      "effectif": 160
+    },
+    {
+      "periode": "2017-10-01T00:00:00Z",
+      "effectif": 477
+    },
+    {
+      "periode": "2017-11-01T00:00:00Z",
+      "effectif": 550
+    },
+    {
+      "periode": "2017-12-01T00:00:00Z",
+      "effectif": 331
+    },
+    {
+      "periode": "2018-01-01T00:00:00Z",
+      "effectif": 777
+    },
+    {
+      "periode": "2018-02-01T00:00:00Z",
+      "effectif": 244
+    },
+    {
+      "periode": "2018-03-01T00:00:00Z",
+      "effectif": 12
+    },
+    {
+      "periode": "2018-04-01T00:00:00Z",
+      "effectif": 730
+    },
+    {
+      "periode": "2018-05-01T00:00:00Z",
+      "effectif": 784
+    },
+    {
+      "periode": "2018-06-01T00:00:00Z",
+      "effectif": 763
+    },
+    {
+      "periode": "2018-07-01T00:00:00Z",
+      "effectif": 755
+    },
+    {
+      "periode": "2018-08-01T00:00:00Z",
+      "effectif": 27
+    },
+    {
+      "periode": "2018-09-01T00:00:00Z",
+      "effectif": 782
+    },
+    {
+      "periode": "2018-10-01T00:00:00Z",
+      "effectif": 658
+    },
+    {
+      "periode": "2018-11-01T00:00:00Z",
+      "effectif": 885
+    },
+    {
+      "periode": "2018-12-01T00:00:00Z",
+      "effectif": 737
+    },
+    {
+      "periode": "2019-01-01T00:00:00Z",
+      "effectif": 208
+    },
+    {
+      "periode": "2019-02-01T00:00:00Z",
+      "effectif": 871
+    },
+    {
+      "periode": "2019-03-01T00:00:00Z",
+      "effectif": 143
+    },
+    {
+      "periode": "2019-04-01T00:00:00Z",
+      "effectif": 843
+    },
+    {
+      "periode": "2010-01-01T00:00:00Z",
+      "effectif": 25
+    },
+    {
+      "periode": "2010-02-01T00:00:00Z",
+      "effectif": 58
+    },
+    {
+      "periode": "2010-03-01T00:00:00Z",
+      "effectif": 536
+    },
+    {
+      "periode": "2010-04-01T00:00:00Z",
+      "effectif": 91
+    },
+    {
+      "periode": "2010-05-01T00:00:00Z",
+      "effectif": 690
+    },
+    {
+      "periode": "2010-06-01T00:00:00Z",
+      "effectif": 944
+    },
+    {
+      "periode": "2010-07-01T00:00:00Z",
+      "effectif": 562
+    },
+    {
+      "periode": "2010-08-01T00:00:00Z",
+      "effectif": 15
+    },
+    {
+      "periode": "2010-09-01T00:00:00Z",
+      "effectif": 287
+    },
+    {
+      "periode": "2010-10-01T00:00:00Z",
+      "effectif": 374
+    },
+    {
+      "periode": "2010-11-01T00:00:00Z",
+      "effectif": 950
+    },
+    {
+      "periode": "2010-12-01T00:00:00Z",
+      "effectif": 827
+    },
+    {
+      "periode": "2011-01-01T00:00:00Z",
+      "effectif": 270
+    },
+    {
+      "periode": "2011-02-01T00:00:00Z",
+      "effectif": 40
+    },
+    {
+      "periode": "2011-03-01T00:00:00Z",
+      "effectif": 672
+    },
+    {
+      "periode": "2011-04-01T00:00:00Z",
+      "effectif": 527
+    },
+    {
+      "periode": "2011-05-01T00:00:00Z",
+      "effectif": 816
+    },
+    {
+      "periode": "2011-06-01T00:00:00Z",
+      "effectif": 825
+    },
+    {
+      "periode": "2011-07-01T00:00:00Z",
+      "effectif": 429
+    },
+    {
+      "periode": "2011-08-01T00:00:00Z",
+      "effectif": 961
+    },
+    {
+      "periode": "2011-09-01T00:00:00Z",
+      "effectif": 278
+    },
+    {
+      "periode": "2011-10-01T00:00:00Z",
+      "effectif": 169
+    },
+    {
+      "periode": "2011-11-01T00:00:00Z",
+      "effectif": 530
+    },
+    {
+      "periode": "2011-12-01T00:00:00Z",
+      "effectif": 990
+    },
+    {
+      "periode": "2012-01-01T00:00:00Z",
+      "effectif": 230
+    },
+    {
+      "periode": "2012-02-01T00:00:00Z",
+      "effectif": 974
+    },
+    {
+      "periode": "2012-03-01T00:00:00Z",
+      "effectif": 294
+    },
+    {
+      "periode": "2012-04-01T00:00:00Z",
+      "effectif": 901
+    },
+    {
+      "periode": "2012-05-01T00:00:00Z",
+      "effectif": 67
+    },
+    {
+      "periode": "2012-06-01T00:00:00Z",
+      "effectif": 37
+    },
+    {
+      "periode": "2012-07-01T00:00:00Z",
+      "effectif": 426
+    },
+    {
+      "periode": "2012-08-01T00:00:00Z",
+      "effectif": 503
+    },
+    {
+      "periode": "2012-09-01T00:00:00Z",
+      "effectif": 262
+    },
+    {
+      "periode": "2012-10-01T00:00:00Z",
+      "effectif": 112
+    },
+    {
+      "periode": "2012-11-01T00:00:00Z",
+      "effectif": 191
+    },
+    {
+      "periode": "2012-12-01T00:00:00Z",
+      "effectif": 345
+    },
+    {
+      "periode": "2013-01-01T00:00:00Z",
+      "effectif": 568
+    },
+    {
+      "periode": "2013-02-01T00:00:00Z",
+      "effectif": 291
+    },
+    {
+      "periode": "2013-03-01T00:00:00Z",
+      "effectif": 287
+    },
+    {
+      "periode": "2013-04-01T00:00:00Z",
+      "effectif": 693
+    },
+    {
+      "periode": "2013-05-01T00:00:00Z",
+      "effectif": 466
+    },
+    {
+      "periode": "2013-06-01T00:00:00Z",
+      "effectif": 758
+    },
+    {
+      "periode": "2013-07-01T00:00:00Z",
+      "effectif": 824
+    },
+    {
+      "periode": "2013-08-01T00:00:00Z",
+      "effectif": 799
+    },
+    {
+      "periode": "2013-10-01T00:00:00Z",
+      "effectif": 187
+    },
+    {
+      "periode": "2013-11-01T00:00:00Z",
+      "effectif": 910
+    },
+    {
+      "periode": "2013-12-01T00:00:00Z",
+      "effectif": 357
+    },
+    {
+      "periode": "2014-01-01T00:00:00Z",
+      "effectif": 615
+    },
+    {
+      "periode": "2014-02-01T00:00:00Z",
+      "effectif": 710
+    },
+    {
+      "periode": "2014-03-01T00:00:00Z",
+      "effectif": 185
+    },
+    {
+      "periode": "2014-04-01T00:00:00Z",
+      "effectif": 939
+    },
+    {
+      "periode": "2014-05-01T00:00:00Z",
+      "effectif": 784
+    },
+    {
+      "periode": "2014-06-01T00:00:00Z",
+      "effectif": 315
+    },
+    {
+      "periode": "2014-07-01T00:00:00Z",
+      "effectif": 886
+    },
+    {
+      "periode": "2014-08-01T00:00:00Z",
+      "effectif": 722
+    },
+    {
+      "periode": "2014-09-01T00:00:00Z",
+      "effectif": 998
+    },
+    {
+      "periode": "2014-10-01T00:00:00Z",
+      "effectif": 19
+    },
+    {
+      "periode": "2014-11-01T00:00:00Z",
+      "effectif": 357
+    },
+    {
+      "periode": "2014-12-01T00:00:00Z",
+      "effectif": 202
+    },
+    {
+      "periode": "2015-01-01T00:00:00Z",
+      "effectif": 966
+    },
+    {
+      "periode": "2015-02-01T00:00:00Z",
+      "effectif": 437
+    },
+    {
+      "periode": "2015-03-01T00:00:00Z",
+      "effectif": 860
+    },
+    {
+      "periode": "2015-04-01T00:00:00Z",
+      "effectif": 807
+    },
+    {
+      "periode": "2015-05-01T00:00:00Z",
+      "effectif": 511
+    },
+    {
+      "periode": "2015-06-01T00:00:00Z",
+      "effectif": 158
+    },
+    {
+      "periode": "2015-07-01T00:00:00Z",
+      "effectif": 172
+    },
+    {
+      "periode": "2015-08-01T00:00:00Z",
+      "effectif": 4
+    },
+    {
+      "periode": "2015-09-01T00:00:00Z",
+      "effectif": 648
+    },
+    {
+      "periode": "2015-10-01T00:00:00Z",
+      "effectif": 41
+    },
+    {
+      "periode": "2015-11-01T00:00:00Z",
+      "effectif": 679
+    },
+    {
+      "periode": "2015-12-01T00:00:00Z",
+      "effectif": 140
+    },
+    {
+      "periode": "2016-01-01T00:00:00Z",
+      "effectif": 124
+    },
+    {
+      "periode": "2016-02-01T00:00:00Z",
+      "effectif": 662
+    },
+    {
+      "periode": "2016-03-01T00:00:00Z",
+      "effectif": 587
+    },
+    {
+      "periode": "2016-04-01T00:00:00Z",
+      "effectif": 147
+    },
+    {
+      "periode": "2016-05-01T00:00:00Z",
+      "effectif": 618
+    },
+    {
+      "periode": "2016-06-01T00:00:00Z",
+      "effectif": 848
+    },
+    {
+      "periode": "2016-07-01T00:00:00Z",
+      "effectif": 617
+    },
+    {
+      "periode": "2016-08-01T00:00:00Z",
+      "effectif": 317
+    },
+    {
+      "periode": "2016-09-01T00:00:00Z",
+      "effectif": 730
+    },
+    {
+      "periode": "2016-10-01T00:00:00Z",
+      "effectif": 577
+    },
+    {
+      "periode": "2016-11-01T00:00:00Z",
+      "effectif": 105
+    },
+    {
+      "periode": "2016-12-01T00:00:00Z",
+      "effectif": 260
+    },
+    {
+      "periode": "2017-01-01T00:00:00Z",
+      "effectif": 675
+    },
+    {
+      "periode": "2017-02-01T00:00:00Z",
+      "effectif": 573
+    },
+    {
+      "periode": "2017-03-01T00:00:00Z",
+      "effectif": 673
+    },
+    {
+      "periode": "2017-04-01T00:00:00Z",
+      "effectif": 717
+    },
+    {
+      "periode": "2017-05-01T00:00:00Z",
+      "effectif": 237
+    },
+    {
+      "periode": "2017-06-01T00:00:00Z",
+      "effectif": 536
+    },
+    {
+      "periode": "2017-07-01T00:00:00Z",
+      "effectif": 92
+    },
+    {
+      "periode": "2017-08-01T00:00:00Z",
+      "effectif": 118
+    },
+    {
+      "periode": "2017-09-01T00:00:00Z",
+      "effectif": 826
+    },
+    {
+      "periode": "2017-10-01T00:00:00Z",
+      "effectif": 816
+    },
+    {
+      "periode": "2017-11-01T00:00:00Z",
+      "effectif": 797
+    },
+    {
+      "periode": "2017-12-01T00:00:00Z",
+      "effectif": 907
+    },
+    {
+      "periode": "2018-01-01T00:00:00Z",
+      "effectif": 313
+    },
+    {
+      "periode": "2018-02-01T00:00:00Z",
+      "effectif": 274
+    },
+    {
+      "periode": "2018-03-01T00:00:00Z",
+      "effectif": 603
+    },
+    {
+      "periode": "2018-04-01T00:00:00Z",
+      "effectif": 920
+    },
+    {
+      "periode": "2018-05-01T00:00:00Z",
+      "effectif": 95
+    },
+    {
+      "periode": "2018-06-01T00:00:00Z",
+      "effectif": 64
+    },
+    {
+      "periode": "2018-07-01T00:00:00Z",
+      "effectif": 156
+    },
+    {
+      "periode": "2018-08-01T00:00:00Z",
+      "effectif": 189
+    },
+    {
+      "periode": "2018-09-01T00:00:00Z",
+      "effectif": 337
+    },
+    {
+      "periode": "2018-10-01T00:00:00Z",
+      "effectif": 918
+    },
+    {
+      "periode": "2018-11-01T00:00:00Z",
+      "effectif": 819
+    },
+    {
+      "periode": "2018-12-01T00:00:00Z",
+      "effectif": 160
+    },
+    {
+      "periode": "2019-01-01T00:00:00Z",
+      "effectif": 270
+    },
+    {
+      "periode": "2019-02-01T00:00:00Z",
+      "effectif": 336
+    },
+    {
+      "periode": "2019-03-01T00:00:00Z",
+      "effectif": 328
+    },
+    {
+      "periode": "2019-04-01T00:00:00Z",
+      "effectif": 272
+    },
+    {
+      "periode": "2010-01-01T00:00:00Z",
+      "effectif": 40
+    },
+    {
+      "periode": "2010-02-01T00:00:00Z",
+      "effectif": 703
+    },
+    {
+      "periode": "2010-03-01T00:00:00Z",
+      "effectif": 674
+    },
+    {
+      "periode": "2010-04-01T00:00:00Z",
+      "effectif": 491
+    },
+    {
+      "periode": "2010-05-01T00:00:00Z",
+      "effectif": 226
+    },
+    {
+      "periode": "2010-06-01T00:00:00Z",
+      "effectif": 644
+    },
+    {
+      "periode": "2010-07-01T00:00:00Z",
+      "effectif": 477
+    },
+    {
+      "periode": "2010-08-01T00:00:00Z",
+      "effectif": 332
+    },
+    {
+      "periode": "2010-09-01T00:00:00Z",
+      "effectif": 249
+    },
+    {
+      "periode": "2010-10-01T00:00:00Z",
+      "effectif": 381
+    },
+    {
+      "periode": "2010-11-01T00:00:00Z",
+      "effectif": 75
+    },
+    {
+      "periode": "2010-12-01T00:00:00Z",
+      "effectif": 705
+    },
+    {
+      "periode": "2011-01-01T00:00:00Z",
+      "effectif": 626
+    },
+    {
+      "periode": "2011-02-01T00:00:00Z",
+      "effectif": 830
+    },
+    {
+      "periode": "2011-03-01T00:00:00Z",
+      "effectif": 912
+    },
+    {
+      "periode": "2011-04-01T00:00:00Z",
+      "effectif": 716
+    },
+    {
+      "periode": "2011-05-01T00:00:00Z",
+      "effectif": 235
+    },
+    {
+      "periode": "2011-06-01T00:00:00Z",
+      "effectif": 900
+    },
+    {
+      "periode": "2011-07-01T00:00:00Z",
+      "effectif": 674
+    },
+    {
+      "periode": "2011-08-01T00:00:00Z",
+      "effectif": 144
+    },
+    {
+      "periode": "2011-09-01T00:00:00Z",
+      "effectif": 919
+    },
+    {
+      "periode": "2011-10-01T00:00:00Z",
+      "effectif": 919
+    },
+    {
+      "periode": "2011-11-01T00:00:00Z",
+      "effectif": 551
+    },
+    {
+      "periode": "2011-12-01T00:00:00Z",
+      "effectif": 841
+    },
+    {
+      "periode": "2012-01-01T00:00:00Z",
+      "effectif": 172
+    },
+    {
+      "periode": "2012-02-01T00:00:00Z",
+      "effectif": 680
+    },
+    {
+      "periode": "2012-03-01T00:00:00Z",
+      "effectif": 8
+    },
+    {
+      "periode": "2012-04-01T00:00:00Z",
+      "effectif": 585
+    },
+    {
+      "periode": "2012-05-01T00:00:00Z",
+      "effectif": 99
+    },
+    {
+      "periode": "2012-06-01T00:00:00Z",
+      "effectif": 695
+    },
+    {
+      "periode": "2012-07-01T00:00:00Z",
+      "effectif": 378
+    },
+    {
+      "periode": "2012-08-01T00:00:00Z",
+      "effectif": 518
+    },
+    {
+      "periode": "2012-09-01T00:00:00Z",
+      "effectif": 128
+    },
+    {
+      "periode": "2012-10-01T00:00:00Z",
+      "effectif": 644
+    },
+    {
+      "periode": "2012-11-01T00:00:00Z",
+      "effectif": 606
+    },
+    {
+      "periode": "2012-12-01T00:00:00Z",
+      "effectif": 469
+    },
+    {
+      "periode": "2013-01-01T00:00:00Z",
+      "effectif": 775
+    },
+    {
+      "periode": "2013-02-01T00:00:00Z",
+      "effectif": 865
+    },
+    {
+      "periode": "2013-03-01T00:00:00Z",
+      "effectif": 730
+    },
+    {
+      "periode": "2013-04-01T00:00:00Z",
+      "effectif": 610
+    },
+    {
+      "periode": "2013-05-01T00:00:00Z",
+      "effectif": 304
+    },
+    {
+      "periode": "2013-06-01T00:00:00Z",
+      "effectif": 85
+    },
+    {
+      "periode": "2013-07-01T00:00:00Z",
+      "effectif": 660
+    },
+    {
+      "periode": "2013-08-01T00:00:00Z",
+      "effectif": 428
+    },
+    {
+      "periode": "2013-09-01T00:00:00Z",
+      "effectif": 594
+    },
+    {
+      "periode": "2013-10-01T00:00:00Z",
+      "effectif": 547
+    },
+    {
+      "periode": "2013-11-01T00:00:00Z",
+      "effectif": 163
+    },
+    {
+      "periode": "2013-12-01T00:00:00Z",
+      "effectif": 695
+    },
+    {
+      "periode": "2014-01-01T00:00:00Z",
+      "effectif": 81
+    },
+    {
+      "periode": "2014-02-01T00:00:00Z",
+      "effectif": 22
+    },
+    {
+      "periode": "2014-03-01T00:00:00Z",
+      "effectif": 990
+    },
+    {
+      "periode": "2014-04-01T00:00:00Z",
+      "effectif": 481
+    },
+    {
+      "periode": "2014-05-01T00:00:00Z",
+      "effectif": 602
+    },
+    {
+      "periode": "2014-06-01T00:00:00Z",
+      "effectif": 599
+    },
+    {
+      "periode": "2014-07-01T00:00:00Z",
+      "effectif": 254
+    },
+    {
+      "periode": "2014-08-01T00:00:00Z",
+      "effectif": 992
+    },
+    {
+      "periode": "2014-09-01T00:00:00Z",
+      "effectif": 803
+    },
+    {
+      "periode": "2014-10-01T00:00:00Z",
+      "effectif": 565
+    },
+    {
+      "periode": "2014-11-01T00:00:00Z",
+      "effectif": 875
+    },
+    {
+      "periode": "2014-12-01T00:00:00Z",
+      "effectif": 836
+    },
+    {
+      "periode": "2015-01-01T00:00:00Z",
+      "effectif": 270
+    },
+    {
+      "periode": "2015-02-01T00:00:00Z",
+      "effectif": 621
+    },
+    {
+      "periode": "2015-03-01T00:00:00Z",
+      "effectif": 833
+    },
+    {
+      "periode": "2015-04-01T00:00:00Z",
+      "effectif": 706
+    },
+    {
+      "periode": "2015-05-01T00:00:00Z",
+      "effectif": 936
+    },
+    {
+      "periode": "2015-06-01T00:00:00Z",
+      "effectif": 162
+    },
+    {
+      "periode": "2015-07-01T00:00:00Z",
+      "effectif": 610
+    },
+    {
+      "periode": "2015-08-01T00:00:00Z",
+      "effectif": 547
+    },
+    {
+      "periode": "2015-09-01T00:00:00Z",
+      "effectif": 964
+    },
+    {
+      "periode": "2015-10-01T00:00:00Z",
+      "effectif": 509
+    },
+    {
+      "periode": "2015-11-01T00:00:00Z",
+      "effectif": 677
+    },
+    {
+      "periode": "2015-12-01T00:00:00Z",
+      "effectif": 602
+    },
+    {
+      "periode": "2016-01-01T00:00:00Z",
+      "effectif": 898
+    },
+    {
+      "periode": "2016-02-01T00:00:00Z",
+      "effectif": 976
+    },
+    {
+      "periode": "2016-03-01T00:00:00Z",
+      "effectif": 319
+    },
+    {
+      "periode": "2016-04-01T00:00:00Z",
+      "effectif": 282
+    },
+    {
+      "periode": "2016-05-01T00:00:00Z",
+      "effectif": 811
+    },
+    {
+      "periode": "2016-06-01T00:00:00Z",
+      "effectif": 917
+    },
+    {
+      "periode": "2016-07-01T00:00:00Z",
+      "effectif": 192
+    },
+    {
+      "periode": "2016-08-01T00:00:00Z",
+      "effectif": 197
+    },
+    {
+      "periode": "2016-09-01T00:00:00Z",
+      "effectif": 528
+    },
+    {
+      "periode": "2016-10-01T00:00:00Z",
+      "effectif": 524
+    },
+    {
+      "periode": "2016-11-01T00:00:00Z",
+      "effectif": 587
+    },
+    {
+      "periode": "2016-12-01T00:00:00Z",
+      "effectif": 709
+    },
+    {
+      "periode": "2017-01-01T00:00:00Z",
+      "effectif": 852
+    },
+    {
+      "periode": "2017-02-01T00:00:00Z",
+      "effectif": 698
+    },
+    {
+      "periode": "2017-03-01T00:00:00Z",
+      "effectif": 619
+    },
+    {
+      "periode": "2017-04-01T00:00:00Z",
+      "effectif": 237
+    },
+    {
+      "periode": "2017-05-01T00:00:00Z",
+      "effectif": 608
+    },
+    {
+      "periode": "2017-06-01T00:00:00Z",
+      "effectif": 792
+    },
+    {
+      "periode": "2017-07-01T00:00:00Z",
+      "effectif": 414
+    },
+    {
+      "periode": "2017-08-01T00:00:00Z",
+      "effectif": 602
+    },
+    {
+      "periode": "2017-09-01T00:00:00Z",
+      "effectif": 922
+    }
+  ],
+  "events": [
+    {
+      "date": "0001-01-01T00:00:00Z",
+      "event": "testData/effectifEntTestData.csv: ouverture",
+      "priority": "info",
+      "code": "effectifEntParser",
+      "report_type": ""
+    },
+    {
+      "date": "0001-01-01T00:00:00Z",
+      "event": {
+        "batchKey": "",
+        "error": 0,
+        "filtered": 0,
+        "headErrors": [],
+        "headFatal": [],
+        "headFilters": [],
+        "report": "testData/effectifEntTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
+        "total": 3,
+        "valid": 3
+      },
+      "priority": "debug",
+      "code": "effectifEntParser",
+      "report_type": ""
+    }
+  ]
+}

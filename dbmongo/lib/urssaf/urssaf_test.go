@@ -66,3 +66,10 @@ func TestEffectif(t *testing.T) {
 	cache := marshal.NewCache()
 	marshal.TestParserOutput(t, ParserEffectif, cache, "effectif", testData, golden, *update)
 }
+
+func TestEffectifEnt(t *testing.T) {
+	var golden = filepath.Join("testData", "expectedEffectifEnt.json")
+	var testData = filepath.Join("testData", "effectifEntTestData.csv")
+	cache := marshal.NewCache()
+	marshal.TestParserOutput(t, ParserEffectifEnt, cache, "effectif_ent", testData, golden, *update)
+}

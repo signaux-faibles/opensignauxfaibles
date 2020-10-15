@@ -6,7 +6,6 @@ import (
 	"errors"
 	"io"
 	"os"
-	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -18,7 +17,6 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sfregexp"
 
 	"github.com/signaux-faibles/gournal"
-	//"github.com/globalsign/mgo/bson"
 	"github.com/spf13/viper"
 )
 
@@ -45,18 +43,6 @@ func (effectif Effectif) Type() string {
 	return "effectif"
 }
 
-// ParseEffectifPeriod Transforme un tableau de périodes telles qu'écrites dans l'entête du tableau d'effectif urssaf en date de début
-func parseEffectifPeriod(effectifPeriods []string) ([]time.Time, error) {
-	periods := []time.Time{}
-	for _, period := range effectifPeriods {
-		urssaf := period[3:9]
-		date, _ := marshal.UrssafToPeriod(urssaf)
-		periods = append(periods, date.Start)
-	}
-
-	return periods, nil
-}
-
 // ParserEffectif retourne un channel fournissant des données extraites
 func ParserEffectif(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
 	outputChannel := make(chan marshal.Tuple)
@@ -68,92 +54,91 @@ func ParserEffectif(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.T
 	filter := marshal.GetSirenFilterFromCache(cache)
 	go func() {
 		for _, path := range batch.Files["effectif"] {
-			tracker := gournal.NewTracker(
-				map[string]string{"path": path, "batchKey": batch.ID.Key},
-				engine.TrackerReports)
-
 			file, err := os.Open(viper.GetString("APP_DATA") + path)
 			if err != nil {
 				event.Critical(path + ": erreur à l'ouverture du fichier, abandon: " + err.Error())
-				continue
 			} else {
+				tracker := gournal.NewTracker(
+					map[string]string{"path": path, "batchKey": batch.ID.Key},
+					engine.TrackerReports)
+
 				event.Info(path + ": ouverture")
+				reader := csv.NewReader(bufio.NewReader(file))
+				reader.Comma = ';'
+
+				parseEffectifFile(reader, filter, &tracker, outputChannel)
+				file.Close()
+				event.Debug(tracker.Report("abstract"))
 			}
-
-			reader := csv.NewReader(bufio.NewReader(file))
-			reader.Comma = ';'
-			fields, err := reader.Read()
-
-			if err != nil {
-				event.Critical(path + ": erreur à la lecture du fichier, abandon: " + err.Error())
-				continue
-			}
-
-			siretIndex := misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "siret" })
-			compteIndex := misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "compte" })
-			if misc.SliceMin(siretIndex, compteIndex) == -1 {
-				event.Critical(path + ": erreur à l'analyse du fichier, abandon, l'un " +
-					"des champs obligatoires n'a pu etre trouve:" +
-					" siretIndex = " + strconv.Itoa(siretIndex) +
-					", compteIndex = " + strconv.Itoa(compteIndex))
-				continue
-			}
-			// Dans quels champs lire l'effectif
-			re, _ := regexp.Compile("^eff")
-			var effectifFields []string
-			var effectifIndexes []int
-			for ind, field := range fields {
-				if re.MatchString(field) {
-					effectifFields = append(effectifFields, field)
-					effectifIndexes = append(effectifIndexes, ind)
-				}
-			}
-
-			periods, err := parseEffectifPeriod(effectifFields)
-			if err != nil {
-				event.Critical(path + ": erreur a l'analyse du fichier, abandon: " + err.Error())
-				continue
-			}
-
-			for {
-				row, err := reader.Read()
-				if err == io.EOF {
-					break
-				} else if err != nil {
-					tracker.Add(err)
-					event.Critical(tracker.Report("fatalError"))
-					break
-				}
-
-				siret := row[siretIndex]
-
-				validSiret := sfregexp.RegexpDict["siret"].MatchString(siret)
-				if !validSiret {
-					tracker.Add(base.NewRegularError(errors.New("Le siret/siren est invalide")))
-				} else if filter != nil || !marshal.FilterHas(siret, filter) {
-					for i, j := range effectifIndexes {
-						if row[j] != "" {
-							noThousandsSep := sfregexp.RegexpDict["notDigit"].ReplaceAllString(row[j], "")
-							e, err := strconv.Atoi(noThousandsSep)
-							tracker.Add(err)
-							if e > 0 {
-								eff := Effectif{
-									Siret:        siret,
-									NumeroCompte: row[compteIndex],
-									Periode:      periods[i],
-									Effectif:     e}
-								outputChannel <- eff
-							}
-						}
-					}
-				}
-				tracker.Next()
-			}
-			file.Close()
-			event.Debug(tracker.Report("abstract"))
 		}
 		close(outputChannel)
 		close(eventChannel)
 	}()
 	return outputChannel, eventChannel
+}
+
+func parseEffectifFile(reader *csv.Reader, filter map[string]bool, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+	fields, err := reader.Read()
+	if err != nil {
+		tracker.Add(err)
+		return
+	}
+
+	var idx = colMapping{
+		"siret":  misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "siret" }),
+		"compte": misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "compte" }),
+	}
+
+	if misc.SliceMin(idx["siret"], idx["compte"]) == -1 {
+		tracker.Add(errors.New("erreur à l'analyse du fichier, abandon, l'un " +
+			"des champs obligatoires n'a pu etre trouve:" +
+			" siretIndex = " + strconv.Itoa(idx["siret"]) +
+			", compteIndex = " + strconv.Itoa(idx["compte"])))
+		return
+	}
+
+	// Dans quels champs lire l'effectif
+	periods := parseEffectifPeriod(fields)
+
+	for {
+		row, err := reader.Read()
+		if err == io.EOF {
+			break
+		} else if err != nil {
+			tracker.Add(err)
+		} else {
+			effectifs := parseEffectifLine(periods, row, idx, filter, tracker)
+			for _, eff := range effectifs {
+				outputChannel <- eff
+			}
+		}
+		tracker.Next()
+	}
+}
+
+func parseEffectifLine(periods []periodCol, row []string, idx colMapping, filter map[string]bool, tracker *gournal.Tracker) []Effectif {
+	var effectifs = []Effectif{}
+	siret := row[idx["siret"]]
+	validSiret := sfregexp.RegexpDict["siret"].MatchString(siret)
+	if !validSiret {
+		tracker.Add(base.NewRegularError(errors.New("Le siret/siren est invalide")))
+	} else if filter != nil || !marshal.FilterHas(siret, filter) {
+		for _, period := range periods {
+			value := row[period.colIndex]
+			if value != "" {
+				noThousandsSep := sfregexp.RegexpDict["notDigit"].ReplaceAllString(value, "")
+				e, err := strconv.Atoi(noThousandsSep)
+				tracker.Add(err)
+				if e > 0 {
+					effectifs = append(effectifs, Effectif{
+						Siret:        siret,
+						NumeroCompte: row[idx["compte"]],
+						Periode:      period.dateStart,
+						Effectif:     e,
+					})
+				}
+			}
+		}
+	}
+	return effectifs
 }
