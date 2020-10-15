@@ -67,11 +67,9 @@ func InitDB() DB {
 	dbstatus := mongostatus.DB(dbDatabase)
 	db := mongodb.DB(dbDatabase)
 
-	// Création d'index sur la collection ImportedData
+	// Création d'index sur la collection ImportedData, pour le découpage du map-reduce de Compact
 	db.C("ImportedData").EnsureIndex(mgo.Index{
 		Key:      []string{"value.key"}, // numéro SIRET ou SIREN
-		Unique:   true,
-		DropDups: true,
 	})
 
 	firstBatchID := viper.GetString("FIRST_BATCH")
