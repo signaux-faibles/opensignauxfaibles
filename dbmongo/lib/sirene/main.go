@@ -223,24 +223,23 @@ func parseSireneFile(reader *csv.Reader, filter map[string]bool, tracker *gourna
 			break
 		} else if err != nil {
 			tracker.Add(err)
-			break
+		} else {
+			validSiren := sfregexp.RegexpDict["siren"].MatchString(row[f["siren"]])
+			if !validSiren {
+				tracker.Add(errors.New("siren invalide : " + row[f["siren"]]))
+			} else {
+				filtered, err := marshal.IsFiltered(row[f["siren"]], filter)
+				tracker.Add(err)
+				if !filtered {
+					outputChannel <- parseSireneLine(row, tracker)
+				}
+			}
 		}
-		validSiren := sfregexp.RegexpDict["siren"].MatchString(row[f["siren"]])
-		if !validSiren {
-			tracker.Add(errors.New("siren invalide : " + row[f["siren"]]))
-			continue // TODO: exécuter tracker.Next() un fois le TODO ci-dessous traité.
-		}
-		filtered, err := marshal.IsFiltered(row[f["siren"]], filter)
-		tracker.Add(err)
-		if !filtered {
-			sirene := readLineEtablissement(row, tracker)
-			outputChannel <- sirene
-			tracker.Next()
-		}
+		tracker.Next()
 	}
 }
 
-func readLineEtablissement(row []string, tracker *gournal.Tracker) Sirene {
+func parseSireneLine(row []string, tracker *gournal.Tracker) Sirene {
 	sirene := Sirene{}
 	var err error
 	sirene.Siren = row[f["siren"]]

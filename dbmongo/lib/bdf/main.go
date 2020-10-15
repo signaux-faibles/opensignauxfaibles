@@ -202,16 +202,13 @@ func parseBdfFile(reader *csv.Reader, filter map[string]bool, tracker *gournal.T
 			break
 		} else if err != nil {
 			tracker.Add(err)
-			break
+		} else {
+			bdf := parseBdfLine(row, tracker, filter)
+			var errorInCurrentCycle = tracker.HasErrorInCurrentCycle()
+			if !errorInCurrentCycle {
+				outputChannel <- bdf
+			}
 		}
-
-		bdf := parseBdfLine(row, tracker, filter)
-
-		var errorInCurrentCycle = tracker.HasErrorInCurrentCycle()
-		if !errorInCurrentCycle {
-			outputChannel <- bdf
-		}
-
 		tracker.Next()
 	}
 }
