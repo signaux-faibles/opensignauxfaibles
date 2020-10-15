@@ -233,14 +233,14 @@ func parseSireneFile(reader *csv.Reader, filter map[string]bool, tracker *gourna
 		filtered, err := marshal.IsFiltered(row[f["siren"]], filter)
 		tracker.Add(err)
 		if !filtered {
-			sirene := parseSireneLine(row, tracker)
+			sirene := readLineEtablissement(row, tracker)
 			outputChannel <- sirene
 			tracker.Next()
 		}
 	}
 }
 
-func parseSireneLine(row []string, tracker *gournal.Tracker) Sirene {
+func readLineEtablissement(row []string, tracker *gournal.Tracker) Sirene {
 	sirene := Sirene{}
 	var err error
 	sirene.Siren = row[f["siren"]]
