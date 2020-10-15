@@ -102,30 +102,23 @@ func parseSireneULFile(reader *csv.Reader, filter map[string]bool, tracker *gour
 			break
 		} else if err != nil {
 			tracker.Add(err)
-			break
+		} else {
+			validSiren := sfregexp.RegexpDict["siren"].MatchString(row[0])
+			if !validSiren {
+				tracker.Add(errors.New("siren invalide : " + row[0]))
+			} else {
+				filtered, err := marshal.IsFiltered(row[0], filter)
+				tracker.Add(err)
+				if !filtered {
+					outputChannel <- parseSireneUlLine(row, tracker)
+				}
+			}
 		}
-
-		validSiren := sfregexp.RegexpDict["siren"].MatchString(row[0])
-		if !validSiren {
-			tracker.Add(errors.New("siren invalide : " + row[0]))
-			continue // TODO: exécuter tracker.Next() un fois le TODO ci-dessous traité.
-		}
-
-		filtered, err := marshal.IsFiltered(row[0], filter)
-		if err != nil {
-			tracker.Add(err)
-		}
-		if !filtered {
-			sireneul := readLineEtablissement(row, tracker)
-			outputChannel <- sireneul
-			tracker.Next() // TODO: garantir que le compteur de lignes
-			// correspond au nombre de lignes du fichier. => appeler même si le
-			// siren est filtré
-		}
+		tracker.Next()
 	}
 }
 
-func readLineEtablissement(row []string, tracker *gournal.Tracker) SireneUL {
+func parseSireneUlLine(row []string, tracker *gournal.Tracker) SireneUL {
 	sireneul := SireneUL{}
 	sireneul.Siren = row[0]
 	sireneul.RaisonSociale = row[23]

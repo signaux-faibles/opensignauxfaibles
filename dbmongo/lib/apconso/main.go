@@ -100,26 +100,18 @@ func parseApConsoFile(reader *csv.Reader, tracker *gournal.Tracker, outputChanne
 
 	for {
 		row, err := reader.Read()
-
 		if err == io.EOF {
 			break
 		} else if err != nil {
 			tracker.Add(err)
-			break
-		}
-
-		// TODO: filtrer et/ou valider siret ?
-
-		if len(row) > 0 {
+		} else if len(row) > 0 {
+			// TODO: filtrer et/ou valider siret ?
 			apconso := parseApConsoLine(row, tracker, idx)
-
 			if !tracker.HasErrorInCurrentCycle() && apconso.Siret != "" {
 				outputChannel <- apconso
 			}
-
-			tracker.Next() // TODO: executer même si len(row) === 0 ?
 		}
-
+		tracker.Next()
 	}
 }
 
