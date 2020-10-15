@@ -408,27 +408,18 @@ func parseDianeFile(batch *base.AdminBatch, path string, outputChannel chan mars
 		engine.TrackerReports)
 
 	// process rows of data
-	var row []string
-	var readErr error
 	for {
-		row, readErr = reader.Read()
-		if readErr != nil {
+		row, err := reader.Read()
+		if err == io.EOF {
 			break
-		}
-		if len(row) >= 83 {
-			outputChannel <- parseDianeRow(row)
+		} else if err != nil {
+			tracker.Add(err)
+		} else if len(row) < 83 {
+			tracker.Add(errors.New("Ligne invalide"))
 		} else {
-			event.Critical("Ligne invalide. Abandon !")
+			outputChannel <- parseDianeRow(row)
 		}
 		tracker.Next()
-	}
-
-	// return errors, if any
-	if readErr != nil && readErr != io.EOF {
-		contextualizedErr := errors.New("erreur pendant la lecture d'une ligne diane: " + readErr.Error())
-		tracker.Add(contextualizedErr)
-		event.Critical(tracker.Report("fatalError"))
-		return
 	}
 	event.Debug(tracker.Report("abstract"))
 }

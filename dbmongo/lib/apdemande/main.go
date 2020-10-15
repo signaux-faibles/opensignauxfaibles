@@ -128,18 +128,14 @@ func parseApDemandeFile(reader *csv.Reader, tracker *gournal.Tracker, outputChan
 			break
 		} else if err != nil {
 			tracker.Add(err)
-			break
-		}
-
-		// TODO: filtrer et/ou valider siret ?
-
-		if row[idx["ETAB_SIRET"]] != "" {
+		} else if row[idx["ETAB_SIRET"]] == "" {
+			tracker.Add(errors.New("invalidLine"))
+		} else {
+			// TODO: filtrer et/ou valider siret ?
 			apdemande := parseApDemandeLine(row, tracker, idx)
 			if !tracker.HasErrorInCurrentCycle() {
 				outputChannel <- apdemande
 			}
-		} else {
-			tracker.Add(errors.New("invalidLine"))
 		}
 		tracker.Next()
 	}
