@@ -108,7 +108,7 @@ func Public(batch base.AdminBatch) error {
 	for _, query := range chunks.ToQueries(filter, "_id") {
 		w.waitGroup.Add(1)
 
-		dbTemp := "purgeBatch" + strconv.Itoa(i)
+		dbTemp := "purgeBatch" + strconv.Itoa(i) // TODO: à renommer
 		job := &mgo.MapReduce{
 			Map:      functions["map"].Code,
 			Reduce:   functions["reduce"].Code,
