@@ -3,48 +3,6 @@
 		"_id" : {
 			"batch" : "1905",
 			"siret" : "12345678901234",
-			"periode" : ISODate("2013-10-01T00:00:00Z")
-		},
-		"value" : {
-			"apart_heures_consommees" : 112,
-			"apart_motif_recours" : 2,
-			"siret" : "12345678901234",
-			"apart_entreprise" : 112,
-			"nbr_etablissements_connus" : 1
-		}
-	},
-	{
-		"_id" : {
-			"batch" : "1905",
-			"siret" : "12345678901234",
-			"periode" : ISODate("2013-11-01T00:00:00Z")
-		},
-		"value" : {
-			"apart_heures_consommees" : 190,
-			"apart_motif_recours" : 2,
-			"siret" : "12345678901234",
-			"apart_entreprise" : 190,
-			"nbr_etablissements_connus" : 1
-		}
-	},
-	{
-		"_id" : {
-			"batch" : "1905",
-			"siret" : "12345678901234",
-			"periode" : ISODate("2013-12-01T00:00:00Z")
-		},
-		"value" : {
-			"apart_heures_consommees" : 326,
-			"apart_motif_recours" : 2,
-			"siret" : "12345678901234",
-			"apart_entreprise" : 326,
-			"nbr_etablissements_connus" : 1
-		}
-	},
-	{
-		"_id" : {
-			"batch" : "1905",
-			"siret" : "12345678901234",
 			"periode" : ISODate("2014-01-01T00:00:00Z")
 		},
 		"value" : {
