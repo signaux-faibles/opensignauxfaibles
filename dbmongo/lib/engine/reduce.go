@@ -42,8 +42,8 @@ func ReduceOne(batch base.AdminBatch, algo string, key, from, to string, types [
 	} else if from != "" && to != "" {
 		query = bson.M{
 			"$and": []bson.M{
-				bson.M{"_id": bson.M{"$gte": from}},
-				bson.M{"_id": bson.M{"$lt": to}},
+				{"_id": bson.M{"$gte": from}},
+				{"_id": bson.M{"$lt": to}},
 				query,
 			},
 		}
@@ -179,7 +179,7 @@ func reduceFinalAggregation(tempDatabase *mgo.Database, tempCollection, outDatab
 	var pipeline []bson.M
 	pipeline = append(pipeline, []bson.M{
 		// séparation des données par établissement
-		bson.M{
+		{
 			"$unwind": bson.M{
 				"path":                       "$value",
 				"preserveNullAndEmptyArrays": false,
@@ -201,7 +201,7 @@ func reduceFinalAggregation(tempDatabase *mgo.Database, tempCollection, outDatab
 		// 	},
 		// },
 		// on a plusieurs objets par clé => on génère un nouvel identifiant et on stocke la clé dans "info"
-		bson.M{
+		{
 			"$project": bson.M{
 				"_id": bson.D{ // on utilise bson.D pour conserver cet ordre, et permettre la fusion (mergePipeline)
 					{"batch", "$_id.batch"},
@@ -216,7 +216,7 @@ func reduceFinalAggregation(tempDatabase *mgo.Database, tempCollection, outDatab
 
 	// Defining pipeline used to during merge stage
 	mergePipeline := []bson.M{
-		bson.M{
+		{
 			"$project": bson.M{
 				"_id": "$_id",
 				"value": bson.M{
@@ -278,8 +278,8 @@ func reduceDefineScope(batch base.AdminBatch, algo string, types []string) (bson
 	if len(types) == 0 {
 		includes["all"] = true
 	} else {
-		for _, data_type := range types {
-			includes[data_type] = true
+		for _, dataType := range types {
+			includes[dataType] = true
 		}
 	}
 
