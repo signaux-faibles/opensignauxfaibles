@@ -932,12 +932,8 @@ function sirene(sireneArray) {
             }, 0);
         }
     });
-    //Object.keys(output_apart).forEach(time => {
-    //  if (output_effectif && time in output_effectif){
-    //    output_apart[time].ratio_apart = (output_apart[time].apart_heures_consommees || 0) / (output_effectif[time].effectif * 157.67)
-    //    //nbr approximatif d'heures ouvrées par mois
-    //  }
-    //})
+    // Note: à la fin de l'opération map-reduce, dbmongo va calculer la propriété
+    // ratio_apart depuis apart.crossComputation.json.
     return output_apart;
 }`,
 "ccsf": `function ccsf(vCcsf, output_array) {
