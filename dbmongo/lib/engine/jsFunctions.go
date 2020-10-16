@@ -537,23 +537,6 @@ function reduce(key, values // chaque element contient plusieurs batches pour ce
     return reducedValue;
 }`,
 },
-"crossComputation":{
-"apart": `{
-  "$set": {
-    "value.ratio_apart": {
-      "$divide": [
-        "$value.apart_heures_consommees",
-        {
-          "$multiply": [
-            "$value.effectif",
-            157.67
-          ]
-        }
-      ]
-    }
-  }
-}`,
-},
 "migrations":{
 "agg_change_index_Features": `// db.getCollection("Features").aggregate(
 // 	[

@@ -1,11 +1,13 @@
 package engine
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
+	"os"
+	"path/filepath"
 	"regexp"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
@@ -134,6 +136,7 @@ func Reduce(batch base.AdminBatch, algo string, types []string) error {
 		)
 
 		if err != nil {
+			fmt.Println(err)
 			w.add("errors", 1, -1)
 		} else {
 			err = db.DB(dbTemp).DropDatabase()
@@ -153,25 +156,26 @@ func Reduce(batch base.AdminBatch, algo string, types []string) error {
 	return nil
 }
 
-func reduceCrossComputations(directoryName string) ([]bson.M, error) {
-	result := []bson.M{}
-	if _, ok := jsFunctions[directoryName]; !ok {
-		return result, errors.New("Map reduce json aggregation steps could not be found for " + directoryName)
+// loadCrossComputationStages charge les étapes d'agrégation MongoDB depuis des fichiers JSON.
+func reduceCrossComputations(directoryName string) (stages []bson.M, err error) {
+	stages = []bson.M{}
+	files, err := listCrossCompJSONFiles(filepath.Join("js", directoryName))
+	if err != nil {
+		return nil, err
 	}
-	for _, v := range jsFunctions[directoryName] {
-		var aggregationStep bson.M
-		err := json.Unmarshal([]byte(v), &aggregationStep) // transform json string into bson.M
+	for _, filePath := range files {
+		stage, err := parseJSONObject(filePath)
 		if err != nil {
 			return nil, err
 		}
-		result = append(result, aggregationStep)
+		stages = append(stages, stage)
 	}
-	return result, nil
+	return stages, nil
 }
 
 func reduceFinalAggregation(tempDatabase *mgo.Database, tempCollection, outDatabase, outCollection string) error {
 
-	setStages, err := reduceCrossComputations("crossComputation")
+	setStages, err := reduceCrossComputations("reduce.algo2")
 	if err != nil {
 		return err
 	}
@@ -298,4 +302,16 @@ func reduceDefineScope(batch base.AdminBatch, algo string, types []string) (bson
 		"includes":               includes,
 	}
 	return scope, nil
+}
+
+// listCrossCompJSONFiles retourne la liste des fichiers JSON présents dans le répertoire spécifié.
+func listCrossCompJSONFiles(path string) ([]string, error) {
+	var files []string
+	err := filepath.Walk(path, func(filePath string, info os.FileInfo, err error) error {
+		if err == nil && strings.Contains(filePath, ".crossComputation.json") {
+			files = append(files, filePath)
+		}
+		return err
+	})
+	return files, err
 }
