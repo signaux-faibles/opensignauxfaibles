@@ -1659,7 +1659,9 @@ function map() {
         if (includes["apart"] || includes["all"]) {
             if (v.apconso && v.apdemande) {
                 const output_apart = f.apart(v.apconso, v.apdemande);
-                Object.keys(output_apart).forEach((periode) => {
+                Object.keys(output_apart)
+                    .filter((periode) => periode in output_indexed) // limiter dans le scope temporel du batch.
+                    .forEach((periode) => {
                     const data = {
                         [this._id]: Object.assign(Object.assign({}, output_apart[periode]), { siret: this._id }),
                     };
