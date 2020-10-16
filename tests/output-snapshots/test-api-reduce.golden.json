@@ -3,10 +3,56 @@
 		"_id" : {
 			"batch" : "1905",
 			"siret" : "12345678901234",
+			"periode" : ISODate("2013-10-01T00:00:00Z")
+		},
+		"value" : {
+			"apart_heures_consommees" : 112,
+			"apart_motif_recours" : 2,
+			"siret" : "12345678901234",
+			"apart_entreprise" : 112,
+			"nbr_etablissements_connus" : 1
+		}
+	},
+	{
+		"_id" : {
+			"batch" : "1905",
+			"siret" : "12345678901234",
+			"periode" : ISODate("2013-11-01T00:00:00Z")
+		},
+		"value" : {
+			"apart_heures_consommees" : 190,
+			"apart_motif_recours" : 2,
+			"siret" : "12345678901234",
+			"apart_entreprise" : 190,
+			"nbr_etablissements_connus" : 1
+		}
+	},
+	{
+		"_id" : {
+			"batch" : "1905",
+			"siret" : "12345678901234",
+			"periode" : ISODate("2013-12-01T00:00:00Z")
+		},
+		"value" : {
+			"apart_heures_consommees" : 326,
+			"apart_motif_recours" : 2,
+			"siret" : "12345678901234",
+			"apart_entreprise" : 326,
+			"nbr_etablissements_connus" : 1
+		}
+	},
+	{
+		"_id" : {
+			"batch" : "1905",
+			"siret" : "12345678901234",
 			"periode" : ISODate("2014-01-01T00:00:00Z")
 		},
 		"value" : {
+			"apart_heures_consommees" : 188,
+			"apart_motif_recours" : 2,
 			"siret" : "12345678901234",
+			"apart_entreprise" : 188,
+			"nbr_etablissements_connus" : 1,
 			"periode" : ISODate("2014-01-01T00:00:00Z"),
 			"effectif" : 49,
 			"etat_proc_collective" : "in_bonis",
@@ -116,7 +162,7 @@
 			"dette_fiscale" : 21.569385388480868,
 			"frais_financier" : 8.192090395480225,
 			"effectif_entreprise" : 49,
-			"nbr_etablissements_connus" : 1
+			"ratio_apart" : 0.024333955057255986
 		}
 	},
 	{
@@ -126,7 +172,11 @@
 			"periode" : ISODate("2014-02-01T00:00:00Z")
 		},
 		"value" : {
+			"apart_heures_consommees" : 133,
+			"apart_motif_recours" : 2,
 			"siret" : "12345678901234",
+			"apart_entreprise" : 133,
+			"nbr_etablissements_connus" : 1,
 			"periode" : ISODate("2014-02-01T00:00:00Z"),
 			"effectif" : 49,
 			"etat_proc_collective" : "in_bonis",
@@ -239,7 +289,7 @@
 			"frais_financier" : 8.192090395480225,
 			"effectif_entreprise" : 49,
 			"debit_entreprise" : 80057,
-			"nbr_etablissements_connus" : 1
+			"ratio_apart" : 0.017214978843697055
 		}
 	},
 	{
@@ -249,7 +299,11 @@
 			"periode" : ISODate("2014-03-01T00:00:00Z")
 		},
 		"value" : {
+			"apart_heures_consommees" : 133,
+			"apart_motif_recours" : 2,
 			"siret" : "12345678901234",
+			"apart_entreprise" : 133,
+			"nbr_etablissements_connus" : 1,
 			"periode" : ISODate("2014-03-01T00:00:00Z"),
 			"effectif" : 47,
 			"etat_proc_collective" : "in_bonis",
@@ -364,7 +418,7 @@
 			"frais_financier" : 8.192090395480225,
 			"effectif_entreprise" : 47,
 			"debit_entreprise" : 94514,
-			"nbr_etablissements_connus" : 1
+			"ratio_apart" : 0.017947531134918204
 		}
 	},
 	{
@@ -374,7 +428,11 @@
 			"periode" : ISODate("2014-04-01T00:00:00Z")
 		},
 		"value" : {
+			"apart_heures_consommees" : 51,
+			"apart_motif_recours" : 2,
 			"siret" : "12345678901234",
+			"apart_entreprise" : 51,
+			"nbr_etablissements_connus" : 1,
 			"periode" : ISODate("2014-04-01T00:00:00Z"),
 			"effectif" : 47,
 			"etat_proc_collective" : "in_bonis",
@@ -491,7 +549,7 @@
 			"frais_financier" : 8.192090395480225,
 			"effectif_entreprise" : 47,
 			"debit_entreprise" : 105342.88,
-			"nbr_etablissements_connus" : 1
+			"ratio_apart" : 0.006882135999103973
 		}
 	},
 	{
@@ -501,7 +559,10 @@
 			"periode" : ISODate("2014-05-01T00:00:00Z")
 		},
 		"value" : {
+			"apart_heures_autorisees" : 1500,
+			"apart_heures_consommees_cumulees" : 0,
 			"siret" : "12345678901234",
+			"nbr_etablissements_connus" : 1,
 			"periode" : ISODate("2014-05-01T00:00:00Z"),
 			"effectif" : 46,
 			"etat_proc_collective" : "in_bonis",
@@ -694,7 +755,7 @@
 			"rendement_capitaux_propres" : 98.42,
 			"effectif_entreprise" : 46,
 			"debit_entreprise" : 147149.88,
-			"nbr_etablissements_connus" : 1
+			"ratio_apart" : null
 		}
 	},
 	{
@@ -704,7 +765,10 @@
 			"periode" : ISODate("2014-06-01T00:00:00Z")
 		},
 		"value" : {
+			"apart_heures_autorisees" : 1500,
+			"apart_heures_consommees_cumulees" : 0,
 			"siret" : "12345678901234",
+			"nbr_etablissements_connus" : 1,
 			"periode" : ISODate("2014-06-01T00:00:00Z"),
 			"effectif" : 45,
 			"etat_proc_collective" : "in_bonis",
@@ -897,7 +961,7 @@
 			"rendement_capitaux_propres" : 98.42,
 			"effectif_entreprise" : 45,
 			"debit_entreprise" : 122109.88,
-			"nbr_etablissements_connus" : 1
+			"ratio_apart" : null
 		}
 	},
 	{
@@ -907,7 +971,10 @@
 			"periode" : ISODate("2014-07-01T00:00:00Z")
 		},
 		"value" : {
+			"apart_heures_autorisees" : 1500,
+			"apart_heures_consommees_cumulees" : 0,
 			"siret" : "12345678901234",
+			"nbr_etablissements_connus" : 1,
 			"periode" : ISODate("2014-07-01T00:00:00Z"),
 			"effectif" : 44,
 			"etat_proc_collective" : "in_bonis",
@@ -1102,7 +1169,7 @@
 			"benefice_ou_perte" : 240,
 			"effectif_entreprise" : 44,
 			"debit_entreprise" : 163748.88,
-			"nbr_etablissements_connus" : 1
+			"ratio_apart" : null
 		}
 	},
 	{
