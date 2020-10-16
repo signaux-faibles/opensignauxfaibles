@@ -160,11 +160,11 @@ func reduceCrossComputations(directoryName string) ([]bson.M, error) {
 	}
 	for _, v := range jsFunctions[directoryName] {
 		var aggregationStep bson.M
-		err := json.Unmarshal([]byte(v), &aggregationStep) // transform json string into bson.M TODO
+		err := json.Unmarshal([]byte(v), &aggregationStep) // transform json string into bson.M
 		if err != nil {
 			return nil, err
 		}
-		result = append(result, aggregationStep) //TODO
+		result = append(result, aggregationStep)
 	}
 	return result, nil
 }
@@ -185,20 +185,25 @@ func reduceFinalAggregation(tempDatabase *mgo.Database, tempCollection, outDatab
 				"preserveNullAndEmptyArrays": false,
 			},
 		},
+		// TODO: exclure les données concernant les entreprises non inclues dans le filtre.
+		// On voudrait à nouveau exclure tous les établissements qui ont un effectif inconnu ou <10.
+		// cf https://github.com/signaux-faibles/opensignauxfaibles/issues/199.
+		//
+		// Ancienne implémentation:
 		// on ne garde que les établissements dont on connait l'effectif (non-null)
 		// Commenté parce que dans le cadre de la séparation des calculs par types de données,
 		// si on n'intègre pas l'effectif, cette étape filtrerait toutes les données.
 		// bson.M{
 		// 	"$match": bson.M{
 		// 		"value.effectif": bson.M{
-		// 			"$not": bson.M{"$type": 10},
+		// 			"$not": bson.M{"$type": 10}, // type 10 = null
 		// 		},
 		// 	},
 		// },
 		// on a plusieurs objets par clé => on génère un nouvel identifiant et on stocke la clé dans "info"
 		bson.M{
 			"$project": bson.M{
-				"_id": bson.D{
+				"_id": bson.D{ // on utilise bson.D pour conserver cet ordre, et permettre la fusion (mergePipeline)
 					{"batch", "$_id.batch"},
 					{"siret", "$value.siret"},
 					{"periode", "$_id.periode"},

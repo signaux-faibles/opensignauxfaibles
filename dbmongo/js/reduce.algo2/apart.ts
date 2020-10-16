@@ -39,7 +39,7 @@ export function apart(
     const periode_fin = apdemande[hash].periode.end
 
     // Des periodes arrondies aux débuts de périodes
-    // TODO meilleur arrondi
+    // TODO: arrondir au debut du mois le plus proche, au lieu de tronquer la date. (ex: cas du dernier jour d'un mois)
     const periode_deb_floor = new Date(
       Date.UTC(
         periode_deb.getUTCFullYear(),
