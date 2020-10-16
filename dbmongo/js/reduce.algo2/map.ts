@@ -79,22 +79,22 @@ export function map(this: EntréeMap): void {
         Object.keys(output_apart)
           .filter((periode) => periode in output_indexed) // limiter dans le scope temporel du batch.
           .forEach((periode) => {
-          const data: SortieMapEtablissements = {
-            [this._id]: {
-              ...output_apart[periode],
-              siret: this._id,
-            },
-          }
-          emit(
-            {
-              batch: actual_batch,
-              siren: this._id.substring(0, 9),
-              periode: new Date(Number(periode)),
-              type: "apart",
-            },
-            data
-          )
-        })
+            const data: SortieMapEtablissements = {
+              [this._id]: {
+                ...output_apart[periode],
+                siret: this._id,
+              },
+            }
+            emit(
+              {
+                batch: actual_batch,
+                siren: this._id.substring(0, 9),
+                periode: new Date(Number(periode)),
+                type: "apart",
+              },
+              data
+            )
+          })
       }
     }
 
