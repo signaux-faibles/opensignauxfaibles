@@ -61,7 +61,7 @@ func main() {
 		api.GET("/admin/batch", listBatchHandler)
 		api.GET("/admin/batch/next", nextBatchHandler)
 		api.POST("/admin/batch/process", processBatchHandler)
-		api.GET("/admin/batch/revert", revertBatchHandler)
+		// api.GET("/admin/batch/revert", revertBatchHandler) // clean
 		api.GET("/admin/regions", adminRegionHandler)
 		api.GET("/admin/files", adminFilesHandler)
 		api.POST("/admin/files", addFile)

@@ -170,8 +170,9 @@ func processBatchHandler(c *gin.Context) {
 //
 func purgeBatchHandler(c *gin.Context) {
 	var params struct {
-		FromBatchKey string `json:"fromBatch"`
-		Key          string `json:"key"`
+		FromBatchKey           string `json:"fromBatch"`
+		Key                    string `json:"key"`
+		IUnderstandWhatImDoing bool   `json:"iUnderstandWhatImDoing"`
 	}
 
 	err := c.ShouldBind(&params)
@@ -179,20 +180,30 @@ func purgeBatchHandler(c *gin.Context) {
 		c.JSON(400, "Requête malformée: "+err.Error())
 		return
 	}
+	if params.FromBatchKey == "" {
+		c.JSON(400, "paramètre `fromBatch` obligatoire")
+	}
+
+	var batch base.AdminBatch
+	err = engine.Load(&batch, params.FromBatchKey)
+	if err != nil {
+		c.JSON(400, "le batch "+params.FromBatchKey+" n'est pas accessible: "+err.Error())
+		return
+	}
 
 	if params.Key != "" {
-		var batch base.AdminBatch
-		err = engine.Load(&batch, params.FromBatchKey)
-		if err != nil {
-			c.JSON(400, "le batch "+params.FromBatchKey+" n'est pas accessible: "+err.Error())
-			return
-		}
 		err = engine.PurgeBatchOne(batch, params.Key)
 		if err != nil {
 			c.JSON(500, "erreur pendant le MapReduce: "+err.Error())
 		}
 	} else {
-		c.JSON(501, "Not implemented")
+		if !params.IUnderstandWhatImDoing {
+			c.JSON(400, "pour une purge de la base complète, IUnderstandWhatImDoing doit être `true`")
+		}
+		err = engine.PurgeBatch(batch)
+		if err != nil {
+			c.JSON(500, "(✖╭╮✖) le traitement n'a pas abouti: "+err.Error())
+		}
 	}
 
 	// if params.BatchKey == "" {
@@ -208,17 +219,17 @@ func purgeBatchHandler(c *gin.Context) {
 	}
 }
 
-func revertBatchHandler(c *gin.Context) {
-	err := engine.RevertBatch()
-	if err != nil {
-		c.JSON(500, err)
-	}
-	batches, _ := engine.GetBatches()
-	engine.MainMessageChannel <- engine.SocketMessage{
-		Batches: batches,
-	}
-	c.JSON(200, "ok")
-}
+// func revertBatchHandler(c *gin.Context) { // clean
+// 	err := engine.RevertBatch()
+// 	if err != nil {
+// 		c.JSON(500, err)
+// 	}
+// 	batches, _ := engine.GetBatches()
+// 	engine.MainMessageChannel <- engine.SocketMessage{
+// 		Batches: batches,
+// 	}
+// 	c.JSON(200, "ok")
+// }
 
 //
 func adminFilesHandler(c *gin.Context) {

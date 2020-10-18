@@ -1,9 +1,13 @@
 package engine
 
 import (
+	"fmt"
+
+	"github.com/davecgh/go-spew/spew"
 	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
+	"github.com/spf13/viper"
 )
 
 // PurgeBatchOne purge 1 batch pour 1 siren
@@ -38,9 +42,14 @@ func PurgeBatchOne(batch base.AdminBatch, key string) error {
 	return err
 }
 
-// PurgeBatch permet de supprimer un batch dans les objets de RawData
-func PurgeBatch(batchKey string) error {
-
+// PurgeBatch permet de supprimer tous les batch consécutifs au un batch donné dans RawData
+func PurgeBatch(batch base.AdminBatch) error {
+	chunks, err := ChunkCollection(viper.GetString("DB"), "RawData", viper.GetInt64("chunkByteSize"))
+	if err != nil {
+		return fmt.Errorf("chunkCollection a échoué: %s", err.Error())
+	}
+	queries := chunks.ToQueries(bson.M{}, "_id")
+	spew.Dump(queries)
 	// // TODO avant de changer clearTempCollections, vérifier que le nettoyage
 	// // fonctionne comme attendu
 	// var clearTempCollections = false

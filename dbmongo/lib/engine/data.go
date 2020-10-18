@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"sort"
 	"sync"
 	"time"
 
@@ -222,31 +223,45 @@ func ChunkCollection(db string, collection string, chunkSize int64) (Chunks, err
 
 // ToQueries translates chunks into bson queries to chunk collection by siren code
 func (chunks Chunks) ToQueries(query bson.M, field string) []bson.M {
-	if len(chunks.SplitKeys) != 0 {
-		var ret []bson.M
-		ret = append(ret, bson.M{
-			field: bson.M{
-				"$lt": chunks.SplitKeys[0].ID[0:9],
-			},
-		})
-		for i := 1; i < len(chunks.SplitKeys); i++ {
-			ret = append(ret, bson.M{
-				"$and": []bson.M{
-					bson.M{field: bson.M{"$gte": chunks.SplitKeys[i-1].ID[0:9]}},
-					bson.M{field: bson.M{"$lt": chunks.SplitKeys[i].ID[0:9]}},
-					query,
-				},
-			})
-		}
-		ret = append(ret, bson.M{
-			field: bson.M{
-				"$gte": chunks.SplitKeys[len(chunks.SplitKeys)-1].ID[0:9],
-			},
-		})
-		return ret
-	} else {
+	// la base n'a pas besoin de split
+	if len(chunks.SplitKeys) == 0 {
 		return []bson.M{query}
 	}
+
+	// creation des clés de partage sans doublons
+	var splitKeysMap = make(map[string]struct{})
+	for i := 0; i < len(chunks.SplitKeys); i++ {
+		splitKey := chunks.SplitKeys[i].ID[0:9]
+		splitKeysMap[splitKey] = struct{}{}
+	}
+	var splitKeys []string
+	for k := range splitKeysMap {
+		splitKeys = append(splitKeys, k)
+	}
+	sort.Strings(splitKeys)
+
+	// creation des requêtes à partir des clés de split
+	var ret []bson.M
+	ret = append(ret, bson.M{
+		field: bson.M{
+			"$lt": splitKeys[0],
+		},
+	})
+	for i := 1; i < len(splitKeys); i++ {
+		ret = append(ret, bson.M{
+			"$and": []bson.M{
+				bson.M{field: bson.M{"$gte": splitKeys[i-1]}},
+				bson.M{field: bson.M{"$lt": splitKeys[i]}},
+				query,
+			},
+		})
+	}
+	ret = append(ret, bson.M{
+		field: bson.M{
+			"$gte": splitKeys[len(splitKeys)-1],
+		},
+	})
+	return ret
 }
 
 func getItemChannelToGzip(filepath string, wait *sync.WaitGroup) chan interface{} {
