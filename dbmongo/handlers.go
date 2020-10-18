@@ -170,18 +170,36 @@ func processBatchHandler(c *gin.Context) {
 //
 func purgeBatchHandler(c *gin.Context) {
 	var params struct {
-		BatchKey string `json:"batch"`
+		FromBatchKey string `json:"fromBatch"`
+		Key          string `json:"key"`
 	}
+
 	err := c.ShouldBind(&params)
 	if err != nil {
 		c.JSON(400, "Requête malformée: "+err.Error())
 		return
 	}
-	if params.BatchKey == "" {
-		batch := engine.LastBatch()
-		params.BatchKey = batch.ID.Key
+
+	if params.Key != "" {
+		var batch base.AdminBatch
+		err = engine.Load(&batch, params.FromBatchKey)
+		if err != nil {
+			c.JSON(400, "le batch "+params.FromBatchKey+" n'est pas accessible: "+err.Error())
+			return
+		}
+		err = engine.PurgeBatchOne(batch, params.Key)
+		if err != nil {
+			c.JSON(500, "erreur pendant le MapReduce: "+err.Error())
+		}
+	} else {
+		c.JSON(501, "Not implemented")
 	}
-	err = engine.PurgeBatch(params.BatchKey)
+
+	// if params.BatchKey == "" {
+	// 	batch := engine.LastBatch()
+	// 	params.BatchKey = batch.ID.Key
+	// }
+	// err = engine.PurgeBatch(params.BatchKey)
 
 	if err != nil {
 		c.JSON(500, "Erreur dans la purge du batch: "+err.Error())
