@@ -205,28 +205,7 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 			reader.Comma = ','
 			reader.LazyQuotes = true
 
-			for {
-				row, err := reader.Read()
-				if err == io.EOF {
-					break
-				} else if err != nil {
-					tracker.Add(err)
-					event.Critical(tracker.Report("fatalError"))
-					break
-				}
-				validSiren := sfregexp.RegexpDict["siren"].MatchString(row[f["siren"]])
-				if !validSiren {
-					tracker.Add(errors.New("siren invalide : " + row[f["siren"]]))
-					continue // TODO: exécuter tracker.Next() un fois le TODO ci-dessous traité.
-				}
-				filtered, err := marshal.IsFiltered(row[f["siren"]], filter)
-				tracker.Add(err)
-				if !filtered {
-					sirene := readLineEtablissement(row, &tracker)
-					outputChannel <- sirene
-					tracker.Next()
-				}
-			}
+			parseSireneFile(reader, filter, &tracker, outputChannel)
 			file.Close()
 			event.Info(tracker.Report("abstract"))
 		}
@@ -237,7 +216,30 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 	return outputChannel, eventChannel
 }
 
-func readLineEtablissement(row []string, tracker *gournal.Tracker) Sirene {
+func parseSireneFile(reader *csv.Reader, filter map[string]bool, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+	for {
+		row, err := reader.Read()
+		if err == io.EOF {
+			break
+		} else if err != nil {
+			tracker.Add(err)
+		} else {
+			validSiren := sfregexp.RegexpDict["siren"].MatchString(row[f["siren"]])
+			if !validSiren {
+				tracker.Add(errors.New("siren invalide : " + row[f["siren"]]))
+			} else {
+				filtered, err := marshal.IsFiltered(row[f["siren"]], filter)
+				tracker.Add(err)
+				if !filtered {
+					outputChannel <- parseSireneLine(row, tracker)
+				}
+			}
+		}
+		tracker.Next()
+	}
+}
+
+func parseSireneLine(row []string, tracker *gournal.Tracker) Sirene {
 	sirene := Sirene{}
 	var err error
 	sirene.Siren = row[f["siren"]]

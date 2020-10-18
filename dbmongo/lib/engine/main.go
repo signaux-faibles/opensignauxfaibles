@@ -2,6 +2,7 @@ package engine
 
 import (
 	"fmt"
+	"sort"
 	"strconv"
 
 	"github.com/globalsign/mgo/bson"
@@ -12,8 +13,7 @@ import (
 // Db connecteur exportable
 var Db DB
 
-// MaxParsingErrors is the number of parsing errors that are needed to
-// interrupt a parser
+// MaxParsingErrors is the number of parsing errors to report per file.
 var MaxParsingErrors = 200
 
 func reportAbstract(tracker gournal.Tracker) interface{} {
@@ -25,37 +25,48 @@ func reportAbstract(tracker gournal.Tracker) interface{} {
 	var fatalErrors = []string{}
 	var filterErrors = []string{}
 	var errorErrors = []string{}
-	for ind := range tracker.Errors {
-		for _, e := range tracker.Errors[ind] {
-			switch c := e.(type) {
+
+	// En Golang, l'ordre des clés d'un map n'est pas garanti. (https://blog.golang.org/maps)
+	// => On ordonne les erreurs par numéro de cycle, pour permettre la reproductibilité.
+	// cf https://github.com/signaux-faibles/opensignauxfaibles/issues/181
+	var cycles []int
+	for cycle := range tracker.Errors {
+		cycles = append(cycles, cycle)
+	}
+	sort.Ints(cycles)
+
+	for _, cycle := range cycles {
+		for _, err := range tracker.Errors[cycle] {
+			switch c := err.(type) {
 			case base.CriticityError:
 				if c.Criticity() == "fatal" {
 					nFatal++
 					if len(fatalErrors) < MaxParsingErrors {
-						fatalErrors = append(fatalErrors, fmt.Sprintf("Cycle %d: %v", ind, e))
+						fatalErrors = append(fatalErrors, fmt.Sprintf("Cycle %d: %v", cycle, err))
 					}
 				}
 				if c.Criticity() == "error" {
 					nError++
 					if len(errorErrors) < MaxParsingErrors {
-						errorErrors = append(errorErrors, fmt.Sprintf("Cycle %d: %v", ind, e))
+						errorErrors = append(errorErrors, fmt.Sprintf("Cycle %d: %v", cycle, err))
 					}
 				}
 				if c.Criticity() == "filter" {
 					nFiltered++
 					if len(filterErrors) < MaxParsingErrors {
-						filterErrors = append(filterErrors, fmt.Sprintf("Cycle %d: %v", ind, e))
+						filterErrors = append(filterErrors, fmt.Sprintf("Cycle %d: %v", cycle, err))
 					}
 				}
 			default:
 				nFatal++
 				if len(fatalErrors) < MaxParsingErrors {
-					fatalErrors = append(fatalErrors, fmt.Sprintf("Cycle %d: %v", ind, e))
-					fmt.Printf("Cycle %d: %v", ind, e)
+					fatalErrors = append(fatalErrors, fmt.Sprintf("Cycle %d: %v", cycle, err))
+					fmt.Printf("Cycle %d: %v", cycle, err)
 				}
 			}
 		}
 	}
+
 	nValid := tracker.Count - nFatal - nError - nFiltered
 	report := fmt.Sprintf(
 		"%s: intégration terminée, %d lignes traitées, %d erreures fatales, %d rejets, %d lignes filtrées, %d lignes valides",
@@ -95,33 +106,6 @@ func reportFatalError(tracker gournal.Tracker) interface{} {
 	return bson.M{
 		"report": report,
 	}
-}
-
-// ShouldBreak returns true when there are to much errors regarding maxErrors
-func ShouldBreak(tracker gournal.Tracker, maxErrors int) bool {
-	l := 0
-	hasError := false
-	for _, errs := range tracker.Errors {
-		for _, e := range errs {
-			switch c := e.(type) {
-			case base.CriticityError:
-				if c.Criticity() == "fatal" {
-					hasError = true
-				}
-				if c.Criticity() == "error" {
-					hasError = true
-				}
-				if c.Criticity() == "filter" {
-				}
-			default:
-				hasError = true
-			}
-		}
-		if hasError {
-			l++
-		}
-	}
-	return l > maxErrors
 }
 
 // TrackerReports contient les fonctions de reporting du moteur

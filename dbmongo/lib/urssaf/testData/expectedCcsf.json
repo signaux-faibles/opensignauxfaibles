@@ -1,13 +1,45 @@
-[{
-  "date_traitement": "2018-01-30T00:00:00Z",
-  "stade": "ukohkb",
-  "action": "klay"
-},{
-  "date_traitement": "2019-04-20T00:00:00Z",
-  "stade": "xljgvd",
-  "action": "cvqv"
-},{
-  "date_traitement": "1999-04-01T00:00:00Z",
-  "stade": "ehxdqd",
-  "action": "cair"
-}]
+{
+  "tuples": [
+    {
+      "date_traitement": "2018-01-30T00:00:00Z",
+      "stade": "ukohkb",
+      "action": "klay"
+    },
+    {
+      "date_traitement": "2019-04-20T00:00:00Z",
+      "stade": "xljgvd",
+      "action": "cvqv"
+    },
+    {
+      "date_traitement": "1999-04-01T00:00:00Z",
+      "stade": "ehxdqd",
+      "action": "cair"
+    }
+  ],
+  "events": [
+    {
+      "date": "0001-01-01T00:00:00Z",
+      "event": "testData/ccsfTestData.csv: ouverture",
+      "priority": "info",
+      "code": "ccsfParser",
+      "report_type": ""
+    },
+    {
+      "date": "0001-01-01T00:00:00Z",
+      "event": {
+        "batchKey": "",
+        "error": 0,
+        "filtered": 0,
+        "headErrors": [],
+        "headFatal": [],
+        "headFilters": [],
+        "report": "testData/ccsfTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
+        "total": 3,
+        "valid": 3
+      },
+      "priority": "info",
+      "code": "ccsfParser",
+      "report_type": ""
+    }
+  ]
+}

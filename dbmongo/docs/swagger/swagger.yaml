@@ -451,12 +451,19 @@ paths:
                 - cotisation
       responses:
         "200":
-          description: Le batch et ses fichiers sont valides et prêts à être importés en base de données.
+          description: Le batch est valide et les rapports de parsing stockés dans la collection Journal.
           content:
             application/json:
               schema:
-                type: boolean
-              example: true
+                type: object
+                properties:
+                  reports:
+                    type: array
+                    items:
+                      type: string
+                    description: rapports de parsing de chaque fichier mentionné dans le batch
+                    example:
+                      - "/../lib/urssaf/testData/debitCorrompuTestData.csv: intégration terminée, 5 lignes traitées, 2 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides"
         "404":
           description: Le batch est inexistant ou un des parsers demandé n'est pas reconnu.
           content:

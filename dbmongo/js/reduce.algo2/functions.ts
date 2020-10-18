@@ -1,4 +1,3 @@
-import { altaresToHuman } from "../common/altaresToHuman"
 import { compareDebit } from "../common/compareDebit"
 import { dateAddMonth } from "../common/dateAddMonth"
 import { flatten } from "../common/flatten"
@@ -60,7 +59,6 @@ export const f = {
   entr_diane,
   lookAhead,
   compareDebit,
-  altaresToHuman,
   procolToHuman,
   dealWithProcols,
   raison_sociale,

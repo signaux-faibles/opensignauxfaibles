@@ -75,36 +75,8 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 			reader.Comma = ','
 			reader.LazyQuotes = true
 
-			_, _ = reader.Read()
+			parseSireneULFile(reader, filter, &tracker, outputChannel)
 
-			for {
-				row, err := reader.Read()
-				if err == io.EOF {
-					break
-				} else if err != nil {
-					tracker.Add(err)
-					event.Critical(tracker.Report("fatalError"))
-					break
-				}
-
-				validSiren := sfregexp.RegexpDict["siren"].MatchString(row[0])
-				if !validSiren {
-					tracker.Add(errors.New("siren invalide : " + row[0]))
-					continue // TODO: exécuter tracker.Next() un fois le TODO ci-dessous traité.
-				}
-
-				filtered, err := marshal.IsFiltered(row[0], filter)
-				if err != nil {
-					tracker.Add(err)
-				}
-				if !filtered {
-					sireneul := readLineEtablissement(row, &tracker)
-					outputChannel <- sireneul
-					tracker.Next() // TODO: garantir que le compteur de lignes
-					// correspond au nombre de lignes du fichier. => appeler même si le
-					// siren est filtré
-				}
-			}
 			file.Close()
 			event.Info(tracker.Report("abstract"))
 		}
@@ -115,7 +87,38 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 	return outputChannel, eventChannel
 }
 
-func readLineEtablissement(row []string, tracker *gournal.Tracker) SireneUL {
+func parseSireneULFile(reader *csv.Reader, filter map[string]bool, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+	_, err := reader.Read()
+	if err == io.EOF {
+		return
+	} else if err != nil {
+		tracker.Add(err)
+		return
+	}
+
+	for {
+		row, err := reader.Read()
+		if err == io.EOF {
+			break
+		} else if err != nil {
+			tracker.Add(err)
+		} else {
+			validSiren := sfregexp.RegexpDict["siren"].MatchString(row[0])
+			if !validSiren {
+				tracker.Add(errors.New("siren invalide : " + row[0]))
+			} else {
+				filtered, err := marshal.IsFiltered(row[0], filter)
+				tracker.Add(err)
+				if !filtered {
+					outputChannel <- parseSireneUlLine(row, tracker)
+				}
+			}
+		}
+		tracker.Next()
+	}
+}
+
+func parseSireneUlLine(row []string, tracker *gournal.Tracker) SireneUL {
 	sireneul := SireneUL{}
 	sireneul.Siren = row[0]
 	sireneul.RaisonSociale = row[23]

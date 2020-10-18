@@ -1,12 +1,11 @@
 import { f } from "./functions"
-import { AltaresToHumanRes } from "../common/altaresToHuman"
 import { ProcolToHumanRes } from "../common/procolToHuman"
 import { EntréeDefaillances, ParHash, ParPériode } from "../RawDataTypes"
 
 export type InputEvent = EntréeDefaillances
 
 type OutputEvent = {
-  etat: AltaresToHumanRes
+  etat: ProcolToHumanRes
   date_proc_col: Date
 }
 
@@ -18,7 +17,6 @@ export type SortieProcols = {
 
 export function dealWithProcols(
   data_source: ParHash<InputEvent>,
-  altar_or_procol: "altares" | "procol",
   output_indexed: ParPériode<Partial<SortieProcols>>
 ): void {
   "use strict"
@@ -26,11 +24,8 @@ export function dealWithProcols(
     .reduce((events, hash) => {
       const the_event = data_source[hash]
 
-      let etat: AltaresToHumanRes | ProcolToHumanRes = null
-      if (altar_or_procol === "altares")
-        etat = f.altaresToHuman(the_event.code_evenement)
-      else if (altar_or_procol === "procol")
-        etat = f.procolToHuman(the_event.action_procol, the_event.stade_procol)
+      let etat: ProcolToHumanRes = null
+      etat = f.procolToHuman(the_event.action_procol, the_event.stade_procol)
 
       if (etat !== null)
         events.push({

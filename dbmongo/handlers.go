@@ -276,11 +276,11 @@ func checkBatchHandler(c *gin.Context) {
 		c.JSON(404, err.Error())
 	}
 
-	err = engine.CheckBatch(batch, parsers)
+	reports, err := engine.CheckBatch(batch, parsers)
 	if err != nil {
 		c.JSON(417, "Erreurs détectées: "+err.Error())
 	} else {
-		c.JSON(200, true)
+		c.JSON(200, bson.M{"reports": reports})
 	}
 }
 
