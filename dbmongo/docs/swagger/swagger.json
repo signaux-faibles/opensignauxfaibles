@@ -406,33 +406,6 @@
                 ]
             }
         },
-        "/api/admin/batch/revert": {
-            "get": {
-                "description": "Ce traitement permet de supprime les données et la référence du dernier batch et de le réouvrir pour une nouvelle intégration.  \nCela est utile si des modifications sont à apporter au niveau du batch.",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "string"
-                                },
-                                "example": "ok"
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "summary": "supprimer le dernier batch",
-                "tags": [
-                    "Administration"
-                ]
-            }
-        },
         "/api/admin/events": {
             "get": {
                 "description": "Liste les 250 derniers évènements du journal",

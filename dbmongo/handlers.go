@@ -209,19 +209,6 @@ func purgeBatchHandler(c *gin.Context) {
 	}
 }
 
-// func revertBatchHandler(c *gin.Context) { // clean
-// 	err := engine.RevertBatch()
-// 	if err != nil {
-// 		c.JSON(500, err)
-// 	}
-// 	batches, _ := engine.GetBatches()
-// 	engine.MainMessageChannel <- engine.SocketMessage{
-// 		Batches: batches,
-// 	}
-// 	c.JSON(200, "ok")
-// }
-
-//
 func adminFilesHandler(c *gin.Context) {
 	basePath := viper.GetString("APP_DATA")
 	files, err := files.ListFiles(basePath)
