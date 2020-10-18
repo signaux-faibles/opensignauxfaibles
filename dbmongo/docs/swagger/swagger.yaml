@@ -43,6 +43,14 @@ components:
       properties:
         fromBatchKey:
           type: string
+    PurgeBatch:
+      properties:
+        fromBatch:
+          type: string
+        key:
+          type: string
+        IUnderstandWhatImDoing:
+          type: boolean
     Public:
       properties:
         batch:
@@ -519,6 +527,34 @@ paths:
               batch: "1805"
               features: "algo2"
               key: "012345678901234"
+      responses:
+        "200":
+          description: Le traitement s'est bien déroulé
+          content:
+            application/json:
+              schema:
+                type: string
+              example: ok
+      security:
+        - BearerAuth: []
+      summary: calculer les variables
+      tags:
+        - Traitements
+  /api/data/purge:
+    post:
+      description: |-
+        Supprime les données dans les objets de la collection RawData pour les batches suivant le numéro de batch donné.
+        Le numéro de batch donné doit être un batch existant. La valeur `key` doit comporter au minimum 9 caractères qui seront les seuls utilisés (siren).
+        Lorsque `key` n'est pas fourni, le traitement s'exécutera sur l'ensemble de la base, et dans ce cas la propriété IUnderstandWhatImDoing doit être fournie avec la valeur `true` sans quoi le traitement refusera de se lancer.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PurgeBatch"
+            example:
+              fromBatch: "1805"
+              key: "012345678901234"
+              IUnderstandWhatImDoing: true
       responses:
         "200":
           description: Le traitement s'est bien déroulé
