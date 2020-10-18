@@ -135,7 +135,6 @@ func listBatchHandler(c *gin.Context) {
 
 //
 func processBatchHandler(c *gin.Context) {
-
 	var query struct {
 		Batches []string `json:"batches"`
 		Parsers []string `json:"parsers"`
@@ -172,7 +171,7 @@ func purgeBatchHandler(c *gin.Context) {
 	var params struct {
 		FromBatchKey           string `json:"fromBatch"`
 		Key                    string `json:"key"`
-		IUnderstandWhatImDoing bool   `json:"iUnderstandWhatImDoing"`
+		IUnderstandWhatImDoing bool   `json:"IUnderstandWhatImDoing"`
 	}
 
 	err := c.ShouldBind(&params)
@@ -195,27 +194,18 @@ func purgeBatchHandler(c *gin.Context) {
 		err = engine.PurgeBatchOne(batch, params.Key)
 		if err != nil {
 			c.JSON(500, "erreur pendant le MapReduce: "+err.Error())
+			return
 		}
 	} else {
 		if !params.IUnderstandWhatImDoing {
 			c.JSON(400, "pour une purge de la base complète, IUnderstandWhatImDoing doit être `true`")
+			return
 		}
 		err = engine.PurgeBatch(batch)
 		if err != nil {
 			c.JSON(500, "(✖╭╮✖) le traitement n'a pas abouti: "+err.Error())
+			return
 		}
-	}
-
-	// if params.BatchKey == "" {
-	// 	batch := engine.LastBatch()
-	// 	params.BatchKey = batch.ID.Key
-	// }
-	// err = engine.PurgeBatch(params.BatchKey)
-
-	if err != nil {
-		c.JSON(500, "Erreur dans la purge du batch: "+err.Error())
-	} else {
-		c.JSON(200, "ok")
 	}
 }
 
