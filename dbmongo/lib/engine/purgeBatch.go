@@ -123,9 +123,8 @@ func PurgeBatch(batch base.AdminBatch) error {
 		if err != nil {
 			fmt.Println("quelque chose vient de se casser: " + err.Error())
 			return err
-		} else {
-			db.DB(tempDB).DropDatabase()
 		}
+		db.DB(tempDB).DropDatabase()
 	}
 
 	return nil
