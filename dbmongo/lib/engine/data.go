@@ -200,12 +200,14 @@ func GetBatch(batchKey string) (base.AdminBatch, error) {
 	return batch, err
 }
 
+type splitKey struct {
+	ID string `bson:"_id"`
+}
+
 // Chunks est le retour de la fonction mongodb SplitKeys
 type Chunks struct {
-	OK        int `bson:"ok"`
-	SplitKeys []struct {
-		ID string `bson:"_id"`
-	} `bson:"splitKeys"`
+	OK        int        `bson:"ok"`
+	SplitKeys []splitKey `bson:"splitKeys"`
 }
 
 // ChunkCollection exécute la fonction SplitKeys sur la collection passée en paramètres
