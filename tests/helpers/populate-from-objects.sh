@@ -14,7 +14,7 @@ function raw_data_documents {
 echo "
   db.Admin.insertOne({
     '_id' : {
-        'key' : '1901',
+        'key' : '1905',
         'type' : 'batch'
     },
     'param' : {
