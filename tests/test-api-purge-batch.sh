@@ -8,7 +8,6 @@ tests/helpers/mongodb-container.sh stop
 set -e # will stop the script if any command fails with a non-zero exit code
 
 # Setup
-FLAGS="$*" # the script will update the golden file if "--update" flag was provided as 1st argument
 TMP_DIR="tests/tmp-test-execution-files"
 OUTPUT_FILE="${TMP_DIR}/test-api-purge-batch.output.json"
 mkdir -p "${TMP_DIR}"
