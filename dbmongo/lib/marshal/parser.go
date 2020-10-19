@@ -20,7 +20,7 @@ type Tuple interface {
 }
 
 // ParseFilesFromBatch parse tous les fichiers spécifiés dans batch pour un parseur donné.
-func ParseFilesFromBatch(parser Parser, cache Cache, batch *base.AdminBatch) (chan Tuple, chan Event) {
+func (parser Parser) ParseFilesFromBatch(cache Cache, batch *base.AdminBatch) (chan Tuple, chan Event) {
 	return parser(cache, batch)
 }
 
