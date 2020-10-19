@@ -67,12 +67,35 @@ func InitDB() DB {
 	dbstatus := mongostatus.DB(dbDatabase)
 	db := mongodb.DB(dbDatabase)
 
+	// Création d'index sur la collection Admin, pour selection et tri de GetBatches()
+	db.C("Admin").EnsureIndex(mgo.Index{
+		Key: []string{"_id.type", "_id.key"},
+	})
+
+	// Création d'index sur la collection ImportedData, pour le découpage du map-reduce de Compact
+	db.C("ImportedData").EnsureIndex(mgo.Index{
+		Name: "value.key_1",         // trouvé sur la db de prod
+		Key:  []string{"value.key"}, // numéro SIRET ou SIREN
+	})
+
+	// Création d'index sur la collection Features, pour le chargement de données depuis R
+	db.C("Features_").EnsureIndex(mgo.Index{
+		Name: "_id.batch_1_value.random_order_-1__id.periode_1_value.effectif_1", // trouvé sur la db de prod
+		Key:  []string{"_id.batch", "-value.random_order", "_id.periode", "value.effectif"},
+	})
+
 	firstBatchID := viper.GetString("FIRST_BATCH")
 	if !base.IsBatchID(firstBatchID) {
 		panic("Paramètre FIRST_BATCH incorrect, vérifiez la configuration.")
 	}
 
 	db.C("RawData").Create(&mgo.CollectionInfo{})
+
+	// Création d'index sur la collection RawData, pour le filtrage du map-reduce de Public et Reduce
+	db.C("RawData").EnsureIndex(mgo.Index{
+		Name: "algo2",                        // trouvé sur la db de prod
+		Key:  []string{"-value.index.algo2"}, // booléen
+	})
 
 	// firstBatch, err := getBatch(db, firstBatchID)
 	var firstBatch base.AdminBatch
