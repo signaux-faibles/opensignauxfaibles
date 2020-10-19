@@ -67,26 +67,8 @@ func ParserDelai(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 				map[string]string{"path": path, "batchKey": batch.ID.Key},
 				engine.TrackerReports)
 
-			file, err := os.Open(viper.GetString("APP_DATA") + path)
-
-			if err != nil {
-				tracker.Add(err)
-				event.Critical(tracker.Report("fatalError"))
-				break
-			} else {
-				event.Info(path + ": ouverture")
-			}
-
-			comptes, err := marshal.GetCompteSiretMapping(cache, batch, marshal.OpenAndReadSiretMapping)
-			if err != nil {
-				tracker.Add(err)
-			} else {
-				reader := csv.NewReader(bufio.NewReader(file))
-				reader.Comma = ';'
-				parseDelaiFile(reader, &comptes, &tracker, outputChannel)
-			}
-
-			file.Close()
+			event.Info(path + ": ouverture")
+			ParseDelaiFile(viper.GetString("APP_DATA")+path, &cache, batch, &tracker, outputChannel)
 			event.Debug(tracker.Report("abstract"))
 		}
 		close(outputChannel)
@@ -94,6 +76,24 @@ func ParserDelai(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 	}()
 
 	return outputChannel, eventChannel
+}
+
+// ParseDelaiFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
+func ParseDelaiFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+	comptes, err := marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
+	if err != nil {
+		tracker.Add(err)
+		return
+	}
+	file, err := os.Open(filePath)
+	if err != nil {
+		tracker.Add(err)
+		return
+	}
+	defer file.Close()
+	reader := csv.NewReader(bufio.NewReader(file))
+	reader.Comma = ';'
+	parseDelaiFile(reader, &comptes, tracker, outputChannel)
 }
 
 func parseDelaiFile(reader *csv.Reader, comptes *marshal.Comptes, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {

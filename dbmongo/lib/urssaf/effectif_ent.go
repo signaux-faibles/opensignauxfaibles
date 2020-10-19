@@ -69,30 +69,34 @@ func ParserEffectifEnt(cache marshal.Cache, batch *base.AdminBatch) (chan marsha
 		Code:    "effectifEntParser",
 		Channel: eventChannel,
 	}
-	filter := marshal.GetSirenFilterFromCache(cache)
 	go func() {
 		for _, path := range batch.Files["effectif_ent"] {
-			file, err := os.Open(viper.GetString("APP_DATA") + path)
-			if err != nil {
-				event.Critical(path + ": erreur à l'ouverture du fichier, abandon: " + err.Error())
-			} else {
-				tracker := gournal.NewTracker(
-					map[string]string{"path": path, "batchKey": batch.ID.Key},
-					engine.TrackerReports)
+			tracker := gournal.NewTracker(
+				map[string]string{"path": path, "batchKey": batch.ID.Key},
+				engine.TrackerReports)
 
-				event.Info(path + ": ouverture")
-				reader := csv.NewReader(bufio.NewReader(file))
-				reader.Comma = ';'
-
-				parseEffectifEntFile(reader, filter, &tracker, outputChannel)
-				file.Close()
-				event.Debug(tracker.Report("abstract"))
-			}
+			event.Info(path + ": ouverture")
+			ParseEffectifEntFile(viper.GetString("APP_DATA")+path, &cache, batch, &tracker, outputChannel)
+			event.Debug(tracker.Report("abstract"))
 		}
 		close(outputChannel)
 		close(eventChannel)
 	}()
 	return outputChannel, eventChannel
+}
+
+// ParseEffectifEntFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
+func ParseEffectifEntFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+	filter := marshal.GetSirenFilterFromCache(*cache)
+	file, err := os.Open(filePath)
+	if err != nil {
+		tracker.Add(err)
+		return
+	}
+	defer file.Close()
+	reader := csv.NewReader(bufio.NewReader(file))
+	reader.Comma = ';'
+	parseEffectifEntFile(reader, filter, tracker, outputChannel)
 }
 
 func parseEffectifEntFile(reader *csv.Reader, filter map[string]bool, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {

@@ -51,8 +51,6 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 		Channel: eventChannel,
 	}
 
-	filter := marshal.GetSirenFilterFromCache(cache)
-
 	go func() {
 		defer close(outputChannel)
 		defer close(eventChannel)
@@ -65,25 +63,27 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 			path := viper.GetString("APP_DATA") + path
 
 			event.Info(path + ": Opening file")
-			xlsxFile, err := xlsx.OpenFile(path)
-			if err != nil {
-				event.Critical(path + ": erreur à l'ouverture du fichier: " + err.Error())
-				continue
-			}
-
-			if len(xlsxFile.Sheets) != 1 {
-				tracker.Add(errors.Errorf("the source has %d sheets, should have only 1", len(xlsxFile.Sheets)))
-				event.Critical(tracker.Report("abstract"))
-				continue
-			}
-
-			parseEllisphereSheet(xlsxFile.Sheets[0], filter, &tracker, outputChannel)
-
+			ParseFile(path, &cache, batch, &tracker, outputChannel)
 			event.Info(tracker.Report("abstract"))
 		}
 	}()
 
 	return outputChannel, eventChannel
+}
+
+// ParseFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
+func ParseFile(path string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+	filter := marshal.GetSirenFilterFromCache(*cache)
+	xlsxFile, err := xlsx.OpenFile(path)
+	if err != nil {
+		tracker.Add(err)
+		return
+	}
+	if len(xlsxFile.Sheets) != 1 {
+		tracker.Add(errors.Errorf("the source has %d sheets, should have only 1", len(xlsxFile.Sheets)))
+		return
+	}
+	parseEllisphereSheet(xlsxFile.Sheets[0], filter, tracker, outputChannel)
 }
 
 func parseEllisphereSheet(sheet *xlsx.Sheet, filter map[string]bool, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {

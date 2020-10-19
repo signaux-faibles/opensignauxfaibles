@@ -58,27 +58,14 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 		Channel: eventChannel,
 	}
 
-	filter := marshal.GetSirenFilterFromCache(cache)
-
 	go func() {
 		for _, path := range batch.Files["bdf"] {
 			tracker := gournal.NewTracker(
 				map[string]string{"path": path, "batchKey": batch.ID.Key},
 				engine.TrackerReports)
 
-			file, err := os.Open(viper.GetString("APP_DATA") + path)
-			if err != nil {
-				tracker.Add(err)
-				event.Critical(tracker.Report("fatalError"))
-				continue
-			}
-
-			reader := csv.NewReader(bufio.NewReader(file))
-			reader.Comma = ';'
-			reader.LazyQuotes = true
 			event.Info(path + ": ouverture " + path)
-
-			parseBdfFile(reader, filter, &tracker, outputChannel)
+			ParseFile(viper.GetString("APP_DATA")+path, &cache, batch, &tracker, outputChannel)
 			event.Info(tracker.Report("abstract"))
 		}
 
@@ -87,6 +74,21 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 
 	}()
 	return outputChannel, eventChannel
+}
+
+// ParseFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
+func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+	filter := marshal.GetSirenFilterFromCache(*cache)
+	file, err := os.Open(filePath)
+	if err != nil {
+		tracker.Add(err)
+		return
+	}
+	defer file.Close()
+	reader := csv.NewReader(bufio.NewReader(file))
+	reader.Comma = ';'
+	reader.LazyQuotes = true
+	parseBdfFile(reader, filter, tracker, outputChannel)
 }
 
 var field = map[string]int{

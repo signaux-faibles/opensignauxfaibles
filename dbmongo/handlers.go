@@ -322,6 +322,24 @@ var registeredParsers = map[string]marshal.Parser{
 	"ellisphere":   ellisphere.Parser,
 }
 
+var registeredFileParsers = map[string]marshal.ParseFile{
+	"debit":        urssaf.ParseDebitFile,
+	"ccsf":         urssaf.ParseCcsfFile,
+	"cotisation":   urssaf.ParseCotisationFile,
+	"admin_urssaf": urssaf.ParseCompteFile,
+	"delai":        urssaf.ParseDelaiFile,
+	"effectif":     urssaf.ParseEffectifFile,
+	"effectif_ent": urssaf.ParseEffectifEntFile,
+	"procol":       urssaf.ParseProcolFile,
+	"apconso":      apconso.ParseFile,
+	"apdemande":    apdemande.ParseFile,
+	"bdf":          bdf.ParseFile,
+	"sirene":       sirene.ParseFile,
+	"sirene_ul":    sireneul.ParseFile,
+	"diane":        diane.ParseFile,
+	"ellisphere":   ellisphere.ParseFile,
+}
+
 // Vérifie et charge les parsers
 func resolveParsers(parserNames []string) ([]marshal.Parser, error) {
 	var parsers []marshal.Parser

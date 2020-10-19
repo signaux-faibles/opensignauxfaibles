@@ -57,30 +57,34 @@ func ParserCCSF(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple
 				map[string]string{"path": path, "batchKey": batch.ID.Key},
 				engine.TrackerReports)
 
-			file, err := os.Open(viper.GetString("APP_DATA") + path)
-			if err != nil {
-				tracker.Add(err)
-				event.Critical(tracker.Report("fatalError"))
-				continue
-			}
-
 			event.Info(path + ": ouverture")
-			comptes, err := marshal.GetCompteSiretMapping(cache, batch, marshal.OpenAndReadSiretMapping)
-			if err != nil {
-				tracker.Add(err)
-			} else {
-				reader := csv.NewReader(bufio.NewReader(file))
-				reader.Comma = ';'
-				parseCcsfFile(reader, &comptes, &tracker, outputChannel)
-			}
+			ParseCcsfFile(viper.GetString("APP_DATA")+path, &cache, batch, &tracker, outputChannel)
 			event.Info(tracker.Report("abstract"))
-
-			file.Close()
 		}
 		close(outputChannel)
 		close(eventChannel)
 	}()
 	return outputChannel, eventChannel
+}
+
+// ParseCcsfFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
+func ParseCcsfFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+	comptes, err := marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
+	if err != nil {
+		tracker.Add(err)
+		return
+	}
+
+	file, err := os.Open(filePath)
+	if err != nil {
+		tracker.Add(err)
+		return
+	}
+	defer file.Close()
+
+	reader := csv.NewReader(bufio.NewReader(file))
+	reader.Comma = ';'
+	parseCcsfFile(reader, &comptes, tracker, outputChannel)
 }
 
 func parseCcsfFile(reader *csv.Reader, comptes *marshal.Comptes, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {

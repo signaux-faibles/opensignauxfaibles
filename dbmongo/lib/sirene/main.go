@@ -2,6 +2,7 @@ package sirene
 
 import (
 	//"bufio"
+
 	"encoding/csv"
 	"errors"
 	"io"
@@ -186,27 +187,14 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 		Channel: eventChannel,
 	}
 
-	filter := marshal.GetSirenFilterFromCache(cache)
-
 	go func() {
 		for _, path := range batch.Files["sirene"] {
 			tracker := gournal.NewTracker(
 				map[string]string{"path": path, "batchKey": batch.ID.Key},
 				engine.TrackerReports)
 
-			file, err := os.Open(viper.GetString("APP_DATA") + path)
-
-			if err != nil {
-				tracker.Add(err)
-				tracker.Report("fatalError")
-			}
 			event.Info(path + ": ouverture")
-			reader := csv.NewReader(file)
-			reader.Comma = ','
-			reader.LazyQuotes = true
-
-			parseSireneFile(reader, filter, &tracker, outputChannel)
-			file.Close()
+			ParseFile(viper.GetString("APP_DATA")+path, &cache, batch, &tracker, outputChannel)
 			event.Info(tracker.Report("abstract"))
 		}
 		close(outputChannel)
@@ -214,6 +202,21 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 	}()
 
 	return outputChannel, eventChannel
+}
+
+// ParseFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
+func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+	filter := marshal.GetSirenFilterFromCache(*cache)
+	file, err := os.Open(filePath)
+	if err != nil {
+		tracker.Add(err)
+		return
+	}
+	defer file.Close()
+	reader := csv.NewReader(file)
+	reader.Comma = ','
+	reader.LazyQuotes = true
+	parseSireneFile(reader, filter, tracker, outputChannel)
 }
 
 func parseSireneFile(reader *csv.Reader, filter map[string]bool, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {

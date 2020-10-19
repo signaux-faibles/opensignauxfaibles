@@ -6,11 +6,17 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/signaux-faibles/gournal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 )
 
 // Parser fonction de traitement de données en entrée
 type Parser func(Cache, *base.AdminBatch) (chan Tuple, chan Event)
+
+type filePath = string
+
+// ParseFile fonction de traitement de données en entrée
+type ParseFile func(filePath, *Cache, *base.AdminBatch, *gournal.Tracker, chan Tuple)
 
 // Tuple unité de donnée à insérer dans un type
 type Tuple interface {

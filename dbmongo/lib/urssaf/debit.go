@@ -70,32 +70,35 @@ func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 				map[string]string{"path": path, "batchKey": batch.ID.Key},
 				engine.TrackerReports)
 
-			file, err := os.Open(viper.GetString("APP_DATA") + path)
-			if err != nil {
-				tracker.Add(err)
-				event.Critical(tracker.Report("fatalError"))
-			} else {
-				event.Info(path + ": ouverture")
-			}
-
-			comptes, err := marshal.GetCompteSiretMapping(cache, batch, marshal.OpenAndReadSiretMapping)
-			if err != nil {
-				tracker.Add(err)
-				return
-			}
-
-			reader := csv.NewReader(bufio.NewReader(file))
-			reader.Comma = ';'
-
-			parseDebitFile(reader, &comptes, &tracker, outputChannel)
+			event.Info(path + ": ouverture")
+			ParseDebitFile(viper.GetString("APP_DATA")+path, &cache, batch, &tracker, outputChannel)
 			event.Debug(tracker.Report("abstract"))
-			file.Close()
 		}
 		close(outputChannel)
 		close(eventChannel)
 	}()
 
 	return outputChannel, eventChannel
+}
+
+// ParseDebitFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
+func ParseDebitFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+	comptes, err := marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
+	if err != nil {
+		tracker.Add(err)
+		return
+	}
+
+	file, err := os.Open(filePath)
+	if err != nil {
+		tracker.Add(err)
+		return
+	}
+	defer file.Close()
+
+	reader := csv.NewReader(bufio.NewReader(file))
+	reader.Comma = ';'
+	parseDebitFile(reader, &comptes, tracker, outputChannel)
 }
 
 func parseDebitFile(reader *csv.Reader, comptes *marshal.Comptes, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {

@@ -59,25 +59,28 @@ func ParserProcol(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tup
 				map[string]string{"path": path, "batchKey": batch.ID.Key},
 				engine.TrackerReports)
 
-			file, err := os.Open(viper.GetString("APP_DATA") + path)
-			if err != nil {
-				tracker.Add(err)
-				event.Critical(tracker.Report("fatalError"))
-			} else {
-				event.Info(path + ": ouverture")
-				reader := csv.NewReader(bufio.NewReader(file))
-				reader.Comma = ';'
-				reader.LazyQuotes = true
-
-				parseProcolFile(reader, &tracker, outputChannel)
-				event.Info(tracker.Report("abstract"))
-				file.Close()
-			}
+			event.Info(path + ": ouverture")
+			ParseProcolFile(viper.GetString("APP_DATA")+path, &cache, batch, &tracker, outputChannel)
+			event.Info(tracker.Report("abstract"))
 		}
 		close(outputChannel)
 		close(eventChannel)
 	}()
 	return outputChannel, eventChannel
+}
+
+// ParseProcolFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
+func ParseProcolFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+	file, err := os.Open(filePath)
+	if err != nil {
+		tracker.Add(err)
+		return
+	}
+	defer file.Close()
+	reader := csv.NewReader(bufio.NewReader(file))
+	reader.Comma = ';'
+	reader.LazyQuotes = true
+	parseProcolFile(reader, tracker, outputChannel)
 }
 
 func parseProcolFile(reader *csv.Reader, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
