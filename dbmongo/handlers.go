@@ -181,6 +181,7 @@ func purgeBatchHandler(c *gin.Context) {
 	}
 	if params.FromBatchKey == "" {
 		c.JSON(400, "paramètre `fromBatch` obligatoire")
+		return
 	}
 
 	var batch base.AdminBatch

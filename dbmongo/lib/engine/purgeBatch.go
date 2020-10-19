@@ -57,20 +57,14 @@ func queriesToChan(queries []bson.M) chan bson.M {
 }
 
 // MRChunks exécute un job MapReduce à partir d'un channel fournissant des queries
-func MRChunks(queryChan chan bson.M, MRBaseJob mgo.MapReduce, tempDBprefix string, id *int, tempDBs *[]string, idMutex *sync.Mutex, wg *sync.WaitGroup) {
+func MRChunks(queryChan chan bson.M, MRBaseJob mgo.MapReduce, tempDBprefix string, id int, wg *sync.WaitGroup) {
 	for query := range queryChan {
-		idMutex.Lock()
-		i := *id
-		*id++
-		tempDB := tempDBprefix + strconv.Itoa(i)
-		*tempDBs = append(*tempDBs, tempDB)
-		idMutex.Unlock()
 		job := MRBaseJob
-		job.Out = bson.M{"replace": "TemporaryCollection", "db": tempDB}
-		log.Println(tempDBprefix+strconv.Itoa(i)+": ", query)
+		job.Out = bson.M{"merge": "TemporaryCollection", "db": tempDBprefix + strconv.Itoa(id)}
+		log.Println(tempDBprefix+strconv.Itoa(id)+": ", query)
 		_, err := Db.DB.C("RawData").Find(query).MapReduce(&job, nil)
 		if err != nil {
-			fmt.Println(tempDBprefix+strconv.Itoa(i)+": error ", err.Error())
+			fmt.Println(tempDBprefix+strconv.Itoa(id)+": error ", err.Error())
 		}
 	}
 	wg.Done()
@@ -101,12 +95,10 @@ func PurgeBatch(batch base.AdminBatch) error {
 	}
 
 	wg := sync.WaitGroup{}
-	var id = 0
-	var idMutex sync.Mutex
-	var tempDBs []string
-	for i := 0; i < viper.GetInt("MRthreads"); i++ {
+
+	for id := 0; id < viper.GetInt("MRthreads"); id++ {
 		wg.Add(1)
-		go MRChunks(queryChan, baseJob, "purgeBatch", &id, &tempDBs, &idMutex, &wg)
+		go MRChunks(queryChan, baseJob, "purgeBatch", id, &wg)
 	}
 
 	wg.Wait()
@@ -114,7 +106,8 @@ func PurgeBatch(batch base.AdminBatch) error {
 	db, _ := mgo.Dial(viper.GetString("DB_DIAL"))
 	db.SetSocketTimeout(720000 * time.Second)
 
-	for _, tempDB := range tempDBs {
+	for id := 0; id < viper.GetInt("MRthreads"); id++ {
+		tempDB := "purgeBatch" + strconv.Itoa(id)
 		pipeline := []bson.M{{
 			"$merge": bson.M{"into": bson.M{"coll": "RawData", "db": viper.GetString("DB")}}}}
 		pipe := db.DB(tempDB).C("TemporaryCollection").Pipe(pipeline)
