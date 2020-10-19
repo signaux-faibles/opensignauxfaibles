@@ -75,7 +75,7 @@
                     "fromBatch": {
                         "type": "string"
                     },
-                    "key": {
+                    "debugForKey": {
                         "type": "string"
                     },
                     "IUnderstandWhatImDoing": {
@@ -812,7 +812,7 @@
         },
         "/api/data/purge": {
             "post": {
-                "description": "Supprime les données dans les objets de la collection RawData pour les batches suivant le numéro de batch donné.\nLe numéro de batch donné doit être un batch existant. La valeur `key` doit comporter au minimum 9 caractères qui seront les seuls utilisés (siren).\nLorsque `key` n'est pas fourni, le traitement s'exécutera sur l'ensemble de la base, et dans ce cas la propriété IUnderstandWhatImDoing doit être fournie avec la valeur `true` sans quoi le traitement refusera de se lancer.",
+                "description": "/!\\ ce traitement est destructif et irréversible /!\\\nSupprime les données dans les objets de la collection RawData pour les batches suivant le numéro de batch donné.\nLa propriété `debugForKey` permet de traiter une entreprise en fournissant son siren, le résultat n'impacte pas la collection RawData mais est déversé dans purgeBatch_debug à des fins de vérifications.\nLorsque `key` n'est pas fourni, le traitement s'exécute sur l'ensemble de la base, et dans ce cas la propriété IUnderstandWhatImDoing doit être fournie à la valeur `true` sans quoi le traitement refusera de se lancer.\n/!\\ ce traitement est destructif et irréversible /!\\",
                 "requestBody": {
                     "content": {
                         "application/json": {

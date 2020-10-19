@@ -47,7 +47,7 @@ components:
       properties:
         fromBatch:
           type: string
-        key:
+        debugForKey:
           type: string
         IUnderstandWhatImDoing:
           type: boolean
@@ -543,9 +543,11 @@ paths:
   /api/data/purge:
     post:
       description: |-
+        /!\ ce traitement est destructif et irréversible /!\
         Supprime les données dans les objets de la collection RawData pour les batches suivant le numéro de batch donné.
-        Le numéro de batch donné doit être un batch existant. La valeur `key` doit comporter au minimum 9 caractères qui seront les seuls utilisés (siren).
-        Lorsque `key` n'est pas fourni, le traitement s'exécutera sur l'ensemble de la base, et dans ce cas la propriété IUnderstandWhatImDoing doit être fournie avec la valeur `true` sans quoi le traitement refusera de se lancer.
+        La propriété `debugForKey` permet de traiter une entreprise en fournissant son siren, le résultat n'impacte pas la collection RawData mais est déversé dans purgeBatch_debug à des fins de vérifications.
+        Lorsque `key` n'est pas fourni, le traitement s'exécute sur l'ensemble de la base, et dans ce cas la propriété IUnderstandWhatImDoing doit être fournie à la valeur `true` sans quoi le traitement refusera de se lancer.
+        /!\ ce traitement est destructif et irréversible /!\
       requestBody:
         content:
           application/json:

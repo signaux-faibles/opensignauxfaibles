@@ -170,7 +170,7 @@ func processBatchHandler(c *gin.Context) {
 func purgeBatchHandler(c *gin.Context) {
 	var params struct {
 		FromBatchKey           string `json:"fromBatch"`
-		Key                    string `json:"key"`
+		Key                    string `json:"debugForKey"`
 		IUnderstandWhatImDoing bool   `json:"IUnderstandWhatImDoing"`
 	}
 
