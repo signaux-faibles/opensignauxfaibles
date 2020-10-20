@@ -310,36 +310,36 @@ func purgeNotCompactedHandler(c *gin.Context) {
 	c.JSON(200, result)
 }
 
-// liste des parsers disponibles
-var registeredFileParsers = map[string]marshal.ParseFile{
-	"debit":        urssaf.ParseDebitFile,
-	"ccsf":         urssaf.ParseCcsfFile,
-	"cotisation":   urssaf.ParseCotisationFile,
-	"admin_urssaf": urssaf.ParseCompteFile,
-	"delai":        urssaf.ParseDelaiFile,
-	"effectif":     urssaf.ParseEffectifFile,
-	"effectif_ent": urssaf.ParseEffectifEntFile,
-	"procol":       urssaf.ParseProcolFile,
-	"apconso":      apconso.ParseFile,
-	"apdemande":    apdemande.ParseFile,
-	"bdf":          bdf.ParseFile,
-	"sirene":       sirene.ParseFile,
-	"sirene_ul":    sireneul.ParseFile,
-	"diane":        diane.ParseFile,
-	"ellisphere":   ellisphere.ParseFile,
+// RegisteredParsers liste des parsers disponibles
+var registeredParsers = map[string]marshal.Parser{
+	"debit":        urssaf.ParserDebit,
+	"ccsf":         urssaf.ParserCCSF,
+	"cotisation":   urssaf.ParserCotisation,
+	"admin_urssaf": urssaf.ParserCompte,
+	"delai":        urssaf.ParserDelai,
+	"effectif":     urssaf.ParserEffectif,
+	"effectif_ent": urssaf.ParserEffectifEnt,
+	"procol":       urssaf.ParserProcol,
+	"apconso":      apconso.Parser,
+	"apdemande":    apdemande.Parser,
+	"bdf":          bdf.Parser,
+	"sirene":       sirene.Parser,
+	"sirene_ul":    sireneul.Parser,
+	"diane":        diane.Parser,
+	"ellisphere":   ellisphere.Parser,
 }
 
 // Vérifie et charge les parsers
 func resolveParsers(parserNames []string) ([]marshal.Parser, error) {
 	var parsers []marshal.Parser
 	if parserNames == nil {
-		for fileType, fileParser := range registeredFileParsers {
-			parsers = append(parsers, marshal.Parser{FileType: fileType, FileParser: fileParser})
+		for _, fileParser := range registeredParsers {
+			parsers = append(parsers, fileParser)
 		}
 	} else {
 		for _, fileType := range parserNames {
-			if fileParser, ok := registeredFileParsers[fileType]; ok {
-				parsers = append(parsers, marshal.Parser{FileType: fileType, FileParser: fileParser})
+			if fileParser, ok := registeredParsers[fileType]; ok {
+				parsers = append(parsers, fileParser)
 			} else {
 				return parsers, errors.New(fileType + " n'est pas un parser reconnu.")
 			}
