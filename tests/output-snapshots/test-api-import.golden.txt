@@ -899,6 +899,36 @@
 		"_id" : ObjectId("________ObjectId________"),
 		"value" : {
 			"scope" : "etablissement",
+			"key" : "49788833327462",
+			"batch" : {
+				"1910" : {
+					"sirene" : {
+						"______________Hash______________" : {
+							"siren" : "497888333",
+							"nic" : "27462",
+							"siege" : true,
+							"numero_voie" : "55",
+							"type_voie" : "HAMEAU",
+							"voie" : "demnbujm",
+							"commune" : "hzvnctxvbgkms",
+							"code_commune" : "63024",
+							"code_postal" : "83699",
+							"departement" : "83",
+							"code_activite" : "28.4x",
+							"nomen_activite" : "NAFRev1",
+							"date_creation" : ISODate("2007-04-19T22:00:00Z"),
+							"longitude" : 5.52488,
+							"latitude" : 65.448048
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "etablissement",
 			"key" : "50930194570891",
 			"batch" : {
 				"1910" : {
@@ -1775,6 +1805,63 @@
 		"_id" : ObjectId("________ObjectId________"),
 		"value" : {
 			"scope" : "etablissement",
+			"key" : "95652057344947",
+			"batch" : {
+				"1910" : {
+					"sirene" : {
+						"______________Hash______________" : {
+							"siren" : "956520573",
+							"nic" : "44947",
+							"type_voie" : "CHEMIN",
+							"voie" : "dguylittc",
+							"commune" : "rjkxla",
+							"code_commune" : "73187",
+							"code_postal" : "64276",
+							"departement" : "64",
+							"code_activite" : "94.7h",
+							"nomen_activite" : "NAFRev1",
+							"date_creation" : ISODate("2007-04-19T22:00:00Z"),
+							"longitude" : 6.1256,
+							"latitude" : 14.106745
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "etablissement",
+			"key" : "96979276956291",
+			"batch" : {
+				"1910" : {
+					"sirene" : {
+						"______________Hash______________" : {
+							"siren" : "969792769",
+							"nic" : "56291",
+							"siege" : true,
+							"numero_voie" : "192",
+							"type_voie" : "RUE",
+							"voie" : "oyrdvmle",
+							"commune" : "qxszfpieiukzzxr",
+							"code_commune" : "94133",
+							"code_postal" : "08079",
+							"departement" : "08",
+							"code_activite" : "00.9u",
+							"nomen_activite" : "NAFRev1",
+							"longitude" : 6.140122,
+							"latitude" : 58.817057
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "etablissement",
 			"key" : "99508628226971",
 			"batch" : {
 				"1910" : {
@@ -1878,6 +1965,18 @@
 			"batchKey" : "1910"
 		},
 		"code" : "parserEllisphere"
+	},
+	{
+		"event" : {
+			"headFilters" : [ ],
+			"headErrors" : [ ],
+			"headFatal" : [
+				"Cycle 1: parsing time \"\" as \"2006-01-02\": cannot parse \"\" as \"2006\""
+			],
+			"report" : "/../lib/sirene/testData/sireneTestData.csv: intégration terminée, 3 lignes traitées, 1 erreures fatales, 0 rejets, 0 lignes filtrées, 2 lignes valides",
+			"batchKey" : "1910"
+		},
+		"code" : "sireneParser"
 	}
 ]
 // Critical errors from db.Journal:
