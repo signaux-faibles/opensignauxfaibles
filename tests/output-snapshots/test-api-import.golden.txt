@@ -481,6 +481,46 @@
 		"_id" : ObjectId("________ObjectId________"),
 		"value" : {
 			"scope" : "entreprise",
+			"key" : "112233445",
+			"batch" : {
+				"1910" : {
+					"sirene_ul" : {
+						"______________Hash______________" : {
+							"siren" : "112233445",
+							"raison_sociale" : "companyname",
+							"statut_juridique" : "5422",
+							"date_creation" : ISODate("1967-01-01T00:00:00Z")
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "entreprise",
+			"key" : "138426539",
+			"batch" : {
+				"1910" : {
+					"sirene_ul" : {
+						"______________Hash______________" : {
+							"siren" : "138426539",
+							"raison_sociale" : "",
+							"prenom1_unite_legale" : "cuhgjdp",
+							"nom_unite_legale" : "jjqcmkg",
+							"statut_juridique" : "5465",
+							"date_creation" : ISODate("1999-11-11T00:00:00Z")
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "entreprise",
 			"key" : "151515151",
 			"batch" : {
 				"1910" : {
@@ -654,6 +694,27 @@
 							"heure_consommee" : 48512,
 							"montant_consommee" : 689663.3,
 							"effectif_consomme" : 319
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "entreprise",
+			"key" : "238307776",
+			"batch" : {
+				"1910" : {
+					"sirene_ul" : {
+						"______________Hash______________" : {
+							"siren" : "238307776",
+							"raison_sociale" : "",
+							"prenom1_unite_legale" : "wwdsrst",
+							"nom_unite_legale" : "nduxdzbou",
+							"statut_juridique" : "4263",
+							"date_creation" : ISODate("1964-01-01T00:00:00Z")
 						}
 					}
 				}
@@ -1407,6 +1468,27 @@
 		"_id" : ObjectId("________ObjectId________"),
 		"value" : {
 			"scope" : "entreprise",
+			"key" : "789211558",
+			"batch" : {
+				"1910" : {
+					"sirene_ul" : {
+						"______________Hash______________" : {
+							"siren" : "789211558",
+							"raison_sociale" : "",
+							"prenom1_unite_legale" : "ajfwprw-qmxobv",
+							"nom_unite_legale" : "fvxmjl",
+							"statut_juridique" : "5258",
+							"date_creation" : ISODate("1999-10-25T00:00:00Z")
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "entreprise",
 			"key" : "839244082",
 			"batch" : {
 				"1910" : {
@@ -1977,6 +2059,16 @@
 			"batchKey" : "1910"
 		},
 		"code" : "sireneParser"
+	},
+	{
+		"event" : {
+			"headFilters" : [ ],
+			"headErrors" : [ ],
+			"headFatal" : [ ],
+			"report" : "/../lib/sirene_ul/testData/sireneULTestData.csv: intégration terminée, 4 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 4 lignes valides",
+			"batchKey" : "1910"
+		},
+		"code" : "sireneULParser"
 	}
 ]
 // Critical errors from db.Journal:
