@@ -1481,7 +1481,7 @@
     {
       "date": "0001-01-01T00:00:00Z",
       "event": "testData/dianeTestData.txt: ouverture",
-      "priority": "debug",
+      "priority": "info",
       "code": "dianeParser",
       "report_type": ""
     },
@@ -1498,7 +1498,7 @@
         "total": 18,
         "valid": 18
       },
-      "priority": "debug",
+      "priority": "info",
       "code": "dianeParser",
       "report_type": ""
     }

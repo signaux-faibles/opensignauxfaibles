@@ -378,7 +378,7 @@ func parseDianeFile(batch *base.AdminBatch, path string, tracker *gournal.Tracke
 	go func() {
 		scanner := bufio.NewScanner(stderr)
 		for scanner.Scan() {
-			// event.Debug("[convert_diane.sh stderr] " + scanner.Text())
+			tracker.Add(errors.New("[convert_diane.sh stderr] " + scanner.Text()))
 		}
 	}()
 
@@ -386,7 +386,7 @@ func parseDianeFile(batch *base.AdminBatch, path string, tracker *gournal.Tracke
 	cmd.Start()
 	defer func() {
 		if err := cmd.Wait(); err != nil {
-			// event.Debug("[convert_diane.sh] failed with " + err.Error())
+			tracker.Add(errors.New("[convert_diane.sh] failed with " + err.Error()))
 		}
 	}()
 
@@ -423,28 +423,5 @@ func ParseFile(path string, cache *marshal.Cache, batch *base.AdminBatch, tracke
 
 // Parser produit les données Diane listées dans un batch
 func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
-	outputChannel := make(chan marshal.Tuple)
-	eventChannel := make(chan marshal.Event)
-	event := marshal.Event{
-		Code:    "dianeParser",
-		Channel: eventChannel,
-	}
-
-	go func() {
-		for _, path := range batch.Files["diane"] {
-			// init tracker to keep track and report parsing errors
-			tracker := gournal.NewTracker(
-				map[string]string{"path": path, "batchKey": batch.ID.Key},
-				marshal.TrackerReports)
-
-			event.Debug(path + ": ouverture")
-			//parseDianeFile(batch, path, outputChannel, event)
-			ParseFile(path, &cache, batch, &tracker, outputChannel)
-			event.Debug(tracker.Report("abstract"))
-		}
-		close(eventChannel)
-		close(outputChannel)
-	}()
-
-	return outputChannel, eventChannel
+	return marshal.ParseFilesFromBatch(cache, batch, marshal.Parser{FileType: "diane", FileParser: ParseFile})
 }
