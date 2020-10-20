@@ -12458,6 +12458,25 @@ const makeObjects = ISODate => ([
                         "action" : "SUR PO"
                     }
                 },
+                "apdemande" : {
+                    "b88032c02d1724d92279a47599b112dd" : {
+                        id_demande: "S044130482",
+                        effectif_entreprise: 10,
+                        effectif: 10,
+                        date_statut: ISODate("2014-06-01T00:00:00.000Z"),
+                        periode: {
+                            start: ISODate("2014-05-01T00:00:00.000Z"),
+                            end: ISODate("2014-07-01T00:00:00.000Z")
+                        },
+                        hta: 1500,
+                        mta: 10000,
+                        effectif_autorise: 30,
+                        motif_recours_se: 2,
+                        heure_consommee: 0,
+                        montant_consommee: 0,
+                        effectif_consomme: 0
+                    }
+                },
                 "apconso" : {
                     "b88032c02d1724d92279a47599b112dc" : {
                         "id_conso" : "S044130239",

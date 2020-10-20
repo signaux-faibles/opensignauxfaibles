@@ -39,7 +39,7 @@ export function apart(
     const periode_fin = apdemande[hash].periode.end
 
     // Des periodes arrondies aux débuts de périodes
-    // TODO meilleur arrondi
+    // TODO: arrondir au debut du mois le plus proche, au lieu de tronquer la date. (ex: cas du dernier jour d'un mois)
     const periode_deb_floor = new Date(
       Date.UTC(
         periode_deb.getUTCFullYear(),
@@ -117,11 +117,8 @@ export function apart(
     }
   })
 
-  //Object.keys(output_apart).forEach(time => {
-  //  if (output_effectif && time in output_effectif){
-  //    output_apart[time].ratio_apart = (output_apart[time].apart_heures_consommees || 0) / (output_effectif[time].effectif * 157.67)
-  //    //nbr approximatif d'heures ouvrées par mois
-  //  }
-  //})
+  // Note: à la fin de l'opération map-reduce, dbmongo va calculer la propriété
+  // ratio_apart depuis apart.crossComputation.json.
+
   return output_apart
 }
