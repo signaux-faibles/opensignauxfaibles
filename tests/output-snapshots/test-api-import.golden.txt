@@ -594,6 +594,463 @@
 	{
 		"_id" : ObjectId("________ObjectId________"),
 		"value" : {
+			"scope" : "entreprise",
+			"key" : "149285238",
+			"batch" : {
+				"1910" : {
+					"effectif_ent" : {
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 816
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 848
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 140
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 799
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 758
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 124
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 230
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 618
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 169
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 886
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 901
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 648
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 270
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 67
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 272
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 357
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 675
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 185
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 511
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 25
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 202
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 466
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 337
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 112
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 961
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 336
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 278
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 437
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 710
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 730
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 41
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 274
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 966
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 64
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 317
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 147
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 974
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 603
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 910
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 291
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 357
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 95
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 294
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 573
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 939
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 860
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 998
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 717
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 722
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 91
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 262
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 315
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 662
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 105
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 615
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 577
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 260
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 328
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 673
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 784
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 950
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 827
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 816
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 944
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 693
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 824
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 690
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 160
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 907
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 37
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 287
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 568
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 672
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 530
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 15
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 237
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 118
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 58
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 426
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 345
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 429
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 19
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 562
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 536
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 527
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 503
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 825
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 187
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 679
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 172
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 287
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 920
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 92
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 156
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 4
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 270
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 918
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 807
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 191
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 990
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 158
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 40
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 374
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 797
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 617
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 189
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 536
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 819
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 313
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 826
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 587
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
 			"scope" : "etablissement",
 			"key" : "14928523839192",
 			"batch" : {
@@ -1649,6 +2106,391 @@
 	{
 		"_id" : ObjectId("________ObjectId________"),
 		"value" : {
+			"scope" : "entreprise",
+			"key" : "316726617",
+			"batch" : {
+				"1910" : {
+					"effectif_ent" : {
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 469
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 830
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 477
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 709
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 547
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 674
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 85
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 852
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 610
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 775
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 703
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 803
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 841
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 608
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 40
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 226
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 162
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 81
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 75
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 547
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 716
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 551
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 919
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 332
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 528
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 619
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 509
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 698
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 270
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 602
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 481
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 235
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 524
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 674
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 836
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 660
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 964
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 833
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 282
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 677
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 730
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 626
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 922
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 381
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 705
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 518
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 976
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 144
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 192
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 163
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 811
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 585
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 22
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 898
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 99
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 587
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 865
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 491
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 610
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 378
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 172
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 606
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 900
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 875
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 428
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 565
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 237
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 695
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 414
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 695
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 319
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 990
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 8
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 197
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 304
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 912
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 917
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 602
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 992
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 644
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 936
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 644
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 602
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 594
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 249
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 621
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 680
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 599
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 254
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 919
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 792
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 706
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 128
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
 			"scope" : "etablissement",
 			"key" : "31672661744173",
 			"batch" : {
@@ -2198,6 +3040,463 @@
 							"montant" : 27,
 							"effectif" : 7,
 							"periode" : ISODate("_______ Date _______")
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "entreprise",
+			"key" : "542368702",
+			"batch" : {
+				"1910" : {
+					"effectif_ent" : {
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 871
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 47
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 94
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 878
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 450
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 105
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 348
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 779
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 606
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 212
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 855
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 843
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 43
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 128
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 331
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 619
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 592
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 247
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 264
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 198
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 737
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 774
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 987
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 873
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 12
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 244
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 925
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 69
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 391
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 143
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 675
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 281
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 806
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 951
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 394
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 303
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 885
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 629
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 809
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 550
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 273
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 131
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 561
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 653
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 586
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 397
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 888
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 208
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 542
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 65
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 209
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 220
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 485
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 503
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 82
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 664
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 353
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 369
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 214
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 763
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 379
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 755
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 658
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 549
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 406
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 777
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 89
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 734
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 763
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 887
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 745
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 292
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 988
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 816
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 30
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 585
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 74
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 279
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 116
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 361
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 160
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 303
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 801
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 256
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 835
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 113
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 123
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 495
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 606
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 325
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 27
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 941
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 152
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 5
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 852
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 58
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 359
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 323
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 784
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 477
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 302
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 593
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 709
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 928
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 195
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 730
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 432
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 582
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 782
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 536
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 923
 						}
 					}
 				}
@@ -3780,6 +5079,16 @@
 			"batchKey" : "1910"
 		},
 		"code" : "dianeParser"
+	},
+	{
+		"event" : {
+			"headFilters" : [ ],
+			"headErrors" : [ ],
+			"headFatal" : [ ],
+			"report" : "/../lib/urssaf/testData/effectifEntTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
+			"batchKey" : "1910"
+		},
+		"code" : "effectifEntParser"
 	},
 	{
 		"event" : {

@@ -50,7 +50,7 @@ tests/helpers/mongodb-container.sh run > /dev/null << CONTENTS
       "cotisation":   [ "/../lib/urssaf/testData/cotisationTestData.csv" ],
       "delai":        [ "/../lib/urssaf/testData/delaiTestData.csv" ],
       "effectif":     [ "/../lib/urssaf/testData/effectifTestData.csv" ],
-//      "effectif_ent": [ "/../lib/urssaf/testData/effectifEntTestData.csv" ],
+      "effectif_ent": [ "/../lib/urssaf/testData/effectifEntTestData.csv" ],
 //      "procol":       [ "/../lib/urssaf/testData/procolTestData.csv" ],
     },
     "param" : {
