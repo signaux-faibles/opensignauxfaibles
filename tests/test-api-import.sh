@@ -84,7 +84,10 @@ printjson(db.ImportedData.find().sort({"value.key":1}).toArray().map(doc => ({
       ...batch,
       [ batchKey ]: Object.keys(doc.value.batch[batchKey]).sort().reduce((batchData, dataType) => ({
         ...batchData,
-        [ dataType ]: doc.value.batch[batchKey][dataType]
+        [ dataType ]: Object.keys(doc.value.batch[batchKey][dataType]).sort().reduce((hashedData, hash) => ({
+          ...hashedData,
+          [ hash ]: doc.value.batch[batchKey][dataType][hash]
+        }), {})
       }), {})
     }), {})
   }
