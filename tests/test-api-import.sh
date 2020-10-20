@@ -79,7 +79,7 @@ printjson(db.ImportedData.find().sort({"value.key":1}).toArray().map(doc => ({
   ...doc,
   value: {
     ...doc.value,
-    // on va classer les données par type, de manière à ce que l'ordre soit stable
+    // on classe les données par type, de manière à ce que l'ordre soit stable
     batch: Object.keys(doc.value.batch).reduce((batch, batchKey) => ({
       ...batch,
       [ batchKey ]: Object.keys(doc.value.batch[batchKey]).sort().reduce((batchData, dataType) => ({
@@ -90,8 +90,8 @@ printjson(db.ImportedData.find().sort({"value.key":1}).toArray().map(doc => ({
   }
 })));
 print("// Documents from db.Journal:");
-printjson(db.Journal.find({ "event.report": { "\$exists": true } }).toArray().map(doc => ({
-  // note: we use map() to force the order of properties at every run of this test
+// on classe les données par type, de manière à ce que l'ordre soit stable
+printjson(db.Journal.find({ "event.report": { "\$exists": true } }).sort({ code: 1 }).toArray().map(doc => ({
   event: {
     headFilters: doc.event.headFilters,
     headErrors: doc.event.headErrors,
