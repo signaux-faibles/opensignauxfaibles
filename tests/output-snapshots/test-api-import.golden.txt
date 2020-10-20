@@ -380,6 +380,42 @@
 		"_id" : ObjectId("________ObjectId________"),
 		"value" : {
 			"scope" : "etablissement",
+			"key" : "01234567891011",
+			"batch" : {
+				"1910" : {
+					"procol" : {
+						"______________Hash______________" : {
+							"date_effet" : ISODate("2014-05-26T00:00:00Z"),
+							"action_procol" : "redressement",
+							"stade_procol" : "solde_procedure"
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "etablissement",
+			"key" : "11109876543210",
+			"batch" : {
+				"1910" : {
+					"procol" : {
+						"______________Hash______________" : {
+							"date_effet" : ISODate("2017-10-04T00:00:00Z"),
+							"action_procol" : "redressement",
+							"stade_procol" : "solde_procedure"
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "etablissement",
 			"key" : "11111111111111",
 			"batch" : {
 				"1910" : {
@@ -545,6 +581,13 @@
 							"montant_echeancier" : 74825.41,
 							"stade" : "qh",
 							"action" : "bad mu"
+						}
+					},
+					"procol" : {
+						"______________Hash______________" : {
+							"date_effet" : ISODate("2014-07-17T00:00:00Z"),
+							"action_procol" : "redressement",
+							"stade_procol" : "solde_procedure"
 						}
 					}
 				}
@@ -5132,6 +5175,16 @@
 			"batchKey" : "1910"
 		},
 		"code" : "parserEllisphere"
+	},
+	{
+		"event" : {
+			"headFilters" : [ ],
+			"headErrors" : [ ],
+			"headFatal" : [ ],
+			"report" : "/../lib/urssaf/testData/procolTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
+			"batchKey" : "1910"
+		},
+		"code" : "procolParser"
 	},
 	{
 		"event" : {

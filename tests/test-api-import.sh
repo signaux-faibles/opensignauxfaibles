@@ -51,7 +51,7 @@ tests/helpers/mongodb-container.sh run > /dev/null << CONTENTS
       "delai":        [ "/../lib/urssaf/testData/delaiTestData.csv" ],
       "effectif":     [ "/../lib/urssaf/testData/effectifTestData.csv" ],
       "effectif_ent": [ "/../lib/urssaf/testData/effectifEntTestData.csv" ],
-//      "procol":       [ "/../lib/urssaf/testData/procolTestData.csv" ],
+      "procol":       [ "/../lib/urssaf/testData/procolTestData.csv" ],
     },
     "param" : {
         "date_debut" : ISODate("2019-01-01T00:00:00.000+0000"),
