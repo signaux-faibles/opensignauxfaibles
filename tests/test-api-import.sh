@@ -54,7 +54,7 @@ tests/helpers/mongodb-container.sh run > /dev/null << CONTENTS
 //      "procol":       [ "/../lib/urssaf/testData/procolTestData.csv" ],
     },
     "param" : {
-        "date_debut" : ISODate("2001-01-01T00:00:00.000+0000"),
+        "date_debut" : ISODate("2019-01-01T00:00:00.000+0000"),
         "date_fin" : ISODate("2019-02-01T00:00:00.000+0000")
     }
   })
