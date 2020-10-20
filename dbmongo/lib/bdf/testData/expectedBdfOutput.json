@@ -43,7 +43,7 @@
   "events": [
     {
       "date": "0001-01-01T00:00:00Z",
-      "event": "testData/bdfTestData.csv: ouverture testData/bdfTestData.csv",
+      "event": "testData/bdfTestData.csv: ouverture",
       "priority": "info",
       "code": "bdfParser",
       "report_type": ""

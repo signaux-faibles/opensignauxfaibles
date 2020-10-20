@@ -16,7 +16,6 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
 
 	"github.com/signaux-faibles/gournal"
-	"github.com/spf13/viper"
 )
 
 // Procol Procédures collectives, extraction URSSAF
@@ -44,28 +43,7 @@ func (procol Procol) Type() string {
 
 // ParserProcol transorme le fichier procol en data
 func ParserProcol(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
-	outputChannel := make(chan marshal.Tuple)
-	eventChannel := make(chan marshal.Event)
-
-	event := marshal.Event{
-		Code:    "procolParser",
-		Channel: eventChannel,
-	}
-
-	go func() {
-		for _, path := range batch.Files["procol"] {
-			tracker := gournal.NewTracker(
-				map[string]string{"path": path, "batchKey": batch.ID.Key},
-				marshal.TrackerReports)
-
-			event.Info(path + ": ouverture")
-			ParseProcolFile(viper.GetString("APP_DATA")+path, &cache, batch, &tracker, outputChannel)
-			event.Info(tracker.Report("abstract"))
-		}
-		close(outputChannel)
-		close(eventChannel)
-	}()
-	return outputChannel, eventChannel
+	return marshal.ParseFilesFromBatch(cache, batch, marshal.Parser{FileType: "procol", FileParser: ParseProcolFile})
 }
 
 // ParseProcolFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.

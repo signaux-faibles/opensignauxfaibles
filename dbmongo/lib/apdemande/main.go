@@ -13,7 +13,6 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
 
 	"github.com/signaux-faibles/gournal"
-	"github.com/spf13/viper"
 )
 
 // Periode Période de temps avec un début et une fin
@@ -52,29 +51,7 @@ func (apdemande APDemande) Scope() string {
 
 // Parser produit les lignes
 func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
-	outputChannel := make(chan marshal.Tuple)
-	eventChannel := make(chan marshal.Event)
-	event := marshal.Event{
-		Code:    "apdemandeParser",
-		Channel: eventChannel,
-	}
-
-	go func() {
-		defer close(outputChannel)
-		defer close(eventChannel)
-
-		for _, path := range batch.Files["apdemande"] {
-			tracker := gournal.NewTracker(
-				map[string]string{"path": path, "batchKey": batch.ID.Key},
-				marshal.TrackerReports)
-
-			event.Info(path + ": ouverture")
-			ParseFile(viper.GetString("APP_DATA")+path, &cache, batch, &tracker, outputChannel)
-			event.Info(tracker.Report("abstract"))
-		}
-	}()
-
-	return outputChannel, eventChannel
+	return marshal.ParseFilesFromBatch(cache, batch, marshal.Parser{FileType: "apdemande", FileParser: ParseFile})
 }
 
 // ParseFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.

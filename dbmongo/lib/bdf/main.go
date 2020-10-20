@@ -13,7 +13,6 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sfregexp"
-	"github.com/spf13/viper"
 
 	"github.com/signaux-faibles/gournal"
 )
@@ -50,29 +49,7 @@ func (bdf BDF) Scope() string {
 
 // Parser produit les datas BDF à partir des fichiers source
 func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
-	outputChannel := make(chan marshal.Tuple)
-	eventChannel := make(chan marshal.Event)
-	event := marshal.Event{
-		Code:    "bdfParser",
-		Channel: eventChannel,
-	}
-
-	go func() {
-		for _, path := range batch.Files["bdf"] {
-			tracker := gournal.NewTracker(
-				map[string]string{"path": path, "batchKey": batch.ID.Key},
-				marshal.TrackerReports)
-
-			event.Info(path + ": ouverture " + path)
-			ParseFile(viper.GetString("APP_DATA")+path, &cache, batch, &tracker, outputChannel)
-			event.Info(tracker.Report("abstract"))
-		}
-
-		close(outputChannel)
-		close(eventChannel)
-
-	}()
-	return outputChannel, eventChannel
+	return marshal.ParseFilesFromBatch(cache, batch, marshal.Parser{FileType: "bdf", FileParser: ParseFile})
 }
 
 // ParseFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
