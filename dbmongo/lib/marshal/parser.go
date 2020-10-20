@@ -11,10 +11,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-// BatchParser fonction de traitement de données en entrée
-type BatchParser func(Cache, *base.AdminBatch) (chan Tuple, chan Event)
-
-// Parser associates a fileType with a fileParser function.
+// Parser associe un type de fichier avec sa fonction de parsing.
 type Parser = struct {
 	FileType   string
 	FileParser ParseFile

@@ -45,10 +45,8 @@ func (sirene_ul SireneUL) Scope() string {
 	return "entreprise"
 }
 
-// Parser produit les données sirene à partir du fichier geosirene
-func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
-	return marshal.ParseFilesFromBatch(cache, batch, marshal.Parser{FileType: "sirene_ul", FileParser: ParseFile})
-}
+// Parser expose le parseur et le type de fichier qu'il supporte.
+var Parser = marshal.Parser{FileType: "sirene_ul", FileParser: ParseFile}
 
 // ParseFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
 func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {

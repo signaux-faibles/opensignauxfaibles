@@ -48,10 +48,8 @@ func (delai Delai) Type() string {
 	return "delai"
 }
 
-// ParserDelai fonction d'extraction des délais
-func ParserDelai(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
-	return marshal.ParseFilesFromBatch(cache, batch, marshal.Parser{FileType: "delai", FileParser: ParseDelaiFile})
-}
+// ParserDelai expose le parseur et le type de fichier qu'il supporte.
+var ParserDelai = marshal.Parser{FileType: "delai", FileParser: ParseDelaiFile}
 
 // ParseDelaiFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
 func ParseDelaiFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {

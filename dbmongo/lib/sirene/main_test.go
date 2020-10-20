@@ -14,5 +14,5 @@ var golden = filepath.Join("testData", "expectedSirene.json")
 var testData = filepath.Join("testData", "sireneTestData.csv")
 
 func TestSirene(t *testing.T) {
-	marshal.TestParserOutput(t, Parser, marshal.NewCache(), "sirene", testData, golden, *update)
+	marshal.TestParserOutput(t, Parser, marshal.NewCache(), testData, golden, *update)
 }

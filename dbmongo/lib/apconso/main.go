@@ -39,10 +39,8 @@ func (apconso APConso) Scope() string {
 	return "etablissement"
 }
 
-// Parser produit des lignes de consommation d'activité partielle
-func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
-	return marshal.ParseFilesFromBatch(cache, batch, marshal.Parser{FileType: "apconso", FileParser: ParseFile})
-}
+// Parser expose le parseur et le type de fichier qu'il supporte.
+var Parser = marshal.Parser{FileType: "apconso", FileParser: ParseFile}
 
 // ParseFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
 func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {

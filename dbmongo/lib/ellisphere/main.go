@@ -40,10 +40,8 @@ func (ellisphere Ellisphere) Scope() string {
 	return "entreprise"
 }
 
-// Parser produit les lignes
-func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
-	return marshal.ParseFilesFromBatch(cache, batch, marshal.Parser{FileType: "ellisphere", FileParser: ParseFile})
-}
+// Parser expose le parseur et le type de fichier qu'il supporte.
+var Parser = marshal.Parser{FileType: "ellisphere", FileParser: ParseFile}
 
 // ParseFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
 func ParseFile(path string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {

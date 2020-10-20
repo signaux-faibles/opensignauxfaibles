@@ -52,10 +52,8 @@ func (debit Debit) Type() string {
 
 type colMapping map[string]int
 
-// ParserDebit retourne les entrées lues depuis .
-func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
-	return marshal.ParseFilesFromBatch(cache, batch, marshal.Parser{FileType: "debit", FileParser: ParseDebitFile})
-}
+// ParserDebit expose le parseur et le type de fichier qu'il supporte.
+var ParserDebit = marshal.Parser{FileType: "debit", FileParser: ParseDebitFile}
 
 // ParseDebitFile extrait les tuples depuis un fichier "débit" de l'URSSAF.
 func ParseDebitFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {

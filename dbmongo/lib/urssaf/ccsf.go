@@ -38,10 +38,8 @@ func (ccsf CCSF) Type() string {
 	return "ccsf"
 }
 
-// ParserCCSF produit des lignes CCSF
-func ParserCCSF(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
-	return marshal.ParseFilesFromBatch(cache, batch, marshal.Parser{FileType: "ccsf", FileParser: ParseCcsfFile})
-}
+// ParserCCSF expose le parseur et le type de fichier qu'il supporte.
+var ParserCCSF = marshal.Parser{FileType: "ccsf", FileParser: ParseCcsfFile}
 
 // ParseCcsfFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
 func ParseCcsfFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {

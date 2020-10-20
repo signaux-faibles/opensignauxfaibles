@@ -59,10 +59,8 @@ func parseEffectifPeriod(fields []string) []periodCol {
 	return periods
 }
 
-// ParserEffectifEnt retourne un channel fournissant des données extraites
-func ParserEffectifEnt(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
-	return marshal.ParseFilesFromBatch(cache, batch, marshal.Parser{FileType: "effectif_ent", FileParser: ParseEffectifEntFile})
-}
+// ParserEffectifEnt expose le parseur et le type de fichier qu'il supporte.
+var ParserEffectifEnt = marshal.Parser{FileType: "effectif_ent", FileParser: ParseEffectifEntFile}
 
 // ParseEffectifEntFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
 func ParseEffectifEntFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {

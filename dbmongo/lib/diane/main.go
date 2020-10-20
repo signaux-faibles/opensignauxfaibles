@@ -421,7 +421,5 @@ func ParseFile(path string, cache *marshal.Cache, batch *base.AdminBatch, tracke
 	parseDianeFile(batch, path, tracker, outputChannel)
 }
 
-// Parser produit les données Diane listées dans un batch
-func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
-	return marshal.ParseFilesFromBatch(cache, batch, marshal.Parser{FileType: "diane", FileParser: ParseFile})
-}
+// Parser expose le parseur et le type de fichier qu'il supporte.
+var Parser = marshal.Parser{FileType: "diane", FileParser: ParseFile}

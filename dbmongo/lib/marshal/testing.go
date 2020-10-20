@@ -39,15 +39,12 @@ type tuplesAndEvents = struct {
 // RunParser returns Tuples and Events resulting from the execution of a
 // Parser on a given input file.
 func RunParser(
-	parser BatchParser,
+	parser Parser,
 	cache Cache,
-	parserType string,
 	inputFile string,
 ) (output tuplesAndEvents) {
-	batch := base.MockBatch(parserType, []string{inputFile})
-	var events chan Event
-	var tuples chan Tuple
-	tuples, events = parser(cache, &batch)
+	batch := base.MockBatch(parser.FileType, []string{inputFile})
+	tuples, events := ParseFilesFromBatch(cache, &batch, parser)
 
 	// intercepter et afficher les évènements pendant l'importation
 	var wg sync.WaitGroup
@@ -72,14 +69,13 @@ func RunParser(
 // in a golden file. If update = true, the the golden file is updated.
 func TestParserOutput(
 	t *testing.T,
-	parser BatchParser,
+	parser Parser,
 	cache Cache,
-	parserType string,
 	inputFile string,
 	goldenFile string,
 	update bool,
 ) {
-	var output = RunParser(parser, cache, parserType, inputFile)
+	var output = RunParser(parser, cache, inputFile)
 
 	actual, err := json.MarshalIndent(output, "", "  ")
 	if err != nil {

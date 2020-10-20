@@ -41,10 +41,8 @@ func (procol Procol) Type() string {
 	return "procol"
 }
 
-// ParserProcol transorme le fichier procol en data
-func ParserProcol(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
-	return marshal.ParseFilesFromBatch(cache, batch, marshal.Parser{FileType: "procol", FileParser: ParseProcolFile})
-}
+// ParserProcol expose le parseur et le type de fichier qu'il supporte.
+var ParserProcol = marshal.Parser{FileType: "procol", FileParser: ParseProcolFile}
 
 // ParseProcolFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
 func ParseProcolFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {

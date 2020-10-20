@@ -41,10 +41,8 @@ func (effectif Effectif) Type() string {
 	return "effectif"
 }
 
-// ParserEffectif retourne un channel fournissant des données extraites
-func ParserEffectif(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
-	return marshal.ParseFilesFromBatch(cache, batch, marshal.Parser{FileType: "effectif", FileParser: ParseEffectifFile})
-}
+// ParserEffectif expose le parseur et le type de fichier qu'il supporte.
+var ParserEffectif = marshal.Parser{FileType: "effectif", FileParser: ParseEffectifFile}
 
 // ParseEffectifFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
 func ParseEffectifFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {

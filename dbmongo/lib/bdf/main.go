@@ -47,12 +47,10 @@ func (bdf BDF) Scope() string {
 	return "entreprise"
 }
 
-// Parser produit les datas BDF à partir des fichiers source
-func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
-	return marshal.ParseFilesFromBatch(cache, batch, marshal.Parser{FileType: "bdf", FileParser: ParseFile})
-}
+// Parser expose le parseur et le type de fichier qu'il supporte.
+var Parser = marshal.Parser{FileType: "bdf", FileParser: ParseFile}
 
-// ParseFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
+// ParseFile extrait les tuples depuis un fichier BDF et génère un rapport Gournal.
 func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
 	filter := marshal.GetSirenFilterFromCache(*cache)
 	file, err := os.Open(filePath)
