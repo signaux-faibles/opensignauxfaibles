@@ -130,6 +130,13 @@
 			"key" : "00000000000000",
 			"batch" : {
 				"1910" : {
+					"ccsf" : {
+						"______________Hash______________" : {
+							"date_traitement" : ISODate("2018-01-30T00:00:00Z"),
+							"stade" : "ukohkb",
+							"action" : "klay"
+						}
+					},
 					"compte" : {
 						"______________Hash______________" : {
 							"siret" : "00000000000000",
@@ -365,6 +372,13 @@
 			"key" : "11111111111111",
 			"batch" : {
 				"1910" : {
+					"ccsf" : {
+						"______________Hash______________" : {
+							"date_traitement" : ISODate("2019-04-20T00:00:00Z"),
+							"stade" : "xljgvd",
+							"action" : "cvqv"
+						}
+					},
 					"compte" : {
 						"______________Hash______________" : {
 							"siret" : "11111111111111",
@@ -745,6 +759,13 @@
 			"key" : "22222222222222",
 			"batch" : {
 				"1910" : {
+					"ccsf" : {
+						"______________Hash______________" : {
+							"date_traitement" : ISODate("1999-04-01T00:00:00Z"),
+							"stade" : "ehxdqd",
+							"action" : "cair"
+						}
+					},
 					"debit" : {
 						"______________Hash______________" : {
 							"numero_compte" : "450359886246036238",
@@ -2050,6 +2071,16 @@
 			"batchKey" : "1910"
 		},
 		"code" : "bdfParser"
+	},
+	{
+		"event" : {
+			"headFilters" : [ ],
+			"headErrors" : [ ],
+			"headFatal" : [ ],
+			"report" : "/../lib/urssaf/testData/ccsfTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
+			"batchKey" : "1910"
+		},
+		"code" : "ccsfParser"
 	},
 	{
 		"event" : {

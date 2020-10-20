@@ -46,7 +46,7 @@ tests/helpers/mongodb-container.sh run > /dev/null << CONTENTS
       "sirene_ul":    [ "/../lib/sirene_ul/testData/sireneULTestData.csv" ],
       "admin_urssaf": [ "/../lib/urssaf/testData/comptesTestData.csv" ],
       "debit":        [ "/../lib/urssaf/testData/debitTestData.csv" ],
-//      "ccsf":         [ "/../lib/urssaf/testData/ccsfTestData.csv" ],
+      "ccsf":         [ "/../lib/urssaf/testData/ccsfTestData.csv" ],
 //      "cotisation":   [ "/../lib/urssaf/testData/cotisationTestData.csv" ],
       "delai":        [ "/../lib/urssaf/testData/delaiTestData.csv" ],
 //      "effectif":     [ "/../lib/urssaf/testData/effectifTestData.csv" ],
