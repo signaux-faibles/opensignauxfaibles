@@ -45,7 +45,7 @@
       "date": "0001-01-01T00:00:00Z",
       "event": "testData/bdfTestData.csv: ouverture",
       "priority": "info",
-      "code": "bdfParser",
+      "code": "bdf_parser",
       "report_type": ""
     },
     {
@@ -62,7 +62,7 @@
         "valid": 3
       },
       "priority": "info",
-      "code": "bdfParser",
+      "code": "bdf_parser",
       "report_type": ""
     }
   ]

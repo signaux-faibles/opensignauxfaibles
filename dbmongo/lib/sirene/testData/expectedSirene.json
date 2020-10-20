@@ -54,7 +54,7 @@
       "date": "0001-01-01T00:00:00Z",
       "event": "testData/sireneTestData.csv: ouverture",
       "priority": "info",
-      "code": "sireneParser",
+      "code": "sirene_parser",
       "report_type": ""
     },
     {
@@ -73,7 +73,7 @@
         "valid": 2
       },
       "priority": "info",
-      "code": "sireneParser",
+      "code": "sirene_parser",
       "report_type": ""
     }
   ]

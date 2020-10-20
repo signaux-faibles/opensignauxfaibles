@@ -21,7 +21,7 @@
       "date": "0001-01-01T00:00:00Z",
       "event": "testData/procolTestData.csv: ouverture",
       "priority": "info",
-      "code": "procolParser",
+      "code": "procol_parser",
       "report_type": ""
     },
     {
@@ -38,7 +38,7 @@
         "valid": 3
       },
       "priority": "info",
-      "code": "procolParser",
+      "code": "procol_parser",
       "report_type": ""
     }
   ]

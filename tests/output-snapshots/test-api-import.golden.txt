@@ -5059,7 +5059,7 @@
 			"report" : "/../lib/urssaf/testData/comptesTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
 			"batchKey" : "1910"
 		},
-		"code" : "admin_urssafParser"
+		"code" : "admin_urssaf_parser"
 	},
 	{
 		"event" : {
@@ -5069,7 +5069,7 @@
 			"report" : "/../lib/apconso/testData/apconsoTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
 			"batchKey" : "1910"
 		},
-		"code" : "apconsoParser"
+		"code" : "apconso_parser"
 	},
 	{
 		"event" : {
@@ -5079,7 +5079,7 @@
 			"report" : "/../lib/apdemande/testData/apdemandeTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
 			"batchKey" : "1910"
 		},
-		"code" : "apdemandeParser"
+		"code" : "apdemande_parser"
 	},
 	{
 		"event" : {
@@ -5089,7 +5089,7 @@
 			"report" : "/../lib/bdf/testData/bdfTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
 			"batchKey" : "1910"
 		},
-		"code" : "bdfParser"
+		"code" : "bdf_parser"
 	},
 	{
 		"event" : {
@@ -5099,7 +5099,7 @@
 			"report" : "/../lib/urssaf/testData/ccsfTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
 			"batchKey" : "1910"
 		},
-		"code" : "ccsfParser"
+		"code" : "ccsf_parser"
 	},
 	{
 		"event" : {
@@ -5109,7 +5109,7 @@
 			"report" : "/../lib/urssaf/testData/cotisationTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
 			"batchKey" : "1910"
 		},
-		"code" : "cotisationParser"
+		"code" : "cotisation_parser"
 	},
 	{
 		"event" : {
@@ -5119,7 +5119,7 @@
 			"report" : "/../lib/urssaf/testData/debitTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
 			"batchKey" : "1910"
 		},
-		"code" : "debitParser"
+		"code" : "debit_parser"
 	},
 	{
 		"event" : {
@@ -5131,7 +5131,7 @@
 			"report" : "/../lib/urssaf/testData/delaiTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 1 lignes filtrées, 2 lignes valides",
 			"batchKey" : "1910"
 		},
-		"code" : "delaiParser"
+		"code" : "delai_parser"
 	},
 	{
 		"event" : {
@@ -5141,17 +5141,7 @@
 			"report" : "/../lib/diane/testData/dianeTestData.txt: intégration terminée, 18 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 18 lignes valides",
 			"batchKey" : "1910"
 		},
-		"code" : "dianeParser"
-	},
-	{
-		"event" : {
-			"headFilters" : [ ],
-			"headErrors" : [ ],
-			"headFatal" : [ ],
-			"report" : "/../lib/urssaf/testData/effectifTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
-			"batchKey" : "1910"
-		},
-		"code" : "effectifParser"
+		"code" : "diane_parser"
 	},
 	{
 		"event" : {
@@ -5161,7 +5151,17 @@
 			"report" : "/../lib/urssaf/testData/effectifEntTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
 			"batchKey" : "1910"
 		},
-		"code" : "effectif_entParser"
+		"code" : "effectif_ent_parser"
+	},
+	{
+		"event" : {
+			"headFilters" : [ ],
+			"headErrors" : [ ],
+			"headFatal" : [ ],
+			"report" : "/../lib/urssaf/testData/effectifTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
+			"batchKey" : "1910"
+		},
+		"code" : "effectif_parser"
 	},
 	{
 		"event" : {
@@ -5174,7 +5174,7 @@
 			"report" : "/../lib/ellisphere/testData/ellisphereTestData.excel: intégration terminée, 7 lignes traitées, 2 erreures fatales, 0 rejets, 0 lignes filtrées, 5 lignes valides",
 			"batchKey" : "1910"
 		},
-		"code" : "ellisphereParser"
+		"code" : "ellisphere_parser"
 	},
 	{
 		"event" : {
@@ -5184,7 +5184,7 @@
 			"report" : "/../lib/urssaf/testData/procolTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
 			"batchKey" : "1910"
 		},
-		"code" : "procolParser"
+		"code" : "procol_parser"
 	},
 	{
 		"event" : {
@@ -5196,7 +5196,7 @@
 			"report" : "/../lib/sirene/testData/sireneTestData.csv: intégration terminée, 3 lignes traitées, 1 erreures fatales, 0 rejets, 0 lignes filtrées, 2 lignes valides",
 			"batchKey" : "1910"
 		},
-		"code" : "sireneParser"
+		"code" : "sirene_parser"
 	},
 	{
 		"event" : {
@@ -5206,7 +5206,7 @@
 			"report" : "/../lib/sirene_ul/testData/sireneULTestData.csv: intégration terminée, 4 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 4 lignes valides",
 			"batchKey" : "1910"
 		},
-		"code" : "sirene_ulParser"
+		"code" : "sirene_ul_parser"
 	}
 ]
 // Critical errors from db.Journal:
