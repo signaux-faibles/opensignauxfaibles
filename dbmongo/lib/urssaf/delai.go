@@ -15,7 +15,6 @@ import (
 	"time"
 
 	"github.com/signaux-faibles/gournal"
-	"github.com/spf13/viper"
 )
 
 // Delai tuple fichier ursaff
@@ -51,30 +50,7 @@ func (delai Delai) Type() string {
 
 // ParserDelai fonction d'extraction des délais
 func ParserDelai(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
-	outputChannel := make(chan marshal.Tuple)
-	eventChannel := make(chan marshal.Event)
-
-	event := marshal.Event{
-		Code:    "delaiParser",
-		Channel: eventChannel,
-	}
-
-	go func() {
-
-		for _, path := range batch.Files["delai"] {
-			tracker := gournal.NewTracker(
-				map[string]string{"path": path, "batchKey": batch.ID.Key},
-				marshal.TrackerReports)
-
-			event.Info(path + ": ouverture")
-			ParseDelaiFile(viper.GetString("APP_DATA")+path, &cache, batch, &tracker, outputChannel)
-			event.Debug(tracker.Report("abstract"))
-		}
-		close(outputChannel)
-		close(eventChannel)
-	}()
-
-	return outputChannel, eventChannel
+	return marshal.ParseFilesFromBatch(cache, batch, marshal.Parser{FileType: "delai", FileParser: ParseDelaiFile})
 }
 
 // ParseDelaiFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.

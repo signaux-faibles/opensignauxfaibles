@@ -33,28 +33,7 @@ func (compte Compte) Type() string {
 
 // ParserCompte retourne les comptes lus depuis un fichier admin_urssaf.
 func ParserCompte(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
-	outputChannel := make(chan marshal.Tuple)
-	eventChannel := make(chan marshal.Event)
-	go func() {
-
-		defer close(outputChannel)
-		defer close(eventChannel)
-
-		if len(batch.Files["admin_urssaf"]) > 0 {
-			event := marshal.Event{
-				Code:    "compteParser",
-				Channel: eventChannel,
-			}
-			tracker := gournal.NewTracker(
-				map[string]string{"path": "Admin_urssaf", "batchKey": batch.ID.Key},
-				marshal.TrackerReports)
-
-			event.Info("Comptes urssaf : traitement")
-			ParseCompteFile("", &cache, batch, &tracker, outputChannel)
-			event.Info(tracker.Report("abstract"))
-		}
-	}()
-	return outputChannel, eventChannel
+	return marshal.ParseFilesFromBatch(cache, batch, marshal.Parser{FileType: "admin_urssaf", FileParser: ParseCompteFile})
 }
 
 // ParseCompteFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.

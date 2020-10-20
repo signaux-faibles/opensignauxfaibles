@@ -17,7 +17,6 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sfregexp"
 
 	"github.com/signaux-faibles/gournal"
-	"github.com/spf13/viper"
 )
 
 // EffectifEnt Urssaf
@@ -62,26 +61,7 @@ func parseEffectifPeriod(fields []string) []periodCol {
 
 // ParserEffectifEnt retourne un channel fournissant des données extraites
 func ParserEffectifEnt(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
-	outputChannel := make(chan marshal.Tuple)
-	eventChannel := make(chan marshal.Event)
-	event := marshal.Event{
-		Code:    "effectifEntParser",
-		Channel: eventChannel,
-	}
-	go func() {
-		for _, path := range batch.Files["effectif_ent"] {
-			tracker := gournal.NewTracker(
-				map[string]string{"path": path, "batchKey": batch.ID.Key},
-				marshal.TrackerReports)
-
-			event.Info(path + ": ouverture")
-			ParseEffectifEntFile(viper.GetString("APP_DATA")+path, &cache, batch, &tracker, outputChannel)
-			event.Debug(tracker.Report("abstract"))
-		}
-		close(outputChannel)
-		close(eventChannel)
-	}()
-	return outputChannel, eventChannel
+	return marshal.ParseFilesFromBatch(cache, batch, marshal.Parser{FileType: "effectif_ent", FileParser: ParseEffectifEntFile})
 }
 
 // ParseEffectifEntFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.

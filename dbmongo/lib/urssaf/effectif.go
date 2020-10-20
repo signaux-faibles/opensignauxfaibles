@@ -16,7 +16,6 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sfregexp"
 
 	"github.com/signaux-faibles/gournal"
-	"github.com/spf13/viper"
 )
 
 // Effectif Urssaf
@@ -44,26 +43,7 @@ func (effectif Effectif) Type() string {
 
 // ParserEffectif retourne un channel fournissant des données extraites
 func ParserEffectif(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
-	outputChannel := make(chan marshal.Tuple)
-	eventChannel := make(chan marshal.Event)
-	event := marshal.Event{
-		Code:    "effectifParser",
-		Channel: eventChannel,
-	}
-	go func() {
-		for _, path := range batch.Files["effectif"] {
-			tracker := gournal.NewTracker(
-				map[string]string{"path": path, "batchKey": batch.ID.Key},
-				marshal.TrackerReports)
-
-			event.Info(path + ": ouverture")
-			ParseEffectifFile(viper.GetString("APP_DATA")+path, &cache, batch, &tracker, outputChannel)
-			event.Debug(tracker.Report("abstract"))
-		}
-		close(outputChannel)
-		close(eventChannel)
-	}()
-	return outputChannel, eventChannel
+	return marshal.ParseFilesFromBatch(cache, batch, marshal.Parser{FileType: "effectif", FileParser: ParseEffectifFile})
 }
 
 // ParseEffectifFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.

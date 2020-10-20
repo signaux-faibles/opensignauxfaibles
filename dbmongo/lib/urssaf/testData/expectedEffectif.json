@@ -1597,7 +1597,7 @@
         "total": 3,
         "valid": 3
       },
-      "priority": "debug",
+      "priority": "info",
       "code": "effectifParser",
       "report_type": ""
     }
