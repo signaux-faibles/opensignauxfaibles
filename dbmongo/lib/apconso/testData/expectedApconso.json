@@ -27,7 +27,7 @@
       "date": "0001-01-01T00:00:00Z",
       "event": "testData/apconsoTestData.csv: ouverture",
       "priority": "info",
-      "code": "parserApconso",
+      "code": "apconsoParser",
       "report_type": ""
     },
     {
@@ -44,7 +44,7 @@
         "valid": 3
       },
       "priority": "info",
-      "code": "parserApconso",
+      "code": "apconsoParser",
       "report_type": ""
     }
   ]

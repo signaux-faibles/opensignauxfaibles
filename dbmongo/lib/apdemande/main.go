@@ -55,7 +55,7 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 	outputChannel := make(chan marshal.Tuple)
 	eventChannel := make(chan marshal.Event)
 	event := marshal.Event{
-		Code:    "parserApdemande",
+		Code:    "apdemandeParser",
 		Channel: eventChannel,
 	}
 

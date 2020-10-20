@@ -57,7 +57,7 @@
       "date": "0001-01-01T00:00:00Z",
       "event": "testData/apdemandeTestData.csv: ouverture",
       "priority": "info",
-      "code": "parserApdemande",
+      "code": "apdemandeParser",
       "report_type": ""
     },
     {
@@ -74,7 +74,7 @@
         "valid": 3
       },
       "priority": "info",
-      "code": "parserApdemande",
+      "code": "apdemandeParser",
       "report_type": ""
     }
   ]

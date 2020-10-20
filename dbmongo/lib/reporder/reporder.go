@@ -43,7 +43,7 @@ func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, ch
 	eventChannel := make(chan marshal.Event)
 
 	event := marshal.Event{
-		Code:    "parserRepeatableOrder",
+		Code:    "reporderParser", // anciennement "parserRepeatableOrder"
 		Channel: eventChannel,
 	}
 
