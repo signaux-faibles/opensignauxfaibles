@@ -13,7 +13,6 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
 
 	"github.com/signaux-faibles/gournal"
-	"github.com/spf13/viper"
 )
 
 // Cotisation Objet cotisation
@@ -42,28 +41,7 @@ func (cotisation Cotisation) Type() string {
 
 // ParserCotisation transforme les fichiers en données à intégrer
 func ParserCotisation(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
-	outputChannel := make(chan marshal.Tuple)
-	eventChannel := make(chan marshal.Event)
-
-	go func() {
-		event := marshal.Event{
-			Code:    "cotisationParser",
-			Channel: eventChannel,
-		}
-
-		for _, path := range batch.Files["cotisation"] {
-			tracker := gournal.NewTracker(
-				map[string]string{"path": path, "batchKey": batch.ID.Key},
-				marshal.TrackerReports)
-
-			event.Info(path + ": ouverture")
-			ParseCotisationFile(viper.GetString("APP_DATA")+path, &cache, batch, &tracker, outputChannel)
-			event.Info(tracker.Report("abstract"))
-		}
-		close(eventChannel)
-		close(outputChannel)
-	}()
-	return outputChannel, eventChannel
+	return marshal.ParseFilesFromBatch(cache, batch, marshal.Parser{FileType: "cotisation", FileParser: ParseCotisationFile})
 }
 
 // ParseCotisationFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.

@@ -12,7 +12,6 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 
 	"github.com/signaux-faibles/gournal"
-	"github.com/spf13/viper"
 )
 
 // CCSF information urssaf ccsf
@@ -41,29 +40,7 @@ func (ccsf CCSF) Type() string {
 
 // ParserCCSF produit des lignes CCSF
 func ParserCCSF(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
-	outputChannel := make(chan marshal.Tuple)
-	eventChannel := make(chan marshal.Event)
-
-	event := marshal.Event{
-		Code:    "ccsfParser",
-		Channel: eventChannel,
-	}
-
-	go func() {
-
-		for _, path := range batch.Files["ccsf"] {
-			tracker := gournal.NewTracker(
-				map[string]string{"path": path, "batchKey": batch.ID.Key},
-				marshal.TrackerReports)
-
-			event.Info(path + ": ouverture")
-			ParseCcsfFile(viper.GetString("APP_DATA")+path, &cache, batch, &tracker, outputChannel)
-			event.Info(tracker.Report("abstract"))
-		}
-		close(outputChannel)
-		close(eventChannel)
-	}()
-	return outputChannel, eventChannel
+	return marshal.ParseFilesFromBatch(cache, batch, marshal.Parser{FileType: "ccsf", FileParser: ParseCcsfFile})
 }
 
 // ParseCcsfFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
