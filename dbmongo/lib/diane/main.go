@@ -357,7 +357,7 @@ func parseDianeRow(row []string) (diane Diane) {
 // parseDianeRow génère des objets Diane à partir d'un fichier
 func parseDianeFile(batch *base.AdminBatch, path string, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
 
-	cmdPath := []string{filepath.Join(viper.GetString("SCRIPTDIANE_DIR"), "convert_diane.sh"), viper.GetString("APP_DATA") + path}
+	cmdPath := []string{filepath.Join(viper.GetString("SCRIPTDIANE_DIR"), "convert_diane.sh"), path}
 	cmd := exec.Command("/bin/bash", cmdPath...)
 
 	stdout, err := cmd.StdoutPipe()

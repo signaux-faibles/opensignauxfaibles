@@ -5056,6 +5056,16 @@
 			"headFilters" : [ ],
 			"headErrors" : [ ],
 			"headFatal" : [ ],
+			"report" : "/../lib/urssaf/testData/comptesTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
+			"batchKey" : "1910"
+		},
+		"code" : "admin_urssafParser"
+	},
+	{
+		"event" : {
+			"headFilters" : [ ],
+			"headErrors" : [ ],
+			"headFatal" : [ ],
 			"report" : "/../lib/apconso/testData/apconsoTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
 			"batchKey" : "1910"
 		},
@@ -5090,16 +5100,6 @@
 			"batchKey" : "1910"
 		},
 		"code" : "ccsfParser"
-	},
-	{
-		"event" : {
-			"headFilters" : [ ],
-			"headErrors" : [ ],
-			"headFatal" : [ ],
-			"report" : "Admin_urssaf: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
-			"batchKey" : "1910"
-		},
-		"code" : "compteParser"
 	},
 	{
 		"event" : {
@@ -5148,20 +5148,20 @@
 			"headFilters" : [ ],
 			"headErrors" : [ ],
 			"headFatal" : [ ],
-			"report" : "/../lib/urssaf/testData/effectifEntTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
+			"report" : "/../lib/urssaf/testData/effectifTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
 			"batchKey" : "1910"
 		},
-		"code" : "effectifEntParser"
+		"code" : "effectifParser"
 	},
 	{
 		"event" : {
 			"headFilters" : [ ],
 			"headErrors" : [ ],
 			"headFatal" : [ ],
-			"report" : "/../lib/urssaf/testData/effectifTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
+			"report" : "/../lib/urssaf/testData/effectifEntTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
 			"batchKey" : "1910"
 		},
-		"code" : "effectifParser"
+		"code" : "effectif_entParser"
 	},
 	{
 		"event" : {
@@ -5206,7 +5206,7 @@
 			"report" : "/../lib/sirene_ul/testData/sireneULTestData.csv: intégration terminée, 4 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 4 lignes valides",
 			"batchKey" : "1910"
 		},
-		"code" : "sireneULParser"
+		"code" : "sirene_ulParser"
 	}
 ]
 // Critical errors from db.Journal:
