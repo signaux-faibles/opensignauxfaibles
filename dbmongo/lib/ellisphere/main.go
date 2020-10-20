@@ -7,7 +7,6 @@ import (
 	"github.com/tealeg/xlsx/v3"
 
 	"github.com/signaux-faibles/gournal"
-	"github.com/spf13/viper"
 )
 
 // Ellisphere informations groupe pour une entreprise
@@ -43,31 +42,7 @@ func (ellisphere Ellisphere) Scope() string {
 
 // Parser produit les lignes
 func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
-	outputChannel := make(chan marshal.Tuple)
-	eventChannel := make(chan marshal.Event)
-	event := marshal.Event{
-		Code:    "ellisphereParser",
-		Channel: eventChannel,
-	}
-
-	go func() {
-		defer close(outputChannel)
-		defer close(eventChannel)
-
-		for _, path := range batch.Files["ellisphere"] {
-			tracker := gournal.NewTracker(
-				map[string]string{"path": path, "batchKey": batch.ID.Key},
-				marshal.TrackerReports)
-
-			path := viper.GetString("APP_DATA") + path
-
-			event.Info(path + ": Opening file")
-			ParseFile(path, &cache, batch, &tracker, outputChannel)
-			event.Info(tracker.Report("abstract"))
-		}
-	}()
-
-	return outputChannel, eventChannel
+	return marshal.ParseFilesFromBatch(cache, batch, marshal.Parser{FileType: "ellisphere", FileParser: ParseFile})
 }
 
 // ParseFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
