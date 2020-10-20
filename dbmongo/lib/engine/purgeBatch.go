@@ -1,114 +1,123 @@
 package engine
 
 import (
-	"errors"
+	"fmt"
+	"log"
 	"strconv"
+	"sync"
 	"time"
 
 	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/spf13/viper"
 )
 
-// PurgeBatch permet de supprimer un batch dans les objets de RawData
-func PurgeBatch(batchKey string) error {
+// PurgeBatchOne purge 1 batch pour 1 siren
+func PurgeBatchOne(batch base.AdminBatch, key string) error {
+	functions, err := loadJSFunctions("purgeBatch")
+	if err != nil {
+		return err
+	}
 
-	// TODO avant de changer clearTempCollections, vérifier que le nettoyage
-	// fonctionne comme attendu
-	var clearTempCollections = false
+	MRscope := bson.M{
+		"fromBatchKey": batch.ID.Key,
+		"f":            functions,
+	}
+
+	job := &mgo.MapReduce{
+		Map:      functions["map"].Code,
+		Reduce:   functions["reduce"].Code,
+		Finalize: functions["finalize"].Code,
+		Out:      bson.M{"merge": "purgeBatch_debug"},
+		Scope:    MRscope,
+	}
+
+	query := bson.M{
+		"_id": bson.M{
+			"$regex": bson.RegEx{Pattern: "^" + key[0:9],
+				Options: "",
+			},
+		},
+	}
+
+	_, err = Db.DB.C("RawData").Find(query).MapReduce(job, nil)
+	return err
+}
+
+func queriesToChan(queries []bson.M) chan bson.M {
+	channel := make(chan bson.M)
+	go func() {
+		for _, query := range queries {
+			channel <- query
+		}
+		close(channel)
+	}()
+	return channel
+}
+
+// MRChunks exécute un job MapReduce à partir d'un channel fournissant des queries
+func MRChunks(queryChan chan bson.M, MRBaseJob mgo.MapReduce, tempDBprefix string, id int, wg *sync.WaitGroup) {
+	for query := range queryChan {
+		job := MRBaseJob
+		job.Out = bson.M{"merge": "TemporaryCollection", "db": tempDBprefix + strconv.Itoa(id)}
+		log.Println(tempDBprefix+strconv.Itoa(id)+": ", query)
+		_, err := Db.DB.C("RawData").Find(query).MapReduce(&job, nil)
+		if err != nil {
+			fmt.Println(tempDBprefix+strconv.Itoa(id)+": error ", err.Error())
+		}
+	}
+	wg.Done()
+}
+
+// PurgeBatch permet de supprimer tous les batch consécutifs au un batch donné dans RawData
+func PurgeBatch(batch base.AdminBatch) error {
+	chunks, err := ChunkCollection(viper.GetString("DB"), "RawData", viper.GetInt64("chunkByteSize"))
+	if err != nil {
+		return fmt.Errorf("chunkCollection a échoué: %s", err.Error())
+	}
+	queries := chunks.ToQueries(bson.M{}, "_id")
+	queryChan := queriesToChan(queries)
 
 	functions, err := loadJSFunctions("purgeBatch")
 	if err != nil {
 		return err
 	}
-	MRscope := bson.M{
-		"currentBatch": batchKey,
-		"f":            functions,
+
+	baseJob := mgo.MapReduce{
+		Map:      functions["map"].Code,
+		Reduce:   functions["reduce"].Code,
+		Finalize: functions["finalize"].Code,
+		Scope: bson.M{
+			"fromBatchKey": batch.ID.Key,
+			"f":            functions,
+		},
 	}
 
-	// Calculs parallélisés pour éviter un Out Of Memory qui se produit
-	// lorsqu'est lancé le map-reduce sur toute la base.
-	chunks, err := ChunkCollection(viper.GetString("DB"), "RawData", viper.GetInt64("chunkByteSize"))
-	if err != nil {
-		return err
+	wg := sync.WaitGroup{}
+
+	for id := 0; id < viper.GetInt("MRthreads"); id++ {
+		wg.Add(1)
+		go MRChunks(queryChan, baseJob, "purgeBatch", id, &wg)
 	}
 
-	w := MRWait{}
-	w.init()
-
-	var tempDbNames []string
-	var tempDBChannel = make(chan string)
-
-	numQuery := 0
-	for _, chunkQuery := range chunks.ToQueries(nil, "_id") {
-		w.waitGroup.Add(1)
-
-		tempDbName := "purgeBatch" + strconv.Itoa(numQuery)
-		job := &mgo.MapReduce{
-			Map:      functions["map"].Code,
-			Reduce:   functions["reduce"].Code,
-			Finalize: functions["finalize"].Code,
-			Out:      bson.M{"merge": "RawData"},
-			Scope:    MRscope,
-		}
-		numQuery++
-
-		go MRroutine(
-			job,
-			chunkQuery,
-			tempDbName,
-			/*Origin collection name = */ "RawData",
-			/*Waitgroup = */ &w,
-			tempDBChannel,
-		)
-	}
-
-	// On consomme les objets dans tempDBChannel
-	go func() {
-		for tempDbName := range tempDBChannel {
-			tempDbNames = append(tempDbNames, tempDbName)
-		}
-	}()
-
-	w.waitGroup.Wait()
-	close(tempDBChannel)
+	wg.Wait()
 
 	db, _ := mgo.Dial(viper.GetString("DB_DIAL"))
 	db.SetSocketTimeout(720000 * time.Second)
 
-	if clearTempCollections {
-		for _, tempDbName := range tempDbNames {
-			pipeline := []bson.M{
-				bson.M{
-					"$merge": bson.M{
-						"into": bson.M{
-							"coll":        "RawData",
-							"db":          viper.GetString("DB"),
-							"whenMatched": "merge",
-						},
-					},
-				},
-			}
+	for id := 0; id < viper.GetInt("MRthreads"); id++ {
+		tempDB := "purgeBatch" + strconv.Itoa(id)
+		pipeline := []bson.M{{
+			"$merge": bson.M{"into": bson.M{"coll": "RawData", "db": viper.GetString("DB")}}}}
+		pipe := db.DB(tempDB).C("TemporaryCollection").Pipe(pipeline)
 
-			pipe := db.DB(tempDbName).C("TemporaryCollection").Pipe(pipeline)
-			var result []interface{}
-			err = pipe.AllowDiskUse().All(&result)
-			if err != nil {
-				w.add("errors", 1, -1)
-			} else {
-				err = db.DB(tempDbName).DropDatabase()
-				if err != nil {
-					w.add("errors", 1, -1)
-				}
-			}
+		err = pipe.AllowDiskUse().All(&[]interface{}{})
+		if err != nil {
+			fmt.Println("quelque chose vient de se casser: " + err.Error())
+			return err
 		}
-	}
-
-	db.Close()
-
-	errorcount, _ := w.running.Load("errors")
-	if errorcount.(int) != 0 {
-		return errors.New("erreurs constatées, consultez les journaux")
+		db.DB(tempDB).DropDatabase()
 	}
 
 	return nil

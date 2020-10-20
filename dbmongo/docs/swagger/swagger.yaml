@@ -43,6 +43,14 @@ components:
       properties:
         fromBatchKey:
           type: string
+    PurgeBatch:
+      properties:
+        fromBatch:
+          type: string
+        debugForKey:
+          type: string
+        IUnderstandWhatImDoing:
+          type: boolean
     Public:
       properties:
         batch:
@@ -269,24 +277,6 @@ paths:
       security:
         - BearerAuth: []
       summary: créer le batch suivant
-      tags:
-        - Administration
-  /api/admin/batch/revert:
-    get:
-      description: |-
-        Ce traitement permet de supprime les données et la référence du dernier batch et de le réouvrir pour une nouvelle intégration.  
-        Cela est utile si des modifications sont à apporter au niveau du batch.
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: string
-              example: "ok"
-      security:
-        - BearerAuth: []
-      summary: supprimer le dernier batch
       tags:
         - Administration
   /api/admin/events:
@@ -537,6 +527,36 @@ paths:
               batch: "1805"
               features: "algo2"
               key: "012345678901234"
+      responses:
+        "200":
+          description: Le traitement s'est bien déroulé
+          content:
+            application/json:
+              schema:
+                type: string
+              example: ok
+      security:
+        - BearerAuth: []
+      summary: calculer les variables
+      tags:
+        - Traitements
+  /api/data/purge:
+    post:
+      description: |-
+        /!\ ce traitement est destructif et irréversible /!\
+        Supprime les données dans les objets de la collection RawData pour les batches suivant le numéro de batch donné.
+        La propriété `debugForKey` permet de traiter une entreprise en fournissant son siren, le résultat n'impacte pas la collection RawData mais est déversé dans purgeBatch_debug à des fins de vérifications.
+        Lorsque `key` n'est pas fourni, le traitement s'exécute sur l'ensemble de la base, et dans ce cas la propriété IUnderstandWhatImDoing doit être fournie à la valeur `true` sans quoi le traitement refusera de se lancer.
+        /!\ ce traitement est destructif et irréversible /!\
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PurgeBatch"
+            example:
+              fromBatch: "1805"
+              key: "012345678901234"
+              IUnderstandWhatImDoing: true
       responses:
         "200":
           description: Le traitement s'est bien déroulé

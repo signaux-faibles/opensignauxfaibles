@@ -208,9 +208,9 @@ func reduceFinalAggregation(tempDatabase *mgo.Database, tempCollection, outDatab
 		{
 			"$project": bson.M{
 				"_id": bson.D{ // on utilise bson.D pour conserver cet ordre, et permettre la fusion (mergePipeline)
-					{"batch", "$_id.batch"},
-					{"siret", "$value.siret"},
-					{"periode", "$_id.periode"},
+					bson.DocElem{Name: "batch", Value: "$_id.batch"},
+					bson.DocElem{Name: "siret", Value: "$value.siret"},
+					bson.DocElem{Name: "periode", Value: "$_id.periode"},
 				},
 				"value": 1.0,
 			},

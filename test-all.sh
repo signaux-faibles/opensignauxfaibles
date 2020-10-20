@@ -72,6 +72,9 @@ heading "test-api-reduce.sh"
 heading "test-api-reduce-2.sh"
 ./tests/test-api-reduce-2.sh $@ 2>&1 | indent
 
+heading "test-api-purge-batch.sh"
+./tests/test-api-purge-batch.sh $@ 2>&1 | indent
+
 heading "test-api-export.sh"
 ./tests/test-api-export.sh $@ 2>&1 | indent
 

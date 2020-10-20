@@ -174,24 +174,3 @@ func NextBatch() error {
 	}
 	return nil
 }
-
-// RevertBatch purge le batch et supprime sa référence dans la collection Admin
-func RevertBatch() error {
-	batch := LastBatch()
-	err := PurgeBatch(batch.ID.Key)
-	if err != nil {
-		return fmt.Errorf("Erreur lors de la purge: " + err.Error())
-	}
-	err = DropBatch(batch.ID.Key)
-	if err != nil {
-		return fmt.Errorf("Erreur lors de la purge: " + err.Error())
-	}
-
-	return nil
-}
-
-// DropBatch supprime une référence de batch dans la collection Admin
-func DropBatch(batchKey string) error {
-	_, err := Db.DB.C("Admin").RemoveAll(bson.M{"_id.key": batchKey, "_id.type": "batch"})
-	return err
-}
