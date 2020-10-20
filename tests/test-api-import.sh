@@ -37,15 +37,24 @@ tests/helpers/mongodb-container.sh run > /dev/null << CONTENTS
         "type" : "batch"
     },
     "files": {
-      "admin_urssaf": [
-        "/../lib/urssaf/testData/comptesTestData.csv"
-      ],
-      "delai": [
-        "/../lib/urssaf/testData/delaiTestData.csv"
-      ]
+      "apconso":      [ "/../lib/apconso/testData/apconsoTestData.csv" ],
+      "apdemande":    [ "/../lib/apdemande/testData/apdemandeTestData.csv" ],
+      "bdf":          [ "/../lib/bdf/testData/bdfTestData.csv" ],
+      "diane":        [ "/../lib/diane/testData/dianeTestData.txt" ],
+      "ellisphere":   [ "/../lib/ellisphere/testData/ellisphereTestData.excel" ],
+      "sirene":       [ "/../lib/sirene/testData/sireneTestData.csv" ],
+      "sirene_ul":    [ "/../lib/sirene_ul/testData/sireneULTestData.csv" ],
+      "admin_urssaf": [ "/../lib/urssaf/testData/comptesTestData.csv" ],
+      "debit":        [ "/../lib/urssaf/testData/debitTestData.csv" ],
+      "ccsf":         [ "/../lib/urssaf/testData/ccsfTestData.csv" ],
+      "cotisation":   [ "/../lib/urssaf/testData/cotisationTestData.csv" ],
+      "delai":        [ "/../lib/urssaf/testData/delaiTestData.csv" ],
+      "effectif":     [ "/../lib/urssaf/testData/effectifTestData.csv" ],
+      "effectif_ent": [ "/../lib/urssaf/testData/effectifEntTestData.csv" ],
+      "procol":       [ "/../lib/urssaf/testData/procolTestData.csv" ],
     },
     "param" : {
-        "date_debut" : ISODate("2001-01-01T00:00:00.000+0000"),
+        "date_debut" : ISODate("2019-01-01T00:00:00.000+0000"),
         "date_fin" : ISODate("2019-02-01T00:00:00.000+0000")
     }
   })
@@ -54,7 +63,7 @@ CONTENTS
 echo ""
 echo "💎 Parsing and importing data thru dbmongo API..."
 tests/helpers/dbmongo-server.sh start
-echo "- POST /api/data/import 👉 $(http --print=b --ignore-stdin :5000/api/data/import batch=1910 noFilter:=true parsers:='["delai"]')"
+echo "- POST /api/data/import 👉 $(http --print=b --ignore-stdin :5000/api/data/import batch=1910 noFilter:=true)"
 
 OUTPUT_GZ_FILE=dbmongo/$(http --print=b --ignore-stdin :5000/api/data/validate collection=ImportedData | tr -d '"')
 echo "- POST /api/data/validate 👉 ${OUTPUT_GZ_FILE}"
@@ -62,13 +71,31 @@ echo "- POST /api/data/validate 👉 ${OUTPUT_GZ_FILE}"
 (tests/helpers/mongodb-container.sh run \
   | perl -p -e 's/"[0-9a-z]{32}"/"______________Hash______________"/' \
   | perl -p -e 's/"[0-9a-z]{24}"/"________ObjectId________"/' \
+  | perl -p -e 's/"periode" : ISODate\("....-..-..T..:..:..Z"\)/"periode" : ISODate\("_______ Date _______"\)/' \
   > "${OUTPUT_FILE}" \
 ) << CONTENT
 print("// Documents from db.ImportedData, after call to /api/data/import:");
-printjson(db.ImportedData.find().sort({"value.key":1}).toArray());
-print("// Documents from db.Journal:");
-printjson(db.Journal.find({ "event.report": { "\$exists": true } }).toArray().map(doc => ({
-  // note: we use map() to force the order of properties at every run of this test
+printjson(db.ImportedData.find().sort({"value.key":1}).toArray().map(doc => ({
+  ...doc,
+  value: {
+    ...doc.value,
+    // on classe les données par type, de manière à ce que l'ordre soit stable
+    batch: Object.keys(doc.value.batch).reduce((batch, batchKey) => ({
+      ...batch,
+      [ batchKey ]: Object.keys(doc.value.batch[batchKey]).sort().reduce((batchData, dataType) => ({
+        ...batchData,
+        [ dataType ]: Object.keys(doc.value.batch[batchKey][dataType]).sort().reduce((hashedData, hash) => ({
+          ...hashedData,
+          [ hash ]: doc.value.batch[batchKey][dataType][hash]
+        }), {})
+      }), {})
+    }), {})
+  }
+})));
+
+print("// Reports from db.Journal:");
+// on classe les données par type, de manière à ce que l'ordre soit stable
+printjson(db.Journal.find({ "event.report": { "\$exists": true } }).sort({ code: 1 }).toArray().map(doc => ({
   event: {
     headFilters: doc.event.headFilters,
     headErrors: doc.event.headErrors,
@@ -79,12 +106,16 @@ printjson(db.Journal.find({ "event.report": { "\$exists": true } }).toArray().ma
   code: doc.code
 })));
 
+print("// Critical errors from db.Journal:");
+printjson(db.Journal.find({ priority: "critical" }).sort({ code: 1 }).toArray());
+
 print("// Results of call to /api/data/validate:");
 CONTENT
 
 zcat < "${OUTPUT_GZ_FILE}" \
   | perl -p -e 's/"[0-9a-z]{32}"/"______________Hash______________"/' \
   | perl -p -e 's/"[0-9a-z]{24}"/"________ObjectId________"/' \
+  | perl -p -e 's/"periode" : ISODate\("....-..-..T..:..:..Z"\)/"periode" : ISODate\("_______ Date _______"\)/' \
   | sort \
   >> "${OUTPUT_FILE}"
 
