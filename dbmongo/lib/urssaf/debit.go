@@ -67,7 +67,7 @@ func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 		for _, path := range batch.Files["debit"] {
 			tracker := gournal.NewTracker(
 				map[string]string{"path": path, "batchKey": batch.ID.Key},
-				engine.TrackerReports)
+				marshal.TrackerReports)
 
 			event.Info(path + ": ouverture")
 			ParseDebitFile(viper.GetString("APP_DATA")+path, &cache, batch, &tracker, outputChannel)
