@@ -480,6 +480,159 @@
 	{
 		"_id" : ObjectId("________ObjectId________"),
 		"value" : {
+			"scope" : "entreprise",
+			"key" : "151515151",
+			"batch" : {
+				"1910" : {
+					"ellisphere" : {
+						"______________Hash______________" : {
+							"code_groupe" : "1234567",
+							"siren_groupe" : "525343432",
+							"refid_groupe" : "1234567",
+							"raison_sociale_groupe" : "GROUPE A",
+							"adresse_groupe" : "quelque part",
+							"personne_pou_m_groupe" : "M",
+							"niveau_detention" : 1,
+							"part_financiere" : 90.2,
+							"code_filiere" : "1000000",
+							"refid_filiere" : "AKES38748",
+							"personne_pou_m_filiere" : "M"
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "entreprise",
+			"key" : "151515152",
+			"batch" : {
+				"1910" : {
+					"ellisphere" : {
+						"______________Hash______________" : {
+							"code_groupe" : "2345678",
+							"siren_groupe" : "592839489",
+							"refid_groupe" : "2345678",
+							"raison_sociale_groupe" : "GROUPE B",
+							"adresse_groupe" : "ailleurs",
+							"personne_pou_m_groupe" : "M",
+							"niveau_detention" : 1,
+							"part_financiere" : 63.2,
+							"code_filiere" : "1000001",
+							"refid_filiere" : "BKES38748",
+							"personne_pou_m_filiere" : "M"
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "entreprise",
+			"key" : "151515153",
+			"batch" : {
+				"1910" : {
+					"ellisphere" : {
+						"______________Hash______________" : {
+							"code_groupe" : "3456789",
+							"siren_groupe" : "235935959",
+							"refid_groupe" : "3456789",
+							"raison_sociale_groupe" : "GROUPE C",
+							"adresse_groupe" : "mais",
+							"personne_pou_m_groupe" : "M",
+							"niveau_detention" : 2,
+							"part_financiere" : 52,
+							"code_filiere" : "1000002",
+							"refid_filiere" : "CKES38748",
+							"personne_pou_m_filiere" : "M"
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "entreprise",
+			"key" : "151515154",
+			"batch" : {
+				"1910" : {
+					"ellisphere" : {
+						"______________Hash______________" : {
+							"code_groupe" : "4567890",
+							"refid_groupe" : "4567890",
+							"raison_sociale_groupe" : "GROUPE A",
+							"adresse_groupe" : "pas ici",
+							"personne_pou_m_groupe" : "M",
+							"niveau_detention" : 1,
+							"part_financiere" : 100,
+							"code_filiere" : "1000003",
+							"refid_filiere" : "DKES38748",
+							"personne_pou_m_filiere" : "M"
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "entreprise",
+			"key" : "151515155",
+			"batch" : {
+				"1910" : {
+					"ellisphere" : {
+						"______________Hash______________" : {
+							"code_groupe" : "5678901",
+							"refid_groupe" : "5678901",
+							"raison_sociale_groupe" : "GROUPE B",
+							"adresse_groupe" : "ça",
+							"personne_pou_m_groupe" : "M",
+							"niveau_detention" : 2,
+							"part_financiere" : 80,
+							"code_filiere" : "1000004",
+							"refid_filiere" : "EKES38748",
+							"personne_pou_m_filiere" : "M"
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "entreprise",
+			"key" : "151515156",
+			"batch" : {
+				"1910" : {
+					"ellisphere" : {
+						"______________Hash______________" : {
+							"code_groupe" : "6789012",
+							"refid_groupe" : "6789012",
+							"raison_sociale_groupe" : "GROUPE C",
+							"adresse_groupe" : "c’est certain",
+							"personne_pou_m_groupe" : "M",
+							"niveau_detention" : 9,
+							"part_financiere" : 22,
+							"code_filiere" : "1000005",
+							"refid_filiere" : "FKES38748",
+							"personne_pou_m_filiere" : "M"
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
 			"scope" : "etablissement",
 			"key" : "15756082097503",
 			"batch" : {
@@ -1712,6 +1865,19 @@
 			"batchKey" : "1910"
 		},
 		"code" : "parserApdemande"
+	},
+	{
+		"event" : {
+			"headFilters" : [ ],
+			"headErrors" : [ ],
+			"headFatal" : [
+				"Cycle 0: Le siret/siren est invalide",
+				"Cycle 0: strconv.ParseInt: parsing \"Niveau de détention\": invalid syntax"
+			],
+			"report" : "/../lib/ellisphere/testData/ellisphereTestData.excel: intégration terminée, 7 lignes traitées, 2 erreures fatales, 0 rejets, 0 lignes filtrées, 5 lignes valides",
+			"batchKey" : "1910"
+		},
+		"code" : "parserEllisphere"
 	}
 ]
 // Critical errors from db.Journal:

@@ -41,7 +41,7 @@ tests/helpers/mongodb-container.sh run > /dev/null << CONTENTS
       "apdemande":    [ "/../lib/apdemande/testData/apdemandeTestData.csv" ],
       "bdf":          [ "/../lib/bdf/testData/bdfTestData.csv" ],
       "diane":        [ "/../lib/diane/testData/dianeTestData.txt" ],
-//      "ellisphere":   [ "/../lib/ellisphere/testData/ellisphereTestData.csv" ],
+      "ellisphere":   [ "/../lib/ellisphere/testData/ellisphereTestData.excel" ],
 //      "sirene":       [ "/../lib/sirene/testData/sireneTestData.csv" ],
 //      "sirene_ul":    [ "/../lib/sirene_ul/testData/sireneULTestData.csv" ],
       "admin_urssaf": [ "/../lib/urssaf/testData/comptesTestData.csv" ],
