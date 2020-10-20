@@ -3,13 +3,13 @@
     "value.ratio_apart": {
       "$let": {
         "vars": {
-          "nbHeuresOuvreesMoyParSemaine": 157.67
+          "nbHeuresOuvreesMoyParMois": 157.67
         },
         "in": {
           "$divide": [
             "$value.apart_heures_consommees",
             {
-              "$multiply": ["$value.effectif", "$$nbHeuresOuvreesMoyParSemaine"]
+              "$multiply": ["$value.effectif", "$$nbHeuresOuvreesMoyParMois"]
             }
           ]
         }
