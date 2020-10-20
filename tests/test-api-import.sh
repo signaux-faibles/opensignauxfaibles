@@ -63,7 +63,7 @@ CONTENTS
 echo ""
 echo "💎 Parsing and importing data thru dbmongo API..."
 tests/helpers/dbmongo-server.sh start
-echo "- POST /api/data/import 👉 $(http --print=b --ignore-stdin :5000/api/data/import batch=1910 noFilter:=true parsers:='["delai"]')"
+echo "- POST /api/data/import 👉 $(http --print=b --ignore-stdin :5000/api/data/import batch=1910 noFilter:=true)"
 
 OUTPUT_GZ_FILE=dbmongo/$(http --print=b --ignore-stdin :5000/api/data/validate collection=ImportedData | tr -d '"')
 echo "- POST /api/data/validate 👉 ${OUTPUT_GZ_FILE}"
@@ -71,10 +71,24 @@ echo "- POST /api/data/validate 👉 ${OUTPUT_GZ_FILE}"
 (tests/helpers/mongodb-container.sh run \
   | perl -p -e 's/"[0-9a-z]{32}"/"______________Hash______________"/' \
   | perl -p -e 's/"[0-9a-z]{24}"/"________ObjectId________"/' \
+  | perl -p -e 's/"periode" : ISODate\("....-..-..T..:..:..Z"\)/"periode" : ISODate\("_______ Date _______"\)/' \
   > "${OUTPUT_FILE}" \
 ) << CONTENT
 print("// Documents from db.ImportedData, after call to /api/data/import:");
-printjson(db.ImportedData.find().sort({"value.key":1}).toArray());
+printjson(db.ImportedData.find().sort({"value.key":1}).toArray().map(doc => ({
+  ...doc,
+  value: {
+    ...doc.value,
+    // on va classer les données par type, de manière à ce que l'ordre soit stable
+    batch: Object.keys(doc.value.batch).reduce((batch, batchKey) => ({
+      ...batch,
+      [ batchKey ]: Object.keys(doc.value.batch[batchKey]).sort().reduce((batchData, dataType) => ({
+        ...batchData,
+        [ dataType ]: doc.value.batch[batchKey][dataType]
+      }), {})
+    }), {})
+  }
+})));
 print("// Documents from db.Journal:");
 printjson(db.Journal.find({ "event.report": { "\$exists": true } }).toArray().map(doc => ({
   // note: we use map() to force the order of properties at every run of this test
@@ -94,6 +108,7 @@ CONTENT
 zcat < "${OUTPUT_GZ_FILE}" \
   | perl -p -e 's/"[0-9a-z]{32}"/"______________Hash______________"/' \
   | perl -p -e 's/"[0-9a-z]{24}"/"________ObjectId________"/' \
+  | perl -p -e 's/"periode" : ISODate\("....-..-..T..:..:..Z"\)/"periode" : ISODate\("_______ Date _______"\)/' \
   | sort \
   >> "${OUTPUT_FILE}"
 
