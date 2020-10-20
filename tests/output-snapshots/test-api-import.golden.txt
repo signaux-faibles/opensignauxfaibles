@@ -5056,6 +5056,26 @@
 			"headFilters" : [ ],
 			"headErrors" : [ ],
 			"headFatal" : [ ],
+			"report" : "/../lib/apconso/testData/apconsoTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
+			"batchKey" : "1910"
+		},
+		"code" : "apconsoParser"
+	},
+	{
+		"event" : {
+			"headFilters" : [ ],
+			"headErrors" : [ ],
+			"headFatal" : [ ],
+			"report" : "/../lib/apdemande/testData/apdemandeTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
+			"batchKey" : "1910"
+		},
+		"code" : "apdemandeParser"
+	},
+	{
+		"event" : {
+			"headFilters" : [ ],
+			"headErrors" : [ ],
+			"headFatal" : [ ],
 			"report" : "/../lib/bdf/testData/bdfTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
 			"batchKey" : "1910"
 		},
@@ -5147,26 +5167,6 @@
 		"event" : {
 			"headFilters" : [ ],
 			"headErrors" : [ ],
-			"headFatal" : [ ],
-			"report" : "/../lib/apconso/testData/apconsoTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
-			"batchKey" : "1910"
-		},
-		"code" : "parserApconso"
-	},
-	{
-		"event" : {
-			"headFilters" : [ ],
-			"headErrors" : [ ],
-			"headFatal" : [ ],
-			"report" : "/../lib/apdemande/testData/apdemandeTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
-			"batchKey" : "1910"
-		},
-		"code" : "parserApdemande"
-	},
-	{
-		"event" : {
-			"headFilters" : [ ],
-			"headErrors" : [ ],
 			"headFatal" : [
 				"Cycle 0: Le siret/siren est invalide",
 				"Cycle 0: strconv.ParseInt: parsing \"Niveau de détention\": invalid syntax"
@@ -5174,7 +5174,7 @@
 			"report" : "/../lib/ellisphere/testData/ellisphereTestData.excel: intégration terminée, 7 lignes traitées, 2 erreures fatales, 0 rejets, 0 lignes filtrées, 5 lignes valides",
 			"batchKey" : "1910"
 		},
-		"code" : "parserEllisphere"
+		"code" : "ellisphereParser"
 	},
 	{
 		"event" : {
