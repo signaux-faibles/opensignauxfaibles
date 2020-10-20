@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 
 	"github.com/signaux-faibles/gournal"
@@ -55,7 +54,7 @@ func ParserCCSF(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple
 		for _, path := range batch.Files["ccsf"] {
 			tracker := gournal.NewTracker(
 				map[string]string{"path": path, "batchKey": batch.ID.Key},
-				engine.TrackerReports)
+				marshal.TrackerReports)
 
 			event.Info(path + ": ouverture")
 			ParseCcsfFile(viper.GetString("APP_DATA")+path, &cache, batch, &tracker, outputChannel)

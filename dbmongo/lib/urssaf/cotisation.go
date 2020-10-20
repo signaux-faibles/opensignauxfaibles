@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
 
@@ -55,7 +54,7 @@ func ParserCotisation(cache marshal.Cache, batch *base.AdminBatch) (chan marshal
 		for _, path := range batch.Files["cotisation"] {
 			tracker := gournal.NewTracker(
 				map[string]string{"path": path, "batchKey": batch.ID.Key},
-				engine.TrackerReports)
+				marshal.TrackerReports)
 
 			event.Info(path + ": ouverture")
 			ParseCotisationFile(viper.GetString("APP_DATA")+path, &cache, batch, &tracker, outputChannel)

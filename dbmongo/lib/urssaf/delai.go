@@ -5,7 +5,6 @@ import (
 	"encoding/csv"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 
 	//"errors"
@@ -65,7 +64,7 @@ func ParserDelai(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tupl
 		for _, path := range batch.Files["delai"] {
 			tracker := gournal.NewTracker(
 				map[string]string{"path": path, "batchKey": batch.ID.Key},
-				engine.TrackerReports)
+				marshal.TrackerReports)
 
 			event.Info(path + ": ouverture")
 			ParseDelaiFile(viper.GetString("APP_DATA")+path, &cache, batch, &tracker, outputChannel)

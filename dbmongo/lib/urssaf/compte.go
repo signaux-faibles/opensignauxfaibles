@@ -5,7 +5,6 @@ import (
 
 	"github.com/signaux-faibles/gournal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
 )
@@ -48,7 +47,7 @@ func ParserCompte(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tup
 			}
 			tracker := gournal.NewTracker(
 				map[string]string{"path": "Admin_urssaf", "batchKey": batch.ID.Key},
-				engine.TrackerReports)
+				marshal.TrackerReports)
 
 			event.Info("Comptes urssaf : traitement")
 			ParseCompteFile("", &cache, batch, &tracker, outputChannel)
