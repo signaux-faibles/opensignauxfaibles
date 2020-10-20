@@ -310,25 +310,7 @@ func purgeNotCompactedHandler(c *gin.Context) {
 	c.JSON(200, result)
 }
 
-// RegisteredParsers liste des parsers disponibles
-var registeredParsers = map[string]marshal.Parser{
-	"debit":        urssaf.ParserDebit,
-	"ccsf":         urssaf.ParserCCSF,
-	"cotisation":   urssaf.ParserCotisation,
-	"admin_urssaf": urssaf.ParserCompte,
-	"delai":        urssaf.ParserDelai,
-	"effectif":     urssaf.ParserEffectif,
-	"effectif_ent": urssaf.ParserEffectifEnt,
-	"procol":       urssaf.ParserProcol,
-	"apconso":      apconso.Parser,
-	"apdemande":    apdemande.Parser,
-	"bdf":          bdf.Parser,
-	"sirene":       sirene.Parser,
-	"sirene_ul":    sireneul.Parser,
-	"diane":        diane.Parser,
-	"ellisphere":   ellisphere.Parser,
-}
-
+// liste des parsers disponibles
 var registeredFileParsers = map[string]marshal.ParseFile{
 	"debit":        urssaf.ParseDebitFile,
 	"ccsf":         urssaf.ParseCcsfFile,
@@ -351,15 +333,15 @@ var registeredFileParsers = map[string]marshal.ParseFile{
 func resolveParsers(parserNames []string) ([]marshal.Parser, error) {
 	var parsers []marshal.Parser
 	if parserNames == nil {
-		for _, f := range registeredParsers {
-			parsers = append(parsers, f)
+		for fileType, fileParser := range registeredFileParsers {
+			parsers = append(parsers, marshal.Parser{FileType: fileType, FileParser: fileParser})
 		}
 	} else {
-		for _, p := range parserNames {
-			if f, ok := registeredParsers[p]; ok {
-				parsers = append(parsers, f)
+		for _, fileType := range parserNames {
+			if fileParser, ok := registeredFileParsers[fileType]; ok {
+				parsers = append(parsers, marshal.Parser{FileType: fileType, FileParser: fileParser})
 			} else {
-				return parsers, errors.New(p + " n'est pas un parser reconnu.")
+				return parsers, errors.New(fileType + " n'est pas un parser reconnu.")
 			}
 		}
 	}

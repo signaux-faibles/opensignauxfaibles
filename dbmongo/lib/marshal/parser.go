@@ -8,10 +8,17 @@ import (
 
 	"github.com/signaux-faibles/gournal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
+	"github.com/spf13/viper"
 )
 
-// Parser fonction de traitement de données en entrée
-type Parser func(Cache, *base.AdminBatch) (chan Tuple, chan Event)
+// BatchParser fonction de traitement de données en entrée
+type BatchParser func(Cache, *base.AdminBatch) (chan Tuple, chan Event)
+
+// Parser associates a fileType with a fileParser function.
+type Parser = struct {
+	FileType   string
+	FileParser ParseFile
+}
 
 type filePath = string
 
@@ -26,8 +33,29 @@ type Tuple interface {
 }
 
 // ParseFilesFromBatch parse tous les fichiers spécifiés dans batch pour un parseur donné.
-func (parser Parser) ParseFilesFromBatch(cache Cache, batch *base.AdminBatch) (chan Tuple, chan Event) {
-	return parser(cache, batch)
+func ParseFilesFromBatch(cache Cache, batch *base.AdminBatch, parser Parser) (chan Tuple, chan Event) {
+	outputChannel := make(chan Tuple)
+	eventChannel := make(chan Event)
+	event := Event{
+		Code:    Code(parser.FileType + "Parser"),
+		Channel: eventChannel,
+	}
+
+	go func() {
+		for _, path := range batch.Files[parser.FileType] {
+			tracker := gournal.NewTracker(
+				map[string]string{"path": path, "batchKey": batch.ID.Key},
+				TrackerReports)
+
+			event.Info(path + ": ouverture")
+			parser.FileParser(viper.GetString("APP_DATA")+path, &cache, batch, &tracker, outputChannel)
+			event.Debug(tracker.Report("abstract"))
+		}
+		close(outputChannel)
+		close(eventChannel)
+	}()
+
+	return outputChannel, eventChannel
 }
 
 // GetJSON sérialise un tuple au format JSON.

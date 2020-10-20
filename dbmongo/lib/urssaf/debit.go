@@ -14,7 +14,6 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
 
 	"github.com/signaux-faibles/gournal"
-	"github.com/spf13/viper"
 )
 
 // Debit Débit – fichier Urssaf
@@ -53,34 +52,12 @@ func (debit Debit) Type() string {
 
 type colMapping map[string]int
 
-// ParserDebit retourne les entrées lues depuis un fichier "débit" de l'URSSAF.
+// ParserDebit retourne les entrées lues depuis .
 func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
-	outputChannel := make(chan marshal.Tuple)
-	eventChannel := make(chan marshal.Event)
-
-	event := marshal.Event{
-		Code:    "debitParser",
-		Channel: eventChannel,
-	}
-
-	go func() {
-		for _, path := range batch.Files["debit"] {
-			tracker := gournal.NewTracker(
-				map[string]string{"path": path, "batchKey": batch.ID.Key},
-				marshal.TrackerReports)
-
-			event.Info(path + ": ouverture")
-			ParseDebitFile(viper.GetString("APP_DATA")+path, &cache, batch, &tracker, outputChannel)
-			event.Debug(tracker.Report("abstract"))
-		}
-		close(outputChannel)
-		close(eventChannel)
-	}()
-
-	return outputChannel, eventChannel
+	return marshal.ParseFilesFromBatch(cache, batch, marshal.Parser{FileType: "debit", FileParser: ParseDebitFile})
 }
 
-// ParseDebitFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
+// ParseDebitFile extrait les tuples depuis un fichier "débit" de l'URSSAF.
 func ParseDebitFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
 	comptes, err := marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
 	if err != nil {

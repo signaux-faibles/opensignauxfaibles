@@ -39,7 +39,7 @@ type tuplesAndEvents = struct {
 // RunParser returns Tuples and Events resulting from the execution of a
 // Parser on a given input file.
 func RunParser(
-	parser Parser,
+	parser BatchParser,
 	cache Cache,
 	parserType string,
 	inputFile string,
@@ -72,7 +72,7 @@ func RunParser(
 // in a golden file. If update = true, the the golden file is updated.
 func TestParserOutput(
 	t *testing.T,
-	parser Parser,
+	parser BatchParser,
 	cache Cache,
 	parserType string,
 	inputFile string,
