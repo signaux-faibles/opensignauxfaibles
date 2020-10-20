@@ -37,7 +37,7 @@ tests/helpers/mongodb-container.sh run > /dev/null << CONTENTS
         "type" : "batch"
     },
     "files": {
-//      "apconso":      [ "/../lib/apconso/testData/apconsoTestData.csv" ],
+      "apconso":      [ "/../lib/apconso/testData/apconsoTestData.csv" ],
 //      "apdemande":    [ "/../lib/apdemande/testData/apdemandeTestData.csv" ],
 //      "bdf":          [ "/../lib/bdf/testData/bdfTestData.csv" ],
 //      "diane":        [ "/../lib/diane/testData/dianeTestData.csv" ],

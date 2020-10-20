@@ -398,6 +398,66 @@
 				}
 			}
 		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "etablissement",
+			"key" : "53312397597505",
+			"batch" : {
+				"1910" : {
+					"apconso" : {
+						"______________Hash______________" : {
+							"id_conso" : "p95a076375",
+							"heure_consomme" : 6.25,
+							"montant" : 27,
+							"effectif" : 7,
+							"periode" : ISODate("_______ Date _______")
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "etablissement",
+			"key" : "61433760225578",
+			"batch" : {
+				"1910" : {
+					"apconso" : {
+						"______________Hash______________" : {
+							"id_conso" : "d363954866",
+							"heure_consomme" : 311.54,
+							"montant" : 214,
+							"effectif" : 0,
+							"periode" : ISODate("_______ Date _______")
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "etablissement",
+			"key" : "65272073959845",
+			"batch" : {
+				"1910" : {
+					"apconso" : {
+						"______________Hash______________" : {
+							"id_conso" : "u90q913412",
+							"heure_consomme" : 44.11,
+							"montant" : 659,
+							"effectif" : 2,
+							"periode" : ISODate("_______ Date _______")
+						}
+					}
+				}
+			}
+		}
 	}
 ]
 // Documents from db.Journal:
@@ -423,6 +483,16 @@
 			"batchKey" : "1910"
 		},
 		"code" : "delaiParser"
+	},
+	{
+		"event" : {
+			"headFilters" : [ ],
+			"headErrors" : [ ],
+			"headFatal" : [ ],
+			"report" : "/../lib/apconso/testData/apconsoTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
+			"batchKey" : "1910"
+		},
+		"code" : "parserApconso"
 	}
 ]
 // Results of call to /api/data/validate:
