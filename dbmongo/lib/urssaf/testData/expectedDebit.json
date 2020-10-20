@@ -73,7 +73,7 @@
         "total": 3,
         "valid": 3
       },
-      "priority": "debug",
+      "priority": "info",
       "code": "debitParser",
       "report_type": ""
     }

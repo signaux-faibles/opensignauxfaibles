@@ -49,7 +49,7 @@ func ParseFilesFromBatch(cache Cache, batch *base.AdminBatch, parser Parser) (ch
 
 			event.Info(path + ": ouverture")
 			parser.FileParser(viper.GetString("APP_DATA")+path, &cache, batch, &tracker, outputChannel)
-			event.Debug(tracker.Report("abstract"))
+			event.Info(tracker.Report("abstract"))
 		}
 		close(outputChannel)
 		close(eventChannel)
