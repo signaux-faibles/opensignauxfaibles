@@ -39,7 +39,7 @@ tests/helpers/mongodb-container.sh run > /dev/null << CONTENTS
     "files": {
       "apconso":      [ "/../lib/apconso/testData/apconsoTestData.csv" ],
       "apdemande":    [ "/../lib/apdemande/testData/apdemandeTestData.csv" ],
-//      "bdf":          [ "/../lib/bdf/testData/bdfTestData.csv" ],
+      "bdf":          [ "/../lib/bdf/testData/bdfTestData.csv" ],
 //      "diane":        [ "/../lib/diane/testData/dianeTestData.csv" ],
 //      "ellisphere":   [ "/../lib/ellisphere/testData/ellisphereTestData.csv" ],
 //      "sirene":       [ "/../lib/sirene/testData/sireneTestData.csv" ],
