@@ -37,12 +37,21 @@ tests/helpers/mongodb-container.sh run > /dev/null << CONTENTS
         "type" : "batch"
     },
     "files": {
-      "admin_urssaf": [
-        "/../lib/urssaf/testData/comptesTestData.csv"
-      ],
-      "delai": [
-        "/../lib/urssaf/testData/delaiTestData.csv"
-      ]
+//      "apconso":      [ "/../lib/apconso/testData/apconsoTestData.csv" ],
+//      "apdemande":    [ "/../lib/apdemande/testData/apdemandeTestData.csv" ],
+//      "bdf":          [ "/../lib/bdf/testData/bdfTestData.csv" ],
+//      "diane":        [ "/../lib/diane/testData/dianeTestData.csv" ],
+//      "ellisphere":   [ "/../lib/ellisphere/testData/ellisphereTestData.csv" ],
+//      "sirene":       [ "/../lib/sirene/testData/sireneTestData.csv" ],
+//      "sirene_ul":    [ "/../lib/sirene_ul/testData/sireneULTestData.csv" ],
+      "admin_urssaf": [ "/../lib/urssaf/testData/comptesTestData.csv" ],
+//      "debit":        [ "/../lib/urssaf/testData/debitTestData.csv" ],
+//      "ccsf":         [ "/../lib/urssaf/testData/ccsfTestData.csv" ],
+//      "cotisation":   [ "/../lib/urssaf/testData/cotisationTestData.csv" ],
+      "delai":        [ "/../lib/urssaf/testData/delaiTestData.csv" ],
+//      "effectif":     [ "/../lib/urssaf/testData/effectifTestData.csv" ],
+//      "effectif_ent": [ "/../lib/urssaf/testData/effectifEntTestData.csv" ],
+//      "procol":       [ "/../lib/urssaf/testData/procolTestData.csv" ],
     },
     "param" : {
         "date_debut" : ISODate("2001-01-01T00:00:00.000+0000"),
