@@ -126,13 +126,20 @@ func Reduce(batch base.AdminBatch, algo string, types []string) error {
 	db, _ := mgo.Dial(viper.GetString("DB_DIAL"))
 	db.SetSocketTimeout(720000 * time.Second)
 
+	var outCollection string
+	if batch.Name != "" {
+		outCollection = "Features_" + batch.Name
+	} else {
+		outCollection = "Features"
+	}
+
 	for _, dbTemp := range tempDBs {
 
 		err = reduceFinalAggregation(
 			db.DB(dbTemp),
 			"TemporaryCollection",
 			/*outDatabase = */ viper.GetString("DB"),
-			/*outCollection = */ "Features_"+batch.Name,
+			outCollection,
 		)
 
 		if err != nil {
@@ -174,6 +181,12 @@ func reduceCrossComputations(directoryName string) (stages []bson.M, err error) 
 }
 
 func reduceFinalAggregation(tempDatabase *mgo.Database, tempCollection, outDatabase, outCollection string) error {
+
+	// Création d'index sur la collection Features, pour le chargement de données depuis R
+	Db.DB.C(outCollection).EnsureIndex(mgo.Index{
+		Name: "_id.batch_1_value.random_order_-1__id.periode_1_value.effectif_1", // trouvé sur la db de prod
+		Key:  []string{"_id.batch", "-value.random_order", "_id.periode", "value.effectif"},
+	})
 
 	setStages, err := reduceCrossComputations("reduce.algo2")
 	if err != nil {

@@ -78,12 +78,6 @@ func InitDB() DB {
 		Key:  []string{"value.key"}, // numéro SIRET ou SIREN
 	})
 
-	// Création d'index sur la collection Features, pour le chargement de données depuis R
-	db.C("Features_").EnsureIndex(mgo.Index{
-		Name: "_id.batch_1_value.random_order_-1__id.periode_1_value.effectif_1", // trouvé sur la db de prod
-		Key:  []string{"_id.batch", "-value.random_order", "_id.periode", "value.effectif"},
-	})
-
 	firstBatchID := viper.GetString("FIRST_BATCH")
 	if !base.IsBatchID(firstBatchID) {
 		panic("Paramètre FIRST_BATCH incorrect, vérifiez la configuration.")
