@@ -628,7 +628,7 @@
 		}
 	}
 ]
-// Documents from db.Journal:
+// Reports from db.Journal:
 [
 	{
 		"event" : {
@@ -681,6 +681,16 @@
 			"batchKey" : "1910"
 		},
 		"code" : "parserApdemande"
+	}
+]
+// Critical errors from db.Journal:
+[
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"date" : ISODate("2020-10-20T09:27:08.291Z"),
+		"event" : "echec de lecture de l'en-tête du fichier en sortie du script: EOF",
+		"priority" : "critical",
+		"code" : "dianeParser"
 	}
 ]
 // Results of call to /api/data/validate:

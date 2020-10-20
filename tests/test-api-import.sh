@@ -40,7 +40,7 @@ tests/helpers/mongodb-container.sh run > /dev/null << CONTENTS
       "apconso":      [ "/../lib/apconso/testData/apconsoTestData.csv" ],
       "apdemande":    [ "/../lib/apdemande/testData/apdemandeTestData.csv" ],
       "bdf":          [ "/../lib/bdf/testData/bdfTestData.csv" ],
-//      "diane":        [ "/../lib/diane/testData/dianeTestData.csv" ],
+      "diane":        [ "/../lib/diane/testData/dianeTestData.txt" ],
 //      "ellisphere":   [ "/../lib/ellisphere/testData/ellisphereTestData.csv" ],
 //      "sirene":       [ "/../lib/sirene/testData/sireneTestData.csv" ],
 //      "sirene_ul":    [ "/../lib/sirene_ul/testData/sireneULTestData.csv" ],
@@ -89,7 +89,8 @@ printjson(db.ImportedData.find().sort({"value.key":1}).toArray().map(doc => ({
     }), {})
   }
 })));
-print("// Documents from db.Journal:");
+
+print("// Reports from db.Journal:");
 // on classe les données par type, de manière à ce que l'ordre soit stable
 printjson(db.Journal.find({ "event.report": { "\$exists": true } }).sort({ code: 1 }).toArray().map(doc => ({
   event: {
@@ -101,6 +102,9 @@ printjson(db.Journal.find({ "event.report": { "\$exists": true } }).sort({ code:
   },
   code: doc.code
 })));
+
+print("// Critical errors from db.Journal:");
+printjson(db.Journal.find({ priority: "critical" }).sort({ code: 1 }).toArray());
 
 print("// Results of call to /api/data/validate:");
 CONTENT
