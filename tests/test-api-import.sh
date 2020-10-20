@@ -107,8 +107,7 @@ printjson(db.Journal.find({ "event.report": { "\$exists": true } }).sort({ code:
 })));
 
 print("// Critical errors from db.Journal:");
-printjson(db.Journal.find().sort({ code: 1 }).toArray());
-// printjson(db.Journal.find({ priority: "critical" }).sort({ code: 1 }).toArray());
+printjson(db.Journal.find({ priority: "critical" }).sort({ code: 1 }).toArray());
 
 print("// Results of call to /api/data/validate:");
 CONTENT
