@@ -76,23 +76,25 @@ export function map(this: EntréeMap): void {
     if (includes["apart"] || includes["all"]) {
       if (v.apconso && v.apdemande) {
         const output_apart = f.apart(v.apconso, v.apdemande)
-        Object.keys(output_apart).forEach((periode) => {
-          const data: SortieMapEtablissements = {
-            [this._id]: {
-              ...output_apart[periode],
-              siret: this._id,
-            },
-          }
-          emit(
-            {
-              batch: actual_batch,
-              siren: this._id.substring(0, 9),
-              periode: new Date(Number(periode)),
-              type: "apart",
-            },
-            data
-          )
-        })
+        Object.keys(output_apart)
+          .filter((periode) => periode in output_indexed) // limiter dans le scope temporel du batch.
+          .forEach((periode) => {
+            const data: SortieMapEtablissements = {
+              [this._id]: {
+                ...output_apart[periode],
+                siret: this._id,
+              },
+            }
+            emit(
+              {
+                batch: actual_batch,
+                siren: this._id.substring(0, 9),
+                periode: new Date(Number(periode)),
+                type: "apart",
+              },
+              data
+            )
+          })
       }
     }
 

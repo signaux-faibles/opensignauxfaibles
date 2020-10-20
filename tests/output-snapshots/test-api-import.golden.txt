@@ -4,9 +4,281 @@
 		"_id" : ObjectId("________ObjectId________"),
 		"value" : {
 			"scope" : "etablissement",
+			"key" : "",
+			"batch" : {
+				"1910" : {
+					"compte" : {
+						"______________Hash______________" : {
+							"siret" : "",
+							"numero_compte" : "450359886246036238",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "",
+							"numero_compte" : "450359886246036238",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "",
+							"numero_compte" : "450359886246036238",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "",
+							"numero_compte" : "450359886246036238",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "",
+							"numero_compte" : "450359886246036238",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "",
+							"numero_compte" : "450359886246036238",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "",
+							"numero_compte" : "450359886246036238",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "",
+							"numero_compte" : "450359886246036238",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "",
+							"numero_compte" : "450359886246036238",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "",
+							"numero_compte" : "450359886246036238",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "",
+							"numero_compte" : "450359886246036238",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "",
+							"numero_compte" : "450359886246036238",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "",
+							"numero_compte" : "450359886246036238",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "",
+							"numero_compte" : "450359886246036238",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "",
+							"numero_compte" : "450359886246036238",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "",
+							"numero_compte" : "450359886246036238",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "",
+							"numero_compte" : "450359886246036238",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "",
+							"numero_compte" : "450359886246036238",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "",
+							"numero_compte" : "450359886246036238",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "",
+							"numero_compte" : "450359886246036238",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "",
+							"numero_compte" : "450359886246036238",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "",
+							"numero_compte" : "450359886246036238",
+							"periode" : ISODate("_______ Date _______")
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "etablissement",
 			"key" : "00000000000000",
 			"batch" : {
 				"1910" : {
+					"ccsf" : {
+						"______________Hash______________" : {
+							"date_traitement" : ISODate("2018-01-30T00:00:00Z"),
+							"stade" : "ukohkb",
+							"action" : "klay"
+						}
+					},
+					"compte" : {
+						"______________Hash______________" : {
+							"siret" : "00000000000000",
+							"numero_compte" : "111982477292496174",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "00000000000000",
+							"numero_compte" : "111982477292496174",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "00000000000000",
+							"numero_compte" : "111982477292496174",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "00000000000000",
+							"numero_compte" : "111982477292496174",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "00000000000000",
+							"numero_compte" : "111982477292496174",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "00000000000000",
+							"numero_compte" : "111982477292496174",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "00000000000000",
+							"numero_compte" : "111982477292496174",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "00000000000000",
+							"numero_compte" : "111982477292496174",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "00000000000000",
+							"numero_compte" : "111982477292496174",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "00000000000000",
+							"numero_compte" : "111982477292496174",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "00000000000000",
+							"numero_compte" : "111982477292496174",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "00000000000000",
+							"numero_compte" : "111982477292496174",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "00000000000000",
+							"numero_compte" : "111982477292496174",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "00000000000000",
+							"numero_compte" : "111982477292496174",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "00000000000000",
+							"numero_compte" : "111982477292496174",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "00000000000000",
+							"numero_compte" : "111982477292496174",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "00000000000000",
+							"numero_compte" : "111982477292496174",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "00000000000000",
+							"numero_compte" : "111982477292496174",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "00000000000000",
+							"numero_compte" : "111982477292496174",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "00000000000000",
+							"numero_compte" : "111982477292496174",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "00000000000000",
+							"numero_compte" : "111982477292496174",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "00000000000000",
+							"numero_compte" : "111982477292496174",
+							"periode" : ISODate("_______ Date _______")
+						}
+					},
+					"cotisation" : {
+						"______________Hash______________" : {
+							"numero_compte" : "111982477292496174",
+							"periode" : {
+								"start" : ISODate("2010-05-01T00:00:00Z"),
+								"end" : ISODate("2010-06-01T00:00:00Z")
+							},
+							"encaisse" : 4,
+							"du" : 4
+						}
+					},
+					"debit" : {
+						"______________Hash______________" : {
+							"numero_compte" : "111982477292496174",
+							"numero_ecart_negatif" : "659",
+							"date_traitement" : ISODate("1999-05-05T00:00:00Z"),
+							"part_ouvriere" : 1959.07,
+							"part_patronale" : 8644.97,
+							"numero_historique" : 9,
+							"etat_compte" : 5,
+							"code_procedure_collective" : "0",
+							"periode" : {
+								"start" : ISODate("2017-02-01T00:00:00Z"),
+								"end" : ISODate("2017-03-01T00:00:00Z")
+							},
+							"code_operation_ecart_negatif" : "3",
+							"code_motif_ecart_negatif" : "74",
+							"recours_en_cours" : false
+						}
+					},
 					"delai" : {
 						"______________Hash______________" : {
 							"numero_compte" : "111982477292496174",
@@ -29,10 +301,273 @@
 	{
 		"_id" : ObjectId("________ObjectId________"),
 		"value" : {
+			"scope" : "entreprise",
+			"key" : "000111222",
+			"batch" : {
+				"1910" : {
+					"bdf" : {
+						"______________Hash______________" : {
+							"siren" : "000111222",
+							"annee_bdf" : 2013,
+							"arrete_bilan_bdf" : ISODate("2012-12-31T00:00:00Z"),
+							"raison_sociale" : "SOCIETE",
+							"secteur" : "01 Industrie et Transports (Hors TRM)",
+							"poids_frng" : -37.5,
+							"taux_marge" : -63.1,
+							"delai_fournisseur" : 88.5,
+							"dette_fiscale" : 561,
+							"financier_court_terme" : 5.2,
+							"frais_financier" : -9.4
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "entreprise",
+			"key" : "000111223",
+			"batch" : {
+				"1910" : {
+					"bdf" : {
+						"______________Hash______________" : {
+							"siren" : "000111223",
+							"annee_bdf" : 2014,
+							"arrete_bilan_bdf" : ISODate("2013-12-31T00:00:00Z"),
+							"raison_sociale" : "SOCIETE",
+							"secteur" : "01 Industrie et Transports (Hors TRM)",
+							"poids_frng" : -77.1,
+							"taux_marge" : -13.9,
+							"delai_fournisseur" : 203.8,
+							"dette_fiscale" : 204,
+							"financier_court_terme" : 9.2,
+							"frais_financier" : 7.3
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "entreprise",
+			"key" : "000111224",
+			"batch" : {
+				"1910" : {
+					"bdf" : {
+						"______________Hash______________" : {
+							"siren" : "000111224",
+							"annee_bdf" : 2015,
+							"arrete_bilan_bdf" : ISODate("2014-12-31T00:00:00Z"),
+							"raison_sociale" : "SOCIETE",
+							"secteur" : "01 Industrie et Transports (Hors TRM)",
+							"poids_frng" : 64.5,
+							"taux_marge" : 103.5,
+							"delai_fournisseur" : 22.9,
+							"dette_fiscale" : 235,
+							"financier_court_terme" : 7.3,
+							"frais_financier" : 20.3
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "etablissement",
+			"key" : "01234567891011",
+			"batch" : {
+				"1910" : {
+					"procol" : {
+						"______________Hash______________" : {
+							"date_effet" : ISODate("2014-05-26T00:00:00Z"),
+							"action_procol" : "redressement",
+							"stade_procol" : "solde_procedure"
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "etablissement",
+			"key" : "11109876543210",
+			"batch" : {
+				"1910" : {
+					"procol" : {
+						"______________Hash______________" : {
+							"date_effet" : ISODate("2017-10-04T00:00:00Z"),
+							"action_procol" : "redressement",
+							"stade_procol" : "solde_procedure"
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
 			"scope" : "etablissement",
 			"key" : "11111111111111",
 			"batch" : {
 				"1910" : {
+					"ccsf" : {
+						"______________Hash______________" : {
+							"date_traitement" : ISODate("2019-04-20T00:00:00Z"),
+							"stade" : "xljgvd",
+							"action" : "cvqv"
+						}
+					},
+					"compte" : {
+						"______________Hash______________" : {
+							"siret" : "11111111111111",
+							"numero_compte" : "636043216536562844",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "11111111111111",
+							"numero_compte" : "636043216536562844",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "11111111111111",
+							"numero_compte" : "636043216536562844",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "11111111111111",
+							"numero_compte" : "636043216536562844",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "11111111111111",
+							"numero_compte" : "636043216536562844",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "11111111111111",
+							"numero_compte" : "636043216536562844",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "11111111111111",
+							"numero_compte" : "636043216536562844",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "11111111111111",
+							"numero_compte" : "636043216536562844",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "11111111111111",
+							"numero_compte" : "636043216536562844",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "11111111111111",
+							"numero_compte" : "636043216536562844",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "11111111111111",
+							"numero_compte" : "636043216536562844",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "11111111111111",
+							"numero_compte" : "636043216536562844",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "11111111111111",
+							"numero_compte" : "636043216536562844",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "11111111111111",
+							"numero_compte" : "636043216536562844",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "11111111111111",
+							"numero_compte" : "636043216536562844",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "11111111111111",
+							"numero_compte" : "636043216536562844",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "11111111111111",
+							"numero_compte" : "636043216536562844",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "11111111111111",
+							"numero_compte" : "636043216536562844",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "11111111111111",
+							"numero_compte" : "636043216536562844",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "11111111111111",
+							"numero_compte" : "636043216536562844",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "11111111111111",
+							"numero_compte" : "636043216536562844",
+							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "11111111111111",
+							"numero_compte" : "636043216536562844",
+							"periode" : ISODate("_______ Date _______")
+						}
+					},
+					"cotisation" : {
+						"______________Hash______________" : {
+							"numero_compte" : "636043216536562844",
+							"periode" : {
+								"start" : ISODate("2010-07-01T00:00:00Z"),
+								"end" : ISODate("2010-08-01T00:00:00Z")
+							},
+							"encaisse" : -68231,
+							"du" : -21099
+						}
+					},
+					"debit" : {
+						"______________Hash______________" : {
+							"numero_compte" : "636043216536562844",
+							"numero_ecart_negatif" : "397",
+							"date_traitement" : ISODate("2005-08-24T00:00:00Z"),
+							"part_ouvriere" : 0.03,
+							"part_patronale" : 0.02,
+							"numero_historique" : 9,
+							"etat_compte" : 4,
+							"code_procedure_collective" : "4",
+							"periode" : {
+								"start" : ISODate("2015-01-01T00:00:00Z"),
+								"end" : ISODate("2015-02-01T00:00:00Z")
+							},
+							"code_operation_ecart_negatif" : "63",
+							"code_motif_ecart_negatif" : "74",
+							"recours_en_cours" : false
+						}
+					},
 					"delai" : {
 						"______________Hash______________" : {
 							"numero_compte" : "636043216536562844",
@@ -47,14 +582,4525 @@
 							"stade" : "qh",
 							"action" : "bad mu"
 						}
+					},
+					"procol" : {
+						"______________Hash______________" : {
+							"date_effet" : ISODate("2014-07-17T00:00:00Z"),
+							"action_procol" : "redressement",
+							"stade_procol" : "solde_procedure"
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "entreprise",
+			"key" : "112233445",
+			"batch" : {
+				"1910" : {
+					"sirene_ul" : {
+						"______________Hash______________" : {
+							"siren" : "112233445",
+							"raison_sociale" : "companyname",
+							"statut_juridique" : "5422",
+							"date_creation" : ISODate("1967-01-01T00:00:00Z")
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "entreprise",
+			"key" : "138426539",
+			"batch" : {
+				"1910" : {
+					"sirene_ul" : {
+						"______________Hash______________" : {
+							"siren" : "138426539",
+							"raison_sociale" : "",
+							"prenom1_unite_legale" : "cuhgjdp",
+							"nom_unite_legale" : "jjqcmkg",
+							"statut_juridique" : "5465",
+							"date_creation" : ISODate("1999-11-11T00:00:00Z")
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "entreprise",
+			"key" : "149285238",
+			"batch" : {
+				"1910" : {
+					"effectif_ent" : {
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 816
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 848
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 140
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 799
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 758
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 124
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 230
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 618
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 169
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 886
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 901
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 648
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 270
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 67
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 272
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 357
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 675
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 185
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 511
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 25
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 202
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 466
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 337
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 112
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 961
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 336
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 278
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 437
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 710
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 730
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 41
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 274
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 966
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 64
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 317
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 147
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 974
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 603
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 910
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 291
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 357
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 95
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 294
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 573
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 939
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 860
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 998
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 717
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 722
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 91
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 262
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 315
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 662
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 105
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 615
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 577
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 260
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 328
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 673
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 784
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 950
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 827
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 816
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 944
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 693
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 824
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 690
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 160
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 907
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 37
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 287
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 568
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 672
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 530
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 15
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 237
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 118
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 58
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 426
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 345
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 429
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 19
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 562
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 536
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 527
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 503
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 825
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 187
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 679
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 172
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 287
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 920
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 92
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 156
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 4
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 270
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 918
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 807
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 191
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 990
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 158
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 40
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 374
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 797
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 617
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 189
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 536
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 819
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 313
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 826
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 587
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "etablissement",
+			"key" : "14928523839192",
+			"batch" : {
+				"1910" : {
+					"effectif" : {
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 191
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 998
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 675
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 939
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 907
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 848
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 337
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 466
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 950
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 426
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 974
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 990
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 158
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 317
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 270
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 587
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 169
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 202
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 730
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 679
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 345
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 374
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 673
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 15
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 64
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 124
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 91
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 662
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 617
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 503
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 603
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 961
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 511
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 437
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 313
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 901
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 717
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 910
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 156
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 966
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 287
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 187
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 40
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 536
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 819
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 824
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 799
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 118
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 573
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 693
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 672
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 270
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 112
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 25
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 784
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 577
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 918
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 797
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 315
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 237
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 825
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 189
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 690
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 568
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 886
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 722
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 615
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 827
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 19
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 294
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 562
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 648
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 278
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 67
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 230
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 140
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 527
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 944
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 274
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 530
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 105
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 260
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 807
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 357
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 147
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 291
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 816
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 92
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 185
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 536
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 816
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 58
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 328
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 262
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 429
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 860
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 287
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 710
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 95
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 37
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 357
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 618
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 272
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 336
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 41
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 758
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 172
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 4
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 826
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 920
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "197578387587810443",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 160
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "entreprise",
+			"key" : "151515151",
+			"batch" : {
+				"1910" : {
+					"ellisphere" : {
+						"______________Hash______________" : {
+							"code_groupe" : "1234567",
+							"siren_groupe" : "525343432",
+							"refid_groupe" : "1234567",
+							"raison_sociale_groupe" : "GROUPE A",
+							"adresse_groupe" : "quelque part",
+							"personne_pou_m_groupe" : "M",
+							"niveau_detention" : 1,
+							"part_financiere" : 90.2,
+							"code_filiere" : "1000000",
+							"refid_filiere" : "AKES38748",
+							"personne_pou_m_filiere" : "M"
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "entreprise",
+			"key" : "151515152",
+			"batch" : {
+				"1910" : {
+					"ellisphere" : {
+						"______________Hash______________" : {
+							"code_groupe" : "2345678",
+							"siren_groupe" : "592839489",
+							"refid_groupe" : "2345678",
+							"raison_sociale_groupe" : "GROUPE B",
+							"adresse_groupe" : "ailleurs",
+							"personne_pou_m_groupe" : "M",
+							"niveau_detention" : 1,
+							"part_financiere" : 63.2,
+							"code_filiere" : "1000001",
+							"refid_filiere" : "BKES38748",
+							"personne_pou_m_filiere" : "M"
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "entreprise",
+			"key" : "151515153",
+			"batch" : {
+				"1910" : {
+					"ellisphere" : {
+						"______________Hash______________" : {
+							"code_groupe" : "3456789",
+							"siren_groupe" : "235935959",
+							"refid_groupe" : "3456789",
+							"raison_sociale_groupe" : "GROUPE C",
+							"adresse_groupe" : "mais",
+							"personne_pou_m_groupe" : "M",
+							"niveau_detention" : 2,
+							"part_financiere" : 52,
+							"code_filiere" : "1000002",
+							"refid_filiere" : "CKES38748",
+							"personne_pou_m_filiere" : "M"
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "entreprise",
+			"key" : "151515154",
+			"batch" : {
+				"1910" : {
+					"ellisphere" : {
+						"______________Hash______________" : {
+							"code_groupe" : "4567890",
+							"refid_groupe" : "4567890",
+							"raison_sociale_groupe" : "GROUPE A",
+							"adresse_groupe" : "pas ici",
+							"personne_pou_m_groupe" : "M",
+							"niveau_detention" : 1,
+							"part_financiere" : 100,
+							"code_filiere" : "1000003",
+							"refid_filiere" : "DKES38748",
+							"personne_pou_m_filiere" : "M"
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "entreprise",
+			"key" : "151515155",
+			"batch" : {
+				"1910" : {
+					"ellisphere" : {
+						"______________Hash______________" : {
+							"code_groupe" : "5678901",
+							"refid_groupe" : "5678901",
+							"raison_sociale_groupe" : "GROUPE B",
+							"adresse_groupe" : "ça",
+							"personne_pou_m_groupe" : "M",
+							"niveau_detention" : 2,
+							"part_financiere" : 80,
+							"code_filiere" : "1000004",
+							"refid_filiere" : "EKES38748",
+							"personne_pou_m_filiere" : "M"
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "entreprise",
+			"key" : "151515156",
+			"batch" : {
+				"1910" : {
+					"ellisphere" : {
+						"______________Hash______________" : {
+							"code_groupe" : "6789012",
+							"refid_groupe" : "6789012",
+							"raison_sociale_groupe" : "GROUPE C",
+							"adresse_groupe" : "c’est certain",
+							"personne_pou_m_groupe" : "M",
+							"niveau_detention" : 9,
+							"part_financiere" : 22,
+							"code_filiere" : "1000005",
+							"refid_filiere" : "FKES38748",
+							"personne_pou_m_filiere" : "M"
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "etablissement",
+			"key" : "15756082097503",
+			"batch" : {
+				"1910" : {
+					"apdemande" : {
+						"______________Hash______________" : {
+							"id_demande" : "f288626887",
+							"effectif_entreprise" : 559,
+							"effectif" : 0,
+							"date_statut" : ISODate("2012-02-11T00:00:00Z"),
+							"periode" : {
+								"start" : ISODate("2017-08-09T00:00:00Z"),
+								"end" : ISODate("2017-09-09T00:00:00Z")
+							},
+							"hta" : 42078.52,
+							"mta" : 666113.56,
+							"effectif_autorise" : 99,
+							"motif_recours_se" : 8,
+							"heure_consommee" : 48512,
+							"montant_consommee" : 689663.3,
+							"effectif_consomme" : 319
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "etablissement",
+			"key" : "22222222222222",
+			"batch" : {
+				"1910" : {
+					"ccsf" : {
+						"______________Hash______________" : {
+							"date_traitement" : ISODate("1999-04-01T00:00:00Z"),
+							"stade" : "ehxdqd",
+							"action" : "cair"
+						}
+					},
+					"cotisation" : {
+						"______________Hash______________" : {
+							"numero_compte" : "450359886246036238",
+							"periode" : {
+								"start" : ISODate("2002-08-01T00:00:00Z"),
+								"end" : ISODate("2002-09-01T00:00:00Z")
+							},
+							"encaisse" : -77244,
+							"du" : -47022
+						}
+					},
+					"debit" : {
+						"______________Hash______________" : {
+							"numero_compte" : "450359886246036238",
+							"numero_ecart_negatif" : "738",
+							"date_traitement" : ISODate("2012-10-18T00:00:00Z"),
+							"part_ouvriere" : 0.01,
+							"part_patronale" : 0.02,
+							"numero_historique" : 4,
+							"etat_compte" : 1,
+							"code_procedure_collective" : "1",
+							"periode" : {
+								"start" : ISODate("1999-01-01T00:00:00Z"),
+								"end" : ISODate("1999-02-01T00:00:00Z")
+							},
+							"code_operation_ecart_negatif" : "43",
+							"code_motif_ecart_negatif" : "40",
+							"recours_en_cours" : true
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "entreprise",
+			"key" : "238307776",
+			"batch" : {
+				"1910" : {
+					"sirene_ul" : {
+						"______________Hash______________" : {
+							"siren" : "238307776",
+							"raison_sociale" : "",
+							"prenom1_unite_legale" : "wwdsrst",
+							"nom_unite_legale" : "nduxdzbou",
+							"statut_juridique" : "4263",
+							"date_creation" : ISODate("1964-01-01T00:00:00Z")
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "entreprise",
+			"key" : "313829771",
+			"batch" : {
+				"1910" : {
+					"diane" : {
+						"______________Hash______________" : {
+							"exercice_diane" : 2015,
+							"nom_entreprise" : "trbste yj ecwtqeuxml ksvqolihajqkbm",
+							"numero_siren" : "313829771",
+							"statut_juridique" : "fsffwjx",
+							"nombre_etab_secondaire" : 9,
+							"nombre_filiale" : 9,
+							"taille_compo_groupe" : 5
+						},
+						"______________Hash______________" : {
+							"exercice_diane" : 2012,
+							"nom_entreprise" : "trbste yj ecwtqeuxml ksvqolihajqkbm",
+							"numero_siren" : "313829771",
+							"statut_juridique" : "fsffwjx",
+							"effectif_consolide" : 11,
+							"dette_fiscale_et_sociale" : 819,
+							"frais_de_RetD" : 9,
+							"conces_brev_et_droits_sim" : 0,
+							"nombre_etab_secondaire" : 9,
+							"nombre_filiale" : 9,
+							"taille_compo_groupe" : 5,
+							"arrete_bilan_diane" : ISODate("2018-05-09T00:00:00Z"),
+							"nombre_mois" : 90,
+							"independance_financiere" : 949,
+							"endettement" : 6.34,
+							"degre_immo_corporelle" : -62.96,
+							"financement_actif_circulant" : 79.9,
+							"liquidite_generale" : -7.76,
+							"rotation_stocks" : 47.3,
+							"credit_client" : 5.91,
+							"credit_fournisseur" : 1.25,
+							"ca_apar_effectif" : 9.33,
+							"taux_interet_financier" : 47,
+							"taux_interet_sur_ca" : 78,
+							"endettement_global" : 23,
+							"capacite_remboursement" : 704,
+							"capacite_autofinancement" : 7.71,
+							"couverture_ca_fdr" : 9.95,
+							"couverture_ca_besoin_fdr" : 112,
+							"poids_bfr_exploitation" : -211.1,
+							"exportation" : -0.02,
+							"efficacite_economique" : -35.95,
+							"productivite_capital_financier" : 50,
+							"productivite_capital_investi" : 40,
+							"taux_d_investissement_productif" : 27.13,
+							"rentabilite_economique" : 1.26,
+							"performance" : 33,
+							"rentabilite_nette" : 7.26,
+							"rendement_capitaux_propres" : 1.84,
+							"rendement_ressources_durables" : 5.99,
+							"taux_valeur_ajoutee" : -86.13,
+							"part_salaries" : -79.96,
+							"part_preteur" : -61.54,
+							"part_autofinancement" : -84.61,
+							"ca_exportation" : -243.18,
+							"achat_matieres_premieres" : 6.82,
+							"production" : 22.62,
+							"marge_commerciale" : 380.6,
+							"consommation" : 5.79,
+							"autres_achats_charges_externes" : 6.34,
+							"valeur_ajoutee" : -68.01,
+							"charge_personnel" : 4726,
+							"impots_taxes" : 52,
+							"excedent_brut_d_exploitation" : 909,
+							"autres_produits_charges_reprises" : 5839,
+							"resultat_expl" : 532,
+							"operations_commun" : 2226,
+							"produits_financiers" : 1740,
+							"charges_financieres" : 9896,
+							"interets" : 3354,
+							"resultat_avant_impot" : 5465,
+							"produit_exceptionnel" : 7087,
+							"participation_salaries" : 66,
+							"impot_benefice" : 5,
+							"benefice_ou_perte" : -573
+						},
+						"______________Hash______________" : {
+							"exercice_diane" : 2016,
+							"nom_entreprise" : "trbste yj ecwtqeuxml ksvqolihajqkbm",
+							"numero_siren" : "313829771",
+							"statut_juridique" : "fsffwjx",
+							"nombre_etab_secondaire" : 9,
+							"nombre_filiale" : 9,
+							"taille_compo_groupe" : 5
+						},
+						"______________Hash______________" : {
+							"exercice_diane" : 2017,
+							"nom_entreprise" : "trbste yj ecwtqeuxml ksvqolihajqkbm",
+							"numero_siren" : "313829771",
+							"statut_juridique" : "fsffwjx",
+							"nombre_etab_secondaire" : 9,
+							"nombre_filiale" : 9,
+							"taille_compo_groupe" : 5
+						},
+						"______________Hash______________" : {
+							"exercice_diane" : 2013,
+							"nom_entreprise" : "trbste yj ecwtqeuxml ksvqolihajqkbm",
+							"numero_siren" : "313829771",
+							"statut_juridique" : "fsffwjx",
+							"effectif_consolide" : 49,
+							"dette_fiscale_et_sociale" : 78,
+							"frais_de_RetD" : 4,
+							"conces_brev_et_droits_sim" : 5,
+							"nombre_etab_secondaire" : 9,
+							"nombre_filiale" : 9,
+							"taille_compo_groupe" : 5,
+							"arrete_bilan_diane" : ISODate("2017-05-09T00:00:00Z"),
+							"nombre_mois" : 12,
+							"independance_financiere" : 91,
+							"endettement" : 5.1,
+							"degre_immo_corporelle" : -89.87,
+							"financement_actif_circulant" : 33.19,
+							"liquidite_generale" : -2.75,
+							"rotation_stocks" : 53.76,
+							"credit_client" : 1.83,
+							"credit_fournisseur" : 1.34,
+							"ca_apar_effectif" : 6.72,
+							"taux_interet_financier" : 549,
+							"taux_interet_sur_ca" : 42,
+							"endettement_global" : 70,
+							"capacite_remboursement" : 645,
+							"capacite_autofinancement" : 8.42,
+							"couverture_ca_fdr" : 9.81,
+							"couverture_ca_besoin_fdr" : 598,
+							"poids_bfr_exploitation" : -341.35,
+							"exportation" : -0.04,
+							"efficacite_economique" : -8.08,
+							"productivite_capital_financier" : 66,
+							"productivite_capital_investi" : 14,
+							"taux_d_investissement_productif" : 14.74,
+							"rentabilite_economique" : 7.89,
+							"performance" : 46,
+							"rentabilite_nette" : 8.95,
+							"rendement_capitaux_propres" : 9.64,
+							"rendement_ressources_durables" : 2.62,
+							"taux_valeur_ajoutee" : 2.82,
+							"part_salaries" : -2.94,
+							"part_autofinancement" : -0.96,
+							"achat_matieres_premieres" : 25.56,
+							"production" : 43.83,
+							"marge_commerciale" : 57.62,
+							"consommation" : 6.26,
+							"autres_achats_charges_externes" : 8.55,
+							"valeur_ajoutee" : -31.33,
+							"charge_personnel" : 7533,
+							"impots_taxes" : 4,
+							"excedent_brut_d_exploitation" : 6159,
+							"autres_produits_charges_reprises" : 4584,
+							"resultat_expl" : 149,
+							"operations_commun" : 2739,
+							"produits_financiers" : 2282,
+							"charges_financieres" : 2352,
+							"interets" : 32,
+							"resultat_avant_impot" : 260,
+							"produit_exceptionnel" : 6430,
+							"participation_salaries" : 43,
+							"impot_benefice" : 9,
+							"benefice_ou_perte" : 21
+						},
+						"______________Hash______________" : {
+							"exercice_diane" : 2014,
+							"nom_entreprise" : "trbste yj ecwtqeuxml ksvqolihajqkbm",
+							"numero_siren" : "313829771",
+							"statut_juridique" : "fsffwjx",
+							"dette_fiscale_et_sociale" : 251,
+							"frais_de_RetD" : 2,
+							"conces_brev_et_droits_sim" : 3,
+							"nombre_etab_secondaire" : 9,
+							"nombre_filiale" : 9,
+							"taille_compo_groupe" : 5,
+							"arrete_bilan_diane" : ISODate("2016-05-09T00:00:00Z"),
+							"nombre_mois" : 12,
+							"endettement" : 2.05,
+							"degre_immo_corporelle" : -20.51,
+							"financement_actif_circulant" : 165.24,
+							"liquidite_generale" : -82.16,
+							"rotation_stocks" : 94.13,
+							"credit_client" : 1.64,
+							"credit_fournisseur" : 2.12,
+							"ca_apar_effectif" : 3.45,
+							"taux_interet_financier" : 575,
+							"taux_interet_sur_ca" : 42,
+							"endettement_global" : 47,
+							"capacite_autofinancement" : 4.05,
+							"couverture_ca_fdr" : 2.72,
+							"couverture_ca_besoin_fdr" : 592,
+							"poids_bfr_exploitation" : -425.56,
+							"exportation" : -54.1,
+							"efficacite_economique" : -4.46,
+							"productivite_capital_financier" : 17,
+							"productivite_capital_investi" : 22,
+							"taux_d_investissement_productif" : 94.42,
+							"rentabilite_economique" : 9.42,
+							"rentabilite_nette" : 5.84,
+							"rendement_capitaux_propres" : 2.93,
+							"rendement_ressources_durables" : 4.85,
+							"taux_marge_commerciale" : 0.52,
+							"taux_valeur_ajoutee" : -9.37,
+							"part_salaries" : -0.66,
+							"part_autofinancement" : -1.16,
+							"achat_marchandises" : -55.8,
+							"achat_matieres_premieres" : 38.16,
+							"production" : 80.63,
+							"marge_commerciale" : 906.82,
+							"consommation" : 4.96,
+							"autres_achats_charges_externes" : 0.41,
+							"valeur_ajoutee" : -42.92,
+							"charge_personnel" : 856,
+							"impots_taxes" : 2,
+							"excedent_brut_d_exploitation" : 3775,
+							"autres_produits_charges_reprises" : 3265,
+							"resultat_expl" : 261,
+							"operations_commun" : 197,
+							"produits_financiers" : 5512,
+							"charges_financieres" : 9721,
+							"interets" : 3323,
+							"resultat_avant_impot" : 865,
+							"produit_exceptionnel" : 6539,
+							"participation_salaries" : 92,
+							"impot_benefice" : 5,
+							"benefice_ou_perte" : -877
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "entreprise",
+			"key" : "316726617",
+			"batch" : {
+				"1910" : {
+					"effectif_ent" : {
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 469
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 830
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 477
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 709
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 547
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 674
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 85
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 852
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 610
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 775
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 703
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 803
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 841
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 608
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 40
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 226
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 162
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 81
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 75
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 547
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 716
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 551
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 919
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 332
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 528
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 619
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 509
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 698
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 270
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 602
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 481
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 235
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 524
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 674
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 836
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 660
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 964
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 833
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 282
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 677
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 730
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 626
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 922
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 381
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 705
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 518
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 976
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 144
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 192
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 163
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 811
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 585
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 22
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 898
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 99
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 587
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 865
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 491
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 610
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 378
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 172
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 606
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 900
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 875
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 428
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 565
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 237
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 695
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 414
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 695
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 319
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 990
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 8
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 197
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 304
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 912
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 917
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 602
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 992
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 644
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 936
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 644
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 602
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 594
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 249
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 621
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 680
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 599
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 254
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 919
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 792
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 706
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 128
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "etablissement",
+			"key" : "31672661744173",
+			"batch" : {
+				"1910" : {
+					"effectif" : {
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 606
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 626
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 547
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 695
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 610
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 128
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 705
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 716
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 282
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 509
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 249
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 792
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 976
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 922
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 270
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 172
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 830
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 235
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 585
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 811
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 192
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 599
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 912
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 706
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 803
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 900
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 610
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 865
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 852
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 304
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 621
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 695
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 602
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 99
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 875
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 775
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 919
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 226
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 237
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 587
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 833
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 703
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 898
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 491
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 414
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 197
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 677
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 919
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 378
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 680
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 964
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 836
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 428
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 619
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 990
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 524
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 936
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 8
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 565
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 602
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 547
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 81
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 518
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 841
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 477
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 254
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 40
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 528
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 992
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 644
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 608
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 144
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 162
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 660
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 709
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 674
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 319
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 602
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 332
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 481
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 75
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 381
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 674
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 594
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 698
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 551
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 22
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 163
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 644
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 469
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 730
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 85
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "794745007145714533",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 917
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "etablissement",
+			"key" : "49788833327462",
+			"batch" : {
+				"1910" : {
+					"sirene" : {
+						"______________Hash______________" : {
+							"siren" : "497888333",
+							"nic" : "27462",
+							"siege" : true,
+							"numero_voie" : "55",
+							"type_voie" : "HAMEAU",
+							"voie" : "demnbujm",
+							"commune" : "hzvnctxvbgkms",
+							"code_commune" : "63024",
+							"code_postal" : "83699",
+							"departement" : "83",
+							"code_activite" : "28.4x",
+							"nomen_activite" : "NAFRev1",
+							"date_creation" : ISODate("2007-04-19T22:00:00Z"),
+							"longitude" : 5.52488,
+							"latitude" : 65.448048
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "etablissement",
+			"key" : "50930194570891",
+			"batch" : {
+				"1910" : {
+					"apdemande" : {
+						"______________Hash______________" : {
+							"id_demande" : "j354624024",
+							"effectif_entreprise" : 20,
+							"effectif" : 82,
+							"date_statut" : ISODate("2012-03-11T00:00:00Z"),
+							"periode" : {
+								"start" : ISODate("2005-08-29T00:00:00Z"),
+								"end" : ISODate("2005-09-29T00:00:00Z")
+							},
+							"hta" : 178.53,
+							"mta" : 953.96,
+							"effectif_autorise" : 9,
+							"motif_recours_se" : 3,
+							"heure_consommee" : 81,
+							"montant_consommee" : 820.94,
+							"effectif_consomme" : 8
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "etablissement",
+			"key" : "53312397597505",
+			"batch" : {
+				"1910" : {
+					"apconso" : {
+						"______________Hash______________" : {
+							"id_conso" : "p95a076375",
+							"heure_consomme" : 6.25,
+							"montant" : 27,
+							"effectif" : 7,
+							"periode" : ISODate("_______ Date _______")
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "entreprise",
+			"key" : "542368702",
+			"batch" : {
+				"1910" : {
+					"effectif_ent" : {
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 871
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 47
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 94
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 878
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 450
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 105
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 348
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 779
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 606
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 212
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 855
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 843
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 43
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 128
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 331
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 619
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 592
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 247
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 264
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 198
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 737
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 774
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 987
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 873
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 12
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 244
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 925
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 69
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 391
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 143
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 675
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 281
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 806
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 951
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 394
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 303
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 885
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 629
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 809
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 550
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 273
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 131
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 561
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 653
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 586
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 397
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 888
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 208
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 542
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 65
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 209
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 220
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 485
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 503
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 82
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 664
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 353
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 369
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 214
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 763
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 379
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 755
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 658
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 549
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 406
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 777
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 89
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 734
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 763
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 887
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 745
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 292
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 988
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 816
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 30
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 585
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 74
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 279
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 116
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 361
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 160
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 303
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 801
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 256
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 835
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 113
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 123
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 495
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 606
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 325
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 27
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 941
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 152
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 5
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 852
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 58
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 359
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 323
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 784
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 477
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 302
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 593
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 709
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 928
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 195
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 730
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 432
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 582
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 782
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 536
+						},
+						"______________Hash______________" : {
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 923
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "etablissement",
+			"key" : "54236870268934",
+			"batch" : {
+				"1910" : {
+					"effectif" : {
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 143
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 279
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 43
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 94
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 331
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 47
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 774
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 273
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 658
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 928
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 256
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 406
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 450
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 871
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 653
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 873
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 619
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 65
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 123
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 369
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 432
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 923
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 209
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 160
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 806
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 208
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 843
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 664
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 755
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 359
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 763
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 105
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 391
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 244
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 214
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 779
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 542
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 951
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 30
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 737
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 730
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 835
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 988
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 606
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 353
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 5
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 606
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 809
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 212
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 131
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 397
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 302
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 152
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 198
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 281
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 379
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 74
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 763
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 264
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 941
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 495
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 675
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 477
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 816
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 89
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 855
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 801
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 323
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 303
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 852
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 220
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 987
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 58
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 69
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 361
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 782
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 593
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 585
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 12
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 777
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 82
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 325
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 561
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 586
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 885
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 195
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 549
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 27
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 348
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 629
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 709
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 113
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 394
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 745
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 128
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 292
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 888
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 550
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 116
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 536
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 784
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 582
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 592
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 247
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 503
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 878
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 925
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 303
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 485
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 734
+						},
+						"______________Hash______________" : {
+							"numero_compte" : "951406823818346903",
+							"periode" : ISODate("_______ Date _______"),
+							"effectif" : 887
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "entreprise",
+			"key" : "604713366",
+			"batch" : {
+				"1910" : {
+					"diane" : {
+						"______________Hash______________" : {
+							"exercice_diane" : 2017,
+							"nom_entreprise" : "grqjhca ppbvcpv ftgcgf",
+							"numero_siren" : "604713366",
+							"statut_juridique" : "zgmjk",
+							"dette_fiscale_et_sociale" : 696,
+							"frais_de_RetD" : 1,
+							"conces_brev_et_droits_sim" : 21,
+							"nombre_etab_secondaire" : 7,
+							"nombre_filiale" : 8,
+							"taille_compo_groupe" : 5,
+							"arrete_bilan_diane" : ISODate("2013-01-01T00:00:00Z"),
+							"nombre_mois" : 65,
+							"endettement" : 6,
+							"autonomie_financiere" : 46.62,
+							"financement_actif_circulant" : 0.97,
+							"liquidite_generale" : 30.9,
+							"liquidite_reduite" : 0.92,
+							"credit_client" : 8.53,
+							"credit_fournisseur" : 5.65,
+							"ca_apar_effectif" : 1.15,
+							"taux_interet_financier" : 7,
+							"taux_interet_sur_ca" : 14,
+							"endettement_global" : 81,
+							"capacite_autofinancement" : 4.11,
+							"couverture_ca_fdr" : 1.91,
+							"couverture_ca_besoin_fdr" : 16,
+							"poids_bfr_exploitation" : 36.9,
+							"exportation" : 6.54,
+							"efficacite_economique" : 1.13,
+							"productivite_potentiel_production" : 68,
+							"productivite_capital_investi" : 45,
+							"taux_d_investissement_productif" : 0.17,
+							"rentabilite_economique" : 6.77,
+							"rendement_brut_fonds_propres" : 7.3,
+							"rendement_capitaux_propres" : 9.51,
+							"rendement_ressources_durables" : 0.64,
+							"taux_marge_commerciale" : 3.02,
+							"taux_valeur_ajoutee" : 45.16,
+							"part_salaries" : 45.51,
+							"part_etat" : 530.75,
+							"part_autofinancement" : 96.83,
+							"ca" : 39.33,
+							"achat_marchandises" : 40.06,
+							"production" : 69.18,
+							"marge_commerciale" : 5.5,
+							"consommation" : 87.48,
+							"autres_achats_charges_externes" : 2.47,
+							"valeur_ajoutee" : 73.32,
+							"charge_personnel" : 825,
+							"impots_taxes" : 5,
+							"subventions_d_exploitation" : 90,
+							"autres_produits_charges_reprises" : 2,
+							"dotation_amortissement" : 57,
+							"operations_commun" : 3145,
+							"produits_financiers" : 6,
+							"charges_financieres" : 8773,
+							"interets" : 4152,
+							"resultat_avant_impot" : 8768,
+							"produit_exceptionnel" : 9907,
+							"charge_exceptionnelle" : 91,
+							"impot_benefice" : 8,
+							"benefice_ou_perte" : 720
+						},
+						"______________Hash______________" : {
+							"exercice_diane" : 2013,
+							"nom_entreprise" : "grqjhca ppbvcpv ftgcgf",
+							"numero_siren" : "604713366",
+							"statut_juridique" : "zgmjk",
+							"dette_fiscale_et_sociale" : 850,
+							"frais_de_RetD" : 1,
+							"conces_brev_et_droits_sim" : 1,
+							"nombre_etab_secondaire" : 7,
+							"nombre_filiale" : 8,
+							"taille_compo_groupe" : 5,
+							"arrete_bilan_diane" : ISODate("2017-01-01T00:00:00Z"),
+							"nombre_mois" : 19,
+							"endettement" : 4.83,
+							"degre_immo_corporelle" : 7.82,
+							"financement_actif_circulant" : 60.15,
+							"liquidite_generale" : 12.26,
+							"rotation_stocks" : 58.98,
+							"credit_client" : 8.89,
+							"credit_fournisseur" : 7.07,
+							"ca_apar_effectif" : 1.34,
+							"taux_interet_financier" : 0,
+							"taux_interet_sur_ca" : 95,
+							"endettement_global" : 18,
+							"capacite_autofinancement" : 2.53,
+							"couverture_ca_fdr" : 6.53,
+							"couverture_ca_besoin_fdr" : 293,
+							"poids_bfr_exploitation" : 64.87,
+							"exportation" : 7.36,
+							"efficacite_economique" : 19.08,
+							"productivite_capital_financier" : 54,
+							"taux_d_investissement_productif" : 95.39,
+							"rentabilite_economique" : 8.5,
+							"rentabilite_nette" : 1.81,
+							"rendement_capitaux_propres" : 4.97,
+							"rendement_ressources_durables" : 2.19,
+							"taux_marge_commerciale" : 8.93,
+							"taux_valeur_ajoutee" : 99.33,
+							"part_salaries" : 6.37,
+							"part_preteur" : 51.98,
+							"part_autofinancement" : 15.15,
+							"ca_exportation" : 73.15,
+							"production" : 0.03,
+							"marge_commerciale" : 48.27,
+							"consommation" : 5.91,
+							"autres_achats_charges_externes" : 8,
+							"valeur_ajoutee" : 43.59,
+							"charge_personnel" : 1667,
+							"impots_taxes" : 9,
+							"excedent_brut_d_exploitation" : 49,
+							"autres_produits_charges_reprises" : 6,
+							"resultat_expl" : 19,
+							"operations_commun" : 6708,
+							"produits_financiers" : 7,
+							"charges_financieres" : 4648,
+							"interets" : 7055,
+							"resultat_avant_impot" : 6147,
+							"produit_exceptionnel" : 7531,
+							"participation_salaries" : 24,
+							"impot_benefice" : 5,
+							"benefice_ou_perte" : 736
+						},
+						"______________Hash______________" : {
+							"exercice_diane" : 2014,
+							"nom_entreprise" : "grqjhca ppbvcpv ftgcgf",
+							"numero_siren" : "604713366",
+							"statut_juridique" : "zgmjk",
+							"dette_fiscale_et_sociale" : 844,
+							"frais_de_RetD" : 8,
+							"conces_brev_et_droits_sim" : 94,
+							"nombre_etab_secondaire" : 7,
+							"nombre_filiale" : 8,
+							"taille_compo_groupe" : 5,
+							"arrete_bilan_diane" : ISODate("2016-01-01T00:00:00Z"),
+							"nombre_mois" : 84,
+							"endettement" : 9.26,
+							"degre_immo_corporelle" : 55.29,
+							"financement_actif_circulant" : 78.32,
+							"liquidite_generale" : 40.59,
+							"rotation_stocks" : 29.74,
+							"credit_client" : 2.79,
+							"credit_fournisseur" : 2.18,
+							"ca_apar_effectif" : 3.61,
+							"taux_interet_financier" : 9,
+							"taux_interet_sur_ca" : 21,
+							"endettement_global" : 8,
+							"capacite_autofinancement" : 9.24,
+							"couverture_ca_fdr" : 1.1,
+							"couverture_ca_besoin_fdr" : 945,
+							"poids_bfr_exploitation" : 85.84,
+							"exportation" : 1.99,
+							"efficacite_economique" : 71.88,
+							"productivite_capital_financier" : 28,
+							"taux_d_investissement_productif" : 77.75,
+							"rentabilite_economique" : 2.67,
+							"rentabilite_nette" : 0.37,
+							"rendement_capitaux_propres" : 8.99,
+							"rendement_ressources_durables" : 7.69,
+							"taux_valeur_ajoutee" : 95.21,
+							"part_salaries" : 4.13,
+							"part_etat" : 74.17,
+							"part_autofinancement" : 6.56,
+							"ca_exportation" : 70.34,
+							"achat_marchandises" : 34.18,
+							"production" : 42.01,
+							"marge_commerciale" : 33.55,
+							"consommation" : 4.82,
+							"autres_achats_charges_externes" : 7.26,
+							"valeur_ajoutee" : 59.94,
+							"charge_personnel" : 4527,
+							"impots_taxes" : 8,
+							"excedent_brut_d_exploitation" : 5,
+							"autres_produits_charges_reprises" : 5,
+							"resultat_expl" : 95,
+							"operations_commun" : 2310,
+							"produits_financiers" : 4,
+							"charges_financieres" : 8854,
+							"interets" : 8931,
+							"resultat_avant_impot" : 1182,
+							"produit_exceptionnel" : 6448,
+							"participation_salaries" : 2,
+							"impot_benefice" : 7,
+							"benefice_ou_perte" : 842
+						},
+						"______________Hash______________" : {
+							"exercice_diane" : 2016,
+							"nom_entreprise" : "grqjhca ppbvcpv ftgcgf",
+							"numero_siren" : "604713366",
+							"statut_juridique" : "zgmjk",
+							"dette_fiscale_et_sociale" : 981,
+							"frais_de_RetD" : 1,
+							"conces_brev_et_droits_sim" : 11,
+							"nombre_etab_secondaire" : 7,
+							"nombre_filiale" : 8,
+							"taille_compo_groupe" : 5,
+							"arrete_bilan_diane" : ISODate("2014-01-01T00:00:00Z"),
+							"nombre_mois" : 76,
+							"endettement" : 9.56,
+							"autonomie_financiere" : 37.57,
+							"financement_actif_circulant" : 90.95,
+							"liquidite_generale" : 12.34,
+							"rotation_stocks" : 3.59,
+							"credit_client" : 9.6,
+							"credit_fournisseur" : 9.58,
+							"ca_apar_effectif" : 4.52,
+							"taux_interet_financier" : 3,
+							"taux_interet_sur_ca" : 23,
+							"endettement_global" : 19,
+							"capacite_autofinancement" : 1.06,
+							"couverture_ca_fdr" : 8.95,
+							"couverture_ca_besoin_fdr" : 448,
+							"poids_bfr_exploitation" : 57.88,
+							"exportation" : 2.87,
+							"efficacite_economique" : 49.07,
+							"productivite_capital_financier" : 28,
+							"productivite_capital_investi" : 2,
+							"taux_d_investissement_productif" : 8.96,
+							"rentabilite_economique" : 3.46,
+							"rentabilite_nette" : 6.43,
+							"rendement_capitaux_propres" : 8.58,
+							"rendement_ressources_durables" : 3.17,
+							"taux_marge_commerciale" : 6.26,
+							"taux_valeur_ajoutee" : 78.57,
+							"part_salaries" : 49.45,
+							"part_preteur" : 61.26,
+							"part_autofinancement" : 34.1,
+							"ca_exportation" : 6.65,
+							"production" : 17.79,
+							"marge_commerciale" : 75.87,
+							"consommation" : 61.87,
+							"autres_achats_charges_externes" : 0.72,
+							"valeur_ajoutee" : 12.07,
+							"charge_personnel" : 9658,
+							"impots_taxes" : 3,
+							"subventions_d_exploitation" : 1,
+							"autres_produits_charges_reprises" : 9,
+							"resultat_expl" : 25,
+							"operations_commun" : 5922,
+							"produits_financiers" : 8,
+							"charges_financieres" : 8115,
+							"interets" : 5018,
+							"resultat_avant_impot" : 371,
+							"produit_exceptionnel" : 3218,
+							"charge_exceptionnelle" : 83,
+							"impot_benefice" : 0,
+							"benefice_ou_perte" : 419
+						},
+						"______________Hash______________" : {
+							"exercice_diane" : 2012,
+							"nom_entreprise" : "grqjhca ppbvcpv ftgcgf",
+							"numero_siren" : "604713366",
+							"statut_juridique" : "zgmjk",
+							"dette_fiscale_et_sociale" : 348,
+							"frais_de_RetD" : 8,
+							"conces_brev_et_droits_sim" : 58,
+							"nombre_etab_secondaire" : 7,
+							"nombre_filiale" : 8,
+							"taille_compo_groupe" : 5,
+							"arrete_bilan_diane" : ISODate("2018-01-01T00:00:00Z"),
+							"nombre_mois" : 25,
+							"endettement" : 7.71,
+							"degre_immo_corporelle" : 30.24,
+							"financement_actif_circulant" : 22.07,
+							"liquidite_generale" : 6.94,
+							"rotation_stocks" : 73.77,
+							"credit_client" : 3.26,
+							"credit_fournisseur" : 0.57,
+							"ca_apar_effectif" : 9.47,
+							"taux_interet_financier" : 0,
+							"taux_interet_sur_ca" : 69,
+							"endettement_global" : 65,
+							"capacite_autofinancement" : 7.72,
+							"couverture_ca_fdr" : 2.2,
+							"couverture_ca_besoin_fdr" : 252,
+							"poids_bfr_exploitation" : 63.69,
+							"exportation" : 4.13,
+							"efficacite_economique" : 2.5,
+							"productivite_capital_financier" : 79,
+							"taux_d_investissement_productif" : 11.94,
+							"rentabilite_economique" : 6.73,
+							"rentabilite_nette" : 3.46,
+							"rendement_capitaux_propres" : 5.87,
+							"rendement_ressources_durables" : 2.83,
+							"taux_valeur_ajoutee" : 9.27,
+							"part_salaries" : 24.99,
+							"part_preteur" : 29.68,
+							"part_autofinancement" : 2.79,
+							"ca_exportation" : 45.73,
+							"production" : 58.91,
+							"marge_commerciale" : 70.82,
+							"consommation" : 0.23,
+							"autres_achats_charges_externes" : 5.32,
+							"valeur_ajoutee" : 61.74,
+							"charge_personnel" : 2231,
+							"impots_taxes" : 0,
+							"excedent_brut_d_exploitation" : 61,
+							"autres_produits_charges_reprises" : 2,
+							"resultat_expl" : 89,
+							"operations_commun" : 1540,
+							"produits_financiers" : 0,
+							"charges_financieres" : 4946,
+							"interets" : 6043,
+							"resultat_avant_impot" : 5526,
+							"produit_exceptionnel" : 7029,
+							"participation_salaries" : 1,
+							"impot_benefice" : 6,
+							"benefice_ou_perte" : 221
+						},
+						"______________Hash______________" : {
+							"exercice_diane" : 2015,
+							"nom_entreprise" : "grqjhca ppbvcpv ftgcgf",
+							"numero_siren" : "604713366",
+							"statut_juridique" : "zgmjk",
+							"dette_fiscale_et_sociale" : 911,
+							"frais_de_RetD" : 1,
+							"conces_brev_et_droits_sim" : 44,
+							"nombre_etab_secondaire" : 7,
+							"nombre_filiale" : 8,
+							"taille_compo_groupe" : 5,
+							"arrete_bilan_diane" : ISODate("2015-01-01T00:00:00Z"),
+							"nombre_mois" : 56,
+							"endettement" : 4.48,
+							"autonomie_financiere" : 43.9,
+							"financement_actif_circulant" : 41.71,
+							"liquidite_generale" : 63.41,
+							"liquidite_reduite" : 86.16,
+							"credit_client" : 9.72,
+							"credit_fournisseur" : 2.82,
+							"ca_apar_effectif" : 1.74,
+							"taux_interet_financier" : 8,
+							"taux_interet_sur_ca" : 93,
+							"endettement_global" : 74,
+							"capacite_autofinancement" : 1.53,
+							"couverture_ca_fdr" : 9.05,
+							"couverture_ca_besoin_fdr" : 452,
+							"poids_bfr_exploitation" : 11.8,
+							"exportation" : 8.16,
+							"efficacite_economique" : 34.29,
+							"productivite_capital_financier" : 59,
+							"taux_d_investissement_productif" : 42.1,
+							"rentabilite_economique" : 8.59,
+							"rendement_brut_fonds_propres" : 7.34,
+							"rendement_capitaux_propres" : 4.07,
+							"rendement_ressources_durables" : 7.18,
+							"taux_marge_commerciale" : 7.36,
+							"taux_valeur_ajoutee" : 76.16,
+							"part_salaries" : 76.86,
+							"part_etat" : 105.45,
+							"part_autofinancement" : 3.18,
+							"ca" : 88.22,
+							"achat_marchandises" : 86.77,
+							"production" : 30.54,
+							"marge_commerciale" : 48.2,
+							"consommation" : 60.22,
+							"autres_achats_charges_externes" : 5.37,
+							"valeur_ajoutee" : 29.64,
+							"charge_personnel" : 6703,
+							"impots_taxes" : 3,
+							"subventions_d_exploitation" : 58,
+							"autres_produits_charges_reprises" : 3,
+							"resultat_expl" : 28,
+							"operations_commun" : 4158,
+							"produits_financiers" : 3,
+							"charges_financieres" : 163,
+							"interets" : 799,
+							"resultat_avant_impot" : 5518,
+							"produit_exceptionnel" : 7102,
+							"participation_salaries" : 82,
+							"impot_benefice" : 3,
+							"benefice_ou_perte" : 288
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "etablissement",
+			"key" : "61433760225578",
+			"batch" : {
+				"1910" : {
+					"apconso" : {
+						"______________Hash______________" : {
+							"id_conso" : "d363954866",
+							"heure_consomme" : 311.54,
+							"montant" : 214,
+							"effectif" : 0,
+							"periode" : ISODate("_______ Date _______")
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "etablissement",
+			"key" : "65272073959845",
+			"batch" : {
+				"1910" : {
+					"apconso" : {
+						"______________Hash______________" : {
+							"id_conso" : "u90q913412",
+							"heure_consomme" : 44.11,
+							"montant" : 659,
+							"effectif" : 2,
+							"periode" : ISODate("_______ Date _______")
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "entreprise",
+			"key" : "789211558",
+			"batch" : {
+				"1910" : {
+					"sirene_ul" : {
+						"______________Hash______________" : {
+							"siren" : "789211558",
+							"raison_sociale" : "",
+							"prenom1_unite_legale" : "ajfwprw-qmxobv",
+							"nom_unite_legale" : "fvxmjl",
+							"statut_juridique" : "5258",
+							"date_creation" : ISODate("1999-10-25T00:00:00Z")
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "entreprise",
+			"key" : "839244082",
+			"batch" : {
+				"1910" : {
+					"diane" : {
+						"______________Hash______________" : {
+							"exercice_diane" : 2014,
+							"nom_entreprise" : "bysmsnh awkvsuik tupkif djyoguh cfe bwhkxnc ocbknhd mo kmgbd hquxb",
+							"numero_siren" : "839244082",
+							"statut_juridique" : "byfnw",
+							"dette_fiscale_et_sociale" : 659,
+							"frais_de_RetD" : 8,
+							"conces_brev_et_droits_sim" : 4,
+							"nombre_etab_secondaire" : 67,
+							"nombre_filiale" : 5,
+							"taille_compo_groupe" : 4,
+							"arrete_bilan_diane" : ISODate("2016-05-09T00:00:00Z"),
+							"nombre_mois" : 45,
+							"endettement" : 6.78,
+							"degre_immo_corporelle" : 77.17,
+							"financement_actif_circulant" : 5.79,
+							"liquidite_generale" : 36.28,
+							"rotation_stocks" : 93.42,
+							"credit_client" : 4.74,
+							"credit_fournisseur" : 2.86,
+							"ca_apar_effectif" : 5.94,
+							"taux_interet_financier" : 8,
+							"taux_interet_sur_ca" : 49,
+							"endettement_global" : 537,
+							"capacite_autofinancement" : 2.94,
+							"couverture_ca_fdr" : 6.64,
+							"couverture_ca_besoin_fdr" : 893,
+							"poids_bfr_exploitation" : 3.47,
+							"exportation" : 7.53,
+							"efficacite_economique" : 0.85,
+							"productivite_capital_financier" : 76,
+							"productivite_capital_investi" : 62,
+							"taux_d_investissement_productif" : 49.93,
+							"rentabilite_economique" : 7.53,
+							"rentabilite_nette" : 0.38,
+							"rendement_capitaux_propres" : 1.96,
+							"rendement_ressources_durables" : 1.42,
+							"taux_valeur_ajoutee" : 8.72,
+							"part_salaries" : 8.09,
+							"part_etat" : 30.2,
+							"part_autofinancement" : 4.88,
+							"ca_exportation" : 38.85,
+							"achat_marchandises" : 96.65,
+							"production" : 31.4,
+							"marge_commerciale" : 40.21,
+							"consommation" : 1.03,
+							"autres_achats_charges_externes" : 7.31,
+							"valeur_ajoutee" : 4.35,
+							"charge_personnel" : 4129,
+							"impots_taxes" : 8,
+							"excedent_brut_d_exploitation" : 2,
+							"autres_produits_charges_reprises" : 3,
+							"resultat_expl" : 7,
+							"operations_commun" : 7703,
+							"produits_financiers" : 8,
+							"charges_financieres" : 920,
+							"interets" : 688,
+							"resultat_avant_impot" : 6091,
+							"produit_exceptionnel" : 8450,
+							"participation_salaries" : 933,
+							"impot_benefice" : 12,
+							"benefice_ou_perte" : 68
+						},
+						"______________Hash______________" : {
+							"exercice_diane" : 2015,
+							"nom_entreprise" : "bysmsnh awkvsuik tupkif djyoguh cfe bwhkxnc ocbknhd mo kmgbd hquxb",
+							"numero_siren" : "839244082",
+							"statut_juridique" : "byfnw",
+							"dette_fiscale_et_sociale" : 3,
+							"frais_de_RetD" : 2,
+							"conces_brev_et_droits_sim" : 0,
+							"nombre_etab_secondaire" : 67,
+							"nombre_filiale" : 5,
+							"taille_compo_groupe" : 4,
+							"arrete_bilan_diane" : ISODate("2015-05-09T00:00:00Z"),
+							"nombre_mois" : 12,
+							"endettement" : 0.77,
+							"autonomie_financiere" : 1.3,
+							"financement_actif_circulant" : 0.69,
+							"liquidite_generale" : 42.96,
+							"liquidite_reduite" : 5.44,
+							"credit_client" : 4.76,
+							"credit_fournisseur" : 2.91,
+							"ca_apar_effectif" : 3.11,
+							"taux_interet_financier" : 7,
+							"taux_interet_sur_ca" : 62,
+							"endettement_global" : 48,
+							"capacite_autofinancement" : 8.08,
+							"couverture_ca_fdr" : 5.02,
+							"couverture_ca_besoin_fdr" : 870,
+							"poids_bfr_exploitation" : 6.88,
+							"exportation" : 6.61,
+							"efficacite_economique" : 5.74,
+							"productivite_capital_financier" : 70,
+							"productivite_capital_investi" : 13,
+							"taux_d_investissement_productif" : 67.64,
+							"rentabilite_economique" : 2.87,
+							"rendement_brut_fonds_propres" : 1.93,
+							"rendement_capitaux_propres" : 1.89,
+							"rendement_ressources_durables" : 7.53,
+							"taux_marge_commerciale" : 0.39,
+							"taux_valeur_ajoutee" : 4.15,
+							"part_salaries" : 1.45,
+							"part_etat" : 43.95,
+							"part_autofinancement" : 4.19,
+							"ca" : 19.11,
+							"achat_marchandises" : 2.65,
+							"production" : 38.87,
+							"marge_commerciale" : 34.79,
+							"consommation" : 5.35,
+							"autres_achats_charges_externes" : 3.58,
+							"valeur_ajoutee" : 1.64,
+							"charge_personnel" : 3098,
+							"impots_taxes" : 8,
+							"subventions_d_exploitation" : 3,
+							"autres_produits_charges_reprises" : 1,
+							"resultat_expl" : 3,
+							"operations_commun" : 7898,
+							"produits_financiers" : 5,
+							"charges_financieres" : 265,
+							"interets" : 502,
+							"resultat_avant_impot" : 931,
+							"produit_exceptionnel" : 4262,
+							"participation_salaries" : 157,
+							"impot_benefice" : 810,
+							"benefice_ou_perte" : 18
+						},
+						"______________Hash______________" : {
+							"exercice_diane" : 2012,
+							"nom_entreprise" : "bysmsnh awkvsuik tupkif djyoguh cfe bwhkxnc ocbknhd mo kmgbd hquxb",
+							"numero_siren" : "839244082",
+							"statut_juridique" : "byfnw",
+							"effectif_consolide" : 17,
+							"dette_fiscale_et_sociale" : 332,
+							"frais_de_RetD" : 8,
+							"conces_brev_et_droits_sim" : 55,
+							"nombre_etab_secondaire" : 67,
+							"nombre_filiale" : 5,
+							"taille_compo_groupe" : 4,
+							"arrete_bilan_diane" : ISODate("2018-05-09T00:00:00Z"),
+							"nombre_mois" : 68,
+							"endettement" : 9.13,
+							"degre_immo_corporelle" : 9.42,
+							"financement_actif_circulant" : 2.32,
+							"liquidite_generale" : 67.12,
+							"rotation_stocks" : 0.51,
+							"credit_client" : 2.71,
+							"credit_fournisseur" : 8.81,
+							"ca_apar_effectif" : 6.93,
+							"taux_interet_financier" : 7,
+							"taux_interet_sur_ca" : 80,
+							"endettement_global" : 934,
+							"capacite_remboursement" : 6,
+							"capacite_autofinancement" : 2.92,
+							"couverture_ca_fdr" : 3.23,
+							"couverture_ca_besoin_fdr" : 498,
+							"poids_bfr_exploitation" : 9.53,
+							"exportation" : 2.03,
+							"efficacite_economique" : 2.61,
+							"productivite_capital_financier" : 5,
+							"taux_d_investissement_productif" : 84.82,
+							"rentabilite_economique" : 9.69,
+							"performance" : 81,
+							"rentabilite_nette" : 6.84,
+							"rendement_capitaux_propres" : 2.85,
+							"rendement_ressources_durables" : 2.41,
+							"taux_marge_commerciale" : 5.83,
+							"taux_valeur_ajoutee" : 8.91,
+							"part_salaries" : 4.17,
+							"part_preteur" : 6.95,
+							"part_autofinancement" : 6.44,
+							"ca_exportation" : 5.01,
+							"production" : 29.13,
+							"marge_commerciale" : 91.7,
+							"consommation" : 3.46,
+							"autres_achats_charges_externes" : 7.15,
+							"valeur_ajoutee" : 2.05,
+							"charge_personnel" : 1966,
+							"impots_taxes" : 8,
+							"excedent_brut_d_exploitation" : 5,
+							"autres_produits_charges_reprises" : 5,
+							"resultat_expl" : 6,
+							"operations_commun" : 3288,
+							"produits_financiers" : 3,
+							"charges_financieres" : 603,
+							"interets" : 313,
+							"resultat_avant_impot" : 1559,
+							"produit_exceptionnel" : 4170,
+							"participation_salaries" : 919,
+							"impot_benefice" : 603,
+							"benefice_ou_perte" : 31
+						},
+						"______________Hash______________" : {
+							"exercice_diane" : 2016,
+							"nom_entreprise" : "bysmsnh awkvsuik tupkif djyoguh cfe bwhkxnc ocbknhd mo kmgbd hquxb",
+							"numero_siren" : "839244082",
+							"statut_juridique" : "byfnw",
+							"effectif_consolide" : 9,
+							"dette_fiscale_et_sociale" : 995,
+							"frais_de_RetD" : 6,
+							"conces_brev_et_droits_sim" : 79,
+							"nombre_etab_secondaire" : 67,
+							"nombre_filiale" : 5,
+							"taille_compo_groupe" : 4,
+							"arrete_bilan_diane" : ISODate("2014-05-09T00:00:00Z"),
+							"nombre_mois" : 81,
+							"endettement" : 2.17,
+							"autonomie_financiere" : 11.87,
+							"financement_actif_circulant" : 7.43,
+							"liquidite_generale" : 79.46,
+							"rotation_stocks" : 71.2,
+							"credit_client" : 6.2,
+							"credit_fournisseur" : 3.25,
+							"ca_apar_effectif" : 2.85,
+							"taux_interet_financier" : 8,
+							"taux_interet_sur_ca" : 81,
+							"endettement_global" : 75,
+							"capacite_remboursement" : 1,
+							"capacite_autofinancement" : 2.12,
+							"couverture_ca_fdr" : 3.81,
+							"couverture_ca_besoin_fdr" : 61,
+							"poids_bfr_exploitation" : 1.64,
+							"exportation" : 6.67,
+							"efficacite_economique" : 5.66,
+							"productivite_capital_financier" : 73,
+							"productivite_capital_investi" : 9,
+							"taux_d_investissement_productif" : 40.79,
+							"rentabilite_economique" : 6.55,
+							"performance" : 88,
+							"rentabilite_nette" : 0.13,
+							"rendement_capitaux_propres" : 6.12,
+							"rendement_ressources_durables" : 6.79,
+							"taux_marge_commerciale" : 5.72,
+							"taux_valeur_ajoutee" : 9.39,
+							"part_salaries" : 9.2,
+							"part_preteur" : 0.86,
+							"part_autofinancement" : 4.89,
+							"ca_exportation" : 3.27,
+							"production" : 71.99,
+							"marge_commerciale" : 63.51,
+							"consommation" : 1.64,
+							"autres_achats_charges_externes" : 6.99,
+							"valeur_ajoutee" : 7.93,
+							"charge_personnel" : 3334,
+							"impots_taxes" : 3,
+							"subventions_d_exploitation" : 4,
+							"autres_produits_charges_reprises" : 0,
+							"resultat_expl" : 3,
+							"operations_commun" : 8978,
+							"produits_financiers" : 2,
+							"charges_financieres" : 938,
+							"interets" : 130,
+							"resultat_avant_impot" : 8,
+							"produit_exceptionnel" : 3029,
+							"charge_exceptionnelle" : 896,
+							"impot_benefice" : 531,
+							"benefice_ou_perte" : 356
+						},
+						"______________Hash______________" : {
+							"exercice_diane" : 2013,
+							"nom_entreprise" : "bysmsnh awkvsuik tupkif djyoguh cfe bwhkxnc ocbknhd mo kmgbd hquxb",
+							"numero_siren" : "839244082",
+							"statut_juridique" : "byfnw",
+							"dette_fiscale_et_sociale" : 768,
+							"frais_de_RetD" : 7,
+							"conces_brev_et_droits_sim" : 6,
+							"nombre_etab_secondaire" : 67,
+							"nombre_filiale" : 5,
+							"taille_compo_groupe" : 4,
+							"arrete_bilan_diane" : ISODate("2017-05-09T00:00:00Z"),
+							"nombre_mois" : 35,
+							"endettement" : 6.01,
+							"degre_immo_corporelle" : 28.47,
+							"financement_actif_circulant" : 1.89,
+							"liquidite_generale" : 78.2,
+							"rotation_stocks" : 30.84,
+							"credit_client" : 8.09,
+							"credit_fournisseur" : 1.14,
+							"ca_apar_effectif" : 1.47,
+							"taux_interet_financier" : 0,
+							"taux_interet_sur_ca" : 2,
+							"endettement_global" : 813,
+							"capacite_autofinancement" : 2.22,
+							"couverture_ca_fdr" : 5.15,
+							"couverture_ca_besoin_fdr" : 518,
+							"poids_bfr_exploitation" : 0.13,
+							"exportation" : 0.08,
+							"efficacite_economique" : 0.01,
+							"productivite_capital_financier" : 18,
+							"taux_d_investissement_productif" : 46.18,
+							"rentabilite_economique" : 6.04,
+							"rentabilite_nette" : 5.23,
+							"rendement_capitaux_propres" : 1.28,
+							"rendement_ressources_durables" : 4.16,
+							"taux_marge_commerciale" : 9.88,
+							"taux_valeur_ajoutee" : 2.32,
+							"part_salaries" : 4.59,
+							"part_preteur" : 4.47,
+							"part_autofinancement" : 2.22,
+							"ca_exportation" : 4.45,
+							"production" : 62.72,
+							"marge_commerciale" : 49.35,
+							"consommation" : 7.61,
+							"autres_achats_charges_externes" : 6.98,
+							"valeur_ajoutee" : 4.88,
+							"charge_personnel" : 3660,
+							"impots_taxes" : 5,
+							"excedent_brut_d_exploitation" : 6,
+							"autres_produits_charges_reprises" : 7,
+							"resultat_expl" : 9,
+							"operations_commun" : 1836,
+							"produits_financiers" : 8,
+							"charges_financieres" : 72,
+							"interets" : 101,
+							"resultat_avant_impot" : 6885,
+							"produit_exceptionnel" : 8806,
+							"participation_salaries" : 75,
+							"impot_benefice" : 563,
+							"benefice_ou_perte" : 52
+						},
+						"______________Hash______________" : {
+							"exercice_diane" : 2017,
+							"nom_entreprise" : "bysmsnh awkvsuik tupkif djyoguh cfe bwhkxnc ocbknhd mo kmgbd hquxb",
+							"numero_siren" : "839244082",
+							"statut_juridique" : "byfnw",
+							"effectif_consolide" : 86,
+							"dette_fiscale_et_sociale" : 292,
+							"frais_de_RetD" : 6,
+							"conces_brev_et_droits_sim" : 13,
+							"nombre_etab_secondaire" : 67,
+							"nombre_filiale" : 5,
+							"taille_compo_groupe" : 4,
+							"arrete_bilan_diane" : ISODate("2013-05-09T00:00:00Z"),
+							"nombre_mois" : 81,
+							"endettement" : 3.56,
+							"autonomie_financiere" : 67.89,
+							"financement_actif_circulant" : 2.52,
+							"liquidite_generale" : 74.93,
+							"liquidite_reduite" : 99.58,
+							"credit_client" : 3.28,
+							"credit_fournisseur" : 0.23,
+							"ca_apar_effectif" : 8.7,
+							"taux_interet_financier" : 0,
+							"taux_interet_sur_ca" : 92,
+							"endettement_global" : 250,
+							"taux_endettement" : 49,
+							"capacite_autofinancement" : 5.45,
+							"couverture_ca_fdr" : 1.1,
+							"couverture_ca_besoin_fdr" : 796,
+							"poids_bfr_exploitation" : 7.28,
+							"exportation" : 6.14,
+							"efficacite_economique" : 5.14,
+							"productivite_potentiel_production" : 39,
+							"taux_d_investissement_productif" : 49.55,
+							"rentabilite_economique" : 0.47,
+							"performance" : 68,
+							"rendement_brut_fonds_propres" : 6.17,
+							"rendement_capitaux_propres" : 4.2,
+							"rendement_ressources_durables" : 2.82,
+							"taux_marge_commerciale" : 9.78,
+							"taux_valeur_ajoutee" : 1.46,
+							"part_salaries" : 6.49,
+							"part_etat" : 8.42,
+							"part_autofinancement" : 8.85,
+							"ca" : 3.05,
+							"achat_marchandises" : 4.32,
+							"production" : 79.05,
+							"marge_commerciale" : 192.87,
+							"consommation" : 7.56,
+							"autres_achats_charges_externes" : 9.97,
+							"valeur_ajoutee" : 5.26,
+							"charge_personnel" : 213,
+							"impots_taxes" : 7,
+							"subventions_d_exploitation" : 5,
+							"dotation_amortissement" : 7,
+							"operations_commun" : 5119,
+							"produits_financiers" : 7,
+							"charges_financieres" : 465,
+							"interets" : 731,
+							"resultat_avant_impot" : 5798,
+							"produit_exceptionnel" : 2597,
+							"charge_exceptionnelle" : 107,
+							"impot_benefice" : 177,
+							"benefice_ou_perte" : 52
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "etablissement",
+			"key" : "95652057344947",
+			"batch" : {
+				"1910" : {
+					"sirene" : {
+						"______________Hash______________" : {
+							"siren" : "956520573",
+							"nic" : "44947",
+							"type_voie" : "CHEMIN",
+							"voie" : "dguylittc",
+							"commune" : "rjkxla",
+							"code_commune" : "73187",
+							"code_postal" : "64276",
+							"departement" : "64",
+							"code_activite" : "94.7h",
+							"nomen_activite" : "NAFRev1",
+							"date_creation" : ISODate("2007-04-19T22:00:00Z"),
+							"longitude" : 6.1256,
+							"latitude" : 14.106745
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "etablissement",
+			"key" : "96979276956291",
+			"batch" : {
+				"1910" : {
+					"sirene" : {
+						"______________Hash______________" : {
+							"siren" : "969792769",
+							"nic" : "56291",
+							"siege" : true,
+							"numero_voie" : "192",
+							"type_voie" : "RUE",
+							"voie" : "oyrdvmle",
+							"commune" : "qxszfpieiukzzxr",
+							"code_commune" : "94133",
+							"code_postal" : "08079",
+							"departement" : "08",
+							"code_activite" : "00.9u",
+							"nomen_activite" : "NAFRev1",
+							"longitude" : 6.140122,
+							"latitude" : 58.817057
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "etablissement",
+			"key" : "99508628226971",
+			"batch" : {
+				"1910" : {
+					"apdemande" : {
+						"______________Hash______________" : {
+							"id_demande" : "m80v947695",
+							"effectif_entreprise" : 949,
+							"effectif" : 535,
+							"date_statut" : ISODate("2012-04-11T00:00:00Z"),
+							"periode" : {
+								"start" : ISODate("2014-04-29T00:00:00Z"),
+								"end" : ISODate("2014-05-29T00:00:00Z")
+							},
+							"hta" : 8921.61,
+							"mta" : 72697.76,
+							"effectif_autorise" : 83,
+							"motif_recours_se" : 7,
+							"heure_consommee" : 6165,
+							"montant_consommee" : 1456.27,
+							"effectif_consomme" : 64
+						}
 					}
 				}
 			}
 		}
 	}
 ]
-// Documents from db.Journal:
+// Reports from db.Journal:
 [
+	{
+		"event" : {
+			"headFilters" : [ ],
+			"headErrors" : [ ],
+			"headFatal" : [ ],
+			"report" : "/../lib/bdf/testData/bdfTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
+			"batchKey" : "1910"
+		},
+		"code" : "bdfParser"
+	},
+	{
+		"event" : {
+			"headFilters" : [ ],
+			"headErrors" : [ ],
+			"headFatal" : [ ],
+			"report" : "/../lib/urssaf/testData/ccsfTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
+			"batchKey" : "1910"
+		},
+		"code" : "ccsfParser"
+	},
+	{
+		"event" : {
+			"headFilters" : [ ],
+			"headErrors" : [ ],
+			"headFatal" : [ ],
+			"report" : "Admin_urssaf: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
+			"batchKey" : "1910"
+		},
+		"code" : "compteParser"
+	},
+	{
+		"event" : {
+			"headFilters" : [ ],
+			"headErrors" : [ ],
+			"headFatal" : [ ],
+			"report" : "/../lib/urssaf/testData/cotisationTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
+			"batchKey" : "1910"
+		},
+		"code" : "cotisationParser"
+	},
+	{
+		"event" : {
+			"headFilters" : [ ],
+			"headErrors" : [ ],
+			"headFatal" : [ ],
+			"report" : "/../lib/urssaf/testData/debitTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
+			"batchKey" : "1910"
+		},
+		"code" : "debitParser"
+	},
 	{
 		"event" : {
 			"headFilters" : [
@@ -66,8 +5112,108 @@
 			"batchKey" : "1910"
 		},
 		"code" : "delaiParser"
+	},
+	{
+		"event" : {
+			"headFilters" : [ ],
+			"headErrors" : [ ],
+			"headFatal" : [ ],
+			"report" : "/../lib/diane/testData/dianeTestData.txt: intégration terminée, 18 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 18 lignes valides",
+			"batchKey" : "1910"
+		},
+		"code" : "dianeParser"
+	},
+	{
+		"event" : {
+			"headFilters" : [ ],
+			"headErrors" : [ ],
+			"headFatal" : [ ],
+			"report" : "/../lib/urssaf/testData/effectifEntTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
+			"batchKey" : "1910"
+		},
+		"code" : "effectifEntParser"
+	},
+	{
+		"event" : {
+			"headFilters" : [ ],
+			"headErrors" : [ ],
+			"headFatal" : [ ],
+			"report" : "/../lib/urssaf/testData/effectifTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
+			"batchKey" : "1910"
+		},
+		"code" : "effectifParser"
+	},
+	{
+		"event" : {
+			"headFilters" : [ ],
+			"headErrors" : [ ],
+			"headFatal" : [ ],
+			"report" : "/../lib/apconso/testData/apconsoTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
+			"batchKey" : "1910"
+		},
+		"code" : "parserApconso"
+	},
+	{
+		"event" : {
+			"headFilters" : [ ],
+			"headErrors" : [ ],
+			"headFatal" : [ ],
+			"report" : "/../lib/apdemande/testData/apdemandeTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
+			"batchKey" : "1910"
+		},
+		"code" : "parserApdemande"
+	},
+	{
+		"event" : {
+			"headFilters" : [ ],
+			"headErrors" : [ ],
+			"headFatal" : [
+				"Cycle 0: Le siret/siren est invalide",
+				"Cycle 0: strconv.ParseInt: parsing \"Niveau de détention\": invalid syntax"
+			],
+			"report" : "/../lib/ellisphere/testData/ellisphereTestData.excel: intégration terminée, 7 lignes traitées, 2 erreures fatales, 0 rejets, 0 lignes filtrées, 5 lignes valides",
+			"batchKey" : "1910"
+		},
+		"code" : "parserEllisphere"
+	},
+	{
+		"event" : {
+			"headFilters" : [ ],
+			"headErrors" : [ ],
+			"headFatal" : [ ],
+			"report" : "/../lib/urssaf/testData/procolTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
+			"batchKey" : "1910"
+		},
+		"code" : "procolParser"
+	},
+	{
+		"event" : {
+			"headFilters" : [ ],
+			"headErrors" : [ ],
+			"headFatal" : [
+				"Cycle 1: parsing time \"\" as \"2006-01-02\": cannot parse \"\" as \"2006\""
+			],
+			"report" : "/../lib/sirene/testData/sireneTestData.csv: intégration terminée, 3 lignes traitées, 1 erreures fatales, 0 rejets, 0 lignes filtrées, 2 lignes valides",
+			"batchKey" : "1910"
+		},
+		"code" : "sireneParser"
+	},
+	{
+		"event" : {
+			"headFilters" : [ ],
+			"headErrors" : [ ],
+			"headFatal" : [ ],
+			"report" : "/../lib/sirene_ul/testData/sireneULTestData.csv: intégration terminée, 4 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 4 lignes valides",
+			"batchKey" : "1910"
+		},
+		"code" : "sireneULParser"
 	}
 ]
+// Critical errors from db.Journal:
+[ ]
 // Results of call to /api/data/validate:
 {"_id":"________ObjectId________","batchKey":"1910","dataHash":"______________Hash______________","dataObject":{"action":"bad mu","annee_creation":9941,"date_creation":"2000-03-02T23:00:00Z","date_echeance":"2001-05-04T22:00:00Z","denomination":"mtj n.p. eg saxjoc","duree_delai":758,"indic_6m":"uqu","montant_echeancier":74825.41,"numero_compte":"636043216536562844","numero_contentieux":"8981265766679","stade":"qh"},"dataType":"delai"}
 {"_id":"________ObjectId________","batchKey":"1910","dataHash":"______________Hash______________","dataObject":{"action":"cya ng","annee_creation":5647,"date_creation":"1999-12-31T23:00:00Z","date_echeance":"2001-01-03T23:00:00Z","denomination":"etmlgcthph ecoowixknaae se","duree_delai":456,"indic_6m":"lhm","montant_echeancier":5065.79,"numero_compte":"111982477292496174","numero_contentieux":"5856690802766","stade":"nbz sk"},"dataType":"delai"}
+{"_id":"________ObjectId________","batchKey":"1910","dataHash":"______________Hash______________","dataObject":{"annee_bdf":2013,"arrete_bilan_bdf":"2012-12-31T00:00:00Z","delai_fournisseur":88.5,"dette_fiscale":561,"financier_court_terme":5.2,"frais_financier":-9.4,"poids_frng":-37.5,"raison_sociale":"SOCIETE","secteur":"01 Industrie et Transports (Hors TRM)","siren":"000111222","taux_marge":-63.1},"dataType":"bdf"}
+{"_id":"________ObjectId________","batchKey":"1910","dataHash":"______________Hash______________","dataObject":{"annee_bdf":2014,"arrete_bilan_bdf":"2013-12-31T00:00:00Z","delai_fournisseur":203.8,"dette_fiscale":204,"financier_court_terme":9.2,"frais_financier":7.3,"poids_frng":-77.1,"raison_sociale":"SOCIETE","secteur":"01 Industrie et Transports (Hors TRM)","siren":"000111223","taux_marge":-13.9},"dataType":"bdf"}
+{"_id":"________ObjectId________","batchKey":"1910","dataHash":"______________Hash______________","dataObject":{"annee_bdf":2015,"arrete_bilan_bdf":"2014-12-31T00:00:00Z","delai_fournisseur":22.9,"dette_fiscale":235,"financier_court_terme":7.3,"frais_financier":20.3,"poids_frng":64.5,"raison_sociale":"SOCIETE","secteur":"01 Industrie et Transports (Hors TRM)","siren":"000111224","taux_marge":103.5},"dataType":"bdf"}

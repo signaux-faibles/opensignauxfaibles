@@ -537,23 +537,6 @@ function reduce(key, values // chaque element contient plusieurs batches pour ce
     return reducedValue;
 }`,
 },
-"crossComputation":{
-"apart": `{
-  "$set": {
-    "value.ratio_apart": {
-      "$divide": [
-        "$value.apart_heures_consommees",
-        {
-          "$multiply": [
-            "$value.effectif",
-            157.67
-          ]
-        }
-      ]
-    }
-  }
-}`,
-},
 "migrations":{
 "agg_change_index_Features": `// db.getCollection("Features").aggregate(
 // 	[
@@ -868,11 +851,12 @@ function sirene(sireneArray) {
 }`,
 "map": `function map() {
   "use strict";
-  if (this.value.batch[currentBatch]){
-    delete this.value.batch[currentBatch]
-  }
-  // With a merge at the end, sending a new object, even empty, is compulsary
-    emit(this._id, this.value)
+  const batches = Object.keys(this.value.batch)
+  batches.filter((key) => key >= fromBatchKey).forEach((key) => {
+    delete this.value.batch[key]
+  })
+  // With a merge output, sending a new object, even empty, is compulsory
+  emit(this._id, this.value)
 }`,
 "reduce": `function reduce(key, values) {
     "use strict";
@@ -906,7 +890,7 @@ function sirene(sireneArray) {
         const periode_deb = apdemande[hash].periode.start;
         const periode_fin = apdemande[hash].periode.end;
         // Des periodes arrondies aux débuts de périodes
-        // TODO meilleur arrondi
+        // TODO: arrondir au debut du mois le plus proche, au lieu de tronquer la date. (ex: cas du dernier jour d'un mois)
         const periode_deb_floor = new Date(Date.UTC(periode_deb.getUTCFullYear(), periode_deb.getUTCMonth(), 1, 0, 0, 0, 0));
         const periode_fin_ceil = new Date(Date.UTC(periode_fin.getUTCFullYear(), periode_fin.getUTCMonth() + 1, 1, 0, 0, 0, 0));
         apart[apdemande[hash].id_demande.substring(0, 9)].periode_debut = periode_deb_floor;
@@ -949,12 +933,8 @@ function sirene(sireneArray) {
             }, 0);
         }
     });
-    //Object.keys(output_apart).forEach(time => {
-    //  if (output_effectif && time in output_effectif){
-    //    output_apart[time].ratio_apart = (output_apart[time].apart_heures_consommees || 0) / (output_effectif[time].effectif * 157.67)
-    //    //nbr approximatif d'heures ouvrées par mois
-    //  }
-    //})
+    // Note: à la fin de l'opération map-reduce, dbmongo va calculer la propriété
+    // ratio_apart depuis apart.crossComputation.json.
     return output_apart;
 }`,
 "ccsf": `function ccsf(vCcsf, output_array) {
@@ -1659,7 +1639,9 @@ function map() {
         if (includes["apart"] || includes["all"]) {
             if (v.apconso && v.apdemande) {
                 const output_apart = f.apart(v.apconso, v.apdemande);
-                Object.keys(output_apart).forEach((periode) => {
+                Object.keys(output_apart)
+                    .filter((periode) => periode in output_indexed) // limiter dans le scope temporel du batch.
+                    .forEach((periode) => {
                     const data = {
                         [this._id]: Object.assign(Object.assign({}, output_apart[periode]), { siret: this._id }),
                     };

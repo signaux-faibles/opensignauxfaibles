@@ -135,7 +135,6 @@ func listBatchHandler(c *gin.Context) {
 
 //
 func processBatchHandler(c *gin.Context) {
-
 	var query struct {
 		Batches []string `json:"batches"`
 		Parsers []string `json:"parsers"`
@@ -170,39 +169,47 @@ func processBatchHandler(c *gin.Context) {
 //
 func purgeBatchHandler(c *gin.Context) {
 	var params struct {
-		BatchKey string `json:"batch"`
+		FromBatchKey           string `json:"fromBatch"`
+		Key                    string `json:"debugForKey"`
+		IUnderstandWhatImDoing bool   `json:"IUnderstandWhatImDoing"`
 	}
+
 	err := c.ShouldBind(&params)
 	if err != nil {
 		c.JSON(400, "Requête malformée: "+err.Error())
 		return
 	}
-	if params.BatchKey == "" {
-		batch := engine.LastBatch()
-		params.BatchKey = batch.ID.Key
+	if params.FromBatchKey == "" {
+		c.JSON(400, "paramètre `fromBatch` obligatoire")
+		return
 	}
-	err = engine.PurgeBatch(params.BatchKey)
 
+	var batch base.AdminBatch
+	err = engine.Load(&batch, params.FromBatchKey)
 	if err != nil {
-		c.JSON(500, "Erreur dans la purge du batch: "+err.Error())
+		c.JSON(400, "le batch "+params.FromBatchKey+" n'est pas accessible: "+err.Error())
+		return
+	}
+
+	if params.Key != "" {
+		err = engine.PurgeBatchOne(batch, params.Key)
+		if err != nil {
+			c.JSON(500, "erreur pendant le MapReduce: "+err.Error())
+			return
+		}
 	} else {
-		c.JSON(200, "ok")
+		if !params.IUnderstandWhatImDoing {
+			c.JSON(400, "pour une purge de la base complète, IUnderstandWhatImDoing doit être `true`")
+			return
+		}
+		err = engine.PurgeBatch(batch)
+		if err != nil {
+			c.JSON(500, "(✖╭╮✖) le traitement n'a pas abouti: "+err.Error())
+			return
+		}
 	}
 }
 
-func revertBatchHandler(c *gin.Context) {
-	err := engine.RevertBatch()
-	if err != nil {
-		c.JSON(500, err)
-	}
-	batches, _ := engine.GetBatches()
-	engine.MainMessageChannel <- engine.SocketMessage{
-		Batches: batches,
-	}
-	c.JSON(200, "ok")
-}
-
-//
 func adminFilesHandler(c *gin.Context) {
 	basePath := viper.GetString("APP_DATA")
 	files, err := files.ListFiles(basePath)

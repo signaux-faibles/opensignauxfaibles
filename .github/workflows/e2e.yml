@@ -28,20 +28,23 @@ jobs:
         run: |
           sudo apt-get install -y httpie
           sudo apt-get install git-secret # to decrypt golden master files, for tests
+          sudo apt-get install dos2unix # called by convert_diane.sh
 
       - run: ./tests/test-api.sh
+
+      - run: ./tests/test-api-import.sh
 
       - run: ./tests/test-api-validate.sh
 
       - run: ./tests/test-api-check.sh
-
-      - run: ./tests/test-api-import.sh
 
       - run: ./tests/test-api-export.sh
 
       - run: ./tests/test-api-public.sh
 
       - run: ./tests/test-api-reduce.sh
+
+      - run: ./tests/test-api-purge-batch.sh
 
       - name: Reveal golden master files for tests
         env:
