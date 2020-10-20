@@ -122,6 +122,7 @@ zcat < "${OUTPUT_GZ_FILE}" \
 # Display JS errors logged by MongoDB, if any
 tests/helpers/mongodb-container.sh exceptions || true
 
+diff "${GOLDEN_FILE}" "${OUTPUT_FILE}"
 tests/helpers/diff-or-update-golden-master.sh "${FLAGS}" "${GOLDEN_FILE}" "${OUTPUT_FILE}"
 
 rm "${OUTPUT_GZ_FILE}"
