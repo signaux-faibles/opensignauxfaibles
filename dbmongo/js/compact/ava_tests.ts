@@ -125,42 +125,39 @@ test.serial(
   `compact retourne 2 cotisations depuis deux objets importés couvrant le même batch`,
   (t: ExecutionContext) => {
     const siret = ""
+    const batchId = "1910"
+    const entréeCotisation = {
+      periode: {
+        start: new Date(),
+        end: new Date(),
+      },
+      du: 64012.0,
+    }
+    const hashCotisation = ["hash1", "hash2"]
     const importedData = [
       {
-        _id: "abc",
+        _id: "entrée1",
         value: ({
           scope: "etablissement",
           key: siret,
           batch: {
-            "1910": {
+            [batchId]: {
               cotisation: {
-                f72742994ce361fd830eeee5f43f07fd: {
-                  periode: {
-                    start: new Date("2014-12-01T00:00:00.000Z"),
-                    end: new Date("2015-01-01T00:00:00.000Z"),
-                  },
-                  du: 64012.0,
-                },
+                [hashCotisation[0]]: entréeCotisation,
               },
             },
           },
         } as CompanyDataValues) as CompanyDataValuesWithFlags,
       },
       {
-        _id: "def",
+        _id: "entrée2",
         value: ({
           scope: "etablissement",
           key: siret,
           batch: {
-            "1910": {
+            [batchId]: {
               cotisation: {
-                f72742994ce361fd830eeee5f43f07fe: {
-                  periode: {
-                    start: new Date("2014-11-01T00:00:00.000Z"),
-                    end: new Date("2014-12-01T00:00:00.000Z"),
-                  },
-                  du: 123.0,
-                },
+                [hashCotisation[1]]: entréeCotisation,
               },
             },
           },
@@ -168,17 +165,14 @@ test.serial(
       },
     ]
     setGlobals({
-      fromBatchKey: "1910",
-      batches: ["1910"],
-      completeTypes: { "1910": [] },
+      fromBatchKey: batchId,
+      batches: [batchId],
+      completeTypes: { [batchId]: [] },
     })
     const mapResults = runMongoMap(map, importedData).map(({ value }) => value)
     const reduceResults = reduce(siret, mapResults as CompanyDataValues[])
     const finalizeResult = finalize(siret, reduceResults)
-    const cotisations = finalizeResult.batch["1910"].cotisation || {}
-    t.deepEqual(Object.keys(cotisations), [
-      "f72742994ce361fd830eeee5f43f07fe",
-      "f72742994ce361fd830eeee5f43f07fd",
-    ])
+    const cotisations = finalizeResult.batch[batchId].cotisation || {}
+    t.deepEqual(Object.keys(cotisations), hashCotisation)
   }
 )
