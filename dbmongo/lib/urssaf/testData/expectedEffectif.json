@@ -1581,7 +1581,7 @@
       "date": "0001-01-01T00:00:00Z",
       "event": "testData/effectifTestData.csv: ouverture",
       "priority": "info",
-      "code": "effectifParser",
+      "code": "effectif_parser",
       "report_type": ""
     },
     {
@@ -1597,8 +1597,8 @@
         "total": 3,
         "valid": 3
       },
-      "priority": "debug",
-      "code": "effectifParser",
+      "priority": "info",
+      "code": "effectif_parser",
       "report_type": ""
     }
   ]

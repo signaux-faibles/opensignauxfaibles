@@ -45,7 +45,7 @@
       "date": "0001-01-01T00:00:00Z",
       "event": "testData/delaiTestData.csv: ouverture",
       "priority": "info",
-      "code": "delaiParser",
+      "code": "delai_parser",
       "report_type": ""
     },
     {
@@ -61,8 +61,8 @@
         "total": 3,
         "valid": 3
       },
-      "priority": "debug",
-      "code": "delaiParser",
+      "priority": "info",
+      "code": "delai_parser",
       "report_type": ""
     }
   ]

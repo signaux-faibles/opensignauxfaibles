@@ -1,7 +1,6 @@
 package apdemande
 
 import (
-	"bufio"
 	"encoding/csv"
 	"errors"
 	"io"
@@ -10,12 +9,10 @@ import (
 	"time"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
 
 	"github.com/signaux-faibles/gournal"
-	"github.com/spf13/viper"
 )
 
 // Periode Période de temps avec un début et une fin
@@ -52,40 +49,21 @@ func (apdemande APDemande) Scope() string {
 	return "etablissement"
 }
 
-// Parser produit les lignes
-func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
-	outputChannel := make(chan marshal.Tuple)
-	eventChannel := make(chan marshal.Event)
-	event := marshal.Event{
-		Code:    "parserApdemande",
-		Channel: eventChannel,
+// Parser expose le parseur et le type de fichier qu'il supporte.
+var Parser = marshal.Parser{FileType: "apdemande", FileParser: ParseFile}
+
+// ParseFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
+func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+	file, err := os.Open(filePath)
+	if err != nil {
+		tracker.Add(err)
+		return
 	}
-
-	go func() {
-		defer close(outputChannel)
-		defer close(eventChannel)
-
-		for _, path := range batch.Files["apdemande"] {
-			tracker := gournal.NewTracker(
-				map[string]string{"path": path, "batchKey": batch.ID.Key},
-				engine.TrackerReports)
-
-			file, err := os.Open(viper.GetString("APP_DATA") + path)
-			if err != nil {
-				event.Critical(path + ": erreur à l'ouverture du fichier: " + err.Error())
-				return
-			}
-			reader := csv.NewReader(bufio.NewReader(file))
-			reader.Comma = ','
-			reader.LazyQuotes = true
-
-			event.Info(path + ": ouverture")
-			parseApDemandeFile(reader, &tracker, outputChannel)
-			event.Info(tracker.Report("abstract"))
-		}
-	}()
-
-	return outputChannel, eventChannel
+	defer file.Close()
+	reader := csv.NewReader(file)
+	reader.Comma = ','
+	reader.LazyQuotes = true
+	parseApDemandeFile(reader, tracker, outputChannel)
 }
 
 type colMapping map[string]int

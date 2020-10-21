@@ -333,15 +333,15 @@ var registeredParsers = map[string]marshal.Parser{
 func resolveParsers(parserNames []string) ([]marshal.Parser, error) {
 	var parsers []marshal.Parser
 	if parserNames == nil {
-		for _, f := range registeredParsers {
-			parsers = append(parsers, f)
+		for _, fileParser := range registeredParsers {
+			parsers = append(parsers, fileParser)
 		}
 	} else {
-		for _, p := range parserNames {
-			if f, ok := registeredParsers[p]; ok {
-				parsers = append(parsers, f)
+		for _, fileType := range parserNames {
+			if fileParser, ok := registeredParsers[fileType]; ok {
+				parsers = append(parsers, fileParser)
 			} else {
-				return parsers, errors.New(p + " n'est pas un parser reconnu.")
+				return parsers, errors.New(fileType + " n'est pas un parser reconnu.")
 			}
 		}
 	}

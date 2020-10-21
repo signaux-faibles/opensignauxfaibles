@@ -9,12 +9,10 @@ import (
 	"strings"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
 
 	"github.com/signaux-faibles/gournal"
-	"github.com/spf13/viper"
 )
 
 // Cotisation Objet cotisation
@@ -41,49 +39,26 @@ func (cotisation Cotisation) Type() string {
 	return "cotisation"
 }
 
-// ParserCotisation transforme les fichiers en données à intégrer
-func ParserCotisation(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
-	outputChannel := make(chan marshal.Tuple)
-	eventChannel := make(chan marshal.Event)
+// ParserCotisation expose le parseur et le type de fichier qu'il supporte.
+var ParserCotisation = marshal.Parser{FileType: "cotisation", FileParser: ParseCotisationFile}
 
-	go func() {
-		event := marshal.Event{
-			Code:    "cotisationParser",
-			Channel: eventChannel,
-		}
-
-		for _, path := range batch.Files["cotisation"] {
-			tracker := gournal.NewTracker(
-				map[string]string{"path": path, "batchKey": batch.ID.Key},
-				engine.TrackerReports)
-
-			file, err := os.Open(viper.GetString("APP_DATA") + path)
-			if err != nil {
-				tracker.Add(err)
-				event.Critical(tracker.Report("fatalError"))
-				break
-			} else {
-				event.Info(path + ": ouverture")
-			}
-			defer file.Close()
-
-			comptes, err := marshal.GetCompteSiretMapping(cache, batch, marshal.OpenAndReadSiretMapping)
-			if err != nil {
-				tracker.Add(err)
-			} else {
-				reader := csv.NewReader(bufio.NewReader(file))
-				reader.Comma = ';'
-				reader.LazyQuotes = true
-				parseCotisationFile(reader, &comptes, &tracker, outputChannel)
-			}
-
-			event.Info(tracker.Report("abstract"))
-			file.Close()
-		}
-		close(eventChannel)
-		close(outputChannel)
-	}()
-	return outputChannel, eventChannel
+// ParseCotisationFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
+func ParseCotisationFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+	comptes, err := marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
+	if err != nil {
+		tracker.Add(err)
+		return
+	}
+	file, err := os.Open(filePath)
+	if err != nil {
+		tracker.Add(err)
+		return
+	}
+	defer file.Close()
+	reader := csv.NewReader(bufio.NewReader(file))
+	reader.Comma = ';'
+	reader.LazyQuotes = true
+	parseCotisationFile(reader, &comptes, tracker, outputChannel)
 }
 
 func parseCotisationFile(reader *csv.Reader, comptes *marshal.Comptes, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {

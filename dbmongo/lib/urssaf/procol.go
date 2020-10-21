@@ -12,12 +12,10 @@ import (
 	"time"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
 
 	"github.com/signaux-faibles/gournal"
-	"github.com/spf13/viper"
 )
 
 // Procol Procédures collectives, extraction URSSAF
@@ -43,41 +41,21 @@ func (procol Procol) Type() string {
 	return "procol"
 }
 
-// ParserProcol transorme le fichier procol en data
-func ParserProcol(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
-	outputChannel := make(chan marshal.Tuple)
-	eventChannel := make(chan marshal.Event)
+// ParserProcol expose le parseur et le type de fichier qu'il supporte.
+var ParserProcol = marshal.Parser{FileType: "procol", FileParser: ParseProcolFile}
 
-	event := marshal.Event{
-		Code:    "procolParser",
-		Channel: eventChannel,
+// ParseProcolFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
+func ParseProcolFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+	file, err := os.Open(filePath)
+	if err != nil {
+		tracker.Add(err)
+		return
 	}
-
-	go func() {
-		for _, path := range batch.Files["procol"] {
-			tracker := gournal.NewTracker(
-				map[string]string{"path": path, "batchKey": batch.ID.Key},
-				engine.TrackerReports)
-
-			file, err := os.Open(viper.GetString("APP_DATA") + path)
-			if err != nil {
-				tracker.Add(err)
-				event.Critical(tracker.Report("fatalError"))
-			} else {
-				event.Info(path + ": ouverture")
-				reader := csv.NewReader(bufio.NewReader(file))
-				reader.Comma = ';'
-				reader.LazyQuotes = true
-
-				parseProcolFile(reader, &tracker, outputChannel)
-				event.Info(tracker.Report("abstract"))
-				file.Close()
-			}
-		}
-		close(outputChannel)
-		close(eventChannel)
-	}()
-	return outputChannel, eventChannel
+	defer file.Close()
+	reader := csv.NewReader(bufio.NewReader(file))
+	reader.Comma = ';'
+	reader.LazyQuotes = true
+	parseProcolFile(reader, tracker, outputChannel)
 }
 
 func parseProcolFile(reader *csv.Reader, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {

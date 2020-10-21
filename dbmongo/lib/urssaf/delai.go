@@ -5,7 +5,6 @@ import (
 	"encoding/csv"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 
 	//"errors"
@@ -16,7 +15,6 @@ import (
 	"time"
 
 	"github.com/signaux-faibles/gournal"
-	"github.com/spf13/viper"
 )
 
 // Delai tuple fichier ursaff
@@ -50,50 +48,25 @@ func (delai Delai) Type() string {
 	return "delai"
 }
 
-// ParserDelai fonction d'extraction des délais
-func ParserDelai(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
-	outputChannel := make(chan marshal.Tuple)
-	eventChannel := make(chan marshal.Event)
+// ParserDelai expose le parseur et le type de fichier qu'il supporte.
+var ParserDelai = marshal.Parser{FileType: "delai", FileParser: ParseDelaiFile}
 
-	event := marshal.Event{
-		Code:    "delaiParser",
-		Channel: eventChannel,
+// ParseDelaiFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
+func ParseDelaiFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+	comptes, err := marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
+	if err != nil {
+		tracker.Add(err)
+		return
 	}
-
-	go func() {
-
-		for _, path := range batch.Files["delai"] {
-			tracker := gournal.NewTracker(
-				map[string]string{"path": path, "batchKey": batch.ID.Key},
-				engine.TrackerReports)
-
-			file, err := os.Open(viper.GetString("APP_DATA") + path)
-
-			if err != nil {
-				tracker.Add(err)
-				event.Critical(tracker.Report("fatalError"))
-				break
-			} else {
-				event.Info(path + ": ouverture")
-			}
-
-			comptes, err := marshal.GetCompteSiretMapping(cache, batch, marshal.OpenAndReadSiretMapping)
-			if err != nil {
-				tracker.Add(err)
-			} else {
-				reader := csv.NewReader(bufio.NewReader(file))
-				reader.Comma = ';'
-				parseDelaiFile(reader, &comptes, &tracker, outputChannel)
-			}
-
-			file.Close()
-			event.Debug(tracker.Report("abstract"))
-		}
-		close(outputChannel)
-		close(eventChannel)
-	}()
-
-	return outputChannel, eventChannel
+	file, err := os.Open(filePath)
+	if err != nil {
+		tracker.Add(err)
+		return
+	}
+	defer file.Close()
+	reader := csv.NewReader(bufio.NewReader(file))
+	reader.Comma = ';'
+	parseDelaiFile(reader, &comptes, tracker, outputChannel)
 }
 
 func parseDelaiFile(reader *csv.Reader, comptes *marshal.Comptes, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {

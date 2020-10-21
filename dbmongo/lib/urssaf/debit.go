@@ -10,12 +10,10 @@ import (
 	"time"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
 
 	"github.com/signaux-faibles/gournal"
-	"github.com/spf13/viper"
 )
 
 // Debit Débit – fichier Urssaf
@@ -54,48 +52,27 @@ func (debit Debit) Type() string {
 
 type colMapping map[string]int
 
-// ParserDebit retourne les entrées lues depuis un fichier "débit" de l'URSSAF.
-func ParserDebit(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
-	outputChannel := make(chan marshal.Tuple)
-	eventChannel := make(chan marshal.Event)
+// ParserDebit expose le parseur et le type de fichier qu'il supporte.
+var ParserDebit = marshal.Parser{FileType: "debit", FileParser: ParseDebitFile}
 
-	event := marshal.Event{
-		Code:    "debitParser",
-		Channel: eventChannel,
+// ParseDebitFile extrait les tuples depuis un fichier "débit" de l'URSSAF.
+func ParseDebitFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+	comptes, err := marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
+	if err != nil {
+		tracker.Add(err)
+		return
 	}
 
-	go func() {
-		for _, path := range batch.Files["debit"] {
-			tracker := gournal.NewTracker(
-				map[string]string{"path": path, "batchKey": batch.ID.Key},
-				engine.TrackerReports)
+	file, err := os.Open(filePath)
+	if err != nil {
+		tracker.Add(err)
+		return
+	}
+	defer file.Close()
 
-			file, err := os.Open(viper.GetString("APP_DATA") + path)
-			if err != nil {
-				tracker.Add(err)
-				event.Critical(tracker.Report("fatalError"))
-			} else {
-				event.Info(path + ": ouverture")
-			}
-
-			comptes, err := marshal.GetCompteSiretMapping(cache, batch, marshal.OpenAndReadSiretMapping)
-			if err != nil {
-				tracker.Add(err)
-				return
-			}
-
-			reader := csv.NewReader(bufio.NewReader(file))
-			reader.Comma = ';'
-
-			parseDebitFile(reader, &comptes, &tracker, outputChannel)
-			event.Debug(tracker.Report("abstract"))
-			file.Close()
-		}
-		close(outputChannel)
-		close(eventChannel)
-	}()
-
-	return outputChannel, eventChannel
+	reader := csv.NewReader(bufio.NewReader(file))
+	reader.Comma = ';'
+	parseDebitFile(reader, &comptes, tracker, outputChannel)
 }
 
 func parseDebitFile(reader *csv.Reader, comptes *marshal.Comptes, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {

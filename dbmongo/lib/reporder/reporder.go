@@ -7,13 +7,10 @@ import (
 	"time"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
 
 	"github.com/signaux-faibles/gournal"
-
-	"github.com/spf13/viper"
 )
 
 // RepeatableOrder random number
@@ -38,46 +35,23 @@ func (rep RepeatableOrder) Type() string {
 	return "reporder"
 }
 
-// Parser fonction qui retourne data et journaux
-func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
-	outputChannel := make(chan marshal.Tuple)
-	eventChannel := make(chan marshal.Event)
+// Parser expose le parseur et le type de fichier qu'il supporte.
+var Parser = marshal.Parser{FileType: "reporder", FileParser: ParseFile}
 
-	event := marshal.Event{
-		Code:    "parserRepeatableOrder",
-		Channel: eventChannel,
+// ParseFile extrait les tuples depuis un fichier Reporder et génère un rapport Gournal.
+func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+	filter := marshal.GetSirenFilterFromCache(*cache)
+
+	file, err := os.Open(filePath)
+	if err != nil {
+		tracker.Add(err)
+		return
 	}
+	defer file.Close()
 
-	filter := marshal.GetSirenFilterFromCache(cache)
-
-	go func() {
-		for _, path := range batch.Files["reporder"] {
-			tracker := gournal.NewTracker(
-				map[string]string{"path": path, "batchKey": batch.ID.Key},
-				engine.TrackerReports)
-			// get current file name
-
-			file, err := os.Open(viper.GetString("APP_DATA") + path)
-			if err != nil {
-				tracker.Add(err)
-				event.Critical(tracker.Report("fatalError"))
-				continue
-			}
-
-			event.Info(path + ": ouverture")
-
-			reader := csv.NewReader(file)
-			reader.Comma = ','
-
-			parseReporderFile(reader, filter, &tracker, outputChannel)
-			event.Info(tracker.Report("abstract"))
-			file.Close()
-		}
-
-		close(eventChannel)
-		close(outputChannel)
-	}()
-	return outputChannel, eventChannel
+	reader := csv.NewReader(file)
+	reader.Comma = ','
+	parseReporderFile(reader, filter, tracker, outputChannel)
 }
 
 func parseReporderFile(reader *csv.Reader, filter map[string]bool, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {

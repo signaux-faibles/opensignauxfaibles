@@ -79,9 +79,9 @@
   "events": [
     {
       "date": "0001-01-01T00:00:00Z",
-      "event": "testData/ellisphereTestData.excel: Opening file",
+      "event": "testData/ellisphereTestData.excel: ouverture",
       "priority": "info",
-      "code": "parserEllisphere",
+      "code": "ellisphere_parser",
       "report_type": ""
     },
     {
@@ -101,7 +101,7 @@
         "valid": 5
       },
       "priority": "info",
-      "code": "parserEllisphere",
+      "code": "ellisphere_parser",
       "report_type": ""
     }
   ]

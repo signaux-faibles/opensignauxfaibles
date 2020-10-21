@@ -11,7 +11,6 @@ import (
 	"time"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 
 	"github.com/signaux-faibles/gournal"
@@ -356,22 +355,21 @@ func parseDianeRow(row []string) (diane Diane) {
 }
 
 // parseDianeRow génère des objets Diane à partir d'un fichier
-func parseDianeFile(batch *base.AdminBatch, path string, outputChannel chan marshal.Tuple, event marshal.Event) {
-	event.Debug(path + ": ouverture")
+func parseDianeFile(batch *base.AdminBatch, path string, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
 
-	cmdPath := []string{filepath.Join(viper.GetString("SCRIPTDIANE_DIR"), "convert_diane.sh"), viper.GetString("APP_DATA") + path}
+	cmdPath := []string{filepath.Join(viper.GetString("SCRIPTDIANE_DIR"), "convert_diane.sh"), path}
 	cmd := exec.Command("/bin/bash", cmdPath...)
 
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
-		event.Critical("echec de récupération de sortie standard du script: " + err.Error())
+		tracker.Add(errors.New("echec de récupération de sortie standard du script: " + err.Error()))
 		return
 	}
 	defer stdout.Close()
 
 	stderr, err := cmd.StderrPipe()
 	if err != nil {
-		event.Critical("echec de récupération de sortie d'erreurs du script: " + err.Error())
+		tracker.Add(errors.New("echec de récupération de sortie d'erreurs du script: " + err.Error()))
 		return
 	}
 	defer stderr.Close()
@@ -380,7 +378,7 @@ func parseDianeFile(batch *base.AdminBatch, path string, outputChannel chan mars
 	go func() {
 		scanner := bufio.NewScanner(stderr)
 		for scanner.Scan() {
-			event.Debug("[convert_diane.sh stderr] " + scanner.Text())
+			tracker.Add(errors.New("[convert_diane.sh stderr] " + scanner.Text()))
 		}
 	}()
 
@@ -388,7 +386,7 @@ func parseDianeFile(batch *base.AdminBatch, path string, outputChannel chan mars
 	cmd.Start()
 	defer func() {
 		if err := cmd.Wait(); err != nil {
-			event.Debug("[convert_diane.sh] failed with " + err.Error())
+			tracker.Add(errors.New("[convert_diane.sh] failed with " + err.Error()))
 		}
 	}()
 
@@ -398,14 +396,9 @@ func parseDianeFile(batch *base.AdminBatch, path string, outputChannel chan mars
 	reader.LazyQuotes = true
 	_, err = reader.Read() // Discard header
 	if err != nil {
-		event.Critical("echec de lecture de l'en-tête du fichier en sortie du script: " + err.Error())
+		tracker.Add(errors.New("echec de lecture de l'en-tête du fichier en sortie du script: " + err.Error()))
 		return
 	}
-
-	// init tracker to keep track and report parsing errors
-	tracker := gournal.NewTracker(
-		map[string]string{"path": path, "batchKey": batch.ID.Key},
-		engine.TrackerReports)
 
 	// process rows of data
 	for {
@@ -421,25 +414,12 @@ func parseDianeFile(batch *base.AdminBatch, path string, outputChannel chan mars
 		}
 		tracker.Next()
 	}
-	event.Debug(tracker.Report("abstract"))
 }
 
-// Parser produit les données Diane listées dans un batch
-func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
-	outputChannel := make(chan marshal.Tuple)
-	eventChannel := make(chan marshal.Event)
-	event := marshal.Event{
-		Code:    "dianeParser",
-		Channel: eventChannel,
-	}
-
-	go func() {
-		for _, path := range batch.Files["diane"] {
-			parseDianeFile(batch, path, outputChannel, event)
-		}
-		close(eventChannel)
-		close(outputChannel)
-	}()
-
-	return outputChannel, eventChannel
+// ParseFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
+func ParseFile(path string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+	parseDianeFile(batch, path, tracker, outputChannel)
 }
+
+// Parser expose le parseur et le type de fichier qu'il supporte.
+var Parser = marshal.Parser{FileType: "diane", FileParser: ParseFile}

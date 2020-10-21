@@ -2,6 +2,7 @@ package sirene
 
 import (
 	//"bufio"
+
 	"encoding/csv"
 	"errors"
 	"io"
@@ -12,12 +13,10 @@ import (
 	"time"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sfregexp"
 
 	"github.com/signaux-faibles/gournal"
-	"github.com/spf13/viper"
 )
 
 // Sirene informations sur les entreprises
@@ -175,45 +174,22 @@ func (sirene Sirene) Scope() string {
 	return "etablissement"
 }
 
-// Parser produit les données sirene à partir du fichier geosirene
-func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
+// Parser expose le parseur et le type de fichier qu'il supporte.
+var Parser = marshal.Parser{FileType: "sirene", FileParser: ParseFile}
 
-	outputChannel := make(chan marshal.Tuple)
-	eventChannel := make(chan marshal.Event)
-
-	event := marshal.Event{
-		Code:    "sireneParser",
-		Channel: eventChannel,
+// ParseFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
+func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+	filter := marshal.GetSirenFilterFromCache(*cache)
+	file, err := os.Open(filePath)
+	if err != nil {
+		tracker.Add(err)
+		return
 	}
-
-	filter := marshal.GetSirenFilterFromCache(cache)
-
-	go func() {
-		for _, path := range batch.Files["sirene"] {
-			tracker := gournal.NewTracker(
-				map[string]string{"path": path, "batchKey": batch.ID.Key},
-				engine.TrackerReports)
-
-			file, err := os.Open(viper.GetString("APP_DATA") + path)
-
-			if err != nil {
-				tracker.Add(err)
-				tracker.Report("fatalError")
-			}
-			event.Info(path + ": ouverture")
-			reader := csv.NewReader(file)
-			reader.Comma = ','
-			reader.LazyQuotes = true
-
-			parseSireneFile(reader, filter, &tracker, outputChannel)
-			file.Close()
-			event.Info(tracker.Report("abstract"))
-		}
-		close(outputChannel)
-		close(eventChannel)
-	}()
-
-	return outputChannel, eventChannel
+	defer file.Close()
+	reader := csv.NewReader(file)
+	reader.Comma = ','
+	reader.LazyQuotes = true
+	parseSireneFile(reader, filter, tracker, outputChannel)
 }
 
 func parseSireneFile(reader *csv.Reader, filter map[string]bool, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {

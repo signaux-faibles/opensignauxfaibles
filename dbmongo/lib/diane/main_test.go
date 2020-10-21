@@ -20,7 +20,7 @@ func TestDiane(t *testing.T) {
 	t.Run("Diane parser (JSON output)", func(t *testing.T) {
 		var golden = filepath.Join("testData", "expectedDiane.json")
 		var testData = filepath.Join("testData", "dianeTestData.txt")
-		marshal.TestParserOutput(t, Parser, marshal.NewCache(), "diane", testData, golden, *update)
+		marshal.TestParserOutput(t, Parser, marshal.NewCache(), testData, golden, *update)
 	})
 
 	t.Run("Diane converter (CSV output)", func(t *testing.T) {
