@@ -479,7 +479,7 @@ function reduce(key, values // chaque element contient plusieurs batches pour ce
     // batchs. Sinon, juste fusion des attributs
     const auxBatchSet = new Set();
     const severalBatches = values.some((value) => {
-        auxBatchSet.add(Object.keys(value.batch || {}));
+        Object.keys(value.batch || {}).forEach((batch) => auxBatchSet.add(batch));
         return auxBatchSet.size > 1;
     });
     // Fusion batch par batch des types de données sans se préoccuper des doublons.
