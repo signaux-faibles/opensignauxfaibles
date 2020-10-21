@@ -11,13 +11,11 @@ import (
 	"time"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sfregexp"
 
 	"github.com/signaux-faibles/gournal"
-	"github.com/spf13/viper"
 )
 
 // Effectif Urssaf
@@ -43,38 +41,21 @@ func (effectif Effectif) Type() string {
 	return "effectif"
 }
 
-// ParserEffectif retourne un channel fournissant des données extraites
-func ParserEffectif(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
-	outputChannel := make(chan marshal.Tuple)
-	eventChannel := make(chan marshal.Event)
-	event := marshal.Event{
-		Code:    "effectifParser",
-		Channel: eventChannel,
+// ParserEffectif expose le parseur et le type de fichier qu'il supporte.
+var ParserEffectif = marshal.Parser{FileType: "effectif", FileParser: ParseEffectifFile}
+
+// ParseEffectifFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
+func ParseEffectifFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+	filter := marshal.GetSirenFilterFromCache(*cache)
+	file, err := os.Open(filePath)
+	if err != nil {
+		tracker.Add(err)
+		return
 	}
-	filter := marshal.GetSirenFilterFromCache(cache)
-	go func() {
-		for _, path := range batch.Files["effectif"] {
-			file, err := os.Open(viper.GetString("APP_DATA") + path)
-			if err != nil {
-				event.Critical(path + ": erreur à l'ouverture du fichier, abandon: " + err.Error())
-			} else {
-				tracker := gournal.NewTracker(
-					map[string]string{"path": path, "batchKey": batch.ID.Key},
-					engine.TrackerReports)
-
-				event.Info(path + ": ouverture")
-				reader := csv.NewReader(bufio.NewReader(file))
-				reader.Comma = ';'
-
-				parseEffectifFile(reader, filter, &tracker, outputChannel)
-				file.Close()
-				event.Debug(tracker.Report("abstract"))
-			}
-		}
-		close(outputChannel)
-		close(eventChannel)
-	}()
-	return outputChannel, eventChannel
+	defer file.Close()
+	reader := csv.NewReader(bufio.NewReader(file))
+	reader.Comma = ';'
+	parseEffectifFile(reader, filter, tracker, outputChannel)
 }
 
 func parseEffectifFile(reader *csv.Reader, filter map[string]bool, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {

@@ -1,10 +1,13 @@
 package engine
 
 import (
+	"flag"
 	"testing"
 
 	"github.com/globalsign/mgo/bson"
 )
+
+var update = flag.Bool("update", false, "Update the expected test values in golden file") // please keep this line until https://github.com/kubernetes-sigs/service-catalog/issues/2319#issuecomment-425200065 is fixed
 
 func TestToQueries(t *testing.T) {
 	var chunks = Chunks{

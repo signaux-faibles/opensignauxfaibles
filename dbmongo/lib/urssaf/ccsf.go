@@ -9,11 +9,9 @@ import (
 	"time"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 
 	"github.com/signaux-faibles/gournal"
-	"github.com/spf13/viper"
 )
 
 // CCSF information urssaf ccsf
@@ -40,47 +38,27 @@ func (ccsf CCSF) Type() string {
 	return "ccsf"
 }
 
-// ParserCCSF produit des lignes CCSF
-func ParserCCSF(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
-	outputChannel := make(chan marshal.Tuple)
-	eventChannel := make(chan marshal.Event)
+// ParserCCSF expose le parseur et le type de fichier qu'il supporte.
+var ParserCCSF = marshal.Parser{FileType: "ccsf", FileParser: ParseCcsfFile}
 
-	event := marshal.Event{
-		Code:    "ccsfParser",
-		Channel: eventChannel,
+// ParseCcsfFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
+func ParseCcsfFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+	comptes, err := marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
+	if err != nil {
+		tracker.Add(err)
+		return
 	}
 
-	go func() {
+	file, err := os.Open(filePath)
+	if err != nil {
+		tracker.Add(err)
+		return
+	}
+	defer file.Close()
 
-		for _, path := range batch.Files["ccsf"] {
-			tracker := gournal.NewTracker(
-				map[string]string{"path": path, "batchKey": batch.ID.Key},
-				engine.TrackerReports)
-
-			file, err := os.Open(viper.GetString("APP_DATA") + path)
-			if err != nil {
-				tracker.Add(err)
-				event.Critical(tracker.Report("fatalError"))
-				continue
-			}
-
-			event.Info(path + ": ouverture")
-			comptes, err := marshal.GetCompteSiretMapping(cache, batch, marshal.OpenAndReadSiretMapping)
-			if err != nil {
-				tracker.Add(err)
-			} else {
-				reader := csv.NewReader(bufio.NewReader(file))
-				reader.Comma = ';'
-				parseCcsfFile(reader, &comptes, &tracker, outputChannel)
-			}
-			event.Info(tracker.Report("abstract"))
-
-			file.Close()
-		}
-		close(outputChannel)
-		close(eventChannel)
-	}()
-	return outputChannel, eventChannel
+	reader := csv.NewReader(bufio.NewReader(file))
+	reader.Comma = ';'
+	parseCcsfFile(reader, &comptes, tracker, outputChannel)
 }
 
 func parseCcsfFile(reader *csv.Reader, comptes *marshal.Comptes, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {

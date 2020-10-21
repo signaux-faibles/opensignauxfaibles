@@ -13,5 +13,5 @@ var update = flag.Bool("update", false, "Update the expected test values in gold
 func TestApconso(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedApconso.json")
 	var testData = filepath.Join("testData", "apconsoTestData.csv")
-	marshal.TestParserOutput(t, Parser, marshal.NewCache(), "apconso", testData, golden, *update)
+	marshal.TestParserOutput(t, Parser, marshal.NewCache(), testData, golden, *update)
 }

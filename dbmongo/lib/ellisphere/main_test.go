@@ -13,5 +13,5 @@ var update = flag.Bool("update", false, "Update the expected test values in gold
 func TestApdemande(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedEllisphere.json")
 	var testData = filepath.Join("testData", "ellisphereTestData.excel")
-	marshal.TestParserOutput(t, Parser, marshal.NewCache(), "ellisphere", testData, golden, *update)
+	marshal.TestParserOutput(t, Parser, marshal.NewCache(), testData, golden, *update)
 }

@@ -57,7 +57,7 @@
       "date": "0001-01-01T00:00:00Z",
       "event": "testData/debitCorrompuTestData.csv: ouverture",
       "priority": "info",
-      "code": "debitParser",
+      "code": "debit_parser",
       "report_type": ""
     },
     {
@@ -76,8 +76,8 @@
         "total": 5,
         "valid": 3
       },
-      "priority": "debug",
-      "code": "debitParser",
+      "priority": "info",
+      "code": "debit_parser",
       "report_type": ""
     }
   ]

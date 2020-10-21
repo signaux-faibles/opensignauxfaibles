@@ -3,12 +3,10 @@ package ellisphere
 import (
 	"github.com/pkg/errors"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/tealeg/xlsx/v3"
 
 	"github.com/signaux-faibles/gournal"
-	"github.com/spf13/viper"
 )
 
 // Ellisphere informations groupe pour une entreprise
@@ -42,48 +40,22 @@ func (ellisphere Ellisphere) Scope() string {
 	return "entreprise"
 }
 
-// Parser produit les lignes
-func Parser(cache marshal.Cache, batch *base.AdminBatch) (chan marshal.Tuple, chan marshal.Event) {
-	outputChannel := make(chan marshal.Tuple)
-	eventChannel := make(chan marshal.Event)
-	event := marshal.Event{
-		Code:    "parserEllisphere",
-		Channel: eventChannel,
+// Parser expose le parseur et le type de fichier qu'il supporte.
+var Parser = marshal.Parser{FileType: "ellisphere", FileParser: ParseFile}
+
+// ParseFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
+func ParseFile(path string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+	filter := marshal.GetSirenFilterFromCache(*cache)
+	xlsxFile, err := xlsx.OpenFile(path)
+	if err != nil {
+		tracker.Add(err)
+		return
 	}
-
-	filter := marshal.GetSirenFilterFromCache(cache)
-
-	go func() {
-		defer close(outputChannel)
-		defer close(eventChannel)
-
-		for _, path := range batch.Files["ellisphere"] {
-			tracker := gournal.NewTracker(
-				map[string]string{"path": path, "batchKey": batch.ID.Key},
-				engine.TrackerReports)
-
-			path := viper.GetString("APP_DATA") + path
-
-			event.Info(path + ": Opening file")
-			xlsxFile, err := xlsx.OpenFile(path)
-			if err != nil {
-				event.Critical(path + ": erreur à l'ouverture du fichier: " + err.Error())
-				continue
-			}
-
-			if len(xlsxFile.Sheets) != 1 {
-				tracker.Add(errors.Errorf("the source has %d sheets, should have only 1", len(xlsxFile.Sheets)))
-				event.Critical(tracker.Report("abstract"))
-				continue
-			}
-
-			parseEllisphereSheet(xlsxFile.Sheets[0], filter, &tracker, outputChannel)
-
-			event.Info(tracker.Report("abstract"))
-		}
-	}()
-
-	return outputChannel, eventChannel
+	if len(xlsxFile.Sheets) != 1 {
+		tracker.Add(errors.Errorf("the source has %d sheets, should have only 1", len(xlsxFile.Sheets)))
+		return
+	}
+	parseEllisphereSheet(xlsxFile.Sheets[0], filter, tracker, outputChannel)
 }
 
 func parseEllisphereSheet(sheet *xlsx.Sheet, filter map[string]bool, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
