@@ -124,8 +124,16 @@ test.serial(
 test.serial(
   `compact retourne 2 cotisations depuis deux objets importés couvrant le même batch`,
   (t: ExecutionContext) => {
-    const siret = ""
+    // initialisation des paramètres de compact
     const batchId = "1910"
+    const hashCotisation = ["hash1", "hash2"]
+    setGlobals({
+      fromBatchKey: batchId,
+      batches: [batchId],
+      completeTypes: { [batchId]: [] },
+    })
+    // execution de compact sur les données importées
+    const siret = ""
     const entréeCotisation = {
       periode: {
         start: new Date(),
@@ -133,46 +141,32 @@ test.serial(
       },
       du: 64012.0,
     }
-    const hashCotisation = ["hash1", "hash2"]
-    const importedData = [
+    const reduceResults = reduce(siret, [
       {
-        _id: "entrée1",
-        value: ({
-          scope: "etablissement",
-          key: siret,
-          batch: {
-            [batchId]: {
-              cotisation: {
-                [hashCotisation[0]]: entréeCotisation,
-              },
+        scope: "etablissement",
+        key: siret,
+        batch: {
+          [batchId]: {
+            cotisation: {
+              [hashCotisation[0]]: entréeCotisation,
             },
           },
-        } as CompanyDataValues) as CompanyDataValuesWithFlags,
+        },
       },
       {
-        _id: "entrée2",
-        value: ({
-          scope: "etablissement",
-          key: siret,
-          batch: {
-            [batchId]: {
-              cotisation: {
-                [hashCotisation[1]]: entréeCotisation,
-              },
+        scope: "etablissement",
+        key: siret,
+        batch: {
+          [batchId]: {
+            cotisation: {
+              [hashCotisation[1]]: entréeCotisation,
             },
           },
-        } as CompanyDataValues) as CompanyDataValuesWithFlags,
+        },
       },
-    ]
-    setGlobals({
-      fromBatchKey: batchId,
-      batches: [batchId],
-      completeTypes: { [batchId]: [] },
-    })
-    const mapResults = runMongoMap(map, importedData).map(({ value }) => value)
-    const reduceResults = reduce(siret, mapResults as CompanyDataValues[])
-    const finalizeResult = finalize(siret, reduceResults)
-    const cotisations = finalizeResult.batch[batchId].cotisation || {}
+    ])
+    // test sur les données compactées de cotisation
+    const cotisations = reduceResults.batch[batchId].cotisation || {}
     t.deepEqual(Object.keys(cotisations), hashCotisation)
   }
 )
