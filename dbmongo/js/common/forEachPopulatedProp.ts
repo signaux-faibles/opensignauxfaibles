@@ -1,6 +1,6 @@
 // Appelle fct() pour chaque propriété définie (non undefined) de obj.
 // Contrat: obj ne doit contenir que les clés définies dans son type.
-export function forEachPopulatedProp<T>(
+export function forEachPopulatedProp<T extends Record<string, unknown>>(
   obj: T,
   fct: (key: keyof T, val: Required<T>[keyof T]) => unknown
 ): void {
