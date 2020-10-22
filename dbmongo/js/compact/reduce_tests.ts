@@ -375,3 +375,53 @@ testCases.forEach(({ testCaseName, expected, ...testCase }) => {
     t.deepEqual(actualResults, expected)
   })
 })
+
+test.serial(
+  `reduce retourne 2 cotisations depuis deux objets importés couvrant le même batch`,
+  (t: ExecutionContext) => {
+    // initialisation des paramètres de compact
+    const batchId = "1910"
+    const hashCotisation = ["hash1", "hash2"]
+    setGlobals({
+      fromBatchKey: batchId,
+      batches: [batchId],
+      completeTypes: { [batchId]: [] },
+    })
+    // execution de compact sur les données importées
+    const siret = ""
+    const entréeCotisation = {
+      periode: {
+        start: new Date(),
+        end: new Date(),
+      },
+      du: 64012.0,
+    }
+    const reduceResults = reduce(siret, [
+      {
+        scope: "etablissement",
+        key: siret,
+        batch: {
+          [batchId]: {
+            cotisation: {
+              [hashCotisation[0]]: entréeCotisation,
+            },
+          },
+        },
+      },
+      {
+        scope: "etablissement",
+        key: siret,
+        batch: {
+          [batchId]: {
+            cotisation: {
+              [hashCotisation[1]]: entréeCotisation,
+            },
+          },
+        },
+      },
+    ])
+    // test sur les données compactées de cotisation
+    const cotisations = reduceResults.batch[batchId].cotisation || {}
+    t.deepEqual(Object.keys(cotisations), hashCotisation)
+  }
+)

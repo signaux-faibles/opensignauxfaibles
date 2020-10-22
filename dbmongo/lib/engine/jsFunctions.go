@@ -485,7 +485,7 @@ function reduce(key, values // chaque element contient plusieurs batches pour ce
     // Fusion batch par batch des types de données sans se préoccuper des doublons.
     const naivelyMergedCompanyData = values.reduce((m, value) => {
         Object.keys(value.batch).forEach((batch) => {
-            m.batch[batch] = Object.keys(value.batch[batch]).reduce((batchValues, type) => (Object.assign(Object.assign({}, batchValues), { [type]: value.batch[batch][type] })), m.batch[batch] || {});
+            m.batch[batch] = Object.keys(value.batch[batch]).reduce((batchValues, type) => (Object.assign(Object.assign({}, batchValues), { [type]: Object.assign(Object.assign({}, batchValues[type]), value.batch[batch][type]) })), m.batch[batch] || {});
         });
         return m;
     }, { key, scope: values[0].scope, batch: {} });
