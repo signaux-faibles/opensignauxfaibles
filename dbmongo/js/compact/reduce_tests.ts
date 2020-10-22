@@ -432,6 +432,7 @@ test.serial(
     // définition des valeurs de paramètres globaux utilisés par les fonctions de "compact"
     const batchKeyWithInvalidData = "2009"
     const fromBatchKey = "2008"
+    const oldBatchKey = "2007"
     setGlobals({
       fromBatchKey,
       batches: [fromBatchKey],
@@ -441,7 +442,7 @@ test.serial(
     const previousRawDataValue = {
       key,
       scope: "etablissement",
-      batch: {},
+      batch: { [oldBatchKey]: {} },
     } as CompanyDataValues
     const importedDataValue: CompanyDataValues = {
       key,

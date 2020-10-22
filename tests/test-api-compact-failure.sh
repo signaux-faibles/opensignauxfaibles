@@ -52,7 +52,7 @@ tests/helpers/mongodb-container.sh run << CONTENTS
       "value" : {
         "key" : "01234567891011", 
         "scope" : "etablissement", 
-        "batch" : {}
+        "batch" : { "2007": {} }
       }
     }
   ])
