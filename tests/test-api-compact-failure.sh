@@ -85,6 +85,8 @@ echo "💎 Compacting RawData thru dbmongo API..."
 tests/helpers/dbmongo-server.sh start
 echo "- POST /api/data/compact => diff:"
 
-diff <(echo "ok") <(http --print=b --ignore-stdin :5000/api/data/compact fromBatchKey=2009) # will fail with "TypeError: can't convert undefined to object"
+diff <(echo -n '"ok"') <(http --print=b --ignore-stdin :5000/api/data/compact fromBatchKey=2009) # will fail with "TypeError: can't convert undefined to object"
+
+echo "✅ No diff => OK"
 
 # Now, the "trap" commands will clean up the rest.
