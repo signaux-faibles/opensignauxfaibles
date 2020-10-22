@@ -48,9 +48,6 @@ heading "go generate"
 heading "go build"
 (killall dbmongo 2>/dev/null || true; cd ./dbmongo && go build && echo "📦 dbmongo/dbmongo") 2>&1 | indent
 
-heading "test-api-compact-failure.sh"
-./tests/test-api-compact-failure.sh $@ 2>&1 | indent
-
 heading "test-api.sh"
 ./tests/test-api.sh $@ 2>&1 | indent
 
@@ -65,6 +62,9 @@ heading "test-api-import.sh"
 
 heading "test-api-compact.sh"
 ./tests/test-api-compact.sh $@ 2>&1 | indent
+
+heading "test-api-compact-failure.sh"
+./tests/test-api-compact-failure.sh $@ 2>&1 | indent
 
 heading "test-api-public.sh"
 ./tests/test-api-public.sh $@ 2>&1 | indent
