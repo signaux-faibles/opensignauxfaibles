@@ -299,15 +299,12 @@ func getItemChannelToGzip(filepath string, wait *sync.WaitGroup) chan interface{
 	return c
 }
 
-// ExportEtablissements exporte les établissements dans un fichier.
-func ExportEtablissements(key, filepath string) error {
-	pipeline := GetEtablissementWithScoresPipeline(key)
-	iter := Db.DB.C("Public").Pipe(pipeline).AllowDiskUse().Iter()
+func storeMongoPipelineResults(filepath string, iterator *mgo.Iter) error {
 	wait := sync.WaitGroup{}
 	gzipWriter := getItemChannelToGzip(filepath, &wait)
 	var item interface{}
-	for iter.Next(&item) {
-		if err := iter.Err(); err != nil {
+	for iterator.Next(&item) {
+		if err := iterator.Err(); err != nil {
 			return err
 		}
 		gzipWriter <- item
@@ -317,22 +314,18 @@ func ExportEtablissements(key, filepath string) error {
 	return nil
 }
 
+// ExportEtablissements exporte les établissements dans un fichier.
+func ExportEtablissements(key, filepath string) error {
+	pipeline := GetEtablissementWithScoresPipeline(key)
+	iter := Db.DB.C("Public").Pipe(pipeline).AllowDiskUse().Iter()
+	return storeMongoPipelineResults(filepath, iter)
+}
+
 // ExportEntreprises exporte les entreprises dans un fichier.
 func ExportEntreprises(key, filepath string) error {
 	pipeline := GetEntreprisePipeline(key)
 	iter := Db.DB.C("Public").Pipe(pipeline).AllowDiskUse().Iter()
-	w := sync.WaitGroup{}
-	gzipWriter := getItemChannelToGzip(filepath, &w)
-	var item interface{}
-	for iter.Next(&item) {
-		if err := iter.Err(); err != nil {
-			return err
-		}
-		gzipWriter <- item
-	}
-	close(gzipWriter)
-	w.Wait()
-	return nil
+	return storeMongoPipelineResults(filepath, iter)
 }
 
 // ValidateDataEntries retourne dans un fichier les entrées de données invalides détectées dans la collection spécifiée.
