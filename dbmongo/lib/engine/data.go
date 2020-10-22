@@ -299,21 +299,6 @@ func getItemChannelToGzip(filepath string, wait *sync.WaitGroup) chan interface{
 	return c
 }
 
-func storeMongoPipelineResults(filepath string, iterator *mgo.Iter) error {
-	wait := sync.WaitGroup{}
-	gzipWriter := getItemChannelToGzip(filepath, &wait)
-	var item interface{}
-	for iterator.Next(&item) {
-		if err := iterator.Err(); err != nil {
-			return err
-		}
-		gzipWriter <- item
-	}
-	close(gzipWriter)
-	wait.Wait()
-	return nil
-}
-
 // ExportEtablissements exporte les établissements dans un fichier.
 func ExportEtablissements(key, filepath string) error {
 	pipeline := GetEtablissementWithScoresPipeline(key)
@@ -333,32 +318,50 @@ func ValidateDataEntries(filepath string, jsonSchema map[string]bson.M, collecti
 	w := sync.WaitGroup{}
 	gzipWriter := getItemChannelToGzip(filepath, &w)
 
+	// lister les entrées de données non définies (type: undefined au lieu de object)
 	pipeline, err := GetUndefinedDataValidationPipeline()
 	if err != nil {
 		return err
 	}
-	iter := Db.DB.C(collection).Pipe(pipeline).AllowDiskUse().Iter()
-	var item interface{}
-	for iter.Next(&item) {
-		if err := iter.Err(); err != nil {
-			return err
-		}
-		gzipWriter <- item
+	err = iterateToChannel(gzipWriter, Db.DB.C(collection).Pipe(pipeline).AllowDiskUse().Iter())
+	if err != nil {
+		return err
 	}
 
+	// lister les entrées de données non conformes aux modèles JSON Schema
 	pipeline, err = GetDataValidationPipeline(jsonSchema)
 	if err != nil {
 		return err
 	}
-	iter = Db.DB.C(collection).Pipe(pipeline).AllowDiskUse().Iter()
-	for iter.Next(&item) {
-		if err := iter.Err(); err != nil {
-			return err
-		}
-		gzipWriter <- item
+	err = iterateToChannel(gzipWriter, Db.DB.C(collection).Pipe(pipeline).AllowDiskUse().Iter())
+	if err != nil {
+		return err
 	}
 
 	close(gzipWriter)
 	w.Wait()
+	return nil
+}
+
+func iterateToChannel(channel chan interface{}, iterator *mgo.Iter) error {
+	var item interface{}
+	for iterator.Next(&item) {
+		if err := iterator.Err(); err != nil {
+			return err
+		}
+		channel <- item
+	}
+	return nil
+}
+
+func storeMongoPipelineResults(filepath string, iterator *mgo.Iter) error {
+	wait := sync.WaitGroup{}
+	gzipWriter := getItemChannelToGzip(filepath, &wait)
+	err := iterateToChannel(gzipWriter, iterator)
+	if err != nil {
+		return err
+	}
+	close(gzipWriter)
+	wait.Wait()
 	return nil
 }
