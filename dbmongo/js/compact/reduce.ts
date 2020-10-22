@@ -23,7 +23,7 @@ export function reduce(
   // batchs. Sinon, juste fusion des attributs
   const auxBatchSet = new Set()
   const severalBatches = values.some((value) => {
-    auxBatchSet.add(Object.keys(value.batch || {}))
+    Object.keys(value.batch || {}).forEach((batch) => auxBatchSet.add(batch))
     return auxBatchSet.size > 1
   })
 
