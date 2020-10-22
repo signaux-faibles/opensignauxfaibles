@@ -147,9 +147,9 @@ func Compact(fromBatchKey string) error {
 	// Traitement MR
 	job := &mgo.MapReduce{
 		Map:      functions["map"].Code,
-		Reduce:   functions["reduce"].Code,
+		Reduce:   functions["reduce"].Code, // 1st pass: reduce() will be called on the documents of ImportedData
 		Finalize: functions["finalize"].Code,
-		Out:      bson.M{"reduce": "RawData"},
+		Out:      bson.M{"reduce": "RawData"}, // 2nd pass: for each siret/siren, reduce() will be called on the current RawData document and the result of the 1st pass, to merge the the new data with the existing data
 		Scope: bson.M{
 			"f":             functions,
 			"batches":       batchesID,
