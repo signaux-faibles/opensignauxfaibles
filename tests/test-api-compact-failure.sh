@@ -61,10 +61,17 @@ CONTENTS
 echo ""
 echo "💎 Compacting RawData thru dbmongo API..."
 tests/helpers/dbmongo-server.sh start
+
+OUTPUT_GZ_FILE=dbmongo/$(http --print=b --ignore-stdin :5000/api/data/validate collection=RawData | tr -d '"')
+echo "- POST /api/data/validate RawData 👉 ${OUTPUT_GZ_FILE}"
+diff <(echo -n '') <(zcat < "${OUTPUT_GZ_FILE}")
+
+OUTPUT_GZ_FILE=dbmongo/$(http --print=b --ignore-stdin :5000/api/data/validate collection=ImportedData | tr -d '"')
+echo "- POST /api/data/validate ImportedData 👉 ${OUTPUT_GZ_FILE}, contents:"
+diff <(echo '(invalid data entry)') <(zcat < "${OUTPUT_GZ_FILE}") # we expect an invalid data entry to be listed
+
 echo "- POST /api/data/compact => diff:"
-
 diff <(echo -n '"ok"') <(http --print=b --ignore-stdin :5000/api/data/compact fromBatchKey=2008) # will fail with "TypeError: can't convert undefined to object"
-
 echo "✅ No diff => OK"
 
 # Now, the "trap" commands will clean up the rest.
