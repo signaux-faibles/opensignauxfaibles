@@ -35,7 +35,10 @@ export function reduce(
         m.batch[batch] = (Object.keys(value.batch[batch]) as DataType[]).reduce(
           (batchValues: BatchValue, type: DataType) => ({
             ...batchValues,
-            [type]: value.batch[batch][type],
+            [type]: {
+              ...batchValues[type],
+              ...value.batch[batch][type],
+            },
           }),
           m.batch[batch] || {}
         )
