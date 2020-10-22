@@ -28,19 +28,12 @@ tests/helpers/mongodb-container.sh run << CONTENTS
       "_id" : {
         "key" : "2008",
         "type" : "batch"
-      },
-      "param" : {
-        "date_debut" : ISODate("2014-01-01T00:00:00.000+0000"),
-        "date_fin" : ISODate("2016-01-01T00:00:00.000+0000"),
-        "date_fin_effectif" : ISODate("2016-03-01T00:00:00.000+0000")
-      },
-      "name" : "TestData"
+      }
     }
   ])
 
   db.ImportedData.insertMany([
     {
-      "_id": "import1",
       "value": {
         "key": "01234567891011",
         "scope": "etablissement",
@@ -48,9 +41,6 @@ tests/helpers/mongodb-container.sh run << CONTENTS
           "2009": {
             "cotisation": undefined
           }
-        },
-        "index": {
-          "algo2": true
         }
       }
     }
