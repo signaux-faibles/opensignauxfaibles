@@ -26,19 +26,7 @@ tests/helpers/mongodb-container.sh run << CONTENTS
   db.Admin.insertMany([
     {
       "_id" : {
-        "key" : "2009",
-        "type" : "batch"
-      },
-      "param" : {
-        "date_debut" : ISODate("2014-01-01T00:00:00.000+0000"),
-        "date_fin" : ISODate("2016-01-01T00:00:00.000+0000"),
-        "date_fin_effectif" : ISODate("2016-03-01T00:00:00.000+0000")
-      },
-      "name" : "TestData"
-    },
-    {
-      "_id" : {
-        "key" : "2010",
+        "key" : "2008",
         "type" : "batch"
       },
       "param" : {
@@ -85,7 +73,7 @@ echo "💎 Compacting RawData thru dbmongo API..."
 tests/helpers/dbmongo-server.sh start
 echo "- POST /api/data/compact => diff:"
 
-diff <(echo -n '"ok"') <(http --print=b --ignore-stdin :5000/api/data/compact fromBatchKey=2009) # will fail with "TypeError: can't convert undefined to object"
+diff <(echo -n '"ok"') <(http --print=b --ignore-stdin :5000/api/data/compact fromBatchKey=2008) # will fail with "TypeError: can't convert undefined to object"
 
 echo "✅ No diff => OK"
 
