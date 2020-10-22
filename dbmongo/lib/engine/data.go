@@ -337,13 +337,14 @@ func ExportEntreprises(key, filepath string) error {
 
 // ValidateDataEntries retourne dans un fichier les entrées de données invalides détectées dans la collection spécifiée.
 func ValidateDataEntries(filepath string, jsonSchema map[string]bson.M, collection string) error {
-	pipeline, err := GetDataValidationPipeline(jsonSchema, collection)
+	w := sync.WaitGroup{}
+	gzipWriter := getItemChannelToGzip(filepath, &w)
+
+	pipeline, err := GetUndefinedDataValidationPipeline()
 	if err != nil {
 		return err
 	}
 	iter := Db.DB.C(collection).Pipe(pipeline).AllowDiskUse().Iter()
-	w := sync.WaitGroup{}
-	gzipWriter := getItemChannelToGzip(filepath, &w)
 	var item interface{}
 	for iter.Next(&item) {
 		if err := iter.Err(); err != nil {
@@ -351,6 +352,19 @@ func ValidateDataEntries(filepath string, jsonSchema map[string]bson.M, collecti
 		}
 		gzipWriter <- item
 	}
+
+	pipeline, err = GetDataValidationPipeline(jsonSchema)
+	if err != nil {
+		return err
+	}
+	iter = Db.DB.C(collection).Pipe(pipeline).AllowDiskUse().Iter()
+	for iter.Next(&item) {
+		if err := iter.Err(); err != nil {
+			return err
+		}
+		gzipWriter <- item
+	}
+
 	close(gzipWriter)
 	w.Wait()
 	return nil

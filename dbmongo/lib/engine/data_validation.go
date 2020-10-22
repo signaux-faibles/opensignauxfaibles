@@ -59,8 +59,13 @@ func LoadJSONSchemaFiles() (jsonSchema map[string]bson.M, err error) {
 	return jsonSchema, nil
 }
 
+// GetUndefinedDataValidationPipeline produit un pipeline pour détecter les entrées `undefined` depuis RawData ou ImportedData.
+func GetUndefinedDataValidationPipeline() (pipeline []bson.M, err error) {
+	return parseJSONArray("validation/detect_invalid_entries.pipeline.json")
+}
+
 // GetDataValidationPipeline produit un pipeline pour retourner la listes des documents invalides depuis RawData ou ImportedData.
-func GetDataValidationPipeline(jsonSchema map[string]bson.M, collection string) (pipeline []bson.M, err error) {
+func GetDataValidationPipeline(jsonSchema map[string]bson.M) (pipeline []bson.M, err error) {
 
 	flattenPipeline, err := parseJSONArray("validation/flatten_data_entries.pipeline.json")
 	if err != nil {

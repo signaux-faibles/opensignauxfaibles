@@ -34,6 +34,7 @@ tests/helpers/mongodb-container.sh run << CONTENTS
 
   db.ImportedData.insertMany([
     {
+      "_id": "5f9192703029a1f7d4b1773b",
       "value": {
         "key": "01234567891011",
         "scope": "etablissement",
@@ -67,8 +68,8 @@ echo "- POST /api/data/validate RawData 👉 ${OUTPUT_GZ_FILE}"
 diff <(echo -n '') <(zcat < "${OUTPUT_GZ_FILE}")
 
 OUTPUT_GZ_FILE=dbmongo/$(http --print=b --ignore-stdin :5000/api/data/validate collection=ImportedData | tr -d '"')
-echo "- POST /api/data/validate ImportedData 👉 ${OUTPUT_GZ_FILE}, contents:"
-diff <(echo '(invalid data entry)') <(zcat < "${OUTPUT_GZ_FILE}") # we expect an invalid data entry to be listed
+echo "- POST /api/data/validate ImportedData 👉 ${OUTPUT_GZ_FILE}"
+diff <(echo '{"_id":"5f9192703029a1f7d4b1773b","batchKey":"2009","dataPerHash":{},"dataType":"cotisation"}') <(zcat < "${OUTPUT_GZ_FILE}") # we expect an invalid data entry to be listed
 
 echo "- POST /api/data/compact => diff:"
 diff <(echo -n '"ok"') <(http --print=b --ignore-stdin :5000/api/data/compact fromBatchKey=2008) # will fail with "TypeError: can't convert undefined to object"
