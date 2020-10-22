@@ -451,7 +451,9 @@ test.serial(
     }
     // exécution du test
     const reducedData = reduce(key, [importedDataValue])
-    const mergeOutput = reduce(key, [previousRawDataValue, reducedData])
-    t.truthy(mergeOutput.batch)
+    const error = t.throws(() => {
+      /*const mergeOutput =*/ reduce(key, [previousRawDataValue, reducedData])
+    })
+    t.regex(error.message, /Cannot convert undefined or null to object/)
   }
 )
