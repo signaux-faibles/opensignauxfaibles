@@ -69,7 +69,7 @@ printjson(db.Journal.find({ "event.summary": { "\$exists": true } }).toArray().m
     summary: doc.event.summary,
     batchKey: doc.event.batchKey
   },
-  code: doc.code
+  parserCode: doc.parserCode
 })));
 
 print("// Response body from /api/data/check:");

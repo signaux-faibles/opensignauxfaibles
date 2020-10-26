@@ -41,7 +41,7 @@ func (event Event) GetBSON() (interface{}, error) {
 		Date     time.Time     `json:"date" bson:"date"`
 		Comment  interface{}   `json:"event" bson:"event"`
 		Priority Priority      `json:"priority" bson:"priority"`
-		Code     Code          `json:"code" bson:"code"`
+		Code     Code          `json:"parserCode" bson:"parserCode"`
 	}
 	tmp.ID = event.ID
 	tmp.Date = event.Date
