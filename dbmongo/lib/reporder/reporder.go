@@ -54,7 +54,7 @@ func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tr
 	parseReporderFile(reader, filter, tracker, outputChannel)
 }
 
-func parseReporderFile(reader *csv.Reader, filter map[string]bool, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+func parseReporderFile(reader *csv.Reader, filter marshal.SirenFilter, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
 	for {
 		row, err := reader.Read()
 		if err == io.EOF {

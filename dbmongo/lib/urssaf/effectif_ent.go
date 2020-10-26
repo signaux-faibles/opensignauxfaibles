@@ -76,7 +76,7 @@ func ParseEffectifEntFile(filePath string, cache *marshal.Cache, batch *base.Adm
 	parseEffectifEntFile(reader, filter, tracker, outputChannel)
 }
 
-func parseEffectifEntFile(reader *csv.Reader, filter map[string]bool, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+func parseEffectifEntFile(reader *csv.Reader, filter marshal.SirenFilter, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
 	fields, err := reader.Read()
 	if err != nil {
 		tracker.Add(err)
@@ -106,7 +106,7 @@ func parseEffectifEntFile(reader *csv.Reader, filter map[string]bool, tracker *g
 	}
 }
 
-func parseEffectifEntLine(periods []periodCol, row []string, idx colMapping, filter map[string]bool, tracker *gournal.Tracker) []EffectifEnt {
+func parseEffectifEntLine(periods []periodCol, row []string, idx colMapping, filter marshal.SirenFilter, tracker *gournal.Tracker) []EffectifEnt {
 	var effectifs = []EffectifEnt{}
 	siren := row[idx["siren"]]
 	filtered, err := marshal.IsFiltered(siren, filter)

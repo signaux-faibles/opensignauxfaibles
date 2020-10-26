@@ -14,8 +14,11 @@ import (
 	"github.com/spf13/viper"
 )
 
+// SirenFilter liste les numéros SIREN d'entreprise et établissements à exclure des traitements.
+type SirenFilter map[string]bool
+
 // IsFiltered determines if the siret must be filtered or not
-func IsFiltered(id string, filter map[string]bool) (bool, error) {
+func IsFiltered(id string, filter SirenFilter) (bool, error) {
 
 	validSiret := sfregexp.RegexpDict["siret"].MatchString(id)
 	validSiren := sfregexp.RegexpDict["siren"].MatchString(id)
@@ -31,7 +34,7 @@ func IsFiltered(id string, filter map[string]bool) (bool, error) {
 }
 
 // FilterHas tells if the siret/siren is listed in the filter, or not.
-func FilterHas(siretOrSiren string, filter map[string]bool) bool {
+func FilterHas(siretOrSiren string, filter SirenFilter) bool {
 	if len(siretOrSiren) >= 9 {
 		return filter[siretOrSiren[0:9]]
 	}
@@ -39,10 +42,10 @@ func FilterHas(siretOrSiren string, filter map[string]bool) bool {
 }
 
 // GetSirenFilterFromCache reads the filter from cache.
-func GetSirenFilterFromCache(cache Cache) map[string]bool {
+func GetSirenFilterFromCache(cache Cache) SirenFilter {
 	value, err := cache.Get("filter")
 	if err == nil {
-		filter, ok := value.(map[string]bool)
+		filter, ok := value.(SirenFilter)
 		if ok {
 			return filter
 		}
@@ -52,23 +55,22 @@ func GetSirenFilterFromCache(cache Cache) map[string]bool {
 
 // GetSirenFilter reads the filter from cache if it cans, or else it reads it
 // from input files and stores it in cache
-func GetSirenFilter(cache Cache, batch *base.AdminBatch) (map[string]bool, error) {
+func GetSirenFilter(cache Cache, batch *base.AdminBatch) (SirenFilter, error) {
 	return getSirenFilter(cache, batch, readFilterFiles)
 }
 
 // getSirenFilter reads the filter from cache if it cans, or else it reads it
 // from input files and stores it in cache
-func getSirenFilter(cache Cache, batch *base.AdminBatch, fr filterReader) (map[string]bool, error) {
+func getSirenFilter(cache Cache, batch *base.AdminBatch, fr filterReader) (SirenFilter, error) {
 
 	value, err := cache.Get("filter")
 
 	if err == nil {
-		filter, ok := value.(map[string]bool)
+		filter, ok := value.(SirenFilter)
 		if ok {
 			return filter, nil
-		} else {
-			return nil, errors.New("Wrong format from existing field filter in cache")
 		}
+		return nil, errors.New("Wrong format from existing field filter in cache")
 	}
 
 	paths := batch.Files["filter"]
@@ -86,12 +88,12 @@ func getSirenFilter(cache Cache, batch *base.AdminBatch, fr filterReader) (map[s
 	return filter, nil
 }
 
-type filterReader func(string, []string) (map[string]bool, error)
+type filterReader func(string, []string) (SirenFilter, error)
 
 // openAndReadFilters reads several files, reads their content and concatenate
-// it into a map[string]bool
-func readFilterFiles(basePath string, filenames []string) (map[string]bool, error) {
-	filter := make(map[string]bool)
+// it into a SirenFilter
+func readFilterFiles(basePath string, filenames []string) (SirenFilter, error) {
+	filter := make(SirenFilter)
 	for _, p := range filenames {
 		file, err := os.Open(filepath.Join(basePath, p))
 		if err != nil {
@@ -108,7 +110,7 @@ func readFilterFiles(basePath string, filenames []string) (map[string]bool, erro
 
 // readFilter reads the content of a io.Reader and adds it to an existing
 // filter
-func readFilter(reader io.Reader, filter map[string]bool) error {
+func readFilter(reader io.Reader, filter SirenFilter) error {
 
 	csvreader := csv.NewReader(reader)
 	csvreader.Comma = ';'
