@@ -21,7 +21,7 @@
       "date": "0001-01-01T00:00:00Z",
       "event": "testData/procolTestData.csv: ouverture",
       "priority": "info",
-      "code": "procol_parser",
+      "parserCode": "procol",
       "report_type": ""
     },
     {
@@ -39,7 +39,7 @@
         "summary": "testData/procolTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides"
       },
       "priority": "info",
-      "code": "procol_parser",
+      "parserCode": "procol",
       "report_type": ""
     }
   ]

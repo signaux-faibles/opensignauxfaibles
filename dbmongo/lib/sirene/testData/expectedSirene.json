@@ -54,7 +54,7 @@
       "date": "0001-01-01T00:00:00Z",
       "event": "testData/sireneTestData.csv: ouverture",
       "priority": "info",
-      "code": "sirene_parser",
+      "parserCode": "sirene",
       "report_type": ""
     },
     {
@@ -74,7 +74,7 @@
         "summary": "testData/sireneTestData.csv: intégration terminée, 3 lignes traitées, 1 erreures fatales, 0 rejets, 0 lignes filtrées, 2 lignes valides"
       },
       "priority": "info",
-      "code": "sirene_parser",
+      "parserCode": "sirene",
       "report_type": ""
     }
   ]

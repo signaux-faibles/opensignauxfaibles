@@ -27,7 +27,7 @@
       "date": "0001-01-01T00:00:00Z",
       "event": "testData/apconsoTestData.csv: ouverture",
       "priority": "info",
-      "code": "apconso_parser",
+      "parserCode": "apconso",
       "report_type": ""
     },
     {
@@ -45,7 +45,7 @@
         "summary": "testData/apconsoTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides"
       },
       "priority": "info",
-      "code": "apconso_parser",
+      "parserCode": "apconso",
       "report_type": ""
     }
   ]

@@ -81,7 +81,7 @@
       "date": "0001-01-01T00:00:00Z",
       "event": "testData/ellisphereTestData.excel: ouverture",
       "priority": "info",
-      "code": "ellisphere_parser",
+      "parserCode": "ellisphere",
       "report_type": ""
     },
     {
@@ -102,7 +102,7 @@
         "summary": "testData/ellisphereTestData.excel: intégration terminée, 7 lignes traitées, 2 erreures fatales, 0 rejets, 0 lignes filtrées, 5 lignes valides"
       },
       "priority": "info",
-      "code": "ellisphere_parser",
+      "parserCode": "ellisphere",
       "report_type": ""
     }
   ]

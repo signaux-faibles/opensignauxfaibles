@@ -26,7 +26,7 @@
       "date": "0001-01-01T00:00:00Z",
       "event": "testData/reporderTestData.csv: ouverture",
       "priority": "info",
-      "code": "reporder_parser",
+      "parserCode": "reporder",
       "report_type": ""
     },
     {
@@ -44,7 +44,7 @@
         "summary": "testData/reporderTestData.csv: intégration terminée, 4 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 4 lignes valides"
       },
       "priority": "info",
-      "code": "reporder_parser",
+      "parserCode": "reporder",
       "report_type": ""
     }
   ]

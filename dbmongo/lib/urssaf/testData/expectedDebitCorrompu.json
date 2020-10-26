@@ -57,7 +57,7 @@
       "date": "0001-01-01T00:00:00Z",
       "event": "testData/debitCorrompuTestData.csv: ouverture",
       "priority": "info",
-      "code": "debit_parser",
+      "parserCode": "debit",
       "report_type": ""
     },
     {
@@ -78,7 +78,7 @@
         "summary": "testData/debitCorrompuTestData.csv: intégration terminée, 5 lignes traitées, 2 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides"
       },
       "priority": "info",
-      "code": "debit_parser",
+      "parserCode": "debit",
       "report_type": ""
     }
   ]

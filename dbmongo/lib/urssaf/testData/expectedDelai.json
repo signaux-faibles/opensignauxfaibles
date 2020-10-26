@@ -45,7 +45,7 @@
       "date": "0001-01-01T00:00:00Z",
       "event": "testData/delaiTestData.csv: ouverture",
       "priority": "info",
-      "code": "delai_parser",
+      "parserCode": "delai",
       "report_type": ""
     },
     {
@@ -63,7 +63,7 @@
         "summary": "testData/delaiTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides"
       },
       "priority": "info",
-      "code": "delai_parser",
+      "parserCode": "delai",
       "report_type": ""
     }
   ]
