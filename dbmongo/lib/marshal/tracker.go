@@ -3,7 +3,6 @@ package marshal
 import (
 	"fmt"
 	"sort"
-	"strconv"
 
 	"github.com/globalsign/mgo/bson"
 	"github.com/signaux-faibles/gournal"
@@ -95,26 +94,7 @@ func reportAbstract(tracker gournal.Tracker) interface{} {
 	}
 }
 
-func reportCycleErrors(tracker gournal.Tracker) interface{} {
-	return bson.M{
-		"report":      tracker.Context["path"] + ": ligne " + strconv.Itoa(tracker.Count) + " ignorée",
-		"errorReport": tracker.ErrorsInCurrentCycle(),
-	}
-}
-
-func reportFatalError(tracker gournal.Tracker) interface{} {
-	report := "Erreur fatale, abandon"
-	if errs, ok := tracker.Errors[tracker.Count]; ok {
-		report = report + ": " + errs[len(errs)-1].Error()
-	}
-	return bson.M{
-		"report": report,
-	}
-}
-
 // TrackerReports contient les fonctions de reporting du moteur
 var TrackerReports = map[string]gournal.ReportFunction{
-	"abstract":   reportAbstract,
-	"errors":     reportCycleErrors,
-	"fatalError": reportFatalError,
+	"abstract": reportAbstract,
 }
