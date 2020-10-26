@@ -1,7 +1,12 @@
 import test, { ExecutionContext } from "ava"
 import { reduce } from "./reduce"
 import { setGlobals } from "../test/helpers/setGlobals"
-import { DataType, BatchKey, CompanyDataValues } from "../RawDataTypes"
+import {
+  DataType,
+  BatchKey,
+  CompanyDataValues,
+  EntréeDebit,
+} from "../RawDataTypes"
 import { CompanyDataValuesWithCompact } from "./applyPatchesToBatch"
 
 const REDUCE_KEY = "123"
@@ -423,6 +428,61 @@ test.serial(
     // test sur les données compactées de cotisation
     const cotisations = reduceResults.batch[batchId].cotisation || {}
     t.deepEqual(Object.keys(cotisations), hashCotisation)
+  }
+)
+
+test.serial.only(
+  `compacte supporte la suppression d'un type`,
+  (t: ExecutionContext) => {
+    // définition des valeurs de paramètres globaux utilisés par les fonctions de "compact"
+    const fromBatchKey = "2008"
+    const oldBatchKey = "2007"
+    setGlobals({
+      fromBatchKey,
+      batches: [fromBatchKey],
+      completeTypes: { [fromBatchKey]: ["cotisation", "debit"] },
+    })
+    const key = "01234567891011"
+    const previousRawDataValue = {
+      key,
+      scope: "etablissement",
+      batch: {
+        [oldBatchKey]: {
+          cotisation: {
+            hash1: {
+              du: 100,
+              periode: { start: new Date(), end: new Date() },
+            },
+          },
+          debit: {
+            hash2: {} as EntréeDebit,
+          },
+        },
+      },
+    } as CompanyDataValues
+    const importedDataValue: CompanyDataValues = {
+      key,
+      scope: "etablissement",
+      batch: {
+        [fromBatchKey]: {
+          cotisation: {
+            hash1: {
+              du: 100,
+              periode: { start: new Date(), end: new Date() },
+            },
+          },
+        },
+      },
+    }
+    // exécution du test
+    const reducedData = reduce(key, [importedDataValue])
+    t.log(reducedData)
+    t.log(reduce(key, [previousRawDataValue, reducedData]).batch["2007"])
+    t.log(reduce(key, [previousRawDataValue, reducedData]).batch["2008"])
+    // const error = t.throws(() => {
+    //   /*const mergeOutput =*/ reduce(key, [previousRawDataValue, reducedData])
+    // })
+    // t.regex(error.message, /Cannot convert undefined or null to object/)
   }
 )
 
