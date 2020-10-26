@@ -34,7 +34,7 @@ func ParseFilesFromBatch(cache Cache, batch *base.AdminBatch, parser Parser) (ch
 	outputChannel := make(chan Tuple)
 	eventChannel := make(chan Event)
 	event := Event{
-		Code:    Code(parser.FileType + "_parser"),
+		Code:    Code(parser.FileType),
 		Channel: eventChannel,
 	}
 
