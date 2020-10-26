@@ -76,15 +76,16 @@ func reportAbstract(tracker gournal.Tracker) interface{} {
 	)
 
 	return bson.M{
-		"batchKey":    tracker.Context["batchKey"],
-		"report":      report,
-		"total":       tracker.Count,
-		"valid":       nValid,
-		"filtered":    nFiltered,
-		"error":       nError,
-		"headFilters": filterErrors,
-		"headErrors":  errorErrors,
-		"headFatal":   fatalErrors,
+		"batchKey":      tracker.Context["batchKey"],
+		"summary":       report,
+		"linesParsed":   tracker.Count,
+		"linesValid":    nValid,
+		"linesSkipped":  nFiltered,
+		"linesRejected": nError, // TODO: vérifier qu'on liste bien un nombre de lignes et non un nombre d'erreurs
+		"isFatal":       nFatal > 0,
+		"headSkipped":   filterErrors,
+		"headRejected":  errorErrors,
+		"headFatal":     fatalErrors,
 	}
 }
 
