@@ -19,13 +19,6 @@
   "events": [
     {
       "date": "0001-01-01T00:00:00Z",
-      "event": "testData/procolTestData.csv: ouverture",
-      "priority": "info",
-      "parserCode": "procol",
-      "report_type": ""
-    },
-    {
-      "date": "0001-01-01T00:00:00Z",
       "event": {
         "batchKey": "",
         "headFatal": [],

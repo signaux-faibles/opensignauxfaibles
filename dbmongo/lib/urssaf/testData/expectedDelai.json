@@ -43,13 +43,6 @@
   "events": [
     {
       "date": "0001-01-01T00:00:00Z",
-      "event": "testData/delaiTestData.csv: ouverture",
-      "priority": "info",
-      "parserCode": "delai",
-      "report_type": ""
-    },
-    {
-      "date": "0001-01-01T00:00:00Z",
       "event": {
         "batchKey": "",
         "headFatal": [],

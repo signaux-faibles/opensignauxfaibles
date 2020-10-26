@@ -19,13 +19,6 @@
   "events": [
     {
       "date": "0001-01-01T00:00:00Z",
-      "event": "testData/ccsfTestData.csv: ouverture",
-      "priority": "info",
-      "parserCode": "ccsf",
-      "report_type": ""
-    },
-    {
-      "date": "0001-01-01T00:00:00Z",
       "event": {
         "batchKey": "",
         "headFatal": [],

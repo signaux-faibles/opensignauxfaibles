@@ -24,13 +24,6 @@
   "events": [
     {
       "date": "0001-01-01T00:00:00Z",
-      "event": "testData/reporderTestData.csv: ouverture",
-      "priority": "info",
-      "parserCode": "reporder",
-      "report_type": ""
-    },
-    {
-      "date": "0001-01-01T00:00:00Z",
       "event": {
         "batchKey": "",
         "headFatal": [],

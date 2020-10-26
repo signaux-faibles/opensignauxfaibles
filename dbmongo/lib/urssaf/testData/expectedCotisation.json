@@ -31,13 +31,6 @@
   "events": [
     {
       "date": "0001-01-01T00:00:00Z",
-      "event": "testData/cotisationTestData.csv: ouverture",
-      "priority": "info",
-      "parserCode": "cotisation",
-      "report_type": ""
-    },
-    {
-      "date": "0001-01-01T00:00:00Z",
       "event": {
         "batchKey": "",
         "headFatal": [],
