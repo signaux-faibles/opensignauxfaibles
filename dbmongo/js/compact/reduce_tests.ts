@@ -435,6 +435,7 @@ test.serial.only(
   `compacte supporte la suppression d'un type`,
   (t: ExecutionContext) => {
     // définition des valeurs de paramètres globaux utilisés par les fonctions de "compact"
+    const batchKeyInFuture = "2009"
     const fromBatchKey = "2008"
     const oldBatchKey = "2007"
     setGlobals({
@@ -464,6 +465,11 @@ test.serial.only(
       key,
       scope: "etablissement",
       batch: {
+        [batchKeyInFuture]: {
+          debit: {
+            hash3: {} as EntréeDebit,
+          },
+        },
         [fromBatchKey]: {
           cotisation: {
             hash1: {
