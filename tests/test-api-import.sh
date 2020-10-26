@@ -95,7 +95,7 @@ printjson(db.ImportedData.find().sort({"value.key":1}).toArray().map(doc => ({
 
 print("// Reports from db.Journal:");
 // on classe les données par type, de manière à ce que l'ordre soit stable
-printjson(db.Journal.find({ "event.summary": { "\$exists": true } }).sort({ parserCode: 1 }).toArray().map(doc => ({
+printjson(db.Journal.find().sort({ parserCode: 1 }).toArray().map(doc => ({
   event: {
     headSkipped: doc.event.headSkipped,
     headRejected: doc.event.headRejected,
@@ -105,9 +105,6 @@ printjson(db.Journal.find({ "event.summary": { "\$exists": true } }).sort({ pars
   },
   parserCode: doc.parserCode
 })));
-
-print("// Critical errors from db.Journal:");
-printjson(db.Journal.find({ priority: "critical" }).sort({ parserCode: 1 }).toArray());
 
 print("// Results of call to /api/data/validate:");
 CONTENT
