@@ -63,17 +63,18 @@ echo ""
 echo "💎 Compacting RawData thru dbmongo API..."
 tests/helpers/dbmongo-server.sh start
 
-OUTPUT_GZ_FILE=dbmongo/$(http --print=b --ignore-stdin :5000/api/data/validate collection=RawData | tr -d '"')
-echo "- POST /api/data/validate RawData 👉 ${OUTPUT_GZ_FILE}"
-diff <(echo -n '') <(zcat < "${OUTPUT_GZ_FILE}")
+RAWDATA_ERRORS_FILE=dbmongo/$(http --print=b --ignore-stdin :5000/api/data/validate collection=RawData | tr -d '"')
+echo "- POST /api/data/validate RawData 👉 ${RAWDATA_ERRORS_FILE}"
+diff <(echo -n '') <(zcat < "${RAWDATA_ERRORS_FILE}")
 
-OUTPUT_GZ_FILE=dbmongo/$(http --print=b --ignore-stdin :5000/api/data/validate collection=ImportedData | tr -d '"')
-echo "- POST /api/data/validate ImportedData 👉 ${OUTPUT_GZ_FILE}"
-grep --quiet '{"_id":"5f9192703029a1f7d4b1773b","batchKey":"2009","dataPerHash":{},"dataType":"cotisation"}' <(zcat < "${OUTPUT_GZ_FILE}") # we expect an invalid data entry to be listed
+IMPORTEDDATA_ERRORS_FILE=dbmongo/$(http --print=b --ignore-stdin :5000/api/data/validate collection=ImportedData | tr -d '"')
+echo "- POST /api/data/validate ImportedData 👉 ${IMPORTEDDATA_ERRORS_FILE}"
+grep --quiet '{"_id":"5f9192703029a1f7d4b1773b","batchKey":"2009","dataPerHash":{},"dataType":"cotisation"}' <(zcat < "${IMPORTEDDATA_ERRORS_FILE}") # we expect an invalid data entry to be listed
 
 echo "- POST /api/data/compact should fail"
 grep --quiet "TypeError: can't convert undefined to object" <(http --print=b --ignore-stdin :5000/api/data/compact fromBatchKey=2008) # will fail with "TypeError: can't convert undefined to object"
 
 echo "✅ OK"
 
+rm "${RAWDATA_ERRORS_FILE}" "${IMPORTEDDATA_ERRORS_FILE}"
 # Now, the "trap" commands will clean up the rest.
