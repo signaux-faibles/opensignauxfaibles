@@ -147,9 +147,9 @@ func Compact(fromBatchKey string) error {
 	// Traitement MR
 	job := &mgo.MapReduce{
 		Map:      functions["map"].Code,
-		Reduce:   functions["reduce"].Code,
+		Reduce:   functions["reduce"].Code, // 1st pass: reduce() will be called on the documents of ImportedData
 		Finalize: functions["finalize"].Code,
-		Out:      bson.M{"reduce": "RawData"},
+		Out:      bson.M{"reduce": "RawData"}, // 2nd pass: for each siret/siren, reduce() will be called on the current RawData document and the result of the 1st pass, to merge the the new data with the existing data
 		Scope: bson.M{
 			"f":             functions,
 			"batches":       batchesID,
@@ -303,55 +303,65 @@ func getItemChannelToGzip(filepath string, wait *sync.WaitGroup) chan interface{
 func ExportEtablissements(key, filepath string) error {
 	pipeline := GetEtablissementWithScoresPipeline(key)
 	iter := Db.DB.C("Public").Pipe(pipeline).AllowDiskUse().Iter()
-	wait := sync.WaitGroup{}
-	gzipWriter := getItemChannelToGzip(filepath, &wait)
-	var item interface{}
-	for iter.Next(&item) {
-		if err := iter.Err(); err != nil {
-			return err
-		}
-		gzipWriter <- item
-	}
-	close(gzipWriter)
-	wait.Wait()
-	return nil
+	return storeMongoPipelineResults(filepath, iter)
 }
 
 // ExportEntreprises exporte les entreprises dans un fichier.
 func ExportEntreprises(key, filepath string) error {
 	pipeline := GetEntreprisePipeline(key)
 	iter := Db.DB.C("Public").Pipe(pipeline).AllowDiskUse().Iter()
+	return storeMongoPipelineResults(filepath, iter)
+}
+
+// ValidateDataEntries retourne dans un fichier les entrées de données invalides détectées dans la collection spécifiée.
+func ValidateDataEntries(filepath string, jsonSchema map[string]bson.M, collection string) error {
 	w := sync.WaitGroup{}
 	gzipWriter := getItemChannelToGzip(filepath, &w)
-	var item interface{}
-	for iter.Next(&item) {
-		if err := iter.Err(); err != nil {
-			return err
-		}
-		gzipWriter <- item
+
+	// lister les entrées de données non définies (type: undefined au lieu de object)
+	pipeline, err := GetUndefinedDataValidationPipeline()
+	if err != nil {
+		return err
 	}
+	err = iterateToChannel(gzipWriter, Db.DB.C(collection).Pipe(pipeline).AllowDiskUse().Iter())
+	if err != nil {
+		return err
+	}
+
+	// lister les entrées de données non conformes aux modèles JSON Schema
+	pipeline, err = GetDataValidationPipeline(jsonSchema)
+	if err != nil {
+		return err
+	}
+	err = iterateToChannel(gzipWriter, Db.DB.C(collection).Pipe(pipeline).AllowDiskUse().Iter())
+	if err != nil {
+		return err
+	}
+
 	close(gzipWriter)
 	w.Wait()
 	return nil
 }
 
-// ValidateDataEntries retourne dans un fichier les entrées de données invalides détectées dans la collection spécifiée.
-func ValidateDataEntries(filepath string, jsonSchema map[string]bson.M, collection string) error {
-	pipeline, err := GetDataValidationPipeline(jsonSchema, collection)
+func iterateToChannel(channel chan interface{}, iterator *mgo.Iter) error {
+	var item interface{}
+	for iterator.Next(&item) {
+		if err := iterator.Err(); err != nil {
+			return err
+		}
+		channel <- item
+	}
+	return nil
+}
+
+func storeMongoPipelineResults(filepath string, iterator *mgo.Iter) error {
+	wait := sync.WaitGroup{}
+	gzipWriter := getItemChannelToGzip(filepath, &wait)
+	err := iterateToChannel(gzipWriter, iterator)
 	if err != nil {
 		return err
 	}
-	iter := Db.DB.C(collection).Pipe(pipeline).AllowDiskUse().Iter()
-	w := sync.WaitGroup{}
-	gzipWriter := getItemChannelToGzip(filepath, &w)
-	var item interface{}
-	for iter.Next(&item) {
-		if err := iter.Err(); err != nil {
-			return err
-		}
-		gzipWriter <- item
-	}
 	close(gzipWriter)
-	w.Wait()
+	wait.Wait()
 	return nil
 }

@@ -1,7 +1,7 @@
 import test, { ExecutionContext } from "ava"
 import { reduce } from "./reduce"
 import { setGlobals } from "../test/helpers/setGlobals"
-import { DataType, BatchKey } from "../RawDataTypes"
+import { DataType, BatchKey, CompanyDataValues } from "../RawDataTypes"
 import { CompanyDataValuesWithCompact } from "./applyPatchesToBatch"
 
 const REDUCE_KEY = "123"
@@ -423,5 +423,37 @@ test.serial(
     // test sur les données compactées de cotisation
     const cotisations = reduceResults.batch[batchId].cotisation || {}
     t.deepEqual(Object.keys(cotisations), hashCotisation)
+  }
+)
+
+test.serial(
+  `reduce crashe quand une entrée de donnée est indéfinie`,
+  (t: ExecutionContext) => {
+    // définition des valeurs de paramètres globaux utilisés par les fonctions de "compact"
+    const batchKeyWithInvalidData = "2009"
+    const fromBatchKey = "2008"
+    const oldBatchKey = "2007"
+    setGlobals({
+      fromBatchKey,
+      batches: [fromBatchKey],
+      completeTypes: { [fromBatchKey]: [] },
+    })
+    const key = "01234567891011"
+    const previousRawDataValue = {
+      key,
+      scope: "etablissement",
+      batch: { [oldBatchKey]: {} },
+    } as CompanyDataValues
+    const importedDataValue: CompanyDataValues = {
+      key,
+      scope: "etablissement",
+      batch: { [batchKeyWithInvalidData]: { cotisation: undefined } },
+    }
+    // exécution du test
+    const reducedData = reduce(key, [importedDataValue])
+    const error = t.throws(() => {
+      /*const mergeOutput =*/ reduce(key, [previousRawDataValue, reducedData])
+    })
+    t.regex(error.message, /Cannot convert undefined or null to object/)
   }
 )

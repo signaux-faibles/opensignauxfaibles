@@ -46,6 +46,8 @@ jobs:
 
       - run: ./tests/test-api-purge-batch.sh
 
+      - run: ./tests/test-api-compact-failure.sh
+
       - name: Reveal golden master files for tests
         env:
           GPG_PRIVATE_KEY_FOR_GIT_SECRET: ${{ secrets.GPG_PRIVATE_KEY_FOR_GIT_SECRET }}
