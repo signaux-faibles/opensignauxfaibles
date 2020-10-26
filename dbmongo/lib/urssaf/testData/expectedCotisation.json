@@ -40,14 +40,15 @@
       "date": "0001-01-01T00:00:00Z",
       "event": {
         "batchKey": "",
-        "error": 0,
-        "filtered": 0,
-        "headErrors": [],
         "headFatal": [],
-        "headFilters": [],
-        "report": "testData/cotisationTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
-        "total": 3,
-        "valid": 3
+        "headRejected": [],
+        "headSkipped": [],
+        "isFatal": false,
+        "linesParsed": 3,
+        "linesRejected": 0,
+        "linesSkipped": 0,
+        "linesValid": 3,
+        "summary": "testData/cotisationTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides"
       },
       "priority": "info",
       "code": "cotisation_parser",
