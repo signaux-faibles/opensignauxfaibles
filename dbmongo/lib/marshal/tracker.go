@@ -87,7 +87,7 @@ func reportAbstract(tracker gournal.Tracker) interface{} {
 		"linesParsed":   tracker.Count,
 		"linesValid":    nValid,
 		"linesSkipped":  nFiltered,
-		"linesRejected": nError, // TODO: vérifier qu'on liste bien un nombre de lignes et non un nombre d'erreurs
+		"linesRejected": nError,
 		"isFatal":       nFatal > 0,
 		"headSkipped":   filterErrors,
 		"headRejected":  errorErrors,
