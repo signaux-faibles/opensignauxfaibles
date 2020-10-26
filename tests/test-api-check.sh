@@ -60,7 +60,7 @@ echo "- POST /api/data/check 👉 ${API_RESULT}"
   > "${OUTPUT_FILE}" \
 ) << CONTENT
 print("// Documents from db.Journal:");
-printjson(db.Journal.find({ "event.summary": { "\$exists": true } }).toArray().map(doc => ({
+printjson(db.Journal.find().toArray().map(doc => ({
   // note: we use map() to force the order of properties at every run of this test
   event: {
     headSkipped: doc.event.headSkipped,
