@@ -32,7 +32,10 @@ func reportAbstract(tracker gournal.Tracker) interface{} {
 	}
 	sort.Ints(cycles)
 
+	// pour chaque cycle qui a au moins une erreur
 	for _, cycle := range cycles {
+		var lineRejected = false
+		// pour chaque erreur du cycle
 		for _, err := range tracker.Errors[cycle] {
 			switch c := err.(type) {
 			case base.CriticityError:
@@ -43,7 +46,7 @@ func reportAbstract(tracker gournal.Tracker) interface{} {
 					}
 				}
 				if c.Criticity() == "error" {
-					nError++
+					lineRejected = true
 					if len(errorErrors) < MaxParsingErrors {
 						errorErrors = append(errorErrors, fmt.Sprintf("Cycle %d: %v", cycle, err))
 					}
@@ -60,6 +63,9 @@ func reportAbstract(tracker gournal.Tracker) interface{} {
 					fatalErrors = append(fatalErrors, fmt.Sprintf("Cycle %d: %v", cycle, err))
 					fmt.Printf("Cycle %d: %v", cycle, err)
 				}
+			}
+			if lineRejected {
+				nError++
 			}
 		}
 	}
