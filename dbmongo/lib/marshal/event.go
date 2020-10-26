@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/globalsign/mgo/bson"
-	"github.com/signaux-faibles/gournal"
 )
 
 // Priority test
@@ -87,34 +86,7 @@ func (event Event) throw(comment interface{}, logLevel string) {
 	event.Channel <- event
 }
 
-// Debug produit un évènement de niveau Debug
-func (event Event) Debug(comment interface{}) {
-	event.throw(comment, "debug")
-}
-
 // Info produit un évènement de niveau Info
 func (event Event) Info(comment interface{}) {
 	event.throw(comment, "info")
-}
-
-// Warning produit un évènement de niveau Warning
-func (event Event) Warning(comment interface{}) {
-	event.throw(comment, "warning")
-}
-
-// Critical produit un évènement de niveau Critical
-func (event Event) Critical(comment interface{}) {
-	event.throw(comment, "critical")
-}
-
-// InfoReport produit un rapport de niveau Info
-func (event Event) InfoReport(report string, tracker gournal.Tracker) {
-	event.ReportType = report
-	event.Info(tracker.Report(report))
-}
-
-// CriticalReport produit un rapport de niveau Critical
-func (event Event) CriticalReport(report string, tracker gournal.Tracker) {
-	event.ReportType = report
-	event.Critical(tracker.Report(report))
 }
