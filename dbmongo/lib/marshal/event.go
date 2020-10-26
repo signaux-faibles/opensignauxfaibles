@@ -50,39 +50,14 @@ func (event Event) GetBSON() (interface{}, error) {
 	return tmp, nil
 }
 
-// Debug test
-var Debug = Priority("debug")
-
-// Info test
-var Info = Priority("info")
-
-// Warning test
-var Warning = Priority("warning")
-
-// Critical test
-var Critical = Priority("critical")
-
-var unknownCode = Code("unknown")
-
 func (event Event) throw(comment interface{}, logLevel string) {
 	event.ID = bson.NewObjectId()
 	event.Date = time.Now()
 	event.Comment = comment
 	if event.Code == "" {
-		event.Code = unknownCode
+		event.Code = Code("unknown")
 	}
-	switch logLevel {
-	case "debug":
-		event.Priority = Debug
-	case "info":
-		event.Priority = Info
-	case "warning":
-		event.Priority = Warning
-	case "critical":
-		event.Priority = Critical
-	default:
-		panic("Wrong use of throw function")
-	}
+	event.Priority = Priority("info")
 	event.Channel <- event
 }
 
