@@ -18,7 +18,7 @@ import (
 type SirenFilter map[string]bool
 
 // IsFiltered determines if the siret must be filtered or not
-func IsFiltered(id string, filter SirenFilter) (bool, error) {
+func (filter *SirenFilter) IsFiltered(id string) (bool, error) {
 
 	validSiret := sfregexp.RegexpDict["siret"].MatchString(id)
 	validSiren := sfregexp.RegexpDict["siren"].MatchString(id)
@@ -30,7 +30,7 @@ func IsFiltered(id string, filter SirenFilter) (bool, error) {
 	if filter == nil {
 		return false, nil
 	}
-	return !FilterHas(id, filter), nil
+	return !FilterHas(id, *filter), nil
 }
 
 // FilterHas tells if the siret/siren is listed in the filter, or not.

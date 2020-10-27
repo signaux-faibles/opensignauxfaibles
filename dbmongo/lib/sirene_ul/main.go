@@ -83,7 +83,7 @@ func parseSireneULFile(reader *csv.Reader, filter marshal.SirenFilter, tracker *
 			if !validSiren {
 				tracker.Add(errors.New("siren invalide : " + row[0]))
 			} else {
-				filtered, err := marshal.IsFiltered(row[0], filter)
+				filtered, err := filter.IsFiltered(row[0])
 				tracker.Add(err)
 				if !filtered {
 					outputChannel <- parseSireneUlLine(row, tracker)

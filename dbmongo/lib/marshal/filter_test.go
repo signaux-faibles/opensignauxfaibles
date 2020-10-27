@@ -30,7 +30,7 @@ func TestIsFiltered(t *testing.T) {
 	}
 
 	for ind, tc := range testCases {
-		actual, err := IsFiltered(tc.siret, tc.filter)
+		actual, err := tc.filter.IsFiltered(tc.siret)
 		if err != nil && !tc.expectError {
 			t.Fatalf("Unexpected error during cache request in test %d: %v", ind, err)
 		}

@@ -63,7 +63,7 @@ func parseReporderFile(reader *csv.Reader, filter marshal.SirenFilter, tracker *
 			tracker.Add(err)
 		} else {
 			reporder := parseReporderLine(row, tracker)
-			filtered, err := marshal.IsFiltered(reporder.Siret[0:9], filter)
+			filtered, err := filter.IsFiltered(reporder.Siret[0:9]) // TODO: remove [0:9]
 			tracker.Add(err)
 			if !tracker.HasErrorInCurrentCycle() && !filtered {
 				outputChannel <- reporder

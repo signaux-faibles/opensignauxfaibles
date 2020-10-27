@@ -64,7 +64,7 @@ func parseEllisphereSheet(sheet *xlsx.Sheet, filter marshal.SirenFilter, tracker
 			var ellisphere Ellisphere
 			err := row.ReadStruct(&ellisphere)
 
-			filtered, errFilter := marshal.IsFiltered(ellisphere.Siren, filter)
+			filtered, errFilter := filter.IsFiltered(ellisphere.Siren)
 			if errFilter != nil {
 				tracker.Add(errFilter)
 			}

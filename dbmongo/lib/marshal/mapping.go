@@ -64,9 +64,8 @@ func GetCompteSiretMapping(cache Cache, batch *base.AdminBatch, mr mappingReader
 		comptes, ok := value.(Comptes)
 		if ok {
 			return comptes, nil
-		} else {
-			return nil, errors.New("Wrong format from existing field comptes in cache")
 		}
+		return nil, errors.New("Wrong format from existing field comptes in cache")
 	}
 
 	fmt.Println("Chargement des comptes urssaf")
@@ -167,7 +166,7 @@ func readSiretMapping(
 			return nil, err
 		}
 
-		filtered, err := IsFiltered(siret, filter)
+		filtered, err := filter.IsFiltered(siret)
 		if err != nil {
 			return nil, err
 		}

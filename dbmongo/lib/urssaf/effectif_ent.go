@@ -109,7 +109,7 @@ func parseEffectifEntFile(reader *csv.Reader, filter marshal.SirenFilter, tracke
 func parseEffectifEntLine(periods []periodCol, row []string, idx colMapping, filter marshal.SirenFilter, tracker *gournal.Tracker) []EffectifEnt {
 	var effectifs = []EffectifEnt{}
 	siren := row[idx["siren"]]
-	filtered, err := marshal.IsFiltered(siren, filter)
+	filtered, err := filter.IsFiltered(siren)
 	tracker.Add(err)
 	if len(siren) != 9 {
 		tracker.Add(errors.New("Format de siren incorrect : " + siren))

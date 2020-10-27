@@ -204,7 +204,7 @@ func parseSireneFile(reader *csv.Reader, filter marshal.SirenFilter, tracker *go
 			if !validSiren {
 				tracker.Add(errors.New("siren invalide : " + row[f["siren"]]))
 			} else {
-				filtered, err := marshal.IsFiltered(row[f["siren"]], filter)
+				filtered, err := filter.IsFiltered(row[f["siren"]])
 				tracker.Add(err)
 				if !filtered {
 					outputChannel <- parseSireneLine(row, tracker)
