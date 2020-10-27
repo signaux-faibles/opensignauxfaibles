@@ -122,6 +122,11 @@ func readSiretMapping(
 	batch *base.AdminBatch,
 ) (Comptes, error) {
 
+	filter, err := GetSirenFilter(cache, batch)
+	if err != nil {
+		return nil, err
+	}
+
 	var addSiretMapping = make(map[string][]SiretDate)
 
 	csvReader := csv.NewReader(reader)
@@ -157,21 +162,7 @@ func readSiretMapping(
 		compte := row[compteIndex]
 		siret := row[siretIndex]
 
-		if !sfregexp.RegexpDict["siret"].MatchString(siret) {
-			continue
-		}
-
-		filter, err := GetSirenFilter(cache, batch)
-		if err != nil {
-			return nil, err
-		}
-
-		filtered, err := filter.IsFiltered(siret)
-		if err != nil {
-			return nil, err
-		}
-
-		if sfregexp.RegexpDict["siret"].MatchString(siret) && !filtered {
+		if sfregexp.ValidSiret(siret) && !filter.Skips(siret) {
 			//siret valide
 			addSiretMapping[compte] = append(addSiretMapping[compte], SiretDate{siret, fermeture})
 			// Tri des sirets pour chaque compte par ordre croissant de date de fermeture
