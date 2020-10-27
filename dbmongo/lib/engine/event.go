@@ -80,7 +80,7 @@ func RelayEvents(eventChannel chan marshal.Event) (lastReport string) {
 	}
 	for e := range eventChannel {
 		if reportContainer, ok := e.Comment.(bson.M); ok {
-			if strReport, ok := reportContainer["report"].(string); ok {
+			if strReport, ok := reportContainer["summary"].(string); ok {
 				lastReport = strReport
 			}
 		}

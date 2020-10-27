@@ -52,28 +52,22 @@
   "events": [
     {
       "date": "0001-01-01T00:00:00Z",
-      "event": "testData/sireneTestData.csv: ouverture",
-      "priority": "info",
-      "code": "sirene_parser",
-      "report_type": ""
-    },
-    {
-      "date": "0001-01-01T00:00:00Z",
       "event": {
         "batchKey": "",
-        "error": 0,
-        "filtered": 0,
-        "headErrors": [],
         "headFatal": [
           "Cycle 1: parsing time \"\" as \"2006-01-02\": cannot parse \"\" as \"2006\""
         ],
-        "headFilters": [],
-        "report": "testData/sireneTestData.csv: intégration terminée, 3 lignes traitées, 1 erreures fatales, 0 rejets, 0 lignes filtrées, 2 lignes valides",
-        "total": 3,
-        "valid": 2
+        "headRejected": [],
+        "headSkipped": [],
+        "isFatal": true,
+        "linesParsed": 3,
+        "linesRejected": 0,
+        "linesSkipped": 0,
+        "linesValid": 2,
+        "summary": "testData/sireneTestData.csv: intégration terminée, 3 lignes traitées, 1 erreures fatales, 0 rejets, 0 lignes filtrées, 2 lignes valides"
       },
       "priority": "info",
-      "code": "sirene_parser",
+      "parserCode": "sirene",
       "report_type": ""
     }
   ]
