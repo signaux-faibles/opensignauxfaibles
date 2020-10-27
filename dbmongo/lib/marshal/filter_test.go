@@ -19,7 +19,6 @@ func TestIsFiltered(t *testing.T) {
 		expectError bool
 		expected    bool
 	}{
-		{"012345678", SirenFilter{"01234567891011": true}, true, false}, // siren non valide trouvé dans le fichier
 		{"012345678", SirenFilter{"012345678": true}, false, false},
 		{"01234567891011", SirenFilter{"012345678": true}, false, false},
 		{"0123", SirenFilter{"012345678": true}, true, true},
