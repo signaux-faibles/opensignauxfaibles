@@ -77,7 +77,7 @@ func TestReadSiretMapping(t *testing.T) {
 	}
 
 	stdFilterCache := Cache{
-		"filter": map[string]bool{"012345678": true},
+		"filter": SirenFilter{"012345678": true},
 	}
 
 	testCases := []struct {

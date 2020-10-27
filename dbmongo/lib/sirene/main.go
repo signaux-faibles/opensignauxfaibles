@@ -192,7 +192,7 @@ func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tr
 	parseSireneFile(reader, filter, tracker, outputChannel)
 }
 
-func parseSireneFile(reader *csv.Reader, filter map[string]bool, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+func parseSireneFile(reader *csv.Reader, filter marshal.SirenFilter, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
 	for {
 		row, err := reader.Read()
 		if err == io.EOF {
@@ -204,7 +204,7 @@ func parseSireneFile(reader *csv.Reader, filter map[string]bool, tracker *gourna
 			if !validSiren {
 				tracker.Add(errors.New("siren invalide : " + row[f["siren"]]))
 			} else {
-				filtered, err := marshal.IsFiltered(row[f["siren"]], filter)
+				filtered, err := filter.IsFiltered(row[f["siren"]])
 				tracker.Add(err)
 				if !filtered {
 					outputChannel <- parseSireneLine(row, tracker)

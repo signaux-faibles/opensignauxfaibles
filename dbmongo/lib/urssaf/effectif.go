@@ -58,7 +58,7 @@ func ParseEffectifFile(filePath string, cache *marshal.Cache, batch *base.AdminB
 	parseEffectifFile(reader, filter, tracker, outputChannel)
 }
 
-func parseEffectifFile(reader *csv.Reader, filter map[string]bool, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+func parseEffectifFile(reader *csv.Reader, filter marshal.SirenFilter, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
 	fields, err := reader.Read()
 	if err != nil {
 		tracker.Add(err)
@@ -97,13 +97,13 @@ func parseEffectifFile(reader *csv.Reader, filter map[string]bool, tracker *gour
 	}
 }
 
-func parseEffectifLine(periods []periodCol, row []string, idx colMapping, filter map[string]bool, tracker *gournal.Tracker) []Effectif {
+func parseEffectifLine(periods []periodCol, row []string, idx colMapping, filter marshal.SirenFilter, tracker *gournal.Tracker) []Effectif {
 	var effectifs = []Effectif{}
 	siret := row[idx["siret"]]
 	validSiret := sfregexp.RegexpDict["siret"].MatchString(siret)
 	if !validSiret {
 		tracker.Add(base.NewRegularError(errors.New("Le siret/siren est invalide")))
-	} else if filter != nil || !marshal.FilterHas(siret, filter) {
+	} else if filter == nil || filter.Includes(siret) {
 		for _, period := range periods {
 			value := row[period.colIndex]
 			if value != "" {
