@@ -7,39 +7,33 @@ import (
 	"testing"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
+	"github.com/stretchr/testify/assert"
 )
 
 var update = flag.Bool("update", false, "Update the expected test values in golden file") // please keep this line until https://github.com/kubernetes-sigs/service-catalog/issues/2319#issuecomment-425200065 is fixed
 
-func TestIsFiltered(t *testing.T) {
+func TestIncludes(t *testing.T) {
 
 	testCases := []struct {
-		siret       string
-		filter      SirenFilter
-		expectError bool
-		expected    bool
+		siret    string
+		filter   SirenFilter
+		expected bool
 	}{
-		{"012345678", SirenFilter{"012345678": true}, false, false},
-		{"01234567891011", SirenFilter{"012345678": true}, false, false},
-		{"0123", SirenFilter{"012345678": true}, true, true},
-		{"0123456789", SirenFilter{"012345678": true}, true, true},
-		{"876543210", SirenFilter{"012345678": true}, false, true},
-		{"87654321091011", SirenFilter{"012345678": true}, false, true},
-		{"012345678", nil, false, false},
-		{"0123", nil, true, true},
+		{"012345678", SirenFilter{"012345678": true}, true},       // siren inclus dans filtre
+		{"01234567891011", SirenFilter{"012345678": true}, true},  // siret inclus dans filtre
+		{"0123", SirenFilter{"012345678": true}, false},           // siren trop court
+		{"0123456789", SirenFilter{"012345678": true}, true},      // numéro invalide mais ayant comme prefixe un siret filtré
+		{"876543210", SirenFilter{"012345678": true}, false},      // siren non inclus dans filtre
+		{"87654321091011", SirenFilter{"012345678": true}, false}, // siret non inclus dans filtre
+		{"012345678", nil, false},                                 // pas de filtre
+		{"0123", nil, false},                                      // pas de filtre + numéro invalide
 	}
 
 	for ind, tc := range testCases {
-		actual, err := tc.filter.IsFiltered(tc.siret)
-		if err != nil && !tc.expectError {
-			t.Fatalf("Unexpected error during cache request in test %d: %v", ind, err)
-		}
-		if err == nil && tc.expectError {
-			t.Fatalf("Expected error missing during cache request in test %d: %v", ind, err)
-		}
+		included := tc.filter.includes(tc.siret)
 		expected := tc.expected
-		if actual != expected {
-			t.Fatalf("IsFiltered failed on test %d", ind)
+		if included != expected {
+			t.Fatalf("Includes failed on test %d", ind)
 		}
 	}
 }
@@ -110,4 +104,19 @@ func TestReadFilter(t *testing.T) {
 	if err == nil {
 		t.Fatalf("readFilter should fail on incorrect siren")
 	}
+}
+
+func TestNilFilter(t *testing.T) {
+	filter := GetSirenFilterFromCache(Cache{}) // => nil
+	assert.Equal(t, true, filter == nil)
+	assert.Equal(t, false, filter.includes("012345678"))
+	assert.Equal(t, false, filter.Skips("012345678"))
+	assert.Equal(t, false, filter.Skips("912345678"))
+	cache := Cache{}
+	cache.Set("filter", SirenFilter{"012345678": true})
+	filter = GetSirenFilterFromCache(cache) // => not nil
+	assert.Equal(t, false, filter == nil)
+	assert.Equal(t, true, filter.includes("012345678"))
+	assert.Equal(t, false, filter.Skips("012345678"))
+	assert.Equal(t, true, filter.Skips("912345678"))
 }

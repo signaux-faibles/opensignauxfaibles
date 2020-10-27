@@ -92,7 +92,7 @@
         "filtered": 0,
         "headErrors": [],
         "headFatal": [
-          "Cycle 0: Le siret/siren est invalide",
+          "Cycle 0: siren invalide : FIL SIREN 9",
           "Cycle 0: strconv.ParseInt: parsing \"Niveau de détention\": invalid syntax"
         ],
         "headFilters": [],

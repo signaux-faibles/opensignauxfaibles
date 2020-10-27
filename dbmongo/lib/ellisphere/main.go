@@ -4,6 +4,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sfregexp"
 	"github.com/tealeg/xlsx/v3"
 
 	"github.com/signaux-faibles/gournal"
@@ -64,12 +65,10 @@ func parseEllisphereSheet(sheet *xlsx.Sheet, filter marshal.SirenFilter, tracker
 			var ellisphere Ellisphere
 			err := row.ReadStruct(&ellisphere)
 
-			filtered, errFilter := filter.IsFiltered(ellisphere.Siren)
-			if errFilter != nil {
-				tracker.Add(errFilter)
+			if !sfregexp.ValidSiren(ellisphere.Siren) {
+				tracker.Add(errors.New("siren invalide : " + ellisphere.Siren))
 			}
-
-			if err == nil && !filtered {
+			if err == nil && !filter.Skips(ellisphere.Siren) {
 				outputChannel <- ellisphere
 			}
 			tracker.Add(err)

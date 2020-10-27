@@ -83,19 +83,17 @@ func parseBdfLine(row []string, tracker *gournal.Tracker, filter marshal.SirenFi
 	bdf := BDF{}
 	bdf.Siren = strings.Replace(row[field["siren"]], " ", "", -1)
 
-	validSiren := sfregexp.RegexpDict["siren"].MatchString(bdf.Siren)
-	if !validSiren {
+	if !sfregexp.ValidSiren(bdf.Siren) {
 		tracker.Add(errors.New("siren invalide : " + bdf.Siren))
 		return BDF{}
 	}
 
-	filtered, err := filter.IsFiltered(bdf.Siren)
-	tracker.Add(err)
-	if filtered {
+	if filter.Skips(bdf.Siren) {
 		tracker.Add(base.NewFilterNotice())
 		return BDF{}
 	}
 
+	var err error
 	bdf.Annee, err = misc.ParsePInt(row[field["année"]])
 	tracker.Add(err)
 	var arrete = row[field["arrêtéBilan"]]
