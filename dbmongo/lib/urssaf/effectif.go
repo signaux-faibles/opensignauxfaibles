@@ -103,7 +103,7 @@ func parseEffectifLine(periods []periodCol, row []string, idx colMapping, filter
 	validSiret := sfregexp.RegexpDict["siret"].MatchString(siret)
 	if !validSiret {
 		tracker.Add(base.NewRegularError(errors.New("Le siret/siren est invalide")))
-	} else if filter != nil || !filter.Includes(siret) {
+	} else if filter == nil || filter.Includes(siret) {
 		for _, period := range periods {
 			value := row[period.colIndex]
 			if value != "" {
