@@ -5168,7 +5168,7 @@
 			"headFilters" : [ ],
 			"headErrors" : [ ],
 			"headFatal" : [
-				"Cycle 0: Le siret/siren est invalide",
+				"Cycle 0: siren invalide : FIL SIREN 9",
 				"Cycle 0: strconv.ParseInt: parsing \"Niveau de détention\": invalid syntax"
 			],
 			"report" : "/../lib/ellisphere/testData/ellisphereTestData.excel: intégration terminée, 7 lignes traitées, 2 erreures fatales, 0 rejets, 0 lignes filtrées, 5 lignes valides",
