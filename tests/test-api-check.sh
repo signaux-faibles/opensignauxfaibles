@@ -60,16 +60,16 @@ echo "- POST /api/data/check 👉 ${API_RESULT}"
   > "${OUTPUT_FILE}" \
 ) << CONTENT
 print("// Documents from db.Journal:");
-printjson(db.Journal.find({ "event.report": { "\$exists": true } }).toArray().map(doc => ({
+printjson(db.Journal.find().toArray().map(doc => ({
   // note: we use map() to force the order of properties at every run of this test
   event: {
-    headFilters: doc.event.headFilters,
-    headErrors: doc.event.headErrors,
+    headSkipped: doc.event.headSkipped,
+    headRejected: doc.event.headRejected,
     headFatal: doc.event.headFatal,
-    report: doc.event.report,
+    summary: doc.event.summary,
     batchKey: doc.event.batchKey
   },
-  code: doc.code
+  parserCode: doc.parserCode
 })));
 
 print("// Response body from /api/data/check:");

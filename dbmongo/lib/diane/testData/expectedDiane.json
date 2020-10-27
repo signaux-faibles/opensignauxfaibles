@@ -1480,26 +1480,20 @@
   "events": [
     {
       "date": "0001-01-01T00:00:00Z",
-      "event": "testData/dianeTestData.txt: ouverture",
-      "priority": "info",
-      "code": "diane_parser",
-      "report_type": ""
-    },
-    {
-      "date": "0001-01-01T00:00:00Z",
       "event": {
         "batchKey": "",
-        "error": 0,
-        "filtered": 0,
-        "headErrors": [],
         "headFatal": [],
-        "headFilters": [],
-        "report": "testData/dianeTestData.txt: intégration terminée, 18 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 18 lignes valides",
-        "total": 18,
-        "valid": 18
+        "headRejected": [],
+        "headSkipped": [],
+        "isFatal": false,
+        "linesParsed": 18,
+        "linesRejected": 0,
+        "linesSkipped": 0,
+        "linesValid": 18,
+        "summary": "testData/dianeTestData.txt: intégration terminée, 18 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 18 lignes valides"
       },
       "priority": "info",
-      "code": "diane_parser",
+      "parserCode": "diane",
       "report_type": ""
     }
   ]

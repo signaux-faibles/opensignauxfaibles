@@ -3,7 +3,6 @@ package marshal
 import (
 	"fmt"
 	"sort"
-	"strconv"
 
 	"github.com/globalsign/mgo/bson"
 	"github.com/signaux-faibles/gournal"
@@ -32,7 +31,10 @@ func reportAbstract(tracker gournal.Tracker) interface{} {
 	}
 	sort.Ints(cycles)
 
+	// pour chaque cycle qui a au moins une erreur
 	for _, cycle := range cycles {
+		var lineRejected = false
+		// pour chaque erreur du cycle
 		for _, err := range tracker.Errors[cycle] {
 			switch c := err.(type) {
 			case base.CriticityError:
@@ -43,7 +45,7 @@ func reportAbstract(tracker gournal.Tracker) interface{} {
 					}
 				}
 				if c.Criticity() == "error" {
-					nError++
+					lineRejected = true
 					if len(errorErrors) < MaxParsingErrors {
 						errorErrors = append(errorErrors, fmt.Sprintf("Cycle %d: %v", cycle, err))
 					}
@@ -61,6 +63,9 @@ func reportAbstract(tracker gournal.Tracker) interface{} {
 					fmt.Printf("Cycle %d: %v", cycle, err)
 				}
 			}
+			if lineRejected {
+				nError++
+			}
 		}
 	}
 
@@ -76,38 +81,20 @@ func reportAbstract(tracker gournal.Tracker) interface{} {
 	)
 
 	return bson.M{
-		"batchKey":    tracker.Context["batchKey"],
-		"report":      report,
-		"total":       tracker.Count,
-		"valid":       nValid,
-		"filtered":    nFiltered,
-		"error":       nError,
-		"headFilters": filterErrors,
-		"headErrors":  errorErrors,
-		"headFatal":   fatalErrors,
-	}
-}
-
-func reportCycleErrors(tracker gournal.Tracker) interface{} {
-	return bson.M{
-		"report":      tracker.Context["path"] + ": ligne " + strconv.Itoa(tracker.Count) + " ignorée",
-		"errorReport": tracker.ErrorsInCurrentCycle(),
-	}
-}
-
-func reportFatalError(tracker gournal.Tracker) interface{} {
-	report := "Erreur fatale, abandon"
-	if errs, ok := tracker.Errors[tracker.Count]; ok {
-		report = report + ": " + errs[len(errs)-1].Error()
-	}
-	return bson.M{
-		"report": report,
+		"batchKey":      tracker.Context["batchKey"],
+		"summary":       report,
+		"linesParsed":   tracker.Count,
+		"linesValid":    nValid,
+		"linesSkipped":  nFiltered,
+		"linesRejected": nError,
+		"isFatal":       nFatal > 0,
+		"headSkipped":   filterErrors,
+		"headRejected":  errorErrors,
+		"headFatal":     fatalErrors,
 	}
 }
 
 // TrackerReports contient les fonctions de reporting du moteur
 var TrackerReports = map[string]gournal.ReportFunction{
-	"abstract":   reportAbstract,
-	"errors":     reportCycleErrors,
-	"fatalError": reportFatalError,
+	"abstract": reportAbstract,
 }

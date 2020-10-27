@@ -34,7 +34,7 @@ func ParseFilesFromBatch(cache Cache, batch *base.AdminBatch, parser Parser) (ch
 	outputChannel := make(chan Tuple)
 	eventChannel := make(chan Event)
 	event := Event{
-		Code:    Code(parser.FileType + "_parser"),
+		Code:    Code(parser.FileType),
 		Channel: eventChannel,
 	}
 
@@ -44,7 +44,6 @@ func ParseFilesFromBatch(cache Cache, batch *base.AdminBatch, parser Parser) (ch
 				map[string]string{"path": path, "batchKey": batch.ID.Key},
 				TrackerReports)
 
-			event.Info(path + ": ouverture")
 			parser.FileParser(viper.GetString("APP_DATA")+path, &cache, batch, &tracker, outputChannel)
 			event.Info(tracker.Report("abstract"))
 		}
