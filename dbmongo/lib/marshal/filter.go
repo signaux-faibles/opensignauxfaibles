@@ -30,11 +30,11 @@ func (filter SirenFilter) IsFiltered(id string) (bool, error) {
 	if filter == nil {
 		return false, nil
 	}
-	return !FilterHas(id, filter), nil
+	return !filter.FilterHas(id), nil
 }
 
 // FilterHas tells if the siret/siren is listed in the filter, or not.
-func FilterHas(siretOrSiren string, filter SirenFilter) bool {
+func (filter SirenFilter) FilterHas(siretOrSiren string) bool {
 	if len(siretOrSiren) >= 9 {
 		return filter[siretOrSiren[0:9]]
 	}
