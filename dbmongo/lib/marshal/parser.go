@@ -31,6 +31,7 @@ type Tuple interface {
 
 // ParseFilesFromBatch parse tous les fichiers spécifiés dans batch pour un parseur donné.
 func ParseFilesFromBatch(cache Cache, batch *base.AdminBatch, parser Parser) (chan Tuple, chan Event) {
+	filter := GetSirenFilterFromCache(cache)
 	outputChannel := make(chan Tuple)
 	eventChannel := make(chan Event)
 	event := Event{
@@ -50,7 +51,6 @@ func ParseFilesFromBatch(cache Cache, batch *base.AdminBatch, parser Parser) (ch
 				parser.FileParser(viper.GetString("APP_DATA")+path, &cache, batch, &tracker, fullOutputChannel)
 				defer close(fullOutputChannel)
 			}()
-			filter := GetSirenFilterFromCache(cache)
 			for tuple := range fullOutputChannel {
 				if !filter.Skips(tuple.Key()) {
 					outputChannel <- tuple
@@ -60,8 +60,8 @@ func ParseFilesFromBatch(cache Cache, batch *base.AdminBatch, parser Parser) (ch
 			}
 			event.Info(tracker.Report("abstract"))
 		}
-		close(eventChannel)
 		close(outputChannel)
+		close(eventChannel)
 	}()
 
 	return outputChannel, eventChannel
