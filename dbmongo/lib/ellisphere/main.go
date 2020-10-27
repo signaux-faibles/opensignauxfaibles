@@ -58,13 +58,13 @@ func ParseFile(path string, cache *marshal.Cache, batch *base.AdminBatch, tracke
 	parseEllisphereSheet(xlsxFile.Sheets[0], filter, tracker, outputChannel)
 }
 
-func parseEllisphereSheet(sheet *xlsx.Sheet, filter map[string]bool, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+func parseEllisphereSheet(sheet *xlsx.Sheet, filter marshal.SirenFilter, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
 	sheet.ForEachRow(
 		func(row *xlsx.Row) error {
 			var ellisphere Ellisphere
 			err := row.ReadStruct(&ellisphere)
 
-			filtered, errFilter := marshal.IsFiltered(ellisphere.Siren, filter)
+			filtered, errFilter := filter.IsFiltered(ellisphere.Siren)
 			if errFilter != nil {
 				tracker.Add(errFilter)
 			}

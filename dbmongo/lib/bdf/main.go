@@ -79,7 +79,7 @@ var field = map[string]int{
 	"fraisFinancier":      12,
 }
 
-func parseBdfLine(row []string, tracker *gournal.Tracker, filter map[string]bool) BDF {
+func parseBdfLine(row []string, tracker *gournal.Tracker, filter marshal.SirenFilter) BDF {
 	bdf := BDF{}
 	bdf.Siren = strings.Replace(row[field["siren"]], " ", "", -1)
 
@@ -89,7 +89,7 @@ func parseBdfLine(row []string, tracker *gournal.Tracker, filter map[string]bool
 		return BDF{}
 	}
 
-	filtered, err := marshal.IsFiltered(bdf.Siren, filter)
+	filtered, err := filter.IsFiltered(bdf.Siren)
 	tracker.Add(err)
 	if filtered {
 		tracker.Add(base.NewFilterNotice())
@@ -167,7 +167,7 @@ func parseBdfLine(row []string, tracker *gournal.Tracker, filter map[string]bool
 	return bdf
 }
 
-func parseBdfFile(reader *csv.Reader, filter map[string]bool, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+func parseBdfFile(reader *csv.Reader, filter marshal.SirenFilter, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
 	// Lecture en-tête
 	_, err := reader.Read()
 	tracker.Add(err)

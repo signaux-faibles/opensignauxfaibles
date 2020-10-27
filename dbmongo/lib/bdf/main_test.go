@@ -22,7 +22,7 @@ func TestBdfOutput(t *testing.T) {
 func TestBdfParser(t *testing.T) {
 	t.Run("Should return only the companies listed in the filter file", func(t *testing.T) {
 		var cache = marshal.NewCache()
-		cache.Set("filter", map[string]bool{"000111222": true, "000111224": true})
+		cache.Set("filter", marshal.SirenFilter{"000111222": true, "000111224": true})
 		var output = marshal.RunParser(Parser, cache, testData)
 		assert.Equal(t, 2, len(output.Tuples))
 		lastEvent := output.Events[len(output.Events)-1]

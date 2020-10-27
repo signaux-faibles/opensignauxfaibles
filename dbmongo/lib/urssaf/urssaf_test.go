@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
+	"github.com/stretchr/testify/assert"
 )
 
 var update = flag.Bool("update", false, "Update the expected test values in golden file")
@@ -62,9 +63,16 @@ func TestProcol(t *testing.T) {
 
 func TestEffectif(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedEffectif.json")
-	var testData = filepath.Join("testData", "effectifTestData.csv")
+	var testData = filepath.Join("testData", "effectifTestData.csv") // Données pour 3 établissements
 	cache := marshal.NewCache()
 	marshal.TestParserOutput(t, ParserEffectif, cache, testData, golden, *update)
+
+	t.Run("Effectif n'est importé que si inclus dans le filtre", func(t *testing.T) {
+		cache := marshal.NewCache()
+		cache.Set("filter", marshal.SirenFilter{"149285238": true}) // SIREN correspondant à un des 3 SIRETs mentionnés dans le fichier
+		output := marshal.RunParser(ParserEffectif, cache, testData)
+		assert.Equal(t, 111, len(output.Tuples))
+	})
 }
 
 func TestEffectifEnt(t *testing.T) {
