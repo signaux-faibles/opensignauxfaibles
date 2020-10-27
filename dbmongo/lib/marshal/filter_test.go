@@ -30,7 +30,7 @@ func TestIncludes(t *testing.T) {
 	}
 
 	for ind, tc := range testCases {
-		included := tc.filter.Includes(tc.siret)
+		included := tc.filter.includes(tc.siret)
 		expected := tc.expected
 		if included != expected {
 			t.Fatalf("Includes failed on test %d", ind)
@@ -109,14 +109,14 @@ func TestReadFilter(t *testing.T) {
 func TestNilFilter(t *testing.T) {
 	filter := GetSirenFilterFromCache(Cache{}) // => nil
 	assert.Equal(t, true, filter == nil)
-	assert.Equal(t, false, filter.Includes("012345678"))
+	assert.Equal(t, false, filter.includes("012345678"))
 	assert.Equal(t, false, filter.Skips("012345678"))
 	assert.Equal(t, false, filter.Skips("912345678"))
 	cache := Cache{}
 	cache.Set("filter", SirenFilter{"012345678": true})
 	filter = GetSirenFilterFromCache(cache) // => not nil
 	assert.Equal(t, false, filter == nil)
-	assert.Equal(t, true, filter.Includes("012345678"))
+	assert.Equal(t, true, filter.includes("012345678"))
 	assert.Equal(t, false, filter.Skips("012345678"))
 	assert.Equal(t, true, filter.Skips("912345678"))
 }
