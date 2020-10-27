@@ -95,6 +95,10 @@ func TestReadSiretMapping(t *testing.T) {
 		// With filtered siret
 		{`0;1;2;3;4;5;6;7
 		;;"abc";;;"01234567891011";;"1150101"`, stdFilterCache, false, stdExpected2},
+		// With two entries, including excluded siret
+		{`0;1;2;3;4;5;6;7
+		;;"abc";;;"01234567891011";;"1150101"
+		;;"abc";;;"87654321091011";;""`, stdFilterCache, false, stdExpected2},
 		// With two entries 1
 		{`0;1;2;3;4;5;6;7
 		;;"abc";;;"01234567891011";;"1150101"
