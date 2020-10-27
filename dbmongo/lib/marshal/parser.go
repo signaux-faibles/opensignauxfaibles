@@ -31,7 +31,6 @@ type Tuple interface {
 
 // ParseFilesFromBatch parse tous les fichiers spécifiés dans batch pour un parseur donné.
 func ParseFilesFromBatch(cache Cache, batch *base.AdminBatch, parser Parser) (chan Tuple, chan Event) {
-	fullOutputChannel := make(chan Tuple)
 	outputChannel := make(chan Tuple)
 	eventChannel := make(chan Event)
 	event := Event{
@@ -40,27 +39,29 @@ func ParseFilesFromBatch(cache Cache, batch *base.AdminBatch, parser Parser) (ch
 	}
 
 	go func() {
-		filter := GetSirenFilterFromCache(cache)
-		for tuple := range fullOutputChannel {
-			if !filter.Skips(tuple.Key()) {
-				outputChannel <- tuple
-			}
-		}
-		close(outputChannel)
-	}()
-
-	go func() {
 		for _, path := range batch.Files[parser.FileType] {
 			tracker := gournal.NewTracker(
 				map[string]string{"path": path, "batchKey": batch.ID.Key},
 				TrackerReports)
 
 			event.Info(path + ": ouverture")
-			parser.FileParser(viper.GetString("APP_DATA")+path, &cache, batch, &tracker, fullOutputChannel)
+			fullOutputChannel := make(chan Tuple)
+			go func() {
+				parser.FileParser(viper.GetString("APP_DATA")+path, &cache, batch, &tracker, fullOutputChannel)
+				defer close(fullOutputChannel)
+			}()
+			filter := GetSirenFilterFromCache(cache)
+			for tuple := range fullOutputChannel {
+				if !filter.Skips(tuple.Key()) {
+					outputChannel <- tuple
+				} else {
+					tracker.Add(base.NewFilterNotice())
+				}
+			}
 			event.Info(tracker.Report("abstract"))
 		}
 		close(eventChannel)
-		close(fullOutputChannel)
+		close(outputChannel)
 	}()
 
 	return outputChannel, eventChannel
