@@ -2,6 +2,7 @@ package reporder
 
 import (
 	"encoding/csv"
+	"errors"
 	"io"
 	"os"
 	"time"
@@ -9,6 +10,7 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sfregexp"
 
 	"github.com/signaux-faibles/gournal"
 )
@@ -63,9 +65,10 @@ func parseReporderFile(reader *csv.Reader, filter marshal.SirenFilter, tracker *
 			tracker.Add(err)
 		} else {
 			reporder := parseReporderLine(row, tracker)
-			filtered, err := filter.IsFiltered(reporder.Siret)
-			tracker.Add(err)
-			if !tracker.HasErrorInCurrentCycle() && !filtered {
+			if !sfregexp.ValidSiret(reporder.Siret) {
+				tracker.Add(errors.New("siret invalide : " + reporder.Siret))
+			}
+			if !tracker.HasErrorInCurrentCycle() && (filter == nil || filter.Includes(reporder.Siret)) {
 				outputChannel <- reporder
 			}
 		}

@@ -78,17 +78,10 @@ func parseSireneULFile(reader *csv.Reader, filter marshal.SirenFilter, tracker *
 			break
 		} else if err != nil {
 			tracker.Add(err)
-		} else {
-			validSiren := sfregexp.RegexpDict["siren"].MatchString(row[0])
-			if !validSiren {
-				tracker.Add(errors.New("siren invalide : " + row[0]))
-			} else {
-				filtered, err := filter.IsFiltered(row[0])
-				tracker.Add(err)
-				if !filtered {
-					outputChannel <- parseSireneUlLine(row, tracker)
-				}
-			}
+		} else if !sfregexp.ValidSiren(row[0]) {
+			tracker.Add(errors.New("siren invalide : " + row[0]))
+		} else if filter == nil || filter.Includes(row[0]) {
+			outputChannel <- parseSireneUlLine(row, tracker)
 		}
 		tracker.Next()
 	}

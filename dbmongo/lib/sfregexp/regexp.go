@@ -9,3 +9,13 @@ var RegexpDict = map[string]*regexp.Regexp{
 	"notDigit": regexp.MustCompile("[^0-9]"),
 	"nil":      regexp.MustCompile(".*"),
 }
+
+// ValidSiret retourne `true` si le numéro SIRET est valide.
+func ValidSiret(siret string) bool {
+	return RegexpDict["siret"].MatchString(siret)
+}
+
+// ValidSiren retourne `true` si le numéro SIREN est valide.
+func ValidSiren(siren string) bool {
+	return RegexpDict["siren"].MatchString(siren)
+}
