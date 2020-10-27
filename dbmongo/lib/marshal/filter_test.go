@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
+	"github.com/stretchr/testify/assert"
 )
 
 var update = flag.Bool("update", false, "Update the expected test values in golden file") // please keep this line until https://github.com/kubernetes-sigs/service-catalog/issues/2319#issuecomment-425200065 is fixed
@@ -103,4 +104,19 @@ func TestReadFilter(t *testing.T) {
 	if err == nil {
 		t.Fatalf("readFilter should fail on incorrect siren")
 	}
+}
+
+func TestNilFilter(t *testing.T) {
+	filter := GetSirenFilterFromCache(Cache{}) // => nil
+	assert.Equal(t, true, filter == nil)
+	assert.Equal(t, false, filter.Includes("012345678"))
+	assert.Equal(t, false, filter.Skips("012345678"))
+	assert.Equal(t, false, filter.Skips("912345678"))
+	cache := Cache{}
+	cache.Set("filter", SirenFilter{"012345678": true})
+	filter = GetSirenFilterFromCache(cache) // => not nil
+	assert.Equal(t, false, filter == nil)
+	assert.Equal(t, true, filter.Includes("012345678"))
+	assert.Equal(t, false, filter.Skips("012345678"))
+	assert.Equal(t, true, filter.Skips("912345678"))
 }

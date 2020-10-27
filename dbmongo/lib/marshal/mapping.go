@@ -162,7 +162,7 @@ func readSiretMapping(
 		compte := row[compteIndex]
 		siret := row[siretIndex]
 
-		if sfregexp.ValidSiret(siret) && (filter == nil || filter.Includes(siret)) {
+		if sfregexp.ValidSiret(siret) && !filter.Skips(siret) {
 			//siret valide
 			addSiretMapping[compte] = append(addSiretMapping[compte], SiretDate{siret, fermeture})
 			// Tri des sirets pour chaque compte par ordre croissant de date de fermeture

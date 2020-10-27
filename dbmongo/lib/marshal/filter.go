@@ -17,6 +17,12 @@ import (
 // SirenFilter liste les numéros SIREN d'entreprise et établissements à exclure des traitements.
 type SirenFilter map[string]bool
 
+// Skips retourne `false` si le numéro SIREN/SIRET peut être traité,
+// car il est inclus dans le Filtre, ou car il n'y a pas de filtre.
+func (filter *SirenFilter) Skips(siretOrSiren string) bool {
+	return *filter != nil && !filter.Includes(siretOrSiren)
+}
+
 // Includes retourne `true` si le numéro SIREN/SIRET est inclus, c.a.d. à traiter.
 func (filter SirenFilter) Includes(siretOrSiren string) bool {
 	if len(siretOrSiren) >= 9 {

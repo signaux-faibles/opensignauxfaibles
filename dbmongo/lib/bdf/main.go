@@ -88,7 +88,7 @@ func parseBdfLine(row []string, tracker *gournal.Tracker, filter marshal.SirenFi
 		return BDF{}
 	}
 
-	if filter != nil && !filter.Includes(bdf.Siren) {
+	if filter.Skips(bdf.Siren) {
 		tracker.Add(base.NewFilterNotice())
 		return BDF{}
 	}

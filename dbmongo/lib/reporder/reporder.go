@@ -68,7 +68,7 @@ func parseReporderFile(reader *csv.Reader, filter marshal.SirenFilter, tracker *
 			if !sfregexp.ValidSiret(reporder.Siret) {
 				tracker.Add(errors.New("siret invalide : " + reporder.Siret))
 			}
-			if !tracker.HasErrorInCurrentCycle() && (filter == nil || filter.Includes(reporder.Siret)) {
+			if !tracker.HasErrorInCurrentCycle() && !filter.Skips(reporder.Siret) {
 				outputChannel <- reporder
 			}
 		}

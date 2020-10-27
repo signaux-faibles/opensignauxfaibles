@@ -68,7 +68,7 @@ func parseEllisphereSheet(sheet *xlsx.Sheet, filter marshal.SirenFilter, tracker
 			if !sfregexp.ValidSiren(ellisphere.Siren) {
 				tracker.Add(errors.New("siren invalide : " + ellisphere.Siren))
 			}
-			if err == nil && (filter == nil || filter.Includes(ellisphere.Siren)) {
+			if err == nil && !filter.Skips(ellisphere.Siren) {
 				outputChannel <- ellisphere
 			}
 			tracker.Add(err)
