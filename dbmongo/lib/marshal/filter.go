@@ -17,7 +17,7 @@ import (
 // SirenFilter liste les numéros SIREN d'entreprise et établissements à exclure des traitements.
 type SirenFilter map[string]bool
 
-// IsFiltered determines if the siret must be filtered or not
+// IsFiltered valide le numéro SIREN/SIRET puis retourne `true` si il est à exclure.
 func (filter SirenFilter) IsFiltered(id string) (bool, error) {
 
 	validSiret := sfregexp.RegexpDict["siret"].MatchString(id)
@@ -30,11 +30,11 @@ func (filter SirenFilter) IsFiltered(id string) (bool, error) {
 	if filter == nil {
 		return false, nil
 	}
-	return !filter.FilterHas(id), nil
+	return !filter.Includes(id), nil
 }
 
-// FilterHas tells if the siret/siren is listed in the filter, or not.
-func (filter SirenFilter) FilterHas(siretOrSiren string) bool {
+// Includes retourne `true` si le numéro SIREN/SIRET est inclus, c.a.d. à traiter.
+func (filter SirenFilter) Includes(siretOrSiren string) bool {
 	if len(siretOrSiren) >= 9 {
 		return filter[siretOrSiren[0:9]]
 	}
