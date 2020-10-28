@@ -201,7 +201,7 @@ func parseSireneFile(reader *csv.Reader, filter marshal.SirenFilter, tracker *go
 			tracker.Add(err)
 		} else if !sfregexp.ValidSiren(row[f["siren"]]) {
 			tracker.Add(errors.New("siren invalide : " + row[f["siren"]]))
-		} else if !filter.Skips(row[f["siren"]]) {
+		} else {
 			outputChannel <- parseSireneLine(row, tracker)
 		}
 		tracker.Next()

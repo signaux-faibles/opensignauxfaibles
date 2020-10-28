@@ -111,7 +111,7 @@ func parseEffectifEntLine(periods []periodCol, row []string, idx colMapping, fil
 	siren := row[idx["siren"]]
 	if !sfregexp.ValidSiren(siren) {
 		tracker.Add(errors.New("Format de siren incorrect : " + siren))
-	} else if !filter.Skips(siren) {
+	} else {
 		for _, period := range periods {
 			value := row[period.colIndex]
 			if value != "" {

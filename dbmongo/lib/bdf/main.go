@@ -88,11 +88,6 @@ func parseBdfLine(row []string, tracker *gournal.Tracker, filter marshal.SirenFi
 		return BDF{}
 	}
 
-	if filter.Skips(bdf.Siren) {
-		tracker.Add(base.NewFilterNotice())
-		return BDF{}
-	}
-
 	var err error
 	bdf.Annee, err = misc.ParsePInt(row[field["année"]])
 	tracker.Add(err)

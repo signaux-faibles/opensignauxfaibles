@@ -37,21 +37,35 @@ func ParseFilesFromBatch(cache Cache, batch *base.AdminBatch, parser Parser) (ch
 		Code:    Code(parser.FileType),
 		Channel: eventChannel,
 	}
-
 	go func() {
 		for _, path := range batch.Files[parser.FileType] {
 			tracker := gournal.NewTracker(
 				map[string]string{"path": path, "batchKey": batch.ID.Key},
 				TrackerReports)
-
-			parser.FileParser(viper.GetString("APP_DATA")+path, &cache, batch, &tracker, outputChannel)
+			filePath := viper.GetString("APP_DATA") + path
+			runParserWithSirenFilter(parser, filePath, &cache, batch, &tracker, outputChannel)
 			event.Info(tracker.Report("abstract"))
 		}
 		close(outputChannel)
 		close(eventChannel)
 	}()
-
 	return outputChannel, eventChannel
+}
+
+func runParserWithSirenFilter(parser Parser, filePath string, cache *Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan Tuple) {
+	filter := GetSirenFilterFromCache(*cache)
+	fullOutputChannel := make(chan Tuple)
+	go func() {
+		parser.FileParser(filePath, cache, batch, tracker, fullOutputChannel)
+		defer close(fullOutputChannel)
+	}()
+	for tuple := range fullOutputChannel {
+		if !filter.Skips(tuple.Key()) {
+			outputChannel <- tuple
+		} else {
+			tracker.Add(base.NewFilterNotice())
+		}
+	}
 }
 
 // GetJSON sérialise un tuple au format JSON.
