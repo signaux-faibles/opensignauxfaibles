@@ -46,7 +46,7 @@ func ParseCompteFile(filePath string, cache *marshal.Cache, batch *base.AdminBat
 
 		// return line parser
 		return func() []marshal.Tuple {
-			if accountIndex > len(mapping) {
+			if accountIndex >= len(mapping) {
 				return nil // EOF
 			}
 			account := accounts[accountIndex]
