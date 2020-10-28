@@ -130,14 +130,14 @@ func ParseFile(path string, cache *marshal.Cache, batch *base.AdminBatch, tracke
 		tracker.Add(errors.New("echec de récupération de sortie standard du script: " + err.Error()))
 		return nil
 	}
-	defer stdout.Close()
+	// defer stdout.Close() // TODO: à réactiver
 
 	stderr, err := cmd.StderrPipe()
 	if err != nil {
 		tracker.Add(errors.New("echec de récupération de sortie d'erreurs du script: " + err.Error()))
 		return nil
 	}
-	defer stderr.Close()
+	// defer stderr.Close() // TODO: à réactiver
 
 	// turn lines of standard error output into events, to help debugging
 	go func() {
@@ -149,11 +149,12 @@ func ParseFile(path string, cache *marshal.Cache, batch *base.AdminBatch, tracke
 
 	// start preprocessing script + report non-zero exit code in case of failure
 	cmd.Start()
-	defer func() {
-		if err := cmd.Wait(); err != nil {
-			tracker.Add(errors.New("[convert_diane.sh] failed with " + err.Error()))
-		}
-	}()
+	// TODO: à réactiver:
+	// defer func() {
+	// 	if err := cmd.Wait(); err != nil {
+	// 		tracker.Add(errors.New("[convert_diane.sh] failed with " + err.Error()))
+	// 	}
+	// }()
 
 	// init csv reader and skip header
 	reader := csv.NewReader(stdout)

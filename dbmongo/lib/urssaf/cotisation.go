@@ -54,7 +54,7 @@ func ParseCotisationFile(filePath string, cache *marshal.Cache, batch *base.Admi
 		tracker.Add(err)
 		return nil
 	}
-	defer file.Close()
+	// defer file.Close() // TODO: à réactiver
 	reader := csv.NewReader(bufio.NewReader(file))
 	reader.Comma = ';'
 	reader.LazyQuotes = true
