@@ -57,35 +57,34 @@ func ParseFile(path string, cache *marshal.Cache, batch *base.AdminBatch, tracke
 		return nil
 	}
 
-	returned := false
-	tuples := parseEllisphereSheet(xlsxFile.Sheets[0], filter, tracker)
+	tupleGenerator := parseEllisphereSheet(xlsxFile.Sheets[0], filter, tracker)
 
 	return func() []marshal.Tuple {
-		if !returned {
-			returned = true
-			return tuples
-		}
-		return nil // EOF
+		tuples := <-tupleGenerator
+		return tuples
 	}
 }
 
-func parseEllisphereSheet(sheet *xlsx.Sheet, filter marshal.SirenFilter, tracker *gournal.Tracker) []marshal.Tuple {
-	tuples := []marshal.Tuple{}
-	sheet.ForEachRow(
-		func(row *xlsx.Row) error {
-			var ellisphere Ellisphere
-			err := row.ReadStruct(&ellisphere)
-
-			if !sfregexp.ValidSiren(ellisphere.Siren) {
-				tracker.Add(errors.New("siren invalide : " + ellisphere.Siren))
-			}
-			if err == nil {
-				tuples = append(tuples, ellisphere)
-			}
-			tracker.Add(err)
-			tracker.Next()
-			return nil
-		},
-	)
-	return tuples
+func parseEllisphereSheet(sheet *xlsx.Sheet, filter marshal.SirenFilter, tracker *gournal.Tracker) chan []marshal.Tuple {
+	yield := make(chan []marshal.Tuple)
+	go func() {
+		sheet.ForEachRow(
+			func(row *xlsx.Row) error {
+				var ellisphere Ellisphere
+				err := row.ReadStruct(&ellisphere)
+				if !sfregexp.ValidSiren(ellisphere.Siren) {
+					tracker.Add(errors.New("siren invalide : " + ellisphere.Siren))
+				}
+				tracker.Add(err)
+				if err == nil {
+					yield <- []marshal.Tuple{ellisphere}
+				} else {
+					yield <- []marshal.Tuple{}
+				}
+				return nil
+			},
+		)
+		yield <- nil
+	}()
+	return yield
 }
