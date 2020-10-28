@@ -4,129 +4,6 @@
 		"_id" : ObjectId("________ObjectId________"),
 		"value" : {
 			"scope" : "etablissement",
-			"key" : "",
-			"batch" : {
-				"1910" : {
-					"compte" : {
-						"______________Hash______________" : {
-							"siret" : "",
-							"numero_compte" : "450359886246036238",
-							"periode" : ISODate("_______ Date _______")
-						},
-						"______________Hash______________" : {
-							"siret" : "",
-							"numero_compte" : "450359886246036238",
-							"periode" : ISODate("_______ Date _______")
-						},
-						"______________Hash______________" : {
-							"siret" : "",
-							"numero_compte" : "450359886246036238",
-							"periode" : ISODate("_______ Date _______")
-						},
-						"______________Hash______________" : {
-							"siret" : "",
-							"numero_compte" : "450359886246036238",
-							"periode" : ISODate("_______ Date _______")
-						},
-						"______________Hash______________" : {
-							"siret" : "",
-							"numero_compte" : "450359886246036238",
-							"periode" : ISODate("_______ Date _______")
-						},
-						"______________Hash______________" : {
-							"siret" : "",
-							"numero_compte" : "450359886246036238",
-							"periode" : ISODate("_______ Date _______")
-						},
-						"______________Hash______________" : {
-							"siret" : "",
-							"numero_compte" : "450359886246036238",
-							"periode" : ISODate("_______ Date _______")
-						},
-						"______________Hash______________" : {
-							"siret" : "",
-							"numero_compte" : "450359886246036238",
-							"periode" : ISODate("_______ Date _______")
-						},
-						"______________Hash______________" : {
-							"siret" : "",
-							"numero_compte" : "450359886246036238",
-							"periode" : ISODate("_______ Date _______")
-						},
-						"______________Hash______________" : {
-							"siret" : "",
-							"numero_compte" : "450359886246036238",
-							"periode" : ISODate("_______ Date _______")
-						},
-						"______________Hash______________" : {
-							"siret" : "",
-							"numero_compte" : "450359886246036238",
-							"periode" : ISODate("_______ Date _______")
-						},
-						"______________Hash______________" : {
-							"siret" : "",
-							"numero_compte" : "450359886246036238",
-							"periode" : ISODate("_______ Date _______")
-						},
-						"______________Hash______________" : {
-							"siret" : "",
-							"numero_compte" : "450359886246036238",
-							"periode" : ISODate("_______ Date _______")
-						},
-						"______________Hash______________" : {
-							"siret" : "",
-							"numero_compte" : "450359886246036238",
-							"periode" : ISODate("_______ Date _______")
-						},
-						"______________Hash______________" : {
-							"siret" : "",
-							"numero_compte" : "450359886246036238",
-							"periode" : ISODate("_______ Date _______")
-						},
-						"______________Hash______________" : {
-							"siret" : "",
-							"numero_compte" : "450359886246036238",
-							"periode" : ISODate("_______ Date _______")
-						},
-						"______________Hash______________" : {
-							"siret" : "",
-							"numero_compte" : "450359886246036238",
-							"periode" : ISODate("_______ Date _______")
-						},
-						"______________Hash______________" : {
-							"siret" : "",
-							"numero_compte" : "450359886246036238",
-							"periode" : ISODate("_______ Date _______")
-						},
-						"______________Hash______________" : {
-							"siret" : "",
-							"numero_compte" : "450359886246036238",
-							"periode" : ISODate("_______ Date _______")
-						},
-						"______________Hash______________" : {
-							"siret" : "",
-							"numero_compte" : "450359886246036238",
-							"periode" : ISODate("_______ Date _______")
-						},
-						"______________Hash______________" : {
-							"siret" : "",
-							"numero_compte" : "450359886246036238",
-							"periode" : ISODate("_______ Date _______")
-						},
-						"______________Hash______________" : {
-							"siret" : "",
-							"numero_compte" : "450359886246036238",
-							"periode" : ISODate("_______ Date _______")
-						}
-					}
-				}
-			}
-		}
-	},
-	{
-		"_id" : ObjectId("________ObjectId________"),
-		"value" : {
-			"scope" : "etablissement",
 			"key" : "00000000000000",
 			"batch" : {
 				"1910" : {
@@ -5055,8 +4932,31 @@
 		"event" : {
 			"headSkipped" : [ ],
 			"headRejected" : [ ],
-			"headFatal" : [ ],
-			"summary" : "/../lib/urssaf/testData/comptesTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
+			"headFatal" : [
+				"Cycle 2: siret invalide : ",
+				"Cycle 2: siret invalide : ",
+				"Cycle 2: siret invalide : ",
+				"Cycle 2: siret invalide : ",
+				"Cycle 2: siret invalide : ",
+				"Cycle 2: siret invalide : ",
+				"Cycle 2: siret invalide : ",
+				"Cycle 2: siret invalide : ",
+				"Cycle 2: siret invalide : ",
+				"Cycle 2: siret invalide : ",
+				"Cycle 2: siret invalide : ",
+				"Cycle 2: siret invalide : ",
+				"Cycle 2: siret invalide : ",
+				"Cycle 2: siret invalide : ",
+				"Cycle 2: siret invalide : ",
+				"Cycle 2: siret invalide : ",
+				"Cycle 2: siret invalide : ",
+				"Cycle 2: siret invalide : ",
+				"Cycle 2: siret invalide : ",
+				"Cycle 2: siret invalide : ",
+				"Cycle 2: siret invalide : ",
+				"Cycle 2: siret invalide : "
+			],
+			"summary" : "/../lib/urssaf/testData/comptesTestData.csv: intégration terminée, 3 lignes traitées, 22 erreures fatales, 0 rejets, 0 lignes filtrées, -19 lignes valides",
 			"batchKey" : "1910"
 		},
 		"parserCode" : "admin_urssaf"
