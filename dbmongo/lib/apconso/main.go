@@ -42,26 +42,23 @@ func (apconso APConso) Scope() string {
 // Parser expose le parseur et le type de fichier qu'il supporte.
 var Parser = marshal.Parser{FileType: "apconso", FileParser: ParseFile}
 
+type colMapping map[string]int
+
 // ParseFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.LineParser {
 	file, err := os.Open(filePath)
 	if err != nil {
 		tracker.Add(err)
-		return
+		return nil
 	}
 	defer file.Close()
 	reader := csv.NewReader(file)
 	reader.Comma = ','
-	parseApConsoFile(reader, tracker, outputChannel)
-}
 
-type colMapping map[string]int
-
-func parseApConsoFile(reader *csv.Reader, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
 	header, err := reader.Read()
 	if err != nil {
 		tracker.Add(err)
-		return
+		return nil
 	}
 	var idx = colMapping{}
 	idx["ID"] = misc.SliceIndex(len(header), func(i int) bool { return header[i] == "ID_DA" })
@@ -73,23 +70,23 @@ func parseApConsoFile(reader *csv.Reader, tracker *gournal.Tracker, outputChanne
 
 	if misc.SliceMin(idx["ID"], idx["Siret"], idx["Periode"], idx["HeureConsommee"], idx["Montant"], idx["Effectif"]) == -1 {
 		tracker.Add(errors.New("entête non conforme, fichier ignoré"))
-		return
+		return nil
 	}
 
-	for {
+	return func() []marshal.Tuple {
 		row, err := reader.Read()
 		if err == io.EOF {
-			break
+			return nil
 		} else if err != nil {
 			tracker.Add(err)
 		} else if len(row) > 0 {
 			// TODO: filtrer et/ou valider siret ?
 			apconso := parseApConsoLine(row, tracker, idx)
 			if !tracker.HasErrorInCurrentCycle() && apconso.Siret != "" {
-				outputChannel <- apconso
+				return []marshal.Tuple{apconso}
 			}
 		}
-		tracker.Next()
+		return []marshal.Tuple{}
 	}
 }
 

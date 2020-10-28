@@ -35,22 +35,44 @@ func (compte Compte) Type() string {
 var ParserCompte = marshal.Parser{FileType: "admin_urssaf", FileParser: ParseCompteFile}
 
 // ParseCompteFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseCompteFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+func ParseCompteFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.LineParser {
 	if len(batch.Files["admin_urssaf"]) > 0 {
 		periodes := misc.GenereSeriePeriode(batch.Params.DateDebut, time.Now()) //[]time.Time
 		mapping, err := marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
 		tracker.Add(err)
-		for c := range mapping {
+
+		accounts := mapKeys(mapping)
+		accountIndex := 0
+
+		// return line parser
+		return func() []marshal.Tuple {
+			if accountIndex > len(mapping) {
+				return nil // EOF
+			}
+			account := accounts[accountIndex]
+			accountIndex++
+			var tuples []marshal.Tuple
 			for _, p := range periodes {
 				var err error
 				compte := Compte{}
-				compte.NumeroCompte = c
+				compte.NumeroCompte = account
 				compte.Periode = p
-				compte.Siret, err = marshal.GetSiret(c, &p, *cache, batch)
+				compte.Siret, err = marshal.GetSiret(account, &p, *cache, batch)
 				tracker.Add(base.NewCriticError(err, "erreur"))
-				outputChannel <- compte
+				tuples = append(tuples, compte)
 			}
-			tracker.Next()
+			return tuples
 		}
 	}
+	return nil
+}
+
+func mapKeys(mymap marshal.Comptes) []string {
+	keys := make([]string, len(mymap))
+	i := 0
+	for k := range mymap {
+		keys[i] = k
+		i++
+	}
+	return keys
 }

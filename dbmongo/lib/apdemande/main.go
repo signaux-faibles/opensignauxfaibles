@@ -52,27 +52,24 @@ func (apdemande APDemande) Scope() string {
 // Parser expose le parseur et le type de fichier qu'il supporte.
 var Parser = marshal.Parser{FileType: "apdemande", FileParser: ParseFile}
 
+type colMapping map[string]int
+
 // ParseFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.LineParser {
 	file, err := os.Open(filePath)
 	if err != nil {
 		tracker.Add(err)
-		return
+		return nil
 	}
 	defer file.Close()
 	reader := csv.NewReader(file)
 	reader.Comma = ','
 	reader.LazyQuotes = true
-	parseApDemandeFile(reader, tracker, outputChannel)
-}
 
-type colMapping map[string]int
-
-func parseApDemandeFile(reader *csv.Reader, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
 	header, err := reader.Read()
 	if err != nil {
 		tracker.Add(err)
-		return
+		return nil
 	}
 
 	var idx = colMapping{}
@@ -97,13 +94,14 @@ func parseApDemandeFile(reader *csv.Reader, tracker *gournal.Tracker, outputChan
 	for _, field := range fields {
 		if _, found := idx[field]; !found {
 			tracker.Add(errors.New("Colonne " + field + " non trouvée. Abandon."))
-			return
+			return nil
 		}
 	}
-	for {
+
+	return func() []marshal.Tuple {
 		row, err := reader.Read()
 		if err == io.EOF {
-			break
+			return nil
 		} else if err != nil {
 			tracker.Add(err)
 		} else if row[idx["ETAB_SIRET"]] == "" {
@@ -112,10 +110,10 @@ func parseApDemandeFile(reader *csv.Reader, tracker *gournal.Tracker, outputChan
 			// TODO: filtrer et/ou valider siret ?
 			apdemande := parseApDemandeLine(row, tracker, idx)
 			if !tracker.HasErrorInCurrentCycle() {
-				outputChannel <- apdemande
+				return []marshal.Tuple{apdemande}
 			}
 		}
-		tracker.Next()
+		return []marshal.Tuple{}
 	}
 }
 

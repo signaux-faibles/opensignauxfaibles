@@ -116,6 +116,71 @@ func (diane Diane) Scope() string {
 	return "entreprise"
 }
 
+// Parser expose le parseur et le type de fichier qu'il supporte.
+var Parser = marshal.Parser{FileType: "diane", FileParser: ParseFile}
+
+// ParseFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
+func ParseFile(path string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.LineParser {
+
+	cmdPath := []string{filepath.Join(viper.GetString("SCRIPTDIANE_DIR"), "convert_diane.sh"), path}
+	cmd := exec.Command("/bin/bash", cmdPath...)
+
+	stdout, err := cmd.StdoutPipe()
+	if err != nil {
+		tracker.Add(errors.New("echec de récupération de sortie standard du script: " + err.Error()))
+		return nil
+	}
+	defer stdout.Close()
+
+	stderr, err := cmd.StderrPipe()
+	if err != nil {
+		tracker.Add(errors.New("echec de récupération de sortie d'erreurs du script: " + err.Error()))
+		return nil
+	}
+	defer stderr.Close()
+
+	// turn lines of standard error output into events, to help debugging
+	go func() {
+		scanner := bufio.NewScanner(stderr)
+		for scanner.Scan() {
+			tracker.Add(errors.New("[convert_diane.sh stderr] " + scanner.Text()))
+		}
+	}()
+
+	// start preprocessing script + report non-zero exit code in case of failure
+	cmd.Start()
+	defer func() {
+		if err := cmd.Wait(); err != nil {
+			tracker.Add(errors.New("[convert_diane.sh] failed with " + err.Error()))
+		}
+	}()
+
+	// init csv reader and skip header
+	reader := csv.NewReader(stdout)
+	reader.Comma = ';'
+	reader.LazyQuotes = true
+	_, err = reader.Read() // Discard header
+	if err != nil {
+		tracker.Add(errors.New("echec de lecture de l'en-tête du fichier en sortie du script: " + err.Error()))
+		return nil
+	}
+
+	return func() []marshal.Tuple {
+		row, err := reader.Read()
+		if err == io.EOF {
+			return nil
+		} else if err != nil {
+			tracker.Add(err)
+		} else if len(row) < 83 {
+			tracker.Add(errors.New("Ligne invalide"))
+		} else {
+			// TODO: filtrer et/ou valider siret ?
+			return []marshal.Tuple{parseDianeRow(row)}
+		}
+		return []marshal.Tuple{}
+	}
+}
+
 // parseDianeRow construit un objet Diane à partir d'une ligne de valeurs récupérée depuis un fichier
 func parseDianeRow(row []string) (diane Diane) {
 	if i, err := strconv.Atoi(row[0]); err == nil {
@@ -353,73 +418,3 @@ func parseDianeRow(row []string) (diane Diane) {
 	}
 	return diane
 }
-
-// parseDianeRow génère des objets Diane à partir d'un fichier
-func parseDianeFile(batch *base.AdminBatch, path string, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
-
-	cmdPath := []string{filepath.Join(viper.GetString("SCRIPTDIANE_DIR"), "convert_diane.sh"), path}
-	cmd := exec.Command("/bin/bash", cmdPath...)
-
-	stdout, err := cmd.StdoutPipe()
-	if err != nil {
-		tracker.Add(errors.New("echec de récupération de sortie standard du script: " + err.Error()))
-		return
-	}
-	defer stdout.Close()
-
-	stderr, err := cmd.StderrPipe()
-	if err != nil {
-		tracker.Add(errors.New("echec de récupération de sortie d'erreurs du script: " + err.Error()))
-		return
-	}
-	defer stderr.Close()
-
-	// turn lines of standard error output into events, to help debugging
-	go func() {
-		scanner := bufio.NewScanner(stderr)
-		for scanner.Scan() {
-			tracker.Add(errors.New("[convert_diane.sh stderr] " + scanner.Text()))
-		}
-	}()
-
-	// start preprocessing script + report non-zero exit code in case of failure
-	cmd.Start()
-	defer func() {
-		if err := cmd.Wait(); err != nil {
-			tracker.Add(errors.New("[convert_diane.sh] failed with " + err.Error()))
-		}
-	}()
-
-	// init csv reader and skip header
-	reader := csv.NewReader(stdout)
-	reader.Comma = ';'
-	reader.LazyQuotes = true
-	_, err = reader.Read() // Discard header
-	if err != nil {
-		tracker.Add(errors.New("echec de lecture de l'en-tête du fichier en sortie du script: " + err.Error()))
-		return
-	}
-
-	// process rows of data
-	for {
-		row, err := reader.Read()
-		if err == io.EOF {
-			break
-		} else if err != nil {
-			tracker.Add(err)
-		} else if len(row) < 83 {
-			tracker.Add(errors.New("Ligne invalide"))
-		} else {
-			outputChannel <- parseDianeRow(row)
-		}
-		tracker.Next()
-	}
-}
-
-// ParseFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseFile(path string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
-	parseDianeFile(batch, path, tracker, outputChannel)
-}
-
-// Parser expose le parseur et le type de fichier qu'il supporte.
-var Parser = marshal.Parser{FileType: "diane", FileParser: ParseFile}

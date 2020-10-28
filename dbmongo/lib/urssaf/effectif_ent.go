@@ -63,24 +63,21 @@ func parseEffectifPeriod(fields []string) []periodCol {
 var ParserEffectifEnt = marshal.Parser{FileType: "effectif_ent", FileParser: ParseEffectifEntFile}
 
 // ParseEffectifEntFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseEffectifEntFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+func ParseEffectifEntFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.LineParser {
 	filter := marshal.GetSirenFilterFromCache(*cache)
 	file, err := os.Open(filePath)
 	if err != nil {
 		tracker.Add(err)
-		return
+		return nil
 	}
 	defer file.Close()
 	reader := csv.NewReader(bufio.NewReader(file))
 	reader.Comma = ';'
-	parseEffectifEntFile(reader, filter, tracker, outputChannel)
-}
 
-func parseEffectifEntFile(reader *csv.Reader, filter marshal.SirenFilter, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
 	fields, err := reader.Read()
 	if err != nil {
 		tracker.Add(err)
-		return
+		return nil
 	}
 
 	var idx = colMapping{
@@ -90,20 +87,22 @@ func parseEffectifEntFile(reader *csv.Reader, filter marshal.SirenFilter, tracke
 	// Dans quels champs lire l'effectifEnt
 	periods := parseEffectifPeriod(fields)
 
-	for {
+	// return line parser
+	return func() []marshal.Tuple {
+		var tuples []marshal.Tuple
 		row, err := reader.Read()
 		if err == io.EOF {
-			break
+			return nil
 		} else if err != nil {
 			tracker.Add(err)
 		} else {
-			effectifs := parseEffectifEntLine(periods, row, idx, filter, tracker)
-			for _, eff := range effectifs {
-				outputChannel <- eff
+			for _, v := range parseEffectifEntLine(periods, row, idx, filter, tracker) {
+				tuples = append(tuples, v)
 			}
 		}
-		tracker.Next()
+		return tuples
 	}
+
 }
 
 func parseEffectifEntLine(periods []periodCol, row []string, idx colMapping, filter marshal.SirenFilter, tracker *gournal.Tracker) []EffectifEnt {

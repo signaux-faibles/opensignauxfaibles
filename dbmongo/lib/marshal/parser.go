@@ -3,11 +3,13 @@ package marshal
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"time"
 
 	"github.com/signaux-faibles/gournal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sfregexp"
 	"github.com/spf13/viper"
 )
 
@@ -19,14 +21,34 @@ type Parser = struct {
 
 type filePath = string
 
+// LineParser est une fonction permettant de parser la prochaine ligne d'un fichier
+type LineParser func() []Tuple
+
 // ParseFile fonction de traitement de données en entrée
-type ParseFile func(filePath, *Cache, *base.AdminBatch, *gournal.Tracker, chan Tuple)
+type ParseFile func(filePath, *Cache, *base.AdminBatch, *gournal.Tracker) LineParser
 
 // Tuple unité de donnée à insérer dans un type
 type Tuple interface {
 	Key() string
 	Scope() string
 	Type() string
+}
+
+func isValid(tuple Tuple) (bool, error) {
+	scope := tuple.Scope()
+	key := tuple.Key()
+	if scope == "entreprise" {
+		if !sfregexp.ValidSiren(key) {
+			return false, errors.New("siren invalide : " + key)
+		}
+		return true, nil
+	} else if scope == "etablissement" {
+		if !sfregexp.ValidSiret(key) {
+			return false, errors.New("siret invalide : " + key)
+		}
+		return true, nil
+	}
+	return false, errors.New("tuple sans scope")
 }
 
 // ParseFilesFromBatch parse tous les fichiers spécifiés dans batch pour un parseur donné.
@@ -54,17 +76,25 @@ func ParseFilesFromBatch(cache Cache, batch *base.AdminBatch, parser Parser) (ch
 
 func runParserWithSirenFilter(parser Parser, filePath string, cache *Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan Tuple) {
 	filter := GetSirenFilterFromCache(*cache)
-	fullOutputChannel := make(chan Tuple)
-	go func() {
-		parser.FileParser(filePath, cache, batch, tracker, fullOutputChannel)
-		defer close(fullOutputChannel)
-	}()
-	for tuple := range fullOutputChannel {
-		if !filter.Skips(tuple.Key()) {
-			outputChannel <- tuple
-		} else {
-			tracker.Add(base.NewFilterNotice())
+	parseLine := parser.FileParser(filePath, cache, batch, tracker)
+	if parseLine == nil {
+		return
+	}
+	for {
+		tuples := parseLine()
+		if tuples == nil {
+			break
 		}
+		for _, tuple := range tuples {
+			if _, err := isValid(tuple); err != nil {
+				tracker.Add(err)
+			} else if filter.Skips(tuple.Key()) {
+				tracker.Add(base.NewFilterNotice())
+			} else {
+				outputChannel <- tuple
+			}
+		}
+		tracker.Next()
 	}
 }
 

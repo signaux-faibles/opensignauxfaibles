@@ -42,26 +42,23 @@ func (ccsf CCSF) Type() string {
 var ParserCCSF = marshal.Parser{FileType: "ccsf", FileParser: ParseCcsfFile}
 
 // ParseCcsfFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseCcsfFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+func ParseCcsfFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.LineParser {
 	comptes, err := marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
 	if err != nil {
 		tracker.Add(err)
-		return
+		return nil
 	}
 
 	file, err := os.Open(filePath)
 	if err != nil {
 		tracker.Add(err)
-		return
+		return nil
 	}
 	defer file.Close()
 
 	reader := csv.NewReader(bufio.NewReader(file))
 	reader.Comma = ';'
-	parseCcsfFile(reader, &comptes, tracker, outputChannel)
-}
 
-func parseCcsfFile(reader *csv.Reader, comptes *marshal.Comptes, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
 	reader.Read() // en-tête du fichier
 
 	var idx = colMapping{
@@ -71,19 +68,19 @@ func parseCcsfFile(reader *csv.Reader, comptes *marshal.Comptes, tracker *gourna
 		"Action":         5,
 	}
 
-	for {
+	return func() []marshal.Tuple {
 		row, err := reader.Read()
 		if err == io.EOF {
-			break
+			return nil
 		} else if err != nil {
 			tracker.Add(err)
 		} else {
-			ccsf := parseCcsfLine(row, tracker, comptes, idx)
+			ccsf := parseCcsfLine(row, tracker, &comptes, idx)
 			if !tracker.HasErrorInCurrentCycle() {
-				outputChannel <- ccsf
+				return []marshal.Tuple{ccsf}
 			}
 		}
-		tracker.Next()
+		return []marshal.Tuple{}
 	}
 }
 

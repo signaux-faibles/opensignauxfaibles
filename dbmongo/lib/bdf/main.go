@@ -51,18 +51,37 @@ func (bdf BDF) Scope() string {
 var Parser = marshal.Parser{FileType: "bdf", FileParser: ParseFile}
 
 // ParseFile extrait les tuples depuis un fichier BDF et génère un rapport Gournal.
-func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.LineParser {
 	filter := marshal.GetSirenFilterFromCache(*cache)
 	file, err := os.Open(filePath)
 	if err != nil {
 		tracker.Add(err)
-		return
+		return nil
 	}
 	defer file.Close()
 	reader := csv.NewReader(bufio.NewReader(file))
 	reader.Comma = ';'
 	reader.LazyQuotes = true
-	parseBdfFile(reader, filter, tracker, outputChannel)
+
+	// Lecture en-tête
+	_, err = reader.Read()
+	tracker.Add(err)
+
+	return func() []marshal.Tuple {
+		row, err := reader.Read()
+		if err == io.EOF {
+			return nil
+		} else if err != nil {
+			tracker.Add(err)
+		} else {
+			// TODO: filtrer et/ou valider siret ?
+			bdf := parseBdfLine(row, tracker, filter)
+			if !tracker.HasErrorInCurrentCycle() {
+				return []marshal.Tuple{bdf}
+			}
+		}
+		return []marshal.Tuple{}
+	}
 }
 
 var field = map[string]int{
@@ -158,26 +177,4 @@ func parseBdfLine(row []string, tracker *gournal.Tracker, filter marshal.SirenFi
 	}
 
 	return bdf
-}
-
-func parseBdfFile(reader *csv.Reader, filter marshal.SirenFilter, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
-	// Lecture en-tête
-	_, err := reader.Read()
-	tracker.Add(err)
-
-	for {
-		row, err := reader.Read()
-		if err == io.EOF {
-			break
-		} else if err != nil {
-			tracker.Add(err)
-		} else {
-			bdf := parseBdfLine(row, tracker, filter)
-			var errorInCurrentCycle = tracker.HasErrorInCurrentCycle()
-			if !errorInCurrentCycle {
-				outputChannel <- bdf
-			}
-		}
-		tracker.Next()
-	}
 }

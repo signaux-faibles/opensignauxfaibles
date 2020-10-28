@@ -56,31 +56,28 @@ type colMapping map[string]int
 var ParserDebit = marshal.Parser{FileType: "debit", FileParser: ParseDebitFile}
 
 // ParseDebitFile extrait les tuples depuis un fichier "débit" de l'URSSAF.
-func ParseDebitFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+func ParseDebitFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.LineParser {
 	comptes, err := marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
 	if err != nil {
 		tracker.Add(err)
-		return
+		return nil
 	}
 
 	file, err := os.Open(filePath)
 	if err != nil {
 		tracker.Add(err)
-		return
+		return nil
 	}
 	defer file.Close()
 
 	reader := csv.NewReader(bufio.NewReader(file))
 	reader.Comma = ';'
-	parseDebitFile(reader, &comptes, tracker, outputChannel)
-}
 
-func parseDebitFile(reader *csv.Reader, comptes *marshal.Comptes, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
 	// ligne de titre
 	fields, err := reader.Read()
 	if err != nil {
 		tracker.Add(err)
-		return
+		return nil
 	}
 
 	var idx = colMapping{
@@ -100,35 +97,34 @@ func parseDebitFile(reader *csv.Reader, comptes *marshal.Comptes, tracker *gourn
 	// montantMajorationsIndex := misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Montant majorations de retard en centimes" })
 	if misc.SliceMin(idx["dateTraitement"], idx["partOuvriere"], idx["partPatronale"], idx["numeroHistoriqueEcartNegatif"], idx["periode"], idx["etatCompte"], idx["numeroCompte"], idx["numeroEcartNegatif"], idx["codeProcedureCollective"], idx["codeOperationEcartNegatif"], idx["codeMotifEcartNegatif"]) < 0 {
 		tracker.Add(errors.New("CSV non conforme"))
-		return
+		return nil
 	}
 
 	var lineNumber = 0 // starting with the header
 	stopProgressLogger := marshal.LogProgress(&lineNumber)
 	defer stopProgressLogger()
 
-	for {
+	return func() []marshal.Tuple {
 		lineNumber++
 		row, err := reader.Read()
 		if err == io.EOF {
-			break
+			return nil
 		} else if err != nil {
 			tracker.Add(err)
 		} else {
 			period, _ := marshal.UrssafToPeriod(row[idx["periode"]])
 			date := period.Start
 
-			if siret, err := marshal.GetSiretFromComptesMapping(row[idx["numeroCompte"]], &date, *comptes); err == nil {
+			if siret, err := marshal.GetSiretFromComptesMapping(row[idx["numeroCompte"]], &date, comptes); err == nil {
 				debit := parseDebitLine(siret, row, tracker, idx)
 				if !tracker.HasErrorInCurrentCycle() {
-					outputChannel <- debit
+					return []marshal.Tuple{debit}
 				}
 			} else {
 				tracker.Add(base.NewFilterError(err))
 			}
 		}
-
-		tracker.Next()
+		return []marshal.Tuple{}
 	}
 }
 

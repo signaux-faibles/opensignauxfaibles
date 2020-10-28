@@ -2,7 +2,6 @@ package reporder
 
 import (
 	"encoding/csv"
-	"errors"
 	"io"
 	"os"
 	"time"
@@ -10,7 +9,6 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sfregexp"
 
 	"github.com/signaux-faibles/gournal"
 )
@@ -41,38 +39,30 @@ func (rep RepeatableOrder) Type() string {
 var Parser = marshal.Parser{FileType: "reporder", FileParser: ParseFile}
 
 // ParseFile extrait les tuples depuis un fichier Reporder et génère un rapport Gournal.
-func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
-	filter := marshal.GetSirenFilterFromCache(*cache)
-
+func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.LineParser {
 	file, err := os.Open(filePath)
 	if err != nil {
 		tracker.Add(err)
-		return
+		return nil
 	}
 	defer file.Close()
 
 	reader := csv.NewReader(file)
 	reader.Comma = ','
-	parseReporderFile(reader, filter, tracker, outputChannel)
-}
 
-func parseReporderFile(reader *csv.Reader, filter marshal.SirenFilter, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
-	for {
+	return func() []marshal.Tuple {
 		row, err := reader.Read()
 		if err == io.EOF {
-			break
+			return nil
 		} else if err != nil {
 			tracker.Add(err)
 		} else {
 			reporder := parseReporderLine(row, tracker)
-			if !sfregexp.ValidSiret(reporder.Siret) {
-				tracker.Add(errors.New("siret invalide : " + reporder.Siret))
-			}
 			if !tracker.HasErrorInCurrentCycle() {
-				outputChannel <- reporder
+				return []marshal.Tuple{reporder}
 			}
 		}
-		tracker.Next()
+		return []marshal.Tuple{}
 	}
 }
 

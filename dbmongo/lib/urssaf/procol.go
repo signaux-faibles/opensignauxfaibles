@@ -45,25 +45,21 @@ func (procol Procol) Type() string {
 var ParserProcol = marshal.Parser{FileType: "procol", FileParser: ParseProcolFile}
 
 // ParseProcolFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseProcolFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+func ParseProcolFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.LineParser {
 	file, err := os.Open(filePath)
 	if err != nil {
 		tracker.Add(err)
-		return
+		return nil
 	}
 	defer file.Close()
 	reader := csv.NewReader(bufio.NewReader(file))
 	reader.Comma = ';'
 	reader.LazyQuotes = true
-	parseProcolFile(reader, tracker, outputChannel)
-}
-
-func parseProcolFile(reader *csv.Reader, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
 
 	fields, err := reader.Read()
 	if err != nil {
 		tracker.Add(err)
-		return
+		return nil
 	}
 
 	var idx = colMapping{
@@ -74,24 +70,24 @@ func parseProcolFile(reader *csv.Reader, tracker *gournal.Tracker, outputChannel
 
 	if misc.SliceMin(idx["dt_effet"], idx["lib_actx_stdx"], idx["siret"]) == -1 {
 		tracker.Add(errors.New("format de fichier incorrect"))
-		return
+		return nil
 	}
 
-	for {
+	return func() []marshal.Tuple {
 		row, err := reader.Read()
 		if err == io.EOF {
-			break
+			return nil
 		} else if err != nil {
 			tracker.Add(err)
 		} else {
 			procol := parseProcolLine(row, tracker, idx)
 			if _, err := strconv.Atoi(row[idx["siret"]]); err == nil && len(row[idx["siret"]]) == 14 {
 				if !tracker.HasErrorInCurrentCycle() {
-					outputChannel <- procol
+					return []marshal.Tuple{procol}
 				}
 			}
 		}
-		tracker.Next()
+		return []marshal.Tuple{}
 	}
 }
 

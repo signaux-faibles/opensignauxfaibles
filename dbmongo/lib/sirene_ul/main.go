@@ -3,14 +3,12 @@ package sireneul
 import (
 	//"bufio"
 	"encoding/csv"
-	"errors"
 	"io"
 	"os"
 	"time"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sfregexp"
 
 	"github.com/signaux-faibles/gournal"
 )
@@ -49,41 +47,35 @@ func (sirene_ul SireneUL) Scope() string {
 var Parser = marshal.Parser{FileType: "sirene_ul", FileParser: ParseFile}
 
 // ParseFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
-	filter := marshal.GetSirenFilterFromCache(*cache)
+func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.LineParser {
 	file, err := os.Open(filePath)
 	if err != nil {
 		tracker.Add(err)
-		return
+		return nil
 	}
 	defer file.Close()
 	reader := csv.NewReader(file)
 	reader.Comma = ','
 	reader.LazyQuotes = true
-	parseSireneULFile(reader, filter, tracker, outputChannel)
-}
 
-func parseSireneULFile(reader *csv.Reader, filter marshal.SirenFilter, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
-	_, err := reader.Read()
+	_, err = reader.Read()
 	if err == io.EOF {
-		return
+		return nil
 	} else if err != nil {
 		tracker.Add(err)
-		return
+		return nil
 	}
 
-	for {
+	return func() []marshal.Tuple {
 		row, err := reader.Read()
 		if err == io.EOF {
-			break
+			return nil
 		} else if err != nil {
 			tracker.Add(err)
-		} else if !sfregexp.ValidSiren(row[0]) {
-			tracker.Add(errors.New("siren invalide : " + row[0]))
 		} else {
-			outputChannel <- parseSireneUlLine(row, tracker)
+			return []marshal.Tuple{parseSireneUlLine(row, tracker)}
 		}
-		tracker.Next()
+		return []marshal.Tuple{}
 	}
 }
 

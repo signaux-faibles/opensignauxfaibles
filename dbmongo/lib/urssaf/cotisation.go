@@ -43,25 +43,22 @@ func (cotisation Cotisation) Type() string {
 var ParserCotisation = marshal.Parser{FileType: "cotisation", FileParser: ParseCotisationFile}
 
 // ParseCotisationFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseCotisationFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+func ParseCotisationFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.LineParser {
 	comptes, err := marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
 	if err != nil {
 		tracker.Add(err)
-		return
+		return nil
 	}
 	file, err := os.Open(filePath)
 	if err != nil {
 		tracker.Add(err)
-		return
+		return nil
 	}
 	defer file.Close()
 	reader := csv.NewReader(bufio.NewReader(file))
 	reader.Comma = ';'
 	reader.LazyQuotes = true
-	parseCotisationFile(reader, &comptes, tracker, outputChannel)
-}
 
-func parseCotisationFile(reader *csv.Reader, comptes *marshal.Comptes, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
 	// ligne de titre
 	reader.Read()
 
@@ -72,19 +69,19 @@ func parseCotisationFile(reader *csv.Reader, comptes *marshal.Comptes, tracker *
 		"Du":           6,
 	}
 
-	for {
+	return func() []marshal.Tuple {
 		row, err := reader.Read()
 		if err == io.EOF {
-			break
+			return nil
 		} else if err != nil {
 			tracker.Add(err)
 		} else {
-			cotisation := parseCotisationLine(row, tracker, comptes, idx)
+			cotisation := parseCotisationLine(row, tracker, &comptes, idx)
 			if !tracker.HasErrorInCurrentCycle() {
-				outputChannel <- cotisation
+				return []marshal.Tuple{cotisation}
 			}
 		}
-		tracker.Next()
+		return []marshal.Tuple{}
 	}
 }
 

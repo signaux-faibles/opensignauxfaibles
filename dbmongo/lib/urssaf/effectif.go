@@ -45,24 +45,21 @@ func (effectif Effectif) Type() string {
 var ParserEffectif = marshal.Parser{FileType: "effectif", FileParser: ParseEffectifFile}
 
 // ParseEffectifFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseEffectifFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+func ParseEffectifFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.LineParser {
 	filter := marshal.GetSirenFilterFromCache(*cache)
 	file, err := os.Open(filePath)
 	if err != nil {
 		tracker.Add(err)
-		return
+		return nil
 	}
 	defer file.Close()
 	reader := csv.NewReader(bufio.NewReader(file))
 	reader.Comma = ';'
-	parseEffectifFile(reader, filter, tracker, outputChannel)
-}
 
-func parseEffectifFile(reader *csv.Reader, filter marshal.SirenFilter, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
 	fields, err := reader.Read()
 	if err != nil {
 		tracker.Add(err)
-		return
+		return nil
 	}
 
 	var idx = colMapping{
@@ -75,26 +72,28 @@ func parseEffectifFile(reader *csv.Reader, filter marshal.SirenFilter, tracker *
 			"des champs obligatoires n'a pu etre trouve:" +
 			" siretIndex = " + strconv.Itoa(idx["siret"]) +
 			", compteIndex = " + strconv.Itoa(idx["compte"])))
-		return
+		return nil
 	}
 
 	// Dans quels champs lire l'effectif
 	periods := parseEffectifPeriod(fields)
 
-	for {
+	return func() []marshal.Tuple {
+		var tuples []marshal.Tuple
 		row, err := reader.Read()
 		if err == io.EOF {
-			break
+			return nil
 		} else if err != nil {
 			tracker.Add(err)
 		} else {
 			effectifs := parseEffectifLine(periods, row, idx, filter, tracker)
-			for _, eff := range effectifs {
-				outputChannel <- eff
+			for _, v := range effectifs {
+				tuples = append(tuples, v)
 			}
 		}
-		tracker.Next()
+		return tuples
 	}
+
 }
 
 func parseEffectifLine(periods []periodCol, row []string, idx colMapping, filter marshal.SirenFilter, tracker *gournal.Tracker) []Effectif {

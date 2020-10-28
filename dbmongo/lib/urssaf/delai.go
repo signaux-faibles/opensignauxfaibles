@@ -52,24 +52,20 @@ func (delai Delai) Type() string {
 var ParserDelai = marshal.Parser{FileType: "delai", FileParser: ParseDelaiFile}
 
 // ParseDelaiFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseDelaiFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+func ParseDelaiFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.LineParser {
 	comptes, err := marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
 	if err != nil {
 		tracker.Add(err)
-		return
+		return nil
 	}
 	file, err := os.Open(filePath)
 	if err != nil {
 		tracker.Add(err)
-		return
+		return nil
 	}
 	defer file.Close()
 	reader := csv.NewReader(bufio.NewReader(file))
 	reader.Comma = ';'
-	parseDelaiFile(reader, &comptes, tracker, outputChannel)
-}
-
-func parseDelaiFile(reader *csv.Reader, comptes *marshal.Comptes, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
 
 	var idx = colMapping{
 		"NumeroCompte":      2,
@@ -86,26 +82,27 @@ func parseDelaiFile(reader *csv.Reader, comptes *marshal.Comptes, tracker *gourn
 	}
 
 	reader.Read()
-	for {
+
+	return func() []marshal.Tuple {
 		row, err := reader.Read()
 		if err == io.EOF {
-			break
+			return nil
 		} else if err != nil {
 			tracker.Add(err)
 		} else {
 			date, err := time.Parse("02/01/2006", row[idx["DateCreation"]])
 			if err != nil {
 				tracker.Add(err)
-			} else if siret, err := marshal.GetSiretFromComptesMapping(row[idx["NumeroCompte"]], &date, *comptes); err == nil {
+			} else if siret, err := marshal.GetSiretFromComptesMapping(row[idx["NumeroCompte"]], &date, comptes); err == nil {
 				delai := parseDelaiLine(row, idx, siret, tracker)
 				if !tracker.HasErrorInCurrentCycle() {
-					outputChannel <- delai
+					return []marshal.Tuple{delai}
 				}
 			} else {
 				tracker.Add(base.NewFilterError(err))
 			}
 		}
-		tracker.Next()
+		return []marshal.Tuple{}
 	}
 }
 
