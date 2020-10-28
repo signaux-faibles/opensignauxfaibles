@@ -43,7 +43,7 @@ func (cotisation Cotisation) Type() string {
 var ParserCotisation = marshal.Parser{FileType: "cotisation", FileParser: ParseCotisationFile}
 
 // ParseCotisationFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseCotisationFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.LineParser {
+func ParseCotisationFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.TupleGenerator {
 	comptes, err := marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
 	if err != nil {
 		tracker.Add(err)
@@ -69,20 +69,26 @@ func ParseCotisationFile(filePath string, cache *marshal.Cache, batch *base.Admi
 		"Du":           6,
 	}
 
-	return func() []marshal.Tuple {
-		row, err := reader.Read()
-		if err == io.EOF {
-			return nil
-		} else if err != nil {
-			tracker.Add(err)
-		} else {
-			cotisation := parseCotisationLine(row, tracker, &comptes, idx)
-			if !tracker.HasErrorInCurrentCycle() {
-				return []marshal.Tuple{cotisation}
+	tupleGenerator := make(marshal.TupleGenerator)
+	go func() {
+		for {
+			tuples := []marshal.Tuple{}
+			row, err := reader.Read()
+			if err == io.EOF {
+				close(tupleGenerator)
+				break
+			} else if err != nil {
+				tracker.Add(err)
+			} else {
+				cotisation := parseCotisationLine(row, tracker, &comptes, idx)
+				if !tracker.HasErrorInCurrentCycle() {
+					tuples = []marshal.Tuple{cotisation}
+				}
 			}
+			tupleGenerator <- tuples
 		}
-		return []marshal.Tuple{}
-	}
+	}()
+	return tupleGenerator
 }
 
 func parseCotisationLine(row []string, tracker *gournal.Tracker, comptes *marshal.Comptes, idx colMapping) Cotisation {

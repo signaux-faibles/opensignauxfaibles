@@ -45,7 +45,7 @@ func (ellisphere Ellisphere) Scope() string {
 var Parser = marshal.Parser{FileType: "ellisphere", FileParser: ParseFile}
 
 // ParseFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseFile(path string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.LineParser {
+func ParseFile(path string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.TupleGenerator {
 	filter := marshal.GetSirenFilterFromCache(*cache)
 	xlsxFile, err := xlsx.OpenFile(path)
 	if err != nil {
@@ -57,16 +57,11 @@ func ParseFile(path string, cache *marshal.Cache, batch *base.AdminBatch, tracke
 		return nil
 	}
 
-	tupleGenerator := parseEllisphereSheet(xlsxFile.Sheets[0], filter, tracker)
-
-	return func() []marshal.Tuple {
-		tuples := <-tupleGenerator
-		return tuples
-	}
+	return parseEllisphereSheet(xlsxFile.Sheets[0], filter, tracker)
 }
 
-func parseEllisphereSheet(sheet *xlsx.Sheet, filter marshal.SirenFilter, tracker *gournal.Tracker) chan []marshal.Tuple {
-	yield := make(chan []marshal.Tuple)
+func parseEllisphereSheet(sheet *xlsx.Sheet, filter marshal.SirenFilter, tracker *gournal.Tracker) marshal.TupleGenerator {
+	tupleGenerator := make(chan []marshal.Tuple)
 	go func() {
 		sheet.ForEachRow(
 			func(row *xlsx.Row) error {
@@ -77,14 +72,14 @@ func parseEllisphereSheet(sheet *xlsx.Sheet, filter marshal.SirenFilter, tracker
 				}
 				tracker.Add(err)
 				if err == nil {
-					yield <- []marshal.Tuple{ellisphere}
+					tupleGenerator <- []marshal.Tuple{ellisphere}
 				} else {
-					yield <- []marshal.Tuple{}
+					tupleGenerator <- []marshal.Tuple{}
 				}
 				return nil
 			},
 		)
-		yield <- nil
+		close(tupleGenerator)
 	}()
-	return yield
+	return tupleGenerator
 }

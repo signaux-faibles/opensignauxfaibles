@@ -45,7 +45,7 @@ var Parser = marshal.Parser{FileType: "apconso", FileParser: ParseFile}
 type colMapping map[string]int
 
 // ParseFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.LineParser {
+func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.TupleGenerator {
 	file, err := os.Open(filePath)
 	if err != nil {
 		tracker.Add(err)
@@ -73,21 +73,26 @@ func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tr
 		return nil
 	}
 
-	return func() []marshal.Tuple {
-		row, err := reader.Read()
-		if err == io.EOF {
-			return nil
-		} else if err != nil {
-			tracker.Add(err)
-		} else if len(row) > 0 {
-			// TODO: filtrer et/ou valider siret ?
-			apconso := parseApConsoLine(row, tracker, idx)
-			if !tracker.HasErrorInCurrentCycle() && apconso.Siret != "" {
-				return []marshal.Tuple{apconso}
+	tupleGenerator := make(marshal.TupleGenerator)
+	go func() {
+		for {
+			tuples := []marshal.Tuple{}
+			row, err := reader.Read()
+			if err == io.EOF {
+				close(tupleGenerator)
+				break
+			} else if err != nil {
+				tracker.Add(err)
+			} else if len(row) > 0 {
+				apconso := parseApConsoLine(row, tracker, idx)
+				if !tracker.HasErrorInCurrentCycle() && apconso.Siret != "" {
+					tuples = []marshal.Tuple{apconso}
+				}
 			}
+			tupleGenerator <- tuples
 		}
-		return []marshal.Tuple{}
-	}
+	}()
+	return tupleGenerator
 }
 
 func parseApConsoLine(row []string, tracker *gournal.Tracker, idx colMapping) APConso {

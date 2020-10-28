@@ -21,11 +21,12 @@ type Parser = struct {
 
 type filePath = string
 
-// LineParser est une fonction permettant de parser la prochaine ligne d'un fichier
-type LineParser func() []Tuple
+// TupleGenerator est un canal permettant à runParserWithSirenFilter() de
+// récupérer les tuples de n'importe quel parseur.
+type TupleGenerator chan []Tuple
 
 // ParseFile fonction de traitement de données en entrée
-type ParseFile func(filePath, *Cache, *base.AdminBatch, *gournal.Tracker) LineParser
+type ParseFile func(filePath, *Cache, *base.AdminBatch, *gournal.Tracker) TupleGenerator
 
 // Tuple unité de donnée à insérer dans un type
 type Tuple interface {
@@ -76,15 +77,11 @@ func ParseFilesFromBatch(cache Cache, batch *base.AdminBatch, parser Parser) (ch
 
 func runParserWithSirenFilter(parser Parser, filePath string, cache *Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan Tuple) {
 	filter := GetSirenFilterFromCache(*cache)
-	parseLine := parser.FileParser(filePath, cache, batch, tracker)
-	if parseLine == nil {
+	tupleGenerator := parser.FileParser(filePath, cache, batch, tracker)
+	if tupleGenerator == nil {
 		return
 	}
-	for {
-		tuples := parseLine()
-		if tuples == nil {
-			break
-		}
+	for tuples := range tupleGenerator {
 		for _, tuple := range tuples {
 			if _, err := isValid(tuple); err != nil {
 				tracker.Add(err)

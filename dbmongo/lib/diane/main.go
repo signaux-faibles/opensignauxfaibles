@@ -120,7 +120,7 @@ func (diane Diane) Scope() string {
 var Parser = marshal.Parser{FileType: "diane", FileParser: ParseFile}
 
 // ParseFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseFile(path string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.LineParser {
+func ParseFile(path string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.TupleGenerator {
 
 	cmdPath := []string{filepath.Join(viper.GetString("SCRIPTDIANE_DIR"), "convert_diane.sh"), path}
 	cmd := exec.Command("/bin/bash", cmdPath...)
@@ -166,20 +166,25 @@ func ParseFile(path string, cache *marshal.Cache, batch *base.AdminBatch, tracke
 		return nil
 	}
 
-	return func() []marshal.Tuple {
-		row, err := reader.Read()
-		if err == io.EOF {
-			return nil
-		} else if err != nil {
-			tracker.Add(err)
-		} else if len(row) < 83 {
-			tracker.Add(errors.New("Ligne invalide"))
-		} else {
-			// TODO: filtrer et/ou valider siret ?
-			return []marshal.Tuple{parseDianeRow(row)}
+	tupleGenerator := make(marshal.TupleGenerator)
+	go func() {
+		for {
+			tuples := []marshal.Tuple{}
+			row, err := reader.Read()
+			if err == io.EOF {
+				close(tupleGenerator)
+				break
+			} else if err != nil {
+				tracker.Add(err)
+			} else if len(row) < 83 {
+				tracker.Add(errors.New("Ligne invalide"))
+			} else {
+				tuples = []marshal.Tuple{parseDianeRow(row)}
+			}
+			tupleGenerator <- tuples
 		}
-		return []marshal.Tuple{}
-	}
+	}()
+	return tupleGenerator
 }
 
 // parseDianeRow construit un objet Diane à partir d'une ligne de valeurs récupérée depuis un fichier

@@ -56,7 +56,7 @@ type colMapping map[string]int
 var ParserDebit = marshal.Parser{FileType: "debit", FileParser: ParseDebitFile}
 
 // ParseDebitFile extrait les tuples depuis un fichier "débit" de l'URSSAF.
-func ParseDebitFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.LineParser {
+func ParseDebitFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.TupleGenerator {
 	comptes, err := marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
 	if err != nil {
 		tracker.Add(err)
@@ -104,28 +104,34 @@ func ParseDebitFile(filePath string, cache *marshal.Cache, batch *base.AdminBatc
 	stopProgressLogger := marshal.LogProgress(&lineNumber)
 	defer stopProgressLogger()
 
-	return func() []marshal.Tuple {
-		lineNumber++
-		row, err := reader.Read()
-		if err == io.EOF {
-			return nil
-		} else if err != nil {
-			tracker.Add(err)
-		} else {
-			period, _ := marshal.UrssafToPeriod(row[idx["periode"]])
-			date := period.Start
-
-			if siret, err := marshal.GetSiretFromComptesMapping(row[idx["numeroCompte"]], &date, comptes); err == nil {
-				debit := parseDebitLine(siret, row, tracker, idx)
-				if !tracker.HasErrorInCurrentCycle() {
-					return []marshal.Tuple{debit}
-				}
+	tupleGenerator := make(marshal.TupleGenerator)
+	go func() {
+		for {
+			tuples := []marshal.Tuple{}
+			lineNumber++
+			row, err := reader.Read()
+			if err == io.EOF {
+				close(tupleGenerator)
+				break
+			} else if err != nil {
+				tracker.Add(err)
 			} else {
-				tracker.Add(base.NewFilterError(err))
+				period, _ := marshal.UrssafToPeriod(row[idx["periode"]])
+				date := period.Start
+
+				if siret, err := marshal.GetSiretFromComptesMapping(row[idx["numeroCompte"]], &date, comptes); err == nil {
+					debit := parseDebitLine(siret, row, tracker, idx)
+					if !tracker.HasErrorInCurrentCycle() {
+						tuples = []marshal.Tuple{debit}
+					}
+				} else {
+					tracker.Add(base.NewFilterError(err))
+				}
 			}
+			tupleGenerator <- tuples
 		}
-		return []marshal.Tuple{}
-	}
+	}()
+	return tupleGenerator
 }
 
 func parseDebitLine(siret string, row []string, tracker *gournal.Tracker, idx colMapping) Debit {

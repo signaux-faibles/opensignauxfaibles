@@ -55,7 +55,7 @@ var Parser = marshal.Parser{FileType: "apdemande", FileParser: ParseFile}
 type colMapping map[string]int
 
 // ParseFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.LineParser {
+func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.TupleGenerator {
 	file, err := os.Open(filePath)
 	if err != nil {
 		tracker.Add(err)
@@ -98,23 +98,29 @@ func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tr
 		}
 	}
 
-	return func() []marshal.Tuple {
-		row, err := reader.Read()
-		if err == io.EOF {
-			return nil
-		} else if err != nil {
-			tracker.Add(err)
-		} else if row[idx["ETAB_SIRET"]] == "" {
-			tracker.Add(errors.New("invalidLine"))
-		} else {
-			// TODO: filtrer et/ou valider siret ?
-			apdemande := parseApDemandeLine(row, tracker, idx)
-			if !tracker.HasErrorInCurrentCycle() {
-				return []marshal.Tuple{apdemande}
+	tupleGenerator := make(marshal.TupleGenerator)
+	go func() {
+		for {
+			tuples := []marshal.Tuple{}
+
+			row, err := reader.Read()
+			if err == io.EOF {
+				close(tupleGenerator)
+				break
+			} else if err != nil {
+				tracker.Add(err)
+			} else if row[idx["ETAB_SIRET"]] == "" {
+				tracker.Add(errors.New("invalidLine"))
+			} else {
+				apdemande := parseApDemandeLine(row, tracker, idx)
+				if !tracker.HasErrorInCurrentCycle() {
+					tuples = []marshal.Tuple{apdemande}
+				}
 			}
+			tupleGenerator <- tuples
 		}
-		return []marshal.Tuple{}
-	}
+	}()
+	return tupleGenerator
 }
 
 func parseApDemandeLine(row []string, tracker *gournal.Tracker, idx colMapping) APDemande {

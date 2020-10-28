@@ -35,7 +35,7 @@ func (compte Compte) Type() string {
 var ParserCompte = marshal.Parser{FileType: "admin_urssaf", FileParser: ParseCompteFile}
 
 // ParseCompteFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseCompteFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.LineParser {
+func ParseCompteFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.TupleGenerator {
 	if len(batch.Files["admin_urssaf"]) > 0 {
 		periodes := misc.GenereSeriePeriode(batch.Params.DateDebut, time.Now()) //[]time.Time
 		mapping, err := marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
@@ -45,24 +45,29 @@ func ParseCompteFile(filePath string, cache *marshal.Cache, batch *base.AdminBat
 		accountIndex := 0
 
 		// return line parser
-		return func() []marshal.Tuple {
-			if accountIndex >= len(mapping) {
-				return nil // EOF
+		tupleGenerator := make(marshal.TupleGenerator)
+		go func() {
+			for {
+				tuples := []marshal.Tuple{}
+				if accountIndex >= len(mapping) {
+					close(tupleGenerator) // EOF
+					break
+				}
+				account := accounts[accountIndex]
+				accountIndex++
+				for _, p := range periodes {
+					var err error
+					compte := Compte{}
+					compte.NumeroCompte = account
+					compte.Periode = p
+					compte.Siret, err = marshal.GetSiret(account, &p, *cache, batch)
+					tracker.Add(base.NewCriticError(err, "erreur"))
+					tuples = append(tuples, compte)
+				}
+				tupleGenerator <- tuples
 			}
-			account := accounts[accountIndex]
-			accountIndex++
-			var tuples []marshal.Tuple
-			for _, p := range periodes {
-				var err error
-				compte := Compte{}
-				compte.NumeroCompte = account
-				compte.Periode = p
-				compte.Siret, err = marshal.GetSiret(account, &p, *cache, batch)
-				tracker.Add(base.NewCriticError(err, "erreur"))
-				tuples = append(tuples, compte)
-			}
-			return tuples
-		}
+		}()
+		return tupleGenerator
 	}
 	return nil
 }

@@ -178,7 +178,7 @@ func (sirene Sirene) Scope() string {
 var Parser = marshal.Parser{FileType: "sirene", FileParser: ParseFile}
 
 // ParseFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.LineParser {
+func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.TupleGenerator {
 	file, err := os.Open(filePath)
 	if err != nil {
 		tracker.Add(err)
@@ -189,10 +189,14 @@ func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tr
 	reader.Comma = ','
 	reader.LazyQuotes = true
 
-	return func() []marshal.Tuple {
+	tupleGenerator := make(marshal.TupleGenerator)
+	go func() {
+		for {
+			tuples := []marshal.Tuple{}
 		row, err := reader.Read()
 		if err == io.EOF {
-			return nil
+			close(tupleGenerator)
+			break
 		} else if err != nil {
 			tracker.Add(err)
 		} else if !sfregexp.ValidSiren(row[f["siren"]]) {
@@ -268,7 +272,8 @@ func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tr
 			tracker.Add(err)
 		}
 
-		return []marshal.Tuple{sirene}
-	}
+		tupleGenerator <- []marshal.Tuple{sirene}
+	}()
+	return tupleGenerator
 
 }

@@ -63,7 +63,7 @@ func parseEffectifPeriod(fields []string) []periodCol {
 var ParserEffectifEnt = marshal.Parser{FileType: "effectif_ent", FileParser: ParseEffectifEntFile}
 
 // ParseEffectifEntFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseEffectifEntFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.LineParser {
+func ParseEffectifEntFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.TupleGenerator {
 	filter := marshal.GetSirenFilterFromCache(*cache)
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -88,21 +88,25 @@ func ParseEffectifEntFile(filePath string, cache *marshal.Cache, batch *base.Adm
 	periods := parseEffectifPeriod(fields)
 
 	// return line parser
-	return func() []marshal.Tuple {
-		var tuples []marshal.Tuple
-		row, err := reader.Read()
-		if err == io.EOF {
-			return nil
-		} else if err != nil {
-			tracker.Add(err)
-		} else {
-			for _, v := range parseEffectifEntLine(periods, row, idx, filter, tracker) {
-				tuples = append(tuples, v)
+	tupleGenerator := make(marshal.TupleGenerator)
+	go func() {
+		for {
+			tuples := []marshal.Tuple{}
+			row, err := reader.Read()
+			if err == io.EOF {
+				close(tupleGenerator)
+				break
+			} else if err != nil {
+				tracker.Add(err)
+			} else {
+				for _, v := range parseEffectifEntLine(periods, row, idx, filter, tracker) {
+					tuples = append(tuples, v)
+				}
 			}
+			tupleGenerator <- tuples
 		}
-		return tuples
-	}
-
+	}()
+	return tupleGenerator
 }
 
 func parseEffectifEntLine(periods []periodCol, row []string, idx colMapping, filter marshal.SirenFilter, tracker *gournal.Tracker) []EffectifEnt {

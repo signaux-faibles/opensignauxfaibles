@@ -51,7 +51,7 @@ func (bdf BDF) Scope() string {
 var Parser = marshal.Parser{FileType: "bdf", FileParser: ParseFile}
 
 // ParseFile extrait les tuples depuis un fichier BDF et génère un rapport Gournal.
-func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.LineParser {
+func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.TupleGenerator {
 	filter := marshal.GetSirenFilterFromCache(*cache)
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -67,21 +67,28 @@ func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tr
 	_, err = reader.Read()
 	tracker.Add(err)
 
-	return func() []marshal.Tuple {
-		row, err := reader.Read()
-		if err == io.EOF {
-			return nil
-		} else if err != nil {
-			tracker.Add(err)
-		} else {
-			// TODO: filtrer et/ou valider siret ?
-			bdf := parseBdfLine(row, tracker, filter)
-			if !tracker.HasErrorInCurrentCycle() {
-				return []marshal.Tuple{bdf}
+	tupleGenerator := make(marshal.TupleGenerator)
+	go func() {
+		for {
+			tuples := []marshal.Tuple{}
+
+			row, err := reader.Read()
+			if err == io.EOF {
+				close(tupleGenerator)
+				break
+			} else if err != nil {
+				tracker.Add(err)
+			} else {
+				// TODO: filtrer et/ou valider siret ?
+				bdf := parseBdfLine(row, tracker, filter)
+				if !tracker.HasErrorInCurrentCycle() {
+					tuples = []marshal.Tuple{bdf}
+				}
 			}
+			tupleGenerator <- tuples
 		}
-		return []marshal.Tuple{}
-	}
+	}()
+	return tupleGenerator
 }
 
 var field = map[string]int{

@@ -42,7 +42,7 @@ func (ccsf CCSF) Type() string {
 var ParserCCSF = marshal.Parser{FileType: "ccsf", FileParser: ParseCcsfFile}
 
 // ParseCcsfFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseCcsfFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.LineParser {
+func ParseCcsfFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.TupleGenerator {
 	comptes, err := marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
 	if err != nil {
 		tracker.Add(err)
@@ -68,20 +68,27 @@ func ParseCcsfFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch
 		"Action":         5,
 	}
 
-	return func() []marshal.Tuple {
-		row, err := reader.Read()
-		if err == io.EOF {
-			return nil
-		} else if err != nil {
-			tracker.Add(err)
-		} else {
-			ccsf := parseCcsfLine(row, tracker, &comptes, idx)
-			if !tracker.HasErrorInCurrentCycle() {
-				return []marshal.Tuple{ccsf}
+	tupleGenerator := make(marshal.TupleGenerator)
+	go func() {
+		for {
+			tuples := []marshal.Tuple{}
+
+			row, err := reader.Read()
+			if err == io.EOF {
+				close(tupleGenerator)
+				break
+			} else if err != nil {
+				tracker.Add(err)
+			} else {
+				ccsf := parseCcsfLine(row, tracker, &comptes, idx)
+				if !tracker.HasErrorInCurrentCycle() {
+					tuples = []marshal.Tuple{ccsf}
+				}
 			}
+			tupleGenerator <- tuples
 		}
-		return []marshal.Tuple{}
-	}
+	}()
+	return tupleGenerator
 }
 
 func parseCcsfLine(row []string, tracker *gournal.Tracker, comptes *marshal.Comptes, idx colMapping) CCSF {

@@ -52,7 +52,7 @@ func (delai Delai) Type() string {
 var ParserDelai = marshal.Parser{FileType: "delai", FileParser: ParseDelaiFile}
 
 // ParseDelaiFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseDelaiFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.LineParser {
+func ParseDelaiFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.TupleGenerator {
 	comptes, err := marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
 	if err != nil {
 		tracker.Add(err)
@@ -83,27 +83,33 @@ func ParseDelaiFile(filePath string, cache *marshal.Cache, batch *base.AdminBatc
 
 	reader.Read()
 
-	return func() []marshal.Tuple {
-		row, err := reader.Read()
-		if err == io.EOF {
-			return nil
-		} else if err != nil {
-			tracker.Add(err)
-		} else {
-			date, err := time.Parse("02/01/2006", row[idx["DateCreation"]])
-			if err != nil {
+	tupleGenerator := make(marshal.TupleGenerator)
+	go func() {
+		for {
+			tuples := []marshal.Tuple{}
+			row, err := reader.Read()
+			if err == io.EOF {
+				close(tupleGenerator)
+				break
+			} else if err != nil {
 				tracker.Add(err)
-			} else if siret, err := marshal.GetSiretFromComptesMapping(row[idx["NumeroCompte"]], &date, comptes); err == nil {
-				delai := parseDelaiLine(row, idx, siret, tracker)
-				if !tracker.HasErrorInCurrentCycle() {
-					return []marshal.Tuple{delai}
-				}
 			} else {
-				tracker.Add(base.NewFilterError(err))
+				date, err := time.Parse("02/01/2006", row[idx["DateCreation"]])
+				if err != nil {
+					tracker.Add(err)
+				} else if siret, err := marshal.GetSiretFromComptesMapping(row[idx["NumeroCompte"]], &date, comptes); err == nil {
+					delai := parseDelaiLine(row, idx, siret, tracker)
+					if !tracker.HasErrorInCurrentCycle() {
+						tuples = []marshal.Tuple{delai}
+					}
+				} else {
+					tracker.Add(base.NewFilterError(err))
+				}
 			}
+			tupleGenerator <- tuples
 		}
-		return []marshal.Tuple{}
-	}
+	}()
+	return tupleGenerator
 }
 
 func parseDelaiLine(row []string, idx colMapping, siret string, tracker *gournal.Tracker) Delai {
