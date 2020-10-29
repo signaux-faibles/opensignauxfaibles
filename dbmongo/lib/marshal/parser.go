@@ -49,7 +49,7 @@ func (res *ParsedLineResult) AddError(err ParseError) {
 type ParsedLineChan chan ParsedLineResult
 
 // ParseFile fonction de traitement de données en entrée
-type ParseFile func(filePath, *Cache, *base.AdminBatch, *gournal.Tracker) ParsedLineChan
+type ParseFile func(filePath, *Cache, *base.AdminBatch) (ParsedLineChan, error)
 
 // Tuple unité de donnée à insérer dans un type
 type Tuple interface {
@@ -100,8 +100,10 @@ func ParseFilesFromBatch(cache Cache, batch *base.AdminBatch, parser Parser) (ch
 
 func runParserWithSirenFilter(parser Parser, filePath string, cache *Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan Tuple) {
 	filter := GetSirenFilterFromCache(*cache)
-	parsedLineChan := parser.FileParser(filePath, cache, batch, tracker)
-	if parsedLineChan == nil {
+	parsedLineChan, err := parser.FileParser(filePath, cache, batch)
+	// Note: on ne passe plus le tracker aux parseurs afin de garder ici le controle de la numérotation des lignes où les erreurs sont trouvées
+	if err != nil {
+		tracker.Add(err)
 		return
 	}
 	for lineResult := range parsedLineChan {
@@ -117,7 +119,7 @@ func runParserWithSirenFilter(parser Parser, filePath string, cache *Cache, batc
 				outputChannel <- tuple
 			}
 		}
-		tracker.Next() // TODO: ne plus passer le tracker aux parseurs, pour garder le controle de la numérotation des lignes où les erreurs sont trouvées
+		tracker.Next()
 	}
 }
 

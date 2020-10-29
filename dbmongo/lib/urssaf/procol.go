@@ -14,8 +14,6 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
-
-	"github.com/signaux-faibles/gournal"
 )
 
 // Procol Procédures collectives, extraction URSSAF
@@ -45,11 +43,10 @@ func (procol Procol) Type() string {
 var ParserProcol = marshal.Parser{FileType: "procol", FileParser: ParseProcolFile}
 
 // ParseProcolFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseProcolFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.ParsedLineChan {
+func ParseProcolFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (marshal.ParsedLineChan, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		tracker.Add(err)
-		return nil
+		return nil, err
 	}
 	// defer file.Close() // TODO: à réactiver
 	reader := csv.NewReader(bufio.NewReader(file))
@@ -58,8 +55,7 @@ func ParseProcolFile(filePath string, cache *marshal.Cache, batch *base.AdminBat
 
 	fields, err := reader.Read()
 	if err != nil {
-		tracker.Add(err)
-		return nil
+		return nil, err
 	}
 
 	var idx = colMapping{
@@ -69,50 +65,49 @@ func ParseProcolFile(filePath string, cache *marshal.Cache, batch *base.AdminBat
 	}
 
 	if misc.SliceMin(idx["dt_effet"], idx["lib_actx_stdx"], idx["siret"]) == -1 {
-		tracker.Add(errors.New("format de fichier incorrect"))
-		return nil
+		return nil, errors.New("format de fichier incorrect")
 	}
 
 	parsedLineChan := make(marshal.ParsedLineChan)
 	go func() {
 		for {
-			tuples := []marshal.Tuple{}
+			parsedLine := marshal.ParsedLineResult{}
 			row, err := reader.Read()
 			if err == io.EOF {
 				close(parsedLineChan)
 				break
 			} else if err != nil {
-				tracker.Add(err)
+				parsedLine.AddError(err)
 			} else {
-				procol := parseProcolLine(row, tracker, idx)
-				if _, err := strconv.Atoi(row[idx["siret"]]); err == nil && len(row[idx["siret"]]) == 14 {
-					if !tracker.HasErrorInCurrentCycle() {
-						tuples = []marshal.Tuple{procol}
+				parseProcolLine(row, idx, &parsedLine)
+				if _, err := strconv.Atoi(row[idx["siret"]]); err == nil && len(row[idx["siret"]]) == 14 { // TODO: remove validation
+					if len(parsedLine.Errors) > 0 {
+						parsedLine.Tuples = []marshal.Tuple{}
 					}
 				}
 			}
-			parsedLineChan <- marshal.ParsedLineResult{Tuples: tuples, Errors: []marshal.ParseError{}}
+			parsedLineChan <- parsedLine
 		}
 	}()
-	return parsedLineChan
+	return parsedLineChan, nil
 }
 
-func parseProcolLine(row []string, tracker *gournal.Tracker, idx colMapping) Procol {
+func parseProcolLine(row []string, idx colMapping, parsedLine *marshal.ParsedLineResult) {
 	var err error
 	procol := Procol{}
 	procol.DateEffet, err = time.Parse("02Jan2006", row[idx["dt_effet"]])
-	tracker.Add(err)
+	parsedLine.AddError(err)
 	procol.Siret = row[idx["siret"]]
 	actionStade := row[idx["lib_actx_stdx"]]
 	splitted := strings.Split(strings.ToLower(actionStade), "_")
 	for i, v := range splitted {
 		r, err := regexp.Compile("liquidation|redressement|sauvegarde")
-		tracker.Add(err)
+		parsedLine.AddError(err)
 		if match := r.MatchString(v); match {
 			procol.ActionProcol = v
 			procol.StadeProcol = strings.Join(append(splitted[:i], splitted[i+1:]...), "_")
 			break
 		}
 	}
-	return (procol)
+	parsedLine.AddTuple(procol)
 }

@@ -15,8 +15,6 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sfregexp"
-
-	"github.com/signaux-faibles/gournal"
 )
 
 // EffectifEnt Urssaf
@@ -63,12 +61,11 @@ func parseEffectifPeriod(fields []string) []periodCol {
 var ParserEffectifEnt = marshal.Parser{FileType: "effectif_ent", FileParser: ParseEffectifEntFile}
 
 // ParseEffectifEntFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseEffectifEntFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.ParsedLineChan {
+func ParseEffectifEntFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (marshal.ParsedLineChan, error) {
 	filter := marshal.GetSirenFilterFromCache(*cache)
 	file, err := os.Open(filePath)
 	if err != nil {
-		tracker.Add(err)
-		return nil
+		return nil, err
 	}
 	// defer file.Close() // TODO: à réactiver
 	reader := csv.NewReader(bufio.NewReader(file))
@@ -76,8 +73,7 @@ func ParseEffectifEntFile(filePath string, cache *marshal.Cache, batch *base.Adm
 
 	fields, err := reader.Read()
 	if err != nil {
-		tracker.Add(err)
-		return nil
+		return nil, err
 	}
 
 	var idx = colMapping{
@@ -91,39 +87,36 @@ func ParseEffectifEntFile(filePath string, cache *marshal.Cache, batch *base.Adm
 	parsedLineChan := make(marshal.ParsedLineChan)
 	go func() {
 		for {
-			tuples := []marshal.Tuple{}
+			parsedLine := marshal.ParsedLineResult{}
 			row, err := reader.Read()
 			if err == io.EOF {
 				close(parsedLineChan)
 				break
 			} else if err != nil {
-				tracker.Add(err)
+				parsedLine.AddError(err)
 			} else {
-				for _, v := range parseEffectifEntLine(periods, row, idx, filter, tracker) {
-					tuples = append(tuples, v)
-				}
+				parseEffectifEntLine(periods, row, idx, filter, &parsedLine)
 			}
-			parsedLineChan <- marshal.ParsedLineResult{Tuples: tuples, Errors: []marshal.ParseError{}}
+			parsedLineChan <- parsedLine
 		}
 	}()
-	return parsedLineChan
+	return parsedLineChan, nil
 }
 
-func parseEffectifEntLine(periods []periodCol, row []string, idx colMapping, filter marshal.SirenFilter, tracker *gournal.Tracker) []EffectifEnt {
-	var effectifs = []EffectifEnt{}
+func parseEffectifEntLine(periods []periodCol, row []string, idx colMapping, filter marshal.SirenFilter, parsedLine *marshal.ParsedLineResult) {
 	siren := row[idx["siren"]]
 	if !sfregexp.ValidSiren(siren) {
-		tracker.Add(errors.New("Format de siren incorrect : " + siren))
+		parsedLine.AddError(errors.New("Format de siren incorrect : " + siren)) // TODO: remove validation
 	} else {
 		for _, period := range periods {
 			value := row[period.colIndex]
 			if value != "" {
 				noThousandsSep := sfregexp.RegexpDict["notDigit"].ReplaceAllString(value, "")
 				s, err := strconv.ParseFloat(noThousandsSep, 64)
-				tracker.Add(err)
+				parsedLine.AddError(err)
 				e := int(s)
 				if e > 0 {
-					effectifs = append(effectifs, EffectifEnt{
+					parsedLine.AddTuple(EffectifEnt{
 						Siren:       siren,
 						Periode:     period.dateStart,
 						EffectifEnt: e,
@@ -132,5 +125,4 @@ func parseEffectifEntLine(periods []periodCol, row []string, idx colMapping, fil
 			}
 		}
 	}
-	return effectifs
 }

@@ -6,8 +6,6 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sfregexp"
 	"github.com/tealeg/xlsx/v3"
-
-	"github.com/signaux-faibles/gournal"
 )
 
 // Ellisphere informations groupe pour une entreprise
@@ -45,37 +43,35 @@ func (ellisphere Ellisphere) Scope() string {
 var Parser = marshal.Parser{FileType: "ellisphere", FileParser: ParseFile}
 
 // ParseFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseFile(path string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.ParsedLineChan {
+func ParseFile(path string, cache *marshal.Cache, batch *base.AdminBatch) (marshal.ParsedLineChan, error) {
 	filter := marshal.GetSirenFilterFromCache(*cache)
 	xlsxFile, err := xlsx.OpenFile(path)
 	if err != nil {
-		tracker.Add(err)
-		return nil
+		return nil, err
 	}
 	if len(xlsxFile.Sheets) != 1 {
-		tracker.Add(errors.Errorf("the source has %d sheets, should have only 1", len(xlsxFile.Sheets)))
-		return nil
+		return nil, errors.Errorf("the source has %d sheets, should have only 1", len(xlsxFile.Sheets))
 	}
 
-	return parseEllisphereSheet(xlsxFile.Sheets[0], filter, tracker)
+	return parseEllisphereSheet(xlsxFile.Sheets[0], filter), nil
 }
 
-func parseEllisphereSheet(sheet *xlsx.Sheet, filter marshal.SirenFilter, tracker *gournal.Tracker) marshal.ParsedLineChan {
+func parseEllisphereSheet(sheet *xlsx.Sheet, filter marshal.SirenFilter) marshal.ParsedLineChan {
 	parsedLineChan := make(marshal.ParsedLineChan)
 	go func() {
 		sheet.ForEachRow(
 			func(row *xlsx.Row) error {
+				parsedLine := marshal.ParsedLineResult{}
 				var ellisphere Ellisphere
 				err := row.ReadStruct(&ellisphere)
-				if !sfregexp.ValidSiren(ellisphere.Siren) {
-					tracker.Add(errors.New("siren invalide : " + ellisphere.Siren))
+				if !sfregexp.ValidSiren(ellisphere.Siren) { // TODO: retirer validation, tout en empêchant l'ajout du tuple en cas d'erreur
+					parsedLine.AddError(errors.New("siren invalide : " + ellisphere.Siren))
 				}
-				tracker.Add(err)
-				if err == nil {
-					parsedLineChan <- marshal.ParsedLineResult{Tuples: []marshal.Tuple{ellisphere}, Errors: []marshal.ParseError{}}
-				} else {
-					parsedLineChan <- marshal.ParsedLineResult{Tuples: []marshal.Tuple{}, Errors: []marshal.ParseError{}}
+				parsedLine.AddError(err)
+				if len(parsedLine.Errors) == 0 {
+					parsedLine.AddTuple(ellisphere)
 				}
+				parsedLineChan <- parsedLine
 				return nil
 			},
 		)

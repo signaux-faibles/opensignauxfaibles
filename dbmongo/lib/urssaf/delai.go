@@ -13,8 +13,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
-	"github.com/signaux-faibles/gournal"
 )
 
 // Delai tuple fichier ursaff
@@ -52,16 +50,14 @@ func (delai Delai) Type() string {
 var ParserDelai = marshal.Parser{FileType: "delai", FileParser: ParseDelaiFile}
 
 // ParseDelaiFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseDelaiFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.ParsedLineChan {
+func ParseDelaiFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (marshal.ParsedLineChan, error) {
 	comptes, err := marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
 	if err != nil {
-		tracker.Add(err)
-		return nil
+		return nil, err
 	}
 	file, err := os.Open(filePath)
 	if err != nil {
-		tracker.Add(err)
-		return nil
+		return nil, err
 	}
 	// defer file.Close() // TODO: à réactiver
 	reader := csv.NewReader(bufio.NewReader(file))
@@ -99,7 +95,7 @@ func ParseDelaiFile(filePath string, cache *marshal.Cache, batch *base.AdminBatc
 					parsedLine.AddError(err)
 				} else if siret, err := marshal.GetSiretFromComptesMapping(row[idx["NumeroCompte"]], &date, comptes); err == nil {
 					parseDelaiLine(row, idx, siret, &parsedLine)
-					if tracker.HasErrorInCurrentCycle() {
+					if len(parsedLine.Errors) > 0 {
 						parsedLine.Tuples = []marshal.Tuple{}
 					}
 				} else {
@@ -109,7 +105,7 @@ func ParseDelaiFile(filePath string, cache *marshal.Cache, batch *base.AdminBatc
 			parsedLineChan <- parsedLine
 		}
 	}()
-	return parsedLineChan
+	return parsedLineChan, nil
 }
 
 func parseDelaiLine(row []string, idx colMapping, siret string, parsedLine *marshal.ParsedLineResult) {

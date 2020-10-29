@@ -9,8 +9,6 @@ import (
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
-
-	"github.com/signaux-faibles/gournal"
 )
 
 // SireneUL informations sur les entreprises
@@ -47,11 +45,10 @@ func (sirene_ul SireneUL) Scope() string {
 var Parser = marshal.Parser{FileType: "sirene_ul", FileParser: ParseFile}
 
 // ParseFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.ParsedLineChan {
+func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (marshal.ParsedLineChan, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		tracker.Add(err)
-		return nil
+		return nil, err
 	}
 	// defer file.Close() // TODO: à réactiver
 	reader := csv.NewReader(file)
@@ -59,11 +56,8 @@ func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tr
 	reader.LazyQuotes = true
 
 	_, err = reader.Read()
-	if err == io.EOF {
-		return nil
-	} else if err != nil {
-		tracker.Add(err)
-		return nil
+	if err != nil {
+		return nil, err
 	}
 
 	parsedLineChan := make(marshal.ParsedLineChan)
@@ -82,7 +76,7 @@ func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tr
 			parsedLineChan <- parsedLine
 		}
 	}()
-	return parsedLineChan
+	return parsedLineChan, nil
 }
 
 func parseSireneUlLine(row []string, parsedLine *marshal.ParsedLineResult) {

@@ -11,8 +11,6 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
-
-	"github.com/signaux-faibles/gournal"
 )
 
 // Periode Période de temps avec un début et une fin
@@ -55,11 +53,10 @@ var Parser = marshal.Parser{FileType: "apdemande", FileParser: ParseFile}
 type colMapping map[string]int
 
 // ParseFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.ParsedLineChan {
+func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (marshal.ParsedLineChan, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		tracker.Add(err)
-		return nil
+		return nil, err
 	}
 	// defer file.Close() // TODO: à réactiver
 	reader := csv.NewReader(file)
@@ -68,8 +65,7 @@ func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tr
 
 	header, err := reader.Read()
 	if err != nil {
-		tracker.Add(err)
-		return nil
+		return nil, err
 	}
 
 	var idx = colMapping{}
@@ -93,65 +89,63 @@ func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tr
 
 	for _, field := range fields {
 		if _, found := idx[field]; !found {
-			tracker.Add(errors.New("Colonne " + field + " non trouvée. Abandon."))
-			return nil
+			return nil, errors.New("Colonne " + field + " non trouvée. Abandon.")
 		}
 	}
 
 	parsedLineChan := make(marshal.ParsedLineChan)
 	go func() {
 		for {
-			tuples := []marshal.Tuple{}
-
+			parsedLine := marshal.ParsedLineResult{}
 			row, err := reader.Read()
 			if err == io.EOF {
 				close(parsedLineChan)
 				break
 			} else if err != nil {
-				tracker.Add(err)
+				parsedLine.AddError(err)
 			} else if row[idx["ETAB_SIRET"]] == "" {
-				tracker.Add(errors.New("invalidLine"))
+				parsedLine.AddError(errors.New("invalidLine")) // TODO: retirer validation
 			} else {
-				apdemande := parseApDemandeLine(row, tracker, idx)
-				if !tracker.HasErrorInCurrentCycle() {
-					tuples = []marshal.Tuple{apdemande}
+				parseApDemandeLine(row, idx, &parsedLine)
+				if len(parsedLine.Errors) > 0 {
+					parsedLine.Tuples = []marshal.Tuple{}
 				}
 			}
-			parsedLineChan <- marshal.ParsedLineResult{Tuples: tuples, Errors: []marshal.ParseError{}}
+			parsedLineChan <- parsedLine
 		}
 	}()
-	return parsedLineChan
+	return parsedLineChan, nil
 }
 
-func parseApDemandeLine(row []string, tracker *gournal.Tracker, idx colMapping) APDemande {
+func parseApDemandeLine(row []string, idx colMapping, parsedLine *marshal.ParsedLineResult) {
 	apdemande := APDemande{}
 	apdemande.ID = row[idx["ID_DA"]]
 	apdemande.Siret = row[idx["ETAB_SIRET"]]
 	var err error
 	apdemande.EffectifEntreprise, err = misc.ParsePInt(row[idx["EFF_ENT"]])
-	tracker.Add(err)
+	parsedLine.AddError(err)
 	apdemande.Effectif, err = misc.ParsePInt(row[idx["EFF_ETAB"]])
-	tracker.Add(err)
+	parsedLine.AddError(err)
 	apdemande.DateStatut, err = time.Parse("02/01/2006", row[idx["DATE_STATUT"]])
-	tracker.Add(err)
+	parsedLine.AddError(err)
 	apdemande.Periode = misc.Periode{}
 	apdemande.Periode.Start, err = time.Parse("02/01/2006", row[idx["DATE_DEB"]])
-	tracker.Add(err)
+	parsedLine.AddError(err)
 	apdemande.Periode.End, err = time.Parse("02/01/2006", row[idx["DATE_FIN"]])
-	tracker.Add(err)
+	parsedLine.AddError(err)
 	apdemande.HTA, err = misc.ParsePFloat(row[idx["HTA"]])
-	tracker.Add(err)
+	parsedLine.AddError(err)
 	apdemande.MTA, err = misc.ParsePFloat(strings.ReplaceAll(row[idx["MTA"]], ",", "."))
-	tracker.Add(err)
+	parsedLine.AddError(err)
 	apdemande.EffectifAutorise, err = misc.ParsePInt(row[idx["EFF_AUTO"]])
-	tracker.Add(err)
+	parsedLine.AddError(err)
 	apdemande.MotifRecoursSE, err = misc.ParsePInt(row[idx["MOTIF_RECOURS_SE"]])
-	tracker.Add(err)
+	parsedLine.AddError(err)
 	apdemande.HeureConsommee, err = misc.ParsePFloat(row[idx["S_HEURE_CONSOM_TOT"]])
-	tracker.Add(err)
+	parsedLine.AddError(err)
 	apdemande.EffectifConsomme, err = misc.ParsePInt(row[idx["S_EFF_CONSOM_TOT"]])
-	tracker.Add(err)
+	parsedLine.AddError(err)
 	apdemande.MontantConsomme, err = misc.ParsePFloat(strings.ReplaceAll(row[idx["S_MONTANT_CONSOM_TOT"]], ",", "."))
-	tracker.Add(err)
-	return apdemande
+	parsedLine.AddError(err)
+	parsedLine.AddTuple(apdemande)
 }

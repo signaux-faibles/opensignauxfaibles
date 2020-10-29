@@ -12,8 +12,6 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
-
-	"github.com/signaux-faibles/gournal"
 )
 
 // Debit Débit – fichier Urssaf
@@ -56,17 +54,15 @@ type colMapping map[string]int
 var ParserDebit = marshal.Parser{FileType: "debit", FileParser: ParseDebitFile}
 
 // ParseDebitFile extrait les tuples depuis un fichier "débit" de l'URSSAF.
-func ParseDebitFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.ParsedLineChan {
+func ParseDebitFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (marshal.ParsedLineChan, error) {
 	comptes, err := marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
 	if err != nil {
-		tracker.Add(err)
-		return nil
+		return nil, err
 	}
 
 	file, err := os.Open(filePath)
 	if err != nil {
-		tracker.Add(err)
-		return nil
+		return nil, err
 	}
 	// defer file.Close() // TODO: à réactiver
 
@@ -76,8 +72,7 @@ func ParseDebitFile(filePath string, cache *marshal.Cache, batch *base.AdminBatc
 	// ligne de titre
 	fields, err := reader.Read()
 	if err != nil {
-		tracker.Add(err)
-		return nil
+		return nil, err
 	}
 
 	var idx = colMapping{
@@ -96,8 +91,7 @@ func ParseDebitFile(filePath string, cache *marshal.Cache, batch *base.AdminBatc
 	}
 	// montantMajorationsIndex := misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Montant majorations de retard en centimes" })
 	if misc.SliceMin(idx["dateTraitement"], idx["partOuvriere"], idx["partPatronale"], idx["numeroHistoriqueEcartNegatif"], idx["periode"], idx["etatCompte"], idx["numeroCompte"], idx["numeroEcartNegatif"], idx["codeProcedureCollective"], idx["codeOperationEcartNegatif"], idx["codeMotifEcartNegatif"]) < 0 {
-		tracker.Add(errors.New("CSV non conforme"))
-		return nil
+		return nil, errors.New("CSV non conforme")
 	}
 
 	var lineNumber = 0 // starting with the header
@@ -120,9 +114,9 @@ func ParseDebitFile(filePath string, cache *marshal.Cache, batch *base.AdminBatc
 				date := period.Start
 
 				if siret, err := marshal.GetSiretFromComptesMapping(row[idx["numeroCompte"]], &date, comptes); err == nil {
-					debit := parseDebitLine(siret, row, tracker, idx)
-					if !tracker.HasErrorInCurrentCycle() {
-						parsedLine.AddTuple(debit)
+					parseDebitLine(siret, row, idx, &parsedLine)
+					if len(parsedLine.Errors) > 0 {
+						parsedLine.Tuples = []marshal.Tuple{}
 					}
 				} else {
 					parsedLine.AddError(base.NewFilterError(err))
@@ -131,10 +125,10 @@ func ParseDebitFile(filePath string, cache *marshal.Cache, batch *base.AdminBatc
 			parsedLineChan <- parsedLine
 		}
 	}()
-	return parsedLineChan
+	return parsedLineChan, nil
 }
 
-func parseDebitLine(siret string, row []string, tracker *gournal.Tracker, idx colMapping) Debit {
+func parseDebitLine(siret string, row []string, idx colMapping, parsedLine *marshal.ParsedLineResult) {
 
 	debit := Debit{
 		key:                       siret,
@@ -147,23 +141,23 @@ func parseDebitLine(siret string, row []string, tracker *gournal.Tracker, idx co
 
 	var err error
 	debit.DateTraitement, err = marshal.UrssafToDate(row[idx["dateTraitement"]])
-	tracker.Add(err)
+	parsedLine.AddError(err)
 	debit.PartOuvriere, err = strconv.ParseFloat(row[idx["partOuvriere"]], 64)
-	tracker.Add(err)
+	parsedLine.AddError(err)
 	debit.PartOuvriere = debit.PartOuvriere / 100
 	debit.PartPatronale, err = strconv.ParseFloat(row[idx["partPatronale"]], 64)
-	tracker.Add(err)
+	parsedLine.AddError(err)
 	debit.PartPatronale = debit.PartPatronale / 100
 	debit.NumeroHistoriqueEcartNegatif, err = strconv.Atoi(row[idx["numeroHistoriqueEcartNegatif"]])
-	tracker.Add(err)
+	parsedLine.AddError(err)
 	debit.EtatCompte, err = strconv.Atoi(row[idx["etatCompte"]])
-	tracker.Add(err)
+	parsedLine.AddError(err)
 	debit.Periode, err = marshal.UrssafToPeriod(row[idx["periode"]])
-	tracker.Add(err)
+	parsedLine.AddError(err)
 	debit.Recours, err = strconv.ParseBool(row[idx["recours"]])
-	tracker.Add(err)
+	parsedLine.AddError(err)
 	// debit.MontantMajorations, err = strconv.ParseFloat(row[idx["montantMajorations"]], 64)
 	// tracker.Error(err)
 	// debit.MontantMajorations = debit.MontantMajorations / 100
-	return debit
+	parsedLine.AddTuple(debit)
 }

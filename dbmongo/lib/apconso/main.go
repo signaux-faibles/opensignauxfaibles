@@ -10,8 +10,6 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
-
-	"github.com/signaux-faibles/gournal"
 )
 
 // APConso Consommation d'activité partielle
@@ -45,11 +43,10 @@ var Parser = marshal.Parser{FileType: "apconso", FileParser: ParseFile}
 type colMapping map[string]int
 
 // ParseFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.ParsedLineChan {
+func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (marshal.ParsedLineChan, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		tracker.Add(err)
-		return nil
+		return nil, err
 	}
 	// defer file.Close() // TODO: à réactiver
 	reader := csv.NewReader(file)
@@ -57,8 +54,7 @@ func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tr
 
 	header, err := reader.Read()
 	if err != nil {
-		tracker.Add(err)
-		return nil
+		return nil, err
 	}
 	var idx = colMapping{}
 	idx["ID"] = misc.SliceIndex(len(header), func(i int) bool { return header[i] == "ID_DA" })
@@ -69,44 +65,43 @@ func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tr
 	idx["Effectif"] = misc.SliceIndex(len(header), func(i int) bool { return header[i] == "EFFECTIFS" })
 
 	if misc.SliceMin(idx["ID"], idx["Siret"], idx["Periode"], idx["HeureConsommee"], idx["Montant"], idx["Effectif"]) == -1 {
-		tracker.Add(errors.New("entête non conforme, fichier ignoré"))
-		return nil
+		return nil, errors.New("entête non conforme, fichier ignoré")
 	}
 
 	parsedLineChan := make(marshal.ParsedLineChan)
 	go func() {
 		for {
-			tuples := []marshal.Tuple{}
+			parsedLine := marshal.ParsedLineResult{}
 			row, err := reader.Read()
 			if err == io.EOF {
 				close(parsedLineChan)
 				break
 			} else if err != nil {
-				tracker.Add(err)
+				parsedLine.AddError(err)
 			} else if len(row) > 0 {
-				apconso := parseApConsoLine(row, tracker, idx)
-				if !tracker.HasErrorInCurrentCycle() && apconso.Siret != "" {
-					tuples = []marshal.Tuple{apconso}
+				parseApConsoLine(row, idx, &parsedLine)
+				if len(parsedLine.Errors) > 0 {
+					parsedLine.Tuples = []marshal.Tuple{}
 				}
 			}
-			parsedLineChan <- marshal.ParsedLineResult{Tuples: tuples, Errors: []marshal.ParseError{}}
+			parsedLineChan <- parsedLine
 		}
 	}()
-	return parsedLineChan
+	return parsedLineChan, nil
 }
 
-func parseApConsoLine(row []string, tracker *gournal.Tracker, idx colMapping) APConso {
+func parseApConsoLine(row []string, idx colMapping, parsedLine *marshal.ParsedLineResult) {
 	apconso := APConso{}
 	apconso.ID = row[idx["ID"]]
 	apconso.Siret = row[idx["Siret"]]
 	var err error
 	apconso.Periode, err = time.Parse("01/2006", row[idx["Periode"]])
-	tracker.Add(err)
+	parsedLine.AddError(err)
 	apconso.HeureConsommee, err = misc.ParsePFloat(row[idx["HeureConsommee"]])
-	tracker.Add(err)
+	parsedLine.AddError(err)
 	apconso.Montant, err = misc.ParsePFloat(row[idx["Montant"]])
-	tracker.Add(err)
+	parsedLine.AddError(err)
 	apconso.Effectif, err = misc.ParsePInt(row[idx["Effectif"]])
-	tracker.Add(err)
-	return apconso
+	parsedLine.AddError(err)
+	parsedLine.AddTuple(apconso)
 }

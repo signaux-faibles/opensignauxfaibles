@@ -9,8 +9,6 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
-
-	"github.com/signaux-faibles/gournal"
 )
 
 // RepeatableOrder random number
@@ -39,11 +37,10 @@ func (rep RepeatableOrder) Type() string {
 var Parser = marshal.Parser{FileType: "reporder", FileParser: ParseFile}
 
 // ParseFile extrait les tuples depuis un fichier Reporder et génère un rapport Gournal.
-func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.ParsedLineChan {
+func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (marshal.ParsedLineChan, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		tracker.Add(err)
-		return nil
+		return nil, err
 	}
 	// defer file.Close() // TODO: à réactiver
 
@@ -53,33 +50,33 @@ func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tr
 	parsedLineChan := make(marshal.ParsedLineChan)
 	go func() {
 		for {
-			tuples := []marshal.Tuple{}
+			parsedLine := marshal.ParsedLineResult{}
 			row, err := reader.Read()
 			if err == io.EOF {
 				close(parsedLineChan)
 				break
 			} else if err != nil {
-				tracker.Add(err)
+				parsedLine.AddError(err)
 			} else {
-				reporder := parseReporderLine(row, tracker)
-				if !tracker.HasErrorInCurrentCycle() {
-					tuples = []marshal.Tuple{reporder}
+				parseReporderLine(row, &parsedLine)
+				if len(parsedLine.Errors) > 0 {
+					parsedLine.Tuples = []marshal.Tuple{}
 				}
 			}
-			parsedLineChan <- marshal.ParsedLineResult{Tuples: tuples, Errors: []marshal.ParseError{}}
+			parsedLineChan <- parsedLine
 		}
 	}()
-	return parsedLineChan
+	return parsedLineChan, nil
 }
 
-func parseReporderLine(row []string, tracker *gournal.Tracker) RepeatableOrder {
+func parseReporderLine(row []string, parsedLine *marshal.ParsedLineResult) {
 	periode, err := time.Parse("2006-01-02", row[1])
-	tracker.Add(err)
+	parsedLine.AddError(err)
 	randomOrder, err := misc.ParsePFloat(row[2])
-	tracker.Add(err)
-	return RepeatableOrder{
+	parsedLine.AddError(err)
+	parsedLine.AddTuple(RepeatableOrder{
 		Siret:       row[0],
 		Periode:     periode,
 		RandomOrder: randomOrder,
-	}
+	})
 }

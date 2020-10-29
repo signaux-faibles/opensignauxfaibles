@@ -14,8 +14,6 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sfregexp"
-
-	"github.com/signaux-faibles/gournal"
 )
 
 // Effectif Urssaf
@@ -45,12 +43,11 @@ func (effectif Effectif) Type() string {
 var ParserEffectif = marshal.Parser{FileType: "effectif", FileParser: ParseEffectifFile}
 
 // ParseEffectifFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseEffectifFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.ParsedLineChan {
+func ParseEffectifFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (marshal.ParsedLineChan, error) {
 	filter := marshal.GetSirenFilterFromCache(*cache)
 	file, err := os.Open(filePath)
 	if err != nil {
-		tracker.Add(err)
-		return nil
+		return nil, err
 	}
 	// defer file.Close() // TODO: à réactiver
 	reader := csv.NewReader(bufio.NewReader(file))
@@ -58,8 +55,7 @@ func ParseEffectifFile(filePath string, cache *marshal.Cache, batch *base.AdminB
 
 	fields, err := reader.Read()
 	if err != nil {
-		tracker.Add(err)
-		return nil
+		return nil, err
 	}
 
 	var idx = colMapping{
@@ -68,11 +64,10 @@ func ParseEffectifFile(filePath string, cache *marshal.Cache, batch *base.AdminB
 	}
 
 	if misc.SliceMin(idx["siret"], idx["compte"]) == -1 {
-		tracker.Add(errors.New("erreur à l'analyse du fichier, abandon, l'un " +
+		return nil, errors.New("erreur à l'analyse du fichier, abandon, l'un " +
 			"des champs obligatoires n'a pu etre trouve:" +
 			" siretIndex = " + strconv.Itoa(idx["siret"]) +
-			", compteIndex = " + strconv.Itoa(idx["compte"])))
-		return nil
+			", compteIndex = " + strconv.Itoa(idx["compte"]))
 	}
 
 	// Dans quels champs lire l'effectif
@@ -81,40 +76,36 @@ func ParseEffectifFile(filePath string, cache *marshal.Cache, batch *base.AdminB
 	parsedLineChan := make(marshal.ParsedLineChan)
 	go func() {
 		for {
-			tuples := []marshal.Tuple{}
+			parsedLine := marshal.ParsedLineResult{}
 			row, err := reader.Read()
 			if err == io.EOF {
 				close(parsedLineChan)
 				break
 			} else if err != nil {
-				tracker.Add(err)
+				parsedLine.AddError(err)
 			} else {
-				effectifs := parseEffectifLine(periods, row, idx, filter, tracker)
-				for _, v := range effectifs {
-					tuples = append(tuples, v)
-				}
+				parseEffectifLine(periods, row, idx, filter, &parsedLine)
 			}
-			parsedLineChan <- marshal.ParsedLineResult{Tuples: tuples, Errors: []marshal.ParseError{}}
+			parsedLineChan <- parsedLine
 		}
 	}()
-	return parsedLineChan
+	return parsedLineChan, nil
 }
 
-func parseEffectifLine(periods []periodCol, row []string, idx colMapping, filter marshal.SirenFilter, tracker *gournal.Tracker) []Effectif {
-	var effectifs = []Effectif{}
+func parseEffectifLine(periods []periodCol, row []string, idx colMapping, filter marshal.SirenFilter, parsedLine *marshal.ParsedLineResult) {
 	siret := row[idx["siret"]]
-	validSiret := sfregexp.RegexpDict["siret"].MatchString(siret)
+	validSiret := sfregexp.RegexpDict["siret"].MatchString(siret) // TODO: remove validation
 	if !validSiret {
-		tracker.Add(base.NewRegularError(errors.New("Le siret/siren est invalide")))
+		parsedLine.AddError(base.NewRegularError(errors.New("Le siret/siren est invalide")))
 	} else {
 		for _, period := range periods {
 			value := row[period.colIndex]
 			if value != "" {
 				noThousandsSep := sfregexp.RegexpDict["notDigit"].ReplaceAllString(value, "")
 				e, err := strconv.Atoi(noThousandsSep)
-				tracker.Add(err)
+				parsedLine.AddError(err)
 				if e > 0 {
-					effectifs = append(effectifs, Effectif{
+					parsedLine.AddTuple(Effectif{
 						Siret:        siret,
 						NumeroCompte: row[idx["compte"]],
 						Periode:      period.dateStart,
@@ -124,5 +115,4 @@ func parseEffectifLine(periods []periodCol, row []string, idx colMapping, filter
 			}
 		}
 	}
-	return effectifs
 }

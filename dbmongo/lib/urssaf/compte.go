@@ -3,7 +3,6 @@ package urssaf
 import (
 	"time"
 
-	"github.com/signaux-faibles/gournal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
@@ -35,11 +34,13 @@ func (compte Compte) Type() string {
 var ParserCompte = marshal.Parser{FileType: "admin_urssaf", FileParser: ParseCompteFile}
 
 // ParseCompteFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseCompteFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.ParsedLineChan {
+func ParseCompteFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (marshal.ParsedLineChan, error) {
 	if len(batch.Files["admin_urssaf"]) > 0 {
 		periodes := misc.GenereSeriePeriode(batch.Params.DateDebut, time.Now()) //[]time.Time
 		mapping, err := marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
-		tracker.Add(err)
+		if err != nil {
+			return nil, err
+		}
 
 		accounts := mapKeys(mapping)
 		accountIndex := 0
@@ -67,9 +68,9 @@ func ParseCompteFile(filePath string, cache *marshal.Cache, batch *base.AdminBat
 				parsedLineChan <- parsedLine
 			}
 		}()
-		return parsedLineChan
+		return parsedLineChan, nil
 	}
-	return nil
+	return nil, nil
 }
 
 func mapKeys(mymap marshal.Comptes) []string {

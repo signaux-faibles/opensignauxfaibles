@@ -10,8 +10,6 @@ import (
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
-
-	"github.com/signaux-faibles/gournal"
 )
 
 // CCSF information urssaf ccsf
@@ -42,17 +40,15 @@ func (ccsf CCSF) Type() string {
 var ParserCCSF = marshal.Parser{FileType: "ccsf", FileParser: ParseCcsfFile}
 
 // ParseCcsfFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseCcsfFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.ParsedLineChan {
+func ParseCcsfFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (marshal.ParsedLineChan, error) {
 	comptes, err := marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
 	if err != nil {
-		tracker.Add(err)
-		return nil
+		return nil, err
 	}
 
 	file, err := os.Open(filePath)
 	if err != nil {
-		tracker.Add(err)
-		return nil
+		return nil, err
 	}
 	// defer file.Close() // TODO: à réactiver
 
@@ -71,48 +67,47 @@ func ParseCcsfFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch
 	parsedLineChan := make(marshal.ParsedLineChan)
 	go func() {
 		for {
-			tuples := []marshal.Tuple{}
-
+			parsedLine := marshal.ParsedLineResult{}
 			row, err := reader.Read()
 			if err == io.EOF {
 				close(parsedLineChan)
 				break
 			} else if err != nil {
-				tracker.Add(err)
+				parsedLine.AddError(err)
 			} else {
-				ccsf := parseCcsfLine(row, tracker, &comptes, idx)
-				if !tracker.HasErrorInCurrentCycle() {
-					tuples = []marshal.Tuple{ccsf}
+				parseCcsfLine(row, idx, &comptes, &parsedLine)
+				if len(parsedLine.Errors) > 0 {
+					parsedLine.Tuples = []marshal.Tuple{}
 				}
 			}
-			parsedLineChan <- marshal.ParsedLineResult{Tuples: tuples, Errors: []marshal.ParseError{}}
+			parsedLineChan <- parsedLine
 		}
 	}()
-	return parsedLineChan
+	return parsedLineChan, nil
 }
 
-func parseCcsfLine(row []string, tracker *gournal.Tracker, comptes *marshal.Comptes, idx colMapping) CCSF {
+func parseCcsfLine(row []string, idx colMapping, comptes *marshal.Comptes, parsedLine *marshal.ParsedLineResult) {
 	var err error
 	ccsf := CCSF{}
 	if len(row) >= 4 {
 		ccsf.Action = row[idx["Action"]]
 		ccsf.Stade = row[idx["Stade"]]
 		ccsf.DateTraitement, err = marshal.UrssafToDate(row[idx["DateTraitement"]])
-		tracker.Add(err)
+		parsedLine.AddError(err)
 		if err != nil {
-			return ccsf
+			return
 		}
 
 		ccsf.key, err = marshal.GetSiretFromComptesMapping(row[idx["NumeroCompte"]], &ccsf.DateTraitement, *comptes)
 		if err != nil {
 			// Compte filtré
-			tracker.Add(base.NewFilterError(err))
-			return ccsf
+			parsedLine.AddError(base.NewFilterError(err))
+			return
 		}
 		ccsf.NumeroCompte = row[idx["NumeroCompte"]]
 
 	} else {
-		tracker.Add(errors.New("Ligne non conforme, moins de 4 champs"))
+		parsedLine.AddError(errors.New("Ligne non conforme, moins de 4 champs"))
 	}
-	return ccsf
+	parsedLine.AddTuple(ccsf)
 }

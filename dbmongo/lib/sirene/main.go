@@ -15,8 +15,6 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sfregexp"
-
-	"github.com/signaux-faibles/gournal"
 )
 
 // Sirene informations sur les entreprises
@@ -178,11 +176,10 @@ func (sirene Sirene) Scope() string {
 var Parser = marshal.Parser{FileType: "sirene", FileParser: ParseFile}
 
 // ParseFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.ParsedLineChan {
+func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (marshal.ParsedLineChan, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		tracker.Add(err)
-		return nil
+		return nil, err
 	}
 	// defer file.Close() // TODO: à réactiver
 	reader := csv.NewReader(file)
@@ -275,6 +272,5 @@ func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tr
 			parsedLineChan <- parsedLine
 		}
 	}()
-	return parsedLineChan
-
+	return parsedLineChan, nil
 }
