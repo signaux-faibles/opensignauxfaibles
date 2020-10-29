@@ -107,14 +107,14 @@ func ParseDebitFile(filePath string, cache *marshal.Cache, batch *base.AdminBatc
 	parsedLineChan := make(marshal.ParsedLineChan)
 	go func() {
 		for {
-			tuples := []marshal.Tuple{}
+			parsedLine := marshal.ParsedLineResult{}
 			lineNumber++
 			row, err := reader.Read()
 			if err == io.EOF {
 				close(parsedLineChan)
 				break
 			} else if err != nil {
-				tracker.Add(err)
+				parsedLine.AddError(err)
 			} else {
 				period, _ := marshal.UrssafToPeriod(row[idx["periode"]])
 				date := period.Start
@@ -122,13 +122,14 @@ func ParseDebitFile(filePath string, cache *marshal.Cache, batch *base.AdminBatc
 				if siret, err := marshal.GetSiretFromComptesMapping(row[idx["numeroCompte"]], &date, comptes); err == nil {
 					debit := parseDebitLine(siret, row, tracker, idx)
 					if !tracker.HasErrorInCurrentCycle() {
-						tuples = []marshal.Tuple{debit}
+						parsedLine.AddTuple(debit)
 					}
 				} else {
 					tracker.Add(base.NewFilterError(err))
+					// parsedLine.AddError(base.NewFilterError(err)) // TODO
 				}
 			}
-			parsedLineChan <- marshal.ParsedLineResult{Tuples: tuples, Errors: []marshal.ParseError{}}
+			parsedLineChan <- parsedLine
 		}
 	}()
 	return parsedLineChan

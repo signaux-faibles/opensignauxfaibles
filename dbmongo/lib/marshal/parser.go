@@ -30,6 +30,20 @@ type ParsedLineResult struct {
 	Errors []ParseError
 }
 
+// AddTuple permet au parseur d'ajouter un tuple extrait depuis la ligne en cours.
+func (res *ParsedLineResult) AddTuple(tuple Tuple) {
+	if tuple != nil {
+		res.Tuples = append(res.Tuples, tuple)
+	}
+}
+
+// AddError permet au parseur d'ajouter un tuple extrait depuis la ligne en cours.
+func (res *ParsedLineResult) AddError(err ParseError) {
+	if err != nil {
+		res.Errors = append(res.Errors, err)
+	}
+}
+
 // ParsedLineChan est un canal permettant à runParserWithSirenFilter() de
 // récupérer les tuples et erreurs d'une ligne de n'importe quel parseur.
 type ParsedLineChan chan ParsedLineResult
