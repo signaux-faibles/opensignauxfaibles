@@ -37,9 +37,9 @@ heading "npm test"
 heading "go test"
 if [[ "$*" == *--update* ]]
 then
-    (cd ./dbmongo && go test ./... -update) 2>&1 | indent
+    (cd ./dbmongo && go test ./... -test.count=1 -update) 2>&1 | indent
 else
-    (cd ./dbmongo && go test ./...) 2>&1 | indent
+    (cd ./dbmongo && go test ./... -test.count=1) 2>&1 | indent
 fi
 
 heading "go generate"
