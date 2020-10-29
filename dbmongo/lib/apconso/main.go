@@ -43,15 +43,37 @@ var Parser = marshal.Parser{FileType: "apconso", FileParser: ParseFile}
 type colMapping map[string]int
 
 // ParseFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (marshal.ParsedLineChan, error) {
+func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) marshal.OpenFileResult {
+	var idx colMapping
+	file, reader, err := openFile(filePath)
+	if err == nil {
+		idx, err = parseColMapping(reader)
+	}
+	return marshal.OpenFileResult{
+		Error: err,
+		ParseLines: func() marshal.ParsedLineChan {
+			parsedLineChan := make(marshal.ParsedLineChan)
+			go parseLines(reader, idx, parsedLineChan)
+			return parsedLineChan
+		},
+		Close: func() {
+			file.Close()
+		},
+	}
+}
+
+func openFile(filePath string) (*os.File, *csv.Reader, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	// defer file.Close() // TODO: à réactiver
 	reader := csv.NewReader(file)
 	reader.Comma = ','
+	return file, reader, nil
+}
 
+func parseColMapping(reader *csv.Reader) (colMapping, error) {
 	header, err := reader.Read()
 	if err != nil {
 		return nil, err
@@ -63,31 +85,29 @@ func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (m
 	idx["HeureConsommee"] = misc.SliceIndex(len(header), func(i int) bool { return header[i] == "HEURES" })
 	idx["Montant"] = misc.SliceIndex(len(header), func(i int) bool { return header[i] == "MONTANTS" })
 	idx["Effectif"] = misc.SliceIndex(len(header), func(i int) bool { return header[i] == "EFFECTIFS" })
-
 	if misc.SliceMin(idx["ID"], idx["Siret"], idx["Periode"], idx["HeureConsommee"], idx["Montant"], idx["Effectif"]) == -1 {
 		return nil, errors.New("entête non conforme, fichier ignoré")
 	}
+	return idx, nil
+}
 
-	parsedLineChan := make(marshal.ParsedLineChan)
-	go func() {
-		for {
-			parsedLine := marshal.ParsedLineResult{}
-			row, err := reader.Read()
-			if err == io.EOF {
-				close(parsedLineChan)
-				break
-			} else if err != nil {
-				parsedLine.AddError(err)
-			} else if len(row) > 0 {
-				parseApConsoLine(row, idx, &parsedLine)
-				if len(parsedLine.Errors) > 0 {
-					parsedLine.Tuples = []marshal.Tuple{}
-				}
+func parseLines(reader *csv.Reader, idx colMapping, parsedLineChan marshal.ParsedLineChan) {
+	for {
+		parsedLine := marshal.ParsedLineResult{}
+		row, err := reader.Read()
+		if err == io.EOF {
+			close(parsedLineChan)
+			break
+		} else if err != nil {
+			parsedLine.AddError(err)
+		} else if len(row) > 0 {
+			parseApConsoLine(row, idx, &parsedLine)
+			if len(parsedLine.Errors) > 0 {
+				parsedLine.Tuples = []marshal.Tuple{}
 			}
-			parsedLineChan <- parsedLine
 		}
-	}()
-	return parsedLineChan, nil
+		parsedLineChan <- parsedLine
+	}
 }
 
 func parseApConsoLine(row []string, idx colMapping, parsedLine *marshal.ParsedLineResult) {

@@ -48,8 +48,16 @@ func (res *ParsedLineResult) AddError(err ParseError) {
 // récupérer les tuples et erreurs d'une ligne de n'importe quel parseur.
 type ParsedLineChan chan ParsedLineResult
 
+// OpenFileResult permet à runParserWithSirenFilter() de savoir si le fichier à
+// parser a bien été ouvert, puis de lancer le parsing des lignes.
+type OpenFileResult struct {
+	Error      error
+	ParseLines func() ParsedLineChan
+	Close      func()
+}
+
 // ParseFile fonction de traitement de données en entrée
-type ParseFile func(filePath, *Cache, *base.AdminBatch) (ParsedLineChan, error)
+type ParseFile func(filePath, *Cache, *base.AdminBatch) OpenFileResult
 
 // Tuple unité de donnée à insérer dans un type
 type Tuple interface {
@@ -100,27 +108,28 @@ func ParseFilesFromBatch(cache Cache, batch *base.AdminBatch, parser Parser) (ch
 
 func runParserWithSirenFilter(parser Parser, filePath string, cache *Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan Tuple) {
 	filter := GetSirenFilterFromCache(*cache)
-	parsedLineChan, err := parser.FileParser(filePath, cache, batch)
+	openFileRes := parser.FileParser(filePath, cache, batch)
 	// Note: on ne passe plus le tracker aux parseurs afin de garder ici le controle de la numérotation des lignes où les erreurs sont trouvées
-	if err != nil {
-		tracker.Add(base.NewFatalError(err))
-		return
-	}
-	for lineResult := range parsedLineChan {
-		for _, err := range lineResult.Errors {
-			tracker.Add(err)
-		}
-		for _, tuple := range lineResult.Tuples {
-			if _, err := isValid(tuple); err != nil {
-				tracker.Add(base.NewRegularError(err))
-			} else if filter.Skips(tuple.Key()) {
-				tracker.Add(base.NewFilterNotice())
-			} else {
-				outputChannel <- tuple
+	if openFileRes.Error != nil {
+		tracker.Add(base.NewFatalError(openFileRes.Error))
+	} else {
+		for lineResult := range openFileRes.ParseLines() {
+			for _, err := range lineResult.Errors {
+				tracker.Add(err)
 			}
+			for _, tuple := range lineResult.Tuples {
+				if _, err := isValid(tuple); err != nil {
+					tracker.Add(base.NewRegularError(err))
+				} else if filter.Skips(tuple.Key()) {
+					tracker.Add(base.NewFilterNotice())
+				} else {
+					outputChannel <- tuple
+				}
+			}
+			tracker.Next()
 		}
-		tracker.Next()
 	}
+	openFileRes.Close()
 }
 
 // GetJSON sérialise un tuple au format JSON.
