@@ -5,7 +5,7 @@ import (
 
 	"github.com/cnf/structhash"
 	"github.com/globalsign/mgo/bson"
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 )
 
 // Value structure pour un établissement
@@ -22,12 +22,12 @@ type Data struct {
 }
 
 // GetMD5 returns a MD5 signature of the Tupe
-func GetMD5(tuple marshal.Tuple) []byte {
+func GetMD5(tuple base.Tuple) []byte {
 	return structhash.Md5(tuple, 1)
 }
 
 // Batch ensemble des données
-type Batch map[string]map[string]marshal.Tuple
+type Batch map[string]map[string]base.Tuple
 
 // Merge union de deux objets Batch
 func (batch1 Batch) Merge(batch2 Batch) {

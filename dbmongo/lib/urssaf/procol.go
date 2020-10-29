@@ -71,7 +71,7 @@ func ParseProcolFile(filePath string, cache *marshal.Cache, batch *base.AdminBat
 	parsedLineChan := make(marshal.ParsedLineChan)
 	go func() {
 		for {
-			parsedLine := marshal.ParsedLineResult{}
+			parsedLine := base.ParsedLineResult{}
 			row, err := reader.Read()
 			if err == io.EOF {
 				close(parsedLineChan)
@@ -82,7 +82,7 @@ func ParseProcolFile(filePath string, cache *marshal.Cache, batch *base.AdminBat
 				parseProcolLine(row, idx, &parsedLine)
 				if _, err := strconv.Atoi(row[idx["siret"]]); err == nil && len(row[idx["siret"]]) == 14 { // TODO: remove validation
 					if len(parsedLine.Errors) > 0 {
-						parsedLine.Tuples = []marshal.Tuple{}
+						parsedLine.Tuples = []base.Tuple{}
 					}
 				}
 			}
@@ -92,7 +92,7 @@ func ParseProcolFile(filePath string, cache *marshal.Cache, batch *base.AdminBat
 	return parsedLineChan, nil
 }
 
-func parseProcolLine(row []string, idx colMapping, parsedLine *marshal.ParsedLineResult) {
+func parseProcolLine(row []string, idx colMapping, parsedLine *base.ParsedLineResult) {
 	var err error
 	procol := Procol{}
 	procol.DateEffet, err = time.Parse("02Jan2006", row[idx["dt_effet"]])

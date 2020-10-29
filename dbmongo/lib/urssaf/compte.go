@@ -49,7 +49,7 @@ func ParseCompteFile(filePath string, cache *marshal.Cache, batch *base.AdminBat
 		parsedLineChan := make(marshal.ParsedLineChan)
 		go func() {
 			for {
-				parsedLine := marshal.ParsedLineResult{}
+				parsedLine := base.ParsedLineResult{}
 				if accountIndex >= len(mapping) {
 					close(parsedLineChan) // EOF
 					break

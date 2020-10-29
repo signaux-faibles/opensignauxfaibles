@@ -96,7 +96,7 @@ func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (m
 	parsedLineChan := make(marshal.ParsedLineChan)
 	go func() {
 		for {
-			parsedLine := marshal.ParsedLineResult{}
+			parsedLine := base.ParsedLineResult{}
 			row, err := reader.Read()
 			if err == io.EOF {
 				close(parsedLineChan)
@@ -108,7 +108,7 @@ func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (m
 			} else {
 				parseApDemandeLine(row, idx, &parsedLine)
 				if len(parsedLine.Errors) > 0 {
-					parsedLine.Tuples = []marshal.Tuple{}
+					parsedLine.Tuples = []base.Tuple{}
 				}
 			}
 			parsedLineChan <- parsedLine
@@ -117,7 +117,7 @@ func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (m
 	return parsedLineChan, nil
 }
 
-func parseApDemandeLine(row []string, idx colMapping, parsedLine *marshal.ParsedLineResult) {
+func parseApDemandeLine(row []string, idx colMapping, parsedLine *base.ParsedLineResult) {
 	apdemande := APDemande{}
 	apdemande.ID = row[idx["ID_DA"]]
 	apdemande.Siret = row[idx["ETAB_SIRET"]]

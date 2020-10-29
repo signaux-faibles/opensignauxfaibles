@@ -63,7 +63,7 @@ func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (m
 	parsedLineChan := make(marshal.ParsedLineChan)
 	go func() {
 		for {
-			parsedLine := marshal.ParsedLineResult{}
+			parsedLine := base.ParsedLineResult{}
 			row, err := reader.Read()
 			if err == io.EOF {
 				close(parsedLineChan)
@@ -79,7 +79,7 @@ func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (m
 	return parsedLineChan, nil
 }
 
-func parseSireneUlLine(row []string, parsedLine *marshal.ParsedLineResult) {
+func parseSireneUlLine(row []string, parsedLine *base.ParsedLineResult) {
 	sireneul := SireneUL{}
 	sireneul.Siren = row[0]
 	sireneul.RaisonSociale = row[23]

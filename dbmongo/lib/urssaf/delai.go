@@ -82,7 +82,7 @@ func ParseDelaiFile(filePath string, cache *marshal.Cache, batch *base.AdminBatc
 	parsedLineChan := make(marshal.ParsedLineChan)
 	go func() {
 		for {
-			parsedLine := marshal.ParsedLineResult{}
+			parsedLine := base.ParsedLineResult{}
 			row, err := reader.Read()
 			if err == io.EOF {
 				close(parsedLineChan)
@@ -96,7 +96,7 @@ func ParseDelaiFile(filePath string, cache *marshal.Cache, batch *base.AdminBatc
 				} else if siret, err := marshal.GetSiretFromComptesMapping(row[idx["NumeroCompte"]], &date, comptes); err == nil {
 					parseDelaiLine(row, idx, siret, &parsedLine)
 					if len(parsedLine.Errors) > 0 {
-						parsedLine.Tuples = []marshal.Tuple{}
+						parsedLine.Tuples = []base.Tuple{}
 					}
 				} else {
 					parsedLine.AddError(base.NewFilterError(err))
@@ -108,7 +108,7 @@ func ParseDelaiFile(filePath string, cache *marshal.Cache, batch *base.AdminBatc
 	return parsedLineChan, nil
 }
 
-func parseDelaiLine(row []string, idx colMapping, siret string, parsedLine *marshal.ParsedLineResult) {
+func parseDelaiLine(row []string, idx colMapping, siret string, parsedLine *base.ParsedLineResult) {
 	var err error
 	loc, _ := time.LoadLocation("Europe/Paris")
 	delai := Delai{}

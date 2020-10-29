@@ -61,7 +61,7 @@ func parseEllisphereSheet(sheet *xlsx.Sheet, filter marshal.SirenFilter) marshal
 	go func() {
 		sheet.ForEachRow(
 			func(row *xlsx.Row) error {
-				parsedLine := marshal.ParsedLineResult{}
+				parsedLine := base.ParsedLineResult{}
 				var ellisphere Ellisphere
 				err := row.ReadStruct(&ellisphere)
 				if !sfregexp.ValidSiren(ellisphere.Siren) { // TODO: retirer validation, tout en empêchant l'ajout du tuple en cas d'erreur

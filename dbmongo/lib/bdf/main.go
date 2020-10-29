@@ -66,7 +66,7 @@ func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (m
 	parsedLineChan := make(marshal.ParsedLineChan)
 	go func() {
 		for {
-			parsedLine := marshal.ParsedLineResult{}
+			parsedLine := base.ParsedLineResult{}
 			row, err := reader.Read()
 			if err == io.EOF {
 				close(parsedLineChan)
@@ -76,7 +76,7 @@ func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (m
 			} else {
 				parseBdfLine(row, filter, &parsedLine)
 				if len(parsedLine.Errors) > 0 {
-					parsedLine.Tuples = []marshal.Tuple{}
+					parsedLine.Tuples = []base.Tuple{}
 				}
 			}
 			parsedLineChan <- parsedLine
@@ -99,7 +99,7 @@ var field = map[string]int{
 	"fraisFinancier":      12,
 }
 
-func parseBdfLine(row []string, filter marshal.SirenFilter, parsedLine *marshal.ParsedLineResult) {
+func parseBdfLine(row []string, filter marshal.SirenFilter, parsedLine *base.ParsedLineResult) {
 	bdf := BDF{}
 	bdf.Siren = strings.Replace(row[field["siren"]], " ", "", -1)
 

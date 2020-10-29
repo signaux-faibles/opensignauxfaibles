@@ -87,7 +87,7 @@ func ParseEffectifEntFile(filePath string, cache *marshal.Cache, batch *base.Adm
 	parsedLineChan := make(marshal.ParsedLineChan)
 	go func() {
 		for {
-			parsedLine := marshal.ParsedLineResult{}
+			parsedLine := base.ParsedLineResult{}
 			row, err := reader.Read()
 			if err == io.EOF {
 				close(parsedLineChan)
@@ -103,7 +103,7 @@ func ParseEffectifEntFile(filePath string, cache *marshal.Cache, batch *base.Adm
 	return parsedLineChan, nil
 }
 
-func parseEffectifEntLine(periods []periodCol, row []string, idx colMapping, filter marshal.SirenFilter, parsedLine *marshal.ParsedLineResult) {
+func parseEffectifEntLine(periods []periodCol, row []string, idx colMapping, filter marshal.SirenFilter, parsedLine *base.ParsedLineResult) {
 	siren := row[idx["siren"]]
 	if !sfregexp.ValidSiren(siren) {
 		parsedLine.AddError(errors.New("Format de siren incorrect : " + siren)) // TODO: remove validation

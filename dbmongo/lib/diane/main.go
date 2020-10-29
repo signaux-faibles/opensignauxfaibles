@@ -166,7 +166,7 @@ func ParseFile(path string, cache *marshal.Cache, batch *base.AdminBatch) (marsh
 	parsedLineChan := make(marshal.ParsedLineChan)
 	go func() {
 		for {
-			parsedLine := marshal.ParsedLineResult{}
+			parsedLine := base.ParsedLineResult{}
 			row, err := reader.Read()
 			if err == io.EOF {
 				close(parsedLineChan)

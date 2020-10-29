@@ -40,8 +40,6 @@ func (apconso APConso) Scope() string {
 // Parser expose le parseur et le type de fichier qu'il supporte.
 var Parser = marshal.Parser{FileType: "apconso", FileParser: ParseFile}
 
-type colMapping map[string]int
-
 // ParseFile permet de lancer le parsing du fichier demandé.
 func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) marshal.OpenFileResult {
 	var idx colMapping
@@ -51,7 +49,7 @@ func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) ma
 	}
 	return marshal.OpenFileResult{
 		Error: err,
-		ParseLines: func(parsedLineChan marshal.ParsedLineChan) {
+		ParseLines: func(parsedLineChan chan base.ParsedLineResult) {
 			parseLines(reader, idx, parsedLineChan)
 		},
 		Close: func() {
@@ -71,6 +69,8 @@ func openFile(filePath string) (*os.File, *csv.Reader, error) {
 	return file, reader, nil
 }
 
+type colMapping map[string]int
+
 func parseColMapping(reader *csv.Reader) (colMapping, error) {
 	header, err := reader.Read()
 	if err != nil {
@@ -89,9 +89,9 @@ func parseColMapping(reader *csv.Reader) (colMapping, error) {
 	return idx, nil
 }
 
-func parseLines(reader *csv.Reader, idx colMapping, parsedLineChan marshal.ParsedLineChan) {
+func parseLines(reader *csv.Reader, idx colMapping, parsedLineChan chan base.ParsedLineResult) {
 	for {
-		parsedLine := marshal.ParsedLineResult{}
+		parsedLine := base.ParsedLineResult{}
 		row, err := reader.Read()
 		if err == io.EOF {
 			close(parsedLineChan)
@@ -101,14 +101,14 @@ func parseLines(reader *csv.Reader, idx colMapping, parsedLineChan marshal.Parse
 		} else if len(row) > 0 {
 			parseApConsoLine(row, idx, &parsedLine)
 			if len(parsedLine.Errors) > 0 {
-				parsedLine.Tuples = []marshal.Tuple{}
+				parsedLine.Tuples = []base.Tuple{}
 			}
 		}
 		parsedLineChan <- parsedLine
 	}
 }
 
-func parseApConsoLine(row []string, idx colMapping, parsedLine *marshal.ParsedLineResult) {
+func parseApConsoLine(row []string, idx colMapping, parsedLine *base.ParsedLineResult) {
 	apconso := APConso{}
 	apconso.ID = row[idx["ID"]]
 	apconso.Siret = row[idx["Siret"]]

@@ -76,7 +76,7 @@ func ParseEffectifFile(filePath string, cache *marshal.Cache, batch *base.AdminB
 	parsedLineChan := make(marshal.ParsedLineChan)
 	go func() {
 		for {
-			parsedLine := marshal.ParsedLineResult{}
+			parsedLine := base.ParsedLineResult{}
 			row, err := reader.Read()
 			if err == io.EOF {
 				close(parsedLineChan)
@@ -92,7 +92,7 @@ func ParseEffectifFile(filePath string, cache *marshal.Cache, batch *base.AdminB
 	return parsedLineChan, nil
 }
 
-func parseEffectifLine(periods []periodCol, row []string, idx colMapping, filter marshal.SirenFilter, parsedLine *marshal.ParsedLineResult) {
+func parseEffectifLine(periods []periodCol, row []string, idx colMapping, filter marshal.SirenFilter, parsedLine *base.ParsedLineResult) {
 	siret := row[idx["siret"]]
 	validSiret := sfregexp.RegexpDict["siret"].MatchString(siret) // TODO: remove validation
 	if !validSiret {

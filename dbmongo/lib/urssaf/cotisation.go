@@ -68,7 +68,7 @@ func ParseCotisationFile(filePath string, cache *marshal.Cache, batch *base.Admi
 	parsedLineChan := make(marshal.ParsedLineChan)
 	go func() {
 		for {
-			parsedLine := marshal.ParsedLineResult{}
+			parsedLine := base.ParsedLineResult{}
 			row, err := reader.Read()
 			if err == io.EOF {
 				close(parsedLineChan)
@@ -78,7 +78,7 @@ func ParseCotisationFile(filePath string, cache *marshal.Cache, batch *base.Admi
 			} else {
 				parseCotisationLine(row, &comptes, idx, &parsedLine)
 				if len(parsedLine.Errors) > 0 {
-					parsedLine.Tuples = []marshal.Tuple{}
+					parsedLine.Tuples = []base.Tuple{}
 				}
 			}
 			parsedLineChan <- parsedLine
@@ -87,7 +87,7 @@ func ParseCotisationFile(filePath string, cache *marshal.Cache, batch *base.Admi
 	return parsedLineChan, nil
 }
 
-func parseCotisationLine(row []string, comptes *marshal.Comptes, idx colMapping, parsedLine *marshal.ParsedLineResult) {
+func parseCotisationLine(row []string, comptes *marshal.Comptes, idx colMapping, parsedLine *base.ParsedLineResult) {
 	cotisation := Cotisation{}
 
 	periode, err := marshal.UrssafToPeriod(row[idx["Periode"]])

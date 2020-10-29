@@ -69,7 +69,7 @@ func ImportBatch(batch base.AdminBatch, parsers []marshal.Parser, skipFilter boo
 					Key:   tuple.Key(),
 					Batch: map[string]Batch{
 						batch.ID.Key: {
-							tuple.Type(): map[string]marshal.Tuple{
+							tuple.Type(): map[string]base.Tuple{
 								hash: tuple,
 							}}}}}
 			Db.ChanData <- &value

@@ -1,9 +1,9 @@
 package engine
 
-import "github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
+import "github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 
 // DiscardTuple supprime les évènements
-func DiscardTuple(tuples chan marshal.Tuple) {
+func DiscardTuple(tuples chan base.Tuple) {
 	go func() {
 		for range tuples {
 		}

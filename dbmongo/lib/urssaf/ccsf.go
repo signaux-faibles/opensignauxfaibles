@@ -67,7 +67,7 @@ func ParseCcsfFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch
 	parsedLineChan := make(marshal.ParsedLineChan)
 	go func() {
 		for {
-			parsedLine := marshal.ParsedLineResult{}
+			parsedLine := base.ParsedLineResult{}
 			row, err := reader.Read()
 			if err == io.EOF {
 				close(parsedLineChan)
@@ -77,7 +77,7 @@ func ParseCcsfFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch
 			} else {
 				parseCcsfLine(row, idx, &comptes, &parsedLine)
 				if len(parsedLine.Errors) > 0 {
-					parsedLine.Tuples = []marshal.Tuple{}
+					parsedLine.Tuples = []base.Tuple{}
 				}
 			}
 			parsedLineChan <- parsedLine
@@ -86,7 +86,7 @@ func ParseCcsfFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch
 	return parsedLineChan, nil
 }
 
-func parseCcsfLine(row []string, idx colMapping, comptes *marshal.Comptes, parsedLine *marshal.ParsedLineResult) {
+func parseCcsfLine(row []string, idx colMapping, comptes *marshal.Comptes, parsedLine *base.ParsedLineResult) {
 	var err error
 	ccsf := CCSF{}
 	if len(row) >= 4 {

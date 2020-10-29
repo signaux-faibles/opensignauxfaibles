@@ -50,7 +50,7 @@ func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (m
 	parsedLineChan := make(marshal.ParsedLineChan)
 	go func() {
 		for {
-			parsedLine := marshal.ParsedLineResult{}
+			parsedLine := base.ParsedLineResult{}
 			row, err := reader.Read()
 			if err == io.EOF {
 				close(parsedLineChan)
@@ -60,7 +60,7 @@ func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (m
 			} else {
 				parseReporderLine(row, &parsedLine)
 				if len(parsedLine.Errors) > 0 {
-					parsedLine.Tuples = []marshal.Tuple{}
+					parsedLine.Tuples = []base.Tuple{}
 				}
 			}
 			parsedLineChan <- parsedLine
@@ -69,7 +69,7 @@ func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (m
 	return parsedLineChan, nil
 }
 
-func parseReporderLine(row []string, parsedLine *marshal.ParsedLineResult) {
+func parseReporderLine(row []string, parsedLine *base.ParsedLineResult) {
 	periode, err := time.Parse("2006-01-02", row[1])
 	parsedLine.AddError(err)
 	randomOrder, err := misc.ParsePFloat(row[2])
