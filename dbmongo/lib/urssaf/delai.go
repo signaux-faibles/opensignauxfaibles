@@ -86,33 +86,33 @@ func ParseDelaiFile(filePath string, cache *marshal.Cache, batch *base.AdminBatc
 	parsedLineChan := make(marshal.ParsedLineChan)
 	go func() {
 		for {
-			tuples := []marshal.Tuple{}
+			parsedLine := marshal.ParsedLineResult{}
 			row, err := reader.Read()
 			if err == io.EOF {
 				close(parsedLineChan)
 				break
 			} else if err != nil {
-				tracker.Add(err)
+				parsedLine.AddError(err)
 			} else {
 				date, err := time.Parse("02/01/2006", row[idx["DateCreation"]])
 				if err != nil {
-					tracker.Add(err)
+					parsedLine.AddError(err)
 				} else if siret, err := marshal.GetSiretFromComptesMapping(row[idx["NumeroCompte"]], &date, comptes); err == nil {
-					delai := parseDelaiLine(row, idx, siret, tracker)
-					if !tracker.HasErrorInCurrentCycle() {
-						tuples = []marshal.Tuple{delai}
+					parseDelaiLine(row, idx, siret, &parsedLine)
+					if tracker.HasErrorInCurrentCycle() {
+						parsedLine.Tuples = []marshal.Tuple{}
 					}
 				} else {
-					tracker.Add(base.NewFilterError(err))
+					parsedLine.AddError(base.NewFilterError(err))
 				}
 			}
-			parsedLineChan <- marshal.ParsedLineResult{Tuples: tuples, Errors: []marshal.ParseError{}}
+			parsedLineChan <- parsedLine
 		}
 	}()
 	return parsedLineChan
 }
 
-func parseDelaiLine(row []string, idx colMapping, siret string, tracker *gournal.Tracker) Delai {
+func parseDelaiLine(row []string, idx colMapping, siret string, parsedLine *marshal.ParsedLineResult) {
 	var err error
 	loc, _ := time.LoadLocation("Europe/Paris")
 	delai := Delai{}
@@ -120,17 +120,17 @@ func parseDelaiLine(row []string, idx colMapping, siret string, tracker *gournal
 	delai.NumeroCompte = row[idx["NumeroCompte"]]
 	delai.NumeroContentieux = row[idx["NumeroContentieux"]]
 	delai.DateCreation, err = time.ParseInLocation("02/01/2006", row[idx["DateCreation"]], loc)
-	tracker.Add(err)
+	parsedLine.AddError(err)
 	delai.DateEcheance, err = time.ParseInLocation("02/01/2006", row[idx["DateEcheance"]], loc)
-	tracker.Add(err)
+	parsedLine.AddError(err)
 	delai.DureeDelai, err = strconv.Atoi(row[idx["DureeDelai"]])
 	delai.Denomination = row[idx["Denomination"]]
 	delai.Indic6m = row[idx["Indic6m"]]
 	delai.AnneeCreation, err = strconv.Atoi(row[idx["AnneeCreation"]])
-	tracker.Add(err)
+	parsedLine.AddError(err)
 	delai.MontantEcheancier, err = strconv.ParseFloat(strings.Replace(row[idx["MontantEcheancier"]], ",", ".", -1), 64)
-	tracker.Add(err)
+	parsedLine.AddError(err)
 	delai.Stade = row[idx["Stade"]]
 	delai.Action = row[idx["Action"]]
-	return delai
+	parsedLine.AddTuple(delai)
 }
