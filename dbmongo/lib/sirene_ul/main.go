@@ -77,7 +77,7 @@ func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tr
 			} else if err != nil {
 				parsedLine.AddError(err)
 			} else {
-				parsedLine.AddTuple(parseSireneUlLine(row, tracker)) // TODO: ne plus passer le tracker
+				parseSireneUlLine(row, &parsedLine)
 			}
 			parsedLineChan <- parsedLine
 		}
@@ -85,7 +85,7 @@ func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tr
 	return parsedLineChan
 }
 
-func parseSireneUlLine(row []string, tracker *gournal.Tracker) SireneUL {
+func parseSireneUlLine(row []string, parsedLine *marshal.ParsedLineResult) {
 	sireneul := SireneUL{}
 	sireneul.Siren = row[0]
 	sireneul.RaisonSociale = row[23]
@@ -100,6 +100,6 @@ func parseSireneUlLine(row []string, tracker *gournal.Tracker) SireneUL {
 	if err == nil {
 		sireneul.Creation = &creation
 	}
-	tracker.Add(err)
-	return sireneul
+	parsedLine.AddError(err)
+	parsedLine.AddTuple(sireneul)
 }
