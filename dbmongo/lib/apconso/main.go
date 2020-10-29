@@ -42,7 +42,7 @@ var Parser = marshal.Parser{FileType: "apconso", FileParser: ParseFile}
 
 type colMapping map[string]int
 
-// ParseFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
+// ParseFile permet de lancer le parsing du fichier demandé.
 func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) marshal.OpenFileResult {
 	var idx colMapping
 	file, reader, err := openFile(filePath)
@@ -51,10 +51,8 @@ func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) ma
 	}
 	return marshal.OpenFileResult{
 		Error: err,
-		ParseLines: func() marshal.ParsedLineChan {
-			parsedLineChan := make(marshal.ParsedLineChan)
-			go parseLines(reader, idx, parsedLineChan)
-			return parsedLineChan
+		ParseLines: func(parsedLineChan marshal.ParsedLineChan) {
+			parseLines(reader, idx, parsedLineChan)
 		},
 		Close: func() {
 			file.Close()

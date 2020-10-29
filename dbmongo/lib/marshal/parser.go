@@ -52,7 +52,7 @@ type ParsedLineChan chan ParsedLineResult
 // parser a bien été ouvert, puis de lancer le parsing des lignes.
 type OpenFileResult struct {
 	Error      error
-	ParseLines func() ParsedLineChan
+	ParseLines func(ParsedLineChan)
 	Close      func()
 }
 
@@ -113,7 +113,9 @@ func runParserWithSirenFilter(parser Parser, filePath string, cache *Cache, batc
 	if openFileRes.Error != nil {
 		tracker.Add(base.NewFatalError(openFileRes.Error))
 	} else {
-		for lineResult := range openFileRes.ParseLines() {
+		parsedLineChan := make(ParsedLineChan)
+		go openFileRes.ParseLines(parsedLineChan)
+		for lineResult := range parsedLineChan {
 			for _, err := range lineResult.Errors {
 				tracker.Add(err)
 			}
