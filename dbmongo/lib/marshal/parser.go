@@ -22,7 +22,7 @@ type Parser = struct {
 type filePath = string
 
 // ParseError est une erreur produite lors du parsing d'une ligne.
-type ParseError = error
+type ParseError = error // TODO: utiliser CriticError ici
 
 // ParsedLineResult est le résultat du parsing d'une ligne.
 type ParsedLineResult struct {

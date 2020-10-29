@@ -125,8 +125,7 @@ func ParseDebitFile(filePath string, cache *marshal.Cache, batch *base.AdminBatc
 						parsedLine.AddTuple(debit)
 					}
 				} else {
-					tracker.Add(base.NewFilterError(err))
-					// parsedLine.AddError(base.NewFilterError(err)) // TODO
+					parsedLine.AddError(base.NewFilterError(err))
 				}
 			}
 			parsedLineChan <- parsedLine
