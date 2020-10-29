@@ -51,7 +51,7 @@ func (bdf BDF) Scope() string {
 var Parser = marshal.Parser{FileType: "bdf", FileParser: ParseFile}
 
 // ParseFile extrait les tuples depuis un fichier BDF et génère un rapport Gournal.
-func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.TupleGenerator {
+func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.ParsedLineChan {
 	filter := marshal.GetSirenFilterFromCache(*cache)
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -67,14 +67,14 @@ func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tr
 	_, err = reader.Read()
 	tracker.Add(err)
 
-	tupleGenerator := make(marshal.TupleGenerator)
+	parsedLineChan := make(marshal.ParsedLineChan)
 	go func() {
 		for {
 			tuples := []marshal.Tuple{}
 
 			row, err := reader.Read()
 			if err == io.EOF {
-				close(tupleGenerator)
+				close(parsedLineChan)
 				break
 			} else if err != nil {
 				tracker.Add(err)
@@ -85,10 +85,10 @@ func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tr
 					tuples = []marshal.Tuple{bdf}
 				}
 			}
-			tupleGenerator <- tuples
+			parsedLineChan <- marshal.ParsedLineResult{Tuples: tuples, Errors: []marshal.ParseError{}}
 		}
 	}()
-	return tupleGenerator
+	return parsedLineChan
 }
 
 var field = map[string]int{

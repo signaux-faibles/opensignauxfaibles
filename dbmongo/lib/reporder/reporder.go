@@ -39,7 +39,7 @@ func (rep RepeatableOrder) Type() string {
 var Parser = marshal.Parser{FileType: "reporder", FileParser: ParseFile}
 
 // ParseFile extrait les tuples depuis un fichier Reporder et génère un rapport Gournal.
-func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.TupleGenerator {
+func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.ParsedLineChan {
 	file, err := os.Open(filePath)
 	if err != nil {
 		tracker.Add(err)
@@ -50,13 +50,13 @@ func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tr
 	reader := csv.NewReader(file)
 	reader.Comma = ','
 
-	tupleGenerator := make(marshal.TupleGenerator)
+	parsedLineChan := make(marshal.ParsedLineChan)
 	go func() {
 		for {
 			tuples := []marshal.Tuple{}
 			row, err := reader.Read()
 			if err == io.EOF {
-				close(tupleGenerator)
+				close(parsedLineChan)
 				break
 			} else if err != nil {
 				tracker.Add(err)
@@ -66,10 +66,10 @@ func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tr
 					tuples = []marshal.Tuple{reporder}
 				}
 			}
-			tupleGenerator <- tuples
+			parsedLineChan <- marshal.ParsedLineResult{Tuples: tuples, Errors: []marshal.ParseError{}}
 		}
 	}()
-	return tupleGenerator
+	return parsedLineChan
 }
 
 func parseReporderLine(row []string, tracker *gournal.Tracker) RepeatableOrder {

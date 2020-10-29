@@ -178,7 +178,7 @@ func (sirene Sirene) Scope() string {
 var Parser = marshal.Parser{FileType: "sirene", FileParser: ParseFile}
 
 // ParseFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.TupleGenerator {
+func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.ParsedLineChan {
 	file, err := os.Open(filePath)
 	if err != nil {
 		tracker.Add(err)
@@ -189,12 +189,12 @@ func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tr
 	reader.Comma = ','
 	reader.LazyQuotes = true
 
-	tupleGenerator := make(marshal.TupleGenerator)
+	parsedLineChan := make(marshal.ParsedLineChan)
 	go func() {
 		for {
 			row, err := reader.Read()
 			if err == io.EOF {
-				close(tupleGenerator)
+				close(parsedLineChan)
 				break
 			} else if err != nil {
 				tracker.Add(err)
@@ -270,10 +270,10 @@ func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tr
 			if row[49] != "" {
 				tracker.Add(err)
 			}
-
-			tupleGenerator <- []marshal.Tuple{sirene}
+			tuples := []marshal.Tuple{sirene}
+			parsedLineChan <- marshal.ParsedLineResult{Tuples: tuples, Errors: []marshal.ParseError{}}
 		}
 	}()
-	return tupleGenerator
+	return parsedLineChan
 
 }

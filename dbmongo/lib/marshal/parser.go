@@ -21,12 +21,21 @@ type Parser = struct {
 
 type filePath = string
 
-// TupleGenerator est un canal permettant à runParserWithSirenFilter() de
-// récupérer les tuples de n'importe quel parseur.
-type TupleGenerator chan []Tuple
+// ParseError est une erreur produite lors du parsing d'une ligne.
+type ParseError = error
+
+// ParsedLineResult est le résultat du parsing d'une ligne.
+type ParsedLineResult struct {
+	Tuples []Tuple
+	Errors []ParseError
+}
+
+// ParsedLineChan est un canal permettant à runParserWithSirenFilter() de
+// récupérer les tuples et erreurs d'une ligne de n'importe quel parseur.
+type ParsedLineChan chan ParsedLineResult
 
 // ParseFile fonction de traitement de données en entrée
-type ParseFile func(filePath, *Cache, *base.AdminBatch, *gournal.Tracker) TupleGenerator
+type ParseFile func(filePath, *Cache, *base.AdminBatch, *gournal.Tracker) ParsedLineChan
 
 // Tuple unité de donnée à insérer dans un type
 type Tuple interface {
@@ -77,12 +86,15 @@ func ParseFilesFromBatch(cache Cache, batch *base.AdminBatch, parser Parser) (ch
 
 func runParserWithSirenFilter(parser Parser, filePath string, cache *Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan Tuple) {
 	filter := GetSirenFilterFromCache(*cache)
-	tupleGenerator := parser.FileParser(filePath, cache, batch, tracker)
-	if tupleGenerator == nil {
+	parsedLineChan := parser.FileParser(filePath, cache, batch, tracker)
+	if parsedLineChan == nil {
 		return
 	}
-	for tuples := range tupleGenerator {
-		for _, tuple := range tuples {
+	for lineResult := range parsedLineChan {
+		for _, err := range lineResult.Errors {
+			tracker.Add(err)
+		}
+		for _, tuple := range lineResult.Tuples {
 			if _, err := isValid(tuple); err != nil {
 				tracker.Add(err)
 			} else if filter.Skips(tuple.Key()) {
@@ -91,7 +103,7 @@ func runParserWithSirenFilter(parser Parser, filePath string, cache *Cache, batc
 				outputChannel <- tuple
 			}
 		}
-		tracker.Next()
+		tracker.Next() // TODO: ne plus passer le tracker aux parseurs, pour garder le controle de la numérotation des lignes où les erreurs sont trouvées
 	}
 }
 

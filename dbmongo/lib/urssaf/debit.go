@@ -56,7 +56,7 @@ type colMapping map[string]int
 var ParserDebit = marshal.Parser{FileType: "debit", FileParser: ParseDebitFile}
 
 // ParseDebitFile extrait les tuples depuis un fichier "débit" de l'URSSAF.
-func ParseDebitFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.TupleGenerator {
+func ParseDebitFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.ParsedLineChan {
 	comptes, err := marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
 	if err != nil {
 		tracker.Add(err)
@@ -104,14 +104,14 @@ func ParseDebitFile(filePath string, cache *marshal.Cache, batch *base.AdminBatc
 	stopProgressLogger := marshal.LogProgress(&lineNumber)
 	defer stopProgressLogger()
 
-	tupleGenerator := make(marshal.TupleGenerator)
+	parsedLineChan := make(marshal.ParsedLineChan)
 	go func() {
 		for {
 			tuples := []marshal.Tuple{}
 			lineNumber++
 			row, err := reader.Read()
 			if err == io.EOF {
-				close(tupleGenerator)
+				close(parsedLineChan)
 				break
 			} else if err != nil {
 				tracker.Add(err)
@@ -128,10 +128,10 @@ func ParseDebitFile(filePath string, cache *marshal.Cache, batch *base.AdminBatc
 					tracker.Add(base.NewFilterError(err))
 				}
 			}
-			tupleGenerator <- tuples
+			parsedLineChan <- marshal.ParsedLineResult{Tuples: tuples, Errors: []marshal.ParseError{}}
 		}
 	}()
-	return tupleGenerator
+	return parsedLineChan
 }
 
 func parseDebitLine(siret string, row []string, tracker *gournal.Tracker, idx colMapping) Debit {

@@ -55,7 +55,7 @@ var Parser = marshal.Parser{FileType: "apdemande", FileParser: ParseFile}
 type colMapping map[string]int
 
 // ParseFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.TupleGenerator {
+func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker) marshal.ParsedLineChan {
 	file, err := os.Open(filePath)
 	if err != nil {
 		tracker.Add(err)
@@ -98,14 +98,14 @@ func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tr
 		}
 	}
 
-	tupleGenerator := make(marshal.TupleGenerator)
+	parsedLineChan := make(marshal.ParsedLineChan)
 	go func() {
 		for {
 			tuples := []marshal.Tuple{}
 
 			row, err := reader.Read()
 			if err == io.EOF {
-				close(tupleGenerator)
+				close(parsedLineChan)
 				break
 			} else if err != nil {
 				tracker.Add(err)
@@ -117,10 +117,10 @@ func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tr
 					tuples = []marshal.Tuple{apdemande}
 				}
 			}
-			tupleGenerator <- tuples
+			parsedLineChan <- marshal.ParsedLineResult{Tuples: tuples, Errors: []marshal.ParseError{}}
 		}
 	}()
-	return tupleGenerator
+	return parsedLineChan
 }
 
 func parseApDemandeLine(row []string, tracker *gournal.Tracker, idx colMapping) APDemande {
