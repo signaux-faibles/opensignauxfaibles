@@ -192,21 +192,22 @@ func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tr
 	parsedLineChan := make(marshal.ParsedLineChan)
 	go func() {
 		for {
+			parsedLine := marshal.ParsedLineResult{}
 			row, err := reader.Read()
 			if err == io.EOF {
 				close(parsedLineChan)
 				break
 			} else if err != nil {
-				tracker.Add(err)
+				parsedLine.AddError(err)
 			} else if !sfregexp.ValidSiren(row[f["siren"]]) {
-				tracker.Add(errors.New("siren invalide : " + row[f["siren"]]))
+				parsedLine.AddError(errors.New("siren invalide : " + row[f["siren"]])) // TODO: retirer validation
 			}
 
 			sirene := Sirene{}
 			sirene.Siren = row[f["siren"]]
 			sirene.Nic = row[f["nic"]]
 			sirene.Siege, err = strconv.ParseBool(row[f["etablissementSiege"]])
-			tracker.Add(err)
+			parsedLine.AddError(err)
 
 			sirene.ComplementAdresse = row[f["complementAdresseEtablissement"]]
 			sirene.NumVoie = row[f["numeroVoieEtablissement"]]
@@ -233,7 +234,7 @@ func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tr
 				}
 				sirene.Departement = departement
 			} else {
-				tracker.Add(errors.New("Code postal est manquant ou de format incorrect"))
+				parsedLine.AddError(errors.New("Code postal est manquant ou de format incorrect"))
 			}
 
 			if row[f["activitePrincipaleEtablissement"]] != "" {
@@ -253,14 +254,14 @@ func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tr
 			if err == nil {
 				sirene.Creation = &creation
 			}
-			tracker.Add(err)
+			parsedLine.AddError(err)
 
 			long, err := strconv.ParseFloat(row[f["longitude"]], 64)
 			if err == nil {
 				sirene.Longitude = long
 			}
 			if row[48] != "" {
-				tracker.Add(err)
+				parsedLine.AddError(err)
 			}
 
 			lat, err := strconv.ParseFloat(row[f["latitude"]], 64)
@@ -268,10 +269,10 @@ func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tr
 				sirene.Latitude = lat
 			}
 			if row[49] != "" {
-				tracker.Add(err)
+				parsedLine.AddError(err)
 			}
-			tuples := []marshal.Tuple{sirene}
-			parsedLineChan <- marshal.ParsedLineResult{Tuples: tuples, Errors: []marshal.ParseError{}}
+			parsedLine.AddTuple(sirene)
+			parsedLineChan <- parsedLine
 		}
 	}()
 	return parsedLineChan
