@@ -103,7 +103,7 @@ func runParserWithSirenFilter(parser Parser, filePath string, cache *Cache, batc
 	parsedLineChan, err := parser.FileParser(filePath, cache, batch)
 	// Note: on ne passe plus le tracker aux parseurs afin de garder ici le controle de la numérotation des lignes où les erreurs sont trouvées
 	if err != nil {
-		tracker.Add(err)
+		tracker.Add(base.NewFatalError(err))
 		return
 	}
 	for lineResult := range parsedLineChan {
@@ -112,7 +112,7 @@ func runParserWithSirenFilter(parser Parser, filePath string, cache *Cache, batc
 		}
 		for _, tuple := range lineResult.Tuples {
 			if _, err := isValid(tuple); err != nil {
-				tracker.Add(err)
+				tracker.Add(base.NewRegularError(err))
 			} else if filter.Skips(tuple.Key()) {
 				tracker.Add(base.NewFilterNotice())
 			} else {
