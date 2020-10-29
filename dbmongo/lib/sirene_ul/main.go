@@ -69,17 +69,17 @@ func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tr
 	parsedLineChan := make(marshal.ParsedLineChan)
 	go func() {
 		for {
-			tuples := []marshal.Tuple{}
+			parsedLine := marshal.ParsedLineResult{}
 			row, err := reader.Read()
 			if err == io.EOF {
 				close(parsedLineChan)
 				break
 			} else if err != nil {
-				tracker.Add(err)
+				parsedLine.AddError(err)
 			} else {
-				tuples = []marshal.Tuple{parseSireneUlLine(row, tracker)}
+				parsedLine.AddTuple(parseSireneUlLine(row, tracker)) // TODO: ne plus passer le tracker
 			}
-			parsedLineChan <- marshal.ParsedLineResult{Tuples: tuples, Errors: []marshal.ParseError{}}
+			parsedLineChan <- parsedLine
 		}
 	}()
 	return parsedLineChan
