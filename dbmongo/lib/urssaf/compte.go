@@ -48,7 +48,7 @@ func ParseCompteFile(filePath string, cache *marshal.Cache, batch *base.AdminBat
 		parsedLineChan := make(marshal.ParsedLineChan)
 		go func() {
 			for {
-				tuples := []marshal.Tuple{}
+				parsedLine := marshal.ParsedLineResult{}
 				if accountIndex >= len(mapping) {
 					close(parsedLineChan) // EOF
 					break
@@ -61,10 +61,10 @@ func ParseCompteFile(filePath string, cache *marshal.Cache, batch *base.AdminBat
 					compte.NumeroCompte = account
 					compte.Periode = p
 					compte.Siret, err = marshal.GetSiret(account, &p, *cache, batch)
-					tracker.Add(base.NewCriticError(err, "erreur"))
-					tuples = append(tuples, compte)
+					parsedLine.AddError(base.NewCriticError(err, "erreur"))
+					parsedLine.AddTuple(compte)
 				}
-				parsedLineChan <- marshal.ParsedLineResult{Tuples: tuples, Errors: []marshal.ParseError{}}
+				parsedLineChan <- parsedLine
 			}
 		}()
 		return parsedLineChan
