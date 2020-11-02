@@ -53,7 +53,7 @@ var ParserDelai = marshal.Parser{FileType: "delai", FileParser: ParseDelaiFile}
 func ParseDelaiFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) marshal.OpenFileResult {
 	var comptes marshal.Comptes
 	closeFct, reader, err := openDelaiFile(filePath)
-	if err != nil {
+	if err == nil {
 		comptes, err = marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
 	}
 	return marshal.OpenFileResult{

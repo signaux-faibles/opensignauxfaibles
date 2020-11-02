@@ -61,7 +61,7 @@ func ParseDebitFile(filePath string, cache *marshal.Cache, batch *base.AdminBatc
 	if err == nil {
 		idx, err = parseDebitColMapping(reader)
 	}
-	if err != nil {
+	if err == nil {
 		comptes, err = marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
 	}
 	return marshal.OpenFileResult{

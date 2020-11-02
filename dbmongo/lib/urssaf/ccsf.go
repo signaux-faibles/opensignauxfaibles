@@ -43,7 +43,7 @@ var ParserCCSF = marshal.Parser{FileType: "ccsf", FileParser: ParseCcsfFile}
 func ParseCcsfFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) marshal.OpenFileResult {
 	var comptes marshal.Comptes
 	closeFct, reader, err := openCcsfFile(filePath)
-	if err != nil {
+	if err == nil {
 		comptes, err = marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
 	}
 	return marshal.OpenFileResult{
