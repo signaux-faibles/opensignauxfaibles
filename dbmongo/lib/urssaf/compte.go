@@ -33,44 +33,47 @@ func (compte Compte) Type() string {
 // ParserCompte expose le parseur et le type de fichier qu'il supporte.
 var ParserCompte = marshal.Parser{FileType: "admin_urssaf", FileParser: ParseCompteFile}
 
-// ParseCompteFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseCompteFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (marshal.ParsedLineChan, error) {
+// ParseCompteFile permet de lancer le parsing du fichier demandé.
+func ParseCompteFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) marshal.OpenFileResult {
+	var err error
+	var periodes []time.Time
+	var mapping marshal.Comptes
+	closeFct := func() error { return nil }
 	if len(batch.Files["admin_urssaf"]) > 0 {
-		periodes := misc.GenereSeriePeriode(batch.Params.DateDebut, time.Now()) //[]time.Time
-		mapping, err := marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
-		if err != nil {
-			return nil, err
-		}
-
-		accounts := mapKeys(mapping)
-		accountIndex := 0
-
-		// return line parser
-		parsedLineChan := make(marshal.ParsedLineChan)
-		go func() {
-			for {
-				parsedLine := base.ParsedLineResult{}
-				if accountIndex >= len(mapping) {
-					close(parsedLineChan) // EOF
-					break
-				}
-				account := accounts[accountIndex]
-				accountIndex++
-				for _, p := range periodes {
-					var err error
-					compte := Compte{}
-					compte.NumeroCompte = account
-					compte.Periode = p
-					compte.Siret, err = marshal.GetSiret(account, &p, *cache, batch)
-					parsedLine.AddError(base.NewCriticError(err, "erreur"))
-					parsedLine.AddTuple(compte)
-				}
-				parsedLineChan <- parsedLine
-			}
-		}()
-		return parsedLineChan, nil
+		periodes = misc.GenereSeriePeriode(batch.Params.DateDebut, time.Now()) //[]time.Time
+		mapping, err = marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
 	}
-	return nil, nil
+	return marshal.OpenFileResult{
+		Error: err,
+		ParseLines: func(parsedLineChan chan base.ParsedLineResult) {
+			parseCompteLines(periodes, &mapping, parsedLineChan)
+		},
+		Close: closeFct,
+	}
+}
+
+func parseCompteLines(periodes []time.Time, mapping *marshal.Comptes, parsedLineChan chan base.ParsedLineResult) {
+	accounts := mapKeys(*mapping)
+	accountIndex := 0
+	for {
+		parsedLine := base.ParsedLineResult{}
+		if accountIndex >= len(*mapping) {
+			close(parsedLineChan) // EOF
+			break
+		}
+		account := accounts[accountIndex]
+		accountIndex++
+		for _, p := range periodes {
+			var err error
+			compte := Compte{}
+			compte.NumeroCompte = account
+			compte.Periode = p
+			compte.Siret, err = marshal.GetSiretFromComptesMapping(account, &p, *mapping)
+			parsedLine.AddError(base.NewCriticError(err, "erreur"))
+			parsedLine.AddTuple(compte)
+		}
+		parsedLineChan <- parsedLine
+	}
 }
 
 func mapKeys(mymap marshal.Comptes) []string {
