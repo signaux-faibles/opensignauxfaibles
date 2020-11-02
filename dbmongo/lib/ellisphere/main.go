@@ -4,7 +4,6 @@ import (
 	"github.com/pkg/errors"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sfregexp"
 	"github.com/tealeg/xlsx/v3"
 )
 
@@ -71,9 +70,6 @@ func parseLines(sheet *xlsx.Sheet, parsedLineChan chan base.ParsedLineResult) {
 			parsedLine := base.ParsedLineResult{}
 			var ellisphere Ellisphere
 			err := row.ReadStruct(&ellisphere)
-			if !sfregexp.ValidSiren(ellisphere.Siren) { // TODO: retirer validation, tout en empêchant l'ajout du tuple en cas d'erreur
-				parsedLine.AddError(errors.New("siren invalide : " + ellisphere.Siren))
-			}
 			parsedLine.AddError(err)
 			if len(parsedLine.Errors) == 0 {
 				parsedLine.AddTuple(ellisphere)

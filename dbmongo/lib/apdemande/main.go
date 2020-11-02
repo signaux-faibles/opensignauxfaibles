@@ -120,7 +120,7 @@ func parseLines(reader *csv.Reader, idx colMapping, parsedLineChan chan base.Par
 		} else if err != nil {
 			parsedLine.AddError(err)
 		} else if row[idx["ETAB_SIRET"]] == "" {
-			parsedLine.AddError(errors.New("invalidLine")) // TODO: retirer validation
+			parsedLine.AddError(errors.New("invalidLine"))
 		} else {
 			parseApDemandeLine(row, idx, &parsedLine)
 			if len(parsedLine.Errors) > 0 {

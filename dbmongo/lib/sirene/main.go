@@ -14,7 +14,6 @@ import (
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sfregexp"
 )
 
 // Sirene informations sur les entreprises
@@ -207,8 +206,6 @@ func parseLines(reader *csv.Reader, parsedLineChan chan base.ParsedLineResult) {
 			break
 		} else if err != nil {
 			parsedLine.AddError(err)
-		} else if !sfregexp.ValidSiren(row[f["siren"]]) {
-			parsedLine.AddError(errors.New("siren invalide : " + row[f["siren"]])) // TODO: retirer validation
 		} else {
 			parseLine(row, &parsedLine)
 		}
