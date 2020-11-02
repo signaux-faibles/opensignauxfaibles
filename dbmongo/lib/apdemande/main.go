@@ -62,9 +62,7 @@ func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) ma
 		ParseLines: func(parsedLineChan chan base.ParsedLineResult) {
 			parseLines(reader, idx, parsedLineChan)
 		},
-		Close: func() {
-			file.Close()
-		},
+		Close: file.Close,
 	}
 }
 

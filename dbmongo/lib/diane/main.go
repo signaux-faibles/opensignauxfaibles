@@ -119,23 +119,46 @@ func (diane Diane) Scope() string {
 // Parser expose le parseur et le type de fichier qu'il supporte.
 var Parser = marshal.Parser{FileType: "diane", FileParser: ParseFile}
 
-// ParseFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseFile(path string, cache *marshal.Cache, batch *base.AdminBatch) (marshal.ParsedLineChan, error) {
+// ParseFile permet de lancer le parsing du fichier demandé.
+func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) marshal.OpenFileResult {
+	closeFct, reader, err := openFile(filePath)
+	return marshal.OpenFileResult{
+		Error: err,
+		ParseLines: func(parsedLineChan chan base.ParsedLineResult) {
+			parseLines(reader, parsedLineChan)
+		},
+		Close: closeFct,
+	}
+}
 
-	cmdPath := []string{filepath.Join(viper.GetString("SCRIPTDIANE_DIR"), "convert_diane.sh"), path}
+func openFile(filePath string) (func() error, *csv.Reader, error) {
+	cmdPath := []string{filepath.Join(viper.GetString("SCRIPTDIANE_DIR"), "convert_diane.sh"), filePath}
 	cmd := exec.Command("/bin/bash", cmdPath...)
 
-	stdout, err := cmd.StdoutPipe()
-	if err != nil {
-		return nil, errors.New("echec de récupération de sortie standard du script: " + err.Error())
+	var err error
+	var stdout, stderr io.ReadCloser
+	close := func() error {
+		if stdout != nil {
+			stdout.Close()
+		}
+		if stderr != nil {
+			stderr.Close()
+		}
+		if err := cmd.Wait(); err != nil {
+			return errors.New("[convert_diane.sh] failed with " + err.Error())
+		}
+		return nil
 	}
-	// defer stdout.Close() // TODO: à réactiver
 
-	stderr, err := cmd.StderrPipe()
+	stdout, err = cmd.StdoutPipe()
 	if err != nil {
-		return nil, errors.New("echec de récupération de sortie d'erreurs du script: " + err.Error())
+		return close, nil, errors.New("echec de récupération de sortie standard du script: " + err.Error())
 	}
-	// defer stderr.Close() // TODO: à réactiver
+
+	stderr, err = cmd.StderrPipe()
+	if err != nil {
+		return close, nil, errors.New("echec de récupération de sortie d'erreurs du script: " + err.Error())
+	}
 
 	// turn lines of standard error output into events, to help debugging
 	go func() {
@@ -145,43 +168,42 @@ func ParseFile(path string, cache *marshal.Cache, batch *base.AdminBatch) (marsh
 		}
 	}()
 
-	// start preprocessing script + report non-zero exit code in case of failure
+	// start preprocessing script
 	cmd.Start()
-	// TODO: à réactiver:
-	// defer func() {
-	// 	if err := cmd.Wait(); err != nil {
-	// 		parsedLine.AddError(errors.New("[convert_diane.sh] failed with " + err.Error()))
-	// 	}
-	// }()
 
-	// init csv reader and skip header
+	// init csv reader
 	reader := csv.NewReader(stdout)
 	reader.Comma = ';'
 	reader.LazyQuotes = true
+
 	_, err = reader.Read() // Discard header
 	if err != nil {
-		return nil, errors.New("echec de lecture de l'en-tête du fichier en sortie du script: " + err.Error())
+		return close, nil, errors.New("echec de lecture de l'en-tête du fichier en sortie du script: " + err.Error())
 	}
 
-	parsedLineChan := make(marshal.ParsedLineChan)
-	go func() {
-		for {
-			parsedLine := base.ParsedLineResult{}
-			row, err := reader.Read()
-			if err == io.EOF {
-				close(parsedLineChan)
-				break
-			} else if err != nil {
-				parsedLine.AddError(err)
-			} else if len(row) < 83 {
-				parsedLine.AddError(errors.New("Ligne invalide"))
-			} else {
-				parsedLine.AddTuple(parseDianeRow(row))
-			}
-			parsedLineChan <- parsedLine
+	return close, reader, nil
+}
+
+func parseLines(reader *csv.Reader, parsedLineChan chan base.ParsedLineResult) {
+	for {
+		parsedLine := base.ParsedLineResult{}
+		row, err := reader.Read()
+		if err == io.EOF {
+			close(parsedLineChan)
+			break
+		} else if err != nil {
+			parsedLine.AddError(err)
+		} else if len(row) < 83 {
+			parsedLine.AddError(errors.New("Ligne invalide"))
+		} else {
+			parseDianeLine(row, &parsedLine)
 		}
-	}()
-	return parsedLineChan, nil
+		parsedLineChan <- parsedLine
+	}
+}
+
+func parseDianeLine(row []string, parsedLine *base.ParsedLineResult) {
+	parsedLine.AddTuple(parseDianeRow(row))
 }
 
 // parseDianeRow construit un objet Diane à partir d'une ligne de valeurs récupérée depuis un fichier

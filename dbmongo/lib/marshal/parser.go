@@ -28,7 +28,7 @@ type filePath = string
 type OpenFileResult struct {
 	Error      error
 	ParseLines func(chan base.ParsedLineResult)
-	Close      func()
+	Close      func() error
 }
 
 func isValid(tuple base.Tuple) (bool, error) {
@@ -96,7 +96,9 @@ func runParserWithSirenFilter(parser Parser, filePath string, cache *Cache, batc
 			tracker.Next()
 		}
 	}
-	openFileRes.Close()
+	if err := openFileRes.Close(); err != nil {
+		tracker.Add(base.NewFatalError(err))
+	}
 }
 
 // GetJSON sérialise un tuple au format JSON.
