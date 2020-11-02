@@ -48,41 +48,51 @@ func (bdf BDF) Scope() string {
 // Parser expose le parseur et le type de fichier qu'il supporte.
 var Parser = marshal.Parser{FileType: "bdf", FileParser: ParseFile}
 
-// ParseFile extrait les tuples depuis un fichier BDF et génère un rapport Gournal.
-func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (marshal.ParsedLineChan, error) {
-	filter := marshal.GetSirenFilterFromCache(*cache)
+// ParseFile permet de lancer le parsing du fichier demandé.
+func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) marshal.OpenFileResult {
+	filter := marshal.GetSirenFilterFromCache(*cache) // TODO: retirer filtre
+	file, reader, err := openFile(filePath)
+	return marshal.OpenFileResult{
+		Error: err,
+		ParseLines: func(parsedLineChan chan base.ParsedLineResult) {
+			parseLines(reader, &filter, parsedLineChan)
+		},
+		Close: func() {
+			file.Close()
+		},
+	}
+}
+
+func openFile(filePath string) (*os.File, *csv.Reader, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	// defer file.Close() // TODO: à réactiver
 	reader := csv.NewReader(bufio.NewReader(file))
 	reader.Comma = ';'
 	reader.LazyQuotes = true
+	return file, reader, nil
+}
 
+func parseLines(reader *csv.Reader, filter *marshal.SirenFilter, parsedLineChan chan base.ParsedLineResult) {
 	// Sauter l'en-tête
 	reader.Read()
-
-	parsedLineChan := make(marshal.ParsedLineChan)
-	go func() {
-		for {
-			parsedLine := base.ParsedLineResult{}
-			row, err := reader.Read()
-			if err == io.EOF {
-				close(parsedLineChan)
-				break
-			} else if err != nil {
-				parsedLine.AddError(err)
-			} else {
-				parseBdfLine(row, filter, &parsedLine)
-				if len(parsedLine.Errors) > 0 {
-					parsedLine.Tuples = []base.Tuple{}
-				}
+	for {
+		parsedLine := base.ParsedLineResult{}
+		row, err := reader.Read()
+		if err == io.EOF {
+			close(parsedLineChan)
+			break
+		} else if err != nil {
+			parsedLine.AddError(err)
+		} else {
+			parseBdfLine(row, *filter, &parsedLine)
+			if len(parsedLine.Errors) > 0 {
+				parsedLine.Tuples = []base.Tuple{}
 			}
-			parsedLineChan <- parsedLine
 		}
-	}()
-	return parsedLineChan, nil
+		parsedLineChan <- parsedLine
+	}
 }
 
 var field = map[string]int{
