@@ -124,6 +124,11 @@
 							"siret" : "00000000000000",
 							"numero_compte" : "111982477292496174",
 							"periode" : ISODate("_______ Date _______")
+						},
+						"______________Hash______________" : {
+							"siret" : "00000000000000",
+							"numero_compte" : "111982477292496174",
+							"periode" : ISODate("_______ Date _______")
 						}
 					},
 					"cotisation" : {
@@ -304,6 +309,11 @@
 						}
 					},
 					"compte" : {
+						"______________Hash______________" : {
+							"siret" : "11111111111111",
+							"numero_compte" : "636043216536562844",
+							"periode" : ISODate("_______ Date _______")
+						},
 						"______________Hash______________" : {
 							"siret" : "11111111111111",
 							"numero_compte" : "636043216536562844",
@@ -4953,10 +4963,11 @@
 				"Cycle 2: siret invalide : ",
 				"Cycle 2: siret invalide : ",
 				"Cycle 2: siret invalide : ",
+				"Cycle 2: siret invalide : ",
 				"Cycle 2: siret invalide : "
 			],
 			"headFatal" : [ ],
-			"summary" : "/../lib/urssaf/testData/comptesTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 22 rejets, 0 lignes filtrées, -19 lignes valides",
+			"summary" : "/../lib/urssaf/testData/comptesTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 23 rejets, 0 lignes filtrées, -20 lignes valides",
 			"batchKey" : "1910"
 		},
 		"parserCode" : "admin_urssaf"
