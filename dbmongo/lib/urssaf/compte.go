@@ -46,13 +46,13 @@ func ParseCompteFile(filePath string, cache *marshal.Cache, batch *base.AdminBat
 	return marshal.OpenFileResult{
 		Error: err,
 		ParseLines: func(parsedLineChan chan base.ParsedLineResult) {
-			parseCompteLines(periodes, &mapping, parsedLineChan)
+			parseCompteLines(periodes, &mapping, cache, batch, parsedLineChan)
 		},
 		Close: closeFct,
 	}
 }
 
-func parseCompteLines(periodes []time.Time, mapping *marshal.Comptes, parsedLineChan chan base.ParsedLineResult) {
+func parseCompteLines(periodes []time.Time, mapping *marshal.Comptes, cache *marshal.Cache, batch *base.AdminBatch, parsedLineChan chan base.ParsedLineResult) {
 	accounts := mapKeys(*mapping)
 	accountIndex := 0
 	for {
@@ -68,7 +68,7 @@ func parseCompteLines(periodes []time.Time, mapping *marshal.Comptes, parsedLine
 			compte := Compte{}
 			compte.NumeroCompte = account
 			compte.Periode = p
-			compte.Siret, err = marshal.GetSiretFromComptesMapping(account, &p, *mapping)
+			compte.Siret, err = marshal.GetSiret(account, &p, *cache, batch) // TODO: remplacer par GetSiretFromComptesMapping(), pour éviter d'avoir à passer cache et batch jusqu'ici ?
 			parsedLine.AddError(base.NewCriticError(err, "erreur"))
 			parsedLine.AddTuple(compte)
 		}
