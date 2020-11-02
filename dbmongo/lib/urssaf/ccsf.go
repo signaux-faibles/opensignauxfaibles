@@ -66,7 +66,7 @@ func openCcsfFile(filePath string) (func() error, *csv.Reader, error) {
 	return file.Close, reader, err
 }
 
-var idx = colMapping{
+var idxCcsf = colMapping{
 	"NumeroCompte":   2,
 	"DateTraitement": 3,
 	"Stade":          4,
@@ -93,6 +93,7 @@ func parseCcsfLines(reader *csv.Reader, comptes *marshal.Comptes, parsedLineChan
 }
 
 func parseCcsfLine(row []string, comptes *marshal.Comptes, parsedLine *base.ParsedLineResult) {
+	idx := idxCcsf
 	var err error
 	ccsf := CCSF{}
 	if len(row) >= 4 {
