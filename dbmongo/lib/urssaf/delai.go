@@ -49,63 +49,72 @@ func (delai Delai) Type() string {
 // ParserDelai expose le parseur et le type de fichier qu'il supporte.
 var ParserDelai = marshal.Parser{FileType: "delai", FileParser: ParseDelaiFile}
 
-// ParseDelaiFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseDelaiFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (marshal.ParsedLineChan, error) {
-	comptes, err := marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
+// ParseDelaiFile permet de lancer le parsing du fichier demandé.
+func ParseDelaiFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) marshal.OpenFileResult {
+	var comptes marshal.Comptes
+	closeFct, reader, err := openDelaiFile(filePath)
 	if err != nil {
-		return nil, err
+		comptes, err = marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
 	}
+	return marshal.OpenFileResult{
+		Error: err,
+		ParseLines: func(parsedLineChan chan base.ParsedLineResult) {
+			parseDelaiLines(reader, &comptes, parsedLineChan)
+		},
+		Close: closeFct,
+	}
+}
+
+func openDelaiFile(filePath string) (func() error, *csv.Reader, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		return nil, err
+		return file.Close, nil, err
 	}
-	// defer file.Close() // TODO: à réactiver
 	reader := csv.NewReader(bufio.NewReader(file))
 	reader.Comma = ';'
+	_, err = reader.Read() // Sauter l'en-tête
+	return file.Close, reader, err
+}
 
-	var idx = colMapping{
-		"NumeroCompte":      2,
-		"NumeroContentieux": 3,
-		"DateCreation":      4,
-		"DateEcheance":      5,
-		"DureeDelai":        6,
-		"Denomination":      7,
-		"Indic6m":           8,
-		"AnneeCreation":     9,
-		"MontantEcheancier": 10,
-		"Stade":             11,
-		"Action":            12,
-	}
+var idxDelai = colMapping{
+	"NumeroCompte":      2,
+	"NumeroContentieux": 3,
+	"DateCreation":      4,
+	"DateEcheance":      5,
+	"DureeDelai":        6,
+	"Denomination":      7,
+	"Indic6m":           8,
+	"AnneeCreation":     9,
+	"MontantEcheancier": 10,
+	"Stade":             11,
+	"Action":            12,
+}
 
-	reader.Read()
-
-	parsedLineChan := make(marshal.ParsedLineChan)
-	go func() {
-		for {
-			parsedLine := base.ParsedLineResult{}
-			row, err := reader.Read()
-			if err == io.EOF {
-				close(parsedLineChan)
-				break
-			} else if err != nil {
+func parseDelaiLines(reader *csv.Reader, comptes *marshal.Comptes, parsedLineChan chan base.ParsedLineResult) {
+	idx := idxDelai
+	for {
+		parsedLine := base.ParsedLineResult{}
+		row, err := reader.Read()
+		if err == io.EOF {
+			close(parsedLineChan)
+			break
+		} else if err != nil {
+			parsedLine.AddError(err)
+		} else {
+			date, err := time.Parse("02/01/2006", row[idx["DateCreation"]])
+			if err != nil {
 				parsedLine.AddError(err)
-			} else {
-				date, err := time.Parse("02/01/2006", row[idx["DateCreation"]])
-				if err != nil {
-					parsedLine.AddError(err)
-				} else if siret, err := marshal.GetSiretFromComptesMapping(row[idx["NumeroCompte"]], &date, comptes); err == nil {
-					parseDelaiLine(row, idx, siret, &parsedLine)
-					if len(parsedLine.Errors) > 0 {
-						parsedLine.Tuples = []base.Tuple{}
-					}
-				} else {
-					parsedLine.AddError(base.NewFilterError(err))
+			} else if siret, err := marshal.GetSiretFromComptesMapping(row[idx["NumeroCompte"]], &date, *comptes); err == nil {
+				parseDelaiLine(row, idx, siret, &parsedLine)
+				if len(parsedLine.Errors) > 0 {
+					parsedLine.Tuples = []base.Tuple{}
 				}
+			} else {
+				parsedLine.AddError(base.NewFilterError(err))
 			}
-			parsedLineChan <- parsedLine
 		}
-	}()
-	return parsedLineChan, nil
+		parsedLineChan <- parsedLine
+	}
 }
 
 func parseDelaiLine(row []string, idx colMapping, siret string, parsedLine *base.ParsedLineResult) {
