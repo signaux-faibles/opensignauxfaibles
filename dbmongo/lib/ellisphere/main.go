@@ -44,12 +44,11 @@ var Parser = marshal.Parser{FileType: "ellisphere", FileParser: ParseFile}
 
 // ParseFile permet de lancer le parsing du fichier demandé.
 func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) marshal.OpenFileResult {
-	filter := marshal.GetSirenFilterFromCache(*cache) // TODO: retirer filtre
 	sheet, err := openFile(filePath)
 	return marshal.OpenFileResult{
 		Error: err,
 		ParseLines: func(parsedLineChan chan base.ParsedLineResult) {
-			parseLines(sheet, &filter, parsedLineChan)
+			parseLines(sheet, parsedLineChan)
 		},
 		Close: func() error { return nil },
 	}
@@ -66,7 +65,7 @@ func openFile(filePath string) (*xlsx.Sheet, error) {
 	return xlsxFile.Sheets[0], nil
 }
 
-func parseLines(sheet *xlsx.Sheet, filter *marshal.SirenFilter, parsedLineChan chan base.ParsedLineResult) {
+func parseLines(sheet *xlsx.Sheet, parsedLineChan chan base.ParsedLineResult) {
 	sheet.ForEachRow(
 		func(row *xlsx.Row) error {
 			parsedLine := base.ParsedLineResult{}
