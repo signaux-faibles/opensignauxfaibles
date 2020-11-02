@@ -4941,33 +4941,33 @@
 	{
 		"event" : {
 			"headSkipped" : [ ],
-			"headRejected" : [ ],
-			"headFatal" : [
-				"Cycle 2: siret invalide : ",
-				"Cycle 2: siret invalide : ",
-				"Cycle 2: siret invalide : ",
-				"Cycle 2: siret invalide : ",
-				"Cycle 2: siret invalide : ",
-				"Cycle 2: siret invalide : ",
-				"Cycle 2: siret invalide : ",
-				"Cycle 2: siret invalide : ",
-				"Cycle 2: siret invalide : ",
-				"Cycle 2: siret invalide : ",
-				"Cycle 2: siret invalide : ",
-				"Cycle 2: siret invalide : ",
-				"Cycle 2: siret invalide : ",
-				"Cycle 2: siret invalide : ",
-				"Cycle 2: siret invalide : ",
-				"Cycle 2: siret invalide : ",
-				"Cycle 2: siret invalide : ",
-				"Cycle 2: siret invalide : ",
-				"Cycle 2: siret invalide : ",
-				"Cycle 2: siret invalide : ",
-				"Cycle 2: siret invalide : ",
-				"Cycle 2: siret invalide : ",
-				"Cycle 2: siret invalide : "
+			"headRejected" : [
+				"Cycle 0: siret invalide : ",
+				"Cycle 0: siret invalide : ",
+				"Cycle 0: siret invalide : ",
+				"Cycle 0: siret invalide : ",
+				"Cycle 0: siret invalide : ",
+				"Cycle 0: siret invalide : ",
+				"Cycle 0: siret invalide : ",
+				"Cycle 0: siret invalide : ",
+				"Cycle 0: siret invalide : ",
+				"Cycle 0: siret invalide : ",
+				"Cycle 0: siret invalide : ",
+				"Cycle 0: siret invalide : ",
+				"Cycle 0: siret invalide : ",
+				"Cycle 0: siret invalide : ",
+				"Cycle 0: siret invalide : ",
+				"Cycle 0: siret invalide : ",
+				"Cycle 0: siret invalide : ",
+				"Cycle 0: siret invalide : ",
+				"Cycle 0: siret invalide : ",
+				"Cycle 0: siret invalide : ",
+				"Cycle 0: siret invalide : ",
+				"Cycle 0: siret invalide : ",
+				"Cycle 0: siret invalide : "
 			],
-			"summary" : "/../lib/urssaf/testData/comptesTestData.csv: intégration terminée, 3 lignes traitées, 23 erreures fatales, 0 rejets, 0 lignes filtrées, 0 lignes valides",
+			"headFatal" : [ ],
+			"summary" : "/../lib/urssaf/testData/comptesTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 23 rejets, 0 lignes filtrées, -20 lignes valides",
 			"batchKey" : "1910"
 		},
 		"parserCode" : "admin_urssaf"
@@ -5079,10 +5079,9 @@
 			"headSkipped" : [ ],
 			"headRejected" : [ ],
 			"headFatal" : [
-				"Cycle 0: siren invalide : FIL SIREN 9",
 				"Cycle 0: strconv.ParseInt: parsing \"Niveau de détention\": invalid syntax"
 			],
-			"summary" : "/../lib/ellisphere/testData/ellisphereTestData.excel: intégration terminée, 7 lignes traitées, 2 erreures fatales, 0 rejets, 0 lignes filtrées, 0 lignes valides",
+			"summary" : "/../lib/ellisphere/testData/ellisphereTestData.excel: intégration terminée, 7 lignes traitées, 1 erreures fatales, 0 rejets, 0 lignes filtrées, 6 lignes valides",
 			"batchKey" : "1910"
 		},
 		"parserCode" : "ellisphere"
@@ -5104,7 +5103,7 @@
 			"headFatal" : [
 				"Cycle 1: parsing time \"\" as \"2006-01-02\": cannot parse \"\" as \"2006\""
 			],
-			"summary" : "/../lib/sirene/testData/sireneTestData.csv: intégration terminée, 3 lignes traitées, 1 erreures fatales, 0 rejets, 0 lignes filtrées, 0 lignes valides",
+			"summary" : "/../lib/sirene/testData/sireneTestData.csv: intégration terminée, 3 lignes traitées, 1 erreures fatales, 0 rejets, 0 lignes filtrées, 2 lignes valides",
 			"batchKey" : "1910"
 		},
 		"parserCode" : "sirene"

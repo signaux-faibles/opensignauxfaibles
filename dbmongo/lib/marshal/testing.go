@@ -32,8 +32,8 @@ func MockComptesMapping(mapping map[string]string) Comptes {
 }
 
 type tuplesAndEvents = struct {
-	Tuples []Tuple `json:"tuples"`
-	Events []Event `json:"events"`
+	Tuples []base.Tuple `json:"tuples"`
+	Events []Event      `json:"events"`
 }
 
 // RunParser returns Tuples and Events resulting from the execution of a

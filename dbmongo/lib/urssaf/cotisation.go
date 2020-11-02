@@ -40,54 +40,62 @@ func (cotisation Cotisation) Type() string {
 // ParserCotisation expose le parseur et le type de fichier qu'il supporte.
 var ParserCotisation = marshal.Parser{FileType: "cotisation", FileParser: ParseCotisationFile}
 
-// ParseCotisationFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseCotisationFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (marshal.ParsedLineChan, error) {
-	comptes, err := marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
-	if err != nil {
-		return nil, err
+// ParseCotisationFile permet de lancer le parsing du fichier demandé.
+func ParseCotisationFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) marshal.OpenFileResult {
+	var comptes marshal.Comptes
+	closeFct, reader, err := openCotisationFile(filePath)
+	if err == nil {
+		comptes, err = marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
 	}
+	return marshal.OpenFileResult{
+		Error: err,
+		ParseLines: func(parsedLineChan chan base.ParsedLineResult) {
+			parseCotisationLines(reader, &comptes, parsedLineChan)
+		},
+		Close: closeFct,
+	}
+}
+
+func openCotisationFile(filePath string) (func() error, *csv.Reader, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		return nil, err
+		return file.Close, nil, err
 	}
-	// defer file.Close() // TODO: à réactiver
 	reader := csv.NewReader(bufio.NewReader(file))
 	reader.Comma = ';'
 	reader.LazyQuotes = true
-
-	// ligne de titre
-	reader.Read()
-
-	var idx = colMapping{
-		"NumeroCompte": 2,
-		"Periode":      3,
-		"Encaisse":     5,
-		"Du":           6,
-	}
-
-	parsedLineChan := make(marshal.ParsedLineChan)
-	go func() {
-		for {
-			parsedLine := marshal.ParsedLineResult{}
-			row, err := reader.Read()
-			if err == io.EOF {
-				close(parsedLineChan)
-				break
-			} else if err != nil {
-				parsedLine.AddError(err)
-			} else {
-				parseCotisationLine(row, &comptes, idx, &parsedLine)
-				if len(parsedLine.Errors) > 0 {
-					parsedLine.Tuples = []marshal.Tuple{}
-				}
-			}
-			parsedLineChan <- parsedLine
-		}
-	}()
-	return parsedLineChan, nil
+	_, err = reader.Read() // Sauter l'en-tête
+	return file.Close, reader, err
 }
 
-func parseCotisationLine(row []string, comptes *marshal.Comptes, idx colMapping, parsedLine *marshal.ParsedLineResult) {
+var idxCotisation = colMapping{
+	"NumeroCompte": 2,
+	"Periode":      3,
+	"Encaisse":     5,
+	"Du":           6,
+}
+
+func parseCotisationLines(reader *csv.Reader, comptes *marshal.Comptes, parsedLineChan chan base.ParsedLineResult) {
+	for {
+		parsedLine := base.ParsedLineResult{}
+		row, err := reader.Read()
+		if err == io.EOF {
+			close(parsedLineChan)
+			break
+		} else if err != nil {
+			parsedLine.AddError(err)
+		} else {
+			parseCotisationLine(row, comptes, &parsedLine)
+			if len(parsedLine.Errors) > 0 {
+				parsedLine.Tuples = []base.Tuple{}
+			}
+		}
+		parsedLineChan <- parsedLine
+	}
+}
+
+func parseCotisationLine(row []string, comptes *marshal.Comptes, parsedLine *base.ParsedLineResult) {
+	idx := idxCotisation
 	cotisation := Cotisation{}
 
 	periode, err := marshal.UrssafToPeriod(row[idx["Periode"]])

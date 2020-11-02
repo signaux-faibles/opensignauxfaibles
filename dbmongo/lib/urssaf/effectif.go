@@ -42,20 +42,37 @@ func (effectif Effectif) Type() string {
 // ParserEffectif expose le parseur et le type de fichier qu'il supporte.
 var ParserEffectif = marshal.Parser{FileType: "effectif", FileParser: ParseEffectifFile}
 
-// ParseEffectifFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseEffectifFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (marshal.ParsedLineChan, error) {
-	filter := marshal.GetSirenFilterFromCache(*cache)
+// ParseEffectifFile permet de lancer le parsing du fichier demandé.
+func ParseEffectifFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) marshal.OpenFileResult {
+	var idx colMapping
+	var periods []periodCol
+	closeFct, reader, err := openEffectifFile(filePath)
+	if err == nil {
+		idx, periods, err = parseEffectifColMapping(reader)
+	}
+	return marshal.OpenFileResult{
+		Error: err,
+		ParseLines: func(parsedLineChan chan base.ParsedLineResult) {
+			parseEffectifLines(reader, idx, periods, parsedLineChan)
+		},
+		Close: closeFct,
+	}
+}
+
+func openEffectifFile(filePath string) (func() error, *csv.Reader, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		return nil, err
+		return file.Close, nil, err
 	}
-	// defer file.Close() // TODO: à réactiver
 	reader := csv.NewReader(bufio.NewReader(file))
 	reader.Comma = ';'
+	return file.Close, reader, err
+}
 
+func parseEffectifColMapping(reader *csv.Reader) (colMapping, []periodCol, error) {
 	fields, err := reader.Read()
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	var idx = colMapping{
@@ -64,7 +81,7 @@ func ParseEffectifFile(filePath string, cache *marshal.Cache, batch *base.AdminB
 	}
 
 	if misc.SliceMin(idx["siret"], idx["compte"]) == -1 {
-		return nil, errors.New("erreur à l'analyse du fichier, abandon, l'un " +
+		return nil, nil, errors.New("erreur à l'analyse du fichier, abandon, l'un " +
 			"des champs obligatoires n'a pu etre trouve:" +
 			" siretIndex = " + strconv.Itoa(idx["siret"]) +
 			", compteIndex = " + strconv.Itoa(idx["compte"]))
@@ -72,27 +89,26 @@ func ParseEffectifFile(filePath string, cache *marshal.Cache, batch *base.AdminB
 
 	// Dans quels champs lire l'effectif
 	periods := parseEffectifPeriod(fields)
-
-	parsedLineChan := make(marshal.ParsedLineChan)
-	go func() {
-		for {
-			parsedLine := marshal.ParsedLineResult{}
-			row, err := reader.Read()
-			if err == io.EOF {
-				close(parsedLineChan)
-				break
-			} else if err != nil {
-				parsedLine.AddError(err)
-			} else {
-				parseEffectifLine(periods, row, idx, filter, &parsedLine)
-			}
-			parsedLineChan <- parsedLine
-		}
-	}()
-	return parsedLineChan, nil
+	return idx, periods, err
 }
 
-func parseEffectifLine(periods []periodCol, row []string, idx colMapping, filter marshal.SirenFilter, parsedLine *marshal.ParsedLineResult) {
+func parseEffectifLines(reader *csv.Reader, idx colMapping, periods []periodCol, parsedLineChan chan base.ParsedLineResult) {
+	for {
+		parsedLine := base.ParsedLineResult{}
+		row, err := reader.Read()
+		if err == io.EOF {
+			close(parsedLineChan)
+			break
+		} else if err != nil {
+			parsedLine.AddError(err)
+		} else {
+			parseEffectifLine(row, idx, periods, &parsedLine)
+		}
+		parsedLineChan <- parsedLine
+	}
+}
+
+func parseEffectifLine(row []string, idx colMapping, periods []periodCol, parsedLine *base.ParsedLineResult) {
 	siret := row[idx["siret"]]
 	validSiret := sfregexp.RegexpDict["siret"].MatchString(siret) // TODO: remove validation
 	if !validSiret {

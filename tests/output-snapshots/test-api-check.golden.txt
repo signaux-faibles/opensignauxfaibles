@@ -8,11 +8,11 @@
 				"Cycle 1: record on line 3: wrong number of fields",
 				"Cycle 3: parse error on line 5, column 1: bare \" in non-quoted-field"
 			],
-			"summary" : "/../lib/urssaf/testData/debitCorrompuTestData.csv: intégration terminée, 5 lignes traitées, 2 erreures fatales, 0 rejets, 0 lignes filtrées, 0 lignes valides",
+			"summary" : "/../lib/urssaf/testData/debitCorrompuTestData.csv: intégration terminée, 5 lignes traitées, 2 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
 			"batchKey" : "1910"
 		},
 		"parserCode" : "debit"
 	}
 ]
 // Response body from /api/data/check:
-{"reports":["/../lib/urssaf/testData/debitCorrompuTestData.csv: intégration terminée, 5 lignes traitées, 2 erreures fatales, 0 rejets, 0 lignes filtrées, 0 lignes valides"]}
+{"reports":["/../lib/urssaf/testData/debitCorrompuTestData.csv: intégration terminée, 5 lignes traitées, 2 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides"]}

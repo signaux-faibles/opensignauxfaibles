@@ -48,41 +48,47 @@ func (bdf BDF) Scope() string {
 // Parser expose le parseur et le type de fichier qu'il supporte.
 var Parser = marshal.Parser{FileType: "bdf", FileParser: ParseFile}
 
-// ParseFile extrait les tuples depuis un fichier BDF et génère un rapport Gournal.
-func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (marshal.ParsedLineChan, error) {
-	filter := marshal.GetSirenFilterFromCache(*cache)
+// ParseFile permet de lancer le parsing du fichier demandé.
+func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) marshal.OpenFileResult {
+	closeFct, reader, err := openFile(filePath)
+	return marshal.OpenFileResult{
+		Error: err,
+		ParseLines: func(parsedLineChan chan base.ParsedLineResult) {
+			parseLines(reader, parsedLineChan)
+		},
+		Close: closeFct,
+	}
+}
+
+func openFile(filePath string) (func() error, *csv.Reader, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		return nil, err
+		return file.Close, nil, err
 	}
-	// defer file.Close() // TODO: à réactiver
 	reader := csv.NewReader(bufio.NewReader(file))
 	reader.Comma = ';'
 	reader.LazyQuotes = true
+	_, err = reader.Read() // Sauter l'en-tête
+	return file.Close, reader, err
+}
 
-	// Sauter l'en-tête
-	reader.Read()
-
-	parsedLineChan := make(marshal.ParsedLineChan)
-	go func() {
-		for {
-			parsedLine := marshal.ParsedLineResult{}
-			row, err := reader.Read()
-			if err == io.EOF {
-				close(parsedLineChan)
-				break
-			} else if err != nil {
-				parsedLine.AddError(err)
-			} else {
-				parseBdfLine(row, filter, &parsedLine)
-				if len(parsedLine.Errors) > 0 {
-					parsedLine.Tuples = []marshal.Tuple{}
-				}
+func parseLines(reader *csv.Reader, parsedLineChan chan base.ParsedLineResult) {
+	for {
+		parsedLine := base.ParsedLineResult{}
+		row, err := reader.Read()
+		if err == io.EOF {
+			close(parsedLineChan)
+			break
+		} else if err != nil {
+			parsedLine.AddError(err)
+		} else {
+			parseBdfLine(row, &parsedLine)
+			if len(parsedLine.Errors) > 0 {
+				parsedLine.Tuples = []base.Tuple{}
 			}
-			parsedLineChan <- parsedLine
 		}
-	}()
-	return parsedLineChan, nil
+		parsedLineChan <- parsedLine
+	}
 }
 
 var field = map[string]int{
@@ -99,7 +105,7 @@ var field = map[string]int{
 	"fraisFinancier":      12,
 }
 
-func parseBdfLine(row []string, filter marshal.SirenFilter, parsedLine *marshal.ParsedLineResult) {
+func parseBdfLine(row []string, parsedLine *base.ParsedLineResult) {
 	bdf := BDF{}
 	bdf.Siren = strings.Replace(row[field["siren"]], " ", "", -1)
 

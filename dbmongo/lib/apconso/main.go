@@ -40,18 +40,35 @@ func (apconso APConso) Scope() string {
 // Parser expose le parseur et le type de fichier qu'il supporte.
 var Parser = marshal.Parser{FileType: "apconso", FileParser: ParseFile}
 
-type colMapping map[string]int
+// ParseFile permet de lancer le parsing du fichier demandé.
+func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) marshal.OpenFileResult {
+	var idx colMapping
+	closeFct, reader, err := openFile(filePath)
+	if err == nil {
+		idx, err = parseColMapping(reader)
+	}
+	return marshal.OpenFileResult{
+		Error: err,
+		ParseLines: func(parsedLineChan chan base.ParsedLineResult) {
+			parseLines(reader, idx, parsedLineChan)
+		},
+		Close: closeFct,
+	}
+}
 
-// ParseFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (marshal.ParsedLineChan, error) {
+func openFile(filePath string) (func() error, *csv.Reader, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		return nil, err
+		return file.Close, nil, err
 	}
-	// defer file.Close() // TODO: à réactiver
 	reader := csv.NewReader(file)
 	reader.Comma = ','
+	return file.Close, reader, nil
+}
 
+type colMapping map[string]int
+
+func parseColMapping(reader *csv.Reader) (colMapping, error) {
 	header, err := reader.Read()
 	if err != nil {
 		return nil, err
@@ -63,34 +80,32 @@ func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (m
 	idx["HeureConsommee"] = misc.SliceIndex(len(header), func(i int) bool { return header[i] == "HEURES" })
 	idx["Montant"] = misc.SliceIndex(len(header), func(i int) bool { return header[i] == "MONTANTS" })
 	idx["Effectif"] = misc.SliceIndex(len(header), func(i int) bool { return header[i] == "EFFECTIFS" })
-
 	if misc.SliceMin(idx["ID"], idx["Siret"], idx["Periode"], idx["HeureConsommee"], idx["Montant"], idx["Effectif"]) == -1 {
 		return nil, errors.New("entête non conforme, fichier ignoré")
 	}
-
-	parsedLineChan := make(marshal.ParsedLineChan)
-	go func() {
-		for {
-			parsedLine := marshal.ParsedLineResult{}
-			row, err := reader.Read()
-			if err == io.EOF {
-				close(parsedLineChan)
-				break
-			} else if err != nil {
-				parsedLine.AddError(err)
-			} else if len(row) > 0 {
-				parseApConsoLine(row, idx, &parsedLine)
-				if len(parsedLine.Errors) > 0 {
-					parsedLine.Tuples = []marshal.Tuple{}
-				}
-			}
-			parsedLineChan <- parsedLine
-		}
-	}()
-	return parsedLineChan, nil
+	return idx, nil
 }
 
-func parseApConsoLine(row []string, idx colMapping, parsedLine *marshal.ParsedLineResult) {
+func parseLines(reader *csv.Reader, idx colMapping, parsedLineChan chan base.ParsedLineResult) {
+	for {
+		parsedLine := base.ParsedLineResult{}
+		row, err := reader.Read()
+		if err == io.EOF {
+			close(parsedLineChan)
+			break
+		} else if err != nil {
+			parsedLine.AddError(err)
+		} else if len(row) > 0 {
+			parseApConsoLine(row, idx, &parsedLine)
+			if len(parsedLine.Errors) > 0 {
+				parsedLine.Tuples = []base.Tuple{}
+			}
+		}
+		parsedLineChan <- parsedLine
+	}
+}
+
+func parseApConsoLine(row []string, idx colMapping, parsedLine *base.ParsedLineResult) {
 	apconso := APConso{}
 	apconso.ID = row[idx["ID"]]
 	apconso.Siret = row[idx["Siret"]]

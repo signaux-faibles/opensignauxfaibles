@@ -91,8 +91,8 @@
         "linesParsed": 7,
         "linesRejected": 0,
         "linesSkipped": 0,
-        "linesValid": 0,
-        "summary": "testData/ellisphereTestData.excel: intégration terminée, 7 lignes traitées, 2 erreures fatales, 0 rejets, 0 lignes filtrées, 0 lignes valides"
+        "linesValid": 5,
+        "summary": "testData/ellisphereTestData.excel: intégration terminée, 7 lignes traitées, 2 erreures fatales, 0 rejets, 0 lignes filtrées, 5 lignes valides"
       },
       "priority": "info",
       "parserCode": "ellisphere",
