@@ -69,12 +69,11 @@ func openFile(filePath string) (*os.File, *csv.Reader, error) {
 	reader := csv.NewReader(bufio.NewReader(file))
 	reader.Comma = ';'
 	reader.LazyQuotes = true
-	return file, reader, nil
+	_, err = reader.Read() // Sauter l'en-tête
+	return file, reader, err
 }
 
 func parseLines(reader *csv.Reader, filter *marshal.SirenFilter, parsedLineChan chan base.ParsedLineResult) {
-	// Sauter l'en-tête
-	reader.Read()
 	for {
 		parsedLine := base.ParsedLineResult{}
 		row, err := reader.Read()
