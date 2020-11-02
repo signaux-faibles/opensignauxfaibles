@@ -60,50 +60,67 @@ func parseEffectifPeriod(fields []string) []periodCol {
 // ParserEffectifEnt expose le parseur et le type de fichier qu'il supporte.
 var ParserEffectifEnt = marshal.Parser{FileType: "effectif_ent", FileParser: ParseEffectifEntFile}
 
-// ParseEffectifEntFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseEffectifEntFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (marshal.ParsedLineChan, error) {
-	filter := marshal.GetSirenFilterFromCache(*cache)
+// ParseEffectifEntFile permet de lancer le parsing du fichier demandé.
+func ParseEffectifEntFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) marshal.OpenFileResult {
+	var idx colMapping
+	var periods []periodCol
+	var comptes marshal.Comptes
+	closeFct, reader, err := openEffectifEntFile(filePath)
+	if err == nil {
+		idx, periods, err = parseEffectifEntColMapping(reader)
+	}
+	if err == nil {
+		comptes, err = marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
+	}
+	return marshal.OpenFileResult{
+		Error: err,
+		ParseLines: func(parsedLineChan chan base.ParsedLineResult) {
+			parseEffectifEntLines(reader, idx, periods, &comptes, parsedLineChan)
+		},
+		Close: closeFct,
+	}
+}
+
+func openEffectifEntFile(filePath string) (func() error, *csv.Reader, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		return nil, err
+		return file.Close, nil, err
 	}
-	// defer file.Close() // TODO: à réactiver
 	reader := csv.NewReader(bufio.NewReader(file))
 	reader.Comma = ';'
+	return file.Close, reader, err
+}
 
+func parseEffectifEntColMapping(reader *csv.Reader) (colMapping, []periodCol, error) {
 	fields, err := reader.Read()
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-
 	var idx = colMapping{
 		"siren": misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "siren" }),
 	}
-
 	// Dans quels champs lire l'effectifEnt
 	periods := parseEffectifPeriod(fields)
-
-	// return line parser
-	parsedLineChan := make(marshal.ParsedLineChan)
-	go func() {
-		for {
-			parsedLine := base.ParsedLineResult{}
-			row, err := reader.Read()
-			if err == io.EOF {
-				close(parsedLineChan)
-				break
-			} else if err != nil {
-				parsedLine.AddError(err)
-			} else {
-				parseEffectifEntLine(periods, row, idx, filter, &parsedLine)
-			}
-			parsedLineChan <- parsedLine
-		}
-	}()
-	return parsedLineChan, nil
+	return idx, periods, nil
 }
 
-func parseEffectifEntLine(periods []periodCol, row []string, idx colMapping, filter marshal.SirenFilter, parsedLine *base.ParsedLineResult) {
+func parseEffectifEntLines(reader *csv.Reader, idx colMapping, periods []periodCol, comptes *marshal.Comptes, parsedLineChan chan base.ParsedLineResult) {
+	for {
+		parsedLine := base.ParsedLineResult{}
+		row, err := reader.Read()
+		if err == io.EOF {
+			close(parsedLineChan)
+			break
+		} else if err != nil {
+			parsedLine.AddError(err)
+		} else {
+			parseEffectifEntLine(row, idx, periods, &parsedLine)
+		}
+		parsedLineChan <- parsedLine
+	}
+}
+
+func parseEffectifEntLine(row []string, idx colMapping, periods []periodCol, parsedLine *base.ParsedLineResult) {
 	siren := row[idx["siren"]]
 	if !sfregexp.ValidSiren(siren) {
 		parsedLine.AddError(errors.New("Format de siren incorrect : " + siren)) // TODO: remove validation
