@@ -53,7 +53,7 @@ var Parser = marshal.Parser{FileType: "apdemande", FileParser: ParseFile}
 // ParseFile permet de lancer le parsing du fichier demandé.
 func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) marshal.OpenFileResult {
 	var idx colMapping
-	file, reader, err := openFile(filePath)
+	closeFct, reader, err := openFile(filePath)
 	if err == nil {
 		idx, err = parseColMapping(reader)
 	}
@@ -62,19 +62,19 @@ func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) ma
 		ParseLines: func(parsedLineChan chan base.ParsedLineResult) {
 			parseLines(reader, idx, parsedLineChan)
 		},
-		Close: file.Close,
+		Close: closeFct,
 	}
 }
 
-func openFile(filePath string) (*os.File, *csv.Reader, error) {
+func openFile(filePath string) (func() error, *csv.Reader, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		return nil, nil, err
+		return file.Close, nil, err
 	}
 	reader := csv.NewReader(file)
 	reader.Comma = ','
 	reader.LazyQuotes = true
-	return file, reader, nil
+	return file.Close, reader, nil
 }
 
 type colMapping map[string]int

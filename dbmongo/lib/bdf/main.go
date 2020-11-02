@@ -51,26 +51,26 @@ var Parser = marshal.Parser{FileType: "bdf", FileParser: ParseFile}
 // ParseFile permet de lancer le parsing du fichier demandé.
 func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) marshal.OpenFileResult {
 	filter := marshal.GetSirenFilterFromCache(*cache) // TODO: retirer filtre
-	file, reader, err := openFile(filePath)
+	closeFct, reader, err := openFile(filePath)
 	return marshal.OpenFileResult{
 		Error: err,
 		ParseLines: func(parsedLineChan chan base.ParsedLineResult) {
 			parseLines(reader, &filter, parsedLineChan)
 		},
-		Close: file.Close,
+		Close: closeFct,
 	}
 }
 
-func openFile(filePath string) (*os.File, *csv.Reader, error) {
+func openFile(filePath string) (func() error, *csv.Reader, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		return nil, nil, err
+		return file.Close, nil, err
 	}
 	reader := csv.NewReader(bufio.NewReader(file))
 	reader.Comma = ';'
 	reader.LazyQuotes = true
 	_, err = reader.Read() // Sauter l'en-tête
-	return file, reader, err
+	return file.Close, reader, err
 }
 
 func parseLines(reader *csv.Reader, filter *marshal.SirenFilter, parsedLineChan chan base.ParsedLineResult) {
