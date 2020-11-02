@@ -5186,7 +5186,7 @@
 				"Cycle 0: siren invalide : FIL SIREN 9",
 				"Cycle 0: strconv.ParseInt: parsing \"Niveau de détention\": invalid syntax"
 			],
-			"summary" : "/../lib/ellisphere/testData/ellisphereTestData.excel: intégration terminée, 7 lignes traitées, 2 erreures fatales, 0 rejets, 0 lignes filtrées, 5 lignes valides",
+			"summary" : "/../lib/ellisphere/testData/ellisphereTestData.excel: intégration terminée, 7 lignes traitées, 2 erreures fatales, 0 rejets, 0 lignes filtrées, 0 lignes valides",
 			"batchKey" : "1910"
 		},
 		"parserCode" : "ellisphere"
@@ -5208,7 +5208,7 @@
 			"headFatal" : [
 				"Cycle 1: parsing time \"\" as \"2006-01-02\": cannot parse \"\" as \"2006\""
 			],
-			"summary" : "/../lib/sirene/testData/sireneTestData.csv: intégration terminée, 3 lignes traitées, 1 erreures fatales, 0 rejets, 0 lignes filtrées, 2 lignes valides",
+			"summary" : "/../lib/sirene/testData/sireneTestData.csv: intégration terminée, 3 lignes traitées, 1 erreures fatales, 0 rejets, 0 lignes filtrées, 0 lignes valides",
 			"batchKey" : "1910"
 		},
 		"parserCode" : "sirene"
