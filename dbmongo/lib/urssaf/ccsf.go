@@ -39,54 +39,60 @@ func (ccsf CCSF) Type() string {
 // ParserCCSF expose le parseur et le type de fichier qu'il supporte.
 var ParserCCSF = marshal.Parser{FileType: "ccsf", FileParser: ParseCcsfFile}
 
-// ParseCcsfFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseCcsfFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (marshal.ParsedLineChan, error) {
-	comptes, err := marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
+// ParseCcsfFile permet de lancer le parsing du fichier demandé.
+func ParseCcsfFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) marshal.OpenFileResult {
+	var comptes marshal.Comptes
+	closeFct, reader, err := openCcsfFile(filePath)
 	if err != nil {
-		return nil, err
+		comptes, err = marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
 	}
-
-	file, err := os.Open(filePath)
-	if err != nil {
-		return nil, err
+	return marshal.OpenFileResult{
+		Error: err,
+		ParseLines: func(parsedLineChan chan base.ParsedLineResult) {
+			parseCcsfLines(reader, &comptes, parsedLineChan)
+		},
+		Close: closeFct,
 	}
-	// defer file.Close() // TODO: à réactiver
-
-	reader := csv.NewReader(bufio.NewReader(file))
-	reader.Comma = ';'
-
-	reader.Read() // en-tête du fichier
-
-	var idx = colMapping{
-		"NumeroCompte":   2,
-		"DateTraitement": 3,
-		"Stade":          4,
-		"Action":         5,
-	}
-
-	parsedLineChan := make(marshal.ParsedLineChan)
-	go func() {
-		for {
-			parsedLine := base.ParsedLineResult{}
-			row, err := reader.Read()
-			if err == io.EOF {
-				close(parsedLineChan)
-				break
-			} else if err != nil {
-				parsedLine.AddError(err)
-			} else {
-				parseCcsfLine(row, idx, &comptes, &parsedLine)
-				if len(parsedLine.Errors) > 0 {
-					parsedLine.Tuples = []base.Tuple{}
-				}
-			}
-			parsedLineChan <- parsedLine
-		}
-	}()
-	return parsedLineChan, nil
 }
 
-func parseCcsfLine(row []string, idx colMapping, comptes *marshal.Comptes, parsedLine *base.ParsedLineResult) {
+func openCcsfFile(filePath string) (func() error, *csv.Reader, error) {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return file.Close, nil, err
+	}
+	reader := csv.NewReader(bufio.NewReader(file))
+	reader.Comma = ';'
+	_, err = reader.Read() // Sauter l'en-tête
+	return file.Close, reader, err
+}
+
+var idx = colMapping{
+	"NumeroCompte":   2,
+	"DateTraitement": 3,
+	"Stade":          4,
+	"Action":         5,
+}
+
+func parseCcsfLines(reader *csv.Reader, comptes *marshal.Comptes, parsedLineChan chan base.ParsedLineResult) {
+	for {
+		parsedLine := base.ParsedLineResult{}
+		row, err := reader.Read()
+		if err == io.EOF {
+			close(parsedLineChan)
+			break
+		} else if err != nil {
+			parsedLine.AddError(err)
+		} else {
+			parseCcsfLine(row, comptes, &parsedLine)
+			if len(parsedLine.Errors) > 0 {
+				parsedLine.Tuples = []base.Tuple{}
+			}
+		}
+		parsedLineChan <- parsedLine
+	}
+}
+
+func parseCcsfLine(row []string, comptes *marshal.Comptes, parsedLine *base.ParsedLineResult) {
 	var err error
 	ccsf := CCSF{}
 	if len(row) >= 4 {
