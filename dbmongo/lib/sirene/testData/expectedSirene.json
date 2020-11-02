@@ -63,8 +63,8 @@
         "linesParsed": 3,
         "linesRejected": 0,
         "linesSkipped": 0,
-        "linesValid": 2,
-        "summary": "testData/sireneTestData.csv: intégration terminée, 3 lignes traitées, 1 erreures fatales, 0 rejets, 0 lignes filtrées, 2 lignes valides"
+        "linesValid": 0,
+        "summary": "testData/sireneTestData.csv: intégration terminée, 3 lignes traitées, 1 erreures fatales, 0 rejets, 0 lignes filtrées, 0 lignes valides"
       },
       "priority": "info",
       "parserCode": "sirene",
