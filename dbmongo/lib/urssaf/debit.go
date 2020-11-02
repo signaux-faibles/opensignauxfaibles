@@ -53,28 +53,41 @@ type colMapping map[string]int
 // ParserDebit expose le parseur et le type de fichier qu'il supporte.
 var ParserDebit = marshal.Parser{FileType: "debit", FileParser: ParseDebitFile}
 
-// ParseDebitFile extrait les tuples depuis un fichier "débit" de l'URSSAF.
-func ParseDebitFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (marshal.ParsedLineChan, error) {
-	comptes, err := marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
-	if err != nil {
-		return nil, err
+// ParseDebitFile permet de lancer le parsing du fichier demandé.
+func ParseDebitFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) marshal.OpenFileResult {
+	var idx colMapping
+	var comptes marshal.Comptes
+	closeFct, reader, err := openDebitFile(filePath)
+	if err == nil {
+		idx, err = parseDebitColMapping(reader)
 	}
+	if err != nil {
+		comptes, err = marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
+	}
+	return marshal.OpenFileResult{
+		Error: err,
+		ParseLines: func(parsedLineChan chan base.ParsedLineResult) {
+			parseDebitLines(reader, idx, &comptes, parsedLineChan)
+		},
+		Close: closeFct,
+	}
+}
 
+func openDebitFile(filePath string) (func() error, *csv.Reader, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		return nil, err
+		return file.Close, nil, err
 	}
-	// defer file.Close() // TODO: à réactiver
-
 	reader := csv.NewReader(bufio.NewReader(file))
 	reader.Comma = ';'
+	return file.Close, reader, err
+}
 
-	// ligne de titre
+func parseDebitColMapping(reader *csv.Reader) (colMapping, error) {
 	fields, err := reader.Read()
 	if err != nil {
 		return nil, err
 	}
-
 	var idx = colMapping{
 		"dateTraitement":               misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Dt_trt_ecn" }),
 		"partOuvriere":                 misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Mt_PO" }),
@@ -93,39 +106,38 @@ func ParseDebitFile(filePath string, cache *marshal.Cache, batch *base.AdminBatc
 	if misc.SliceMin(idx["dateTraitement"], idx["partOuvriere"], idx["partPatronale"], idx["numeroHistoriqueEcartNegatif"], idx["periode"], idx["etatCompte"], idx["numeroCompte"], idx["numeroEcartNegatif"], idx["codeProcedureCollective"], idx["codeOperationEcartNegatif"], idx["codeMotifEcartNegatif"]) < 0 {
 		return nil, errors.New("CSV non conforme")
 	}
+	return idx, nil
+}
 
+func parseDebitLines(reader *csv.Reader, idx colMapping, comptes *marshal.Comptes, parsedLineChan chan base.ParsedLineResult) {
 	var lineNumber = 0 // starting with the header
 	stopProgressLogger := marshal.LogProgress(&lineNumber)
 	defer stopProgressLogger()
 
-	parsedLineChan := make(marshal.ParsedLineChan)
-	go func() {
-		for {
-			parsedLine := base.ParsedLineResult{}
-			lineNumber++
-			row, err := reader.Read()
-			if err == io.EOF {
-				close(parsedLineChan)
-				break
-			} else if err != nil {
-				parsedLine.AddError(err)
-			} else {
-				period, _ := marshal.UrssafToPeriod(row[idx["periode"]])
-				date := period.Start
+	for {
+		parsedLine := base.ParsedLineResult{}
+		lineNumber++
+		row, err := reader.Read()
+		if err == io.EOF {
+			close(parsedLineChan)
+			break
+		} else if err != nil {
+			parsedLine.AddError(err)
+		} else {
+			period, _ := marshal.UrssafToPeriod(row[idx["periode"]])
+			date := period.Start
 
-				if siret, err := marshal.GetSiretFromComptesMapping(row[idx["numeroCompte"]], &date, comptes); err == nil {
-					parseDebitLine(siret, row, idx, &parsedLine)
-					if len(parsedLine.Errors) > 0 {
-						parsedLine.Tuples = []base.Tuple{}
-					}
-				} else {
-					parsedLine.AddError(base.NewFilterError(err))
+			if siret, err := marshal.GetSiretFromComptesMapping(row[idx["numeroCompte"]], &date, *comptes); err == nil {
+				parseDebitLine(siret, row, idx, &parsedLine)
+				if len(parsedLine.Errors) > 0 {
+					parsedLine.Tuples = []base.Tuple{}
 				}
+			} else {
+				parsedLine.AddError(base.NewFilterError(err))
 			}
-			parsedLineChan <- parsedLine
 		}
-	}()
-	return parsedLineChan, nil
+		parsedLineChan <- parsedLine
+	}
 }
 
 func parseDebitLine(siret string, row []string, idx colMapping, parsedLine *base.ParsedLineResult) {
