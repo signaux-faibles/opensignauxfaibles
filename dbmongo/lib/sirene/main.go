@@ -175,102 +175,116 @@ func (sirene Sirene) Scope() string {
 // Parser expose le parseur et le type de fichier qu'il supporte.
 var Parser = marshal.Parser{FileType: "sirene", FileParser: ParseFile}
 
-// ParseFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (marshal.ParsedLineChan, error) {
+// ParseFile permet de lancer le parsing du fichier demandé.
+func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) marshal.OpenFileResult {
+	closeFct, reader, err := openFile(filePath)
+	return marshal.OpenFileResult{
+		Error: err,
+		ParseLines: func(parsedLineChan chan base.ParsedLineResult) {
+			parseLines(reader, parsedLineChan)
+		},
+		Close: closeFct,
+	}
+}
+
+func openFile(filePath string) (func() error, *csv.Reader, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		return nil, err
+		return file.Close, nil, err
 	}
-	// defer file.Close() // TODO: à réactiver
 	reader := csv.NewReader(file)
 	reader.Comma = ','
 	reader.LazyQuotes = true
+	return file.Close, reader, nil
+}
 
-	parsedLineChan := make(marshal.ParsedLineChan)
-	go func() {
-		for {
-			parsedLine := base.ParsedLineResult{}
-			row, err := reader.Read()
-			if err == io.EOF {
-				close(parsedLineChan)
-				break
-			} else if err != nil {
-				parsedLine.AddError(err)
-			} else if !sfregexp.ValidSiren(row[f["siren"]]) {
-				parsedLine.AddError(errors.New("siren invalide : " + row[f["siren"]])) // TODO: retirer validation
-			}
-
-			sirene := Sirene{}
-			sirene.Siren = row[f["siren"]]
-			sirene.Nic = row[f["nic"]]
-			sirene.Siege, err = strconv.ParseBool(row[f["etablissementSiege"]])
+func parseLines(reader *csv.Reader, parsedLineChan chan base.ParsedLineResult) {
+	for {
+		parsedLine := base.ParsedLineResult{}
+		row, err := reader.Read()
+		if err == io.EOF {
+			close(parsedLineChan)
+			break
+		} else if err != nil {
 			parsedLine.AddError(err)
-
-			sirene.ComplementAdresse = row[f["complementAdresseEtablissement"]]
-			sirene.NumVoie = row[f["numeroVoieEtablissement"]]
-			sirene.IndRep = indRep[row[f["indiceRepetitionEtablissement"]]]
-			sirene.TypeVoie = typeVoie[row[f["typeVoieEtablissement"]]]
-			sirene.Voie = row[f["libelleVoieEtablissement"]]
-			sirene.Commune = row[f["libelleCommuneEtablissement"]]
-			sirene.CommuneEtranger = row[f["libelleCommuneEtrangerEtablissement"]]
-			sirene.DistributionSpeciale = row[f["distributionSpecialeEtablissement"]]
-			sirene.CodeCommune = row[f["codeCommuneEtablissement"]]
-			sirene.CodeCedex = row[f["codeCedexEtablissement"]]
-			sirene.Cedex = row[f["libelleCedexEtablissement"]]
-			sirene.CodePaysEtranger = row[f["codePaysEtrangerEtablissement"]]
-			sirene.PaysEtranger = row[f["libellePaysEtrangerEtablissement"]]
-
-			if len(row[f["codePostalEtablissement"]]) > 2 {
-				sirene.CodePostal = row[f["codePostalEtablissement"]]
-				departement := row[f["codePostalEtablissement"]][0:2]
-				// traitement pour les départements de Corse
-				if row[f["codePostalEtablissement"]][0:3] == "201" || row[f["codePostalEtablissement"]][0:3] == "200" {
-					departement = "2A"
-				} else if row[f["codePostalEtablissement"]][0:2] == "20" {
-					departement = "2B"
-				}
-				sirene.Departement = departement
-			} else {
-				parsedLine.AddError(errors.New("Code postal est manquant ou de format incorrect"))
-			}
-
-			if row[f["activitePrincipaleEtablissement"]] != "" {
-				if row[f["nomenclatureActivitePrincipaleEtablissement"]] == "NAFRev2" {
-					ape := strings.Replace(row[f["activitePrincipaleEtablissement"]], ".", "", -1)
-					if matched, err := regexp.MatchString(`^[0-9]{4}[A-Z]$`, ape); err == nil && matched {
-						sirene.APE = ape
-					}
-				} else {
-					sirene.CodeActivite = row[f["activitePrincipaleEtablissement"]]
-					sirene.NomenActivite = row[f["nomenclatureActivitePrincipaleEtablissement"]]
-				}
-			}
-
-			loc, _ := time.LoadLocation("Europe/Paris")
-			creation, err := time.ParseInLocation("2006-01-02", row[f["dateCreationEtablissement"]], loc)
-			if err == nil {
-				sirene.Creation = &creation
-			}
-			parsedLine.AddError(err)
-
-			long, err := strconv.ParseFloat(row[f["longitude"]], 64)
-			if err == nil {
-				sirene.Longitude = long
-			}
-			if row[48] != "" {
-				parsedLine.AddError(err)
-			}
-
-			lat, err := strconv.ParseFloat(row[f["latitude"]], 64)
-			if err == nil {
-				sirene.Latitude = lat
-			}
-			if row[49] != "" {
-				parsedLine.AddError(err)
-			}
-			parsedLine.AddTuple(sirene)
-			parsedLineChan <- parsedLine
+		} else if !sfregexp.ValidSiren(row[f["siren"]]) {
+			parsedLine.AddError(errors.New("siren invalide : " + row[f["siren"]])) // TODO: retirer validation
+		} else {
+			parseLine(row, &parsedLine)
 		}
-	}()
-	return parsedLineChan, nil
+		parsedLineChan <- parsedLine
+	}
+}
+
+func parseLine(row []string, parsedLine *base.ParsedLineResult) {
+	var err error
+	sirene := Sirene{}
+	sirene.Siren = row[f["siren"]]
+	sirene.Nic = row[f["nic"]]
+	sirene.Siege, err = strconv.ParseBool(row[f["etablissementSiege"]])
+	parsedLine.AddError(err)
+
+	sirene.ComplementAdresse = row[f["complementAdresseEtablissement"]]
+	sirene.NumVoie = row[f["numeroVoieEtablissement"]]
+	sirene.IndRep = indRep[row[f["indiceRepetitionEtablissement"]]]
+	sirene.TypeVoie = typeVoie[row[f["typeVoieEtablissement"]]]
+	sirene.Voie = row[f["libelleVoieEtablissement"]]
+	sirene.Commune = row[f["libelleCommuneEtablissement"]]
+	sirene.CommuneEtranger = row[f["libelleCommuneEtrangerEtablissement"]]
+	sirene.DistributionSpeciale = row[f["distributionSpecialeEtablissement"]]
+	sirene.CodeCommune = row[f["codeCommuneEtablissement"]]
+	sirene.CodeCedex = row[f["codeCedexEtablissement"]]
+	sirene.Cedex = row[f["libelleCedexEtablissement"]]
+	sirene.CodePaysEtranger = row[f["codePaysEtrangerEtablissement"]]
+	sirene.PaysEtranger = row[f["libellePaysEtrangerEtablissement"]]
+
+	if len(row[f["codePostalEtablissement"]]) > 2 {
+		sirene.CodePostal = row[f["codePostalEtablissement"]]
+		departement := row[f["codePostalEtablissement"]][0:2]
+		// traitement pour les départements de Corse
+		if row[f["codePostalEtablissement"]][0:3] == "201" || row[f["codePostalEtablissement"]][0:3] == "200" {
+			departement = "2A"
+		} else if row[f["codePostalEtablissement"]][0:2] == "20" {
+			departement = "2B"
+		}
+		sirene.Departement = departement
+	} else {
+		parsedLine.AddError(errors.New("Code postal est manquant ou de format incorrect"))
+	}
+
+	if row[f["activitePrincipaleEtablissement"]] != "" {
+		if row[f["nomenclatureActivitePrincipaleEtablissement"]] == "NAFRev2" {
+			ape := strings.Replace(row[f["activitePrincipaleEtablissement"]], ".", "", -1)
+			if matched, err := regexp.MatchString(`^[0-9]{4}[A-Z]$`, ape); err == nil && matched {
+				sirene.APE = ape
+			}
+		} else {
+			sirene.CodeActivite = row[f["activitePrincipaleEtablissement"]]
+			sirene.NomenActivite = row[f["nomenclatureActivitePrincipaleEtablissement"]]
+		}
+	}
+
+	loc, _ := time.LoadLocation("Europe/Paris")
+	creation, err := time.ParseInLocation("2006-01-02", row[f["dateCreationEtablissement"]], loc)
+	if err == nil {
+		sirene.Creation = &creation
+	}
+	parsedLine.AddError(err)
+
+	long, err := strconv.ParseFloat(row[f["longitude"]], 64)
+	if err == nil {
+		sirene.Longitude = long
+	}
+	if row[48] != "" {
+		parsedLine.AddError(err)
+	}
+
+	lat, err := strconv.ParseFloat(row[f["latitude"]], 64)
+	if err == nil {
+		sirene.Latitude = lat
+	}
+	if row[49] != "" {
+		parsedLine.AddError(err)
+	}
+	parsedLine.AddTuple(sirene)
 }
