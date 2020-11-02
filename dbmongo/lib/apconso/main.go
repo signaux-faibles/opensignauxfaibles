@@ -63,7 +63,6 @@ func openFile(filePath string) (*os.File, *csv.Reader, error) {
 	if err != nil {
 		return nil, nil, err
 	}
-	// defer file.Close() // TODO: à réactiver
 	reader := csv.NewReader(file)
 	reader.Comma = ','
 	return file, reader, nil
