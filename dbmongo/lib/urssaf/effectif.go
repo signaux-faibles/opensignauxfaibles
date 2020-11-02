@@ -46,18 +46,14 @@ var ParserEffectif = marshal.Parser{FileType: "effectif", FileParser: ParseEffec
 func ParseEffectifFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) marshal.OpenFileResult {
 	var idx colMapping
 	var periods []periodCol
-	var comptes marshal.Comptes
 	closeFct, reader, err := openEffectifFile(filePath)
 	if err == nil {
 		idx, periods, err = parseEffectifColMapping(reader)
 	}
-	if err == nil {
-		comptes, err = marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
-	}
 	return marshal.OpenFileResult{
 		Error: err,
 		ParseLines: func(parsedLineChan chan base.ParsedLineResult) {
-			parseEffectifLines(reader, idx, periods, &comptes, parsedLineChan)
+			parseEffectifLines(reader, idx, periods, parsedLineChan)
 		},
 		Close: closeFct,
 	}
@@ -96,7 +92,7 @@ func parseEffectifColMapping(reader *csv.Reader) (colMapping, []periodCol, error
 	return idx, periods, err
 }
 
-func parseEffectifLines(reader *csv.Reader, idx colMapping, periods []periodCol, comptes *marshal.Comptes, parsedLineChan chan base.ParsedLineResult) {
+func parseEffectifLines(reader *csv.Reader, idx colMapping, periods []periodCol, parsedLineChan chan base.ParsedLineResult) {
 	for {
 		parsedLine := base.ParsedLineResult{}
 		row, err := reader.Read()
