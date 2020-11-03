@@ -33,8 +33,7 @@ func (compte Compte) Type() string {
 // ParserCompte expose le parseur et le type de fichier qu'il supporte.
 var ParserCompte = marshal.Parser{FileType: "admin_urssaf", FileParser: ParseCompteFile}
 
-// ParseCompteFile permet de générer des tuples à partir des mappings
-// compte<->siret déjà parsés par marshal.GetCompteSiretMapping().
+// ParseCompteFile permet de lancer le parsing du fichier demandé.
 func ParseCompteFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) marshal.OpenFileResult {
 	var err error
 	var periodes []time.Time
@@ -54,35 +53,35 @@ func ParseCompteFile(filePath string, cache *marshal.Cache, batch *base.AdminBat
 }
 
 func parseCompteLines(periodes []time.Time, mapping *marshal.Comptes, cache *marshal.Cache, batch *base.AdminBatch, parsedLineChan chan base.ParsedLineResult) {
-	// First, we sort the mapping entries by account number, to make sure that
-	// tuples are always processed in the same order, and therefore that errors
-	// (e.g. "siret invalide") are reported at consistent Cycle/line numbers.
-	// cf https://github.com/signaux-faibles/opensignauxfaibles/pull/225#issuecomment-720594272
-	var mappingEntries []MappingEntry
-	for key, value := range *mapping {
-		mappingEntries = append(mappingEntries, MappingEntry{
-			NumeroCompte: key,
-			SiretDates:   value,
-		})
-	}
-
-	for _, mappingEntry := range mappingEntries {
+	accounts := mapKeys(*mapping)
+	accountIndex := 0
+	for {
 		parsedLine := base.ParsedLineResult{}
+		if accountIndex >= len(*mapping) {
+			close(parsedLineChan) // EOF
+			break
+		}
+		account := accounts[accountIndex]
+		accountIndex++
 		for _, p := range periodes {
 			var err error
 			compte := Compte{}
-			compte.NumeroCompte = mappingEntry.NumeroCompte
+			compte.NumeroCompte = account
 			compte.Periode = p
-			compte.Siret, err = marshal.GetSiret(mappingEntry.NumeroCompte, &p, *cache, batch) // TODO: remplacer par GetSiretFromComptesMapping(), pour éviter d'avoir à passer cache et batch jusqu'ici ?
+			compte.Siret, err = marshal.GetSiret(account, &p, *cache, batch) // TODO: remplacer par GetSiretFromComptesMapping(), pour éviter d'avoir à passer cache et batch jusqu'ici ?
 			parsedLine.AddError(base.NewCriticError(err, "erreur"))
 			parsedLine.AddTuple(compte)
 		}
 		parsedLineChan <- parsedLine
 	}
-	close(parsedLineChan) // EOF
 }
 
-type MappingEntry struct {
-	NumeroCompte string
-	SiretDates   []marshal.SiretDate
+func mapKeys(mymap marshal.Comptes) []string {
+	keys := make([]string, len(mymap))
+	i := 0
+	for k := range mymap {
+		keys[i] = k
+		i++
+	}
+	return keys
 }
