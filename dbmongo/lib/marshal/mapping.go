@@ -168,7 +168,7 @@ func readSiretMapping(
 		// fermeture, err := UrssafToDate(row[fermetureIndex])
 		fermeture, err := UrssafToDate(row[fermetureIndex])
 		if err != nil {
-			return nil, base.NewCriticError(err, "fatal") // fermeture n'a pas pu être lue ou convertie en date
+			return nil, base.NewFatalError(err) // fermeture n'a pas pu être lue ou convertie en date
 		}
 
 		compte := row[compteIndex]
