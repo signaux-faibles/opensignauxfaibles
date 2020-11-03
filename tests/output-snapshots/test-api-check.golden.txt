@@ -11,6 +11,7 @@
 			"summary" : "/../lib/urssaf/testData/debitCorrompuTestData.csv: intégration terminée, 5 lignes traitées, 2 erreures fatales, 0 rejets, 0 lignes filtrées, 0 lignes valides",
 			"batchKey" : "1910"
 		},
+		"reportType" : "CheckBatch",
 		"parserCode" : "debit"
 	}
 ]

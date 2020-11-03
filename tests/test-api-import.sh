@@ -103,6 +103,7 @@ printjson(db.Journal.find().sort({ parserCode: 1 }).toArray().map(doc => ({
     summary: doc.event.summary,
     batchKey: doc.event.batchKey
   },
+  reportType: doc.reportType,
   parserCode: doc.parserCode
 })));
 
