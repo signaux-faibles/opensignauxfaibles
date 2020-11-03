@@ -65,7 +65,7 @@
         "linesRejected": 0,
         "linesSkipped": 0,
         "linesValid": 3,
-        "summary": "testData/debitTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides"
+        "summary": "testData/debitTestData.csv: intégration terminée, 3 lignes traitées, 0 erreurs fatales, 0 lignes rejetées, 0 lignes filtrées, 3 lignes valides"
       },
       "priority": "info",
       "parserCode": "debit",
