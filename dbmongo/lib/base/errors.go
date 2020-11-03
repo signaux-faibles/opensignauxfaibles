@@ -42,11 +42,6 @@ type FilterError struct {
 	*CriticError
 }
 
-// NewFilterNotice returns a filter error
-func NewFilterNotice() error {
-	return NewFilterError(errors.New("ligne filtrée"))
-}
-
 // NewFilterError returns a filter error
 func NewFilterError(err error) error {
 	return NewCriticError(err, "filter")

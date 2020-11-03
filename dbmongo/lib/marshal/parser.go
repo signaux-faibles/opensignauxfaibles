@@ -88,7 +88,7 @@ func runParserWithSirenFilter(parser Parser, filePath string, cache *Cache, batc
 				if _, err := isValid(tuple); err != nil {
 					tracker.Add(base.NewRegularError(err))
 				} else if filter.Skips(tuple.Key()) {
-					tracker.Add(base.NewFilterNotice())
+					tracker.Add(base.NewFilterError(errors.New("ligne filtrée")))
 				} else {
 					outputChannel <- tuple
 				}
