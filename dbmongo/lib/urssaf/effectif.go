@@ -109,25 +109,19 @@ func parseEffectifLines(reader *csv.Reader, idx colMapping, periods []periodCol,
 }
 
 func parseEffectifLine(row []string, idx colMapping, periods []periodCol, parsedLine *base.ParsedLineResult) {
-	siret := row[idx["siret"]]
-	validSiret := sfregexp.RegexpDict["siret"].MatchString(siret) // TODO: remove validation
-	if !validSiret {
-		parsedLine.AddError(base.NewRegularError(errors.New("Le siret/siren est invalide")))
-	} else {
-		for _, period := range periods {
-			value := row[period.colIndex]
-			if value != "" {
-				noThousandsSep := sfregexp.RegexpDict["notDigit"].ReplaceAllString(value, "")
-				e, err := strconv.Atoi(noThousandsSep)
-				parsedLine.AddError(err)
-				if e > 0 {
-					parsedLine.AddTuple(Effectif{
-						Siret:        siret,
-						NumeroCompte: row[idx["compte"]],
-						Periode:      period.dateStart,
-						Effectif:     e,
-					})
-				}
+	for _, period := range periods {
+		value := row[period.colIndex]
+		if value != "" {
+			noThousandsSep := sfregexp.RegexpDict["notDigit"].ReplaceAllString(value, "")
+			e, err := strconv.Atoi(noThousandsSep)
+			parsedLine.AddError(err)
+			if e > 0 {
+				parsedLine.AddTuple(Effectif{
+					Siret:        row[idx["siret"]],
+					NumeroCompte: row[idx["compte"]],
+					Periode:      period.dateStart,
+					Effectif:     e,
+				})
 			}
 		}
 	}
