@@ -7,7 +7,6 @@ import (
 	"io"
 	"os"
 	"regexp"
-	"strconv"
 	"strings"
 	"time"
 
@@ -100,10 +99,8 @@ func parseProcolLines(reader *csv.Reader, idx colMapping, parsedLineChan chan ba
 			parsedLine.AddError(err)
 		} else {
 			parseProcolLine(row, idx, &parsedLine)
-			if _, err := strconv.Atoi(row[idx["siret"]]); err == nil && len(row[idx["siret"]]) == 14 { // TODO: remove validation
-				if len(parsedLine.Errors) > 0 {
-					parsedLine.Tuples = []base.Tuple{}
-				}
+			if len(parsedLine.Errors) > 0 {
+				parsedLine.Tuples = []base.Tuple{}
 			}
 		}
 		parsedLineChan <- parsedLine
