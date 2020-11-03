@@ -86,7 +86,12 @@ func runParserWithSirenFilter(parser Parser, filePath string, cache *Cache, batc
 			}
 			for _, tuple := range lineResult.Tuples {
 				if _, err := isValid(tuple); err != nil {
-					tracker.Add(base.NewRegularError(err))
+					// Si le siret/siren est invalide, on jette le tuple,
+					// et on rapporte une erreur seulement si aucune n'a été
+					// rapportée par le parseur.
+					if len(lineResult.Errors) == 0 {
+						tracker.Add(base.NewRegularError(err))
+					}
 				} else if filter.Skips(tuple.Key()) {
 					tracker.Add(base.NewFilterError(errors.New("ligne filtrée")))
 				} else {
