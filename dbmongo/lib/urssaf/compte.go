@@ -1,6 +1,7 @@
 package urssaf
 
 import (
+	"sort"
 	"time"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
@@ -33,7 +34,8 @@ func (compte Compte) Type() string {
 // ParserCompte expose le parseur et le type de fichier qu'il supporte.
 var ParserCompte = marshal.Parser{FileType: "admin_urssaf", FileParser: ParseCompteFile}
 
-// ParseCompteFile permet de lancer le parsing du fichier demandé.
+// ParseCompteFile permet de générer des tuples à partir des mappings
+// compte<->siret déjà parsés par marshal.GetCompteSiretMapping().
 func ParseCompteFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) marshal.OpenFileResult {
 	var err error
 	var periodes []time.Time
@@ -53,7 +55,11 @@ func ParseCompteFile(filePath string, cache *marshal.Cache, batch *base.AdminBat
 }
 
 func parseCompteLines(periodes []time.Time, mapping *marshal.Comptes, cache *marshal.Cache, batch *base.AdminBatch, parsedLineChan chan base.ParsedLineResult) {
-	accounts := mapKeys(*mapping)
+	// First, we sort the mapping entries by account number, to make sure that
+	// tuples are always processed in the same order, and therefore that errors
+	// (e.g. "siret invalide") are reported at consistent Cycle/line numbers.
+	// cf https://github.com/signaux-faibles/opensignauxfaibles/pull/225#issuecomment-720594272
+	accounts := sortKeys(*mapping)
 	accountIndex := 0
 	for {
 		parsedLine := base.ParsedLineResult{}
@@ -76,12 +82,13 @@ func parseCompteLines(periodes []time.Time, mapping *marshal.Comptes, cache *mar
 	}
 }
 
-func mapKeys(mymap marshal.Comptes) []string {
+func sortKeys(mymap marshal.Comptes) []string {
 	keys := make([]string, len(mymap))
 	i := 0
 	for k := range mymap {
 		keys[i] = k
 		i++
 	}
+	sort.Strings(keys)
 	return keys
 }
