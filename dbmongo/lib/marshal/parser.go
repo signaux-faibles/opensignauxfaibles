@@ -101,7 +101,6 @@ func runParserWithSirenFilter(parser Parser, filePath string, cache *Cache, batc
 			tracker.Next()
 		}
 	}
-	// TODO: s'assurer que openFileRes.Close est bien défini avant de l'appeler ?
 	if err := openFileRes.Close(); err != nil {
 		tracker.Add(base.NewFatalError(err))
 	}

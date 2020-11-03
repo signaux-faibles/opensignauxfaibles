@@ -71,7 +71,7 @@ func reportAbstract(tracker gournal.Tracker) interface{} {
 
 	var nValid int
 	if nFatal > 0 {
-		nValid = 0 // TODO: s'assurer que les parseurs ne produisent des erreurs fatales que lors de l'ouverture du fichier, et non pendant le parsing
+		nValid = 0
 	} else {
 		nValid = tracker.Count - nError - nFiltered
 	}
