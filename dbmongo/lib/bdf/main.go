@@ -3,7 +3,6 @@ package bdf
 import (
 	"bufio"
 	"encoding/csv"
-	"errors"
 	"io"
 	"os"
 	"strings"
@@ -12,7 +11,6 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sfregexp"
 )
 
 // BDF Information Banque de France
@@ -106,15 +104,9 @@ var field = map[string]int{
 }
 
 func parseBdfLine(row []string, parsedLine *base.ParsedLineResult) {
+	var err error
 	bdf := BDF{}
 	bdf.Siren = strings.Replace(row[field["siren"]], " ", "", -1)
-
-	if !sfregexp.ValidSiren(bdf.Siren) {
-		parsedLine.AddError(errors.New("siren invalide : " + bdf.Siren))
-		return
-	}
-
-	var err error
 	bdf.Annee, err = misc.ParsePInt(row[field["année"]])
 	parsedLine.AddError(err)
 	var arrete = row[field["arrêtéBilan"]]
