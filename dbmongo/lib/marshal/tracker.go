@@ -63,9 +63,9 @@ func reportAbstract(tracker gournal.Tracker) interface{} {
 					fmt.Printf("Cycle %d: %v", cycle, err)
 				}
 			}
-			if lineRejected {
-				nError++
-			}
+		}
+		if lineRejected {
+			nError++
 		}
 	}
 
@@ -77,7 +77,7 @@ func reportAbstract(tracker gournal.Tracker) interface{} {
 	}
 
 	report := fmt.Sprintf(
-		"%s: intégration terminée, %d lignes traitées, %d erreures fatales, %d rejets, %d lignes filtrées, %d lignes valides",
+		"%s: intégration terminée, %d lignes traitées, %d erreurs fatales, %d lignes rejetées, %d lignes filtrées, %d lignes valides",
 		tracker.Context["path"],
 		tracker.Count,
 		nFatal,
