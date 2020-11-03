@@ -69,7 +69,13 @@ func reportAbstract(tracker gournal.Tracker) interface{} {
 		}
 	}
 
-	nValid := tracker.Count - nFatal - nError - nFiltered
+	var nValid int
+	if nFatal > 0 {
+		nValid = 0 // TODO: s'assurer que les parseurs ne produisent des erreurs fatales que lors de l'ouverture du fichier, et non pendant le parsing
+	} else {
+		nValid = tracker.Count - nError - nFiltered
+	}
+
 	report := fmt.Sprintf(
 		"%s: intégration terminée, %d lignes traitées, %d erreures fatales, %d rejets, %d lignes filtrées, %d lignes valides",
 		tracker.Context["path"],
