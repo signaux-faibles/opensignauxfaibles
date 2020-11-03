@@ -49,7 +49,7 @@ func ParseCotisationFile(filePath string, cache *marshal.Cache, batch *base.Admi
 	}
 	return marshal.OpenFileResult{
 		Error: err,
-		ParseLines: func(parsedLineChan chan base.ParsedLineResult) {
+		ParseLines: func(parsedLineChan chan marshal.ParsedLineResult) {
 			parseCotisationLines(reader, &comptes, parsedLineChan)
 		},
 		Close: closeFct,
@@ -75,9 +75,9 @@ var idxCotisation = colMapping{
 	"Du":           6,
 }
 
-func parseCotisationLines(reader *csv.Reader, comptes *marshal.Comptes, parsedLineChan chan base.ParsedLineResult) {
+func parseCotisationLines(reader *csv.Reader, comptes *marshal.Comptes, parsedLineChan chan marshal.ParsedLineResult) {
 	for {
-		parsedLine := base.ParsedLineResult{}
+		parsedLine := marshal.ParsedLineResult{}
 		row, err := reader.Read()
 		if err == io.EOF {
 			close(parsedLineChan)
@@ -87,14 +87,14 @@ func parseCotisationLines(reader *csv.Reader, comptes *marshal.Comptes, parsedLi
 		} else {
 			parseCotisationLine(row, comptes, &parsedLine)
 			if len(parsedLine.Errors) > 0 {
-				parsedLine.Tuples = []base.Tuple{}
+				parsedLine.Tuples = []marshal.Tuple{}
 			}
 		}
 		parsedLineChan <- parsedLine
 	}
 }
 
-func parseCotisationLine(row []string, comptes *marshal.Comptes, parsedLine *base.ParsedLineResult) {
+func parseCotisationLine(row []string, comptes *marshal.Comptes, parsedLine *marshal.ParsedLineResult) {
 	idx := idxCotisation
 	cotisation := Cotisation{}
 

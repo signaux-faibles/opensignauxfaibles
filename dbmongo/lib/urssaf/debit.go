@@ -66,7 +66,7 @@ func ParseDebitFile(filePath string, cache *marshal.Cache, batch *base.AdminBatc
 	}
 	return marshal.OpenFileResult{
 		Error: err,
-		ParseLines: func(parsedLineChan chan base.ParsedLineResult) {
+		ParseLines: func(parsedLineChan chan marshal.ParsedLineResult) {
 			parseDebitLines(reader, idx, &comptes, parsedLineChan)
 		},
 		Close: closeFct,
@@ -109,13 +109,13 @@ func parseDebitColMapping(reader *csv.Reader) (colMapping, error) {
 	return idx, nil
 }
 
-func parseDebitLines(reader *csv.Reader, idx colMapping, comptes *marshal.Comptes, parsedLineChan chan base.ParsedLineResult) {
+func parseDebitLines(reader *csv.Reader, idx colMapping, comptes *marshal.Comptes, parsedLineChan chan marshal.ParsedLineResult) {
 	var lineNumber = 0 // starting with the header
 	stopProgressLogger := marshal.LogProgress(&lineNumber)
 	defer stopProgressLogger()
 
 	for {
-		parsedLine := base.ParsedLineResult{}
+		parsedLine := marshal.ParsedLineResult{}
 		lineNumber++
 		row, err := reader.Read()
 		if err == io.EOF {
@@ -130,7 +130,7 @@ func parseDebitLines(reader *csv.Reader, idx colMapping, comptes *marshal.Compte
 			if siret, err := marshal.GetSiretFromComptesMapping(row[idx["numeroCompte"]], &date, *comptes); err == nil {
 				parseDebitLine(siret, row, idx, &parsedLine)
 				if len(parsedLine.Errors) > 0 {
-					parsedLine.Tuples = []base.Tuple{}
+					parsedLine.Tuples = []marshal.Tuple{}
 				}
 			} else {
 				parsedLine.AddError(base.NewFilterError(err))
@@ -140,7 +140,7 @@ func parseDebitLines(reader *csv.Reader, idx colMapping, comptes *marshal.Compte
 	}
 }
 
-func parseDebitLine(siret string, row []string, idx colMapping, parsedLine *base.ParsedLineResult) {
+func parseDebitLine(siret string, row []string, idx colMapping, parsedLine *marshal.ParsedLineResult) {
 
 	debit := Debit{
 		key:                       siret,

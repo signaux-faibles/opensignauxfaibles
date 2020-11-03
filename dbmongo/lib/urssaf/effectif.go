@@ -52,7 +52,7 @@ func ParseEffectifFile(filePath string, cache *marshal.Cache, batch *base.AdminB
 	}
 	return marshal.OpenFileResult{
 		Error: err,
-		ParseLines: func(parsedLineChan chan base.ParsedLineResult) {
+		ParseLines: func(parsedLineChan chan marshal.ParsedLineResult) {
 			parseEffectifLines(reader, idx, periods, parsedLineChan)
 		},
 		Close: closeFct,
@@ -92,9 +92,9 @@ func parseEffectifColMapping(reader *csv.Reader) (colMapping, []periodCol, error
 	return idx, periods, err
 }
 
-func parseEffectifLines(reader *csv.Reader, idx colMapping, periods []periodCol, parsedLineChan chan base.ParsedLineResult) {
+func parseEffectifLines(reader *csv.Reader, idx colMapping, periods []periodCol, parsedLineChan chan marshal.ParsedLineResult) {
 	for {
-		parsedLine := base.ParsedLineResult{}
+		parsedLine := marshal.ParsedLineResult{}
 		row, err := reader.Read()
 		if err == io.EOF {
 			close(parsedLineChan)
@@ -108,7 +108,7 @@ func parseEffectifLines(reader *csv.Reader, idx colMapping, periods []periodCol,
 	}
 }
 
-func parseEffectifLine(row []string, idx colMapping, periods []periodCol, parsedLine *base.ParsedLineResult) {
+func parseEffectifLine(row []string, idx colMapping, periods []periodCol, parsedLine *marshal.ParsedLineResult) {
 	for _, period := range periods {
 		value := row[period.colIndex]
 		if value != "" {

@@ -69,7 +69,7 @@ func ParseEffectifEntFile(filePath string, cache *marshal.Cache, batch *base.Adm
 	}
 	return marshal.OpenFileResult{
 		Error: err,
-		ParseLines: func(parsedLineChan chan base.ParsedLineResult) {
+		ParseLines: func(parsedLineChan chan marshal.ParsedLineResult) {
 			parseEffectifEntLines(reader, idx, periods, parsedLineChan)
 		},
 		Close: closeFct,
@@ -99,9 +99,9 @@ func parseEffectifEntColMapping(reader *csv.Reader) (colMapping, []periodCol, er
 	return idx, periods, nil
 }
 
-func parseEffectifEntLines(reader *csv.Reader, idx colMapping, periods []periodCol, parsedLineChan chan base.ParsedLineResult) {
+func parseEffectifEntLines(reader *csv.Reader, idx colMapping, periods []periodCol, parsedLineChan chan marshal.ParsedLineResult) {
 	for {
-		parsedLine := base.ParsedLineResult{}
+		parsedLine := marshal.ParsedLineResult{}
 		row, err := reader.Read()
 		if err == io.EOF {
 			close(parsedLineChan)
@@ -115,7 +115,7 @@ func parseEffectifEntLines(reader *csv.Reader, idx colMapping, periods []periodC
 	}
 }
 
-func parseEffectifEntLine(row []string, idx colMapping, periods []periodCol, parsedLine *base.ParsedLineResult) {
+func parseEffectifEntLine(row []string, idx colMapping, periods []periodCol, parsedLine *marshal.ParsedLineResult) {
 	for _, period := range periods {
 		value := row[period.colIndex]
 		if value != "" {

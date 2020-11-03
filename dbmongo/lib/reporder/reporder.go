@@ -41,7 +41,7 @@ func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) ma
 	closeFct, reader, err := openFile(filePath)
 	return marshal.OpenFileResult{
 		Error: err,
-		ParseLines: func(parsedLineChan chan base.ParsedLineResult) {
+		ParseLines: func(parsedLineChan chan marshal.ParsedLineResult) {
 			parseLines(reader, parsedLineChan)
 		},
 		Close: closeFct,
@@ -58,9 +58,9 @@ func openFile(filePath string) (func() error, *csv.Reader, error) {
 	return file.Close, reader, nil
 }
 
-func parseLines(reader *csv.Reader, parsedLineChan chan base.ParsedLineResult) {
+func parseLines(reader *csv.Reader, parsedLineChan chan marshal.ParsedLineResult) {
 	for {
-		parsedLine := base.ParsedLineResult{}
+		parsedLine := marshal.ParsedLineResult{}
 		row, err := reader.Read()
 		if err == io.EOF {
 			close(parsedLineChan)
@@ -70,14 +70,14 @@ func parseLines(reader *csv.Reader, parsedLineChan chan base.ParsedLineResult) {
 		} else {
 			parseReporderLine(row, &parsedLine)
 			if len(parsedLine.Errors) > 0 {
-				parsedLine.Tuples = []base.Tuple{}
+				parsedLine.Tuples = []marshal.Tuple{}
 			}
 		}
 		parsedLineChan <- parsedLine
 	}
 }
 
-func parseReporderLine(row []string, parsedLine *base.ParsedLineResult) {
+func parseReporderLine(row []string, parsedLine *marshal.ParsedLineResult) {
 	periode, err := time.Parse("2006-01-02", row[1])
 	parsedLine.AddError(base.NewRegularError(err))
 	randomOrder, err := misc.ParsePFloat(row[2])

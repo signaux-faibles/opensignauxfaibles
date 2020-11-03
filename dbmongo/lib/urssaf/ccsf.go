@@ -48,7 +48,7 @@ func ParseCcsfFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch
 	}
 	return marshal.OpenFileResult{
 		Error: err,
-		ParseLines: func(parsedLineChan chan base.ParsedLineResult) {
+		ParseLines: func(parsedLineChan chan marshal.ParsedLineResult) {
 			parseCcsfLines(reader, &comptes, parsedLineChan)
 		},
 		Close: closeFct,
@@ -73,9 +73,9 @@ var idxCcsf = colMapping{
 	"Action":         5,
 }
 
-func parseCcsfLines(reader *csv.Reader, comptes *marshal.Comptes, parsedLineChan chan base.ParsedLineResult) {
+func parseCcsfLines(reader *csv.Reader, comptes *marshal.Comptes, parsedLineChan chan marshal.ParsedLineResult) {
 	for {
-		parsedLine := base.ParsedLineResult{}
+		parsedLine := marshal.ParsedLineResult{}
 		row, err := reader.Read()
 		if err == io.EOF {
 			close(parsedLineChan)
@@ -85,14 +85,14 @@ func parseCcsfLines(reader *csv.Reader, comptes *marshal.Comptes, parsedLineChan
 		} else {
 			parseCcsfLine(row, comptes, &parsedLine)
 			if len(parsedLine.Errors) > 0 {
-				parsedLine.Tuples = []base.Tuple{}
+				parsedLine.Tuples = []marshal.Tuple{}
 			}
 		}
 		parsedLineChan <- parsedLine
 	}
 }
 
-func parseCcsfLine(row []string, comptes *marshal.Comptes, parsedLine *base.ParsedLineResult) {
+func parseCcsfLine(row []string, comptes *marshal.Comptes, parsedLine *marshal.ParsedLineResult) {
 	idx := idxCcsf
 	var err error
 	ccsf := CCSF{}

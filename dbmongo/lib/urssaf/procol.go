@@ -54,7 +54,7 @@ func ParseProcolFile(filePath string, cache *marshal.Cache, batch *base.AdminBat
 	// }
 	return marshal.OpenFileResult{
 		Error: err,
-		ParseLines: func(parsedLineChan chan base.ParsedLineResult) {
+		ParseLines: func(parsedLineChan chan marshal.ParsedLineResult) {
 			parseProcolLines(reader, idx, parsedLineChan)
 		},
 		Close: closeFct,
@@ -88,9 +88,9 @@ func parseProcolColMapping(reader *csv.Reader) (colMapping, error) {
 	return idx, nil
 }
 
-func parseProcolLines(reader *csv.Reader, idx colMapping, parsedLineChan chan base.ParsedLineResult) {
+func parseProcolLines(reader *csv.Reader, idx colMapping, parsedLineChan chan marshal.ParsedLineResult) {
 	for {
-		parsedLine := base.ParsedLineResult{}
+		parsedLine := marshal.ParsedLineResult{}
 		row, err := reader.Read()
 		if err == io.EOF {
 			close(parsedLineChan)
@@ -100,14 +100,14 @@ func parseProcolLines(reader *csv.Reader, idx colMapping, parsedLineChan chan ba
 		} else {
 			parseProcolLine(row, idx, &parsedLine)
 			if len(parsedLine.Errors) > 0 {
-				parsedLine.Tuples = []base.Tuple{}
+				parsedLine.Tuples = []marshal.Tuple{}
 			}
 		}
 		parsedLineChan <- parsedLine
 	}
 }
 
-func parseProcolLine(row []string, idx colMapping, parsedLine *base.ParsedLineResult) {
+func parseProcolLine(row []string, idx colMapping, parsedLine *marshal.ParsedLineResult) {
 	var err error
 	procol := Procol{}
 	procol.DateEffet, err = time.Parse("02Jan2006", row[idx["dt_effet"]])

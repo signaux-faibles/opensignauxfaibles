@@ -58,7 +58,7 @@ func ParseDelaiFile(filePath string, cache *marshal.Cache, batch *base.AdminBatc
 	}
 	return marshal.OpenFileResult{
 		Error: err,
-		ParseLines: func(parsedLineChan chan base.ParsedLineResult) {
+		ParseLines: func(parsedLineChan chan marshal.ParsedLineResult) {
 			parseDelaiLines(reader, &comptes, parsedLineChan)
 		},
 		Close: closeFct,
@@ -90,10 +90,10 @@ var idxDelai = colMapping{
 	"Action":            12,
 }
 
-func parseDelaiLines(reader *csv.Reader, comptes *marshal.Comptes, parsedLineChan chan base.ParsedLineResult) {
+func parseDelaiLines(reader *csv.Reader, comptes *marshal.Comptes, parsedLineChan chan marshal.ParsedLineResult) {
 	idx := idxDelai
 	for {
-		parsedLine := base.ParsedLineResult{}
+		parsedLine := marshal.ParsedLineResult{}
 		row, err := reader.Read()
 		if err == io.EOF {
 			close(parsedLineChan)
@@ -107,7 +107,7 @@ func parseDelaiLines(reader *csv.Reader, comptes *marshal.Comptes, parsedLineCha
 			} else if siret, err := marshal.GetSiretFromComptesMapping(row[idx["NumeroCompte"]], &date, *comptes); err == nil {
 				parseDelaiLine(row, idx, siret, &parsedLine)
 				if len(parsedLine.Errors) > 0 {
-					parsedLine.Tuples = []base.Tuple{}
+					parsedLine.Tuples = []marshal.Tuple{}
 				}
 			} else {
 				parsedLine.AddError(base.NewFilterError(err))
@@ -117,7 +117,7 @@ func parseDelaiLines(reader *csv.Reader, comptes *marshal.Comptes, parsedLineCha
 	}
 }
 
-func parseDelaiLine(row []string, idx colMapping, siret string, parsedLine *base.ParsedLineResult) {
+func parseDelaiLine(row []string, idx colMapping, siret string, parsedLine *marshal.ParsedLineResult) {
 	var err error
 	loc, _ := time.LoadLocation("Europe/Paris")
 	delai := Delai{}

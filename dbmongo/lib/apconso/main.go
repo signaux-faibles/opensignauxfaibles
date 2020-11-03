@@ -49,7 +49,7 @@ func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) ma
 	}
 	return marshal.OpenFileResult{
 		Error: err,
-		ParseLines: func(parsedLineChan chan base.ParsedLineResult) {
+		ParseLines: func(parsedLineChan chan marshal.ParsedLineResult) {
 			parseLines(reader, idx, parsedLineChan)
 		},
 		Close: closeFct,
@@ -86,9 +86,9 @@ func parseColMapping(reader *csv.Reader) (colMapping, error) {
 	return idx, nil
 }
 
-func parseLines(reader *csv.Reader, idx colMapping, parsedLineChan chan base.ParsedLineResult) {
+func parseLines(reader *csv.Reader, idx colMapping, parsedLineChan chan marshal.ParsedLineResult) {
 	for {
-		parsedLine := base.ParsedLineResult{}
+		parsedLine := marshal.ParsedLineResult{}
 		row, err := reader.Read()
 		if err == io.EOF {
 			close(parsedLineChan)
@@ -98,14 +98,14 @@ func parseLines(reader *csv.Reader, idx colMapping, parsedLineChan chan base.Par
 		} else if len(row) > 0 {
 			parseApConsoLine(row, idx, &parsedLine)
 			if len(parsedLine.Errors) > 0 {
-				parsedLine.Tuples = []base.Tuple{}
+				parsedLine.Tuples = []marshal.Tuple{}
 			}
 		}
 		parsedLineChan <- parsedLine
 	}
 }
 
-func parseApConsoLine(row []string, idx colMapping, parsedLine *base.ParsedLineResult) {
+func parseApConsoLine(row []string, idx colMapping, parsedLine *marshal.ParsedLineResult) {
 	apconso := APConso{}
 	apconso.ID = row[idx["ID"]]
 	apconso.Siret = row[idx["Siret"]]

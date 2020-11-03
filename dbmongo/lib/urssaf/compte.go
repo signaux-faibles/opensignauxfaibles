@@ -46,21 +46,21 @@ func ParseCompteFile(filePath string, cache *marshal.Cache, batch *base.AdminBat
 	}
 	return marshal.OpenFileResult{
 		Error: err,
-		ParseLines: func(parsedLineChan chan base.ParsedLineResult) {
+		ParseLines: func(parsedLineChan chan marshal.ParsedLineResult) {
 			parseCompteLines(periodes, &mapping, parsedLineChan)
 		},
 		Close: closeFct,
 	}
 }
 
-func parseCompteLines(periodes []time.Time, mapping *marshal.Comptes, parsedLineChan chan base.ParsedLineResult) {
+func parseCompteLines(periodes []time.Time, mapping *marshal.Comptes, parsedLineChan chan marshal.ParsedLineResult) {
 	// First, we sort the mapping entries by account number, to make sure that
 	// tuples are always processed in the same order, and therefore that errors
 	// (e.g. "siret invalide") are reported at consistent Cycle/line numbers.
 	// cf https://github.com/signaux-faibles/opensignauxfaibles/pull/225#issuecomment-720594272
 	accounts := mapping.GetSortedKeys()
 	for accountIndex := range accounts {
-		parsedLine := base.ParsedLineResult{}
+		parsedLine := marshal.ParsedLineResult{}
 		account := accounts[accountIndex]
 		for _, p := range periodes {
 			var err error

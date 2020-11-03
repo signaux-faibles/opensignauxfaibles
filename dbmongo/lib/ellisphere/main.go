@@ -46,7 +46,7 @@ func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) ma
 	sheet, err := openFile(filePath)
 	return marshal.OpenFileResult{
 		Error: err,
-		ParseLines: func(parsedLineChan chan base.ParsedLineResult) {
+		ParseLines: func(parsedLineChan chan marshal.ParsedLineResult) {
 			parseLines(sheet, parsedLineChan)
 		},
 		Close: func() error { return nil },
@@ -64,10 +64,10 @@ func openFile(filePath string) (*xlsx.Sheet, error) {
 	return xlsxFile.Sheets[0], nil
 }
 
-func parseLines(sheet *xlsx.Sheet, parsedLineChan chan base.ParsedLineResult) {
+func parseLines(sheet *xlsx.Sheet, parsedLineChan chan marshal.ParsedLineResult) {
 	sheet.ForEachRow(
 		func(row *xlsx.Row) error {
-			parsedLine := base.ParsedLineResult{}
+			parsedLine := marshal.ParsedLineResult{}
 			var ellisphere Ellisphere
 			err := row.ReadStruct(&ellisphere)
 			parsedLine.AddError(base.NewRegularError(err))

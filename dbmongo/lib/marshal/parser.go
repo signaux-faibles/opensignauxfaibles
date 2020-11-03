@@ -27,30 +27,40 @@ type filePath = string
 // parser a bien été ouvert, puis de lancer le parsing des lignes.
 type OpenFileResult struct {
 	Error      error
-	ParseLines func(chan base.ParsedLineResult)
+	ParseLines func(chan ParsedLineResult)
 	Close      func() error
 }
 
-func isValid(tuple base.Tuple) (bool, error) {
-	scope := tuple.Scope()
-	key := tuple.Key()
-	if scope == "entreprise" {
-		if !sfregexp.ValidSiren(key) {
-			return false, errors.New("siren invalide : " + key)
-		}
-		return true, nil
-	} else if scope == "etablissement" {
-		if !sfregexp.ValidSiret(key) {
-			return false, errors.New("siret invalide : " + key)
-		}
-		return true, nil
+// ParsedLineResult est le résultat du parsing d'une ligne.
+type ParsedLineResult struct {
+	Tuples []Tuple
+	Errors []error // TODO: utiliser CriticError ici
+}
+
+// AddTuple permet au parseur d'ajouter un tuple extrait depuis la ligne en cours.
+func (res *ParsedLineResult) AddTuple(tuple Tuple) {
+	if tuple != nil {
+		res.Tuples = append(res.Tuples, tuple)
 	}
-	return false, errors.New("tuple sans scope")
+}
+
+// AddError permet au parseur d'ajouter un tuple extrait depuis la ligne en cours.
+func (res *ParsedLineResult) AddError(err error) { // TODO: utiliser CriticError ici
+	if err != nil {
+		res.Errors = append(res.Errors, err)
+	}
+}
+
+// Tuple unité de donnée à insérer dans un type
+type Tuple interface {
+	Key() string
+	Scope() string
+	Type() string
 }
 
 // ParseFilesFromBatch parse tous les fichiers spécifiés dans batch pour un parseur donné.
-func ParseFilesFromBatch(cache Cache, batch *base.AdminBatch, parser Parser) (chan base.Tuple, chan Event) {
-	outputChannel := make(chan base.Tuple)
+func ParseFilesFromBatch(cache Cache, batch *base.AdminBatch, parser Parser) (chan Tuple, chan Event) {
+	outputChannel := make(chan Tuple)
 	eventChannel := make(chan Event)
 	event := Event{
 		Code:    Code(parser.FileType),
@@ -71,14 +81,14 @@ func ParseFilesFromBatch(cache Cache, batch *base.AdminBatch, parser Parser) (ch
 	return outputChannel, eventChannel
 }
 
-func runParserWithSirenFilter(parser Parser, filePath string, cache *Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan base.Tuple) {
+func runParserWithSirenFilter(parser Parser, filePath string, cache *Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan Tuple) {
 	filter := GetSirenFilterFromCache(*cache)
 	openFileRes := parser.FileParser(filePath, cache, batch)
 	// Note: on ne passe plus le tracker aux parseurs afin de garder ici le controle de la numérotation des lignes où les erreurs sont trouvées
 	if openFileRes.Error != nil {
 		tracker.Add(base.NewFatalError(openFileRes.Error))
 	} else {
-		parsedLineChan := make(chan base.ParsedLineResult)
+		parsedLineChan := make(chan ParsedLineResult)
 		go openFileRes.ParseLines(parsedLineChan)
 		for lineResult := range parsedLineChan {
 			for _, err := range lineResult.Errors {
@@ -107,7 +117,7 @@ func runParserWithSirenFilter(parser Parser, filePath string, cache *Cache, batc
 }
 
 // GetJSON sérialise un tuple au format JSON.
-func GetJSON(tuple base.Tuple) ([]byte, error) {
+func GetJSON(tuple Tuple) ([]byte, error) {
 	return json.MarshalIndent(tuple, "", "  ")
 }
 
@@ -116,4 +126,21 @@ func LogProgress(lineNumber *int) (stop context.CancelFunc) {
 	return base.Cron(time.Second*2, func() {
 		fmt.Printf("Reading csv line %d\n", *lineNumber)
 	})
+}
+
+func isValid(tuple Tuple) (bool, error) {
+	scope := tuple.Scope()
+	key := tuple.Key()
+	if scope == "entreprise" {
+		if !sfregexp.ValidSiren(key) {
+			return false, errors.New("siren invalide : " + key)
+		}
+		return true, nil
+	} else if scope == "etablissement" {
+		if !sfregexp.ValidSiret(key) {
+			return false, errors.New("siret invalide : " + key)
+		}
+		return true, nil
+	}
+	return false, errors.New("tuple sans scope")
 }
