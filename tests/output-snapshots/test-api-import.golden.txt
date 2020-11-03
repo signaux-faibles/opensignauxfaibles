@@ -5077,11 +5077,11 @@
 	{
 		"event" : {
 			"headSkipped" : [ ],
-			"headRejected" : [ ],
-			"headFatal" : [
+			"headRejected" : [
 				"Cycle 0: strconv.ParseInt: parsing \"Niveau de détention\": invalid syntax"
 			],
-			"summary" : "/../lib/ellisphere/testData/ellisphereTestData.excel: intégration terminée, 7 lignes traitées, 1 erreurs fatales, 0 lignes rejetées, 0 lignes filtrées, 0 lignes valides",
+			"headFatal" : [ ],
+			"summary" : "/../lib/ellisphere/testData/ellisphereTestData.excel: intégration terminée, 7 lignes traitées, 0 erreurs fatales, 1 lignes rejetées, 0 lignes filtrées, 6 lignes valides",
 			"batchKey" : "1910"
 		},
 		"parserCode" : "ellisphere"
@@ -5099,11 +5099,11 @@
 	{
 		"event" : {
 			"headSkipped" : [ ],
-			"headRejected" : [ ],
-			"headFatal" : [
+			"headRejected" : [
 				"Cycle 1: parsing time \"\" as \"2006-01-02\": cannot parse \"\" as \"2006\""
 			],
-			"summary" : "/../lib/sirene/testData/sireneTestData.csv: intégration terminée, 3 lignes traitées, 1 erreurs fatales, 0 lignes rejetées, 0 lignes filtrées, 0 lignes valides",
+			"headFatal" : [ ],
+			"summary" : "/../lib/sirene/testData/sireneTestData.csv: intégration terminée, 3 lignes traitées, 0 erreurs fatales, 1 lignes rejetées, 0 lignes filtrées, 2 lignes valides",
 			"batchKey" : "1910"
 		},
 		"parserCode" : "sirene"

@@ -81,17 +81,17 @@
       "date": "0001-01-01T00:00:00Z",
       "event": {
         "batchKey": "",
-        "headFatal": [
+        "headFatal": [],
+        "headRejected": [
           "Cycle 0: strconv.ParseInt: parsing \"Niveau de détention\": invalid syntax"
         ],
-        "headRejected": [],
         "headSkipped": [],
-        "isFatal": true,
+        "isFatal": false,
         "linesParsed": 7,
-        "linesRejected": 0,
+        "linesRejected": 1,
         "linesSkipped": 0,
-        "linesValid": 0,
-        "summary": "testData/ellisphereTestData.excel: intégration terminée, 7 lignes traitées, 1 erreurs fatales, 0 lignes rejetées, 0 lignes filtrées, 0 lignes valides"
+        "linesValid": 6,
+        "summary": "testData/ellisphereTestData.excel: intégration terminée, 7 lignes traitées, 0 erreurs fatales, 1 lignes rejetées, 0 lignes filtrées, 6 lignes valides"
       },
       "priority": "info",
       "parserCode": "ellisphere",
