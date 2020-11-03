@@ -1,7 +1,6 @@
 package urssaf
 
 import (
-	"sort"
 	"time"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
@@ -59,7 +58,7 @@ func parseCompteLines(periodes []time.Time, mapping *marshal.Comptes, parsedLine
 	// tuples are always processed in the same order, and therefore that errors
 	// (e.g. "siret invalide") are reported at consistent Cycle/line numbers.
 	// cf https://github.com/signaux-faibles/opensignauxfaibles/pull/225#issuecomment-720594272
-	accounts := sortKeys(*mapping)
+	accounts := mapping.GetSortedKeys()
 	accountIndex := 0
 	for {
 		parsedLine := base.ParsedLineResult{}
@@ -80,15 +79,4 @@ func parseCompteLines(periodes []time.Time, mapping *marshal.Comptes, parsedLine
 		}
 		parsedLineChan <- parsedLine
 	}
-}
-
-func sortKeys(mymap marshal.Comptes) []string {
-	keys := make([]string, len(mymap))
-	i := 0
-	for k := range mymap {
-		keys[i] = k
-		i++
-	}
-	sort.Strings(keys)
-	return keys
 }

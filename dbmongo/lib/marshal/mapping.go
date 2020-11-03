@@ -55,8 +55,20 @@ type SiretDate struct {
 // Comptes associates a SiretDate to an urssaf account number
 type Comptes map[string][]SiretDate
 
+// GetSortedKeys retourne la liste classée des numéros de Comptes.
+func (comptes *Comptes) GetSortedKeys() []string {
+	keys := make([]string, len(*comptes))
+	i := 0
+	for k := range *comptes {
+		keys[i] = k
+		i++
+	}
+	sort.Strings(keys)
+	return keys
+}
+
 // GetCompteSiretMapping returns the siret mapping in cache if available, else
-// reads the file and save it in cache
+// reads the file and save it in cache. Lazy loaded.
 func GetCompteSiretMapping(cache Cache, batch *base.AdminBatch, mr mappingReader) (Comptes, error) {
 
 	value, err := cache.Get("comptes")
