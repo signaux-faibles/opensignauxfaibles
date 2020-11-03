@@ -4942,6 +4942,29 @@
 		"event" : {
 			"headSkipped" : [ ],
 			"headRejected" : [
+				"Cycle 1: Pas de siret associé au compte 450359886246036238 à la période 2019-01-01 00:00:00 +0000 UTC",
+				"Cycle 1: Pas de siret associé au compte 450359886246036238 à la période 2019-02-01 00:00:00 +0000 UTC",
+				"Cycle 1: Pas de siret associé au compte 450359886246036238 à la période 2019-03-01 00:00:00 +0000 UTC",
+				"Cycle 1: Pas de siret associé au compte 450359886246036238 à la période 2019-04-01 00:00:00 +0000 UTC",
+				"Cycle 1: Pas de siret associé au compte 450359886246036238 à la période 2019-05-01 00:00:00 +0000 UTC",
+				"Cycle 1: Pas de siret associé au compte 450359886246036238 à la période 2019-06-01 00:00:00 +0000 UTC",
+				"Cycle 1: Pas de siret associé au compte 450359886246036238 à la période 2019-07-01 00:00:00 +0000 UTC",
+				"Cycle 1: Pas de siret associé au compte 450359886246036238 à la période 2019-08-01 00:00:00 +0000 UTC",
+				"Cycle 1: Pas de siret associé au compte 450359886246036238 à la période 2019-09-01 00:00:00 +0000 UTC",
+				"Cycle 1: Pas de siret associé au compte 450359886246036238 à la période 2019-10-01 00:00:00 +0000 UTC",
+				"Cycle 1: Pas de siret associé au compte 450359886246036238 à la période 2019-11-01 00:00:00 +0000 UTC",
+				"Cycle 1: Pas de siret associé au compte 450359886246036238 à la période 2019-12-01 00:00:00 +0000 UTC",
+				"Cycle 1: Pas de siret associé au compte 450359886246036238 à la période 2020-01-01 00:00:00 +0000 UTC",
+				"Cycle 1: Pas de siret associé au compte 450359886246036238 à la période 2020-02-01 00:00:00 +0000 UTC",
+				"Cycle 1: Pas de siret associé au compte 450359886246036238 à la période 2020-03-01 00:00:00 +0000 UTC",
+				"Cycle 1: Pas de siret associé au compte 450359886246036238 à la période 2020-04-01 00:00:00 +0000 UTC",
+				"Cycle 1: Pas de siret associé au compte 450359886246036238 à la période 2020-05-01 00:00:00 +0000 UTC",
+				"Cycle 1: Pas de siret associé au compte 450359886246036238 à la période 2020-06-01 00:00:00 +0000 UTC",
+				"Cycle 1: Pas de siret associé au compte 450359886246036238 à la période 2020-07-01 00:00:00 +0000 UTC",
+				"Cycle 1: Pas de siret associé au compte 450359886246036238 à la période 2020-08-01 00:00:00 +0000 UTC",
+				"Cycle 1: Pas de siret associé au compte 450359886246036238 à la période 2020-09-01 00:00:00 +0000 UTC",
+				"Cycle 1: Pas de siret associé au compte 450359886246036238 à la période 2020-10-01 00:00:00 +0000 UTC",
+				"Cycle 1: Pas de siret associé au compte 450359886246036238 à la période 2020-11-01 00:00:00 +0000 UTC",
 				"Cycle 1: siret invalide : ",
 				"Cycle 1: siret invalide : ",
 				"Cycle 1: siret invalide : ",
@@ -4967,7 +4990,7 @@
 				"Cycle 1: siret invalide : "
 			],
 			"headFatal" : [ ],
-			"summary" : "/../lib/urssaf/testData/comptesTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 23 rejets, 0 lignes filtrées, -20 lignes valides",
+			"summary" : "/../lib/urssaf/testData/comptesTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 46 rejets, 0 lignes filtrées, -43 lignes valides",
 			"batchKey" : "1910"
 		},
 		"parserCode" : "admin_urssaf"

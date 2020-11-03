@@ -68,7 +68,7 @@ func parseCompteLines(periodes []time.Time, mapping *marshal.Comptes, parsedLine
 			compte.NumeroCompte = account
 			compte.Periode = p
 			compte.Siret, err = marshal.GetSiretFromComptesMapping(account, &p, *mapping)
-			parsedLine.AddError(base.NewCriticError(err, "erreur"))
+			parsedLine.AddError(base.NewRegularError(err))
 			parsedLine.AddTuple(compte)
 		}
 		parsedLineChan <- parsedLine
