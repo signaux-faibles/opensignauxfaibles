@@ -59,15 +59,9 @@ func parseCompteLines(periodes []time.Time, mapping *marshal.Comptes, parsedLine
 	// (e.g. "siret invalide") are reported at consistent Cycle/line numbers.
 	// cf https://github.com/signaux-faibles/opensignauxfaibles/pull/225#issuecomment-720594272
 	accounts := mapping.GetSortedKeys()
-	accountIndex := 0
-	for {
+	for accountIndex := range accounts {
 		parsedLine := base.ParsedLineResult{}
-		if accountIndex >= len(*mapping) {
-			close(parsedLineChan) // EOF
-			break
-		}
 		account := accounts[accountIndex]
-		accountIndex++
 		for _, p := range periodes {
 			var err error
 			compte := Compte{}
@@ -79,4 +73,5 @@ func parseCompteLines(periodes []time.Time, mapping *marshal.Comptes, parsedLine
 		}
 		parsedLineChan <- parsedLine
 	}
+	close(parsedLineChan) // EOF
 }
