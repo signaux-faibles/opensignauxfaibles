@@ -3,7 +3,6 @@ package urssaf
 import (
 	"bufio"
 	"encoding/csv"
-	"errors"
 	"io"
 	"os"
 	"regexp"
@@ -117,24 +116,19 @@ func parseEffectifEntLines(reader *csv.Reader, idx colMapping, periods []periodC
 }
 
 func parseEffectifEntLine(row []string, idx colMapping, periods []periodCol, parsedLine *base.ParsedLineResult) {
-	siren := row[idx["siren"]]
-	if !sfregexp.ValidSiren(siren) {
-		parsedLine.AddError(errors.New("Format de siren incorrect : " + siren)) // TODO: remove validation
-	} else {
-		for _, period := range periods {
-			value := row[period.colIndex]
-			if value != "" {
-				noThousandsSep := sfregexp.RegexpDict["notDigit"].ReplaceAllString(value, "")
-				s, err := strconv.ParseFloat(noThousandsSep, 64)
-				parsedLine.AddError(err)
-				e := int(s)
-				if e > 0 {
-					parsedLine.AddTuple(EffectifEnt{
-						Siren:       siren,
-						Periode:     period.dateStart,
-						EffectifEnt: e,
-					})
-				}
+	for _, period := range periods {
+		value := row[period.colIndex]
+		if value != "" {
+			noThousandsSep := sfregexp.RegexpDict["notDigit"].ReplaceAllString(value, "")
+			s, err := strconv.ParseFloat(noThousandsSep, 64)
+			parsedLine.AddError(err)
+			e := int(s)
+			if e > 0 {
+				parsedLine.AddTuple(EffectifEnt{
+					Siren:       row[idx["siren"]],
+					Periode:     period.dateStart,
+					EffectifEnt: e,
+				})
 			}
 		}
 	}
