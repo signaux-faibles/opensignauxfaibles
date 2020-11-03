@@ -1,0 +1,166 @@
+---
+title: "Signaux Faibles - Import Monitoring"
+author: "contact@beta.gouv.fr"
+date: "22/10/2020"
+output:
+  html_document:
+    theme: cerulean
+    toc: no
+params:
+  startdate: "2020-10-28T00:00:00Z"
+  parsertype:  "all"
+  include_fatal: FALSE
+  interactive: FALSE
+  mongo_collection: "Journal"
+  mongo_db: "test"
+  mongo_url: "mongodb://labbdd"
+  debug_mode: FALSE
+---
+
+```{css, echo=FALSE}
+.main-container {
+  margin-left: 0;
+}
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Ce rapport est généré pour les paramètres suivants:
+```{r dump_params, echo=FALSE}
+cat(rjson::toJSON(params, indent = 1))
+```
+
+## Connection à la base MongoDB
+
+```{r imports, include=FALSE, echo=FALSE}
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+```
+
+```{r connect-mongodb, echo=params$debug_mode}
+journal = mongolite::mongo(
+  collection = params$mongo_collection,
+  db = params$mongo_db,
+  url = params$mongo_url
+  )
+```
+
+```{r debug-mongodb, echo=params$debug_mode, include=params$debug_mode}
+journal$info()
+```
+
+## Lecture du journal d'import
+
+```{r read-data, echo=params$debug_mode}
+query = sprintf('{"date": { "$gte" : { "$date" :  "%s"}}}', params$startdate) #TODO: filter on parser here instead of within dplyr (?)
+dta = journal$find(query)
+
+# create logs dataset
+logs <- dta %>%
+  filter(parserCode == params$parsertype | params$parsertype == "all") %>% 
+  mutate(
+    batch = event$batchKey,
+    file = substring(event$summary, 1, regexpr(":", event$summary) - 1), # could be cleaner, will do for now
+    is_fatal = event$isFatal,
+    n_lignes_traitees = event$linesParsed,
+    n_lignes_valides = event$linesValid,
+    n_lignes_rejetees = event$linesRejected,
+    n_lignes_filtrees = event$linesSkipped
+  ) %>%
+  filter(is_fatal == FALSE | params$include_fatal) %>% 
+  select(-priority, -event)
+```
+
+Requête MongoDB: ` `r query` `
+
+`r logs %>% nrow()` lignes lues. 
+
+```{r data-augmentation, echo=FALSE}
+set.seed(42)
+new_data <- logs
+new_logs <- data.frame()
+for (i in 1:9){
+  new_data$batch <- paste0("2", i, "10_testimport")
+  new_data$date <- logs$date + (3600 * 24 * i)
+  new_data$n_lignes_traitees <- round(pmax(rep(0, nrow(new_data)), logs$n_lignes_traitees * sample(c(1, 1.5, 1.2), nrow(new_data), replace = TRUE)))
+  new_data$n_lignes_valides <- round(pmax(rep(0, nrow(new_data)), logs$n_lignes_valides * sample(c(.8, .5, 1), nrow(new_data), replace = TRUE)))
+  new_data$n_lignes_rejetees <- sample(c(100, 0, 50), nrow(new_data), replace = TRUE)
+  new_data$n_lignes_filtrees <- round(pmax(rep(0, nrow(new_data)), logs$n_lignes_filtrees * sample(c(.8, .5, 1, 1.2, 1.3), nrow(new_data), replace = TRUE)))
+  new_logs <- rbind.data.frame(new_logs, new_data)
+}
+```
+
+```{r datatable, echo=params$debug_mode, include=params$interactive, eval=params$interactive}
+DT::datatable(new_logs, rownames = FALSE, filter="top", options = list(pageLength = 10, scrollX=T))
+```
+
+
+## Derniers Imports
+
+```{r last-imports, echo=params$debug_mode, include=!params$interactive, eval=!params$interactive}
+last_imports <- new_logs %>% 
+  group_by(parserCode) %>%
+  mutate(
+    N = n(),
+    variation_lignes_traitees = 100 * (n_lignes_traitees - mean(n_lignes_traitees)) / mean(n_lignes_traitees),
+    n_lignes_traitees = sprintf("%d (%1.2f %%)", n_lignes_traitees, variation_lignes_traitees),
+    variation_lignes_valides = 100 * (n_lignes_valides - mean(n_lignes_valides)) / mean(n_lignes_valides),
+    n_lignes_valides = sprintf("%d (%1.2f %%)", n_lignes_valides, variation_lignes_valides),
+    variation_lignes_rejetees = 100 * (n_lignes_rejetees - mean(n_lignes_rejetees)) / mean(n_lignes_rejetees),
+    n_lignes_rejetees = sprintf("%d (%1.2f %%)", n_lignes_rejetees, variation_lignes_rejetees),
+    variation_lignes_filtrees = 100 * (n_lignes_filtrees - mean(n_lignes_filtrees)) / mean(n_lignes_filtrees),
+    n_lignes_filtrees = sprintf("%d (%1.2f %%)", n_lignes_filtrees, variation_lignes_filtrees)
+  ) %>%
+  arrange(desc(date), .by_group=TRUE) %>% 
+  slice_head()
+
+last_imports %>% 
+  select(-starts_with("variation")) %>%
+  kableExtra::kbl() %>%
+  kableExtra::kable_styling() %>% 
+  kableExtra::row_spec(which(last_imports$is_fatal), background = "lightcoral")
+```
+
+
+# Plots
+
+```{r parser_plots, fig.width=12, echo=FALSE, message=FALSE, results="asis"}
+
+df_for_plotting <- new_logs %>% 
+  gather(key = "data", value = "value", c("n_lignes_traitees", "n_lignes_valides", "n_lignes_rejetees", "n_lignes_filtrees")) %>% 
+  mutate(batch_unique = paste0(batch, as.character(date)))
+
+new_factor_order <- c("n_lignes_traitees", "n_lignes_valides", "n_lignes_filtrees", "n_lignes_rejetees")
+
+for(parser in unique(new_logs$parserCode)) {
+  cat("  \n###",  parser, "\n")
+  print(df_for_plotting %>%
+    filter(parserCode == parser) %>% 
+      ggplot() +
+        geom_line(stat="identity", aes(x=batch_unique, y=value, color=factor(data, levels = new_factor_order), group = factor(data, levels = new_factor_order))) +
+        geom_point(stat="identity", aes(x=batch_unique, y=value, color=factor(data, levels = new_factor_order))) +
+        scale_color_discrete(name = "Lignes", limits=new_factor_order, labels = c("Traitées", "Valides", "Filtrées", "Rejetées")) +
+        theme(axis.text.x = element_text(angle=90))
+  )
+  cat("  \n")
+}
+
+# keep alternative just in case for now
+# for(parser in unique(new_logs$parserCode)) {
+#   cat("  \n###",  parser, "\n")
+#   print(df_for_plotting %>%
+#     filter(parserCode == parser) %>% 
+#       ggplot() +
+#         geom_line(stat="identity", aes(x=batch_unique, y=value, color=factor(data, levels = new_factor_order), group = factor(data, levels = new_factor_order))) +
+#         geom_point(stat="identity", aes(x=batch_unique, y=value, color=factor(data, levels = new_factor_order))) +
+#         scale_color_discrete(name = "Lignes", limits=new_factor_order, labels = c("Traitées", "Valides", "Filtrées", "Rejetées")) +
+#         theme(axis.text.x = element_text(angle=90))
+#   )
+#   cat("  \n")
+# }
+```
+
+
