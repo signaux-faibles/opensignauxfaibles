@@ -100,7 +100,7 @@ func parseEffectifLines(reader *csv.Reader, idx colMapping, periods []periodCol,
 			close(parsedLineChan)
 			break
 		} else if err != nil {
-			parsedLine.AddError(err)
+			parsedLine.AddError(base.NewRegularError(err))
 		} else {
 			parseEffectifLine(row, idx, periods, &parsedLine)
 		}
@@ -114,7 +114,7 @@ func parseEffectifLine(row []string, idx colMapping, periods []periodCol, parsed
 		if value != "" {
 			noThousandsSep := sfregexp.RegexpDict["notDigit"].ReplaceAllString(value, "")
 			e, err := strconv.Atoi(noThousandsSep)
-			parsedLine.AddError(err)
+			parsedLine.AddError(base.NewRegularError(err))
 			if e > 0 {
 				parsedLine.AddTuple(Effectif{
 					Siret:        row[idx["siret"]],

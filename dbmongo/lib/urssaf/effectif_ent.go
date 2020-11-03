@@ -107,7 +107,7 @@ func parseEffectifEntLines(reader *csv.Reader, idx colMapping, periods []periodC
 			close(parsedLineChan)
 			break
 		} else if err != nil {
-			parsedLine.AddError(err)
+			parsedLine.AddError(base.NewRegularError(err))
 		} else {
 			parseEffectifEntLine(row, idx, periods, &parsedLine)
 		}
@@ -121,7 +121,7 @@ func parseEffectifEntLine(row []string, idx colMapping, periods []periodCol, par
 		if value != "" {
 			noThousandsSep := sfregexp.RegexpDict["notDigit"].ReplaceAllString(value, "")
 			s, err := strconv.ParseFloat(noThousandsSep, 64)
-			parsedLine.AddError(err)
+			parsedLine.AddError(base.NewRegularError(err))
 			e := int(s)
 			if e > 0 {
 				parsedLine.AddTuple(EffectifEnt{

@@ -96,7 +96,7 @@ func parseProcolLines(reader *csv.Reader, idx colMapping, parsedLineChan chan ba
 			close(parsedLineChan)
 			break
 		} else if err != nil {
-			parsedLine.AddError(err)
+			parsedLine.AddError(base.NewRegularError(err))
 		} else {
 			parseProcolLine(row, idx, &parsedLine)
 			if len(parsedLine.Errors) > 0 {
@@ -111,13 +111,13 @@ func parseProcolLine(row []string, idx colMapping, parsedLine *base.ParsedLineRe
 	var err error
 	procol := Procol{}
 	procol.DateEffet, err = time.Parse("02Jan2006", row[idx["dt_effet"]])
-	parsedLine.AddError(err)
+	parsedLine.AddError(base.NewRegularError(err))
 	procol.Siret = row[idx["siret"]]
 	actionStade := row[idx["lib_actx_stdx"]]
 	splitted := strings.Split(strings.ToLower(actionStade), "_")
 	for i, v := range splitted {
 		r, err := regexp.Compile("liquidation|redressement|sauvegarde")
-		parsedLine.AddError(err)
+		parsedLine.AddError(base.NewRegularError(err))
 		if match := r.MatchString(v); match {
 			procol.ActionProcol = v
 			procol.StadeProcol = strings.Join(append(splitted[:i], splitted[i+1:]...), "_")

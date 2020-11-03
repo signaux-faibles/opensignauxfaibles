@@ -192,9 +192,9 @@ func parseLines(reader *csv.Reader, parsedLineChan chan base.ParsedLineResult) {
 			close(parsedLineChan)
 			break
 		} else if err != nil {
-			parsedLine.AddError(err)
+			parsedLine.AddError(base.NewRegularError(err))
 		} else if len(row) < 83 {
-			parsedLine.AddError(errors.New("Ligne invalide"))
+			parsedLine.AddError(base.NewRegularError(errors.New("Ligne invalide")))
 		} else {
 			parseDianeLine(row, &parsedLine)
 		}

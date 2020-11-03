@@ -99,11 +99,11 @@ func parseDelaiLines(reader *csv.Reader, comptes *marshal.Comptes, parsedLineCha
 			close(parsedLineChan)
 			break
 		} else if err != nil {
-			parsedLine.AddError(err)
+			parsedLine.AddError(base.NewRegularError(err))
 		} else {
 			date, err := time.Parse("02/01/2006", row[idx["DateCreation"]])
 			if err != nil {
-				parsedLine.AddError(err)
+				parsedLine.AddError(base.NewRegularError(err))
 			} else if siret, err := marshal.GetSiretFromComptesMapping(row[idx["NumeroCompte"]], &date, *comptes); err == nil {
 				parseDelaiLine(row, idx, siret, &parsedLine)
 				if len(parsedLine.Errors) > 0 {
@@ -125,16 +125,16 @@ func parseDelaiLine(row []string, idx colMapping, siret string, parsedLine *base
 	delai.NumeroCompte = row[idx["NumeroCompte"]]
 	delai.NumeroContentieux = row[idx["NumeroContentieux"]]
 	delai.DateCreation, err = time.ParseInLocation("02/01/2006", row[idx["DateCreation"]], loc)
-	parsedLine.AddError(err)
+	parsedLine.AddError(base.NewRegularError(err))
 	delai.DateEcheance, err = time.ParseInLocation("02/01/2006", row[idx["DateEcheance"]], loc)
-	parsedLine.AddError(err)
+	parsedLine.AddError(base.NewRegularError(err))
 	delai.DureeDelai, err = strconv.Atoi(row[idx["DureeDelai"]])
 	delai.Denomination = row[idx["Denomination"]]
 	delai.Indic6m = row[idx["Indic6m"]]
 	delai.AnneeCreation, err = strconv.Atoi(row[idx["AnneeCreation"]])
-	parsedLine.AddError(err)
+	parsedLine.AddError(base.NewRegularError(err))
 	delai.MontantEcheancier, err = strconv.ParseFloat(strings.Replace(row[idx["MontantEcheancier"]], ",", ".", -1), 64)
-	parsedLine.AddError(err)
+	parsedLine.AddError(base.NewRegularError(err))
 	delai.Stade = row[idx["Stade"]]
 	delai.Action = row[idx["Action"]]
 	parsedLine.AddTuple(delai)

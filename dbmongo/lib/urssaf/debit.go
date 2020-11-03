@@ -122,7 +122,7 @@ func parseDebitLines(reader *csv.Reader, idx colMapping, comptes *marshal.Compte
 			close(parsedLineChan)
 			break
 		} else if err != nil {
-			parsedLine.AddError(err)
+			parsedLine.AddError(base.NewRegularError(err))
 		} else {
 			period, _ := marshal.UrssafToPeriod(row[idx["periode"]])
 			date := period.Start
@@ -153,21 +153,21 @@ func parseDebitLine(siret string, row []string, idx colMapping, parsedLine *base
 
 	var err error
 	debit.DateTraitement, err = marshal.UrssafToDate(row[idx["dateTraitement"]])
-	parsedLine.AddError(err)
+	parsedLine.AddError(base.NewRegularError(err))
 	debit.PartOuvriere, err = strconv.ParseFloat(row[idx["partOuvriere"]], 64)
-	parsedLine.AddError(err)
+	parsedLine.AddError(base.NewRegularError(err))
 	debit.PartOuvriere = debit.PartOuvriere / 100
 	debit.PartPatronale, err = strconv.ParseFloat(row[idx["partPatronale"]], 64)
-	parsedLine.AddError(err)
+	parsedLine.AddError(base.NewRegularError(err))
 	debit.PartPatronale = debit.PartPatronale / 100
 	debit.NumeroHistoriqueEcartNegatif, err = strconv.Atoi(row[idx["numeroHistoriqueEcartNegatif"]])
-	parsedLine.AddError(err)
+	parsedLine.AddError(base.NewRegularError(err))
 	debit.EtatCompte, err = strconv.Atoi(row[idx["etatCompte"]])
-	parsedLine.AddError(err)
+	parsedLine.AddError(base.NewRegularError(err))
 	debit.Periode, err = marshal.UrssafToPeriod(row[idx["periode"]])
-	parsedLine.AddError(err)
+	parsedLine.AddError(base.NewRegularError(err))
 	debit.Recours, err = strconv.ParseBool(row[idx["recours"]])
-	parsedLine.AddError(err)
+	parsedLine.AddError(base.NewRegularError(err))
 	// debit.MontantMajorations, err = strconv.ParseFloat(row[idx["montantMajorations"]], 64)
 	// tracker.Error(err)
 	// debit.MontantMajorations = debit.MontantMajorations / 100

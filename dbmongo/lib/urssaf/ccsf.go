@@ -81,7 +81,7 @@ func parseCcsfLines(reader *csv.Reader, comptes *marshal.Comptes, parsedLineChan
 			close(parsedLineChan)
 			break
 		} else if err != nil {
-			parsedLine.AddError(err)
+			parsedLine.AddError(base.NewRegularError(err))
 		} else {
 			parseCcsfLine(row, comptes, &parsedLine)
 			if len(parsedLine.Errors) > 0 {
@@ -100,7 +100,7 @@ func parseCcsfLine(row []string, comptes *marshal.Comptes, parsedLine *base.Pars
 		ccsf.Action = row[idx["Action"]]
 		ccsf.Stade = row[idx["Stade"]]
 		ccsf.DateTraitement, err = marshal.UrssafToDate(row[idx["DateTraitement"]])
-		parsedLine.AddError(err)
+		parsedLine.AddError(base.NewRegularError(err))
 		if err != nil {
 			return
 		}
@@ -114,7 +114,7 @@ func parseCcsfLine(row []string, comptes *marshal.Comptes, parsedLine *base.Pars
 		ccsf.NumeroCompte = row[idx["NumeroCompte"]]
 
 	} else {
-		parsedLine.AddError(errors.New("Ligne non conforme, moins de 4 champs"))
+		parsedLine.AddError(base.NewRegularError(errors.New("Ligne non conforme, moins de 4 champs")))
 	}
 	parsedLine.AddTuple(ccsf)
 }

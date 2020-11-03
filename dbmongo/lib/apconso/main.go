@@ -94,7 +94,7 @@ func parseLines(reader *csv.Reader, idx colMapping, parsedLineChan chan base.Par
 			close(parsedLineChan)
 			break
 		} else if err != nil {
-			parsedLine.AddError(err)
+			parsedLine.AddError(base.NewRegularError(err))
 		} else if len(row) > 0 {
 			parseApConsoLine(row, idx, &parsedLine)
 			if len(parsedLine.Errors) > 0 {
@@ -111,12 +111,12 @@ func parseApConsoLine(row []string, idx colMapping, parsedLine *base.ParsedLineR
 	apconso.Siret = row[idx["Siret"]]
 	var err error
 	apconso.Periode, err = time.Parse("01/2006", row[idx["Periode"]])
-	parsedLine.AddError(err)
+	parsedLine.AddError(base.NewRegularError(err))
 	apconso.HeureConsommee, err = misc.ParsePFloat(row[idx["HeureConsommee"]])
-	parsedLine.AddError(err)
+	parsedLine.AddError(base.NewRegularError(err))
 	apconso.Montant, err = misc.ParsePFloat(row[idx["Montant"]])
-	parsedLine.AddError(err)
+	parsedLine.AddError(base.NewRegularError(err))
 	apconso.Effectif, err = misc.ParsePInt(row[idx["Effectif"]])
-	parsedLine.AddError(err)
+	parsedLine.AddError(base.NewRegularError(err))
 	parsedLine.AddTuple(apconso)
 }

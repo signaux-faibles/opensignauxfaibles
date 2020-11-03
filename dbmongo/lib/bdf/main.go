@@ -78,7 +78,7 @@ func parseLines(reader *csv.Reader, parsedLineChan chan base.ParsedLineResult) {
 			close(parsedLineChan)
 			break
 		} else if err != nil {
-			parsedLine.AddError(err)
+			parsedLine.AddError(base.NewRegularError(err))
 		} else {
 			parseBdfLine(row, &parsedLine)
 			if len(parsedLine.Errors) > 0 {
@@ -108,7 +108,7 @@ func parseBdfLine(row []string, parsedLine *base.ParsedLineResult) {
 	bdf := BDF{}
 	bdf.Siren = strings.Replace(row[field["siren"]], " ", "", -1)
 	bdf.Annee, err = misc.ParsePInt(row[field["année"]])
-	parsedLine.AddError(err)
+	parsedLine.AddError(base.NewRegularError(err))
 	var arrete = row[field["arrêtéBilan"]]
 	arrete = strings.Replace(arrete, "janv", "-01-", -1)
 	arrete = strings.Replace(arrete, "JAN", "-01-", -1)
@@ -135,42 +135,42 @@ func parseBdfLine(row []string, parsedLine *base.ParsedLineResult) {
 	arrete = strings.Replace(arrete, "déc", "-12-", -1)
 	arrete = strings.Replace(arrete, "DEC", "-12-", -1)
 	bdf.ArreteBilan, err = time.Parse("02-01-2006", arrete)
-	parsedLine.AddError(err)
+	parsedLine.AddError(base.NewRegularError(err))
 	bdf.RaisonSociale = row[field["raisonSociale"]]
 	bdf.Secteur = row[field["secteur"]]
 	if len(row) > field["poidsFrng"] {
 		bdf.PoidsFrng, err = misc.ParsePFloat(row[field["poidsFrng"]])
-		parsedLine.AddError(err)
+		parsedLine.AddError(base.NewRegularError(err))
 	} else {
 		bdf.PoidsFrng = nil
 	}
 	if len(row) > field["tauxMarge"] {
 		bdf.TauxMarge, err = misc.ParsePFloat(row[field["tauxMarge"]])
-		parsedLine.AddError(err)
+		parsedLine.AddError(base.NewRegularError(err))
 	} else {
 		bdf.TauxMarge = nil
 	}
 	if len(row) > field["delaiFournisseur"] {
 		bdf.DelaiFournisseur, err = misc.ParsePFloat(row[field["delaiFournisseur"]])
-		parsedLine.AddError(err)
+		parsedLine.AddError(base.NewRegularError(err))
 	} else {
 		bdf.DelaiFournisseur = nil
 	}
 	if len(row) > field["detteFiscale"] {
 		bdf.DetteFiscale, err = misc.ParsePFloat(row[field["detteFiscale"]])
-		parsedLine.AddError(err)
+		parsedLine.AddError(base.NewRegularError(err))
 	} else {
 		bdf.DetteFiscale = nil
 	}
 	if len(row) > field["financierCourtTerme"] {
 		bdf.FinancierCourtTerme, err = misc.ParsePFloat(row[field["financierCourtTerme"]])
-		parsedLine.AddError(err)
+		parsedLine.AddError(base.NewRegularError(err))
 	} else {
 		bdf.FinancierCourtTerme = nil
 	}
 	if len(row) > field["fraisFinancier"] {
 		bdf.FraisFinancier, err = misc.ParsePFloat(row[field["fraisFinancier"]])
-		parsedLine.AddError(err)
+		parsedLine.AddError(base.NewRegularError(err))
 	} else {
 		bdf.FraisFinancier = nil
 	}

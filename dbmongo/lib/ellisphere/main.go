@@ -70,7 +70,7 @@ func parseLines(sheet *xlsx.Sheet, parsedLineChan chan base.ParsedLineResult) {
 			parsedLine := base.ParsedLineResult{}
 			var ellisphere Ellisphere
 			err := row.ReadStruct(&ellisphere)
-			parsedLine.AddError(err)
+			parsedLine.AddError(base.NewRegularError(err))
 			if len(parsedLine.Errors) == 0 {
 				parsedLine.AddTuple(ellisphere)
 			}

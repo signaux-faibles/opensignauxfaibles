@@ -66,7 +66,7 @@ func parseLines(reader *csv.Reader, parsedLineChan chan base.ParsedLineResult) {
 			close(parsedLineChan)
 			break
 		} else if err != nil {
-			parsedLine.AddError(err)
+			parsedLine.AddError(base.NewRegularError(err))
 		} else {
 			parseReporderLine(row, &parsedLine)
 			if len(parsedLine.Errors) > 0 {
@@ -79,9 +79,9 @@ func parseLines(reader *csv.Reader, parsedLineChan chan base.ParsedLineResult) {
 
 func parseReporderLine(row []string, parsedLine *base.ParsedLineResult) {
 	periode, err := time.Parse("2006-01-02", row[1])
-	parsedLine.AddError(err)
+	parsedLine.AddError(base.NewRegularError(err))
 	randomOrder, err := misc.ParsePFloat(row[2])
-	parsedLine.AddError(err)
+	parsedLine.AddError(base.NewRegularError(err))
 	parsedLine.AddTuple(RepeatableOrder{
 		Siret:       row[0],
 		Periode:     periode,
