@@ -35,39 +35,44 @@ var ParserCompte = marshal.Parser{FileType: "admin_urssaf", FileParser: ParseCom
 
 // ParseCompteFile permet de générer des tuples à partir des mappings
 // compte<->siret déjà parsés par marshal.GetCompteSiretMapping().
-func ParseCompteFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) marshal.OpenFileResult {
+func ParseCompteFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (marshal.FileReader, error) {
 	var err error
 	var periodes []time.Time
 	var mapping marshal.Comptes
-	closeFct := func() error { return nil }
 	if len(batch.Files["admin_urssaf"]) > 0 {
 		periodes = misc.GenereSeriePeriode(batch.Params.DateDebut, time.Now()) //[]time.Time
 		mapping, err = marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
 	}
-	return marshal.OpenFileResult{
-		Error: err,
-		ParseLines: func(parsedLineChan chan marshal.ParsedLineResult) {
-			parseCompteLines(periodes, &mapping, parsedLineChan)
-		},
-		Close: closeFct,
-	}
+	return comptesReader{
+		periodes: &periodes,
+		mapping:  &mapping,
+	}, err
 }
 
-func parseCompteLines(periodes []time.Time, mapping *marshal.Comptes, parsedLineChan chan marshal.ParsedLineResult) {
+type comptesReader struct {
+	periodes *[]time.Time
+	mapping  *marshal.Comptes
+}
+
+func (parser comptesReader) Close() error {
+	return nil
+}
+
+func (parser comptesReader) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
 	// First, we sort the mapping entries by account number, to make sure that
 	// tuples are always processed in the same order, and therefore that errors
 	// (e.g. "siret invalide") are reported at consistent Cycle/line numbers.
 	// cf https://github.com/signaux-faibles/opensignauxfaibles/pull/225#issuecomment-720594272
-	accounts := mapping.GetSortedKeys()
+	accounts := parser.mapping.GetSortedKeys()
 	for accountIndex := range accounts {
 		parsedLine := marshal.ParsedLineResult{}
 		account := accounts[accountIndex]
-		for _, p := range periodes {
+		for _, p := range *parser.periodes {
 			var err error
 			compte := Compte{}
 			compte.NumeroCompte = account
 			compte.Periode = p
-			compte.Siret, err = marshal.GetSiretFromComptesMapping(account, &p, *mapping)
+			compte.Siret, err = marshal.GetSiretFromComptesMapping(account, &p, *parser.mapping)
 			parsedLine.AddError(base.NewRegularError(err))
 			parsedLine.AddTuple(compte)
 		}
