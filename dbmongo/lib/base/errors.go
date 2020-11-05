@@ -32,17 +32,17 @@ func newCriticError(err error, criticity string) CriticityError {
 	return &CriticError{err, criticity}
 }
 
-// NewFilterError returns a filter error
-func NewFilterError(err error) error {
+// NewFilterError returns a filter error (occurs when something goes wrong while filtering)
+func NewFilterError(err error) CriticityError {
 	return newCriticError(err, "filter")
 }
 
 // NewRegularError creates a regular error
-func NewRegularError(err error) error {
+func NewRegularError(err error) CriticityError {
 	return newCriticError(err, "error")
 }
 
 // NewFatalError creates a fatal error
-func NewFatalError(err error) error {
+func NewFatalError(err error) CriticityError {
 	return newCriticError(err, "fatal")
 }
