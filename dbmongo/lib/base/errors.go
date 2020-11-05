@@ -12,14 +12,6 @@ type CriticError struct {
 	criticity string
 }
 
-// newCriticError creates an error with the provided criticity
-func newCriticError(err error, criticity string) CriticityError {
-	if err == nil {
-		return nil
-	}
-	return &CriticError{err, criticity}
-}
-
 // Criticity returns criticity
 func (pe *CriticError) Criticity() string {
 	if pe == nil {
@@ -32,9 +24,12 @@ func (pe *CriticError) Error() string {
 	return pe.err.Error()
 }
 
-// FilterError occurs when something goes wrong while filtering
-type FilterError struct {
-	*CriticError
+// newCriticError creates an error with the provided criticity
+func newCriticError(err error, criticity string) CriticityError {
+	if err == nil {
+		return nil
+	}
+	return &CriticError{err, criticity}
 }
 
 // NewFilterError returns a filter error
