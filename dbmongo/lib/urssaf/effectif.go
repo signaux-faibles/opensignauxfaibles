@@ -14,8 +14,6 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sfregexp"
-
-	"github.com/signaux-faibles/gournal"
 )
 
 // Effectif Urssaf
@@ -44,25 +42,37 @@ func (effectif Effectif) Type() string {
 // ParserEffectif expose le parseur et le type de fichier qu'il supporte.
 var ParserEffectif = marshal.Parser{FileType: "effectif", FileParser: ParseEffectifFile}
 
-// ParseEffectifFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseEffectifFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
-	filter := marshal.GetSirenFilterFromCache(*cache)
-	file, err := os.Open(filePath)
-	if err != nil {
-		tracker.Add(err)
-		return
+// ParseEffectifFile permet de lancer le parsing du fichier demandé.
+func ParseEffectifFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) marshal.OpenFileResult {
+	var idx colMapping
+	var periods []periodCol
+	closeFct, reader, err := openEffectifFile(filePath)
+	if err == nil {
+		idx, periods, err = parseEffectifColMapping(reader)
 	}
-	defer file.Close()
-	reader := csv.NewReader(bufio.NewReader(file))
-	reader.Comma = ';'
-	parseEffectifFile(reader, filter, tracker, outputChannel)
+	return marshal.OpenFileResult{
+		Error: err,
+		ParseLines: func(parsedLineChan chan marshal.ParsedLineResult) {
+			parseEffectifLines(reader, idx, periods, parsedLineChan)
+		},
+		Close: closeFct,
+	}
 }
 
-func parseEffectifFile(reader *csv.Reader, filter marshal.SirenFilter, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+func openEffectifFile(filePath string) (func() error, *csv.Reader, error) {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return file.Close, nil, err
+	}
+	reader := csv.NewReader(bufio.NewReader(file))
+	reader.Comma = ';'
+	return file.Close, reader, err
+}
+
+func parseEffectifColMapping(reader *csv.Reader) (colMapping, []periodCol, error) {
 	fields, err := reader.Read()
 	if err != nil {
-		tracker.Add(err)
-		return
+		return nil, nil, err
 	}
 
 	var idx = colMapping{
@@ -71,55 +81,48 @@ func parseEffectifFile(reader *csv.Reader, filter marshal.SirenFilter, tracker *
 	}
 
 	if misc.SliceMin(idx["siret"], idx["compte"]) == -1 {
-		tracker.Add(errors.New("erreur à l'analyse du fichier, abandon, l'un " +
+		return nil, nil, errors.New("erreur à l'analyse du fichier, abandon, l'un " +
 			"des champs obligatoires n'a pu etre trouve:" +
 			" siretIndex = " + strconv.Itoa(idx["siret"]) +
-			", compteIndex = " + strconv.Itoa(idx["compte"])))
-		return
+			", compteIndex = " + strconv.Itoa(idx["compte"]))
 	}
 
 	// Dans quels champs lire l'effectif
 	periods := parseEffectifPeriod(fields)
+	return idx, periods, err
+}
 
+func parseEffectifLines(reader *csv.Reader, idx colMapping, periods []periodCol, parsedLineChan chan marshal.ParsedLineResult) {
 	for {
+		parsedLine := marshal.ParsedLineResult{}
 		row, err := reader.Read()
 		if err == io.EOF {
+			close(parsedLineChan)
 			break
 		} else if err != nil {
-			tracker.Add(err)
+			parsedLine.AddError(base.NewRegularError(err))
 		} else {
-			effectifs := parseEffectifLine(periods, row, idx, filter, tracker)
-			for _, eff := range effectifs {
-				outputChannel <- eff
-			}
+			parseEffectifLine(row, idx, periods, &parsedLine)
 		}
-		tracker.Next()
+		parsedLineChan <- parsedLine
 	}
 }
 
-func parseEffectifLine(periods []periodCol, row []string, idx colMapping, filter marshal.SirenFilter, tracker *gournal.Tracker) []Effectif {
-	var effectifs = []Effectif{}
-	siret := row[idx["siret"]]
-	validSiret := sfregexp.RegexpDict["siret"].MatchString(siret)
-	if !validSiret {
-		tracker.Add(base.NewRegularError(errors.New("Le siret/siren est invalide")))
-	} else {
-		for _, period := range periods {
-			value := row[period.colIndex]
-			if value != "" {
-				noThousandsSep := sfregexp.RegexpDict["notDigit"].ReplaceAllString(value, "")
-				e, err := strconv.Atoi(noThousandsSep)
-				tracker.Add(err)
-				if e > 0 {
-					effectifs = append(effectifs, Effectif{
-						Siret:        siret,
-						NumeroCompte: row[idx["compte"]],
-						Periode:      period.dateStart,
-						Effectif:     e,
-					})
-				}
+func parseEffectifLine(row []string, idx colMapping, periods []periodCol, parsedLine *marshal.ParsedLineResult) {
+	for _, period := range periods {
+		value := row[period.colIndex]
+		if value != "" {
+			noThousandsSep := sfregexp.RegexpDict["notDigit"].ReplaceAllString(value, "")
+			e, err := strconv.Atoi(noThousandsSep)
+			parsedLine.AddError(base.NewRegularError(err))
+			if e > 0 {
+				parsedLine.AddTuple(Effectif{
+					Siret:        row[idx["siret"]],
+					NumeroCompte: row[idx["compte"]],
+					Periode:      period.dateStart,
+					Effectif:     e,
+				})
 			}
 		}
 	}
-	return effectifs
 }

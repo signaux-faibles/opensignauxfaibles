@@ -14,9 +14,6 @@ import (
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sfregexp"
-
-	"github.com/signaux-faibles/gournal"
 )
 
 // Sirene informations sur les entreprises
@@ -177,44 +174,52 @@ func (sirene Sirene) Scope() string {
 // Parser expose le parseur et le type de fichier qu'il supporte.
 var Parser = marshal.Parser{FileType: "sirene", FileParser: ParseFile}
 
-// ParseFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
-	filter := marshal.GetSirenFilterFromCache(*cache)
+// ParseFile permet de lancer le parsing du fichier demandé.
+func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) marshal.OpenFileResult {
+	closeFct, reader, err := openFile(filePath)
+	return marshal.OpenFileResult{
+		Error: err,
+		ParseLines: func(parsedLineChan chan marshal.ParsedLineResult) {
+			parseLines(reader, parsedLineChan)
+		},
+		Close: closeFct,
+	}
+}
+
+func openFile(filePath string) (func() error, *csv.Reader, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		tracker.Add(err)
-		return
+		return file.Close, nil, err
 	}
-	defer file.Close()
 	reader := csv.NewReader(file)
 	reader.Comma = ','
 	reader.LazyQuotes = true
-	parseSireneFile(reader, filter, tracker, outputChannel)
+	return file.Close, reader, nil
 }
 
-func parseSireneFile(reader *csv.Reader, filter marshal.SirenFilter, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+func parseLines(reader *csv.Reader, parsedLineChan chan marshal.ParsedLineResult) {
 	for {
+		parsedLine := marshal.ParsedLineResult{}
 		row, err := reader.Read()
 		if err == io.EOF {
+			close(parsedLineChan)
 			break
 		} else if err != nil {
-			tracker.Add(err)
-		} else if !sfregexp.ValidSiren(row[f["siren"]]) {
-			tracker.Add(errors.New("siren invalide : " + row[f["siren"]]))
+			parsedLine.AddError(base.NewRegularError(err))
 		} else {
-			outputChannel <- parseSireneLine(row, tracker)
+			parseLine(row, &parsedLine)
 		}
-		tracker.Next()
+		parsedLineChan <- parsedLine
 	}
 }
 
-func parseSireneLine(row []string, tracker *gournal.Tracker) Sirene {
-	sirene := Sirene{}
+func parseLine(row []string, parsedLine *marshal.ParsedLineResult) {
 	var err error
+	sirene := Sirene{}
 	sirene.Siren = row[f["siren"]]
 	sirene.Nic = row[f["nic"]]
 	sirene.Siege, err = strconv.ParseBool(row[f["etablissementSiege"]])
-	tracker.Add(err)
+	parsedLine.AddError(base.NewRegularError(err))
 
 	sirene.ComplementAdresse = row[f["complementAdresseEtablissement"]]
 	sirene.NumVoie = row[f["numeroVoieEtablissement"]]
@@ -241,7 +246,7 @@ func parseSireneLine(row []string, tracker *gournal.Tracker) Sirene {
 		}
 		sirene.Departement = departement
 	} else {
-		tracker.Add(errors.New("Code postal est manquant ou de format incorrect"))
+		parsedLine.AddError(base.NewRegularError(errors.New("Code postal est manquant ou de format incorrect")))
 	}
 
 	if row[f["activitePrincipaleEtablissement"]] != "" {
@@ -261,14 +266,14 @@ func parseSireneLine(row []string, tracker *gournal.Tracker) Sirene {
 	if err == nil {
 		sirene.Creation = &creation
 	}
-	tracker.Add(err)
+	parsedLine.AddError(base.NewRegularError(err))
 
 	long, err := strconv.ParseFloat(row[f["longitude"]], 64)
 	if err == nil {
 		sirene.Longitude = long
 	}
 	if row[48] != "" {
-		tracker.Add(err)
+		parsedLine.AddError(base.NewRegularError(err))
 	}
 
 	lat, err := strconv.ParseFloat(row[f["latitude"]], 64)
@@ -276,8 +281,7 @@ func parseSireneLine(row []string, tracker *gournal.Tracker) Sirene {
 		sirene.Latitude = lat
 	}
 	if row[49] != "" {
-		tracker.Add(err)
+		parsedLine.AddError(base.NewRegularError(err))
 	}
-
-	return sirene
+	parsedLine.AddTuple(sirene)
 }

@@ -3,7 +3,6 @@ package bdf
 import (
 	"bufio"
 	"encoding/csv"
-	"errors"
 	"io"
 	"os"
 	"strings"
@@ -12,9 +11,6 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sfregexp"
-
-	"github.com/signaux-faibles/gournal"
 )
 
 // BDF Information Banque de France
@@ -50,19 +46,47 @@ func (bdf BDF) Scope() string {
 // Parser expose le parseur et le type de fichier qu'il supporte.
 var Parser = marshal.Parser{FileType: "bdf", FileParser: ParseFile}
 
-// ParseFile extrait les tuples depuis un fichier BDF et génère un rapport Gournal.
-func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
-	filter := marshal.GetSirenFilterFromCache(*cache)
+// ParseFile permet de lancer le parsing du fichier demandé.
+func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) marshal.OpenFileResult {
+	closeFct, reader, err := openFile(filePath)
+	return marshal.OpenFileResult{
+		Error: err,
+		ParseLines: func(parsedLineChan chan marshal.ParsedLineResult) {
+			parseLines(reader, parsedLineChan)
+		},
+		Close: closeFct,
+	}
+}
+
+func openFile(filePath string) (func() error, *csv.Reader, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		tracker.Add(err)
-		return
+		return file.Close, nil, err
 	}
-	defer file.Close()
 	reader := csv.NewReader(bufio.NewReader(file))
 	reader.Comma = ';'
 	reader.LazyQuotes = true
-	parseBdfFile(reader, filter, tracker, outputChannel)
+	_, err = reader.Read() // Sauter l'en-tête
+	return file.Close, reader, err
+}
+
+func parseLines(reader *csv.Reader, parsedLineChan chan marshal.ParsedLineResult) {
+	for {
+		parsedLine := marshal.ParsedLineResult{}
+		row, err := reader.Read()
+		if err == io.EOF {
+			close(parsedLineChan)
+			break
+		} else if err != nil {
+			parsedLine.AddError(base.NewRegularError(err))
+		} else {
+			parseBdfLine(row, &parsedLine)
+			if len(parsedLine.Errors) > 0 {
+				parsedLine.Tuples = []marshal.Tuple{}
+			}
+		}
+		parsedLineChan <- parsedLine
+	}
 }
 
 var field = map[string]int{
@@ -79,18 +103,12 @@ var field = map[string]int{
 	"fraisFinancier":      12,
 }
 
-func parseBdfLine(row []string, tracker *gournal.Tracker, filter marshal.SirenFilter) BDF {
+func parseBdfLine(row []string, parsedLine *marshal.ParsedLineResult) {
+	var err error
 	bdf := BDF{}
 	bdf.Siren = strings.Replace(row[field["siren"]], " ", "", -1)
-
-	if !sfregexp.ValidSiren(bdf.Siren) {
-		tracker.Add(errors.New("siren invalide : " + bdf.Siren))
-		return BDF{}
-	}
-
-	var err error
 	bdf.Annee, err = misc.ParsePInt(row[field["année"]])
-	tracker.Add(err)
+	parsedLine.AddError(base.NewRegularError(err))
 	var arrete = row[field["arrêtéBilan"]]
 	arrete = strings.Replace(arrete, "janv", "-01-", -1)
 	arrete = strings.Replace(arrete, "JAN", "-01-", -1)
@@ -117,67 +135,44 @@ func parseBdfLine(row []string, tracker *gournal.Tracker, filter marshal.SirenFi
 	arrete = strings.Replace(arrete, "déc", "-12-", -1)
 	arrete = strings.Replace(arrete, "DEC", "-12-", -1)
 	bdf.ArreteBilan, err = time.Parse("02-01-2006", arrete)
-	tracker.Add(err)
+	parsedLine.AddError(base.NewRegularError(err))
 	bdf.RaisonSociale = row[field["raisonSociale"]]
 	bdf.Secteur = row[field["secteur"]]
 	if len(row) > field["poidsFrng"] {
 		bdf.PoidsFrng, err = misc.ParsePFloat(row[field["poidsFrng"]])
-		tracker.Add(err)
+		parsedLine.AddError(base.NewRegularError(err))
 	} else {
 		bdf.PoidsFrng = nil
 	}
 	if len(row) > field["tauxMarge"] {
 		bdf.TauxMarge, err = misc.ParsePFloat(row[field["tauxMarge"]])
-		tracker.Add(err)
+		parsedLine.AddError(base.NewRegularError(err))
 	} else {
 		bdf.TauxMarge = nil
 	}
 	if len(row) > field["delaiFournisseur"] {
 		bdf.DelaiFournisseur, err = misc.ParsePFloat(row[field["delaiFournisseur"]])
-		tracker.Add(err)
+		parsedLine.AddError(base.NewRegularError(err))
 	} else {
 		bdf.DelaiFournisseur = nil
 	}
 	if len(row) > field["detteFiscale"] {
 		bdf.DetteFiscale, err = misc.ParsePFloat(row[field["detteFiscale"]])
-		tracker.Add(err)
+		parsedLine.AddError(base.NewRegularError(err))
 	} else {
 		bdf.DetteFiscale = nil
 	}
 	if len(row) > field["financierCourtTerme"] {
 		bdf.FinancierCourtTerme, err = misc.ParsePFloat(row[field["financierCourtTerme"]])
-		tracker.Add(err)
+		parsedLine.AddError(base.NewRegularError(err))
 	} else {
 		bdf.FinancierCourtTerme = nil
 	}
 	if len(row) > field["fraisFinancier"] {
 		bdf.FraisFinancier, err = misc.ParsePFloat(row[field["fraisFinancier"]])
-		tracker.Add(err)
+		parsedLine.AddError(base.NewRegularError(err))
 	} else {
 		bdf.FraisFinancier = nil
 	}
-
-	return bdf
-}
-
-func parseBdfFile(reader *csv.Reader, filter marshal.SirenFilter, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
-	// Lecture en-tête
-	_, err := reader.Read()
-	tracker.Add(err)
-
-	for {
-		row, err := reader.Read()
-		if err == io.EOF {
-			break
-		} else if err != nil {
-			tracker.Add(err)
-		} else {
-			bdf := parseBdfLine(row, tracker, filter)
-			var errorInCurrentCycle = tracker.HasErrorInCurrentCycle()
-			if !errorInCurrentCycle {
-				outputChannel <- bdf
-			}
-		}
-		tracker.Next()
-	}
+	parsedLine.AddTuple(bdf)
 }

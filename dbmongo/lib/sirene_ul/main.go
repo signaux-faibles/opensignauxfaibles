@@ -3,16 +3,12 @@ package sireneul
 import (
 	//"bufio"
 	"encoding/csv"
-	"errors"
 	"io"
 	"os"
 	"time"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sfregexp"
-
-	"github.com/signaux-faibles/gournal"
 )
 
 // SireneUL informations sur les entreprises
@@ -48,46 +44,47 @@ func (sirene_ul SireneUL) Scope() string {
 // Parser expose le parseur et le type de fichier qu'il supporte.
 var Parser = marshal.Parser{FileType: "sirene_ul", FileParser: ParseFile}
 
-// ParseFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
-	filter := marshal.GetSirenFilterFromCache(*cache)
+// ParseFile permet de lancer le parsing du fichier demandé.
+func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) marshal.OpenFileResult {
+	closeFct, reader, err := openFile(filePath)
+	return marshal.OpenFileResult{
+		Error: err,
+		ParseLines: func(parsedLineChan chan marshal.ParsedLineResult) {
+			parseLines(reader, parsedLineChan)
+		},
+		Close: closeFct,
+	}
+}
+
+func openFile(filePath string) (func() error, *csv.Reader, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		tracker.Add(err)
-		return
+		return file.Close, nil, err
 	}
-	defer file.Close()
 	reader := csv.NewReader(file)
 	reader.Comma = ','
 	reader.LazyQuotes = true
-	parseSireneULFile(reader, filter, tracker, outputChannel)
+	_, err = reader.Read() // skip header
+	return file.Close, reader, err
 }
 
-func parseSireneULFile(reader *csv.Reader, filter marshal.SirenFilter, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
-	_, err := reader.Read()
-	if err == io.EOF {
-		return
-	} else if err != nil {
-		tracker.Add(err)
-		return
-	}
-
+func parseLines(reader *csv.Reader, parsedLineChan chan marshal.ParsedLineResult) {
 	for {
+		parsedLine := marshal.ParsedLineResult{}
 		row, err := reader.Read()
 		if err == io.EOF {
+			close(parsedLineChan)
 			break
 		} else if err != nil {
-			tracker.Add(err)
-		} else if !sfregexp.ValidSiren(row[0]) {
-			tracker.Add(errors.New("siren invalide : " + row[0]))
+			parsedLine.AddError(base.NewRegularError(err))
 		} else {
-			outputChannel <- parseSireneUlLine(row, tracker)
+			parseSireneUlLine(row, &parsedLine)
 		}
-		tracker.Next()
+		parsedLineChan <- parsedLine
 	}
 }
 
-func parseSireneUlLine(row []string, tracker *gournal.Tracker) SireneUL {
+func parseSireneUlLine(row []string, parsedLine *marshal.ParsedLineResult) {
 	sireneul := SireneUL{}
 	sireneul.Siren = row[0]
 	sireneul.RaisonSociale = row[23]
@@ -102,6 +99,6 @@ func parseSireneUlLine(row []string, tracker *gournal.Tracker) SireneUL {
 	if err == nil {
 		sireneul.Creation = &creation
 	}
-	tracker.Add(err)
-	return sireneul
+	parsedLine.AddError(base.NewRegularError(err))
+	parsedLine.AddTuple(sireneul)
 }

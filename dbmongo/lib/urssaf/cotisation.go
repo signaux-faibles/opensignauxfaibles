@@ -11,8 +11,6 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
-
-	"github.com/signaux-faibles/gournal"
 )
 
 // Cotisation Objet cotisation
@@ -42,71 +40,80 @@ func (cotisation Cotisation) Type() string {
 // ParserCotisation expose le parseur et le type de fichier qu'il supporte.
 var ParserCotisation = marshal.Parser{FileType: "cotisation", FileParser: ParseCotisationFile}
 
-// ParseCotisationFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseCotisationFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
-	comptes, err := marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
-	if err != nil {
-		tracker.Add(err)
-		return
+// ParseCotisationFile permet de lancer le parsing du fichier demandé.
+func ParseCotisationFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) marshal.OpenFileResult {
+	var comptes marshal.Comptes
+	closeFct, reader, err := openCotisationFile(filePath)
+	if err == nil {
+		comptes, err = marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
 	}
+	return marshal.OpenFileResult{
+		Error: err,
+		ParseLines: func(parsedLineChan chan marshal.ParsedLineResult) {
+			parseCotisationLines(reader, &comptes, parsedLineChan)
+		},
+		Close: closeFct,
+	}
+}
+
+func openCotisationFile(filePath string) (func() error, *csv.Reader, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		tracker.Add(err)
-		return
+		return file.Close, nil, err
 	}
-	defer file.Close()
 	reader := csv.NewReader(bufio.NewReader(file))
 	reader.Comma = ';'
 	reader.LazyQuotes = true
-	parseCotisationFile(reader, &comptes, tracker, outputChannel)
+	_, err = reader.Read() // Sauter l'en-tête
+	return file.Close, reader, err
 }
 
-func parseCotisationFile(reader *csv.Reader, comptes *marshal.Comptes, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
-	// ligne de titre
-	reader.Read()
+var idxCotisation = colMapping{
+	"NumeroCompte": 2,
+	"Periode":      3,
+	"Encaisse":     5,
+	"Du":           6,
+}
 
-	var idx = colMapping{
-		"NumeroCompte": 2,
-		"Periode":      3,
-		"Encaisse":     5,
-		"Du":           6,
-	}
-
+func parseCotisationLines(reader *csv.Reader, comptes *marshal.Comptes, parsedLineChan chan marshal.ParsedLineResult) {
 	for {
+		parsedLine := marshal.ParsedLineResult{}
 		row, err := reader.Read()
 		if err == io.EOF {
+			close(parsedLineChan)
 			break
 		} else if err != nil {
-			tracker.Add(err)
+			parsedLine.AddError(base.NewRegularError(err))
 		} else {
-			cotisation := parseCotisationLine(row, tracker, comptes, idx)
-			if !tracker.HasErrorInCurrentCycle() {
-				outputChannel <- cotisation
+			parseCotisationLine(row, comptes, &parsedLine)
+			if len(parsedLine.Errors) > 0 {
+				parsedLine.Tuples = []marshal.Tuple{}
 			}
 		}
-		tracker.Next()
+		parsedLineChan <- parsedLine
 	}
 }
 
-func parseCotisationLine(row []string, tracker *gournal.Tracker, comptes *marshal.Comptes, idx colMapping) Cotisation {
+func parseCotisationLine(row []string, comptes *marshal.Comptes, parsedLine *marshal.ParsedLineResult) {
+	idx := idxCotisation
 	cotisation := Cotisation{}
 
 	periode, err := marshal.UrssafToPeriod(row[idx["Periode"]])
 	date := periode.Start
-	tracker.Add(err)
+	parsedLine.AddError(base.NewRegularError(err))
 
 	siret, err := marshal.GetSiretFromComptesMapping(row[idx["NumeroCompte"]], &date, *comptes)
 	if err != nil {
-		tracker.Add(base.NewFilterError(err))
+		parsedLine.AddError(base.NewFilterError(err))
 	} else {
 		cotisation.key = siret
 		cotisation.NumeroCompte = row[idx["NumeroCompte"]]
 		cotisation.Periode, err = marshal.UrssafToPeriod(row[idx["Periode"]])
-		tracker.Add(err)
+		parsedLine.AddError(base.NewRegularError(err))
 		cotisation.Encaisse, err = strconv.ParseFloat(strings.Replace(row[idx["Encaisse"]], ",", ".", -1), 64)
-		tracker.Add(err)
+		parsedLine.AddError(base.NewRegularError(err))
 		cotisation.Du, err = strconv.ParseFloat(strings.Replace(row[idx["Du"]], ",", ".", -1), 64)
-		tracker.Add(err)
+		parsedLine.AddError(base.NewRegularError(err))
 	}
-	return cotisation
+	parsedLine.AddTuple(cotisation)
 }

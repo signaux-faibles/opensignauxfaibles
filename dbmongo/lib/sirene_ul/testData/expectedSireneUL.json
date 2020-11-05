@@ -44,7 +44,7 @@
         "linesRejected": 0,
         "linesSkipped": 0,
         "linesValid": 4,
-        "summary": "testData/sireneULTestData.csv: intégration terminée, 4 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 4 lignes valides"
+        "summary": "testData/sireneULTestData.csv: intégration terminée, 4 lignes traitées, 0 erreurs fatales, 0 lignes rejetées, 0 lignes filtrées, 4 lignes valides"
       },
       "priority": "info",
       "parserCode": "sirene_ul",

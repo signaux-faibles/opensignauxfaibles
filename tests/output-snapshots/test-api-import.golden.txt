@@ -4,134 +4,6 @@
 		"_id" : ObjectId("________ObjectId________"),
 		"value" : {
 			"scope" : "etablissement",
-			"key" : "",
-			"batch" : {
-				"1910" : {
-					"compte" : {
-						"______________Hash______________" : {
-							"siret" : "",
-							"numero_compte" : "450359886246036238",
-							"periode" : ISODate("_______ Date _______")
-						},
-						"______________Hash______________" : {
-							"siret" : "",
-							"numero_compte" : "450359886246036238",
-							"periode" : ISODate("_______ Date _______")
-						},
-						"______________Hash______________" : {
-							"siret" : "",
-							"numero_compte" : "450359886246036238",
-							"periode" : ISODate("_______ Date _______")
-						},
-						"______________Hash______________" : {
-							"siret" : "",
-							"numero_compte" : "450359886246036238",
-							"periode" : ISODate("_______ Date _______")
-						},
-						"______________Hash______________" : {
-							"siret" : "",
-							"numero_compte" : "450359886246036238",
-							"periode" : ISODate("_______ Date _______")
-						},
-						"______________Hash______________" : {
-							"siret" : "",
-							"numero_compte" : "450359886246036238",
-							"periode" : ISODate("_______ Date _______")
-						},
-						"______________Hash______________" : {
-							"siret" : "",
-							"numero_compte" : "450359886246036238",
-							"periode" : ISODate("_______ Date _______")
-						},
-						"______________Hash______________" : {
-							"siret" : "",
-							"numero_compte" : "450359886246036238",
-							"periode" : ISODate("_______ Date _______")
-						},
-						"______________Hash______________" : {
-							"siret" : "",
-							"numero_compte" : "450359886246036238",
-							"periode" : ISODate("_______ Date _______")
-						},
-						"______________Hash______________" : {
-							"siret" : "",
-							"numero_compte" : "450359886246036238",
-							"periode" : ISODate("_______ Date _______")
-						},
-						"______________Hash______________" : {
-							"siret" : "",
-							"numero_compte" : "450359886246036238",
-							"periode" : ISODate("_______ Date _______")
-						},
-						"______________Hash______________" : {
-							"siret" : "",
-							"numero_compte" : "450359886246036238",
-							"periode" : ISODate("_______ Date _______")
-						},
-						"______________Hash______________" : {
-							"siret" : "",
-							"numero_compte" : "450359886246036238",
-							"periode" : ISODate("_______ Date _______")
-						},
-						"______________Hash______________" : {
-							"siret" : "",
-							"numero_compte" : "450359886246036238",
-							"periode" : ISODate("_______ Date _______")
-						},
-						"______________Hash______________" : {
-							"siret" : "",
-							"numero_compte" : "450359886246036238",
-							"periode" : ISODate("_______ Date _______")
-						},
-						"______________Hash______________" : {
-							"siret" : "",
-							"numero_compte" : "450359886246036238",
-							"periode" : ISODate("_______ Date _______")
-						},
-						"______________Hash______________" : {
-							"siret" : "",
-							"numero_compte" : "450359886246036238",
-							"periode" : ISODate("_______ Date _______")
-						},
-						"______________Hash______________" : {
-							"siret" : "",
-							"numero_compte" : "450359886246036238",
-							"periode" : ISODate("_______ Date _______")
-						},
-						"______________Hash______________" : {
-							"siret" : "",
-							"numero_compte" : "450359886246036238",
-							"periode" : ISODate("_______ Date _______")
-						},
-						"______________Hash______________" : {
-							"siret" : "",
-							"numero_compte" : "450359886246036238",
-							"periode" : ISODate("_______ Date _______")
-						},
-						"______________Hash______________" : {
-							"siret" : "",
-							"numero_compte" : "450359886246036238",
-							"periode" : ISODate("_______ Date _______")
-						},
-						"______________Hash______________" : {
-							"siret" : "",
-							"numero_compte" : "450359886246036238",
-							"periode" : ISODate("_______ Date _______")
-						},
-						"______________Hash______________" : {
-							"siret" : "",
-							"numero_compte" : "450359886246036238",
-							"periode" : ISODate("_______ Date _______")
-						}
-					}
-				}
-			}
-		}
-	},
-	{
-		"_id" : ObjectId("________ObjectId________"),
-		"value" : {
-			"scope" : "etablissement",
 			"key" : "00000000000000",
 			"batch" : {
 				"1910" : {
@@ -5069,9 +4941,33 @@
 	{
 		"event" : {
 			"headSkipped" : [ ],
-			"headRejected" : [ ],
+			"headRejected" : [
+				"Cycle 1: Pas de siret associé au compte 450359886246036238 à la période 2019-01-01 00:00:00 +0000 UTC",
+				"Cycle 1: Pas de siret associé au compte 450359886246036238 à la période 2019-02-01 00:00:00 +0000 UTC",
+				"Cycle 1: Pas de siret associé au compte 450359886246036238 à la période 2019-03-01 00:00:00 +0000 UTC",
+				"Cycle 1: Pas de siret associé au compte 450359886246036238 à la période 2019-04-01 00:00:00 +0000 UTC",
+				"Cycle 1: Pas de siret associé au compte 450359886246036238 à la période 2019-05-01 00:00:00 +0000 UTC",
+				"Cycle 1: Pas de siret associé au compte 450359886246036238 à la période 2019-06-01 00:00:00 +0000 UTC",
+				"Cycle 1: Pas de siret associé au compte 450359886246036238 à la période 2019-07-01 00:00:00 +0000 UTC",
+				"Cycle 1: Pas de siret associé au compte 450359886246036238 à la période 2019-08-01 00:00:00 +0000 UTC",
+				"Cycle 1: Pas de siret associé au compte 450359886246036238 à la période 2019-09-01 00:00:00 +0000 UTC",
+				"Cycle 1: Pas de siret associé au compte 450359886246036238 à la période 2019-10-01 00:00:00 +0000 UTC",
+				"Cycle 1: Pas de siret associé au compte 450359886246036238 à la période 2019-11-01 00:00:00 +0000 UTC",
+				"Cycle 1: Pas de siret associé au compte 450359886246036238 à la période 2019-12-01 00:00:00 +0000 UTC",
+				"Cycle 1: Pas de siret associé au compte 450359886246036238 à la période 2020-01-01 00:00:00 +0000 UTC",
+				"Cycle 1: Pas de siret associé au compte 450359886246036238 à la période 2020-02-01 00:00:00 +0000 UTC",
+				"Cycle 1: Pas de siret associé au compte 450359886246036238 à la période 2020-03-01 00:00:00 +0000 UTC",
+				"Cycle 1: Pas de siret associé au compte 450359886246036238 à la période 2020-04-01 00:00:00 +0000 UTC",
+				"Cycle 1: Pas de siret associé au compte 450359886246036238 à la période 2020-05-01 00:00:00 +0000 UTC",
+				"Cycle 1: Pas de siret associé au compte 450359886246036238 à la période 2020-06-01 00:00:00 +0000 UTC",
+				"Cycle 1: Pas de siret associé au compte 450359886246036238 à la période 2020-07-01 00:00:00 +0000 UTC",
+				"Cycle 1: Pas de siret associé au compte 450359886246036238 à la période 2020-08-01 00:00:00 +0000 UTC",
+				"Cycle 1: Pas de siret associé au compte 450359886246036238 à la période 2020-09-01 00:00:00 +0000 UTC",
+				"Cycle 1: Pas de siret associé au compte 450359886246036238 à la période 2020-10-01 00:00:00 +0000 UTC",
+				"Cycle 1: Pas de siret associé au compte 450359886246036238 à la période 2020-11-01 00:00:00 +0000 UTC"
+			],
 			"headFatal" : [ ],
-			"summary" : "/../lib/urssaf/testData/comptesTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
+			"summary" : "/../lib/urssaf/testData/comptesTestData.csv: intégration terminée, 3 lignes traitées, 0 erreurs fatales, 1 lignes rejetées, 0 lignes filtrées, 2 lignes valides",
 			"batchKey" : "1910"
 		},
 		"parserCode" : "admin_urssaf"
@@ -5081,7 +4977,7 @@
 			"headSkipped" : [ ],
 			"headRejected" : [ ],
 			"headFatal" : [ ],
-			"summary" : "/../lib/apconso/testData/apconsoTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
+			"summary" : "/../lib/apconso/testData/apconsoTestData.csv: intégration terminée, 3 lignes traitées, 0 erreurs fatales, 0 lignes rejetées, 0 lignes filtrées, 3 lignes valides",
 			"batchKey" : "1910"
 		},
 		"parserCode" : "apconso"
@@ -5091,7 +4987,7 @@
 			"headSkipped" : [ ],
 			"headRejected" : [ ],
 			"headFatal" : [ ],
-			"summary" : "/../lib/apdemande/testData/apdemandeTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
+			"summary" : "/../lib/apdemande/testData/apdemandeTestData.csv: intégration terminée, 3 lignes traitées, 0 erreurs fatales, 0 lignes rejetées, 0 lignes filtrées, 3 lignes valides",
 			"batchKey" : "1910"
 		},
 		"parserCode" : "apdemande"
@@ -5101,7 +4997,7 @@
 			"headSkipped" : [ ],
 			"headRejected" : [ ],
 			"headFatal" : [ ],
-			"summary" : "/../lib/bdf/testData/bdfTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
+			"summary" : "/../lib/bdf/testData/bdfTestData.csv: intégration terminée, 3 lignes traitées, 0 erreurs fatales, 0 lignes rejetées, 0 lignes filtrées, 3 lignes valides",
 			"batchKey" : "1910"
 		},
 		"parserCode" : "bdf"
@@ -5111,7 +5007,7 @@
 			"headSkipped" : [ ],
 			"headRejected" : [ ],
 			"headFatal" : [ ],
-			"summary" : "/../lib/urssaf/testData/ccsfTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
+			"summary" : "/../lib/urssaf/testData/ccsfTestData.csv: intégration terminée, 3 lignes traitées, 0 erreurs fatales, 0 lignes rejetées, 0 lignes filtrées, 3 lignes valides",
 			"batchKey" : "1910"
 		},
 		"parserCode" : "ccsf"
@@ -5121,7 +5017,7 @@
 			"headSkipped" : [ ],
 			"headRejected" : [ ],
 			"headFatal" : [ ],
-			"summary" : "/../lib/urssaf/testData/cotisationTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
+			"summary" : "/../lib/urssaf/testData/cotisationTestData.csv: intégration terminée, 3 lignes traitées, 0 erreurs fatales, 0 lignes rejetées, 0 lignes filtrées, 3 lignes valides",
 			"batchKey" : "1910"
 		},
 		"parserCode" : "cotisation"
@@ -5131,7 +5027,7 @@
 			"headSkipped" : [ ],
 			"headRejected" : [ ],
 			"headFatal" : [ ],
-			"summary" : "/../lib/urssaf/testData/debitTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
+			"summary" : "/../lib/urssaf/testData/debitTestData.csv: intégration terminée, 3 lignes traitées, 0 erreurs fatales, 0 lignes rejetées, 0 lignes filtrées, 3 lignes valides",
 			"batchKey" : "1910"
 		},
 		"parserCode" : "debit"
@@ -5143,7 +5039,7 @@
 			],
 			"headRejected" : [ ],
 			"headFatal" : [ ],
-			"summary" : "/../lib/urssaf/testData/delaiTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 1 lignes filtrées, 2 lignes valides",
+			"summary" : "/../lib/urssaf/testData/delaiTestData.csv: intégration terminée, 3 lignes traitées, 0 erreurs fatales, 0 lignes rejetées, 1 lignes filtrées, 2 lignes valides",
 			"batchKey" : "1910"
 		},
 		"parserCode" : "delai"
@@ -5153,7 +5049,7 @@
 			"headSkipped" : [ ],
 			"headRejected" : [ ],
 			"headFatal" : [ ],
-			"summary" : "/../lib/diane/testData/dianeTestData.txt: intégration terminée, 18 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 18 lignes valides",
+			"summary" : "/../lib/diane/testData/dianeTestData.txt: intégration terminée, 18 lignes traitées, 0 erreurs fatales, 0 lignes rejetées, 0 lignes filtrées, 18 lignes valides",
 			"batchKey" : "1910"
 		},
 		"parserCode" : "diane"
@@ -5163,7 +5059,7 @@
 			"headSkipped" : [ ],
 			"headRejected" : [ ],
 			"headFatal" : [ ],
-			"summary" : "/../lib/urssaf/testData/effectifTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
+			"summary" : "/../lib/urssaf/testData/effectifTestData.csv: intégration terminée, 3 lignes traitées, 0 erreurs fatales, 0 lignes rejetées, 0 lignes filtrées, 3 lignes valides",
 			"batchKey" : "1910"
 		},
 		"parserCode" : "effectif"
@@ -5173,7 +5069,7 @@
 			"headSkipped" : [ ],
 			"headRejected" : [ ],
 			"headFatal" : [ ],
-			"summary" : "/../lib/urssaf/testData/effectifEntTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
+			"summary" : "/../lib/urssaf/testData/effectifEntTestData.csv: intégration terminée, 3 lignes traitées, 0 erreurs fatales, 0 lignes rejetées, 0 lignes filtrées, 3 lignes valides",
 			"batchKey" : "1910"
 		},
 		"parserCode" : "effectif_ent"
@@ -5181,12 +5077,11 @@
 	{
 		"event" : {
 			"headSkipped" : [ ],
-			"headRejected" : [ ],
-			"headFatal" : [
-				"Cycle 0: siren invalide : FIL SIREN 9",
+			"headRejected" : [
 				"Cycle 0: strconv.ParseInt: parsing \"Niveau de détention\": invalid syntax"
 			],
-			"summary" : "/../lib/ellisphere/testData/ellisphereTestData.excel: intégration terminée, 7 lignes traitées, 2 erreures fatales, 0 rejets, 0 lignes filtrées, 0 lignes valides",
+			"headFatal" : [ ],
+			"summary" : "/../lib/ellisphere/testData/ellisphereTestData.excel: intégration terminée, 7 lignes traitées, 0 erreurs fatales, 1 lignes rejetées, 0 lignes filtrées, 6 lignes valides",
 			"batchKey" : "1910"
 		},
 		"parserCode" : "ellisphere"
@@ -5196,7 +5091,7 @@
 			"headSkipped" : [ ],
 			"headRejected" : [ ],
 			"headFatal" : [ ],
-			"summary" : "/../lib/urssaf/testData/procolTestData.csv: intégration terminée, 3 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides",
+			"summary" : "/../lib/urssaf/testData/procolTestData.csv: intégration terminée, 3 lignes traitées, 0 erreurs fatales, 0 lignes rejetées, 0 lignes filtrées, 3 lignes valides",
 			"batchKey" : "1910"
 		},
 		"parserCode" : "procol"
@@ -5204,11 +5099,11 @@
 	{
 		"event" : {
 			"headSkipped" : [ ],
-			"headRejected" : [ ],
-			"headFatal" : [
+			"headRejected" : [
 				"Cycle 1: parsing time \"\" as \"2006-01-02\": cannot parse \"\" as \"2006\""
 			],
-			"summary" : "/../lib/sirene/testData/sireneTestData.csv: intégration terminée, 3 lignes traitées, 1 erreures fatales, 0 rejets, 0 lignes filtrées, 0 lignes valides",
+			"headFatal" : [ ],
+			"summary" : "/../lib/sirene/testData/sireneTestData.csv: intégration terminée, 3 lignes traitées, 0 erreurs fatales, 1 lignes rejetées, 0 lignes filtrées, 2 lignes valides",
 			"batchKey" : "1910"
 		},
 		"parserCode" : "sirene"
@@ -5218,7 +5113,7 @@
 			"headSkipped" : [ ],
 			"headRejected" : [ ],
 			"headFatal" : [ ],
-			"summary" : "/../lib/sirene_ul/testData/sireneULTestData.csv: intégration terminée, 4 lignes traitées, 0 erreures fatales, 0 rejets, 0 lignes filtrées, 4 lignes valides",
+			"summary" : "/../lib/sirene_ul/testData/sireneULTestData.csv: intégration terminée, 4 lignes traitées, 0 erreurs fatales, 0 lignes rejetées, 0 lignes filtrées, 4 lignes valides",
 			"batchKey" : "1910"
 		},
 		"parserCode" : "sirene_ul"

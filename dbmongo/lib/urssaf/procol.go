@@ -7,15 +7,12 @@ import (
 	"io"
 	"os"
 	"regexp"
-	"strconv"
 	"strings"
 	"time"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
-
-	"github.com/signaux-faibles/gournal"
 )
 
 // Procol Procédures collectives, extraction URSSAF
@@ -44,73 +41,88 @@ func (procol Procol) Type() string {
 // ParserProcol expose le parseur et le type de fichier qu'il supporte.
 var ParserProcol = marshal.Parser{FileType: "procol", FileParser: ParseProcolFile}
 
-// ParseProcolFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseProcolFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+// ParseProcolFile permet de lancer le parsing du fichier demandé.
+func ParseProcolFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) marshal.OpenFileResult {
+	var idx colMapping
+	// var comptes marshal.Comptes
+	closeFct, reader, err := openProcolFile(filePath)
+	if err == nil {
+		idx, err = parseProcolColMapping(reader)
+	}
+	// if err == nil {
+	// 	comptes, err = marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
+	// }
+	return marshal.OpenFileResult{
+		Error: err,
+		ParseLines: func(parsedLineChan chan marshal.ParsedLineResult) {
+			parseProcolLines(reader, idx, parsedLineChan)
+		},
+		Close: closeFct,
+	}
+}
+
+func openProcolFile(filePath string) (func() error, *csv.Reader, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		tracker.Add(err)
-		return
+		return file.Close, nil, err
 	}
-	defer file.Close()
 	reader := csv.NewReader(bufio.NewReader(file))
 	reader.Comma = ';'
 	reader.LazyQuotes = true
-	parseProcolFile(reader, tracker, outputChannel)
+	return file.Close, reader, err
 }
 
-func parseProcolFile(reader *csv.Reader, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
-
+func parseProcolColMapping(reader *csv.Reader) (colMapping, error) {
 	fields, err := reader.Read()
 	if err != nil {
-		tracker.Add(err)
-		return
+		return nil, err
 	}
-
 	var idx = colMapping{
 		"dt_effet":      misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "dt_effet" }),
 		"lib_actx_stdx": misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "lib_actx_stdx" }),
 		"siret":         misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "siret" }),
 	}
-
 	if misc.SliceMin(idx["dt_effet"], idx["lib_actx_stdx"], idx["siret"]) == -1 {
-		tracker.Add(errors.New("format de fichier incorrect"))
-		return
+		return nil, errors.New("format de fichier incorrect")
 	}
+	return idx, nil
+}
 
+func parseProcolLines(reader *csv.Reader, idx colMapping, parsedLineChan chan marshal.ParsedLineResult) {
 	for {
+		parsedLine := marshal.ParsedLineResult{}
 		row, err := reader.Read()
 		if err == io.EOF {
+			close(parsedLineChan)
 			break
 		} else if err != nil {
-			tracker.Add(err)
+			parsedLine.AddError(base.NewRegularError(err))
 		} else {
-			procol := parseProcolLine(row, tracker, idx)
-			if _, err := strconv.Atoi(row[idx["siret"]]); err == nil && len(row[idx["siret"]]) == 14 {
-				if !tracker.HasErrorInCurrentCycle() {
-					outputChannel <- procol
-				}
+			parseProcolLine(row, idx, &parsedLine)
+			if len(parsedLine.Errors) > 0 {
+				parsedLine.Tuples = []marshal.Tuple{}
 			}
 		}
-		tracker.Next()
+		parsedLineChan <- parsedLine
 	}
 }
 
-func parseProcolLine(row []string, tracker *gournal.Tracker, idx colMapping) Procol {
+func parseProcolLine(row []string, idx colMapping, parsedLine *marshal.ParsedLineResult) {
 	var err error
 	procol := Procol{}
 	procol.DateEffet, err = time.Parse("02Jan2006", row[idx["dt_effet"]])
-	tracker.Add(err)
+	parsedLine.AddError(base.NewRegularError(err))
 	procol.Siret = row[idx["siret"]]
 	actionStade := row[idx["lib_actx_stdx"]]
 	splitted := strings.Split(strings.ToLower(actionStade), "_")
 	for i, v := range splitted {
 		r, err := regexp.Compile("liquidation|redressement|sauvegarde")
-		tracker.Add(err)
+		parsedLine.AddError(base.NewRegularError(err))
 		if match := r.MatchString(v); match {
 			procol.ActionProcol = v
 			procol.StadeProcol = strings.Join(append(splitted[:i], splitted[i+1:]...), "_")
 			break
 		}
 	}
-	return (procol)
+	parsedLine.AddTuple(procol)
 }
