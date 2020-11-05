@@ -120,15 +120,21 @@ func (diane Diane) Scope() string {
 var Parser = marshal.Parser{FileType: "diane", FileParser: ParseFile}
 
 // ParseFile permet de lancer le parsing du fichier demandé.
-func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) marshal.OpenFileResult {
+func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (marshal.FileReader, error) {
 	closeFct, reader, err := openFile(filePath)
-	return marshal.OpenFileResult{
-		Error: err,
-		ParseLines: func(parsedLineChan chan marshal.ParsedLineResult) {
-			parseLines(reader, parsedLineChan)
-		},
-		Close: closeFct,
-	}
+	return dianeReader{
+		closeFct: closeFct,
+		reader:   reader,
+	}, err
+}
+
+type dianeReader struct {
+	closeFct func() error
+	reader   *csv.Reader
+}
+
+func (parser dianeReader) Close() error {
+	return parser.closeFct()
 }
 
 func openFile(filePath string) (func() error, *csv.Reader, error) {
@@ -184,10 +190,10 @@ func openFile(filePath string) (func() error, *csv.Reader, error) {
 	return close, reader, nil
 }
 
-func parseLines(reader *csv.Reader, parsedLineChan chan marshal.ParsedLineResult) {
+func (parser dianeReader) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
 	for {
 		parsedLine := marshal.ParsedLineResult{}
-		row, err := reader.Read()
+		row, err := parser.reader.Read()
 		if err == io.EOF {
 			close(parsedLineChan)
 			break
