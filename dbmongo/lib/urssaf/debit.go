@@ -122,7 +122,7 @@ func parseDebitLines(reader *csv.Reader, idx colMapping, comptes *marshal.Compte
 			close(parsedLineChan)
 			break
 		} else if err != nil {
-			parsedLine.AddError(base.NewRegularError(err))
+			parsedLine.AddRegularError(err)
 		} else {
 			period, _ := marshal.UrssafToPeriod(row[idx["periode"]])
 			date := period.Start
@@ -133,7 +133,7 @@ func parseDebitLines(reader *csv.Reader, idx colMapping, comptes *marshal.Compte
 					parsedLine.Tuples = []marshal.Tuple{}
 				}
 			} else {
-				parsedLine.AddError(base.NewFilterError(err))
+				parsedLine.AddFilterError(err)
 			}
 		}
 		parsedLineChan <- parsedLine
@@ -153,21 +153,21 @@ func parseDebitLine(siret string, row []string, idx colMapping, parsedLine *mars
 
 	var err error
 	debit.DateTraitement, err = marshal.UrssafToDate(row[idx["dateTraitement"]])
-	parsedLine.AddError(base.NewRegularError(err))
+	parsedLine.AddRegularError(err)
 	debit.PartOuvriere, err = strconv.ParseFloat(row[idx["partOuvriere"]], 64)
-	parsedLine.AddError(base.NewRegularError(err))
+	parsedLine.AddRegularError(err)
 	debit.PartOuvriere = debit.PartOuvriere / 100
 	debit.PartPatronale, err = strconv.ParseFloat(row[idx["partPatronale"]], 64)
-	parsedLine.AddError(base.NewRegularError(err))
+	parsedLine.AddRegularError(err)
 	debit.PartPatronale = debit.PartPatronale / 100
 	debit.NumeroHistoriqueEcartNegatif, err = strconv.Atoi(row[idx["numeroHistoriqueEcartNegatif"]])
-	parsedLine.AddError(base.NewRegularError(err))
+	parsedLine.AddRegularError(err)
 	debit.EtatCompte, err = strconv.Atoi(row[idx["etatCompte"]])
-	parsedLine.AddError(base.NewRegularError(err))
+	parsedLine.AddRegularError(err)
 	debit.Periode, err = marshal.UrssafToPeriod(row[idx["periode"]])
-	parsedLine.AddError(base.NewRegularError(err))
+	parsedLine.AddRegularError(err)
 	debit.Recours, err = strconv.ParseBool(row[idx["recours"]])
-	parsedLine.AddError(base.NewRegularError(err))
+	parsedLine.AddRegularError(err)
 	// debit.MontantMajorations, err = strconv.ParseFloat(row[idx["montantMajorations"]], 64)
 	// tracker.Error(err)
 	// debit.MontantMajorations = debit.MontantMajorations / 100

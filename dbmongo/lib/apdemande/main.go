@@ -118,9 +118,9 @@ func parseLines(reader *csv.Reader, idx colMapping, parsedLineChan chan marshal.
 			close(parsedLineChan)
 			break
 		} else if err != nil {
-			parsedLine.AddError(base.NewRegularError(err))
+			parsedLine.AddRegularError(err)
 		} else if row[idx["ETAB_SIRET"]] == "" {
-			parsedLine.AddError(base.NewRegularError(errors.New("invalidLine")))
+			parsedLine.AddRegularError(errors.New("invalidLine"))
 		} else {
 			parseApDemandeLine(row, idx, &parsedLine)
 			if len(parsedLine.Errors) > 0 {
@@ -137,29 +137,29 @@ func parseApDemandeLine(row []string, idx colMapping, parsedLine *marshal.Parsed
 	apdemande.Siret = row[idx["ETAB_SIRET"]]
 	var err error
 	apdemande.EffectifEntreprise, err = misc.ParsePInt(row[idx["EFF_ENT"]])
-	parsedLine.AddError(base.NewRegularError(err))
+	parsedLine.AddRegularError(err)
 	apdemande.Effectif, err = misc.ParsePInt(row[idx["EFF_ETAB"]])
-	parsedLine.AddError(base.NewRegularError(err))
+	parsedLine.AddRegularError(err)
 	apdemande.DateStatut, err = time.Parse("02/01/2006", row[idx["DATE_STATUT"]])
-	parsedLine.AddError(base.NewRegularError(err))
+	parsedLine.AddRegularError(err)
 	apdemande.Periode = misc.Periode{}
 	apdemande.Periode.Start, err = time.Parse("02/01/2006", row[idx["DATE_DEB"]])
-	parsedLine.AddError(base.NewRegularError(err))
+	parsedLine.AddRegularError(err)
 	apdemande.Periode.End, err = time.Parse("02/01/2006", row[idx["DATE_FIN"]])
-	parsedLine.AddError(base.NewRegularError(err))
+	parsedLine.AddRegularError(err)
 	apdemande.HTA, err = misc.ParsePFloat(row[idx["HTA"]])
-	parsedLine.AddError(base.NewRegularError(err))
+	parsedLine.AddRegularError(err)
 	apdemande.MTA, err = misc.ParsePFloat(strings.ReplaceAll(row[idx["MTA"]], ",", "."))
-	parsedLine.AddError(base.NewRegularError(err))
+	parsedLine.AddRegularError(err)
 	apdemande.EffectifAutorise, err = misc.ParsePInt(row[idx["EFF_AUTO"]])
-	parsedLine.AddError(base.NewRegularError(err))
+	parsedLine.AddRegularError(err)
 	apdemande.MotifRecoursSE, err = misc.ParsePInt(row[idx["MOTIF_RECOURS_SE"]])
-	parsedLine.AddError(base.NewRegularError(err))
+	parsedLine.AddRegularError(err)
 	apdemande.HeureConsommee, err = misc.ParsePFloat(row[idx["S_HEURE_CONSOM_TOT"]])
-	parsedLine.AddError(base.NewRegularError(err))
+	parsedLine.AddRegularError(err)
 	apdemande.EffectifConsomme, err = misc.ParsePInt(row[idx["S_EFF_CONSOM_TOT"]])
-	parsedLine.AddError(base.NewRegularError(err))
+	parsedLine.AddRegularError(err)
 	apdemande.MontantConsomme, err = misc.ParsePFloat(strings.ReplaceAll(row[idx["S_MONTANT_CONSOM_TOT"]], ",", "."))
-	parsedLine.AddError(base.NewRegularError(err))
+	parsedLine.AddRegularError(err)
 	parsedLine.AddTuple(apdemande)
 }

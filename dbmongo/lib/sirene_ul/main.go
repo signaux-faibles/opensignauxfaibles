@@ -76,7 +76,7 @@ func parseLines(reader *csv.Reader, parsedLineChan chan marshal.ParsedLineResult
 			close(parsedLineChan)
 			break
 		} else if err != nil {
-			parsedLine.AddError(base.NewRegularError(err))
+			parsedLine.AddRegularError(err)
 		} else {
 			parseSireneUlLine(row, &parsedLine)
 		}
@@ -99,6 +99,6 @@ func parseSireneUlLine(row []string, parsedLine *marshal.ParsedLineResult) {
 	if err == nil {
 		sireneul.Creation = &creation
 	}
-	parsedLine.AddError(base.NewRegularError(err))
+	parsedLine.AddRegularError(err)
 	parsedLine.AddTuple(sireneul)
 }
