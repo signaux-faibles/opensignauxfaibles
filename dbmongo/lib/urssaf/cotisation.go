@@ -41,31 +41,39 @@ func (cotisation Cotisation) Type() string {
 var ParserCotisation = marshal.Parser{FileType: "cotisation", FileParser: ParseCotisationFile}
 
 // ParseCotisationFile permet de lancer le parsing du fichier demandé.
-func ParseCotisationFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) marshal.OpenFileResult {
+func ParseCotisationFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (marshal.FileReader, error) {
 	var comptes marshal.Comptes
-	closeFct, reader, err := openCotisationFile(filePath)
+	file, reader, err := openCotisationFile(filePath)
 	if err == nil {
 		comptes, err = marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
 	}
-	return marshal.OpenFileResult{
-		Error: err,
-		ParseLines: func(parsedLineChan chan marshal.ParsedLineResult) {
-			parseCotisationLines(reader, &comptes, parsedLineChan)
-		},
-		Close: closeFct,
-	}
+	return cotisationReader{
+		file:    file,
+		reader:  reader,
+		comptes: &comptes,
+	}, err
 }
 
-func openCotisationFile(filePath string) (func() error, *csv.Reader, error) {
+type cotisationReader struct {
+	file    *os.File
+	reader  *csv.Reader
+	comptes *marshal.Comptes
+}
+
+func (parser cotisationReader) Close() error {
+	return parser.file.Close()
+}
+
+func openCotisationFile(filePath string) (*os.File, *csv.Reader, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		return file.Close, nil, err
+		return file, nil, err
 	}
 	reader := csv.NewReader(bufio.NewReader(file))
 	reader.Comma = ';'
 	reader.LazyQuotes = true
 	_, err = reader.Read() // Sauter l'en-tête
-	return file.Close, reader, err
+	return file, reader, err
 }
 
 var idxCotisation = colMapping{
@@ -75,17 +83,17 @@ var idxCotisation = colMapping{
 	"Du":           6,
 }
 
-func parseCotisationLines(reader *csv.Reader, comptes *marshal.Comptes, parsedLineChan chan marshal.ParsedLineResult) {
+func (parser cotisationReader) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
 	for {
 		parsedLine := marshal.ParsedLineResult{}
-		row, err := reader.Read()
+		row, err := parser.reader.Read()
 		if err == io.EOF {
 			close(parsedLineChan)
 			break
 		} else if err != nil {
 			parsedLine.AddError(base.NewRegularError(err))
 		} else {
-			parseCotisationLine(row, comptes, &parsedLine)
+			parseCotisationLine(row, parser.comptes, &parsedLine)
 			if len(parsedLine.Errors) > 0 {
 				parsedLine.Tuples = []marshal.Tuple{}
 			}
