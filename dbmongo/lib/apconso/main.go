@@ -40,16 +40,6 @@ func (apconso APConso) Scope() string {
 // Parser expose le parseur et le type de fichier qu'il supporte.
 var Parser = marshal.Parser{FileType: "apconso", FileParser: ParseFile}
 
-type apconsoReader struct {
-	file   *os.File
-	reader *csv.Reader
-	idx    colMapping
-}
-
-func (parser apconsoReader) Close() error {
-	return parser.file.Close()
-}
-
 // ParseFile permet de lancer le parsing du fichier demandé.
 func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (marshal.FileReader, error) {
 	var idx colMapping
@@ -62,6 +52,16 @@ func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (m
 		reader: reader,
 		idx:    idx,
 	}, err
+}
+
+type apconsoReader struct {
+	file   *os.File
+	reader *csv.Reader
+	idx    colMapping
+}
+
+func (parser apconsoReader) Close() error {
+	return parser.file.Close()
 }
 
 func openFile(filePath string) (*os.File, *csv.Reader, error) {
