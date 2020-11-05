@@ -42,15 +42,19 @@ func (ellisphere Ellisphere) Scope() string {
 var Parser = marshal.Parser{FileType: "ellisphere", FileParser: ParseFile}
 
 // ParseFile permet de lancer le parsing du fichier demandé.
-func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) marshal.OpenFileResult {
+func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (marshal.FileReader, error) {
 	sheet, err := openFile(filePath)
-	return marshal.OpenFileResult{
-		Error: err,
-		ParseLines: func(parsedLineChan chan marshal.ParsedLineResult) {
-			parseLines(sheet, parsedLineChan)
-		},
-		Close: func() error { return nil },
-	}
+	return ellisphereReader{
+		sheet: sheet,
+	}, err
+}
+
+type ellisphereReader struct {
+	sheet *xlsx.Sheet
+}
+
+func (parser ellisphereReader) Close() error {
+	return nil
 }
 
 func openFile(filePath string) (*xlsx.Sheet, error) {
@@ -64,8 +68,8 @@ func openFile(filePath string) (*xlsx.Sheet, error) {
 	return xlsxFile.Sheets[0], nil
 }
 
-func parseLines(sheet *xlsx.Sheet, parsedLineChan chan marshal.ParsedLineResult) {
-	sheet.ForEachRow(
+func (parser ellisphereReader) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
+	parser.sheet.ForEachRow(
 		func(row *xlsx.Row) error {
 			parsedLine := marshal.ParsedLineResult{}
 			var ellisphere Ellisphere
