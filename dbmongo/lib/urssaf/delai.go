@@ -50,30 +50,38 @@ func (delai Delai) Type() string {
 var ParserDelai = marshal.Parser{FileType: "delai", FileParser: ParseDelaiFile}
 
 // ParseDelaiFile permet de lancer le parsing du fichier demandé.
-func ParseDelaiFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) marshal.OpenFileResult {
+func ParseDelaiFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (marshal.FileReader, error) {
 	var comptes marshal.Comptes
-	closeFct, reader, err := openDelaiFile(filePath)
+	file, reader, err := openDelaiFile(filePath)
 	if err == nil {
 		comptes, err = marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
 	}
-	return marshal.OpenFileResult{
-		Error: err,
-		ParseLines: func(parsedLineChan chan marshal.ParsedLineResult) {
-			parseDelaiLines(reader, &comptes, parsedLineChan)
-		},
-		Close: closeFct,
-	}
+	return delaiReader{
+		file:    file,
+		reader:  reader,
+		comptes: &comptes,
+	}, err
 }
 
-func openDelaiFile(filePath string) (func() error, *csv.Reader, error) {
+type delaiReader struct {
+	file    *os.File
+	reader  *csv.Reader
+	comptes *marshal.Comptes
+}
+
+func (parser delaiReader) Close() error {
+	return parser.file.Close()
+}
+
+func openDelaiFile(filePath string) (*os.File, *csv.Reader, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		return file.Close, nil, err
+		return file, nil, err
 	}
 	reader := csv.NewReader(bufio.NewReader(file))
 	reader.Comma = ';'
 	_, err = reader.Read() // Sauter l'en-tête
-	return file.Close, reader, err
+	return file, reader, err
 }
 
 var idxDelai = colMapping{
@@ -90,11 +98,11 @@ var idxDelai = colMapping{
 	"Action":            12,
 }
 
-func parseDelaiLines(reader *csv.Reader, comptes *marshal.Comptes, parsedLineChan chan marshal.ParsedLineResult) {
+func (parser delaiReader) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
 	idx := idxDelai
 	for {
 		parsedLine := marshal.ParsedLineResult{}
-		row, err := reader.Read()
+		row, err := parser.reader.Read()
 		if err == io.EOF {
 			close(parsedLineChan)
 			break
@@ -104,7 +112,7 @@ func parseDelaiLines(reader *csv.Reader, comptes *marshal.Comptes, parsedLineCha
 			date, err := time.Parse("02/01/2006", row[idx["DateCreation"]])
 			if err != nil {
 				parsedLine.AddError(base.NewRegularError(err))
-			} else if siret, err := marshal.GetSiretFromComptesMapping(row[idx["NumeroCompte"]], &date, *comptes); err == nil {
+			} else if siret, err := marshal.GetSiretFromComptesMapping(row[idx["NumeroCompte"]], &date, *parser.comptes); err == nil {
 				parseDelaiLine(row, idx, siret, &parsedLine)
 				if len(parsedLine.Errors) > 0 {
 					parsedLine.Tuples = []marshal.Tuple{}
