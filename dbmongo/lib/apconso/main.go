@@ -41,37 +41,37 @@ func (apconso APConso) Scope() string {
 var Parser = marshal.Parser{FileType: "apconso", FileParser: ParseFile}
 
 type apconsoReader struct {
-	reader   *csv.Reader
-	idx      colMapping
-	closeFct func() error
+	file   *os.File
+	reader *csv.Reader
+	idx    colMapping
 }
 
 func (parser apconsoReader) Close() error {
-	return parser.closeFct()
+	return parser.file.Close()
 }
 
 // ParseFile permet de lancer le parsing du fichier demandé.
 func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (marshal.FileReader, error) {
 	var idx colMapping
-	closeFct, reader, err := openFile(filePath)
+	file, reader, err := openFile(filePath)
 	if err == nil {
 		idx, err = parseColMapping(reader)
 	}
 	return apconsoReader{
-		closeFct: closeFct,
-		reader:   reader,
-		idx:      idx,
+		file:   file,
+		reader: reader,
+		idx:    idx,
 	}, err
 }
 
-func openFile(filePath string) (func() error, *csv.Reader, error) {
+func openFile(filePath string) (*os.File, *csv.Reader, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		return file.Close, nil, err
+		return file, nil, err
 	}
 	reader := csv.NewReader(file)
 	reader.Comma = ','
-	return file.Close, reader, nil
+	return file, reader, nil
 }
 
 type colMapping map[string]int
