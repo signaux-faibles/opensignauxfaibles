@@ -44,10 +44,17 @@ func (res *ParsedLineResult) AddTuple(tuple Tuple) {
 	}
 }
 
-// AddError permet au parseur d'ajouter un tuple extrait depuis la ligne en cours.
-func (res *ParsedLineResult) AddError(err error) { // TODO: utiliser CriticError ici
+// AddRegularError permet au parseur de rapporter une erreur d'extraction.
+func (res *ParsedLineResult) AddRegularError(err error) {
 	if err != nil {
-		res.Errors = append(res.Errors, err)
+		res.Errors = append(res.Errors, base.NewRegularError(err))
+	}
+}
+
+// AddFilterError permet au parseur de rapporter qu'une ligne a été filtrée.
+func (res *ParsedLineResult) AddFilterError(err error) {
+	if err != nil {
+		res.Errors = append(res.Errors, base.NewFilterError(err))
 	}
 }
 
