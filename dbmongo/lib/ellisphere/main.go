@@ -4,10 +4,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sfregexp"
 	"github.com/tealeg/xlsx/v3"
-
-	"github.com/signaux-faibles/gournal"
 )
 
 // Ellisphere informations groupe pour une entreprise
@@ -44,36 +41,42 @@ func (ellisphere Ellisphere) Scope() string {
 // Parser expose le parseur et le type de fichier qu'il supporte.
 var Parser = marshal.Parser{FileType: "ellisphere", FileParser: ParseFile}
 
-// ParseFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseFile(path string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
-	filter := marshal.GetSirenFilterFromCache(*cache)
-	xlsxFile, err := xlsx.OpenFile(path)
-	if err != nil {
-		tracker.Add(err)
-		return
+// ParseFile permet de lancer le parsing du fichier demandé.
+func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) marshal.OpenFileResult {
+	sheet, err := openFile(filePath)
+	return marshal.OpenFileResult{
+		Error: err,
+		ParseLines: func(parsedLineChan chan marshal.ParsedLineResult) {
+			parseLines(sheet, parsedLineChan)
+		},
+		Close: func() error { return nil },
 	}
-	if len(xlsxFile.Sheets) != 1 {
-		tracker.Add(errors.Errorf("the source has %d sheets, should have only 1", len(xlsxFile.Sheets)))
-		return
-	}
-	parseEllisphereSheet(xlsxFile.Sheets[0], filter, tracker, outputChannel)
 }
 
-func parseEllisphereSheet(sheet *xlsx.Sheet, filter marshal.SirenFilter, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+func openFile(filePath string) (*xlsx.Sheet, error) {
+	xlsxFile, err := xlsx.OpenFile(filePath)
+	if err != nil {
+		return nil, err
+	}
+	if len(xlsxFile.Sheets) != 1 {
+		return nil, errors.Errorf("the source has %d sheets, should have only 1", len(xlsxFile.Sheets))
+	}
+	return xlsxFile.Sheets[0], nil
+}
+
+func parseLines(sheet *xlsx.Sheet, parsedLineChan chan marshal.ParsedLineResult) {
 	sheet.ForEachRow(
 		func(row *xlsx.Row) error {
+			parsedLine := marshal.ParsedLineResult{}
 			var ellisphere Ellisphere
 			err := row.ReadStruct(&ellisphere)
-
-			if !sfregexp.ValidSiren(ellisphere.Siren) {
-				tracker.Add(errors.New("siren invalide : " + ellisphere.Siren))
+			parsedLine.AddError(base.NewRegularError(err))
+			if len(parsedLine.Errors) == 0 {
+				parsedLine.AddTuple(ellisphere)
 			}
-			if err == nil {
-				outputChannel <- ellisphere
-			}
-			tracker.Add(err)
-			tracker.Next()
+			parsedLineChan <- parsedLine
 			return nil
 		},
 	)
+	close(parsedLineChan)
 }

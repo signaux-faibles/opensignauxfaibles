@@ -1,7 +1,6 @@
 package base
 
 import (
-	"errors"
 	"fmt"
 )
 
@@ -17,8 +16,8 @@ type CriticError struct {
 	criticity string
 }
 
-// NewCriticError creates an error with the provided criticity
-func NewCriticError(err error, criticity string) error {
+// newCriticError creates an error with the provided criticity
+func newCriticError(err error, criticity string) error {
 	if err == nil {
 		return nil
 	}
@@ -42,24 +41,19 @@ type FilterError struct {
 	*CriticError
 }
 
-// NewFilterNotice returns a filter error
-func NewFilterNotice() error {
-	return NewFilterError(errors.New("ligne filtrée"))
-}
-
 // NewFilterError returns a filter error
 func NewFilterError(err error) error {
-	return NewCriticError(err, "filter")
+	return newCriticError(err, "filter")
 }
 
 // NewRegularError creates a regular error
 func NewRegularError(err error) error {
-	return NewCriticError(err, "error")
+	return newCriticError(err, "error")
 }
 
 // NewFatalError creates a fatal error
 func NewFatalError(err error) error {
-	return NewCriticError(err, "fatal")
+	return newCriticError(err, "fatal")
 }
 
 // MappingError occurs when something goes wrong while looking for a mapping
@@ -72,7 +66,7 @@ func NewMappingError(err error, criticity string) error {
 	if err == nil {
 		return nil
 	}
-	return &MappingError{NewCriticError(err, criticity).(*CriticError)}
+	return &MappingError{newCriticError(err, criticity).(*CriticError)}
 }
 
 func (pe *MappingError) Error() string {

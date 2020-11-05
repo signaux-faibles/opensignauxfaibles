@@ -3,7 +3,6 @@ package urssaf
 import (
 	"time"
 
-	"github.com/signaux-faibles/gournal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
@@ -34,23 +33,45 @@ func (compte Compte) Type() string {
 // ParserCompte expose le parseur et le type de fichier qu'il supporte.
 var ParserCompte = marshal.Parser{FileType: "admin_urssaf", FileParser: ParseCompteFile}
 
-// ParseCompteFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseCompteFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+// ParseCompteFile permet de générer des tuples à partir des mappings
+// compte<->siret déjà parsés par marshal.GetCompteSiretMapping().
+func ParseCompteFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) marshal.OpenFileResult {
+	var err error
+	var periodes []time.Time
+	var mapping marshal.Comptes
+	closeFct := func() error { return nil }
 	if len(batch.Files["admin_urssaf"]) > 0 {
-		periodes := misc.GenereSeriePeriode(batch.Params.DateDebut, time.Now()) //[]time.Time
-		mapping, err := marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
-		tracker.Add(err)
-		for c := range mapping {
-			for _, p := range periodes {
-				var err error
-				compte := Compte{}
-				compte.NumeroCompte = c
-				compte.Periode = p
-				compte.Siret, err = marshal.GetSiret(c, &p, *cache, batch)
-				tracker.Add(base.NewCriticError(err, "erreur"))
-				outputChannel <- compte
-			}
-			tracker.Next()
-		}
+		periodes = misc.GenereSeriePeriode(batch.Params.DateDebut, time.Now()) //[]time.Time
+		mapping, err = marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
 	}
+	return marshal.OpenFileResult{
+		Error: err,
+		ParseLines: func(parsedLineChan chan marshal.ParsedLineResult) {
+			parseCompteLines(periodes, &mapping, parsedLineChan)
+		},
+		Close: closeFct,
+	}
+}
+
+func parseCompteLines(periodes []time.Time, mapping *marshal.Comptes, parsedLineChan chan marshal.ParsedLineResult) {
+	// First, we sort the mapping entries by account number, to make sure that
+	// tuples are always processed in the same order, and therefore that errors
+	// (e.g. "siret invalide") are reported at consistent Cycle/line numbers.
+	// cf https://github.com/signaux-faibles/opensignauxfaibles/pull/225#issuecomment-720594272
+	accounts := mapping.GetSortedKeys()
+	for accountIndex := range accounts {
+		parsedLine := marshal.ParsedLineResult{}
+		account := accounts[accountIndex]
+		for _, p := range periodes {
+			var err error
+			compte := Compte{}
+			compte.NumeroCompte = account
+			compte.Periode = p
+			compte.Siret, err = marshal.GetSiretFromComptesMapping(account, &p, *mapping)
+			parsedLine.AddError(base.NewRegularError(err))
+			parsedLine.AddTuple(compte)
+		}
+		parsedLineChan <- parsedLine
+	}
+	close(parsedLineChan) // EOF
 }

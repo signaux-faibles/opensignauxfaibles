@@ -13,8 +13,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
-	"github.com/signaux-faibles/gournal"
 )
 
 // Delai tuple fichier ursaff
@@ -51,65 +49,75 @@ func (delai Delai) Type() string {
 // ParserDelai expose le parseur et le type de fichier qu'il supporte.
 var ParserDelai = marshal.Parser{FileType: "delai", FileParser: ParseDelaiFile}
 
-// ParseDelaiFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseDelaiFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
-	comptes, err := marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
-	if err != nil {
-		tracker.Add(err)
-		return
+// ParseDelaiFile permet de lancer le parsing du fichier demandé.
+func ParseDelaiFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) marshal.OpenFileResult {
+	var comptes marshal.Comptes
+	closeFct, reader, err := openDelaiFile(filePath)
+	if err == nil {
+		comptes, err = marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
 	}
-	file, err := os.Open(filePath)
-	if err != nil {
-		tracker.Add(err)
-		return
+	return marshal.OpenFileResult{
+		Error: err,
+		ParseLines: func(parsedLineChan chan marshal.ParsedLineResult) {
+			parseDelaiLines(reader, &comptes, parsedLineChan)
+		},
+		Close: closeFct,
 	}
-	defer file.Close()
-	reader := csv.NewReader(bufio.NewReader(file))
-	reader.Comma = ';'
-	parseDelaiFile(reader, &comptes, tracker, outputChannel)
 }
 
-func parseDelaiFile(reader *csv.Reader, comptes *marshal.Comptes, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
-
-	var idx = colMapping{
-		"NumeroCompte":      2,
-		"NumeroContentieux": 3,
-		"DateCreation":      4,
-		"DateEcheance":      5,
-		"DureeDelai":        6,
-		"Denomination":      7,
-		"Indic6m":           8,
-		"AnneeCreation":     9,
-		"MontantEcheancier": 10,
-		"Stade":             11,
-		"Action":            12,
+func openDelaiFile(filePath string) (func() error, *csv.Reader, error) {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return file.Close, nil, err
 	}
+	reader := csv.NewReader(bufio.NewReader(file))
+	reader.Comma = ';'
+	_, err = reader.Read() // Sauter l'en-tête
+	return file.Close, reader, err
+}
 
-	reader.Read()
+var idxDelai = colMapping{
+	"NumeroCompte":      2,
+	"NumeroContentieux": 3,
+	"DateCreation":      4,
+	"DateEcheance":      5,
+	"DureeDelai":        6,
+	"Denomination":      7,
+	"Indic6m":           8,
+	"AnneeCreation":     9,
+	"MontantEcheancier": 10,
+	"Stade":             11,
+	"Action":            12,
+}
+
+func parseDelaiLines(reader *csv.Reader, comptes *marshal.Comptes, parsedLineChan chan marshal.ParsedLineResult) {
+	idx := idxDelai
 	for {
+		parsedLine := marshal.ParsedLineResult{}
 		row, err := reader.Read()
 		if err == io.EOF {
+			close(parsedLineChan)
 			break
 		} else if err != nil {
-			tracker.Add(err)
+			parsedLine.AddError(base.NewRegularError(err))
 		} else {
 			date, err := time.Parse("02/01/2006", row[idx["DateCreation"]])
 			if err != nil {
-				tracker.Add(err)
+				parsedLine.AddError(base.NewRegularError(err))
 			} else if siret, err := marshal.GetSiretFromComptesMapping(row[idx["NumeroCompte"]], &date, *comptes); err == nil {
-				delai := parseDelaiLine(row, idx, siret, tracker)
-				if !tracker.HasErrorInCurrentCycle() {
-					outputChannel <- delai
+				parseDelaiLine(row, idx, siret, &parsedLine)
+				if len(parsedLine.Errors) > 0 {
+					parsedLine.Tuples = []marshal.Tuple{}
 				}
 			} else {
-				tracker.Add(base.NewFilterError(err))
+				parsedLine.AddError(base.NewFilterError(err))
 			}
 		}
-		tracker.Next()
+		parsedLineChan <- parsedLine
 	}
 }
 
-func parseDelaiLine(row []string, idx colMapping, siret string, tracker *gournal.Tracker) Delai {
+func parseDelaiLine(row []string, idx colMapping, siret string, parsedLine *marshal.ParsedLineResult) {
 	var err error
 	loc, _ := time.LoadLocation("Europe/Paris")
 	delai := Delai{}
@@ -117,17 +125,17 @@ func parseDelaiLine(row []string, idx colMapping, siret string, tracker *gournal
 	delai.NumeroCompte = row[idx["NumeroCompte"]]
 	delai.NumeroContentieux = row[idx["NumeroContentieux"]]
 	delai.DateCreation, err = time.ParseInLocation("02/01/2006", row[idx["DateCreation"]], loc)
-	tracker.Add(err)
+	parsedLine.AddError(base.NewRegularError(err))
 	delai.DateEcheance, err = time.ParseInLocation("02/01/2006", row[idx["DateEcheance"]], loc)
-	tracker.Add(err)
+	parsedLine.AddError(base.NewRegularError(err))
 	delai.DureeDelai, err = strconv.Atoi(row[idx["DureeDelai"]])
 	delai.Denomination = row[idx["Denomination"]]
 	delai.Indic6m = row[idx["Indic6m"]]
 	delai.AnneeCreation, err = strconv.Atoi(row[idx["AnneeCreation"]])
-	tracker.Add(err)
+	parsedLine.AddError(base.NewRegularError(err))
 	delai.MontantEcheancier, err = strconv.ParseFloat(strings.Replace(row[idx["MontantEcheancier"]], ",", ".", -1), 64)
-	tracker.Add(err)
+	parsedLine.AddError(base.NewRegularError(err))
 	delai.Stade = row[idx["Stade"]]
 	delai.Action = row[idx["Action"]]
-	return delai
+	parsedLine.AddTuple(delai)
 }

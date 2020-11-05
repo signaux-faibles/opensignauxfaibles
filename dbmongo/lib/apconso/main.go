@@ -10,8 +10,6 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
-
-	"github.com/signaux-faibles/gournal"
 )
 
 // APConso Consommation d'activité partielle
@@ -42,26 +40,38 @@ func (apconso APConso) Scope() string {
 // Parser expose le parseur et le type de fichier qu'il supporte.
 var Parser = marshal.Parser{FileType: "apconso", FileParser: ParseFile}
 
-// ParseFile extrait les tuples depuis le fichier demandé et génère un rapport Gournal.
-func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+// ParseFile permet de lancer le parsing du fichier demandé.
+func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) marshal.OpenFileResult {
+	var idx colMapping
+	closeFct, reader, err := openFile(filePath)
+	if err == nil {
+		idx, err = parseColMapping(reader)
+	}
+	return marshal.OpenFileResult{
+		Error: err,
+		ParseLines: func(parsedLineChan chan marshal.ParsedLineResult) {
+			parseLines(reader, idx, parsedLineChan)
+		},
+		Close: closeFct,
+	}
+}
+
+func openFile(filePath string) (func() error, *csv.Reader, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		tracker.Add(err)
-		return
+		return file.Close, nil, err
 	}
-	defer file.Close()
 	reader := csv.NewReader(file)
 	reader.Comma = ','
-	parseApConsoFile(reader, tracker, outputChannel)
+	return file.Close, reader, nil
 }
 
 type colMapping map[string]int
 
-func parseApConsoFile(reader *csv.Reader, tracker *gournal.Tracker, outputChannel chan marshal.Tuple) {
+func parseColMapping(reader *csv.Reader) (colMapping, error) {
 	header, err := reader.Read()
 	if err != nil {
-		tracker.Add(err)
-		return
+		return nil, err
 	}
 	var idx = colMapping{}
 	idx["ID"] = misc.SliceIndex(len(header), func(i int) bool { return header[i] == "ID_DA" })
@@ -70,41 +80,43 @@ func parseApConsoFile(reader *csv.Reader, tracker *gournal.Tracker, outputChanne
 	idx["HeureConsommee"] = misc.SliceIndex(len(header), func(i int) bool { return header[i] == "HEURES" })
 	idx["Montant"] = misc.SliceIndex(len(header), func(i int) bool { return header[i] == "MONTANTS" })
 	idx["Effectif"] = misc.SliceIndex(len(header), func(i int) bool { return header[i] == "EFFECTIFS" })
-
 	if misc.SliceMin(idx["ID"], idx["Siret"], idx["Periode"], idx["HeureConsommee"], idx["Montant"], idx["Effectif"]) == -1 {
-		tracker.Add(errors.New("entête non conforme, fichier ignoré"))
-		return
+		return nil, errors.New("entête non conforme, fichier ignoré")
 	}
+	return idx, nil
+}
 
+func parseLines(reader *csv.Reader, idx colMapping, parsedLineChan chan marshal.ParsedLineResult) {
 	for {
+		parsedLine := marshal.ParsedLineResult{}
 		row, err := reader.Read()
 		if err == io.EOF {
+			close(parsedLineChan)
 			break
 		} else if err != nil {
-			tracker.Add(err)
+			parsedLine.AddError(base.NewRegularError(err))
 		} else if len(row) > 0 {
-			// TODO: filtrer et/ou valider siret ?
-			apconso := parseApConsoLine(row, tracker, idx)
-			if !tracker.HasErrorInCurrentCycle() && apconso.Siret != "" {
-				outputChannel <- apconso
+			parseApConsoLine(row, idx, &parsedLine)
+			if len(parsedLine.Errors) > 0 {
+				parsedLine.Tuples = []marshal.Tuple{}
 			}
 		}
-		tracker.Next()
+		parsedLineChan <- parsedLine
 	}
 }
 
-func parseApConsoLine(row []string, tracker *gournal.Tracker, idx colMapping) APConso {
+func parseApConsoLine(row []string, idx colMapping, parsedLine *marshal.ParsedLineResult) {
 	apconso := APConso{}
 	apconso.ID = row[idx["ID"]]
 	apconso.Siret = row[idx["Siret"]]
 	var err error
 	apconso.Periode, err = time.Parse("01/2006", row[idx["Periode"]])
-	tracker.Add(err)
+	parsedLine.AddError(base.NewRegularError(err))
 	apconso.HeureConsommee, err = misc.ParsePFloat(row[idx["HeureConsommee"]])
-	tracker.Add(err)
+	parsedLine.AddError(base.NewRegularError(err))
 	apconso.Montant, err = misc.ParsePFloat(row[idx["Montant"]])
-	tracker.Add(err)
+	parsedLine.AddError(base.NewRegularError(err))
 	apconso.Effectif, err = misc.ParsePInt(row[idx["Effectif"]])
-	tracker.Add(err)
-	return apconso
+	parsedLine.AddError(base.NewRegularError(err))
+	parsedLine.AddTuple(apconso)
 }

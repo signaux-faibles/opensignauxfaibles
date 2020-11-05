@@ -28,6 +28,6 @@ func TestBdfParser(t *testing.T) {
 		lastEvent := output.Events[len(output.Events)-1]
 		lastReportJSON, err := json.MarshalIndent(lastEvent, "", "  ")
 		assert.NoError(t, err)
-		assert.Contains(t, string(lastReportJSON), "3 lignes traitées, 0 erreures fatales, 0 rejets, 1 lignes filtrées, 2 lignes valides")
+		assert.Contains(t, string(lastReportJSON), "3 lignes traitées, 0 erreurs fatales, 0 lignes rejetées, 1 lignes filtrées, 2 lignes valides")
 	})
 }
