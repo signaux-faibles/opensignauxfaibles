@@ -60,30 +60,40 @@ func parseEffectifPeriod(fields []string) []periodCol {
 var ParserEffectifEnt = marshal.Parser{FileType: "effectif_ent", FileParser: ParseEffectifEntFile}
 
 // ParseEffectifEntFile permet de lancer le parsing du fichier demandé.
-func ParseEffectifEntFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) marshal.OpenFileResult {
+func ParseEffectifEntFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (marshal.FileReader, error) {
 	var idx colMapping
 	var periods []periodCol
-	closeFct, reader, err := openEffectifEntFile(filePath)
+	file, reader, err := openEffectifEntFile(filePath)
 	if err == nil {
 		idx, periods, err = parseEffectifEntColMapping(reader)
 	}
-	return marshal.OpenFileResult{
-		Error: err,
-		ParseLines: func(parsedLineChan chan marshal.ParsedLineResult) {
-			parseEffectifEntLines(reader, idx, periods, parsedLineChan)
-		},
-		Close: closeFct,
-	}
+	return effectifEntReader{
+		file:    file,
+		reader:  reader,
+		periods: &periods,
+		idx:     idx,
+	}, err
 }
 
-func openEffectifEntFile(filePath string) (func() error, *csv.Reader, error) {
+type effectifEntReader struct {
+	file    *os.File
+	reader  *csv.Reader
+	periods *[]periodCol
+	idx     colMapping
+}
+
+func (parser effectifEntReader) Close() error {
+	return parser.file.Close()
+}
+
+func openEffectifEntFile(filePath string) (*os.File, *csv.Reader, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		return file.Close, nil, err
+		return file, nil, err
 	}
 	reader := csv.NewReader(bufio.NewReader(file))
 	reader.Comma = ';'
-	return file.Close, reader, err
+	return file, reader, err
 }
 
 func parseEffectifEntColMapping(reader *csv.Reader) (colMapping, []periodCol, error) {
@@ -99,24 +109,24 @@ func parseEffectifEntColMapping(reader *csv.Reader) (colMapping, []periodCol, er
 	return idx, periods, nil
 }
 
-func parseEffectifEntLines(reader *csv.Reader, idx colMapping, periods []periodCol, parsedLineChan chan marshal.ParsedLineResult) {
+func (parser effectifEntReader) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
 	for {
 		parsedLine := marshal.ParsedLineResult{}
-		row, err := reader.Read()
+		row, err := parser.reader.Read()
 		if err == io.EOF {
 			close(parsedLineChan)
 			break
 		} else if err != nil {
 			parsedLine.AddError(base.NewRegularError(err))
 		} else {
-			parseEffectifEntLine(row, idx, periods, &parsedLine)
+			parseEffectifEntLine(row, parser.idx, parser.periods, &parsedLine)
 		}
 		parsedLineChan <- parsedLine
 	}
 }
 
-func parseEffectifEntLine(row []string, idx colMapping, periods []periodCol, parsedLine *marshal.ParsedLineResult) {
-	for _, period := range periods {
+func parseEffectifEntLine(row []string, idx colMapping, periods *[]periodCol, parsedLine *marshal.ParsedLineResult) {
+	for _, period := range *periods {
 		value := row[period.colIndex]
 		if value != "" {
 			noThousandsSep := sfregexp.RegexpDict["notDigit"].ReplaceAllString(value, "")
