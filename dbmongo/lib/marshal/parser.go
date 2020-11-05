@@ -34,7 +34,7 @@ type OpenFileResult struct {
 // ParsedLineResult est le résultat du parsing d'une ligne.
 type ParsedLineResult struct {
 	Tuples []Tuple
-	Errors []error // TODO: utiliser CriticError ici
+	Errors []base.CriticityError
 }
 
 // AddTuple permet au parseur d'ajouter un tuple extrait depuis la ligne en cours.
