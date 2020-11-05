@@ -40,30 +40,38 @@ func (ccsf CCSF) Type() string {
 var ParserCCSF = marshal.Parser{FileType: "ccsf", FileParser: ParseCcsfFile}
 
 // ParseCcsfFile permet de lancer le parsing du fichier demandé.
-func ParseCcsfFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) marshal.OpenFileResult {
+func ParseCcsfFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (marshal.FileReader, error) {
 	var comptes marshal.Comptes
-	closeFct, reader, err := openCcsfFile(filePath)
+	file, reader, err := openCcsfFile(filePath)
 	if err == nil {
 		comptes, err = marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
 	}
-	return marshal.OpenFileResult{
-		Error: err,
-		ParseLines: func(parsedLineChan chan marshal.ParsedLineResult) {
-			parseCcsfLines(reader, &comptes, parsedLineChan)
-		},
-		Close: closeFct,
-	}
+	return ccsfReader{
+		file:    file,
+		reader:  reader,
+		comptes: &comptes,
+	}, err
 }
 
-func openCcsfFile(filePath string) (func() error, *csv.Reader, error) {
+type ccsfReader struct {
+	file    *os.File
+	reader  *csv.Reader
+	comptes *marshal.Comptes
+}
+
+func (parser ccsfReader) Close() error {
+	return parser.file.Close()
+}
+
+func openCcsfFile(filePath string) (*os.File, *csv.Reader, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		return file.Close, nil, err
+		return file, nil, err
 	}
 	reader := csv.NewReader(bufio.NewReader(file))
 	reader.Comma = ';'
 	_, err = reader.Read() // Sauter l'en-tête
-	return file.Close, reader, err
+	return file, reader, err
 }
 
 var idxCcsf = colMapping{
@@ -73,17 +81,17 @@ var idxCcsf = colMapping{
 	"Action":         5,
 }
 
-func parseCcsfLines(reader *csv.Reader, comptes *marshal.Comptes, parsedLineChan chan marshal.ParsedLineResult) {
+func (parser ccsfReader) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
 	for {
 		parsedLine := marshal.ParsedLineResult{}
-		row, err := reader.Read()
+		row, err := parser.reader.Read()
 		if err == io.EOF {
 			close(parsedLineChan)
 			break
 		} else if err != nil {
 			parsedLine.AddError(base.NewRegularError(err))
 		} else {
-			parseCcsfLine(row, comptes, &parsedLine)
+			parseCcsfLine(row, parser.comptes, &parsedLine)
 			if len(parsedLine.Errors) > 0 {
 				parsedLine.Tuples = []marshal.Tuple{}
 			}
