@@ -1,9 +1,5 @@
 package base
 
-import (
-	"fmt"
-)
-
 // CriticityError object
 type CriticityError interface {
 	error
@@ -54,21 +50,4 @@ func NewRegularError(err error) error {
 // NewFatalError creates a fatal error
 func NewFatalError(err error) error {
 	return newCriticError(err, "fatal")
-}
-
-// MappingError occurs when something goes wrong while looking for a mapping
-type MappingError struct {
-	*CriticError
-}
-
-// NewMappingError return a mapping Error
-func NewMappingError(err error, criticity string) error {
-	if err == nil {
-		return nil
-	}
-	return &MappingError{newCriticError(err, criticity).(*CriticError)}
-}
-
-func (pe *MappingError) Error() string {
-	return fmt.Sprintf("Error while loading or applying the key mapping: %v", pe.err)
 }
