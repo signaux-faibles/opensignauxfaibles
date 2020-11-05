@@ -17,7 +17,7 @@ type CriticError struct {
 }
 
 // newCriticError creates an error with the provided criticity
-func newCriticError(err error, criticity string) error {
+func newCriticError(err error, criticity string) CriticityError {
 	if err == nil {
 		return nil
 	}
