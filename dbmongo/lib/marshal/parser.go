@@ -13,23 +13,19 @@ import (
 	"github.com/spf13/viper"
 )
 
-// Parser associe un type de fichier avec sa fonction de parsing.
+// Parser associe un type de fichier avec ses fonctions de parsing.
 type Parser = struct {
 	FileType   string
-	FileParser ParseFile
+	FileParser func(filePath, *Cache, *base.AdminBatch) (FileReader, error)
 }
 
-// ParseFile fonction de traitement de données en entrée
-type ParseFile func(filePath, *Cache, *base.AdminBatch) OpenFileResult
+// FileReader représente un fichier en train d'être parsé.
+type FileReader interface {
+	Close() error
+	ParseLines(parsedLineChan chan ParsedLineResult)
+}
+
 type filePath = string
-
-// OpenFileResult permet à runParserWithSirenFilter() de savoir si le fichier à
-// parser a bien été ouvert, puis de lancer le parsing des lignes.
-type OpenFileResult struct {
-	Error      error
-	ParseLines func(chan ParsedLineResult)
-	Close      func() error
-}
 
 // ParsedLineResult est le résultat du parsing d'une ligne.
 type ParsedLineResult struct {
@@ -83,13 +79,13 @@ func ParseFilesFromBatch(cache Cache, batch *base.AdminBatch, parser Parser) (ch
 
 func runParserWithSirenFilter(parser Parser, filePath string, cache *Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan Tuple) {
 	filter := GetSirenFilterFromCache(*cache)
-	openFileRes := parser.FileParser(filePath, cache, batch)
+	fileReader, err := parser.FileParser(filePath, cache, batch)
 	// Note: on ne passe plus le tracker aux parseurs afin de garder ici le controle de la numérotation des lignes où les erreurs sont trouvées
-	if openFileRes.Error != nil {
-		tracker.Add(base.NewFatalError(openFileRes.Error))
+	if err != nil {
+		tracker.Add(base.NewFatalError(err))
 	} else {
 		parsedLineChan := make(chan ParsedLineResult)
-		go openFileRes.ParseLines(parsedLineChan)
+		go fileReader.ParseLines(parsedLineChan)
 		for lineResult := range parsedLineChan {
 			for _, err := range lineResult.Errors {
 				tracker.Add(err)
@@ -111,7 +107,7 @@ func runParserWithSirenFilter(parser Parser, filePath string, cache *Cache, batc
 			tracker.Next()
 		}
 	}
-	if err := openFileRes.Close(); err != nil {
+	if err := fileReader.Close(); err != nil {
 		tracker.Add(base.NewFatalError(err))
 	}
 }

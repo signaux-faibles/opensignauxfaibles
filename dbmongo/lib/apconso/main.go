@@ -40,20 +40,28 @@ func (apconso APConso) Scope() string {
 // Parser expose le parseur et le type de fichier qu'il supporte.
 var Parser = marshal.Parser{FileType: "apconso", FileParser: ParseFile}
 
+type apconsoReader struct {
+	reader   *csv.Reader
+	idx      colMapping
+	closeFct func() error
+}
+
+func (parser apconsoReader) Close() error {
+	return parser.closeFct()
+}
+
 // ParseFile permet de lancer le parsing du fichier demandé.
-func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) marshal.OpenFileResult {
+func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (marshal.FileReader, error) {
 	var idx colMapping
 	closeFct, reader, err := openFile(filePath)
 	if err == nil {
 		idx, err = parseColMapping(reader)
 	}
-	return marshal.OpenFileResult{
-		Error: err,
-		ParseLines: func(parsedLineChan chan marshal.ParsedLineResult) {
-			parseLines(reader, idx, parsedLineChan)
-		},
-		Close: closeFct,
-	}
+	return apconsoReader{
+		closeFct: closeFct,
+		reader:   reader,
+		idx:      idx,
+	}, err
 }
 
 func openFile(filePath string) (func() error, *csv.Reader, error) {
@@ -86,17 +94,17 @@ func parseColMapping(reader *csv.Reader) (colMapping, error) {
 	return idx, nil
 }
 
-func parseLines(reader *csv.Reader, idx colMapping, parsedLineChan chan marshal.ParsedLineResult) {
+func (parser apconsoReader) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
 	for {
 		parsedLine := marshal.ParsedLineResult{}
-		row, err := reader.Read()
+		row, err := parser.reader.Read()
 		if err == io.EOF {
 			close(parsedLineChan)
 			break
 		} else if err != nil {
 			parsedLine.AddError(base.NewRegularError(err))
 		} else if len(row) > 0 {
-			parseApConsoLine(row, idx, &parsedLine)
+			parseApConsoLine(row, parser.idx, &parsedLine)
 			if len(parsedLine.Errors) > 0 {
 				parsedLine.Tuples = []marshal.Tuple{}
 			}
