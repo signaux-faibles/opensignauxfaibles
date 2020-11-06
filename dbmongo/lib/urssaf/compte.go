@@ -30,44 +30,51 @@ func (compte Compte) Type() string {
 	return "compte"
 }
 
-// ParserCompte expose le parseur et le type de fichier qu'il supporte.
-var ParserCompte = marshal.Parser{FileType: "admin_urssaf", FileParser: ParseCompteFile}
+// ParserCompte fournit une instance utilisable par ParseFilesFromBatch.
+var ParserCompte = &comptesParser{}
 
-// ParseCompteFile permet de générer des tuples à partir des mappings
-// compte<->siret déjà parsés par marshal.GetCompteSiretMapping().
-func ParseCompteFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) marshal.OpenFileResult {
-	var err error
-	var periodes []time.Time
-	var mapping marshal.Comptes
-	closeFct := func() error { return nil }
-	if len(batch.Files["admin_urssaf"]) > 0 {
-		periodes = misc.GenereSeriePeriode(batch.Params.DateDebut, time.Now()) //[]time.Time
-		mapping, err = marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
-	}
-	return marshal.OpenFileResult{
-		Error: err,
-		ParseLines: func(parsedLineChan chan marshal.ParsedLineResult) {
-			parseCompteLines(periodes, &mapping, parsedLineChan)
-		},
-		Close: closeFct,
-	}
+type comptesParser struct {
+	periodes []time.Time
+	mapping  marshal.Comptes
 }
 
-func parseCompteLines(periodes []time.Time, mapping *marshal.Comptes, parsedLineChan chan marshal.ParsedLineResult) {
+func (parser *comptesParser) GetFileType() string {
+	return "admin_urssaf"
+}
+
+func (parser *comptesParser) Init(cache *marshal.Cache, batch *base.AdminBatch) (err error) {
+	if len(batch.Files["admin_urssaf"]) > 0 {
+		parser.periodes = misc.GenereSeriePeriode(batch.Params.DateDebut, time.Now()) //[]time.Time
+		parser.mapping, err = marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
+	}
+	return err
+}
+
+func (parser *comptesParser) Open(filePath string) error {
+	// Ce parseur produit des tuples à partir des mappings compte<->siret déjà
+	// parsés par marshal.GetCompteSiretMapping(). => pas de fichier à ouvrir.
+	return nil
+}
+
+func (parser *comptesParser) Close() error {
+	return nil
+}
+
+func (parser *comptesParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
 	// First, we sort the mapping entries by account number, to make sure that
 	// tuples are always processed in the same order, and therefore that errors
 	// (e.g. "siret invalide") are reported at consistent Cycle/line numbers.
 	// cf https://github.com/signaux-faibles/opensignauxfaibles/pull/225#issuecomment-720594272
-	accounts := mapping.GetSortedKeys()
+	accounts := parser.mapping.GetSortedKeys()
 	for accountIndex := range accounts {
 		parsedLine := marshal.ParsedLineResult{}
 		account := accounts[accountIndex]
-		for _, p := range periodes {
+		for _, p := range parser.periodes {
 			var err error
 			compte := Compte{}
 			compte.NumeroCompte = account
 			compte.Periode = p
-			compte.Siret, err = marshal.GetSiretFromComptesMapping(account, &p, *mapping)
+			compte.Siret, err = marshal.GetSiretFromComptesMapping(account, &p, parser.mapping)
 			parsedLine.AddRegularError(err)
 			parsedLine.AddTuple(compte)
 		}

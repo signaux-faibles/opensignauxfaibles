@@ -37,33 +37,43 @@ func (apconso APConso) Scope() string {
 	return "etablissement"
 }
 
-// Parser expose le parseur et le type de fichier qu'il supporte.
-var Parser = marshal.Parser{FileType: "apconso", FileParser: ParseFile}
+// Parser fournit une instance utilisable par ParseFilesFromBatch.
+var Parser = &apconsoParser{}
 
-// ParseFile permet de lancer le parsing du fichier demandé.
-func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) marshal.OpenFileResult {
-	var idx colMapping
-	closeFct, reader, err := openFile(filePath)
-	if err == nil {
-		idx, err = parseColMapping(reader)
-	}
-	return marshal.OpenFileResult{
-		Error: err,
-		ParseLines: func(parsedLineChan chan marshal.ParsedLineResult) {
-			parseLines(reader, idx, parsedLineChan)
-		},
-		Close: closeFct,
-	}
+type apconsoParser struct {
+	file   *os.File
+	reader *csv.Reader
+	idx    colMapping
 }
 
-func openFile(filePath string) (func() error, *csv.Reader, error) {
+func (parser *apconsoParser) GetFileType() string {
+	return "apconso"
+}
+
+func (parser *apconsoParser) Init(cache *marshal.Cache, batch *base.AdminBatch) error {
+	return nil
+}
+
+func (parser *apconsoParser) Open(filePath string) (err error) {
+	parser.file, parser.reader, err = openFile(filePath)
+	if err == nil {
+		parser.idx, err = parseColMapping(parser.reader)
+	}
+	return err
+}
+
+func (parser *apconsoParser) Close() error {
+	return parser.file.Close()
+}
+
+func openFile(filePath string) (*os.File, *csv.Reader, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		return file.Close, nil, err
+		return file, nil, err
 	}
 	reader := csv.NewReader(file)
 	reader.Comma = ','
-	return file.Close, reader, nil
+	return file, reader, nil
 }
 
 type colMapping map[string]int
@@ -86,17 +96,17 @@ func parseColMapping(reader *csv.Reader) (colMapping, error) {
 	return idx, nil
 }
 
-func parseLines(reader *csv.Reader, idx colMapping, parsedLineChan chan marshal.ParsedLineResult) {
+func (parser *apconsoParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
 	for {
 		parsedLine := marshal.ParsedLineResult{}
-		row, err := reader.Read()
+		row, err := parser.reader.Read()
 		if err == io.EOF {
 			close(parsedLineChan)
 			break
 		} else if err != nil {
 			parsedLine.AddRegularError(err)
 		} else if len(row) > 0 {
-			parseApConsoLine(row, idx, &parsedLine)
+			parseApConsoLine(row, parser.idx, &parsedLine)
 			if len(parsedLine.Errors) > 0 {
 				parsedLine.Tuples = []marshal.Tuple{}
 			}
