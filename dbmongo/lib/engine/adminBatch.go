@@ -60,7 +60,7 @@ func ImportBatch(batch base.AdminBatch, parsers []marshal.Parser, skipFilter boo
 	}
 	for _, parser := range parsers {
 		outputChannel, eventChannel := marshal.ParseFilesFromBatch(cache, &batch, parser) // appelle la fonction ParseFile() pour chaque type de fichier
-		go RelayEvents(eventChannel)
+		go RelayEvents(eventChannel, "ImportBatch")
 		for tuple := range outputChannel {
 			hash := fmt.Sprintf("%x", GetMD5(tuple))
 			value := Value{
@@ -107,7 +107,7 @@ func CheckBatch(batch base.AdminBatch, parsers []marshal.Parser) (reports []stri
 	for _, parser := range parsers {
 		outputChannel, eventChannel := marshal.ParseFilesFromBatch(cache, &batch, parser) // appelle la fonction ParseFile() pour chaque type de fichier
 		DiscardTuple(outputChannel)
-		lastReport := RelayEvents(eventChannel)
+		lastReport := RelayEvents(eventChannel, "CheckBatch")
 		reports = append(reports, lastReport)
 	}
 

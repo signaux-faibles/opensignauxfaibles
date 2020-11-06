@@ -36,17 +36,19 @@ type Event struct {
 // GetBSON retourne l'objet Event sous une forme sérialisable
 func (event Event) GetBSON() (interface{}, error) {
 	var tmp struct {
-		ID       bson.ObjectId `json:"id" bson:"_id"`
-		Date     time.Time     `json:"date" bson:"date"`
-		Comment  interface{}   `json:"event" bson:"event"`
-		Priority Priority      `json:"priority" bson:"priority"`
-		Code     Code          `json:"parserCode" bson:"parserCode"`
+		ID         bson.ObjectId `json:"id" bson:"_id"`
+		Date       time.Time     `json:"date" bson:"date"`
+		Comment    interface{}   `json:"event" bson:"event"`
+		Priority   Priority      `json:"priority" bson:"priority"`
+		Code       Code          `json:"parserCode" bson:"parserCode"`
+		ReportType string        `json:"reportType" bson:"reportType"`
 	}
 	tmp.ID = event.ID
 	tmp.Date = event.Date
 	tmp.Comment = event.Comment
 	tmp.Priority = event.Priority
 	tmp.Code = event.Code
+	tmp.ReportType = event.ReportType
 	return tmp, nil
 }
 

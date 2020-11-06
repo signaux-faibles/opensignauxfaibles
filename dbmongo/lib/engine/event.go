@@ -74,7 +74,7 @@ func messageDispatch() chan SocketMessage {
 }
 
 // RelayEvents transmet les messages
-func RelayEvents(eventChannel chan marshal.Event) (lastReport string) {
+func RelayEvents(eventChannel chan marshal.Event, reportType string) (lastReport string) {
 	if eventChannel == nil {
 		return
 	}
@@ -84,6 +84,7 @@ func RelayEvents(eventChannel chan marshal.Event) (lastReport string) {
 				lastReport = strReport
 			}
 		}
+		e.ReportType = reportType
 		MainMessageChannel <- SocketMessage{
 			JournalEvent: e,
 		}

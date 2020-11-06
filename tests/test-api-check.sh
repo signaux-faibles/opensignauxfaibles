@@ -69,6 +69,7 @@ printjson(db.Journal.find().toArray().map(doc => ({
     summary: doc.event.summary,
     batchKey: doc.event.batchKey
   },
+  reportType: doc.reportType,
   parserCode: doc.parserCode
 })));
 
