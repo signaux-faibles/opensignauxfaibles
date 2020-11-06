@@ -30,35 +30,37 @@ func (compte Compte) Type() string {
 	return "compte"
 }
 
-// ParserCompte expose le parseur et le type de fichier qu'il supporte.
-var ParserCompte = marshal.Parser{FileType: "admin_urssaf", FileParser: ParseCompteFile}
+// ParserCompte fournit une instance utilisable par ParseFilesFromBatch.
+var ParserCompte = &comptesParser{}
 
-// ParseCompteFile permet de générer des tuples à partir des mappings
-// compte<->siret déjà parsés par marshal.GetCompteSiretMapping().
-func ParseCompteFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (marshal.FileReader, error) {
-	var err error
-	var periodes []time.Time
-	var mapping marshal.Comptes
+type comptesParser struct {
+	periodes []time.Time
+	mapping  marshal.Comptes
+}
+
+func (parser *comptesParser) GetFileType() string {
+	return "admin_urssaf"
+}
+
+func (parser *comptesParser) Init(cache *marshal.Cache, batch *base.AdminBatch) (err error) {
 	if len(batch.Files["admin_urssaf"]) > 0 {
-		periodes = misc.GenereSeriePeriode(batch.Params.DateDebut, time.Now()) //[]time.Time
-		mapping, err = marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
+		parser.periodes = misc.GenereSeriePeriode(batch.Params.DateDebut, time.Now()) //[]time.Time
+		parser.mapping, err = marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
 	}
-	return comptesReader{
-		periodes: &periodes,
-		mapping:  &mapping,
-	}, err
+	return err
 }
 
-type comptesReader struct {
-	periodes *[]time.Time
-	mapping  *marshal.Comptes
-}
-
-func (parser comptesReader) Close() error {
+func (parser *comptesParser) Open() error {
+	// Ce parseur produit des tuples à partir des mappings compte<->siret déjà
+	// parsés par marshal.GetCompteSiretMapping(). => pas de fichier à ouvrir.
 	return nil
 }
 
-func (parser comptesReader) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
+func (parser *comptesParser) Close() error {
+	return nil
+}
+
+func (parser *comptesParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
 	// First, we sort the mapping entries by account number, to make sure that
 	// tuples are always processed in the same order, and therefore that errors
 	// (e.g. "siret invalide") are reported at consistent Cycle/line numbers.
@@ -67,12 +69,12 @@ func (parser comptesReader) ParseLines(parsedLineChan chan marshal.ParsedLineRes
 	for accountIndex := range accounts {
 		parsedLine := marshal.ParsedLineResult{}
 		account := accounts[accountIndex]
-		for _, p := range *parser.periodes {
+		for _, p := range parser.periodes {
 			var err error
 			compte := Compte{}
 			compte.NumeroCompte = account
 			compte.Periode = p
-			compte.Siret, err = marshal.GetSiretFromComptesMapping(account, &p, *parser.mapping)
+			compte.Siret, err = marshal.GetSiretFromComptesMapping(account, &p, parser.mapping)
 			parsedLine.AddError(base.NewRegularError(err))
 			parsedLine.AddTuple(compte)
 		}
