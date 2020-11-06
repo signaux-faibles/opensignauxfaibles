@@ -39,34 +39,44 @@ func (effectif Effectif) Type() string {
 	return "effectif"
 }
 
-// ParserEffectif expose le parseur et le type de fichier qu'il supporte.
-var ParserEffectif = marshal.Parser{FileType: "effectif", FileParser: ParseEffectifFile}
+// ParserEffectif fournit une instance utilisable par ParseFilesFromBatch.
+var ParserEffectif = &effectifParser{}
 
-// ParseEffectifFile permet de lancer le parsing du fichier demandé.
-func ParseEffectifFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) marshal.OpenFileResult {
-	var idx colMapping
-	var periods []periodCol
-	closeFct, reader, err := openEffectifFile(filePath)
-	if err == nil {
-		idx, periods, err = parseEffectifColMapping(reader)
-	}
-	return marshal.OpenFileResult{
-		Error: err,
-		ParseLines: func(parsedLineChan chan marshal.ParsedLineResult) {
-			parseEffectifLines(reader, idx, periods, parsedLineChan)
-		},
-		Close: closeFct,
-	}
+type effectifParser struct {
+	file    *os.File
+	reader  *csv.Reader
+	periods []periodCol
+	idx     colMapping
 }
 
-func openEffectifFile(filePath string) (func() error, *csv.Reader, error) {
+func (parser *effectifParser) GetFileType() string {
+	return "effectif"
+}
+
+func (parser *effectifParser) Init(cache *marshal.Cache, batch *base.AdminBatch) error {
+	return nil
+}
+
+func (parser *effectifParser) Close() error {
+	return parser.file.Close()
+}
+
+func (parser *effectifParser) Open(filePath string) (err error) {
+	parser.file, parser.reader, err = openEffectifFile(filePath)
+	if err == nil {
+		parser.idx, parser.periods, err = parseEffectifColMapping(parser.reader)
+	}
+	return err
+}
+
+func openEffectifFile(filePath string) (*os.File, *csv.Reader, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		return file.Close, nil, err
+		return file, nil, err
 	}
 	reader := csv.NewReader(bufio.NewReader(file))
 	reader.Comma = ';'
-	return file.Close, reader, err
+	return file, reader, err
 }
 
 func parseEffectifColMapping(reader *csv.Reader) (colMapping, []periodCol, error) {
@@ -92,24 +102,24 @@ func parseEffectifColMapping(reader *csv.Reader) (colMapping, []periodCol, error
 	return idx, periods, err
 }
 
-func parseEffectifLines(reader *csv.Reader, idx colMapping, periods []periodCol, parsedLineChan chan marshal.ParsedLineResult) {
+func (parser *effectifParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
 	for {
 		parsedLine := marshal.ParsedLineResult{}
-		row, err := reader.Read()
+		row, err := parser.reader.Read()
 		if err == io.EOF {
 			close(parsedLineChan)
 			break
 		} else if err != nil {
 			parsedLine.AddError(base.NewRegularError(err))
 		} else {
-			parseEffectifLine(row, idx, periods, &parsedLine)
+			parseEffectifLine(row, parser.idx, &parser.periods, &parsedLine)
 		}
 		parsedLineChan <- parsedLine
 	}
 }
 
-func parseEffectifLine(row []string, idx colMapping, periods []periodCol, parsedLine *marshal.ParsedLineResult) {
-	for _, period := range periods {
+func parseEffectifLine(row []string, idx colMapping, periods *[]periodCol, parsedLine *marshal.ParsedLineResult) {
+	for _, period := range *periods {
 		value := row[period.colIndex]
 		if value != "" {
 			noThousandsSep := sfregexp.RegexpDict["notDigit"].ReplaceAllString(value, "")

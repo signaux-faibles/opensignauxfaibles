@@ -43,37 +43,47 @@ func (bdf BDF) Scope() string {
 	return "entreprise"
 }
 
-// Parser expose le parseur et le type de fichier qu'il supporte.
-var Parser = marshal.Parser{FileType: "bdf", FileParser: ParseFile}
+// Parser fournit une instance utilisable par ParseFilesFromBatch.
+var Parser = &bdfParser{}
 
-// ParseFile permet de lancer le parsing du fichier demandé.
-func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) marshal.OpenFileResult {
-	closeFct, reader, err := openFile(filePath)
-	return marshal.OpenFileResult{
-		Error: err,
-		ParseLines: func(parsedLineChan chan marshal.ParsedLineResult) {
-			parseLines(reader, parsedLineChan)
-		},
-		Close: closeFct,
-	}
+type bdfParser struct {
+	file   *os.File
+	reader *csv.Reader
 }
 
-func openFile(filePath string) (func() error, *csv.Reader, error) {
+func (parser *bdfParser) GetFileType() string {
+	return "bdf"
+}
+
+func (parser *bdfParser) Init(cache *marshal.Cache, batch *base.AdminBatch) error {
+	return nil
+}
+
+func (parser *bdfParser) Open(filePath string) (err error) {
+	parser.file, parser.reader, err = openFile(filePath)
+	return err
+}
+
+func (parser *bdfParser) Close() error {
+	return parser.file.Close()
+}
+
+func openFile(filePath string) (*os.File, *csv.Reader, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		return file.Close, nil, err
+		return file, nil, err
 	}
 	reader := csv.NewReader(bufio.NewReader(file))
 	reader.Comma = ';'
 	reader.LazyQuotes = true
 	_, err = reader.Read() // Sauter l'en-tête
-	return file.Close, reader, err
+	return file, reader, err
 }
 
-func parseLines(reader *csv.Reader, parsedLineChan chan marshal.ParsedLineResult) {
+func (parser *bdfParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
 	for {
 		parsedLine := marshal.ParsedLineResult{}
-		row, err := reader.Read()
+		row, err := parser.reader.Read()
 		if err == io.EOF {
 			close(parsedLineChan)
 			break
