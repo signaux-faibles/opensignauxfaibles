@@ -39,34 +39,34 @@ func (effectif Effectif) Type() string {
 	return "effectif"
 }
 
-// ParserEffectif expose le parseur et le type de fichier qu'il supporte.
-var ParserEffectif = marshal.Parser{FileType: "effectif", FileParser: ParseEffectifFile}
+// ParserEffectif fournit une instance utilisable par ParseFilesFromBatch.
+var ParserEffectif = &effectifParser{}
 
-// ParseEffectifFile permet de lancer le parsing du fichier demandé.
-func ParseEffectifFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (marshal.FileReader, error) {
-	var idx colMapping
-	var periods []periodCol
-	file, reader, err := openEffectifFile(filePath)
-	if err == nil {
-		idx, periods, err = parseEffectifColMapping(reader)
-	}
-	return effectifReader{
-		file:    file,
-		reader:  reader,
-		periods: &periods,
-		idx:     idx,
-	}, err
-}
-
-type effectifReader struct {
+type effectifParser struct {
 	file    *os.File
 	reader  *csv.Reader
-	periods *[]periodCol
+	periods []periodCol
 	idx     colMapping
 }
 
-func (parser effectifReader) Close() error {
+func (parser *effectifParser) GetFileType() string {
+	return "effectif"
+}
+
+func (parser *effectifParser) Init(cache *marshal.Cache, batch *base.AdminBatch) error {
+	return nil
+}
+
+func (parser *effectifParser) Close() error {
 	return parser.file.Close()
+}
+
+func (parser *effectifParser) Open(filePath string) (err error) {
+	parser.file, parser.reader, err = openEffectifFile(filePath)
+	if err == nil {
+		parser.idx, parser.periods, err = parseEffectifColMapping(parser.reader)
+	}
+	return err
 }
 
 func openEffectifFile(filePath string) (*os.File, *csv.Reader, error) {
@@ -102,7 +102,7 @@ func parseEffectifColMapping(reader *csv.Reader) (colMapping, []periodCol, error
 	return idx, periods, err
 }
 
-func (parser effectifReader) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
+func (parser *effectifParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
 	for {
 		parsedLine := marshal.ParsedLineResult{}
 		row, err := parser.reader.Read()
@@ -112,7 +112,7 @@ func (parser effectifReader) ParseLines(parsedLineChan chan marshal.ParsedLineRe
 		} else if err != nil {
 			parsedLine.AddError(base.NewRegularError(err))
 		} else {
-			parseEffectifLine(row, parser.idx, parser.periods, &parsedLine)
+			parseEffectifLine(row, parser.idx, &parser.periods, &parsedLine)
 		}
 		parsedLineChan <- parsedLine
 	}
