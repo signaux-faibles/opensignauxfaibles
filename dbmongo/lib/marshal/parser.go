@@ -13,22 +13,13 @@ import (
 	"github.com/spf13/viper"
 )
 
-// Parser associe un type de fichier avec sa fonction de parsing.
-type Parser = struct {
-	FileType   string
-	FileParser ParseFile
-}
-
-// ParseFile fonction de traitement de données en entrée
-type ParseFile func(filePath, *Cache, *base.AdminBatch) OpenFileResult
-type filePath = string
-
-// OpenFileResult permet à runParserWithSirenFilter() de savoir si le fichier à
-// parser a bien été ouvert, puis de lancer le parsing des lignes.
-type OpenFileResult struct {
-	Error      error
-	ParseLines func(chan ParsedLineResult)
-	Close      func() error
+// Parser fournit les fonctions de parsing d'un type de fichier donné.
+type Parser interface {
+	GetFileType() string
+	Init(cache *Cache, batch *base.AdminBatch) error
+	Open(filePath string) error
+	ParseLines(parsedLineChan chan ParsedLineResult)
+	Close() error
 }
 
 // ParsedLineResult est le résultat du parsing d'une ligne.
@@ -62,17 +53,22 @@ type Tuple interface {
 func ParseFilesFromBatch(cache Cache, batch *base.AdminBatch, parser Parser) (chan Tuple, chan Event) {
 	outputChannel := make(chan Tuple)
 	eventChannel := make(chan Event)
+	fileType := parser.GetFileType()
 	event := Event{
-		Code:    Code(parser.FileType),
+		Code:    Code(fileType),
 		Channel: eventChannel,
 	}
+	filter := GetSirenFilterFromCache(cache)
 	go func() {
-		for _, path := range batch.Files[parser.FileType] {
+		for _, path := range batch.Files[fileType] {
 			tracker := gournal.NewTracker(
 				map[string]string{"path": path, "batchKey": batch.ID.Key},
 				TrackerReports)
 			filePath := viper.GetString("APP_DATA") + path
-			runParserWithSirenFilter(parser, filePath, &cache, batch, &tracker, outputChannel)
+			if err := parser.Init(&cache, batch); err != nil {
+				tracker.Add(base.NewFatalError(err))
+			}
+			runParserWithSirenFilter(parser, &filter, filePath, &tracker, outputChannel)
 			event.Info(tracker.Report("abstract"))
 		}
 		close(outputChannel)
@@ -81,15 +77,14 @@ func ParseFilesFromBatch(cache Cache, batch *base.AdminBatch, parser Parser) (ch
 	return outputChannel, eventChannel
 }
 
-func runParserWithSirenFilter(parser Parser, filePath string, cache *Cache, batch *base.AdminBatch, tracker *gournal.Tracker, outputChannel chan Tuple) {
-	filter := GetSirenFilterFromCache(*cache)
-	openFileRes := parser.FileParser(filePath, cache, batch)
+func runParserWithSirenFilter(parser Parser, filter *SirenFilter, filePath string, tracker *gournal.Tracker, outputChannel chan Tuple) {
+	err := parser.Open(filePath)
 	// Note: on ne passe plus le tracker aux parseurs afin de garder ici le controle de la numérotation des lignes où les erreurs sont trouvées
-	if openFileRes.Error != nil {
-		tracker.Add(base.NewFatalError(openFileRes.Error))
+	if err != nil {
+		tracker.Add(base.NewFatalError(err))
 	} else {
 		parsedLineChan := make(chan ParsedLineResult)
-		go openFileRes.ParseLines(parsedLineChan)
+		go parser.ParseLines(parsedLineChan)
 		for lineResult := range parsedLineChan {
 			for _, err := range lineResult.Errors {
 				tracker.Add(err)
@@ -111,7 +106,7 @@ func runParserWithSirenFilter(parser Parser, filePath string, cache *Cache, batc
 			tracker.Next()
 		}
 	}
-	if err := openFileRes.Close(); err != nil {
+	if err := parser.Close(); err != nil {
 		tracker.Add(base.NewFatalError(err))
 	}
 }

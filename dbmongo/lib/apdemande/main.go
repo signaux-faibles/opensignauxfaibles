@@ -47,34 +47,44 @@ func (apdemande APDemande) Scope() string {
 	return "etablissement"
 }
 
-// Parser expose le parseur et le type de fichier qu'il supporte.
-var Parser = marshal.Parser{FileType: "apdemande", FileParser: ParseFile}
+// Parser fournit une instance utilisable par ParseFilesFromBatch.
+var Parser = &apdemandeParser{}
 
-// ParseFile permet de lancer le parsing du fichier demandé.
-func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) marshal.OpenFileResult {
-	var idx colMapping
-	closeFct, reader, err := openFile(filePath)
-	if err == nil {
-		idx, err = parseColMapping(reader)
-	}
-	return marshal.OpenFileResult{
-		Error: err,
-		ParseLines: func(parsedLineChan chan marshal.ParsedLineResult) {
-			parseLines(reader, idx, parsedLineChan)
-		},
-		Close: closeFct,
-	}
+type apdemandeParser struct {
+	file   *os.File
+	reader *csv.Reader
+	idx    colMapping
 }
 
-func openFile(filePath string) (func() error, *csv.Reader, error) {
+func (parser *apdemandeParser) GetFileType() string {
+	return "apdemande"
+}
+
+func (parser *apdemandeParser) Init(cache *marshal.Cache, batch *base.AdminBatch) error {
+	return nil
+}
+
+func (parser *apdemandeParser) Open(filePath string) (err error) {
+	parser.file, parser.reader, err = openFile(filePath)
+	if err == nil {
+		parser.idx, err = parseColMapping(parser.reader)
+	}
+	return err
+}
+
+func (parser *apdemandeParser) Close() error {
+	return parser.file.Close()
+}
+
+func openFile(filePath string) (*os.File, *csv.Reader, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		return file.Close, nil, err
+		return file, nil, err
 	}
 	reader := csv.NewReader(file)
 	reader.Comma = ','
 	reader.LazyQuotes = true
-	return file.Close, reader, nil
+	return file, reader, nil
 }
 
 type colMapping map[string]int
@@ -110,19 +120,19 @@ func parseColMapping(reader *csv.Reader) (colMapping, error) {
 	return idx, nil
 }
 
-func parseLines(reader *csv.Reader, idx colMapping, parsedLineChan chan marshal.ParsedLineResult) {
+func (parser *apdemandeParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
 	for {
 		parsedLine := marshal.ParsedLineResult{}
-		row, err := reader.Read()
+		row, err := parser.reader.Read()
 		if err == io.EOF {
 			close(parsedLineChan)
 			break
 		} else if err != nil {
 			parsedLine.AddError(base.NewRegularError(err))
-		} else if row[idx["ETAB_SIRET"]] == "" {
+		} else if row[parser.idx["ETAB_SIRET"]] == "" {
 			parsedLine.AddError(base.NewRegularError(errors.New("invalidLine")))
 		} else {
-			parseApDemandeLine(row, idx, &parsedLine)
+			parseApDemandeLine(row, parser.idx, &parsedLine)
 			if len(parsedLine.Errors) > 0 {
 				parsedLine.Tuples = []marshal.Tuple{}
 			}

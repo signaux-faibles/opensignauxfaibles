@@ -38,34 +38,39 @@ func (ellisphere Ellisphere) Scope() string {
 	return "entreprise"
 }
 
-// Parser expose le parseur et le type de fichier qu'il supporte.
-var Parser = marshal.Parser{FileType: "ellisphere", FileParser: ParseFile}
+// Parser fournit une instance utilisable par ParseFilesFromBatch.
+var Parser = &ellisphereParser{}
 
-// ParseFile permet de lancer le parsing du fichier demandé.
-func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) marshal.OpenFileResult {
-	sheet, err := openFile(filePath)
-	return marshal.OpenFileResult{
-		Error: err,
-		ParseLines: func(parsedLineChan chan marshal.ParsedLineResult) {
-			parseLines(sheet, parsedLineChan)
-		},
-		Close: func() error { return nil },
-	}
+type ellisphereParser struct {
+	sheet *xlsx.Sheet
 }
 
-func openFile(filePath string) (*xlsx.Sheet, error) {
+func (parser *ellisphereParser) GetFileType() string {
+	return "ellisphere"
+}
+
+func (parser *ellisphereParser) Init(cache *marshal.Cache, batch *base.AdminBatch) error {
+	return nil
+}
+
+func (parser *ellisphereParser) Open(filePath string) (err error) {
 	xlsxFile, err := xlsx.OpenFile(filePath)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	if len(xlsxFile.Sheets) != 1 {
-		return nil, errors.Errorf("the source has %d sheets, should have only 1", len(xlsxFile.Sheets))
+		return errors.Errorf("the source has %d sheets, should have only 1", len(xlsxFile.Sheets))
 	}
-	return xlsxFile.Sheets[0], nil
+	parser.sheet = xlsxFile.Sheets[0]
+	return nil
 }
 
-func parseLines(sheet *xlsx.Sheet, parsedLineChan chan marshal.ParsedLineResult) {
-	sheet.ForEachRow(
+func (parser *ellisphereParser) Close() error {
+	return nil
+}
+
+func (parser *ellisphereParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
+	parser.sheet.ForEachRow(
 		func(row *xlsx.Row) error {
 			parsedLine := marshal.ParsedLineResult{}
 			var ellisphere Ellisphere
