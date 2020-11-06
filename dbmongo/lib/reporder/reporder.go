@@ -33,38 +33,35 @@ func (rep RepeatableOrder) Type() string {
 	return "reporder"
 }
 
-// Parser expose le parseur et le type de fichier qu'il supporte.
-var Parser = marshal.Parser{FileType: "reporder", FileParser: ParseFile}
+// Parser fournit une instance utilisable par ParseFilesFromBatch.
+var Parser = &reporderParser{}
 
-// ParseFile permet de lancer le parsing du fichier demandé.
-func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (marshal.FileReader, error) {
-	file, reader, err := openFile(filePath)
-	return reporderReader{
-		file:   file,
-		reader: reader,
-	}, err
-}
-
-type reporderReader struct {
+type reporderParser struct {
 	file   *os.File
 	reader *csv.Reader
 }
 
-func (parser reporderReader) Close() error {
+func (parser *reporderParser) GetFileType() string {
+	return "reporder"
+}
+
+func (parser *reporderParser) Init(cache *marshal.Cache, batch *base.AdminBatch) {}
+
+func (parser *reporderParser) Open(filePath string) (err error) {
+	parser.file, err = os.Open(filePath)
+	if err != nil {
+		return err
+	}
+	parser.reader = csv.NewReader(parser.file)
+	parser.reader.Comma = ','
+	return nil
+}
+
+func (parser *reporderParser) Close() error {
 	return parser.file.Close()
 }
 
-func openFile(filePath string) (*os.File, *csv.Reader, error) {
-	file, err := os.Open(filePath)
-	if err != nil {
-		return file, nil, err
-	}
-	reader := csv.NewReader(file)
-	reader.Comma = ','
-	return file, reader, nil
-}
-
-func (parser reporderReader) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
+func (parser *reporderParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
 	for {
 		parsedLine := marshal.ParsedLineResult{}
 		row, err := parser.reader.Read()
