@@ -116,24 +116,25 @@ func (diane Diane) Scope() string {
 	return "entreprise"
 }
 
-// Parser expose le parseur et le type de fichier qu'il supporte.
-var Parser = marshal.Parser{FileType: "diane", FileParser: ParseFile}
+// Parser fournit une instance utilisable par ParseFilesFromBatch.
+var Parser = &dianeParser{}
 
-// ParseFile permet de lancer le parsing du fichier demandé.
-func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (marshal.FileReader, error) {
-	closeFct, reader, err := openFile(filePath)
-	return dianeReader{
-		closeFct: closeFct,
-		reader:   reader,
-	}, err
-}
-
-type dianeReader struct {
+type dianeParser struct {
 	closeFct func() error
 	reader   *csv.Reader
 }
 
-func (parser dianeReader) Close() error {
+func (parser *dianeParser) GetFileType() string {
+	return "diane"
+}
+
+func (parser *dianeParser) Init(cache *marshal.Cache, batch *base.AdminBatch) {}
+
+func (parser *dianeParser) Open(filePath string) (err error) {
+	parser.closeFct, parser.reader, err = openFile(filePath)
+	return err
+}
+func (parser *dianeParser) Close() error {
 	return parser.closeFct()
 }
 
@@ -190,7 +191,7 @@ func openFile(filePath string) (func() error, *csv.Reader, error) {
 	return close, reader, nil
 }
 
-func (parser dianeReader) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
+func (parser *dianeParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
 	for {
 		parsedLine := marshal.ParsedLineResult{}
 		row, err := parser.reader.Read()
