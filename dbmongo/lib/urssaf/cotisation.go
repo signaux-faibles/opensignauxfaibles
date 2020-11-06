@@ -46,6 +46,10 @@ type cotisationParser struct {
 	comptes marshal.Comptes
 }
 
+func (parser *cotisationParser) GetFileType() string {
+	return "cotisation"
+}
+
 func (parser *cotisationParser) Close() error {
 	return parser.file.Close()
 }
