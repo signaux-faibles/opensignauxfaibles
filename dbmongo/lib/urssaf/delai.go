@@ -69,13 +69,13 @@ func (parser *delaiParser) Init(cache *marshal.Cache, batch *base.AdminBatch) (e
 }
 
 func (parser *delaiParser) Open(filePath string) (err error) {
-	file, err := os.Open(filePath)
+	parser.file, err = os.Open(filePath)
 	if err != nil {
 		return err
 	}
-	reader := csv.NewReader(bufio.NewReader(file))
-	reader.Comma = ';'
-	_, err = reader.Read() // Sauter l'en-tête
+	parser.reader = csv.NewReader(bufio.NewReader(parser.file))
+	parser.reader.Comma = ';'
+	_, err = parser.reader.Read() // Sauter l'en-tête
 	return err
 }
 
