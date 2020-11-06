@@ -37,43 +37,34 @@ func (cotisation Cotisation) Type() string {
 	return "cotisation"
 }
 
-// ParserCotisation expose le parseur et le type de fichier qu'il supporte.
-var ParserCotisation = marshal.Parser{FileType: "cotisation", FileParser: ParseCotisationFile}
+// ParserCotisation fournit une instance utilisable par ParseFilesFromBatch.
+var ParserCotisation = &cotisationParser{}
 
-// ParseCotisationFile permet de lancer le parsing du fichier demandé.
-func ParseCotisationFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (marshal.FileReader, error) {
-	var comptes marshal.Comptes
-	file, reader, err := openCotisationFile(filePath)
-	if err == nil {
-		comptes, err = marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
-	}
-	return cotisationReader{
-		file:    file,
-		reader:  reader,
-		comptes: &comptes,
-	}, err
-}
-
-type cotisationReader struct {
+type cotisationParser struct {
 	file    *os.File
 	reader  *csv.Reader
-	comptes *marshal.Comptes
+	comptes marshal.Comptes
 }
 
-func (parser cotisationReader) Close() error {
+func (parser *cotisationParser) Close() error {
 	return parser.file.Close()
 }
 
-func openCotisationFile(filePath string) (*os.File, *csv.Reader, error) {
-	file, err := os.Open(filePath)
+func (parser *cotisationParser) Init(cache *marshal.Cache, batch *base.AdminBatch) (err error) {
+	parser.comptes, err = marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
+	return err
+}
+
+func (parser *cotisationParser) Open(filePath string) (err error) {
+	parser.file, err = os.Open(filePath)
 	if err != nil {
-		return file, nil, err
+		return err
 	}
-	reader := csv.NewReader(bufio.NewReader(file))
-	reader.Comma = ';'
-	reader.LazyQuotes = true
-	_, err = reader.Read() // Sauter l'en-tête
-	return file, reader, err
+	parser.reader = csv.NewReader(bufio.NewReader(parser.file))
+	parser.reader.Comma = ';'
+	parser.reader.LazyQuotes = true
+	_, err = parser.reader.Read() // Sauter l'en-tête
+	return err
 }
 
 var idxCotisation = colMapping{
@@ -83,7 +74,7 @@ var idxCotisation = colMapping{
 	"Du":           6,
 }
 
-func (parser cotisationReader) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
+func (parser *cotisationParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
 	for {
 		parsedLine := marshal.ParsedLineResult{}
 		row, err := parser.reader.Read()
@@ -93,7 +84,7 @@ func (parser cotisationReader) ParseLines(parsedLineChan chan marshal.ParsedLine
 		} else if err != nil {
 			parsedLine.AddError(base.NewRegularError(err))
 		} else {
-			parseCotisationLine(row, parser.comptes, &parsedLine)
+			parseCotisationLine(row, &parser.comptes, &parsedLine)
 			if len(parsedLine.Errors) > 0 {
 				parsedLine.Tuples = []marshal.Tuple{}
 			}
