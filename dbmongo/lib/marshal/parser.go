@@ -16,7 +16,7 @@ import (
 // Parser fournit les fonctions de parsing d'un type de fichier donné.
 type Parser interface {
 	GetFileType() string
-	Init(cache *Cache, batch *base.AdminBatch)
+	Init(cache *Cache, batch *base.AdminBatch) error
 	Open(filePath string) error
 	ParseLines(parsedLineChan chan ParsedLineResult)
 	Close() error

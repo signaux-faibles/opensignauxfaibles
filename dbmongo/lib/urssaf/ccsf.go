@@ -36,42 +36,37 @@ func (ccsf CCSF) Type() string {
 	return "ccsf"
 }
 
-// ParserCCSF expose le parseur et le type de fichier qu'il supporte.
-var ParserCCSF = marshal.Parser{FileType: "ccsf", FileParser: ParseCcsfFile}
+// ParserCCSF fournit une instance utilisable par ParseFilesFromBatch.
+var ParserCCSF = &ccsfParser{}
 
-// ParseCcsfFile permet de lancer le parsing du fichier demandé.
-func ParseCcsfFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (marshal.FileReader, error) {
-	var comptes marshal.Comptes
-	file, reader, err := openCcsfFile(filePath)
-	if err == nil {
-		comptes, err = marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
-	}
-	return ccsfReader{
-		file:    file,
-		reader:  reader,
-		comptes: &comptes,
-	}, err
-}
-
-type ccsfReader struct {
+type ccsfParser struct {
 	file    *os.File
 	reader  *csv.Reader
-	comptes *marshal.Comptes
+	comptes marshal.Comptes
 }
 
-func (parser ccsfReader) Close() error {
+func (parser *ccsfParser) GetFileType() string {
+	return "ccsf"
+}
+
+func (parser *ccsfParser) Init(cache *marshal.Cache, batch *base.AdminBatch) (err error) {
+	parser.comptes, err = marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
+	return err
+}
+
+func (parser *ccsfParser) Close() error {
 	return parser.file.Close()
 }
 
-func openCcsfFile(filePath string) (*os.File, *csv.Reader, error) {
-	file, err := os.Open(filePath)
+func (parser *ccsfParser) Open(filePath string) (err error) {
+	parser.file, err = os.Open(filePath)
 	if err != nil {
-		return file, nil, err
+		return err
 	}
-	reader := csv.NewReader(bufio.NewReader(file))
-	reader.Comma = ';'
-	_, err = reader.Read() // Sauter l'en-tête
-	return file, reader, err
+	parser.reader = csv.NewReader(bufio.NewReader(parser.file))
+	parser.reader.Comma = ';'
+	_, err = parser.reader.Read() // Sauter l'en-tête
+	return err
 }
 
 var idxCcsf = colMapping{
@@ -81,7 +76,7 @@ var idxCcsf = colMapping{
 	"Action":         5,
 }
 
-func (parser ccsfReader) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
+func (parser *ccsfParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
 	for {
 		parsedLine := marshal.ParsedLineResult{}
 		row, err := parser.reader.Read()
@@ -91,7 +86,7 @@ func (parser ccsfReader) ParseLines(parsedLineChan chan marshal.ParsedLineResult
 		} else if err != nil {
 			parsedLine.AddError(base.NewRegularError(err))
 		} else {
-			parseCcsfLine(row, parser.comptes, &parsedLine)
+			parseCcsfLine(row, &parser.comptes, &parsedLine)
 			if len(parsedLine.Errors) > 0 {
 				parsedLine.Tuples = []marshal.Tuple{}
 			}
