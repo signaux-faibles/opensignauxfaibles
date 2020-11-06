@@ -1,9 +1,5 @@
 package base
 
-import (
-	"fmt"
-)
-
 // CriticityError object
 type CriticityError interface {
 	error
@@ -14,14 +10,6 @@ type CriticityError interface {
 type CriticError struct {
 	err       error
 	criticity string
-}
-
-// newCriticError creates an error with the provided criticity
-func newCriticError(err error, criticity string) error {
-	if err == nil {
-		return nil
-	}
-	return &CriticError{err, criticity}
 }
 
 // Criticity returns criticity
@@ -36,39 +24,25 @@ func (pe *CriticError) Error() string {
 	return pe.err.Error()
 }
 
-// FilterError occurs when something goes wrong while filtering
-type FilterError struct {
-	*CriticError
+// newCriticError creates an error with the provided criticity
+func newCriticError(err error, criticity string) CriticityError {
+	if err == nil {
+		return nil
+	}
+	return &CriticError{err, criticity}
 }
 
-// NewFilterError returns a filter error
-func NewFilterError(err error) error {
+// NewFilterError returns a filter error (occurs when something goes wrong while filtering)
+func NewFilterError(err error) CriticityError {
 	return newCriticError(err, "filter")
 }
 
 // NewRegularError creates a regular error
-func NewRegularError(err error) error {
+func NewRegularError(err error) CriticityError {
 	return newCriticError(err, "error")
 }
 
 // NewFatalError creates a fatal error
-func NewFatalError(err error) error {
+func NewFatalError(err error) CriticityError {
 	return newCriticError(err, "fatal")
-}
-
-// MappingError occurs when something goes wrong while looking for a mapping
-type MappingError struct {
-	*CriticError
-}
-
-// NewMappingError return a mapping Error
-func NewMappingError(err error, criticity string) error {
-	if err == nil {
-		return nil
-	}
-	return &MappingError{newCriticError(err, criticity).(*CriticError)}
-}
-
-func (pe *MappingError) Error() string {
-	return fmt.Sprintf("Error while loading or applying the key mapping: %v", pe.err)
 }

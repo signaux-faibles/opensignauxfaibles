@@ -12,6 +12,41 @@ import (
 // MaxParsingErrors is the number of parsing errors to report per file.
 var MaxParsingErrors = 200
 
+// ParsingTracker permet de collecter puis rapporter des erreurs de parsing.
+type ParsingTracker struct {
+	gournalTracker gournal.Tracker
+}
+
+// Add rapporte une erreur de parsing à la ligne en cours.
+func (tracker *ParsingTracker) Add(err base.CriticityError) {
+	tracker.gournalTracker.Add(err)
+}
+
+// Next informe le Tracker qu'on passe à la ligne suivante.
+func (tracker *ParsingTracker) Next() {
+	tracker.gournalTracker.Next()
+}
+
+// Report génère un rapport de parsing à partir des erreurs rapportées.
+func (tracker *ParsingTracker) Report(code string) interface{} {
+	return tracker.gournalTracker.Report(code)
+}
+
+// NewParsingTracker retourne une instance pour rapporter les erreurs de parsing.
+func NewParsingTracker(batchKey string, filePath string) ParsingTracker {
+	// fonctions de reporting du moteur
+	trackerReports := map[string]gournal.ReportFunction{
+		"abstract": reportAbstract,
+	}
+	context := map[string]string{
+		"path":     filePath,
+		"batchKey": batchKey,
+	}
+	return ParsingTracker{
+		gournalTracker: gournal.NewTracker(context, trackerReports),
+	}
+}
+
 func reportAbstract(tracker gournal.Tracker) interface{} {
 
 	var nError = 0
@@ -35,32 +70,23 @@ func reportAbstract(tracker gournal.Tracker) interface{} {
 	for _, cycle := range cycles {
 		var lineRejected = false
 		// pour chaque erreur du cycle
-		for _, err := range tracker.Errors[cycle] {
-			switch c := err.(type) {
-			case base.CriticityError:
-				if c.Criticity() == "fatal" {
-					nFatal++
-					if len(fatalErrors) < MaxParsingErrors {
-						fatalErrors = append(fatalErrors, fmt.Sprintf("Cycle %d: %v", cycle, err))
-					}
-				}
-				if c.Criticity() == "error" {
-					lineRejected = true
-					if len(errorErrors) < MaxParsingErrors {
-						errorErrors = append(errorErrors, fmt.Sprintf("Cycle %d: %v", cycle, err))
-					}
-				}
-				if c.Criticity() == "filter" {
-					nFiltered++
-					if len(filterErrors) < MaxParsingErrors {
-						filterErrors = append(filterErrors, fmt.Sprintf("Cycle %d: %v", cycle, err))
-					}
-				}
-			default:
+		cycleErrors := tracker.Errors[cycle]
+		for _, err := range cycleErrors {
+			switch err.(base.CriticityError).Criticity() {
+			case "fatal":
 				nFatal++
 				if len(fatalErrors) < MaxParsingErrors {
 					fatalErrors = append(fatalErrors, fmt.Sprintf("Cycle %d: %v", cycle, err))
-					fmt.Printf("Cycle %d: %v", cycle, err)
+				}
+			case "error":
+				lineRejected = true
+				if len(errorErrors) < MaxParsingErrors {
+					errorErrors = append(errorErrors, fmt.Sprintf("Cycle %d: %v", cycle, err))
+				}
+			case "filter":
+				nFiltered++
+				if len(filterErrors) < MaxParsingErrors {
+					filterErrors = append(filterErrors, fmt.Sprintf("Cycle %d: %v", cycle, err))
 				}
 			}
 		}
@@ -98,9 +124,4 @@ func reportAbstract(tracker gournal.Tracker) interface{} {
 		"headRejected":  errorErrors,
 		"headFatal":     fatalErrors,
 	}
-}
-
-// TrackerReports contient les fonctions de reporting du moteur
-var TrackerReports = map[string]gournal.ReportFunction{
-	"abstract": reportAbstract,
 }

@@ -210,7 +210,7 @@ func (parser *sireneParser) ParseLines(parsedLineChan chan marshal.ParsedLineRes
 			close(parsedLineChan)
 			break
 		} else if err != nil {
-			parsedLine.AddError(base.NewRegularError(err))
+			parsedLine.AddRegularError(err)
 		} else {
 			parseLine(row, &parsedLine)
 		}
@@ -224,7 +224,7 @@ func parseLine(row []string, parsedLine *marshal.ParsedLineResult) {
 	sirene.Siren = row[f["siren"]]
 	sirene.Nic = row[f["nic"]]
 	sirene.Siege, err = strconv.ParseBool(row[f["etablissementSiege"]])
-	parsedLine.AddError(base.NewRegularError(err))
+	parsedLine.AddRegularError(err)
 
 	sirene.ComplementAdresse = row[f["complementAdresseEtablissement"]]
 	sirene.NumVoie = row[f["numeroVoieEtablissement"]]
@@ -251,7 +251,7 @@ func parseLine(row []string, parsedLine *marshal.ParsedLineResult) {
 		}
 		sirene.Departement = departement
 	} else {
-		parsedLine.AddError(base.NewRegularError(errors.New("Code postal est manquant ou de format incorrect")))
+		parsedLine.AddRegularError(errors.New("Code postal est manquant ou de format incorrect"))
 	}
 
 	if row[f["activitePrincipaleEtablissement"]] != "" {
@@ -271,14 +271,14 @@ func parseLine(row []string, parsedLine *marshal.ParsedLineResult) {
 	if err == nil {
 		sirene.Creation = &creation
 	}
-	parsedLine.AddError(base.NewRegularError(err))
+	parsedLine.AddRegularError(err)
 
 	long, err := strconv.ParseFloat(row[f["longitude"]], 64)
 	if err == nil {
 		sirene.Longitude = long
 	}
 	if row[48] != "" {
-		parsedLine.AddError(base.NewRegularError(err))
+		parsedLine.AddRegularError(err)
 	}
 
 	lat, err := strconv.ParseFloat(row[f["latitude"]], 64)
@@ -286,7 +286,7 @@ func parseLine(row []string, parsedLine *marshal.ParsedLineResult) {
 		sirene.Latitude = lat
 	}
 	if row[49] != "" {
-		parsedLine.AddError(base.NewRegularError(err))
+		parsedLine.AddRegularError(err)
 	}
 	parsedLine.AddTuple(sirene)
 }

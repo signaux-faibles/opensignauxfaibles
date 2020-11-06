@@ -75,7 +75,7 @@ func (parser *ellisphereParser) ParseLines(parsedLineChan chan marshal.ParsedLin
 			parsedLine := marshal.ParsedLineResult{}
 			var ellisphere Ellisphere
 			err := row.ReadStruct(&ellisphere)
-			parsedLine.AddError(base.NewRegularError(err))
+			parsedLine.AddRegularError(err)
 			if len(parsedLine.Errors) == 0 {
 				parsedLine.AddTuple(ellisphere)
 			}

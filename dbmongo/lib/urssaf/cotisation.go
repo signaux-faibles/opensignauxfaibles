@@ -86,7 +86,7 @@ func (parser *cotisationParser) ParseLines(parsedLineChan chan marshal.ParsedLin
 			close(parsedLineChan)
 			break
 		} else if err != nil {
-			parsedLine.AddError(base.NewRegularError(err))
+			parsedLine.AddRegularError(err)
 		} else {
 			parseCotisationLine(row, &parser.comptes, &parsedLine)
 			if len(parsedLine.Errors) > 0 {
@@ -103,20 +103,20 @@ func parseCotisationLine(row []string, comptes *marshal.Comptes, parsedLine *mar
 
 	periode, err := marshal.UrssafToPeriod(row[idx["Periode"]])
 	date := periode.Start
-	parsedLine.AddError(base.NewRegularError(err))
+	parsedLine.AddRegularError(err)
 
 	siret, err := marshal.GetSiretFromComptesMapping(row[idx["NumeroCompte"]], &date, *comptes)
 	if err != nil {
-		parsedLine.AddError(base.NewFilterError(err))
+		parsedLine.AddFilterError(err)
 	} else {
 		cotisation.key = siret
 		cotisation.NumeroCompte = row[idx["NumeroCompte"]]
 		cotisation.Periode, err = marshal.UrssafToPeriod(row[idx["Periode"]])
-		parsedLine.AddError(base.NewRegularError(err))
+		parsedLine.AddRegularError(err)
 		cotisation.Encaisse, err = strconv.ParseFloat(strings.Replace(row[idx["Encaisse"]], ",", ".", -1), 64)
-		parsedLine.AddError(base.NewRegularError(err))
+		parsedLine.AddRegularError(err)
 		cotisation.Du, err = strconv.ParseFloat(strings.Replace(row[idx["Du"]], ",", ".", -1), 64)
-		parsedLine.AddError(base.NewRegularError(err))
+		parsedLine.AddRegularError(err)
 	}
 	parsedLine.AddTuple(cotisation)
 }

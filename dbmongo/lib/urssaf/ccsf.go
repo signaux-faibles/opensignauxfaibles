@@ -84,7 +84,7 @@ func (parser *ccsfParser) ParseLines(parsedLineChan chan marshal.ParsedLineResul
 			close(parsedLineChan)
 			break
 		} else if err != nil {
-			parsedLine.AddError(base.NewRegularError(err))
+			parsedLine.AddRegularError(err)
 		} else {
 			parseCcsfLine(row, &parser.comptes, &parsedLine)
 			if len(parsedLine.Errors) > 0 {
@@ -103,7 +103,7 @@ func parseCcsfLine(row []string, comptes *marshal.Comptes, parsedLine *marshal.P
 		ccsf.Action = row[idx["Action"]]
 		ccsf.Stade = row[idx["Stade"]]
 		ccsf.DateTraitement, err = marshal.UrssafToDate(row[idx["DateTraitement"]])
-		parsedLine.AddError(base.NewRegularError(err))
+		parsedLine.AddRegularError(err)
 		if err != nil {
 			return
 		}
@@ -111,13 +111,13 @@ func parseCcsfLine(row []string, comptes *marshal.Comptes, parsedLine *marshal.P
 		ccsf.key, err = marshal.GetSiretFromComptesMapping(row[idx["NumeroCompte"]], &ccsf.DateTraitement, *comptes)
 		if err != nil {
 			// Compte filtré
-			parsedLine.AddError(base.NewFilterError(err))
+			parsedLine.AddFilterError(err)
 			return
 		}
 		ccsf.NumeroCompte = row[idx["NumeroCompte"]]
 
 	} else {
-		parsedLine.AddError(base.NewRegularError(errors.New("Ligne non conforme, moins de 4 champs")))
+		parsedLine.AddRegularError(errors.New("Ligne non conforme, moins de 4 champs"))
 	}
 	parsedLine.AddTuple(ccsf)
 }
