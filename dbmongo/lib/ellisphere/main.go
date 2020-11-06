@@ -52,23 +52,19 @@ func (parser *ellisphereParser) GetFileType() string {
 func (parser *ellisphereParser) Init(cache *marshal.Cache, batch *base.AdminBatch) {}
 
 func (parser *ellisphereParser) Open(filePath string) (err error) {
-	parser.sheet, err = openFile(filePath)
-	return err
+	xlsxFile, err := xlsx.OpenFile(filePath)
+	if err != nil {
+		return err
+	}
+	if len(xlsxFile.Sheets) != 1 {
+		return errors.Errorf("the source has %d sheets, should have only 1", len(xlsxFile.Sheets))
+	}
+	parser.sheet = xlsxFile.Sheets[0]
+	return nil
 }
 
 func (parser *ellisphereParser) Close() error {
 	return nil
-}
-
-func openFile(filePath string) (*xlsx.Sheet, error) {
-	xlsxFile, err := xlsx.OpenFile(filePath)
-	if err != nil {
-		return nil, err
-	}
-	if len(xlsxFile.Sheets) != 1 {
-		return nil, errors.Errorf("the source has %d sheets, should have only 1", len(xlsxFile.Sheets))
-	}
-	return xlsxFile.Sheets[0], nil
 }
 
 func (parser *ellisphereParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
