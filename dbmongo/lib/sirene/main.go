@@ -171,39 +171,36 @@ func (sirene Sirene) Scope() string {
 	return "etablissement"
 }
 
-// Parser expose le parseur et le type de fichier qu'il supporte.
-var Parser = marshal.Parser{FileType: "sirene", FileParser: ParseFile}
+// Parser fournit une instance utilisable par ParseFilesFromBatch.
+var Parser = &sireneParser{}
 
-// ParseFile permet de lancer le parsing du fichier demandé.
-func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (marshal.FileReader, error) {
-	file, reader, err := openFile(filePath)
-	return sireneReader{
-		file:   file,
-		reader: reader,
-	}, err
-}
-
-type sireneReader struct {
+type sireneParser struct {
 	file   *os.File
 	reader *csv.Reader
 }
 
-func (parser sireneReader) Close() error {
+func (parser *sireneParser) GetFileType() string {
+	return "sirene"
+}
+
+func (parser *sireneParser) Init(cache *marshal.Cache, batch *base.AdminBatch) {}
+
+func (parser *sireneParser) Close() error {
 	return parser.file.Close()
 }
 
-func openFile(filePath string) (*os.File, *csv.Reader, error) {
-	file, err := os.Open(filePath)
+func (parser *sireneParser) Open(filePath string) (err error) {
+	parser.file, err = os.Open(filePath)
 	if err != nil {
-		return file, nil, err
+		return err
 	}
-	reader := csv.NewReader(file)
-	reader.Comma = ','
-	reader.LazyQuotes = true
-	return file, reader, nil
+	parser.reader = csv.NewReader(parser.file)
+	parser.reader.Comma = ','
+	parser.reader.LazyQuotes = true
+	return nil
 }
 
-func (parser sireneReader) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
+func (parser *sireneParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
 	for {
 		parsedLine := marshal.ParsedLineResult{}
 		row, err := parser.reader.Read()
