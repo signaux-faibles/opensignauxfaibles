@@ -53,7 +53,9 @@ func (parser *sireneUlParser) GetFileType() string {
 	return "sirene_ul"
 }
 
-func (parser *sireneUlParser) Init(cache *marshal.Cache, batch *base.AdminBatch) {}
+func (parser *sireneUlParser) Init(cache *marshal.Cache, batch *base.AdminBatch) error {
+	return nil
+}
 
 func (parser *sireneUlParser) Close() error {
 	return parser.file.Close()

@@ -49,7 +49,9 @@ func (parser *ellisphereParser) GetFileType() string {
 	return "ellisphere"
 }
 
-func (parser *ellisphereParser) Init(cache *marshal.Cache, batch *base.AdminBatch) {}
+func (parser *ellisphereParser) Init(cache *marshal.Cache, batch *base.AdminBatch) error {
+	return nil
+}
 
 func (parser *ellisphereParser) Open(filePath string) (err error) {
 	xlsxFile, err := xlsx.OpenFile(filePath)

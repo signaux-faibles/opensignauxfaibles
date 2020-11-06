@@ -50,7 +50,9 @@ func (parser *apconsoParser) GetFileType() string {
 	return "apconso"
 }
 
-func (parser *apconsoParser) Init(cache *marshal.Cache, batch *base.AdminBatch) {}
+func (parser *apconsoParser) Init(cache *marshal.Cache, batch *base.AdminBatch) error {
+	return nil
+}
 
 func (parser *apconsoParser) Open(filePath string) (err error) {
 	parser.file, parser.reader, err = openFile(filePath)

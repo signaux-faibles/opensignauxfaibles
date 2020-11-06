@@ -55,7 +55,9 @@ func (parser *bdfParser) GetFileType() string {
 	return "bdf"
 }
 
-func (parser *bdfParser) Init(cache *marshal.Cache, batch *base.AdminBatch) {}
+func (parser *bdfParser) Init(cache *marshal.Cache, batch *base.AdminBatch) error {
+	return nil
+}
 
 func (parser *bdfParser) Open(filePath string) (err error) {
 	parser.file, parser.reader, err = openFile(filePath)

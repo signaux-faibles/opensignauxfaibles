@@ -128,7 +128,9 @@ func (parser *dianeParser) GetFileType() string {
 	return "diane"
 }
 
-func (parser *dianeParser) Init(cache *marshal.Cache, batch *base.AdminBatch) {}
+func (parser *dianeParser) Init(cache *marshal.Cache, batch *base.AdminBatch) error {
+	return nil
+}
 
 func (parser *dianeParser) Open(filePath string) (err error) {
 	parser.closeFct, parser.reader, err = openFile(filePath)

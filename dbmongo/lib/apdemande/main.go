@@ -60,7 +60,9 @@ func (parser *apdemandeParser) GetFileType() string {
 	return "apdemande"
 }
 
-func (parser *apdemandeParser) Init(cache *marshal.Cache, batch *base.AdminBatch) {}
+func (parser *apdemandeParser) Init(cache *marshal.Cache, batch *base.AdminBatch) error {
+	return nil
+}
 
 func (parser *apdemandeParser) Open(filePath string) (err error) {
 	parser.file, parser.reader, err = openFile(filePath)
