@@ -50,7 +50,7 @@ func (parser *comptesParser) Init(cache *marshal.Cache, batch *base.AdminBatch) 
 	return err
 }
 
-func (parser *comptesParser) Open() error {
+func (parser *comptesParser) Open(filePath string) error {
 	// Ce parseur produit des tuples à partir des mappings compte<->siret déjà
 	// parsés par marshal.GetCompteSiretMapping(). => pas de fichier à ouvrir.
 	return nil
