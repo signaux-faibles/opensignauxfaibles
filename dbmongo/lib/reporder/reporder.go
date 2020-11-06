@@ -45,7 +45,9 @@ func (parser *reporderParser) GetFileType() string {
 	return "reporder"
 }
 
-func (parser *reporderParser) Init(cache *marshal.Cache, batch *base.AdminBatch) {}
+func (parser *reporderParser) Init(cache *marshal.Cache, batch *base.AdminBatch) error {
+	return nil
+}
 
 func (parser *reporderParser) Open(filePath string) (err error) {
 	parser.file, err = os.Open(filePath)
