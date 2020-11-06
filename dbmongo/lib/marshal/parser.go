@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/signaux-faibles/gournal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sfregexp"
 	"github.com/spf13/viper"
@@ -68,9 +67,7 @@ func ParseFilesFromBatch(cache Cache, batch *base.AdminBatch, parser Parser) (ch
 	filter := GetSirenFilterFromCache(cache)
 	go func() {
 		for _, path := range batch.Files[fileType] {
-			tracker := gournal.NewTracker(
-				map[string]string{"path": path, "batchKey": batch.ID.Key},
-				TrackerReports)
+			tracker := NewParsingTracker(batch.ID.Key, path)
 			filePath := viper.GetString("APP_DATA") + path
 			if err := parser.Init(&cache, batch); err != nil {
 				tracker.Add(base.NewFatalError(err))
@@ -84,7 +81,7 @@ func ParseFilesFromBatch(cache Cache, batch *base.AdminBatch, parser Parser) (ch
 	return outputChannel, eventChannel
 }
 
-func runParserWithSirenFilter(parser Parser, filter *SirenFilter, filePath string, tracker *gournal.Tracker, outputChannel chan Tuple) {
+func runParserWithSirenFilter(parser Parser, filter *SirenFilter, filePath string, tracker *ParsingTracker, outputChannel chan Tuple) {
 	err := parser.Open(filePath)
 	// Note: on ne passe plus le tracker aux parseurs afin de garder ici le controle de la numérotation des lignes où les erreurs sont trouvées
 	if err != nil {
