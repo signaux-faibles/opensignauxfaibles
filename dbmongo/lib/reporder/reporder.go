@@ -71,7 +71,7 @@ func (parser *reporderParser) ParseLines(parsedLineChan chan marshal.ParsedLineR
 			close(parsedLineChan)
 			break
 		} else if err != nil {
-			parsedLine.AddError(base.NewRegularError(err))
+			parsedLine.AddRegularError(err)
 		} else {
 			parseReporderLine(row, &parsedLine)
 			if len(parsedLine.Errors) > 0 {
@@ -84,9 +84,9 @@ func (parser *reporderParser) ParseLines(parsedLineChan chan marshal.ParsedLineR
 
 func parseReporderLine(row []string, parsedLine *marshal.ParsedLineResult) {
 	periode, err := time.Parse("2006-01-02", row[1])
-	parsedLine.AddError(base.NewRegularError(err))
+	parsedLine.AddRegularError(err)
 	randomOrder, err := misc.ParsePFloat(row[2])
-	parsedLine.AddError(base.NewRegularError(err))
+	parsedLine.AddRegularError(err)
 	parsedLine.AddTuple(RepeatableOrder{
 		Siret:       row[0],
 		Periode:     periode,

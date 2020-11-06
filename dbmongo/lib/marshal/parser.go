@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/signaux-faibles/gournal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sfregexp"
 	"github.com/spf13/viper"
@@ -25,7 +24,7 @@ type Parser interface {
 // ParsedLineResult est le résultat du parsing d'une ligne.
 type ParsedLineResult struct {
 	Tuples []Tuple
-	Errors []error // TODO: utiliser CriticError ici
+	Errors []base.CriticityError
 }
 
 // AddTuple permet au parseur d'ajouter un tuple extrait depuis la ligne en cours.
@@ -35,10 +34,17 @@ func (res *ParsedLineResult) AddTuple(tuple Tuple) {
 	}
 }
 
-// AddError permet au parseur d'ajouter un tuple extrait depuis la ligne en cours.
-func (res *ParsedLineResult) AddError(err error) { // TODO: utiliser CriticError ici
+// AddRegularError permet au parseur de rapporter une erreur d'extraction.
+func (res *ParsedLineResult) AddRegularError(err error) {
 	if err != nil {
-		res.Errors = append(res.Errors, err)
+		res.Errors = append(res.Errors, base.NewRegularError(err))
+	}
+}
+
+// AddFilterError permet au parseur de rapporter qu'une ligne a été filtrée.
+func (res *ParsedLineResult) AddFilterError(err error) {
+	if err != nil {
+		res.Errors = append(res.Errors, base.NewFilterError(err))
 	}
 }
 
@@ -61,9 +67,7 @@ func ParseFilesFromBatch(cache Cache, batch *base.AdminBatch, parser Parser) (ch
 	filter := GetSirenFilterFromCache(cache)
 	go func() {
 		for _, path := range batch.Files[fileType] {
-			tracker := gournal.NewTracker(
-				map[string]string{"path": path, "batchKey": batch.ID.Key},
-				TrackerReports)
+			tracker := NewParsingTracker(batch.ID.Key, path)
 			filePath := viper.GetString("APP_DATA") + path
 			if err := parser.Init(&cache, batch); err != nil {
 				tracker.Add(base.NewFatalError(err))
@@ -77,7 +81,7 @@ func ParseFilesFromBatch(cache Cache, batch *base.AdminBatch, parser Parser) (ch
 	return outputChannel, eventChannel
 }
 
-func runParserWithSirenFilter(parser Parser, filter *SirenFilter, filePath string, tracker *gournal.Tracker, outputChannel chan Tuple) {
+func runParserWithSirenFilter(parser Parser, filter *SirenFilter, filePath string, tracker *ParsingTracker, outputChannel chan Tuple) {
 	err := parser.Open(filePath)
 	// Note: on ne passe plus le tracker aux parseurs afin de garder ici le controle de la numérotation des lignes où les erreurs sont trouvées
 	if err != nil {

@@ -201,9 +201,9 @@ func (parser *dianeParser) ParseLines(parsedLineChan chan marshal.ParsedLineResu
 			close(parsedLineChan)
 			break
 		} else if err != nil {
-			parsedLine.AddError(base.NewRegularError(err))
+			parsedLine.AddRegularError(err)
 		} else if len(row) < 83 {
-			parsedLine.AddError(base.NewRegularError(errors.New("Ligne invalide")))
+			parsedLine.AddRegularError(errors.New("Ligne invalide"))
 		} else {
 			parseDianeLine(row, &parsedLine)
 		}

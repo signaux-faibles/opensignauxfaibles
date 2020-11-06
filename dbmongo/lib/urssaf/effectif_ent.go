@@ -80,7 +80,7 @@ func (parser *effectifEntParser) ParseLines(parsedLineChan chan marshal.ParsedLi
 			close(parsedLineChan)
 			break
 		} else if err != nil {
-			parsedLine.AddError(base.NewRegularError(err))
+			parsedLine.AddRegularError(err)
 		} else {
 			parseEffectifEntLine(row, parser.idx, &parser.periods, &parsedLine)
 		}
@@ -125,7 +125,7 @@ func parseEffectifEntLine(row []string, idx colMapping, periods *[]periodCol, pa
 		if value != "" {
 			noThousandsSep := sfregexp.RegexpDict["notDigit"].ReplaceAllString(value, "")
 			s, err := strconv.ParseFloat(noThousandsSep, 64)
-			parsedLine.AddError(base.NewRegularError(err))
+			parsedLine.AddRegularError(err)
 			e := int(s)
 			if e > 0 {
 				parsedLine.AddTuple(EffectifEnt{
