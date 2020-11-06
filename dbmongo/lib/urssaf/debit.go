@@ -50,37 +50,35 @@ func (debit Debit) Type() string {
 
 type colMapping map[string]int
 
-// ParserDebit expose le parseur et le type de fichier qu'il supporte.
-var ParserDebit = marshal.Parser{FileType: "debit", FileParser: ParseDebitFile}
+// ParserDebit fournit une instance utilisable par ParseFilesFromBatch.
+var ParserDebit = &debitParser{}
 
-// ParseDebitFile permet de lancer le parsing du fichier demandé.
-func ParseDebitFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (marshal.FileReader, error) {
-	var idx colMapping
-	var comptes marshal.Comptes
-	file, reader, err := openDebitFile(filePath)
-	if err == nil {
-		idx, err = parseDebitColMapping(reader)
-	}
-	if err == nil {
-		comptes, err = marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
-	}
-	return debitReader{
-		file:    file,
-		reader:  reader,
-		comptes: &comptes,
-		idx:     idx,
-	}, err
-}
-
-type debitReader struct {
+type debitParser struct {
 	file    *os.File
 	reader  *csv.Reader
-	comptes *marshal.Comptes
+	comptes marshal.Comptes
 	idx     colMapping
 }
 
-func (parser debitReader) Close() error {
+func (parser *debitParser) GetFileType() string {
+	return "debit"
+}
+
+func (parser *debitParser) Close() error {
 	return parser.file.Close()
+}
+
+func (parser *debitParser) Init(cache *marshal.Cache, batch *base.AdminBatch) (err error) {
+	parser.comptes, err = marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
+	return err
+}
+
+func (parser *debitParser) Open(filePath string) (err error) {
+	parser.file, parser.reader, err = openDebitFile(filePath)
+	if err == nil {
+		parser.idx, err = parseDebitColMapping(parser.reader)
+	}
+	return err
 }
 
 func openDebitFile(filePath string) (*os.File, *csv.Reader, error) {
@@ -119,7 +117,7 @@ func parseDebitColMapping(reader *csv.Reader) (colMapping, error) {
 	return idx, nil
 }
 
-func (parser debitReader) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
+func (parser *debitParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
 	var lineNumber = 0 // starting with the header
 	stopProgressLogger := marshal.LogProgress(&lineNumber)
 	defer stopProgressLogger()
@@ -137,7 +135,7 @@ func (parser debitReader) ParseLines(parsedLineChan chan marshal.ParsedLineResul
 			period, _ := marshal.UrssafToPeriod(row[parser.idx["periode"]])
 			date := period.Start
 
-			if siret, err := marshal.GetSiretFromComptesMapping(row[parser.idx["numeroCompte"]], &date, *parser.comptes); err == nil {
+			if siret, err := marshal.GetSiretFromComptesMapping(row[parser.idx["numeroCompte"]], &date, parser.comptes); err == nil {
 				parseDebitLine(siret, row, parser.idx, &parsedLine)
 				if len(parsedLine.Errors) > 0 {
 					parsedLine.Tuples = []marshal.Tuple{}
