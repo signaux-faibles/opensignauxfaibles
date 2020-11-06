@@ -38,31 +38,33 @@ func (procol Procol) Type() string {
 	return "procol"
 }
 
-// ParserProcol expose le parseur et le type de fichier qu'il supporte.
-var ParserProcol = marshal.Parser{FileType: "procol", FileParser: ParseProcolFile}
+// ParserProcol fournit une instance utilisable par ParseFilesFromBatch.
+var ParserProcol = &procolParser{}
 
-// ParseProcolFile permet de lancer le parsing du fichier demandé.
-func ParseProcolFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (marshal.FileReader, error) {
-	var idx colMapping
-	file, reader, err := openProcolFile(filePath)
-	if err == nil {
-		idx, err = parseProcolColMapping(reader)
-	}
-	return procolReader{
-		file:   file,
-		reader: reader,
-		idx:    idx,
-	}, err
-}
-
-type procolReader struct {
+type procolParser struct {
 	file   *os.File
 	reader *csv.Reader
 	idx    colMapping
 }
 
-func (parser procolReader) Close() error {
+func (parser *procolParser) GetFileType() string {
+	return "procol"
+}
+
+func (parser *procolParser) Init(cache *marshal.Cache, batch *base.AdminBatch) error {
+	return nil
+}
+
+func (parser *procolParser) Close() error {
 	return parser.file.Close()
+}
+
+func (parser *procolParser) Open(filePath string) (err error) {
+	parser.file, parser.reader, err = openProcolFile(filePath)
+	if err == nil {
+		parser.idx, err = parseProcolColMapping(parser.reader)
+	}
+	return err
 }
 
 func openProcolFile(filePath string) (*os.File, *csv.Reader, error) {
@@ -92,7 +94,7 @@ func parseProcolColMapping(reader *csv.Reader) (colMapping, error) {
 	return idx, nil
 }
 
-func (parser procolReader) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
+func (parser *procolParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
 	for {
 		parsedLine := marshal.ParsedLineResult{}
 		row, err := parser.reader.Read()
