@@ -47,30 +47,30 @@ func (apdemande APDemande) Scope() string {
 	return "etablissement"
 }
 
-// Parser expose le parseur et le type de fichier qu'il supporte.
-var Parser = marshal.Parser{FileType: "apdemande", FileParser: ParseFile}
+// Parser fournit une instance utilisable par ParseFilesFromBatch.
+var Parser = &apdemandeParser{}
 
-// ParseFile permet de lancer le parsing du fichier demandé.
-func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (marshal.FileReader, error) {
-	var idx colMapping
-	file, reader, err := openFile(filePath)
-	if err == nil {
-		idx, err = parseColMapping(reader)
-	}
-	return apdemandeReader{
-		file:   file,
-		reader: reader,
-		idx:    idx,
-	}, err
-}
-
-type apdemandeReader struct {
+type apdemandeParser struct {
 	file   *os.File
 	reader *csv.Reader
 	idx    colMapping
 }
 
-func (parser apdemandeReader) Close() error {
+func (parser *apdemandeParser) GetFileType() string {
+	return "apdemande"
+}
+
+func (parser *apdemandeParser) Init(cache *marshal.Cache, batch *base.AdminBatch) {}
+
+func (parser *apdemandeParser) Open(filePath string) (err error) {
+	parser.file, parser.reader, err = openFile(filePath)
+	if err == nil {
+		parser.idx, err = parseColMapping(parser.reader)
+	}
+	return err
+}
+
+func (parser *apdemandeParser) Close() error {
 	return parser.file.Close()
 }
 
@@ -118,7 +118,7 @@ func parseColMapping(reader *csv.Reader) (colMapping, error) {
 	return idx, nil
 }
 
-func (parser apdemandeReader) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
+func (parser *apdemandeParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
 	for {
 		parsedLine := marshal.ParsedLineResult{}
 		row, err := parser.reader.Read()
