@@ -63,11 +63,11 @@ func (parser *effectifEntParser) Init(cache *marshal.Cache, batch *base.AdminBat
 func (parser *effectifEntParser) Open(filePath string) (err error) {
 	parser.file, err = os.Open(filePath)
 	if err == nil {
-		parser.idx, parser.periods, err = parseEffectifEntColMapping(parser.reader)
-	}
-	if err == nil {
 		parser.reader = csv.NewReader(bufio.NewReader(parser.file))
 		parser.reader.Comma = ';'
+	}
+	if err == nil {
+		parser.idx, parser.periods, err = parseEffectifEntColMapping(parser.reader)
 	}
 	return err
 }
