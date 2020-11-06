@@ -43,24 +43,26 @@ func (bdf BDF) Scope() string {
 	return "entreprise"
 }
 
-// Parser expose le parseur et le type de fichier qu'il supporte.
-var Parser = marshal.Parser{FileType: "bdf", FileParser: ParseFile}
+// Parser fournit une instance utilisable par ParseFilesFromBatch.
+var Parser = &bdfParser{}
 
-// ParseFile permet de lancer le parsing du fichier demandé.
-func ParseFile(filePath string, cache *marshal.Cache, batch *base.AdminBatch) (marshal.FileReader, error) {
-	file, reader, err := openFile(filePath)
-	return bdfReader{
-		file:   file,
-		reader: reader,
-	}, err
-}
-
-type bdfReader struct {
+type bdfParser struct {
 	file   *os.File
 	reader *csv.Reader
 }
 
-func (parser bdfReader) Close() error {
+func (parser *bdfParser) GetFileType() string {
+	return "bdf"
+}
+
+func (parser *bdfParser) Init(cache *marshal.Cache, batch *base.AdminBatch) {}
+
+func (parser *bdfParser) Open(filePath string) (err error) {
+	parser.file, parser.reader, err = openFile(filePath)
+	return err
+}
+
+func (parser *bdfParser) Close() error {
 	return parser.file.Close()
 }
 
@@ -76,7 +78,7 @@ func openFile(filePath string) (*os.File, *csv.Reader, error) {
 	return file, reader, err
 }
 
-func (parser bdfReader) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
+func (parser *bdfParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
 	for {
 		parsedLine := marshal.ParsedLineResult{}
 		row, err := parser.reader.Read()
