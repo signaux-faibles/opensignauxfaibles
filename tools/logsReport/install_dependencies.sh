@@ -11,5 +11,5 @@ packages <- c(
 )
 packagecheck <- match(packages, utils::installed.packages()[,1])
 packagestoinstall <- packages[is.na(packagecheck)]
-install.packages(packagestoinstall)
+install.packages(packagestoinstall, repos = "https://cloud.r-project.org")
 
