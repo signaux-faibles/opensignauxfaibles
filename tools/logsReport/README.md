@@ -2,7 +2,7 @@
 
 ## Set up
 
-Start by making sure that you have R along with all needed packages installed. You will also need to install [`pandoc`](https://pandoc.org/installing.html) if you don't have it.
+Start by making sure that you have R along with all needed packages installed. You will also need to install [`pandoc`](https://pandoc.org/installing.html) if you don't have it. Linux users may also have to install the Cyrus SASL library (`apt-get install libsasl2-dev`).
 
 ```sh
 $ R --version
