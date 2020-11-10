@@ -2,7 +2,7 @@
 
 ## Set up
 
-Start by making sure that you have R along with all needed packages installed. You will also need to install [`pandoc`](https://pandoc.org/installing.html) if you don't have it.
+Start by making sure that you have R along with all needed packages installed. You will also need to install [`pandoc`](https://pandoc.org/installing.html) if you don't have it. Linux users may need to install other dependencies as well as compiler-related libraries such as `build-essential` or `gcc`.
 
 ```sh
 $ R --version
