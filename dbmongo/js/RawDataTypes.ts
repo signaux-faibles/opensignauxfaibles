@@ -68,7 +68,14 @@ export type BatchValueProps = {
 
 export type EntréeDefaillances = {
   action_procol: "liquidation" | "redressement" | "sauvegarde"
-  stade_procol: "abandon_procedure" | "solde_procedure" | "fin_procedure" | "plan_continuation" | "ouverture" | "inclusion_autre_procedure" | "cloture_insuffisance_actif"
+  stade_procol:
+    | "abandon_procedure"
+    | "solde_procedure"
+    | "fin_procedure"
+    | "plan_continuation"
+    | "ouverture"
+    | "inclusion_autre_procedure"
+    | "cloture_insuffisance_actif"
   date_effet: Date
 }
 
