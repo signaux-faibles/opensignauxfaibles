@@ -24,7 +24,8 @@ jobs:
         working-directory: dbmongo
         run: |
           go build -v .
-          rm -R js/
+          rm js/reduce.algo2/apart.crossComputation.json # should be included in jsfunctions.go
+          # TODO: rm -R js/
           # TODO: rm -R validation/
           # TODO: chmod 0444 lib/diane/convert_diane.sh # prevent this file from being deleted
           # TODO: rm -R -- */ # delete subdirectories (i.e. source code and other files)
