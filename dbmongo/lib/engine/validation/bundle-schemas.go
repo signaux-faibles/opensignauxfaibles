@@ -27,15 +27,11 @@ func bundleValidationSchemas(schemaDir string) {
 	// For each file in folder
 	for _, file := range files {
 		if shouldInclude(file) {
-			out.Write([]byte(`"` + file.Name() + `"` + ": `"))
-
 			content, err := ioutil.ReadFile(filepath.Join(schemaDir, file.Name()))
 			if err != nil {
 				log.Fatal(err)
 			}
-			// stringFunction := string(stringFunction)
-			// stringFunction = strings.Trim(stringFunction, "\n")
-
+			out.Write([]byte(`"` + file.Name() + `"` + ": `"))
 			out.Write([]byte(content))
 			out.Write([]byte("`,\n"))
 		}
