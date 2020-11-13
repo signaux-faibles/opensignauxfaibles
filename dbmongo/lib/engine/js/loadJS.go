@@ -41,7 +41,7 @@ func bundleJsFunctions(jsRootDir string) {
 
 			// For each file in folder
 			for _, file := range files {
-				if strings.HasSuffix(file.Name(), ".js") && file.Name() != "functions.js" {
+				if shouldInclude(file) {
 					out.Write([]byte(
 						`"` + strings.TrimSuffix(file.Name(), ".js") + `"` +
 							": `"))
@@ -69,4 +69,9 @@ func main() {
 	engine.TranspileTsFunctions(jsRootDir)  // convert *.ts files to .js
 	bundleJsFunctions(jsRootDir)            // bundle *.js files to jsFunctions.go
 	engine.DeleteTranspiledFiles(jsRootDir) // delete the *.js files
+}
+
+func shouldInclude(file os.FileInfo) bool {
+	return file.Name() != "functions.js" &&
+		strings.HasSuffix(file.Name(), ".js")
 }
