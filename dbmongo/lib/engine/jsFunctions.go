@@ -1222,7 +1222,7 @@ function cotisationsdettes(vCotisation, vDebit, periodes, finPériode // corresp
     codes.forEach((event) => {
         const periode_effet = new Date(Date.UTC(event.date_proc_col.getFullYear(), event.date_proc_col.getUTCMonth(), 1, 0, 0, 0, 0));
         const time_til_last = Object.keys(output_indexed).filter((val) => {
-            return val >= periode_effet.toString();
+            return val >= periode_effet.toISOString().split("T")[0];
         });
         time_til_last.forEach((time) => {
             if (time in output_indexed) {
