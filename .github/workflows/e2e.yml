@@ -30,7 +30,7 @@ jobs:
           mv dbmongo "${TMP_DIR}"
           # delete all the source code
           cd ..
-          rm -rf .
+          rm -rf *
           # move the binary back to its initial path
           mkdir dbmongo
           mv "${TMP_DIR}/dbmongo" dbmongo/
