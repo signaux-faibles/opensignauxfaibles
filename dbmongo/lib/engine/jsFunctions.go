@@ -1202,11 +1202,11 @@ function cotisationsdettes(vCotisation, vDebit, periodes, finPériode // corresp
     });
     return sortieCotisationsDettes;
 }`,
-"dealWithProcols": `function dealWithProcols(data_source, output_indexed) {
+"defaillances": `function defaillances(défaillances, output_indexed) {
     "use strict";
-    const codes = Object.keys(data_source)
+    const codes = Object.keys(défaillances)
         .reduce((events, hash) => {
-        const the_event = data_source[hash];
+        const the_event = défaillances[hash];
         let etat = null;
         etat = f.procolToHuman(the_event.action_procol, the_event.stade_procol);
         if (etat !== null)
@@ -1233,10 +1233,6 @@ function cotisationsdettes(vCotisation, vDebit, periodes, finPériode // corresp
             }
         });
     });
-}`,
-"defaillances": `function defaillances(procol, output_indexed) {
-    "use strict";
-    f.dealWithProcols(procol, output_indexed);
 }`,
 "delais": `/**
  * Calcule pour chaque période le nombre de jours restants du délai accordé et
