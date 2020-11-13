@@ -1,6 +1,6 @@
 import test from "ava"
-import { dealWithProcols, InputEvent } from "./dealWithProcols"
-import { ParHash } from "../RawDataTypes"
+import { dealWithProcols } from "./dealWithProcols"
+import { ParHash, EntréeDéfaillances } from "../RawDataTypes"
 
 test("Une ouverture de liquidation est prise en compte dans la période courante et les suivantes", (t) => {
   const output_indexed = {
@@ -16,7 +16,7 @@ test("Une ouverture de liquidation est prise en compte dans la période courante
       stade_procol: "ouverture",
       date_effet: date_ouverture,
     },
-  } as ParHash<InputEvent>
+  } as ParHash<EntréeDéfaillances>
 
   dealWithProcols(data_source, output_indexed)
   const expected = {
@@ -57,7 +57,7 @@ test("Une ouverture puis cloture d'un redressement sont pris en compte, tag_fail
       stade_procol: "fin_procedure",
       date_effet: date_cloture,
     },
-  } as ParHash<InputEvent>
+  } as ParHash<EntréeDéfaillances>
 
   dealWithProcols(data_source, output_indexed)
   const expected = {

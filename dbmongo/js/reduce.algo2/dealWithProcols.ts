@@ -1,8 +1,6 @@
 import { f } from "./functions"
 import { ProcolToHumanRes } from "../common/procolToHuman"
-import { EntréeDefaillances, ParHash, ParPériode } from "../RawDataTypes"
-
-export type InputEvent = EntréeDefaillances
+import { EntréeDéfaillances, ParHash, ParPériode } from "../RawDataTypes"
 
 type OutputEvent = {
   etat: ProcolToHumanRes
@@ -16,7 +14,7 @@ export type SortieProcols = {
 }
 
 export function dealWithProcols(
-  data_source: ParHash<InputEvent>,
+  data_source: ParHash<EntréeDéfaillances>,
   output_indexed: ParPériode<Partial<SortieProcols>>
 ): void {
   "use strict"
