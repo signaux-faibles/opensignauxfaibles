@@ -24,8 +24,10 @@ jobs:
         working-directory: dbmongo
         run: |
           go build -v .
-          chmod 0444 lib/diane/convert_diane.sh # prevent this file from being deleted
-          rm -R --interactive=never -- */ # delete subdirectories (i.e. source code and other files)
+          rm -R js/
+          # TODO: rm -R validation/
+          # TODO: chmod 0444 lib/diane/convert_diane.sh # prevent this file from being deleted
+          # TODO: rm -R -- */ # delete subdirectories (i.e. source code and other files)
 
       - name: Install test dependencies
         run: |
