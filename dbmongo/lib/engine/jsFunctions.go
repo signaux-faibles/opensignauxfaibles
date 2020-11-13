@@ -872,6 +872,25 @@ function sirene(sireneArray) {
         }
     });
 }`,
+"apart.crossComputation.json": `{
+  "$set": {
+    "value.ratio_apart": {
+      "$let": {
+        "vars": {
+          "nbHeuresOuvreesMoyParMois": 157.67
+        },
+        "in": {
+          "$divide": [
+            "$value.apart_heures_consommees",
+            {
+              "$multiply": ["$value.effectif", "$$nbHeuresOuvreesMoyParMois"]
+            }
+          ]
+        }
+      }
+    }
+  }
+}`,
 "apart": `function apart(apconso, apdemande) {
     "use strict";
     const output_apart = {};

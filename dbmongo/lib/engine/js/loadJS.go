@@ -73,5 +73,6 @@ func main() {
 
 func shouldInclude(file os.FileInfo) bool {
 	return file.Name() != "functions.js" &&
-		strings.HasSuffix(file.Name(), ".js")
+		(strings.HasSuffix(file.Name(), ".js") ||
+			strings.HasSuffix(file.Name(), ".json"))
 }

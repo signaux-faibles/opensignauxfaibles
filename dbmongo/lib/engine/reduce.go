@@ -1,10 +1,9 @@
 package engine
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
-	"os"
-	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
@@ -166,12 +165,12 @@ func Reduce(batch base.AdminBatch, algo string, types []string) error {
 // loadCrossComputationStages charge les étapes d'agrégation MongoDB depuis des fichiers JSON.
 func reduceCrossComputations(directoryName string) (stages []bson.M, err error) {
 	stages = []bson.M{}
-	files, err := listCrossCompJSONFiles(filepath.Join("js", directoryName))
-	if err != nil {
-		return nil, err
-	}
-	for _, filePath := range files {
-		stage, err := parseJSONObject(filePath)
+	for file, content := range jsFunctions["reduce.algo2"] {
+		if !strings.Contains(file, ".crossComputation.json") {
+			continue
+		}
+		var stage bson.M
+		err = json.Unmarshal([]byte(content), &stage) // transform json string into bson.M
 		if err != nil {
 			return nil, err
 		}
@@ -315,16 +314,4 @@ func reduceDefineScope(batch base.AdminBatch, algo string, types []string) (bson
 		"includes":               includes,
 	}
 	return scope, nil
-}
-
-// listCrossCompJSONFiles retourne la liste des fichiers JSON présents dans le répertoire spécifié.
-func listCrossCompJSONFiles(path string) ([]string, error) {
-	var files []string
-	err := filepath.Walk(path, func(filePath string, info os.FileInfo, err error) error {
-		if err == nil && strings.Contains(filePath, ".crossComputation.json") {
-			files = append(files, filePath)
-		}
-		return err
-	})
-	return files, err
 }
