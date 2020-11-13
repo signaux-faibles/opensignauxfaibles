@@ -37,10 +37,10 @@ tests/helpers/mongodb-container.sh run > /dev/null << CONTENTS
     },
     "files": {
       "admin_urssaf": [
-        "/../lib/urssaf/testData/comptesTestData.csv"
+        "dbmongo/lib/urssaf/testData/comptesTestData.csv"
       ],
       "debit": [
-        "/../lib/urssaf/testData/debitCorrompuTestData.csv"
+        "dbmongo/lib/urssaf/testData/debitCorrompuTestData.csv"
       ]
     },
     "param" : {

@@ -15,7 +15,8 @@ case ${COMMAND} in
   setup)
     [ -f dbmongo/config.toml ] && mv dbmongo/config.toml dbmongo/config.backup.toml
     cp dbmongo/config-sample.toml dbmongo/config.toml
-    perl -pi'' -e "s,/foo/bar/data-raw,../sample-data-raw," dbmongo/config.toml
+    perl -pi'' -e "s,/foo/bar/data-raw/,../sample-data-raw/," dbmongo/config.toml
+    perl -pi'' -e "s,/foo/bar/data-raw,../," dbmongo/config.toml
     perl -pi'' -e "s,27017,${MONGODB_PORT}," dbmongo/config.toml
     exit ;;
   start)

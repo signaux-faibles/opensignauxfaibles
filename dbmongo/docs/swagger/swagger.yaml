@@ -471,7 +471,7 @@ paths:
                       type: string
                     description: rapports de parsing de chaque fichier mentionné dans le batch
                     example:
-                      - "/../lib/urssaf/testData/debitCorrompuTestData.csv: intégration terminée, 5 lignes traitées, 2 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides"
+                      - "dbmongo/lib/urssaf/testData/debitCorrompuTestData.csv: intégration terminée, 5 lignes traitées, 2 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides"
         "404":
           description: Le batch est inexistant ou un des parsers demandé n'est pas reconnu.
           content:
