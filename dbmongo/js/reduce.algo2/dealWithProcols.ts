@@ -52,7 +52,7 @@ export function dealWithProcols(
       )
     )
     const time_til_last = Object.keys(output_indexed).filter((val) => {
-      return val >= periode_effet.toString()
+      return val >= periode_effet.toISOString().split("T")[0]
     })
 
     time_til_last.forEach((time) => {
