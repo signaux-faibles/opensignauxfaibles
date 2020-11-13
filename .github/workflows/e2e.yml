@@ -21,19 +21,10 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Build + remove source code
+        working-directory: dbmongo
         run: |
-          # build the binary
-          cd dbmongo
           go build -v .
-          # extract the binary out of the source code's directory
-          TMP_DIR=$(mktemp -d)
-          mv dbmongo "${TMP_DIR}"
-          # delete all the source code
-          cd ..
-          rm -rf dbmongo/
-          # move the binary back to its initial path
-          mkdir dbmongo
-          mv "${TMP_DIR}/dbmongo" dbmongo/
+          rm -R -- */ # delete subdirectories (i.e. source code and other files)
 
       - name: Install test dependencies
         run: |
