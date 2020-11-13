@@ -1,5 +1,5 @@
 import test from "ava"
-import { dealWithProcols } from "./dealWithProcols"
+import { defaillances } from "./defaillances"
 import { ParHash, EntréeDéfaillances } from "../RawDataTypes"
 
 test("Une ouverture de liquidation est prise en compte dans la période courante et les suivantes", (t) => {
@@ -18,7 +18,7 @@ test("Une ouverture de liquidation est prise en compte dans la période courante
     },
   } as ParHash<EntréeDéfaillances>
 
-  dealWithProcols(data_source, output_indexed)
+  defaillances(data_source, output_indexed)
   const expected = {
     ["2018-01-01"]: {},
     ["2018-02-01"]: {
@@ -59,7 +59,7 @@ test("Une ouverture puis cloture d'un redressement sont pris en compte, tag_fail
     },
   } as ParHash<EntréeDéfaillances>
 
-  dealWithProcols(data_source, output_indexed)
+  defaillances(data_source, output_indexed)
   const expected = {
     ["2018-01-01"]: {},
     ["2018-02-01"]: {

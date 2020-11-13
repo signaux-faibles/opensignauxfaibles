@@ -13,7 +13,6 @@ import { cibleApprentissage } from "./cibleApprentissage"
 import { compte } from "./compte"
 import { cotisation } from "./cotisation"
 import { cotisationsdettes } from "./cotisationsdettes"
-import { dealWithProcols } from "./dealWithProcols"
 import { defaillances } from "./defaillances"
 import { delais } from "./delais"
 import { detteFiscale } from "./detteFiscale"
@@ -60,7 +59,6 @@ export const f = {
   lookAhead,
   compareDebit,
   procolToHuman,
-  dealWithProcols,
   raison_sociale,
   region,
   nbDays,
