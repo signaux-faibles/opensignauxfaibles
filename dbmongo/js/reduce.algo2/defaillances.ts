@@ -1,13 +1,63 @@
 import { f } from "./functions"
-import { SortieProcols } from "./dealWithProcols"
-import { EntréeDefaillances, ParPériode, ParHash } from "../RawDataTypes"
+import { ProcolToHumanRes } from "../common/procolToHuman"
+import { EntréeDéfaillances, ParPériode, ParHash } from "../RawDataTypes"
 
-export type SortieDefaillances = SortieProcols
+export type SortieDefaillances = {
+  etat_proc_collective: unknown
+  date_proc_collective: unknown
+  tag_failure: boolean
+}
+type OutputEvent = {
+  etat: ProcolToHumanRes
+  date_proc_col: Date
+}
 
 export function defaillances(
-  procol: ParHash<EntréeDefaillances>,
+  défaillances: ParHash<EntréeDéfaillances>,
   output_indexed: ParPériode<Partial<SortieDefaillances>>
 ): void {
   "use strict"
-  f.dealWithProcols(procol, output_indexed)
+  const codes = Object.keys(défaillances)
+    .reduce((events, hash) => {
+      const the_event = défaillances[hash]
+
+      let etat: ProcolToHumanRes = null
+      etat = f.procolToHuman(the_event.action_procol, the_event.stade_procol)
+
+      if (etat !== null)
+        events.push({
+          etat,
+          date_proc_col: new Date(the_event.date_effet),
+        })
+
+      return events
+    }, [] as OutputEvent[])
+    .sort((a, b) => {
+      return a.date_proc_col.getTime() - b.date_proc_col.getTime()
+    })
+
+  codes.forEach((event) => {
+    const periode_effet = new Date(
+      Date.UTC(
+        event.date_proc_col.getFullYear(),
+        event.date_proc_col.getUTCMonth(),
+        1,
+        0,
+        0,
+        0,
+        0
+      )
+    )
+    const time_til_last = Object.keys(output_indexed).filter((val) => {
+      return val >= periode_effet.toISOString().split("T")[0]
+    })
+
+    time_til_last.forEach((time) => {
+      if (time in output_indexed) {
+        output_indexed[time].etat_proc_collective = event.etat
+        output_indexed[time].date_proc_collective = event.date_proc_col
+        if (event.etat !== "in_bonis") output_indexed[time].tag_failure = true
+      }
+    })
+  })
 }

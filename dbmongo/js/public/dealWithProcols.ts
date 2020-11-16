@@ -1,6 +1,6 @@
 import { f } from "./functions"
 import { ProcolToHumanRes } from "../common/procolToHuman"
-import { EntréeDefaillances, ParHash } from "../RawDataTypes"
+import { EntréeDéfaillances, ParHash } from "../RawDataTypes"
 
 export type SortieProcols = {
   etat: ProcolToHumanRes
@@ -8,7 +8,7 @@ export type SortieProcols = {
 }
 
 export function dealWithProcols(
-  data_source: ParHash<EntréeDefaillances> = {}
+  data_source: ParHash<EntréeDéfaillances> = {}
 ): SortieProcols[] {
   return Object.keys(data_source)
     .reduce((events, hash) => {
