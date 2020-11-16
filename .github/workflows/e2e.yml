@@ -20,9 +20,14 @@ jobs:
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
 
-      - name: Build
+      - name: Build + remove source code
         working-directory: dbmongo
-        run: go build -v .
+        run: |
+          go build -v .
+          rm js/reduce.algo2/apart.crossComputation.json # should be included in jsfunctions.go
+          rm -R validation/
+          # TODO: rm lib/diane/convert_diane.sh
+          # TODO: rm -R -- */ # delete all subdirectories (i.e. source code and other files)
 
       - name: Install test dependencies
         run: |
