@@ -25,7 +25,7 @@ jobs:
         run: |
           go build -v .
           # delete all files, except the binary, the NAF and testData files
-          find . ! -name 'dbmongo' ! -name '*.toml' ! -name 'sample-data-raw' ! -name 'testData' -type f -exec rm -v {} +
+          find . ! -name 'dbmongo' ! -name '*.toml' ! -name '*.csv' ! -name 'objects.js' -type f -exec rm -v {} +
 
       - name: Install test dependencies
         run: |
