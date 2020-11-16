@@ -26,9 +26,11 @@ jobs:
           go build -v .
           rm js/reduce.algo2/apart.crossComputation.json # should be included in jsfunctions.go
           rm -R validation/
+          mv sample-data-raw .sample-data-raw
           mv dbmongo .dbmongo
           rm -R -- */ # delete all subdirectories (i.e. source code and other files)
           mv .dbmongo dbmongo
+          mv .sample-data-raw sample-data-raw
 
       - name: Install test dependencies
         run: |
