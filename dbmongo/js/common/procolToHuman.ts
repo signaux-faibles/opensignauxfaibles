@@ -1,4 +1,4 @@
-import { EntréeDefaillances } from "../RawDataTypes"
+import { EntréeDéfaillances } from "../RawDataTypes"
 
 export type ProcolToHumanRes =
   | "liquidation"
@@ -9,9 +9,9 @@ export type ProcolToHumanRes =
   | "plan_redressement"
   | null
 
-type Action = EntréeDefaillances["action_procol"]
+type Action = EntréeDéfaillances["action_procol"]
 
-type Stade = EntréeDefaillances["stade_procol"]
+type Stade = EntréeDéfaillances["stade_procol"]
 
 export function procolToHuman(action: Action, stade: Stade): ProcolToHumanRes {
   "use strict"

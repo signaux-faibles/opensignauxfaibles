@@ -5,7 +5,7 @@ import {
   EntréeApConso,
   EntréeApDemande,
   EntréeDelai,
-  EntréeDefaillances,
+  EntréeDéfaillances,
   EntréeDiane,
   EntréeEllisphere,
 } from "../RawDataTypes"
@@ -24,7 +24,7 @@ type SortieMapEtablissement = SortieMapCommon & {
   apdemande: EntréeApDemande[]
   delai: EntréeDelai[]
   compte: unknown
-  procol: EntréeDefaillances[]
+  procol: EntréeDéfaillances[]
   periodes: Date[]
   effectif: (number | null)[]
   cotisation: number[]

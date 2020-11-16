@@ -52,7 +52,7 @@ export type BatchValueProps = {
   compte: ParHash<EntréeCompte>
   interim: ParHash<EntréeInterim>
   delai: ParHash<EntréeDelai>
-  procol: ParHash<EntréeDefaillances>
+  procol: ParHash<EntréeDéfaillances>
   cotisation: ParHash<EntréeCotisation>
   debit: ParHash<EntréeDebit>
   ccsf: ParHash<{ date_traitement: Date }>
@@ -66,7 +66,7 @@ export type BatchValueProps = {
 
 // Détail des types de données
 
-export type EntréeDefaillances = {
+export type EntréeDéfaillances = {
   action_procol: "liquidation" | "redressement" | "sauvegarde"
   stade_procol:
     | "abandon_procedure"
