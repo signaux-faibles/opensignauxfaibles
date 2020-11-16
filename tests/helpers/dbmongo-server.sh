@@ -20,7 +20,7 @@ case ${COMMAND} in
     exit ;;
   start)
     cd dbmongo
-    bash -c "./dbmongo &>/dev/null &" # we run in a separate shell to hide the "terminated" message when the process is killed by trap
+    bash -c "./dbmongo &" # we run in a separate shell to hide the "terminated" message when the process is killed by trap
     sleep 2 # give some time for dbmongo to start
     exit ;;
   ?)
