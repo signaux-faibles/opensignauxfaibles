@@ -189,38 +189,55 @@ FNR>1 && $1 !~ "Marquée" { # Data row
 	c3 := exec.Command("awk", awkScript)                                         // TODO: implement this step in Go
 	c4 := exec.Command("sed", "s/,/./g")                                         // TODO: implement this step in Go
 
-	c2.Stdin, _ = c1.StdoutPipe()
-	c3.Stdin, _ = c2.StdoutPipe()
-	c4.Stdin, _ = c3.StdoutPipe() // TODO: handle errors
-	// c4.Stdout = os.Stdout
 	c1.Stderr = os.Stderr
 	c2.Stderr = os.Stderr
 	c3.Stderr = os.Stderr
 	c4.Stderr = os.Stderr
 
-	var err error
-	var stdout io.ReadCloser
 	close := func() error {
-		// TODO: make sure to close all streams
-		if c4.Stdout != nil {
-			stdout.Close()
-		}
 		if err := c4.Wait(); err != nil {
 			return errors.New("[convert_diane.sh] failed with " + err.Error())
 		}
 		return nil
 	}
 
+	var err error
+	var stdout io.ReadCloser
+	c2.Stdin, err = c1.StdoutPipe()
+	if err != nil {
+		return close, nil, err
+	}
+	c3.Stdin, err = c2.StdoutPipe()
+	if err != nil {
+		return close, nil, err
+	}
+	c4.Stdin, err = c3.StdoutPipe()
+	if err != nil {
+		return close, nil, err
+	}
 	stdout, err = c4.StdoutPipe()
 	if err != nil {
-		return close, nil, errors.New("echec de récupération de sortie standard du script: " + err.Error())
+		return close, nil, err
 	}
 
 	// start preprocessing script
-	_ = c4.Start()
-	_ = c3.Start()
-	_ = c2.Start()
-	_ = c1.Run() // TODO: handle errors
+	err = c4.Start()
+	if err != nil {
+		return close, nil, err
+	}
+	err = c3.Start()
+	if err != nil {
+		return close, nil, err
+	}
+	err = c2.Start()
+	if err != nil {
+		return close, nil, err
+	}
+	err = c1.Run()
+	if err != nil {
+		return close, nil, err
+	}
+	// TODO: refactor
 
 	// init csv reader
 	reader := csv.NewReader(stdout)
