@@ -138,106 +138,47 @@ func (parser *dianeParser) Close() error {
 
 func openFile(filePath string) (func() error, *csv.Reader, error) {
 
-	// This awk spreads company data so that each year of data has its own row.
-	awkScript := `
-BEGIN { # Semi-column separated csv as input and output
-  FS = ";"
-  OFS = ";"
-  RE_YEAR = "[[:digit:]][[:digit:]][[:digit:]][[:digit:]]"
-  RE_YEAR_SUFFIX = / ([[:digit:]][[:digit:]][[:digit:]][[:digit:]])$/
-  first_year = last_year = 0
-}
-FNR==1 { # Heading row => coalesce yearly fields
-  printf "%s", "\"Annee\""
-  for (field = 1; field <= NF; ++field) {
-    if ($field !~ RE_YEAR_SUFFIX) { # Field without year
-      fields[++nb_fields] = field
-      printf "%s%s",  OFS, $field
-    } else { # Field with year
-      match($field, RE_YEAR, year)
-      field_name = gensub(" "year[0], "", "g", $field) # Remove year from column name
-      first_year = !first_year || year[0] < first_year ? year[0] : first_year
-      last_year = !last_year || year[0] > last_year ? year[0] : last_year
-      if (!yearly_fields[field_name]) {
-        ++nb_fields
-        ++yearly_fields[field_name]
-        printf "%s%s", OFS, field_name;
-      }
-      fields[nb_fields, year[0]] = field
-    }
-  }
-  printf "%s", ORS
-}
-FNR>1 && $1 !~ "Marquée" { # Data row
-  for (current_year = first_year; current_year <= last_year; ++current_year) {
-    printf "%i", current_year
-    for (field = 1; field <= nb_fields; ++field) {
-      if (fields[field, current_year] && $(fields[field, current_year])) {
-        printf "%s%s", OFS, $(fields[field, current_year]);
-      } else if (fields[field] && $(fields[field])) {
-        printf "%s%s", OFS, $(fields[field]);
-      } else {
-        printf "%s%s", OFS, "\"\"";
-      }
-    }
-    printf "%s", ORS # Each year on a new line
-  }
-}`
+	pipedCmds := []*exec.Cmd{
+		exec.Command("cat", filePath),                                          // TODO: implement this step in Go
+		exec.Command("iconv", "--from-code", "UTF-16LE", "--to-code", "UTF-8"), // TODO: implement this step in Go
+		exec.Command("awk", awkScript),                                         // TODO: implement this step in Go
+		exec.Command("sed", "s/,/./g"),                                         // TODO: implement this step in Go
+	}
+	lastCmd := pipedCmds[len(pipedCmds)-1]
 
-	c1 := exec.Command("cat", filePath)                                          // TODO: implement this step in Go
-	c2 := exec.Command("iconv", "--from-code", "UTF-16LE", "--to-code", "UTF-8") // TODO: implement this step in Go
-	c3 := exec.Command("awk", awkScript)                                         // TODO: implement this step in Go
-	c4 := exec.Command("sed", "s/,/./g")                                         // TODO: implement this step in Go
-
-	c1.Stderr = os.Stderr
-	c2.Stderr = os.Stderr
-	c3.Stderr = os.Stderr
-	c4.Stderr = os.Stderr
-
+	var err error
 	close := func() error {
-		if err := c4.Wait(); err != nil {
+		if err := lastCmd.Wait(); err != nil {
 			return errors.New("[convert_diane.sh] failed with " + err.Error())
 		}
 		return nil
 	}
 
-	var err error
-	var stdout io.ReadCloser
-	c2.Stdin, err = c1.StdoutPipe()
-	if err != nil {
-		return close, nil, err
+	// pipe streams between commands
+	for i := 0; i < len(pipedCmds)-1; i++ {
+		pipedCmds[i].Stderr = os.Stderr
+		pipedCmds[i+1].Stdin, err = pipedCmds[i].StdoutPipe()
+		if err != nil {
+			return close, nil, err
+		}
 	}
-	c3.Stdin, err = c2.StdoutPipe()
-	if err != nil {
-		return close, nil, err
-	}
-	c4.Stdin, err = c3.StdoutPipe()
-	if err != nil {
-		return close, nil, err
-	}
-	stdout, err = c4.StdoutPipe()
+	lastCmd.Stderr = os.Stderr
+	stdout, err := lastCmd.StdoutPipe()
 	if err != nil {
 		return close, nil, err
 	}
 
-	// start preprocessing script
-	err = c4.Start()
+	// start piped commands, from last to first
+	for i := len(pipedCmds) - 1; i > 0; i-- {
+		err = pipedCmds[i].Start()
+		if err != nil {
+			return close, nil, err
+		}
+	}
+	err = pipedCmds[0].Run()
 	if err != nil {
 		return close, nil, err
 	}
-	err = c3.Start()
-	if err != nil {
-		return close, nil, err
-	}
-	err = c2.Start()
-	if err != nil {
-		return close, nil, err
-	}
-	err = c1.Run()
-	if err != nil {
-		return close, nil, err
-	}
-	// TODO: refactor
 
 	// init csv reader
 	reader := csv.NewReader(stdout)
@@ -511,3 +452,49 @@ func parseDianeRow(row []string) (diane Diane) {
 	}
 	return diane
 }
+
+// This awk spreads company data so that each year of data has its own row.
+const awkScript = `
+BEGIN { # Semi-column separated csv as input and output
+  FS = ";"
+  OFS = ";"
+  RE_YEAR = "[[:digit:]][[:digit:]][[:digit:]][[:digit:]]"
+  RE_YEAR_SUFFIX = / ([[:digit:]][[:digit:]][[:digit:]][[:digit:]])$/
+  first_year = last_year = 0
+}
+FNR==1 { # Heading row => coalesce yearly fields
+  printf "%s", "\"Annee\""
+  for (field = 1; field <= NF; ++field) {
+    if ($field !~ RE_YEAR_SUFFIX) { # Field without year
+      fields[++nb_fields] = field
+      printf "%s%s",  OFS, $field
+    } else { # Field with year
+      match($field, RE_YEAR, year)
+      field_name = gensub(" "year[0], "", "g", $field) # Remove year from column name
+      first_year = !first_year || year[0] < first_year ? year[0] : first_year
+      last_year = !last_year || year[0] > last_year ? year[0] : last_year
+      if (!yearly_fields[field_name]) {
+        ++nb_fields
+        ++yearly_fields[field_name]
+        printf "%s%s", OFS, field_name;
+      }
+      fields[nb_fields, year[0]] = field
+    }
+  }
+  printf "%s", ORS
+}
+FNR>1 && $1 !~ "Marquée" { # Data row
+  for (current_year = first_year; current_year <= last_year; ++current_year) {
+    printf "%i", current_year
+    for (field = 1; field <= nb_fields; ++field) {
+      if (fields[field, current_year] && $(fields[field, current_year])) {
+        printf "%s%s", OFS, $(fields[field, current_year]);
+      } else if (fields[field] && $(fields[field])) {
+        printf "%s%s", OFS, $(fields[field]);
+      } else {
+        printf "%s%s", OFS, "\"\"";
+      }
+    }
+    printf "%s", ORS # Each year on a new line
+  }
+}`
