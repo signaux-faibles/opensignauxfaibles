@@ -169,15 +169,11 @@ func openFile(filePath string) (func() error, *csv.Reader, error) {
 	}
 
 	// start piped commands, from last to first
-	for i := len(pipedCmds) - 1; i > 0; i-- {
+	for i := len(pipedCmds) - 1; i >= 0; i-- {
 		err = pipedCmds[i].Start()
 		if err != nil {
 			return close, nil, err
 		}
-	}
-	err = pipedCmds[0].Start()
-	if err != nil {
-		return close, nil, err
 	}
 
 	// init csv reader
