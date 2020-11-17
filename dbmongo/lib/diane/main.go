@@ -175,7 +175,7 @@ func openFile(filePath string) (func() error, *csv.Reader, error) {
 			return close, nil, err
 		}
 	}
-	err = pipedCmds[0].Run()
+	err = pipedCmds[0].Start()
 	if err != nil {
 		return close, nil, err
 	}
