@@ -24,10 +24,6 @@ jobs:
         working-directory: dbmongo
         run: go build -v .
 
-      - name: Install test dependencies
-        run: |
-          sudo apt-get install -y dos2unix # for Diane tests
-
       - name: Tests
         working-directory: dbmongo
         run: go test ./...

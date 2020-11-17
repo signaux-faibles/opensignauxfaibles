@@ -1,20 +1,16 @@
 package diane
 
 import (
-	"bufio"
 	"encoding/csv"
 	"errors"
-	"fmt"
 	"io"
+	"os"
 	"os/exec"
-	"path/filepath"
 	"strconv"
 	"time"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
-
-	"github.com/spf13/viper"
 )
 
 // Diane Information financières
@@ -141,44 +137,44 @@ func (parser *dianeParser) Close() error {
 }
 
 func openFile(filePath string) (func() error, *csv.Reader, error) {
-	cmdPath := []string{filepath.Join(viper.GetString("SCRIPTDIANE_DIR"), "convert_diane.sh"), filePath}
-	cmd := exec.Command("/bin/bash", cmdPath...)
+
+	pipedCmds := []*exec.Cmd{
+		exec.Command("cat", filePath),                                          // TODO: implement this step in Go
+		exec.Command("iconv", "--from-code", "UTF-16LE", "--to-code", "UTF-8"), // TODO: implement this step in Go
+		exec.Command("awk", awkScript),                                         // TODO: implement this step in Go
+		exec.Command("sed", "s/,/./g"),                                         // TODO: implement this step in Go
+	}
+	lastCmd := pipedCmds[len(pipedCmds)-1]
 
 	var err error
-	var stdout, stderr io.ReadCloser
 	close := func() error {
-		if stdout != nil {
-			stdout.Close()
-		}
-		if stderr != nil {
-			stderr.Close()
-		}
-		if err := cmd.Wait(); err != nil {
+		if err := lastCmd.Wait(); err != nil {
 			return errors.New("[convert_diane.sh] failed with " + err.Error())
 		}
 		return nil
 	}
 
-	stdout, err = cmd.StdoutPipe()
-	if err != nil {
-		return close, nil, errors.New("echec de récupération de sortie standard du script: " + err.Error())
-	}
-
-	stderr, err = cmd.StderrPipe()
-	if err != nil {
-		return close, nil, errors.New("echec de récupération de sortie d'erreurs du script: " + err.Error())
-	}
-
-	// turn lines of standard error output into events, to help debugging
-	go func() {
-		scanner := bufio.NewScanner(stderr)
-		for scanner.Scan() {
-			fmt.Println("[convert_diane.sh stderr] " + scanner.Text())
+	// pipe streams between commands
+	for i := 0; i < len(pipedCmds)-1; i++ {
+		pipedCmds[i].Stderr = os.Stderr
+		pipedCmds[i+1].Stdin, err = pipedCmds[i].StdoutPipe()
+		if err != nil {
+			return close, nil, err
 		}
-	}()
+	}
+	lastCmd.Stderr = os.Stderr
+	stdout, err := lastCmd.StdoutPipe()
+	if err != nil {
+		return close, nil, err
+	}
 
-	// start preprocessing script
-	cmd.Start()
+	// start piped commands, from last to first
+	for i := len(pipedCmds) - 1; i >= 0; i-- {
+		err = pipedCmds[i].Start()
+		if err != nil {
+			return close, nil, err
+		}
+	}
 
 	// init csv reader
 	reader := csv.NewReader(stdout)
@@ -452,3 +448,49 @@ func parseDianeRow(row []string) (diane Diane) {
 	}
 	return diane
 }
+
+// This awk spreads company data so that each year of data has its own row.
+const awkScript = `
+BEGIN { # Semi-column separated csv as input and output
+  FS = ";"
+  OFS = ";"
+  RE_YEAR = "[[:digit:]][[:digit:]][[:digit:]][[:digit:]]"
+  RE_YEAR_SUFFIX = / ([[:digit:]][[:digit:]][[:digit:]][[:digit:]])$/
+  first_year = last_year = 0
+}
+FNR==1 { # Heading row => coalesce yearly fields
+  printf "%s", "\"Annee\""
+  for (field = 1; field <= NF; ++field) {
+    if ($field !~ RE_YEAR_SUFFIX) { # Field without year
+      fields[++nb_fields] = field
+      printf "%s%s",  OFS, $field
+    } else { # Field with year
+      match($field, RE_YEAR, year)
+      field_name = gensub(" "year[0], "", "g", $field) # Remove year from column name
+      first_year = !first_year || year[0] < first_year ? year[0] : first_year
+      last_year = !last_year || year[0] > last_year ? year[0] : last_year
+      if (!yearly_fields[field_name]) {
+        ++nb_fields
+        ++yearly_fields[field_name]
+        printf "%s%s", OFS, field_name;
+      }
+      fields[nb_fields, year[0]] = field
+    }
+  }
+  printf "%s", ORS
+}
+FNR>1 && $1 !~ "Marquée" { # Data row
+  for (current_year = first_year; current_year <= last_year; ++current_year) {
+    printf "%i", current_year
+    for (field = 1; field <= nb_fields; ++field) {
+      if (fields[field, current_year] && $(fields[field, current_year])) {
+        printf "%s%s", OFS, $(fields[field, current_year]);
+      } else if (fields[field] && $(fields[field])) {
+        printf "%s%s", OFS, $(fields[field]);
+      } else {
+        printf "%s%s", OFS, "\"\"";
+      }
+    }
+    printf "%s", ORS # Each year on a new line
+  }
+}`

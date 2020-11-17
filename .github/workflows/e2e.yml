@@ -24,16 +24,13 @@ jobs:
         working-directory: dbmongo
         run: |
           go build -v .
-          rm js/reduce.algo2/apart.crossComputation.json # should be included in jsfunctions.go
-          rm -R validation/
-          # TODO: rm lib/diane/convert_diane.sh
-          # TODO: rm -R -- */ # delete all subdirectories (i.e. source code and other files)
+          # delete all files, except the binary, config, NAF and other data files used by tests
+          find . ! -name 'dbmongo' ! -name '*.toml' ! -name '*.csv' ! -name 'dianeTestData.txt' ! -name 'ellisphereTestData.excel' ! -name 'objects.js' -type f -exec rm -v {} +
 
       - name: Install test dependencies
         run: |
           sudo apt-get install -y httpie
           sudo apt-get install git-secret # to decrypt golden master files, for tests
-          sudo apt-get install dos2unix # called by convert_diane.sh
 
       - run: ./tests/test-api.sh
 
