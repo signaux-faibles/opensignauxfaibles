@@ -97,9 +97,9 @@ print("// Reports from db.Journal:");
 // on classe les données par type, de manière à ce que l'ordre soit stable
 printjson(db.Journal.find().sort({ parserCode: 1 }).toArray().map(doc => ({
   event: {
-    headSkipped: doc.event.headSkipped,
     headRejected: doc.event.headRejected,
     headFatal: doc.event.headFatal,
+    linesSkipped: doc.event.linesSkipped,
     summary: doc.event.summary,
     batchKey: doc.event.batchKey
   },
