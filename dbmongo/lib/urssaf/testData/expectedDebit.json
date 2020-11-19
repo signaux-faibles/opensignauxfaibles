@@ -59,7 +59,6 @@
         "batchKey": "",
         "headFatal": [],
         "headRejected": [],
-        "headSkipped": [],
         "isFatal": false,
         "linesParsed": 3,
         "linesRejected": 0,

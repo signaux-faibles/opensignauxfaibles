@@ -85,7 +85,6 @@
         "headRejected": [
           "Cycle 0: strconv.ParseInt: parsing \"Niveau de détention\": invalid syntax"
         ],
-        "headSkipped": [],
         "isFatal": false,
         "linesParsed": 7,
         "linesRejected": 1,

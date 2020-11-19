@@ -58,7 +58,6 @@
         "headRejected": [
           "Cycle 1: parsing time \"\" as \"2006-01-02\": cannot parse \"\" as \"2006\""
         ],
-        "headSkipped": [],
         "isFatal": false,
         "linesParsed": 3,
         "linesRejected": 1,
