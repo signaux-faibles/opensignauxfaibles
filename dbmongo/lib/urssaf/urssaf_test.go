@@ -23,41 +23,65 @@ func makeCacheWithComptesMapping() marshal.Cache {
 	return cache
 }
 
-var cache = makeCacheWithComptesMapping()
-
 func TestDebit(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedDebit.json")
 	var testData = filepath.Join("testData", "debitTestData.csv")
+	var cache = makeCacheWithComptesMapping()
 	marshal.TestParserOutput(t, ParserDebit, cache, testData, golden, *update)
+
+	t.Run("Debit n'est importé que si inclus dans le filtre", func(t *testing.T) {
+		cache.Set("filter", marshal.SirenFilter{"111111111": true}) // SIREN correspondant à un des 3 comptes retournés par makeCacheWithComptesMapping
+		output := marshal.RunParser(ParserDebit, cache, testData)
+		// test: tous les tuples retournés concernent le compte associé au SIREN spécifié ci-dessus
+		for _, tuple := range output.Tuples {
+			debit, _ := tuple.(Debit)
+			assert.Equal(t, "636043216536562844", debit.NumeroCompte)
+		}
+	})
+
+	t.Run("Debit n'est importé que si inclus dans le filtre", func(t *testing.T) {
+		cache.Set("filter", marshal.SirenFilter{"111111111": true}) // SIREN correspondant à un des 3 comptes retournés par makeCacheWithComptesMapping
+		output := marshal.RunParser(ParserDebit, cache, testData)
+		// test: tous les tuples retournés concernent le compte associé au SIREN spécifié ci-dessus
+		for _, tuple := range output.Tuples {
+			debit, _ := tuple.(Debit)
+			assert.Equal(t, "636043216536562844", debit.NumeroCompte)
+		}
+	})
 }
 
 func TestDebitCorrompu(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedDebitCorrompu.json")
 	var testData = filepath.Join("testData", "debitCorrompuTestData.csv")
+	var cache = makeCacheWithComptesMapping()
 	marshal.TestParserOutput(t, ParserDebit, cache, testData, golden, *update)
 }
 
 func TestDelai(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedDelai.json")
 	var testData = filepath.Join("testData", "delaiTestData.csv")
+	var cache = makeCacheWithComptesMapping()
 	marshal.TestParserOutput(t, ParserDelai, cache, testData, golden, *update)
 }
 
 func TestCcsf(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedCcsf.json")
 	var testData = filepath.Join("testData", "ccsfTestData.csv")
+	var cache = makeCacheWithComptesMapping()
 	marshal.TestParserOutput(t, ParserCCSF, cache, testData, golden, *update)
 }
 
 func TestCotisation(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedCotisation.json")
 	var testData = filepath.Join("testData", "cotisationTestData.csv")
+	var cache = makeCacheWithComptesMapping()
 	marshal.TestParserOutput(t, ParserCotisation, cache, testData, golden, *update)
 }
 
 func TestProcol(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedProcol.json")
 	var testData = filepath.Join("testData", "procolTestData.csv")
+	var cache = makeCacheWithComptesMapping()
 	marshal.TestParserOutput(t, ParserProcol, cache, testData, golden, *update)
 }
 
@@ -68,10 +92,15 @@ func TestEffectif(t *testing.T) {
 	marshal.TestParserOutput(t, ParserEffectif, cache, testData, golden, *update)
 
 	t.Run("Effectif n'est importé que si inclus dans le filtre", func(t *testing.T) {
+		allowedSiren := "149285238" // SIREN correspondant à un des 3 SIRETs mentionnés dans le fichier
 		cache := marshal.NewCache()
-		cache.Set("filter", marshal.SirenFilter{"149285238": true}) // SIREN correspondant à un des 3 SIRETs mentionnés dans le fichier
+		cache.Set("filter", marshal.SirenFilter{allowedSiren: true})
 		output := marshal.RunParser(ParserEffectif, cache, testData)
-		assert.Equal(t, 111, len(output.Tuples))
+		// test: vérifier que tous les tuples retournés concernent ce SIREN
+		for _, tuple := range output.Tuples {
+			effectif, _ := tuple.(Effectif)
+			assert.Equal(t, allowedSiren, effectif.Siret[0:9])
+		}
 	})
 }
 

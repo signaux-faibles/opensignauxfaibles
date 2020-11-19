@@ -14,9 +14,9 @@ func TestGetSiret(t *testing.T) {
 	stdTime1, _ := time.Parse("2006-02-01", "2015-01-01")
 	stdTime2, _ := time.Parse("2006-02-01", "2016-01-01")
 	var stdMapping = map[string][]SiretDate{
-		"abc": []SiretDate{
-			SiretDate{"01234567891011", stdTime1},
-			SiretDate{"87654321091011", stdTime2},
+		"abc": {
+			{"01234567891011", stdTime1},
+			{"87654321091011", stdTime2},
 		},
 	}
 	var batch = base.AdminBatch{}
@@ -62,17 +62,17 @@ func TestReadSiretMapping(t *testing.T) {
 	stdTime1, _ := time.Parse("2006-02-01", "2899-01-01")
 	stdTime2, _ := time.Parse("2006-02-01", "2015-01-01")
 	stdExpected1 := Comptes{
-		"abc": []SiretDate{SiretDate{"01234567891011", stdTime1}},
+		"abc": []SiretDate{{"01234567891011", stdTime1}},
 	}
 
 	stdExpected2 := Comptes{
-		"abc": []SiretDate{SiretDate{"01234567891011", stdTime2}},
+		"abc": []SiretDate{{"01234567891011", stdTime2}},
 	}
 
 	stdExpected3 := Comptes{
 		"abc": []SiretDate{
-			SiretDate{"01234567891011", stdTime2},
-			SiretDate{"87654321091011", stdTime1},
+			{"01234567891011", stdTime2},
+			{"87654321091011", stdTime1},
 		},
 	}
 
@@ -98,7 +98,7 @@ func TestReadSiretMapping(t *testing.T) {
 		// With two entries, including excluded siret
 		{`0;1;2;3;4;5;6;7
 		;;"abc";;;"01234567891011";;"1150101"
-		;;"abc";;;"87654321091011";;""`, stdFilterCache, false, stdExpected2},
+		;;"abc";;;"87654321091011";;""`, stdFilterCache, false, stdExpected2}, // i.e. no mapping stored for 87654321091011, because it's not included by Filter
 		// With two entries 1
 		{`0;1;2;3;4;5;6;7
 		;;"abc";;;"01234567891011";;"1150101"
@@ -133,10 +133,10 @@ func TestGetCompteSiretMapping(t *testing.T) {
 	stdTime1, _ := time.Parse("2006-02-01", "2899-01-01")
 	stdTime2, _ := time.Parse("2006-02-01", "2016-01-01")
 	stdExpected1 := Comptes{
-		"abc": []SiretDate{SiretDate{"01234567891011", stdTime1}},
+		"abc": []SiretDate{{"01234567891011", stdTime1}},
 	}
 	stdExpected2 := Comptes{
-		"abc": []SiretDate{SiretDate{"01234567891011", stdTime2}},
+		"abc": []SiretDate{{"01234567891011", stdTime2}},
 	}
 
 	// When file is read, returnd stdExpected1
