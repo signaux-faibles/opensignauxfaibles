@@ -362,9 +362,8 @@ function currentState(batches) {
 // l'échantillonnage pour l'entraînement du modèle.
 function finalize(k, companyDataValues) {
     "use strict";
-    let o = Object.assign(Object.assign({}, companyDataValues), { index: { algo1: false, algo2: false } });
+    let o = Object.assign(Object.assign({}, companyDataValues), { index: { algo2: false } });
     if (o.scope === "entreprise") {
-        o.index.algo1 = true;
         o.index.algo2 = true;
     }
     else {
@@ -372,7 +371,6 @@ function finalize(k, companyDataValues) {
         const batches = Object.keys(o.batch);
         batches.some((batch) => {
             const hasEffectif = Object.keys(o.batch[batch].effectif || {}).length > 0;
-            o.index.algo1 = hasEffectif;
             o.index.algo2 = hasEffectif;
             return hasEffectif;
         });

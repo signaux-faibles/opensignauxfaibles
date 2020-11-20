@@ -18,18 +18,16 @@ export function finalize(
 
   let o: CompanyDataValuesWithFlags = {
     ...companyDataValues,
-    index: { algo1: false, algo2: false },
+    index: { algo2: false },
   }
 
   if (o.scope === "entreprise") {
-    o.index.algo1 = true
     o.index.algo2 = true
   } else {
     // Est-ce que l'un des batchs a un effectif ?
     const batches = Object.keys(o.batch)
     batches.some((batch) => {
       const hasEffectif = Object.keys(o.batch[batch].effectif || {}).length > 0
-      o.index.algo1 = hasEffectif
       o.index.algo2 = hasEffectif
       return hasEffectif
     })
