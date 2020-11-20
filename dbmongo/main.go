@@ -65,10 +65,6 @@ func main() {
 		api.GET("/admin/files", adminFilesHandler)
 		api.POST("/admin/files", addFile)
 
-		api.GET("/admin/types", listTypesHandler)
-		api.GET("/admin/features", adminFeature)
-		api.GET("/admin/events", eventsHandler)
-
 		api.GET("/data/naf", nafHandler)
 		api.POST("/data/batch/purge", purgeBatchHandler)
 		api.POST("/data/import", importBatchHandler)

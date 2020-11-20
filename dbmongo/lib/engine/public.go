@@ -43,7 +43,6 @@ func PublicOne(batch base.AdminBatch, key string) error {
 		"naf":                    naf,
 		"f":                      functions,
 		"batches":                GetBatchesID(),
-		"types":                  GetTypes(),
 	}
 
 	job := &mgo.MapReduce{
@@ -88,7 +87,6 @@ func Public(batch base.AdminBatch) error {
 		"naf":                    naf.Naf,
 		"f":                      functions,
 		"batches":                GetBatchesID(),
-		"types":                  GetTypes(),
 	}
 
 	chunks, err := ChunkCollection(viper.GetString("DB"), "RawData", viper.GetInt64("chunkByteSize"))

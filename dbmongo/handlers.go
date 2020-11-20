@@ -28,16 +28,6 @@ import (
 )
 
 //
-func adminFeature(c *gin.Context) {
-	c.JSON(200, []string{"algo_avec_urssaf", "algo_sans_urssaf"})
-}
-
-//
-func listTypesHandler(c *gin.Context) {
-	c.JSON(200, engine.GetTypes())
-}
-
-//
 func addFile(c *gin.Context) {
 	file, err := c.FormFile("file")
 	if err != nil {
@@ -282,21 +272,6 @@ func checkBatchHandler(c *gin.Context) {
 		c.JSON(417, "Erreurs détectées: "+err.Error())
 	} else {
 		c.JSON(200, bson.M{"reports": reports})
-	}
-}
-
-//
-func eventsHandler(c *gin.Context) {
-	batchKey := c.Query("batchKey")
-	var query interface{}
-	if batchKey != "" {
-		query = bson.M{"event.batchKey": batchKey}
-	}
-	logs, err := engine.GetEventsFromDB(query, 250)
-	if err != nil {
-		c.JSON(500, err.Error())
-	} else {
-		c.JSON(200, logs)
 	}
 }
 
