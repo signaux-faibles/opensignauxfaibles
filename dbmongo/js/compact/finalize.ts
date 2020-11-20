@@ -27,7 +27,9 @@ export function finalize(
   } else {
     // Est-ce que l'un des batchs a un effectif ?
     const batches = Object.keys(o.batch)
-    if (batches.some((batch) => hasEffectif(o, batch))) {
+    const hasEffectif = (batch: string) =>
+      Object.keys(o.batch[batch].effectif || {}).length > 0
+    if (batches.some(hasEffectif)) {
       o.index.algo1 = true
       o.index.algo2 = true
       // Complete reporder if missing
@@ -37,6 +39,3 @@ export function finalize(
   }
   return o
 }
-
-const hasEffectif = (o: CompanyDataValuesWithFlags, batch: string) =>
-  Object.keys(o.batch[batch].effectif || {}).length > 0
