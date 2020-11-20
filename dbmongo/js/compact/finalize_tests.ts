@@ -30,9 +30,9 @@ type TestCase = {
 }
 
 const testCases: TestCase[] = [
-  // example 1
+  // example 0
   {
-    testCaseName: "add random_order",
+    testCaseName: "no random_order if there is no effectif",
     finalizeObject: {
       key: SIRET,
       scope: "etablissement",
@@ -74,6 +74,52 @@ const testCases: TestCase[] = [
               apconso: ["b"],
             },
           },
+        },
+      },
+      index: {
+        algo1: false,
+        algo2: false,
+      },
+    },
+  },
+  // example 1
+  {
+    testCaseName: "add random_order if there is an effectif",
+    finalizeObject: {
+      key: SIRET,
+      scope: "etablissement",
+      batch: {
+        "1901": {
+          effectif: {
+            a: EFFECTIF,
+            b: EFFECTIF,
+          },
+        },
+        "1902": {
+          compact: {
+            delete: {
+              effectif: ["b"],
+            },
+          },
+        },
+      },
+    },
+    expected: {
+      key: SIRET,
+      scope: "etablissement",
+      batch: {
+        "1901": {
+          effectif: {
+            a: EFFECTIF,
+            b: EFFECTIF,
+          },
+        },
+        "1902": {
+          compact: {
+            delete: {
+              effectif: ["b"],
+            },
+          },
           reporder: {
             [DATE_DEBUT.toString()]: {
               periode: DATE_DEBUT,
@@ -87,8 +133,8 @@ const testCases: TestCase[] = [
         },
       },
       index: {
-        algo1: false,
-        algo2: false,
+        algo1: true,
+        algo2: true,
       },
     },
   },
@@ -253,8 +299,8 @@ const testCases: TestCase[] = [
           other_stuff: {},
         } as BatchValueWithCompact,
         "1902": {
-          apconso: {
-            c: AP_CONSO,
+          effectif: {
+            c: EFFECTIF,
           },
         },
       },
@@ -268,8 +314,8 @@ const testCases: TestCase[] = [
       scope: "etablissement",
       batch: {
         "1902": {
-          apconso: {
-            c: AP_CONSO,
+          effectif: {
+            c: EFFECTIF,
           },
           reporder: {
             [DATE_DEBUT.toString()]: {
@@ -291,8 +337,8 @@ const testCases: TestCase[] = [
         },
       },
       index: {
-        algo1: false,
-        algo2: false,
+        algo1: true,
+        algo2: true,
       },
     },
   },
@@ -313,8 +359,8 @@ const testCases: TestCase[] = [
           },
         },
         "1902": {
-          apconso: {
-            c: AP_CONSO,
+          effectif: {
+            c: EFFECTIF,
           },
           reporder: {
             "4124ad3ec7264743785e6a0b107cbc42": {
@@ -348,8 +394,8 @@ const testCases: TestCase[] = [
           },
         },
         "1902": {
-          apconso: {
-            c: AP_CONSO,
+          effectif: {
+            c: EFFECTIF,
           },
           reporder: {
             "4124ad3ec7264743785e6a0b107cbc43": {
@@ -360,8 +406,8 @@ const testCases: TestCase[] = [
         },
       },
       index: {
-        algo1: false,
-        algo2: false,
+        algo1: true,
+        algo2: true,
       },
     },
   },

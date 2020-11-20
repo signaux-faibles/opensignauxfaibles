@@ -35,7 +35,15 @@ const dates = [
   new Date("2016-01-01T00:00:00.000+0000"),
 ]
 const batch: BatchValues = {
-  [fromBatchKey]: {},
+  [fromBatchKey]: {
+    effectif: {
+      a: {
+        periode: dates[0],
+        effectif: 1,
+        numero_compte: "123",
+      },
+    },
+  },
 }
 
 const importedData = {
@@ -64,6 +72,7 @@ const expectedReduceResults = {
 const expectedFinalizeResultValue = {
   batch: {
     [fromBatchKey]: {
+      effectif: batch[fromBatchKey].effectif,
       reporder: dates.reduce(
         (reporder, date) => ({
           ...reporder,
@@ -74,7 +83,7 @@ const expectedFinalizeResultValue = {
     },
   },
   scope,
-  index: { algo1: false, algo2: false }, // car il n'y a pas de données justifiant que l'établissement compte 10 employés ou pas
+  index: { algo1: true, algo2: true },
   key: siret,
 }
 
