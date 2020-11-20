@@ -57,15 +57,12 @@ func main() {
 	api := r.Group("api")
 
 	{
-		api.GET("/data/naf", nafHandler)
 		api.POST("/data/batch/purge", purgeBatchHandler)
 		api.POST("/data/import", importBatchHandler)
 		api.POST("/data/check", checkBatchHandler)
 		api.POST("/data/compact", compactHandler)
 		api.POST("/data/reduce", reduceHandler)
 		api.POST("/data/public", publicHandler)
-
-		api.POST("/data/search", searchHandler)
 
 		api.GET("/data/purgeNotCompacted", purgeNotCompactedHandler)
 
