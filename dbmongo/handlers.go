@@ -2,8 +2,6 @@ package main
 
 import (
 	"errors"
-	"fmt"
-	"sort"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/apconso"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/apdemande"
@@ -22,19 +20,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/globalsign/mgo/bson"
 )
-
-//
-func nextBatchHandler(c *gin.Context) {
-	err := engine.NextBatch()
-	if err != nil {
-		c.JSON(500, fmt.Errorf("Erreur lors de la création du batch suivant: "+err.Error()))
-	}
-	batches, _ := engine.GetBatches()
-	engine.MainMessageChannel <- engine.SocketMessage{
-		Batches: batches,
-	}
-	c.JSON(200, batches)
-}
 
 //
 func upsertBatchHandler(c *gin.Context) {
@@ -69,39 +54,6 @@ func listBatchHandler(c *gin.Context) {
 		return
 	}
 	c.JSON(200, batch)
-}
-
-//
-func processBatchHandler(c *gin.Context) {
-	var query struct {
-		Batches []string `json:"batches"`
-		Parsers []string `json:"parsers"`
-	}
-
-	err := c.ShouldBind(&query)
-
-	if err != nil {
-		c.JSON(400, err.Error())
-		return
-	}
-	if query.Batches == nil {
-		query.Batches = engine.GetBatchesID()
-	}
-	if query.Batches == nil {
-		query.Batches = engine.GetBatchesID()
-	}
-
-	parsers, err := resolveParsers(query.Parsers)
-	if err != nil {
-		c.JSON(404, err.Error())
-	}
-	sort.Strings(query.Batches)
-	err = engine.ProcessBatch(query.Batches, parsers)
-	if err != nil {
-		c.JSON(500, err.Error())
-		return
-	}
-	c.JSON(200, "ok !")
 }
 
 //
@@ -146,12 +98,6 @@ func purgeBatchHandler(c *gin.Context) {
 			return
 		}
 	}
-}
-
-func adminRegionHandler(c *gin.Context) {
-	c.JSON(200, []string{
-		"FR-BFC", "FR-PDL",
-	})
 }
 
 // importBatchHandler traite les demandes d'import par l'API

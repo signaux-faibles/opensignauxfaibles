@@ -59,9 +59,6 @@ func main() {
 	{
 		api.POST("/admin/batch", upsertBatchHandler)
 		api.GET("/admin/batch", listBatchHandler)
-		api.GET("/admin/batch/next", nextBatchHandler)
-		api.POST("/admin/batch/process", processBatchHandler)
-		api.GET("/admin/regions", adminRegionHandler)
 
 		api.GET("/data/naf", nafHandler)
 		api.POST("/data/batch/purge", purgeBatchHandler)

@@ -7,28 +7,6 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 )
 
-func Test_NextBatchID(t *testing.T) {
-	batchID, err := NextBatchID("abcd")
-
-	if err == nil {
-		t.Error("Erreur attendue absente. '" + batchID + "' obtenu. err = " + err.Error())
-	} else {
-		t.Log("Test valeur erronée ok")
-	}
-	batchID, err = NextBatchID("1801")
-	if err != nil || batchID != "1802" {
-		t.Error("'1802' attendu, '" + batchID + "' obtenu. err = " + err.Error())
-	} else {
-		t.Log("Test valeur courante ok")
-	}
-	batchID, err = NextBatchID("1812")
-	if err != nil || batchID != "1901" {
-		t.Error("'1901' attendu, '" + batchID + "' obtenu. err = " + err.Error())
-	} else {
-		t.Log("Test passage nouvelle année ok")
-	}
-}
-
 func Test_IsBatchID(t *testing.T) {
 	if !base.IsBatchID("1801") {
 		t.Error("1801 devrait être un ID de batch")
