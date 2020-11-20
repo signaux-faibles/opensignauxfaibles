@@ -34,7 +34,6 @@ export function finalize(
       return hasEffectif
     })
     // Complete reporder if missing
-    // TODO: do not complete if all indexes are false.
     o = f.complete_reporder(k, o)
   }
   return o
