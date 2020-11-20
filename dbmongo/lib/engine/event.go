@@ -6,16 +6,14 @@ import (
 
 	"github.com/globalsign/mgo/bson"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/files"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 )
 
 // SocketMessage permet la diffusion d'information vers tous les clients
 type SocketMessage struct {
-	JournalEvent marshal.Event       `json:"journalEvent" bson:"journalEvent"`
-	Batches      []base.AdminBatch   `json:"batches,omitempty" bson:"batches,omitempty"`
-	Features     []string            `json:"features,omitempty" bson:"features,omitempty"`
-	Files        []files.FileSummary `json:"files,omitempty" bson:"files,omitempty"`
+	JournalEvent marshal.Event     `json:"journalEvent" bson:"journalEvent"`
+	Batches      []base.AdminBatch `json:"batches,omitempty" bson:"batches,omitempty"`
+	Features     []string          `json:"features,omitempty" bson:"features,omitempty"`
 	Channel      chan SocketMessage
 }
 
@@ -25,7 +23,6 @@ func (message SocketMessage) MarshalJSON() ([]byte, error) {
 	tmp.JournalEvent = message.JournalEvent
 	tmp.Batches = message.Batches
 	tmp.Features = message.Features
-	tmp.Files = message.Files
 	return json.Marshal(tmp)
 }
 

@@ -3,8 +3,6 @@ package main
 import (
 	"errors"
 	"fmt"
-	"io"
-	"os"
 	"sort"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/apconso"
@@ -14,7 +12,6 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/diane"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/ellisphere"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/files"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sirene"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/urssaf"
@@ -24,56 +21,7 @@ import (
 	"github.com/davecgh/go-spew/spew"
 	"github.com/gin-gonic/gin"
 	"github.com/globalsign/mgo/bson"
-	"github.com/spf13/viper"
 )
-
-//
-func addFile(c *gin.Context) {
-	file, err := c.FormFile("file")
-	if err != nil {
-		c.JSON(500, err.Error())
-		return
-	}
-	batch := c.Request.FormValue("batch")
-	fileType := c.Request.FormValue("type")
-
-	source, err := file.Open()
-	if err != nil {
-		c.JSON(500, err.Error())
-		return
-	}
-
-	defer source.Close()
-
-	os.MkdirAll(viper.GetString("APP_DATA")+"/"+batch+"/"+fileType+"/", os.ModePerm)
-	destination, err := os.Create(viper.GetString("APP_DATA") + "/" + batch + "/" + fileType + "/" + file.Filename)
-	if err != nil {
-		c.JSON(500, err.Error())
-		return
-	}
-	defer destination.Close()
-
-	_, err = io.Copy(destination, source)
-
-	if err != nil {
-		c.JSON(500, err.Error())
-		return
-	}
-
-	basePath := viper.GetString("APP_DATA")
-	newFiles, err := files.ListFiles(basePath)
-
-	if err != nil {
-		c.JSON(500, err.Error())
-		return
-	}
-
-	engine.MainMessageChannel <- engine.SocketMessage{
-		Files: newFiles,
-	}
-
-	c.JSON(200, "ok")
-}
 
 //
 func nextBatchHandler(c *gin.Context) {
@@ -197,16 +145,6 @@ func purgeBatchHandler(c *gin.Context) {
 			c.JSON(500, "(✖╭╮✖) le traitement n'a pas abouti: "+err.Error())
 			return
 		}
-	}
-}
-
-func adminFilesHandler(c *gin.Context) {
-	basePath := viper.GetString("APP_DATA")
-	files, err := files.ListFiles(basePath)
-	if err != nil {
-		c.JSON(500, err)
-	} else {
-		c.JSON(200, files)
 	}
 }
 
