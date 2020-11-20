@@ -370,15 +370,14 @@ function finalize(k, companyDataValues) {
     else {
         // Est-ce que l'un des batchs a un effectif ?
         const batches = Object.keys(o.batch);
-        batches.some((batch) => {
-            const hasEffectif = Object.keys(o.batch[batch].effectif || {}).length > 0;
-            o.index.algo1 = hasEffectif;
-            o.index.algo2 = hasEffectif;
-            return hasEffectif;
-        });
-        // Complete reporder if missing
-        // TODO: do not complete if all indexes are false.
-        o = f.complete_reporder(k, o);
+        const hasEffectif = (batch) => Object.keys(o.batch[batch].effectif || {}).length > 0;
+        if (batches.some(hasEffectif)) {
+            o.index.algo1 = true;
+            o.index.algo2 = true;
+            // Complete reporder if missing
+            o = f.complete_reporder(k, o);
+        }
+        // do not complete if all indexes are false.
     }
     return o;
 }`,
