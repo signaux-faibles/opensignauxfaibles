@@ -135,7 +135,7 @@ func ProcessBatch(batchList []string, parsers []marshal.Parser) error {
 	}
 
 	batch := LastBatch()
-	return Reduce(batch, "algo2", []string{"all"})
+	return Reduce(batch, []string{"all"})
 }
 
 // LastBatch retourne le dernier batch

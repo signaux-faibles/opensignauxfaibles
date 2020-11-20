@@ -36,9 +36,9 @@ func reduceHandler(c *gin.Context) {
 	}
 
 	if params.Key == "" && params.From == "" && params.To == "" {
-		err = engine.Reduce(batch, params.Algo, params.Types)
+		err = engine.Reduce(batch, params.Types)
 	} else {
-		err = engine.ReduceOne(batch, params.Algo, params.Key, params.From, params.To, params.Types)
+		err = engine.ReduceOne(batch, params.Key, params.From, params.To, params.Types)
 	}
 
 	if err != nil {
