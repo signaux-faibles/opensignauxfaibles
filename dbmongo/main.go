@@ -57,9 +57,6 @@ func main() {
 	api := r.Group("api")
 
 	{
-		api.POST("/admin/batch", upsertBatchHandler)
-		api.GET("/admin/batch", listBatchHandler)
-
 		api.GET("/data/naf", nafHandler)
 		api.POST("/data/batch/purge", purgeBatchHandler)
 		api.POST("/data/import", importBatchHandler)

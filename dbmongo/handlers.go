@@ -16,45 +16,9 @@ import (
 
 	sireneul "github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/sirene_ul"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/gin-gonic/gin"
 	"github.com/globalsign/mgo/bson"
 )
-
-//
-func upsertBatchHandler(c *gin.Context) {
-	var batch base.AdminBatch
-	err := c.ShouldBind(&batch)
-	if err != nil {
-		c.JSON(400, err.Error)
-		return
-	}
-
-	err = engine.Save(&batch)
-	if err != nil {
-		c.JSON(500, "Erreur à l'enregistrement: "+err.Error())
-		return
-	}
-
-	batches, _ := engine.GetBatches()
-	engine.MainMessageChannel <- engine.SocketMessage{
-		Batches: batches,
-	}
-
-	c.JSON(200, batch)
-}
-
-//
-func listBatchHandler(c *gin.Context) {
-	var batch []base.AdminBatch
-	err := engine.Db.DB.C("Admin").Find(bson.M{"_id.type": "batch"}).Sort("-_id.key").All(&batch)
-	if err != nil {
-		spew.Dump(err)
-		c.JSON(500, err)
-		return
-	}
-	c.JSON(200, batch)
-}
 
 //
 func purgeBatchHandler(c *gin.Context) {
