@@ -63,9 +63,9 @@ print("// Documents from db.Journal:");
 printjson(db.Journal.find().toArray().map(doc => ({
   // note: we use map() to force the order of properties at every run of this test
   event: {
-    headSkipped: doc.event.headSkipped,
     headRejected: doc.event.headRejected,
     headFatal: doc.event.headFatal,
+    linesSkipped: doc.event.linesSkipped,
     summary: doc.event.summary,
     batchKey: doc.event.batchKey
   },

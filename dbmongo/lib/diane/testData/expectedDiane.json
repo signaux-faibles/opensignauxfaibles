@@ -1484,7 +1484,6 @@
         "batchKey": "",
         "headFatal": [],
         "headRejected": [],
-        "headSkipped": [],
         "isFatal": false,
         "linesParsed": 18,
         "linesRejected": 0,

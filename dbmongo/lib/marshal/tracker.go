@@ -120,7 +120,6 @@ func reportAbstract(tracker gournal.Tracker) interface{} {
 		"linesSkipped":  nFiltered,
 		"linesRejected": nError,
 		"isFatal":       nFatal > 0,
-		"headSkipped":   filterErrors,
 		"headRejected":  errorErrors,
 		"headFatal":     fatalErrors,
 	}
