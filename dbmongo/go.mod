@@ -5,7 +5,6 @@ go 1.14
 require (
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
 	github.com/cnf/structhash v0.0.0-20180104161610-62a607eb0224
-	github.com/davecgh/go-spew v1.1.1
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-gonic/gin v1.6.2
 	github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8

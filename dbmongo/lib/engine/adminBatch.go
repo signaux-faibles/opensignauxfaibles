@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"time"
 
 	"github.com/globalsign/mgo/bson"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
@@ -36,16 +35,6 @@ func Load(batch *base.AdminBatch, batchKey string) error {
 func Save(batch *base.AdminBatch) error {
 	_, err := Db.DB.C("Admin").Upsert(bson.M{"_id": batch.ID}, batch)
 	return err
-}
-
-// NextBatchID génère le batchKey suivant à partir d'un batchKey
-func NextBatchID(batchID string) (string, error) {
-	batchTime, err := time.Parse("0601", batchID)
-	if err != nil {
-		return "", err
-	}
-	nextBatchTime := time.Date(batchTime.Year(), time.Month(batchTime.Month()+1), 1, 0, 0, 0, 0, time.UTC)
-	return nextBatchTime.Format("0601"), err
 }
 
 // ImportBatch lance tous les parsers sur le batch fourni
@@ -113,64 +102,4 @@ func CheckBatch(batch base.AdminBatch, parsers []marshal.Parser) (reports []stri
 
 	Db.ChanData <- &Value{}
 	return reports, nil
-}
-
-// ProcessBatch traitement ad-hoc modifiable pour les besoins du développement
-func ProcessBatch(batchList []string, parsers []marshal.Parser) error {
-
-	for _, v := range batchList {
-		batch, errBatch := GetBatch(v)
-		if errBatch != nil {
-			return errors.New("Erreur de lecture du batch: " + errBatch.Error())
-		}
-		importErr := ImportBatch(batch, parsers, false)
-		if importErr != nil {
-			return importErr
-		}
-		time.Sleep(5 * time.Second) // TODO: trouver une façon de synchroniser l'insert des paquets
-		err := Compact(v)
-		if err != nil {
-			return errors.New("Erreur de compactage: " + err.Error())
-		}
-	}
-
-	batch := LastBatch()
-	return Reduce(batch, []string{"all"})
-}
-
-// LastBatch retourne le dernier batch
-func LastBatch() base.AdminBatch {
-	batches, _ := GetBatches()
-	l := len(batches)
-	batch := batches[l-1]
-	return batch
-}
-
-// NextBatch crée le batch suivant le dernier batch existant
-func NextBatch() error {
-	batch := LastBatch()
-	newBatchID, err := NextBatchID(batch.ID.Key)
-	if err != nil {
-		return fmt.Errorf("Mauvais numéro de batch: " + err.Error())
-	}
-	newBatch := base.AdminBatch{
-		ID: base.AdminID{
-			Key:  newBatchID,
-			Type: "batch",
-		},
-		CompleteTypes: batch.CompleteTypes,
-	}
-
-	batch.Readonly = true
-
-	err = Save(&batch)
-	if err != nil {
-		return fmt.Errorf("Erreur readonly Batch: " + err.Error())
-	}
-
-	err = Save(&newBatch)
-	if err != nil {
-		return fmt.Errorf("Erreur newBatch: " + err.Error())
-	}
-	return nil
 }
