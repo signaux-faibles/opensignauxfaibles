@@ -15,7 +15,6 @@ import (
 func reduceHandler(c *gin.Context) {
 	var params struct {
 		BatchKey string   `json:"batch"`
-		Algo     string   `json:"algo"`
 		Key      string   `json:"key"`
 		From     string   `json:"from"`
 		To       string   `json:"to"`

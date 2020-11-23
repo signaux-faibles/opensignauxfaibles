@@ -35,7 +35,7 @@ tests/helpers/populate-from-objects.sh \
 echo ""
 echo "💎 Computing the Features collection thru dbmongo API..."
 tests/helpers/dbmongo-server.sh start
-echo "- POST /api/data/reduce 👉 $(http --print=b --ignore-stdin :5000/api/data/reduce algo=algo2 batch=1905)"
+echo "- POST /api/data/reduce 👉 $(http --print=b --ignore-stdin :5000/api/data/reduce batch=1905)"
 
 (tests/helpers/mongodb-container.sh run \
   > "${OUTPUT_FILE}" \
