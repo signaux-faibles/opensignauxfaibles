@@ -310,7 +310,6 @@ func reduceDefineScope(batch base.AdminBatch, algo string, types []string) (bson
 		"naf":                    naf,
 		"f":                      functions,
 		"batches":                GetBatchesID(),
-		"types":                  GetTypes(),
 		"includes":               includes,
 	}
 	return scope, nil

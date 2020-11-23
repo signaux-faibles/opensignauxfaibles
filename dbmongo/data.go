@@ -7,7 +7,6 @@ import (
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/naf"
 	"github.com/spf13/viper"
 
 	"github.com/gin-gonic/gin"
@@ -97,10 +96,6 @@ func compactHandler(c *gin.Context) {
 		return
 	}
 	c.JSON(200, "ok")
-}
-
-func nafHandler(c *gin.Context) {
-	c.JSON(200, naf.Naf)
 }
 
 func getTimestamp() string {

@@ -6,17 +6,14 @@ import (
 
 	"github.com/globalsign/mgo/bson"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/files"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 )
 
 // SocketMessage permet la diffusion d'information vers tous les clients
 type SocketMessage struct {
-	JournalEvent marshal.Event       `json:"journalEvent" bson:"journalEvent"`
-	Batches      []base.AdminBatch   `json:"batches,omitempty" bson:"batches,omitempty"`
-	Types        []Type              `json:"types,omitempty" bson:"types,omitempty"`
-	Features     []string            `json:"features,omitempty" bson:"features,omitempty"`
-	Files        []files.FileSummary `json:"files,omitempty" bson:"files,omitempty"`
+	JournalEvent marshal.Event     `json:"journalEvent" bson:"journalEvent"`
+	Batches      []base.AdminBatch `json:"batches,omitempty" bson:"batches,omitempty"`
+	Features     []string          `json:"features,omitempty" bson:"features,omitempty"`
 	Channel      chan SocketMessage
 }
 
@@ -25,17 +22,8 @@ func (message SocketMessage) MarshalJSON() ([]byte, error) {
 	var tmp SocketMessage
 	tmp.JournalEvent = message.JournalEvent
 	tmp.Batches = message.Batches
-	tmp.Types = message.Types
 	tmp.Features = message.Features
-	tmp.Files = message.Files
 	return json.Marshal(tmp)
-}
-
-// GetEventsFromDB retourne les n derniers enregistrements correspondant à la requête
-func GetEventsFromDB(query interface{}, n int) ([]marshal.Event, error) {
-	var logs []marshal.Event
-	err := Db.DB.C("Journal").Find(query).Sort("-date").Limit(n).All(&logs)
-	return logs, err
 }
 
 type messageChannel chan SocketMessage
