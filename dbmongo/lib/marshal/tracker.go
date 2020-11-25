@@ -20,7 +20,7 @@ type parseError struct {
 type ParsingTracker struct {
 	filePath       string
 	batchKey       string
-	currentLine    int
+	currentLine    int // Note: line 1 is the first line of data (excluding the header) read from a file
 	nbSkippedLines int
 	fatalErrors    []error
 	parseErrors    []parseError
