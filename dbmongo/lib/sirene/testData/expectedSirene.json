@@ -56,7 +56,7 @@
         "batchKey": "",
         "headFatal": [],
         "headRejected": [
-          "Line 4: parsing time \"\" as \"2006-01-02\": cannot parse \"\" as \"2006\""
+          "Line 2: parsing time \"\" as \"2006-01-02\": cannot parse \"\" as \"2006\""
         ],
         "isFatal": false,
         "linesParsed": 3,

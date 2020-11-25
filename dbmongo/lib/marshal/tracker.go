@@ -54,7 +54,7 @@ func (tracker *ParsingTracker) Report(code string) interface{} {
 	var headFatal = []string{}
 	for _, err := range tracker.fatalErrors {
 		if len(headFatal) < MaxParsingErrors {
-			rendered := fmt.Sprintf("Line %d: %v", tracker.currentLine, err.Error())
+			rendered := fmt.Sprintf("Fatal: %v", err.Error())
 			headFatal = append(headFatal, rendered)
 		}
 	}
@@ -67,7 +67,7 @@ func (tracker *ParsingTracker) Report(code string) interface{} {
 			lastLineWithError = err.line
 		}
 		if len(headRejected) < MaxParsingErrors {
-			rendered := fmt.Sprintf("Line %d: %v", tracker.currentLine, err.err.Error())
+			rendered := fmt.Sprintf("Line %d: %v", err.line, err.err.Error())
 			headRejected = append(headRejected, rendered)
 		}
 	}
