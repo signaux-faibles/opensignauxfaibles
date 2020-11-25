@@ -75,18 +75,40 @@ func PruneEntities(batchKey string, delete bool) (int, error) {
 		return -1, errors.New("Ce batch ne spécifie pas de filtre")
 	}
 	// Créer une expression régulière pour reconnaitre les SIRENs du périmètre
-	sirenRegexs := []bson.M{}
+	sirens := []string{}
 	for siren := range filter {
-		sirenRegexs = append(sirenRegexs, bson.M{"_id": bson.M{"$not": bson.M{"$regex": "^" + siren}}})
+		sirens = append(sirens, siren)
 	}
 	// Compter les entités de RawData qui ne figurent pas dans le filtre
-	query := bson.M{"$and": sirenRegexs}
-	count, err := Db.DB.C("RawData").Find(query).Count()
+	pipeline := []bson.M{
+		{
+			"$project": bson.M{
+				"_id":   true,
+				"siren": bson.M{"$substr": []interface{}{"$_id", 0, 9}},
+			},
+		},
+		{
+			"$match": bson.M{
+				"siren": bson.M{"$nin": sirens},
+			},
+		},
+		{
+			"$group": bson.M{
+				"_id":           "result",
+				"ids_to_delete": bson.M{"$push": "$_id"}, // accumulate _id values into a _id field
+			},
+		},
+	}
+	type aggrResult struct {
+		IdsToDelete []string `json:"ids_to_delete"   bson:"ids_to_delete"`
+	}
+	var result aggrResult
+	err = Db.DB.C("RawData").Pipe(pipeline).AllowDiskUse().One(&result)
 	// Éventuellement, supprimer ces entités
 	if delete == true && err == nil {
-		_, err = Db.DB.C("RawData").RemoveAll(query)
+		_, err = Db.DB.C("RawData").RemoveAll(bson.M{"_id": bson.M{"$in": result.IdsToDelete}})
 	}
-	return count, err
+	return len(result.IdsToDelete), err
 }
 
 // MRWait centralise les variables nécessaires à l'isolation des traitements parallèlisés MR
