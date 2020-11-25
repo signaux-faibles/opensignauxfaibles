@@ -51,11 +51,24 @@ func (tracker *ParsingTracker) Next() {
 func (tracker *ParsingTracker) Report(code string) interface{} {
 	var nbRejectedLines = 0
 
+	var headFatal = []string{}
+	for _, err := range tracker.fatalErrors {
+		if len(headFatal) < MaxParsingErrors {
+			rendered := fmt.Sprintf("Cycle %d: %v", tracker.currentCycle, err.Error())
+			headFatal = append(headFatal, rendered)
+		}
+	}
+
+	var headRejected = []string{}
 	var lastCycleWithError = -1
-	for cycle, err := range tracker.parseErrors {
+	for _, err := range tracker.parseErrors {
 		if err.cycle != lastCycleWithError {
 			nbRejectedLines++
-			lastCycleWithError = cycle
+			lastCycleWithError = err.cycle
+		}
+		if len(headRejected) < MaxParsingErrors {
+			rendered := fmt.Sprintf("Cycle %d: %v", tracker.currentCycle, err.err.Error())
+			headRejected = append(headRejected, rendered)
 		}
 	}
 
@@ -79,8 +92,8 @@ func (tracker *ParsingTracker) Report(code string) interface{} {
 		"linesSkipped":  tracker.nbSkippedLines,
 		"linesRejected": nbRejectedLines,
 		"isFatal":       len(tracker.fatalErrors) > 0,
-		"headRejected":  tracker.parseErrors,
-		"headFatal":     tracker.fatalErrors,
+		"headRejected":  headRejected,
+		"headFatal":     headFatal,
 	}
 }
 
