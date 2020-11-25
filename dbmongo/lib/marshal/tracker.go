@@ -12,15 +12,15 @@ import (
 var MaxParsingErrors = 200
 
 type parseError struct {
-	cycle int
-	err   error
+	line int
+	err  error
 }
 
 // ParsingTracker permet de collecter puis rapporter des erreurs de parsing.
 type ParsingTracker struct {
 	filePath       string
 	batchKey       string
-	currentCycle   int
+	currentLine    int
 	nbSkippedLines int
 	fatalErrors    []error
 	parseErrors    []parseError
@@ -31,20 +31,20 @@ func (tracker *ParsingTracker) Add(err base.CriticityError) {
 	if err.Criticity() == "fatal" {
 		tracker.fatalErrors = append(tracker.fatalErrors, err)
 	} else if err.Criticity() == "filter" {
-		// TODO: make sure that we never add more than 1 filter error per line/cycle
+		// TODO: make sure that we never add more than 1 filter error per line
 		tracker.nbSkippedLines++
-		fmt.Fprintf(os.Stderr, "Cycle %d: %v", tracker.currentCycle, err.Error())
+		fmt.Fprintf(os.Stderr, "Line %d: %v", tracker.currentLine, err.Error())
 	} else {
 		tracker.parseErrors = append(tracker.parseErrors, parseError{
-			cycle: tracker.currentCycle,
-			err:   err,
+			line: tracker.currentLine,
+			err:  err,
 		})
 	}
 }
 
 // Next informe le Tracker qu'on passe à la ligne suivante.
 func (tracker *ParsingTracker) Next() {
-	tracker.currentCycle++
+	tracker.currentLine++
 }
 
 // Report génère un rapport de parsing à partir des erreurs rapportées.
@@ -54,30 +54,31 @@ func (tracker *ParsingTracker) Report(code string) interface{} {
 	var headFatal = []string{}
 	for _, err := range tracker.fatalErrors {
 		if len(headFatal) < MaxParsingErrors {
-			rendered := fmt.Sprintf("Cycle %d: %v", tracker.currentCycle, err.Error())
+			rendered := fmt.Sprintf("Line %d: %v", tracker.currentLine, err.Error())
 			headFatal = append(headFatal, rendered)
 		}
 	}
 
 	var headRejected = []string{}
-	var lastCycleWithError = -1
+	var lastLineWithError = -1
 	for _, err := range tracker.parseErrors {
-		if err.cycle != lastCycleWithError {
+		if err.line != lastLineWithError {
 			nbRejectedLines++
-			lastCycleWithError = err.cycle
+			lastLineWithError = err.line
 		}
 		if len(headRejected) < MaxParsingErrors {
-			rendered := fmt.Sprintf("Cycle %d: %v", tracker.currentCycle, err.err.Error())
+			rendered := fmt.Sprintf("Line %d: %v", tracker.currentLine, err.err.Error())
 			headRejected = append(headRejected, rendered)
 		}
 	}
 
-	nbValidLines := tracker.currentCycle - nbRejectedLines - tracker.nbSkippedLines
+	nbParsedLines := tracker.currentLine - 1
+	nbValidLines := nbParsedLines - nbRejectedLines - tracker.nbSkippedLines
 
 	report := fmt.Sprintf(
 		"%s: intégration terminée, %d lignes traitées, %d erreurs fatales, %d lignes rejetées, %d lignes filtrées, %d lignes valides",
 		tracker.filePath,
-		tracker.currentCycle,
+		nbParsedLines,
 		len(tracker.fatalErrors),
 		nbRejectedLines,
 		tracker.nbSkippedLines,
@@ -87,7 +88,7 @@ func (tracker *ParsingTracker) Report(code string) interface{} {
 	return bson.M{
 		"batchKey":      tracker.batchKey,
 		"summary":       report,
-		"linesParsed":   tracker.currentCycle,
+		"linesParsed":   nbParsedLines,
 		"linesValid":    nbValidLines,
 		"linesSkipped":  tracker.nbSkippedLines,
 		"linesRejected": nbRejectedLines,
@@ -100,7 +101,8 @@ func (tracker *ParsingTracker) Report(code string) interface{} {
 // NewParsingTracker retourne une instance pour rapporter les erreurs de parsing.
 func NewParsingTracker(batchKey string, filePath string) ParsingTracker {
 	return ParsingTracker{
-		filePath: filePath,
-		batchKey: batchKey,
+		filePath:    filePath,
+		batchKey:    batchKey,
+		currentLine: 1,
 	}
 }

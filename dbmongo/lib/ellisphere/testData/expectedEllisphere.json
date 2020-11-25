@@ -83,7 +83,7 @@
         "batchKey": "",
         "headFatal": [],
         "headRejected": [
-          "Cycle 0: strconv.ParseInt: parsing \"Niveau de détention\": invalid syntax"
+          "Line 8: strconv.ParseInt: parsing \"Niveau de détention\": invalid syntax"
         ],
         "isFatal": false,
         "linesParsed": 7,
