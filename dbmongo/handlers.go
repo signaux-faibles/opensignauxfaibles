@@ -138,14 +138,14 @@ func purgeNotCompactedHandler(c *gin.Context) {
 func pruneEntitiesHandler(c *gin.Context) {
 	var params struct {
 		BatchKey string `json:"batch"`
-		// TODO: DeleteEntities bool     `json:"delete"`
+		Delete   bool   `json:"delete"`
 	}
 	err := c.ShouldBind(&params)
 	if err != nil {
 		c.JSON(400, "Requête malformée: "+err.Error())
 		return
 	}
-	count, err := engine.PruneEntities(params.BatchKey)
+	count, err := engine.PruneEntities(params.BatchKey, params.Delete)
 	if err != nil {
 		c.JSON(500, err.Error())
 		return
