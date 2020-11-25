@@ -8,10 +8,12 @@ import (
 	"log"
 	"os"
 	"sort"
+	"strings"
 	"sync"
 	"time"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
 
 	"github.com/globalsign/mgo"
@@ -53,6 +55,36 @@ func loadJSFunctions(directoryNames ...string) (map[string]bson.JavaScript, erro
 func PurgeNotCompacted() error {
 	_, err := Db.DB.C("ImportedData").RemoveAll(nil)
 	return err
+}
+
+// PruneEntities permet de compter puis supprimer les entités de RawData
+// qui auraient du être exclues par le Filtre de périmètre SIREN.
+func PruneEntities(batchKey string) (int, error) {
+	// Récupérer le batch
+	batch := base.AdminBatch{}
+	err := Load(&batch, batchKey)
+	if err != nil {
+		return -1, errors.New("Batch inexistant: " + err.Error())
+	}
+	// Charger le filtre
+	var cache = marshal.NewCache()
+	filter, err := marshal.GetSirenFilter(cache, &batch)
+	if err != nil {
+		return -1, err
+	}
+	if filter == nil {
+		return -1, errors.New("Ce batch ne spécifie pas de filtre")
+	}
+	// Créer une expression régulière pour reconnaitre les SIRENs du périmètre
+	sirenRegexs := []string{}
+	for siren := range filter {
+		sirenRegexs = append(sirenRegexs, "^"+siren)
+	}
+	perimeterRegex := strings.Join(sirenRegexs, "|")
+	// Compter les entités de RawData qui ne figurent pas dans le filtre
+	query := bson.M{"_id": bson.M{"$not": bson.M{"$regex": perimeterRegex}}}
+	count, err := Db.DB.C("RawData").Find(query).Count()
+	return count, err
 }
 
 // MRWait centralise les variables nécessaires à l'isolation des traitements parallèlisés MR
