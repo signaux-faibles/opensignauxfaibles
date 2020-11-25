@@ -8,7 +8,6 @@ import (
 	"log"
 	"os"
 	"sort"
-	"strings"
 	"sync"
 	"time"
 
@@ -76,13 +75,12 @@ func PruneEntities(batchKey string, delete bool) (int, error) {
 		return -1, errors.New("Ce batch ne spécifie pas de filtre")
 	}
 	// Créer une expression régulière pour reconnaitre les SIRENs du périmètre
-	sirenRegexs := []string{}
+	sirenRegexs := []bson.M{}
 	for siren := range filter {
-		sirenRegexs = append(sirenRegexs, "^"+siren)
+		sirenRegexs = append(sirenRegexs, bson.M{"_id": bson.M{"$not": bson.M{"$regex": "^" + siren}}})
 	}
-	perimeterRegex := strings.Join(sirenRegexs, "|")
 	// Compter les entités de RawData qui ne figurent pas dans le filtre
-	query := bson.M{"_id": bson.M{"$not": bson.M{"$regex": perimeterRegex}}}
+	query := bson.M{"$and": sirenRegexs}
 	count, err := Db.DB.C("RawData").Find(query).Count()
 	// Éventuellement, supprimer ces entités
 	if delete == true && err == nil {
