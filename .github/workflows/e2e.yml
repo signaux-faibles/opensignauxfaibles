@@ -32,6 +32,8 @@ jobs:
           sudo apt-get install -y httpie
           sudo apt-get install git-secret # to decrypt golden master files, for tests
 
+      - run: ./tests/test-api-prune-entities.sh
+
       - run: ./tests/test-api.sh
 
       - run: ./tests/test-api-import.sh
