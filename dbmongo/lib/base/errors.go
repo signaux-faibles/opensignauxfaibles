@@ -36,7 +36,7 @@ func newCriticError(err error, criticity string) CriticityError {
 
 // NewFilterError returns a filter error (occurs when something goes wrong while filtering)
 func NewFilterError() CriticityError {
-	return newCriticError(errors.New(""), "filter")
+	return newCriticError(errors.New("(filtered)"), "filter")
 }
 
 // NewRegularError creates a regular error

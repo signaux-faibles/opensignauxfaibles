@@ -33,7 +33,7 @@ func (tracker *ParsingTracker) Add(err base.CriticityError) {
 	} else if err.Criticity() == "filter" {
 		// TODO: make sure that we never add more than 1 filter error per line
 		tracker.nbSkippedLines++
-		fmt.Fprintf(os.Stderr, "Line %d: %v", tracker.currentLine, err.Error())
+		fmt.Fprintf(os.Stderr, "Line %d: %v\n", tracker.currentLine, err.Error())
 	} else {
 		tracker.parseErrors = append(tracker.parseErrors, parseError{
 			line: tracker.currentLine,
