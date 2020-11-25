@@ -26,7 +26,8 @@ MONGODB_PORT="27016" tests/helpers/dbmongo-server.sh setup
 echo ""
 echo "📝 Inserting test data..."
 sleep 1 # give some time for MongoDB to start
-echo "222222222" > "${FILTER_FILE}"
+echo "333333333" > "${FILTER_FILE}"
+echo "111111111" >> "${FILTER_FILE}"
 tests/helpers/mongodb-container.sh run >/dev/null << CONTENT
   db.RawData.insertMany([
     {
@@ -62,7 +63,7 @@ echo ""
 echo "💎 Test: count and prune entities from RawData..."
 tests/helpers/dbmongo-server.sh start
 COUNT=$(http --print=b --ignore-stdin :5000/api/data/pruneEntities batch=2010)
-echo "- POST /api/data/pruneEntities 👉 count: ${COUNT} (expected: 3)"
+echo "- POST /api/data/pruneEntities 👉 count: ${COUNT} (expected: 2)"
 echo "- POST /api/data/pruneEntities delete=true 👉 $(http --print=b --ignore-stdin :5000/api/data/pruneEntities batch=2010 delete=true)"
 
 # Display JS errors logged by MongoDB, if any
@@ -74,11 +75,11 @@ function test {
   grep 'true' <<< "${RESULT}" # test will fail if result does not contain 'true'
 }
 
-test "222222222 was not pruned" 'db.RawData.find({_id: "222222222"}).count() === 1'
-test "22222222200000 was not pruned" 'db.RawData.find({_id: "22222222200000"}).count() === 1'
-test "111111111 was pruned" 'db.RawData.find({_id: "111111111"}).count() === 0'
-test "11111111100000 was pruned" 'db.RawData.find({_id: "11111111100000"}).count() === 0'
-test "333333333 was pruned" 'db.RawData.find({_id: "333333333"}).count() === 0'
+test "333333333 was not pruned" 'db.RawData.find({_id: "333333333"}).count() === 1'
+test "111111111 was not pruned" 'db.RawData.find({_id: "111111111"}).count() === 1'
+test "11111111100000 was not pruned" 'db.RawData.find({_id: "11111111100000"}).count() === 1'
+test "222222222 was pruned" 'db.RawData.find({_id: "222222222"}).count() === 0'
+test "22222222200000 was pruned" 'db.RawData.find({_id: "22222222200000"}).count() === 0'
 
 rm -rf "${TMP_DIR}"
 # Now, the "trap" commands will clean up the rest.
