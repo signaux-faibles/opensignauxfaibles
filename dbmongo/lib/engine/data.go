@@ -79,7 +79,7 @@ func PruneEntities(batchKey string, delete bool) (int, error) {
 	for siren := range filter {
 		sirens = append(sirens, siren)
 	}
-	// Compter les entités de RawData qui ne figurent pas dans le filtre
+	// Lister les entités de RawData qui ne figurent pas dans le filtre
 	pipeline := []bson.M{
 		{
 			"$project": bson.M{
@@ -93,22 +93,49 @@ func PruneEntities(batchKey string, delete bool) (int, error) {
 			},
 		},
 		{
-			"$group": bson.M{
-				"_id":           "result",
-				"ids_to_delete": bson.M{"$push": "$_id"}, // accumulate _id values into a _id field
+			"$project": bson.M{
+				"siren": false,
 			},
 		},
 	}
-	type aggrResult struct {
-		IdsToDelete []string `json:"ids_to_delete"   bson:"ids_to_delete"`
-	}
-	var result aggrResult
-	err = Db.DB.C("RawData").Pipe(pipeline).AllowDiskUse().One(&result)
 	// Éventuellement, supprimer ces entités
-	if delete == true && err == nil {
-		_, err = Db.DB.C("RawData").RemoveAll(bson.M{"_id": bson.M{"$in": result.IdsToDelete}})
+	if delete == true {
+		// Enregistrer la liste d'entités dans la collection temporaire "EntitiesToPrune"
+		tmpCollection := "EntitiesToPrune"
+		iterator := Db.DB.C("RawData").Pipe(pipeline).AllowDiskUse().Iter()
+		var item struct {
+			ID string `json:"id"   bson:"_id"`
+		}
+		for iterator.Next(&item) {
+			if err := iterator.Err(); err != nil {
+				return -1, err
+			}
+			if err = Db.DB.C(tmpCollection).Insert(bson.M{"_id": item.ID}); err != nil {
+				return -1, err
+			}
+		}
+		// Supprimer les entités en itérant sur "EntitiesToPrune"
+		var nbDeleted = 0
+		iterator = Db.DB.C(tmpCollection).Find(bson.M{}).Iter()
+		for iterator.Next(&item) {
+			if err := iterator.Err(); err != nil {
+				return -1, err
+			}
+			if err = Db.DB.C("RawData").Remove(bson.M{"_id": item.ID}); err != nil {
+				return -1, err
+			}
+			nbDeleted++
+		}
+		// Supprimer la collection temporaire
+		_ = Db.DB.C(tmpCollection).DropCollection()
+		return nbDeleted, err
 	}
-	return len(result.IdsToDelete), err
+	var result struct {
+		IdsToDelete int `json:"ids_to_delete"   bson:"ids_to_delete"`
+	}
+	pipeline = append(pipeline, bson.M{"$count": "ids_to_delete"})
+	err = Db.DB.C("RawData").Pipe(pipeline).AllowDiskUse().One(&result)
+	return result.IdsToDelete, err
 }
 
 // MRWait centralise les variables nécessaires à l'isolation des traitements parallèlisés MR
