@@ -59,27 +59,29 @@ tests/helpers/mongodb-container.sh run >/dev/null << CONTENT
   });
 CONTENT
 
-echo ""
-echo "💎 Test: count and prune entities from RawData..."
-tests/helpers/dbmongo-server.sh start
-COUNT=$(http --print=b --ignore-stdin :5000/api/data/pruneEntities batch=2010)
-echo "- POST /api/data/pruneEntities 👉 count: ${COUNT} (expected: 2)"
-echo "- POST /api/data/pruneEntities delete=true 👉 $(http --print=b --ignore-stdin :5000/api/data/pruneEntities batch=2010 delete=true)"
-
-# Display JS errors logged by MongoDB, if any
-tests/helpers/mongodb-container.sh exceptions || true
-
 function test {
   RESULT=$(tests/helpers/mongodb-container.sh run <<< "print('$1:', $2)")
   (grep --color=always 'false' <<< "${RESULT}") || true # will display test if it contains 'false'
   grep 'true' <<< "${RESULT}" # test will fail if result does not contain 'true'
 }
 
-test "333333333 was not pruned" 'db.RawData.find({_id: "333333333"}).count() === 1'
-test "111111111 was not pruned" 'db.RawData.find({_id: "111111111"}).count() === 1'
-test "11111111100000 was not pruned" 'db.RawData.find({_id: "11111111100000"}).count() === 1'
-test "222222222 was pruned" 'db.RawData.find({_id: "222222222"}).count() === 0'
-test "22222222200000 was pruned" 'db.RawData.find({_id: "22222222200000"}).count() === 0'
+echo ""
+echo "💎 Test: count and prune entities from RawData..."
+tests/helpers/dbmongo-server.sh start
+COUNT=$(http --print=b --ignore-stdin :5000/api/data/pruneEntities batch=2010)
+echo "- POST /api/data/pruneEntities 👉 count: ${COUNT} (expected: 2)"
+test "  - 222222222 was not pruned yet" 'db.RawData.find({_id: "222222222"}).count() === 1'
+test "  - 22222222200000 was not pruned yet" 'db.RawData.find({_id: "22222222200000"}).count() === 1'
+
+echo "- POST /api/data/pruneEntities delete=true 👉 $(http --print=b --ignore-stdin :5000/api/data/pruneEntities batch=2010 delete:=true)"
+test "  - 333333333 was not pruned" 'db.RawData.find({_id: "333333333"}).count() === 1'
+test "  - 111111111 was not pruned" 'db.RawData.find({_id: "111111111"}).count() === 1'
+test "  - 11111111100000 was not pruned" 'db.RawData.find({_id: "11111111100000"}).count() === 1'
+test "  - 222222222 was pruned" 'db.RawData.find({_id: "222222222"}).count() === 0'
+test "  - 22222222200000 was pruned" 'db.RawData.find({_id: "22222222200000"}).count() === 0'
+
+# Display JS errors logged by MongoDB, if any
+tests/helpers/mongodb-container.sh exceptions || true
 
 rm -rf "${TMP_DIR}"
 # Now, the "trap" commands will clean up the rest.
