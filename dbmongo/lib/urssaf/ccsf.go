@@ -111,7 +111,7 @@ func parseCcsfLine(row []string, comptes *marshal.Comptes, parsedLine *marshal.P
 		ccsf.key, err = marshal.GetSiretFromComptesMapping(row[idx["NumeroCompte"]], &ccsf.DateTraitement, *comptes)
 		if err != nil {
 			// Compte filtré
-			parsedLine.AddFilterError(err)
+			parsedLine.SetFilterError(err)
 			return
 		}
 		ccsf.NumeroCompte = row[idx["NumeroCompte"]]

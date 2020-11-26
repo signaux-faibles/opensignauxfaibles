@@ -113,7 +113,7 @@ func (parser *delaiParser) ParseLines(parsedLineChan chan marshal.ParsedLineResu
 					parsedLine.Tuples = []marshal.Tuple{}
 				}
 			} else {
-				parsedLine.AddFilterError(err)
+				parsedLine.SetFilterError(err)
 			}
 		}
 		parsedLineChan <- parsedLine

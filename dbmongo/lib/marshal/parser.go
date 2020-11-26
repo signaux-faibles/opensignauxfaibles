@@ -23,8 +23,9 @@ type Parser interface {
 
 // ParsedLineResult est le résultat du parsing d'une ligne.
 type ParsedLineResult struct {
-	Tuples []Tuple
-	Errors []base.ParserError
+	Tuples      []Tuple
+	Errors      []error
+	FilterError error
 }
 
 // AddTuple permet au parseur d'ajouter un tuple extrait depuis la ligne en cours.
@@ -37,14 +38,14 @@ func (res *ParsedLineResult) AddTuple(tuple Tuple) {
 // AddRegularError permet au parseur de rapporter une erreur d'extraction.
 func (res *ParsedLineResult) AddRegularError(err error) {
 	if err != nil {
-		res.Errors = append(res.Errors, base.NewRegularError(err))
+		res.Errors = append(res.Errors, err)
 	}
 }
 
-// AddFilterError permet au parseur de rapporter qu'une ligne a été filtrée.
-func (res *ParsedLineResult) AddFilterError(err error) {
+// SetFilterError permet au parseur de rapporter que la ligne doit été filtrée.
+func (res *ParsedLineResult) SetFilterError(err error) {
 	if err != nil {
-		res.Errors = append(res.Errors, base.NewFilterError(err))
+		res.FilterError = err
 	}
 }
 
@@ -90,12 +91,12 @@ func runParserWithSirenFilter(parser Parser, filter *SirenFilter, filePath strin
 		parsedLineChan := make(chan ParsedLineResult)
 		go parser.ParseLines(parsedLineChan)
 		for lineResult := range parsedLineChan {
+			filterError := lineResult.FilterError
+			if filterError != nil {
+				tracker.AddFilterError(filterError)
+			}
 			for _, err := range lineResult.Errors {
-				if err.IsFilterError() {
-					tracker.AddFilterError(err)
-				} else {
-					tracker.AddParseError(err)
-				}
+				tracker.AddParseError(err)
 			}
 			for _, tuple := range lineResult.Tuples {
 				if _, err := isValid(tuple); err != nil {

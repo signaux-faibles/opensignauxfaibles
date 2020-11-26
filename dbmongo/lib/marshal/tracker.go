@@ -17,6 +17,7 @@ type ParsingTracker struct {
 	currentLine            int // Note: line 1 is the first line of data (excluding the header) read from a file
 	nbSkippedLines         int // lines skipped by the perimeter/filter or not found in "comptes" mapping
 	nbRejectedLines        int // lines that have at least one parse error
+	lastSkippedLine        int
 	lastLineWithParseError int
 	firstParseErrors       []string // capped by MaxParsingErrors, with line number rendered as string
 	fatalErrors            []error
@@ -32,8 +33,10 @@ func (tracker *ParsingTracker) AddFatalError(err error) {
 
 // AddFilterError rapporte le fait que la ligne en cours est ignorée à cause du filtre/périmètre
 func (tracker *ParsingTracker) AddFilterError(err error) {
-	// TODO: make sure that we never add more than 1 filter error per line
-	tracker.nbSkippedLines++
+	if tracker.currentLine != tracker.lastSkippedLine {
+		tracker.nbSkippedLines++
+		tracker.lastSkippedLine = tracker.currentLine
+	}
 	fmt.Fprintf(os.Stderr, "Line %d: %v\n", tracker.currentLine, err.Error())
 }
 
@@ -99,6 +102,7 @@ func NewParsingTracker(batchKey string, filePath string) ParsingTracker {
 		filePath:               filePath,
 		batchKey:               batchKey,
 		currentLine:            1,
+		lastSkippedLine:        -1,
 		lastLineWithParseError: -1,
 		firstParseErrors:       []string{},
 		fatalErrors:            []error{},
