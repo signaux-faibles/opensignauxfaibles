@@ -94,6 +94,7 @@ func PruneEntities(batchKey string, delete bool) (int, error) {
 		},
 		{
 			"$project": bson.M{
+				"_id":   true,
 				"siren": false,
 			},
 		},
