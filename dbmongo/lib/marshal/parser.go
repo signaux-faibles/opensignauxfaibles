@@ -68,13 +68,13 @@ func ParseFilesFromBatch(cache Cache, batch *base.AdminBatch, parser Parser) (ch
 	filter := GetSirenFilterFromCache(cache)
 	go func() {
 		for _, path := range batch.Files[fileType] {
-			tracker := NewParsingTracker(batch.ID.Key, path)
+			tracker := NewParsingTracker()
 			filePath := viper.GetString("APP_DATA") + path
 			if err := parser.Init(&cache, batch); err != nil {
 				tracker.AddFatalError(err)
 			}
 			runParserWithSirenFilter(parser, &filter, filePath, &tracker, outputChannel)
-			event.Info(tracker.Report("abstract"))
+			event.Info(tracker.Report(batch.ID.Key, path)) // abstract
 		}
 		close(outputChannel)
 		close(eventChannel)

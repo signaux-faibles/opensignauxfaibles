@@ -12,8 +12,6 @@ var MaxParsingErrors = 200
 
 // ParsingTracker permet de collecter puis rapporter des erreurs de parsing.
 type ParsingTracker struct {
-	filePath               string
-	batchKey               string
 	currentLine            int // Note: line 1 is the first line of data (excluding the header) read from a file
 	nbSkippedLines         int // lines skipped by the perimeter/filter or not found in "comptes" mapping
 	nbRejectedLines        int // lines that have at least one parse error
@@ -61,13 +59,13 @@ func (tracker *ParsingTracker) Next() {
 }
 
 // Report génère un rapport de parsing à partir des erreurs rapportées.
-func (tracker *ParsingTracker) Report(code string) bson.M {
+func (tracker *ParsingTracker) Report(batchKey string, filePath string) bson.M {
 	nbParsedLines := tracker.currentLine - 1 // -1 because we started counting at line number 1
 	nbValidLines := nbParsedLines - tracker.nbRejectedLines - tracker.nbSkippedLines
 
 	report := fmt.Sprintf(
 		"%s: intégration terminée, %d lignes traitées, %d erreurs fatales, %d lignes rejetées, %d lignes filtrées, %d lignes valides",
-		tracker.filePath,
+		filePath,
 		nbParsedLines,
 		len(tracker.fatalErrors),
 		tracker.nbRejectedLines,
@@ -76,7 +74,7 @@ func (tracker *ParsingTracker) Report(code string) bson.M {
 	)
 
 	return bson.M{
-		"batchKey":      tracker.batchKey,
+		"batchKey":      batchKey,
 		"summary":       report,
 		"linesParsed":   nbParsedLines,
 		"linesValid":    nbValidLines,
@@ -89,10 +87,8 @@ func (tracker *ParsingTracker) Report(code string) bson.M {
 }
 
 // NewParsingTracker retourne une instance pour rapporter les erreurs de parsing.
-func NewParsingTracker(batchKey string, filePath string) ParsingTracker {
+func NewParsingTracker() ParsingTracker {
 	return ParsingTracker{
-		filePath:               filePath,
-		batchKey:               batchKey,
 		currentLine:            1,
 		lastSkippedLine:        -1,
 		lastLineWithParseError: -1,
