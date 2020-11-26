@@ -82,7 +82,7 @@ func ParseFilesFromBatch(cache Cache, batch *base.AdminBatch, parser Parser) (ch
 	return outputChannel, eventChannel
 }
 
-func runParserWithSirenFilter(parser Parser, filter *SirenFilter, filePath string, tracker *parsingTracker, outputChannel chan Tuple) {
+func runParserWithSirenFilter(parser Parser, filter *SirenFilter, filePath string, tracker *ParsingTracker, outputChannel chan Tuple) {
 	err := parser.Open(filePath)
 	// Note: on ne passe plus le tracker aux parseurs afin de garder ici le controle de la numérotation des lignes où les erreurs sont trouvées
 	if err != nil {
