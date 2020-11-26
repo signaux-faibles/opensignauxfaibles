@@ -1,11 +1,11 @@
 package marshal
 
 import (
+	"errors"
 	"fmt"
 	"os"
 
 	"github.com/globalsign/mgo/bson"
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
 )
 
 // MaxParsingErrors is the number of parsing errors to report per file.
@@ -23,24 +23,34 @@ type ParsingTracker struct {
 	fatalErrors            []error
 }
 
-// Add rapporte une erreur de parsing à la ligne en cours.
-func (tracker *ParsingTracker) Add(err base.CriticityError) {
-	if err.Criticity() == "fatal" {
-		tracker.fatalErrors = append(tracker.fatalErrors, err)
-	} else if err.Criticity() == "filter" {
-		// TODO: make sure that we never add more than 1 filter error per line
-		tracker.nbSkippedLines++
-		fmt.Fprintf(os.Stderr, "Line %d: %v\n", tracker.currentLine, err.Error())
-	} else {
-		// parse error
-		if len(tracker.firstParseErrors) < MaxParsingErrors {
-			tracker.firstParseErrors = append(tracker.firstParseErrors,
-				fmt.Sprintf("Line %d: %v", tracker.currentLine, err.Error()))
-		}
-		if tracker.currentLine != tracker.lastLineWithParseError {
-			tracker.nbRejectedLines++
-			tracker.lastLineWithParseError = tracker.currentLine
-		}
+// AddFatalError rapporte une erreur fatale liée au parsing
+func (tracker *ParsingTracker) AddFatalError(err error) {
+	if err == nil {
+		return
+	}
+	tracker.fatalErrors = append(tracker.fatalErrors, err)
+}
+
+// AddFilterError rapporte le fait que la ligne en cours est ignorée à cause du filtre/périmètre
+func (tracker *ParsingTracker) AddFilterError() {
+	// TODO: make sure that we never add more than 1 filter error per line
+	tracker.nbSkippedLines++
+	err := errors.New("(filtered)")
+	fmt.Fprintf(os.Stderr, "Line %d: %v\n", tracker.currentLine, err.Error())
+}
+
+// AddParseError rapporte une erreur de parsing à la ligne en cours
+func (tracker *ParsingTracker) AddParseError(err error) {
+	if err == nil {
+		return
+	}
+	if len(tracker.firstParseErrors) < MaxParsingErrors {
+		tracker.firstParseErrors = append(tracker.firstParseErrors,
+			fmt.Sprintf("Line %d: %v", tracker.currentLine, err.Error()))
+	}
+	if tracker.currentLine != tracker.lastLineWithParseError {
+		tracker.nbRejectedLines++
+		tracker.lastLineWithParseError = tracker.currentLine
 	}
 }
 

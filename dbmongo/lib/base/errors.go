@@ -10,16 +10,18 @@ type CriticityError interface {
 
 // CriticError is a generic error with criticity
 type CriticError struct {
-	err       error
-	criticity string
+	err           error
+	isFilterError bool
 }
 
 // Criticity returns criticity
 func (pe *CriticError) Criticity() string {
 	if pe == nil {
 		return ""
+	} else if pe.isFilterError {
+		return "filter"
 	}
-	return pe.criticity
+	return "error"
 }
 
 func (pe *CriticError) Error() string {
@@ -27,24 +29,19 @@ func (pe *CriticError) Error() string {
 }
 
 // newCriticError creates an error with the provided criticity
-func newCriticError(err error, criticity string) CriticityError {
+func newCriticError(err error, isFilterError bool) CriticityError {
 	if err == nil {
 		return nil
 	}
-	return &CriticError{err, criticity}
+	return &CriticError{err, isFilterError}
 }
 
 // NewFilterError returns a filter error (occurs when something goes wrong while filtering)
 func NewFilterError() CriticityError {
-	return newCriticError(errors.New("(filtered)"), "filter")
+	return newCriticError(errors.New("(filtered)"), true)
 }
 
 // NewRegularError creates a regular error
 func NewRegularError(err error) CriticityError {
-	return newCriticError(err, "error")
-}
-
-// NewFatalError creates a fatal error
-func NewFatalError(err error) CriticityError {
-	return newCriticError(err, "fatal")
+	return newCriticError(err, false)
 }
