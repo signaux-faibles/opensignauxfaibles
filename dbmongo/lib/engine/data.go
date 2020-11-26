@@ -103,17 +103,10 @@ func PruneEntities(batchKey string, delete bool) (int, error) {
 	if delete == true {
 		// Enregistrer la liste d'entités dans la collection temporaire "EntitiesToPrune"
 		tmpCollection := "EntitiesToPrune"
+		pipeline = append(pipeline, bson.M{"$out": tmpCollection})
 		iterator := Db.DB.C("RawData").Pipe(pipeline).AllowDiskUse().Iter()
 		var item struct {
 			ID string `json:"id"   bson:"_id"`
-		}
-		for iterator.Next(&item) {
-			if err := iterator.Err(); err != nil {
-				return -1, err
-			}
-			if err = Db.DB.C(tmpCollection).Insert(bson.M{"_id": item.ID}); err != nil {
-				return -1, err
-			}
 		}
 		// Supprimer les entités en itérant sur "EntitiesToPrune"
 		var nbDeleted = 0
