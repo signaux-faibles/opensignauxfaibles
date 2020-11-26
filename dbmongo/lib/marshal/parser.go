@@ -24,7 +24,7 @@ type Parser interface {
 // ParsedLineResult est le résultat du parsing d'une ligne.
 type ParsedLineResult struct {
 	Tuples []Tuple
-	Errors []base.CriticityError
+	Errors []base.ParserError
 }
 
 // AddTuple permet au parseur d'ajouter un tuple extrait depuis la ligne en cours.
@@ -91,9 +91,9 @@ func runParserWithSirenFilter(parser Parser, filter *SirenFilter, filePath strin
 		go parser.ParseLines(parsedLineChan)
 		for lineResult := range parsedLineChan {
 			for _, err := range lineResult.Errors {
-				if err.Criticity() == "filter" {
+				if err.IsFilterError() {
 					tracker.AddFilterError(err)
-				} else if err.Criticity() == "error" {
+				} else {
 					tracker.AddParseError(err)
 				}
 			}
