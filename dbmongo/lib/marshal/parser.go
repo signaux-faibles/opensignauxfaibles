@@ -91,7 +91,11 @@ func runParserWithSirenFilter(parser Parser, filter *SirenFilter, filePath strin
 		go parser.ParseLines(parsedLineChan)
 		for lineResult := range parsedLineChan {
 			for _, err := range lineResult.Errors {
-				tracker.AddParseError(err)
+				if err.Criticity() == "filter" {
+					tracker.AddFilterError(err)
+				} else if err.Criticity() == "error" {
+					tracker.AddParseError(err)
+				}
 			}
 			for _, tuple := range lineResult.Tuples {
 				if _, err := isValid(tuple); err != nil {
