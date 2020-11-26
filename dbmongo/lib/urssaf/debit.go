@@ -118,8 +118,8 @@ func parseDebitColMapping(reader *csv.Reader) (colMapping, error) {
 }
 
 func (parser *debitParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
-	var lineNumber = 0 // starting with the header
-	stopProgressLogger := marshal.LogProgress(&lineNumber)
+	var lineNumber = 0                                     // starting with the header
+	stopProgressLogger := marshal.LogProgress(&lineNumber) // TODO: move this call to runParserWithSirenFilter()
 	defer stopProgressLogger()
 
 	for {
