@@ -14,6 +14,6 @@ func TestTracker(t *testing.T) {
 		for i := 0; i < MaxParsingErrors+1; i++ {
 			tracker.Add(base.NewRegularError(fmt.Errorf("parse error %d", i)))
 		}
-		assert.Equal(t, MaxParsingErrors, len(tracker.parseErrors))
+		assert.Equal(t, MaxParsingErrors, len(tracker.firstParseErrors))
 	})
 }

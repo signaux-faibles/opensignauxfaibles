@@ -18,12 +18,13 @@ type parseError struct {
 
 // ParsingTracker permet de collecter puis rapporter des erreurs de parsing.
 type ParsingTracker struct {
-	filePath       string
-	batchKey       string
-	currentLine    int // Note: line 1 is the first line of data (excluding the header) read from a file
-	nbSkippedLines int
-	fatalErrors    []error
-	parseErrors    []parseError
+	filePath         string
+	batchKey         string
+	currentLine      int          // Note: line 1 is the first line of data (excluding the header) read from a file
+	nbSkippedLines   int          // lines skipped by the perimeter/filter or not found in "comptes" mapping
+	nbRejectedLines  int          // lines that have at least one parse error
+	firstParseErrors []parseError // capped by MaxParsingErrors
+	fatalErrors      []error
 }
 
 // Add rapporte une erreur de parsing à la ligne en cours.
@@ -34,8 +35,8 @@ func (tracker *ParsingTracker) Add(err base.CriticityError) {
 		// TODO: make sure that we never add more than 1 filter error per line
 		tracker.nbSkippedLines++
 		fmt.Fprintf(os.Stderr, "Line %d: %v\n", tracker.currentLine, err.Error())
-	} else {
-		tracker.parseErrors = append(tracker.parseErrors, parseError{
+	} else if len(tracker.firstParseErrors) < MaxParsingErrors {
+		tracker.firstParseErrors = append(tracker.firstParseErrors, parseError{
 			line: tracker.currentLine,
 			err:  err,
 		})
@@ -61,15 +62,13 @@ func (tracker *ParsingTracker) Report(code string) interface{} {
 
 	var headRejected = []string{}
 	var lastLineWithError = -1
-	for _, err := range tracker.parseErrors {
+	for _, err := range tracker.firstParseErrors {
 		if err.line != lastLineWithError {
 			nbRejectedLines++
 			lastLineWithError = err.line
 		}
-		if len(headRejected) < MaxParsingErrors {
-			rendered := fmt.Sprintf("Line %d: %v", err.line, err.err.Error())
-			headRejected = append(headRejected, rendered)
-		}
+		rendered := fmt.Sprintf("Line %d: %v", err.line, err.err.Error())
+		headRejected = append(headRejected, rendered)
 	}
 
 	nbParsedLines := tracker.currentLine - 1
