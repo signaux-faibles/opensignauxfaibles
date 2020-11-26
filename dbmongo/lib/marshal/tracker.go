@@ -11,11 +11,6 @@ import (
 // MaxParsingErrors is the number of parsing errors to report per file.
 var MaxParsingErrors = 200
 
-type parseError struct {
-	line int
-	err  error
-}
-
 // ParsingTracker permet de collecter puis rapporter des erreurs de parsing.
 type ParsingTracker struct {
 	filePath               string
@@ -24,7 +19,7 @@ type ParsingTracker struct {
 	nbSkippedLines         int // lines skipped by the perimeter/filter or not found in "comptes" mapping
 	nbRejectedLines        int // lines that have at least one parse error
 	lastLineWithParseError int
-	firstParseErrors       []parseError // capped by MaxParsingErrors
+	firstParseErrors       []string // capped by MaxParsingErrors, with line number rendered as string
 	fatalErrors            []error
 }
 
@@ -39,10 +34,8 @@ func (tracker *ParsingTracker) Add(err base.CriticityError) {
 	} else {
 		// parse error
 		if len(tracker.firstParseErrors) < MaxParsingErrors {
-			tracker.firstParseErrors = append(tracker.firstParseErrors, parseError{
-				line: tracker.currentLine,
-				err:  err,
-			})
+			tracker.firstParseErrors = append(tracker.firstParseErrors,
+				fmt.Sprintf("Line %d: %v", tracker.currentLine, err.Error()))
 		}
 		if tracker.currentLine != tracker.lastLineWithParseError {
 			tracker.nbRejectedLines++
@@ -66,12 +59,6 @@ func (tracker *ParsingTracker) Report(code string) bson.M {
 		}
 	}
 
-	var headRejected = []string{}
-	for _, err := range tracker.firstParseErrors {
-		rendered := fmt.Sprintf("Line %d: %v", err.line, err.err.Error())
-		headRejected = append(headRejected, rendered)
-	}
-
 	nbParsedLines := tracker.currentLine - 1
 	nbValidLines := nbParsedLines - tracker.nbRejectedLines - tracker.nbSkippedLines
 
@@ -93,7 +80,7 @@ func (tracker *ParsingTracker) Report(code string) bson.M {
 		"linesSkipped":  tracker.nbSkippedLines,
 		"linesRejected": tracker.nbRejectedLines,
 		"isFatal":       len(tracker.fatalErrors) > 0,
-		"headRejected":  headRejected,
+		"headRejected":  tracker.firstParseErrors,
 		"headFatal":     headFatal,
 	}
 }
