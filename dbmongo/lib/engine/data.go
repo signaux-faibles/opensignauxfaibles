@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
+	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
 
 	"github.com/globalsign/mgo"
@@ -53,6 +54,82 @@ func loadJSFunctions(directoryNames ...string) (map[string]bson.JavaScript, erro
 func PurgeNotCompacted() error {
 	_, err := Db.DB.C("ImportedData").RemoveAll(nil)
 	return err
+}
+
+// PruneEntities permet de compter puis supprimer les entités de RawData
+// qui auraient du être exclues par le Filtre de périmètre SIREN.
+func PruneEntities(batchKey string, delete bool) (int, error) {
+	// Récupérer le batch
+	batch := base.AdminBatch{}
+	err := Load(&batch, batchKey)
+	if err != nil {
+		return -1, errors.New("Batch inexistant: " + err.Error())
+	}
+	// Charger le filtre
+	var cache = marshal.NewCache()
+	filter, err := marshal.GetSirenFilter(cache, &batch)
+	if err != nil {
+		return -1, err
+	}
+	if filter == nil {
+		return -1, errors.New("Ce batch ne spécifie pas de filtre")
+	}
+	// Créer une expression régulière pour reconnaitre les SIRENs du périmètre
+	sirens := []string{}
+	for siren := range filter {
+		sirens = append(sirens, siren)
+	}
+	// Lister les entités de RawData qui ne figurent pas dans le filtre
+	pipeline := []bson.M{
+		{
+			"$project": bson.M{
+				"_id":   true,
+				"siren": bson.M{"$substr": []interface{}{"$_id", 0, 9}},
+			},
+		},
+		{
+			"$match": bson.M{
+				"siren": bson.M{"$nin": sirens},
+			},
+		},
+		{
+			"$project": bson.M{
+				"_id":   true,
+				"siren": false,
+			},
+		},
+	}
+	// Éventuellement, supprimer ces entités
+	if delete == true {
+		// Enregistrer la liste d'entités dans la collection temporaire "EntitiesToPrune"
+		tmpCollection := "EntitiesToPrune"
+		pipeline = append(pipeline, bson.M{"$out": tmpCollection})
+		iterator := Db.DB.C("RawData").Pipe(pipeline).AllowDiskUse().Iter()
+		var item struct {
+			ID string `json:"id"   bson:"_id"`
+		}
+		// Supprimer les entités en itérant sur "EntitiesToPrune"
+		var nbDeleted = 0
+		iterator = Db.DB.C(tmpCollection).Find(bson.M{}).Iter()
+		for iterator.Next(&item) {
+			if err := iterator.Err(); err != nil {
+				return -1, err
+			}
+			if err = Db.DB.C("RawData").Remove(bson.M{"_id": item.ID}); err != nil {
+				return -1, err
+			}
+			nbDeleted++
+		}
+		// Supprimer la collection temporaire
+		_ = Db.DB.C(tmpCollection).DropCollection()
+		return nbDeleted, err
+	}
+	var result struct {
+		IdsToDelete int `json:"ids_to_delete"   bson:"ids_to_delete"`
+	}
+	pipeline = append(pipeline, bson.M{"$count": "ids_to_delete"})
+	err = Db.DB.C("RawData").Pipe(pipeline).AllowDiskUse().One(&result)
+	return result.IdsToDelete, err
 }
 
 // MRWait centralise les variables nécessaires à l'isolation des traitements parallèlisés MR
