@@ -92,5 +92,7 @@ func NewParsingTracker(batchKey string, filePath string) ParsingTracker {
 		batchKey:               batchKey,
 		currentLine:            1,
 		lastLineWithParseError: -1,
+		firstParseErrors:       []string{},
+		fatalErrors:            []error{},
 	}
 }
