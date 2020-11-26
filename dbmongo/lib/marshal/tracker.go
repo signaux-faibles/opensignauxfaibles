@@ -49,7 +49,7 @@ func (tracker *ParsingTracker) Next() {
 }
 
 // Report génère un rapport de parsing à partir des erreurs rapportées.
-func (tracker *ParsingTracker) Report(code string) interface{} {
+func (tracker *ParsingTracker) Report(code string) bson.M {
 	var nbRejectedLines = 0
 
 	var headFatal = []string{}
