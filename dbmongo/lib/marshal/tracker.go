@@ -18,13 +18,14 @@ type parseError struct {
 
 // ParsingTracker permet de collecter puis rapporter des erreurs de parsing.
 type ParsingTracker struct {
-	filePath         string
-	batchKey         string
-	currentLine      int          // Note: line 1 is the first line of data (excluding the header) read from a file
-	nbSkippedLines   int          // lines skipped by the perimeter/filter or not found in "comptes" mapping
-	nbRejectedLines  int          // lines that have at least one parse error
-	firstParseErrors []parseError // capped by MaxParsingErrors
-	fatalErrors      []error
+	filePath               string
+	batchKey               string
+	currentLine            int // Note: line 1 is the first line of data (excluding the header) read from a file
+	nbSkippedLines         int // lines skipped by the perimeter/filter or not found in "comptes" mapping
+	nbRejectedLines        int // lines that have at least one parse error
+	lastLineWithParseError int
+	firstParseErrors       []parseError // capped by MaxParsingErrors
+	fatalErrors            []error
 }
 
 // Add rapporte une erreur de parsing à la ligne en cours.
@@ -35,11 +36,18 @@ func (tracker *ParsingTracker) Add(err base.CriticityError) {
 		// TODO: make sure that we never add more than 1 filter error per line
 		tracker.nbSkippedLines++
 		fmt.Fprintf(os.Stderr, "Line %d: %v\n", tracker.currentLine, err.Error())
-	} else if len(tracker.firstParseErrors) < MaxParsingErrors {
-		tracker.firstParseErrors = append(tracker.firstParseErrors, parseError{
-			line: tracker.currentLine,
-			err:  err,
-		})
+	} else {
+		// parse error
+		if len(tracker.firstParseErrors) < MaxParsingErrors {
+			tracker.firstParseErrors = append(tracker.firstParseErrors, parseError{
+				line: tracker.currentLine,
+				err:  err,
+			})
+		}
+		if tracker.currentLine != tracker.lastLineWithParseError {
+			tracker.nbRejectedLines++
+			tracker.lastLineWithParseError = tracker.currentLine
+		}
 	}
 }
 
@@ -50,8 +58,6 @@ func (tracker *ParsingTracker) Next() {
 
 // Report génère un rapport de parsing à partir des erreurs rapportées.
 func (tracker *ParsingTracker) Report(code string) bson.M {
-	var nbRejectedLines = 0
-
 	var headFatal = []string{}
 	for _, err := range tracker.fatalErrors {
 		if len(headFatal) < MaxParsingErrors {
@@ -61,25 +67,20 @@ func (tracker *ParsingTracker) Report(code string) bson.M {
 	}
 
 	var headRejected = []string{}
-	var lastLineWithError = -1
 	for _, err := range tracker.firstParseErrors {
-		if err.line != lastLineWithError {
-			nbRejectedLines++
-			lastLineWithError = err.line
-		}
 		rendered := fmt.Sprintf("Line %d: %v", err.line, err.err.Error())
 		headRejected = append(headRejected, rendered)
 	}
 
 	nbParsedLines := tracker.currentLine - 1
-	nbValidLines := nbParsedLines - nbRejectedLines - tracker.nbSkippedLines
+	nbValidLines := nbParsedLines - tracker.nbRejectedLines - tracker.nbSkippedLines
 
 	report := fmt.Sprintf(
 		"%s: intégration terminée, %d lignes traitées, %d erreurs fatales, %d lignes rejetées, %d lignes filtrées, %d lignes valides",
 		tracker.filePath,
 		nbParsedLines,
 		len(tracker.fatalErrors),
-		nbRejectedLines,
+		tracker.nbRejectedLines,
 		tracker.nbSkippedLines,
 		nbValidLines,
 	)
@@ -90,7 +91,7 @@ func (tracker *ParsingTracker) Report(code string) bson.M {
 		"linesParsed":   nbParsedLines,
 		"linesValid":    nbValidLines,
 		"linesSkipped":  tracker.nbSkippedLines,
-		"linesRejected": nbRejectedLines,
+		"linesRejected": tracker.nbRejectedLines,
 		"isFatal":       len(tracker.fatalErrors) > 0,
 		"headRejected":  headRejected,
 		"headFatal":     headFatal,
@@ -100,8 +101,9 @@ func (tracker *ParsingTracker) Report(code string) bson.M {
 // NewParsingTracker retourne une instance pour rapporter les erreurs de parsing.
 func NewParsingTracker(batchKey string, filePath string) ParsingTracker {
 	return ParsingTracker{
-		filePath:    filePath,
-		batchKey:    batchKey,
-		currentLine: 1,
+		filePath:               filePath,
+		batchKey:               batchKey,
+		currentLine:            1,
+		lastLineWithParseError: -1,
 	}
 }
