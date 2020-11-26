@@ -20,7 +20,7 @@ type ParsingTracker struct {
 	lastSkippedLine        int
 	lastLineWithParseError int
 	firstParseErrors       []string // capped by MaxParsingErrors, with line number rendered as string
-	fatalErrors            []error
+	fatalErrors            []string // with line number rendered as string
 }
 
 // AddFatalError rapporte une erreur fatale liée au parsing
@@ -28,7 +28,7 @@ func (tracker *ParsingTracker) AddFatalError(err error) {
 	if err == nil {
 		return
 	}
-	tracker.fatalErrors = append(tracker.fatalErrors, err)
+	tracker.fatalErrors = append(tracker.fatalErrors, fmt.Sprintf("Fatal: %v", err.Error()))
 }
 
 // AddFilterError rapporte le fait que la ligne en cours est ignorée à cause du filtre/périmètre
@@ -62,15 +62,7 @@ func (tracker *ParsingTracker) Next() {
 
 // Report génère un rapport de parsing à partir des erreurs rapportées.
 func (tracker *ParsingTracker) Report(code string) bson.M {
-	var headFatal = []string{}
-	for _, err := range tracker.fatalErrors {
-		if len(headFatal) < MaxParsingErrors {
-			rendered := fmt.Sprintf("Fatal: %v", err.Error())
-			headFatal = append(headFatal, rendered)
-		}
-	}
-
-	nbParsedLines := tracker.currentLine - 1
+	nbParsedLines := tracker.currentLine - 1 // -1 because we started counting at line number 1
 	nbValidLines := nbParsedLines - tracker.nbRejectedLines - tracker.nbSkippedLines
 
 	report := fmt.Sprintf(
@@ -92,7 +84,7 @@ func (tracker *ParsingTracker) Report(code string) bson.M {
 		"linesRejected": tracker.nbRejectedLines,
 		"isFatal":       len(tracker.fatalErrors) > 0,
 		"headRejected":  tracker.firstParseErrors,
-		"headFatal":     headFatal,
+		"headFatal":     tracker.fatalErrors,
 	}
 }
 
@@ -105,6 +97,6 @@ func NewParsingTracker(batchKey string, filePath string) ParsingTracker {
 		lastSkippedLine:        -1,
 		lastLineWithParseError: -1,
 		firstParseErrors:       []string{},
-		fatalErrors:            []error{},
+		fatalErrors:            []string{},
 	}
 }
