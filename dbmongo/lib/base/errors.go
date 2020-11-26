@@ -1,21 +1,18 @@
 package base
 
-import "errors"
-
-// CriticityError object
+// CriticityError is a generic error with criticity
 type CriticityError interface {
 	error
 	Criticity() string
 }
 
-// CriticError is a generic error with criticity
-type CriticError struct {
+type criticError struct {
 	err           error
 	isFilterError bool
 }
 
-// Criticity returns criticity
-func (pe *CriticError) Criticity() string {
+// Criticity returns the type of error
+func (pe *criticError) Criticity() string {
 	if pe == nil {
 		return ""
 	} else if pe.isFilterError {
@@ -24,21 +21,20 @@ func (pe *CriticError) Criticity() string {
 	return "error"
 }
 
-func (pe *CriticError) Error() string {
+func (pe *criticError) Error() string {
 	return pe.err.Error()
 }
 
-// newCriticError creates an error with the provided criticity
 func newCriticError(err error, isFilterError bool) CriticityError {
 	if err == nil {
 		return nil
 	}
-	return &CriticError{err, isFilterError}
+	return &criticError{err, isFilterError}
 }
 
 // NewFilterError returns a filter error (occurs when something goes wrong while filtering)
-func NewFilterError() CriticityError {
-	return newCriticError(errors.New("(filtered)"), true)
+func NewFilterError(err error) CriticityError {
+	return newCriticError(err, true)
 }
 
 // NewRegularError creates a regular error

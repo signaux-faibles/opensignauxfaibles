@@ -44,7 +44,7 @@ func (res *ParsedLineResult) AddRegularError(err error) {
 // AddFilterError permet au parseur de rapporter qu'une ligne a été filtrée.
 func (res *ParsedLineResult) AddFilterError(err error) {
 	if err != nil {
-		res.Errors = append(res.Errors, base.NewFilterError())
+		res.Errors = append(res.Errors, base.NewFilterError(err))
 	}
 }
 
@@ -106,7 +106,7 @@ func runParserWithSirenFilter(parser Parser, filter *SirenFilter, filePath strin
 						tracker.AddParseError(err)
 					}
 				} else if filter.Skips(tuple.Key()) {
-					tracker.AddFilterError()
+					tracker.AddFilterError(errors.New("(filtered)"))
 				} else {
 					outputChannel <- tuple
 				}

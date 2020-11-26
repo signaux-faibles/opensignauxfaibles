@@ -1,7 +1,6 @@
 package marshal
 
 import (
-	"errors"
 	"fmt"
 	"os"
 
@@ -32,10 +31,9 @@ func (tracker *ParsingTracker) AddFatalError(err error) {
 }
 
 // AddFilterError rapporte le fait que la ligne en cours est ignorée à cause du filtre/périmètre
-func (tracker *ParsingTracker) AddFilterError() {
+func (tracker *ParsingTracker) AddFilterError(err error) {
 	// TODO: make sure that we never add more than 1 filter error per line
 	tracker.nbSkippedLines++
-	err := errors.New("(filtered)")
 	fmt.Fprintf(os.Stderr, "Line %d: %v\n", tracker.currentLine, err.Error())
 }
 
