@@ -23,8 +23,9 @@ type Parser interface {
 
 // ParsedLineResult est le résultat du parsing d'une ligne.
 type ParsedLineResult struct {
-	Tuples []Tuple
-	Errors []base.CriticityError
+	Tuples      []Tuple
+	Errors      []error
+	FilterError error
 }
 
 // AddTuple permet au parseur d'ajouter un tuple extrait depuis la ligne en cours.
@@ -37,14 +38,14 @@ func (res *ParsedLineResult) AddTuple(tuple Tuple) {
 // AddRegularError permet au parseur de rapporter une erreur d'extraction.
 func (res *ParsedLineResult) AddRegularError(err error) {
 	if err != nil {
-		res.Errors = append(res.Errors, base.NewRegularError(err))
+		res.Errors = append(res.Errors, err)
 	}
 }
 
-// AddFilterError permet au parseur de rapporter qu'une ligne a été filtrée.
-func (res *ParsedLineResult) AddFilterError(err error) {
+// SetFilterError permet au parseur de rapporter que la ligne doit été filtrée.
+func (res *ParsedLineResult) SetFilterError(err error) {
 	if err != nil {
-		res.Errors = append(res.Errors, base.NewFilterError())
+		res.FilterError = err
 	}
 }
 
@@ -67,13 +68,13 @@ func ParseFilesFromBatch(cache Cache, batch *base.AdminBatch, parser Parser) (ch
 	filter := GetSirenFilterFromCache(cache)
 	go func() {
 		for _, path := range batch.Files[fileType] {
-			tracker := NewParsingTracker(batch.ID.Key, path)
+			tracker := NewParsingTracker()
 			filePath := viper.GetString("APP_DATA") + path
 			if err := parser.Init(&cache, batch); err != nil {
-				tracker.Add(base.NewFatalError(err))
+				tracker.AddFatalError(err)
 			}
 			runParserWithSirenFilter(parser, &filter, filePath, &tracker, outputChannel)
-			event.Info(tracker.Report("abstract"))
+			event.Info(tracker.Report(batch.ID.Key, path)) // abstract
 		}
 		close(outputChannel)
 		close(eventChannel)
@@ -85,13 +86,17 @@ func runParserWithSirenFilter(parser Parser, filter *SirenFilter, filePath strin
 	err := parser.Open(filePath)
 	// Note: on ne passe plus le tracker aux parseurs afin de garder ici le controle de la numérotation des lignes où les erreurs sont trouvées
 	if err != nil {
-		tracker.Add(base.NewFatalError(err))
+		tracker.AddFatalError(err)
 	} else {
 		parsedLineChan := make(chan ParsedLineResult)
 		go parser.ParseLines(parsedLineChan)
 		for lineResult := range parsedLineChan {
+			filterError := lineResult.FilterError
+			if filterError != nil {
+				tracker.AddFilterError(filterError)
+			}
 			for _, err := range lineResult.Errors {
-				tracker.Add(err)
+				tracker.AddParseError(err)
 			}
 			for _, tuple := range lineResult.Tuples {
 				if _, err := isValid(tuple); err != nil {
@@ -99,10 +104,10 @@ func runParserWithSirenFilter(parser Parser, filter *SirenFilter, filePath strin
 					// et on rapporte une erreur seulement si aucune n'a été
 					// rapportée par le parseur.
 					if len(lineResult.Errors) == 0 {
-						tracker.Add(base.NewRegularError(err))
+						tracker.AddParseError(err)
 					}
 				} else if filter.Skips(tuple.Key()) {
-					tracker.Add(base.NewFilterError())
+					tracker.AddFilterError(errors.New("(filtered)"))
 				} else {
 					outputChannel <- tuple
 				}
@@ -111,7 +116,7 @@ func runParserWithSirenFilter(parser Parser, filter *SirenFilter, filePath strin
 		}
 	}
 	if err := parser.Close(); err != nil {
-		tracker.Add(base.NewFatalError(err))
+		tracker.AddFatalError(err)
 	}
 }
 

@@ -107,7 +107,7 @@ func parseCotisationLine(row []string, comptes *marshal.Comptes, parsedLine *mar
 
 	siret, err := marshal.GetSiretFromComptesMapping(row[idx["NumeroCompte"]], &date, *comptes)
 	if err != nil {
-		parsedLine.AddFilterError(err)
+		parsedLine.SetFilterError(err)
 	} else {
 		cotisation.key = siret
 		cotisation.NumeroCompte = row[idx["NumeroCompte"]]
