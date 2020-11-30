@@ -133,6 +133,26 @@ func purgeNotCompactedHandler(c *gin.Context) {
 	c.JSON(200, result)
 }
 
+// Count – then delete – companies from RawData that should have been
+// excluded by the SIREN Filter.
+func pruneEntitiesHandler(c *gin.Context) {
+	var params struct {
+		BatchKey string `json:"batch"`
+		Delete   bool   `json:"delete"`
+	}
+	err := c.ShouldBind(&params)
+	if err != nil {
+		c.JSON(400, "Requête malformée: "+err.Error())
+		return
+	}
+	count, err := engine.PruneEntities(params.BatchKey, params.Delete)
+	if err != nil {
+		c.JSON(500, err.Error())
+		return
+	}
+	c.JSON(200, bson.M{"count": count})
+}
+
 // RegisteredParsers liste des parsers disponibles
 var registeredParsers = map[string]marshal.Parser{
 	"debit":        urssaf.ParserDebit,

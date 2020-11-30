@@ -59,6 +59,7 @@ func main() {
 		api.POST("/data/compact", compactHandler)
 		api.POST("/data/reduce", reduceHandler)
 		api.POST("/data/public", publicHandler)
+		api.POST("/data/pruneEntities", pruneEntitiesHandler)
 
 		api.GET("/data/purgeNotCompacted", purgeNotCompactedHandler)
 
