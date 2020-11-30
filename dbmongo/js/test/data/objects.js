@@ -584,7 +584,6 @@ const makeObjects = ISODate => ([
             }
         },
         "index" : {
-            "algo1" : true,
             "algo2" : true
         }
     }
@@ -13283,7 +13282,6 @@ const makeObjects = ISODate => ([
             }
         },
         "index" : {
-            "algo1" : true,
             "algo2" : true
         }
     }

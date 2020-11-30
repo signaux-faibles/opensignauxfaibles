@@ -61,7 +61,7 @@ echo ""
 echo "💎 Computing Features and Public collections thru dbmongo API..."
 tests/helpers/dbmongo-server.sh start
 echo "- POST /api/data/compact 👉 $(http --print=b --ignore-stdin :5000/api/data/compact fromBatchKey=1910)"
-echo "- POST /api/data/reduce 👉 $(http --print=b --ignore-stdin :5000/api/data/reduce algo=algo2 batch=1910 key=012345678)"
+echo "- POST /api/data/reduce 👉 $(http --print=b --ignore-stdin :5000/api/data/reduce batch=1910 key=012345678)"
 echo "- POST /api/data/public 👉 $(http --print=b --ignore-stdin :5000/api/data/public batch=1910 key=012345678)"
 
 (tests/helpers/mongodb-container.sh run \
