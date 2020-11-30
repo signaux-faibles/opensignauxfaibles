@@ -68,6 +68,16 @@
                     }
                 }
             },
+            "PruneEntities": {
+                "properties": {
+                    "batch": {
+                        "type": "string"
+                    },
+                    "delete": {
+                        "type": "boolean"
+                    }
+                }
+            },
             "Validate": {
                 "properties": {
                     "collection": {
@@ -327,6 +337,51 @@
                     }
                 ],
                 "summary": "calculer les variables",
+                "tags": [
+                    "Traitements"
+                ]
+            }
+        },
+        "/api/data/pruneEntities": {
+            "post": {
+                "description": "Compte puis supprime dans la collection `RawData` les entités (établissements et entreprises)\nnon listés dans le filtre de périmètre du batch spécifié.",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PruneEntities"
+                            },
+                            "example": {
+                                "batch": "1805",
+                                "delete": true
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Le traitement s'est bien déroulé",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "count": {
+                                            "type": "number",
+                                            "description": "nombre d'entités hors périmètre comptées ou supprimées"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "summary": "compter/supprimer les entités hors périmètre",
                 "tags": [
                     "Traitements"
                 ]
