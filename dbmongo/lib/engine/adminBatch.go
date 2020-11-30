@@ -11,20 +11,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-// AdminAlgo décrit les qualités d'un algorithme
-type AdminAlgo struct {
-	ID          base.AdminID `json:"id" bson:"_id"`
-	Label       string       `json:"label" bson:"label"`
-	Description string       `json:"description" bson:"description"`
-	Scope       []string     `json:"scope,omitempty" bson:"scope,omitempty"`
-}
-
-// Load charge un objet algo de la base
-func (algo *AdminAlgo) Load(algoKey string) error {
-	err := Db.DBStatus.C("Admin").Find(bson.M{"_id.type": "algo", "_id.key": algoKey}).One(algo)
-	return err
-}
-
 // Load charge les données d'un batch depuis la base de données
 func Load(batch *base.AdminBatch, batchKey string) error {
 	err := Db.DB.C("Admin").Find(bson.M{"_id.type": "batch", "_id.key": batchKey}).One(batch)

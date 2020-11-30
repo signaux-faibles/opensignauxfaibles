@@ -48,7 +48,6 @@
         }
       },
       "index": {
-        "algo1": true,
         "algo2": true
       }
     }

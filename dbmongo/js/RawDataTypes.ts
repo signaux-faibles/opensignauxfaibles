@@ -29,8 +29,7 @@ export type CompanyDataValuesWithFlags = CompanyDataValues & IndexFlags
 
 export type IndexFlags = {
   index: {
-    algo1: boolean
-    algo2: boolean
+    algo2: boolean // pour spécifier quelles données seront à calculer puis inclure dans Features, par Reduce.algo2
   }
 }
 

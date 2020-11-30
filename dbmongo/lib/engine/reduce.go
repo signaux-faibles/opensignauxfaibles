@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -19,13 +18,13 @@ import (
 )
 
 // ReduceOne lance le calcul de Features pour la clé passée en argument
-func ReduceOne(batch base.AdminBatch, algo string, key, from, to string, types []string) error {
+func ReduceOne(batch base.AdminBatch, key, from, to string, types []string) error {
 
 	if len(key) < 9 && (from == "" && to == "") {
 		return errors.New("key minimal length of 9")
 	}
 
-	scope, err := reduceDefineScope(batch, algo, types)
+	scope, err := reduceDefineScope(batch, types)
 	if err != nil {
 		return err
 	}
@@ -71,9 +70,9 @@ func ReduceOne(batch base.AdminBatch, algo string, key, from, to string, types [
 }
 
 // Reduce alimente la base Features
-func Reduce(batch base.AdminBatch, algo string, types []string) error {
+func Reduce(batch base.AdminBatch, types []string) error {
 
-	scope, err := reduceDefineScope(batch, algo, types)
+	scope, err := reduceDefineScope(batch, types)
 	if err != nil {
 		return err
 	}
@@ -93,7 +92,7 @@ func Reduce(batch base.AdminBatch, algo string, types []string) error {
 	// chaque goroutine essaye de lancer un mapreduce
 	// voir MRthreads dans le fichier de config
 	i := 0
-	for _, query := range chunks.ToQueries(bson.M{"value.index." + algo: true}, "_id") {
+	for _, query := range chunks.ToQueries(bson.M{"value.index.algo2": true}, "_id") { // mini filtre
 		w.waitGroup.Add(1)
 		dbTemp := "reduce" + strconv.Itoa(i)
 
@@ -267,20 +266,9 @@ func reduceFinalAggregation(tempDatabase *mgo.Database, tempCollection, outDatab
 	return err
 }
 
-func reduceDefineScope(batch base.AdminBatch, algo string, types []string) (bson.M, error) {
+func reduceDefineScope(batch base.AdminBatch, types []string) (bson.M, error) {
 
-	// Limiter les caractères de nom d'algo pour éviter de hacker la fonction
-	// loadJSFunctions
-	isAlphaNum := regexp.MustCompile(`^[A-Za-z0-9]+$`).MatchString
-	if !isAlphaNum(algo) {
-		return nil, errors.New("nom d'algorithme invalide, alphanumérique sans espace exigé")
-	}
-
-	if algo == "" {
-		return nil, errors.New("Veuillez spécifier un nom d'algo (par exemple avec l'option algo=algo2)")
-	}
-
-	functions, err := loadJSFunctions("reduce." + algo)
+	functions, err := loadJSFunctions("reduce.algo2")
 	if err != nil {
 		return nil, err
 	}

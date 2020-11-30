@@ -36,7 +36,7 @@ const rawData = {
     [batchKey]: {},
   },
   scope,
-  index: { algo1: false, algo2: false },
+  index: { algo2: false },
   key: siret,
 }
 

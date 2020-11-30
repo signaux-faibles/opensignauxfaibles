@@ -30,7 +30,7 @@ const rawData = {
     [batchKey]: {},
   },
   scope,
-  index: { algo1: false, algo2: false }, // car il n'y a pas de données justifiant que l'établissement compte 10 employés ou pas
+  index: { algo2: false }, // car il n'y a pas de données justifiant que l'établissement compte 10 employés ou pas
   key: siret,
 }
 

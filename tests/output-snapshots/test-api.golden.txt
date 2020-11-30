@@ -287,7 +287,6 @@
 			},
 			"scope" : "etablissement",
 			"index" : {
-				"algo1" : false,
 				"algo2" : false
 			},
 			"key" : "01234567891011"

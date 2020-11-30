@@ -15,7 +15,6 @@ import (
 func reduceHandler(c *gin.Context) {
 	var params struct {
 		BatchKey string   `json:"batch"`
-		Algo     string   `json:"algo"`
 		Key      string   `json:"key"`
 		From     string   `json:"from"`
 		To       string   `json:"to"`
@@ -35,9 +34,9 @@ func reduceHandler(c *gin.Context) {
 	}
 
 	if params.Key == "" && params.From == "" && params.To == "" {
-		err = engine.Reduce(batch, params.Algo, params.Types)
+		err = engine.Reduce(batch, params.Types)
 	} else {
-		err = engine.ReduceOne(batch, params.Algo, params.Key, params.From, params.To, params.Types)
+		err = engine.ReduceOne(batch, params.Key, params.From, params.To, params.Types)
 	}
 
 	if err != nil {
