@@ -427,7 +427,7 @@ test.serial(
 )
 
 test.serial(
-  `reduce crashe quand une entrée de donnée est indéfinie`,
+  `reduce doit tolérer l'intégration du batch suivant, même s'il contient des données invalides`,
   (t: ExecutionContext) => {
     // définition des valeurs de paramètres globaux utilisés par les fonctions de "compact"
     const batchKeyWithInvalidData = "2009"
@@ -451,10 +451,8 @@ test.serial(
     }
     // exécution du test
     const reducedData = reduce(key, [importedDataValue])
-    const error = t.throws(() => {
-      /*const mergeOutput =*/ reduce(key, [previousRawDataValue, reducedData])
-    })
-    t.regex(error.message, /Cannot convert undefined or null to object/)
+    /*const mergeOutput =*/ reduce(key, [previousRawDataValue, reducedData])
+    t.pass()
   }
 )
 
