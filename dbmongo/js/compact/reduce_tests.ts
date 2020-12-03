@@ -486,5 +486,6 @@ test.serial(
     const reducedData = reduce(key, [importedDataValue])
     reduce(key, [previousRawDataValue, reducedData])
     t.pass()
+    // TODO: enrichir le test pour vérifier que les données de nextBatchKey sont bien intégrées lors du compactage
   }
 )
