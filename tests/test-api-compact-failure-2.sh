@@ -24,8 +24,8 @@ sleep 1 # give some time for MongoDB to start
 
 tests/helpers/mongodb-container.sh run << CONTENTS
   db.Admin.insertMany([
-    {"_id":{"key":"2011_0_urssaf","type":"batch"},"files":{},"param":{}},
-    {"_id":{"key":"2011_1_sirene","type":"batch"},"files":{},"param":{}},
+    {"_id":{"key":"2011_0_urssaf","type":"batch"}},
+    {"_id":{"key":"2011_1_sirene","type":"batch"}},
   ])
 
   db.ImportedData.insertMany([
