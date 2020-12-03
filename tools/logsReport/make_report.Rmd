@@ -9,7 +9,7 @@ output:
 params:
   startdate: "2020-10-28T00:00:00Z"
   parsertype:  "all"
-  include_fatal: TRUE
+  include_fatal: FALSE
   interactive: FALSE
   mongo_collection: "Journal"
   mongo_db: "test"
