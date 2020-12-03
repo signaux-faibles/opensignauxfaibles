@@ -30,15 +30,11 @@ tests/helpers/mongodb-container.sh run << CONTENTS
 
   db.ImportedData.insertMany([
     {
-      "_id": {
-        "$oid": "5fc4fe82ef6c0e7f34db3925"
-      },
       "value": {
         "scope": "entreprise",
         "key": "000000000",
         "batch": {
           "2011_0_urssaf": {
-            "effectif_ent": {}
           }
         }
       }
