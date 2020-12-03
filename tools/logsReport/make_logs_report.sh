@@ -8,7 +8,7 @@ option_list = list(
               help="Which parser to select [default= %default]", metavar="character"),
   make_option(c("-i", "--interactive"), action = "store_true", type="logical", default = FALSE,
               help="Interactive mode flag", metavar="logical"),
-  make_option(c("--include_fatal"), action = "store_true", type="logical", default = FALSE,
+  make_option(c("--include_fatal"), action = "store_true", type="logical", default = TRUE,
               help="Include fatal errors in report.", metavar="logical"),
   make_option(c("--debug"), action = "store_true", type="logical", default = FALSE,
               help="Run in debug mode (show code along with output)", metavar="logical")
