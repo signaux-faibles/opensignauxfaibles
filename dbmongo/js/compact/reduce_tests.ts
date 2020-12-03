@@ -484,9 +484,7 @@ test.serial(
     }
     // exécution du test
     const reducedData = reduce(key, [importedDataValue])
-    const error = t.throws(() => {
-      /*const mergeOutput =*/ reduce(key, [previousRawDataValue, reducedData])
-    })
-    t.regex(error.message, /Cannot convert undefined or null to object/)
+    reduce(key, [previousRawDataValue, reducedData])
+    t.pass()
   }
 )
