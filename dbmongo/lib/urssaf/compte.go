@@ -44,7 +44,7 @@ func (parser *comptesParser) GetFileType() string {
 
 func (parser *comptesParser) Init(cache *marshal.Cache, batch *base.AdminBatch) (err error) {
 	if len(batch.Files["admin_urssaf"]) > 0 {
-		parser.periodes = misc.GenereSeriePeriode(batch.Params.DateDebut, time.Now()) //[]time.Time
+		parser.periodes = misc.GenereSeriePeriode(batch.Params.DateDebut, batch.Params.DateFin)
 		parser.mapping, err = marshal.GetCompteSiretMapping(*cache, batch, marshal.OpenAndReadSiretMapping)
 	}
 	return err
