@@ -457,3 +457,36 @@ test.serial(
     t.regex(error.message, /Cannot convert undefined or null to object/)
   }
 )
+
+test.serial(
+  `https://github.com/signaux-faibles/opensignauxfaibles/issues/248`, // TODO
+  (t: ExecutionContext) => {
+    // définition des valeurs de paramètres globaux utilisés par les fonctions de "compact"
+    const oldBatchKey = "1910_6"
+    const fromBatchKey = "2011_0_urssaf"
+    const nextBatchKey = "2011_1_sirene"
+    setGlobals({
+      fromBatchKey,
+      batches: [fromBatchKey, nextBatchKey],
+      completeTypes: { [fromBatchKey]: [], [nextBatchKey]: [] },
+    })
+    const key = "000000000"
+    const scope = "entreprise"
+    const previousRawDataValue = {
+      key,
+      scope,
+      batch: { [oldBatchKey]: {} },
+    } as CompanyDataValues
+    const importedDataValue: CompanyDataValues = {
+      key,
+      scope,
+      batch: { [fromBatchKey]: {} },
+    }
+    // exécution du test
+    const reducedData = reduce(key, [importedDataValue])
+    const error = t.throws(() => {
+      /*const mergeOutput =*/ reduce(key, [previousRawDataValue, reducedData])
+    })
+    t.regex(error.message, /Cannot convert undefined or null to object/)
+  }
+)
