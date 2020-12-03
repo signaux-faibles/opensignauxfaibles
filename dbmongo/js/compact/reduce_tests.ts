@@ -439,11 +439,11 @@ test.serial(
       completeTypes: { [fromBatchKey]: [] },
     })
     const key = "01234567891011"
-    const previousRawDataValue = {
+    const previousRawDataValue: CompanyDataValues = {
       key,
       scope: "etablissement",
       batch: { [oldBatchKey]: {} },
-    } as CompanyDataValues
+    }
     const importedDataValue: CompanyDataValues = {
       key,
       scope: "etablissement",
@@ -472,11 +472,11 @@ test.serial(
     })
     const key = "000000000"
     const scope = "entreprise"
-    const previousRawDataValue = {
+    const previousRawDataValue: CompanyDataValues = {
       key,
       scope,
       batch: { [oldBatchKey]: {} },
-    } as CompanyDataValues
+    }
     const importedDataValue: CompanyDataValues = {
       key,
       scope,
