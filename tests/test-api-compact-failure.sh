@@ -71,8 +71,10 @@ IMPORTEDDATA_ERRORS_FILE=dbmongo/$(http --print=b --ignore-stdin :5000/api/data/
 echo "- POST /api/data/validate ImportedData 👉 ${IMPORTEDDATA_ERRORS_FILE}"
 grep --quiet '{"_id":"5f9192703029a1f7d4b1773b","batchKey":"2009","dataPerHash":{},"dataType":"cotisation"}' <(zcat < "${IMPORTEDDATA_ERRORS_FILE}") # we expect an invalid data entry to be listed
 
-echo "- POST /api/data/compact should fail"
-grep --quiet "TypeError: can't convert undefined to object" <(http --print=b --ignore-stdin :5000/api/data/compact fromBatchKey=2008) # will fail with "TypeError: can't convert undefined to object"
+echo "- POST /api/data/compact should not fail"
+RESULT=$(http --print=b --ignore-stdin :5000/api/data/compact fromBatchKey=2008)
+echo "${RESULT}"
+echo "${RESULT}" | grep --quiet "ok"
 
 echo "✅ OK"
 

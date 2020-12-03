@@ -72,7 +72,7 @@ rm "${IMPORTEDDATA_ERRORS_FILE}"
 echo "- POST /api/data/compact should not fail"
 RESULT=$(http --print=b --ignore-stdin :5000/api/data/compact fromBatchKey=2011_0_urssaf)
 echo "${RESULT}"
-echo "${RESULT}" | grep "ok"
+echo "${RESULT}" | grep --quiet "ok"
 
 echo "✅ OK"
 
