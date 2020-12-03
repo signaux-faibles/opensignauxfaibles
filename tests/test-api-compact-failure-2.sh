@@ -64,13 +64,13 @@ echo ""
 echo "💎 Compacting RawData thru dbmongo API..."
 tests/helpers/dbmongo-server.sh start
 
-# RAWDATA_ERRORS_FILE=dbmongo/$(http --print=b --ignore-stdin :5000/api/data/validate collection=RawData | tr -d '"')
-# echo "- POST /api/data/validate RawData 👉 ${RAWDATA_ERRORS_FILE}"
-# diff <(echo -n '') <(zcat < "${RAWDATA_ERRORS_FILE}")
+RAWDATA_ERRORS_FILE=dbmongo/$(http --print=b --ignore-stdin :5000/api/data/validate collection=RawData | tr -d '"')
+echo "- POST /api/data/validate RawData 👉 ${RAWDATA_ERRORS_FILE}"
+diff <(echo -n '') <(zcat < "${RAWDATA_ERRORS_FILE}") # no validation errors detected in RawData
 
-# IMPORTEDDATA_ERRORS_FILE=dbmongo/$(http --print=b --ignore-stdin :5000/api/data/validate collection=ImportedData | tr -d '"')
-# echo "- POST /api/data/validate ImportedData 👉 ${IMPORTEDDATA_ERRORS_FILE}"
-# grep --quiet '{"_id":"5f9192703029a1f7d4b1773b","batchKey":"2009","dataPerHash":{},"dataType":"cotisation"}' <(zcat < "${IMPORTEDDATA_ERRORS_FILE}") # we expect an invalid data entry to be listed
+IMPORTEDDATA_ERRORS_FILE=dbmongo/$(http --print=b --ignore-stdin :5000/api/data/validate collection=ImportedData | tr -d '"')
+echo "- POST /api/data/validate ImportedData 👉 ${IMPORTEDDATA_ERRORS_FILE}"
+diff <(echo -n '') <(zcat < "${IMPORTEDDATA_ERRORS_FILE}") # no validation errors detected in ImportedData
 
 echo "- POST /api/data/compact should not fail"
 RESULT=$(http --print=b --ignore-stdin :5000/api/data/compact fromBatchKey=2011_0_urssaf)
@@ -79,5 +79,5 @@ echo "${RESULT}" | grep "ok"
 
 echo "✅ OK"
 
-# rm "${RAWDATA_ERRORS_FILE}" "${IMPORTEDDATA_ERRORS_FILE}"
+rm "${RAWDATA_ERRORS_FILE}" "${IMPORTEDDATA_ERRORS_FILE}"
 # Now, the "trap" commands will clean up the rest.
