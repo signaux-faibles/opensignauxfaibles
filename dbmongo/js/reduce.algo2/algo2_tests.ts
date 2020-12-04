@@ -108,7 +108,7 @@ test("delai_deviation_remboursement est calculé à partir d'un débit et d'une 
   const input = makeInput(dateDebut, dateFin)
 
   const [res] = runMongoMap<EntréeMap, CléSortieMap, SortieMap>(map, [input])
-  const finalCompanyData = Object.values(res.value)[0]
-  t.is(typeof finalCompanyData.delai_deviation_remboursement, "number")
-  t.is(finalCompanyData.delai_deviation_remboursement, -0.4)
+  const finalCompanyData = Object.values(res?.value ?? {})[0]
+  t.is(typeof finalCompanyData?.delai_deviation_remboursement, "number")
+  t.is(finalCompanyData?.delai_deviation_remboursement, -0.4)
 })
