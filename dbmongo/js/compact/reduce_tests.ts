@@ -396,6 +396,7 @@ test.serial(
       },
       du: 64012.0,
     }
+    const firstCotisationHash = hashCotisation[0] as string
     const reduceResults = reduce(siret, [
       {
         scope: "etablissement",
@@ -403,7 +404,7 @@ test.serial(
         batch: {
           [batchId]: {
             cotisation: {
-              [hashCotisation[0]]: entréeCotisation,
+              [firstCotisationHash]: entréeCotisation,
             },
           },
         },
@@ -414,14 +415,14 @@ test.serial(
         batch: {
           [batchId]: {
             cotisation: {
-              [hashCotisation[1]]: entréeCotisation,
+              [firstCotisationHash]: entréeCotisation,
             },
           },
         },
       },
     ])
     // test sur les données compactées de cotisation
-    const cotisations = reduceResults.batch[batchId].cotisation || {}
+    const cotisations = reduceResults.batch[batchId]?.cotisation || {}
     t.deepEqual(Object.keys(cotisations), hashCotisation)
   }
 )
