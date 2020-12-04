@@ -19,7 +19,7 @@ export function defaillances(
   "use strict"
   const codes = Object.keys(défaillances)
     .reduce((events, hash) => {
-      const the_event = défaillances[hash]
+      const the_event = défaillances[hash] as EntréeDéfaillances
 
       let etat: ProcolToHumanRes = null
       etat = f.procolToHuman(the_event.action_procol, the_event.stade_procol)
@@ -49,14 +49,15 @@ export function defaillances(
       )
     )
     const time_til_last = Object.keys(output_indexed).filter((val) => {
-      return val >= periode_effet.toISOString().split("T")[0]
+      return val >= (periode_effet.toISOString().split("T")[0] as string)
     })
 
     time_til_last.forEach((time) => {
-      if (time in output_indexed) {
-        output_indexed[time].etat_proc_collective = event.etat
-        output_indexed[time].date_proc_collective = event.date_proc_col
-        if (event.etat !== "in_bonis") output_indexed[time].tag_failure = true
+      const outputForTime = output_indexed[time]
+      if (outputForTime !== undefined) {
+        outputForTime.etat_proc_collective = event.etat
+        outputForTime.date_proc_collective = event.date_proc_col
+        if (event.etat !== "in_bonis") outputForTime.tag_failure = true
       }
     })
   })
