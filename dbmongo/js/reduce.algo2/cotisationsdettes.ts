@@ -191,6 +191,7 @@ export function cotisationsdettes(
       }
     )
     val = Object.assign(val, montant_dette)
+    sortieCotisationsDettes[time] = val
 
     const futureTimestamps = [1, 2, 3, 6, 12] // Penser à mettre à jour le type CotisationsDettesPassees pour tout changement
       .map((offset) => ({
@@ -223,7 +224,6 @@ export function cotisationsdettes(
         }
       })
     }
-    sortieCotisationsDettes[time] = val
   })
 
   return sortieCotisationsDettes
