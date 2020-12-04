@@ -10,17 +10,16 @@ export type SortieProcols = {
 export function dealWithProcols(
   data_source: ParHash<EntréeDéfaillances> = {}
 ): SortieProcols[] {
-  return Object.keys(data_source)
-    .reduce((events, hash) => {
-      const the_event = data_source[hash]
+  const events: SortieProcols[] = []
+  for (const the_event of Object.values(data_source)) {
+    let etat: ProcolToHumanRes = null
+    etat = f.procolToHuman(the_event.action_procol, the_event.stade_procol)
 
-      let etat: ProcolToHumanRes = null
-      etat = f.procolToHuman(the_event.action_procol, the_event.stade_procol)
+    if (etat !== null)
+      events.push({ etat, date_procol: new Date(the_event.date_effet) })
+  }
 
-      if (etat !== null)
-        events.push({ etat, date_procol: new Date(the_event.date_effet) })
-
-      return events
-    }, [] as SortieProcols[])
-    .sort((a, b) => a.date_procol.getTime() - b.date_procol.getTime())
+  return events.sort(
+    (a, b) => a.date_procol.getTime() - b.date_procol.getTime()
+  )
 }
