@@ -22,7 +22,7 @@ export type SortieEffectifs = Record<CléSortieEffectif, ValeurEffectif | null> 
   Record<CléSortieEffectifReporté, 1 | 0> &
   Record<CléSortieEffectifPassé, ValeurEffectif>
 
-type EffectifEntreprise = ParHash<EntréeEffectif>
+export type EffectifEntreprise = ParHash<EntréeEffectif>
 
 export function effectifs(
   entréeEffectif: EffectifEntreprise,
