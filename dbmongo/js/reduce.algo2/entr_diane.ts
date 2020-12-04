@@ -8,13 +8,13 @@ export function entr_diane(
   output_indexed: ParPériode<SortieDiane>,
   periodes: Timestamp[]
 ): ParPériode<SortieDiane> {
-  for (const hash of Object.keys(donnéesDiane)) {
-    if (!donnéesDiane[hash].arrete_bilan_diane) continue
-    //donnéesDiane[hash].arrete_bilan_diane = new Date(Date.UTC(donnéesDiane[hash].exercice_diane, 11, 31, 0, 0, 0, 0))
+  for (const entréeDiane of Object.values(donnéesDiane)) {
+    if (!entréeDiane.arrete_bilan_diane) continue
+    //entréeDiane.arrete_bilan_diane = new Date(Date.UTC(entréeDiane.exercice_diane, 11, 31, 0, 0, 0, 0))
     const periode_arrete_bilan = new Date(
       Date.UTC(
-        donnéesDiane[hash].arrete_bilan_diane.getUTCFullYear(),
-        donnéesDiane[hash].arrete_bilan_diane.getUTCMonth() + 1,
+        entréeDiane.arrete_bilan_diane.getUTCFullYear(),
+        entréeDiane.arrete_bilan_diane.getUTCMonth() + 1,
         1,
         0,
         0,
@@ -30,7 +30,7 @@ export function entr_diane(
 
     for (const periode of series) {
       const rest = f.omit(
-        donnéesDiane[hash] as EntréeDiane & {
+        entréeDiane as EntréeDiane & {
           marquee: unknown
           nom_entreprise: unknown
           numero_siren: unknown
@@ -49,9 +49,13 @@ export function entr_diane(
       }
 
       for (const ratio of Object.keys(rest) as (keyof typeof rest)[]) {
-        if (donnéesDiane[hash][ratio] === null) {
-          if (periodes.includes(periode.getTime())) {
-            delete output_indexed[periode.getTime()][ratio]
+        if (entréeDiane[ratio] === null) {
+          const outputAtTime = output_indexed[periode.getTime()]
+          if (
+            outputAtTime !== undefined &&
+            periodes.includes(periode.getTime())
+          ) {
+            delete outputAtTime[ratio]
           }
           continue
         }
@@ -63,33 +67,37 @@ export function entr_diane(
           const periode_offset = f.dateAddMonth(periode, 12 * offset)
           const variable_name = ratio + "_past_" + offset
 
+          const outputAtOffset = output_indexed[periode_offset.getTime()]
           if (
-            periode_offset.getTime() in output_indexed &&
+            outputAtOffset !== undefined &&
             ratio !== "arrete_bilan_diane" &&
             ratio !== "exercice_diane"
           ) {
-            output_indexed[periode_offset.getTime()][variable_name] =
-              donnéesDiane[hash][ratio]
+            outputAtOffset[variable_name] = entréeDiane[ratio]
           }
         }
       }
     }
 
     for (const periode of series) {
-      if (periodes.includes(periode.getTime())) {
+      const inputInPeriod = output_indexed[periode.getTime()]
+      const outputInPeriod = output_indexed[periode.getTime()]
+      if (
+        periodes.includes(periode.getTime()) &&
+        inputInPeriod &&
+        outputInPeriod
+      ) {
         // Recalcul BdF si ratios bdf sont absents
-        const inputInPeriod = output_indexed[periode.getTime()]
-        const outputInPeriod = output_indexed[periode.getTime()]
         if (!("poids_frng" in inputInPeriod)) {
-          const poids = f.poidsFrng(donnéesDiane[hash])
+          const poids = f.poidsFrng(entréeDiane)
           if (poids !== null) outputInPeriod.poids_frng = poids
         }
         if (!("dette_fiscale" in inputInPeriod)) {
-          const dette = f.detteFiscale(donnéesDiane[hash])
+          const dette = f.detteFiscale(entréeDiane)
           if (dette !== null) outputInPeriod.dette_fiscale = dette
         }
         if (!("frais_financier" in inputInPeriod)) {
-          const frais = f.fraisFinancier(donnéesDiane[hash])
+          const frais = f.fraisFinancier(entréeDiane)
           if (frais !== null) outputInPeriod.frais_financier = frais
         }
 
@@ -108,9 +116,12 @@ export function entr_diane(
               const periode_offset = f.dateAddMonth(periode, 12 * offset)
               const variable_name = k + "_past_" + offset
 
-              if (periodes.includes(periode_offset.getTime())) {
-                output_indexed[periode_offset.getTime()][variable_name] =
-                  outputInPeriod[k]
+              const outputAtOffset = output_indexed[periode_offset.getTime()]
+              if (
+                outputAtOffset &&
+                periodes.includes(periode_offset.getTime())
+              ) {
+                outputAtOffset[variable_name] = outputInPeriod[k]
               }
             })
           }
