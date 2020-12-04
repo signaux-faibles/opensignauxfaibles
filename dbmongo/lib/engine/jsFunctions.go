@@ -1892,9 +1892,7 @@ function outputs(v, serie_periode) {
         if (code_ape) {
             const code_naf = naf.n5to1[code_ape];
             outputForKey.code_naf = code_naf;
-            if (code_naf) {
-                outputForKey.libelle_naf = naf.n1[code_naf];
-            }
+            outputForKey.libelle_naf = code_naf ? naf.n1[code_naf] : undefined;
             const code_ape_niveau2 = code_ape.substring(0, 2);
             outputForKey.code_ape_niveau2 = code_ape_niveau2;
             const code_ape_niveau3 = code_ape.substring(0, 3);
