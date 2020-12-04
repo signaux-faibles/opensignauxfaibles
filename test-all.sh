@@ -69,9 +69,6 @@ heading "test-api-compact.sh"
 heading "test-api-compact-failure.sh"
 ./tests/test-api-compact-failure.sh $@ 2>&1 | indent
 
-heading "test-api-compact-failure-2.sh"
-./tests/test-api-compact-failure-2.sh $@ 2>&1 | indent
-
 heading "test-api-public.sh"
 ./tests/test-api-public.sh $@ 2>&1 | indent
 
