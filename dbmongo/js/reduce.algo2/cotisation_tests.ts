@@ -112,7 +112,7 @@ testCases.forEach(({ assertion, input, propName, expected }) => {
     expected.forEach((expectedPropValue, indiceMois) => {
       const actualValue = actual[dateAddMonth(dateDebut, indiceMois).getTime()]
       t.is(
-        actualValue[propName as keyof SortieCotisation],
+        actualValue?.[propName as keyof SortieCotisation],
         expectedPropValue,
         `mois: #${indiceMois}, expected: ${expectedPropValue}`
       )
