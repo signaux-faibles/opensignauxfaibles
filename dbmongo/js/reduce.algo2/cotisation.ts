@@ -35,10 +35,10 @@ export function cotisation(
     montantsPO: number[]
   }> = {}
 
-  Object.keys(output_indexed).forEach((periode) => {
-    const input = output_indexed[periode]
+  for (const [periode, input] of Object.entries(output_indexed)) {
+    const périodeCourante = output_indexed[periode]?.periode
+    if (périodeCourante === undefined) continue
 
-    const périodeCourante = output_indexed[periode].periode
     const douzeMoisÀVenir = f
       .generatePeriodSerie(périodeCourante, f.dateAddMonth(périodeCourante, 12))
       .map((periodeFuture) => ({ timestamp: periodeFuture.getTime() }))
@@ -57,9 +57,9 @@ export function cotisation(
     })
 
     // Calcul des cotisations moyennes à partir des valeurs accumulées ci-dessus
-    const { cotisations, montantsPO, montantsPP } = futureArrays[periode]
-    const out = (sortieCotisation[periode] = sortieCotisation[periode] || {})
-    if (cotisations.length >= 12) {
+    const { cotisations, montantsPO, montantsPP } = futureArrays[periode] ?? {}
+    const out = sortieCotisation[periode] ?? ({} as SortieCotisation)
+    if (cotisations && cotisations.length >= 12) {
       out.cotisation_moy12m = moyenne(cotisations)
     }
     if (typeof out.cotisation_moy12m === "undefined") {
@@ -69,36 +69,49 @@ export function cotisation(
         ((input.montant_part_ouvriere || 0) +
           (input.montant_part_patronale || 0)) /
         out.cotisation_moy12m
-      if (!cotisations.includes(undefined) && !cotisations.includes(0)) {
-        out.ratio_dette_moy12m = moyenne(
-          montantsPO.map(
-            (_, i) =>
-              (montantsPO[i] + montantsPP[i]) / (cotisations as number[])[i]
-          )
-        )
+      if (
+        montantsPO &&
+        montantsPP &&
+        cotisations &&
+        !cotisations.includes(undefined) &&
+        !cotisations.includes(0)
+      ) {
+        const detteVals = []
+        for (const [i, cotisation] of cotisations.entries()) {
+          const montPO = montantsPO[i]
+          const montPP = montantsPP[i]
+          if (
+            cotisation !== undefined &&
+            montPO !== undefined &&
+            montPP !== undefined
+          ) {
+            detteVals.push((montPO + montPP) / cotisation)
+          }
+        }
+        out.ratio_dette_moy12m = moyenne(detteVals)
       }
     }
+    sortieCotisation[periode] = out
     // Remplace dans cibleApprentissage
     //val.dette_any_12m = (val.montantsPA || []).reduce((p,c) => (c >=
     //100) || p, false) || (val.montantsPO || []).reduce((p, c) => (c >=
     //100) || p, false)
-  })
+  }
 
   // Calcul des défauts URSSAF prolongés
   let counter = 0
-  Object.keys(sortieCotisation)
-    .sort()
-    .forEach((k) => {
-      const { ratio_dette } = sortieCotisation[k]
-      if (!ratio_dette) return
-      if (ratio_dette > 0.01) {
-        sortieCotisation[k].tag_debit = true // Survenance d'un débit d'au moins 1% des cotisations
-      }
-      if (ratio_dette > 1) {
-        counter = counter + 1
-        if (counter >= 3) sortieCotisation[k].tag_default = true
-      } else counter = 0
-    })
+  for (const k of Object.keys(sortieCotisation).sort()) {
+    const cotis = sortieCotisation[k] as SortieCotisation
+    const { ratio_dette } = sortieCotisation[k] ?? {}
+    if (!ratio_dette) continue
+    if (ratio_dette > 0.01) {
+      cotis.tag_debit = true // Survenance d'un débit d'au moins 1% des cotisations
+    }
+    if (ratio_dette > 1) {
+      counter = counter + 1
+      if (counter >= 3) cotis.tag_default = true
+    } else counter = 0
+  }
 
   return sortieCotisation
 }
