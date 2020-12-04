@@ -40,8 +40,7 @@ export function entr_bdf(
     outputBdf[p] = {}
   }
 
-  for (const hash of Object.keys(donnéesBdf)) {
-    const entréeBdf = donnéesBdf[hash]
+  for (const entréeBdf of Object.values(donnéesBdf)) {
     const periode_arrete_bilan = new Date(
       Date.UTC(
         entréeBdf.arrete_bilan_bdf.getUTCFullYear(),
@@ -80,7 +79,7 @@ export function entr_bdf(
           const outputInPast = outputBdf[periode_offset.getTime()]
           if (outputInPast) {
             Object.assign(outputInPast, {
-              [prop + "_past_" + offset]: donnéesBdf[hash][prop],
+              [prop + "_past_" + offset]: entréeBdf[prop],
             })
           }
         }
