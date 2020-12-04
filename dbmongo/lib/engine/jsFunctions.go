@@ -525,7 +525,7 @@ function reduce(key, values // chaque element contient plusieurs batches pour ce
     batches
         .filter((batch) => batch >= fromBatchKey)
         .forEach((batch) => {
-        const currentBatch = naivelyMergedCompanyData.batch[batch];
+        const currentBatch = naivelyMergedCompanyData.batch[batch] || {};
         const compactedBatch = f.compactBatch(currentBatch, memory, batch);
         if (Object.keys(compactedBatch).length > 0) {
             reducedValue.batch[batch] = compactedBatch;

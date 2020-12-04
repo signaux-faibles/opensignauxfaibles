@@ -427,7 +427,7 @@ test.serial(
 )
 
 test.serial(
-  `reduce crashe quand une entrée de donnée est indéfinie`,
+  `reduce intègre le batch suivant, même s'il contient des données invalides`,
   (t: ExecutionContext) => {
     // définition des valeurs de paramètres globaux utilisés par les fonctions de "compact"
     const batchKeyWithInvalidData = "2009"
@@ -439,11 +439,11 @@ test.serial(
       completeTypes: { [fromBatchKey]: [] },
     })
     const key = "01234567891011"
-    const previousRawDataValue = {
+    const previousRawDataValue: CompanyDataValues = {
       key,
       scope: "etablissement",
       batch: { [oldBatchKey]: {} },
-    } as CompanyDataValues
+    }
     const importedDataValue: CompanyDataValues = {
       key,
       scope: "etablissement",
@@ -451,9 +451,60 @@ test.serial(
     }
     // exécution du test
     const reducedData = reduce(key, [importedDataValue])
-    const error = t.throws(() => {
-      /*const mergeOutput =*/ reduce(key, [previousRawDataValue, reducedData])
+    /*const mergeOutput =*/ reduce(key, [previousRawDataValue, reducedData])
+    t.pass()
+  }
+)
+
+test.serial(
+  `le compactage intègre bien les données de 3 batches, dont 2 qui viennent d'être importés`, // cf https://github.com/signaux-faibles/opensignauxfaibles/issues/248
+  (t: ExecutionContext) => {
+    // définition des valeurs de paramètres globaux utilisés par les fonctions de "compact"
+    const oldBatchKey = "1910_6"
+    const fromBatchKey = "2011_0_urssaf"
+    const nextBatchKey = "2011_1_sirene"
+    setGlobals({
+      fromBatchKey,
+      batches: [fromBatchKey, nextBatchKey],
+      completeTypes: { [fromBatchKey]: [], [nextBatchKey]: [] },
     })
-    t.regex(error.message, /Cannot convert undefined or null to object/)
+    const key = "000000000"
+    const scope = "entreprise"
+    const AP_CONSO = {
+      periode: new Date(0),
+      id_conso: "",
+      heure_consomme: 0,
+    }
+    const previousRawDataValue: CompanyDataValues = {
+      key,
+      scope,
+      batch: { [oldBatchKey]: { apconso: { a: AP_CONSO } } },
+    }
+    const importedDataValue: CompanyDataValues = {
+      key,
+      scope,
+      batch: {
+        [fromBatchKey]: { apconso: { b: AP_CONSO } },
+        [nextBatchKey]: { apconso: { c: AP_CONSO } },
+      },
+    }
+    // exécution du test
+    const reducedData = reduce(key, [importedDataValue])
+    const mergeOutput = reduce(key, [previousRawDataValue, reducedData])
+    t.deepEqual(
+      mergeOutput.batch[oldBatchKey],
+      previousRawDataValue.batch[oldBatchKey],
+      "RawData doit inclure les données précédentes"
+    )
+    t.deepEqual(
+      mergeOutput.batch[fromBatchKey],
+      importedDataValue.batch[fromBatchKey],
+      "RawData doit inclure les données du batch spécifié dans fromBatchKey"
+    )
+    t.deepEqual(
+      mergeOutput.batch[nextBatchKey],
+      importedDataValue.batch[nextBatchKey],
+      "RawData doit inclure les données du batch suivant"
+    )
   }
 )

@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Test de bout en bout de l'API "compact".
+# Test de non regression pour https://github.com/signaux-faibles/opensignauxfaibles/issues/248.
 # Ce script doit être exécuté depuis la racine du projet. Ex: par test-all.sh.
 
 tests/helpers/mongodb-container.sh stop
@@ -24,23 +25,17 @@ sleep 1 # give some time for MongoDB to start
 
 tests/helpers/mongodb-container.sh run << CONTENTS
   db.Admin.insertMany([
-    {
-      "_id" : {
-        "key" : "2008",
-        "type" : "batch"
-      }
-    }
+    {"_id":{"key":"2011_0_urssaf","type":"batch"}},
+    {"_id":{"key":"2011_1_sirene","type":"batch"}},
   ])
 
   db.ImportedData.insertMany([
     {
-      "_id": "5f9192703029a1f7d4b1773b",
       "value": {
-        "key": "01234567891011",
-        "scope": "etablissement",
+        "scope": "entreprise",
+        "key": "000000000",
         "batch": {
-          "2009": {
-            "cotisation": undefined
+          "2011_0_urssaf": {
           }
         }
       }
@@ -48,14 +43,16 @@ tests/helpers/mongodb-container.sh run << CONTENTS
   ])
 
   db.RawData.insertMany([
-    { 
-      "_id" : "01234567891011", 
-      "value" : {
-        "key" : "01234567891011", 
-        "scope" : "etablissement", 
-        "batch" : { "2007": {} }
+    {
+      "_id": "000000000",
+      "value": {
+        "key": "000000000",
+        "scope": "entreprise",
+        "batch": {
+    			"1910_6": {}
+        }
       }
-    }
+    },
   ])
 CONTENTS
 
@@ -65,16 +62,19 @@ tests/helpers/dbmongo-server.sh start
 
 RAWDATA_ERRORS_FILE=dbmongo/$(http --print=b --ignore-stdin :5000/api/data/validate collection=RawData | tr -d '"')
 echo "- POST /api/data/validate RawData 👉 ${RAWDATA_ERRORS_FILE}"
-diff <(echo -n '') <(zcat < "${RAWDATA_ERRORS_FILE}")
+diff <(echo -n '') <(zcat < "${RAWDATA_ERRORS_FILE}") # no validation errors detected in RawData
+rm "${RAWDATA_ERRORS_FILE}"
 
 IMPORTEDDATA_ERRORS_FILE=dbmongo/$(http --print=b --ignore-stdin :5000/api/data/validate collection=ImportedData | tr -d '"')
 echo "- POST /api/data/validate ImportedData 👉 ${IMPORTEDDATA_ERRORS_FILE}"
-grep --quiet '{"_id":"5f9192703029a1f7d4b1773b","batchKey":"2009","dataPerHash":{},"dataType":"cotisation"}' <(zcat < "${IMPORTEDDATA_ERRORS_FILE}") # we expect an invalid data entry to be listed
+diff <(echo -n '') <(zcat < "${IMPORTEDDATA_ERRORS_FILE}") # no validation errors detected in ImportedData
+rm "${IMPORTEDDATA_ERRORS_FILE}"
 
-echo "- POST /api/data/compact should fail"
-grep --quiet "TypeError: can't convert undefined to object" <(http --print=b --ignore-stdin :5000/api/data/compact fromBatchKey=2008) # will fail with "TypeError: can't convert undefined to object"
+echo "- POST /api/data/compact should not fail"
+RESULT=$(http --print=b --ignore-stdin :5000/api/data/compact fromBatchKey=2011_0_urssaf)
+echo "${RESULT}"
+echo "${RESULT}" | grep --quiet "ok"
 
 echo "✅ OK"
 
-rm "${RAWDATA_ERRORS_FILE}" "${IMPORTEDDATA_ERRORS_FILE}"
-# Now, the "trap" commands will clean up the rest.
+# Now, the "trap" commands will clean up tmp files.
