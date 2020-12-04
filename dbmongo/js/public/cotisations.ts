@@ -11,8 +11,7 @@ export function cotisations(
   const value_cotisation: Record<number, number[]> = {}
 
   // Répartition des cotisations sur toute la période qu'elle concerne
-  Object.keys(vcotisation).forEach(function (h) {
-    const cotisation = vcotisation[h]
+  for (const cotisation of Object.values(vcotisation)) {
     const periode_cotisation = f.generatePeriodSerie(
       cotisation.periode.start,
       cotisation.periode.end
@@ -23,7 +22,7 @@ export function cotisations(
         value_cotisation[date_offset.getTime()] || []
       ).concat([cotisation.du / periode_cotisation.length])
     })
-  })
+  }
 
   const output_cotisation: number[] = []
 
