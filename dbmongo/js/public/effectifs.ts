@@ -1,4 +1,3 @@
-import { f } from "./functions"
 import { EntréeEffectif, ParHash, ParPériode } from "../RawDataTypes"
 
 // Paramètres globaux utilisés par "public"
@@ -13,7 +12,7 @@ export function effectifs(
   effectif?: ParHash<EntréeEffectif>
 ): SortieEffectif[] {
   const mapEffectif: ParPériode<number> = {}
-  f.iterable(effectif).forEach((e) => {
+  Object.values(effectif ?? {}).forEach((e) => {
     mapEffectif[e.periode.getTime()] =
       (mapEffectif[e.periode.getTime()] || 0) + e.effectif
   })
