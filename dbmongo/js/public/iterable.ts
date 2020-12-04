@@ -3,3 +3,4 @@ export function iterable<T>(
 ): (T | undefined)[] {
   return typeof dict === "object" ? Object.keys(dict).map((h) => dict[h]) : []
 }
+// TODO: iterable() --> Object.values()

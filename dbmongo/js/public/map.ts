@@ -74,7 +74,7 @@ export function map(this: Input): void {
     vcmde.apdemande = f.apdemande(value.apdemande)
     vcmde.delai = f.delai(value.delai)
     vcmde.compte = f.compte(value.compte)
-    vcmde.procol = f.iterable(value.procol)
+    vcmde.procol = Object.values(value.procol ?? {})
 
     emit("etablissement_" + this.value.key, vcmde)
   } else if (this.value.scope === "entreprise") {
