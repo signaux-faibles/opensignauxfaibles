@@ -22,11 +22,11 @@ export function joinUrssaf(
     montant_majorations: [],
   }
 
-  debit.forEach((d, i) => {
+  for (const [i, d] of debit.entries()) {
     const e = effectif.filter(
-      (e) => serie_periode[i].getTime() === e.periode.getTime()
+      (e) => serie_periode[i]?.getTime() === e.periode.getTime()
     )
-    if (e.length > 0) {
+    if (e.length > 0 && e[0] !== undefined) {
       result.effectif.push(e[0].effectif)
     } else {
       result.effectif.push(null)
@@ -34,7 +34,7 @@ export function joinUrssaf(
     result.part_patronale.push(d.part_patronale)
     result.part_ouvriere.push(d.part_ouvriere)
     result.montant_majorations.push(d.montant_majorations)
-  })
+  }
 
   return result
 }
