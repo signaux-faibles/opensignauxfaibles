@@ -104,7 +104,8 @@ test[serialOrSkip](
       .map((finalizedEntry) => {
         if (
           typeof finalizedEntry === "undefined" ||
-          "incomplete" in finalizedEntry
+          "incomplete" in finalizedEntry ||
+          finalizedEntry[0] === undefined
         ) {
           return {}
         }
