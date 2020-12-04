@@ -23,7 +23,7 @@ export function currentState(
       if (batch.compact) {
         f.forEachPopulatedProp(batch.compact.delete, (type, keysToDelete) => {
           keysToDelete.forEach((key) => {
-            m[type].delete(key) // Should never fail or collection is corrupted
+            m[type]?.delete(key) // Should never fail or collection is corrupted
           })
         })
       }
@@ -33,7 +33,7 @@ export function currentState(
         if (type === "compact") continue
         m[type] = m[type] || new Set()
         for (const key in batch[type]) {
-          m[type].add(key)
+          m[type]?.add(key)
         }
       }
       return m
