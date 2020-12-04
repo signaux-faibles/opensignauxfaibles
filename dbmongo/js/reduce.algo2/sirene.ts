@@ -36,7 +36,9 @@ export function sirene(
     // geolocalisation
 
     if (sireneHashes.length !== 0) {
-      const sirene = vSirene[sireneHashes[sireneHashes.length - 1]]
+      const sirene = vSirene[
+        sireneHashes[sireneHashes.length - 1] as string
+      ] as EntréeSirene
       val.siren = val.siret.substring(0, 9)
       val.latitude = sirene.latitude || null
       val.longitude = sirene.longitude || null

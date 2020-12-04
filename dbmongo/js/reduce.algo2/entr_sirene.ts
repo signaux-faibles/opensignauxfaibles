@@ -15,11 +15,11 @@ export function entr_sirene(
   "use strict"
   const retourEntrSirene: ParPériode<Partial<SortieSireneEntreprise>> = {}
   const sireneHashes = Object.keys(sirene_ul || {})
-  const sirene = sirene_ul[
-    sireneHashes[sireneHashes.length - 1] as string
-  ] as EntréeSireneEntreprise
   sériePériode.forEach((période) => {
     if (sireneHashes.length !== 0) {
+      const sirene = sirene_ul[
+        sireneHashes[sireneHashes.length - 1] as string
+      ] as EntréeSireneEntreprise
       const val: Partial<SortieSireneEntreprise> = {}
       val.raison_sociale = f.raison_sociale(
         sirene.raison_sociale,
