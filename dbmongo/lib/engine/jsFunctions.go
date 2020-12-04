@@ -67,8 +67,7 @@ function forEachPopulatedProp(obj, fct) {
         if (typeof obj[key] !== "undefined")
             fct(key, obj[key]);
     });
-}
-// TODO: remove this file`,
+}`,
 "generatePeriodSerie": `function generatePeriodSerie(date_debut, date_fin) {
     "use strict";
     const date_next = new Date(date_debut.getTime());
@@ -472,10 +471,9 @@ function listHashesToAddAndDelete(currentBatch, stockTypes, memory) {
         }
     });
     stockTypes.forEach((type) => {
-        var _a, _b;
         hashToDelete[type] = new Set([
-            ...((_a = hashToDelete[type]) !== null && _a !== void 0 ? _a : new Set()),
-            ...((_b = memory[type]) !== null && _b !== void 0 ? _b : new Set()),
+            ...(hashToDelete[type] || new Set()),
+            ...(memory[type] || new Set()),
         ]);
     });
     return {

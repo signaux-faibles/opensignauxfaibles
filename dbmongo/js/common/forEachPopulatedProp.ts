@@ -8,4 +8,3 @@ export function forEachPopulatedProp<T extends Record<string, unknown>>(
     if (typeof obj[key] !== "undefined") fct(key, obj[key])
   })
 }
-// TODO: remove this file
