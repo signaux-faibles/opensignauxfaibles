@@ -396,7 +396,6 @@ test.serial(
       },
       du: 64012.0,
     }
-    const firstCotisationHash = hashCotisation[0] as string
     const reduceResults = reduce(siret, [
       {
         scope: "etablissement",
@@ -404,7 +403,7 @@ test.serial(
         batch: {
           [batchId]: {
             cotisation: {
-              [firstCotisationHash]: entréeCotisation,
+              ["hash1"]: entréeCotisation,
             },
           },
         },
@@ -415,7 +414,7 @@ test.serial(
         batch: {
           [batchId]: {
             cotisation: {
-              [firstCotisationHash]: entréeCotisation,
+              ["hash2"]: entréeCotisation,
             },
           },
         },
