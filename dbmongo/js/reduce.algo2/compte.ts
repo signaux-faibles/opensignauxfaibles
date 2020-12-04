@@ -7,11 +7,13 @@ export function compte(compte: ParHash<EntréeCompte>): SortieCompte {
   const output_compte: SortieCompte = {}
 
   //  var offset_compte = 3
-  Object.keys(compte).forEach((hash) => {
-    const periode: Periode = compte[hash].periode.getTime().toString()
-    output_compte[periode] = output_compte[periode] || {}
-    output_compte[periode].compte_urssaf = compte[hash].numero_compte
-  })
+  for (const compteEntry of Object.values(compte)) {
+    const periode: Periode = compteEntry.periode.getTime().toString()
+    output_compte[periode] = {
+      ...(output_compte[periode] ?? {}),
+      compte_urssaf: compteEntry.numero_compte,
+    }
+  }
 
   return output_compte
 }
