@@ -28,17 +28,17 @@ export function interim(
 
   //  var offset_interim = 3
 
-  Object.keys(interim).forEach((hash) => {
-    const one_interim = interim[hash]
+  for (const one_interim of Object.values(interim)) {
     const periode = one_interim.periode.getTime()
     // var periode_d = new Date(parseInt(interimTime))
     // var time_offset = f.dateAddMonth(time_d, -offset_interim)
     if (periode in output_effectif) {
-      output_interim[periode] = output_interim[periode] || {}
-      const { effectif } = output_effectif[periode]
+      const out = output_interim[periode] ?? ({} as SortieInterim)
+      const { effectif } = output_effectif[periode] ?? {}
       if (effectif) {
-        output_interim[periode].interim_proportion = one_interim.etp / effectif
+        out.interim_proportion = one_interim.etp / effectif
       }
+      output_interim[periode] = out
     }
 
     const past_month_offsets = [6, 12, 18, 24] // En cas de changement, penser à mettre à jour le type SortieInterim
@@ -48,18 +48,19 @@ export function interim(
         periode in output_effectif &&
         time_past_offset.getTime() in output_effectif
       ) {
-        output_interim[time_past_offset.getTime()] =
-          output_interim[time_past_offset.getTime()] || {}
+        const out =
+          output_interim[time_past_offset.getTime()] ?? ({} as SortieInterim)
         const val_offset = output_interim[time_past_offset.getTime()]
-        const { effectif } = output_effectif[periode]
+        const { effectif } = output_effectif[periode] ?? {}
         if (effectif) {
           Object.assign(val_offset, {
             [`interim_ratio_past_${offset}`]: one_interim.etp / effectif,
           })
         }
+        output_interim[time_past_offset.getTime()] = out
       }
     })
-  })
+  }
 
   return output_interim
 }
