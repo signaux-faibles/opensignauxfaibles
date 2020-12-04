@@ -60,7 +60,7 @@ export function map(this: Input): void {
     const vcmde: Partial<SortieMapEtablissement> = {}
     vcmde.key = this.value.key
     vcmde.batch = actual_batch
-    vcmde.sirene = f.sirene(f.iterable(value.sirene))
+    vcmde.sirene = f.sirene(Object.values(value.sirene ?? {}))
     vcmde.periodes = serie_periode
     const effectif = f.effectifs(value.effectif)
     const debit = f.debits(value.debit)
@@ -81,8 +81,8 @@ export function map(this: Input): void {
     const v: Partial<SortieMapEntreprise> = {}
     const diane = f.diane(value.diane)
     const bdf = f.bdf(value.bdf)
-    const sirene_ul = f.iterable(value.sirene_ul)[0] || null
-    const ellisphere = f.iterable(value.ellisphere)[0] || null
+    const sirene_ul = Object.values(value.sirene_ul ?? {})[0] ?? null
+    const ellisphere = Object.values(value.ellisphere ?? {})[0] ?? null
     if (sirene_ul) {
       sirene_ul.raison_sociale = f.raison_sociale(
         sirene_ul.raison_sociale,
