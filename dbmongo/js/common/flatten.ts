@@ -25,11 +25,13 @@ export function flatten(
     .filter((batch) => batch <= actual_batch)
     .reduce(
       (m, batch) => {
+        const dataInBatch = v.batch[batch]
+        if (dataInBatch === undefined) return m
         // Types intéressants = nouveaux types, ou types avec suppressions
         const delete_types = Object.keys(
-          (v.batch[batch].compact || {}).delete || {}
+          (dataInBatch.compact || {}).delete || {}
         )
-        const new_types = Object.keys(v.batch[batch])
+        const new_types = Object.keys(dataInBatch)
         const all_interesting_types = [
           ...new Set([...delete_types, ...new_types]),
         ] as DataType[]
@@ -38,14 +40,14 @@ export function flatten(
           const typedData = m[type]
           if (typeof typedData === "object") {
             // On supprime les clés qu'il faut
-            const keysToDelete = v.batch[batch]?.compact?.delete?.[type] || []
+            const keysToDelete = dataInBatch.compact?.delete?.[type] || []
             for (const hash of keysToDelete) {
               delete typedData[hash]
             }
           } else {
             m[type] = {}
           }
-          Object.assign(m[type], v.batch[batch][type])
+          Object.assign(m[type], dataInBatch[type])
         })
         return m
       },
