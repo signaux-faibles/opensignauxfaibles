@@ -38,7 +38,7 @@ export function effectifs(
 
   Object.keys(entréeEffectif).forEach((hash) => {
     const effectif = entréeEffectif[hash]
-    if (effectif !== null) {
+    if (effectif !== null && effectif !== undefined) {
       mapEffectif[effectif.periode.getTime()] = effectif.effectif
     }
   })
@@ -46,7 +46,7 @@ export function effectifs(
   // On reporte dans les dernières périodes le dernier effectif connu
   // Ne reporter que si le dernier effectif est disponible
   const dernièrePériodeAvecEffectifConnu = f.dateAddMonth(
-    new Date(periodes[periodes.length - 1]),
+    new Date(periodes[periodes.length - 1] as number),
     offset_effectif + 1
   )
   const effectifÀReporter =
@@ -54,7 +54,7 @@ export function effectifs(
 
   periodes.forEach((time) => {
     sortieEffectif[time] = {
-      ...sortieEffectif[time],
+      ...(sortieEffectif[time] as SortieEffectifs),
       [clé]: mapEffectif[time] || effectifÀReporter,
       [clé + "_reporte"]: mapEffectif[time] ? 0 : 1,
     }
@@ -77,7 +77,7 @@ export function effectifs(
 
     futureTimestamps.forEach(({ offset, timestamp }) => {
       sortieEffectif[timestamp] = {
-        ...sortieEffectif[timestamp],
+        ...(sortieEffectif[timestamp] as SortieEffectifs),
         [clé + "_past_" + offset]: mapEffectif[time],
       }
     })
