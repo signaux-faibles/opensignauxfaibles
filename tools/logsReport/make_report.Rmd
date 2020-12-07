@@ -78,30 +78,15 @@ Requête MongoDB: ` `r query` `
 
 `r logs %>% nrow()` lignes lues. 
 
-```{r data-augmentation, echo=FALSE}
-set.seed(42)
-new_data <- logs
-new_logs <- data.frame()
-for (i in 1:9){
-  new_data$batch <- paste0("2", i, "10_testimport")
-  new_data$date <- logs$date + (3600 * 24 * i)
-  new_data$n_lignes_traitees <- round(pmax(rep(0, nrow(new_data)), logs$n_lignes_traitees * sample(c(1, 1.5, 1.2), nrow(new_data), replace = TRUE)))
-  new_data$n_lignes_valides <- round(pmax(rep(0, nrow(new_data)), logs$n_lignes_valides * sample(c(.8, .5, 1), nrow(new_data), replace = TRUE)))
-  new_data$n_lignes_rejetees <- sample(c(100, 0, 50), nrow(new_data), replace = TRUE)
-  new_data$n_lignes_filtrees <- round(pmax(rep(0, nrow(new_data)), logs$n_lignes_filtrees * sample(c(.8, .5, 1, 1.2, 1.3), nrow(new_data), replace = TRUE)))
-  new_logs <- rbind.data.frame(new_logs, new_data)
-}
-```
-
 ```{r datatable, echo=params$debug_mode, include=params$interactive, eval=params$interactive}
-DT::datatable(new_logs, rownames = FALSE, filter="top", options = list(pageLength = 10, scrollX=T))
+DT::datatable(logs, rownames = FALSE, filter="top", options = list(pageLength = 10, scrollX=T))
 ```
 
 
 ## Derniers Imports
 
 ```{r last-imports, echo=params$debug_mode, include=!params$interactive, eval=!params$interactive}
-last_imports <- new_logs %>% 
+last_imports <- logs %>% 
   group_by(parserCode) %>%
   mutate(
     N = n(),
@@ -129,13 +114,13 @@ last_imports %>%
 
 ```{r parser_plots, fig.width=12, echo=FALSE, message=FALSE, results="asis"}
 
-df_for_plotting <- new_logs %>% 
+df_for_plotting <- logs %>% 
   gather(key = "data", value = "value", c("n_lignes_traitees", "n_lignes_valides", "n_lignes_rejetees", "n_lignes_filtrees")) %>% 
   mutate(batch_unique = paste0(batch, as.character(date)))
 
 new_factor_order <- c("n_lignes_traitees", "n_lignes_valides", "n_lignes_filtrees", "n_lignes_rejetees")
 
-for(parser in unique(new_logs$parserCode)) {
+for(parser in unique(logs$parserCode)) {
   cat("  \n###",  parser, "\n")
   print(df_for_plotting %>%
     filter(parserCode == parser) %>% 
@@ -149,7 +134,7 @@ for(parser in unique(new_logs$parserCode)) {
 }
 
 # keep alternative just in case for now
-# for(parser in unique(new_logs$parserCode)) {
+# for(parser in unique(logs$parserCode)) {
 #   cat("  \n###",  parser, "\n")
 #   print(df_for_plotting %>%
 #     filter(parserCode == parser) %>% 
