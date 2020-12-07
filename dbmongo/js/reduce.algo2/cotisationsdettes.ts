@@ -96,13 +96,14 @@ export function cotisationsdettes(
   for (const ecnEntry of Object.values(ecn)) {
     ecnEntry.sort(f.compareDebit)
     const l = ecnEntry.length
-    ecnEntry.forEach((e, idx) => {
-      if (idx <= l - 2) return
-      const vDebitForHash = vDebit[e.hash]
-      const next = (ecnEntry?.[idx + 1] || {}).hash
-      if (vDebitForHash && next !== undefined)
-        vDebitForHash.debit_suivant = next
-    })
+    ecnEntry
+      .filter((_, idx) => idx <= l - 2)
+      .forEach((e, idx) => {
+        const vDebitForHash = vDebit[e.hash]
+        const next = (ecnEntry?.[idx + 1] || {}).hash
+        if (vDebitForHash && next !== undefined)
+          vDebitForHash.debit_suivant = next
+      })
   }
 
   const value_dette: Record<string, Dette[]> = {}

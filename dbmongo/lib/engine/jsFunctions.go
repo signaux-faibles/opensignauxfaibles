@@ -1186,9 +1186,9 @@ function cotisationsdettes(vCotisation, vDebit, periodes, finPériode // corresp
     for (const ecnEntry of Object.values(ecn)) {
         ecnEntry.sort(f.compareDebit);
         const l = ecnEntry.length;
-        ecnEntry.forEach((e, idx) => {
-            if (idx <= l - 2)
-                return;
+        ecnEntry
+            .filter((_, idx) => idx <= l - 2)
+            .forEach((e, idx) => {
             const vDebitForHash = vDebit[e.hash];
             const next = ((ecnEntry === null || ecnEntry === void 0 ? void 0 : ecnEntry[idx + 1]) || {}).hash;
             if (vDebitForHash && next !== undefined)
