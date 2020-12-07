@@ -1187,12 +1187,12 @@ function cotisationsdettes(vCotisation, vDebit, periodes, finPériode // corresp
         ecnEntry.sort(f.compareDebit);
         const l = ecnEntry.length;
         ecnEntry.forEach((e, idx) => {
-            if (idx <= l - 2) {
-                const vDebitForHash = vDebit[e.hash];
-                const next = ((ecnEntry === null || ecnEntry === void 0 ? void 0 : ecnEntry[idx + 1]) || {}).hash;
-                if (vDebitForHash && next !== undefined)
-                    vDebitForHash.debit_suivant = next;
-            }
+            if (idx <= l - 2)
+                return;
+            const vDebitForHash = vDebit[e.hash];
+            const next = ((ecnEntry === null || ecnEntry === void 0 ? void 0 : ecnEntry[idx + 1]) || {}).hash;
+            if (vDebitForHash && next !== undefined)
+                vDebitForHash.debit_suivant = next;
         });
     }
     const value_dette = {};
