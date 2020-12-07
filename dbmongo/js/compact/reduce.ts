@@ -19,11 +19,16 @@ export function reduce(
 ): CompanyDataValues {
   "use strict"
 
-  if (values.length === 0) throw "values should contain at least one item"
+  if (values.length === 0)
+    throw new Error(
+      `reduce: values of key ${key} should contain at least one item`
+    )
 
   const firstValue = values[0]
   if (firstValue === undefined)
-    throw "values should not contain undefined items"
+    throw new Error(
+      `reduce: values of key ${key} should contain at least one item`
+    )
 
   // Tester si plusieurs batchs. Reduce complet uniquement si plusieurs
   // batchs. Sinon, juste fusion des attributs

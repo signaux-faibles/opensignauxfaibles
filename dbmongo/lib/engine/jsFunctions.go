@@ -326,7 +326,7 @@ function complete_reporder(siret, object) {
     });
     const lastBatch = batches[batches.length - 1];
     if (lastBatch === undefined)
-        throw "the last batch should not be undefined";
+        throw new Error("the last batch should not be undefined");
     serie_periode
         .filter((p) => missing[p.getTime()])
         .forEach((p) => {
@@ -495,10 +495,10 @@ function reduce(key, values // chaque element contient plusieurs batches pour ce
 ) {
     "use strict";
     if (values.length === 0)
-        throw "values should contain at least one item";
+        throw new Error(` + "`" + `reduce: values of key ${key} should contain at least one item` + "`" + `);
     const firstValue = values[0];
     if (firstValue === undefined)
-        throw "values should not contain undefined items";
+        throw new Error(` + "`" + `reduce: values of key ${key} should contain at least one item` + "`" + `);
     // Tester si plusieurs batchs. Reduce complet uniquement si plusieurs
     // batchs. Sinon, juste fusion des attributs
     const auxBatchSet = new Set();

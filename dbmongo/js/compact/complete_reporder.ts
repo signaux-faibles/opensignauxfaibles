@@ -36,7 +36,8 @@ export function complete_reporder(
   })
 
   const lastBatch = batches[batches.length - 1]
-  if (lastBatch === undefined) throw "the last batch should not be undefined"
+  if (lastBatch === undefined)
+    throw new Error("the last batch should not be undefined")
   serie_periode
     .filter((p) => missing[p.getTime()])
     .forEach((p) => {
