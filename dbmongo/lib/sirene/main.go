@@ -7,6 +7,7 @@ import (
 	"errors"
 	"io"
 	"os"
+	"reflect"
 	"regexp"
 	"strconv"
 	"strings"
@@ -44,64 +45,72 @@ type Sirene struct {
 	Latitude             float64    `json:"latitude,omitempty" bson:"latitude,omitempty"`
 }
 
-var f = map[string]int{
-	"siren":                         0,
-	"nic":                           1,
-	"siret":                         2,
-	"statutDiffusionEtablissement":  3,
-	"dateCreationEtablissement":     4,
-	"trancheEffectifsEtablissement": 5,
-	"anneeEffectifsEtablissement":   6,
-	"activitePrincipaleRegistreMetiersEtablissement": 7,
-	"dateDernierTraitementEtablissement":             8,
-	"etablissementSiege":                             9,
-	"nombrePeriodesEtablissement":                    10,
-	"complementAdresseEtablissement":                 11,
-	"numeroVoieEtablissement":                        12,
-	"indiceRepetitionEtablissement":                  13,
-	"typeVoieEtablissement":                          14,
-	"libelleVoieEtablissement":                       15,
-	"codePostalEtablissement":                        16,
-	"libelleCommuneEtablissement":                    17,
-	"libelleCommuneEtrangerEtablissement":            18,
-	"distributionSpecialeEtablissement":              19,
-	"codeCommuneEtablissement":                       20,
-	"codeCedexEtablissement":                         21,
-	"libelleCedexEtablissement":                      22,
-	"codePaysEtrangerEtablissement":                  23,
-	"libellePaysEtrangerEtablissement":               24,
-	"complementAdresse2Etablissement":                25,
-	"numeroVoie2Etablissement":                       26,
-	"indiceRepetition2Etablissement":                 27,
-	"typeVoie2Etablissement":                         28,
-	"libelleVoie2Etablissement":                      29,
-	"codePostal2Etablissement":                       30,
-	"libelleCommune2Etablissement":                   31,
-	"libelleCommuneEtranger2Etablissement":           32,
-	"distributionSpeciale2Etablissement":             33,
-	"codeCommune2Etablissement":                      34,
-	"codeCedex2Etablissement":                        35,
-	"libelleCedex2Etablissement":                     36,
-	"codePaysEtranger2Etablissement":                 37,
-	"libellePaysEtranger2Etablissement":              38,
-	"dateDebut":                                      39,
-	"etatAdministratifEtablissement":                 40,
-	"enseigne1Etablissement":                         41,
-	"enseigne2Etablissement":                         42,
-	"enseigne3Etablissement":                         43,
-	"denominationUsuelleEtablissement":               44,
-	"activitePrincipaleEtablissement":                45,
-	"nomenclatureActivitePrincipaleEtablissement":    46,
-	"caractereEmployeurEtablissement":                47,
-	"longitude":                                      48,
-	"latitude":                                       49,
-	"geo_score":                                      50,
-	"geo_type":                                       51,
-	"geo_adresse":                                    52,
-	"geo_id":                                         53,
-	"geo_ligne":                                      54,
-	"geo_l4":                                         55,
-	"geo_l5":                                         56,
+var fields = []string{
+	"siren",
+	"nic",
+	"siret",
+	"statutDiffusionEtablissement",
+	"dateCreationEtablissement",
+	"trancheEffectifsEtablissement",
+	"anneeEffectifsEtablissement",
+	"activitePrincipaleRegistreMetiersEtablissement",
+	"dateDernierTraitementEtablissement",
+	"etablissementSiege",
+	"nombrePeriodesEtablissement",
+	"complementAdresseEtablissement",
+	"numeroVoieEtablissement",
+	"indiceRepetitionEtablissement",
+	"typeVoieEtablissement",
+	"libelleVoieEtablissement",
+	"codePostalEtablissement",
+	"libelleCommuneEtablissement",
+	"libelleCommuneEtrangerEtablissement",
+	"distributionSpecialeEtablissement",
+	"codeCommuneEtablissement",
+	"codeCedexEtablissement",
+	"libelleCedexEtablissement",
+	"codePaysEtrangerEtablissement",
+	"libellePaysEtrangerEtablissement",
+	"complementAdresse2Etablissement",
+	"numeroVoie2Etablissement",
+	"indiceRepetition2Etablissement",
+	"typeVoie2Etablissement",
+	"libelleVoie2Etablissement",
+	"codePostal2Etablissement",
+	"libelleCommune2Etablissement",
+	"libelleCommuneEtranger2Etablissement",
+	"distributionSpeciale2Etablissement",
+	"codeCommune2Etablissement",
+	"codeCedex2Etablissement",
+	"libelleCedex2Etablissement",
+	"codePaysEtranger2Etablissement",
+	"libellePaysEtranger2Etablissement",
+	"dateDebut",
+	"etatAdministratifEtablissement",
+	"enseigne1Etablissement",
+	"enseigne2Etablissement",
+	"enseigne3Etablissement",
+	"denominationUsuelleEtablissement",
+	"activitePrincipaleEtablissement",
+	"nomenclatureActivitePrincipaleEtablissement",
+	"caractereEmployeurEtablissement",
+	"longitude",
+	"latitude",
+	"geo_score",
+	"geo_type",
+	"geo_adresse",
+	"geo_id",
+	"geo_ligne",
+	"geo_l4",
+	"geo_l5",
+}
+
+func getFieldBindings(fields []string) map[string]int {
+	var f = map[string]int{}
+	for i, k := range fields {
+		f[k] = i
+	}
+	return f
 }
 
 var typeVoie = map[string]string{
@@ -199,10 +208,20 @@ func (parser *sireneParser) Open(filePath string) (err error) {
 	parser.reader = csv.NewReader(parser.file)
 	parser.reader.Comma = ','
 	parser.reader.LazyQuotes = true
+
+	// parse header
+	row, err := parser.reader.Read()
+	if err != nil {
+		return err // may be io.EOF
+	} else if !reflect.DeepEqual(row, fields) {
+		return errors.New("sirene header does not match the parser's expectations")
+	}
+
 	return nil
 }
 
 func (parser *sireneParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
+	f := getFieldBindings(fields)
 	for {
 		parsedLine := marshal.ParsedLineResult{}
 		row, err := parser.reader.Read()
@@ -212,13 +231,13 @@ func (parser *sireneParser) ParseLines(parsedLineChan chan marshal.ParsedLineRes
 		} else if err != nil {
 			parsedLine.AddRegularError(err)
 		} else {
-			parseLine(row, &parsedLine)
+			parseLine(f, row, &parsedLine)
 		}
 		parsedLineChan <- parsedLine
 	}
 }
 
-func parseLine(row []string, parsedLine *marshal.ParsedLineResult) {
+func parseLine(f map[string]int, row []string, parsedLine *marshal.ParsedLineResult) {
 	var err error
 	sirene := Sirene{}
 	sirene.Siren = row[f["siren"]]
@@ -267,11 +286,10 @@ func parseLine(row []string, parsedLine *marshal.ParsedLineResult) {
 	}
 
 	loc, _ := time.LoadLocation("Europe/Paris")
-	creation, err := time.ParseInLocation("2006-01-02", row[f["dateCreationEtablissement"]], loc)
+	creation, err := time.ParseInLocation("2006-01-02", row[f["dateCreationEtablissement"]], loc) // note: cette date n'est pas toujours présente, et on ne souhaite pas être rapporter d'erreur en cas d'absence
 	if err == nil {
 		sirene.Creation = &creation
 	}
-	parsedLine.AddRegularError(err)
 
 	long, err := strconv.ParseFloat(row[f["longitude"]], 64)
 	if err == nil {

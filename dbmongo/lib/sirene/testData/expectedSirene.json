@@ -55,15 +55,13 @@
       "event": {
         "batchKey": "",
         "headFatal": [],
-        "headRejected": [
-          "Line 2: parsing time \"\" as \"2006-01-02\": cannot parse \"\" as \"2006\""
-        ],
+        "headRejected": [],
         "isFatal": false,
         "linesParsed": 3,
-        "linesRejected": 1,
+        "linesRejected": 0,
         "linesSkipped": 0,
-        "linesValid": 2,
-        "summary": "testData/sireneTestData.csv: intégration terminée, 3 lignes traitées, 0 erreurs fatales, 1 lignes rejetées, 0 lignes filtrées, 2 lignes valides"
+        "linesValid": 3,
+        "summary": "testData/sireneTestData.csv: intégration terminée, 3 lignes traitées, 0 erreurs fatales, 0 lignes rejetées, 0 lignes filtrées, 3 lignes valides"
       },
       "priority": "info",
       "parserCode": "sirene",
