@@ -12,9 +12,9 @@ params:
   include_fatal: FALSE
   interactive: FALSE
   mongo_collection: "Journal"
-  mongo_db: "test"
   mongo_url: "mongodb://labbdd"
   debug_mode: FALSE
+  mongo_db: "prod"
 ---
 
 ```{css, echo=FALSE}
@@ -56,7 +56,7 @@ journal$info()
 
 ```{r read-data, echo=params$debug_mode}
 query = sprintf('{"date": { "$gte" : { "$date" :  "%s"}}}', params$startdate) #TODO: filter on parser here instead of within dplyr (?)
-dta = journal$find(query)
+dta = journal$find(query, sort = '{"date": 1}')
 
 # create logs dataset
 logs <- dta %>%
@@ -116,7 +116,7 @@ last_imports %>%
 
 df_for_plotting <- logs %>% 
   gather(key = "data", value = "value", c("n_lignes_traitees", "n_lignes_valides", "n_lignes_rejetees", "n_lignes_filtrees")) %>% 
-  mutate(batch_unique = paste0(batch, as.character(date)))
+  mutate(batch_unique = sprintf("%s \n (%s)", as.character(date), batch))
 
 new_factor_order <- c("n_lignes_traitees", "n_lignes_valides", "n_lignes_filtrees", "n_lignes_rejetees")
 
