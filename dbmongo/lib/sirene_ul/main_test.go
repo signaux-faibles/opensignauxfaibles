@@ -2,8 +2,6 @@ package sireneul
 
 import (
 	"flag"
-	"io/ioutil"
-	"os"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -26,7 +24,7 @@ func TestSireneUlHeader(t *testing.T) {
 		csvData := strings.Join([]string{
 			"siren,statutDiffusionUniteLegale,unitePurgeeUniteLegale,dateCreationUniteLegale,sigleUniteLegale,sexeUniteLegale,prenom1UniteLegale,prenom2UniteLegale,prenom3UniteLegale,prenom4UniteLegale,prenomUsuelUniteLegale,pseudonymeUniteLegale,identifiantAssociationUniteLegale,trancheEffectifsUniteLegale,anneeEffectifsUniteLegale,dateDernierTraitementUniteLegale,nombrePeriodesUniteLegale,categorieEntreprise,anneeCategorieEntreprise,dateDebut,etatAdministratifUniteLegale,nomUniteLegale,nomUsageUniteLegale,denominationUniteLegale,denominationUsuelle1UniteLegale,denominationUsuelle2UniteLegale,denominationUsuelle3UniteLegale,categorieJuridiqueUniteLegale,activitePrincipaleUniteLegale,nomenclatureActivitePrincipaleUniteLegale,nicSiegeUniteLegale,economieSocialeSolidaireUniteLegale,caractereEmployeurUniteLegale",
 		}, "\n")
-		csvFile := createTempFileWithContent(t, []byte(csvData))
+		csvFile := marshal.CreateTempFileWithContent(t, []byte(csvData))
 		output := marshal.RunParser(Parser, marshal.NewCache(), csvFile.Name())
 		assert.Equal(t, []marshal.Tuple(nil), output.Tuples, "should return no tuples")
 		assert.Equal(t, 1, len(output.Events), "should return a parsing report")
@@ -38,27 +36,11 @@ func TestSireneUlHeader(t *testing.T) {
 		csvData := strings.Join([]string{
 			"sirenXYZ,statutDiffusionUniteLegale,unitePurgeeUniteLegale,dateCreationUniteLegale,sigleUniteLegale,sexeUniteLegale,prenom1UniteLegale,prenom2UniteLegale,prenom3UniteLegale,prenom4UniteLegale,prenomUsuelUniteLegale,pseudonymeUniteLegale,identifiantAssociationUniteLegale,trancheEffectifsUniteLegale,anneeEffectifsUniteLegale,dateDernierTraitementUniteLegale,nombrePeriodesUniteLegale,categorieEntreprise,anneeCategorieEntreprise,dateDebut,etatAdministratifUniteLegale,nomUniteLegale,nomUsageUniteLegale,denominationUniteLegale,denominationUsuelle1UniteLegale,denominationUsuelle2UniteLegale,denominationUsuelle3UniteLegale,categorieJuridiqueUniteLegale,activitePrincipaleUniteLegale,nomenclatureActivitePrincipaleUniteLegale,nicSiegeUniteLegale,economieSocialeSolidaireUniteLegale,caractereEmployeurUniteLegale",
 		}, "\n")
-		csvFile := createTempFileWithContent(t, []byte(csvData))
+		csvFile := marshal.CreateTempFileWithContent(t, []byte(csvData))
 		output := marshal.RunParser(Parser, marshal.NewCache(), csvFile.Name())
 		assert.Equal(t, []marshal.Tuple(nil), output.Tuples, "should return no tuples")
 		assert.Equal(t, 1, len(output.Events), "should return a parsing report")
 		reportData, _ := output.Events[0].ParseReport()
 		assert.Equal(t, true, reportData["isFatal"], "should report a fatal error")
 	})
-}
-
-func createTempFileWithContent(t *testing.T, content []byte) *os.File {
-	t.Helper()
-	tmpfile, err := ioutil.TempFile("", "createTempFileWithContent")
-	if err != nil {
-		t.Fatal(err)
-	}
-	t.Cleanup(func() { os.Remove(tmpfile.Name()) })
-	if _, err := tmpfile.Write(content); err != nil {
-		t.Fatal(err)
-	}
-	if err := tmpfile.Close(); err != nil {
-		t.Fatal(err)
-	}
-	return tmpfile
 }
