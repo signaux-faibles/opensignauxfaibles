@@ -79,7 +79,7 @@ func (parser *sireneUlParser) Open(filePath string) (err error) {
 	if err != nil {
 		return err // may be io.EOF
 	} else if strings.Join(row, ",") != expectedHeader {
-		return errors.New("sirene header does not match the parser's expectations")
+		return errors.New("sirene_ul header does not match the parser's expectations")
 	}
 
 	return err
