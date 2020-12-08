@@ -9,9 +9,9 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/globalsign/mgo/bson"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/stretchr/testify/assert"
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 var update = flag.Bool("update", false, "Update the expected test values in golden file")
@@ -39,7 +39,7 @@ func TestSireneUlHeader(t *testing.T) {
 
 func parseReport(reportEvent marshal.Event) (map[string]interface{}, error) {
 	var jsonDocument map[string]interface{}
-	temporaryBytes, err := bson.MarshalExtJSON(reportEvent.Comment, true, true)
+	temporaryBytes, err := bson.MarshalJSON(reportEvent.Comment)
 	if err != nil {
 		return nil, err
 	}
