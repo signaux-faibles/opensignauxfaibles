@@ -15,12 +15,10 @@ import { debits } from "./debits"
 import { delai } from "./delai"
 import { diane } from "./diane"
 import { effectifs } from "./effectifs"
-import { iterable } from "./iterable"
 import { joinUrssaf } from "./joinUrssaf"
 import { sirene } from "./sirene"
 
 export const f = {
-  iterable,
   dateAddMonth,
   debits,
   apconso,

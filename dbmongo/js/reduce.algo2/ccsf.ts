@@ -14,27 +14,19 @@ export function ccsf(
 ): void {
   "use strict"
 
-  const ccsfHashes = Object.keys(vCcsf || {})
-
   output_array.forEach((val) => {
-    const optccsf = ccsfHashes.reduce(
-      function (accu, hash) {
-        const ccsf = vCcsf[hash]
-        if (
-          ccsf.date_traitement.getTime() < val.periode.getTime() &&
-          ccsf.date_traitement.getTime() > accu.date_traitement.getTime()
-        ) {
-          return ccsf
-        }
-        return accu
-      },
-      {
-        date_traitement: new Date(0),
+    let optccsfDateTraitement = new Date(0)
+    for (const ccsf of Object.values(vCcsf)) {
+      if (
+        ccsf.date_traitement.getTime() < val.periode.getTime() &&
+        ccsf.date_traitement.getTime() > optccsfDateTraitement.getTime()
+      ) {
+        optccsfDateTraitement = ccsf.date_traitement
       }
-    )
+    }
 
-    if (optccsf.date_traitement.getTime() !== 0) {
-      val.date_ccsf = optccsf.date_traitement
+    if (optccsfDateTraitement.getTime() !== 0) {
+      val.date_ccsf = optccsfDateTraitement
     }
   })
 }

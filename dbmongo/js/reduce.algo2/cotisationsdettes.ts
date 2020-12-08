@@ -47,7 +47,7 @@ export function cotisationsdettes(
   vCotisation: ParHash<EntréeCotisation>,
   vDebit: ParHash<EntréeDebit>,
   periodes: Timestamp[],
-  finPériode?: Date // correspond à la variable globale date_fin
+  finPériode: Date // correspond à la variable globale date_fin
 ): ParPériode<SortieCotisationsDettes> {
   "use strict"
 
@@ -60,8 +60,7 @@ export function cotisationsdettes(
   const value_cotisation: Record<Timestamp, number[]> = {}
 
   // Répartition des cotisations sur toute la période qu'elle concerne
-  Object.keys(vCotisation).forEach(function (h) {
-    const cotisation = vCotisation[h]
+  for (const cotisation of Object.values(vCotisation)) {
     const periode_cotisation = f.generatePeriodSerie(
       cotisation.periode.start,
       cotisation.periode.end
@@ -71,57 +70,53 @@ export function cotisationsdettes(
         value_cotisation[date_cotisation.getTime()] || []
       ).concat([cotisation.du / periode_cotisation.length])
     })
-  })
+  }
 
   // relier les débits
   // ecn: ecart negatif
   // map les débits: clé fabriquée maison => [{hash, numero_historique, date_traitement}, ...]
   // Pour un même compte, les débits avec le même num_ecn (chaque émission de facture) sont donc regroupés
-  const ecn = Object.keys(vDebit).reduce((accu, h) => {
-    //pour chaque debit
-    const debit = vDebit[h]
-
+  const ecn: ParHash<EcartNegatif[]> = {}
+  for (const [h, debit] of Object.entries(vDebit)) {
     const start = debit.periode.start
     const end = debit.periode.end
     const num_ecn = debit.numero_ecart_negatif
     const compte = debit.numero_compte
     const key = start + "-" + end + "-" + num_ecn + "-" + compte
-    accu[key] = (accu[key] || []).concat([
+    ecn[key] = (ecn[key] || []).concat([
       {
         hash: h,
         numero_historique: debit.numero_historique,
         date_traitement: debit.date_traitement,
       },
     ])
-    return accu
-  }, {} as ParHash<EcartNegatif[]>)
+  }
 
   // Pour chaque numero_ecn, on trie et on chaîne les débits avec debit_suivant
-  Object.keys(ecn).forEach((i) => {
-    ecn[i].sort(f.compareDebit)
-    const l = ecn[i].length
-    ecn[i].forEach((e, idx) => {
-      if (idx <= l - 2) {
-        vDebit[e.hash].debit_suivant = ecn[i][idx + 1].hash
-      }
-    })
-  })
+  for (const ecnEntry of Object.values(ecn)) {
+    ecnEntry.sort(f.compareDebit)
+    const l = ecnEntry.length
+    ecnEntry
+      .filter((_, idx) => idx <= l - 2)
+      .forEach((e, idx) => {
+        const vDebitForHash = vDebit[e.hash]
+        const next = (ecnEntry?.[idx + 1] || {}).hash
+        if (vDebitForHash && next !== undefined)
+          vDebitForHash.debit_suivant = next
+      })
+  }
 
   const value_dette: Record<string, Dette[]> = {}
   // Pour chaque objet debit:
   // debit_traitement_debut => periode de traitement du débit
   // debit_traitement_fin => periode de traitement du debit suivant, ou bien finPériode
   // Entre ces deux dates, c'est cet objet qui est le plus à jour.
-  Object.keys(vDebit).forEach(function (h) {
-    const debit = vDebit[h]
-
-    const debit_suivant = vDebit[debit.debit_suivant] || {
-      date_traitement: finPériode,
-    }
+  for (const debit of Object.values(vDebit)) {
+    const nextDate = vDebit[debit.debit_suivant]?.date_traitement ?? finPériode
 
     //Selon le jour du traitement, cela passe sur la période en cours ou sur la suivante.
     const jour_traitement = debit.date_traitement.getUTCDate()
-    const jour_traitement_suivant = debit_suivant.date_traitement.getUTCDate()
+    const jour_traitement_suivant = nextDate.getUTCDate()
     let date_traitement_debut
     if (jour_traitement <= lastAccountedDay) {
       date_traitement_debut = new Date(
@@ -142,17 +137,11 @@ export function cotisationsdettes(
     let date_traitement_fin
     if (jour_traitement_suivant <= lastAccountedDay) {
       date_traitement_fin = new Date(
-        Date.UTC(
-          debit_suivant.date_traitement.getFullYear(),
-          debit_suivant.date_traitement.getUTCMonth()
-        )
+        Date.UTC(nextDate.getFullYear(), nextDate.getUTCMonth())
       )
     } else {
       date_traitement_fin = new Date(
-        Date.UTC(
-          debit_suivant.date_traitement.getFullYear(),
-          debit_suivant.date_traitement.getUTCMonth() + 1
-        )
+        Date.UTC(nextDate.getFullYear(), nextDate.getUTCMonth() + 1)
       )
     }
 
@@ -170,7 +159,7 @@ export function cotisationsdettes(
         },
       ])
     })
-  })
+  }
 
   // TODO faire numero de compte ailleurs
   // Array des numeros de compte
@@ -181,12 +170,12 @@ export function cotisationsdettes(
   //))
 
   periodes.forEach(function (time) {
-    sortieCotisationsDettes[time] = sortieCotisationsDettes[time] || {}
-    let val = sortieCotisationsDettes[time]
+    let val = sortieCotisationsDettes[time] ?? ({} as SortieCotisationsDettes)
     //output_cotisationsdettes[time].numero_compte_urssaf = numeros_compte
-    if (time in value_cotisation) {
+    const valueCotis = value_cotisation[time]
+    if (valueCotis !== undefined) {
       // somme de toutes les cotisations dues pour une periode donnée
-      val.cotisation = value_cotisation[time].reduce((a, cot) => a + cot, 0)
+      val.cotisation = valueCotis.reduce((a, cot) => a + cot, 0)
     }
 
     // somme de tous les débits (part ouvriere, part patronale)
@@ -202,6 +191,7 @@ export function cotisationsdettes(
       }
     )
     val = Object.assign(val, montant_dette)
+    sortieCotisationsDettes[time] = val
 
     const futureTimestamps = [1, 2, 3, 6, 12] // Penser à mettre à jour le type CotisationsDettesPassees pour tout changement
       .map((offset) => ({
@@ -212,7 +202,8 @@ export function cotisationsdettes(
 
     futureTimestamps.forEach(({ offset, timestamp }) => {
       sortieCotisationsDettes[timestamp] = {
-        ...sortieCotisationsDettes[timestamp],
+        ...(sortieCotisationsDettes[timestamp] ??
+          ({} as SortieCotisationsDettes)),
         ["montant_part_ouvriere_past_" + offset]: val.montant_part_ouvriere,
         ["montant_part_patronale_past_" + offset]: val.montant_part_patronale,
       }
@@ -227,7 +218,8 @@ export function cotisationsdettes(
 
       futureTimestamps.forEach(({ timestamp }) => {
         sortieCotisationsDettes[timestamp] = {
-          ...sortieCotisationsDettes[timestamp],
+          ...(sortieCotisationsDettes[timestamp] ??
+            ({} as SortieCotisationsDettes)),
           interessante_urssaf: false,
         }
       })

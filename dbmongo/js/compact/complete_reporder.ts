@@ -22,28 +22,34 @@ export function complete_reporder(
   })
 
   batches.forEach((batch) => {
-    const reporder = object.batch[batch].reporder || {}
-
+    const reporder = object.batch[batch]?.reporder
+    if (reporder === undefined) return
     Object.keys(reporder).forEach((ro) => {
-      if (!missing[reporder[ro].periode.getTime()]) {
+      const periode = reporder[ro]?.periode
+      if (periode === undefined) return
+      if (!missing[periode.getTime()]) {
         delete reporder[ro]
       } else {
-        missing[reporder[ro].periode.getTime()] = false
+        missing[periode.getTime()] = false
       }
     })
   })
 
   const lastBatch = batches[batches.length - 1]
+  if (lastBatch === undefined)
+    throw new Error("the last batch should not be undefined")
   serie_periode
     .filter((p) => missing[p.getTime()])
     .forEach((p) => {
-      const reporder_obj = object.batch[lastBatch].reporder || {}
+      const dataInLastBatch = object.batch[lastBatch]
+      if (dataInLastBatch === undefined) return
+      const reporder_obj = dataInLastBatch.reporder ?? {}
       reporder_obj[p.toString()] = {
         random_order: Math.random(),
         periode: p,
         siret,
       }
-      object.batch[lastBatch].reporder = reporder_obj
+      dataInLastBatch.reporder = reporder_obj
     })
   return object
 }

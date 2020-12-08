@@ -131,11 +131,21 @@ export function map(this: EntréeMap): void {
       }
 
       if (v.delai) {
-        const output_delai = f.delais(v.delai, output_cotisationsdettes || {}, {
-          premièreDate: serie_periode[0],
-          dernièreDate: serie_periode[serie_periode.length - 1],
-        })
-        f.add(output_delai, output_indexed)
+        const premièreDate = serie_periode[0]
+        const dernièreDate = serie_periode[serie_periode.length - 1]
+        if (premièreDate === undefined || dernièreDate === undefined) {
+          const error = (message: string): never => {
+            throw new Error(message)
+          }
+          error("serie_periode should not contain undefined values")
+        } else {
+          const output_delai = f.delais(
+            v.delai,
+            output_cotisationsdettes ?? {},
+            { premièreDate, dernièreDate }
+          )
+          f.add(output_delai, output_indexed)
+        }
       }
 
       v.procol = v.procol || {}
@@ -219,8 +229,8 @@ export function map(this: EntréeMap): void {
       serie_periode.forEach((date) => {
         const periode = output_indexed[date.getTime()]
         if (
-          typeof periode.arrete_bilan_bdf !== "undefined" ||
-          typeof periode.arrete_bilan_diane !== "undefined"
+          periode?.arrete_bilan_bdf !== undefined ||
+          periode?.arrete_bilan_diane !== undefined
         ) {
           emit(
             {

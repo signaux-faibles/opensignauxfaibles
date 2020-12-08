@@ -160,7 +160,7 @@ testedProps.forEach((testedProp) => {
     testedProp.expected.forEach((expectedPropValue, indiceMois) => {
       const actualValue = actual[dateAddMonth(dateDebut, indiceMois).getTime()]
       t.is(
-        actualValue[testedProp.name as keyof SortieCotisationsDettes],
+        actualValue?.[testedProp.name as keyof SortieCotisationsDettes],
         expectedPropValue,
         `mois: #${indiceMois}, expected: ${expectedPropValue}`
       )

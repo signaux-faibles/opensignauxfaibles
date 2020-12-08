@@ -41,34 +41,35 @@ export function finalize(k: Clé, v: SortieMap): SortieFinalize {
   //
 
   // extraction de l'entreprise et des établissements depuis v
-  const etab: Record<Siret, SortieMapEtablissement> = f.omit(v, "entreprise")
+  const établissements: Record<Siret, SortieMapEtablissement> = f.omit(
+    v,
+    "entreprise"
+  )
   const entr: Partial<EntrepriseEnSortie> = { ...v.entreprise }
 
-  const output: Partial<EntrepriseEnSortie>[] = Object.keys(etab).map(
+  const output: Partial<EntrepriseEnSortie>[] = Object.keys(établissements).map(
     (siret) => {
-      const { effectif } = etab[siret]
+      const { effectif } = établissements[siret] ?? {}
       if (effectif) {
         entr.effectif_entreprise = entr.effectif_entreprise || 0 + effectif
       }
-      const { apart_heures_consommees } = etab[siret]
+      const { apart_heures_consommees } = établissements[siret] ?? {}
       if (apart_heures_consommees) {
         entr.apart_entreprise =
           (entr.apart_entreprise || 0) + apart_heures_consommees
       }
-      if (
-        etab[siret].montant_part_patronale ||
-        etab[siret].montant_part_ouvriere
-      ) {
+      const etab = établissements[siret]
+      if (etab && (etab.montant_part_patronale || etab.montant_part_ouvriere)) {
         entr.debit_entreprise =
-          (entr.debit_entreprise || 0) +
-          (etab[siret].montant_part_patronale || 0) +
-          (etab[siret].montant_part_ouvriere || 0)
+          (entr.debit_entreprise ?? 0) +
+          (etab.montant_part_patronale ?? 0) +
+          (etab.montant_part_ouvriere ?? 0)
       }
 
       return {
-        ...etab[siret],
+        ...établissements[siret],
         ...entr,
-        nbr_etablissements_connus: Object.keys(etab).length,
+        nbr_etablissements_connus: Object.keys(établissements).length,
       }
     }
   )

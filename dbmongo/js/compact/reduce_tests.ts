@@ -403,7 +403,7 @@ test.serial(
         batch: {
           [batchId]: {
             cotisation: {
-              [hashCotisation[0]]: entréeCotisation,
+              ["hash1"]: entréeCotisation,
             },
           },
         },
@@ -414,14 +414,14 @@ test.serial(
         batch: {
           [batchId]: {
             cotisation: {
-              [hashCotisation[1]]: entréeCotisation,
+              ["hash2"]: entréeCotisation,
             },
           },
         },
       },
     ])
     // test sur les données compactées de cotisation
-    const cotisations = reduceResults.batch[batchId].cotisation || {}
+    const cotisations = reduceResults.batch[batchId]?.cotisation || {}
     t.deepEqual(Object.keys(cotisations), hashCotisation)
   }
 )

@@ -75,7 +75,7 @@ test.serial(
 test.serial(
   `public.reduce() retourne les propriétés d'établissement, telles quelles`,
   (t: ExecutionContext) => {
-    const reduceValues = [expectedMapResults[etablissementKey]]
+    const reduceValues = [expectedMapResults[etablissementKey] ?? {}]
     const reduceResults = reduce({ scope }, reduceValues)
     t.deepEqual(reduceResults, expectedReduceResults)
   }

@@ -44,7 +44,7 @@ export function listHashesToAddAndDelete(
   stockTypes.forEach((type) => {
     hashToDelete[type] = new Set([
       ...(hashToDelete[type] || new Set()),
-      ...memory[type],
+      ...(memory[type] || new Set()),
     ])
   })
 

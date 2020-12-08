@@ -27,38 +27,39 @@ declare const serie_periode: Date[]
 
 export function debits(vdebit: ParHash<EntréeDebit> = {}): SortieDebit[] {
   const last_treatment_day = 20
-  const ecn = Object.keys(vdebit).reduce((accu, h) => {
-    const debit = vdebit[h]
+  const ecn = {} as Record<string, AccuItem[]>
+  for (const [h, debit] of Object.entries(vdebit)) {
     const start = debit.periode.start
     const end = debit.periode.end
     const num_ecn = debit.numero_ecart_negatif
     const compte = debit.numero_compte
     const key = start + "-" + end + "-" + num_ecn + "-" + compte
-    accu[key] = (accu[key] || []).concat([
+    ecn[key] = (ecn[key] || []).concat([
       {
         hash: h,
         numero_historique: debit.numero_historique,
         date_traitement: debit.date_traitement,
       },
     ])
-    return accu
-  }, {} as Record<string, AccuItem[]>)
+  }
 
-  Object.keys(ecn).forEach((i) => {
-    ecn[i].sort(f.compareDebit)
-    const l = ecn[i].length
-    ecn[i].forEach((e, idx) => {
+  for (const ecnItem of Object.values(ecn)) {
+    ecnItem.sort(f.compareDebit)
+    const l = ecnItem.length
+    ecnItem.forEach((e, idx) => {
       if (idx <= l - 2) {
-        vdebit[e.hash].debit_suivant = ecn[i][idx + 1].hash
+        const hashedDataInVDebit = vdebit[e?.hash]
+        const next = ecnItem[idx + 1]
+        if (hashedDataInVDebit !== undefined && next !== undefined) {
+          hashedDataInVDebit.debit_suivant = next.hash
+        }
       }
     })
-  })
+  }
 
   const value_dette: Record<Timestamp, DetteItem[]> = {}
 
-  Object.keys(vdebit).forEach(function (h) {
-    const debit = vdebit[h]
-
+  for (const debit of Object.values(vdebit)) {
     const debit_suivant = vdebit[debit.debit_suivant] || {
       date_traitement: date_fin,
     }
@@ -115,7 +116,7 @@ export function debits(vdebit: ParHash<EntréeDebit> = {}): SortieDebit[] {
         },
       ])
     })
-  })
+  }
 
   return serie_periode.map((p) =>
     (value_dette[p.getTime()] || []).reduce(

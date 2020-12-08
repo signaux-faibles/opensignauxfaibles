@@ -10,7 +10,7 @@ export function applyPatchesToMemory(
   // Prise en compte des suppressions de clés dans la mémoire
   f.forEachPopulatedProp(hashToDelete, (type, hashesToDelete) => {
     hashesToDelete.forEach((hash) => {
-      memory[type].delete(hash)
+      memory[type]?.delete(hash)
     })
   })
 
@@ -18,7 +18,7 @@ export function applyPatchesToMemory(
   f.forEachPopulatedProp(hashToAdd, (type, hashesToAdd) => {
     hashesToAdd.forEach((hash) => {
       memory[type] = memory[type] || new Set()
-      memory[type].add(hash)
+      memory[type]?.add(hash)
     })
   })
 }

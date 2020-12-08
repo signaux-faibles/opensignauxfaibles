@@ -18,7 +18,7 @@ export function compactBatch(
   fromBatchKey: string
 ): BatchValue {
   // Les types où il y a potentiellement des suppressions
-  const stockTypes = completeTypes[fromBatchKey].filter(
+  const stockTypes = (completeTypes[fromBatchKey] ?? []).filter(
     (type) => (memory[type] || new Set()).size > 0
   )
 

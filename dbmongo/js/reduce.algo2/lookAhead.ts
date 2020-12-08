@@ -26,20 +26,21 @@ export function lookAhead(
       // Si on a déjà détecté quelque chose, on compte le nombre de périodes
       if (counter >= 0) counter = counter + 1
 
-      if (data[period][attr_name]) {
+      if ((data[period] ?? {})[attr_name]) {
         // si l'évènement se produit on retombe à 0
         counter = 0
       }
 
       if (counter >= 0) {
         // l'évènement s'est produit
-        m[period] = m[period] || {}
-        m[period].time_til_outcome = counter
-        if (m[period].time_til_outcome <= n_months) {
-          m[period].outcome = true
+        const out = m[period] ?? ({} as Outcome)
+        out.time_til_outcome = counter
+        if (out.time_til_outcome <= n_months) {
+          out.outcome = true
         } else {
-          m[period].outcome = false
+          out.outcome = false
         }
+        m[period] = out
       }
       return m
     }, {} as ParPériode<Outcome>)

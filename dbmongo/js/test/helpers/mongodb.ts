@@ -31,8 +31,8 @@ export const indexMapResultsByKey = <K, V>(
 ): Indexed<K, V> =>
   mapResults.reduce((acc, { _id, value }) => {
     const key = JSON.stringify(_id) // e.g. _id: { siren; batch; periode }
-    acc[key] = acc[key] || []
-    acc[key].push({ key: _id, value })
+    acc[key] = acc[key] ?? []
+    acc[key]?.push({ key: _id, value })
     return acc
   }, {} as Indexed<K, V>)
 
@@ -76,8 +76,8 @@ const groupMapValuesByKey = <K, V>(
 ): Grouped<K, V> =>
   mapResults.reduce((acc, { _id, value }) => {
     const key = JSON.stringify(_id)
-    acc[key] = acc[key] || { _id, values: [] }
-    acc[key].values.push(value)
+    acc[key] = acc[key] ?? { key: _id, values: [] }
+    acc[key]?.values.push(value)
     return acc
   }, {} as Grouped<K, V>)
 

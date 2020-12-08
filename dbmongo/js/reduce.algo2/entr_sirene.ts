@@ -17,8 +17,10 @@ export function entr_sirene(
   const sireneHashes = Object.keys(sirene_ul || {})
   sériePériode.forEach((période) => {
     if (sireneHashes.length !== 0) {
+      const sirene = sirene_ul[
+        sireneHashes[sireneHashes.length - 1] as string
+      ] as EntréeSireneEntreprise
       const val: Partial<SortieSireneEntreprise> = {}
-      const sirene = sirene_ul[sireneHashes[sireneHashes.length - 1]]
       val.raison_sociale = f.raison_sociale(
         sirene.raison_sociale,
         sirene.nom_unite_legale,

@@ -42,11 +42,11 @@ const runDelais = (
 test("la propriété delai_nb_jours_restants représente le nombre de jours restants du délai", (t: ExecutionContext) => {
   const outputDelai = runDelais()
   t.is(
-    outputDelai[fevrier.getTime()]["delai_nb_jours_restants"],
+    outputDelai[fevrier.getTime()]?.["delai_nb_jours_restants"],
     nbDays(new Date("2014-02-01"), new Date("2014-04-05"))
   )
   t.is(
-    outputDelai[mars.getTime()]["delai_nb_jours_restants"],
+    outputDelai[mars.getTime()]?.["delai_nb_jours_restants"],
     nbDays(new Date("2014-03-01"), new Date("2014-04-05"))
   )
 })
@@ -54,14 +54,14 @@ test("la propriété delai_nb_jours_restants représente le nombre de jours rest
 test("la propriété delai_nb_jours_total représente la durée totale en jours du délai", (t: ExecutionContext) => {
   const dureeEnJours = nbDays(new Date("2014-01-03"), new Date("2014-04-05"))
   const outputDelai = runDelais()
-  t.is(outputDelai[fevrier.getTime()]["delai_nb_jours_total"], dureeEnJours)
-  t.is(outputDelai[mars.getTime()]["delai_nb_jours_total"], dureeEnJours)
+  t.is(outputDelai[fevrier.getTime()]?.["delai_nb_jours_total"], dureeEnJours)
+  t.is(outputDelai[mars.getTime()]?.["delai_nb_jours_total"], dureeEnJours)
 })
 
 test("la propriété delai_montant_echeancier représente le montant en euros des cotisations sociales couvertes par le délai", (t: ExecutionContext) => {
   const outputDelai = runDelais()
-  t.is(outputDelai[fevrier.getTime()]["delai_montant_echeancier"], 1000)
-  t.is(outputDelai[mars.getTime()]["delai_montant_echeancier"], 1000)
+  t.is(outputDelai[fevrier.getTime()]?.["delai_montant_echeancier"], 1000)
+  t.is(outputDelai[mars.getTime()]?.["delai_montant_echeancier"], 1000)
 })
 
 test(
@@ -76,9 +76,9 @@ test(
     const outputDelai = runDelais(debits)
     const tolerance = 10e-3
     const ratioFebruary =
-      outputDelai[fevrier.getTime()]["delai_deviation_remboursement"]
+      outputDelai[fevrier.getTime()]?.["delai_deviation_remboursement"]
     const ratioMarch =
-      outputDelai[mars.getTime()]["delai_deviation_remboursement"]
+      outputDelai[mars.getTime()]?.["delai_deviation_remboursement"]
     t.is(typeof ratioFebruary, "number")
     t.is(typeof ratioMarch, "number")
     if (typeof ratioFebruary === "number") {

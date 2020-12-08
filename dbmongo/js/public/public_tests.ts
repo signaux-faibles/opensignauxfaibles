@@ -36,12 +36,12 @@ test("l'ordre de traitement des données n'influe pas sur les résultats", (t) =
   )
 
   const intermediateResult = Object.values(pool).map((array) => ({
-    key: array[0].key,
+    key: array[0]?.key,
     value: reducer(array, reduce),
   }))
 
   const invertedIntermediateResult = Object.values(pool).map((array) => ({
-    key: array[0].key,
+    key: array[0]?.key,
     value: invertedReducer(array, reduce),
   }))
 

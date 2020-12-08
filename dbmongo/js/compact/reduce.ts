@@ -19,6 +19,17 @@ export function reduce(
 ): CompanyDataValues {
   "use strict"
 
+  if (values.length === 0)
+    throw new Error(
+      `reduce: values of key ${key} should contain at least one item`
+    )
+
+  const firstValue = values[0]
+  if (firstValue === undefined)
+    throw new Error(
+      `reduce: values of key ${key} should contain at least one item`
+    )
+
   // Tester si plusieurs batchs. Reduce complet uniquement si plusieurs
   // batchs. Sinon, juste fusion des attributs
   const auxBatchSet = new Set()
@@ -32,12 +43,13 @@ export function reduce(
     (m, value: CompanyDataValues) => {
       Object.keys(value.batch).forEach((batch) => {
         type DataType = keyof BatchValue
-        m.batch[batch] = (Object.keys(value.batch[batch]) as DataType[]).reduce(
+        const dataInBatch = value.batch[batch] ?? {}
+        m.batch[batch] = (Object.keys(dataInBatch) as DataType[]).reduce(
           (batchValues: BatchValue, type: DataType) => ({
             ...batchValues,
             [type]: {
               ...batchValues[type],
-              ...value.batch[batch][type],
+              ...dataInBatch[type],
             },
           }),
           m.batch[batch] || {}
@@ -45,7 +57,7 @@ export function reduce(
       })
       return m
     },
-    { key, scope: values[0].scope, batch: {} }
+    { key, scope: firstValue.scope, batch: {} }
   )
 
   // Cette fonction reduce() est appelée à deux moments:
@@ -68,7 +80,8 @@ export function reduce(
     .filter((batch) => batch < fromBatchKey)
     .sort()
     .reduce((m: BatchValue[], batch: string) => {
-      m.push(naivelyMergedCompanyData.batch[batch])
+      const dataInBatch = naivelyMergedCompanyData.batch[batch]
+      if (dataInBatch !== undefined) m.push(dataInBatch)
       return m
     }, [])
 
@@ -86,7 +99,10 @@ export function reduce(
   Object.keys(naivelyMergedCompanyData.batch)
     .filter((batch) => batch < fromBatchKey)
     .forEach((batch) => {
-      reducedValue.batch[batch] = naivelyMergedCompanyData.batch[batch]
+      const mergedBatch = naivelyMergedCompanyData.batch[batch]
+      if (mergedBatch !== undefined) {
+        reducedValue.batch[batch] = mergedBatch
+      }
     })
 
   // On itère sur chaque batch à partir de fromBatchKey pour les compacter.
@@ -95,10 +111,12 @@ export function reduce(
   batches
     .filter((batch) => batch >= fromBatchKey)
     .forEach((batch) => {
-      const currentBatch = naivelyMergedCompanyData.batch[batch] || {}
-      const compactedBatch = f.compactBatch(currentBatch, memory, batch)
-      if (Object.keys(compactedBatch).length > 0) {
-        reducedValue.batch[batch] = compactedBatch
+      const currentBatch = naivelyMergedCompanyData.batch[batch]
+      if (currentBatch !== undefined) {
+        const compactedBatch = f.compactBatch(currentBatch, memory, batch)
+        if (Object.keys(compactedBatch).length > 0) {
+          reducedValue.batch[batch] = compactedBatch
+        }
       }
     })
 

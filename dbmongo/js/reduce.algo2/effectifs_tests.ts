@@ -1,4 +1,4 @@
-import { effectifs, SortieEffectifs } from "./effectifs"
+import { effectifs, EffectifEntreprise, SortieEffectifs } from "./effectifs"
 import test, { ExecutionContext } from "ava"
 import { setGlobals } from "../test/helpers/setGlobals"
 import { ParPériode } from "../RawDataTypes"
@@ -11,13 +11,13 @@ function assertEffectif(
   const périodes = Object.keys(résultat)
   for (let i = 0; i < périodes.length; i++) {
     t.is(
-      résultat[périodes[i]].effectif,
-      effectifsAttendus[i][0],
+      résultat[périodes[i] as string]?.effectif,
+      effectifsAttendus[i]?.[0],
       `valeur inattendue pour la période ${i}`
     )
     t.is(
-      résultat[périodes[i]].effectif_reporte,
-      effectifsAttendus[i][1] ? 1 : 0,
+      résultat[périodes[i] as string]?.effectif_reporte,
+      effectifsAttendus[i]?.[1] ? 1 : 0,
       `flag de report inattendu pour la période ${i}`
     )
   }
@@ -37,7 +37,7 @@ test.serial(
     }
     const clé = "effectif"
     const résultat = effectifs(
-      entréeEffectif,
+      entréeEffectif as EffectifEntreprise,
       periodes.map((d) => d.getTime()),
       clé
     )
@@ -66,7 +66,7 @@ test.serial(
     }
     const clé = "effectif"
     const résultat = effectifs(
-      entréeEffectif,
+      entréeEffectif as EffectifEntreprise,
       periodes.map((d) => d.getTime()),
       clé
     )
@@ -102,7 +102,7 @@ test.serial(
     }
     const clé = "effectif"
     const résultat = effectifs(
-      entréeEffectif,
+      entréeEffectif as EffectifEntreprise,
       periodes.map((d) => d.getTime()),
       clé
     )

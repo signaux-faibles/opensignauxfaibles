@@ -23,7 +23,7 @@ const removeRandomOrder = (
   reporderProp: Record<string, Partial<EntréeRepOrder>>
 ): void =>
   Object.keys(reporderProp).forEach((period) => {
-    delete reporderProp[period].random_order
+    delete reporderProp[period]?.random_order
   })
 
 // test data inspired by test-api.sh
@@ -97,7 +97,7 @@ test.serial(
 test.serial(
   `compact.reduce() agrège les données par entreprise`,
   (t: ExecutionContext) => {
-    const reduceValues: CompanyDataValues[] = [expectedMapResults[siret]]
+    const reduceValues = [expectedMapResults[siret] as CompanyDataValues]
     const reduceResults = reduce(siret, reduceValues)
     t.deepEqual(reduceResults, expectedReduceResults)
   }
@@ -108,7 +108,7 @@ test.serial(
   (t: ExecutionContext) => {
     setGlobals({ serie_periode: dates }) // used by complete_reporder(), which is called by finalize()
     const finalizeResult = finalize(siret, expectedReduceResults)
-    const { reporder } = finalizeResult.batch[fromBatchKey]
+    const { reporder } = finalizeResult.batch[fromBatchKey] || {}
     t.is(typeof reporder, "object")
     // reporder contient une propriété par periode
     t.is(Object.keys(reporder || {}).length, dates.length)

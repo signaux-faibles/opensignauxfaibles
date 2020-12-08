@@ -18,14 +18,14 @@ export function cibleApprentissage(
   // replace with const
   const all_keys = Object.keys(output_indexed)
 
-  const merged_info = all_keys.reduce(function (m, k) {
-    m[k] = {
+  const merged_info: ParPériode<{ outcome: boolean }> = {}
+  for (const k of all_keys) {
+    merged_info[k] = {
       outcome: Boolean(
-        output_procol[k].tag_failure || output_cotisation[k].tag_default
+        output_procol[k]?.tag_failure || output_cotisation[k]?.tag_default
       ),
     }
-    return m
-  }, {} as ParPériode<{ outcome: boolean }>)
+  }
 
   const output_outcome = f.lookAhead(merged_info, "outcome", n_months, true)
   const output_default = f.lookAhead(
@@ -43,10 +43,10 @@ export function cibleApprentissage(
 
   const output_cible = all_keys.reduce(function (m, k) {
     const outputTimes: Times = {}
-    if (output_default[k])
-      outputTimes.time_til_default = output_default[k].time_til_outcome
-    if (output_failure[k])
-      outputTimes.time_til_failure = output_failure[k].time_til_outcome
+    if (output_default[k] !== undefined)
+      outputTimes.time_til_default = output_default[k]?.time_til_outcome
+    if (output_failure[k] !== undefined)
+      outputTimes.time_til_failure = output_failure[k]?.time_til_outcome
     return {
       ...m,
       [k]: {

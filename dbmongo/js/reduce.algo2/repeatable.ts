@@ -7,12 +7,12 @@ export function repeatable(
 ): ParPériode<SortieRepeatable> {
   "use strict"
   const output_repeatable: ParPériode<{ random_order: number }> = {}
-  Object.keys(rep).forEach((hash) => {
-    const one_rep = rep[hash]
+  for (const one_rep of Object.values(rep)) {
     const periode = one_rep.periode.getTime()
-    output_repeatable[periode] = output_repeatable[periode] || {}
-    output_repeatable[periode].random_order = one_rep.random_order
-  })
+    const out = output_repeatable[periode] ?? ({} as { random_order: number })
+    out.random_order = one_rep.random_order
+    output_repeatable[periode] = out
+  }
 
   return output_repeatable
 }
