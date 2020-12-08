@@ -1,6 +1,7 @@
 package marshal
 
 import (
+	"encoding/json"
 	"time"
 
 	"github.com/globalsign/mgo/bson"
@@ -66,4 +67,15 @@ func (event Event) throw(comment interface{}, logLevel string) {
 // Info produit un évènement de niveau Info
 func (event Event) Info(comment interface{}) {
 	event.throw(comment, "info")
+}
+
+// ParseReport permet d'accéder aux propriétés d'un rapport de parsing.
+func (event Event) ParseReport() (map[string]interface{}, error) {
+	var jsonDocument map[string]interface{}
+	temporaryBytes, err := bson.MarshalJSON(event.Comment)
+	if err != nil {
+		return nil, err
+	}
+	err = json.Unmarshal(temporaryBytes, &jsonDocument)
+	return jsonDocument, err
 }

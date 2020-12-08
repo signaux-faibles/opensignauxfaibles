@@ -1,7 +1,6 @@
 package sireneul
 
 import (
-	"encoding/json"
 	"flag"
 	"io/ioutil"
 	"os"
@@ -9,7 +8,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/globalsign/mgo/bson"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
 	"github.com/stretchr/testify/assert"
 )
@@ -32,7 +30,7 @@ func TestSireneUlHeader(t *testing.T) {
 		output := marshal.RunParser(Parser, marshal.NewCache(), csvFile.Name())
 		assert.Equal(t, []marshal.Tuple(nil), output.Tuples, "should return no tuples")
 		assert.Equal(t, 1, len(output.Events), "should return a parsing report")
-		reportData, _ := parseReport(output.Events[0])
+		reportData, _ := output.Events[0].ParseReport()
 		assert.Equal(t, false, reportData["isFatal"], "should not report a fatal error")
 	})
 
@@ -44,19 +42,9 @@ func TestSireneUlHeader(t *testing.T) {
 		output := marshal.RunParser(Parser, marshal.NewCache(), csvFile.Name())
 		assert.Equal(t, []marshal.Tuple(nil), output.Tuples, "should return no tuples")
 		assert.Equal(t, 1, len(output.Events), "should return a parsing report")
-		reportData, _ := parseReport(output.Events[0])
+		reportData, _ := output.Events[0].ParseReport()
 		assert.Equal(t, true, reportData["isFatal"], "should report a fatal error")
 	})
-}
-
-func parseReport(reportEvent marshal.Event) (map[string]interface{}, error) {
-	var jsonDocument map[string]interface{}
-	temporaryBytes, err := bson.MarshalJSON(reportEvent.Comment)
-	if err != nil {
-		return nil, err
-	}
-	err = json.Unmarshal(temporaryBytes, &jsonDocument)
-	return jsonDocument, err
 }
 
 func createTempFileWithContent(t *testing.T, content []byte) *os.File {
