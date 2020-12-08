@@ -100,10 +100,9 @@ func parseSireneUlLine(row []string, parsedLine *marshal.ParsedLineResult) {
 	sireneul.NomUniteLegale = row[21]
 	sireneul.NomUsageUniteLegale = row[22]
 	sireneul.CodeStatutJuridique = row[27]
-	creation, err := time.Parse("2006-01-02", row[3])
+	creation, err := time.Parse("2006-01-02", row[3]) // note: cette date n'est pas toujours présente, et on ne souhaite pas être rapporter d'erreur en cas d'absence
 	if err == nil {
 		sireneul.Creation = &creation
 	}
-	parsedLine.AddRegularError(err)
 	parsedLine.AddTuple(sireneul)
 }
