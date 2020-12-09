@@ -96,7 +96,7 @@ func TestCotisation(t *testing.T) {
 		cache.Set("comptes", marshal.MockComptesMapping(
 			map[string]string{
 				"111982477292496174": "00000000000000",
-				// "636043216536562844": "11111111111111",
+				// "636043216536562844": "11111111111111", // on retire volontairement ce mapping qui va être demandé par le parseur de cotisations
 				"450359886246036238": "22222222222222",
 			},
 		))
@@ -105,7 +105,7 @@ func TestCotisation(t *testing.T) {
 		reportData, _ := output.Events[0].ParseReport()
 		assert.Equal(t, false, reportData["isFatal"], "aucune erreur fatale ne doit être rapportée")
 		assert.Equal(t, []interface{}{}, reportData["headRejected"], "aucune erreur de parsing ne doit être rapportée")
-		assert.Equal(t, 1.0, reportData["linesValid"], "seule la ligne de cotisation liée à un établissement du périmètre doit être incluse")
+		assert.Equal(t, 1.0, reportData["linesSkipped"], "seule la ligne de cotisation liée à un établissement hors mapping doit être sautée")
 	})
 }
 
