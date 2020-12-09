@@ -1480,6 +1480,7 @@
   "events": [
     {
       "date": "0001-01-01T00:00:00Z",
+      "startDate": "0001-01-01T00:00:00Z",
       "event": {
         "batchKey": "",
         "headFatal": [],
