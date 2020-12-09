@@ -3,8 +3,10 @@ package sireneul
 import (
 	//"bufio"
 	"encoding/csv"
+	"errors"
 	"io"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
@@ -25,6 +27,8 @@ type SireneUL struct {
 	CodeStatutJuridique string     `json:"statut_juridique"        bson:"statut_juridique"`
 	Creation            *time.Time `json:"date_creation,omitempty" bson:"date_creation,omitempty"`
 }
+
+var expectedHeader = "siren,statutDiffusionUniteLegale,unitePurgeeUniteLegale,dateCreationUniteLegale,sigleUniteLegale,sexeUniteLegale,prenom1UniteLegale,prenom2UniteLegale,prenom3UniteLegale,prenom4UniteLegale,prenomUsuelUniteLegale,pseudonymeUniteLegale,identifiantAssociationUniteLegale,trancheEffectifsUniteLegale,anneeEffectifsUniteLegale,dateDernierTraitementUniteLegale,nombrePeriodesUniteLegale,categorieEntreprise,anneeCategorieEntreprise,dateDebut,etatAdministratifUniteLegale,nomUniteLegale,nomUsageUniteLegale,denominationUniteLegale,denominationUsuelle1UniteLegale,denominationUsuelle2UniteLegale,denominationUsuelle3UniteLegale,categorieJuridiqueUniteLegale,activitePrincipaleUniteLegale,nomenclatureActivitePrincipaleUniteLegale,nicSiegeUniteLegale,economieSocialeSolidaireUniteLegale,caractereEmployeurUniteLegale"
 
 // Key id de l'objet
 func (sirene_ul SireneUL) Key() string {
@@ -69,7 +73,15 @@ func (parser *sireneUlParser) Open(filePath string) (err error) {
 	parser.reader = csv.NewReader(parser.file)
 	parser.reader.Comma = ','
 	parser.reader.LazyQuotes = true
-	_, err = parser.reader.Read() // skip header
+
+	// parse header
+	row, err := parser.reader.Read()
+	if err != nil {
+		return err // may be io.EOF
+	} else if strings.Join(row, ",") != expectedHeader {
+		return errors.New("sirene_ul header does not match the parser's expectations")
+	}
+
 	return err
 }
 
@@ -100,10 +112,9 @@ func parseSireneUlLine(row []string, parsedLine *marshal.ParsedLineResult) {
 	sireneul.NomUniteLegale = row[21]
 	sireneul.NomUsageUniteLegale = row[22]
 	sireneul.CodeStatutJuridique = row[27]
-	creation, err := time.Parse("2006-01-02", row[3])
+	creation, err := time.Parse("2006-01-02", row[3]) // note: cette date n'est pas toujours présente, et on ne souhaite pas être rapporter d'erreur en cas d'absence
 	if err == nil {
 		sireneul.Creation = &creation
 	}
-	parsedLine.AddRegularError(err)
 	parsedLine.AddTuple(sireneul)
 }

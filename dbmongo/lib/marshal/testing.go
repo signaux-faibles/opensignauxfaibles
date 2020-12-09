@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"log"
+	"os"
 	"sync"
 	"testing"
 	"time"
@@ -92,4 +93,22 @@ func TestParserOutput(
 	}
 
 	assert.Equal(t, string(expected), string(actual))
+}
+
+// CreateTempFileWithContent créée un fichier temporaire et le supprime
+// après le passage (ou échec) du test.
+func CreateTempFileWithContent(t *testing.T, content []byte) *os.File {
+	t.Helper()
+	tmpfile, err := ioutil.TempFile("", "createTempFileWithContent")
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { os.Remove(tmpfile.Name()) })
+	if _, err := tmpfile.Write(content); err != nil {
+		t.Fatal(err)
+	}
+	if err := tmpfile.Close(); err != nil {
+		t.Fatal(err)
+	}
+	return tmpfile
 }
