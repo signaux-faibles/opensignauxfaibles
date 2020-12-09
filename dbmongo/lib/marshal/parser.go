@@ -91,15 +91,13 @@ func runParserWithSirenFilter(parser Parser, filter *SirenFilter, filePath strin
 		parsedLineChan := make(chan ParsedLineResult)
 		go parser.ParseLines(parsedLineChan)
 		for lineResult := range parsedLineChan {
-			filterError := lineResult.FilterError
-			if filterError != nil {
-				tracker.AddFilterError(filterError)
-			}
 			for _, err := range lineResult.Errors {
 				tracker.AddParseError(err)
 			}
 			for _, tuple := range lineResult.Tuples {
-				if _, err := isValid(tuple); err != nil {
+				if lineResult.FilterError != nil {
+					tracker.AddFilterError(lineResult.FilterError)
+				} else if _, err := isValid(tuple); err != nil {
 					// Si le siret/siren est invalide, on jette le tuple,
 					// et on rapporte une erreur seulement si aucune n'a été
 					// rapportée par le parseur.
