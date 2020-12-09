@@ -41,8 +41,7 @@ echo "- POST /api/data/reduce 👉 $(http --print=b --ignore-stdin :5000/api/dat
 
 (tests/helpers/mongodb-container.sh run \
   > "${OUTPUT_FILE}" \
-) <<< 'printjson(db.Features_TestData.find().toArray());
-printjson(db.runCommand( { listCollections: 1.0, authorizedCollections: true, nameOnly: true } ))' # TODO: remove this
+) <<< 'printjson(db.Features_TestData.find().toArray());'
 
 # Display JS errors logged by MongoDB, if any
 tests/helpers/mongodb-container.sh exceptions || true
