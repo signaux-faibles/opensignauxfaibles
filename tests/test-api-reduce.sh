@@ -32,6 +32,8 @@ sleep 1 # give some time for MongoDB to start
 tests/helpers/populate-from-objects.sh \
   | tests/helpers/mongodb-container.sh run
 
+echo "db.Features_TestData.insertOne({a:1})" | tests/helpers/mongodb-container.sh run # TODO: remove this
+
 echo ""
 echo "💎 Computing the Features collection thru dbmongo API..."
 tests/helpers/dbmongo-server.sh start
