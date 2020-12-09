@@ -93,7 +93,7 @@ func runParserWithSirenFilter(parser Parser, filter *SirenFilter, filePath strin
 		for lineResult := range parsedLineChan {
 			filterError := lineResult.FilterError
 			if filterError != nil {
-				tracker.AddFilterError(filterError) // on rapporte le filtrage, même aucun tuple n'est transmis
+				tracker.AddFilterError(filterError) // on rapporte le filtrage même si aucun tuple n'est transmis par le parseur
 			}
 			for _, err := range lineResult.Errors {
 				tracker.AddParseError(err)
