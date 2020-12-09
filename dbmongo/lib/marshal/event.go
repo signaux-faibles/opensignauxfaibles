@@ -27,6 +27,7 @@ type Code string
 type Event struct {
 	ID         bson.ObjectId `json:"-" bson:"_id"`
 	Date       time.Time     `json:"date" bson:"date"`
+	StartDate  time.Time     `json:"startDate" bson:"startDate"`
 	Comment    interface{}   `json:"event" bson:"event"`
 	Priority   Priority      `json:"priority" bson:"priority"`
 	Code       Code          `json:"parserCode" bson:"parserCode"`

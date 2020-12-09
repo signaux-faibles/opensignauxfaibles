@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -131,6 +132,14 @@ func Reduce(batch base.AdminBatch, types []string) error {
 		outCollection = "Features"
 	}
 
+	// Backup: renommer la collection Features actuelle, pour en créer une nouvelle version
+	backupColName, err := backupCollection(db.DB("admin"), viper.GetString("DB"), outCollection)
+	if err != nil {
+		return err
+	} else if backupColName != "" {
+		fmt.Fprintln(os.Stderr, "La collection Features actuelle a été sauvegardée dans: "+backupColName)
+	}
+
 	for _, dbTemp := range tempDBs {
 
 		err = reduceFinalAggregation(
@@ -156,6 +165,10 @@ func Reduce(batch base.AdminBatch, types []string) error {
 	errorcount, _ := w.running.Load("errors")
 	if errorcount.(int) != 0 {
 		return errors.New("erreurs constatées, consultez les journaux")
+	}
+
+	if backupColName != "" {
+		fmt.Fprintln(os.Stderr, "Vous pouvez supprimer la version précédente de la collection Features: "+backupColName)
 	}
 
 	return nil
@@ -301,4 +314,20 @@ func reduceDefineScope(batch base.AdminBatch, types []string) (bson.M, error) {
 		"includes":               includes,
 	}
 	return scope, nil
+}
+
+func backupCollection(adminDb *mgo.Database, namespace string, outCollection string) (string, error) {
+	backupColName := outCollection + "_" + time.Now().Format("2006-01-02_15-04-05")
+	var res interface{}
+	err := adminDb.Run(bson.D{
+		{Name: "renameCollection", Value: namespace + "." + outCollection},
+		{Name: "to", Value: namespace + "." + backupColName},
+	}, res)
+	if err != nil {
+		backupColName = ""
+		if err.Error() == "source namespace does not exist" {
+			err = nil
+		}
+	}
+	return backupColName, nil
 }

@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/globalsign/mgo/bson"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
@@ -33,9 +34,10 @@ func ImportBatch(batch base.AdminBatch, parsers []marshal.Parser, skipFilter boo
 	if !skipFilter && filter == nil {
 		return errors.New("Veuillez inclure un filtre")
 	}
+	startDate := time.Now()
 	for _, parser := range parsers {
 		outputChannel, eventChannel := marshal.ParseFilesFromBatch(cache, &batch, parser) // appelle la fonction ParseFile() pour chaque type de fichier
-		go RelayEvents(eventChannel, "ImportBatch")
+		go RelayEvents(eventChannel, "ImportBatch", startDate)
 		for tuple := range outputChannel {
 			hash := fmt.Sprintf("%x", GetMD5(tuple))
 			value := Value{
@@ -79,10 +81,11 @@ func CheckBatch(batch base.AdminBatch, parsers []marshal.Parser) (reports []stri
 		return nil, err
 	}
 	var cache = marshal.NewCache()
+	startDate := time.Now()
 	for _, parser := range parsers {
 		outputChannel, eventChannel := marshal.ParseFilesFromBatch(cache, &batch, parser) // appelle la fonction ParseFile() pour chaque type de fichier
 		DiscardTuple(outputChannel)
-		lastReport := RelayEvents(eventChannel, "CheckBatch")
+		lastReport := RelayEvents(eventChannel, "CheckBatch", startDate)
 		reports = append(reports, lastReport)
 	}
 
