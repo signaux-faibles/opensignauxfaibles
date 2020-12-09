@@ -32,7 +32,8 @@ sleep 1 # give some time for MongoDB to start
 tests/helpers/populate-from-objects.sh \
   | tests/helpers/mongodb-container.sh run
 
-echo "db.Features_TestData.insertOne({a:1})" | tests/helpers/mongodb-container.sh run # TODO: remove this
+# We create a collection with dummy data which should not remain after the execution of Reduce
+echo "db.Features_TestData.insertOne({a:1})" | tests/helpers/mongodb-container.sh run
 
 echo ""
 echo "💎 Computing the Features collection thru dbmongo API..."

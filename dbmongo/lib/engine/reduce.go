@@ -135,7 +135,6 @@ func Reduce(batch base.AdminBatch, types []string) error {
 	// Backup: renommer la collection Features actuelle, pour en créer une nouvelle version
 	backupColName := outCollection + "_" + time.Now().Format("2006-01-02_15-04-05")
 	var res interface{}
-	fmt.Fprintln(os.Stderr, viper.GetString("DB")+"."+outCollection)
 	err = db.DB("admin").Run(bson.D{
 		{Name: "renameCollection", Value: viper.GetString("DB") + "." + outCollection},
 		{Name: "to", Value: viper.GetString("DB") + "." + backupColName},
