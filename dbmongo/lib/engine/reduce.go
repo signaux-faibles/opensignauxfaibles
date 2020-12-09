@@ -141,9 +141,13 @@ func Reduce(batch base.AdminBatch, types []string) error {
 		{Name: "to", Value: viper.GetString("DB") + "." + backupColName},
 	}, res)
 	if err != nil {
-		return err
+		if err.Error() != "source namespace does not exist" {
+			return err
+		}
+		backupColName = ""
+	} else {
+		fmt.Fprintln(os.Stderr, "La collection Features actuelle a été sauvegardée dans: "+backupColName)
 	}
-	fmt.Fprintln(os.Stderr, "La collection Features actuelle a été sauvegardée dans: "+backupColName)
 
 	for _, dbTemp := range tempDBs {
 
@@ -172,7 +176,9 @@ func Reduce(batch base.AdminBatch, types []string) error {
 		return errors.New("erreurs constatées, consultez les journaux")
 	}
 
-	fmt.Fprintln(os.Stderr, "Vous pouvez supprimer la version précédente de la collection Features: "+backupColName)
+	if backupColName != "" {
+		fmt.Fprintln(os.Stderr, "Vous pouvez supprimer la version précédente de la collection Features: "+backupColName)
+	}
 
 	return nil
 }
