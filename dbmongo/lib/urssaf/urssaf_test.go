@@ -77,7 +77,6 @@ func TestCotisation(t *testing.T) {
 	var cache = makeCacheWithComptesMapping()
 	marshal.TestParserOutput(t, ParserCotisation, cache, testData, golden, *update)
 
-	// TODO: déplacer ce test dans un fichier marshal/parser_test.go ?
 	t.Run("toute ligne de cotisation d'un établissement hors périmètre doit être sautée silencieusement", func(t *testing.T) {
 		allowedSiren := "111111111" // SIREN correspondant à un des 3 comptes mentionnés dans le fichier testData
 		cache := makeCacheWithComptesMapping()
@@ -90,7 +89,6 @@ func TestCotisation(t *testing.T) {
 		assert.Equal(t, 1.0, reportData["linesValid"], "seule la ligne de cotisation liée à un établissement du périmètre doit être incluse")
 	})
 
-	// TODO: déplacer ce test dans un fichier marshal/parser_test.go ?
 	t.Run("toute ligne de cotisation d'un établissement non inclus dans les comptes urssaf doit être sautée silencieusement", func(t *testing.T) {
 		cache := marshal.NewCache()
 		cache.Set("comptes", marshal.MockComptesMapping(
