@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -131,6 +132,19 @@ func Reduce(batch base.AdminBatch, types []string) error {
 		outCollection = "Features"
 	}
 
+	// Backup: renommer la collection Features actuelle, pour en créer une nouvelle version
+	backupColName := outCollection + "_" + time.Now().Format("2006-01-02_15-04-05")
+	var res interface{}
+	fmt.Fprintln(os.Stderr, viper.GetString("DB")+"."+outCollection)
+	err = db.DB("admin").Run(bson.D{
+		{Name: "renameCollection", Value: viper.GetString("DB") + "." + outCollection},
+		{Name: "to", Value: viper.GetString("DB") + "." + backupColName},
+	}, res)
+	if err != nil {
+		return err
+	}
+	fmt.Fprintln(os.Stderr, "La collection Features actuelle a été sauvegardée dans: "+backupColName)
+
 	for _, dbTemp := range tempDBs {
 
 		err = reduceFinalAggregation(
@@ -157,6 +171,8 @@ func Reduce(batch base.AdminBatch, types []string) error {
 	if errorcount.(int) != 0 {
 		return errors.New("erreurs constatées, consultez les journaux")
 	}
+
+	fmt.Fprintln(os.Stderr, "Vous pouvez supprimer la version précédente de la collection Features: "+backupColName)
 
 	return nil
 }
