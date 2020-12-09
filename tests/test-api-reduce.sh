@@ -32,6 +32,8 @@ sleep 1 # give some time for MongoDB to start
 tests/helpers/populate-from-objects.sh \
   | tests/helpers/mongodb-container.sh run
 
+echo "db.Features_TestData.insertOne({})" | tests/helpers/mongodb-container.sh run # TODO: remove this
+
 echo ""
 echo "💎 Computing the Features collection thru dbmongo API..."
 tests/helpers/dbmongo-server.sh start
@@ -39,7 +41,8 @@ echo "- POST /api/data/reduce 👉 $(http --print=b --ignore-stdin :5000/api/dat
 
 (tests/helpers/mongodb-container.sh run \
   > "${OUTPUT_FILE}" \
-) <<< 'printjson(db.Features_TestData.find().toArray());'
+) <<< 'printjson(db.Features_TestData.find().toArray());
+printjson(db.runCommand( { listCollections: 1.0, authorizedCollections: true, nameOnly: true } ))' # TODO: remove this
 
 # Display JS errors logged by MongoDB, if any
 tests/helpers/mongodb-container.sh exceptions || true
