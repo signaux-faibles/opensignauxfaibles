@@ -3,6 +3,7 @@ package engine
 import (
 	"encoding/json"
 	"log"
+	"time"
 
 	"github.com/globalsign/mgo/bson"
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
@@ -62,7 +63,7 @@ func messageDispatch() chan SocketMessage {
 }
 
 // RelayEvents transmet les messages
-func RelayEvents(eventChannel chan marshal.Event, reportType string) (lastReport string) {
+func RelayEvents(eventChannel chan marshal.Event, reportType string, startDate time.Time) (lastReport string) {
 	if eventChannel == nil {
 		return
 	}
@@ -73,6 +74,7 @@ func RelayEvents(eventChannel chan marshal.Event, reportType string) (lastReport
 			}
 		}
 		e.ReportType = reportType
+		e.StartDate = startDate
 		MainMessageChannel <- SocketMessage{
 			JournalEvent: e,
 		}
