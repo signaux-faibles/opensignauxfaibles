@@ -1,3 +1,11 @@
+// db.Journal:
+{
+	"count" : 1,
+	"reportType" : "Public",
+	"hasDate" : true,
+	"hasStartDate" : true
+}
+// Documents from db.Public:
 [
 	{
 		"_id" : "entreprise_123456789",
@@ -1038,3 +1046,5 @@
 		}
 	}
 ]
+// Response body from /api/data/public:
+"ok"

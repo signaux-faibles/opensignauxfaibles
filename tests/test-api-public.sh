@@ -34,11 +34,28 @@ tests/helpers/populate-from-objects.sh \
 echo ""
 echo "💎 Computing the Public collection thru dbmongo API..."
 tests/helpers/dbmongo-server.sh start
-echo "- POST /api/data/public 👉 $(http --print=b --ignore-stdin :5000/api/data/public batch=1905)"
+API_RESULT=$(http --print=b --ignore-stdin :5000/api/data/public batch=1905)
+echo "- POST /api/data/public 👉 ${API_RESULT}"
 
 (tests/helpers/mongodb-container.sh run \
   > "${OUTPUT_FILE}" \
-) <<< 'printjson(db.Public.find().toArray());'
+) << CONTENT
+print("// db.Journal:");
+const report = db.Journal.find().toArray().pop() || {};
+printjson({
+  count: db.Journal.count(),
+  reportType: report.reportType,
+  hasDate: !!report.date,
+  hasStartDate: !!report.startDate,
+});
+
+print("// Documents from db.Public:");
+printjson(db.Public.find().toArray());
+
+print("// Response body from /api/data/public:");
+CONTENT
+
+echo "${API_RESULT}" >> "${OUTPUT_FILE}"
 
 # Display JS errors logged by MongoDB, if any
 tests/helpers/mongodb-container.sh exceptions || true
