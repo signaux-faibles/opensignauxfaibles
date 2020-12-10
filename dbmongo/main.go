@@ -62,10 +62,10 @@ func main() {
 		api.POST("/data/public", publicHandler)               // [x] écrit dans Journal
 		api.POST("/data/pruneEntities", pruneEntitiesHandler) // [x] écrit dans Journal
 
-		api.GET("/data/purgeNotCompacted", purgeNotCompactedHandler) // [ ] écrit dans Journal
+		api.GET("/data/purgeNotCompacted", purgeNotCompactedHandler)
 
-		api.GET("/data/etablissements", exportEtablissementsHandler) // [ ] écrit dans Journal
-		api.GET("/data/entreprises", exportEntreprisesHandler)       // [ ] écrit dans Journal
+		api.GET("/data/etablissements", exportEtablissementsHandler)
+		api.GET("/data/entreprises", exportEntreprisesHandler)
 	}
 
 	bind := viper.GetString("APP_BIND")
