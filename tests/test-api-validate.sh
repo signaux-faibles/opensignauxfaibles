@@ -13,6 +13,7 @@ FLAGS="$*" # the script will update the golden file if "--update" flag was provi
 INPUT_FILE="tests/input-data/RawData.validation.json"
 GOLDEN_FILE="tests/output-snapshots/test-api-validate.golden.json"
 TMP_DIR="tests/tmp-test-execution-files"
+OUTPUT_FILE="${TMP_DIR}/output.json"
 mkdir -p "${TMP_DIR}"
 
 # Clean up on exit
@@ -36,10 +37,26 @@ CONTENT
 echo ""
 echo "💎 Testing the dbmongo API..."
 tests/helpers/dbmongo-server.sh start
-OUTPUT_GZ_FILE=dbmongo/$(http --print=b --ignore-stdin :5000/api/data/validate collection=RawData | tr -d '"')
-echo "- POST /api/data/validate 👉 ${OUTPUT_GZ_FILE}"
-OUTPUT_FILE="${TMP_DIR}/output.json"
-zcat < "${OUTPUT_GZ_FILE}" > "${OUTPUT_FILE}"
+API_RESULT=$(http --print=b --ignore-stdin :5000/api/data/validate collection=RawData)
+echo "- POST /api/data/validate 👉 ${API_RESULT}"
+
+(tests/helpers/mongodb-container.sh run \
+  > "${OUTPUT_FILE}" \
+) << CONTENT
+print("// db.Journal:");
+const report = db.Journal.find().toArray().pop() || {};
+printjson({
+  count: db.Journal.count(),
+  reportType: report.reportType,
+  hasDate: !!report.date,
+  hasStartDate: !!report.startDate,
+});
+
+print("// Result from /api/data/validate:");
+CONTENT
+
+OUTPUT_GZ_FILE=dbmongo/$(echo ${API_RESULT} | tr -d '"')
+zcat < "${OUTPUT_GZ_FILE}" >> "${OUTPUT_FILE}"
 
 tests/helpers/diff-or-update-golden-master.sh "${FLAGS}" "${GOLDEN_FILE}" "${OUTPUT_FILE}"
 
