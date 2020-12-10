@@ -193,6 +193,8 @@ func MRroutine(job *mgo.MapReduce, query bson.M, dbTemp string, collOrig string,
 
 // Compact traite le compactage de la base RawData
 func Compact(fromBatchKey string) error {
+	startDate := time.Now()
+
 	// Détermination scope traitement
 	batches, _ := GetBatches()
 
@@ -250,6 +252,9 @@ func Compact(fromBatchKey string) error {
 	}
 
 	err = PurgeNotCompacted()
+
+	LogOperationEvent("Compact", startDate)
+
 	return err
 }
 
