@@ -1,6 +1,6 @@
 # Open Signaux Faibles
 
-coucou
+coucou2
 
 Solution logicielle pour la détection anticipée d'entreprises en difficulté.
 
