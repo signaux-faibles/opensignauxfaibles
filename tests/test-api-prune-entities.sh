@@ -74,6 +74,10 @@ echo "- POST /api/data/pruneEntities 👉 ${API_RESULT}"
     "found 2 entities to prune": ${API_RESULT}.count === 2,
     "222222222 was not pruned yet": db.RawData.find({_id: "222222222"}).count() === 1,
     "22222222200000 was not pruned yet": db.RawData.find({_id: "22222222200000"}).count() === 1,
+    "Journal has 1 entry": db.Journal.count() === 1,
+    "Journal reports PurgeBatch": report.reportType === "PruneEntities",
+    "Journal report has date": !!report.date === true,
+    "Journal report has start date": !!report.startDate === true,
   });
 CONTENT
 
@@ -86,6 +90,10 @@ function test {
 test "found 2 entities to prune"
 test "222222222 was not pruned yet"
 test "22222222200000 was not pruned yet"
+test "Journal has 1 entry"
+test "Journal reports PurgeBatch"
+test "Journal report has date"
+test "Journal report has start date"
 
 echo "- POST /api/data/pruneEntities delete=true 👉 $(http --print=b --ignore-stdin :5000/api/data/pruneEntities batch=2010 delete:=true)"
 
