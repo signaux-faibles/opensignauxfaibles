@@ -38,11 +38,28 @@ echo "db.Features_TestData.insertOne({a:1})" | tests/helpers/mongodb-container.s
 echo ""
 echo "💎 Computing the Features collection thru dbmongo API..."
 tests/helpers/dbmongo-server.sh start
-echo "- POST /api/data/reduce 👉 $(http --print=b --ignore-stdin :5000/api/data/reduce batch=1905)"
+API_RESULT=$(http --print=b --ignore-stdin :5000/api/data/reduce batch=1905)
+echo "- POST /api/data/reduce 👉 ${API_RESULT}"
 
 (tests/helpers/mongodb-container.sh run \
   > "${OUTPUT_FILE}" \
-) <<< 'printjson(db.Features_TestData.find().toArray());'
+) << CONTENT
+print("// db.Journal:");
+const report = db.Journal.find().toArray().pop() || {};
+printjson({
+  count: db.Journal.count(),
+  reportType: report.reportType,
+  hasDate: !!report.date,
+  hasStartDate: !!report.startDate,
+});
+
+print("// Documents from db.Features_TestData:");
+printjson(db.Features_TestData.find().toArray());
+
+print("// Response body from /api/data/check:");
+CONTENT
+
+echo "${API_RESULT}" >> "${OUTPUT_FILE}"
 
 # Display JS errors logged by MongoDB, if any
 tests/helpers/mongodb-container.sh exceptions || true

@@ -1,3 +1,11 @@
+// db.Journal:
+{
+	"count" : 1,
+	"reportType" : "Reduce",
+	"hasDate" : true,
+	"hasStartDate" : true
+}
+// Documents from db.Features_TestData:
 [
 	{
 		"_id" : {
@@ -5328,3 +5336,5 @@
 		}
 	}
 ]
+// Response body from /api/data/check:
+"Traitement effectué"
