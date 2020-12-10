@@ -60,7 +60,7 @@ func main() {
 		api.POST("/data/compact", compactHandler)             // [x] écrit dans Journal
 		api.POST("/data/reduce", reduceHandler)               // [x] écrit dans Journal
 		api.POST("/data/public", publicHandler)               // [x] écrit dans Journal
-		api.POST("/data/pruneEntities", pruneEntitiesHandler) // [ ] écrit dans Journal
+		api.POST("/data/pruneEntities", pruneEntitiesHandler) // [x] écrit dans Journal
 
 		api.GET("/data/purgeNotCompacted", purgeNotCompactedHandler) // [ ] écrit dans Journal
 

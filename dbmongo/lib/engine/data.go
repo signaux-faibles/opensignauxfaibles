@@ -59,6 +59,8 @@ func PurgeNotCompacted() error {
 // PruneEntities permet de compter puis supprimer les entités de RawData
 // qui auraient du être exclues par le Filtre de périmètre SIREN.
 func PruneEntities(batchKey string, delete bool) (int, error) {
+	startDate := time.Now()
+
 	// Récupérer le batch
 	batch := base.AdminBatch{}
 	err := Load(&batch, batchKey)
@@ -129,6 +131,7 @@ func PruneEntities(batchKey string, delete bool) (int, error) {
 	}
 	pipeline = append(pipeline, bson.M{"$count": "ids_to_delete"})
 	err = Db.DB.C("RawData").Pipe(pipeline).AllowDiskUse().One(&result)
+	LogOperationEvent("PruneEntities", startDate)
 	return result.IdsToDelete, err
 }
 
