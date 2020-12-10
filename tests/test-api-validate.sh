@@ -55,7 +55,7 @@ printjson({
 print("// Result from /api/data/validate:");
 CONTENT
 
-OUTPUT_GZ_FILE=dbmongo/$(echo ${API_RESULT} | tr -d '"')
+OUTPUT_GZ_FILE="dbmongo/$(echo ${API_RESULT} | tr -d '"')"
 zcat < "${OUTPUT_GZ_FILE}" >> "${OUTPUT_FILE}"
 
 tests/helpers/diff-or-update-golden-master.sh "${FLAGS}" "${GOLDEN_FILE}" "${OUTPUT_FILE}"
