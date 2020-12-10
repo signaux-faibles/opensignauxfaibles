@@ -12,7 +12,9 @@
 			"batchKey" : "1910"
 		},
 		"reportType" : "CheckBatch",
-		"parserCode" : "debit"
+		"parserCode" : "debit",
+		"hasDate" : true,
+		"hasStartDate" : true
 	}
 ]
 // Response body from /api/data/check:

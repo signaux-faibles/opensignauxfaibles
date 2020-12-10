@@ -70,7 +70,9 @@ printjson(db.Journal.find().toArray().map(doc => ({
     batchKey: doc.event.batchKey
   },
   reportType: doc.reportType,
-  parserCode: doc.parserCode
+  parserCode: doc.parserCode,
+  hasDate: !!doc.date,
+  hasStartDate: !!doc.startDate,
 })));
 
 print("// Response body from /api/data/check:");
