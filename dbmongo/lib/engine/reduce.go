@@ -73,6 +73,8 @@ func ReduceOne(batch base.AdminBatch, key, from, to string, types []string) erro
 // Reduce alimente la base Features
 func Reduce(batch base.AdminBatch, types []string) error {
 
+	startDate := time.Now()
+
 	scope, err := reduceDefineScope(batch, types)
 	if err != nil {
 		return err
@@ -166,6 +168,8 @@ func Reduce(batch base.AdminBatch, types []string) error {
 	if errorcount.(int) != 0 {
 		return errors.New("erreurs constatées, consultez les journaux")
 	}
+
+	LogOperationEvent("Reduce", startDate)
 
 	if backupColName != "" {
 		fmt.Fprintln(os.Stderr, "Vous pouvez supprimer la version précédente de la collection Features: "+backupColName)
