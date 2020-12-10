@@ -57,29 +57,12 @@ CONTENTS
 echo ""
 echo "💎 Computing the Features collection thru dbmongo API..."
 tests/helpers/dbmongo-server.sh start
-API_RESULT=$(http --print=b --ignore-stdin :5000/api/data/reduce batch=2002_1)
-echo "- POST /api/data/reduce 👉 ${API_RESULT}"
+echo "- POST /api/data/reduce 👉 $(http --print=b --ignore-stdin :5000/api/data/reduce batch=2002_1)"
 
 (tests/helpers/mongodb-container.sh run \
   | tests/helpers/remove-random_order.sh \
   > "${OUTPUT_FILE}" \
-) << CONTENT
-print("// db.Journal:");
-const report = db.Journal.find().toArray().pop() || {};
-printjson({
-  count: db.Journal.count(),
-  reportType: report.reportType,
-  hasDate: !!report.date,
-  hasStartDate: !!report.startDate,
-});
-
-print("// Documents from db.Features_TestData:");
-printjson(db.Features_TestData.find().toArray());
-
-print("// Response body from /api/data/reduce:");
-CONTENT
-
-echo "${API_RESULT}" >> "${OUTPUT_FILE}"
+) <<< 'printjson(db.Features_TestData.find().toArray());'
 
 # Display JS errors logged by MongoDB, if any
 tests/helpers/mongodb-container.sh exceptions || true
