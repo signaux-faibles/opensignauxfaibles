@@ -57,7 +57,7 @@ func main() {
 		api.POST("/data/import", importBatchHandler)          // [x] écrit dans Journal
 		api.POST("/data/check", checkBatchHandler)            // [x] écrit dans Journal
 		api.POST("/data/compact", compactHandler)             // [ ] écrit dans Journal
-		api.POST("/data/reduce", reduceHandler)               // [ ] écrit dans Journal
+		api.POST("/data/reduce", reduceHandler)               // [x] écrit dans Journal
 		api.POST("/data/public", publicHandler)               // [ ] écrit dans Journal
 		api.POST("/data/pruneEntities", pruneEntitiesHandler) // [ ] écrit dans Journal
 		api.POST("/data/validate", validateHandler)           // [ ] écrit dans Journal

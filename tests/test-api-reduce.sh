@@ -56,7 +56,7 @@ printjson({
 print("// Documents from db.Features_TestData:");
 printjson(db.Features_TestData.find().toArray());
 
-print("// Response body from /api/data/check:");
+print("// Response body from /api/data/reduce:");
 CONTENT
 
 echo "${API_RESULT}" >> "${OUTPUT_FILE}"

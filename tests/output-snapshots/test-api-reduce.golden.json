@@ -5336,5 +5336,5 @@
 		}
 	}
 ]
-// Response body from /api/data/check:
+// Response body from /api/data/reduce:
 "Traitement effectué"
