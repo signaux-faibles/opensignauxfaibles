@@ -397,6 +397,8 @@ func ExportEntreprises(key, filepath string) error {
 
 // ValidateDataEntries retourne dans un fichier les entrées de données invalides détectées dans la collection spécifiée.
 func ValidateDataEntries(filepath string, jsonSchema map[string]bson.M, collection string) error {
+	startDate := time.Now()
+
 	w := sync.WaitGroup{}
 	gzipWriter := getItemChannelToGzip(filepath, &w)
 
@@ -422,6 +424,9 @@ func ValidateDataEntries(filepath string, jsonSchema map[string]bson.M, collecti
 
 	close(gzipWriter)
 	w.Wait()
+
+	LogOperationEvent("ValidateDataEntries", startDate)
+
 	return nil
 }
 
