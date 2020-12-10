@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestGetSiret(t *testing.T) {
@@ -176,4 +177,26 @@ func TestGetCompteSiretMapping(t *testing.T) {
 			t.Fatalf("getSiretMapping failed test %d", ind)
 		}
 	}
+}
+
+func TestGetSiretFromComptesMapping(t *testing.T) {
+	t.Run("doit retourner une erreur si un compte n'est pas associé à un numéro de SIRET, à la date d'aujourd'hui", func(t *testing.T) {
+		comptes := MockComptesMapping(map[string]string{})
+		compteManquant := "636043216536562844"
+		// test
+		date := time.Now()
+		siret, err := GetSiretFromComptesMapping(compteManquant, &date, comptes)
+		assert.Equal(t, "", siret)
+		assert.Equal(t, "Pas de siret associé au compte "+compteManquant+" à la période "+date.String(), err.Error())
+	})
+
+	t.Run("doit retourner une erreur si un compte n'est pas associé à un numéro de SIRET, à une date passée", func(t *testing.T) {
+		comptes := MockComptesMapping(map[string]string{})
+		compteManquant := "636043216536562844"
+		// test
+		date := time.Time{}
+		siret, err := GetSiretFromComptesMapping(compteManquant, &date, comptes)
+		assert.Equal(t, "", siret)
+		assert.Equal(t, "Pas de siret associé au compte "+compteManquant+" à la période "+date.String(), err.Error())
+	})
 }
