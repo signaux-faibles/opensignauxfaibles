@@ -53,7 +53,7 @@ func main() {
 	api := r.Group("api")
 
 	{
-		api.POST("/data/batch/purge", purgeBatchHandler)      // [ ] écrit dans Journal
+		api.POST("/data/batch/purge", purgeBatchHandler)      // [x] écrit dans Journal
 		api.POST("/data/check", checkBatchHandler)            // [x] écrit dans Journal
 		api.POST("/data/import", importBatchHandler)          // [x] écrit dans Journal
 		api.POST("/data/validate", validateHandler)           // [x] écrit dans Journal

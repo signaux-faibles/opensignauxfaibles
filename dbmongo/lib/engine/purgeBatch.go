@@ -72,6 +72,8 @@ func MRChunks(queryChan chan bson.M, MRBaseJob mgo.MapReduce, tempDBprefix strin
 
 // PurgeBatch permet de supprimer tous les batch consécutifs au un batch donné dans RawData
 func PurgeBatch(batch base.AdminBatch) error {
+	startDate := time.Now()
+
 	chunks, err := ChunkCollection(viper.GetString("DB"), "RawData", viper.GetInt64("chunkByteSize"))
 	if err != nil {
 		return fmt.Errorf("chunkCollection a échoué: %s", err.Error())
@@ -119,6 +121,8 @@ func PurgeBatch(batch base.AdminBatch) error {
 		}
 		db.DB(tempDB).DropDatabase()
 	}
+
+	LogOperationEvent("PurgeBatch", startDate)
 
 	return nil
 }
