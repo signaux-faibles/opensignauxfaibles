@@ -72,6 +72,8 @@ func PublicOne(batch base.AdminBatch, key string) error {
 
 // Public traite le mapReduce public pour les entreprises et établissements du perimètre "algo2".
 func Public(batch base.AdminBatch) error {
+	startDate := time.Now()
+
 	functions, err := loadJSFunctions("public")
 	if err != nil {
 		return err
@@ -142,5 +144,8 @@ func Public(batch base.AdminBatch) error {
 	}
 
 	db.Close()
+
+	LogOperationEvent("Public", startDate)
+
 	return nil
 }
