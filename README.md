@@ -1,5 +1,7 @@
 # Open Signaux Faibles
 
+coucou
+
 Solution logicielle pour la détection anticipée d'entreprises en difficulté.
 
 ## Architecture
