@@ -95,7 +95,7 @@ printjson(db.ImportedData.find().sort({"value.key":1}).toArray().map(doc => ({
 
 print("// Reports from db.Journal:");
 // on classe les données par type, de manière à ce que l'ordre soit stable
-printjson(db.Journal.find().sort({ parserCode: 1 }).toArray().map(doc => ({
+printjson(db.Journal.find().sort({ parserCode: 1 }).toArray().map(doc => (doc.event ? {
   event: {
     headRejected: doc.event.headRejected,
     headFatal: doc.event.headFatal,
@@ -105,6 +105,10 @@ printjson(db.Journal.find().sort({ parserCode: 1 }).toArray().map(doc => ({
   },
   reportType: doc.reportType,
   parserCode: doc.parserCode
+} : {
+  reportType: doc.reportType,
+  hasDate: !!doc.date,
+  hasStartDate: !!doc.startDate,
 })));
 
 print("// Results of call to /api/data/validate:");
