@@ -104,7 +104,9 @@ printjson(db.Journal.find().sort({ parserCode: 1 }).toArray().map(doc => (doc.ev
     batchKey: doc.event.batchKey
   },
   reportType: doc.reportType,
-  parserCode: doc.parserCode
+  parserCode: doc.parserCode,
+  hasDate: !!doc.date,
+  hasStartDate: !!doc.startDate,
 } : {
   reportType: doc.reportType,
   hasDate: !!doc.date,
