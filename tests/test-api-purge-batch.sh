@@ -41,14 +41,30 @@ tests/helpers/mongodb-container.sh exceptions || true
 
 (tests/helpers/mongodb-container.sh run \
   > "${OUTPUT_FILE}" \
-) <<< 'printjson({
+) <<< '
+  const report = db.Journal.find().toArray().pop() || {};
+  printjson({
     "1901 was purged": db.RawData.find({"value.batch.1901": {"$exists": true}}).count() === 0,
     "1812 was not purged": db.RawData.find({"value.batch.1812": {"$exists": true}}).count() > 0,
+    "Journal has 1 entry": db.Journal.count() === 1,
+    "Journal reports PurgeBatch": report.reportType === "PurgeBatch",
+    "Journal report has date": !!report.date === true,
+    "Journal report has start date": !!report.startDate === true,
   });'
 
-cat "${OUTPUT_FILE}"
+function test {
+  TEST_KEY="$1"
+  (grep --color=always "\"${TEST_KEY}\" : false" "${OUTPUT_FILE}") || true # will display the test if it failed
+  grep "\"${TEST_KEY}\" : true" "${OUTPUT_FILE}" # test function will fail if result is not 'true'
+}
 
-grep --quiet '{ "1901 was purged" : true, "1812 was not purged" : true }' "${OUTPUT_FILE}"
+echo "Test results:"
+test "1901 was purged"
+test "1812 was not purged"
+test "Journal has 1 entry"
+test "Journal reports PurgeBatch"
+test "Journal report has date"
+test "Journal report has start date"
 
 rm -rf "${TMP_DIR}"
 # Now, the "trap" commands will clean up the rest.
