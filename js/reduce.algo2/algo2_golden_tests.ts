@@ -29,11 +29,11 @@ import {
 } from "../test/helpers/mongodb"
 import { compare } from "concordance"
 
-const INPUT_FILE = "../../tests/input-data/RawData.sample.json"
+const INPUT_FILE = "../tests/input-data/RawData.sample.json"
 const MAP_GOLDEN_FILE =
-  "../../tests/output-snapshots/reduce-map-output.golden.json"
+  "../tests/output-snapshots/reduce-map-output.golden.json"
 const FINALIZE_GOLDEN_FILE =
-  "../../tests/output-snapshots/reduce-Features.golden.json"
+  "../tests/output-snapshots/reduce-Features.golden.json"
 
 // En Intégration Continue, certains tests seront ignorés.
 const serialOrSkip = process.env.SKIP_PRIVATE ? "skip" : "serial"
