@@ -19,8 +19,7 @@ case ${COMMAND} in
     perl -pi'' -e "s,27017,${MONGODB_PORT}," config.toml
     exit ;;
   run)
-    go build -o dbmongo # TODO: rename to sfdata, then remove from here
-    ./dbmongo $2 $3 $4 $5 $6 $7 $8 || true
+    ./dbmongo $2 $3 $4 $5 $6 $7 $8 || true # TODO: rename to sfdata
     exit ;;
   ?)
     echo "error: ${COMMAND} is not a recognized command" ;;

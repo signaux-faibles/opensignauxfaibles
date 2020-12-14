@@ -28,9 +28,6 @@ func connectDb() {
 
 // main Fonction Principale
 func main() {
-
-	// api.GET("/data/purgeNotCompacted", purgeNotCompactedHandler)
-
 	err := runCommand(os.Args[1:])
 	time.Sleep(2 * time.Second) // TODO: trouver un meilleur moyen d'assurer que les données ont fini d'être enregistrées en db
 
@@ -41,6 +38,7 @@ func main() {
 }
 
 var cmds = map[string]commandDefinition{
+	// TODO: convert api.GET("/data/purgeNotCompacted", purgeNotCompactedHandler)
 	"purge": func(args []string) error {
 		var params purgeBatchParams // TODO: also populate other parameters
 		flag.StringVar(&params.FromBatchKey, "since-batch", "", "Batch identifier")

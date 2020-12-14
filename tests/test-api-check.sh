@@ -16,6 +16,7 @@ mkdir -p "${TMP_DIR}"
 
 # Clean up on exit
 function teardown {
+    tests/helpers/dbmongo-server.sh stop || true # keep tearing down, even if "No matching processes belonging to you were found"
     tests/helpers/mongodb-container.sh stop
 }
 trap teardown EXIT
