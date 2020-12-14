@@ -50,7 +50,6 @@ jobs:
             ! -name '*.txt' \
             ! -name '*.csv' \
             ! -name '*.json' \
-            ! -name '*.json.gz' \
             ! -name '*.excel' \
             ! -name 'objects.js' \
             -type f \
