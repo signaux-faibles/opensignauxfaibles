@@ -126,20 +126,21 @@ type validateParams struct {
 	Collection string `json:"collection"`
 }
 
-func validateHandler(params validateParams) (string, error) {
+func validateHandler(params validateParams) error {
 
 	if params.Collection != "RawData" && params.Collection != "ImportedData" {
-		return "", errors.New("le paramètre collection doit valoir RawData ou ImportedData")
+		return errors.New("le paramètre collection doit valoir RawData ou ImportedData")
 	}
-
-	// On retourne le nom de fichier avant la fin du traitement, pour éviter erreur "Request timed out"
-	var filepath = viper.GetString("exportPath") + "dbmongo-" + params.Collection + "-validation-" + getTimestamp() + ".json.gz"
 
 	jsonSchema, err := engine.LoadJSONSchemaFiles()
 	if err != nil {
-		return "", err
+		return err
 	}
 
-	err = engine.ValidateDataEntries(filepath, jsonSchema, params.Collection)
-	return filepath, err
+	err = engine.ValidateDataEntries(jsonSchema, params.Collection)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -62,11 +62,10 @@ CONTENTS
 
 echo ""
 echo "💎 Parsing and importing data thru dbmongo API..."
-tests/helpers/dbmongo-server.sh start
-echo "- POST /api/data/import 👉 $(http --print=b --ignore-stdin :5000/api/data/import batch=1910 noFilter:=true)"
+echo "- POST /api/data/import 👉 $(tests/helpers/dbmongo-server.sh run import --batch=1910 --no-filter)"
 
-OUTPUT_GZ_FILE=$(http --print=b --ignore-stdin :5000/api/data/validate collection=ImportedData | tr -d '"')
-echo "- POST /api/data/validate 👉 ${OUTPUT_GZ_FILE}"
+VALIDATION_REPORT=$(tests/helpers/dbmongo-server.sh run validate --collection=ImportedData)
+echo "- POST /api/data/validate"
 
 (tests/helpers/mongodb-container.sh run \
   | perl -p -e 's/"[0-9a-z]{32}"/"______________Hash______________"/' \
@@ -116,7 +115,7 @@ printjson(db.Journal.find().sort({ parserCode: 1 }).toArray().map(doc => (doc.ev
 print("// Results of call to /api/data/validate:");
 CONTENT
 
-zcat < "${OUTPUT_GZ_FILE}" \
+echo "${VALIDATION_REPORT}" \
   | perl -p -e 's/"[0-9a-z]{32}"/"______________Hash______________"/' \
   | perl -p -e 's/"[0-9a-z]{24}"/"________ObjectId________"/' \
   | perl -p -e 's/"periode" : ISODate\("....-..-..T..:..:..Z"\)/"periode" : ISODate\("_______ Date _______"\)/' \
@@ -128,6 +127,5 @@ tests/helpers/mongodb-container.sh exceptions || true
 
 tests/helpers/diff-or-update-golden-master.sh "${FLAGS}" "${GOLDEN_FILE}" "${OUTPUT_FILE}"
 
-rm "${OUTPUT_GZ_FILE}"
 rm -rf "${TMP_DIR}"
 # Now, the "trap" commands will clean up the rest.

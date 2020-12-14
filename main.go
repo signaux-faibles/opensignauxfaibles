@@ -77,6 +77,21 @@ var cmds = map[string]commandDefinition{
 		connectDb()
 		return pruneEntitiesHandler(params)
 	},
+	"import": func(args []string) error {
+		params := importBatchParams{} // TODO: also populate other parameters
+		flag.StringVar(&params.BatchKey, "batch", "", "Batch identifier")
+		flag.BoolVar(&params.NoFilter, "no-filter", false, "Tolerate the absence of filter/perimeter file")
+		flag.CommandLine.Parse(args)
+		connectDb()
+		return importBatchHandler(params)
+	},
+	"validate": func(args []string) error {
+		params := validateParams{}
+		flag.StringVar(&params.Collection, "collection", "", "Name of the collection to validate")
+		flag.CommandLine.Parse(args)
+		connectDb()
+		return validateHandler(params)
+	},
 	"compact": func(args []string) error {
 		params := compactParams{}
 		flag.StringVar(&params.FromBatchKey, "since-batch", "", "Batch identifier")
