@@ -54,7 +54,7 @@ tests/helpers/mongodb-container.sh run >/dev/null << CONTENT
   db.Admin.insertOne({
     _id: { key: "2010", type: "batch" },
     files: {
-      filter: [ "/../../${FILTER_FILE}" ],
+      filter: [ "/../${FILTER_FILE}" ],
     },
   });
 CONTENT

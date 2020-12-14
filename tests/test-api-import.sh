@@ -65,7 +65,7 @@ echo "💎 Parsing and importing data thru dbmongo API..."
 tests/helpers/dbmongo-server.sh start
 echo "- POST /api/data/import 👉 $(http --print=b --ignore-stdin :5000/api/data/import batch=1910 noFilter:=true)"
 
-OUTPUT_GZ_FILE=dbmongo/$(http --print=b --ignore-stdin :5000/api/data/validate collection=ImportedData | tr -d '"')
+OUTPUT_GZ_FILE=$(http --print=b --ignore-stdin :5000/api/data/validate collection=ImportedData | tr -d '"')
 echo "- POST /api/data/validate 👉 ${OUTPUT_GZ_FILE}"
 
 (tests/helpers/mongodb-container.sh run \

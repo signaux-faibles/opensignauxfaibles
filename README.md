@@ -10,7 +10,7 @@ Solution logicielle pour la détection anticipée d'entreprises en difficulté.
 
 ## Dépendances / pré-requis
 
-- [Node.js](https://nodejs.org/) (voir version spécifiée dans `dbmongo/js/.nvmrc`), pour transpiler les fonctions map-reduce de TypeScript vers JavaScript et exécuter les tests automatisés, après toute modification de ces fonctions.
+- [Node.js](https://nodejs.org/) (voir version spécifiée dans `js/.nvmrc`), pour transpiler les fonctions map-reduce de TypeScript vers JavaScript et exécuter les tests automatisés, après toute modification de ces fonctions.
 - [git secret](https://git-secret.io/), pour (dé)chiffrer les fichiers de données privées utilisés dans certains tests automatisés.
 
 ## Installation
@@ -18,9 +18,8 @@ Solution logicielle pour la détection anticipée d'entreprises en difficulté.
 ```bash
 $ git clone https://github.com/signaux-faibles/opensignauxfaibles.git
 $ cd opensignauxfaibles
-$ cd dbmongo
 $ go generate ./...
-$ go build
+$ go build -o dbmongo
 $ go test ./...
 ```
 
@@ -44,8 +43,8 @@ Le serveur `dbmongo` s'inscrit dans un workflow d'intégration de données. Pour
 
 Afin de prévenir les régressions, plusieurs types de tests automatisés sont inclus dans le dépôt:
 
-- tests unitaires de `dbmongo`: `$ cd dbmongo && go test ./...`
-- tests unitaires et d'intégration des fonctions map-reduce: `$ cd dbmongo/js && npm test`
+- tests unitaires de `dbmongo`: `$ go test ./...`
+- tests unitaires et d'intégration des fonctions map-reduce: `$ cd js && npm test`
 - tests de bout en bout de l'API: `$ tests/test-api-*.sh`
 
 Tous ces tests sont exécutés en environnement d'Intégration Continue (CI) après chaque commit poussé sur GitHub, grâce à GitHub actions, tel que défini dans les fichiers `yaml` du répertoire `.github/workflows`.
@@ -89,7 +88,7 @@ Instructions à suivre par le développeur demandant l'accès aux données priv�
 ### Développement des fonctions map-reduce (TS/JS)
 
 ```sh
-$ cd dbmongo/js
+$ cd js
 $ nvm use # pour utiliser la version de Node.js spécifiée dans .nvmrc
 $ npm install # pour installer les dépendances
 $ npm test # pour exécuter les tests unitaires et d'intégration, tel que décrit dans package.json

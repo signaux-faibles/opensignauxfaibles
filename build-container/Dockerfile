@@ -1,6 +1,5 @@
 FROM alpine:3.12
-ARG dbmongoDir
-COPY ./$dbmongoDir/dbmongo /app/dbmongo
+COPY ./$path/dbmongo /app
 RUN chmod 555 /app/dbmongo
 WORKDIR /app
 EXPOSE 3000

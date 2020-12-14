@@ -24,13 +24,13 @@ fi
 
 # Unzip des sources et build
 unzip "$1.zip"
-cd "opensignauxfaibles-$1/dbmongo/"
+cd "opensignauxfaibles-$1/"
 
-CGO_ENABLED=0 GOARCH=amd64 go build
+CGO_ENABLED=0 GOARCH=amd64 go build -o "dbmongo"
 
 # Build docker
 cd ../../..
-docker build -t dbmongo --build-arg dbmongoDir="./workspace/opensignauxfaibles-$1/dbmongo/" . 
+docker build -t dbmongo --build-arg path="./workspace/opensignauxfaibles-$1/" . 
 docker save dbmongo | gzip > dbmongo.tar.gz
 
 # Cleanup

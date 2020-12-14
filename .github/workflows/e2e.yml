@@ -20,17 +20,41 @@ jobs:
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
 
-      - name: Build + remove source code
-        working-directory: dbmongo
-        run: |
-          go build -v .
-          # delete all files, except the binary, config, NAF and other data files used by tests
-          find . ! -name 'dbmongo' ! -name '*.toml' ! -name '*.csv' ! -name 'dianeTestData.txt' ! -name 'ellisphereTestData.excel' ! -name 'objects.js' -type f -exec rm -v {} +
-
       - name: Install test dependencies
         run: |
           sudo apt-get install -y httpie
           sudo apt-get install git-secret # to decrypt golden master files, for tests
+
+      - name: Reveal golden master files for tests
+        env:
+          GPG_PRIVATE_KEY_FOR_GIT_SECRET: ${{ secrets.GPG_PRIVATE_KEY_FOR_GIT_SECRET }}
+        run: |
+          echo "${GPG_PRIVATE_KEY_FOR_GIT_SECRET}" > ./private_key.gpg
+          gpg --import --no-tty --batch --yes ./private_key.gpg
+          git secret reveal
+
+      - name: Build + remove source code
+        run: |
+          go build -o "dbmongo" -v .
+          ls -lR
+          # delete all files, except the binary, config, NAF and other data files used by tests
+          find . \
+            ! -name 'dbmongo' \
+            ! -name '*.toml' \
+            ! -name 'test-*.sh' \
+            ! -name 'dbmongo-server.sh' \
+            ! -name 'diff-or-update-golden-master.sh' \
+            ! -name 'mongodb-container.sh' \
+            ! -name 'populate-from-objects.sh' \
+            ! -name 'remove-random_order.sh' \
+            ! -name '*.txt' \
+            ! -name '*.csv' \
+            ! -name '*.json' \
+            ! -name '*.json.gz' \
+            ! -name '*.excel' \
+            ! -name 'objects.js' \
+            -type f \
+            -exec rm -v {} +
 
       - run: ./tests/test-api-prune-entities.sh
 
@@ -51,14 +75,6 @@ jobs:
       - run: ./tests/test-api-purge-batch.sh
 
       - run: ./tests/test-api-compact-failure.sh
-
-      - name: Reveal golden master files for tests
-        env:
-          GPG_PRIVATE_KEY_FOR_GIT_SECRET: ${{ secrets.GPG_PRIVATE_KEY_FOR_GIT_SECRET }}
-        run: |
-          echo "${GPG_PRIVATE_KEY_FOR_GIT_SECRET}" > ./private_key.gpg
-          gpg --import --no-tty --batch --yes ./private_key.gpg
-          git secret reveal
 
       - run: ./tests/test-api-compact.sh # relies on encrypted files
 

@@ -4,7 +4,7 @@
 
 function raw_data_documents {
   node --print -e '
-    const { makeObjects } = require("./dbmongo/js/test/data/objects.js");
+    const { makeObjects } = require("./js/test/data/objects.js");
     makeObjects.toString()
       .replace("ISODate => ([", "[")
       .replace("])", "]");
