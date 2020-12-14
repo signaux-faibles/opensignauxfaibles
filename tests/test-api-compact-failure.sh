@@ -60,12 +60,12 @@ echo ""
 echo "💎 Compacting RawData thru dbmongo API..."
 tests/helpers/dbmongo-server.sh start
 
-RAWDATA_ERRORS_FILE=dbmongo/$(http --print=b --ignore-stdin :5000/api/data/validate collection=RawData | tr -d '"')
+RAWDATA_ERRORS_FILE=$(http --print=b --ignore-stdin :5000/api/data/validate collection=RawData | tr -d '"')
 echo "- POST /api/data/validate RawData 👉 ${RAWDATA_ERRORS_FILE}"
 diff <(echo -n '') <(zcat < "${RAWDATA_ERRORS_FILE}") # no validation errors detected in RawData
 rm "${RAWDATA_ERRORS_FILE}"
 
-IMPORTEDDATA_ERRORS_FILE=dbmongo/$(http --print=b --ignore-stdin :5000/api/data/validate collection=ImportedData | tr -d '"')
+IMPORTEDDATA_ERRORS_FILE=$(http --print=b --ignore-stdin :5000/api/data/validate collection=ImportedData | tr -d '"')
 echo "- POST /api/data/validate ImportedData 👉 ${IMPORTEDDATA_ERRORS_FILE}"
 diff <(echo -n '') <(zcat < "${IMPORTEDDATA_ERRORS_FILE}") # no validation errors detected in ImportedData
 rm "${IMPORTEDDATA_ERRORS_FILE}"

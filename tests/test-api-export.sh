@@ -153,7 +153,7 @@ echo "- GET /api/data/entreprises with invalid key 👉 ${RESULT}"
 stopIfFailed "${RESULT}"
 
 # GET /api/data/etablissements with key=212345678 should return just one match
-FILE=dbmongo/$(http --print=b --ignore-stdin GET :5000/api/data/etablissements key=="212345678" | tr -d '"')
+FILE=$(http --print=b --ignore-stdin GET :5000/api/data/etablissements key=="212345678" | tr -d '"')
 MATCH=$(zgrep --quiet "etablissement_21234567891011" "${FILE}" && echo "found etablissement_21234567891011" || echo -e "${COLOR_YELLOW}failed${COLOR_DEFAULT}")
 COUNT=$(zcat < "${FILE}" | wc -l)
 rm "${FILE}"
@@ -165,7 +165,7 @@ then
 fi
 
 # GET /api/data/entreprises with key=212345678 should return just one match
-FILE=dbmongo/$(http --print=b --ignore-stdin GET :5000/api/data/entreprises key=="212345678" | tr -d '"')
+FILE=$(http --print=b --ignore-stdin GET :5000/api/data/entreprises key=="212345678" | tr -d '"')
 MATCH=$(zgrep --quiet "entreprise_212345678" "${FILE}" && echo "found entreprise_212345678" || echo -e "${COLOR_YELLOW}failed${COLOR_DEFAULT}")
 COUNT=$(zcat < "$FILE" | wc -l)
 rm "${FILE}"
@@ -177,9 +177,9 @@ then
 fi
 
 # Export enterprise data
-ETABLISSEMENTS_FILE=dbmongo/$(http --print=b --ignore-stdin GET :5000/api/data/etablissements | tr -d '"')
+ETABLISSEMENTS_FILE=$(http --print=b --ignore-stdin GET :5000/api/data/etablissements | tr -d '"')
 echo "- GET /api/data/etablissements 👉 ${ETABLISSEMENTS_FILE}"
-ENTREPRISES_FILE=dbmongo/$(http --print=b --ignore-stdin GET :5000/api/data/entreprises | tr -d '"')
+ENTREPRISES_FILE=$(http --print=b --ignore-stdin GET :5000/api/data/entreprises | tr -d '"')
 echo "- GET /api/data/entreprises 👉 ${ENTREPRISES_FILE}"
 
 tests/helpers/diff-or-update-golden-master.sh "${FLAGS}" "${ETAB_GOLDEN_FILE}" "${ETABLISSEMENTS_FILE}"
