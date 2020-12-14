@@ -25,54 +25,45 @@ type Code string
 // Event est un objet de journal
 // swagger:ignore
 type Event struct {
-	ID         bson.ObjectId `json:"-" bson:"_id"`
+	ActualEvent actualEvent
+	Channel     chan Event
+}
+
+type actualEvent struct {
+	ID         bson.ObjectId `json:"id" bson:"_id"`
 	Date       time.Time     `json:"date" bson:"date"`
 	StartDate  time.Time     `json:"startDate" bson:"startDate"`
 	Comment    interface{}   `json:"event" bson:"event"`
 	Priority   Priority      `json:"priority" bson:"priority"`
 	Code       Code          `json:"parserCode" bson:"parserCode"`
-	ReportType string        `json:"report_type" bson:"record_type"`
-	Channel    chan Event    `json:"-"`
+	ReportType string        `json:"reportType" bson:"reportType"`
 }
 
 // GetBSON retourne l'objet Event sous une forme sérialisable
 func (event Event) GetBSON() (interface{}, error) {
-	var tmp struct {
-		ID         bson.ObjectId `json:"id" bson:"_id"`
-		Date       time.Time     `json:"date" bson:"date"`
-		StartDate  time.Time     `json:"startDate" bson:"startDate"`
-		Comment    interface{}   `json:"event" bson:"event"`
-		Priority   Priority      `json:"priority" bson:"priority"`
-		Code       Code          `json:"parserCode" bson:"parserCode"`
-		ReportType string        `json:"reportType" bson:"reportType"`
-	}
-	tmp.ID = event.ID
-	tmp.Date = event.Date
-	tmp.StartDate = event.StartDate
-	tmp.Comment = event.Comment
-	tmp.Priority = event.Priority
-	tmp.Code = event.Code
-	tmp.ReportType = event.ReportType
-	return tmp, nil
+	return event.ActualEvent, nil
 }
 
 // CreateEvent initialise un évènement avec les valeurs par défaut.
 func CreateEvent() (event Event) {
-	return Event{
+	actualEvent := actualEvent{
 		ID:       bson.NewObjectId(),
 		Date:     time.Now(),
 		Priority: Priority("info"),
 	}
+	return Event{
+		ActualEvent: actualEvent,
+	}
 }
 
 func (event Event) throw(comment interface{}, logLevel string) {
-	event.ID = bson.NewObjectId()
-	event.Date = time.Now()
-	event.Comment = comment
-	if event.Code == "" {
-		event.Code = Code("unknown")
+	event.ActualEvent.ID = bson.NewObjectId()
+	event.ActualEvent.Date = time.Now()
+	event.ActualEvent.Comment = comment
+	if event.ActualEvent.Code == "" {
+		event.ActualEvent.Code = Code("unknown")
 	}
-	event.Priority = Priority("info")
+	event.ActualEvent.Priority = Priority("info")
 	event.Channel <- event
 }
 
@@ -84,7 +75,7 @@ func (event Event) Info(comment interface{}) {
 // ParseReport permet d'accéder aux propriétés d'un rapport de parsing.
 func (event Event) ParseReport() (map[string]interface{}, error) {
 	var jsonDocument map[string]interface{}
-	temporaryBytes, err := bson.MarshalJSON(event.Comment)
+	temporaryBytes, err := bson.MarshalJSON(event.ActualEvent.Comment)
 	if err != nil {
 		return nil, err
 	}

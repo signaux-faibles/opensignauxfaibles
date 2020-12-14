@@ -62,7 +62,9 @@ func ParseFilesFromBatch(cache Cache, batch *base.AdminBatch, parser Parser) (ch
 	eventChannel := make(chan Event)
 	fileType := parser.GetFileType()
 	event := Event{
-		Code:    Code(fileType),
+		ActualEvent: actualEvent{
+			Code: Code(fileType),
+		},
 		Channel: eventChannel,
 	}
 	filter := GetSirenFilterFromCache(cache)
