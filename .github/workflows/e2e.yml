@@ -20,6 +20,11 @@ jobs:
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
 
+      - name: Install test dependencies
+        run: |
+          sudo apt-get install -y httpie
+          sudo apt-get install git-secret # to decrypt golden master files, for tests
+
       - name: Reveal golden master files for tests
         env:
           GPG_PRIVATE_KEY_FOR_GIT_SECRET: ${{ secrets.GPG_PRIVATE_KEY_FOR_GIT_SECRET }}
@@ -50,11 +55,6 @@ jobs:
             ! -name 'objects.js' \
             -type f \
             -exec rm -v {} +
-
-      - name: Install test dependencies
-        run: |
-          sudo apt-get install -y httpie
-          sudo apt-get install git-secret # to decrypt golden master files, for tests
 
       - run: ./tests/test-api-prune-entities.sh
 
