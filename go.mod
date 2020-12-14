@@ -1,4 +1,4 @@
-module github.com/signaux-faibles/opensignauxfaibles/dbmongo
+module github.com/signaux-faibles/opensignauxfaibles
 
 go 1.14
 

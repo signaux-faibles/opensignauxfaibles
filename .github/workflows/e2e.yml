@@ -23,7 +23,7 @@ jobs:
       - name: Build + remove source code
         working-directory: dbmongo
         run: |
-          go build -v .
+          go build -v . -o "sfdata"
           # delete all files, except the binary, config, NAF and other data files used by tests
           find . ! -name 'dbmongo' ! -name '*.toml' ! -name '*.csv' ! -name 'dianeTestData.txt' ! -name 'ellisphereTestData.excel' ! -name 'objects.js' -type f -exec rm -v {} +
 
