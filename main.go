@@ -46,7 +46,7 @@ func main() {
 	}
 }
 
-var cmds = []commandDefinition{
+var cmds = map[string]commandDefinition{
 	// {
 	// 	Name: "purgeBatch",
 	// 	Run: func([]string) error {
@@ -54,22 +54,16 @@ var cmds = []commandDefinition{
 	// 		return purgeBatchHandler(params)
 	// 	},
 	// },
-	{
-		Name: "hello",
-		Run: func(args []string) error {
-			params := helloParams{}
-			flag.StringVar(&params.FirstName, "first", "", "First name")
-			flag.StringVar(&params.LastName, "last", "", "First name")
-			flag.CommandLine.Parse(args)
-			return helloHandler(params)
-		},
+	"hello": func(args []string) error {
+		params := helloParams{}
+		flag.StringVar(&params.FirstName, "first", "", "First name")
+		flag.StringVar(&params.LastName, "last", "", "First name")
+		flag.CommandLine.Parse(args)
+		return helloHandler(params)
 	},
 }
 
-type commandDefinition struct {
-	Name string
-	Run  func([]string) error
-}
+type commandDefinition func(args []string) error
 
 func runCommand(args []string) error {
 	if len(args) < 1 {
@@ -78,11 +72,9 @@ func runCommand(args []string) error {
 	}
 
 	command := os.Args[1]
-
-	for _, cmd := range cmds {
-		if cmd.Name == command {
-			return cmd.Run(os.Args[2:])
-		}
+	commandFct := cmds[command]
+	if commandFct != nil {
+		return commandFct(os.Args[2:])
 	}
 
 	printSupportedCommands()
@@ -91,8 +83,8 @@ func runCommand(args []string) error {
 
 func printSupportedCommands() {
 	fmt.Println("Supported commands:")
-	for _, cmd := range cmds {
-		fmt.Printf(" - %s\n", cmd.Name)
+	for cmd := range cmds {
+		fmt.Printf(" - %s\n", cmd)
 	}
 }
 
