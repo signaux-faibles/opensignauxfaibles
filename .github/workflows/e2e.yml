@@ -34,9 +34,11 @@ jobs:
             ! -name 'mongodb-container.sh' \
             ! -name 'populate-from-objects.sh' \
             ! -name 'remove-random_order.sh' \
+            ! -name '*.txt' \
             ! -name '*.csv' \
-            ! -name 'dianeTestData.txt' \
-            ! -name 'ellisphereTestData.excel' \
+            ! -name '*.json' \
+            ! -name '*.json.gz' \
+            ! -name '*.excel' \
             ! -name 'objects.js' \
             -type f \
             -exec rm -v {} +
