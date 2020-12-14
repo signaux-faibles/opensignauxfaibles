@@ -64,8 +64,7 @@ CONTENTS
 
 echo ""
 echo "💎 Compacting RawData thru dbmongo API..."
-tests/helpers/dbmongo-server.sh start
-API_RESULT=$(http --print=b --ignore-stdin :5000/api/data/compact fromBatchKey=1802)
+API_RESULT=$(tests/helpers/dbmongo-server.sh run compact --since-batch=1802)
 echo "- POST /api/data/compact 👉 ${API_RESULT}"
 
 (tests/helpers/mongodb-container.sh run \
