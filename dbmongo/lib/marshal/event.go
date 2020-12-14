@@ -40,6 +40,7 @@ func (event Event) GetBSON() (interface{}, error) {
 	var tmp struct {
 		ID         bson.ObjectId `json:"id" bson:"_id"`
 		Date       time.Time     `json:"date" bson:"date"`
+		StartDate  time.Time     `json:"startDate" bson:"startDate"`
 		Comment    interface{}   `json:"event" bson:"event"`
 		Priority   Priority      `json:"priority" bson:"priority"`
 		Code       Code          `json:"parserCode" bson:"parserCode"`
@@ -47,11 +48,21 @@ func (event Event) GetBSON() (interface{}, error) {
 	}
 	tmp.ID = event.ID
 	tmp.Date = event.Date
+	tmp.StartDate = event.StartDate
 	tmp.Comment = event.Comment
 	tmp.Priority = event.Priority
 	tmp.Code = event.Code
 	tmp.ReportType = event.ReportType
 	return tmp, nil
+}
+
+// CreateEvent initialise un évènement avec les valeurs par défaut.
+func CreateEvent() (event Event) {
+	return Event{
+		ID:       bson.NewObjectId(),
+		Date:     time.Now(),
+		Priority: Priority("info"),
+	}
 }
 
 func (event Event) throw(comment interface{}, logLevel string) {

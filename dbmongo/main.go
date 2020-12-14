@@ -53,19 +53,19 @@ func main() {
 	api := r.Group("api")
 
 	{
-		api.POST("/data/batch/purge", purgeBatchHandler)
-		api.POST("/data/import", importBatchHandler)
-		api.POST("/data/check", checkBatchHandler)
-		api.POST("/data/compact", compactHandler)
-		api.POST("/data/reduce", reduceHandler)
-		api.POST("/data/public", publicHandler)
-		api.POST("/data/pruneEntities", pruneEntitiesHandler)
+		api.POST("/data/batch/purge", purgeBatchHandler)      // [x] écrit dans Journal
+		api.POST("/data/check", checkBatchHandler)            // [x] écrit dans Journal
+		api.POST("/data/import", importBatchHandler)          // [x] écrit dans Journal
+		api.POST("/data/validate", validateHandler)           // [x] écrit dans Journal
+		api.POST("/data/compact", compactHandler)             // [x] écrit dans Journal
+		api.POST("/data/reduce", reduceHandler)               // [x] écrit dans Journal
+		api.POST("/data/public", publicHandler)               // [x] écrit dans Journal
+		api.POST("/data/pruneEntities", pruneEntitiesHandler) // [x] écrit dans Journal
 
 		api.GET("/data/purgeNotCompacted", purgeNotCompactedHandler)
 
 		api.GET("/data/etablissements", exportEtablissementsHandler)
 		api.GET("/data/entreprises", exportEntreprisesHandler)
-		api.POST("/data/validate", validateHandler)
 	}
 
 	bind := viper.GetString("APP_BIND")

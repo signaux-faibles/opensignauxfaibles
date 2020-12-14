@@ -65,12 +65,29 @@ CONTENTS
 echo ""
 echo "💎 Compacting RawData thru dbmongo API..."
 tests/helpers/dbmongo-server.sh start
-echo "- POST /api/data/compact 👉 $(http --print=b --ignore-stdin :5000/api/data/compact fromBatchKey=1802)"
+API_RESULT=$(http --print=b --ignore-stdin :5000/api/data/compact fromBatchKey=1802)
+echo "- POST /api/data/compact 👉 ${API_RESULT}"
 
 (tests/helpers/mongodb-container.sh run \
   | tests/helpers/remove-random_order.sh \
   > "${OUTPUT_FILE}" \
-) <<< 'printjson(db.RawData.find().toArray());'
+) << CONTENT
+print("// db.Journal:");
+const report = db.Journal.find().toArray().pop() || {};
+printjson({
+  count: db.Journal.count(),
+  reportType: report.reportType,
+  hasDate: !!report.date,
+  hasStartDate: !!report.startDate,
+});
+
+print("// Documents from db.RawData:");
+printjson(db.RawData.find().toArray());
+
+print("// Response body from /api/data/compact:");
+CONTENT
+
+echo "${API_RESULT}" >> "${OUTPUT_FILE}"
 
 # Display JS errors logged by MongoDB, if any
 tests/helpers/mongodb-container.sh exceptions || true

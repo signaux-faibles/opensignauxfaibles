@@ -59,26 +59,49 @@ tests/helpers/mongodb-container.sh run >/dev/null << CONTENT
   });
 CONTENT
 
-function test {
-  RESULT=$(tests/helpers/mongodb-container.sh run <<< "print('$1:', $2)")
-  (grep --color=always 'false' <<< "${RESULT}") || true # will display test if it contains 'false'
-  grep 'true' <<< "${RESULT}" # test will fail if result does not contain 'true'
-}
-
 echo ""
 echo "💎 Test: count and prune entities from RawData..."
 tests/helpers/dbmongo-server.sh start
-COUNT=$(http --print=b --ignore-stdin :5000/api/data/pruneEntities batch=2010)
-echo "- POST /api/data/pruneEntities 👉 count: ${COUNT} (expected: 2)"
-test "  - 222222222 was not pruned yet" 'db.RawData.find({_id: "222222222"}).count() === 1'
-test "  - 22222222200000 was not pruned yet" 'db.RawData.find({_id: "22222222200000"}).count() === 1'
+API_RESULT=$(http --print=b --ignore-stdin :5000/api/data/pruneEntities batch=2010)
+echo "- POST /api/data/pruneEntities 👉 ${API_RESULT}"
+
+# Print test results from stdin. Fails on any "false" result.
+# Expected format for each line: "<test label> : <true|false>"
+function reportFailedTests {
+  while IFS='$\n' read -r line; do
+    echo "  - $line" | (grep --color=always " : false") || true # display failed test
+    echo "  - $line" | grep " : true" # display passing test, and make the test function fail otherwise
+  done
+}
+
+(tests/helpers/mongodb-container.sh run \
+  | reportFailedTests \
+) << CONTENT
+  const report = db.Journal.find().toArray().pop() || {};
+  Object.entries({
+    "found 2 entities to prune": ${API_RESULT}.count === 2,
+    "222222222 was not pruned yet": db.RawData.find({_id: "222222222"}).count() === 1,
+    "22222222200000 was not pruned yet": db.RawData.find({_id: "22222222200000"}).count() === 1,
+    "Journal has 1 entry": db.Journal.count() === 1,
+    "Journal reports PurgeBatch": report.reportType === "PruneEntities",
+    "Journal report has date": !!report.date === true,
+    "Journal report has start date": !!report.startDate === true,
+  }).forEach(([ testName, testRes ]) => print(testName, ':', testRes));
+CONTENT
 
 echo "- POST /api/data/pruneEntities delete=true 👉 $(http --print=b --ignore-stdin :5000/api/data/pruneEntities batch=2010 delete:=true)"
-test "  - 333333333 was not pruned" 'db.RawData.find({_id: "333333333"}).count() === 1'
-test "  - 111111111 was not pruned" 'db.RawData.find({_id: "111111111"}).count() === 1'
-test "  - 11111111100000 was not pruned" 'db.RawData.find({_id: "11111111100000"}).count() === 1'
-test "  - 222222222 was pruned" 'db.RawData.find({_id: "222222222"}).count() === 0'
-test "  - 22222222200000 was pruned" 'db.RawData.find({_id: "22222222200000"}).count() === 0'
+
+(tests/helpers/mongodb-container.sh run \
+  | reportFailedTests \
+) << CONTENT
+  Object.entries({
+    "333333333 was not pruned": db.RawData.find({_id: "333333333"}).count() === 1,
+    "111111111 was not pruned": db.RawData.find({_id: "111111111"}).count() === 1,
+    "11111111100000 was not pruned": db.RawData.find({_id: "11111111100000"}).count() === 1,
+    "222222222 was pruned": db.RawData.find({_id: "222222222"}).count() === 0,
+    "22222222200000 was pruned": db.RawData.find({_id: "22222222200000"}).count() === 0,
+  }).forEach(([ testName, testRes ]) => print(testName, ':', testRes));
+CONTENT
 
 # Display JS errors logged by MongoDB, if any
 tests/helpers/mongodb-container.sh exceptions || true

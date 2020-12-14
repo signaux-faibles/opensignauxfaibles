@@ -4717,6 +4717,11 @@
 // Reports from db.Journal:
 [
 	{
+		"reportType" : "ValidateDataEntries",
+		"hasDate" : true,
+		"hasStartDate" : true
+	},
+	{
 		"event" : {
 			"headRejected" : [
 				"Line 2: Pas de siret associé au compte 450359886246036238 à la période 2019-01-01 00:00:00 +0000 UTC"
@@ -4727,7 +4732,9 @@
 			"batchKey" : "1910"
 		},
 		"reportType" : "ImportBatch",
-		"parserCode" : "admin_urssaf"
+		"parserCode" : "admin_urssaf",
+		"hasDate" : true,
+		"hasStartDate" : true
 	},
 	{
 		"event" : {
@@ -4738,7 +4745,9 @@
 			"batchKey" : "1910"
 		},
 		"reportType" : "ImportBatch",
-		"parserCode" : "apconso"
+		"parserCode" : "apconso",
+		"hasDate" : true,
+		"hasStartDate" : true
 	},
 	{
 		"event" : {
@@ -4749,7 +4758,9 @@
 			"batchKey" : "1910"
 		},
 		"reportType" : "ImportBatch",
-		"parserCode" : "apdemande"
+		"parserCode" : "apdemande",
+		"hasDate" : true,
+		"hasStartDate" : true
 	},
 	{
 		"event" : {
@@ -4760,7 +4771,9 @@
 			"batchKey" : "1910"
 		},
 		"reportType" : "ImportBatch",
-		"parserCode" : "bdf"
+		"parserCode" : "bdf",
+		"hasDate" : true,
+		"hasStartDate" : true
 	},
 	{
 		"event" : {
@@ -4771,7 +4784,9 @@
 			"batchKey" : "1910"
 		},
 		"reportType" : "ImportBatch",
-		"parserCode" : "ccsf"
+		"parserCode" : "ccsf",
+		"hasDate" : true,
+		"hasStartDate" : true
 	},
 	{
 		"event" : {
@@ -4782,7 +4797,9 @@
 			"batchKey" : "1910"
 		},
 		"reportType" : "ImportBatch",
-		"parserCode" : "cotisation"
+		"parserCode" : "cotisation",
+		"hasDate" : true,
+		"hasStartDate" : true
 	},
 	{
 		"event" : {
@@ -4793,7 +4810,9 @@
 			"batchKey" : "1910"
 		},
 		"reportType" : "ImportBatch",
-		"parserCode" : "debit"
+		"parserCode" : "debit",
+		"hasDate" : true,
+		"hasStartDate" : true
 	},
 	{
 		"event" : {
@@ -4804,7 +4823,9 @@
 			"batchKey" : "1910"
 		},
 		"reportType" : "ImportBatch",
-		"parserCode" : "delai"
+		"parserCode" : "delai",
+		"hasDate" : true,
+		"hasStartDate" : true
 	},
 	{
 		"event" : {
@@ -4815,7 +4836,9 @@
 			"batchKey" : "1910"
 		},
 		"reportType" : "ImportBatch",
-		"parserCode" : "diane"
+		"parserCode" : "diane",
+		"hasDate" : true,
+		"hasStartDate" : true
 	},
 	{
 		"event" : {
@@ -4826,7 +4849,9 @@
 			"batchKey" : "1910"
 		},
 		"reportType" : "ImportBatch",
-		"parserCode" : "effectif"
+		"parserCode" : "effectif",
+		"hasDate" : true,
+		"hasStartDate" : true
 	},
 	{
 		"event" : {
@@ -4837,7 +4862,9 @@
 			"batchKey" : "1910"
 		},
 		"reportType" : "ImportBatch",
-		"parserCode" : "effectif_ent"
+		"parserCode" : "effectif_ent",
+		"hasDate" : true,
+		"hasStartDate" : true
 	},
 	{
 		"event" : {
@@ -4850,7 +4877,9 @@
 			"batchKey" : "1910"
 		},
 		"reportType" : "ImportBatch",
-		"parserCode" : "ellisphere"
+		"parserCode" : "ellisphere",
+		"hasDate" : true,
+		"hasStartDate" : true
 	},
 	{
 		"event" : {
@@ -4861,7 +4890,9 @@
 			"batchKey" : "1910"
 		},
 		"reportType" : "ImportBatch",
-		"parserCode" : "procol"
+		"parserCode" : "procol",
+		"hasDate" : true,
+		"hasStartDate" : true
 	},
 	{
 		"event" : {
@@ -4872,7 +4903,9 @@
 			"batchKey" : "1910"
 		},
 		"reportType" : "ImportBatch",
-		"parserCode" : "sirene"
+		"parserCode" : "sirene",
+		"hasDate" : true,
+		"hasStartDate" : true
 	},
 	{
 		"event" : {
@@ -4883,7 +4916,9 @@
 			"batchKey" : "1910"
 		},
 		"reportType" : "ImportBatch",
-		"parserCode" : "sirene_ul"
+		"parserCode" : "sirene_ul",
+		"hasDate" : true,
+		"hasStartDate" : true
 	}
 ]
 // Results of call to /api/data/validate:

@@ -59,6 +59,8 @@ func PurgeNotCompacted() error {
 // PruneEntities permet de compter puis supprimer les entités de RawData
 // qui auraient du être exclues par le Filtre de périmètre SIREN.
 func PruneEntities(batchKey string, delete bool) (int, error) {
+	startDate := time.Now()
+
 	// Récupérer le batch
 	batch := base.AdminBatch{}
 	err := Load(&batch, batchKey)
@@ -129,6 +131,7 @@ func PruneEntities(batchKey string, delete bool) (int, error) {
 	}
 	pipeline = append(pipeline, bson.M{"$count": "ids_to_delete"})
 	err = Db.DB.C("RawData").Pipe(pipeline).AllowDiskUse().One(&result)
+	LogOperationEvent("PruneEntities", startDate)
 	return result.IdsToDelete, err
 }
 
@@ -193,6 +196,8 @@ func MRroutine(job *mgo.MapReduce, query bson.M, dbTemp string, collOrig string,
 
 // Compact traite le compactage de la base RawData
 func Compact(fromBatchKey string) error {
+	startDate := time.Now()
+
 	// Détermination scope traitement
 	batches, _ := GetBatches()
 
@@ -250,6 +255,9 @@ func Compact(fromBatchKey string) error {
 	}
 
 	err = PurgeNotCompacted()
+
+	LogOperationEvent("Compact", startDate)
+
 	return err
 }
 
@@ -392,6 +400,8 @@ func ExportEntreprises(key, filepath string) error {
 
 // ValidateDataEntries retourne dans un fichier les entrées de données invalides détectées dans la collection spécifiée.
 func ValidateDataEntries(filepath string, jsonSchema map[string]bson.M, collection string) error {
+	startDate := time.Now()
+
 	w := sync.WaitGroup{}
 	gzipWriter := getItemChannelToGzip(filepath, &w)
 
@@ -417,6 +427,9 @@ func ValidateDataEntries(filepath string, jsonSchema map[string]bson.M, collecti
 
 	close(gzipWriter)
 	w.Wait()
+
+	LogOperationEvent("ValidateDataEntries", startDate)
+
 	return nil
 }
 

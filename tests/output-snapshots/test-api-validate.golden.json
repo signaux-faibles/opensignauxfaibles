@@ -1,3 +1,11 @@
+// db.Journal:
+{
+	"count" : 1,
+	"reportType" : "ValidateDataEntries",
+	"hasDate" : true,
+	"hasStartDate" : true
+}
+// Result from /api/data/validate:
 {"_id":"01234567891011","batchKey":"1802","dataHash":"hash-délai-nul","dataObject":{"date_creation":"2016-09-01T00:00:00Z","date_echeance":"2016-09-01T00:00:00Z","duree_delai":0,"montant_echeancier":10},"dataType":"delai"}
 {"_id":"01234567891011","batchKey":"1803","dataHash":"hash-siren-manquant","dataObject":{},"dataType":"bdf"}
 {"_id":"01234567891011","batchKey":"1803","dataHash":"hash-siren-invalide","dataObject":{"siren":"123"},"dataType":"bdf"}

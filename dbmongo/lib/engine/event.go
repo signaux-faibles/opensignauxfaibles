@@ -81,3 +81,13 @@ func RelayEvents(eventChannel chan marshal.Event, reportType string, startDate t
 	}
 	return lastReport
 }
+
+// LogOperationEvent rapporte la fin d'une opération effectuée par dbmongo.
+func LogOperationEvent(reportType string, startDate time.Time) {
+	event := marshal.CreateEvent()
+	event.StartDate = startDate
+	event.ReportType = reportType
+	MainMessageChannel <- SocketMessage{
+		JournalEvent: event,
+	}
+}
