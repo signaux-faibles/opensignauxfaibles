@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/engine"
 
@@ -41,7 +42,10 @@ func main() {
 	// api.GET("/data/etablissements", exportEtablissementsHandler)
 	// api.GET("/data/entreprises", exportEntreprisesHandler)
 
-	if err := runCommand(os.Args[1:]); err != nil {
+	err := runCommand(os.Args[1:])
+	time.Sleep(2 * time.Second) // TODO: trouver un meilleur moyen d'assurer que les données ont fini d'être enregistrées en db
+
+	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
