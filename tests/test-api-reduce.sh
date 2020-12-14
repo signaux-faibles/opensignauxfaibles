@@ -37,8 +37,7 @@ echo "db.Features_TestData.insertOne({a:1})" | tests/helpers/mongodb-container.s
 
 echo ""
 echo "💎 Computing the Features collection thru dbmongo API..."
-tests/helpers/dbmongo-server.sh start
-API_RESULT=$(http --print=b --ignore-stdin :5000/api/data/reduce batch=1905)
+API_RESULT=$(tests/helpers/dbmongo-server.sh run reduce --until-batch=1905)
 echo "- POST /api/data/reduce 👉 ${API_RESULT}"
 
 (tests/helpers/mongodb-container.sh run \

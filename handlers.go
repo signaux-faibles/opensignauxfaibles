@@ -110,7 +110,7 @@ func checkBatchHandler(params checkBatchParams) error {
 	return nil
 }
 
-func printJSON(object bson.M) {
+func printJSON(object interface{}) {
 	res, _ := json.Marshal(object)
 	fmt.Println(string(res))
 }

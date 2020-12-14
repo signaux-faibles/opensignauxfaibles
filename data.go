@@ -35,7 +35,8 @@ func reduceHandler(params reduceParams) error {
 	if err != nil {
 		return err
 	}
-	// TODO: Print "Traitement effectué"
+
+	printJSON("Traitement effectué")
 	return nil
 }
 

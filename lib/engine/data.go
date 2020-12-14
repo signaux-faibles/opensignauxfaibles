@@ -174,7 +174,7 @@ func MRroutine(job *mgo.MapReduce, query bson.M, dbTemp string, collOrig string,
 		}
 		time.Sleep(time.Second)
 	}
-	fmt.Println(query)
+	log.Println(query)
 
 	db, _ := mgo.Dial(viper.GetString("DB_DIAL"))
 	db.SetSocketTimeout(720000 * time.Second)
