@@ -33,8 +33,7 @@ tests/helpers/populate-from-objects.sh \
 
 echo ""
 echo "💎 Computing the Public collection thru dbmongo API..."
-tests/helpers/dbmongo-server.sh start
-API_RESULT=$(http --print=b --ignore-stdin :5000/api/data/public batch=1905)
+API_RESULT=$(tests/helpers/dbmongo-server.sh run public --until-batch=1905)
 echo "- POST /api/data/public 👉 ${API_RESULT}"
 
 (tests/helpers/mongodb-container.sh run \

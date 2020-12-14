@@ -64,11 +64,10 @@ func publicHandler(params publicParams) error {
 		return errors.New("la clé fait moins de 9 caractères (siren)")
 	}
 
-	if err != nil {
-		return err
+	if err == nil {
+		printJSON("ok")
 	}
-
-	return nil // TODO: afficher "ok"
+	return err
 }
 
 type compactParams struct {
