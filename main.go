@@ -77,6 +77,29 @@ var cmds = map[string]commandDefinition{
 		connectDb()
 		return pruneEntitiesHandler(params)
 	},
+	"compact": func(args []string) error {
+		params := compactParams{}
+		flag.StringVar(&params.FromBatchKey, "since-batch", "", "Batch identifier")
+		flag.CommandLine.Parse(args)
+		connectDb()
+		return compactHandler(params)
+	},
+	"reduce": func(args []string) error {
+		params := reduceParams{} // TODO: also populate other parameters
+		flag.StringVar(&params.BatchKey, "until-batch", "", "Batch identifier")
+		flag.StringVar(&params.Key, "key", "", "SIRET or SIREN to focus on")
+		flag.CommandLine.Parse(args)
+		connectDb()
+		return reduceHandler(params)
+	},
+	"public": func(args []string) error {
+		params := publicParams{} // TODO: also populate other parameters
+		flag.StringVar(&params.BatchKey, "until-batch", "", "Batch identifier")
+		flag.StringVar(&params.Key, "key", "", "SIRET or SIREN to focus on")
+		flag.CommandLine.Parse(args)
+		connectDb()
+		return publicHandler(params)
+	},
 }
 
 type commandDefinition func(args []string) error

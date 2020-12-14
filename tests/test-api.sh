@@ -59,10 +59,9 @@ CONTENTS
 
 echo ""
 echo "💎 Computing Features and Public collections thru dbmongo API..."
-tests/helpers/dbmongo-server.sh start
-echo "- POST /api/data/compact 👉 $(http --print=b --ignore-stdin :5000/api/data/compact fromBatchKey=1910)"
-echo "- POST /api/data/reduce 👉 $(http --print=b --ignore-stdin :5000/api/data/reduce batch=1910 key=012345678)"
-echo "- POST /api/data/public 👉 $(http --print=b --ignore-stdin :5000/api/data/public batch=1910 key=012345678)"
+echo "- POST /api/data/compact 👉 $(tests/helpers/dbmongo-server.sh run compact --since-batch=1910)"
+echo "- POST /api/data/reduce 👉 $(tests/helpers/dbmongo-server.sh run reduce --until-batch=1910 --key=012345678)"
+echo "- POST /api/data/public 👉 $(tests/helpers/dbmongo-server.sh run public --until-batch=1910 --key=012345678)"
 
 (tests/helpers/mongodb-container.sh run \
   | tests/helpers/remove-random_order.sh \
