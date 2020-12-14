@@ -1,5 +1,5 @@
 // Version TypeScript / AVA de public/_test.js, précedemment exécuté par jsc,
-// lors de l'appel à `go test`, via dbmongo/js/test/test_public.sh.
+// lors de l'appel à `go test`, via js/test/test_public.sh.
 //
 // Usage: $ npx ava public/public_tests.ts
 //     ou $ npm test

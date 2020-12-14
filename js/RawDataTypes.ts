@@ -121,7 +121,7 @@ export type EntréeEffectif = {
   effectif: number
 }
 
-// Valeurs attendues par delais(), pour chaque période. (cf dbmongo/lib/urssaf/delai.go)
+// Valeurs attendues par delais(), pour chaque période. (cf lib/urssaf/delai.go)
 export type EntréeDelai = {
   date_creation: Date
   date_echeance: Date
