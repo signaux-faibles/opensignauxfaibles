@@ -26,9 +26,9 @@ jobs:
           ls -lR
           # delete all files, except the binary, config, NAF and other data files used by tests
           find . \
-            ! -name 'tests/*' \
             ! -name 'dbmongo' \
             ! -name '*.toml' \
+            ! -name 'test-*.sh' \
             ! -name '*.csv' \
             ! -name 'dianeTestData.txt' \
             ! -name 'ellisphereTestData.excel' \
