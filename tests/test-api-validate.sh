@@ -36,9 +36,8 @@ CONTENT
 
 echo ""
 echo "💎 Testing the dbmongo API..."
-tests/helpers/dbmongo-server.sh start
-API_RESULT=$(http --print=b --ignore-stdin :5000/api/data/validate collection=RawData)
-echo "- POST /api/data/validate 👉 ${API_RESULT}"
+VALIDATION_REPORT=$(tests/helpers/dbmongo-server.sh run validate --collection=RawData)
+echo "- POST /api/data/validate"
 
 (tests/helpers/mongodb-container.sh run \
   > "${OUTPUT_FILE}" \
@@ -55,11 +54,9 @@ printjson({
 print("// Result from /api/data/validate:");
 CONTENT
 
-OUTPUT_GZ_FILE=$(echo "${API_RESULT}" | tr -d '"')
-zcat < "${OUTPUT_GZ_FILE}" >> "${OUTPUT_FILE}"
+echo "${VALIDATION_REPORT}" >> "${OUTPUT_FILE}"
 
 tests/helpers/diff-or-update-golden-master.sh "${FLAGS}" "${GOLDEN_FILE}" "${OUTPUT_FILE}"
 
-rm "${OUTPUT_GZ_FILE}"
 rm -rf "${TMP_DIR}"
 # Now, the "trap" commands will clean up the rest.
