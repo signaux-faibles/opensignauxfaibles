@@ -69,6 +69,14 @@ var cmds = map[string]commandDefinition{
 		connectDb()
 		return checkBatchHandler(params)
 	},
+	"pruneEntities": func(args []string) error {
+		params := pruneEntitiesParams{}
+		flag.StringVar(&params.BatchKey, "batch", "", "Batch identifier")
+		flag.BoolVar(&params.Delete, "delete", false, "Delete entities")
+		flag.CommandLine.Parse(args)
+		connectDb()
+		return pruneEntitiesHandler(params)
+	},
 }
 
 type commandDefinition func(args []string) error

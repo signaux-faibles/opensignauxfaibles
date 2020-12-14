@@ -106,9 +106,13 @@ func checkBatchHandler(params checkBatchParams) error {
 		return errors.New("Erreurs détectées: " + err.Error())
 	}
 
-	res, _ := json.Marshal(bson.M{"reports": reports})
-	fmt.Println(string(res))
+	printJSON(bson.M{"reports": reports})
 	return nil
+}
+
+func printJSON(object bson.M) {
+	res, _ := json.Marshal(object)
+	fmt.Println(string(res))
 }
 
 func purgeNotCompactedHandler() error {
@@ -122,9 +126,12 @@ type pruneEntitiesParams struct {
 
 // Count – then delete – companies from RawData that should have been
 // excluded by the SIREN Filter.
-func pruneEntitiesHandler(params pruneEntitiesParams) (bson.M, error) {
+func pruneEntitiesHandler(params pruneEntitiesParams) error {
 	count, err := engine.PruneEntities(params.BatchKey, params.Delete)
-	return bson.M{"count": count}, err
+	if err == nil {
+		printJSON(bson.M{"count": count})
+	}
+	return err
 }
 
 // RegisteredParsers liste des parsers disponibles

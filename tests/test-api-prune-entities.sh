@@ -61,8 +61,7 @@ CONTENT
 
 echo ""
 echo "💎 Test: count and prune entities from RawData..."
-tests/helpers/dbmongo-server.sh start
-API_RESULT=$(http --print=b --ignore-stdin :5000/api/data/pruneEntities batch=2010)
+API_RESULT=$(tests/helpers/dbmongo-server.sh run pruneEntities --batch=2010)
 echo "- POST /api/data/pruneEntities 👉 ${API_RESULT}"
 
 # Print test results from stdin. Fails on any "false" result.
@@ -89,7 +88,7 @@ function reportFailedTests {
   }).forEach(([ testName, testRes ]) => print(testName, ':', testRes));
 CONTENT
 
-echo "- POST /api/data/pruneEntities delete=true 👉 $(http --print=b --ignore-stdin :5000/api/data/pruneEntities batch=2010 delete:=true)"
+echo "- POST /api/data/pruneEntities delete=true 👉 $(tests/helpers/dbmongo-server.sh run pruneEntities --batch=2010 --delete)"
 
 (tests/helpers/mongodb-container.sh run \
   | reportFailedTests \
