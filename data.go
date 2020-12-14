@@ -7,7 +7,6 @@ import (
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/engine"
-	"github.com/spf13/viper"
 )
 
 type reduceParams struct {
@@ -95,31 +94,20 @@ func getKeyParam(params exportParams) (string, error) {
 	return params.Key, nil
 }
 
-func exportEtablissementsHandler(params exportParams) (string, error) {
-
+func exportEtablissementsHandler(params exportParams) error {
 	key, err := getKeyParam(params)
 	if err != nil {
-		return "", err
+		return err
 	}
-
-	// On retourne le nom de fichier avant la fin du traitement, pour éviter erreur "Request timed out"
-	var filepath = viper.GetString("exportPath") + "dbmongo-data-export-etablissements-" + getTimestamp() + ".json.gz"
-
-	err = engine.ExportEtablissements(key, filepath)
-	return filepath, err
+	return engine.ExportEtablissements(key)
 }
 
-func exportEntreprisesHandler(params exportParams) (string, error) {
+func exportEntreprisesHandler(params exportParams) error {
 	key, err := getKeyParam(params)
 	if err != nil {
-		return "", err
+		return err
 	}
-
-	// On retourne le nom de fichier avant la fin du traitement, pour éviter erreur "Request timed out"
-	var filepath = viper.GetString("exportPath") + "dbmongo-data-export-entreprises-" + getTimestamp() + ".json.gz"
-
-	err = engine.ExportEntreprises(key, filepath)
-	return filepath, err
+	return engine.ExportEntreprises(key)
 }
 
 type validateParams struct {

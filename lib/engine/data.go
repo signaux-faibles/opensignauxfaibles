@@ -367,17 +367,17 @@ func printJSON(object interface{}) {
 }
 
 // ExportEtablissements exporte les établissements dans un fichier.
-func ExportEtablissements(key, filepath string) error {
+func ExportEtablissements(key string) error {
 	pipeline := GetEtablissementWithScoresPipeline(key)
 	iter := Db.DB.C("Public").Pipe(pipeline).AllowDiskUse().Iter()
-	return storeMongoPipelineResults(filepath, iter)
+	return storeMongoPipelineResults(iter)
 }
 
 // ExportEntreprises exporte les entreprises dans un fichier.
-func ExportEntreprises(key, filepath string) error {
+func ExportEntreprises(key string) error {
 	pipeline := GetEntreprisePipeline(key)
 	iter := Db.DB.C("Public").Pipe(pipeline).AllowDiskUse().Iter()
-	return storeMongoPipelineResults(filepath, iter)
+	return storeMongoPipelineResults(iter)
 }
 
 // ValidateDataEntries affiche les entrées de données invalides détectées dans la collection spécifiée.
@@ -426,7 +426,7 @@ func iterateToChannel(channel chan interface{}, iterator *mgo.Iter) error {
 	return nil
 }
 
-func storeMongoPipelineResults(filepath string, iterator *mgo.Iter) error {
+func storeMongoPipelineResults(iterator *mgo.Iter) error {
 	wait := sync.WaitGroup{}
 	gzipWriter := getItemChannelToStdout(&wait)
 	err := iterateToChannel(gzipWriter, iterator)

@@ -12,8 +12,8 @@ set -e # will stop the script if any command fails with a non-zero exit code
 FLAGS="$*" # the script will update the golden file if "--update" flag was provided as 1st argument
 COLOR_YELLOW='\033[1;33m'
 COLOR_DEFAULT='\033[0m'
-ETAB_GOLDEN_FILE="tests/output-snapshots/test-api-export-etablissements.golden.json.gz"
-ENTR_GOLDEN_FILE="tests/output-snapshots/test-api-export-entreprises.golden.json.gz"
+ETAB_GOLDEN_FILE="tests/output-snapshots/test-api-export-etablissements.golden.json" # TODO: delete test-api-export-etablissements.golden.json.gz
+ENTR_GOLDEN_FILE="tests/output-snapshots/test-api-export-entreprises.golden.json" # TODO: delete test-api-export-entreprises.golden.json.gz
 TMP_DIR="tests/tmp-test-execution-files"
 mkdir -p "${TMP_DIR}"
 
@@ -124,9 +124,8 @@ CONTENTS
 
 echo ""
 echo "💎 Computing the Public collection thru dbmongo API..."
-tests/helpers/dbmongo-server.sh start
-echo "- POST /api/data/compact 👉 $(http --print=b --ignore-stdin :5000/api/data/compact fromBatchKey=2002_1)"
-echo "- POST /api/data/public 👉 $(http --print=b --ignore-stdin :5000/api/data/public batch=2002_1 key=.........)" # we specify a placeholder value as key, so that PublicOne() is run instead of Public(), so the data is generated for etablissements that don't have effectif values, and therefore are outside of the "algo2" scope.
+echo "- POST /api/data/compact 👉 $(tests/helpers/dbmongo-server.sh run compact --since-batch=2002_1)"
+echo "- POST /api/data/public 👉 $(tests/helpers/dbmongo-server.sh run public --until-batch=2002_1 --key=.........)" # TODO: we specify a placeholder value as key, so that PublicOne() is run instead of Public(), so the data is generated for etablissements that don't have effectif values, and therefore are outside of the "algo2" scope.
 
 echo ""
 echo "🚚 Asking API to export enterprise data..."
@@ -145,18 +144,17 @@ function stopIfFailed {
 }
 
 # Parameter validation
-RESULT=$(http --print=b --ignore-stdin GET :5000/api/data/etablissements key=="invalid" | (grep "key doit être un numéro SIREN" || echo -e "${COLOR_YELLOW}failed${COLOR_DEFAULT}"))
+RESULT=$(tests/helpers/dbmongo-server.sh run etablissements --key="invalid" | (grep "key doit être un numéro SIREN" || echo -e "${COLOR_YELLOW}failed${COLOR_DEFAULT}"))
 echo "- GET /api/data/etablissements with invalid key 👉 ${RESULT}"
 stopIfFailed "${RESULT}"
-RESULT=$(http --print=b --ignore-stdin GET :5000/api/data/entreprises key=="invalid" | (grep "key doit être un numéro SIREN" || echo -e "${COLOR_YELLOW}failed${COLOR_DEFAULT}"))
+RESULT=$(tests/helpers/dbmongo-server.sh run entreprises --key="invalid" | (grep "key doit être un numéro SIREN" || echo -e "${COLOR_YELLOW}failed${COLOR_DEFAULT}"))
 echo "- GET /api/data/entreprises with invalid key 👉 ${RESULT}"
 stopIfFailed "${RESULT}"
 
 # GET /api/data/etablissements with key=212345678 should return just one match
-FILE=$(http --print=b --ignore-stdin GET :5000/api/data/etablissements key=="212345678" | tr -d '"')
-MATCH=$(zgrep --quiet "etablissement_21234567891011" "${FILE}" && echo "found etablissement_21234567891011" || echo -e "${COLOR_YELLOW}failed${COLOR_DEFAULT}")
-COUNT=$(zcat < "${FILE}" | wc -l)
-rm "${FILE}"
+RESULTS=$(tests/helpers/dbmongo-server.sh run etablissements --key="212345678")
+MATCH=$(echo "${RESULTS}" | grep --quiet "etablissement_21234567891011" && echo "found etablissement_21234567891011" || echo -e "${COLOR_YELLOW}failed${COLOR_DEFAULT}")
+COUNT=$(echo "${RESULTS}" | wc -l)
 echo "- GET /api/data/etablissements with key=212345678 👉 ${MATCH}, ${COUNT} result(s)"
 stopIfFailed "${MATCH}"
 if [[ "${COUNT}" -ne "1" ]]
@@ -165,10 +163,9 @@ then
 fi
 
 # GET /api/data/entreprises with key=212345678 should return just one match
-FILE=$(http --print=b --ignore-stdin GET :5000/api/data/entreprises key=="212345678" | tr -d '"')
-MATCH=$(zgrep --quiet "entreprise_212345678" "${FILE}" && echo "found entreprise_212345678" || echo -e "${COLOR_YELLOW}failed${COLOR_DEFAULT}")
-COUNT=$(zcat < "$FILE" | wc -l)
-rm "${FILE}"
+RESULTS=$(tests/helpers/dbmongo-server.sh run entreprises --key="212345678")
+MATCH=$(echo "${RESULTS}" | grep --quiet "entreprise_212345678" && echo "found entreprise_212345678" || echo -e "${COLOR_YELLOW}failed${COLOR_DEFAULT}")
+COUNT=$(echo "${RESULTS}" | wc -l)
 echo "- GET /api/data/entreprises with key=212345678 👉 ${MATCH}, ${COUNT} result(s)"
 stopIfFailed "${MATCH}"
 if [[ "${COUNT}" -ne "1" ]]
@@ -177,9 +174,13 @@ then
 fi
 
 # Export enterprise data
-ETABLISSEMENTS_FILE=$(http --print=b --ignore-stdin GET :5000/api/data/etablissements | tr -d '"')
+RESULTS=$(tests/helpers/dbmongo-server.sh run etablissements)
+ETABLISSEMENTS_FILE="${TMP_DIR}/etablissements.json"
+echo "${RESULTS}" > "${ETABLISSEMENTS_FILE}"
 echo "- GET /api/data/etablissements 👉 ${ETABLISSEMENTS_FILE}"
-ENTREPRISES_FILE=$(http --print=b --ignore-stdin GET :5000/api/data/entreprises | tr -d '"')
+RESULTS=$(tests/helpers/dbmongo-server.sh run entreprises)
+ENTREPRISES_FILE="${TMP_DIR}/entreprises.json"
+echo "${RESULTS}" > "${ENTREPRISES_FILE}"
 echo "- GET /api/data/entreprises 👉 ${ENTREPRISES_FILE}"
 
 tests/helpers/diff-or-update-golden-master.sh "${FLAGS}" "${ETAB_GOLDEN_FILE}" "${ETABLISSEMENTS_FILE}"

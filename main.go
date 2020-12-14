@@ -29,18 +29,8 @@ func connectDb() {
 // main Fonction Principale
 func main() {
 
-	// connectDb()
 	// api.POST("/data/batch/purge", purgeBatchHandler)      // [x] écrit dans Journal
-	// api.POST("/data/check", checkBatchHandler)            // [x] écrit dans Journal
-	// api.POST("/data/import", importBatchHandler)          // [x] écrit dans Journal
-	// api.POST("/data/validate", validateHandler)           // [x] écrit dans Journal
-	// api.POST("/data/compact", compactHandler)             // [x] écrit dans Journal
-	// api.POST("/data/reduce", reduceHandler)               // [x] écrit dans Journal
-	// api.POST("/data/public", publicHandler)               // [x] écrit dans Journal
-	// api.POST("/data/pruneEntities", pruneEntitiesHandler) // [x] écrit dans Journal
 	// api.GET("/data/purgeNotCompacted", purgeNotCompactedHandler)
-	// api.GET("/data/etablissements", exportEtablissementsHandler)
-	// api.GET("/data/entreprises", exportEntreprisesHandler)
 
 	err := runCommand(os.Args[1:])
 	time.Sleep(2 * time.Second) // TODO: trouver un meilleur moyen d'assurer que les données ont fini d'être enregistrées en db
@@ -67,7 +57,7 @@ var cmds = map[string]commandDefinition{
 		flag.CommandLine.Parse(args)
 		params.Parsers = strings.Split(parsers, ",")
 		connectDb()
-		return checkBatchHandler(params)
+		return checkBatchHandler(params) // [x] écrit dans Journal
 	},
 	"pruneEntities": func(args []string) error {
 		params := pruneEntitiesParams{}
@@ -75,7 +65,7 @@ var cmds = map[string]commandDefinition{
 		flag.BoolVar(&params.Delete, "delete", false, "Delete entities")
 		flag.CommandLine.Parse(args)
 		connectDb()
-		return pruneEntitiesHandler(params)
+		return pruneEntitiesHandler(params) // [x] écrit dans Journal
 	},
 	"import": func(args []string) error {
 		params := importBatchParams{} // TODO: also populate other parameters
@@ -83,21 +73,21 @@ var cmds = map[string]commandDefinition{
 		flag.BoolVar(&params.NoFilter, "no-filter", false, "Tolerate the absence of filter/perimeter file")
 		flag.CommandLine.Parse(args)
 		connectDb()
-		return importBatchHandler(params)
+		return importBatchHandler(params) // [x] écrit dans Journal
 	},
 	"validate": func(args []string) error {
 		params := validateParams{}
 		flag.StringVar(&params.Collection, "collection", "", "Name of the collection to validate")
 		flag.CommandLine.Parse(args)
 		connectDb()
-		return validateHandler(params)
+		return validateHandler(params) // [x] écrit dans Journal
 	},
 	"compact": func(args []string) error {
 		params := compactParams{}
 		flag.StringVar(&params.FromBatchKey, "since-batch", "", "Batch identifier")
 		flag.CommandLine.Parse(args)
 		connectDb()
-		return compactHandler(params)
+		return compactHandler(params) // [x] écrit dans Journal
 	},
 	"reduce": func(args []string) error {
 		params := reduceParams{} // TODO: also populate other parameters
@@ -105,7 +95,7 @@ var cmds = map[string]commandDefinition{
 		flag.StringVar(&params.Key, "key", "", "SIRET or SIREN to focus on")
 		flag.CommandLine.Parse(args)
 		connectDb()
-		return reduceHandler(params)
+		return reduceHandler(params) // [x] écrit dans Journal
 	},
 	"public": func(args []string) error {
 		params := publicParams{} // TODO: also populate other parameters
@@ -113,7 +103,21 @@ var cmds = map[string]commandDefinition{
 		flag.StringVar(&params.Key, "key", "", "SIRET or SIREN to focus on")
 		flag.CommandLine.Parse(args)
 		connectDb()
-		return publicHandler(params)
+		return publicHandler(params) // [x] écrit dans Journal
+	},
+	"etablissements": func(args []string) error {
+		params := exportParams{}
+		flag.StringVar(&params.Key, "key", "", "SIRET or SIREN to export")
+		flag.CommandLine.Parse(args)
+		connectDb()
+		return exportEtablissementsHandler(params) // TODO: écrire rapport dans Journal ?
+	},
+	"entreprises": func(args []string) error {
+		params := exportParams{}
+		flag.StringVar(&params.Key, "key", "", "SIRET or SIREN to export")
+		flag.CommandLine.Parse(args)
+		connectDb()
+		return exportEntreprisesHandler(params) // TODO: écrire rapport dans Journal ?
 	},
 }
 

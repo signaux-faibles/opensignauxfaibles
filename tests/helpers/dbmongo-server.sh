@@ -20,7 +20,7 @@ case ${COMMAND} in
     exit ;;
   run)
     go build -o dbmongo # TODO: rename to sfdata, then remove from here
-    ./dbmongo $2 $3 $4 $5 $6 $7 $8
+    ./dbmongo $2 $3 $4 $5 $6 $7 $8 || true
     exit ;;
   ?)
     echo "error: ${COMMAND} is not a recognized command" ;;
