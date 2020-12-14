@@ -20,6 +20,14 @@ jobs:
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
 
+      - name: Reveal golden master files for tests
+        env:
+          GPG_PRIVATE_KEY_FOR_GIT_SECRET: ${{ secrets.GPG_PRIVATE_KEY_FOR_GIT_SECRET }}
+        run: |
+          echo "${GPG_PRIVATE_KEY_FOR_GIT_SECRET}" > ./private_key.gpg
+          gpg --import --no-tty --batch --yes ./private_key.gpg
+          git secret reveal
+
       - name: Build + remove source code
         run: |
           go build -o "dbmongo" -v .
@@ -67,14 +75,6 @@ jobs:
       - run: ./tests/test-api-purge-batch.sh
 
       - run: ./tests/test-api-compact-failure.sh
-
-      - name: Reveal golden master files for tests
-        env:
-          GPG_PRIVATE_KEY_FOR_GIT_SECRET: ${{ secrets.GPG_PRIVATE_KEY_FOR_GIT_SECRET }}
-        run: |
-          echo "${GPG_PRIVATE_KEY_FOR_GIT_SECRET}" > ./private_key.gpg
-          gpg --import --no-tty --batch --yes ./private_key.gpg
-          git secret reveal
 
       - run: ./tests/test-api-compact.sh # relies on encrypted files
 
