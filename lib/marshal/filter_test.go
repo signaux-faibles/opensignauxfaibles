@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
+	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
 	"github.com/stretchr/testify/assert"
 )
 

@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
+	"github.com/signaux-faibles/opensignauxfaibles/lib/misc"
 )
 
 // UrssafToDate convertit le format de date urssaf en type Date.

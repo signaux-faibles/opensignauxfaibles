@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
+	"github.com/signaux-faibles/opensignauxfaibles/lib/marshal"
 )
 
 var update = flag.Bool("update", false, "Update the expected test values in golden file")

@@ -5,7 +5,7 @@ import (
 
 	"github.com/cnf/structhash"
 	"github.com/globalsign/mgo/bson"
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
+	"github.com/signaux-faibles/opensignauxfaibles/lib/marshal"
 )
 
 // Value structure pour un établissement

@@ -3,9 +3,9 @@ package urssaf
 import (
 	"time"
 
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/misc"
+	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
+	"github.com/signaux-faibles/opensignauxfaibles/lib/marshal"
+	"github.com/signaux-faibles/opensignauxfaibles/lib/misc"
 )
 
 // Compte tuple fichier ursaff

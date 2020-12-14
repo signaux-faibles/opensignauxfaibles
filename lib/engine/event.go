@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/globalsign/mgo/bson"
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
+	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
+	"github.com/signaux-faibles/opensignauxfaibles/lib/marshal"
 )
 
 // SocketMessage permet la diffusion d'information vers tous les clients

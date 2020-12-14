@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
+	"github.com/signaux-faibles/opensignauxfaibles/lib/engine"
 )
 
 // Reads all .js files in the current folder

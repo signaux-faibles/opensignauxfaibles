@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
+	"github.com/signaux-faibles/opensignauxfaibles/lib/engine"
 
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/naf"
+	"github.com/signaux-faibles/opensignauxfaibles/lib/naf"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -12,7 +12,7 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 
-	_ "github.com/signaux-faibles/opensignauxfaibles/dbmongo/docs"
+	_ "github.com/signaux-faibles/opensignauxfaibles/docs"
 )
 
 // main Fonction Principale

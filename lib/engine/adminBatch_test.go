@@ -3,8 +3,8 @@ package engine
 import (
 	"testing"
 
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/marshal"
+	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
+	"github.com/signaux-faibles/opensignauxfaibles/lib/marshal"
 )
 
 func Test_IsBatchID(t *testing.T) {

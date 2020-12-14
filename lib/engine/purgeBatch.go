@@ -9,7 +9,7 @@ import (
 
 	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
+	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
 	"github.com/spf13/viper"
 )
 

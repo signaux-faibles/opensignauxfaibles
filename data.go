@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/base"
-	"github.com/signaux-faibles/opensignauxfaibles/dbmongo/lib/engine"
+	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
+	"github.com/signaux-faibles/opensignauxfaibles/lib/engine"
 	"github.com/spf13/viper"
 
 	"github.com/gin-gonic/gin"
