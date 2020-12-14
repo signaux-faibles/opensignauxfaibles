@@ -1,7 +1,3 @@
-# API
-DEV = true
-APP_BIND = ":5000"
-
 # Paramètrage de l'import
 APP_DATA = "/foo/bar/data-raw"
 NAF_L1 =   "/foo/bar/data-raw/naf/naf1.csv"

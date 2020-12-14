@@ -8,8 +8,6 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/engine"
 	"github.com/spf13/viper"
-
-	"github.com/gin-gonic/gin"
 )
 
 func reduceHandler(c *gin.Context) {

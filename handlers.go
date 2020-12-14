@@ -16,7 +16,6 @@ import (
 
 	sireneul "github.com/signaux-faibles/opensignauxfaibles/lib/sirene_ul"
 
-	"github.com/gin-gonic/gin"
 	"github.com/globalsign/mgo/bson"
 )
 
