@@ -76,8 +76,11 @@ type compactParams struct {
 }
 
 func compactHandler(params compactParams) error {
-	return engine.Compact(params.FromBatchKey)
-	// TODO: afficher "ok"
+	err := engine.Compact(params.FromBatchKey)
+	if err == nil {
+		printJSON("ok")
+	}
+	return err
 }
 
 func getTimestamp() string {
