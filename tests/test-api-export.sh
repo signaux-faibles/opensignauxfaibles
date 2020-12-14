@@ -12,8 +12,8 @@ set -e # will stop the script if any command fails with a non-zero exit code
 FLAGS="$*" # the script will update the golden file if "--update" flag was provided as 1st argument
 COLOR_YELLOW='\033[1;33m'
 COLOR_DEFAULT='\033[0m'
-ETAB_GOLDEN_FILE="tests/output-snapshots/test-api-export-etablissements.golden.json" # TODO: delete test-api-export-etablissements.golden.json.gz
-ENTR_GOLDEN_FILE="tests/output-snapshots/test-api-export-entreprises.golden.json" # TODO: delete test-api-export-entreprises.golden.json.gz
+ETAB_GOLDEN_FILE="tests/output-snapshots/test-api-export-etablissements.golden.json"
+ENTR_GOLDEN_FILE="tests/output-snapshots/test-api-export-entreprises.golden.json"
 TMP_DIR="tests/tmp-test-execution-files"
 mkdir -p "${TMP_DIR}"
 
