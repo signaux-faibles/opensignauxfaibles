@@ -18,9 +18,9 @@ case ${COMMAND} in
     perl -pi'' -e "s,/foo/bar/data-raw,sample-data-raw," config.toml
     perl -pi'' -e "s,27017,${MONGODB_PORT}," config.toml
     exit ;;
-  start)
-    bash -c "./dbmongo &>/dev/null &" # we run in a separate shell to hide the "terminated" message when the process is killed by trap
-    sleep 2 # give some time for dbmongo to start
+  run)
+    go build -o dbmongo # TODO: rename to sfdata, then remove from here
+    ./dbmongo $2 $3 $4 $5 $6 $7 $8
     exit ;;
   ?)
     echo "error: ${COMMAND} is not a recognized command" ;;

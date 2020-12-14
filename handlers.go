@@ -1,7 +1,9 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
+	"fmt"
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/apconso"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/apdemande"
@@ -86,25 +88,27 @@ type checkBatchParams struct {
 	Parsers  []string `json:"parsers"`
 }
 
-func checkBatchHandler(params checkBatchParams) (bson.M, error) {
+func checkBatchHandler(params checkBatchParams) error {
 
 	batch := base.AdminBatch{}
 	err := engine.Load(&batch, params.BatchKey)
 	if err != nil {
-		return bson.M{}, errors.New("Batch inexistant: " + err.Error())
+		return errors.New("Batch inexistant: " + err.Error())
 	}
 
 	parsers, err := resolveParsers(params.Parsers)
 	if err != nil {
-		return bson.M{}, err
+		return err
 	}
 
 	reports, err := engine.CheckBatch(batch, parsers)
 	if err != nil {
-		return bson.M{}, errors.New("Erreurs détectées: " + err.Error())
+		return errors.New("Erreurs détectées: " + err.Error())
 	}
 
-	return bson.M{"reports": reports}, nil
+	res, _ := json.Marshal(bson.M{"reports": reports})
+	fmt.Println(string(res))
+	return nil
 }
 
 func purgeNotCompactedHandler() error {

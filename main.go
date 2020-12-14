@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/engine"
 
@@ -54,12 +55,15 @@ var cmds = map[string]commandDefinition{
 	// 		return purgeBatchHandler(params)
 	// 	},
 	// },
-	"hello": func(args []string) error {
-		params := helloParams{}
-		flag.StringVar(&params.FirstName, "first", "", "First name")
-		flag.StringVar(&params.LastName, "last", "", "First name")
+	"check": func(args []string) error {
+		var parsers string
+		params := checkBatchParams{}
+		flag.StringVar(&params.BatchKey, "batch", "", "Batch identifier")
+		flag.StringVar(&parsers, "parsers", "", "List of parsers")
 		flag.CommandLine.Parse(args)
-		return helloHandler(params)
+		params.Parsers = strings.Split(parsers, ",")
+		connectDb()
+		return checkBatchHandler(params)
 	},
 }
 
@@ -86,17 +90,4 @@ func printSupportedCommands() {
 	for cmd := range cmds {
 		fmt.Printf(" - %s\n", cmd)
 	}
-}
-
-type helloParams struct {
-	FirstName string `names:"-f, --first-name" usage:"hello -f Adrien"`
-	LastName  string `names:"-l, --last-name"`
-}
-
-func helloHandler(params helloParams) error {
-	if params.FirstName == "" {
-		return errors.New("firstname is not defined")
-	}
-	fmt.Printf("Hello %s %s\n", params.FirstName, params.LastName)
-	return nil
 }
