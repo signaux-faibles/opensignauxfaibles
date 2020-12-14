@@ -35,20 +35,20 @@ jobs:
             ${{ runner.OS }}-build-
 
       - name: Install Node/npm dependencies
-        working-directory: dbmongo/js
+        working-directory: js
         env:
           CI: true
         run: npm install --prefer-offline --no-audit
 
       - name: Check that jsFunctions.go is up to date
-        working-directory: dbmongo/lib/engine
+        working-directory: lib/engine
         run: |
           go generate -x
           git diff jsFunctions.go
           exit $(git diff jsFunctions.go | wc -l)
 
       - name: JS Linter
-        working-directory: dbmongo/js
+        working-directory: js
         run: |
           npm run lint
 
@@ -62,7 +62,7 @@ jobs:
           git secret reveal
 
       - name: Tests driven by Node/AVA
-        working-directory: dbmongo/js
+        working-directory: js
         run: |
           npm run test:coverage
           npx nyc report --reporter=lcov --include="**/*.ts" --exclude="**/*.js" # stores the coverage report in ./coverage/lcov.info
@@ -71,7 +71,7 @@ jobs:
         uses: codacy/codacy-coverage-reporter-action@master
         with:
           project-token: ${{ secrets.CODACY_REPOSITORY_TOKEN_FOR_COVERAGE }}
-          coverage-reports: dbmongo/js/coverage/lcov.info
+          coverage-reports: js/coverage/lcov.info
 
       - name: Check that Swagger API defs are valid and up to date
         run: tests/test-api-swagger.sh

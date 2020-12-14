@@ -21,7 +21,6 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Build + remove source code
-        working-directory: dbmongo
         run: |
           go build -v . -o "dbmongo"
           # delete all files, except the binary, config, NAF and other data files used by tests
