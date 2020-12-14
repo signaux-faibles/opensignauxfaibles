@@ -53,7 +53,7 @@ func RunParser(
 	go func() {
 		defer wg.Done()
 		for event := range events {
-			event.ActualEvent.Date = time.Time{}
+			event.Date = time.Time{}
 			output.Events = append(output.Events, event)
 		}
 	}()
