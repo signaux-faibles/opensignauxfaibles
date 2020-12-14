@@ -32,8 +32,7 @@ CONTENT
 
 echo ""
 echo "💎 Test: purge batch 1901 from RawData..."
-tests/helpers/dbmongo-server.sh start
-echo "- POST /api/data/batch/purge 👉 $(http --print=b --ignore-stdin :5000/api/data/batch/purge fromBatch=1901 IUnderstandWhatImDoing:=true)"
+echo "- POST /api/data/batch/purge 👉 $(tests/helpers/dbmongo-server.sh run purge --since-batch=1901 --i-understand-what-im-doing)"
 
 # Display JS errors logged by MongoDB, if any
 tests/helpers/mongodb-container.sh exceptions || true

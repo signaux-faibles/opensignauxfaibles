@@ -29,7 +29,6 @@ func connectDb() {
 // main Fonction Principale
 func main() {
 
-	// api.POST("/data/batch/purge", purgeBatchHandler)      // [x] écrit dans Journal
 	// api.GET("/data/purgeNotCompacted", purgeNotCompactedHandler)
 
 	err := runCommand(os.Args[1:])
@@ -42,13 +41,14 @@ func main() {
 }
 
 var cmds = map[string]commandDefinition{
-	// {
-	// 	Name: "purgeBatch",
-	// 	Run: func([]string) error {
-	// 		var params purgeBatchParams
-	// 		return purgeBatchHandler(params)
-	// 	},
-	// },
+	"purge": func(args []string) error {
+		var params purgeBatchParams // TODO: also populate other parameters
+		flag.StringVar(&params.FromBatchKey, "since-batch", "", "Batch identifier")
+		flag.BoolVar(&params.IUnderstandWhatImDoing, "i-understand-what-im-doing", false, "Confirm data deletion")
+		flag.CommandLine.Parse(args)
+		connectDb()
+		return purgeBatchHandler(params) // [x] écrit dans Journal
+	},
 	"check": func(args []string) error {
 		var parsers string
 		params := checkBatchParams{}
