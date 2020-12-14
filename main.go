@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"flag"
 	"fmt"
 	"os"
 
@@ -46,11 +47,21 @@ func main() {
 }
 
 var cmds = []commandDefinition{
+	// {
+	// 	Name: "purgeBatch",
+	// 	Run: func([]string) error {
+	// 		var params purgeBatchParams
+	// 		return purgeBatchHandler(params)
+	// 	},
+	// },
 	{
-		Name: "purgeBatch",
-		Run: func([]string) error {
-			var params purgeBatchParams
-			return purgeBatchHandler(params)
+		Name: "hello",
+		Run: func(args []string) error {
+			params := helloParams{}
+			flag.StringVar(&params.FirstName, "first", "", "First name")
+			flag.StringVar(&params.LastName, "last", "", "First name")
+			flag.CommandLine.Parse(args)
+			return helloHandler(params)
 		},
 	},
 }
@@ -83,4 +94,17 @@ func printSupportedCommands() {
 	for _, cmd := range cmds {
 		fmt.Printf(" - %s\n", cmd.Name)
 	}
+}
+
+type helloParams struct {
+	FirstName string `names:"-f, --first-name" usage:"hello -f Adrien"`
+	LastName  string `names:"-l, --last-name"`
+}
+
+func helloHandler(params helloParams) error {
+	if params.FirstName == "" {
+		return errors.New("firstname is not defined")
+	}
+	fmt.Printf("Hello %s %s\n", params.FirstName, params.LastName)
+	return nil
 }
