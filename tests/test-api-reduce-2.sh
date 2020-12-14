@@ -56,8 +56,7 @@ CONTENTS
 
 echo ""
 echo "💎 Computing the Features collection thru dbmongo API..."
-tests/helpers/dbmongo-server.sh start
-echo "- POST /api/data/reduce 👉 $(http --print=b --ignore-stdin :5000/api/data/reduce batch=2002_1)"
+echo "- POST /api/data/reduce 👉 $(tests/helpers/dbmongo-server.sh run reduce --until-batch=2002_1)"
 
 (tests/helpers/mongodb-container.sh run \
   | tests/helpers/remove-random_order.sh \
