@@ -29,6 +29,8 @@ jobs:
             ! -name 'dbmongo' \
             ! -name '*.toml' \
             ! -name 'test-*.sh' \
+            ! -name 'mongodb-container.sh' \
+            ! -name 'dbmongo-server.sh' \
             ! -name '*.csv' \
             ! -name 'dianeTestData.txt' \
             ! -name 'ellisphereTestData.excel' \
