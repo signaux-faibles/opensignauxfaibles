@@ -4,14 +4,14 @@
 mkdir -p dist/static
 
 # compilation et recopie des éléments nécessaires
-go build -ldflags="-s -w" -o "sfdata"
-upx sfdata
-cp sfdata ../dist
+go build -ldflags="-s -w"
+upx dbmongo
+cp dbmongo ../dist
 cp config.toml ../dist
 
 # création de l'archive
 tar cvJf dist.tar.xz dist/
 
 # cleanup
-rm sfdata
+rm dbmongo
 rm -r dist/

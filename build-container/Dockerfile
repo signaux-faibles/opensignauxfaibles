@@ -1,6 +1,6 @@
 FROM alpine:3.12
-COPY ./$path/sfdata /app
-RUN chmod 555 /app/sfdata
+COPY ./$path/dbmongo /app
+RUN chmod 555 /app/dbmongo
 WORKDIR /app
 EXPOSE 3000
-CMD ["/app/sfdata"]
+CMD ["/app/dbmongo"]

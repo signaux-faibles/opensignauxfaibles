@@ -26,12 +26,12 @@ fi
 unzip "$1.zip"
 cd "opensignauxfaibles-$1/"
 
-CGO_ENABLED=0 GOARCH=amd64 go build -o "sfdata"
+CGO_ENABLED=0 GOARCH=amd64 go build -o "dbmongo"
 
 # Build docker
 cd ../../..
-docker build -t sfdata --build-arg path="./workspace/opensignauxfaibles-$1/" . 
-docker save sfdata | gzip > sfdata.tar.gz
+docker build -t dbmongo --build-arg path="./workspace/opensignauxfaibles-$1/" . 
+docker save dbmongo | gzip > dbmongo.tar.gz
 
 # Cleanup
 rm -rf workspace

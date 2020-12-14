@@ -22,7 +22,7 @@ jobs:
 
       - name: Build
         working-directory: dbmongo
-        run: go build -v . -o "sfdata"
+        run: go build -v . -o "dbmongo"
 
       - name: Tests
         working-directory: dbmongo

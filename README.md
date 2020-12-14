@@ -20,7 +20,7 @@ $ git clone https://github.com/signaux-faibles/opensignauxfaibles.git
 $ cd opensignauxfaibles
 $ cd dbmongo
 $ go generate ./...
-$ go build -o sfdata
+$ go build -o dbmongo
 $ go test ./...
 ```
 

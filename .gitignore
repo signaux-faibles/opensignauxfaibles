@@ -16,7 +16,7 @@ data-raw/
 output/*
 keys.json
 data-raw
-sfdata
+dbmongo
 **/.vscode
 static/*
 archive/*

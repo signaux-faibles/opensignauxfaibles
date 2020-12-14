@@ -46,7 +46,7 @@ heading "go generate"
 (cd ./lib/engine && go generate .) 2>&1 | indent
 
 heading "go build"
-(killall sfdata 2>/dev/null || true; go build -o "sfdata" && echo "📦 sfdata") 2>&1 | indent
+(killall dbmongo 2>/dev/null || true; go build -o "dbmongo" && echo "📦 dbmongo") 2>&1 | indent
 
 heading "test-api-prune-entities.sh"
 ./tests/test-api-prune-entities.sh $@ 2>&1 | indent
