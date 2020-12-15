@@ -2,9 +2,13 @@
 
 Solution logicielle pour la détection anticipée d'entreprises en difficulté.
 
+La solution est centrée sur la commande `sfdata` qui permet d'exécuter des traitements sur une base de données MongoDB.
+
+Précedemment, la solution reposait sur un serveur HTTP nommé `dbmongo`.
+
 ## Architecture
 
-- Back-end: golang
+- Golang
 - MongoDB 4.2
 - Fonctions map-reduce: TypeScript (TS) et JavaScript (JS)
 
