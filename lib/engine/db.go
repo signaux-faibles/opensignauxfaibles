@@ -101,15 +101,10 @@ func InitDB() DB {
 		}
 	}
 
-	// TODO: celui qui produit des messages doit fermer le channel
-	// => on va lancer le parseur parseur de manière async (go parser()) => lancer les 2 boucles de lecture (insert et events) est async avec wait group
-
-	dbConnect := DB{
+	return DB{
 		DB:       db,
 		DBStatus: dbstatus,
 	}
-
-	return dbConnect
 }
 
 var importing sync.WaitGroup

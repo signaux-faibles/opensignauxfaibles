@@ -49,7 +49,6 @@ func MessageSocketAddClient() {
 
 // journal dispatch un event vers les clients et l'enregistre dans la bdd
 func messageDispatch() chan SocketMessage {
-	log.Println("starting EventQueue")
 	relaying.Add(1)
 	channel := make(messageChannel)
 	go func() {
