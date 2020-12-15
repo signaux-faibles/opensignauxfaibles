@@ -19,7 +19,9 @@ case ${COMMAND} in
     perl -pi'' -e "s,27017,${MONGODB_PORT}," config.toml
     exit ;;
   run)
-    ./dbmongo $2 $3 $4 $5 $6 $7 $8 || true # TODO: rename to sfdata
+    ./dbmongo "${@:2}" || true # pass all arguments except the first one
+    # TODO: rename dbmongo to sfdata
+    # TODO: ... and call it directly from tests, if possible
     exit ;;
   ?)
     echo "error: ${COMMAND} is not a recognized command" ;;
