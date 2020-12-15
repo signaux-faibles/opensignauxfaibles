@@ -20,17 +20,11 @@ type Dette = {
 }
 
 type CotisationsDettesPassees = {
-  montant_part_ouvriere_past_1: number
-  montant_part_ouvriere_past_2: number
-  montant_part_ouvriere_past_3: number
-  montant_part_ouvriere_past_6: number
-  montant_part_ouvriere_past_12: number
-  montant_part_patronale_past_1: number
-  montant_part_patronale_past_2: number
-  montant_part_patronale_past_3: number
-  montant_part_patronale_past_6: number
-  montant_part_patronale_past_12: number
+  [K in
+    | `montant_part_ouvriere_past_${MonthOffsets}`
+    | `montant_part_patronale_past_${MonthOffsets}`]: number
 }
+type MonthOffsets = 1 | 2 | 3 | 6 | 12
 
 export type SortieCotisationsDettes = {
   interessante_urssaf: boolean // true: si l'entreprise n'a pas eu de débit (dette) sur les 6 derniers mois
@@ -193,7 +187,8 @@ export function cotisationsdettes(
     val = Object.assign(val, montant_dette)
     sortieCotisationsDettes[time] = val
 
-    const futureTimestamps = [1, 2, 3, 6, 12] // Penser à mettre à jour le type CotisationsDettesPassees pour tout changement
+    const monthOffsets: MonthOffsets[] = [1, 2, 3, 6, 12]
+    const futureTimestamps = monthOffsets
       .map((offset) => ({
         offset,
         timestamp: f.dateAddMonth(new Date(time), offset).getTime(),
@@ -204,8 +199,8 @@ export function cotisationsdettes(
       sortieCotisationsDettes[timestamp] = {
         ...(sortieCotisationsDettes[timestamp] ??
           ({} as SortieCotisationsDettes)),
-        ["montant_part_ouvriere_past_" + offset]: val.montant_part_ouvriere,
-        ["montant_part_patronale_past_" + offset]: val.montant_part_patronale,
+        [`montant_part_ouvriere_past_${offset}`]: val.montant_part_ouvriere,
+        [`montant_part_patronale_past_${offset}`]: val.montant_part_patronale,
       }
     })
 

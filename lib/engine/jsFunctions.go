@@ -1260,7 +1260,8 @@ function cotisationsdettes(vCotisation, vDebit, periodes, finPériode // corresp
         });
         val = Object.assign(val, montant_dette);
         sortieCotisationsDettes[time] = val;
-        const futureTimestamps = [1, 2, 3, 6, 12] // Penser à mettre à jour le type CotisationsDettesPassees pour tout changement
+        const monthOffsets = [1, 2, 3, 6, 12];
+        const futureTimestamps = monthOffsets
             .map((offset) => ({
             offset,
             timestamp: f.dateAddMonth(new Date(time), offset).getTime(),
@@ -1268,7 +1269,7 @@ function cotisationsdettes(vCotisation, vDebit, periodes, finPériode // corresp
             .filter(({ timestamp }) => periodes.includes(timestamp));
         futureTimestamps.forEach(({ offset, timestamp }) => {
             var _a;
-            sortieCotisationsDettes[timestamp] = Object.assign(Object.assign({}, ((_a = sortieCotisationsDettes[timestamp]) !== null && _a !== void 0 ? _a : {})), { ["montant_part_ouvriere_past_" + offset]: val.montant_part_ouvriere, ["montant_part_patronale_past_" + offset]: val.montant_part_patronale });
+            sortieCotisationsDettes[timestamp] = Object.assign(Object.assign({}, ((_a = sortieCotisationsDettes[timestamp]) !== null && _a !== void 0 ? _a : {})), { [` + "`" + `montant_part_ouvriere_past_${offset}` + "`" + `]: val.montant_part_ouvriere, [` + "`" + `montant_part_patronale_past_${offset}` + "`" + `]: val.montant_part_patronale });
         });
         if (val.montant_part_ouvriere + val.montant_part_patronale > 0) {
             const futureTimestamps = [0, 1, 2, 3, 4, 5]

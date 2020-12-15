@@ -7,14 +7,9 @@ declare const offset_effectif: number
 type CléSortieEffectif = "effectif_ent" | "effectif" // effectif entreprise ou établissement
 type CléSortieEffectifReporté = "effectif_ent_reporte" | "effectif_reporte"
 type CléSortieEffectifPassé =
-  | "effectif_past_6"
-  | "effectif_past_12"
-  | "effectif_past_18"
-  | "effectif_past_24"
-  | "effectif_ent_past_6"
-  | "effectif_ent_past_12"
-  | "effectif_ent_past_18"
-  | "effectif_ent_past_24"
+  | `effectif_past_${MonthOffsets}`
+  | `effectif_ent_past_${MonthOffsets}`
+type MonthOffsets = 6 | 12 | 18 | 24
 
 type ValeurEffectif = number
 

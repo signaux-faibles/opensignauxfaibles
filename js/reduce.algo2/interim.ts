@@ -7,11 +7,10 @@ type Input = {
 
 type SortieInterim = {
   interim_proportion: number
-  interim_ratio_past_6: number
-  interim_ratio_past_12: number
-  interim_ratio_past_18: number
-  interim_ratio_past_24: number
+} & {
+  [K in `interim_ratio_past_${MonthOffsets}`]: number
 }
+type MonthOffsets = 6 | 12 | 18 | 24
 
 export function interim(
   interim: ParHash<EntréeInterim>,
