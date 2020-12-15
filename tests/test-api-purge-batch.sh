@@ -13,14 +13,14 @@ mkdir -p "${TMP_DIR}"
 
 # Clean up on exit
 function teardown {
-    tests/helpers/dbmongo-server.sh stop || true # keep tearing down, even if "No matching processes belonging to you were found"
+    tests/helpers/sfdata-wrapper.sh stop || true # keep tearing down, even if "No matching processes belonging to you were found"
     tests/helpers/mongodb-container.sh stop
 }
 trap teardown EXIT
 
 PORT="27016" tests/helpers/mongodb-container.sh start
 
-MONGODB_PORT="27016" tests/helpers/dbmongo-server.sh setup
+MONGODB_PORT="27016" tests/helpers/sfdata-wrapper.sh setup
 
 echo ""
 echo "📝 Inserting test data..."
@@ -32,7 +32,7 @@ CONTENT
 
 echo ""
 echo "💎 Test: purge batch 1901 from RawData..."
-echo "- POST /api/data/batch/purge 👉 $(tests/helpers/dbmongo-server.sh run purge --since-batch=1901 --i-understand-what-im-doing)"
+echo "- POST /api/data/batch/purge 👉 $(tests/helpers/sfdata-wrapper.sh run purge --since-batch=1901 --i-understand-what-im-doing)"
 
 # Display JS errors logged by MongoDB, if any
 tests/helpers/mongodb-container.sh exceptions || true

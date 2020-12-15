@@ -20,14 +20,14 @@ mkdir -p "${TMP_DIR}"
 # Clean up on exit
 function teardown {
     echo -e "${COLOR_DEFAULT}"
-    tests/helpers/dbmongo-server.sh stop || true # keep tearing down, even if "No matching processes belonging to you were found"
+    tests/helpers/sfdata-wrapper.sh stop || true # keep tearing down, even if "No matching processes belonging to you were found"
     tests/helpers/mongodb-container.sh stop
 }
 trap teardown EXIT
 
 PORT="27016" tests/helpers/mongodb-container.sh start
 
-MONGODB_PORT="27016" tests/helpers/dbmongo-server.sh setup
+MONGODB_PORT="27016" tests/helpers/sfdata-wrapper.sh setup
 
 echo ""
 echo "📝 Inserting test data..."
@@ -123,9 +123,9 @@ tests/helpers/mongodb-container.sh run > /dev/null << CONTENTS
 CONTENTS
 
 echo ""
-echo "💎 Computing the Public collection thru dbmongo API..."
-echo "- POST /api/data/compact 👉 $(tests/helpers/dbmongo-server.sh run compact --since-batch=2002_1)"
-echo "- POST /api/data/public 👉 $(tests/helpers/dbmongo-server.sh run public --until-batch=2002_1 --key=.........)" # TODO: we specify a placeholder value as key, so that PublicOne() is run instead of Public(), so the data is generated for etablissements that don't have effectif values, and therefore are outside of the "algo2" scope.
+echo "💎 Computing the Public collection..."
+echo "- POST /api/data/compact 👉 $(tests/helpers/sfdata-wrapper.sh run compact --since-batch=2002_1)"
+echo "- POST /api/data/public 👉 $(tests/helpers/sfdata-wrapper.sh run public --until-batch=2002_1 --key=.........)" # TODO: we specify a placeholder value as key, so that PublicOne() is run instead of Public(), so the data is generated for etablissements that don't have effectif values, and therefore are outside of the "algo2" scope.
 
 echo ""
 echo "🚚 Asking API to export enterprise data..."
@@ -144,15 +144,15 @@ function stopIfFailed {
 }
 
 # Parameter validation
-RESULT=$(tests/helpers/dbmongo-server.sh run etablissements --key="invalid" | (grep "key doit être un numéro SIREN" || echo -e "${COLOR_YELLOW}failed${COLOR_DEFAULT}"))
+RESULT=$(tests/helpers/sfdata-wrapper.sh run etablissements --key="invalid" | (grep "key doit être un numéro SIREN" || echo -e "${COLOR_YELLOW}failed${COLOR_DEFAULT}"))
 echo "- GET /api/data/etablissements with invalid key 👉 ${RESULT}"
 stopIfFailed "${RESULT}"
-RESULT=$(tests/helpers/dbmongo-server.sh run entreprises --key="invalid" | (grep "key doit être un numéro SIREN" || echo -e "${COLOR_YELLOW}failed${COLOR_DEFAULT}"))
+RESULT=$(tests/helpers/sfdata-wrapper.sh run entreprises --key="invalid" | (grep "key doit être un numéro SIREN" || echo -e "${COLOR_YELLOW}failed${COLOR_DEFAULT}"))
 echo "- GET /api/data/entreprises with invalid key 👉 ${RESULT}"
 stopIfFailed "${RESULT}"
 
 # GET /api/data/etablissements with key=212345678 should return just one match
-RESULTS=$(tests/helpers/dbmongo-server.sh run etablissements --key="212345678")
+RESULTS=$(tests/helpers/sfdata-wrapper.sh run etablissements --key="212345678")
 MATCH=$(echo "${RESULTS}" | grep --quiet "etablissement_21234567891011" && echo "found etablissement_21234567891011" || echo -e "${COLOR_YELLOW}failed${COLOR_DEFAULT}")
 COUNT=$(echo "${RESULTS}" | wc -l)
 echo "- GET /api/data/etablissements with key=212345678 👉 ${MATCH}, ${COUNT} result(s)"
@@ -163,7 +163,7 @@ then
 fi
 
 # GET /api/data/entreprises with key=212345678 should return just one match
-RESULTS=$(tests/helpers/dbmongo-server.sh run entreprises --key="212345678")
+RESULTS=$(tests/helpers/sfdata-wrapper.sh run entreprises --key="212345678")
 MATCH=$(echo "${RESULTS}" | grep --quiet "entreprise_212345678" && echo "found entreprise_212345678" || echo -e "${COLOR_YELLOW}failed${COLOR_DEFAULT}")
 COUNT=$(echo "${RESULTS}" | wc -l)
 echo "- GET /api/data/entreprises with key=212345678 👉 ${MATCH}, ${COUNT} result(s)"
@@ -174,11 +174,11 @@ then
 fi
 
 # Export enterprise data
-RESULTS=$(tests/helpers/dbmongo-server.sh run etablissements)
+RESULTS=$(tests/helpers/sfdata-wrapper.sh run etablissements)
 ETABLISSEMENTS_FILE="${TMP_DIR}/etablissements.json"
 echo "${RESULTS}" > "${ETABLISSEMENTS_FILE}"
 echo "- GET /api/data/etablissements 👉 ${ETABLISSEMENTS_FILE}"
-RESULTS=$(tests/helpers/dbmongo-server.sh run entreprises)
+RESULTS=$(tests/helpers/sfdata-wrapper.sh run entreprises)
 ENTREPRISES_FILE="${TMP_DIR}/entreprises.json"
 echo "${RESULTS}" > "${ENTREPRISES_FILE}"
 echo "- GET /api/data/entreprises 👉 ${ENTREPRISES_FILE}"

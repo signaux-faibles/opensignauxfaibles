@@ -18,14 +18,14 @@ mkdir -p "${TMP_DIR}"
 
 # Clean up on exit
 function teardown {
-    tests/helpers/dbmongo-server.sh stop || true # keep tearing down, even if "No matching processes belonging to you were found"
+    tests/helpers/sfdata-wrapper.sh stop || true # keep tearing down, even if "No matching processes belonging to you were found"
     tests/helpers/mongodb-container.sh stop
 }
 trap teardown EXIT
 
 PORT="27016" tests/helpers/mongodb-container.sh start
 
-MONGODB_PORT="27016" tests/helpers/dbmongo-server.sh setup
+MONGODB_PORT="27016" tests/helpers/sfdata-wrapper.sh setup
 
 echo ""
 echo "📝 Inserting test data..."
@@ -35,8 +35,8 @@ tests/helpers/mongodb-container.sh run << CONTENT
 CONTENT
 
 echo ""
-echo "💎 Testing the dbmongo API..."
-VALIDATION_REPORT=$(tests/helpers/dbmongo-server.sh run validate --collection=RawData)
+echo "💎 Testing sfdata..."
+VALIDATION_REPORT=$(tests/helpers/sfdata-wrapper.sh run validate --collection=RawData)
 echo "- POST /api/data/validate"
 
 (tests/helpers/mongodb-container.sh run \

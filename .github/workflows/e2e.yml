@@ -35,14 +35,14 @@ jobs:
 
       - name: Build + remove source code
         run: |
-          go build -o "dbmongo" -v .
+          go build -o "sfdata" -v .
           ls -lR
           # delete all files, except the binary, config, NAF and other data files used by tests
           find . \
-            ! -name 'dbmongo' \
+            ! -name 'sfdata' \
             ! -name '*.toml' \
             ! -name 'test-*.sh' \
-            ! -name 'dbmongo-server.sh' \
+            ! -name 'sfdata-wrapper.sh' \
             ! -name 'diff-or-update-golden-master.sh' \
             ! -name 'mongodb-container.sh' \
             ! -name 'populate-from-objects.sh' \

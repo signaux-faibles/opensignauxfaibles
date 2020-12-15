@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# This helper can configure, start and stop the "dbmongo" API server.
+# This helper can configure, start and stop the "sfdata" command.
 
 COMMAND=$1
 
@@ -9,7 +9,7 @@ exec 2> >(sed 's/^/[API] /' >&2)
 
 case ${COMMAND} in
   stop)
-    killall dbmongo >/dev/null
+    killall sfdata >/dev/null
     [ -f config.backup.toml ] && mv config.backup.toml config.toml
     exit ;;
   setup)
@@ -19,9 +19,8 @@ case ${COMMAND} in
     perl -pi'' -e "s,27017,${MONGODB_PORT}," config.toml
     exit ;;
   run)
-    ./dbmongo "${@:2}" || true # pass all arguments except the first one
-    # TODO: rename dbmongo to sfdata
-    # TODO: ... and call it directly from tests, if possible
+    ./sfdata "${@:2}" || true # pass all arguments except the first one
+    # TODO: call sfdata directly from tests, if possible
     exit ;;
   ?)
     echo "error: ${COMMAND} is not a recognized command" ;;
