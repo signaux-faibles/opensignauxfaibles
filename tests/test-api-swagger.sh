@@ -3,6 +3,9 @@
 # Test de validité des définitions API / Swagger.
 # Ce script doit être exécuté depuis la racine du projet. Ex: par test-all.sh.
 
+# TODO: remplacer l'usage de Swagger par une meilleure documentation d'usage de
+# la commande sfdata => supprimer les références à "swagger" et "swag".
+
 set -e # will stop the script if any command fails with a non-zero exit code
 
 # Convert swagger.yaml to swagger.json
