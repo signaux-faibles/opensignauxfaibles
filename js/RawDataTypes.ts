@@ -203,6 +203,11 @@ export type EntréeDiane = {
   concours_bancaire_courant?: number | null
   valeur_ajoutee?: number | null
   dette_fiscale_et_sociale?: number | null
+  marquee: unknown
+  nom_entreprise: unknown
+  numero_siren: unknown
+  statut_juridique: unknown
+  procedure_collective: unknown
 }
 
 export type EntréeEllisphere = {

@@ -30,13 +30,7 @@ export function entr_diane(
 
     for (const periode of series) {
       const rest = f.omit(
-        entréeDiane as EntréeDiane & {
-          marquee: unknown
-          nom_entreprise: unknown
-          numero_siren: unknown
-          statut_juridique: unknown
-          procedure_collective: unknown
-        },
+        entréeDiane,
         "marquee",
         "nom_entreprise",
         "numero_siren",
