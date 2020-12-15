@@ -25,7 +25,7 @@ func Save(batch *base.AdminBatch) error {
 }
 
 // ImportBatch lance tous les parsers sur le batch fourni
-func ImportBatch(batch base.AdminBatch, parsers []marshal.Parser, skipFilter bool) error {
+func ImportBatch(batch base.AdminBatch, parsers []marshal.Parser, skipFilter bool, data chan *Value) error {
 	var cache = marshal.NewCache()
 	filter, err := marshal.GetSirenFilter(cache, &batch)
 	if err != nil {
@@ -49,11 +49,10 @@ func ImportBatch(batch base.AdminBatch, parsers []marshal.Parser, skipFilter boo
 							tuple.Type(): map[string]marshal.Tuple{
 								hash: tuple,
 							}}}}}
-			Db.ChanData <- &value
+			data <- &value
 		}
 	}
 
-	Db.ChanData <- &Value{}
 	return nil
 }
 
@@ -89,6 +88,5 @@ func CheckBatch(batch base.AdminBatch, parsers []marshal.Parser) (reports []stri
 		reports = append(reports, lastReport)
 	}
 
-	Db.ChanData <- &Value{}
 	return reports, nil
 }
