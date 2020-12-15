@@ -53,6 +53,7 @@ func purgeBatchHandler(params purgeBatchParams) error {
 			return errors.New("(✖╭╮✖) le traitement n'a pas abouti: " + err.Error())
 		}
 	}
+	printJSON("ok")
 	return nil
 }
 
@@ -79,7 +80,12 @@ func importBatchHandler(params importBatchParams) error {
 
 	dataChan := engine.InsertIntoImportedData(engine.Db.DB)
 	err = engine.ImportBatch(batch, parsers, params.NoFilter, dataChan)
-	return err
+	if err != nil {
+		return err
+	}
+
+	printJSON("ok")
+	return nil
 }
 
 type checkBatchParams struct {
