@@ -10,20 +10,10 @@ import (
 	"github.com/spf13/viper"
 )
 
-// Status statut de la base de données
-type Status struct {
-	ID     base.AdminID  `json:"id" bson:"_id"`
-	Status *string       `json:"status" bson:"status"`
-	Epoch  int           `json:"epoch" bson:"epoch"`
-	DB     *mgo.Database `json:"-" bson:"-"`
-}
-
 // DB type centralisant les accès à une base de données
 type DB struct {
 	DB       *mgo.Database
 	DBStatus *mgo.Database
-	Status   Status
-	// ChanData chan *Value
 }
 
 func loadConfig() {
@@ -105,15 +95,12 @@ func InitDB() DB {
 		}
 
 		err := db.C("Admin").Insert(firstBatch)
-
 		if err != nil {
 			panic("Impossible de créer le premier batch: " + err.Error())
 		}
 	}
 
-	//chanData := InsertIntoImportedData(db) // idée de christophe: passer chanData à insert => et lui faire consommer depuis ce channel
-	// appeller insert() directement depuis main()
-	// celui qui produit des messages doit fermer le channel
+	// TODO: celui qui produit des messages doit fermer le channel
 	// => on va lancer le parseur parseur de manière async (go parser()) => lancer les 2 boucles de lecture (insert et events) est async avec wait group
 
 	dbConnect := DB{
@@ -124,6 +111,8 @@ func InitDB() DB {
 	return dbConnect
 }
 
+// InsertIntoImportedData retourne un canal dont les objets seront ajoutés à
+// la collection ImportedData, par paquets de 100.
 func InsertIntoImportedData(db *mgo.Database) chan *Value {
 	source := make(chan *Value, 10)
 
