@@ -94,7 +94,7 @@ var cmds = map[string]commandDefinition{
 		return reduceHandler(params) // [x] écrit dans Journal
 	},
 	"public": func(args []string) error {
-		params := publicParams{} // TODO: also populate other parameters
+		params := publicParams{}
 		flag.StringVar(&params.BatchKey, "until-batch", "", "Batch identifier")
 		flag.StringVar(&params.Key, "key", "", "SIRET or SIREN to focus on")
 		flag.CommandLine.Parse(args)
