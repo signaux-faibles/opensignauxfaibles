@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"os"
 	"strings"
-	"time"
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/engine"
 
@@ -29,12 +28,11 @@ func connectDb() {
 // main Fonction Principale
 func main() {
 	err := runCommand(os.Args[1:])
-	time.Sleep(2 * time.Second) // TODO: trouver un meilleur moyen d'assurer que les données ont fini d'être enregistrées en db
-
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+	engine.FlushEventQueue()
 }
 
 var cmds = map[string]commandDefinition{

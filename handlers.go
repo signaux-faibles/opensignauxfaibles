@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"time"
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/apconso"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/apdemande"
@@ -78,19 +77,9 @@ func importBatchHandler(params importBatchParams) error {
 		return err
 	}
 
-	data := engine.InsertIntoImportedData(engine.Db.DB)
-	// envoie un struct vide pour purger les channels au cas où il reste les objets non insérés
-	go func() {
-		for range time.Tick(1 * time.Second) {
-			data <- &engine.Value{} // TODO: à remplacer par un purge.
-		}
-	}()
-
-	err = engine.ImportBatch(batch, parsers, params.NoFilter, data)
-	if err != nil {
-		return err
-	}
-	return nil
+	dataChan := engine.InsertIntoImportedData(engine.Db.DB)
+	err = engine.ImportBatch(batch, parsers, params.NoFilter, dataChan)
+	return err
 }
 
 type checkBatchParams struct {

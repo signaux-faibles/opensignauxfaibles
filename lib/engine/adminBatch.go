@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"sync"
 	"time"
 
 	"github.com/globalsign/mgo/bson"
@@ -35,9 +36,16 @@ func ImportBatch(batch base.AdminBatch, parsers []marshal.Parser, skipFilter boo
 		return errors.New("Veuillez inclure un filtre")
 	}
 	startDate := time.Now()
+	var wg sync.WaitGroup
 	for _, parser := range parsers {
+		wg.Add(1)
 		outputChannel, eventChannel := marshal.ParseFilesFromBatch(cache, &batch, parser) // appelle la fonction ParseFile() pour chaque type de fichier
-		go RelayEvents(eventChannel, "ImportBatch", startDate)
+		// Insert events (parsing logs) into the "Journal" collection
+		go func() {
+			defer wg.Done()
+			RelayEvents(eventChannel, "ImportBatch", startDate)
+		}()
+		// Insert tuples (data) into the "ImportedData" collection
 		for tuple := range outputChannel {
 			hash := fmt.Sprintf("%x", GetMD5(tuple))
 			value := Value{
@@ -52,7 +60,8 @@ func ImportBatch(batch base.AdminBatch, parsers []marshal.Parser, skipFilter boo
 			data <- &value
 		}
 	}
-
+	wg.Wait() // wait for all events and tuples to be inserted
+	FlushImportedData(data)
 	return nil
 }
 

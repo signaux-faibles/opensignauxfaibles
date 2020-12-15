@@ -2,6 +2,7 @@ package engine
 
 import (
 	"log"
+	"sync"
 	"time"
 
 	"github.com/globalsign/mgo"
@@ -111,12 +112,16 @@ func InitDB() DB {
 	return dbConnect
 }
 
+var importing sync.WaitGroup
+
 // InsertIntoImportedData retourne un canal dont les objets seront ajoutés à
 // la collection ImportedData, par paquets de 100.
 func InsertIntoImportedData(db *mgo.Database) chan *Value {
+	importing.Add(1)
 	source := make(chan *Value, 10)
 
 	go func(chan *Value) {
+		defer importing.Done()
 		buffer := make(map[string]*Value)
 		objects := make([]interface{}, 0)
 		i := 0
@@ -147,4 +152,11 @@ func InsertIntoImportedData(db *mgo.Database) chan *Value {
 	}(source)
 
 	return source
+}
+
+// FlushImportedData finalise l'insertion des données dans ImportedData.
+func FlushImportedData(channel chan *Value) {
+	channel <- &Value{}
+	close(channel)
+	importing.Wait()
 }
