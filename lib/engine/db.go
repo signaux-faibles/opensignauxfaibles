@@ -23,12 +23,8 @@ func loadConfig() {
 	viper.AddConfigPath("/etc/opensignauxfaibles")
 	viper.AddConfigPath("$HOME/.opensignauxfaibles")
 	viper.AddConfigPath(".")
-	viper.SetDefault("APP_BIND", ":3000")
 	viper.SetDefault("APP_DATA", "$HOME/data-raw/")
-	viper.SetDefault("DB_HOST", "127.0.0.1")
-	viper.SetDefault("DB_PORT", "27017")
 	viper.SetDefault("DB", "opensignauxfaibles")
-	viper.SetDefault("JWT_SECRET", "Secret à changer")
 	err := viper.ReadInConfig()
 	if err != nil {
 		panic("Erreur à la lecture de la configuration")

@@ -1,11 +1,11 @@
 # Paramètrage de l'import
-APP_DATA = "/foo/bar/data-raw"
-NAF_L1 =   "/foo/bar/data-raw/naf/naf1.csv"
-NAF_L2 =   "/foo/bar/data-raw/naf/naf2.csv"
-NAF_L3 =   "/foo/bar/data-raw/naf/naf3.csv"
-NAF_L4 =   "/foo/bar/data-raw/naf/naf4.csv"
-NAF_l5 =   "/foo/bar/data-raw/naf/naf5.csv"
-NAF_5to1 = "/foo/bar/data-raw/naf/5to1.csv"
+APP_DATA = "sample-data-raw"
+NAF_L1 =   "sample-data-raw/naf/naf1.csv"
+NAF_L2 =   "sample-data-raw/naf/naf2.csv"
+NAF_L3 =   "sample-data-raw/naf/naf3.csv"
+NAF_L4 =   "sample-data-raw/naf/naf4.csv"
+NAF_l5 =   "sample-data-raw/naf/naf5.csv"
+NAF_5to1 = "sample-data-raw/naf/5to1.csv"
 
 # Connexion à la base de données
 DB_DIAL = "mongodb://localhost:27017"
