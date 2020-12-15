@@ -15,7 +15,3 @@ FIRST_BATCH = "1802"
 # Parallélisme du MapReduce
 MRthreads = 2
 chunkByteSize = 1000000000
-
-# Traitement d'export public
-exportPath = "" # répertoire de travail
-# exportPath = "/foo/bar/exportPath"
