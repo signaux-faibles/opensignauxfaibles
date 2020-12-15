@@ -111,19 +111,21 @@ func InitDB() DB {
 		}
 	}
 
-	chanData := insert(db)
+	chanData := insert(db) // idée de christophe: passer chanData à insert => et lui faire consommer depuis ce channel
+	// appeller insert() directement depuis main()
+	// celui qui produit des messages doit fermer le channel
+	// => on va lancer le parseur parseur de manière async (go parser()) => lancer les 2 boucles de lecture (insert et events) est async avec wait group
 
 	// envoie un struct vide pour purger les channels au cas où il reste les objets non insérés
 	go func() {
 		for range time.Tick(1 * time.Second) {
-			chanData <- &Value{}
+			chanData <- &Value{} // à remplacer par un purge.
 		}
 	}()
 
 	dbConnect := DB{
 		DB:       db,
 		DBStatus: dbstatus,
-		ChanData: chanData,
 	}
 
 	return dbConnect
