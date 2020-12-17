@@ -14,14 +14,12 @@ mkdir -p "${TMP_DIR}"
 
 # Clean up on exit
 function teardown {
-    tests/helpers/sfdata-wrapper.sh stop || true # keep tearing down, even if "No matching processes belonging to you were found"
     tests/helpers/mongodb-container.sh stop
 }
 trap teardown EXIT
 
 PORT="27016" tests/helpers/mongodb-container.sh start
-
-MONGODB_PORT="27016" tests/helpers/sfdata-wrapper.sh setup
+export MONGODB_PORT="27016" # for tests/helpers/sfdata-wrapper.sh
 
 echo ""
 echo "📝 Inserting test data..."
@@ -61,7 +59,7 @@ CONTENT
 
 echo ""
 echo "💎 Test: count and prune entities from RawData..."
-RESULT=$(tests/helpers/sfdata-wrapper.sh run pruneEntities --batch=2010)
+RESULT=$(tests/helpers/sfdata-wrapper.sh pruneEntities --batch=2010)
 echo "- sfdata pruneEntities 👉 ${RESULT}"
 
 # Print test results from stdin. Fails on any "false" result.
@@ -88,7 +86,7 @@ function reportFailedTests {
   }).forEach(([ testName, testRes ]) => print(testName, ':', testRes));
 CONTENT
 
-echo "- sfdata pruneEntities delete=true 👉 $(tests/helpers/sfdata-wrapper.sh run pruneEntities --batch=2010 --delete)"
+echo "- sfdata pruneEntities delete=true 👉 $(tests/helpers/sfdata-wrapper.sh pruneEntities --batch=2010 --delete)"
 
 (tests/helpers/mongodb-container.sh run \
   | reportFailedTests \

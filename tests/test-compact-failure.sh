@@ -10,14 +10,12 @@ set -e # will stop the script if any command fails with a non-zero exit code
 
 # Clean up on exit
 function teardown {
-    tests/helpers/sfdata-wrapper.sh stop || true # keep tearing down, even if "No matching processes belonging to you were found"
     tests/helpers/mongodb-container.sh stop
 }
 trap teardown EXIT
 
 PORT="27016" tests/helpers/mongodb-container.sh start
-
-MONGODB_PORT="27016" tests/helpers/sfdata-wrapper.sh setup
+export MONGODB_PORT="27016" # for tests/helpers/sfdata-wrapper.sh
 
 echo ""
 echo "📝 Inserting test data..."
@@ -59,16 +57,16 @@ CONTENTS
 echo ""
 echo "💎 Compacting RawData..."
 
-VALIDATION_REPORT=$(tests/helpers/sfdata-wrapper.sh run validate --collection=RawData)
+VALIDATION_REPORT=$(tests/helpers/sfdata-wrapper.sh validate --collection=RawData)
 echo "- sfdata validate RawData"
 diff <(echo '') <(echo "${VALIDATION_REPORT}") # no validation errors detected in RawData
 
-VALIDATION_REPORT=$(tests/helpers/sfdata-wrapper.sh run validate --collection=ImportedData)
+VALIDATION_REPORT=$(tests/helpers/sfdata-wrapper.sh validate --collection=ImportedData)
 echo "- sfdata validate ImportedData"
 diff <(echo '') <(echo "${VALIDATION_REPORT}") # no validation errors detected in ImportedData
 
 echo "- sfdata compact should not fail"
-RESULT=$(tests/helpers/sfdata-wrapper.sh run compact --since-batch=2011_0_urssaf)
+RESULT=$(tests/helpers/sfdata-wrapper.sh compact --since-batch=2011_0_urssaf)
 echo "${RESULT}" | grep --quiet "ok"
 
 echo "✅ OK"

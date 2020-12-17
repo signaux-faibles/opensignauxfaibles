@@ -23,14 +23,12 @@ mkdir -p "${TMP_DIR}"
 
 # Clean up on exit
 function teardown {
-    tests/helpers/sfdata-wrapper.sh stop || true # keep tearing down, even if "No matching processes belonging to you were found"
     tests/helpers/mongodb-container.sh stop
 }
 trap teardown EXIT
 
 PORT="27016" tests/helpers/mongodb-container.sh start
-
-MONGODB_PORT="27016" tests/helpers/sfdata-wrapper.sh setup
+export MONGODB_PORT="27016" # for tests/helpers/sfdata-wrapper.sh
 
 echo ""
 echo "📝 Inserting test data..."
@@ -56,7 +54,7 @@ CONTENTS
 
 echo ""
 echo "💎 Computing the Features collection..."
-echo "- sfdata reduce 👉 $(tests/helpers/sfdata-wrapper.sh run reduce --until-batch=2002_1)"
+echo "- sfdata reduce 👉 $(tests/helpers/sfdata-wrapper.sh reduce --until-batch=2002_1)"
 
 (tests/helpers/mongodb-container.sh run \
   | tests/helpers/remove-random_order.sh \
