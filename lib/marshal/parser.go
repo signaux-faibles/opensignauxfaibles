@@ -70,10 +70,7 @@ func ParseFilesFromBatch(cache Cache, batch *base.AdminBatch, parser Parser) (ch
 				tracker.AddFatalError(err)
 			}
 			runParserWithSirenFilter(parser, &filter, filePath, &tracker, outputChannel)
-			event := CreateEvent()
-			event.Code = Code(fileType)
-			event.Comment = tracker.Report(batch.ID.Key, path) // abstract
-			eventChannel <- event
+			eventChannel <- CreateReportEvent(fileType, tracker.Report(batch.ID.Key, path)) // abstract
 		}
 		close(outputChannel)
 		close(eventChannel)

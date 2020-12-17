@@ -26,13 +26,21 @@ type Event struct {
 }
 
 // CreateEvent initialise un évènement avec les valeurs par défaut.
-func CreateEvent() (event Event) {
+func CreateEvent() Event {
 	return Event{
 		ID:       bson.NewObjectId(),
 		Date:     time.Now(),
 		Priority: Priority("info"),
 		Code:     Code("unknown"),
 	}
+}
+
+// CreateReportEvent initialise un évènement contenant un rapport de parsing.
+func CreateReportEvent(fileType string, report interface{}) Event {
+	event := CreateEvent()
+	event.Code = Code(fileType)
+	event.Comment = report
+	return event
 }
 
 // ParseReport permet d'accéder aux propriétés d'un rapport de parsing.
