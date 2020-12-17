@@ -34,7 +34,6 @@ func main() {
 }
 
 var cmds = map[string]*commandDefinition{
-	// TODO: convert api.GET("/data/purgeNotCompacted", purgeNotCompactedHandler)
 	"purge": {"TODO - summary", func(args []string) error {
 		var params purgeBatchParams // TODO: also populate other parameters
 		flag.StringVar(&params.FromBatchKey, "since-batch", "", "Batch identifier")
@@ -99,6 +98,9 @@ var cmds = map[string]*commandDefinition{
 			connectDb()
 			return compactHandler(params) // [x] écrit dans Journal
 		}},
+	// "purgeNotCompacted": {"TODO - summary", func(args []string) error {
+	// 	return purgeNotCompactedHandler() // TODO: écrire rapport dans Journal ?
+	// }},
 	"reduce": {"TODO - summary", func(args []string) error {
 		params := reduceParams{} // TODO: also populate other parameters
 		flag.StringVar(&params.BatchKey, "until-batch", "", "Batch identifier")
