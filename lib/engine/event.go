@@ -1,3 +1,6 @@
+// Ce fichier est responsable de collecter les messages et de les ajouter
+// dans la collection Journal.
+
 package engine
 
 import (
@@ -10,14 +13,13 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/lib/marshal"
 )
 
-var relaying sync.WaitGroup
-
 type messageChannel chan marshal.Event
 
-var messageClientChannels = []messageChannel{}
+var mainMessageChannel = messageDispatch() // canal dans lequel on va émettre tous les messages
 
-// MainMessageChannel permet d'envoyer un SocketMessage
-var MainMessageChannel = messageDispatch()
+var relaying sync.WaitGroup // permet de savoir quand les messages ont fini d'être transmis
+
+var messageClientChannels = []messageChannel{}
 
 // AddClientChannel enregistre un nouveau client
 var AddClientChannel = make(chan messageChannel)
@@ -29,7 +31,7 @@ func MessageSocketAddClient() {
 	}
 }
 
-// journal dispatch un event vers les clients et l'enregistre dans la bdd
+// Transmet les messages collectés vers les clients et l'enregistre dans la bdd
 func messageDispatch() chan marshal.Event {
 	relaying.Add(1)
 	channel := make(messageChannel)
@@ -49,11 +51,9 @@ func messageDispatch() chan marshal.Event {
 	return channel
 }
 
-// RelayEvents transmet les messages
+// RelayEvents transmet les événements qui surviennent pendant le parsing d'un
+// fichiers de données et retourne le rapport final du parsing de ce fichier.
 func RelayEvents(eventChannel chan marshal.Event, reportType string, startDate time.Time) (lastReport string) {
-	if eventChannel == nil {
-		return
-	}
 	for e := range eventChannel {
 		if reportContainer, ok := e.Comment.(bson.M); ok {
 			if strReport, ok := reportContainer["summary"].(string); ok {
@@ -62,7 +62,7 @@ func RelayEvents(eventChannel chan marshal.Event, reportType string, startDate t
 		}
 		e.ReportType = reportType
 		e.StartDate = startDate
-		MainMessageChannel <- e
+		mainMessageChannel <- e
 	}
 	return lastReport
 }
@@ -72,11 +72,11 @@ func LogOperationEvent(reportType string, startDate time.Time) {
 	event := marshal.CreateEvent()
 	event.StartDate = startDate
 	event.ReportType = reportType
-	MainMessageChannel <- event
+	mainMessageChannel <- event
 }
 
 // FlushEventQueue finalise l'insertion des événements dans Journal.
 func FlushEventQueue() {
-	close(MainMessageChannel)
+	close(mainMessageChannel)
 	relaying.Wait()
 }
