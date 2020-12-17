@@ -34,14 +34,6 @@ func main() {
 }
 
 var cmds = map[string]*commandDefinition{
-	"purge": {"TODO - summary", func(args []string) error {
-		var params purgeBatchParams // TODO: also populate other parameters
-		flag.StringVar(&params.FromBatchKey, "since-batch", "", "Batch identifier")
-		flag.BoolVar(&params.IUnderstandWhatImDoing, "i-understand-what-im-doing", false, "Confirm data deletion")
-		flag.CommandLine.Parse(args)
-		connectDb()
-		return purgeBatchHandler(params) // [x] écrit dans Journal
-	}},
 	"check": {"TODO - summary", func(args []string) error {
 		var parsers string
 		params := checkBatchParams{}
@@ -52,6 +44,25 @@ var cmds = map[string]*commandDefinition{
 		connectDb()
 		return checkBatchHandler(params) // [x] écrit dans Journal
 	}},
+	"purge": {
+		"Supprime une partie des données compactées",
+		/**
+		/!\ ce traitement est destructif et irréversible /!\
+		Supprime les données dans les objets de la collection RawData pour les batches suivant le numéro de batch donné.
+		La propriété `debugForKey` permet de traiter une entreprise en fournissant son siren, le résultat n'impacte pas la collection RawData mais est déversé dans purgeBatch_debug à des fins de vérifications.
+		Lorsque `key` n'est pas fourni, le traitement s'exécute sur l'ensemble de la base, et dans ce cas la propriété IUnderstandWhatImDoing doit être fournie à la valeur `true` sans quoi le traitement refusera de se lancer.
+		Répond "ok" dans la sortie standard, si le traitement s'est bien déroulé.
+		/!\ ce traitement est destructif et irréversible /!\
+		*/
+		func(args []string) error {
+			var params purgeBatchParams
+			// TODO: populer "debugForKey" (ex: "012345678901234")
+			flag.StringVar(&params.FromBatchKey, "since-batch", "", "Identifiant du batch à partir duquel supprimer les données (ex: `1802`, pour Février 2018)")
+			flag.BoolVar(&params.IUnderstandWhatImDoing, "i-understand-what-im-doing", false, "Nécessaire pour confirmer la suppression de données")
+			flag.CommandLine.Parse(args)
+			connectDb()
+			return purgeBatchHandler(params) // [x] écrit dans Journal
+		}},
 	"pruneEntities": {"TODO - summary", func(args []string) error {
 		params := pruneEntitiesParams{}
 		flag.StringVar(&params.BatchKey, "batch", "", "Batch identifier")
