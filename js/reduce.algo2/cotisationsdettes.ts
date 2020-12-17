@@ -19,12 +19,12 @@ type Dette = {
   part_patronale: EntréeDebit["part_patronale"]
 }
 
+type MonthOffsets = 1 | 2 | 3 | 6 | 12
 type CotisationsDettesPassees = {
   [K in
     | `montant_part_ouvriere_past_${MonthOffsets}`
     | `montant_part_patronale_past_${MonthOffsets}`]: number
 }
-type MonthOffsets = 1 | 2 | 3 | 6 | 12
 
 export type SortieCotisationsDettes = {
   interessante_urssaf: boolean // true: si l'entreprise n'a pas eu de débit (dette) sur les 6 derniers mois
