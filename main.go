@@ -86,7 +86,7 @@ var cmds = map[string]*commandDefinition{
 			return pruneEntitiesHandler(params) // [x] écrit dans Journal
 		}},
 	"import": {
-		"Importer des fichiers",
+		"Importe des fichiers",
 		/**
 		Effectue l'import de tous les fichiers du batch donné en paramètre.
 		Pour exécuter tous les parsers, il faut ne pas spécifier la propriété parsers ou lui donner la valeur null.
@@ -115,7 +115,7 @@ var cmds = map[string]*commandDefinition{
 			return validateHandler(params) // [x] écrit dans Journal
 		}},
 	"compact": {
-		"Compacter la base de données",
+		"Compacte la base de données",
 		/**
 		Ce traitement permet le compactage de la base de données.
 		Ce compactage a pour effet de réduire tous les objets en clé uniques comportant dans la même arborescence toutes les données en rapport avec ces clés.
