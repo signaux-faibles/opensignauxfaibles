@@ -16,7 +16,7 @@ data-raw/
 output/*
 keys.json
 data-raw
-dbmongo
+sfdata
 **/.vscode
 static/*
 archive/*
@@ -38,7 +38,6 @@ js/node_modules
 js/.nyc_output
 export/mongo_dump
 **/tags
-rsignauxfaibles_*.tar.gz
 script/archive/*
 js/test/test_data_algo2
 .gitsecret/keys/random_seed

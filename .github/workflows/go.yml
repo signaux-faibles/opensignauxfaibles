@@ -21,7 +21,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Build
-        run: go build -o "dbmongo" -v .
+        run: go build -o "sfdata" -v .
 
       - name: Tests
         run: go test ./...

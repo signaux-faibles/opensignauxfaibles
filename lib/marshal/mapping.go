@@ -4,8 +4,8 @@ import (
 	"bufio"
 	"encoding/csv"
 	"errors"
-	"fmt"
 	"io"
+	"log"
 	"os"
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
@@ -80,7 +80,7 @@ func GetCompteSiretMapping(cache Cache, batch *base.AdminBatch, mr mappingReader
 		return nil, errors.New("Wrong format from existing field comptes in cache")
 	}
 
-	fmt.Println("Chargement des comptes urssaf")
+	log.Println("Chargement des comptes urssaf")
 
 	compteSiretMapping := make(Comptes)
 

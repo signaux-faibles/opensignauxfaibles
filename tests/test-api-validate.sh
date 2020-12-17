@@ -18,14 +18,14 @@ mkdir -p "${TMP_DIR}"
 
 # Clean up on exit
 function teardown {
-    tests/helpers/dbmongo-server.sh stop || true # keep tearing down, even if "No matching processes belonging to you were found"
+    tests/helpers/sfdata-wrapper.sh stop || true # keep tearing down, even if "No matching processes belonging to you were found"
     tests/helpers/mongodb-container.sh stop
 }
 trap teardown EXIT
 
 PORT="27016" tests/helpers/mongodb-container.sh start
 
-MONGODB_PORT="27016" tests/helpers/dbmongo-server.sh setup
+MONGODB_PORT="27016" tests/helpers/sfdata-wrapper.sh setup
 
 echo ""
 echo "📝 Inserting test data..."
@@ -35,10 +35,9 @@ tests/helpers/mongodb-container.sh run << CONTENT
 CONTENT
 
 echo ""
-echo "💎 Testing the dbmongo API..."
-tests/helpers/dbmongo-server.sh start
-API_RESULT=$(http --print=b --ignore-stdin :5000/api/data/validate collection=RawData)
-echo "- POST /api/data/validate 👉 ${API_RESULT}"
+echo "💎 Testing sfdata..."
+VALIDATION_REPORT=$(tests/helpers/sfdata-wrapper.sh run validate --collection=RawData)
+echo "- POST /api/data/validate"
 
 (tests/helpers/mongodb-container.sh run \
   > "${OUTPUT_FILE}" \
@@ -55,11 +54,9 @@ printjson({
 print("// Result from /api/data/validate:");
 CONTENT
 
-OUTPUT_GZ_FILE=$(echo "${API_RESULT}" | tr -d '"')
-zcat < "${OUTPUT_GZ_FILE}" >> "${OUTPUT_FILE}"
+echo "${VALIDATION_REPORT}" >> "${OUTPUT_FILE}"
 
 tests/helpers/diff-or-update-golden-master.sh "${FLAGS}" "${GOLDEN_FILE}" "${OUTPUT_FILE}"
 
-rm "${OUTPUT_GZ_FILE}"
 rm -rf "${TMP_DIR}"
 # Now, the "trap" commands will clean up the rest.

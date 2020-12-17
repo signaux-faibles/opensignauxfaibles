@@ -1,12 +1,10 @@
 package engine
 
 import (
-	"compress/gzip"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
-	"os"
 	"sort"
 	"sync"
 	"time"
@@ -176,7 +174,7 @@ func MRroutine(job *mgo.MapReduce, query bson.M, dbTemp string, collOrig string,
 		}
 		time.Sleep(time.Second)
 	}
-	fmt.Println(query)
+	log.Println(query)
 
 	db, _ := mgo.Dial(viper.GetString("DB_DIAL"))
 	db.SetSocketTimeout(720000 * time.Second)
@@ -351,59 +349,43 @@ func (chunks Chunks) ToQueries(query bson.M, field string) []bson.M {
 	return ret
 }
 
-func getItemChannelToGzip(filepath string, wait *sync.WaitGroup) chan interface{} {
+func getItemChannelToStdout(wait *sync.WaitGroup) chan interface{} {
 	c := make(chan interface{})
 	wait.Add(1)
 	go func() {
 		defer wait.Done()
-
-		file, err := os.Create(filepath)
-		if err != nil {
-			log.Printf("Unable to open to file %s, reason:\n%s", filepath, err.Error())
-			// dépletion du channel pour permettre une fermeture propre de l'itérateur
-			for range c {
-				continue
-			}
-			return
-		}
-
-		w := gzip.NewWriter(file)
-		j := json.NewEncoder(w)
-		i := 0
 		for item := range c {
-			j.Encode(item)
-			i++
-			fmt.Printf("\033[2K\r%s: %d objects written", filepath, i)
+			printJSON(item)
 		}
-		w.Close()
-		file.Sync()
-		file.Close()
-
 	}()
-
 	return c
 }
 
+func printJSON(object interface{}) {
+	res, _ := json.Marshal(object)
+	fmt.Println(string(res))
+}
+
 // ExportEtablissements exporte les établissements dans un fichier.
-func ExportEtablissements(key, filepath string) error {
+func ExportEtablissements(key string) error {
 	pipeline := GetEtablissementWithScoresPipeline(key)
 	iter := Db.DB.C("Public").Pipe(pipeline).AllowDiskUse().Iter()
-	return storeMongoPipelineResults(filepath, iter)
+	return storeMongoPipelineResults(iter)
 }
 
 // ExportEntreprises exporte les entreprises dans un fichier.
-func ExportEntreprises(key, filepath string) error {
+func ExportEntreprises(key string) error {
 	pipeline := GetEntreprisePipeline(key)
 	iter := Db.DB.C("Public").Pipe(pipeline).AllowDiskUse().Iter()
-	return storeMongoPipelineResults(filepath, iter)
+	return storeMongoPipelineResults(iter)
 }
 
-// ValidateDataEntries retourne dans un fichier les entrées de données invalides détectées dans la collection spécifiée.
-func ValidateDataEntries(filepath string, jsonSchema map[string]bson.M, collection string) error {
+// ValidateDataEntries affiche les entrées de données invalides détectées dans la collection spécifiée.
+func ValidateDataEntries(jsonSchema map[string]bson.M, collection string) error {
 	startDate := time.Now()
 
 	w := sync.WaitGroup{}
-	gzipWriter := getItemChannelToGzip(filepath, &w)
+	gzipWriter := getItemChannelToStdout(&w)
 
 	// lister les entrées de données non définies (type: undefined au lieu de object)
 	pipeline, err := GetUndefinedDataValidationPipeline()
@@ -444,9 +426,9 @@ func iterateToChannel(channel chan interface{}, iterator *mgo.Iter) error {
 	return nil
 }
 
-func storeMongoPipelineResults(filepath string, iterator *mgo.Iter) error {
+func storeMongoPipelineResults(iterator *mgo.Iter) error {
 	wait := sync.WaitGroup{}
-	gzipWriter := getItemChannelToGzip(filepath, &wait)
+	gzipWriter := getItemChannelToStdout(&wait)
 	err := iterateToChannel(gzipWriter, iterator)
 	if err != nil {
 		return err

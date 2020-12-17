@@ -146,7 +146,7 @@ export function apart(
     }
   }
 
-  // Note: à la fin de l'opération map-reduce, dbmongo va calculer la propriété
+  // Note: à la fin de l'opération map-reduce, sfdata va calculer la propriété
   // ratio_apart depuis apart.crossComputation.json.
 
   return output_apart

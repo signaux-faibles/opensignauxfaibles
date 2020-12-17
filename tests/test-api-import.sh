@@ -17,14 +17,14 @@ mkdir -p "${TMP_DIR}"
 
 # Clean up on exit
 function teardown {
-    tests/helpers/dbmongo-server.sh stop || true # keep tearing down, even if "No matching processes belonging to you were found"
+    tests/helpers/sfdata-wrapper.sh stop || true # keep tearing down, even if "No matching processes belonging to you were found"
     tests/helpers/mongodb-container.sh stop
 }
 trap teardown EXIT
 
 PORT="27016" tests/helpers/mongodb-container.sh start
 
-MONGODB_PORT="27016" tests/helpers/dbmongo-server.sh setup
+MONGODB_PORT="27016" tests/helpers/sfdata-wrapper.sh setup
 
 echo ""
 echo "📝 Inserting test data..."
@@ -61,12 +61,11 @@ tests/helpers/mongodb-container.sh run > /dev/null << CONTENTS
 CONTENTS
 
 echo ""
-echo "💎 Parsing and importing data thru dbmongo API..."
-tests/helpers/dbmongo-server.sh start
-echo "- POST /api/data/import 👉 $(http --print=b --ignore-stdin :5000/api/data/import batch=1910 noFilter:=true)"
+echo "💎 Parsing and importing data..."
+echo "- POST /api/data/import 👉 $(tests/helpers/sfdata-wrapper.sh run import --batch=1910 --no-filter)"
 
-OUTPUT_GZ_FILE=$(http --print=b --ignore-stdin :5000/api/data/validate collection=ImportedData | tr -d '"')
-echo "- POST /api/data/validate 👉 ${OUTPUT_GZ_FILE}"
+VALIDATION_REPORT=$(tests/helpers/sfdata-wrapper.sh run validate --collection=ImportedData)
+echo "- POST /api/data/validate"
 
 (tests/helpers/mongodb-container.sh run \
   | perl -p -e 's/"[0-9a-z]{32}"/"______________Hash______________"/' \
@@ -116,7 +115,7 @@ printjson(db.Journal.find().sort({ parserCode: 1 }).toArray().map(doc => (doc.ev
 print("// Results of call to /api/data/validate:");
 CONTENT
 
-zcat < "${OUTPUT_GZ_FILE}" \
+echo "${VALIDATION_REPORT}" \
   | perl -p -e 's/"[0-9a-z]{32}"/"______________Hash______________"/' \
   | perl -p -e 's/"[0-9a-z]{24}"/"________ObjectId________"/' \
   | perl -p -e 's/"periode" : ISODate\("....-..-..T..:..:..Z"\)/"periode" : ISODate\("_______ Date _______"\)/' \
@@ -128,6 +127,5 @@ tests/helpers/mongodb-container.sh exceptions || true
 
 tests/helpers/diff-or-update-golden-master.sh "${FLAGS}" "${GOLDEN_FILE}" "${OUTPUT_FILE}"
 
-rm "${OUTPUT_GZ_FILE}"
 rm -rf "${TMP_DIR}"
 # Now, the "trap" commands will clean up the rest.

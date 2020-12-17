@@ -1,7 +1,9 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
+	"fmt"
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/apconso"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/apdemande"
@@ -16,141 +18,125 @@ import (
 
 	sireneul "github.com/signaux-faibles/opensignauxfaibles/lib/sirene_ul"
 
-	"github.com/gin-gonic/gin"
 	"github.com/globalsign/mgo/bson"
 )
 
-//
-func purgeBatchHandler(c *gin.Context) {
-	var params struct {
-		FromBatchKey           string `json:"fromBatch"`
-		Key                    string `json:"debugForKey"`
-		IUnderstandWhatImDoing bool   `json:"IUnderstandWhatImDoing"`
-	}
+type purgeBatchParams struct {
+	FromBatchKey           string `json:"fromBatch"`
+	Key                    string `json:"debugForKey"`
+	IUnderstandWhatImDoing bool   `json:"IUnderstandWhatImDoing"`
+}
 
-	err := c.ShouldBind(&params)
-	if err != nil {
-		c.JSON(400, "Requête malformée: "+err.Error())
-		return
-	}
+func purgeBatchHandler(params purgeBatchParams) error {
+
 	if params.FromBatchKey == "" {
-		c.JSON(400, "paramètre `fromBatch` obligatoire")
-		return
+		return errors.New("paramètre `fromBatch` obligatoire")
 	}
 
 	var batch base.AdminBatch
-	err = engine.Load(&batch, params.FromBatchKey)
+	err := engine.Load(&batch, params.FromBatchKey)
 	if err != nil {
-		c.JSON(400, "le batch "+params.FromBatchKey+" n'est pas accessible: "+err.Error())
-		return
+		return errors.New("le batch " + params.FromBatchKey + " n'est pas accessible: " + err.Error())
 	}
 
 	if params.Key != "" {
 		err = engine.PurgeBatchOne(batch, params.Key)
 		if err != nil {
-			c.JSON(500, "erreur pendant le MapReduce: "+err.Error())
-			return
+			return errors.New("erreur pendant le MapReduce: " + err.Error())
 		}
 	} else {
 		if !params.IUnderstandWhatImDoing {
-			c.JSON(400, "pour une purge de la base complète, IUnderstandWhatImDoing doit être `true`")
-			return
+			return errors.New("pour une purge de la base complète, IUnderstandWhatImDoing doit être `true`")
 		}
 		err = engine.PurgeBatch(batch)
 		if err != nil {
-			c.JSON(500, "(✖╭╮✖) le traitement n'a pas abouti: "+err.Error())
-			return
+			return errors.New("(✖╭╮✖) le traitement n'a pas abouti: " + err.Error())
 		}
 	}
+	printJSON("ok")
+	return nil
+}
+
+type importBatchParams struct {
+	BatchKey string   `json:"batch"`
+	Parsers  []string `json:"parsers"`
+	NoFilter bool     `json:"noFilter"`
 }
 
 // importBatchHandler traite les demandes d'import par l'API
 // on peut demander l'exécution de tous les parsers sans fournir d'option
 // ou demander l'exécution de parsers particuliers en fournissant une liste de leurs codes.
-func importBatchHandler(c *gin.Context) {
-	var params struct {
-		BatchKey string   `json:"batch"`
-		Parsers  []string `json:"parsers"`
-		NoFilter bool     `json:"noFilter"`
-	}
-	err := c.ShouldBind(&params)
-	if err != nil {
-		c.JSON(400, "Requête malformée: "+err.Error())
-		return
-	}
+func importBatchHandler(params importBatchParams) error {
 	batch := base.AdminBatch{}
-	err = engine.Load(&batch, params.BatchKey)
+	err := engine.Load(&batch, params.BatchKey)
 	if err != nil {
-		c.JSON(404, "Batch inexistant: "+err.Error())
+		return errors.New("Batch inexistant: " + err.Error())
 	}
 
 	parsers, err := resolveParsers(params.Parsers)
 	if err != nil {
-		c.JSON(404, err.Error())
+		return err
 	}
-	err = engine.ImportBatch(batch, parsers, params.NoFilter)
+
+	dataChan := engine.InsertIntoImportedData(engine.Db.DB)
+	err = engine.ImportBatch(batch, parsers, params.NoFilter, dataChan)
 	if err != nil {
-		c.JSON(500, err.Error())
+		return err
 	}
+
+	printJSON("ok")
+	return nil
 }
 
-func checkBatchHandler(c *gin.Context) {
-	var params struct {
-		BatchKey string   `json:"batch"`
-		Parsers  []string `json:"parsers"`
-	}
-	err := c.ShouldBind(&params)
-	if err != nil {
-		c.JSON(400, "Requête malformée: "+err.Error())
-		return
-	}
+type checkBatchParams struct {
+	BatchKey string   `json:"batch"`
+	Parsers  []string `json:"parsers"`
+}
+
+func checkBatchHandler(params checkBatchParams) error {
+
 	batch := base.AdminBatch{}
-	err = engine.Load(&batch, params.BatchKey)
+	err := engine.Load(&batch, params.BatchKey)
 	if err != nil {
-		c.JSON(404, "Batch inexistant: "+err.Error())
+		return errors.New("Batch inexistant: " + err.Error())
 	}
 
 	parsers, err := resolveParsers(params.Parsers)
 	if err != nil {
-		c.JSON(404, err.Error())
+		return err
 	}
 
 	reports, err := engine.CheckBatch(batch, parsers)
 	if err != nil {
-		c.JSON(417, "Erreurs détectées: "+err.Error())
-	} else {
-		c.JSON(200, bson.M{"reports": reports})
+		return errors.New("Erreurs détectées: " + err.Error())
 	}
+
+	printJSON(bson.M{"reports": reports})
+	return nil
 }
 
-func purgeNotCompactedHandler(c *gin.Context) {
-	var result []interface{}
-	err := engine.PurgeNotCompacted()
-	if err != nil {
-		c.JSON(500, err.Error())
-		return
-	}
-	c.JSON(200, result)
+func printJSON(object interface{}) {
+	res, _ := json.Marshal(object)
+	fmt.Println(string(res))
+}
+
+func purgeNotCompactedHandler() error {
+	return engine.PurgeNotCompacted()
+}
+
+type pruneEntitiesParams struct {
+	BatchKey string `json:"batch"`
+	Delete   bool   `json:"delete"`
 }
 
 // Count – then delete – companies from RawData that should have been
 // excluded by the SIREN Filter.
-func pruneEntitiesHandler(c *gin.Context) {
-	var params struct {
-		BatchKey string `json:"batch"`
-		Delete   bool   `json:"delete"`
-	}
-	err := c.ShouldBind(&params)
-	if err != nil {
-		c.JSON(400, "Requête malformée: "+err.Error())
-		return
-	}
+func pruneEntitiesHandler(params pruneEntitiesParams) error {
 	count, err := engine.PruneEntities(params.BatchKey, params.Delete)
-	if err != nil {
-		c.JSON(500, err.Error())
-		return
+	if err == nil {
+		printJSON(bson.M{"count": count})
 	}
-	c.JSON(200, bson.M{"count": count})
+	return err
 }
 
 // RegisteredParsers liste des parsers disponibles
