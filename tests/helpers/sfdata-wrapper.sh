@@ -3,8 +3,6 @@
 # This helper runs the "sfdata" command using provided MongoDB port,
 # and prefixes its output, to make warnings stand out during tests.
 
-set -e # will stop the script if any command fails with a non-zero exit code
-
 # Restore config on exit (including if errors happen)
 function restoreConfig {
   [ -f config.backup.toml ] && mv config.backup.toml config.toml
