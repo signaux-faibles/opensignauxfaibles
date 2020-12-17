@@ -84,9 +84,6 @@ heading "test-api-purge-batch.sh"
 heading "test-api-export.sh"
 ./tests/test-api-export.sh $@ 2>&1 | indent
 
-heading "test-api-swagger.sh"
-./tests/test-api-swagger.sh $@ 2>&1 | indent
-
 # Check if the --update flag was passed
 if [[ "$*" == *--update* ]]
 then

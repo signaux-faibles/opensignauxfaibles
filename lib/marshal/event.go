@@ -14,7 +14,6 @@ type Priority string
 type Code string
 
 // Event est un objet de journal
-// swagger:ignore
 type Event struct {
 	ID         bson.ObjectId `json:"-" bson:"_id"`
 	Date       time.Time     `json:"date" bson:"date"`
