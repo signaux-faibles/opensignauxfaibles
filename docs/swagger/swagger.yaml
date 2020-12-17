@@ -57,24 +57,6 @@ components:
       type: http
       scheme: bearer
 info:
-  contact:
-    name: "contact support"
-    email: "contact@signaux-faibles.beta.gouv.fr"
-  description: |-
-    Cette API centralise toutes les fonctionnalités du module de traitement de données [openSignauxFaibles](https://github.com/signaux-faibles/opensignauxfaibles)  
-    Ce [projet](https://beta.gouv.fr/startups/signaux-faibles.html) fournit une plateforme technique à l'exploitation des signaux faibles pour anticiper les difficultés des entreprises  
-
-    La plateforme fournit les services suivants    
-    - Gestion des batches d'intégration  
-    - Lancement/ordonnancement des traitements  
-    - Export et consultation des données  
-
-    Toutes les erreurs rencontrées lors du traitement seront signalées par le statut `HTTP 500` assorti du message d'erreur ayant provoqué le défaut du traitement.  
-    Par ailleurs, tous les services authentifiés sont succeptibles de renvoyer le statut `HTTP 401` dans le cas où l'authentification est erronée.  Le code `HTTP 403` est également communiqué lorsque les attributions sont insuffisantes pour traiter la requête.  
-    Dans le cas où une requête est malformée, le code `HTTP 400` sera renvoyé assorti d'un message indiquant l'erreur rencontrée dans l'analyse du corps de la requête
-  license:
-    name: Licence MIT
-    url: https://raw.githubusercontent.com/signaux-faibles/opensignauxfaibles/master/LICENSE
   title: API openSignauxFaibles
   version: "1.1"
 paths:

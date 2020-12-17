@@ -1,10 +1,16 @@
 # Open Signaux Faibles
 
-Solution logicielle pour la détection anticipée d'entreprises en difficulté.
+Le projet [Signaux Faibles](https://beta.gouv.fr/startups/signaux-faibles.html) fournit une plateforme technique de détection anticipée d'entreprises en difficulté, en s'appuyant sur l'exploitation des signaux faibles.
 
-La solution est centrée sur la commande `sfdata` qui permet d'exécuter des traitements sur une base de données MongoDB.
+En intéragissant avec une base de données MongoDB, la commande `sfdata` fournie dans ce dépôt centralise toutes les fonctionnalités du module de traitement de données:
 
-Précedemment, la solution reposait sur un serveur HTTP nommé `dbmongo`.
+- Gestion des batches d'intégration
+- Exécution des traitements
+- Export des données
+
+Note: Précedemment, ces fonctionnalités étaient mises à disposition via un serveur HTTP nommé `dbmongo`.
+
+Contact: [contact@signaux-faibles.beta.gouv.fr](mailto:contact@signaux-faibles.beta.gouv.fr)
 
 ## Architecture
 
