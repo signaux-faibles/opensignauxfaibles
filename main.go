@@ -101,13 +101,19 @@ var cmds = map[string]*commandDefinition{
 			connectDb()
 			return importBatchHandler(params) // [x] écrit dans Journal
 		}},
-	"validate": {"TODO - summary", func(args []string) error {
-		params := validateParams{}
-		flag.StringVar(&params.Collection, "collection", "", "Name of the collection to validate")
-		flag.CommandLine.Parse(args)
-		connectDb()
-		return validateHandler(params) // [x] écrit dans Journal
-	}},
+	"validate": {
+		"Liste les entrées de données invalides",
+		/**
+		Vérifie la validité des entrées de données contenues dans les documents de la collection RawData ou ImportedData.
+		Répond en listant les entrées invalides.
+		*/
+		func(args []string) error {
+			params := validateParams{}
+			flag.StringVar(&params.Collection, "collection", "", "Nom de la collection à valider: RawData ou ImportedData")
+			flag.CommandLine.Parse(args)
+			connectDb()
+			return validateHandler(params) // [x] écrit dans Journal
+		}},
 	"compact": {
 		"Compacter la base de données",
 		/**

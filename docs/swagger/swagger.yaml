@@ -14,11 +14,6 @@ components:
           type: string
         features:
           type: string
-    Validate:
-      properties:
-        collection:
-          type: string
-          description: "RawData ou ImportedData"
   /api/data/public:
     post:
       description: |-
@@ -116,29 +111,3 @@ components:
             application/json:
               schema:
                 type: string
-      security:
-        - BearerAuth: []
-      tags:
-        - Traitements
-  /api/data/validate:
-    post:
-      description: Vérifie la validité des entrées de données contenues dans les documents de la collection RawData ou ImportedData.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Validate"
-            example:
-              collection: "RawData"
-      responses:
-        "200":
-          description: Les entrées invalides ont été exportées dans le fichier fourni en réponse.
-          content:
-            application/json:
-              schema:
-                type: string
-      security:
-        - BearerAuth: []
-      tags:
-        - Traitements
-openapi: "3.0.0"
