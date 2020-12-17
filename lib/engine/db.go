@@ -118,7 +118,7 @@ func InsertIntoImportedData(db *mgo.Database) chan *Value {
 		i := 0
 
 		for value := range source {
-			if (value.Value.Batch == nil) || i >= 100 {
+			if i >= 100 {
 				for _, v := range buffer {
 					objects = append(objects, *v)
 				}
@@ -129,15 +129,13 @@ func InsertIntoImportedData(db *mgo.Database) chan *Value {
 				objects = make([]interface{}, 0)
 				i = 0
 			}
-			if value.Value.Batch != nil {
-				if knownValue, ok := buffer[value.Value.Key]; ok {
-					newValue, _ := (*knownValue).Merge(*value)
-					buffer[value.Value.Key] = &newValue
-				} else {
-					value.ID = bson.NewObjectId()
-					buffer[value.Value.Key] = value
-					i++
-				}
+			if knownValue, ok := buffer[value.Value.Key]; ok {
+				newValue, _ := (*knownValue).Merge(*value)
+				buffer[value.Value.Key] = &newValue
+			} else {
+				value.ID = bson.NewObjectId()
+				buffer[value.Value.Key] = value
+				i++
 			}
 		}
 	}(source)
@@ -147,7 +145,6 @@ func InsertIntoImportedData(db *mgo.Database) chan *Value {
 
 // FlushImportedData finalise l'insertion des données dans ImportedData.
 func FlushImportedData(channel chan *Value) {
-	channel <- &Value{}
 	close(channel)
 	importing.Wait()
 }
