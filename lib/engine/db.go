@@ -117,17 +117,21 @@ func InsertIntoImportedData(db *mgo.Database) chan *Value {
 		objects := make([]interface{}, 0)
 		i := 0
 
+		insertObjectsIntoImportedData := func() {
+			for _, v := range buffer {
+				objects = append(objects, *v)
+			}
+			if len(objects) > 0 {
+				db.C("ImportedData").Insert(objects...)
+			}
+			buffer = make(map[string]*Value)
+			objects = make([]interface{}, 0)
+			i = 0
+		}
+
 		for value := range source {
 			if i >= 100 {
-				for _, v := range buffer {
-					objects = append(objects, *v)
-				}
-				if len(objects) > 0 {
-					db.C("ImportedData").Insert(objects...)
-				}
-				buffer = make(map[string]*Value)
-				objects = make([]interface{}, 0)
-				i = 0
+				insertObjectsIntoImportedData()
 			}
 			if knownValue, ok := buffer[value.Value.Key]; ok {
 				newValue, _ := (*knownValue).Merge(*value)
@@ -138,6 +142,8 @@ func InsertIntoImportedData(db *mgo.Database) chan *Value {
 				i++
 			}
 		}
+		// le canal a été fermé => importer les données restantes avant de rendre la main
+		insertObjectsIntoImportedData()
 	}(source)
 
 	return source
