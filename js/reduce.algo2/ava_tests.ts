@@ -64,8 +64,8 @@ const expectedMapResults = dates.map((periode) => ({
 const expectedReduceResults = expectedMapResults
 
 // Structure légèrement différente de celle de test-api.golden.txt car
-// l'API effectue une passe d'agrégation en plus: "cross-computation", qui est
-// en cours de développement en Go (cf `reduceFinalAggregation`).
+// `reduce` effectue une passe d'agrégation en plus: "cross-computation", qui
+// est en cours de développement en Go (cf `reduceFinalAggregation`).
 const expectedFinalizeResults = expectedMapResults.map(({ _id }) => ({
   _id,
   value: [

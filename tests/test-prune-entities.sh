@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Test de bout en bout de l'API "/data/pruneEntities". Inspiré de test-purge-batch.sh.
+# Test de bout en bout de la commande "pruneEntities". Inspiré de test-purge-batch.sh.
 # Ce script doit être exécuté depuis la racine du projet. Ex: par test-all.sh.
 
 tests/helpers/mongodb-container.sh stop
@@ -61,8 +61,8 @@ CONTENT
 
 echo ""
 echo "💎 Test: count and prune entities from RawData..."
-API_RESULT=$(tests/helpers/sfdata-wrapper.sh run pruneEntities --batch=2010)
-echo "- POST /api/data/pruneEntities 👉 ${API_RESULT}"
+RESULT=$(tests/helpers/sfdata-wrapper.sh run pruneEntities --batch=2010)
+echo "- POST /api/data/pruneEntities 👉 ${RESULT}"
 
 # Print test results from stdin. Fails on any "false" result.
 # Expected format for each line: "<test label> : <true|false>"
@@ -78,7 +78,7 @@ function reportFailedTests {
 ) << CONTENT
   const report = db.Journal.find().toArray().pop() || {};
   Object.entries({
-    "found 2 entities to prune": ${API_RESULT}.count === 2,
+    "found 2 entities to prune": ${RESULT}.count === 2,
     "222222222 was not pruned yet": db.RawData.find({_id: "222222222"}).count() === 1,
     "22222222200000 was not pruned yet": db.RawData.find({_id: "22222222200000"}).count() === 1,
     "Journal has 1 entry": db.Journal.count() === 1,

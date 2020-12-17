@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Test de bout en bout de l'API "compact".
+# Test de bout en bout de la commande "compact".
 # Ce script doit être exécuté depuis la racine du projet. Ex: par test-all.sh.
 
 tests/helpers/mongodb-container.sh stop
@@ -64,8 +64,8 @@ CONTENTS
 
 echo ""
 echo "💎 Compacting RawData..."
-API_RESULT=$(tests/helpers/sfdata-wrapper.sh run compact --since-batch=1802)
-echo "- POST /api/data/compact 👉 ${API_RESULT}"
+RESULT=$(tests/helpers/sfdata-wrapper.sh run compact --since-batch=1802)
+echo "- POST /api/data/compact 👉 ${RESULT}"
 
 (tests/helpers/mongodb-container.sh run \
   | tests/helpers/remove-random_order.sh \
@@ -86,7 +86,7 @@ printjson(db.RawData.find().toArray());
 print("// Response body from /api/data/compact:");
 CONTENT
 
-echo "${API_RESULT}" >> "${OUTPUT_FILE}"
+echo "${RESULT}" >> "${OUTPUT_FILE}"
 
 # Display JS errors logged by MongoDB, if any
 tests/helpers/mongodb-container.sh exceptions || true

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Test de bout en bout des APIs "reduce" et "public"
+# Test de bout en bout des commandes "reduce" et "public"
 # Source: https://github.com/signaux-faibles/documentation/blob/master/prise-en-main.md#%C3%A9tape-de-calculs-pour-populer-features
 # Ce script doit être exécuté depuis la racine du projet. Ex: par test-all.sh.
 

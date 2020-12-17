@@ -128,7 +128,7 @@ echo "- POST /api/data/compact 👉 $(tests/helpers/sfdata-wrapper.sh run compac
 echo "- POST /api/data/public 👉 $(tests/helpers/sfdata-wrapper.sh run public --until-batch=2002_1 --key=.........)" # TODO: we specify a placeholder value as key, so that PublicOne() is run instead of Public(), so the data is generated for etablissements that don't have effectif values, and therefore are outside of the "algo2" scope.
 
 echo ""
-echo "🚚 Asking API to export enterprise data..."
+echo "🚚 Export enterprise data..."
 # This step is required only if key was provided when calling POST /api/data/public
 RENAME_RESULT=$(tests/helpers/mongodb-container.sh run <<< 'db.Public_debug.renameCollection("Public");')
 echo "- rename 'Public_debug' collection to 'Public' 👉 ${RENAME_RESULT}"

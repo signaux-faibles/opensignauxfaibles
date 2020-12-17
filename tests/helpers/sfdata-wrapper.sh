@@ -5,7 +5,7 @@
 COMMAND=$1
 
 # Add prefix to stderr stream
-exec 2> >(sed 's/^/[API] /' >&2)
+exec 2> >(sed 's/^/[sfdata] /' >&2)
 
 case ${COMMAND} in
   stop)

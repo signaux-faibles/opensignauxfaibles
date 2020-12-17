@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Test de bout en bout de l'API "reduce" à l'aide de données réalistes.
+# Test de bout en bout de la commande "reduce" à l'aide de données réalistes.
 # Inspiré de test.sh et finalize_test.js.
 # Ce script doit être exécuté depuis la racine du projet. Ex: par test-all.sh.
 #

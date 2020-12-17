@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Test de bout en bout de l'API "reduce" à l'aide de données publiques.
+# Test de bout en bout de la commande "reduce" à l'aide de données publiques.
 # Inspiré de test-reduce-2.sh et algo2_tests.ts.
 # Ce script doit être exécuté depuis la racine du projet. Ex: par test-all.sh.
 
@@ -37,8 +37,8 @@ echo "db.Features_TestData.insertOne({a:1})" | tests/helpers/mongodb-container.s
 
 echo ""
 echo "💎 Computing the Features collection..."
-API_RESULT=$(tests/helpers/sfdata-wrapper.sh run reduce --until-batch=1905)
-echo "- POST /api/data/reduce 👉 ${API_RESULT}"
+RESULT=$(tests/helpers/sfdata-wrapper.sh run reduce --until-batch=1905)
+echo "- POST /api/data/reduce 👉 ${RESULT}"
 
 (tests/helpers/mongodb-container.sh run \
   > "${OUTPUT_FILE}" \
@@ -58,7 +58,7 @@ printjson(db.Features_TestData.find().toArray());
 print("// Response body from /api/data/reduce:");
 CONTENT
 
-echo "${API_RESULT}" >> "${OUTPUT_FILE}"
+echo "${RESULT}" >> "${OUTPUT_FILE}"
 
 # Display JS errors logged by MongoDB, if any
 tests/helpers/mongodb-container.sh exceptions || true

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Test de bout en bout de l'API "compact".
+# Test de bout en bout de la commande "compact".
 # Test de non regression pour https://github.com/signaux-faibles/opensignauxfaibles/issues/248.
 # Ce script doit être exécuté depuis la racine du projet. Ex: par test-all.sh.
 

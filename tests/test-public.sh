@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Test de bout en bout de l'API "/public". Inspiré de test-public.sh.
+# Test de bout en bout de la commande "public". Inspiré de test-public.sh.
 # Ce script doit être exécuté depuis la racine du projet. Ex: par test-all.sh.
 
 tests/helpers/mongodb-container.sh stop
@@ -33,8 +33,8 @@ tests/helpers/populate-from-objects.sh \
 
 echo ""
 echo "💎 Computing the Public collection..."
-API_RESULT=$(tests/helpers/sfdata-wrapper.sh run public --until-batch=1905)
-echo "- POST /api/data/public 👉 ${API_RESULT}"
+RESULT=$(tests/helpers/sfdata-wrapper.sh run public --until-batch=1905)
+echo "- POST /api/data/public 👉 ${RESULT}"
 
 (tests/helpers/mongodb-container.sh run \
   > "${OUTPUT_FILE}" \
@@ -54,7 +54,7 @@ printjson(db.Public.find().toArray());
 print("// Response body from /api/data/public:");
 CONTENT
 
-echo "${API_RESULT}" >> "${OUTPUT_FILE}"
+echo "${RESULT}" >> "${OUTPUT_FILE}"
 
 # Display JS errors logged by MongoDB, if any
 tests/helpers/mongodb-container.sh exceptions || true

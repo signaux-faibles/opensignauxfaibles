@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Test de bout en bout de l'API "import".
+# Test de bout en bout de la commande "import".
 # Référence: https://github.com/signaux-faibles/documentation/blob/master/processus-traitement-donnees.md#vue-densemble-des-canaux-de-transformation-des-donn%C3%A9es
 # Ce script doit être exécuté depuis la racine du projet. Ex: par test-all.sh.
 

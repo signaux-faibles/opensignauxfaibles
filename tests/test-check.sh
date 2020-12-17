@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Test de bout en bout de l'API "check".
+# Test de bout en bout de la commande "check".
 # Ce script doit être exécuté depuis la racine du projet. Ex: par test-all.sh.
 
 tests/helpers/mongodb-container.sh stop
@@ -52,8 +52,8 @@ CONTENTS
 
 echo ""
 echo "💎 Parsing data..."
-API_RESULT=$(tests/helpers/sfdata-wrapper.sh run check --batch=1910 --parsers='debit')
-echo "- POST /api/data/check 👉 ${API_RESULT}"
+RESULT=$(tests/helpers/sfdata-wrapper.sh run check --batch=1910 --parsers='debit')
+echo "- POST /api/data/check 👉 ${RESULT}"
 
 (tests/helpers/mongodb-container.sh run \
   > "${OUTPUT_FILE}" \
@@ -77,7 +77,7 @@ printjson(db.Journal.find().toArray().map(doc => ({
 print("// Response body from /api/data/check:");
 CONTENT
 
-echo "${API_RESULT}" >> "${OUTPUT_FILE}"
+echo "${RESULT}" >> "${OUTPUT_FILE}"
 
 # Display JS errors logged by MongoDB, if any
 tests/helpers/mongodb-container.sh exceptions || true
