@@ -72,6 +72,3 @@ jobs:
         with:
           project-token: ${{ secrets.CODACY_REPOSITORY_TOKEN_FOR_COVERAGE }}
           coverage-reports: js/coverage/lcov.info
-
-      - name: Check that Swagger API defs are valid and up to date
-        run: tests/test-api-swagger.sh
