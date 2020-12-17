@@ -3,6 +3,7 @@ package engine
 import (
 	"encoding/json"
 	"log"
+	"sync"
 	"time"
 
 	"github.com/globalsign/mgo/bson"
@@ -27,6 +28,8 @@ func (message SocketMessage) MarshalJSON() ([]byte, error) {
 	return json.Marshal(tmp)
 }
 
+var relaying sync.WaitGroup
+
 type messageChannel chan SocketMessage
 
 var messageClientChannels = []messageChannel{}
@@ -46,8 +49,10 @@ func MessageSocketAddClient() {
 
 // journal dispatch un event vers les clients et l'enregistre dans la bdd
 func messageDispatch() chan SocketMessage {
+	relaying.Add(1)
 	channel := make(messageChannel)
 	go func() {
+		defer relaying.Done()
 		for event := range channel {
 			err := Db.DBStatus.C("Journal").Insert(event.JournalEvent)
 			if err != nil {
@@ -82,7 +87,7 @@ func RelayEvents(eventChannel chan marshal.Event, reportType string, startDate t
 	return lastReport
 }
 
-// LogOperationEvent rapporte la fin d'une opération effectuée par dbmongo.
+// LogOperationEvent rapporte la fin d'une opération effectuée par sfdata.
 func LogOperationEvent(reportType string, startDate time.Time) {
 	event := marshal.CreateEvent()
 	event.StartDate = startDate
@@ -90,4 +95,10 @@ func LogOperationEvent(reportType string, startDate time.Time) {
 	MainMessageChannel <- SocketMessage{
 		JournalEvent: event,
 	}
+}
+
+// FlushEventQueue finalise l'insertion des événements dans Journal.
+func FlushEventQueue() {
+	close(MainMessageChannel)
+	relaying.Wait()
 }

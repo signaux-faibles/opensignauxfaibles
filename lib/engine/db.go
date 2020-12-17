@@ -2,6 +2,7 @@ package engine
 
 import (
 	"log"
+	"sync"
 	"time"
 
 	"github.com/globalsign/mgo"
@@ -10,20 +11,10 @@ import (
 	"github.com/spf13/viper"
 )
 
-// Status statut de la base de données
-type Status struct {
-	ID     base.AdminID  `json:"id" bson:"_id"`
-	Status *string       `json:"status" bson:"status"`
-	Epoch  int           `json:"epoch" bson:"epoch"`
-	DB     *mgo.Database `json:"-" bson:"-"`
-}
-
 // DB type centralisant les accès à une base de données
 type DB struct {
 	DB       *mgo.Database
 	DBStatus *mgo.Database
-	Status   Status
-	ChanData chan *Value
 }
 
 func loadConfig() {
@@ -32,12 +23,8 @@ func loadConfig() {
 	viper.AddConfigPath("/etc/opensignauxfaibles")
 	viper.AddConfigPath("$HOME/.opensignauxfaibles")
 	viper.AddConfigPath(".")
-	viper.SetDefault("APP_BIND", ":3000")
 	viper.SetDefault("APP_DATA", "$HOME/data-raw/")
-	viper.SetDefault("DB_HOST", "127.0.0.1")
-	viper.SetDefault("DB_PORT", "27017")
 	viper.SetDefault("DB", "opensignauxfaibles")
-	viper.SetDefault("JWT_SECRET", "Secret à changer")
 	err := viper.ReadInConfig()
 	if err != nil {
 		panic("Erreur à la lecture de la configuration")
@@ -105,34 +92,27 @@ func InitDB() DB {
 		}
 
 		err := db.C("Admin").Insert(firstBatch)
-
 		if err != nil {
 			panic("Impossible de créer le premier batch: " + err.Error())
 		}
 	}
 
-	chanData := insert(db)
-
-	// envoie un struct vide pour purger les channels au cas où il reste les objets non insérés
-	go func() {
-		for range time.Tick(1 * time.Second) {
-			chanData <- &Value{}
-		}
-	}()
-
-	dbConnect := DB{
+	return DB{
 		DB:       db,
 		DBStatus: dbstatus,
-		ChanData: chanData,
 	}
-
-	return dbConnect
 }
 
-func insert(db *mgo.Database) chan *Value {
+var importing sync.WaitGroup
+
+// InsertIntoImportedData retourne un canal dont les objets seront ajoutés à
+// la collection ImportedData, par paquets de 100.
+func InsertIntoImportedData(db *mgo.Database) chan *Value {
+	importing.Add(1)
 	source := make(chan *Value, 10)
 
 	go func(chan *Value) {
+		defer importing.Done()
 		buffer := make(map[string]*Value)
 		objects := make([]interface{}, 0)
 		i := 0
@@ -163,4 +143,11 @@ func insert(db *mgo.Database) chan *Value {
 	}(source)
 
 	return source
+}
+
+// FlushImportedData finalise l'insertion des données dans ImportedData.
+func FlushImportedData(channel chan *Value) {
+	channel <- &Value{}
+	close(channel)
+	importing.Wait()
 }

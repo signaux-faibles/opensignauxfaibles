@@ -7,30 +7,23 @@ import (
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/engine"
-	"github.com/spf13/viper"
-
-	"github.com/gin-gonic/gin"
 )
 
-func reduceHandler(c *gin.Context) {
-	var params struct {
-		BatchKey string   `json:"batch"`
-		Key      string   `json:"key"`
-		From     string   `json:"from"`
-		To       string   `json:"to"`
-		Types    []string `json:"types"`
-		// Sélection des types de données qui vont être calculés ou recalculés.
-		// Valeurs autorisées pour l'instant: "apart", "all"
-	}
+type reduceParams struct {
+	BatchKey string   `json:"batch"`
+	Key      string   `json:"key"`
+	From     string   `json:"from"`
+	To       string   `json:"to"`
+	Types    []string `json:"types"`
+	// Sélection des types de données qui vont être calculés ou recalculés.
+	// Valeurs autorisées pour l'instant: "apart", "all"
+}
 
-	err := c.ShouldBind(&params)
-	if err != nil {
-		c.JSON(400, err.Error())
-	}
+func reduceHandler(params reduceParams) error {
 
 	batch, err := engine.GetBatch(params.BatchKey)
 	if err != nil {
-		c.JSON(404, "Batch inexistant: "+err.Error())
+		return errors.New("Batch inexistant: " + err.Error())
 	}
 
 	if params.Key == "" && params.From == "" && params.To == "" {
@@ -40,28 +33,27 @@ func reduceHandler(c *gin.Context) {
 	}
 
 	if err != nil {
-		c.JSON(500, err.Error())
-	} else {
-		c.JSON(200, "Traitement effectué")
+		return err
 	}
 
+	printJSON("Traitement effectué")
+	return nil
 }
 
-func publicHandler(c *gin.Context) {
-	var params struct {
-		BatchKey string `json:"batch"`
-		Key      string `json:"key"`
-	}
-	err := c.ShouldBind(&params)
-	if err != nil || params.BatchKey == "" {
-		c.JSON(400, err.Error())
+type publicParams struct {
+	BatchKey string `json:"batch"`
+	Key      string `json:"key"`
+}
+
+func publicHandler(params publicParams) error {
+	if params.BatchKey == "" {
+		return errors.New("batch vide")
 	}
 
 	batch := base.AdminBatch{}
-	err = engine.Load(&batch, params.BatchKey)
+	err := engine.Load(&batch, params.BatchKey)
 	if err != nil {
-		c.JSON(404, "batch non trouvé")
-		return
+		return errors.New("batch non trouvé")
 	}
 
 	if params.Key == "" {
@@ -69,103 +61,77 @@ func publicHandler(c *gin.Context) {
 	} else if len(params.Key) >= 9 {
 		err = engine.PublicOne(batch, params.Key[0:9])
 	} else {
-		c.JSON(400, "la clé fait moins de 9 caractères (siren)")
+		return errors.New("la clé fait moins de 9 caractères (siren)")
 	}
 
-	if err != nil {
-		c.JSON(500, err.Error())
-		return
+	if err == nil {
+		printJSON("ok")
 	}
-
-	c.JSON(200, "ok")
+	return err
 }
 
-func compactHandler(c *gin.Context) {
-	var params struct {
-		FromBatchKey string `json:"fromBatchKey"`
-	}
-	err := c.ShouldBind(&params)
-	if err != nil {
-		c.JSON(400, err.Error())
-	}
+type compactParams struct {
+	FromBatchKey string `json:"fromBatchKey"`
+}
 
-	err = engine.Compact(params.FromBatchKey)
-	if err != nil {
-		c.JSON(500, err.Error())
-		return
+func compactHandler(params compactParams) error {
+	err := engine.Compact(params.FromBatchKey)
+	if err == nil {
+		printJSON("ok")
 	}
-	c.JSON(200, "ok")
+	return err
 }
 
 func getTimestamp() string {
 	return strconv.FormatInt(time.Now().Unix(), 10)
 }
 
-func getKeyParam(c *gin.Context) (string, error) {
-	key := c.Query("key")
-	if !(len(key) == 9 || len(key) == 0) {
+type exportParams struct {
+	Key string `json:"key"`
+}
+
+func getKeyParam(params exportParams) (string, error) {
+	if !(len(params.Key) == 9 || len(params.Key) == 0) {
 		return "", errors.New("si fourni, key doit être un numéro SIREN (9 chiffres)")
 	}
-	return key, nil
+	return params.Key, nil
 }
 
-func exportEtablissementsHandler(c *gin.Context) {
-	key, err := getKeyParam(c)
+func exportEtablissementsHandler(params exportParams) error {
+	key, err := getKeyParam(params)
 	if err != nil {
-		c.JSON(400, err.Error())
-		return
+		return err
 	}
-
-	// On retourne le nom de fichier avant la fin du traitement, pour éviter erreur "Request timed out"
-	var filepath = viper.GetString("exportPath") + "dbmongo-data-export-etablissements-" + getTimestamp() + ".json.gz"
-	c.JSON(200, filepath)
-
-	err = engine.ExportEtablissements(key, filepath)
-	if err != nil {
-		c.AbortWithError(500, err)
-	}
+	return engine.ExportEtablissements(key)
 }
 
-func exportEntreprisesHandler(c *gin.Context) {
-	key, err := getKeyParam(c)
+func exportEntreprisesHandler(params exportParams) error {
+	key, err := getKeyParam(params)
 	if err != nil {
-		c.JSON(400, err.Error())
-		return
+		return err
 	}
-
-	// On retourne le nom de fichier avant la fin du traitement, pour éviter erreur "Request timed out"
-	var filepath = viper.GetString("exportPath") + "dbmongo-data-export-entreprises-" + getTimestamp() + ".json.gz"
-	c.JSON(200, filepath)
-
-	err = engine.ExportEntreprises(key, filepath)
-	if err != nil {
-		c.AbortWithError(500, err)
-	}
+	return engine.ExportEntreprises(key)
 }
 
-func validateHandler(c *gin.Context) {
+type validateParams struct {
+	Collection string `json:"collection"`
+}
 
-	var params struct {
-		Collection string `json:"collection"`
-	}
-	c.ShouldBind(&params)
+func validateHandler(params validateParams) error {
+
 	if params.Collection != "RawData" && params.Collection != "ImportedData" {
-		c.JSON(400, "le paramètre collection doit valoir RawData ou ImportedData")
-		return
+		return errors.New("le paramètre collection doit valoir RawData ou ImportedData")
 	}
-
-	// On retourne le nom de fichier avant la fin du traitement, pour éviter erreur "Request timed out"
-	var filepath = viper.GetString("exportPath") + "dbmongo-" + params.Collection + "-validation-" + getTimestamp() + ".json.gz"
 
 	jsonSchema, err := engine.LoadJSONSchemaFiles()
 	if err != nil {
-		c.JSON(500, err)
-		return
+		return err
 	}
-	c.JSON(200, filepath)
 
-	err = engine.ValidateDataEntries(filepath, jsonSchema, params.Collection)
+	err = engine.ValidateDataEntries(jsonSchema, params.Collection)
 	if err != nil {
-		c.AbortWithError(500, err)
+		return err
 	}
+
+	return nil
 }

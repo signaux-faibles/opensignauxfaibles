@@ -2,9 +2,13 @@
 
 Solution logicielle pour la détection anticipée d'entreprises en difficulté.
 
+La solution est centrée sur la commande `sfdata` qui permet d'exécuter des traitements sur une base de données MongoDB.
+
+Précedemment, la solution reposait sur un serveur HTTP nommé `dbmongo`.
+
 ## Architecture
 
-- Back-end: golang
+- Golang
 - MongoDB 4.2
 - Fonctions map-reduce: TypeScript (TS) et JavaScript (JS)
 
@@ -19,7 +23,7 @@ Solution logicielle pour la détection anticipée d'entreprises en difficulté.
 $ git clone https://github.com/signaux-faibles/opensignauxfaibles.git
 $ cd opensignauxfaibles
 $ go generate ./...
-$ go build -o dbmongo
+$ go build -o sfdata
 $ go test ./...
 ```
 
@@ -37,13 +41,13 @@ Par ordre de priorité, le fichier de configuration peut se trouver dans:
 
 ## Usage
 
-Le serveur `dbmongo` s'inscrit dans un workflow d'intégration de données. Pour plus d'informations, consulter [signaux-faibles/documentation](https://github.com/signaux-faibles/documentation/blob/master/processus-traitement-donnees.md#workflow-classique).
+La commande `sfdata` s'inscrit dans un workflow d'intégration de données. Pour plus d'informations, consulter [signaux-faibles/documentation](https://github.com/signaux-faibles/documentation/blob/master/processus-traitement-donnees.md#workflow-classique).
 
 ## Développement et tests automatisés
 
 Afin de prévenir les régressions, plusieurs types de tests automatisés sont inclus dans le dépôt:
 
-- tests unitaires de `dbmongo`: `$ go test ./...`
+- tests unitaires de `sfdata`: `$ go test ./...`
 - tests unitaires et d'intégration des fonctions map-reduce: `$ cd js && npm test`
 - tests de bout en bout de l'API: `$ tests/test-api-*.sh`
 
@@ -97,5 +101,5 @@ $ npm test # pour exécuter les tests unitaires et d'intégration, tel que décr
 ### Intégration et test de modifications des fonctions map-reduce (TS/JS)
 
 ```sh
-$ ./test-all.sh # va regénérer jsFunctions.go, recompiler dbmongo et exécuter tous les tests
+$ ./test-all.sh # va regénérer jsFunctions.go, recompiler sfdata et exécuter tous les tests
 ```

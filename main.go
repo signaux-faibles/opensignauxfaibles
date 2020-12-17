@@ -1,25 +1,20 @@
 package main
 
 import (
+	"errors"
+	"flag"
+	"fmt"
+	"os"
+	"strings"
+
 	"github.com/signaux-faibles/opensignauxfaibles/lib/engine"
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/naf"
 
-	"github.com/gin-contrib/cors"
-	"github.com/gin-gonic/gin"
-	"github.com/spf13/viper"
-
-	ginSwagger "github.com/swaggo/gin-swagger"
-	"github.com/swaggo/gin-swagger/swaggerFiles"
-
 	_ "github.com/signaux-faibles/opensignauxfaibles/docs"
 )
 
-// main Fonction Principale
-func main() {
-	// Lancer Rserve en background
-
-	// go r()
+func connectDb() {
 	engine.Db = engine.InitDB()
 	go engine.MessageSocketAddClient()
 
@@ -28,46 +23,121 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+}
 
-	r := gin.New()
+// main Fonction Principale
+func main() {
+	err := runCommand(os.Args[1:])
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	engine.FlushEventQueue()
+}
 
-	if !viper.GetBool("DEV") {
-		gin.SetMode(gin.ReleaseMode)
-	} else {
-		r.Use(gin.Recovery())
-		r.Use(gin.Logger())
+var cmds = map[string]commandDefinition{
+	// TODO: convert api.GET("/data/purgeNotCompacted", purgeNotCompactedHandler)
+	"purge": func(args []string) error {
+		var params purgeBatchParams // TODO: also populate other parameters
+		flag.StringVar(&params.FromBatchKey, "since-batch", "", "Batch identifier")
+		flag.BoolVar(&params.IUnderstandWhatImDoing, "i-understand-what-im-doing", false, "Confirm data deletion")
+		flag.CommandLine.Parse(args)
+		connectDb()
+		return purgeBatchHandler(params) // [x] écrit dans Journal
+	},
+	"check": func(args []string) error {
+		var parsers string
+		params := checkBatchParams{}
+		flag.StringVar(&params.BatchKey, "batch", "", "Batch identifier")
+		flag.StringVar(&parsers, "parsers", "", "List of parsers")
+		flag.CommandLine.Parse(args)
+		params.Parsers = strings.Split(parsers, ",")
+		connectDb()
+		return checkBatchHandler(params) // [x] écrit dans Journal
+	},
+	"pruneEntities": func(args []string) error {
+		params := pruneEntitiesParams{}
+		flag.StringVar(&params.BatchKey, "batch", "", "Batch identifier")
+		flag.BoolVar(&params.Delete, "delete", false, "Delete entities")
+		flag.CommandLine.Parse(args)
+		connectDb()
+		return pruneEntitiesHandler(params) // [x] écrit dans Journal
+	},
+	"import": func(args []string) error {
+		params := importBatchParams{} // TODO: also populate other parameters
+		flag.StringVar(&params.BatchKey, "batch", "", "Batch identifier")
+		flag.BoolVar(&params.NoFilter, "no-filter", false, "Tolerate the absence of filter/perimeter file")
+		flag.CommandLine.Parse(args)
+		connectDb()
+		return importBatchHandler(params) // [x] écrit dans Journal
+	},
+	"validate": func(args []string) error {
+		params := validateParams{}
+		flag.StringVar(&params.Collection, "collection", "", "Name of the collection to validate")
+		flag.CommandLine.Parse(args)
+		connectDb()
+		return validateHandler(params) // [x] écrit dans Journal
+	},
+	"compact": func(args []string) error {
+		params := compactParams{}
+		flag.StringVar(&params.FromBatchKey, "since-batch", "", "Batch identifier")
+		flag.CommandLine.Parse(args)
+		connectDb()
+		return compactHandler(params) // [x] écrit dans Journal
+	},
+	"reduce": func(args []string) error {
+		params := reduceParams{} // TODO: also populate other parameters
+		flag.StringVar(&params.BatchKey, "until-batch", "", "Batch identifier")
+		flag.StringVar(&params.Key, "key", "", "SIRET or SIREN to focus on")
+		flag.CommandLine.Parse(args)
+		connectDb()
+		return reduceHandler(params) // [x] écrit dans Journal
+	},
+	"public": func(args []string) error {
+		params := publicParams{}
+		flag.StringVar(&params.BatchKey, "until-batch", "", "Batch identifier")
+		flag.StringVar(&params.Key, "key", "", "SIRET or SIREN to focus on")
+		flag.CommandLine.Parse(args)
+		connectDb()
+		return publicHandler(params) // [x] écrit dans Journal
+	},
+	"etablissements": func(args []string) error {
+		params := exportParams{}
+		flag.StringVar(&params.Key, "key", "", "SIRET or SIREN to export")
+		flag.CommandLine.Parse(args)
+		connectDb()
+		return exportEtablissementsHandler(params) // TODO: écrire rapport dans Journal ?
+	},
+	"entreprises": func(args []string) error {
+		params := exportParams{}
+		flag.StringVar(&params.Key, "key", "", "SIRET or SIREN to export")
+		flag.CommandLine.Parse(args)
+		connectDb()
+		return exportEntreprisesHandler(params) // TODO: écrire rapport dans Journal ?
+	},
+}
+
+type commandDefinition func(args []string) error
+
+func runCommand(args []string) error {
+	if len(args) < 1 {
+		printSupportedCommands()
+		return errors.New("Error: You must pass a command")
 	}
 
-	config := cors.DefaultConfig()
-	if viper.GetBool("DEV") {
-		config.AllowOrigins = []string{"*"}
-	} else {
-		config.AllowOrigins = []string{viper.GetString("corsDomain")}
-	}
-	config.AddAllowHeaders("Authorization")
-	config.AddAllowMethods("GET", "POST")
-	r.Use(cors.New(config))
-
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler)) // serves interactive API documentation on /swagger/index.html
-
-	api := r.Group("api")
-
-	{
-		api.POST("/data/batch/purge", purgeBatchHandler)      // [x] écrit dans Journal
-		api.POST("/data/check", checkBatchHandler)            // [x] écrit dans Journal
-		api.POST("/data/import", importBatchHandler)          // [x] écrit dans Journal
-		api.POST("/data/validate", validateHandler)           // [x] écrit dans Journal
-		api.POST("/data/compact", compactHandler)             // [x] écrit dans Journal
-		api.POST("/data/reduce", reduceHandler)               // [x] écrit dans Journal
-		api.POST("/data/public", publicHandler)               // [x] écrit dans Journal
-		api.POST("/data/pruneEntities", pruneEntitiesHandler) // [x] écrit dans Journal
-
-		api.GET("/data/purgeNotCompacted", purgeNotCompactedHandler)
-
-		api.GET("/data/etablissements", exportEtablissementsHandler)
-		api.GET("/data/entreprises", exportEntreprisesHandler)
+	command := os.Args[1]
+	commandFct := cmds[command]
+	if commandFct != nil {
+		return commandFct(os.Args[2:])
 	}
 
-	bind := viper.GetString("APP_BIND")
-	r.Run(bind)
+	printSupportedCommands()
+	return fmt.Errorf("Unknown command: %s", command)
+}
+
+func printSupportedCommands() {
+	fmt.Println("Supported commands:")
+	for cmd := range cmds {
+		fmt.Printf(" - %s\n", cmd)
+	}
 }

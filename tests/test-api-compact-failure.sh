@@ -10,14 +10,14 @@ set -e # will stop the script if any command fails with a non-zero exit code
 
 # Clean up on exit
 function teardown {
-    tests/helpers/dbmongo-server.sh stop || true # keep tearing down, even if "No matching processes belonging to you were found"
+    tests/helpers/sfdata-wrapper.sh stop || true # keep tearing down, even if "No matching processes belonging to you were found"
     tests/helpers/mongodb-container.sh stop
 }
 trap teardown EXIT
 
 PORT="27016" tests/helpers/mongodb-container.sh start
 
-MONGODB_PORT="27016" tests/helpers/dbmongo-server.sh setup
+MONGODB_PORT="27016" tests/helpers/sfdata-wrapper.sh setup
 
 echo ""
 echo "📝 Inserting test data..."
@@ -57,22 +57,18 @@ tests/helpers/mongodb-container.sh run << CONTENTS
 CONTENTS
 
 echo ""
-echo "💎 Compacting RawData thru dbmongo API..."
-tests/helpers/dbmongo-server.sh start
+echo "💎 Compacting RawData..."
 
-RAWDATA_ERRORS_FILE=$(http --print=b --ignore-stdin :5000/api/data/validate collection=RawData | tr -d '"')
-echo "- POST /api/data/validate RawData 👉 ${RAWDATA_ERRORS_FILE}"
-diff <(echo -n '') <(zcat < "${RAWDATA_ERRORS_FILE}") # no validation errors detected in RawData
-rm "${RAWDATA_ERRORS_FILE}"
+VALIDATION_REPORT=$(tests/helpers/sfdata-wrapper.sh run validate --collection=RawData)
+echo "- POST /api/data/validate RawData"
+diff <(echo '') <(echo "${VALIDATION_REPORT}") # no validation errors detected in RawData
 
-IMPORTEDDATA_ERRORS_FILE=$(http --print=b --ignore-stdin :5000/api/data/validate collection=ImportedData | tr -d '"')
-echo "- POST /api/data/validate ImportedData 👉 ${IMPORTEDDATA_ERRORS_FILE}"
-diff <(echo -n '') <(zcat < "${IMPORTEDDATA_ERRORS_FILE}") # no validation errors detected in ImportedData
-rm "${IMPORTEDDATA_ERRORS_FILE}"
+VALIDATION_REPORT=$(tests/helpers/sfdata-wrapper.sh run validate --collection=ImportedData)
+echo "- POST /api/data/validate ImportedData"
+diff <(echo '') <(echo "${VALIDATION_REPORT}") # no validation errors detected in ImportedData
 
 echo "- POST /api/data/compact should not fail"
-RESULT=$(http --print=b --ignore-stdin :5000/api/data/compact fromBatchKey=2011_0_urssaf)
-echo "${RESULT}"
+RESULT=$(tests/helpers/sfdata-wrapper.sh run compact --since-batch=2011_0_urssaf)
 echo "${RESULT}" | grep --quiet "ok"
 
 echo "✅ OK"
