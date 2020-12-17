@@ -217,8 +217,12 @@ func runCommand(args []string) error {
 }
 
 func printSupportedCommands() {
+	fmt.Println("usage: sfdata <command> [--boolean-flag] [--parameter=<value1>,<value2>,...]")
+	fmt.Println("")
 	fmt.Println("Supported commands:")
+	fmt.Println("")
 	for cmd, cmdDef := range cmds {
-		fmt.Printf(" - %s (%s)\n", cmd, cmdDef.summary)
+		fmt.Printf("   %-16s %s\n", cmd, cmdDef.summary)
 	}
+	fmt.Println("")
 }
