@@ -7,15 +7,12 @@ import (
 	"time"
 
 	"github.com/globalsign/mgo/bson"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/marshal"
 )
 
 // SocketMessage permet la diffusion d'information vers tous les clients
 type SocketMessage struct {
-	JournalEvent marshal.Event     `json:"journalEvent" bson:"journalEvent"`
-	Batches      []base.AdminBatch `json:"batches,omitempty" bson:"batches,omitempty"`
-	Features     []string          `json:"features,omitempty" bson:"features,omitempty"`
+	JournalEvent marshal.Event `json:"journalEvent" bson:"journalEvent"`
 }
 
 var relaying sync.WaitGroup
