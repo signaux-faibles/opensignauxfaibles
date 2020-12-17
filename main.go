@@ -70,14 +70,21 @@ var cmds = map[string]*commandDefinition{
 			connectDb()
 			return checkBatchHandler(params) // [x] écrit dans Journal
 		}},
-	"pruneEntities": {"TODO - summary", func(args []string) error {
-		params := pruneEntitiesParams{}
-		flag.StringVar(&params.BatchKey, "batch", "", "Batch identifier")
-		flag.BoolVar(&params.Delete, "delete", false, "Delete entities")
-		flag.CommandLine.Parse(args)
-		connectDb()
-		return pruneEntitiesHandler(params) // [x] écrit dans Journal
-	}},
+	"pruneEntities": {
+		"Compte/supprime les entités hors périmètre",
+		/**
+		Compte puis supprime dans la collection `RawData` les entités (établissements et entreprises)
+		non listées dans le filtre de périmètre du batch spécifié.
+		Répond avec un propriété JSON "count" qui vaut le nombre d'entités hors périmètre comptées ou supprimées.
+		*/
+		func(args []string) error {
+			params := pruneEntitiesParams{}
+			flag.StringVar(&params.BatchKey, "batch", "", "Identifiant du batch à nettoyer (ex: `1802`, pour Février 2018)")
+			flag.BoolVar(&params.Delete, "delete", false, "Nécessaire pour confirmer la suppression de données")
+			flag.CommandLine.Parse(args)
+			connectDb()
+			return pruneEntitiesHandler(params) // [x] écrit dans Journal
+		}},
 	"import": {
 		"Importer des fichiers",
 		/**
