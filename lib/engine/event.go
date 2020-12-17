@@ -1,3 +1,6 @@
+// Ce fichier est responsable de collecter les messages et de les ajouter
+// dans la collection Journal.
+
 package engine
 
 import (
@@ -7,35 +10,16 @@ import (
 	"time"
 
 	"github.com/globalsign/mgo/bson"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/marshal"
 )
 
-// SocketMessage permet la diffusion d'information vers tous les clients
-type SocketMessage struct {
-	JournalEvent marshal.Event     `json:"journalEvent" bson:"journalEvent"`
-	Batches      []base.AdminBatch `json:"batches,omitempty" bson:"batches,omitempty"`
-	Features     []string          `json:"features,omitempty" bson:"features,omitempty"`
-	Channel      chan SocketMessage
-}
+type messageChannel chan marshal.Event
 
-// MarshalJSON fournit un objet serialisable
-func (message SocketMessage) MarshalJSON() ([]byte, error) {
-	var tmp SocketMessage
-	tmp.JournalEvent = message.JournalEvent
-	tmp.Batches = message.Batches
-	tmp.Features = message.Features
-	return json.Marshal(tmp)
-}
+var mainMessageChannel = messageDispatch() // canal dans lequel on va émettre tous les messages
 
-var relaying sync.WaitGroup
-
-type messageChannel chan SocketMessage
+var relaying sync.WaitGroup // permet de savoir quand les messages ont fini d'être transmis
 
 var messageClientChannels = []messageChannel{}
-
-// MainMessageChannel permet d'envoyer un SocketMessage
-var MainMessageChannel = messageDispatch()
 
 // AddClientChannel enregistre un nouveau client
 var AddClientChannel = make(chan messageChannel)
@@ -47,17 +31,17 @@ func MessageSocketAddClient() {
 	}
 }
 
-// journal dispatch un event vers les clients et l'enregistre dans la bdd
-func messageDispatch() chan SocketMessage {
+// Transmet les messages collectés vers les clients et l'enregistre dans la bdd
+func messageDispatch() chan marshal.Event {
 	relaying.Add(1)
 	channel := make(messageChannel)
 	go func() {
 		defer relaying.Done()
 		for event := range channel {
-			err := Db.DBStatus.C("Journal").Insert(event.JournalEvent)
+			err := Db.DBStatus.C("Journal").Insert(event)
 			if err != nil {
 				log.Print("Erreur critique d'insertion dans la base de données: " + err.Error())
-				log.Print(json.Marshal(event.JournalEvent))
+				log.Print(json.Marshal(event))
 			}
 			for _, clientChannel := range messageClientChannels {
 				clientChannel <- event
@@ -67,11 +51,9 @@ func messageDispatch() chan SocketMessage {
 	return channel
 }
 
-// RelayEvents transmet les messages
+// RelayEvents transmet les événements qui surviennent pendant le parsing d'un
+// fichiers de données et retourne le rapport final du parsing de ce fichier.
 func RelayEvents(eventChannel chan marshal.Event, reportType string, startDate time.Time) (lastReport string) {
-	if eventChannel == nil {
-		return
-	}
 	for e := range eventChannel {
 		if reportContainer, ok := e.Comment.(bson.M); ok {
 			if strReport, ok := reportContainer["summary"].(string); ok {
@@ -80,9 +62,7 @@ func RelayEvents(eventChannel chan marshal.Event, reportType string, startDate t
 		}
 		e.ReportType = reportType
 		e.StartDate = startDate
-		MainMessageChannel <- SocketMessage{
-			JournalEvent: e,
-		}
+		mainMessageChannel <- e
 	}
 	return lastReport
 }
@@ -92,13 +72,11 @@ func LogOperationEvent(reportType string, startDate time.Time) {
 	event := marshal.CreateEvent()
 	event.StartDate = startDate
 	event.ReportType = reportType
-	MainMessageChannel <- SocketMessage{
-		JournalEvent: event,
-	}
+	mainMessageChannel <- event
 }
 
 // FlushEventQueue finalise l'insertion des événements dans Journal.
 func FlushEventQueue() {
-	close(MainMessageChannel)
+	close(mainMessageChannel)
 	relaying.Wait()
 }
