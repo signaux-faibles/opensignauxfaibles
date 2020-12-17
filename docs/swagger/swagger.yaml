@@ -1,25 +1,4 @@
 components:
-  /api/data/etablissements:
-    get:
-      description: Exporte la liste des établissements depuis la collection Public vers un fichier compressé au format gzip contenant une ligne JSON par document.
-      parameters:
-        - in: query
-          name: key
-          schema:
-            type: integer
-          required: false
-          description: Numéro SIREN à utiliser pour filtrer les résultats.
-      responses:
-        "200":
-          description: Les établissements ont été exportés dans le fichier fourni en réponse.
-          content:
-            application/json:
-              schema:
-                type: string
-      security:
-        - BearerAuth: []
-      tags:
-        - Traitements
   /api/data/entreprises:
     get:
       description: Exporte la liste des entreprises depuis la collection Public vers un fichier compressé au format gzip contenant une ligne JSON par document.

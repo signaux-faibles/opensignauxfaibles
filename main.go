@@ -105,7 +105,7 @@ var cmds = map[string]*commandDefinition{
 		"Liste les entrées de données invalides",
 		/**
 		Vérifie la validité des entrées de données contenues dans les documents de la collection RawData ou ImportedData.
-		Répond en listant les entrées invalides.
+		Répond en listant dans la sortie standard les entrées invalides au format JSON.
 		*/
 		func(args []string) error {
 			params := validateParams{}
@@ -167,13 +167,19 @@ var cmds = map[string]*commandDefinition{
 			connectDb()
 			return publicHandler(params) // [x] écrit dans Journal
 		}},
-	"etablissements": {"TODO - summary", func(args []string) error {
-		params := exportParams{}
-		flag.StringVar(&params.Key, "key", "", "SIRET or SIREN to export")
-		flag.CommandLine.Parse(args)
-		connectDb()
-		return exportEtablissementsHandler(params) // TODO: écrire rapport dans Journal ?
-	}},
+	"etablissements": {
+		"Exporte la liste des établissements",
+		/**
+		Exporte la liste des établissements depuis la collection Public.
+		Répond dans la sortie standard une ligne JSON par établissement.
+		*/
+		func(args []string) error {
+			params := exportParams{}
+			flag.StringVar(&params.Key, "key", "", "Numéro SIREN à utiliser pour filtrer les résultats.")
+			flag.CommandLine.Parse(args)
+			connectDb()
+			return exportEtablissementsHandler(params) // TODO: écrire rapport dans Journal ?
+		}},
 	"entreprises": {"TODO - summary", func(args []string) error {
 		params := exportParams{}
 		flag.StringVar(&params.Key, "key", "", "SIRET or SIREN to export")
