@@ -10,8 +10,6 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/lib/engine"
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/naf"
-
-	_ "github.com/signaux-faibles/opensignauxfaibles/docs"
 )
 
 func connectDb() {
