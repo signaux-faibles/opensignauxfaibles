@@ -61,14 +61,22 @@ var cmds = map[string]*commandDefinition{
 		connectDb()
 		return pruneEntitiesHandler(params) // [x] écrit dans Journal
 	}},
-	"import": {"TODO - summary", func(args []string) error {
-		params := importBatchParams{} // TODO: also populate other parameters
-		flag.StringVar(&params.BatchKey, "batch", "", "Batch identifier")
-		flag.BoolVar(&params.NoFilter, "no-filter", false, "Tolerate the absence of filter/perimeter file")
-		flag.CommandLine.Parse(args)
-		connectDb()
-		return importBatchHandler(params) // [x] écrit dans Journal
-	}},
+	"import": {
+		"Importer des fichiers",
+		/**
+		Effectue l'import de tous les fichiers du batch donné en paramètre.
+		Pour exécuter tous les parsers, il faut ne pas spécifier la propriété parsers ou lui donner la valeur null.
+		Répond "ok" dans la sortie standard, si le traitement s'est bien déroulé.
+		*/
+		func(args []string) error {
+			params := importBatchParams{}
+			// TODO: populer "Parsers", documentation: "Parseurs à employer (ex: `altares,cotisation`)"
+			flag.StringVar(&params.BatchKey, "batch", "", "Identifiant du batch à importer (ex: `1802`, pour Février 2018)")
+			flag.BoolVar(&params.NoFilter, "no-filter", false, "Pour procéder à l'importation même si aucun filtre n'est fourni")
+			flag.CommandLine.Parse(args)
+			connectDb()
+			return importBatchHandler(params) // [x] écrit dans Journal
+		}},
 	"validate": {"TODO - summary", func(args []string) error {
 		params := validateParams{}
 		flag.StringVar(&params.Collection, "collection", "", "Name of the collection to validate")

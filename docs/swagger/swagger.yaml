@@ -14,15 +14,6 @@ components:
           type: string
         key:
           type: string
-    Import:
-      properties:
-        batch:
-          type: string
-        noFilter:
-          type: boolean
-          description: Permet de poursuivre l'importation même si aucun filtre n'est fourni
-        parsers:
-          type: string
     Check:
       properties:
         batch:
@@ -48,46 +39,6 @@ components:
         collection:
           type: string
           description: "RawData ou ImportedData"
-  securitySchemes:
-    BearerAuth:
-      type: http
-      scheme: bearer
-paths:
-  /api/data/import:
-    post:
-      description:
-        Effectue l'import de tous les fichiers du batch donné en paramètre
-        Pour exécuter tous les parsers, il faut ne pas spécifier la propriété parsers ou lui donner la valeur null.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Import"
-            example:
-              batch: 1802
-              parsers:
-                - altares
-                - cotisation
-      responses:
-        "200":
-          description: Le traitement s'est bien déroulé
-          content:
-            application/json:
-              schema:
-                type: string
-              example: ok
-        "404":
-          description: Un des parsers demandé n'est pas reconnu
-          content:
-            application/json:
-              schema:
-                type: string
-              example: justAnExampleParser n'est pas un parser reconnu
-      security:
-        - BearerAuth: []
-      summary: importer des fichiers
-      tags:
-        - Traitements
   /api/data/check:
     post:
       description:
