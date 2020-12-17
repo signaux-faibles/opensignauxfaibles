@@ -11,7 +11,7 @@ set -e # will stop the script if any command fails with a non-zero exit code
 # Setup
 FLAGS="$*" # the script will update the golden file if "--update" flag was provided as 1st argument
 INPUT_FILE="tests/input-data/RawData.validation.json"
-GOLDEN_FILE="tests/output-snapshots/test-api-validate.golden.json"
+GOLDEN_FILE="tests/output-snapshots/test-validate.golden.json"
 TMP_DIR="tests/tmp-test-execution-files"
 OUTPUT_FILE="${TMP_DIR}/output.json"
 mkdir -p "${TMP_DIR}"

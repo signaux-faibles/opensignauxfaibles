@@ -10,8 +10,8 @@ set -e # will stop the script if any command fails with a non-zero exit code
 # Setup
 FLAGS="$*" # the script will update the golden file if "--update" flag was provided as 1st argument
 TMP_DIR="tests/tmp-test-execution-files"
-OUTPUT_FILE="${TMP_DIR}/test-api-check.output.txt"
-GOLDEN_FILE="tests/output-snapshots/test-api-check.golden.txt"
+OUTPUT_FILE="${TMP_DIR}/test-check.output.txt"
+GOLDEN_FILE="tests/output-snapshots/test-check.golden.txt"
 mkdir -p "${TMP_DIR}"
 
 # Clean up on exit

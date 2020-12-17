@@ -9,7 +9,7 @@ set -e # will stop the script if any command fails with a non-zero exit code
 
 # Setup
 TMP_DIR="tests/tmp-test-execution-files"
-FILTER_FILE="${TMP_DIR}/test-api-prune-entities.filter.csv"
+FILTER_FILE="${TMP_DIR}/test-prune-entities.filter.csv"
 mkdir -p "${TMP_DIR}"
 
 # Clean up on exit
