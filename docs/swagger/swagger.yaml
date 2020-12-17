@@ -6,12 +6,6 @@ components:
           type: string
         key:
           type: string
-    Check:
-      properties:
-        batch:
-          type: string
-        parsers:
-          type: string
     Reduce:
       properties:
         batch:
@@ -31,46 +25,6 @@ components:
         collection:
           type: string
           description: "RawData ou ImportedData"
-  /api/data/check:
-    post:
-      description:
-        Vérifie la validité du batch sur le point d'être importé et des fichiers qui le constituent.
-        Pour exécuter tous les parsers, il faut ne pas spécifier la propriété parsers ou lui donner la valeur null.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Check"
-            example:
-              batch: 1802
-              parsers:
-                - altares
-                - cotisation
-      responses:
-        "200":
-          description: Le batch est valide et les rapports de parsing stockés dans la collection Journal.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  reports:
-                    type: array
-                    items:
-                      type: string
-                    description: rapports de parsing de chaque fichier mentionné dans le batch
-                    example:
-                      - "/../lib/urssaf/testData/debitCorrompuTestData.csv: intégration terminée, 5 lignes traitées, 2 erreures fatales, 0 rejets, 0 lignes filtrées, 3 lignes valides"
-        "404":
-          description: Le batch est inexistant ou un des parsers demandé n'est pas reconnu.
-          content:
-            application/json:
-              schema:
-                type: string
-              example: justAnExampleParser n'est pas un parser reconnu
-      summary: Vérifier la validité d'un batch avant son importation
-      tags:
-        - Traitements
   /api/data/public:
     post:
       description: |-

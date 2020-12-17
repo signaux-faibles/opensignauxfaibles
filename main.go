@@ -34,16 +34,6 @@ func main() {
 }
 
 var cmds = map[string]*commandDefinition{
-	"check": {"TODO - summary", func(args []string) error {
-		var parsers string
-		params := checkBatchParams{}
-		flag.StringVar(&params.BatchKey, "batch", "", "Batch identifier")
-		flag.StringVar(&parsers, "parsers", "", "List of parsers")
-		flag.CommandLine.Parse(args)
-		params.Parsers = strings.Split(parsers, ",")
-		connectDb()
-		return checkBatchHandler(params) // [x] écrit dans Journal
-	}},
 	"purge": {
 		"Supprime une partie des données compactées",
 		/**
@@ -62,6 +52,23 @@ var cmds = map[string]*commandDefinition{
 			flag.CommandLine.Parse(args)
 			connectDb()
 			return purgeBatchHandler(params) // [x] écrit dans Journal
+		}},
+	"check": {
+		"Vérifie la validité d'un batch avant son importation",
+		/**
+		Vérifie la validité du batch sur le point d'être importé et des fichiers qui le constituent.
+		Pour exécuter tous les parsers, il faut ne pas spécifier la propriété parsers ou lui donner la valeur null.
+		Répond avec un propriété JSON "reports" qui contient les rapports textuels de parsing de chaque fichier.
+		*/
+		func(args []string) error {
+			var parsers string
+			params := checkBatchParams{}
+			flag.StringVar(&params.BatchKey, "batch", "", "Identifiant du batch à vérifier (ex: `1802`, pour Février 2018)")
+			flag.StringVar(&parsers, "parsers", "", "Parseurs à employer (ex: `altares,cotisation`)")
+			flag.CommandLine.Parse(args)
+			params.Parsers = strings.Split(parsers, ",")
+			connectDb()
+			return checkBatchHandler(params) // [x] écrit dans Journal
 		}},
 	"pruneEntities": {"TODO - summary", func(args []string) error {
 		params := pruneEntitiesParams{}
