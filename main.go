@@ -76,13 +76,21 @@ var cmds = map[string]*commandDefinition{
 		connectDb()
 		return validateHandler(params) // [x] écrit dans Journal
 	}},
-	"compact": {"TODO - summary", func(args []string) error {
-		params := compactParams{}
-		flag.StringVar(&params.FromBatchKey, "since-batch", "", "Batch identifier")
-		flag.CommandLine.Parse(args)
-		connectDb()
-		return compactHandler(params) // [x] écrit dans Journal
-	}},
+	"compact": {
+		"Compacter la base de données",
+		/**
+		Ce traitement permet le compactage de la base de données.
+		Ce compactage a pour effet de réduire tous les objets en clé uniques comportant dans la même arborescence toutes les données en rapport avec ces clés.
+		Ce traitement est nécessaire pour rendre disponible les données à /api/data/reduce les nouvelles données importées.
+		Répond "ok" dans la sortie standard, si le traitement s'est bien déroulé.
+		*/
+		func(args []string) error {
+			params := compactParams{}
+			flag.StringVar(&params.FromBatchKey, "since-batch", "", "Batch identifier")
+			flag.CommandLine.Parse(args)
+			connectDb()
+			return compactHandler(params) // [x] écrit dans Journal
+		}},
 	"reduce": {"TODO - summary", func(args []string) error {
 		params := reduceParams{} // TODO: also populate other parameters
 		flag.StringVar(&params.BatchKey, "until-batch", "", "Batch identifier")
