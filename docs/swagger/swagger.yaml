@@ -1,41 +1,4 @@
 components:
-  schemas:
-    Public:
-      properties:
-        batch:
-          type: string
-        key:
-          type: string
-  /api/data/public:
-    post:
-      description: |-
-        Alimente la collection Public avec les objets calculés pour le batch cité en paramètre, à partir de la collection RawData.  
-        Le traitement prend en paramètre la clé du batch (obligatoire) et un SIREN (optionnel). Lorsque le SIREN n'est pas précisé, tous les objets lié au batch sont traités, à conditions qu'ils soient dans le périmètre de scoring "algo2".
-        Cette collection sera ensuite accédée par les utilisateurs pour consulter les données des entreprises.  
-        Des niveaux d'accéditation fins (ligne ou colonne) pour la consultation de ces données peuvent être mis en oeuvre.  
-        Ces filtrages sont effectués grace à la notion de scope. Les objets et les utilisateurs disposent d'un ensemble de tags et les objets partageant au moins un tag avec les utilisateurs peuvent être consultés par ceux-ci.  
-        Ces tags sont exploités pour traiter la notion de région (ligne) mais aussi les permissions (colonne).
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Public"
-            example:
-              batch: "1805"
-              key: "012345678"
-      responses:
-        "200":
-          description: Le traitement s'est bien déroulé
-          content:
-            application/json:
-              schema:
-                type: string
-              example: ok
-      security:
-        - BearerAuth: []
-      summary: publier les données
-      tags:
-        - Traitements
   /api/data/etablissements:
     get:
       description: Exporte la liste des établissements depuis la collection Public vers un fichier compressé au format gzip contenant une ligne JSON par document.
