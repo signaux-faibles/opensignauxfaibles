@@ -16,16 +16,6 @@ type SocketMessage struct {
 	JournalEvent marshal.Event     `json:"journalEvent" bson:"journalEvent"`
 	Batches      []base.AdminBatch `json:"batches,omitempty" bson:"batches,omitempty"`
 	Features     []string          `json:"features,omitempty" bson:"features,omitempty"`
-	Channel      chan SocketMessage
-}
-
-// MarshalJSON fournit un objet serialisable
-func (message SocketMessage) MarshalJSON() ([]byte, error) {
-	var tmp SocketMessage
-	tmp.JournalEvent = message.JournalEvent
-	tmp.Batches = message.Batches
-	tmp.Features = message.Features
-	return json.Marshal(tmp)
 }
 
 var relaying sync.WaitGroup
