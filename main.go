@@ -89,12 +89,12 @@ var cmds = map[string]*commandDefinition{
 		/**
 		Ce traitement permet le compactage de la base de données.
 		Ce compactage a pour effet de réduire tous les objets en clé uniques comportant dans la même arborescence toutes les données en rapport avec ces clés.
-		Ce traitement est nécessaire pour rendre disponible les données à /api/data/reduce les nouvelles données importées.
+		Ce traitement est nécessaire avant l'usage des commandes `reduce` et `public`, après chaque import de données.
 		Répond "ok" dans la sortie standard, si le traitement s'est bien déroulé.
 		*/
 		func(args []string) error {
 			params := compactParams{}
-			flag.StringVar(&params.FromBatchKey, "since-batch", "", "Batch identifier")
+			flag.StringVar(&params.FromBatchKey, "since-batch", "", "Identifiant du batch à partir duquel compacter (ex: `1802`, pour Février 2018)")
 			flag.CommandLine.Parse(args)
 			connectDb()
 			return compactHandler(params) // [x] écrit dans Journal
