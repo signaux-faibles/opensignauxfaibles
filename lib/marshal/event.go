@@ -13,12 +13,6 @@ type Priority string
 // Code test
 type Code string
 
-// EventInChannel envelope un objet de journal avec sa destination
-type EventInChannel struct {
-	ActualEvent Event
-	Channel     chan Event
-}
-
 // Event est un objet de journal
 // swagger:ignore
 type Event struct {
@@ -37,23 +31,8 @@ func CreateEvent() (event Event) {
 		ID:       bson.NewObjectId(),
 		Date:     time.Now(),
 		Priority: Priority("info"),
+		Code:     Code("unknown"),
 	}
-}
-
-func (event EventInChannel) throw(comment interface{}, logLevel string) {
-	event.ActualEvent.ID = bson.NewObjectId()
-	event.ActualEvent.Date = time.Now()
-	event.ActualEvent.Comment = comment
-	if event.ActualEvent.Code == "" {
-		event.ActualEvent.Code = Code("unknown")
-	}
-	event.ActualEvent.Priority = Priority("info")
-	event.Channel <- event.ActualEvent
-}
-
-// Info produit un évènement de niveau Info
-func (event EventInChannel) Info(comment interface{}) {
-	event.throw(comment, "info")
 }
 
 // ParseReport permet d'accéder aux propriétés d'un rapport de parsing.
