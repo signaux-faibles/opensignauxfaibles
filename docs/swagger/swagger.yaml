@@ -6,14 +6,6 @@ components:
           type: string
         key:
           type: string
-    Reduce:
-      properties:
-        batch:
-          type: string
-        key:
-          type: string
-        features:
-          type: string
   /api/data/public:
     post:
       description: |-
@@ -44,35 +36,6 @@ components:
       summary: publier les données
       tags:
         - Traitements
-  /api/data/reduce:
-    post:
-      description: |-
-        Alimente la collection Features en calculant les variables avec le traitement mapreduce demandé dans la propriété `features`  
-        Le traitement remplace les objets similaires en sortie du calcul dans la collection Features, les objets non concernés par le traitement ne seront ainsi pas remplacés, de sorte que si un seul siret est demandé le calcul ne remplacera qu'un seul objet.  
-        Ces traitements ne prennent en compte que les objets déjà compactés.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Reduce"
-            example:
-              batch: "1805"
-              features: "algo2"
-              key: "012345678901234"
-      responses:
-        "200":
-          description: Le traitement s'est bien déroulé
-          content:
-            application/json:
-              schema:
-                type: string
-              example: ok
-      security:
-        - BearerAuth: []
-      summary: calculer les variables
-      tags:
-        - Traitements
-
   /api/data/etablissements:
     get:
       description: Exporte la liste des établissements depuis la collection Public vers un fichier compressé au format gzip contenant une ligne JSON par document.
