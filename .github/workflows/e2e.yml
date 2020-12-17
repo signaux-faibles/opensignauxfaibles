@@ -41,7 +41,7 @@ jobs:
           find . \
             ! -name 'sfdata' \
             ! -name '*.toml' \
-            ! -name 'test-*.sh' \
+            ! -name 'test*.sh' \
             ! -name 'sfdata-wrapper.sh' \
             ! -name 'diff-or-update-golden-master.sh' \
             ! -name 'mongodb-container.sh' \
