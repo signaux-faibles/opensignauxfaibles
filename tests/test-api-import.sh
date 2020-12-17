@@ -94,7 +94,7 @@ printjson(db.ImportedData.find().sort({"value.key":1}).toArray().map(doc => ({
 
 print("// Reports from db.Journal:");
 // on classe les données par type, de manière à ce que l'ordre soit stable
-printjson(db.Journal.find().sort({ parserCode: 1 }).toArray().map(doc => (doc.event ? {
+printjson(db.Journal.find().sort({ reportType: -1, parserCode: 1 }).toArray().map(doc => (doc.event ? {
   event: {
     headRejected: doc.event.headRejected,
     headFatal: doc.event.headFatal,
