@@ -10,14 +10,9 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/lib/marshal"
 )
 
-// SocketMessage permet la diffusion d'information vers tous les clients
-type SocketMessage struct {
-	JournalEvent marshal.Event `json:"journalEvent" bson:"journalEvent"`
-}
-
 var relaying sync.WaitGroup
 
-type messageChannel chan SocketMessage
+type messageChannel chan marshal.Event
 
 var messageClientChannels = []messageChannel{}
 
@@ -35,16 +30,16 @@ func MessageSocketAddClient() {
 }
 
 // journal dispatch un event vers les clients et l'enregistre dans la bdd
-func messageDispatch() chan SocketMessage {
+func messageDispatch() chan marshal.Event {
 	relaying.Add(1)
 	channel := make(messageChannel)
 	go func() {
 		defer relaying.Done()
 		for event := range channel {
-			err := Db.DBStatus.C("Journal").Insert(event.JournalEvent)
+			err := Db.DBStatus.C("Journal").Insert(event)
 			if err != nil {
 				log.Print("Erreur critique d'insertion dans la base de données: " + err.Error())
-				log.Print(json.Marshal(event.JournalEvent))
+				log.Print(json.Marshal(event))
 			}
 			for _, clientChannel := range messageClientChannels {
 				clientChannel <- event
@@ -67,9 +62,7 @@ func RelayEvents(eventChannel chan marshal.Event, reportType string, startDate t
 		}
 		e.ReportType = reportType
 		e.StartDate = startDate
-		MainMessageChannel <- SocketMessage{
-			JournalEvent: e,
-		}
+		MainMessageChannel <- e
 	}
 	return lastReport
 }
@@ -79,9 +72,7 @@ func LogOperationEvent(reportType string, startDate time.Time) {
 	event := marshal.CreateEvent()
 	event.StartDate = startDate
 	event.ReportType = reportType
-	MainMessageChannel <- SocketMessage{
-		JournalEvent: event,
-	}
+	MainMessageChannel <- event
 }
 
 // FlushEventQueue finalise l'insertion des événements dans Journal.
