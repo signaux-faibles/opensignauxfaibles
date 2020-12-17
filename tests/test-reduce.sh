@@ -38,7 +38,7 @@ echo "db.Features_TestData.insertOne({a:1})" | tests/helpers/mongodb-container.s
 echo ""
 echo "💎 Computing the Features collection..."
 RESULT=$(tests/helpers/sfdata-wrapper.sh run reduce --until-batch=1905)
-echo "- POST /api/data/reduce 👉 ${RESULT}"
+echo "- sfdata reduce 👉 ${RESULT}"
 
 (tests/helpers/mongodb-container.sh run \
   > "${OUTPUT_FILE}" \
@@ -55,7 +55,7 @@ printjson({
 print("// Documents from db.Features_TestData:");
 printjson(db.Features_TestData.find().toArray());
 
-print("// Response body from /api/data/reduce:");
+print("// Response body from sfdata reduce:");
 CONTENT
 
 echo "${RESULT}" >> "${OUTPUT_FILE}"

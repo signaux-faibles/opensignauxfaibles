@@ -60,14 +60,14 @@ echo ""
 echo "💎 Compacting RawData..."
 
 VALIDATION_REPORT=$(tests/helpers/sfdata-wrapper.sh run validate --collection=RawData)
-echo "- POST /api/data/validate RawData"
+echo "- sfdata validate RawData"
 diff <(echo '') <(echo "${VALIDATION_REPORT}") # no validation errors detected in RawData
 
 VALIDATION_REPORT=$(tests/helpers/sfdata-wrapper.sh run validate --collection=ImportedData)
-echo "- POST /api/data/validate ImportedData"
+echo "- sfdata validate ImportedData"
 diff <(echo '') <(echo "${VALIDATION_REPORT}") # no validation errors detected in ImportedData
 
-echo "- POST /api/data/compact should not fail"
+echo "- sfdata compact should not fail"
 RESULT=$(tests/helpers/sfdata-wrapper.sh run compact --since-batch=2011_0_urssaf)
 echo "${RESULT}" | grep --quiet "ok"
 

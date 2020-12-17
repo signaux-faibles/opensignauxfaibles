@@ -17,5 +17,5 @@
 		"hasStartDate" : true
 	}
 ]
-// Response body from /api/data/check:
+// Response body from sfdata check:
 {"reports":["/../lib/urssaf/testData/debitCorrompuTestData.csv: intégration terminée, 5 lignes traitées, 0 erreurs fatales, 2 lignes rejetées, 0 lignes filtrées, 3 lignes valides"]}

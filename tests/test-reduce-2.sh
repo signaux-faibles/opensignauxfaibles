@@ -56,7 +56,7 @@ CONTENTS
 
 echo ""
 echo "💎 Computing the Features collection..."
-echo "- POST /api/data/reduce 👉 $(tests/helpers/sfdata-wrapper.sh run reduce --until-batch=2002_1)"
+echo "- sfdata reduce 👉 $(tests/helpers/sfdata-wrapper.sh run reduce --until-batch=2002_1)"
 
 (tests/helpers/mongodb-container.sh run \
   | tests/helpers/remove-random_order.sh \

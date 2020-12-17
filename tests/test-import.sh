@@ -62,10 +62,10 @@ CONTENTS
 
 echo ""
 echo "💎 Parsing and importing data..."
-echo "- POST /api/data/import 👉 $(tests/helpers/sfdata-wrapper.sh run import --batch=1910 --no-filter)"
+echo "- sfdata import 👉 $(tests/helpers/sfdata-wrapper.sh run import --batch=1910 --no-filter)"
 
 VALIDATION_REPORT=$(tests/helpers/sfdata-wrapper.sh run validate --collection=ImportedData)
-echo "- POST /api/data/validate"
+echo "- sfdata validate"
 
 (tests/helpers/mongodb-container.sh run \
   | perl -p -e 's/"[0-9a-z]{32}"/"______________Hash______________"/' \
@@ -73,7 +73,7 @@ echo "- POST /api/data/validate"
   | perl -p -e 's/"periode" : ISODate\("....-..-..T..:..:..Z"\)/"periode" : ISODate\("_______ Date _______"\)/' \
   > "${OUTPUT_FILE}" \
 ) << CONTENT
-print("// Documents from db.ImportedData, after call to /api/data/import:");
+print("// Documents from db.ImportedData, after call to sfdata import:");
 printjson(db.ImportedData.find().sort({"value.key":1}).toArray().map(doc => ({
   ...doc,
   value: {
@@ -112,7 +112,7 @@ printjson(db.Journal.find().sort({ reportType: -1, parserCode: 1 }).toArray().ma
   hasStartDate: !!doc.startDate,
 })));
 
-print("// Results of call to /api/data/validate:");
+print("// Results of call to sfdata validate:");
 CONTENT
 
 echo "${VALIDATION_REPORT}" \

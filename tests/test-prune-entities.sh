@@ -62,7 +62,7 @@ CONTENT
 echo ""
 echo "💎 Test: count and prune entities from RawData..."
 RESULT=$(tests/helpers/sfdata-wrapper.sh run pruneEntities --batch=2010)
-echo "- POST /api/data/pruneEntities 👉 ${RESULT}"
+echo "- sfdata pruneEntities 👉 ${RESULT}"
 
 # Print test results from stdin. Fails on any "false" result.
 # Expected format for each line: "<test label> : <true|false>"
@@ -88,7 +88,7 @@ function reportFailedTests {
   }).forEach(([ testName, testRes ]) => print(testName, ':', testRes));
 CONTENT
 
-echo "- POST /api/data/pruneEntities delete=true 👉 $(tests/helpers/sfdata-wrapper.sh run pruneEntities --batch=2010 --delete)"
+echo "- sfdata pruneEntities delete=true 👉 $(tests/helpers/sfdata-wrapper.sh run pruneEntities --batch=2010 --delete)"
 
 (tests/helpers/mongodb-container.sh run \
   | reportFailedTests \

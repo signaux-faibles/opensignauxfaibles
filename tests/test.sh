@@ -59,19 +59,19 @@ CONTENTS
 
 echo ""
 echo "💎 Computing Features and Public collections..."
-echo "- POST /api/data/compact 👉 $(tests/helpers/sfdata-wrapper.sh run compact --since-batch=1910)"
-echo "- POST /api/data/reduce 👉 $(tests/helpers/sfdata-wrapper.sh run reduce --until-batch=1910 --key=012345678)"
-echo "- POST /api/data/public 👉 $(tests/helpers/sfdata-wrapper.sh run public --until-batch=1910 --key=012345678)"
+echo "- sfdata compact 👉 $(tests/helpers/sfdata-wrapper.sh run compact --since-batch=1910)"
+echo "- sfdata reduce 👉 $(tests/helpers/sfdata-wrapper.sh run reduce --until-batch=1910 --key=012345678)"
+echo "- sfdata public 👉 $(tests/helpers/sfdata-wrapper.sh run public --until-batch=1910 --key=012345678)"
 
 (tests/helpers/mongodb-container.sh run \
   | tests/helpers/remove-random_order.sh \
   > "${OUTPUT_FILE}" \
 ) << CONTENTS
-  print("// Documents from db.RawData, after call to /api/data/compact:");
+  print("// Documents from db.RawData, after call to sfdata compact:");
   printjson(db.RawData.find().toArray());
-  print("// Documents from db.Features_debug, after call to /api/data/reduce:");
+  print("// Documents from db.Features_debug, after call to sfdata reduce:");
   printjson(db.Features_debug.find().toArray());
-  print("// Documents from db.Public_debug, after call to /api/data/public:");
+  print("// Documents from db.Public_debug, after call to sfdata public:");
   printjson(db.Public_debug.find().toArray());
 CONTENTS
 

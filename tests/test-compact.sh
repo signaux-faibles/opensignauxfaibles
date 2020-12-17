@@ -65,7 +65,7 @@ CONTENTS
 echo ""
 echo "💎 Compacting RawData..."
 RESULT=$(tests/helpers/sfdata-wrapper.sh run compact --since-batch=1802)
-echo "- POST /api/data/compact 👉 ${RESULT}"
+echo "- sfdata compact 👉 ${RESULT}"
 
 (tests/helpers/mongodb-container.sh run \
   | tests/helpers/remove-random_order.sh \
@@ -83,7 +83,7 @@ printjson({
 print("// Documents from db.RawData:");
 printjson(db.RawData.find().toArray());
 
-print("// Response body from /api/data/compact:");
+print("// Response body from sfdata compact:");
 CONTENT
 
 echo "${RESULT}" >> "${OUTPUT_FILE}"

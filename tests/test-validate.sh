@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Test de bout en bout de POST /api/data/validate.
+# Test de bout en bout de la commande "validate".
 # Inspiré de test-export.sh.
 # Ce script doit être exécuté depuis la racine du projet. Ex: par test-all.sh.
 
@@ -37,7 +37,7 @@ CONTENT
 echo ""
 echo "💎 Testing sfdata..."
 VALIDATION_REPORT=$(tests/helpers/sfdata-wrapper.sh run validate --collection=RawData)
-echo "- POST /api/data/validate"
+echo "- sfdata validate"
 
 (tests/helpers/mongodb-container.sh run \
   > "${OUTPUT_FILE}" \
@@ -51,7 +51,7 @@ printjson({
   hasStartDate: !!report.startDate,
 });
 
-print("// Result from /api/data/validate:");
+print("// Result from sfdata validate:");
 CONTENT
 
 echo "${VALIDATION_REPORT}" >> "${OUTPUT_FILE}"

@@ -32,7 +32,7 @@ CONTENT
 
 echo ""
 echo "💎 Test: purge batch 1901 from RawData..."
-echo "- POST /api/data/batch/purge 👉 $(tests/helpers/sfdata-wrapper.sh run purge --since-batch=1901 --i-understand-what-im-doing)"
+echo "- sfdata batch/purge 👉 $(tests/helpers/sfdata-wrapper.sh run purge --since-batch=1901 --i-understand-what-im-doing)"
 
 # Display JS errors logged by MongoDB, if any
 tests/helpers/mongodb-container.sh exceptions || true

@@ -53,7 +53,7 @@ CONTENTS
 echo ""
 echo "💎 Parsing data..."
 RESULT=$(tests/helpers/sfdata-wrapper.sh run check --batch=1910 --parsers='debit')
-echo "- POST /api/data/check 👉 ${RESULT}"
+echo "- sfdata check 👉 ${RESULT}"
 
 (tests/helpers/mongodb-container.sh run \
   > "${OUTPUT_FILE}" \
@@ -74,7 +74,7 @@ printjson(db.Journal.find().toArray().map(doc => ({
   hasStartDate: !!doc.startDate,
 })));
 
-print("// Response body from /api/data/check:");
+print("// Response body from sfdata check:");
 CONTENT
 
 echo "${RESULT}" >> "${OUTPUT_FILE}"

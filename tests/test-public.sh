@@ -34,7 +34,7 @@ tests/helpers/populate-from-objects.sh \
 echo ""
 echo "💎 Computing the Public collection..."
 RESULT=$(tests/helpers/sfdata-wrapper.sh run public --until-batch=1905)
-echo "- POST /api/data/public 👉 ${RESULT}"
+echo "- sfdata public 👉 ${RESULT}"
 
 (tests/helpers/mongodb-container.sh run \
   > "${OUTPUT_FILE}" \
@@ -51,7 +51,7 @@ printjson({
 print("// Documents from db.Public:");
 printjson(db.Public.find().toArray());
 
-print("// Response body from /api/data/public:");
+print("// Response body from sfdata public:");
 CONTENT
 
 echo "${RESULT}" >> "${OUTPUT_FILE}"
