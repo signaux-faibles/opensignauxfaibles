@@ -180,13 +180,19 @@ var cmds = map[string]*commandDefinition{
 			connectDb()
 			return exportEtablissementsHandler(params) // TODO: écrire rapport dans Journal ?
 		}},
-	"entreprises": {"TODO - summary", func(args []string) error {
-		params := exportParams{}
-		flag.StringVar(&params.Key, "key", "", "SIRET or SIREN to export")
-		flag.CommandLine.Parse(args)
-		connectDb()
-		return exportEntreprisesHandler(params) // TODO: écrire rapport dans Journal ?
-	}},
+	"entreprises": {
+		"Exporte la liste des entreprises",
+		/**
+		Exporte la liste des entreprises depuis la collection Public.
+		Répond dans la sortie standard une ligne JSON par entreprise.
+		*/
+		func(args []string) error {
+			params := exportParams{}
+			flag.StringVar(&params.Key, "key", "", "Numéro SIREN à utiliser pour filtrer les résultats.")
+			flag.CommandLine.Parse(args)
+			connectDb()
+			return exportEntreprisesHandler(params) // TODO: écrire rapport dans Journal ?
+		}},
 }
 
 type commandDefinition struct {
