@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Test de bout en bout de GET /api/data/entreprise et /api/data/etablissement.
-# Inspiré de test-api.sh.
+# Inspiré de test.sh.
 # Ce script doit être exécuté depuis la racine du projet. Ex: par test-all.sh.
 
 tests/helpers/mongodb-container.sh stop

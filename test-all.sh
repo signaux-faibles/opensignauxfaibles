@@ -48,41 +48,41 @@ heading "go generate"
 heading "go build"
 (killall sfdata 2>/dev/null || true; go build -o "sfdata" && echo "📦 sfdata") 2>&1 | indent
 
-heading "test-api-prune-entities.sh"
-./tests/test-api-prune-entities.sh $@ 2>&1 | indent
+heading "test-prune-entities.sh"
+./tests/test-prune-entities.sh $@ 2>&1 | indent
 
-heading "test-api.sh"
-./tests/test-api.sh $@ 2>&1 | indent
+heading "test.sh"
+./tests/test.sh $@ 2>&1 | indent
 
-heading "test-api-validate.sh"
-./tests/test-api-validate.sh $@ 2>&1 | indent
+heading "test-validate.sh"
+./tests/test-validate.sh $@ 2>&1 | indent
 
-heading "test-api-check.sh"
-./tests/test-api-check.sh $@ 2>&1 | indent
+heading "test-check.sh"
+./tests/test-check.sh $@ 2>&1 | indent
 
-heading "test-api-import.sh"
-./tests/test-api-import.sh $@ 2>&1 | indent
+heading "test-import.sh"
+./tests/test-import.sh $@ 2>&1 | indent
 
-heading "test-api-compact.sh"
-./tests/test-api-compact.sh $@ 2>&1 | indent
+heading "test-compact.sh"
+./tests/test-compact.sh $@ 2>&1 | indent
 
-heading "test-api-compact-failure.sh"
-./tests/test-api-compact-failure.sh $@ 2>&1 | indent
+heading "test-compact-failure.sh"
+./tests/test-compact-failure.sh $@ 2>&1 | indent
 
-heading "test-api-public.sh"
-./tests/test-api-public.sh $@ 2>&1 | indent
+heading "test-public.sh"
+./tests/test-public.sh $@ 2>&1 | indent
 
-heading "test-api-reduce.sh"
-./tests/test-api-reduce.sh $@ 2>&1 | indent
+heading "test-reduce.sh"
+./tests/test-reduce.sh $@ 2>&1 | indent
 
-heading "test-api-reduce-2.sh"
-./tests/test-api-reduce-2.sh $@ 2>&1 | indent
+heading "test-reduce-2.sh"
+./tests/test-reduce-2.sh $@ 2>&1 | indent
 
-heading "test-api-purge-batch.sh"
-./tests/test-api-purge-batch.sh $@ 2>&1 | indent
+heading "test-purge-batch.sh"
+./tests/test-purge-batch.sh $@ 2>&1 | indent
 
-heading "test-api-export.sh"
-./tests/test-api-export.sh $@ 2>&1 | indent
+heading "test-export.sh"
+./tests/test-export.sh $@ 2>&1 | indent
 
 # Check if the --update flag was passed
 if [[ "$*" == *--update* ]]

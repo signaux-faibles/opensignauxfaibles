@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Test de bout en bout de l'API "/batch/purge". Inspiré de test-api-public.sh.
+# Test de bout en bout de l'API "/batch/purge". Inspiré de test-public.sh.
 # Ce script doit être exécuté depuis la racine du projet. Ex: par test-all.sh.
 
 tests/helpers/mongodb-container.sh stop

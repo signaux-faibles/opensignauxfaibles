@@ -57,7 +57,7 @@ const isStringifiedDate = (date: string | unknown) =>
 // Converts an object into the same format as the one returned by the
 // `find().toArray()` command when executed from  MongoDB's mongo shell.
 // E.g. Dates are serialized as ISODate() instances.
-// Thanks to this function, algo2_golden_tests.ts and test-api-reduce-2.sh
+// Thanks to this function, algo2_golden_tests.ts and test-reduce-2.sh
 // can produce the exact same content, when updating.
 export const serializeAsMongoObject = (obj: unknown): string =>
   JSON.stringify(

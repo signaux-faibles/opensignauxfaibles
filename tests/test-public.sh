@@ -1,7 +1,6 @@
 #!/bin/bash
 
-# Test de bout en bout de l'API "reduce" à l'aide de données publiques.
-# Inspiré de test-api-reduce-2.sh et algo2_tests.ts.
+# Test de bout en bout de l'API "/public". Inspiré de test-public.sh.
 # Ce script doit être exécuté depuis la racine du projet. Ex: par test-all.sh.
 
 tests/helpers/mongodb-container.sh stop
@@ -11,8 +10,8 @@ set -e # will stop the script if any command fails with a non-zero exit code
 # Setup
 FLAGS="$*" # the script will update the golden file if "--update" flag was provided as 1st argument
 TMP_DIR="tests/tmp-test-execution-files"
-OUTPUT_FILE="${TMP_DIR}/test-api-reduce.output.json"
-GOLDEN_FILE="tests/output-snapshots/test-api-reduce.golden.json"
+OUTPUT_FILE="${TMP_DIR}/test-api-public.output.json"
+GOLDEN_FILE="tests/output-snapshots/test-api-public.golden.json"
 mkdir -p "${TMP_DIR}"
 
 # Clean up on exit
@@ -30,15 +29,12 @@ echo ""
 echo "📝 Inserting test data..."
 sleep 1 # give some time for MongoDB to start
 tests/helpers/populate-from-objects.sh \
-  | tests/helpers/mongodb-container.sh run
-
-# We create a collection with dummy data which should not remain after the execution of Reduce
-echo "db.Features_TestData.insertOne({a:1})" | tests/helpers/mongodb-container.sh run
+  | tests/helpers/mongodb-container.sh run >/dev/null
 
 echo ""
-echo "💎 Computing the Features collection..."
-API_RESULT=$(tests/helpers/sfdata-wrapper.sh run reduce --until-batch=1905)
-echo "- POST /api/data/reduce 👉 ${API_RESULT}"
+echo "💎 Computing the Public collection..."
+API_RESULT=$(tests/helpers/sfdata-wrapper.sh run public --until-batch=1905)
+echo "- POST /api/data/public 👉 ${API_RESULT}"
 
 (tests/helpers/mongodb-container.sh run \
   > "${OUTPUT_FILE}" \
@@ -52,10 +48,10 @@ printjson({
   hasStartDate: !!report.startDate,
 });
 
-print("// Documents from db.Features_TestData:");
-printjson(db.Features_TestData.find().toArray());
+print("// Documents from db.Public:");
+printjson(db.Public.find().toArray());
 
-print("// Response body from /api/data/reduce:");
+print("// Response body from /api/data/public:");
 CONTENT
 
 echo "${API_RESULT}" >> "${OUTPUT_FILE}"

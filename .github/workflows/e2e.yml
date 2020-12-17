@@ -55,26 +55,26 @@ jobs:
             -type f \
             -exec rm -v {} +
 
-      - run: ./tests/test-api-prune-entities.sh
+      - run: ./tests/test-prune-entities.sh
 
-      - run: ./tests/test-api.sh
+      - run: ./tests/test.sh
 
-      - run: ./tests/test-api-import.sh
+      - run: ./tests/test-import.sh
 
-      - run: ./tests/test-api-validate.sh
+      - run: ./tests/test-validate.sh
 
-      - run: ./tests/test-api-check.sh
+      - run: ./tests/test-check.sh
 
-      - run: ./tests/test-api-export.sh
+      - run: ./tests/test-export.sh
 
-      - run: ./tests/test-api-public.sh
+      - run: ./tests/test-public.sh
 
-      - run: ./tests/test-api-reduce.sh
+      - run: ./tests/test-reduce.sh
 
-      - run: ./tests/test-api-purge-batch.sh
+      - run: ./tests/test-purge-batch.sh
 
-      - run: ./tests/test-api-compact-failure.sh
+      - run: ./tests/test-compact-failure.sh
 
-      - run: ./tests/test-api-compact.sh # relies on encrypted files
+      - run: ./tests/test-compact.sh # relies on encrypted files
 
-      - run: ./tests/test-api-reduce-2.sh # relies on encrypted files
+      - run: ./tests/test-reduce-2.sh # relies on encrypted files

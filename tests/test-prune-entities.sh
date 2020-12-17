@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Test de bout en bout de l'API "/data/pruneEntities". Inspiré de test-api-purge-batch.sh.
+# Test de bout en bout de l'API "/data/pruneEntities". Inspiré de test-purge-batch.sh.
 # Ce script doit être exécuté depuis la racine du projet. Ex: par test-all.sh.
 
 tests/helpers/mongodb-container.sh stop

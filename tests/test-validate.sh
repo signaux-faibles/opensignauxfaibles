@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# Test de bout en bout de l'API "/public". Inspiré de test-api-public.sh.
+# Test de bout en bout de POST /api/data/validate.
+# Inspiré de test-export.sh.
 # Ce script doit être exécuté depuis la racine du projet. Ex: par test-all.sh.
 
 tests/helpers/mongodb-container.sh stop
@@ -9,9 +10,10 @@ set -e # will stop the script if any command fails with a non-zero exit code
 
 # Setup
 FLAGS="$*" # the script will update the golden file if "--update" flag was provided as 1st argument
+INPUT_FILE="tests/input-data/RawData.validation.json"
+GOLDEN_FILE="tests/output-snapshots/test-api-validate.golden.json"
 TMP_DIR="tests/tmp-test-execution-files"
-OUTPUT_FILE="${TMP_DIR}/test-api-public.output.json"
-GOLDEN_FILE="tests/output-snapshots/test-api-public.golden.json"
+OUTPUT_FILE="${TMP_DIR}/output.json"
 mkdir -p "${TMP_DIR}"
 
 # Clean up on exit
@@ -28,13 +30,14 @@ MONGODB_PORT="27016" tests/helpers/sfdata-wrapper.sh setup
 echo ""
 echo "📝 Inserting test data..."
 sleep 1 # give some time for MongoDB to start
-tests/helpers/populate-from-objects.sh \
-  | tests/helpers/mongodb-container.sh run >/dev/null
+tests/helpers/mongodb-container.sh run << CONTENT
+  db.RawData.insertMany($(cat ${INPUT_FILE}))
+CONTENT
 
 echo ""
-echo "💎 Computing the Public collection..."
-API_RESULT=$(tests/helpers/sfdata-wrapper.sh run public --until-batch=1905)
-echo "- POST /api/data/public 👉 ${API_RESULT}"
+echo "💎 Testing sfdata..."
+VALIDATION_REPORT=$(tests/helpers/sfdata-wrapper.sh run validate --collection=RawData)
+echo "- POST /api/data/validate"
 
 (tests/helpers/mongodb-container.sh run \
   > "${OUTPUT_FILE}" \
@@ -48,16 +51,10 @@ printjson({
   hasStartDate: !!report.startDate,
 });
 
-print("// Documents from db.Public:");
-printjson(db.Public.find().toArray());
-
-print("// Response body from /api/data/public:");
+print("// Result from /api/data/validate:");
 CONTENT
 
-echo "${API_RESULT}" >> "${OUTPUT_FILE}"
-
-# Display JS errors logged by MongoDB, if any
-tests/helpers/mongodb-container.sh exceptions || true
+echo "${VALIDATION_REPORT}" >> "${OUTPUT_FILE}"
 
 tests/helpers/diff-or-update-golden-master.sh "${FLAGS}" "${GOLDEN_FILE}" "${OUTPUT_FILE}"
 

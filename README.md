@@ -55,7 +55,7 @@ Afin de prévenir les régressions, plusieurs types de tests automatisés sont i
 
 - tests unitaires de `sfdata`: `$ go test ./...`
 - tests unitaires et d'intégration des fonctions map-reduce: `$ cd js && npm test`
-- tests de bout en bout de l'API: `$ tests/test-api-*.sh`
+- tests de bout en bout: `$ tests/test-*.sh`
 
 Tous ces tests sont exécutés en environnement d'Intégration Continue (CI) après chaque commit poussé sur GitHub, grâce à GitHub actions, tel que défini dans les fichiers `yaml` du répertoire `.github/workflows`.
 
@@ -65,7 +65,7 @@ Il est possible de tous les exécuter en local: `$ ./test-all.sh`.
 
 #### Introduction
 
-Certains tests (ex: `test-api-reduce-2.sh` et `algo2_golden_tests.ts`) s'appuient sur des fichiers de données sensibles qui doivent donc être déchiffrés avant l'exécution de ces tests.
+Certains tests (ex: `test-reduce-2.sh` et `algo2_golden_tests.ts`) s'appuient sur des fichiers de données sensibles qui doivent donc être déchiffrés avant l'exécution de ces tests.
 
 Reconnaissables à leur extension `.secret`, ces fichiers sont stockés dans le répertoire `/tests` du dépôt. Ils sont chiffrés et déchiffrés à l'aide de [git secret](https://git-secret.io/), commande basée sur l'outil de chiffrage GPG. Chaque développeur désireux d'accéder et/ou de modifier ces fichiers doit y être autorisé par un autre développeur y ayant déjà acccès, en intégrant sa clé publique GPG au porte-clés du projet (incarné par le fichier `.gitsecret/keys/pubring.kbx`).
 
