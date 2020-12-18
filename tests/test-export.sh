@@ -142,10 +142,10 @@ function stopIfFailed {
 }
 
 # Parameter validation
-RESULT=$(tests/helpers/sfdata-wrapper.sh etablissements --key="invalid" | (grep "key doit être un numéro SIREN" || echo -e "${COLOR_YELLOW}failed${COLOR_DEFAULT}"))
+RESULT=$(tests/helpers/sfdata-wrapper.sh etablissements --key="invalid" | (grep "doit être un numéro SIREN" || echo -e "${COLOR_YELLOW}failed${COLOR_DEFAULT}"))
 echo "- sfdata etablissements with invalid key 👉 ${RESULT}"
 stopIfFailed "${RESULT}"
-RESULT=$(tests/helpers/sfdata-wrapper.sh entreprises --key="invalid" | (grep "key doit être un numéro SIREN" || echo -e "${COLOR_YELLOW}failed${COLOR_DEFAULT}"))
+RESULT=$(tests/helpers/sfdata-wrapper.sh entreprises --key="invalid" | (grep "doit être un numéro SIREN" || echo -e "${COLOR_YELLOW}failed${COLOR_DEFAULT}"))
 echo "- sfdata entreprises with invalid key 👉 ${RESULT}"
 stopIfFailed "${RESULT}"
 
