@@ -109,12 +109,33 @@ func importBatchHandler(params importBatchParams) error {
 	return nil
 }
 
-type checkBatchParams struct {
-	BatchKey string   `json:"batch"`
-	Parsers  []string `json:"parsers"`
+type checkBatchHandler struct {
+	Enable   bool     // set to true by cosiner/flag if the user is running this command
+	BatchKey string   `names:"--batch" arglist:"batch_key" desc:"Identifiant du batch à vérifier (ex: 1802, pour Février 2018)"`
+	Parsers  []string `names:"--parsers" desc:"Parseurs à employer (ex: altares,cotisation)"`
 }
 
-func checkBatchHandler(params checkBatchParams) error {
+var checkBatchMetadata = flag.Flag{
+	Usage: "Vérifie la validité d'un batch avant son importation",
+	Desc: `
+		Vérifie la validité du batch sur le point d'être importé et des fichiers qui le constituent.
+		Pour exécuter tous les parsers, il faut ne pas spécifier la propriété parsers ou lui donner la valeur null.
+		Répond avec un propriété JSON "reports" qui contient les rapports textuels de parsing de chaque fichier.
+	`,
+}
+
+func (params checkBatchHandler) IsEnabled() bool {
+	return params.Enable
+}
+
+func (params checkBatchHandler) Validate() error {
+	if params.BatchKey == "" {
+		return errors.New("paramètre `batch` obligatoire")
+	}
+	return nil
+}
+
+func (params checkBatchHandler) Run() error {
 
 	batch := base.AdminBatch{}
 	err := engine.Load(&batch, params.BatchKey)

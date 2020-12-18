@@ -5,7 +5,6 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"strings"
 
 	cosFlag "github.com/cosiner/flag"
 
@@ -46,6 +45,7 @@ type command interface {
 // List of command handlers that cosiner/flag should recognize in CLI arguments
 type cliCommands struct {
 	Purge purgeBatchHandler
+	Check checkBatchHandler
 }
 
 // Metadata returns the documentation that will be displayed by cosiner/flag
@@ -53,6 +53,7 @@ type cliCommands struct {
 func (*cliCommands) Metadata() map[string]cosFlag.Flag {
 	return map[string]cosFlag.Flag{
 		"purge": purgeBatchMetadata,
+		"check": checkBatchMetadata,
 	}
 }
 
@@ -66,23 +67,6 @@ type legacyCommandDefinition struct {
 // List of commands that will be migrated over cosiner/flag's format.
 var legacyCommandDefs = []*legacyCommandDefinition{
 	{
-		"check",
-		"Vérifie la validité d'un batch avant son importation",
-		/**
-		Vérifie la validité du batch sur le point d'être importé et des fichiers qui le constituent.
-		Pour exécuter tous les parsers, il faut ne pas spécifier la propriété parsers ou lui donner la valeur null.
-		Répond avec un propriété JSON "reports" qui contient les rapports textuels de parsing de chaque fichier.
-		*/
-		func(args []string) error {
-			var parsers string
-			params := checkBatchParams{}
-			flag.StringVar(&params.BatchKey, "batch", "", "Identifiant du batch à vérifier (ex: `1802`, pour Février 2018)")
-			flag.StringVar(&parsers, "parsers", "", "Parseurs à employer (ex: `altares,cotisation`)")
-			flag.CommandLine.Parse(args)
-			params.Parsers = strings.Split(parsers, ",")
-			connectDb()
-			return checkBatchHandler(params) // [x] écrit dans Journal
-		}}, {
 		"pruneEntities",
 		"Compte/supprime les entités hors périmètre",
 		/**
@@ -263,6 +247,7 @@ func getNewCommand() (command, *cosFlag.FlagSet) {
 	var actualArgs = cliCommands{}
 	var commands = map[string]command{
 		"purge": &actualArgs.Purge, // TODO: use reflection to iterate over each command's params => delete "commands"
+		"check": &actualArgs.Check, // TODO: use reflection to iterate over each command's params => delete "commands"
 	}
 	flagSet := cosFlag.NewFlagSet(cosFlag.Flag{})
 	flagSet.ParseStruct(&actualArgs, os.Args...)
