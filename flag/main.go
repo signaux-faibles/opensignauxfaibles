@@ -10,13 +10,13 @@ import (
 	flag "github.com/cosiner/flag"
 )
 
-type Command interface {
+type command interface {
 	IsEnabled() bool
 	Validate() error
 	Run()
 }
 
-type BuildParams struct {
+type buildParams struct {
 	Enable   bool
 	Already  bool     `names:"-a" important:"1" desc:"force rebuilding of packages that are already up-to-date."`
 	Race     bool     `important:"1" desc:"enable data race detection.\nSupported only on linux/amd64, freebsd/amd64, darwin/amd64 and windows/amd64."`
@@ -25,7 +25,7 @@ type BuildParams struct {
 	Packages []string `args:"true"`
 }
 
-var BuildMetadata = flag.Flag{
+var buildMetadata = flag.Flag{
 	Arglist: "[-o output] [-i] [build flags] [packages]",
 	Desc: `
 	Build compiles the packages named by the import paths,
@@ -36,59 +36,59 @@ var BuildMetadata = flag.Flag{
 		`,
 }
 
-func (p BuildParams) IsEnabled() bool {
+func (p buildParams) IsEnabled() bool {
 	return p.Enable
 }
 
-func (p BuildParams) Validate() error {
+func (p buildParams) Validate() error {
 	if len(p.Packages) == 0 {
 		return errors.New("Error: you should at least specify one package")
 	}
 	return nil
 }
 
-func (p BuildParams) Run() {
+func (p buildParams) Run() {
 	fmt.Println("Going to build with the following parameters:")
 	fmt.Println(p)
 }
 
-type CleanParams struct {
+type cleanParams struct {
 	Enable bool
 }
 
-func (p CleanParams) Validate() error {
+func (p cleanParams) Validate() error {
 	return nil
 }
 
-func (p CleanParams) Run() {
+func (p cleanParams) Run() {
 	fmt.Println("Going to clean with the following parameters:")
 	fmt.Println(p)
 }
 
-type GoCmd struct {
-	Build BuildParams `usage:"compile packages and dependencies"`
-	Clean CleanParams `usage:"remove object files"`
+type goCmd struct {
+	Build buildParams `usage:"compile packages and dependencies"`
+	Clean cleanParams `usage:"remove object files"`
 }
 
-var GoCmdMetadata = flag.Flag{
+var goCmdMetadata = flag.Flag{
 	Usage:   "Go is a tool for managing Go source code.",
 	Arglist: "command [argument]",
 }
 
-func (*GoCmd) Metadata() map[string]flag.Flag {
+func (*goCmd) Metadata() map[string]flag.Flag {
 	return map[string]flag.Flag{
-		"":      GoCmdMetadata,
-		"build": BuildMetadata,
+		"":      goCmdMetadata,
+		"build": buildMetadata,
 	}
 }
 
 func main() {
-	var actualArgs GoCmd
+	var actualArgs goCmd
 
 	flagSet := flag.NewFlagSet(flag.Flag{})
 	flagSet.ParseStruct(&actualArgs, os.Args...)
 
-	var commands = map[string]Command{
+	var commands = map[string]command{
 		"build": actualArgs.Build,
 	}
 
