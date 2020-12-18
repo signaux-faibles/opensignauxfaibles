@@ -208,9 +208,16 @@ func printSupportedCommands() {
 	fmt.Println("")
 	fmt.Println("Supported commands:")
 	fmt.Println("")
+
+	orderedNewCommandNames := []string{
+		"purge",
+		"check",
+		"pruneEntities",
+		"import",
+	}
 	commandsMeta := (&cliCommands{}).Metadata()
-	for cmdName, cmdMeta := range commandsMeta {
-		fmt.Printf("   %-16s %s\n", cmdName, cmdMeta.Usage)
+	for _, cmdName := range orderedNewCommandNames {
+		fmt.Printf("   %-16s %s\n", cmdName, commandsMeta[cmdName].Usage)
 	}
 	for _, cmdDef := range legacyCommandDefs {
 		fmt.Printf("   %-16s %s\n", cmdDef.name, cmdDef.summary)
