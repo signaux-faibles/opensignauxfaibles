@@ -47,28 +47,30 @@ type command interface {
 
 // List of command handlers that cosiner/flag should recognize in CLI arguments
 type cliCommands struct {
-	Purge         purgeBatchHandler
-	Check         checkBatchHandler
-	PruneEntities pruneEntitiesHandler
-	Import        importBatchHandler
-	Validate      validateHandler
-	Compact       compactHandler
-	Reduce        reduceHandler
-	Public        publicHandler
+	Purge          purgeBatchHandler
+	Check          checkBatchHandler
+	PruneEntities  pruneEntitiesHandler
+	Import         importBatchHandler
+	Validate       validateHandler
+	Compact        compactHandler
+	Reduce         reduceHandler
+	Public         publicHandler
+	Etablissements exportEtablissementsHandler
 }
 
 // Metadata returns the documentation that will be displayed by cosiner/flag
 // if the user invokes "--help", or if some parameters are invalid.
 func (cmds *cliCommands) Metadata() map[string]cosFlag.Flag {
 	return map[string]cosFlag.Flag{
-		"purge":         cmds.Purge.Documentation(),
-		"check":         cmds.Check.Documentation(),
-		"pruneEntities": cmds.PruneEntities.Documentation(),
-		"import":        cmds.Import.Documentation(),
-		"validate":      cmds.Validate.Documentation(),
-		"compact":       cmds.Compact.Documentation(),
-		"reduce":        cmds.Reduce.Documentation(),
-		"public":        cmds.Public.Documentation(),
+		"purge":          cmds.Purge.Documentation(),
+		"check":          cmds.Check.Documentation(),
+		"pruneEntities":  cmds.PruneEntities.Documentation(),
+		"import":         cmds.Import.Documentation(),
+		"validate":       cmds.Validate.Documentation(),
+		"compact":        cmds.Compact.Documentation(),
+		"reduce":         cmds.Reduce.Documentation(),
+		"public":         cmds.Public.Documentation(),
+		"etablissements": cmds.Etablissements.Documentation(),
 	}
 }
 
@@ -85,19 +87,6 @@ var legacyCommandDefs = []*legacyCommandDefinition{
 		// "purgeNotCompacted": {"TODO - summary", func(args []string) error {
 		// 	return purgeNotCompactedHandler() // TODO: écrire rapport dans Journal ?
 		// }},
-		"etablissements",
-		"Exporte la liste des établissements",
-		/**
-		Exporte la liste des établissements depuis la collection Public.
-		Répond dans la sortie standard une ligne JSON par établissement.
-		*/
-		func(args []string) error {
-			params := exportParams{}
-			flag.StringVar(&params.Key, "key", "", "Numéro SIREN à utiliser pour filtrer les résultats.")
-			flag.CommandLine.Parse(args)
-			connectDb()
-			return exportEtablissementsHandler(params) // TODO: écrire rapport dans Journal ?
-		}}, {
 		"entreprises",
 		"Exporte la liste des entreprises",
 		/**
@@ -163,6 +152,7 @@ func printSupportedCommands() {
 		"compact",
 		"reduce",
 		"public",
+		"etablissements",
 	}
 	commandsMeta := (&cliCommands{}).Metadata()
 	for _, cmdName := range orderedNewCommandNames {

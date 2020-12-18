@@ -31,6 +31,7 @@ test "sfdata validate"
 test "sfdata compact"
 test "sfdata reduce"
 test "sfdata public"
+test "sfdata etablissements --key=1234"
 
 set -e # will stop the script if any command fails with a non-zero exit code
 tests/helpers/diff-or-update-golden-master.sh "${FLAGS}" "${GOLDEN_FILE}" "${OUTPUT_FILE}"

@@ -26,14 +26,15 @@ Flags:
 	-v, --verbose show verbose help (type: bool)
 
 Sets:
-	purge         Supprime une partie des données compactées
-	check         Vérifie la validité d'un batch avant son importation
-	pruneEntities Compte/supprime les entités hors périmètre
-	import        Importe des fichiers de données
-	validate      Liste les entrées de données invalides
-	compact       Compacte la base de données
-	reduce        Calcule les variables destinées à la prédiction
-	public        Génère les données destinées au site web
+	purge          Supprime une partie des données compactées
+	check          Vérifie la validité d'un batch avant son importation
+	pruneEntities  Compte/supprime les entités hors périmètre
+	import         Importe des fichiers de données
+	validate       Liste les entrées de données invalides
+	compact        Compacte la base de données
+	reduce         Calcule les variables destinées à la prédiction
+	public         Génère les données destinées au site web
+	etablissements Exporte la liste des établissements
 ---
 $ ./sfdata purge
 Supprime une partie des données compactées
@@ -198,4 +199,20 @@ Flags:
 		Numéro SIRET or SIREN d'une entité à calculer exclusivement
 
 paramètre `until-batch` obligatoire
+---
+$ ./sfdata etablissements --key=1234
+Exporte la liste des établissements
+
+Usage:
+	etablissements [FLAG]...
+
+Description:
+	Exporte la liste des établissements depuis la collection Public.
+	Répond dans la sortie standard une ligne JSON par établissement.
+
+Flags:
+	--key        (type: string)
+		Numéro SIREN à utiliser pour filtrer les résultats (ex: 012345678)
+
+si fourni, paramètre `key` doit être un numéro SIREN (9 chiffres)
 ---

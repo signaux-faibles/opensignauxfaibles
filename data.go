@@ -2,8 +2,6 @@ package main
 
 import (
 	"errors"
-	"strconv"
-	"time"
 
 	flag "github.com/cosiner/flag"
 
@@ -157,35 +155,42 @@ func (params compactHandler) Run() error {
 	return err
 }
 
-func getTimestamp() string {
-	return strconv.FormatInt(time.Now().Unix(), 10)
+type exportEtablissementsHandler struct {
+	Enable bool   // set to true by cosiner/flag if the user is running this command
+	Key    string `names:"--key" desc:"Numéro SIREN à utiliser pour filtrer les résultats (ex: 012345678)"`
+}
+
+func (params exportEtablissementsHandler) Documentation() flag.Flag {
+	return flag.Flag{
+		Usage: "Exporte la liste des établissements",
+		Desc: `
+		Exporte la liste des établissements depuis la collection Public.
+		Répond dans la sortie standard une ligne JSON par établissement.
+		`,
+	}
+}
+
+func (params exportEtablissementsHandler) IsEnabled() bool {
+	return params.Enable
+}
+
+func (params exportEtablissementsHandler) Validate() error {
+	if !(len(params.Key) == 9 || len(params.Key) == 0) {
+		return errors.New("si fourni, paramètre `key` doit être un numéro SIREN (9 chiffres)")
+	}
+	return nil
+}
+
+func (params exportEtablissementsHandler) Run() error {
+	return engine.ExportEtablissements(params.Key)
 }
 
 type exportParams struct {
 	Key string `json:"key"`
 }
 
-func getKeyParam(params exportParams) (string, error) {
-	if !(len(params.Key) == 9 || len(params.Key) == 0) {
-		return "", errors.New("si fourni, key doit être un numéro SIREN (9 chiffres)")
-	}
-	return params.Key, nil
-}
-
-func exportEtablissementsHandler(params exportParams) error {
-	key, err := getKeyParam(params)
-	if err != nil {
-		return err
-	}
-	return engine.ExportEtablissements(key)
-}
-
 func exportEntreprisesHandler(params exportParams) error {
-	key, err := getKeyParam(params)
-	if err != nil {
-		return err
-	}
-	return engine.ExportEntreprises(key)
+	return engine.ExportEntreprises(params.Key)
 }
 
 type validateHandler struct {
