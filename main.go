@@ -45,7 +45,7 @@ var commandDefs = []*commandDefinition{
 		/!\ ce traitement est destructif et irréversible /!\
 		*/
 		func(args []string) error {
-			var params purgeBatchParams
+			var params purgeBatchHandler
 			// TODO: populer "debugForKey" (ex: "012345678901234")
 			flag.StringVar(&params.FromBatchKey, "since-batch", "", "Identifiant du batch à partir duquel supprimer les données (ex: `1802`, pour Février 2018)")
 			flag.BoolVar(&params.IUnderstandWhatImDoing, "i-understand-what-im-doing", false, "Nécessaire pour confirmer la suppression de données")
@@ -55,7 +55,7 @@ var commandDefs = []*commandDefinition{
 				return err
 			}
 			connectDb()
-			return purgeBatchHandler(params) // [x] écrit dans Journal
+			return params.Run() // [x] écrit dans Journal
 		}}, {
 		"check",
 		"Vérifie la validité d'un batch avant son importation",

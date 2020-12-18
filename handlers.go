@@ -21,21 +21,20 @@ import (
 	"github.com/globalsign/mgo/bson"
 )
 
-type purgeBatchParams struct {
+type purgeBatchHandler struct {
 	FromBatchKey           string `json:"fromBatch"`
 	Key                    string `json:"debugForKey"`
 	IUnderstandWhatImDoing bool   `json:"IUnderstandWhatImDoing"`
 }
 
-func (p purgeBatchParams) Validate() error {
-	if p.FromBatchKey == "" {
+func (params purgeBatchHandler) Validate() error {
+	if params.FromBatchKey == "" {
 		return errors.New("paramètre `since-batch` obligatoire")
 	}
 	return nil
 }
 
-func purgeBatchHandler(params purgeBatchParams) error {
-
+func (params purgeBatchHandler) Run() error {
 	var batch base.AdminBatch
 	err := engine.Load(&batch, params.FromBatchKey)
 	if err != nil {
