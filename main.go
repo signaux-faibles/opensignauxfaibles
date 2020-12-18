@@ -28,13 +28,7 @@ func connectDb() {
 // main Fonction Principale
 func main() {
 
-	err := runCommand()
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-
-	err = runLegacyCommand(os.Args[1:])
+	err := runCommand(os.Args[1:])
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -42,40 +36,33 @@ func main() {
 	engine.FlushEventQueue()
 }
 
-func runCommand() error {
-	var actualArgs cliCommands
-
+func getNewCommand() (command, *cosFlag.FlagSet) {
+	var actualArgs = cliCommands{}
+	var commands = map[string]command{
+		"purge": &actualArgs.Purge,
+	}
 	flagSet := cosFlag.NewFlagSet(cosFlag.Flag{})
 	flagSet.ParseStruct(&actualArgs, os.Args...)
-
-	type command interface {
-		IsEnabled() bool
-		Validate() error
-		Run() error
-	}
-
-	var commands = map[string]command{
-		"purge": actualArgs.Purge,
-	}
-
 	for cmdName, cmdArgs := range commands {
 		if cmdArgs.IsEnabled() {
-			err := cmdArgs.Validate()
-			if err != nil {
-				build, _ := flagSet.FindSubset(cmdName)
-				build.Help(false) // display usage information for this command only
-				fmt.Println()
-				return err
-			}
-			connectDb()
-			return cmdArgs.Run()
+			cmdDef, _ := flagSet.FindSubset(cmdName)
+			return cmdArgs, cmdDef
 		}
 	}
-
 	// no command was recognized in args
-	return nil
+	return nil, nil
 	// flagSet.Help(false) // display usage information, with list of supported commands
 	// os.Exit(1)
+}
+
+var commandsMeta = map[string]cosFlag.Flag{
+	"purge": purgeBatchMetadata,
+}
+
+type command interface {
+	IsEnabled() bool
+	Validate() error
+	Run() error
 }
 
 type cliCommands struct {
@@ -83,17 +70,11 @@ type cliCommands struct {
 }
 
 func (*cliCommands) Metadata() map[string]cosFlag.Flag {
-	return map[string]cosFlag.Flag{
-		"purge": purgeBatchMetadata,
-	}
+	return commandsMeta
 }
 
 var legacyCommandDefs = []*legacyCommandDefinition{
-	{"purge",
-		"Supprime une partie des données compactées",
-		func(args []string) error {
-			return errors.New("deprecated command")
-		}}, {
+	{
 		"check",
 		"Vérifie la validité d'un batch avant son importation",
 		/**
@@ -242,7 +223,7 @@ type legacyCommandDefinition struct {
 	run     func(args []string) error
 }
 
-func runLegacyCommand(args []string) error {
+func runCommand(args []string) error {
 	if len(args) < 1 {
 		printSupportedCommands()
 		return errors.New("Error: You must pass a command")
@@ -259,6 +240,18 @@ func runLegacyCommand(args []string) error {
 		return commandDef.run(os.Args[2:])
 	}
 
+	newCmd, cmdDef := getNewCommand()
+	if newCmd != nil {
+		err := newCmd.Validate()
+		if err != nil {
+			cmdDef.Help(false) // display usage information for this command only
+			fmt.Println()
+			return err
+		}
+		connectDb()
+		return newCmd.Run()
+	}
+
 	printSupportedCommands()
 	return fmt.Errorf("Unknown command: %s", command)
 }
@@ -268,6 +261,9 @@ func printSupportedCommands() {
 	fmt.Println("")
 	fmt.Println("Supported commands:")
 	fmt.Println("")
+	for cmdName, cmdMeta := range commandsMeta {
+		fmt.Printf("   %-16s %s\n", cmdName, cmdMeta.Usage)
+	}
 	for _, cmdDef := range legacyCommandDefs {
 		fmt.Printf("   %-16s %s\n", cmdDef.name, cmdDef.summary)
 	}

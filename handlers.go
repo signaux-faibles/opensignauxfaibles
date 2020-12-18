@@ -31,6 +31,7 @@ type purgeBatchHandler struct {
 }
 
 var purgeBatchMetadata = flag.Flag{
+	Usage: "Supprime une partie des données compactées",
 	Desc: `
 		/!\ ce traitement est destructif et irréversible /!\
 		Supprime les données dans les objets de la collection RawData pour les batches suivant le numéro de batch donné.
