@@ -61,6 +61,7 @@ type cliCommands struct {
 // Metadata returns the documentation that will be displayed by cosiner/flag
 // if the user invokes "--help", or if some parameters are invalid.
 func (cmds *cliCommands) Metadata() map[string]cosFlag.Flag {
+	// TODO: use reflection to generate that list automatically
 	return map[string]cosFlag.Flag{
 		"purge":          cmds.Purge.Documentation(),
 		"check":          cmds.Check.Documentation(),
@@ -75,35 +76,14 @@ func (cmds *cliCommands) Metadata() map[string]cosFlag.Flag {
 	}
 }
 
-// Structure to define commands that will be migrated over cosiner/flag's format.
-type legacyCommandDefinition struct {
-	name    string
-	summary string
-	run     func(args []string) error
-}
-
-// List of commands that will be migrated over cosiner/flag's format.
-var legacyCommandDefs = []*legacyCommandDefinition{
-	// "purgeNotCompacted": {"TODO - summary", func(args []string) error {
-	// 	return purgeNotCompactedHandler() // TODO: écrire rapport dans Journal ?
-	// }},
-}
+// "purgeNotCompacted": {"TODO - summary", func(args []string) error {
+// 	return purgeNotCompactedHandler() // TODO: écrire rapport dans Journal ?
+// }},
 
 func runCommand(args []string) error {
 	if len(args) < 1 {
 		printSupportedCommands()
 		return errors.New("Error: You must pass a command")
-	}
-
-	// handle legacy commands
-	var legacyCmds = map[string]*legacyCommandDefinition{}
-	for _, commandDef := range legacyCommandDefs {
-		legacyCmds[commandDef.name] = commandDef
-	}
-	command := os.Args[1]
-	commandDef := legacyCmds[command]
-	if commandDef != nil {
-		return commandDef.run(os.Args[2:])
 	}
 
 	// fallback: handle new commands
@@ -121,7 +101,7 @@ func runCommand(args []string) error {
 
 	// no match
 	printSupportedCommands()
-	return fmt.Errorf("Unknown command: %s", command)
+	return fmt.Errorf("Unknown command")
 }
 
 func printSupportedCommands() {
@@ -145,9 +125,6 @@ func printSupportedCommands() {
 	commandsMeta := (&cliCommands{}).Metadata()
 	for _, cmdName := range orderedNewCommandNames {
 		fmt.Printf("   %-16s %s\n", cmdName, commandsMeta[cmdName].Usage)
-	}
-	for _, cmdDef := range legacyCommandDefs {
-		fmt.Printf("   %-16s %s\n", cmdDef.name, cmdDef.summary)
 	}
 	fmt.Println("")
 }
