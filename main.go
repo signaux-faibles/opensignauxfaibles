@@ -36,43 +36,34 @@ func main() {
 	engine.FlushEventQueue()
 }
 
-func getNewCommand() (command, *cosFlag.FlagSet) {
-	var actualArgs = cliCommands{}
-	var commands = map[string]command{
-		"purge": &actualArgs.Purge,
-	}
-	flagSet := cosFlag.NewFlagSet(cosFlag.Flag{})
-	flagSet.ParseStruct(&actualArgs, os.Args...)
-	for cmdName, cmdArgs := range commands {
-		if cmdArgs.IsEnabled() {
-			cmdDef, _ := flagSet.FindSubset(cmdName)
-			return cmdArgs, cmdDef
-		}
-	}
-	// no command was recognized in args
-	return nil, nil
-	// flagSet.Help(false) // display usage information, with list of supported commands
-	// os.Exit(1)
-}
-
-var commandsMeta = map[string]cosFlag.Flag{
-	"purge": purgeBatchMetadata,
-}
-
+// Interface that each command should implement
 type command interface {
-	IsEnabled() bool
-	Validate() error
-	Run() error
+	IsEnabled() bool // returns true when the user invokes this command from the CLI
+	Validate() error // returns an error if some command parameters don't meet expectations
+	Run() error      // executes the command and return an error if it fails
 }
 
+// List of command handlers that cosiner/flag should recognize in CLI arguments
 type cliCommands struct {
-	Purge purgeBatchHandler `usage:"Supprime une partie des données compactées"` // TODO: essayer de déplacer dans le Usage de purgeBatchMetadata
+	Purge purgeBatchHandler
 }
 
+// Metadata returns the documentation that will be displayed by cosiner/flag
+// if the user invokes "--help", or if some parameters are invalid.
 func (*cliCommands) Metadata() map[string]cosFlag.Flag {
-	return commandsMeta
+	return map[string]cosFlag.Flag{
+		"purge": purgeBatchMetadata,
+	}
 }
 
+// Structure to define commands that will be migrated over cosiner/flag's format.
+type legacyCommandDefinition struct {
+	name    string
+	summary string
+	run     func(args []string) error
+}
+
+// List of commands that will be migrated over cosiner/flag's format.
 var legacyCommandDefs = []*legacyCommandDefinition{
 	{
 		"check",
@@ -217,29 +208,24 @@ var legacyCommandDefs = []*legacyCommandDefinition{
 		}},
 }
 
-type legacyCommandDefinition struct {
-	name    string
-	summary string
-	run     func(args []string) error
-}
-
 func runCommand(args []string) error {
 	if len(args) < 1 {
 		printSupportedCommands()
 		return errors.New("Error: You must pass a command")
 	}
 
+	// handle legacy commands
 	var legacyCmds = map[string]*legacyCommandDefinition{}
 	for _, commandDef := range legacyCommandDefs {
 		legacyCmds[commandDef.name] = commandDef
 	}
-
 	command := os.Args[1]
 	commandDef := legacyCmds[command]
 	if commandDef != nil {
 		return commandDef.run(os.Args[2:])
 	}
 
+	// fallback: handle new commands
 	newCmd, cmdDef := getNewCommand()
 	if newCmd != nil {
 		err := newCmd.Validate()
@@ -252,6 +238,7 @@ func runCommand(args []string) error {
 		return newCmd.Run()
 	}
 
+	// no match
 	printSupportedCommands()
 	return fmt.Errorf("Unknown command: %s", command)
 }
@@ -261,6 +248,7 @@ func printSupportedCommands() {
 	fmt.Println("")
 	fmt.Println("Supported commands:")
 	fmt.Println("")
+	commandsMeta := (&cliCommands{}).Metadata()
 	for cmdName, cmdMeta := range commandsMeta {
 		fmt.Printf("   %-16s %s\n", cmdName, cmdMeta.Usage)
 	}
@@ -268,4 +256,24 @@ func printSupportedCommands() {
 		fmt.Printf("   %-16s %s\n", cmdDef.name, cmdDef.summary)
 	}
 	fmt.Println("")
+}
+
+// Function that uses cosiner/flag to parse CLI args.
+func getNewCommand() (command, *cosFlag.FlagSet) {
+	var actualArgs = cliCommands{}
+	var commands = map[string]command{
+		"purge": &actualArgs.Purge, // TODO: use reflection to iterate over each command's params => delete "commands"
+	}
+	flagSet := cosFlag.NewFlagSet(cosFlag.Flag{})
+	flagSet.ParseStruct(&actualArgs, os.Args...)
+	for cmdName, cmdArgs := range commands {
+		if cmdArgs.IsEnabled() {
+			cmdDef, _ := flagSet.FindSubset(cmdName)
+			return cmdArgs, cmdDef
+		}
+	}
+	// no command was recognized in args
+	return nil, nil
+	// flagSet.Help(false) // display usage information, with list of supported commands
+	// os.Exit(1)
 }
