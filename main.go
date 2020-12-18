@@ -49,6 +49,7 @@ type cliCommands struct {
 	Purge         purgeBatchHandler
 	Check         checkBatchHandler
 	PruneEntities pruneEntitiesHandler
+	Import        importBatchHandler
 }
 
 // Metadata returns the documentation that will be displayed by cosiner/flag
@@ -58,6 +59,7 @@ func (*cliCommands) Metadata() map[string]cosFlag.Flag {
 		"purge":         purgeBatchMetadata,
 		"check":         checkBatchMetadata,
 		"pruneEntities": pruneEntitiesMetadata,
+		"import":        importBatchMetadata,
 	}
 }
 
@@ -71,22 +73,6 @@ type legacyCommandDefinition struct {
 // List of commands that will be migrated over cosiner/flag's format.
 var legacyCommandDefs = []*legacyCommandDefinition{
 	{
-		"import",
-		"Importe des fichiers",
-		/**
-		Effectue l'import de tous les fichiers du batch donné en paramètre.
-		Pour exécuter tous les parsers, il faut ne pas spécifier la propriété parsers ou lui donner la valeur null.
-		Répond "ok" dans la sortie standard, si le traitement s'est bien déroulé.
-		*/
-		func(args []string) error {
-			params := importBatchParams{}
-			// TODO: populer "Parsers", documentation: "Parseurs à employer (ex: `altares,cotisation`)"
-			flag.StringVar(&params.BatchKey, "batch", "", "Identifiant du batch à importer (ex: `1802`, pour Février 2018)")
-			flag.BoolVar(&params.NoFilter, "no-filter", false, "Pour procéder à l'importation même si aucun filtre n'est fourni")
-			flag.CommandLine.Parse(args)
-			connectDb()
-			return importBatchHandler(params) // [x] écrit dans Journal
-		}}, {
 		"validate",
 		"Liste les entrées de données invalides",
 		/**

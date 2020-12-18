@@ -78,16 +78,37 @@ func (params purgeBatchHandler) Run() error {
 	return nil
 }
 
-type importBatchParams struct {
-	BatchKey string   `json:"batch"`
-	Parsers  []string `json:"parsers"`
-	NoFilter bool     `json:"noFilter"`
+type importBatchHandler struct {
+	Enable   bool     // set to true by cosiner/flag if the user is running this command
+	BatchKey string   `names:"--batch" arglist:"batch_key" desc:"Identifiant du batch à importer (ex: 1802, pour Février 2018)"`
+	Parsers  []string `names:"--parsers" desc:"Parseurs à employer (ex: altares,cotisation)"` // TODO: tester la population de ce paramètre
+	NoFilter bool     `names:"--no-filter" desc:"Pour procéder à l'importation même si aucun filtre n'est fourni"`
+}
+
+var importBatchMetadata = flag.Flag{
+	Usage: "Importe des fichiers de données",
+	Desc: `
+		Effectue l'import de tous les fichiers du batch donné en paramètre.
+		Pour exécuter tous les parsers, il faut ne pas spécifier la propriété parsers ou lui donner la valeur null.
+		Répond "ok" dans la sortie standard, si le traitement s'est bien déroulé.
+	`,
+}
+
+func (params importBatchHandler) IsEnabled() bool {
+	return params.Enable
+}
+
+func (params importBatchHandler) Validate() error {
+	if params.BatchKey == "" {
+		return errors.New("paramètre `batch` obligatoire")
+	}
+	return nil
 }
 
 // importBatchHandler traite les demandes d'import par l'API
 // on peut demander l'exécution de tous les parsers sans fournir d'option
 // ou demander l'exécution de parsers particuliers en fournissant une liste de leurs codes.
-func importBatchHandler(params importBatchParams) error {
+func (params importBatchHandler) Run() error {
 	batch := base.AdminBatch{}
 	err := engine.Load(&batch, params.BatchKey)
 	if err != nil {

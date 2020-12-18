@@ -7,7 +7,7 @@ Supported commands:
    purge            Supprime une partie des données compactées
    check            Vérifie la validité d'un batch avant son importation
    pruneEntities    Compte/supprime les entités hors périmètre
-   import           Importe des fichiers
+   import           Importe des fichiers de données
    validate         Liste les entrées de données invalides
    compact          Compacte la base de données
    reduce           Calcule les variables destinées à la prédiction
@@ -29,6 +29,7 @@ Sets:
 	purge         Supprime une partie des données compactées
 	check         Vérifie la validité d'un batch avant son importation
 	pruneEntities Compte/supprime les entités hors périmètre
+	import        Importe des fichiers de données
 ---
 $ ./sfdata purge
 Supprime une partie des données compactées
@@ -88,6 +89,27 @@ Flags:
 		Identifiant du batch à nettoyer (ex: 1802, pour Février 2018)
 	--delete          (type: bool)
 		Nécessaire pour confirmer la suppression de données
+
+paramètre `batch` obligatoire
+---
+$ ./sfdata import
+Importe des fichiers de données
+
+Usage:
+	import [FLAG]...
+
+Description:
+	Effectue l'import de tous les fichiers du batch donné en paramètre.
+	Pour exécuter tous les parsers, il faut ne pas spécifier la propriété parsers ou lui donner la valeur null.
+	Répond "ok" dans la sortie standard, si le traitement s'est bien déroulé.
+
+Flags:
+	--batch batch_key (type: string)
+		Identifiant du batch à importer (ex: 1802, pour Février 2018)
+	--parsers         (type: []string)
+		Parseurs à employer (ex: altares,cotisation)
+	--no-filter       (type: bool)
+		Pour procéder à l'importation même si aucun filtre n'est fourni
 
 paramètre `batch` obligatoire
 ---

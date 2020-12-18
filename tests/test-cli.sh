@@ -26,6 +26,7 @@ test "sfdata --help"
 test "sfdata purge"
 test "sfdata check"
 test "sfdata pruneEntities"
+test "sfdata import"
 # test "sfdata unknown_command" # TODO
 
 set -e # will stop the script if any command fails with a non-zero exit code
