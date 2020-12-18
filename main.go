@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"reflect"
@@ -81,12 +80,6 @@ func (cmds *cliCommands) Metadata() map[string]cosFlag.Flag {
 // }},
 
 func runCommand(args []string) error {
-	if len(args) < 1 {
-		printSupportedCommands()
-		return errors.New("Error: You must pass a command")
-	}
-
-	// fallback: handle new commands
 	newCmd, cmdDef := getNewCommand()
 	if newCmd != nil {
 		err := newCmd.Validate()
@@ -100,36 +93,10 @@ func runCommand(args []string) error {
 	}
 
 	// no match
-	printSupportedCommands()
 	return fmt.Errorf("Unknown command")
 }
 
-func printSupportedCommands() {
-	fmt.Println("usage: sfdata <command> [--boolean-flag] [--parameter=<value1>,<value2>,...]")
-	fmt.Println("")
-	fmt.Println("Supported commands:")
-	fmt.Println("")
-
-	orderedNewCommandNames := []string{
-		"purge",
-		"check",
-		"pruneEntities",
-		"import",
-		"validate",
-		"compact",
-		"reduce",
-		"public",
-		"etablissements",
-		"entreprises",
-	}
-	commandsMeta := (&cliCommands{}).Metadata()
-	for _, cmdName := range orderedNewCommandNames {
-		fmt.Printf("   %-16s %s\n", cmdName, commandsMeta[cmdName].Usage)
-	}
-	fmt.Println("")
-}
-
-// Function that uses cosiner/flag to parse CLI args.
+// Use cosiner/flag to parse CLI args
 func getNewCommand() (command, *cosFlag.FlagSet) {
 	var actualArgs = cliCommands{}
 	flagSet := cosFlag.NewFlagSet(cosFlag.Flag{})
@@ -149,7 +116,7 @@ func getNewCommand() (command, *cosFlag.FlagSet) {
 		}
 	}
 	// no command was recognized in args
+	flagSet.Help(false) // display usage information, with list of supported commands
+	os.Exit(1)
 	return nil, nil
-	// flagSet.Help(false) // display usage information, with list of supported commands
-	// os.Exit(1)
 }
