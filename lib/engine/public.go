@@ -102,7 +102,7 @@ func Public(batch base.AdminBatch) error {
 	var pipes []string
 	var pipeChannel = make(chan string)
 
-	filter := bson.M{"value.index.algo2": true} // on exclue les établissements et entreprises hors périmètre "algo2", pour lesquelles aucun score ne sera calculé.
+	filter := bson.M{} // on prend tous les objets comme on sait qu'ils font partie du filtre.
 
 	i := 0
 	for _, query := range chunks.ToQueries(filter, "_id") {
