@@ -3,6 +3,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
 
@@ -29,9 +30,31 @@ var BuildMetadata = flag.Flag{
 		`,
 }
 
+func (p BuildParams) Validate() error {
+	if len(p.Packages) == 0 {
+		return errors.New("Error: you should at least specify one package")
+	}
+	return nil
+}
+
+func (p BuildParams) Run() {
+	fmt.Println("Going to build with the following parameters:")
+	fmt.Println(p)
+}
+
 type CleanParams struct {
 	Enable bool
 }
+
+func (p CleanParams) Validate() error {
+	return nil
+}
+
+func (p CleanParams) Run() {
+	fmt.Println("Going to clean with the following parameters:")
+	fmt.Println(p)
+}
+
 type GoCmd struct {
 	Build BuildParams `usage:"compile packages and dependencies"`
 	Clean CleanParams `usage:"remove object files"`
@@ -56,18 +79,25 @@ func main() {
 	set.ParseStruct(&g, os.Args...)
 
 	if g.Build.Enable {
-		if len(g.Build.Packages) == 0 {
-			fmt.Fprintln(os.Stderr, "Error: you should at least specify one package")
+		err := g.Build.Validate()
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
 			fmt.Println("")
 			build, _ := set.FindSubset("build")
 			build.Help(false) // display usage information for the "go build" command only
 		} else {
-			fmt.Println("Going to build with the following parameters:")
-			fmt.Println(g.Build)
+			g.Build.Run()
 		}
 	} else if g.Clean.Enable {
-		fmt.Println("Going to clean with the following parameters:")
-		fmt.Println(g.Clean)
+		err := g.Clean.Validate()
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			fmt.Println("")
+			clean, _ := set.FindSubset("clean")
+			clean.Help(false) // display usage information for the "go clean" command only
+		} else {
+			g.Clean.Run()
+		}
 	} else {
 		set.Help(false) // display usage information, with list of supported commands
 	}
