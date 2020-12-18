@@ -51,6 +51,7 @@ type cliCommands struct {
 	Check         checkBatchHandler
 	PruneEntities pruneEntitiesHandler
 	Import        importBatchHandler
+	Validate      validateHandler
 }
 
 // Metadata returns the documentation that will be displayed by cosiner/flag
@@ -61,6 +62,7 @@ func (cmds *cliCommands) Metadata() map[string]cosFlag.Flag {
 		"check":         cmds.Check.Documentation(),
 		"pruneEntities": cmds.PruneEntities.Documentation(),
 		"import":        cmds.Import.Documentation(),
+		"validate":      cmds.Validate.Documentation(),
 	}
 }
 
@@ -74,19 +76,6 @@ type legacyCommandDefinition struct {
 // List of commands that will be migrated over cosiner/flag's format.
 var legacyCommandDefs = []*legacyCommandDefinition{
 	{
-		"validate",
-		"Liste les entrées de données invalides",
-		/**
-		Vérifie la validité des entrées de données contenues dans les documents de la collection RawData ou ImportedData.
-		Répond en listant dans la sortie standard les entrées invalides au format JSON.
-		*/
-		func(args []string) error {
-			params := validateParams{}
-			flag.StringVar(&params.Collection, "collection", "", "Nom de la collection à valider: RawData ou ImportedData")
-			flag.CommandLine.Parse(args)
-			connectDb()
-			return validateHandler(params) // [x] écrit dans Journal
-		}}, {
 		"compact",
 		"Compacte la base de données",
 		/**
@@ -214,6 +203,7 @@ func printSupportedCommands() {
 		"check",
 		"pruneEntities",
 		"import",
+		"validate",
 	}
 	commandsMeta := (&cliCommands{}).Metadata()
 	for _, cmdName := range orderedNewCommandNames {

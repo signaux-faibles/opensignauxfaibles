@@ -30,6 +30,7 @@ Sets:
 	check         Vérifie la validité d'un batch avant son importation
 	pruneEntities Compte/supprime les entités hors périmètre
 	import        Importe des fichiers de données
+	validate      Liste les entrées de données invalides
 ---
 $ ./sfdata purge
 Supprime une partie des données compactées
@@ -113,4 +114,20 @@ Flags:
 		Pour procéder à l'importation même si aucun filtre n'est fourni
 
 paramètre `batch` obligatoire
+---
+$ ./sfdata validate
+Liste les entrées de données invalides
+
+Usage:
+	validate [FLAG]...
+
+Description:
+	Vérifie la validité des entrées de données contenues dans les documents de la collection RawData ou ImportedData.
+	Répond en listant dans la sortie standard les entrées invalides au format JSON.
+
+Flags:
+	--collection RawData|ImportedData (type: string)
+		Nom de la collection à valider
+
+le paramètre collection doit valoir RawData ou ImportedData
 ---
