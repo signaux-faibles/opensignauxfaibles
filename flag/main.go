@@ -110,4 +110,5 @@ func main() {
 
 	// no command was recognized in args
 	flagSet.Help(false) // display usage information, with list of supported commands
+	os.Exit(1)
 }

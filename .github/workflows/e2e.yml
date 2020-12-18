@@ -55,6 +55,8 @@ jobs:
             -type f \
             -exec rm -v {} +
 
+      - run: ./tests/test-cli.sh
+
       - run: ./tests/test-prune-entities.sh
 
       - run: ./tests/test.sh
