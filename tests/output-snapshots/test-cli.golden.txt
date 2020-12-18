@@ -17,6 +17,18 @@ Supported commands:
 
 Error: You must pass a command
 ---
+$ ./sfdata --help
+Usage:
+	sfdata [FLAG|SET]...
+
+Flags:
+	-h, --help    show help (type: bool)
+	-v, --verbose show verbose help (type: bool)
+
+Sets:
+	purge         Supprime une partie des données compactées
+	check         Vérifie la validité d'un batch avant son importation
+---
 $ ./sfdata purge
 Supprime une partie des données compactées
 

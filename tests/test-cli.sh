@@ -22,6 +22,7 @@ function test {
 
 # run test cases
 test "sfdata"
+test "sfdata --help"
 test "sfdata purge"
 test "sfdata check"
 
