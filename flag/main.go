@@ -17,6 +17,18 @@ type BuildParams struct {
 	LdFlags  string   `names:"-ldflags" arglist:"'flag list'" desc:"arguments to pass on each go tool link invocation."`
 	Packages []string `args:"true"`
 }
+
+var BuildMetadata = flag.Flag{
+	Arglist: "[-o output] [-i] [build flags] [packages]",
+	Desc: `
+	Build compiles the packages named by the import paths,
+	along with their dependencies, but it does not install the results.
+	...
+	The build flags are shared by the build, clean, get, install, list, run,
+	and test commands:
+		`,
+}
+
 type CleanParams struct {
 	Enable bool
 }
@@ -25,22 +37,15 @@ type GoCmd struct {
 	Clean CleanParams `usage:"remove object files"`
 }
 
+var GoCmdMetadata = flag.Flag{
+	Usage:   "Go is a tool for managing Go source code.",
+	Arglist: "command [argument]",
+}
+
 func (*GoCmd) Metadata() map[string]flag.Flag {
 	return map[string]flag.Flag{
-		"": {
-			Usage:   "Go is a tool for managing Go source code.",
-			Arglist: "command [argument]",
-		},
-		"build": {
-			Arglist: "[-o output] [-i] [build flags] [packages]",
-			Desc: `
-		Build compiles the packages named by the import paths,
-		along with their dependencies, but it does not install the results.
-		...
-		The build flags are shared by the build, clean, get, install, list, run,
-		and test commands:
-			`,
-		},
+		"":      GoCmdMetadata,
+		"build": BuildMetadata,
 	}
 }
 
