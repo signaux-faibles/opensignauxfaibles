@@ -40,3 +40,22 @@ Flags:
 
 paramètre `since-batch` obligatoire
 ---
+$ ./sfdata check
+Vérifie la validité d'un batch avant son importation
+
+Usage:
+	check [FLAG]...
+
+Description:
+	Vérifie la validité du batch sur le point d'être importé et des fichiers qui le constituent.
+	Pour exécuter tous les parsers, il faut ne pas spécifier la propriété parsers ou lui donner la valeur null.
+	Répond avec un propriété JSON "reports" qui contient les rapports textuels de parsing de chaque fichier.
+
+Flags:
+	--batch batch_key (type: string)
+		Identifiant du batch à vérifier (ex: 1802, pour Février 2018)
+	--parsers         (type: []string)
+		Parseurs à employer (ex: altares,cotisation)
+
+paramètre `batch` obligatoire
+---
