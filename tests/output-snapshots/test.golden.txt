@@ -1,4 +1,4 @@
-// Documents from db.RawData, after call to /api/data/compact:
+// Documents from db.RawData, after call to sfdata compact:
 [
 	{
 		"_id" : "01234567891011",
@@ -293,7 +293,7 @@
 		}
 	}
 ]
-// Documents from db.Features_debug, after call to /api/data/reduce:
+// Documents from db.Features_debug, after call to sfdata reduce:
 [
 	{
 		"_id" : {
@@ -1400,7 +1400,7 @@
 		}
 	}
 ]
-// Documents from db.Public_debug, after call to /api/data/public:
+// Documents from db.Public_debug, after call to sfdata public:
 [
 	{
 		"_id" : "etablissement_01234567891011",

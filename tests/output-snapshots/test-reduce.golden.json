@@ -5336,5 +5336,5 @@
 		}
 	}
 ]
-// Response body from /api/data/reduce:
+// Response body from sfdata reduce:
 "Traitement effectué"

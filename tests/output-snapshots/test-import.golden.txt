@@ -1,4 +1,4 @@
-// Documents from db.ImportedData, after call to /api/data/import:
+// Documents from db.ImportedData, after call to sfdata import:
 [
 	{
 		"_id" : ObjectId("________ObjectId________"),
@@ -4921,7 +4921,7 @@
 		"hasStartDate" : true
 	}
 ]
-// Results of call to /api/data/validate:
+// Results of call to sfdata validate:
 {"_id":"________ObjectId________","batchKey":"1910","dataHash":"______________Hash______________","dataObject":{"action":"bad mu","annee_creation":9941,"date_creation":"2000-03-02T23:00:00Z","date_echeance":"2001-05-04T22:00:00Z","denomination":"mtj n.p. eg saxjoc","duree_delai":758,"indic_6m":"uqu","montant_echeancier":74825.41,"numero_compte":"636043216536562844","numero_contentieux":"8981265766679","stade":"qh"},"dataType":"delai"}
 {"_id":"________ObjectId________","batchKey":"1910","dataHash":"______________Hash______________","dataObject":{"action":"cya ng","annee_creation":5647,"date_creation":"1999-12-31T23:00:00Z","date_echeance":"2001-01-03T23:00:00Z","denomination":"etmlgcthph ecoowixknaae se","duree_delai":456,"indic_6m":"lhm","montant_echeancier":5065.79,"numero_compte":"111982477292496174","numero_contentieux":"5856690802766","stade":"nbz sk"},"dataType":"delai"}
 {"_id":"________ObjectId________","batchKey":"1910","dataHash":"______________Hash______________","dataObject":{"annee_bdf":2013,"arrete_bilan_bdf":"2012-12-31T00:00:00Z","delai_fournisseur":88.5,"dette_fiscale":561,"financier_court_terme":5.2,"frais_financier":-9.4,"poids_frng":-37.5,"raison_sociale":"SOCIETE","secteur":"01 Industrie et Transports (Hors TRM)","siren":"000111222","taux_marge":-63.1},"dataType":"bdf"}

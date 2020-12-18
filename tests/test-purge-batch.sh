@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Test de bout en bout de l'API "/batch/purge". Inspiré de test-api-public.sh.
+# Test de bout en bout de la commande "purge". Inspiré de test-public.sh.
 # Ce script doit être exécuté depuis la racine du projet. Ex: par test-all.sh.
 
 tests/helpers/mongodb-container.sh stop
@@ -13,14 +13,12 @@ mkdir -p "${TMP_DIR}"
 
 # Clean up on exit
 function teardown {
-    tests/helpers/sfdata-wrapper.sh stop || true # keep tearing down, even if "No matching processes belonging to you were found"
     tests/helpers/mongodb-container.sh stop
 }
 trap teardown EXIT
 
 PORT="27016" tests/helpers/mongodb-container.sh start
-
-MONGODB_PORT="27016" tests/helpers/sfdata-wrapper.sh setup
+export MONGODB_PORT="27016" # for tests/helpers/sfdata-wrapper.sh
 
 echo ""
 echo "📝 Inserting test data..."
@@ -32,7 +30,7 @@ CONTENT
 
 echo ""
 echo "💎 Test: purge batch 1901 from RawData..."
-echo "- POST /api/data/batch/purge 👉 $(tests/helpers/sfdata-wrapper.sh run purge --since-batch=1901 --i-understand-what-im-doing)"
+echo "- sfdata batch/purge 👉 $(tests/helpers/sfdata-wrapper.sh purge --since-batch=1901 --i-understand-what-im-doing)"
 
 # Display JS errors logged by MongoDB, if any
 tests/helpers/mongodb-container.sh exceptions || true

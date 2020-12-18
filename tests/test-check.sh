@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Test de bout en bout de l'API "check".
+# Test de bout en bout de la commande "check".
 # Ce script doit être exécuté depuis la racine du projet. Ex: par test-all.sh.
 
 tests/helpers/mongodb-container.sh stop
@@ -10,20 +10,18 @@ set -e # will stop the script if any command fails with a non-zero exit code
 # Setup
 FLAGS="$*" # the script will update the golden file if "--update" flag was provided as 1st argument
 TMP_DIR="tests/tmp-test-execution-files"
-OUTPUT_FILE="${TMP_DIR}/test-api-check.output.txt"
-GOLDEN_FILE="tests/output-snapshots/test-api-check.golden.txt"
+OUTPUT_FILE="${TMP_DIR}/test-check.output.txt"
+GOLDEN_FILE="tests/output-snapshots/test-check.golden.txt"
 mkdir -p "${TMP_DIR}"
 
 # Clean up on exit
 function teardown {
-    tests/helpers/sfdata-wrapper.sh stop || true # keep tearing down, even if "No matching processes belonging to you were found"
     tests/helpers/mongodb-container.sh stop
 }
 trap teardown EXIT
 
 PORT="27016" tests/helpers/mongodb-container.sh start
-
-MONGODB_PORT="27016" tests/helpers/sfdata-wrapper.sh setup
+export MONGODB_PORT="27016" # for tests/helpers/sfdata-wrapper.sh
 
 echo ""
 echo "📝 Inserting test data..."
@@ -52,8 +50,8 @@ CONTENTS
 
 echo ""
 echo "💎 Parsing data..."
-API_RESULT=$(tests/helpers/sfdata-wrapper.sh run check --batch=1910 --parsers='debit')
-echo "- POST /api/data/check 👉 ${API_RESULT}"
+RESULT=$(tests/helpers/sfdata-wrapper.sh check --batch=1910 --parsers='debit')
+echo "- sfdata check 👉 ${RESULT}"
 
 (tests/helpers/mongodb-container.sh run \
   > "${OUTPUT_FILE}" \
@@ -74,10 +72,10 @@ printjson(db.Journal.find().toArray().map(doc => ({
   hasStartDate: !!doc.startDate,
 })));
 
-print("// Response body from /api/data/check:");
+print("// Response body from sfdata check:");
 CONTENT
 
-echo "${API_RESULT}" >> "${OUTPUT_FILE}"
+echo "${RESULT}" >> "${OUTPUT_FILE}"
 
 # Display JS errors logged by MongoDB, if any
 tests/helpers/mongodb-container.sh exceptions || true
