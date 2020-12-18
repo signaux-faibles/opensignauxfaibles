@@ -33,8 +33,8 @@ func main() {
 	engine.FlushEventQueue()
 }
 
-var cmds = map[string]*commandDefinition{
-	"purge": {
+var commandDefs = []*commandDefinition{
+	{"purge",
 		"Supprime une partie des données compactées",
 		/**
 		/!\ ce traitement est destructif et irréversible /!\
@@ -52,8 +52,8 @@ var cmds = map[string]*commandDefinition{
 			flag.CommandLine.Parse(args)
 			connectDb()
 			return purgeBatchHandler(params) // [x] écrit dans Journal
-		}},
-	"check": {
+		}}, {
+		"check",
 		"Vérifie la validité d'un batch avant son importation",
 		/**
 		Vérifie la validité du batch sur le point d'être importé et des fichiers qui le constituent.
@@ -69,8 +69,8 @@ var cmds = map[string]*commandDefinition{
 			params.Parsers = strings.Split(parsers, ",")
 			connectDb()
 			return checkBatchHandler(params) // [x] écrit dans Journal
-		}},
-	"pruneEntities": {
+		}}, {
+		"pruneEntities",
 		"Compte/supprime les entités hors périmètre",
 		/**
 		Compte puis supprime dans la collection `RawData` les entités (établissements et entreprises)
@@ -84,8 +84,8 @@ var cmds = map[string]*commandDefinition{
 			flag.CommandLine.Parse(args)
 			connectDb()
 			return pruneEntitiesHandler(params) // [x] écrit dans Journal
-		}},
-	"import": {
+		}}, {
+		"import",
 		"Importe des fichiers",
 		/**
 		Effectue l'import de tous les fichiers du batch donné en paramètre.
@@ -100,8 +100,8 @@ var cmds = map[string]*commandDefinition{
 			flag.CommandLine.Parse(args)
 			connectDb()
 			return importBatchHandler(params) // [x] écrit dans Journal
-		}},
-	"validate": {
+		}}, {
+		"validate",
 		"Liste les entrées de données invalides",
 		/**
 		Vérifie la validité des entrées de données contenues dans les documents de la collection RawData ou ImportedData.
@@ -113,8 +113,8 @@ var cmds = map[string]*commandDefinition{
 			flag.CommandLine.Parse(args)
 			connectDb()
 			return validateHandler(params) // [x] écrit dans Journal
-		}},
-	"compact": {
+		}}, {
+		"compact",
 		"Compacte la base de données",
 		/**
 		Ce traitement permet le compactage de la base de données.
@@ -128,11 +128,11 @@ var cmds = map[string]*commandDefinition{
 			flag.CommandLine.Parse(args)
 			connectDb()
 			return compactHandler(params) // [x] écrit dans Journal
-		}},
-	// "purgeNotCompacted": {"TODO - summary", func(args []string) error {
-	// 	return purgeNotCompactedHandler() // TODO: écrire rapport dans Journal ?
-	// }},
-	"reduce": {
+		}}, {
+		// "purgeNotCompacted": {"TODO - summary", func(args []string) error {
+		// 	return purgeNotCompactedHandler() // TODO: écrire rapport dans Journal ?
+		// }},
+		"reduce",
 		"Calcule les variables destinées à la prédiction",
 		/**
 		Alimente la collection Features en calculant les variables avec le traitement mapreduce demandé dans la propriété `features`.
@@ -147,8 +147,8 @@ var cmds = map[string]*commandDefinition{
 			flag.CommandLine.Parse(args)
 			connectDb()
 			return reduceHandler(params) // [x] écrit dans Journal
-		}},
-	"public": {
+		}}, {
+		"public",
 		"Génère les données destinées au site web",
 		/**
 		Alimente la collection Public avec les objets calculés pour le batch cité en paramètre, à partir de la collection RawData.
@@ -166,8 +166,8 @@ var cmds = map[string]*commandDefinition{
 			flag.CommandLine.Parse(args)
 			connectDb()
 			return publicHandler(params) // [x] écrit dans Journal
-		}},
-	"etablissements": {
+		}}, {
+		"etablissements",
 		"Exporte la liste des établissements",
 		/**
 		Exporte la liste des établissements depuis la collection Public.
@@ -179,8 +179,8 @@ var cmds = map[string]*commandDefinition{
 			flag.CommandLine.Parse(args)
 			connectDb()
 			return exportEtablissementsHandler(params) // TODO: écrire rapport dans Journal ?
-		}},
-	"entreprises": {
+		}}, {
+		"entreprises",
 		"Exporte la liste des entreprises",
 		/**
 		Exporte la liste des entreprises depuis la collection Public.
@@ -196,6 +196,7 @@ var cmds = map[string]*commandDefinition{
 }
 
 type commandDefinition struct {
+	name    string
 	summary string
 	run     func(args []string) error
 }
@@ -204,6 +205,11 @@ func runCommand(args []string) error {
 	if len(args) < 1 {
 		printSupportedCommands()
 		return errors.New("Error: You must pass a command")
+	}
+
+	var cmds = map[string]*commandDefinition{}
+	for _, commandDef := range commandDefs {
+		cmds[commandDef.name] = commandDef
 	}
 
 	command := os.Args[1]
@@ -221,8 +227,8 @@ func printSupportedCommands() {
 	fmt.Println("")
 	fmt.Println("Supported commands:")
 	fmt.Println("")
-	for cmd, cmdDef := range cmds {
-		fmt.Printf("   %-16s %s\n", cmd, cmdDef.summary)
+	for _, cmdDef := range commandDefs {
+		fmt.Printf("   %-16s %s\n", cmdDef.name, cmdDef.summary)
 	}
 	fmt.Println("")
 }

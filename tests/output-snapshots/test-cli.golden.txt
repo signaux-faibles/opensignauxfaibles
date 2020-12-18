@@ -4,16 +4,16 @@ usage: sfdata <command> [--boolean-flag] [--parameter=<value1>,<value2>,...]
 
 Supported commands:
 
-   compact          Compacte la base de données
-   reduce           Calcule les variables destinées à la prédiction
-   etablissements   Exporte la liste des établissements
-   entreprises      Exporte la liste des entreprises
    purge            Supprime une partie des données compactées
    check            Vérifie la validité d'un batch avant son importation
    pruneEntities    Compte/supprime les entités hors périmètre
    import           Importe des fichiers
    validate         Liste les entrées de données invalides
+   compact          Compacte la base de données
+   reduce           Calcule les variables destinées à la prédiction
    public           Génère les données destinées au site web
+   etablissements   Exporte la liste des établissements
+   entreprises      Exporte la liste des entreprises
 
 Error: You must pass a command
 ---
