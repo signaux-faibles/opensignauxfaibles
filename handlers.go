@@ -30,9 +30,10 @@ type purgeBatchHandler struct {
 	IUnderstandWhatImDoing bool   `names:"--i-understand-what-im-doing" desc:"Nécessaire pour confirmer la suppression de données"`
 }
 
-var purgeBatchMetadata = flag.Flag{
-	Usage: "Supprime une partie des données compactées",
-	Desc: `
+func (params purgeBatchHandler) Documentation() flag.Flag {
+	return flag.Flag{
+		Usage: "Supprime une partie des données compactées",
+		Desc: `
 		/!\ ce traitement est destructif et irréversible /!\
 		Supprime les données dans les objets de la collection RawData pour les batches suivant le numéro de batch donné.
 		La propriété "debugForKey" permet de traiter une entreprise en fournissant son siren, le résultat n'impacte pas la collection RawData mais est déversé dans purgeBatch_debug à des fins de vérifications.
@@ -40,6 +41,7 @@ var purgeBatchMetadata = flag.Flag{
 		Répond "ok" dans la sortie standard, si le traitement s'est bien déroulé.
 		/!\ ce traitement est destructif et irréversible /!\
 		`,
+	}
 }
 
 func (params purgeBatchHandler) IsEnabled() bool {
@@ -85,13 +87,15 @@ type importBatchHandler struct {
 	NoFilter bool     `names:"--no-filter" desc:"Pour procéder à l'importation même si aucun filtre n'est fourni"`
 }
 
-var importBatchMetadata = flag.Flag{
-	Usage: "Importe des fichiers de données",
-	Desc: `
+func (params importBatchHandler) Documentation() flag.Flag {
+	return flag.Flag{
+		Usage: "Importe des fichiers de données",
+		Desc: `
 		Effectue l'import de tous les fichiers du batch donné en paramètre.
 		Pour exécuter tous les parsers, il faut ne pas spécifier la propriété parsers ou lui donner la valeur null.
 		Répond "ok" dans la sortie standard, si le traitement s'est bien déroulé.
 	`,
+	}
 }
 
 func (params importBatchHandler) IsEnabled() bool {
@@ -136,13 +140,15 @@ type checkBatchHandler struct {
 	Parsers  []string `names:"--parsers" desc:"Parseurs à employer (ex: altares,cotisation)"`
 }
 
-var checkBatchMetadata = flag.Flag{
-	Usage: "Vérifie la validité d'un batch avant son importation",
-	Desc: `
+func (params checkBatchHandler) Documentation() flag.Flag {
+	return flag.Flag{
+		Usage: "Vérifie la validité d'un batch avant son importation",
+		Desc: `
 		Vérifie la validité du batch sur le point d'être importé et des fichiers qui le constituent.
 		Pour exécuter tous les parsers, il faut ne pas spécifier la propriété parsers ou lui donner la valeur null.
 		Répond avec un propriété JSON "reports" qui contient les rapports textuels de parsing de chaque fichier.
 	`,
+	}
 }
 
 func (params checkBatchHandler) IsEnabled() bool {
@@ -193,13 +199,15 @@ type pruneEntitiesHandler struct {
 	Delete   bool   `names:"--delete" desc:"Nécessaire pour confirmer la suppression de données"`
 }
 
-var pruneEntitiesMetadata = flag.Flag{
-	Usage: "Compte/supprime les entités hors périmètre",
-	Desc: `
+func (params pruneEntitiesHandler) Documentation() flag.Flag {
+	return flag.Flag{
+		Usage: "Compte/supprime les entités hors périmètre",
+		Desc: `
 		Compte puis supprime dans la collection "RawData" les entités (établissements et entreprises)
 		non listées dans le filtre de périmètre du batch spécifié.
 		Répond avec un propriété JSON "count" qui vaut le nombre d'entités hors périmètre comptées ou supprimées.
 	`,
+	}
 }
 
 func (params pruneEntitiesHandler) IsEnabled() bool {

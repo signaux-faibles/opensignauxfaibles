@@ -39,9 +39,10 @@ func main() {
 
 // Interface that each command should implement
 type command interface {
-	IsEnabled() bool // returns true when the user invokes this command from the CLI
-	Validate() error // returns an error if some command parameters don't meet expectations
-	Run() error      // executes the command and return an error if it fails
+	Documentation() cosFlag.Flag // returns documentation to display in the CLI
+	IsEnabled() bool             // returns true when the user invokes this command from the CLI
+	Validate() error             // returns an error if some command parameters don't meet expectations
+	Run() error                  // executes the command and return an error if it fails
 }
 
 // List of command handlers that cosiner/flag should recognize in CLI arguments
@@ -54,12 +55,12 @@ type cliCommands struct {
 
 // Metadata returns the documentation that will be displayed by cosiner/flag
 // if the user invokes "--help", or if some parameters are invalid.
-func (*cliCommands) Metadata() map[string]cosFlag.Flag {
+func (cmds *cliCommands) Metadata() map[string]cosFlag.Flag {
 	return map[string]cosFlag.Flag{
-		"purge":         purgeBatchMetadata,
-		"check":         checkBatchMetadata,
-		"pruneEntities": pruneEntitiesMetadata,
-		"import":        importBatchMetadata,
+		"purge":         cmds.Purge.Documentation(),
+		"check":         cmds.Check.Documentation(),
+		"pruneEntities": cmds.PruneEntities.Documentation(),
+		"import":        cmds.Import.Documentation(),
 	}
 }
 
@@ -225,10 +226,13 @@ func getNewCommand() (command, *cosFlag.FlagSet) {
 	// check which command was recognized, based on the fields of cliCommands
 	supportedCommands := reflect.ValueOf(actualArgs)
 	for i := 0; i < supportedCommands.NumField(); i++ {
-		cmdArgs, _ := supportedCommands.Field(i).Interface().(command)
 		fieldName := supportedCommands.Type().Field(i).Name
 		cmdName := strings.ToLower(fieldName[0:1]) + fieldName[1:]
-		if cmdArgs.IsEnabled() {
+		cmdArgs, ok := supportedCommands.Field(i).Interface().(command)
+		if ok != true {
+			panic(fmt.Sprintf("Property %v of type cliCommands is not an instance of command", fieldName))
+		}
+		if cmdArgs.IsEnabled() { // TODO: can we read Enabled property directly, thanks to reflection ?
 			cmdDef, _ := flagSet.FindSubset(cmdName)
 			return cmdArgs, cmdDef
 		}
