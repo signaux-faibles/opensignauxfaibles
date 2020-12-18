@@ -72,11 +72,35 @@ func publicHandler(params publicParams) error {
 	return err
 }
 
-type compactParams struct {
-	FromBatchKey string `json:"fromBatchKey"`
+type compactHandler struct {
+	Enable       bool   // set to true by cosiner/flag if the user is running this command
+	FromBatchKey string `names:"--since-batch" arglist:"batch_key" desc:"Identifiant du batch à partir duquel compacter (ex: 1802, pour Février 2018)"`
 }
 
-func compactHandler(params compactParams) error {
+func (params compactHandler) Documentation() flag.Flag {
+	return flag.Flag{
+		Usage: "Compacte la base de données",
+		Desc: `
+		Ce traitement permet le compactage de la base de données.
+		Ce compactage a pour effet de réduire tous les objets en clé uniques comportant dans la même arborescence toutes les données en rapport avec ces clés.
+		Ce traitement est nécessaire avant l'usage des commandes "reduce" et "public", après chaque import de données.
+		Répond "ok" dans la sortie standard, si le traitement s'est bien déroulé.
+		`,
+	}
+}
+
+func (params compactHandler) IsEnabled() bool {
+	return params.Enable
+}
+
+func (params compactHandler) Validate() error {
+	if params.FromBatchKey == "" {
+		return errors.New("paramètre `since-batch` obligatoire")
+	}
+	return nil
+}
+
+func (params compactHandler) Run() error {
 	err := engine.Compact(params.FromBatchKey)
 	if err == nil {
 		printJSON("ok")

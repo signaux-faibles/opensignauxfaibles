@@ -52,6 +52,7 @@ type cliCommands struct {
 	PruneEntities pruneEntitiesHandler
 	Import        importBatchHandler
 	Validate      validateHandler
+	Compact       compactHandler
 }
 
 // Metadata returns the documentation that will be displayed by cosiner/flag
@@ -63,6 +64,7 @@ func (cmds *cliCommands) Metadata() map[string]cosFlag.Flag {
 		"pruneEntities": cmds.PruneEntities.Documentation(),
 		"import":        cmds.Import.Documentation(),
 		"validate":      cmds.Validate.Documentation(),
+		"compact":       cmds.Compact.Documentation(),
 	}
 }
 
@@ -76,21 +78,6 @@ type legacyCommandDefinition struct {
 // List of commands that will be migrated over cosiner/flag's format.
 var legacyCommandDefs = []*legacyCommandDefinition{
 	{
-		"compact",
-		"Compacte la base de données",
-		/**
-		Ce traitement permet le compactage de la base de données.
-		Ce compactage a pour effet de réduire tous les objets en clé uniques comportant dans la même arborescence toutes les données en rapport avec ces clés.
-		Ce traitement est nécessaire avant l'usage des commandes `reduce` et `public`, après chaque import de données.
-		Répond "ok" dans la sortie standard, si le traitement s'est bien déroulé.
-		*/
-		func(args []string) error {
-			params := compactParams{}
-			flag.StringVar(&params.FromBatchKey, "since-batch", "", "Identifiant du batch à partir duquel compacter (ex: `1802`, pour Février 2018)")
-			flag.CommandLine.Parse(args)
-			connectDb()
-			return compactHandler(params) // [x] écrit dans Journal
-		}}, {
 		// "purgeNotCompacted": {"TODO - summary", func(args []string) error {
 		// 	return purgeNotCompactedHandler() // TODO: écrire rapport dans Journal ?
 		// }},
@@ -204,6 +191,7 @@ func printSupportedCommands() {
 		"pruneEntities",
 		"import",
 		"validate",
+		"compact",
 	}
 	commandsMeta := (&cliCommands{}).Metadata()
 	for _, cmdName := range orderedNewCommandNames {

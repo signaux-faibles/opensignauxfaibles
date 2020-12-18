@@ -31,6 +31,7 @@ Sets:
 	pruneEntities Compte/supprime les entités hors périmètre
 	import        Importe des fichiers de données
 	validate      Liste les entrées de données invalides
+	compact       Compacte la base de données
 ---
 $ ./sfdata purge
 Supprime une partie des données compactées
@@ -130,4 +131,22 @@ Flags:
 		Nom de la collection à valider
 
 le paramètre collection doit valoir RawData ou ImportedData
+---
+$ ./sfdata compact
+Compacte la base de données
+
+Usage:
+	compact [FLAG]...
+
+Description:
+	Ce traitement permet le compactage de la base de données.
+	Ce compactage a pour effet de réduire tous les objets en clé uniques comportant dans la même arborescence toutes les données en rapport avec ces clés.
+	Ce traitement est nécessaire avant l'usage des commandes "reduce" et "public", après chaque import de données.
+	Répond "ok" dans la sortie standard, si le traitement s'est bien déroulé.
+
+Flags:
+	--since-batch batch_key (type: string)
+		Identifiant du batch à partir duquel compacter (ex: 1802, pour Février 2018)
+
+paramètre `since-batch` obligatoire
 ---
