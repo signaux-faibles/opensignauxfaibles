@@ -64,15 +64,42 @@ func (params reduceHandler) Run() error {
 	return nil
 }
 
-type publicParams struct {
-	BatchKey string `json:"batch"`
-	Key      string `json:"key"`
+type publicHandler struct {
+	Enable   bool   // set to true by cosiner/flag if the user is running this command
+	BatchKey string `names:"--until-batch" arglist:"batch_key" desc:"Identifiant du batch jusqu'auquel calculer (ex: 1802, pour Février 2018)"`
+	Key      string `names:"--key" desc:"Numéro SIRET or SIREN d'une entité à calculer exclusivement"`
 }
 
-func publicHandler(params publicParams) error {
-	if params.BatchKey == "" {
-		return errors.New("batch vide")
+func (params publicHandler) Documentation() flag.Flag {
+	return flag.Flag{
+		Usage: "Génère les données destinées au site web",
+		Desc: `
+		Alimente la collection Public avec les objets calculés pour le batch cité en paramètre, à partir de la collection RawData.
+		Le traitement prend en paramètre la clé du batch (obligatoire) et un SIREN (optionnel). Lorsque le SIREN n'est pas précisé, tous les objets lié au batch sont traités, à conditions qu'ils soient dans le périmètre de scoring "algo2".
+		Cette collection sera ensuite accédée par les utilisateurs pour consulter les données des entreprises.
+		Des niveaux d'accéditation fins (ligne ou colonne) pour la consultation de ces données peuvent être mis en oeuvre.
+		Ces filtrages sont effectués grace à la notion de scope. Les objets et les utilisateurs disposent d'un ensemble de tags et les objets partageant au moins un tag avec les utilisateurs peuvent être consultés par ceux-ci.
+		Ces tags sont exploités pour traiter la notion de région (ligne) mais aussi les permissions (colonne).
+		Répond "ok" dans la sortie standard, si le traitement s'est bien déroulé.
+		`,
 	}
+}
+
+func (params publicHandler) IsEnabled() bool {
+	return params.Enable
+}
+
+func (params publicHandler) Validate() error {
+	if params.BatchKey == "" {
+		return errors.New("paramètre `until-batch` obligatoire")
+	}
+	if len(params.Key) < 9 {
+		return errors.New("la clé fait moins de 9 caractères (siren)")
+	}
+	return nil
+}
+
+func (params publicHandler) Run() error {
 
 	batch := base.AdminBatch{}
 	err := engine.Load(&batch, params.BatchKey)

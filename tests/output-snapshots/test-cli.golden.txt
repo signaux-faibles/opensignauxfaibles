@@ -33,6 +33,7 @@ Sets:
 	validate      Liste les entrées de données invalides
 	compact       Compacte la base de données
 	reduce        Calcule les variables destinées à la prédiction
+	public        Génère les données destinées au site web
 ---
 $ ./sfdata purge
 Supprime une partie des données compactées
@@ -172,6 +173,29 @@ Flags:
 	--to                    (type: string)
 	--type all|apart        (type: []string)
 		Sélection des types de données qui vont être calculés ou recalculés
+
+paramètre `until-batch` obligatoire
+---
+$ ./sfdata public
+Génère les données destinées au site web
+
+Usage:
+	public [FLAG]...
+
+Description:
+	Alimente la collection Public avec les objets calculés pour le batch cité en paramètre, à partir de la collection RawData.
+	Le traitement prend en paramètre la clé du batch (obligatoire) et un SIREN (optionnel). Lorsque le SIREN n'est pas précisé, tous les objets lié au batch sont traités, à conditions qu'ils soient dans le périmètre de scoring "algo2".
+	Cette collection sera ensuite accédée par les utilisateurs pour consulter les données des entreprises.
+	Des niveaux d'accéditation fins (ligne ou colonne) pour la consultation de ces données peuvent être mis en oeuvre.
+	Ces filtrages sont effectués grace à la notion de scope. Les objets et les utilisateurs disposent d'un ensemble de tags et les objets partageant au moins un tag avec les utilisateurs peuvent être consultés par ceux-ci.
+	Ces tags sont exploités pour traiter la notion de région (ligne) mais aussi les permissions (colonne).
+	Répond "ok" dans la sortie standard, si le traitement s'est bien déroulé.
+
+Flags:
+	--until-batch batch_key (type: string)
+		Identifiant du batch jusqu'auquel calculer (ex: 1802, pour Février 2018)
+	--key                   (type: string)
+		Numéro SIRET or SIREN d'une entité à calculer exclusivement
 
 paramètre `until-batch` obligatoire
 ---

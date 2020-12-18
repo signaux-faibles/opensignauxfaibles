@@ -54,6 +54,7 @@ type cliCommands struct {
 	Validate      validateHandler
 	Compact       compactHandler
 	Reduce        reduceHandler
+	Public        publicHandler
 }
 
 // Metadata returns the documentation that will be displayed by cosiner/flag
@@ -67,6 +68,7 @@ func (cmds *cliCommands) Metadata() map[string]cosFlag.Flag {
 		"validate":      cmds.Validate.Documentation(),
 		"compact":       cmds.Compact.Documentation(),
 		"reduce":        cmds.Reduce.Documentation(),
+		"public":        cmds.Public.Documentation(),
 	}
 }
 
@@ -83,25 +85,6 @@ var legacyCommandDefs = []*legacyCommandDefinition{
 		// "purgeNotCompacted": {"TODO - summary", func(args []string) error {
 		// 	return purgeNotCompactedHandler() // TODO: écrire rapport dans Journal ?
 		// }},
-		"public",
-		"Génère les données destinées au site web",
-		/**
-		Alimente la collection Public avec les objets calculés pour le batch cité en paramètre, à partir de la collection RawData.
-		Le traitement prend en paramètre la clé du batch (obligatoire) et un SIREN (optionnel). Lorsque le SIREN n'est pas précisé, tous les objets lié au batch sont traités, à conditions qu'ils soient dans le périmètre de scoring "algo2".
-		Cette collection sera ensuite accédée par les utilisateurs pour consulter les données des entreprises.
-		Des niveaux d'accéditation fins (ligne ou colonne) pour la consultation de ces données peuvent être mis en oeuvre.
-		Ces filtrages sont effectués grace à la notion de scope. Les objets et les utilisateurs disposent d'un ensemble de tags et les objets partageant au moins un tag avec les utilisateurs peuvent être consultés par ceux-ci.
-		Ces tags sont exploités pour traiter la notion de région (ligne) mais aussi les permissions (colonne).
-		Répond "ok" dans la sortie standard, si le traitement s'est bien déroulé.
-		*/
-		func(args []string) error {
-			params := publicParams{}
-			flag.StringVar(&params.BatchKey, "until-batch", "", "Identifiant du batch jusqu'auquel calculer (ex: `1802`, pour Février 2018)")
-			flag.StringVar(&params.Key, "key", "", "Numéro SIRET or SIREN d'une entité à calculer exclusivement")
-			flag.CommandLine.Parse(args)
-			connectDb()
-			return publicHandler(params) // [x] écrit dans Journal
-		}}, {
 		"etablissements",
 		"Exporte la liste des établissements",
 		/**
@@ -179,6 +162,7 @@ func printSupportedCommands() {
 		"validate",
 		"compact",
 		"reduce",
+		"public",
 	}
 	commandsMeta := (&cliCommands{}).Metadata()
 	for _, cmdName := range orderedNewCommandNames {
