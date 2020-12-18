@@ -7,6 +7,8 @@ import (
 	"os"
 	"strings"
 
+	cosFlag "github.com/cosiner/flag"
+
 	"github.com/signaux-faibles/opensignauxfaibles/lib/engine"
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/naf"
@@ -25,6 +27,7 @@ func connectDb() {
 
 // main Fonction Principale
 func main() {
+
 	err := runCommand(os.Args[1:])
 	if err != nil {
 		fmt.Println(err)
@@ -33,27 +36,37 @@ func main() {
 	engine.FlushEventQueue()
 }
 
-var cmds = map[string]*commandDefinition{
-	"purge": {
-		"Supprime une partie des données compactées",
-		/**
-		/!\ ce traitement est destructif et irréversible /!\
-		Supprime les données dans les objets de la collection RawData pour les batches suivant le numéro de batch donné.
-		La propriété `debugForKey` permet de traiter une entreprise en fournissant son siren, le résultat n'impacte pas la collection RawData mais est déversé dans purgeBatch_debug à des fins de vérifications.
-		Lorsque `key` n'est pas fourni, le traitement s'exécute sur l'ensemble de la base, et dans ce cas la propriété IUnderstandWhatImDoing doit être fournie à la valeur `true` sans quoi le traitement refusera de se lancer.
-		Répond "ok" dans la sortie standard, si le traitement s'est bien déroulé.
-		/!\ ce traitement est destructif et irréversible /!\
-		*/
-		func(args []string) error {
-			var params purgeBatchParams
-			// TODO: populer "debugForKey" (ex: "012345678901234")
-			flag.StringVar(&params.FromBatchKey, "since-batch", "", "Identifiant du batch à partir duquel supprimer les données (ex: `1802`, pour Février 2018)")
-			flag.BoolVar(&params.IUnderstandWhatImDoing, "i-understand-what-im-doing", false, "Nécessaire pour confirmer la suppression de données")
-			flag.CommandLine.Parse(args)
-			connectDb()
-			return purgeBatchHandler(params) // [x] écrit dans Journal
-		}},
-	"check": {
+// Interface that each command should implement
+type command interface {
+	IsEnabled() bool // returns true when the user invokes this command from the CLI
+	Validate() error // returns an error if some command parameters don't meet expectations
+	Run() error      // executes the command and return an error if it fails
+}
+
+// List of command handlers that cosiner/flag should recognize in CLI arguments
+type cliCommands struct {
+	Purge purgeBatchHandler
+}
+
+// Metadata returns the documentation that will be displayed by cosiner/flag
+// if the user invokes "--help", or if some parameters are invalid.
+func (*cliCommands) Metadata() map[string]cosFlag.Flag {
+	return map[string]cosFlag.Flag{
+		"purge": purgeBatchMetadata,
+	}
+}
+
+// Structure to define commands that will be migrated over cosiner/flag's format.
+type legacyCommandDefinition struct {
+	name    string
+	summary string
+	run     func(args []string) error
+}
+
+// List of commands that will be migrated over cosiner/flag's format.
+var legacyCommandDefs = []*legacyCommandDefinition{
+	{
+		"check",
 		"Vérifie la validité d'un batch avant son importation",
 		/**
 		Vérifie la validité du batch sur le point d'être importé et des fichiers qui le constituent.
@@ -69,8 +82,8 @@ var cmds = map[string]*commandDefinition{
 			params.Parsers = strings.Split(parsers, ",")
 			connectDb()
 			return checkBatchHandler(params) // [x] écrit dans Journal
-		}},
-	"pruneEntities": {
+		}}, {
+		"pruneEntities",
 		"Compte/supprime les entités hors périmètre",
 		/**
 		Compte puis supprime dans la collection `RawData` les entités (établissements et entreprises)
@@ -84,8 +97,8 @@ var cmds = map[string]*commandDefinition{
 			flag.CommandLine.Parse(args)
 			connectDb()
 			return pruneEntitiesHandler(params) // [x] écrit dans Journal
-		}},
-	"import": {
+		}}, {
+		"import",
 		"Importe des fichiers",
 		/**
 		Effectue l'import de tous les fichiers du batch donné en paramètre.
@@ -100,8 +113,8 @@ var cmds = map[string]*commandDefinition{
 			flag.CommandLine.Parse(args)
 			connectDb()
 			return importBatchHandler(params) // [x] écrit dans Journal
-		}},
-	"validate": {
+		}}, {
+		"validate",
 		"Liste les entrées de données invalides",
 		/**
 		Vérifie la validité des entrées de données contenues dans les documents de la collection RawData ou ImportedData.
@@ -113,8 +126,8 @@ var cmds = map[string]*commandDefinition{
 			flag.CommandLine.Parse(args)
 			connectDb()
 			return validateHandler(params) // [x] écrit dans Journal
-		}},
-	"compact": {
+		}}, {
+		"compact",
 		"Compacte la base de données",
 		/**
 		Ce traitement permet le compactage de la base de données.
@@ -128,11 +141,11 @@ var cmds = map[string]*commandDefinition{
 			flag.CommandLine.Parse(args)
 			connectDb()
 			return compactHandler(params) // [x] écrit dans Journal
-		}},
-	// "purgeNotCompacted": {"TODO - summary", func(args []string) error {
-	// 	return purgeNotCompactedHandler() // TODO: écrire rapport dans Journal ?
-	// }},
-	"reduce": {
+		}}, {
+		// "purgeNotCompacted": {"TODO - summary", func(args []string) error {
+		// 	return purgeNotCompactedHandler() // TODO: écrire rapport dans Journal ?
+		// }},
+		"reduce",
 		"Calcule les variables destinées à la prédiction",
 		/**
 		Alimente la collection Features en calculant les variables avec le traitement mapreduce demandé dans la propriété `features`.
@@ -147,8 +160,8 @@ var cmds = map[string]*commandDefinition{
 			flag.CommandLine.Parse(args)
 			connectDb()
 			return reduceHandler(params) // [x] écrit dans Journal
-		}},
-	"public": {
+		}}, {
+		"public",
 		"Génère les données destinées au site web",
 		/**
 		Alimente la collection Public avec les objets calculés pour le batch cité en paramètre, à partir de la collection RawData.
@@ -166,8 +179,8 @@ var cmds = map[string]*commandDefinition{
 			flag.CommandLine.Parse(args)
 			connectDb()
 			return publicHandler(params) // [x] écrit dans Journal
-		}},
-	"etablissements": {
+		}}, {
+		"etablissements",
 		"Exporte la liste des établissements",
 		/**
 		Exporte la liste des établissements depuis la collection Public.
@@ -179,8 +192,8 @@ var cmds = map[string]*commandDefinition{
 			flag.CommandLine.Parse(args)
 			connectDb()
 			return exportEtablissementsHandler(params) // TODO: écrire rapport dans Journal ?
-		}},
-	"entreprises": {
+		}}, {
+		"entreprises",
 		"Exporte la liste des entreprises",
 		/**
 		Exporte la liste des entreprises depuis la collection Public.
@@ -195,23 +208,37 @@ var cmds = map[string]*commandDefinition{
 		}},
 }
 
-type commandDefinition struct {
-	summary string
-	run     func(args []string) error
-}
-
 func runCommand(args []string) error {
 	if len(args) < 1 {
 		printSupportedCommands()
 		return errors.New("Error: You must pass a command")
 	}
 
+	// handle legacy commands
+	var legacyCmds = map[string]*legacyCommandDefinition{}
+	for _, commandDef := range legacyCommandDefs {
+		legacyCmds[commandDef.name] = commandDef
+	}
 	command := os.Args[1]
-	commandDef := cmds[command]
+	commandDef := legacyCmds[command]
 	if commandDef != nil {
 		return commandDef.run(os.Args[2:])
 	}
 
+	// fallback: handle new commands
+	newCmd, cmdDef := getNewCommand()
+	if newCmd != nil {
+		err := newCmd.Validate()
+		if err != nil {
+			cmdDef.Help(false) // display usage information for this command only
+			fmt.Println()
+			return err
+		}
+		connectDb()
+		return newCmd.Run()
+	}
+
+	// no match
 	printSupportedCommands()
 	return fmt.Errorf("Unknown command: %s", command)
 }
@@ -221,8 +248,32 @@ func printSupportedCommands() {
 	fmt.Println("")
 	fmt.Println("Supported commands:")
 	fmt.Println("")
-	for cmd, cmdDef := range cmds {
-		fmt.Printf("   %-16s %s\n", cmd, cmdDef.summary)
+	commandsMeta := (&cliCommands{}).Metadata()
+	for cmdName, cmdMeta := range commandsMeta {
+		fmt.Printf("   %-16s %s\n", cmdName, cmdMeta.Usage)
+	}
+	for _, cmdDef := range legacyCommandDefs {
+		fmt.Printf("   %-16s %s\n", cmdDef.name, cmdDef.summary)
 	}
 	fmt.Println("")
+}
+
+// Function that uses cosiner/flag to parse CLI args.
+func getNewCommand() (command, *cosFlag.FlagSet) {
+	var actualArgs = cliCommands{}
+	var commands = map[string]command{
+		"purge": &actualArgs.Purge, // TODO: use reflection to iterate over each command's params => delete "commands"
+	}
+	flagSet := cosFlag.NewFlagSet(cosFlag.Flag{})
+	flagSet.ParseStruct(&actualArgs, os.Args...)
+	for cmdName, cmdArgs := range commands {
+		if cmdArgs.IsEnabled() {
+			cmdDef, _ := flagSet.FindSubset(cmdName)
+			return cmdArgs, cmdDef
+		}
+	}
+	// no command was recognized in args
+	return nil, nil
+	// flagSet.Help(false) // display usage information, with list of supported commands
+	// os.Exit(1)
 }

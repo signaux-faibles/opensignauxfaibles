@@ -48,6 +48,9 @@ heading "go generate"
 heading "go build"
 (killall sfdata 2>/dev/null || true; go build -o "sfdata" && echo "📦 sfdata") 2>&1 | indent
 
+heading "test-cli.sh"
+./tests/test-cli.sh $@ 2>&1 | indent
+
 heading "test-prune-entities.sh"
 ./tests/test-prune-entities.sh $@ 2>&1 | indent
 
