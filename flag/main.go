@@ -10,6 +10,12 @@ import (
 	flag "github.com/cosiner/flag"
 )
 
+type Command interface {
+	IsEnabled() bool
+	Validate() error
+	Run()
+}
+
 type BuildParams struct {
 	Enable   bool
 	Already  bool     `names:"-a" important:"1" desc:"force rebuilding of packages that are already up-to-date."`
@@ -28,6 +34,10 @@ var BuildMetadata = flag.Flag{
 	The build flags are shared by the build, clean, get, install, list, run,
 	and test commands:
 		`,
+}
+
+func (p BuildParams) IsEnabled() bool {
+	return p.Enable
 }
 
 func (p BuildParams) Validate() error {
@@ -73,32 +83,31 @@ func (*GoCmd) Metadata() map[string]flag.Flag {
 }
 
 func main() {
-	var g GoCmd
+	var actualArgs GoCmd
 
-	set := flag.NewFlagSet(flag.Flag{})
-	set.ParseStruct(&g, os.Args...)
+	flagSet := flag.NewFlagSet(flag.Flag{})
+	flagSet.ParseStruct(&actualArgs, os.Args...)
 
-	if g.Build.Enable {
-		err := g.Build.Validate()
-		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-			fmt.Println("")
-			build, _ := set.FindSubset("build")
-			build.Help(false) // display usage information for the "go build" command only
-		} else {
-			g.Build.Run()
-		}
-	} else if g.Clean.Enable {
-		err := g.Clean.Validate()
-		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-			fmt.Println("")
-			clean, _ := set.FindSubset("clean")
-			clean.Help(false) // display usage information for the "go clean" command only
-		} else {
-			g.Clean.Run()
-		}
-	} else {
-		set.Help(false) // display usage information, with list of supported commands
+	var commands = map[string]Command{
+		"build": actualArgs.Build,
 	}
+
+	for cmdName, cmdArgs := range commands {
+		if cmdArgs.IsEnabled() {
+			err := cmdArgs.Validate()
+			if err == nil {
+				cmdArgs.Run()
+				os.Exit(0)
+			} else {
+				fmt.Fprintln(os.Stderr, err)
+				fmt.Println("")
+				build, _ := flagSet.FindSubset(cmdName)
+				build.Help(false) // display usage information for this command only
+				os.Exit(1)
+			}
+		}
+	}
+
+	// no command was recognized in args
+	flagSet.Help(false) // display usage information, with list of supported commands
 }
