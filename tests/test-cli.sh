@@ -20,8 +20,10 @@ function test {
   echo "---"       >> "${OUTPUT_FILE}"
 }
 
+# run test cases
 test "sfdata"
 
+set -e # will stop the script if any command fails with a non-zero exit code
 tests/helpers/diff-or-update-golden-master.sh "${FLAGS}" "${GOLDEN_FILE}" "${OUTPUT_FILE}"
 
 rm -rf "${TMP_DIR}"
