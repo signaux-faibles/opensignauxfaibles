@@ -9,19 +9,20 @@ import (
 	flag "github.com/cosiner/flag"
 )
 
+type BuildParams struct {
+	Enable   bool
+	Already  bool     `names:"-a" important:"1" desc:"force rebuilding of packages that are already up-to-date."`
+	Race     bool     `important:"1" desc:"enable data race detection.\nSupported only on linux/amd64, freebsd/amd64, darwin/amd64 and windows/amd64."`
+	Output   string   `names:"-o" arglist:"output" important:"1" desc:"only allowed when compiling a single package"`
+	LdFlags  string   `names:"-ldflags" arglist:"'flag list'" desc:"arguments to pass on each go tool link invocation."`
+	Packages []string `args:"true"`
+}
+type CleanParams struct {
+	Enable bool
+}
 type GoCmd struct {
-	Build struct {
-		Enable  bool
-		Already bool   `names:"-a" important:"1" desc:"force rebuilding of packages that are already up-to-date."`
-		Race    bool   `important:"1" desc:"enable data race detection.\nSupported only on linux/amd64, freebsd/amd64, darwin/amd64 and windows/amd64."`
-		Output  string `names:"-o" arglist:"output" important:"1" desc:"only allowed when compiling a single package"`
-
-		LdFlags  string   `names:"-ldflags" arglist:"'flag list'" desc:"arguments to pass on each go tool link invocation."`
-		Packages []string `args:"true"`
-	} `usage:"compile packages and dependencies"`
-	Clean struct {
-		Enable bool
-	} `usage:"remove object files"`
+	Build BuildParams `usage:"compile packages and dependencies"`
+	Clean CleanParams `usage:"remove object files"`
 }
 
 func (*GoCmd) Metadata() map[string]flag.Flag {
