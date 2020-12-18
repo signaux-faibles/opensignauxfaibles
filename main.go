@@ -5,6 +5,8 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"reflect"
+	"strings"
 
 	cosFlag "github.com/cosiner/flag"
 
@@ -245,13 +247,13 @@ func printSupportedCommands() {
 // Function that uses cosiner/flag to parse CLI args.
 func getNewCommand() (command, *cosFlag.FlagSet) {
 	var actualArgs = cliCommands{}
-	var commands = map[string]command{
-		"purge": &actualArgs.Purge, // TODO: use reflection to iterate over each command's params => delete "commands"
-		"check": &actualArgs.Check, // TODO: use reflection to iterate over each command's params => delete "commands"
-	}
 	flagSet := cosFlag.NewFlagSet(cosFlag.Flag{})
 	flagSet.ParseStruct(&actualArgs, os.Args...)
-	for cmdName, cmdArgs := range commands {
+	supportedCommands := reflect.ValueOf(actualArgs)
+	for i := 0; i < supportedCommands.NumField(); i++ {
+		cmdArgs, _ := supportedCommands.Field(i).Interface().(command)
+		fieldName := supportedCommands.Type().Field(i).Name
+		cmdName := strings.ToLower(fieldName)
 		if cmdArgs.IsEnabled() {
 			cmdDef, _ := flagSet.FindSubset(cmdName)
 			return cmdArgs, cmdDef
