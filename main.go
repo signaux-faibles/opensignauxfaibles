@@ -25,7 +25,7 @@ func connectDb() {
 
 // main Fonction Principale
 func main() {
-	err := runCommand(os.Args[1:])
+	err = runLegacyCommand(os.Args[1:])
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -33,7 +33,6 @@ func main() {
 	engine.FlushEventQueue()
 }
 
-var commandDefs = []*commandDefinition{
 	{"purge",
 		"Supprime une partie des données compactées",
 		/**
@@ -56,6 +55,7 @@ var commandDefs = []*commandDefinition{
 			}
 			connectDb()
 			return params.Run() // [x] écrit dans Journal
+var legacyCommandDefs = []*legacyCommandDefinition{
 		}}, {
 		"check",
 		"Vérifie la validité d'un batch avant son importation",
@@ -199,25 +199,25 @@ var commandDefs = []*commandDefinition{
 		}},
 }
 
-type commandDefinition struct {
+type legacyCommandDefinition struct {
 	name    string
 	summary string
 	run     func(args []string) error
 }
 
-func runCommand(args []string) error {
+func runLegacyCommand(args []string) error {
 	if len(args) < 1 {
 		printSupportedCommands()
 		return errors.New("Error: You must pass a command")
 	}
 
-	var cmds = map[string]*commandDefinition{}
-	for _, commandDef := range commandDefs {
-		cmds[commandDef.name] = commandDef
+	var legacyCmds = map[string]*legacyCommandDefinition{}
+	for _, commandDef := range legacyCommandDefs {
+		legacyCmds[commandDef.name] = commandDef
 	}
 
 	command := os.Args[1]
-	commandDef := cmds[command]
+	commandDef := legacyCmds[command]
 	if commandDef != nil {
 		return commandDef.run(os.Args[2:])
 	}
@@ -231,7 +231,7 @@ func printSupportedCommands() {
 	fmt.Println("")
 	fmt.Println("Supported commands:")
 	fmt.Println("")
-	for _, cmdDef := range commandDefs {
+	for _, cmdDef := range legacyCommandDefs {
 		fmt.Printf("   %-16s %s\n", cmdDef.name, cmdDef.summary)
 	}
 	fmt.Println("")
