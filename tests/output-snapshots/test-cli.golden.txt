@@ -32,10 +32,10 @@ Description:
 	/!\ ce traitement est destructif et irréversible /!\
 
 Flags:
-	-since-batch batch_key   (type: string)
+	--since-batch batch_key  (type: string)
 		Identifiant du batch à partir duquel supprimer les données (ex: 1802, pour Février 2018)
 	-key                     (type: string)
-	-i-understand-what-im-doing batch_key (type: bool)
+	--i-understand-what-im-doing (type: bool)
 		Nécessaire pour confirmer la suppression de données
 
 paramètre `since-batch` obligatoire
