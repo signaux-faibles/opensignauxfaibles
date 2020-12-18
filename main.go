@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"flag"
 	"fmt"
 	"os"
 	"reflect"
@@ -56,6 +55,7 @@ type cliCommands struct {
 	Reduce         reduceHandler
 	Public         publicHandler
 	Etablissements exportEtablissementsHandler
+	Entreprises    exportEntreprisesHandler
 }
 
 // Metadata returns the documentation that will be displayed by cosiner/flag
@@ -71,6 +71,7 @@ func (cmds *cliCommands) Metadata() map[string]cosFlag.Flag {
 		"reduce":         cmds.Reduce.Documentation(),
 		"public":         cmds.Public.Documentation(),
 		"etablissements": cmds.Etablissements.Documentation(),
+		"entreprises":    cmds.Entreprises.Documentation(),
 	}
 }
 
@@ -83,23 +84,9 @@ type legacyCommandDefinition struct {
 
 // List of commands that will be migrated over cosiner/flag's format.
 var legacyCommandDefs = []*legacyCommandDefinition{
-	{
-		// "purgeNotCompacted": {"TODO - summary", func(args []string) error {
-		// 	return purgeNotCompactedHandler() // TODO: écrire rapport dans Journal ?
-		// }},
-		"entreprises",
-		"Exporte la liste des entreprises",
-		/**
-		Exporte la liste des entreprises depuis la collection Public.
-		Répond dans la sortie standard une ligne JSON par entreprise.
-		*/
-		func(args []string) error {
-			params := exportParams{}
-			flag.StringVar(&params.Key, "key", "", "Numéro SIREN à utiliser pour filtrer les résultats.")
-			flag.CommandLine.Parse(args)
-			connectDb()
-			return exportEntreprisesHandler(params) // TODO: écrire rapport dans Journal ?
-		}},
+	// "purgeNotCompacted": {"TODO - summary", func(args []string) error {
+	// 	return purgeNotCompactedHandler() // TODO: écrire rapport dans Journal ?
+	// }},
 }
 
 func runCommand(args []string) error {
@@ -153,6 +140,7 @@ func printSupportedCommands() {
 		"reduce",
 		"public",
 		"etablissements",
+		"entreprises",
 	}
 	commandsMeta := (&cliCommands{}).Metadata()
 	for _, cmdName := range orderedNewCommandNames {

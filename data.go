@@ -185,11 +185,33 @@ func (params exportEtablissementsHandler) Run() error {
 	return engine.ExportEtablissements(params.Key)
 }
 
-type exportParams struct {
-	Key string `json:"key"`
+type exportEntreprisesHandler struct {
+	Enable bool   // set to true by cosiner/flag if the user is running this command
+	Key    string `names:"--key" desc:"Numéro SIREN à utiliser pour filtrer les résultats (ex: 012345678)"`
 }
 
-func exportEntreprisesHandler(params exportParams) error {
+func (params exportEntreprisesHandler) Documentation() flag.Flag {
+	return flag.Flag{
+		Usage: "Exporte la liste des entreprises",
+		Desc: `
+		Exporte la liste des entreprises depuis la collection Public.
+		Répond dans la sortie standard une ligne JSON par entreprise.
+		`,
+	}
+}
+
+func (params exportEntreprisesHandler) IsEnabled() bool {
+	return params.Enable
+}
+
+func (params exportEntreprisesHandler) Validate() error {
+	if !(len(params.Key) == 9 || len(params.Key) == 0) {
+		return errors.New("si fourni, paramètre `key` doit être un numéro SIREN (9 chiffres)")
+	}
+	return nil
+}
+
+func (params exportEntreprisesHandler) Run() error {
 	return engine.ExportEntreprises(params.Key)
 }
 

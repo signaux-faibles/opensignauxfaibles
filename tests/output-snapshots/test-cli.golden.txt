@@ -35,6 +35,7 @@ Sets:
 	reduce         Calcule les variables destinées à la prédiction
 	public         Génère les données destinées au site web
 	etablissements Exporte la liste des établissements
+	entreprises    Exporte la liste des entreprises
 ---
 $ ./sfdata purge
 Supprime une partie des données compactées
@@ -209,6 +210,22 @@ Usage:
 Description:
 	Exporte la liste des établissements depuis la collection Public.
 	Répond dans la sortie standard une ligne JSON par établissement.
+
+Flags:
+	--key        (type: string)
+		Numéro SIREN à utiliser pour filtrer les résultats (ex: 012345678)
+
+si fourni, paramètre `key` doit être un numéro SIREN (9 chiffres)
+---
+$ ./sfdata entreprises --key=1234
+Exporte la liste des entreprises
+
+Usage:
+	entreprises [FLAG]...
+
+Description:
+	Exporte la liste des entreprises depuis la collection Public.
+	Répond dans la sortie standard une ligne JSON par entreprise.
 
 Flags:
 	--key        (type: string)
