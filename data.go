@@ -91,8 +91,8 @@ func (params publicHandler) Validate() error {
 	if params.BatchKey == "" {
 		return errors.New("paramètre `until-batch` obligatoire")
 	}
-	if len(params.Key) < 9 {
-		return errors.New("la clé fait moins de 9 caractères (siren)")
+	if !(len(params.Key) == 9 || len(params.Key) == 0) {
+		return errors.New("si fourni, paramètre `key` doit être un numéro SIREN (9 chiffres) ou SIRET (14 chiffres)")
 	}
 	return nil
 }
