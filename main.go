@@ -50,6 +50,11 @@ var commandDefs = []*commandDefinition{
 			flag.StringVar(&params.FromBatchKey, "since-batch", "", "Identifiant du batch à partir duquel supprimer les données (ex: `1802`, pour Février 2018)")
 			flag.BoolVar(&params.IUnderstandWhatImDoing, "i-understand-what-im-doing", false, "Nécessaire pour confirmer la suppression de données")
 			flag.CommandLine.Parse(args)
+
+			if params.FromBatchKey == "" {
+				return errors.New("paramètre `since-batch` obligatoire")
+			}
+
 			connectDb()
 			return purgeBatchHandler(params) // [x] écrit dans Journal
 		}}, {

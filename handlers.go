@@ -29,10 +29,6 @@ type purgeBatchParams struct {
 
 func purgeBatchHandler(params purgeBatchParams) error {
 
-	if params.FromBatchKey == "" {
-		return errors.New("paramètre `fromBatch` obligatoire")
-	}
-
 	var batch base.AdminBatch
 	err := engine.Load(&batch, params.FromBatchKey)
 	if err != nil {
