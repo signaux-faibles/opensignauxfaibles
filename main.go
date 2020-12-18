@@ -92,9 +92,9 @@ func runCommand() error {
 	if cmdHandler != nil {
 		err := cmdHandler.Validate() // validate command parameters
 		if err != nil {
-			cmdDef, _ := flagSet.FindSubset(cmdName)
-			cmdDef.Help(false) // display usage information for this command
-			return err
+			// cmdDef, _ := flagSet.FindSubset(cmdName)
+			// cmdDef.Help(false) // display usage information for this command
+			return fmt.Errorf("%v. Utilisez %v %v --help pour consulter la documentation.", err, os.Args[0], cmdName)
 		}
 		connectDb()
 		return cmdHandler.Run()

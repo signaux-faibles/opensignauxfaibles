@@ -28,6 +28,10 @@ Sets:
 	entreprises    Exporte la liste des entreprises
 ---
 $ ./sfdata purge
+
+Erreur: paramètre `since-batch` obligatoire. Utilisez ./sfdata purge --help pour consulter la documentation.
+---
+$ ./sfdata purge --help
 Supprime une partie des données compactées
 
 Usage:
@@ -48,10 +52,8 @@ Flags:
 		Numéro SIRET or SIREN d'une entité à déboguer (ex: 012345678901234)
 	--i-understand-what-im-doing (type: bool)
 		Nécessaire pour confirmer la suppression de données
-
-Erreur: paramètre `since-batch` obligatoire
 ---
-$ ./sfdata check
+$ ./sfdata check --help
 Vérifie la validité d'un batch avant son importation
 
 Usage:
@@ -67,10 +69,8 @@ Flags:
 		Identifiant du batch à vérifier (ex: 1802, pour Février 2018)
 	--parsers         (type: []string)
 		Parseurs à employer (ex: altares,cotisation)
-
-Erreur: paramètre `batch` obligatoire
 ---
-$ ./sfdata pruneEntities
+$ ./sfdata pruneEntities --help
 Compte/supprime les entités hors périmètre
 
 Usage:
@@ -86,10 +86,8 @@ Flags:
 		Identifiant du batch à nettoyer (ex: 1802, pour Février 2018)
 	--delete          (type: bool)
 		Nécessaire pour confirmer la suppression de données
-
-Erreur: paramètre `batch` obligatoire
 ---
-$ ./sfdata import
+$ ./sfdata import --help
 Importe des fichiers de données
 
 Usage:
@@ -107,10 +105,8 @@ Flags:
 		Parseurs à employer (ex: altares,cotisation)
 	--no-filter       (type: bool)
 		Pour procéder à l'importation même si aucun filtre n'est fourni
-
-Erreur: paramètre `batch` obligatoire
 ---
-$ ./sfdata validate
+$ ./sfdata validate --help
 Liste les entrées de données invalides
 
 Usage:
@@ -123,10 +119,8 @@ Description:
 Flags:
 	--collection RawData|ImportedData (type: string)
 		Nom de la collection à valider
-
-Erreur: le paramètre collection doit valoir RawData ou ImportedData
 ---
-$ ./sfdata compact
+$ ./sfdata compact --help
 Compacte la base de données
 
 Usage:
@@ -141,10 +135,8 @@ Description:
 Flags:
 	--since-batch batch_key (type: string)
 		Identifiant du batch à partir duquel compacter (ex: 1802, pour Février 2018)
-
-Erreur: paramètre `since-batch` obligatoire
 ---
-$ ./sfdata reduce
+$ ./sfdata reduce --help
 Calcule les variables destinées à la prédiction
 
 Usage:
@@ -165,10 +157,8 @@ Flags:
 	--to                    (type: string)
 	--type all|apart        (type: []string)
 		Sélection des types de données qui vont être calculés ou recalculés
-
-Erreur: paramètre `until-batch` obligatoire
 ---
-$ ./sfdata public
+$ ./sfdata public --help
 Génère les données destinées au site web
 
 Usage:
@@ -188,10 +178,8 @@ Flags:
 		Identifiant du batch jusqu'auquel calculer (ex: 1802, pour Février 2018)
 	--key                   (type: string)
 		Numéro SIRET or SIREN d'une entité à calculer exclusivement
-
-Erreur: paramètre `until-batch` obligatoire
 ---
-$ ./sfdata etablissements --key=1234
+$ ./sfdata etablissements --help
 Exporte la liste des établissements
 
 Usage:
@@ -204,10 +192,8 @@ Description:
 Flags:
 	--key        (type: string)
 		Numéro SIREN à utiliser pour filtrer les résultats (ex: 012345678)
-
-Erreur: si fourni, paramètre `key` doit être un numéro SIREN (9 chiffres)
 ---
-$ ./sfdata entreprises --key=1234
+$ ./sfdata entreprises --help
 Exporte la liste des entreprises
 
 Usage:
@@ -220,6 +206,4 @@ Description:
 Flags:
 	--key        (type: string)
 		Numéro SIREN à utiliser pour filtrer les résultats (ex: 012345678)
-
-Erreur: si fourni, paramètre `key` doit être un numéro SIREN (9 chiffres)
 ---
