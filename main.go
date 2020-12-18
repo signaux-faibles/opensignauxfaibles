@@ -26,10 +26,9 @@ func connectDb() {
 
 // main Fonction Principale
 func main() {
-
-	err := runCommand(os.Args[1:])
+	err := runCommand()
 	if err != nil {
-		fmt.Println(err)
+		fmt.Printf("\nErreur: %v\n", err)
 		os.Exit(1)
 	}
 	engine.FlushEventQueue()
@@ -79,29 +78,32 @@ func (cmds *cliCommands) Metadata() map[string]cosFlag.Flag {
 // 	return purgeNotCompactedHandler() // TODO: écrire rapport dans Journal ?
 // }},
 
-func runCommand(args []string) error {
-	newCmd, cmdDef := getNewCommand()
-	if newCmd != nil {
-		err := newCmd.Validate()
-		if err != nil {
-			cmdDef.Help(false) // display usage information for this command only
-			fmt.Println()
-			return err
-		}
-		connectDb()
-		return newCmd.Run()
-	}
-
-	// no match
-	return fmt.Errorf("Unknown command")
-}
-
-// Use cosiner/flag to parse CLI args
-func getNewCommand() (command, *cosFlag.FlagSet) {
+// Detect and run the command specified in CLI args.
+// Returns any validation or execution error.
+func runCommand() error {
+	// ask cosiner/flag to parse arguments
 	var actualArgs = cliCommands{}
 	flagSet := cosFlag.NewFlagSet(cosFlag.Flag{})
 	flagSet.ParseStruct(&actualArgs, os.Args...)
-	// check which command was recognized, based on the fields of cliCommands
+	// find and execute the command, if any
+	cmdName, cmdHandler := getCommand(actualArgs)
+	if cmdHandler != nil {
+		err := cmdHandler.Validate() // validate command parameters
+		if err != nil {
+			cmdDef, _ := flagSet.FindSubset(cmdName)
+			cmdDef.Help(false) // display usage information for this command
+			return err
+		}
+		connectDb()
+		return cmdHandler.Run()
+	}
+	// no command was recognized in args
+	flagSet.Help(false) // display usage information, with list of supported commands
+	return fmt.Errorf("Commande non reconnue")
+}
+
+// Find which command was recognized from CLI args, based on the fields of cliCommands.
+func getCommand(actualArgs cliCommands) (string, command) {
 	supportedCommands := reflect.ValueOf(actualArgs)
 	for i := 0; i < supportedCommands.NumField(); i++ {
 		fieldName := supportedCommands.Type().Field(i).Name             // e.g. PruneEntities
@@ -111,12 +113,8 @@ func getNewCommand() (command, *cosFlag.FlagSet) {
 			panic(fmt.Sprintf("Property %v of type cliCommands is not an instance of command", fieldName))
 		}
 		if cmdArgs.IsEnabled() {
-			cmdDef, _ := flagSet.FindSubset(cmdName)
-			return cmdArgs, cmdDef
+			return cmdName, cmdArgs
 		}
 	}
-	// no command was recognized in args
-	flagSet.Help(false) // display usage information, with list of supported commands
-	os.Exit(1)
-	return nil, nil
+	return "", nil
 }
