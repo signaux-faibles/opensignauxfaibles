@@ -166,14 +166,35 @@ func purgeNotCompactedHandler() error {
 	return engine.PurgeNotCompacted()
 }
 
-type pruneEntitiesParams struct {
-	BatchKey string `json:"batch"`
-	Delete   bool   `json:"delete"`
+type pruneEntitiesHandler struct {
+	Enable   bool   // set to true by cosiner/flag if the user is running this command
+	BatchKey string `names:"--batch" arglist:"batch_key" desc:"Identifiant du batch à nettoyer (ex: 1802, pour Février 2018)"`
+	Delete   bool   `names:"--delete" desc:"Nécessaire pour confirmer la suppression de données"`
+}
+
+var pruneEntitiesMetadata = flag.Flag{
+	Usage: "Compte/supprime les entités hors périmètre",
+	Desc: `
+		Compte puis supprime dans la collection "RawData" les entités (établissements et entreprises)
+		non listées dans le filtre de périmètre du batch spécifié.
+		Répond avec un propriété JSON "count" qui vaut le nombre d'entités hors périmètre comptées ou supprimées.
+	`,
+}
+
+func (params pruneEntitiesHandler) IsEnabled() bool {
+	return params.Enable
+}
+
+func (params pruneEntitiesHandler) Validate() error {
+	if params.BatchKey == "" {
+		return errors.New("paramètre `batch` obligatoire")
+	}
+	return nil
 }
 
 // Count – then delete – companies from RawData that should have been
 // excluded by the SIREN Filter.
-func pruneEntitiesHandler(params pruneEntitiesParams) error {
+func (params pruneEntitiesHandler) Run() error {
 	count, err := engine.PruneEntities(params.BatchKey, params.Delete)
 	if err == nil {
 		printJSON(bson.M{"count": count})

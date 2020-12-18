@@ -46,16 +46,18 @@ type command interface {
 
 // List of command handlers that cosiner/flag should recognize in CLI arguments
 type cliCommands struct {
-	Purge purgeBatchHandler
-	Check checkBatchHandler
+	Purge         purgeBatchHandler
+	Check         checkBatchHandler
+	PruneEntities pruneEntitiesHandler
 }
 
 // Metadata returns the documentation that will be displayed by cosiner/flag
 // if the user invokes "--help", or if some parameters are invalid.
 func (*cliCommands) Metadata() map[string]cosFlag.Flag {
 	return map[string]cosFlag.Flag{
-		"purge": purgeBatchMetadata,
-		"check": checkBatchMetadata,
+		"purge":         purgeBatchMetadata,
+		"check":         checkBatchMetadata,
+		"pruneEntities": pruneEntitiesMetadata,
 	}
 }
 
@@ -69,21 +71,6 @@ type legacyCommandDefinition struct {
 // List of commands that will be migrated over cosiner/flag's format.
 var legacyCommandDefs = []*legacyCommandDefinition{
 	{
-		"pruneEntities",
-		"Compte/supprime les entités hors périmètre",
-		/**
-		Compte puis supprime dans la collection `RawData` les entités (établissements et entreprises)
-		non listées dans le filtre de périmètre du batch spécifié.
-		Répond avec un propriété JSON "count" qui vaut le nombre d'entités hors périmètre comptées ou supprimées.
-		*/
-		func(args []string) error {
-			params := pruneEntitiesParams{}
-			flag.StringVar(&params.BatchKey, "batch", "", "Identifiant du batch à nettoyer (ex: `1802`, pour Février 2018)")
-			flag.BoolVar(&params.Delete, "delete", false, "Nécessaire pour confirmer la suppression de données")
-			flag.CommandLine.Parse(args)
-			connectDb()
-			return pruneEntitiesHandler(params) // [x] écrit dans Journal
-		}}, {
 		"import",
 		"Importe des fichiers",
 		/**
@@ -249,11 +236,12 @@ func getNewCommand() (command, *cosFlag.FlagSet) {
 	var actualArgs = cliCommands{}
 	flagSet := cosFlag.NewFlagSet(cosFlag.Flag{})
 	flagSet.ParseStruct(&actualArgs, os.Args...)
+	// check which command was recognized, based on the fields of cliCommands
 	supportedCommands := reflect.ValueOf(actualArgs)
 	for i := 0; i < supportedCommands.NumField(); i++ {
 		cmdArgs, _ := supportedCommands.Field(i).Interface().(command)
 		fieldName := supportedCommands.Type().Field(i).Name
-		cmdName := strings.ToLower(fieldName)
+		cmdName := strings.ToLower(fieldName[0:1]) + fieldName[1:]
 		if cmdArgs.IsEnabled() {
 			cmdDef, _ := flagSet.FindSubset(cmdName)
 			return cmdArgs, cmdDef

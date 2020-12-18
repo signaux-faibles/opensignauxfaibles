@@ -28,6 +28,7 @@ Flags:
 Sets:
 	purge         Supprime une partie des données compactées
 	check         Vérifie la validité d'un batch avant son importation
+	pruneEntities Compte/supprime les entités hors périmètre
 ---
 $ ./sfdata purge
 Supprime une partie des données compactées
@@ -68,6 +69,25 @@ Flags:
 		Identifiant du batch à vérifier (ex: 1802, pour Février 2018)
 	--parsers         (type: []string)
 		Parseurs à employer (ex: altares,cotisation)
+
+paramètre `batch` obligatoire
+---
+$ ./sfdata pruneEntities
+Compte/supprime les entités hors périmètre
+
+Usage:
+	pruneEntities [FLAG]...
+
+Description:
+	Compte puis supprime dans la collection "RawData" les entités (établissements et entreprises)
+	non listées dans le filtre de périmètre du batch spécifié.
+	Répond avec un propriété JSON "count" qui vaut le nombre d'entités hors périmètre comptées ou supprimées.
+
+Flags:
+	--batch batch_key (type: string)
+		Identifiant du batch à nettoyer (ex: 1802, pour Février 2018)
+	--delete          (type: bool)
+		Nécessaire pour confirmer la suppression de données
 
 paramètre `batch` obligatoire
 ---
