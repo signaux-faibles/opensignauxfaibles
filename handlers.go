@@ -27,6 +27,13 @@ type purgeBatchParams struct {
 	IUnderstandWhatImDoing bool   `json:"IUnderstandWhatImDoing"`
 }
 
+func (p purgeBatchParams) Validate() error {
+	if p.FromBatchKey == "" {
+		return errors.New("paramètre `since-batch` obligatoire")
+	}
+	return nil
+}
+
 func purgeBatchHandler(params purgeBatchParams) error {
 
 	var batch base.AdminBatch
