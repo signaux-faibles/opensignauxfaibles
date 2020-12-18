@@ -7,6 +7,8 @@ import (
 	"os"
 	"strings"
 
+	cosFlag "github.com/cosiner/flag"
+
 	"github.com/signaux-faibles/opensignauxfaibles/lib/engine"
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/naf"
@@ -25,6 +27,13 @@ func connectDb() {
 
 // main Fonction Principale
 func main() {
+
+	err := runCommand()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
 	err = runLegacyCommand(os.Args[1:])
 	if err != nil {
 		fmt.Println(err)
@@ -33,29 +42,57 @@ func main() {
 	engine.FlushEventQueue()
 }
 
-	{"purge",
-		"Supprime une partie des données compactées",
-		/**
-		/!\ ce traitement est destructif et irréversible /!\
-		Supprime les données dans les objets de la collection RawData pour les batches suivant le numéro de batch donné.
-		La propriété `debugForKey` permet de traiter une entreprise en fournissant son siren, le résultat n'impacte pas la collection RawData mais est déversé dans purgeBatch_debug à des fins de vérifications.
-		Lorsque `key` n'est pas fourni, le traitement s'exécute sur l'ensemble de la base, et dans ce cas la propriété IUnderstandWhatImDoing doit être fournie à la valeur `true` sans quoi le traitement refusera de se lancer.
-		Répond "ok" dans la sortie standard, si le traitement s'est bien déroulé.
-		/!\ ce traitement est destructif et irréversible /!\
-		*/
-		func(args []string) error {
-			var params purgeBatchHandler
-			// TODO: populer "debugForKey" (ex: "012345678901234")
-			flag.StringVar(&params.FromBatchKey, "since-batch", "", "Identifiant du batch à partir duquel supprimer les données (ex: `1802`, pour Février 2018)")
-			flag.BoolVar(&params.IUnderstandWhatImDoing, "i-understand-what-im-doing", false, "Nécessaire pour confirmer la suppression de données")
-			flag.CommandLine.Parse(args)
-			err := params.Validate()
+func runCommand() error {
+	var actualArgs cliCommands
+
+	flagSet := cosFlag.NewFlagSet(cosFlag.Flag{})
+	flagSet.ParseStruct(&actualArgs, os.Args...)
+
+	type command interface {
+		IsEnabled() bool
+		Validate() error
+		Run() error
+	}
+
+	var commands = map[string]command{
+		"purge": actualArgs.Purge,
+	}
+
+	for cmdName, cmdArgs := range commands {
+		if cmdArgs.IsEnabled() {
+			err := cmdArgs.Validate()
 			if err != nil {
+				build, _ := flagSet.FindSubset(cmdName)
+				build.Help(false) // display usage information for this command only
+				fmt.Println()
 				return err
 			}
 			connectDb()
-			return params.Run() // [x] écrit dans Journal
+			return cmdArgs.Run()
+		}
+	}
+
+	// no command was recognized in args
+	return nil
+	// flagSet.Help(false) // display usage information, with list of supported commands
+	// os.Exit(1)
+}
+
+type cliCommands struct {
+	Purge purgeBatchHandler `usage:"Supprime une partie des données compactées"` // TODO: essayer de déplacer dans le Usage de purgeBatchMetadata
+}
+
+func (*cliCommands) Metadata() map[string]cosFlag.Flag {
+	return map[string]cosFlag.Flag{
+		"purge": purgeBatchMetadata,
+	}
+}
+
 var legacyCommandDefs = []*legacyCommandDefinition{
+	{"purge",
+		"Supprime une partie des données compactées",
+		func(args []string) error {
+			return errors.New("deprecated command")
 		}}, {
 		"check",
 		"Vérifie la validité d'un batch avant son importation",
