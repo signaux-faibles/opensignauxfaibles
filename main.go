@@ -100,8 +100,7 @@ func runCommand() error {
 		return cmdHandler.Run()
 	}
 	// no command was recognized in args
-	flagSet.Help(false) // display usage information, with list of supported commands
-	return fmt.Errorf("Commande non reconnue")
+	return fmt.Errorf("Commande non reconnue. Utilisez %v --help pour lister les commandes.", os.Args[0])
 }
 
 // Find which command was recognized from CLI args, based on the fields of cliCommands.
