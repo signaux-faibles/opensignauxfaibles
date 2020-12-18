@@ -226,13 +226,13 @@ func getNewCommand() (command, *cosFlag.FlagSet) {
 	// check which command was recognized, based on the fields of cliCommands
 	supportedCommands := reflect.ValueOf(actualArgs)
 	for i := 0; i < supportedCommands.NumField(); i++ {
-		fieldName := supportedCommands.Type().Field(i).Name
-		cmdName := strings.ToLower(fieldName[0:1]) + fieldName[1:]
-		cmdArgs, ok := supportedCommands.Field(i).Interface().(command)
+		fieldName := supportedCommands.Type().Field(i).Name             // e.g. PruneEntities
+		cmdName := strings.ToLower(fieldName[0:1]) + fieldName[1:]      // e.g. pruneEntities
+		cmdArgs, ok := supportedCommands.Field(i).Interface().(command) // e.g. pruneEntitiesHandler instance
 		if ok != true {
 			panic(fmt.Sprintf("Property %v of type cliCommands is not an instance of command", fieldName))
 		}
-		if cmdArgs.IsEnabled() { // TODO: can we read Enabled property directly, thanks to reflection ?
+		if cmdArgs.IsEnabled() {
 			cmdDef, _ := flagSet.FindSubset(cmdName)
 			return cmdArgs, cmdDef
 		}
