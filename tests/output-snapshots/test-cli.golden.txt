@@ -21,6 +21,10 @@ Sets:
 
 Erreur: Commande non reconnue
 ---
+$ ./sfdata unknown_command
+unexpected non-flag value: [sfdata] unknown_command
+
+---
 $ ./sfdata --help
 Usage:
 	sfdata [FLAG|SET]...

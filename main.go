@@ -84,7 +84,9 @@ func runCommand() error {
 	// ask cosiner/flag to parse arguments
 	var actualArgs = cliCommands{}
 	flagSet := cosFlag.NewFlagSet(cosFlag.Flag{})
-	flagSet.ParseStruct(&actualArgs, os.Args...)
+	if err := flagSet.ParseStruct(&actualArgs, os.Args...); err != nil {
+		return err // Note: parsing may exit instead of reporting "unexpected non-flag value: unknown_command"
+	}
 	// find and execute the command, if any
 	cmdName, cmdHandler := getCommand(actualArgs)
 	if cmdHandler != nil {
