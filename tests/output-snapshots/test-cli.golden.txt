@@ -48,7 +48,8 @@ Description:
 Flags:
 	--since-batch batch_key  (type: string)
 		Identifiant du batch à partir duquel supprimer les données (ex: 1802, pour Février 2018)
-	-key                     (type: string)
+	--debug-for-key          (type: string)
+		Numéro SIRET or SIREN d'une entité à déboguer (ex: 012345678901234)
 	--i-understand-what-im-doing (type: bool)
 		Nécessaire pour confirmer la suppression de données
 

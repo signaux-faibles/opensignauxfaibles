@@ -26,7 +26,7 @@ import (
 type purgeBatchHandler struct {
 	Enable                 bool   // set to true by cosiner/flag if the user is running this command
 	FromBatchKey           string `names:"--since-batch" arglist:"batch_key" desc:"Identifiant du batch à partir duquel supprimer les données (ex: 1802, pour Février 2018)"`
-	Key                    string `json:"debugForKey"` // TODO: populer "debugForKey" (ex: "012345678901234")
+	Key                    string `names:"--debug-for-key" desc:"Numéro SIRET or SIREN d'une entité à déboguer (ex: 012345678901234)"` // (not tested yet)
 	IUnderstandWhatImDoing bool   `names:"--i-understand-what-im-doing" desc:"Nécessaire pour confirmer la suppression de données"`
 }
 
