@@ -11,17 +11,39 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/lib/engine"
 )
 
-type reduceParams struct {
-	BatchKey string   `json:"batch"`
-	Key      string   `json:"key"`
-	From     string   `json:"from"`
-	To       string   `json:"to"`
-	Types    []string `json:"types"`
-	// Sélection des types de données qui vont être calculés ou recalculés.
-	// Valeurs autorisées pour l'instant: "apart", "all"
+type reduceHandler struct {
+	Enable   bool     // set to true by cosiner/flag if the user is running this command
+	BatchKey string   `names:"--until-batch" arglist:"batch_key" desc:"Identifiant du batch jusqu'auquel calculer (ex: 1802, pour Février 2018)"`
+	Key      string   `names:"--key" desc:"Numéro SIRET or SIREN d'une entité à calculer exclusivement"`
+	From     string   `names:"--from"`                                                                                                // TODO: à définir et tester
+	To       string   `names:"--to"`                                                                                                  // TODO: à définir et tester
+	Types    []string `names:"--type" arglist:"all|apart" desc:"Sélection des types de données qui vont être calculés ou recalculés"` // Valeurs autorisées pour l'instant: "apart", "all"
 }
 
-func reduceHandler(params reduceParams) error {
+func (params reduceHandler) Documentation() flag.Flag {
+	return flag.Flag{
+		Usage: "Calcule les variables destinées à la prédiction",
+		Desc: `
+		Alimente la collection Features en calculant les variables avec le traitement mapreduce demandé dans la propriété "features".
+		Le traitement remplace les objets similaires en sortie du calcul dans la collection Features, les objets non concernés par le traitement ne seront ainsi pas remplacés, de sorte que si un seul siret est demandé le calcul ne remplacera qu'un seul objet.
+		Ces traitements ne prennent en compte que les objets déjà compactés.
+		Répond "ok" dans la sortie standard, si le traitement s'est bien déroulé.
+		`,
+	}
+}
+
+func (params reduceHandler) IsEnabled() bool {
+	return params.Enable
+}
+
+func (params reduceHandler) Validate() error {
+	if params.BatchKey == "" {
+		return errors.New("paramètre `until-batch` obligatoire")
+	}
+	return nil
+}
+
+func (params reduceHandler) Run() error {
 
 	batch, err := engine.GetBatch(params.BatchKey)
 	if err != nil {

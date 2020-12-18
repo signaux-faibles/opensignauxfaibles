@@ -53,6 +53,7 @@ type cliCommands struct {
 	Import        importBatchHandler
 	Validate      validateHandler
 	Compact       compactHandler
+	Reduce        reduceHandler
 }
 
 // Metadata returns the documentation that will be displayed by cosiner/flag
@@ -65,6 +66,7 @@ func (cmds *cliCommands) Metadata() map[string]cosFlag.Flag {
 		"import":        cmds.Import.Documentation(),
 		"validate":      cmds.Validate.Documentation(),
 		"compact":       cmds.Compact.Documentation(),
+		"reduce":        cmds.Reduce.Documentation(),
 	}
 }
 
@@ -81,22 +83,6 @@ var legacyCommandDefs = []*legacyCommandDefinition{
 		// "purgeNotCompacted": {"TODO - summary", func(args []string) error {
 		// 	return purgeNotCompactedHandler() // TODO: écrire rapport dans Journal ?
 		// }},
-		"reduce",
-		"Calcule les variables destinées à la prédiction",
-		/**
-		Alimente la collection Features en calculant les variables avec le traitement mapreduce demandé dans la propriété `features`.
-		Le traitement remplace les objets similaires en sortie du calcul dans la collection Features, les objets non concernés par le traitement ne seront ainsi pas remplacés, de sorte que si un seul siret est demandé le calcul ne remplacera qu'un seul objet.
-		Ces traitements ne prennent en compte que les objets déjà compactés.
-		Répond "ok" dans la sortie standard, si le traitement s'est bien déroulé.
-		*/
-		func(args []string) error {
-			params := reduceParams{} // TODO: also populate other parameters
-			flag.StringVar(&params.BatchKey, "until-batch", "", "Identifiant du batch jusqu'auquel calculer (ex: `1802`, pour Février 2018)")
-			flag.StringVar(&params.Key, "key", "", "Numéro SIRET or SIREN d'une entité à calculer exclusivement")
-			flag.CommandLine.Parse(args)
-			connectDb()
-			return reduceHandler(params) // [x] écrit dans Journal
-		}}, {
 		"public",
 		"Génère les données destinées au site web",
 		/**
@@ -192,6 +178,7 @@ func printSupportedCommands() {
 		"import",
 		"validate",
 		"compact",
+		"reduce",
 	}
 	commandsMeta := (&cliCommands{}).Metadata()
 	for _, cmdName := range orderedNewCommandNames {

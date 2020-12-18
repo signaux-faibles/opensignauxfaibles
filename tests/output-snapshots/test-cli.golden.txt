@@ -32,6 +32,7 @@ Sets:
 	import        Importe des fichiers de données
 	validate      Liste les entrées de données invalides
 	compact       Compacte la base de données
+	reduce        Calcule les variables destinées à la prédiction
 ---
 $ ./sfdata purge
 Supprime une partie des données compactées
@@ -149,4 +150,28 @@ Flags:
 		Identifiant du batch à partir duquel compacter (ex: 1802, pour Février 2018)
 
 paramètre `since-batch` obligatoire
+---
+$ ./sfdata reduce
+Calcule les variables destinées à la prédiction
+
+Usage:
+	reduce [FLAG]...
+
+Description:
+	Alimente la collection Features en calculant les variables avec le traitement mapreduce demandé dans la propriété "features".
+	Le traitement remplace les objets similaires en sortie du calcul dans la collection Features, les objets non concernés par le traitement ne seront ainsi pas remplacés, de sorte que si un seul siret est demandé le calcul ne remplacera qu'un seul objet.
+	Ces traitements ne prennent en compte que les objets déjà compactés.
+	Répond "ok" dans la sortie standard, si le traitement s'est bien déroulé.
+
+Flags:
+	--until-batch batch_key (type: string)
+		Identifiant du batch jusqu'auquel calculer (ex: 1802, pour Février 2018)
+	--key                   (type: string)
+		Numéro SIRET or SIREN d'une entité à calculer exclusivement
+	--from                  (type: string)
+	--to                    (type: string)
+	--type all|apart        (type: []string)
+		Sélection des types de données qui vont être calculés ou recalculés
+
+paramètre `until-batch` obligatoire
 ---
