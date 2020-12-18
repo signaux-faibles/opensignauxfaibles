@@ -17,3 +17,6 @@ Supported commands:
 
 Error: You must pass a command
 ---
+$ ./sfdata purge
+paramètre `since-batch` obligatoire
+---
