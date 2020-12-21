@@ -15,16 +15,17 @@ Flags:
 	-v, --verbose show verbose help (type: bool)
 
 Sets:
-	purge          Supprime une partie des données compactées
-	check          Vérifie la validité d'un batch avant son importation
-	pruneEntities  Compte/supprime les entités hors périmètre
-	import         Importe des fichiers de données
-	validate       Liste les entrées de données invalides
-	compact        Compacte la base de données
-	reduce         Calcule les variables destinées à la prédiction
-	public         Génère les données destinées au site web
-	etablissements Exporte la liste des établissements
-	entreprises    Exporte la liste des entreprises
+	purge             Supprime une partie des données compactées
+	check             Vérifie la validité d'un batch avant son importation
+	pruneEntities     Compte/supprime les entités hors périmètre
+	import            Importe des fichiers de données
+	purgeNotCompacted Vide la collection ImportedData
+	validate          Liste les entrées de données invalides
+	compact           Compacte la base de données
+	reduce            Calcule les variables destinées à la prédiction
+	public            Génère les données destinées au site web
+	etablissements    Exporte la liste des établissements
+	entreprises       Exporte la liste des entreprises
 ---
 $ ./sfdata purge
 Erreur: paramètre `since-batch` obligatoire. Utilisez ./sfdata purge --help pour consulter la documentation.
@@ -204,4 +205,17 @@ Description:
 Flags:
 	--key        (type: string)
 		Numéro SIREN à utiliser pour filtrer les résultats (ex: 012345678)
+---
+$ ./sfdata purgeNotCompacted --help
+Vide la collection ImportedData
+
+Usage:
+	purgeNotCompacted [FLAG]...
+
+Description:
+	Vide la collection "ImportedData".
+
+Flags:
+	--i-understand-what-im-doing (type: bool)
+		Nécessaire pour confirmer la suppression de données
 ---

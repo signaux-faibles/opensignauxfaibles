@@ -184,13 +184,33 @@ func (params checkBatchHandler) Run() error {
 	return nil
 }
 
-func printJSON(object interface{}) {
-	res, _ := json.Marshal(object)
-	fmt.Println(string(res))
+type purgeNotCompactedHandler struct {
+	Enable                 bool // set to true by cosiner/flag if the user is running this command
+	IUnderstandWhatImDoing bool `names:"--i-understand-what-im-doing" desc:"Nécessaire pour confirmer la suppression de données"`
 }
 
-func purgeNotCompactedHandler() error {
-	return engine.PurgeNotCompacted()
+func (params purgeNotCompactedHandler) Documentation() flag.Flag {
+	return flag.Flag{
+		Usage: "Vide la collection ImportedData",
+		Desc: `
+		Vide la collection "ImportedData".
+		`,
+	}
+}
+
+func (params purgeNotCompactedHandler) IsEnabled() bool {
+	return params.Enable
+}
+
+func (params purgeNotCompactedHandler) Validate() error {
+	if !params.IUnderstandWhatImDoing {
+		return errors.New("--i-understand-what-im-doing doit être employé pour confirmer la suppression")
+	}
+	return nil
+}
+
+func (params purgeNotCompactedHandler) Run() error {
+	return engine.PurgeNotCompacted() // TODO: écrire rapport dans Journal ?
 }
 
 type pruneEntitiesHandler struct {
@@ -267,4 +287,9 @@ func resolveParsers(parserNames []string) ([]marshal.Parser, error) {
 		}
 	}
 	return parsers, nil
+}
+
+func printJSON(object interface{}) {
+	res, _ := json.Marshal(object)
+	fmt.Println(string(res))
 }

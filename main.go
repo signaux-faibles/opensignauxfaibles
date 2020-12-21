@@ -71,16 +71,17 @@ type commandHandler interface {
 // Each entry will be populated with parameters parsed from command line arguments.
 // Each entry must implement the commandHandler interface.
 type cliCommands struct {
-	Purge          purgeBatchHandler
-	Check          checkBatchHandler
-	PruneEntities  pruneEntitiesHandler
-	Import         importBatchHandler
-	Validate       validateHandler
-	Compact        compactHandler
-	Reduce         reduceHandler
-	Public         publicHandler
-	Etablissements exportEtablissementsHandler
-	Entreprises    exportEntreprisesHandler
+	Purge             purgeBatchHandler
+	Check             checkBatchHandler
+	PruneEntities     pruneEntitiesHandler
+	Import            importBatchHandler
+	PurgeNotCompacted purgeNotCompactedHandler
+	Validate          validateHandler
+	Compact           compactHandler
+	Reduce            reduceHandler
+	Public            publicHandler
+	Etablissements    exportEtablissementsHandler
+	Entreprises       exportEntreprisesHandler
 }
 
 func (cmds *cliCommands) populateFromArgs() {
@@ -114,7 +115,3 @@ func (cmds *cliCommands) index() map[string]commandHandler {
 	}
 	return commandByName
 }
-
-// "purgeNotCompacted": {"TODO - summary", func(args []string) error {
-// 	return purgeNotCompactedHandler() // TODO: écrire rapport dans Journal ?
-// }},
