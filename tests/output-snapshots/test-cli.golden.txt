@@ -214,6 +214,7 @@ Usage:
 
 Description:
 	Vide la collection "ImportedData".
+	Répond "ok" dans la sortie standard, si le traitement s'est bien déroulé.
 
 Flags:
 	--i-understand-what-im-doing (type: bool)

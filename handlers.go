@@ -194,6 +194,7 @@ func (params purgeNotCompactedHandler) Documentation() flag.Flag {
 		Usage: "Vide la collection ImportedData",
 		Desc: `
 		Vide la collection "ImportedData".
+		Répond "ok" dans la sortie standard, si le traitement s'est bien déroulé.
 		`,
 	}
 }
@@ -210,7 +211,12 @@ func (params purgeNotCompactedHandler) Validate() error {
 }
 
 func (params purgeNotCompactedHandler) Run() error {
-	return engine.PurgeNotCompacted() // TODO: écrire rapport dans Journal ?
+	err := engine.PurgeNotCompacted() // TODO: écrire rapport dans Journal ?
+	if err != nil {
+		return err
+	}
+	printJSON("ok")
+	return nil
 }
 
 type pruneEntitiesHandler struct {
