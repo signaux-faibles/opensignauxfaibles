@@ -120,6 +120,25 @@ echo "${VALIDATION_REPORT}" \
   | sort \
   >> "${OUTPUT_FILE}"
 
+echo "- sfdata purgeNotCompacted 👉 $(tests/helpers/sfdata-wrapper.sh purgeNotCompacted --i-understand-what-im-doing)"
+
+# Print test results from stdin. Fails on any "false" result.
+# Expected format for each line: "<test label> : <true|false>"
+function reportFailedTests {
+  while IFS='$\n' read -r line; do
+    echo "  - $line" | (grep --color=always " : false") || true # display failed test
+    echo "  - $line" | grep " : true" # display passing test, and make the test function fail otherwise
+  done
+}
+
+(tests/helpers/mongodb-container.sh run \
+  | reportFailedTests \
+) << CONTENT
+  Object.entries({
+    "ImportedData was emptied by purgeNotCompacted": db.ImportedData.count() === 0,
+  }).forEach(([ testName, testRes ]) => print(testName, ':', testRes));
+CONTENT
+
 # Display JS errors logged by MongoDB, if any
 tests/helpers/mongodb-container.sh exceptions || true
 
