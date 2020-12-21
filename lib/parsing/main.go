@@ -33,6 +33,14 @@ var registeredParsers = map[string]marshal.Parser{
 	"ellisphere":   ellisphere.Parser,
 }
 
+// IsSupportedParser retourne true si un parseur est défini pour le fileType spécifié.
+func IsSupportedParser(fileType string) bool {
+	if registeredParsers[fileType] != nil {
+		return true
+	}
+	return false
+}
+
 // ResolveParsers sélectionne, vérifie et charge les parsers.
 func ResolveParsers(parserNames []string) ([]marshal.Parser, error) {
 	var parsers []marshal.Parser
