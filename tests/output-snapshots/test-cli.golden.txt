@@ -1,7 +1,6 @@
 
 $ ./sfdata
-
-Erreur: Commande non reconnue. Utilisez ./sfdata --help pour lister les commandes.
+Commande non reconnue. Utilisez ./sfdata --help pour lister les commandes.
 ---
 $ ./sfdata unknown_command
 unexpected non-flag value: [sfdata] unknown_command
@@ -28,7 +27,6 @@ Sets:
 	entreprises    Exporte la liste des entreprises
 ---
 $ ./sfdata purge
-
 Erreur: paramètre `since-batch` obligatoire. Utilisez ./sfdata purge --help pour consulter la documentation.
 ---
 $ ./sfdata purge --help

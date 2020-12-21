@@ -26,12 +26,38 @@ func connectDb() {
 
 // main Fonction Principale
 func main() {
-	err := runCommand()
-	if err != nil {
-		fmt.Printf("\nErreur: %v\n", err)
+	cmdHandlerWithArgs := parseCommandFromArgs()
+	// exit if no command was recognized in args
+	if cmdHandlerWithArgs == nil {
+		fmt.Printf("Commande non reconnue. Utilisez %v --help pour lister les commandes.", strings.Join(os.Args, " "))
 		os.Exit(1)
+		return
+	}
+	// validate command parameters
+	if err := cmdHandlerWithArgs.Validate(); err != nil {
+		fmt.Printf("Erreur: %v. Utilisez %v --help pour consulter la documentation.", err, strings.Join(os.Args, " "))
+		os.Exit(2)
+	}
+	// execute the command
+	connectDb()
+	if err := cmdHandlerWithArgs.Run(); err != nil {
+		fmt.Printf("\nErreur: %v\n", err)
+		os.Exit(3)
 	}
 	engine.FlushEventQueue()
+}
+
+// Ask cosiner/flag to parse arguments
+func parseCommandFromArgs() command {
+	var actualArgs = cliCommands{}
+	flagSet := cosFlag.NewFlagSet(cosFlag.Flag{})
+	_ = flagSet.ParseStruct(&actualArgs, os.Args...) // may panic with "unexpected non-flag value: unknown_command"
+	for _, cmdHandlerWithArgs := range actualArgs.index() {
+		if cmdHandlerWithArgs.IsEnabled() {
+			return cmdHandlerWithArgs
+		}
+	}
+	return nil
 }
 
 // Interface that each command should implement
@@ -59,53 +85,17 @@ type cliCommands struct {
 // Metadata returns the documentation that will be displayed by cosiner/flag
 // if the user invokes "--help", or if some parameters are invalid.
 func (cmds *cliCommands) Metadata() map[string]cosFlag.Flag {
-	// TODO: use reflection to generate that list automatically
-	return map[string]cosFlag.Flag{
-		"purge":          cmds.Purge.Documentation(),
-		"check":          cmds.Check.Documentation(),
-		"pruneEntities":  cmds.PruneEntities.Documentation(),
-		"import":         cmds.Import.Documentation(),
-		"validate":       cmds.Validate.Documentation(),
-		"compact":        cmds.Compact.Documentation(),
-		"reduce":         cmds.Reduce.Documentation(),
-		"public":         cmds.Public.Documentation(),
-		"etablissements": cmds.Etablissements.Documentation(),
-		"entreprises":    cmds.Entreprises.Documentation(),
+	commandMetadata := map[string]cosFlag.Flag{}
+	// we use reflection to get the documentation of each prop from cliCommands
+	for cmdName, cmdArgs := range cmds.index() {
+		commandMetadata[cmdName] = cmdArgs.Documentation()
 	}
+	return commandMetadata
 }
 
-// "purgeNotCompacted": {"TODO - summary", func(args []string) error {
-// 	return purgeNotCompactedHandler() // TODO: écrire rapport dans Journal ?
-// }},
-
-// Detect and run the command specified in CLI args.
-// Returns any validation or execution error.
-func runCommand() error {
-	// ask cosiner/flag to parse arguments
-	var actualArgs = cliCommands{}
-	flagSet := cosFlag.NewFlagSet(cosFlag.Flag{})
-	if err := flagSet.ParseStruct(&actualArgs, os.Args...); err != nil {
-		return err // Note: parsing may exit instead of reporting "unexpected non-flag value: unknown_command"
-	}
-	// find and execute the command, if any
-	cmdName, cmdHandler := getCommand(actualArgs)
-	if cmdHandler != nil {
-		err := cmdHandler.Validate() // validate command parameters
-		if err != nil {
-			// cmdDef, _ := flagSet.FindSubset(cmdName)
-			// cmdDef.Help(false) // display usage information for this command
-			return fmt.Errorf("%v. Utilisez %v %v --help pour consulter la documentation.", err, os.Args[0], cmdName)
-		}
-		connectDb()
-		return cmdHandler.Run()
-	}
-	// no command was recognized in args
-	return fmt.Errorf("Commande non reconnue. Utilisez %v --help pour lister les commandes.", os.Args[0])
-}
-
-// Find which command was recognized from CLI args, based on the fields of cliCommands.
-func getCommand(actualArgs cliCommands) (string, command) {
-	supportedCommands := reflect.ValueOf(actualArgs)
+func (cmds *cliCommands) index() map[string]command {
+	commandByName := map[string]command{}
+	supportedCommands := reflect.ValueOf(*cmds)
 	for i := 0; i < supportedCommands.NumField(); i++ {
 		fieldName := supportedCommands.Type().Field(i).Name             // e.g. PruneEntities
 		cmdName := strings.ToLower(fieldName[0:1]) + fieldName[1:]      // e.g. pruneEntities
@@ -113,9 +103,11 @@ func getCommand(actualArgs cliCommands) (string, command) {
 		if ok != true {
 			panic(fmt.Sprintf("Property %v of type cliCommands is not an instance of command", fieldName))
 		}
-		if cmdArgs.IsEnabled() {
-			return cmdName, cmdArgs
-		}
+		commandByName[cmdName] = cmdArgs
 	}
-	return "", nil
+	return commandByName
 }
+
+// "purgeNotCompacted": {"TODO - summary", func(args []string) error {
+// 	return purgeNotCompactedHandler() // TODO: écrire rapport dans Journal ?
+// }},
