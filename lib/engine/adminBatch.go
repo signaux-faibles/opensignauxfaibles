@@ -38,19 +38,7 @@ func ImportBatch(batch base.AdminBatch, parsers []marshal.Parser, skipFilter boo
 		return errors.New("Veuillez inclure un filtre")
 	}
 	startDate := time.Now()
-	for fileType := range batch.Files {
-		if !parsing.IsSupportedParser(fileType) {
-			msg := fmt.Sprintf("Type de fichier non reconnu: %v", fileType)
-			log.Println(msg)
-			event := marshal.CreateReportEvent(fileType, bson.M{
-				"batchKey": batch.ID.Key,
-				"summary":  msg,
-			})
-			event.ReportType = "ImportBatch_error"
-			event.StartDate = startDate
-			mainMessageChannel <- event
-		}
-	}
+	reportUnsupportedFiletypes(batch)
 	var wg sync.WaitGroup
 	for _, parser := range parsers {
 		wg.Add(1)
@@ -113,4 +101,19 @@ func CheckBatch(batch base.AdminBatch, parsers []marshal.Parser) (reports []stri
 	}
 
 	return reports, nil
+}
+
+func reportUnsupportedFiletypes(batch base.AdminBatch) {
+	for fileType := range batch.Files {
+		if !parsing.IsSupportedParser(fileType) {
+			msg := fmt.Sprintf("Type de fichier non reconnu: %v", fileType)
+			log.Println(msg)
+			event := marshal.CreateReportEvent(fileType, bson.M{
+				"batchKey": batch.ID.Key,
+				"summary":  msg,
+			})
+			event.ReportType = "ImportBatch_error"
+			mainMessageChannel <- event
+		}
+	}
 }
