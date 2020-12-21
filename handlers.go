@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"time"
 
 	flag "github.com/cosiner/flag"
 
@@ -211,10 +212,12 @@ func (params purgeNotCompactedHandler) Validate() error {
 }
 
 func (params purgeNotCompactedHandler) Run() error {
-	err := engine.PurgeNotCompacted() // TODO: écrire rapport dans Journal ?
+	startDate := time.Now()
+	err := engine.PurgeNotCompacted()
 	if err != nil {
 		return err
 	}
+	engine.LogOperationEvent("PurgeNotCompacted", startDate)
 	printJSON("ok")
 	return nil
 }
