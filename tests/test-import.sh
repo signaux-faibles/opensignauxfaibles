@@ -89,7 +89,13 @@ printjson(db.ImportedData.find().sort({"value.key":1}).toArray().map(doc => ({
     }), {})
   }
 })));
+CONTENT
 
+echo "- sfdata purgeNotCompacted 👉 $(tests/helpers/sfdata-wrapper.sh purgeNotCompacted --i-understand-what-im-doing)"
+
+(tests/helpers/mongodb-container.sh run \
+  >> "${OUTPUT_FILE}" \
+) << CONTENT
 print("// Reports from db.Journal:");
 // on classe les données par type, de manière à ce que l'ordre soit stable
 printjson(db.Journal.find().sort({ reportType: -1, parserCode: 1 }).toArray().map(doc => (doc.event ? {
@@ -119,8 +125,6 @@ echo "${VALIDATION_REPORT}" \
   | perl -p -e 's/"periode" : ISODate\("....-..-..T..:..:..Z"\)/"periode" : ISODate\("_______ Date _______"\)/' \
   | sort \
   >> "${OUTPUT_FILE}"
-
-echo "- sfdata purgeNotCompacted 👉 $(tests/helpers/sfdata-wrapper.sh purgeNotCompacted --i-understand-what-im-doing)"
 
 # Print test results from stdin. Fails on any "false" result.
 # Expected format for each line: "<test label> : <true|false>"
