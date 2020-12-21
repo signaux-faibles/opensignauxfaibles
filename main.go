@@ -48,7 +48,7 @@ func main() {
 }
 
 // Ask cosiner/flag to parse arguments
-func parseCommandFromArgs() command {
+func parseCommandFromArgs() commandHandler {
 	var actualArgs = cliCommands{}
 	flagSet := cosFlag.NewFlagSet(cosFlag.Flag{})
 	_ = flagSet.ParseStruct(&actualArgs, os.Args...) // may panic with "unexpected non-flag value: unknown_command"
@@ -61,14 +61,16 @@ func parseCommandFromArgs() command {
 }
 
 // Interface that each command should implement
-type command interface {
+type commandHandler interface {
 	Documentation() cosFlag.Flag // returns documentation to display in the CLI
 	IsEnabled() bool             // returns true when the user invokes this command from the CLI
 	Validate() error             // returns an error if some command parameters don't meet expectations
 	Run() error                  // executes the command and return an error if it fails
 }
 
-// List of command handlers that cosiner/flag should recognize in CLI arguments
+// List of command handlers that cosiner/flag should recognize in CLI arguments.
+// Each entry will be populated with parameters parsed from command line arguments.
+// Each entry must implement the commandHandler interface.
 type cliCommands struct {
 	Purge          purgeBatchHandler
 	Check          checkBatchHandler
@@ -93,15 +95,16 @@ func (cmds *cliCommands) Metadata() map[string]cosFlag.Flag {
 	return commandMetadata
 }
 
-func (cmds *cliCommands) index() map[string]command {
-	commandByName := map[string]command{}
+// List and index the commandHandler entries, using reflection.
+func (cmds *cliCommands) index() map[string]commandHandler {
+	commandByName := map[string]commandHandler{}
 	supportedCommands := reflect.ValueOf(*cmds)
 	for i := 0; i < supportedCommands.NumField(); i++ {
-		fieldName := supportedCommands.Type().Field(i).Name             // e.g. PruneEntities
-		cmdName := strings.ToLower(fieldName[0:1]) + fieldName[1:]      // e.g. pruneEntities
-		cmdArgs, ok := supportedCommands.Field(i).Interface().(command) // e.g. pruneEntitiesHandler instance
+		fieldName := supportedCommands.Type().Field(i).Name                    // e.g. "PruneEntities"
+		cmdName := strings.ToLower(fieldName[0:1]) + fieldName[1:]             // e.g. "pruneEntities"
+		cmdArgs, ok := supportedCommands.Field(i).Interface().(commandHandler) // e.g. pruneEntitiesHandler instance
 		if ok != true {
-			panic(fmt.Sprintf("Property %v of type cliCommands is not an instance of command", fieldName))
+			panic(fmt.Sprintf("Property %v of type cliCommands is not an instance of commandHandler", fieldName))
 		}
 		commandByName[cmdName] = cmdArgs
 	}
