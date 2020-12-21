@@ -9,6 +9,7 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/lib/diane"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/ellisphere"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/marshal"
+	"github.com/signaux-faibles/opensignauxfaibles/lib/paydex"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/sirene"
 	sireneul "github.com/signaux-faibles/opensignauxfaibles/lib/sirene_ul"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/urssaf"
@@ -31,6 +32,7 @@ var registeredParsers = map[string]marshal.Parser{
 	"sirene_ul":    sireneul.Parser,
 	"diane":        diane.Parser,
 	"ellisphere":   ellisphere.Parser,
+	"paydex":       paydex.ParserPaydex,
 }
 
 // IsSupportedParser retourne true si un parseur est défini pour le fileType spécifié.

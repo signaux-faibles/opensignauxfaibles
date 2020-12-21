@@ -74,6 +74,57 @@
 		"_id" : ObjectId("________ObjectId________"),
 		"value" : {
 			"scope" : "entreprise",
+			"key" : "000000001",
+			"batch" : {
+				"1910" : {
+					"paydex" : {
+						"______________Hash______________" : {
+							"siren" : "000000001",
+							"periode" : ISODate("_______ Date _______"),
+							"paydex_jours" : 2
+						},
+						"______________Hash______________" : {
+							"siren" : "000000001",
+							"periode" : ISODate("_______ Date _______"),
+							"paydex_jours" : 1
+						},
+						"______________Hash______________" : {
+							"siren" : "000000001",
+							"periode" : ISODate("_______ Date _______"),
+							"paydex_jours" : 3
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "entreprise",
+			"key" : "000000002",
+			"batch" : {
+				"1910" : {
+					"paydex" : {
+						"______________Hash______________" : {
+							"siren" : "000000002",
+							"periode" : ISODate("_______ Date _______"),
+							"paydex_jours" : 4
+						},
+						"______________Hash______________" : {
+							"siren" : "000000002",
+							"periode" : ISODate("_______ Date _______"),
+							"paydex_jours" : 5
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "entreprise",
 			"key" : "000111222",
 			"batch" : {
 				"1910" : {
@@ -4878,6 +4929,19 @@
 		},
 		"reportType" : "ImportBatch",
 		"parserCode" : "ellisphere",
+		"hasDate" : true,
+		"hasStartDate" : true
+	},
+	{
+		"event" : {
+			"headRejected" : [ ],
+			"headFatal" : [ ],
+			"linesSkipped" : 0,
+			"summary" : "/../lib/paydex/testData/paydexTestData.csv: intégration terminée, 5 lignes traitées, 0 erreurs fatales, 0 lignes rejetées, 0 lignes filtrées, 5 lignes valides",
+			"batchKey" : "1910"
+		},
+		"reportType" : "ImportBatch",
+		"parserCode" : "paydex",
 		"hasDate" : true,
 		"hasStartDate" : true
 	},
