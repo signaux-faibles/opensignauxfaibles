@@ -50,8 +50,9 @@ func loadJSFunctions(directoryNames ...string) (map[string]bson.JavaScript, erro
 // PurgeNotCompacted permet de supprimer les objets non encore compactés
 // c'est à dire, vider la collection ImportedData
 func PurgeNotCompacted() error {
-	_, err := Db.DB.C("ImportedData").RemoveAll(nil)
-	return err
+	return nil
+	// _, err := Db.DB.C("ImportedData").RemoveAll(nil) // TODO: supprimer la collection
+	// return err
 }
 
 // PruneEntities permet de compter puis supprimer les entités de RawData
