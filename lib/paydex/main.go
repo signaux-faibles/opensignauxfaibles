@@ -1,6 +1,8 @@
 package paydex
 
 import (
+	"log"
+	"strconv"
 	"time"
 )
 
@@ -12,10 +14,25 @@ type Paydex struct {
 }
 
 func parsePaydexLine(row []string) Paydex {
+	periode, err := time.Parse("02/01/2006", row[3])
+	if err != nil {
+		log.Fatalf("invalid date: %v", row[3])
+	}
+	jours, err := strconv.Atoi(row[1])
+	if err != nil {
+		log.Fatalf("invalid date: %v", row[3])
+	}
 	return Paydex{
-		Siren:   "000000001",
-		Periode: time.Date(2018, 12, 01, 00, 00, 00, 0, time.UTC),
-		Jours:   2,
+		Siren:   row[0],
+		Periode: beginningOfMonth(periode),
+		Jours:   jours,
+	}
+}
+
+func beginningOfMonth(date time.Time) time.Time {
+	return date.AddDate(0, 0, -date.Day()+1)
+}
+
 	}
 }
 
