@@ -50,8 +50,7 @@ func main() {
 // Ask cosiner/flag to parse arguments
 func parseCommandFromArgs() commandHandler {
 	var actualArgs = cliCommands{}
-	flagSet := cosFlag.NewFlagSet(cosFlag.Flag{})
-	_ = flagSet.ParseStruct(&actualArgs, os.Args...) // may panic with "unexpected non-flag value: unknown_command"
+	actualArgs.populateFromArgs()
 	for _, cmdHandlerWithArgs := range actualArgs.index() {
 		if cmdHandlerWithArgs.IsEnabled() {
 			return cmdHandlerWithArgs
@@ -82,6 +81,11 @@ type cliCommands struct {
 	Public         publicHandler
 	Etablissements exportEtablissementsHandler
 	Entreprises    exportEntreprisesHandler
+}
+
+func (cmds *cliCommands) populateFromArgs() {
+	flagSet := cosFlag.NewFlagSet(cosFlag.Flag{})
+	_ = flagSet.ParseStruct(cmds, os.Args...) // may panic with "unexpected non-flag value: unknown_command"
 }
 
 // Metadata returns the documentation that will be displayed by cosiner/flag
