@@ -66,7 +66,6 @@ VALIDATION_REPORT=$(tests/helpers/sfdata-wrapper.sh validate --collection=Import
 echo "- sfdata validate"
 
 (tests/helpers/mongodb-container.sh run \
-  | perl -p -e 's/"[0-9a-z]{32}"/"______________Hash______________"/' \
   | perl -p -e 's/"[0-9a-z]{24}"/"________ObjectId________"/' \
   | perl -p -e 's/"periode" : ISODate\("....-..-..T..:..:..Z"\)/"periode" : ISODate\("_______ Date _______"\)/' \
   > "${OUTPUT_FILE}" \
@@ -120,7 +119,6 @@ print("// Results of call to sfdata validate:");
 CONTENT
 
 echo "${VALIDATION_REPORT}" \
-  | perl -p -e 's/"[0-9a-z]{32}"/"______________Hash______________"/' \
   | perl -p -e 's/"[0-9a-z]{24}"/"________ObjectId________"/' \
   | perl -p -e 's/"periode" : ISODate\("....-..-..T..:..:..Z"\)/"periode" : ISODate\("_______ Date _______"\)/' \
   | sort \

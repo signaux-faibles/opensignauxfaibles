@@ -21,7 +21,7 @@ type Data struct {
 	Batch map[string]Batch `json:"batch,omitempty" bson:"batch,omitempty"`
 }
 
-// GetMD5 returns a MD5 signature of the Tupe
+// GetMD5 returns a MD5 signature of the Tuple
 func GetMD5(tuple marshal.Tuple) []byte {
 	return structhash.Md5(tuple, 1)
 }
