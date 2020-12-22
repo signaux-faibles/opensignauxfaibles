@@ -2,24 +2,46 @@ package main
 
 import (
 	"errors"
-	"strconv"
-	"time"
+
+	flag "github.com/cosiner/flag"
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/engine"
 )
 
-type reduceParams struct {
-	BatchKey string   `json:"batch"`
-	Key      string   `json:"key"`
-	From     string   `json:"from"`
-	To       string   `json:"to"`
-	Types    []string `json:"types"`
-	// Sélection des types de données qui vont être calculés ou recalculés.
-	// Valeurs autorisées pour l'instant: "apart", "all"
+type reduceHandler struct {
+	Enable   bool     // set to true by cosiner/flag if the user is running this command
+	BatchKey string   `names:"--until-batch" arglist:"batch_key" desc:"Identifiant du batch jusqu'auquel calculer (ex: 1802, pour Février 2018)"`
+	Key      string   `names:"--key" desc:"Numéro SIRET or SIREN d'une entité à calculer exclusivement"`
+	From     string   `names:"--from"`                                                                                                // TODO: à définir et tester
+	To       string   `names:"--to"`                                                                                                  // TODO: à définir et tester
+	Types    []string `names:"--type" arglist:"all|apart" desc:"Sélection des types de données qui vont être calculés ou recalculés"` // Valeurs autorisées pour l'instant: "apart", "all"
 }
 
-func reduceHandler(params reduceParams) error {
+func (params reduceHandler) Documentation() flag.Flag {
+	return flag.Flag{
+		Usage: "Calcule les variables destinées à la prédiction",
+		Desc: `
+		Alimente la collection Features en calculant les variables avec le traitement map-reduce "reduce.algo2".
+		Le traitement remplace les objets similaires en sortie du calcul dans la collection Features, les objets non concernés par le traitement ne seront ainsi pas remplacés, de sorte que si un seul siret est demandé le calcul ne remplacera qu'un seul objet.
+		Ces traitements ne prennent en compte que les objets déjà compactés.
+		Répond "ok" dans la sortie standard, si le traitement s'est bien déroulé.
+		`,
+	}
+}
+
+func (params reduceHandler) IsEnabled() bool {
+	return params.Enable
+}
+
+func (params reduceHandler) Validate() error {
+	if params.BatchKey == "" {
+		return errors.New("paramètre `until-batch` obligatoire")
+	}
+	return nil
+}
+
+func (params reduceHandler) Run() error {
 
 	batch, err := engine.GetBatch(params.BatchKey)
 	if err != nil {
@@ -40,15 +62,38 @@ func reduceHandler(params reduceParams) error {
 	return nil
 }
 
-type publicParams struct {
-	BatchKey string `json:"batch"`
-	Key      string `json:"key"`
+type publicHandler struct {
+	Enable   bool   // set to true by cosiner/flag if the user is running this command
+	BatchKey string `names:"--until-batch" arglist:"batch_key" desc:"Identifiant du batch jusqu'auquel calculer (ex: 1802, pour Février 2018)"`
+	Key      string `names:"--key" desc:"Numéro SIRET or SIREN d'une entité à calculer exclusivement"`
 }
 
-func publicHandler(params publicParams) error {
-	if params.BatchKey == "" {
-		return errors.New("batch vide")
+func (params publicHandler) Documentation() flag.Flag {
+	return flag.Flag{
+		Usage: "Génère les données destinées au site web",
+		Desc: `
+		Alimente la collection Public avec les objets calculés pour le batch cité en paramètre, à partir de la collection RawData.
+		Le traitement prend en paramètre la clé du batch (obligatoire) et un SIREN (optionnel). Lorsque le SIREN n'est pas précisé, tous les objets liés au batch sont traités.
+		Répond "ok" dans la sortie standard, si le traitement s'est bien déroulé.
+		`,
 	}
+}
+
+func (params publicHandler) IsEnabled() bool {
+	return params.Enable
+}
+
+func (params publicHandler) Validate() error {
+	if params.BatchKey == "" {
+		return errors.New("paramètre `until-batch` obligatoire")
+	}
+	if !(len(params.Key) == 9 || len(params.Key) == 0) {
+		return errors.New("si fourni, paramètre `key` doit être un numéro SIREN (9 chiffres) ou SIRET (14 chiffres)")
+	}
+	return nil
+}
+
+func (params publicHandler) Run() error {
 
 	batch := base.AdminBatch{}
 	err := engine.Load(&batch, params.BatchKey)
@@ -70,11 +115,35 @@ func publicHandler(params publicParams) error {
 	return err
 }
 
-type compactParams struct {
-	FromBatchKey string `json:"fromBatchKey"`
+type compactHandler struct {
+	Enable       bool   // set to true by cosiner/flag if the user is running this command
+	FromBatchKey string `names:"--since-batch" arglist:"batch_key" desc:"Identifiant du batch à partir duquel compacter (ex: 1802, pour Février 2018)"`
 }
 
-func compactHandler(params compactParams) error {
+func (params compactHandler) Documentation() flag.Flag {
+	return flag.Flag{
+		Usage: "Compacte la base de données",
+		Desc: `
+		Ce traitement permet le compactage de la base de données.
+		Ce compactage a pour effet de réduire tous les objets en clé uniques comportant dans la même arborescence toutes les données en rapport avec ces clés.
+		Ce traitement est nécessaire avant l'usage des commandes "reduce" et "public", après chaque import de données.
+		Répond "ok" dans la sortie standard, si le traitement s'est bien déroulé.
+		`,
+	}
+}
+
+func (params compactHandler) IsEnabled() bool {
+	return params.Enable
+}
+
+func (params compactHandler) Validate() error {
+	if params.FromBatchKey == "" {
+		return errors.New("paramètre `since-batch` obligatoire")
+	}
+	return nil
+}
+
+func (params compactHandler) Run() error {
 	err := engine.Compact(params.FromBatchKey)
 	if err == nil {
 		printJSON("ok")
@@ -82,46 +151,93 @@ func compactHandler(params compactParams) error {
 	return err
 }
 
-func getTimestamp() string {
-	return strconv.FormatInt(time.Now().Unix(), 10)
+type exportEtablissementsHandler struct {
+	Enable bool   // set to true by cosiner/flag if the user is running this command
+	Key    string `names:"--key" desc:"Numéro SIREN à utiliser pour filtrer les résultats (ex: 012345678)"`
 }
 
-type exportParams struct {
-	Key string `json:"key"`
+func (params exportEtablissementsHandler) Documentation() flag.Flag {
+	return flag.Flag{
+		Usage: "Exporte la liste des établissements",
+		Desc: `
+		Exporte la liste des établissements depuis la collection Public.
+		Répond dans la sortie standard une ligne JSON par établissement.
+		`,
+	}
 }
 
-func getKeyParam(params exportParams) (string, error) {
+func (params exportEtablissementsHandler) IsEnabled() bool {
+	return params.Enable
+}
+
+func (params exportEtablissementsHandler) Validate() error {
 	if !(len(params.Key) == 9 || len(params.Key) == 0) {
-		return "", errors.New("si fourni, key doit être un numéro SIREN (9 chiffres)")
+		return errors.New("si fourni, paramètre `key` doit être un numéro SIREN (9 chiffres)")
 	}
-	return params.Key, nil
+	return nil
 }
 
-func exportEtablissementsHandler(params exportParams) error {
-	key, err := getKeyParam(params)
-	if err != nil {
-		return err
+func (params exportEtablissementsHandler) Run() error {
+	return engine.ExportEtablissements(params.Key)
+}
+
+type exportEntreprisesHandler struct {
+	Enable bool   // set to true by cosiner/flag if the user is running this command
+	Key    string `names:"--key" desc:"Numéro SIREN à utiliser pour filtrer les résultats (ex: 012345678)"`
+}
+
+func (params exportEntreprisesHandler) Documentation() flag.Flag {
+	return flag.Flag{
+		Usage: "Exporte la liste des entreprises",
+		Desc: `
+		Exporte la liste des entreprises depuis la collection Public.
+		Répond dans la sortie standard une ligne JSON par entreprise.
+		`,
 	}
-	return engine.ExportEtablissements(key)
 }
 
-func exportEntreprisesHandler(params exportParams) error {
-	key, err := getKeyParam(params)
-	if err != nil {
-		return err
+func (params exportEntreprisesHandler) IsEnabled() bool {
+	return params.Enable
+}
+
+func (params exportEntreprisesHandler) Validate() error {
+	if !(len(params.Key) == 9 || len(params.Key) == 0) {
+		return errors.New("si fourni, paramètre `key` doit être un numéro SIREN (9 chiffres)")
 	}
-	return engine.ExportEntreprises(key)
+	return nil
 }
 
-type validateParams struct {
-	Collection string `json:"collection"`
+func (params exportEntreprisesHandler) Run() error {
+	return engine.ExportEntreprises(params.Key)
 }
 
-func validateHandler(params validateParams) error {
+type validateHandler struct {
+	Enable     bool   // set to true by cosiner/flag if the user is running this command
+	Collection string `names:"--collection" arglist:"RawData|ImportedData" desc:"Nom de la collection à valider"`
+}
 
+func (params validateHandler) Documentation() flag.Flag {
+	return flag.Flag{
+		Usage: "Liste les entrées de données invalides",
+		Desc: `
+		Vérifie la validité des entrées de données contenues dans les documents de la collection RawData ou ImportedData.
+		Répond en listant dans la sortie standard les entrées invalides au format JSON.
+		`,
+	}
+}
+
+func (params validateHandler) IsEnabled() bool {
+	return params.Enable
+}
+
+func (params validateHandler) Validate() error {
 	if params.Collection != "RawData" && params.Collection != "ImportedData" {
 		return errors.New("le paramètre collection doit valoir RawData ou ImportedData")
 	}
+	return nil
+}
+
+func (params validateHandler) Run() error {
 
 	jsonSchema, err := engine.LoadJSONSchemaFiles()
 	if err != nil {
