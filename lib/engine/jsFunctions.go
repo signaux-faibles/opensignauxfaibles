@@ -1388,11 +1388,14 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
     // Ne reporter que si le dernier effectif est disponible
     const dernièrePériodeAvecEffectifConnu = f.dateAddMonth(new Date(periodes[periodes.length - 1]), offset_effectif + 1);
     const effectifÀReporter = (_a = mapEffectif[dernièrePériodeAvecEffectifConnu.getTime()]) !== null && _a !== void 0 ? _a : null;
+    const makeReporteProp = (clé) => ` + "`" + `${clé}_reporte` + "`" + `;
     periodes.forEach((time) => {
-        sortieEffectif[time] = Object.assign(Object.assign({}, sortieEffectif[time]), { [clé]: mapEffectif[time] || effectifÀReporter, [clé + "_reporte"]: mapEffectif[time] ? 0 : 1 });
+        sortieEffectif[time] = Object.assign(Object.assign({}, sortieEffectif[time]), { [clé]: mapEffectif[time] || effectifÀReporter, [makeReporteProp(clé)]: mapEffectif[time] ? 0 : 1 });
     });
+    const makePastProp = (clé, offset) => ` + "`" + `${clé}_past_${offset}` + "`" + `;
     Object.keys(mapEffectif).forEach((time) => {
-        const futureTimestamps = [6, 12, 18, 24] // Penser à mettre à jour le type PastPropertyName pour tout changement
+        const futureOffsets = [6, 12, 18, 24];
+        const futureTimestamps = futureOffsets
             .map((offset) => ({
             offset,
             timestamp: f
@@ -1406,7 +1409,7 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
         }))
             .filter(({ timestamp }) => periodes.includes(timestamp));
         futureTimestamps.forEach(({ offset, timestamp }) => {
-            sortieEffectif[timestamp] = Object.assign(Object.assign({}, sortieEffectif[timestamp]), { [clé + "_past_" + offset]: mapEffectif[time] });
+            sortieEffectif[timestamp] = Object.assign(Object.assign({}, sortieEffectif[timestamp]), { [makePastProp(clé, offset)]: mapEffectif[time] });
         });
     });
     return sortieEffectif;
