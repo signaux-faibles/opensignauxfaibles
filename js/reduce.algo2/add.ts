@@ -1,9 +1,6 @@
 import { ParPériode } from "../RawDataTypes"
 
-export function add(
-  obj: ParPériode<unknown>,
-  output: ParPériode<unknown>
-): void {
+export function add<T>(obj: ParPériode<Partial<T>>, output: ParPériode<T>) {
   "use strict"
   Object.keys(output).forEach(function (periode) {
     if (periode in obj) {
