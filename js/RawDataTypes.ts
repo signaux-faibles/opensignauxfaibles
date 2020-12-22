@@ -176,7 +176,7 @@ export type EntréeBdf = {
   annee_bdf: number
   exercice_bdf: number
   raison_sociale: string
-  secteur: unknown
+  secteur: string
   siren: SiretOrSiren
 } & EntréeBdfRatios
 
@@ -204,10 +204,10 @@ export type EntréeDiane = {
   valeur_ajoutee?: number | null
   dette_fiscale_et_sociale?: number | null
   marquee: unknown
-  nom_entreprise: unknown
-  numero_siren: unknown
-  statut_juridique: unknown
-  procedure_collective: unknown
+  nom_entreprise: string
+  numero_siren: SiretOrSiren
+  statut_juridique: string
+  procedure_collective: boolean
 }
 
 export type EntréeEllisphere = {
