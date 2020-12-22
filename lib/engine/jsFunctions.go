@@ -1517,11 +1517,12 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
                     "frais_financier",
                 ];
                 const past_year_offset = [1, 2];
+                const makePastProp = (clé, offset) => ` + "`" + `${clé}_past_${offset}` + "`" + `;
                 bdf_vars.forEach((k) => {
                     if (k in outputInPeriod) {
                         past_year_offset.forEach((offset) => {
                             const periode_offset = f.dateAddMonth(periode, 12 * offset);
-                            const variable_name = k + "_past_" + offset;
+                            const variable_name = makePastProp(k, offset);
                             const outputAtOffset = output_indexed[periode_offset.getTime()];
                             if (outputAtOffset &&
                                 periodes.includes(periode_offset.getTime())) {

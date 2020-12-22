@@ -4,6 +4,15 @@ import { EntréeDiane, ParHash, ParPériode, Timestamp } from "../RawDataTypes"
 export type SortieDiane = Record<string, unknown> // for *_past_* props of diane. // TODO: définir les props de manière plus précise à l'aide de cette fonctionnalité TS, quand elle sera prête: https://github.com/microsoft/TypeScript/pull/40336
 type YearOffset = 1 | 2
 
+type ClésRatiosBdfInclus =
+  | "taux_marge"
+  | "poids_frng"
+  | "dette_fiscale"
+  | "financier_court_terme"
+  | "frais_financier"
+
+type CléRatioBdfPassé = `${ClésRatiosBdfInclus}_past_${YearOffset}`
+
 export function entr_diane(
   donnéesDiane: ParHash<EntréeDiane>,
   output_indexed: ParPériode<SortieDiane>,
@@ -97,7 +106,7 @@ export function entr_diane(
         }
 
         // TODO: mettre en commun population des champs _past_ avec bdf ?
-        const bdf_vars = [
+        const bdf_vars: ClésRatiosBdfInclus[] = [
           "taux_marge",
           "poids_frng",
           "dette_fiscale",
@@ -105,11 +114,15 @@ export function entr_diane(
           "frais_financier",
         ]
         const past_year_offset: YearOffset[] = [1, 2]
+
+        const makePastProp = (clé: ClésRatiosBdfInclus, offset: YearOffset) =>
+          `${clé}_past_${offset}` as CléRatioBdfPassé
+
         bdf_vars.forEach((k) => {
           if (k in outputInPeriod) {
             past_year_offset.forEach((offset) => {
               const periode_offset = f.dateAddMonth(periode, 12 * offset)
-              const variable_name = k + "_past_" + offset
+              const variable_name: CléRatioBdfPassé = makePastProp(k, offset)
 
               const outputAtOffset = output_indexed[periode_offset.getTime()]
               if (
