@@ -2,28 +2,28 @@
   "tuples": [
     {
       "siren": "000000001",
-      "periode": "2018-12-01T00:00:00Z",
-      "paydex_jours": 2
+      "date_valeur": "2018-12-15T00:00:00Z",
+      "nb_jours": 2
     },
     {
       "siren": "000000001",
-      "periode": "2018-01-01T00:00:00Z",
-      "paydex_jours": 1
+      "date_valeur": "2018-01-15T00:00:00Z",
+      "nb_jours": 1
     },
     {
       "siren": "000000001",
-      "periode": "2019-01-01T00:00:00Z",
-      "paydex_jours": 3
+      "date_valeur": "2019-01-15T00:00:00Z",
+      "nb_jours": 3
     },
     {
       "siren": "000000002",
-      "periode": "2018-12-01T00:00:00Z",
-      "paydex_jours": 4
+      "date_valeur": "2018-12-15T00:00:00Z",
+      "nb_jours": 4
     },
     {
       "siren": "000000002",
-      "periode": "2019-01-01T00:00:00Z",
-      "paydex_jours": 5
+      "date_valeur": "2019-01-15T00:00:00Z",
+      "nb_jours": 5
     }
   ],
   "events": [
