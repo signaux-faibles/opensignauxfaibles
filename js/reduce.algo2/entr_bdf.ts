@@ -12,11 +12,11 @@ type DonnéesBdfTransmises = Omit<
   "raison_sociale" | "secteur" | "siren"
 >
 
-export type SortieBdf = DonnéesBdfTransmises & EntréeBdfRatios & RatiosBdfPassés
-
 type YearOffset = 1 | 2
 type CléRatiosBdfPassés = `${keyof EntréeBdfRatios}_past_${YearOffset}`
 type RatiosBdfPassés = Record<CléRatiosBdfPassés, number>
+
+export type SortieBdf = DonnéesBdfTransmises & EntréeBdfRatios & RatiosBdfPassés
 
 export function entr_bdf(
   donnéesBdf: ParHash<EntréeBdf>,
