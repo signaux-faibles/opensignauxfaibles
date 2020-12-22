@@ -29,7 +29,7 @@ func main() {
 	cmdHandlerWithArgs := parseCommandFromArgs()
 	// exit if no command was recognized in args
 	if cmdHandlerWithArgs == nil {
-		fmt.Printf("Commande non reconnue. Utilisez %v --help pour lister les commandes.", strings.Join(os.Args, " "))
+		fmt.Printf("Commande non reconnue. Utilisez %v --help pour lister les commandes.\n", strings.Join(os.Args, " "))
 		os.Exit(1)
 		return
 	}

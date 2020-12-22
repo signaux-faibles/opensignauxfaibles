@@ -232,7 +232,7 @@ func (params pruneEntitiesHandler) Documentation() flag.Flag {
 	return flag.Flag{
 		Usage: "Compte/supprime les entités hors périmètre",
 		Desc: `
-		Compte puis supprime dans la collection "RawData" les entités (établissements et entreprises)
+		Compte ou supprime dans la collection "RawData" les entités (établissements et entreprises)
 		non listées dans le filtre de périmètre du batch spécifié.
 		Répond avec un propriété JSON "count" qui vaut le nombre d'entités hors périmètre comptées ou supprimées.
 	`,
