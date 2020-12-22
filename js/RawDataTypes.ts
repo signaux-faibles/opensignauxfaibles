@@ -203,7 +203,7 @@ export type EntréeDiane = {
   concours_bancaire_courant?: number | null
   valeur_ajoutee?: number | null
   dette_fiscale_et_sociale?: number | null
-  marquee: unknown
+  marquee: unknown // TODO: propriété non trouvée en sortie du parseur Diane => à supprimer ?
   nom_entreprise: string
   numero_siren: SiretOrSiren
   statut_juridique: string
