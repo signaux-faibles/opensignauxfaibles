@@ -12,7 +12,8 @@ import (
 
 var update = flag.Bool("update", false, "Update the expected test values in golden file")
 
-func TestPaydex(t *testing.T) {
+// unit tests
+func TestParsePaydexLine(t *testing.T) {
 	t.Run("should parse a valid row", func(t *testing.T) {
 		row := []string{"000000001", "2", "2 jours", "15/12/2018"}
 		expected := Paydex{
@@ -31,8 +32,11 @@ func TestPaydex(t *testing.T) {
 		assert.EqualError(t, err, "invalid date: 12/15/2018")
 		assert.Nil(t, actual)
 	})
+}
 
-	t.Run("generate the right tuples and events from test file", func(t *testing.T) {
+// integration tests
+func TestPaydex(t *testing.T) {
+	t.Run("should generate the right tuples and events from test file", func(t *testing.T) {
 		var golden = filepath.Join("testData", "expectedPaydex.json")
 		var testData = filepath.Join("testData", "paydexTestData.csv")
 		marshal.TestParserOutput(t, ParserPaydex, marshal.NewCache(), testData, golden, *update)
