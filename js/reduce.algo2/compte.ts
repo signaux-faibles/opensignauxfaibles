@@ -1,6 +1,6 @@
 import { EntréeCompte, ParPériode, Periode, ParHash } from "../RawDataTypes"
 
-type SortieCompte = ParPériode<{ compte_urssaf: unknown }>
+type SortieCompte = ParPériode<{ compte_urssaf: unknown }> // TODO: choisir un type plus précis
 
 export function compte(compte: ParHash<EntréeCompte>): SortieCompte {
   "use strict"

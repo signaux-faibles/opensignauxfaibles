@@ -6,7 +6,7 @@ type Outcome = {
 }
 
 export function lookAhead(
-  data: ParPériode<Record<string, unknown>>,
+  data: ParPériode<Record<string, unknown>>, // TODO: choisir un type plus précis
   attr_name: string,
   n_months: number,
   past: boolean

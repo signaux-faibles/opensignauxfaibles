@@ -18,12 +18,12 @@ type SortieMapCommon = {
 }
 
 type SortieMapEtablissement = SortieMapCommon & {
-  sirene: unknown
+  sirene: unknown // TODO: choisir un type plus précis
   debit: SortieDebit[]
   apconso: EntréeApConso[]
   apdemande: EntréeApDemande[]
   delai: EntréeDelai[]
-  compte: unknown
+  compte: unknown // TODO: supprimer ou choisir un type plus précis ?
   procol: EntréeDéfaillances[]
   periodes: Date[]
   effectif: (number | null)[]

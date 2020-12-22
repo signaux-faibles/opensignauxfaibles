@@ -12,10 +12,10 @@ type Accumulateurs = {
 export type EntrepriseEnSortie = SortieMapEtablissement & Accumulateurs
 
 export type Clé = {
-  batch: unknown
+  batch: unknown // TODO: choisir un type plus précis
   siren: SiretOrSiren
-  periode: unknown
-  type: unknown
+  periode: unknown // TODO: choisir un type plus précis
+  type: unknown // TODO: choisir un type plus précis
 }
 
 type SortieFinalize = Partial<EntrepriseEnSortie>[] | { incomplete: true }
