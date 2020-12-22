@@ -2,6 +2,7 @@ import { f } from "./functions"
 import { EntréeDiane, ParHash, ParPériode, Timestamp } from "../RawDataTypes"
 
 export type SortieDiane = Record<string, unknown> // for *_past_* props of diane. // TODO: définir les props de manière plus précise à l'aide de cette fonctionnalité TS, quand elle sera prête: https://github.com/microsoft/TypeScript/pull/40336
+type YearOffset = 1 | 2
 
 export function entr_diane(
   donnéesDiane: ParHash<EntréeDiane>,
@@ -56,7 +57,7 @@ export function entr_diane(
 
         // Passé
 
-        const past_year_offset = [1, 2]
+        const past_year_offset: YearOffset[] = [1, 2]
         for (const offset of past_year_offset) {
           const periode_offset = f.dateAddMonth(periode, 12 * offset)
           const variable_name = ratio + "_past_" + offset
@@ -103,7 +104,7 @@ export function entr_diane(
           "financier_court_terme",
           "frais_financier",
         ]
-        const past_year_offset = [1, 2]
+        const past_year_offset: YearOffset[] = [1, 2]
         bdf_vars.forEach((k) => {
           if (k in outputInPeriod) {
             past_year_offset.forEach((offset) => {
