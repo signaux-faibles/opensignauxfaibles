@@ -2,7 +2,7 @@
 // Vérifier la compatibilité des types et mesurer la couverture lors du passage
 // de données entre les fonctions map(), reduce() et finalize(), en s'appuyant
 // sur le jeu de données minimal utilisé dans notre suite de bout en bout
-// définie dans test-api.sh.
+// définie dans test.sh.
 
 import test, { ExecutionContext } from "ava"
 import { map } from "./map"
@@ -26,7 +26,7 @@ const removeRandomOrder = (
     delete reporderProp[period]?.random_order
   })
 
-// test data inspired by test-api.sh
+// test data inspired by test.sh
 const siret: SiretOrSiren = "01234567891011"
 const scope: Scope = "etablissement"
 const fromBatchKey = "1910"

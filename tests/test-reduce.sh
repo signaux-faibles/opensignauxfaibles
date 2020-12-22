@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Test de bout en bout de POST /api/data/validate.
-# Inspiré de test-api-export.sh.
+# Test de bout en bout de la commande "reduce" à l'aide de données publiques.
+# Inspiré de test-reduce-2.sh et algo2_tests.ts.
 # Ce script doit être exécuté depuis la racine du projet. Ex: par test-all.sh.
 
 tests/helpers/mongodb-container.sh stop
@@ -10,34 +10,33 @@ set -e # will stop the script if any command fails with a non-zero exit code
 
 # Setup
 FLAGS="$*" # the script will update the golden file if "--update" flag was provided as 1st argument
-INPUT_FILE="tests/input-data/RawData.validation.json"
-GOLDEN_FILE="tests/output-snapshots/test-api-validate.golden.json"
 TMP_DIR="tests/tmp-test-execution-files"
-OUTPUT_FILE="${TMP_DIR}/output.json"
+OUTPUT_FILE="${TMP_DIR}/test-reduce.output.json"
+GOLDEN_FILE="tests/output-snapshots/test-reduce.golden.json"
 mkdir -p "${TMP_DIR}"
 
 # Clean up on exit
 function teardown {
-    tests/helpers/sfdata-wrapper.sh stop || true # keep tearing down, even if "No matching processes belonging to you were found"
     tests/helpers/mongodb-container.sh stop
 }
 trap teardown EXIT
 
 PORT="27016" tests/helpers/mongodb-container.sh start
-
-MONGODB_PORT="27016" tests/helpers/sfdata-wrapper.sh setup
+export MONGODB_PORT="27016" # for tests/helpers/sfdata-wrapper.sh
 
 echo ""
 echo "📝 Inserting test data..."
 sleep 1 # give some time for MongoDB to start
-tests/helpers/mongodb-container.sh run << CONTENT
-  db.RawData.insertMany($(cat ${INPUT_FILE}))
-CONTENT
+tests/helpers/populate-from-objects.sh \
+  | tests/helpers/mongodb-container.sh run
+
+# We create a collection with dummy data which should not remain after the execution of Reduce
+echo "db.Features_TestData.insertOne({a:1})" | tests/helpers/mongodb-container.sh run
 
 echo ""
-echo "💎 Testing sfdata..."
-VALIDATION_REPORT=$(tests/helpers/sfdata-wrapper.sh run validate --collection=RawData)
-echo "- POST /api/data/validate"
+echo "💎 Computing the Features collection..."
+RESULT=$(tests/helpers/sfdata-wrapper.sh reduce --until-batch=1905)
+echo "- sfdata reduce 👉 ${RESULT}"
 
 (tests/helpers/mongodb-container.sh run \
   > "${OUTPUT_FILE}" \
@@ -51,10 +50,16 @@ printjson({
   hasStartDate: !!report.startDate,
 });
 
-print("// Result from /api/data/validate:");
+print("// Documents from db.Features_TestData:");
+printjson(db.Features_TestData.find().toArray());
+
+print("// Response body from sfdata reduce:");
 CONTENT
 
-echo "${VALIDATION_REPORT}" >> "${OUTPUT_FILE}"
+echo "${RESULT}" >> "${OUTPUT_FILE}"
+
+# Display JS errors logged by MongoDB, if any
+tests/helpers/mongodb-container.sh exceptions || true
 
 tests/helpers/diff-or-update-golden-master.sh "${FLAGS}" "${GOLDEN_FILE}" "${OUTPUT_FILE}"
 

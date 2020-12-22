@@ -1,14 +1,7 @@
 #!/bin/bash
 
-# Test de bout en bout de l'API "reduce" à l'aide de données réalistes.
-# Inspiré de test-api.sh et finalize_test.js.
+# Test de bout en bout de la commande "compact".
 # Ce script doit être exécuté depuis la racine du projet. Ex: par test-all.sh.
-#
-# To update golden files: `$ ./test-api-reduce-2.sh --update`
-# 
-# These tests require the presence of private files => Make sure to:
-# - run `$ git secret reveal` before running these tests;
-# - run `$ git secret hide` (to encrypt changes) after updating.
 
 tests/helpers/mongodb-container.sh stop
 
@@ -17,24 +10,23 @@ set -e # will stop the script if any command fails with a non-zero exit code
 # Setup
 FLAGS="$*" # the script will update the golden file if "--update" flag was provided as 1st argument
 TMP_DIR="tests/tmp-test-execution-files"
-OUTPUT_FILE="${TMP_DIR}/reduce-Features.output.json"
-GOLDEN_FILE="tests/output-snapshots/reduce-Features.golden.json"
+OUTPUT_FILE="${TMP_DIR}/test-compact.output.json"
+GOLDEN_FILE="tests/output-snapshots/test-compact.golden.json"
 mkdir -p "${TMP_DIR}"
 
 # Clean up on exit
 function teardown {
-    tests/helpers/sfdata-wrapper.sh stop || true # keep tearing down, even if "No matching processes belonging to you were found"
     tests/helpers/mongodb-container.sh stop
 }
 trap teardown EXIT
 
 PORT="27016" tests/helpers/mongodb-container.sh start
-
-MONGODB_PORT="27016" tests/helpers/sfdata-wrapper.sh setup
+export MONGODB_PORT="27016" # for tests/helpers/sfdata-wrapper.sh
 
 echo ""
 echo "📝 Inserting test data..."
 sleep 1 # give some time for MongoDB to start
+
 tests/helpers/mongodb-container.sh run > /dev/null << CONTENTS
   db.Admin.insertOne({
     "_id" : {
@@ -49,19 +41,50 @@ tests/helpers/mongodb-container.sh run > /dev/null << CONTENTS
     "name" : "TestData"
   })
 
+  db.ImportedData.insertOne({
+    "_id": "random123abc",
+    "value": {
+      "batch": {
+        "1910": {}
+      },
+      "scope": "etablissement",
+      "index": {
+        "algo2": true
+      },
+      "key": "01234567891011"
+    }
+  })
+
   db.RawData.insertMany(
     $(cat tests/input-data/RawData.sample.json)
   )
 CONTENTS
 
 echo ""
-echo "💎 Computing the Features collection..."
-echo "- POST /api/data/reduce 👉 $(tests/helpers/sfdata-wrapper.sh run reduce --until-batch=2002_1)"
+echo "💎 Compacting RawData..."
+RESULT=$(tests/helpers/sfdata-wrapper.sh compact --since-batch=1802)
+echo "- sfdata compact 👉 ${RESULT}"
 
 (tests/helpers/mongodb-container.sh run \
   | tests/helpers/remove-random_order.sh \
   > "${OUTPUT_FILE}" \
-) <<< 'printjson(db.Features_TestData.find().toArray());'
+) << CONTENT
+print("// db.Journal:");
+const report = db.Journal.find().toArray().pop() || {};
+printjson({
+  count: db.Journal.count(),
+  reportType: report.reportType,
+  hasDate: !!report.date,
+  hasStartDate: !!report.startDate,
+});
+
+print("// Documents from db.RawData:");
+printjson(db.RawData.find().toArray());
+
+print("// Response body from sfdata compact:");
+CONTENT
+
+echo "${RESULT}" >> "${OUTPUT_FILE}"
 
 # Display JS errors logged by MongoDB, if any
 tests/helpers/mongodb-container.sh exceptions || true

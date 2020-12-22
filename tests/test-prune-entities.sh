@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Test de bout en bout de l'API "/data/pruneEntities". Inspiré de test-api-purge-batch.sh.
+# Test de bout en bout de la commande "pruneEntities". Inspiré de test-purge-batch.sh.
 # Ce script doit être exécuté depuis la racine du projet. Ex: par test-all.sh.
 
 tests/helpers/mongodb-container.sh stop
@@ -9,19 +9,17 @@ set -e # will stop the script if any command fails with a non-zero exit code
 
 # Setup
 TMP_DIR="tests/tmp-test-execution-files"
-FILTER_FILE="${TMP_DIR}/test-api-prune-entities.filter.csv"
+FILTER_FILE="${TMP_DIR}/test-prune-entities.filter.csv"
 mkdir -p "${TMP_DIR}"
 
 # Clean up on exit
 function teardown {
-    tests/helpers/sfdata-wrapper.sh stop || true # keep tearing down, even if "No matching processes belonging to you were found"
     tests/helpers/mongodb-container.sh stop
 }
 trap teardown EXIT
 
 PORT="27016" tests/helpers/mongodb-container.sh start
-
-MONGODB_PORT="27016" tests/helpers/sfdata-wrapper.sh setup
+export MONGODB_PORT="27016" # for tests/helpers/sfdata-wrapper.sh
 
 echo ""
 echo "📝 Inserting test data..."
@@ -61,8 +59,8 @@ CONTENT
 
 echo ""
 echo "💎 Test: count and prune entities from RawData..."
-API_RESULT=$(tests/helpers/sfdata-wrapper.sh run pruneEntities --batch=2010)
-echo "- POST /api/data/pruneEntities 👉 ${API_RESULT}"
+RESULT=$(tests/helpers/sfdata-wrapper.sh pruneEntities --batch=2010)
+echo "- sfdata pruneEntities 👉 ${RESULT}"
 
 # Print test results from stdin. Fails on any "false" result.
 # Expected format for each line: "<test label> : <true|false>"
@@ -78,7 +76,7 @@ function reportFailedTests {
 ) << CONTENT
   const report = db.Journal.find().toArray().pop() || {};
   Object.entries({
-    "found 2 entities to prune": ${API_RESULT}.count === 2,
+    "found 2 entities to prune": ${RESULT}.count === 2,
     "222222222 was not pruned yet": db.RawData.find({_id: "222222222"}).count() === 1,
     "22222222200000 was not pruned yet": db.RawData.find({_id: "22222222200000"}).count() === 1,
     "Journal has 1 entry": db.Journal.count() === 1,
@@ -88,7 +86,7 @@ function reportFailedTests {
   }).forEach(([ testName, testRes ]) => print(testName, ':', testRes));
 CONTENT
 
-echo "- POST /api/data/pruneEntities delete=true 👉 $(tests/helpers/sfdata-wrapper.sh run pruneEntities --batch=2010 --delete)"
+echo "- sfdata pruneEntities delete=true 👉 $(tests/helpers/sfdata-wrapper.sh pruneEntities --batch=2010 --delete)"
 
 (tests/helpers/mongodb-container.sh run \
   | reportFailedTests \

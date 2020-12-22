@@ -117,29 +117,33 @@ func InsertIntoImportedData(db *mgo.Database) chan *Value {
 		objects := make([]interface{}, 0)
 		i := 0
 
-		for value := range source {
-			if (value.Value.Batch == nil) || i >= 100 {
-				for _, v := range buffer {
-					objects = append(objects, *v)
-				}
-				if len(objects) > 0 {
-					db.C("ImportedData").Insert(objects...)
-				}
-				buffer = make(map[string]*Value)
-				objects = make([]interface{}, 0)
-				i = 0
+		insertObjectsIntoImportedData := func() {
+			for _, v := range buffer {
+				objects = append(objects, *v)
 			}
-			if value.Value.Batch != nil {
-				if knownValue, ok := buffer[value.Value.Key]; ok {
-					newValue, _ := (*knownValue).Merge(*value)
-					buffer[value.Value.Key] = &newValue
-				} else {
-					value.ID = bson.NewObjectId()
-					buffer[value.Value.Key] = value
-					i++
-				}
+			if len(objects) > 0 {
+				db.C("ImportedData").Insert(objects...)
+			}
+			buffer = make(map[string]*Value)
+			objects = make([]interface{}, 0)
+			i = 0
+		}
+
+		for value := range source {
+			if i >= 100 {
+				insertObjectsIntoImportedData()
+			}
+			if knownValue, ok := buffer[value.Value.Key]; ok {
+				newValue, _ := (*knownValue).Merge(*value)
+				buffer[value.Value.Key] = &newValue
+			} else {
+				value.ID = bson.NewObjectId()
+				buffer[value.Value.Key] = value
+				i++
 			}
 		}
+		// le canal a été fermé => importer les données restantes avant de rendre la main
+		insertObjectsIntoImportedData()
 	}(source)
 
 	return source
@@ -147,7 +151,6 @@ func InsertIntoImportedData(db *mgo.Database) chan *Value {
 
 // FlushImportedData finalise l'insertion des données dans ImportedData.
 func FlushImportedData(channel chan *Value) {
-	channel <- &Value{}
 	close(channel)
 	importing.Wait()
 }

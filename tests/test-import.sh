@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Test de bout en bout de l'API "import".
+# Test de bout en bout de la commande "import".
 # Référence: https://github.com/signaux-faibles/documentation/blob/master/processus-traitement-donnees.md#vue-densemble-des-canaux-de-transformation-des-donn%C3%A9es
 # Ce script doit être exécuté depuis la racine du projet. Ex: par test-all.sh.
 
@@ -11,20 +11,18 @@ set -e # will stop the script if any command fails with a non-zero exit code
 # Setup
 FLAGS="$*" # the script will update the golden file if "--update" flag was provided as 1st argument
 TMP_DIR="tests/tmp-test-execution-files"
-OUTPUT_FILE="${TMP_DIR}/test-api-import.output.txt"
-GOLDEN_FILE="tests/output-snapshots/test-api-import.golden.txt"
+OUTPUT_FILE="${TMP_DIR}/test-import.output.txt"
+GOLDEN_FILE="tests/output-snapshots/test-import.golden.txt"
 mkdir -p "${TMP_DIR}"
 
 # Clean up on exit
 function teardown {
-    tests/helpers/sfdata-wrapper.sh stop || true # keep tearing down, even if "No matching processes belonging to you were found"
     tests/helpers/mongodb-container.sh stop
 }
 trap teardown EXIT
 
 PORT="27016" tests/helpers/mongodb-container.sh start
-
-MONGODB_PORT="27016" tests/helpers/sfdata-wrapper.sh setup
+export MONGODB_PORT="27016" # for tests/helpers/sfdata-wrapper.sh
 
 echo ""
 echo "📝 Inserting test data..."
@@ -62,10 +60,10 @@ CONTENTS
 
 echo ""
 echo "💎 Parsing and importing data..."
-echo "- POST /api/data/import 👉 $(tests/helpers/sfdata-wrapper.sh run import --batch=1910 --no-filter)"
+echo "- sfdata import 👉 $(tests/helpers/sfdata-wrapper.sh import --batch=1910 --no-filter)"
 
-VALIDATION_REPORT=$(tests/helpers/sfdata-wrapper.sh run validate --collection=ImportedData)
-echo "- POST /api/data/validate"
+VALIDATION_REPORT=$(tests/helpers/sfdata-wrapper.sh validate --collection=ImportedData)
+echo "- sfdata validate"
 
 (tests/helpers/mongodb-container.sh run \
   | perl -p -e 's/"[0-9a-z]{32}"/"______________Hash______________"/' \
@@ -73,7 +71,7 @@ echo "- POST /api/data/validate"
   | perl -p -e 's/"periode" : ISODate\("....-..-..T..:..:..Z"\)/"periode" : ISODate\("_______ Date _______"\)/' \
   > "${OUTPUT_FILE}" \
 ) << CONTENT
-print("// Documents from db.ImportedData, after call to /api/data/import:");
+print("// Documents from db.ImportedData, after call to sfdata import:");
 printjson(db.ImportedData.find().sort({"value.key":1}).toArray().map(doc => ({
   ...doc,
   value: {
@@ -91,10 +89,16 @@ printjson(db.ImportedData.find().sort({"value.key":1}).toArray().map(doc => ({
     }), {})
   }
 })));
+CONTENT
 
+echo "- sfdata purgeNotCompacted 👉 $(tests/helpers/sfdata-wrapper.sh purgeNotCompacted --i-understand-what-im-doing)"
+
+(tests/helpers/mongodb-container.sh run \
+  >> "${OUTPUT_FILE}" \
+) << CONTENT
 print("// Reports from db.Journal:");
 // on classe les données par type, de manière à ce que l'ordre soit stable
-printjson(db.Journal.find().sort({ parserCode: 1 }).toArray().map(doc => (doc.event ? {
+printjson(db.Journal.find().sort({ reportType: -1, parserCode: 1 }).toArray().map(doc => (doc.event ? {
   event: {
     headRejected: doc.event.headRejected,
     headFatal: doc.event.headFatal,
@@ -112,7 +116,7 @@ printjson(db.Journal.find().sort({ parserCode: 1 }).toArray().map(doc => (doc.ev
   hasStartDate: !!doc.startDate,
 })));
 
-print("// Results of call to /api/data/validate:");
+print("// Results of call to sfdata validate:");
 CONTENT
 
 echo "${VALIDATION_REPORT}" \
@@ -121,6 +125,23 @@ echo "${VALIDATION_REPORT}" \
   | perl -p -e 's/"periode" : ISODate\("....-..-..T..:..:..Z"\)/"periode" : ISODate\("_______ Date _______"\)/' \
   | sort \
   >> "${OUTPUT_FILE}"
+
+# Print test results from stdin. Fails on any "false" result.
+# Expected format for each line: "<test label> : <true|false>"
+function reportFailedTests {
+  while IFS='$\n' read -r line; do
+    echo "  - $line" | (grep --color=always " : false") || true # display failed test
+    echo "  - $line" | grep " : true" # display passing test, and make the test function fail otherwise
+  done
+}
+
+(tests/helpers/mongodb-container.sh run \
+  | reportFailedTests \
+) << CONTENT
+  Object.entries({
+    "ImportedData was emptied by purgeNotCompacted": db.ImportedData.count() === 0,
+  }).forEach(([ testName, testRes ]) => print(testName, ':', testRes));
+CONTENT
 
 # Display JS errors logged by MongoDB, if any
 tests/helpers/mongodb-container.sh exceptions || true

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Test de bout en bout des APIs "reduce" et "public"
+# Test de bout en bout des commandes "reduce" et "public"
 # Source: https://github.com/signaux-faibles/documentation/blob/master/prise-en-main.md#%C3%A9tape-de-calculs-pour-populer-features
 # Ce script doit être exécuté depuis la racine du projet. Ex: par test-all.sh.
 
@@ -11,20 +11,18 @@ set -e # will stop the script if any command fails with a non-zero exit code
 # Setup
 FLAGS="$*" # the script will update the golden file if "--update" flag was provided as 1st argument
 TMP_DIR="tests/tmp-test-execution-files"
-OUTPUT_FILE="${TMP_DIR}/test-api.output.txt"
-GOLDEN_FILE="tests/output-snapshots/test-api.golden.txt"
+OUTPUT_FILE="${TMP_DIR}/test.output.txt"
+GOLDEN_FILE="tests/output-snapshots/test.golden.txt"
 mkdir -p "${TMP_DIR}"
 
 # Clean up on exit
 function teardown {
-    tests/helpers/sfdata-wrapper.sh stop || true # keep tearing down, even if "No matching processes belonging to you were found"
     tests/helpers/mongodb-container.sh stop
 }
 trap teardown EXIT
 
 PORT="27016" tests/helpers/mongodb-container.sh start
-
-MONGODB_PORT="27016" tests/helpers/sfdata-wrapper.sh setup
+export MONGODB_PORT="27016" # for tests/helpers/sfdata-wrapper.sh
 
 echo ""
 echo "📝 Inserting test data..."
@@ -59,19 +57,19 @@ CONTENTS
 
 echo ""
 echo "💎 Computing Features and Public collections..."
-echo "- POST /api/data/compact 👉 $(tests/helpers/sfdata-wrapper.sh run compact --since-batch=1910)"
-echo "- POST /api/data/reduce 👉 $(tests/helpers/sfdata-wrapper.sh run reduce --until-batch=1910 --key=012345678)"
-echo "- POST /api/data/public 👉 $(tests/helpers/sfdata-wrapper.sh run public --until-batch=1910 --key=012345678)"
+echo "- sfdata compact 👉 $(tests/helpers/sfdata-wrapper.sh compact --since-batch=1910)"
+echo "- sfdata reduce 👉 $(tests/helpers/sfdata-wrapper.sh reduce --until-batch=1910 --key=012345678)"
+echo "- sfdata public 👉 $(tests/helpers/sfdata-wrapper.sh public --until-batch=1910 --key=012345678)"
 
 (tests/helpers/mongodb-container.sh run \
   | tests/helpers/remove-random_order.sh \
   > "${OUTPUT_FILE}" \
 ) << CONTENTS
-  print("// Documents from db.RawData, after call to /api/data/compact:");
+  print("// Documents from db.RawData, after call to sfdata compact:");
   printjson(db.RawData.find().toArray());
-  print("// Documents from db.Features_debug, after call to /api/data/reduce:");
+  print("// Documents from db.Features_debug, after call to sfdata reduce:");
   printjson(db.Features_debug.find().toArray());
-  print("// Documents from db.Public_debug, after call to /api/data/public:");
+  print("// Documents from db.Public_debug, after call to sfdata public:");
   printjson(db.Public_debug.find().toArray());
 CONTENTS
 

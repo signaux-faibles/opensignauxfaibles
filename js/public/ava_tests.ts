@@ -2,7 +2,7 @@
 // Vérifier la compatibilité des types et mesurer la couverture lors du passage
 // de données entre les fonctions map(), reduce() et finalize(), en s'appuyant
 // sur le jeu de données minimal utilisé dans notre suite de bout en bout
-// définie dans test-api.sh.
+// définie dans test.sh.
 
 import test, { ExecutionContext } from "ava"
 import { map } from "./map"
@@ -12,7 +12,7 @@ import { runMongoMap } from "../test/helpers/mongodb"
 import { setGlobals } from "../test/helpers/setGlobals"
 import { Scope, SiretOrSiren } from "../RawDataTypes"
 
-// test data inspired by test-api.sh
+// test data inspired by test.sh
 const siret: SiretOrSiren = "01234567891011"
 const scope: Scope = "etablissement"
 const batchKey = "1910"

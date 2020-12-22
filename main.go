@@ -1,17 +1,16 @@
 package main
 
 import (
-	"errors"
-	"flag"
 	"fmt"
 	"os"
+	"reflect"
 	"strings"
+
+	cosFlag "github.com/cosiner/flag"
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/engine"
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/naf"
-
-	_ "github.com/signaux-faibles/opensignauxfaibles/docs"
 )
 
 func connectDb() {
@@ -27,117 +26,92 @@ func connectDb() {
 
 // main Fonction Principale
 func main() {
-	err := runCommand(os.Args[1:])
-	if err != nil {
-		fmt.Println(err)
+	cmdHandlerWithArgs := parseCommandFromArgs()
+	// exit if no command was recognized in args
+	if cmdHandlerWithArgs == nil {
+		fmt.Printf("Commande non reconnue. Utilisez %v --help pour lister les commandes.\n", strings.Join(os.Args, " "))
 		os.Exit(1)
+		return
+	}
+	// validate command parameters
+	if err := cmdHandlerWithArgs.Validate(); err != nil {
+		fmt.Printf("Erreur: %v. Utilisez %v --help pour consulter la documentation.", err, strings.Join(os.Args, " "))
+		os.Exit(2)
+	}
+	// execute the command
+	connectDb()
+	if err := cmdHandlerWithArgs.Run(); err != nil {
+		fmt.Printf("\nErreur: %v\n", err)
+		os.Exit(3)
 	}
 	engine.FlushEventQueue()
 }
 
-var cmds = map[string]commandDefinition{
-	// TODO: convert api.GET("/data/purgeNotCompacted", purgeNotCompactedHandler)
-	"purge": func(args []string) error {
-		var params purgeBatchParams // TODO: also populate other parameters
-		flag.StringVar(&params.FromBatchKey, "since-batch", "", "Batch identifier")
-		flag.BoolVar(&params.IUnderstandWhatImDoing, "i-understand-what-im-doing", false, "Confirm data deletion")
-		flag.CommandLine.Parse(args)
-		connectDb()
-		return purgeBatchHandler(params) // [x] écrit dans Journal
-	},
-	"check": func(args []string) error {
-		var parsers string
-		params := checkBatchParams{}
-		flag.StringVar(&params.BatchKey, "batch", "", "Batch identifier")
-		flag.StringVar(&parsers, "parsers", "", "List of parsers")
-		flag.CommandLine.Parse(args)
-		params.Parsers = strings.Split(parsers, ",")
-		connectDb()
-		return checkBatchHandler(params) // [x] écrit dans Journal
-	},
-	"pruneEntities": func(args []string) error {
-		params := pruneEntitiesParams{}
-		flag.StringVar(&params.BatchKey, "batch", "", "Batch identifier")
-		flag.BoolVar(&params.Delete, "delete", false, "Delete entities")
-		flag.CommandLine.Parse(args)
-		connectDb()
-		return pruneEntitiesHandler(params) // [x] écrit dans Journal
-	},
-	"import": func(args []string) error {
-		params := importBatchParams{} // TODO: also populate other parameters
-		flag.StringVar(&params.BatchKey, "batch", "", "Batch identifier")
-		flag.BoolVar(&params.NoFilter, "no-filter", false, "Tolerate the absence of filter/perimeter file")
-		flag.CommandLine.Parse(args)
-		connectDb()
-		return importBatchHandler(params) // [x] écrit dans Journal
-	},
-	"validate": func(args []string) error {
-		params := validateParams{}
-		flag.StringVar(&params.Collection, "collection", "", "Name of the collection to validate")
-		flag.CommandLine.Parse(args)
-		connectDb()
-		return validateHandler(params) // [x] écrit dans Journal
-	},
-	"compact": func(args []string) error {
-		params := compactParams{}
-		flag.StringVar(&params.FromBatchKey, "since-batch", "", "Batch identifier")
-		flag.CommandLine.Parse(args)
-		connectDb()
-		return compactHandler(params) // [x] écrit dans Journal
-	},
-	"reduce": func(args []string) error {
-		params := reduceParams{} // TODO: also populate other parameters
-		flag.StringVar(&params.BatchKey, "until-batch", "", "Batch identifier")
-		flag.StringVar(&params.Key, "key", "", "SIRET or SIREN to focus on")
-		flag.CommandLine.Parse(args)
-		connectDb()
-		return reduceHandler(params) // [x] écrit dans Journal
-	},
-	"public": func(args []string) error {
-		params := publicParams{}
-		flag.StringVar(&params.BatchKey, "until-batch", "", "Batch identifier")
-		flag.StringVar(&params.Key, "key", "", "SIRET or SIREN to focus on")
-		flag.CommandLine.Parse(args)
-		connectDb()
-		return publicHandler(params) // [x] écrit dans Journal
-	},
-	"etablissements": func(args []string) error {
-		params := exportParams{}
-		flag.StringVar(&params.Key, "key", "", "SIRET or SIREN to export")
-		flag.CommandLine.Parse(args)
-		connectDb()
-		return exportEtablissementsHandler(params) // TODO: écrire rapport dans Journal ?
-	},
-	"entreprises": func(args []string) error {
-		params := exportParams{}
-		flag.StringVar(&params.Key, "key", "", "SIRET or SIREN to export")
-		flag.CommandLine.Parse(args)
-		connectDb()
-		return exportEntreprisesHandler(params) // TODO: écrire rapport dans Journal ?
-	},
+// Ask cosiner/flag to parse arguments
+func parseCommandFromArgs() commandHandler {
+	var actualArgs = cliCommands{}
+	actualArgs.populateFromArgs()
+	for _, cmdHandlerWithArgs := range actualArgs.index() {
+		if cmdHandlerWithArgs.IsEnabled() {
+			return cmdHandlerWithArgs
+		}
+	}
+	return nil
 }
 
-type commandDefinition func(args []string) error
-
-func runCommand(args []string) error {
-	if len(args) < 1 {
-		printSupportedCommands()
-		return errors.New("Error: You must pass a command")
-	}
-
-	command := os.Args[1]
-	commandFct := cmds[command]
-	if commandFct != nil {
-		return commandFct(os.Args[2:])
-	}
-
-	printSupportedCommands()
-	return fmt.Errorf("Unknown command: %s", command)
+// Interface that each command should implement
+type commandHandler interface {
+	Documentation() cosFlag.Flag // returns documentation to display in the CLI
+	IsEnabled() bool             // returns true when the user invokes this command from the CLI
+	Validate() error             // returns an error if some command parameters don't meet expectations
+	Run() error                  // executes the command and return an error if it fails
 }
 
-func printSupportedCommands() {
-	fmt.Println("Supported commands:")
-	for cmd := range cmds {
-		fmt.Printf(" - %s\n", cmd)
+// List of command handlers that cosiner/flag should recognize in CLI arguments.
+// Each entry will be populated with parameters parsed from command line arguments.
+// Each entry must implement the commandHandler interface.
+type cliCommands struct {
+	Purge             purgeBatchHandler
+	Check             checkBatchHandler
+	PruneEntities     pruneEntitiesHandler
+	Import            importBatchHandler
+	PurgeNotCompacted purgeNotCompactedHandler
+	Validate          validateHandler
+	Compact           compactHandler
+	Reduce            reduceHandler
+	Public            publicHandler
+	Etablissements    exportEtablissementsHandler
+	Entreprises       exportEntreprisesHandler
+}
+
+func (cmds *cliCommands) populateFromArgs() {
+	flagSet := cosFlag.NewFlagSet(cosFlag.Flag{})
+	_ = flagSet.ParseStruct(cmds, os.Args...) // may panic with "unexpected non-flag value: unknown_command"
+}
+
+// Metadata returns the documentation that will be displayed by cosiner/flag
+// if the user invokes "--help", or if some parameters are invalid.
+func (cmds *cliCommands) Metadata() map[string]cosFlag.Flag {
+	commandMetadata := map[string]cosFlag.Flag{}
+	// we use reflection to get the documentation of each prop from cliCommands
+	for cmdName, cmdArgs := range cmds.index() {
+		commandMetadata[cmdName] = cmdArgs.Documentation()
 	}
+	return commandMetadata
+}
+
+// List and index the commandHandler entries, using reflection.
+func (cmds *cliCommands) index() map[string]commandHandler {
+	commandByName := map[string]commandHandler{}
+	supportedCommands := reflect.ValueOf(*cmds)
+	for i := 0; i < supportedCommands.NumField(); i++ {
+		fieldName := supportedCommands.Type().Field(i).Name                    // e.g. "PruneEntities"
+		cmdName := strings.ToLower(fieldName[0:1]) + fieldName[1:]             // e.g. "pruneEntities"
+		cmdArgs, ok := supportedCommands.Field(i).Interface().(commandHandler) // e.g. pruneEntitiesHandler instance
+		if ok != true {
+			panic(fmt.Sprintf("Property %v of type cliCommands is not an instance of commandHandler", fieldName))
+		}
+		commandByName[cmdName] = cmdArgs
+	}
+	return commandByName
 }

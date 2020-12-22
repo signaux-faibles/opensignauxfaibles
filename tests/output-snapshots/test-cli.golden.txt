@@ -1,0 +1,218 @@
+
+$ ./sfdata
+Commande non reconnue. Utilisez ./sfdata --help pour lister les commandes.
+---
+$ ./sfdata unknown_command
+unexpected non-flag value: [sfdata] unknown_command
+
+---
+$ ./sfdata --help
+Usage:
+	sfdata [FLAG|SET]...
+
+Flags:
+	-h, --help    show help (type: bool)
+	-v, --verbose show verbose help (type: bool)
+
+Sets:
+	purge             Supprime une partie des données compactées
+	check             Vérifie la validité d'un batch avant son importation
+	pruneEntities     Compte/supprime les entités hors périmètre
+	import            Importe des fichiers de données
+	purgeNotCompacted Vide la collection ImportedData
+	validate          Liste les entrées de données invalides
+	compact           Compacte la base de données
+	reduce            Calcule les variables destinées à la prédiction
+	public            Génère les données destinées au site web
+	etablissements    Exporte la liste des établissements
+	entreprises       Exporte la liste des entreprises
+---
+$ ./sfdata purge
+Erreur: paramètre `since-batch` obligatoire. Utilisez ./sfdata purge --help pour consulter la documentation.
+---
+$ ./sfdata purge --help
+Supprime une partie des données compactées
+
+Usage:
+	purge [FLAG]...
+
+Description:
+	/!\ ce traitement est destructif et irréversible /!\
+	Supprime les données dans les objets de la collection RawData pour les batches suivant le numéro de batch donné.
+	La propriété "debugForKey" permet de traiter une entreprise en fournissant son siren, le résultat n'impacte pas la collection RawData mais est déversé dans purgeBatch_debug à des fins de vérifications.
+	Lorsque "key" n'est pas fourni, le traitement s'exécute sur l'ensemble de la base, et dans ce cas le flag --i-understand-what-im-doing doit être fourni pour confirmer la décision de suppression.
+	Répond "ok" dans la sortie standard, si le traitement s'est bien déroulé.
+	/!\ ce traitement est destructif et irréversible /!\
+
+Flags:
+	--since-batch batch_key  (type: string)
+		Identifiant du batch à partir duquel supprimer les données (ex: 1802, pour Février 2018)
+	--debug-for-key          (type: string)
+		Numéro SIRET or SIREN d'une entité à déboguer (ex: 012345678901234)
+	--i-understand-what-im-doing (type: bool)
+		Nécessaire pour confirmer la suppression de données
+---
+$ ./sfdata check --help
+Vérifie la validité d'un batch avant son importation
+
+Usage:
+	check [FLAG]...
+
+Description:
+	Vérifie la validité du batch sur le point d'être importé et des fichiers qui le constituent.
+	Il est possible de limiter l'exécution à certains parsers en spécifiant la liste dans le flag "--parsers".
+	Répond avec un propriété JSON "reports" qui contient les rapports textuels de parsing de chaque fichier.
+
+Flags:
+	--batch batch_key (type: string)
+		Identifiant du batch à vérifier (ex: 1802, pour Février 2018)
+	--parsers         (type: []string)
+		Parseurs à employer (ex: altares,cotisation)
+---
+$ ./sfdata pruneEntities --help
+Compte/supprime les entités hors périmètre
+
+Usage:
+	pruneEntities [FLAG]...
+
+Description:
+	Compte ou supprime dans la collection "RawData" les entités (établissements et entreprises)
+	non listées dans le filtre de périmètre du batch spécifié.
+	Répond avec un propriété JSON "count" qui vaut le nombre d'entités hors périmètre comptées ou supprimées.
+
+Flags:
+	--batch batch_key (type: string)
+		Identifiant du batch à nettoyer (ex: 1802, pour Février 2018)
+	--delete          (type: bool)
+		Nécessaire pour confirmer la suppression de données
+---
+$ ./sfdata import --help
+Importe des fichiers de données
+
+Usage:
+	import [FLAG]...
+
+Description:
+	Effectue l'import de tous les fichiers du batch donné en paramètre.
+	Il est possible de limiter l'exécution à certains parsers en spécifiant la liste dans le flag "--parsers".
+	Répond "ok" dans la sortie standard, si le traitement s'est bien déroulé.
+
+Flags:
+	--batch batch_key (type: string)
+		Identifiant du batch à importer (ex: 1802, pour Février 2018)
+	--parsers         (type: []string)
+		Parseurs à employer (ex: altares,cotisation)
+	--no-filter       (type: bool)
+		Pour procéder à l'importation même si aucun filtre n'est fourni
+---
+$ ./sfdata validate --help
+Liste les entrées de données invalides
+
+Usage:
+	validate [FLAG]...
+
+Description:
+	Vérifie la validité des entrées de données contenues dans les documents de la collection RawData ou ImportedData.
+	Répond en listant dans la sortie standard les entrées invalides au format JSON.
+
+Flags:
+	--collection RawData|ImportedData (type: string)
+		Nom de la collection à valider
+---
+$ ./sfdata compact --help
+Compacte la base de données
+
+Usage:
+	compact [FLAG]...
+
+Description:
+	Ce traitement permet le compactage de la base de données.
+	Ce compactage a pour effet de réduire tous les objets en clé uniques comportant dans la même arborescence toutes les données en rapport avec ces clés.
+	Ce traitement est nécessaire avant l'usage des commandes "reduce" et "public", après chaque import de données.
+	Répond "ok" dans la sortie standard, si le traitement s'est bien déroulé.
+
+Flags:
+	--since-batch batch_key (type: string)
+		Identifiant du batch à partir duquel compacter (ex: 1802, pour Février 2018)
+---
+$ ./sfdata reduce --help
+Calcule les variables destinées à la prédiction
+
+Usage:
+	reduce [FLAG]...
+
+Description:
+	Alimente la collection Features en calculant les variables avec le traitement map-reduce "reduce.algo2".
+	Le traitement remplace les objets similaires en sortie du calcul dans la collection Features, les objets non concernés par le traitement ne seront ainsi pas remplacés, de sorte que si un seul siret est demandé le calcul ne remplacera qu'un seul objet.
+	Ces traitements ne prennent en compte que les objets déjà compactés.
+	Répond "ok" dans la sortie standard, si le traitement s'est bien déroulé.
+
+Flags:
+	--until-batch batch_key (type: string)
+		Identifiant du batch jusqu'auquel calculer (ex: 1802, pour Février 2018)
+	--key                   (type: string)
+		Numéro SIRET or SIREN d'une entité à calculer exclusivement
+	--from                  (type: string)
+	--to                    (type: string)
+	--type all|apart        (type: []string)
+		Sélection des types de données qui vont être calculés ou recalculés
+---
+$ ./sfdata public --help
+Génère les données destinées au site web
+
+Usage:
+	public [FLAG]...
+
+Description:
+	Alimente la collection Public avec les objets calculés pour le batch cité en paramètre, à partir de la collection RawData.
+	Le traitement prend en paramètre la clé du batch (obligatoire) et un SIREN (optionnel). Lorsque le SIREN n'est pas précisé, tous les objets liés au batch sont traités.
+	Répond "ok" dans la sortie standard, si le traitement s'est bien déroulé.
+
+Flags:
+	--until-batch batch_key (type: string)
+		Identifiant du batch jusqu'auquel calculer (ex: 1802, pour Février 2018)
+	--key                   (type: string)
+		Numéro SIRET or SIREN d'une entité à calculer exclusivement
+---
+$ ./sfdata etablissements --help
+Exporte la liste des établissements
+
+Usage:
+	etablissements [FLAG]...
+
+Description:
+	Exporte la liste des établissements depuis la collection Public.
+	Répond dans la sortie standard une ligne JSON par établissement.
+
+Flags:
+	--key        (type: string)
+		Numéro SIREN à utiliser pour filtrer les résultats (ex: 012345678)
+---
+$ ./sfdata entreprises --help
+Exporte la liste des entreprises
+
+Usage:
+	entreprises [FLAG]...
+
+Description:
+	Exporte la liste des entreprises depuis la collection Public.
+	Répond dans la sortie standard une ligne JSON par entreprise.
+
+Flags:
+	--key        (type: string)
+		Numéro SIREN à utiliser pour filtrer les résultats (ex: 012345678)
+---
+$ ./sfdata purgeNotCompacted --help
+Vide la collection ImportedData
+
+Usage:
+	purgeNotCompacted [FLAG]...
+
+Description:
+	Vide la collection "ImportedData".
+	Répond "ok" dans la sortie standard, si le traitement s'est bien déroulé.
+
+Flags:
+	--i-understand-what-im-doing (type: bool)
+		Nécessaire pour confirmer la suppression de données
+---
