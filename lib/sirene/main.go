@@ -285,8 +285,7 @@ func parseLine(f map[string]int, row []string, parsedLine *marshal.ParsedLineRes
 		}
 	}
 
-	loc, _ := time.LoadLocation("Europe/Paris")
-	creation, err := time.ParseInLocation("2006-01-02", row[f["dateCreationEtablissement"]], loc) // note: cette date n'est pas toujours présente, et on ne souhaite pas être rapporter d'erreur en cas d'absence
+	creation, err := time.Parse("2006-01-02", row[f["dateCreationEtablissement"]]) // note: cette date n'est pas toujours présente, et on ne souhaite pas être rapporter d'erreur en cas d'absence
 	if err == nil {
 		sirene.Creation = &creation
 	}

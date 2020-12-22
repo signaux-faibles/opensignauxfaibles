@@ -11,7 +11,7 @@
       "departement": "64",
       "code_activite": "94.7h",
       "nomen_activite": "NAFRev1",
-      "date_creation": "2007-04-20T00:00:00+02:00",
+      "date_creation": "2007-04-20T00:00:00Z",
       "longitude": 6.1256,
       "latitude": 14.106745
     },
@@ -44,7 +44,7 @@
       "departement": "83",
       "code_activite": "28.4x",
       "nomen_activite": "NAFRev1",
-      "date_creation": "2007-04-20T00:00:00+02:00",
+      "date_creation": "2007-04-20T00:00:00Z",
       "longitude": 5.52488,
       "latitude": 65.448048
     }

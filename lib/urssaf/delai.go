@@ -122,14 +122,13 @@ func (parser *delaiParser) ParseLines(parsedLineChan chan marshal.ParsedLineResu
 
 func parseDelaiLine(row []string, idx colMapping, siret string, parsedLine *marshal.ParsedLineResult) {
 	var err error
-	loc, _ := time.LoadLocation("Europe/Paris")
 	delai := Delai{}
 	delai.key = siret
 	delai.NumeroCompte = row[idx["NumeroCompte"]]
 	delai.NumeroContentieux = row[idx["NumeroContentieux"]]
-	delai.DateCreation, err = time.ParseInLocation("02/01/2006", row[idx["DateCreation"]], loc)
+	delai.DateCreation, err = time.Parse("02/01/2006", row[idx["DateCreation"]])
 	parsedLine.AddRegularError(err)
-	delai.DateEcheance, err = time.ParseInLocation("02/01/2006", row[idx["DateEcheance"]], loc)
+	delai.DateEcheance, err = time.Parse("02/01/2006", row[idx["DateEcheance"]])
 	parsedLine.AddRegularError(err)
 	delai.DureeDelai, err = strconv.Atoi(row[idx["DureeDelai"]])
 	delai.Denomination = row[idx["Denomination"]]
