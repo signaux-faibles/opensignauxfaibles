@@ -67,7 +67,6 @@ VALIDATION_REPORT=$(tests/helpers/sfdata-wrapper.sh validate --collection=Import
 echo "- sfdata validate"
 
 (tests/helpers/mongodb-container.sh run \
-  | perl -p -e 's/"[0-9a-z]{32}"/"______________Hash______________"/' \
   | perl -p -e 's/"[0-9a-z]{24}"/"________ObjectId________"/' \
   | perl -p -e 's/"periode" : ISODate\("....-..-..T..:..:..Z"\)/"periode" : ISODate\("_______ Date _______"\)/' \
   > "${OUTPUT_FILE}" \
@@ -90,7 +89,13 @@ printjson(db.ImportedData.find().sort({"value.key":1}).toArray().map(doc => ({
     }), {})
   }
 })));
+CONTENT
 
+echo "- sfdata purgeNotCompacted 👉 $(tests/helpers/sfdata-wrapper.sh purgeNotCompacted --i-understand-what-im-doing)"
+
+(tests/helpers/mongodb-container.sh run \
+  >> "${OUTPUT_FILE}" \
+) << CONTENT
 print("// Reports from db.Journal:");
 // on classe les données par type, de manière à ce que l'ordre soit stable
 printjson(db.Journal.find().sort({ reportType: -1, parserCode: 1 }).toArray().map(doc => (doc.event ? {
@@ -115,11 +120,27 @@ print("// Results of call to sfdata validate:");
 CONTENT
 
 echo "${VALIDATION_REPORT}" \
-  | perl -p -e 's/"[0-9a-z]{32}"/"______________Hash______________"/' \
   | perl -p -e 's/"[0-9a-z]{24}"/"________ObjectId________"/' \
   | perl -p -e 's/"periode" : ISODate\("....-..-..T..:..:..Z"\)/"periode" : ISODate\("_______ Date _______"\)/' \
   | sort \
   >> "${OUTPUT_FILE}"
+
+# Print test results from stdin. Fails on any "false" result.
+# Expected format for each line: "<test label> : <true|false>"
+function reportFailedTests {
+  while IFS='$\n' read -r line; do
+    echo "  - $line" | (grep --color=always " : false") || true # display failed test
+    echo "  - $line" | grep " : true" # display passing test, and make the test function fail otherwise
+  done
+}
+
+(tests/helpers/mongodb-container.sh run \
+  | reportFailedTests \
+) << CONTENT
+  Object.entries({
+    "ImportedData was emptied by purgeNotCompacted": db.ImportedData.count() === 0,
+  }).forEach(([ testName, testRes ]) => print(testName, ':', testRes));
+CONTENT
 
 # Display JS errors logged by MongoDB, if any
 tests/helpers/mongodb-container.sh exceptions || true
