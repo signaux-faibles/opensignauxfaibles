@@ -40,7 +40,7 @@ Description:
 	/!\ ce traitement est destructif et irréversible /!\
 	Supprime les données dans les objets de la collection RawData pour les batches suivant le numéro de batch donné.
 	La propriété "debugForKey" permet de traiter une entreprise en fournissant son siren, le résultat n'impacte pas la collection RawData mais est déversé dans purgeBatch_debug à des fins de vérifications.
-	Lorsque "key" n'est pas fourni, le traitement s'exécute sur l'ensemble de la base, et dans ce cas la propriété IUnderstandWhatImDoing doit être fournie à la valeur "true" sans quoi le traitement refusera de se lancer.
+	Lorsque "key" n'est pas fourni, le traitement s'exécute sur l'ensemble de la base, et dans ce cas le flag --i-understand-what-im-doing doit être fourni pour confirmer la décision de suppression.
 	Répond "ok" dans la sortie standard, si le traitement s'est bien déroulé.
 	/!\ ce traitement est destructif et irréversible /!\
 
@@ -60,7 +60,7 @@ Usage:
 
 Description:
 	Vérifie la validité du batch sur le point d'être importé et des fichiers qui le constituent.
-	 Il est possible de limiter l'exécution à certains parsers en spécifiant la liste dans le flag `--parsers`.
+	Il est possible de limiter l'exécution à certains parsers en spécifiant la liste dans le flag "--parsers".
 	Répond avec un propriété JSON "reports" qui contient les rapports textuels de parsing de chaque fichier.
 
 Flags:
@@ -94,7 +94,7 @@ Usage:
 
 Description:
 	Effectue l'import de tous les fichiers du batch donné en paramètre.
-	Pour exécuter tous les parsers, il faut ne pas spécifier la propriété parsers ou lui donner la valeur null.
+	Il est possible de limiter l'exécution à certains parsers en spécifiant la liste dans le flag "--parsers".
 	Répond "ok" dans la sortie standard, si le traitement s'est bien déroulé.
 
 Flags:
@@ -142,7 +142,7 @@ Usage:
 	reduce [FLAG]...
 
 Description:
-	Alimente la collection Features en calculant les variables avec le traitement mapreduce `reduce.algo2`.
+	Alimente la collection Features en calculant les variables avec le traitement map-reduce "reduce.algo2".
 	Le traitement remplace les objets similaires en sortie du calcul dans la collection Features, les objets non concernés par le traitement ne seront ainsi pas remplacés, de sorte que si un seul siret est demandé le calcul ne remplacera qu'un seul objet.
 	Ces traitements ne prennent en compte que les objets déjà compactés.
 	Répond "ok" dans la sortie standard, si le traitement s'est bien déroulé.

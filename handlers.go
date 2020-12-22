@@ -38,7 +38,7 @@ func (params purgeBatchHandler) Documentation() flag.Flag {
 		/!\ ce traitement est destructif et irréversible /!\
 		Supprime les données dans les objets de la collection RawData pour les batches suivant le numéro de batch donné.
 		La propriété "debugForKey" permet de traiter une entreprise en fournissant son siren, le résultat n'impacte pas la collection RawData mais est déversé dans purgeBatch_debug à des fins de vérifications.
-		Lorsque "key" n'est pas fourni, le traitement s'exécute sur l'ensemble de la base, et dans ce cas la propriété IUnderstandWhatImDoing doit être fournie à la valeur "true" sans quoi le traitement refusera de se lancer.
+		Lorsque "key" n'est pas fourni, le traitement s'exécute sur l'ensemble de la base, et dans ce cas le flag --i-understand-what-im-doing doit être fourni pour confirmer la décision de suppression.
 		Répond "ok" dans la sortie standard, si le traitement s'est bien déroulé.
 		/!\ ce traitement est destructif et irréversible /!\
 		`,
