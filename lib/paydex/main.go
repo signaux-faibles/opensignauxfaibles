@@ -1,3 +1,9 @@
+// Le Paydex – index de paiement – mesure statistiquement la régularité de
+// paiement d’une entreprise vis-à-vis de ses fournisseurs.
+// Il est exprimé en nombre de jours de retard de paiement moyen,
+// basé sur trois expériences de paiement minimum
+// (provenant de trois fournisseurs distincts).
+
 package paydex
 
 import (
