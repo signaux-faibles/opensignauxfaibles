@@ -93,7 +93,7 @@ func (params importBatchHandler) Documentation() flag.Flag {
 		Usage: "Importe des fichiers de données",
 		Desc: `
 		Effectue l'import de tous les fichiers du batch donné en paramètre.
-		Pour exécuter tous les parsers, il faut ne pas spécifier la propriété parsers ou lui donner la valeur null.
+		Il est possible de limiter l'exécution à certains parsers en spécifiant la liste dans le flag "--parsers".
 		Répond "ok" dans la sortie standard, si le traitement s'est bien déroulé.
 	`,
 	}
@@ -146,7 +146,7 @@ func (params checkBatchHandler) Documentation() flag.Flag {
 		Usage: "Vérifie la validité d'un batch avant son importation",
 		Desc: `
 		Vérifie la validité du batch sur le point d'être importé et des fichiers qui le constituent.
-		Pour exécuter tous les parsers, il faut ne pas spécifier la propriété parsers ou lui donner la valeur null.
+		Il est possible de limiter l'exécution à certains parsers en spécifiant la liste dans le flag "--parsers".
 		Répond avec un propriété JSON "reports" qui contient les rapports textuels de parsing de chaque fichier.
 	`,
 	}

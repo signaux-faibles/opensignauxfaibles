@@ -22,7 +22,7 @@ func (params reduceHandler) Documentation() flag.Flag {
 	return flag.Flag{
 		Usage: "Calcule les variables destinées à la prédiction",
 		Desc: `
-		Alimente la collection Features en calculant les variables avec le traitement mapreduce demandé dans la propriété "features".
+		Alimente la collection Features en calculant les variables avec le traitement map-reduce "reduce.algo2".
 		Le traitement remplace les objets similaires en sortie du calcul dans la collection Features, les objets non concernés par le traitement ne seront ainsi pas remplacés, de sorte que si un seul siret est demandé le calcul ne remplacera qu'un seul objet.
 		Ces traitements ne prennent en compte que les objets déjà compactés.
 		Répond "ok" dans la sortie standard, si le traitement s'est bien déroulé.
@@ -73,11 +73,7 @@ func (params publicHandler) Documentation() flag.Flag {
 		Usage: "Génère les données destinées au site web",
 		Desc: `
 		Alimente la collection Public avec les objets calculés pour le batch cité en paramètre, à partir de la collection RawData.
-		Le traitement prend en paramètre la clé du batch (obligatoire) et un SIREN (optionnel). Lorsque le SIREN n'est pas précisé, tous les objets lié au batch sont traités, à conditions qu'ils soient dans le périmètre de scoring "algo2".
-		Cette collection sera ensuite accédée par les utilisateurs pour consulter les données des entreprises.
-		Des niveaux d'accéditation fins (ligne ou colonne) pour la consultation de ces données peuvent être mis en oeuvre.
-		Ces filtrages sont effectués grace à la notion de scope. Les objets et les utilisateurs disposent d'un ensemble de tags et les objets partageant au moins un tag avec les utilisateurs peuvent être consultés par ceux-ci.
-		Ces tags sont exploités pour traiter la notion de région (ligne) mais aussi les permissions (colonne).
+		Le traitement prend en paramètre la clé du batch (obligatoire) et un SIREN (optionnel). Lorsque le SIREN n'est pas précisé, tous les objets liés au batch sont traités.
 		Répond "ok" dans la sortie standard, si le traitement s'est bien déroulé.
 		`,
 	}
