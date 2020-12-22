@@ -33,13 +33,15 @@
       "event": {
         "batchKey": "",
         "headFatal": [],
-        "headRejected": [],
+        "headRejected": [
+          "Line 3: invalid date: 01/15/2019"
+        ],
         "isFatal": false,
-        "linesParsed": 5,
-        "linesRejected": 0,
+        "linesParsed": 6,
+        "linesRejected": 1,
         "linesSkipped": 0,
         "linesValid": 5,
-        "summary": "testData/paydexTestData.csv: intégration terminée, 5 lignes traitées, 0 erreurs fatales, 0 lignes rejetées, 0 lignes filtrées, 5 lignes valides"
+        "summary": "testData/paydexTestData.csv: intégration terminée, 6 lignes traitées, 0 erreurs fatales, 1 lignes rejetées, 0 lignes filtrées, 5 lignes valides"
       },
       "priority": "info",
       "parserCode": "paydex",

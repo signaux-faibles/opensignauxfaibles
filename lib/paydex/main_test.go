@@ -13,15 +13,23 @@ import (
 var update = flag.Bool("update", false, "Update the expected test values in golden file")
 
 func TestPaydex(t *testing.T) {
-	t.Run("can parse a line", func(t *testing.T) {
+	t.Run("should parse a valid row", func(t *testing.T) {
 		row := []string{"000000001", "2", "2 jours", "15/12/2018"}
 		expected := Paydex{
 			Siren:      "000000001",
-			DateValeur: time.Date(2018, 12, 01, 00, 00, 00, 0, time.UTC),
+			DateValeur: time.Date(2018, 12, 15, 00, 00, 00, 0, time.UTC),
 			NbJours:    2,
 		}
-		actual := parsePaydexLine(row)
-		assert.Equal(t, expected, actual)
+		actual, err := parsePaydexLine(row)
+		assert.Equal(t, expected, *actual)
+		assert.Equal(t, nil, err)
+	})
+
+	t.Run("should report parse error on invalid date", func(t *testing.T) {
+		row := []string{"000000001", "2", "2 jours", "12/15/2018"} // "15" is in the "month" slot
+		actual, err := parsePaydexLine(row)
+		assert.EqualError(t, err, "invalid date: 12/15/2018")
+		assert.Nil(t, actual)
 	})
 
 	t.Run("generate the right tuples and events from test file", func(t *testing.T) {

@@ -9,8 +9,8 @@ package paydex
 import (
 	"bufio"
 	"encoding/csv"
+	"fmt"
 	"io"
-	"log"
 	"os"
 	"strconv"
 	"time"
@@ -87,26 +87,31 @@ func (parser *paydexParser) ParseLines(parsedLineChan chan marshal.ParsedLineRes
 		} else if err != nil {
 			parsedLine.AddRegularError(err)
 		} else {
-			parsedLine.AddTuple(parsePaydexLine(row))
+			paydex, err := parsePaydexLine(row)
+			if err != nil {
+				parsedLine.AddRegularError(err)
+			} else {
+				parsedLine.AddTuple(paydex)
+			}
 		}
 		parsedLineChan <- parsedLine
 	}
 }
 
-func parsePaydexLine(row []string) Paydex {
+func parsePaydexLine(row []string) (*Paydex, error) {
 	dateValeur, err := time.Parse("02/01/2006", row[3])
 	if err != nil {
-		log.Fatalf("invalid date: %v", row[3])
+		return nil, fmt.Errorf("invalid date: %v", row[3])
 	}
 	nbJours, err := strconv.Atoi(row[1])
 	if err != nil {
-		log.Fatalf("invalid date: %v", row[3])
+		return nil, fmt.Errorf("invalid date: %v", row[3])
 	}
-	return Paydex{
+	return &Paydex{
 		Siren:      row[0],
 		DateValeur: dateValeur,
 		NbJours:    nbJours,
-	}
+	}, nil
 }
 
 // TODO: ajouter détection de colonnes

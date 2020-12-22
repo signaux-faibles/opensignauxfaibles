@@ -4934,10 +4934,12 @@
 	},
 	{
 		"event" : {
-			"headRejected" : [ ],
+			"headRejected" : [
+				"Line 3: invalid date: 01/15/2019"
+			],
 			"headFatal" : [ ],
 			"linesSkipped" : 0,
-			"summary" : "/../lib/paydex/testData/paydexTestData.csv: intégration terminée, 5 lignes traitées, 0 erreurs fatales, 0 lignes rejetées, 0 lignes filtrées, 5 lignes valides",
+			"summary" : "/../lib/paydex/testData/paydexTestData.csv: intégration terminée, 6 lignes traitées, 0 erreurs fatales, 1 lignes rejetées, 0 lignes filtrées, 5 lignes valides",
 			"batchKey" : "1910"
 		},
 		"reportType" : "ImportBatch",
