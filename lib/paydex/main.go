@@ -21,9 +21,9 @@ import (
 
 // Paydex décrit le format de chaque entrée de donnée résultant du parsing.
 type Paydex struct {
-	Siren   string    `json:"siren" bson:"siren"`
-	Periode time.Time `json:"periode" bson:"periode"`
-	Jours   int       `json:"paydex_jours" bson:"paydex_jours"`
+	Siren      string    `json:"siren" bson:"siren"`
+	DateValeur time.Time `json:"date_valeur" bson:"date_valeur"`
+	NbJours    int       `json:"nb_jours" bson:"nb_jours"`
 }
 
 // Key _id de l'objet
@@ -94,22 +94,19 @@ func (parser *paydexParser) ParseLines(parsedLineChan chan marshal.ParsedLineRes
 }
 
 func parsePaydexLine(row []string) Paydex {
-	periode, err := time.Parse("02/01/2006", row[3])
+	dateValeur, err := time.Parse("02/01/2006", row[3])
 	if err != nil {
 		log.Fatalf("invalid date: %v", row[3])
 	}
-	jours, err := strconv.Atoi(row[1])
+	nbJours, err := strconv.Atoi(row[1])
 	if err != nil {
 		log.Fatalf("invalid date: %v", row[3])
 	}
 	return Paydex{
-		Siren:   row[0],
-		Periode: beginningOfMonth(periode),
-		Jours:   jours,
+		Siren:      row[0],
+		DateValeur: dateValeur,
+		NbJours:    nbJours,
 	}
 }
 
-func beginningOfMonth(date time.Time) time.Time {
-	return date.AddDate(0, 0, -date.Day()+1)
-}
-
+// TODO: ajouter détection de colonnes
