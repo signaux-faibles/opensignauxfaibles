@@ -1652,9 +1652,11 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
             }
             output_interim[periode] = out;
         }
-        const past_month_offsets = [6, 12, 18, 24]; // En cas de changement, penser à mettre à jour le type SortieInterim
+        const makePastProp = (offset) => ` + "`" + `interim_ratio_past_${offset}` + "`" + `;
+        const past_month_offsets = [6, 12, 18, 24];
         past_month_offsets.forEach((offset) => {
             var _a, _b;
+            const pastPropName = makePastProp(offset);
             const time_past_offset = f.dateAddMonth(one_interim.periode, offset);
             if (periode in output_effectif &&
                 time_past_offset.getTime() in output_effectif) {
@@ -1663,7 +1665,7 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
                 const { effectif } = (_b = output_effectif[periode]) !== null && _b !== void 0 ? _b : {};
                 if (effectif) {
                     Object.assign(val_offset, {
-                        [` + "`" + `interim_ratio_past_${offset}` + "`" + `]: one_interim.etp / effectif,
+                        [pastPropName]: one_interim.etp / effectif,
                     });
                 }
                 output_interim[time_past_offset.getTime()] = out;
