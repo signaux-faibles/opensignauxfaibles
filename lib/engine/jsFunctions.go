@@ -1430,16 +1430,15 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
             if (outputInPeriod.annee_bdf) {
                 outputInPeriod.exercice_bdf = outputInPeriod.annee_bdf - 1;
             }
-            const pastData = f.omit(periodData, "arrete_bilan_bdf", "exercice_bdf");
+            const pastData = f.omit(periodData, "arrete_bilan_bdf", "exercice_bdf", "annee_bdf");
+            const makePastProp = (prop, offset) => ` + "`" + `${prop}_past_${offset}` + "`" + `;
             for (const prop of Object.keys(pastData)) {
                 const past_year_offset = [1, 2];
                 for (const offset of past_year_offset) {
                     const periode_offset = f.dateAddMonth(periode, 12 * offset);
                     const outputInPast = outputBdf[periode_offset.getTime()];
                     if (outputInPast) {
-                        Object.assign(outputInPast, {
-                            [prop + "_past_" + offset]: entréeBdf[prop],
-                        });
+                        outputInPast[makePastProp(prop, offset)] = entréeBdf[prop];
                     }
                 }
             }
