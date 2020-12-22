@@ -1,10 +1,12 @@
 import { EntréeCompte, ParPériode, Periode, ParHash } from "../RawDataTypes"
 
-type SortieCompte = ParPériode<{ compte_urssaf: unknown }> // TODO: choisir un type plus précis
+export type SortieCompte = { compte_urssaf: number }
 
-export function compte(compte: ParHash<EntréeCompte>): SortieCompte {
+export function compte(
+  compte: ParHash<EntréeCompte>
+): ParPériode<SortieCompte> {
   "use strict"
-  const output_compte: SortieCompte = {}
+  const output_compte: ParPériode<SortieCompte> = {}
 
   //  var offset_compte = 3
   for (const compteEntry of Object.values(compte)) {

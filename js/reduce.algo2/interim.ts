@@ -5,7 +5,7 @@ type Input = {
   effectif: number | null
 }
 
-type SortieInterim = {
+export type SortieInterim = {
   interim_proportion: number
   interim_ratio_past_6: number
   interim_ratio_past_12: number
