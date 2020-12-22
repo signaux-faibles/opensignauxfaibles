@@ -3,6 +3,7 @@ package paydex
 import (
 	"flag"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 
@@ -36,6 +37,15 @@ func TestParsePaydexLine(t *testing.T) {
 
 // integration tests
 func TestPaydex(t *testing.T) {
+	t.Run("should fail if one of the required columns is missing", func(t *testing.T) {
+		csvData := strings.Join([]string{"SIREN;NB_JOURS_LIB;DATE_VALEUR"}, "\n") // NB_JOURS is missing
+		csvFile := marshal.CreateTempFileWithContent(t, []byte(csvData))
+		output := marshal.RunParser(ParserPaydex, marshal.NewCache(), csvFile.Name())
+		assert.Equal(t, []marshal.Tuple(nil), output.Tuples, "should return no tuples")
+		assert.Equal(t, 1, len(output.Events), "should return a parsing report")
+		reportData, _ := output.Events[0].ParseReport()
+		assert.Equal(t, true, reportData["isFatal"], "should report a fatal error")
+	})
 	t.Run("should generate the right tuples and events from test file", func(t *testing.T) {
 		var golden = filepath.Join("testData", "expectedPaydex.json")
 		var testData = filepath.Join("testData", "paydexTestData.csv")
