@@ -19,11 +19,11 @@ type Dette = {
   part_patronale: EntréeDebit["part_patronale"]
 }
 
-type MonthOffsets = 1 | 2 | 3 | 6 | 12
+type MonthOffset = 1 | 2 | 3 | 6 | 12
 type CotisationsDettesPassees = {
   [K in
-    | `montant_part_ouvriere_past_${MonthOffsets}`
-    | `montant_part_patronale_past_${MonthOffsets}`]: number
+    | `montant_part_ouvriere_past_${MonthOffset}`
+    | `montant_part_patronale_past_${MonthOffset}`]: number
 }
 
 export type SortieCotisationsDettes = {
@@ -187,7 +187,7 @@ export function cotisationsdettes(
     val = Object.assign(val, montant_dette)
     sortieCotisationsDettes[time] = val
 
-    const monthOffsets: MonthOffsets[] = [1, 2, 3, 6, 12]
+    const monthOffsets: MonthOffset[] = [1, 2, 3, 6, 12]
     const futureTimestamps = monthOffsets
       .map((offset) => ({
         offset,
