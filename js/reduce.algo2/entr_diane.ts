@@ -4,13 +4,22 @@ import { EntréeDiane, ParHash, ParPériode, Timestamp } from "../RawDataTypes"
 export type SortieDiane = Record<string, unknown> // for *_past_* props of diane. // TODO: définir les props de manière plus précise à l'aide de cette fonctionnalité TS, quand elle sera prête: https://github.com/microsoft/TypeScript/pull/40336
 type YearOffset = 1 | 2
 
+type RatiosDianeInclus = Omit<
+  EntréeDiane,
+  | "marquee"
+  | "nom_entreprise"
+  | "numero_siren"
+  | "statut_juridique"
+  | "procedure_collective"
+>
+type CléRatioDianePassé = `${keyof RatiosDianeInclus}_past_${YearOffset}`
+
 type ClésRatiosBdfInclus =
   | "taux_marge"
   | "poids_frng"
   | "dette_fiscale"
   | "financier_court_terme"
   | "frais_financier"
-
 type CléRatioBdfPassé = `${ClésRatiosBdfInclus}_past_${YearOffset}`
 
 export function entr_diane(
@@ -39,7 +48,7 @@ export function entr_diane(
     )
 
     for (const periode of series) {
-      const rest = f.omit(
+      const rest: RatiosDianeInclus = f.omit(
         entréeDiane,
         "marquee",
         "nom_entreprise",
@@ -47,6 +56,11 @@ export function entr_diane(
         "statut_juridique",
         "procedure_collective"
       )
+
+      const makePastProp = (
+        prop: keyof RatiosDianeInclus,
+        offset: YearOffset
+      ) => `${prop}_past_${offset}` as CléRatioDianePassé
 
       if (periodes.includes(periode.getTime())) {
         Object.assign(output_indexed[periode.getTime()], rest)
@@ -69,7 +83,7 @@ export function entr_diane(
         const past_year_offset: YearOffset[] = [1, 2]
         for (const offset of past_year_offset) {
           const periode_offset = f.dateAddMonth(periode, 12 * offset)
-          const variable_name = ratio + "_past_" + offset
+          const variable_name: CléRatioDianePassé = makePastProp(ratio, offset)
 
           const outputAtOffset = output_indexed[periode_offset.getTime()]
           if (

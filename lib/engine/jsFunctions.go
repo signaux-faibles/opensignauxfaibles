@@ -1460,6 +1460,7 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
         );
         for (const periode of series) {
             const rest = f.omit(entréeDiane, "marquee", "nom_entreprise", "numero_siren", "statut_juridique", "procedure_collective");
+            const makePastProp = (prop, offset) => ` + "`" + `${prop}_past_${offset}` + "`" + `;
             if (periodes.includes(periode.getTime())) {
                 Object.assign(output_indexed[periode.getTime()], rest);
             }
@@ -1476,7 +1477,7 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
                 const past_year_offset = [1, 2];
                 for (const offset of past_year_offset) {
                     const periode_offset = f.dateAddMonth(periode, 12 * offset);
-                    const variable_name = ratio + "_past_" + offset;
+                    const variable_name = makePastProp(ratio, offset);
                     const outputAtOffset = output_indexed[periode_offset.getTime()];
                     if (outputAtOffset !== undefined &&
                         ratio !== "arrete_bilan_diane" &&
