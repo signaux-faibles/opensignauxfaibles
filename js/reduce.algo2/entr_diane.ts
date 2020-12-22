@@ -1,10 +1,9 @@
 import { f } from "./functions"
 import { EntréeDiane, ParHash, ParPériode, Timestamp } from "../RawDataTypes"
 
-export type SortieDiane = Record<string, unknown> // for *_past_* props of diane. // TODO: définir les props de manière plus précise à l'aide de cette fonctionnalité TS, quand elle sera prête: https://github.com/microsoft/TypeScript/pull/40336
 type YearOffset = 1 | 2
 
-type RatiosDianeInclus = Omit<
+type DonnéesDianeTransmises = Omit<
   EntréeDiane,
   | "marquee"
   | "nom_entreprise"
@@ -12,21 +11,26 @@ type RatiosDianeInclus = Omit<
   | "statut_juridique"
   | "procedure_collective"
 >
-type CléRatioDianePassé = `${keyof RatiosDianeInclus}_past_${YearOffset}`
+type CléRatioDianePassé = `${keyof DonnéesDianeTransmises}_past_${YearOffset}`
 
-type ClésRatiosBdfInclus =
+type CléRatioBdfCalculable = "poids_frng" | "dette_fiscale" | "frais_financier"
+
+type CléRatioBdfInclus =
+  | CléRatioBdfCalculable
   | "taux_marge"
-  | "poids_frng"
-  | "dette_fiscale"
   | "financier_court_terme"
-  | "frais_financier"
-type CléRatioBdfPassé = `${ClésRatiosBdfInclus}_past_${YearOffset}`
+type CléRatioBdfPassé = `${CléRatioBdfInclus}_past_${YearOffset}`
+
+export type SortieDiane = DonnéesDianeTransmises &
+  Record<CléRatioDianePassé, number | null | undefined> &
+  Record<CléRatioBdfInclus, number> &
+  Record<CléRatioBdfPassé, number>
 
 export function entr_diane(
   donnéesDiane: ParHash<EntréeDiane>,
-  output_indexed: ParPériode<SortieDiane>,
+  output_indexed: ParPériode<Partial<SortieDiane>>,
   periodes: Timestamp[]
-): ParPériode<SortieDiane> {
+): ParPériode<Partial<SortieDiane>> {
   for (const entréeDiane of Object.values(donnéesDiane)) {
     if (!entréeDiane.arrete_bilan_diane) continue
     //entréeDiane.arrete_bilan_diane = new Date(Date.UTC(entréeDiane.exercice_diane, 11, 31, 0, 0, 0, 0))
@@ -48,7 +52,7 @@ export function entr_diane(
     )
 
     for (const periode of series) {
-      const rest: RatiosDianeInclus = f.omit(
+      const rest: DonnéesDianeTransmises = f.omit(
         entréeDiane,
         "marquee",
         "nom_entreprise",
@@ -58,7 +62,7 @@ export function entr_diane(
       )
 
       const makePastProp = (
-        prop: keyof RatiosDianeInclus,
+        prop: keyof DonnéesDianeTransmises,
         offset: YearOffset
       ) => `${prop}_past_${offset}` as CléRatioDianePassé
 
@@ -120,7 +124,7 @@ export function entr_diane(
         }
 
         // TODO: mettre en commun population des champs _past_ avec bdf ?
-        const bdf_vars: ClésRatiosBdfInclus[] = [
+        const bdf_vars: CléRatioBdfInclus[] = [
           "taux_marge",
           "poids_frng",
           "dette_fiscale",
@@ -129,7 +133,7 @@ export function entr_diane(
         ]
         const past_year_offset: YearOffset[] = [1, 2]
 
-        const makePastProp = (clé: ClésRatiosBdfInclus, offset: YearOffset) =>
+        const makePastProp = (clé: CléRatioBdfInclus, offset: YearOffset) =>
           `${clé}_past_${offset}` as CléRatioBdfPassé
 
         bdf_vars.forEach((k) => {

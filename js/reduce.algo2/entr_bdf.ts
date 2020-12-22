@@ -7,11 +7,12 @@ import {
   ParPériode,
 } from "../RawDataTypes"
 
-export type SortieBdf = {
-  annee_bdf: number
-  exercice_bdf: number // année
-} & EntréeBdfRatios &
-  RatiosBdfPassés
+type DonnéesBdfTransmises = Omit<
+  EntréeBdf,
+  "raison_sociale" | "secteur" | "siren"
+>
+
+export type SortieBdf = DonnéesBdfTransmises & EntréeBdfRatios & RatiosBdfPassés
 
 type YearOffset = 1 | 2
 type CléRatiosBdfPassés = `${keyof EntréeBdfRatios}_past_${YearOffset}`
@@ -50,7 +51,12 @@ export function entr_bdf(
       const outputInPeriod = (outputBdf[periode.getTime()] =
         outputBdf[periode.getTime()] || {})
 
-      const periodData = f.omit(entréeBdf, "raison_sociale", "secteur", "siren")
+      const periodData: DonnéesBdfTransmises = f.omit(
+        entréeBdf,
+        "raison_sociale",
+        "secteur",
+        "siren"
+      )
 
       // TODO: Éviter d'ajouter des données en dehors de `periodes`, sans fausser le calcul des données passées (plus bas)
       Object.assign(outputInPeriod, periodData)
