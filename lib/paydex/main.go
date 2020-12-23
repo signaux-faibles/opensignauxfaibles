@@ -22,7 +22,7 @@ import (
 
 // Paydex décrit le format de chaque entrée de donnée résultant du parsing.
 type Paydex struct {
-	Siren      string    `json:"siren" bson:"siren"`
+	Siren      string    `json:"-" bson:"-"`
 	DateValeur time.Time `json:"date_valeur" bson:"date_valeur"`
 	NbJours    int       `json:"nb_jours" bson:"nb_jours"`
 }
