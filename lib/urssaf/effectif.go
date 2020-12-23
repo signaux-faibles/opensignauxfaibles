@@ -3,7 +3,6 @@ package urssaf
 import (
 	"bufio"
 	"encoding/csv"
-	"errors"
 	"io"
 	"os"
 	"strconv"
@@ -11,7 +10,6 @@ import (
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/marshal"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/misc"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/sfregexp"
 )
 
@@ -86,12 +84,8 @@ func parseEffectifColMapping(reader *csv.Reader) (marshal.ColMapping, []periodCo
 
 	expectedFields := []string{"siret", "compte"}
 	var idx = marshal.IndexFields(fields, expectedFields)
-
-	if misc.SliceMin(idx["siret"], idx["compte"]) == -1 {
-		return nil, nil, errors.New("erreur à l'analyse du fichier, abandon, l'un " +
-			"des champs obligatoires n'a pu etre trouve:" +
-			" siretIndex = " + strconv.Itoa(idx["siret"]) +
-			", compteIndex = " + strconv.Itoa(idx["compte"]))
+	if _, err = idx.HasFields(expectedFields); err != nil {
+		return nil, nil, err
 	}
 
 	// Dans quels champs lire l'effectif
