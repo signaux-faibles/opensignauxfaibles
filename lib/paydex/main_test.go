@@ -46,6 +46,7 @@ func TestPaydex(t *testing.T) {
 		reportData, _ := output.Events[0].ParseReport()
 		assert.Equal(t, true, reportData["isFatal"], "should report a fatal error")
 	})
+
 	t.Run("should generate the right tuples and events from test file", func(t *testing.T) {
 		var golden = filepath.Join("testData", "expectedPaydex.json")
 		var testData = filepath.Join("testData", "paydexTestData.csv")

@@ -13,7 +13,6 @@ import (
 	"io"
 	"os"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
@@ -67,9 +66,11 @@ func (parser *paydexParser) Open(filePath string) (err error) {
 	if err != nil {
 		return err
 	}
-	row, err := parser.reader.Read() // parse header
-	if strings.Join(row, ";") != "SIREN;NB_JOURS;NB_JOURS_LIB;DATE_VALEUR" {
-		err = fmt.Errorf("unexpected header: %v", strings.Join(row, ";"))
+	headerRow, err := parser.reader.Read()
+	if err == nil {
+		expectedFields := []string{"SIREN", "NB_JOURS", "DATE_VALEUR"}
+		colIndex := marshal.IndexFields(headerRow, expectedFields)
+		_, err = colIndex.HasFields(expectedFields)
 	}
 	return err
 }
