@@ -21,13 +21,13 @@ export type ParHash<T> = Record<DataHash, T>
 type EntrepriseDataValues = {
   key: Siren
   scope: "entreprise"
-  batch: Record<BatchKey, Partial<EntrepriseBatchProps>>
+  batch: Record<BatchKey, Partial<BatchValueProps>> // TODO: remplacer par `Partial<EntrepriseBatchProps>>`, une fois que tous les champs auront été séparés
 }
 
 type EtablissementDataValues = {
   key: Siret
   scope: "etablissement"
-  batch: Record<BatchKey, Partial<BatchValueProps>> // TODO: remplacer par Partial<EtablissementBatchProps>
+  batch: Record<BatchKey, Partial<BatchValueProps>> // TODO: remplacer par Partial<EtablissementBatchProps>, une fois que tous les champs auront été séparés
 }
 
 export type Scope = (EntrepriseDataValues | EtablissementDataValues)["scope"]
@@ -46,11 +46,11 @@ export type IndexFlags = {
 
 export type BatchKey = string
 
-export type BatchValues = Record<BatchKey, BatchValue>
+export type BatchValues = Record<BatchKey, BatchValue> // TODO: supprimer ce type, pour faire la distinction entre Entreprise et Etablissement
 
 export type DataType = keyof BatchValueProps // => 'reporder' | 'effectif' | 'apconso' | ...
 
-export type BatchValue = Partial<BatchValueProps>
+export type BatchValue = Partial<BatchValueProps> // TODO: supprimer ce type, pour faire la distinction entre Entreprise et Etablissement
 
 type CommonBatchProps = {
   reporder: ParPériode<EntréeRepOrder> // RepOrder est généré par "compact", et non importé => Usage de Periode en guise de hash d'indexation
