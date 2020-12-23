@@ -38,6 +38,17 @@ type tuplesAndEvents = struct {
 	Events []Event `json:"events"`
 }
 
+// GetFatalError retourne le message d'erreur fatale obtenu suite à une
+// opération de parsing.
+func GetFatalError(output tuplesAndEvents) string {
+	reportData, _ := output.Events[0].ParseReport()
+	headFatal, ok := reportData["headFatal"].([]interface{})
+	if ok != true || len(headFatal) != 1 {
+		return ""
+	}
+	return headFatal[0].(string)
+}
+
 // RunParserInline returns Tuples and Events resulting from the execution of a
 // Parser on a given list of rows, with an empty Cache.
 func RunParserInline(t *testing.T, parser Parser, rows []string) (output tuplesAndEvents) {

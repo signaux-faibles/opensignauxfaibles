@@ -41,9 +41,7 @@ func TestPaydex(t *testing.T) {
 	t.Run("should fail if one of the required columns is missing", func(t *testing.T) {
 		output := marshal.RunParserInline(t, ParserPaydex, []string{"SIREN;NB_JOURS_LIB;DATE_VALEUR"}) // NB_JOURS is missing
 		assert.Equal(t, []marshal.Tuple(nil), output.Tuples, "should return no tuples")
-		assert.Equal(t, 1, len(output.Events), "should return a parsing report")
-		reportData, _ := output.Events[0].ParseReport()
-		assert.Equal(t, true, reportData["isFatal"], "should report a fatal error")
+		assert.Contains(t, marshal.GetFatalError(output), "Fatal: Colonne NB_JOURS non trouvée. Abandon.")
 	})
 
 	t.Run("should adapt to different order of columns", func(t *testing.T) {

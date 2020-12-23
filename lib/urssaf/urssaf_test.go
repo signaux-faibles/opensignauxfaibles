@@ -137,9 +137,7 @@ func TestEffectif(t *testing.T) {
 		output := marshal.RunParserInline(t, ParserEffectif, []string{"siret"}) // "compte" column is missing
 		assert.Equal(t, []marshal.Tuple(nil), output.Tuples, "should return no tuples")
 		assert.Equal(t, 1, len(output.Events), "should return a parsing report")
-		reportData, _ := output.Events[0].ParseReport()
-		assert.Equal(t, true, reportData["isFatal"], "should report a fatal error")
-		assert.Regexp(t, regexp.MustCompile("Colonne compte non trouvée"), reportData["headFatal"])
+		assert.Regexp(t, regexp.MustCompile("Colonne compte non trouvée"), marshal.GetFatalError(output))
 	})
 }
 
