@@ -29,7 +29,13 @@ jobs:
         run: go build -o "sfdata" -v .
 
       - name: Go test
-        run: go test -coverprofile=go-coverage.out ./...
+        run: |
+          go test -coverprofile=go-coverage.out ./...
+          # Prerequisites
+          go get github.com/axw/gocov/gocov
+          go get github.com/AlekSi/gocov-xml
+          # Coverage
+          gocov convert go-coverage.out | gocov-xml > go-coverage.xml
 
       - name: Use cache for Node/npm dependencies
         uses: actions/cache@v1
@@ -77,4 +83,4 @@ jobs:
         uses: codacy/codacy-coverage-reporter-action@master
         with:
           project-token: ${{ secrets.CODACY_REPOSITORY_TOKEN_FOR_COVERAGE }}
-          coverage-reports: go-coverage.out,js/coverage/lcov.info
+          coverage-reports: go-coverage.xml,js/coverage/lcov.info
