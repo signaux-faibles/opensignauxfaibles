@@ -30,7 +30,7 @@ jobs:
 
       - name: Go test
         run: |
-          go test -coverprofile=go-coverage.out ./...
+          go test -coverprofile=go-coverage.out -covermode count ./...
           # go run github.com/axw/gocov/gocov convert go-coverage.out > go-coverage.json
           # cat go-coverage.json
           # echo "go run github.com/AlekSi/gocov-xml -source $PWD/go-coverage.json"
