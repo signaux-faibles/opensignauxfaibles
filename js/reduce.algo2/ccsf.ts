@@ -5,7 +5,7 @@ type Input = {
 }
 
 export type SortieCcsf = {
-  date_ccsf: unknown
+  date_ccsf: Date
 }
 
 export function ccsf(

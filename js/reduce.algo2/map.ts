@@ -13,6 +13,7 @@ import { DonnéesAgrégées } from "./outputs"
 import { NAF } from "./populateNafAndApe"
 
 type SortieMapEntreprise = {
+  siren: SiretOrSiren
   periode: Date
 } & Partial<SortieSireneEntreprise> &
   Partial<SortieBdf> &

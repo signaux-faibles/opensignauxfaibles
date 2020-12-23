@@ -3,8 +3,8 @@ import { ProcolToHumanRes } from "../common/procolToHuman"
 import { EntréeDéfaillances, ParPériode, ParHash } from "../RawDataTypes"
 
 export type SortieDefaillances = {
-  etat_proc_collective: unknown
-  date_proc_collective: unknown
+  etat_proc_collective: ProcolToHumanRes
+  date_proc_collective: Date
   tag_failure: boolean
 }
 type OutputEvent = {
