@@ -1,0 +1,51 @@
+{
+  "tuples": [
+    {
+      "siren": "000000001",
+      "date_valeur": "2018-12-15T00:00:00Z",
+      "nb_jours": 2
+    },
+    {
+      "siren": "000000001",
+      "date_valeur": "2018-01-15T00:00:00Z",
+      "nb_jours": 1
+    },
+    {
+      "siren": "000000001",
+      "date_valeur": "2019-01-15T00:00:00Z",
+      "nb_jours": 3
+    },
+    {
+      "siren": "000000002",
+      "date_valeur": "2018-12-15T00:00:00Z",
+      "nb_jours": 4
+    },
+    {
+      "siren": "000000002",
+      "date_valeur": "2019-01-15T00:00:00Z",
+      "nb_jours": 5
+    }
+  ],
+  "events": [
+    {
+      "date": "0001-01-01T00:00:00Z",
+      "startDate": "0001-01-01T00:00:00Z",
+      "event": {
+        "batchKey": "",
+        "headFatal": [],
+        "headRejected": [
+          "Line 3: invalid date: 01/15/2019"
+        ],
+        "isFatal": false,
+        "linesParsed": 6,
+        "linesRejected": 1,
+        "linesSkipped": 0,
+        "linesValid": 5,
+        "summary": "testData/paydexTestData.csv: intégration terminée, 6 lignes traitées, 0 erreurs fatales, 1 lignes rejetées, 0 lignes filtrées, 5 lignes valides"
+      },
+      "priority": "info",
+      "parserCode": "paydex",
+      "report_type": ""
+    }
+  ]
+}
