@@ -49,6 +49,21 @@ func TestPaydex(t *testing.T) {
 		assert.Equal(t, true, reportData["isFatal"], "should report a fatal error")
 	})
 
+	t.Run("should adapt to different order of columns", func(t *testing.T) {
+		csvData := strings.Join([]string{
+			"SIREN;DATE_VALEUR;NB_JOURS",
+			"000000001;15/12/2018;2",
+		}, "\n")
+		csvFile := marshal.CreateTempFileWithContent(t, []byte(csvData))
+		output := marshal.RunParser(ParserPaydex, marshal.NewCache(), csvFile.Name())
+		expected := Paydex{
+			Siren:      "000000001",
+			DateValeur: time.Date(2018, 12, 15, 00, 00, 00, 0, time.UTC),
+			NbJours:    2,
+		}
+		assert.EqualValues(t, []marshal.Tuple{&expected}, output.Tuples)
+	})
+
 	t.Run("should generate the right tuples and events from test file", func(t *testing.T) {
 		var golden = filepath.Join("testData", "expectedPaydex.json")
 		var testData = filepath.Join("testData", "paydexTestData.csv")
