@@ -1,15 +1,34 @@
 package marshal
 
-import "errors"
+import (
+	"errors"
+	"strings"
+
+	"github.com/signaux-faibles/opensignauxfaibles/lib/misc"
+)
+
+// IndexFields indexe la position de chaque colonne par son nom,
+// à partir d'un en-tête ordonné et d'une liste de colonnes attendues.
+func IndexFields(headerFields []string, expectedFields []string) ColMapping {
+	var normalizedHeaderFields = make([]string, len(headerFields))
+	for i, name := range headerFields {
+		normalizedHeaderFields[i] = strings.ToLower(name)
+	}
+	var colMapping = ColMapping{}
+	for _, name := range expectedFields {
+		colMapping[name] = misc.SliceIndex(len(headerFields), func(i int) bool { return normalizedHeaderFields[i] == name })
+	}
+	return colMapping
+}
 
 // GetFieldBindings indexe la position de chaque colonne par son nom,
 // à partir de la liste ordonnée des noms de colonne, telle que lue en en-tête.
 func GetFieldBindings(orderedFields []string) ColMapping {
-	var f = ColMapping{}
-	for i, k := range orderedFields {
-		f[k] = i
+	var colMapping = ColMapping{}
+	for idx, name := range orderedFields {
+		colMapping[name] = idx
 	}
-	return f
+	return colMapping
 }
 
 // ColMapping fournit l'indice de chaque colonne.
@@ -17,9 +36,9 @@ type ColMapping map[string]int
 
 // HasFields vérifie la présence d'un ensemble de colonnes.
 func (colMapping ColMapping) HasFields(requiredFields []string) (bool, error) {
-	for _, field := range requiredFields {
-		if _, found := colMapping[field]; !found {
-			return false, errors.New("Colonne " + field + " non trouvée. Abandon.")
+	for _, name := range requiredFields {
+		if _, found := colMapping[name]; !found {
+			return false, errors.New("Colonne " + name + " non trouvée. Abandon.")
 		}
 	}
 	return true, nil
