@@ -92,12 +92,7 @@ func parseColMapping(reader *csv.Reader) (marshal.ColMapping, error) {
 	if err != nil {
 		return nil, err
 	}
-	var idx = marshal.GetFieldBindings(header)
-	requiredFields := marshal.ExtractColTags(APDemande{})
-	if _, err := idx.HasFields(requiredFields); err != nil {
-		return nil, err
-	}
-	return idx, nil
+	return marshal.ValidateAndIndexColumnsFromColTags(header, APDemande{})
 }
 
 func (parser *apdemandeParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {

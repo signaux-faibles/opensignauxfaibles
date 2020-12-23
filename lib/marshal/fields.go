@@ -8,6 +8,16 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/lib/misc"
 )
 
+// ValidateAndIndexColumnsFromColTags valide puis indexe les colonnes trouvées
+// en en-tête d'un fichier csv, à partir des noms de colonnes spécifiés dans le
+// tag "col" annotant les propriétés du type de destination du parseur.
+func ValidateAndIndexColumnsFromColTags(headerRow []string, destObject interface{}) (ColMapping, error) {
+	requiredFields := extractColTags(destObject)
+	idx := GetFieldBindings(headerRow)
+	_, err := idx.HasFields(requiredFields)
+	return idx, err
+}
+
 // IndexFields indexe la position de chaque colonne par son nom,
 // à partir d'un en-tête ordonné et d'une liste de colonnes attendues.
 func IndexFields(headerFields []string, expectedFields []string) ColMapping {
@@ -53,10 +63,10 @@ func LowercaseFields(headerFields []string) []string {
 	return normalizedHeaderFields
 }
 
-// ExtractColTags extraie les noms de colonnes depuis les valeurs du tag "col"
+// extractColTags extraie les noms de colonnes depuis les valeurs du tag "col"
 // de chaque propriété de l'objet fourni.
 // Il est possible d'associer plusieurs colonnes en séparant par des virgules.
-func ExtractColTags(object interface{}) (expectedFields []string) {
+func extractColTags(object interface{}) (expectedFields []string) {
 	structure := reflect.TypeOf(object)
 	for i := 0; i < structure.NumField(); i++ {
 		tag := structure.Field(i).Tag.Get("col")

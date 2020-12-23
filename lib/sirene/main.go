@@ -146,9 +146,7 @@ func (parser *sireneParser) Open(filePath string) (err error) {
 	if err != nil {
 		return err // may be io.EOF
 	}
-	parser.colIndex = marshal.GetFieldBindings(headerRow)
-	expectedFields := marshal.ExtractColTags(Sirene{})
-	_, err = parser.colIndex.HasFields(expectedFields)
+	parser.colIndex, err = marshal.ValidateAndIndexColumnsFromColTags(headerRow, Sirene{})
 	return err
 }
 
