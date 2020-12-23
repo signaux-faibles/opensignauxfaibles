@@ -21,9 +21,9 @@ import (
 
 // Paydex décrit le format de chaque entrée de donnée résultant du parsing.
 type Paydex struct {
-	Siren      string    `json:"siren" bson:"siren"`
-	DateValeur time.Time `json:"date_valeur" bson:"date_valeur"`
-	NbJours    int       `json:"nb_jours" bson:"nb_jours"`
+	Siren      string    `col:"SIREN" json:"siren" bson:"siren"`
+	DateValeur time.Time `col:"DATE_VALEUR" json:"date_valeur" bson:"date_valeur"`
+	NbJours    int       `col:"NB_JOURS" json:"nb_jours" bson:"nb_jours"`
 }
 
 // Key _id de l'objet
@@ -69,9 +69,7 @@ func (parser *paydexParser) Open(filePath string) (err error) {
 	}
 	headerRow, err := parser.reader.Read()
 	if err == nil {
-		expectedFields := []string{"SIREN", "NB_JOURS", "DATE_VALEUR"}
-		parser.colIndex = marshal.IndexFields(headerRow, expectedFields)
-		_, err = parser.colIndex.HasFields(expectedFields)
+		parser.colIndex, err = marshal.ValidateAndIndexColumnsFromColTags(headerRow, Paydex{})
 	}
 	return err
 }
