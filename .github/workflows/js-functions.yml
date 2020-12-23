@@ -31,11 +31,7 @@ jobs:
       - name: Go test
         run: |
           go test -coverprofile=go-coverage.out ./...
-          # Prerequisites
-          go install github.com/axw/gocov/gocov
-          go install github.com/AlekSi/gocov-xml
-          # Coverage
-          gocov convert go-coverage.out | gocov-xml > go-coverage.xml
+          go run github.com/axw/gocov/gocov convert go-coverage.out | go run github.com/AlekSi/gocov-xml > go-coverage.xml
 
       - name: Use cache for Node/npm dependencies
         uses: actions/cache@v1
