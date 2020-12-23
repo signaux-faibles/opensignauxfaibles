@@ -39,12 +39,15 @@ type tuplesAndEvents = struct {
 }
 
 // GetFatalError retourne le message d'erreur fatale obtenu suite à une
-// opération de parsing.
+// opération de parsing, ou une chaine vide.
 func GetFatalError(output tuplesAndEvents) string {
 	reportData, _ := output.Events[0].ParseReport()
 	headFatal, ok := reportData["headFatal"].([]interface{})
-	if ok != true || len(headFatal) != 1 {
+	if ok != true || headFatal == nil || len(headFatal) < 1 {
 		return ""
+	}
+	if len(headFatal) > 1 {
+		log.Fatal("headFatal should never contain more than one item")
 	}
 	return headFatal[0].(string)
 }
