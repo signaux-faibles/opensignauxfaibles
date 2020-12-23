@@ -61,6 +61,7 @@ export type BatchValueProps = {
   bdf: ParHash<EntréeBdf>
   diane: ParHash<EntréeDiane>
   ellisphere: ParHash<EntréeEllisphere>
+  paydex: ParHash<EntréePaydex>
 }
 
 // Détail des types de données
@@ -223,4 +224,9 @@ export type EntréeEllisphere = {
   code_filiere: string
   refid_filiere: string
   personne_pou_m_filiere: string
+}
+
+export type EntréePaydex = {
+  date_valeur: Date
+  nb_jours: number
 }

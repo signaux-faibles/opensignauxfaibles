@@ -845,6 +845,9 @@ db.getCollection("Features").createIndex({
         if (ellisphere) {
             v.ellisphere = ellisphere;
         }
+        if (value.paydex) {
+            v.paydex = Object.values(value.paydex).sort((p1, p2) => p1.date_valeur.getTime() - p2.date_valeur.getTime());
+        }
         if (Object.keys(v) !== []) {
             emit("entreprise_" + this.value.key, v);
         }
