@@ -53,7 +53,7 @@ var Parser = &apdemandeParser{}
 type apdemandeParser struct {
 	file   *os.File
 	reader *csv.Reader
-	idx    colMapping
+	idx    marshal.ColMapping
 }
 
 func (parser *apdemandeParser) GetFileType() string {
@@ -87,18 +87,13 @@ func openFile(filePath string) (*os.File, *csv.Reader, error) {
 	return file, reader, nil
 }
 
-type colMapping map[string]int
-
-func parseColMapping(reader *csv.Reader) (colMapping, error) {
+func parseColMapping(reader *csv.Reader) (marshal.ColMapping, error) {
 	header, err := reader.Read()
 	if err != nil {
 		return nil, err
 	}
-	var idx = colMapping{}
-	for i, field := range header {
-		idx[field] = i
-	}
-	fields := []string{
+	var idx = marshal.GetFieldBindings(header)
+	requiredFields := []string{
 		"ID_DA",
 		"ETAB_SIRET",
 		"EFF_ENT",
@@ -112,10 +107,8 @@ func parseColMapping(reader *csv.Reader) (colMapping, error) {
 		"S_HEURE_CONSOM_TOT",
 		"S_EFF_CONSOM_TOT",
 	}
-	for _, field := range fields {
-		if _, found := idx[field]; !found {
-			return nil, errors.New("Colonne " + field + " non trouvée. Abandon.")
-		}
+	if _, err := idx.HasFields(requiredFields); err != nil {
+		return nil, err
 	}
 	return idx, nil
 }
@@ -141,7 +134,7 @@ func (parser *apdemandeParser) ParseLines(parsedLineChan chan marshal.ParsedLine
 	}
 }
 
-func parseApDemandeLine(row []string, idx colMapping, parsedLine *marshal.ParsedLineResult) {
+func parseApDemandeLine(row []string, idx marshal.ColMapping, parsedLine *marshal.ParsedLineResult) {
 	apdemande := APDemande{}
 	apdemande.ID = row[idx["ID_DA"]]
 	apdemande.Siret = row[idx["ETAB_SIRET"]]
