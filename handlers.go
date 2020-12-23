@@ -8,18 +8,9 @@ import (
 
 	flag "github.com/cosiner/flag"
 
-	"github.com/signaux-faibles/opensignauxfaibles/lib/apconso"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/apdemande"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/bdf"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/diane"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/ellisphere"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/engine"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/marshal"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/sirene"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/urssaf"
-
-	sireneul "github.com/signaux-faibles/opensignauxfaibles/lib/sirene_ul"
+	"github.com/signaux-faibles/opensignauxfaibles/lib/parsing"
 
 	"github.com/globalsign/mgo/bson"
 )
@@ -120,7 +111,7 @@ func (params importBatchHandler) Run() error {
 		return errors.New("Batch inexistant: " + err.Error())
 	}
 
-	parsers, err := resolveParsers(params.Parsers)
+	parsers, err := parsing.ResolveParsers(params.Parsers)
 	if err != nil {
 		return err
 	}
@@ -171,7 +162,7 @@ func (params checkBatchHandler) Run() error {
 		return errors.New("Batch inexistant: " + err.Error())
 	}
 
-	parsers, err := resolveParsers(params.Parsers)
+	parsers, err := parsing.ResolveParsers(params.Parsers)
 	if err != nil {
 		return err
 	}
@@ -258,44 +249,6 @@ func (params pruneEntitiesHandler) Run() error {
 		printJSON(bson.M{"count": count})
 	}
 	return err
-}
-
-// RegisteredParsers liste des parsers disponibles
-var registeredParsers = map[string]marshal.Parser{
-	"debit":        urssaf.ParserDebit,
-	"ccsf":         urssaf.ParserCCSF,
-	"cotisation":   urssaf.ParserCotisation,
-	"admin_urssaf": urssaf.ParserCompte,
-	"delai":        urssaf.ParserDelai,
-	"effectif":     urssaf.ParserEffectif,
-	"effectif_ent": urssaf.ParserEffectifEnt,
-	"procol":       urssaf.ParserProcol,
-	"apconso":      apconso.Parser,
-	"apdemande":    apdemande.Parser,
-	"bdf":          bdf.Parser,
-	"sirene":       sirene.Parser,
-	"sirene_ul":    sireneul.Parser,
-	"diane":        diane.Parser,
-	"ellisphere":   ellisphere.Parser,
-}
-
-// Vérifie et charge les parsers
-func resolveParsers(parserNames []string) ([]marshal.Parser, error) {
-	var parsers []marshal.Parser
-	if parserNames == nil {
-		for _, fileParser := range registeredParsers {
-			parsers = append(parsers, fileParser)
-		}
-	} else {
-		for _, fileType := range parserNames {
-			if fileParser, ok := registeredParsers[fileType]; ok {
-				parsers = append(parsers, fileParser)
-			} else {
-				return parsers, errors.New(fileType + " n'est pas un parser reconnu.")
-			}
-		}
-	}
-	return parsers, nil
 }
 
 func printJSON(object interface{}) {

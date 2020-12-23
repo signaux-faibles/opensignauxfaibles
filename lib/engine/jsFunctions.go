@@ -1260,7 +1260,8 @@ function cotisationsdettes(vCotisation, vDebit, periodes, finPériode // corresp
         });
         val = Object.assign(val, montant_dette);
         sortieCotisationsDettes[time] = val;
-        const futureTimestamps = [1, 2, 3, 6, 12] // Penser à mettre à jour le type CotisationsDettesPassees pour tout changement
+        const monthOffsets = [1, 2, 3, 6, 12];
+        const futureTimestamps = monthOffsets
             .map((offset) => ({
             offset,
             timestamp: f.dateAddMonth(new Date(time), offset).getTime(),
@@ -1268,7 +1269,7 @@ function cotisationsdettes(vCotisation, vDebit, periodes, finPériode // corresp
             .filter(({ timestamp }) => periodes.includes(timestamp));
         futureTimestamps.forEach(({ offset, timestamp }) => {
             var _a;
-            sortieCotisationsDettes[timestamp] = Object.assign(Object.assign({}, ((_a = sortieCotisationsDettes[timestamp]) !== null && _a !== void 0 ? _a : {})), { ["montant_part_ouvriere_past_" + offset]: val.montant_part_ouvriere, ["montant_part_patronale_past_" + offset]: val.montant_part_patronale });
+            sortieCotisationsDettes[timestamp] = Object.assign(Object.assign({}, ((_a = sortieCotisationsDettes[timestamp]) !== null && _a !== void 0 ? _a : {})), { [` + "`" + `montant_part_ouvriere_past_${offset}` + "`" + `]: val.montant_part_ouvriere, [` + "`" + `montant_part_patronale_past_${offset}` + "`" + `]: val.montant_part_patronale });
         });
         if (val.montant_part_ouvriere + val.montant_part_patronale > 0) {
             const futureTimestamps = [0, 1, 2, 3, 4, 5]
@@ -1387,11 +1388,14 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
     // Ne reporter que si le dernier effectif est disponible
     const dernièrePériodeAvecEffectifConnu = f.dateAddMonth(new Date(periodes[periodes.length - 1]), offset_effectif + 1);
     const effectifÀReporter = (_a = mapEffectif[dernièrePériodeAvecEffectifConnu.getTime()]) !== null && _a !== void 0 ? _a : null;
+    const makeReporteProp = (clé) => ` + "`" + `${clé}_reporte` + "`" + `;
     periodes.forEach((time) => {
-        sortieEffectif[time] = Object.assign(Object.assign({}, sortieEffectif[time]), { [clé]: mapEffectif[time] || effectifÀReporter, [clé + "_reporte"]: mapEffectif[time] ? 0 : 1 });
+        sortieEffectif[time] = Object.assign(Object.assign({}, sortieEffectif[time]), { [clé]: mapEffectif[time] || effectifÀReporter, [makeReporteProp(clé)]: mapEffectif[time] ? 0 : 1 });
     });
+    const makePastProp = (clé, offset) => ` + "`" + `${clé}_past_${offset}` + "`" + `;
     Object.keys(mapEffectif).forEach((time) => {
-        const futureTimestamps = [6, 12, 18, 24] // Penser à mettre à jour le type PastPropertyName pour tout changement
+        const futureOffsets = [6, 12, 18, 24];
+        const futureTimestamps = futureOffsets
             .map((offset) => ({
             offset,
             timestamp: f
@@ -1405,7 +1409,7 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
         }))
             .filter(({ timestamp }) => periodes.includes(timestamp));
         futureTimestamps.forEach(({ offset, timestamp }) => {
-            sortieEffectif[timestamp] = Object.assign(Object.assign({}, sortieEffectif[timestamp]), { [clé + "_past_" + offset]: mapEffectif[time] });
+            sortieEffectif[timestamp] = Object.assign(Object.assign({}, sortieEffectif[timestamp]), { [makePastProp(clé, offset)]: mapEffectif[time] });
         });
     });
     return sortieEffectif;
@@ -1429,16 +1433,15 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
             if (outputInPeriod.annee_bdf) {
                 outputInPeriod.exercice_bdf = outputInPeriod.annee_bdf - 1;
             }
-            const pastData = f.omit(periodData, "arrete_bilan_bdf", "exercice_bdf");
+            const pastData = f.omit(periodData, "arrete_bilan_bdf", "exercice_bdf", "annee_bdf");
+            const makePastProp = (prop, offset) => ` + "`" + `${prop}_past_${offset}` + "`" + `;
             for (const prop of Object.keys(pastData)) {
                 const past_year_offset = [1, 2];
                 for (const offset of past_year_offset) {
                     const periode_offset = f.dateAddMonth(periode, 12 * offset);
                     const outputInPast = outputBdf[periode_offset.getTime()];
                     if (outputInPast) {
-                        Object.assign(outputInPast, {
-                            [prop + "_past_" + offset]: entréeBdf[prop],
-                        });
+                        outputInPast[makePastProp(prop, offset)] = entréeBdf[prop];
                     }
                 }
             }
@@ -1457,6 +1460,7 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
         );
         for (const periode of series) {
             const rest = f.omit(entréeDiane, "marquee", "nom_entreprise", "numero_siren", "statut_juridique", "procedure_collective");
+            const makePastProp = (prop, offset) => ` + "`" + `${prop}_past_${offset}` + "`" + `;
             if (periodes.includes(periode.getTime())) {
                 Object.assign(output_indexed[periode.getTime()], rest);
             }
@@ -1473,7 +1477,7 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
                 const past_year_offset = [1, 2];
                 for (const offset of past_year_offset) {
                     const periode_offset = f.dateAddMonth(periode, 12 * offset);
-                    const variable_name = ratio + "_past_" + offset;
+                    const variable_name = makePastProp(ratio, offset);
                     const outputAtOffset = output_indexed[periode_offset.getTime()];
                     if (outputAtOffset !== undefined &&
                         ratio !== "arrete_bilan_diane" &&
@@ -1514,11 +1518,12 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
                     "frais_financier",
                 ];
                 const past_year_offset = [1, 2];
+                const makePastProp = (clé, offset) => ` + "`" + `${clé}_past_${offset}` + "`" + `;
                 bdf_vars.forEach((k) => {
                     if (k in outputInPeriod) {
                         past_year_offset.forEach((offset) => {
                             const periode_offset = f.dateAddMonth(periode, 12 * offset);
-                            const variable_name = k + "_past_" + offset;
+                            const variable_name = makePastProp(k, offset);
                             const outputAtOffset = output_indexed[periode_offset.getTime()];
                             if (outputAtOffset &&
                                 periodes.includes(periode_offset.getTime())) {
@@ -1649,9 +1654,11 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
             }
             output_interim[periode] = out;
         }
-        const past_month_offsets = [6, 12, 18, 24]; // En cas de changement, penser à mettre à jour le type SortieInterim
+        const makePastProp = (offset) => ` + "`" + `interim_ratio_past_${offset}` + "`" + `;
+        const past_month_offsets = [6, 12, 18, 24];
         past_month_offsets.forEach((offset) => {
             var _a, _b;
+            const pastPropName = makePastProp(offset);
             const time_past_offset = f.dateAddMonth(one_interim.periode, offset);
             if (periode in output_effectif &&
                 time_past_offset.getTime() in output_effectif) {
@@ -1660,7 +1667,7 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
                 const { effectif } = (_b = output_effectif[periode]) !== null && _b !== void 0 ? _b : {};
                 if (effectif) {
                     Object.assign(val_offset, {
-                        [` + "`" + `interim_ratio_past_${offset}` + "`" + `]: one_interim.etp / effectif,
+                        [pastPropName]: one_interim.etp / effectif,
                     });
                 }
                 output_interim[time_past_offset.getTime()] = out;

@@ -17,8 +17,8 @@ export type SortieSirene = {
   latitude: number | null
   longitude: number | null
   departement: Departement | null
-  region: unknown
-  raison_sociale: unknown
+  region: ReturnType<typeof f.region>
+  raison_sociale: string | null
   code_ape: CodeAPE
   date_creation_etablissement: number | null // année
   age: number | null // en années

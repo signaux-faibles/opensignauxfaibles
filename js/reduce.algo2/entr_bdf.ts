@@ -7,27 +7,16 @@ import {
   ParPériode,
 } from "../RawDataTypes"
 
-export type SortieBdf = {
-  annee_bdf: number
-  exercice_bdf: number // année
-} & EntréeBdfRatios &
-  RatiosBdfPassés
+type DonnéesBdfTransmises = Omit<
+  EntréeBdf,
+  "raison_sociale" | "secteur" | "siren"
+>
 
-// Synchroniser les propriétés avec celles de RatiosBdf
-type RatiosBdfPassés = {
-  poids_frng_past_1: number
-  taux_marge_past_1: number
-  delai_fournisseur_past_1: number
-  dette_fiscale_past_1: number
-  financier_court_terme_past_1: number
-  frais_financier_past_1: number
-  poids_frng_past_2: number
-  taux_marge_past_2: number
-  delai_fournisseur_past_2: number
-  dette_fiscale_past_2: number
-  financier_court_terme_past_2: number
-  frais_financier_past_2: number
-}
+type YearOffset = 1 | 2
+type CléRatiosBdfPassés = `${keyof EntréeBdfRatios}_past_${YearOffset}`
+type RatiosBdfPassés = Record<CléRatiosBdfPassés, number>
+
+export type SortieBdf = DonnéesBdfTransmises & EntréeBdfRatios & RatiosBdfPassés
 
 export function entr_bdf(
   donnéesBdf: ParHash<EntréeBdf>,
@@ -62,7 +51,12 @@ export function entr_bdf(
       const outputInPeriod = (outputBdf[periode.getTime()] =
         outputBdf[periode.getTime()] || {})
 
-      const periodData = f.omit(entréeBdf, "raison_sociale", "secteur", "siren")
+      const periodData: DonnéesBdfTransmises = f.omit(
+        entréeBdf,
+        "raison_sociale",
+        "secteur",
+        "siren"
+      )
 
       // TODO: Éviter d'ajouter des données en dehors de `periodes`, sans fausser le calcul des données passées (plus bas)
       Object.assign(outputInPeriod, periodData)
@@ -70,17 +64,22 @@ export function entr_bdf(
         outputInPeriod.exercice_bdf = outputInPeriod.annee_bdf - 1
       }
 
-      const pastData = f.omit(periodData, "arrete_bilan_bdf", "exercice_bdf")
+      const pastData = f.omit(
+        periodData,
+        "arrete_bilan_bdf",
+        "exercice_bdf",
+        "annee_bdf"
+      )
 
+      const makePastProp = (prop: keyof EntréeBdfRatios, offset: YearOffset) =>
+        `${prop}_past_${offset}` as CléRatiosBdfPassés
       for (const prop of Object.keys(pastData) as (keyof typeof pastData)[]) {
-        const past_year_offset = [1, 2]
+        const past_year_offset: YearOffset[] = [1, 2]
         for (const offset of past_year_offset) {
           const periode_offset = f.dateAddMonth(periode, 12 * offset)
           const outputInPast = outputBdf[periode_offset.getTime()]
           if (outputInPast) {
-            Object.assign(outputInPast, {
-              [prop + "_past_" + offset]: entréeBdf[prop],
-            })
+            outputInPast[makePastProp(prop, offset)] = entréeBdf[prop]
           }
         }
       }
