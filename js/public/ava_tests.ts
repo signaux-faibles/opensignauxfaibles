@@ -13,6 +13,8 @@ import { finalize } from "./finalize"
 import { runMongoMap } from "../test/helpers/mongodb"
 import { setGlobals } from "../test/helpers/setGlobals"
 import {
+  EntrepriseBatchProps,
+  EntrepriseDataValues,
   EtablissementBatchProps,
   EtablissementDataValues,
   Siret,
@@ -71,6 +73,33 @@ const expectedReduceResults = expectedMapResults[etablissementKey]
 const expectedFinalizeResultValue = expectedMapResults[etablissementKey]
 
 // exécution complète de la chaine "public"
+
+test.serial(
+  `public.map() retourne toutes les propriétés d'entreprise attendues sur le frontal`,
+  (t: ExecutionContext) => {
+    const rawEntrData: EntrepriseBatchProps = {
+      reporder: {},
+      paydex: { somehash: { date_valeur: new Date(), nb_jours: 1 } },
+    }
+    const rawData: EntrepriseDataValues = {
+      scope: "entreprise",
+      key: siret.substr(0, 9), // siren
+      batch: { [batchKey]: rawEntrData },
+    }
+    const expectedMapResults = {
+      [rawData.scope + "_" + rawData.key]: {
+        key: rawData.key,
+        batch: batchKey,
+        paydex: [rawEntrData.paydex.somehash],
+      },
+    }
+    const mapResults: Record<string, unknown> = {}
+    runMongoMap(map, [{ _id: null, value: rawData }]).map(
+      ({ _id, value }) => (mapResults[_id as string] = value)
+    )
+    t.deepEqual(mapResults, expectedMapResults)
+  }
+)
 
 test.serial(
   `public.map() retourne les propriétés d'établissement présentées sur le frontal`,
