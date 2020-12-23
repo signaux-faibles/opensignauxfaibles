@@ -177,8 +177,9 @@ func (sirene Sirene) Scope() string {
 var Parser = &sireneParser{}
 
 type sireneParser struct {
-	file   *os.File
-	reader *csv.Reader
+	file     *os.File
+	reader   *csv.Reader
+	colIndex marshal.ColMapping
 }
 
 func (parser *sireneParser) GetFileType() string {
@@ -203,18 +204,17 @@ func (parser *sireneParser) Open(filePath string) (err error) {
 	parser.reader.LazyQuotes = true
 
 	// parse header
-	row, err := parser.reader.Read()
+	headerRow, err := parser.reader.Read()
 	if err != nil {
 		return err // may be io.EOF
-	} else if !reflect.DeepEqual(row, fields) {
+	} else if !reflect.DeepEqual(headerRow, fields) {
 		return errors.New("sirene header does not match the parser's expectations")
 	}
-
+	parser.colIndex = marshal.GetFieldBindings(headerRow)
 	return nil
 }
 
 func (parser *sireneParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
-	f := marshal.GetFieldBindings(fields)
 	for {
 		parsedLine := marshal.ParsedLineResult{}
 		row, err := parser.reader.Read()
@@ -224,7 +224,7 @@ func (parser *sireneParser) ParseLines(parsedLineChan chan marshal.ParsedLineRes
 		} else if err != nil {
 			parsedLine.AddRegularError(err)
 		} else {
-			parseLine(f, row, &parsedLine)
+			parseLine(parser.colIndex, row, &parsedLine)
 		}
 		parsedLineChan <- parsedLine
 	}
