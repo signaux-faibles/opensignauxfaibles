@@ -16,7 +16,10 @@ func IndexFields(headerFields []string, expectedFields []string) ColMapping {
 	}
 	var colMapping = ColMapping{}
 	for _, name := range expectedFields {
-		colMapping[name] = misc.SliceIndex(len(headerFields), func(i int) bool { return normalizedHeaderFields[i] == name })
+		idx := misc.SliceIndex(len(headerFields), func(i int) bool { return normalizedHeaderFields[i] == name })
+		if idx != -1 {
+			colMapping[name] = idx
+		}
 	}
 	return colMapping
 }
