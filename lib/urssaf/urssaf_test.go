@@ -2,7 +2,10 @@ package urssaf
 
 import (
 	"flag"
+	"log"
 	"path/filepath"
+	"regexp"
+	"strings"
 	"testing"
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/marshal"
@@ -130,6 +133,18 @@ func TestEffectif(t *testing.T) {
 			effectif, _ := tuple.(Effectif)
 			assert.Equal(t, allowedSiren, effectif.Siret[0:9])
 		}
+	})
+
+	t.Run("Effectif ne peut pas être importé s'il manque une colonne", func(t *testing.T) {
+		csvData := strings.Join([]string{"siret"}, "\n") // "compte" column is missing
+		csvFile := marshal.CreateTempFileWithContent(t, []byte(csvData))
+		output := marshal.RunParser(ParserEffectif, marshal.NewCache(), csvFile.Name())
+		assert.Equal(t, []marshal.Tuple(nil), output.Tuples, "should return no tuples")
+		assert.Equal(t, 1, len(output.Events), "should return a parsing report")
+		reportData, _ := output.Events[0].ParseReport()
+		assert.Equal(t, true, reportData["isFatal"], "should report a fatal error")
+		log.Println(reportData["headFatal"])
+		assert.Regexp(t, regexp.MustCompile("champs obligatoires n'a pu etre trouve"), reportData["headFatal"])
 	})
 }
 
