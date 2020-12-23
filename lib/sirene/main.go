@@ -45,8 +45,9 @@ type Sirene struct {
 	Latitude             float64    `json:"latitude,omitempty" bson:"latitude,omitempty"`
 }
 
+// liste des colonnes attendues, dans l'ordre attendu
 var fields = []string{
-	"siren",
+	"siren", // TODO: construire cette liste par reflection des champs de Sirene ? ou détecter les indices depuis l'en-tête ?
 	"nic",
 	"siret",
 	"statutDiffusionEtablissement",
