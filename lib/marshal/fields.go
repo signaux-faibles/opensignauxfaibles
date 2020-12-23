@@ -13,14 +13,14 @@ import (
 // tag "col" annotant les propriétés du type de destination du parseur.
 func ValidateAndIndexColumnsFromColTags(headerRow []string, destObject interface{}) (ColMapping, error) {
 	requiredFields := extractColTags(destObject)
-	idx := GetFieldBindings(headerRow)
+	idx := indexFields(headerRow)
 	_, err := idx.HasFields(requiredFields)
 	return idx, err
 }
 
-// IndexFields indexe la position de chaque colonne par son nom,
-// à partir d'un en-tête ordonné et d'une liste de colonnes attendues.
-func IndexFields(headerFields []string, expectedFields []string) ColMapping {
+// IndexSpecificFields indexe la position des colonnes spécifiées,
+// à partir de la liste ordonnée des noms de colonne, telle que lue en en-tête.
+func IndexSpecificFields(headerFields []string, expectedFields []string) ColMapping {
 	var colMapping = ColMapping{}
 	for _, name := range expectedFields {
 		idx := misc.SliceIndex(len(headerFields), func(i int) bool { return headerFields[i] == name })
@@ -31,9 +31,9 @@ func IndexFields(headerFields []string, expectedFields []string) ColMapping {
 	return colMapping
 }
 
-// GetFieldBindings indexe la position de chaque colonne par son nom,
+// indexFields indexe la position de chaque colonne par son nom,
 // à partir de la liste ordonnée des noms de colonne, telle que lue en en-tête.
-func GetFieldBindings(headerFields []string) ColMapping {
+func indexFields(headerFields []string) ColMapping {
 	var colMapping = ColMapping{}
 	for idx, name := range headerFields {
 		colMapping[name] = idx
