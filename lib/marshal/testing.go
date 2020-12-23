@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"strings"
 	"sync"
 	"testing"
 	"time"
@@ -35,6 +36,14 @@ func MockComptesMapping(mapping map[string]string) Comptes {
 type tuplesAndEvents = struct {
 	Tuples []Tuple `json:"tuples"`
 	Events []Event `json:"events"`
+}
+
+// RunParserInline returns Tuples and Events resulting from the execution of a
+// Parser on a given list of rows, with an empty Cache.
+func RunParserInline(t *testing.T, parser Parser, rows []string) (output tuplesAndEvents) {
+	csvData := strings.Join(rows, "\n")
+	csvFile := CreateTempFileWithContent(t, []byte(csvData)) // will clean up after the test
+	return RunParser(parser, NewCache(), csvFile.Name())
 }
 
 // RunParser returns Tuples and Events resulting from the execution of a

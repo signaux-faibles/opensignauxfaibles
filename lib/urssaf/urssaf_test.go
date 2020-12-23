@@ -4,7 +4,6 @@ import (
 	"flag"
 	"path/filepath"
 	"regexp"
-	"strings"
 	"testing"
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/marshal"
@@ -135,9 +134,7 @@ func TestEffectif(t *testing.T) {
 	})
 
 	t.Run("Effectif ne peut pas être importé s'il manque une colonne", func(t *testing.T) {
-		csvData := strings.Join([]string{"siret"}, "\n") // "compte" column is missing
-		csvFile := marshal.CreateTempFileWithContent(t, []byte(csvData))
-		output := marshal.RunParser(ParserEffectif, marshal.NewCache(), csvFile.Name())
+		output := marshal.RunParserInline(t, ParserEffectif, []string{"siret"}) // "compte" column is missing
 		assert.Equal(t, []marshal.Tuple(nil), output.Tuples, "should return no tuples")
 		assert.Equal(t, 1, len(output.Events), "should return a parsing report")
 		reportData, _ := output.Events[0].ParseReport()
