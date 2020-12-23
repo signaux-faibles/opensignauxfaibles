@@ -92,7 +92,7 @@ func parseEffectifEntColMapping(reader *csv.Reader) (marshal.ColMapping, []perio
 		return nil, nil, err
 	}
 	expectedFields := []string{"siren"}
-	var idx = marshal.IndexFields(fields, expectedFields)
+	var idx = marshal.IndexFields(marshal.LowercaseFields(fields), expectedFields)
 	// Dans quels champs lire l'effectifEnt
 	periods := parseEffectifPeriod(fields)
 	return idx, periods, nil

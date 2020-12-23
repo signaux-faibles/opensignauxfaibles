@@ -83,7 +83,7 @@ func parseEffectifColMapping(reader *csv.Reader) (marshal.ColMapping, []periodCo
 	}
 
 	expectedFields := []string{"siret", "compte"}
-	var idx = marshal.IndexFields(fields, expectedFields)
+	var idx = marshal.IndexFields(marshal.LowercaseFields(fields), expectedFields)
 	if _, err = idx.HasFields(expectedFields); err != nil {
 		return nil, nil, err
 	}
