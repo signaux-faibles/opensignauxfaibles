@@ -1,3 +1,6 @@
+// Ce paquet centralise les parseurs de fichiers pour les mettre à
+// disposition de `engine`.
+
 package parsing
 
 import (

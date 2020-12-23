@@ -105,14 +105,6 @@ var fields = []string{
 	"geo_l5",
 }
 
-func getFieldBindings(fields []string) map[string]int {
-	var f = map[string]int{}
-	for i, k := range fields {
-		f[k] = i
-	}
-	return f
-}
-
 var typeVoie = map[string]string{
 	"ALL":  "ALLÉE",
 	"AV":   "AVENUE",
@@ -221,7 +213,7 @@ func (parser *sireneParser) Open(filePath string) (err error) {
 }
 
 func (parser *sireneParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
-	f := getFieldBindings(fields)
+	f := marshal.GetFieldBindings(fields)
 	for {
 		parsedLine := marshal.ParsedLineResult{}
 		row, err := parser.reader.Read()
