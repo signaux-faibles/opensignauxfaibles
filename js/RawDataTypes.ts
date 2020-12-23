@@ -60,25 +60,30 @@ export type EntrepriseBatchProps = CommonBatchProps & {
   paydex: ParHash<EntréePaydex>
 }
 
-// TODO: continuer d'extraire les propriétés vers EntrepriseBatchProps et EtablissementBatchProps
-export type BatchValueProps = EntrepriseBatchProps & {
-  effectif: ParHash<EntréeEffectif>
+export type EtablissementBatchProps = CommonBatchProps & {
   apconso: ParHash<EntréeApConso>
-  apdemande: ParHash<EntréeApDemande>
-  compte: ParHash<EntréeCompte>
-  interim: ParHash<EntréeInterim>
-  delai: ParHash<EntréeDelai>
-  procol: ParHash<EntréeDéfaillances>
-  cotisation: ParHash<EntréeCotisation>
-  debit: ParHash<EntréeDebit>
-  ccsf: ParHash<{ date_traitement: Date }>
-  sirene: ParHash<EntréeSirene>
-  sirene_ul: ParHash<EntréeSireneEntreprise>
-  effectif_ent: ParHash<EntréeEffectif>
-  bdf: ParHash<EntréeBdf>
-  diane: ParHash<EntréeDiane>
-  ellisphere: ParHash<EntréeEllisphere>
 }
+
+// TODO: continuer d'extraire les propriétés vers EntrepriseBatchProps et EtablissementBatchProps
+export type BatchValueProps = CommonBatchProps &
+  EntrepriseBatchProps &
+  EtablissementBatchProps & {
+    effectif: ParHash<EntréeEffectif>
+    apdemande: ParHash<EntréeApDemande>
+    compte: ParHash<EntréeCompte>
+    interim: ParHash<EntréeInterim>
+    delai: ParHash<EntréeDelai>
+    procol: ParHash<EntréeDéfaillances>
+    cotisation: ParHash<EntréeCotisation>
+    debit: ParHash<EntréeDebit>
+    ccsf: ParHash<{ date_traitement: Date }>
+    sirene: ParHash<EntréeSirene>
+    sirene_ul: ParHash<EntréeSireneEntreprise>
+    effectif_ent: ParHash<EntréeEffectif>
+    bdf: ParHash<EntréeBdf>
+    diane: ParHash<EntréeDiane>
+    ellisphere: ParHash<EntréeEllisphere>
+  }
 
 // Détail des types de données
 
