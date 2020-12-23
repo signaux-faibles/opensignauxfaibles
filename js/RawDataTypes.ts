@@ -10,7 +10,7 @@ export type Departement = string
 
 export type Siren = string
 export type Siret = string
-export type SiretOrSiren = Siret | Siren
+export type SiretOrSiren = Siret | Siren // TODO: supprimer ce type, une fois que tous les champs auront été séparés
 export type CodeAPE = string
 
 export type DataHash = string
@@ -46,11 +46,11 @@ export type IndexFlags = {
 
 export type BatchKey = string
 
-export type BatchValues = Record<BatchKey, BatchValue> // TODO: supprimer ce type, pour faire la distinction entre Entreprise et Etablissement
+export type BatchValues = Record<BatchKey, BatchValue>
 
 export type DataType = keyof BatchValueProps // => 'reporder' | 'effectif' | 'apconso' | ...
 
-export type BatchValue = Partial<BatchValueProps> // TODO: supprimer ce type, pour faire la distinction entre Entreprise et Etablissement
+export type BatchValue = Partial<BatchValueProps>
 
 type CommonBatchProps = {
   reporder: ParPériode<EntréeRepOrder> // RepOrder est généré par "compact", et non importé => Usage de Periode en guise de hash d'indexation
@@ -64,7 +64,7 @@ export type EtablissementBatchProps = CommonBatchProps & {
   apconso: ParHash<EntréeApConso>
 }
 
-// TODO: continuer d'extraire les propriétés vers EntrepriseBatchProps et EtablissementBatchProps
+// TODO: continuer d'extraire les propriétés vers EntrepriseBatchProps et EtablissementBatchProps, puis supprimer BatchValueProps et les types qui en dépendent
 export type BatchValueProps = CommonBatchProps &
   EntrepriseBatchProps &
   EtablissementBatchProps & {
