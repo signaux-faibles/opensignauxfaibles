@@ -45,8 +45,9 @@ func (paydex Paydex) Type() string {
 var ParserPaydex = &paydexParser{}
 
 type paydexParser struct {
-	file   *os.File
-	reader *csv.Reader
+	file     *os.File
+	reader   *csv.Reader
+	colIndex marshal.ColMapping
 }
 
 func (parser *paydexParser) GetFileType() string {
@@ -69,8 +70,8 @@ func (parser *paydexParser) Open(filePath string) (err error) {
 	headerRow, err := parser.reader.Read()
 	if err == nil {
 		expectedFields := []string{"SIREN", "NB_JOURS", "DATE_VALEUR"}
-		colIndex := marshal.IndexFields(headerRow, expectedFields)
-		_, err = colIndex.HasFields(expectedFields)
+		parser.colIndex = marshal.IndexFields(headerRow, expectedFields)
+		_, err = parser.colIndex.HasFields(expectedFields)
 	}
 	return err
 }
@@ -95,7 +96,7 @@ func (parser *paydexParser) ParseLines(parsedLineChan chan marshal.ParsedLineRes
 		} else if err != nil {
 			parsedLine.AddRegularError(err)
 		} else {
-			paydex, err := parsePaydexLine(row)
+			paydex, err := parsePaydexLine(parser.colIndex, row)
 			if err != nil {
 				parsedLine.AddRegularError(err)
 			} else {
@@ -106,17 +107,17 @@ func (parser *paydexParser) ParseLines(parsedLineChan chan marshal.ParsedLineRes
 	}
 }
 
-func parsePaydexLine(row []string) (*Paydex, error) {
-	dateValeur, err := time.Parse("02/01/2006", row[3])
+func parsePaydexLine(colIndex marshal.ColMapping, row []string) (*Paydex, error) {
+	dateValeur, err := time.Parse("02/01/2006", row[colIndex["DATE_VALEUR"]])
 	if err != nil {
-		return nil, fmt.Errorf("invalid date: %v", row[3])
+		return nil, fmt.Errorf("invalid date: %v", row[colIndex["DATE_VALEUR"]])
 	}
-	nbJours, err := strconv.Atoi(row[1])
+	nbJours, err := strconv.Atoi(row[colIndex["NB_JOURS"]])
 	if err != nil {
-		return nil, fmt.Errorf("invalid date: %v", row[3])
+		return nil, fmt.Errorf("invalid int: %v", row[colIndex["NB_JOURS"]])
 	}
 	return &Paydex{
-		Siren:      row[0],
+		Siren:      row[colIndex["SIREN"]],
 		DateValeur: dateValeur,
 		NbJours:    nbJours,
 	}, nil
