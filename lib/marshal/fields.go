@@ -55,12 +55,13 @@ func LowercaseFields(headerFields []string) []string {
 
 // ExtractColTags extraie les noms de colonnes depuis les valeurs du tag "col"
 // de chaque propriété de l'objet fourni.
+// Il est possible d'associer plusieurs colonnes en séparant par des virgules.
 func ExtractColTags(object interface{}) (expectedFields []string) {
 	structure := reflect.TypeOf(object)
 	for i := 0; i < structure.NumField(); i++ {
 		tag := structure.Field(i).Tag.Get("col")
 		if tag != "" {
-			expectedFields = append(expectedFields, tag)
+			expectedFields = append(expectedFields, strings.Split(tag, ",")...)
 		}
 	}
 	return expectedFields
