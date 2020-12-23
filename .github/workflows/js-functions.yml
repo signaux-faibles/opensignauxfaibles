@@ -25,6 +25,12 @@ jobs:
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
 
+      - name: Go build
+        run: go build -o "sfdata" -v .
+
+      - name: Go test
+        run: go test -coverprofile=go-coverage.out ./...
+
       - name: Use cache for Node/npm dependencies
         uses: actions/cache@v1
         with:
@@ -71,4 +77,4 @@ jobs:
         uses: codacy/codacy-coverage-reporter-action@master
         with:
           project-token: ${{ secrets.CODACY_REPOSITORY_TOKEN_FOR_COVERAGE }}
-          coverage-reports: js/coverage/lcov.info
+          coverage-reports: go-coverage.out,js/coverage/lcov.info
