@@ -8,8 +8,9 @@ export type ParPériode<T> = Record<Periode, T>
 
 export type Departement = string
 
+export type Siren = string
 export type Siret = string
-export type SiretOrSiren = Siret | string
+export type SiretOrSiren = Siret | Siren
 export type CodeAPE = string
 
 export type DataHash = string
@@ -17,13 +18,21 @@ export type ParHash<T> = Record<DataHash, T>
 
 // Données importées pour une entreprise ou établissement
 
-export type Scope = "etablissement" | "entreprise"
-
-export type CompanyDataValues = {
-  key: SiretOrSiren
-  scope: Scope
-  batch: BatchValues
+type EntrepriseDataValues = {
+  key: Siren
+  scope: "entreprise"
+  batch: Record<BatchKey, Partial<EntrepriseBatchProps>>
 }
+
+type EtablissementDataValues = {
+  key: Siret
+  scope: "etablissement"
+  batch: Record<BatchKey, Partial<BatchValueProps>> // TODO: remplacer par Partial<EtablissementBatchProps>
+}
+
+export type Scope = (EntrepriseDataValues | EtablissementDataValues)["scope"]
+
+export type CompanyDataValues = EntrepriseDataValues | EtablissementDataValues
 
 export type CompanyDataValuesWithFlags = CompanyDataValues & IndexFlags
 
@@ -42,8 +51,12 @@ export type BatchValues = Record<BatchKey, BatchValue>
 export type DataType = keyof BatchValueProps // => 'reporder' | 'effectif' | 'apconso' | ...
 
 export type BatchValue = Partial<BatchValueProps>
+export type EntrepriseBatchProps = {
+  paydex: ParHash<EntréePaydex>
+}
 
-export type BatchValueProps = {
+// TODO: continuer d'extraire les propriétés vers EntrepriseBatchProps et EtablissementBatchProps
+export type BatchValueProps = EntrepriseBatchProps & {
   reporder: ParPériode<EntréeRepOrder> // RepOrder est généré par "compact", et non importé => Usage de Periode en guise de hash d'indexation
   effectif: ParHash<EntréeEffectif>
   apconso: ParHash<EntréeApConso>
@@ -61,7 +74,6 @@ export type BatchValueProps = {
   bdf: ParHash<EntréeBdf>
   diane: ParHash<EntréeDiane>
   ellisphere: ParHash<EntréeEllisphere>
-  paydex: ParHash<EntréePaydex>
 }
 
 // Détail des types de données
