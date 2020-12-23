@@ -1,8 +1,10 @@
-// Objectif de cette suite de tests d'intégration:
-// Vérifier la compatibilité des types et mesurer la couverture lors du passage
-// de données entre les fonctions map(), reduce() et finalize(), en s'appuyant
-// sur le jeu de données minimal utilisé dans notre suite de bout en bout
-// définie dans test.sh.
+// Ces tests visent à couvrir toutes les fonctions invoquées par map(), en lui
+// fournissant un jeu de données minimal mais incluant tous les types d'entrée
+// inclus dans RawData.
+//
+// => Penser à ajouter les nouveaux types dans rawEtabData et rawEntrData.
+//
+// TODO: renommer ce fichier --> `map_tests.ts`.
 
 import test, { ExecutionContext } from "ava"
 import { map } from "./map"
