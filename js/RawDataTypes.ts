@@ -18,13 +18,13 @@ export type ParHash<T> = Record<DataHash, T>
 
 // Données importées pour une entreprise ou établissement
 
-type EntrepriseDataValues = {
+export type EntrepriseDataValues = {
   key: Siren
   scope: "entreprise"
   batch: Record<BatchKey, Partial<BatchValueProps>> // TODO: remplacer par `Partial<EntrepriseBatchProps>>`, une fois que tous les champs auront été séparés
 }
 
-type EtablissementDataValues = {
+export type EtablissementDataValues = {
   key: Siret
   scope: "etablissement"
   batch: Record<BatchKey, Partial<BatchValueProps>> // TODO: remplacer par Partial<EtablissementBatchProps>, une fois que tous les champs auront été séparés

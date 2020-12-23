@@ -14,7 +14,7 @@ import { runMongoMap } from "../test/helpers/mongodb"
 import { setGlobals } from "../test/helpers/setGlobals"
 import {
   EtablissementBatchProps,
-  CompanyDataValuesWithFlags,
+  EtablissementDataValues,
   Siret,
 } from "../RawDataTypes"
 
@@ -37,12 +37,11 @@ const rawEtabData: EtablissementBatchProps = {
   },
 }
 
-const rawData: CompanyDataValuesWithFlags = {
+const rawData: EtablissementDataValues = {
   batch: {
     [batchKey]: rawEtabData,
   },
   scope: "etablissement",
-  index: { algo2: false }, // car il n'y a pas de données justifiant que l'établissement compte 10 employés ou pas
   key: siret,
 }
 
