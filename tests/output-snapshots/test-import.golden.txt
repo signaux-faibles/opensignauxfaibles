@@ -74,6 +74,57 @@
 		"_id" : ObjectId("________ObjectId________"),
 		"value" : {
 			"scope" : "entreprise",
+			"key" : "000000001",
+			"batch" : {
+				"1910" : {
+					"paydex" : {
+						"08d189057ad993550d687c012c38deba" : {
+							"siren" : "000000001",
+							"date_valeur" : ISODate("2018-12-15T00:00:00Z"),
+							"nb_jours" : 2
+						},
+						"14e0ccedefff3afa3b6fcf0d529d0f6b" : {
+							"siren" : "000000001",
+							"date_valeur" : ISODate("2019-01-15T00:00:00Z"),
+							"nb_jours" : 3
+						},
+						"e1f1f42c498b07f1267ed0f03b5d2cbf" : {
+							"siren" : "000000001",
+							"date_valeur" : ISODate("2018-01-15T00:00:00Z"),
+							"nb_jours" : 1
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "entreprise",
+			"key" : "000000002",
+			"batch" : {
+				"1910" : {
+					"paydex" : {
+						"262fb3db3a0e98195003a8d78d82f3b9" : {
+							"siren" : "000000002",
+							"date_valeur" : ISODate("2018-12-15T00:00:00Z"),
+							"nb_jours" : 4
+						},
+						"8e8223443c1df0dcb532eaa834886638" : {
+							"siren" : "000000002",
+							"date_valeur" : ISODate("2019-01-15T00:00:00Z"),
+							"nb_jours" : 5
+						}
+					}
+				}
+			}
+		}
+	},
+	{
+		"_id" : ObjectId("________ObjectId________"),
+		"value" : {
+			"scope" : "entreprise",
 			"key" : "000111222",
 			"batch" : {
 				"1910" : {
@@ -4883,6 +4934,21 @@
 		},
 		"reportType" : "ImportBatch",
 		"parserCode" : "ellisphere",
+		"hasDate" : true,
+		"hasStartDate" : true
+	},
+	{
+		"event" : {
+			"headRejected" : [
+				"Line 3: invalid date: 01/15/2019"
+			],
+			"headFatal" : [ ],
+			"linesSkipped" : 0,
+			"summary" : "/../lib/paydex/testData/paydexTestData.csv: intégration terminée, 6 lignes traitées, 0 erreurs fatales, 1 lignes rejetées, 0 lignes filtrées, 5 lignes valides",
+			"batchKey" : "1910"
+		},
+		"reportType" : "ImportBatch",
+		"parserCode" : "paydex",
 		"hasDate" : true,
 		"hasStartDate" : true
 	},
