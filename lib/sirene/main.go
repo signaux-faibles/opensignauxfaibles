@@ -7,7 +7,6 @@ import (
 	"errors"
 	"io"
 	"os"
-	"reflect"
 	"regexp"
 	"strconv"
 	"strings"
@@ -46,7 +45,7 @@ type Sirene struct {
 }
 
 // liste des colonnes attendues, dans l'ordre attendu
-var fields = []string{
+var expectedFields = []string{
 	"siren", // TODO: construire cette liste par reflection des champs de Sirene ? ou détecter les indices depuis l'en-tête ?
 	"nic",
 	"siret",
@@ -207,11 +206,10 @@ func (parser *sireneParser) Open(filePath string) (err error) {
 	headerRow, err := parser.reader.Read()
 	if err != nil {
 		return err // may be io.EOF
-	} else if !reflect.DeepEqual(headerRow, fields) {
-		return errors.New("sirene header does not match the parser's expectations")
 	}
 	parser.colIndex = marshal.GetFieldBindings(headerRow)
-	return nil
+	_, err = parser.colIndex.HasFields(expectedFields)
+	return err
 }
 
 func (parser *sireneParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
