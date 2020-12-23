@@ -51,13 +51,17 @@ export type BatchValues = Record<BatchKey, BatchValue>
 export type DataType = keyof BatchValueProps // => 'reporder' | 'effectif' | 'apconso' | ...
 
 export type BatchValue = Partial<BatchValueProps>
-export type EntrepriseBatchProps = {
+
+type CommonBatchProps = {
+  reporder: ParPériode<EntréeRepOrder> // RepOrder est généré par "compact", et non importé => Usage de Periode en guise de hash d'indexation
+}
+
+export type EntrepriseBatchProps = CommonBatchProps & {
   paydex: ParHash<EntréePaydex>
 }
 
 // TODO: continuer d'extraire les propriétés vers EntrepriseBatchProps et EtablissementBatchProps
 export type BatchValueProps = EntrepriseBatchProps & {
-  reporder: ParPériode<EntréeRepOrder> // RepOrder est généré par "compact", et non importé => Usage de Periode en guise de hash d'indexation
   effectif: ParHash<EntréeEffectif>
   apconso: ParHash<EntréeApConso>
   apdemande: ParHash<EntréeApDemande>
