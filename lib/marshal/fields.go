@@ -2,6 +2,7 @@ package marshal
 
 import (
 	"errors"
+	"reflect"
 	"strings"
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/misc"
@@ -50,4 +51,17 @@ func LowercaseFields(headerFields []string) []string {
 		normalizedHeaderFields[i] = strings.ToLower(name)
 	}
 	return normalizedHeaderFields
+}
+
+// ExtractColTags extraie les noms de colonnes depuis les valeurs du tag "col"
+// de chaque propriété de l'objet fourni.
+func ExtractColTags(object interface{}) (expectedFields []string) {
+	structure := reflect.TypeOf(object)
+	for i := 0; i < structure.NumField(); i++ {
+		tag := structure.Field(i).Tag.Get("col")
+		if tag != "" {
+			expectedFields = append(expectedFields, tag)
+		}
+	}
+	return expectedFields
 }
