@@ -36,7 +36,9 @@ jobs:
           # echo "go run github.com/AlekSi/gocov-xml -source $PWD/go-coverage.json"
           # go run github.com/AlekSi/gocov-xml -source "$PWD/go-coverage.json" > go-coverage.xml
           # cat go-coverage.xml
-          go run github.com/t-yuki/gocover-cobertura < go-coverage.out > go-coverage.xml,
+          go run github.com/t-yuki/gocover-cobertura < go-coverage.out > go-coverage.xml
+          cat go-coverage.xml
+          echo "$PWD/go-coverage.xml"
 
       - name: Use cache for Node/npm dependencies
         uses: actions/cache@v1
