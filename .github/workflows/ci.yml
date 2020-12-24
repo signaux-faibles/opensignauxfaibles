@@ -1,4 +1,4 @@
-name: JavaScript Functions CI
+name: CI
 
 on:
   push:
