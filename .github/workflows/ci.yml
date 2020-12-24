@@ -7,8 +7,8 @@ on:
     branches: [master]
 
 jobs:
-  build:
-    name: Build
+  go-tests:
+    name: Go functions
     runs-on: ubuntu-latest
     steps:
       - name: Set up Go 1.14
@@ -16,20 +16,28 @@ jobs:
         with:
           go-version: 1.14
         id: go
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v1
-        with:
-          node-version: 12
-
-      - name: Check out code into the Go module directory
+      - name: Check out code
         uses: actions/checkout@v2
-
       - name: Go test (with coverage)
         run: |
           go test -coverprofile=go-coverage.out -covermode count ./...
           go run github.com/t-yuki/gocover-cobertura < go-coverage.out > go-coverage.xml
 
+  mr-tests:
+    name: Map-Reduce functions
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Go 1.14
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.14
+        id: go
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
+      - name: Check out code
+        uses: actions/checkout@v2
       - name: Use cache for Node/npm dependencies
         uses: actions/cache@v1
         with:
@@ -38,25 +46,21 @@ jobs:
           restore-keys: |
             ${{ runner.OS }}-build-${{ env.cache-name }}-
             ${{ runner.OS }}-build-
-
       - name: Install Node/npm dependencies
         working-directory: js
         env:
           CI: true
         run: npm install --prefer-offline --no-audit
-
       - name: Check that jsFunctions.go is up to date
         working-directory: lib/engine
         run: |
           go generate -x
           git diff jsFunctions.go
           exit $(git diff jsFunctions.go | wc -l)
-
       - name: JS Linter
         working-directory: js
         run: |
           npm run lint
-
       - name: Reveal golden master files for tests
         env:
           GPG_PRIVATE_KEY_FOR_GIT_SECRET: ${{ secrets.GPG_PRIVATE_KEY_FOR_GIT_SECRET }}
@@ -65,13 +69,19 @@ jobs:
           echo "${GPG_PRIVATE_KEY_FOR_GIT_SECRET}" > ./private_key.gpg
           gpg --import --no-tty --batch --yes ./private_key.gpg
           git secret reveal
-
       - name: Tests driven by Node/AVA
         working-directory: js
         run: |
           npm run test:coverage
           npx nyc report --reporter=lcov --include="**/*.ts" --exclude="**/*.js" # stores the coverage report in ./coverage/lcov.info
 
+  coverage:
+    name: Send coverage data to Codacy
+    needs:
+      - mr-tests
+      - go-tests
+    runs-on: ubuntu-latest
+    steps:
       - name: Upload coverage to codacy
         uses: codacy/codacy-coverage-reporter-action@master
         with:
