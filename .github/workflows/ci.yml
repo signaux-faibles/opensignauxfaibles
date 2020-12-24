@@ -9,7 +9,7 @@ on:
 jobs:
   go-tests:
     name: Go functions
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Set up Go 1.14
         uses: actions/setup-go@v1
@@ -30,7 +30,7 @@ jobs:
 
   mr-tests:
     name: Map-Reduce functions
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Set up Go 1.14
         uses: actions/setup-go@v1
@@ -77,7 +77,7 @@ jobs:
 
   build:
     name: Generate and lint
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Set up Go 1.14
         uses: actions/setup-go@v1
@@ -118,7 +118,7 @@ jobs:
 
   e2e-tests:
     name: End-to-end tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Set up Go 1.14
         uses: actions/setup-go@v1
@@ -195,7 +195,7 @@ jobs:
     needs:
       - mr-tests
       - go-tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Check out code
         uses: actions/checkout@v2
