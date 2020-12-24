@@ -25,7 +25,6 @@ jobs:
       - name: Archive code coverage results
         uses: actions/upload-artifact@v2
         with:
-          name: code-coverage-report-1
           path: go-coverage.xml
 
   mr-tests:
@@ -82,7 +81,6 @@ jobs:
       - name: Archive code coverage results
         uses: actions/upload-artifact@v2
         with:
-          name: code-coverage-report-2
           path: js/coverage/lcov.info
 
   coverage:
@@ -100,4 +98,4 @@ jobs:
         uses: codacy/codacy-coverage-reporter-action@master
         with:
           project-token: ${{ secrets.CODACY_REPOSITORY_TOKEN_FOR_COVERAGE }}
-          coverage-reports: go-coverage.xml,js/coverage/lcov.info
+          coverage-reports: go-coverage.xml,lcov.info,js/coverage/lcov.info
