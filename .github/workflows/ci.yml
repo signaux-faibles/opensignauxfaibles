@@ -104,4 +104,4 @@ jobs:
         uses: codacy/codacy-coverage-reporter-action@master
         with:
           project-token: ${{ secrets.CODACY_REPOSITORY_TOKEN_FOR_COVERAGE }}
-          coverage-reports: go-coverage.xml,lcov.info,js/coverage/lcov.info
+          coverage-reports: go-coverage.xml,lcov.info
