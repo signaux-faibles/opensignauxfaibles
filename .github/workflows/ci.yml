@@ -76,7 +76,7 @@ jobs:
           path: js/coverage/lcov.info
 
   build:
-    name: Generate, build and linter
+    name: Generate and lint
     runs-on: ubuntu-latest
     steps:
       - name: Set up Go 1.14
@@ -115,6 +115,80 @@ jobs:
         working-directory: js
         run: |
           npm run lint
+
+  e2e-tests:
+    name: End-to-end tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Go 1.14
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.14
+        id: go
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+
+      - name: Install test dependencies
+        run: |
+          sudo apt-get install -y httpie
+          sudo apt-get install git-secret # to decrypt golden master files, for tests
+
+      - name: Reveal golden master files for tests
+        env:
+          GPG_PRIVATE_KEY_FOR_GIT_SECRET: ${{ secrets.GPG_PRIVATE_KEY_FOR_GIT_SECRET }}
+        run: |
+          echo "${GPG_PRIVATE_KEY_FOR_GIT_SECRET}" > ./private_key.gpg
+          gpg --import --no-tty --batch --yes ./private_key.gpg
+          git secret reveal
+
+      - name: Build + remove source code
+        run: |
+          go build -o "sfdata" -v .
+          ls -lR
+          # delete all files, except the binary, config, NAF and other data files used by tests
+          find . \
+            ! -name 'sfdata' \
+            ! -name '*.toml' \
+            ! -name 'test*.sh' \
+            ! -name 'sfdata-wrapper.sh' \
+            ! -name 'diff-or-update-golden-master.sh' \
+            ! -name 'mongodb-container.sh' \
+            ! -name 'populate-from-objects.sh' \
+            ! -name 'remove-random_order.sh' \
+            ! -name '*.txt' \
+            ! -name '*.csv' \
+            ! -name '*.json' \
+            ! -name '*.excel' \
+            ! -name 'objects.js' \
+            -type f \
+            -exec rm -v {} +
+
+      - run: ./tests/test-cli.sh
+
+      - run: ./tests/test-prune-entities.sh
+
+      - run: ./tests/test.sh
+
+      - run: ./tests/test-import.sh
+
+      - run: ./tests/test-validate.sh
+
+      - run: ./tests/test-check.sh
+
+      - run: ./tests/test-export.sh
+
+      - run: ./tests/test-public.sh
+
+      - run: ./tests/test-reduce.sh
+
+      - run: ./tests/test-purge-batch.sh
+
+      - run: ./tests/test-compact-failure.sh
+
+      - run: ./tests/test-compact.sh # relies on encrypted files
+
+      - run: ./tests/test-reduce-2.sh # relies on encrypted files
 
   coverage:
     name: Send coverage data to Codacy
