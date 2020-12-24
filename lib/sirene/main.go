@@ -7,7 +7,6 @@ import (
 	"errors"
 	"io"
 	"os"
-	"reflect"
 	"regexp"
 	"strconv"
 	"strings"
@@ -19,98 +18,30 @@ import (
 
 // Sirene informations sur les entreprises
 type Sirene struct {
-	Siren                string     `json:"siren,omitempty" bson:"siren,omitempty"`
-	Nic                  string     `json:"nic,omitempty" bson:"nic,omitempty"`
-	Siege                bool       `json:"siege,omitempty" bson:"siege,omitempty"`
-	ComplementAdresse    string     `json:"complement_adresse,omitempty" bson:"complement_adresse,omitempty"`
-	NumVoie              string     `json:"numero_voie,omitempty" bson:"numero_voie,omitempty"`
-	IndRep               string     `json:"indrep,omitempty" bson:"indrep,omitempty"`
-	TypeVoie             string     `json:"type_voie,omitempty" bson:"type_voie,omitempty"`
-	Voie                 string     `json:"voie,omitempty" bson:"voie,omitempty"`
-	Commune              string     `json:"commune,omitempty" bson:"commune,omitempty"`
-	CommuneEtranger      string     `json:"commune_etranger,omitempty" bson:"commune_etranger,omitempty"`
-	DistributionSpeciale string     `json:"distribution_speciale,omitempty" bson:"distribution_speciale,omitempty"`
-	CodeCommune          string     `json:"code_commune,omitempty" bson:"code_commune,omitempty"`
-	CodeCedex            string     `json:"code_cedex,omitempty" bson:"code_cedex,omitempty"`
-	Cedex                string     `json:"cedex,omitempty" bson:"cedex,omitempty"`
-	CodePaysEtranger     string     `json:"code_pays_etranger,omitempty" bson:"code_pays_etranger,omitempty"`
-	PaysEtranger         string     `json:"pays_etranger,omitempty" bson:"pays_etranger,omitempty"`
-	CodePostal           string     `json:"code_postal,omitempty" bson:"code_postal,omitempty"`
+	Siren                string     `col:"siren" json:"siren,omitempty" bson:"siren,omitempty"`
+	Nic                  string     `col:"nic" json:"nic,omitempty" bson:"nic,omitempty"`
+	Siege                bool       `col:"etablissementSiege" json:"siege,omitempty" bson:"siege,omitempty"`
+	ComplementAdresse    string     `col:"complementAdresseEtablissement" json:"complement_adresse,omitempty" bson:"complement_adresse,omitempty"`
+	NumVoie              string     `col:"numeroVoieEtablissement" json:"numero_voie,omitempty" bson:"numero_voie,omitempty"`
+	IndRep               string     `col:"indiceRepetitionEtablissement" json:"indrep,omitempty" bson:"indrep,omitempty"`
+	TypeVoie             string     `col:"typeVoieEtablissement" json:"type_voie,omitempty" bson:"type_voie,omitempty"`
+	Voie                 string     `col:"libelleVoieEtablissement" json:"voie,omitempty" bson:"voie,omitempty"`
+	Commune              string     `col:"libelleCommuneEtablissement" json:"commune,omitempty" bson:"commune,omitempty"`
+	CommuneEtranger      string     `col:"libelleCommuneEtrangerEtablissement" json:"commune_etranger,omitempty" bson:"commune_etranger,omitempty"`
+	DistributionSpeciale string     `col:"distributionSpecialeEtablissement" json:"distribution_speciale,omitempty" bson:"distribution_speciale,omitempty"`
+	CodeCommune          string     `col:"codeCommuneEtablissement" json:"code_commune,omitempty" bson:"code_commune,omitempty"`
+	CodeCedex            string     `col:"codeCedexEtablissement" json:"code_cedex,omitempty" bson:"code_cedex,omitempty"`
+	Cedex                string     `col:"libelleCedexEtablissement" json:"cedex,omitempty" bson:"cedex,omitempty"`
+	CodePaysEtranger     string     `col:"codePaysEtrangerEtablissement" json:"code_pays_etranger,omitempty" bson:"code_pays_etranger,omitempty"`
+	PaysEtranger         string     `col:"libellePaysEtrangerEtablissement" json:"pays_etranger,omitempty" bson:"pays_etranger,omitempty"`
+	CodePostal           string     `col:"codePostalEtablissement" json:"code_postal,omitempty" bson:"code_postal,omitempty"`
 	Departement          string     `json:"departement,omitempty" bson:"departement,omitempty"`
 	APE                  string     `json:"ape,omitempty" bson:"ape,omitempty"`
-	CodeActivite         string     `json:"code_activite,omitempty" bson:"code_activite,omitempty"`
-	NomenActivite        string     `json:"nomen_activite,omitempty" bson:"nomen_activite,omitempty"`
-	Creation             *time.Time `json:"date_creation,omitempty" bson:"date_creation,omitempty"`
-	Longitude            float64    `json:"longitude,omitempty" bson:"longitude,omitempty"`
-	Latitude             float64    `json:"latitude,omitempty" bson:"latitude,omitempty"`
-}
-
-var fields = []string{
-	"siren",
-	"nic",
-	"siret",
-	"statutDiffusionEtablissement",
-	"dateCreationEtablissement",
-	"trancheEffectifsEtablissement",
-	"anneeEffectifsEtablissement",
-	"activitePrincipaleRegistreMetiersEtablissement",
-	"dateDernierTraitementEtablissement",
-	"etablissementSiege",
-	"nombrePeriodesEtablissement",
-	"complementAdresseEtablissement",
-	"numeroVoieEtablissement",
-	"indiceRepetitionEtablissement",
-	"typeVoieEtablissement",
-	"libelleVoieEtablissement",
-	"codePostalEtablissement",
-	"libelleCommuneEtablissement",
-	"libelleCommuneEtrangerEtablissement",
-	"distributionSpecialeEtablissement",
-	"codeCommuneEtablissement",
-	"codeCedexEtablissement",
-	"libelleCedexEtablissement",
-	"codePaysEtrangerEtablissement",
-	"libellePaysEtrangerEtablissement",
-	"complementAdresse2Etablissement",
-	"numeroVoie2Etablissement",
-	"indiceRepetition2Etablissement",
-	"typeVoie2Etablissement",
-	"libelleVoie2Etablissement",
-	"codePostal2Etablissement",
-	"libelleCommune2Etablissement",
-	"libelleCommuneEtranger2Etablissement",
-	"distributionSpeciale2Etablissement",
-	"codeCommune2Etablissement",
-	"codeCedex2Etablissement",
-	"libelleCedex2Etablissement",
-	"codePaysEtranger2Etablissement",
-	"libellePaysEtranger2Etablissement",
-	"dateDebut",
-	"etatAdministratifEtablissement",
-	"enseigne1Etablissement",
-	"enseigne2Etablissement",
-	"enseigne3Etablissement",
-	"denominationUsuelleEtablissement",
-	"activitePrincipaleEtablissement",
-	"nomenclatureActivitePrincipaleEtablissement",
-	"caractereEmployeurEtablissement",
-	"longitude",
-	"latitude",
-	"geo_score",
-	"geo_type",
-	"geo_adresse",
-	"geo_id",
-	"geo_ligne",
-	"geo_l4",
-	"geo_l5",
-}
-
-func getFieldBindings(fields []string) map[string]int {
-	var f = map[string]int{}
-	for i, k := range fields {
-		f[k] = i
-	}
-	return f
+	CodeActivite         string     `col:"activitePrincipaleEtablissement" json:"code_activite,omitempty" bson:"code_activite,omitempty"`
+	NomenActivite        string     `col:"nomenclatureActivitePrincipaleEtablissement" json:"nomen_activite,omitempty" bson:"nomen_activite,omitempty"`
+	Creation             *time.Time `col:"dateCreationEtablissement" json:"date_creation,omitempty" bson:"date_creation,omitempty"`
+	Longitude            float64    `col:"longitude" json:"longitude,omitempty" bson:"longitude,omitempty"`
+	Latitude             float64    `col:"latitude" json:"latitude,omitempty" bson:"latitude,omitempty"`
 }
 
 var typeVoie = map[string]string{
@@ -184,8 +115,9 @@ func (sirene Sirene) Scope() string {
 var Parser = &sireneParser{}
 
 type sireneParser struct {
-	file   *os.File
-	reader *csv.Reader
+	file     *os.File
+	reader   *csv.Reader
+	colIndex marshal.ColMapping
 }
 
 func (parser *sireneParser) GetFileType() string {
@@ -210,18 +142,15 @@ func (parser *sireneParser) Open(filePath string) (err error) {
 	parser.reader.LazyQuotes = true
 
 	// parse header
-	row, err := parser.reader.Read()
+	headerRow, err := parser.reader.Read()
 	if err != nil {
 		return err // may be io.EOF
-	} else if !reflect.DeepEqual(row, fields) {
-		return errors.New("sirene header does not match the parser's expectations")
 	}
-
-	return nil
+	parser.colIndex, err = marshal.ValidateAndIndexColumnsFromColTags(headerRow, Sirene{})
+	return err
 }
 
 func (parser *sireneParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
-	f := getFieldBindings(fields)
 	for {
 		parsedLine := marshal.ParsedLineResult{}
 		row, err := parser.reader.Read()
@@ -231,7 +160,7 @@ func (parser *sireneParser) ParseLines(parsedLineChan chan marshal.ParsedLineRes
 		} else if err != nil {
 			parsedLine.AddRegularError(err)
 		} else {
-			parseLine(f, row, &parsedLine)
+			parseLine(parser.colIndex, row, &parsedLine)
 		}
 		parsedLineChan <- parsedLine
 	}

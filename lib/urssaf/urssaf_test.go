@@ -3,6 +3,7 @@ package urssaf
 import (
 	"flag"
 	"path/filepath"
+	"regexp"
 	"testing"
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/marshal"
@@ -130,6 +131,13 @@ func TestEffectif(t *testing.T) {
 			effectif, _ := tuple.(Effectif)
 			assert.Equal(t, allowedSiren, effectif.Siret[0:9])
 		}
+	})
+
+	t.Run("Effectif ne peut pas être importé s'il manque une colonne", func(t *testing.T) {
+		output := marshal.RunParserInline(t, ParserEffectif, []string{"siret"}) // "compte" column is missing
+		assert.Equal(t, []marshal.Tuple(nil), output.Tuples, "should return no tuples")
+		assert.Equal(t, 1, len(output.Events), "should return a parsing report")
+		assert.Regexp(t, regexp.MustCompile("Colonne compte non trouvée"), marshal.GetFatalError(output))
 	})
 }
 

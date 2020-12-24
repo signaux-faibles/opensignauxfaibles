@@ -7,12 +7,10 @@ import (
 	"os"
 	"regexp"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/marshal"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/misc"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/sfregexp"
 )
 
@@ -45,7 +43,7 @@ type effectifEntParser struct {
 	file    *os.File
 	reader  *csv.Reader
 	periods []periodCol
-	idx     colMapping
+	idx     marshal.ColMapping
 }
 
 func (parser *effectifEntParser) GetFileType() string {
@@ -88,14 +86,13 @@ func (parser *effectifEntParser) ParseLines(parsedLineChan chan marshal.ParsedLi
 	}
 }
 
-func parseEffectifEntColMapping(reader *csv.Reader) (colMapping, []periodCol, error) {
+func parseEffectifEntColMapping(reader *csv.Reader) (marshal.ColMapping, []periodCol, error) {
 	fields, err := reader.Read()
 	if err != nil {
 		return nil, nil, err
 	}
-	var idx = colMapping{
-		"siren": misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "siren" }),
-	}
+	expectedFields := []string{"siren"}
+	var idx = marshal.IndexSpecificFields(marshal.LowercaseFields(fields), expectedFields)
 	// Dans quels champs lire l'effectifEnt
 	periods := parseEffectifPeriod(fields)
 	return idx, periods, nil
@@ -119,7 +116,7 @@ func parseEffectifPeriod(fields []string) []periodCol {
 	return periods
 }
 
-func parseEffectifEntLine(row []string, idx colMapping, periods *[]periodCol, parsedLine *marshal.ParsedLineResult) {
+func parseEffectifEntLine(row []string, idx marshal.ColMapping, periods *[]periodCol, parsedLine *marshal.ParsedLineResult) {
 	for _, period := range *periods {
 		value := row[period.colIndex]
 		if value != "" {
