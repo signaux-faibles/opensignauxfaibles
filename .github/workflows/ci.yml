@@ -11,8 +11,7 @@ jobs:
     name: Go functions
     runs-on: ubuntu-20.04
     steps:
-      - name: Set up Go 1.14
-        uses: actions/setup-go@v1
+      - uses: actions/setup-go@v2
         with:
           go-version: 1.14
         id: go
@@ -32,8 +31,7 @@ jobs:
     name: Map-Reduce functions
     runs-on: ubuntu-20.04
     steps:
-      - name: Set up Go 1.14
-        uses: actions/setup-go@v1
+      - uses: actions/setup-go@v2
         with:
           go-version: 1.14
         id: go
@@ -76,8 +74,7 @@ jobs:
     name: Generate and lint
     runs-on: ubuntu-20.04
     steps:
-      - name: Set up Go 1.14
-        uses: actions/setup-go@v1
+      - uses: actions/setup-go@v2
         with:
           go-version: 1.14
         id: go
@@ -114,8 +111,7 @@ jobs:
     name: End-to-end tests
     runs-on: ubuntu-20.04
     steps:
-      - name: Set up Go 1.14
-        uses: actions/setup-go@v1
+      - uses: actions/setup-go@v2
         with:
           go-version: 1.14
         id: go
