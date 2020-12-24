@@ -1,4 +1,4 @@
-![CI](https://github.com/signaux-faibles/opensignauxfaibles/workflows/CI/badge.svg)
+![CI](https://github.com/signaux-faibles/opensignauxfaibles/workflows/CI/badge.svg) [![Codacy Badge](https://app.codacy.com/project/badge/Grade/47a9094cf7bd4f7387a10151b90ed609)](https://www.codacy.com/gh/signaux-faibles/opensignauxfaibles/dashboard?utm_source=github.com&utm_medium=referral&utm_content=signaux-faibles/opensignauxfaibles&utm_campaign=Badge_Grade)
 
 # Open Signaux Faibles
 
