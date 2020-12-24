@@ -14,14 +14,12 @@ jobs:
       - uses: actions/setup-go@v2
         with:
           go-version: 1.14
-      - name: Check out code
-        uses: actions/checkout@v2
-      - name: Go test (with coverage)
-        run: |
-          go test -coverprofile=go-coverage.out -covermode count ./...
-          go run github.com/t-yuki/gocover-cobertura < go-coverage.out > go-coverage.xml
-      - name: Archive code coverage results
-        uses: actions/upload-artifact@v2
+      - name: actions/checkout@v2
+      - name: Go test
+        run: go test -coverprofile=go-coverage.out -covermode count ./...
+      - name: Generate coverage report
+        run: go run github.com/t-yuki/gocover-cobertura < go-coverage.out > go-coverage.xml
+      - uses: actions/upload-artifact@v2
         with:
           name: go-coverage-report
           path: go-coverage.xml
@@ -36,19 +34,17 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: 12
-      - name: Check out code
-        uses: actions/checkout@v2
+      - name: actions/checkout@v2
       - uses: actions/cache@v2
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
-      - name: Install Node/npm dependencies
+      - run: npm install --prefer-offline --no-audit
         working-directory: js
         env:
           CI: true
-        run: npm install --prefer-offline --no-audit
       - name: Reveal golden master files for tests
         env:
           GPG_PRIVATE_KEY_FOR_GIT_SECRET: ${{ secrets.GPG_PRIVATE_KEY_FOR_GIT_SECRET }}
@@ -59,11 +55,11 @@ jobs:
           git secret reveal
       - name: Tests driven by Node/AVA
         working-directory: js
-        run: |
-          npm run test:coverage
-          npx nyc report --reporter=lcov --include="**/*.ts" --exclude="**/*.js" # stores the coverage report in ./coverage/lcov.info
-      - name: Archive code coverage results
-        uses: actions/upload-artifact@v2
+        run: npm run test:coverage
+      - name: Generate coverage report
+        working-directory: js
+        run: npx nyc report --reporter=lcov --include="**/*.ts" --exclude="**/*.js" # stores the coverage report in ./coverage/lcov.info
+      - uses: actions/upload-artifact@v2
         with:
           name: mr-coverage-report
           path: js/coverage/lcov.info
@@ -75,8 +71,7 @@ jobs:
       - uses: actions/setup-go@v2
         with:
           go-version: 1.14
-      - name: Check out code
-        uses: actions/checkout@v2
+      - name: actions/checkout@v2
       - name: Go build
         run: go build -o "sfdata" -v .
       - uses: actions/setup-node@v2
@@ -88,21 +83,18 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
-      - name: Install Node/npm dependencies
+      - run: npm install --prefer-offline --no-audit
         working-directory: js
         env:
           CI: true
-        run: npm install --prefer-offline --no-audit
       - name: Check that jsFunctions.go is up to date
         working-directory: lib/engine
         run: |
           go generate -x
           git diff jsFunctions.go
           exit $(git diff jsFunctions.go | wc -l)
-      - name: JS Linter
+      - run: npm run lint
         working-directory: js
-        run: |
-          npm run lint
 
   e2e-tests:
     name: End-to-end tests
@@ -112,8 +104,7 @@ jobs:
         with:
           go-version: 1.14
 
-      - name: Check out code into the Go module directory
-        uses: actions/checkout@v2
+      - name: actions/checkout@v2
 
       - name: Install test dependencies
         run: |
@@ -127,10 +118,9 @@ jobs:
           gpg --import --no-tty --batch --yes ./private_key.gpg
           git secret reveal
 
-      - name: Build + remove source code
+      - run: go build -o "sfdata" -v .
+      - name: Remove source code
         run: |
-          go build -o "sfdata" -v .
-          ls -lR
           # delete all files, except the binary, config, NAF and other data files used by tests
           find . \
             ! -name 'sfdata' \
@@ -182,16 +172,14 @@ jobs:
       - go-tests
     runs-on: ubuntu-20.04
     steps:
-      - name: Check out code
-        uses: actions/checkout@v2
+      - name: actions/checkout@v2
       - uses: actions/download-artifact@v2
         with:
           name: go-coverage-report
       - uses: actions/download-artifact@v2
         with:
           name: mr-coverage-report
-      - name: Upload coverage to codacy
-        uses: codacy/codacy-coverage-reporter-action@master
+      - uses: codacy/codacy-coverage-reporter-action@master
         with:
           project-token: ${{ secrets.CODACY_REPOSITORY_TOKEN_FOR_COVERAGE }}
           coverage-reports: go-coverage.xml,lcov.info
