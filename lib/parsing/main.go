@@ -16,6 +16,8 @@ import (
 )
 
 // RegisteredParsers liste des parsers disponibles
+// Note: penser à tenir à jour la table des formats, dans la documentation:
+// https://github.com/signaux-faibles/documentation/blob/master/processus-traitement-donnees.md#sp%C3%A9cificit%C3%A9s-de-limport
 var registeredParsers = map[string]marshal.Parser{
 	"debit":        urssaf.ParserDebit,
 	"ccsf":         urssaf.ParserCCSF,
