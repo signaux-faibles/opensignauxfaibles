@@ -43,14 +43,12 @@ jobs:
           node-version: 12
       - name: Check out code
         uses: actions/checkout@v2
-      - name: Use cache for Node/npm dependencies
-        uses: actions/cache@v1
+      - uses: actions/cache@v2
         with:
-          path: node_modules
-          key: ${{ runner.OS }}-build-${{ hashFiles('**/package-lock.json') }}
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.OS }}-build-${{ env.cache-name }}-
-            ${{ runner.OS }}-build-
+            ${{ runner.os }}-node-
       - name: Install Node/npm dependencies
         working-directory: js
         env:
@@ -92,14 +90,12 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 12
-      - name: Use cache for Node/npm dependencies
-        uses: actions/cache@v1
+      - uses: actions/cache@v2
         with:
-          path: node_modules
-          key: ${{ runner.OS }}-build-${{ hashFiles('**/package-lock.json') }}
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.OS }}-build-${{ env.cache-name }}-
-            ${{ runner.OS }}-build-
+            ${{ runner.os }}-node-
       - name: Install Node/npm dependencies
         working-directory: js
         env:
