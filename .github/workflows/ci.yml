@@ -8,7 +8,7 @@ on:
 
 jobs:
   go-tests:
-    name: Go functions
+    name: Go tests
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/setup-go@v2
@@ -24,7 +24,7 @@ jobs:
           path: go-coverage.xml
 
   mr-tests:
-    name: Map-Reduce functions
+    name: Map-Reduce tests
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/setup-node@v2
@@ -39,8 +39,6 @@ jobs:
             ${{ runner.os }}-node-
       - run: npm install --prefer-offline --no-audit
         working-directory: js
-        env:
-          CI: true
       - name: Reveal golden master files for tests
         env:
           GPG_PRIVATE_KEY_FOR_GIT_SECRET: ${{ secrets.GPG_PRIVATE_KEY_FOR_GIT_SECRET }}
@@ -80,8 +78,6 @@ jobs:
             ${{ runner.os }}-node-
       - run: npm install --prefer-offline --no-audit
         working-directory: js
-        env:
-          CI: true
       - name: Check that jsFunctions.go is up to date
         working-directory: lib/engine
         run: |
@@ -101,14 +97,11 @@ jobs:
 
       - uses: actions/checkout@v2
 
-      - name: Install test dependencies
-        run: |
-          sudo apt-get install git-secret # to decrypt golden master files, for tests
-
       - name: Reveal golden master files for tests
         env:
           GPG_PRIVATE_KEY_FOR_GIT_SECRET: ${{ secrets.GPG_PRIVATE_KEY_FOR_GIT_SECRET }}
         run: |
+          sudo apt-get install git-secret # to decrypt golden master files, for tests
           echo "${GPG_PRIVATE_KEY_FOR_GIT_SECRET}" > ./private_key.gpg
           gpg --import --no-tty --batch --yes ./private_key.gpg
           git secret reveal
