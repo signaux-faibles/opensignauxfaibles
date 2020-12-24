@@ -1,3 +1,5 @@
+![CI](https://github.com/signaux-faibles/opensignauxfaibles/workflows/CI/badge.svg)
+
 # Open Signaux Faibles
 
 Le projet [Signaux Faibles](https://beta.gouv.fr/startups/signaux-faibles.html) fournit une plateforme technique de détection anticipée d'entreprises en difficulté, en s'appuyant sur l'exploitation des signaux faibles.
