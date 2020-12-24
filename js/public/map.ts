@@ -9,6 +9,7 @@ import {
   EntréeDiane,
   EntréeEllisphere,
   EntréeSireneEntreprise,
+  EntréePaydex,
 } from "../RawDataTypes"
 import { SortieDebit } from "./debits"
 import { Bdf } from "./bdf"
@@ -40,6 +41,7 @@ type SortieMapEntreprise = SortieMapCommon & {
   bdf: Bdf[]
   sirene_ul: EntréeSireneEntreprise
   ellisphere: EntréeEllisphere
+  paydex: EntréePaydex[]
 }
 
 export type SortieMap = SortieMapEtablissement | SortieMapEntreprise
@@ -84,6 +86,7 @@ export function map(this: Input): void {
     const bdf = f.bdf(value.bdf)
     const sirene_ul = Object.values(value.sirene_ul ?? {})[0] ?? null
     const ellisphere = Object.values(value.ellisphere ?? {})[0] ?? null
+
     if (sirene_ul) {
       sirene_ul.raison_sociale = f.raison_sociale(
         sirene_ul.raison_sociale,
@@ -110,6 +113,13 @@ export function map(this: Input): void {
     if (ellisphere) {
       v.ellisphere = ellisphere
     }
+
+    if (value.paydex) {
+      v.paydex = Object.values(value.paydex).sort(
+        (p1, p2) => p1.date_valeur.getTime() - p2.date_valeur.getTime()
+      )
+    }
+
     if (Object.keys(v) !== []) {
       emit("entreprise_" + this.value.key, v)
     }

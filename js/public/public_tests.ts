@@ -1,8 +1,7 @@
-// Version TypeScript / AVA de public/_test.js, précedemment exécuté par jsc,
-// lors de l'appel à `go test`, via js/test/test_public.sh.
+// Tests des fonctions map(), reduce() et finalize() de Public,
+// en les faisant tourner sur les données de test/data/objects.js.
 //
-// Usage: $ npx ava public/public_tests.ts
-//     ou $ npm test
+// Important: ce jeu de données ne couvre pas tous les types d'entrées.
 
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { map, Input, OutKey, OutValue } from "./map"

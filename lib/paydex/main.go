@@ -13,7 +13,6 @@ import (
 	"io"
 	"os"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
@@ -22,9 +21,9 @@ import (
 
 // Paydex décrit le format de chaque entrée de donnée résultant du parsing.
 type Paydex struct {
-	Siren      string    `json:"siren" bson:"siren"`
-	DateValeur time.Time `json:"date_valeur" bson:"date_valeur"`
-	NbJours    int       `json:"nb_jours" bson:"nb_jours"`
+	Siren      string    `col:"SIREN" json:"-" bson:"-"`
+	DateValeur time.Time `col:"DATE_VALEUR" json:"date_valeur" bson:"date_valeur"`
+	NbJours    int       `col:"NB_JOURS" json:"nb_jours" bson:"nb_jours"`
 }
 
 // Key _id de l'objet
@@ -46,8 +45,9 @@ func (paydex Paydex) Type() string {
 var ParserPaydex = &paydexParser{}
 
 type paydexParser struct {
-	file   *os.File
-	reader *csv.Reader
+	file     *os.File
+	reader   *csv.Reader
+	colIndex marshal.ColMapping
 }
 
 func (parser *paydexParser) GetFileType() string {
@@ -67,9 +67,9 @@ func (parser *paydexParser) Open(filePath string) (err error) {
 	if err != nil {
 		return err
 	}
-	row, err := parser.reader.Read() // parse header
-	if strings.Join(row, ";") != "SIREN;NB_JOURS;NB_JOURS_LIB;DATE_VALEUR" {
-		err = fmt.Errorf("unexpected header: %v", strings.Join(row, ";"))
+	headerRow, err := parser.reader.Read()
+	if err == nil {
+		parser.colIndex, err = marshal.ValidateAndIndexColumnsFromColTags(headerRow, Paydex{})
 	}
 	return err
 }
@@ -94,7 +94,7 @@ func (parser *paydexParser) ParseLines(parsedLineChan chan marshal.ParsedLineRes
 		} else if err != nil {
 			parsedLine.AddRegularError(err)
 		} else {
-			paydex, err := parsePaydexLine(row)
+			paydex, err := parsePaydexLine(parser.colIndex, row)
 			if err != nil {
 				parsedLine.AddRegularError(err)
 			} else {
@@ -105,17 +105,17 @@ func (parser *paydexParser) ParseLines(parsedLineChan chan marshal.ParsedLineRes
 	}
 }
 
-func parsePaydexLine(row []string) (*Paydex, error) {
-	dateValeur, err := time.Parse("02/01/2006", row[3])
+func parsePaydexLine(colIndex marshal.ColMapping, row []string) (*Paydex, error) {
+	dateValeur, err := time.Parse("02/01/2006", row[colIndex["DATE_VALEUR"]])
 	if err != nil {
-		return nil, fmt.Errorf("invalid date: %v", row[3])
+		return nil, fmt.Errorf("invalid date: %v", row[colIndex["DATE_VALEUR"]])
 	}
-	nbJours, err := strconv.Atoi(row[1])
+	nbJours, err := strconv.Atoi(row[colIndex["NB_JOURS"]])
 	if err != nil {
-		return nil, fmt.Errorf("invalid date: %v", row[3])
+		return nil, fmt.Errorf("invalid int: %v", row[colIndex["NB_JOURS"]])
 	}
 	return &Paydex{
-		Siren:      row[0],
+		Siren:      row[colIndex["SIREN"]],
 		DateValeur: dateValeur,
 		NbJours:    nbJours,
 	}, nil

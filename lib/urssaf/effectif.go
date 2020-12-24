@@ -3,16 +3,13 @@ package urssaf
 import (
 	"bufio"
 	"encoding/csv"
-	"errors"
 	"io"
 	"os"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/marshal"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/misc"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/sfregexp"
 )
 
@@ -46,7 +43,7 @@ type effectifParser struct {
 	file    *os.File
 	reader  *csv.Reader
 	periods []periodCol
-	idx     colMapping
+	idx     marshal.ColMapping
 }
 
 func (parser *effectifParser) GetFileType() string {
@@ -79,22 +76,16 @@ func openEffectifFile(filePath string) (*os.File, *csv.Reader, error) {
 	return file, reader, err
 }
 
-func parseEffectifColMapping(reader *csv.Reader) (colMapping, []periodCol, error) {
+func parseEffectifColMapping(reader *csv.Reader) (marshal.ColMapping, []periodCol, error) {
 	fields, err := reader.Read()
 	if err != nil {
 		return nil, nil, err
 	}
 
-	var idx = colMapping{
-		"siret":  misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "siret" }),
-		"compte": misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "compte" }),
-	}
-
-	if misc.SliceMin(idx["siret"], idx["compte"]) == -1 {
-		return nil, nil, errors.New("erreur à l'analyse du fichier, abandon, l'un " +
-			"des champs obligatoires n'a pu etre trouve:" +
-			" siretIndex = " + strconv.Itoa(idx["siret"]) +
-			", compteIndex = " + strconv.Itoa(idx["compte"]))
+	expectedFields := []string{"siret", "compte"}
+	var idx = marshal.IndexSpecificFields(marshal.LowercaseFields(fields), expectedFields)
+	if _, err = idx.HasFields(expectedFields); err != nil {
+		return nil, nil, err
 	}
 
 	// Dans quels champs lire l'effectif
@@ -118,7 +109,7 @@ func (parser *effectifParser) ParseLines(parsedLineChan chan marshal.ParsedLineR
 	}
 }
 
-func parseEffectifLine(row []string, idx colMapping, periods *[]periodCol, parsedLine *marshal.ParsedLineResult) {
+func parseEffectifLine(row []string, idx marshal.ColMapping, periods *[]periodCol, parsedLine *marshal.ParsedLineResult) {
 	for _, period := range *periods {
 		value := row[period.colIndex]
 		if value != "" {

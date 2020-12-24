@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"strings"
 	"sync"
 	"testing"
 	"time"
@@ -35,6 +36,28 @@ func MockComptesMapping(mapping map[string]string) Comptes {
 type tuplesAndEvents = struct {
 	Tuples []Tuple `json:"tuples"`
 	Events []Event `json:"events"`
+}
+
+// GetFatalError retourne le message d'erreur fatale obtenu suite à une
+// opération de parsing, ou une chaine vide.
+func GetFatalError(output tuplesAndEvents) string {
+	reportData, _ := output.Events[0].ParseReport()
+	headFatal, ok := reportData["headFatal"].([]interface{})
+	if ok != true || headFatal == nil || len(headFatal) < 1 {
+		return ""
+	}
+	if len(headFatal) > 1 {
+		log.Fatal("headFatal should never contain more than one item")
+	}
+	return headFatal[0].(string)
+}
+
+// RunParserInline returns Tuples and Events resulting from the execution of a
+// Parser on a given list of rows, with an empty Cache.
+func RunParserInline(t *testing.T, parser Parser, rows []string) (output tuplesAndEvents) {
+	csvData := strings.Join(rows, "\n")
+	csvFile := CreateTempFileWithContent(t, []byte(csvData)) // will clean up after the test
+	return RunParser(parser, NewCache(), csvFile.Name())
 }
 
 // RunParser returns Tuples and Events resulting from the execution of a

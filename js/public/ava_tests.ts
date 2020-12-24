@@ -1,8 +1,10 @@
-// Objectif de cette suite de tests d'intégration:
-// Vérifier la compatibilité des types et mesurer la couverture lors du passage
-// de données entre les fonctions map(), reduce() et finalize(), en s'appuyant
-// sur le jeu de données minimal utilisé dans notre suite de bout en bout
-// définie dans test.sh.
+// Ces tests visent à couvrir toutes les fonctions invoquées par map(), en lui
+// fournissant un jeu de données minimal mais incluant tous les types d'entrée
+// inclus dans RawData.
+//
+// => Penser à ajouter les nouveaux types dans rawEtabData et rawEntrData.
+//
+// TODO: renommer ce fichier --> `map_tests.ts`.
 
 import test, { ExecutionContext } from "ava"
 import { map } from "./map"
@@ -10,11 +12,16 @@ import { reduce } from "./reduce"
 import { finalize } from "./finalize"
 import { runMongoMap } from "../test/helpers/mongodb"
 import { setGlobals } from "../test/helpers/setGlobals"
-import { Scope, SiretOrSiren } from "../RawDataTypes"
+import {
+  EntrepriseBatchProps,
+  EntrepriseDataValues,
+  EtablissementBatchProps,
+  EtablissementDataValues,
+  Siret,
+} from "../RawDataTypes"
 
 // test data inspired by test.sh
-const siret: SiretOrSiren = "01234567891011"
-const scope: Scope = "etablissement"
+const siret: Siret = "01234567891011"
 const batchKey = "1910"
 const dates = [
   new Date("2015-12-01T00:00:00.000+0000"),
@@ -25,20 +32,26 @@ setGlobals({
   serie_periode: dates, // used by effectifs(), which is called by map()
 })
 
-const rawData = {
-  batch: {
-    [batchKey]: {},
+const rawEtabData: EtablissementBatchProps = {
+  reporder: {},
+  apconso: {
+    somehash: { id_conso: "", periode: new Date(), heure_consomme: 1 },
   },
-  scope,
-  index: { algo2: false }, // car il n'y a pas de données justifiant que l'établissement compte 10 employés ou pas
+}
+
+const rawData: EtablissementDataValues = {
+  batch: {
+    [batchKey]: rawEtabData,
+  },
+  scope: "etablissement",
   key: siret,
 }
 
-const etablissementKey = scope + "_" + siret
+const etablissementKey = rawData.scope + "_" + siret
 
 const expectedMapResults = {
   [etablissementKey]: {
-    apconso: [],
+    apconso: [rawEtabData.apconso.somehash],
     apdemande: [],
     batch: batchKey,
     compte: undefined,
@@ -62,6 +75,33 @@ const expectedFinalizeResultValue = expectedMapResults[etablissementKey]
 // exécution complète de la chaine "public"
 
 test.serial(
+  `public.map() retourne toutes les propriétés d'entreprise attendues sur le frontal`,
+  (t: ExecutionContext) => {
+    const rawEntrData: EntrepriseBatchProps = {
+      reporder: {},
+      paydex: { somehash: { date_valeur: new Date(), nb_jours: 1 } },
+    }
+    const rawData: EntrepriseDataValues = {
+      scope: "entreprise",
+      key: siret.substr(0, 9), // siren
+      batch: { [batchKey]: rawEntrData },
+    }
+    const expectedMapResults = {
+      [rawData.scope + "_" + rawData.key]: {
+        key: rawData.key,
+        batch: batchKey,
+        paydex: [rawEntrData.paydex.somehash],
+      },
+    }
+    const mapResults: Record<string, unknown> = {}
+    runMongoMap(map, [{ _id: null, value: rawData }]).map(
+      ({ _id, value }) => (mapResults[_id as string] = value)
+    )
+    t.deepEqual(mapResults, expectedMapResults)
+  }
+)
+
+test.serial(
   `public.map() retourne les propriétés d'établissement présentées sur le frontal`,
   (t: ExecutionContext) => {
     const mapResults: Record<string, unknown> = {}
@@ -76,7 +116,7 @@ test.serial(
   `public.reduce() retourne les propriétés d'établissement, telles quelles`,
   (t: ExecutionContext) => {
     const reduceValues = [expectedMapResults[etablissementKey] ?? {}]
-    const reduceResults = reduce({ scope }, reduceValues)
+    const reduceResults = reduce({ scope: rawData.scope }, reduceValues)
     t.deepEqual(reduceResults, expectedReduceResults)
   }
 )
@@ -84,7 +124,10 @@ test.serial(
 test.serial(
   `public.finalize() retourne les propriétés d'établissement, telles quelles`,
   (t: ExecutionContext) => {
-    const finalizeResultValue = finalize({ scope }, expectedReduceResults)
+    const finalizeResultValue = finalize(
+      { scope: rawData.scope },
+      expectedReduceResults
+    )
     t.deepEqual(finalizeResultValue, expectedFinalizeResultValue)
   }
 )
