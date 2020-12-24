@@ -22,6 +22,11 @@ jobs:
         run: |
           go test -coverprofile=go-coverage.out -covermode count ./...
           go run github.com/t-yuki/gocover-cobertura < go-coverage.out > go-coverage.xml
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@v2
+        with:
+          name: code-coverage-reports
+          path: go-coverage.xml
 
   mr-tests:
     name: Map-Reduce functions
@@ -74,6 +79,11 @@ jobs:
         run: |
           npm run test:coverage
           npx nyc report --reporter=lcov --include="**/*.ts" --exclude="**/*.js" # stores the coverage report in ./coverage/lcov.info
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@v2
+        with:
+          name: code-coverage-reports
+          path: js/coverage/lcov.info
 
   coverage:
     name: Send coverage data to Codacy
@@ -82,6 +92,12 @@ jobs:
       - go-tests
     runs-on: ubuntu-latest
     steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Download a single artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: code-coverage-reports
       - name: Upload coverage to codacy
         uses: codacy/codacy-coverage-reporter-action@master
         with:
