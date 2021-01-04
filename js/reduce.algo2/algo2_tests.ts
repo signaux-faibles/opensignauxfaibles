@@ -79,15 +79,18 @@ test.serial(
       serie_periode.length,
       "map() doit émettre un objet par période"
     )
-    Object.values(rawEntrData.paydex).forEach(
-      (entréePaydex, i) =>
-        t.is(
-          otherResults[i]?.value.entreprise?.paydex_nb_jours,
-          entréePaydex.nb_jours,
-          "le nombre de jours paydex doit être transmis pour chaque période"
-        )
-      // TODO: nb_jours_past_1
-      // TODO: nb_jours_past_12
+    Object.values(rawEntrData.paydex).forEach((entréePaydex, i) =>
+      t.is(
+        otherResults[i]?.value.entreprise?.paydex_nb_jours,
+        entréePaydex.nb_jours,
+        "le nombre de jours paydex doit être transmis pour chaque période"
+      )
+    )
+    t.is(otherResults[0]?.value.entreprise?.paydex_nb_jours_past_12, null)
+    t.is(otherResults[0]?.value.entreprise?.paydex_nb_jours_past_1, null)
+    t.is(
+      otherResults[1]?.value.entreprise?.paydex_nb_jours_past_1,
+      rawEntrData.paydex.decembre?.nb_jours
     )
     t.snapshot(otherResults)
   }

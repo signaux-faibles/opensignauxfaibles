@@ -13,7 +13,7 @@ import { DonnéesAgrégées } from "./outputs"
 import { NAF } from "./populateNafAndApe"
 
 type SortiePaydex = {
-  paydex_nb_jours: number
+  [K in `paydex_nb_jours${"" | "_past_1" | "_past_12"}`]: number
 }
 
 type SortieMapEntreprise = {
