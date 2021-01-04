@@ -219,7 +219,7 @@ export function map(this: EntréeMap): void {
       }
 
       if (v.paydex) {
-        for (let périodeData of Object.values(output_indexed)) {
+        for (const périodeData of Object.values(output_indexed)) {
           périodeData.paydex_nb_jours = null
           périodeData.paydex_nb_jours_past_1 = null
           périodeData.paydex_nb_jours_past_12 = null
