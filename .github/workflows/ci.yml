@@ -1,0 +1,174 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  go-tests:
+    name: Go tests
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/setup-go@v2
+        with:
+          go-version: 1.14
+      - uses: actions/checkout@v2
+      - run: go test -coverprofile=go-coverage.out -covermode count ./...
+      - name: Generate coverage report
+        run: go run github.com/t-yuki/gocover-cobertura < go-coverage.out > go-coverage.xml
+      - uses: actions/upload-artifact@v2
+        with:
+          name: go-coverage-report
+          path: go-coverage.xml
+
+  mr-tests:
+    name: Map-Reduce tests
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 12
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - run: npm install --prefer-offline --no-audit
+        working-directory: js
+      - name: Reveal golden master files for tests
+        env:
+          GPG_PRIVATE_KEY_FOR_GIT_SECRET: ${{ secrets.GPG_PRIVATE_KEY_FOR_GIT_SECRET }}
+        run: |
+          sudo apt-get install git-secret # to decrypt golden master files, for tests
+          echo "${GPG_PRIVATE_KEY_FOR_GIT_SECRET}" > ./private_key.gpg
+          gpg --import --no-tty --batch --yes ./private_key.gpg
+          git secret reveal
+      - name: Tests driven by Node/AVA
+        working-directory: js
+        run: npm run test:coverage
+      - name: Generate coverage report
+        working-directory: js
+        run: npx nyc report --reporter=lcov --include="**/*.ts" --exclude="**/*.js" # stores the coverage report in ./coverage/lcov.info
+      - uses: actions/upload-artifact@v2
+        with:
+          name: mr-coverage-report
+          path: js/coverage/lcov.info
+
+  build:
+    name: Generate and lint
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/setup-go@v2
+        with:
+          go-version: 1.14
+      - uses: actions/checkout@v2
+      - run: go build -o "sfdata" -v .
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 12
+      - uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - run: npm install --prefer-offline --no-audit
+        working-directory: js
+      - name: Check that jsFunctions.go is up to date
+        working-directory: lib/engine
+        run: |
+          go generate -x
+          git diff jsFunctions.go
+          exit $(git diff jsFunctions.go | wc -l)
+      - run: npm run lint
+        working-directory: js
+
+  e2e-tests:
+    name: End-to-end tests
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/setup-go@v2
+        with:
+          go-version: 1.14
+
+      - uses: actions/checkout@v2
+
+      - name: Reveal golden master files for tests
+        env:
+          GPG_PRIVATE_KEY_FOR_GIT_SECRET: ${{ secrets.GPG_PRIVATE_KEY_FOR_GIT_SECRET }}
+        run: |
+          sudo apt-get install git-secret # to decrypt golden master files, for tests
+          echo "${GPG_PRIVATE_KEY_FOR_GIT_SECRET}" > ./private_key.gpg
+          gpg --import --no-tty --batch --yes ./private_key.gpg
+          git secret reveal
+
+      - run: go build -o "sfdata" -v .
+
+      - name: Remove source code
+        run: |
+          # delete all files, except the binary, config, NAF and other data files used by tests
+          find . \
+            ! -name 'sfdata' \
+            ! -name '*.toml' \
+            ! -name 'test*.sh' \
+            ! -name 'sfdata-wrapper.sh' \
+            ! -name 'diff-or-update-golden-master.sh' \
+            ! -name 'mongodb-container.sh' \
+            ! -name 'populate-from-objects.sh' \
+            ! -name 'remove-random_order.sh' \
+            ! -name '*.txt' \
+            ! -name '*.csv' \
+            ! -name '*.json' \
+            ! -name '*.excel' \
+            ! -name 'objects.js' \
+            -type f \
+            -exec rm -v {} +
+
+      - run: ./tests/test-cli.sh
+
+      - run: ./tests/test-prune-entities.sh
+
+      - run: ./tests/test.sh
+
+      - run: ./tests/test-import.sh
+
+      - run: ./tests/test-validate.sh
+
+      - run: ./tests/test-check.sh
+
+      - run: ./tests/test-export.sh
+
+      - run: ./tests/test-public.sh
+
+      - run: ./tests/test-reduce.sh
+
+      - run: ./tests/test-purge-batch.sh
+
+      - run: ./tests/test-compact-failure.sh
+
+      - run: ./tests/test-compact.sh # relies on encrypted files
+
+      - run: ./tests/test-reduce-2.sh # relies on encrypted files
+
+  coverage:
+    name: Send coverage data to Codacy
+    needs:
+      - mr-tests
+      - go-tests
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+          name: go-coverage-report
+      - uses: actions/download-artifact@v2
+        with:
+          name: mr-coverage-report
+      - uses: codacy/codacy-coverage-reporter-action@master
+        with:
+          project-token: ${{ secrets.CODACY_REPOSITORY_TOKEN_FOR_COVERAGE }}
+          coverage-reports: go-coverage.xml,lcov.info
