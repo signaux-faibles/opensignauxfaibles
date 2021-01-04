@@ -9,13 +9,17 @@ test(`doit retourner paydex_nb_jours pour chaque période`, (t) => {
     decembre: { date_valeur: new Date("2015-12-15T00:00Z"), nb_jours: 1 },
     janvier: { date_valeur: new Date("2016-01-15T00:00Z"), nb_jours: 2 },
   }
-  const actual = entr_paydex(entréesPaydex, périodes)
+  const sortiePaydex = entr_paydex(entréesPaydex, périodes)
   t.is(
-    actual[dateDébut.getTime()]?.paydex_nb_jours,
-    entréesPaydex.decembre.nb_jours
+    Object.values(sortiePaydex).length,
+    périodes.length,
+    "entr_paydex() doit émettre un objet par période"
   )
-  t.is(
-    actual[dateFin.getTime()]?.paydex_nb_jours,
-    entréesPaydex.janvier.nb_jours
+  Object.values(entréesPaydex).forEach((entréePaydex, i) =>
+    t.is(
+      sortiePaydex[(périodes[i] as Date).getTime()]?.paydex_nb_jours,
+      entréePaydex.nb_jours,
+      "le nombre de jours paydex doit être transmis pour chaque période"
+    )
   )
 })
