@@ -73,9 +73,7 @@ test.serial(
     const mapResults = runMongoMap<EntréeMap, CléSortieMap, SortieMap>(map, [
       { _id: siren, value: rawData },
     ])
-    const otherResults = mapResults.filter((res) => res._id.type === "other")
-    t.is(otherResults[0]?.value.entreprise?.paydex_nb_jours_past_12, null)
-    t.snapshot(otherResults)
+    t.snapshot(mapResults)
   }
 )
 
