@@ -56,6 +56,7 @@ test.serial(
       date_valeur: new Date("2016-01-15T00:00:00.000Z"),
       nb_jours: 2,
     }
+    // Note: l'entrée bdf est nécéssaire pour map() émette les données
     const entréeBdfDécembre = {
       arrete_bilan_bdf: new Date(
         (serie_periode[0] as Date).getTime() - 7 * 31 * 24 * 60 * 60 * 1000 // 7 months earlier
@@ -64,12 +65,11 @@ test.serial(
     const rawEntrData: EntrepriseBatchProps = {
       reporder: {},
       paydex: { entréePaydexDécembre, entréePaydexJanvier },
-      bdf: { entréeBdfDécembre },
     }
     const rawData: EntrepriseDataValues = {
       scope: "entreprise",
       key: siren,
-      batch: { [batchKey]: rawEntrData },
+      batch: { [batchKey]: { ...rawEntrData, bdf: { entréeBdfDécembre } } },
     }
     const mapResults = runMongoMap<EntréeMap, CléSortieMap, SortieMap>(map, [
       { _id: siren, value: rawData },
