@@ -43,27 +43,56 @@ test.serial(
       ],
       includes: { all: true },
     })
-    const entréePaydex = { date_valeur: new Date(), nb_jours: 1 }
+    const entréePaydexDécembre = {
+      date_valeur: new Date("2015-12-15T00:00:00.000Z"),
+      nb_jours: 1,
+    }
+    const entréePaydexJanvier = {
+      date_valeur: new Date("2016-01-15T00:00:00.000Z"),
+      nb_jours: 2,
+    }
     const rawEntrData: EntrepriseBatchProps = {
       reporder: {},
-      paydex: { somehash: entréePaydex },
+      paydex: { entréePaydexDécembre, entréePaydexJanvier },
     }
     const rawData: EntrepriseDataValues = {
       scope: "entreprise",
       key: siren,
       batch: { [batchKey]: rawEntrData },
     }
-    const expectedMapResults = {
-      ["entreprise_" + siren]: {
-        key: siren,
-        batch: batchKey,
-        paydex: [entréePaydex],
+    const expectedMapResults = [
+      {
+        _id: {
+          batch: batchKey,
+          siren,
+          periode: new Date("2015-12-01T00:00:00.000Z"),
+          type: "paydex",
+        },
+        value: {
+          [siren]: {
+            nb_jours: entréePaydexDécembre.nb_jours,
+            // TODO: nb_jours_past_1
+            // TODO: nb_jours_past_12
+          },
+        },
       },
-    }
-    const mapResults: Record<string, unknown> = {}
-    runMongoMap(map, [{ _id: siren, value: rawData }]).map(
-      ({ _id, value }) => (mapResults[_id as string] = value)
-    )
+      {
+        _id: {
+          batch: batchKey,
+          siren,
+          periode: new Date("2016-01-01T00:00:00.000Z"),
+          type: "paydex",
+        },
+        value: {
+          [siren]: {
+            nb_jours: entréePaydexJanvier.nb_jours,
+            // TODO: nb_jours_past_1
+            // TODO: nb_jours_past_12
+          },
+        },
+      },
+    ]
+    const mapResults = runMongoMap(map, [{ _id: siren, value: rawData }])
     t.deepEqual(mapResults, expectedMapResults)
   }
 )
