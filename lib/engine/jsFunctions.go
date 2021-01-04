@@ -1834,10 +1834,13 @@ function map() {
                 f.add(output_effectif_ent, output_indexed);
             }
             if (v.paydex) {
-                for (const périodeData of Object.values(output_indexed)) {
-                    périodeData.paydex_nb_jours = null;
-                    périodeData.paydex_nb_jours_past_1 = null;
-                    périodeData.paydex_nb_jours_past_12 = null;
+                const paydexParPériode = {};
+                for (const période of serie_periode) {
+                    paydexParPériode[période.getTime()] = {
+                        paydex_nb_jours: null,
+                        paydex_nb_jours_past_1: null,
+                        paydex_nb_jours_past_12: null,
+                    };
                 }
                 for (const entréePaydex of Object.values(v.paydex)) {
                     const période = Date.UTC(entréePaydex.date_valeur.getUTCFullYear(), entréePaydex.date_valeur.getUTCMonth(), 1);
@@ -1849,8 +1852,9 @@ function map() {
                         [f.dateAddMonth(new Date(période), 12).getTime()]: {
                             paydex_nb_jours_past_12: entréePaydex.nb_jours,
                         },
-                    }, output_indexed);
+                    }, paydexParPériode);
                 }
+                f.add(paydexParPériode, output_indexed);
             }
             v.bdf = v.bdf || {};
             v.diane = v.diane || {};
