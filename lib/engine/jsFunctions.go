@@ -1540,6 +1540,30 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
     }
     return output_indexed;
 }`,
+"entr_paydex": `function entr_paydex(vPaydex, sériePériode) {
+    "use strict";
+    const paydexParPériode = {};
+    // initialisation (avec valeurs N/A par défaut)
+    for (const période of sériePériode) {
+        paydexParPériode[période.getTime()] = {
+            paydex_nb_jours: null,
+            paydex_nb_jours_past_1: null,
+            paydex_nb_jours_past_12: null,
+        };
+    }
+    // population des valeurs
+    for (const entréePaydex of Object.values(vPaydex)) {
+        const période = Date.UTC(entréePaydex.date_valeur.getUTCFullYear(), entréePaydex.date_valeur.getUTCMonth(), 1);
+        const moisSuivant = f.dateAddMonth(new Date(période), 1).getTime();
+        const annéeSuivante = f.dateAddMonth(new Date(période), 12).getTime();
+        f.add({
+            [période]: { paydex_nb_jours: entréePaydex.nb_jours },
+            [moisSuivant]: { paydex_nb_jours_past_1: entréePaydex.nb_jours },
+            [annéeSuivante]: { paydex_nb_jours_past_12: entréePaydex.nb_jours },
+        }, paydexParPériode);
+    }
+    return paydexParPériode;
+}`,
 "entr_sirene": `function entr_sirene(sirene_ul, sériePériode) {
     "use strict";
     const retourEntrSirene = {};
@@ -1834,26 +1858,7 @@ function map() {
                 f.add(output_effectif_ent, output_indexed);
             }
             if (v.paydex) {
-                const paydexParPériode = {};
-                for (const période of serie_periode) {
-                    paydexParPériode[période.getTime()] = {
-                        paydex_nb_jours: null,
-                        paydex_nb_jours_past_1: null,
-                        paydex_nb_jours_past_12: null,
-                    };
-                }
-                for (const entréePaydex of Object.values(v.paydex)) {
-                    const période = Date.UTC(entréePaydex.date_valeur.getUTCFullYear(), entréePaydex.date_valeur.getUTCMonth(), 1);
-                    f.add({
-                        [période]: { paydex_nb_jours: entréePaydex.nb_jours },
-                        [f.dateAddMonth(new Date(période), 1).getTime()]: {
-                            paydex_nb_jours_past_1: entréePaydex.nb_jours,
-                        },
-                        [f.dateAddMonth(new Date(période), 12).getTime()]: {
-                            paydex_nb_jours_past_12: entréePaydex.nb_jours,
-                        },
-                    }, paydexParPériode);
-                }
+                const paydexParPériode = f.entr_paydex(v.paydex, serie_periode);
                 f.add(paydexParPériode, output_indexed);
             }
             v.bdf = v.bdf || {};
