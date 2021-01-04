@@ -7,14 +7,11 @@ import {
   ParPériode,
 } from "../RawDataTypes"
 import { SortieBdf } from "./entr_bdf"
+import { SortiePaydex } from "./entr_paydex"
 import { SortieDiane } from "./entr_diane"
 import { SortieSireneEntreprise } from "./entr_sirene"
 import { DonnéesAgrégées } from "./outputs"
 import { NAF } from "./populateNafAndApe"
-
-type SortiePaydex = {
-  [K in `paydex_nb_jours${"" | "_past_1" | "_past_12"}`]: number | null
-}
 
 type SortieMapEntreprise = {
   siren: SiretOrSiren
@@ -219,33 +216,7 @@ export function map(this: EntréeMap): void {
       }
 
       if (v.paydex) {
-        const paydexParPériode: ParPériode<SortiePaydex> = {}
-        for (const période of serie_periode) {
-          paydexParPériode[période.getTime()] = {
-            paydex_nb_jours: null,
-            paydex_nb_jours_past_1: null,
-            paydex_nb_jours_past_12: null,
-          }
-        }
-        for (const entréePaydex of Object.values(v.paydex)) {
-          const période = Date.UTC(
-            entréePaydex.date_valeur.getUTCFullYear(),
-            entréePaydex.date_valeur.getUTCMonth(),
-            1
-          )
-          f.add(
-            {
-              [période]: { paydex_nb_jours: entréePaydex.nb_jours },
-              [f.dateAddMonth(new Date(période), 1).getTime()]: {
-                paydex_nb_jours_past_1: entréePaydex.nb_jours,
-              },
-              [f.dateAddMonth(new Date(période), 12).getTime()]: {
-                paydex_nb_jours_past_12: entréePaydex.nb_jours,
-              },
-            },
-            paydexParPériode
-          )
-        }
+        const paydexParPériode = f.entr_paydex(v.paydex, serie_periode)
         f.add(paydexParPériode, output_indexed)
       }
 
