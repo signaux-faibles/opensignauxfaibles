@@ -58,6 +58,7 @@ type CommonBatchProps = {
 
 export type EntrepriseBatchProps = CommonBatchProps & {
   paydex: ParHash<EntréePaydex>
+  bdf: ParHash<EntréeBdf>
 }
 
 export type EtablissementBatchProps = CommonBatchProps & {

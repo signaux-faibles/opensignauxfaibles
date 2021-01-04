@@ -14,7 +14,11 @@ import { naf as nafValues } from "../test/data/naf"
 import { reducer, invertedReducer } from "../test/helpers/reducers"
 import { runMongoMap, indexMapResultsByKey } from "../test/helpers/mongodb"
 import { setGlobals } from "../test/helpers/setGlobals"
-import { EntrepriseBatchProps, EntrepriseDataValues } from "../RawDataTypes"
+import {
+  EntrepriseBatchProps,
+  EntrepriseDataValues,
+  EntréeBdf,
+} from "../RawDataTypes"
 
 // initialisation des paramètres globaux de reduce.algo2
 const initGlobalParams = (dateDebut: Date, dateFin: Date) =>
@@ -35,12 +39,13 @@ test.serial(
   (t: ExecutionContext) => {
     const siren = "012345678"
     const batchKey = "1910"
+    const serie_periode = [
+      new Date("2015-12-01T00:00:00.000+0000"),
+      new Date("2016-01-01T00:00:00.000+0000"),
+    ]
     setGlobals({
       actual_batch: batchKey,
-      serie_periode: [
-        new Date("2015-12-01T00:00:00.000+0000"),
-        new Date("2016-01-01T00:00:00.000+0000"),
-      ],
+      serie_periode,
       includes: { all: true },
     })
     const entréePaydexDécembre = {
@@ -51,49 +56,41 @@ test.serial(
       date_valeur: new Date("2016-01-15T00:00:00.000Z"),
       nb_jours: 2,
     }
+    const entréeBdfDécembre = {
+      arrete_bilan_bdf: new Date(
+        (serie_periode[0] as Date).getTime() - 7 * 31 * 24 * 60 * 60 * 1000 // 7 months earlier
+      ),
+    } as EntréeBdf
     const rawEntrData: EntrepriseBatchProps = {
       reporder: {},
       paydex: { entréePaydexDécembre, entréePaydexJanvier },
+      bdf: { entréeBdfDécembre },
     }
     const rawData: EntrepriseDataValues = {
       scope: "entreprise",
       key: siren,
       batch: { [batchKey]: rawEntrData },
     }
-    const expectedMapResults = [
-      {
-        _id: {
-          batch: batchKey,
-          siren,
-          periode: new Date("2015-12-01T00:00:00.000Z"),
-          type: "paydex",
-        },
-        value: {
-          [siren]: {
-            nb_jours: entréePaydexDécembre.nb_jours,
-            // TODO: nb_jours_past_1
-            // TODO: nb_jours_past_12
-          },
-        },
-      },
-      {
-        _id: {
-          batch: batchKey,
-          siren,
-          periode: new Date("2016-01-01T00:00:00.000Z"),
-          type: "paydex",
-        },
-        value: {
-          [siren]: {
-            nb_jours: entréePaydexJanvier.nb_jours,
-            // TODO: nb_jours_past_1
-            // TODO: nb_jours_past_12
-          },
-        },
-      },
-    ]
-    const mapResults = runMongoMap(map, [{ _id: siren, value: rawData }])
-    t.deepEqual(mapResults, expectedMapResults)
+    const mapResults = runMongoMap<EntréeMap, CléSortieMap, SortieMap>(map, [
+      { _id: siren, value: rawData },
+    ])
+    const otherResults = mapResults.filter((res) => res._id.type === "other")
+    t.is(
+      otherResults.length,
+      serie_periode.length,
+      "map() doit émettre un objet par période"
+    )
+    ;[entréePaydexDécembre, entréePaydexJanvier].forEach(
+      (entréePaydex, i) =>
+        t.is(
+          otherResults[i]?.value.entreprise?.paydex_nb_jours,
+          entréePaydex.nb_jours,
+          "le nombre de jours paydex doit être transmis pour chaque période"
+        )
+      // TODO: nb_jours_past_1
+      // TODO: nb_jours_past_12
+    )
+    t.snapshot(otherResults)
   }
 )
 

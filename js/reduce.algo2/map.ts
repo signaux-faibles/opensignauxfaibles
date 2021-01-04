@@ -12,11 +12,16 @@ import { SortieSireneEntreprise } from "./entr_sirene"
 import { DonnéesAgrégées } from "./outputs"
 import { NAF } from "./populateNafAndApe"
 
+type SortiePaydex = {
+  paydex_nb_jours: number
+}
+
 type SortieMapEntreprise = {
   siren: SiretOrSiren
   periode: Date
 } & Partial<SortieSireneEntreprise> &
   Partial<SortieBdf> &
+  Partial<SortiePaydex> &
   Partial<SortieDiane>
 
 export type SortieMapEtablissement = Partial<DonnéesAgrégées>
@@ -211,6 +216,24 @@ export function map(this: EntréeMap): void {
           "effectif_ent"
         )
         f.add(output_effectif_ent, output_indexed)
+      }
+
+      if (v.paydex) {
+        for (const entréePaydex of Object.values(v.paydex)) {
+          const période = Date.UTC(
+            entréePaydex.date_valeur.getUTCFullYear(),
+            entréePaydex.date_valeur.getUTCMonth(),
+            1,
+            0,
+            0,
+            0,
+            0
+          ).toString()
+          f.add(
+            { [période]: { paydex_nb_jours: entréePaydex.nb_jours } },
+            output_indexed
+          )
+        }
       }
 
       v.bdf = v.bdf || {}
