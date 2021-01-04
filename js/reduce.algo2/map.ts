@@ -219,10 +219,13 @@ export function map(this: EntréeMap): void {
       }
 
       if (v.paydex) {
-        for (const périodeData of Object.values(output_indexed)) {
-          périodeData.paydex_nb_jours = null
-          périodeData.paydex_nb_jours_past_1 = null
-          périodeData.paydex_nb_jours_past_12 = null
+        const paydexParPériode: ParPériode<SortiePaydex> = {}
+        for (const période of serie_periode) {
+          paydexParPériode[période.getTime()] = {
+            paydex_nb_jours: null,
+            paydex_nb_jours_past_1: null,
+            paydex_nb_jours_past_12: null,
+          }
         }
         for (const entréePaydex of Object.values(v.paydex)) {
           const période = Date.UTC(
@@ -240,9 +243,10 @@ export function map(this: EntréeMap): void {
                 paydex_nb_jours_past_12: entréePaydex.nb_jours,
               },
             },
-            output_indexed
+            paydexParPériode
           )
         }
+        f.add(paydexParPériode, output_indexed)
       }
 
       v.bdf = v.bdf || {}
