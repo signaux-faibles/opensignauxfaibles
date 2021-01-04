@@ -39,37 +39,36 @@ test.serial(
   (t: ExecutionContext) => {
     const siren = "012345678"
     const batchKey = "1910"
-    const serie_periode = [
-      new Date("2015-12-01T00:00:00.000+0000"),
-      new Date("2016-01-01T00:00:00.000+0000"),
-    ]
+    const dateDébut = new Date("2015-12-01T00:00:00.000+0000")
+    const dateFin = new Date("2016-01-01T00:00:00.000+0000")
+    const serie_periode = [dateDébut, dateFin]
     setGlobals({
       actual_batch: batchKey,
       serie_periode,
       includes: { all: true },
     })
-    const entréePaydexDécembre = {
-      date_valeur: new Date("2015-12-15T00:00:00.000Z"),
-      nb_jours: 1,
-    }
-    const entréePaydexJanvier = {
-      date_valeur: new Date("2016-01-15T00:00:00.000Z"),
-      nb_jours: 2,
-    }
-    // Note: l'entrée bdf est nécéssaire pour map() émette les données
-    const entréeBdfDécembre = {
-      arrete_bilan_bdf: new Date(
-        (serie_periode[0] as Date).getTime() - 7 * 31 * 24 * 60 * 60 * 1000 // 7 months earlier
-      ),
-    } as EntréeBdf
     const rawEntrData: EntrepriseBatchProps = {
       reporder: {},
-      paydex: { entréePaydexDécembre, entréePaydexJanvier },
+      paydex: {
+        decembre: { date_valeur: new Date("2015-12-15T00:00Z"), nb_jours: 1 },
+        janvier: { date_valeur: new Date("2016-01-15T00:00Z"), nb_jours: 2 },
+      },
     }
+    // Note: l'entrée bdf est nécéssaire pour map() émette les données
+    const entréeBdf = {
+      arrete_bilan_bdf: new Date(
+        dateDébut.getTime() - 7 * 31 * 24 * 60 * 60 * 1000 // 7 mois avant date_debut
+      ),
+    } as EntréeBdf
     const rawData: EntrepriseDataValues = {
       scope: "entreprise",
       key: siren,
-      batch: { [batchKey]: { ...rawEntrData, bdf: { entréeBdfDécembre } } },
+      batch: {
+        [batchKey]: {
+          ...rawEntrData,
+          bdf: { entréeBdf },
+        },
+      },
     }
     const mapResults = runMongoMap<EntréeMap, CléSortieMap, SortieMap>(map, [
       { _id: siren, value: rawData },
@@ -80,7 +79,7 @@ test.serial(
       serie_periode.length,
       "map() doit émettre un objet par période"
     )
-    ;[entréePaydexDécembre, entréePaydexJanvier].forEach(
+    Object.values(rawEntrData.paydex).forEach(
       (entréePaydex, i) =>
         t.is(
           otherResults[i]?.value.entreprise?.paydex_nb_jours,
