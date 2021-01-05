@@ -26,25 +26,29 @@ func connectDb() {
 
 // main Fonction Principale
 func main() {
+	os.Exit(mainLogic())
+}
+
+func mainLogic() int {
 	cmdHandlerWithArgs := parseCommandFromArgs()
 	// exit if no command was recognized in args
 	if cmdHandlerWithArgs == nil {
 		fmt.Printf("Commande non reconnue. Utilisez %v --help pour lister les commandes.\n", strings.Join(os.Args, " "))
-		os.Exit(1)
-		return
+		return 1
 	}
 	// validate command parameters
 	if err := cmdHandlerWithArgs.Validate(); err != nil {
 		fmt.Printf("Erreur: %v. Utilisez %v --help pour consulter la documentation.", err, strings.Join(os.Args, " "))
-		os.Exit(2)
+		return 2
 	}
 	// execute the command
 	connectDb()
 	if err := cmdHandlerWithArgs.Run(); err != nil {
 		fmt.Printf("\nErreur: %v\n", err)
-		os.Exit(3)
+		return 3
 	}
 	engine.FlushEventQueue()
+	return 0
 }
 
 // Ask cosiner/flag to parse arguments

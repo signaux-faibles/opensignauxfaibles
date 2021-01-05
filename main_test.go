@@ -39,7 +39,7 @@ func TestMain(t *testing.T) {
 	viper.Set("DB_DIAL", mongoURI)
 	viper.Set("DB", mongoDatabase)
 	os.Args = []string{"sfdata", "etablissements"}
-	main()
+	mainLogic() // n'appelle pas os.Exit() => le cleanup du test pourra avoir lieu
 }
 
 // Code from https://github.com/niilo/golib/blob/master/test/dockertest/docker.go
