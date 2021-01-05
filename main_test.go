@@ -31,6 +31,7 @@ func TestMain(t *testing.T) {
 	viper.Set("DB", mongoDatabase)
 
 	runCLI("sfdata", "etablissements") // n'appelle pas os.Exit() => le cleanup du test pourra avoir lieu
+	runCLI("sfdata", "etablissements") // n'appelle pas os.Exit() => le cleanup du test pourra avoir lieu
 }
 
 func startMongoContainer(t *testing.T) {
