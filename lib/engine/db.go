@@ -27,6 +27,7 @@ func loadConfig() {
 	viper.SetDefault("DB", "opensignauxfaibles")
 	err := viper.ReadInConfig()
 	if err != nil {
+		log.Println(err) // /!\ en ci, seul le fichier config-sample.toml existe
 		panic("Erreur à la lecture de la configuration")
 	}
 }

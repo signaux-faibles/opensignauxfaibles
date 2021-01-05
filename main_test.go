@@ -8,7 +8,6 @@ import (
 	"log"
 	"os"
 	"os/exec"
-	"sync"
 	"testing"
 	"time"
 
@@ -27,18 +26,20 @@ func TestMain(t *testing.T) {
 	// wrong when setting up the container. Thus, no error is returned
 	_ /*containerID*/, ip := setupMongoContainer(t)
 	fmt.Println(ip)
-	defer KillRemove(t)
 
-	var wg sync.WaitGroup
-	wg.Add(1)
-	go func() {
-		viper.Set("DB_DIAL", mongoURI)
-		viper.Set("DB", mongoDatabase)
-		os.Args = []string{"sfdata", "etablissements"}
-		main()
-		wg.Done()
-	}()
-	wg.Wait()
+	// Note: les fonctions ci-dessous sont appelées en cas de panic depuis db.go, mais pas en cas d'appel à os.Exit()
+	defer KillRemove(t)
+	t.Cleanup(func() {
+		if err := exec.Command("docker", "stop", "dockertestmongodb").Run(); err != nil {
+			log.Println(err)
+		}
+		log.Println("cleanup ok")
+	})
+
+	viper.Set("DB_DIAL", mongoURI)
+	viper.Set("DB", mongoDatabase)
+	os.Args = []string{"sfdata", "etablissements"}
+	main()
 }
 
 // Code from https://github.com/niilo/golib/blob/master/test/dockertest/docker.go
@@ -65,6 +66,7 @@ func /*(c ContainerID)*/ KillRemove(t *testing.T) {
 		t.Log(err)
 		return
 	}
+	log.Println("KillRemove ok")
 	// if err := c.Kill(); err != nil {
 	// 	t.Log(err)
 	// 	return
@@ -132,6 +134,7 @@ func setupMongoContainer(t *testing.T) (c ContainerID, ip string) {
 // port and timeout. It returns the container ID and its IP address, or makes the test
 // fail on error.
 func setupContainer(t *testing.T, image string, port int, timeout time.Duration, start func() (string, error)) (c ContainerID, ip string) {
+	t.Helper()
 	runLongTest(t, image)
 
 	/*containerID*/
