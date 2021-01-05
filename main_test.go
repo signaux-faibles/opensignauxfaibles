@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"log"
-	"os"
 	"os/exec"
 	"testing"
 
@@ -31,8 +30,7 @@ func TestMain(t *testing.T) {
 	viper.Set("DB_DIAL", fmt.Sprintf("mongodb://localhost:%v", mongoPort))
 	viper.Set("DB", mongoDatabase)
 
-	os.Args = []string{"sfdata", "etablissements"}
-	mainLogic() // n'appelle pas os.Exit() => le cleanup du test pourra avoir lieu
+	runCLI("sfdata", "etablissements") // n'appelle pas os.Exit() => le cleanup du test pourra avoir lieu
 }
 
 func startMongoContainer(t *testing.T) {

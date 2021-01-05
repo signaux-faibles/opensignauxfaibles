@@ -28,19 +28,20 @@ func connectDb() {
 // main Fonction Principale
 func main() {
 	initConfig()
-	os.Exit(mainLogic())
+	exitCode := runCLI(os.Args...)
+	os.Exit(exitCode)
 }
 
-func mainLogic() int {
-	cmdHandlerWithArgs := parseCommandFromArgs()
+func runCLI(args ...string) int {
+	cmdHandlerWithArgs := parseCommandFromArgs(args)
 	// exit if no command was recognized in args
 	if cmdHandlerWithArgs == nil {
-		fmt.Printf("Commande non reconnue. Utilisez %v --help pour lister les commandes.\n", strings.Join(os.Args, " "))
+		fmt.Printf("Commande non reconnue. Utilisez %v --help pour lister les commandes.\n", strings.Join(args, " "))
 		return 1
 	}
 	// validate command parameters
 	if err := cmdHandlerWithArgs.Validate(); err != nil {
-		fmt.Printf("Erreur: %v. Utilisez %v --help pour consulter la documentation.", err, strings.Join(os.Args, " "))
+		fmt.Printf("Erreur: %v. Utilisez %v --help pour consulter la documentation.", err, strings.Join(args, " "))
 		return 2
 	}
 	// execute the command
@@ -62,9 +63,9 @@ func initConfig() {
 }
 
 // Ask cosiner/flag to parse arguments
-func parseCommandFromArgs() commandHandler {
+func parseCommandFromArgs(args []string) commandHandler {
 	var actualArgs = cliCommands{}
-	actualArgs.populateFromArgs()
+	actualArgs.populateFromArgs(args)
 	for _, cmdHandlerWithArgs := range actualArgs.index() {
 		if cmdHandlerWithArgs.IsEnabled() {
 			return cmdHandlerWithArgs
@@ -98,9 +99,9 @@ type cliCommands struct {
 	Entreprises       exportEntreprisesHandler
 }
 
-func (cmds *cliCommands) populateFromArgs() {
+func (cmds *cliCommands) populateFromArgs(args []string) {
 	flagSet := cosFlag.NewFlagSet(cosFlag.Flag{})
-	_ = flagSet.ParseStruct(cmds, os.Args...) // may panic with "unexpected non-flag value: unknown_command"
+	_ = flagSet.ParseStruct(cmds, args...) // may panic with "unexpected non-flag value: unknown_command"
 }
 
 // Metadata returns the documentation that will be displayed by cosiner/flag
