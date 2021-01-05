@@ -3,6 +3,7 @@ module github.com/signaux-faibles/opensignauxfaibles
 go 1.14
 
 require (
+	camlistore.org v0.0.0-20171230002226-a5a65f0d8b22
 	github.com/TomOnTime/utfutil v0.0.0-20200626160131-0b0178852c8f
 	github.com/cnf/structhash v0.0.0-20180104161610-62a607eb0224
 	github.com/cosiner/flag v0.4.0

@@ -1,3 +1,5 @@
+camlistore.org v0.0.0-20171230002226-a5a65f0d8b22 h1:VP9VuyosMHmS9zdzd5Co9TJKWPbMTfmtKc/XWctszyQ=
+camlistore.org v0.0.0-20171230002226-a5a65f0d8b22/go.mod h1:mzAP6ICVzPdfO0f3N9hAVWhO7qplHF7mbFhGsGdErTI=
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 github.com/BurntSushi/toml v0.3.1 h1:WXkYYl6Yr3qBf1K79EBnL4mak0OimBfB0XUf9Vl28OQ=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
