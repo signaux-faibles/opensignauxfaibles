@@ -16,25 +16,19 @@ import (
 )
 
 const (
-	mongoImage    = "mongo:4.2@sha256:1c2243a5e21884ffa532ca9d20c221b170d7b40774c235619f98e2f6eaec520a"
-	mongoURI      = "mongodb://localhost:27017" // TODO: switch to 27016
-	mongoDatabase = "signauxfaibles"
+	mongoImage     = "mongo:4.2@sha256:1c2243a5e21884ffa532ca9d20c221b170d7b40774c235619f98e2f6eaec520a"
+	mongoContainer = "dockertestmongodb"
+	mongoURI       = "mongodb://localhost:27017" // TODO: switch to 27016
+	mongoDatabase  = "signauxfaibles"
 )
 
 func TestMain(t *testing.T) {
-	// SetupMongoContainer may skip or fatal the test if docker isn't found or something goes
-	// wrong when setting up the container. Thus, no error is returned
-	_ /*containerID*/, ip := setupMongoContainer(t)
-	fmt.Println(ip)
+	if testing.Short() {
+		t.Skip("skipping in short mode")
+	}
 
-	// Note: les fonctions ci-dessous sont appelées en cas de panic depuis db.go, mais pas en cas d'appel à os.Exit()
-	defer KillRemove(t)
-	t.Cleanup(func() {
-		if err := exec.Command("docker", "stop", "dockertestmongodb").Run(); err != nil {
-			log.Println(err)
-		}
-		log.Println("cleanup ok")
-	})
+	setupMongoContainer(t) // may skip or fatal the test
+	t.Cleanup(stopMongoContainer)
 
 	viper.AddConfigPath(".")
 	viper.SetConfigType("toml")
@@ -63,21 +57,10 @@ func (c ContainerID) Remove() error {
 	return exec.Command("docker", "rm", string(c)).Run()
 }
 
-// KillRemove calls Kill on the container, and then Remove if there was
-// no error. It logs any error to t.
-func /*(c ContainerID)*/ KillRemove(t *testing.T) {
-	if err := exec.Command("docker", "stop", "dockertestmongodb").Run(); err != nil {
-		t.Log(err)
-		return
+func stopMongoContainer() {
+	if err := exec.Command("docker", "stop", mongoContainer).Run(); err != nil {
+		log.Println(err)
 	}
-	log.Println("KillRemove ok")
-	// if err := c.Kill(); err != nil {
-	// 	t.Log(err)
-	// 	return
-	// }
-	// if err := c.Remove(); err != nil {
-	// 	t.Log(err)
-	// }
 }
 
 // lookup retrieves the ip address of the container, and tries to reach
@@ -123,13 +106,11 @@ func IP(containerID string) (string, error) {
 }
 
 // setupMongoContainer sets up a real MongoDB instance for testing purposes,
-// using a Docker container. It returns the container ID and its IP address,
-// or makes the test fail on error.
-// Currently using https://hub.docker.com/_/mongo/
-func setupMongoContainer(t *testing.T) (c ContainerID, ip string) {
-	return setupContainer(t, mongoImage, 27017, 10*time.Second, func() (string, error) {
+// using a Docker container. It makes the test fail on error.
+func setupMongoContainer(t *testing.T) {
+	setupContainer(t, mongoImage, 27017, 10*time.Second, func() (string, error) {
 		log.Println("Starting mongodb container...")
-		return run("--rm", "-d", "-p", "27017:27017", "--name", "dockertestmongodb", mongoImage)
+		return run("--rm", "-d", "-p", "27017:27017", "--name", mongoContainer, mongoImage)
 	})
 }
 
@@ -137,22 +118,11 @@ func setupMongoContainer(t *testing.T) (c ContainerID, ip string) {
 // It also looks up the IP address of the container, and tests this address with the given
 // port and timeout. It returns the container ID and its IP address, or makes the test
 // fail on error.
-func setupContainer(t *testing.T, image string, port int, timeout time.Duration, start func() (string, error)) (c ContainerID, ip string) {
-	t.Helper()
-	runLongTest(t, image)
-
-	/*containerID*/
-	_, err := start()
-	if err != nil {
+func setupContainer(t *testing.T, image string, port int, timeout time.Duration, start func() (string, error)) {
+	checkDockerImage(t, image)
+	if _, err := start(); err != nil {
 		t.Fatalf("docker run: %v", err)
 	}
-	// c = ContainerID(containerID)
-	// ip, err = c.lookup(port, timeout)
-	// if err != nil {
-	// 	c.KillRemove(t)
-	// 	t.Errorf("Container %v setup failed: %v", c, err)
-	// }
-	return
 }
 
 // haveDocker returns whether the "docker" command was found.
@@ -178,12 +148,8 @@ func Pull(image string) error {
 	return err
 }
 
-/// runLongTest checks all the conditions for running a docker container
-// based on image.
-func runLongTest(t *testing.T, image string) {
-	if testing.Short() {
-		t.Skip("skipping in short mode")
-	}
+// check all conditions to run a docker container based on image.
+func checkDockerImage(t *testing.T, image string) {
 	if !haveDocker() {
 		t.Error("'docker' command not found")
 	}
