@@ -16,7 +16,7 @@ import (
 
 func connectDb() {
 	engine.Db = engine.InitDB()
-	go engine.MessageSocketAddClient()
+	go engine.InitEventQueue()
 
 	var err error
 	naf.Naf, err = naf.LoadNAF()
