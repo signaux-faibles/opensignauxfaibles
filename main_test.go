@@ -5,7 +5,10 @@ import (
 	"log"
 	"os/exec"
 	"testing"
+	"time"
 
+	"github.com/globalsign/mgo"
+	"github.com/globalsign/mgo/bson"
 	"github.com/spf13/viper"
 )
 
@@ -27,11 +30,40 @@ func TestMain(t *testing.T) {
 	viper.AddConfigPath(".")
 	viper.SetConfigType("toml")
 	viper.SetConfigName("config-sample") // => config will be loaded from ./config-sample.toml
-	viper.Set("DB_DIAL", fmt.Sprintf("mongodb://localhost:%v", mongoPort))
+
+	mongoURI := fmt.Sprintf("mongodb://localhost:%v", mongoPort)
+	viper.Set("DB_DIAL", mongoURI)
 	viper.Set("DB", mongoDatabase)
 
-	runCLI("sfdata", "etablissements") // n'appelle pas os.Exit() => le cleanup du test pourra avoir lieu
-	runCLI("sfdata", "etablissements") // n'appelle pas os.Exit() => le cleanup du test pourra avoir lieu
+	mongodb, err := mgo.Dial(mongoURI)
+	if err != nil {
+		t.Fatal(err)
+	}
+	// mongodb.SetSocketTimeout(72000 * time.Second)
+	db := mongodb.DB(mongoDatabase)
+	db.C("Admin").Insert(bson.M{
+		"_id": bson.M{
+			"key":  "1910",
+			"type": "batch",
+		},
+		"files": bson.M{
+			"paydex": []string{"/../lib/paydex/testData/paydexTestData.csv"},
+		},
+		"param": bson.M{
+			"date_debut": time.Date(2019, 0, 1, 0, 0, 0, 0, time.UTC), // ISODate("2019-01-01T00:00:00.000+0000"),
+			"date_fin":   time.Date(2019, 1, 1, 0, 0, 0, 0, time.UTC), // ISODate("2019-02-01T00:00:00.000+0000"),
+		},
+	})
+
+	runCLI("sfdata", "import", "--batch=1910", "--no-filter")
+	runCLI("sfdata", "compact", "--since-batch=1910")
+	runCLI("sfdata", "public", "--until-batch=1910")
+	runCLI("sfdata", "etablissements")
+	runCLI("sfdata", "entreprises")
+
+	// var firstBatch base.AdminBatch
+	// db.C("Admin").Find(bson.M{}).One(&firstBatch)
+	// log.Println(firstBatch)
 }
 
 func startMongoContainer(t *testing.T) {
