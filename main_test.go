@@ -47,7 +47,6 @@ func stopMongoContainer() {
 // startMongoContainer sets up a real MongoDB instance for testing purposes,
 // using a Docker container. It makes the test fail on error.
 func startMongoContainer(t *testing.T) {
-	checkDockerImage(t, mongoImage)
 	log.Println("Starting mongodb container...")
 	if _, err := run("--rm", "-d", "-p", "27017:27017", "--name", mongoContainer, mongoImage); err != nil {
 		t.Fatalf("docker run: %v", err)
@@ -69,22 +68,6 @@ func Pull(image string) error {
 		err = fmt.Errorf("%v: %s", err, out)
 	}
 	return err
-}
-
-// check all conditions to run a docker container based on image.
-func checkDockerImage(t *testing.T, image string) {
-	if _, err := exec.LookPath("docker"); err != nil {
-		t.Error("'docker' command not found")
-	}
-	if ok, err := haveImage(image); !ok || err != nil {
-		if err != nil {
-			t.Errorf("Error running docker to check for %s: %v", image, err)
-		}
-		log.Printf("Pulling docker image %s ...", image)
-		if err := Pull(image); err != nil {
-			t.Errorf("Error pulling %s: %v", image, err)
-		}
-	}
 }
 
 func run(args ...string) (containerID string, err error) {
