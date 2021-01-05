@@ -1,8 +1,6 @@
 package main
 
 import (
-	"bytes"
-	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -36,8 +34,6 @@ func TestMain(t *testing.T) {
 	mainLogic() // n'appelle pas os.Exit() => le cleanup du test pourra avoir lieu
 }
 
-// Code from https://github.com/niilo/golib/blob/master/test/dockertest/docker.go
-
 func stopMongoContainer() {
 	if err := exec.Command("docker", "stop", mongoContainer).Run(); err != nil {
 		log.Println(err)
@@ -47,42 +43,12 @@ func stopMongoContainer() {
 // startMongoContainer sets up a real MongoDB instance for testing purposes,
 // using a Docker container. It makes the test fail on error.
 func startMongoContainer(t *testing.T) {
-	log.Println("Starting mongodb container...")
-	if _, err := run("--rm", "-d", "-p", "27017:27017", "--name", mongoContainer, mongoImage); err != nil {
+	if err := run("--rm", "-d", "-p", "27017:27017", "--name", mongoContainer, mongoImage); err != nil {
 		t.Fatalf("docker run: %v", err)
 	}
 }
 
-func haveImage(name string) (ok bool, err error) {
-	out, err := exec.Command("docker", "images", "--no-trunc").Output()
-	if err != nil {
-		return
-	}
-	return bytes.Contains(out, []byte(name)), nil
-}
-
-// Pull retrieves the docker image with 'docker pull'.
-func Pull(image string) error {
-	out, err := exec.Command("docker", "pull", image).CombinedOutput()
-	if err != nil {
-		err = fmt.Errorf("%v: %s", err, out)
-	}
-	return err
-}
-
-func run(args ...string) (containerID string, err error) {
+func run(args ...string) error {
 	log.Println(append([]string{"docker", "run"}, args...))
-	cmd := exec.Command("docker", append([]string{"run"}, args...)...)
-	var stdout, stderr bytes.Buffer
-	cmd.Stdout, cmd.Stderr = &stdout, &stderr
-	log.Println(stdout.String())
-	log.Println(stderr.String())
-	if err = cmd.Run(); err != nil {
-		return "", err // fmt.Errorf("%v%v", stderr.String(), err)
-	}
-	containerID = "" // strings.TrimSpace(stdout.String())
-	// if containerID == "" {
-	// 	return "", errors.New("unexpected empty output from `docker run`")
-	// }
-	return
+	return exec.Command("docker", append([]string{"run"}, args...)...).Run()
 }
