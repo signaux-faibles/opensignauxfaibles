@@ -2,16 +2,12 @@ package main
 
 import (
 	"bytes"
-	"encoding/json"
-	"errors"
 	"fmt"
 	"log"
 	"os"
 	"os/exec"
 	"testing"
-	"time"
 
-	"camlistore.org/pkg/netutil"
 	"github.com/spf13/viper"
 )
 
@@ -27,7 +23,7 @@ func TestMain(t *testing.T) {
 		t.Skip("skipping in short mode")
 	}
 
-	setupMongoContainer(t) // may skip or fatal the test
+	startMongoContainer(t) // may skip or fatal the test
 	t.Cleanup(stopMongoContainer)
 
 	viper.AddConfigPath(".")
@@ -42,93 +38,20 @@ func TestMain(t *testing.T) {
 
 // Code from https://github.com/niilo/golib/blob/master/test/dockertest/docker.go
 
-type ContainerID string
-
-func (c ContainerID) IP() (string, error) {
-	return IP(string(c))
-}
-
-func (c ContainerID) Kill() error {
-	return KillContainer(string(c))
-}
-
-// Remove runs "docker rm" on the container
-func (c ContainerID) Remove() error {
-	return exec.Command("docker", "rm", string(c)).Run()
-}
-
 func stopMongoContainer() {
 	if err := exec.Command("docker", "stop", mongoContainer).Run(); err != nil {
 		log.Println(err)
 	}
 }
 
-// lookup retrieves the ip address of the container, and tries to reach
-// before timeout the tcp address at this ip and given port.
-func (c ContainerID) lookup(port int, timeout time.Duration) (ip string, err error) {
-	ip, err = c.IP()
-	if err != nil {
-		err = fmt.Errorf("error getting IP: %v", err)
-		return
-	}
-	addr := fmt.Sprintf("%s:%d", ip, port)
-	err = netutil.AwaitReachable(addr, timeout)
-	return
-}
-
-func KillContainer(container string) error {
-	return exec.Command("docker", "kill", container).Run()
-}
-
-// IP returns the IP address of the container.
-func IP(containerID string) (string, error) {
-	out, err := exec.Command("docker", "inspect", containerID).Output()
-	if err != nil {
-		return "", err
-	}
-	type networkSettings struct {
-		IPAddress string
-	}
-	type container struct {
-		NetworkSettings networkSettings
-	}
-	var c []container
-	if err := json.NewDecoder(bytes.NewReader(out)).Decode(&c); err != nil {
-		return "", err
-	}
-	if len(c) == 0 {
-		return "", errors.New("no output from docker inspect")
-	}
-	if ip := c[0].NetworkSettings.IPAddress; ip != "" {
-		return ip, nil
-	}
-	return "", errors.New("could not find an IP. Not running?")
-}
-
-// setupMongoContainer sets up a real MongoDB instance for testing purposes,
+// startMongoContainer sets up a real MongoDB instance for testing purposes,
 // using a Docker container. It makes the test fail on error.
-func setupMongoContainer(t *testing.T) {
-	setupContainer(t, mongoImage, 27017, 10*time.Second, func() (string, error) {
-		log.Println("Starting mongodb container...")
-		return run("--rm", "-d", "-p", "27017:27017", "--name", mongoContainer, mongoImage)
-	})
-}
-
-// setupContainer sets up a container, using the start function to run the given image.
-// It also looks up the IP address of the container, and tests this address with the given
-// port and timeout. It returns the container ID and its IP address, or makes the test
-// fail on error.
-func setupContainer(t *testing.T, image string, port int, timeout time.Duration, start func() (string, error)) {
-	checkDockerImage(t, image)
-	if _, err := start(); err != nil {
+func startMongoContainer(t *testing.T) {
+	checkDockerImage(t, mongoImage)
+	log.Println("Starting mongodb container...")
+	if _, err := run("--rm", "-d", "-p", "27017:27017", "--name", mongoContainer, mongoImage); err != nil {
 		t.Fatalf("docker run: %v", err)
 	}
-}
-
-// haveDocker returns whether the "docker" command was found.
-func haveDocker() bool {
-	_, err := exec.LookPath("docker")
-	return err == nil
 }
 
 func haveImage(name string) (ok bool, err error) {
@@ -150,7 +73,7 @@ func Pull(image string) error {
 
 // check all conditions to run a docker container based on image.
 func checkDockerImage(t *testing.T, image string) {
-	if !haveDocker() {
+	if _, err := exec.LookPath("docker"); err != nil {
 		t.Error("'docker' command not found")
 	}
 	if ok, err := haveImage(image); !ok || err != nil {
