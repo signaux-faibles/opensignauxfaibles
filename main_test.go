@@ -36,6 +36,7 @@ func TestMain(t *testing.T) {
 		log.Println("cleanup ok")
 	})
 
+	viper.SetConfigName("config-sample") // config-sample.toml
 	viper.Set("DB_DIAL", mongoURI)
 	viper.Set("DB", mongoDatabase)
 	os.Args = []string{"sfdata", "etablissements"}
