@@ -12,8 +12,9 @@ func TestMain(t *testing.T) {
 	var wg sync.WaitGroup
 	wg.Add(1)
 	go func() {
-		viper.Set("Verbose", true) // cf https://github.com/spf13/viper#setting-overrides
-		os.Args = []string{"sfdata", "--help"}
+		viper.Set("DB_DIAL", "mongodb://localhost:27016")
+		viper.Set("DB_DIAL", "signauxfaibles")
+		os.Args = []string{"sfdata", "etablissements"}
 		main()
 		wg.Done()
 	}()
