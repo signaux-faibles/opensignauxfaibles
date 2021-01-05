@@ -31,6 +31,9 @@ set -o pipefail # ... even for tests which pipe their output to indent
 heading "npm install"
 (cd ./js && npm install) 2>&1 | indent
 
+heading "typescript check"
+(cd ./js && npx tsc --noEmit) 2>&1 | indent
+
 heading "npm test"
 (cd ./js && npm run lint && npm test -- $@) 2>&1 | indent
 
