@@ -26,13 +26,16 @@ func connectDb() {
 
 // main Fonction Principale
 func main() {
+	fmt.Println(os.Args)
 	cmdHandlerWithArgs := parseCommandFromArgs()
+	fmt.Println(cmdHandlerWithArgs)
 	// exit if no command was recognized in args
 	if cmdHandlerWithArgs == nil {
 		fmt.Printf("Commande non reconnue. Utilisez %v --help pour lister les commandes.\n", strings.Join(os.Args, " "))
 		os.Exit(1)
 		return
 	}
+	fmt.Println("2")
 	// validate command parameters
 	if err := cmdHandlerWithArgs.Validate(); err != nil {
 		fmt.Printf("Erreur: %v. Utilisez %v --help pour consulter la documentation.", err, strings.Join(os.Args, " "))
