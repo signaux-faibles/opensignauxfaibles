@@ -7,6 +7,7 @@ import {
   ParPériode,
 } from "../RawDataTypes"
 import { SortieBdf } from "./entr_bdf"
+import { SortiePaydex } from "./entr_paydex"
 import { SortieDiane } from "./entr_diane"
 import { SortieSireneEntreprise } from "./entr_sirene"
 import { DonnéesAgrégées } from "./outputs"
@@ -17,6 +18,7 @@ type SortieMapEntreprise = {
   periode: Date
 } & Partial<SortieSireneEntreprise> &
   Partial<SortieBdf> &
+  Partial<SortiePaydex> &
   Partial<SortieDiane>
 
 export type SortieMapEtablissement = Partial<DonnéesAgrégées>
@@ -211,6 +213,11 @@ export function map(this: EntréeMap): void {
           "effectif_ent"
         )
         f.add(output_effectif_ent, output_indexed)
+      }
+
+      if (v.paydex) {
+        const paydexParPériode = f.entr_paydex(v.paydex, serie_periode)
+        f.add(paydexParPériode, output_indexed)
       }
 
       v.bdf = v.bdf || {}
