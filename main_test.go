@@ -36,9 +36,12 @@ func TestMain(t *testing.T) {
 		log.Println("cleanup ok")
 	})
 
-	viper.SetConfigName("config-sample") // config-sample.toml
+	viper.AddConfigPath(".")
+	viper.SetConfigType("toml")
+	viper.SetConfigName("config-sample") // => config will be loaded from ./config-sample.toml
 	viper.Set("DB_DIAL", mongoURI)
 	viper.Set("DB", mongoDatabase)
+
 	os.Args = []string{"sfdata", "etablissements"}
 	mainLogic() // n'appelle pas os.Exit() => le cleanup du test pourra avoir lieu
 }

@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	cosFlag "github.com/cosiner/flag"
+	"github.com/spf13/viper"
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/engine"
 
@@ -26,6 +27,7 @@ func connectDb() {
 
 // main Fonction Principale
 func main() {
+	initConfig()
 	os.Exit(mainLogic())
 }
 
@@ -49,6 +51,14 @@ func mainLogic() int {
 	}
 	engine.FlushEventQueue()
 	return 0
+}
+
+func initConfig() {
+	viper.SetConfigType("toml")
+	viper.SetConfigName("config") // => will look for config.toml in the following paths:
+	viper.AddConfigPath("/etc/opensignauxfaibles")
+	viper.AddConfigPath("$HOME/.opensignauxfaibles")
+	viper.AddConfigPath(".")
 }
 
 // Ask cosiner/flag to parse arguments
