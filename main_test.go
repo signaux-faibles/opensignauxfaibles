@@ -34,21 +34,17 @@ func TestMain(t *testing.T) {
 	mainLogic() // n'appelle pas os.Exit() => le cleanup du test pourra avoir lieu
 }
 
-func stopMongoContainer() {
-	if err := exec.Command("docker", "stop", mongoContainer).Run(); err != nil {
-		log.Println(err)
-	}
-}
-
 // startMongoContainer sets up a real MongoDB instance for testing purposes,
 // using a Docker container. It makes the test fail on error.
 func startMongoContainer(t *testing.T) {
-	if err := run("--rm", "-d", "-p", "27017:27017", "--name", mongoContainer, mongoImage); err != nil {
+	err := exec.Command("docker", "run", "--rm", "-d", "-p", "27017:27017", "--name", mongoContainer, mongoImage).Run()
+	if err != nil {
 		t.Fatalf("docker run: %v", err)
 	}
 }
 
-func run(args ...string) error {
-	log.Println(append([]string{"docker", "run"}, args...))
-	return exec.Command("docker", append([]string{"run"}, args...)...).Run()
+func stopMongoContainer() {
+	if err := exec.Command("docker", "stop", mongoContainer).Run(); err != nil {
+		log.Println(err)
+	}
 }
