@@ -19,6 +19,7 @@ import { detteFiscale } from "./detteFiscale"
 import { effectifs } from "./effectifs"
 import { entr_bdf } from "./entr_bdf"
 import { entr_diane } from "./entr_diane"
+import { entr_paydex } from "./entr_paydex"
 import { entr_sirene } from "./entr_sirene"
 import { fraisFinancier } from "./fraisFinancier"
 import { interim } from "./interim"
@@ -56,6 +57,7 @@ export const f = {
   entr_bdf,
   omit,
   entr_diane,
+  entr_paydex,
   lookAhead,
   compareDebit,
   procolToHuman,
