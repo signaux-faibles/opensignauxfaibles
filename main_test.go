@@ -12,7 +12,7 @@ import (
 
 const (
 	mongoImage     = "mongo:4.2@sha256:1c2243a5e21884ffa532ca9d20c221b170d7b40774c235619f98e2f6eaec520a"
-	mongoContainer = "dockertestmongodb"
+	mongoContainer = "sf-mongodb"
 	mongoPort      = 27016
 	mongoDatabase  = "signauxfaibles"
 )
