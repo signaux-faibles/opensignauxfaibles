@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	cosFlag "github.com/cosiner/flag"
+	"github.com/spf13/viper"
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/engine"
 
@@ -15,7 +16,7 @@ import (
 
 func connectDb() {
 	engine.Db = engine.InitDB()
-	go engine.MessageSocketAddClient()
+	go engine.InitEventQueue()
 
 	var err error
 	naf.Naf, err = naf.LoadNAF()
@@ -26,31 +27,45 @@ func connectDb() {
 
 // main Fonction Principale
 func main() {
-	cmdHandlerWithArgs := parseCommandFromArgs()
+	initConfig()
+	exitCode := runCLI(os.Args...)
+	os.Exit(exitCode)
+}
+
+func runCLI(args ...string) int {
+	cmdHandlerWithArgs := parseCommandFromArgs(args)
 	// exit if no command was recognized in args
 	if cmdHandlerWithArgs == nil {
-		fmt.Printf("Commande non reconnue. Utilisez %v --help pour lister les commandes.\n", strings.Join(os.Args, " "))
-		os.Exit(1)
-		return
+		fmt.Printf("Commande non reconnue. Utilisez %v --help pour lister les commandes.\n", strings.Join(args, " "))
+		return 1
 	}
 	// validate command parameters
 	if err := cmdHandlerWithArgs.Validate(); err != nil {
-		fmt.Printf("Erreur: %v. Utilisez %v --help pour consulter la documentation.", err, strings.Join(os.Args, " "))
-		os.Exit(2)
+		fmt.Printf("Erreur: %v. Utilisez %v --help pour consulter la documentation.", err, strings.Join(args, " "))
+		return 2
 	}
 	// execute the command
 	connectDb()
 	if err := cmdHandlerWithArgs.Run(); err != nil {
 		fmt.Printf("\nErreur: %v\n", err)
-		os.Exit(3)
+		return 3
 	}
 	engine.FlushEventQueue()
+	return 0
+}
+
+func initConfig() {
+	viper.SetConfigType("toml")
+	viper.SetConfigName("config") // => will look for config.toml in the following paths:
+	viper.AddConfigPath("/etc/opensignauxfaibles")
+	viper.AddConfigPath("$HOME/.opensignauxfaibles")
+	viper.AddConfigPath(".")
 }
 
 // Ask cosiner/flag to parse arguments
-func parseCommandFromArgs() commandHandler {
+func parseCommandFromArgs(args []string) commandHandler {
 	var actualArgs = cliCommands{}
-	actualArgs.populateFromArgs()
+	actualArgs.populateFromArgs(args)
 	for _, cmdHandlerWithArgs := range actualArgs.index() {
 		if cmdHandlerWithArgs.IsEnabled() {
 			return cmdHandlerWithArgs
@@ -84,9 +99,9 @@ type cliCommands struct {
 	Entreprises       exportEntreprisesHandler
 }
 
-func (cmds *cliCommands) populateFromArgs() {
+func (cmds *cliCommands) populateFromArgs(args []string) {
 	flagSet := cosFlag.NewFlagSet(cosFlag.Flag{})
-	_ = flagSet.ParseStruct(cmds, os.Args...) // may panic with "unexpected non-flag value: unknown_command"
+	_ = flagSet.ParseStruct(cmds, args...) // may panic with "unexpected non-flag value: unknown_command"
 }
 
 // Metadata returns the documentation that will be displayed by cosiner/flag

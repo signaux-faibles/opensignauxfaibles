@@ -15,7 +15,7 @@ import (
 
 type messageChannel chan marshal.Event
 
-var mainMessageChannel = messageDispatch() // canal dans lequel on va émettre tous les messages
+var mainMessageChannel messageChannel // canal dans lequel on va émettre tous les messages
 
 var relaying sync.WaitGroup // permet de savoir quand les messages ont fini d'être transmis
 
@@ -24,8 +24,9 @@ var messageClientChannels = []messageChannel{}
 // AddClientChannel enregistre un nouveau client
 var AddClientChannel = make(chan messageChannel)
 
-// MessageSocketAddClient surveille l'ajout de nouveaux clients pour les enregistrer dans la liste des clients
-func MessageSocketAddClient() {
+// InitEventQueue surveille l'ajout de nouveaux clients pour les enregistrer dans la liste des clients
+func InitEventQueue() {
+	mainMessageChannel = messageDispatch()
 	for clientChannel := range AddClientChannel {
 		messageClientChannels = append(messageClientChannels, clientChannel)
 	}
