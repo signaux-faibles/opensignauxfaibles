@@ -71,7 +71,6 @@ export type BatchValueProps = CommonBatchProps &
     effectif: ParHash<EntréeEffectif>
     apdemande: ParHash<EntréeApDemande>
     compte: ParHash<EntréeCompte>
-    interim: ParHash<EntréeInterim>
     delai: ParHash<EntréeDelai>
     procol: ParHash<EntréeDéfaillances>
     cotisation: ParHash<EntréeCotisation>
