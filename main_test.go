@@ -58,6 +58,7 @@ func TestMain(t *testing.T) {
 	runCLI("sfdata", "import", "--batch=1910", "--no-filter")
 	runCLI("sfdata", "compact", "--since-batch=1910")
 	runCLI("sfdata", "public", "--until-batch=1910")
+	runCLI("sfdata", "reduce", "--until-batch=1910")
 	runCLI("sfdata", "etablissements")
 	runCLI("sfdata", "entreprises")
 
