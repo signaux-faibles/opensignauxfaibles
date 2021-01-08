@@ -15,7 +15,7 @@ jobs:
         with:
           go-version: 1.14
       - uses: actions/checkout@v2
-      - run: go test -v -coverprofile=go-coverage.out -covermode count ./...
+      - run: go test -v -coverprofile=go-coverage.out -covermode=atomic ./...
       - name: Generate coverage report
         run: go run github.com/t-yuki/gocover-cobertura < go-coverage.out > go-coverage.xml
       - uses: actions/upload-artifact@v2
