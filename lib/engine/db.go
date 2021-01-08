@@ -18,15 +18,12 @@ type DB struct {
 }
 
 func loadConfig() {
-	viper.SetConfigName("config")
-	viper.SetConfigType("toml")
-	viper.AddConfigPath("/etc/opensignauxfaibles")
-	viper.AddConfigPath("$HOME/.opensignauxfaibles")
-	viper.AddConfigPath(".")
+	// Note: viper.SetConfigType() and viper.AddConfigPath() are called by initConfig()
 	viper.SetDefault("APP_DATA", "$HOME/data-raw/")
 	viper.SetDefault("DB", "opensignauxfaibles")
 	err := viper.ReadInConfig()
 	if err != nil {
+		log.Println(err) // /!\ en ci, seul le fichier config-sample.toml existe
 		panic("Erreur à la lecture de la configuration")
 	}
 }

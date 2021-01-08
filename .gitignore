@@ -12,6 +12,7 @@ dist.tar.xz
 **/*.RData
 **/*.toml
 !config-sample.toml
+!tools/_fakeData/config.toml
 data-raw/
 output/*
 keys.json

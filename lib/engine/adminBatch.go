@@ -21,12 +21,6 @@ func Load(batch *base.AdminBatch, batchKey string) error {
 	return err
 }
 
-// Save écrit les données d'un batch vers la base de données
-func Save(batch *base.AdminBatch) error {
-	_, err := Db.DB.C("Admin").Upsert(bson.M{"_id": batch.ID}, batch)
-	return err
-}
-
 // ImportBatch lance tous les parsers sur le batch fourni
 func ImportBatch(batch base.AdminBatch, parsers []marshal.Parser, skipFilter bool, data chan *Value) error {
 	var cache = marshal.NewCache()
