@@ -57,6 +57,7 @@ func TestMain(t *testing.T) {
 		},
 	})
 
+	assert.Equal(t, 0, runCLI("sfdata", "check", "--batch=1910"))
 	assert.Equal(t, 0, runCLI("sfdata", "import", "--batch=1910", "--no-filter"))
 	assert.Equal(t, 0, runCLI("sfdata", "validate", "--collection=ImportedData"))
 	assert.Equal(t, 0, runCLI("sfdata", "compact", "--since-batch=1910"))
