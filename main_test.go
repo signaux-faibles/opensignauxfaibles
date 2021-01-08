@@ -48,7 +48,8 @@ func TestMain(t *testing.T) {
 			"type": "batch",
 		},
 		"files": bson.M{
-			"paydex": []string{"/../lib/paydex/testData/paydexTestData.csv"},
+			"admin_urssaf": []string{"/../lib/urssaf/testData/comptesTestData.csv"},
+			"paydex":       []string{"/../lib/paydex/testData/paydexTestData.csv"},
 		},
 		"param": bson.M{
 			"date_debut": time.Date(2019, 0, 1, 0, 0, 0, 0, time.UTC), // ISODate("2019-01-01T00:00:00.000+0000"),
