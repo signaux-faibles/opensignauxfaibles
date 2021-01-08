@@ -1660,49 +1660,6 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
             ((_f = diane["charges_financieres"]) !== null && _f !== void 0 ? _f : NaN));
     return isNaN(ratio) ? null : ratio * 100;
 }`,
-"interim": `function interim(interim, output_indexed) {
-    "use strict";
-    var _a, _b;
-    const output_effectif = output_indexed;
-    // let periodes = Object.keys(output_indexed)
-    // output_indexed devra être remplacé par output_effectif, et ne contenir que les données d'effectif.
-    // periodes sera passé en argument.
-    const output_interim = {};
-    //  var offset_interim = 3
-    for (const one_interim of Object.values(interim)) {
-        const periode = one_interim.periode.getTime();
-        // var periode_d = new Date(parseInt(interimTime))
-        // var time_offset = f.dateAddMonth(time_d, -offset_interim)
-        if (periode in output_effectif) {
-            const out = (_a = output_interim[periode]) !== null && _a !== void 0 ? _a : {};
-            const { effectif } = (_b = output_effectif[periode]) !== null && _b !== void 0 ? _b : {};
-            if (effectif) {
-                out.interim_proportion = one_interim.etp / effectif;
-            }
-            output_interim[periode] = out;
-        }
-        const makePastProp = (offset) => ` + "`" + `interim_ratio_past_${offset}` + "`" + `;
-        const past_month_offsets = [6, 12, 18, 24];
-        past_month_offsets.forEach((offset) => {
-            var _a, _b;
-            const pastPropName = makePastProp(offset);
-            const time_past_offset = f.dateAddMonth(one_interim.periode, offset);
-            if (periode in output_effectif &&
-                time_past_offset.getTime() in output_effectif) {
-                const out = (_a = output_interim[time_past_offset.getTime()]) !== null && _a !== void 0 ? _a : {};
-                const val_offset = output_interim[time_past_offset.getTime()];
-                const { effectif } = (_b = output_effectif[periode]) !== null && _b !== void 0 ? _b : {};
-                if (effectif) {
-                    Object.assign(val_offset, {
-                        [pastPropName]: one_interim.etp / effectif,
-                    });
-                }
-                output_interim[time_past_offset.getTime()] = out;
-            }
-        });
-    }
-    return output_interim;
-}`,
 "lookAhead": `function lookAhead(data, attr_name, n_months, past) {
     "use strict";
     // Est-ce que l'évènement se répercute dans le passé (past = true on pourra se
@@ -1784,10 +1741,6 @@ function map() {
             if (v.effectif) {
                 const output_effectif = f.effectifs(v.effectif, periodes, "effectif");
                 f.add(output_effectif, output_indexed);
-            }
-            if (v.interim) {
-                const output_interim = f.interim(v.interim, output_indexed);
-                f.add(output_interim, output_indexed);
             }
             if (v.reporder) {
                 const output_repeatable = f.repeatable(v.reporder);
