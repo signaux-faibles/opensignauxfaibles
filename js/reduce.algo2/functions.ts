@@ -22,7 +22,6 @@ import { entr_diane } from "./entr_diane"
 import { entr_paydex } from "./entr_paydex"
 import { entr_sirene } from "./entr_sirene"
 import { fraisFinancier } from "./fraisFinancier"
-import { interim } from "./interim"
 import { lookAhead } from "./lookAhead"
 import { nbDays } from "./nbDays"
 import { outputs } from "./outputs"
@@ -37,7 +36,6 @@ export const f = {
   apart,
   compte,
   effectifs,
-  interim,
   add,
   repeatable,
   delais,
