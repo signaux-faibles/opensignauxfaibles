@@ -10,6 +10,7 @@ import (
 	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
 	"github.com/spf13/viper"
+	"github.com/stretchr/testify/assert"
 )
 
 const (
@@ -55,12 +56,13 @@ func TestMain(t *testing.T) {
 		},
 	})
 
-	runCLI("sfdata", "import", "--batch=1910", "--no-filter")
-	runCLI("sfdata", "compact", "--since-batch=1910")
-	runCLI("sfdata", "public", "--until-batch=1910")
-	runCLI("sfdata", "reduce", "--until-batch=1910")
-	runCLI("sfdata", "etablissements")
-	runCLI("sfdata", "entreprises")
+	assert.Equal(t, 0, runCLI("sfdata", "import", "--batch=1910", "--no-filter"))
+	assert.Equal(t, 0, runCLI("sfdata", "compact", "--since-batch=1910"))
+	assert.Equal(t, 0, runCLI("sfdata", "public", "--until-batch=1910"))
+	assert.Equal(t, 0, runCLI("sfdata", "reduce", "--until-batch=1910"))
+	assert.Equal(t, 0, runCLI("sfdata", "etablissements"))
+	assert.Equal(t, 0, runCLI("sfdata", "entreprises"))
+	assert.Equal(t, 0, runCLI("sfdata", "purge", "--since-batch=1910"))
 
 	// var firstBatch base.AdminBatch
 	// db.C("Admin").Find(bson.M{}).One(&firstBatch)
