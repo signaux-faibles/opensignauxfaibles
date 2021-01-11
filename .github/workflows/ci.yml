@@ -19,7 +19,7 @@ jobs:
       - name: Show coverage
         run: go tool cover -func=go-coverage.out
       - name: Generate coverage report
-        run: go run github.com/t-yuki/gocover-cobertura < go-coverage.out > go-coverage.xml
+        run: go run github.com/richardlt/gocover-cobertura < go-coverage.out > go-coverage.xml
       - uses: actions/upload-artifact@v2
         with:
           name: go-coverage-report
