@@ -8,6 +8,7 @@ import {
   EntréeDéfaillances,
   EntréeDiane,
   EntréeEllisphere,
+  EntréeSirene,
   EntréeSireneEntreprise,
   EntréePaydex,
 } from "../RawDataTypes"
@@ -20,7 +21,7 @@ type SortieMapCommon = {
 }
 
 type SortieMapEtablissement = SortieMapCommon & {
-  sirene: unknown // TODO: choisir un type plus précis
+  sirene: Partial<EntréeSirene>
   debit: SortieDebit[]
   apconso: EntréeApConso[]
   apdemande: EntréeApDemande[]
