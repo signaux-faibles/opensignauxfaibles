@@ -4,6 +4,7 @@ import {
   BatchKey,
   EntréeApConso,
   EntréeApDemande,
+  EntréeCompte,
   EntréeDelai,
   EntréeDéfaillances,
   EntréeDiane,
@@ -26,7 +27,7 @@ type SortieMapEtablissement = SortieMapCommon & {
   apconso: EntréeApConso[]
   apdemande: EntréeApDemande[]
   delai: EntréeDelai[]
-  compte: unknown // TODO: supprimer ou choisir un type plus précis ?
+  compte?: EntréeCompte
   procol: EntréeDéfaillances[]
   periodes: Date[]
   effectif: (number | null)[]
