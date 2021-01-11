@@ -8,7 +8,6 @@ import { SortieNAF } from "./populateNafAndApe"
 import { DelaiComputedValues } from "./delais"
 import { SortieCotisation } from "./cotisation"
 import { SortieCompte } from "./compte"
-import { SortieInterim } from "./interim"
 import { SiretOrSiren, ParPériode } from "../RawDataTypes"
 
 export type DonnéesAgrégées = {
@@ -28,7 +27,6 @@ export type DonnéesAgrégées = {
   Partial<DelaiComputedValues> &
   Partial<SortieCotisation> &
   Partial<SortieCompte> &
-  Partial<SortieInterim> &
   Partial<SortieCotisationsDettes>
 
 /**
