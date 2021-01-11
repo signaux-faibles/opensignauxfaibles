@@ -5,8 +5,10 @@ type Outcome = {
   outcome: boolean
 }
 
+type EntréeLookAhead = Record<string, unknown> // TODO: choisir un type plus précis
+
 export function lookAhead(
-  data: ParPériode<Record<string, unknown>>, // TODO: choisir un type plus précis
+  data: ParPériode<EntréeLookAhead>,
   attr_name: string,
   n_months: number,
   past: boolean

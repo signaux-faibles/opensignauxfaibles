@@ -1556,11 +1556,12 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
         const période = Date.UTC(entréePaydex.date_valeur.getUTCFullYear(), entréePaydex.date_valeur.getUTCMonth(), 1);
         const moisSuivant = f.dateAddMonth(new Date(période), 1).getTime();
         const annéeSuivante = f.dateAddMonth(new Date(période), 12).getTime();
-        f.add({
+        const donnéesAdditionnelles = {
             [période]: { paydex_nb_jours: entréePaydex.nb_jours },
             [moisSuivant]: { paydex_nb_jours_past_1: entréePaydex.nb_jours },
             [annéeSuivante]: { paydex_nb_jours_past_12: entréePaydex.nb_jours },
-        }, paydexParPériode);
+        };
+        f.add(donnéesAdditionnelles, paydexParPériode);
     }
     return paydexParPériode;
 }`,

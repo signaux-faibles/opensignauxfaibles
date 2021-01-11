@@ -28,14 +28,12 @@ export function entr_paydex(
     )
     const moisSuivant = f.dateAddMonth(new Date(période), 1).getTime()
     const annéeSuivante = f.dateAddMonth(new Date(période), 12).getTime()
-    f.add(
-      {
-        [période]: { paydex_nb_jours: entréePaydex.nb_jours },
-        [moisSuivant]: { paydex_nb_jours_past_1: entréePaydex.nb_jours },
-        [annéeSuivante]: { paydex_nb_jours_past_12: entréePaydex.nb_jours },
-      },
-      paydexParPériode
-    )
+    const donnéesAdditionnelles: ParPériode<Partial<SortiePaydex>> = {
+      [période]: { paydex_nb_jours: entréePaydex.nb_jours },
+      [moisSuivant]: { paydex_nb_jours_past_1: entréePaydex.nb_jours },
+      [annéeSuivante]: { paydex_nb_jours_past_12: entréePaydex.nb_jours },
+    }
+    f.add(donnéesAdditionnelles, paydexParPériode)
   }
   return paydexParPériode
 }
