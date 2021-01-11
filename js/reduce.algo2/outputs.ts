@@ -6,6 +6,7 @@ import { SortieCcsf } from "./ccsf"
 import { SortieSirene } from "./sirene"
 import { SortieNAF } from "./populateNafAndApe"
 import { DelaiComputedValues } from "./delais"
+import { SortieCibleApprentissage } from "./cibleApprentissage"
 import { SortieCotisation } from "./cotisation"
 import { SortieCompte } from "./compte"
 import { SiretOrSiren, ParPériode } from "../RawDataTypes"
@@ -27,6 +28,7 @@ export type DonnéesAgrégées = {
   Partial<DelaiComputedValues> &
   Partial<SortieCotisation> &
   Partial<SortieCompte> &
+  Partial<SortieCibleApprentissage> &
   Partial<SortieCotisationsDettes>
 
 /**
