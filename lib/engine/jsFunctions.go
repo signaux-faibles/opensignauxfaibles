@@ -656,16 +656,6 @@ db.getCollection("Features").createIndex({
     result.setDate(result.getDate() + nbDays);
     return result;
 }`,
-"dealWithProcols": `function dealWithProcols(data_source = {}) {
-    const events = [];
-    for (const the_event of Object.values(data_source)) {
-        let etat = null;
-        etat = f.procolToHuman(the_event.action_procol, the_event.stade_procol);
-        if (etat !== null)
-            events.push({ etat, date_procol: new Date(the_event.date_effet) });
-    }
-    return events.sort((a, b) => a.date_procol.getTime() - b.date_procol.getTime());
-}`,
 "debits": `function debits(vdebit = {}) {
     const last_treatment_day = 20;
     const ecn = {};
@@ -1672,17 +1662,18 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
     const output = Object.keys(data)
         .sort(past ? reverse : chronologic)
         .reduce(function (m, period) {
-        var _a, _b;
+        var _a;
         // Si on a déjà détecté quelque chose, on compte le nombre de périodes
         if (counter >= 0)
             counter = counter + 1;
-        if (((_a = data[period]) !== null && _a !== void 0 ? _a : {})[attr_name]) {
+        const dataInPeriod = data[period];
+        if (dataInPeriod && dataInPeriod[attr_name]) {
             // si l'évènement se produit on retombe à 0
             counter = 0;
         }
         if (counter >= 0) {
             // l'évènement s'est produit
-            const out = (_b = m[period]) !== null && _b !== void 0 ? _b : {};
+            const out = (_a = m[period]) !== null && _a !== void 0 ? _a : {};
             out.time_til_outcome = counter;
             if (out.time_til_outcome <= n_months) {
                 out.outcome = true;
