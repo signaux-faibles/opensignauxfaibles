@@ -28,7 +28,50 @@ type SireneUL struct {
 	Creation            *time.Time `json:"date_creation,omitempty" bson:"date_creation,omitempty"`
 }
 
-var expectedHeader = "siren,statutDiffusionUniteLegale,unitePurgeeUniteLegale,dateCreationUniteLegale,sigleUniteLegale,sexeUniteLegale,prenom1UniteLegale,prenom2UniteLegale,prenom3UniteLegale,prenom4UniteLegale,prenomUsuelUniteLegale,pseudonymeUniteLegale,identifiantAssociationUniteLegale,trancheEffectifsUniteLegale,anneeEffectifsUniteLegale,dateDernierTraitementUniteLegale,nombrePeriodesUniteLegale,categorieEntreprise,anneeCategorieEntreprise,dateDebut,etatAdministratifUniteLegale,nomUniteLegale,nomUsageUniteLegale,denominationUniteLegale,denominationUsuelle1UniteLegale,denominationUsuelle2UniteLegale,denominationUsuelle3UniteLegale,categorieJuridiqueUniteLegale,activitePrincipaleUniteLegale,nomenclatureActivitePrincipaleUniteLegale,nicSiegeUniteLegale,economieSocialeSolidaireUniteLegale,caractereEmployeurUniteLegale"
+sireneul.Siren = row[0]
+sireneul.RaisonSociale = row[23]
+sireneul.Prenom1UniteLegale = row[6]
+sireneul.Prenom2UniteLegale = row[7]
+sireneul.Prenom3UniteLegale = row[8]
+sireneul.Prenom4UniteLegale = row[9]
+sireneul.NomUniteLegale = row[21]
+sireneul.NomUsageUniteLegale = row[22]
+sireneul.CodeStatutJuridique = row[27]
+creation, err := time.Parse("2006-01-02", row[3]) // note: cette date n'est pas toujours présente, et on ne souhaite pas être rapporter d'erreur en cas d'absence
+
+// 0: siren
+// 1: statutDiffusionUniteLegale
+// 2: unitePurgeeUniteLegale
+// 3: dateCreationUniteLegale
+// 4: sigleUniteLegale
+// 5: sexeUniteLegale
+// 6: prenom1UniteLegale
+// 7: prenom2UniteLegale
+// 8: prenom3UniteLegale
+// 9: prenom4UniteLegale
+// 10: prenomUsuelUniteLegale
+// 11: pseudonymeUniteLegale
+// 12: identifiantAssociationUniteLegale
+// 13: trancheEffectifsUniteLegale
+// 14: anneeEffectifsUniteLegale
+// 15: dateDernierTraitementUniteLegale
+// 16: nombrePeriodesUniteLegale
+// 17: categorieEntreprise
+// 18: anneeCategorieEntreprise
+// 19: dateDebut
+// 20: etatAdministratifUniteLegale
+// 21: nomUniteLegale
+// 22: nomUsageUniteLegale
+// 23: denominationUniteLegale
+// 24: denominationUsuelle1UniteLegale
+// 25: denominationUsuelle2UniteLegale
+// 26: denominationUsuelle3UniteLegale
+// 27: categorieJuridiqueUniteLegale
+// 28: activitePrincipaleUniteLegale
+// 29: nomenclatureActivitePrincipaleUniteLegale
+// 30: nicSiegeUniteLegale
+// 31: economieSocialeSolidaireUniteLegale
+// 32: caractereEmployeurUniteLegale
 
 // Key id de l'objet
 func (sirene_ul SireneUL) Key() string {
