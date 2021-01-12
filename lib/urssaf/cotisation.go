@@ -15,11 +15,11 @@ import (
 
 // Cotisation Objet cotisation
 type Cotisation struct {
-	key          string       `hash:"-"`
-	NumeroCompte string       `json:"numero_compte" bson:"numero_compte"`
-	Periode      misc.Periode `json:"period" bson:"periode"`
-	Encaisse     float64      `json:"encaisse" bson:"encaisse"`
-	Du           float64      `json:"du" bson:"du"`
+	key          string       `                 hash:"-"`
+	NumeroCompte string       `col:"Compte"     json:"numero_compte" bson:"numero_compte"`
+	Periode      misc.Periode `col:"periode"    json:"period"        bson:"periode"`
+	Encaisse     float64      `col:"enc_direct" json:"encaisse"      bson:"encaisse"`
+	Du           float64      `col:"cotis_due"  json:"du"            bson:"du"`
 }
 
 // Key _id de l'objet
@@ -44,6 +44,7 @@ type cotisationParser struct {
 	file    *os.File
 	reader  *csv.Reader
 	comptes marshal.Comptes
+	idx     marshal.ColMapping
 }
 
 func (parser *cotisationParser) GetFileType() string {
@@ -67,15 +68,11 @@ func (parser *cotisationParser) Open(filePath string) (err error) {
 	parser.reader = csv.NewReader(bufio.NewReader(parser.file))
 	parser.reader.Comma = ';'
 	parser.reader.LazyQuotes = true
-	_, err = parser.reader.Read() // Sauter l'en-tête
+	header, err := parser.reader.Read()
+	if err == nil {
+		parser.idx, err = marshal.ValidateAndIndexColumnsFromColTags(header, Cotisation{})
+	}
 	return err
-}
-
-var idxCotisation = colMapping{
-	"NumeroCompte": 2,
-	"Periode":      3,
-	"Encaisse":     5,
-	"Du":           6,
 }
 
 func (parser *cotisationParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
@@ -88,7 +85,7 @@ func (parser *cotisationParser) ParseLines(parsedLineChan chan marshal.ParsedLin
 		} else if err != nil {
 			parsedLine.AddRegularError(err)
 		} else {
-			parseCotisationLine(row, &parser.comptes, &parsedLine)
+			parseCotisationLine(parser.idx, row, &parser.comptes, &parsedLine)
 			if len(parsedLine.Errors) > 0 {
 				parsedLine.Tuples = []marshal.Tuple{}
 			}
@@ -97,25 +94,24 @@ func (parser *cotisationParser) ParseLines(parsedLineChan chan marshal.ParsedLin
 	}
 }
 
-func parseCotisationLine(row []string, comptes *marshal.Comptes, parsedLine *marshal.ParsedLineResult) {
-	idx := idxCotisation
+func parseCotisationLine(idx marshal.ColMapping, row []string, comptes *marshal.Comptes, parsedLine *marshal.ParsedLineResult) {
 	cotisation := Cotisation{}
 
-	periode, err := marshal.UrssafToPeriod(row[idx["Periode"]])
+	periode, err := marshal.UrssafToPeriod(row[idx["periode"]])
 	date := periode.Start
 	parsedLine.AddRegularError(err)
 
-	siret, err := marshal.GetSiretFromComptesMapping(row[idx["NumeroCompte"]], &date, *comptes)
+	siret, err := marshal.GetSiretFromComptesMapping(row[idx["Compte"]], &date, *comptes)
 	if err != nil {
 		parsedLine.SetFilterError(err)
 	} else {
 		cotisation.key = siret
-		cotisation.NumeroCompte = row[idx["NumeroCompte"]]
-		cotisation.Periode, err = marshal.UrssafToPeriod(row[idx["Periode"]])
+		cotisation.NumeroCompte = row[idx["Compte"]]
+		cotisation.Periode, err = marshal.UrssafToPeriod(row[idx["periode"]])
 		parsedLine.AddRegularError(err)
-		cotisation.Encaisse, err = strconv.ParseFloat(strings.Replace(row[idx["Encaisse"]], ",", ".", -1), 64)
+		cotisation.Encaisse, err = strconv.ParseFloat(strings.Replace(row[idx["enc_direct"]], ",", ".", -1), 64)
 		parsedLine.AddRegularError(err)
-		cotisation.Du, err = strconv.ParseFloat(strings.Replace(row[idx["Du"]], ",", ".", -1), 64)
+		cotisation.Du, err = strconv.ParseFloat(strings.Replace(row[idx["cotis_due"]], ",", ".", -1), 64)
 		parsedLine.AddRegularError(err)
 	}
 	parsedLine.AddTuple(cotisation)
