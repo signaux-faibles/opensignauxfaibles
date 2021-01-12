@@ -83,6 +83,12 @@ func TestCotisation(t *testing.T) {
 	var cache = makeCacheWithComptesMapping()
 	marshal.TestParserOutput(t, ParserCotisation, cache, testData, golden, *update)
 
+	t.Run("doit rapporter une erreur fatale s'il manque une colonne", func(t *testing.T) {
+		output := marshal.RunParserInlineEx(t, cache, ParserCotisation, []string{"dummy"})
+		assert.Equal(t, []marshal.Tuple(nil), output.Tuples, "should return no tuples")
+		assert.Contains(t, marshal.GetFatalError(output), "Colonne Compte non trouvée")
+	})
+
 	t.Run("toute ligne de cotisation d'un établissement hors périmètre doit être sautée silencieusement", func(t *testing.T) {
 		allowedSiren := "111111111" // SIREN correspondant à un des 3 comptes mentionnés dans le fichier testData
 		cache := makeCacheWithComptesMapping()
