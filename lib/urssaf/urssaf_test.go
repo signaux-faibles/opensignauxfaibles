@@ -29,6 +29,12 @@ func TestDebit(t *testing.T) {
 	var cache = makeCacheWithComptesMapping()
 	marshal.TestParserOutput(t, ParserDebit, cache, testData, golden, *update)
 
+	t.Run("doit rapporter une erreur fatale s'il manque une colonne", func(t *testing.T) {
+		output := marshal.RunParserInlineEx(t, cache, ParserDebit, []string{"dummy"})
+		assert.Equal(t, []marshal.Tuple(nil), output.Tuples, "should return no tuples")
+		assert.Contains(t, marshal.GetFatalError(output), "Colonne Compte non trouvée")
+	})
+
 	t.Run("Debit n'est importé que si inclus dans le filtre", func(t *testing.T) {
 		cache.Set("filter", marshal.SirenFilter{"111111111": true}) // SIREN correspondant à un des 3 comptes retournés par makeCacheWithComptesMapping
 		output := marshal.RunParser(ParserDebit, cache, testData)
