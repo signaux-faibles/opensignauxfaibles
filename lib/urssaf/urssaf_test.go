@@ -68,6 +68,12 @@ func TestDelai(t *testing.T) {
 	var testData = filepath.Join("testData", "delaiTestData.csv")
 	var cache = makeCacheWithComptesMapping()
 	marshal.TestParserOutput(t, ParserDelai, cache, testData, golden, *update)
+
+	t.Run("doit rapporter une erreur fatale s'il manque une colonne", func(t *testing.T) {
+		output := marshal.RunParserInlineEx(t, cache, ParserDebit, []string{"dummy"})
+		assert.Equal(t, []marshal.Tuple(nil), output.Tuples, "should return no tuples")
+		assert.Contains(t, marshal.GetFatalError(output), "Colonne Numero_compte_externe non trouvée")
+	})
 }
 
 func TestCcsf(t *testing.T) {
