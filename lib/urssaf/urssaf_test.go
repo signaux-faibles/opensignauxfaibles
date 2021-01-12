@@ -32,7 +32,7 @@ func TestDebit(t *testing.T) {
 	t.Run("doit rapporter une erreur fatale s'il manque une colonne", func(t *testing.T) {
 		output := marshal.RunParserInlineEx(t, cache, ParserDebit, []string{"dummy"})
 		assert.Equal(t, []marshal.Tuple(nil), output.Tuples, "should return no tuples")
-		assert.Contains(t, marshal.GetFatalError(output), "Colonne Compte non trouvée")
+		assert.Contains(t, marshal.GetFatalError(output), "Colonne num_cpte non trouvée")
 	})
 
 	t.Run("Debit n'est importé que si inclus dans le filtre", func(t *testing.T) {
