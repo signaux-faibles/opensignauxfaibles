@@ -1,7 +1,6 @@
 package sireneul
 
 import (
-	//"bufio"
 	"encoding/csv"
 	"io"
 	"os"
@@ -47,6 +46,7 @@ var Parser = &sireneUlParser{}
 type sireneUlParser struct {
 	file   *os.File
 	reader *csv.Reader
+	idx    marshal.ColMapping
 }
 
 func (parser *sireneUlParser) GetFileType() string {
@@ -76,7 +76,7 @@ func (parser *sireneUlParser) Open(filePath string) (err error) {
 		return err // may be io.EOF
 	}
 
-	_, err = marshal.ValidateAndIndexColumnsFromColTags(header, SireneUL{})
+	parser.idx, err = marshal.ValidateAndIndexColumnsFromColTags(header, SireneUL{})
 	return err
 }
 
@@ -90,25 +90,24 @@ func (parser *sireneUlParser) ParseLines(parsedLineChan chan marshal.ParsedLineR
 		} else if err != nil {
 			parsedLine.AddRegularError(err)
 		} else {
-			parseSireneUlLine(row, &parsedLine)
+			parseSireneUlLine(parser.idx, row, &parsedLine)
 		}
 		parsedLineChan <- parsedLine
 	}
 }
 
-func parseSireneUlLine(row []string, parsedLine *marshal.ParsedLineResult) {
-	// TODO: utiliser ColMapping
+func parseSireneUlLine(idx marshal.ColMapping, row []string, parsedLine *marshal.ParsedLineResult) {
 	sireneul := SireneUL{}
-	sireneul.Siren = row[0]
-	sireneul.RaisonSociale = row[23]
-	sireneul.Prenom1UniteLegale = row[6]
-	sireneul.Prenom2UniteLegale = row[7]
-	sireneul.Prenom3UniteLegale = row[8]
-	sireneul.Prenom4UniteLegale = row[9]
-	sireneul.NomUniteLegale = row[21]
-	sireneul.NomUsageUniteLegale = row[22]
-	sireneul.CodeStatutJuridique = row[27]
-	creation, err := time.Parse("2006-01-02", row[3]) // note: cette date n'est pas toujours présente, et on ne souhaite pas être rapporter d'erreur en cas d'absence
+	sireneul.Siren = row[idx["siren"]]
+	sireneul.RaisonSociale = row[idx["denominationUniteLegale"]]
+	sireneul.Prenom1UniteLegale = row[idx["prenom1UniteLegale"]]
+	sireneul.Prenom2UniteLegale = row[idx["prenom2UniteLegale"]]
+	sireneul.Prenom3UniteLegale = row[idx["prenom3UniteLegale"]]
+	sireneul.Prenom4UniteLegale = row[idx["prenom4UniteLegale"]]
+	sireneul.NomUniteLegale = row[idx["nomUniteLegale"]]
+	sireneul.NomUsageUniteLegale = row[idx["nomUsageUniteLegale"]]
+	sireneul.CodeStatutJuridique = row[idx["categorieJuridiqueUniteLegale"]]
+	creation, err := time.Parse("2006-01-02", row[idx["dateCreationUniteLegale"]]) // note: cette date n'est pas toujours présente, et on ne souhaite pas être rapporter d'erreur en cas d'absence
 	if err == nil {
 		sireneul.Creation = &creation
 	}
