@@ -129,14 +129,19 @@ func (parser *dianeParser) Init(cache *marshal.Cache, batch *base.AdminBatch) er
 }
 
 func (parser *dianeParser) Open(filePath string) (err error) {
-	parser.closeFct, parser.reader, err = openFile(filePath)
+	var readCloser *io.ReadCloser
+	parser.closeFct, readCloser, err = openFile(filePath)
+	if err == nil {
+		err = parser.initCsvReader(readCloser)
+	}
 	return err
 }
+
 func (parser *dianeParser) Close() error {
 	return parser.closeFct()
 }
 
-func openFile(filePath string) (func() error, *csv.Reader, error) {
+func openFile(filePath string) (func() error, *io.ReadCloser, error) {
 
 	pipedCmds := []*exec.Cmd{
 		exec.Command("cat", filePath),                                          // TODO: implement this step in Go
@@ -176,17 +181,20 @@ func openFile(filePath string) (func() error, *csv.Reader, error) {
 		}
 	}
 
-	// init csv reader
-	reader := csv.NewReader(stdout)
-	reader.Comma = ';'
-	reader.LazyQuotes = true
+	return close, &stdout, nil
+}
 
-	_, err = reader.Read() // Discard header
+func (parser *dianeParser) initCsvReader(reader *io.ReadCloser) (err error) {
+	parser.reader = csv.NewReader(*reader)
+	parser.reader.Comma = ';'
+	parser.reader.LazyQuotes = true
+
+	_, err = parser.reader.Read() // Discard header
 	if err != nil {
-		return close, nil, errors.New("echec de lecture de l'en-tête du fichier en sortie du script: " + err.Error())
+		return errors.New("echec de lecture de l'en-tête du fichier en sortie du script: " + err.Error())
 	}
 
-	return close, reader, nil
+	return nil
 }
 
 func (parser *dianeParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
