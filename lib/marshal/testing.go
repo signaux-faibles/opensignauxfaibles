@@ -47,6 +47,7 @@ func GetFatalError(output tuplesAndEvents) string {
 		return ""
 	}
 	if len(headFatal) > 1 {
+		log.Println(headFatal)
 		log.Fatal("headFatal should never contain more than one item")
 	}
 	return headFatal[0].(string)
@@ -55,9 +56,15 @@ func GetFatalError(output tuplesAndEvents) string {
 // RunParserInline returns Tuples and Events resulting from the execution of a
 // Parser on a given list of rows, with an empty Cache.
 func RunParserInline(t *testing.T, parser Parser, rows []string) (output tuplesAndEvents) {
+	return RunParserInlineEx(t, NewCache(), parser, rows)
+}
+
+// RunParserInlineEx returns Tuples and Events resulting from the execution of a
+// Parser on a given list of rows.
+func RunParserInlineEx(t *testing.T, cache Cache, parser Parser, rows []string) (output tuplesAndEvents) {
 	csvData := strings.Join(rows, "\n")
 	csvFile := CreateTempFileWithContent(t, []byte(csvData)) // will clean up after the test
-	return RunParser(parser, NewCache(), csvFile.Name())
+	return RunParser(parser, cache, csvFile.Name())
 }
 
 // RunParser returns Tuples and Events resulting from the execution of a

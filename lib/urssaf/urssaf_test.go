@@ -70,12 +70,11 @@ func TestCcsf(t *testing.T) {
 	var cache = makeCacheWithComptesMapping()
 	marshal.TestParserOutput(t, ParserCCSF, cache, testData, golden, *update)
 
-	// TODO
-	// t.Run("doit rapporter une erreur fatale s'il manque une colonne", func(t *testing.T) {
-	// 	output := marshal.RunParserInline(t, ParserCCSF, []string{"dummy"})
-	// 	assert.Equal(t, []marshal.Tuple(nil), output.Tuples, "should return no tuples")
-	// 	assert.Contains(t, marshal.GetFatalError(output), "Colonne NumeroCompte non trouvée")
-	// })
+	t.Run("doit rapporter une erreur fatale s'il manque une colonne", func(t *testing.T) {
+		output := marshal.RunParserInlineEx(t, cache, ParserCCSF, []string{"dummy"})
+		assert.Equal(t, []marshal.Tuple(nil), output.Tuples, "should return no tuples")
+		assert.Contains(t, marshal.GetFatalError(output), "Colonne Compte non trouvée")
+	})
 }
 
 func TestCotisation(t *testing.T) {
