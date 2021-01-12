@@ -2,7 +2,6 @@ package apconso
 
 import (
 	"encoding/csv"
-	"errors"
 	"io"
 	"os"
 	"time"
@@ -14,12 +13,12 @@ import (
 
 // APConso Consommation d'activité partielle
 type APConso struct {
-	ID             string    `json:"id_conso"         bson:"id_conso"`
-	Siret          string    `json:"-"                bson:"-"`
-	HeureConsommee *float64  `json:"heure_consomme"   bson:"heure_consomme"`
-	Montant        *float64  `json:"montant"          bson:"montant"`
-	Effectif       *int      `json:"effectif"         bson:"effectif"`
-	Periode        time.Time `json:"periode"          bson:"periode"`
+	ID             string    `col:"ID_DA"      json:"id_conso"       bson:"id_conso"`
+	Siret          string    `col:"ETAB_SIRET" json:"-"              bson:"-"`
+	HeureConsommee *float64  `col:"HEURES"     json:"heure_consomme" bson:"heure_consomme"`
+	Montant        *float64  `col:"MONTANTS"   json:"montant"        bson:"montant"`
+	Effectif       *int      `col:"EFFECTIFS"  json:"effectif"       bson:"effectif"`
+	Periode        time.Time `col:"MOIS"       json:"periode"        bson:"periode"`
 }
 
 // Key id de l'objet
@@ -43,7 +42,7 @@ var Parser = &apconsoParser{}
 type apconsoParser struct {
 	file   *os.File
 	reader *csv.Reader
-	idx    colMapping
+	idx    marshal.ColMapping
 }
 
 func (parser *apconsoParser) GetFileType() string {
@@ -76,24 +75,12 @@ func openFile(filePath string) (*os.File, *csv.Reader, error) {
 	return file, reader, nil
 }
 
-type colMapping map[string]int
-
-func parseColMapping(reader *csv.Reader) (colMapping, error) {
+func parseColMapping(reader *csv.Reader) (marshal.ColMapping, error) {
 	header, err := reader.Read()
 	if err != nil {
 		return nil, err
 	}
-	var idx = colMapping{}
-	idx["ID"] = misc.SliceIndex(len(header), func(i int) bool { return header[i] == "ID_DA" })
-	idx["Siret"] = misc.SliceIndex(len(header), func(i int) bool { return header[i] == "ETAB_SIRET" })
-	idx["Periode"] = misc.SliceIndex(len(header), func(i int) bool { return header[i] == "MOIS" })
-	idx["HeureConsommee"] = misc.SliceIndex(len(header), func(i int) bool { return header[i] == "HEURES" })
-	idx["Montant"] = misc.SliceIndex(len(header), func(i int) bool { return header[i] == "MONTANTS" })
-	idx["Effectif"] = misc.SliceIndex(len(header), func(i int) bool { return header[i] == "EFFECTIFS" })
-	if misc.SliceMin(idx["ID"], idx["Siret"], idx["Periode"], idx["HeureConsommee"], idx["Montant"], idx["Effectif"]) == -1 {
-		return nil, errors.New("entête non conforme, fichier ignoré")
-	}
-	return idx, nil
+	return marshal.ValidateAndIndexColumnsFromColTags(header, APConso{})
 }
 
 func (parser *apconsoParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
@@ -115,18 +102,18 @@ func (parser *apconsoParser) ParseLines(parsedLineChan chan marshal.ParsedLineRe
 	}
 }
 
-func parseApConsoLine(row []string, idx colMapping, parsedLine *marshal.ParsedLineResult) {
+func parseApConsoLine(row []string, idx marshal.ColMapping, parsedLine *marshal.ParsedLineResult) {
 	apconso := APConso{}
-	apconso.ID = row[idx["ID"]]
-	apconso.Siret = row[idx["Siret"]]
+	apconso.ID = row[idx["ID_DA"]]
+	apconso.Siret = row[idx["ETAB_SIRET"]]
 	var err error
-	apconso.Periode, err = time.Parse("01/2006", row[idx["Periode"]])
+	apconso.Periode, err = time.Parse("01/2006", row[idx["MOIS"]])
 	parsedLine.AddRegularError(err)
-	apconso.HeureConsommee, err = misc.ParsePFloat(row[idx["HeureConsommee"]])
+	apconso.HeureConsommee, err = misc.ParsePFloat(row[idx["HEURES"]])
 	parsedLine.AddRegularError(err)
-	apconso.Montant, err = misc.ParsePFloat(row[idx["Montant"]])
+	apconso.Montant, err = misc.ParsePFloat(row[idx["MONTANTS"]])
 	parsedLine.AddRegularError(err)
-	apconso.Effectif, err = misc.ParsePInt(row[idx["Effectif"]])
+	apconso.Effectif, err = misc.ParsePInt(row[idx["EFFECTIFS"]])
 	parsedLine.AddRegularError(err)
 	parsedLine.AddTuple(apconso)
 }

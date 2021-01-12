@@ -19,6 +19,6 @@ func TestApconso(t *testing.T) {
 	t.Run("doit détecter s'il manque des colonnes", func(t *testing.T) {
 		output := marshal.RunParserInline(t, Parser, []string{"ID_DA,ETAB_SIRET,MOIS,HEURE,MONTANTS,EFFECTIFS"}) // typo: HEURE au lieu de HEURES
 		assert.Equal(t, []marshal.Tuple(nil), output.Tuples, "le parseur doit retourner aucun tuple")
-		assert.Contains(t, marshal.GetFatalError(output), "entête non conforme")
+		assert.Contains(t, marshal.GetFatalError(output), "Colonne HEURES non trouvée")
 	})
 }
