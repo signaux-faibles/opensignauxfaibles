@@ -129,7 +129,7 @@ func (parser *dianeParser) Init(cache *marshal.Cache, batch *base.AdminBatch) er
 }
 
 func (parser *dianeParser) Open(filePath string) (err error) {
-	var readCloser *io.ReadCloser
+	var readCloser io.Reader
 	parser.closeFct, readCloser, err = openFile(filePath)
 	if err == nil {
 		err = parser.initCsvReader(readCloser)
@@ -141,7 +141,7 @@ func (parser *dianeParser) Close() error {
 	return parser.closeFct()
 }
 
-func openFile(filePath string) (func() error, *io.ReadCloser, error) {
+func openFile(filePath string) (func() error, io.Reader, error) {
 
 	pipedCmds := []*exec.Cmd{
 		exec.Command("cat", filePath),                                          // TODO: implement this step in Go
@@ -181,11 +181,11 @@ func openFile(filePath string) (func() error, *io.ReadCloser, error) {
 		}
 	}
 
-	return close, &stdout, nil
+	return close, stdout, nil
 }
 
-func (parser *dianeParser) initCsvReader(reader *io.ReadCloser) (err error) {
-	parser.reader = csv.NewReader(*reader)
+func (parser *dianeParser) initCsvReader(reader io.Reader) (err error) {
+	parser.reader = csv.NewReader(reader)
 	parser.reader.Comma = ';'
 	parser.reader.LazyQuotes = true
 
