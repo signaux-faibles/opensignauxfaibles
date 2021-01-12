@@ -1,10 +1,7 @@
 package diane
 
 import (
-	"bytes"
 	"flag"
-	"io/ioutil"
-	"log"
 	"path/filepath"
 	"testing"
 
@@ -20,16 +17,4 @@ func TestDiane(t *testing.T) {
 		var testData = filepath.Join("testData", "dianeTestData.txt")
 		marshal.TestParserOutput(t, Parser, marshal.NewCache(), testData, golden, *update)
 	})
-}
-
-func diffWithGoldenFile(filename string, updateGoldenFile bool, cmdOutput bytes.Buffer) []byte {
-
-	if updateGoldenFile {
-		ioutil.WriteFile(filename, cmdOutput.Bytes(), 0644)
-	}
-	expected, err := ioutil.ReadFile(filename)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return expected
 }
