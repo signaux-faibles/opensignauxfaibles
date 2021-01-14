@@ -12,30 +12,16 @@ import (
 func TestParseFilesFromBatch(t *testing.T) {
 
 	t.Run("intérrompt le parsing en cas d'erreur d'initialisation", func(t *testing.T) {
-		var fatalErrors []string
-		var batch = base.AdminBatch{Files: base.BatchFiles{"dummy": {"dummy.csv"}}}
+		batch := base.AdminBatch{Files: base.BatchFiles{"dummy": {"dummy.csv"}}}
 		_, eventChan := ParseFilesFromBatch(NewCache(), &batch, &dummyParser{initError: errors.New("error from Init()")})
-		// récupération des erreurs
-		for event := range eventChan {
-			headFatal := GetFatalErrors(event)
-			for _, fatalError := range headFatal {
-				fatalErrors = append(fatalErrors, fatalError.(string))
-			}
-		}
+		fatalErrors := ConsumeFatalErrors(eventChan)
 		assert.Equal(t, []string{"Fatal: error from Init()"}, fatalErrors)
 	})
 
 	t.Run("ne rapporte pas d'erreur de fermeture en cas d'erreur d'ouverture", func(t *testing.T) {
-		var fatalErrors []string
-		var batch = base.AdminBatch{Files: base.BatchFiles{"dummy": {"dummy.csv"}}}
+		batch := base.AdminBatch{Files: base.BatchFiles{"dummy": {"dummy.csv"}}}
 		_, eventChan := ParseFilesFromBatch(NewCache(), &batch, &dummyParser{})
-		// récupération des erreurs
-		for event := range eventChan {
-			headFatal := GetFatalErrors(event)
-			for _, fatalError := range headFatal {
-				fatalErrors = append(fatalErrors, fatalError.(string))
-			}
-		}
+		fatalErrors := ConsumeFatalErrors(eventChan)
 		assert.Equal(t, []string{"Fatal: error from Open()"}, fatalErrors)
 	})
 }

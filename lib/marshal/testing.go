@@ -63,6 +63,18 @@ func GetFatalErrors(event Event) []interface{} {
 	return headFatal
 }
 
+// ConsumeFatalErrors récupère les erreurs fatales depuis un canal d'évènements
+func ConsumeFatalErrors(eventChan chan Event) []string {
+	var fatalErrors []string
+	for event := range eventChan {
+		headFatal := GetFatalErrors(event)
+		for _, fatalError := range headFatal {
+			fatalErrors = append(fatalErrors, fatalError.(string))
+		}
+	}
+	return fatalErrors
+}
+
 // RunParserInline returns Tuples and Events resulting from the execution of a
 // Parser on a given list of rows, with an empty Cache.
 func RunParserInline(t *testing.T, parser Parser, rows []string) (output tuplesAndEvents) {
