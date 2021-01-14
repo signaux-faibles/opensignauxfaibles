@@ -1,12 +1,23 @@
 package marshal
 
 import (
+	"encoding/csv"
 	"errors"
 	"reflect"
 	"strings"
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/misc"
 )
+
+// IndexColumnsFromCsvHeader extrait les noms de colonnes depuis l'en-tête d'un
+// flux CSV puis les indexe à l'aide de ValidateAndIndexColumnsFromColTags().
+func IndexColumnsFromCsvHeader(reader *csv.Reader, destObject interface{}) (ColMapping, error) {
+	header, err := reader.Read()
+	if err != nil {
+		return nil, err
+	}
+	return ValidateAndIndexColumnsFromColTags(header, destObject)
+}
 
 // ValidateAndIndexColumnsFromColTags valide puis indexe les colonnes trouvées
 // en en-tête d'un fichier csv, à partir des noms de colonnes spécifiés dans le

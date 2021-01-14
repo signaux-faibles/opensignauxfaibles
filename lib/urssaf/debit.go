@@ -75,7 +75,7 @@ func (parser *debitParser) Init(cache *marshal.Cache, batch *base.AdminBatch) (e
 func (parser *debitParser) Open(filePath string) (err error) {
 	parser.file, parser.reader, err = openDebitFile(filePath)
 	if err == nil {
-		parser.idx, err = parseDebitColMapping(parser.reader)
+		parser.idx, err = marshal.IndexColumnsFromCsvHeader(parser.reader, Debit{})
 	}
 	return err
 }
@@ -88,14 +88,6 @@ func openDebitFile(filePath string) (*os.File, *csv.Reader, error) {
 	reader := csv.NewReader(bufio.NewReader(file))
 	reader.Comma = ';'
 	return file, reader, err
-}
-
-func parseDebitColMapping(reader *csv.Reader) (marshal.ColMapping, error) {
-	header, err := reader.Read()
-	if err != nil {
-		return nil, err
-	}
-	return marshal.ValidateAndIndexColumnsFromColTags(header, Debit{})
 }
 
 func (parser *debitParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {

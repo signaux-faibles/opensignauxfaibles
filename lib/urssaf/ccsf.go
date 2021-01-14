@@ -66,10 +66,7 @@ func (parser *ccsfParser) Open(filePath string) (err error) {
 	}
 	parser.reader = csv.NewReader(bufio.NewReader(parser.file))
 	parser.reader.Comma = ';'
-	header, err := parser.reader.Read() // Sauter l'en-tête
-	if err == nil {
-		parser.idx, err = marshal.ValidateAndIndexColumnsFromColTags(header, CCSF{})
-	}
+	parser.idx, err = marshal.IndexColumnsFromCsvHeader(parser.reader, CCSF{})
 	return err
 }
 

@@ -76,10 +76,7 @@ func (parser *delaiParser) Open(filePath string) (err error) {
 	}
 	parser.reader = csv.NewReader(bufio.NewReader(parser.file))
 	parser.reader.Comma = ';'
-	header, err := parser.reader.Read()
-	if err == nil {
-		parser.idx, err = marshal.ValidateAndIndexColumnsFromColTags(header, Delai{})
-	}
+	parser.idx, err = marshal.IndexColumnsFromCsvHeader(parser.reader, Delai{})
 	return err
 }
 

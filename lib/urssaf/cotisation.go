@@ -68,10 +68,7 @@ func (parser *cotisationParser) Open(filePath string) (err error) {
 	parser.reader = csv.NewReader(bufio.NewReader(parser.file))
 	parser.reader.Comma = ';'
 	parser.reader.LazyQuotes = true
-	header, err := parser.reader.Read()
-	if err == nil {
-		parser.idx, err = marshal.ValidateAndIndexColumnsFromColTags(header, Cotisation{})
-	}
+	parser.idx, err = marshal.IndexColumnsFromCsvHeader(parser.reader, Cotisation{})
 	return err
 }
 

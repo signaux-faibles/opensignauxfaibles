@@ -140,13 +140,7 @@ func (parser *sireneParser) Open(filePath string) (err error) {
 	parser.reader = csv.NewReader(parser.file)
 	parser.reader.Comma = ','
 	parser.reader.LazyQuotes = true
-
-	// parse header
-	headerRow, err := parser.reader.Read()
-	if err != nil {
-		return err // may be io.EOF
-	}
-	parser.colIndex, err = marshal.ValidateAndIndexColumnsFromColTags(headerRow, Sirene{})
+	parser.colIndex, err = marshal.IndexColumnsFromCsvHeader(parser.reader, Sirene{})
 	return err
 }
 
