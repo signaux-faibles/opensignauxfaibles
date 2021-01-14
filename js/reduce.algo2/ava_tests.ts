@@ -55,7 +55,7 @@ const expectedMapResults = dates.map((periode) => ({
     siren,
     periode,
     type: "other",
-  },
+  } as CléSortieMap,
   value: {
     [siret]: makeValue(periode),
   } as SortieMap,

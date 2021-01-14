@@ -1,13 +1,24 @@
+import { SortieDefaillances } from "./defaillances"
 import { ParPériode } from "../RawDataTypes"
+import { SortieCotisation } from "./cotisation"
 
 type Outcome = {
   time_til_outcome: number
   outcome: boolean
 }
 
-export function lookAhead(
-  data: ParPériode<Record<string, unknown>>,
-  attr_name: string,
+type EntréeLookAhead = {
+  outcome: { outcome: boolean }
+  tag_default: Partial<Pick<SortieCotisation, "tag_default">>
+  tag_failure: Partial<Pick<SortieDefaillances, "tag_failure">>
+}
+
+export function lookAhead<
+  K extends keyof EntréeLookAhead,
+  T extends EntréeLookAhead[K]
+>(
+  data: ParPériode<T>,
+  attr_name: K,
   n_months: number,
   past: boolean
 ): ParPériode<Outcome> {
@@ -26,7 +37,8 @@ export function lookAhead(
       // Si on a déjà détecté quelque chose, on compte le nombre de périodes
       if (counter >= 0) counter = counter + 1
 
-      if ((data[period] ?? {})[attr_name]) {
+      const dataInPeriod: Record<string, unknown> | undefined = data[period]
+      if (dataInPeriod && dataInPeriod[attr_name]) {
         // si l'évènement se produit on retombe à 0
         counter = 0
       }

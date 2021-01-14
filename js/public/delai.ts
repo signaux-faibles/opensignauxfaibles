@@ -1,3 +1,5 @@
-export function delai<T>(delai?: Record<string, T>): T[] {
+import { EntréeDelai, ParHash } from "../RawDataTypes"
+
+export function delai(delai?: ParHash<EntréeDelai>): EntréeDelai[] {
   return Object.values(delai ?? {})
 }

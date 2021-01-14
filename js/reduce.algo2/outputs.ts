@@ -6,8 +6,10 @@ import { SortieCcsf } from "./ccsf"
 import { SortieSirene } from "./sirene"
 import { SortieNAF } from "./populateNafAndApe"
 import { DelaiComputedValues } from "./delais"
+import { SortieCibleApprentissage } from "./cibleApprentissage"
 import { SortieCotisation } from "./cotisation"
-import { SiretOrSiren, Timestamp } from "../RawDataTypes"
+import { SortieCompte } from "./compte"
+import { SiretOrSiren, ParPériode } from "../RawDataTypes"
 
 export type DonnéesAgrégées = {
   siret: SiretOrSiren
@@ -24,9 +26,10 @@ export type DonnéesAgrégées = {
   Partial<SortieAPart> &
   Partial<SortieRepeatable> &
   Partial<DelaiComputedValues> &
-  Partial<SortieCotisation>
-
-type IndexDonnéesAgrégées = Record<Timestamp, DonnéesAgrégées>
+  Partial<SortieCotisation> &
+  Partial<SortieCompte> &
+  Partial<SortieCibleApprentissage> &
+  Partial<SortieCotisationsDettes>
 
 /**
  * Appelé par `map()` pour chaque entreprise/établissement, `outputs()` retourne
@@ -37,7 +40,7 @@ type IndexDonnéesAgrégées = Record<Timestamp, DonnéesAgrégées>
 export function outputs(
   v: { key: SiretOrSiren },
   serie_periode: Date[]
-): [DonnéesAgrégées[], IndexDonnéesAgrégées] {
+): [DonnéesAgrégées[], ParPériode<DonnéesAgrégées>] {
   "use strict"
   const output_array: DonnéesAgrégées[] = serie_periode.map(function (e) {
     return {
@@ -53,7 +56,7 @@ export function outputs(
   const output_indexed = output_array.reduce(function (periodes, val) {
     periodes[val.periode.getTime()] = val
     return periodes
-  }, {} as IndexDonnéesAgrégées)
+  }, {} as ParPériode<DonnéesAgrégées>)
 
   return [output_array, output_indexed]
 }

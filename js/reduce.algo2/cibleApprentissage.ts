@@ -1,7 +1,7 @@
 import { f } from "./functions"
 import { ParPériode } from "../RawDataTypes"
 
-type Times = {
+export type SortieCibleApprentissage = {
   time_til_default?: number
   time_til_failure?: number
 }
@@ -9,7 +9,7 @@ type Times = {
 export function cibleApprentissage(
   output_indexed: ParPériode<{ tag_failure?: boolean; tag_default?: boolean }>,
   n_months: number
-): ParPériode<Partial<Times>> {
+): ParPériode<SortieCibleApprentissage> {
   "use strict"
 
   // Mock two input instead of one for future modification
@@ -42,7 +42,7 @@ export function cibleApprentissage(
   )
 
   const output_cible = all_keys.reduce(function (m, k) {
-    const outputTimes: Times = {}
+    const outputTimes: SortieCibleApprentissage = {}
     if (output_default[k] !== undefined)
       outputTimes.time_til_default = output_default[k]?.time_til_outcome
     if (output_failure[k] !== undefined)
@@ -54,7 +54,7 @@ export function cibleApprentissage(
         ...outputTimes,
       },
     }
-  }, {} as ParPériode<Times>)
+  }, {} as ParPériode<SortieCibleApprentissage>)
 
   return output_cible
 }
