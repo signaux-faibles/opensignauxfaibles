@@ -4,10 +4,12 @@ import {
   BatchKey,
   EntréeApConso,
   EntréeApDemande,
+  EntréeCompte,
   EntréeDelai,
   EntréeDéfaillances,
   EntréeDiane,
   EntréeEllisphere,
+  EntréeSirene,
   EntréeSireneEntreprise,
   EntréePaydex,
 } from "../RawDataTypes"
@@ -20,12 +22,12 @@ type SortieMapCommon = {
 }
 
 type SortieMapEtablissement = SortieMapCommon & {
-  sirene: unknown
+  sirene: Partial<EntréeSirene>
   debit: SortieDebit[]
   apconso: EntréeApConso[]
   apdemande: EntréeApDemande[]
   delai: EntréeDelai[]
-  compte: unknown
+  compte?: EntréeCompte
   procol: EntréeDéfaillances[]
   periodes: Date[]
   effectif: (number | null)[]

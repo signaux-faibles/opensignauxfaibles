@@ -12,6 +12,7 @@ import { SortieDiane } from "./entr_diane"
 import { SortieSireneEntreprise } from "./entr_sirene"
 import { DonnéesAgrégées } from "./outputs"
 import { NAF } from "./populateNafAndApe"
+import { SortieEffectifs } from "./effectifs"
 
 type SortieMapEntreprise = {
   siren: SiretOrSiren
@@ -19,7 +20,8 @@ type SortieMapEntreprise = {
 } & Partial<SortieSireneEntreprise> &
   Partial<SortieBdf> &
   Partial<SortiePaydex> &
-  Partial<SortieDiane>
+  Partial<SortieDiane> &
+  Partial<SortieEffectifs>
 
 export type SortieMapEtablissement = Partial<DonnéesAgrégées>
 

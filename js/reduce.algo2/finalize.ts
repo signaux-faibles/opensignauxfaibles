@@ -1,6 +1,6 @@
 import { f } from "./functions"
-import { SiretOrSiren, Siret } from "../RawDataTypes"
-import { SortieMap, SortieMapEtablissement } from "./map"
+import { SiretOrSiren, Siret, BatchKey } from "../RawDataTypes"
+import { CléSortieMap, SortieMap, SortieMapEtablissement } from "./map"
 
 type Accumulateurs = {
   effectif_entreprise: number
@@ -12,10 +12,10 @@ type Accumulateurs = {
 export type EntrepriseEnSortie = SortieMapEtablissement & Accumulateurs
 
 export type Clé = {
-  batch: unknown
+  batch: BatchKey
   siren: SiretOrSiren
-  periode: unknown
-  type: unknown
+  periode: Date
+  type: CléSortieMap["type"]
 }
 
 type SortieFinalize = Partial<EntrepriseEnSortie>[] | { incomplete: true }
