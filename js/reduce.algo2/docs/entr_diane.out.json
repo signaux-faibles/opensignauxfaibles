@@ -1,318 +1,393 @@
 {
     "description": "Variables Diane générées par reduce.algo2 (opensignauxfaibles/sfdata)",
     "type": "object",
-    "properties": {
-        "interets": {
-            "computed": false,
-            "type": "number"
+    "properties": [
+        {
+            "name": "interets",
+            "type": "number",
+            "computed": false
         },
-        "excedent_brut_d_exploitation": {
-            "computed": false,
-            "type": "number"
+        {
+            "name": "excedent_brut_d_exploitation",
+            "type": "number",
+            "computed": false
         },
-        "produits_financiers": {
-            "computed": false,
-            "type": "number"
+        {
+            "name": "produits_financiers",
+            "type": "number",
+            "computed": false
         },
-        "produit_exceptionnel": {
-            "computed": false,
-            "type": "number"
+        {
+            "name": "produit_exceptionnel",
+            "type": "number",
+            "computed": false
         },
-        "charge_exceptionnelle": {
-            "computed": false,
-            "type": "number"
+        {
+            "name": "charge_exceptionnelle",
+            "type": "number",
+            "computed": false
         },
-        "charges_financieres": {
-            "computed": false,
-            "type": "number"
+        {
+            "name": "charges_financieres",
+            "type": "number",
+            "computed": false
         },
-        "exercice_diane": {
-            "computed": false,
+        {
+            "name": "exercice_diane",
             "description": "Année de l'exercice",
-            "type": "number"
+            "type": "number",
+            "computed": false
         },
-        "arrete_bilan_diane": {
-            "computed": false,
+        {
+            "name": "arrete_bilan_diane",
             "description": "Date d'arrêté du bilan",
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "computed": false
         },
-        "couverture_ca_fdr": {
-            "computed": false,
-            "type": "number"
+        {
+            "name": "couverture_ca_fdr",
+            "type": "number",
+            "computed": false
         },
-        "ca": {
-            "computed": false,
-            "type": "number"
+        {
+            "name": "ca",
+            "type": "number",
+            "computed": false
         },
-        "concours_bancaire_courant": {
-            "computed": false,
+        {
+            "name": "concours_bancaire_courant",
             "description": "Concours bancaires courants. (Pour recalculer les frais financiers court terme de la Banque de France)",
-            "type": "number"
+            "type": "number",
+            "computed": false
         },
-        "valeur_ajoutee": {
-            "computed": false,
-            "type": "number"
+        {
+            "name": "valeur_ajoutee",
+            "type": "number",
+            "computed": false
         },
-        "dette_fiscale_et_sociale": {
-            "computed": false,
+        {
+            "name": "dette_fiscale_et_sociale",
             "description": "Dette fiscale et sociale",
-            "type": "number"
+            "type": "number",
+            "computed": false
         },
-        "effectif_consolide": {
-            "computed": false,
+        {
+            "name": "effectif_consolide",
             "description": "Effectif consolidé à l'entreprise",
-            "type": "number"
+            "type": "number",
+            "computed": false
         },
-        "frais_de_RetD": {
-            "computed": false,
+        {
+            "name": "frais_de_RetD",
             "description": "Frais de Recherche et Développement",
-            "type": "number"
+            "type": "number",
+            "computed": false
         },
-        "conces_brev_et_droits_sim": {
-            "computed": false,
+        {
+            "name": "conces_brev_et_droits_sim",
             "description": "Concessions, brevets, et droits similaires",
-            "type": "number"
+            "type": "number",
+            "computed": false
         },
-        "nombre_etab_secondaire": {
-            "computed": false,
+        {
+            "name": "nombre_etab_secondaire",
             "description": "Nombre d'établissements secondaires de l'entreprise, en plus du siège.",
-            "type": "number"
+            "type": "number",
+            "computed": false
         },
-        "nombre_filiale": {
-            "computed": false,
+        {
+            "name": "nombre_filiale",
             "description": "Nombre de filiales de l'entreprise. Dans la base de données des liens capitalistiques, le concept de filiale ne fait aucune référence au pourcentage d’appartenance entre le parent et la fille. Dans ce sens, si l'entreprise A est enregistrée comme ayant des intérêts dans l'entreprise B avec un très petit, ou même un pourcentage de participation inconnu, l'entreprise B sera considérée filiale de l'entreprise A.",
-            "type": "number"
+            "type": "number",
+            "computed": false
         },
-        "taille_compo_groupe": {
-            "computed": false,
+        {
+            "name": "taille_compo_groupe",
             "description": "Nombre d'entreprises dans le groupe (groupe défini par les liens capitalistique d'au moins 50,01%)",
-            "type": "number"
+            "type": "number",
+            "computed": false
         },
-        "nombre_mois": {
-            "computed": false,
+        {
+            "name": "nombre_mois",
             "description": "Durée de l'exercice en mois.",
-            "type": "number"
+            "type": "number",
+            "computed": false
         },
-        "interets_past_1": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "interets_past_1",
+            "type": "number",
+            "computed": true
         },
-        "interets_past_2": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "interets_past_2",
+            "type": "number",
+            "computed": true
         },
-        "excedent_brut_d_exploitation_past_1": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "excedent_brut_d_exploitation_past_1",
+            "type": "number",
+            "computed": true
         },
-        "excedent_brut_d_exploitation_past_2": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "excedent_brut_d_exploitation_past_2",
+            "type": "number",
+            "computed": true
         },
-        "produits_financiers_past_1": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "produits_financiers_past_1",
+            "type": "number",
+            "computed": true
         },
-        "produits_financiers_past_2": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "produits_financiers_past_2",
+            "type": "number",
+            "computed": true
         },
-        "produit_exceptionnel_past_1": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "produit_exceptionnel_past_1",
+            "type": "number",
+            "computed": true
         },
-        "produit_exceptionnel_past_2": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "produit_exceptionnel_past_2",
+            "type": "number",
+            "computed": true
         },
-        "charge_exceptionnelle_past_1": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "charge_exceptionnelle_past_1",
+            "type": "number",
+            "computed": true
         },
-        "charge_exceptionnelle_past_2": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "charge_exceptionnelle_past_2",
+            "type": "number",
+            "computed": true
         },
-        "charges_financieres_past_1": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "charges_financieres_past_1",
+            "type": "number",
+            "computed": true
         },
-        "charges_financieres_past_2": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "charges_financieres_past_2",
+            "type": "number",
+            "computed": true
         },
-        "exercice_diane_past_1": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "exercice_diane_past_1",
+            "type": "number",
+            "computed": true
         },
-        "exercice_diane_past_2": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "exercice_diane_past_2",
+            "type": "number",
+            "computed": true
         },
-        "arrete_bilan_diane_past_1": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "arrete_bilan_diane_past_1",
+            "type": "number",
+            "computed": true
         },
-        "arrete_bilan_diane_past_2": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "arrete_bilan_diane_past_2",
+            "type": "number",
+            "computed": true
         },
-        "couverture_ca_fdr_past_1": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "couverture_ca_fdr_past_1",
+            "type": "number",
+            "computed": true
         },
-        "couverture_ca_fdr_past_2": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "couverture_ca_fdr_past_2",
+            "type": "number",
+            "computed": true
         },
-        "ca_past_1": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "ca_past_1",
+            "type": "number",
+            "computed": true
         },
-        "ca_past_2": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "ca_past_2",
+            "type": "number",
+            "computed": true
         },
-        "concours_bancaire_courant_past_1": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "concours_bancaire_courant_past_1",
+            "type": "number",
+            "computed": true
         },
-        "concours_bancaire_courant_past_2": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "concours_bancaire_courant_past_2",
+            "type": "number",
+            "computed": true
         },
-        "valeur_ajoutee_past_1": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "valeur_ajoutee_past_1",
+            "type": "number",
+            "computed": true
         },
-        "valeur_ajoutee_past_2": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "valeur_ajoutee_past_2",
+            "type": "number",
+            "computed": true
         },
-        "dette_fiscale_et_sociale_past_1": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "dette_fiscale_et_sociale_past_1",
+            "type": "number",
+            "computed": true
         },
-        "dette_fiscale_et_sociale_past_2": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "dette_fiscale_et_sociale_past_2",
+            "type": "number",
+            "computed": true
         },
-        "effectif_consolide_past_1": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "effectif_consolide_past_1",
+            "type": "number",
+            "computed": true
         },
-        "effectif_consolide_past_2": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "effectif_consolide_past_2",
+            "type": "number",
+            "computed": true
         },
-        "frais_de_RetD_past_1": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "frais_de_RetD_past_1",
+            "type": "number",
+            "computed": true
         },
-        "frais_de_RetD_past_2": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "frais_de_RetD_past_2",
+            "type": "number",
+            "computed": true
         },
-        "conces_brev_et_droits_sim_past_1": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "conces_brev_et_droits_sim_past_1",
+            "type": "number",
+            "computed": true
         },
-        "conces_brev_et_droits_sim_past_2": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "conces_brev_et_droits_sim_past_2",
+            "type": "number",
+            "computed": true
         },
-        "nombre_etab_secondaire_past_1": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "nombre_etab_secondaire_past_1",
+            "type": "number",
+            "computed": true
         },
-        "nombre_etab_secondaire_past_2": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "nombre_etab_secondaire_past_2",
+            "type": "number",
+            "computed": true
         },
-        "nombre_filiale_past_1": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "nombre_filiale_past_1",
+            "type": "number",
+            "computed": true
         },
-        "nombre_filiale_past_2": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "nombre_filiale_past_2",
+            "type": "number",
+            "computed": true
         },
-        "taille_compo_groupe_past_1": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "taille_compo_groupe_past_1",
+            "type": "number",
+            "computed": true
         },
-        "taille_compo_groupe_past_2": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "taille_compo_groupe_past_2",
+            "type": "number",
+            "computed": true
         },
-        "nombre_mois_past_1": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "nombre_mois_past_1",
+            "type": "number",
+            "computed": true
         },
-        "nombre_mois_past_2": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "nombre_mois_past_2",
+            "type": "number",
+            "computed": true
         },
-        "poids_frng": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "poids_frng",
+            "type": "number",
+            "computed": true
         },
-        "taux_marge": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "taux_marge",
+            "type": "number",
+            "computed": true
         },
-        "dette_fiscale": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "dette_fiscale",
+            "type": "number",
+            "computed": true
         },
-        "financier_court_terme": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "financier_court_terme",
+            "type": "number",
+            "computed": true
         },
-        "frais_financier": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "frais_financier",
+            "type": "number",
+            "computed": true
         },
-        "poids_frng_past_1": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "poids_frng_past_1",
+            "type": "number",
+            "computed": true
         },
-        "poids_frng_past_2": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "poids_frng_past_2",
+            "type": "number",
+            "computed": true
         },
-        "taux_marge_past_1": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "taux_marge_past_1",
+            "type": "number",
+            "computed": true
         },
-        "taux_marge_past_2": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "taux_marge_past_2",
+            "type": "number",
+            "computed": true
         },
-        "dette_fiscale_past_1": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "dette_fiscale_past_1",
+            "type": "number",
+            "computed": true
         },
-        "dette_fiscale_past_2": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "dette_fiscale_past_2",
+            "type": "number",
+            "computed": true
         },
-        "financier_court_terme_past_1": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "financier_court_terme_past_1",
+            "type": "number",
+            "computed": true
         },
-        "financier_court_terme_past_2": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "financier_court_terme_past_2",
+            "type": "number",
+            "computed": true
         },
-        "frais_financier_past_1": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "frais_financier_past_1",
+            "type": "number",
+            "computed": true
         },
-        "frais_financier_past_2": {
-            "computed": true,
-            "type": "number"
+        {
+            "name": "frais_financier_past_2",
+            "type": "number",
+            "computed": true
         }
-    }
+    ]
 }

@@ -29,41 +29,39 @@ const computed2 = generator?.getSchemaForSymbol("SortieDiane")?.allOf![2]
 const computed3 = generator?.getSchemaForSymbol("SortieDiane")?.allOf![3]
 
 // Addition to the JSON Schema standard
-type Additions = {
+type Attributes = {
   computed: boolean
 }
 
-const appendToValues = (
+const documentProp = (
   props: Record<string, TJS.DefinitionOrBoolean> = {},
-  additions: Additions
+  attributes: Attributes
 ) =>
-  Object.entries(props).reduce(
-    (res, [key, value]) => ({
-      ...res,
-      [key]: typeof value === "boolean" ? value : { ...additions, ...value },
-    }),
-    {}
-  )
+  Object.entries(props).map(([key, value]) => ({
+    name: key,
+    ...(typeof value === "boolean" ? undefined : value),
+    ...attributes,
+  }))
 
 const schema = {
   description:
     "Variables Diane générées par reduce.algo2 (opensignauxfaibles/sfdata)",
   type: "object",
-  properties: {
-    ...appendToValues(thru?.properties, { computed: false }),
-    ...appendToValues(
+  properties: [
+    ...documentProp(thru?.properties, { computed: false }),
+    ...documentProp(
       typeof computed1 === "boolean" ? {} : computed1?.properties,
       { computed: true }
     ),
-    ...appendToValues(
+    ...documentProp(
       typeof computed2 === "boolean" ? {} : computed2?.properties,
       { computed: true }
     ),
-    ...appendToValues(
+    ...documentProp(
       typeof computed3 === "boolean" ? {} : computed3?.properties,
       { computed: true }
     ),
-  },
+  ],
 }
 
 fs.writeFileSync("entr_diane.out.json", JSON.stringify(schema, null, 4))
