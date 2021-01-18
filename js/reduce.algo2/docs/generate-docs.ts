@@ -21,17 +21,49 @@ const program = TJS.getProgramFromFiles(
   basePath
 )
 
-// We can either get the schema for one file and one type...
-const schema = TJS.generateSchema(program, "SortieDiane", settings)
+const generator = TJS.buildGenerator(program, settings)
+generator?.setSchemaOverride
+const thru = generator?.getSchemaForSymbol("DonnéesDianeTransmises")
+const computed1 = generator?.getSchemaForSymbol("SortieDiane")?.allOf![1]
+const computed2 = generator?.getSchemaForSymbol("SortieDiane")?.allOf![2]
+const computed3 = generator?.getSchemaForSymbol("SortieDiane")?.allOf![3]
 
-// ... or a generator that lets us incrementally get more schemas
-// const generator = TJS.buildGenerator(program, settings)
-// all symbols
-// const symbols = generator.getUserSymbols()
+// Addition to the JSON Schema standard
+type Additions = {
+  computed: boolean
+}
 
-// Get symbols for different types from generator.
-// generator.getSchemaForSymbol("MyType")
-// generator.getSchemaForSymbol("AnotherType")
+const appendToValues = (
+  props: Record<string, TJS.DefinitionOrBoolean> = {},
+  additions: Additions
+) =>
+  Object.entries(props).reduce(
+    (res, [key, value]) => ({
+      ...res,
+      [key]: typeof value === "boolean" ? value : { ...additions, ...value },
+    }),
+    {}
+  )
 
-// console.log(schema)
+const schema = {
+  description:
+    "Variables Diane générées par reduce.algo2 (opensignauxfaibles/sfdata)",
+  type: "object",
+  properties: {
+    ...appendToValues(thru?.properties, { computed: false }),
+    ...appendToValues(
+      typeof computed1 === "boolean" ? {} : computed1?.properties,
+      { computed: true }
+    ),
+    ...appendToValues(
+      typeof computed2 === "boolean" ? {} : computed2?.properties,
+      { computed: true }
+    ),
+    ...appendToValues(
+      typeof computed3 === "boolean" ? {} : computed3?.properties,
+      { computed: true }
+    ),
+  },
+}
+
 fs.writeFileSync("entr_diane.out.json", JSON.stringify(schema, null, 4))
