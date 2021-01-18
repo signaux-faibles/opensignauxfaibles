@@ -21,6 +21,9 @@ type CléRatioBdfInclus =
   | "financier_court_terme"
 type CléRatioBdfPassé = `${CléRatioBdfInclus}_past_${YearOffset}`
 
+/**
+ * SortieDiane.
+ */
 export type SortieDiane = DonnéesDianeTransmises &
   Record<CléRatioDianePassé, number | null | undefined> &
   Record<CléRatioBdfInclus, number> &

@@ -1,15 +1,20 @@
 {
-    "$schema": "http://json-schema.org/draft-07/schema#",
+    "description": "SortieDiane.",
     "allOf": [
         {
             "description": "From T, pick a set of properties whose keys are in the union K",
+            "type": "object",
             "properties": {
-                "arrete_bilan_diane": {
-                    "description": "Date d'arrêté du bilan",
-                    "format": "date-time",
-                    "type": "string"
+                "interets": {
+                    "type": "number"
                 },
-                "ca": {
+                "excedent_brut_d_exploitation": {
+                    "type": "number"
+                },
+                "produits_financiers": {
+                    "type": "number"
+                },
+                "produit_exceptionnel": {
                     "type": "number"
                 },
                 "charge_exceptionnelle": {
@@ -18,15 +23,26 @@
                 "charges_financieres": {
                     "type": "number"
                 },
-                "conces_brev_et_droits_sim": {
-                    "description": "Concessions, brevets, et droits similaires",
+                "exercice_diane": {
+                    "description": "Année de l'exercice",
+                    "type": "number"
+                },
+                "arrete_bilan_diane": {
+                    "description": "Date d'arrêté du bilan",
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "couverture_ca_fdr": {
+                    "type": "number"
+                },
+                "ca": {
                     "type": "number"
                 },
                 "concours_bancaire_courant": {
                     "description": "Concours bancaires courants. (Pour recalculer les frais financiers court terme de la Banque de France)",
                     "type": "number"
                 },
-                "couverture_ca_fdr": {
+                "valeur_ajoutee": {
                     "type": "number"
                 },
                 "dette_fiscale_et_sociale": {
@@ -37,18 +53,12 @@
                     "description": "Effectif consolidé à l'entreprise",
                     "type": "number"
                 },
-                "excedent_brut_d_exploitation": {
-                    "type": "number"
-                },
-                "exercice_diane": {
-                    "description": "Année de l'exercice",
-                    "type": "number"
-                },
                 "frais_de_RetD": {
                     "description": "Frais de Recherche et Développement",
                     "type": "number"
                 },
-                "interets": {
+                "conces_brev_et_droits_sim": {
+                    "description": "Concessions, brevets, et droits similaires",
                     "type": "number"
                 },
                 "nombre_etab_secondaire": {
@@ -59,39 +69,42 @@
                     "description": "Nombre de filiales de l'entreprise. Dans la base de données des liens capitalistiques, le concept de filiale ne fait aucune référence au pourcentage d’appartenance entre le parent et la fille. Dans ce sens, si l'entreprise A est enregistrée comme ayant des intérêts dans l'entreprise B avec un très petit, ou même un pourcentage de participation inconnu, l'entreprise B sera considérée filiale de l'entreprise A.",
                     "type": "number"
                 },
-                "nombre_mois": {
-                    "description": "Durée de l'exercice en mois.",
-                    "type": "number"
-                },
-                "produit_exceptionnel": {
-                    "type": "number"
-                },
-                "produits_financiers": {
-                    "type": "number"
-                },
                 "taille_compo_groupe": {
                     "description": "Nombre d'entreprises dans le groupe (groupe défini par les liens capitalistique d'au moins 50,01%)",
                     "type": "number"
                 },
-                "valeur_ajoutee": {
+                "nombre_mois": {
+                    "description": "Durée de l'exercice en mois.",
                     "type": "number"
                 }
-            },
-            "type": "object"
+            }
         },
         {
             "description": "Construct a type with a set of properties K of type T",
+            "type": "object",
             "properties": {
-                "arrete_bilan_diane_past_1": {
+                "interets_past_1": {
                     "type": "number"
                 },
-                "arrete_bilan_diane_past_2": {
+                "interets_past_2": {
                     "type": "number"
                 },
-                "ca_past_1": {
+                "excedent_brut_d_exploitation_past_1": {
                     "type": "number"
                 },
-                "ca_past_2": {
+                "excedent_brut_d_exploitation_past_2": {
+                    "type": "number"
+                },
+                "produits_financiers_past_1": {
+                    "type": "number"
+                },
+                "produits_financiers_past_2": {
+                    "type": "number"
+                },
+                "produit_exceptionnel_past_1": {
+                    "type": "number"
+                },
+                "produit_exceptionnel_past_2": {
                     "type": "number"
                 },
                 "charge_exceptionnelle_past_1": {
@@ -106,10 +119,28 @@
                 "charges_financieres_past_2": {
                     "type": "number"
                 },
-                "conces_brev_et_droits_sim_past_1": {
+                "exercice_diane_past_1": {
                     "type": "number"
                 },
-                "conces_brev_et_droits_sim_past_2": {
+                "exercice_diane_past_2": {
+                    "type": "number"
+                },
+                "arrete_bilan_diane_past_1": {
+                    "type": "number"
+                },
+                "arrete_bilan_diane_past_2": {
+                    "type": "number"
+                },
+                "couverture_ca_fdr_past_1": {
+                    "type": "number"
+                },
+                "couverture_ca_fdr_past_2": {
+                    "type": "number"
+                },
+                "ca_past_1": {
+                    "type": "number"
+                },
+                "ca_past_2": {
                     "type": "number"
                 },
                 "concours_bancaire_courant_past_1": {
@@ -118,10 +149,10 @@
                 "concours_bancaire_courant_past_2": {
                     "type": "number"
                 },
-                "couverture_ca_fdr_past_1": {
+                "valeur_ajoutee_past_1": {
                     "type": "number"
                 },
-                "couverture_ca_fdr_past_2": {
+                "valeur_ajoutee_past_2": {
                     "type": "number"
                 },
                 "dette_fiscale_et_sociale_past_1": {
@@ -136,28 +167,16 @@
                 "effectif_consolide_past_2": {
                     "type": "number"
                 },
-                "excedent_brut_d_exploitation_past_1": {
-                    "type": "number"
-                },
-                "excedent_brut_d_exploitation_past_2": {
-                    "type": "number"
-                },
-                "exercice_diane_past_1": {
-                    "type": "number"
-                },
-                "exercice_diane_past_2": {
-                    "type": "number"
-                },
                 "frais_de_RetD_past_1": {
                     "type": "number"
                 },
                 "frais_de_RetD_past_2": {
                     "type": "number"
                 },
-                "interets_past_1": {
+                "conces_brev_et_droits_sim_past_1": {
                     "type": "number"
                 },
-                "interets_past_2": {
+                "conces_brev_et_droits_sim_past_2": {
                     "type": "number"
                 },
                 "nombre_etab_secondaire_past_1": {
@@ -172,42 +191,30 @@
                 "nombre_filiale_past_2": {
                     "type": "number"
                 },
-                "nombre_mois_past_1": {
-                    "type": "number"
-                },
-                "nombre_mois_past_2": {
-                    "type": "number"
-                },
-                "produit_exceptionnel_past_1": {
-                    "type": "number"
-                },
-                "produit_exceptionnel_past_2": {
-                    "type": "number"
-                },
-                "produits_financiers_past_1": {
-                    "type": "number"
-                },
-                "produits_financiers_past_2": {
-                    "type": "number"
-                },
                 "taille_compo_groupe_past_1": {
                     "type": "number"
                 },
                 "taille_compo_groupe_past_2": {
                     "type": "number"
                 },
-                "valeur_ajoutee_past_1": {
+                "nombre_mois_past_1": {
                     "type": "number"
                 },
-                "valeur_ajoutee_past_2": {
+                "nombre_mois_past_2": {
                     "type": "number"
                 }
-            },
-            "type": "object"
+            }
         },
         {
             "description": "Construct a type with a set of properties K of type T",
+            "type": "object",
             "properties": {
+                "poids_frng": {
+                    "type": "number"
+                },
+                "taux_marge": {
+                    "type": "number"
+                },
                 "dette_fiscale": {
                     "type": "number"
                 },
@@ -216,19 +223,25 @@
                 },
                 "frais_financier": {
                     "type": "number"
-                },
-                "poids_frng": {
-                    "type": "number"
-                },
-                "taux_marge": {
-                    "type": "number"
                 }
-            },
-            "type": "object"
+            }
         },
         {
             "description": "Construct a type with a set of properties K of type T",
+            "type": "object",
             "properties": {
+                "poids_frng_past_1": {
+                    "type": "number"
+                },
+                "poids_frng_past_2": {
+                    "type": "number"
+                },
+                "taux_marge_past_1": {
+                    "type": "number"
+                },
+                "taux_marge_past_2": {
+                    "type": "number"
+                },
                 "dette_fiscale_past_1": {
                     "type": "number"
                 },
@@ -246,22 +259,9 @@
                 },
                 "frais_financier_past_2": {
                     "type": "number"
-                },
-                "poids_frng_past_1": {
-                    "type": "number"
-                },
-                "poids_frng_past_2": {
-                    "type": "number"
-                },
-                "taux_marge_past_1": {
-                    "type": "number"
-                },
-                "taux_marge_past_2": {
-                    "type": "number"
                 }
-            },
-            "type": "object"
+            }
         }
-    ]
+    ],
+    "$schema": "http://json-schema.org/draft-07/schema#"
 }
-
