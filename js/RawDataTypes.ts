@@ -210,8 +210,13 @@ export type EntréeBdfRatios = {
   frais_financier: number
 }
 
+/**
+ * Champs Diane en entrée.
+ */
 export type EntréeDiane = {
+  /** Année de l'exercice */
   exercice_diane: number
+  /** Date d'arrêté du bilan */
   arrete_bilan_diane: Date
   couverture_ca_fdr?: number | null
   interets?: number | null
@@ -221,15 +226,37 @@ export type EntréeDiane = {
   charge_exceptionnelle?: number | null
   charges_financieres?: number | null
   ca?: number | null
+  /** Concours bancaires courants. (Pour recalculer les frais financiers court terme de la Banque de France) */
   concours_bancaire_courant?: number | null
   valeur_ajoutee?: number | null
+  /** Dette fiscale et sociale */
   dette_fiscale_et_sociale?: number | null
   marquee: unknown // TODO: propriété non trouvée en sortie du parseur Diane => à supprimer ?
+  /** Raison sociale */
   nom_entreprise: string
+  /** Numéro siren */
   numero_siren: SiretOrSiren
+  /** Statut juridique */
   statut_juridique: string
+  /** Présence d'une procédure collective en cours */
   procedure_collective: boolean
+  /** Effectif consolidé à l'entreprise */
+  effectif_consolide: number
+  /** Frais de Recherche et Développement */
+  frais_de_RetD: number
+  /** Concessions, brevets, et droits similaires */
+  conces_brev_et_droits_sim: number
+  /** Nombre d'établissements secondaires de l'entreprise, en plus du siège. */
+  nombre_etab_secondaire: number
+  /** Nombre de filiales de l'entreprise. Dans la base de données des liens capitalistiques, le concept de filiale ne fait aucune référence au pourcentage d’appartenance entre le parent et la fille. Dans ce sens, si l'entreprise A est enregistrée comme ayant des intérêts dans l'entreprise B avec un très petit, ou même un pourcentage de participation inconnu, l'entreprise B sera considérée filiale de l'entreprise A. */
+  nombre_filiale: number
+  /** Nombre d'entreprises dans le groupe (groupe défini par les liens capitalistique d'au moins 50,01%) */
+  taille_compo_groupe: number
+  /** Durée de l'exercice en mois. */
+  nombre_mois: number
 }
+
+// TODO: ajouter NotePreface: Note Diane "Préface" entre 0 et 10. (cf https://github.com/signaux-faibles/documentation/blob/master/description-donnees.md#donn%C3%A9es-financi%C3%A8res-issues-des-bilans-d%C3%A9pos%C3%A9s-au-greffe-de-tribunaux-de-commerce)
 
 export type EntréeEllisphere = {
   siren: string

@@ -5,7 +5,7 @@
             "description": "From T, pick a set of properties whose keys are in the union K",
             "properties": {
                 "arrete_bilan_diane": {
-                    "description": "Enables basic storage and retrieval of dates and times.",
+                    "description": "Date d'arrêté du bilan",
                     "format": "date-time",
                     "type": "string"
                 },
@@ -18,28 +18,59 @@
                 "charges_financieres": {
                     "type": "number"
                 },
+                "conces_brev_et_droits_sim": {
+                    "description": "Concessions, brevets, et droits similaires",
+                    "type": "number"
+                },
                 "concours_bancaire_courant": {
+                    "description": "Concours bancaires courants. (Pour recalculer les frais financiers court terme de la Banque de France)",
                     "type": "number"
                 },
                 "couverture_ca_fdr": {
                     "type": "number"
                 },
                 "dette_fiscale_et_sociale": {
+                    "description": "Dette fiscale et sociale",
+                    "type": "number"
+                },
+                "effectif_consolide": {
+                    "description": "Effectif consolidé à l'entreprise",
                     "type": "number"
                 },
                 "excedent_brut_d_exploitation": {
                     "type": "number"
                 },
                 "exercice_diane": {
+                    "description": "Année de l'exercice",
+                    "type": "number"
+                },
+                "frais_de_RetD": {
+                    "description": "Frais de Recherche et Développement",
                     "type": "number"
                 },
                 "interets": {
+                    "type": "number"
+                },
+                "nombre_etab_secondaire": {
+                    "description": "Nombre d'établissements secondaires de l'entreprise, en plus du siège.",
+                    "type": "number"
+                },
+                "nombre_filiale": {
+                    "description": "Nombre de filiales de l'entreprise. Dans la base de données des liens capitalistiques, le concept de filiale ne fait aucune référence au pourcentage d’appartenance entre le parent et la fille. Dans ce sens, si l'entreprise A est enregistrée comme ayant des intérêts dans l'entreprise B avec un très petit, ou même un pourcentage de participation inconnu, l'entreprise B sera considérée filiale de l'entreprise A.",
+                    "type": "number"
+                },
+                "nombre_mois": {
+                    "description": "Durée de l'exercice en mois.",
                     "type": "number"
                 },
                 "produit_exceptionnel": {
                     "type": "number"
                 },
                 "produits_financiers": {
+                    "type": "number"
+                },
+                "taille_compo_groupe": {
+                    "description": "Nombre d'entreprises dans le groupe (groupe défini par les liens capitalistique d'au moins 50,01%)",
                     "type": "number"
                 },
                 "valeur_ajoutee": {
@@ -75,6 +106,12 @@
                 "charges_financieres_past_2": {
                     "type": "number"
                 },
+                "conces_brev_et_droits_sim_past_1": {
+                    "type": "number"
+                },
+                "conces_brev_et_droits_sim_past_2": {
+                    "type": "number"
+                },
                 "concours_bancaire_courant_past_1": {
                     "type": "number"
                 },
@@ -93,6 +130,12 @@
                 "dette_fiscale_et_sociale_past_2": {
                     "type": "number"
                 },
+                "effectif_consolide_past_1": {
+                    "type": "number"
+                },
+                "effectif_consolide_past_2": {
+                    "type": "number"
+                },
                 "excedent_brut_d_exploitation_past_1": {
                     "type": "number"
                 },
@@ -105,10 +148,34 @@
                 "exercice_diane_past_2": {
                     "type": "number"
                 },
+                "frais_de_RetD_past_1": {
+                    "type": "number"
+                },
+                "frais_de_RetD_past_2": {
+                    "type": "number"
+                },
                 "interets_past_1": {
                     "type": "number"
                 },
                 "interets_past_2": {
+                    "type": "number"
+                },
+                "nombre_etab_secondaire_past_1": {
+                    "type": "number"
+                },
+                "nombre_etab_secondaire_past_2": {
+                    "type": "number"
+                },
+                "nombre_filiale_past_1": {
+                    "type": "number"
+                },
+                "nombre_filiale_past_2": {
+                    "type": "number"
+                },
+                "nombre_mois_past_1": {
+                    "type": "number"
+                },
+                "nombre_mois_past_2": {
                     "type": "number"
                 },
                 "produit_exceptionnel_past_1": {
@@ -121,6 +188,12 @@
                     "type": "number"
                 },
                 "produits_financiers_past_2": {
+                    "type": "number"
+                },
+                "taille_compo_groupe_past_1": {
+                    "type": "number"
+                },
+                "taille_compo_groupe_past_2": {
                     "type": "number"
                 },
                 "valeur_ajoutee_past_1": {
