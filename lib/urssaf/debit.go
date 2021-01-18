@@ -3,7 +3,6 @@ package urssaf
 import (
 	"bufio"
 	"encoding/csv"
-	"errors"
 	"io"
 	"os"
 	"strconv"
@@ -16,21 +15,21 @@ import (
 
 // Debit Débit – fichier Urssaf
 type Debit struct {
-	key                          string       `hash:"-"`
-	NumeroCompte                 string       `json:"numero_compte" bson:"numero_compte"`
-	NumeroEcartNegatif           string       `json:"numero_ecart_negatif" bson:"numero_ecart_negatif"`
-	DateTraitement               time.Time    `json:"date_traitement" bson:"date_traitement"`
-	PartOuvriere                 float64      `json:"part_ouvriere" bson:"part_ouvriere"`
-	PartPatronale                float64      `json:"part_patronale" bson:"part_patronale"`
-	NumeroHistoriqueEcartNegatif int          `json:"numero_historique" bson:"numero_historique"`
-	EtatCompte                   int          `json:"etat_compte" bson:"etat_compte"`
-	CodeProcedureCollective      string       `json:"code_procedure_collective" bson:"code_procedure_collective"`
-	Periode                      misc.Periode `json:"periode" bson:"periode"`
-	CodeOperationEcartNegatif    string       `json:"code_operation_ecart_negatif" bson:"code_operation_ecart_negatif"`
-	CodeMotifEcartNegatif        string       `json:"code_motif_ecart_negatif" bson:"code_motif_ecart_negatif"`
-	DebitSuivant                 string       `json:"debit_suivant,omitempty" bson:"debit_suivant,omitempty"`
-	Recours                      bool         `json:"recours_en_cours" bson:"recours_en_cours"`
-	// MontantMajorations           float64   `json:"montant_majorations" bson:"montant_majorations"`
+	key                          string       `                       hash:"-"`
+	NumeroCompte                 string       `col:"num_cpte"         json:"numero_compte"                bson:"numero_compte"`
+	NumeroEcartNegatif           string       `col:"Num_Ecn"          json:"numero_ecart_negatif"         bson:"numero_ecart_negatif"`
+	DateTraitement               time.Time    `col:"Dt_trt_ecn"       json:"date_traitement"              bson:"date_traitement"`
+	PartOuvriere                 float64      `col:"Mt_PO"            json:"part_ouvriere"                bson:"part_ouvriere"`
+	PartPatronale                float64      `col:"Mt_PP"            json:"part_patronale"               bson:"part_patronale"`
+	NumeroHistoriqueEcartNegatif int          `col:"Num_Hist_Ecn"     json:"numero_historique"            bson:"numero_historique"`
+	EtatCompte                   int          `col:"Etat_cpte"        json:"etat_compte"                  bson:"etat_compte"`
+	CodeProcedureCollective      string       `col:"Cd_pro_col"       json:"code_procedure_collective"    bson:"code_procedure_collective"`
+	Periode                      misc.Periode `col:"Periode"          json:"periode"                      bson:"periode"`
+	CodeOperationEcartNegatif    string       `col:"Cd_op_ecn"        json:"code_operation_ecart_negatif" bson:"code_operation_ecart_negatif"`
+	CodeMotifEcartNegatif        string       `col:"Motif_ecn"        json:"code_motif_ecart_negatif"     bson:"code_motif_ecart_negatif"`
+	DebitSuivant                 string       `                       json:"debit_suivant,omitempty"      bson:"debit_suivant,omitempty"`
+	Recours                      bool         `col:"Recours_en_cours" json:"recours_en_cours"             bson:"recours_en_cours"`
+	// MontantMajorations        float64      `                       json:"montant_majorations"          bson:"montant_majorations"`
 }
 
 // Key _id de l'objet
@@ -57,7 +56,7 @@ type debitParser struct {
 	file    *os.File
 	reader  *csv.Reader
 	comptes marshal.Comptes
-	idx     colMapping
+	idx     marshal.ColMapping
 }
 
 func (parser *debitParser) GetFileType() string {
@@ -76,7 +75,7 @@ func (parser *debitParser) Init(cache *marshal.Cache, batch *base.AdminBatch) (e
 func (parser *debitParser) Open(filePath string) (err error) {
 	parser.file, parser.reader, err = openDebitFile(filePath)
 	if err == nil {
-		parser.idx, err = parseDebitColMapping(parser.reader)
+		parser.idx, err = marshal.IndexColumnsFromCsvHeader(parser.reader, Debit{})
 	}
 	return err
 }
@@ -89,32 +88,6 @@ func openDebitFile(filePath string) (*os.File, *csv.Reader, error) {
 	reader := csv.NewReader(bufio.NewReader(file))
 	reader.Comma = ';'
 	return file, reader, err
-}
-
-func parseDebitColMapping(reader *csv.Reader) (colMapping, error) {
-	fields, err := reader.Read()
-	if err != nil {
-		return nil, err
-	}
-	var idx = colMapping{
-		"dateTraitement":               misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Dt_trt_ecn" }),
-		"partOuvriere":                 misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Mt_PO" }),
-		"partPatronale":                misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Mt_PP" }),
-		"numeroHistoriqueEcartNegatif": misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Num_Hist_Ecn" }),
-		"periode":                      misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Periode" }),
-		"etatCompte":                   misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Etat_cpte" }),
-		"numeroCompte":                 misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "num_cpte" }),
-		"numeroEcartNegatif":           misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Num_Ecn" }),
-		"codeProcedureCollective":      misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Cd_pro_col" }),
-		"codeOperationEcartNegatif":    misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Cd_op_ecn" }),
-		"codeMotifEcartNegatif":        misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Motif_ecn" }),
-		"recours":                      misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Recours_en_cours" }),
-	}
-	// montantMajorationsIndex := misc.SliceIndex(len(fields), func(i int) bool { return fields[i] == "Montant majorations de retard en centimes" })
-	if misc.SliceMin(idx["dateTraitement"], idx["partOuvriere"], idx["partPatronale"], idx["numeroHistoriqueEcartNegatif"], idx["periode"], idx["etatCompte"], idx["numeroCompte"], idx["numeroEcartNegatif"], idx["codeProcedureCollective"], idx["codeOperationEcartNegatif"], idx["codeMotifEcartNegatif"]) < 0 {
-		return nil, errors.New("CSV non conforme")
-	}
-	return idx, nil
 }
 
 func (parser *debitParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
@@ -132,10 +105,10 @@ func (parser *debitParser) ParseLines(parsedLineChan chan marshal.ParsedLineResu
 		} else if err != nil {
 			parsedLine.AddRegularError(err)
 		} else {
-			period, _ := marshal.UrssafToPeriod(row[parser.idx["periode"]])
+			period, _ := marshal.UrssafToPeriod(row[parser.idx["Periode"]])
 			date := period.Start
 
-			if siret, err := marshal.GetSiretFromComptesMapping(row[parser.idx["numeroCompte"]], &date, parser.comptes); err == nil {
+			if siret, err := marshal.GetSiretFromComptesMapping(row[parser.idx["num_cpte"]], &date, parser.comptes); err == nil {
 				parseDebitLine(siret, row, parser.idx, &parsedLine)
 				if len(parsedLine.Errors) > 0 {
 					parsedLine.Tuples = []marshal.Tuple{}
@@ -148,33 +121,33 @@ func (parser *debitParser) ParseLines(parsedLineChan chan marshal.ParsedLineResu
 	}
 }
 
-func parseDebitLine(siret string, row []string, idx colMapping, parsedLine *marshal.ParsedLineResult) {
+func parseDebitLine(siret string, row []string, idx marshal.ColMapping, parsedLine *marshal.ParsedLineResult) {
 
 	debit := Debit{
 		key:                       siret,
-		NumeroCompte:              row[idx["numeroCompte"]],
-		NumeroEcartNegatif:        row[idx["numeroEcartNegatif"]],
-		CodeProcedureCollective:   row[idx["codeProcedureCollective"]],
-		CodeOperationEcartNegatif: row[idx["codeOperationEcartNegatif"]],
-		CodeMotifEcartNegatif:     row[idx["codeMotifEcartNegatif"]],
+		NumeroCompte:              row[idx["num_cpte"]],
+		NumeroEcartNegatif:        row[idx["Num_Ecn"]],
+		CodeProcedureCollective:   row[idx["Cd_pro_col"]],
+		CodeOperationEcartNegatif: row[idx["Cd_op_ecn"]],
+		CodeMotifEcartNegatif:     row[idx["Motif_ecn"]],
 	}
 
 	var err error
-	debit.DateTraitement, err = marshal.UrssafToDate(row[idx["dateTraitement"]])
+	debit.DateTraitement, err = marshal.UrssafToDate(row[idx["Dt_trt_ecn"]])
 	parsedLine.AddRegularError(err)
-	debit.PartOuvriere, err = strconv.ParseFloat(row[idx["partOuvriere"]], 64)
+	debit.PartOuvriere, err = strconv.ParseFloat(row[idx["Mt_PO"]], 64)
 	parsedLine.AddRegularError(err)
 	debit.PartOuvriere = debit.PartOuvriere / 100
-	debit.PartPatronale, err = strconv.ParseFloat(row[idx["partPatronale"]], 64)
+	debit.PartPatronale, err = strconv.ParseFloat(row[idx["Mt_PP"]], 64)
 	parsedLine.AddRegularError(err)
 	debit.PartPatronale = debit.PartPatronale / 100
-	debit.NumeroHistoriqueEcartNegatif, err = strconv.Atoi(row[idx["numeroHistoriqueEcartNegatif"]])
+	debit.NumeroHistoriqueEcartNegatif, err = strconv.Atoi(row[idx["Num_Hist_Ecn"]])
 	parsedLine.AddRegularError(err)
-	debit.EtatCompte, err = strconv.Atoi(row[idx["etatCompte"]])
+	debit.EtatCompte, err = strconv.Atoi(row[idx["Etat_cpte"]])
 	parsedLine.AddRegularError(err)
-	debit.Periode, err = marshal.UrssafToPeriod(row[idx["periode"]])
+	debit.Periode, err = marshal.UrssafToPeriod(row[idx["Periode"]])
 	parsedLine.AddRegularError(err)
-	debit.Recours, err = strconv.ParseBool(row[idx["recours"]])
+	debit.Recours, err = strconv.ParseBool(row[idx["Recours_en_cours"]])
 	parsedLine.AddRegularError(err)
 	// debit.MontantMajorations, err = strconv.ParseFloat(row[idx["montantMajorations"]], 64)
 	// tracker.Error(err)

@@ -3,7 +3,6 @@ package urssaf
 import (
 	"flag"
 	"path/filepath"
-	"regexp"
 	"testing"
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/marshal"
@@ -29,6 +28,12 @@ func TestDebit(t *testing.T) {
 	var testData = filepath.Join("testData", "debitTestData.csv")
 	var cache = makeCacheWithComptesMapping()
 	marshal.TestParserOutput(t, ParserDebit, cache, testData, golden, *update)
+
+	t.Run("doit rapporter une erreur fatale s'il manque une colonne", func(t *testing.T) {
+		output := marshal.RunParserInlineEx(t, cache, ParserDebit, []string{"dummy"})
+		assert.Equal(t, []marshal.Tuple(nil), output.Tuples, "should return no tuples")
+		assert.Contains(t, marshal.GetFatalError(output), "Colonne num_cpte non trouvée")
+	})
 
 	t.Run("Debit n'est importé que si inclus dans le filtre", func(t *testing.T) {
 		cache.Set("filter", marshal.SirenFilter{"111111111": true}) // SIREN correspondant à un des 3 comptes retournés par makeCacheWithComptesMapping
@@ -63,6 +68,12 @@ func TestDelai(t *testing.T) {
 	var testData = filepath.Join("testData", "delaiTestData.csv")
 	var cache = makeCacheWithComptesMapping()
 	marshal.TestParserOutput(t, ParserDelai, cache, testData, golden, *update)
+
+	t.Run("doit rapporter une erreur fatale s'il manque une colonne", func(t *testing.T) {
+		output := marshal.RunParserInlineEx(t, cache, ParserDelai, []string{"dummy"})
+		assert.Equal(t, []marshal.Tuple(nil), output.Tuples, "should return no tuples")
+		assert.Contains(t, marshal.GetFatalError(output), "Colonne Numero_compte_externe non trouvée")
+	})
 }
 
 func TestCcsf(t *testing.T) {
@@ -70,6 +81,12 @@ func TestCcsf(t *testing.T) {
 	var testData = filepath.Join("testData", "ccsfTestData.csv")
 	var cache = makeCacheWithComptesMapping()
 	marshal.TestParserOutput(t, ParserCCSF, cache, testData, golden, *update)
+
+	t.Run("doit rapporter une erreur fatale s'il manque une colonne", func(t *testing.T) {
+		output := marshal.RunParserInlineEx(t, cache, ParserCCSF, []string{"dummy"})
+		assert.Equal(t, []marshal.Tuple(nil), output.Tuples, "should return no tuples")
+		assert.Contains(t, marshal.GetFatalError(output), "Colonne Compte non trouvée")
+	})
 }
 
 func TestCotisation(t *testing.T) {
@@ -77,6 +94,12 @@ func TestCotisation(t *testing.T) {
 	var testData = filepath.Join("testData", "cotisationTestData.csv")
 	var cache = makeCacheWithComptesMapping()
 	marshal.TestParserOutput(t, ParserCotisation, cache, testData, golden, *update)
+
+	t.Run("doit rapporter une erreur fatale s'il manque une colonne", func(t *testing.T) {
+		output := marshal.RunParserInlineEx(t, cache, ParserCotisation, []string{"dummy"})
+		assert.Equal(t, []marshal.Tuple(nil), output.Tuples, "should return no tuples")
+		assert.Contains(t, marshal.GetFatalError(output), "Colonne Compte non trouvée")
+	})
 
 	t.Run("toute ligne de cotisation d'un établissement hors périmètre doit être sautée silencieusement", func(t *testing.T) {
 		allowedSiren := "111111111" // SIREN correspondant à un des 3 comptes mentionnés dans le fichier testData
@@ -136,8 +159,7 @@ func TestEffectif(t *testing.T) {
 	t.Run("Effectif ne peut pas être importé s'il manque une colonne", func(t *testing.T) {
 		output := marshal.RunParserInline(t, ParserEffectif, []string{"siret"}) // "compte" column is missing
 		assert.Equal(t, []marshal.Tuple(nil), output.Tuples, "should return no tuples")
-		assert.Equal(t, 1, len(output.Events), "should return a parsing report")
-		assert.Regexp(t, regexp.MustCompile("Colonne compte non trouvée"), marshal.GetFatalError(output))
+		assert.Contains(t, marshal.GetFatalError(output), "Colonne compte non trouvée")
 	})
 }
 

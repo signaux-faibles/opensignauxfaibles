@@ -15,17 +15,17 @@ import (
 
 // BDF Information Banque de France
 type BDF struct {
-	Siren               string    `json:"siren" bson:"siren"`
-	Annee               *int      `json:"annee_bdf" bson:"annee_bdf"`
-	ArreteBilan         time.Time `json:"arrete_bilan_bdf" bson:"arrete_bilan_bdf"`
-	RaisonSociale       string    `json:"raison_sociale" bson:"raison_sociale"`
-	Secteur             string    `json:"secteur" bson:"secteur"`
-	PoidsFrng           *float64  `json:"poids_frng" bson:"poids_frng"`
-	TauxMarge           *float64  `json:"taux_marge" bson:"taux_marge"`
-	DelaiFournisseur    *float64  `json:"delai_fournisseur" bson:"delai_fournisseur"`
-	DetteFiscale        *float64  `json:"dette_fiscale" bson:"dette_fiscale"`
-	FinancierCourtTerme *float64  `json:"financier_court_terme" bson:"financier_court_terme"`
-	FraisFinancier      *float64  `json:"frais_financier" bson:"frais_financier"`
+	Siren               string    `col:"D1"              json:"siren"                 bson:"siren"`
+	Annee               *int      `col:"ANNEE"           json:"annee_bdf"             bson:"annee_bdf"`
+	ArreteBilan         time.Time `col:"ARRETE_BILAN"    json:"arrete_bilan_bdf"      bson:"arrete_bilan_bdf"`
+	RaisonSociale       string    `col:"DENOM"           json:"raison_sociale"        bson:"raison_sociale"`
+	Secteur             string    `col:"SECTEUR"         json:"secteur"               bson:"secteur"`
+	PoidsFrng           *float64  `col:"POIDS_FRNG"      json:"poids_frng"            bson:"poids_frng"`
+	TauxMarge           *float64  `col:"TX_MARGE"        json:"taux_marge"            bson:"taux_marge"`
+	DelaiFournisseur    *float64  `col:"DELAI_FRS"       json:"delai_fournisseur"     bson:"delai_fournisseur"`
+	DetteFiscale        *float64  `col:"POIDS_DFISC_SOC" json:"dette_fiscale"         bson:"dette_fiscale"`
+	FinancierCourtTerme *float64  `col:"POIDS_FIN_CT"    json:"financier_court_terme" bson:"financier_court_terme"`
+	FraisFinancier      *float64  `col:"POIDS_FRAIS_FIN" json:"frais_financier"       bson:"frais_financier"`
 }
 
 // Key id de l'objet
@@ -49,6 +49,7 @@ var Parser = &bdfParser{}
 type bdfParser struct {
 	file   *os.File
 	reader *csv.Reader
+	idx    marshal.ColMapping
 }
 
 func (parser *bdfParser) GetFileType() string {
@@ -61,6 +62,9 @@ func (parser *bdfParser) Init(cache *marshal.Cache, batch *base.AdminBatch) erro
 
 func (parser *bdfParser) Open(filePath string) (err error) {
 	parser.file, parser.reader, err = openFile(filePath)
+	if err == nil {
+		parser.idx, err = marshal.IndexColumnsFromCsvHeader(parser.reader, BDF{})
+	}
 	return err
 }
 
@@ -76,8 +80,7 @@ func openFile(filePath string) (*os.File, *csv.Reader, error) {
 	reader := csv.NewReader(bufio.NewReader(file))
 	reader.Comma = ';'
 	reader.LazyQuotes = true
-	_, err = reader.Read() // Sauter l'en-tête
-	return file, reader, err
+	return file, reader, nil
 }
 
 func (parser *bdfParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
@@ -90,7 +93,7 @@ func (parser *bdfParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult
 		} else if err != nil {
 			parsedLine.AddRegularError(err)
 		} else {
-			parseBdfLine(row, &parsedLine)
+			parseBdfLine(row, parser.idx, &parsedLine)
 			if len(parsedLine.Errors) > 0 {
 				parsedLine.Tuples = []marshal.Tuple{}
 			}
@@ -99,27 +102,13 @@ func (parser *bdfParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult
 	}
 }
 
-var field = map[string]int{
-	"siren":               0,
-	"année":               1,
-	"arrêtéBilan":         2,
-	"raisonSociale":       3,
-	"secteur":             6,
-	"poidsFrng":           7,
-	"tauxMarge":           8,
-	"delaiFournisseur":    9,
-	"detteFiscale":        10,
-	"financierCourtTerme": 11,
-	"fraisFinancier":      12,
-}
-
-func parseBdfLine(row []string, parsedLine *marshal.ParsedLineResult) {
+func parseBdfLine(row []string, field marshal.ColMapping, parsedLine *marshal.ParsedLineResult) {
 	var err error
 	bdf := BDF{}
-	bdf.Siren = strings.Replace(row[field["siren"]], " ", "", -1)
-	bdf.Annee, err = misc.ParsePInt(row[field["année"]])
+	bdf.Siren = strings.Replace(row[field["D1"]], " ", "", -1)
+	bdf.Annee, err = misc.ParsePInt(row[field["ANNEE"]])
 	parsedLine.AddRegularError(err)
-	var arrete = row[field["arrêtéBilan"]]
+	var arrete = row[field["ARRETE_BILAN"]]
 	arrete = strings.Replace(arrete, "janv", "-01-", -1)
 	arrete = strings.Replace(arrete, "JAN", "-01-", -1)
 	arrete = strings.Replace(arrete, "févr", "-02-", -1)
@@ -146,40 +135,40 @@ func parseBdfLine(row []string, parsedLine *marshal.ParsedLineResult) {
 	arrete = strings.Replace(arrete, "DEC", "-12-", -1)
 	bdf.ArreteBilan, err = time.Parse("02-01-2006", arrete)
 	parsedLine.AddRegularError(err)
-	bdf.RaisonSociale = row[field["raisonSociale"]]
-	bdf.Secteur = row[field["secteur"]]
-	if len(row) > field["poidsFrng"] {
-		bdf.PoidsFrng, err = misc.ParsePFloat(row[field["poidsFrng"]])
+	bdf.RaisonSociale = row[field["DENOM"]]
+	bdf.Secteur = row[field["SECTEUR"]]
+	if len(row) > field["POIDS_FRNG"] {
+		bdf.PoidsFrng, err = misc.ParsePFloat(row[field["POIDS_FRNG"]])
 		parsedLine.AddRegularError(err)
 	} else {
 		bdf.PoidsFrng = nil
 	}
-	if len(row) > field["tauxMarge"] {
-		bdf.TauxMarge, err = misc.ParsePFloat(row[field["tauxMarge"]])
+	if len(row) > field["TX_MARGE"] {
+		bdf.TauxMarge, err = misc.ParsePFloat(row[field["TX_MARGE"]])
 		parsedLine.AddRegularError(err)
 	} else {
 		bdf.TauxMarge = nil
 	}
-	if len(row) > field["delaiFournisseur"] {
-		bdf.DelaiFournisseur, err = misc.ParsePFloat(row[field["delaiFournisseur"]])
+	if len(row) > field["DELAI_FRS"] {
+		bdf.DelaiFournisseur, err = misc.ParsePFloat(row[field["DELAI_FRS"]])
 		parsedLine.AddRegularError(err)
 	} else {
 		bdf.DelaiFournisseur = nil
 	}
-	if len(row) > field["detteFiscale"] {
-		bdf.DetteFiscale, err = misc.ParsePFloat(row[field["detteFiscale"]])
+	if len(row) > field["POIDS_DFISC_SOC"] {
+		bdf.DetteFiscale, err = misc.ParsePFloat(row[field["POIDS_DFISC_SOC"]])
 		parsedLine.AddRegularError(err)
 	} else {
 		bdf.DetteFiscale = nil
 	}
-	if len(row) > field["financierCourtTerme"] {
-		bdf.FinancierCourtTerme, err = misc.ParsePFloat(row[field["financierCourtTerme"]])
+	if len(row) > field["POIDS_FIN_CT"] {
+		bdf.FinancierCourtTerme, err = misc.ParsePFloat(row[field["POIDS_FIN_CT"]])
 		parsedLine.AddRegularError(err)
 	} else {
 		bdf.FinancierCourtTerme = nil
 	}
-	if len(row) > field["fraisFinancier"] {
-		bdf.FraisFinancier, err = misc.ParsePFloat(row[field["fraisFinancier"]])
+	if len(row) > field["POIDS_FRAIS_FIN"] {
+		bdf.FraisFinancier, err = misc.ParsePFloat(row[field["POIDS_FRAIS_FIN"]])
 		parsedLine.AddRegularError(err)
 	} else {
 		bdf.FraisFinancier = nil

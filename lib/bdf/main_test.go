@@ -30,4 +30,10 @@ func TestBdfParser(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Contains(t, string(lastReportJSON), "3 lignes traitées, 0 erreurs fatales, 0 lignes rejetées, 1 lignes filtrées, 2 lignes valides")
 	})
+
+	t.Run("doit détecter s'il manque des colonnes", func(t *testing.T) {
+		output := marshal.RunParserInline(t, Parser, []string{"D1;ANNEES;ARRETE_BILAN;DENOM;CP;REGION;SECTEUR;POIDS_FRNG;TX_MARGE;DELAI_FRS;POIDS_DFISC_SOC;POIDS_FIN_CT;POIDS_FRAIS_FIN"}) // typo: ANNEES au lieu de ANNEE
+		assert.Equal(t, []marshal.Tuple(nil), output.Tuples, "le parseur doit retourner aucun tuple")
+		assert.Contains(t, marshal.GetFatalError(output), "Colonne ANNEE non trouvée")
+	})
 }

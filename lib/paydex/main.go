@@ -64,12 +64,8 @@ func (parser *paydexParser) Close() error {
 
 func (parser *paydexParser) Open(filePath string) (err error) {
 	parser.file, parser.reader, err = openPaydexFile(filePath)
-	if err != nil {
-		return err
-	}
-	headerRow, err := parser.reader.Read()
 	if err == nil {
-		parser.colIndex, err = marshal.ValidateAndIndexColumnsFromColTags(headerRow, Paydex{})
+		parser.colIndex, err = marshal.IndexColumnsFromCsvHeader(parser.reader, Paydex{})
 	}
 	return err
 }

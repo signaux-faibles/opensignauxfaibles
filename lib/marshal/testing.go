@@ -41,23 +41,52 @@ type tuplesAndEvents = struct {
 // GetFatalError retourne le message d'erreur fatale obtenu suite à une
 // opération de parsing, ou une chaine vide.
 func GetFatalError(output tuplesAndEvents) string {
-	reportData, _ := output.Events[0].ParseReport()
-	headFatal, ok := reportData["headFatal"].([]interface{})
-	if ok != true || headFatal == nil || len(headFatal) < 1 {
+	headFatal := GetFatalErrors(output.Events[0])
+	if headFatal == nil || len(headFatal) < 1 {
 		return ""
 	}
 	if len(headFatal) > 1 {
+		log.Println(headFatal)
 		log.Fatal("headFatal should never contain more than one item")
 	}
 	return headFatal[0].(string)
 }
 
+// GetFatalErrors retourne les messages d'erreurs fatales obtenus suite à une
+// opération de parsing, ou nil.
+func GetFatalErrors(event Event) []interface{} {
+	reportData, _ := event.ParseReport()
+	headFatal, ok := reportData["headFatal"].([]interface{})
+	if ok != true {
+		return nil
+	}
+	return headFatal
+}
+
+// ConsumeFatalErrors récupère les erreurs fatales depuis un canal d'évènements
+func ConsumeFatalErrors(eventChan chan Event) []string {
+	var fatalErrors []string
+	for event := range eventChan {
+		headFatal := GetFatalErrors(event)
+		for _, fatalError := range headFatal {
+			fatalErrors = append(fatalErrors, fatalError.(string))
+		}
+	}
+	return fatalErrors
+}
+
 // RunParserInline returns Tuples and Events resulting from the execution of a
 // Parser on a given list of rows, with an empty Cache.
 func RunParserInline(t *testing.T, parser Parser, rows []string) (output tuplesAndEvents) {
+	return RunParserInlineEx(t, NewCache(), parser, rows)
+}
+
+// RunParserInlineEx returns Tuples and Events resulting from the execution of a
+// Parser on a given list of rows.
+func RunParserInlineEx(t *testing.T, cache Cache, parser Parser, rows []string) (output tuplesAndEvents) {
 	csvData := strings.Join(rows, "\n")
 	csvFile := CreateTempFileWithContent(t, []byte(csvData)) // will clean up after the test
-	return RunParser(parser, NewCache(), csvFile.Name())
+	return RunParser(parser, cache, csvFile.Name())
 }
 
 // RunParser returns Tuples and Events resulting from the execution of a
