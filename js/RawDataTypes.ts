@@ -211,7 +211,9 @@ export type EntréeBdfRatios = {
 }
 
 /**
- * Champs Diane en entrée.
+ * Champs récupérés lors de l'import depuis des fichiers Diane.
+ * Le commentaire de chaque champ permet de générer sa documentation.
+ * Cf https://github.com/signaux-faibles/opensignauxfaibles/pull/291.
  */
 export type EntréeDiane = {
   /** Année de l'exercice */
@@ -254,9 +256,25 @@ export type EntréeDiane = {
   taille_compo_groupe: number
   /** Durée de l'exercice en mois. */
   nombre_mois: number
+  /** Équilibre financier: Ressources durables / Emplois stables */
+  equilibre_financier: number
+  /** Indépendance financière (exprimé en %): Fonds propres / Ressources durables * 100 */
+  independance_financiere: number
+  /** Endettement (exprimé en %): Dettes de caractère financier / Ressources durables * 100 */
+  endettement: number
+  /** Autonomie financière Fonds propres / Total bilan * 100 */
+  autonomie_financiere: number
+  /** Degré d'amortissement des immobilisations corporelles (exprimé en %): Amortissements des immobilisations corporelles / Immobilisation corporelles brutes * 100 */
+  degre_immo_corporelle: number
+  /** Financement de l'actif circulant net: Fonds de roulement net global / Actif circulant net */
+  financement_actif_circulant: number
+  /** Liquidité générale: Actif circulant net / Dettes à court terme */
+  liquidite_generale: number
+  /** Liquidité réduite: Actif circulant net hors stocks / Dettes à court terme */
+  liquidite_reduite: number
 }
 
-// TODO: ajouter NotePreface: Note Diane "Préface" entre 0 et 10. (cf https://github.com/signaux-faibles/documentation/blob/master/description-donnees.md#donn%C3%A9es-financi%C3%A8res-issues-des-bilans-d%C3%A9pos%C3%A9s-au-greffe-de-tribunaux-de-commerce)
+// TODO: ajouter NotePreface ou le retirer de la documentation (cf https://github.com/signaux-faibles/documentation/blob/master/description-donnees.md#donn%C3%A9es-financi%C3%A8res-issues-des-bilans-d%C3%A9pos%C3%A9s-au-greffe-de-tribunaux-de-commerce)
 
 export type EntréeEllisphere = {
   siren: string

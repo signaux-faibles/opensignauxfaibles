@@ -115,6 +115,54 @@
             "computed": false
         },
         {
+            "name": "equilibre_financier",
+            "description": "Équilibre financier: Ressources durables / Emplois stables",
+            "type": "number",
+            "computed": false
+        },
+        {
+            "name": "independance_financiere",
+            "description": "Indépendance financière (exprimé en %): Fonds propres / Ressources durables * 100",
+            "type": "number",
+            "computed": false
+        },
+        {
+            "name": "endettement",
+            "description": "Endettement (exprimé en %): Dettes de caractère financier / Ressources durables * 100",
+            "type": "number",
+            "computed": false
+        },
+        {
+            "name": "autonomie_financiere",
+            "description": "Autonomie financière Fonds propres / Total bilan * 100",
+            "type": "number",
+            "computed": false
+        },
+        {
+            "name": "degre_immo_corporelle",
+            "description": "Degré d'amortissement des immobilisations corporelles (exprimé en %): Amortissements des immobilisations corporelles / Immobilisation corporelles brutes * 100",
+            "type": "number",
+            "computed": false
+        },
+        {
+            "name": "financement_actif_circulant",
+            "description": "Financement de l'actif circulant net: Fonds de roulement net global / Actif circulant net",
+            "type": "number",
+            "computed": false
+        },
+        {
+            "name": "liquidite_generale",
+            "description": "Liquidité générale: Actif circulant net / Dettes à court terme",
+            "type": "number",
+            "computed": false
+        },
+        {
+            "name": "liquidite_reduite",
+            "description": "Liquidité réduite: Actif circulant net hors stocks / Dettes à court terme",
+            "type": "number",
+            "computed": false
+        },
+        {
             "name": "interets_past_1",
             "type": "number",
             "computed": true
@@ -311,6 +359,86 @@
         },
         {
             "name": "nombre_mois_past_2",
+            "type": "number",
+            "computed": true
+        },
+        {
+            "name": "equilibre_financier_past_1",
+            "type": "number",
+            "computed": true
+        },
+        {
+            "name": "equilibre_financier_past_2",
+            "type": "number",
+            "computed": true
+        },
+        {
+            "name": "independance_financiere_past_1",
+            "type": "number",
+            "computed": true
+        },
+        {
+            "name": "independance_financiere_past_2",
+            "type": "number",
+            "computed": true
+        },
+        {
+            "name": "endettement_past_1",
+            "type": "number",
+            "computed": true
+        },
+        {
+            "name": "endettement_past_2",
+            "type": "number",
+            "computed": true
+        },
+        {
+            "name": "autonomie_financiere_past_1",
+            "type": "number",
+            "computed": true
+        },
+        {
+            "name": "autonomie_financiere_past_2",
+            "type": "number",
+            "computed": true
+        },
+        {
+            "name": "degre_immo_corporelle_past_1",
+            "type": "number",
+            "computed": true
+        },
+        {
+            "name": "degre_immo_corporelle_past_2",
+            "type": "number",
+            "computed": true
+        },
+        {
+            "name": "financement_actif_circulant_past_1",
+            "type": "number",
+            "computed": true
+        },
+        {
+            "name": "financement_actif_circulant_past_2",
+            "type": "number",
+            "computed": true
+        },
+        {
+            "name": "liquidite_generale_past_1",
+            "type": "number",
+            "computed": true
+        },
+        {
+            "name": "liquidite_generale_past_2",
+            "type": "number",
+            "computed": true
+        },
+        {
+            "name": "liquidite_reduite_past_1",
+            "type": "number",
+            "computed": true
+        },
+        {
+            "name": "liquidite_reduite_past_2",
             "type": "number",
             "computed": true
         },
