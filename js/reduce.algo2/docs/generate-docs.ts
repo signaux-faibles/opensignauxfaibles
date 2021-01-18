@@ -12,31 +12,34 @@ const compilerOptions: TJS.CompilerOptions = {
   // strictNullChecks: true,
 }
 
-// optionally pass a base path
-const basePath = "./my-dir"
-
 const program = TJS.getProgramFromFiles(
   [resolve("../entr_diane.ts")],
-  compilerOptions,
-  basePath
+  compilerOptions
 )
+
+const getAllProps = (schema: TJS.Definition): TJS.Definition =>
+  schema.allOf
+    ? schema.allOf.reduce((allProps: TJS.Definition, subSchema) => {
+        return typeof subSchema === "object"
+          ? { ...allProps, ...getAllProps(subSchema) }
+          : allProps
+      }, {})
+    : schema.properties ?? {}
 
 const generator = TJS.buildGenerator(program, settings)
 generator?.setSchemaOverride
-const thru = generator?.getSchemaForSymbol("TransmittedVariables")
-const computed1 = generator?.getSchemaForSymbol("ComputedVariables")?.allOf![0]
-const computed2 = generator?.getSchemaForSymbol("ComputedVariables")?.allOf![1]
-const computed3 = generator?.getSchemaForSymbol("ComputedVariables")?.allOf![2]
+const transmittedProps = generator?.getSchemaForSymbol("TransmittedVariables")
+  ?.properties
+const computedProps = getAllProps(
+  generator?.getSchemaForSymbol("ComputedVariables") || {}
+)
 
 // Addition to the JSON Schema standard
 type Attributes = {
   computed: boolean
 }
 
-const documentProp = (
-  props: Record<string, TJS.DefinitionOrBoolean> = {},
-  attributes: Attributes
-) =>
+const documentProps = (props: TJS.Definition = {}, attributes: Attributes) =>
   Object.entries(props).map(([key, value]) => ({
     name: key,
     ...(typeof value === "boolean" ? undefined : value),
@@ -48,19 +51,8 @@ const schema = {
     "Variables Diane générées par reduce.algo2 (opensignauxfaibles/sfdata)",
   type: "object",
   properties: [
-    ...documentProp(thru?.properties, { computed: false }),
-    ...documentProp(
-      typeof computed1 === "boolean" ? {} : computed1?.properties,
-      { computed: true }
-    ),
-    ...documentProp(
-      typeof computed2 === "boolean" ? {} : computed2?.properties,
-      { computed: true }
-    ),
-    ...documentProp(
-      typeof computed3 === "boolean" ? {} : computed3?.properties,
-      { computed: true }
-    ),
+    ...documentProps(transmittedProps, { computed: false }),
+    ...documentProps(computedProps, { computed: true }),
   ],
 }
 
