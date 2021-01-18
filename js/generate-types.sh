@@ -18,6 +18,6 @@ echo > "${OUT_FILE}" "\
 $("${NODE_BIN}/mongodb-json-schema-to-typescript" --input "../validation/*.schema.json" --bannerComment '')"
 
 # Generate reduce.algo2/docs/entr_diane.out.json
-(cd reduce.algo2/docs/ && ${NODE_BIN}/ts-node generate-docs.ts)
+(cd reduce.algo2/docs/ && ${NODE_BIN}/ts-node generate-docs.ts "../entr_diane.ts")
 
 "${NODE_BIN}/eslint" "${OUT_FILE}" --fix

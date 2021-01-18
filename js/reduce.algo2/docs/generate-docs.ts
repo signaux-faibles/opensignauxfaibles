@@ -1,7 +1,8 @@
 import * as fs from "fs"
-import { resolve } from "path"
-
+import * as path from "path"
 import * as TJS from "typescript-json-schema"
+
+const INPUT_FILES = process.argv.slice(2)
 
 const settings: TJS.PartialArgs = {
   ignoreErrors: true,
@@ -12,11 +13,6 @@ const compilerOptions: TJS.CompilerOptions = {
   // strictNullChecks: true,
 }
 
-const program = TJS.getProgramFromFiles(
-  [resolve("../entr_diane.ts")],
-  compilerOptions
-)
-
 const getAllProps = (schema: TJS.Definition): TJS.Definition =>
   schema.allOf
     ? schema.allOf.reduce((allProps: TJS.Definition, subSchema) => {
@@ -25,14 +21,6 @@ const getAllProps = (schema: TJS.Definition): TJS.Definition =>
           : allProps
       }, {})
     : schema.properties ?? {}
-
-const generator = TJS.buildGenerator(program, settings)
-generator?.setSchemaOverride
-const transmittedProps = generator?.getSchemaForSymbol("TransmittedVariables")
-  ?.properties
-const computedProps = getAllProps(
-  generator?.getSchemaForSymbol("ComputedVariables") || {}
-)
 
 // Addition to the JSON Schema standard
 type Attributes = {
@@ -46,14 +34,33 @@ const documentProps = (props: TJS.Definition = {}, attributes: Attributes) =>
     ...attributes,
   }))
 
-const schema = {
-  description:
-    "Variables Diane générées par reduce.algo2 (opensignauxfaibles/sfdata)",
-  type: "object",
-  properties: [
-    ...documentProps(transmittedProps, { computed: false }),
-    ...documentProps(computedProps, { computed: true }),
-  ],
+function documentPropertiesFromTypeDef(filePath: string) {
+  const outFile = path.basename(filePath).replace(".ts", ".out.json")
+  console.warn(`Generating ${outFile}...`)
+
+  const program = TJS.getProgramFromFiles([filePath], compilerOptions)
+
+  const generator = TJS.buildGenerator(program, settings)
+  generator?.setSchemaOverride
+
+  const transmittedProps = generator?.getSchemaForSymbol("TransmittedVariables")
+    ?.properties
+
+  const computedProps = getAllProps(
+    generator?.getSchemaForSymbol("ComputedVariables") || {}
+  )
+
+  const schema = {
+    description:
+      "Variables Diane générées par reduce.algo2 (opensignauxfaibles/sfdata)",
+    type: "object",
+    properties: [
+      ...documentProps(transmittedProps, { computed: false }),
+      ...documentProps(computedProps, { computed: true }),
+    ],
+  }
+
+  fs.writeFileSync(outFile, JSON.stringify(schema, null, 4))
 }
 
-fs.writeFileSync("entr_diane.out.json", JSON.stringify(schema, null, 4))
+INPUT_FILES.forEach(documentPropertiesFromTypeDef)
