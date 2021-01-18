@@ -21,13 +21,16 @@ type CléRatioBdfInclus =
   | "financier_court_terme"
 type CléRatioBdfPassé = `${CléRatioBdfInclus}_past_${YearOffset}`
 
-/**
- * SortieDiane.
- */
-export type SortieDiane = DonnéesDianeTransmises &
-  Record<CléRatioDianePassé, number | null | undefined> &
+export type ComputedVariables = Record<
+  CléRatioDianePassé,
+  number | null | undefined
+> &
   Record<CléRatioBdfInclus, number> &
   Record<CléRatioBdfPassé, number>
+
+export type TransmittedVariables = DonnéesDianeTransmises
+
+export type SortieDiane = ComputedVariables & TransmittedVariables
 
 export function entr_diane(
   donnéesDiane: ParHash<EntréeDiane>,

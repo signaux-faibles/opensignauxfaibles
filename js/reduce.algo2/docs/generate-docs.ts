@@ -23,10 +23,10 @@ const program = TJS.getProgramFromFiles(
 
 const generator = TJS.buildGenerator(program, settings)
 generator?.setSchemaOverride
-const thru = generator?.getSchemaForSymbol("DonnéesDianeTransmises")
-const computed1 = generator?.getSchemaForSymbol("SortieDiane")?.allOf![1]
-const computed2 = generator?.getSchemaForSymbol("SortieDiane")?.allOf![2]
-const computed3 = generator?.getSchemaForSymbol("SortieDiane")?.allOf![3]
+const thru = generator?.getSchemaForSymbol("TransmittedVariables")
+const computed1 = generator?.getSchemaForSymbol("ComputedVariables")?.allOf![0]
+const computed2 = generator?.getSchemaForSymbol("ComputedVariables")?.allOf![1]
+const computed3 = generator?.getSchemaForSymbol("ComputedVariables")?.allOf![2]
 
 // Addition to the JSON Schema standard
 type Attributes = {
