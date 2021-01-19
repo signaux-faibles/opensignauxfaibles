@@ -80,12 +80,12 @@ jobs:
             ${{ runner.os }}-node-
       - run: npm install --prefer-offline --no-audit
         working-directory: js
-      - name: Check that jsFunctions.go is up to date
+      - name: Check that generated files are up to date (jsFunctions.go and variables.json)
         working-directory: lib/engine
         run: |
           go generate -x
-          git diff jsFunctions.go
-          exit $(git diff jsFunctions.go | wc -l)
+          git diff
+          exit $(git diff | wc -l)
       - run: npm run lint
         working-directory: js
       - name: Typescript type checks
