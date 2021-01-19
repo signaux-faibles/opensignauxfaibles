@@ -21,10 +21,18 @@ type CléRatioBdfInclus =
   | "financier_court_terme"
 type CléRatioBdfPassé = `${CléRatioBdfInclus}_past_${YearOffset}`
 
-export type SortieDiane = DonnéesDianeTransmises &
-  Record<CléRatioDianePassé, number | null | undefined> &
+// ComputedVariables est inspecté pour générer docs/variables.json (cf generate-docs.ts)
+export type ComputedVariables = Record<
+  CléRatioDianePassé,
+  number | null | undefined
+> &
   Record<CléRatioBdfInclus, number> &
   Record<CléRatioBdfPassé, number>
+
+// TransmittedVariables est inspecté pour générer docs/variables.json (cf generate-docs.ts)
+export type TransmittedVariables = DonnéesDianeTransmises
+
+export type SortieDiane = ComputedVariables & TransmittedVariables
 
 export function entr_diane(
   donnéesDiane: ParHash<EntréeDiane>,

@@ -95,6 +95,7 @@ type Diane struct {
 	ParticipationSalaries           *float64  `json:"participation_salaries" bson:"participation_salaries,omitempty"`
 	ImpotBenefice                   *float64  `json:"impot_benefice" bson:"impot_benefice,omitempty"`
 	BeneficeOuPerte                 *float64  `json:"benefice_ou_perte" bson:"benefice_ou_perte,omitempty"`
+	// TODO: ajouter NotePreface ou le retirer de la documentation (cf https://github.com/signaux-faibles/documentation/blob/master/description-donnees.md#donn%C3%A9es-financi%C3%A8res-issues-des-bilans-d%C3%A9pos%C3%A9s-au-greffe-de-tribunaux-de-commerce)
 }
 
 // Key id de l'objet
