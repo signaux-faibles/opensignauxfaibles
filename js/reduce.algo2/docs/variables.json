@@ -1583,5 +1583,93 @@
         "description": "Survenance de trois débits de 100% (ou plus) des cotisations",
         "type": "boolean",
         "computed": true
+    },
+    {
+        "source": "cotisationsdettes",
+        "name": "interessante_urssaf",
+        "description": "true: si l'entreprise n'a pas eu de débit (dette) sur les 6 derniers mois",
+        "type": "boolean",
+        "computed": true
+    },
+    {
+        "source": "cotisationsdettes",
+        "name": "cotisation",
+        "description": "montant (€) des mensualités de règlement des cotisations sociales",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "cotisationsdettes",
+        "name": "montant_part_ouvriere",
+        "description": "montant (€) de la dette imputable au réglement des cotisatisations sociales des employés",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "cotisationsdettes",
+        "name": "montant_part_patronale",
+        "description": "montant (€) de la dette imputable au réglement des cotisatisations sociales des dirigeants",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "cotisationsdettes",
+        "name": "montant_part_ouvriere_past_6",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "cotisationsdettes",
+        "name": "montant_part_ouvriere_past_12",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "cotisationsdettes",
+        "name": "montant_part_ouvriere_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "cotisationsdettes",
+        "name": "montant_part_ouvriere_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "cotisationsdettes",
+        "name": "montant_part_ouvriere_past_3",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "cotisationsdettes",
+        "name": "montant_part_patronale_past_6",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "cotisationsdettes",
+        "name": "montant_part_patronale_past_12",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "cotisationsdettes",
+        "name": "montant_part_patronale_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "cotisationsdettes",
+        "name": "montant_part_patronale_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "cotisationsdettes",
+        "name": "montant_part_patronale_past_3",
+        "type": "number",
+        "computed": true
     }
 ]
