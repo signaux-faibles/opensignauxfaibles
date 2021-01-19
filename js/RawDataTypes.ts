@@ -299,6 +299,28 @@ export type EntréeDiane = {
   poids_bfr_exploitation: number
   /** Exportation Exportation (exprimé en %): (Chiffre d'affaires net - Chiffre d'affaires net en France) / Chiffre d'affaires net * 100 */
   exportation: number
+  /** Efficacité économique (exprimé en k€/emploi): Valeur ajoutée / Effectif * 1000 */
+  efficacite_economique: number
+  /** Productivité du potentiel de production: Valeur ajoutée / Immobilisations corporelles et incorporelles brutes */
+  productivite_potentiel_production: number
+  /** Productivtié du capital financier: Valeur ajoutée / Actif circulant net + Effets portés à l'escompte et non échus */
+  productivite_capital_financier: number
+  /** Productivité du capital investi: Valeur ajoutée / Total de l'actif + Effets portés à l'escompte et non échus */
+  productivite_capital_investi: number
+  /** Taux d'investissement productif (exprimé en %): Immobilisations à valeur d'acquisition / Valeur ajoutée * 100 */
+  taux_d_investissement_productif: number
+  /** Rentabilité économique (exprimé en %): Excédent brut d'exploitation / Chiffre d'affaires net + Subventions d'exploitation * 100 */
+  rentabilite_economique: number
+  /** Performance (exprimé en %): Résultat courant avant impôt / Chiffre d'affaires net + Subventions d'exploitation * 100 */
+  performance: number
+  /** Rendement brut des fonds propres (exprimé en %): Résultat courant avant impôt / Fonds propres nets * 100 */
+  rendement_brut_fonds_propres: number
+  /** Rentabilité nette (exprimé en %): Bénéfice ou perte / Chiffre d'affaires net + Subventions d'exploitation * 100 */
+  rentabilite_nette: number
+  /** Rendement des capitaux propres (exprimé en %): Bénéfice ou perte / Capitaux propres nets * 100 */
+  rendement_capitaux_propres: number
+  /** RendementRessourcesDurables Rendement des ressources durables (exprimé en %): Résultat courant avant impôts + Intérêts et charges assimilées / Ressources durables nettes * 100 */
+  rendement_ressources_durables: number
 }
 
 export type EntréeEllisphere = {

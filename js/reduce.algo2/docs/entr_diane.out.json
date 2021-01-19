@@ -238,6 +238,72 @@
         "computed": false
     },
     {
+        "name": "efficacite_economique",
+        "description": "Efficacité économique (exprimé en k€/emploi): Valeur ajoutée / Effectif * 1000",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "name": "productivite_potentiel_production",
+        "description": "Productivité du potentiel de production: Valeur ajoutée / Immobilisations corporelles et incorporelles brutes",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "name": "productivite_capital_financier",
+        "description": "Productivtié du capital financier: Valeur ajoutée / Actif circulant net + Effets portés à l'escompte et non échus",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "name": "productivite_capital_investi",
+        "description": "Productivité du capital investi: Valeur ajoutée / Total de l'actif + Effets portés à l'escompte et non échus",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "name": "taux_d_investissement_productif",
+        "description": "Taux d'investissement productif (exprimé en %): Immobilisations à valeur d'acquisition / Valeur ajoutée * 100",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "name": "rentabilite_economique",
+        "description": "Rentabilité économique (exprimé en %): Excédent brut d'exploitation / Chiffre d'affaires net + Subventions d'exploitation * 100",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "name": "performance",
+        "description": "Performance (exprimé en %): Résultat courant avant impôt / Chiffre d'affaires net + Subventions d'exploitation * 100",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "name": "rendement_brut_fonds_propres",
+        "description": "Rendement brut des fonds propres (exprimé en %): Résultat courant avant impôt / Fonds propres nets * 100",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "name": "rentabilite_nette",
+        "description": "Rentabilité nette (exprimé en %): Bénéfice ou perte / Chiffre d'affaires net + Subventions d'exploitation * 100",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "name": "rendement_capitaux_propres",
+        "description": "Rendement des capitaux propres (exprimé en %): Bénéfice ou perte / Capitaux propres nets * 100",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "name": "rendement_ressources_durables",
+        "description": "RendementRessourcesDurables Rendement des ressources durables (exprimé en %): Résultat courant avant impôts + Intérêts et charges assimilées / Ressources durables nettes * 100",
+        "type": "number",
+        "computed": false
+    },
+    {
         "name": "interets_past_1",
         "type": "number",
         "computed": true
@@ -644,6 +710,116 @@
     },
     {
         "name": "exportation_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "efficacite_economique_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "efficacite_economique_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "productivite_potentiel_production_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "productivite_potentiel_production_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "productivite_capital_financier_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "productivite_capital_financier_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "productivite_capital_investi_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "productivite_capital_investi_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "taux_d_investissement_productif_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "taux_d_investissement_productif_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "rentabilite_economique_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "rentabilite_economique_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "performance_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "performance_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "rendement_brut_fonds_propres_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "rendement_brut_fonds_propres_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "rentabilite_nette_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "rentabilite_nette_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "rendement_capitaux_propres_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "rendement_capitaux_propres_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "rendement_ressources_durables_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "rendement_ressources_durables_past_2",
         "type": "number",
         "computed": true
     },
