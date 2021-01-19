@@ -9,11 +9,23 @@ export type Input = {
 }
 
 export type SortieCotisation = {
+  /** Montant moyen de cotisations calculé sur 12 mois consécutifs. */
   cotisation_moy12m?: number
+  /** ratio_dette divise montant_part_ouvriere et montant_part_patronale par cotisation_moy12m. */
   ratio_dette: number
+  /** Moyenne de ratio_dette sur 12 mois. */
   ratio_dette_moy12m?: number
+  /** Survenance d'un débit d'au moins 1% des cotisations */
   tag_debit: boolean
+  /** Survenance de trois débits de 100% (ou plus) des cotisations */
   tag_default: boolean
+}
+
+// Variables est inspecté pour générer docs/variables.json (cf generate-docs.ts)
+export type Variables = {
+  source: "cotisation"
+  computed: SortieCotisation
+  transmitted: unknown // unknown ~= aucune variable n'est transmise directement depuis RawData
 }
 
 export function cotisation(
