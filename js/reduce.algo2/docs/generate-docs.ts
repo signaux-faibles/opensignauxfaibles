@@ -32,6 +32,7 @@ const documentProps = (
   attributes: Partial<VarDocumentation>
 ): VarDocumentation[] =>
   Object.entries(props).map(([key, value]) => ({
+    source: "diane", // TODO: adapt for each source
     name: key,
     ...value,
     ...attributes,
