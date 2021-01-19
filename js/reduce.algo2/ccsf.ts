@@ -13,9 +13,9 @@ export type ComputedVariables = {
 }
 
 // TransmittedVariables est inspecté pour générer docs/variables.json (cf generate-docs.ts)
-export type TransmittedVariables = Record<string, never>
+// export type TransmittedVariables = {}
 
-export type SortieCcsf = ComputedVariables & TransmittedVariables
+export type SortieCcsf = ComputedVariables // & TransmittedVariables
 
 export function ccsf(
   vCcsf: ParHash<{ date_traitement: Date }>,
