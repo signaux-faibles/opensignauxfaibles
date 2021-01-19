@@ -58,7 +58,7 @@ INPUT_FILES.forEach((filePath) => {
   console.warn(`Generating ${outFile}...`)
   const documentedVars = documentPropertiesFromTypeDef(filePath)
   documentedVars.forEach((varDoc) => {
-    if (!varDoc.description) {
+    if (!varDoc.description && !varDoc.name.includes("_past_")) {
       console.error(`variable ${varDoc.name} has no description`)
     }
   })
