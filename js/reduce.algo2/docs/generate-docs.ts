@@ -68,20 +68,11 @@ function documentPropertiesFromTypeDef(filePath: string): VarDocumentation[] {
     throw new Error("failed to create generator")
   }
 
-  const transmittedVars = getTypeDefFromFile(
-    generator,
-    "TransmittedVariables",
-    filePath
-  )
-
-  const computedVars = getTypeDefFromFile(
-    generator,
-    "ComputedVariables",
-    filePath
-  )
-
-  const source = (getTypeDefFromFile(generator, "VariablesSource", filePath)
-    ?.enum || [])[0]?.toString()
+  const vars = getTypeDefFromFile(generator, "Variables", filePath)
+  const transmittedVars = vars?.properties?.transmitted as TJS.Definition
+  const computedVars = vars?.properties?.computed as TJS.Definition
+  const source = ((vars?.properties?.source as TJS.Definition)?.enum ||
+    [])[0]?.toString()
 
   return [
     ...documentProps(transmittedVars?.properties, { computed: false, source }),

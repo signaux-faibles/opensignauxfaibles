@@ -4,18 +4,18 @@ type Input = {
   periode: Date
 }
 
-// VariablesSource est utilisé pour populer `source` dans docs/variables.json (cf generate-docs.ts)
-export type VariablesSource = "ccsf"
-
-// ComputedVariables est inspecté pour générer docs/variables.json (cf generate-docs.ts)
 export type ComputedVariables = {
   date_ccsf: Date
 }
 
-// TransmittedVariables est inspecté pour générer docs/variables.json (cf generate-docs.ts)
-// export type TransmittedVariables = {}
+// Variables est inspecté pour générer docs/variables.json (cf generate-docs.ts)
+export type Variables = {
+  source: "ccsf"
+  computed: ComputedVariables
+  transmitted: unknown
+}
 
-export type SortieCcsf = ComputedVariables // & TransmittedVariables
+export type SortieCcsf = Variables["computed"] & Variables["transmitted"]
 
 export function ccsf(
   vCcsf: ParHash<{ date_traitement: Date }>,

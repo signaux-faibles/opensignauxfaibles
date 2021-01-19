@@ -21,21 +21,16 @@ type CléRatioBdfInclus =
   | "financier_court_terme"
 type CléRatioBdfPassé = `${CléRatioBdfInclus}_past_${YearOffset}`
 
-// VariablesSource est utilisé pour populer `source` dans docs/variables.json (cf generate-docs.ts)
-export type VariablesSource = "diane"
+// Variables est inspecté pour générer docs/variables.json (cf generate-docs.ts)
+export type Variables = {
+  source: "diane"
+  computed: Record<CléRatioDianePassé, number | null | undefined> &
+    Record<CléRatioBdfInclus, number> &
+    Record<CléRatioBdfPassé, number>
+  transmitted: DonnéesDianeTransmises
+}
 
-// ComputedVariables est inspecté pour générer docs/variables.json (cf generate-docs.ts)
-export type ComputedVariables = Record<
-  CléRatioDianePassé,
-  number | null | undefined
-> &
-  Record<CléRatioBdfInclus, number> &
-  Record<CléRatioBdfPassé, number>
-
-// TransmittedVariables est inspecté pour générer docs/variables.json (cf generate-docs.ts)
-export type TransmittedVariables = DonnéesDianeTransmises
-
-export type SortieDiane = ComputedVariables & TransmittedVariables
+export type SortieDiane = Variables["computed"] & Variables["transmitted"]
 
 export function entr_diane(
   donnéesDiane: ParHash<EntréeDiane>,
