@@ -41,8 +41,6 @@ const proprietes: DianeProperty[] = [
 proprietes.forEach((propriete) =>
   test(`fraisFinancier est nul si "${propriete}" n'est pas disponible dans Diane`, (t) => {
     const diane = fakeDiane() as EntréeDiane
-    diane[propriete] = null
-    t.is(fraisFinancier(diane), null)
     delete diane[propriete]
     t.is(fraisFinancier(diane), null)
   })

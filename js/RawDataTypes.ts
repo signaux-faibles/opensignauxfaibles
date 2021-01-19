@@ -221,27 +221,27 @@ export type EntréeDiane = {
   /** Date d'arrêté du bilan */
   arrete_bilan_diane: Date
   /** Couverture du chiffre d'affaire par le fonds de roulement (exprimé en jours): Fonds de roulement net global / Chiffre d'affaires net * 360 */
-  couverture_ca_fdr?: number | null
+  couverture_ca_fdr?: number
   /** Intérêts et charges assimilées. */
-  interets?: number | null
+  interets?: number
   /** Excédent brut d'exploitation. */
-  excedent_brut_d_exploitation?: number | null
+  excedent_brut_d_exploitation?: number
   /** Produits financiers. */
-  produits_financiers?: number | null
+  produits_financiers?: number
   /** Produits exceptionnels. */
-  produit_exceptionnel?: number | null
+  produit_exceptionnel?: number
   /** Charges exceptionnelles. */
-  charge_exceptionnelle?: number | null
+  charge_exceptionnelle?: number
   /** Charges financières. */
-  charges_financieres?: number | null
+  charges_financieres?: number
   /** Chiffre d'affaires */
-  ca?: number | null
+  ca?: number
   /** Concours bancaires courants. (Pour recalculer les frais financiers court terme de la Banque de France) */
-  concours_bancaire_courant?: number | null
+  concours_bancaire_courant?: number
   /** Valeur ajoutée. */
-  valeur_ajoutee?: number | null
+  valeur_ajoutee?: number
   /** Dette fiscale et sociale */
-  dette_fiscale_et_sociale?: number | null
+  dette_fiscale_et_sociale?: number
   marquee: unknown // TODO: propriété non trouvée en sortie du parseur Diane => à supprimer ?
   /** Raison sociale */
   nom_entreprise: string
