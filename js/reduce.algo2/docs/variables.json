@@ -1541,5 +1541,12 @@
         "type": "string",
         "format": "date-time",
         "computed": true
+    },
+    {
+        "source": "compte",
+        "name": "compte_urssaf",
+        "description": "Compte administratif URSSAF",
+        "type": "number",
+        "computed": true
     }
 ]

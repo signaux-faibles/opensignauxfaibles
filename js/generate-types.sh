@@ -22,6 +22,7 @@ echo "Generating ${VAR_DOC_FILE}..."
 "${NODE_BIN}/ts-node" "reduce.algo2/docs/generate-docs.ts" \
   "reduce.algo2/entr_diane.ts" \
   "reduce.algo2/ccsf.ts" \
+  "reduce.algo2/compte.ts" \
   > "${VAR_DOC_FILE}"
 
 "${NODE_BIN}/eslint" "${OUT_FILE}" --fix
