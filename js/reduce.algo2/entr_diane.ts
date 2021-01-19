@@ -21,6 +21,9 @@ type CléRatioBdfInclus =
   | "financier_court_terme"
 type CléRatioBdfPassé = `${CléRatioBdfInclus}_past_${YearOffset}`
 
+// VariablesSource est utilisé pour populer `source` dans docs/variables.json (cf generate-docs.ts)
+export type VariablesSource = "diane"
+
 // ComputedVariables est inspecté pour générer docs/variables.json (cf generate-docs.ts)
 export type ComputedVariables = Record<
   CléRatioDianePassé,

@@ -2,6 +2,7 @@ import * as TJS from "typescript-json-schema"
 
 // Documentation schema for each variable.
 type VarDocumentation = {
+  source: string
   name: string
   type: string
   computed: boolean
@@ -17,7 +18,7 @@ const settings: TJS.PartialArgs = {
 }
 
 // Recursively extract properties from the schema, including in `allOf` arrays.
-const getAllProps = (schema: TJS.Definition): TJS.Definition =>
+const getAllProps = (schema: TJS.Definition = {}): TJS.Definition =>
   schema.allOf
     ? schema.allOf.reduce((allProps: TJS.Definition, subSchema) => {
         return typeof subSchema === "object"
@@ -32,7 +33,7 @@ const documentProps = (
   attributes: Partial<VarDocumentation>
 ): VarDocumentation[] =>
   Object.entries(props).map(([key, value]) => ({
-    source: "diane", // TODO: adapt for each source
+    source: attributes.source,
     name: key,
     ...value,
     ...attributes,
@@ -43,21 +44,48 @@ function documentPropertiesFromTypeDef(filePath: string): VarDocumentation[] {
   const program = TJS.getProgramFromFiles([filePath])
   const generator = TJS.buildGenerator(program, settings)
 
-  const transmittedVars = generator?.getSchemaForSymbol("TransmittedVariables")
-  const computedVars = generator?.getSchemaForSymbol("ComputedVariables")
+  let transmittedVars: TJS.Definition | undefined
+  try {
+    transmittedVars = generator?.getSchemaForSymbol("TransmittedVariables")
+  } catch (err) {
+    console.error(err.message)
+  }
+
+  let computedVars: TJS.Definition | undefined
+  try {
+    computedVars = generator?.getSchemaForSymbol("ComputedVariables")
+  } catch (err) {
+    console.error(err.message)
+  }
+
+  let source: string | undefined
+  try {
+    source = (generator?.getSchemaForSymbol("VariablesSource")?.enum ||
+      [])[0]?.toString()
+  } catch (err) {
+    console.error(err.message)
+  }
 
   return [
-    ...documentProps(transmittedVars?.properties, { computed: false }),
-    ...documentProps(getAllProps(computedVars || {}), { computed: true }),
+    ...documentProps(transmittedVars?.properties, { computed: false, source }),
+    ...documentProps(getAllProps(computedVars), { computed: true, source }),
   ]
 }
 
-INPUT_FILES.forEach((filePath) => {
+const varsByFile = INPUT_FILES.map((filePath) => {
   const documentedVars = documentPropertiesFromTypeDef(filePath)
   documentedVars.forEach((varDoc) => {
     if (!varDoc.description && !varDoc.name.includes("_past_")) {
       console.error(`variable ${varDoc.name} has no description`)
     }
   })
-  console.log(JSON.stringify(documentedVars, null, 4))
+  return documentedVars
 })
+
+console.log(
+  JSON.stringify(
+    varsByFile.reduce((acc, vars) => acc.concat(...vars), []),
+    null,
+    4
+  )
+)
