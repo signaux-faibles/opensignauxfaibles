@@ -5,6 +5,7 @@ type Input = {
 }
 
 export type ComputedVariables = {
+  /** Date de début de la procédure CCSF */
   date_ccsf: Date
 }
 

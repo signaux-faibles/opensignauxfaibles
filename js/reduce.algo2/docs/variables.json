@@ -1537,7 +1537,7 @@
     {
         "source": "ccsf",
         "name": "date_ccsf",
-        "description": "Enables basic storage and retrieval of dates and times.",
+        "description": "Date de début de la procédure CCSF",
         "type": "string",
         "format": "date-time",
         "computed": true
