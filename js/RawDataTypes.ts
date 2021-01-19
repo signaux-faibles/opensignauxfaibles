@@ -321,6 +321,18 @@ export type EntréeDiane = {
   rendement_capitaux_propres: number
   /** RendementRessourcesDurables Rendement des ressources durables (exprimé en %): Résultat courant avant impôts + Intérêts et charges assimilées / Ressources durables nettes * 100 */
   rendement_ressources_durables: number
+  /** Taux de marge commerciale (exprimé en %): Marge commerciale / Vente de marchandises * 100 */
+  taux_marge_commerciale: number
+  /** Taux de valeur ajoutée (exprimé en %): Valeur ajoutée / Chiffre d'affaires net * 100 */
+  taux_valeur_ajoutee: number
+  /** Part des salariés (exprimé en %): (Charges de personnel + Participation des salariés aux résultats) / Valeur ajoutée * 100 */
+  part_salaries: number
+  /** Part de l'État (exprimé en %): Impôts et taxes / Valeur ajoutée * 100 */
+  part_etat: number
+  /** Part des prêteurs (exprimé en %): Intérêts / Valeur ajoutée * 100 */
+  part_preteur: number
+  /** Part de l'autofinancement (exprimé en %): Capacité d'autofinancement avant répartition / Valeur ajoutée * 100 */
+  part_autofinancement: number
 }
 
 export type EntréeEllisphere = {

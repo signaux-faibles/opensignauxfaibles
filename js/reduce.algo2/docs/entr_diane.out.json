@@ -304,6 +304,42 @@
         "computed": false
     },
     {
+        "name": "taux_marge_commerciale",
+        "description": "Taux de marge commerciale (exprimé en %): Marge commerciale / Vente de marchandises * 100",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "name": "taux_valeur_ajoutee",
+        "description": "Taux de valeur ajoutée (exprimé en %): Valeur ajoutée / Chiffre d'affaires net * 100",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "name": "part_salaries",
+        "description": "Part des salariés (exprimé en %): (Charges de personnel + Participation des salariés aux résultats) / Valeur ajoutée * 100",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "name": "part_etat",
+        "description": "Part de l'État (exprimé en %): Impôts et taxes / Valeur ajoutée * 100",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "name": "part_preteur",
+        "description": "Part des prêteurs (exprimé en %): Intérêts / Valeur ajoutée * 100",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "name": "part_autofinancement",
+        "description": "Part de l'autofinancement (exprimé en %): Capacité d'autofinancement avant répartition / Valeur ajoutée * 100",
+        "type": "number",
+        "computed": false
+    },
+    {
         "name": "interets_past_1",
         "type": "number",
         "computed": true
@@ -820,6 +856,66 @@
     },
     {
         "name": "rendement_ressources_durables_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "taux_marge_commerciale_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "taux_marge_commerciale_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "taux_valeur_ajoutee_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "taux_valeur_ajoutee_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "part_salaries_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "part_salaries_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "part_etat_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "part_etat_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "part_preteur_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "part_preteur_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "part_autofinancement_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "part_autofinancement_past_2",
         "type": "number",
         "computed": true
     },
