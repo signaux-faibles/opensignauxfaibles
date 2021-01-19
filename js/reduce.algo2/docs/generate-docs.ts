@@ -2,17 +2,22 @@ import * as fs from "fs"
 import * as path from "path"
 import * as TJS from "typescript-json-schema"
 
+// Documentation schema for each variable.
+type VarDocumentation = {
+  name: string
+  computed: boolean
+  type: string
+}
+
 const INPUT_FILES = process.argv.slice(2)
 
+// Settings for typescript-json-schema
 const settings: TJS.PartialArgs = {
   ignoreErrors: true,
   ref: false,
 }
 
-const compilerOptions: TJS.CompilerOptions = {
-  // strictNullChecks: true,
-}
-
+// Recursively extract properties from the schema, including in `allOf` arrays.
 const getAllProps = (schema: TJS.Definition): TJS.Definition =>
   schema.allOf
     ? schema.allOf.reduce((allProps: TJS.Definition, subSchema) => {
@@ -22,45 +27,34 @@ const getAllProps = (schema: TJS.Definition): TJS.Definition =>
       }, {})
     : schema.properties ?? {}
 
-// Addition to the JSON Schema standard
-type Attributes = {
-  computed: boolean
-}
-
-const documentProps = (props: TJS.Definition = {}, attributes: Attributes) =>
+// Generate the documentation of variables from properties of a JSON Schema.
+const documentProps = (
+  props: TJS.Definition = {},
+  attributes: Partial<VarDocumentation>
+): VarDocumentation[] =>
   Object.entries(props).map(([key, value]) => ({
     name: key,
-    ...(typeof value === "boolean" ? undefined : value),
+    ...value,
     ...attributes,
   }))
 
-function documentPropertiesFromTypeDef(filePath: string) {
-  const outFile = path.basename(filePath).replace(".ts", ".out.json")
-  console.warn(`Generating ${outFile}...`)
-
-  const program = TJS.getProgramFromFiles([filePath], compilerOptions)
-
+// Generate the documentation of variables by importing types from a TypeScript file.
+function documentPropertiesFromTypeDef(filePath: string): VarDocumentation[] {
+  const program = TJS.getProgramFromFiles([filePath])
   const generator = TJS.buildGenerator(program, settings)
-  generator?.setSchemaOverride
 
-  const transmittedProps = generator?.getSchemaForSymbol("TransmittedVariables")
-    ?.properties
+  const transmittedVars = generator?.getSchemaForSymbol("TransmittedVariables")
+  const computedVars = generator?.getSchemaForSymbol("ComputedVariables")
 
-  const computedProps = getAllProps(
-    generator?.getSchemaForSymbol("ComputedVariables") || {}
-  )
-
-  const schema = {
-    description:
-      "Variables Diane générées par reduce.algo2 (opensignauxfaibles/sfdata)",
-    type: "object",
-    properties: [
-      ...documentProps(transmittedProps, { computed: false }),
-      ...documentProps(computedProps, { computed: true }),
-    ],
-  }
-
-  fs.writeFileSync(outFile, JSON.stringify(schema, null, 4))
+  return [
+    ...documentProps(transmittedVars?.properties, { computed: false }),
+    ...documentProps(getAllProps(computedVars || {}), { computed: true }),
+  ]
 }
 
-INPUT_FILES.forEach(documentPropertiesFromTypeDef)
+INPUT_FILES.forEach((filePath) => {
+  const outFile = path.basename(filePath).replace(".ts", ".out.json")
+  console.warn(`Generating ${outFile}...`)
+  const documentation = documentPropertiesFromTypeDef(filePath)
+  fs.writeFileSync(outFile, JSON.stringify(documentation, null, 4))
+})
