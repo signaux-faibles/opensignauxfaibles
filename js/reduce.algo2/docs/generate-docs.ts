@@ -1,3 +1,4 @@
+import * as path from "path"
 import * as TJS from "typescript-json-schema"
 
 // Documentation schema for each variable.
@@ -15,6 +16,7 @@ const INPUT_FILES = process.argv.slice(2)
 const settings: TJS.PartialArgs = {
   ignoreErrors: true,
   ref: false,
+  uniqueNames: true,
 }
 
 // Recursively extract properties from the schema, including in `allOf` arrays.
@@ -39,32 +41,47 @@ const documentProps = (
     ...attributes,
   }))
 
+const getTypeDefFromFile = (
+  generator: TJS.JsonSchemaGenerator,
+  typeName: string,
+  filePath: string
+): TJS.Definition | undefined => {
+  const filename = path.basename(filePath).replace(/\.ts$/, "")
+  const symbolName = generator
+    ?.getSymbols()
+    .find(
+      (smb) =>
+        smb.typeName === typeName && smb.fullyQualifiedName.includes(filename)
+    )?.name
+  try {
+    return generator?.getSchemaForSymbol(symbolName ?? "") // can throw
+  } catch (err) {
+    return undefined
+  }
+}
+
 // Generate the documentation of variables by importing types from a TypeScript file.
 function documentPropertiesFromTypeDef(filePath: string): VarDocumentation[] {
   const program = TJS.getProgramFromFiles([filePath])
   const generator = TJS.buildGenerator(program, settings)
-
-  let transmittedVars: TJS.Definition | undefined
-  try {
-    transmittedVars = generator?.getSchemaForSymbol("TransmittedVariables")
-  } catch (err) {
-    console.error(err.message)
+  if (!generator) {
+    throw new Error("failed to create generator")
   }
 
-  let computedVars: TJS.Definition | undefined
-  try {
-    computedVars = generator?.getSchemaForSymbol("ComputedVariables")
-  } catch (err) {
-    console.error(err.message)
-  }
+  const transmittedVars = getTypeDefFromFile(
+    generator,
+    "TransmittedVariables",
+    filePath
+  )
 
-  let source: string | undefined
-  try {
-    source = (generator?.getSchemaForSymbol("VariablesSource")?.enum ||
-      [])[0]?.toString()
-  } catch (err) {
-    console.error(err.message)
-  }
+  const computedVars = getTypeDefFromFile(
+    generator,
+    "ComputedVariables",
+    filePath
+  )
+
+  const source = (getTypeDefFromFile(generator, "VariablesSource", filePath)
+    ?.enum || [])[0]?.toString()
 
   return [
     ...documentProps(transmittedVars?.properties, { computed: false, source }),
