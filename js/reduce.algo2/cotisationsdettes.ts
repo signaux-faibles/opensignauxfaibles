@@ -27,11 +27,22 @@ type CotisationsDettesPassees = {
 }
 
 export type SortieCotisationsDettes = {
-  interessante_urssaf: boolean // true: si l'entreprise n'a pas eu de débit (dette) sur les 6 derniers mois
-  cotisation: number // montant (€) des mensualités de règlement des cotisations sociales
-  montant_part_ouvriere: number // montant (€) de la dette imputable au réglement des cotisatisations sociales des employés
-  montant_part_patronale: number // montant (€) de la dette imputable au réglement des cotisatisations sociales des dirigeants
+  /** true: si l'entreprise n'a pas eu de débit (dette) sur les 6 derniers mois */
+  interessante_urssaf: boolean
+  /** montant (€) des mensualités de règlement des cotisations sociales */
+  cotisation: number
+  /** montant (€) de la dette imputable au réglement des cotisatisations sociales des employés */
+  montant_part_ouvriere: number
+  /** montant (€) de la dette imputable au réglement des cotisatisations sociales des dirigeants */
+  montant_part_patronale: number
 } & CotisationsDettesPassees
+
+// Variables est inspecté pour générer docs/variables.json (cf generate-docs.ts)
+export type Variables = {
+  source: "cotisationsdettes"
+  computed: SortieCotisationsDettes
+  transmitted: unknown // unknown ~= aucune variable n'est transmise directement depuis RawData
+}
 
 /**
  * Calcule les variables liées aux cotisations sociales et dettes sur ces
