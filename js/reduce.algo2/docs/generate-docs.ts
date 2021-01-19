@@ -47,14 +47,16 @@ const getTypeDefFromFile = (
   filePath: string
 ): TJS.Definition | undefined => {
   const filename = path.basename(filePath).replace(/\.ts$/, "")
-  const symbolName = generator
+  const symbol = generator
     ?.getSymbols()
     .find(
       (smb) =>
-        smb.typeName === typeName && smb.fullyQualifiedName.includes(filename)
-    )?.name
+        smb.typeName === typeName &&
+        smb.fullyQualifiedName.includes(`${filename}".`)
+    )
+  // console.error(symbol?.fullyQualifiedName)
   try {
-    return generator?.getSchemaForSymbol(symbolName ?? "") // can throw
+    return generator?.getSchemaForSymbol(symbol?.name ?? "") // can throw
   } catch (err) {
     return undefined
   }
