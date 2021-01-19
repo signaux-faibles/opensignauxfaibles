@@ -220,6 +220,7 @@ export type EntréeDiane = {
   exercice_diane: number
   /** Date d'arrêté du bilan */
   arrete_bilan_diane: Date
+  /* Couverture du chiffre d'affaire par le fonds de roulement (exprimé en jours): Fonds de roulement net global / Chiffre d'affaires net * 360 */
   couverture_ca_fdr?: number | null
   interets?: number | null
   excedent_brut_d_exploitation?: number | null
@@ -272,9 +273,33 @@ export type EntréeDiane = {
   liquidite_generale: number
   /** Liquidité réduite: Actif circulant net hors stocks / Dettes à court terme */
   liquidite_reduite: number
+  /** Rotation des stocks (exprimé en jours): Stock / Chiffre d'affaires net * 360. Selon la nomenclature NAF Rév. 2 pour les secteurs d'activité 45, 46, 47, 95 (sauf 9511Z) ainsi que pour les codes d'activités 2319Z, 3831Z et 3832Z : Marchandises / (Achats de marchandises + Variation de stock) * 360 */
+  rotation_stocks: number
+  /** Crédit clients (exprimé en jours): (Clients + Effets portés à l'escompte et non échus) / Chiffre d'affaires TTC * 360 */
+  credit_client: number
+  /** Crédit fournisseurs (exprimé en jours): Fournisseurs / Achats TTC * 360 */
+  credit_fournisseur: number
+  /** Chiffre d'affaire par effectif (exprimé en k€/emploi): Chiffre d'affaires net / Effectif * 1000 */
+  ca_par_effectif: number
+  /** Taux d'intérêt financier (exprimé en %): Intérêts / Chiffre d'affaires net * 100 */
+  taux_interet_financier: number
+  /** Intérêts sur chiffre d'affaire (exprimé en %): Total des charges financières / Chiffre d'affaires net * 100 */
+  taux_interet_sur_ca: number
+  /** Endettement global (exprimé en jours): (Dettes + Effets portés à l'escompte et non échus) / Chiffre d'affaires net * 360 */
+  endettement_global: number
+  /** Taux d'endettement (exprimé en %): Dettes de caractère financier / (Capitaux propres + autres fonds propres) * 100 */
+  taux_endettement: number
+  /** Capacité de remboursement: Dettes de caractère financier / Capacité d'autofinancement avant répartition */
+  capacite_remboursement: number
+  /** Capacité d'autofinancement (exprimé en %): Capacité d'autofinancement avant répartition / (Chiffre d'affaires net + Subvention d'exploitation) * 100 */
+  capacite_autofinancement: number
+  /** Couverture du chiffre d'affaire par le besoin en fonds de roulement (exprimé en jours): Besoins en fonds de roulement / Chiffre d'affaires net * 360 */
+  couverture_ca_besoin_fdr: number
+  /** PoidsBFRExploitation Poids des besoins en fonds de roulement d'exploitation (exprimé en %): Besoins en fonds de roulement d'exploitation / Chiffre d'affaires net * 100 */
+  poids_bfr_exploitation: number
+  /** Exportation Exportation (exprimé en %): (Chiffre d'affaires net - Chiffre d'affaires net en France) / Chiffre d'affaires net * 100 */
+  exportation: number
 }
-
-// TODO: ajouter NotePreface ou le retirer de la documentation (cf https://github.com/signaux-faibles/documentation/blob/master/description-donnees.md#donn%C3%A9es-financi%C3%A8res-issues-des-bilans-d%C3%A9pos%C3%A9s-au-greffe-de-tribunaux-de-commerce)
 
 export type EntréeEllisphere = {
   siren: string

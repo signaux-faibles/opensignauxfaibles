@@ -160,6 +160,84 @@
         "computed": false
     },
     {
+        "name": "rotation_stocks",
+        "description": "Rotation des stocks (exprimé en jours): Stock / Chiffre d'affaires net * 360. Selon la nomenclature NAF Rév. 2 pour les secteurs d'activité 45, 46, 47, 95 (sauf 9511Z) ainsi que pour les codes d'activités 2319Z, 3831Z et 3832Z : Marchandises / (Achats de marchandises + Variation de stock) * 360",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "name": "credit_client",
+        "description": "Crédit clients (exprimé en jours): (Clients + Effets portés à l'escompte et non échus) / Chiffre d'affaires TTC * 360",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "name": "credit_fournisseur",
+        "description": "Crédit fournisseurs (exprimé en jours): Fournisseurs / Achats TTC * 360",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "name": "ca_par_effectif",
+        "description": "Chiffre d'affaire par effectif (exprimé en k€/emploi): Chiffre d'affaires net / Effectif * 1000",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "name": "taux_interet_financier",
+        "description": "Taux d'intérêt financier (exprimé en %): Intérêts / Chiffre d'affaires net * 100",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "name": "taux_interet_sur_ca",
+        "description": "Intérêts sur chiffre d'affaire (exprimé en %): Total des charges financières / Chiffre d'affaires net * 100",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "name": "endettement_global",
+        "description": "Endettement global (exprimé en jours): (Dettes + Effets portés à l'escompte et non échus) / Chiffre d'affaires net * 360",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "name": "taux_endettement",
+        "description": "Taux d'endettement (exprimé en %): Dettes de caractère financier / (Capitaux propres + autres fonds propres) * 100",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "name": "capacite_remboursement",
+        "description": "Capacité de remboursement: Dettes de caractère financier / Capacité d'autofinancement avant répartition",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "name": "capacite_autofinancement",
+        "description": "Capacité d'autofinancement (exprimé en %): Capacité d'autofinancement avant répartition / (Chiffre d'affaires net + Subvention d'exploitation) * 100",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "name": "couverture_ca_besoin_fdr",
+        "description": "Couverture du chiffre d'affaire par le besoin en fonds de roulement (exprimé en jours): Besoins en fonds de roulement / Chiffre d'affaires net * 360",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "name": "poids_bfr_exploitation",
+        "description": "PoidsBFRExploitation Poids des besoins en fonds de roulement d'exploitation (exprimé en %): Besoins en fonds de roulement d'exploitation / Chiffre d'affaires net * 100",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "name": "exportation",
+        "description": "Exportation Exportation (exprimé en %): (Chiffre d'affaires net - Chiffre d'affaires net en France) / Chiffre d'affaires net * 100",
+        "type": "number",
+        "computed": false
+    },
+    {
         "name": "interets_past_1",
         "type": "number",
         "computed": true
@@ -436,6 +514,136 @@
     },
     {
         "name": "liquidite_reduite_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "rotation_stocks_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "rotation_stocks_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "credit_client_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "credit_client_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "credit_fournisseur_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "credit_fournisseur_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "ca_par_effectif_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "ca_par_effectif_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "taux_interet_financier_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "taux_interet_financier_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "taux_interet_sur_ca_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "taux_interet_sur_ca_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "endettement_global_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "endettement_global_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "taux_endettement_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "taux_endettement_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "capacite_remboursement_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "capacite_remboursement_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "capacite_autofinancement_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "capacite_autofinancement_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "couverture_ca_besoin_fdr_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "couverture_ca_besoin_fdr_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "poids_bfr_exploitation_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "poids_bfr_exploitation_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "exportation_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "exportation_past_2",
         "type": "number",
         "computed": true
     },
