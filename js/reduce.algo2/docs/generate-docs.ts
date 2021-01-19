@@ -1,5 +1,3 @@
-import * as fs from "fs"
-import * as path from "path"
 import * as TJS from "typescript-json-schema"
 
 // Documentation schema for each variable.
@@ -54,13 +52,11 @@ function documentPropertiesFromTypeDef(filePath: string): VarDocumentation[] {
 }
 
 INPUT_FILES.forEach((filePath) => {
-  const outFile = path.basename(filePath).replace(".ts", ".out.json")
-  console.warn(`Generating ${outFile}...`)
   const documentedVars = documentPropertiesFromTypeDef(filePath)
   documentedVars.forEach((varDoc) => {
     if (!varDoc.description && !varDoc.name.includes("_past_")) {
       console.error(`variable ${varDoc.name} has no description`)
     }
   })
-  fs.writeFileSync(outFile, JSON.stringify(documentedVars, null, 4))
+  console.log(JSON.stringify(documentedVars, null, 4))
 })
