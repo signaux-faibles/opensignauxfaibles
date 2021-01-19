@@ -220,7 +220,7 @@ export type EntréeDiane = {
   exercice_diane: number
   /** Date d'arrêté du bilan */
   arrete_bilan_diane: Date
-  /* Couverture du chiffre d'affaire par le fonds de roulement (exprimé en jours): Fonds de roulement net global / Chiffre d'affaires net * 360 */
+  /** Couverture du chiffre d'affaire par le fonds de roulement (exprimé en jours): Fonds de roulement net global / Chiffre d'affaires net * 360 */
   couverture_ca_fdr?: number | null
   /** Intérêts et charges assimilées. */
   interets?: number | null

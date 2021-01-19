@@ -50,6 +50,7 @@
     },
     {
         "name": "couverture_ca_fdr",
+        "description": "Couverture du chiffre d'affaire par le fonds de roulement (exprimé en jours): Fonds de roulement net global / Chiffre d'affaires net * 360",
         "type": "number",
         "computed": false
     },
