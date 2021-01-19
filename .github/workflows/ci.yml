@@ -81,9 +81,8 @@ jobs:
       - run: npm install --prefer-offline --no-audit
         working-directory: js
       - name: Check that generated files are up to date (jsFunctions.go and variables.json)
-        working-directory: lib/engine
         run: |
-          go generate -x
+          go generate -x ./...
           git diff
           exit $(git diff | wc -l)
       - run: npm run lint
