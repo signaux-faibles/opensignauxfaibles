@@ -222,15 +222,23 @@ export type EntréeDiane = {
   arrete_bilan_diane: Date
   /* Couverture du chiffre d'affaire par le fonds de roulement (exprimé en jours): Fonds de roulement net global / Chiffre d'affaires net * 360 */
   couverture_ca_fdr?: number | null
+  /** Intérêts et charges assimilées. */
   interets?: number | null
+  /** Excédent brut d'exploitation. */
   excedent_brut_d_exploitation?: number | null
+  /** Produits financiers. */
   produits_financiers?: number | null
+  /** Produits exceptionnels. */
   produit_exceptionnel?: number | null
+  /** Charges exceptionnelles. */
   charge_exceptionnelle?: number | null
+  /** Charges financières. */
   charges_financieres?: number | null
+  /** Chiffre d'affaires */
   ca?: number | null
   /** Concours bancaires courants. (Pour recalculer les frais financiers court terme de la Banque de France) */
   concours_bancaire_courant?: number | null
+  /** Valeur ajoutée. */
   valeur_ajoutee?: number | null
   /** Dette fiscale et sociale */
   dette_fiscale_et_sociale?: number | null
@@ -333,6 +341,42 @@ export type EntréeDiane = {
   part_preteur: number
   /** Part de l'autofinancement (exprimé en %): Capacité d'autofinancement avant répartition / Valeur ajoutée * 100 */
   part_autofinancement: number
+  /** Chiffre d'affaires à l'exportation */
+  ca_exportation: number
+  /** Achats de marchandises */
+  achat_marchandises: number
+  /** Achats de matières premières et autres approvisionnement. */
+  achat_matieres_premieres: number
+  /** Production de l'exercice. */
+  production: number
+  /** Marge commerciale. */
+  marge_commerciale: number
+  /** Consommation de l'exercice. */
+  consommation: number
+  /** Autres achats et charges externes. */
+  autres_achats_charges_externes: number
+  /** Charges de personnel. */
+  charge_personnel: number
+  /** Impôts, taxes et versements assimilés. */
+  impots_taxes: number
+  /** Subventions d'exploitation. */
+  subventions_d_exploitation: number
+  /** Autres produits, charges et reprises. */
+  autres_produits_charges_reprises: number
+  /** Dotation d'exploitation aux amortissements et aux provisions. */
+  dotation_amortissement: number
+  /** Résultat d'exploitation. */
+  resultat_expl: number
+  /** Opérations en commun. */
+  operations_commun: number
+  /** Résultat courant avant impôts. */
+  resultat_avant_impot: number
+  /** Participation des salariés aux résultats. */
+  participation_salaries: number
+  /** Impôts sur les bénéfices et impôts différés. */
+  impot_benefice: number
+  /** Bénéfice ou perte. */
+  benefice_ou_perte: number
 }
 
 export type EntréeEllisphere = {

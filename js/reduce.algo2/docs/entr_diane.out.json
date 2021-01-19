@@ -1,31 +1,37 @@
 [
     {
         "name": "interets",
+        "description": "Intérêts et charges assimilées.",
         "type": "number",
         "computed": false
     },
     {
         "name": "excedent_brut_d_exploitation",
+        "description": "Excédent brut d'exploitation.",
         "type": "number",
         "computed": false
     },
     {
         "name": "produits_financiers",
+        "description": "Produits financiers.",
         "type": "number",
         "computed": false
     },
     {
         "name": "produit_exceptionnel",
+        "description": "Produits exceptionnels.",
         "type": "number",
         "computed": false
     },
     {
         "name": "charge_exceptionnelle",
+        "description": "Charges exceptionnelles.",
         "type": "number",
         "computed": false
     },
     {
         "name": "charges_financieres",
+        "description": "Charges financières.",
         "type": "number",
         "computed": false
     },
@@ -49,6 +55,7 @@
     },
     {
         "name": "ca",
+        "description": "Chiffre d'affaires",
         "type": "number",
         "computed": false
     },
@@ -60,6 +67,7 @@
     },
     {
         "name": "valeur_ajoutee",
+        "description": "Valeur ajoutée.",
         "type": "number",
         "computed": false
     },
@@ -336,6 +344,114 @@
     {
         "name": "part_autofinancement",
         "description": "Part de l'autofinancement (exprimé en %): Capacité d'autofinancement avant répartition / Valeur ajoutée * 100",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "name": "ca_exportation",
+        "description": "Chiffre d'affaires à l'exportation",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "name": "achat_marchandises",
+        "description": "Achats de marchandises",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "name": "achat_matieres_premieres",
+        "description": "Achats de matières premières et autres approvisionnement.",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "name": "production",
+        "description": "Production de l'exercice.",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "name": "marge_commerciale",
+        "description": "Marge commerciale.",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "name": "consommation",
+        "description": "Consommation de l'exercice.",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "name": "autres_achats_charges_externes",
+        "description": "Autres achats et charges externes.",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "name": "charge_personnel",
+        "description": "Charges de personnel.",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "name": "impots_taxes",
+        "description": "Impôts, taxes et versements assimilés.",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "name": "subventions_d_exploitation",
+        "description": "Subventions d'exploitation.",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "name": "autres_produits_charges_reprises",
+        "description": "Autres produits, charges et reprises.",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "name": "dotation_amortissement",
+        "description": "Dotation d'exploitation aux amortissements et aux provisions.",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "name": "resultat_expl",
+        "description": "Résultat d'exploitation.",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "name": "operations_commun",
+        "description": "Opérations en commun.",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "name": "resultat_avant_impot",
+        "description": "Résultat courant avant impôts.",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "name": "participation_salaries",
+        "description": "Participation des salariés aux résultats.",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "name": "impot_benefice",
+        "description": "Impôts sur les bénéfices et impôts différés.",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "name": "benefice_ou_perte",
+        "description": "Bénéfice ou perte.",
         "type": "number",
         "computed": false
     },
@@ -916,6 +1032,186 @@
     },
     {
         "name": "part_autofinancement_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "ca_exportation_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "ca_exportation_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "achat_marchandises_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "achat_marchandises_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "achat_matieres_premieres_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "achat_matieres_premieres_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "production_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "production_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "marge_commerciale_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "marge_commerciale_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "consommation_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "consommation_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "autres_achats_charges_externes_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "autres_achats_charges_externes_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "charge_personnel_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "charge_personnel_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "impots_taxes_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "impots_taxes_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "subventions_d_exploitation_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "subventions_d_exploitation_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "autres_produits_charges_reprises_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "autres_produits_charges_reprises_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "dotation_amortissement_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "dotation_amortissement_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "resultat_expl_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "resultat_expl_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "operations_commun_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "operations_commun_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "resultat_avant_impot_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "resultat_avant_impot_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "participation_salaries_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "participation_salaries_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "impot_benefice_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "impot_benefice_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "benefice_ou_perte_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "name": "benefice_ou_perte_past_2",
         "type": "number",
         "computed": true
     },
