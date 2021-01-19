@@ -21,6 +21,7 @@ type CléRatioBdfInclus =
   | "financier_court_terme"
 type CléRatioBdfPassé = `${CléRatioBdfInclus}_past_${YearOffset}`
 
+// ComputedVariables est inspecté pour générer docs/variables.json (cf generate-docs.ts)
 export type ComputedVariables = Record<
   CléRatioDianePassé,
   number | null | undefined
@@ -28,6 +29,7 @@ export type ComputedVariables = Record<
   Record<CléRatioBdfInclus, number> &
   Record<CléRatioBdfPassé, number>
 
+// TransmittedVariables est inspecté pour générer docs/variables.json (cf generate-docs.ts)
 export type TransmittedVariables = DonnéesDianeTransmises
 
 export type SortieDiane = ComputedVariables & TransmittedVariables
