@@ -279,6 +279,28 @@
     },
     {
         "source": "diane",
+        "name": "exercice_diane",
+        "description": "Année de l'exercice",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "source": "diane",
+        "name": "arrete_bilan_diane",
+        "description": "Date d'arrêté du bilan",
+        "type": "string",
+        "format": "date-time",
+        "computed": false
+    },
+    {
+        "source": "diane",
+        "name": "couverture_ca_fdr",
+        "description": "Couverture du chiffre d'affaire par le fonds de roulement (exprimé en jours): Fonds de roulement net global / Chiffre d'affaires net * 360",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "source": "diane",
         "name": "interets",
         "description": "Intérêts et charges assimilées.",
         "type": "number",
@@ -316,28 +338,6 @@
         "source": "diane",
         "name": "charges_financieres",
         "description": "Charges financières.",
-        "type": "number",
-        "computed": false
-    },
-    {
-        "source": "diane",
-        "name": "exercice_diane",
-        "description": "Année de l'exercice",
-        "type": "number",
-        "computed": false
-    },
-    {
-        "source": "diane",
-        "name": "arrete_bilan_diane",
-        "description": "Date d'arrêté du bilan",
-        "type": "string",
-        "format": "date-time",
-        "computed": false
-    },
-    {
-        "source": "diane",
-        "name": "couverture_ca_fdr",
-        "description": "Couverture du chiffre d'affaire par le fonds de roulement (exprimé en jours): Fonds de roulement net global / Chiffre d'affaires net * 360",
         "type": "number",
         "computed": false
     },
@@ -812,6 +812,42 @@
     },
     {
         "source": "diane",
+        "name": "exercice_diane_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "diane",
+        "name": "exercice_diane_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "diane",
+        "name": "arrete_bilan_diane_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "diane",
+        "name": "arrete_bilan_diane_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "diane",
+        "name": "couverture_ca_fdr_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "diane",
+        "name": "couverture_ca_fdr_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "diane",
         "name": "interets_past_1",
         "type": "number",
         "computed": true
@@ -879,42 +915,6 @@
     {
         "source": "diane",
         "name": "charges_financieres_past_2",
-        "type": "number",
-        "computed": true
-    },
-    {
-        "source": "diane",
-        "name": "exercice_diane_past_1",
-        "type": "number",
-        "computed": true
-    },
-    {
-        "source": "diane",
-        "name": "exercice_diane_past_2",
-        "type": "number",
-        "computed": true
-    },
-    {
-        "source": "diane",
-        "name": "arrete_bilan_diane_past_1",
-        "type": "number",
-        "computed": true
-    },
-    {
-        "source": "diane",
-        "name": "arrete_bilan_diane_past_2",
-        "type": "number",
-        "computed": true
-    },
-    {
-        "source": "diane",
-        "name": "couverture_ca_fdr_past_1",
-        "type": "number",
-        "computed": true
-    },
-    {
-        "source": "diane",
-        "name": "couverture_ca_fdr_past_2",
         "type": "number",
         "computed": true
     },
