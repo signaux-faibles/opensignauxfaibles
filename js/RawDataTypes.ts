@@ -78,7 +78,7 @@ export type BatchValueProps = CommonBatchProps &
     ccsf: ParHash<EntréeCcsf>
     sirene: ParHash<EntréeSirene>
     sirene_ul: ParHash<EntréeSireneEntreprise>
-    effectif_ent: ParHash<EntréeEffectif>
+    effectif_ent: ParHash<EntréeEffectifEnt>
     bdf: ParHash<EntréeBdf>
     diane: ParHash<EntréeDiane>
     ellisphere: ParHash<EntréeEllisphere>
@@ -151,9 +151,16 @@ export type EntréeRepOrder = {
 }
 
 export type EntréeEffectif = {
+  /** Compte administratif URSSAF. */
   numero_compte: string
   periode: Date
-  /** Nombre de personnes employées par l'entreprise ou l'établissement. */
+  /** Nombre de personnes employées par l'établissement. */
+  effectif: number
+}
+
+export type EntréeEffectifEnt = {
+  periode: Date
+  /** Nombre de personnes employées par l'entreprise. */
   effectif: number
 }
 

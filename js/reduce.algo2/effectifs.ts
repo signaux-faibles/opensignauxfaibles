@@ -1,5 +1,11 @@
 import { f } from "./functions"
-import { EntréeEffectif, ParHash, Timestamp, ParPériode } from "../RawDataTypes"
+import {
+  EntréeEffectif,
+  EntréeEffectifEnt,
+  ParHash,
+  Timestamp,
+  ParPériode,
+} from "../RawDataTypes"
 
 // Paramètres globaux utilisés par "reduce.algo2"
 declare const offset_effectif: number
@@ -45,7 +51,9 @@ export type SortieEffectifs<K extends Clé> = ValeursTransmises<K> &
   ValeursCalculées<K>
 
 export function effectifs<K extends Clé>(
-  entréeEffectif: ParHash<EntréeEffectif>,
+  entréeEffectif: ParHash<
+    K extends "effectif_ent" ? EntréeEffectifEnt : EntréeEffectif
+  >,
   periodes: Timestamp[],
   clé: K
 ): ParPériode<SortieEffectifs<K>> {
