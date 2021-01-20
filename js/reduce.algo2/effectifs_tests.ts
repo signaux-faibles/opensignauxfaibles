@@ -1,11 +1,11 @@
-import { effectifs, SortieEffectifs } from "./effectifs"
+import { effectifs, SortieEffectifsEtab } from "./effectifs"
 import test, { ExecutionContext } from "ava"
 import { setGlobals } from "../test/helpers/setGlobals"
 import { ParPériode, ParHash, EntréeEffectif } from "../RawDataTypes"
 
 function assertEffectif(
   t: ExecutionContext,
-  résultat: ParPériode<SortieEffectifs>,
+  résultat: ParPériode<SortieEffectifsEtab>,
   effectifsAttendus: Array<[number | null, boolean]>
 ): void {
   const périodes = Object.keys(résultat)
@@ -35,11 +35,10 @@ test.serial(
         numero_compte: "123",
       },
     }
-    const clé = "effectif"
     const résultat = effectifs(
       entréeEffectif as ParHash<EntréeEffectif>,
       periodes.map((d) => d.getTime()),
-      clé
+      "effectif" // clé: établissement
     )
     assertEffectif(t, résultat, [
       [entréeEffectif["hash_periode0"].effectif, false],
@@ -64,11 +63,10 @@ test.serial(
         numero_compte: "123",
       },
     }
-    const clé = "effectif"
     const résultat = effectifs(
       entréeEffectif as ParHash<EntréeEffectif>,
       periodes.map((d) => d.getTime()),
-      clé
+      "effectif" // clé: établissement
     )
     assertEffectif(t, résultat, [
       [entréeEffectif["hash_periode0"].effectif, false],
@@ -100,11 +98,10 @@ test.serial(
         numero_compte: "123",
       },
     }
-    const clé = "effectif"
     const résultat = effectifs(
       entréeEffectif as ParHash<EntréeEffectif>,
       periodes.map((d) => d.getTime()),
-      clé
+      "effectif" // clé: établissement
     )
     assertEffectif(t, résultat, [
       [entréeEffectif["hash_periode0"].effectif, false],

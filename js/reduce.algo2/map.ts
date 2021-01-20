@@ -21,7 +21,7 @@ type SortieMapEntreprise = {
   Partial<SortieBdf> &
   Partial<SortiePaydex> &
   Partial<SortieDiane> &
-  Partial<SortieEffectifs>
+  Partial<SortieEffectifs<"effectif_ent">>
 
 export type SortieMapEtablissement = Partial<DonnéesAgrégées>
 

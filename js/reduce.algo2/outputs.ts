@@ -14,7 +14,7 @@ import { SiretOrSiren, ParPériode } from "../RawDataTypes"
 export type DonnéesAgrégées = {
   siret: SiretOrSiren
   periode: Date
-  effectif: number | null
+  effectif: number | null // TODO: remplacer par SortieEffectif<"effectif"> ?
   etat_proc_collective: "in_bonis" // ou ProcolToHumanRes ?
   interessante_urssaf: true
   outcome: false
