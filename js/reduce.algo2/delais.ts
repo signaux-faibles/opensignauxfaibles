@@ -1,16 +1,11 @@
 import { f } from "./functions"
 import { EntréeDelai, ParHash, ParPériode } from "../RawDataTypes"
+import { SortieCotisationsDettes } from "./cotisationsdettes"
 
-type DeepReadonly<T> = Readonly<T> // pas vraiment, mais espoire que TS le supporte prochainement
-
-// Valeurs attendues pour chaque période, lors de l'appel à delais()
-export type DebitComputedValues = {
-  montant_part_patronale: number
-  montant_part_ouvriere: number
-}
+type DeepReadonly<T> = Readonly<T> // pas vraiment immutable pout l'instant, mais espoir que TS le permette prochainement
 
 // Valeurs retournées par delais(), pour chaque période
-export type DelaiComputedValues = {
+export type SortieDelais = {
   // valeurs fournies, reportées par delais() dans chaque période:
   delai_nb_jours_total: number // nombre de jours entre date_creation et date_echeance
   delai_montant_echeancier: number // exprimé en euros
@@ -31,11 +26,11 @@ export type DelaiComputedValues = {
  */
 export function delais(
   vDelai: ParHash<EntréeDelai>,
-  debitParPériode: DeepReadonly<ParPériode<DebitComputedValues>>,
+  debitParPériode: DeepReadonly<ParPériode<SortieCotisationsDettes>>,
   intervalleTraitement: { premièreDate: Date; dernièreDate: Date }
-): ParPériode<DelaiComputedValues> {
+): ParPériode<SortieDelais> {
   "use strict"
-  const donnéesDélaiParPériode: ParPériode<DelaiComputedValues> = {}
+  const donnéesDélaiParPériode: ParPériode<SortieDelais> = {}
   Object.values(vDelai).forEach((delai) => {
     if (delai.duree_delai <= 0) {
       return
@@ -75,7 +70,7 @@ export function delais(
         const time = debutDeMois.getTime()
         const remainingDays = f.nbDays(debutDeMois, delai.date_echeance)
         const inputAtTime = debitParPériode[time]
-        const outputAtTime: DelaiComputedValues = {
+        const outputAtTime: SortieDelais = {
           delai_nb_jours_restants: remainingDays,
           delai_nb_jours_total: delai.duree_delai,
           delai_montant_echeancier: delai.montant_echeancier,
