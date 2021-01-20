@@ -21,6 +21,10 @@ type ValeursTransmisesEntr = {
   effectif_ent: ValeurEffectif | null
 }
 
+export type ValeursTransmises<
+  Clé extends CléSortieEffectif
+> = Clé extends "effectif_ent" ? ValeursTransmisesEntr : ValeursTransmisesEtab
+
 type ValeursCalculuées = Record<CléSortieEffectifReporté, 1 | 0> &
   Record<CléSortieEffectifPassé, ValeurEffectif>
 
@@ -35,7 +39,7 @@ export type SortieEffectifsEtab = ValeursTransmisesEtab & ValeursCalculuées
 export type SortieEffectifsEntr = ValeursTransmisesEntr & ValeursCalculuées
 export type SortieEffectifs<
   Clé extends CléSortieEffectif
-> = Clé extends "effectif_ent" ? SortieEffectifsEntr : SortieEffectifsEtab
+> = ValeursTransmises<Clé> & ValeursCalculuées
 
 export function effectifs<Clé extends CléSortieEffectif>(
   entréeEffectif: ParHash<EntréeEffectif>,
