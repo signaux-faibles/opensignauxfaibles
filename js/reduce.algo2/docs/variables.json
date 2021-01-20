@@ -1671,5 +1671,33 @@
         "name": "montant_part_patronale_past_3",
         "type": "number",
         "computed": true
+    },
+    {
+        "source": "delais",
+        "name": "delai_nb_jours_total",
+        "description": "Nombre de jours entre date_creation et date_echeance.",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "source": "delais",
+        "name": "delai_montant_echeancier",
+        "description": "Montant global de l'échéancier, en euros.",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "source": "delais",
+        "name": "delai_nb_jours_restants",
+        "description": "Nombre de jours restants du délai.",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "delais",
+        "name": "delai_deviation_remboursement",
+        "description": "Ratio entre remboursement linéaire et effectif, à condition d'avoir le montant des parts ouvrière et patronale.",
+        "type": "number",
+        "computed": true
     }
 ]

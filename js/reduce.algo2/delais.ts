@@ -4,14 +4,30 @@ import { SortieCotisationsDettes } from "./cotisationsdettes"
 
 type DeepReadonly<T> = Readonly<T> // pas vraiment immutable pout l'instant, mais espoir que TS le permette prochainement
 
-// Valeurs retournées par delais(), pour chaque période
-export type SortieDelais = {
-  // valeurs fournies, reportées par delais() dans chaque période:
-  delai_nb_jours_total: number // nombre de jours entre date_creation et date_echeance
-  delai_montant_echeancier: number // exprimé en euros
-  // valeurs calculées par delais():
+// valeurs fournies, reportées par delais() dans chaque période
+type ValeursTransmises = {
+  /** Nombre de jours entre date_creation et date_echeance. */
+  delai_nb_jours_total: EntréeDelai["duree_delai"]
+  /** Montant global de l'échéancier, en euros. */
+  delai_montant_echeancier: EntréeDelai["montant_echeancier"]
+}
+
+// valeurs calculées par delais()
+type ValeursCalculuées = {
+  /** Nombre de jours restants du délai. */
   delai_nb_jours_restants: number
-  delai_deviation_remboursement?: number // ratio entre remboursement linéaire et effectif, à condition d'avoir le montant des parts ouvrière et patronale
+  /** Ratio entre remboursement linéaire et effectif, à condition d'avoir le montant des parts ouvrière et patronale. */
+  delai_deviation_remboursement?: number
+}
+
+// Valeurs retournées par delais(), pour chaque période
+export type SortieDelais = ValeursTransmises & ValeursCalculuées
+
+// Variables est inspecté pour générer docs/variables.json (cf generate-docs.ts)
+export type Variables = {
+  source: "delais"
+  computed: ValeursCalculuées
+  transmitted: ValeursTransmises
 }
 
 /**

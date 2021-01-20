@@ -146,8 +146,10 @@ export type EntréeEffectif = {
 export type EntréeDelai = {
   date_creation: Date
   date_echeance: Date
-  duree_delai: number // nombre de jours entre date_creation et date_echeance
-  montant_echeancier: number // exprimé en euros
+  /** Nombre de jours entre date_creation et date_echeance. */
+  duree_delai: number
+  /** Montant global de l'échéancier, en euros. */
+  montant_echeancier: number
 }
 
 export type EntréeCotisation = {
