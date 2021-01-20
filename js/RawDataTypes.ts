@@ -131,7 +131,11 @@ export type EntréeApDemande = {
 }
 
 export type EntréeCompte = {
+  /** Date à laquelle cet établissement est associé à ce numéro de compte URSSAF. */
   periode: Date
+  /** Numéro SIRET de l'établissement. Les numéros avec des Lettres sont des sirets provisoires. */
+  siret: string
+  /** Compte administratif URSSAF. */
   numero_compte: number
 }
 
