@@ -139,6 +139,7 @@ export type EntréeRepOrder = {
 export type EntréeEffectif = {
   numero_compte: string
   periode: Date
+  /** Nombre de personnes employées par l'entreprise ou l'établissement. */
   effectif: number
 }
 

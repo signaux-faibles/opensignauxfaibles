@@ -11,14 +11,23 @@ type CléSortieEffectifPassé = `${CléSortieEffectif}_past_${MonthOffset}`
 
 type ValeurEffectif = number
 
-export type SortieEffectifs = Record<CléSortieEffectif, ValeurEffectif | null> &
-  Record<CléSortieEffectifReporté, 1 | 0> &
+/** Nombre de personnes employées par l'entreprise ou l'établissement. */
+type ValeursTransmises = Record<CléSortieEffectif, ValeurEffectif | null>
+
+type ValeursCalculuées = Record<CléSortieEffectifReporté, 1 | 0> &
   Record<CléSortieEffectifPassé, ValeurEffectif>
 
-export type EffectifEntreprise = ParHash<EntréeEffectif>
+export type SortieEffectifs = ValeursTransmises & ValeursCalculuées
+
+// Variables est inspecté pour générer docs/variables.json (cf generate-docs.ts)
+export type Variables = {
+  source: "effectifs"
+  computed: ValeursCalculuées
+  transmitted: ValeursTransmises
+}
 
 export function effectifs(
-  entréeEffectif: EffectifEntreprise,
+  entréeEffectif: ParHash<EntréeEffectif>,
   periodes: Timestamp[],
   clé: CléSortieEffectif
 ): ParPériode<SortieEffectifs> {

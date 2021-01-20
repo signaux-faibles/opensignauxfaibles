@@ -26,6 +26,7 @@ echo "Generating ${VAR_DOC_FILE}..."
   "reduce.algo2/cotisation.ts" \
   "reduce.algo2/cotisationsdettes.ts" \
   "reduce.algo2/delais.ts" \
+  "reduce.algo2/effectifs.ts" \
   > "${VAR_DOC_FILE}"
 
 "${NODE_BIN}/eslint" "${OUT_FILE}" --fix
