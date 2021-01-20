@@ -1,3 +1,4 @@
+import * as path from "path"
 import * as TJS from "typescript-json-schema"
 
 // Documentation schema for each variable.
@@ -59,6 +60,10 @@ const getTypeDefsFromFiles = (
   const typeDefs: TJS.Definition[] = []
   for (const symbol of symbols) {
     try {
+      const fileName = path.basename(
+        symbol?.fullyQualifiedName?.split('"')[1] ?? ""
+      )
+      console.warn(`- found ${typeName} type in file: ${fileName}.ts`)
       const typeDef = generator?.getSchemaForSymbol(symbol?.name ?? "") // can throw
       if (!typeDef) {
         throw new Error(`no schema for ${symbol?.fullyQualifiedName}`)
