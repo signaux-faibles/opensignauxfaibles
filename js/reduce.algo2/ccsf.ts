@@ -1,4 +1,4 @@
-import { ParHash } from "../RawDataTypes"
+import { EntréeCcsf, ParHash } from "../RawDataTypes"
 
 type Input = {
   periode: Date
@@ -17,7 +17,7 @@ export type Variables = {
 }
 
 export function ccsf(
-  vCcsf: ParHash<{ date_traitement: Date }>,
+  vCcsf: ParHash<EntréeCcsf>,
   output_array: (Input & Partial<SortieCcsf>)[]
 ): void {
   "use strict"

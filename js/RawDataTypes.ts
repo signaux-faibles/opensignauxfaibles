@@ -75,7 +75,7 @@ export type BatchValueProps = CommonBatchProps &
     procol: ParHash<EntréeDéfaillances>
     cotisation: ParHash<EntréeCotisation>
     debit: ParHash<EntréeDebit>
-    ccsf: ParHash<{ date_traitement: Date }>
+    ccsf: ParHash<EntréeCcsf>
     sirene: ParHash<EntréeSirene>
     sirene_ul: ParHash<EntréeSireneEntreprise>
     effectif_ent: ParHash<EntréeEffectif>
@@ -85,6 +85,13 @@ export type BatchValueProps = CommonBatchProps &
   }
 
 // Détail des types de données
+
+export type EntréeCcsf = {
+  /** Date de début de la procédure CCSF */
+  date_traitement: Date
+  stade: string // TODO: choisir un type plus précis
+  action: string // TODO: choisir un type plus précis
+}
 
 export type EntréeDéfaillances = {
   /** Nature de la procédure de défaillance. */
