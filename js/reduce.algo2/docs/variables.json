@@ -1,5 +1,283 @@
 [
     {
+        "source": "ccsf",
+        "name": "date_ccsf",
+        "description": "Date de début de la procédure CCSF",
+        "type": "string",
+        "format": "date-time",
+        "computed": true
+    },
+    {
+        "source": "compte",
+        "name": "compte_urssaf",
+        "description": "Compte administratif URSSAF",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "cotisation",
+        "name": "cotisation_moy12m",
+        "description": "Montant moyen de cotisations calculé sur 12 mois consécutifs.",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "cotisation",
+        "name": "ratio_dette",
+        "description": "ratio_dette divise montant_part_ouvriere et montant_part_patronale par cotisation_moy12m.",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "cotisation",
+        "name": "ratio_dette_moy12m",
+        "description": "Moyenne de ratio_dette sur 12 mois.",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "cotisation",
+        "name": "tag_debit",
+        "description": "Survenance d'un débit d'au moins 1% des cotisations",
+        "type": "boolean",
+        "computed": true
+    },
+    {
+        "source": "cotisation",
+        "name": "tag_default",
+        "description": "Survenance de trois débits de 100% (ou plus) des cotisations",
+        "type": "boolean",
+        "computed": true
+    },
+    {
+        "source": "cotisationsdettes",
+        "name": "interessante_urssaf",
+        "description": "true: si l'entreprise n'a pas eu de débit (dette) sur les 6 derniers mois",
+        "type": "boolean",
+        "computed": true
+    },
+    {
+        "source": "cotisationsdettes",
+        "name": "cotisation",
+        "description": "montant (€) des mensualités de règlement des cotisations sociales",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "cotisationsdettes",
+        "name": "montant_part_ouvriere",
+        "description": "montant (€) de la dette imputable au réglement des cotisatisations sociales des employés",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "cotisationsdettes",
+        "name": "montant_part_patronale",
+        "description": "montant (€) de la dette imputable au réglement des cotisatisations sociales des dirigeants",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "cotisationsdettes",
+        "name": "montant_part_ouvriere_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "cotisationsdettes",
+        "name": "montant_part_ouvriere_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "cotisationsdettes",
+        "name": "montant_part_ouvriere_past_3",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "cotisationsdettes",
+        "name": "montant_part_ouvriere_past_6",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "cotisationsdettes",
+        "name": "montant_part_ouvriere_past_12",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "cotisationsdettes",
+        "name": "montant_part_patronale_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "cotisationsdettes",
+        "name": "montant_part_patronale_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "cotisationsdettes",
+        "name": "montant_part_patronale_past_3",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "cotisationsdettes",
+        "name": "montant_part_patronale_past_6",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "cotisationsdettes",
+        "name": "montant_part_patronale_past_12",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "defaillances",
+        "name": "etat_proc_collective",
+        "description": "État de la procédure collective.",
+        "enum": [
+            "continuation",
+            "in_bonis",
+            "liquidation",
+            "plan_redressement",
+            "plan_sauvegarde",
+            "sauvegarde"
+        ],
+        "type": "string",
+        "computed": true
+    },
+    {
+        "source": "defaillances",
+        "name": "date_proc_collective",
+        "description": "Date effet de la procédure collective.",
+        "type": "string",
+        "format": "date-time",
+        "computed": true
+    },
+    {
+        "source": "defaillances",
+        "name": "tag_failure",
+        "description": "État de défaillance. (c.a.d. l'entité n'est pas \"in bonis\")",
+        "type": "boolean",
+        "computed": true
+    },
+    {
+        "source": "delais",
+        "name": "delai_nb_jours_total",
+        "description": "Nombre de jours entre date_creation et date_echeance.",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "source": "delais",
+        "name": "delai_montant_echeancier",
+        "description": "Montant global de l'échéancier, en euros.",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "source": "delais",
+        "name": "delai_nb_jours_restants",
+        "description": "Nombre de jours restants du délai.",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "delais",
+        "name": "delai_deviation_remboursement",
+        "description": "Ratio entre remboursement linéaire et effectif, à condition d'avoir le montant des parts ouvrière et patronale.",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "effectifs",
+        "name": "effectif",
+        "description": "Nombre de personnes employées par l'établissement.",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "source": "effectifs",
+        "name": "effectif_ent",
+        "description": "Nombre de personnes employées par l'entreprise.",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "source": "effectifs",
+        "name": "effectif_reporte",
+        "enum": [
+            0,
+            1
+        ],
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "effectifs",
+        "name": "effectif_past_6",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "effectifs",
+        "name": "effectif_past_12",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "effectifs",
+        "name": "effectif_past_18",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "effectifs",
+        "name": "effectif_past_24",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "effectifs",
+        "name": "effectif_ent_reporte",
+        "enum": [
+            0,
+            1
+        ],
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "effectifs",
+        "name": "effectif_ent_past_6",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "effectifs",
+        "name": "effectif_ent_past_12",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "effectifs",
+        "name": "effectif_ent_past_18",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "effectifs",
+        "name": "effectif_ent_past_24",
+        "type": "number",
+        "computed": true
+    },
+    {
         "source": "diane",
         "name": "interets",
         "description": "Intérêts et charges assimilées.",
@@ -1532,284 +1810,6 @@
         "source": "diane",
         "name": "frais_financier_past_2",
         "type": "number",
-        "computed": true
-    },
-    {
-        "source": "ccsf",
-        "name": "date_ccsf",
-        "description": "Date de début de la procédure CCSF",
-        "type": "string",
-        "format": "date-time",
-        "computed": true
-    },
-    {
-        "source": "compte",
-        "name": "compte_urssaf",
-        "description": "Compte administratif URSSAF",
-        "type": "number",
-        "computed": true
-    },
-    {
-        "source": "cotisation",
-        "name": "cotisation_moy12m",
-        "description": "Montant moyen de cotisations calculé sur 12 mois consécutifs.",
-        "type": "number",
-        "computed": true
-    },
-    {
-        "source": "cotisation",
-        "name": "ratio_dette",
-        "description": "ratio_dette divise montant_part_ouvriere et montant_part_patronale par cotisation_moy12m.",
-        "type": "number",
-        "computed": true
-    },
-    {
-        "source": "cotisation",
-        "name": "ratio_dette_moy12m",
-        "description": "Moyenne de ratio_dette sur 12 mois.",
-        "type": "number",
-        "computed": true
-    },
-    {
-        "source": "cotisation",
-        "name": "tag_debit",
-        "description": "Survenance d'un débit d'au moins 1% des cotisations",
-        "type": "boolean",
-        "computed": true
-    },
-    {
-        "source": "cotisation",
-        "name": "tag_default",
-        "description": "Survenance de trois débits de 100% (ou plus) des cotisations",
-        "type": "boolean",
-        "computed": true
-    },
-    {
-        "source": "cotisationsdettes",
-        "name": "interessante_urssaf",
-        "description": "true: si l'entreprise n'a pas eu de débit (dette) sur les 6 derniers mois",
-        "type": "boolean",
-        "computed": true
-    },
-    {
-        "source": "cotisationsdettes",
-        "name": "cotisation",
-        "description": "montant (€) des mensualités de règlement des cotisations sociales",
-        "type": "number",
-        "computed": true
-    },
-    {
-        "source": "cotisationsdettes",
-        "name": "montant_part_ouvriere",
-        "description": "montant (€) de la dette imputable au réglement des cotisatisations sociales des employés",
-        "type": "number",
-        "computed": true
-    },
-    {
-        "source": "cotisationsdettes",
-        "name": "montant_part_patronale",
-        "description": "montant (€) de la dette imputable au réglement des cotisatisations sociales des dirigeants",
-        "type": "number",
-        "computed": true
-    },
-    {
-        "source": "cotisationsdettes",
-        "name": "montant_part_ouvriere_past_6",
-        "type": "number",
-        "computed": true
-    },
-    {
-        "source": "cotisationsdettes",
-        "name": "montant_part_ouvriere_past_12",
-        "type": "number",
-        "computed": true
-    },
-    {
-        "source": "cotisationsdettes",
-        "name": "montant_part_ouvriere_past_1",
-        "type": "number",
-        "computed": true
-    },
-    {
-        "source": "cotisationsdettes",
-        "name": "montant_part_ouvriere_past_2",
-        "type": "number",
-        "computed": true
-    },
-    {
-        "source": "cotisationsdettes",
-        "name": "montant_part_ouvriere_past_3",
-        "type": "number",
-        "computed": true
-    },
-    {
-        "source": "cotisationsdettes",
-        "name": "montant_part_patronale_past_6",
-        "type": "number",
-        "computed": true
-    },
-    {
-        "source": "cotisationsdettes",
-        "name": "montant_part_patronale_past_12",
-        "type": "number",
-        "computed": true
-    },
-    {
-        "source": "cotisationsdettes",
-        "name": "montant_part_patronale_past_1",
-        "type": "number",
-        "computed": true
-    },
-    {
-        "source": "cotisationsdettes",
-        "name": "montant_part_patronale_past_2",
-        "type": "number",
-        "computed": true
-    },
-    {
-        "source": "cotisationsdettes",
-        "name": "montant_part_patronale_past_3",
-        "type": "number",
-        "computed": true
-    },
-    {
-        "source": "delais",
-        "name": "delai_nb_jours_total",
-        "description": "Nombre de jours entre date_creation et date_echeance.",
-        "type": "number",
-        "computed": false
-    },
-    {
-        "source": "delais",
-        "name": "delai_montant_echeancier",
-        "description": "Montant global de l'échéancier, en euros.",
-        "type": "number",
-        "computed": false
-    },
-    {
-        "source": "delais",
-        "name": "delai_nb_jours_restants",
-        "description": "Nombre de jours restants du délai.",
-        "type": "number",
-        "computed": true
-    },
-    {
-        "source": "delais",
-        "name": "delai_deviation_remboursement",
-        "description": "Ratio entre remboursement linéaire et effectif, à condition d'avoir le montant des parts ouvrière et patronale.",
-        "type": "number",
-        "computed": true
-    },
-    {
-        "source": "effectifs",
-        "name": "effectif",
-        "description": "Nombre de personnes employées par l'établissement.",
-        "type": "number",
-        "computed": false
-    },
-    {
-        "source": "effectifs",
-        "name": "effectif_ent",
-        "description": "Nombre de personnes employées par l'entreprise.",
-        "type": "number",
-        "computed": false
-    },
-    {
-        "source": "effectifs",
-        "name": "effectif_reporte",
-        "enum": [
-            0,
-            1
-        ],
-        "type": "number",
-        "computed": true
-    },
-    {
-        "source": "effectifs",
-        "name": "effectif_past_6",
-        "type": "number",
-        "computed": true
-    },
-    {
-        "source": "effectifs",
-        "name": "effectif_past_12",
-        "type": "number",
-        "computed": true
-    },
-    {
-        "source": "effectifs",
-        "name": "effectif_past_18",
-        "type": "number",
-        "computed": true
-    },
-    {
-        "source": "effectifs",
-        "name": "effectif_past_24",
-        "type": "number",
-        "computed": true
-    },
-    {
-        "source": "effectifs",
-        "name": "effectif_ent_reporte",
-        "enum": [
-            0,
-            1
-        ],
-        "type": "number",
-        "computed": true
-    },
-    {
-        "source": "effectifs",
-        "name": "effectif_ent_past_6",
-        "type": "number",
-        "computed": true
-    },
-    {
-        "source": "effectifs",
-        "name": "effectif_ent_past_12",
-        "type": "number",
-        "computed": true
-    },
-    {
-        "source": "effectifs",
-        "name": "effectif_ent_past_18",
-        "type": "number",
-        "computed": true
-    },
-    {
-        "source": "effectifs",
-        "name": "effectif_ent_past_24",
-        "type": "number",
-        "computed": true
-    },
-    {
-        "source": "defaillances",
-        "name": "etat_proc_collective",
-        "description": "État de la procédure collective.",
-        "enum": [
-            "continuation",
-            "in_bonis",
-            "liquidation",
-            "plan_redressement",
-            "plan_sauvegarde",
-            "sauvegarde"
-        ],
-        "type": "string",
-        "computed": true
-    },
-    {
-        "source": "defaillances",
-        "name": "date_proc_collective",
-        "description": "Date effet de la procédure collective.",
-        "type": "string",
-        "format": "date-time",
-        "computed": true
-    },
-    {
-        "source": "defaillances",
-        "name": "tag_failure",
-        "description": "État de défaillance. (c.a.d. l'entité n'est pas \"in bonis\")",
-        "type": "boolean",
         "computed": true
     }
 ]

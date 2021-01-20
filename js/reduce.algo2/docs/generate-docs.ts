@@ -1,4 +1,3 @@
-import * as path from "path"
 import * as TJS from "typescript-json-schema"
 
 // Documentation schema for each variable.
@@ -43,36 +42,39 @@ const documentProps = (
     ...attributes,
   }))
 
-const getTypeDefFromFile = (
-  generator: TJS.JsonSchemaGenerator,
+const getTypeDefsFromFiles = (
   typeName: string,
-  filePath: string
-): TJS.Definition | undefined => {
-  const filename = path.basename(filePath).replace(/\.ts$/, "")
-  const symbol = generator
-    ?.getSymbols()
-    .find(
-      (smb) =>
-        smb.typeName === typeName &&
-        smb.fullyQualifiedName.includes(`${filename}".`)
-    )
-  // console.error(symbol?.fullyQualifiedName)
-  try {
-    return generator?.getSchemaForSymbol(symbol?.name ?? "") // can throw
-  } catch (err) {
-    return undefined
-  }
-}
-
-// Generate the documentation of variables by importing types from a TypeScript file.
-function documentPropertiesFromTypeDef(filePath: string): VarDocumentation[] {
-  const program = TJS.getProgramFromFiles([filePath])
+  filePaths: string[]
+): { typeDefs: TJS.Definition[]; errors: Error[] } => {
+  const program = TJS.getProgramFromFiles(filePaths)
   const generator = TJS.buildGenerator(program, settings)
   if (!generator) {
     throw new Error("failed to create generator")
   }
+  const symbols = generator
+    ?.getSymbols()
+    .filter((smb) => smb.typeName === typeName)
 
-  const vars = getTypeDefFromFile(generator, "Variables", filePath)
+  const errors: Error[] = []
+  const typeDefs: TJS.Definition[] = []
+  for (const symbol of symbols) {
+    try {
+      const typeDef = generator?.getSchemaForSymbol(symbol?.name ?? "") // can throw
+      if (!typeDef) {
+        throw new Error(`no schema for ${symbol?.fullyQualifiedName}`)
+      }
+      typeDefs.push(typeDef)
+    } catch (err) {
+      errors.push(err)
+    }
+  }
+  return { typeDefs, errors }
+}
+
+// Generate the documentation of variables by importing types from a TypeScript file.
+function documentPropertiesFromTypeDef(
+  vars: TJS.Definition
+): VarDocumentation[] {
   const transmittedVars = vars?.properties?.transmitted as TJS.Definition
   const computedVars = vars?.properties?.computed as TJS.Definition
   const source = ((vars?.properties?.source as TJS.Definition)?.enum ||
@@ -84,8 +86,11 @@ function documentPropertiesFromTypeDef(filePath: string): VarDocumentation[] {
   ]
 }
 
-const varsByFile = INPUT_FILES.map((filePath) => {
-  const documentedVars = documentPropertiesFromTypeDef(filePath)
+const { typeDefs, errors } = getTypeDefsFromFiles("Variables", INPUT_FILES)
+errors.forEach(console.error)
+
+const varsByFile = typeDefs.map((typeDef) => {
+  const documentedVars = documentPropertiesFromTypeDef(typeDef)
   documentedVars.forEach((varDoc) => {
     if (!varDoc.description && !varDoc.name.includes("_past_")) {
       console.error(`variable ${varDoc.name} has no description`)
