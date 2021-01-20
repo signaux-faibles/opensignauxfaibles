@@ -168,7 +168,13 @@ export type EntréeDelai = {
 }
 
 export type EntréeCotisation = {
+  /** Compte administratif URSSAF. */
+  numero_compte: string
+  /** Période sur laquelle le montants s'appliquent. */
   periode: { start: Date; end: Date }
+  /** Cotisation encaissée directement, en euros. */
+  encaisse: number
+  /** Cotisation due, en euros. À utiliser pour calculer le montant moyen mensuel du: Somme cotisations dues / nb périodes. */
   du: number
 }
 
