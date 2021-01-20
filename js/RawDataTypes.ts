@@ -136,7 +136,7 @@ export type EntréeCompte = {
   /** Numéro SIRET de l'établissement. Les numéros avec des Lettres sont des sirets provisoires. */
   siret: string
   /** Compte administratif URSSAF. */
-  numero_compte: number
+  numero_compte: string
 }
 
 export type EntréeInterim = {

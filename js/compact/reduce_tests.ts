@@ -1,7 +1,12 @@
 import test, { ExecutionContext } from "ava"
 import { reduce } from "./reduce"
 import { setGlobals } from "../test/helpers/setGlobals"
-import { DataType, BatchKey, CompanyDataValues } from "../RawDataTypes"
+import {
+  DataType,
+  BatchKey,
+  CompanyDataValues,
+  EntréeCotisation,
+} from "../RawDataTypes"
 import { CompanyDataValuesWithCompact } from "./applyPatchesToBatch"
 
 const REDUCE_KEY = "123"
@@ -403,7 +408,7 @@ test.serial(
         batch: {
           [batchId]: {
             cotisation: {
-              ["hash1"]: entréeCotisation,
+              ["hash1"]: entréeCotisation as EntréeCotisation,
             },
           },
         },
@@ -414,7 +419,7 @@ test.serial(
         batch: {
           [batchId]: {
             cotisation: {
-              ["hash2"]: entréeCotisation,
+              ["hash2"]: entréeCotisation as EntréeCotisation,
             },
           },
         },

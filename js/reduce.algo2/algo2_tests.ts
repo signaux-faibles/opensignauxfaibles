@@ -69,7 +69,7 @@ const makeInput = (
               duree_delai: duréeDelai,
               montant_echeancier: 100,
               ...delaiOverrides,
-            },
+            } as EntréeDelai,
           },
         },
       },

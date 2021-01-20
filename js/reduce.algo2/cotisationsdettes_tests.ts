@@ -2,6 +2,7 @@ import test from "ava"
 import { cotisationsdettes, SortieCotisationsDettes } from "./cotisationsdettes"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { dateAddMonth } from "../common/dateAddMonth"
+import { EntréeCotisation } from "../RawDataTypes"
 
 const dureeEnMois = 13
 const moisRemboursement = 4
@@ -28,7 +29,7 @@ const setupCompanyValuesWithCotisation = (
     hash1: {
       periode: { start: dateDebut, end: dateAddMonth(dateDebut, 1) },
       du: montantCotisation,
-    },
+    } as EntréeCotisation,
   },
   debit: {},
 })
@@ -64,7 +65,7 @@ const setupCompanyValues = (dateDebut: Date) => ({
     hash1: {
       periode: { start: dateDebut, end: dateAddMonth(dateDebut, 1) },
       du: 60,
-    },
+    } as EntréeCotisation,
   },
   debit: {
     // dette initiale

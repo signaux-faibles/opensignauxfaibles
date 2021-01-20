@@ -7,12 +7,13 @@ import { EntréeDelai, ParPériode } from "../RawDataTypes"
 const fevrier = new Date("2014-02-01")
 const mars = new Date("2014-03-01")
 
-const makeDelai = (firstDate: Date, secondDate: Date): EntréeDelai => ({
-  date_creation: firstDate,
-  date_echeance: secondDate,
-  duree_delai: nbDays(firstDate, secondDate),
-  montant_echeancier: 1000,
-})
+const makeDelai = (firstDate: Date, secondDate: Date): EntréeDelai =>
+  ({
+    date_creation: firstDate,
+    date_echeance: secondDate,
+    duree_delai: nbDays(firstDate, secondDate),
+    montant_echeancier: 1000,
+  } as EntréeDelai)
 
 const makeDebitParPériode = ({
   montant_part_patronale = 0,

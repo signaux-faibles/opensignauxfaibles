@@ -11,7 +11,7 @@
         "source": "compte",
         "name": "compte_urssaf",
         "description": "Compte administratif URSSAF",
-        "type": "number",
+        "type": "string",
         "computed": true
     },
     {
