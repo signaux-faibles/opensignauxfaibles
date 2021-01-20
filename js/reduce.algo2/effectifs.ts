@@ -5,11 +5,18 @@ import { EntréeEffectif, ParHash, Timestamp, ParPériode } from "../RawDataType
 declare const offset_effectif: number
 
 type Clé = "effectif_ent" | "effectif" // effectif entreprise ou établissement
-type CléEffectifReporté<K extends Clé> = `${K}_reporte`
-type MonthOffset = 6 | 12 | 18 | 24
-type CléEffectifPassé<K extends Clé> = `${K}_past_${MonthOffset}`
-
 type ValeurEffectif = number
+
+type EffectifReporté<K extends Clé> = {
+  /** Vaut 1 si cette valeur d'effectif a été reportée, pour combler une donnée manquante. */
+  [k in `${K}_reporte`]: 1 | 0
+}
+
+type MonthOffset = 6 | 12 | 18 | 24
+type EffectifPassé<K extends Clé> = {
+  /** Valeur d'effectif il y a N mois. */
+  [k in `${K}_past_${MonthOffset}`]: ValeurEffectif
+}
 
 type ValeursTransmisesEtab = {
   /** Nombre de personnes employées par l'établissement. */
@@ -25,22 +32,17 @@ export type ValeursTransmises<K extends Clé> = K extends "effectif_ent"
   ? ValeursTransmisesEntr
   : ValeursTransmisesEtab
 
-type ValeursCalculuées<K extends Clé> = Record<CléEffectifReporté<K>, 1 | 0> &
-  Record<CléEffectifPassé<K>, ValeurEffectif>
+type ValeursCalculées<K extends Clé> = EffectifReporté<K> & EffectifPassé<K>
 
 // Variables est inspecté pour générer docs/variables.json (cf generate-docs.ts)
 export type Variables = {
   source: "effectifs"
-  computed: ValeursCalculuées<"effectif"> | ValeursCalculuées<"effectif_ent">
-  transmitted: ValeursTransmisesEtab | ValeursTransmisesEntr
+  computed: ValeursCalculées<"effectif"> | ValeursCalculées<"effectif_ent">
+  transmitted: ValeursTransmises<"effectif"> | ValeursTransmises<"effectif_ent">
 }
 
-export type SortieEffectifsEtab = ValeursTransmisesEtab &
-  ValeursCalculuées<"effectif">
-export type SortieEffectifsEntr = ValeursTransmisesEntr &
-  ValeursCalculuées<"effectif_ent">
 export type SortieEffectifs<K extends Clé> = ValeursTransmises<K> &
-  ValeursCalculuées<K>
+  ValeursCalculées<K>
 
 export function effectifs<K extends Clé>(
   entréeEffectif: ParHash<EntréeEffectif>,
