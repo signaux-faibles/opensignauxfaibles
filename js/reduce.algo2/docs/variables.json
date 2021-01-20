@@ -1703,12 +1703,14 @@
     {
         "source": "effectifs",
         "name": "effectif",
+        "description": "Nombre de personnes employées par l'établissement.",
         "type": "number",
         "computed": false
     },
     {
         "source": "effectifs",
         "name": "effectif_ent",
+        "description": "Nombre de personnes employées par l'entreprise.",
         "type": "number",
         "computed": false
     },

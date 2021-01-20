@@ -19,15 +19,17 @@ const settings: TJS.PartialArgs = {
   uniqueNames: true,
 }
 
-// Recursively extract properties from the schema, including in `allOf` arrays.
-const getAllProps = (schema: TJS.Definition = {}): TJS.Definition =>
-  schema.allOf
-    ? schema.allOf.reduce((allProps: TJS.Definition, subSchema) => {
+// Recursively extract properties from the schema, including in `allOf` and `anyOf` arrays.
+const getAllProps = (schema: TJS.Definition = {}): TJS.Definition => {
+  const combination = schema.allOf || schema.anyOf
+  return combination
+    ? combination.reduce((allProps: TJS.Definition, subSchema) => {
         return typeof subSchema === "object"
           ? { ...allProps, ...getAllProps(subSchema) }
           : allProps
       }, {})
     : schema.properties ?? {}
+}
 
 // Generate the documentation of variables from properties of a JSON Schema.
 const documentProps = (
@@ -77,7 +79,7 @@ function documentPropertiesFromTypeDef(filePath: string): VarDocumentation[] {
     [])[0]?.toString()
 
   return [
-    ...documentProps(transmittedVars?.properties, { computed: false, source }),
+    ...documentProps(getAllProps(transmittedVars), { computed: false, source }),
     ...documentProps(getAllProps(computedVars), { computed: true, source }),
   ]
 }
