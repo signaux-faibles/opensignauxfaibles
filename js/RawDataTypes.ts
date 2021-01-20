@@ -87,7 +87,9 @@ export type BatchValueProps = CommonBatchProps &
 // Détail des types de données
 
 export type EntréeDéfaillances = {
+  /** Nature de la procédure de défaillance. */
   action_procol: "liquidation" | "redressement" | "sauvegarde"
+  /** Evénement survenu dans le cadre de cette procédure. */
   stade_procol:
     | "abandon_procedure"
     | "solde_procedure"
@@ -96,6 +98,7 @@ export type EntréeDéfaillances = {
     | "ouverture"
     | "inclusion_autre_procedure"
     | "cloture_insuffisance_actif"
+  /** Date effet de la procédure collective. */
   date_effet: Date
 }
 

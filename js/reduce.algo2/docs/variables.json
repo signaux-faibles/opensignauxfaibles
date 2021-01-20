@@ -1781,5 +1781,35 @@
         "name": "effectif_ent_past_24",
         "type": "number",
         "computed": true
+    },
+    {
+        "source": "defaillances",
+        "name": "etat_proc_collective",
+        "description": "État de la procédure collective.",
+        "enum": [
+            "continuation",
+            "in_bonis",
+            "liquidation",
+            "plan_redressement",
+            "plan_sauvegarde",
+            "sauvegarde"
+        ],
+        "type": "string",
+        "computed": true
+    },
+    {
+        "source": "defaillances",
+        "name": "date_proc_collective",
+        "description": "Date effet de la procédure collective.",
+        "type": "string",
+        "format": "date-time",
+        "computed": true
+    },
+    {
+        "source": "defaillances",
+        "name": "tag_failure",
+        "description": "État de défaillance. (c.a.d. l'entité n'est pas \"in bonis\")",
+        "type": "boolean",
+        "computed": true
     }
 ]
