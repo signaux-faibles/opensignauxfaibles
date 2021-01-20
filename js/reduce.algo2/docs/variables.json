@@ -1726,16 +1726,6 @@
     },
     {
         "source": "effectifs",
-        "name": "effectif_ent_reporte",
-        "enum": [
-            0,
-            1
-        ],
-        "type": "number",
-        "computed": true
-    },
-    {
-        "source": "effectifs",
         "name": "effectif_past_6",
         "type": "number",
         "computed": true
@@ -1779,6 +1769,16 @@
     {
         "source": "effectifs",
         "name": "effectif_ent_past_24",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "effectifs",
+        "name": "effectif_ent_reporte",
+        "enum": [
+            0,
+            1
+        ],
         "type": "number",
         "computed": true
     }
