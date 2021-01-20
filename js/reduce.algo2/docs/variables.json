@@ -1725,30 +1725,35 @@
     {
         "source": "diane",
         "name": "poids_frng",
-        "type": "number",
-        "computed": true
-    },
-    {
-        "source": "diane",
-        "name": "taux_marge",
+        "description": "Poids du fonds de roulement net global sur le chiffre d'affaire. Exprimé en %.",
         "type": "number",
         "computed": true
     },
     {
         "source": "diane",
         "name": "dette_fiscale",
-        "type": "number",
-        "computed": true
-    },
-    {
-        "source": "diane",
-        "name": "financier_court_terme",
+        "description": "Poids des dettes fiscales et sociales, par rapport à la valeur ajoutée (exprimé en %): 100 * dettes fiscales et sociales / Valeur ajoutee",
         "type": "number",
         "computed": true
     },
     {
         "source": "diane",
         "name": "frais_financier",
+        "description": "Poids des frais financiers, sur l'excedent brut d'exploitation corrigé des produits et charges hors exploitation (exprimé en %): 100 * frais financiers / (EBE + Produits hors expl. - charges hors expl.)",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "diane",
+        "name": "taux_marge",
+        "description": "Taux de marge, rapport de l'excédent brut d'exploitation (EBE) sur la valeur ajoutée (exprimé en %): 100*EBE / valeur ajoutee",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "diane",
+        "name": "financier_court_terme",
+        "description": "Poids du financement court terme (exprimé en %): 100 * concours bancaires courants / chiffre d'affaires HT",
         "type": "number",
         "computed": true
     },
