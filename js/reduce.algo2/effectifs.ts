@@ -4,10 +4,10 @@ import { EntréeEffectif, ParHash, Timestamp, ParPériode } from "../RawDataType
 // Paramètres globaux utilisés par "reduce.algo2"
 declare const offset_effectif: number
 
-type CléSortieEffectif = "effectif_ent" | "effectif" // effectif entreprise ou établissement
-type CléSortieEffectifReporté = `${CléSortieEffectif}_reporte`
+type Clé = "effectif_ent" | "effectif" // effectif entreprise ou établissement
+type CléSortieEffectifReporté = `${Clé}_reporte`
 type MonthOffset = 6 | 12 | 18 | 24
-type CléSortieEffectifPassé = `${CléSortieEffectif}_past_${MonthOffset}`
+type CléSortieEffectifPassé = `${Clé}_past_${MonthOffset}`
 
 type ValeurEffectif = number
 
@@ -21,9 +21,9 @@ type ValeursTransmisesEntr = {
   effectif_ent: ValeurEffectif | null
 }
 
-export type ValeursTransmises<
-  Clé extends CléSortieEffectif
-> = Clé extends "effectif_ent" ? ValeursTransmisesEntr : ValeursTransmisesEtab
+export type ValeursTransmises<K extends Clé> = K extends "effectif_ent"
+  ? ValeursTransmisesEntr
+  : ValeursTransmisesEtab
 
 type ValeursCalculuées = Record<CléSortieEffectifReporté, 1 | 0> &
   Record<CléSortieEffectifPassé, ValeurEffectif>
@@ -37,18 +37,17 @@ export type Variables = {
 
 export type SortieEffectifsEtab = ValeursTransmisesEtab & ValeursCalculuées
 export type SortieEffectifsEntr = ValeursTransmisesEntr & ValeursCalculuées
-export type SortieEffectifs<
-  Clé extends CléSortieEffectif
-> = ValeursTransmises<Clé> & ValeursCalculuées
+export type SortieEffectifs<K extends Clé> = ValeursTransmises<K> &
+  ValeursCalculuées
 
-export function effectifs<Clé extends CléSortieEffectif>(
+export function effectifs<K extends Clé>(
   entréeEffectif: ParHash<EntréeEffectif>,
   periodes: Timestamp[],
-  clé: Clé
-): ParPériode<SortieEffectifs<Clé>> {
+  clé: K
+): ParPériode<SortieEffectifs<K>> {
   "use strict"
 
-  const sortieEffectif: ParPériode<SortieEffectifs<Clé>> = {}
+  const sortieEffectif: ParPériode<SortieEffectifs<K>> = {}
 
   // Construction d'une map[time] = effectif à cette periode
   const mapEffectif: ParPériode<ValeurEffectif> = {}
@@ -69,18 +68,18 @@ export function effectifs<Clé extends CléSortieEffectif>(
   const effectifÀReporter =
     mapEffectif[dernièrePériodeAvecEffectifConnu.getTime()] ?? null
 
-  const makeReporteProp = (clé: CléSortieEffectif) =>
+  const makeReporteProp = (clé: Clé) =>
     `${clé}_reporte` as CléSortieEffectifReporté
 
   periodes.forEach((time) => {
     sortieEffectif[time] = {
-      ...(sortieEffectif[time] as SortieEffectifs<Clé>),
+      ...(sortieEffectif[time] as SortieEffectifs<K>),
       [clé]: mapEffectif[time] || effectifÀReporter,
       [makeReporteProp(clé)]: mapEffectif[time] ? 0 : 1,
     }
   })
 
-  const makePastProp = (clé: CléSortieEffectif, offset: MonthOffset) =>
+  const makePastProp = (clé: Clé, offset: MonthOffset) =>
     `${clé}_past_${offset}` as CléSortieEffectifPassé
 
   Object.keys(mapEffectif).forEach((time) => {
@@ -101,7 +100,7 @@ export function effectifs<Clé extends CléSortieEffectif>(
 
     futureTimestamps.forEach(({ offset, timestamp }) => {
       sortieEffectif[timestamp] = {
-        ...(sortieEffectif[timestamp] as SortieEffectifs<Clé>),
+        ...(sortieEffectif[timestamp] as SortieEffectifs<K>),
         [makePastProp(clé, offset)]: mapEffectif[time],
       }
     })
