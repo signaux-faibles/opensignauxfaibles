@@ -1,7 +1,7 @@
-import { effectifs, EffectifEntreprise, SortieEffectifs } from "./effectifs"
+import { effectifs, SortieEffectifs } from "./effectifs"
 import test, { ExecutionContext } from "ava"
 import { setGlobals } from "../test/helpers/setGlobals"
-import { ParPériode } from "../RawDataTypes"
+import { ParPériode, ParHash, EntréeEffectif } from "../RawDataTypes"
 
 function assertEffectif(
   t: ExecutionContext,
@@ -37,7 +37,7 @@ test.serial(
     }
     const clé = "effectif"
     const résultat = effectifs(
-      entréeEffectif as EffectifEntreprise,
+      entréeEffectif as ParHash<EntréeEffectif>,
       periodes.map((d) => d.getTime()),
       clé
     )
@@ -66,7 +66,7 @@ test.serial(
     }
     const clé = "effectif"
     const résultat = effectifs(
-      entréeEffectif as EffectifEntreprise,
+      entréeEffectif as ParHash<EntréeEffectif>,
       periodes.map((d) => d.getTime()),
       clé
     )
@@ -102,7 +102,7 @@ test.serial(
     }
     const clé = "effectif"
     const résultat = effectifs(
-      entréeEffectif as EffectifEntreprise,
+      entréeEffectif as ParHash<EntréeEffectif>,
       periodes.map((d) => d.getTime()),
       clé
     )
