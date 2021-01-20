@@ -43,37 +43,26 @@ const documentProps = (
     ...attributes,
   }))
 
-const getTypeDefsFromFiles = (
+// Generator that yields a function to get the definition of a type for each file.
+function* extractTypeDefsFromFiles(
   typeName: string,
   filePaths: string[]
-): { typeDefs: TJS.Definition[]; errors: Error[] } => {
+): Generator<{ fileName: string; getTypeDef: () => TJS.Definition }> {
   const program = TJS.getProgramFromFiles(filePaths)
   const generator = TJS.buildGenerator(program, settings)
   if (!generator) {
     throw new Error("failed to create generator")
   }
   const symbols = generator
-    ?.getSymbols()
+    .getSymbols()
     .filter((smb) => smb.typeName === typeName)
-
-  const errors: Error[] = []
-  const typeDefs: TJS.Definition[] = []
   for (const symbol of symbols) {
-    try {
-      const fileName = path.basename(
-        symbol?.fullyQualifiedName?.split('"')[1] ?? ""
-      )
-      console.warn(`- found ${typeName} type in file: ${fileName}.ts`)
-      const typeDef = generator?.getSchemaForSymbol(symbol?.name ?? "") // can throw
-      if (!typeDef) {
-        throw new Error(`no schema for ${symbol?.fullyQualifiedName}`)
-      }
-      typeDefs.push(typeDef)
-    } catch (err) {
-      errors.push(err)
+    // We let the caller call getTypeDef(), for each fileName
+    yield {
+      fileName: path.basename(symbol.fullyQualifiedName?.split('"')[1] ?? ""),
+      getTypeDef: () => generator.getSchemaForSymbol(symbol.name), // can throw
     }
   }
-  return { typeDefs, errors }
 }
 
 // Generate the documentation of variables by importing types from a TypeScript file.
@@ -91,23 +80,21 @@ function documentPropertiesFromTypeDef(
   ]
 }
 
-const { typeDefs, errors } = getTypeDefsFromFiles("Variables", INPUT_FILES)
-errors.forEach(console.error)
+const missingDesc = (varDoc: VarDocumentation) =>
+  !varDoc.description && !varDoc.name.includes("_past_")
 
-const varsByFile = typeDefs.map((typeDef) => {
+// Main script: print the documented variables in JSON format + log errors.
+
+const allDocumentedVars = []
+const typeDefGeneretor = extractTypeDefsFromFiles("Variables", INPUT_FILES)
+for (const { fileName, getTypeDef } of typeDefGeneretor) {
+  console.warn(`- extracting variables from file: ${fileName}.ts`)
+  const typeDef = getTypeDef() // can throw
   const documentedVars = documentPropertiesFromTypeDef(typeDef)
-  documentedVars.forEach((varDoc) => {
-    if (!varDoc.description && !varDoc.name.includes("_past_")) {
-      console.error(`variable ${varDoc.name} has no description`)
-    }
-  })
-  return documentedVars
-})
+  documentedVars
+    .filter(missingDesc)
+    .forEach(({ name }) => console.error(`  ⚠ no description for: ${name}`))
+  allDocumentedVars.push(...documentedVars)
+}
 
-console.log(
-  JSON.stringify(
-    varsByFile.reduce((acc, vars) => acc.concat(...vars), []),
-    null,
-    4
-  )
-)
+console.log(JSON.stringify(allDocumentedVars, null, 4))
