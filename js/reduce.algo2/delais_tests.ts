@@ -1,6 +1,7 @@
 import test, { ExecutionContext } from "ava"
 import { nbDays } from "./nbDays"
-import { delais, DelaiComputedValues, DebitComputedValues } from "./delais"
+import { SortieCotisationsDettes } from "./cotisationsdettes"
+import { delais, SortieDelais } from "./delais"
 import { EntréeDelai, ParPériode } from "../RawDataTypes"
 
 const fevrier = new Date("2014-02-01")
@@ -16,19 +17,20 @@ const makeDelai = (firstDate: Date, secondDate: Date): EntréeDelai => ({
 const makeDebitParPériode = ({
   montant_part_patronale = 0,
   montant_part_ouvriere = 0,
-} = {}): DebitComputedValues => ({
-  montant_part_patronale,
-  montant_part_ouvriere,
-})
+} = {}) =>
+  ({
+    montant_part_patronale,
+    montant_part_ouvriere,
+  } as SortieCotisationsDettes)
 
 const runDelais = (
-  debits?: DebitComputedValues
-): ParPériode<DelaiComputedValues> => {
+  debits?: SortieCotisationsDettes
+): ParPériode<SortieDelais> => {
   const delaiTest = makeDelai(new Date("2014-01-03"), new Date("2014-04-05"))
   const delaiMap: ParPériode<EntréeDelai> = {
     abc: delaiTest,
   }
-  const debitParPériode: ParPériode<DebitComputedValues> = {}
+  const debitParPériode: ParPériode<SortieCotisationsDettes> = {}
   if (debits) {
     debitParPériode[fevrier.getTime()] = makeDebitParPériode(debits)
     debitParPériode[mars.getTime()] = makeDebitParPériode(debits)
@@ -73,7 +75,7 @@ test(
     const expectedFebruary = -0.0848
     const expectedMarch = 0.22
     const debits = { montant_part_patronale: 600, montant_part_ouvriere: 0 }
-    const outputDelai = runDelais(debits)
+    const outputDelai = runDelais(debits as SortieCotisationsDettes)
     const tolerance = 10e-3
     const ratioFebruary =
       outputDelai[fevrier.getTime()]?.["delai_deviation_remboursement"]
@@ -95,7 +97,7 @@ test("un délai en dehors de la période d'intérêt est ignorée", (t: Executio
   const delaiMap: ParPériode<EntréeDelai> = {
     abc: delaiTest,
   }
-  const donnéesParPériode: ParPériode<DebitComputedValues> = {}
+  const donnéesParPériode: ParPériode<SortieCotisationsDettes> = {}
   donnéesParPériode[fevrier.getTime()] = makeDebitParPériode()
   const périodesComplétées = delais(delaiMap, donnéesParPériode, {
     premièreDate: fevrier,
