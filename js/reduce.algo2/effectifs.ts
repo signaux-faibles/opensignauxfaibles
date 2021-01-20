@@ -7,7 +7,7 @@ declare const offset_effectif: number
 type Clé = "effectif_ent" | "effectif" // effectif entreprise ou établissement
 type CléEffectifReporté<K extends Clé> = `${K}_reporte`
 type MonthOffset = 6 | 12 | 18 | 24
-type CléSortieEffectifPassé = `${Clé}_past_${MonthOffset}`
+type CléEffectifPassé<K extends Clé> = `${K}_past_${MonthOffset}`
 
 type ValeurEffectif = number
 
@@ -26,7 +26,7 @@ export type ValeursTransmises<K extends Clé> = K extends "effectif_ent"
   : ValeursTransmisesEtab
 
 type ValeursCalculuées<K extends Clé> = Record<CléEffectifReporté<K>, 1 | 0> &
-  Record<CléSortieEffectifPassé, ValeurEffectif>
+  Record<CléEffectifPassé<K>, ValeurEffectif>
 
 // Variables est inspecté pour générer docs/variables.json (cf generate-docs.ts)
 export type Variables = {
