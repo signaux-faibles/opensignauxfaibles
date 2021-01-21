@@ -657,6 +657,7 @@ db.getCollection("Features").createIndex({
     return result;
 }`,
 "debits": `function debits(vdebit = {}) {
+    var _a;
     const last_treatment_day = 20;
     const ecn = {};
     for (const [h, debit] of Object.entries(vdebit)) {
@@ -688,12 +689,11 @@ db.getCollection("Features").createIndex({
     }
     const value_dette = {};
     for (const debit of Object.values(vdebit)) {
-        const debit_suivant = vdebit[debit.debit_suivant] || {
-            date_traitement: date_fin,
-        };
+        const nextDate = (debit.debit_suivant && ((_a = vdebit[debit.debit_suivant]) === null || _a === void 0 ? void 0 : _a.date_traitement)) ||
+            date_fin;
         //Selon le jour du traitement, cela passe sur la période en cours ou sur la suivante.
         const jour_traitement = debit.date_traitement.getUTCDate();
-        const jour_traitement_suivant = debit_suivant.date_traitement.getUTCDate();
+        const jour_traitement_suivant = nextDate.getUTCDate();
         let date_traitement_debut;
         if (jour_traitement <= last_treatment_day) {
             date_traitement_debut = new Date(Date.UTC(debit.date_traitement.getFullYear(), debit.date_traitement.getUTCMonth()));
@@ -703,10 +703,10 @@ db.getCollection("Features").createIndex({
         }
         let date_traitement_fin;
         if (jour_traitement_suivant <= last_treatment_day) {
-            date_traitement_fin = new Date(Date.UTC(debit_suivant.date_traitement.getFullYear(), debit_suivant.date_traitement.getUTCMonth()));
+            date_traitement_fin = new Date(Date.UTC(nextDate.getFullYear(), nextDate.getUTCMonth()));
         }
         else {
-            date_traitement_fin = new Date(Date.UTC(debit_suivant.date_traitement.getFullYear(), debit_suivant.date_traitement.getUTCMonth() + 1));
+            date_traitement_fin = new Date(Date.UTC(nextDate.getFullYear(), nextDate.getUTCMonth() + 1));
         }
         const periode_debut = date_traitement_debut;
         const periode_fin = date_traitement_fin;
@@ -1143,7 +1143,7 @@ function sirene(sireneArray) {
 function cotisationsdettes(vCotisation, vDebit, periodes, finPériode // correspond à la variable globale date_fin
 ) {
     "use strict";
-    var _a, _b;
+    var _a;
     // Tous les débits traitées après ce jour du mois sont reportées à la période suivante
     // Permet de s'aligner avec le calendrier de fourniture des données
     const lastAccountedDay = 20;
@@ -1194,7 +1194,8 @@ function cotisationsdettes(vCotisation, vDebit, periodes, finPériode // corresp
     // debit_traitement_fin => periode de traitement du debit suivant, ou bien finPériode
     // Entre ces deux dates, c'est cet objet qui est le plus à jour.
     for (const debit of Object.values(vDebit)) {
-        const nextDate = (_b = (_a = vDebit[debit.debit_suivant]) === null || _a === void 0 ? void 0 : _a.date_traitement) !== null && _b !== void 0 ? _b : finPériode;
+        const nextDate = (debit.debit_suivant && ((_a = vDebit[debit.debit_suivant]) === null || _a === void 0 ? void 0 : _a.date_traitement)) ||
+            finPériode;
         //Selon le jour du traitement, cela passe sur la période en cours ou sur la suivante.
         const jour_traitement = debit.date_traitement.getUTCDate();
         const jour_traitement_suivant = nextDate.getUTCDate();

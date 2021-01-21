@@ -60,13 +60,13 @@ export function debits(vdebit: ParHash<EntréeDebit> = {}): SortieDebit[] {
   const value_dette: Record<Timestamp, DetteItem[]> = {}
 
   for (const debit of Object.values(vdebit)) {
-    const debit_suivant = vdebit[debit.debit_suivant] || {
-      date_traitement: date_fin,
-    }
+    const nextDate =
+      (debit.debit_suivant && vdebit[debit.debit_suivant]?.date_traitement) ||
+      date_fin
 
     //Selon le jour du traitement, cela passe sur la période en cours ou sur la suivante.
     const jour_traitement = debit.date_traitement.getUTCDate()
-    const jour_traitement_suivant = debit_suivant.date_traitement.getUTCDate()
+    const jour_traitement_suivant = nextDate.getUTCDate()
     let date_traitement_debut
     if (jour_traitement <= last_treatment_day) {
       date_traitement_debut = new Date(
@@ -87,17 +87,11 @@ export function debits(vdebit: ParHash<EntréeDebit> = {}): SortieDebit[] {
     let date_traitement_fin
     if (jour_traitement_suivant <= last_treatment_day) {
       date_traitement_fin = new Date(
-        Date.UTC(
-          debit_suivant.date_traitement.getFullYear(),
-          debit_suivant.date_traitement.getUTCMonth()
-        )
+        Date.UTC(nextDate.getFullYear(), nextDate.getUTCMonth())
       )
     } else {
       date_traitement_fin = new Date(
-        Date.UTC(
-          debit_suivant.date_traitement.getFullYear(),
-          debit_suivant.date_traitement.getUTCMonth() + 1
-        )
+        Date.UTC(nextDate.getFullYear(), nextDate.getUTCMonth() + 1)
       )
     }
 
