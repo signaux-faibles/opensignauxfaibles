@@ -10,6 +10,19 @@ import {
 // Champs de EntréeCotisation nécéssaires à cotisationsdettes
 type ChampsEntréeCotisation = Pick<EntréeCotisation, "periode" | "du">
 
+// Champs de EntréeDebit nécéssaires à cotisationsdettes
+type ChampsEntréeDebit = Pick<
+  EntréeDebit,
+  | "numero_compte"
+  | "periode"
+  | "part_ouvriere"
+  | "part_patronale"
+  | "numero_ecart_negatif"
+  | "numero_historique"
+  | "date_traitement"
+  | "debit_suivant"
+>
+
 type EcartNegatif = {
   hash: string
   numero_historique: EntréeDebit["numero_historique"]
@@ -53,7 +66,7 @@ export type Variables = {
  */
 export function cotisationsdettes(
   vCotisation: ParHash<ChampsEntréeCotisation>,
-  vDebit: ParHash<EntréeDebit>,
+  vDebit: ParHash<ChampsEntréeDebit>,
   periodes: Timestamp[],
   finPériode: Date // correspond à la variable globale date_fin
 ): ParPériode<SortieCotisationsDettes> {
