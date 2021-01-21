@@ -1,9 +1,22 @@
 import { f } from "./functions"
 import { ParPériode } from "../RawDataTypes"
+import { Outcome } from "./lookAhead"
 
 export type SortieCibleApprentissage = {
+  outcome?: Outcome["outcome"]
+  /** Distance de l'évènement, exprimé en nombre de périodes. */
+  time_til_outcome?: Outcome["time_til_outcome"]
+  /** Distance de l'évènement basé sur le défaut de paiement des cotisations (cf tag_default), exprimé en nombre de périodes. */
   time_til_default?: number
+  /** Distance de l'évènement basé sur une défaillance (cf tag_failure des procédures collectives), exprimé en nombre de périodes. */
   time_til_failure?: number
+}
+
+// Variables est inspecté pour générer docs/variables.json (cf generate-docs.ts)
+export type Variables = {
+  source: "cibleApprentissage"
+  computed: SortieCibleApprentissage
+  transmitted: unknown // unknown ~= aucune variable n'est transmise directement depuis RawData
 }
 
 export function cibleApprentissage(

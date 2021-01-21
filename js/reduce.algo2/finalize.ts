@@ -1,15 +1,29 @@
 import { f } from "./functions"
 import { SiretOrSiren, Siret, BatchKey } from "../RawDataTypes"
-import { CléSortieMap, SortieMap, SortieMapEtablissement } from "./map"
+import {
+  CléSortieMap,
+  SortieMap,
+  SortieMapEntreprise,
+  SortieMapEtablissement,
+} from "./map"
 
 type Accumulateurs = {
-  effectif_entreprise: number
-  apart_entreprise: number
-  debit_entreprise: number
+  /** Cumul du nombre de personnes employées par tous les établissements de l'entreprise. */
+  effectif_entreprise?: number
+  /** Cumul du nombre d'heures d'activité partielle consommées par tous les établissements de l'entreprise. */
+  apart_entreprise?: number
+  /** Cumul du montant des débits de tous les établissements de l'entreprise. */
+  debit_entreprise?: number
+  /** Nombre d'établissements rattachés à l'entreprise. */
   nbr_etablissements_connus: number
 }
 
-export type EntrepriseEnSortie = SortieMapEtablissement & Accumulateurs
+type DonnéesEntreprise = SortieMapEntreprise & Accumulateurs
+
+type SortieEtabAvecEntreprise = Omit<
+  SortieMapEtablissement & DonnéesEntreprise,
+  "raison_sociale"
+> & { raison_sociale?: string | null } // TODO: éviter de se coltiner une raison_sociale d'établissement `null`, quitte à récupérer celle de l'entreprise mère
 
 export type Clé = {
   batch: BatchKey
@@ -18,7 +32,14 @@ export type Clé = {
   type: CléSortieMap["type"]
 }
 
-type SortieFinalize = Partial<EntrepriseEnSortie>[] | { incomplete: true }
+export type SortieFinalize = SortieEtabAvecEntreprise[] | { incomplete: true }
+
+// Variables est inspecté pour générer docs/variables.json (cf generate-docs.ts)
+export type Variables = {
+  source: "finalize"
+  computed: Accumulateurs
+  transmitted: unknown // Note: les autres champs ont été documentés dans les autres fichiers constituants les types inclus dans SortieEtabAvecEntreprise
+}
 
 declare function print(str: string): void
 
@@ -45,29 +66,26 @@ export function finalize(k: Clé, v: SortieMap): SortieFinalize {
     v,
     "entreprise"
   )
-  const entr: Partial<EntrepriseEnSortie> = { ...v.entreprise }
+  const entr: DonnéesEntreprise = { ...v.entreprise } as DonnéesEntreprise // on suppose que v.entreprise est défini
 
-  const output: Partial<EntrepriseEnSortie>[] = Object.keys(établissements).map(
+  const output: SortieEtabAvecEntreprise[] = Object.keys(établissements).map(
     (siret) => {
-      const { effectif } = établissements[siret] ?? {}
-      if (effectif) {
-        entr.effectif_entreprise = entr.effectif_entreprise || 0 + effectif
+      const etab: SortieMapEtablissement = établissements[siret] ?? {}
+      if (etab.effectif) {
+        entr.effectif_entreprise = entr.effectif_entreprise || 0 + etab.effectif
       }
-      const { apart_heures_consommees } = établissements[siret] ?? {}
-      if (apart_heures_consommees) {
+      if (etab.apart_heures_consommees) {
         entr.apart_entreprise =
-          (entr.apart_entreprise || 0) + apart_heures_consommees
+          (entr.apart_entreprise || 0) + etab.apart_heures_consommees
       }
-      const etab = établissements[siret]
-      if (etab && (etab.montant_part_patronale || etab.montant_part_ouvriere)) {
+      if (etab.montant_part_patronale || etab.montant_part_ouvriere) {
         entr.debit_entreprise =
           (entr.debit_entreprise ?? 0) +
           (etab.montant_part_patronale ?? 0) +
           (etab.montant_part_ouvriere ?? 0)
       }
-
       return {
-        ...établissements[siret],
+        ...etab, // TODO: éviter que les champs d'entreprise surchargent ceux de l'établissement, tout en conservant la raison_sociale d'entreprise si celle d'établissement est null
         ...entr,
         nbr_etablissements_connus: Object.keys(établissements).length,
       }

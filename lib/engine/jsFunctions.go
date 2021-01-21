@@ -1427,7 +1427,7 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
             if (outputInPeriod.annee_bdf) {
                 outputInPeriod.exercice_bdf = outputInPeriod.annee_bdf - 1;
             }
-            const pastData = f.omit(periodData, "arrete_bilan_bdf", "exercice_bdf", "annee_bdf");
+            const pastData = f.omit(periodData, "arrete_bilan_bdf", "annee_bdf");
             const makePastProp = (prop, offset) => ` + "`" + `${prop}_past_${offset}` + "`" + `;
             for (const prop of Object.keys(pastData)) {
                 const past_year_offset = [1, 2];
@@ -1595,26 +1595,24 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
     //
     // extraction de l'entreprise et des établissements depuis v
     const établissements = f.omit(v, "entreprise");
-    const entr = Object.assign({}, v.entreprise);
+    const entr = Object.assign({}, v.entreprise); // on suppose que v.entreprise est défini
     const output = Object.keys(établissements).map((siret) => {
-        var _a, _b, _c, _d, _e;
-        const { effectif } = (_a = établissements[siret]) !== null && _a !== void 0 ? _a : {};
-        if (effectif) {
-            entr.effectif_entreprise = entr.effectif_entreprise || 0 + effectif;
+        var _a, _b, _c, _d;
+        const etab = (_a = établissements[siret]) !== null && _a !== void 0 ? _a : {};
+        if (etab.effectif) {
+            entr.effectif_entreprise = entr.effectif_entreprise || 0 + etab.effectif;
         }
-        const { apart_heures_consommees } = (_b = établissements[siret]) !== null && _b !== void 0 ? _b : {};
-        if (apart_heures_consommees) {
+        if (etab.apart_heures_consommees) {
             entr.apart_entreprise =
-                (entr.apart_entreprise || 0) + apart_heures_consommees;
+                (entr.apart_entreprise || 0) + etab.apart_heures_consommees;
         }
-        const etab = établissements[siret];
-        if (etab && (etab.montant_part_patronale || etab.montant_part_ouvriere)) {
+        if (etab.montant_part_patronale || etab.montant_part_ouvriere) {
             entr.debit_entreprise =
-                ((_c = entr.debit_entreprise) !== null && _c !== void 0 ? _c : 0) +
-                    ((_d = etab.montant_part_patronale) !== null && _d !== void 0 ? _d : 0) +
-                    ((_e = etab.montant_part_ouvriere) !== null && _e !== void 0 ? _e : 0);
+                ((_b = entr.debit_entreprise) !== null && _b !== void 0 ? _b : 0) +
+                    ((_c = etab.montant_part_patronale) !== null && _c !== void 0 ? _c : 0) +
+                    ((_d = etab.montant_part_ouvriere) !== null && _d !== void 0 ? _d : 0);
         }
-        return Object.assign(Object.assign(Object.assign({}, établissements[siret]), entr), { nbr_etablissements_connus: Object.keys(établissements).length });
+        return Object.assign(Object.assign(Object.assign({}, etab), entr), { nbr_etablissements_connus: Object.keys(établissements).length });
     });
     // NON: Pour l'instant, filtrage a posteriori
     // output = output.filter(siret_data => {
@@ -1638,6 +1636,7 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
 "financierCourtTerme": `function financierCourtTerme(diane) {
     "use strict";
     var _a, _b;
+    // Note: cette fonction n'est plus appelée. => à supprimer ?
     const ratio = ((_a = diane["concours_bancaire_courant"]) !== null && _a !== void 0 ? _a : NaN) / ((_b = diane["ca"]) !== null && _b !== void 0 ? _b : NaN);
     return isNaN(ratio) ? null : ratio * 100;
 }`,

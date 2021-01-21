@@ -1,11 +1,25 @@
 import { f } from "./functions"
 import { EntréeSireneEntreprise, ParHash, ParPériode } from "../RawDataTypes"
 
-export type SortieSireneEntreprise = {
-  raison_sociale: string // nom de l'entreprise
-  statut_juridique: string | null // code numérique sérialisé en chaine de caractères
-  date_creation_entreprise: number | null // année
-  age_entreprise?: number // en années
+type VariablesTransmises = {
+  /** Catégorie juridique de l’unité légale. Nomenclature: https://www.insee.fr/fr/information/2028129. */
+  statut_juridique: string | null
+}
+
+export type SortieSireneEntreprise = VariablesTransmises & {
+  /** Nom de l'entreprise. Composé à partir des champs raison_sociale, nom_unite_legale, nom_usage_unite_legale, prenom1_unite_legale, prenom2_unite_legale, prenom3_unite_legale et prenom4_unite_legal. */
+  raison_sociale: string
+  /** Année de création de l'entreprise. */
+  date_creation_entreprise: number | null
+  /** Age de l'entreprise, en nombre d'années. */
+  age_entreprise?: number
+}
+
+// Variables est inspecté pour générer docs/variables.json (cf generate-docs.ts)
+export type Variables = {
+  source: "entr_sirene"
+  computed: Omit<SortieSireneEntreprise, keyof VariablesTransmises>
+  transmitted: VariablesTransmises
 }
 
 export function entr_sirene(

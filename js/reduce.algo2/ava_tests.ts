@@ -7,7 +7,7 @@
 import test, { ExecutionContext } from "ava"
 import { map, EntréeMap, CléSortieMap, SortieMap } from "./map"
 import { reduce } from "./reduce"
-import { finalize, EntrepriseEnSortie } from "./finalize"
+import { finalize, SortieFinalize } from "./finalize"
 import { setGlobals } from "../test/helpers/setGlobals"
 import { runMongoMap } from "../test/helpers/mongodb"
 import { Scope, SiretOrSiren } from "../RawDataTypes"
@@ -73,8 +73,8 @@ const expectedFinalizeResults = expectedMapResults.map(({ _id }) => ({
     {
       ...makeValue(_id.periode),
       nbr_etablissements_connus: 1,
-    } as EntrepriseEnSortie,
-  ],
+    },
+  ] as SortieFinalize,
 }))
 
 // exécution complète de la chaine "reduce.algo2"

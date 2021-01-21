@@ -23,15 +23,31 @@ type Input = {
 }
 
 export type SortieNAF = {
+  /** Code APE (code d'activité principale), aussi appelé code NAF (nomenclature d’activité française). */
   code_naf: CodeNAF
+  /** Libellé de code NAF/APE. */
   libelle_naf: string
+  /** Deuxième niveau du code NAF/APE: Section et Division. */
   code_ape_niveau2: CodeAPENiveau2
+  /** Troisième niveau du code NAF/APE: Section, Division et Groupe. */
   code_ape_niveau3: CodeAPENiveau3
+  /** Quatrième niveau du code NAF/APE: Section, Division, Groupe et Classe. (sans la Sous-classe) */
   code_ape_niveau4: CodeAPENiveau4
+  /** Libellé de code NAF/APE de deuxième niveau: Division. */
   libelle_ape2: string
+  /** Libellé de code NAF/APE de troisième niveau: Groupe. */
   libelle_ape3: string
+  /** Libellé de code NAF/APE de quatrième niveau: Classe. */
   libelle_ape4: string
+  /** Libellé de code NAF/APE de cinquième niveau: Sous-classe. */
   libelle_ape5: string
+}
+
+// Variables est inspecté pour générer docs/variables.json (cf generate-docs.ts)
+export type Variables = {
+  source: "populateNafAndApe"
+  computed: SortieNAF
+  transmitted: unknown // unknown ~= aucune variable n'est transmise directement depuis RawData
 }
 
 export function populateNafAndApe(

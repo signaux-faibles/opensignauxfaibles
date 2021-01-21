@@ -1,15 +1,25 @@
 import { EntréeRepOrder, ParPériode } from "../RawDataTypes"
 
-export type SortieRepeatable = { random_order: number }
+export type SortieRepeatable = {
+  /** Numéro permettant de réaliser un échantillon reproductible des données. */
+  random_order: number
+}
+
+// Variables est inspecté pour générer docs/variables.json (cf generate-docs.ts)
+export type Variables = {
+  source: "repeatable"
+  computed: SortieRepeatable
+  transmitted: unknown // unknown ~= aucune variable n'est transmise directement depuis RawData
+}
 
 export function repeatable(
   rep: ParPériode<EntréeRepOrder>
 ): ParPériode<SortieRepeatable> {
   "use strict"
-  const output_repeatable: ParPériode<{ random_order: number }> = {}
+  const output_repeatable: ParPériode<SortieRepeatable> = {}
   for (const one_rep of Object.values(rep)) {
     const periode = one_rep.periode.getTime()
-    const out = output_repeatable[periode] ?? ({} as { random_order: number })
+    const out = output_repeatable[periode] ?? ({} as SortieRepeatable)
     out.random_order = one_rep.random_order
     output_repeatable[periode] = out
   }

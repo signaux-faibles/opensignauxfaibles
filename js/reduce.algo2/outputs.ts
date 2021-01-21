@@ -1,6 +1,7 @@
 import { SortieAPart } from "./apart"
 import { SortieRepeatable } from "./repeatable"
 import { SortieCotisationsDettes } from "./cotisationsdettes"
+import { SortieEffectifs } from "./effectifs"
 import { SortieDefaillances } from "./defaillances"
 import { SortieCcsf } from "./ccsf"
 import { SortieSirene } from "./sirene"
@@ -14,11 +15,8 @@ import { SiretOrSiren, ParPériode } from "../RawDataTypes"
 export type DonnéesAgrégées = {
   siret: SiretOrSiren
   periode: Date
-  effectif: number | null // TODO: remplacer par SortieEffectif<"effectif"> ?
-  etat_proc_collective: "in_bonis" // ou ProcolToHumanRes ?
-  interessante_urssaf: true
-  outcome: false
 } & Partial<SortieCotisationsDettes> &
+  Partial<SortieEffectifs<"effectif">> &
   Partial<SortieDefaillances> &
   Partial<SortieCcsf> &
   Partial<SortieSirene> &
