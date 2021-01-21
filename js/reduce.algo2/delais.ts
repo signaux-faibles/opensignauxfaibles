@@ -4,9 +4,16 @@ import { SortieCotisationsDettes } from "./cotisationsdettes"
 
 type DeepReadonly<T> = Readonly<T> // pas vraiment immutable pout l'instant, mais espoir que TS le permette prochainement
 
+// Champs de EntréeDelai nécéssaires à delais
 export type ChampsEntréeDelai = Pick<
   EntréeDelai,
   "date_creation" | "date_echeance" | "duree_delai" | "montant_echeancier"
+>
+
+// Champs de SortieCotisationsDettes nécéssaires à delais
+export type ChampsDettes = Pick<
+  SortieCotisationsDettes,
+  "montant_part_ouvriere" | "montant_part_patronale"
 >
 
 // valeurs fournies, reportées par delais() dans chaque période
@@ -47,7 +54,7 @@ export type Variables = {
  */
 export function delais(
   vDelai: ParHash<ChampsEntréeDelai>,
-  debitParPériode: DeepReadonly<ParPériode<SortieCotisationsDettes>>,
+  debitParPériode: DeepReadonly<ParPériode<ChampsDettes>>,
   intervalleTraitement: { premièreDate: Date; dernièreDate: Date }
 ): ParPériode<SortieDelais> {
   "use strict"
