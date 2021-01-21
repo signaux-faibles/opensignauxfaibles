@@ -60,7 +60,6 @@ const makeInput = (
               numero_historique: 2,
               numero_compte: "",
               date_traitement: dateDebut,
-              debit_suivant: "",
               part_ouvriere: 60,
               part_patronale: 0,
             } as EntréeDebit,
