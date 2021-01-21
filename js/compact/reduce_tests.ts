@@ -400,7 +400,7 @@ test.serial(
         end: new Date(),
       },
       du: 64012.0,
-    }
+    } as EntréeCotisation
     const reduceResults = reduce(siret, [
       {
         scope: "etablissement",
@@ -408,7 +408,7 @@ test.serial(
         batch: {
           [batchId]: {
             cotisation: {
-              ["hash1"]: entréeCotisation as EntréeCotisation,
+              ["hash1"]: entréeCotisation,
             },
           },
         },
@@ -419,7 +419,7 @@ test.serial(
         batch: {
           [batchId]: {
             cotisation: {
-              ["hash2"]: entréeCotisation as EntréeCotisation,
+              ["hash2"]: entréeCotisation,
             },
           },
         },

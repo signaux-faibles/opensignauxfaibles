@@ -7,6 +7,9 @@ import {
   ParHash,
 } from "../RawDataTypes"
 
+// Champs de EntréeCotisation nécéssaires à cotisationsdettes
+type ChampsEntréeCotisation = Pick<EntréeCotisation, "periode" | "du">
+
 type EcartNegatif = {
   hash: string
   numero_historique: EntréeDebit["numero_historique"]
@@ -49,7 +52,7 @@ export type Variables = {
  * cotisations.
  */
 export function cotisationsdettes(
-  vCotisation: ParHash<EntréeCotisation>,
+  vCotisation: ParHash<ChampsEntréeCotisation>,
   vDebit: ParHash<EntréeDebit>,
   periodes: Timestamp[],
   finPériode: Date // correspond à la variable globale date_fin
