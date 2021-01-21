@@ -133,9 +133,7 @@ export function cotisationsdettes(
   // debit_traitement_fin => periode de traitement du debit suivant, ou bien finPériode
   // Entre ces deux dates, c'est cet objet qui est le plus à jour.
   for (const debit of Object.values(vDebit)) {
-    const nextDate =
-      (debit.debit_suivant && vDebit[debit.debit_suivant]?.date_traitement) ||
-      finPériode
+    const nextDate = vDebit[debit.debit_suivant]?.date_traitement ?? finPériode
 
     //Selon le jour du traitement, cela passe sur la période en cours ou sur la suivante.
     const jour_traitement = debit.date_traitement.getUTCDate()
