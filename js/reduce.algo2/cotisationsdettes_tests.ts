@@ -41,7 +41,6 @@ const setupCompanyValuesForMontant = (dateDebut: Date) => ({
       part_ouvriere: montantPartOuvrière,
       part_patronale: montantPartPatronale,
       date_traitement: dateDebut,
-      debit_suivant: "",
       numero_compte: "",
       numero_ecart_negatif: 1,
       numero_historique: 2,
@@ -51,7 +50,6 @@ const setupCompanyValuesForMontant = (dateDebut: Date) => ({
       part_ouvriere: 0,
       part_patronale: 0,
       date_traitement: dateAddMonth(dateDebut, moisRemboursement),
-      debit_suivant: "",
       numero_compte: "",
       numero_ecart_negatif: 1,
       numero_historique: 3,
@@ -91,7 +89,6 @@ const setupCompanyValues = (dateDebut: Date) => ({
       numero_historique: 3, // incrémentation depuis le débit précédent
       numero_compte: "",
       date_traitement: dateAddMonth(dateDebut, 1),
-      debit_suivant: "",
       part_ouvriere: 0,
       part_patronale: 0,
     },

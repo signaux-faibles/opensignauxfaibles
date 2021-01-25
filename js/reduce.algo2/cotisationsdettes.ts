@@ -7,6 +7,22 @@ import {
   ParHash,
 } from "../RawDataTypes"
 
+// Champs de EntréeCotisation nécéssaires à cotisationsdettes
+type ChampsEntréeCotisation = Pick<EntréeCotisation, "periode" | "du">
+
+// Champs de EntréeDebit nécéssaires à cotisationsdettes
+type ChampsEntréeDebit = Pick<
+  EntréeDebit,
+  | "numero_compte"
+  | "periode"
+  | "part_ouvriere"
+  | "part_patronale"
+  | "numero_ecart_negatif"
+  | "numero_historique"
+  | "date_traitement"
+  | "debit_suivant"
+>
+
 type EcartNegatif = {
   hash: string
   numero_historique: EntréeDebit["numero_historique"]
@@ -27,19 +43,30 @@ type CotisationsDettesPassees = {
 }
 
 export type SortieCotisationsDettes = {
-  interessante_urssaf: boolean // true: si l'entreprise n'a pas eu de débit (dette) sur les 6 derniers mois
-  cotisation: number // montant (€) des mensualités de règlement des cotisations sociales
-  montant_part_ouvriere: number // montant (€) de la dette imputable au réglement des cotisatisations sociales des employés
-  montant_part_patronale: number // montant (€) de la dette imputable au réglement des cotisatisations sociales des dirigeants
+  /** Règle métier URSSAF. true: si l'entreprise n'a pas eu de débit (dette) sur les 6 derniers mois. Pas utile dans les travaux de data science. */
+  interessante_urssaf: boolean
+  /** montant (€) des mensualités de règlement des cotisations sociales */
+  cotisation: number
+  /** montant (€) de la dette imputable au réglement des cotisatisations sociales des employés */
+  montant_part_ouvriere: number
+  /** montant (€) de la dette imputable au réglement des cotisatisations sociales des dirigeants */
+  montant_part_patronale: number
 } & CotisationsDettesPassees
+
+// Variables est inspecté pour générer docs/variables.json (cf generate-docs.ts)
+export type Variables = {
+  source: "cotisationsdettes"
+  computed: SortieCotisationsDettes
+  transmitted: unknown // unknown ~= aucune variable n'est transmise directement depuis RawData
+}
 
 /**
  * Calcule les variables liées aux cotisations sociales et dettes sur ces
  * cotisations.
  */
 export function cotisationsdettes(
-  vCotisation: ParHash<EntréeCotisation>,
-  vDebit: ParHash<EntréeDebit>,
+  vCotisation: ParHash<ChampsEntréeCotisation>,
+  vDebit: ParHash<ChampsEntréeDebit>,
   periodes: Timestamp[],
   finPériode: Date // correspond à la variable globale date_fin
 ): ParPériode<SortieCotisationsDettes> {
@@ -106,7 +133,9 @@ export function cotisationsdettes(
   // debit_traitement_fin => periode de traitement du debit suivant, ou bien finPériode
   // Entre ces deux dates, c'est cet objet qui est le plus à jour.
   for (const debit of Object.values(vDebit)) {
-    const nextDate = vDebit[debit.debit_suivant]?.date_traitement ?? finPériode
+    const nextDate =
+      (debit.debit_suivant && vDebit[debit.debit_suivant]?.date_traitement) ||
+      finPériode
 
     //Selon le jour du traitement, cela passe sur la période en cours ou sur la suivante.
     const jour_traitement = debit.date_traitement.getUTCDate()

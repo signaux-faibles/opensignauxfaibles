@@ -169,7 +169,7 @@ func Reduce(batch base.AdminBatch, types []string) error {
 		return errors.New("erreurs constatées, consultez les journaux")
 	}
 
-	LogOperationEvent("Reduce", startDate)
+	LogOperationEvent("Reduce", startDate) // TODO: stocker aussi batchId + erreurs fatales (utile pour qualifier les données présentes dans Features)
 
 	if backupColName != "" {
 		fmt.Fprintln(os.Stderr, "Vous pouvez supprimer la version précédente de la collection Features: "+backupColName)

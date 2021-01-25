@@ -2,7 +2,8 @@ import { SortieDefaillances } from "./defaillances"
 import { ParPériode } from "../RawDataTypes"
 import { SortieCotisation } from "./cotisation"
 
-type Outcome = {
+export type Outcome = {
+  /** Distance de l'évènement, exprimé en nombre de périodes. */
   time_til_outcome: number
   outcome: boolean
 }

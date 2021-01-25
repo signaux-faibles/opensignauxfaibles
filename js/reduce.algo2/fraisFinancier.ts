@@ -1,14 +1,16 @@
 import { EntréeDiane } from "../RawDataTypes"
 
-export type DianeProperty =
+export type ChampsDiane = Pick<
+  EntréeDiane,
   | "interets"
   | "excedent_brut_d_exploitation"
   | "produits_financiers"
   | "produit_exceptionnel"
   | "charge_exceptionnelle"
   | "charges_financieres"
+>
 
-export function fraisFinancier(diane: EntréeDiane): number | null {
+export function fraisFinancier(diane: ChampsDiane): number | null {
   "use strict"
   const ratio =
     (diane["interets"] ?? NaN) /

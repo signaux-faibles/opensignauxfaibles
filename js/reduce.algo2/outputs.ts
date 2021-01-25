@@ -1,11 +1,12 @@
 import { SortieAPart } from "./apart"
 import { SortieRepeatable } from "./repeatable"
 import { SortieCotisationsDettes } from "./cotisationsdettes"
+import { SortieEffectifs } from "./effectifs"
 import { SortieDefaillances } from "./defaillances"
 import { SortieCcsf } from "./ccsf"
 import { SortieSirene } from "./sirene"
 import { SortieNAF } from "./populateNafAndApe"
-import { DelaiComputedValues } from "./delais"
+import { SortieDelais } from "./delais"
 import { SortieCibleApprentissage } from "./cibleApprentissage"
 import { SortieCotisation } from "./cotisation"
 import { SortieCompte } from "./compte"
@@ -14,18 +15,15 @@ import { SiretOrSiren, ParPériode } from "../RawDataTypes"
 export type DonnéesAgrégées = {
   siret: SiretOrSiren
   periode: Date
-  effectif: number | null
-  etat_proc_collective: "in_bonis" // ou ProcolToHumanRes ?
-  interessante_urssaf: true
-  outcome: false
 } & Partial<SortieCotisationsDettes> &
+  Partial<SortieEffectifs<"effectif">> &
   Partial<SortieDefaillances> &
   Partial<SortieCcsf> &
   Partial<SortieSirene> &
   Partial<SortieNAF> &
   Partial<SortieAPart> &
   Partial<SortieRepeatable> &
-  Partial<DelaiComputedValues> &
+  Partial<SortieDelais> &
   Partial<SortieCotisation> &
   Partial<SortieCompte> &
   Partial<SortieCibleApprentissage> &

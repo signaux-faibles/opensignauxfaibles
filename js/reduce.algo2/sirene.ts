@@ -1,27 +1,40 @@
 import { f } from "./functions"
-import {
-  EntréeSirene,
-  SiretOrSiren,
-  Departement,
-  CodeAPE,
-  ParHash,
-} from "../RawDataTypes"
+import { EntréeSirene, Siret, Siren, ParHash } from "../RawDataTypes"
 
 type Input = {
   periode: Date
-  siret: SiretOrSiren
+  siret: Siret
 }
 
-export type SortieSirene = {
-  siren: SiretOrSiren
-  latitude: number | null
-  longitude: number | null
-  departement: Departement | null
-  region: ReturnType<typeof f.region>
+type VariablesTransmises = {
+  /** Raison sociale de l'établissement. */
   raison_sociale: string | null
-  code_ape: CodeAPE
-  date_creation_etablissement: number | null // année
-  age: number | null // en années
+  /** Latitude (géolocalisation) de l'établissement. */
+  latitude: EntréeSirene["latitude"] | null
+  /** Longitude (géolocalisation) de l'établissement. */
+  longitude: EntréeSirene["longitude"] | null
+  /** Département où est localisé l'établissement. */
+  departement: EntréeSirene["departement"] | null
+  /** Code APE/NAF de l'établissement. */
+  code_ape: EntréeSirene["ape"]
+}
+
+export type SortieSirene = VariablesTransmises & {
+  /** Numéro SIREN de l'établissement. */
+  siren: Siren
+  /** Région où est localisé l'établissement. */
+  region: ReturnType<typeof f.region>
+  /** Année de création de l'établissement. */
+  date_creation_etablissement: number | null
+  /** Âge de l'établissement, exprimé en années. */
+  age: number | null
+}
+
+// Variables est inspecté pour générer docs/variables.json (cf generate-docs.ts)
+export type Variables = {
+  source: "sirene"
+  computed: Omit<SortieSirene, keyof VariablesTransmises>
+  transmitted: VariablesTransmises
 }
 
 export function sirene(

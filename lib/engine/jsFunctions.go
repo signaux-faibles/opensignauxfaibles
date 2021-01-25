@@ -657,6 +657,7 @@ db.getCollection("Features").createIndex({
     return result;
 }`,
 "debits": `function debits(vdebit = {}) {
+    var _a;
     const last_treatment_day = 20;
     const ecn = {};
     for (const [h, debit] of Object.entries(vdebit)) {
@@ -688,12 +689,11 @@ db.getCollection("Features").createIndex({
     }
     const value_dette = {};
     for (const debit of Object.values(vdebit)) {
-        const debit_suivant = vdebit[debit.debit_suivant] || {
-            date_traitement: date_fin,
-        };
+        const nextDate = (debit.debit_suivant && ((_a = vdebit[debit.debit_suivant]) === null || _a === void 0 ? void 0 : _a.date_traitement)) ||
+            date_fin;
         //Selon le jour du traitement, cela passe sur la période en cours ou sur la suivante.
         const jour_traitement = debit.date_traitement.getUTCDate();
-        const jour_traitement_suivant = debit_suivant.date_traitement.getUTCDate();
+        const jour_traitement_suivant = nextDate.getUTCDate();
         let date_traitement_debut;
         if (jour_traitement <= last_treatment_day) {
             date_traitement_debut = new Date(Date.UTC(debit.date_traitement.getFullYear(), debit.date_traitement.getUTCMonth()));
@@ -703,10 +703,10 @@ db.getCollection("Features").createIndex({
         }
         let date_traitement_fin;
         if (jour_traitement_suivant <= last_treatment_day) {
-            date_traitement_fin = new Date(Date.UTC(debit_suivant.date_traitement.getFullYear(), debit_suivant.date_traitement.getUTCMonth()));
+            date_traitement_fin = new Date(Date.UTC(nextDate.getFullYear(), nextDate.getUTCMonth()));
         }
         else {
-            date_traitement_fin = new Date(Date.UTC(debit_suivant.date_traitement.getFullYear(), debit_suivant.date_traitement.getUTCMonth() + 1));
+            date_traitement_fin = new Date(Date.UTC(nextDate.getFullYear(), nextDate.getUTCMonth() + 1));
         }
         const periode_debut = date_traitement_debut;
         const periode_fin = date_traitement_fin;
@@ -1143,7 +1143,7 @@ function sirene(sireneArray) {
 function cotisationsdettes(vCotisation, vDebit, periodes, finPériode // correspond à la variable globale date_fin
 ) {
     "use strict";
-    var _a, _b;
+    var _a;
     // Tous les débits traitées après ce jour du mois sont reportées à la période suivante
     // Permet de s'aligner avec le calendrier de fourniture des données
     const lastAccountedDay = 20;
@@ -1194,7 +1194,8 @@ function cotisationsdettes(vCotisation, vDebit, periodes, finPériode // corresp
     // debit_traitement_fin => periode de traitement du debit suivant, ou bien finPériode
     // Entre ces deux dates, c'est cet objet qui est le plus à jour.
     for (const debit of Object.values(vDebit)) {
-        const nextDate = (_b = (_a = vDebit[debit.debit_suivant]) === null || _a === void 0 ? void 0 : _a.date_traitement) !== null && _b !== void 0 ? _b : finPériode;
+        const nextDate = (debit.debit_suivant && ((_a = vDebit[debit.debit_suivant]) === null || _a === void 0 ? void 0 : _a.date_traitement)) ||
+            finPériode;
         //Selon le jour du traitement, cela passe sur la période en cours ou sur la suivante.
         const jour_traitement = debit.date_traitement.getUTCDate();
         const jour_traitement_suivant = nextDate.getUTCDate();
@@ -1426,7 +1427,7 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
             if (outputInPeriod.annee_bdf) {
                 outputInPeriod.exercice_bdf = outputInPeriod.annee_bdf - 1;
             }
-            const pastData = f.omit(periodData, "arrete_bilan_bdf", "exercice_bdf", "annee_bdf");
+            const pastData = f.omit(periodData, "arrete_bilan_bdf", "annee_bdf");
             const makePastProp = (prop, offset) => ` + "`" + `${prop}_past_${offset}` + "`" + `;
             for (const prop of Object.keys(pastData)) {
                 const past_year_offset = [1, 2];
@@ -1594,26 +1595,24 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
     //
     // extraction de l'entreprise et des établissements depuis v
     const établissements = f.omit(v, "entreprise");
-    const entr = Object.assign({}, v.entreprise);
+    const entr = Object.assign({}, v.entreprise); // on suppose que v.entreprise est défini
     const output = Object.keys(établissements).map((siret) => {
-        var _a, _b, _c, _d, _e;
-        const { effectif } = (_a = établissements[siret]) !== null && _a !== void 0 ? _a : {};
-        if (effectif) {
-            entr.effectif_entreprise = entr.effectif_entreprise || 0 + effectif;
+        var _a, _b, _c, _d;
+        const etab = (_a = établissements[siret]) !== null && _a !== void 0 ? _a : {};
+        if (etab.effectif) {
+            entr.effectif_entreprise = entr.effectif_entreprise || 0 + etab.effectif;
         }
-        const { apart_heures_consommees } = (_b = établissements[siret]) !== null && _b !== void 0 ? _b : {};
-        if (apart_heures_consommees) {
+        if (etab.apart_heures_consommees) {
             entr.apart_entreprise =
-                (entr.apart_entreprise || 0) + apart_heures_consommees;
+                (entr.apart_entreprise || 0) + etab.apart_heures_consommees;
         }
-        const etab = établissements[siret];
-        if (etab && (etab.montant_part_patronale || etab.montant_part_ouvriere)) {
+        if (etab.montant_part_patronale || etab.montant_part_ouvriere) {
             entr.debit_entreprise =
-                ((_c = entr.debit_entreprise) !== null && _c !== void 0 ? _c : 0) +
-                    ((_d = etab.montant_part_patronale) !== null && _d !== void 0 ? _d : 0) +
-                    ((_e = etab.montant_part_ouvriere) !== null && _e !== void 0 ? _e : 0);
+                ((_b = entr.debit_entreprise) !== null && _b !== void 0 ? _b : 0) +
+                    ((_c = etab.montant_part_patronale) !== null && _c !== void 0 ? _c : 0) +
+                    ((_d = etab.montant_part_ouvriere) !== null && _d !== void 0 ? _d : 0);
         }
-        return Object.assign(Object.assign(Object.assign({}, établissements[siret]), entr), { nbr_etablissements_connus: Object.keys(établissements).length });
+        return Object.assign(Object.assign(Object.assign({}, etab), entr), { nbr_etablissements_connus: Object.keys(établissements).length });
     });
     // NON: Pour l'instant, filtrage a posteriori
     // output = output.filter(siret_data => {
@@ -1637,6 +1636,7 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
 "financierCourtTerme": `function financierCourtTerme(diane) {
     "use strict";
     var _a, _b;
+    // Note: cette fonction n'est plus appelée. => à supprimer ?
     const ratio = ((_a = diane["concours_bancaire_courant"]) !== null && _a !== void 0 ? _a : NaN) / ((_b = diane["ca"]) !== null && _b !== void 0 ? _b : NaN);
     return isNaN(ratio) ? null : ratio * 100;
 }`,

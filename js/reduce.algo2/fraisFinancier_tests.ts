@@ -1,5 +1,5 @@
 import test from "ava"
-import { fraisFinancier, DianeProperty } from "./fraisFinancier"
+import { fraisFinancier, ChampsDiane } from "./fraisFinancier"
 import { EntréeDiane } from "../RawDataTypes"
 
 const fakeDiane = () => ({
@@ -30,7 +30,7 @@ test(`fraisFinancier est calculé selon la formule:
   t.is(fraisFinancier(diane as EntréeDiane), resultat)
 })
 
-const proprietes: DianeProperty[] = [
+const proprietes: (keyof ChampsDiane)[] = [
   "interets",
   "excedent_brut_d_exploitation",
   "produits_financiers",
@@ -40,7 +40,7 @@ const proprietes: DianeProperty[] = [
 ]
 proprietes.forEach((propriete) =>
   test(`fraisFinancier est nul si "${propriete}" n'est pas disponible dans Diane`, (t) => {
-    const diane = fakeDiane() as EntréeDiane
+    const diane = fakeDiane()
     delete diane[propriete]
     t.is(fraisFinancier(diane), null)
   })

@@ -14,7 +14,12 @@ import { naf as nafValues } from "../test/data/naf"
 import { reducer, invertedReducer } from "../test/helpers/reducers"
 import { runMongoMap, indexMapResultsByKey } from "../test/helpers/mongodb"
 import { setGlobals } from "../test/helpers/setGlobals"
-import { EntréeBdf, EntréeDelai, EntrepriseBatchProps } from "../RawDataTypes"
+import {
+  EntréeBdf,
+  EntréeDelai,
+  EntréeDebit,
+  EntrepriseBatchProps,
+} from "../RawDataTypes"
 
 const DAY_IN_MS = 24 * 60 * 60 * 1000
 
@@ -55,10 +60,9 @@ const makeInput = (
               numero_historique: 2,
               numero_compte: "",
               date_traitement: dateDebut,
-              debit_suivant: "",
               part_ouvriere: 60,
               part_patronale: 0,
-            },
+            } as EntréeDebit,
           },
           delai: {
             hashDelai: {
@@ -69,7 +73,7 @@ const makeInput = (
               duree_delai: duréeDelai,
               montant_echeancier: 100,
               ...delaiOverrides,
-            },
+            } as EntréeDelai,
           },
         },
       },

@@ -75,10 +75,10 @@ export type BatchValueProps = CommonBatchProps &
     procol: ParHash<EntréeDéfaillances>
     cotisation: ParHash<EntréeCotisation>
     debit: ParHash<EntréeDebit>
-    ccsf: ParHash<{ date_traitement: Date }>
+    ccsf: ParHash<EntréeCcsf>
     sirene: ParHash<EntréeSirene>
     sirene_ul: ParHash<EntréeSireneEntreprise>
-    effectif_ent: ParHash<EntréeEffectif>
+    effectif_ent: ParHash<EntréeEffectifEnt>
     bdf: ParHash<EntréeBdf>
     diane: ParHash<EntréeDiane>
     ellisphere: ParHash<EntréeEllisphere>
@@ -86,8 +86,17 @@ export type BatchValueProps = CommonBatchProps &
 
 // Détail des types de données
 
+export type EntréeCcsf = {
+  /** Date de début de la procédure CCSF */
+  date_traitement: Date
+  stade: string // TODO: choisir un type plus précis
+  action: string // TODO: choisir un type plus précis
+}
+
 export type EntréeDéfaillances = {
+  /** Nature de la procédure de défaillance. */
   action_procol: "liquidation" | "redressement" | "sauvegarde"
+  /** Evénement survenu dans le cadre de cette procédure. */
   stade_procol:
     | "abandon_procedure"
     | "solde_procedure"
@@ -96,6 +105,7 @@ export type EntréeDéfaillances = {
     | "ouverture"
     | "inclusion_autre_procedure"
     | "cloture_insuffisance_actif"
+  /** Date effet de la procédure collective. */
   date_effet: Date
 }
 
@@ -121,8 +131,12 @@ export type EntréeApDemande = {
 }
 
 export type EntréeCompte = {
+  /** Date à laquelle cet établissement est associé à ce numéro de compte URSSAF. */
   periode: Date
-  numero_compte: number
+  /** Numéro SIRET de l'établissement. Les numéros avec des Lettres sont des sirets provisoires. */
+  siret: string
+  /** Compte administratif URSSAF. */
+  numero_compte: string
 }
 
 export type EntréeInterim = {
@@ -137,21 +151,53 @@ export type EntréeRepOrder = {
 }
 
 export type EntréeEffectif = {
+  /** Compte administratif URSSAF. */
   numero_compte: string
   periode: Date
+  /** Nombre de personnes employées par l'établissement. */
+  effectif: number
+}
+
+export type EntréeEffectifEnt = {
+  periode: Date
+  /** Nombre de personnes employées par l'entreprise. */
   effectif: number
 }
 
 // Valeurs attendues par delais(), pour chaque période. (cf lib/urssaf/delai.go)
 export type EntréeDelai = {
+  /** Compte administratif URSSAF. */
+  numero_compte: string
+  /** Le numéro de structure est l'identifiant d'un dossier contentieux. */
+  numero_contentieux: string
+  /** Date de création du délai. */
   date_creation: Date
+  /** Date d'échéance du délai. */
   date_echeance: Date
-  duree_delai: number // nombre de jours entre date_creation et date_echeance
-  montant_echeancier: number // exprimé en euros
+  /** Durée du délai en jours: nombre de jours entre date_creation et date_echeance. */
+  duree_delai: number
+  /** Raison sociale de l'établissement. */
+  denomination: string
+  /** Délai inférieur ou supérieur à 6 mois ? Modalités INF et SUP. */
+  indic_6m: string
+  /** Année de création du délai. */
+  annee_creation: number
+  /** Montant global de l'échéancier, en euros. */
+  montant_echeancier: number
+  /** Code externe du stade. */
+  stade: string
+  /** Code externe de l'action. */
+  action: string
 }
 
 export type EntréeCotisation = {
+  /** Compte administratif URSSAF. */
+  numero_compte: string
+  /** Période sur laquelle le montants s'appliquent. */
   periode: { start: Date; end: Date }
+  /** Cotisation encaissée directement, en euros. */
+  encaisse: number
+  /** Cotisation due, en euros. À utiliser pour calculer le montant moyen mensuel du: Somme cotisations dues / nb périodes. */
   du: number
 }
 
@@ -159,16 +205,73 @@ export type EntréeCotisation = {
  * Représente un reste à payer (dette) sur cotisation sociale ou autre.
  */
 export type EntréeDebit = {
+  /** Identifiant URSSAF d'établissement (équivalent du SIRET). */
+  numero_compte: string
+  /** Période sur laquelle le montants s'appliquent. */
   periode: { start: Date; end: Date } // Periode pour laquelle la cotisation était attendue
-  numero_ecart_negatif: number // identifiant du débit pour une période donnée (comme une sorte de numéro de facture)
-  numero_historique: number // identifiant d'un remboursement (partiel ou complet) d'un débit
-  numero_compte: string // identifiant URSSAF d'établissement (équivalent du SIRET)
-  date_traitement: Date // Date de constatation du débit (exemple: remboursement, majoration ou autre modification du montant)
-  debit_suivant: string // Hash d'un autre débit
-  // le montant est ventilé entre ces deux valeurs, exprimées en euros (€):
+  /** L'écart négatif (ecn) correspond à une période en débit. Pour une même période, plusieurs débits peuvent être créés. On leur attribue un numéro d'ordre. Par exemple, 101, 201, 301 etc.; ou 101, 102, 201 etc. correspondent respectivement au 1er, 2ème et 3ème ecn de la période considérée. */
+  numero_ecart_negatif: number
+  /** Ordre des opérations pour un écart négatif donné. */
+  numero_historique: number
+  /** Date de constatation du débit (exemple: remboursement, majoration ou autre modification du montant) */
+  date_traitement: Date
+  /** Hash d'un autre débit */
+  debit_suivant?: string // TODO: non fourni par le parseur, ce champ devrait être défini dans un type de sortie.
+  /** Montant des débits sur la part ouvrières, exprimées en euros (€). Sont exclues les pénalités et les majorations de retard. */
   part_ouvriere: number
+  /** Montant des débits sur la part patronale, exprimées en euros (€). Sont exclues les pénalités et les majorations de retard. */
   part_patronale: number
-  montant_majorations?: number // exploité par map-reduce "public", mais pas par "reduce.algo2"
+  montant_majorations?: number // TODO: non fourni par le parseur, ce champ devrait être défini dans un type de sortie.
+  /** Code état du compte: 1 (Actif), 2 (Suspendu) ou 3 (Radié). */
+  etat_compte: number
+  /** Code qui indique si le compte fait l'objet d'une procédure collective: 1 (en cours), 2 (plan de redressement en cours), 9	(procédure collective sans dette à l'Urssaf) ou valeur nulle en cas d'absence de procédure collective. */
+  code_procedure_collective: string
+  /** Code opération historique de l'écart négatif:
+   * 1	Mise en recouvrement
+   * 2	Paiement
+   * 3	Admission en non valeur
+   * 4	Remise de majoration de retard
+   * 5	Abandon de solde debiteur
+   * 11	Annulation de mise en recouvrement
+   * 12	Annulation paiement
+   * 13	Annulation a-n-v
+   * 14	Annulation de remise de majoration retard
+   * 15	Annulation abandon solde debiteur
+   */
+  code_operation_ecart_negatif: string
+  /** Code motif de l'écart négatif:
+   * 0	Cde motif inconnu
+   * 1	Retard dans le versement
+   * 2	Absence ou insuffisance de versement
+   * 3	Taxation provisionelle. Déclarations non fournies
+   * 4	Majorations de retard complémentaires Article R243-18 du code de la sécurité sociale
+   * 5	Contrôle,chefs de redressement notifiés le JJ/MM/AA Article R243-59 de la Securité Sociale
+   * 6	Fourniture tardive des déclarations
+   * 7	Bases déclarées supérieures à Taxation provisionnelle
+   * 8	Retard dans le versement et fourniture tardive des déclarations
+   * 9	Absence ou insuffisance de versement et fourniture tardive des déclarations
+   * 10	Rappel sur contrôle et fourniture tardive des déclarations
+   * 11	Régularisation d'une taxation provisionnelle
+   * 12	Régularisation annuelle
+   * 13	Rejet du titre de paiement par la banque .
+   * 14	Modification d'affectation d'un crédit
+   * 15	Annulation d'un crédit
+   * 16	Régularisation suite à modification du Taux Accident du Travail
+   * 17	Régularisation suite à assujettissement au transport (origine débit sur PJ=4)
+   * 18	Majorations pour non respect de paiement par moyen dématérialisé Article L243-14
+   * 19	Rapprochement TR/BRC sous réserve de vérification ultérieure
+   * 20	Cotisations complémentaires suite modification des revenus déclarés
+   * 21	Cotisations complémentaires suite à non fourniture du contrat d'exonération
+   * 22	Contrôle. Chefs de redressement notifiés le JJ/MM/AA. Article L324.9 du code du travail
+   * 23	Cotisations complémentaires suite conditions d'exonération non remplies
+   * 24	Absence de versement
+   * 25	Insuffisance de versement
+   * 26	Absence de versement et fourniture tardive des déclarations
+   * 27	Insuffisance de versement et fourniture tardive des déclarations
+   **/
+  code_motif_ecart_negatif: string
+  /** Recours en cours. */
+  recours_en_cours: boolean
 }
 
 export type EntréeSirene = {
@@ -193,20 +296,30 @@ export type EntréeSireneEntreprise = {
 }
 
 export type EntréeBdf = {
+  /** Date de clôture de l'exercice. */
   arrete_bilan_bdf: Date
+  /** Année de l'exercice. */
   annee_bdf: number
-  exercice_bdf: number
+  /** Raison sociale de l'entreprise. */
   raison_sociale: string
+  /** Secteur d'activité. */
   secteur: string
+  /** Siren de l'entreprise. */
   siren: SiretOrSiren
 } & EntréeBdfRatios
 
 export type EntréeBdfRatios = {
+  /** Poids du fonds de roulement net global sur le chiffre d'affaire. Exprimé en %. */
   poids_frng: number
+  /** Taux de marge, rapport de l'excédent brut d'exploitation (EBE) sur la valeur ajoutée (exprimé en %): 100*EBE / valeur ajoutee */
   taux_marge: number
+  /** Délai estimé de paiement des fournisseurs (exprimé en jours): 360 * dettes fournisseurs / achats HT */
   delai_fournisseur: number
+  /** Poids des dettes fiscales et sociales, par rapport à la valeur ajoutée (exprimé en %): 100 * dettes fiscales et sociales / Valeur ajoutee */
   dette_fiscale: number
+  /** Poids du financement court terme (exprimé en %): 100 * concours bancaires courants / chiffre d'affaires HT */
   financier_court_terme: number
+  /** Poids des frais financiers, sur l'excedent brut d'exploitation corrigé des produits et charges hors exploitation (exprimé en %): 100 * frais financiers / (EBE + Produits hors expl. - charges hors expl.) */
   frais_financier: number
 }
 

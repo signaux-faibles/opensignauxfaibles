@@ -14,14 +14,14 @@ import { DonnéesAgrégées } from "./outputs"
 import { NAF } from "./populateNafAndApe"
 import { SortieEffectifs } from "./effectifs"
 
-type SortieMapEntreprise = {
+export type SortieMapEntreprise = {
   siren: SiretOrSiren
   periode: Date
 } & Partial<SortieSireneEntreprise> &
   Partial<SortieBdf> &
   Partial<SortiePaydex> &
   Partial<SortieDiane> &
-  Partial<SortieEffectifs>
+  Partial<SortieEffectifs<"effectif_ent">>
 
 export type SortieMapEtablissement = Partial<DonnéesAgrégées>
 
