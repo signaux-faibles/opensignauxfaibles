@@ -145,6 +145,11 @@ func TestProcol(t *testing.T) {
 		assert.Equal(t, []marshal.Tuple(nil), output.Tuples, "should return no tuples")
 		assert.Contains(t, marshal.GetFatalError(output), "format de fichier incorrect")
 	})
+
+	t.Run("est insensible à la casse des en-têtes de colonnes", func(t *testing.T) {
+		output := marshal.RunParserInline(t, ParserProcol, []string{"dT_eFfeT;lIb_aCtx_stDx;sIret"})
+		assert.Len(t, marshal.GetFatalErrors(output.Events[0]), 0)
+	})
 }
 
 func TestEffectif(t *testing.T) {
