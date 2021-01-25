@@ -145,7 +145,7 @@ func readSiretMapping(
 	csvReader.Comma = ';'
 
 	// discard header row
-	csvReader.Read()
+	csvReader.Read() // => Urssaf_gestion;Dep;Compte;Etat_compte;Siren;Siret;Date_crea_siret;Date_disp_siret;Cle_md5
 
 	compteIndex := 2
 	siretIndex := 5
