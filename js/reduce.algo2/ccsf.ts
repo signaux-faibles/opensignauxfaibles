@@ -1,4 +1,4 @@
-import { ParHash } from "../RawDataTypes"
+import { EntréeCcsf, ParHash } from "../RawDataTypes"
 
 type Input = {
   periode: Date
@@ -12,12 +12,12 @@ export type SortieCcsf = {
 // Variables est inspecté pour générer docs/variables.json (cf generate-docs.ts)
 export type Variables = {
   source: "ccsf"
-  computed: SortieCcsf
-  transmitted: unknown // unknown ~= aucune variable n'est transmise directement depuis RawData
+  computed: unknown // unknown ~= aucune variable n'est calculée
+  transmitted: SortieCcsf
 }
 
 export function ccsf(
-  vCcsf: ParHash<{ date_traitement: Date }>,
+  vCcsf: ParHash<EntréeCcsf>,
   output_array: (Input & Partial<SortieCcsf>)[]
 ): void {
   "use strict"

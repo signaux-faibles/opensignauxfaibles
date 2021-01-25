@@ -1,5 +1,11 @@
 import { f } from "./functions"
-import { EntréeEffectif, ParHash, Timestamp, ParPériode } from "../RawDataTypes"
+import {
+  EntréeEffectif,
+  EntréeEffectifEnt,
+  ParHash,
+  Timestamp,
+  ParPériode,
+} from "../RawDataTypes"
 
 // Paramètres globaux utilisés par "reduce.algo2"
 declare const offset_effectif: number
@@ -7,10 +13,15 @@ declare const offset_effectif: number
 type Clé = "effectif_ent" | "effectif" // effectif entreprise ou établissement
 type ValeurEffectif = number
 
-type EffectifReporté<K extends Clé> = {
-  /** Vaut 1 si cette valeur d'effectif a été reportée, pour combler une donnée manquante. */
-  [k in `${K}_reporte`]: 1 | 0
-}
+type EffectifReporté<K extends Clé> = K extends "effectif_ent"
+  ? {
+      /** Vaut 1 si cette valeur est absente pour la période donnée et que le dernier effectif connu a été utilisé à la place. */
+      effectif_ent_reporte: 1 | 0
+    }
+  : {
+      /** Vaut 1 si cette valeur est absente pour la période donnée et que le dernier effectif connu a été utilisé à la place. */
+      effectif_reporte: 1 | 0
+    }
 
 type MonthOffset = 6 | 12 | 18 | 24
 type EffectifPassé<K extends Clé> = {
@@ -45,7 +56,9 @@ export type SortieEffectifs<K extends Clé> = ValeursTransmises<K> &
   ValeursCalculées<K>
 
 export function effectifs<K extends Clé>(
-  entréeEffectif: ParHash<EntréeEffectif>,
+  entréeEffectif: ParHash<
+    K extends "effectif_ent" ? EntréeEffectifEnt : EntréeEffectif
+  >,
   periodes: Timestamp[],
   clé: K
 ): ParPériode<SortieEffectifs<K>> {

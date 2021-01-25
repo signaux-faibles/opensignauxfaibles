@@ -5,14 +5,14 @@
         "description": "Date de début de la procédure CCSF",
         "type": "string",
         "format": "date-time",
-        "computed": true
+        "computed": false
     },
     {
         "source": "compte",
         "name": "compte_urssaf",
         "description": "Compte administratif URSSAF",
-        "type": "number",
-        "computed": true
+        "type": "string",
+        "computed": false
     },
     {
         "source": "cotisation",
@@ -24,7 +24,7 @@
     {
         "source": "cotisation",
         "name": "ratio_dette",
-        "description": "ratio_dette divise montant_part_ouvriere et montant_part_patronale par cotisation_moy12m.",
+        "description": "ratio_dette = (montant_part_ouvriere + montant_part_patronale) / cotisation_moy12m",
         "type": "number",
         "computed": true
     },
@@ -52,7 +52,7 @@
     {
         "source": "cotisationsdettes",
         "name": "interessante_urssaf",
-        "description": "true: si l'entreprise n'a pas eu de débit (dette) sur les 6 derniers mois",
+        "description": "Règle métier URSSAF. true: si l'entreprise n'a pas eu de débit (dette) sur les 6 derniers mois. Pas utile dans les travaux de data science.",
         "type": "boolean",
         "computed": true
     },
@@ -184,7 +184,7 @@
     {
         "source": "delais",
         "name": "delai_nb_jours_restants",
-        "description": "Nombre de jours restants du délai.",
+        "description": "Nombre de jours restants du délai de paiement.",
         "type": "number",
         "computed": true
     },
@@ -212,6 +212,7 @@
     {
         "source": "effectifs",
         "name": "effectif_reporte",
+        "description": "Vaut 1 si cette valeur est absente pour la période donnée et que le dernier effectif connu a été utilisé à la place.",
         "enum": [
             0,
             1
@@ -246,6 +247,7 @@
     {
         "source": "effectifs",
         "name": "effectif_ent_reporte",
+        "description": "Vaut 1 si cette valeur est absente pour la période donnée et que le dernier effectif connu a été utilisé à la place.",
         "enum": [
             0,
             1

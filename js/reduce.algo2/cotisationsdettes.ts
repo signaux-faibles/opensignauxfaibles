@@ -7,6 +7,9 @@ import {
   ParHash,
 } from "../RawDataTypes"
 
+// Champs de EntréeCotisation nécéssaires à cotisationsdettes
+type ChampsEntréeCotisation = Pick<EntréeCotisation, "periode" | "du">
+
 type EcartNegatif = {
   hash: string
   numero_historique: EntréeDebit["numero_historique"]
@@ -27,7 +30,7 @@ type CotisationsDettesPassees = {
 }
 
 export type SortieCotisationsDettes = {
-  /** true: si l'entreprise n'a pas eu de débit (dette) sur les 6 derniers mois */
+  /** Règle métier URSSAF. true: si l'entreprise n'a pas eu de débit (dette) sur les 6 derniers mois. Pas utile dans les travaux de data science. */
   interessante_urssaf: boolean
   /** montant (€) des mensualités de règlement des cotisations sociales */
   cotisation: number
@@ -49,7 +52,7 @@ export type Variables = {
  * cotisations.
  */
 export function cotisationsdettes(
-  vCotisation: ParHash<EntréeCotisation>,
+  vCotisation: ParHash<ChampsEntréeCotisation>,
   vDebit: ParHash<EntréeDebit>,
   periodes: Timestamp[],
   finPériode: Date // correspond à la variable globale date_fin

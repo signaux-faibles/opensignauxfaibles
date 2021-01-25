@@ -4,6 +4,18 @@ import { SortieCotisationsDettes } from "./cotisationsdettes"
 
 type DeepReadonly<T> = Readonly<T> // pas vraiment immutable pout l'instant, mais espoir que TS le permette prochainement
 
+// Champs de EntréeDelai nécéssaires à delais
+export type ChampsEntréeDelai = Pick<
+  EntréeDelai,
+  "date_creation" | "date_echeance" | "duree_delai" | "montant_echeancier"
+>
+
+// Champs de SortieCotisationsDettes nécéssaires à delais
+export type ChampsDettes = Pick<
+  SortieCotisationsDettes,
+  "montant_part_ouvriere" | "montant_part_patronale"
+>
+
 // valeurs fournies, reportées par delais() dans chaque période
 type ValeursTransmises = {
   /** Nombre de jours entre date_creation et date_echeance. */
@@ -14,7 +26,7 @@ type ValeursTransmises = {
 
 // valeurs calculées par delais()
 type ValeursCalculuées = {
-  /** Nombre de jours restants du délai. */
+  /** Nombre de jours restants du délai de paiement. */
   delai_nb_jours_restants: number
   /** Ratio entre remboursement linéaire et effectif, à condition d'avoir le montant des parts ouvrière et patronale. */
   delai_deviation_remboursement?: number
@@ -41,8 +53,8 @@ export type Variables = {
  * demande de délai.
  */
 export function delais(
-  vDelai: ParHash<EntréeDelai>,
-  debitParPériode: DeepReadonly<ParPériode<SortieCotisationsDettes>>,
+  vDelai: ParHash<ChampsEntréeDelai>,
+  debitParPériode: DeepReadonly<ParPériode<ChampsDettes>>,
   intervalleTraitement: { premièreDate: Date; dernièreDate: Date }
 ): ParPériode<SortieDelais> {
   "use strict"
