@@ -15,11 +15,11 @@ type ValeurEffectif = number
 
 type EffectifReporté<K extends Clé> = K extends "effectif_ent"
   ? {
-      /** Vaut 1 si cette valeur d'effectif a été reportée, pour combler une donnée manquante. */
+      /** Vaut 1 si cette valeur est absente pour la période donnée et que le dernier effectif connu a été utilisé à la place. */
       effectif_ent_reporte: 1 | 0
     }
   : {
-      /** Vaut 1 si cette valeur d'effectif a été reportée, pour combler une donnée manquante. */
+      /** Vaut 1 si cette valeur est absente pour la période donnée et que le dernier effectif connu a été utilisé à la place. */
       effectif_reporte: 1 | 0
     }
 
