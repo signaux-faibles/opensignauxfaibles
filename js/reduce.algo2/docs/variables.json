@@ -5,14 +5,14 @@
         "description": "Date de début de la procédure CCSF",
         "type": "string",
         "format": "date-time",
-        "computed": true
+        "computed": false
     },
     {
         "source": "compte",
         "name": "compte_urssaf",
         "description": "Compte administratif URSSAF",
         "type": "string",
-        "computed": true
+        "computed": false
     },
     {
         "source": "cotisation",
