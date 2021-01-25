@@ -203,6 +203,11 @@ func reduceFinalAggregation(tempDatabase *mgo.Database, tempCollection, outDatab
 		Key:  []string{"_id.batch", "-value.random_order", "_id.periode", "value.effectif"},
 	})
 
+	// Création d'index sur la collection Features, pour le chargement de données par SIREN
+	Db.DB.C(outCollection).EnsureIndex(mgo.Index{
+		Key: []string{"value.siren"},
+	})
+
 	setStages, err := reduceCrossComputations("reduce.algo2")
 	if err != nil {
 		return err
