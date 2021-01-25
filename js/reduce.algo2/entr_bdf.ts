@@ -15,8 +15,20 @@ type DonnéesBdfTransmises = Omit<
 type YearOffset = 1 | 2
 type CléRatiosBdfPassés = `${keyof EntréeBdfRatios}_past_${YearOffset}`
 type RatiosBdfPassés = Record<CléRatiosBdfPassés, number>
+type DonnéesBdfCalculées = {
+  /** Année de l'exercice - 1. */
+  exercice_bdf: number
+} & EntréeBdfRatios &
+  RatiosBdfPassés
 
-export type SortieBdf = DonnéesBdfTransmises & EntréeBdfRatios & RatiosBdfPassés
+export type SortieBdf = DonnéesBdfTransmises & DonnéesBdfCalculées
+
+// Variables est inspecté pour générer docs/variables.json (cf generate-docs.ts)
+export type Variables = {
+  source: "entr_bdf"
+  computed: DonnéesBdfCalculées
+  transmitted: DonnéesBdfTransmises
+}
 
 export function entr_bdf(
   donnéesBdf: ParHash<EntréeBdf>,
@@ -64,12 +76,7 @@ export function entr_bdf(
         outputInPeriod.exercice_bdf = outputInPeriod.annee_bdf - 1
       }
 
-      const pastData = f.omit(
-        periodData,
-        "arrete_bilan_bdf",
-        "exercice_bdf",
-        "annee_bdf"
-      )
+      const pastData = f.omit(periodData, "arrete_bilan_bdf", "annee_bdf")
 
       const makePastProp = (prop: keyof EntréeBdfRatios, offset: YearOffset) =>
         `${prop}_past_${offset}` as CléRatiosBdfPassés

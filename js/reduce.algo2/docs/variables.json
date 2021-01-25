@@ -1,5 +1,33 @@
 [
     {
+        "source": "apart",
+        "name": "apart_heures_autorisees",
+        "description": "Nombre total d'heures d'activité partielle autorisées (nombre décimal).",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "source": "apart",
+        "name": "apart_motif_recours",
+        "description": "Motif de recours à l'activité partielle:\n1\tConjoncture économique.\n2\tDifficultés d’approvisionnement en matières premières ou en énergie\n3\tSinistre ou intempéries de caractère exceptionnel\n4\tTransformation, restructuration ou modernisation des installations et des bâtiments\n5\tAutres circonstances exceptionnelles",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "source": "apart",
+        "name": "apart_heures_consommees",
+        "description": "Nombre d'heures d'activité partielle consommées sur la période considérée.",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "apart",
+        "name": "apart_heures_consommees_cumulees",
+        "description": "Cumul du nombre d'heures d'activité partielle consommées depuis date_debut.",
+        "type": "number",
+        "computed": true
+    },
+    {
         "source": "ccsf",
         "name": "date_ccsf",
         "description": "Date de début de la procédure CCSF",
@@ -8,11 +36,34 @@
         "computed": false
     },
     {
-        "source": "compte",
-        "name": "compte_urssaf",
-        "description": "Compte administratif URSSAF",
+        "source": "defaillances",
+        "name": "etat_proc_collective",
+        "description": "État de la procédure collective.",
+        "enum": [
+            "continuation",
+            "in_bonis",
+            "liquidation",
+            "plan_redressement",
+            "plan_sauvegarde",
+            "sauvegarde"
+        ],
         "type": "string",
-        "computed": false
+        "computed": true
+    },
+    {
+        "source": "defaillances",
+        "name": "date_proc_collective",
+        "description": "Date effet de la procédure collective.",
+        "type": "string",
+        "format": "date-time",
+        "computed": true
+    },
+    {
+        "source": "defaillances",
+        "name": "tag_failure",
+        "description": "État de défaillance. (c.a.d. l'entité n'est pas \"in bonis\")",
+        "type": "boolean",
+        "computed": true
     },
     {
         "source": "cotisation",
@@ -48,6 +99,40 @@
         "description": "Survenance de trois débits de 100% (ou plus) des cotisations",
         "type": "boolean",
         "computed": true
+    },
+    {
+        "source": "cibleApprentissage",
+        "name": "outcome",
+        "type": "boolean",
+        "computed": true
+    },
+    {
+        "source": "cibleApprentissage",
+        "name": "time_til_outcome",
+        "description": "Distance de l'évènement, exprimé en nombre de périodes.",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "cibleApprentissage",
+        "name": "time_til_default",
+        "description": "Distance de l'évènement basé sur le défaut de paiement des cotisations (cf tag_default), exprimé en nombre de périodes.",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "cibleApprentissage",
+        "name": "time_til_failure",
+        "description": "Distance de l'évènement basé sur une défaillance (cf tag_failure des procédures collectives), exprimé en nombre de périodes.",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "compte",
+        "name": "compte_urssaf",
+        "description": "Compte administratif URSSAF",
+        "type": "string",
+        "computed": false
     },
     {
         "source": "cotisationsdettes",
@@ -135,36 +220,6 @@
         "source": "cotisationsdettes",
         "name": "montant_part_patronale_past_12",
         "type": "number",
-        "computed": true
-    },
-    {
-        "source": "defaillances",
-        "name": "etat_proc_collective",
-        "description": "État de la procédure collective.",
-        "enum": [
-            "continuation",
-            "in_bonis",
-            "liquidation",
-            "plan_redressement",
-            "plan_sauvegarde",
-            "sauvegarde"
-        ],
-        "type": "string",
-        "computed": true
-    },
-    {
-        "source": "defaillances",
-        "name": "date_proc_collective",
-        "description": "Date effet de la procédure collective.",
-        "type": "string",
-        "format": "date-time",
-        "computed": true
-    },
-    {
-        "source": "defaillances",
-        "name": "tag_failure",
-        "description": "État de défaillance. (c.a.d. l'entité n'est pas \"in bonis\")",
-        "type": "boolean",
         "computed": true
     },
     {
@@ -276,6 +331,184 @@
     {
         "source": "effectifs",
         "name": "effectif_ent_past_24",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "entr_bdf",
+        "name": "arrete_bilan_bdf",
+        "description": "Date de clôture de l'exercice.",
+        "type": "string",
+        "format": "date-time",
+        "computed": false
+    },
+    {
+        "source": "entr_bdf",
+        "name": "annee_bdf",
+        "description": "Année de l'exercice.",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "source": "entr_bdf",
+        "name": "poids_frng",
+        "description": "Poids du fonds de roulement net global sur le chiffre d'affaire. Exprimé en %.",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "source": "entr_bdf",
+        "name": "taux_marge",
+        "description": "Taux de marge, rapport de l'excédent brut d'exploitation (EBE) sur la valeur ajoutée (exprimé en %): 100*EBE / valeur ajoutee",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "source": "entr_bdf",
+        "name": "delai_fournisseur",
+        "description": "Délai estimé de paiement des fournisseurs (exprimé en jours): 360 * dettes fournisseurs / achats HT",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "source": "entr_bdf",
+        "name": "dette_fiscale",
+        "description": "Poids des dettes fiscales et sociales, par rapport à la valeur ajoutée (exprimé en %): 100 * dettes fiscales et sociales / Valeur ajoutee",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "source": "entr_bdf",
+        "name": "financier_court_terme",
+        "description": "Poids du financement court terme (exprimé en %): 100 * concours bancaires courants / chiffre d'affaires HT",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "source": "entr_bdf",
+        "name": "frais_financier",
+        "description": "Poids des frais financiers, sur l'excedent brut d'exploitation corrigé des produits et charges hors exploitation (exprimé en %): 100 * frais financiers / (EBE + Produits hors expl. - charges hors expl.)",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "source": "entr_bdf",
+        "name": "exercice_bdf",
+        "description": "Année de l'exercice - 1.",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "entr_bdf",
+        "name": "poids_frng",
+        "description": "Poids du fonds de roulement net global sur le chiffre d'affaire. Exprimé en %.",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "entr_bdf",
+        "name": "taux_marge",
+        "description": "Taux de marge, rapport de l'excédent brut d'exploitation (EBE) sur la valeur ajoutée (exprimé en %): 100*EBE / valeur ajoutee",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "entr_bdf",
+        "name": "delai_fournisseur",
+        "description": "Délai estimé de paiement des fournisseurs (exprimé en jours): 360 * dettes fournisseurs / achats HT",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "entr_bdf",
+        "name": "dette_fiscale",
+        "description": "Poids des dettes fiscales et sociales, par rapport à la valeur ajoutée (exprimé en %): 100 * dettes fiscales et sociales / Valeur ajoutee",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "entr_bdf",
+        "name": "financier_court_terme",
+        "description": "Poids du financement court terme (exprimé en %): 100 * concours bancaires courants / chiffre d'affaires HT",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "entr_bdf",
+        "name": "frais_financier",
+        "description": "Poids des frais financiers, sur l'excedent brut d'exploitation corrigé des produits et charges hors exploitation (exprimé en %): 100 * frais financiers / (EBE + Produits hors expl. - charges hors expl.)",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "entr_bdf",
+        "name": "poids_frng_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "entr_bdf",
+        "name": "poids_frng_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "entr_bdf",
+        "name": "taux_marge_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "entr_bdf",
+        "name": "taux_marge_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "entr_bdf",
+        "name": "delai_fournisseur_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "entr_bdf",
+        "name": "delai_fournisseur_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "entr_bdf",
+        "name": "dette_fiscale_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "entr_bdf",
+        "name": "dette_fiscale_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "entr_bdf",
+        "name": "financier_court_terme_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "entr_bdf",
+        "name": "financier_court_terme_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "entr_bdf",
+        "name": "frais_financier_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "entr_bdf",
+        "name": "frais_financier_past_2",
         "type": "number",
         "computed": true
     },
@@ -1816,6 +2049,230 @@
     {
         "source": "diane",
         "name": "frais_financier_past_2",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "entr_paydex",
+        "name": "paydex_nb_jours",
+        "description": "Nombre de jours de retard de paiement moyen, basé sur trois expériences de paiement minimum (provenant de trois fournisseurs distincts).",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "source": "entr_paydex",
+        "name": "paydex_nb_jours_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "entr_paydex",
+        "name": "paydex_nb_jours_past_12",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "entr_sirene",
+        "name": "statut_juridique",
+        "description": "Catégorie juridique de l’unité légale. Nomenclature: https://www.insee.fr/fr/information/2028129.",
+        "type": "string",
+        "computed": false
+    },
+    {
+        "source": "entr_sirene",
+        "name": "raison_sociale",
+        "description": "Nom de l'entreprise. Composé à partir des champs raison_sociale, nom_unite_legale, nom_usage_unite_legale, prenom1_unite_legale, prenom2_unite_legale, prenom3_unite_legale et prenom4_unite_legal.",
+        "type": "string",
+        "computed": true
+    },
+    {
+        "source": "entr_sirene",
+        "name": "date_creation_entreprise",
+        "description": "Année de création de l'entreprise.",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "entr_sirene",
+        "name": "age_entreprise",
+        "description": "Age de l'entreprise, en nombre d'années.",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "repeatable",
+        "name": "random_order",
+        "description": "Numéro permettant de réaliser un échantillon reproductible des données.",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "sirene",
+        "name": "raison_sociale",
+        "description": "Raison sociale de l'établissement.",
+        "type": "string",
+        "computed": false
+    },
+    {
+        "source": "sirene",
+        "name": "latitude",
+        "description": "Latitude (géolocalisation) de l'établissement.",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "source": "sirene",
+        "name": "longitude",
+        "description": "Longitude (géolocalisation) de l'établissement.",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "source": "sirene",
+        "name": "departement",
+        "description": "Département où est localisé l'établissement.",
+        "type": "string",
+        "computed": false
+    },
+    {
+        "source": "sirene",
+        "name": "code_ape",
+        "description": "Code APE/NAF de l'établissement.",
+        "type": "string",
+        "computed": false
+    },
+    {
+        "source": "sirene",
+        "name": "siren",
+        "description": "Numéro SIREN de l'établissement.",
+        "type": "string",
+        "computed": true
+    },
+    {
+        "source": "sirene",
+        "name": "region",
+        "description": "Région où est localisé l'établissement.",
+        "enum": [
+            "",
+            "Auvergne-Rhône-Alpes",
+            "Bourgogne-Franche-Comté",
+            "Bretagne",
+            "Centre-Val de Loire",
+            "Corse",
+            "Grand Est",
+            "Hauts-de-France",
+            "Normandie",
+            "Nouvelle-Aquitaine",
+            "Occitanie",
+            "Pays de la Loire",
+            "Provence-Alpes-Côte d'Azur",
+            "Île-de-France"
+        ],
+        "type": "string",
+        "computed": true
+    },
+    {
+        "source": "sirene",
+        "name": "date_creation_etablissement",
+        "description": "Année de création de l'établissement.",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "sirene",
+        "name": "age",
+        "description": "Âge de l'établissement, exprimé en années.",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "populateNafAndApe",
+        "name": "code_naf",
+        "description": "Code APE (code d'activité principale), aussi appelé code NAF (nomenclature d’activité française).",
+        "type": "string",
+        "computed": true
+    },
+    {
+        "source": "populateNafAndApe",
+        "name": "libelle_naf",
+        "description": "Libellé de code NAF/APE.",
+        "type": "string",
+        "computed": true
+    },
+    {
+        "source": "populateNafAndApe",
+        "name": "code_ape_niveau2",
+        "description": "Deuxième niveau du code NAF/APE: Section et Division.",
+        "type": "string",
+        "computed": true
+    },
+    {
+        "source": "populateNafAndApe",
+        "name": "code_ape_niveau3",
+        "description": "Troisième niveau du code NAF/APE: Section, Division et Groupe.",
+        "type": "string",
+        "computed": true
+    },
+    {
+        "source": "populateNafAndApe",
+        "name": "code_ape_niveau4",
+        "description": "Quatrième niveau du code NAF/APE: Section, Division, Groupe et Classe. (sans la Sous-classe)",
+        "type": "string",
+        "computed": true
+    },
+    {
+        "source": "populateNafAndApe",
+        "name": "libelle_ape2",
+        "description": "Libellé de code NAF/APE de deuxième niveau: Division.",
+        "type": "string",
+        "computed": true
+    },
+    {
+        "source": "populateNafAndApe",
+        "name": "libelle_ape3",
+        "description": "Libellé de code NAF/APE de troisième niveau: Groupe.",
+        "type": "string",
+        "computed": true
+    },
+    {
+        "source": "populateNafAndApe",
+        "name": "libelle_ape4",
+        "description": "Libellé de code NAF/APE de quatrième niveau: Classe.",
+        "type": "string",
+        "computed": true
+    },
+    {
+        "source": "populateNafAndApe",
+        "name": "libelle_ape5",
+        "description": "Libellé de code NAF/APE de cinquième niveau: Sous-classe.",
+        "type": "string",
+        "computed": true
+    },
+    {
+        "source": "finalize",
+        "name": "effectif_entreprise",
+        "description": "Cumul du nombre de personnes employées par tous les établissements de l'entreprise.",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "finalize",
+        "name": "apart_entreprise",
+        "description": "Cumul du nombre d'heures d'activité partielle consommées par tous les établissements de l'entreprise.",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "finalize",
+        "name": "debit_entreprise",
+        "description": "Cumul du montant des débits de tous les établissements de l'entreprise.",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "finalize",
+        "name": "nbr_etablissements_connus",
+        "description": "Nombre d'établissements rattachés à l'entreprise.",
         "type": "number",
         "computed": true
     }

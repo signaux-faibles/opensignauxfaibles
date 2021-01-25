@@ -1,32 +1,48 @@
 import { f } from "./functions"
-import { EntréeApDemande, EntréeApConso } from "../RawDataTypes"
+import { EntréeApDemande, EntréeApConso, ParPériode } from "../RawDataTypes"
 
 type ApConsoHash = string
 
-type Hash = string
+type ApDemandeHash = string
 
-type Timestamp = string
-
-export type SortieAPart = {
-  apart_heures_autorisees: number
-  apart_heures_consommees: number
-  apart_motif_recours: EntréeApDemande["motif_recours_se"]
-  apart_heures_consommees_cumulees: number
+// Variables est inspecté pour générer docs/variables.json (cf generate-docs.ts)
+export type Variables = {
+  source: "apart"
+  computed: {
+    /** Nombre d'heures d'activité partielle consommées sur la période considérée. */
+    apart_heures_consommees: EntréeApConso["heure_consomme"]
+    /** Cumul du nombre d'heures d'activité partielle consommées depuis date_debut. */
+    apart_heures_consommees_cumulees: EntréeApConso["heure_consomme"]
+  }
+  transmitted: {
+    /** Nombre total d'heures d'activité partielle autorisées (nombre décimal). */
+    apart_heures_autorisees: EntréeApDemande["hta"]
+    /** Motif de recours à l'activité partielle:
+     * 1	Conjoncture économique.
+     * 2	Difficultés d’approvisionnement en matières premières ou en énergie
+     * 3	Sinistre ou intempéries de caractère exceptionnel
+     * 4	Transformation, restructuration ou modernisation des installations et des bâtiments
+     * 5	Autres circonstances exceptionnelles
+     */
+    apart_motif_recours: EntréeApDemande["motif_recours_se"]
+  }
 }
+
+export type SortieAPart = Variables["computed"] & Variables["transmitted"]
 
 export function apart(
   apconso: Record<ApConsoHash, EntréeApConso>,
-  apdemande: Record<Hash, EntréeApDemande>
-): Record<Timestamp, SortieAPart> {
+  apdemande: Record<ApDemandeHash, EntréeApDemande>
+): ParPériode<SortieAPart> {
   "use strict"
 
-  const output_apart: Record<Timestamp, SortieAPart> = {}
+  const output_apart: ParPériode<SortieAPart> = {}
 
   // Mapping (pour l'instant vide) du hash de la demande avec les hash des consos correspondantes
   const apart: Record<
     string,
     {
-      demande: Hash
+      demande: ApDemandeHash
       consommation: ApConsoHash[]
       periode_debut: Date
       periode_fin: Date

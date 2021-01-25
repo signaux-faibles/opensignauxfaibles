@@ -296,11 +296,15 @@ export type EntréeSireneEntreprise = {
 }
 
 export type EntréeBdf = {
+  /** Date de clôture de l'exercice. */
   arrete_bilan_bdf: Date
+  /** Année de l'exercice. */
   annee_bdf: number
-  exercice_bdf: number
+  /** Raison sociale de l'entreprise. */
   raison_sociale: string
+  /** Secteur d'activité. */
   secteur: string
+  /** Siren de l'entreprise. */
   siren: SiretOrSiren
 } & EntréeBdfRatios
 

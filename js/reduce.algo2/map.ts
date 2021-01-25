@@ -14,7 +14,7 @@ import { DonnéesAgrégées } from "./outputs"
 import { NAF } from "./populateNafAndApe"
 import { SortieEffectifs } from "./effectifs"
 
-type SortieMapEntreprise = {
+export type SortieMapEntreprise = {
   siren: SiretOrSiren
   periode: Date
 } & Partial<SortieSireneEntreprise> &
