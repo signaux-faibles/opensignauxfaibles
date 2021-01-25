@@ -10,6 +10,19 @@ import {
 // Champs de EntréeCotisation nécéssaires à cotisationsdettes
 type ChampsEntréeCotisation = Pick<EntréeCotisation, "periode" | "du">
 
+// Champs de EntréeDebit nécéssaires à cotisationsdettes
+type ChampsEntréeDebit = Pick<
+  EntréeDebit,
+  | "numero_compte"
+  | "periode"
+  | "part_ouvriere"
+  | "part_patronale"
+  | "numero_ecart_negatif"
+  | "numero_historique"
+  | "date_traitement"
+  | "debit_suivant"
+>
+
 type EcartNegatif = {
   hash: string
   numero_historique: EntréeDebit["numero_historique"]
@@ -53,7 +66,7 @@ export type Variables = {
  */
 export function cotisationsdettes(
   vCotisation: ParHash<ChampsEntréeCotisation>,
-  vDebit: ParHash<EntréeDebit>,
+  vDebit: ParHash<ChampsEntréeDebit>,
   periodes: Timestamp[],
   finPériode: Date // correspond à la variable globale date_fin
 ): ParPériode<SortieCotisationsDettes> {
@@ -120,7 +133,9 @@ export function cotisationsdettes(
   // debit_traitement_fin => periode de traitement du debit suivant, ou bien finPériode
   // Entre ces deux dates, c'est cet objet qui est le plus à jour.
   for (const debit of Object.values(vDebit)) {
-    const nextDate = vDebit[debit.debit_suivant]?.date_traitement ?? finPériode
+    const nextDate =
+      (debit.debit_suivant && vDebit[debit.debit_suivant]?.date_traitement) ||
+      finPériode
 
     //Selon le jour du traitement, cela passe sur la période en cours ou sur la suivante.
     const jour_traitement = debit.date_traitement.getUTCDate()
