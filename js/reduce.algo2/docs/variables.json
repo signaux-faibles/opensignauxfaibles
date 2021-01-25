@@ -212,7 +212,7 @@
     {
         "source": "effectifs",
         "name": "effectif_reporte",
-        "description": "Vaut 1 si cette valeur d'effectif a été reportée, pour combler une donnée manquante.",
+        "description": "Vaut 1 si cette valeur est absente pour la période donnée et que le dernier effectif connu a été utilisé à la place.",
         "enum": [
             0,
             1
