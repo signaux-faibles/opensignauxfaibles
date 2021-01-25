@@ -26,7 +26,7 @@ type ValeursTransmises = {
 
 // valeurs calculées par delais()
 type ValeursCalculuées = {
-  /** Nombre de jours restants du délai. */
+  /** Nombre de jours restants du délai de paiement. */
   delai_nb_jours_restants: number
   /** Ratio entre remboursement linéaire et effectif, à condition d'avoir le montant des parts ouvrière et patronale. */
   delai_deviation_remboursement?: number

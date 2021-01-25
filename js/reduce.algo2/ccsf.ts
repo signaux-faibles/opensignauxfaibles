@@ -12,8 +12,8 @@ export type SortieCcsf = {
 // Variables est inspecté pour générer docs/variables.json (cf generate-docs.ts)
 export type Variables = {
   source: "ccsf"
-  computed: SortieCcsf
-  transmitted: unknown // unknown ~= aucune variable n'est transmise directement depuis RawData
+  computed: unknown // unknown ~= aucune variable n'est calculée
+  transmitted: SortieCcsf
 }
 
 export function ccsf(
