@@ -148,10 +148,13 @@ func TestProcol(t *testing.T) {
 }
 
 func TestEffectif(t *testing.T) {
-	var golden = filepath.Join("testData", "expectedEffectif.json")
 	var testData = filepath.Join("testData", "effectifTestData.csv") // Données pour 3 établissements
-	cache := marshal.NewCache()
-	marshal.TestParserOutput(t, ParserEffectif, cache, testData, golden, *update)
+
+	t.Run("Le fichier de test Effectif est parsé comme d'habitude", func(t *testing.T) {
+		var golden = filepath.Join("testData", "expectedEffectif.json")
+		cache := marshal.NewCache()
+		marshal.TestParserOutput(t, ParserEffectif, cache, testData, golden, *update)
+	})
 
 	t.Run("Effectif n'est importé que si inclus dans le filtre", func(t *testing.T) {
 		allowedSiren := "149285238" // SIREN correspondant à un des 3 SIRETs mentionnés dans le fichier
@@ -173,8 +176,10 @@ func TestEffectif(t *testing.T) {
 }
 
 func TestEffectifEnt(t *testing.T) {
-	var golden = filepath.Join("testData", "expectedEffectifEnt.json")
-	var testData = filepath.Join("testData", "effectifEntTestData.csv")
-	cache := marshal.NewCache()
-	marshal.TestParserOutput(t, ParserEffectifEnt, cache, testData, golden, *update)
+	t.Run("Le fichier de test EffectifEnt est parsé comme d'habitude", func(t *testing.T) {
+		var golden = filepath.Join("testData", "expectedEffectifEnt.json")
+		var testData = filepath.Join("testData", "effectifEntTestData.csv")
+		cache := marshal.NewCache()
+		marshal.TestParserOutput(t, ParserEffectifEnt, cache, testData, golden, *update)
+	})
 }
