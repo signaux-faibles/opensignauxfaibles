@@ -184,7 +184,7 @@
     {
         "source": "delais",
         "name": "delai_nb_jours_restants",
-        "description": "Nombre de jours restants du délai.",
+        "description": "Nombre de jours restants du délai de paiement.",
         "type": "number",
         "computed": true
     },
