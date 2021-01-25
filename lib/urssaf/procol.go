@@ -3,7 +3,6 @@ package urssaf
 import (
 	"bufio"
 	"encoding/csv"
-	"errors"
 	"io"
 	"os"
 	"regexp"
@@ -12,7 +11,6 @@ import (
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/marshal"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/misc"
 )
 
 // Procol Procédures collectives, extraction URSSAF
@@ -44,7 +42,7 @@ var ParserProcol = &procolParser{}
 type procolParser struct {
 	file   *os.File
 	reader *csv.Reader
-	idx    colMapping
+	idx    marshal.ColMapping
 }
 
 func (parser *procolParser) GetFileType() string {
@@ -78,20 +76,15 @@ func openProcolFile(filePath string) (*os.File, *csv.Reader, error) {
 	return file, reader, err
 }
 
-func parseProcolColMapping(reader *csv.Reader) (colMapping, error) {
+func parseProcolColMapping(reader *csv.Reader) (marshal.ColMapping, error) {
 	fields, err := reader.Read()
 	if err != nil {
 		return nil, err
 	}
-	var idx = colMapping{
-		"dt_effet":      misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "dt_effet" }),
-		"lib_actx_stdx": misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "lib_actx_stdx" }),
-		"siret":         misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "siret" }),
-	}
-	if misc.SliceMin(idx["dt_effet"], idx["lib_actx_stdx"], idx["siret"]) == -1 {
-		return nil, errors.New("format de fichier incorrect")
-	}
-	return idx, nil
+	expectedFields := []string{"dt_effet", "lib_actx_stdx", "siret"}
+	var idx = marshal.IndexSpecificFields(marshal.LowercaseFields(fields), expectedFields)
+	_, err = idx.HasFields(expectedFields)
+	return idx, err
 }
 
 func (parser *procolParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
@@ -113,7 +106,7 @@ func (parser *procolParser) ParseLines(parsedLineChan chan marshal.ParsedLineRes
 	}
 }
 
-func parseProcolLine(row []string, idx colMapping, parsedLine *marshal.ParsedLineResult) {
+func parseProcolLine(row []string, idx marshal.ColMapping, parsedLine *marshal.ParsedLineResult) {
 	var err error
 	procol := Procol{}
 	procol.DateEffet, err = time.Parse("02Jan2006", row[idx["dt_effet"]])
