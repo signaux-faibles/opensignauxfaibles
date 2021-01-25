@@ -1,5 +1,11 @@
 import { f } from "./functions"
-import { EntréeDiane, ParHash, ParPériode, Timestamp } from "../RawDataTypes"
+import {
+  EntréeDiane,
+  EntréeBdf,
+  ParHash,
+  ParPériode,
+  Timestamp,
+} from "../RawDataTypes"
 
 type YearOffset = 1 | 2
 
@@ -13,26 +19,25 @@ type DonnéesDianeTransmises = Omit<
 >
 type CléRatioDianePassé = `${keyof DonnéesDianeTransmises}_past_${YearOffset}`
 
-type CléRatioBdfCalculable = "poids_frng" | "dette_fiscale" | "frais_financier"
+type RatioBdfCalculable = Pick<
+  EntréeBdf,
+  "poids_frng" | "dette_fiscale" | "frais_financier"
+>
 
-type CléRatioBdfInclus =
-  | CléRatioBdfCalculable
-  | "taux_marge"
-  | "financier_court_terme"
-type CléRatioBdfPassé = `${CléRatioBdfInclus}_past_${YearOffset}`
+type RatioBdfInclus = RatioBdfCalculable &
+  Pick<EntréeBdf, "taux_marge" | "financier_court_terme">
+type CléRatioBdfPassé = `${keyof RatioBdfInclus}_past_${YearOffset}`
 
-// ComputedVariables est inspecté pour générer docs/variables.json (cf generate-docs.ts)
-export type ComputedVariables = Record<
-  CléRatioDianePassé,
-  number | null | undefined
-> &
-  Record<CléRatioBdfInclus, number> &
-  Record<CléRatioBdfPassé, number>
+// Variables est inspecté pour générer docs/variables.json (cf generate-docs.ts)
+export type Variables = {
+  source: "diane"
+  computed: Record<CléRatioDianePassé, number | null | undefined> &
+    RatioBdfInclus &
+    Record<CléRatioBdfPassé, number>
+  transmitted: DonnéesDianeTransmises
+}
 
-// TransmittedVariables est inspecté pour générer docs/variables.json (cf generate-docs.ts)
-export type TransmittedVariables = DonnéesDianeTransmises
-
-export type SortieDiane = ComputedVariables & TransmittedVariables
+export type SortieDiane = Variables["computed"] & Variables["transmitted"]
 
 export function entr_diane(
   donnéesDiane: ParHash<EntréeDiane>,
@@ -132,7 +137,7 @@ export function entr_diane(
         }
 
         // TODO: mettre en commun population des champs _past_ avec bdf ?
-        const bdf_vars: CléRatioBdfInclus[] = [
+        const bdf_vars: (keyof RatioBdfInclus)[] = [
           "taux_marge",
           "poids_frng",
           "dette_fiscale",
@@ -141,7 +146,7 @@ export function entr_diane(
         ]
         const past_year_offset: YearOffset[] = [1, 2]
 
-        const makePastProp = (clé: CléRatioBdfInclus, offset: YearOffset) =>
+        const makePastProp = (clé: keyof RatioBdfInclus, offset: YearOffset) =>
           `${clé}_past_${offset}` as CléRatioBdfPassé
 
         bdf_vars.forEach((k) => {

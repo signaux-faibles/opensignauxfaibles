@@ -3,13 +3,19 @@ import { ProcolToHumanRes } from "../common/procolToHuman"
 import { EntréeDéfaillances, ParPériode, ParHash } from "../RawDataTypes"
 
 export type SortieDefaillances = {
+  /** État de la procédure collective. */
   etat_proc_collective: ProcolToHumanRes
+  /** Date effet de la procédure collective. */
   date_proc_collective: Date
+  /** État de défaillance. (c.a.d. l'entité n'est pas "in bonis") */
   tag_failure: boolean
 }
-type OutputEvent = {
-  etat: ProcolToHumanRes
-  date_proc_col: Date
+
+// Variables est inspecté pour générer docs/variables.json (cf generate-docs.ts)
+export type Variables = {
+  source: "defaillances"
+  computed: SortieDefaillances
+  transmitted: unknown // unknown ~= aucune variable n'est transmise directement depuis RawData
 }
 
 export function defaillances(
@@ -31,7 +37,7 @@ export function defaillances(
         })
 
       return events
-    }, [] as OutputEvent[])
+    }, [] as { etat: ProcolToHumanRes; date_proc_col: Date }[])
     .sort((a, b) => {
       return a.date_proc_col.getTime() - b.date_proc_col.getTime()
     })

@@ -1,22 +1,45 @@
 import { f } from "./functions"
 import { EntréeDelai, ParHash, ParPériode } from "../RawDataTypes"
+import { SortieCotisationsDettes } from "./cotisationsdettes"
 
-type DeepReadonly<T> = Readonly<T> // pas vraiment, mais espoire que TS le supporte prochainement
+type DeepReadonly<T> = Readonly<T> // pas vraiment immutable pout l'instant, mais espoir que TS le permette prochainement
 
-// Valeurs attendues pour chaque période, lors de l'appel à delais()
-export type DebitComputedValues = {
-  montant_part_patronale: number
-  montant_part_ouvriere: number
+// Champs de EntréeDelai nécéssaires à delais
+export type ChampsEntréeDelai = Pick<
+  EntréeDelai,
+  "date_creation" | "date_echeance" | "duree_delai" | "montant_echeancier"
+>
+
+// Champs de SortieCotisationsDettes nécéssaires à delais
+export type ChampsDettes = Pick<
+  SortieCotisationsDettes,
+  "montant_part_ouvriere" | "montant_part_patronale"
+>
+
+// valeurs fournies, reportées par delais() dans chaque période
+type ValeursTransmises = {
+  /** Nombre de jours entre date_creation et date_echeance. */
+  delai_nb_jours_total: EntréeDelai["duree_delai"]
+  /** Montant global de l'échéancier, en euros. */
+  delai_montant_echeancier: EntréeDelai["montant_echeancier"]
+}
+
+// valeurs calculées par delais()
+type ValeursCalculuées = {
+  /** Nombre de jours restants du délai de paiement. */
+  delai_nb_jours_restants: number
+  /** Ratio entre remboursement linéaire et effectif, à condition d'avoir le montant des parts ouvrière et patronale. */
+  delai_deviation_remboursement?: number
 }
 
 // Valeurs retournées par delais(), pour chaque période
-export type DelaiComputedValues = {
-  // valeurs fournies, reportées par delais() dans chaque période:
-  delai_nb_jours_total: number // nombre de jours entre date_creation et date_echeance
-  delai_montant_echeancier: number // exprimé en euros
-  // valeurs calculées par delais():
-  delai_nb_jours_restants: number
-  delai_deviation_remboursement?: number // ratio entre remboursement linéaire et effectif, à condition d'avoir le montant des parts ouvrière et patronale
+export type SortieDelais = ValeursTransmises & ValeursCalculuées
+
+// Variables est inspecté pour générer docs/variables.json (cf generate-docs.ts)
+export type Variables = {
+  source: "delais"
+  computed: ValeursCalculuées
+  transmitted: ValeursTransmises
 }
 
 /**
@@ -30,12 +53,12 @@ export type DelaiComputedValues = {
  * demande de délai.
  */
 export function delais(
-  vDelai: ParHash<EntréeDelai>,
-  debitParPériode: DeepReadonly<ParPériode<DebitComputedValues>>,
+  vDelai: ParHash<ChampsEntréeDelai>,
+  debitParPériode: DeepReadonly<ParPériode<ChampsDettes>>,
   intervalleTraitement: { premièreDate: Date; dernièreDate: Date }
-): ParPériode<DelaiComputedValues> {
+): ParPériode<SortieDelais> {
   "use strict"
-  const donnéesDélaiParPériode: ParPériode<DelaiComputedValues> = {}
+  const donnéesDélaiParPériode: ParPériode<SortieDelais> = {}
   Object.values(vDelai).forEach((delai) => {
     if (delai.duree_delai <= 0) {
       return
@@ -75,7 +98,7 @@ export function delais(
         const time = debutDeMois.getTime()
         const remainingDays = f.nbDays(debutDeMois, delai.date_echeance)
         const inputAtTime = debitParPériode[time]
-        const outputAtTime: DelaiComputedValues = {
+        const outputAtTime: SortieDelais = {
           delai_nb_jours_restants: remainingDays,
           delai_nb_jours_total: delai.duree_delai,
           delai_montant_echeancier: delai.montant_echeancier,

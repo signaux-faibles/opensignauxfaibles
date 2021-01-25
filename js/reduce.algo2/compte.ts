@@ -1,6 +1,16 @@
 import { EntréeCompte, ParPériode, Periode, ParHash } from "../RawDataTypes"
 
-export type SortieCompte = { compte_urssaf: number }
+export type SortieCompte = {
+  /** Compte administratif URSSAF */
+  compte_urssaf: string
+}
+
+// Variables est inspecté pour générer docs/variables.json (cf generate-docs.ts)
+export type Variables = {
+  source: "compte"
+  computed: unknown // unknown ~= aucune variable n'est calculée
+  transmitted: SortieCompte
+}
 
 export function compte(
   compte: ParHash<EntréeCompte>

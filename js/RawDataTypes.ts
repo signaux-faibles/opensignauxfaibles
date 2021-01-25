@@ -75,10 +75,10 @@ export type BatchValueProps = CommonBatchProps &
     procol: ParHash<EntréeDéfaillances>
     cotisation: ParHash<EntréeCotisation>
     debit: ParHash<EntréeDebit>
-    ccsf: ParHash<{ date_traitement: Date }>
+    ccsf: ParHash<EntréeCcsf>
     sirene: ParHash<EntréeSirene>
     sirene_ul: ParHash<EntréeSireneEntreprise>
-    effectif_ent: ParHash<EntréeEffectif>
+    effectif_ent: ParHash<EntréeEffectifEnt>
     bdf: ParHash<EntréeBdf>
     diane: ParHash<EntréeDiane>
     ellisphere: ParHash<EntréeEllisphere>
@@ -86,8 +86,17 @@ export type BatchValueProps = CommonBatchProps &
 
 // Détail des types de données
 
+export type EntréeCcsf = {
+  /** Date de début de la procédure CCSF */
+  date_traitement: Date
+  stade: string // TODO: choisir un type plus précis
+  action: string // TODO: choisir un type plus précis
+}
+
 export type EntréeDéfaillances = {
+  /** Nature de la procédure de défaillance. */
   action_procol: "liquidation" | "redressement" | "sauvegarde"
+  /** Evénement survenu dans le cadre de cette procédure. */
   stade_procol:
     | "abandon_procedure"
     | "solde_procedure"
@@ -96,6 +105,7 @@ export type EntréeDéfaillances = {
     | "ouverture"
     | "inclusion_autre_procedure"
     | "cloture_insuffisance_actif"
+  /** Date effet de la procédure collective. */
   date_effet: Date
 }
 
@@ -121,8 +131,12 @@ export type EntréeApDemande = {
 }
 
 export type EntréeCompte = {
+  /** Date à laquelle cet établissement est associé à ce numéro de compte URSSAF. */
   periode: Date
-  numero_compte: number
+  /** Numéro SIRET de l'établissement. Les numéros avec des Lettres sont des sirets provisoires. */
+  siret: string
+  /** Compte administratif URSSAF. */
+  numero_compte: string
 }
 
 export type EntréeInterim = {
@@ -137,21 +151,53 @@ export type EntréeRepOrder = {
 }
 
 export type EntréeEffectif = {
+  /** Compte administratif URSSAF. */
   numero_compte: string
   periode: Date
+  /** Nombre de personnes employées par l'établissement. */
+  effectif: number
+}
+
+export type EntréeEffectifEnt = {
+  periode: Date
+  /** Nombre de personnes employées par l'entreprise. */
   effectif: number
 }
 
 // Valeurs attendues par delais(), pour chaque période. (cf lib/urssaf/delai.go)
 export type EntréeDelai = {
+  /** Compte administratif URSSAF. */
+  numero_compte: string
+  /** Le numéro de structure est l'identifiant d'un dossier contentieux. */
+  numero_contentieux: string
+  /** Date de création du délai. */
   date_creation: Date
+  /** Date d'échéance du délai. */
   date_echeance: Date
-  duree_delai: number // nombre de jours entre date_creation et date_echeance
-  montant_echeancier: number // exprimé en euros
+  /** Durée du délai en jours: nombre de jours entre date_creation et date_echeance. */
+  duree_delai: number
+  /** Raison sociale de l'établissement. */
+  denomination: string
+  /** Délai inférieur ou supérieur à 6 mois ? Modalités INF et SUP. */
+  indic_6m: string
+  /** Année de création du délai. */
+  annee_creation: number
+  /** Montant global de l'échéancier, en euros. */
+  montant_echeancier: number
+  /** Code externe du stade. */
+  stade: string
+  /** Code externe de l'action. */
+  action: string
 }
 
 export type EntréeCotisation = {
+  /** Compte administratif URSSAF. */
+  numero_compte: string
+  /** Période sur laquelle le montants s'appliquent. */
   periode: { start: Date; end: Date }
+  /** Cotisation encaissée directement, en euros. */
+  encaisse: number
+  /** Cotisation due, en euros. À utiliser pour calculer le montant moyen mensuel du: Somme cotisations dues / nb périodes. */
   du: number
 }
 
@@ -202,11 +248,17 @@ export type EntréeBdf = {
 } & EntréeBdfRatios
 
 export type EntréeBdfRatios = {
+  /** Poids du fonds de roulement net global sur le chiffre d'affaire. Exprimé en %. */
   poids_frng: number
+  /** Taux de marge, rapport de l'excédent brut d'exploitation (EBE) sur la valeur ajoutée (exprimé en %): 100*EBE / valeur ajoutee */
   taux_marge: number
+  /** Délai estimé de paiement des fournisseurs (exprimé en jours): 360 * dettes fournisseurs / achats HT */
   delai_fournisseur: number
+  /** Poids des dettes fiscales et sociales, par rapport à la valeur ajoutée (exprimé en %): 100 * dettes fiscales et sociales / Valeur ajoutee */
   dette_fiscale: number
+  /** Poids du financement court terme (exprimé en %): 100 * concours bancaires courants / chiffre d'affaires HT */
   financier_court_terme: number
+  /** Poids des frais financiers, sur l'excedent brut d'exploitation corrigé des produits et charges hors exploitation (exprimé en %): 100 * frais financiers / (EBE + Produits hors expl. - charges hors expl.) */
   frais_financier: number
 }
 
