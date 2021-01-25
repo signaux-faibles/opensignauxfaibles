@@ -132,7 +132,7 @@
         "name": "compte_urssaf",
         "description": "Compte administratif URSSAF",
         "type": "string",
-        "computed": true
+        "computed": false
     },
     {
         "source": "cotisationsdettes",
@@ -510,202 +510,6 @@
         "source": "entr_bdf",
         "name": "frais_financier_past_2",
         "type": "number",
-        "computed": true
-    },
-    {
-        "source": "entr_paydex",
-        "name": "paydex_nb_jours",
-        "description": "Nombre de jours de retard de paiement moyen, basé sur trois expériences de paiement minimum (provenant de trois fournisseurs distincts).",
-        "type": "number",
-        "computed": false
-    },
-    {
-        "source": "entr_paydex",
-        "name": "paydex_nb_jours_past_1",
-        "type": "number",
-        "computed": true
-    },
-    {
-        "source": "entr_paydex",
-        "name": "paydex_nb_jours_past_12",
-        "type": "number",
-        "computed": true
-    },
-    {
-        "source": "entr_sirene",
-        "name": "statut_juridique",
-        "description": "Catégorie juridique de l’unité légale. Nomenclature: https://www.insee.fr/fr/information/2028129.",
-        "type": "string",
-        "computed": false
-    },
-    {
-        "source": "entr_sirene",
-        "name": "raison_sociale",
-        "description": "Nom de l'entreprise. Composé à partir des champs raison_sociale, nom_unite_legale, nom_usage_unite_legale, prenom1_unite_legale, prenom2_unite_legale, prenom3_unite_legale et prenom4_unite_legal.",
-        "type": "string",
-        "computed": true
-    },
-    {
-        "source": "entr_sirene",
-        "name": "date_creation_entreprise",
-        "description": "Année de création de l'entreprise.",
-        "type": "number",
-        "computed": true
-    },
-    {
-        "source": "entr_sirene",
-        "name": "age_entreprise",
-        "description": "Age de l'entreprise, en nombre d'années.",
-        "type": "number",
-        "computed": true
-    },
-    {
-        "source": "repeatable",
-        "name": "random_order",
-        "description": "Numéro permettant de réaliser un échantillon reproductible des données.",
-        "type": "number",
-        "computed": true
-    },
-    {
-        "source": "sirene",
-        "name": "raison_sociale",
-        "description": "Raison sociale de l'établissement.",
-        "type": "string",
-        "computed": false
-    },
-    {
-        "source": "sirene",
-        "name": "latitude",
-        "description": "Latitude (géolocalisation) de l'établissement.",
-        "type": "number",
-        "computed": false
-    },
-    {
-        "source": "sirene",
-        "name": "longitude",
-        "description": "Longitude (géolocalisation) de l'établissement.",
-        "type": "number",
-        "computed": false
-    },
-    {
-        "source": "sirene",
-        "name": "departement",
-        "description": "Département où est localisé l'établissement.",
-        "type": "string",
-        "computed": false
-    },
-    {
-        "source": "sirene",
-        "name": "code_ape",
-        "description": "Code APE/NAF de l'établissement.",
-        "type": "string",
-        "computed": false
-    },
-    {
-        "source": "sirene",
-        "name": "siren",
-        "description": "Numéro SIREN de l'établissement.",
-        "type": "string",
-        "computed": true
-    },
-    {
-        "source": "sirene",
-        "name": "region",
-        "description": "Région où est localisé l'établissement.",
-        "enum": [
-            "",
-            "Auvergne-Rhône-Alpes",
-            "Bourgogne-Franche-Comté",
-            "Bretagne",
-            "Centre-Val de Loire",
-            "Corse",
-            "Grand Est",
-            "Hauts-de-France",
-            "Normandie",
-            "Nouvelle-Aquitaine",
-            "Occitanie",
-            "Pays de la Loire",
-            "Provence-Alpes-Côte d'Azur",
-            "Île-de-France"
-        ],
-        "type": "string",
-        "computed": true
-    },
-    {
-        "source": "sirene",
-        "name": "date_creation_etablissement",
-        "description": "Année de création de l'établissement.",
-        "type": "number",
-        "computed": true
-    },
-    {
-        "source": "sirene",
-        "name": "age",
-        "description": "Âge de l'établissement, exprimé en années.",
-        "type": "number",
-        "computed": true
-    },
-    {
-        "source": "populateNafAndApe",
-        "name": "code_naf",
-        "description": "Code APE (code d'activité principale), aussi appelé code NAF (nomenclature d’activité française).",
-        "type": "string",
-        "computed": true
-    },
-    {
-        "source": "populateNafAndApe",
-        "name": "libelle_naf",
-        "description": "Libellé de code NAF/APE.",
-        "type": "string",
-        "computed": true
-    },
-    {
-        "source": "populateNafAndApe",
-        "name": "code_ape_niveau2",
-        "description": "Deuxième niveau du code NAF/APE: Section et Division.",
-        "type": "string",
-        "computed": true
-    },
-    {
-        "source": "populateNafAndApe",
-        "name": "code_ape_niveau3",
-        "description": "Troisième niveau du code NAF/APE: Section, Division et Groupe.",
-        "type": "string",
-        "computed": true
-    },
-    {
-        "source": "populateNafAndApe",
-        "name": "code_ape_niveau4",
-        "description": "Quatrième niveau du code NAF/APE: Section, Division, Groupe et Classe. (sans la Sous-classe)",
-        "type": "string",
-        "computed": true
-    },
-    {
-        "source": "populateNafAndApe",
-        "name": "libelle_ape2",
-        "description": "Libellé de code NAF/APE de deuxième niveau: Division.",
-        "type": "string",
-        "computed": true
-    },
-    {
-        "source": "populateNafAndApe",
-        "name": "libelle_ape3",
-        "description": "Libellé de code NAF/APE de troisième niveau: Groupe.",
-        "type": "string",
-        "computed": true
-    },
-    {
-        "source": "populateNafAndApe",
-        "name": "libelle_ape4",
-        "description": "Libellé de code NAF/APE de quatrième niveau: Classe.",
-        "type": "string",
-        "computed": true
-    },
-    {
-        "source": "populateNafAndApe",
-        "name": "libelle_ape5",
-        "description": "Libellé de code NAF/APE de cinquième niveau: Sous-classe.",
-        "type": "string",
         "computed": true
     },
     {
@@ -2246,6 +2050,202 @@
         "source": "diane",
         "name": "frais_financier_past_2",
         "type": "number",
+        "computed": true
+    },
+    {
+        "source": "entr_paydex",
+        "name": "paydex_nb_jours",
+        "description": "Nombre de jours de retard de paiement moyen, basé sur trois expériences de paiement minimum (provenant de trois fournisseurs distincts).",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "source": "entr_paydex",
+        "name": "paydex_nb_jours_past_1",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "entr_paydex",
+        "name": "paydex_nb_jours_past_12",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "entr_sirene",
+        "name": "statut_juridique",
+        "description": "Catégorie juridique de l’unité légale. Nomenclature: https://www.insee.fr/fr/information/2028129.",
+        "type": "string",
+        "computed": false
+    },
+    {
+        "source": "entr_sirene",
+        "name": "raison_sociale",
+        "description": "Nom de l'entreprise. Composé à partir des champs raison_sociale, nom_unite_legale, nom_usage_unite_legale, prenom1_unite_legale, prenom2_unite_legale, prenom3_unite_legale et prenom4_unite_legal.",
+        "type": "string",
+        "computed": true
+    },
+    {
+        "source": "entr_sirene",
+        "name": "date_creation_entreprise",
+        "description": "Année de création de l'entreprise.",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "entr_sirene",
+        "name": "age_entreprise",
+        "description": "Age de l'entreprise, en nombre d'années.",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "repeatable",
+        "name": "random_order",
+        "description": "Numéro permettant de réaliser un échantillon reproductible des données.",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "sirene",
+        "name": "raison_sociale",
+        "description": "Raison sociale de l'établissement.",
+        "type": "string",
+        "computed": false
+    },
+    {
+        "source": "sirene",
+        "name": "latitude",
+        "description": "Latitude (géolocalisation) de l'établissement.",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "source": "sirene",
+        "name": "longitude",
+        "description": "Longitude (géolocalisation) de l'établissement.",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "source": "sirene",
+        "name": "departement",
+        "description": "Département où est localisé l'établissement.",
+        "type": "string",
+        "computed": false
+    },
+    {
+        "source": "sirene",
+        "name": "code_ape",
+        "description": "Code APE/NAF de l'établissement.",
+        "type": "string",
+        "computed": false
+    },
+    {
+        "source": "sirene",
+        "name": "siren",
+        "description": "Numéro SIREN de l'établissement.",
+        "type": "string",
+        "computed": true
+    },
+    {
+        "source": "sirene",
+        "name": "region",
+        "description": "Région où est localisé l'établissement.",
+        "enum": [
+            "",
+            "Auvergne-Rhône-Alpes",
+            "Bourgogne-Franche-Comté",
+            "Bretagne",
+            "Centre-Val de Loire",
+            "Corse",
+            "Grand Est",
+            "Hauts-de-France",
+            "Normandie",
+            "Nouvelle-Aquitaine",
+            "Occitanie",
+            "Pays de la Loire",
+            "Provence-Alpes-Côte d'Azur",
+            "Île-de-France"
+        ],
+        "type": "string",
+        "computed": true
+    },
+    {
+        "source": "sirene",
+        "name": "date_creation_etablissement",
+        "description": "Année de création de l'établissement.",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "sirene",
+        "name": "age",
+        "description": "Âge de l'établissement, exprimé en années.",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "populateNafAndApe",
+        "name": "code_naf",
+        "description": "Code APE (code d'activité principale), aussi appelé code NAF (nomenclature d’activité française).",
+        "type": "string",
+        "computed": true
+    },
+    {
+        "source": "populateNafAndApe",
+        "name": "libelle_naf",
+        "description": "Libellé de code NAF/APE.",
+        "type": "string",
+        "computed": true
+    },
+    {
+        "source": "populateNafAndApe",
+        "name": "code_ape_niveau2",
+        "description": "Deuxième niveau du code NAF/APE: Section et Division.",
+        "type": "string",
+        "computed": true
+    },
+    {
+        "source": "populateNafAndApe",
+        "name": "code_ape_niveau3",
+        "description": "Troisième niveau du code NAF/APE: Section, Division et Groupe.",
+        "type": "string",
+        "computed": true
+    },
+    {
+        "source": "populateNafAndApe",
+        "name": "code_ape_niveau4",
+        "description": "Quatrième niveau du code NAF/APE: Section, Division, Groupe et Classe. (sans la Sous-classe)",
+        "type": "string",
+        "computed": true
+    },
+    {
+        "source": "populateNafAndApe",
+        "name": "libelle_ape2",
+        "description": "Libellé de code NAF/APE de deuxième niveau: Division.",
+        "type": "string",
+        "computed": true
+    },
+    {
+        "source": "populateNafAndApe",
+        "name": "libelle_ape3",
+        "description": "Libellé de code NAF/APE de troisième niveau: Groupe.",
+        "type": "string",
+        "computed": true
+    },
+    {
+        "source": "populateNafAndApe",
+        "name": "libelle_ape4",
+        "description": "Libellé de code NAF/APE de quatrième niveau: Classe.",
+        "type": "string",
+        "computed": true
+    },
+    {
+        "source": "populateNafAndApe",
+        "name": "libelle_ape5",
+        "description": "Libellé de code NAF/APE de cinquième niveau: Sous-classe.",
+        "type": "string",
         "computed": true
     },
     {
