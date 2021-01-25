@@ -132,10 +132,19 @@ func TestCotisation(t *testing.T) {
 }
 
 func TestProcol(t *testing.T) {
-	var golden = filepath.Join("testData", "expectedProcol.json")
-	var testData = filepath.Join("testData", "procolTestData.csv")
 	var cache = makeCacheWithComptesMapping()
-	marshal.TestParserOutput(t, ParserProcol, cache, testData, golden, *update)
+
+	t.Run("Le fichier de test Procol est parsé comme d'habitude", func(t *testing.T) {
+		var golden = filepath.Join("testData", "expectedProcol.json")
+		var testData = filepath.Join("testData", "procolTestData.csv")
+		marshal.TestParserOutput(t, ParserProcol, cache, testData, golden, *update)
+	})
+
+	t.Run("doit rapporter une erreur fatale s'il manque une colonne", func(t *testing.T) {
+		output := marshal.RunParserInlineEx(t, cache, ParserProcol, []string{"dummy"})
+		assert.Equal(t, []marshal.Tuple(nil), output.Tuples, "should return no tuples")
+		assert.Contains(t, marshal.GetFatalError(output), "format de fichier incorrect")
+	})
 }
 
 func TestEffectif(t *testing.T) {
