@@ -11,7 +11,7 @@ export type Input = {
 export type SortieCotisation = {
   /** Montant moyen de cotisations calculé sur 12 mois consécutifs. */
   cotisation_moy12m?: number
-  /** ratio_dette divise montant_part_ouvriere et montant_part_patronale par cotisation_moy12m. */
+  /** ratio_dette = (montant_part_ouvriere + montant_part_patronale) / cotisation_moy12m */
   ratio_dette: number
   /** Moyenne de ratio_dette sur 12 mois. */
   ratio_dette_moy12m?: number
