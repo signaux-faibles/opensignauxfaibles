@@ -24,7 +24,7 @@
     {
         "source": "cotisation",
         "name": "ratio_dette",
-        "description": "ratio_dette divise montant_part_ouvriere et montant_part_patronale par cotisation_moy12m.",
+        "description": "ratio_dette = (montant_part_ouvriere + montant_part_patronale) / cotisation_moy12m",
         "type": "number",
         "computed": true
     },
