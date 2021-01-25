@@ -52,7 +52,7 @@
     {
         "source": "cotisationsdettes",
         "name": "interessante_urssaf",
-        "description": "true: si l'entreprise n'a pas eu de débit (dette) sur les 6 derniers mois",
+        "description": "Règle métier URSSAF. true: si l'entreprise n'a pas eu de débit (dette) sur les 6 derniers mois. Pas utile dans les travaux de data science.",
         "type": "boolean",
         "computed": true
     },
