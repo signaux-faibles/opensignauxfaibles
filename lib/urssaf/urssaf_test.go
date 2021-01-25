@@ -182,4 +182,10 @@ func TestEffectifEnt(t *testing.T) {
 		cache := marshal.NewCache()
 		marshal.TestParserOutput(t, ParserEffectifEnt, cache, testData, golden, *update)
 	})
+
+	t.Run("EffectifEnt ne peut pas être importé s'il manque une colonne", func(t *testing.T) {
+		output := marshal.RunParserInline(t, ParserEffectifEnt, []string{"siret"})
+		assert.Equal(t, []marshal.Tuple(nil), output.Tuples, "should return no tuples")
+		assert.Contains(t, marshal.GetFatalError(output), "Colonne siren non trouvée")
+	})
 }
