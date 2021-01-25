@@ -173,6 +173,11 @@ func TestEffectif(t *testing.T) {
 		assert.Equal(t, []marshal.Tuple(nil), output.Tuples, "should return no tuples")
 		assert.Contains(t, marshal.GetFatalError(output), "Colonne compte non trouvée")
 	})
+
+	t.Run("Effectif est insensible à la casse des en-têtes de colonnes", func(t *testing.T) {
+		output := marshal.RunParserInline(t, ParserEffectif, []string{"CoMpTe;SiReT"})
+		assert.Len(t, marshal.GetFatalErrors(output.Events[0]), 0)
+	})
 }
 
 func TestEffectifEnt(t *testing.T) {
@@ -187,5 +192,10 @@ func TestEffectifEnt(t *testing.T) {
 		output := marshal.RunParserInline(t, ParserEffectifEnt, []string{"siret"})
 		assert.Equal(t, []marshal.Tuple(nil), output.Tuples, "should return no tuples")
 		assert.Contains(t, marshal.GetFatalError(output), "Colonne siren non trouvée")
+	})
+
+	t.Run("EffectifEnt est insensible à la casse des en-têtes de colonnes", func(t *testing.T) {
+		output := marshal.RunParserInline(t, ParserEffectifEnt, []string{"SiReN"})
+		assert.Len(t, marshal.GetFatalErrors(output.Events[0]), 0)
 	})
 }
