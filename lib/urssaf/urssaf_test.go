@@ -132,17 +132,34 @@ func TestCotisation(t *testing.T) {
 }
 
 func TestProcol(t *testing.T) {
-	var golden = filepath.Join("testData", "expectedProcol.json")
-	var testData = filepath.Join("testData", "procolTestData.csv")
 	var cache = makeCacheWithComptesMapping()
-	marshal.TestParserOutput(t, ParserProcol, cache, testData, golden, *update)
+
+	t.Run("Le fichier de test Procol est parsé comme d'habitude", func(t *testing.T) {
+		var golden = filepath.Join("testData", "expectedProcol.json")
+		var testData = filepath.Join("testData", "procolTestData.csv")
+		marshal.TestParserOutput(t, ParserProcol, cache, testData, golden, *update)
+	})
+
+	t.Run("doit rapporter une erreur fatale s'il manque une colonne", func(t *testing.T) {
+		output := marshal.RunParserInlineEx(t, cache, ParserProcol, []string{"dummy"})
+		assert.Equal(t, []marshal.Tuple(nil), output.Tuples, "should return no tuples")
+		assert.Contains(t, marshal.GetFatalError(output), "Colonne dt_effet non trouvée.")
+	})
+
+	t.Run("est insensible à la casse des en-têtes de colonnes", func(t *testing.T) {
+		output := marshal.RunParserInline(t, ParserProcol, []string{"dT_eFfeT;lIb_aCtx_stDx;sIret"})
+		assert.Len(t, marshal.GetFatalErrors(output.Events[0]), 0)
+	})
 }
 
 func TestEffectif(t *testing.T) {
-	var golden = filepath.Join("testData", "expectedEffectif.json")
 	var testData = filepath.Join("testData", "effectifTestData.csv") // Données pour 3 établissements
-	cache := marshal.NewCache()
-	marshal.TestParserOutput(t, ParserEffectif, cache, testData, golden, *update)
+
+	t.Run("Le fichier de test Effectif est parsé comme d'habitude", func(t *testing.T) {
+		var golden = filepath.Join("testData", "expectedEffectif.json")
+		cache := marshal.NewCache()
+		marshal.TestParserOutput(t, ParserEffectif, cache, testData, golden, *update)
+	})
 
 	t.Run("Effectif n'est importé que si inclus dans le filtre", func(t *testing.T) {
 		allowedSiren := "149285238" // SIREN correspondant à un des 3 SIRETs mentionnés dans le fichier
@@ -161,11 +178,29 @@ func TestEffectif(t *testing.T) {
 		assert.Equal(t, []marshal.Tuple(nil), output.Tuples, "should return no tuples")
 		assert.Contains(t, marshal.GetFatalError(output), "Colonne compte non trouvée")
 	})
+
+	t.Run("Effectif est insensible à la casse des en-têtes de colonnes", func(t *testing.T) {
+		output := marshal.RunParserInline(t, ParserEffectif, []string{"CoMpTe;SiReT"})
+		assert.Len(t, marshal.GetFatalErrors(output.Events[0]), 0)
+	})
 }
 
 func TestEffectifEnt(t *testing.T) {
-	var golden = filepath.Join("testData", "expectedEffectifEnt.json")
-	var testData = filepath.Join("testData", "effectifEntTestData.csv")
-	cache := marshal.NewCache()
-	marshal.TestParserOutput(t, ParserEffectifEnt, cache, testData, golden, *update)
+	t.Run("Le fichier de test EffectifEnt est parsé comme d'habitude", func(t *testing.T) {
+		var golden = filepath.Join("testData", "expectedEffectifEnt.json")
+		var testData = filepath.Join("testData", "effectifEntTestData.csv")
+		cache := marshal.NewCache()
+		marshal.TestParserOutput(t, ParserEffectifEnt, cache, testData, golden, *update)
+	})
+
+	t.Run("EffectifEnt ne peut pas être importé s'il manque une colonne", func(t *testing.T) {
+		output := marshal.RunParserInline(t, ParserEffectifEnt, []string{"siret"})
+		assert.Equal(t, []marshal.Tuple(nil), output.Tuples, "should return no tuples")
+		assert.Contains(t, marshal.GetFatalError(output), "Colonne siren non trouvée")
+	})
+
+	t.Run("EffectifEnt est insensible à la casse des en-têtes de colonnes", func(t *testing.T) {
+		output := marshal.RunParserInline(t, ParserEffectifEnt, []string{"SiReN"})
+		assert.Len(t, marshal.GetFatalErrors(output.Events[0]), 0)
+	})
 }

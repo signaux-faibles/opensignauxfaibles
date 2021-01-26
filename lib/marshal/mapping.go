@@ -144,12 +144,16 @@ func readSiretMapping(
 	csvReader := csv.NewReader(reader)
 	csvReader.Comma = ';'
 
-	// discard header row
-	csvReader.Read()
-
-	compteIndex := 2
-	siretIndex := 5
-	fermetureIndex := 7
+	// parse header row
+	fields, err := csvReader.Read() // => Urssaf_gestion;Dep;Compte;Etat_compte;Siren;Siret;Date_crea_siret;Date_disp_siret;Cle_md5
+	if err != nil {
+		return nil, err
+	}
+	idx := indexFields(LowercaseFields(fields))
+	requiredFields := []string{"compte", "siret", "date_disp_siret"}
+	if _, err := idx.HasFields(requiredFields); err != nil {
+		return nil, err
+	}
 
 	for {
 		row, err := csvReader.Read()
@@ -161,18 +165,20 @@ func readSiretMapping(
 
 		maxTime := "9990101"
 
-		if row[fermetureIndex] == "" {
-			row[fermetureIndex] = maxTime
+		fermetureRaw := row[idx["date_disp_siret"]]
+
+		if fermetureRaw == "" {
+			fermetureRaw = maxTime
 		} // compte non fermé
 
-		// fermeture, err := UrssafToDate(row[fermetureIndex])
-		fermeture, err := UrssafToDate(row[fermetureIndex])
+		// fermeture, err := UrssafToDate(fermetureRaw)
+		fermeture, err := UrssafToDate(fermetureRaw)
 		if err != nil {
 			return nil, err // fermeture n'a pas pu être lue ou convertie en date
 		}
 
-		compte := row[compteIndex]
-		siret := row[siretIndex]
+		compte := row[idx["compte"]]
+		siret := row[idx["siret"]]
 
 		if sfregexp.ValidSiret(siret) && !filter.Skips(siret) {
 			//siret valide
