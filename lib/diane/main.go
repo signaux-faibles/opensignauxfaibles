@@ -276,7 +276,7 @@ func parseDianeRow(idx marshal.ColMapping, row []string) (diane Diane) {
 	if i, err := strconv.ParseFloat(row[16], 64); err == nil {
 		diane.ConcoursBancaireCourant = &i
 	}
-	if i, err := strconv.ParseFloat(row[17], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Equilibre financier"]], 64); err == nil {
 		diane.EquilibreFinancier = &i
 	}
 	if i, err := strconv.ParseFloat(row[18], 64); err == nil {
