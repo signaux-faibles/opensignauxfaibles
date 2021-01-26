@@ -47,8 +47,6 @@ func (debit Debit) Type() string {
 	return "debit"
 }
 
-type colMapping map[string]int
-
 // ParserDebit fournit une instance utilisable par ParseFilesFromBatch.
 var ParserDebit = &debitParser{}
 
