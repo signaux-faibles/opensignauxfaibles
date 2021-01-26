@@ -65,6 +65,13 @@ func TestReadSiretMapping(t *testing.T) {
 		assert.NoError(t, err)
 	})
 
+	t.Run("readSiretMapping doit rapporter une erreur s'il manque une colonne", func(t *testing.T) {
+		batch := base.AdminBatch{}
+		csvHeader := `UrsSaf_geStion`
+		_, err := readSiretMapping(strings.NewReader(csvHeader), Cache{}, &batch)
+		assert.Error(t, err, "Colonne Compte non trouvée.")
+	})
+
 	t.Run("readSiretMapping doit produire les mêmes tuples que d'habitude", func(t *testing.T) {
 
 		var batch = base.AdminBatch{}
