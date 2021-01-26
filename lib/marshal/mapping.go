@@ -144,12 +144,20 @@ func readSiretMapping(
 	csvReader := csv.NewReader(reader)
 	csvReader.Comma = ';'
 
-	// discard header row
-	csvReader.Read() // => Urssaf_gestion;Dep;Compte;Etat_compte;Siren;Siret;Date_crea_siret;Date_disp_siret;Cle_md5
+	// parse header row
+	fields, err := csvReader.Read() // => Urssaf_gestion;Dep;Compte;Etat_compte;Siren;Siret;Date_crea_siret;Date_disp_siret;Cle_md5
+	if err != nil {
+		return nil, err
+	}
+	idx := indexFields(LowercaseFields(fields))
+	requiredFields := []string{"compte", "siret", "date_disp_siret"}
+	if _, err := idx.HasFields(requiredFields); err != nil {
+		return nil, err
+	}
 
-	compteIndex := 2
-	siretIndex := 5
-	fermetureIndex := 7
+	compteIndex := idx["compte"]             // column index: 2
+	siretIndex := idx["siret"]               // column index: 5
+	fermetureIndex := idx["date_disp_siret"] // column index: 7
 
 	for {
 		row, err := csvReader.Read()
