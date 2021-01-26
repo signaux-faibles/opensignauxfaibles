@@ -15,10 +15,10 @@ import (
 
 // Effectif Urssaf
 type Effectif struct {
-	Siret        string    `json:"-" bson:"-"`
-	NumeroCompte string    `json:"numero_compte" bson:"numero_compte"`
-	Periode      time.Time `json:"periode" bson:"periode"`
-	Effectif     int       `json:"effectif" bson:"effectif"`
+	Siret        string    `col:"siret"  json:"-"             bson:"-"`
+	NumeroCompte string    `col:"compte" json:"numero_compte" bson:"numero_compte"`
+	Periode      time.Time `             json:"periode"       bson:"periode"`
+	Effectif     int       `             json:"effectif"      bson:"effectif"`
 }
 
 // Key _id de l'objet
@@ -81,13 +81,7 @@ func parseEffectifColMapping(reader *csv.Reader) (marshal.ColMapping, []periodCo
 	if err != nil {
 		return nil, nil, err
 	}
-
-	expectedFields := []string{"siret", "compte"}
-	var idx = marshal.IndexSpecificFields(marshal.LowercaseFields(fields), expectedFields)
-	if _, err = idx.HasFields(expectedFields); err != nil {
-		return nil, nil, err
-	}
-
+	idx, err := marshal.ValidateAndIndexColumnsFromColTags(marshal.LowercaseFields(fields), Effectif{})
 	// Dans quels champs lire l'effectif
 	periods := parseEffectifPeriod(fields)
 	return idx, periods, err

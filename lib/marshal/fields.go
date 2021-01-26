@@ -5,8 +5,6 @@ import (
 	"errors"
 	"reflect"
 	"strings"
-
-	"github.com/signaux-faibles/opensignauxfaibles/lib/misc"
 )
 
 // IndexColumnsFromCsvHeader extrait les noms de colonnes depuis l'en-tête d'un
@@ -27,19 +25,6 @@ func ValidateAndIndexColumnsFromColTags(headerRow []string, destObject interface
 	idx := indexFields(headerRow)
 	_, err := idx.HasFields(requiredFields)
 	return idx, err
-}
-
-// IndexSpecificFields indexe la position des colonnes spécifiées,
-// à partir de la liste ordonnée des noms de colonne, telle que lue en en-tête.
-func IndexSpecificFields(headerFields []string, expectedFields []string) ColMapping {
-	var colMapping = ColMapping{}
-	for _, name := range expectedFields {
-		idx := misc.SliceIndex(len(headerFields), func(i int) bool { return headerFields[i] == name })
-		if idx != -1 {
-			colMapping[name] = idx
-		}
-	}
-	return colMapping
 }
 
 // indexFields indexe la position de chaque colonne par son nom,
