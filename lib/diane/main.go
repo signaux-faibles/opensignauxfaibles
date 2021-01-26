@@ -230,14 +230,14 @@ func (parser *dianeParser) ParseLines(parsedLineChan chan marshal.ParsedLineResu
 		} else if len(row) < 83 {
 			parsedLine.AddRegularError(errors.New("Ligne invalide"))
 		} else {
-			parsedLine.AddTuple(parseDianeRow(&parser.idx, row))
+			parsedLine.AddTuple(parseDianeRow(parser.idx, row))
 		}
 		parsedLineChan <- parsedLine
 	}
 }
 
 // parseDianeRow construit un objet Diane à partir d'une ligne de valeurs récupérée depuis un fichier
-func parseDianeRow(idx *marshal.ColMapping, row []string) (diane Diane) {
+func parseDianeRow(idx marshal.ColMapping, row []string) (diane Diane) {
 	if i, err := strconv.Atoi(row[0]); err == nil {
 		diane.Annee = &i
 	}
