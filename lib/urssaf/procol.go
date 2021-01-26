@@ -3,7 +3,6 @@ package urssaf
 import (
 	"bufio"
 	"encoding/csv"
-	"errors"
 	"io"
 	"os"
 	"regexp"
@@ -12,15 +11,14 @@ import (
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/marshal"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/misc"
 )
 
 // Procol Procédures collectives, extraction URSSAF
 type Procol struct {
-	DateEffet    time.Time `json:"date_effet" bson:"date_effet"`
-	ActionProcol string    `json:"action_procol" bson:"action_procol"`
-	StadeProcol  string    `json:"stade_procol" bson:"stade_procol"`
-	Siret        string    `json:"-" bson:"-"`
+	DateEffet    time.Time `col:"dt_effet"      json:"date_effet"    bson:"date_effet"`
+	ActionProcol string    `col:"lib_actx_stdx" json:"action_procol" bson:"action_procol"`
+	StadeProcol  string    `col:"lib_actx_stdx" json:"stade_procol"  bson:"stade_procol"`
+	Siret        string    `col:"siret"         json:"-"             bson:"-"`
 }
 
 // Key _id de l'objet
@@ -44,7 +42,7 @@ var ParserProcol = &procolParser{}
 type procolParser struct {
 	file   *os.File
 	reader *csv.Reader
-	idx    colMapping
+	idx    marshal.ColMapping
 }
 
 func (parser *procolParser) GetFileType() string {
@@ -78,20 +76,12 @@ func openProcolFile(filePath string) (*os.File, *csv.Reader, error) {
 	return file, reader, err
 }
 
-func parseProcolColMapping(reader *csv.Reader) (colMapping, error) {
+func parseProcolColMapping(reader *csv.Reader) (marshal.ColMapping, error) {
 	fields, err := reader.Read()
 	if err != nil {
 		return nil, err
 	}
-	var idx = colMapping{
-		"dt_effet":      misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "dt_effet" }),
-		"lib_actx_stdx": misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "lib_actx_stdx" }),
-		"siret":         misc.SliceIndex(len(fields), func(i int) bool { return strings.ToLower(fields[i]) == "siret" }),
-	}
-	if misc.SliceMin(idx["dt_effet"], idx["lib_actx_stdx"], idx["siret"]) == -1 {
-		return nil, errors.New("format de fichier incorrect")
-	}
-	return idx, nil
+	return marshal.ValidateAndIndexColumnsFromColTags(marshal.LowercaseFields(fields), Procol{})
 }
 
 func (parser *procolParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
@@ -113,7 +103,7 @@ func (parser *procolParser) ParseLines(parsedLineChan chan marshal.ParsedLineRes
 	}
 }
 
-func parseProcolLine(row []string, idx colMapping, parsedLine *marshal.ParsedLineResult) {
+func parseProcolLine(row []string, idx marshal.ColMapping, parsedLine *marshal.ParsedLineResult) {
 	var err error
 	procol := Procol{}
 	procol.DateEffet, err = time.Parse("02Jan2006", row[idx["dt_effet"]])

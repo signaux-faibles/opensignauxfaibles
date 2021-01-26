@@ -16,9 +16,9 @@ import (
 
 // EffectifEnt Urssaf
 type EffectifEnt struct {
-	Siren       string    `json:"-" bson:"-"`
-	Periode     time.Time `json:"periode" bson:"periode"`
-	EffectifEnt int       `json:"effectif" bson:"effectif"`
+	Siren       string    `col:"siren" json:"-"        bson:"-"`
+	Periode     time.Time `            json:"periode"  bson:"periode"`
+	EffectifEnt int       `            json:"effectif" bson:"effectif"`
 }
 
 // Key _id de l'objet
@@ -91,11 +91,10 @@ func parseEffectifEntColMapping(reader *csv.Reader) (marshal.ColMapping, []perio
 	if err != nil {
 		return nil, nil, err
 	}
-	expectedFields := []string{"siren"}
-	var idx = marshal.IndexSpecificFields(marshal.LowercaseFields(fields), expectedFields)
+	idx, err := marshal.ValidateAndIndexColumnsFromColTags(marshal.LowercaseFields(fields), EffectifEnt{})
 	// Dans quels champs lire l'effectifEnt
 	periods := parseEffectifPeriod(fields)
-	return idx, periods, nil
+	return idx, periods, err
 }
 
 type periodCol struct {
