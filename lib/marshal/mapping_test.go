@@ -97,6 +97,8 @@ func TestReadSiretMapping(t *testing.T) {
 			"filter": SirenFilter{"012345678": true},
 		}
 
+		expectedHeader := "Urssaf_gestion;Dep;Compte;Etat_compte;Siren;Siret;Date_crea_siret;Date_disp_siret"
+
 		testCases := []struct {
 			csv         string
 			cache       Cache
@@ -104,28 +106,28 @@ func TestReadSiretMapping(t *testing.T) {
 			expected    Comptes
 		}{
 			// No closing date
-			{`0;1;2;3;4;5;6;7
+			{expectedHeader + `
 		;;"abc";;;"01234567891011";;""`, Cache{}, false, stdExpected1},
 			// With closing date
-			{`0;1;2;3;4;5;6;7
+			{expectedHeader + `
 		;;"abc";;;"01234567891011";;"1150101"`, Cache{}, false, stdExpected2},
 			// With filtered siret
-			{`0;1;2;3;4;5;6;7
+			{expectedHeader + `
 		;;"abc";;;"01234567891011";;"1150101"`, stdFilterCache, false, stdExpected2},
 			// With two entries, including excluded siret
-			{`0;1;2;3;4;5;6;7
+			{expectedHeader + `
 		;;"abc";;;"01234567891011";;"1150101"
 		;;"abc";;;"87654321091011";;""`, stdFilterCache, false, stdExpected2}, // i.e. no mapping stored for 87654321091011, because it's not included by Filter
 			// With two entries 1
-			{`0;1;2;3;4;5;6;7
+			{expectedHeader + `
 		;;"abc";;;"01234567891011";;"1150101"
 		;;"abc";;;"87654321091011";;""`, Cache{}, false, stdExpected3},
 			// With two entries 2: different order
-			{`0;1;2;3;4;5;6;7
+			{expectedHeader + `
 	    ;;"abc";;;"87654321091011";;""
 	    ;;"abc";;;"01234567891011";;"1150101"`, Cache{}, false, stdExpected3},
 			// With invalid siret
-			{`0;1;2;3;4;5;6;7
+			{expectedHeader + `
 		  ;;"abc";;;"8765432109101A";;""
 	    ;;"abc";;;"01234567891011";;"1150101"`, Cache{}, false, stdExpected2},
 		}
