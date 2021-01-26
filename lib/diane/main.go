@@ -100,7 +100,7 @@ type Diane struct {
 	ExcedentBrutDExploitation     *float64 `col:"Excédent brut d'exploitation kEUR" json:"excedent_brut_d_exploitation" bson:"excedent_brut_d_exploitation,omitempty"`
 	AutresProduitsChargesReprises *float64 `col:"Autres Prod.. char. et Repr. kEUR" json:"autres_produits_charges_reprises" bson:"autres_produits_charges_reprises,omitempty"`
 	// TODO: retirer colonne redondante: "Autres Prod.. char. et Repr.  kEUR"
-	DotationAmortissement *float64 `col:"Dot. d'exploit. aux amort. et  prov. kEUR" json:"dotation_amortissement" bson:"dotation_amortissement,omitempty"`
+	DotationAmortissement *float64 `col:"Dot. d'exploit. aux amort. et prov. kEUR" json:"dotation_amortissement" bson:"dotation_amortissement,omitempty"`
 	ResultatExpl          *float64 `col:"Résultat d'expl. kEUR" json:"resultat_expl" bson:"resultat_expl,omitempty"`
 	OperationsCommun      *float64 `col:"Opérations en commun kEUR" json:"operations_commun" bson:"operations_commun,omitempty"`
 	ProduitsFinanciers    *float64 `col:"Produits fin. kEUR" json:"produits_financiers" bson:"produits_financiers,omitempty"`
