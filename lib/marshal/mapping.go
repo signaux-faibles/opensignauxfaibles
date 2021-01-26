@@ -155,10 +155,6 @@ func readSiretMapping(
 		return nil, err
 	}
 
-	compteIndex := idx["compte"]             // column index: 2
-	siretIndex := idx["siret"]               // column index: 5
-	fermetureIndex := idx["date_disp_siret"] // column index: 7
-
 	for {
 		row, err := csvReader.Read()
 		if err == io.EOF {
@@ -169,18 +165,20 @@ func readSiretMapping(
 
 		maxTime := "9990101"
 
-		if row[fermetureIndex] == "" {
-			row[fermetureIndex] = maxTime
+		fermetureRaw := row[idx["date_disp_siret"]]
+
+		if fermetureRaw == "" {
+			fermetureRaw = maxTime
 		} // compte non fermé
 
-		// fermeture, err := UrssafToDate(row[fermetureIndex])
-		fermeture, err := UrssafToDate(row[fermetureIndex])
+		// fermeture, err := UrssafToDate(fermetureRaw)
+		fermeture, err := UrssafToDate(fermetureRaw)
 		if err != nil {
 			return nil, err // fermeture n'a pas pu être lue ou convertie en date
 		}
 
-		compte := row[compteIndex]
-		siret := row[siretIndex]
+		compte := row[idx["compte"]]
+		siret := row[idx["siret"]]
 
 		if sfregexp.ValidSiret(siret) && !filter.Skips(siret) {
 			//siret valide
