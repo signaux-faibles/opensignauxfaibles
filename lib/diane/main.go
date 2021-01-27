@@ -225,16 +225,6 @@ func (parser *dianeParser) ParseLines(parsedLineChan chan marshal.ParsedLineResu
 func parseDianeRow(idx marshal.ColMapping, row []string) (diane Diane) {
 
 	// indices de colonnes extraits depuis expectedDianeConvert.csv
-	// 10 "Nombre d"ES";
-	// 11 "Nombre de filiales";
-	// 12 "Taille de la Composition du Groupe";
-	// 13 "Dernière année disponible";
-	// 14 "Date de clôture";
-	// 15 "Nombre de mois";
-	// 16 "Conc. banc. cour. & sold. cr. kEUR";
-	// 17 "Equilibre financier";
-	// 18 "Indépendance fin. %";
-	// 19 "Endettement %";
 	// 20 "Autonomie fin. %";
 	// 21 "Degré d'amort. des immob. corp. %";
 	// 22 "Financ. de l'actif circ. net";
@@ -300,6 +290,7 @@ func parseDianeRow(idx marshal.ColMapping, row []string) (diane Diane) {
 	// 82 "Bénéfice ou perte kEUR"
 	// Colonnes non utilisées:
 	// 01 "Marquée";
+	// 13 "Dernière année disponible";
 
 	if i, err := strconv.Atoi(row[idx["Annee"]]); err == nil {
 		diane.Annee = &i
@@ -321,31 +312,31 @@ func parseDianeRow(idx marshal.ColMapping, row []string) (diane Diane) {
 	if i, err := strconv.ParseFloat(row[idx["Conces.. brev. et droits sim. : net kEUR"]], 64); err == nil {
 		diane.ConcesBrevEtDroitsSim = &i
 	}
-	if i, err := strconv.Atoi(row[10]); err == nil {
+	if i, err := strconv.Atoi(row[idx["Nombre d\"ES"]]); err == nil {
 		diane.NombreEtabSecondaire = &i
 	}
-	if i, err := strconv.Atoi(row[11]); err == nil {
+	if i, err := strconv.Atoi(row[idx["Nombre de filiales"]]); err == nil {
 		diane.NombreFiliale = &i
 	}
-	if i, err := strconv.Atoi(row[12]); err == nil {
+	if i, err := strconv.Atoi(row[idx["Taille de la Composition du Groupe"]]); err == nil {
 		diane.TailleCompoGroupe = &i
 	}
-	if i, err := time.Parse("02/01/2006", row[14]); err == nil {
+	if i, err := time.Parse("02/01/2006", row[idx["Date de clôture"]]); err == nil {
 		diane.ArreteBilan = i
 	}
-	if i, err := strconv.Atoi(row[15]); err == nil {
+	if i, err := strconv.Atoi(row[idx["Nombre de mois"]]); err == nil {
 		diane.NombreMois = &i
 	}
-	if i, err := strconv.ParseFloat(row[16], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Conc. banc. cour. & sold. cr. kEUR"]], 64); err == nil {
 		diane.ConcoursBancaireCourant = &i
 	}
-	if i, err := strconv.ParseFloat(row[17], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Equilibre financier"]], 64); err == nil {
 		diane.EquilibreFinancier = &i
 	}
-	if i, err := strconv.ParseFloat(row[18], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Indépendance fin. %"]], 64); err == nil {
 		diane.IndependanceFinanciere = &i
 	}
-	if i, err := strconv.ParseFloat(row[19], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Endettement %"]], 64); err == nil {
 		diane.Endettement = &i
 	}
 	if i, err := strconv.ParseFloat(row[20], 64); err == nil {
