@@ -155,12 +155,13 @@ func (parser *dianeParser) Close() error {
 
 func openFile(filePath string) (func() error, *io.ReadCloser, error) {
 
+	// TODO: implémenter ces traitements en Go
 	pipedCmds := []*exec.Cmd{
-		exec.Command("cat", filePath),                                          // TODO: implement this step in Go
-		exec.Command("iconv", "--from-code", "UTF-16LE", "--to-code", "UTF-8"), // TODO: implement this step in Go
-		exec.Command("sed", "s/\r$//"),                                         // TODO: implement this step in Go
-		exec.Command("awk", awkScript),                                         // TODO: implement this step in Go
-		exec.Command("sed", "s/,/./g"),                                         // TODO: implement this step in Go
+		exec.Command("cat", filePath),
+		exec.Command("iconv", "--from-code", "UTF-16LE", "--to-code", "UTF-8"), // conversion d'encodage de fichier car awk ne supporte pas UTF-16LE
+		exec.Command("sed", "s/\r$//"),                                         // forcer l'usage de retours charriot au format UNIX car le caractère \r cause une duplication de colonne depuis le script awk
+		exec.Command("awk", awkScript),                                         // réorganisation des des données pour éviter la duplication de colonnes par année
+		exec.Command("sed", "s/,/./g"),                                         // usage de points au lieu de virgules, pour que les nombres décimaux soient reconnus par csv.Reader
 	}
 	lastCmd := pipedCmds[len(pipedCmds)-1]
 
