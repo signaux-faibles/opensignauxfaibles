@@ -160,6 +160,7 @@ func openFile(filePath string) (func() error, *io.ReadCloser, error) {
 		exec.Command("cat", filePath),
 		exec.Command("iconv", "--from-code", "UTF-16LE", "--to-code", "UTF-8"), // conversion d'encodage de fichier car awk ne supporte pas UTF-16LE
 		exec.Command("sed", "s/\r$//"),                                         // forcer l'usage de retours charriot au format UNIX car le caractère \r cause une duplication de colonne depuis le script awk
+		exec.Command("sed", "s/  / /g"),                                        // dé-dupliquer les caractères d'espacement, notamment dans les en-têtes de colonnes
 		exec.Command("awk", awkScript),                                         // réorganisation des des données pour éviter la duplication de colonnes par année
 		exec.Command("sed", "s/,/./g"),                                         // usage de points au lieu de virgules, pour que les nombres décimaux soient reconnus par csv.Reader
 	}
