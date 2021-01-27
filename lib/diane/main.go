@@ -24,7 +24,7 @@ type Diane struct {
 	DetteFiscaleEtSociale           *float64  `col:"Dettes fiscales et sociales kEUR" json:"dette_fiscale_et_sociale" bson:"dette_fiscale_et_sociale,omitempty"`
 	FraisDeRetD                     *float64  `col:"Frais de R&D : net kEUR" json:"frais_de_RetD" bson:"frais_de_RetD,omitempty"`
 	ConcesBrevEtDroitsSim           *float64  `col:"Conces.. brev. et droits sim. : net kEUR" json:"conces_brev_et_droits_sim" bson:"conces_brev_et_droits_sim,omitempty"` // Nom de la colonne avant transformation des virgules en points: "Conces., brev. et droits sim. : net kEUR"
-	NombreEtabSecondaire            *int      `col:"Nombre d\"ES" json:"nombre_etab_secondaire" bson:"nombre_etab_secondaire,omitempty"`
+	NombreEtabSecondaire            *int      `col:"Nombre d’ES" json:"nombre_etab_secondaire" bson:"nombre_etab_secondaire,omitempty"`                                    // Ancien nom: "Nombre d"ES"
 	NombreFiliale                   *int      `col:"Nombre de filiales" json:"nombre_filiale" bson:"nombre_filiale,omitempty"`
 	TailleCompoGroupe               *int      `col:"Taille de la Composition du Groupe" json:"taille_compo_groupe" bson:"taille_compo_groupe,omitempty"`
 	ArreteBilan                     time.Time `col:"Date de clôture" json:"arrete_bilan_diane" bson:"arrete_bilan_diane,omitempty"`
@@ -243,7 +243,7 @@ func parseDianeRow(idx marshal.ColMapping, row []string) (diane Diane) {
 	if i, err := strconv.ParseFloat(row[idx["Conces.. brev. et droits sim. : net kEUR"]], 64); err == nil {
 		diane.ConcesBrevEtDroitsSim = &i
 	}
-	if i, err := strconv.Atoi(row[idx["Nombre d\"ES"]]); err == nil {
+	if i, err := strconv.Atoi(row[idx["Nombre d’ES"]]); err == nil {
 		diane.NombreEtabSecondaire = &i
 	}
 	if i, err := strconv.Atoi(row[idx["Nombre de filiales"]]); err == nil {
