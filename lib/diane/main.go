@@ -225,16 +225,6 @@ func (parser *dianeParser) ParseLines(parsedLineChan chan marshal.ParsedLineResu
 func parseDianeRow(idx marshal.ColMapping, row []string) (diane Diane) {
 
 	// indices de colonnes extraits depuis expectedDianeConvert.csv
-	// 20 "Autonomie fin. %";
-	// 21 "Degré d'amort. des immob. corp. %";
-	// 22 "Financ. de l'actif circ. net";
-	// 23 "Liquidité générale";
-	// 24 "Liquidité réduite";
-	// 25 "Rotation des stocks jours";
-	// 26 "Crédit clients jours";
-	// 27 "Crédit fournisseurs jours";
-	// 28 "C. A. par effectif (milliers/pers.) kEUR";
-	// 29 "Taux d'intérêt financier %";
 	// 30 "Intérêts / Chiffre d'affaires %";
 	// 31 "Endettement global jours";
 	// 32 "Taux d'endettement %";
@@ -339,34 +329,34 @@ func parseDianeRow(idx marshal.ColMapping, row []string) (diane Diane) {
 	if i, err := strconv.ParseFloat(row[idx["Endettement %"]], 64); err == nil {
 		diane.Endettement = &i
 	}
-	if i, err := strconv.ParseFloat(row[20], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Autonomie fin. %"]], 64); err == nil {
 		diane.AutonomieFinanciere = &i
 	}
-	if i, err := strconv.ParseFloat(row[21], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Degré d'amort. des immob. corp. %"]], 64); err == nil {
 		diane.DegreImmoCorporelle = &i
 	}
-	if i, err := strconv.ParseFloat(row[22], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Financ. de l'actif circ. net"]], 64); err == nil {
 		diane.FinancementActifCirculant = &i
 	}
-	if i, err := strconv.ParseFloat(row[23], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Liquidité générale"]], 64); err == nil {
 		diane.LiquiditeGenerale = &i
 	}
-	if i, err := strconv.ParseFloat(row[24], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Liquidité réduite"]], 64); err == nil {
 		diane.LiquiditeReduite = &i
 	}
-	if i, err := strconv.ParseFloat(row[25], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Rotation des stocks jours"]], 64); err == nil {
 		diane.RotationStocks = &i
 	}
-	if i, err := strconv.ParseFloat(row[26], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Crédit clients jours"]], 64); err == nil {
 		diane.CreditClient = &i
 	}
-	if i, err := strconv.ParseFloat(row[27], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Crédit fournisseurs jours"]], 64); err == nil {
 		diane.CreditFournisseur = &i
 	}
-	if i, err := strconv.ParseFloat(row[28], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["C. A. par effectif (milliers/pers.) kEUR"]], 64); err == nil {
 		diane.CAparEffectif = &i
 	}
-	if i, err := strconv.ParseFloat(row[29], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Taux d'intérêt financier %"]], 64); err == nil {
 		diane.TauxInteretFinancier = &i
 	}
 	if i, err := strconv.ParseFloat(row[30], 64); err == nil {
