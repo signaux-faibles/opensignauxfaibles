@@ -225,16 +225,6 @@ func (parser *dianeParser) ParseLines(parsedLineChan chan marshal.ParsedLineResu
 func parseDianeRow(idx marshal.ColMapping, row []string) (diane Diane) {
 
 	// indices de colonnes extraits depuis expectedDianeConvert.csv
-	// 30 "Intérêts / Chiffre d'affaires %";
-	// 31 "Endettement global jours";
-	// 32 "Taux d'endettement %";
-	// 33 "Capacité de remboursement";
-	// 34 "Capacité d'autofin. %";
-	// 35 "Couv. du C.A. par le f.d.r. jours";
-	// 36 "Couv. du C.A. par bes. en fdr jours";
-	// 37 "Poids des BFR d'exploitation %";
-	// 38 "Exportation %";
-	// 39 "Efficacité économique (milliers/pers.) kEUR";
 	// 40 "Prod. du potentiel de production";
 	// 41 "Productivité du capital financier";
 	// 42 "Productivité du capital investi";
@@ -359,34 +349,34 @@ func parseDianeRow(idx marshal.ColMapping, row []string) (diane Diane) {
 	if i, err := strconv.ParseFloat(row[idx["Taux d'intérêt financier %"]], 64); err == nil {
 		diane.TauxInteretFinancier = &i
 	}
-	if i, err := strconv.ParseFloat(row[30], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Intérêts / Chiffre d'affaires %"]], 64); err == nil {
 		diane.TauxInteretSurCA = &i
 	}
-	if i, err := strconv.ParseFloat(row[31], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Endettement global jours"]], 64); err == nil {
 		diane.EndettementGlobal = &i
 	}
-	if i, err := strconv.ParseFloat(row[32], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Taux d'endettement %"]], 64); err == nil {
 		diane.TauxEndettement = &i
 	}
-	if i, err := strconv.ParseFloat(row[33], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Capacité de remboursement"]], 64); err == nil {
 		diane.CapaciteRemboursement = &i
 	}
-	if i, err := strconv.ParseFloat(row[34], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Capacité d'autofin. %"]], 64); err == nil {
 		diane.CapaciteAutofinancement = &i
 	}
-	if i, err := strconv.ParseFloat(row[35], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Couv. du C.A. par le f.d.r. jours"]], 64); err == nil {
 		diane.CouvertureCaFdr = &i
 	}
-	if i, err := strconv.ParseFloat(row[36], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Couv. du C.A. par bes. en fdr jours"]], 64); err == nil {
 		diane.CouvertureCaBesoinFdr = &i
 	}
-	if i, err := strconv.ParseFloat(row[37], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Poids des BFR d'exploitation %"]], 64); err == nil {
 		diane.PoidsBFRExploitation = &i
 	}
-	if i, err := strconv.ParseFloat(row[38], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Exportation %"]], 64); err == nil {
 		diane.Exportation = &i
 	}
-	if i, err := strconv.ParseFloat(row[39], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Efficacité économique (milliers/pers.) kEUR"]], 64); err == nil {
 		diane.EfficaciteEconomique = &i
 	}
 	if i, err := strconv.ParseFloat(row[40], 64); err == nil {
