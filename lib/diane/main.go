@@ -225,16 +225,6 @@ func (parser *dianeParser) ParseLines(parsedLineChan chan marshal.ParsedLineResu
 func parseDianeRow(idx marshal.ColMapping, row []string) (diane Diane) {
 
 	// indices de colonnes extraits depuis expectedDianeConvert.csv
-	// 40 "Prod. du potentiel de production";
-	// 41 "Productivité du capital financier";
-	// 42 "Productivité du capital investi";
-	// 43 "Taux d'invest. productif %";
-	// 44 "Rentabilité économique %";
-	// 45 "Performance %";
-	// 46 "Rend. brut des f. propres nets %";
-	// 47 "Rentabilité nette %";
-	// 48 "Rend. des capitaux propres nets %";
-	// 49 "Rend. des res. durables nettes %";
 	// 50 "Taux de marge commerciale %";
 	// 51 "Taux de valeur ajoutée %";
 	// 52 "Part des salariés %";
@@ -379,34 +369,34 @@ func parseDianeRow(idx marshal.ColMapping, row []string) (diane Diane) {
 	if i, err := strconv.ParseFloat(row[idx["Efficacité économique (milliers/pers.) kEUR"]], 64); err == nil {
 		diane.EfficaciteEconomique = &i
 	}
-	if i, err := strconv.ParseFloat(row[40], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Prod. du potentiel de production"]], 64); err == nil {
 		diane.ProductivitePotentielProduction = &i
 	}
-	if i, err := strconv.ParseFloat(row[41], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Productivité du capital financier"]], 64); err == nil {
 		diane.ProductiviteCapitalFinancier = &i
 	}
-	if i, err := strconv.ParseFloat(row[42], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Productivité du capital investi"]], 64); err == nil {
 		diane.ProductiviteCapitalInvesti = &i
 	}
-	if i, err := strconv.ParseFloat(row[43], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Taux d'invest. productif %"]], 64); err == nil {
 		diane.TauxDInvestissementProductif = &i
 	}
-	if i, err := strconv.ParseFloat(row[44], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Rentabilité économique %"]], 64); err == nil {
 		diane.RentabiliteEconomique = &i
 	}
-	if i, err := strconv.ParseFloat(row[45], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Performance %"]], 64); err == nil {
 		diane.Performance = &i
 	}
-	if i, err := strconv.ParseFloat(row[46], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Rend. brut des f. propres nets %"]], 64); err == nil {
 		diane.RendementBrutFondsPropres = &i
 	}
-	if i, err := strconv.ParseFloat(row[47], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Rentabilité nette %"]], 64); err == nil {
 		diane.RentabiliteNette = &i
 	}
-	if i, err := strconv.ParseFloat(row[48], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Rend. des capitaux propres nets %"]], 64); err == nil {
 		diane.RendementCapitauxPropres = &i
 	}
-	if i, err := strconv.ParseFloat(row[49], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Rend. des res. durables nettes %"]], 64); err == nil {
 		diane.RendementRessourcesDurables = &i
 	}
 	if i, err := strconv.ParseFloat(row[50], 64); err == nil {
