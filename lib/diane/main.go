@@ -79,7 +79,7 @@ type Diane struct {
 	AutresAchatsChargesExternes     *float64  `col:"Autres achats et charges externes kEUR" json:"autres_achats_charges_externes" bson:"autres_achats_charges_externes,omitempty"`
 	ValeurAjoutee                   *float64  `col:"Valeur ajoutée kEUR" json:"valeur_ajoutee" bson:"valeur_ajoutee,omitempty"`
 	ChargePersonnel                 *float64  `col:"Charges de personnel kEUR" json:"charge_personnel" bson:"charge_personnel,omitempty"`
-	ImpotsTaxes                     *float64  `col:"Impôts. taxes et vers. assimil. kEUR" json:"impots_taxes" bson:"impots_taxes,omitempty"`
+	ImpotsTaxes                     *float64  `col:"Impôts. taxes et vers. assimil. kEUR" json:"impots_taxes" bson:"impots_taxes,omitempty"` // Nom de la colonne avant transformation des virgules en points: "Impôts, taxes et vers. assimil. kEUR"
 	SubventionsDExploitation        *float64  `col:"Subventions d'expl. kEUR" json:"subventions_d_exploitation" bson:"subventions_d_exploitation,omitempty"`
 	ExcedentBrutDExploitation       *float64  `col:"Excédent brut d'exploitation kEUR" json:"excedent_brut_d_exploitation" bson:"excedent_brut_d_exploitation,omitempty"`
 	AutresProduitsChargesReprises   *float64  `col:"Autres Prod.. char. et Repr. kEUR" json:"autres_produits_charges_reprises" bson:"autres_produits_charges_reprises,omitempty"`
@@ -225,16 +225,6 @@ func (parser *dianeParser) ParseLines(parsedLineChan chan marshal.ParsedLineResu
 func parseDianeRow(idx marshal.ColMapping, row []string) (diane Diane) {
 
 	// indices de colonnes extraits depuis expectedDianeConvert.csv
-	// 60 "Achats de mat. prem. et autres approv. kEUR";
-	// 61 "Production de l'ex. kEUR";
-	// 62 "Marge commerciale kEUR";
-	// 63 "Consommation de l'ex. kEUR";
-	// 64 "Autres achats et charges externes kEUR";
-	// 65 "Valeur ajoutée kEUR";
-	// 66 "Charges de personnel kEUR";
-	// 67 "Impôts, taxes et vers. assimil. kEUR";
-	// 68 "Subventions d'expl. kEUR";
-	// 69 "Excédent brut d'exploitation kEUR";
 	// 70 "Autres Prod., char. et Repr. kEUR";
 	// 71 "Dot. d'exploit. aux amort. et prov. kEUR";
 	// 72 "Résultat d'expl. kEUR";
@@ -417,34 +407,34 @@ func parseDianeRow(idx marshal.ColMapping, row []string) (diane Diane) {
 	if i, err := strconv.ParseFloat(row[idx["Achats march. et autres approv. kEUR"]], 64); err == nil {
 		diane.AchatMarchandises = &i
 	}
-	if i, err := strconv.ParseFloat(row[60], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Achats de mat. prem. et autres approv. kEUR"]], 64); err == nil {
 		diane.AchatMatieresPremieres = &i
 	}
-	if i, err := strconv.ParseFloat(row[61], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Production de l'ex. kEUR"]], 64); err == nil {
 		diane.Production = &i
 	}
-	if i, err := strconv.ParseFloat(row[62], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Marge commerciale kEUR"]], 64); err == nil {
 		diane.MargeCommerciale = &i
 	}
-	if i, err := strconv.ParseFloat(row[63], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Consommation de l'ex. kEUR"]], 64); err == nil {
 		diane.Consommation = &i
 	}
-	if i, err := strconv.ParseFloat(row[64], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Autres achats et charges externes kEUR"]], 64); err == nil {
 		diane.AutresAchatsChargesExternes = &i
 	}
-	if i, err := strconv.ParseFloat(row[65], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Valeur ajoutée kEUR"]], 64); err == nil {
 		diane.ValeurAjoutee = &i
 	}
-	if i, err := strconv.ParseFloat(row[66], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Charges de personnel kEUR"]], 64); err == nil {
 		diane.ChargePersonnel = &i
 	}
-	if i, err := strconv.ParseFloat(row[67], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Impôts. taxes et vers. assimil. kEUR"]], 64); err == nil {
 		diane.ImpotsTaxes = &i
 	}
-	if i, err := strconv.ParseFloat(row[68], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Subventions d'expl. kEUR"]], 64); err == nil {
 		diane.SubventionsDExploitation = &i
 	}
-	if i, err := strconv.ParseFloat(row[69], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Excédent brut d'exploitation kEUR"]], 64); err == nil {
 		diane.ExcedentBrutDExploitation = &i
 	}
 	if i, err := strconv.ParseFloat(row[70], 64); err == nil {
