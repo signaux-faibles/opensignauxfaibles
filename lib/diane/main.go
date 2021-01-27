@@ -82,7 +82,7 @@ type Diane struct {
 	ImpotsTaxes                     *float64  `col:"Impôts. taxes et vers. assimil. kEUR" json:"impots_taxes" bson:"impots_taxes,omitempty"` // Nom de la colonne avant transformation des virgules en points: "Impôts, taxes et vers. assimil. kEUR"
 	SubventionsDExploitation        *float64  `col:"Subventions d'expl. kEUR" json:"subventions_d_exploitation" bson:"subventions_d_exploitation,omitempty"`
 	ExcedentBrutDExploitation       *float64  `col:"Excédent brut d'exploitation kEUR" json:"excedent_brut_d_exploitation" bson:"excedent_brut_d_exploitation,omitempty"`
-	AutresProduitsChargesReprises   *float64  `col:"Autres Prod.. char. et Repr. kEUR" json:"autres_produits_charges_reprises" bson:"autres_produits_charges_reprises,omitempty"`
+	AutresProduitsChargesReprises   *float64  `col:"Autres Prod.. char. et Repr. kEUR" json:"autres_produits_charges_reprises" bson:"autres_produits_charges_reprises,omitempty"` // Nom de la colonne avant transformation des virgules en points: "Autres Prod., char. et Repr. kEUR"
 	DotationAmortissement           *float64  `col:"Dot. d'exploit. aux amort. et prov. kEUR" json:"dotation_amortissement" bson:"dotation_amortissement,omitempty"`
 	ResultatExpl                    *float64  `col:"Résultat d'expl. kEUR" json:"resultat_expl" bson:"resultat_expl,omitempty"`
 	OperationsCommun                *float64  `col:"Opérations en commun kEUR" json:"operations_commun" bson:"operations_commun,omitempty"`
@@ -96,6 +96,11 @@ type Diane struct {
 	ImpotBenefice                   *float64  `col:"Impôts sur le bénéf. et impôts diff. kEUR" json:"impot_benefice" bson:"impot_benefice,omitempty"`
 	BeneficeOuPerte                 *float64  `col:"Bénéfice ou perte kEUR" json:"benefice_ou_perte" bson:"benefice_ou_perte,omitempty"`
 	// TODO: ajouter NotePreface ou le retirer de la documentation (cf https://github.com/signaux-faibles/documentation/blob/master/description-donnees.md#donn%C3%A9es-financi%C3%A8res-issues-des-bilans-d%C3%A9pos%C3%A9s-au-greffe-de-tribunaux-de-commerce)
+
+	// Colonnes non utilisées:
+	// 01 "Marquée";
+	// 13 "Dernière année disponible";
+	// 59 "Achats de march. kEUR";
 }
 
 // Key id de l'objet
@@ -223,25 +228,6 @@ func (parser *dianeParser) ParseLines(parsedLineChan chan marshal.ParsedLineResu
 
 // parseDianeRow construit un objet Diane à partir d'une ligne de valeurs récupérée depuis un fichier
 func parseDianeRow(idx marshal.ColMapping, row []string) (diane Diane) {
-
-	// indices de colonnes extraits depuis expectedDianeConvert.csv
-	// 70 "Autres Prod., char. et Repr. kEUR";
-	// 71 "Dot. d'exploit. aux amort. et prov. kEUR";
-	// 72 "Résultat d'expl. kEUR";
-	// 73 "Opérations en commun kEUR";
-	// 74 "Produits fin. kEUR";
-	// 75 "Charges fin. kEUR";
-	// 76 "Intérêts et charges assimilées kEUR";
-	// 77 "Résultat courant avant impôts kEUR";
-	// 78 "Produits except. kEUR";
-	// 79 "Charges except. kEUR";
-	// 80 "Particip. des sal. aux résul. kEUR";
-	// 81 "Impôts sur le bénéf. et impôts diff. kEUR";
-	// 82 "Bénéfice ou perte kEUR"
-	// Colonnes non utilisées:
-	// 01 "Marquée";
-	// 13 "Dernière année disponible";
-	// 59 "Achats de march. kEUR";
 
 	if i, err := strconv.Atoi(row[idx["Annee"]]); err == nil {
 		diane.Annee = &i
@@ -437,43 +423,43 @@ func parseDianeRow(idx marshal.ColMapping, row []string) (diane Diane) {
 	if i, err := strconv.ParseFloat(row[idx["Excédent brut d'exploitation kEUR"]], 64); err == nil {
 		diane.ExcedentBrutDExploitation = &i
 	}
-	if i, err := strconv.ParseFloat(row[70], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Autres Prod.. char. et Repr. kEUR"]], 64); err == nil {
 		diane.AutresProduitsChargesReprises = &i
 	}
-	if i, err := strconv.ParseFloat(row[71], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Dot. d'exploit. aux amort. et prov. kEUR"]], 64); err == nil {
 		diane.DotationAmortissement = &i
 	}
-	if i, err := strconv.ParseFloat(row[72], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Résultat d'expl. kEUR"]], 64); err == nil {
 		diane.ResultatExpl = &i
 	}
-	if i, err := strconv.ParseFloat(row[73], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Opérations en commun kEUR"]], 64); err == nil {
 		diane.OperationsCommun = &i
 	}
-	if i, err := strconv.ParseFloat(row[74], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Produits fin. kEUR"]], 64); err == nil {
 		diane.ProduitsFinanciers = &i
 	}
-	if i, err := strconv.ParseFloat(row[75], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Charges fin. kEUR"]], 64); err == nil {
 		diane.ChargesFinancieres = &i
 	}
-	if i, err := strconv.ParseFloat(row[76], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Intérêts et charges assimilées kEUR"]], 64); err == nil {
 		diane.Interets = &i
 	}
-	if i, err := strconv.ParseFloat(row[77], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Résultat courant avant impôts kEUR"]], 64); err == nil {
 		diane.ResultatAvantImpot = &i
 	}
-	if i, err := strconv.ParseFloat(row[78], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Produits except. kEUR"]], 64); err == nil {
 		diane.ProduitExceptionnel = &i
 	}
-	if i, err := strconv.ParseFloat(row[79], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Charges except. kEUR"]], 64); err == nil {
 		diane.ChargeExceptionnelle = &i
 	}
-	if i, err := strconv.ParseFloat(row[80], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Particip. des sal. aux résul. kEUR"]], 64); err == nil {
 		diane.ParticipationSalaries = &i
 	}
-	if i, err := strconv.ParseFloat(row[81], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Impôts sur le bénéf. et impôts diff. kEUR"]], 64); err == nil {
 		diane.ImpotBenefice = &i
 	}
-	if i, err := strconv.ParseFloat(row[82], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Bénéfice ou perte kEUR"]], 64); err == nil {
 		diane.BeneficeOuPerte = &i
 	}
 	return diane
