@@ -24,9 +24,9 @@ func TestDiane(t *testing.T) {
 		}
 	})
 
-	t.Run("openFile() doit retourner un flux csv avec un en-tête sans duplication de caractères d'espacement", func(t *testing.T) {
+	t.Run("preprocessDianeFile() doit retourner un flux csv avec un en-tête sans duplication de caractères d'espacement", func(t *testing.T) {
 		var testData = filepath.Join("testData", "dianeTestData.txt")
-		_, reader, err := openFile(testData)
+		_, reader, err := preprocessDianeFile(testData)
 		if assert.NoError(t, err) {
 			csvReader := csv.NewReader(*reader)
 			csvReader.Comma = ';'
@@ -40,10 +40,10 @@ func TestDiane(t *testing.T) {
 		}
 	})
 
-	t.Run("openFile() doit produire un fichier csv intermédiaire conforme", func(t *testing.T) {
+	t.Run("preprocessDianeFile() doit produire un fichier csv intermédiaire conforme", func(t *testing.T) {
 		var golden = filepath.Join("testData", "expectedDianeConvert.csv")
 		var testData = filepath.Join("testData", "dianeTestData.txt")
-		_, reader, err := openFile(testData)
+		_, reader, err := preprocessDianeFile(testData)
 		if assert.NoError(t, err) {
 			output, err := ioutil.ReadAll(*reader)
 			if assert.NoError(t, err) {

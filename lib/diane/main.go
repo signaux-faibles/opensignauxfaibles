@@ -137,7 +137,7 @@ func (parser *dianeParser) Init(cache *marshal.Cache, batch *base.AdminBatch) er
 
 func (parser *dianeParser) Open(filePath string) (err error) {
 	var reader *io.ReadCloser
-	parser.closeFct, reader, err = openFile(filePath)
+	parser.closeFct, reader, err = preprocessDianeFile(filePath)
 	if err != nil {
 		return err
 	}
@@ -148,7 +148,7 @@ func (parser *dianeParser) Close() error {
 	return parser.closeFct()
 }
 
-func openFile(filePath string) (func() error, *io.ReadCloser, error) {
+func preprocessDianeFile(filePath string) (func() error, *io.ReadCloser, error) {
 
 	// TODO: implémenter ces traitements en Go
 	pipedCmds := []*exec.Cmd{
