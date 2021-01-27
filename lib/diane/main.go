@@ -198,13 +198,7 @@ func (parser *dianeParser) initCsvReader(reader io.Reader) (err error) {
 	parser.reader = csv.NewReader(reader)
 	parser.reader.Comma = ';'
 	parser.reader.LazyQuotes = true
-
-	header, err := parser.reader.Read()
-	if err != nil {
-		return errors.New("echec de lecture de l'en-tête du fichier en sortie du script: " + err.Error())
-	}
-
-	parser.idx, err = marshal.ValidateAndIndexColumnsFromColTags(header, Diane{})
+	parser.idx, err = marshal.IndexColumnsFromCsvHeader(parser.reader, Diane{})
 	return err
 }
 
