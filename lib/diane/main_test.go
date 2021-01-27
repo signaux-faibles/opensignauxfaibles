@@ -1,11 +1,9 @@
 package diane
 
 import (
-	"bytes"
 	"encoding/csv"
 	"flag"
 	"io/ioutil"
-	"log"
 	"path/filepath"
 	"testing"
 
@@ -38,10 +36,10 @@ func TestDiane(t *testing.T) {
 		var testData = filepath.Join("testData", "dianeTestData.txt")
 		_, reader, err := openFile(testData)
 		if assert.NoError(t, err) {
-			buf := new(bytes.Buffer)
-			buf.ReadFrom(*reader)
-			expected := diffWithGoldenFile(golden, *update, *buf)
-			assert.Equal(t, expected, buf)
+			output, err := ioutil.ReadAll(*reader)
+			if assert.NoError(t, err) {
+				diffWithGoldenFile(t, output, golden, *update)
+			}
 		}
 	})
 
@@ -52,14 +50,13 @@ func TestDiane(t *testing.T) {
 	})
 }
 
-func diffWithGoldenFile(filename string, updateGoldenFile bool, cmdOutput bytes.Buffer) []byte {
-
+func diffWithGoldenFile(t *testing.T, output []byte, goldenFileName string, updateGoldenFile bool) {
+	t.Helper()
 	if updateGoldenFile {
-		ioutil.WriteFile(filename, cmdOutput.Bytes(), 0644)
+		ioutil.WriteFile(goldenFileName, output, 0644)
 	}
-	expected, err := ioutil.ReadFile(filename)
-	if err != nil {
-		log.Fatal(err)
+	expected, err := ioutil.ReadFile(goldenFileName)
+	if assert.NoError(t, err) {
+		assert.Equal(t, expected, output)
 	}
-	return expected
 }
