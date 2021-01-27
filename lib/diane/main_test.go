@@ -2,6 +2,7 @@ package diane
 
 import (
 	"bytes"
+	"encoding/csv"
 	"flag"
 	"io/ioutil"
 	"log"
@@ -15,6 +16,22 @@ import (
 var update = flag.Bool("update", false, "Update the expected test values in golden file")
 
 func TestDiane(t *testing.T) {
+
+	t.Run("openFile() doit retourner un flux csv avec un en-tête sans duplication de caractères d'espacement", func(t *testing.T) {
+		var testData = filepath.Join("testData", "dianeTestData.txt")
+		_, reader, err := openFile(testData)
+		if assert.NoError(t, err) {
+			csvReader := csv.NewReader(*reader)
+			csvReader.Comma = ';'
+			csvReader.LazyQuotes = true
+			header, err := csvReader.Read() // Discard header
+			if assert.NoError(t, err) {
+				for _, field := range header {
+					assert.NotContains(t, field, "  ")
+				}
+			}
+		}
+	})
 
 	t.Run("openFile() doit produire un fichier csv intermédiaire conforme", func(t *testing.T) {
 		var golden = filepath.Join("testData", "expectedDianeConvert.csv")
