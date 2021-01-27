@@ -119,6 +119,7 @@ var Parser = &dianeParser{}
 type dianeParser struct {
 	closeFct func() error
 	reader   *csv.Reader
+	idx      marshal.ColMapping
 }
 
 func (parser *dianeParser) GetFileType() string {
@@ -135,18 +136,7 @@ func (parser *dianeParser) Open(filePath string) (err error) {
 	if err != nil {
 		return err
 	}
-
-	// init csv reader
-	parser.reader = csv.NewReader(*reader)
-	parser.reader.Comma = ';'
-	parser.reader.LazyQuotes = true
-
-	_, err = parser.reader.Read() // Discard header
-	if err != nil {
-		return errors.New("echec de lecture de l'en-tête du fichier en sortie du script: " + err.Error())
-	}
-
-	return err
+	return parser.initCsvReader(*reader)
 }
 
 func (parser *dianeParser) Close() error {
@@ -199,6 +189,19 @@ func openFile(filePath string) (func() error, *io.ReadCloser, error) {
 	return close, &stdout, nil
 }
 
+func (parser *dianeParser) initCsvReader(reader io.Reader) (err error) {
+	parser.reader = csv.NewReader(reader)
+	parser.reader.Comma = ';'
+	parser.reader.LazyQuotes = true
+
+	_, err = parser.reader.Read()
+	if err != nil {
+		return errors.New("echec de lecture de l'en-tête du fichier en sortie du script: " + err.Error())
+	}
+
+	return err
+}
+
 func (parser *dianeParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
 	for {
 		parsedLine := marshal.ParsedLineResult{}
@@ -211,18 +214,15 @@ func (parser *dianeParser) ParseLines(parsedLineChan chan marshal.ParsedLineResu
 		} else if len(row) < 83 {
 			parsedLine.AddRegularError(errors.New("Ligne invalide"))
 		} else {
-			parseDianeLine(row, &parsedLine)
+			parsedLine.AddTuple(parseDianeRow(parser.idx, row))
 		}
 		parsedLineChan <- parsedLine
 	}
 }
 
-func parseDianeLine(row []string, parsedLine *marshal.ParsedLineResult) {
-	parsedLine.AddTuple(parseDianeRow(row))
-}
-
 // parseDianeRow construit un objet Diane à partir d'une ligne de valeurs récupérée depuis un fichier
-func parseDianeRow(row []string) (diane Diane) {
+func parseDianeRow(idx marshal.ColMapping, row []string) (diane Diane) {
+
 	// indices de colonnes extraits depuis expectedDianeConvert.csv
 	// 00 "Annee";
 	// 01 "Marquée";
