@@ -223,6 +223,91 @@ func parseDianeLine(row []string, parsedLine *marshal.ParsedLineResult) {
 
 // parseDianeRow construit un objet Diane à partir d'une ligne de valeurs récupérée depuis un fichier
 func parseDianeRow(row []string) (diane Diane) {
+	// indices de colonnes extraits depuis expectedDianeConvert.csv
+	// 00 "Annee";
+	// 01 "Marquée";
+	// 02 "Nom de l'entreprise";
+	// 03 "Numéro Siren";
+	// 04 "Statut juridique ";
+	// 05 "Procédure collective";
+	// 06 "Effectif consolidé";
+	// 07 "Dettes fiscales et sociales kEUR";
+	// 08 "Frais de R&D : net kEUR";
+	// 09 "Conces., brev. et droits sim. : net kEUR";
+	// 10 "Nombre d"ES";
+	// 11 "Nombre de filiales";
+	// 12 "Taille de la Composition du Groupe";
+	// 13 "Dernière année disponible";
+	// 14 "Date de clôture";
+	// 15 "Nombre de mois";
+	// 16 "Conc. banc. cour. & sold. cr. kEUR";
+	// 17 "Equilibre financier";
+	// 18 "Indépendance fin. %";
+	// 19 "Endettement %";
+	// 20 "Autonomie fin. %";
+	// 21 "Degré d'amort. des immob. corp. %";
+	// 22 "Financ. de l'actif circ. net";
+	// 23 "Liquidité générale";
+	// 24 "Liquidité réduite";
+	// 25 "Rotation des stocks jours";
+	// 26 "Crédit clients jours";
+	// 27 "Crédit fournisseurs jours";
+	// 28 "C. A. par effectif (milliers/pers.) kEUR";
+	// 29 "Taux d'intérêt financier %";
+	// 30 "Intérêts / Chiffre d'affaires %";
+	// 31 "Endettement global jours";
+	// 32 "Taux d'endettement %";
+	// 33 "Capacité de remboursement";
+	// 34 "Capacité d'autofin. %";
+	// 35 "Couv. du C.A. par le f.d.r. jours";
+	// 36 "Couv. du C.A. par bes. en fdr jours";
+	// 37 "Poids des BFR d'exploitation %";
+	// 38 "Exportation %";
+	// 39 "Efficacité économique (milliers/pers.) kEUR";
+	// 40 "Prod. du potentiel de production";
+	// 41 "Productivité du capital financier";
+	// 42 "Productivité du capital investi";
+	// 43 "Taux d'invest. productif %";
+	// 44 "Rentabilité économique %";
+	// 45 "Performance %";
+	// 46 "Rend. brut des f. propres nets %";
+	// 47 "Rentabilité nette %";
+	// 48 "Rend. des capitaux propres nets %";
+	// 49 "Rend. des res. durables nettes %";
+	// 50 "Taux de marge commerciale %";
+	// 51 "Taux de valeur ajoutée %";
+	// 52 "Part des salariés %";
+	// 53 "Part de l'Etat %";
+	// 54 "Part des prêteurs %";
+	// 55 "Part de l'autofin. %";
+	// 56 "Chiffre d'affaires net (H.T.) kEUR";
+	// 57 "Dont exportation kEUR";
+	// 58 "Achats march. et autres approv. kEUR";
+	// 59 "Achats de march. kEUR";
+	// 60 "Achats de mat. prem. et autres approv. kEUR";
+	// 61 "Production de l'ex. kEUR";
+	// 62 "Marge commerciale kEUR";
+	// 63 "Consommation de l'ex. kEUR";
+	// 64 "Autres achats et charges externes kEUR";
+	// 65 "Valeur ajoutée kEUR";
+	// 66 "Charges de personnel kEUR";
+	// 67 "Impôts, taxes et vers. assimil. kEUR";
+	// 68 "Subventions d'expl. kEUR";
+	// 69 "Excédent brut d'exploitation kEUR";
+	// 70 "Autres Prod., char. et Repr. kEUR";
+	// 71 "Dot. d'exploit. aux amort. et prov. kEUR";
+	// 72 "Résultat d'expl. kEUR";
+	// 73 "Opérations en commun kEUR";
+	// 74 "Produits fin. kEUR";
+	// 75 "Charges fin. kEUR";
+	// 76 "Intérêts et charges assimilées kEUR";
+	// 77 "Résultat courant avant impôts kEUR";
+	// 78 "Produits except. kEUR";
+	// 79 "Charges except. kEUR";
+	// 80 "Particip. des sal. aux résul. kEUR";
+	// 81 "Impôts sur le bénéf. et impôts diff. kEUR";
+	// 82 "Bénéfice ou perte kEUR"
+
 	if i, err := strconv.Atoi(row[0]); err == nil {
 		diane.Annee = &i
 	}
