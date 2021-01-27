@@ -158,6 +158,7 @@ func openFile(filePath string) (func() error, *io.ReadCloser, error) {
 	pipedCmds := []*exec.Cmd{
 		exec.Command("cat", filePath),                                          // TODO: implement this step in Go
 		exec.Command("iconv", "--from-code", "UTF-16LE", "--to-code", "UTF-8"), // TODO: implement this step in Go
+		exec.Command("sed", "s/\r$//"),                                         // TODO: implement this step in Go
 		exec.Command("awk", awkScript),                                         // TODO: implement this step in Go
 		exec.Command("sed", "s/,/./g"),                                         // TODO: implement this step in Go
 	}
