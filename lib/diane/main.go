@@ -23,7 +23,7 @@ type Diane struct {
 	EffectifConsolide               *int      `col:"Effectif consolidé" json:"effectif_consolide" bson:"effectif_consolide,omitempty"`
 	DetteFiscaleEtSociale           *float64  `col:"Dettes fiscales et sociales kEUR" json:"dette_fiscale_et_sociale" bson:"dette_fiscale_et_sociale,omitempty"`
 	FraisDeRetD                     *float64  `col:"Frais de R&D : net kEUR" json:"frais_de_RetD" bson:"frais_de_RetD,omitempty"`
-	ConcesBrevEtDroitsSim           *float64  `col:"Conces.. brev. et droits sim. : net kEUR" json:"conces_brev_et_droits_sim" bson:"conces_brev_et_droits_sim,omitempty"`
+	ConcesBrevEtDroitsSim           *float64  `col:"Conces.. brev. et droits sim. : net kEUR" json:"conces_brev_et_droits_sim" bson:"conces_brev_et_droits_sim,omitempty"` // Nom de la colonne avant transformation des virgules en points: "Conces., brev. et droits sim. : net kEUR"
 	NombreEtabSecondaire            *int      `col:"Nombre d\"ES" json:"nombre_etab_secondaire" bson:"nombre_etab_secondaire,omitempty"`
 	NombreFiliale                   *int      `col:"Nombre de filiales" json:"nombre_filiale" bson:"nombre_filiale,omitempty"`
 	TailleCompoGroupe               *int      `col:"Taille de la Composition du Groupe" json:"taille_compo_groupe" bson:"taille_compo_groupe,omitempty"`
@@ -225,16 +225,6 @@ func (parser *dianeParser) ParseLines(parsedLineChan chan marshal.ParsedLineResu
 func parseDianeRow(idx marshal.ColMapping, row []string) (diane Diane) {
 
 	// indices de colonnes extraits depuis expectedDianeConvert.csv
-	// 00 "Annee";
-	// 01 "Marquée";
-	// 02 "Nom de l'entreprise";
-	// 03 "Numéro Siren";
-	// 04 "Statut juridique ";
-	// 05 "Procédure collective";
-	// 06 "Effectif consolidé";
-	// 07 "Dettes fiscales et sociales kEUR";
-	// 08 "Frais de R&D : net kEUR";
-	// 09 "Conces., brev. et droits sim. : net kEUR";
 	// 10 "Nombre d"ES";
 	// 11 "Nombre de filiales";
 	// 12 "Taille de la Composition du Groupe";
@@ -308,25 +298,27 @@ func parseDianeRow(idx marshal.ColMapping, row []string) (diane Diane) {
 	// 80 "Particip. des sal. aux résul. kEUR";
 	// 81 "Impôts sur le bénéf. et impôts diff. kEUR";
 	// 82 "Bénéfice ou perte kEUR"
+	// Colonnes non utilisées:
+	// 01 "Marquée";
 
-	if i, err := strconv.Atoi(row[0]); err == nil {
+	if i, err := strconv.Atoi(row[idx["Annee"]]); err == nil {
 		diane.Annee = &i
 	}
-	diane.NomEntreprise = row[2]
-	diane.NumeroSiren = row[3]
-	diane.StatutJuridique = row[4]
-	diane.ProcedureCollective = (row[5] == "Oui")
+	diane.NomEntreprise = row[idx["Nom de l'entreprise"]]
+	diane.NumeroSiren = row[idx["Numéro Siren"]]
+	diane.StatutJuridique = row[idx["Statut juridique "]]
+	diane.ProcedureCollective = (row[idx["Procédure collective"]] == "Oui")
 
-	if i, err := strconv.Atoi(row[6]); err == nil {
+	if i, err := strconv.Atoi(row[idx["Effectif consolidé"]]); err == nil {
 		diane.EffectifConsolide = &i
 	}
-	if i, err := strconv.ParseFloat(row[7], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Dettes fiscales et sociales kEUR"]], 64); err == nil {
 		diane.DetteFiscaleEtSociale = &i
 	}
-	if i, err := strconv.ParseFloat(row[8], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Frais de R&D : net kEUR"]], 64); err == nil {
 		diane.FraisDeRetD = &i
 	}
-	if i, err := strconv.ParseFloat(row[9], 64); err == nil {
+	if i, err := strconv.ParseFloat(row[idx["Conces.. brev. et droits sim. : net kEUR"]], 64); err == nil {
 		diane.ConcesBrevEtDroitsSim = &i
 	}
 	if i, err := strconv.Atoi(row[10]); err == nil {
