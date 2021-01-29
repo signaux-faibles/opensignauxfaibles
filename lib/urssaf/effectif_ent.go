@@ -108,7 +108,7 @@ func parseEffectifPeriod(fields []string) []periodCol {
 	re, _ := regexp.Compile("^eff")
 	for index, field := range fields {
 		if re.MatchString(field) {
-			date, _ := marshal.UrssafToPeriod(field[3:9])
+			date, _ := marshal.UrssafToPeriod(field[3:9]) // TODO: à sécuriser
 			periods = append(periods, periodCol{dateStart: date.Start, colIndex: index})
 		}
 	}

@@ -103,7 +103,7 @@ func (parser *debitParser) ParseLines(parsedLineChan chan marshal.ParsedLineResu
 		} else if err != nil {
 			parsedLine.AddRegularError(err)
 		} else {
-			period, _ := marshal.UrssafToPeriod(row[parser.idx["Periode"]])
+			period, _ := marshal.UrssafToPeriod(row[parser.idx["Periode"]]) // TODO: utiliser idxRow
 			date := period.Start
 
 			if siret, err := marshal.GetSiretFromComptesMapping(row[parser.idx["num_cpte"]], &date, parser.comptes); err == nil {
