@@ -29,3 +29,5 @@ rm sfdata
 rm -r dist/
 
 echo dist.tar.gz généré
+
+// TODO: supprimer ce fichier, et les mentions associées (ex: entrées gitignore)
