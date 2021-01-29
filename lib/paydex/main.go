@@ -101,17 +101,18 @@ func (parser *paydexParser) ParseLines(parsedLineChan chan marshal.ParsedLineRes
 	}
 }
 
-func parsePaydexLine(colIndex marshal.ColMapping, row []string) (*Paydex, error) {
-	dateValeur, err := time.Parse("02/01/2006", row[colIndex["DATE_VALEUR"]])
+func parsePaydexLine(idx marshal.ColMapping, row []string) (*Paydex, error) {
+	idxRow := idx.IndexRow(row)
+	dateValeur, err := time.Parse("02/01/2006", idxRow.GetVal("DATE_VALEUR"))
 	if err != nil {
-		return nil, fmt.Errorf("invalid date: %v", row[colIndex["DATE_VALEUR"]])
+		return nil, fmt.Errorf("invalid date: %v", idxRow.GetVal("DATE_VALEUR"))
 	}
-	nbJours, err := strconv.Atoi(row[colIndex["NB_JOURS"]])
+	nbJours, err := strconv.Atoi(idxRow.GetVal("NB_JOURS"))
 	if err != nil {
-		return nil, fmt.Errorf("invalid int: %v", row[colIndex["NB_JOURS"]])
+		return nil, fmt.Errorf("invalid int: %v", idxRow.GetVal("NB_JOURS"))
 	}
 	return &Paydex{
-		Siren:      row[colIndex["SIREN"]],
+		Siren:      idxRow.GetVal("SIREN"),
 		DateValeur: dateValeur,
 		NbJours:    nbJours,
 	}, nil

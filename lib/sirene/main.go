@@ -160,35 +160,36 @@ func (parser *sireneParser) ParseLines(parsedLineChan chan marshal.ParsedLineRes
 	}
 }
 
-func parseLine(f map[string]int, row []string, parsedLine *marshal.ParsedLineResult) {
+func parseLine(idx marshal.ColMapping, row []string, parsedLine *marshal.ParsedLineResult) {
 	var err error
+	idxRow := idx.IndexRow(row)
 	sirene := Sirene{}
-	sirene.Siren = row[f["siren"]]
-	sirene.Nic = row[f["nic"]]
-	sirene.Siege, err = strconv.ParseBool(row[f["etablissementSiege"]])
+	sirene.Siren = idxRow.GetVal("siren")
+	sirene.Nic = idxRow.GetVal("nic")
+	sirene.Siege, err = strconv.ParseBool(idxRow.GetVal("etablissementSiege"))
 	parsedLine.AddRegularError(err)
 
-	sirene.ComplementAdresse = row[f["complementAdresseEtablissement"]]
-	sirene.NumVoie = row[f["numeroVoieEtablissement"]]
-	sirene.IndRep = indRep[row[f["indiceRepetitionEtablissement"]]]
-	sirene.TypeVoie = typeVoie[row[f["typeVoieEtablissement"]]]
-	sirene.Voie = row[f["libelleVoieEtablissement"]]
-	sirene.Commune = row[f["libelleCommuneEtablissement"]]
-	sirene.CommuneEtranger = row[f["libelleCommuneEtrangerEtablissement"]]
-	sirene.DistributionSpeciale = row[f["distributionSpecialeEtablissement"]]
-	sirene.CodeCommune = row[f["codeCommuneEtablissement"]]
-	sirene.CodeCedex = row[f["codeCedexEtablissement"]]
-	sirene.Cedex = row[f["libelleCedexEtablissement"]]
-	sirene.CodePaysEtranger = row[f["codePaysEtrangerEtablissement"]]
-	sirene.PaysEtranger = row[f["libellePaysEtrangerEtablissement"]]
+	sirene.ComplementAdresse = idxRow.GetVal("complementAdresseEtablissement")
+	sirene.NumVoie = idxRow.GetVal("numeroVoieEtablissement")
+	sirene.IndRep = indRep[idxRow.GetVal("indiceRepetitionEtablissement")]
+	sirene.TypeVoie = typeVoie[idxRow.GetVal("typeVoieEtablissement")]
+	sirene.Voie = idxRow.GetVal("libelleVoieEtablissement")
+	sirene.Commune = idxRow.GetVal("libelleCommuneEtablissement")
+	sirene.CommuneEtranger = idxRow.GetVal("libelleCommuneEtrangerEtablissement")
+	sirene.DistributionSpeciale = idxRow.GetVal("distributionSpecialeEtablissement")
+	sirene.CodeCommune = idxRow.GetVal("codeCommuneEtablissement")
+	sirene.CodeCedex = idxRow.GetVal("codeCedexEtablissement")
+	sirene.Cedex = idxRow.GetVal("libelleCedexEtablissement")
+	sirene.CodePaysEtranger = idxRow.GetVal("codePaysEtrangerEtablissement")
+	sirene.PaysEtranger = idxRow.GetVal("libellePaysEtrangerEtablissement")
 
-	if len(row[f["codePostalEtablissement"]]) > 2 {
-		sirene.CodePostal = row[f["codePostalEtablissement"]]
-		departement := row[f["codePostalEtablissement"]][0:2]
+	if len(idxRow.GetVal("codePostalEtablissement")) > 2 {
+		sirene.CodePostal = idxRow.GetVal("codePostalEtablissement")
+		departement := idxRow.GetVal("codePostalEtablissement")[0:2]
 		// traitement pour les départements de Corse
-		if row[f["codePostalEtablissement"]][0:3] == "201" || row[f["codePostalEtablissement"]][0:3] == "200" {
+		if idxRow.GetVal("codePostalEtablissement")[0:3] == "201" || idxRow.GetVal("codePostalEtablissement")[0:3] == "200" {
 			departement = "2A"
-		} else if row[f["codePostalEtablissement"]][0:2] == "20" {
+		} else if idxRow.GetVal("codePostalEtablissement")[0:2] == "20" {
 			departement = "2B"
 		}
 		sirene.Departement = departement
@@ -196,24 +197,24 @@ func parseLine(f map[string]int, row []string, parsedLine *marshal.ParsedLineRes
 		parsedLine.AddRegularError(errors.New("Code postal est manquant ou de format incorrect"))
 	}
 
-	if row[f["activitePrincipaleEtablissement"]] != "" {
-		if row[f["nomenclatureActivitePrincipaleEtablissement"]] == "NAFRev2" {
-			ape := strings.Replace(row[f["activitePrincipaleEtablissement"]], ".", "", -1)
+	if idxRow.GetVal("activitePrincipaleEtablissement") != "" {
+		if idxRow.GetVal("nomenclatureActivitePrincipaleEtablissement") == "NAFRev2" {
+			ape := strings.Replace(idxRow.GetVal("activitePrincipaleEtablissement"), ".", "", -1)
 			if matched, err := regexp.MatchString(`^[0-9]{4}[A-Z]$`, ape); err == nil && matched {
 				sirene.APE = ape
 			}
 		} else {
-			sirene.CodeActivite = row[f["activitePrincipaleEtablissement"]]
-			sirene.NomenActivite = row[f["nomenclatureActivitePrincipaleEtablissement"]]
+			sirene.CodeActivite = idxRow.GetVal("activitePrincipaleEtablissement")
+			sirene.NomenActivite = idxRow.GetVal("nomenclatureActivitePrincipaleEtablissement")
 		}
 	}
 
-	creation, err := time.Parse("2006-01-02", row[f["dateCreationEtablissement"]]) // note: cette date n'est pas toujours présente, et on ne souhaite pas être rapporter d'erreur en cas d'absence
+	creation, err := time.Parse("2006-01-02", idxRow.GetVal("dateCreationEtablissement")) // note: cette date n'est pas toujours présente, et on ne souhaite pas être rapporter d'erreur en cas d'absence
 	if err == nil {
 		sirene.Creation = &creation
 	}
 
-	long, err := strconv.ParseFloat(row[f["longitude"]], 64)
+	long, err := strconv.ParseFloat(idxRow.GetVal("longitude"), 64)
 	if err == nil {
 		sirene.Longitude = long
 	}
@@ -221,7 +222,7 @@ func parseLine(f map[string]int, row []string, parsedLine *marshal.ParsedLineRes
 		parsedLine.AddRegularError(err)
 	}
 
-	lat, err := strconv.ParseFloat(row[f["latitude"]], 64)
+	lat, err := strconv.ParseFloat(idxRow.GetVal("latitude"), 64)
 	if err == nil {
 		sirene.Latitude = lat
 	}

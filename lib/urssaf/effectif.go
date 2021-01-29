@@ -79,7 +79,7 @@ func openEffectifFile(filePath string) (*os.File, *csv.Reader, error) {
 func parseEffectifColMapping(reader *csv.Reader) (marshal.ColMapping, []periodCol, error) {
 	fields, err := reader.Read()
 	if err != nil {
-		return nil, nil, err
+		return marshal.ColMapping{}, nil, err
 	}
 	idx, err := marshal.ValidateAndIndexColumnsFromColTags(marshal.LowercaseFields(fields), Effectif{})
 	// Dans quels champs lire l'effectif

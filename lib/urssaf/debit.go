@@ -103,11 +103,12 @@ func (parser *debitParser) ParseLines(parsedLineChan chan marshal.ParsedLineResu
 		} else if err != nil {
 			parsedLine.AddRegularError(err)
 		} else {
-			period, _ := marshal.UrssafToPeriod(row[parser.idx["Periode"]]) // TODO: utiliser idxRow
+			idxRow := parser.idx.IndexRow(row)
+			period, _ := marshal.UrssafToPeriod(idxRow.GetVal("Periode"))
 			date := period.Start
 
-			if siret, err := marshal.GetSiretFromComptesMapping(row[parser.idx["num_cpte"]], &date, parser.comptes); err == nil {
-				parseDebitLine(siret, row, parser.idx, &parsedLine)
+			if siret, err := marshal.GetSiretFromComptesMapping(idxRow.GetVal("num_cpte"), &date, parser.comptes); err == nil {
+				parseDebitLine(siret, idxRow, &parsedLine)
 				if len(parsedLine.Errors) > 0 {
 					parsedLine.Tuples = []marshal.Tuple{}
 				}
@@ -119,9 +120,7 @@ func (parser *debitParser) ParseLines(parsedLineChan chan marshal.ParsedLineResu
 	}
 }
 
-func parseDebitLine(siret string, row []string, idx marshal.ColMapping, parsedLine *marshal.ParsedLineResult) {
-
-	idxRow := idx.IndexRow(row)
+func parseDebitLine(siret string, idxRow marshal.IndexedRow, parsedLine *marshal.ParsedLineResult) {
 
 	debit := Debit{
 		key:                       siret,

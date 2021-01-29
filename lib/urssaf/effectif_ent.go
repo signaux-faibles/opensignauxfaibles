@@ -89,7 +89,7 @@ func (parser *effectifEntParser) ParseLines(parsedLineChan chan marshal.ParsedLi
 func parseEffectifEntColMapping(reader *csv.Reader) (marshal.ColMapping, []periodCol, error) {
 	fields, err := reader.Read()
 	if err != nil {
-		return nil, nil, err
+		return marshal.ColMapping{}, nil, err
 	}
 	idx, err := marshal.ValidateAndIndexColumnsFromColTags(marshal.LowercaseFields(fields), EffectifEnt{})
 	// Dans quels champs lire l'effectifEnt

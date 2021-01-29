@@ -96,20 +96,23 @@ func (parser *apdemandeParser) ParseLines(parsedLineChan chan marshal.ParsedLine
 			break
 		} else if err != nil {
 			parsedLine.AddRegularError(err)
-		} else if row[parser.idx["ETAB_SIRET"]] == "" {
-			parsedLine.AddRegularError(errors.New("invalidLine"))
 		} else {
-			parseApDemandeLine(row, parser.idx, &parsedLine)
-			if len(parsedLine.Errors) > 0 {
-				parsedLine.Tuples = []marshal.Tuple{}
+			idxRow := parser.idx.IndexRow(row)
+			if idxRow.GetVal("ETAB_SIRET") == "" {
+				parsedLine.AddRegularError(errors.New("invalidLine"))
+			} else {
+				parseApDemandeLine(idxRow, &parsedLine)
+				if len(parsedLine.Errors) > 0 {
+					parsedLine.Tuples = []marshal.Tuple{}
+				}
 			}
 		}
 		parsedLineChan <- parsedLine
 	}
 }
 
-func parseApDemandeLine(row []string, idx marshal.ColMapping, parsedLine *marshal.ParsedLineResult) {
-	idxRow := idx.IndexRow(row)
+func parseApDemandeLine(idxRow marshal.IndexedRow, parsedLine *marshal.ParsedLineResult) {
+
 	apdemande := APDemande{}
 	apdemande.ID = idxRow.GetVal("ID_DA")
 	apdemande.Siret = idxRow.GetVal("ETAB_SIRET")

@@ -79,7 +79,7 @@ func openProcolFile(filePath string) (*os.File, *csv.Reader, error) {
 func parseProcolColMapping(reader *csv.Reader) (marshal.ColMapping, error) {
 	fields, err := reader.Read()
 	if err != nil {
-		return nil, err
+		return marshal.ColMapping{}, err
 	}
 	return marshal.ValidateAndIndexColumnsFromColTags(marshal.LowercaseFields(fields), Procol{})
 }
