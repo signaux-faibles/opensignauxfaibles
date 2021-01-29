@@ -214,20 +214,15 @@ func parseLine(idx marshal.ColMapping, row []string, parsedLine *marshal.ParsedL
 		sirene.Creation = &creation
 	}
 
-	long, err := strconv.ParseFloat(idxRow.GetVal("longitude"), 64)
-	if err == nil {
-		sirene.Longitude = long
-	}
-	if row[48] != "" {
+	if val, ok := idxRow.GetOptionalVal("longitude"); ok == true {
+		sirene.Longitude, err = strconv.ParseFloat(val, 64)
 		parsedLine.AddRegularError(err)
 	}
 
-	lat, err := strconv.ParseFloat(idxRow.GetVal("latitude"), 64)
-	if err == nil {
-		sirene.Latitude = lat
-	}
-	if row[49] != "" {
+	if val, ok := idxRow.GetOptionalVal("latitude"); ok == true {
+		sirene.Latitude, err = strconv.ParseFloat(val, 64)
 		parsedLine.AddRegularError(err)
 	}
+
 	parsedLine.AddTuple(sirene)
 }
