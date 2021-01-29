@@ -117,15 +117,16 @@ func parseEffectifPeriod(fields []string) []periodCol {
 
 func parseEffectifEntLine(row []string, idx marshal.ColMapping, periods *[]periodCol, parsedLine *marshal.ParsedLineResult) {
 	for _, period := range *periods {
-		value := row[period.colIndex]
+		value := row[period.colIndex] // TODO: utiliser idxRow au lieu de row
 		if value != "" {
 			noThousandsSep := sfregexp.RegexpDict["notDigit"].ReplaceAllString(value, "")
 			s, err := strconv.ParseFloat(noThousandsSep, 64)
 			parsedLine.AddRegularError(err)
 			e := int(s)
 			if e > 0 {
+				idxRow := idx.IndexRow(row)
 				parsedLine.AddTuple(EffectifEnt{
-					Siren:       row[idx["siren"]],
+					Siren:       idxRow.GetVal("siren"),
 					Periode:     period.dateStart,
 					EffectifEnt: e,
 				})

@@ -90,17 +90,18 @@ func (parser *sireneUlParser) ParseLines(parsedLineChan chan marshal.ParsedLineR
 }
 
 func parseSireneUlLine(idx marshal.ColMapping, row []string, parsedLine *marshal.ParsedLineResult) {
+	idxRow := idx.IndexRow(row)
 	sireneul := SireneUL{}
-	sireneul.Siren = row[idx["siren"]]
-	sireneul.RaisonSociale = row[idx["denominationUniteLegale"]]
-	sireneul.Prenom1UniteLegale = row[idx["prenom1UniteLegale"]]
-	sireneul.Prenom2UniteLegale = row[idx["prenom2UniteLegale"]]
-	sireneul.Prenom3UniteLegale = row[idx["prenom3UniteLegale"]]
-	sireneul.Prenom4UniteLegale = row[idx["prenom4UniteLegale"]]
-	sireneul.NomUniteLegale = row[idx["nomUniteLegale"]]
-	sireneul.NomUsageUniteLegale = row[idx["nomUsageUniteLegale"]]
-	sireneul.CodeStatutJuridique = row[idx["categorieJuridiqueUniteLegale"]]
-	creation, err := time.Parse("2006-01-02", row[idx["dateCreationUniteLegale"]]) // note: cette date n'est pas toujours présente, et on ne souhaite pas être rapporter d'erreur en cas d'absence
+	sireneul.Siren = idxRow.GetVal("siren")
+	sireneul.RaisonSociale = idxRow.GetVal("denominationUniteLegale")
+	sireneul.Prenom1UniteLegale = idxRow.GetVal("prenom1UniteLegale")
+	sireneul.Prenom2UniteLegale = idxRow.GetVal("prenom2UniteLegale")
+	sireneul.Prenom3UniteLegale = idxRow.GetVal("prenom3UniteLegale")
+	sireneul.Prenom4UniteLegale = idxRow.GetVal("prenom4UniteLegale")
+	sireneul.NomUniteLegale = idxRow.GetVal("nomUniteLegale")
+	sireneul.NomUsageUniteLegale = idxRow.GetVal("nomUsageUniteLegale")
+	sireneul.CodeStatutJuridique = idxRow.GetVal("categorieJuridiqueUniteLegale")
+	creation, err := time.Parse("2006-01-02", idxRow.GetVal("dateCreationUniteLegale")) // note: cette date n'est pas toujours présente, et on ne souhaite pas être rapporter d'erreur en cas d'absence
 	if err == nil {
 		sireneul.Creation = &creation
 	}

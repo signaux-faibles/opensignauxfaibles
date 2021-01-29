@@ -105,11 +105,12 @@ func (parser *procolParser) ParseLines(parsedLineChan chan marshal.ParsedLineRes
 
 func parseProcolLine(row []string, idx marshal.ColMapping, parsedLine *marshal.ParsedLineResult) {
 	var err error
+	idxRow := idx.IndexRow(row)
 	procol := Procol{}
-	procol.DateEffet, err = time.Parse("02Jan2006", row[idx["dt_effet"]])
+	procol.DateEffet, err = time.Parse("02Jan2006", idxRow.GetVal("dt_effet"))
 	parsedLine.AddRegularError(err)
-	procol.Siret = row[idx["siret"]]
-	actionStade := row[idx["lib_actx_stdx"]]
+	procol.Siret = idxRow.GetVal("siret")
+	actionStade := idxRow.GetVal("lib_actx_stdx")
 	splitted := strings.Split(strings.ToLower(actionStade), "_")
 	for i, v := range splitted {
 		r, err := regexp.Compile("liquidation|redressement|sauvegarde")

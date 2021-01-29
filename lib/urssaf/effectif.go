@@ -111,9 +111,10 @@ func parseEffectifLine(row []string, idx marshal.ColMapping, periods *[]periodCo
 			e, err := strconv.Atoi(noThousandsSep)
 			parsedLine.AddRegularError(err)
 			if e > 0 {
+				idxRow := idx.IndexRow(row)
 				parsedLine.AddTuple(Effectif{
-					Siret:        row[idx["siret"]],
-					NumeroCompte: row[idx["compte"]],
+					Siret:        idxRow.GetVal("siret"),
+					NumeroCompte: idxRow.GetVal("compte"),
 					Periode:      period.dateStart,
 					Effectif:     e,
 				})
