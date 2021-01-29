@@ -5,8 +5,6 @@
 !js/.editorconfig
 !js/.eslintrc.js
 !js/.prettierrc.js
-dist
-dist.tar.xz
 **/*.log
 **/*.xls*
 **/*.RData
@@ -47,4 +45,3 @@ tests/input-data/RawData.sample.json
 tests/output-snapshots/reduce-Features.golden.json
 tests/output-snapshots/reduce-map-output.golden.json
 tests/output-snapshots/test-compact.golden.json
-dist.tar.gz

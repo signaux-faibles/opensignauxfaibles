@@ -68,7 +68,7 @@ jobs:
         with:
           go-version: 1.14
       - uses: actions/checkout@v2
-      - run: go build -o "sfdata" -v .
+      - run: make build
       - uses: actions/setup-node@v2
         with:
           node-version: 12
@@ -110,7 +110,7 @@ jobs:
           gpg --import --no-tty --batch --yes ./private_key.gpg
           git secret reveal
 
-      - run: go build -o "sfdata" -v .
+      - run: make build
 
       - name: Remove source code
         run: |

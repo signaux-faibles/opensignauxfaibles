@@ -4952,11 +4952,13 @@
 [
 	{
 		"reportType" : "ValidateDataEntries",
+		"hasCommitHash" : true,
 		"hasDate" : true,
 		"hasStartDate" : true
 	},
 	{
 		"reportType" : "PurgeNotCompacted",
+		"hasCommitHash" : true,
 		"hasDate" : true,
 		"hasStartDate" : true
 	},
@@ -4972,6 +4974,7 @@
 		},
 		"reportType" : "ImportBatch",
 		"parserCode" : "admin_urssaf",
+		"hasCommitHash" : true,
 		"hasDate" : true,
 		"hasStartDate" : true
 	},
@@ -4985,6 +4988,7 @@
 		},
 		"reportType" : "ImportBatch",
 		"parserCode" : "apconso",
+		"hasCommitHash" : true,
 		"hasDate" : true,
 		"hasStartDate" : true
 	},
@@ -4998,6 +5002,7 @@
 		},
 		"reportType" : "ImportBatch",
 		"parserCode" : "apdemande",
+		"hasCommitHash" : true,
 		"hasDate" : true,
 		"hasStartDate" : true
 	},
@@ -5011,6 +5016,7 @@
 		},
 		"reportType" : "ImportBatch",
 		"parserCode" : "bdf",
+		"hasCommitHash" : true,
 		"hasDate" : true,
 		"hasStartDate" : true
 	},
@@ -5024,6 +5030,7 @@
 		},
 		"reportType" : "ImportBatch",
 		"parserCode" : "ccsf",
+		"hasCommitHash" : true,
 		"hasDate" : true,
 		"hasStartDate" : true
 	},
@@ -5037,6 +5044,7 @@
 		},
 		"reportType" : "ImportBatch",
 		"parserCode" : "cotisation",
+		"hasCommitHash" : true,
 		"hasDate" : true,
 		"hasStartDate" : true
 	},
@@ -5050,6 +5058,7 @@
 		},
 		"reportType" : "ImportBatch",
 		"parserCode" : "debit",
+		"hasCommitHash" : true,
 		"hasDate" : true,
 		"hasStartDate" : true
 	},
@@ -5063,6 +5072,7 @@
 		},
 		"reportType" : "ImportBatch",
 		"parserCode" : "delai",
+		"hasCommitHash" : true,
 		"hasDate" : true,
 		"hasStartDate" : true
 	},
@@ -5076,6 +5086,7 @@
 		},
 		"reportType" : "ImportBatch",
 		"parserCode" : "diane",
+		"hasCommitHash" : true,
 		"hasDate" : true,
 		"hasStartDate" : true
 	},
@@ -5089,6 +5100,7 @@
 		},
 		"reportType" : "ImportBatch",
 		"parserCode" : "effectif",
+		"hasCommitHash" : true,
 		"hasDate" : true,
 		"hasStartDate" : true
 	},
@@ -5102,6 +5114,7 @@
 		},
 		"reportType" : "ImportBatch",
 		"parserCode" : "effectif_ent",
+		"hasCommitHash" : true,
 		"hasDate" : true,
 		"hasStartDate" : true
 	},
@@ -5117,6 +5130,7 @@
 		},
 		"reportType" : "ImportBatch",
 		"parserCode" : "ellisphere",
+		"hasCommitHash" : true,
 		"hasDate" : true,
 		"hasStartDate" : true
 	},
@@ -5132,6 +5146,7 @@
 		},
 		"reportType" : "ImportBatch",
 		"parserCode" : "paydex",
+		"hasCommitHash" : true,
 		"hasDate" : true,
 		"hasStartDate" : true
 	},
@@ -5145,6 +5160,7 @@
 		},
 		"reportType" : "ImportBatch",
 		"parserCode" : "procol",
+		"hasCommitHash" : true,
 		"hasDate" : true,
 		"hasStartDate" : true
 	},
@@ -5158,6 +5174,7 @@
 		},
 		"reportType" : "ImportBatch",
 		"parserCode" : "sirene",
+		"hasCommitHash" : true,
 		"hasDate" : true,
 		"hasStartDate" : true
 	},
@@ -5171,6 +5188,7 @@
 		},
 		"reportType" : "ImportBatch",
 		"parserCode" : "sirene_ul",
+		"hasCommitHash" : true,
 		"hasDate" : true,
 		"hasStartDate" : true
 	}
