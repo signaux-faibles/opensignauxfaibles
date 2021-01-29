@@ -116,5 +116,3 @@ func parsePaydexLine(colIndex marshal.ColMapping, row []string) (*Paydex, error)
 		NbJours:    nbJours,
 	}, nil
 }
-
-// TODO: ajouter détection de colonnes
