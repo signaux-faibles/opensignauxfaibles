@@ -22,10 +22,10 @@ type Delai struct {
 	NumeroContentieux string    `col:"Numero_structure"            json:"numero_contentieux" bson:"numero_contentieux"`
 	DateCreation      time.Time `col:"Date_creation"               json:"date_creation"      bson:"date_creation"`
 	DateEcheance      time.Time `col:"Date_echeance"               json:"date_echeance"      bson:"date_echeance"`
-	DureeDelai        int       `col:"Duree_delai"                 json:"duree_delai"        bson:"duree_delai"`
+	DureeDelai        *int      `col:"Duree_delai"                 json:"duree_delai"        bson:"duree_delai"`
 	Denomination      string    `col:"Denomination_premiere_ligne" json:"denomination"       bson:"denomination"`
 	Indic6m           string    `col:"Indic_6M"                    json:"indic_6m"           bson:"indic_6m"`
-	AnneeCreation     int       `col:"Annee_creation"              json:"annee_creation"     bson:"annee_creation"`
+	AnneeCreation     *int      `col:"Annee_creation"              json:"annee_creation"     bson:"annee_creation"`
 	MontantEcheancier float64   `col:"Montant_global_echeancier"   json:"montant_echeancier" bson:"montant_echeancier"`
 	Stade             string    `col:"Code_externe_stade"          json:"stade"              bson:"stade"`
 	Action            string    `col:"Code_externe_action"         json:"action"             bson:"action"`
@@ -118,10 +118,10 @@ func parseDelaiLine(idxRow marshal.IndexedRow, siret string, parsedLine *marshal
 	parsedLine.AddRegularError(err)
 	delai.DateEcheance, err = time.Parse("02/01/2006", idxRow.GetVal("Date_echeance"))
 	parsedLine.AddRegularError(err)
-	delai.DureeDelai, err = strconv.Atoi(idxRow.GetVal("Duree_delai"))
+	delai.DureeDelai, err = idxRow.GetInt("Duree_delai")
 	delai.Denomination = idxRow.GetVal("Denomination_premiere_ligne")
 	delai.Indic6m = idxRow.GetVal("Indic_6M")
-	delai.AnneeCreation, err = strconv.Atoi(idxRow.GetVal("Annee_creation"))
+	delai.AnneeCreation, err = idxRow.GetInt("Annee_creation")
 	parsedLine.AddRegularError(err)
 	delai.MontantEcheancier, err = strconv.ParseFloat(strings.Replace(idxRow.GetVal("Montant_global_echeancier"), ",", ".", -1), 64)
 	parsedLine.AddRegularError(err)

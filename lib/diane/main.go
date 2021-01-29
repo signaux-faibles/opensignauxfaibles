@@ -6,7 +6,6 @@ import (
 	"io"
 	"os"
 	"os/exec"
-	"strconv"
 	"time"
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
@@ -225,16 +224,16 @@ func parseDianeRow(idx marshal.ColMapping, row []string) (diane Diane) {
 
 	idxRow := idx.IndexRow(row)
 
-	if i, err := strconv.Atoi(idxRow.GetVal("Annee")); err == nil {
-		diane.Annee = &i
+	if val, err := idxRow.GetInt("Annee"); err == nil {
+		diane.Annee = val
 	}
 	diane.NomEntreprise = idxRow.GetVal("Nom de l'entreprise")
 	diane.NumeroSiren = idxRow.GetVal("Numéro Siren")
 	diane.StatutJuridique = idxRow.GetVal("Statut juridique ")
 	diane.ProcedureCollective = (idxRow.GetVal("Procédure collective") == "Oui")
 
-	if i, err := strconv.Atoi(idxRow.GetVal("Effectif consolidé")); err == nil {
-		diane.EffectifConsolide = &i
+	if val, err := idxRow.GetInt("Effectif consolidé"); err == nil {
+		diane.EffectifConsolide = val
 	}
 	if val, err := idxRow.GetFloat64("Dettes fiscales et sociales kEUR"); err == nil {
 		diane.DetteFiscaleEtSociale = val
@@ -245,20 +244,20 @@ func parseDianeRow(idx marshal.ColMapping, row []string) (diane Diane) {
 	if val, err := idxRow.GetFloat64("Conces.. brev. et droits sim. : net kEUR"); err == nil {
 		diane.ConcesBrevEtDroitsSim = val
 	}
-	if i, err := strconv.Atoi(idxRow.GetVal("Nombre d’ES")); err == nil {
-		diane.NombreEtabSecondaire = &i
+	if val, err := idxRow.GetInt("Nombre d’ES"); err == nil {
+		diane.NombreEtabSecondaire = val
 	}
-	if i, err := strconv.Atoi(idxRow.GetVal("Nombre de filiales")); err == nil {
-		diane.NombreFiliale = &i
+	if val, err := idxRow.GetInt("Nombre de filiales"); err == nil {
+		diane.NombreFiliale = val
 	}
-	if i, err := strconv.Atoi(idxRow.GetVal("Taille de la Composition du Groupe")); err == nil {
-		diane.TailleCompoGroupe = &i
+	if val, err := idxRow.GetInt("Taille de la Composition du Groupe"); err == nil {
+		diane.TailleCompoGroupe = val
 	}
 	if i, err := time.Parse("02/01/2006", idxRow.GetVal("Date de clôture")); err == nil {
 		diane.ArreteBilan = i
 	}
-	if i, err := strconv.Atoi(idxRow.GetVal("Nombre de mois")); err == nil {
-		diane.NombreMois = &i
+	if val, err := idxRow.GetInt("Nombre de mois"); err == nil {
+		diane.NombreMois = val
 	}
 	if val, err := idxRow.GetFloat64("Conc. banc. cour. & sold. cr. kEUR"); err == nil {
 		diane.ConcoursBancaireCourant = val
