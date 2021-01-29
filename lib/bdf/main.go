@@ -138,38 +138,38 @@ func parseBdfLine(row []string, idx marshal.ColMapping, parsedLine *marshal.Pars
 	parsedLine.AddRegularError(err)
 	bdf.RaisonSociale = idxRow.GetVal("DENOM")
 	bdf.Secteur = idxRow.GetVal("SECTEUR")
-	if len(row) > idx["POIDS_FRNG"] { // TODO: sécuriser cette logique
-		bdf.PoidsFrng, err = misc.ParsePFloat(idxRow.GetVal("POIDS_FRNG"))
+	if val, ok := idxRow.GetOptionalVal("POIDS_FRNG"); ok == true {
+		bdf.PoidsFrng, err = misc.ParsePFloat(val)
 		parsedLine.AddRegularError(err)
 	} else {
 		bdf.PoidsFrng = nil
 	}
-	if len(row) > idx["TX_MARGE"] {
-		bdf.TauxMarge, err = misc.ParsePFloat(idxRow.GetVal("TX_MARGE"))
+	if val, ok := idxRow.GetOptionalVal("TX_MARGE"); ok == true {
+		bdf.TauxMarge, err = misc.ParsePFloat(val)
 		parsedLine.AddRegularError(err)
 	} else {
 		bdf.TauxMarge = nil
 	}
-	if len(row) > idx["DELAI_FRS"] {
-		bdf.DelaiFournisseur, err = misc.ParsePFloat(idxRow.GetVal("DELAI_FRS"))
+	if val, ok := idxRow.GetOptionalVal("DELAI_FRS"); ok == true {
+		bdf.DelaiFournisseur, err = misc.ParsePFloat(val)
 		parsedLine.AddRegularError(err)
 	} else {
 		bdf.DelaiFournisseur = nil
 	}
-	if len(row) > idx["POIDS_DFISC_SOC"] {
-		bdf.DetteFiscale, err = misc.ParsePFloat(idxRow.GetVal("POIDS_DFISC_SOC"))
+	if val, ok := idxRow.GetOptionalVal("POIDS_DFISC_SOC"); ok == true {
+		bdf.DetteFiscale, err = misc.ParsePFloat(val)
 		parsedLine.AddRegularError(err)
 	} else {
 		bdf.DetteFiscale = nil
 	}
-	if len(row) > idx["POIDS_FIN_CT"] {
-		bdf.FinancierCourtTerme, err = misc.ParsePFloat(idxRow.GetVal("POIDS_FIN_CT"))
+	if val, ok := idxRow.GetOptionalVal("POIDS_FIN_CT"); ok == true {
+		bdf.FinancierCourtTerme, err = misc.ParsePFloat(val)
 		parsedLine.AddRegularError(err)
 	} else {
 		bdf.FinancierCourtTerme = nil
 	}
-	if len(row) > idx["POIDS_FRAIS_FIN"] {
-		bdf.FraisFinancier, err = misc.ParsePFloat(idxRow.GetVal("POIDS_FRAIS_FIN"))
+	if val, ok := idxRow.GetOptionalVal("POIDS_FRAIS_FIN"); ok == true {
+		bdf.FraisFinancier, err = misc.ParsePFloat(val)
 		parsedLine.AddRegularError(err)
 	} else {
 		bdf.FraisFinancier = nil

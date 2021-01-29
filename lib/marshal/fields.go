@@ -79,6 +79,16 @@ func (indexedRow IndexedRow) GetVal(colName string) string {
 	return indexedRow.row[index]
 }
 
+// GetOptionalVal retourne la valeur associée à la colonne donnée, sur la ligne en cours.
+// Dans le cas où la colonne n'existe pas, le booléen sera faux.
+func (indexedRow IndexedRow) GetOptionalVal(colName string) (string, bool) {
+	index, ok := indexedRow.colMaping.index[colName]
+	if ok == false {
+		return "", false
+	}
+	return indexedRow.row[index], true
+}
+
 // LowercaseFields normalise les noms de colonnes en minuscules.
 func LowercaseFields(headerFields []string) []string {
 	var normalizedHeaderFields = make([]string, len(headerFields))
