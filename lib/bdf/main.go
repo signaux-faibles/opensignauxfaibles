@@ -102,13 +102,14 @@ func (parser *bdfParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult
 	}
 }
 
-func parseBdfLine(row []string, field marshal.ColMapping, parsedLine *marshal.ParsedLineResult) {
+func parseBdfLine(row []string, idx marshal.ColMapping, parsedLine *marshal.ParsedLineResult) {
 	var err error
+	idxRow := idx.IndexRow(row)
 	bdf := BDF{}
-	bdf.Siren = strings.Replace(row[field["D1"]], " ", "", -1)
-	bdf.Annee, err = misc.ParsePInt(row[field["ANNEE"]])
+	bdf.Siren = strings.Replace(idxRow.GetVal("D1"), " ", "", -1)
+	bdf.Annee, err = misc.ParsePInt(idxRow.GetVal("ANNEE"))
 	parsedLine.AddRegularError(err)
-	var arrete = row[field["ARRETE_BILAN"]]
+	var arrete = idxRow.GetVal("ARRETE_BILAN")
 	arrete = strings.Replace(arrete, "janv", "-01-", -1)
 	arrete = strings.Replace(arrete, "JAN", "-01-", -1)
 	arrete = strings.Replace(arrete, "févr", "-02-", -1)
@@ -135,40 +136,40 @@ func parseBdfLine(row []string, field marshal.ColMapping, parsedLine *marshal.Pa
 	arrete = strings.Replace(arrete, "DEC", "-12-", -1)
 	bdf.ArreteBilan, err = time.Parse("02-01-2006", arrete)
 	parsedLine.AddRegularError(err)
-	bdf.RaisonSociale = row[field["DENOM"]]
-	bdf.Secteur = row[field["SECTEUR"]]
-	if len(row) > field["POIDS_FRNG"] {
-		bdf.PoidsFrng, err = misc.ParsePFloat(row[field["POIDS_FRNG"]])
+	bdf.RaisonSociale = idxRow.GetVal("DENOM")
+	bdf.Secteur = idxRow.GetVal("SECTEUR")
+	if len(row) > idx["POIDS_FRNG"] { // TODO: sécuriser cette logique
+		bdf.PoidsFrng, err = misc.ParsePFloat(idxRow.GetVal("POIDS_FRNG"))
 		parsedLine.AddRegularError(err)
 	} else {
 		bdf.PoidsFrng = nil
 	}
-	if len(row) > field["TX_MARGE"] {
-		bdf.TauxMarge, err = misc.ParsePFloat(row[field["TX_MARGE"]])
+	if len(row) > idx["TX_MARGE"] {
+		bdf.TauxMarge, err = misc.ParsePFloat(idxRow.GetVal("TX_MARGE"))
 		parsedLine.AddRegularError(err)
 	} else {
 		bdf.TauxMarge = nil
 	}
-	if len(row) > field["DELAI_FRS"] {
-		bdf.DelaiFournisseur, err = misc.ParsePFloat(row[field["DELAI_FRS"]])
+	if len(row) > idx["DELAI_FRS"] {
+		bdf.DelaiFournisseur, err = misc.ParsePFloat(idxRow.GetVal("DELAI_FRS"))
 		parsedLine.AddRegularError(err)
 	} else {
 		bdf.DelaiFournisseur = nil
 	}
-	if len(row) > field["POIDS_DFISC_SOC"] {
-		bdf.DetteFiscale, err = misc.ParsePFloat(row[field["POIDS_DFISC_SOC"]])
+	if len(row) > idx["POIDS_DFISC_SOC"] {
+		bdf.DetteFiscale, err = misc.ParsePFloat(idxRow.GetVal("POIDS_DFISC_SOC"))
 		parsedLine.AddRegularError(err)
 	} else {
 		bdf.DetteFiscale = nil
 	}
-	if len(row) > field["POIDS_FIN_CT"] {
-		bdf.FinancierCourtTerme, err = misc.ParsePFloat(row[field["POIDS_FIN_CT"]])
+	if len(row) > idx["POIDS_FIN_CT"] {
+		bdf.FinancierCourtTerme, err = misc.ParsePFloat(idxRow.GetVal("POIDS_FIN_CT"))
 		parsedLine.AddRegularError(err)
 	} else {
 		bdf.FinancierCourtTerme = nil
 	}
-	if len(row) > field["POIDS_FRAIS_FIN"] {
-		bdf.FraisFinancier, err = misc.ParsePFloat(row[field["POIDS_FRAIS_FIN"]])
+	if len(row) > idx["POIDS_FRAIS_FIN"] {
+		bdf.FraisFinancier, err = misc.ParsePFloat(idxRow.GetVal("POIDS_FRAIS_FIN"))
 		parsedLine.AddRegularError(err)
 	} else {
 		bdf.FraisFinancier = nil
