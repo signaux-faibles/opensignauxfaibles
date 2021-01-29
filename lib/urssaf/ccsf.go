@@ -93,21 +93,22 @@ func parseCcsfLine(idx marshal.ColMapping, row []string, comptes *marshal.Compte
 	var err error
 	ccsf := CCSF{}
 	if len(row) >= 4 {
-		ccsf.Action = row[idx["Code_externe_action"]]
-		ccsf.Stade = row[idx["Code_externe_stade"]]
-		ccsf.DateTraitement, err = marshal.UrssafToDate(row[idx["Date_de_traitement"]])
+		idxRow := idx.IndexRow(row)
+		ccsf.Action = idxRow.GetVal("Code_externe_action")
+		ccsf.Stade = idxRow.GetVal("Code_externe_stade")
+		ccsf.DateTraitement, err = marshal.UrssafToDate(idxRow.GetVal("Date_de_traitement"))
 		parsedLine.AddRegularError(err)
 		if err != nil {
 			return
 		}
 
-		ccsf.key, err = marshal.GetSiretFromComptesMapping(row[idx["Compte"]], &ccsf.DateTraitement, *comptes)
+		ccsf.key, err = marshal.GetSiretFromComptesMapping(idxRow.GetVal("Compte"), &ccsf.DateTraitement, *comptes)
 		if err != nil {
 			// Compte filtré
 			parsedLine.SetFilterError(err)
 			return
 		}
-		ccsf.NumeroCompte = row[idx["Compte"]]
+		ccsf.NumeroCompte = idxRow.GetVal("Compte")
 
 	} else {
 		parsedLine.AddRegularError(errors.New("Ligne non conforme, moins de 4 champs"))

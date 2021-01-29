@@ -89,7 +89,7 @@ func (parser *effectifEntParser) ParseLines(parsedLineChan chan marshal.ParsedLi
 func parseEffectifEntColMapping(reader *csv.Reader) (marshal.ColMapping, []periodCol, error) {
 	fields, err := reader.Read()
 	if err != nil {
-		return nil, nil, err
+		return marshal.ColMapping{}, nil, err
 	}
 	idx, err := marshal.ValidateAndIndexColumnsFromColTags(marshal.LowercaseFields(fields), EffectifEnt{})
 	// Dans quels champs lire l'effectifEnt
@@ -108,7 +108,7 @@ func parseEffectifPeriod(fields []string) []periodCol {
 	re, _ := regexp.Compile("^eff")
 	for index, field := range fields {
 		if re.MatchString(field) {
-			date, _ := marshal.UrssafToPeriod(field[3:9])
+			date, _ := marshal.UrssafToPeriod(field[3:9]) // format: YYQM ou YYYYQM
 			periods = append(periods, periodCol{dateStart: date.Start, colIndex: index})
 		}
 	}
@@ -117,15 +117,16 @@ func parseEffectifPeriod(fields []string) []periodCol {
 
 func parseEffectifEntLine(row []string, idx marshal.ColMapping, periods *[]periodCol, parsedLine *marshal.ParsedLineResult) {
 	for _, period := range *periods {
-		value := row[period.colIndex]
+		value := row[period.colIndex] // TODO: utiliser idxRow.GetVal(colName) au lieu de row[colIndex] ?
 		if value != "" {
 			noThousandsSep := sfregexp.RegexpDict["notDigit"].ReplaceAllString(value, "")
 			s, err := strconv.ParseFloat(noThousandsSep, 64)
 			parsedLine.AddRegularError(err)
 			e := int(s)
 			if e > 0 {
+				idxRow := idx.IndexRow(row)
 				parsedLine.AddTuple(EffectifEnt{
-					Siren:       row[idx["siren"]],
+					Siren:       idxRow.GetVal("siren"),
 					Periode:     period.dateStart,
 					EffectifEnt: e,
 				})

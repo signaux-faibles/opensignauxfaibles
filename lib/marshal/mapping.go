@@ -163,9 +163,11 @@ func readSiretMapping(
 			return nil, err
 		}
 
+		idxRow := idx.IndexRow(row)
+
 		maxTime := "9990101"
 
-		fermetureRaw := row[idx["date_disp_siret"]]
+		fermetureRaw := idxRow.GetVal("date_disp_siret")
 
 		if fermetureRaw == "" {
 			fermetureRaw = maxTime
@@ -177,8 +179,8 @@ func readSiretMapping(
 			return nil, err // fermeture n'a pas pu être lue ou convertie en date
 		}
 
-		compte := row[idx["compte"]]
-		siret := row[idx["siret"]]
+		compte := idxRow.GetVal("compte")
+		siret := idxRow.GetVal("siret")
 
 		if sfregexp.ValidSiret(siret) && !filter.Skips(siret) {
 			//siret valide

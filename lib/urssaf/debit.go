@@ -103,11 +103,12 @@ func (parser *debitParser) ParseLines(parsedLineChan chan marshal.ParsedLineResu
 		} else if err != nil {
 			parsedLine.AddRegularError(err)
 		} else {
-			period, _ := marshal.UrssafToPeriod(row[parser.idx["Periode"]])
+			idxRow := parser.idx.IndexRow(row)
+			period, _ := marshal.UrssafToPeriod(idxRow.GetVal("Periode"))
 			date := period.Start
 
-			if siret, err := marshal.GetSiretFromComptesMapping(row[parser.idx["num_cpte"]], &date, parser.comptes); err == nil {
-				parseDebitLine(siret, row, parser.idx, &parsedLine)
+			if siret, err := marshal.GetSiretFromComptesMapping(idxRow.GetVal("num_cpte"), &date, parser.comptes); err == nil {
+				parseDebitLine(siret, idxRow, &parsedLine)
 				if len(parsedLine.Errors) > 0 {
 					parsedLine.Tuples = []marshal.Tuple{}
 				}
@@ -119,35 +120,35 @@ func (parser *debitParser) ParseLines(parsedLineChan chan marshal.ParsedLineResu
 	}
 }
 
-func parseDebitLine(siret string, row []string, idx marshal.ColMapping, parsedLine *marshal.ParsedLineResult) {
+func parseDebitLine(siret string, idxRow marshal.IndexedRow, parsedLine *marshal.ParsedLineResult) {
 
 	debit := Debit{
 		key:                       siret,
-		NumeroCompte:              row[idx["num_cpte"]],
-		NumeroEcartNegatif:        row[idx["Num_Ecn"]],
-		CodeProcedureCollective:   row[idx["Cd_pro_col"]],
-		CodeOperationEcartNegatif: row[idx["Cd_op_ecn"]],
-		CodeMotifEcartNegatif:     row[idx["Motif_ecn"]],
+		NumeroCompte:              idxRow.GetVal("num_cpte"),
+		NumeroEcartNegatif:        idxRow.GetVal("Num_Ecn"),
+		CodeProcedureCollective:   idxRow.GetVal("Cd_pro_col"),
+		CodeOperationEcartNegatif: idxRow.GetVal("Cd_op_ecn"),
+		CodeMotifEcartNegatif:     idxRow.GetVal("Motif_ecn"),
 	}
 
 	var err error
-	debit.DateTraitement, err = marshal.UrssafToDate(row[idx["Dt_trt_ecn"]])
+	debit.DateTraitement, err = marshal.UrssafToDate(idxRow.GetVal("Dt_trt_ecn"))
 	parsedLine.AddRegularError(err)
-	debit.PartOuvriere, err = strconv.ParseFloat(row[idx["Mt_PO"]], 64)
+	debit.PartOuvriere, err = strconv.ParseFloat(idxRow.GetVal("Mt_PO"), 64)
 	parsedLine.AddRegularError(err)
 	debit.PartOuvriere = debit.PartOuvriere / 100
-	debit.PartPatronale, err = strconv.ParseFloat(row[idx["Mt_PP"]], 64)
+	debit.PartPatronale, err = strconv.ParseFloat(idxRow.GetVal("Mt_PP"), 64)
 	parsedLine.AddRegularError(err)
 	debit.PartPatronale = debit.PartPatronale / 100
-	debit.NumeroHistoriqueEcartNegatif, err = strconv.Atoi(row[idx["Num_Hist_Ecn"]])
+	debit.NumeroHistoriqueEcartNegatif, err = strconv.Atoi(idxRow.GetVal("Num_Hist_Ecn"))
 	parsedLine.AddRegularError(err)
-	debit.EtatCompte, err = strconv.Atoi(row[idx["Etat_cpte"]])
+	debit.EtatCompte, err = strconv.Atoi(idxRow.GetVal("Etat_cpte"))
 	parsedLine.AddRegularError(err)
-	debit.Periode, err = marshal.UrssafToPeriod(row[idx["Periode"]])
+	debit.Periode, err = marshal.UrssafToPeriod(idxRow.GetVal("Periode"))
 	parsedLine.AddRegularError(err)
-	debit.Recours, err = strconv.ParseBool(row[idx["Recours_en_cours"]])
+	debit.Recours, err = strconv.ParseBool(idxRow.GetVal("Recours_en_cours"))
 	parsedLine.AddRegularError(err)
-	// debit.MontantMajorations, err = strconv.ParseFloat(row[idx["montantMajorations"]], 64)
+	// debit.MontantMajorations, err = strconv.ParseFloat(idxRow.GetVal("montantMajorations"), 64)
 	// tracker.Error(err)
 	// debit.MontantMajorations = debit.MontantMajorations / 100
 	parsedLine.AddTuple(debit)

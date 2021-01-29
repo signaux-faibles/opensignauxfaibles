@@ -91,11 +91,12 @@ func (parser *delaiParser) ParseLines(parsedLineChan chan marshal.ParsedLineResu
 		} else if err != nil {
 			parsedLine.AddRegularError(err)
 		} else {
-			date, err := time.Parse("02/01/2006", row[idx["Date_creation"]])
+			idxRow := idx.IndexRow(row)
+			date, err := time.Parse("02/01/2006", idxRow.GetVal("Date_creation"))
 			if err != nil {
 				parsedLine.AddRegularError(err)
-			} else if siret, err := marshal.GetSiretFromComptesMapping(row[idx["Numero_compte_externe"]], &date, parser.comptes); err == nil {
-				parseDelaiLine(row, idx, siret, &parsedLine)
+			} else if siret, err := marshal.GetSiretFromComptesMapping(idxRow.GetVal("Numero_compte_externe"), &date, parser.comptes); err == nil {
+				parseDelaiLine(idxRow, siret, &parsedLine)
 				if len(parsedLine.Errors) > 0 {
 					parsedLine.Tuples = []marshal.Tuple{}
 				}
@@ -107,24 +108,24 @@ func (parser *delaiParser) ParseLines(parsedLineChan chan marshal.ParsedLineResu
 	}
 }
 
-func parseDelaiLine(row []string, idx marshal.ColMapping, siret string, parsedLine *marshal.ParsedLineResult) {
+func parseDelaiLine(idxRow marshal.IndexedRow, siret string, parsedLine *marshal.ParsedLineResult) {
 	var err error
 	delai := Delai{}
 	delai.key = siret
-	delai.NumeroCompte = row[idx["Numero_compte_externe"]]
-	delai.NumeroContentieux = row[idx["Numero_structure"]]
-	delai.DateCreation, err = time.Parse("02/01/2006", row[idx["Date_creation"]])
+	delai.NumeroCompte = idxRow.GetVal("Numero_compte_externe")
+	delai.NumeroContentieux = idxRow.GetVal("Numero_structure")
+	delai.DateCreation, err = time.Parse("02/01/2006", idxRow.GetVal("Date_creation"))
 	parsedLine.AddRegularError(err)
-	delai.DateEcheance, err = time.Parse("02/01/2006", row[idx["Date_echeance"]])
+	delai.DateEcheance, err = time.Parse("02/01/2006", idxRow.GetVal("Date_echeance"))
 	parsedLine.AddRegularError(err)
-	delai.DureeDelai, err = strconv.Atoi(row[idx["Duree_delai"]])
-	delai.Denomination = row[idx["Denomination_premiere_ligne"]]
-	delai.Indic6m = row[idx["Indic_6M"]]
-	delai.AnneeCreation, err = strconv.Atoi(row[idx["Annee_creation"]])
+	delai.DureeDelai, err = strconv.Atoi(idxRow.GetVal("Duree_delai"))
+	delai.Denomination = idxRow.GetVal("Denomination_premiere_ligne")
+	delai.Indic6m = idxRow.GetVal("Indic_6M")
+	delai.AnneeCreation, err = strconv.Atoi(idxRow.GetVal("Annee_creation"))
 	parsedLine.AddRegularError(err)
-	delai.MontantEcheancier, err = strconv.ParseFloat(strings.Replace(row[idx["Montant_global_echeancier"]], ",", ".", -1), 64)
+	delai.MontantEcheancier, err = strconv.ParseFloat(strings.Replace(idxRow.GetVal("Montant_global_echeancier"), ",", ".", -1), 64)
 	parsedLine.AddRegularError(err)
-	delai.Stade = row[idx["Code_externe_stade"]]
-	delai.Action = row[idx["Code_externe_action"]]
+	delai.Stade = idxRow.GetVal("Code_externe_stade")
+	delai.Action = idxRow.GetVal("Code_externe_action")
 	parsedLine.AddTuple(delai)
 }
