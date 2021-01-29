@@ -4,7 +4,6 @@ import (
 	"encoding/csv"
 	"errors"
 	"log"
-	"math"
 	"reflect"
 	"strconv"
 	"strings"
@@ -92,14 +91,14 @@ func (indexedRow IndexedRow) GetOptionalVal(colName string) (string, bool) {
 }
 
 // GetFloat64 retourne la valeur décimale associée à la colonne donnée, sur la ligne en cours.
-// Dans le cas où la colonne n'existe pas, le booléen sera faux.
-func (indexedRow IndexedRow) GetFloat64(colName string) (float64, bool, error) {
+// Dans le cas où la colonne n'existe pas, un pointeur nil est retourné.
+func (indexedRow IndexedRow) GetFloat64(colName string) (*float64, error) {
 	index, ok := indexedRow.colMaping.index[colName]
 	if ok == false {
-		return math.NaN(), false, nil
+		return nil, nil
 	}
 	val, err := strconv.ParseFloat(indexedRow.row[index], 64)
-	return val, true, err
+	return &val, err
 }
 
 // LowercaseFields normalise les noms de colonnes en minuscules.
