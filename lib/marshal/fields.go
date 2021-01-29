@@ -5,8 +5,9 @@ import (
 	"errors"
 	"log"
 	"reflect"
-	"strconv"
 	"strings"
+
+	"github.com/signaux-faibles/opensignauxfaibles/lib/misc"
 )
 
 // IndexColumnsFromCsvHeader extrait les noms de colonnes depuis l'en-tête d'un
@@ -91,14 +92,13 @@ func (indexedRow IndexedRow) GetOptionalVal(colName string) (string, bool) {
 }
 
 // GetFloat64 retourne la valeur décimale associée à la colonne donnée, sur la ligne en cours.
-// Dans le cas où la colonne n'existe pas, un pointeur nil est retourné.
+// Un pointeur nil est retourné si la colonne n'existe pas ou la valeur est une chaine vide.
 func (indexedRow IndexedRow) GetFloat64(colName string) (*float64, error) {
 	index, ok := indexedRow.colMaping.index[colName]
 	if ok == false {
 		return nil, nil
 	}
-	val, err := strconv.ParseFloat(indexedRow.row[index], 64)
-	return &val, err
+	return misc.ParsePFloat(indexedRow.row[index])
 }
 
 // LowercaseFields normalise les noms de colonnes en minuscules.

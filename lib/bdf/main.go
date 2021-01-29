@@ -138,41 +138,23 @@ func parseBdfLine(row []string, idx marshal.ColMapping, parsedLine *marshal.Pars
 	parsedLine.AddRegularError(err)
 	bdf.RaisonSociale = idxRow.GetVal("DENOM")
 	bdf.Secteur = idxRow.GetVal("SECTEUR")
-	if val, ok := idxRow.GetOptionalVal("POIDS_FRNG"); ok == true {
-		bdf.PoidsFrng, err = misc.ParsePFloat(val)
+	if bdf.PoidsFrng, err = idxRow.GetFloat64("POIDS_FRNG"); bdf.PoidsFrng != nil {
 		parsedLine.AddRegularError(err)
-	} else {
-		bdf.PoidsFrng = nil
 	}
-	if val, ok := idxRow.GetOptionalVal("TX_MARGE"); ok == true {
-		bdf.TauxMarge, err = misc.ParsePFloat(val)
+	if bdf.TauxMarge, err = idxRow.GetFloat64("TX_MARGE"); bdf.TauxMarge != nil {
 		parsedLine.AddRegularError(err)
-	} else {
-		bdf.TauxMarge = nil
 	}
-	if val, ok := idxRow.GetOptionalVal("DELAI_FRS"); ok == true {
-		bdf.DelaiFournisseur, err = misc.ParsePFloat(val)
+	if bdf.DelaiFournisseur, err = idxRow.GetFloat64("DELAI_FRS"); bdf.DelaiFournisseur != nil {
 		parsedLine.AddRegularError(err)
-	} else {
-		bdf.DelaiFournisseur = nil
 	}
-	if val, ok := idxRow.GetOptionalVal("POIDS_DFISC_SOC"); ok == true {
-		bdf.DetteFiscale, err = misc.ParsePFloat(val)
+	if bdf.DetteFiscale, err = idxRow.GetFloat64("POIDS_DFISC_SOC"); bdf.DetteFiscale != nil {
 		parsedLine.AddRegularError(err)
-	} else {
-		bdf.DetteFiscale = nil
 	}
-	if val, ok := idxRow.GetOptionalVal("POIDS_FIN_CT"); ok == true {
-		bdf.FinancierCourtTerme, err = misc.ParsePFloat(val)
+	if bdf.FinancierCourtTerme, err = idxRow.GetFloat64("POIDS_FIN_CT"); bdf.FinancierCourtTerme != nil {
 		parsedLine.AddRegularError(err)
-	} else {
-		bdf.FinancierCourtTerme = nil
 	}
-	if val, ok := idxRow.GetOptionalVal("POIDS_FRAIS_FIN"); ok == true {
-		bdf.FraisFinancier, err = misc.ParsePFloat(val)
+	if bdf.FraisFinancier, err = idxRow.GetFloat64("POIDS_FRAIS_FIN"); bdf.FraisFinancier != nil {
 		parsedLine.AddRegularError(err)
-	} else {
-		bdf.FraisFinancier = nil
 	}
 	parsedLine.AddTuple(bdf)
 }

@@ -102,9 +102,9 @@ func parseApConsoLine(row []string, idx marshal.ColMapping, parsedLine *marshal.
 	var err error
 	apconso.Periode, err = time.Parse("01/2006", idxRow.GetVal("MOIS"))
 	parsedLine.AddRegularError(err)
-	apconso.HeureConsommee, err = misc.ParsePFloat(idxRow.GetVal("HEURES"))
+	apconso.HeureConsommee, err = idxRow.GetFloat64("HEURES")
 	parsedLine.AddRegularError(err)
-	apconso.Montant, err = misc.ParsePFloat(idxRow.GetVal("MONTANTS"))
+	apconso.Montant, err = idxRow.GetFloat64("MONTANTS")
 	parsedLine.AddRegularError(err)
 	apconso.Effectif, err = misc.ParsePInt(idxRow.GetVal("EFFECTIFS"))
 	parsedLine.AddRegularError(err)
