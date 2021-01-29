@@ -82,7 +82,7 @@ func LogOperationEvent(reportType string, startDate time.Time) {
 	cmd.Stdout = &cmdOutput
 	err := cmd.Run()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("git rev-parse HEAD => " + err.Error())
 	} else {
 		event.CommitHash = cmdOutput.String()
 	}
