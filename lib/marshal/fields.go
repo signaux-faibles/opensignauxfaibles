@@ -38,6 +38,11 @@ func indexFields(headerFields []string) ColMapping {
 	return colMapping
 }
 
+// CreateColMapping créée un index de colonnes. Utile pour constituer des données de test.
+func CreateColMapping(index map[string]int) ColMapping {
+	return ColMapping{index}
+}
+
 // ColMapping fournit l'indice de chaque colonne.
 type ColMapping struct {
 	index map[string]int
