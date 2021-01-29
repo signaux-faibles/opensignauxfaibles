@@ -4,10 +4,8 @@
 package engine
 
 import (
-	"bytes"
 	"encoding/json"
 	"log"
-	"os/exec"
 	"sync"
 	"time"
 
@@ -75,18 +73,6 @@ func LogOperationEvent(reportType string, startDate time.Time) {
 	event := marshal.CreateEvent()
 	event.StartDate = startDate
 	event.ReportType = reportType
-
-	// récupérer le hash du dernier commmit git, pour déterminer la version employée de sfdata
-	var cmdOutput bytes.Buffer
-	cmd := exec.Command("git", "rev-parse", "HEAD") // TODO: store at go-generate time
-	cmd.Stdout = &cmdOutput
-	err := cmd.Run()
-	if err != nil {
-		log.Fatal("git rev-parse HEAD => " + err.Error())
-	} else {
-		event.CommitHash = cmdOutput.String()
-	}
-
 	mainMessageChannel <- event
 }
 

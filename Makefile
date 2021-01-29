@@ -2,7 +2,7 @@
 
 build: ## Build the sfdata binary
 	# TODO: go generate ./...
-	go build -o "sfdata"
+	go build -o "sfdata" -ldflags "-X main.GitCommit=$(shell git rev-parse HEAD)"
 
 test: ## Run automated tests
 	./test-all.sh

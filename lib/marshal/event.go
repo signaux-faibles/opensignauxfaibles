@@ -7,6 +7,8 @@ import (
 	"github.com/globalsign/mgo/bson"
 )
 
+var gitCommit string
+
 // Priority test
 type Priority string
 
@@ -25,13 +27,19 @@ type Event struct {
 	ReportType string        `json:"report_type" bson:"reportType"`
 }
 
+// SetGitCommit spécifie la valeur à stocker dans le CommitHash de chaque événement.
+func SetGitCommit(hash string) {
+	gitCommit = hash
+}
+
 // CreateEvent initialise un évènement avec les valeurs par défaut.
 func CreateEvent() Event {
 	return Event{
-		ID:       bson.NewObjectId(),
-		Date:     time.Now(),
-		Priority: Priority("info"),
-		Code:     Code("unknown"),
+		ID:         bson.NewObjectId(),
+		Date:       time.Now(),
+		Priority:   Priority("info"),
+		Code:       Code("unknown"),
+		CommitHash: gitCommit,
 	}
 }
 
