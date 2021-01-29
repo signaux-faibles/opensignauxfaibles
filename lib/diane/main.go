@@ -223,7 +223,13 @@ func (parser *dianeParser) ParseLines(parsedLineChan chan marshal.ParsedLineResu
 // parseDianeRow construit un objet Diane à partir d'une ligne de valeurs récupérée depuis un fichier
 func parseDianeRow(idx marshal.ColMapping, row []string) (diane Diane) {
 
-	if i, err := strconv.Atoi(row[idx["Annee"]]); err == nil {
+	idxRow := idx.IndexRow(row)
+
+	// Cas où on cherche à récupérer la valeur d'une colonne qui n'existe pas:
+	// idxRow.GetVal("Année") // => log.Fatal: "Column not found in ColMapping: Année"
+	// ... alors que row[idx["Année"]] aurait échoué silencieusement, en retournant un indice incorrect (0)
+
+	if i, err := strconv.Atoi(idxRow.GetVal("Annee")); err == nil {
 		diane.Annee = &i
 	}
 	diane.NomEntreprise = row[idx["Nom de l'entreprise"]]

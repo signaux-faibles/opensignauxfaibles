@@ -3,6 +3,7 @@ package marshal
 import (
 	"encoding/csv"
 	"errors"
+	"log"
 	"reflect"
 	"strings"
 )
@@ -48,6 +49,27 @@ func (colMapping ColMapping) HasFields(requiredFields []string) (bool, error) {
 		}
 	}
 	return true, nil
+}
+
+// IndexRow retourne une structure pour faciliter la lecture de données.
+func (colMapping ColMapping) IndexRow(row []string) IndexedRow {
+	return IndexedRow{colMapping, row}
+}
+
+// IndexedRow facilite la lecture de données par colonnes, dans une ligne.
+type IndexedRow struct {
+	colMaping ColMapping
+	row       []string
+}
+
+// GetVal retourne la valeur associée à la colonne donnée, sur la ligne en cours.
+// Dans le cas où la colonne n'existe pas, une erreur fatale est déclenchée.
+func (indexedRow IndexedRow) GetVal(colName string) string {
+	index, ok := indexedRow.colMaping[colName]
+	if ok == false {
+		log.Fatal("Column not found in ColMapping: " + colName)
+	}
+	return indexedRow.row[index]
 }
 
 // LowercaseFields normalise les noms de colonnes en minuscules.
