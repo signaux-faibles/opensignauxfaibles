@@ -236,13 +236,13 @@ func parseDianeRow(idx marshal.ColMapping, row []string) (diane Diane) {
 	if i, err := strconv.Atoi(idxRow.GetVal("Effectif consolidé")); err == nil {
 		diane.EffectifConsolide = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Dettes fiscales et sociales kEUR"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Dettes fiscales et sociales kEUR"); found && err == nil {
 		diane.DetteFiscaleEtSociale = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Frais de R&D : net kEUR"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Frais de R&D : net kEUR"); found && err == nil {
 		diane.FraisDeRetD = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Conces.. brev. et droits sim. : net kEUR"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Conces.. brev. et droits sim. : net kEUR"); found && err == nil {
 		diane.ConcesBrevEtDroitsSim = &i
 	}
 	if i, err := strconv.Atoi(idxRow.GetVal("Nombre d’ES")); err == nil {
@@ -260,202 +260,202 @@ func parseDianeRow(idx marshal.ColMapping, row []string) (diane Diane) {
 	if i, err := strconv.Atoi(idxRow.GetVal("Nombre de mois")); err == nil {
 		diane.NombreMois = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Conc. banc. cour. & sold. cr. kEUR"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Conc. banc. cour. & sold. cr. kEUR"); found && err == nil {
 		diane.ConcoursBancaireCourant = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Equilibre financier"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Equilibre financier"); found && err == nil {
 		diane.EquilibreFinancier = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Indépendance fin. %"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Indépendance fin. %"); found && err == nil {
 		diane.IndependanceFinanciere = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Endettement %"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Endettement %"); found && err == nil {
 		diane.Endettement = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Autonomie fin. %"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Autonomie fin. %"); found && err == nil {
 		diane.AutonomieFinanciere = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Degré d'amort. des immob. corp. %"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Degré d'amort. des immob. corp. %"); found && err == nil {
 		diane.DegreImmoCorporelle = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Financ. de l'actif circ. net"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Financ. de l'actif circ. net"); found && err == nil {
 		diane.FinancementActifCirculant = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Liquidité générale"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Liquidité générale"); found && err == nil {
 		diane.LiquiditeGenerale = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Liquidité réduite"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Liquidité réduite"); found && err == nil {
 		diane.LiquiditeReduite = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Rotation des stocks jours"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Rotation des stocks jours"); found && err == nil {
 		diane.RotationStocks = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Crédit clients jours"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Crédit clients jours"); found && err == nil {
 		diane.CreditClient = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Crédit fournisseurs jours"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Crédit fournisseurs jours"); found && err == nil {
 		diane.CreditFournisseur = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("C. A. par effectif (milliers/pers.) kEUR"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("C. A. par effectif (milliers/pers.) kEUR"); found && err == nil {
 		diane.CAparEffectif = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Taux d'intérêt financier %"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Taux d'intérêt financier %"); found && err == nil {
 		diane.TauxInteretFinancier = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Intérêts / Chiffre d'affaires %"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Intérêts / Chiffre d'affaires %"); found && err == nil {
 		diane.TauxInteretSurCA = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Endettement global jours"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Endettement global jours"); found && err == nil {
 		diane.EndettementGlobal = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Taux d'endettement %"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Taux d'endettement %"); found && err == nil {
 		diane.TauxEndettement = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Capacité de remboursement"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Capacité de remboursement"); found && err == nil {
 		diane.CapaciteRemboursement = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Capacité d'autofin. %"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Capacité d'autofin. %"); found && err == nil {
 		diane.CapaciteAutofinancement = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Couv. du C.A. par le f.d.r. jours"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Couv. du C.A. par le f.d.r. jours"); found && err == nil {
 		diane.CouvertureCaFdr = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Couv. du C.A. par bes. en fdr jours"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Couv. du C.A. par bes. en fdr jours"); found && err == nil {
 		diane.CouvertureCaBesoinFdr = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Poids des BFR d'exploitation %"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Poids des BFR d'exploitation %"); found && err == nil {
 		diane.PoidsBFRExploitation = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Exportation %"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Exportation %"); found && err == nil {
 		diane.Exportation = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Efficacité économique (milliers/pers.) kEUR"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Efficacité économique (milliers/pers.) kEUR"); found && err == nil {
 		diane.EfficaciteEconomique = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Prod. du potentiel de production"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Prod. du potentiel de production"); found && err == nil {
 		diane.ProductivitePotentielProduction = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Productivité du capital financier"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Productivité du capital financier"); found && err == nil {
 		diane.ProductiviteCapitalFinancier = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Productivité du capital investi"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Productivité du capital investi"); found && err == nil {
 		diane.ProductiviteCapitalInvesti = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Taux d'invest. productif %"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Taux d'invest. productif %"); found && err == nil {
 		diane.TauxDInvestissementProductif = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Rentabilité économique %"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Rentabilité économique %"); found && err == nil {
 		diane.RentabiliteEconomique = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Performance %"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Performance %"); found && err == nil {
 		diane.Performance = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Rend. brut des f. propres nets %"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Rend. brut des f. propres nets %"); found && err == nil {
 		diane.RendementBrutFondsPropres = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Rentabilité nette %"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Rentabilité nette %"); found && err == nil {
 		diane.RentabiliteNette = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Rend. des capitaux propres nets %"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Rend. des capitaux propres nets %"); found && err == nil {
 		diane.RendementCapitauxPropres = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Rend. des res. durables nettes %"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Rend. des res. durables nettes %"); found && err == nil {
 		diane.RendementRessourcesDurables = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Taux de marge commerciale %"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Taux de marge commerciale %"); found && err == nil {
 		diane.TauxMargeCommerciale = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Taux de valeur ajoutée %"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Taux de valeur ajoutée %"); found && err == nil {
 		diane.TauxValeurAjoutee = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Part des salariés %"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Part des salariés %"); found && err == nil {
 		diane.PartSalaries = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Part de l'Etat %"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Part de l'Etat %"); found && err == nil {
 		diane.PartEtat = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Part des prêteurs %"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Part des prêteurs %"); found && err == nil {
 		diane.PartPreteur = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Part de l'autofin. %"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Part de l'autofin. %"); found && err == nil {
 		diane.PartAutofinancement = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Chiffre d'affaires net (H.T.) kEUR"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Chiffre d'affaires net (H.T.) kEUR"); found && err == nil {
 		diane.CA = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Dont exportation kEUR"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Dont exportation kEUR"); found && err == nil {
 		diane.CAExportation = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Achats march. et autres approv. kEUR"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Achats march. et autres approv. kEUR"); found && err == nil {
 		diane.AchatMarchandises = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Achats de mat. prem. et autres approv. kEUR"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Achats de mat. prem. et autres approv. kEUR"); found && err == nil {
 		diane.AchatMatieresPremieres = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Production de l'ex. kEUR"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Production de l'ex. kEUR"); found && err == nil {
 		diane.Production = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Marge commerciale kEUR"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Marge commerciale kEUR"); found && err == nil {
 		diane.MargeCommerciale = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Consommation de l'ex. kEUR"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Consommation de l'ex. kEUR"); found && err == nil {
 		diane.Consommation = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Autres achats et charges externes kEUR"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Autres achats et charges externes kEUR"); found && err == nil {
 		diane.AutresAchatsChargesExternes = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Valeur ajoutée kEUR"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Valeur ajoutée kEUR"); found && err == nil {
 		diane.ValeurAjoutee = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Charges de personnel kEUR"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Charges de personnel kEUR"); found && err == nil {
 		diane.ChargePersonnel = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Impôts. taxes et vers. assimil. kEUR"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Impôts. taxes et vers. assimil. kEUR"); found && err == nil {
 		diane.ImpotsTaxes = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Subventions d'expl. kEUR"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Subventions d'expl. kEUR"); found && err == nil {
 		diane.SubventionsDExploitation = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Excédent brut d'exploitation kEUR"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Excédent brut d'exploitation kEUR"); found && err == nil {
 		diane.ExcedentBrutDExploitation = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Autres Prod.. char. et Repr. kEUR"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Autres Prod.. char. et Repr. kEUR"); found && err == nil {
 		diane.AutresProduitsChargesReprises = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Dot. d'exploit. aux amort. et prov. kEUR"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Dot. d'exploit. aux amort. et prov. kEUR"); found && err == nil {
 		diane.DotationAmortissement = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Résultat d'expl. kEUR"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Résultat d'expl. kEUR"); found && err == nil {
 		diane.ResultatExpl = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Opérations en commun kEUR"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Opérations en commun kEUR"); found && err == nil {
 		diane.OperationsCommun = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Produits fin. kEUR"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Produits fin. kEUR"); found && err == nil {
 		diane.ProduitsFinanciers = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Charges fin. kEUR"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Charges fin. kEUR"); found && err == nil {
 		diane.ChargesFinancieres = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Intérêts et charges assimilées kEUR"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Intérêts et charges assimilées kEUR"); found && err == nil {
 		diane.Interets = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Résultat courant avant impôts kEUR"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Résultat courant avant impôts kEUR"); found && err == nil {
 		diane.ResultatAvantImpot = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Produits except. kEUR"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Produits except. kEUR"); found && err == nil {
 		diane.ProduitExceptionnel = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Charges except. kEUR"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Charges except. kEUR"); found && err == nil {
 		diane.ChargeExceptionnelle = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Particip. des sal. aux résul. kEUR"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Particip. des sal. aux résul. kEUR"); found && err == nil {
 		diane.ParticipationSalaries = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Impôts sur le bénéf. et impôts diff. kEUR"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Impôts sur le bénéf. et impôts diff. kEUR"); found && err == nil {
 		diane.ImpotBenefice = &i
 	}
-	if i, err := strconv.ParseFloat(idxRow.GetVal("Bénéfice ou perte kEUR"), 64); err == nil {
+	if i, found, err := idxRow.GetFloat64("Bénéfice ou perte kEUR"); found && err == nil {
 		diane.BeneficeOuPerte = &i
 	}
 	return diane
