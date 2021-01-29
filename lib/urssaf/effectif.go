@@ -105,7 +105,7 @@ func (parser *effectifParser) ParseLines(parsedLineChan chan marshal.ParsedLineR
 
 func parseEffectifLine(row []string, idx marshal.ColMapping, periods *[]periodCol, parsedLine *marshal.ParsedLineResult) {
 	for _, period := range *periods {
-		value := row[period.colIndex]
+		value := row[period.colIndex] // TODO: utiliser idxRow.GetVal(colName) au lieu de row[colIndex] ?
 		if value != "" {
 			noThousandsSep := sfregexp.RegexpDict["notDigit"].ReplaceAllString(value, "")
 			e, err := strconv.Atoi(noThousandsSep)

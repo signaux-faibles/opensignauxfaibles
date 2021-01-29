@@ -108,7 +108,7 @@ func parseEffectifPeriod(fields []string) []periodCol {
 	re, _ := regexp.Compile("^eff")
 	for index, field := range fields {
 		if re.MatchString(field) {
-			date, _ := marshal.UrssafToPeriod(field[3:9]) // TODO: à sécuriser
+			date, _ := marshal.UrssafToPeriod(field[3:9]) // format: YYQM ou YYYYQM
 			periods = append(periods, periodCol{dateStart: date.Start, colIndex: index})
 		}
 	}
@@ -117,7 +117,7 @@ func parseEffectifPeriod(fields []string) []periodCol {
 
 func parseEffectifEntLine(row []string, idx marshal.ColMapping, periods *[]periodCol, parsedLine *marshal.ParsedLineResult) {
 	for _, period := range *periods {
-		value := row[period.colIndex] // TODO: utiliser idxRow au lieu de row
+		value := row[period.colIndex] // TODO: utiliser idxRow.GetVal(colName) au lieu de row[colIndex] ?
 		if value != "" {
 			noThousandsSep := sfregexp.RegexpDict["notDigit"].ReplaceAllString(value, "")
 			s, err := strconv.ParseFloat(noThousandsSep, 64)
