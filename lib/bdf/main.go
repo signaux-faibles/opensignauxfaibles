@@ -10,7 +10,6 @@ import (
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/marshal"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/misc"
 )
 
 // BDF Information Banque de France
@@ -107,7 +106,7 @@ func parseBdfLine(row []string, idx marshal.ColMapping, parsedLine *marshal.Pars
 	idxRow := idx.IndexRow(row)
 	bdf := BDF{}
 	bdf.Siren = strings.Replace(idxRow.GetVal("D1"), " ", "", -1)
-	bdf.Annee, err = misc.ParsePInt(idxRow.GetVal("ANNEE"))
+	bdf.Annee, err = idxRow.GetInt("ANNEE")
 	parsedLine.AddRegularError(err)
 	var arrete = idxRow.GetVal("ARRETE_BILAN")
 	arrete = strings.Replace(arrete, "janv", "-01-", -1)

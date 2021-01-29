@@ -8,7 +8,6 @@ import (
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/marshal"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/misc"
 )
 
 // APConso Consommation d'activité partielle
@@ -106,7 +105,7 @@ func parseApConsoLine(row []string, idx marshal.ColMapping, parsedLine *marshal.
 	parsedLine.AddRegularError(err)
 	apconso.Montant, err = idxRow.GetFloat64("MONTANTS")
 	parsedLine.AddRegularError(err)
-	apconso.Effectif, err = misc.ParsePInt(idxRow.GetVal("EFFECTIFS"))
+	apconso.Effectif, err = idxRow.GetInt("EFFECTIFS")
 	parsedLine.AddRegularError(err)
 	parsedLine.AddTuple(apconso)
 }

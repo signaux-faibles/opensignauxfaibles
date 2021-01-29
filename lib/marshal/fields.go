@@ -101,6 +101,16 @@ func (indexedRow IndexedRow) GetFloat64(colName string) (*float64, error) {
 	return misc.ParsePFloat(indexedRow.row[index])
 }
 
+// GetInt retourne la valeur entière associée à la colonne donnée, sur la ligne en cours.
+// Un pointeur nil est retourné si la colonne n'existe pas ou la valeur est une chaine vide.
+func (indexedRow IndexedRow) GetInt(colName string) (*int, error) {
+	index, ok := indexedRow.colMaping.index[colName]
+	if ok == false {
+		return nil, nil
+	}
+	return misc.ParsePInt(indexedRow.row[index])
+}
+
 // LowercaseFields normalise les noms de colonnes en minuscules.
 func LowercaseFields(headerFields []string) []string {
 	var normalizedHeaderFields = make([]string, len(headerFields))
