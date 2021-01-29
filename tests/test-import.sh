@@ -108,10 +108,12 @@ printjson(db.Journal.find().sort({ reportType: -1, parserCode: 1 }).toArray().ma
   },
   reportType: doc.reportType,
   parserCode: doc.parserCode,
+  // hasCommitHash: !!doc.commitHash, // TODO
   hasDate: !!doc.date,
   hasStartDate: !!doc.startDate,
 } : {
   reportType: doc.reportType,
+  hasCommitHash: !!doc.commitHash,
   hasDate: !!doc.date,
   hasStartDate: !!doc.startDate,
 })));

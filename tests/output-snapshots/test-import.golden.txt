@@ -4952,11 +4952,13 @@
 [
 	{
 		"reportType" : "ValidateDataEntries",
+		"hasCommitHash" : false,
 		"hasDate" : true,
 		"hasStartDate" : true
 	},
 	{
 		"reportType" : "PurgeNotCompacted",
+		"hasCommitHash" : false,
 		"hasDate" : true,
 		"hasStartDate" : true
 	},
