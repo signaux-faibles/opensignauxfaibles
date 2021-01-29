@@ -10,9 +10,13 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/engine"
+	"github.com/signaux-faibles/opensignauxfaibles/lib/marshal"
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/naf"
 )
+
+// GitCommit est le hash du dernier commit à inclure dans le binaire.
+var GitCommit string // (populé lors de la compilation, par `make build`)
 
 func connectDb() {
 	engine.Db = engine.InitDB()
@@ -60,6 +64,7 @@ func initConfig() {
 	viper.AddConfigPath("/etc/opensignauxfaibles")
 	viper.AddConfigPath("$HOME/.opensignauxfaibles")
 	viper.AddConfigPath(".")
+	marshal.SetGitCommit(GitCommit)
 }
 
 // Ask cosiner/flag to parse arguments
