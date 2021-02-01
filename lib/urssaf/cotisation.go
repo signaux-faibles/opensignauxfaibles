@@ -5,8 +5,6 @@ import (
 	"encoding/csv"
 	"io"
 	"os"
-	"strconv"
-	"strings"
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/marshal"
@@ -18,8 +16,8 @@ type Cotisation struct {
 	key          string       `                 hash:"-"`
 	NumeroCompte string       `col:"Compte"     json:"numero_compte" bson:"numero_compte"`
 	Periode      misc.Periode `col:"periode"    json:"periode"       bson:"periode"`
-	Encaisse     float64      `col:"enc_direct" json:"encaisse"      bson:"encaisse"`
-	Du           float64      `col:"cotis_due"  json:"du"            bson:"du"`
+	Encaisse     *float64     `col:"enc_direct" json:"encaisse"      bson:"encaisse"`
+	Du           *float64     `col:"cotis_due"  json:"du"            bson:"du"`
 }
 
 // Key _id de l'objet
@@ -107,9 +105,9 @@ func parseCotisationLine(idx marshal.ColMapping, row []string, comptes *marshal.
 		cotisation.NumeroCompte = idxRow.GetVal("Compte")
 		cotisation.Periode, err = marshal.UrssafToPeriod(idxRow.GetVal("periode"))
 		parsedLine.AddRegularError(err)
-		cotisation.Encaisse, err = strconv.ParseFloat(strings.Replace(idxRow.GetVal("enc_direct"), ",", ".", -1), 64)
+		cotisation.Encaisse, err = idxRow.GetCommaFloat64("enc_direct")
 		parsedLine.AddRegularError(err)
-		cotisation.Du, err = strconv.ParseFloat(strings.Replace(idxRow.GetVal("cotis_due"), ",", ".", -1), 64)
+		cotisation.Du, err = idxRow.GetCommaFloat64("cotis_due")
 		parsedLine.AddRegularError(err)
 	}
 	parsedLine.AddTuple(cotisation)

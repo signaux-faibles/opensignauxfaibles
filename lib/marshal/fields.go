@@ -103,6 +103,17 @@ func (indexedRow IndexedRow) GetFloat64(colName string) (*float64, error) {
 	return misc.ParsePFloat(indexedRow.row[index])
 }
 
+// GetCommaFloat64 retourne la valeur décimale avec virgule associée à la colonne donnée, sur la ligne en cours.
+// Un pointeur nil est retourné si la colonne n'existe pas ou la valeur est une chaine vide.
+func (indexedRow IndexedRow) GetCommaFloat64(colName string) (*float64, error) {
+	index, ok := indexedRow.colMaping.index[colName]
+	if ok == false {
+		return nil, fmt.Errorf("GetCommaFloat64 failed to find column: %v", colName)
+	}
+	normalizedDecimalVal := strings.Replace(indexedRow.row[index], ",", ".", -1)
+	return misc.ParsePFloat(normalizedDecimalVal)
+}
+
 // GetInt retourne la valeur entière associée à la colonne donnée, sur la ligne en cours.
 // Un pointeur nil est retourné si la colonne n'existe pas ou la valeur est une chaine vide.
 func (indexedRow IndexedRow) GetInt(colName string) (*int, error) {

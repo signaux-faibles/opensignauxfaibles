@@ -10,8 +10,6 @@ import (
 	//"errors"
 	"io"
 	"os"
-	"strconv"
-	"strings"
 	"time"
 )
 
@@ -26,7 +24,7 @@ type Delai struct {
 	Denomination      string    `col:"Denomination_premiere_ligne" json:"denomination"       bson:"denomination"`
 	Indic6m           string    `col:"Indic_6M"                    json:"indic_6m"           bson:"indic_6m"`
 	AnneeCreation     *int      `col:"Annee_creation"              json:"annee_creation"     bson:"annee_creation"`
-	MontantEcheancier float64   `col:"Montant_global_echeancier"   json:"montant_echeancier" bson:"montant_echeancier"`
+	MontantEcheancier *float64  `col:"Montant_global_echeancier"   json:"montant_echeancier" bson:"montant_echeancier"`
 	Stade             string    `col:"Code_externe_stade"          json:"stade"              bson:"stade"`
 	Action            string    `col:"Code_externe_action"         json:"action"             bson:"action"`
 }
@@ -123,7 +121,7 @@ func parseDelaiLine(idxRow marshal.IndexedRow, siret string, parsedLine *marshal
 	delai.Indic6m = idxRow.GetVal("Indic_6M")
 	delai.AnneeCreation, err = idxRow.GetInt("Annee_creation")
 	parsedLine.AddRegularError(err)
-	delai.MontantEcheancier, err = strconv.ParseFloat(strings.Replace(idxRow.GetVal("Montant_global_echeancier"), ",", ".", -1), 64)
+	delai.MontantEcheancier, err = idxRow.GetCommaFloat64("Montant_global_echeancier")
 	parsedLine.AddRegularError(err)
 	delai.Stade = idxRow.GetVal("Code_externe_stade")
 	delai.Action = idxRow.GetVal("Code_externe_action")
