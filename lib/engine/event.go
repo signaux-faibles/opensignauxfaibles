@@ -76,6 +76,16 @@ func LogOperationEvent(reportType string, startDate time.Time) {
 	mainMessageChannel <- event
 }
 
+// LogOperationEventEx rapporte la fin d'une opération effectuée par sfdata,
+// tout en permettant l'ajout d'un commentaire.
+func LogOperationEventEx(reportType string, startDate time.Time, comment interface{}) {
+	event := marshal.CreateEvent()
+	event.StartDate = startDate
+	event.ReportType = reportType
+	event.Comment = comment
+	mainMessageChannel <- event
+}
+
 // FlushEventQueue finalise l'insertion des événements dans Journal.
 func FlushEventQueue() {
 	close(mainMessageChannel)
