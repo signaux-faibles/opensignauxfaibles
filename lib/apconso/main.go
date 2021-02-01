@@ -95,17 +95,18 @@ func (parser *apconsoParser) ParseLines(parsedLineChan chan marshal.ParsedLineRe
 }
 
 func parseApConsoLine(row []string, idx marshal.ColMapping, parsedLine *marshal.ParsedLineResult) {
+	idxRow := idx.IndexRow(row)
 	apconso := APConso{}
-	apconso.ID = row[idx["ID_DA"]]
-	apconso.Siret = row[idx["ETAB_SIRET"]]
+	apconso.ID = idxRow.GetVal("ID_DA")
+	apconso.Siret = idxRow.GetVal("ETAB_SIRET")
 	var err error
-	apconso.Periode, err = time.Parse("01/2006", row[idx["MOIS"]])
+	apconso.Periode, err = time.Parse("01/2006", idxRow.GetVal("MOIS"))
 	parsedLine.AddRegularError(err)
-	apconso.HeureConsommee, err = misc.ParsePFloat(row[idx["HEURES"]])
+	apconso.HeureConsommee, err = misc.ParsePFloat(idxRow.GetVal("HEURES"))
 	parsedLine.AddRegularError(err)
-	apconso.Montant, err = misc.ParsePFloat(row[idx["MONTANTS"]])
+	apconso.Montant, err = misc.ParsePFloat(idxRow.GetVal("MONTANTS"))
 	parsedLine.AddRegularError(err)
-	apconso.Effectif, err = misc.ParsePInt(row[idx["EFFECTIFS"]])
+	apconso.Effectif, err = misc.ParsePInt(idxRow.GetVal("EFFECTIFS"))
 	parsedLine.AddRegularError(err)
 	parsedLine.AddTuple(apconso)
 }

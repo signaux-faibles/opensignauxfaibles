@@ -45,14 +45,15 @@ func readAndRandomAltares(fileName string, outputFileName string, mapping map[st
 			return err
 		}
 
+		idxRow := idx.IndexRow(row)
 		row[0] = mapping[row[0]]
 		output := make([]string, lidx)
 
-		output[idx["Date d'effet"]] = row[idx["Date d'effet"]]
-		output[idx["Date parution"]] = row[idx["Date parution"]]
-		output[idx["Code du journal"]] = row[idx["Code du journal"]]
-		output[idx["Code de la nature de l'événement"]] = row[idx["Code de la nature de l'événement"]]
-		newSiret, ok := mapping[row[idx["Siret"]]]
+		output[idx["Date d'effet"]] = idxRow.GetVal("Date d'effet")
+		output[idx["Date parution"]] = idxRow.GetVal("Date parution")
+		output[idx["Code du journal"]] = idxRow.GetVal("Code du journal")
+		output[idx["Code de la nature de l'événement"]] = idxRow.GetVal("Code de la nature de l'événement")
+		newSiret, ok := mapping[idxRow.GetVal("Siret")]
 		output[idx["Siret"]] = newSiret
 		if ok {
 			outputRow := strings.Join(output, ",") + "\n"

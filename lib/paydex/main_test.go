@@ -21,7 +21,7 @@ func TestParsePaydexLine(t *testing.T) {
 			DateValeur: time.Date(2018, 12, 15, 00, 00, 00, 0, time.UTC),
 			NbJours:    2,
 		}
-		colIndex := marshal.ColMapping{"SIREN": 0, "NB_JOURS": 1, "DATE_VALEUR": 3}
+		colIndex := marshal.CreateColMapping(map[string]int{"SIREN": 0, "NB_JOURS": 1, "DATE_VALEUR": 3})
 		actual, err := parsePaydexLine(colIndex, row)
 		assert.Equal(t, expected, *actual)
 		assert.Equal(t, nil, err)
@@ -29,7 +29,7 @@ func TestParsePaydexLine(t *testing.T) {
 
 	t.Run("should report parse error on invalid date", func(t *testing.T) {
 		row := []string{"000000001", "2", "2 jours", "12/15/2018"} // "15" is in the "month" slot
-		colIndex := marshal.ColMapping{"SIREN": 0, "NB_JOURS": 1, "DATE_VALEUR": 3}
+		colIndex := marshal.CreateColMapping(map[string]int{"SIREN": 0, "NB_JOURS": 1, "DATE_VALEUR": 3})
 		actual, err := parsePaydexLine(colIndex, row)
 		assert.EqualError(t, err, "invalid date: 12/15/2018")
 		assert.Nil(t, actual)

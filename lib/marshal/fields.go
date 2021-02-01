@@ -3,6 +3,7 @@ package marshal
 import (
 	"encoding/csv"
 	"errors"
+	"log"
 	"reflect"
 	"strings"
 )
@@ -12,7 +13,7 @@ import (
 func IndexColumnsFromCsvHeader(reader *csv.Reader, destObject interface{}) (ColMapping, error) {
 	header, err := reader.Read()
 	if err != nil {
-		return nil, err
+		return ColMapping{}, err
 	}
 	return ValidateAndIndexColumnsFromColTags(header, destObject)
 }
@@ -30,24 +31,62 @@ func ValidateAndIndexColumnsFromColTags(headerRow []string, destObject interface
 // indexFields indexe la position de chaque colonne par son nom,
 // à partir de la liste ordonnée des noms de colonne, telle que lue en en-tête.
 func indexFields(headerFields []string) ColMapping {
-	var colMapping = ColMapping{}
+	var colMapping = ColMapping{index: map[string]int{}}
 	for idx, name := range headerFields {
-		colMapping[name] = idx
+		colMapping.index[name] = idx
 	}
 	return colMapping
 }
 
+// CreateColMapping créée un index de colonnes. Utile pour constituer des données de test.
+func CreateColMapping(index map[string]int) ColMapping {
+	return ColMapping{index}
+}
+
 // ColMapping fournit l'indice de chaque colonne.
-type ColMapping map[string]int
+type ColMapping struct {
+	index map[string]int
+}
 
 // HasFields vérifie la présence d'un ensemble de colonnes.
 func (colMapping ColMapping) HasFields(requiredFields []string) (bool, error) {
 	for _, name := range requiredFields {
-		if _, found := colMapping[name]; !found {
+		if _, found := colMapping.index[name]; !found {
 			return false, errors.New("Colonne " + name + " non trouvée. Abandon.")
 		}
 	}
 	return true, nil
+}
+
+// IndexRow retourne une structure pour faciliter la lecture de données.
+func (colMapping ColMapping) IndexRow(row []string) IndexedRow {
+	return IndexedRow{colMapping, row}
+}
+
+// IndexedRow facilite la lecture de données par colonnes, dans une ligne.
+type IndexedRow struct {
+	colMaping ColMapping
+	row       []string
+}
+
+// GetVal retourne la valeur associée à la colonne donnée, sur la ligne en cours.
+// Dans le cas où la colonne n'existe pas, une erreur fatale est déclenchée.
+func (indexedRow IndexedRow) GetVal(colName string) string {
+	index, ok := indexedRow.colMaping.index[colName]
+	if ok == false {
+		log.Fatal("Column not found in ColMapping: " + colName)
+	}
+	return indexedRow.row[index]
+}
+
+// GetOptionalVal retourne la valeur associée à la colonne donnée, sur la ligne en cours.
+// Dans le cas où la colonne n'existe pas, le booléen sera faux.
+func (indexedRow IndexedRow) GetOptionalVal(colName string) (string, bool) {
+	index, ok := indexedRow.colMaping.index[colName]
+	if ok == false {
+		return "", false
+	}
+	return indexedRow.row[index], true
 }
 
 // LowercaseFields normalise les noms de colonnes en minuscules.

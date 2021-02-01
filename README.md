@@ -31,7 +31,7 @@ Contact: [contact@signaux-faibles.beta.gouv.fr](mailto:contact@signaux-faibles.b
 $ git clone https://github.com/signaux-faibles/opensignauxfaibles.git
 $ cd opensignauxfaibles
 $ go generate ./...
-$ go build -o sfdata
+$ make build
 $ go test ./...
 ```
 
