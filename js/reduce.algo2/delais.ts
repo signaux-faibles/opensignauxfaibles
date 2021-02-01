@@ -1,5 +1,6 @@
 import { f } from "./functions"
-import { EntréeDelai, ParHash, ParPériode } from "../RawDataTypes"
+import { EntréeDelai } from "../GeneratedTypes"
+import { ParHash, ParPériode } from "../RawDataTypes"
 import { SortieCotisationsDettes } from "./cotisationsdettes"
 
 type DeepReadonly<T> = Readonly<T> // pas vraiment immutable pout l'instant, mais espoir que TS le permette prochainement
