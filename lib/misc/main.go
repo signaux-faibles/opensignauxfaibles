@@ -26,17 +26,6 @@ func ParsePFloat(s string) (*float64, error) {
 	return &i, err
 }
 
-// SliceMin retourne l'entier le plus petit d'un slice
-func SliceMin(elem ...int) int {
-	m := elem[0]
-	for _, e := range elem {
-		if e < m {
-			m = e
-		}
-	}
-	return m
-}
-
 // Max retourne le plus grand des deux entiers passés en argument
 func Max(a, b int) int {
 	if a > b {
