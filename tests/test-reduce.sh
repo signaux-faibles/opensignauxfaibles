@@ -47,6 +47,7 @@ printjson({
   count: db.Journal.count(),
   reportType: report.reportType,
   hasDate: !!report.date,
+  batchId: report.event.batchId,
   hasStartDate: !!report.startDate,
 });
 
