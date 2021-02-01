@@ -3,6 +3,7 @@ package marshal
 import (
 	"encoding/csv"
 	"errors"
+	"fmt"
 	"log"
 	"reflect"
 	"strings"
@@ -96,7 +97,7 @@ func (indexedRow IndexedRow) GetOptionalVal(colName string) (string, bool) {
 func (indexedRow IndexedRow) GetFloat64(colName string) (*float64, error) {
 	index, ok := indexedRow.colMaping.index[colName]
 	if ok == false {
-		return nil, nil
+		return nil, fmt.Errorf("GetFloat64 failed to find column: %v", colName)
 	}
 	return misc.ParsePFloat(indexedRow.row[index])
 }
@@ -106,7 +107,7 @@ func (indexedRow IndexedRow) GetFloat64(colName string) (*float64, error) {
 func (indexedRow IndexedRow) GetInt(colName string) (*int, error) {
 	index, ok := indexedRow.colMaping.index[colName]
 	if ok == false {
-		return nil, nil
+		return nil, fmt.Errorf("GetInt failed to find column: %v", colName)
 	}
 	return misc.ParsePInt(indexedRow.row[index])
 }
