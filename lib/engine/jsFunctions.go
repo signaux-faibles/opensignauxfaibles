@@ -1633,13 +1633,6 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
         return []; // ajouté pour résoudre erreur TS7030 (Not all code paths return a value)
     }
 }`,
-"financierCourtTerme": `function financierCourtTerme(diane) {
-    "use strict";
-    var _a, _b;
-    // Note: cette fonction n'est plus appelée. => à supprimer ?
-    const ratio = ((_a = diane["concours_bancaire_courant"]) !== null && _a !== void 0 ? _a : NaN) / ((_b = diane["ca"]) !== null && _b !== void 0 ? _b : NaN);
-    return isNaN(ratio) ? null : ratio * 100;
-}`,
 "fraisFinancier": `function fraisFinancier(diane) {
     "use strict";
     var _a, _b, _c, _d, _e, _f;
