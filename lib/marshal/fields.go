@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"reflect"
+	"strconv"
 	"strings"
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/misc"
@@ -110,6 +111,16 @@ func (indexedRow IndexedRow) GetInt(colName string) (*int, error) {
 		return nil, fmt.Errorf("GetInt failed to find column: %v", colName)
 	}
 	return misc.ParsePInt(indexedRow.row[index])
+}
+
+// GetBool retourne la valeur booléenne associée à la colonne donnée, sur la ligne en cours.
+// Un pointeur nil est retourné si la colonne n'existe pas ou la valeur est une chaine vide.
+func (indexedRow IndexedRow) GetBool(colName string) (bool, error) {
+	index, ok := indexedRow.colMaping.index[colName]
+	if ok == false {
+		return false, fmt.Errorf("GetBool failed to find column: %v", colName)
+	}
+	return strconv.ParseBool(indexedRow.row[index])
 }
 
 // LowercaseFields normalise les noms de colonnes en minuscules.

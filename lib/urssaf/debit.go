@@ -5,7 +5,6 @@ import (
 	"encoding/csv"
 	"io"
 	"os"
-	"strconv"
 	"time"
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
@@ -146,7 +145,7 @@ func parseDebitLine(siret string, idxRow marshal.IndexedRow, parsedLine *marshal
 	parsedLine.AddRegularError(err)
 	debit.Periode, err = marshal.UrssafToPeriod(idxRow.GetVal("Periode"))
 	parsedLine.AddRegularError(err)
-	debit.Recours, err = strconv.ParseBool(idxRow.GetVal("Recours_en_cours"))
+	debit.Recours, err = idxRow.GetBool("Recours_en_cours")
 	parsedLine.AddRegularError(err)
 	// debit.MontantMajorations, err = strconv.ParseFloat(idxRow.GetVal("montantMajorations"), 64)
 	// tracker.Error(err)
