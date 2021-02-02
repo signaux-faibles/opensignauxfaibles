@@ -3,9 +3,13 @@ package marshal
 import (
 	"encoding/csv"
 	"errors"
+	"fmt"
 	"log"
 	"reflect"
+	"strconv"
 	"strings"
+
+	"github.com/signaux-faibles/opensignauxfaibles/lib/misc"
 )
 
 // IndexColumnsFromCsvHeader extrait les noms de colonnes depuis l'en-tête d'un
@@ -87,6 +91,47 @@ func (indexedRow IndexedRow) GetOptionalVal(colName string) (string, bool) {
 		return "", false
 	}
 	return indexedRow.row[index], true
+}
+
+// GetFloat64 retourne la valeur décimale associée à la colonne donnée, sur la ligne en cours.
+// Un pointeur nil est retourné si la colonne n'existe pas ou la valeur est une chaine vide.
+func (indexedRow IndexedRow) GetFloat64(colName string) (*float64, error) {
+	index, ok := indexedRow.colMaping.index[colName]
+	if ok == false {
+		return nil, fmt.Errorf("GetFloat64 failed to find column: %v", colName)
+	}
+	return misc.ParsePFloat(indexedRow.row[index])
+}
+
+// GetCommaFloat64 retourne la valeur décimale avec virgule associée à la colonne donnée, sur la ligne en cours.
+// Un pointeur nil est retourné si la colonne n'existe pas ou la valeur est une chaine vide.
+func (indexedRow IndexedRow) GetCommaFloat64(colName string) (*float64, error) {
+	index, ok := indexedRow.colMaping.index[colName]
+	if ok == false {
+		return nil, fmt.Errorf("GetCommaFloat64 failed to find column: %v", colName)
+	}
+	normalizedDecimalVal := strings.Replace(indexedRow.row[index], ",", ".", -1)
+	return misc.ParsePFloat(normalizedDecimalVal)
+}
+
+// GetInt retourne la valeur entière associée à la colonne donnée, sur la ligne en cours.
+// Un pointeur nil est retourné si la colonne n'existe pas ou la valeur est une chaine vide.
+func (indexedRow IndexedRow) GetInt(colName string) (*int, error) {
+	index, ok := indexedRow.colMaping.index[colName]
+	if ok == false {
+		return nil, fmt.Errorf("GetInt failed to find column: %v", colName)
+	}
+	return misc.ParsePInt(indexedRow.row[index])
+}
+
+// GetBool retourne la valeur booléenne associée à la colonne donnée, sur la ligne en cours.
+// Un pointeur nil est retourné si la colonne n'existe pas ou la valeur est une chaine vide.
+func (indexedRow IndexedRow) GetBool(colName string) (bool, error) {
+	index, ok := indexedRow.colMaping.index[colName]
+	if ok == false {
+		return false, fmt.Errorf("GetBool failed to find column: %v", colName)
+	}
+	return strconv.ParseBool(indexedRow.row[index])
 }
 
 // LowercaseFields normalise les noms de colonnes en minuscules.

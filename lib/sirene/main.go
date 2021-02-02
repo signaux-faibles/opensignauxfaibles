@@ -166,7 +166,7 @@ func parseLine(idx marshal.ColMapping, row []string, parsedLine *marshal.ParsedL
 	sirene := Sirene{}
 	sirene.Siren = idxRow.GetVal("siren")
 	sirene.Nic = idxRow.GetVal("nic")
-	sirene.Siege, err = strconv.ParseBool(idxRow.GetVal("etablissementSiege"))
+	sirene.Siege, err = idxRow.GetBool("etablissementSiege")
 	parsedLine.AddRegularError(err)
 
 	sirene.ComplementAdresse = idxRow.GetVal("complementAdresseEtablissement")
