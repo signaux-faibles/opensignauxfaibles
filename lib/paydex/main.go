@@ -12,7 +12,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"strconv"
 	"time"
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
@@ -107,13 +106,13 @@ func parsePaydexLine(idx marshal.ColMapping, row []string) (*Paydex, error) {
 	if err != nil {
 		return nil, fmt.Errorf("invalid date: %v", idxRow.GetVal("DATE_VALEUR"))
 	}
-	nbJours, err := strconv.Atoi(idxRow.GetVal("NB_JOURS"))
+	nbJours, err := idxRow.GetInt("NB_JOURS")
 	if err != nil {
 		return nil, fmt.Errorf("invalid int: %v", idxRow.GetVal("NB_JOURS"))
 	}
 	return &Paydex{
 		Siren:      idxRow.GetVal("SIREN"),
 		DateValeur: dateValeur,
-		NbJours:    nbJours,
+		NbJours:    *nbJours,
 	}, nil
 }

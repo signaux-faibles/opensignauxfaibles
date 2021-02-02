@@ -5,7 +5,6 @@ import (
 	"encoding/csv"
 	"io"
 	"os"
-	"strconv"
 	"time"
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
@@ -21,8 +20,8 @@ type Debit struct {
 	DateTraitement               time.Time    `col:"Dt_trt_ecn"       json:"date_traitement"              bson:"date_traitement"`
 	PartOuvriere                 float64      `col:"Mt_PO"            json:"part_ouvriere"                bson:"part_ouvriere"`
 	PartPatronale                float64      `col:"Mt_PP"            json:"part_patronale"               bson:"part_patronale"`
-	NumeroHistoriqueEcartNegatif int          `col:"Num_Hist_Ecn"     json:"numero_historique"            bson:"numero_historique"`
-	EtatCompte                   int          `col:"Etat_cpte"        json:"etat_compte"                  bson:"etat_compte"`
+	NumeroHistoriqueEcartNegatif *int         `col:"Num_Hist_Ecn"     json:"numero_historique"            bson:"numero_historique"`
+	EtatCompte                   *int         `col:"Etat_cpte"        json:"etat_compte"                  bson:"etat_compte"`
 	CodeProcedureCollective      string       `col:"Cd_pro_col"       json:"code_procedure_collective"    bson:"code_procedure_collective"`
 	Periode                      misc.Periode `col:"Periode"          json:"periode"                      bson:"periode"`
 	CodeOperationEcartNegatif    string       `col:"Cd_op_ecn"        json:"code_operation_ecart_negatif" bson:"code_operation_ecart_negatif"`
@@ -134,19 +133,19 @@ func parseDebitLine(siret string, idxRow marshal.IndexedRow, parsedLine *marshal
 	var err error
 	debit.DateTraitement, err = marshal.UrssafToDate(idxRow.GetVal("Dt_trt_ecn"))
 	parsedLine.AddRegularError(err)
-	debit.PartOuvriere, err = strconv.ParseFloat(idxRow.GetVal("Mt_PO"), 64)
+	partOuvriere, err := idxRow.GetFloat64("Mt_PO")
 	parsedLine.AddRegularError(err)
-	debit.PartOuvriere = debit.PartOuvriere / 100
-	debit.PartPatronale, err = strconv.ParseFloat(idxRow.GetVal("Mt_PP"), 64)
+	debit.PartOuvriere = *partOuvriere / 100
+	partPatronale, err := idxRow.GetFloat64("Mt_PP")
 	parsedLine.AddRegularError(err)
-	debit.PartPatronale = debit.PartPatronale / 100
-	debit.NumeroHistoriqueEcartNegatif, err = strconv.Atoi(idxRow.GetVal("Num_Hist_Ecn"))
+	debit.PartPatronale = *partPatronale / 100
+	debit.NumeroHistoriqueEcartNegatif, err = idxRow.GetInt("Num_Hist_Ecn")
 	parsedLine.AddRegularError(err)
-	debit.EtatCompte, err = strconv.Atoi(idxRow.GetVal("Etat_cpte"))
+	debit.EtatCompte, err = idxRow.GetInt("Etat_cpte")
 	parsedLine.AddRegularError(err)
 	debit.Periode, err = marshal.UrssafToPeriod(idxRow.GetVal("Periode"))
 	parsedLine.AddRegularError(err)
-	debit.Recours, err = strconv.ParseBool(idxRow.GetVal("Recours_en_cours"))
+	debit.Recours, err = idxRow.GetBool("Recours_en_cours")
 	parsedLine.AddRegularError(err)
 	// debit.MontantMajorations, err = strconv.ParseFloat(idxRow.GetVal("montantMajorations"), 64)
 	// tracker.Error(err)
