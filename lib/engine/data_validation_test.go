@@ -2,6 +2,7 @@ package engine
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -9,25 +10,46 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/signaux-faibles/opensignauxfaibles/lib/bdf"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/urssaf"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestDataValidation(t *testing.T) {
-	typesToCompare := map[string]interface{}{
-		"delai": urssaf.Delai{},
-	}
-	for jsonTypeName, structInstance := range typesToCompare {
-		t.Run(jsonTypeName, func(t *testing.T) {
-			errors := diffProps(jsonTypeName, structInstance)
-			if len(errors) > 0 {
-				log.Println("Types are not deeply equal:")
-				for _, err := range errors {
-					log.Println("- " + err.Error())
+
+	t.Run("types couverts en JSON Schema", func(t *testing.T) {
+		typesToCompare := map[string]interface{}{
+			"delai": urssaf.Delai{},
+		}
+		for jsonTypeName, structInstance := range typesToCompare {
+			t.Run(jsonTypeName, func(t *testing.T) {
+				errors := diffProps(jsonTypeName, structInstance)
+				if len(errors) > 0 {
+					log.Println("Types are not deeply equal:")
+					for _, err := range errors {
+						log.Println("- " + err.Error())
+					}
+					t.FailNow()
 				}
-				t.FailNow()
-			}
+			})
+		}
+	})
+
+	t.Run("bdf n'est pas encore complètement couvert en JSON Schema", func(t *testing.T) {
+		actualErrors := diffProps("bdf", bdf.BDF{})
+		assert.ElementsMatch(t, actualErrors, []error{
+			errors.New("property not found in JSON Schema: delai_fournisseur"),
+			errors.New("property not found in JSON Schema: dette_fiscale"),
+			errors.New("property not found in JSON Schema: frais_financier"),
+			errors.New("property not found in JSON Schema: arrete_bilan_bdf"),
+			errors.New("property not found in JSON Schema: secteur"),
+			errors.New("property not found in JSON Schema: taux_marge"),
+			errors.New("property not found in JSON Schema: annee_bdf"),
+			errors.New("property not found in JSON Schema: raison_sociale"),
+			errors.New("property not found in JSON Schema: poids_frng"),
+			errors.New("property not found in JSON Schema: financier_court_terme"),
 		})
-	}
+	})
 }
 
 func diffProps(jsonTypeName string, structInstance interface{}) []error {
