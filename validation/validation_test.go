@@ -5,7 +5,7 @@ import (
 	"flag"
 	"io/ioutil"
 	"log"
-	"regexp"
+	"strings"
 	"testing"
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/bdf"
@@ -64,20 +64,19 @@ func TestReflectPropsFromStruct(t *testing.T) {
 func TestTypeAlignment(t *testing.T) {
 
 	typesToCompare := map[string]interface{}{
-		"delai": urssaf.Delai{},
+		"delai.schema.json": urssaf.Delai{},
 	}
 
 	t.Run("tous les fichiers JSON Schema sont couverts par des tests", func(t *testing.T) {
-		schemaFileRegex := regexp.MustCompile(`^([^.]+)\.schema\.json$`)
 		files, err := ioutil.ReadDir(".")
 		if err != nil {
 			t.Fatal(err)
 		}
 		for _, file := range files {
-			if match := schemaFileRegex.FindStringSubmatch(file.Name()); len(match) > 1 {
-				jsonTypeName := match[1]
-				if _, ok := typesToCompare[jsonTypeName]; !ok {
-					assert.Fail(t, "please add \""+jsonTypeName+"\" entry to typesToCompare, in validation_test.go")
+			if strings.HasSuffix(file.Name(), ".schema.json") {
+				jsonSchemaFile := file.Name()
+				if _, ok := typesToCompare[jsonSchemaFile]; !ok {
+					assert.Fail(t, "please add \""+jsonSchemaFile+"\" entry to typesToCompare, in validation_test.go")
 				}
 			}
 		}
@@ -99,7 +98,7 @@ func TestTypeAlignment(t *testing.T) {
 	})
 
 	t.Run("le type BDF n'est pas encore complètement couvert en JSON Schema", func(t *testing.T) {
-		actualErrors := diffProps("bdf", bdf.BDF{})
+		actualErrors := diffProps("bdf.schema.json", bdf.BDF{})
 		assert.ElementsMatch(t, actualErrors, []error{
 			errors.New("property not found in JSON Schema: delai_fournisseur"),
 			errors.New("property not found in JSON Schema: dette_fiscale"),
@@ -115,8 +114,8 @@ func TestTypeAlignment(t *testing.T) {
 	})
 }
 
-func diffProps(jsonTypeName string, structInstance interface{}) []error {
-	schemaProps := loadPropsFromSchema(jsonTypeName + ".schema.json")
+func diffProps(jsonSchemaFile string, structInstance interface{}) []error {
+	schemaProps := loadPropsFromSchema(jsonSchemaFile)
 	structProps := reflectPropsFromStruct(structInstance)
 	return diffMaps(schemaProps, structProps)
 }
