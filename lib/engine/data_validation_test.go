@@ -13,18 +13,27 @@ import (
 )
 
 func TestDataValidation(t *testing.T) {
-
-	schemaProps := loadPropsFromSchema("../../validation/delai.schema.json")
-	structProps := reflectPropsFromStruct(urssaf.Delai{})
-
-	errors := diffMaps(schemaProps, structProps)
-	if len(errors) > 0 {
-		log.Println("Types are not deeply equal:")
-		for _, err := range errors {
-			log.Println("- " + err.Error())
-		}
-		t.FailNow()
+	typesToCompare := map[string]interface{}{
+		"delai": urssaf.Delai{},
 	}
+	for jsonTypeName, structInstance := range typesToCompare {
+		t.Run(jsonTypeName, func(t *testing.T) {
+			errors := diffProps(jsonTypeName, structInstance)
+			if len(errors) > 0 {
+				log.Println("Types are not deeply equal:")
+				for _, err := range errors {
+					log.Println("- " + err.Error())
+				}
+				t.FailNow()
+			}
+		})
+	}
+}
+
+func diffProps(jsonTypeName string, structInstance interface{}) []error {
+	schemaProps := loadPropsFromSchema("../../validation/" + jsonTypeName + ".schema.json")
+	structProps := reflectPropsFromStruct(structInstance)
+	return diffMaps(schemaProps, structProps)
 }
 
 func reflectPropsFromStruct(structInstance interface{}) map[string]propertySchema {
