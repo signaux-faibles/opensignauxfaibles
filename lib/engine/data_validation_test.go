@@ -15,21 +15,13 @@ import (
 func TestDataValidation(t *testing.T) {
 
 	schemaProps := loadPropsFromSchema("../../validation/delai.schema.json")
-	// for fieldName, field := range schemaProps {
-	// 	log.Println(fieldName, field.BsonType)
-	// }
-
-	// log.Println("--")
 	structProps := reflectPropsFromStruct(urssaf.Delai{})
-	// for fieldName, field := range structProps {
-	// 	log.Println(fieldName, field.BsonType)
-	// }
 
-	if reflect.DeepEqual(schemaProps, structProps) == false {
+	errors := diffMaps(schemaProps, structProps)
+	if len(errors) > 0 {
 		log.Println("Types are not deeply equal:")
-		errors := diffMaps(schemaProps, structProps)
 		for _, err := range errors {
-			log.Println(err)
+			log.Println("- " + err.Error())
 		}
 		t.FailNow()
 	}
