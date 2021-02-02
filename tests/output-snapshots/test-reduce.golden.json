@@ -3,6 +3,7 @@
 	"count" : 1,
 	"reportType" : "Reduce",
 	"hasDate" : true,
+	"batchId" : "1905",
 	"hasStartDate" : true
 }
 // Documents from db.Features_TestData:
