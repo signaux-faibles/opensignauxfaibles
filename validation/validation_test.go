@@ -3,7 +3,9 @@ package validation
 import (
 	"errors"
 	"flag"
+	"io/ioutil"
 	"log"
+	"regexp"
 	"testing"
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/bdf"
@@ -61,12 +63,27 @@ func TestReflectPropsFromStruct(t *testing.T) {
 
 func TestTypeAlignment(t *testing.T) {
 
-	t.Run("chaque type décrit en JSON Schema doit correspondre à la structure retournée par le parseur correspondant", func(t *testing.T) {
-		typesToCompare := map[string]interface{}{
-			"delai": urssaf.Delai{},
-			// TODO: lister les fichiers JSON Schema du répertoire,
-			// pour s'assurer qu'ils sont couvert ici par un test d'alignement de type.
+	typesToCompare := map[string]interface{}{
+		"delai": urssaf.Delai{},
+	}
+
+	t.Run("tous les fichiers JSON Schema sont couverts par des tests", func(t *testing.T) {
+		schemaFileRegex := regexp.MustCompile(`^([^.]+)\.schema\.json$`)
+		files, err := ioutil.ReadDir(".")
+		if err != nil {
+			t.Fatal(err)
 		}
+		for _, file := range files {
+			if match := schemaFileRegex.FindStringSubmatch(file.Name()); len(match) > 1 {
+				jsonTypeName := match[1]
+				if _, ok := typesToCompare[jsonTypeName]; !ok {
+					assert.Fail(t, "please add \""+jsonTypeName+"\" entry to typesToCompare, in validation_test.go")
+				}
+			}
+		}
+	})
+
+	t.Run("chaque type décrit en JSON Schema doit correspondre à la structure retournée par le parseur correspondant", func(t *testing.T) {
 		for jsonTypeName, structInstance := range typesToCompare {
 			t.Run(jsonTypeName, func(t *testing.T) {
 				errors := diffProps(jsonTypeName, structInstance)
