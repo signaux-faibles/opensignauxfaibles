@@ -4,7 +4,7 @@ import (
 	"errors"
 	"flag"
 	"io/ioutil"
-	"log"
+	"reflect"
 	"strings"
 	"testing"
 
@@ -63,11 +63,29 @@ func TestReflectPropsFromStruct(t *testing.T) {
 
 func TestTypeAlignment(t *testing.T) {
 
-	typesToCompare := map[string]interface{}{
-		"delai.schema.json": urssaf.Delai{},
+	type TypeToCompare struct {
+		ParserStructInstance interface{} // instance type Go retourné par le parseur correspondant à un JSON Schema donné
+		ExpectedErrors       []error     // erreurs attendues lors de la vérification d'alignement entre JSON Schema et type Go
 	}
 
-	t.Run("tous les fichiers JSON Schema sont couverts par des tests", func(t *testing.T) {
+	typesToCompare := map[string]TypeToCompare{
+		"delai.schema.json": {urssaf.Delai{}, []error{}}, // delai.schema.json est aligné avec le type urssaf.Delai 👌
+		"bdf.schema.json": {bdf.BDF{}, []error{ // bdf.schema.json n'est pas encore complet => la vérification va retourner les erreurs suivantes:
+			errors.New("property not found in JSON Schema: delai_fournisseur"),
+			errors.New("property not found in JSON Schema: dette_fiscale"),
+			errors.New("property not found in JSON Schema: frais_financier"),
+			errors.New("property not found in JSON Schema: arrete_bilan_bdf"),
+			errors.New("property not found in JSON Schema: secteur"),
+			errors.New("property not found in JSON Schema: taux_marge"),
+			errors.New("property not found in JSON Schema: annee_bdf"),
+			errors.New("property not found in JSON Schema: raison_sociale"),
+			errors.New("property not found in JSON Schema: poids_frng"),
+			errors.New("property not found in JSON Schema: financier_court_terme"),
+		}},
+		// NOTE: Au fur et à mesure qu'on ajoute des fichiers JSON Schema, penser à les couvrir ici.
+	}
+
+	t.Run("chaque fichier JSON Schema est couvert par un test d'alignement avec son type Go correspondant", func(t *testing.T) {
 		files, err := ioutil.ReadDir(".")
 		if err != nil {
 			t.Fatal(err)
@@ -82,35 +100,20 @@ func TestTypeAlignment(t *testing.T) {
 		}
 	})
 
-	t.Run("chaque type décrit en JSON Schema doit correspondre à la structure retournée par le parseur correspondant", func(t *testing.T) {
-		for jsonTypeName, structInstance := range typesToCompare {
+	t.Run("chaque fichier JSON Schema est aligné avec le type Go retourné par le parseur correspondant", func(t *testing.T) {
+		for jsonTypeName, typeDef := range typesToCompare {
 			t.Run(jsonTypeName, func(t *testing.T) {
-				errors := diffProps(jsonTypeName, structInstance)
-				if len(errors) > 0 {
-					log.Println("Types are not deeply equal:")
+				errors := diffProps(jsonTypeName, typeDef.ParserStructInstance)
+				if ok := assert.ElementsMatch(t, typeDef.ExpectedErrors, errors); !ok {
+					// affichage des champs non alignés, pour aider à la complétion
+					structTypeName := reflect.TypeOf(typeDef.ParserStructInstance).Name()
+					t.Log(jsonTypeName + " is not aligned with struct type \"" + structTypeName + "\":")
 					for _, err := range errors {
-						log.Println("- " + err.Error())
+						t.Log("- " + err.Error())
 					}
-					t.FailNow()
 				}
 			})
 		}
-	})
-
-	t.Run("le type BDF n'est pas encore complètement couvert en JSON Schema", func(t *testing.T) {
-		actualErrors := diffProps("bdf.schema.json", bdf.BDF{})
-		assert.ElementsMatch(t, actualErrors, []error{
-			errors.New("property not found in JSON Schema: delai_fournisseur"),
-			errors.New("property not found in JSON Schema: dette_fiscale"),
-			errors.New("property not found in JSON Schema: frais_financier"),
-			errors.New("property not found in JSON Schema: arrete_bilan_bdf"),
-			errors.New("property not found in JSON Schema: secteur"),
-			errors.New("property not found in JSON Schema: taux_marge"),
-			errors.New("property not found in JSON Schema: annee_bdf"),
-			errors.New("property not found in JSON Schema: raison_sociale"),
-			errors.New("property not found in JSON Schema: poids_frng"),
-			errors.New("property not found in JSON Schema: financier_court_terme"),
-		})
 	})
 }
 
