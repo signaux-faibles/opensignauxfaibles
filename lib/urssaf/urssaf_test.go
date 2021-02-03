@@ -37,6 +37,7 @@ func TestUrssaf(t *testing.T) {
 		urssafFiles := []TestCase{
 			{ParserDebit, "debitTestData.csv", "expectedDebit.json"},
 			{ParserDelai, "delaiTestData.csv", "expectedDelai.json"},
+			{ParserCCSF, "ccsfTestData.csv", "expectedCcsf.json"},
 			// TODO: appliquer à tous les fichiers
 		}
 		for _, testCase := range urssafFiles {
