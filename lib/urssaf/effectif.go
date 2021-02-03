@@ -58,21 +58,11 @@ func (parser *effectifParser) Close() error {
 }
 
 func (parser *effectifParser) Open(filePath string) (err error) {
-	parser.file, parser.reader, err = openEffectifFile(filePath)
+	parser.file, parser.reader, err = marshal.OpenCsvReader(filePath, ';', false)
 	if err == nil {
 		parser.idx, parser.periods, err = parseEffectifColMapping(parser.reader)
 	}
 	return err
-}
-
-func openEffectifFile(filePath string) (*os.File, *csv.Reader, error) {
-	file, fileReader, err := marshal.OpenFileReader(filePath)
-	if err != nil {
-		return file, nil, err
-	}
-	reader := csv.NewReader(fileReader)
-	reader.Comma = ';'
-	return file, reader, err
 }
 
 func parseEffectifColMapping(reader *csv.Reader) (marshal.ColMapping, []periodCol, error) {

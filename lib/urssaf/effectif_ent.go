@@ -58,15 +58,7 @@ func (parser *effectifEntParser) Init(cache *marshal.Cache, batch *base.AdminBat
 }
 
 func (parser *effectifEntParser) Open(filePath string) (err error) {
-	var fileReader io.Reader
-	parser.file, fileReader, err = marshal.OpenFileReader(filePath)
-	if err != nil {
-		return err
-	}
-	if err == nil {
-		parser.reader = csv.NewReader(fileReader)
-		parser.reader.Comma = ';'
-	}
+	parser.file, parser.reader, err = marshal.OpenCsvReader(filePath, ';', false)
 	if err == nil {
 		parser.idx, parser.periods, err = parseEffectifEntColMapping(parser.reader)
 	}

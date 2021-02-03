@@ -69,21 +69,11 @@ func (parser *debitParser) Init(cache *marshal.Cache, batch *base.AdminBatch) (e
 }
 
 func (parser *debitParser) Open(filePath string) (err error) {
-	parser.file, parser.reader, err = openDebitFile(filePath)
+	parser.file, parser.reader, err = marshal.OpenCsvReader(filePath, ';', false)
 	if err == nil {
 		parser.idx, err = marshal.IndexColumnsFromCsvHeader(parser.reader, Debit{})
 	}
 	return err
-}
-
-func openDebitFile(filePath string) (*os.File, *csv.Reader, error) {
-	file, fileReader, err := marshal.OpenFileReader(filePath)
-	if err != nil {
-		return file, nil, err
-	}
-	csvReader := csv.NewReader(fileReader)
-	csvReader.Comma = ';'
-	return file, csvReader, nil
 }
 
 func (parser *debitParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {

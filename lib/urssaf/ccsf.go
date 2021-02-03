@@ -59,14 +59,10 @@ func (parser *ccsfParser) Close() error {
 }
 
 func (parser *ccsfParser) Open(filePath string) (err error) {
-	var fileReader io.Reader
-	parser.file, fileReader, err = marshal.OpenFileReader(filePath)
-	if err != nil {
-		return err
+	parser.file, parser.reader, err = marshal.OpenCsvReader(filePath, ';', false)
+	if err == nil {
+		parser.idx, err = marshal.IndexColumnsFromCsvHeader(parser.reader, CCSF{})
 	}
-	parser.reader = csv.NewReader(fileReader)
-	parser.reader.Comma = ';'
-	parser.idx, err = marshal.IndexColumnsFromCsvHeader(parser.reader, CCSF{})
 	return err
 }
 

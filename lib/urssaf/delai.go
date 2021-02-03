@@ -67,21 +67,11 @@ func (parser *delaiParser) Init(cache *marshal.Cache, batch *base.AdminBatch) (e
 }
 
 func (parser *delaiParser) Open(filePath string) (err error) {
-	parser.file, parser.reader, err = openDelaiFile(filePath)
+	parser.file, parser.reader, err = marshal.OpenCsvReader(filePath, ';', false)
 	if err == nil {
 		parser.idx, err = marshal.IndexColumnsFromCsvHeader(parser.reader, Delai{})
 	}
 	return err
-}
-
-func openDelaiFile(filePath string) (*os.File, *csv.Reader, error) {
-	file, fileReader, err := marshal.OpenFileReader(filePath)
-	if err != nil {
-		return file, nil, err
-	}
-	csvReader := csv.NewReader(fileReader)
-	csvReader.Comma = ';'
-	return file, csvReader, nil
 }
 
 func (parser *delaiParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
