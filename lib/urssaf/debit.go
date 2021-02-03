@@ -76,16 +76,16 @@ func (parser *debitParser) Open(filePath string) (err error) {
 	if err != nil {
 		return err
 	}
-	// var reader *io.Reader
+	var fileReader io.Reader
 	if strings.HasSuffix(filePath, ".gz") {
-		zr, err := gzip.NewReader(parser.file)
+		fileReader, err = gzip.NewReader(parser.file)
 		if err != nil {
 			return err
 		}
-		parser.reader = openDebitFile(zr)
 	} else {
-		parser.reader = openDebitFile(bufio.NewReader(parser.file))
+		fileReader = bufio.NewReader(parser.file)
 	}
+	parser.reader = openDebitFile(fileReader)
 	parser.idx, err = marshal.IndexColumnsFromCsvHeader(parser.reader, Debit{})
 	return err
 }
