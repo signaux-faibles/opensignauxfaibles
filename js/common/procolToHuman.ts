@@ -1,4 +1,4 @@
-import { EntréeDéfaillances } from "../RawDataTypes"
+import { EntréeDéfaillances } from "../GeneratedTypes"
 
 export type ProcolToHumanRes =
   | "liquidation"
