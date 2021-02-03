@@ -1,7 +1,6 @@
 package urssaf
 
 import (
-	"bufio"
 	"encoding/csv"
 	"io"
 	"os"
@@ -67,11 +66,12 @@ func (parser *effectifParser) Open(filePath string) (err error) {
 }
 
 func openEffectifFile(filePath string) (*os.File, *csv.Reader, error) {
-	file, err := os.Open(filePath)
+	var fileReader io.Reader
+	file, fileReader, err := marshal.OpenFileReader(filePath)
 	if err != nil {
 		return file, nil, err
 	}
-	reader := csv.NewReader(bufio.NewReader(file))
+	reader := csv.NewReader(fileReader)
 	reader.Comma = ';'
 	return file, reader, err
 }

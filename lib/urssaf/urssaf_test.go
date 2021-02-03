@@ -41,6 +41,7 @@ func TestUrssaf(t *testing.T) {
 			{ParserDebit, "debitTestData.csv", "expectedDebit.json", makeCacheWithComptesMapping()},
 			{ParserDelai, "delaiTestData.csv", "expectedDelai.json", makeCacheWithComptesMapping()},
 			{ParserEffectifEnt, "effectifEntTestData.csv", "expectedEffectifEnt.json", makeCacheWithComptesMapping()},
+			{ParserEffectif, "effectifTestData.csv", "expectedEffectif.json", makeCacheWithComptesMapping()},
 			// TODO: appliquer à tous les fichiers
 		}
 		for _, testCase := range urssafFiles {
