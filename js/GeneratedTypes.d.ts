@@ -15,6 +15,17 @@ export interface EntréeBdf {
   siren: string
 }
 /**
+ * Champs importés par le parseur lib/urssaf/ccsf.go de sfdata.
+ */
+export interface EntréeCcsf {
+  /**
+   * Date de début de la procédure CCSF
+   */
+  date_traitement: Date
+  stade: string
+  action: string
+}
+/**
  * Champs importés par le parseur lib/urssaf/delai.go de sfdata.
  */
 export interface EntréeDelai {

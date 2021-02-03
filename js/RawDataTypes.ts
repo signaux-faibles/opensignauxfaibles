@@ -1,6 +1,6 @@
 /* eslint-disable no-use-before-define */
 
-import { EntréeDelai } from "./GeneratedTypes"
+import { EntréeDelai, EntréeCcsf } from "./GeneratedTypes"
 
 // Types de données de base
 
@@ -87,13 +87,6 @@ export type BatchValueProps = CommonBatchProps &
   }
 
 // Détail des types de données
-
-export type EntréeCcsf = {
-  /** Date de début de la procédure CCSF */
-  date_traitement: Date
-  stade: string // TODO: choisir un type plus précis
-  action: string // TODO: choisir un type plus précis
-}
 
 export type EntréeDéfaillances = {
   /** Nature de la procédure de défaillance. */
