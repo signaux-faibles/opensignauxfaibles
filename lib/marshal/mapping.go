@@ -1,12 +1,11 @@
 package marshal
 
 import (
-	"bufio"
 	"encoding/csv"
 	"errors"
 	"io"
 	"log"
-	"os"
+	"path"
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/sfregexp"
@@ -111,13 +110,13 @@ func OpenAndReadSiretMapping(
 	batch *base.AdminBatch,
 ) (Comptes, error) {
 
-	file, err := os.Open(basePath + endPath)
+	file, fileReader, err := OpenFileReader(path.Join(basePath, endPath))
 	if err != nil {
 		return nil, errors.New("Erreur à l'ouverture du fichier, " + err.Error())
 	}
 	defer file.Close()
 
-	addSiretMapping, err := readSiretMapping(bufio.NewReader(file), cache, batch)
+	addSiretMapping, err := readSiretMapping(fileReader, cache, batch)
 	if err != nil {
 		return nil, err
 	}
