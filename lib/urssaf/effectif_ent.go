@@ -1,7 +1,6 @@
 package urssaf
 
 import (
-	"bufio"
 	"encoding/csv"
 	"io"
 	"os"
@@ -59,9 +58,13 @@ func (parser *effectifEntParser) Init(cache *marshal.Cache, batch *base.AdminBat
 }
 
 func (parser *effectifEntParser) Open(filePath string) (err error) {
-	parser.file, err = os.Open(filePath)
+	var fileReader io.Reader
+	parser.file, fileReader, err = marshal.OpenFileReader(filePath)
+	if err != nil {
+		return err
+	}
 	if err == nil {
-		parser.reader = csv.NewReader(bufio.NewReader(parser.file))
+		parser.reader = csv.NewReader(fileReader)
 		parser.reader.Comma = ';'
 	}
 	if err == nil {
