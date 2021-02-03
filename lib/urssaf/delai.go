@@ -2,7 +2,9 @@ package urssaf
 
 import (
 	"bufio"
+	"compress/gzip"
 	"encoding/csv"
+	"strings"
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/marshal"
@@ -68,14 +70,30 @@ func (parser *delaiParser) Init(cache *marshal.Cache, batch *base.AdminBatch) (e
 }
 
 func (parser *delaiParser) Open(filePath string) (err error) {
-	parser.file, err = os.Open(filePath)
-	if err != nil {
-		return err
+	parser.file, parser.reader, err = openDelaiFile(filePath)
+	if err == nil {
+		parser.idx, err = marshal.IndexColumnsFromCsvHeader(parser.reader, Delai{})
 	}
-	parser.reader = csv.NewReader(bufio.NewReader(parser.file))
-	parser.reader.Comma = ';'
-	parser.idx, err = marshal.IndexColumnsFromCsvHeader(parser.reader, Delai{})
 	return err
+}
+
+func openDelaiFile(filePath string) (*os.File, *csv.Reader, error) {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return file, nil, err
+	}
+	var fileReader io.Reader
+	if strings.HasSuffix(filePath, ".gz") {
+		fileReader, err = gzip.NewReader(file)
+		if err != nil {
+			return file, nil, err
+		}
+	} else {
+		fileReader = bufio.NewReader(file)
+	}
+	csvReader := csv.NewReader(fileReader)
+	csvReader.Comma = ';'
+	return file, csvReader, nil
 }
 
 func (parser *delaiParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
