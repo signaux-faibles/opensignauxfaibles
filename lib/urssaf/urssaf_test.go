@@ -40,17 +40,19 @@ func TestUrssaf(t *testing.T) {
 			// TODO: appliquer à tous les fichiers
 		}
 		for _, testCase := range urssafFiles {
-			// Compression du fichier de données
-			err := exec.Command("gzip", "--keep", filepath.Join("testData", testCase.InputFile)).Run() // créée une version gzippée du fichier
-			assert.NoError(t, err)
-			compressedFilePath := filepath.Join("testData", testCase.InputFile+".gz")
-			t.Cleanup(func() { os.Remove(compressedFilePath) })
-			// Création d'un fichier Golden temporaire mentionnant le nom du fichier compressé
-			initialGoldenContent, err := ioutil.ReadFile(filepath.Join("testData", testCase.GoldenFile))
-			assert.NoError(t, err)
-			goldenContent := bytes.ReplaceAll(initialGoldenContent, []byte(testCase.InputFile), []byte(testCase.InputFile+".gz"))
-			tmpGoldenFile := marshal.CreateTempFileWithContent(t, goldenContent)
-			marshal.TestParserOutput(t, testCase.Parser, makeCacheWithComptesMapping(), compressedFilePath, tmpGoldenFile.Name(), false)
+			t.Run(testCase.Parser.GetFileType(), func(t *testing.T) {
+				// Compression du fichier de données
+				err := exec.Command("gzip", "--keep", filepath.Join("testData", testCase.InputFile)).Run() // créée une version gzippée du fichier
+				assert.NoError(t, err)
+				compressedFilePath := filepath.Join("testData", testCase.InputFile+".gz")
+				t.Cleanup(func() { os.Remove(compressedFilePath) })
+				// Création d'un fichier Golden temporaire mentionnant le nom du fichier compressé
+				initialGoldenContent, err := ioutil.ReadFile(filepath.Join("testData", testCase.GoldenFile))
+				assert.NoError(t, err)
+				goldenContent := bytes.ReplaceAll(initialGoldenContent, []byte(testCase.InputFile), []byte(testCase.InputFile+".gz"))
+				tmpGoldenFile := marshal.CreateTempFileWithContent(t, goldenContent)
+				marshal.TestParserOutput(t, testCase.Parser, makeCacheWithComptesMapping(), compressedFilePath, tmpGoldenFile.Name(), false)
+			})
 		}
 	})
 }
