@@ -61,10 +61,9 @@ func TestUrssaf(t *testing.T) {
 func TestComptes(t *testing.T) {
 
 	t.Run("Le fichier de test Comptes est parsé comme d'habitude", func(t *testing.T) {
-		cache := marshal.NewCache()
 		var golden = filepath.Join("testData", "expectedComptes.json")
 		var testData = filepath.Join("testData", "comptesTestData.csv")
-		marshal.TestParserOutput(t, ParserCompte, cache, testData, golden, *update)
+		marshal.TestParserOutput(t, ParserCompte, makeCacheWithComptesMapping(), testData, golden, *update)
 	})
 }
 
