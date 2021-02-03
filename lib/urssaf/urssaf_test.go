@@ -36,10 +36,11 @@ func TestUrssaf(t *testing.T) {
 			Cache      marshal.Cache
 		}
 		urssafFiles := []TestCase{
-			{ParserDebit, "debitTestData.csv", "expectedDebit.json", makeCacheWithComptesMapping()},
-			{ParserDelai, "delaiTestData.csv", "expectedDelai.json", makeCacheWithComptesMapping()},
 			{ParserCCSF, "ccsfTestData.csv", "expectedCcsf.json", makeCacheWithComptesMapping()},
 			{ParserCompte, "comptesTestData.csv", "expectedComptes.json", marshal.NewCache()},
+			{ParserDebit, "debitTestData.csv", "expectedDebit.json", makeCacheWithComptesMapping()},
+			{ParserDelai, "delaiTestData.csv", "expectedDelai.json", makeCacheWithComptesMapping()},
+			{ParserEffectifEnt, "effectifEntTestData.csv", "expectedEffectifEnt.json", makeCacheWithComptesMapping()},
 			// TODO: appliquer à tous les fichiers
 		}
 		for _, testCase := range urssafFiles {
