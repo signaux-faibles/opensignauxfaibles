@@ -1,5 +1,7 @@
 /* eslint-disable no-use-before-define */
 
+import { EntréeDelai } from "./GeneratedTypes"
+
 // Types de données de base
 
 export type Periode = string // Date.getTime().toString()
@@ -162,32 +164,6 @@ export type EntréeEffectifEnt = {
   periode: Date
   /** Nombre de personnes employées par l'entreprise. */
   effectif: number
-}
-
-// Valeurs attendues par delais(), pour chaque période. (cf lib/urssaf/delai.go)
-export type EntréeDelai = {
-  /** Compte administratif URSSAF. */
-  numero_compte: string
-  /** Le numéro de structure est l'identifiant d'un dossier contentieux. */
-  numero_contentieux: string
-  /** Date de création du délai. */
-  date_creation: Date
-  /** Date d'échéance du délai. */
-  date_echeance: Date
-  /** Durée du délai en jours: nombre de jours entre date_creation et date_echeance. */
-  duree_delai: number
-  /** Raison sociale de l'établissement. */
-  denomination: string
-  /** Délai inférieur ou supérieur à 6 mois ? Modalités INF et SUP. */
-  indic_6m: string
-  /** Année de création du délai. */
-  annee_creation: number
-  /** Montant global de l'échéancier, en euros. */
-  montant_echeancier: number
-  /** Code externe du stade. */
-  stade: string
-  /** Code externe de l'action. */
-  action: string
 }
 
 export type EntréeCotisation = {

@@ -8,23 +8,36 @@
         "1802": {
           "delai": {
             "hash-données-valides": {
+              "action": "bad mu",
+              "annee_creation": 9941,
               "date_creation": ISODate("2016-09-01T00:00:00.000+0000"),
               "date_echeance": ISODate("2016-09-01T00:00:00.000+0000"),
+              "denomination": "mtj n.p. eg saxjoc",
               "duree_delai": 1,
-              "montant_echeancier": 10
+              "indic_6m": "uqu",
+              "montant_echeancier": 10,
+              "numero_compte": "636043216536562844",
+              "numero_contentieux": "8981265766679",
+              "stade": "qh"
             },
             "hash-délai-nul": {
+              "action": "bad mu",
+              "annee_creation": 9941,
               "date_creation": ISODate("2016-09-01T00:00:00.000+0000"),
               "date_echeance": ISODate("2016-09-01T00:00:00.000+0000"),
+              "denomination": "mtj n.p. eg saxjoc",
               "duree_delai": 0,
-              "montant_echeancier": 10
+              "indic_6m": "uqu",
+              "montant_echeancier": 10,
+              "numero_compte": "636043216536562844",
+              "numero_contentieux": "8981265766679",
+              "stade": "qh"
             }
           }
         },
         "1803": {
           "bdf": {
-            "hash-siren-manquant": {
-            },
+            "hash-siren-manquant": {},
             "hash-siren-invalide": {
               "siren": "123"
             },

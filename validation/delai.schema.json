@@ -1,25 +1,66 @@
 {
   "title": "EntréeDelai",
-  "description": "Note: CE SCHEMA EST INCOMPLET POUR L'INSTANT. Cf https://github.com/signaux-faibles/opensignauxfaibles/pull/143",
+  "description": "Champs importés par le parseur lib/urssaf/delai.go de sfdata.",
   "bsonType": "object",
   "required": [
+    "numero_compte",
+    "numero_contentieux",
     "date_creation",
     "date_echeance",
     "duree_delai",
-    "montant_echeancier"
+    "denomination",
+    "indic_6m",
+    "annee_creation",
+    "montant_echeancier",
+    "stade",
+    "action"
   ],
   "properties": {
-    "date_creation": { "bsonType": "date" },
-    "date_echeance": { "bsonType": "date" },
+    "numero_compte": {
+      "bsonType": "string",
+      "description": "Compte administratif URSSAF."
+    },
+    "numero_contentieux": {
+      "bsonType": "string",
+      "description": "Le numéro de structure est l'identifiant d'un dossier contentieux."
+    },
+    "date_creation": {
+      "bsonType": "date",
+      "description": "Date de création du délai."
+    },
+    "date_echeance": {
+      "bsonType": "date",
+      "description": "Date d'échéance du délai."
+    },
     "duree_delai": {
       "bsonType": "number",
-      "description": "Doit valoir 1 ou plus:",
+      "description": "Durée du délai en jours: nombre de jours entre date_creation et date_echeance.",
       "minimum": 1
+    },
+    "denomination": {
+      "bsonType": "string",
+      "description": "Raison sociale de l'établissement."
+    },
+    "indic_6m": {
+      "bsonType": "string",
+      "description": "Délai inférieur ou supérieur à 6 mois ? Modalités INF et SUP."
+    },
+    "annee_creation": {
+      "bsonType": "number",
+      "description": "Année de création du délai."
     },
     "montant_echeancier": {
       "bsonType": "number",
-      "description": "Doit valoir plus que 0 euros:",
+      "description": "Montant global de l'échéancier, en euros.",
       "minimum": 0.01
+    },
+    "stade": {
+      "bsonType": "string",
+      "description": "Code externe du stade."
+    },
+    "action": {
+      "bsonType": "string",
+      "description": "Code externe de l'action."
     }
   },
   "additionalProperties": false
