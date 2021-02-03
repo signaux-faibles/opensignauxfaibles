@@ -39,7 +39,6 @@ func (tracker *ParsingTracker) AddFilterError(err error) {
 		tracker.nbSkippedLines++
 		tracker.lastSkippedLine = tracker.currentLine
 	}
-	// fmt.Fprintf(os.Stderr, "Line %d: %v\n", tracker.currentLine, err.Error()) // on ne souhaite pas conserver ces erreurs dans le rapport
 }
 
 // AddParseError rapporte une erreur rencontrée sur la ligne en cours de parsing
