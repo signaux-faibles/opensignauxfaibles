@@ -66,7 +66,6 @@ func (parser *effectifParser) Open(filePath string) (err error) {
 }
 
 func openEffectifFile(filePath string) (*os.File, *csv.Reader, error) {
-	var fileReader io.Reader
 	file, fileReader, err := marshal.OpenFileReader(filePath)
 	if err != nil {
 		return file, nil, err

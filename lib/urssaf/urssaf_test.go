@@ -42,7 +42,7 @@ func TestUrssaf(t *testing.T) {
 			{ParserDelai, "delaiTestData.csv", "expectedDelai.json", makeCacheWithComptesMapping()},
 			{ParserEffectifEnt, "effectifEntTestData.csv", "expectedEffectifEnt.json", makeCacheWithComptesMapping()},
 			{ParserEffectif, "effectifTestData.csv", "expectedEffectif.json", makeCacheWithComptesMapping()},
-			// TODO: appliquer à tous les fichiers
+			{ParserProcol, "procolTestData.csv", "expectedProcol.json", makeCacheWithComptesMapping()},
 		}
 		for _, testCase := range urssafFiles {
 			t.Run(testCase.Parser.GetFileType(), func(t *testing.T) {
