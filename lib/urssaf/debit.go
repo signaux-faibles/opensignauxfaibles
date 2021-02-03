@@ -72,28 +72,30 @@ func (parser *debitParser) Init(cache *marshal.Cache, batch *base.AdminBatch) (e
 }
 
 func (parser *debitParser) Open(filePath string) (err error) {
-	parser.file, err = os.Open(filePath)
-	if err != nil {
-		return err
+	parser.file, parser.reader, err = openDebitFile(filePath)
+	if err == nil {
+		parser.idx, err = marshal.IndexColumnsFromCsvHeader(parser.reader, Debit{})
 	}
-	var fileReader io.Reader
-	if strings.HasSuffix(filePath, ".gz") {
-		fileReader, err = gzip.NewReader(parser.file)
-		if err != nil {
-			return err
-		}
-	} else {
-		fileReader = bufio.NewReader(parser.file)
-	}
-	parser.reader = openDebitFile(fileReader)
-	parser.idx, err = marshal.IndexColumnsFromCsvHeader(parser.reader, Debit{})
 	return err
 }
 
-func openDebitFile(inputReader io.Reader) *csv.Reader {
-	csvReader := csv.NewReader(inputReader)
+func openDebitFile(filePath string) (*os.File, *csv.Reader, error) {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return file, nil, err
+	}
+	var fileReader io.Reader
+	if strings.HasSuffix(filePath, ".gz") {
+		fileReader, err = gzip.NewReader(file)
+		if err != nil {
+			return file, nil, err
+		}
+	} else {
+		fileReader = bufio.NewReader(file)
+	}
+	csvReader := csv.NewReader(fileReader)
 	csvReader.Comma = ';'
-	return csvReader
+	return file, csvReader, nil
 }
 
 func (parser *debitParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
