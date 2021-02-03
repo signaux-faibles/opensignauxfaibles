@@ -1,12 +1,9 @@
 package urssaf
 
 import (
-	"bufio"
-	"compress/gzip"
 	"encoding/csv"
 	"io"
 	"os"
-	"strings"
 	"time"
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
@@ -80,18 +77,9 @@ func (parser *debitParser) Open(filePath string) (err error) {
 }
 
 func openDebitFile(filePath string) (*os.File, *csv.Reader, error) {
-	file, err := os.Open(filePath)
+	file, fileReader, err := marshal.OpenFileReader(filePath)
 	if err != nil {
 		return file, nil, err
-	}
-	var fileReader io.Reader
-	if strings.HasSuffix(filePath, ".gz") {
-		fileReader, err = gzip.NewReader(file)
-		if err != nil {
-			return file, nil, err
-		}
-	} else {
-		fileReader = bufio.NewReader(file)
 	}
 	csvReader := csv.NewReader(fileReader)
 	csvReader.Comma = ';'
