@@ -1,0 +1,8 @@
+{
+  "title": "EntréeCcsf",
+  "description": "Champs importés par le parseur lib/urssaf/ccsf.go de sfdata.",
+  "bsonType": "object",
+  "required": [],
+  "properties": {},
+  "additionalProperties": false
+}
