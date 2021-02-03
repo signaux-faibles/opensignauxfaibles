@@ -46,7 +46,7 @@ func reflectPropsFromStruct(structInstance interface{}) map[string]propertySchem
 	for i := 0; i < fields.NumField(); i++ {
 		field := fields.Field(i)
 		fieldName := field.Tag.Get("json")
-		if fieldName != "" {
+		if fieldName != "" && fieldName != "-" {
 			fieldType := field.Type.Name()
 			// support pointer types
 			if fieldType == "" {
