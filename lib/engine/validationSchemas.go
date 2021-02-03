@@ -17,6 +17,28 @@ var validationSchemas = map[string]string{
   "additionalProperties": false
 }
 `,
+"ccsf.schema.json": `{
+  "title": "EntréeCcsf",
+  "description": "Champs importés par le parseur lib/urssaf/ccsf.go de sfdata.",
+  "bsonType": "object",
+  "required": ["date_traitement", "stade", "action"],
+  "properties": {
+    "date_traitement": {
+      "bsonType": "date",
+      "description": "Date de début de la procédure CCSF"
+    },
+    "stade": {
+      "bsonType": "string",
+      "_TODO": "choisir un type plus précis"
+    },
+    "action": {
+      "bsonType": "string",
+      "_TODO": "choisir un type plus précis"
+    }
+  },
+  "additionalProperties": false
+}
+`,
 "delai.schema.json": `{
   "title": "EntréeDelai",
   "description": "Champs importés par le parseur lib/urssaf/delai.go de sfdata.",
