@@ -69,8 +69,9 @@ func TestTypeAlignment(t *testing.T) {
 	}
 
 	typesToCompare := map[string]TypeToCompare{
-		"ccsf.schema.json":  {urssaf.CCSF{}, []error{}},
-		"delai.schema.json": {urssaf.Delai{}, []error{}}, // delai.schema.json est aligné avec le type urssaf.Delai 👌
+		"ccsf.schema.json":   {urssaf.CCSF{}, []error{}},
+		"procol.schema.json": {urssaf.Procol{}, []error{}},
+		"delai.schema.json":  {urssaf.Delai{}, []error{}}, // delai.schema.json est aligné avec le type urssaf.Delai 👌
 		"bdf.schema.json": {bdf.BDF{}, []error{ // bdf.schema.json n'est pas encore complet => la vérification va retourner les erreurs suivantes:
 			errors.New("property not found in JSON Schema: delai_fournisseur"),
 			errors.New("property not found in JSON Schema: dette_fiscale"),
