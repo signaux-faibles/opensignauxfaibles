@@ -1,7 +1,9 @@
 package urssaf
 
 import (
+	"bytes"
 	"flag"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -32,12 +34,17 @@ func TestUrssaf(t *testing.T) {
 			// TODO: appliquer à tous les fichiers
 		}
 		for inputFile, goldenFile := range urssafFiles {
+			// Compression du fichier de données
 			err := exec.Command("gzip", "--keep", filepath.Join("testData", inputFile)).Run() // créée une version gzippée du fichier
 			assert.NoError(t, err)
 			compressedFilePath := filepath.Join("testData", inputFile+".gz")
 			t.Cleanup(func() { os.Remove(compressedFilePath) })
-			goldenFilePath := filepath.Join("testData", goldenFile)
-			marshal.TestParserOutput(t, ParserDebit, makeCacheWithComptesMapping(), compressedFilePath, goldenFilePath, *update)
+			// Création d'un fichier Golden temporaire mentionnant le nom du fichier compressé
+			initialGoldenContent, err := ioutil.ReadFile(filepath.Join("testData", goldenFile))
+			assert.NoError(t, err)
+			goldenContent := bytes.ReplaceAll(initialGoldenContent, []byte(inputFile), []byte(inputFile+".gz"))
+			tmpGoldenFile := marshal.CreateTempFileWithContent(t, goldenContent)
+			marshal.TestParserOutput(t, ParserDebit, makeCacheWithComptesMapping(), compressedFilePath, tmpGoldenFile.Name(), false)
 		}
 	})
 }
