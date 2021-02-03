@@ -7,7 +7,7 @@ var validationSchemas = map[string]string{
   "title": "EntréeApConso",
   "description": "Champs importés par le parseur lib/apconso/main.go de sfdata.",
   "bsonType": "object",
-  "required": ["id_conso", "heure_consomme", "montant", "effectif", "periode"],
+  "required": ["id_conso", "periode", "heure_consomme"],
   "properties": {
     "id_conso": {
       "bsonType": "string"

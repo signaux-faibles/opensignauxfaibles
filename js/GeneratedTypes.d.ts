@@ -14,8 +14,8 @@
 export interface EntréeApConso {
   id_conso: string
   heure_consomme: number
-  montant: number
-  effectif: number
+  montant?: number
+  effectif?: number
   periode: Date
 }
 /**
