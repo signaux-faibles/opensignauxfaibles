@@ -69,7 +69,7 @@ var validationSchemas = map[string]string{
     "effectif_autorise": {
       "bsonType": "number"
     },
-    "heure_consomme": {
+    "heure_consommee": {
       "bsonType": "number"
     },
     "montant_consomme": {

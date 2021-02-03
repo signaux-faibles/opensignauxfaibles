@@ -40,7 +40,7 @@ export interface EntréeApDemande {
   date_statut?: Date
   mta?: number
   effectif_autorise?: number
-  heure_consomme?: number
+  heure_consommee?: number
   montant_consomme?: number
   effectif_consomme?: number
 }
