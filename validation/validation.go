@@ -44,26 +44,36 @@ func diffMaps(schemaProps map[string]propertySchema, structProps map[string]prop
 }
 
 func reflectPropsFromStruct(structInstance interface{}) map[string]propertySchema {
+	return reflectPropsFromType(reflect.TypeOf(structInstance))
+}
+
+func reflectPropsFromType(structType reflect.Type) map[string]propertySchema {
 	props := make(map[string]propertySchema)
-	fields := reflect.TypeOf(structInstance)
-	for i := 0; i < fields.NumField(); i++ {
-		field := fields.Field(i)
+	for i := 0; i < structType.NumField(); i++ {
+		field := structType.Field(i)
 		fieldName := field.Tag.Get("json")
 		if fieldName != "" && fieldName != "-" {
 			fieldType := field.Type.Name()
 			if field.Type.Kind() == reflect.Struct && fieldType != "Time" {
+				props[fieldName] = propertySchema{
+					BsonType:        "object",
+					Properties:      reflectPropsFromType(field.Type),
+					RequiredProps:   []string{"start", "end"}, // TODO: get list of props extracted above
+					AdditionalProps: false,
+				}
+			} else {
+				// support pointer types
+				if fieldType == "" {
+					fieldType = field.Type.Elem().Name()
+				}
+				// convert go types to javascript equivalents
+				if fieldType == "int" || fieldType == "float64" {
+					fieldType = "number"
+				} else if fieldType == "Time" {
+					fieldType = "date"
+				}
+				props[fieldName] = propertySchema{BsonType: fieldType}
 			}
-			// support pointer types
-			if fieldType == "" {
-				fieldType = field.Type.Elem().Name()
-			}
-			// convert go types to javascript equivalents
-			if fieldType == "int" || fieldType == "float64" {
-				fieldType = "number"
-			} else if fieldType == "Time" {
-				fieldType = "date"
-			}
-			props[fieldName] = propertySchema{BsonType: fieldType}
 		}
 	}
 	return props
