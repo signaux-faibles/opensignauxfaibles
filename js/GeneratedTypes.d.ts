@@ -9,6 +9,16 @@
  */
 
 /**
+ * Champs importés par le parseur lib/apconso/main.go de sfdata.
+ */
+export interface EntréeApConso {
+  id_conso: string
+  heure_consomme: number
+  montant: number
+  effectif: number
+  periode: Date
+}
+/**
  * Note: CE SCHEMA EST INCOMPLET POUR L'INSTANT. Cf https://github.com/signaux-faibles/opensignauxfaibles/pull/143
  */
 export interface EntréeBdf {

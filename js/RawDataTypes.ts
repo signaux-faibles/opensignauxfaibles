@@ -1,6 +1,11 @@
 /* eslint-disable no-use-before-define */
 
-import { EntréeDelai, EntréeCcsf, EntréeDéfaillances } from "./GeneratedTypes"
+import {
+  EntréeApConso,
+  EntréeDelai,
+  EntréeCcsf,
+  EntréeDéfaillances,
+} from "./GeneratedTypes"
 
 // Types de données de base
 
@@ -87,12 +92,6 @@ export type BatchValueProps = CommonBatchProps &
   }
 
 // Détail des types de données
-
-export type EntréeApConso = {
-  id_conso: string
-  periode: Date
-  heure_consomme: number
-}
 
 export type EntréeApDemande = {
   id_demande: string

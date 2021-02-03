@@ -3,6 +3,31 @@
 package engine
 
 var validationSchemas = map[string]string{
+"apconso.schema.json": `{
+  "title": "EntréeApConso",
+  "description": "Champs importés par le parseur lib/apconso/main.go de sfdata.",
+  "bsonType": "object",
+  "required": ["id_conso", "heure_consomme", "montant", "effectif", "periode"],
+  "properties": {
+    "id_conso": {
+      "bsonType": "string"
+    },
+    "heure_consomme": {
+      "bsonType": "number"
+    },
+    "montant": {
+      "bsonType": "number"
+    },
+    "effectif": {
+      "bsonType": "number"
+    },
+    "periode": {
+      "bsonType": "date"
+    }
+  },
+  "additionalProperties": false
+}
+`,
 "bdf.schema.json": `{
   "title": "EntréeBdf",
   "description": "Note: CE SCHEMA EST INCOMPLET POUR L'INSTANT. Cf https://github.com/signaux-faibles/opensignauxfaibles/pull/143",

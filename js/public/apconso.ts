@@ -1,4 +1,5 @@
-import { EntréeApConso, ParHash } from "../RawDataTypes"
+import { EntréeApConso } from "../GeneratedTypes"
+import { ParHash } from "../RawDataTypes"
 
 export function apconso(apconso?: ParHash<EntréeApConso>): EntréeApConso[] {
   return Object.values(apconso ?? {}).sort((p1, p2) =>

@@ -1,6 +1,7 @@
 import test, { ExecutionContext } from "ava"
 import { currentState } from "./currentState"
-import { EntréeApDemande, EntréeApConso } from "../RawDataTypes"
+import { EntréeApConso } from "../GeneratedTypes"
+import { EntréeApDemande } from "../RawDataTypes"
 
 const makeApDemande = (): EntréeApDemande => ({
   id_demande: "",
