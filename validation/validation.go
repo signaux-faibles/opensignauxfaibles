@@ -37,7 +37,7 @@ func diffMaps(schemaProps map[string]propertySchema, structProps map[string]prop
 	}
 	for _, k := range commonKeys {
 		if !reflect.DeepEqual(structProps[k], schemaProps[k]) {
-			errors = append(errors, fmt.Errorf("property types of \"%v\" don't match: %v <> %v", k, schemaProps[k].BsonType, structProps[k].BsonType))
+			errors = append(errors, fmt.Errorf("property types of \"%v\" don't match: %v <> %v", k, schemaProps[k], structProps[k]))
 		}
 	}
 	return errors

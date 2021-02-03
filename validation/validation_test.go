@@ -36,7 +36,7 @@ func TestDiffMaps(t *testing.T) {
 		schemaProps := map[string]propertySchema{"a": {BsonType: "number"}}
 		structProps := map[string]propertySchema{"a": {BsonType: "string"}}
 		assert.ElementsMatch(t, diffMaps(schemaProps, structProps), []error{
-			errors.New("property types of \"a\" don't match: number <> string"),
+			errors.New("property types of \"a\" don't match: {number map[] [] false} <> {string map[] [] false}"),
 		})
 	})
 }
