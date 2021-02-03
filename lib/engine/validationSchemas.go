@@ -29,11 +29,11 @@ var validationSchemas = map[string]string{
     },
     "stade": {
       "bsonType": "string",
-      "_TODO": "choisir un type plus précis"
+      "description": "TODO: choisir un type plus précis"
     },
     "action": {
       "bsonType": "string",
-      "_TODO": "choisir un type plus précis"
+      "description": "TODO: choisir un type plus précis"
     }
   },
   "additionalProperties": false

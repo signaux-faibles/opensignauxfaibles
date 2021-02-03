@@ -22,7 +22,13 @@ export interface EntréeCcsf {
    * Date de début de la procédure CCSF
    */
   date_traitement: Date
+  /**
+   * TODO: choisir un type plus précis
+   */
   stade: string
+  /**
+   * TODO: choisir un type plus précis
+   */
   action: string
 }
 /**
