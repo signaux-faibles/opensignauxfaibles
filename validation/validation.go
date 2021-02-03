@@ -14,7 +14,10 @@ type jsonSchema struct {
 }
 
 type propertySchema struct {
-	BsonType string `json:"bsonType"`
+	BsonType        string                    `json:"bsonType,omitempty"`
+	Properties      map[string]propertySchema `json:"properties,omitempty"`
+	RequiredProps   []string                  `json:"required,omitempty"`
+	AdditionalProps bool                      `json:"additionalProperties,omitempty"`
 }
 
 func diffMaps(schemaProps map[string]propertySchema, structProps map[string]propertySchema) []error {
@@ -33,8 +36,8 @@ func diffMaps(schemaProps map[string]propertySchema, structProps map[string]prop
 		}
 	}
 	for _, k := range commonKeys {
-		if structProps[k] != schemaProps[k] {
-			errors = append(errors, fmt.Errorf("property types of \"%v\" don't match: %v <> %v", k, schemaProps[k], structProps[k]))
+		if !reflect.DeepEqual(structProps[k], schemaProps[k]) {
+			errors = append(errors, fmt.Errorf("property types of \"%v\" don't match: %v <> %v", k, schemaProps[k].BsonType, structProps[k].BsonType))
 		}
 	}
 	return errors
@@ -48,6 +51,8 @@ func reflectPropsFromStruct(structInstance interface{}) map[string]propertySchem
 		fieldName := field.Tag.Get("json")
 		if fieldName != "" && fieldName != "-" {
 			fieldType := field.Type.Name()
+			if field.Type.Kind() == reflect.Struct && fieldType != "Time" {
+			}
 			// support pointer types
 			if fieldType == "" {
 				fieldType = field.Type.Elem().Name()
@@ -58,7 +63,7 @@ func reflectPropsFromStruct(structInstance interface{}) map[string]propertySchem
 			} else if fieldType == "Time" {
 				fieldType = "date"
 			}
-			props[fieldName] = propertySchema{fieldType}
+			props[fieldName] = propertySchema{BsonType: fieldType}
 		}
 	}
 	return props

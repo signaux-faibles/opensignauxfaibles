@@ -33,10 +33,10 @@ func TestDiffMaps(t *testing.T) {
 		})
 	})
 	t.Run("doit détecter une entrée dont le type ne correspond pas", func(t *testing.T) {
-		schemaProps := map[string]propertySchema{"a": {"number"}}
-		structProps := map[string]propertySchema{"a": {"string"}}
+		schemaProps := map[string]propertySchema{"a": {BsonType: "number"}}
+		structProps := map[string]propertySchema{"a": {BsonType: "string"}}
 		assert.ElementsMatch(t, diffMaps(schemaProps, structProps), []error{
-			errors.New("property types of \"a\" don't match: {number} <> {string}"),
+			errors.New("property types of \"a\" don't match: number <> string"),
 		})
 	})
 }
@@ -46,20 +46,20 @@ func TestReflectPropsFromStruct(t *testing.T) {
 		type MyType struct {
 			MyField string `json:"myField"`
 		}
-		assert.Equal(t, map[string]propertySchema{"myField": {"string"}}, reflectPropsFromStruct(MyType{}))
+		assert.Equal(t, map[string]propertySchema{"myField": {BsonType: "string"}}, reflectPropsFromStruct(MyType{}))
 	})
 	t.Run("doit interpréter les types float64 et int comme number", func(t *testing.T) {
 		type MyType struct {
 			MyField1 int     `json:"f1"`
 			MyField2 float64 `json:"f2"`
 		}
-		assert.Equal(t, map[string]propertySchema{"f1": {"number"}, "f2": {"number"}}, reflectPropsFromStruct(MyType{}))
+		assert.Equal(t, map[string]propertySchema{"f1": {BsonType: "number"}, "f2": {BsonType: "number"}}, reflectPropsFromStruct(MyType{}))
 	})
 	t.Run("doit reconnaitre le type des pointeurs", func(t *testing.T) {
 		type MyType struct {
 			MyField1 *int `json:"f1"`
 		}
-		assert.Equal(t, map[string]propertySchema{"f1": {"number"}}, reflectPropsFromStruct(MyType{}))
+		assert.Equal(t, map[string]propertySchema{"f1": {BsonType: "number"}}, reflectPropsFromStruct(MyType{}))
 	})
 }
 
