@@ -416,6 +416,9 @@ func ValidateDataEntries(jsonSchema map[string]bson.M, collection string) error 
 
 func iterateToChannel(channel chan interface{}, iterator *mgo.Iter) error {
 	var item interface{}
+	if err := iterator.Err(); err != nil {
+		return err // e.g. "Erreur: Unknown $jsonSchema keyword: _TODO"
+	}
 	for iterator.Next(&item) {
 		if err := iterator.Err(); err != nil {
 			return err
