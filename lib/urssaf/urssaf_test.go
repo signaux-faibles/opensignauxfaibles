@@ -2,6 +2,8 @@ package urssaf
 
 import (
 	"flag"
+	"os"
+	"os/exec"
 	"path/filepath"
 	"testing"
 
@@ -21,6 +23,23 @@ func makeCacheWithComptesMapping() marshal.Cache {
 		},
 	))
 	return cache
+}
+
+func TestUrssaf(t *testing.T) {
+	t.Run("Les fichiers urssaf gzippés peuvent être décompressés à la volée", func(t *testing.T) {
+		urssafFiles := map[string]string{
+			"debitTestData.csv": "expectedDebit.json",
+			// TODO: appliquer à tous les fichiers
+		}
+		for inputFile, goldenFile := range urssafFiles {
+			err := exec.Command("gzip", "--keep", filepath.Join("testData", inputFile)).Run() // créée une version gzippée du fichier
+			assert.NoError(t, err)
+			compressedFilePath := filepath.Join("testData", inputFile+".gz")
+			t.Cleanup(func() { os.Remove(compressedFilePath) })
+			goldenFilePath := filepath.Join("testData", goldenFile)
+			marshal.TestParserOutput(t, ParserDebit, makeCacheWithComptesMapping(), compressedFilePath, goldenFilePath, *update)
+		}
+	})
 }
 
 func TestDebit(t *testing.T) {
