@@ -2,6 +2,7 @@
 
 import {
   EntréeApConso,
+  EntréeApDemande,
   EntréeDelai,
   EntréeCcsf,
   EntréeDéfaillances,
@@ -92,21 +93,6 @@ export type BatchValueProps = CommonBatchProps &
   }
 
 // Détail des types de données
-
-export type EntréeApDemande = {
-  id_demande: string
-  periode: { start: Date; end: Date }
-  hta: number /* Nombre total d'heures autorisées */
-  motif_recours_se: number /* Cause d'activité partielle */
-  effectif_entreprise?: number
-  effectif?: number
-  date_statut?: Date
-  mta?: number
-  effectif_autorise?: number
-  heure_consomme?: number
-  montant_consomme?: number
-  effectif_consomme?: number
-}
 
 export type EntréeCompte = {
   /** Date à laquelle cet établissement est associé à ce numéro de compte URSSAF. */

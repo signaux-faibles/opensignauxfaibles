@@ -1,0 +1,53 @@
+{
+  "title": "EntréeApDemande",
+  "description": "Champs importés par le parseur lib/apdemande/main.go de sfdata.",
+  "bsonType": "object",
+  "required": ["id_demande", "periode", "hta", "motif_recours_se"],
+  "properties": {
+    "id_demande": {
+      "bsonType": "string"
+    },
+    "periode": {
+      "bsonType": "object",
+      "required": ["start", "end"],
+      "properties": {
+        "start": { "bsonType": "date" },
+        "end": { "bsonType": "date" }
+      },
+      "additionalProperties": false
+    },
+    "hta": {
+      "description": "Nombre total d'heures autorisées",
+      "bsonType": "number"
+    },
+    "motif_recours_se": {
+      "description": "Cause d'activité partielle",
+      "bsonType": "number"
+    },
+    "effectif_entreprise": {
+      "bsonType": "number"
+    },
+    "effectif": {
+      "bsonType": "number"
+    },
+    "date_statut": {
+      "bsonType": "date"
+    },
+    "mta": {
+      "bsonType": "number"
+    },
+    "effectif_autorise": {
+      "bsonType": "number"
+    },
+    "heure_consomme": {
+      "bsonType": "number"
+    },
+    "montant_consomme": {
+      "bsonType": "number"
+    },
+    "effectif_consomme": {
+      "bsonType": "number"
+    }
+  },
+  "additionalProperties": false
+}

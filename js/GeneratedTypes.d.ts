@@ -19,6 +19,32 @@ export interface EntréeApConso {
   periode: Date
 }
 /**
+ * Champs importés par le parseur lib/apdemande/main.go de sfdata.
+ */
+export interface EntréeApDemande {
+  id_demande: string
+  periode: {
+    start: Date
+    end: Date
+  }
+  /**
+   * Nombre total d'heures autorisées
+   */
+  hta: number
+  /**
+   * Cause d'activité partielle
+   */
+  motif_recours_se: number
+  effectif_entreprise?: number
+  effectif?: number
+  date_statut?: Date
+  mta?: number
+  effectif_autorise?: number
+  heure_consomme?: number
+  montant_consomme?: number
+  effectif_consomme?: number
+}
+/**
  * Note: CE SCHEMA EST INCOMPLET POUR L'INSTANT. Cf https://github.com/signaux-faibles/opensignauxfaibles/pull/143
  */
 export interface EntréeBdf {

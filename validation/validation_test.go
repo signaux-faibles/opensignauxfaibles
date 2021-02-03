@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/apconso"
+	"github.com/signaux-faibles/opensignauxfaibles/lib/apdemande"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/bdf"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/urssaf"
 	"github.com/stretchr/testify/assert"
@@ -70,10 +71,11 @@ func TestTypeAlignment(t *testing.T) {
 	}
 
 	typesToCompare := map[string]TypeToCompare{
-		"apconso.schema.json": {apconso.APConso{}, []error{}},
-		"ccsf.schema.json":    {urssaf.CCSF{}, []error{}},
-		"delai.schema.json":   {urssaf.Delai{}, []error{}},
-		"procol.schema.json":  {urssaf.Procol{}, []error{}},
+		"apconso.schema.json":   {apconso.APConso{}, []error{}},
+		"apdemande.schema.json": {apdemande.APDemande{}, []error{}},
+		"ccsf.schema.json":      {urssaf.CCSF{}, []error{}},
+		"delai.schema.json":     {urssaf.Delai{}, []error{}},
+		"procol.schema.json":    {urssaf.Procol{}, []error{}},
 		"bdf.schema.json": {bdf.BDF{}, []error{ // bdf.schema.json n'est pas encore complet => la vérification va retourner les erreurs suivantes:
 			errors.New("property not found in JSON Schema: delai_fournisseur"),
 			errors.New("property not found in JSON Schema: dette_fiscale"),
