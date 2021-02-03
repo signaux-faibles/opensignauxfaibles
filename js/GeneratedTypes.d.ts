@@ -41,7 +41,7 @@ export interface EntréeApDemande {
   mta?: number
   effectif_autorise?: number
   heure_consommee?: number
-  montant_consomme?: number
+  montant_consommee?: number
   effectif_consomme?: number
 }
 /**
