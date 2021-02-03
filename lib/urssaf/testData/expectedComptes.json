@@ -6,11 +6,6 @@
       "periode": "2018-12-01T00:00:00Z"
     },
     {
-      "siret": "22222222222222",
-      "numero_compte": "450359886246036238",
-      "periode": "2018-12-01T00:00:00Z"
-    },
-    {
       "siret": "11111111111111",
       "numero_compte": "636043216536562844",
       "periode": "2018-12-01T00:00:00Z"
@@ -23,13 +18,15 @@
       "event": {
         "batchKey": "",
         "headFatal": [],
-        "headRejected": [],
+        "headRejected": [
+          "Line 2: Pas de siret associé au compte 450359886246036238 à la période 2018-12-01 00:00:00 +0000 UTC"
+        ],
         "isFatal": false,
         "linesParsed": 3,
-        "linesRejected": 0,
+        "linesRejected": 1,
         "linesSkipped": 0,
-        "linesValid": 3,
-        "summary": "testData/comptesTestData.csv: intégration terminée, 3 lignes traitées, 0 erreurs fatales, 0 lignes rejetées, 0 lignes filtrées, 3 lignes valides"
+        "linesValid": 2,
+        "summary": "testData/comptesTestData.csv: intégration terminée, 3 lignes traitées, 0 erreurs fatales, 1 lignes rejetées, 0 lignes filtrées, 2 lignes valides"
       },
       "priority": "info",
       "parserCode": "admin_urssaf",

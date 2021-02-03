@@ -33,12 +33,13 @@ func TestUrssaf(t *testing.T) {
 			Parser     marshal.Parser
 			InputFile  string
 			GoldenFile string
+			Cache      marshal.Cache
 		}
 		urssafFiles := []TestCase{
-			{ParserDebit, "debitTestData.csv", "expectedDebit.json"},
-			{ParserDelai, "delaiTestData.csv", "expectedDelai.json"},
-			{ParserCCSF, "ccsfTestData.csv", "expectedCcsf.json"},
-			{ParserCompte, "comptesTestData.csv", "expectedComptes.json"},
+			{ParserDebit, "debitTestData.csv", "expectedDebit.json", makeCacheWithComptesMapping()},
+			{ParserDelai, "delaiTestData.csv", "expectedDelai.json", makeCacheWithComptesMapping()},
+			{ParserCCSF, "ccsfTestData.csv", "expectedCcsf.json", makeCacheWithComptesMapping()},
+			{ParserCompte, "comptesTestData.csv", "expectedComptes.json", marshal.NewCache()},
 			// TODO: appliquer à tous les fichiers
 		}
 		for _, testCase := range urssafFiles {
@@ -53,7 +54,7 @@ func TestUrssaf(t *testing.T) {
 				assert.NoError(t, err)
 				goldenContent := bytes.ReplaceAll(initialGoldenContent, []byte(testCase.InputFile), []byte(testCase.InputFile+".gz"))
 				tmpGoldenFile := marshal.CreateTempFileWithContent(t, goldenContent)
-				marshal.TestParserOutput(t, testCase.Parser, makeCacheWithComptesMapping(), compressedFilePath, tmpGoldenFile.Name(), false)
+				marshal.TestParserOutput(t, testCase.Parser, testCase.Cache, compressedFilePath, tmpGoldenFile.Name(), false)
 			})
 		}
 	})
@@ -64,7 +65,7 @@ func TestComptes(t *testing.T) {
 	t.Run("Le fichier de test Comptes est parsé comme d'habitude", func(t *testing.T) {
 		var golden = filepath.Join("testData", "expectedComptes.json")
 		var testData = filepath.Join("testData", "comptesTestData.csv")
-		marshal.TestParserOutput(t, ParserCompte, makeCacheWithComptesMapping(), testData, golden, *update)
+		marshal.TestParserOutput(t, ParserCompte, marshal.NewCache(), testData, golden, *update)
 	})
 }
 
