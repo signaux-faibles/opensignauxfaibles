@@ -2,9 +2,11 @@ package urssaf
 
 import (
 	"bufio"
+	"compress/gzip"
 	"encoding/csv"
 	"io"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
@@ -70,21 +72,28 @@ func (parser *debitParser) Init(cache *marshal.Cache, batch *base.AdminBatch) (e
 }
 
 func (parser *debitParser) Open(filePath string) (err error) {
-	parser.file, parser.reader, err = openDebitFile(filePath)
-	if err == nil {
-		parser.idx, err = marshal.IndexColumnsFromCsvHeader(parser.reader, Debit{})
+	parser.file, err = os.Open(filePath)
+	if err != nil {
+		return err
 	}
+	// var reader *io.Reader
+	if strings.HasSuffix(filePath, ".gz") {
+		zr, err := gzip.NewReader(parser.file)
+		if err != nil {
+			return err
+		}
+		parser.reader = openDebitFile(zr)
+	} else {
+		parser.reader = openDebitFile(bufio.NewReader(parser.file))
+	}
+	parser.idx, err = marshal.IndexColumnsFromCsvHeader(parser.reader, Debit{})
 	return err
 }
 
-func openDebitFile(filePath string) (*os.File, *csv.Reader, error) {
-	file, err := os.Open(filePath)
-	if err != nil {
-		return file, nil, err
-	}
-	reader := csv.NewReader(bufio.NewReader(file))
-	reader.Comma = ';'
-	return file, reader, err
+func openDebitFile(inputReader io.Reader) *csv.Reader {
+	csvReader := csv.NewReader(inputReader)
+	csvReader.Comma = ';'
+	return csvReader
 }
 
 func (parser *debitParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
