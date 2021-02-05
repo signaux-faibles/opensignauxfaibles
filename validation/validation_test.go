@@ -19,6 +19,25 @@ import (
 
 var update = flag.Bool("update", false, "Update the expected test values in golden file") // please keep this line until https://github.com/kubernetes-sigs/service-catalog/issues/2319#issuecomment-425200065 is fixed
 
+func TestDiffSchema(t *testing.T) {
+	t.Run("doit vérifier qu'un champ est optionnel s'il est taggé avec \"omitempty\"", func(t *testing.T) {
+		type MyType struct {
+			MandatoryField string `json:"mandatoryField"`
+			OptionalField  string `json:"optionalField,omitempty"`
+		}
+		schema := propertySchema{
+			BsonType: "object",
+			Properties: map[string]propertySchema{
+				"mandatoryField": {BsonType: "string"},
+				"optionalField":  {BsonType: "string"},
+			},
+			RequiredProps:   []string{"mandatoryField"},
+			AdditionalProps: false,
+		}
+		assert.Equal(t, []error{}, diffSchema(schema, reflectStructType(reflect.TypeOf(MyType{}))))
+	})
+}
+
 func TestDiffMaps(t *testing.T) {
 	t.Run("doit détecter une entrée manquante dans la map A", func(t *testing.T) {
 		schemaProps := map[string]propertySchema{"a": {}, "b": {}}

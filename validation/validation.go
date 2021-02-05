@@ -21,6 +21,12 @@ type propertySchema struct {
 	AdditionalProps bool                      `json:"additionalProperties,omitempty"`
 }
 
+func diffSchema(jsonSchema propertySchema, structSchema propertySchema) []error {
+	errors := []error{}
+	errors = append(errors, diffMaps(jsonSchema.Properties, structSchema.Properties)...)
+	return errors
+}
+
 func diffMaps(schemaProps map[string]propertySchema, structProps map[string]propertySchema) []error {
 	errors := []error{}
 	commonKeys := []string{}
