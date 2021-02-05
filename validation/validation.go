@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"reflect"
+	"strings"
 )
 
 type jsonSchema struct {
@@ -53,6 +54,7 @@ func reflectPropsFromType(structType reflect.Type) map[string]propertySchema {
 		field := structType.Field(i)
 		fieldName := field.Tag.Get("json")
 		if fieldName != "" && fieldName != "-" {
+			fieldName = strings.ReplaceAll(fieldName, ",omitempty", "")
 			fieldType := field.Type.Name()
 			if field.Type.Kind() == reflect.Struct && fieldType != "Time" {
 				props[fieldName] = propertySchema{
