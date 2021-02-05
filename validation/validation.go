@@ -49,12 +49,21 @@ func reflectPropsFromStruct(structInstance interface{}) map[string]propertySchem
 }
 
 func reflectPropsFromType(structType reflect.Type) map[string]propertySchema {
+	return reflectStructType(structType).Properties
+}
+
+func reflectStructType(structType reflect.Type) propertySchema {
+	requiredProps := []string{}
 	props := make(map[string]propertySchema)
 	for i := 0; i < structType.NumField(); i++ {
 		field := structType.Field(i)
 		fieldName := field.Tag.Get("json")
 		if fieldName != "" && fieldName != "-" {
-			fieldName = strings.ReplaceAll(fieldName, ",omitempty", "")
+			if strings.Contains(fieldName, ",omitempty") == true {
+				fieldName = strings.ReplaceAll(fieldName, ",omitempty", "")
+			} else {
+				requiredProps = append(requiredProps, fieldName)
+			}
 			fieldType := field.Type.Name()
 			if field.Type.Kind() == reflect.Struct && fieldType != "Time" {
 				props[fieldName] = propertySchema{
@@ -78,7 +87,12 @@ func reflectPropsFromType(structType reflect.Type) map[string]propertySchema {
 			}
 		}
 	}
-	return props
+	return propertySchema{
+		BsonType:        "object",
+		Properties:      props,
+		RequiredProps:   requiredProps,
+		AdditionalProps: false,
+	}
 }
 
 func loadPropsFromSchema(filePath string) map[string]propertySchema {
