@@ -253,6 +253,23 @@ var validationSchemas = map[string]string{
   "additionalProperties": false
 }
 `,
+"effectif_ent.schema.json": `{
+  "title": "EntréeEffectifEnt",
+  "description": "Champs importés par le parseur lib/urssaf/effectif_ent.go de sfdata.",
+  "bsonType": "object",
+  "required": ["periode", "effectif"],
+  "properties": {
+    "periode": {
+      "bsonType": "date"
+    },
+    "effectif": {
+      "description": "Nombre de personnes employées par l'entreprise.",
+      "bsonType": "number"
+    }
+  },
+  "additionalProperties": false
+}
+`,
 "flatten_data_entries.pipeline.json": `[
   { "$project": { "_id": 1, "batches": { "$objectToArray": "$value.batch" } } },
   { "$unwind": { "path": "$batches", "preserveNullAndEmptyArrays": false } },

@@ -1,11 +1,6 @@
 import { f } from "./functions"
-import { EntréeEffectif } from "../GeneratedTypes"
-import {
-  EntréeEffectifEnt,
-  ParHash,
-  Timestamp,
-  ParPériode,
-} from "../RawDataTypes"
+import { EntréeEffectif, EntréeEffectifEnt } from "../GeneratedTypes"
+import { ParHash, Timestamp, ParPériode } from "../RawDataTypes"
 
 // Paramètres globaux utilisés par "reduce.algo2"
 declare const offset_effectif: number

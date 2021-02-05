@@ -134,6 +134,16 @@ export interface EntréeDelai {
   action: string
 }
 /**
+ * Champs importés par le parseur lib/urssaf/effectif_ent.go de sfdata.
+ */
+export interface EntréeEffectifEnt {
+  periode: Date
+  /**
+   * Nombre de personnes employées par l'entreprise.
+   */
+  effectif: number
+}
+/**
  * Champs importés par le parseur lib/urssaf/effectif.go de sfdata.
  */
 export interface EntréeEffectif {

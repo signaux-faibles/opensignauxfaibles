@@ -8,6 +8,7 @@ import {
   EntréeCompte,
   EntréeDéfaillances,
   EntréeEffectif,
+  EntréeEffectifEnt,
 } from "./GeneratedTypes"
 
 // Types de données de base
@@ -100,12 +101,6 @@ export type EntréeRepOrder = {
   random_order: number
   periode: Date
   siret: SiretOrSiren
-}
-
-export type EntréeEffectifEnt = {
-  periode: Date
-  /** Nombre de personnes employées par l'entreprise. */
-  effectif: number
 }
 
 export type EntréeCotisation = {
