@@ -10,6 +10,7 @@ import {
   EntréeDéfaillances,
   EntréeEffectif,
   EntréeEffectifEnt,
+  EntréeEllisphere,
   EntréePaydex,
 } from "./GeneratedTypes"
 
@@ -394,19 +395,4 @@ export type EntréeDiane = {
   impot_benefice: number
   /** Bénéfice ou perte. */
   benefice_ou_perte: number
-}
-
-export type EntréeEllisphere = {
-  siren: string
-  code_groupe: string
-  siren_groupe: string
-  refid_groupe: string
-  raison_sociale_groupe: string
-  adresse_groupe: string
-  personne_pou_m_groupe: string
-  niveau_detention: number
-  part_financiere: number
-  code_filiere: string
-  refid_filiere: string
-  personne_pou_m_filiere: string
 }

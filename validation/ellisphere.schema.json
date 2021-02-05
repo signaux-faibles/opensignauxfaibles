@@ -3,7 +3,6 @@
   "description": "Champs importés par le parseur lib/ellisphere/main.go de sfdata.",
   "bsonType": "object",
   "required": [
-    "siren",
     "code_groupe",
     "siren_groupe",
     "refid_groupe",
@@ -17,9 +16,6 @@
     "personne_pou_m_filiere"
   ],
   "properties": {
-    "siren": {
-      "bsonType": "string"
-    },
     "code_groupe": {
       "bsonType": "string"
     },

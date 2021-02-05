@@ -5,13 +5,13 @@ import {
   EntréeCompte,
   EntréeDelai,
   EntréeDéfaillances,
+  EntréeEllisphere,
   EntréePaydex,
 } from "../GeneratedTypes"
 import {
   CompanyDataValues,
   BatchKey,
   EntréeDiane,
-  EntréeEllisphere,
   EntréeSirene,
   EntréeSireneEntreprise,
 } from "../RawDataTypes"

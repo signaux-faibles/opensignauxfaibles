@@ -302,6 +302,61 @@ var validationSchemas = map[string]string{
   "additionalProperties": false
 }
 `,
+"ellisphere.schema.json": `{
+  "title": "EntréeEllisphere",
+  "description": "Champs importés par le parseur lib/ellisphere/main.go de sfdata.",
+  "bsonType": "object",
+  "required": [
+    "code_groupe",
+    "siren_groupe",
+    "refid_groupe",
+    "raison_sociale_groupe",
+    "adresse_groupe",
+    "personne_pou_m_groupe",
+    "niveau_detention",
+    "part_financiere",
+    "code_filiere",
+    "refid_filiere",
+    "personne_pou_m_filiere"
+  ],
+  "properties": {
+    "code_groupe": {
+      "bsonType": "string"
+    },
+    "siren_groupe": {
+      "bsonType": "string"
+    },
+    "refid_groupe": {
+      "bsonType": "string"
+    },
+    "raison_sociale_groupe": {
+      "bsonType": "string"
+    },
+    "adresse_groupe": {
+      "bsonType": "string"
+    },
+    "personne_pou_m_groupe": {
+      "bsonType": "string"
+    },
+    "niveau_detention": {
+      "bsonType": "number"
+    },
+    "part_financiere": {
+      "bsonType": "number"
+    },
+    "code_filiere": {
+      "bsonType": "string"
+    },
+    "refid_filiere": {
+      "bsonType": "string"
+    },
+    "personne_pou_m_filiere": {
+      "bsonType": "string"
+    }
+  },
+  "additionalProperties": false
+}
+`,
 "flatten_data_entries.pipeline.json": `[
   { "$project": { "_id": 1, "batches": { "$objectToArray": "$value.batch" } } },
   { "$unwind": { "path": "$batches", "preserveNullAndEmptyArrays": false } },

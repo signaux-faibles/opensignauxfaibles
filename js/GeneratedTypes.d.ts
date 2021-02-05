@@ -182,6 +182,22 @@ export interface EntréeEffectif {
   effectif: number
 }
 /**
+ * Champs importés par le parseur lib/ellisphere/main.go de sfdata.
+ */
+export interface EntréeEllisphere {
+  code_groupe: string
+  siren_groupe: string
+  refid_groupe: string
+  raison_sociale_groupe: string
+  adresse_groupe: string
+  personne_pou_m_groupe: string
+  niveau_detention: number
+  part_financiere: number
+  code_filiere: string
+  refid_filiere: string
+  personne_pou_m_filiere: string
+}
+/**
  * Champs importés par le parseur lib/paydex/main.go de sfdata.
  */
 export interface EntréePaydex {
