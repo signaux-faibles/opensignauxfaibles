@@ -5,6 +5,7 @@ import {
   EntréeCompte,
   EntréeDelai,
   EntréeDéfaillances,
+  EntréePaydex,
 } from "../GeneratedTypes"
 import {
   CompanyDataValues,
@@ -13,7 +14,6 @@ import {
   EntréeEllisphere,
   EntréeSirene,
   EntréeSireneEntreprise,
-  EntréePaydex,
 } from "../RawDataTypes"
 import { SortieDebit } from "./debits"
 import { Bdf } from "./bdf"

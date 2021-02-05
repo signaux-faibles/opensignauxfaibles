@@ -337,6 +337,22 @@ var validationSchemas = map[string]string{
   }
 ]
 `,
+"paydex.schema.json": `{
+  "title": "EntréePaydex",
+  "description": "Champs importés par le parseur lib/paydex/main.go de sfdata.",
+  "bsonType": "object",
+  "required": ["date_valeur", "nb_jours"],
+  "properties": {
+    "date_valeur": {
+      "bsonType": "date"
+    },
+    "nb_jours": {
+      "bsonType": "number"
+    }
+  },
+  "additionalProperties": false
+}
+`,
 "procol.schema.json": `{
   "title": "EntréeDéfaillances",
   "description": "Champs importés par le parseur lib/urssaf/procol.go de sfdata.",

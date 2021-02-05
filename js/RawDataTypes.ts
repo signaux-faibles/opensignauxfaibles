@@ -10,6 +10,7 @@ import {
   EntréeDéfaillances,
   EntréeEffectif,
   EntréeEffectifEnt,
+  EntréePaydex,
 } from "./GeneratedTypes"
 
 // Types de données de base
@@ -408,9 +409,4 @@ export type EntréeEllisphere = {
   code_filiere: string
   refid_filiere: string
   personne_pou_m_filiere: string
-}
-
-export type EntréePaydex = {
-  date_valeur: Date
-  nb_jours: number
 }

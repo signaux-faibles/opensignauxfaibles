@@ -1,0 +1,15 @@
+{
+  "title": "EntréePaydex",
+  "description": "Champs importés par le parseur lib/paydex/main.go de sfdata.",
+  "bsonType": "object",
+  "required": ["date_valeur", "nb_jours"],
+  "properties": {
+    "date_valeur": {
+      "bsonType": "date"
+    },
+    "nb_jours": {
+      "bsonType": "number"
+    }
+  },
+  "additionalProperties": false
+}

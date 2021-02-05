@@ -182,6 +182,13 @@ export interface EntréeEffectif {
   effectif: number
 }
 /**
+ * Champs importés par le parseur lib/paydex/main.go de sfdata.
+ */
+export interface EntréePaydex {
+  date_valeur: Date
+  nb_jours: number
+}
+/**
  * Champs importés par le parseur lib/urssaf/procol.go de sfdata.
  */
 export interface EntréeDéfaillances {

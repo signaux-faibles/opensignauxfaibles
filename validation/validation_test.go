@@ -11,6 +11,7 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/lib/apconso"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/apdemande"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/bdf"
+	"github.com/signaux-faibles/opensignauxfaibles/lib/paydex"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/urssaf"
 	"github.com/stretchr/testify/assert"
 )
@@ -79,6 +80,7 @@ func TestTypeAlignment(t *testing.T) {
 		"delai.schema.json":        {urssaf.Delai{}, []error{}},
 		"effectif.schema.json":     {urssaf.Effectif{}, []error{}},
 		"effectif_ent.schema.json": {urssaf.EffectifEnt{}, []error{}},
+		"paydex.schema.json":       {paydex.Paydex{}, []error{}},
 		"procol.schema.json":       {urssaf.Procol{}, []error{}},
 		"bdf.schema.json": {bdf.BDF{}, []error{ // bdf.schema.json n'est pas encore complet => la vérification va retourner les erreurs suivantes:
 			errors.New("property not found in JSON Schema: delai_fournisseur"),
