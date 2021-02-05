@@ -1,6 +1,6 @@
 import { f } from "./functions"
+import { EntréeEffectif } from "../GeneratedTypes"
 import {
-  EntréeEffectif,
   EntréeEffectifEnt,
   ParHash,
   Timestamp,

@@ -7,6 +7,7 @@ import {
   EntréeCcsf,
   EntréeCompte,
   EntréeDéfaillances,
+  EntréeEffectif,
 } from "./GeneratedTypes"
 
 // Types de données de base
@@ -99,14 +100,6 @@ export type EntréeRepOrder = {
   random_order: number
   periode: Date
   siret: SiretOrSiren
-}
-
-export type EntréeEffectif = {
-  /** Compte administratif URSSAF. */
-  numero_compte: string
-  periode: Date
-  /** Nombre de personnes employées par l'établissement. */
-  effectif: number
 }
 
 export type EntréeEffectifEnt = {

@@ -232,6 +232,27 @@ var validationSchemas = map[string]string{
   { "$match": { "dataPerHash": { "$not": { "$type": 3 } } } }
 ]
 `,
+"effectif.schema.json": `{
+  "title": "EntréeEffectif",
+  "description": "Champs importés par le parseur lib/urssaf/effectif.go de sfdata.",
+  "bsonType": "object",
+  "required": ["numero_compte", "periode", "effectif"],
+  "properties": {
+    "numero_compte": {
+      "description": "Compte administratif URSSAF.",
+      "bsonType": "string"
+    },
+    "periode": {
+      "bsonType": "date"
+    },
+    "effectif": {
+      "description": "Nombre de personnes employées par l'établissement.",
+      "bsonType": "number"
+    }
+  },
+  "additionalProperties": false
+}
+`,
 "flatten_data_entries.pipeline.json": `[
   { "$project": { "_id": 1, "batches": { "$objectToArray": "$value.batch" } } },
   { "$unwind": { "path": "$batches", "preserveNullAndEmptyArrays": false } },

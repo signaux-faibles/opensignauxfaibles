@@ -134,6 +134,20 @@ export interface EntréeDelai {
   action: string
 }
 /**
+ * Champs importés par le parseur lib/urssaf/effectif.go de sfdata.
+ */
+export interface EntréeEffectif {
+  /**
+   * Compte administratif URSSAF.
+   */
+  numero_compte: string
+  periode: Date
+  /**
+   * Nombre de personnes employées par l'établissement.
+   */
+  effectif: number
+}
+/**
  * Champs importés par le parseur lib/urssaf/procol.go de sfdata.
  */
 export interface EntréeDéfaillances {

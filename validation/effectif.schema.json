@@ -1,0 +1,20 @@
+{
+  "title": "EntréeEffectif",
+  "description": "Champs importés par le parseur lib/urssaf/effectif.go de sfdata.",
+  "bsonType": "object",
+  "required": ["numero_compte", "periode", "effectif"],
+  "properties": {
+    "numero_compte": {
+      "description": "Compte administratif URSSAF.",
+      "bsonType": "string"
+    },
+    "periode": {
+      "bsonType": "date"
+    },
+    "effectif": {
+      "description": "Nombre de personnes employées par l'établissement.",
+      "bsonType": "number"
+    }
+  },
+  "additionalProperties": false
+}
