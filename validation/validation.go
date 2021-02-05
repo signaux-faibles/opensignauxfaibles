@@ -62,12 +62,7 @@ func reflectStructType(structType reflect.Type) propertySchema {
 			}
 			fieldType := field.Type.Name()
 			if field.Type.Kind() == reflect.Struct && fieldType != "Time" {
-				props[fieldName] = propertySchema{
-					BsonType:        "object",
-					Properties:      reflectPropsFromType(field.Type),
-					RequiredProps:   []string{"start", "end"}, // TODO: get list of props extracted above
-					AdditionalProps: false,
-				}
+				props[fieldName] = reflectStructType(field.Type)
 			} else {
 				// support pointer types
 				if fieldType == "" {
