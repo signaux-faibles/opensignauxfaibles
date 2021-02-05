@@ -18,15 +18,22 @@ type propertySchema struct {
 }
 
 func diffSchema(jsonSchema propertySchema, structSchema propertySchema) []error {
-	errors := []error{}
-	errors = append(errors, diffMaps(jsonSchema.Properties, structSchema.Properties)...)
+	errors := diffMaps(jsonSchema.Properties, structSchema.Properties)
+	jsonReqProps := map[string]interface{}{}
 	for _, k := range jsonSchema.RequiredProps {
-		if _, ok := structSchema.Properties[k]; !ok {
+		jsonReqProps[k] = true
+	}
+	structReqProps := map[string]interface{}{}
+	for _, k := range structSchema.RequiredProps {
+		structReqProps[k] = true
+	}
+	for _, k := range jsonSchema.RequiredProps {
+		if _, ok := structReqProps[k]; !ok {
 			errors = append(errors, fmt.Errorf("required property is marked as 'omitempty' in Go struct: %v", k))
 		}
 	}
 	for _, k := range structSchema.RequiredProps {
-		if _, ok := jsonSchema.Properties[k]; !ok {
+		if _, ok := jsonReqProps[k]; !ok {
 			errors = append(errors, fmt.Errorf("property not marked as 'required' in JSON Schema: %v", k))
 		}
 	}
