@@ -10,10 +10,6 @@ import (
 	"strings"
 )
 
-type jsonSchema struct {
-	Properties map[string]propertySchema `json:"properties"`
-}
-
 type propertySchema struct {
 	BsonType        string                    `json:"bsonType,omitempty"`
 	Properties      map[string]propertySchema `json:"properties,omitempty"`
@@ -24,6 +20,16 @@ type propertySchema struct {
 func diffSchema(jsonSchema propertySchema, structSchema propertySchema) []error {
 	errors := []error{}
 	errors = append(errors, diffMaps(jsonSchema.Properties, structSchema.Properties)...)
+	for _, k := range jsonSchema.RequiredProps {
+		if _, ok := structSchema.Properties[k]; !ok {
+			errors = append(errors, fmt.Errorf("required property is marked as 'omitempty' in Go struct: %v", k))
+		}
+	}
+	for _, k := range structSchema.RequiredProps {
+		if _, ok := jsonSchema.Properties[k]; !ok {
+			errors = append(errors, fmt.Errorf("property not marked as 'required' in JSON Schema: %v", k))
+		}
+	}
 	return errors
 }
 
@@ -92,7 +98,7 @@ func reflectStructType(structType reflect.Type) propertySchema {
 	}
 }
 
-func loadPropsFromSchema(filePath string) map[string]propertySchema {
+func loadJSONSchema(filePath string) propertySchema {
 	jsonFile, err := os.Open(filePath)
 	if err != nil {
 		log.Println(err)
@@ -102,7 +108,7 @@ func loadPropsFromSchema(filePath string) map[string]propertySchema {
 	if err != nil {
 		log.Println(err)
 	}
-	var schema jsonSchema
+	var schema propertySchema
 	json.Unmarshal(byteValue, &schema)
-	return schema.Properties
+	return schema
 }

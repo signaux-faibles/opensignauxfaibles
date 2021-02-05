@@ -155,7 +155,7 @@ func TestTypeAlignment(t *testing.T) {
 	t.Run("chaque fichier JSON Schema est aligné avec le type Go retourné par le parseur correspondant", func(t *testing.T) {
 		for jsonTypeName, typeDef := range typesToCompare {
 			t.Run(jsonTypeName, func(t *testing.T) {
-				errors := diffProps(jsonTypeName, typeDef.ParserStructInstance)
+				errors := diffTypeSchema(jsonTypeName, typeDef.ParserStructInstance)
 				if ok := assert.ElementsMatch(t, typeDef.ExpectedErrors, errors); !ok {
 					// affichage des champs non alignés, pour aider à la complétion
 					structTypeName := reflect.TypeOf(typeDef.ParserStructInstance).Name()
@@ -169,8 +169,8 @@ func TestTypeAlignment(t *testing.T) {
 	})
 }
 
-func diffProps(jsonSchemaFile string, structInstance interface{}) []error {
-	schemaProps := loadPropsFromSchema(jsonSchemaFile)
-	structProps := reflectPropsFromStruct(structInstance)
-	return diffMaps(schemaProps, structProps)
+func diffTypeSchema(jsonSchemaFile string, structInstance interface{}) []error {
+	jsonSchema := loadJSONSchema(jsonSchemaFile)
+	structSchema := reflectStructType(reflect.TypeOf(structInstance))
+	return diffSchema(jsonSchema, structSchema)
 }
