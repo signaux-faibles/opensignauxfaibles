@@ -45,11 +45,7 @@ func diffMaps(schemaProps map[string]propertySchema, structProps map[string]prop
 }
 
 func reflectPropsFromStruct(structInstance interface{}) map[string]propertySchema {
-	return reflectPropsFromType(reflect.TypeOf(structInstance))
-}
-
-func reflectPropsFromType(structType reflect.Type) map[string]propertySchema {
-	return reflectStructType(structType).Properties
+	return reflectStructType(reflect.TypeOf(structInstance)).Properties
 }
 
 func reflectStructType(structType reflect.Type) propertySchema {
