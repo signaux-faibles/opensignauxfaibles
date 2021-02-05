@@ -308,7 +308,6 @@ var validationSchemas = map[string]string{
   "bsonType": "object",
   "required": [
     "code_groupe",
-    "siren_groupe",
     "refid_groupe",
     "raison_sociale_groupe",
     "adresse_groupe",

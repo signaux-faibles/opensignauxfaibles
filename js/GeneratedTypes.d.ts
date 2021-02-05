@@ -186,7 +186,7 @@ export interface EntréeEffectif {
  */
 export interface EntréeEllisphere {
   code_groupe: string
-  siren_groupe: string
+  siren_groupe?: string
   refid_groupe: string
   raison_sociale_groupe: string
   adresse_groupe: string
