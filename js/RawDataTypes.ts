@@ -1,6 +1,12 @@
 /* eslint-disable no-use-before-define */
 
-import { EntréeDelai } from "./GeneratedTypes"
+import {
+  EntréeApConso,
+  EntréeApDemande,
+  EntréeDelai,
+  EntréeCcsf,
+  EntréeDéfaillances,
+} from "./GeneratedTypes"
 
 // Types de données de base
 
@@ -87,50 +93,6 @@ export type BatchValueProps = CommonBatchProps &
   }
 
 // Détail des types de données
-
-export type EntréeCcsf = {
-  /** Date de début de la procédure CCSF */
-  date_traitement: Date
-  stade: string // TODO: choisir un type plus précis
-  action: string // TODO: choisir un type plus précis
-}
-
-export type EntréeDéfaillances = {
-  /** Nature de la procédure de défaillance. */
-  action_procol: "liquidation" | "redressement" | "sauvegarde"
-  /** Evénement survenu dans le cadre de cette procédure. */
-  stade_procol:
-    | "abandon_procedure"
-    | "solde_procedure"
-    | "fin_procedure"
-    | "plan_continuation"
-    | "ouverture"
-    | "inclusion_autre_procedure"
-    | "cloture_insuffisance_actif"
-  /** Date effet de la procédure collective. */
-  date_effet: Date
-}
-
-export type EntréeApConso = {
-  id_conso: string
-  periode: Date
-  heure_consomme: number
-}
-
-export type EntréeApDemande = {
-  id_demande: string
-  periode: { start: Date; end: Date }
-  hta: number /* Nombre total d'heures autorisées */
-  motif_recours_se: number /* Cause d'activité partielle */
-  effectif_entreprise?: number
-  effectif?: number
-  date_statut?: Date
-  mta?: number
-  effectif_autorise?: number
-  heure_consomme?: number
-  montant_consomme?: number
-  effectif_consomme?: number
-}
 
 export type EntréeCompte = {
   /** Date à laquelle cet établissement est associé à ce numéro de compte URSSAF. */

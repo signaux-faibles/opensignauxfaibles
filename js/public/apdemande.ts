@@ -1,4 +1,5 @@
-import { EntréeApDemande, ParHash } from "../RawDataTypes"
+import { EntréeApDemande } from "../GeneratedTypes"
+import { ParHash } from "../RawDataTypes"
 
 export function apdemande(
   apdemande?: ParHash<EntréeApDemande>

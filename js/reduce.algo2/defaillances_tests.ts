@@ -1,6 +1,7 @@
 import test from "ava"
 import { defaillances } from "./defaillances"
-import { ParHash, EntréeDéfaillances } from "../RawDataTypes"
+import { EntréeDéfaillances } from "../GeneratedTypes"
+import { ParHash } from "../RawDataTypes"
 
 test("Une ouverture de liquidation est prise en compte dans la période courante et les suivantes", (t) => {
   const output_indexed = {

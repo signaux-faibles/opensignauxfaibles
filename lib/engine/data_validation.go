@@ -57,7 +57,7 @@ func GetDataValidationPipeline(jsonSchema map[string]bson.M) (pipeline []bson.M,
 	for dataType, schema := range jsonSchema {
 		matchers = append(matchers, bson.M{
 			"dataType": dataType,
-			"$nor": []bson.M{
+			"$nor": []bson.M{ // "To find documents in the collection that do not satisfy the specified schema, use the $jsonSchema expression in a $nor expression" (https://docs.mongodb.com/manual/reference/operator/query/jsonSchema/#query-conditions)
 				{
 					"$jsonSchema": bson.M{
 						"bsonType": "object",

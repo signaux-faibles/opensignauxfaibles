@@ -1,4 +1,5 @@
-import { EntréeCcsf, ParHash } from "../RawDataTypes"
+import { EntréeCcsf } from "../GeneratedTypes"
+import { ParHash } from "../RawDataTypes"
 
 type Input = {
   periode: Date

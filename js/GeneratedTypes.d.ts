@@ -9,10 +9,63 @@
  */
 
 /**
+ * Champs importés par le parseur lib/apconso/main.go de sfdata.
+ */
+export interface EntréeApConso {
+  id_conso: string
+  heure_consomme: number
+  montant?: number
+  effectif?: number
+  periode: Date
+}
+/**
+ * Champs importés par le parseur lib/apdemande/main.go de sfdata.
+ */
+export interface EntréeApDemande {
+  id_demande: string
+  periode: {
+    start: Date
+    end: Date
+  }
+  /**
+   * Nombre total d'heures autorisées
+   */
+  hta: number
+  /**
+   * Cause d'activité partielle
+   */
+  motif_recours_se: number
+  effectif_entreprise?: number
+  effectif?: number
+  date_statut?: Date
+  mta?: number
+  effectif_autorise?: number
+  heure_consommee?: number
+  montant_consommee?: number
+  effectif_consomme?: number
+}
+/**
  * Note: CE SCHEMA EST INCOMPLET POUR L'INSTANT. Cf https://github.com/signaux-faibles/opensignauxfaibles/pull/143
  */
 export interface EntréeBdf {
   siren: string
+}
+/**
+ * Champs importés par le parseur lib/urssaf/ccsf.go de sfdata.
+ */
+export interface EntréeCcsf {
+  /**
+   * Date de début de la procédure CCSF
+   */
+  date_traitement: Date
+  /**
+   * TODO: choisir un type plus précis
+   */
+  stade: string
+  /**
+   * TODO: choisir un type plus précis
+   */
+  action: string
 }
 /**
  * Champs importés par le parseur lib/urssaf/delai.go de sfdata.
@@ -62,4 +115,28 @@ export interface EntréeDelai {
    * Code externe de l'action.
    */
   action: string
+}
+/**
+ * Champs importés par le parseur lib/urssaf/procol.go de sfdata.
+ */
+export interface EntréeDéfaillances {
+  /**
+   * Nature de la procédure de défaillance.
+   */
+  action_procol: "liquidation" | "redressement" | "sauvegarde"
+  /**
+   * Evénement survenu dans le cadre de cette procédure.
+   */
+  stade_procol:
+    | "abandon_procedure"
+    | "solde_procedure"
+    | "fin_procedure"
+    | "plan_continuation"
+    | "ouverture"
+    | "inclusion_autre_procedure"
+    | "cloture_insuffisance_actif"
+  /**
+   * Date effet de la procédure collective.
+   */
+  date_effet: Date
 }

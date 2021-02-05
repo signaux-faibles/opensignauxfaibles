@@ -1,6 +1,7 @@
 import { f } from "./functions"
 import { ProcolToHumanRes } from "../common/procolToHuman"
-import { EntréeDéfaillances, ParPériode, ParHash } from "../RawDataTypes"
+import { EntréeDéfaillances } from "../GeneratedTypes"
+import { ParPériode, ParHash } from "../RawDataTypes"
 
 export type SortieDefaillances = {
   /** État de la procédure collective. */

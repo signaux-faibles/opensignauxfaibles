@@ -8,6 +8,8 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/signaux-faibles/opensignauxfaibles/lib/apconso"
+	"github.com/signaux-faibles/opensignauxfaibles/lib/apdemande"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/bdf"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/urssaf"
 	"github.com/stretchr/testify/assert"
@@ -31,10 +33,10 @@ func TestDiffMaps(t *testing.T) {
 		})
 	})
 	t.Run("doit détecter une entrée dont le type ne correspond pas", func(t *testing.T) {
-		schemaProps := map[string]propertySchema{"a": {"number"}}
-		structProps := map[string]propertySchema{"a": {"string"}}
+		schemaProps := map[string]propertySchema{"a": {BsonType: "number"}}
+		structProps := map[string]propertySchema{"a": {BsonType: "string"}}
 		assert.ElementsMatch(t, diffMaps(schemaProps, structProps), []error{
-			errors.New("property types of \"a\" don't match: {number} <> {string}"),
+			errors.New("property types of \"a\" don't match: {number map[] [] false} <> {string map[] [] false}"),
 		})
 	})
 }
@@ -44,20 +46,20 @@ func TestReflectPropsFromStruct(t *testing.T) {
 		type MyType struct {
 			MyField string `json:"myField"`
 		}
-		assert.Equal(t, map[string]propertySchema{"myField": {"string"}}, reflectPropsFromStruct(MyType{}))
+		assert.Equal(t, map[string]propertySchema{"myField": {BsonType: "string"}}, reflectPropsFromStruct(MyType{}))
 	})
 	t.Run("doit interpréter les types float64 et int comme number", func(t *testing.T) {
 		type MyType struct {
 			MyField1 int     `json:"f1"`
 			MyField2 float64 `json:"f2"`
 		}
-		assert.Equal(t, map[string]propertySchema{"f1": {"number"}, "f2": {"number"}}, reflectPropsFromStruct(MyType{}))
+		assert.Equal(t, map[string]propertySchema{"f1": {BsonType: "number"}, "f2": {BsonType: "number"}}, reflectPropsFromStruct(MyType{}))
 	})
 	t.Run("doit reconnaitre le type des pointeurs", func(t *testing.T) {
 		type MyType struct {
 			MyField1 *int `json:"f1"`
 		}
-		assert.Equal(t, map[string]propertySchema{"f1": {"number"}}, reflectPropsFromStruct(MyType{}))
+		assert.Equal(t, map[string]propertySchema{"f1": {BsonType: "number"}}, reflectPropsFromStruct(MyType{}))
 	})
 }
 
@@ -69,7 +71,11 @@ func TestTypeAlignment(t *testing.T) {
 	}
 
 	typesToCompare := map[string]TypeToCompare{
-		"delai.schema.json": {urssaf.Delai{}, []error{}}, // delai.schema.json est aligné avec le type urssaf.Delai 👌
+		"apconso.schema.json":   {apconso.APConso{}, []error{}},
+		"apdemande.schema.json": {apdemande.APDemande{}, []error{}},
+		"ccsf.schema.json":      {urssaf.CCSF{}, []error{}},
+		"delai.schema.json":     {urssaf.Delai{}, []error{}},
+		"procol.schema.json":    {urssaf.Procol{}, []error{}},
 		"bdf.schema.json": {bdf.BDF{}, []error{ // bdf.schema.json n'est pas encore complet => la vérification va retourner les erreurs suivantes:
 			errors.New("property not found in JSON Schema: delai_fournisseur"),
 			errors.New("property not found in JSON Schema: dette_fiscale"),

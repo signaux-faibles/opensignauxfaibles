@@ -1,12 +1,14 @@
 import { f } from "./functions"
-import { EntréeDelai } from "../GeneratedTypes"
+import {
+  EntréeApConso,
+  EntréeApDemande,
+  EntréeDelai,
+  EntréeDéfaillances,
+} from "../GeneratedTypes"
 import {
   CompanyDataValues,
   BatchKey,
-  EntréeApConso,
-  EntréeApDemande,
   EntréeCompte,
-  EntréeDéfaillances,
   EntréeDiane,
   EntréeEllisphere,
   EntréeSirene,

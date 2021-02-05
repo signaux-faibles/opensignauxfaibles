@@ -1,5 +1,6 @@
 import { f } from "./functions"
-import { EntréeApDemande, EntréeApConso, ParPériode } from "../RawDataTypes"
+import { EntréeApConso, EntréeApDemande } from "../GeneratedTypes"
+import { ParPériode } from "../RawDataTypes"
 
 type ApConsoHash = string
 

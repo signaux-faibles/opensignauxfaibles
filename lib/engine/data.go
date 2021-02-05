@@ -384,14 +384,14 @@ func ValidateDataEntries(jsonSchema map[string]bson.M, collection string) error 
 	startDate := time.Now()
 
 	w := sync.WaitGroup{}
-	gzipWriter := getItemChannelToStdout(&w)
+	writer := getItemChannelToStdout(&w)
 
 	// lister les entrées de données non définies (type: undefined au lieu de object)
 	pipeline, err := GetUndefinedDataValidationPipeline()
 	if err != nil {
 		return err
 	}
-	err = iterateToChannel(gzipWriter, Db.DB.C(collection).Pipe(pipeline).AllowDiskUse().Iter())
+	err = iterateToChannel(writer, Db.DB.C(collection).Pipe(pipeline).AllowDiskUse().Iter())
 	if err != nil {
 		return err
 	}
@@ -401,12 +401,12 @@ func ValidateDataEntries(jsonSchema map[string]bson.M, collection string) error 
 	if err != nil {
 		return err
 	}
-	err = iterateToChannel(gzipWriter, Db.DB.C(collection).Pipe(pipeline).AllowDiskUse().Iter())
+	err = iterateToChannel(writer, Db.DB.C(collection).Pipe(pipeline).AllowDiskUse().Iter())
 	if err != nil {
 		return err
 	}
 
-	close(gzipWriter)
+	close(writer)
 	w.Wait()
 
 	LogOperationEvent("ValidateDataEntries", startDate)
@@ -416,6 +416,9 @@ func ValidateDataEntries(jsonSchema map[string]bson.M, collection string) error 
 
 func iterateToChannel(channel chan interface{}, iterator *mgo.Iter) error {
 	var item interface{}
+	if err := iterator.Err(); err != nil {
+		return err // e.g. "Erreur: Unknown $jsonSchema keyword: _TODO"
+	}
 	for iterator.Next(&item) {
 		if err := iterator.Err(); err != nil {
 			return err

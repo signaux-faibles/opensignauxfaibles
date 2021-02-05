@@ -3,6 +3,85 @@
 package engine
 
 var validationSchemas = map[string]string{
+"apconso.schema.json": `{
+  "title": "EntréeApConso",
+  "description": "Champs importés par le parseur lib/apconso/main.go de sfdata.",
+  "bsonType": "object",
+  "required": ["id_conso", "periode", "heure_consomme"],
+  "properties": {
+    "id_conso": {
+      "bsonType": "string"
+    },
+    "heure_consomme": {
+      "bsonType": "number"
+    },
+    "montant": {
+      "bsonType": "number"
+    },
+    "effectif": {
+      "bsonType": "number"
+    },
+    "periode": {
+      "bsonType": "date"
+    }
+  },
+  "additionalProperties": false
+}
+`,
+"apdemande.schema.json": `{
+  "title": "EntréeApDemande",
+  "description": "Champs importés par le parseur lib/apdemande/main.go de sfdata.",
+  "bsonType": "object",
+  "required": ["id_demande", "periode", "hta", "motif_recours_se"],
+  "properties": {
+    "id_demande": {
+      "bsonType": "string"
+    },
+    "periode": {
+      "bsonType": "object",
+      "required": ["start", "end"],
+      "properties": {
+        "start": { "bsonType": "date" },
+        "end": { "bsonType": "date" }
+      },
+      "additionalProperties": false
+    },
+    "hta": {
+      "description": "Nombre total d'heures autorisées",
+      "bsonType": "number"
+    },
+    "motif_recours_se": {
+      "description": "Cause d'activité partielle",
+      "bsonType": "number"
+    },
+    "effectif_entreprise": {
+      "bsonType": "number"
+    },
+    "effectif": {
+      "bsonType": "number"
+    },
+    "date_statut": {
+      "bsonType": "date"
+    },
+    "mta": {
+      "bsonType": "number"
+    },
+    "effectif_autorise": {
+      "bsonType": "number"
+    },
+    "heure_consommee": {
+      "bsonType": "number"
+    },
+    "montant_consommee": {
+      "bsonType": "number"
+    },
+    "effectif_consomme": {
+      "bsonType": "number"
+    }
+  },
+  "additionalProperties": false
+}
+`,
 "bdf.schema.json": `{
   "title": "EntréeBdf",
   "description": "Note: CE SCHEMA EST INCOMPLET POUR L'INSTANT. Cf https://github.com/signaux-faibles/opensignauxfaibles/pull/143",
@@ -12,6 +91,28 @@ var validationSchemas = map[string]string{
     "siren": {
       "bsonType": "string",
       "pattern": "^[0-9]{9}$"
+    }
+  },
+  "additionalProperties": false
+}
+`,
+"ccsf.schema.json": `{
+  "title": "EntréeCcsf",
+  "description": "Champs importés par le parseur lib/urssaf/ccsf.go de sfdata.",
+  "bsonType": "object",
+  "required": ["date_traitement", "stade", "action"],
+  "properties": {
+    "date_traitement": {
+      "bsonType": "date",
+      "description": "Date de début de la procédure CCSF"
+    },
+    "stade": {
+      "bsonType": "string",
+      "description": "TODO: choisir un type plus précis"
+    },
+    "action": {
+      "bsonType": "string",
+      "description": "TODO: choisir un type plus précis"
     }
   },
   "additionalProperties": false
@@ -143,5 +244,37 @@ var validationSchemas = map[string]string{
     }
   }
 ]
+`,
+"procol.schema.json": `{
+  "title": "EntréeDéfaillances",
+  "description": "Champs importés par le parseur lib/urssaf/procol.go de sfdata.",
+  "bsonType": "object",
+  "required": ["action_procol", "stade_procol", "date_effet"],
+  "properties": {
+    "action_procol": {
+      "description": "Nature de la procédure de défaillance.",
+      "bsonType": "string",
+      "enum": ["liquidation", "redressement", "sauvegarde"]
+    },
+    "stade_procol": {
+      "description": "Evénement survenu dans le cadre de cette procédure.",
+      "bsonType": "string",
+      "enum": [
+        "abandon_procedure",
+        "solde_procedure",
+        "fin_procedure",
+        "plan_continuation",
+        "ouverture",
+        "inclusion_autre_procedure",
+        "cloture_insuffisance_actif"
+      ]
+    },
+    "date_effet": {
+      "bsonType": "date",
+      "description": "Date effet de la procédure collective."
+    }
+  },
+  "additionalProperties": false
+}
 `,
 }
