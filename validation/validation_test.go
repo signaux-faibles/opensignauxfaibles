@@ -50,6 +50,12 @@ func TestReflectPropsFromStruct(t *testing.T) {
 		}
 		assert.Equal(t, map[string]propertySchema{"myField": {BsonType: "string"}}, reflectPropsFromStruct(MyType{}))
 	})
+	t.Run("doit ignorer \"omitempty\" dans les annotations d'un champ de struct Go", func(t *testing.T) {
+		type MyType struct {
+			MyField string `json:"myField,omitempty"`
+		}
+		assert.Equal(t, map[string]propertySchema{"myField": {BsonType: "string"}}, reflectPropsFromStruct(MyType{}))
+	})
 	t.Run("doit interpréter les types float64 et int comme number", func(t *testing.T) {
 		type MyType struct {
 			MyField1 int     `json:"f1"`
