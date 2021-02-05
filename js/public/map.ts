@@ -2,13 +2,13 @@ import { f } from "./functions"
 import {
   EntréeApConso,
   EntréeApDemande,
+  EntréeCompte,
   EntréeDelai,
   EntréeDéfaillances,
 } from "../GeneratedTypes"
 import {
   CompanyDataValues,
   BatchKey,
-  EntréeCompte,
   EntréeDiane,
   EntréeEllisphere,
   EntréeSirene,

@@ -5,6 +5,7 @@ import {
   EntréeApDemande,
   EntréeDelai,
   EntréeCcsf,
+  EntréeCompte,
   EntréeDéfaillances,
 } from "./GeneratedTypes"
 
@@ -93,15 +94,6 @@ export type BatchValueProps = CommonBatchProps &
   }
 
 // Détail des types de données
-
-export type EntréeCompte = {
-  /** Date à laquelle cet établissement est associé à ce numéro de compte URSSAF. */
-  periode: Date
-  /** Numéro SIRET de l'établissement. Les numéros avec des Lettres sont des sirets provisoires. */
-  siret: string
-  /** Compte administratif URSSAF. */
-  numero_compte: string
-}
 
 export type EntréeInterim = {
   periode: Date

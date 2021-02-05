@@ -118,6 +118,28 @@ var validationSchemas = map[string]string{
   "additionalProperties": false
 }
 `,
+"compte.schema.json": `{
+  "title": "EntréeCompte",
+  "description": "Champs importés par le parseur lib/urssaf/compte.go de sfdata.",
+  "bsonType": "object",
+  "required": ["periode", "siret", "numero_compte"],
+  "properties": {
+    "periode": {
+      "bsonType": "date",
+      "description": "Date à laquelle cet établissement est associé à ce numéro de compte URSSAF."
+    },
+    "siret": {
+      "bsonType": "string",
+      "description": "Numéro SIRET de l'établissement. Les numéros avec des Lettres sont des sirets provisoires."
+    },
+    "numero_compte": {
+      "bsonType": "string",
+      "description": "Compte administratif URSSAF."
+    }
+  },
+  "additionalProperties": false
+}
+`,
 "delai.schema.json": `{
   "title": "EntréeDelai",
   "description": "Champs importés par le parseur lib/urssaf/delai.go de sfdata.",

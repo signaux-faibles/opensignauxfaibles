@@ -74,6 +74,7 @@ func TestTypeAlignment(t *testing.T) {
 		"apconso.schema.json":   {apconso.APConso{}, []error{}},
 		"apdemande.schema.json": {apdemande.APDemande{}, []error{}},
 		"ccsf.schema.json":      {urssaf.CCSF{}, []error{}},
+		"compte.schema.json":    {urssaf.Compte{}, []error{}},
 		"delai.schema.json":     {urssaf.Delai{}, []error{}},
 		"procol.schema.json":    {urssaf.Procol{}, []error{}},
 		"bdf.schema.json": {bdf.BDF{}, []error{ // bdf.schema.json n'est pas encore complet => la vérification va retourner les erreurs suivantes:

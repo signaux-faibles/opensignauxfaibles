@@ -68,6 +68,23 @@ export interface EntréeCcsf {
   action: string
 }
 /**
+ * Champs importés par le parseur lib/urssaf/compte.go de sfdata.
+ */
+export interface EntréeCompte {
+  /**
+   * Date à laquelle cet établissement est associé à ce numéro de compte URSSAF.
+   */
+  periode: Date
+  /**
+   * Numéro SIRET de l'établissement. Les numéros avec des Lettres sont des sirets provisoires.
+   */
+  siret: string
+  /**
+   * Compte administratif URSSAF.
+   */
+  numero_compte: string
+}
+/**
  * Champs importés par le parseur lib/urssaf/delai.go de sfdata.
  */
 export interface EntréeDelai {

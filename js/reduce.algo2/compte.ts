@@ -1,4 +1,5 @@
-import { EntréeCompte, ParPériode, Periode, ParHash } from "../RawDataTypes"
+import { EntréeCompte } from "../GeneratedTypes"
+import { ParPériode, Periode, ParHash } from "../RawDataTypes"
 
 export type SortieCompte = {
   /** Compte administratif URSSAF */

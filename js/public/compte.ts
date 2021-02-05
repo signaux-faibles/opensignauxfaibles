@@ -1,4 +1,5 @@
-import { EntréeCompte, ParHash } from "../RawDataTypes"
+import { EntréeCompte } from "../GeneratedTypes"
+import { ParHash } from "../RawDataTypes"
 
 export function compte(
   compte?: ParHash<EntréeCompte>
