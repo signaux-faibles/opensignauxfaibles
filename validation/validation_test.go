@@ -133,6 +133,16 @@ func TestTypeAlignment(t *testing.T) {
 			errors.New("property not found in JSON Schema: raison_sociale"),
 			errors.New("property not found in JSON Schema: poids_frng"),
 			errors.New("property not found in JSON Schema: financier_court_terme"),
+			errors.New("property not marked as 'required' in JSON Schema: annee_bdf"),
+			errors.New("property not marked as 'required' in JSON Schema: arrete_bilan_bdf"),
+			errors.New("property not marked as 'required' in JSON Schema: raison_sociale"),
+			errors.New("property not marked as 'required' in JSON Schema: secteur"),
+			errors.New("property not marked as 'required' in JSON Schema: poids_frng"),
+			errors.New("property not marked as 'required' in JSON Schema: taux_marge"),
+			errors.New("property not marked as 'required' in JSON Schema: delai_fournisseur"),
+			errors.New("property not marked as 'required' in JSON Schema: dette_fiscale"),
+			errors.New("property not marked as 'required' in JSON Schema: financier_court_terme"),
+			errors.New("property not marked as 'required' in JSON Schema: frais_financier"),
 		}},
 		// NOTE: Au fur et à mesure qu'on ajoute des fichiers JSON Schema, penser à les couvrir ici.
 	}
