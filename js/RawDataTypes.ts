@@ -6,6 +6,7 @@ import {
   EntréeDelai,
   EntréeCcsf,
   EntréeCompte,
+  EntréeCotisation,
   EntréeDéfaillances,
   EntréeEffectif,
   EntréeEffectifEnt,
@@ -101,17 +102,6 @@ export type EntréeRepOrder = {
   random_order: number
   periode: Date
   siret: SiretOrSiren
-}
-
-export type EntréeCotisation = {
-  /** Compte administratif URSSAF. */
-  numero_compte: string
-  /** Période sur laquelle le montants s'appliquent. */
-  periode: { start: Date; end: Date }
-  /** Cotisation encaissée directement, en euros. */
-  encaisse: number
-  /** Cotisation due, en euros. À utiliser pour calculer le montant moyen mensuel du: Somme cotisations dues / nb périodes. */
-  du: number
 }
 
 /**

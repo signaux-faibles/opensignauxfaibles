@@ -75,6 +75,7 @@ func TestTypeAlignment(t *testing.T) {
 		"apdemande.schema.json":    {apdemande.APDemande{}, []error{}},
 		"ccsf.schema.json":         {urssaf.CCSF{}, []error{}},
 		"compte.schema.json":       {urssaf.Compte{}, []error{}},
+		"cotisation.schema.json":   {urssaf.Cotisation{}, []error{}},
 		"delai.schema.json":        {urssaf.Delai{}, []error{}},
 		"effectif.schema.json":     {urssaf.Effectif{}, []error{}},
 		"effectif_ent.schema.json": {urssaf.EffectifEnt{}, []error{}},

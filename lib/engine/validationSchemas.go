@@ -140,6 +140,38 @@ var validationSchemas = map[string]string{
   "additionalProperties": false
 }
 `,
+"cotisation.schema.json": `{
+  "title": "EntréeCotisation",
+  "description": "Champs importés par le parseur lib/urssaf/cotisation.go de sfdata.",
+  "bsonType": "object",
+  "required": ["numero_compte", "periode", "encaisse", "du"],
+  "properties": {
+    "numero_compte": {
+      "description": "Compte administratif URSSAF.",
+      "bsonType": "string"
+    },
+    "periode": {
+      "description": "Période sur laquelle le montants s'appliquent.",
+      "bsonType": "object",
+      "required": ["start", "end"],
+      "properties": {
+        "start": { "bsonType": "date" },
+        "end": { "bsonType": "date" }
+      },
+      "additionalProperties": false
+    },
+    "encaisse": {
+      "description": "Cotisation encaissée directement, en euros.",
+      "bsonType": "number"
+    },
+    "du": {
+      "description": "Cotisation due, en euros. À utiliser pour calculer le montant moyen mensuel du: Somme cotisations dues / nb périodes.",
+      "bsonType": "number"
+    }
+  },
+  "additionalProperties": false
+}
+`,
 "delai.schema.json": `{
   "title": "EntréeDelai",
   "description": "Champs importés par le parseur lib/urssaf/delai.go de sfdata.",

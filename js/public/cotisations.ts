@@ -1,5 +1,6 @@
 import { f } from "./functions"
-import { EntréeCotisation, ParHash } from "../RawDataTypes"
+import { EntréeCotisation } from "../GeneratedTypes"
+import { ParHash } from "../RawDataTypes"
 
 // Paramètres globaux utilisés par "public"
 declare const serie_periode: Date[]

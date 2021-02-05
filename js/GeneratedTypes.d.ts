@@ -85,6 +85,30 @@ export interface EntréeCompte {
   numero_compte: string
 }
 /**
+ * Champs importés par le parseur lib/urssaf/cotisation.go de sfdata.
+ */
+export interface EntréeCotisation {
+  /**
+   * Compte administratif URSSAF.
+   */
+  numero_compte: string
+  /**
+   * Période sur laquelle le montants s'appliquent.
+   */
+  periode: {
+    start: Date
+    end: Date
+  }
+  /**
+   * Cotisation encaissée directement, en euros.
+   */
+  encaisse: number
+  /**
+   * Cotisation due, en euros. À utiliser pour calculer le montant moyen mensuel du: Somme cotisations dues / nb périodes.
+   */
+  du: number
+}
+/**
  * Champs importés par le parseur lib/urssaf/delai.go de sfdata.
  */
 export interface EntréeDelai {
