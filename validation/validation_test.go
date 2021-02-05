@@ -43,16 +43,29 @@ func TestDiffMaps(t *testing.T) {
 	})
 }
 
+func TestReflectStructType(t *testing.T) {
+	t.Run("doit inclure tous les champs dans \"required\", sauf ceux taggés avec \"omitempty\"", func(t *testing.T) {
+		type MyType struct {
+			MandatoryField string `json:"mandatoryField"`
+			OptionalField  string `json:"optionalField,omitempty"`
+		}
+		expectedSchema := propertySchema{
+			BsonType: "object",
+			Properties: map[string]propertySchema{
+				"mandatoryField": {BsonType: "string"},
+				"optionalField":  {BsonType: "string"},
+			},
+			RequiredProps:   []string{"mandatoryField"},
+			AdditionalProps: false,
+		}
+		assert.Equal(t, expectedSchema, reflectStructType(reflect.TypeOf(MyType{})))
+	})
+}
+
 func TestReflectPropsFromStruct(t *testing.T) {
 	t.Run("doit extraire le nom JSON et type d'un champ de struct Go", func(t *testing.T) {
 		type MyType struct {
 			MyField string `json:"myField"`
-		}
-		assert.Equal(t, map[string]propertySchema{"myField": {BsonType: "string"}}, reflectPropsFromStruct(MyType{}))
-	})
-	t.Run("doit ignorer \"omitempty\" dans les annotations d'un champ de struct Go", func(t *testing.T) {
-		type MyType struct {
-			MyField string `json:"myField,omitempty"`
 		}
 		assert.Equal(t, map[string]propertySchema{"myField": {BsonType: "string"}}, reflectPropsFromStruct(MyType{}))
 	})
