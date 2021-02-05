@@ -12,7 +12,6 @@ import {
   EntréeEffectifEnt,
   EntréeEllisphere,
   EntréePaydex,
-  EntréeSirene,
 } from "./GeneratedTypes"
 
 // Types de données de base
@@ -178,6 +177,15 @@ export type EntréeDebit = {
   code_motif_ecart_negatif: string
   /** Recours en cours. */
   recours_en_cours: boolean
+}
+
+export type EntréeSirene = {
+  ape: CodeAPE
+  latitude: number
+  longitude: number
+  departement: Departement
+  raison_sociale: string
+  date_creation: Date
 }
 
 export type EntréeSireneEntreprise = {

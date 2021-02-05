@@ -228,37 +228,3 @@ export interface EntréeDéfaillances {
    */
   date_effet: Date
 }
-/**
- * Champs importés par le parseur lib/sirene/main.go de sfdata.
- */
-export interface EntréeSirene {
-  /**
-   * Code APE.
-   */
-  ape: string
-  latitude: number
-  longitude: number
-  departement: string
-  date_creation: Date
-  siren?: string
-  nic?: string
-  siege?: {
-    [k: string]: unknown
-  }
-  complement_adresse?: string
-  numero_voie?: string
-  indrep?: string
-  type_voie?: string
-  voie?: string
-  commune?: string
-  commune_etranger?: string
-  distribution_speciale?: string
-  code_commune?: string
-  code_cedex?: string
-  cedex?: string
-  code_pays_etranger?: string
-  pays_etranger?: string
-  code_postal?: string
-  code_activite?: string
-  nomen_activite?: string
-}
