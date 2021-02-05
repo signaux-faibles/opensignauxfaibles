@@ -7,16 +7,18 @@ import (
 
 // AdminBatch metadata Batch
 type AdminBatch struct {
-	ID            AdminID    `json:"id" bson:"_id"`
-	Files         BatchFiles `json:"files" bson:"files"`
-	Name          string     `json:"name" bson:"name"`
-	Readonly      bool       `json:"readonly" bson:"readonly"`
-	CompleteTypes []string   `json:"complete_types" bson:"complete_types"`
-	Params        struct {
-		DateDebut       time.Time `json:"date_debut" bson:"date_debut"`
-		DateFin         time.Time `json:"date_fin" bson:"date_fin"`
-		DateFinEffectif time.Time `json:"date_fin_effectif" bson:"date_fin_effectif"`
-	} `json:"params" bson:"param"`
+	ID            AdminID          `json:"id" bson:"_id"`
+	Files         BatchFiles       `json:"files" bson:"files"`
+	Name          string           `json:"name" bson:"name"`
+	Readonly      bool             `json:"readonly" bson:"readonly"`
+	CompleteTypes []string         `json:"complete_types" bson:"complete_types"`
+	Params        adminBatchParams `json:"params" bson:"param"`
+}
+
+type adminBatchParams struct {
+	DateDebut       time.Time `json:"date_debut" bson:"date_debut"`
+	DateFin         time.Time `json:"date_fin" bson:"date_fin"`
+	DateFinEffectif time.Time `json:"date_fin_effectif" bson:"date_fin_effectif"`
 }
 
 // New crée un nouveau batch
@@ -56,6 +58,10 @@ func MockBatch(filetype string, filepaths []string) AdminBatch {
 	fileMap := map[string][]string{filetype: filepaths}
 	batch := AdminBatch{
 		Files: BatchFiles(fileMap),
+		Params: adminBatchParams{
+			DateDebut: time.Date(2019, 0, 1, 0, 0, 0, 0, time.UTC), // January 1st, 2019
+			DateFin:   time.Date(2019, 1, 1, 0, 0, 0, 0, time.UTC), // February 1st, 2019
+		},
 	}
 	return batch
 }

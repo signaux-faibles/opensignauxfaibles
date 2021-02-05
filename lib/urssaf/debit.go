@@ -1,7 +1,6 @@
 package urssaf
 
 import (
-	"bufio"
 	"encoding/csv"
 	"io"
 	"os"
@@ -70,21 +69,11 @@ func (parser *debitParser) Init(cache *marshal.Cache, batch *base.AdminBatch) (e
 }
 
 func (parser *debitParser) Open(filePath string) (err error) {
-	parser.file, parser.reader, err = openDebitFile(filePath)
+	parser.file, parser.reader, err = marshal.OpenCsvReader(filePath, ';', false)
 	if err == nil {
 		parser.idx, err = marshal.IndexColumnsFromCsvHeader(parser.reader, Debit{})
 	}
 	return err
-}
-
-func openDebitFile(filePath string) (*os.File, *csv.Reader, error) {
-	file, err := os.Open(filePath)
-	if err != nil {
-		return file, nil, err
-	}
-	reader := csv.NewReader(bufio.NewReader(file))
-	reader.Comma = ';'
-	return file, reader, err
 }
 
 func (parser *debitParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {

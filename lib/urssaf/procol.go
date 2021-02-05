@@ -1,7 +1,6 @@
 package urssaf
 
 import (
-	"bufio"
 	"encoding/csv"
 	"io"
 	"os"
@@ -58,22 +57,11 @@ func (parser *procolParser) Close() error {
 }
 
 func (parser *procolParser) Open(filePath string) (err error) {
-	parser.file, parser.reader, err = openProcolFile(filePath)
+	parser.file, parser.reader, err = marshal.OpenCsvReader(filePath, ';', true)
 	if err == nil {
 		parser.idx, err = parseProcolColMapping(parser.reader)
 	}
 	return err
-}
-
-func openProcolFile(filePath string) (*os.File, *csv.Reader, error) {
-	file, err := os.Open(filePath)
-	if err != nil {
-		return file, nil, err
-	}
-	reader := csv.NewReader(bufio.NewReader(file))
-	reader.Comma = ';'
-	reader.LazyQuotes = true
-	return file, reader, err
 }
 
 func parseProcolColMapping(reader *csv.Reader) (marshal.ColMapping, error) {

@@ -1,7 +1,11 @@
 package urssaf
 
 import (
+	"bytes"
 	"flag"
+	"io/ioutil"
+	"os"
+	"os/exec"
 	"path/filepath"
 	"testing"
 
@@ -21,6 +25,50 @@ func makeCacheWithComptesMapping() marshal.Cache {
 		},
 	))
 	return cache
+}
+
+func TestUrssaf(t *testing.T) {
+	t.Run("Les fichiers urssaf gzippés peuvent être décompressés à la volée", func(t *testing.T) {
+		type TestCase struct {
+			Parser     marshal.Parser
+			InputFile  string
+			GoldenFile string
+			Cache      marshal.Cache
+		}
+		urssafFiles := []TestCase{
+			{ParserCCSF, "ccsfTestData.csv", "expectedCcsf.json", makeCacheWithComptesMapping()},
+			{ParserCompte, "comptesTestData.csv", "expectedComptes.json", marshal.NewCache()},
+			{ParserDebit, "debitTestData.csv", "expectedDebit.json", makeCacheWithComptesMapping()},
+			{ParserDelai, "delaiTestData.csv", "expectedDelai.json", makeCacheWithComptesMapping()},
+			{ParserEffectifEnt, "effectifEntTestData.csv", "expectedEffectifEnt.json", makeCacheWithComptesMapping()},
+			{ParserEffectif, "effectifTestData.csv", "expectedEffectif.json", makeCacheWithComptesMapping()},
+			{ParserProcol, "procolTestData.csv", "expectedProcol.json", makeCacheWithComptesMapping()},
+		}
+		for _, testCase := range urssafFiles {
+			t.Run(testCase.Parser.GetFileType(), func(t *testing.T) {
+				// Compression du fichier de données
+				err := exec.Command("gzip", "--keep", filepath.Join("testData", testCase.InputFile)).Run() // créée une version gzippée du fichier
+				assert.NoError(t, err)
+				compressedFilePath := filepath.Join("testData", testCase.InputFile+".gz")
+				t.Cleanup(func() { os.Remove(compressedFilePath) })
+				// Création d'un fichier Golden temporaire mentionnant le nom du fichier compressé
+				initialGoldenContent, err := ioutil.ReadFile(filepath.Join("testData", testCase.GoldenFile))
+				assert.NoError(t, err)
+				goldenContent := bytes.ReplaceAll(initialGoldenContent, []byte(testCase.InputFile), []byte(testCase.InputFile+".gz"))
+				tmpGoldenFile := marshal.CreateTempFileWithContent(t, goldenContent)
+				marshal.TestParserOutput(t, testCase.Parser, testCase.Cache, compressedFilePath, tmpGoldenFile.Name(), false)
+			})
+		}
+	})
+}
+
+func TestComptes(t *testing.T) {
+
+	t.Run("Le fichier de test Comptes est parsé comme d'habitude", func(t *testing.T) {
+		var golden = filepath.Join("testData", "expectedComptes.json")
+		var testData = filepath.Join("testData", "comptesTestData.csv")
+		marshal.TestParserOutput(t, ParserCompte, marshal.NewCache(), testData, golden, *update)
+	})
 }
 
 func TestDebit(t *testing.T) {
