@@ -1,7 +1,6 @@
 package urssaf
 
 import (
-	"bufio"
 	"encoding/csv"
 	"errors"
 	"io"
@@ -60,13 +59,10 @@ func (parser *ccsfParser) Close() error {
 }
 
 func (parser *ccsfParser) Open(filePath string) (err error) {
-	parser.file, err = os.Open(filePath)
-	if err != nil {
-		return err
+	parser.file, parser.reader, err = marshal.OpenCsvReader(filePath, ';', false)
+	if err == nil {
+		parser.idx, err = marshal.IndexColumnsFromCsvHeader(parser.reader, CCSF{})
 	}
-	parser.reader = csv.NewReader(bufio.NewReader(parser.file))
-	parser.reader.Comma = ';'
-	parser.idx, err = marshal.IndexColumnsFromCsvHeader(parser.reader, CCSF{})
 	return err
 }
 
