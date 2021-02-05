@@ -95,11 +95,6 @@ export type BatchValueProps = CommonBatchProps &
 
 // Détail des types de données
 
-export type EntréeInterim = {
-  periode: Date
-  etp: number
-}
-
 export type EntréeRepOrder = {
   random_order: number
   periode: Date
