@@ -440,4 +440,88 @@ var validationSchemas = map[string]string{
   "additionalProperties": false
 }
 `,
+"sirene.schema.json": `{
+  "title": "EntréeSirene",
+  "description": "Champs importés par le parseur lib/sirene/main.go de sfdata.",
+  "bsonType": "object",
+  "required": ["ape", "latitude", "longitude", "departement", "date_creation"],
+  "properties": {
+    "ape": {
+      "description": "Code APE.",
+      "bsonType": "string"
+    },
+    "latitude": {
+      "bsonType": "number"
+    },
+    "longitude": {
+      "bsonType": "number"
+    },
+    "departement": {
+      "bsonType": "string"
+    },
+    "date_creation": {
+      "bsonType": "date"
+    },
+
+    "siren": {
+      "bsonType": "string"
+    },
+    "nic": {
+      "bsonType": "string"
+    },
+    "siege": {
+      "bsonType": "bool"
+    },
+    "complement_adresse": {
+      "bsonType": "string"
+    },
+    "numero_voie": {
+      "bsonType": "string"
+    },
+    "indrep": {
+      "bsonType": "string"
+    },
+    "type_voie": {
+      "bsonType": "string"
+    },
+    "voie": {
+      "bsonType": "string"
+    },
+    "commune": {
+      "bsonType": "string"
+    },
+    "commune_etranger": {
+      "bsonType": "string"
+    },
+    "distribution_speciale": {
+      "bsonType": "string"
+    },
+    "code_commune": {
+      "bsonType": "string"
+    },
+    "code_cedex": {
+      "bsonType": "string"
+    },
+    "cedex": {
+      "bsonType": "string"
+    },
+    "code_pays_etranger": {
+      "bsonType": "string"
+    },
+    "pays_etranger": {
+      "bsonType": "string"
+    },
+    "code_postal": {
+      "bsonType": "string"
+    },
+    "code_activite": {
+      "bsonType": "string"
+    },
+    "nomen_activite": {
+      "bsonType": "string"
+    }
+  },
+  "additionalProperties": false
+}
+`,
 }
