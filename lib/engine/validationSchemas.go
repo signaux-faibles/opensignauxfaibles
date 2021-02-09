@@ -319,7 +319,6 @@ var validationSchemas = map[string]string{
   "title": "EntréeEllisphere",
   "description": "Champs importés par le parseur lib/ellisphere/main.go de sfdata.",
   "bsonType": "object",
-  "required": [],
   "properties": {
     "code_groupe": {
       "bsonType": "string"
