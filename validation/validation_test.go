@@ -118,6 +118,7 @@ func TestTypeAlignment(t *testing.T) {
 		"ccsf.schema.json":         {urssaf.CCSF{}, []error{}},
 		"compte.schema.json":       {urssaf.Compte{}, []error{}},
 		"cotisation.schema.json":   {urssaf.Cotisation{}, []error{}},
+		"debit.schema.json":        {urssaf.Debit{}, []error{}},
 		"delai.schema.json":        {urssaf.Delai{}, []error{}},
 		"effectif.schema.json":     {urssaf.Effectif{}, []error{}},
 		"effectif_ent.schema.json": {urssaf.EffectifEnt{}, []error{}},
