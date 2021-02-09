@@ -1,5 +1,6 @@
 import { f } from "./functions"
-import { EntréeSirene, Siret, Siren, ParHash } from "../RawDataTypes"
+import { Siret, Siren, ParHash } from "../RawDataTypes"
+import { EntréeSirene } from "../GeneratedTypes"
 
 type Input = {
   periode: Date

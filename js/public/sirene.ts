@@ -1,4 +1,4 @@
-import { EntréeSirene } from "../RawDataTypes"
+import { EntréeSirene } from "../GeneratedTypes"
 
 // Cette fonction retourne les données sirene les plus récentes
 export function sirene(sireneArray: EntréeSirene[]): Partial<EntréeSirene> {

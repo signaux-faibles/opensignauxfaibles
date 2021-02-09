@@ -7,12 +7,12 @@ import {
   EntréeDéfaillances,
   EntréeEllisphere,
   EntréePaydex,
+  EntréeSirene,
 } from "../GeneratedTypes"
 import {
   CompanyDataValues,
   BatchKey,
   EntréeDiane,
-  EntréeSirene,
   EntréeSireneEntreprise,
 } from "../RawDataTypes"
 import { SortieDebit } from "./debits"
