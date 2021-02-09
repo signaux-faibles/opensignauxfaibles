@@ -259,6 +259,333 @@ export interface EntréeDelai {
   action: string
 }
 /**
+ * Champs importés par le parseur lib/diane/main.go de sfdata.
+ */
+export interface EntréeDiane {
+  /**
+   * Année de l'exercice
+   */
+  exercice_diane?: number
+  /**
+   * Date d'arrêté du bilan
+   */
+  arrete_bilan_diane: Date
+  /**
+   * Couverture du chiffre d'affaire par le fonds de roulement (exprimé en jours): Fonds de roulement net global / Chiffre d'affaires net * 360
+   */
+  couverture_ca_fdr: number
+  /**
+   * Intérêts et charges assimilées.
+   */
+  interets: number
+  /**
+   * Excédent brut d'exploitation.
+   */
+  excedent_brut_d_exploitation: number
+  /**
+   * Produits financiers.
+   */
+  produits_financiers: number
+  /**
+   * Produits exceptionnels.
+   */
+  produit_exceptionnel: number
+  /**
+   * Charges exceptionnelles.
+   */
+  charge_exceptionnelle: number
+  /**
+   * Charges financières.
+   */
+  charges_financieres: number
+  /**
+   * Chiffre d'affaires
+   */
+  ca: number
+  /**
+   * Concours bancaires courants. (Pour recalculer les frais financiers court terme de la Banque de France)
+   */
+  concours_bancaire_courant: number
+  /**
+   * Valeur ajoutée.
+   */
+  valeur_ajoutee: number
+  /**
+   * Dette fiscale et sociale
+   */
+  dette_fiscale_et_sociale: number
+  /**
+   * Raison sociale
+   */
+  nom_entreprise: string
+  /**
+   * Numéro siren
+   */
+  numero_siren: string
+  /**
+   * Statut juridique
+   */
+  statut_juridique: string
+  /**
+   * Présence d'une procédure collective en cours
+   */
+  procedure_collective: {
+    [k: string]: unknown
+  }
+  /**
+   * Effectif consolidé à l'entreprise
+   */
+  effectif_consolide: number
+  /**
+   * Frais de Recherche et Développement
+   */
+  frais_de_RetD: number
+  /**
+   * Concessions, brevets, et droits similaires
+   */
+  conces_brev_et_droits_sim: number
+  /**
+   * Nombre d'établissements secondaires de l'entreprise, en plus du siège.
+   */
+  nombre_etab_secondaire: number
+  /**
+   * Nombre de filiales de l'entreprise. Dans la base de données des liens capitalistiques, le concept de filiale ne fait aucune référence au pourcentage d’appartenance entre le parent et la fille. Dans ce sens, si l'entreprise A est enregistrée comme ayant des intérêts dans l'entreprise B avec un très petit, ou même un pourcentage de participation inconnu, l'entreprise B sera considérée filiale de l'entreprise A.
+   */
+  nombre_filiale: number
+  /**
+   * Nombre d'entreprises dans le groupe (groupe défini par les liens capitalistique d'au moins 50,01%)
+   */
+  taille_compo_groupe: number
+  /**
+   * Durée de l'exercice en mois.
+   */
+  nombre_mois: number
+  /**
+   * Équilibre financier: Ressources durables / Emplois stables
+   */
+  equilibre_financier: number
+  /**
+   * Indépendance financière (exprimé en %): Fonds propres / Ressources durables * 100
+   */
+  independance_financiere: number
+  /**
+   * Endettement (exprimé en %): Dettes de caractère financier / Ressources durables * 100
+   */
+  endettement: number
+  /**
+   * Autonomie financière Fonds propres / Total bilan * 100
+   */
+  autonomie_financiere: number
+  /**
+   * Degré d'amortissement des immobilisations corporelles (exprimé en %): Amortissements des immobilisations corporelles / Immobilisation corporelles brutes * 100
+   */
+  degre_immo_corporelle: number
+  /**
+   * Financement de l'actif circulant net: Fonds de roulement net global / Actif circulant net
+   */
+  financement_actif_circulant: number
+  /**
+   * Liquidité générale: Actif circulant net / Dettes à court terme
+   */
+  liquidite_generale: number
+  /**
+   * Liquidité réduite: Actif circulant net hors stocks / Dettes à court terme
+   */
+  liquidite_reduite: number
+  /**
+   * Rotation des stocks (exprimé en jours): Stock / Chiffre d'affaires net * 360. Selon la nomenclature NAF Rév. 2 pour les secteurs d'activité 45, 46, 47, 95 (sauf 9511Z) ainsi que pour les codes d'activités 2319Z, 3831Z et 3832Z : Marchandises / (Achats de marchandises + Variation de stock) * 360
+   */
+  rotation_stocks: number
+  /**
+   * Crédit clients (exprimé en jours): (Clients + Effets portés à l'escompte et non échus) / Chiffre d'affaires TTC * 360
+   */
+  credit_client: number
+  /**
+   * Crédit fournisseurs (exprimé en jours): Fournisseurs / Achats TTC * 360
+   */
+  credit_fournisseur: number
+  /**
+   * Chiffre d'affaire par effectif (exprimé en k€/emploi): Chiffre d'affaires net / Effectif * 1000
+   */
+  ca_par_effectif: number
+  /**
+   * Taux d'intérêt financier (exprimé en %): Intérêts / Chiffre d'affaires net * 100
+   */
+  taux_interet_financier: number
+  /**
+   * Intérêts sur chiffre d'affaire (exprimé en %): Total des charges financières / Chiffre d'affaires net * 100
+   */
+  taux_interet_sur_ca: number
+  /**
+   * Endettement global (exprimé en jours): (Dettes + Effets portés à l'escompte et non échus) / Chiffre d'affaires net * 360
+   */
+  endettement_global: number
+  /**
+   * Taux d'endettement (exprimé en %): Dettes de caractère financier / (Capitaux propres + autres fonds propres) * 100
+   */
+  taux_endettement: number
+  /**
+   * Capacité de remboursement: Dettes de caractère financier / Capacité d'autofinancement avant répartition
+   */
+  capacite_remboursement: number
+  /**
+   * Capacité d'autofinancement (exprimé en %): Capacité d'autofinancement avant répartition / (Chiffre d'affaires net + Subvention d'exploitation) * 100
+   */
+  capacite_autofinancement: number
+  /**
+   * Couverture du chiffre d'affaire par le besoin en fonds de roulement (exprimé en jours): Besoins en fonds de roulement / Chiffre d'affaires net * 360
+   */
+  couverture_ca_besoin_fdr: number
+  /**
+   * PoidsBFRExploitation Poids des besoins en fonds de roulement d'exploitation (exprimé en %): Besoins en fonds de roulement d'exploitation / Chiffre d'affaires net * 100
+   */
+  poids_bfr_exploitation: number
+  /**
+   * Exportation Exportation (exprimé en %): (Chiffre d'affaires net - Chiffre d'affaires net en France) / Chiffre d'affaires net * 100
+   */
+  exportation: number
+  /**
+   * Efficacité économique (exprimé en k€/emploi): Valeur ajoutée / Effectif * 1000
+   */
+  efficacite_economique: number
+  /**
+   * Productivité du potentiel de production: Valeur ajoutée / Immobilisations corporelles et incorporelles brutes
+   */
+  productivite_potentiel_production: number
+  /**
+   * Productivtié du capital financier: Valeur ajoutée / Actif circulant net + Effets portés à l'escompte et non échus
+   */
+  productivite_capital_financier: number
+  /**
+   * Productivité du capital investi: Valeur ajoutée / Total de l'actif + Effets portés à l'escompte et non échus
+   */
+  productivite_capital_investi: number
+  /**
+   * Taux d'investissement productif (exprimé en %): Immobilisations à valeur d'acquisition / Valeur ajoutée * 100
+   */
+  taux_d_investissement_productif: number
+  /**
+   * Rentabilité économique (exprimé en %): Excédent brut d'exploitation / Chiffre d'affaires net + Subventions d'exploitation * 100
+   */
+  rentabilite_economique: number
+  /**
+   * Performance (exprimé en %): Résultat courant avant impôt / Chiffre d'affaires net + Subventions d'exploitation * 100
+   */
+  performance: number
+  /**
+   * Rendement brut des fonds propres (exprimé en %): Résultat courant avant impôt / Fonds propres nets * 100
+   */
+  rendement_brut_fonds_propres: number
+  /**
+   * Rentabilité nette (exprimé en %): Bénéfice ou perte / Chiffre d'affaires net + Subventions d'exploitation * 100
+   */
+  rentabilite_nette: number
+  /**
+   * Rendement des capitaux propres (exprimé en %): Bénéfice ou perte / Capitaux propres nets * 100
+   */
+  rendement_capitaux_propres: number
+  /**
+   * RendementRessourcesDurables Rendement des ressources durables (exprimé en %): Résultat courant avant impôts + Intérêts et charges assimilées / Ressources durables nettes * 100
+   */
+  rendement_ressources_durables: number
+  /**
+   * Taux de marge commerciale (exprimé en %): Marge commerciale / Vente de marchandises * 100
+   */
+  taux_marge_commerciale: number
+  /**
+   * Taux de valeur ajoutée (exprimé en %): Valeur ajoutée / Chiffre d'affaires net * 100
+   */
+  taux_valeur_ajoutee: number
+  /**
+   * Part des salariés (exprimé en %): (Charges de personnel + Participation des salariés aux résultats) / Valeur ajoutée * 100
+   */
+  part_salaries: number
+  /**
+   * Part de l'État (exprimé en %): Impôts et taxes / Valeur ajoutée * 100
+   */
+  part_etat: number
+  /**
+   * Part des prêteurs (exprimé en %): Intérêts / Valeur ajoutée * 100
+   */
+  part_preteur: number
+  /**
+   * Part de l'autofinancement (exprimé en %): Capacité d'autofinancement avant répartition / Valeur ajoutée * 100
+   */
+  part_autofinancement: number
+  /**
+   * Chiffre d'affaires à l'exportation
+   */
+  ca_exportation: number
+  /**
+   * Achats de marchandises
+   */
+  achat_marchandises: number
+  /**
+   * Achats de matières premières et autres approvisionnement.
+   */
+  achat_matieres_premieres: number
+  /**
+   * Production de l'exercice.
+   */
+  production: number
+  /**
+   * Marge commerciale.
+   */
+  marge_commerciale: number
+  /**
+   * Consommation de l'exercice.
+   */
+  consommation: number
+  /**
+   * Autres achats et charges externes.
+   */
+  autres_achats_charges_externes: number
+  /**
+   * Charges de personnel.
+   */
+  charge_personnel: number
+  /**
+   * Impôts, taxes et versements assimilés.
+   */
+  impots_taxes: number
+  /**
+   * Subventions d'exploitation.
+   */
+  subventions_d_exploitation: number
+  /**
+   * Autres produits, charges et reprises.
+   */
+  autres_produits_charges_reprises: number
+  /**
+   * Dotation d'exploitation aux amortissements et aux provisions.
+   */
+  dotation_amortissement: number
+  /**
+   * Résultat d'exploitation.
+   */
+  resultat_expl: number
+  /**
+   * Opérations en commun.
+   */
+  operations_commun: number
+  /**
+   * Résultat courant avant impôts.
+   */
+  resultat_avant_impot: number
+  /**
+   * Participation des salariés aux résultats.
+   */
+  participation_salaries: number
+  /**
+   * Impôts sur les bénéfices et impôts différés.
+   */
+  impot_benefice: number
+  /**
+   * Bénéfice ou perte.
+   */
+  benefice_ou_perte: number
+}
+/**
  * Champs importés par le parseur lib/urssaf/effectif_ent.go de sfdata.
  */
 export interface EntréeEffectifEnt {

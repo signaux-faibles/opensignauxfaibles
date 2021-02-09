@@ -1,4 +1,4 @@
-import { EntréeDiane } from "../RawDataTypes"
+import { EntréeDiane } from "../GeneratedTypes"
 
 export function diane(hs?: Record<string, EntréeDiane>): EntréeDiane[] {
   "use strict"

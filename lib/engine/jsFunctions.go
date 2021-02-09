@@ -1453,7 +1453,9 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
         const series = f.generatePeriodSerie(periode_dispo, f.dateAddMonth(periode_dispo, 14) // periode de validité d'un bilan auprès de la Banque de France: 21 mois (14+7)
         );
         for (const periode of series) {
-            const rest = f.omit(entréeDiane, "marquee", "nom_entreprise", "numero_siren", "statut_juridique", "procedure_collective");
+            const rest = f.omit(entréeDiane, 
+            // "marquee",
+            "nom_entreprise", "numero_siren", "statut_juridique", "procedure_collective");
             const makePastProp = (prop, offset) => ` + "`" + `${prop}_past_${offset}` + "`" + `;
             if (periodes.includes(periode.getTime())) {
                 Object.assign(output_indexed[periode.getTime()], rest);
