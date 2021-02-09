@@ -19,6 +19,7 @@ import {
   EtablissementDataValues,
   Siret,
 } from "../RawDataTypes"
+import { EntréeApConso } from "../GeneratedTypes"
 
 // test data inspired by test.sh
 const siret: Siret = "01234567891011"
@@ -35,7 +36,11 @@ setGlobals({
 const rawEtabData: EtablissementBatchProps = {
   reporder: {},
   apconso: {
-    somehash: { id_conso: "", periode: new Date(), heure_consomme: 1 },
+    somehash: {
+      id_conso: "",
+      periode: new Date(),
+      heure_consomme: 1,
+    } as EntréeApConso,
   },
 }
 

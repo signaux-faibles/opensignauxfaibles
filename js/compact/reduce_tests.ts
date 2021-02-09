@@ -1,7 +1,11 @@
 import test, { ExecutionContext } from "ava"
 import { reduce } from "./reduce"
 import { setGlobals } from "../test/helpers/setGlobals"
-import { EntréeCotisation } from "../GeneratedTypes"
+import {
+  EntréeApConso,
+  EntréeApDemande,
+  EntréeCotisation,
+} from "../GeneratedTypes"
 import { DataType, BatchKey, CompanyDataValues } from "../RawDataTypes"
 import { CompanyDataValuesWithCompact } from "./applyPatchesToBatch"
 
@@ -11,14 +15,14 @@ const AP_CONSO = {
   id_conso: "",
   periode: new Date(),
   heure_consomme: 0,
-}
+} as EntréeApConso
 
 const AP_DEMANDE = {
   id_demande: "",
   periode: { start: new Date(), end: new Date() },
   hta: 0,
   motif_recours_se: 0,
-}
+} as EntréeApDemande
 
 type TestCase = {
   testCaseName: string
@@ -475,7 +479,7 @@ test.serial(
       periode: new Date(0),
       id_conso: "",
       heure_consomme: 0,
-    }
+    } as EntréeApConso
     const previousRawDataValue: CompanyDataValues = {
       key,
       scope,
