@@ -8,8 +8,6 @@ type Input = {
 }
 
 type VariablesTransmises = {
-  /** Raison sociale de l'établissement. */
-  raison_sociale: string | null
   /** Latitude (géolocalisation) de l'établissement. */
   latitude: EntréeSirene["latitude"] | null
   /** Longitude (géolocalisation) de l'établissement. */
@@ -64,7 +62,6 @@ export function sirene(
       if (sirene.ape && sirene.ape.match(regexp_naf)) {
         val.code_ape = sirene.ape
       }
-      val.raison_sociale = sirene.raison_sociale || null
       // val.activite_saisonniere = sirene.activite_saisoniere || null
       // val.productif = sirene.productif || null
       // val.tranche_ca = sirene.tranche_ca || null
