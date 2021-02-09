@@ -42,7 +42,7 @@ const setupCompanyValuesForMontant = (dateDebut: Date) => ({
       part_patronale: montantPartPatronale,
       date_traitement: dateDebut,
       numero_compte: "",
-      numero_ecart_negatif: 1,
+      numero_ecart_negatif: "1",
       numero_historique: 2,
     },
     hash2: {
@@ -51,7 +51,7 @@ const setupCompanyValuesForMontant = (dateDebut: Date) => ({
       part_patronale: 0,
       date_traitement: dateAddMonth(dateDebut, moisRemboursement),
       numero_compte: "",
-      numero_ecart_negatif: 1,
+      numero_ecart_negatif: "1",
       numero_historique: 3,
     },
   },
@@ -71,7 +71,7 @@ const setupCompanyValues = (dateDebut: Date) => ({
         start: dateDebut,
         end: dateAddMonth(dateDebut, 1),
       },
-      numero_ecart_negatif: 1,
+      numero_ecart_negatif: "1",
       numero_historique: 2,
       numero_compte: "",
       date_traitement: dateDebut,
@@ -85,7 +85,7 @@ const setupCompanyValues = (dateDebut: Date) => ({
         start: dateDebut,
         end: dateAddMonth(dateDebut, 1),
       },
-      numero_ecart_negatif: 1, // même valeur que pour le débit précédent
+      numero_ecart_negatif: "1", // même valeur que pour le débit précédent
       numero_historique: 3, // incrémentation depuis le débit précédent
       numero_compte: "",
       date_traitement: dateAddMonth(dateDebut, 1),
