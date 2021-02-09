@@ -718,7 +718,7 @@ db.getCollection("Features").createIndex({
                     periode: debit.periode.start,
                     part_ouvriere: debit.part_ouvriere,
                     part_patronale: debit.part_patronale,
-                    montant_majorations: debit.montant_majorations || 0,
+                    montant_majorations: /*debit.montant_majorations ||*/ 0,
                 },
             ]);
         });

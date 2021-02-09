@@ -1,5 +1,6 @@
 import { f } from "./functions"
-import { EntréeDebit, ParHash, Timestamp } from "../RawDataTypes"
+import { EntréeDebit } from "../GeneratedTypes"
+import { ParHash, Timestamp } from "../RawDataTypes"
 
 type AccuItem = {
   hash: string
@@ -106,7 +107,7 @@ export function debits(vdebit: ParHash<EntréeDebit> = {}): SortieDebit[] {
           periode: debit.periode.start,
           part_ouvriere: debit.part_ouvriere,
           part_patronale: debit.part_patronale,
-          montant_majorations: debit.montant_majorations || 0,
+          montant_majorations: /*debit.montant_majorations ||*/ 0, // TODO: montant_majorations n'est pas fourni par les fichiers debit de l'urssaf pour l'instant, mais on aimerait y avoir accès un jour.
         },
       ])
     })

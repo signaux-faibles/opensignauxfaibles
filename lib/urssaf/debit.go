@@ -27,7 +27,7 @@ type Debit struct {
 	CodeMotifEcartNegatif        string       `col:"Motif_ecn"        json:"code_motif_ecart_negatif"     bson:"code_motif_ecart_negatif"`
 	DebitSuivant                 string       `                       json:"debit_suivant,omitempty"      bson:"debit_suivant,omitempty"`
 	Recours                      bool         `col:"Recours_en_cours" json:"recours_en_cours"             bson:"recours_en_cours"`
-	// MontantMajorations        float64      `                       json:"montant_majorations"          bson:"montant_majorations"`
+	// MontantMajorations        float64      `                       json:"montant_majorations"          bson:"montant_majorations"`  // TODO: montant_majorations n'est pas fourni par les fichiers debit de l'urssaf pour l'instant, mais on aimerait y avoir accès un jour.
 }
 
 // Key _id de l'objet
