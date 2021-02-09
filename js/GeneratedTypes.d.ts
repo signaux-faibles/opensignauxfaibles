@@ -229,6 +229,25 @@ export interface EntréeDéfaillances {
   date_effet: Date
 }
 /**
+ * Champs importés par le parseur lib/sirene_ul/main.go de sfdata.
+ */
+export interface EntréeSireneEntreprise {
+  siren?: string
+  nic?: string
+  raison_sociale: string
+  nom_unite_legale?: string
+  nom_usage_unite_legale?: string
+  prenom1_unite_legale?: string
+  prenom2_unite_legale?: string
+  prenom3_unite_legale?: string
+  prenom4_unite_legale?: string
+  /**
+   * code numérique sérialisé en chaine de caractères
+   */
+  statut_juridique: string
+  date_creation?: Date
+}
+/**
  * Champs importés par le parseur lib/sirene/main.go de sfdata.
  */
 export interface EntréeSirene {

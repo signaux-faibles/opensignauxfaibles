@@ -13,6 +13,7 @@ import {
   EntréeEllisphere,
   EntréePaydex,
   EntréeSirene,
+  EntréeSireneEntreprise,
 } from "./GeneratedTypes"
 
 // Types de données de base
@@ -178,18 +179,6 @@ export type EntréeDebit = {
   code_motif_ecart_negatif: string
   /** Recours en cours. */
   recours_en_cours: boolean
-}
-
-export type EntréeSireneEntreprise = {
-  raison_sociale: string
-  nom_unite_legale: string
-  nom_usage_unite_legale: string
-  prenom1_unite_legale: string
-  prenom2_unite_legale: string
-  prenom3_unite_legale: string
-  prenom4_unite_legale: string
-  statut_juridique: string | null // code numérique sérialisé en chaine de caractères
-  date_creation: Date
 }
 
 export type EntréeBdf = {

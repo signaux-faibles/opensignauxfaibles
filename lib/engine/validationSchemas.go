@@ -521,4 +521,48 @@ var validationSchemas = map[string]string{
   "additionalProperties": false
 }
 `,
+"sirene_ul.schema.json": `{
+  "title": "EntréeSireneEntreprise",
+  "description": "Champs importés par le parseur lib/sirene_ul/main.go de sfdata.",
+  "bsonType": "object",
+  "required": ["raison_sociale", "statut_juridique"],
+  "properties": {
+    "siren": {
+      "bsonType": "string"
+    },
+    "nic": {
+      "bsonType": "string"
+    },
+    "raison_sociale": {
+      "bsonType": "string"
+    },
+    "nom_unite_legale": {
+      "bsonType": "string"
+    },
+    "nom_usage_unite_legale": {
+      "bsonType": "string"
+    },
+    "prenom1_unite_legale": {
+      "bsonType": "string"
+    },
+    "prenom2_unite_legale": {
+      "bsonType": "string"
+    },
+    "prenom3_unite_legale": {
+      "bsonType": "string"
+    },
+    "prenom4_unite_legale": {
+      "bsonType": "string"
+    },
+    "statut_juridique": {
+      "description": "code numérique sérialisé en chaine de caractères",
+      "bsonType": "string"
+    },
+    "date_creation": {
+      "bsonType": "date"
+    }
+  },
+  "additionalProperties": false
+}
+`,
 }
