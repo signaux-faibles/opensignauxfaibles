@@ -14,7 +14,7 @@ import (
 
 // Diane Information financières
 type Diane struct {
-	Annee                           *int      `col:"Annee" json:"exercice_diane,omitempty" bson:"exercice_diane,omitempty"`
+	Annee                           *int      `col:"Annee" json:"exercice_diane" bson:"exercice_diane"`
 	NomEntreprise                   string    `col:"Nom de l'entreprise" json:"nom_entreprise" bson:"nom_entreprise,omitempty"`
 	NumeroSiren                     string    `col:"Numéro Siren" json:"numero_siren" bson:"numero_siren,omitempty"`
 	StatutJuridique                 string    `col:"Statut juridique " json:"statut_juridique" bson:"statut_juridique,omitempty"`
@@ -213,7 +213,12 @@ func (parser *dianeParser) ParseLines(parsedLineChan chan marshal.ParsedLineResu
 		} else if len(row) < 83 {
 			parsedLine.AddRegularError(errors.New("Ligne invalide"))
 		} else {
-			parsedLine.AddTuple(parseDianeRow(parser.idx, row))
+			dianeRow := parseDianeRow(parser.idx, row)
+			if dianeRow.Annee == nil {
+				parsedLine.AddRegularError(errors.New("Année d'exercice Diane non définie"))
+			} else {
+				parsedLine.AddTuple(dianeRow)
+			}
 		}
 		parsedLineChan <- parsedLine
 	}

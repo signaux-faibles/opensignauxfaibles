@@ -265,7 +265,7 @@ export interface EntréeDiane {
   /**
    * Année de l'exercice
    */
-  exercice_diane?: number
+  exercice_diane: number
   /**
    * Date d'arrêté du bilan
    */
