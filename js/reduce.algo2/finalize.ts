@@ -20,10 +20,7 @@ type Accumulateurs = {
 
 type DonnéesEntreprise = SortieMapEntreprise & Accumulateurs
 
-type SortieEtabAvecEntreprise = Omit<
-  SortieMapEtablissement & DonnéesEntreprise,
-  "raison_sociale"
-> & { raison_sociale?: string | null } // TODO: éviter de se coltiner une raison_sociale d'établissement `null`, quitte à récupérer celle de l'entreprise mère
+type SortieEtabAvecEntreprise = SortieMapEtablissement & DonnéesEntreprise
 
 export type Clé = {
   batch: BatchKey
@@ -85,7 +82,7 @@ export function finalize(k: Clé, v: SortieMap): SortieFinalize {
           (etab.montant_part_ouvriere ?? 0)
       }
       return {
-        ...etab, // TODO: éviter que les champs d'entreprise surchargent ceux de l'établissement, tout en conservant la raison_sociale d'entreprise si celle d'établissement est null
+        ...etab, // TODO: s'assurer que certains champs de données d'établissement ne sont pas écrasés par des données d'entreprise portant le même nom
         ...entr,
         nbr_etablissements_connus: Object.keys(établissements).length,
       }
