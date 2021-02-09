@@ -1437,7 +1437,6 @@ const makeObjects = ISODate => ([
                     "29d81057925307ae17a3b2d8682bba87" : {
                         "siren" : "005480546",
                         "nic" : "00018",
-                        "raison_sociale" : "LA COMPAGNIE DES LAPINS BLEUS",
                         "type_voie" : "LENIPHEN",
                         "code_postal" : "44350",
                         "region" : "Pays de la Loire",
@@ -12944,7 +12943,6 @@ const makeObjects = ISODate => ([
                     "868849656b29306a4868b65f68af3f09" : {
                         "siren" : "005480546",
                         "nic" : "00018",
-                        "raison_sociale" : "LA COMPAGNIE DES LAPINS BLEUS",
                         "type_voie" : "",
                         "code_postal" : "",
                         "region" : "",
