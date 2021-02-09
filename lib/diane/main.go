@@ -97,7 +97,7 @@ type Diane struct {
 	// TODO: ajouter NotePreface ou le retirer de la documentation (cf https://github.com/signaux-faibles/documentation/blob/master/description-donnees.md#donn%C3%A9es-financi%C3%A8res-issues-des-bilans-d%C3%A9pos%C3%A9s-au-greffe-de-tribunaux-de-commerce)
 
 	// Colonnes non utilisées:
-	// 01 "Marquée";
+	// 01 "Marquée"; (propriété `marquee`)
 	// 13 "Dernière année disponible";
 	// 59 "Achats de march. kEUR";
 }
