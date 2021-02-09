@@ -1,11 +1,6 @@
 import { f } from "./functions"
-import {
-  EntréeDebit,
-  EntréeCotisation,
-  Timestamp,
-  ParPériode,
-  ParHash,
-} from "../RawDataTypes"
+import { EntréeCotisation } from "../GeneratedTypes"
+import { EntréeDebit, Timestamp, ParPériode, ParHash } from "../RawDataTypes"
 
 // Champs de EntréeCotisation nécéssaires à cotisationsdettes
 type ChampsEntréeCotisation = Pick<EntréeCotisation, "periode" | "du">

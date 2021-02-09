@@ -7,7 +7,7 @@ var validationSchemas = map[string]string{
   "title": "EntréeApConso",
   "description": "Champs importés par le parseur lib/apconso/main.go de sfdata.",
   "bsonType": "object",
-  "required": ["id_conso", "periode", "heure_consomme"],
+  "required": ["id_conso", "periode", "heure_consomme", "montant", "effectif"],
   "properties": {
     "id_conso": {
       "bsonType": "string"
@@ -32,7 +32,20 @@ var validationSchemas = map[string]string{
   "title": "EntréeApDemande",
   "description": "Champs importés par le parseur lib/apdemande/main.go de sfdata.",
   "bsonType": "object",
-  "required": ["id_demande", "periode", "hta", "motif_recours_se"],
+  "required": [
+    "id_demande",
+    "periode",
+    "hta",
+    "motif_recours_se",
+    "effectif_entreprise",
+    "effectif",
+    "date_statut",
+    "mta",
+    "effectif_autorise",
+    "heure_consommee",
+    "montant_consommee",
+    "effectif_consomme"
+  ],
   "properties": {
     "id_demande": {
       "bsonType": "string"
@@ -113,6 +126,60 @@ var validationSchemas = map[string]string{
     "action": {
       "bsonType": "string",
       "description": "TODO: choisir un type plus précis"
+    }
+  },
+  "additionalProperties": false
+}
+`,
+"compte.schema.json": `{
+  "title": "EntréeCompte",
+  "description": "Champs importés par le parseur lib/urssaf/compte.go de sfdata.",
+  "bsonType": "object",
+  "required": ["periode", "siret", "numero_compte"],
+  "properties": {
+    "periode": {
+      "bsonType": "date",
+      "description": "Date à laquelle cet établissement est associé à ce numéro de compte URSSAF."
+    },
+    "siret": {
+      "bsonType": "string",
+      "description": "Numéro SIRET de l'établissement. Les numéros avec des Lettres sont des sirets provisoires."
+    },
+    "numero_compte": {
+      "bsonType": "string",
+      "description": "Compte administratif URSSAF."
+    }
+  },
+  "additionalProperties": false
+}
+`,
+"cotisation.schema.json": `{
+  "title": "EntréeCotisation",
+  "description": "Champs importés par le parseur lib/urssaf/cotisation.go de sfdata.",
+  "bsonType": "object",
+  "required": ["numero_compte", "periode", "encaisse", "du"],
+  "properties": {
+    "numero_compte": {
+      "description": "Compte administratif URSSAF.",
+      "bsonType": "string"
+    },
+    "periode": {
+      "description": "Période sur laquelle le montants s'appliquent.",
+      "bsonType": "object",
+      "required": ["start", "end"],
+      "properties": {
+        "start": { "bsonType": "date" },
+        "end": { "bsonType": "date" }
+      },
+      "additionalProperties": false
+    },
+    "encaisse": {
+      "description": "Cotisation encaissée directement, en euros.",
+      "bsonType": "number"
+    },
+    "du": {
+      "description": "Cotisation due, en euros. À utiliser pour calculer le montant moyen mensuel du: Somme cotisations dues / nb périodes.",
+      "bsonType": "number"
     }
   },
   "additionalProperties": false
@@ -210,6 +277,86 @@ var validationSchemas = map[string]string{
   { "$match": { "dataPerHash": { "$not": { "$type": 3 } } } }
 ]
 `,
+"effectif.schema.json": `{
+  "title": "EntréeEffectif",
+  "description": "Champs importés par le parseur lib/urssaf/effectif.go de sfdata.",
+  "bsonType": "object",
+  "required": ["numero_compte", "periode", "effectif"],
+  "properties": {
+    "numero_compte": {
+      "description": "Compte administratif URSSAF.",
+      "bsonType": "string"
+    },
+    "periode": {
+      "bsonType": "date"
+    },
+    "effectif": {
+      "description": "Nombre de personnes employées par l'établissement.",
+      "bsonType": "number"
+    }
+  },
+  "additionalProperties": false
+}
+`,
+"effectif_ent.schema.json": `{
+  "title": "EntréeEffectifEnt",
+  "description": "Champs importés par le parseur lib/urssaf/effectif_ent.go de sfdata.",
+  "bsonType": "object",
+  "required": ["periode", "effectif"],
+  "properties": {
+    "periode": {
+      "bsonType": "date"
+    },
+    "effectif": {
+      "description": "Nombre de personnes employées par l'entreprise.",
+      "bsonType": "number"
+    }
+  },
+  "additionalProperties": false
+}
+`,
+"ellisphere.schema.json": `{
+  "title": "EntréeEllisphere",
+  "description": "Champs importés par le parseur lib/ellisphere/main.go de sfdata.",
+  "bsonType": "object",
+  "properties": {
+    "code_groupe": {
+      "bsonType": "string"
+    },
+    "siren_groupe": {
+      "bsonType": "string"
+    },
+    "refid_groupe": {
+      "bsonType": "string"
+    },
+    "raison_sociale_groupe": {
+      "bsonType": "string"
+    },
+    "adresse_groupe": {
+      "bsonType": "string"
+    },
+    "personne_pou_m_groupe": {
+      "bsonType": "string"
+    },
+    "niveau_detention": {
+      "bsonType": "number"
+    },
+    "part_financiere": {
+      "bsonType": "number"
+    },
+    "code_filiere": {
+      "bsonType": "string"
+    },
+    "refid_filiere": {
+      "bsonType": "string"
+    },
+    "personne_pou_m_filiere": {
+      "bsonType": "string"
+    }
+  },
+  "additionalProperties": false
+}
+`,
 "flatten_data_entries.pipeline.json": `[
   { "$project": { "_id": 1, "batches": { "$objectToArray": "$value.batch" } } },
   { "$unwind": { "path": "$batches", "preserveNullAndEmptyArrays": false } },
@@ -244,6 +391,22 @@ var validationSchemas = map[string]string{
     }
   }
 ]
+`,
+"paydex.schema.json": `{
+  "title": "EntréePaydex",
+  "description": "Champs importés par le parseur lib/paydex/main.go de sfdata.",
+  "bsonType": "object",
+  "required": ["date_valeur", "nb_jours"],
+  "properties": {
+    "date_valeur": {
+      "bsonType": "date"
+    },
+    "nb_jours": {
+      "bsonType": "number"
+    }
+  },
+  "additionalProperties": false
+}
 `,
 "procol.schema.json": `{
   "title": "EntréeDéfaillances",

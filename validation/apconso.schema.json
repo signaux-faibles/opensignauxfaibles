@@ -2,7 +2,7 @@
   "title": "EntréeApConso",
   "description": "Champs importés par le parseur lib/apconso/main.go de sfdata.",
   "bsonType": "object",
-  "required": ["id_conso", "periode", "heure_consomme"],
+  "required": ["id_conso", "periode", "heure_consomme", "montant", "effectif"],
   "properties": {
     "id_conso": {
       "bsonType": "string"

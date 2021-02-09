@@ -14,8 +14,8 @@
 export interface EntréeApConso {
   id_conso: string
   heure_consomme: number
-  montant?: number
-  effectif?: number
+  montant: number
+  effectif: number
   periode: Date
 }
 /**
@@ -35,14 +35,14 @@ export interface EntréeApDemande {
    * Cause d'activité partielle
    */
   motif_recours_se: number
-  effectif_entreprise?: number
-  effectif?: number
-  date_statut?: Date
-  mta?: number
-  effectif_autorise?: number
-  heure_consommee?: number
-  montant_consommee?: number
-  effectif_consomme?: number
+  effectif_entreprise: number
+  effectif: number
+  date_statut: Date
+  mta: number
+  effectif_autorise: number
+  heure_consommee: number
+  montant_consommee: number
+  effectif_consomme: number
 }
 /**
  * Note: CE SCHEMA EST INCOMPLET POUR L'INSTANT. Cf https://github.com/signaux-faibles/opensignauxfaibles/pull/143
@@ -66,6 +66,47 @@ export interface EntréeCcsf {
    * TODO: choisir un type plus précis
    */
   action: string
+}
+/**
+ * Champs importés par le parseur lib/urssaf/compte.go de sfdata.
+ */
+export interface EntréeCompte {
+  /**
+   * Date à laquelle cet établissement est associé à ce numéro de compte URSSAF.
+   */
+  periode: Date
+  /**
+   * Numéro SIRET de l'établissement. Les numéros avec des Lettres sont des sirets provisoires.
+   */
+  siret: string
+  /**
+   * Compte administratif URSSAF.
+   */
+  numero_compte: string
+}
+/**
+ * Champs importés par le parseur lib/urssaf/cotisation.go de sfdata.
+ */
+export interface EntréeCotisation {
+  /**
+   * Compte administratif URSSAF.
+   */
+  numero_compte: string
+  /**
+   * Période sur laquelle le montants s'appliquent.
+   */
+  periode: {
+    start: Date
+    end: Date
+  }
+  /**
+   * Cotisation encaissée directement, en euros.
+   */
+  encaisse: number
+  /**
+   * Cotisation due, en euros. À utiliser pour calculer le montant moyen mensuel du: Somme cotisations dues / nb périodes.
+   */
+  du: number
 }
 /**
  * Champs importés par le parseur lib/urssaf/delai.go de sfdata.
@@ -115,6 +156,53 @@ export interface EntréeDelai {
    * Code externe de l'action.
    */
   action: string
+}
+/**
+ * Champs importés par le parseur lib/urssaf/effectif_ent.go de sfdata.
+ */
+export interface EntréeEffectifEnt {
+  periode: Date
+  /**
+   * Nombre de personnes employées par l'entreprise.
+   */
+  effectif: number
+}
+/**
+ * Champs importés par le parseur lib/urssaf/effectif.go de sfdata.
+ */
+export interface EntréeEffectif {
+  /**
+   * Compte administratif URSSAF.
+   */
+  numero_compte: string
+  periode: Date
+  /**
+   * Nombre de personnes employées par l'établissement.
+   */
+  effectif: number
+}
+/**
+ * Champs importés par le parseur lib/ellisphere/main.go de sfdata.
+ */
+export interface EntréeEllisphere {
+  code_groupe?: string
+  siren_groupe?: string
+  refid_groupe?: string
+  raison_sociale_groupe?: string
+  adresse_groupe?: string
+  personne_pou_m_groupe?: string
+  niveau_detention?: number
+  part_financiere?: number
+  code_filiere?: string
+  refid_filiere?: string
+  personne_pou_m_filiere?: string
+}
+/**
+ * Champs importés par le parseur lib/paydex/main.go de sfdata.
+ */
+export interface EntréePaydex {
+  date_valeur: Date
+  nb_jours: number
 }
 /**
  * Champs importés par le parseur lib/urssaf/procol.go de sfdata.

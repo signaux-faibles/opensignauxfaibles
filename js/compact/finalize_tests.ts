@@ -5,6 +5,7 @@ import {
   CompanyDataValuesWithCompact,
   BatchValueWithCompact,
 } from "./applyPatchesToBatch"
+import { EntréeApConso } from "../GeneratedTypes"
 import { EntréeRepOrder } from "../RawDataTypes"
 
 const SIRET = "123"
@@ -15,7 +16,7 @@ const AP_CONSO = {
   periode: DATE_DEBUT,
   id_conso: "",
   heure_consomme: 0,
-}
+} as EntréeApConso
 
 const EFFECTIF = {
   periode: DATE_DEBUT,

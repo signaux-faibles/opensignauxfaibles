@@ -2,18 +2,20 @@ import test, { ExecutionContext } from "ava"
 import { currentState } from "./currentState"
 import { EntréeApConso, EntréeApDemande } from "../GeneratedTypes"
 
-const makeApDemande = (): EntréeApDemande => ({
-  id_demande: "",
-  periode: { start: new Date(), end: new Date() },
-  hta: 0,
-  motif_recours_se: 0,
-})
+const makeApDemande = () =>
+  ({
+    id_demande: "",
+    periode: { start: new Date(), end: new Date() },
+    hta: 0,
+    motif_recours_se: 0,
+  } as EntréeApDemande)
 
-const makeApConso = (): EntréeApConso => ({
-  id_conso: "",
-  periode: new Date(),
-  heure_consomme: 0,
-})
+const makeApConso = () =>
+  ({
+    id_conso: "",
+    periode: new Date(),
+    heure_consomme: 0,
+  } as EntréeApConso)
 
 test("currentState", (t: ExecutionContext) => {
   const actualRes = currentState([

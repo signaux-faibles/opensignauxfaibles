@@ -1,4 +1,5 @@
-import { ParHash, ParPériode, EntréePaydex } from "../RawDataTypes"
+import { EntréePaydex } from "../GeneratedTypes"
+import { ParHash, ParPériode } from "../RawDataTypes"
 import { f } from "./functions"
 
 export type SortiePaydex = {

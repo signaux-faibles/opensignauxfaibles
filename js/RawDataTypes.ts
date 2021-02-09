@@ -5,7 +5,13 @@ import {
   EntréeApDemande,
   EntréeDelai,
   EntréeCcsf,
+  EntréeCompte,
+  EntréeCotisation,
   EntréeDéfaillances,
+  EntréeEffectif,
+  EntréeEffectifEnt,
+  EntréeEllisphere,
+  EntréePaydex,
 } from "./GeneratedTypes"
 
 // Types de données de base
@@ -94,49 +100,10 @@ export type BatchValueProps = CommonBatchProps &
 
 // Détail des types de données
 
-export type EntréeCompte = {
-  /** Date à laquelle cet établissement est associé à ce numéro de compte URSSAF. */
-  periode: Date
-  /** Numéro SIRET de l'établissement. Les numéros avec des Lettres sont des sirets provisoires. */
-  siret: string
-  /** Compte administratif URSSAF. */
-  numero_compte: string
-}
-
-export type EntréeInterim = {
-  periode: Date
-  etp: number
-}
-
 export type EntréeRepOrder = {
   random_order: number
   periode: Date
   siret: SiretOrSiren
-}
-
-export type EntréeEffectif = {
-  /** Compte administratif URSSAF. */
-  numero_compte: string
-  periode: Date
-  /** Nombre de personnes employées par l'établissement. */
-  effectif: number
-}
-
-export type EntréeEffectifEnt = {
-  periode: Date
-  /** Nombre de personnes employées par l'entreprise. */
-  effectif: number
-}
-
-export type EntréeCotisation = {
-  /** Compte administratif URSSAF. */
-  numero_compte: string
-  /** Période sur laquelle le montants s'appliquent. */
-  periode: { start: Date; end: Date }
-  /** Cotisation encaissée directement, en euros. */
-  encaisse: number
-  /** Cotisation due, en euros. À utiliser pour calculer le montant moyen mensuel du: Somme cotisations dues / nb périodes. */
-  du: number
 }
 
 /**
@@ -428,24 +395,4 @@ export type EntréeDiane = {
   impot_benefice: number
   /** Bénéfice ou perte. */
   benefice_ou_perte: number
-}
-
-export type EntréeEllisphere = {
-  siren: string
-  code_groupe: string
-  siren_groupe: string
-  refid_groupe: string
-  raison_sociale_groupe: string
-  adresse_groupe: string
-  personne_pou_m_groupe: string
-  niveau_detention: number
-  part_financiere: number
-  code_filiere: string
-  refid_filiere: string
-  personne_pou_m_filiere: string
-}
-
-export type EntréePaydex = {
-  date_valeur: Date
-  nb_jours: number
 }

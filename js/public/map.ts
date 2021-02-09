@@ -2,18 +2,18 @@ import { f } from "./functions"
 import {
   EntréeApConso,
   EntréeApDemande,
+  EntréeCompte,
   EntréeDelai,
   EntréeDéfaillances,
+  EntréeEllisphere,
+  EntréePaydex,
 } from "../GeneratedTypes"
 import {
   CompanyDataValues,
   BatchKey,
-  EntréeCompte,
   EntréeDiane,
-  EntréeEllisphere,
   EntréeSirene,
   EntréeSireneEntreprise,
-  EntréePaydex,
 } from "../RawDataTypes"
 import { SortieDebit } from "./debits"
 import { Bdf } from "./bdf"

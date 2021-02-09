@@ -11,11 +11,32 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/lib/apconso"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/apdemande"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/bdf"
+	"github.com/signaux-faibles/opensignauxfaibles/lib/ellisphere"
+	"github.com/signaux-faibles/opensignauxfaibles/lib/paydex"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/urssaf"
 	"github.com/stretchr/testify/assert"
 )
 
 var update = flag.Bool("update", false, "Update the expected test values in golden file") // please keep this line until https://github.com/kubernetes-sigs/service-catalog/issues/2319#issuecomment-425200065 is fixed
+
+func TestDiffSchema(t *testing.T) {
+	t.Run("doit vérifier qu'un champ est optionnel s'il est taggé avec \"omitempty\"", func(t *testing.T) {
+		type MyType struct {
+			MandatoryField string `json:"mandatoryField"`
+			OptionalField  string `json:"optionalField,omitempty"`
+		}
+		schema := propertySchema{
+			BsonType: "object",
+			Properties: map[string]propertySchema{
+				"mandatoryField": {BsonType: "string"},
+				"optionalField":  {BsonType: "string"},
+			},
+			RequiredProps:   []string{"mandatoryField"},
+			AdditionalProps: false,
+		}
+		assert.Equal(t, []error{}, diffSchema(schema, reflectStructType(reflect.TypeOf(MyType{}))))
+	})
+}
 
 func TestDiffMaps(t *testing.T) {
 	t.Run("doit détecter une entrée manquante dans la map A", func(t *testing.T) {
@@ -38,6 +59,25 @@ func TestDiffMaps(t *testing.T) {
 		assert.ElementsMatch(t, diffMaps(schemaProps, structProps), []error{
 			errors.New("property types of \"a\" don't match: {number map[] [] false} <> {string map[] [] false}"),
 		})
+	})
+}
+
+func TestReflectStructType(t *testing.T) {
+	t.Run("doit inclure tous les champs dans \"required\", sauf ceux taggés avec \"omitempty\"", func(t *testing.T) {
+		type MyType struct {
+			MandatoryField string `json:"mandatoryField"`
+			OptionalField  string `json:"optionalField,omitempty"`
+		}
+		expectedSchema := propertySchema{
+			BsonType: "object",
+			Properties: map[string]propertySchema{
+				"mandatoryField": {BsonType: "string"},
+				"optionalField":  {BsonType: "string"},
+			},
+			RequiredProps:   []string{"mandatoryField"},
+			AdditionalProps: false,
+		}
+		assert.Equal(t, expectedSchema, reflectStructType(reflect.TypeOf(MyType{})))
 	})
 }
 
@@ -71,11 +111,17 @@ func TestTypeAlignment(t *testing.T) {
 	}
 
 	typesToCompare := map[string]TypeToCompare{
-		"apconso.schema.json":   {apconso.APConso{}, []error{}},
-		"apdemande.schema.json": {apdemande.APDemande{}, []error{}},
-		"ccsf.schema.json":      {urssaf.CCSF{}, []error{}},
-		"delai.schema.json":     {urssaf.Delai{}, []error{}},
-		"procol.schema.json":    {urssaf.Procol{}, []error{}},
+		"apconso.schema.json":      {apconso.APConso{}, []error{}},
+		"apdemande.schema.json":    {apdemande.APDemande{}, []error{}},
+		"ccsf.schema.json":         {urssaf.CCSF{}, []error{}},
+		"compte.schema.json":       {urssaf.Compte{}, []error{}},
+		"cotisation.schema.json":   {urssaf.Cotisation{}, []error{}},
+		"delai.schema.json":        {urssaf.Delai{}, []error{}},
+		"effectif.schema.json":     {urssaf.Effectif{}, []error{}},
+		"effectif_ent.schema.json": {urssaf.EffectifEnt{}, []error{}},
+		"ellisphere.schema.json":   {ellisphere.Ellisphere{}, []error{}},
+		"paydex.schema.json":       {paydex.Paydex{}, []error{}},
+		"procol.schema.json":       {urssaf.Procol{}, []error{}},
 		"bdf.schema.json": {bdf.BDF{}, []error{ // bdf.schema.json n'est pas encore complet => la vérification va retourner les erreurs suivantes:
 			errors.New("property not found in JSON Schema: delai_fournisseur"),
 			errors.New("property not found in JSON Schema: dette_fiscale"),
@@ -87,6 +133,16 @@ func TestTypeAlignment(t *testing.T) {
 			errors.New("property not found in JSON Schema: raison_sociale"),
 			errors.New("property not found in JSON Schema: poids_frng"),
 			errors.New("property not found in JSON Schema: financier_court_terme"),
+			errors.New("property not marked as 'required' in JSON Schema: annee_bdf"),
+			errors.New("property not marked as 'required' in JSON Schema: arrete_bilan_bdf"),
+			errors.New("property not marked as 'required' in JSON Schema: raison_sociale"),
+			errors.New("property not marked as 'required' in JSON Schema: secteur"),
+			errors.New("property not marked as 'required' in JSON Schema: poids_frng"),
+			errors.New("property not marked as 'required' in JSON Schema: taux_marge"),
+			errors.New("property not marked as 'required' in JSON Schema: delai_fournisseur"),
+			errors.New("property not marked as 'required' in JSON Schema: dette_fiscale"),
+			errors.New("property not marked as 'required' in JSON Schema: financier_court_terme"),
+			errors.New("property not marked as 'required' in JSON Schema: frais_financier"),
 		}},
 		// NOTE: Au fur et à mesure qu'on ajoute des fichiers JSON Schema, penser à les couvrir ici.
 	}
@@ -109,7 +165,7 @@ func TestTypeAlignment(t *testing.T) {
 	t.Run("chaque fichier JSON Schema est aligné avec le type Go retourné par le parseur correspondant", func(t *testing.T) {
 		for jsonTypeName, typeDef := range typesToCompare {
 			t.Run(jsonTypeName, func(t *testing.T) {
-				errors := diffProps(jsonTypeName, typeDef.ParserStructInstance)
+				errors := diffTypeSchema(jsonTypeName, typeDef.ParserStructInstance)
 				if ok := assert.ElementsMatch(t, typeDef.ExpectedErrors, errors); !ok {
 					// affichage des champs non alignés, pour aider à la complétion
 					structTypeName := reflect.TypeOf(typeDef.ParserStructInstance).Name()
@@ -123,8 +179,8 @@ func TestTypeAlignment(t *testing.T) {
 	})
 }
 
-func diffProps(jsonSchemaFile string, structInstance interface{}) []error {
-	schemaProps := loadPropsFromSchema(jsonSchemaFile)
-	structProps := reflectPropsFromStruct(structInstance)
-	return diffMaps(schemaProps, structProps)
+func diffTypeSchema(jsonSchemaFile string, structInstance interface{}) []error {
+	jsonSchema := loadJSONSchema(jsonSchemaFile)
+	structSchema := reflectStructType(reflect.TypeOf(structInstance))
+	return diffSchema(jsonSchema, structSchema)
 }

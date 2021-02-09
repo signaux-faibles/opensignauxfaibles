@@ -1,0 +1,16 @@
+{
+  "title": "EntréeEffectifEnt",
+  "description": "Champs importés par le parseur lib/urssaf/effectif_ent.go de sfdata.",
+  "bsonType": "object",
+  "required": ["periode", "effectif"],
+  "properties": {
+    "periode": {
+      "bsonType": "date"
+    },
+    "effectif": {
+      "description": "Nombre de personnes employées par l'entreprise.",
+      "bsonType": "number"
+    }
+  },
+  "additionalProperties": false
+}

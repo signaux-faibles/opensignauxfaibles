@@ -2,7 +2,20 @@
   "title": "EntréeApDemande",
   "description": "Champs importés par le parseur lib/apdemande/main.go de sfdata.",
   "bsonType": "object",
-  "required": ["id_demande", "periode", "hta", "motif_recours_se"],
+  "required": [
+    "id_demande",
+    "periode",
+    "hta",
+    "motif_recours_se",
+    "effectif_entreprise",
+    "effectif",
+    "date_statut",
+    "mta",
+    "effectif_autorise",
+    "heure_consommee",
+    "montant_consommee",
+    "effectif_consomme"
+  ],
   "properties": {
     "id_demande": {
       "bsonType": "string"
