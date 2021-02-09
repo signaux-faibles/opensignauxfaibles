@@ -7,7 +7,7 @@ var validationSchemas = map[string]string{
   "title": "EntréeApConso",
   "description": "Champs importés par le parseur lib/apconso/main.go de sfdata.",
   "bsonType": "object",
-  "required": ["id_conso", "periode", "heure_consomme"],
+  "required": ["id_conso", "periode", "heure_consomme", "montant", "effectif"],
   "properties": {
     "id_conso": {
       "bsonType": "string"
@@ -32,7 +32,20 @@ var validationSchemas = map[string]string{
   "title": "EntréeApDemande",
   "description": "Champs importés par le parseur lib/apdemande/main.go de sfdata.",
   "bsonType": "object",
-  "required": ["id_demande", "periode", "hta", "motif_recours_se"],
+  "required": [
+    "id_demande",
+    "periode",
+    "hta",
+    "motif_recours_se",
+    "effectif_entreprise",
+    "effectif",
+    "date_statut",
+    "mta",
+    "effectif_autorise",
+    "heure_consommee",
+    "montant_consommee",
+    "effectif_consomme"
+  ],
   "properties": {
     "id_demande": {
       "bsonType": "string"
@@ -306,18 +319,7 @@ var validationSchemas = map[string]string{
   "title": "EntréeEllisphere",
   "description": "Champs importés par le parseur lib/ellisphere/main.go de sfdata.",
   "bsonType": "object",
-  "required": [
-    "code_groupe",
-    "refid_groupe",
-    "raison_sociale_groupe",
-    "adresse_groupe",
-    "personne_pou_m_groupe",
-    "niveau_detention",
-    "part_financiere",
-    "code_filiere",
-    "refid_filiere",
-    "personne_pou_m_filiere"
-  ],
+  "required": [],
   "properties": {
     "code_groupe": {
       "bsonType": "string"

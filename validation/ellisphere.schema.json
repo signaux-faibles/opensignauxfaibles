@@ -2,18 +2,7 @@
   "title": "EntréeEllisphere",
   "description": "Champs importés par le parseur lib/ellisphere/main.go de sfdata.",
   "bsonType": "object",
-  "required": [
-    "code_groupe",
-    "refid_groupe",
-    "raison_sociale_groupe",
-    "adresse_groupe",
-    "personne_pou_m_groupe",
-    "niveau_detention",
-    "part_financiere",
-    "code_filiere",
-    "refid_filiere",
-    "personne_pou_m_filiere"
-  ],
+  "required": [],
   "properties": {
     "code_groupe": {
       "bsonType": "string"

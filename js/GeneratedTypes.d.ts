@@ -14,8 +14,8 @@
 export interface EntréeApConso {
   id_conso: string
   heure_consomme: number
-  montant?: number
-  effectif?: number
+  montant: number
+  effectif: number
   periode: Date
 }
 /**
@@ -35,14 +35,14 @@ export interface EntréeApDemande {
    * Cause d'activité partielle
    */
   motif_recours_se: number
-  effectif_entreprise?: number
-  effectif?: number
-  date_statut?: Date
-  mta?: number
-  effectif_autorise?: number
-  heure_consommee?: number
-  montant_consommee?: number
-  effectif_consomme?: number
+  effectif_entreprise: number
+  effectif: number
+  date_statut: Date
+  mta: number
+  effectif_autorise: number
+  heure_consommee: number
+  montant_consommee: number
+  effectif_consomme: number
 }
 /**
  * Note: CE SCHEMA EST INCOMPLET POUR L'INSTANT. Cf https://github.com/signaux-faibles/opensignauxfaibles/pull/143
@@ -185,17 +185,17 @@ export interface EntréeEffectif {
  * Champs importés par le parseur lib/ellisphere/main.go de sfdata.
  */
 export interface EntréeEllisphere {
-  code_groupe: string
+  code_groupe?: string
   siren_groupe?: string
-  refid_groupe: string
-  raison_sociale_groupe: string
-  adresse_groupe: string
-  personne_pou_m_groupe: string
-  niveau_detention: number
-  part_financiere: number
-  code_filiere: string
-  refid_filiere: string
-  personne_pou_m_filiere: string
+  refid_groupe?: string
+  raison_sociale_groupe?: string
+  adresse_groupe?: string
+  personne_pou_m_groupe?: string
+  niveau_detention?: number
+  part_financiere?: number
+  code_filiere?: string
+  refid_filiere?: string
+  personne_pou_m_filiere?: string
 }
 /**
  * Champs importés par le parseur lib/paydex/main.go de sfdata.
