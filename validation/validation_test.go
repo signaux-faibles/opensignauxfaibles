@@ -14,6 +14,7 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/lib/ellisphere"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/paydex"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/sirene"
+	sireneul "github.com/signaux-faibles/opensignauxfaibles/lib/sirene_ul"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/urssaf"
 	"github.com/stretchr/testify/assert"
 )
@@ -124,6 +125,7 @@ func TestTypeAlignment(t *testing.T) {
 		"paydex.schema.json":       {paydex.Paydex{}, []error{}},
 		"procol.schema.json":       {urssaf.Procol{}, []error{}},
 		"sirene.schema.json":       {sirene.Sirene{}, []error{}},
+		"sirene_ul.schema.json":    {sireneul.SireneUL{}, []error{}},
 		"bdf.schema.json": {bdf.BDF{}, []error{ // bdf.schema.json n'est pas encore complet => la vérification va retourner les erreurs suivantes:
 			errors.New("property not found in JSON Schema: delai_fournisseur"),
 			errors.New("property not found in JSON Schema: dette_fiscale"),
