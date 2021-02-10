@@ -9,7 +9,7 @@ export function diane(hs?: Record<string, EntréeDiane>): EntréeDiane[] {
   Object.values(hs ?? {})
     .filter((d) => d.arrete_bilan_diane)
     .forEach((d) => {
-      diane[d.arrete_bilan_diane.toISOString()] = d
+      diane[(d.arrete_bilan_diane as Date).toISOString()] = d
     })
 
   return Object.values(diane ?? {}).sort((a, b) =>
