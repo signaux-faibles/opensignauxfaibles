@@ -363,7 +363,6 @@ var validationSchemas = map[string]string{
   "description": "Champs importés par le parseur lib/diane/main.go de sfdata.",
   "bsonType": "object",
   "required": [
-    "exercice_diane",
     "nom_entreprise",
     "numero_siren",
     "statut_juridique",

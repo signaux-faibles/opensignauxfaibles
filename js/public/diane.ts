@@ -13,6 +13,6 @@ export function diane(hs?: Record<string, EntréeDiane>): EntréeDiane[] {
     })
 
   return Object.values(diane ?? {}).sort((a, b) =>
-    a.exercice_diane < b.exercice_diane ? 1 : -1
+    (a.exercice_diane ?? 0) < (b.exercice_diane ?? 0) ? 1 : -1
   )
 }

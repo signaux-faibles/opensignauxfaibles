@@ -747,7 +747,7 @@ db.getCollection("Features").createIndex({
         .forEach((d) => {
         diane[d.arrete_bilan_diane.toISOString()] = d;
     });
-    return Object.values(diane !== null && diane !== void 0 ? diane : {}).sort((a, b) => a.exercice_diane < b.exercice_diane ? 1 : -1);
+    return Object.values(diane !== null && diane !== void 0 ? diane : {}).sort((a, b) => { var _a, _b; return ((_a = a.exercice_diane) !== null && _a !== void 0 ? _a : 0) < ((_b = b.exercice_diane) !== null && _b !== void 0 ? _b : 0) ? 1 : -1; });
 }`,
 "effectifs": `function effectifs(effectif) {
     const mapEffectif = {};
