@@ -213,12 +213,7 @@ func (parser *dianeParser) ParseLines(parsedLineChan chan marshal.ParsedLineResu
 		} else if len(row) < 83 {
 			parsedLine.AddRegularError(errors.New("Ligne invalide"))
 		} else {
-			dianeRow := parseDianeRow(parser.idx, row)
-			if dianeRow.Annee == nil {
-				parsedLine.AddRegularError(errors.New("Année d'exercice Diane non définie"))
-			} else {
-				parsedLine.AddTuple(dianeRow)
-			}
+			parsedLine.AddTuple(parseDianeRow(parser.idx, row))
 		}
 		parsedLineChan <- parsedLine
 	}
