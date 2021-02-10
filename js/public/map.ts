@@ -7,14 +7,10 @@ import {
   EntréeDéfaillances,
   EntréeEllisphere,
   EntréePaydex,
-} from "../GeneratedTypes"
-import {
-  CompanyDataValues,
-  BatchKey,
-  EntréeDiane,
   EntréeSirene,
   EntréeSireneEntreprise,
-} from "../RawDataTypes"
+} from "../GeneratedTypes"
+import { CompanyDataValues, BatchKey, EntréeDiane } from "../RawDataTypes"
 import { SortieDebit } from "./debits"
 import { Bdf } from "./bdf"
 

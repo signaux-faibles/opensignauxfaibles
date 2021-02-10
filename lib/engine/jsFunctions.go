@@ -718,7 +718,7 @@ db.getCollection("Features").createIndex({
                     periode: debit.periode.start,
                     part_ouvriere: debit.part_ouvriere,
                     part_patronale: debit.part_patronale,
-                    montant_majorations: debit.montant_majorations || 0,
+                    montant_majorations: /*debit.montant_majorations ||*/ 0,
                 },
             ]);
         });
@@ -1918,7 +1918,6 @@ function outputs(v, serie_periode) {
             if (sirene.ape && sirene.ape.match(regexp_naf)) {
                 val.code_ape = sirene.ape;
             }
-            val.raison_sociale = sirene.raison_sociale || null;
             // val.activite_saisonniere = sirene.activite_saisoniere || null
             // val.productif = sirene.productif || null
             // val.tranche_ca = sirene.tranche_ca || null

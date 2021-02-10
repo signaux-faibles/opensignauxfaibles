@@ -185,6 +185,87 @@ var validationSchemas = map[string]string{
   "additionalProperties": false
 }
 `,
+"debit.schema.json": `{
+  "title": "EntréeDebit",
+  "description": "Champs importés par le parseur lib/sirene_ul/main.go de sfdata. Représente un reste à payer (dette) sur cotisation sociale ou autre.",
+  "bsonType": "object",
+  "required": [
+    "numero_compte",
+    "numero_ecart_negatif",
+    "date_traitement",
+    "part_ouvriere",
+    "part_patronale",
+    "numero_historique",
+    "etat_compte",
+    "code_procedure_collective",
+    "periode",
+    "code_operation_ecart_negatif",
+    "code_motif_ecart_negatif",
+    "recours_en_cours"
+  ],
+  "properties": {
+    "numero_compte": {
+      "description": "Identifiant URSSAF d'établissement (équivalent du SIRET).",
+      "bsonType": "string"
+    },
+    "periode": {
+      "description": "Période sur laquelle le montants s'appliquent.",
+      "bsonType": "object",
+      "required": ["start", "end"],
+      "properties": {
+        "start": { "bsonType": "date" },
+        "end": { "bsonType": "date" }
+      },
+      "additionalItems": false
+    },
+    "numero_ecart_negatif": {
+      "description": "L'écart négatif (ecn) correspond à une période en débit. Pour une même période, plusieurs débits peuvent être créés. On leur attribue un numéro d'ordre. Par exemple, 101, 201, 301 etc.; ou 101, 102, 201 etc. correspondent respectivement au 1er, 2ème et 3ème ecn de la période considérée.",
+      "bsonType": "string"
+    },
+    "numero_historique": {
+      "description": "Ordre des opérations pour un écart négatif donné.",
+      "bsonType": "number"
+    },
+    "date_traitement": {
+      "description": "Date de constatation du débit (exemple: remboursement, majoration ou autre modification du montant)",
+      "bsonType": "date"
+    },
+    "debit_suivant": {
+      "description": "Hash d'un autre débit // TODO: non fourni par le parseur, ce champ devrait être défini dans un type de sortie.",
+      "bsonType": "string"
+    },
+    "part_ouvriere": {
+      "description": "Montant des débits sur la part ouvrières, exprimées en euros (€). Sont exclues les pénalités et les majorations de retard.",
+      "bsonType": "number"
+    },
+    "part_patronale": {
+      "description": "Montant des débits sur la part patronale, exprimées en euros (€). Sont exclues les pénalités et les majorations de retard.",
+      "bsonType": "number"
+    },
+    "etat_compte": {
+      "description": "Code état du compte: 1 (Actif), 2 (Suspendu) ou 3 (Radié).",
+      "bsonType": "number"
+    },
+    "code_procedure_collective": {
+      "description": "Code qui indique si le compte fait l'objet d'une procédure collective: 1 (en cours), 2 (plan de redressement en cours), 9 (procedure collective sans dette à l'Urssaf) ou valeur nulle en cas d'absence de procédure collective.",
+      "bsonType": "string"
+    },
+    "code_operation_ecart_negatif": {
+      "description": "Code opération historique de l'écart négatif: \n 1 Mise en recouvrement \n 2 Paiement \n 3 Admission en non valeur \n 4 Remise de majoration de retard \n 5 Abandon de solde debiteur \n 11 Annulation de mise en recouvrement \n 12 Annulation paiement \n 13 Annulation a-n-v \n 14 Annulation de remise de majoration retard \n 15 Annulation abandon solde debiteur",
+      "bsonType": "string"
+    },
+    "code_motif_ecart_negatif": {
+      "description": "Code motif de l'écart négatif: \n 0 Cde motif inconnu \n 1 Retard dans le versement \n 2 Absence ou insuffisance de versement \n 3 Taxation provisionelle. Déclarations non fournies \n 4 Majorations de retard complémentaires Article R243-18 du code de la sécurité sociale \n 5 Contrôle,chefs de redressement notifiés le JJ/MM/AA Article R243-59 de la Securité Sociale \n 6 Fourniture tardive des déclarations \n 7 Bases déclarées supérieures à Taxation provisionnelle \n 8 Retard dans le versement et fourniture tardive des déclarations \n 9 Absence ou insuffisance de versement et fourniture tardive des déclarations \n 10 Rappel sur contrôle et fourniture tardive des déclarations \n 11 Régularisation d'une taxation provisionnelle \n 12 Régularisation annuelle \n 13 Rejet du titre de paiement par la banque . \n 14 Modification d'affectation d'un crédit \n 15 Annulation d'un crédit \n 16 Régularisation suite à modification du Taux Accident du Travail \n 17 Régularisation suite à assujettissement au transport (origine débit sur PJ=4) \n 18 Majorations pour non respect de paiement par moyen dématérialisé Article L243-14 \n 19 Rapprochement TR/BRC sous réserve de vérification ultérieure \n 20 Cotisations complémentaires suite modification des revenus déclarés \n 21 Cotisations complémentaires suite à non fourniture du contrat d'exonération \n 22 Contrôle. Chefs de redressement notifiés le JJ/MM/AA. Article L324.9 du code du travail \n 23 Cotisations complémentaires suite conditions d'exonération non remplies \n 24 Absence de versement \n 25 Insuffisance de versement \n 26 Absence de versement et fourniture tardive des déclarations \n 27 Insuffisance de versement et fourniture tardive des déclarations",
+      "bsonType": "string"
+    },
+    "recours_en_cours": {
+      "description": "Recours en cours.",
+      "bsonType": "bool"
+    }
+  },
+  "additionalProperties": false
+}
+`,
 "delai.schema.json": `{
   "title": "EntréeDelai",
   "description": "Champs importés par le parseur lib/urssaf/delai.go de sfdata.",
@@ -435,6 +516,131 @@ var validationSchemas = map[string]string{
     "date_effet": {
       "bsonType": "date",
       "description": "Date effet de la procédure collective."
+    }
+  },
+  "additionalProperties": false
+}
+`,
+"sirene.schema.json": `{
+  "title": "EntréeSirene",
+  "description": "Champs importés par le parseur lib/sirene/main.go de sfdata.",
+  "bsonType": "object",
+  "properties": {
+    "siren": {
+      "bsonType": "string"
+    },
+    "nic": {
+      "bsonType": "string"
+    },
+    "siege": {
+      "bsonType": "bool"
+    },
+    "complement_adresse": {
+      "bsonType": "string"
+    },
+    "numero_voie": {
+      "bsonType": "string"
+    },
+    "indrep": {
+      "bsonType": "string"
+    },
+    "type_voie": {
+      "bsonType": "string"
+    },
+    "voie": {
+      "bsonType": "string"
+    },
+    "commune": {
+      "bsonType": "string"
+    },
+    "commune_etranger": {
+      "bsonType": "string"
+    },
+    "distribution_speciale": {
+      "bsonType": "string"
+    },
+    "code_commune": {
+      "bsonType": "string"
+    },
+    "code_cedex": {
+      "bsonType": "string"
+    },
+    "cedex": {
+      "bsonType": "string"
+    },
+    "code_pays_etranger": {
+      "bsonType": "string"
+    },
+    "pays_etranger": {
+      "bsonType": "string"
+    },
+    "code_postal": {
+      "bsonType": "string"
+    },
+    "departement": {
+      "bsonType": "string"
+    },
+    "ape": {
+      "bsonType": "string"
+    },
+    "code_activite": {
+      "bsonType": "string"
+    },
+    "nomen_activite": {
+      "bsonType": "string"
+    },
+    "date_creation": {
+      "bsonType": "date"
+    },
+    "longitude": {
+      "bsonType": "number"
+    },
+    "latitude": {
+      "bsonType": "number"
+    }
+  },
+  "additionalProperties": false
+}
+`,
+"sirene_ul.schema.json": `{
+  "title": "EntréeSireneEntreprise",
+  "description": "Champs importés par le parseur lib/sirene_ul/main.go de sfdata.",
+  "bsonType": "object",
+  "required": ["raison_sociale", "statut_juridique"],
+  "properties": {
+    "siren": {
+      "bsonType": "string"
+    },
+    "nic": {
+      "bsonType": "string"
+    },
+    "raison_sociale": {
+      "bsonType": "string"
+    },
+    "nom_unite_legale": {
+      "bsonType": "string"
+    },
+    "nom_usage_unite_legale": {
+      "bsonType": "string"
+    },
+    "prenom1_unite_legale": {
+      "bsonType": "string"
+    },
+    "prenom2_unite_legale": {
+      "bsonType": "string"
+    },
+    "prenom3_unite_legale": {
+      "bsonType": "string"
+    },
+    "prenom4_unite_legale": {
+      "bsonType": "string"
+    },
+    "statut_juridique": {
+      "description": "code numérique sérialisé en chaine de caractères",
+      "bsonType": "string"
+    },
+    "date_creation": {
+      "bsonType": "date"
     }
   },
   "additionalProperties": false

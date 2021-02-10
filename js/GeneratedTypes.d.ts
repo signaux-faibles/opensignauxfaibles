@@ -109,6 +109,107 @@ export interface EntréeCotisation {
   du: number
 }
 /**
+ * Champs importés par le parseur lib/sirene_ul/main.go de sfdata. Représente un reste à payer (dette) sur cotisation sociale ou autre.
+ */
+export interface EntréeDebit {
+  /**
+   * Identifiant URSSAF d'établissement (équivalent du SIRET).
+   */
+  numero_compte: string
+  /**
+   * Période sur laquelle le montants s'appliquent.
+   */
+  periode: {
+    start: Date
+    end: Date
+    [k: string]: unknown
+  }
+  /**
+   * L'écart négatif (ecn) correspond à une période en débit. Pour une même période, plusieurs débits peuvent être créés. On leur attribue un numéro d'ordre. Par exemple, 101, 201, 301 etc.; ou 101, 102, 201 etc. correspondent respectivement au 1er, 2ème et 3ème ecn de la période considérée.
+   */
+  numero_ecart_negatif: string
+  /**
+   * Ordre des opérations pour un écart négatif donné.
+   */
+  numero_historique: number
+  /**
+   * Date de constatation du débit (exemple: remboursement, majoration ou autre modification du montant)
+   */
+  date_traitement: Date
+  /**
+   * Hash d'un autre débit // TODO: non fourni par le parseur, ce champ devrait être défini dans un type de sortie.
+   */
+  debit_suivant?: string
+  /**
+   * Montant des débits sur la part ouvrières, exprimées en euros (€). Sont exclues les pénalités et les majorations de retard.
+   */
+  part_ouvriere: number
+  /**
+   * Montant des débits sur la part patronale, exprimées en euros (€). Sont exclues les pénalités et les majorations de retard.
+   */
+  part_patronale: number
+  /**
+   * Code état du compte: 1 (Actif), 2 (Suspendu) ou 3 (Radié).
+   */
+  etat_compte: number
+  /**
+   * Code qui indique si le compte fait l'objet d'une procédure collective: 1 (en cours), 2 (plan de redressement en cours), 9 (procedure collective sans dette à l'Urssaf) ou valeur nulle en cas d'absence de procédure collective.
+   */
+  code_procedure_collective: string
+  /**
+   * Code opération historique de l'écart négatif:
+   *  1 Mise en recouvrement
+   *  2 Paiement
+   *  3 Admission en non valeur
+   *  4 Remise de majoration de retard
+   *  5 Abandon de solde debiteur
+   *  11 Annulation de mise en recouvrement
+   *  12 Annulation paiement
+   *  13 Annulation a-n-v
+   *  14 Annulation de remise de majoration retard
+   *  15 Annulation abandon solde debiteur
+   */
+  code_operation_ecart_negatif: string
+  /**
+   * Code motif de l'écart négatif:
+   *  0 Cde motif inconnu
+   *  1 Retard dans le versement
+   *  2 Absence ou insuffisance de versement
+   *  3 Taxation provisionelle. Déclarations non fournies
+   *  4 Majorations de retard complémentaires Article R243-18 du code de la sécurité sociale
+   *  5 Contrôle,chefs de redressement notifiés le JJ/MM/AA Article R243-59 de la Securité Sociale
+   *  6 Fourniture tardive des déclarations
+   *  7 Bases déclarées supérieures à Taxation provisionnelle
+   *  8 Retard dans le versement et fourniture tardive des déclarations
+   *  9 Absence ou insuffisance de versement et fourniture tardive des déclarations
+   *  10 Rappel sur contrôle et fourniture tardive des déclarations
+   *  11 Régularisation d'une taxation provisionnelle
+   *  12 Régularisation annuelle
+   *  13 Rejet du titre de paiement par la banque .
+   *  14 Modification d'affectation d'un crédit
+   *  15 Annulation d'un crédit
+   *  16 Régularisation suite à modification du Taux Accident du Travail
+   *  17 Régularisation suite à assujettissement au transport (origine débit sur PJ=4)
+   *  18 Majorations pour non respect de paiement par moyen dématérialisé Article L243-14
+   *  19 Rapprochement TR/BRC sous réserve de vérification ultérieure
+   *  20 Cotisations complémentaires suite modification des revenus déclarés
+   *  21 Cotisations complémentaires suite à non fourniture du contrat d'exonération
+   *  22 Contrôle. Chefs de redressement notifiés le JJ/MM/AA. Article L324.9 du code du travail
+   *  23 Cotisations complémentaires suite conditions d'exonération non remplies
+   *  24 Absence de versement
+   *  25 Insuffisance de versement
+   *  26 Absence de versement et fourniture tardive des déclarations
+   *  27 Insuffisance de versement et fourniture tardive des déclarations
+   */
+  code_motif_ecart_negatif: string
+  /**
+   * Recours en cours.
+   */
+  recours_en_cours: {
+    [k: string]: unknown
+  }
+}
+/**
  * Champs importés par le parseur lib/urssaf/delai.go de sfdata.
  */
 export interface EntréeDelai {
@@ -227,4 +328,54 @@ export interface EntréeDéfaillances {
    * Date effet de la procédure collective.
    */
   date_effet: Date
+}
+/**
+ * Champs importés par le parseur lib/sirene_ul/main.go de sfdata.
+ */
+export interface EntréeSireneEntreprise {
+  siren?: string
+  nic?: string
+  raison_sociale: string
+  nom_unite_legale?: string
+  nom_usage_unite_legale?: string
+  prenom1_unite_legale?: string
+  prenom2_unite_legale?: string
+  prenom3_unite_legale?: string
+  prenom4_unite_legale?: string
+  /**
+   * code numérique sérialisé en chaine de caractères
+   */
+  statut_juridique: string
+  date_creation?: Date
+}
+/**
+ * Champs importés par le parseur lib/sirene/main.go de sfdata.
+ */
+export interface EntréeSirene {
+  siren?: string
+  nic?: string
+  siege?: {
+    [k: string]: unknown
+  }
+  complement_adresse?: string
+  numero_voie?: string
+  indrep?: string
+  type_voie?: string
+  voie?: string
+  commune?: string
+  commune_etranger?: string
+  distribution_speciale?: string
+  code_commune?: string
+  code_cedex?: string
+  cedex?: string
+  code_pays_etranger?: string
+  pays_etranger?: string
+  code_postal?: string
+  departement?: string
+  ape?: string
+  code_activite?: string
+  nomen_activite?: string
+  date_creation?: Date
+  longitude?: number
+  latitude?: number
 }

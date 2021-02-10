@@ -2108,13 +2108,6 @@
     },
     {
         "source": "sirene",
-        "name": "raison_sociale",
-        "description": "Raison sociale de l'établissement.",
-        "type": "string",
-        "computed": false
-    },
-    {
-        "source": "sirene",
         "name": "latitude",
         "description": "Latitude (géolocalisation) de l'établissement.",
         "type": "number",

@@ -1,5 +1,6 @@
 import { f } from "./functions"
-import { EntréeSireneEntreprise, ParHash, ParPériode } from "../RawDataTypes"
+import { EntréeSireneEntreprise } from "../GeneratedTypes"
+import { ParHash, ParPériode } from "../RawDataTypes"
 
 type VariablesTransmises = {
   /** Catégorie juridique de l’unité légale. Nomenclature: https://www.insee.fr/fr/information/2028129. */
