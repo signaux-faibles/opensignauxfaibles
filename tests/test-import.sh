@@ -125,7 +125,7 @@ echo "${VALIDATION_REPORT}" \
   | perl -p -e 's/"[0-9a-z]{24}"/"________ObjectId________"/' \
   | perl -p -e 's/"periode" : ISODate\("....-..-..T..:..:..Z"\)/"periode" : ISODate\("_______ Date _______"\)/' \
   | sort \
-  | while read -r line; do ( echo "- listing validation errors..." 1>&2; echo "$line"; cd "js"; npx -p ajv-cli -p ajv-bsontype ajv -c "ajv-bsontype" -s "../validation/bdf.schema.json" -d <(echo "$line") 2>&1 || true ); done \
+  | while read -r line; do ( echo "- listing validation errors..." 1>&2; echo "$line"; cd "js"; npx --quiet -p ajv-cli -p ajv-bsontype ajv -c "ajv-bsontype" -s "../validation/bdf.schema.json" -d <(echo "$line") 2>&1 || true ); done \
   >> "${OUTPUT_FILE}"
 
 # Print test results from stdin. Fails on any "false" result.
