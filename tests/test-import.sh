@@ -125,6 +125,7 @@ echo "${VALIDATION_REPORT}" \
   | perl -p -e 's/"[0-9a-z]{24}"/"________ObjectId________"/' \
   | perl -p -e 's/"periode" : ISODate\("....-..-..T..:..:..Z"\)/"periode" : ISODate\("_______ Date _______"\)/' \
   | sort \
+  | node js/validate-json-schema.js \
   >> "${OUTPUT_FILE}"
 
 # Print test results from stdin. Fails on any "false" result.

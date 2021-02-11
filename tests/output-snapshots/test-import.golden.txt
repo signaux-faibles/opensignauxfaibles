@@ -5195,5 +5195,8 @@
 ]
 // Results of call to sfdata validate:
 {"_id":"________ObjectId________","batchKey":"1910","dataHash":"052c762280e3d8d67ac52444ed329976","dataObject":{"annee_bdf":2015,"arrete_bilan_bdf":"2014-12-31T00:00:00Z","delai_fournisseur":22.9,"dette_fiscale":235,"financier_court_terme":7.3,"frais_financier":20.3,"poids_frng":64.5,"raison_sociale":"SOCIETE","secteur":"01 Industrie et Transports (Hors TRM)","siren":"000111224","taux_marge":103.5},"dataType":"bdf"}
+- Validation error: "should NOT have additional properties" { additionalProperty: 'annee_bdf' }
 {"_id":"________ObjectId________","batchKey":"1910","dataHash":"4ab0bd77378c42d7f45a3865a150c8b9","dataObject":{"annee_bdf":2014,"arrete_bilan_bdf":"2013-12-31T00:00:00Z","delai_fournisseur":203.8,"dette_fiscale":204,"financier_court_terme":9.2,"frais_financier":7.3,"poids_frng":-77.1,"raison_sociale":"SOCIETE","secteur":"01 Industrie et Transports (Hors TRM)","siren":"000111223","taux_marge":-13.9},"dataType":"bdf"}
+- Validation error: "should NOT have additional properties" { additionalProperty: 'annee_bdf' }
 {"_id":"________ObjectId________","batchKey":"1910","dataHash":"c80df832dc278d684b9e2c0548123f9d","dataObject":{"annee_bdf":2013,"arrete_bilan_bdf":"2012-12-31T00:00:00Z","delai_fournisseur":88.5,"dette_fiscale":561,"financier_court_terme":5.2,"frais_financier":-9.4,"poids_frng":-37.5,"raison_sociale":"SOCIETE","secteur":"01 Industrie et Transports (Hors TRM)","siren":"000111222","taux_marge":-63.1},"dataType":"bdf"}
+- Validation error: "should NOT have additional properties" { additionalProperty: 'annee_bdf' }
