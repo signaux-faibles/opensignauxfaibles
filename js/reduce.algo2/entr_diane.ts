@@ -1,11 +1,6 @@
 import { f } from "./functions"
-import {
-  EntréeDiane,
-  EntréeBdf,
-  ParHash,
-  ParPériode,
-  Timestamp,
-} from "../RawDataTypes"
+import { EntréeDiane } from "../GeneratedTypes"
+import { EntréeBdf, ParHash, ParPériode, Timestamp } from "../RawDataTypes"
 
 type YearOffset = 1 | 2
 
@@ -67,7 +62,7 @@ export function entr_diane(
     for (const periode of series) {
       const rest: DonnéesDianeTransmises = f.omit(
         entréeDiane,
-        "marquee",
+        // "marquee",
         "nom_entreprise",
         "numero_siren",
         "statut_juridique",

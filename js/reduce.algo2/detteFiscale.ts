@@ -1,4 +1,4 @@
-import { EntréeDiane } from "../RawDataTypes"
+import { EntréeDiane } from "../GeneratedTypes"
 
 export function detteFiscale(diane: EntréeDiane): number | null {
   "use strict"

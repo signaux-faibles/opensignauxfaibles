@@ -747,7 +747,7 @@ db.getCollection("Features").createIndex({
         .forEach((d) => {
         diane[d.arrete_bilan_diane.toISOString()] = d;
     });
-    return Object.values(diane !== null && diane !== void 0 ? diane : {}).sort((a, b) => a.exercice_diane < b.exercice_diane ? 1 : -1);
+    return Object.values(diane !== null && diane !== void 0 ? diane : {}).sort((a, b) => { var _a, _b; return ((_a = a.exercice_diane) !== null && _a !== void 0 ? _a : 0) < ((_b = b.exercice_diane) !== null && _b !== void 0 ? _b : 0) ? 1 : -1; });
 }`,
 "effectifs": `function effectifs(effectif) {
     const mapEffectif = {};
@@ -1453,7 +1453,9 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
         const series = f.generatePeriodSerie(periode_dispo, f.dateAddMonth(periode_dispo, 14) // periode de validité d'un bilan auprès de la Banque de France: 21 mois (14+7)
         );
         for (const periode of series) {
-            const rest = f.omit(entréeDiane, "marquee", "nom_entreprise", "numero_siren", "statut_juridique", "procedure_collective");
+            const rest = f.omit(entréeDiane, 
+            // "marquee",
+            "nom_entreprise", "numero_siren", "statut_juridique", "procedure_collective");
             const makePastProp = (prop, offset) => ` + "`" + `${prop}_past_${offset}` + "`" + `;
             if (periodes.includes(periode.getTime())) {
                 Object.assign(output_indexed[periode.getTime()], rest);

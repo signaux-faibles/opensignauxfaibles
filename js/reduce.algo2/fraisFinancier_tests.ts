@@ -1,6 +1,6 @@
 import test from "ava"
 import { fraisFinancier, ChampsDiane } from "./fraisFinancier"
-import { EntréeDiane } from "../RawDataTypes"
+import { EntréeDiane } from "../GeneratedTypes"
 
 const fakeDiane = () => ({
   interets: 50,

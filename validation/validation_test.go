@@ -11,6 +11,7 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/lib/apconso"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/apdemande"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/bdf"
+	"github.com/signaux-faibles/opensignauxfaibles/lib/diane"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/ellisphere"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/paydex"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/sirene"
@@ -24,8 +25,8 @@ var update = flag.Bool("update", false, "Update the expected test values in gold
 func TestDiffSchema(t *testing.T) {
 	t.Run("doit vérifier qu'un champ est optionnel s'il est taggé avec \"omitempty\"", func(t *testing.T) {
 		type MyType struct {
-			MandatoryField string `json:"mandatoryField"`
-			OptionalField  string `json:"optionalField,omitempty"`
+			MandatoryField string `bson:"mandatoryField"`
+			OptionalField  string `bson:"optionalField,omitempty"`
 		}
 		schema := propertySchema{
 			BsonType: "object",
@@ -67,8 +68,8 @@ func TestDiffMaps(t *testing.T) {
 func TestReflectStructType(t *testing.T) {
 	t.Run("doit inclure tous les champs dans \"required\", sauf ceux taggés avec \"omitempty\"", func(t *testing.T) {
 		type MyType struct {
-			MandatoryField string `json:"mandatoryField"`
-			OptionalField  string `json:"optionalField,omitempty"`
+			MandatoryField string `bson:"mandatoryField"`
+			OptionalField  string `bson:"optionalField,omitempty"`
 		}
 		expectedSchema := propertySchema{
 			BsonType: "object",
@@ -86,20 +87,20 @@ func TestReflectStructType(t *testing.T) {
 func TestReflectPropsFromStruct(t *testing.T) {
 	t.Run("doit extraire le nom JSON et type d'un champ de struct Go", func(t *testing.T) {
 		type MyType struct {
-			MyField string `json:"myField"`
+			MyField string `bson:"myField"`
 		}
 		assert.Equal(t, map[string]propertySchema{"myField": {BsonType: "string"}}, reflectPropsFromStruct(MyType{}))
 	})
 	t.Run("doit interpréter les types float64 et int comme number", func(t *testing.T) {
 		type MyType struct {
-			MyField1 int     `json:"f1"`
-			MyField2 float64 `json:"f2"`
+			MyField1 int     `bson:"f1"`
+			MyField2 float64 `bson:"f2"`
 		}
 		assert.Equal(t, map[string]propertySchema{"f1": {BsonType: "number"}, "f2": {BsonType: "number"}}, reflectPropsFromStruct(MyType{}))
 	})
 	t.Run("doit reconnaitre le type des pointeurs", func(t *testing.T) {
 		type MyType struct {
-			MyField1 *int `json:"f1"`
+			MyField1 *int `bson:"f1"`
 		}
 		assert.Equal(t, map[string]propertySchema{"f1": {BsonType: "number"}}, reflectPropsFromStruct(MyType{}))
 	})
@@ -120,6 +121,7 @@ func TestTypeAlignment(t *testing.T) {
 		"cotisation.schema.json":   {urssaf.Cotisation{}, []error{}},
 		"debit.schema.json":        {urssaf.Debit{}, []error{}},
 		"delai.schema.json":        {urssaf.Delai{}, []error{}},
+		"diane.schema.json":        {diane.Diane{}, []error{}},
 		"effectif.schema.json":     {urssaf.Effectif{}, []error{}},
 		"effectif_ent.schema.json": {urssaf.EffectifEnt{}, []error{}},
 		"ellisphere.schema.json":   {ellisphere.Ellisphere{}, []error{}},
