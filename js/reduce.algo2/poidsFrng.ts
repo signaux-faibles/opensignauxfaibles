@@ -1,4 +1,4 @@
-import { EntréeDiane } from "../RawDataTypes"
+import { EntréeDiane } from "../GeneratedTypes"
 
 export function poidsFrng(diane: EntréeDiane): number | null {
   "use strict"

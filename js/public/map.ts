@@ -5,12 +5,13 @@ import {
   EntréeCompte,
   EntréeDelai,
   EntréeDéfaillances,
+  EntréeDiane,
   EntréeEllisphere,
   EntréePaydex,
   EntréeSirene,
   EntréeSireneEntreprise,
 } from "../GeneratedTypes"
-import { CompanyDataValues, BatchKey, EntréeDiane } from "../RawDataTypes"
+import { CompanyDataValues, BatchKey } from "../RawDataTypes"
 import { SortieDebit } from "./debits"
 import { Bdf } from "./bdf"
 

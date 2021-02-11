@@ -72,7 +72,7 @@ func reflectStructType(structType reflect.Type) propertySchema {
 	props := make(map[string]propertySchema)
 	for i := 0; i < structType.NumField(); i++ {
 		field := structType.Field(i)
-		fieldName := field.Tag.Get("json")
+		fieldName := field.Tag.Get("bson")
 		if fieldName != "" && fieldName != "-" {
 			if strings.Contains(fieldName, ",omitempty") == true {
 				fieldName = strings.ReplaceAll(fieldName, ",omitempty", "")
