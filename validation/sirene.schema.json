@@ -4,24 +4,31 @@
   "bsonType": "object",
   "properties": {
     "siren": {
-      "bsonType": "string"
+      "bsonType": "string",
+      "pattern": "^[0-9]{9}$"
     },
     "nic": {
+      "description": "Numéro interne de classement de l'établissement",
       "bsonType": "string"
     },
     "siege": {
+      "description": "Qualité de siège ou non de l’établissement",
       "bsonType": "bool"
     },
     "complement_adresse": {
+      "description": "Complément d’adresse",
       "bsonType": "string"
     },
     "numero_voie": {
+      "description": "Numéro de la voie de l’adresse",
       "bsonType": "string"
     },
     "indrep": {
+      "description": "Indice de répétition dans la voie",
       "bsonType": "string"
     },
     "type_voie": {
+      "description": "Type de voie (format normalisé en 4 lettres max)",
       "bsonType": "string"
     },
     "voie": {

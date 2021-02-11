@@ -8,7 +8,9 @@
       "bsonType": "string"
     },
     "nic": {
-      "bsonType": "string"
+      "description": "Numéro interne de classement (Nic) de l’unité légale",
+      "bsonType": "string",
+      "pattern": "^[0-9]{9}$"
     },
     "raison_sociale": {
       "bsonType": "string"
@@ -32,8 +34,9 @@
       "bsonType": "string"
     },
     "statut_juridique": {
-      "description": "code numérique sérialisé en chaine de caractères",
-      "bsonType": "string"
+      "description": "Catégorie juridique de l'unité légale. Cf https://www.insee.fr/fr/information/2028129",
+      "bsonType": "string",
+      "pattern": "^[0-9]{4}$"
     },
     "date_creation": {
       "bsonType": "date"

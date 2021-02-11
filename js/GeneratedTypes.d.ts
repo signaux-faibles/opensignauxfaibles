@@ -12,17 +12,38 @@
  * Champs importés par le parseur lib/apconso/main.go de sfdata.
  */
 export interface EntréeApConso {
+  /**
+   * Numéro de la demande (11 caractères principalement des chiffres)
+   */
   id_conso: string
+  /**
+   * Heures consommées (chômées) dans le mois
+   */
   heure_consomme: number
+  /**
+   * Montants consommés dans le mois
+   */
   montant: number
+  /**
+   * Nombre de salariés en activité partielle dans le mois
+   */
   effectif: number
+  /**
+   * Mois considéré
+   */
   periode: Date
 }
 /**
  * Champs importés par le parseur lib/apdemande/main.go de sfdata.
  */
 export interface EntréeApDemande {
+  /**
+   * Numéro de la demande (11 caractères principalement des chiffres)
+   */
   id_demande: string
+  /**
+   * Période de chômage
+   */
   periode: {
     start: Date
     end: Date
@@ -32,15 +53,41 @@ export interface EntréeApDemande {
    */
   hta: number
   /**
-   * Cause d'activité partielle
+   * Motif de recours à l'activité partielle:
+   *  1 - Conjoncture économique.
+   *  2 - Difficultés d’approvisionnement en matières premières ou en énergie
+   *  3 - Sinistre ou intempéries de caractère exceptionnel
+   *  4 - Transformation, restructuration ou modernisation des installations et des bâtiments
+   *  5 - Autres circonstances exceptionnelles
    */
   motif_recours_se: number
+  /**
+   * Effectif de l'entreprise
+   */
   effectif_entreprise: number
+  /**
+   * Effectif de l'établissement
+   */
   effectif: number
+  /**
+   * Date du statut - création ou mise à jour de la demande
+   */
   date_statut: Date
+  /**
+   * Montant total autorisé
+   */
   mta: number
+  /**
+   * Effectifs autorisés
+   */
   effectif_autorise: number
+  /**
+   * Nombre total d'heures consommées
+   */
   heure_consommee: number
+  /**
+   * Montant total consommé
+   */
   montant_consommee: number
   effectif_consomme: number
 }
@@ -661,6 +708,9 @@ export interface EntréeDéfaillances {
  */
 export interface EntréeSireneEntreprise {
   siren?: string
+  /**
+   * Numéro interne de classement (Nic) de l’unité légale
+   */
   nic?: string
   raison_sociale: string
   nom_unite_legale?: string
@@ -670,7 +720,7 @@ export interface EntréeSireneEntreprise {
   prenom3_unite_legale?: string
   prenom4_unite_legale?: string
   /**
-   * code numérique sérialisé en chaine de caractères
+   * Catégorie juridique de l'unité légale. Cf https://www.insee.fr/fr/information/2028129
    */
   statut_juridique: string
   date_creation?: Date
@@ -680,13 +730,31 @@ export interface EntréeSireneEntreprise {
  */
 export interface EntréeSirene {
   siren?: string
+  /**
+   * Numéro interne de classement de l'établissement
+   */
   nic?: string
+  /**
+   * Qualité de siège ou non de l’établissement
+   */
   siege?: {
     [k: string]: unknown
   }
+  /**
+   * Complément d’adresse
+   */
   complement_adresse?: string
+  /**
+   * Numéro de la voie de l’adresse
+   */
   numero_voie?: string
+  /**
+   * Indice de répétition dans la voie
+   */
   indrep?: string
+  /**
+   * Type de voie (format normalisé en 4 lettres max)
+   */
   type_voie?: string
   voie?: string
   commune?: string
