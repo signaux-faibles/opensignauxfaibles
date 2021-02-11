@@ -10,18 +10,25 @@ var validationSchemas = map[string]string{
   "required": ["id_conso", "periode", "heure_consomme", "montant", "effectif"],
   "properties": {
     "id_conso": {
-      "bsonType": "string"
+      "description": "Numéro de la demande (11 caractères principalement des chiffres)",
+      "bsonType": "string",
+      "minLength": 11,
+      "maxLength": 11
     },
     "heure_consomme": {
+      "description": "Heures consommées (chômées) dans le mois",
       "bsonType": "number"
     },
     "montant": {
+      "description": "Montants consommés dans le mois",
       "bsonType": "number"
     },
     "effectif": {
+      "description": "Nombre de salariés en activité partielle dans le mois",
       "bsonType": "number"
     },
     "periode": {
+      "description": "Mois considéré",
       "bsonType": "date"
     }
   },
@@ -48,9 +55,13 @@ var validationSchemas = map[string]string{
   ],
   "properties": {
     "id_demande": {
-      "bsonType": "string"
+      "description": "Numéro de la demande (11 caractères principalement des chiffres)",
+      "bsonType": "string",
+      "minLength": 11,
+      "maxLength": 11
     },
     "periode": {
+      "description": "Période de chômage",
       "bsonType": "object",
       "required": ["start", "end"],
       "properties": {
@@ -64,28 +75,38 @@ var validationSchemas = map[string]string{
       "bsonType": "number"
     },
     "motif_recours_se": {
-      "description": "Cause d'activité partielle",
-      "bsonType": "number"
+      "description": "Motif de recours à l'activité partielle: \n 1 - Conjoncture économique. \n 2 - Difficultés d’approvisionnement en matières premières ou en énergie \n 3 - Sinistre ou intempéries de caractère exceptionnel \n 4 - Transformation, restructuration ou modernisation des installations et des bâtiments \n 5 - Autres circonstances exceptionnelles",
+      "bsonType": "number",
+      "multipleOf": 1.0,
+      "minimum": 1,
+      "maximum": 5
     },
     "effectif_entreprise": {
+      "description": "Effectif de l'entreprise",
       "bsonType": "number"
     },
     "effectif": {
+      "description": "Effectif de l'établissement",
       "bsonType": "number"
     },
     "date_statut": {
+      "description": "Date du statut - création ou mise à jour de la demande",
       "bsonType": "date"
     },
     "mta": {
+      "description": "Montant total autorisé",
       "bsonType": "number"
     },
     "effectif_autorise": {
+      "description": "Effectifs autorisés",
       "bsonType": "number"
     },
     "heure_consommee": {
+      "description": "Nombre total d'heures consommées",
       "bsonType": "number"
     },
     "montant_consommee": {
+      "description": "Montant total consommé",
       "bsonType": "number"
     },
     "effectif_consomme": {
@@ -856,24 +877,31 @@ var validationSchemas = map[string]string{
   "bsonType": "object",
   "properties": {
     "siren": {
-      "bsonType": "string"
+      "bsonType": "string",
+      "pattern": "^[0-9]{9}$"
     },
     "nic": {
+      "description": "Numéro interne de classement de l'établissement",
       "bsonType": "string"
     },
     "siege": {
+      "description": "Qualité de siège ou non de l’établissement",
       "bsonType": "bool"
     },
     "complement_adresse": {
+      "description": "Complément d’adresse",
       "bsonType": "string"
     },
     "numero_voie": {
+      "description": "Numéro de la voie de l’adresse",
       "bsonType": "string"
     },
     "indrep": {
+      "description": "Indice de répétition dans la voie",
       "bsonType": "string"
     },
     "type_voie": {
+      "description": "Type de voie (format normalisé en 4 lettres max)",
       "bsonType": "string"
     },
     "voie": {
@@ -941,7 +969,9 @@ var validationSchemas = map[string]string{
       "bsonType": "string"
     },
     "nic": {
-      "bsonType": "string"
+      "description": "Numéro interne de classement (Nic) de l’unité légale",
+      "bsonType": "string",
+      "pattern": "^[0-9]{9}$"
     },
     "raison_sociale": {
       "bsonType": "string"
@@ -965,8 +995,9 @@ var validationSchemas = map[string]string{
       "bsonType": "string"
     },
     "statut_juridique": {
-      "description": "code numérique sérialisé en chaine de caractères",
-      "bsonType": "string"
+      "description": "Catégorie juridique de l'unité légale. Cf https://www.insee.fr/fr/information/2028129",
+      "bsonType": "string",
+      "pattern": "^[0-9]{4}$"
     },
     "date_creation": {
       "bsonType": "date"
