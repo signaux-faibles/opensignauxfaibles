@@ -1,3 +1,6 @@
+// This script parses JSON Entries returned by the `sfdata validate` command,
+// and prints each of them, followed by their JSON Schema validation error(s).
+
 const Ajv = require("ajv").default // eslint-disable-line @typescript-eslint/no-var-requires
 const useMongoDbPlugin = require("ajv-bsontype") // eslint-disable-line @typescript-eslint/no-var-requires
 
