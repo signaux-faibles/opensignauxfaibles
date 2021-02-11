@@ -1,6 +1,6 @@
 import { f } from "./functions"
-import { EntréeDiane } from "../GeneratedTypes"
-import { EntréeBdf, ParHash, ParPériode, Timestamp } from "../RawDataTypes"
+import { EntréeBdf, EntréeDiane } from "../GeneratedTypes"
+import { ParHash, ParPériode, Timestamp } from "../RawDataTypes"
 
 type YearOffset = 1 | 2
 

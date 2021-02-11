@@ -1,5 +1,6 @@
 import { f } from "./functions"
-import { EntréeBdf, ParHash, Timestamp, ParPériode } from "../RawDataTypes"
+import { EntréeBdf } from "../GeneratedTypes"
+import { ParHash, Timestamp, ParPériode } from "../RawDataTypes"
 
 type EntréeBdfRatios = Pick<
   EntréeBdf,

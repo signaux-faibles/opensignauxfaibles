@@ -3,11 +3,12 @@
 import {
   EntréeApConso,
   EntréeApDemande,
-  EntréeDelai,
+  EntréeBdf,
   EntréeCcsf,
   EntréeCompte,
   EntréeCotisation,
   EntréeDebit,
+  EntréeDelai,
   EntréeDéfaillances,
   EntréeDiane,
   EntréeEffectif,
@@ -108,29 +109,4 @@ export type EntréeRepOrder = {
   random_order: number
   periode: Date
   siret: SiretOrSiren
-}
-
-export type EntréeBdf = {
-  /** Date de clôture de l'exercice. */
-  arrete_bilan_bdf: Date
-  /** Année de l'exercice. */
-  annee_bdf: number
-  /** Raison sociale de l'entreprise. */
-  raison_sociale: string
-  /** Secteur d'activité. */
-  secteur: string
-  /** Siren de l'entreprise. */
-  siren: SiretOrSiren
-  /** Poids du fonds de roulement net global sur le chiffre d'affaire. Exprimé en %. */
-  poids_frng: number
-  /** Taux de marge, rapport de l'excédent brut d'exploitation (EBE) sur la valeur ajoutée (exprimé en %): 100*EBE / valeur ajoutee */
-  taux_marge: number
-  /** Délai estimé de paiement des fournisseurs (exprimé en jours): 360 * dettes fournisseurs / achats HT */
-  delai_fournisseur: number
-  /** Poids des dettes fiscales et sociales, par rapport à la valeur ajoutée (exprimé en %): 100 * dettes fiscales et sociales / Valeur ajoutee */
-  dette_fiscale: number
-  /** Poids du financement court terme (exprimé en %): 100 * concours bancaires courants / chiffre d'affaires HT */
-  financier_court_terme: number
-  /** Poids des frais financiers, sur l'excedent brut d'exploitation corrigé des produits et charges hors exploitation (exprimé en %): 100 * frais financiers / (EBE + Produits hors expl. - charges hors expl.) */
-  frais_financier: number
 }
