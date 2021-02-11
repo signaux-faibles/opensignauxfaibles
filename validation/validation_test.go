@@ -118,6 +118,7 @@ func TestTypeAlignment(t *testing.T) {
 	typesToCompare := map[string]TypeToCompare{
 		"apconso.schema.json":      {apconso.APConso{}, []error{}},
 		"apdemande.schema.json":    {apdemande.APDemande{}, []error{}},
+		"bdf.schema.json":          {bdf.BDF{}, []error{}},
 		"ccsf.schema.json":         {urssaf.CCSF{}, []error{}},
 		"compte.schema.json":       {urssaf.Compte{}, []error{}},
 		"cotisation.schema.json":   {urssaf.Cotisation{}, []error{}},
@@ -131,28 +132,7 @@ func TestTypeAlignment(t *testing.T) {
 		"procol.schema.json":       {urssaf.Procol{}, []error{}},
 		"sirene.schema.json":       {sirene.Sirene{}, []error{}},
 		"sirene_ul.schema.json":    {sireneul.SireneUL{}, []error{}},
-		"bdf.schema.json": {bdf.BDF{}, []error{ // bdf.schema.json n'est pas encore complet => la vérification va retourner les erreurs suivantes:
-			errors.New("property not found in JSON Schema: delai_fournisseur"),
-			errors.New("property not found in JSON Schema: dette_fiscale"),
-			errors.New("property not found in JSON Schema: frais_financier"),
-			errors.New("property not found in JSON Schema: arrete_bilan_bdf"),
-			errors.New("property not found in JSON Schema: secteur"),
-			errors.New("property not found in JSON Schema: taux_marge"),
-			errors.New("property not found in JSON Schema: annee_bdf"),
-			errors.New("property not found in JSON Schema: raison_sociale"),
-			errors.New("property not found in JSON Schema: poids_frng"),
-			errors.New("property not found in JSON Schema: financier_court_terme"),
-			errors.New("property not marked as 'required' in JSON Schema: annee_bdf"),
-			errors.New("property not marked as 'required' in JSON Schema: arrete_bilan_bdf"),
-			errors.New("property not marked as 'required' in JSON Schema: raison_sociale"),
-			errors.New("property not marked as 'required' in JSON Schema: secteur"),
-			errors.New("property not marked as 'required' in JSON Schema: poids_frng"),
-			errors.New("property not marked as 'required' in JSON Schema: taux_marge"),
-			errors.New("property not marked as 'required' in JSON Schema: delai_fournisseur"),
-			errors.New("property not marked as 'required' in JSON Schema: dette_fiscale"),
-			errors.New("property not marked as 'required' in JSON Schema: financier_court_terme"),
-			errors.New("property not marked as 'required' in JSON Schema: frais_financier"),
-		}},
+		// TODO: retirer champ "error" de chaque cas de test
 		// NOTE: Au fur et à mesure qu'on ajoute des fichiers JSON Schema, penser à les couvrir ici.
 	}
 
