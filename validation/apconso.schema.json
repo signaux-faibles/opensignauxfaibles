@@ -6,9 +6,7 @@
   "properties": {
     "id_conso": {
       "description": "Numéro de la demande (11 caractères principalement des chiffres)",
-      "bsonType": "string",
-      "minLength": 11,
-      "maxLength": 11
+      "bsonType": "string"
     },
     "heure_consomme": {
       "description": "Heures consommées (chômées) dans le mois",

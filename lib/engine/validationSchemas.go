@@ -11,9 +11,7 @@ var validationSchemas = map[string]string{
   "properties": {
     "id_conso": {
       "description": "Numéro de la demande (11 caractères principalement des chiffres)",
-      "bsonType": "string",
-      "minLength": 11,
-      "maxLength": 11
+      "bsonType": "string"
     },
     "heure_consomme": {
       "description": "Heures consommées (chômées) dans le mois",
@@ -56,9 +54,7 @@ var validationSchemas = map[string]string{
   "properties": {
     "id_demande": {
       "description": "Numéro de la demande (11 caractères principalement des chiffres)",
-      "bsonType": "string",
-      "minLength": 11,
-      "maxLength": 11
+      "bsonType": "string"
     },
     "periode": {
       "description": "Période de chômage",
@@ -76,10 +72,7 @@ var validationSchemas = map[string]string{
     },
     "motif_recours_se": {
       "description": "Motif de recours à l'activité partielle: \n 1 - Conjoncture économique. \n 2 - Difficultés d’approvisionnement en matières premières ou en énergie \n 3 - Sinistre ou intempéries de caractère exceptionnel \n 4 - Transformation, restructuration ou modernisation des installations et des bâtiments \n 5 - Autres circonstances exceptionnelles",
-      "bsonType": "number",
-      "multipleOf": 1.0,
-      "minimum": 1,
-      "maximum": 5
+      "bsonType": "number"
     },
     "effectif_entreprise": {
       "description": "Effectif de l'entreprise",
