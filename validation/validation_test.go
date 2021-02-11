@@ -110,29 +110,23 @@ func TestReflectPropsFromStruct(t *testing.T) {
 
 func TestTypeAlignment(t *testing.T) {
 
-	type TypeToCompare struct {
-		ParserStructInstance interface{} // instance type Go retourné par le parseur correspondant à un JSON Schema donné
-		ExpectedErrors       []error     // erreurs attendues lors de la vérification d'alignement entre JSON Schema et type Go
-	}
-
-	typesToCompare := map[string]TypeToCompare{
-		"apconso.schema.json":      {apconso.APConso{}, []error{}},
-		"apdemande.schema.json":    {apdemande.APDemande{}, []error{}},
-		"bdf.schema.json":          {bdf.BDF{}, []error{}},
-		"ccsf.schema.json":         {urssaf.CCSF{}, []error{}},
-		"compte.schema.json":       {urssaf.Compte{}, []error{}},
-		"cotisation.schema.json":   {urssaf.Cotisation{}, []error{}},
-		"debit.schema.json":        {urssaf.Debit{}, []error{}},
-		"delai.schema.json":        {urssaf.Delai{}, []error{}},
-		"diane.schema.json":        {diane.Diane{}, []error{}},
-		"effectif.schema.json":     {urssaf.Effectif{}, []error{}},
-		"effectif_ent.schema.json": {urssaf.EffectifEnt{}, []error{}},
-		"ellisphere.schema.json":   {ellisphere.Ellisphere{}, []error{}},
-		"paydex.schema.json":       {paydex.Paydex{}, []error{}},
-		"procol.schema.json":       {urssaf.Procol{}, []error{}},
-		"sirene.schema.json":       {sirene.Sirene{}, []error{}},
-		"sirene_ul.schema.json":    {sireneul.SireneUL{}, []error{}},
-		// TODO: retirer champ "error" de chaque cas de test
+	typesToCompare := map[string]interface{}{
+		"apconso.schema.json":      apconso.APConso{},
+		"apdemande.schema.json":    apdemande.APDemande{},
+		"bdf.schema.json":          bdf.BDF{},
+		"ccsf.schema.json":         urssaf.CCSF{},
+		"compte.schema.json":       urssaf.Compte{},
+		"cotisation.schema.json":   urssaf.Cotisation{},
+		"debit.schema.json":        urssaf.Debit{},
+		"delai.schema.json":        urssaf.Delai{},
+		"diane.schema.json":        diane.Diane{},
+		"effectif.schema.json":     urssaf.Effectif{},
+		"effectif_ent.schema.json": urssaf.EffectifEnt{},
+		"ellisphere.schema.json":   ellisphere.Ellisphere{},
+		"paydex.schema.json":       paydex.Paydex{},
+		"procol.schema.json":       urssaf.Procol{},
+		"sirene.schema.json":       sirene.Sirene{},
+		"sirene_ul.schema.json":    sireneul.SireneUL{},
 		// NOTE: Au fur et à mesure qu'on ajoute des fichiers JSON Schema, penser à les couvrir ici.
 	}
 
@@ -152,12 +146,12 @@ func TestTypeAlignment(t *testing.T) {
 	})
 
 	t.Run("chaque fichier JSON Schema est aligné avec le type Go retourné par le parseur correspondant", func(t *testing.T) {
-		for jsonTypeName, typeDef := range typesToCompare {
+		for jsonTypeName, structInstance := range typesToCompare {
 			t.Run(jsonTypeName, func(t *testing.T) {
-				errors := diffTypeSchema(jsonTypeName, typeDef.ParserStructInstance)
-				if ok := assert.ElementsMatch(t, typeDef.ExpectedErrors, errors); !ok {
+				errors := diffTypeSchema(jsonTypeName, structInstance)
+				if ok := assert.ElementsMatch(t, []error{}, errors); !ok {
 					// affichage des champs non alignés, pour aider à la complétion
-					structTypeName := reflect.TypeOf(typeDef.ParserStructInstance).Name()
+					structTypeName := reflect.TypeOf(structInstance).Name()
 					t.Log(jsonTypeName + " is not aligned with struct type \"" + structTypeName + "\":")
 					for _, err := range errors {
 						t.Log("- " + err.Error())
