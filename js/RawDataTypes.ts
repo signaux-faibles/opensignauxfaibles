@@ -121,9 +121,6 @@ export type EntréeBdf = {
   secteur: string
   /** Siren de l'entreprise. */
   siren: SiretOrSiren
-} & EntréeBdfRatios
-
-export type EntréeBdfRatios = {
   /** Poids du fonds de roulement net global sur le chiffre d'affaire. Exprimé en %. */
   poids_frng: number
   /** Taux de marge, rapport de l'excédent brut d'exploitation (EBE) sur la valeur ajoutée (exprimé en %): 100*EBE / valeur ajoutee */

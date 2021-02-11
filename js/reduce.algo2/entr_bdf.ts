@@ -1,11 +1,15 @@
 import { f } from "./functions"
-import {
-  EntréeBdfRatios,
+import { EntréeBdf, ParHash, Timestamp, ParPériode } from "../RawDataTypes"
+
+type EntréeBdfRatios = Pick<
   EntréeBdf,
-  ParHash,
-  Timestamp,
-  ParPériode,
-} from "../RawDataTypes"
+  | "poids_frng"
+  | "taux_marge"
+  | "delai_fournisseur"
+  | "dette_fiscale"
+  | "financier_court_terme"
+  | "frais_financier"
+>
 
 type DonnéesBdfTransmises = Omit<
   EntréeBdf,
