@@ -118,7 +118,7 @@ printjson(db.Journal.find().sort({ reportType: -1, parserCode: 1 }).toArray().ma
   hasStartDate: !!doc.startDate,
 })));
 
-print("// Results of call to sfdata validate:");
+print("// Invalid data entries returned by sfdata validate:");
 CONTENT
 
 function printJsonValidationErrors {

@@ -5193,5 +5193,5 @@
 		"hasStartDate" : true
 	}
 ]
-// Results of call to sfdata validate:
+// Invalid data entries returned by sfdata validate:
 
