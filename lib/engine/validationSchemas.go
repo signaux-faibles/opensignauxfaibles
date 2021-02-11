@@ -991,7 +991,8 @@ var validationSchemas = map[string]string{
   "required": ["raison_sociale", "statut_juridique"],
   "properties": {
     "siren": {
-      "bsonType": "string"
+      "bsonType": "string",
+      "pattern": "^[0-9]{9}$"
     },
     "nic": {
       "bsonType": "string"
