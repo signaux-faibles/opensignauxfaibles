@@ -1,12 +1,14 @@
 package validation
 
 import (
+	"encoding/json"
 	"errors"
 	"flag"
 	"io/ioutil"
 	"reflect"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/apconso"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/apdemande"
@@ -183,6 +185,54 @@ func TestTypeAlignment(t *testing.T) {
 				}
 			})
 		}
+	})
+
+	t.Run("tout champ manquant dans le schema doit être rapporté", func(t *testing.T) {
+		type Dummy struct {
+			A string    `bson:"a"`
+			B time.Time `bson:"b,omitempty"`
+			C float64   `bson:"c"`
+			D bool      `bson:"d,omitempty"`
+			E bool      `bson:"e,omitempty"`
+			Z bool
+		}
+		structSchema := reflectStructType(reflect.TypeOf(Dummy{}))
+		var jsonSchema propertySchema
+		json.Unmarshal([]byte(`{
+			"title": "EntréeDummy",
+			"bsonType": "object",
+			"required": ["a"],
+			"properties": {
+				"a": {
+					"bsonType": "string",
+					"pattern": "^[0-9]{9}$"
+				},
+				"b": {
+					"bsonType": "date"
+				},
+				"c": {
+					"bsonType": "number"
+				},
+				"e": {
+					"bsonType": "object"
+				}
+			},
+			"additionalProperties": false
+		}`), &jsonSchema)
+		expectedErrors := []error{
+			errors.New("property not found in JSON Schema: d"),
+			errors.New("property types of \"e\" don't match: {object map[] [] false} <> {bool map[] [] false}"),
+			errors.New("property not marked as 'required' in JSON Schema: c"),
+		}
+		errors := diffSchema(jsonSchema, structSchema)
+		if ok := assert.ElementsMatch(t, expectedErrors, errors); !ok {
+			// affichage des champs non alignés, pour aider à la complétion
+			t.Log("JSON Schema is not aligned with struct type:")
+			for _, err := range errors {
+				t.Log("- " + err.Error())
+			}
+		}
+
 	})
 }
 
