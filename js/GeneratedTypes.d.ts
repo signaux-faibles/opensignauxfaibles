@@ -753,7 +753,7 @@ export interface EntréeSirene {
    */
   indrep?: string
   /**
-   * Type de voie (format normalisé en 4 lettres max)
+   * Type de voie
    */
   type_voie?: string
   voie?: string

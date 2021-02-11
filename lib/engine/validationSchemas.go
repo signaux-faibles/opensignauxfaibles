@@ -901,7 +901,7 @@ var validationSchemas = map[string]string{
       "bsonType": "string"
     },
     "type_voie": {
-      "description": "Type de voie (format normalisé en 4 lettres max)",
+      "description": "Type de voie",
       "bsonType": "string"
     },
     "voie": {
