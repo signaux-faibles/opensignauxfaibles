@@ -92,6 +92,12 @@ func reflectStructType(structType reflect.Type) propertySchema {
 					fieldType = "number"
 				} else if fieldType == "Time" {
 					fieldType = "date"
+				} else if fieldType == "bool" {
+					fieldType = "boolean"
+				} else if fieldType == "string" {
+					// leave as is
+				} else {
+					log.Fatal("Unknown type: " + fieldType)
 				}
 				props[fieldName] = propertySchema{BsonType: fieldType}
 			}

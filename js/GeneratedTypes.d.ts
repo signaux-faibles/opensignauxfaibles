@@ -374,9 +374,7 @@ export interface EntréeDiane {
   /**
    * Présence d'une procédure collective en cours
    */
-  procedure_collective?: {
-    [k: string]: unknown
-  }
+  procedure_collective?: boolean
   /**
    * Effectif consolidé à l'entreprise
    */
@@ -765,9 +763,7 @@ export interface EntréeSirene {
   /**
    * Qualité de siège ou non de l’établissement
    */
-  siege?: {
-    [k: string]: unknown
-  }
+  siege?: boolean
   /**
    * Complément d’adresse
    */

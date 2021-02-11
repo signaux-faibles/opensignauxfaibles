@@ -69,7 +69,7 @@
     },
     "procedure_collective": {
       "description": "Présence d'une procédure collective en cours",
-      "bsonType": "bool"
+      "bsonType": "boolean"
     },
     "effectif_consolide": {
       "description": "Effectif consolidé à l'entreprise",
