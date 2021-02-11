@@ -870,6 +870,7 @@ var validationSchemas = map[string]string{
   "bsonType": "object",
   "properties": {
     "siren": {
+      "description": "Numéro Siren de l'entreprise",
       "bsonType": "string",
       "pattern": "^[0-9]{9}$"
     },
@@ -898,54 +899,71 @@ var validationSchemas = map[string]string{
       "bsonType": "string"
     },
     "voie": {
+      "description": "Libellé de voie",
       "bsonType": "string"
     },
     "commune": {
+      "description": "Libellé de la commune",
       "bsonType": "string"
     },
     "commune_etranger": {
+      "description": "Libellé de la commune pour un établissement situé à l’étranger",
       "bsonType": "string"
     },
     "distribution_speciale": {
+      "description": "Distribution spéciale de l’établissement",
       "bsonType": "string"
     },
     "code_commune": {
+      "description": "Code commune de l’établissement",
       "bsonType": "string"
     },
     "code_cedex": {
+      "description": "Code cedex",
       "bsonType": "string"
     },
     "cedex": {
+      "description": "Libellé du code cedex",
       "bsonType": "string"
     },
     "code_pays_etranger": {
+      "description": "Code pays pour un établissement situé à l’étranger",
       "bsonType": "string"
     },
     "pays_etranger": {
+      "description": "Libellé du pays pour un établissement situé à l’étranger",
       "bsonType": "string"
     },
     "code_postal": {
+      "description": "Code postal",
       "bsonType": "string"
     },
     "departement": {
+      "description": "Code de département généré à partir du code postal (ex: 2A et 2B pour la Corse)",
       "bsonType": "string"
     },
     "ape": {
+      "description": "Activité principale de l'établissement pendant la période, dans le cas où celui-ci est renseigné selon la deuxième version de nomenclature NAF",
       "bsonType": "string"
     },
     "code_activite": {
+      "description": "Activité principale de l'établissement pendant la période, dans le cas où celui-ci est renseigné dans un format différent de la deuxième version de nomenclature NAF",
       "bsonType": "string"
     },
     "nomen_activite": {
+      "description": "Nomenclature NAF employée pour renseigner le code d'activité/APE de l'établissement (cf https://www.insee.fr/fr/information/2416409), si autre que deuxième révision",
       "bsonType": "string"
     },
     "date_creation": {
+      "description": "Date de création de l’établissement",
       "bsonType": "date"
     },
     "longitude": {
+      "description": "Géolocalisation des locaux: longitude",
       "bsonType": "number"
     },
     "latitude": {
+      "description": "Géolocalisation des locaux: latitude",
       "bsonType": "number"
     }
   },
@@ -959,7 +977,9 @@ var validationSchemas = map[string]string{
   "required": ["raison_sociale", "statut_juridique"],
   "properties": {
     "siren": {
-      "bsonType": "string"
+      "description": "Numéro Siren de l'entreprise",
+      "bsonType": "string",
+      "pattern": "^[0-9]{9}$"
     },
     "nic": {
       "description": "Numéro interne de classement (Nic) de l’unité légale",
@@ -967,24 +987,31 @@ var validationSchemas = map[string]string{
       "pattern": "^[0-9]{9}$"
     },
     "raison_sociale": {
+      "description": "Dénomination de l’unité légale",
       "bsonType": "string"
     },
     "nom_unite_legale": {
+      "description": "Nom de naissance de la personne physique",
       "bsonType": "string"
     },
     "nom_usage_unite_legale": {
+      "description": "Nom d’usage de la personne physique",
       "bsonType": "string"
     },
     "prenom1_unite_legale": {
+      "description": "Premier prénom déclaré pour une personne physique",
       "bsonType": "string"
     },
     "prenom2_unite_legale": {
+      "description": "Deuxième prénom déclaré pour une personne physique",
       "bsonType": "string"
     },
     "prenom3_unite_legale": {
+      "description": "Troisième prénom déclaré pour une personne physique",
       "bsonType": "string"
     },
     "prenom4_unite_legale": {
+      "description": "Quatrième prénom déclaré pour une personne physique",
       "bsonType": "string"
     },
     "statut_juridique": {
@@ -993,6 +1020,7 @@ var validationSchemas = map[string]string{
       "pattern": "^[0-9]{4}$"
     },
     "date_creation": {
+      "description": "Date de création de l'unité légale",
       "bsonType": "date"
     }
   },

@@ -707,28 +707,58 @@ export interface EntréeDéfaillances {
  * Champs importés par le parseur lib/sirene_ul/main.go de sfdata.
  */
 export interface EntréeSireneEntreprise {
+  /**
+   * Numéro Siren de l'entreprise
+   */
   siren?: string
   /**
    * Numéro interne de classement (Nic) de l’unité légale
    */
   nic?: string
+  /**
+   * Dénomination de l’unité légale
+   */
   raison_sociale: string
+  /**
+   * Nom de naissance de la personne physique
+   */
   nom_unite_legale?: string
+  /**
+   * Nom d’usage de la personne physique
+   */
   nom_usage_unite_legale?: string
+  /**
+   * Premier prénom déclaré pour une personne physique
+   */
   prenom1_unite_legale?: string
+  /**
+   * Deuxième prénom déclaré pour une personne physique
+   */
   prenom2_unite_legale?: string
+  /**
+   * Troisième prénom déclaré pour une personne physique
+   */
   prenom3_unite_legale?: string
+  /**
+   * Quatrième prénom déclaré pour une personne physique
+   */
   prenom4_unite_legale?: string
   /**
    * Catégorie juridique de l'unité légale. Cf https://www.insee.fr/fr/information/2028129
    */
   statut_juridique: string
+  /**
+   * Date de création de l'unité légale
+   */
   date_creation?: Date
 }
 /**
  * Champs importés par le parseur lib/sirene/main.go de sfdata.
  */
 export interface EntréeSirene {
+  /**
+   * Numéro Siren de l'entreprise
+   */
   siren?: string
   /**
    * Numéro interne de classement de l'établissement
@@ -756,21 +786,72 @@ export interface EntréeSirene {
    * Type de voie
    */
   type_voie?: string
+  /**
+   * Libellé de voie
+   */
   voie?: string
+  /**
+   * Libellé de la commune
+   */
   commune?: string
+  /**
+   * Libellé de la commune pour un établissement situé à l’étranger
+   */
   commune_etranger?: string
+  /**
+   * Distribution spéciale de l’établissement
+   */
   distribution_speciale?: string
+  /**
+   * Code commune de l’établissement
+   */
   code_commune?: string
+  /**
+   * Code cedex
+   */
   code_cedex?: string
+  /**
+   * Libellé du code cedex
+   */
   cedex?: string
+  /**
+   * Code pays pour un établissement situé à l’étranger
+   */
   code_pays_etranger?: string
+  /**
+   * Libellé du pays pour un établissement situé à l’étranger
+   */
   pays_etranger?: string
+  /**
+   * Code postal
+   */
   code_postal?: string
+  /**
+   * Code de département généré à partir du code postal (ex: 2A et 2B pour la Corse)
+   */
   departement?: string
+  /**
+   * Activité principale de l'établissement pendant la période, dans le cas où celui-ci est renseigné selon la deuxième version de nomenclature NAF
+   */
   ape?: string
+  /**
+   * Activité principale de l'établissement pendant la période, dans le cas où celui-ci est renseigné dans un format différent de la deuxième version de nomenclature NAF
+   */
   code_activite?: string
+  /**
+   * Nomenclature NAF employée pour renseigner le code d'activité/APE de l'établissement (cf https://www.insee.fr/fr/information/2416409), si autre que deuxième révision
+   */
   nomen_activite?: string
+  /**
+   * Date de création de l’établissement
+   */
   date_creation?: Date
+  /**
+   * Géolocalisation des locaux: longitude
+   */
   longitude?: number
+  /**
+   * Géolocalisation des locaux: latitude
+   */
   latitude?: number
 }

@@ -5,7 +5,9 @@
   "required": ["raison_sociale", "statut_juridique"],
   "properties": {
     "siren": {
-      "bsonType": "string"
+      "description": "Numéro Siren de l'entreprise",
+      "bsonType": "string",
+      "pattern": "^[0-9]{9}$"
     },
     "nic": {
       "description": "Numéro interne de classement (Nic) de l’unité légale",
@@ -13,24 +15,31 @@
       "pattern": "^[0-9]{9}$"
     },
     "raison_sociale": {
+      "description": "Dénomination de l’unité légale",
       "bsonType": "string"
     },
     "nom_unite_legale": {
+      "description": "Nom de naissance de la personne physique",
       "bsonType": "string"
     },
     "nom_usage_unite_legale": {
+      "description": "Nom d’usage de la personne physique",
       "bsonType": "string"
     },
     "prenom1_unite_legale": {
+      "description": "Premier prénom déclaré pour une personne physique",
       "bsonType": "string"
     },
     "prenom2_unite_legale": {
+      "description": "Deuxième prénom déclaré pour une personne physique",
       "bsonType": "string"
     },
     "prenom3_unite_legale": {
+      "description": "Troisième prénom déclaré pour une personne physique",
       "bsonType": "string"
     },
     "prenom4_unite_legale": {
+      "description": "Quatrième prénom déclaré pour une personne physique",
       "bsonType": "string"
     },
     "statut_juridique": {
@@ -39,6 +48,7 @@
       "pattern": "^[0-9]{4}$"
     },
     "date_creation": {
+      "description": "Date de création de l'unité légale",
       "bsonType": "date"
     }
   },
