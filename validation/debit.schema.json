@@ -73,7 +73,7 @@
     },
     "recours_en_cours": {
       "description": "Recours en cours.",
-      "bsonType": "bool"
+      "bsonType": "boolean"
     }
   },
   "additionalProperties": false
