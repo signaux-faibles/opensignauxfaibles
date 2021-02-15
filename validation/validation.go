@@ -87,11 +87,19 @@ func reflectStructType(structType reflect.Type) propertySchema {
 				if fieldType == "" {
 					fieldType = field.Type.Elem().Name()
 				}
-				// convert go types to javascript equivalents
-				if fieldType == "int" || fieldType == "float64" {
-					fieldType = "number"
+				// convert go types to BSON equivalents (cf https://docs.mongodb.com/manual/reference/operator/query/type/#document-type-available-types)
+				if fieldType == "int" || fieldType == "int64" {
+					fieldType = "int64"
+				} else if fieldType == "float64" {
+					fieldType = "double"
 				} else if fieldType == "Time" {
 					fieldType = "date"
+				} else if fieldType == "bool" {
+					fieldType = "bool"
+				} else if fieldType == "string" {
+					fieldType = "string"
+				} else {
+					log.Fatal("Unsupported type: " + fieldType)
 				}
 				props[fieldName] = propertySchema{BsonType: fieldType}
 			}
