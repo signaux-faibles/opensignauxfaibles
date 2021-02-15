@@ -16,7 +16,7 @@ echo > "${OUT_FILE}" "\
  * - then, run generate-types.sh to regenerate this file.
  */
 
-$("node" "generate-types.js" ../validation)"
+$("${NODE_BIN}/ts-node" "generate-types.ts" ../validation)"
 "${NODE_BIN}/eslint" "${OUT_FILE}" --fix
 
 VAR_DOC_FILE="reduce.algo2/docs/variables.json"
