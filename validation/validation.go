@@ -67,6 +67,16 @@ func reflectPropsFromStruct(structInstance interface{}) map[string]propertySchem
 	return reflectStructType(reflect.TypeOf(structInstance)).Properties
 }
 
+// convert go types to BSON equivalents (cf https://docs.mongodb.com/manual/reference/operator/query/type/#document-type-available-types)
+var goTypeToBsonType = map[string]string{
+	"string":  "string",
+	"bool":    "bool",
+	"int":     "number", // TODO: "long"
+	"int64":   "number", // TODO: "long"
+	"float64": "number", // TODO: "double"
+	"Time":    "date",
+}
+
 func reflectStructType(structType reflect.Type) propertySchema {
 	requiredProps := []string{}
 	props := make(map[string]propertySchema)
@@ -83,25 +93,14 @@ func reflectStructType(structType reflect.Type) propertySchema {
 			if field.Type.Kind() == reflect.Struct && fieldType != "Time" {
 				props[fieldName] = reflectStructType(field.Type)
 			} else {
-				// support pointer types
-				if fieldType == "" {
+				if fieldType == "" { // support pointer types
 					fieldType = field.Type.Elem().Name()
 				}
-				// convert go types to BSON equivalents (cf https://docs.mongodb.com/manual/reference/operator/query/type/#document-type-available-types)
-				if fieldType == "int" || fieldType == "int64" {
-					fieldType = "number" // TODO: "long"
-				} else if fieldType == "float64" {
-					fieldType = "number" // TODO: "double"
-				} else if fieldType == "Time" {
-					fieldType = "date"
-				} else if fieldType == "bool" {
-					fieldType = "bool"
-				} else if fieldType == "string" {
-					fieldType = "string"
-				} else {
+				bsonType, ok := goTypeToBsonType[fieldType]
+				if !ok {
 					log.Fatal("Unsupported type: " + fieldType)
 				}
-				props[fieldName] = propertySchema{BsonType: fieldType}
+				props[fieldName] = propertySchema{BsonType: bsonType}
 			}
 		}
 	}
