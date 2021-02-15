@@ -205,9 +205,7 @@ export interface EntréeDebit {
   /**
    * Recours en cours.
    */
-  recours_en_cours: {
-    [k: string]: unknown
-  }
+  recours_en_cours: boolean
 }
 /**
  * Champs importés par le parseur lib/urssaf/delai.go de sfdata.
@@ -329,9 +327,7 @@ export interface EntréeDiane {
   /**
    * Présence d'une procédure collective en cours
    */
-  procedure_collective?: {
-    [k: string]: unknown
-  }
+  procedure_collective?: boolean
   /**
    * Effectif consolidé à l'entreprise
    */
@@ -681,9 +677,7 @@ export interface EntréeSireneEntreprise {
 export interface EntréeSirene {
   siren?: string
   nic?: string
-  siege?: {
-    [k: string]: unknown
-  }
+  siege?: boolean
   complement_adresse?: string
   numero_voie?: string
   indrep?: string
