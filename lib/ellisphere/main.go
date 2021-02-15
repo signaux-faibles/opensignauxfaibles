@@ -7,6 +7,29 @@ import (
 	"github.com/tealeg/xlsx/v3"
 )
 
+// Colonnes:
+//  0: GRP Code
+//  1: GRP Personne PouM
+//  2: GRP SIREN 9
+//  3: GRP RefID
+//  4: GRP Raison Sociale
+//  5: GRP Adresse
+//  6: GRP Code Postal
+//  7: GRP Ville
+//  8: GRP Pays
+//  9: Niveau de détention
+// 10: % Financier
+// 11: Tranche % Financier
+// 12: FIL Code
+// 13: FIL Personne PouM
+// 14: FIL SIREN 9
+// 15: FIL RefID
+// 16: FIL Raison Sociale
+// 17: FIL Adresse
+// 18: FIL Code Postal
+// 19: FIL Ville
+// 20: FIL Pays
+
 // Ellisphere informations groupe pour une entreprise
 type Ellisphere struct {
 	Siren               string  `json:"-" bson:"-" xlsx:"14"`
