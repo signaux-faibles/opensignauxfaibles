@@ -625,16 +625,6 @@ export interface EntréeDiane {
   benefice_ou_perte?: number
 }
 /**
- * Champs importés par le parseur lib/urssaf/effectif_ent.go de sfdata.
- */
-export interface EntréeEffectifEnt {
-  periode: Date
-  /**
-   * Nombre de personnes employées par l'entreprise.
-   */
-  effectif: number
-}
-/**
  * Champs importés par le parseur lib/urssaf/effectif.go de sfdata.
  */
 export interface EntréeEffectif {
@@ -645,6 +635,16 @@ export interface EntréeEffectif {
   periode: Date
   /**
    * Nombre de personnes employées par l'établissement.
+   */
+  effectif: number
+}
+/**
+ * Champs importés par le parseur lib/urssaf/effectif_ent.go de sfdata.
+ */
+export interface EntréeEffectifEnt {
+  periode: Date
+  /**
+   * Nombre de personnes employées par l'entreprise.
    */
   effectif: number
 }
@@ -696,25 +696,6 @@ export interface EntréeDéfaillances {
   date_effet: Date
 }
 /**
- * Champs importés par le parseur lib/sirene_ul/main.go de sfdata.
- */
-export interface EntréeSireneEntreprise {
-  siren?: string
-  nic?: string
-  raison_sociale: string
-  nom_unite_legale?: string
-  nom_usage_unite_legale?: string
-  prenom1_unite_legale?: string
-  prenom2_unite_legale?: string
-  prenom3_unite_legale?: string
-  prenom4_unite_legale?: string
-  /**
-   * code numérique sérialisé en chaine de caractères
-   */
-  statut_juridique: string
-  date_creation?: Date
-}
-/**
  * Champs importés par le parseur lib/sirene/main.go de sfdata.
  */
 export interface EntréeSirene {
@@ -742,4 +723,23 @@ export interface EntréeSirene {
   date_creation?: Date
   longitude?: number
   latitude?: number
+}
+/**
+ * Champs importés par le parseur lib/sirene_ul/main.go de sfdata.
+ */
+export interface EntréeSireneEntreprise {
+  siren?: string
+  nic?: string
+  raison_sociale: string
+  nom_unite_legale?: string
+  nom_usage_unite_legale?: string
+  prenom1_unite_legale?: string
+  prenom2_unite_legale?: string
+  prenom3_unite_legale?: string
+  prenom4_unite_legale?: string
+  /**
+   * code numérique sérialisé en chaine de caractères
+   */
+  statut_juridique: string
+  date_creation?: Date
 }
