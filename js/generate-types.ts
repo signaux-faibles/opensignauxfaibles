@@ -3,30 +3,39 @@ import { compile, JSONSchema } from "json-schema-to-typescript"
 
 const path = process.argv[2]
 
+type JSONProps = JSONSchema["properties"]
+
+const normalizePropTypes = (properties: JSONProps): JSONProps =>
+  Object.entries(properties ?? {}).reduce(
+    (acc, [propName, propDef]) => ({
+      ...acc,
+      [propName]: normalizeType(propDef),
+    }),
+    {}
+  )
+
+const tsTypes = new Map<string, JSONSchema["tsType"]>([["date", "Date"]])
+
+const jsTypes = new Map<string, JSONSchema["type"]>([
+  ["bool", "boolean"],
+  ["long", "number"],
+  ["double", "number"],
+])
+
 const normalizeType = (node: JSONSchema): JSONSchema =>
   node.bsonType === "object"
     ? {
         ...node,
-        properties: Object.entries(node.properties ?? {}).reduce(
-          (acc, [propName, propDef]) => ({
-            ...acc,
-            [propName]: normalizeType(propDef),
-          }),
-          {}
-        ),
+        properties: normalizePropTypes(node.properties),
       }
-    : node.bsonType === "date"
+    : tsTypes.has(node.bsonType)
     ? {
         ...node,
-        tsType: "Date",
+        tsType: tsTypes.get(node.bsonType),
       }
     : {
         ...node,
-        type: node.bsonType
-          .replace("date", "Date")
-          .replace("bool", "boolean")
-          .replace("long", "number")
-          .replace("double", "number"),
+        type: jsTypes.get(node.bsonType) ?? node.bsonType,
       }
 
 const options = {
