@@ -89,7 +89,7 @@ func reflectStructType(structType reflect.Type) propertySchema {
 				}
 				// convert go types to BSON equivalents (cf https://docs.mongodb.com/manual/reference/operator/query/type/#document-type-available-types)
 				if fieldType == "int" || fieldType == "int64" {
-					fieldType = "int64"
+					fieldType = "long"
 				} else if fieldType == "float64" {
 					fieldType = "double"
 				} else if fieldType == "Time" {

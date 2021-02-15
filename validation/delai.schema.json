@@ -33,7 +33,7 @@
       "description": "Date d'échéance du délai."
     },
     "duree_delai": {
-      "bsonType": "int64",
+      "bsonType": "long",
       "description": "Durée du délai en jours: nombre de jours entre date_creation et date_echeance.",
       "minimum": 1
     },
@@ -46,7 +46,7 @@
       "description": "Délai inférieur ou supérieur à 6 mois ? Modalités INF et SUP."
     },
     "annee_creation": {
-      "bsonType": "int64",
+      "bsonType": "long",
       "description": "Année de création du délai."
     },
     "montant_echeancier": {

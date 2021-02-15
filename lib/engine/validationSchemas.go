@@ -19,7 +19,7 @@ var validationSchemas = map[string]string{
       "bsonType": "double"
     },
     "effectif": {
-      "bsonType": "int64"
+      "bsonType": "long"
     },
     "periode": {
       "bsonType": "date"
@@ -65,13 +65,13 @@ var validationSchemas = map[string]string{
     },
     "motif_recours_se": {
       "description": "Cause d'activité partielle",
-      "bsonType": "int64"
+      "bsonType": "long"
     },
     "effectif_entreprise": {
-      "bsonType": "int64"
+      "bsonType": "long"
     },
     "effectif": {
-      "bsonType": "int64"
+      "bsonType": "long"
     },
     "date_statut": {
       "bsonType": "date"
@@ -80,7 +80,7 @@ var validationSchemas = map[string]string{
       "bsonType": "double"
     },
     "effectif_autorise": {
-      "bsonType": "int64"
+      "bsonType": "long"
     },
     "heure_consommee": {
       "bsonType": "double"
@@ -89,7 +89,7 @@ var validationSchemas = map[string]string{
       "bsonType": "double"
     },
     "effectif_consomme": {
-      "bsonType": "int64"
+      "bsonType": "long"
     }
   },
   "additionalProperties": false
@@ -224,7 +224,7 @@ var validationSchemas = map[string]string{
     },
     "numero_historique": {
       "description": "Ordre des opérations pour un écart négatif donné.",
-      "bsonType": "int64"
+      "bsonType": "long"
     },
     "date_traitement": {
       "description": "Date de constatation du débit (exemple: remboursement, majoration ou autre modification du montant)",
@@ -244,7 +244,7 @@ var validationSchemas = map[string]string{
     },
     "etat_compte": {
       "description": "Code état du compte: 1 (Actif), 2 (Suspendu) ou 3 (Radié).",
-      "bsonType": "int64"
+      "bsonType": "long"
     },
     "code_procedure_collective": {
       "description": "Code qui indique si le compte fait l'objet d'une procédure collective: 1 (en cours), 2 (plan de redressement en cours), 9 (procedure collective sans dette à l'Urssaf) ou valeur nulle en cas d'absence de procédure collective.",
@@ -301,7 +301,7 @@ var validationSchemas = map[string]string{
       "description": "Date d'échéance du délai."
     },
     "duree_delai": {
-      "bsonType": "int64",
+      "bsonType": "long",
       "description": "Durée du délai en jours: nombre de jours entre date_creation et date_echeance.",
       "minimum": 1
     },
@@ -314,7 +314,7 @@ var validationSchemas = map[string]string{
       "description": "Délai inférieur ou supérieur à 6 mois ? Modalités INF et SUP."
     },
     "annee_creation": {
-      "bsonType": "int64",
+      "bsonType": "long",
       "description": "Année de création du délai."
     },
     "montant_echeancier": {
@@ -365,7 +365,7 @@ var validationSchemas = map[string]string{
   "properties": {
     "exercice_diane": {
       "description": "Année de l'exercice",
-      "bsonType": "int64"
+      "bsonType": "long"
     },
     "arrete_bilan_diane": {
       "description": "Date d'arrêté du bilan",
@@ -433,7 +433,7 @@ var validationSchemas = map[string]string{
     },
     "effectif_consolide": {
       "description": "Effectif consolidé à l'entreprise",
-      "bsonType": "int64"
+      "bsonType": "long"
     },
     "frais_de_RetD": {
       "description": "Frais de Recherche et Développement",
@@ -445,19 +445,19 @@ var validationSchemas = map[string]string{
     },
     "nombre_etab_secondaire": {
       "description": "Nombre d'établissements secondaires de l'entreprise, en plus du siège.",
-      "bsonType": "int64"
+      "bsonType": "long"
     },
     "nombre_filiale": {
       "description": "Nombre de filiales de l'entreprise. Dans la base de données des liens capitalistiques, le concept de filiale ne fait aucune référence au pourcentage d’appartenance entre le parent et la fille. Dans ce sens, si l'entreprise A est enregistrée comme ayant des intérêts dans l'entreprise B avec un très petit, ou même un pourcentage de participation inconnu, l'entreprise B sera considérée filiale de l'entreprise A.",
-      "bsonType": "int64"
+      "bsonType": "long"
     },
     "taille_compo_groupe": {
       "description": "Nombre d'entreprises dans le groupe (groupe défini par les liens capitalistique d'au moins 50,01%)",
-      "bsonType": "int64"
+      "bsonType": "long"
     },
     "nombre_mois": {
       "description": "Durée de l'exercice en mois.",
-      "bsonType": "int64"
+      "bsonType": "long"
     },
     "equilibre_financier": {
       "description": "Équilibre financier: Ressources durables / Emplois stables",
@@ -702,7 +702,7 @@ var validationSchemas = map[string]string{
     },
     "effectif": {
       "description": "Nombre de personnes employées par l'établissement.",
-      "bsonType": "int64"
+      "bsonType": "long"
     }
   },
   "additionalProperties": false
@@ -719,7 +719,7 @@ var validationSchemas = map[string]string{
     },
     "effectif": {
       "description": "Nombre de personnes employées par l'entreprise.",
-      "bsonType": "int64"
+      "bsonType": "long"
     }
   },
   "additionalProperties": false
@@ -749,7 +749,7 @@ var validationSchemas = map[string]string{
       "bsonType": "string"
     },
     "niveau_detention": {
-      "bsonType": "int64"
+      "bsonType": "long"
     },
     "part_financiere": {
       "bsonType": "double"
@@ -812,7 +812,7 @@ var validationSchemas = map[string]string{
       "bsonType": "date"
     },
     "nb_jours": {
-      "bsonType": "int64"
+      "bsonType": "long"
     }
   },
   "additionalProperties": false

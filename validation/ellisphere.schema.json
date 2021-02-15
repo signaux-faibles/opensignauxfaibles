@@ -22,7 +22,7 @@
       "bsonType": "string"
     },
     "niveau_detention": {
-      "bsonType": "int64"
+      "bsonType": "long"
     },
     "part_financiere": {
       "bsonType": "double"

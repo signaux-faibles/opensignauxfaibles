@@ -35,13 +35,13 @@
     },
     "motif_recours_se": {
       "description": "Cause d'activité partielle",
-      "bsonType": "int64"
+      "bsonType": "long"
     },
     "effectif_entreprise": {
-      "bsonType": "int64"
+      "bsonType": "long"
     },
     "effectif": {
-      "bsonType": "int64"
+      "bsonType": "long"
     },
     "date_statut": {
       "bsonType": "date"
@@ -50,7 +50,7 @@
       "bsonType": "double"
     },
     "effectif_autorise": {
-      "bsonType": "int64"
+      "bsonType": "long"
     },
     "heure_consommee": {
       "bsonType": "double"
@@ -59,7 +59,7 @@
       "bsonType": "double"
     },
     "effectif_consomme": {
-      "bsonType": "int64"
+      "bsonType": "long"
     }
   },
   "additionalProperties": false

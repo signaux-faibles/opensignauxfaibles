@@ -25,7 +25,7 @@ const normalizeType = (node) =>
         type: node.bsonType
           .replace("date", "Date")
           .replace("bool", "boolean")
-          .replace("int64", "number")
+          .replace("long", "number")
           .replace("double", "number"),
       }
 
