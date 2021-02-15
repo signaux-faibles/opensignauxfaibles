@@ -70,10 +70,10 @@
       "bsonType": "date"
     },
     "longitude": {
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "latitude": {
-      "bsonType": "double"
+      "bsonType": "number"
     }
   },
   "additionalProperties": false

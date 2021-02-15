@@ -8,13 +8,13 @@
       "bsonType": "string"
     },
     "heure_consomme": {
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "montant": {
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "effectif": {
-      "bsonType": "long"
+      "bsonType": "number"
     },
     "periode": {
       "bsonType": "date"

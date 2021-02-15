@@ -13,13 +13,13 @@ var validationSchemas = map[string]string{
       "bsonType": "string"
     },
     "heure_consomme": {
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "montant": {
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "effectif": {
-      "bsonType": "long"
+      "bsonType": "number"
     },
     "periode": {
       "bsonType": "date"
@@ -61,35 +61,35 @@ var validationSchemas = map[string]string{
     },
     "hta": {
       "description": "Nombre total d'heures autorisées",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "motif_recours_se": {
       "description": "Cause d'activité partielle",
-      "bsonType": "long"
+      "bsonType": "number"
     },
     "effectif_entreprise": {
-      "bsonType": "long"
+      "bsonType": "number"
     },
     "effectif": {
-      "bsonType": "long"
+      "bsonType": "number"
     },
     "date_statut": {
       "bsonType": "date"
     },
     "mta": {
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "effectif_autorise": {
-      "bsonType": "long"
+      "bsonType": "number"
     },
     "heure_consommee": {
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "montant_consommee": {
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "effectif_consomme": {
-      "bsonType": "long"
+      "bsonType": "number"
     }
   },
   "additionalProperties": false
@@ -175,11 +175,11 @@ var validationSchemas = map[string]string{
     },
     "encaisse": {
       "description": "Cotisation encaissée directement, en euros.",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "du": {
       "description": "Cotisation due, en euros. À utiliser pour calculer le montant moyen mensuel du: Somme cotisations dues / nb périodes.",
-      "bsonType": "double"
+      "bsonType": "number"
     }
   },
   "additionalProperties": false
@@ -224,7 +224,7 @@ var validationSchemas = map[string]string{
     },
     "numero_historique": {
       "description": "Ordre des opérations pour un écart négatif donné.",
-      "bsonType": "long"
+      "bsonType": "number"
     },
     "date_traitement": {
       "description": "Date de constatation du débit (exemple: remboursement, majoration ou autre modification du montant)",
@@ -236,15 +236,15 @@ var validationSchemas = map[string]string{
     },
     "part_ouvriere": {
       "description": "Montant des débits sur la part ouvrières, exprimées en euros (€). Sont exclues les pénalités et les majorations de retard.",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "part_patronale": {
       "description": "Montant des débits sur la part patronale, exprimées en euros (€). Sont exclues les pénalités et les majorations de retard.",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "etat_compte": {
       "description": "Code état du compte: 1 (Actif), 2 (Suspendu) ou 3 (Radié).",
-      "bsonType": "long"
+      "bsonType": "number"
     },
     "code_procedure_collective": {
       "description": "Code qui indique si le compte fait l'objet d'une procédure collective: 1 (en cours), 2 (plan de redressement en cours), 9 (procedure collective sans dette à l'Urssaf) ou valeur nulle en cas d'absence de procédure collective.",
@@ -301,7 +301,7 @@ var validationSchemas = map[string]string{
       "description": "Date d'échéance du délai."
     },
     "duree_delai": {
-      "bsonType": "long",
+      "bsonType": "number",
       "description": "Durée du délai en jours: nombre de jours entre date_creation et date_echeance.",
       "minimum": 1
     },
@@ -314,11 +314,11 @@ var validationSchemas = map[string]string{
       "description": "Délai inférieur ou supérieur à 6 mois ? Modalités INF et SUP."
     },
     "annee_creation": {
-      "bsonType": "long",
+      "bsonType": "number",
       "description": "Année de création du délai."
     },
     "montant_echeancier": {
-      "bsonType": "double",
+      "bsonType": "number",
       "description": "Montant global de l'échéancier, en euros.",
       "minimum": 0.01
     },
@@ -365,7 +365,7 @@ var validationSchemas = map[string]string{
   "properties": {
     "exercice_diane": {
       "description": "Année de l'exercice",
-      "bsonType": "long"
+      "bsonType": "number"
     },
     "arrete_bilan_diane": {
       "description": "Date d'arrêté du bilan",
@@ -373,47 +373,47 @@ var validationSchemas = map[string]string{
     },
     "couverture_ca_fdr": {
       "description": "Couverture du chiffre d'affaire par le fonds de roulement (exprimé en jours): Fonds de roulement net global / Chiffre d'affaires net * 360",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "interets": {
       "description": "Intérêts et charges assimilées.",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "excedent_brut_d_exploitation": {
       "description": "Excédent brut d'exploitation.",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "produits_financiers": {
       "description": "Produits financiers.",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "produit_exceptionnel": {
       "description": "Produits exceptionnels.",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "charge_exceptionnelle": {
       "description": "Charges exceptionnelles.",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "charges_financieres": {
       "description": "Charges financières.",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "ca": {
       "description": "Chiffre d'affaires",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "concours_bancaire_courant": {
       "description": "Concours bancaires courants. (Pour recalculer les frais financiers court terme de la Banque de France)",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "valeur_ajoutee": {
       "description": "Valeur ajoutée.",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "dette_fiscale_et_sociale": {
       "description": "Dette fiscale et sociale",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "nom_entreprise": {
       "description": "Raison sociale",
@@ -433,255 +433,255 @@ var validationSchemas = map[string]string{
     },
     "effectif_consolide": {
       "description": "Effectif consolidé à l'entreprise",
-      "bsonType": "long"
+      "bsonType": "number"
     },
     "frais_de_RetD": {
       "description": "Frais de Recherche et Développement",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "conces_brev_et_droits_sim": {
       "description": "Concessions, brevets, et droits similaires",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "nombre_etab_secondaire": {
       "description": "Nombre d'établissements secondaires de l'entreprise, en plus du siège.",
-      "bsonType": "long"
+      "bsonType": "number"
     },
     "nombre_filiale": {
       "description": "Nombre de filiales de l'entreprise. Dans la base de données des liens capitalistiques, le concept de filiale ne fait aucune référence au pourcentage d’appartenance entre le parent et la fille. Dans ce sens, si l'entreprise A est enregistrée comme ayant des intérêts dans l'entreprise B avec un très petit, ou même un pourcentage de participation inconnu, l'entreprise B sera considérée filiale de l'entreprise A.",
-      "bsonType": "long"
+      "bsonType": "number"
     },
     "taille_compo_groupe": {
       "description": "Nombre d'entreprises dans le groupe (groupe défini par les liens capitalistique d'au moins 50,01%)",
-      "bsonType": "long"
+      "bsonType": "number"
     },
     "nombre_mois": {
       "description": "Durée de l'exercice en mois.",
-      "bsonType": "long"
+      "bsonType": "number"
     },
     "equilibre_financier": {
       "description": "Équilibre financier: Ressources durables / Emplois stables",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "independance_financiere": {
       "description": "Indépendance financière (exprimé en %): Fonds propres / Ressources durables * 100",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "endettement": {
       "description": "Endettement (exprimé en %): Dettes de caractère financier / Ressources durables * 100",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "autonomie_financiere": {
       "description": "Autonomie financière Fonds propres / Total bilan * 100",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "degre_immo_corporelle": {
       "description": "Degré d'amortissement des immobilisations corporelles (exprimé en %): Amortissements des immobilisations corporelles / Immobilisation corporelles brutes * 100",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "financement_actif_circulant": {
       "description": "Financement de l'actif circulant net: Fonds de roulement net global / Actif circulant net",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "liquidite_generale": {
       "description": "Liquidité générale: Actif circulant net / Dettes à court terme",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "liquidite_reduite": {
       "description": "Liquidité réduite: Actif circulant net hors stocks / Dettes à court terme",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "rotation_stocks": {
       "description": "Rotation des stocks (exprimé en jours): Stock / Chiffre d'affaires net * 360. Selon la nomenclature NAF Rév. 2 pour les secteurs d'activité 45, 46, 47, 95 (sauf 9511Z) ainsi que pour les codes d'activités 2319Z, 3831Z et 3832Z : Marchandises / (Achats de marchandises + Variation de stock) * 360",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "credit_client": {
       "description": "Crédit clients (exprimé en jours): (Clients + Effets portés à l'escompte et non échus) / Chiffre d'affaires TTC * 360",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "credit_fournisseur": {
       "description": "Crédit fournisseurs (exprimé en jours): Fournisseurs / Achats TTC * 360",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "ca_par_effectif": {
       "description": "Chiffre d'affaire par effectif (exprimé en k€/emploi): Chiffre d'affaires net / Effectif * 1000",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "taux_interet_financier": {
       "description": "Taux d'intérêt financier (exprimé en %): Intérêts / Chiffre d'affaires net * 100",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "taux_interet_sur_ca": {
       "description": "Intérêts sur chiffre d'affaire (exprimé en %): Total des charges financières / Chiffre d'affaires net * 100",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "endettement_global": {
       "description": "Endettement global (exprimé en jours): (Dettes + Effets portés à l'escompte et non échus) / Chiffre d'affaires net * 360",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "taux_endettement": {
       "description": "Taux d'endettement (exprimé en %): Dettes de caractère financier / (Capitaux propres + autres fonds propres) * 100",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "capacite_remboursement": {
       "description": "Capacité de remboursement: Dettes de caractère financier / Capacité d'autofinancement avant répartition",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "capacite_autofinancement": {
       "description": "Capacité d'autofinancement (exprimé en %): Capacité d'autofinancement avant répartition / (Chiffre d'affaires net + Subvention d'exploitation) * 100",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "couverture_ca_besoin_fdr": {
       "description": "Couverture du chiffre d'affaire par le besoin en fonds de roulement (exprimé en jours): Besoins en fonds de roulement / Chiffre d'affaires net * 360",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "poids_bfr_exploitation": {
       "description": "PoidsBFRExploitation Poids des besoins en fonds de roulement d'exploitation (exprimé en %): Besoins en fonds de roulement d'exploitation / Chiffre d'affaires net * 100",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "exportation": {
       "description": "Exportation Exportation (exprimé en %): (Chiffre d'affaires net - Chiffre d'affaires net en France) / Chiffre d'affaires net * 100",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "efficacite_economique": {
       "description": "Efficacité économique (exprimé en k€/emploi): Valeur ajoutée / Effectif * 1000",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "productivite_potentiel_production": {
       "description": "Productivité du potentiel de production: Valeur ajoutée / Immobilisations corporelles et incorporelles brutes",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "productivite_capital_financier": {
       "description": "Productivtié du capital financier: Valeur ajoutée / Actif circulant net + Effets portés à l'escompte et non échus",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "productivite_capital_investi": {
       "description": "Productivité du capital investi: Valeur ajoutée / Total de l'actif + Effets portés à l'escompte et non échus",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "taux_d_investissement_productif": {
       "description": "Taux d'investissement productif (exprimé en %): Immobilisations à valeur d'acquisition / Valeur ajoutée * 100",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "rentabilite_economique": {
       "description": "Rentabilité économique (exprimé en %): Excédent brut d'exploitation / Chiffre d'affaires net + Subventions d'exploitation * 100",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "performance": {
       "description": "Performance (exprimé en %): Résultat courant avant impôt / Chiffre d'affaires net + Subventions d'exploitation * 100",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "rendement_brut_fonds_propres": {
       "description": "Rendement brut des fonds propres (exprimé en %): Résultat courant avant impôt / Fonds propres nets * 100",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "rentabilite_nette": {
       "description": "Rentabilité nette (exprimé en %): Bénéfice ou perte / Chiffre d'affaires net + Subventions d'exploitation * 100",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "rendement_capitaux_propres": {
       "description": "Rendement des capitaux propres (exprimé en %): Bénéfice ou perte / Capitaux propres nets * 100",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "rendement_ressources_durables": {
       "description": "RendementRessourcesDurables Rendement des ressources durables (exprimé en %): Résultat courant avant impôts + Intérêts et charges assimilées / Ressources durables nettes * 100",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "taux_marge_commerciale": {
       "description": "Taux de marge commerciale (exprimé en %): Marge commerciale / Vente de marchandises * 100",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "taux_valeur_ajoutee": {
       "description": "Taux de valeur ajoutée (exprimé en %): Valeur ajoutée / Chiffre d'affaires net * 100",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "part_salaries": {
       "description": "Part des salariés (exprimé en %): (Charges de personnel + Participation des salariés aux résultats) / Valeur ajoutée * 100",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "part_etat": {
       "description": "Part de l'État (exprimé en %): Impôts et taxes / Valeur ajoutée * 100",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "part_preteur": {
       "description": "Part des prêteurs (exprimé en %): Intérêts / Valeur ajoutée * 100",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "part_autofinancement": {
       "description": "Part de l'autofinancement (exprimé en %): Capacité d'autofinancement avant répartition / Valeur ajoutée * 100",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "ca_exportation": {
       "description": "Chiffre d'affaires à l'exportation",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "achat_marchandises": {
       "description": "Achats de marchandises",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "achat_matieres_premieres": {
       "description": "Achats de matières premières et autres approvisionnement.",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "production": {
       "description": "Production de l'exercice.",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "marge_commerciale": {
       "description": "Marge commerciale.",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "consommation": {
       "description": "Consommation de l'exercice.",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "autres_achats_charges_externes": {
       "description": "Autres achats et charges externes.",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "charge_personnel": {
       "description": "Charges de personnel.",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "impots_taxes": {
       "description": "Impôts, taxes et versements assimilés.",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "subventions_d_exploitation": {
       "description": "Subventions d'exploitation.",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "autres_produits_charges_reprises": {
       "description": "Autres produits, charges et reprises.",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "dotation_amortissement": {
       "description": "Dotation d'exploitation aux amortissements et aux provisions.",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "resultat_expl": {
       "description": "Résultat d'exploitation.",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "operations_commun": {
       "description": "Opérations en commun.",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "resultat_avant_impot": {
       "description": "Résultat courant avant impôts.",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "participation_salaries": {
       "description": "Participation des salariés aux résultats.",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "impot_benefice": {
       "description": "Impôts sur les bénéfices et impôts différés.",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "benefice_ou_perte": {
       "description": "Bénéfice ou perte.",
-      "bsonType": "double"
+      "bsonType": "number"
     }
   },
   "additionalProperties": false
@@ -702,7 +702,7 @@ var validationSchemas = map[string]string{
     },
     "effectif": {
       "description": "Nombre de personnes employées par l'établissement.",
-      "bsonType": "long"
+      "bsonType": "number"
     }
   },
   "additionalProperties": false
@@ -719,7 +719,7 @@ var validationSchemas = map[string]string{
     },
     "effectif": {
       "description": "Nombre de personnes employées par l'entreprise.",
-      "bsonType": "long"
+      "bsonType": "number"
     }
   },
   "additionalProperties": false
@@ -749,10 +749,10 @@ var validationSchemas = map[string]string{
       "bsonType": "string"
     },
     "niveau_detention": {
-      "bsonType": "long"
+      "bsonType": "number"
     },
     "part_financiere": {
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "code_filiere": {
       "bsonType": "string"
@@ -812,7 +812,7 @@ var validationSchemas = map[string]string{
       "bsonType": "date"
     },
     "nb_jours": {
-      "bsonType": "long"
+      "bsonType": "number"
     }
   },
   "additionalProperties": false
@@ -922,10 +922,10 @@ var validationSchemas = map[string]string{
       "bsonType": "date"
     },
     "longitude": {
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "latitude": {
-      "bsonType": "double"
+      "bsonType": "number"
     }
   },
   "additionalProperties": false

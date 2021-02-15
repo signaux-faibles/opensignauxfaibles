@@ -22,10 +22,10 @@
       "bsonType": "string"
     },
     "niveau_detention": {
-      "bsonType": "long"
+      "bsonType": "number"
     },
     "part_financiere": {
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "code_filiere": {
       "bsonType": "string"

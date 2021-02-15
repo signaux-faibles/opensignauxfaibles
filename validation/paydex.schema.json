@@ -8,7 +8,7 @@
       "bsonType": "date"
     },
     "nb_jours": {
-      "bsonType": "long"
+      "bsonType": "number"
     }
   },
   "additionalProperties": false

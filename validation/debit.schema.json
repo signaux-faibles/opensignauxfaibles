@@ -37,7 +37,7 @@
     },
     "numero_historique": {
       "description": "Ordre des opérations pour un écart négatif donné.",
-      "bsonType": "long"
+      "bsonType": "number"
     },
     "date_traitement": {
       "description": "Date de constatation du débit (exemple: remboursement, majoration ou autre modification du montant)",
@@ -49,15 +49,15 @@
     },
     "part_ouvriere": {
       "description": "Montant des débits sur la part ouvrières, exprimées en euros (€). Sont exclues les pénalités et les majorations de retard.",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "part_patronale": {
       "description": "Montant des débits sur la part patronale, exprimées en euros (€). Sont exclues les pénalités et les majorations de retard.",
-      "bsonType": "double"
+      "bsonType": "number"
     },
     "etat_compte": {
       "description": "Code état du compte: 1 (Actif), 2 (Suspendu) ou 3 (Radié).",
-      "bsonType": "long"
+      "bsonType": "number"
     },
     "code_procedure_collective": {
       "description": "Code qui indique si le compte fait l'objet d'une procédure collective: 1 (en cours), 2 (plan de redressement en cours), 9 (procedure collective sans dette à l'Urssaf) ou valeur nulle en cas d'absence de procédure collective.",

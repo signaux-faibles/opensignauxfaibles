@@ -13,7 +13,7 @@
     },
     "effectif": {
       "description": "Nombre de personnes employées par l'établissement.",
-      "bsonType": "long"
+      "bsonType": "number"
     }
   },
   "additionalProperties": false
