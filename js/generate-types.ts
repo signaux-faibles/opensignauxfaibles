@@ -38,19 +38,17 @@ const normalizeType = (node: JSONSchema): JSONSchema =>
         type: jsTypes.get(node.bsonType) ?? node.bsonType,
       }
 
-const options = {
+const DEFAULT_OPTIONS = {
   bannerComment: "",
 }
 
-const convertFile = (filePath: string) => {
-  const schema: JSONSchema = require(filePath) // eslint-disable-line @typescript-eslint/no-var-requires
-  return compile(normalizeType(schema), "", options).then(
-    (ts) =>
-      ts.replace(
-        /export interface ([^ ]+) \{/,
-        `export interface ${schema.title} {`
-      )
-    // .trim()
+const convertFile = async (filePath: string, options = DEFAULT_OPTIONS) => {
+  const rawSchema = await fs.promises.readFile(filePath, "utf-8")
+  const schema: JSONSchema = JSON.parse(rawSchema)
+  const typeDef = await compile(normalizeType(schema), "", options)
+  return typeDef.replace(
+    /export interface ([^ ]+) \{/,
+    `export interface ${schema.title} {` // ré-injection du nom, pour que les accents soient conservés
   )
 }
 
