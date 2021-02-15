@@ -26,6 +26,7 @@ type Debit struct {
 	CodeOperationEcartNegatif    string       `col:"Cd_op_ecn"        json:"code_operation_ecart_negatif" bson:"code_operation_ecart_negatif"`
 	CodeMotifEcartNegatif        string       `col:"Motif_ecn"        json:"code_motif_ecart_negatif"     bson:"code_motif_ecart_negatif"`
 	Recours                      bool         `col:"Recours_en_cours" json:"recours_en_cours"             bson:"recours_en_cours"`
+	DebitSuivant                 string       `                       json:"debit_suivant,omitempty"      bson:"debit_suivant,omitempty"` // généré par traitement map-reduce
 	// MontantMajorations        float64      `                       json:"montant_majorations"          bson:"montant_majorations"`  // TODO: montant_majorations n'est pas fourni par les fichiers debit de l'urssaf pour l'instant, mais on aimerait y avoir accès un jour.
 }
 
