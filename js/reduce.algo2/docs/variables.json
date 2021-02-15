@@ -336,21 +336,6 @@
     },
     {
         "source": "entr_bdf",
-        "name": "arrete_bilan_bdf",
-        "description": "Date de clôture de l'exercice.",
-        "type": "string",
-        "format": "date-time",
-        "computed": false
-    },
-    {
-        "source": "entr_bdf",
-        "name": "annee_bdf",
-        "description": "Année de l'exercice.",
-        "type": "number",
-        "computed": false
-    },
-    {
-        "source": "entr_bdf",
         "name": "poids_frng",
         "description": "Poids du fonds de roulement net global sur le chiffre d'affaire. Exprimé en %.",
         "type": "number",
@@ -388,6 +373,21 @@
         "source": "entr_bdf",
         "name": "frais_financier",
         "description": "Poids des frais financiers, sur l'excedent brut d'exploitation corrigé des produits et charges hors exploitation (exprimé en %): 100 * frais financiers / (EBE + Produits hors expl. - charges hors expl.)",
+        "type": "number",
+        "computed": false
+    },
+    {
+        "source": "entr_bdf",
+        "name": "arrete_bilan_bdf",
+        "description": "Date de clôture de l'exercice.",
+        "type": "string",
+        "format": "date-time",
+        "computed": false
+    },
+    {
+        "source": "entr_bdf",
+        "name": "annee_bdf",
+        "description": "Année de l'exercice.",
         "type": "number",
         "computed": false
     },

@@ -14,8 +14,8 @@ import { naf as nafValues } from "../test/data/naf"
 import { reducer, invertedReducer } from "../test/helpers/reducers"
 import { runMongoMap, indexMapResultsByKey } from "../test/helpers/mongodb"
 import { setGlobals } from "../test/helpers/setGlobals"
-import { EntréeDebit, EntréeDelai } from "../GeneratedTypes"
-import { EntréeBdf, EntrepriseBatchProps } from "../RawDataTypes"
+import { EntréeBdf, EntréeDebit, EntréeDelai } from "../GeneratedTypes"
+import { EntrepriseBatchProps } from "../RawDataTypes"
 
 const DAY_IN_MS = 24 * 60 * 60 * 1000
 
