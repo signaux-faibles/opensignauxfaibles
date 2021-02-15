@@ -163,7 +163,6 @@ export interface EntréeDebit {
   periode: {
     start: Date
     end: Date
-    [k: string]: unknown
   }
   /**
    * L'écart négatif (ecn) correspond à une période en débit. Pour une même période, plusieurs débits peuvent être créés. On leur attribue un numéro d'ordre. Par exemple, 101, 201, 301 etc.; ou 101, 102, 201 etc. correspondent respectivement au 1er, 2ème et 3ème ecn de la période considérée.
