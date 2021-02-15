@@ -77,6 +77,9 @@ var goTypeToBsonType = map[string]string{
 	"Time":    "date",
 }
 
+// reflectStructType transforme les champs d'une structure Go en liste de
+// propriétés dont les types sont supportés par la validation JSON Schema
+// de MongoDB, et par generate-types.ts.
 func reflectStructType(structType reflect.Type) propertySchema {
 	requiredProps := []string{}
 	props := make(map[string]propertySchema)

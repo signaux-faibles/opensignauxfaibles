@@ -1,3 +1,8 @@
+// Ce script sert à générer GeneratedTypes.d.ts à partir de fichiers *.schema.json
+// dans lesquels les types sont exprimés à l'aide de bsonType.
+// (cf https://docs.mongodb.com/manual/reference/operator/query/type/#document-type-available-types)
+// (cf la table de correspondance goTypeToBsonType de validation.go.)
+
 import * as fs from "fs"
 import { compile, JSONSchema } from "json-schema-to-typescript"
 
@@ -5,11 +10,13 @@ const path = process.argv[2]
 
 type JSONProps = JSONSchema["properties"]
 
-const normalizePropTypes = (properties: JSONProps): JSONProps =>
+type SchemaMutation = (node: JSONSchema) => JSONSchema
+
+const mutateEach = (properties: JSONProps, mutate: SchemaMutation): JSONProps =>
   Object.entries(properties ?? {}).reduce(
     (acc, [propName, propDef]) => ({
       ...acc,
-      [propName]: normalizeType(propDef),
+      [propName]: mutate(propDef),
     }),
     {}
   )
@@ -22,11 +29,12 @@ const jsTypes = new Map<string, JSONSchema["type"]>([
   ["double", "number"],
 ])
 
+// Conversion recursive de bsonType en types reconnus par json-schema-to-typescript
 const normalizeType = (node: JSONSchema): JSONSchema =>
   node.bsonType === "object"
     ? {
         ...node,
-        properties: normalizePropTypes(node.properties),
+        properties: mutateEach(node.properties, normalizeType),
       }
     : tsTypes.has(node.bsonType)
     ? {
