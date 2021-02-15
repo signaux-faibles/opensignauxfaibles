@@ -111,13 +111,66 @@ var validationSchemas = map[string]string{
 `,
 "bdf.schema.json": `{
   "title": "EntréeBdf",
-  "description": "Note: CE SCHEMA EST INCOMPLET POUR L'INSTANT. Cf https://github.com/signaux-faibles/opensignauxfaibles/pull/143",
+  "description": "Champs importés par le parseur lib/bdf/main.go de sfdata.",
   "bsonType": "object",
-  "required": ["siren"],
+  "required": [
+    "siren",
+    "annee_bdf",
+    "arrete_bilan_bdf",
+    "raison_sociale",
+    "secteur",
+    "poids_frng",
+    "taux_marge",
+    "delai_fournisseur",
+    "dette_fiscale",
+    "financier_court_terme",
+    "frais_financier"
+  ],
   "properties": {
+    "arrete_bilan_bdf": {
+      "description": "Date de clôture de l'exercice.",
+      "bsonType": "date"
+    },
+    "annee_bdf": {
+      "description": "Année de l'exercice.",
+      "bsonType": "number"
+    },
+    "raison_sociale": {
+      "description": "Raison sociale de l'entreprise.",
+      "bsonType": "string"
+    },
+    "secteur": {
+      "description": "Secteur d'activité.",
+      "bsonType": "string"
+    },
     "siren": {
+      "description": "Siren de l'entreprise.",
       "bsonType": "string",
       "pattern": "^[0-9]{9}$"
+    },
+    "poids_frng": {
+      "description": "Poids du fonds de roulement net global sur le chiffre d'affaire. Exprimé en %.",
+      "bsonType": "number"
+    },
+    "taux_marge": {
+      "description": "Taux de marge, rapport de l'excédent brut d'exploitation (EBE) sur la valeur ajoutée (exprimé en %): 100*EBE / valeur ajoutee",
+      "bsonType": "number"
+    },
+    "delai_fournisseur": {
+      "description": "Délai estimé de paiement des fournisseurs (exprimé en jours): 360 * dettes fournisseurs / achats HT",
+      "bsonType": "number"
+    },
+    "dette_fiscale": {
+      "description": "Poids des dettes fiscales et sociales, par rapport à la valeur ajoutée (exprimé en %): 100 * dettes fiscales et sociales / Valeur ajoutee",
+      "bsonType": "number"
+    },
+    "financier_court_terme": {
+      "description": "Poids du financement court terme (exprimé en %): 100 * concours bancaires courants / chiffre d'affaires HT",
+      "bsonType": "number"
+    },
+    "frais_financier": {
+      "description": "Poids des frais financiers, sur l'excedent brut d'exploitation corrigé des produits et charges hors exploitation (exprimé en %): 100 * frais financiers / (EBE + Produits hors expl. - charges hors expl.)",
+      "bsonType": "number"
     }
   },
   "additionalProperties": false
