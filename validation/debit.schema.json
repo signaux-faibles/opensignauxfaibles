@@ -44,7 +44,7 @@
       "bsonType": "date"
     },
     "debit_suivant": {
-      "description": "Hash d'un autre débit // TODO: non fourni par le parseur, ce champ devrait être défini dans un type de sortie.",
+      "description": "Hash du débit suivant. (généré par sfdata)",
       "bsonType": "string"
     },
     "part_ouvriere": {

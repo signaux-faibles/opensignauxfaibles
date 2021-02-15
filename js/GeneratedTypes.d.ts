@@ -178,7 +178,7 @@ export interface EntréeDebit {
    */
   date_traitement: Date
   /**
-   * Hash d'un autre débit // TODO: non fourni par le parseur, ce champ devrait être défini dans un type de sortie.
+   * Hash du débit suivant. (généré par sfdata)
    */
   debit_suivant?: string
   /**
