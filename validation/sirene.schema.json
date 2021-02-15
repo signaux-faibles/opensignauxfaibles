@@ -14,7 +14,7 @@
     },
     "siege": {
       "description": "Qualité de siège ou non de l’établissement",
-      "bsonType": "boolean"
+      "bsonType": "bool"
     },
     "complement_adresse": {
       "description": "Complément d’adresse",

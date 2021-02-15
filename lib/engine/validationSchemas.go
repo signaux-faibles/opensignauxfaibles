@@ -443,7 +443,7 @@ var validationSchemas = map[string]string{
     },
     "procedure_collective": {
       "description": "Présence d'une procédure collective en cours",
-      "bsonType": "boolean"
+      "bsonType": "bool"
     },
     "effectif_consolide": {
       "description": "Effectif consolidé à l'entreprise",
@@ -880,7 +880,7 @@ var validationSchemas = map[string]string{
     },
     "siege": {
       "description": "Qualité de siège ou non de l’établissement",
-      "bsonType": "boolean"
+      "bsonType": "bool"
     },
     "complement_adresse": {
       "description": "Complément d’adresse",
