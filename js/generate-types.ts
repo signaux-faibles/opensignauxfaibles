@@ -44,13 +44,13 @@ const options = {
 
 const convertFile = (filePath: string) => {
   const schema: JSONSchema = require(filePath) // eslint-disable-line @typescript-eslint/no-var-requires
-  return compile(normalizeType(schema), "", options).then((ts) =>
-    ts
-      .replace(
+  return compile(normalizeType(schema), "", options).then(
+    (ts) =>
+      ts.replace(
         /export interface ([^ ]+) \{/,
         `export interface ${schema.title} {`
       )
-      .trim()
+    // .trim()
   )
 }
 
@@ -61,5 +61,5 @@ fs.promises
       files
         .filter((filename) => filename.endsWith(".schema.json"))
         .map((filename) => convertFile(`${path}/${filename}`))
-    ).then((tsDefs) => tsDefs.map((tsDef) => console.log(tsDef)))
+    ).then((tsDefs) => tsDefs.map((tsDef) => process.stdout.write(tsDef)))
   )
