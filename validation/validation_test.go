@@ -1,12 +1,14 @@
 package validation
 
 import (
+	"encoding/json"
 	"errors"
 	"flag"
 	"io/ioutil"
 	"reflect"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/apconso"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/apdemande"
@@ -107,49 +109,23 @@ func TestReflectPropsFromStruct(t *testing.T) {
 
 func TestTypeAlignment(t *testing.T) {
 
-	type TypeToCompare struct {
-		ParserStructInstance interface{} // instance type Go retourné par le parseur correspondant à un JSON Schema donné
-		ExpectedErrors       []error     // erreurs attendues lors de la vérification d'alignement entre JSON Schema et type Go
-	}
-
-	typesToCompare := map[string]TypeToCompare{
-		"apconso.schema.json":      {apconso.APConso{}, []error{}},
-		"apdemande.schema.json":    {apdemande.APDemande{}, []error{}},
-		"ccsf.schema.json":         {urssaf.CCSF{}, []error{}},
-		"compte.schema.json":       {urssaf.Compte{}, []error{}},
-		"cotisation.schema.json":   {urssaf.Cotisation{}, []error{}},
-		"debit.schema.json":        {urssaf.Debit{}, []error{}},
-		"delai.schema.json":        {urssaf.Delai{}, []error{}},
-		"diane.schema.json":        {diane.Diane{}, []error{}},
-		"effectif.schema.json":     {urssaf.Effectif{}, []error{}},
-		"effectif_ent.schema.json": {urssaf.EffectifEnt{}, []error{}},
-		"ellisphere.schema.json":   {ellisphere.Ellisphere{}, []error{}},
-		"paydex.schema.json":       {paydex.Paydex{}, []error{}},
-		"procol.schema.json":       {urssaf.Procol{}, []error{}},
-		"sirene.schema.json":       {sirene.Sirene{}, []error{}},
-		"sirene_ul.schema.json":    {sireneul.SireneUL{}, []error{}},
-		"bdf.schema.json": {bdf.BDF{}, []error{ // bdf.schema.json n'est pas encore complet => la vérification va retourner les erreurs suivantes:
-			errors.New("property not found in JSON Schema: delai_fournisseur"),
-			errors.New("property not found in JSON Schema: dette_fiscale"),
-			errors.New("property not found in JSON Schema: frais_financier"),
-			errors.New("property not found in JSON Schema: arrete_bilan_bdf"),
-			errors.New("property not found in JSON Schema: secteur"),
-			errors.New("property not found in JSON Schema: taux_marge"),
-			errors.New("property not found in JSON Schema: annee_bdf"),
-			errors.New("property not found in JSON Schema: raison_sociale"),
-			errors.New("property not found in JSON Schema: poids_frng"),
-			errors.New("property not found in JSON Schema: financier_court_terme"),
-			errors.New("property not marked as 'required' in JSON Schema: annee_bdf"),
-			errors.New("property not marked as 'required' in JSON Schema: arrete_bilan_bdf"),
-			errors.New("property not marked as 'required' in JSON Schema: raison_sociale"),
-			errors.New("property not marked as 'required' in JSON Schema: secteur"),
-			errors.New("property not marked as 'required' in JSON Schema: poids_frng"),
-			errors.New("property not marked as 'required' in JSON Schema: taux_marge"),
-			errors.New("property not marked as 'required' in JSON Schema: delai_fournisseur"),
-			errors.New("property not marked as 'required' in JSON Schema: dette_fiscale"),
-			errors.New("property not marked as 'required' in JSON Schema: financier_court_terme"),
-			errors.New("property not marked as 'required' in JSON Schema: frais_financier"),
-		}},
+	typesToCompare := map[string]interface{}{
+		"apconso.schema.json":      apconso.APConso{},
+		"apdemande.schema.json":    apdemande.APDemande{},
+		"bdf.schema.json":          bdf.BDF{},
+		"ccsf.schema.json":         urssaf.CCSF{},
+		"compte.schema.json":       urssaf.Compte{},
+		"cotisation.schema.json":   urssaf.Cotisation{},
+		"debit.schema.json":        urssaf.Debit{},
+		"delai.schema.json":        urssaf.Delai{},
+		"diane.schema.json":        diane.Diane{},
+		"effectif.schema.json":     urssaf.Effectif{},
+		"effectif_ent.schema.json": urssaf.EffectifEnt{},
+		"ellisphere.schema.json":   ellisphere.Ellisphere{},
+		"paydex.schema.json":       paydex.Paydex{},
+		"procol.schema.json":       urssaf.Procol{},
+		"sirene.schema.json":       sirene.Sirene{},
+		"sirene_ul.schema.json":    sireneul.SireneUL{},
 		// NOTE: Au fur et à mesure qu'on ajoute des fichiers JSON Schema, penser à les couvrir ici.
 	}
 
@@ -169,12 +145,12 @@ func TestTypeAlignment(t *testing.T) {
 	})
 
 	t.Run("chaque fichier JSON Schema est aligné avec le type Go retourné par le parseur correspondant", func(t *testing.T) {
-		for jsonTypeName, typeDef := range typesToCompare {
+		for jsonTypeName, structInstance := range typesToCompare {
 			t.Run(jsonTypeName, func(t *testing.T) {
-				errors := diffTypeSchema(jsonTypeName, typeDef.ParserStructInstance)
-				if ok := assert.ElementsMatch(t, typeDef.ExpectedErrors, errors); !ok {
+				errors := diffTypeSchema(jsonTypeName, structInstance)
+				if ok := assert.ElementsMatch(t, []error{}, errors); !ok {
 					// affichage des champs non alignés, pour aider à la complétion
-					structTypeName := reflect.TypeOf(typeDef.ParserStructInstance).Name()
+					structTypeName := reflect.TypeOf(structInstance).Name()
 					t.Log(jsonTypeName + " is not aligned with struct type \"" + structTypeName + "\":")
 					for _, err := range errors {
 						t.Log("- " + err.Error())
@@ -182,6 +158,54 @@ func TestTypeAlignment(t *testing.T) {
 				}
 			})
 		}
+	})
+
+	t.Run("tout champ manquant dans le schema doit être rapporté", func(t *testing.T) {
+		type Dummy struct {
+			A string    `bson:"a"`
+			B time.Time `bson:"b,omitempty"`
+			C float64   `bson:"c"`
+			D bool      `bson:"d,omitempty"`
+			E bool      `bson:"e,omitempty"`
+			Z bool
+		}
+		structSchema := reflectStructType(reflect.TypeOf(Dummy{}))
+		var jsonSchema propertySchema
+		json.Unmarshal([]byte(`{
+			"title": "EntréeDummy",
+			"bsonType": "object",
+			"required": ["a"],
+			"properties": {
+				"a": {
+					"bsonType": "string",
+					"pattern": "^[0-9]{9}$"
+				},
+				"b": {
+					"bsonType": "date"
+				},
+				"c": {
+					"bsonType": "number"
+				},
+				"e": {
+					"bsonType": "object"
+				}
+			},
+			"additionalProperties": false
+		}`), &jsonSchema)
+		expectedErrors := []error{
+			errors.New("property not found in JSON Schema: d"),
+			errors.New("property types of \"e\" don't match: {object map[] [] false} <> {bool map[] [] false}"),
+			errors.New("property not marked as 'required' in JSON Schema: c"),
+		}
+		errors := diffSchema(jsonSchema, structSchema)
+		if ok := assert.ElementsMatch(t, expectedErrors, errors); !ok {
+			// affichage des champs non alignés, pour aider à la complétion
+			t.Log("JSON Schema is not aligned with struct type:")
+			for _, err := range errors {
+				t.Log("- " + err.Error())
+			}
+		}
+
 	})
 }
 

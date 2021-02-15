@@ -118,13 +118,24 @@ printjson(db.Journal.find().sort({ reportType: -1, parserCode: 1 }).toArray().ma
   hasStartDate: !!doc.startDate,
 })));
 
-print("// Results of call to sfdata validate:");
+print("// Invalid data entries returned by sfdata validate:");
 CONTENT
+
+function printJsonValidationErrors {
+  line=$1
+  DATA_TYPE=$(LINE="$line" node -p 'JSON.parse(process.env.LINE).dataType');
+  echo "- listing ${DATA_TYPE} validation error(s)..." 1>&2;
+  npx --quiet --package "ajv-cli" --package "ajv-bsontype" \
+    ajv --strict=false -c "ajv-bsontype" \
+      -s "validation/${DATA_TYPE}.schema.json" \
+      -d <(echo "$line")
+}
 
 echo "${VALIDATION_REPORT}" \
   | perl -p -e 's/"[0-9a-z]{24}"/"________ObjectId________"/' \
   | perl -p -e 's/"periode" : ISODate\("....-..-..T..:..:..Z"\)/"periode" : ISODate\("_______ Date _______"\)/' \
   | sort \
+  | while read -r line; do ( echo "$line"; printJsonValidationErrors "$line" || true ); done \
   >> "${OUTPUT_FILE}"
 
 # Print test results from stdin. Fails on any "false" result.

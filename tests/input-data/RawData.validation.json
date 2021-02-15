@@ -36,12 +36,18 @@
           }
         },
         "1803": {
-          "bdf": {
-            "hash-siren-manquant": {},
+          "sirene_ul": {
+            "hash-statut_juridique-manquant": {
+              "raison_sociale": ""
+            },
             "hash-siren-invalide": {
+              "raison_sociale": "",
+              "statut_juridique": "",
               "siren": "123"
             },
             "hash-siren-valide": {
+              "raison_sociale": "",
+              "statut_juridique": "",
               "siren": "123456789"
             }
           },
