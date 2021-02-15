@@ -91,7 +91,8 @@ func reflectStructType(structType reflect.Type) propertySchema {
 				if fieldType == "int" || fieldType == "int64" {
 					fieldType = "int64"
 				} else if fieldType == "float64" {
-					fieldType = "double"
+					fieldType = "number"
+					// TODO: fieldType = "double"
 				} else if fieldType == "Time" {
 					fieldType = "date"
 				} else if fieldType == "bool" {

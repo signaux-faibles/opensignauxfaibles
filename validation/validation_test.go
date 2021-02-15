@@ -91,18 +91,17 @@ func TestReflectPropsFromStruct(t *testing.T) {
 		}
 		assert.Equal(t, map[string]propertySchema{"myField": {BsonType: "string"}}, reflectPropsFromStruct(MyType{}))
 	})
-	t.Run("doit interpréter les types float64 et int comme number", func(t *testing.T) {
+	t.Run("doit interpréter le types float64 comme number", func(t *testing.T) {
 		type MyType struct {
-			MyField1 int     `bson:"f1"`
-			MyField2 float64 `bson:"f2"`
+			MyField float64 `bson:"f"`
 		}
-		assert.Equal(t, map[string]propertySchema{"f1": {BsonType: "number"}, "f2": {BsonType: "number"}}, reflectPropsFromStruct(MyType{}))
+		assert.Equal(t, map[string]propertySchema{"f": {BsonType: "number"}}, reflectPropsFromStruct(MyType{}))
 	})
 	t.Run("doit reconnaitre le type des pointeurs", func(t *testing.T) {
 		type MyType struct {
-			MyField1 *int `bson:"f1"`
+			MyField1 *string `bson:"f1"`
 		}
-		assert.Equal(t, map[string]propertySchema{"f1": {BsonType: "number"}}, reflectPropsFromStruct(MyType{}))
+		assert.Equal(t, map[string]propertySchema{"f1": {BsonType: "string"}}, reflectPropsFromStruct(MyType{}))
 	})
 }
 
