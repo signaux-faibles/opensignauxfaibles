@@ -50,7 +50,7 @@
       "description": "Année de création du délai."
     },
     "montant_echeancier": {
-      "bsonType": "number",
+      "bsonType": "double",
       "description": "Montant global de l'échéancier, en euros.",
       "minimum": 0.01
     },

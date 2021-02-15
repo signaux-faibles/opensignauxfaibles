@@ -49,11 +49,11 @@
     },
     "part_ouvriere": {
       "description": "Montant des débits sur la part ouvrières, exprimées en euros (€). Sont exclues les pénalités et les majorations de retard.",
-      "bsonType": "number"
+      "bsonType": "double"
     },
     "part_patronale": {
       "description": "Montant des débits sur la part patronale, exprimées en euros (€). Sont exclues les pénalités et les majorations de retard.",
-      "bsonType": "number"
+      "bsonType": "double"
     },
     "etat_compte": {
       "description": "Code état du compte: 1 (Actif), 2 (Suspendu) ou 3 (Radié).",

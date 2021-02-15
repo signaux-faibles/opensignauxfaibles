@@ -31,7 +31,7 @@
     },
     "hta": {
       "description": "Nombre total d'heures autorisées",
-      "bsonType": "number"
+      "bsonType": "double"
     },
     "motif_recours_se": {
       "description": "Cause d'activité partielle",
@@ -47,16 +47,16 @@
       "bsonType": "date"
     },
     "mta": {
-      "bsonType": "number"
+      "bsonType": "double"
     },
     "effectif_autorise": {
       "bsonType": "int64"
     },
     "heure_consommee": {
-      "bsonType": "number"
+      "bsonType": "double"
     },
     "montant_consommee": {
-      "bsonType": "number"
+      "bsonType": "double"
     },
     "effectif_consomme": {
       "bsonType": "int64"

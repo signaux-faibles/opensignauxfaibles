@@ -8,10 +8,10 @@
       "bsonType": "string"
     },
     "heure_consomme": {
-      "bsonType": "number"
+      "bsonType": "double"
     },
     "montant": {
-      "bsonType": "number"
+      "bsonType": "double"
     },
     "effectif": {
       "bsonType": "int64"

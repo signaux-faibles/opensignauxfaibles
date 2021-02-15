@@ -20,11 +20,11 @@
     },
     "encaisse": {
       "description": "Cotisation encaissée directement, en euros.",
-      "bsonType": "number"
+      "bsonType": "double"
     },
     "du": {
       "description": "Cotisation due, en euros. À utiliser pour calculer le montant moyen mensuel du: Somme cotisations dues / nb périodes.",
-      "bsonType": "number"
+      "bsonType": "double"
     }
   },
   "additionalProperties": false
