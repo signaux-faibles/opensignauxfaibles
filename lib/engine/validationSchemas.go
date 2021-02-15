@@ -134,12 +134,10 @@ var validationSchemas = map[string]string{
       "description": "Date de début de la procédure CCSF"
     },
     "stade": {
-      "bsonType": "string",
-      "description": "TODO: choisir un type plus précis"
+      "bsonType": "string"
     },
     "action": {
-      "bsonType": "string",
-      "description": "TODO: choisir un type plus précis"
+      "bsonType": "string"
     }
   },
   "additionalProperties": false
