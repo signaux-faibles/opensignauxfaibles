@@ -252,7 +252,9 @@ export interface EntréeDebit {
   /**
    * Recours en cours.
    */
-  recours_en_cours: boolean
+  recours_en_cours: {
+    [k: string]: unknown
+  }
 }
 /**
  * Champs importés par le parseur lib/urssaf/delai.go de sfdata.

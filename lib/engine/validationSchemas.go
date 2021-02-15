@@ -274,7 +274,7 @@ var validationSchemas = map[string]string{
     },
     "recours_en_cours": {
       "description": "Recours en cours.",
-      "bsonType": "boolean"
+      "bsonType": "bool"
     }
   },
   "additionalProperties": false
