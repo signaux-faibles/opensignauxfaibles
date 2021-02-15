@@ -14,7 +14,7 @@
       "bsonType": "number"
     },
     "effectif": {
-      "bsonType": "number"
+      "bsonType": "int64"
     },
     "periode": {
       "bsonType": "date"

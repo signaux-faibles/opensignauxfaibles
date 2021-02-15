@@ -9,7 +9,7 @@
     },
     "effectif": {
       "description": "Nombre de personnes employées par l'entreprise.",
-      "bsonType": "number"
+      "bsonType": "int64"
     }
   },
   "additionalProperties": false

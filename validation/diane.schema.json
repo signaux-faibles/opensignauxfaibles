@@ -5,7 +5,7 @@
   "properties": {
     "exercice_diane": {
       "description": "Année de l'exercice",
-      "bsonType": "number"
+      "bsonType": "int64"
     },
     "arrete_bilan_diane": {
       "description": "Date d'arrêté du bilan",
@@ -73,7 +73,7 @@
     },
     "effectif_consolide": {
       "description": "Effectif consolidé à l'entreprise",
-      "bsonType": "number"
+      "bsonType": "int64"
     },
     "frais_de_RetD": {
       "description": "Frais de Recherche et Développement",
@@ -85,19 +85,19 @@
     },
     "nombre_etab_secondaire": {
       "description": "Nombre d'établissements secondaires de l'entreprise, en plus du siège.",
-      "bsonType": "number"
+      "bsonType": "int64"
     },
     "nombre_filiale": {
       "description": "Nombre de filiales de l'entreprise. Dans la base de données des liens capitalistiques, le concept de filiale ne fait aucune référence au pourcentage d’appartenance entre le parent et la fille. Dans ce sens, si l'entreprise A est enregistrée comme ayant des intérêts dans l'entreprise B avec un très petit, ou même un pourcentage de participation inconnu, l'entreprise B sera considérée filiale de l'entreprise A.",
-      "bsonType": "number"
+      "bsonType": "int64"
     },
     "taille_compo_groupe": {
       "description": "Nombre d'entreprises dans le groupe (groupe défini par les liens capitalistique d'au moins 50,01%)",
-      "bsonType": "number"
+      "bsonType": "int64"
     },
     "nombre_mois": {
       "description": "Durée de l'exercice en mois.",
-      "bsonType": "number"
+      "bsonType": "int64"
     },
     "equilibre_financier": {
       "description": "Équilibre financier: Ressources durables / Emplois stables",
