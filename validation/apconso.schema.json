@@ -5,18 +5,23 @@
   "required": ["id_conso", "periode", "heure_consomme", "montant", "effectif"],
   "properties": {
     "id_conso": {
+      "description": "Numéro de la demande (11 caractères principalement des chiffres)",
       "bsonType": "string"
     },
     "heure_consomme": {
+      "description": "Heures consommées (chômées) dans le mois",
       "bsonType": "number"
     },
     "montant": {
+      "description": "Montants consommés dans le mois",
       "bsonType": "number"
     },
     "effectif": {
+      "description": "Nombre de salariés en activité partielle dans le mois",
       "bsonType": "number"
     },
     "periode": {
+      "description": "Mois considéré",
       "bsonType": "date"
     }
   },

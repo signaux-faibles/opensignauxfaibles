@@ -42,12 +42,12 @@
             },
             "hash-siren-invalide": {
               "raison_sociale": "",
-              "statut_juridique": "",
+              "statut_juridique": "0000",
               "siren": "123"
             },
             "hash-siren-valide": {
               "raison_sociale": "",
-              "statut_juridique": "",
+              "statut_juridique": "0000",
               "siren": "123456789"
             }
           },
