@@ -692,17 +692,50 @@ export interface EntréeEffectifEnt {
  * Champs importés par le parseur lib/ellisphere/main.go de sfdata.
  */
 export interface EntréeEllisphere {
+  /**
+   * Code du groupe/actionnaire.
+   */
   code_groupe?: string
+  /**
+   * Siren du groupe/actionnaire.
+   */
   siren_groupe?: string
+  /**
+   * Référence du groupe/actionnaire.
+   */
   refid_groupe?: string
+  /**
+   * Raison sociale du groupe/actionnaire.
+   */
   raison_sociale_groupe?: string
+  /**
+   * Adresse du groupe/actionnaire.
+   */
   adresse_groupe?: string
-  personne_pou_m_groupe?: string
+  /**
+   * Groupe/actionnaire: personne physique (P) ou morale (M)
+   */
+  personne_pou_m_groupe?: "P" | "M"
+  /**
+   * Le Rang exprime le nombre d’intermédiaires entre 2 entités. (c.a.d. entre l'actionnaire et la filiale)
+   */
   niveau_detention?: number
+  /**
+   * Le Pourcentage d’intérêt exprime la part mathématique du capital de la société détenue directement ou indirectement par l’entité mère.
+   */
   part_financiere?: number
+  /**
+   * Code de la filiale.
+   */
   code_filiere?: string
+  /**
+   * Référence de la filiale.
+   */
   refid_filiere?: string
-  personne_pou_m_filiere?: string
+  /**
+   * Filiale: personne physique (P) ou morale (M)
+   */
+  personne_pou_m_filiere?: "P" | "M"
 }
 /**
  * Champs importés par le parseur lib/paydex/main.go de sfdata.
