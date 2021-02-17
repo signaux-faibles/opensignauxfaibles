@@ -32,18 +32,18 @@ import (
 
 // Ellisphere informations groupe pour une entreprise
 type Ellisphere struct {
-	Siren               string  `json:"-" bson:"-" xlsx:"14"`
-	CodeGroupe          string  `json:"code_groupe,omitempty" bson:"code_groupe,omitempty" xlsx:"0"`
-	SirenGroupe         string  `json:"siren_groupe,omitempty" bson:"siren_groupe,omitempty" xlsx:"2"`
-	RefIDGroupe         string  `json:"refid_groupe,omitempty" bson:"refid_groupe,omitempty" xlsx:"3"`
-	RaisocGroupe        string  `json:"raison_sociale_groupe,omitempty" bson:"raison_sociale_groupe,omitempty" xlsx:"4"`
-	AdresseGroupe       string  `json:"adresse_groupe,omitempty" bson:"adresse_groupe,omitempty" xlsx:"5"`
-	PersonnePouMGroupe  string  `json:"personne_pou_m_groupe,omitempty" bson:"personne_pou_m_groupe,omitempty" xlsx:"1"`
-	NiveauDetention     int     `json:"niveau_detention,omitempty" bson:"niveau_detention,omitempty" xlsx:"9"`
-	PartFinanciere      float64 `json:"part_financiere,omitempty" bson:"part_financiere,omitempty" xlsx:"10"`
-	CodeFiliere         string  `json:"code_filiere,omitempty" bson:"code_filiere,omitempty" xlsx:"12"`
-	RefIDFiliere        string  `json:"refid_filiere,omitempty" bson:"refid_filiere,omitempty" xlsx:"15"`
-	PersonnePouMFiliere string  `json:"personne_pou_m_filiere,omitempty" bson:"personne_pou_m_filiere,omitempty" xlsx:"13"`
+	Siren               string  `xlsx:"14" json:"-"                                bson:"-"`
+	CodeGroupe          string  `xlsx:"0"  json:"code_groupe,omitempty"            bson:"code_groupe,omitempty"`
+	SirenGroupe         string  `xlsx:"2"  json:"siren_groupe,omitempty"           bson:"siren_groupe,omitempty"`
+	RefIDGroupe         string  `xlsx:"3"  json:"refid_groupe,omitempty"           bson:"refid_groupe,omitempty"`
+	RaisocGroupe        string  `xlsx:"4"  json:"raison_sociale_groupe,omitempty"  bson:"raison_sociale_groupe,omitempty"`
+	AdresseGroupe       string  `xlsx:"5"  json:"adresse_groupe,omitempty"         bson:"adresse_groupe,omitempty"`
+	PersonnePouMGroupe  string  `xlsx:"1"  json:"personne_pou_m_groupe,omitempty"  bson:"personne_pou_m_groupe,omitempty"`
+	NiveauDetention     int     `xlsx:"9"  json:"niveau_detention,omitempty"       bson:"niveau_detention,omitempty"`
+	PartFinanciere      float64 `xlsx:"10" json:"part_financiere,omitempty"        bson:"part_financiere,omitempty"`
+	CodeFiliere         string  `xlsx:"12" json:"code_filiere,omitempty"           bson:"code_filiere,omitempty"`
+	RefIDFiliere        string  `xlsx:"15" json:"refid_filiere,omitempty"          bson:"refid_filiere,omitempty"`
+	PersonnePouMFiliere string  `xlsx:"13" json:"personne_pou_m_filiere,omitempty" bson:"personne_pou_m_filiere,omitempty"`
 }
 
 // Key id de l'objet
