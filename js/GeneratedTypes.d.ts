@@ -736,55 +736,6 @@ export interface EntréeDéfaillances {
   date_effet: Date
 }
 /**
- * Champs importés par le parseur lib/sirene_ul/main.go de sfdata.
- */
-export interface EntréeSireneEntreprise {
-  /**
-   * Numéro Siren de l'entreprise
-   */
-  siren?: string
-  /**
-   * Numéro interne de classement (Nic) de l’unité légale
-   */
-  nic?: string
-  /**
-   * Dénomination de l’unité légale
-   */
-  raison_sociale: string
-  /**
-   * Nom de naissance de la personne physique
-   */
-  nom_unite_legale?: string
-  /**
-   * Nom d’usage de la personne physique
-   */
-  nom_usage_unite_legale?: string
-  /**
-   * Premier prénom déclaré pour une personne physique
-   */
-  prenom1_unite_legale?: string
-  /**
-   * Deuxième prénom déclaré pour une personne physique
-   */
-  prenom2_unite_legale?: string
-  /**
-   * Troisième prénom déclaré pour une personne physique
-   */
-  prenom3_unite_legale?: string
-  /**
-   * Quatrième prénom déclaré pour une personne physique
-   */
-  prenom4_unite_legale?: string
-  /**
-   * Catégorie juridique de l'unité légale. Cf https://www.insee.fr/fr/information/2028129
-   */
-  statut_juridique: string
-  /**
-   * Date de création de l'unité légale
-   */
-  date_creation?: Date
-}
-/**
  * Champs importés par le parseur lib/sirene/main.go de sfdata.
  */
 export interface EntréeSirene {
@@ -799,9 +750,7 @@ export interface EntréeSirene {
   /**
    * Qualité de siège ou non de l’établissement
    */
-  siege?: {
-    [k: string]: unknown
-  }
+  siege?: boolean
   /**
    * Complément d’adresse
    */
@@ -891,18 +840,48 @@ export interface EntréeSirene {
  * Champs importés par le parseur lib/sirene_ul/main.go de sfdata.
  */
 export interface EntréeSireneEntreprise {
+  /**
+   * Numéro Siren de l'entreprise
+   */
   siren?: string
+  /**
+   * Numéro interne de classement (Nic) de l’unité légale
+   */
   nic?: string
+  /**
+   * Dénomination de l’unité légale
+   */
   raison_sociale: string
+  /**
+   * Nom de naissance de la personne physique
+   */
   nom_unite_legale?: string
+  /**
+   * Nom d’usage de la personne physique
+   */
   nom_usage_unite_legale?: string
+  /**
+   * Premier prénom déclaré pour une personne physique
+   */
   prenom1_unite_legale?: string
+  /**
+   * Deuxième prénom déclaré pour une personne physique
+   */
   prenom2_unite_legale?: string
+  /**
+   * Troisième prénom déclaré pour une personne physique
+   */
   prenom3_unite_legale?: string
+  /**
+   * Quatrième prénom déclaré pour une personne physique
+   */
   prenom4_unite_legale?: string
   /**
-   * code numérique sérialisé en chaine de caractères
+   * Catégorie juridique de l'unité légale. Cf https://www.insee.fr/fr/information/2028129
    */
   statut_juridique: string
+  /**
+   * Date de création de l'unité légale
+   */
   date_creation?: Date
 }
