@@ -7,43 +7,30 @@ import (
 	"github.com/tealeg/xlsx/v3"
 )
 
-// Colonnes:
-//  0: GRP Code
-//  1: GRP Personne PouM
-//  2: GRP SIREN 9
-//  3: GRP RefID
-//  4: GRP Raison Sociale
-//  5: GRP Adresse
-//  6: GRP Code Postal
-//  7: GRP Ville
-//  8: GRP Pays
-//  9: Niveau de détention
-// 10: % Financier
-// 11: Tranche % Financier
-// 12: FIL Code
-// 13: FIL Personne PouM
-// 14: FIL SIREN 9
-// 15: FIL RefID
-// 16: FIL Raison Sociale
-// 17: FIL Adresse
-// 18: FIL Code Postal
-// 19: FIL Ville
-// 20: FIL Pays
-
-// Ellisphere informations groupe pour une entreprise
+// Ellisphere informations groupe pour une entreprise"
 type Ellisphere struct {
-	Siren               string  `xlsx:"14" json:"-"                                bson:"-"`
-	CodeGroupe          string  `xlsx:"0"  json:"code_groupe,omitempty"            bson:"code_groupe,omitempty"`
-	SirenGroupe         string  `xlsx:"2"  json:"siren_groupe,omitempty"           bson:"siren_groupe,omitempty"`
-	RefIDGroupe         string  `xlsx:"3"  json:"refid_groupe,omitempty"           bson:"refid_groupe,omitempty"`
-	RaisocGroupe        string  `xlsx:"4"  json:"raison_sociale_groupe,omitempty"  bson:"raison_sociale_groupe,omitempty"`
-	AdresseGroupe       string  `xlsx:"5"  json:"adresse_groupe,omitempty"         bson:"adresse_groupe,omitempty"`
-	PersonnePouMGroupe  string  `xlsx:"1"  json:"personne_pou_m_groupe,omitempty"  bson:"personne_pou_m_groupe,omitempty"`
-	NiveauDetention     int     `xlsx:"9"  json:"niveau_detention,omitempty"       bson:"niveau_detention,omitempty"`
-	PartFinanciere      float64 `xlsx:"10" json:"part_financiere,omitempty"        bson:"part_financiere,omitempty"`
-	CodeFiliere         string  `xlsx:"12" json:"code_filiere,omitempty"           bson:"code_filiere,omitempty"`
-	RefIDFiliere        string  `xlsx:"15" json:"refid_filiere,omitempty"          bson:"refid_filiere,omitempty"`
-	PersonnePouMFiliere string  `xlsx:"13" json:"personne_pou_m_filiere,omitempty" bson:"personne_pou_m_filiere,omitempty"`
+	Siren               string  `xlsx:"14" json:"-"                                bson:"-"`                                // colonne: "FIL SIREN 9"
+	CodeGroupe          string  `xlsx:"0"  json:"code_groupe,omitempty"            bson:"code_groupe,omitempty"`            // colonne: "GRP Code"
+	SirenGroupe         string  `xlsx:"2"  json:"siren_groupe,omitempty"           bson:"siren_groupe,omitempty"`           // colonne: "GRP SIREN 9"
+	RefIDGroupe         string  `xlsx:"3"  json:"refid_groupe,omitempty"           bson:"refid_groupe,omitempty"`           // colonne: "GRP RefID"
+	RaisocGroupe        string  `xlsx:"4"  json:"raison_sociale_groupe,omitempty"  bson:"raison_sociale_groupe,omitempty"`  // colonne: "GRP Raison Sociale"
+	AdresseGroupe       string  `xlsx:"5"  json:"adresse_groupe,omitempty"         bson:"adresse_groupe,omitempty"`         // colonne: "GRP Adresse"
+	PersonnePouMGroupe  string  `xlsx:"1"  json:"personne_pou_m_groupe,omitempty"  bson:"personne_pou_m_groupe,omitempty"`  // colonne: "GRP Personne PouM"
+	NiveauDetention     int     `xlsx:"9"  json:"niveau_detention,omitempty"       bson:"niveau_detention,omitempty"`       // colonne: "Niveau de détention"
+	PartFinanciere      float64 `xlsx:"10" json:"part_financiere,omitempty"        bson:"part_financiere,omitempty"`        // colonne: "% Financier"
+	CodeFiliere         string  `xlsx:"12" json:"code_filiere,omitempty"           bson:"code_filiere,omitempty"`           // colonne: "FIL Code"
+	RefIDFiliere        string  `xlsx:"15" json:"refid_filiere,omitempty"          bson:"refid_filiere,omitempty"`          // colonne: "FIL RefID"
+	PersonnePouMFiliere string  `xlsx:"13" json:"personne_pou_m_filiere,omitempty" bson:"personne_pou_m_filiere,omitempty"` // colonne: "FIL Personne PouM"
+	// Colonnes ignorées:
+	//  6: "GRP Code Postal"
+	//  7: "GRP Ville
+	//  8: "GRP Pays"
+	// 11: "Tranche % Financier"
+	// 16: "FIL Raison Sociale"
+	// 17: "FIL Adresse"
+	// 18: "FIL Code Postal"
+	// 19: "FIL Ville
+	// 20: "FIL Pays"
 }
 
 // Key id de l'objet
