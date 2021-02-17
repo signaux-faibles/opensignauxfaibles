@@ -288,9 +288,7 @@ export interface EntréeDebit {
   /**
    * Recours en cours.
    */
-  recours_en_cours: {
-    [k: string]: unknown
-  }
+  recours_en_cours: boolean
 }
 /**
  * Champs importés par le parseur lib/urssaf/delai.go de sfdata.
@@ -412,9 +410,7 @@ export interface EntréeDiane {
   /**
    * Présence d'une procédure collective en cours
    */
-  procedure_collective?: {
-    [k: string]: unknown
-  }
+  procedure_collective?: boolean
   /**
    * Effectif consolidé à l'entreprise
    */
@@ -669,16 +665,6 @@ export interface EntréeDiane {
   benefice_ou_perte?: number
 }
 /**
- * Champs importés par le parseur lib/urssaf/effectif_ent.go de sfdata.
- */
-export interface EntréeEffectifEnt {
-  periode: Date
-  /**
-   * Nombre de personnes employées par l'entreprise.
-   */
-  effectif: number
-}
-/**
  * Champs importés par le parseur lib/urssaf/effectif.go de sfdata.
  */
 export interface EntréeEffectif {
@@ -689,6 +675,16 @@ export interface EntréeEffectif {
   periode: Date
   /**
    * Nombre de personnes employées par l'établissement.
+   */
+  effectif: number
+}
+/**
+ * Champs importés par le parseur lib/urssaf/effectif_ent.go de sfdata.
+ */
+export interface EntréeEffectifEnt {
+  periode: Date
+  /**
+   * Nombre de personnes employées par l'entreprise.
    */
   effectif: number
 }
@@ -740,55 +736,6 @@ export interface EntréeDéfaillances {
   date_effet: Date
 }
 /**
- * Champs importés par le parseur lib/sirene_ul/main.go de sfdata.
- */
-export interface EntréeSireneEntreprise {
-  /**
-   * Numéro Siren de l'entreprise
-   */
-  siren?: string
-  /**
-   * Numéro interne de classement (Nic) de l’unité légale
-   */
-  nic?: string
-  /**
-   * Dénomination de l’unité légale
-   */
-  raison_sociale: string
-  /**
-   * Nom de naissance de la personne physique
-   */
-  nom_unite_legale?: string
-  /**
-   * Nom d’usage de la personne physique
-   */
-  nom_usage_unite_legale?: string
-  /**
-   * Premier prénom déclaré pour une personne physique
-   */
-  prenom1_unite_legale?: string
-  /**
-   * Deuxième prénom déclaré pour une personne physique
-   */
-  prenom2_unite_legale?: string
-  /**
-   * Troisième prénom déclaré pour une personne physique
-   */
-  prenom3_unite_legale?: string
-  /**
-   * Quatrième prénom déclaré pour une personne physique
-   */
-  prenom4_unite_legale?: string
-  /**
-   * Catégorie juridique de l'unité légale. Cf https://www.insee.fr/fr/information/2028129
-   */
-  statut_juridique: string
-  /**
-   * Date de création de l'unité légale
-   */
-  date_creation?: Date
-}
-/**
  * Champs importés par le parseur lib/sirene/main.go de sfdata.
  */
 export interface EntréeSirene {
@@ -803,9 +750,7 @@ export interface EntréeSirene {
   /**
    * Qualité de siège ou non de l’établissement
    */
-  siege?: {
-    [k: string]: unknown
-  }
+  siege?: boolean
   /**
    * Complément d’adresse
    */
@@ -890,4 +835,53 @@ export interface EntréeSirene {
    * Géolocalisation des locaux: latitude
    */
   latitude?: number
+}
+/**
+ * Champs importés par le parseur lib/sirene_ul/main.go de sfdata.
+ */
+export interface EntréeSireneEntreprise {
+  /**
+   * Numéro Siren de l'entreprise
+   */
+  siren?: string
+  /**
+   * Numéro interne de classement (Nic) de l’unité légale
+   */
+  nic?: string
+  /**
+   * Dénomination de l’unité légale
+   */
+  raison_sociale: string
+  /**
+   * Nom de naissance de la personne physique
+   */
+  nom_unite_legale?: string
+  /**
+   * Nom d’usage de la personne physique
+   */
+  nom_usage_unite_legale?: string
+  /**
+   * Premier prénom déclaré pour une personne physique
+   */
+  prenom1_unite_legale?: string
+  /**
+   * Deuxième prénom déclaré pour une personne physique
+   */
+  prenom2_unite_legale?: string
+  /**
+   * Troisième prénom déclaré pour une personne physique
+   */
+  prenom3_unite_legale?: string
+  /**
+   * Quatrième prénom déclaré pour une personne physique
+   */
+  prenom4_unite_legale?: string
+  /**
+   * Catégorie juridique de l'unité légale. Cf https://www.insee.fr/fr/information/2028129
+   */
+  statut_juridique: string
+  /**
+   * Date de création de l'unité légale
+   */
+  date_creation?: Date
 }

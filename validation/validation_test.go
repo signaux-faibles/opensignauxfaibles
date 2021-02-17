@@ -206,7 +206,6 @@ func TestTypeAlignment(t *testing.T) {
 				t.Log("- " + err.Error())
 			}
 		}
-
 	})
 }
 

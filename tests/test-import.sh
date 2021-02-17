@@ -123,6 +123,7 @@ CONTENT
 
 function printJsonValidationErrors {
   line=$1
+  [ -z "${line}" ] && return;
   DATA_TYPE=$(LINE="$line" node -p 'JSON.parse(process.env.LINE).dataType');
   echo "- listing ${DATA_TYPE} validation error(s)..." 1>&2;
   npx --quiet --package "ajv-cli" --package "ajv-bsontype" \
