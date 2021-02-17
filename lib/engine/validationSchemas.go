@@ -10,18 +10,23 @@ var validationSchemas = map[string]string{
   "required": ["id_conso", "periode", "heure_consomme", "montant", "effectif"],
   "properties": {
     "id_conso": {
+      "description": "Numéro de la demande (11 caractères principalement des chiffres)",
       "bsonType": "string"
     },
     "heure_consomme": {
+      "description": "Heures consommées (chômées) dans le mois",
       "bsonType": "number"
     },
     "montant": {
+      "description": "Montants consommés dans le mois",
       "bsonType": "number"
     },
     "effectif": {
+      "description": "Nombre de salariés en activité partielle dans le mois",
       "bsonType": "number"
     },
     "periode": {
+      "description": "Mois considéré",
       "bsonType": "date"
     }
   },
@@ -48,9 +53,11 @@ var validationSchemas = map[string]string{
   ],
   "properties": {
     "id_demande": {
+      "description": "Numéro de la demande (11 caractères principalement des chiffres)",
       "bsonType": "string"
     },
     "periode": {
+      "description": "Période de chômage",
       "bsonType": "object",
       "required": ["start", "end"],
       "properties": {
@@ -64,28 +71,35 @@ var validationSchemas = map[string]string{
       "bsonType": "number"
     },
     "motif_recours_se": {
-      "description": "Cause d'activité partielle",
+      "description": "Motif de recours à l'activité partielle: \n 1 - Conjoncture économique. \n 2 - Difficultés d’approvisionnement en matières premières ou en énergie \n 3 - Sinistre ou intempéries de caractère exceptionnel \n 4 - Transformation, restructuration ou modernisation des installations et des bâtiments \n 5 - Autres circonstances exceptionnelles",
       "bsonType": "number"
     },
     "effectif_entreprise": {
+      "description": "Effectif de l'entreprise",
       "bsonType": "number"
     },
     "effectif": {
+      "description": "Effectif de l'établissement",
       "bsonType": "number"
     },
     "date_statut": {
+      "description": "Date du statut - création ou mise à jour de la demande",
       "bsonType": "date"
     },
     "mta": {
+      "description": "Montant total autorisé",
       "bsonType": "number"
     },
     "effectif_autorise": {
+      "description": "Effectifs autorisés",
       "bsonType": "number"
     },
     "heure_consommee": {
+      "description": "Nombre total d'heures consommées",
       "bsonType": "number"
     },
     "montant_consommee": {
+      "description": "Montant total consommé",
       "bsonType": "number"
     },
     "effectif_consomme": {
@@ -173,12 +187,10 @@ var validationSchemas = map[string]string{
       "description": "Date de début de la procédure CCSF"
     },
     "stade": {
-      "bsonType": "string",
-      "description": "TODO: choisir un type plus précis"
+      "bsonType": "string"
     },
     "action": {
-      "bsonType": "string",
-      "description": "TODO: choisir un type plus précis"
+      "bsonType": "string"
     }
   },
   "additionalProperties": false
@@ -269,7 +281,7 @@ var validationSchemas = map[string]string{
         "start": { "bsonType": "date" },
         "end": { "bsonType": "date" }
       },
-      "additionalItems": false
+      "additionalProperties": false
     },
     "numero_ecart_negatif": {
       "description": "L'écart négatif (ecn) correspond à une période en débit. Pour une même période, plusieurs débits peuvent être créés. On leur attribue un numéro d'ordre. Par exemple, 101, 201, 301 etc.; ou 101, 102, 201 etc. correspondent respectivement au 1er, 2ème et 3ème ecn de la période considérée.",
@@ -284,7 +296,7 @@ var validationSchemas = map[string]string{
       "bsonType": "date"
     },
     "debit_suivant": {
-      "description": "Hash d'un autre débit // TODO: non fourni par le parseur, ce champ devrait être défini dans un type de sortie.",
+      "description": "Hash du débit suivant. (généré par sfdata)",
       "bsonType": "string"
     },
     "part_ouvriere": {
@@ -909,75 +921,100 @@ var validationSchemas = map[string]string{
   "bsonType": "object",
   "properties": {
     "siren": {
-      "bsonType": "string"
+      "description": "Numéro Siren de l'entreprise",
+      "bsonType": "string",
+      "pattern": "^[0-9]{9}$"
     },
     "nic": {
+      "description": "Numéro interne de classement de l'établissement",
       "bsonType": "string"
     },
     "siege": {
+      "description": "Qualité de siège ou non de l’établissement",
       "bsonType": "bool"
     },
     "complement_adresse": {
+      "description": "Complément d’adresse",
       "bsonType": "string"
     },
     "numero_voie": {
+      "description": "Numéro de la voie de l’adresse",
       "bsonType": "string"
     },
     "indrep": {
+      "description": "Indice de répétition dans la voie",
       "bsonType": "string"
     },
     "type_voie": {
+      "description": "Type de voie",
       "bsonType": "string"
     },
     "voie": {
+      "description": "Libellé de voie",
       "bsonType": "string"
     },
     "commune": {
+      "description": "Libellé de la commune",
       "bsonType": "string"
     },
     "commune_etranger": {
+      "description": "Libellé de la commune pour un établissement situé à l’étranger",
       "bsonType": "string"
     },
     "distribution_speciale": {
+      "description": "Distribution spéciale de l’établissement",
       "bsonType": "string"
     },
     "code_commune": {
+      "description": "Code commune de l’établissement",
       "bsonType": "string"
     },
     "code_cedex": {
+      "description": "Code cedex",
       "bsonType": "string"
     },
     "cedex": {
+      "description": "Libellé du code cedex",
       "bsonType": "string"
     },
     "code_pays_etranger": {
+      "description": "Code pays pour un établissement situé à l’étranger",
       "bsonType": "string"
     },
     "pays_etranger": {
+      "description": "Libellé du pays pour un établissement situé à l’étranger",
       "bsonType": "string"
     },
     "code_postal": {
+      "description": "Code postal",
       "bsonType": "string"
     },
     "departement": {
+      "description": "Code de département généré à partir du code postal (ex: 2A et 2B pour la Corse)",
       "bsonType": "string"
     },
     "ape": {
+      "description": "Activité principale de l'établissement pendant la période, dans le cas où celui-ci est renseigné selon la deuxième version de nomenclature NAF",
       "bsonType": "string"
     },
     "code_activite": {
+      "description": "Activité principale de l'établissement pendant la période, dans le cas où celui-ci est renseigné dans un format différent de la deuxième version de nomenclature NAF",
       "bsonType": "string"
     },
     "nomen_activite": {
+      "description": "Nomenclature NAF employée pour renseigner le code d'activité/APE de l'établissement (cf https://www.insee.fr/fr/information/2416409), si autre que deuxième révision",
       "bsonType": "string"
     },
     "date_creation": {
+      "description": "Date de création de l’établissement",
       "bsonType": "date"
     },
     "longitude": {
+      "description": "Géolocalisation des locaux: longitude",
       "bsonType": "number"
     },
     "latitude": {
+      "description": "Géolocalisation des locaux: latitude",
       "bsonType": "number"
     }
   },
@@ -991,38 +1028,50 @@ var validationSchemas = map[string]string{
   "required": ["raison_sociale", "statut_juridique"],
   "properties": {
     "siren": {
+      "description": "Numéro Siren de l'entreprise",
       "bsonType": "string",
       "pattern": "^[0-9]{9}$"
     },
     "nic": {
-      "bsonType": "string"
+      "description": "Numéro interne de classement (Nic) de l’unité légale",
+      "bsonType": "string",
+      "pattern": "^[0-9]{9}$"
     },
     "raison_sociale": {
+      "description": "Dénomination de l’unité légale",
       "bsonType": "string"
     },
     "nom_unite_legale": {
+      "description": "Nom de naissance de la personne physique",
       "bsonType": "string"
     },
     "nom_usage_unite_legale": {
+      "description": "Nom d’usage de la personne physique",
       "bsonType": "string"
     },
     "prenom1_unite_legale": {
+      "description": "Premier prénom déclaré pour une personne physique",
       "bsonType": "string"
     },
     "prenom2_unite_legale": {
+      "description": "Deuxième prénom déclaré pour une personne physique",
       "bsonType": "string"
     },
     "prenom3_unite_legale": {
+      "description": "Troisième prénom déclaré pour une personne physique",
       "bsonType": "string"
     },
     "prenom4_unite_legale": {
+      "description": "Quatrième prénom déclaré pour une personne physique",
       "bsonType": "string"
     },
     "statut_juridique": {
-      "description": "code numérique sérialisé en chaine de caractères",
-      "bsonType": "string"
+      "description": "Catégorie juridique de l'unité légale. Cf https://www.insee.fr/fr/information/2028129",
+      "bsonType": "string",
+      "pattern": "^[0-9]{4}$"
     },
     "date_creation": {
+      "description": "Date de création de l'unité légale",
       "bsonType": "date"
     }
   },

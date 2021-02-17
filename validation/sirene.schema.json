@@ -4,75 +4,100 @@
   "bsonType": "object",
   "properties": {
     "siren": {
-      "bsonType": "string"
+      "description": "Numéro Siren de l'entreprise",
+      "bsonType": "string",
+      "pattern": "^[0-9]{9}$"
     },
     "nic": {
+      "description": "Numéro interne de classement de l'établissement",
       "bsonType": "string"
     },
     "siege": {
+      "description": "Qualité de siège ou non de l’établissement",
       "bsonType": "bool"
     },
     "complement_adresse": {
+      "description": "Complément d’adresse",
       "bsonType": "string"
     },
     "numero_voie": {
+      "description": "Numéro de la voie de l’adresse",
       "bsonType": "string"
     },
     "indrep": {
+      "description": "Indice de répétition dans la voie",
       "bsonType": "string"
     },
     "type_voie": {
+      "description": "Type de voie",
       "bsonType": "string"
     },
     "voie": {
+      "description": "Libellé de voie",
       "bsonType": "string"
     },
     "commune": {
+      "description": "Libellé de la commune",
       "bsonType": "string"
     },
     "commune_etranger": {
+      "description": "Libellé de la commune pour un établissement situé à l’étranger",
       "bsonType": "string"
     },
     "distribution_speciale": {
+      "description": "Distribution spéciale de l’établissement",
       "bsonType": "string"
     },
     "code_commune": {
+      "description": "Code commune de l’établissement",
       "bsonType": "string"
     },
     "code_cedex": {
+      "description": "Code cedex",
       "bsonType": "string"
     },
     "cedex": {
+      "description": "Libellé du code cedex",
       "bsonType": "string"
     },
     "code_pays_etranger": {
+      "description": "Code pays pour un établissement situé à l’étranger",
       "bsonType": "string"
     },
     "pays_etranger": {
+      "description": "Libellé du pays pour un établissement situé à l’étranger",
       "bsonType": "string"
     },
     "code_postal": {
+      "description": "Code postal",
       "bsonType": "string"
     },
     "departement": {
+      "description": "Code de département généré à partir du code postal (ex: 2A et 2B pour la Corse)",
       "bsonType": "string"
     },
     "ape": {
+      "description": "Activité principale de l'établissement pendant la période, dans le cas où celui-ci est renseigné selon la deuxième version de nomenclature NAF",
       "bsonType": "string"
     },
     "code_activite": {
+      "description": "Activité principale de l'établissement pendant la période, dans le cas où celui-ci est renseigné dans un format différent de la deuxième version de nomenclature NAF",
       "bsonType": "string"
     },
     "nomen_activite": {
+      "description": "Nomenclature NAF employée pour renseigner le code d'activité/APE de l'établissement (cf https://www.insee.fr/fr/information/2416409), si autre que deuxième révision",
       "bsonType": "string"
     },
     "date_creation": {
+      "description": "Date de création de l’établissement",
       "bsonType": "date"
     },
     "longitude": {
+      "description": "Géolocalisation des locaux: longitude",
       "bsonType": "number"
     },
     "latitude": {
+      "description": "Géolocalisation des locaux: latitude",
       "bsonType": "number"
     }
   },

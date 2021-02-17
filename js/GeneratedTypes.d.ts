@@ -12,17 +12,38 @@
  * Champs importés par le parseur lib/apconso/main.go de sfdata.
  */
 export interface EntréeApConso {
+  /**
+   * Numéro de la demande (11 caractères principalement des chiffres)
+   */
   id_conso: string
+  /**
+   * Heures consommées (chômées) dans le mois
+   */
   heure_consomme: number
+  /**
+   * Montants consommés dans le mois
+   */
   montant: number
+  /**
+   * Nombre de salariés en activité partielle dans le mois
+   */
   effectif: number
+  /**
+   * Mois considéré
+   */
   periode: Date
 }
 /**
  * Champs importés par le parseur lib/apdemande/main.go de sfdata.
  */
 export interface EntréeApDemande {
+  /**
+   * Numéro de la demande (11 caractères principalement des chiffres)
+   */
   id_demande: string
+  /**
+   * Période de chômage
+   */
   periode: {
     start: Date
     end: Date
@@ -32,15 +53,41 @@ export interface EntréeApDemande {
    */
   hta: number
   /**
-   * Cause d'activité partielle
+   * Motif de recours à l'activité partielle:
+   *  1 - Conjoncture économique.
+   *  2 - Difficultés d’approvisionnement en matières premières ou en énergie
+   *  3 - Sinistre ou intempéries de caractère exceptionnel
+   *  4 - Transformation, restructuration ou modernisation des installations et des bâtiments
+   *  5 - Autres circonstances exceptionnelles
    */
   motif_recours_se: number
+  /**
+   * Effectif de l'entreprise
+   */
   effectif_entreprise: number
+  /**
+   * Effectif de l'établissement
+   */
   effectif: number
+  /**
+   * Date du statut - création ou mise à jour de la demande
+   */
   date_statut: Date
+  /**
+   * Montant total autorisé
+   */
   mta: number
+  /**
+   * Effectifs autorisés
+   */
   effectif_autorise: number
+  /**
+   * Nombre total d'heures consommées
+   */
   heure_consommee: number
+  /**
+   * Montant total consommé
+   */
   montant_consommee: number
   effectif_consomme: number
 }
@@ -101,13 +148,7 @@ export interface EntréeCcsf {
    * Date de début de la procédure CCSF
    */
   date_traitement: Date
-  /**
-   * TODO: choisir un type plus précis
-   */
   stade: string
-  /**
-   * TODO: choisir un type plus précis
-   */
   action: string
 }
 /**
@@ -165,7 +206,6 @@ export interface EntréeDebit {
   periode: {
     start: Date
     end: Date
-    [k: string]: unknown
   }
   /**
    * L'écart négatif (ecn) correspond à une période en débit. Pour une même période, plusieurs débits peuvent être créés. On leur attribue un numéro d'ordre. Par exemple, 101, 201, 301 etc.; ou 101, 102, 201 etc. correspondent respectivement au 1er, 2ème et 3ème ecn de la période considérée.
@@ -180,7 +220,7 @@ export interface EntréeDebit {
    */
   date_traitement: Date
   /**
-   * Hash d'un autre débit // TODO: non fourni par le parseur, ce champ devrait être défini dans un type de sortie.
+   * Hash du débit suivant. (généré par sfdata)
    */
   debit_suivant?: string
   /**
@@ -696,32 +736,155 @@ export interface EntréeDéfaillances {
   date_effet: Date
 }
 /**
+ * Champs importés par le parseur lib/sirene_ul/main.go de sfdata.
+ */
+export interface EntréeSireneEntreprise {
+  /**
+   * Numéro Siren de l'entreprise
+   */
+  siren?: string
+  /**
+   * Numéro interne de classement (Nic) de l’unité légale
+   */
+  nic?: string
+  /**
+   * Dénomination de l’unité légale
+   */
+  raison_sociale: string
+  /**
+   * Nom de naissance de la personne physique
+   */
+  nom_unite_legale?: string
+  /**
+   * Nom d’usage de la personne physique
+   */
+  nom_usage_unite_legale?: string
+  /**
+   * Premier prénom déclaré pour une personne physique
+   */
+  prenom1_unite_legale?: string
+  /**
+   * Deuxième prénom déclaré pour une personne physique
+   */
+  prenom2_unite_legale?: string
+  /**
+   * Troisième prénom déclaré pour une personne physique
+   */
+  prenom3_unite_legale?: string
+  /**
+   * Quatrième prénom déclaré pour une personne physique
+   */
+  prenom4_unite_legale?: string
+  /**
+   * Catégorie juridique de l'unité légale. Cf https://www.insee.fr/fr/information/2028129
+   */
+  statut_juridique: string
+  /**
+   * Date de création de l'unité légale
+   */
+  date_creation?: Date
+}
+/**
  * Champs importés par le parseur lib/sirene/main.go de sfdata.
  */
 export interface EntréeSirene {
+  /**
+   * Numéro Siren de l'entreprise
+   */
   siren?: string
+  /**
+   * Numéro interne de classement de l'établissement
+   */
   nic?: string
-  siege?: boolean
+  /**
+   * Qualité de siège ou non de l’établissement
+   */
+  siege?: {
+    [k: string]: unknown
+  }
+  /**
+   * Complément d’adresse
+   */
   complement_adresse?: string
+  /**
+   * Numéro de la voie de l’adresse
+   */
   numero_voie?: string
+  /**
+   * Indice de répétition dans la voie
+   */
   indrep?: string
+  /**
+   * Type de voie
+   */
   type_voie?: string
+  /**
+   * Libellé de voie
+   */
   voie?: string
+  /**
+   * Libellé de la commune
+   */
   commune?: string
+  /**
+   * Libellé de la commune pour un établissement situé à l’étranger
+   */
   commune_etranger?: string
+  /**
+   * Distribution spéciale de l’établissement
+   */
   distribution_speciale?: string
+  /**
+   * Code commune de l’établissement
+   */
   code_commune?: string
+  /**
+   * Code cedex
+   */
   code_cedex?: string
+  /**
+   * Libellé du code cedex
+   */
   cedex?: string
+  /**
+   * Code pays pour un établissement situé à l’étranger
+   */
   code_pays_etranger?: string
+  /**
+   * Libellé du pays pour un établissement situé à l’étranger
+   */
   pays_etranger?: string
+  /**
+   * Code postal
+   */
   code_postal?: string
+  /**
+   * Code de département généré à partir du code postal (ex: 2A et 2B pour la Corse)
+   */
   departement?: string
+  /**
+   * Activité principale de l'établissement pendant la période, dans le cas où celui-ci est renseigné selon la deuxième version de nomenclature NAF
+   */
   ape?: string
+  /**
+   * Activité principale de l'établissement pendant la période, dans le cas où celui-ci est renseigné dans un format différent de la deuxième version de nomenclature NAF
+   */
   code_activite?: string
+  /**
+   * Nomenclature NAF employée pour renseigner le code d'activité/APE de l'établissement (cf https://www.insee.fr/fr/information/2416409), si autre que deuxième révision
+   */
   nomen_activite?: string
+  /**
+   * Date de création de l’établissement
+   */
   date_creation?: Date
+  /**
+   * Géolocalisation des locaux: longitude
+   */
   longitude?: number
+  /**
+   * Géolocalisation des locaux: latitude
+   */
   latitude?: number
 }
 /**

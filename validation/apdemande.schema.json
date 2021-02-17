@@ -18,9 +18,11 @@
   ],
   "properties": {
     "id_demande": {
+      "description": "Numéro de la demande (11 caractères principalement des chiffres)",
       "bsonType": "string"
     },
     "periode": {
+      "description": "Période de chômage",
       "bsonType": "object",
       "required": ["start", "end"],
       "properties": {
@@ -34,28 +36,35 @@
       "bsonType": "number"
     },
     "motif_recours_se": {
-      "description": "Cause d'activité partielle",
+      "description": "Motif de recours à l'activité partielle: \n 1 - Conjoncture économique. \n 2 - Difficultés d’approvisionnement en matières premières ou en énergie \n 3 - Sinistre ou intempéries de caractère exceptionnel \n 4 - Transformation, restructuration ou modernisation des installations et des bâtiments \n 5 - Autres circonstances exceptionnelles",
       "bsonType": "number"
     },
     "effectif_entreprise": {
+      "description": "Effectif de l'entreprise",
       "bsonType": "number"
     },
     "effectif": {
+      "description": "Effectif de l'établissement",
       "bsonType": "number"
     },
     "date_statut": {
+      "description": "Date du statut - création ou mise à jour de la demande",
       "bsonType": "date"
     },
     "mta": {
+      "description": "Montant total autorisé",
       "bsonType": "number"
     },
     "effectif_autorise": {
+      "description": "Effectifs autorisés",
       "bsonType": "number"
     },
     "heure_consommee": {
+      "description": "Nombre total d'heures consommées",
       "bsonType": "number"
     },
     "montant_consommee": {
+      "description": "Montant total consommé",
       "bsonType": "number"
     },
     "effectif_consomme": {
