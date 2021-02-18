@@ -446,6 +446,13 @@ type fieldDef struct {
 	Index        int         // ... otherwise, the field index is stored here
 }
 
+func (field fieldDef) GetIndex(year int) int {
+	if index, exists := field.IndexPerYear[year]; exists {
+		return index
+	}
+	return field.Index
+}
+
 type yearSet map[int]interface{}
 
 // parseHeader extrait les indices de chaque champ et les années associées.
@@ -526,11 +533,7 @@ func projectYearlyColumnsAsRows(dianeFile io.Reader) (*bytes.Buffer, error) {
 			for year := firstYear; year <= lastYear; year++ {
 				fieldValues := []string{fmt.Sprintf("%v", year)} // values, starting with the added "Annee" field
 				for _, field := range fields {
-					if index, exists := field.IndexPerYear[year]; exists {
-						fieldValues = append(fieldValues, "\""+row[index]+"\"")
-					} else {
-						fieldValues = append(fieldValues, "\""+row[field.Index]+"\"")
-					}
+					fieldValues = append(fieldValues, "\""+row[field.GetIndex(year)]+"\"")
 				}
 				fmt.Fprintf(&output, "%v\n", strings.Join(fieldValues, string(fieldSeparator))) // values for this year + end of line
 			}
