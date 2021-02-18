@@ -520,15 +520,17 @@ func awkScript(dianeFile io.Reader) (*bytes.Buffer, error) {
 			return nil, err
 		} else /* TODO: $1 !~ "Marquée" */ {
 			for year := firstYear; year <= lastYear; year++ {
-				fmt.Fprintf(&output, "%v", year)
+				fieldValues := []string{
+					fmt.Sprintf("%v", year), // value of the "Annee" field
+				}
 				for _, field := range fields {
 					if index, exists := field.IndexPerYear[year]; exists {
-						fmt.Fprintf(&output, "%v\"%v\"", outputSeparator, row[index])
+						fieldValues = append(fieldValues, "\""+row[index]+"\"")
 					} else {
-						fmt.Fprintf(&output, "%v\"%v\"", outputSeparator, row[field.Index])
+						fieldValues = append(fieldValues, "\""+row[field.Index]+"\"")
 					}
 				}
-				fmt.Fprint(&output, "\n") // end of year => end of line
+				fmt.Fprintf(&output, "%v\n", strings.Join(fieldValues, outputSeparator)) // end of year => values + end of line
 			}
 		}
 	}
