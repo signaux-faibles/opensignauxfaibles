@@ -501,13 +501,13 @@ func awkScript(dianeFile io.Reader) (*bytes.Buffer, error) {
 
 	outputSeparator := ";" // OFS
 
-	// coalesce yearly fields from header
+	// print header after coalescing yearly fields
 	fields, years := parseHeader(header)
-	fmt.Fprintf(&output, "%v", "\"Annee\"")
-	for _, field := range fields {
-		fmt.Fprintf(&output, "%v\"%v\"", outputSeparator, field.Name)
+	fieldNames := []string{}
+	for _, field := range append([]fieldDef{{Name: "Annee", Index: 0}}, fields...) {
+		fieldNames = append(fieldNames, "\""+field.Name+"\"")
 	}
-	fmt.Fprint(&output, "\n") // end of line
+	fmt.Fprintf(&output, "%v\n", strings.Join(fieldNames, outputSeparator)) // field names + end of line
 
 	firstYear, lastYear := getYearRange(years)
 
@@ -519,10 +519,10 @@ func awkScript(dianeFile io.Reader) (*bytes.Buffer, error) {
 		} else if err != nil {
 			return nil, err
 		} else /* TODO: $1 !~ "Marquée" */ {
-			for currentYear := firstYear; currentYear <= lastYear; currentYear++ {
-				fmt.Fprintf(&output, "%v", currentYear)
+			for year := firstYear; year <= lastYear; year++ {
+				fmt.Fprintf(&output, "%v", year)
 				for _, field := range fields {
-					if index, exists := field.IndexPerYear[currentYear]; exists {
+					if index, exists := field.IndexPerYear[year]; exists {
 						fmt.Fprintf(&output, "%v\"%v\"", outputSeparator, row[index])
 					} else {
 						fmt.Fprintf(&output, "%v\"%v\"", outputSeparator, row[field.Index])
