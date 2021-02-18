@@ -444,12 +444,11 @@ type fieldDef struct {
 	Index        int         // ... otherwise, the field index is stored here
 }
 
-func parseHeader(header []string) ([]fieldDef, int, int) {
+func parseHeader(header []string) ([]fieldDef, map[int]interface{}) {
 	fields := []fieldDef{}                   // list of field indexes, incl. for (de-duplicated) yearly fields
 	yearlyFields := map[string]interface{}{} // set of fields that specify a year
+	years := map[int]interface{}{}           // set of years, used to compute firstYear and lastYear
 	regexYearSuffix := regexp.MustCompile(" [[:digit:]]{4}$")
-	firstYear := 0
-	lastYear := 0
 	for field, fieldName := range header {
 		if !regexYearSuffix.MatchString(fieldName) { // Field without year
 			fields = append(fields, fieldDef{Name: fieldName, Index: field})
@@ -461,12 +460,7 @@ func parseHeader(header []string) ([]fieldDef, int, int) {
 			if err != nil {
 				log.Fatal(err)
 			}
-			if firstYear == 0 || year < firstYear {
-				firstYear = year
-			}
-			if lastYear == 0 || year > lastYear {
-				lastYear = year
-			}
+			years[year] = true
 			if _, alreadyKnown := yearlyFields[fieldName]; !alreadyKnown {
 				fields = append(fields, fieldDef{Name: fieldName, IndexPerYear: map[int]int{}})
 				yearlyFields[fieldName] = true
@@ -474,7 +468,7 @@ func parseHeader(header []string) ([]fieldDef, int, int) {
 			fields[len(fields)-1].IndexPerYear[year] = field
 		}
 	}
-	return fields, firstYear, lastYear
+	return fields, years
 }
 
 func awkScript(cleanedCsvData io.Reader) (*bytes.Buffer, error) {
@@ -492,12 +486,23 @@ func awkScript(cleanedCsvData io.Reader) (*bytes.Buffer, error) {
 	outputSeparator := ";" // OFS
 
 	// coalesce yearly fields from header
-	fields, firstYear, lastYear := parseHeader(header)
+	fields, years := parseHeader(header)
 	fmt.Fprintf(&output, "%v", "\"Annee\"")
 	for _, field := range fields {
 		fmt.Fprintf(&output, "%v\"%v\"", outputSeparator, field.Name)
 	}
 	fmt.Fprint(&output, "\n") // end of line
+
+	firstYear := 0
+	lastYear := 0
+	for year := range years {
+		if firstYear == 0 || year < firstYear {
+			firstYear = year
+		}
+		if lastYear == 0 || year > lastYear {
+			lastYear = year
+		}
+	}
 
 	// spread company data so that each year of data has its own row.
 	for {
