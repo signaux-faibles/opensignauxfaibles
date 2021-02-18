@@ -160,7 +160,6 @@ func preprocessDianeFile(filePath string) (func() error, io.Reader, error) {
 	pipedCmds := []*exec.Cmd{
 		exec.Command("cat", filePath),
 		exec.Command("iconv", "--from-code", "UTF-16LE", "--to-code", "UTF-8"), // conversion d'encodage de fichier car awk ne supporte pas UTF-16LE
-		exec.Command("sed", "s/\r$//"),                                         // forcer l'usage de retours charriot au format UNIX car le caractère \r cause une duplication de colonne depuis le script awk
 		exec.Command("sed", "s/  / /g"),                                        // dé-dupliquer les caractères d'espacement, notamment dans les en-têtes de colonnes
 	}
 	lastCmd := pipedCmds[len(pipedCmds)-1]
