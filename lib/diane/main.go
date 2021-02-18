@@ -156,27 +156,18 @@ func (parser *dianeParser) Close() error {
 
 // réorganisation des des données pour éviter la duplication de colonnes par année
 func preprocessDianeFile(filePath string) (func() error, io.Reader, error) {
-
 	file, err := os.Open(filePath)
 	if err != nil {
 		return nil, nil, err
 	}
-
 	close := func() error {
 		return file.Close()
 	}
-
-	reader := transform.NewReader(file, unicode.UTF16(unicode.LittleEndian, unicode.UseBOM).NewDecoder())
-	// scanner := bufio.NewScanner(reader)
-	// for scanner.Scan() {
-	// 	fmt.Printf(scanner.Text())
-	// }
-
-	output, err := awkScript(reader)
+	utf16leDecoder := unicode.UTF16(unicode.LittleEndian, unicode.UseBOM).NewDecoder()
+	output, err := awkScript(transform.NewReader(file, utf16leDecoder))
 	if err != nil {
 		return close, nil, err
 	}
-
 	return close, bytes.NewReader(output.Bytes()), nil
 }
 
