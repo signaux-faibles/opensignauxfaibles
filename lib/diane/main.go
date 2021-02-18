@@ -156,7 +156,9 @@ func (parser *dianeParser) Close() error {
 
 const fieldSeparator = ';' // appelé OFS dans l'ancien script awk
 
-// réorganisation des des données pour éviter la duplication de colonnes par année
+// preprocessDianeFile ouvre un fichier Diane encodé en UTF-16LE puis retourne
+// le Reader d'un fichier CSV intermédiaire dans lequel les données sont
+// projetées à raison d'une ligne par année et par entreprise.
 func preprocessDianeFile(filePath string) (func() error, io.Reader, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -165,8 +167,9 @@ func preprocessDianeFile(filePath string) (func() error, io.Reader, error) {
 	close := func() error {
 		return file.Close()
 	}
-	utf16leDecoder := unicode.UTF16(unicode.LittleEndian, unicode.UseBOM).NewDecoder()
-	output, err := projectYearlyColumnsAsRows(transform.NewReader(file, utf16leDecoder))
+	var output bytes.Buffer
+	utf16leFileReader := transform.NewReader(file, unicode.UTF16(unicode.LittleEndian, unicode.UseBOM).NewDecoder())
+	err = projectYearlyColumnsAsRows(utf16leFileReader, &output)
 	if err != nil {
 		return close, nil, err
 	}
@@ -181,6 +184,8 @@ func (parser *dianeParser) initCsvReader(reader io.Reader) (err error) {
 	return err
 }
 
+// ParseLines parse des entrées depuis un fichier Diane, après que les années
+// aient été projetées à raison d'une par ligne.
 func (parser *dianeParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
 	for {
 		parsedLine := marshal.ParsedLineResult{}
@@ -199,7 +204,8 @@ func (parser *dianeParser) ParseLines(parsedLineChan chan marshal.ParsedLineResu
 	}
 }
 
-// parseDianeRow construit un objet Diane à partir d'une ligne de valeurs récupérée depuis un fichier
+// parseDianeRow construit un objet Diane à partir d'une ligne de valeurs lue
+// depuis un fichier Diane dans lesquelles les années ont été projetées.
 func parseDianeRow(idx marshal.ColMapping, row []string) (diane Diane) {
 
 	idxRow := idx.IndexRow(row)
@@ -440,6 +446,49 @@ func parseDianeRow(idx marshal.ColMapping, row []string) (diane Diane) {
 	return diane
 }
 
+// projectYearlyColumnsAsRows retourne un buffer CSV intermédiaire dans lequel
+// les données sont projetées à raison d'une ligne par année et par entreprise,
+// à partir d'un flux CSV dans lequel les colonnes sont dupliquées par année.
+// Pour référence: ce traitement était autrefois implémenté par un script awk.
+func projectYearlyColumnsAsRows(dianeFile io.Reader, output *bytes.Buffer) error {
+
+	csvReader := csv.NewReader(dianeFile)
+	csvReader.Comma = ';'
+	csvReader.LazyQuotes = true
+	header, err := csvReader.Read()
+	if err != nil {
+		return err
+	}
+
+	// print header after coalescing yearly fields
+	fields, years := parseHeader(header)
+	fieldNames := []string{}
+	for _, field := range append([]fieldDef{{Name: "Annee", Index: 0}}, fields...) {
+		fieldNames = append(fieldNames, "\""+field.Name+"\"")
+	}
+	fmt.Fprintf(output, "%v\n", strings.Join(fieldNames, string(fieldSeparator))) // field names + end of line
+
+	// spread company data so that each year of data has its own row.
+	firstYear, lastYear := getYearRange(years)
+	for {
+		row, err := csvReader.Read()
+		if err == io.EOF {
+			break
+		} else if err != nil {
+			return err
+		} else /* TODO: $1 !~ "Marquée" */ {
+			for year := firstYear; year <= lastYear; year++ {
+				fieldValues := []string{fmt.Sprintf("%v", year)} // values, starting with the added "Annee" field
+				for _, field := range fields {
+					fieldValues = append(fieldValues, "\""+row[field.GetIndex(year)]+"\"")
+				}
+				fmt.Fprintf(output, "%v\n", strings.Join(fieldValues, string(fieldSeparator))) // values for this year + end of line
+			}
+		}
+	}
+	return nil
+}
+
 type fieldDef struct {
 	Name         string
 	IndexPerYear map[int]int // in case of yearly field, this map should contain at last one entry
@@ -494,51 +543,4 @@ func getYearRange(years yearSet) (firstYear int, lastYear int) {
 		}
 	}
 	return firstYear, lastYear
-}
-
-// projectYearlyColumnsAsRows() returns a CSV buffer in which each row contains
-// the data associated to a company for a given year, for a Diane file in which
-// years are appended to column names.
-// Note: it used to be implemented as a awk script.
-func projectYearlyColumnsAsRows(dianeFile io.Reader) (*bytes.Buffer, error) {
-
-	csvReader := csv.NewReader(dianeFile)
-	csvReader.Comma = ';'
-	csvReader.LazyQuotes = true
-	header, err := csvReader.Read()
-	if err != nil {
-		return nil, err
-	}
-
-	var output bytes.Buffer
-
-	// print header after coalescing yearly fields
-	fields, years := parseHeader(header)
-	fieldNames := []string{}
-	for _, field := range append([]fieldDef{{Name: "Annee", Index: 0}}, fields...) {
-		fieldNames = append(fieldNames, "\""+field.Name+"\"")
-	}
-	fmt.Fprintf(&output, "%v\n", strings.Join(fieldNames, string(fieldSeparator))) // field names + end of line
-
-	firstYear, lastYear := getYearRange(years)
-
-	// spread company data so that each year of data has its own row.
-	for {
-		row, err := csvReader.Read()
-		if err == io.EOF {
-			break
-		} else if err != nil {
-			return nil, err
-		} else /* TODO: $1 !~ "Marquée" */ {
-			for year := firstYear; year <= lastYear; year++ {
-				fieldValues := []string{fmt.Sprintf("%v", year)} // values, starting with the added "Annee" field
-				for _, field := range fields {
-					fieldValues = append(fieldValues, "\""+row[field.GetIndex(year)]+"\"")
-				}
-				fmt.Fprintf(&output, "%v\n", strings.Join(fieldValues, string(fieldSeparator))) // values for this year + end of line
-			}
-		}
-	}
-
-	return &output, nil
 }
