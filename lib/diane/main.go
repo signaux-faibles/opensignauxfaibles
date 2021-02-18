@@ -438,37 +438,25 @@ func parseDianeRow(idx marshal.ColMapping, row []string) (diane Diane) {
 	return diane
 }
 
-func awkScript(cleanedCsvData io.Reader) (*bytes.Buffer, error) {
+type Field struct {
+	IndexPerYear map[int]int // in case of yearly field, this map should contain at last one entry
+	Index        int         // ... otherwise, the field index is stored here
+}
 
-	csvReader := csv.NewReader(cleanedCsvData)
-	csvReader.Comma = ';'
-	csvReader.LazyQuotes = true
-	header, err := csvReader.Read()
-	if err != nil {
-		return nil, err
-	}
-
-	var output bytes.Buffer
-
-	type Field struct {
-		IndexPerYear map[int]int // in case of yearly field, this map should contain at last one entry
-		Index        int         // ... otherwise, the field index is stored here
-	}
+func parseHeader(header []string, output *bytes.Buffer, outputSeparator string) ([]Field, int, int) {
+	// TODO: just return fields, instead of printing them
 	fields := []Field{}                                         // list of field indexes, incl. for (de-duplicated) yearly fields
 	yearlyFields := map[string]interface{}{}                    // set of fields that specify a year
-	outputSeparator := ";"                                      // OFS
 	regexYear := regexp.MustCompile("[[:digit:]]{4}")           // RE_YEAR = "[[:digit:]][[:digit:]][[:digit:]][[:digit:]]"
 	regexYearSuffix := regexp.MustCompile(" ([[:digit:]]{4})$") // RE_YEAR_SUFFIX = / ([[:digit:]][[:digit:]][[:digit:]][[:digit:]])$/
 	firstYear := 0
 	lastYear := 0
-
-	// coalesce yearly fields from header
-	fmt.Fprintf(&output, "%v", "\"Annee\"")
+	fmt.Fprintf(output, "%v", "\"Annee\"")
 	for field, fieldVal := range header {
 		if !regexYearSuffix.MatchString(fieldVal) { // Field without year
 			fields = append(fields, Field{Index: field})
 			fieldName := strings.Replace(fieldVal, "\"", "", 2) // to de-duplicate quotes on "Marquée" column
-			fmt.Fprintf(&output, "%v\"%v\"", outputSeparator, fieldName)
+			fmt.Fprintf(output, "%v\"%v\"", outputSeparator, fieldName)
 		} else { // Field with year
 			yearStr := regexYear.FindString(fieldVal)
 			fieldName := strings.Replace(fieldVal, " "+yearStr, "", 1) // Remove year from column name
@@ -486,12 +474,31 @@ func awkScript(cleanedCsvData io.Reader) (*bytes.Buffer, error) {
 			if _, alreadyKnown := yearlyFields[fieldName]; !alreadyKnown {
 				fields = append(fields, Field{IndexPerYear: map[int]int{}})
 				yearlyFields[fieldName] = true
-				fmt.Fprintf(&output, "%v\"%v\"", outputSeparator, fieldName)
+				fmt.Fprintf(output, "%v\"%v\"", outputSeparator, fieldName)
 			}
 			fields[len(fields)-1].IndexPerYear[year] = field
 		}
 	}
-	fmt.Fprint(&output, "\n") // end of line
+	fmt.Fprint(output, "\n") // end of line
+	return fields, firstYear, lastYear
+}
+
+func awkScript(cleanedCsvData io.Reader) (*bytes.Buffer, error) {
+
+	csvReader := csv.NewReader(cleanedCsvData)
+	csvReader.Comma = ';'
+	csvReader.LazyQuotes = true
+	header, err := csvReader.Read()
+	if err != nil {
+		return nil, err
+	}
+
+	var output bytes.Buffer
+
+	outputSeparator := ";" // OFS
+
+	// coalesce yearly fields from header
+	fields, firstYear, lastYear := parseHeader(header, &output, outputSeparator)
 
 	// spread company data so that each year of data has its own row.
 	for {
