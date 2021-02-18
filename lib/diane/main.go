@@ -476,8 +476,6 @@ func parseHeader(header []string) ([]fieldDef, yearSet) {
 }
 
 func getYearRange(years yearSet) (firstYear int, lastYear int) {
-	// firstYear := 0
-	// lastYear := 0
 	for year := range years {
 		if firstYear == 0 || year < firstYear {
 			firstYear = year
