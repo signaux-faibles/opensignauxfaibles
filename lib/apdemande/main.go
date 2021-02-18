@@ -22,7 +22,7 @@ type APDemande struct {
 	EffectifEntreprise *int         `col:"EFF_ENT" json:"effectif_entreprise" bson:"effectif_entreprise"`
 	Effectif           *int         `col:"EFF_ETAB" json:"effectif" bson:"effectif"`
 	DateStatut         time.Time    `col:"DATE_STATUT" json:"date_statut" bson:"date_statut"`
-	Periode            misc.Periode `col:"DATE_DEB,DATE_FIN" json:"periode" bson:"periode"`
+	Periode            misc.Periode `cols:"DATE_DEB,DATE_FIN" json:"periode" bson:"periode"`
 	HTA                *float64     `col:"HTA" json:"hta" bson:"hta"`
 	MTA                *float64     `json:"mta" bson:"mta"`
 	EffectifAutorise   *int         `col:"EFF_AUTO" json:"effectif_autorise" bson:"effectif_autorise"`
