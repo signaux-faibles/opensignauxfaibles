@@ -444,10 +444,12 @@ type fieldDef struct {
 	Index        int         // ... otherwise, the field index is stored here
 }
 
+type yearSet map[int]interface{}
+
 // parseHeader extrait les indices de chaque champ et les années associées.
-func parseHeader(header []string) ([]fieldDef, map[int]interface{}) {
+func parseHeader(header []string) ([]fieldDef, yearSet) {
 	fields := []fieldDef{}                   // list of field indexes, incl. for (de-duplicated) yearly fields
-	years := map[int]interface{}{}           // set of years, used to compute firstYear and lastYear
+	years := yearSet{}                       // set of years, used to compute firstYear and lastYear
 	yearlyFields := map[string]interface{}{} // set of fields that specify a year
 	regexYearSuffix := regexp.MustCompile(" [[:digit:]]{4}$")
 	for field, fieldName := range header {
@@ -473,6 +475,20 @@ func parseHeader(header []string) ([]fieldDef, map[int]interface{}) {
 	return fields, years
 }
 
+func getYearRange(years yearSet) (firstYear int, lastYear int) {
+	// firstYear := 0
+	// lastYear := 0
+	for year := range years {
+		if firstYear == 0 || year < firstYear {
+			firstYear = year
+		}
+		if lastYear == 0 || year > lastYear {
+			lastYear = year
+		}
+	}
+	return firstYear, lastYear
+}
+
 func awkScript(dianeFile io.Reader) (*bytes.Buffer, error) {
 
 	csvReader := csv.NewReader(dianeFile)
@@ -495,16 +511,7 @@ func awkScript(dianeFile io.Reader) (*bytes.Buffer, error) {
 	}
 	fmt.Fprint(&output, "\n") // end of line
 
-	firstYear := 0
-	lastYear := 0
-	for year := range years {
-		if firstYear == 0 || year < firstYear {
-			firstYear = year
-		}
-		if lastYear == 0 || year > lastYear {
-			lastYear = year
-		}
-	}
+	firstYear, lastYear := getYearRange(years)
 
 	// spread company data so that each year of data has its own row.
 	for {
