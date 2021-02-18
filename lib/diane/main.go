@@ -498,7 +498,7 @@ FNR>1 && $1 !~ "Marquée" { # Data row
       } else if (fields[field] && $(fields[field])) {
         printf "%s%s", OFS, $(fields[field]);
       } else {
-        printf "%s%s", OFS, "\"\"";
+        printf "%s%s", OFS, "\"\""; # non couvert
       }
     }
     printf "%s", ORS # Each year on a new line
