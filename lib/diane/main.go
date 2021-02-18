@@ -445,10 +445,9 @@ type fieldDef struct {
 }
 
 func parseHeader(header []string) ([]fieldDef, int, int) {
-	fields := []fieldDef{}                                      // list of field indexes, incl. for (de-duplicated) yearly fields
-	yearlyFields := map[string]interface{}{}                    // set of fields that specify a year
-	regexYear := regexp.MustCompile("[[:digit:]]{4}")           // RE_YEAR = "[[:digit:]][[:digit:]][[:digit:]][[:digit:]]"
-	regexYearSuffix := regexp.MustCompile(" ([[:digit:]]{4})$") // RE_YEAR_SUFFIX = / ([[:digit:]][[:digit:]][[:digit:]][[:digit:]])$/
+	fields := []fieldDef{}                   // list of field indexes, incl. for (de-duplicated) yearly fields
+	yearlyFields := map[string]interface{}{} // set of fields that specify a year
+	regexYearSuffix := regexp.MustCompile(" [[:digit:]]{4}$")
 	firstYear := 0
 	lastYear := 0
 	for field, fieldVal := range header {
@@ -456,10 +455,10 @@ func parseHeader(header []string) ([]fieldDef, int, int) {
 			fieldName := strings.Replace(fieldVal, "\"", "", 2) // to de-duplicate quotes on "Marquée" column
 			fields = append(fields, fieldDef{Name: fieldName, Index: field})
 		} else { // Field with year
-			yearStr := regexYear.FindString(fieldVal)
-			fieldName := strings.Replace(fieldVal, " "+yearStr, "", 1) // Remove year from column name
-			fieldName = strings.Replace(fieldName, "  ", " ", -1)      // De-duplicate spaces from column name
-			year, err := strconv.Atoi(yearStr)
+			yearStr := regexYearSuffix.FindString(fieldVal)
+			fieldName := strings.Replace(fieldVal, yearStr, "", 1) // Remove year from column name
+			fieldName = strings.Replace(fieldName, "  ", " ", -1)  // De-duplicate spaces from column name
+			year, err := strconv.Atoi(strings.Trim(yearStr, " "))
 			if err != nil {
 				log.Fatal(err)
 			}
