@@ -165,13 +165,13 @@ func preprocessDianeFile(filePath string) (func() error, io.Reader, error) {
 	close := func() error {
 		return file.Close()
 	}
-	var output bytes.Buffer
+	var outputBuffer bytes.Buffer
 	utf16leFileReader := transform.NewReader(file, unicode.UTF16(unicode.LittleEndian, unicode.UseBOM).NewDecoder())
-	err = projectYearlyColumnsAsRows(utf16leFileReader, &output)
+	err = projectYearlyColumnsAsRows(utf16leFileReader, *csv.NewWriter(&outputBuffer))
 	if err != nil {
 		return close, nil, err
 	}
-	return close, bytes.NewReader(output.Bytes()), nil
+	return close, bytes.NewReader(outputBuffer.Bytes()), nil
 }
 
 func (parser *dianeParser) initCsvReader(reader io.Reader) (err error) {
@@ -443,12 +443,11 @@ func parseDianeRow(idx marshal.ColMapping, row []string) (diane Diane) {
 	return diane
 }
 
-// projectYearlyColumnsAsRows retourne un buffer CSV intermédiaire dans lequel
-// les données sont projetées à raison d'une ligne par année et par entreprise,
-// à partir d'un flux CSV dans lequel les colonnes sont dupliquées par année.
+// projectYearlyColumnsAsRows projette les données d'un fichier Diane dans
+// lequel les colonnes sont dupliquées par année, de manière à obtenir une
+// ligne par année et par entreprise.
 // Pour référence: ce traitement était autrefois implémenté par un script awk.
-func projectYearlyColumnsAsRows(dianeFile io.Reader, buffer *bytes.Buffer) error {
-	output := csv.NewWriter(buffer)
+func projectYearlyColumnsAsRows(dianeFile io.Reader, output csv.Writer) error {
 	csvReader := csv.NewReader(dianeFile)
 	csvReader.Comma = ';'
 	csvReader.LazyQuotes = true
