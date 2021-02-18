@@ -1,11 +1,17 @@
 package diane
 
 import (
+	"bytes"
 	"encoding/csv"
 	"errors"
+	"fmt"
 	"io"
+	"log"
 	"os"
 	"os/exec"
+	"regexp"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
@@ -135,19 +141,20 @@ func (parser *dianeParser) Init(cache *marshal.Cache, batch *base.AdminBatch) er
 }
 
 func (parser *dianeParser) Open(filePath string) (err error) {
-	var reader *io.ReadCloser
+	var reader io.Reader
 	parser.closeFct, reader, err = preprocessDianeFile(filePath)
 	if err != nil {
 		return err
 	}
-	return parser.initCsvReader(*reader)
+	return parser.initCsvReader(reader)
 }
 
 func (parser *dianeParser) Close() error {
 	return parser.closeFct()
 }
 
-func preprocessDianeFile(filePath string) (func() error, *io.ReadCloser, error) {
+// réorganisation des des données pour éviter la duplication de colonnes par année
+func preprocessDianeFile(filePath string) (func() error, io.Reader, error) {
 
 	// TODO: implémenter ces traitements en Go
 	pipedCmds := []*exec.Cmd{
@@ -155,7 +162,6 @@ func preprocessDianeFile(filePath string) (func() error, *io.ReadCloser, error) 
 		exec.Command("iconv", "--from-code", "UTF-16LE", "--to-code", "UTF-8"), // conversion d'encodage de fichier car awk ne supporte pas UTF-16LE
 		exec.Command("sed", "s/\r$//"),                                         // forcer l'usage de retours charriot au format UNIX car le caractère \r cause une duplication de colonne depuis le script awk
 		exec.Command("sed", "s/  / /g"),                                        // dé-dupliquer les caractères d'espacement, notamment dans les en-têtes de colonnes
-		exec.Command("awk", awkScript),                                         // réorganisation des des données pour éviter la duplication de colonnes par année
 	}
 	lastCmd := pipedCmds[len(pipedCmds)-1]
 
@@ -176,7 +182,7 @@ func preprocessDianeFile(filePath string) (func() error, *io.ReadCloser, error) 
 		}
 	}
 	lastCmd.Stderr = os.Stderr
-	stdout, err := lastCmd.StdoutPipe()
+	cleanedCsvData, err := lastCmd.StdoutPipe()
 	if err != nil {
 		return close, nil, err
 	}
@@ -189,7 +195,12 @@ func preprocessDianeFile(filePath string) (func() error, *io.ReadCloser, error) 
 		}
 	}
 
-	return close, &stdout, nil
+	output, err := awkScript(cleanedCsvData)
+	if err != nil {
+		return close, nil, err
+	}
+
+	return close, bytes.NewReader(output.Bytes()), nil
 }
 
 func (parser *dianeParser) initCsvReader(reader io.Reader) (err error) {
@@ -459,48 +470,81 @@ func parseDianeRow(idx marshal.ColMapping, row []string) (diane Diane) {
 	return diane
 }
 
-// This awk spreads company data so that each year of data has its own row.
-const awkScript = `
-BEGIN { # Semi-column separated csv as input and output
-  FS = ";"
-  OFS = ";"
-  RE_YEAR = "[[:digit:]][[:digit:]][[:digit:]][[:digit:]]"
-  RE_YEAR_SUFFIX = / ([[:digit:]][[:digit:]][[:digit:]][[:digit:]])$/
-  first_year = last_year = 0
+func awkScript(cleanedCsvData io.ReadCloser) (*bytes.Buffer, error) {
+
+	csvReader := csv.NewReader(cleanedCsvData)
+	csvReader.Comma = ';'
+	csvReader.LazyQuotes = true
+	header, err := csvReader.Read()
+	if err != nil {
+		return nil, err
+	}
+
+	var output bytes.Buffer
+
+	type Field struct {
+		IndexPerYear map[int]int // in case of yearly field, this map should contain at last one entry
+		Index        int         // ... otherwise, the field index is stored here
+	}
+	fields := []Field{}                                         // list of field indexes, incl. for (de-duplicated) yearly fields
+	yearlyFields := map[string]interface{}{}                    // set of fields that specify a year
+	outputSeparator := ";"                                      // OFS
+	regexYear := regexp.MustCompile("[[:digit:]]{4}")           // RE_YEAR = "[[:digit:]][[:digit:]][[:digit:]][[:digit:]]"
+	regexYearSuffix := regexp.MustCompile(" ([[:digit:]]{4})$") // RE_YEAR_SUFFIX = / ([[:digit:]][[:digit:]][[:digit:]][[:digit:]])$/
+	firstYear := 0
+	lastYear := 0
+
+	// coalesce yearly fields from header
+	fmt.Fprintf(&output, "%v", "\"Annee\"")
+	for field, fieldVal := range header {
+		if !regexYearSuffix.MatchString(fieldVal) { // Field without year
+			fields = append(fields, Field{Index: field})
+			fieldName := strings.Replace(fieldVal, "\"", "", 2) // to de-duplicate quotes on "Marquée" column
+			fmt.Fprintf(&output, "%v\"%v\"", outputSeparator, fieldName)
+		} else { // Field with year
+			yearStr := regexYear.FindString(fieldVal)
+			fieldName := strings.Replace(fieldVal, " "+yearStr, "", 1) // Remove year from column name
+			year, err := strconv.Atoi(yearStr)
+			if err != nil {
+				log.Fatal(err)
+			}
+			if firstYear == 0 || year < firstYear {
+				firstYear = year
+			}
+			if lastYear == 0 || year > lastYear {
+				lastYear = year
+			}
+			if _, alreadyKnown := yearlyFields[fieldName]; !alreadyKnown {
+				fields = append(fields, Field{IndexPerYear: map[int]int{}})
+				yearlyFields[fieldName] = true
+				fmt.Fprintf(&output, "%v\"%v\"", outputSeparator, fieldName)
+			}
+			fields[len(fields)-1].IndexPerYear[year] = field
+		}
+	}
+	fmt.Fprint(&output, "\n") // end of line
+
+	// spread company data so that each year of data has its own row.
+	for {
+		row, err := csvReader.Read()
+		if err == io.EOF {
+			break
+		} else if err != nil {
+			return nil, err
+		} else /* TODO: $1 !~ "Marquée" */ {
+			for currentYear := firstYear; currentYear <= lastYear; currentYear++ {
+				fmt.Fprintf(&output, "%v", currentYear)
+				for _, field := range fields {
+					if index, exists := field.IndexPerYear[currentYear]; exists {
+						fmt.Fprintf(&output, "%v\"%v\"", outputSeparator, row[index])
+					} else {
+						fmt.Fprintf(&output, "%v\"%v\"", outputSeparator, row[field.Index])
+					}
+				}
+				fmt.Fprint(&output, "\n") // end of year => end of line
+			}
+		}
+	}
+
+	return &output, nil
 }
-FNR==1 { # Heading row => coalesce yearly fields
-  printf "%s", "\"Annee\""
-  for (field = 1; field <= NF; ++field) {
-    if ($field !~ RE_YEAR_SUFFIX) { # Field without year
-      fields[++nb_fields] = field
-      printf "%s%s",  OFS, $field
-    } else { # Field with year
-      match($field, RE_YEAR, year)
-      field_name = gensub(" "year[0], "", "g", $field) # Remove year from column name
-      first_year = !first_year || year[0] < first_year ? year[0] : first_year
-      last_year = !last_year || year[0] > last_year ? year[0] : last_year
-      if (!yearly_fields[field_name]) {
-        ++nb_fields
-        ++yearly_fields[field_name]
-        printf "%s%s", OFS, field_name;
-      }
-      fields[nb_fields, year[0]] = field
-    }
-  }
-  printf "%s", ORS
-}
-FNR>1 && $1 !~ "Marquée" { # Data row
-  for (current_year = first_year; current_year <= last_year; ++current_year) {
-    printf "%i", current_year
-    for (field = 1; field <= nb_fields; ++field) {
-      if (fields[field, current_year] && $(fields[field, current_year])) {
-        printf "%s%s", OFS, $(fields[field, current_year]);
-      } else if (fields[field] && $(fields[field])) {
-        printf "%s%s", OFS, $(fields[field]);
-      } else {
-        printf "%s%s", OFS, "\"\""; # non couvert
-      }
-    }
-    printf "%s", ORS # Each year on a new line
-  }
-}`

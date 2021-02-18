@@ -28,7 +28,7 @@ func TestDiane(t *testing.T) {
 		var testData = filepath.Join("testData", "dianeTestData.txt")
 		_, reader, err := preprocessDianeFile(testData)
 		if assert.NoError(t, err) {
-			csvReader := csv.NewReader(*reader)
+			csvReader := csv.NewReader(reader)
 			csvReader.Comma = ';'
 			csvReader.LazyQuotes = true
 			header, err := csvReader.Read() // Discard header
@@ -45,7 +45,7 @@ func TestDiane(t *testing.T) {
 		var testData = filepath.Join("testData", "dianeTestData.txt")
 		_, reader, err := preprocessDianeFile(testData)
 		if assert.NoError(t, err) {
-			output, err := ioutil.ReadAll(*reader)
+			output, err := ioutil.ReadAll(reader)
 			if assert.NoError(t, err) {
 				diffWithGoldenFile(t, output, golden, *update)
 			}
