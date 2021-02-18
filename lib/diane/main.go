@@ -154,6 +154,8 @@ func (parser *dianeParser) Close() error {
 	return parser.closeFct()
 }
 
+const fieldSeparator = ';' // appelé OFS dans l'ancien script awk
+
 // réorganisation des des données pour éviter la duplication de colonnes par année
 func preprocessDianeFile(filePath string) (func() error, io.Reader, error) {
 	file, err := os.Open(filePath)
@@ -164,7 +166,7 @@ func preprocessDianeFile(filePath string) (func() error, io.Reader, error) {
 		return file.Close()
 	}
 	utf16leDecoder := unicode.UTF16(unicode.LittleEndian, unicode.UseBOM).NewDecoder()
-	output, err := awkScript(transform.NewReader(file, utf16leDecoder))
+	output, err := projectYearlyColumnsAsRows(transform.NewReader(file, utf16leDecoder))
 	if err != nil {
 		return close, nil, err
 	}
@@ -173,7 +175,7 @@ func preprocessDianeFile(filePath string) (func() error, io.Reader, error) {
 
 func (parser *dianeParser) initCsvReader(reader io.Reader) (err error) {
 	parser.reader = csv.NewReader(reader)
-	parser.reader.Comma = ';'
+	parser.reader.Comma = fieldSeparator
 	parser.reader.LazyQuotes = true
 	parser.idx, err = marshal.IndexColumnsFromCsvHeader(parser.reader, Diane{})
 	return err
@@ -487,7 +489,11 @@ func getYearRange(years yearSet) (firstYear int, lastYear int) {
 	return firstYear, lastYear
 }
 
-func awkScript(dianeFile io.Reader) (*bytes.Buffer, error) {
+// projectYearlyColumnsAsRows() returns a CSV buffer in which each row contains
+// the data associated to a company for a given year, for a Diane file in which
+// years are appended to column names.
+// Note: it used to be implemented as a awk script.
+func projectYearlyColumnsAsRows(dianeFile io.Reader) (*bytes.Buffer, error) {
 
 	csvReader := csv.NewReader(dianeFile)
 	csvReader.Comma = ';'
@@ -499,15 +505,13 @@ func awkScript(dianeFile io.Reader) (*bytes.Buffer, error) {
 
 	var output bytes.Buffer
 
-	outputSeparator := ";" // OFS
-
 	// print header after coalescing yearly fields
 	fields, years := parseHeader(header)
 	fieldNames := []string{}
 	for _, field := range append([]fieldDef{{Name: "Annee", Index: 0}}, fields...) {
 		fieldNames = append(fieldNames, "\""+field.Name+"\"")
 	}
-	fmt.Fprintf(&output, "%v\n", strings.Join(fieldNames, outputSeparator)) // field names + end of line
+	fmt.Fprintf(&output, "%v\n", strings.Join(fieldNames, string(fieldSeparator))) // field names + end of line
 
 	firstYear, lastYear := getYearRange(years)
 
@@ -520,9 +524,7 @@ func awkScript(dianeFile io.Reader) (*bytes.Buffer, error) {
 			return nil, err
 		} else /* TODO: $1 !~ "Marquée" */ {
 			for year := firstYear; year <= lastYear; year++ {
-				fieldValues := []string{
-					fmt.Sprintf("%v", year), // value of the "Annee" field
-				}
+				fieldValues := []string{fmt.Sprintf("%v", year)} // values, starting with the added "Annee" field
 				for _, field := range fields {
 					if index, exists := field.IndexPerYear[year]; exists {
 						fieldValues = append(fieldValues, "\""+row[index]+"\"")
@@ -530,7 +532,7 @@ func awkScript(dianeFile io.Reader) (*bytes.Buffer, error) {
 						fieldValues = append(fieldValues, "\""+row[field.Index]+"\"")
 					}
 				}
-				fmt.Fprintf(&output, "%v\n", strings.Join(fieldValues, outputSeparator)) // end of year => values + end of line
+				fmt.Fprintf(&output, "%v\n", strings.Join(fieldValues, string(fieldSeparator))) // values for this year + end of line
 			}
 		}
 	}
