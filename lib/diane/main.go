@@ -154,8 +154,6 @@ func (parser *dianeParser) Close() error {
 	return parser.closeFct()
 }
 
-const fieldSeparator = ';' // appelé OFS dans l'ancien script awk
-
 // preprocessDianeFile ouvre un fichier Diane encodé en UTF-16LE puis retourne
 // le Reader d'un fichier CSV intermédiaire dans lequel les données sont
 // projetées à raison d'une ligne par année et par entreprise.
@@ -178,7 +176,6 @@ func preprocessDianeFile(filePath string) (func() error, io.Reader, error) {
 
 func (parser *dianeParser) initCsvReader(reader io.Reader) (err error) {
 	parser.reader = csv.NewReader(reader)
-	parser.reader.Comma = fieldSeparator
 	parser.reader.LazyQuotes = true
 	parser.idx, err = marshal.IndexColumnsFromCsvHeader(parser.reader, Diane{})
 	return err
@@ -450,8 +447,8 @@ func parseDianeRow(idx marshal.ColMapping, row []string) (diane Diane) {
 // les données sont projetées à raison d'une ligne par année et par entreprise,
 // à partir d'un flux CSV dans lequel les colonnes sont dupliquées par année.
 // Pour référence: ce traitement était autrefois implémenté par un script awk.
-func projectYearlyColumnsAsRows(dianeFile io.Reader, output *bytes.Buffer) error {
-
+func projectYearlyColumnsAsRows(dianeFile io.Reader, buffer *bytes.Buffer) error {
+	output := csv.NewWriter(buffer)
 	csvReader := csv.NewReader(dianeFile)
 	csvReader.Comma = ';'
 	csvReader.LazyQuotes = true
@@ -463,10 +460,10 @@ func projectYearlyColumnsAsRows(dianeFile io.Reader, output *bytes.Buffer) error
 	// print header after coalescing yearly fields
 	fields, years := parseHeader(header)
 	fieldNames := []string{}
-	for _, field := range append([]fieldDef{{Name: "Annee", Index: 0}}, fields...) {
-		fieldNames = append(fieldNames, "\""+field.Name+"\"")
+	for _, field := range append([]fieldDef{{Name: "Annee"}}, fields...) {
+		fieldNames = append(fieldNames, field.Name)
 	}
-	fmt.Fprintf(output, "%v\n", strings.Join(fieldNames, string(fieldSeparator))) // field names + end of line
+	output.Write(fieldNames)
 
 	// spread company data so that each year of data has its own row.
 	firstYear, lastYear := getYearRange(years)
@@ -480,12 +477,13 @@ func projectYearlyColumnsAsRows(dianeFile io.Reader, output *bytes.Buffer) error
 			for year := firstYear; year <= lastYear; year++ {
 				fieldValues := []string{fmt.Sprintf("%v", year)} // values, starting with the added "Annee" field
 				for _, field := range fields {
-					fieldValues = append(fieldValues, "\""+row[field.GetIndex(year)]+"\"")
+					fieldValues = append(fieldValues, row[field.GetIndex(year)])
 				}
-				fmt.Fprintf(output, "%v\n", strings.Join(fieldValues, string(fieldSeparator))) // values for this year + end of line
+				output.Write(fieldValues)
 			}
 		}
 	}
+	output.Flush()
 	return nil
 }
 
