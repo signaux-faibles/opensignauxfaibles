@@ -160,7 +160,6 @@ func preprocessDianeFile(filePath string) (func() error, io.Reader, error) {
 	pipedCmds := []*exec.Cmd{
 		exec.Command("cat", filePath),
 		exec.Command("iconv", "--from-code", "UTF-16LE", "--to-code", "UTF-8"), // conversion d'encodage de fichier car awk ne supporte pas UTF-16LE
-		exec.Command("sed", "s/  / /g"),                                        // dé-dupliquer les caractères d'espacement, notamment dans les en-têtes de colonnes
 	}
 	lastCmd := pipedCmds[len(pipedCmds)-1]
 
@@ -503,6 +502,7 @@ func awkScript(cleanedCsvData io.ReadCloser) (*bytes.Buffer, error) {
 		} else { // Field with year
 			yearStr := regexYear.FindString(fieldVal)
 			fieldName := strings.Replace(fieldVal, " "+yearStr, "", 1) // Remove year from column name
+			fieldName = strings.Replace(fieldName, "  ", " ", -1)      // De-duplicate spaces from column name
 			year, err := strconv.Atoi(yearStr)
 			if err != nil {
 				log.Fatal(err)
