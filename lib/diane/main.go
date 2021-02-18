@@ -438,14 +438,14 @@ func parseDianeRow(idx marshal.ColMapping, row []string) (diane Diane) {
 	return diane
 }
 
-type Field struct {
+type fieldDef struct {
 	Name         string
 	IndexPerYear map[int]int // in case of yearly field, this map should contain at last one entry
 	Index        int         // ... otherwise, the field index is stored here
 }
 
-func parseHeader(header []string) ([]Field, int, int) {
-	fields := []Field{}                                         // list of field indexes, incl. for (de-duplicated) yearly fields
+func parseHeader(header []string) ([]fieldDef, int, int) {
+	fields := []fieldDef{}                                      // list of field indexes, incl. for (de-duplicated) yearly fields
 	yearlyFields := map[string]interface{}{}                    // set of fields that specify a year
 	regexYear := regexp.MustCompile("[[:digit:]]{4}")           // RE_YEAR = "[[:digit:]][[:digit:]][[:digit:]][[:digit:]]"
 	regexYearSuffix := regexp.MustCompile(" ([[:digit:]]{4})$") // RE_YEAR_SUFFIX = / ([[:digit:]][[:digit:]][[:digit:]][[:digit:]])$/
@@ -454,7 +454,7 @@ func parseHeader(header []string) ([]Field, int, int) {
 	for field, fieldVal := range header {
 		if !regexYearSuffix.MatchString(fieldVal) { // Field without year
 			fieldName := strings.Replace(fieldVal, "\"", "", 2) // to de-duplicate quotes on "Marquée" column
-			fields = append(fields, Field{Name: fieldName, Index: field})
+			fields = append(fields, fieldDef{Name: fieldName, Index: field})
 		} else { // Field with year
 			yearStr := regexYear.FindString(fieldVal)
 			fieldName := strings.Replace(fieldVal, " "+yearStr, "", 1) // Remove year from column name
@@ -470,7 +470,7 @@ func parseHeader(header []string) ([]Field, int, int) {
 				lastYear = year
 			}
 			if _, alreadyKnown := yearlyFields[fieldName]; !alreadyKnown {
-				fields = append(fields, Field{Name: fieldName, IndexPerYear: map[int]int{}})
+				fields = append(fields, fieldDef{Name: fieldName, IndexPerYear: map[int]int{}})
 				yearlyFields[fieldName] = true
 			}
 			fields[len(fields)-1].IndexPerYear[year] = field
