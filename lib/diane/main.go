@@ -8,7 +8,6 @@ import (
 	"io"
 	"log"
 	"os"
-	"os/exec"
 	"regexp"
 	"strconv"
 	"strings"
@@ -16,6 +15,8 @@ import (
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/marshal"
+	"golang.org/x/text/encoding/unicode"
+	"golang.org/x/text/transform"
 )
 
 // Diane Information financières
@@ -156,44 +157,22 @@ func (parser *dianeParser) Close() error {
 // réorganisation des des données pour éviter la duplication de colonnes par année
 func preprocessDianeFile(filePath string) (func() error, io.Reader, error) {
 
-	// TODO: implémenter ces traitements en Go
-	pipedCmds := []*exec.Cmd{
-		exec.Command("cat", filePath),
-		exec.Command("iconv", "--from-code", "UTF-16LE", "--to-code", "UTF-8"), // conversion d'encodage de fichier car awk ne supporte pas UTF-16LE
-	}
-	lastCmd := pipedCmds[len(pipedCmds)-1]
-
-	var err error
-	close := func() error {
-		if err := lastCmd.Wait(); err != nil {
-			return errors.New("[convert_diane.sh] failed with " + err.Error())
-		}
-		return nil
-	}
-
-	// pipe streams between commands
-	for i := 0; i < len(pipedCmds)-1; i++ {
-		pipedCmds[i].Stderr = os.Stderr
-		pipedCmds[i+1].Stdin, err = pipedCmds[i].StdoutPipe()
-		if err != nil {
-			return close, nil, err
-		}
-	}
-	lastCmd.Stderr = os.Stderr
-	cleanedCsvData, err := lastCmd.StdoutPipe()
+	file, err := os.Open(filePath)
 	if err != nil {
-		return close, nil, err
+		return nil, nil, err
 	}
 
-	// start piped commands, from last to first
-	for i := len(pipedCmds) - 1; i >= 0; i-- {
-		err = pipedCmds[i].Start()
-		if err != nil {
-			return close, nil, err
-		}
+	close := func() error {
+		return file.Close()
 	}
 
-	output, err := awkScript(cleanedCsvData)
+	reader := transform.NewReader(file, unicode.UTF16(unicode.LittleEndian, unicode.UseBOM).NewDecoder())
+	// scanner := bufio.NewScanner(reader)
+	// for scanner.Scan() {
+	// 	fmt.Printf(scanner.Text())
+	// }
+
+	output, err := awkScript(reader)
 	if err != nil {
 		return close, nil, err
 	}
@@ -468,7 +447,7 @@ func parseDianeRow(idx marshal.ColMapping, row []string) (diane Diane) {
 	return diane
 }
 
-func awkScript(cleanedCsvData io.ReadCloser) (*bytes.Buffer, error) {
+func awkScript(cleanedCsvData io.Reader) (*bytes.Buffer, error) {
 
 	csvReader := csv.NewReader(cleanedCsvData)
 	csvReader.Comma = ';'
