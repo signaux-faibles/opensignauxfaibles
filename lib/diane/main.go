@@ -450,13 +450,12 @@ func parseHeader(header []string) ([]fieldDef, int, int) {
 	regexYearSuffix := regexp.MustCompile(" [[:digit:]]{4}$")
 	firstYear := 0
 	lastYear := 0
-	for field, fieldVal := range header {
-		if !regexYearSuffix.MatchString(fieldVal) { // Field without year
-			fieldName := strings.Replace(fieldVal, "\"", "", 2) // to de-duplicate quotes on "Marquée" column
+	for field, fieldName := range header {
+		if !regexYearSuffix.MatchString(fieldName) { // Field without year
 			fields = append(fields, fieldDef{Name: fieldName, Index: field})
 		} else { // Field with year
-			yearStr := regexYearSuffix.FindString(fieldVal)
-			fieldName := strings.Replace(fieldVal, yearStr, "", 1) // Remove year from column name
+			yearStr := regexYearSuffix.FindString(fieldName)
+			fieldName = strings.Replace(fieldName, yearStr, "", 1) // Remove year from column name
 			fieldName = strings.Replace(fieldName, "  ", " ", -1)  // De-duplicate spaces from column name
 			year, err := strconv.Atoi(strings.Trim(yearStr, " "))
 			if err != nil {
