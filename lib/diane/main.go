@@ -444,17 +444,19 @@ type fieldDef struct {
 	Index        int         // ... otherwise, the field index is stored here
 }
 
+// parseHeader extrait les indices de chaque champ et les années associées.
 func parseHeader(header []string) ([]fieldDef, map[int]interface{}) {
 	fields := []fieldDef{}                   // list of field indexes, incl. for (de-duplicated) yearly fields
-	yearlyFields := map[string]interface{}{} // set of fields that specify a year
 	years := map[int]interface{}{}           // set of years, used to compute firstYear and lastYear
+	yearlyFields := map[string]interface{}{} // set of fields that specify a year
 	regexYearSuffix := regexp.MustCompile(" [[:digit:]]{4}$")
 	for field, fieldName := range header {
-		if !regexYearSuffix.MatchString(fieldName) { // Field without year
+		fieldHasYear := regexYearSuffix.MatchString(fieldName)
+		if !fieldHasYear {
 			fields = append(fields, fieldDef{Name: fieldName, Index: field})
-		} else { // Field with year
+		} else {
 			yearStr := regexYearSuffix.FindString(fieldName)
-			fieldName = strings.Replace(fieldName, yearStr, "", 1) // Remove year from column name
+			fieldName = strings.Replace(fieldName, yearStr, "", 1) // Remove year suffix (incl. space) from column name
 			fieldName = strings.Replace(fieldName, "  ", " ", -1)  // De-duplicate spaces from column name
 			year, err := strconv.Atoi(strings.Trim(yearStr, " "))
 			if err != nil {
@@ -462,8 +464,8 @@ func parseHeader(header []string) ([]fieldDef, map[int]interface{}) {
 			}
 			years[year] = true
 			if _, alreadyKnown := yearlyFields[fieldName]; !alreadyKnown {
-				fields = append(fields, fieldDef{Name: fieldName, IndexPerYear: map[int]int{}})
 				yearlyFields[fieldName] = true
+				fields = append(fields, fieldDef{Name: fieldName, IndexPerYear: map[int]int{}})
 			}
 			fields[len(fields)-1].IndexPerYear[year] = field
 		}
@@ -471,9 +473,9 @@ func parseHeader(header []string) ([]fieldDef, map[int]interface{}) {
 	return fields, years
 }
 
-func awkScript(cleanedCsvData io.Reader) (*bytes.Buffer, error) {
+func awkScript(dianeFile io.Reader) (*bytes.Buffer, error) {
 
-	csvReader := csv.NewReader(cleanedCsvData)
+	csvReader := csv.NewReader(dianeFile)
 	csvReader.Comma = ';'
 	csvReader.LazyQuotes = true
 	header, err := csvReader.Read()
