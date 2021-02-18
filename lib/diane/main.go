@@ -439,24 +439,22 @@ func parseDianeRow(idx marshal.ColMapping, row []string) (diane Diane) {
 }
 
 type Field struct {
+	Name         string
 	IndexPerYear map[int]int // in case of yearly field, this map should contain at last one entry
 	Index        int         // ... otherwise, the field index is stored here
 }
 
-func parseHeader(header []string, output *bytes.Buffer, outputSeparator string) ([]Field, int, int) {
-	// TODO: just return fields, instead of printing them
+func parseHeader(header []string) ([]Field, int, int) {
 	fields := []Field{}                                         // list of field indexes, incl. for (de-duplicated) yearly fields
 	yearlyFields := map[string]interface{}{}                    // set of fields that specify a year
 	regexYear := regexp.MustCompile("[[:digit:]]{4}")           // RE_YEAR = "[[:digit:]][[:digit:]][[:digit:]][[:digit:]]"
 	regexYearSuffix := regexp.MustCompile(" ([[:digit:]]{4})$") // RE_YEAR_SUFFIX = / ([[:digit:]][[:digit:]][[:digit:]][[:digit:]])$/
 	firstYear := 0
 	lastYear := 0
-	fmt.Fprintf(output, "%v", "\"Annee\"")
 	for field, fieldVal := range header {
 		if !regexYearSuffix.MatchString(fieldVal) { // Field without year
-			fields = append(fields, Field{Index: field})
 			fieldName := strings.Replace(fieldVal, "\"", "", 2) // to de-duplicate quotes on "Marquée" column
-			fmt.Fprintf(output, "%v\"%v\"", outputSeparator, fieldName)
+			fields = append(fields, Field{Name: fieldName, Index: field})
 		} else { // Field with year
 			yearStr := regexYear.FindString(fieldVal)
 			fieldName := strings.Replace(fieldVal, " "+yearStr, "", 1) // Remove year from column name
@@ -472,14 +470,12 @@ func parseHeader(header []string, output *bytes.Buffer, outputSeparator string) 
 				lastYear = year
 			}
 			if _, alreadyKnown := yearlyFields[fieldName]; !alreadyKnown {
-				fields = append(fields, Field{IndexPerYear: map[int]int{}})
+				fields = append(fields, Field{Name: fieldName, IndexPerYear: map[int]int{}})
 				yearlyFields[fieldName] = true
-				fmt.Fprintf(output, "%v\"%v\"", outputSeparator, fieldName)
 			}
 			fields[len(fields)-1].IndexPerYear[year] = field
 		}
 	}
-	fmt.Fprint(output, "\n") // end of line
 	return fields, firstYear, lastYear
 }
 
@@ -498,7 +494,12 @@ func awkScript(cleanedCsvData io.Reader) (*bytes.Buffer, error) {
 	outputSeparator := ";" // OFS
 
 	// coalesce yearly fields from header
-	fields, firstYear, lastYear := parseHeader(header, &output, outputSeparator)
+	fields, firstYear, lastYear := parseHeader(header)
+	fmt.Fprintf(&output, "%v", "\"Annee\"")
+	for _, field := range fields {
+		fmt.Fprintf(&output, "%v\"%v\"", outputSeparator, field.Name)
+	}
+	fmt.Fprint(&output, "\n") // end of line
 
 	// spread company data so that each year of data has its own row.
 	for {
