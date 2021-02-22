@@ -2,8 +2,9 @@
 
 build: ## Build the sfdata binary
 	# Note: don't forget to run `go generate ./...` before building.
-	GOARCH=amd64 go build -o "sfdata" -ldflags "-X main.GitCommit=$(shell git rev-parse HEAD)"
-	@ # Other note: GOARCH=amd64 environment variable is necessary for the binary to work in production environment
+	GOOS=linux GOARCH=amd64 go build -o "sfdata" -ldflags "-X main.GitCommit=$(shell git rev-parse HEAD)"
+	@ # Other note: environment variables GOOS=linux and GOARCH=amd64 are necessary
+	@ # for the binary to work in our production environment.
 
 test: ## Run automated tests
 	./test-all.sh
