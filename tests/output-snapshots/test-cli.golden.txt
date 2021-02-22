@@ -15,6 +15,7 @@ Flags:
 	-v, --verbose show verbose help (type: bool)
 
 Sets:
+	parseFile         Parse un fichier vers la sortie standard
 	purge             Supprime une partie des données compactées
 	check             Vérifie la validité d'un batch avant son importation
 	pruneEntities     Compte/supprime les entités hors périmètre
