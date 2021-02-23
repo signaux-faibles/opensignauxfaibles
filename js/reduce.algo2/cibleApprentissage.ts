@@ -21,7 +21,7 @@ export type Variables = {
 
 export function cibleApprentissage(
   output_indexed: ParPériode<{ tag_failure?: boolean; tag_default?: boolean }>,
-  n_months: number
+  n_months: number /** nombre de mois avant/après l'évènement pendant lesquels outcome sera true */
 ): ParPériode<SortieCibleApprentissage> {
   "use strict"
 

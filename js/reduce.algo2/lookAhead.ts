@@ -20,8 +20,8 @@ export function lookAhead<
 >(
   data: ParPériode<T>,
   attr_name: K,
-  n_months: number,
-  past: boolean
+  n_months: number /** nombre de mois avant/après l'évènement pendant lesquels outcome sera true */,
+  past: boolean /** si true: on popule outcome pour les périodes passées, au lieu des périodes futures */
 ): ParPériode<Outcome> {
   "use strict"
   // Est-ce que l'évènement se répercute dans le passé (past = true on pourra se
