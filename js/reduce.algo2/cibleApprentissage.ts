@@ -40,7 +40,28 @@ export function cibleApprentissage(
     }
   }
 
-  const output_outcome = f.lookAhead(merged_info, "outcome", n_months, true)
+  function objectMap<InputVal, OutputVal>(
+    obj: Record<string, InputVal>,
+    fct: (key: string, val: InputVal) => OutputVal
+  ): Record<string, OutputVal> {
+    const result: Record<string, OutputVal> = {}
+    Object.entries(obj).forEach(([key, val]) => {
+      result[key] = fct(key, val)
+    })
+    return result
+  }
+
+  const outputPastOutcome = objectMap(
+    f.lookAhead(merged_info, "outcome", n_months, false),
+    (_, val) => ({
+      ...val,
+      time_til_outcome: -val.time_til_outcome, // ex: -1 veut dire qu'il y a eu une défaillance il y a 1 mois
+    })
+  )
+  const output_outcome = {
+    ...outputPastOutcome,
+    ...f.lookAhead(merged_info, "outcome", n_months, true),
+  }
   const output_default = f.lookAhead(
     output_cotisation,
     "tag_default",
