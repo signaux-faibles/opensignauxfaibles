@@ -3,6 +3,8 @@ import { defaillances } from "./defaillances"
 import { EntréeDéfaillances } from "../GeneratedTypes"
 import { ParHash } from "../RawDataTypes"
 
+// TODO: modifier toutes les dates YYYY-MM-DD employées comme clés pour respecter le type ParPeriode<>
+
 test("Une ouverture de liquidation est prise en compte dans la période courante et les suivantes", (t) => {
   const output_indexed = {
     ["2018-01-01"]: {},

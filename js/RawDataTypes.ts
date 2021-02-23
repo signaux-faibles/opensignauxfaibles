@@ -21,7 +21,7 @@ import {
 
 // Types de données de base
 
-export type Periode = string // Date.getTime().toString()
+export type Periode = string // TODO: empêcher l'usage de valeurs non numériques, c.a.d. autres que Date.getTime().toString()
 export type Timestamp = number // Date.getTime()
 export type ParPériode<T> = Record<Periode, T>
 
