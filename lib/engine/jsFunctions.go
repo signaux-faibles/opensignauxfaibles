@@ -1025,7 +1025,15 @@ function sirene(sireneArray) {
             outcome: Boolean(((_a = output_procol[k]) === null || _a === void 0 ? void 0 : _a.tag_failure) || ((_b = output_cotisation[k]) === null || _b === void 0 ? void 0 : _b.tag_default)),
         };
     }
-    const output_outcome = f.lookAhead(merged_info, "outcome", n_months, true);
+    function objectMap(obj, fct) {
+        const result = {};
+        Object.entries(obj).forEach(([key, val]) => {
+            result[key] = fct(key, val);
+        });
+        return result;
+    }
+    const outputPastOutcome = objectMap(f.lookAhead(merged_info, "outcome", n_months, false), (_, val) => (Object.assign(Object.assign({}, val), { time_til_outcome: -val.time_til_outcome })));
+    const output_outcome = Object.assign(Object.assign({}, outputPastOutcome), f.lookAhead(merged_info, "outcome", n_months, true));
     const output_default = f.lookAhead(output_cotisation, "tag_default", n_months, true);
     const output_failure = f.lookAhead(output_procol, "tag_failure", n_months, true);
     const output_cible = all_keys.reduce(function (m, k) {
