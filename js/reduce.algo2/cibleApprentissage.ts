@@ -1,5 +1,7 @@
 import { f } from "./functions"
 import { ParPériode } from "../RawDataTypes"
+import { SortieDefaillances } from "./defaillances"
+import { SortieCotisation } from "./cotisation"
 import { Outcome } from "./lookAhead"
 
 export type SortieCibleApprentissage = {
@@ -7,9 +9,9 @@ export type SortieCibleApprentissage = {
   /** Distance de l'évènement, exprimé en nombre de périodes. */
   time_til_outcome?: Outcome["time_til_outcome"]
   /** Distance de l'évènement basé sur le défaut de paiement des cotisations (cf tag_default), exprimé en nombre de périodes. */
-  time_til_default?: number
+  time_til_default?: Outcome["time_til_outcome"]
   /** Distance de l'évènement basé sur une défaillance (cf tag_failure des procédures collectives), exprimé en nombre de périodes. */
-  time_til_failure?: number
+  time_til_failure?: Outcome["time_til_outcome"]
 }
 
 // Variables est inspecté pour générer docs/variables.json (cf generate-docs.ts)
@@ -20,7 +22,10 @@ export type Variables = {
 }
 
 export function cibleApprentissage(
-  output_indexed: ParPériode<{ tag_failure?: boolean; tag_default?: boolean }>,
+  output_indexed: ParPériode<{
+    tag_failure?: SortieDefaillances["tag_failure"]
+    tag_default?: SortieCotisation["tag_default"]
+  }>,
   n_months: number /** nombre de mois avant/après l'évènement pendant lesquels outcome sera true */
 ): ParPériode<SortieCibleApprentissage> {
   "use strict"
