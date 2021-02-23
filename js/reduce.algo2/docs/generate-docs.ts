@@ -1,3 +1,7 @@
+// Ce script génère une documentation des champs (variables.json) produits par
+// les fonctions TypeScript employées dans l'opération `reduce.algo2`, par
+// introspection des types `Variables` définis à coté de ces fonctions.
+
 import * as path from "path"
 import * as TJS from "typescript-json-schema"
 
