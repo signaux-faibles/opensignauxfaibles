@@ -38,6 +38,7 @@ func main() {
 
 func runCLI(args ...string) int {
 	cmdHandlerWithArgs := parseCommandFromArgs(args)
+	useDb := os.Getenv("NO_DB") != "1"
 	// exit if no command was recognized in args
 	if cmdHandlerWithArgs == nil {
 		fmt.Printf("Commande non reconnue. Utilisez %v --help pour lister les commandes.\n", strings.Join(args, " "))
@@ -49,12 +50,16 @@ func runCLI(args ...string) int {
 		return 2
 	}
 	// execute the command
-	connectDb()
+	if useDb {
+		connectDb()
+	}
 	if err := cmdHandlerWithArgs.Run(); err != nil {
 		fmt.Printf("\nErreur: %v\n", err)
 		return 3
 	}
-	engine.FlushEventQueue()
+	if useDb {
+		engine.FlushEventQueue()
+	}
 	return 0
 }
 
@@ -91,6 +96,7 @@ type commandHandler interface {
 // Each entry will be populated with parameters parsed from command line arguments.
 // Each entry must implement the commandHandler interface.
 type cliCommands struct {
+	ParseFile         parseFileHandler
 	Purge             purgeBatchHandler
 	Check             checkBatchHandler
 	PruneEntities     pruneEntitiesHandler
