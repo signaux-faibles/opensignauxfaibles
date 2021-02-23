@@ -24,7 +24,7 @@ func IndexColumnsFromCsvHeader(reader *csv.Reader, destObject interface{}) (ColM
 
 // ValidateAndIndexColumnsFromColTags valide puis indexe les colonnes trouvées
 // en en-tête d'un fichier csv, à partir des noms de colonnes spécifiés dans le
-// tag "col" annotant les propriétés du type de destination du parseur.
+// tag "col" ou "cols" annotant les propriétés du type de destination du parseur.
 func ValidateAndIndexColumnsFromColTags(headerRow []string, destObject interface{}) (ColMapping, error) {
 	requiredFields := extractColTags(destObject)
 	idx := indexFields(headerRow)
@@ -144,14 +144,18 @@ func LowercaseFields(headerFields []string) []string {
 }
 
 // extractColTags extraie les noms de colonnes depuis les valeurs du tag "col"
-// de chaque propriété de l'objet fourni.
+// (ou "cols", séparés par des virgules) de chaque propriété de l'objet fourni.
 // Il est possible d'associer plusieurs colonnes en séparant par des virgules.
 func extractColTags(object interface{}) (expectedFields []string) {
 	structure := reflect.TypeOf(object)
 	for i := 0; i < structure.NumField(); i++ {
-		tag := structure.Field(i).Tag.Get("col")
-		if tag != "" {
-			expectedFields = append(expectedFields, strings.Split(tag, ",")...)
+		tagWithSingleVal := structure.Field(i).Tag.Get("col")
+		if tagWithSingleVal != "" {
+			expectedFields = append(expectedFields, tagWithSingleVal)
+		}
+		tagWithMultiVal := structure.Field(i).Tag.Get("cols")
+		if tagWithMultiVal != "" {
+			expectedFields = append(expectedFields, strings.Split(tagWithMultiVal, ",")...)
 		}
 	}
 	return expectedFields
