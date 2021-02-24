@@ -1,6 +1,6 @@
 import test, { ExecutionContext } from "ava"
 import { lookAhead } from "./lookAhead"
-import { parPériode } from "../test/helpers/parPériode"
+import { parPériode } from "../test/helpers/parPeriode"
 
 type TestCase = {
   name: string
