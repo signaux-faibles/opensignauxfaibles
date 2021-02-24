@@ -7,7 +7,7 @@ type TestCase = {
   attr_name: Parameters<typeof lookAhead>[1]
   n_months: Parameters<typeof lookAhead>[2]
   past: Parameters<typeof lookAhead>[3]
-  expected: unknown
+  expected: Partial<ReturnType<typeof lookAhead>>
 }
 
 const parPériode = <T extends Record<number, unknown>>(
@@ -28,7 +28,9 @@ const testCases: Array<TestCase> = [
     attr_name: "outcome",
     n_months: 1,
     past: true,
-    expected: { "2015-01-01": { time_til_outcome: 0, outcome: true } },
+    expected: parPériode({
+      "2015-01-01": { time_til_outcome: 0, outcome: true },
+    }),
   },
   {
     name:
@@ -37,7 +39,7 @@ const testCases: Array<TestCase> = [
     attr_name: "outcome",
     n_months: 1,
     past: true,
-    expected: {},
+    expected: parPériode({}),
   },
   {
     name:
@@ -50,7 +52,7 @@ const testCases: Array<TestCase> = [
     attr_name: "outcome",
     n_months: 1,
     past: true,
-    expected: {},
+    expected: parPériode({}),
   },
   {
     name:
@@ -63,11 +65,11 @@ const testCases: Array<TestCase> = [
     attr_name: "outcome",
     n_months: 1,
     past: true,
-    expected: {
+    expected: parPériode({
       "2015-01-01": { time_til_outcome: 0, outcome: true },
       "2015-02-01": { time_til_outcome: 0, outcome: true },
       "2015-03-01": { time_til_outcome: 0, outcome: true },
-    },
+    }),
   },
   {
     name:
@@ -80,11 +82,11 @@ const testCases: Array<TestCase> = [
     attr_name: "outcome",
     n_months: 1,
     past: true,
-    expected: {
+    expected: parPériode({
       "2015-01-01": { time_til_outcome: 2, outcome: false },
       "2015-02-01": { time_til_outcome: 1, outcome: true },
       "2015-03-01": { time_til_outcome: 0, outcome: true },
-    },
+    }),
   },
   {
     name: "les périodes suivant l'échéance ne sont pas retournées",
@@ -96,9 +98,9 @@ const testCases: Array<TestCase> = [
     attr_name: "outcome",
     n_months: 1,
     past: true,
-    expected: {
+    expected: parPériode({
       "2015-01-01": { time_til_outcome: 0, outcome: true },
-    },
+    }),
   },
   {
     name:
@@ -111,11 +113,11 @@ const testCases: Array<TestCase> = [
     attr_name: "outcome",
     n_months: 1,
     past: false,
-    expected: {
+    expected: parPériode({
       "2015-01-01": { time_til_outcome: 0, outcome: true },
       "2015-02-01": { time_til_outcome: 1, outcome: true },
       "2015-03-01": { time_til_outcome: 2, outcome: false },
-    },
+    }),
   },
   {
     name:
@@ -128,11 +130,11 @@ const testCases: Array<TestCase> = [
     attr_name: "outcome",
     n_months: 1,
     past: false,
-    expected: {
+    expected: parPériode({
       "2015-01-01": { time_til_outcome: 0, outcome: true },
       "2015-02-01": { time_til_outcome: 1, outcome: true },
       "2015-03-01": { time_til_outcome: 2, outcome: false },
-    },
+    }),
   },
 ]
 

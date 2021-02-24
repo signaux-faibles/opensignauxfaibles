@@ -5,7 +5,7 @@ type TestCase = {
   // name: string
   data: Parameters<typeof cibleApprentissage>[0]
   n_months: Parameters<typeof cibleApprentissage>[1]
-  expected: unknown
+  expected: Partial<ReturnType<typeof cibleApprentissage>>
 }
 
 const parPériode = <T extends Record<number, unknown>>(
@@ -22,9 +22,9 @@ const testCases: TestCase[] = [
   {
     data: parPériode({ "2015-01-01": { tag_default: true } }),
     n_months: 1,
-    expected: {
+    expected: parPériode({
       "2015-01-01": { time_til_outcome: 0, outcome: true, time_til_default: 0 },
-    },
+    }),
   },
   {
     data: parPériode({
@@ -34,12 +34,12 @@ const testCases: TestCase[] = [
       "2015-04-01": {},
     }),
     n_months: 1,
-    expected: {
+    expected: parPériode({
       "2015-01-01": {},
       "2015-02-01": {},
       "2015-03-01": {},
       "2015-04-01": {},
-    },
+    }),
   },
   {
     data: parPériode({
@@ -49,7 +49,7 @@ const testCases: TestCase[] = [
       "2015-04-01": {},
     }),
     n_months: 1,
-    expected: {
+    expected: parPériode({
       "2015-01-01": {
         time_til_outcome: 2,
         outcome: false,
@@ -58,7 +58,7 @@ const testCases: TestCase[] = [
       "2015-02-01": { time_til_outcome: 1, outcome: true, time_til_default: 1 },
       "2015-03-01": { time_til_outcome: 0, outcome: true, time_til_default: 0 },
       "2015-04-01": {},
-    },
+    }),
   },
   {
     data: parPériode({
@@ -68,7 +68,7 @@ const testCases: TestCase[] = [
       "2015-04-01": {},
     }),
     n_months: 1,
-    expected: {
+    expected: parPériode({
       "2015-01-01": {
         time_til_outcome: 2,
         outcome: false,
@@ -77,7 +77,7 @@ const testCases: TestCase[] = [
       "2015-02-01": { time_til_outcome: 1, outcome: true, time_til_failure: 1 },
       "2015-03-01": { time_til_outcome: 0, outcome: true, time_til_failure: 0 },
       "2015-04-01": {},
-    },
+    }),
   },
   {
     data: parPériode({
@@ -87,7 +87,7 @@ const testCases: TestCase[] = [
       "2015-04-01": { tag_default: true },
     }),
     n_months: 1,
-    expected: {
+    expected: parPériode({
       "2015-01-01": {
         time_til_outcome: 2,
         outcome: false,
@@ -107,7 +107,7 @@ const testCases: TestCase[] = [
         time_til_failure: 0,
       },
       "2015-04-01": { time_til_outcome: 0, outcome: true, time_til_default: 0 },
-    },
+    }),
   },
 ]
 
