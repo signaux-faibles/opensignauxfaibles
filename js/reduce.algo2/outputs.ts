@@ -75,7 +75,7 @@ export function outputs(
 
   const output_indexed = new Proxy(rawOutputIndexed, validator)
 
-  output_indexed["abd"] = {} as DonnéesAgrégées // => npm test fails with "output_indexed only accepts timestamps as keys" (at runtime)
+  // output_indexed["abd"] = {} as DonnéesAgrégées // => npm test fails with "output_indexed only accepts timestamps as keys" (at runtime)
 
   return [output_array, output_indexed]
 }
