@@ -2,18 +2,9 @@ import test from "ava"
 import { defaillances } from "./defaillances"
 import { EntréeDéfaillances } from "../GeneratedTypes"
 import { ParHash } from "../RawDataTypes"
+import { parPériode } from "../test/helpers/parPériode"
 
 type OutputIndexed = Parameters<typeof defaillances>[1]
-
-const parPériode = <T extends Record<number, unknown>>(
-  indexed: Record<string, T[keyof T]>
-): T => {
-  const res = {} as T
-  Object.entries(indexed).forEach(([k, v]) => {
-    res[new Date(k).getTime()] = v
-  })
-  return res
-}
 
 test("Une ouverture de liquidation est prise en compte dans la période courante et les suivantes", (t) => {
   const output_indexed: OutputIndexed = parPériode({

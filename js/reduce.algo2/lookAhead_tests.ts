@@ -1,5 +1,6 @@
 import test, { ExecutionContext } from "ava"
 import { lookAhead } from "./lookAhead"
+import { parPériode } from "../test/helpers/parPériode"
 
 type TestCase = {
   name: string
@@ -8,16 +9,6 @@ type TestCase = {
   n_months: Parameters<typeof lookAhead>[2]
   past: Parameters<typeof lookAhead>[3]
   expected: Partial<ReturnType<typeof lookAhead>>
-}
-
-const parPériode = <T extends Record<number, unknown>>(
-  indexed: Record<string, T[keyof T]>
-): T => {
-  const res = {} as T
-  Object.entries(indexed).forEach(([k, v]) => {
-    res[new Date(k).getTime()] = v
-  })
-  return res
 }
 
 const testCases: Array<TestCase> = [

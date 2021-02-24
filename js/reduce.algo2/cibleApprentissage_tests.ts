@@ -1,21 +1,12 @@
 import test, { ExecutionContext } from "ava"
 import { cibleApprentissage } from "./cibleApprentissage"
+import { parPériode } from "../test/helpers/parPériode"
 
 type TestCase = {
   // name: string
   data: Parameters<typeof cibleApprentissage>[0]
   n_months: Parameters<typeof cibleApprentissage>[1]
   expected: Partial<ReturnType<typeof cibleApprentissage>>
-}
-
-const parPériode = <T extends Record<number, unknown>>(
-  indexed: Record<string, T[keyof T]>
-): T => {
-  const res = {} as T
-  Object.entries(indexed).forEach(([k, v]) => {
-    res[new Date(k).getTime()] = v
-  })
-  return res
 }
 
 const testCases: TestCase[] = [

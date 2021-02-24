@@ -1,16 +1,7 @@
 import test, { ExecutionContext } from "ava"
 import { add } from "./add"
 import { ParPériode } from "../RawDataTypes"
-
-const parPériode = <T extends Record<number, unknown>>(
-  indexed: Record<string, T[keyof T]>
-): T => {
-  const res = {} as T
-  Object.entries(indexed).forEach(([k, v]) => {
-    res[new Date(k).getTime()] = v
-  })
-  return res
-}
+import { parPériode } from "../test/helpers/parPériode"
 
 const testCases = [
   {
