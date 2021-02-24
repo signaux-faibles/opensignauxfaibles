@@ -8,21 +8,31 @@ type TestCase = {
   expected: unknown
 }
 
+const parPériode = <T extends Record<number, unknown>>(
+  indexed: Record<string, T[keyof T]>
+): T => {
+  const res = {} as T
+  Object.entries(indexed).forEach(([k, v]) => {
+    res[new Date(k).getTime()] = v
+  })
+  return res
+}
+
 const testCases: TestCase[] = [
   {
-    data: { "2015-01-01": { tag_default: true } },
+    data: parPériode({ "2015-01-01": { tag_default: true } }),
     n_months: 1,
     expected: {
       "2015-01-01": { time_til_outcome: 0, outcome: true, time_til_default: 0 },
     },
   },
   {
-    data: {
+    data: parPériode({
       "2015-01-01": {},
       "2015-02-01": {},
       "2015-03-01": {},
       "2015-04-01": {},
-    },
+    }),
     n_months: 1,
     expected: {
       "2015-01-01": {},
@@ -32,12 +42,12 @@ const testCases: TestCase[] = [
     },
   },
   {
-    data: {
+    data: parPériode({
       "2015-01-01": {},
       "2015-02-01": {},
       "2015-03-01": { tag_default: true },
       "2015-04-01": {},
-    },
+    }),
     n_months: 1,
     expected: {
       "2015-01-01": {
@@ -51,12 +61,12 @@ const testCases: TestCase[] = [
     },
   },
   {
-    data: {
+    data: parPériode({
       "2015-01-01": {},
       "2015-02-01": {},
       "2015-03-01": { tag_failure: true },
       "2015-04-01": {},
-    },
+    }),
     n_months: 1,
     expected: {
       "2015-01-01": {
@@ -70,12 +80,12 @@ const testCases: TestCase[] = [
     },
   },
   {
-    data: {
+    data: parPériode({
       "2015-01-01": {},
       "2015-02-01": {},
       "2015-03-01": { tag_failure: true },
       "2015-04-01": { tag_default: true },
-    },
+    }),
     n_months: 1,
     expected: {
       "2015-01-01": {
