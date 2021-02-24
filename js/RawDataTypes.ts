@@ -21,8 +21,8 @@ import {
 
 // Types de données de base
 
-export type Periode = number // Date.getTime()
 export type Timestamp = number // Date.getTime()
+export type Periode = Timestamp
 export type ParPériode<T> = Record<Periode, T>
 
 export type Departement = string
