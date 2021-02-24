@@ -86,7 +86,7 @@ export function map(this: EntréeMap): void {
           .forEach((periode) => {
             const data: SortieMapEtablissements = {
               [this._id]: {
-                ...output_apart[periode],
+                ...output_apart[parseInt(periode)],
                 siret: this._id,
               },
             }
@@ -94,7 +94,7 @@ export function map(this: EntréeMap): void {
               {
                 batch: actual_batch,
                 siren: this._id.substring(0, 9),
-                periode: new Date(Number(periode)),
+                periode: new Date(parseInt(periode)),
                 type: "apart",
               },
               data

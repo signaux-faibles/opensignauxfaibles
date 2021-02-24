@@ -34,11 +34,12 @@ export function lookAhead<
   let counter = -1
   const output = Object.keys(data)
     .sort(past ? reverse : chronologic)
-    .reduce(function (m, period) {
+    .reduce(function (m, strPériode) {
+      const période = parseInt(strPériode)
       // Si on a déjà détecté quelque chose, on compte le nombre de périodes
       if (counter >= 0) counter = counter + 1
 
-      const dataInPeriod: Record<string, unknown> | undefined = data[period]
+      const dataInPeriod: Record<string, unknown> | undefined = data[période]
       if (dataInPeriod && dataInPeriod[attr_name]) {
         // si l'évènement se produit on retombe à 0
         counter = 0
@@ -46,14 +47,14 @@ export function lookAhead<
 
       if (counter >= 0) {
         // l'évènement s'est produit
-        const out = m[period] ?? ({} as Outcome)
+        const out = m[période] ?? ({} as Outcome)
         out.time_til_outcome = counter
         if (out.time_til_outcome <= n_months) {
           out.outcome = true
         } else {
           out.outcome = false
         }
-        m[period] = out
+        m[période] = out
       }
       return m
     }, {} as ParPériode<Outcome>)

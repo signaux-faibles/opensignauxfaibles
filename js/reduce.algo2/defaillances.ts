@@ -60,7 +60,7 @@ export function defaillances(
     })
 
     time_til_last.forEach((time) => {
-      const outputForTime = output_indexed[time]
+      const outputForTime = output_indexed[parseInt(time)]
       if (outputForTime !== undefined) {
         outputForTime.etat_proc_collective = event.etat
         outputForTime.date_proc_collective = event.date_proc_col

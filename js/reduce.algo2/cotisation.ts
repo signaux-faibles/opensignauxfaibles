@@ -47,8 +47,9 @@ export function cotisation(
     montantsPO: number[]
   }> = {}
 
-  for (const [periode, input] of Object.entries(output_indexed)) {
-    const périodeCourante = output_indexed[periode]?.periode
+  for (const [strPériode, input] of Object.entries(output_indexed)) {
+    const période = parseInt(strPériode)
+    const périodeCourante = output_indexed[période]?.periode
     if (périodeCourante === undefined) continue
 
     const douzeMoisÀVenir = f
@@ -69,8 +70,8 @@ export function cotisation(
     })
 
     // Calcul des cotisations moyennes à partir des valeurs accumulées ci-dessus
-    const { cotisations, montantsPO, montantsPP } = futureArrays[periode] ?? {}
-    const out = sortieCotisation[periode] ?? ({} as SortieCotisation)
+    const { cotisations, montantsPO, montantsPP } = futureArrays[période] ?? {}
+    const out = sortieCotisation[période] ?? ({} as SortieCotisation)
     if (cotisations && cotisations.length >= 12) {
       out.cotisation_moy12m = moyenne(cotisations)
     }
@@ -103,7 +104,7 @@ export function cotisation(
         out.ratio_dette_moy12m = moyenne(detteVals)
       }
     }
-    sortieCotisation[periode] = out
+    sortieCotisation[période] = out
     // Remplace dans cibleApprentissage
     //val.dette_any_12m = (val.montantsPA || []).reduce((p,c) => (c >=
     //100) || p, false) || (val.montantsPO || []).reduce((p, c) => (c >=
@@ -113,8 +114,9 @@ export function cotisation(
   // Calcul des défauts URSSAF prolongés
   let counter = 0
   for (const k of Object.keys(sortieCotisation).sort()) {
-    const cotis = sortieCotisation[k] as SortieCotisation
-    const { ratio_dette } = sortieCotisation[k] ?? {}
+    const période = parseInt(k)
+    const cotis = sortieCotisation[période] as SortieCotisation
+    const { ratio_dette } = sortieCotisation[période] ?? {}
     if (!ratio_dette) continue
     if (ratio_dette > 0.01) {
       cotis.tag_debit = true // Survenance d'un débit d'au moins 1% des cotisations

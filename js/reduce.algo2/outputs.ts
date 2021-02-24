@@ -51,31 +51,10 @@ export function outputs(
     }
   })
 
-  const rawOutputIndexed = output_array.reduce(function (periodes, val) {
+  const output_indexed = output_array.reduce(function (periodes, val) {
     periodes[val.periode.getTime()] = val
     return periodes
   }, {} as ParPériode<DonnéesAgrégées>)
-
-  type OutputIndexed = typeof rawOutputIndexed
-
-  const validator = {
-    set(
-      obj: OutputIndexed,
-      prop: keyof OutputIndexed,
-      value: OutputIndexed[keyof OutputIndexed]
-    ): boolean {
-      const timestamp = parseInt(prop, 10)
-      if (isNaN(timestamp) || new Date(timestamp).getTime() !== timestamp) {
-        throw new RangeError("output_indexed only accepts timestamps as keys")
-      }
-      obj[prop] = value // The default behavior to store the value
-      return true // Indicate success
-    },
-  }
-
-  const output_indexed = new Proxy(rawOutputIndexed, validator)
-
-  // output_indexed["abd"] = {} as DonnéesAgrégées // => npm test fails with "output_indexed only accepts timestamps as keys" (at runtime)
 
   return [output_array, output_indexed]
 }
