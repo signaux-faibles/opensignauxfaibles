@@ -56,7 +56,7 @@ export function defaillances(
       )
     )
     const time_til_last = Object.keys(output_indexed).filter((val) => {
-      return val >= (periode_effet.toISOString().split("T")[0] as string) // TODO: corriger cette comparaison
+      return parseInt(val) >= periode_effet.getTime()
     })
 
     time_til_last.forEach((time) => {
