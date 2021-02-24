@@ -1851,10 +1851,22 @@ function outputs(v, serie_periode) {
             outcome: false,
         };
     });
-    const output_indexed = output_array.reduce(function (periodes, val) {
+    const rawOutputIndexed = output_array.reduce(function (periodes, val) {
         periodes[val.periode.getTime()] = val;
         return periodes;
     }, {});
+    const validator = {
+        set(obj, prop, value) {
+            const timestamp = parseInt(prop, 10);
+            if (isNaN(timestamp) || new Date(timestamp).getTime() !== timestamp) {
+                throw new RangeError("output_indexed only accepts timestamps as keys");
+            }
+            obj[prop] = value; // The default behavior to store the value
+            return true; // Indicate success
+        },
+    };
+    const output_indexed = new Proxy(rawOutputIndexed, validator);
+    output_indexed["abd"] = {}; // => npm test fails with "output_indexed only accepts timestamps as keys" (at runtime)
     return [output_array, output_indexed];
 }`,
 "poidsFrng": `function poidsFrng(diane) {
