@@ -14,6 +14,17 @@ export function newParPériode<T>(
   // @ts-expect-error To prevent "ReferenceError: friendlyEqual is not defined" errors, see https://jira.mongodb.org/browse/SERVER-19169 and https://github.com/mongodb/mongo/blob/master/src/mongo/shell/types.js#L584
   friendlyEqual = () => {} // eslint-disable-line
 
+  Map.prototype.keys =
+    Map.prototype.keys ||
+    function () {
+      const keys = []
+      // @ts-expect-error Polyfill for Map.prototype.keys on MongoDB's Map implementation
+      for (const k in this._data) {
+        keys.push(k)
+      }
+      return keys
+    }
+
   /**
    * Cette classe est une Map<Timestamp, T> qui valide (et convertit,
    * si besoin) la période passée aux différentes méthodes.
