@@ -93,12 +93,18 @@ function forEachPopulatedProp(obj, fct) {
             };
     Map.prototype.forEach =
         Map.prototype.forEach ||
-            function forEach(callbackfn, thisArg) {
+            function (callbackfn, thisArg) {
                 // @ts-expect-error Polyfill for Map.prototype.forEach on MongoDB's Map implementation
                 const data = this._data;
                 for (const k in data) {
                     callbackfn.call(thisArg, data[k], parseInt(k), data);
                 }
+            };
+    Map.prototype.has =
+        Map.prototype.has ||
+            function (key) {
+                // @ts-expect-error Polyfill for Map.prototype.has on MongoDB's Map implementation
+                return key in this._data;
             };
     /**
      * Cette classe est une Map<Timestamp, T> qui valide (et convertit,

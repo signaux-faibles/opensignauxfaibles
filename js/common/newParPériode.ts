@@ -27,7 +27,7 @@ export function newParPériode<T>(
 
   Map.prototype.forEach =
     Map.prototype.forEach ||
-    function forEach(
+    function (
       callbackfn: (value: T, key: number, map: Map<Timestamp, T>) => void,
       thisArg?: unknown
     ): void {
@@ -36,6 +36,13 @@ export function newParPériode<T>(
       for (const k in data) {
         callbackfn.call(thisArg, data[k], parseInt(k), data)
       }
+    }
+
+  Map.prototype.has =
+    Map.prototype.has ||
+    function (key): boolean {
+      // @ts-expect-error Polyfill for Map.prototype.has on MongoDB's Map implementation
+      return key in this._data
     }
 
   /**
