@@ -1,6 +1,6 @@
 import { f } from "./functions"
 import { EntréeApConso, EntréeApDemande } from "../GeneratedTypes"
-import { ParPériode } from "../RawDataTypes"
+import { ParPériode } from "../common/ParPériode"
 
 type ApConsoHash = string
 
@@ -37,7 +37,7 @@ export function apart(
 ): ParPériode<SortieAPart> {
   "use strict"
 
-  const output_apart = new ParPériode<SortieAPart>()
+  const output_apart = new f.ParPériode<SortieAPart>()
 
   // Mapping (pour l'instant vide) du hash de la demande avec les hash des consos correspondantes
   const apart: Record<

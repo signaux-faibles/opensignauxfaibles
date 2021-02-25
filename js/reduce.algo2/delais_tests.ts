@@ -1,7 +1,8 @@
 import test, { ExecutionContext } from "ava"
 import { nbDays } from "./nbDays"
 import { delais, ChampsEntréeDelai, ChampsDettes, SortieDelais } from "./delais"
-import { ParPériode, ParHash } from "../RawDataTypes"
+import { ParHash } from "../RawDataTypes"
+import { ParPériode } from "../common/ParPériode"
 
 const fevrier = new Date("2014-02-01")
 const mars = new Date("2014-03-01")

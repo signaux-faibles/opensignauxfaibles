@@ -1,5 +1,5 @@
 import { f } from "./functions"
-import { ParPériode } from "../RawDataTypes"
+import { ParPériode } from "../common/ParPériode"
 
 export type Input = {
   periode: Date
@@ -33,7 +33,7 @@ export function cotisation(
 ): ParPériode<SortieCotisation> {
   "use strict"
 
-  const sortieCotisation = new ParPériode<SortieCotisation>()
+  const sortieCotisation = new f.ParPériode<SortieCotisation>()
 
   const moyenne = (valeurs: (number | undefined)[] = []): number | undefined =>
     valeurs.some((val) => typeof val === "undefined")
@@ -41,7 +41,7 @@ export function cotisation(
       : (valeurs as number[]).reduce((p, c) => p + c, 0) / (valeurs.length || 1)
 
   // calcul de cotisation_moyenne sur 12 mois
-  const futureArrays = new ParPériode<{
+  const futureArrays = new f.ParPériode<{
     cotisations: (number | undefined)[]
     montantsPP: number[]
     montantsPO: number[]

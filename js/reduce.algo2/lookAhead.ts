@@ -1,5 +1,6 @@
+import { f } from "./functions"
+import { ParPériode } from "../common/ParPériode"
 import { SortieDefaillances } from "./defaillances"
-import { ParPériode } from "../RawDataTypes"
 import { SortieCotisation } from "./cotisation"
 
 export type Outcome = {
@@ -56,7 +57,7 @@ export function lookAhead<PropName extends keyof EntréeLookAhead>(
         m.set(période, out)
       }
       return m
-    }, new ParPériode<Outcome>())
+    }, new f.ParPériode<Outcome>())
 
   return output
 }

@@ -1,6 +1,7 @@
 import { f } from "./functions"
+import { ParPériode } from "../common/ParPériode"
 import { EntréeSireneEntreprise } from "../GeneratedTypes"
-import { ParHash, ParPériode } from "../RawDataTypes"
+import { ParHash } from "../RawDataTypes"
 
 type VariablesTransmises = {
   /** Catégorie juridique de l’unité légale. Nomenclature: https://www.insee.fr/fr/information/2028129. */
@@ -28,7 +29,7 @@ export function entr_sirene(
   sériePériode: Date[]
 ): ParPériode<Partial<SortieSireneEntreprise>> {
   "use strict"
-  const retourEntrSirene = new ParPériode<Partial<SortieSireneEntreprise>>()
+  const retourEntrSirene = new f.ParPériode<Partial<SortieSireneEntreprise>>()
   const sireneHashes = Object.keys(sirene_ul || {})
   sériePériode.forEach((période) => {
     if (sireneHashes.length !== 0) {

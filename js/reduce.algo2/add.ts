@@ -1,4 +1,4 @@
-import { ParPériode } from "../RawDataTypes"
+import { ParPériode } from "../common/ParPériode"
 
 export function add<T>(
   obj: ParPériode<T>,

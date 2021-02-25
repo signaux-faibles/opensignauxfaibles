@@ -1,4 +1,6 @@
-import { EntréeRepOrder, ParPériode, ParHash } from "../RawDataTypes"
+import { f } from "./functions"
+import { ParPériode } from "../common/ParPériode"
+import { EntréeRepOrder, ParHash } from "../RawDataTypes"
 
 export type SortieRepeatable = {
   /** Numéro permettant de réaliser un échantillon reproductible des données. */
@@ -16,7 +18,7 @@ export function repeatable(
   rep: ParHash<EntréeRepOrder>
 ): ParPériode<SortieRepeatable> {
   "use strict"
-  const output_repeatable = new ParPériode<SortieRepeatable>()
+  const output_repeatable = new f.ParPériode<SortieRepeatable>()
   for (const one_rep of Object.values(rep)) {
     const periode = one_rep.periode.getTime()
     const out = output_repeatable.get(periode) ?? ({} as SortieRepeatable)

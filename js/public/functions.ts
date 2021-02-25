@@ -1,3 +1,4 @@
+import { ParPériode } from "../common/ParPériode"
 import { compareDebit } from "../common/compareDebit"
 import { dateAddMonth } from "../common/dateAddMonth"
 import { flatten } from "../common/flatten"
@@ -19,6 +20,7 @@ import { joinUrssaf } from "./joinUrssaf"
 import { sirene } from "./sirene"
 
 export const f = {
+  ParPériode,
   dateAddMonth,
   debits,
   apconso,

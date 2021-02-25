@@ -1,4 +1,4 @@
-import { ParPériode } from "../../RawDataTypes"
+import { ParPériode } from "../../common/ParPériode"
 
 /**
  * parPériode convertit un objet indexé par des dates exprimées sous la

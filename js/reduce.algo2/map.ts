@@ -4,7 +4,6 @@ import {
   BatchKey,
   Siret,
   SiretOrSiren,
-  ParPériode,
 } from "../RawDataTypes"
 import { SortieBdf } from "./entr_bdf"
 import { SortiePaydex } from "./entr_paydex"
@@ -117,7 +116,7 @@ export function map(this: EntréeMap): void {
         f.add(output_repeatable, output_indexed)
       }
 
-      let output_cotisationsdettes = new ParPériode<SortieCotisationsDettes>()
+      let output_cotisationsdettes = new f.ParPériode<SortieCotisationsDettes>()
       if (v.cotisation && v.debit) {
         output_cotisationsdettes = f.cotisationsdettes(
           v.cotisation,
@@ -183,7 +182,7 @@ export function map(this: EntréeMap): void {
 
   if (v.scope === "entreprise") {
     if (includes["all"]) {
-      const output_indexed = new ParPériode<SortieMapEntreprise>()
+      const output_indexed = new f.ParPériode<SortieMapEntreprise>()
 
       for (const periode of serie_periode) {
         output_indexed.set(periode, {

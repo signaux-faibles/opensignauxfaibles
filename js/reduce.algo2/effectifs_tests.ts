@@ -2,7 +2,8 @@ import { effectifs, SortieEffectifs } from "./effectifs"
 import test, { ExecutionContext } from "ava"
 import { setGlobals } from "../test/helpers/setGlobals"
 import { EntréeEffectif } from "../GeneratedTypes"
-import { ParPériode, ParHash } from "../RawDataTypes"
+import { ParHash } from "../RawDataTypes"
+import { ParPériode } from "../common/ParPériode"
 
 type SortieEffectifsEtab = SortieEffectifs<"effectif">
 

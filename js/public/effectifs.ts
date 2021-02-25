@@ -1,5 +1,6 @@
+import { f } from "./functions"
 import { EntréeEffectif } from "../GeneratedTypes"
-import { ParHash, ParPériode } from "../RawDataTypes"
+import { ParHash } from "../RawDataTypes"
 
 // Paramètres globaux utilisés par "public"
 declare const serie_periode: Date[]
@@ -12,7 +13,7 @@ export type SortieEffectif = {
 export function effectifs(
   effectif?: ParHash<EntréeEffectif>
 ): SortieEffectif[] {
-  const mapEffectif = new ParPériode<number>()
+  const mapEffectif = new f.ParPériode<number>()
   Object.values(effectif ?? {}).forEach((e) => {
     mapEffectif.set(e.periode, (mapEffectif.get(e.periode) || 0) + e.effectif)
   })

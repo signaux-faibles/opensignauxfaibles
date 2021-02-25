@@ -1,6 +1,7 @@
 import { f } from "./functions"
+import { ParPériode } from "../common/ParPériode"
 import { EntréeBdf, EntréeDiane } from "../GeneratedTypes"
-import { ParHash, ParPériode, Timestamp } from "../RawDataTypes"
+import { ParHash, Timestamp } from "../RawDataTypes"
 
 type YearOffset = 1 | 2
 

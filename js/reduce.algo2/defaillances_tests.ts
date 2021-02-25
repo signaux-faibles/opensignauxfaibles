@@ -1,8 +1,9 @@
 import test from "ava"
 import { defaillances, SortieDefaillances } from "./defaillances"
 import { EntréeDéfaillances } from "../GeneratedTypes"
-import { ParHash, ParPériode } from "../RawDataTypes"
+import { ParHash } from "../RawDataTypes"
 import { parPériode } from "../test/helpers/parPeriode"
+import { ParPériode } from "../common/ParPériode"
 
 type OutputIndexed = Parameters<typeof defaillances>[1]
 

@@ -1,5 +1,5 @@
 import { f } from "./functions"
-import { ParPériode } from "../RawDataTypes"
+import { ParPériode } from "../common/ParPériode"
 import { Outcome } from "./lookAhead"
 
 export type SortieCibleApprentissage = {
@@ -31,7 +31,7 @@ export function cibleApprentissage(
   // replace with const
   const périodes = [...output_indexed.keys()]
 
-  const merged_info = new ParPériode<{ outcome: boolean }>()
+  const merged_info = new f.ParPériode<{ outcome: boolean }>()
   for (const période of périodes) {
     merged_info.set(période, {
       outcome: Boolean(
@@ -65,7 +65,7 @@ export function cibleApprentissage(
       ...output_outcome.get(k),
       ...outputTimes,
     })
-  }, new ParPériode<SortieCibleApprentissage>())
+  }, new f.ParPériode<SortieCibleApprentissage>())
 
   return output_cible
 }

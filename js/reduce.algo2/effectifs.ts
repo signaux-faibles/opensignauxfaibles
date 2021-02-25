@@ -1,6 +1,7 @@
 import { f } from "./functions"
+import { ParPériode } from "../common/ParPériode"
 import { EntréeEffectif, EntréeEffectifEnt } from "../GeneratedTypes"
-import { ParHash, Timestamp, ParPériode } from "../RawDataTypes"
+import { ParHash, Timestamp } from "../RawDataTypes"
 
 // Paramètres globaux utilisés par "reduce.algo2"
 declare const offset_effectif: number
@@ -59,10 +60,10 @@ export function effectifs<K extends Clé>(
 ): ParPériode<SortieEffectifs<K>> {
   "use strict"
 
-  const sortieEffectif = new ParPériode<SortieEffectifs<K>>()
+  const sortieEffectif = new f.ParPériode<SortieEffectifs<K>>()
 
   // Construction d'une map[time] = effectif à cette periode
-  const mapEffectif = new ParPériode<ValeurEffectif>()
+  const mapEffectif = new f.ParPériode<ValeurEffectif>()
 
   Object.keys(entréeEffectif).forEach((hash) => {
     const effectif = entréeEffectif[hash]

@@ -1,3 +1,4 @@
+import { f } from "./functions"
 import { SortieAPart } from "./apart"
 import { SortieRepeatable } from "./repeatable"
 import { SortieCotisationsDettes } from "./cotisationsdettes"
@@ -10,7 +11,8 @@ import { SortieDelais } from "./delais"
 import { SortieCibleApprentissage } from "./cibleApprentissage"
 import { SortieCotisation } from "./cotisation"
 import { SortieCompte } from "./compte"
-import { SiretOrSiren, ParPériode } from "../RawDataTypes"
+import { SiretOrSiren } from "../RawDataTypes"
+import { ParPériode } from "../common/ParPériode"
 
 export type DonnéesAgrégées = {
   siret: SiretOrSiren
@@ -54,7 +56,7 @@ export function outputs(
   // TODO: simplifier cette itération
   const output_indexed = output_array.reduce(function (periodes, val) {
     return periodes.set(val.periode, val)
-  }, new ParPériode<DonnéesAgrégées>())
+  }, new f.ParPériode<DonnéesAgrégées>())
 
   return [output_array, output_indexed]
 }

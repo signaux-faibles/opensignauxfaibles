@@ -1,6 +1,7 @@
 import { f } from "./functions"
+import { ParPériode } from "../common/ParPériode"
 import { EntréeCotisation, EntréeDebit } from "../GeneratedTypes"
-import { Timestamp, ParPériode, ParHash } from "../RawDataTypes"
+import { Timestamp, ParHash } from "../RawDataTypes"
 
 // Champs de EntréeCotisation nécéssaires à cotisationsdettes
 type ChampsEntréeCotisation = Pick<EntréeCotisation, "periode" | "du">
@@ -71,7 +72,7 @@ export function cotisationsdettes(
   // Permet de s'aligner avec le calendrier de fourniture des données
   const lastAccountedDay = 20
 
-  const sortieCotisationsDettes = new ParPériode<SortieCotisationsDettes>()
+  const sortieCotisationsDettes = new f.ParPériode<SortieCotisationsDettes>()
 
   const value_cotisation: Record<Timestamp, number[]> = {}
 

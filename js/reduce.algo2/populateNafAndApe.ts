@@ -1,4 +1,5 @@
-import { CodeAPE, ParPériode } from "../RawDataTypes"
+import { CodeAPE } from "../RawDataTypes"
+import { ParPériode } from "../common/ParPériode"
 
 type CodeAPENiveau2 = string
 type CodeAPENiveau3 = string
