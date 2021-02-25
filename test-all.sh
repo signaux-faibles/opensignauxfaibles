@@ -37,6 +37,12 @@ heading "typescript check"
 heading "npm test"
 (cd ./js && npm run lint && npm test -- $@) 2>&1 | indent
 
+heading "go generate"
+(cd ./lib/engine && go generate .) 2>&1 | indent
+
+heading "make build"
+(killall sfdata 2>/dev/null || true; make build && echo "📦 sfdata") 2>&1 | indent
+
 heading "go test"
 if [[ "$*" == *--update* ]]
 then
@@ -44,12 +50,6 @@ then
 else
     (go test ./... -test.count=1) 2>&1 | indent
 fi
-
-heading "go generate"
-(cd ./lib/engine && go generate .) 2>&1 | indent
-
-heading "make build"
-(killall sfdata 2>/dev/null || true; make build && echo "📦 sfdata") 2>&1 | indent
 
 heading "test-cli.sh"
 ./tests/test-cli.sh $@ 2>&1 | indent
