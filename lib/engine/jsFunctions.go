@@ -616,8 +616,6 @@ function reduce(key, values // chaque element contient plusieurs batches pour ce
     return reducedValue;
 }`,
 },
-"coverage":{
-},
 "migrations":{
 "agg_change_index_Features": `// db.getCollection("Features").aggregate(
 // 	[
