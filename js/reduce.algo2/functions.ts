@@ -29,10 +29,10 @@ import { poidsFrng } from "./poidsFrng"
 import { populateNafAndApe } from "./populateNafAndApe"
 import { repeatable } from "./repeatable"
 import { sirene } from "./sirene"
-import { ParPériode } from "../common/ParPériode"
+import { newParPériode } from "../common/newParPériode"
 
 export const f = {
-  ParPériode,
+  newParPériode,
   flatten,
   outputs,
   apart,

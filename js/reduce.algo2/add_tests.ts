@@ -1,7 +1,7 @@
 import test, { ExecutionContext } from "ava"
 import { add } from "./add"
 import { parPériode } from "../test/helpers/parPeriode"
-import { ParPériode } from "../common/ParPériode"
+import { ParPériode } from "../common/newParPériode"
 
 const testCases = [
   {

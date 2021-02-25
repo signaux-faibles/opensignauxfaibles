@@ -1,4 +1,4 @@
-import { ParPériode } from "../common/ParPériode"
+import { ParPériode } from "../common/newParPériode"
 
 export function add<T>(
   obj: ParPériode<T>,

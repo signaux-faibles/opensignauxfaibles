@@ -1,5 +1,5 @@
 import { f } from "./functions"
-import { ParPériode } from "../common/ParPériode"
+import { ParPériode } from "../common/newParPériode"
 import { EntréeEffectif, EntréeEffectifEnt } from "../GeneratedTypes"
 import { ParHash, Timestamp } from "../RawDataTypes"
 
@@ -60,10 +60,10 @@ export function effectifs<K extends Clé>(
 ): ParPériode<SortieEffectifs<K>> {
   "use strict"
 
-  const sortieEffectif = new f.ParPériode<SortieEffectifs<K>>()
+  const sortieEffectif = f.newParPériode<SortieEffectifs<K>>()
 
   // Construction d'une map[time] = effectif à cette periode
-  const mapEffectif = new f.ParPériode<ValeurEffectif>()
+  const mapEffectif = f.newParPériode<ValeurEffectif>()
 
   Object.keys(entréeEffectif).forEach((hash) => {
     const effectif = entréeEffectif[hash]

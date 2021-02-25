@@ -1,5 +1,5 @@
 import { f } from "./functions"
-import { ParPériode } from "../common/ParPériode"
+import { ParPériode } from "../common/newParPériode"
 import { EntréePaydex } from "../GeneratedTypes"
 import { ParHash } from "../RawDataTypes"
 
@@ -22,7 +22,7 @@ export function entr_paydex(
   sériePériode: Date[]
 ): ParPériode<SortiePaydex> {
   "use strict"
-  const paydexParPériode = new f.ParPériode<SortiePaydex>()
+  const paydexParPériode = f.newParPériode<SortiePaydex>()
   // initialisation (avec valeurs N/A par défaut)
   for (const période of sériePériode) {
     paydexParPériode.set(période, {
@@ -40,7 +40,7 @@ export function entr_paydex(
     )
     const moisSuivant = f.dateAddMonth(new Date(période), 1).getTime()
     const annéeSuivante = f.dateAddMonth(new Date(période), 12).getTime()
-    const donnéesAdditionnelles = new f.ParPériode<Partial<SortiePaydex>>([
+    const donnéesAdditionnelles = f.newParPériode<Partial<SortiePaydex>>([
       [période, { paydex_nb_jours: entréePaydex.nb_jours }],
       [moisSuivant, { paydex_nb_jours_past_1: entréePaydex.nb_jours }],
       [annéeSuivante, { paydex_nb_jours_past_12: entréePaydex.nb_jours }],

@@ -1,5 +1,5 @@
 import { f } from "./functions"
-import { ParPériode } from "../common/ParPériode"
+import { ParPériode } from "../common/newParPériode"
 import { EntréeDelai } from "../GeneratedTypes"
 import { ParHash } from "../RawDataTypes"
 import { SortieCotisationsDettes } from "./cotisationsdettes"
@@ -60,7 +60,7 @@ export function delais(
   intervalleTraitement: { premièreDate: Date; dernièreDate: Date }
 ): ParPériode<SortieDelais> {
   "use strict"
-  const donnéesDélaiParPériode = new f.ParPériode<SortieDelais>()
+  const donnéesDélaiParPériode = f.newParPériode<SortieDelais>()
   Object.values(vDelai).forEach((delai) => {
     if (delai.duree_delai <= 0) {
       return

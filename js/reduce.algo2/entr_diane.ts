@@ -1,5 +1,5 @@
 import { f } from "./functions"
-import { ParPériode } from "../common/ParPériode"
+import { ParPériode } from "../common/newParPériode"
 import { EntréeBdf, EntréeDiane } from "../GeneratedTypes"
 import { ParHash, Timestamp } from "../RawDataTypes"
 

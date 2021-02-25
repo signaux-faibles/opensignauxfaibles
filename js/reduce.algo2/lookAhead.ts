@@ -1,5 +1,5 @@
 import { f } from "./functions"
-import { ParPériode } from "../common/ParPériode"
+import { ParPériode } from "../common/newParPériode"
 import { SortieDefaillances } from "./defaillances"
 import { SortieCotisation } from "./cotisation"
 
@@ -57,7 +57,7 @@ export function lookAhead<PropName extends keyof EntréeLookAhead>(
         m.set(période, out)
       }
       return m
-    }, new f.ParPériode<Outcome>())
+    }, f.newParPériode<Outcome>())
 
   return output
 }

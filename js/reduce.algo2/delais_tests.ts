@@ -2,7 +2,7 @@ import test, { ExecutionContext } from "ava"
 import { nbDays } from "./nbDays"
 import { delais, ChampsEntréeDelai, ChampsDettes, SortieDelais } from "./delais"
 import { ParHash } from "../RawDataTypes"
-import { ParPériode } from "../common/ParPériode"
+import { ParPériode, newParPériode } from "../common/newParPériode"
 
 const fevrier = new Date("2014-02-01")
 const mars = new Date("2014-03-01")
@@ -29,7 +29,7 @@ const runDelais = (debits?: ChampsDettes): ParPériode<SortieDelais> => {
   const delaiMap: ParHash<ChampsEntréeDelai> = {
     [dummyPeriod]: delaiTest,
   }
-  const debitParPériode = new ParPériode<ChampsDettes>()
+  const debitParPériode = newParPériode<ChampsDettes>()
   if (debits) {
     debitParPériode.set(fevrier, makeDebitParPériode(debits))
     debitParPériode.set(mars, makeDebitParPériode(debits))
@@ -95,11 +95,11 @@ test("un délai en dehors de la période d'intérêt est ignorée", (t: Executio
   const delaiMap: ParHash<ChampsEntréeDelai> = {
     [dummyPeriod]: delaiTest,
   }
-  const donnéesParPériode = new ParPériode<ChampsDettes>()
+  const donnéesParPériode = newParPériode<ChampsDettes>()
   donnéesParPériode.set(fevrier, makeDebitParPériode())
   const périodesComplétées = delais(delaiMap, donnéesParPériode, {
     premièreDate: fevrier,
     dernièreDate: mars,
   })
-  t.deepEqual(périodesComplétées, new ParPériode<SortieDelais>())
+  t.deepEqual(périodesComplétées, newParPériode<SortieDelais>())
 })

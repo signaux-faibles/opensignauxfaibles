@@ -1,5 +1,5 @@
 import { f } from "./functions"
-import { ParPériode } from "../common/ParPériode"
+import { ParPériode } from "../common/newParPériode"
 import { EntréeRepOrder, ParHash } from "../RawDataTypes"
 
 export type SortieRepeatable = {
@@ -18,7 +18,7 @@ export function repeatable(
   rep: ParHash<EntréeRepOrder>
 ): ParPériode<SortieRepeatable> {
   "use strict"
-  const output_repeatable = new f.ParPériode<SortieRepeatable>()
+  const output_repeatable = f.newParPériode<SortieRepeatable>()
   for (const one_rep of Object.values(rep)) {
     const periode = one_rep.periode.getTime()
     const out = output_repeatable.get(periode) ?? ({} as SortieRepeatable)

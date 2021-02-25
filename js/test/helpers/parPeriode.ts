@@ -1,4 +1,4 @@
-import { ParPériode } from "../../common/ParPériode"
+import { ParPériode, newParPériode } from "../../common/newParPériode"
 
 /**
  * parPériode convertit un objet indexé par des dates exprimées sous la
@@ -6,7 +6,7 @@ import { ParPériode } from "../../common/ParPériode"
  * par souci de compatibilité avec le type ParPériode.
  */
 export const parPériode = <U>(indexed: Record<string, U>): ParPériode<U> => {
-  const res = new ParPériode<U>()
+  const res = newParPériode<U>()
   Object.entries(indexed).forEach(([k, v]) => {
     res.set(new Date(k), v)
   })

@@ -1,5 +1,5 @@
 import { f } from "./functions"
-import { ParPériode } from "../common/ParPériode"
+import { ParPériode } from "../common/newParPériode"
 import { EntréeBdf } from "../GeneratedTypes"
 import { ParHash, Timestamp } from "../RawDataTypes"
 
@@ -42,7 +42,7 @@ export function entr_bdf(
 ): ParPériode<Partial<SortieBdf>> {
   "use strict"
 
-  const outputBdf = new f.ParPériode<Partial<SortieBdf>>()
+  const outputBdf = f.newParPériode<Partial<SortieBdf>>()
   for (const p of periodes) {
     outputBdf.set(p, {})
   }

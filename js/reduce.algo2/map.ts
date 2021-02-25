@@ -116,7 +116,7 @@ export function map(this: EntréeMap): void {
         f.add(output_repeatable, output_indexed)
       }
 
-      let output_cotisationsdettes = new f.ParPériode<SortieCotisationsDettes>()
+      let output_cotisationsdettes = f.newParPériode<SortieCotisationsDettes>()
       if (v.cotisation && v.debit) {
         output_cotisationsdettes = f.cotisationsdettes(
           v.cotisation,
@@ -182,7 +182,21 @@ export function map(this: EntréeMap): void {
 
   if (v.scope === "entreprise") {
     if (includes["all"]) {
-      const output_indexed = new f.ParPériode<SortieMapEntreprise>()
+      const output_indexed = f.newParPériode<SortieMapEntreprise>()
+      // if (!("print" in this)) {
+      //   throw new Error(
+      //     "output_indexed " +
+      //       typeof output_indexed + // "object"
+      //       " " +
+      //       output_indexed.constructor.name + // ""
+      //       " " +
+      //       // (output_indexed instanceof f.ParPériode) + // true
+      //       // " " +
+      //       // f.ParPériode + // function() { /** ... class ...
+      //       // " " +
+      //       f.add
+      //   )
+      // }
 
       for (const periode of serie_periode) {
         output_indexed.set(periode, {

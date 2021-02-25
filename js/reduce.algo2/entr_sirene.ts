@@ -1,5 +1,5 @@
 import { f } from "./functions"
-import { ParPériode } from "../common/ParPériode"
+import { ParPériode } from "../common/newParPériode"
 import { EntréeSireneEntreprise } from "../GeneratedTypes"
 import { ParHash } from "../RawDataTypes"
 
@@ -29,7 +29,7 @@ export function entr_sirene(
   sériePériode: Date[]
 ): ParPériode<Partial<SortieSireneEntreprise>> {
   "use strict"
-  const retourEntrSirene = new f.ParPériode<Partial<SortieSireneEntreprise>>()
+  const retourEntrSirene = f.newParPériode<Partial<SortieSireneEntreprise>>()
   const sireneHashes = Object.keys(sirene_ul || {})
   sériePériode.forEach((période) => {
     if (sireneHashes.length !== 0) {

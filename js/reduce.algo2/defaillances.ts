@@ -2,7 +2,7 @@ import { f } from "./functions"
 import { ProcolToHumanRes } from "../common/procolToHuman"
 import { EntréeDéfaillances } from "../GeneratedTypes"
 import { ParHash } from "../RawDataTypes"
-import { ParPériode } from "../common/ParPériode"
+import { ParPériode } from "../common/newParPériode"
 
 export type SortieDefaillances = {
   /** État de la procédure collective. */

@@ -1,5 +1,5 @@
 import { f } from "./functions"
-import { ParPériode } from "../common/ParPériode"
+import { ParPériode } from "../common/newParPériode"
 import { EntréeCotisation, EntréeDebit } from "../GeneratedTypes"
 import { Timestamp, ParHash } from "../RawDataTypes"
 
@@ -72,7 +72,7 @@ export function cotisationsdettes(
   // Permet de s'aligner avec le calendrier de fourniture des données
   const lastAccountedDay = 20
 
-  const sortieCotisationsDettes = new f.ParPériode<SortieCotisationsDettes>()
+  const sortieCotisationsDettes = f.newParPériode<SortieCotisationsDettes>()
 
   const value_cotisation: Record<Timestamp, number[]> = {}
 
