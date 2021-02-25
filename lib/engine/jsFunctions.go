@@ -79,33 +79,6 @@ function forEachPopulatedProp(obj, fct) {
     return serie;
 }`,
 "newParPériode": `function newParPériode(arg) {
-    // @ts-expect-error To prevent "ReferenceError: friendlyEqual is not defined" errors, see https://jira.mongodb.org/browse/SERVER-19169 and https://github.com/mongodb/mongo/blob/master/src/mongo/shell/types.js#L584
-    friendlyEqual = () => { }; // eslint-disable-line
-    Map.prototype.keys =
-        Map.prototype.keys ||
-            function () {
-                const keys = [];
-                // @ts-expect-error Polyfill for Map.prototype.keys on MongoDB's Map implementation
-                for (const k in this._data) {
-                    keys.push(k);
-                }
-                return keys;
-            };
-    Map.prototype.forEach =
-        Map.prototype.forEach ||
-            function (callbackfn, thisArg) {
-                // @ts-expect-error Polyfill for Map.prototype.forEach on MongoDB's Map implementation
-                const data = this._data;
-                for (const k in data) {
-                    callbackfn.call(thisArg, data[k], parseInt(k), data);
-                }
-            };
-    Map.prototype.has =
-        Map.prototype.has ||
-            function (key) {
-                // @ts-expect-error Polyfill for Map.prototype.has on MongoDB's Map implementation
-                return key in this._data;
-            };
     /**
      * Cette classe est une Map<Timestamp, T> qui valide (et convertit,
      * si besoin) la période passée aux différentes méthodes.
@@ -148,12 +121,37 @@ function forEachPopulatedProp(obj, fct) {
          */
         set(période, val) {
             const timestamp = this.getTimestamp(période);
-            "put" in Map.prototype
-                ? // @ts-expect-error MongoDB provides Map.prototype.put() instead of Map.prototype.set()
-                    super.put(timestamp, val)
-                : super.set(timestamp, val);
+            super.set(timestamp, val);
             return this;
         }
+    }
+    if ("_get" in Map.prototype && "put" in Map.prototype) {
+        const data = {};
+        // @ts-expect-error Override MongoDB's Map implementation
+        Map.prototype.has = (key) => key in data;
+        // @ts-expect-error Override MongoDB's Map implementation
+        Map.prototype.get = (key) => data[key];
+        // @ts-expect-error Override MongoDB's Map implementation
+        Map.prototype.set = (key, value) => (data[key] = value);
+        // @ts-expect-error Override MongoDB's Map implementation
+        Map.prototype.keys = function* () {
+            for (const k in data) {
+                yield parseInt(k);
+            }
+        };
+        // @ts-expect-error Override MongoDB's Map implementation
+        Map.prototype.entries = function* () {
+            for (const k in data) {
+                yield [parseInt(k), data[k]];
+            }
+        };
+        // @ts-expect-error Override MongoDB's Map implementation
+        Map.prototype.forEach = function (callbackfn, thisArg) {
+            // @ts-expect-error entries() is defined above
+            for (const [key, value] of this.entries()) {
+                callbackfn.call(thisArg, value, key, this);
+            }
+        };
     }
     return new ParPériodeImpl(arg);
 }`,
