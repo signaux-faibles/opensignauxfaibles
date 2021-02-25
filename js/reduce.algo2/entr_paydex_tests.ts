@@ -12,7 +12,7 @@ test(`doit retourner paydex_nb_jours pour chaque période`, (t) => {
   }
   const sortiePaydex = entr_paydex(entréesPaydex, périodes)
   t.is(
-    [...sortiePaydex.values()].length,
+    sortiePaydex.size,
     périodes.length,
     "entr_paydex() doit émettre un objet par période"
   )
@@ -34,7 +34,7 @@ test(`doit donner accès au nombre de jours de la période précédente`, (t) =>
   }
   const sortiePaydex = entr_paydex(entréesPaydex, périodes)
   t.is(
-    [...sortiePaydex.values()].length,
+    sortiePaydex.size,
     périodes.length,
     "entr_paydex() doit émettre un objet par période"
   )
@@ -52,7 +52,7 @@ test(`doit donner accès au nombre de jours d'il y a 12 mois`, (t) => {
   }
   const sortiePaydex = entr_paydex(entréesPaydex, périodes)
   t.is(
-    [...sortiePaydex.values()].length,
+    sortiePaydex.size,
     périodes.length,
     "entr_paydex() doit émettre un objet par période"
   )
