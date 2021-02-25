@@ -1,5 +1,5 @@
 import { EntréeCompte } from "../GeneratedTypes"
-import { ParPériode, Periode, ParHash } from "../RawDataTypes"
+import { ParPériode, ParHash } from "../RawDataTypes"
 
 export type SortieCompte = {
   /** Compte administratif URSSAF */
@@ -17,15 +17,15 @@ export function compte(
   compte: ParHash<EntréeCompte>
 ): ParPériode<SortieCompte> {
   "use strict"
-  const output_compte: ParPériode<SortieCompte> = {}
+  const output_compte = new ParPériode<SortieCompte>()
 
   //  var offset_compte = 3
   for (const compteEntry of Object.values(compte)) {
-    const periode: Periode = compteEntry.periode.getTime()
-    output_compte[periode] = {
-      ...(output_compte[periode] ?? {}),
+    const période = compteEntry.periode
+    output_compte.set(période, {
+      ...(output_compte.get(période) ?? {}),
       compte_urssaf: compteEntry.numero_compte,
-    }
+    })
   }
 
   return output_compte

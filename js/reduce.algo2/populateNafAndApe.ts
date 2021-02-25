@@ -55,7 +55,7 @@ export function populateNafAndApe(
   naf: NAF
 ): void {
   "use strict"
-  for (const outputForKey of Object.values(output_indexed)) {
+  for (const outputForKey of output_indexed.values()) {
     const code_ape = outputForKey.code_ape
     if (code_ape) {
       const code_naf = naf.n5to1[code_ape]

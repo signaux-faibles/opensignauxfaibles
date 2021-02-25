@@ -28,7 +28,7 @@ export function entr_sirene(
   sériePériode: Date[]
 ): ParPériode<Partial<SortieSireneEntreprise>> {
   "use strict"
-  const retourEntrSirene: ParPériode<Partial<SortieSireneEntreprise>> = {}
+  const retourEntrSirene = new ParPériode<Partial<SortieSireneEntreprise>>()
   const sireneHashes = Object.keys(sirene_ul || {})
   sériePériode.forEach((période) => {
     if (sireneHashes.length !== 0) {
@@ -57,7 +57,7 @@ export function entr_sirene(
         val.age_entreprise =
           période.getFullYear() - val.date_creation_entreprise
       }
-      retourEntrSirene[période.getTime()] = val
+      retourEntrSirene.set(période, val)
     }
   })
   return retourEntrSirene

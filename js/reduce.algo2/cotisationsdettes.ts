@@ -71,7 +71,7 @@ export function cotisationsdettes(
   // Permet de s'aligner avec le calendrier de fourniture des données
   const lastAccountedDay = 20
 
-  const sortieCotisationsDettes: ParPériode<SortieCotisationsDettes> = {}
+  const sortieCotisationsDettes = new ParPériode<SortieCotisationsDettes>()
 
   const value_cotisation: Record<Timestamp, number[]> = {}
 
@@ -188,7 +188,8 @@ export function cotisationsdettes(
   //))
 
   periodes.forEach(function (time) {
-    let val = sortieCotisationsDettes[time] ?? ({} as SortieCotisationsDettes)
+    let val =
+      sortieCotisationsDettes.get(time) ?? ({} as SortieCotisationsDettes)
     //output_cotisationsdettes[time].numero_compte_urssaf = numeros_compte
     const valueCotis = value_cotisation[time]
     if (valueCotis !== undefined) {
@@ -208,8 +209,8 @@ export function cotisationsdettes(
         montant_part_patronale: 0,
       }
     )
-    val = Object.assign(val, montant_dette)
-    sortieCotisationsDettes[time] = val
+    val = Object.assign(val, montant_dette) // TODO: affecter directement au lieu de créer variable montant_dette au dessus
+    sortieCotisationsDettes.set(time, val)
 
     const monthOffsets: MonthOffset[] = [1, 2, 3, 6, 12]
     const futureTimestamps = monthOffsets
@@ -220,12 +221,12 @@ export function cotisationsdettes(
       .filter(({ timestamp }) => periodes.includes(timestamp))
 
     futureTimestamps.forEach(({ offset, timestamp }) => {
-      sortieCotisationsDettes[timestamp] = {
-        ...(sortieCotisationsDettes[timestamp] ??
+      sortieCotisationsDettes.set(timestamp, {
+        ...(sortieCotisationsDettes.get(timestamp) ??
           ({} as SortieCotisationsDettes)),
         [`montant_part_ouvriere_past_${offset}`]: val.montant_part_ouvriere,
         [`montant_part_patronale_past_${offset}`]: val.montant_part_patronale,
-      }
+      })
     })
 
     if (val.montant_part_ouvriere + val.montant_part_patronale > 0) {
@@ -236,11 +237,11 @@ export function cotisationsdettes(
         .filter(({ timestamp }) => periodes.includes(timestamp))
 
       futureTimestamps.forEach(({ timestamp }) => {
-        sortieCotisationsDettes[timestamp] = {
-          ...(sortieCotisationsDettes[timestamp] ??
+        sortieCotisationsDettes.set(timestamp, {
+          ...(sortieCotisationsDettes.get(timestamp) ??
             ({} as SortieCotisationsDettes)),
           interessante_urssaf: false,
-        }
+        })
       })
     }
   })

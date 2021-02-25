@@ -41,9 +41,9 @@ export function entr_bdf(
 ): ParPériode<Partial<SortieBdf>> {
   "use strict"
 
-  const outputBdf: ParPériode<Partial<SortieBdf>> = {}
+  const outputBdf = new ParPériode<Partial<SortieBdf>>()
   for (const p of periodes) {
-    outputBdf[p] = {}
+    outputBdf.set(p, {})
   }
 
   for (const entréeBdf of Object.values(donnéesBdf)) {
@@ -65,8 +65,7 @@ export function entr_bdf(
     )
 
     for (const periode of series) {
-      const outputInPeriod = (outputBdf[periode.getTime()] =
-        outputBdf[periode.getTime()] || {})
+      const outputInPeriod = outputBdf.get(periode) || {}
 
       const periodData: DonnéesBdfTransmises = f.omit(
         entréeBdf,
@@ -89,12 +88,13 @@ export function entr_bdf(
         const past_year_offset: YearOffset[] = [1, 2]
         for (const offset of past_year_offset) {
           const periode_offset = f.dateAddMonth(periode, 12 * offset)
-          const outputInPast = outputBdf[periode_offset.getTime()]
+          const outputInPast = outputBdf.get(periode_offset)
           if (outputInPast) {
             outputInPast[makePastProp(prop, offset)] = entréeBdf[prop]
           }
         }
       }
+      outputBdf.set(periode, outputInPeriod)
     }
   }
 

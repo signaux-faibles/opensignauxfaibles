@@ -59,15 +59,15 @@ export function effectifs<K extends Clé>(
 ): ParPériode<SortieEffectifs<K>> {
   "use strict"
 
-  const sortieEffectif: ParPériode<SortieEffectifs<K>> = {}
+  const sortieEffectif = new ParPériode<SortieEffectifs<K>>()
 
   // Construction d'une map[time] = effectif à cette periode
-  const mapEffectif: ParPériode<ValeurEffectif> = {}
+  const mapEffectif = new ParPériode<ValeurEffectif>()
 
   Object.keys(entréeEffectif).forEach((hash) => {
     const effectif = entréeEffectif[hash]
     if (effectif !== null && effectif !== undefined) {
-      mapEffectif[effectif.periode.getTime()] = effectif.effectif
+      mapEffectif.set(effectif.periode, effectif.effectif)
     }
   })
 
@@ -78,27 +78,27 @@ export function effectifs<K extends Clé>(
     offset_effectif + 1
   )
   const effectifÀReporter =
-    mapEffectif[dernièrePériodeAvecEffectifConnu.getTime()] ?? null
+    mapEffectif.get(dernièrePériodeAvecEffectifConnu) ?? null
 
   const makeReporteProp = (clé: K) => `${clé}_reporte`
 
   periodes.forEach((time) => {
-    sortieEffectif[time] = {
-      ...(sortieEffectif[time] as SortieEffectifs<K>),
-      [clé]: mapEffectif[time] || effectifÀReporter,
-      [makeReporteProp(clé)]: mapEffectif[time] ? 0 : 1,
-    }
+    sortieEffectif.set(time, {
+      ...(sortieEffectif.get(time) ?? ({} as SortieEffectifs<K>)),
+      [clé]: mapEffectif.get(time) || effectifÀReporter,
+      [makeReporteProp(clé)]: mapEffectif.get(time) ? 0 : 1,
+    })
   })
 
   const makePastProp = (clé: K, offset: MonthOffset) => `${clé}_past_${offset}`
 
-  Object.keys(mapEffectif).forEach((time) => {
+  mapEffectif.forEach((effectifAtTime, time) => {
     const futureOffsets: MonthOffset[] = [6, 12, 18, 24]
     const futureTimestamps = futureOffsets
       .map((offset) => ({
         offset,
         timestamp: f
-          .dateAddMonth(new Date(parseInt(time)), offset - offset_effectif - 1)
+          .dateAddMonth(new Date(time), offset - offset_effectif - 1)
           // TODO: réfléchir à si l'offset est nécessaire pour l'algo.
           // Ces valeurs permettent de calculer les dernières variations réelles
           // d'effectif sur la période donnée (par exemple: 6 mois),
@@ -109,10 +109,10 @@ export function effectifs<K extends Clé>(
       .filter(({ timestamp }) => periodes.includes(timestamp))
 
     futureTimestamps.forEach(({ offset, timestamp }) => {
-      sortieEffectif[timestamp] = {
-        ...(sortieEffectif[timestamp] as SortieEffectifs<K>),
-        [makePastProp(clé, offset)]: mapEffectif[parseInt(time)],
-      }
+      sortieEffectif.set(timestamp, {
+        ...(sortieEffectif.get(timestamp) ?? ({} as SortieEffectifs<K>)),
+        [makePastProp(clé, offset)]: effectifAtTime,
+      })
     })
   })
   return sortieEffectif

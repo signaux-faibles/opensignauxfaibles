@@ -51,10 +51,10 @@ export function outputs(
     }
   })
 
+  // TODO: simplifier cette itération
   const output_indexed = output_array.reduce(function (periodes, val) {
-    periodes[val.periode.getTime()] = val
-    return periodes
-  }, {} as ParPériode<DonnéesAgrégées>)
+    return periodes.set(val.periode, val)
+  }, new ParPériode<DonnéesAgrégées>())
 
   return [output_array, output_indexed]
 }

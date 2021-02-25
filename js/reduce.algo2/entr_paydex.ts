@@ -21,14 +21,14 @@ export function entr_paydex(
   sériePériode: Date[]
 ): ParPériode<SortiePaydex> {
   "use strict"
-  const paydexParPériode: ParPériode<SortiePaydex> = {}
+  const paydexParPériode = new ParPériode<SortiePaydex>()
   // initialisation (avec valeurs N/A par défaut)
   for (const période of sériePériode) {
-    paydexParPériode[période.getTime()] = {
+    paydexParPériode.set(période, {
       paydex_nb_jours: null,
       paydex_nb_jours_past_1: null,
       paydex_nb_jours_past_12: null,
-    }
+    })
   }
   // population des valeurs
   for (const entréePaydex of Object.values(vPaydex)) {
@@ -39,12 +39,12 @@ export function entr_paydex(
     )
     const moisSuivant = f.dateAddMonth(new Date(période), 1).getTime()
     const annéeSuivante = f.dateAddMonth(new Date(période), 12).getTime()
-    const donnéesAdditionnelles: ParPériode<Partial<SortiePaydex>> = {
-      [période]: { paydex_nb_jours: entréePaydex.nb_jours },
-      [moisSuivant]: { paydex_nb_jours_past_1: entréePaydex.nb_jours },
-      [annéeSuivante]: { paydex_nb_jours_past_12: entréePaydex.nb_jours },
-    }
-    f.add(donnéesAdditionnelles, paydexParPériode)
+    const donnéesAdditionnelles = new ParPériode<Partial<SortiePaydex>>([
+      [période, { paydex_nb_jours: entréePaydex.nb_jours }],
+      [moisSuivant, { paydex_nb_jours_past_1: entréePaydex.nb_jours }],
+      [annéeSuivante, { paydex_nb_jours_past_12: entréePaydex.nb_jours }],
+    ])
+    f.add(donnéesAdditionnelles, paydexParPériode) // TODO: utiliser append() ou upsert()
   }
   return paydexParPériode
 }

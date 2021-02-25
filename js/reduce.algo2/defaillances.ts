@@ -55,17 +55,18 @@ export function defaillances(
         0
       )
     )
-    const time_til_last = Object.keys(output_indexed).filter((val) => {
-      return parseInt(val) >= periode_effet.getTime()
+    const time_til_last = [...output_indexed.keys()].filter((période) => {
+      return période >= periode_effet.getTime()
     })
 
     time_til_last.forEach((time) => {
-      const outputForTime = output_indexed[parseInt(time)]
+      const outputForTime = output_indexed.get(time) ?? {}
       if (outputForTime !== undefined) {
         outputForTime.etat_proc_collective = event.etat
         outputForTime.date_proc_collective = event.date_proc_col
         if (event.etat !== "in_bonis") outputForTime.tag_failure = true
       }
+      output_indexed.set(time, outputForTime)
     })
   })
 }
