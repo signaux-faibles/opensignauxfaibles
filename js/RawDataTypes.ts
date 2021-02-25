@@ -23,7 +23,74 @@ import {
 
 export type Timestamp = number // Date.getTime()
 export type Periode = Timestamp
-export type ParPériode<T> = Record<Periode, T>
+
+/**
+ * Cette classe encapsule un Map<Timestamp, T>, pour valider (et
+ * convertir, si besoin) la période passée aux méthodes get() et set().
+ */
+export class ParPériode<T> {
+  private map = new Map<Timestamp, T>()
+  private getNumericValue(période: Date | Timestamp | string): number {
+    if (typeof période === "number") return période
+    if (typeof période === "string") return parseInt(période)
+    if (période instanceof Date) return période.getTime()
+    throw new TypeError("type non supporté: " + typeof période)
+  }
+  // pour vérifier que le timestamp retourné par getNumericValue est valide
+  private getTimestamp(période: Date | Timestamp | string): Timestamp {
+    const timestamp = this.getNumericValue(période)
+    if (isNaN(timestamp) || new Date(timestamp).getTime() !== timestamp) {
+      throw new RangeError("valeur invalide: " + période)
+    }
+    return timestamp
+  }
+  constructor(entries?: readonly (readonly [number, T])[] | null | undefined) {
+    this.map = new Map<Timestamp, T>(entries)
+  }
+  /**
+   * Informe sur la présence d'une valeur associée à la période donnée.
+   * @throws TypeError si la période n'est pas valide.
+   */
+  has(période: Date | Timestamp | string): boolean {
+    return this.map.has(this.getTimestamp(période))
+  }
+  /**
+   * Retourne la valeur associée à la période donnée.
+   * @throws TypeError si la période n'est pas valide.
+   */
+  get(période: Date | Timestamp | string): T | undefined {
+    return this.map.get(this.getTimestamp(période))
+  }
+  /**
+   * Définit la valeur associée à la période donnée.
+   * @throws TypeError si la période n'est pas valide.
+   */
+  set(période: Date | Timestamp | string, val: T): this {
+    const timestamp = this.getTimestamp(période)
+    this.map.set(timestamp, val)
+    return this
+  }
+
+  keys(): IterableIterator<Timestamp> {
+    return this.map.keys()
+  }
+
+  values(): IterableIterator<T> {
+    return this.map.values()
+  }
+
+  entries(): IterableIterator<[Timestamp, T]> {
+    return this.map.entries()
+  }
+
+  forEach(
+    callbackfn: (value: T, key: number, map: Map<Timestamp, T>) => void,
+    thisArg?: unknown
+  ): void {
+    return this.map.forEach(callbackfn, thisArg)
+  }
+
+}
 
 export type Departement = string
 
