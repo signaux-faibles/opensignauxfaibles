@@ -25,11 +25,10 @@ export type Timestamp = number // Date.getTime()
 export type Periode = Timestamp
 
 /**
- * Cette classe encapsule un Map<Timestamp, T>, pour valider (et
- * convertir, si besoin) la période passée aux méthodes get() et set().
+ * Cette classe est une Map<Timestamp, T> qui valide (et convertit,
+ * si besoin) la période passée aux différentes méthodes.
  */
-export class ParPériode<T> {
-  private map = new Map<Timestamp, T>()
+export class ParPériode<T> extends Map<Timestamp, T> {
   private getNumericValue(période: Date | Timestamp | string): number {
     if (typeof période === "number") return période
     if (typeof période === "string") return parseInt(période)
@@ -44,22 +43,19 @@ export class ParPériode<T> {
     }
     return timestamp
   }
-  constructor(entries?: readonly (readonly [number, T])[] | null | undefined) {
-    this.map = new Map<Timestamp, T>(entries)
-  }
   /**
    * Informe sur la présence d'une valeur associée à la période donnée.
    * @throws TypeError si la période n'est pas valide.
    */
   has(période: Date | Timestamp | string): boolean {
-    return this.map.has(this.getTimestamp(période))
+    return super.has(this.getTimestamp(période))
   }
   /**
    * Retourne la valeur associée à la période donnée.
    * @throws TypeError si la période n'est pas valide.
    */
   get(période: Date | Timestamp | string): T | undefined {
-    return this.map.get(this.getTimestamp(période))
+    return super.get(this.getTimestamp(période))
   }
   /**
    * Définit la valeur associée à la période donnée.
@@ -67,29 +63,9 @@ export class ParPériode<T> {
    */
   set(période: Date | Timestamp | string, val: T): this {
     const timestamp = this.getTimestamp(période)
-    this.map.set(timestamp, val)
+    super.set(timestamp, val)
     return this
   }
-
-  keys(): IterableIterator<Timestamp> {
-    return this.map.keys()
-  }
-
-  values(): IterableIterator<T> {
-    return this.map.values()
-  }
-
-  entries(): IterableIterator<[Timestamp, T]> {
-    return this.map.entries()
-  }
-
-  forEach(
-    callbackfn: (value: T, key: number, map: Map<Timestamp, T>) => void,
-    thisArg?: unknown
-  ): void {
-    return this.map.forEach(callbackfn, thisArg)
-  }
-
 }
 
 export type Departement = string
