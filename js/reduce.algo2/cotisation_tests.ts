@@ -2,6 +2,7 @@ import test from "ava"
 import { cotisation, Input, SortieCotisation } from "./cotisation"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { dateAddMonth } from "../common/dateAddMonth"
+import { ParPériode } from "../RawDataTypes"
 
 const dureeEnMois = 13
 const dateDebut = new Date("2018-01-01")
@@ -12,11 +13,9 @@ const forEachMonth = (
   fct: ({ periode, month }: { periode: Date; month: number }) => Partial<Input>
 ) =>
   periodeSerie.reduce(
-    (acc, periode, month) => ({
-      ...acc,
-      [periode.getTime()]: { periode, ...fct({ periode, month }) },
-    }),
-    {}
+    (acc, periode, month) =>
+      acc.set(periode, { periode, ...fct({ periode, month }) }),
+    new ParPériode<Input>()
   )
 
 const testCases = [
@@ -110,7 +109,7 @@ testCases.forEach(({ assertion, input, propName, expected }) => {
   test(assertion, (t) => {
     const actual = cotisation(input)
     expected.forEach((expectedPropValue, indiceMois) => {
-      const actualValue = actual[dateAddMonth(dateDebut, indiceMois).getTime()]
+      const actualValue = actual.get(dateAddMonth(dateDebut, indiceMois))
       t.is(
         actualValue?.[propName as keyof SortieCotisation],
         expectedPropValue,
@@ -123,5 +122,5 @@ testCases.forEach(({ assertion, input, propName, expected }) => {
 test("cotisation retourne les mêmes périodes que fournies en entrée", (t) => {
   const input = forEachMonth(() => ({}))
   const actual = cotisation(input)
-  t.deepEqual(Object.keys(actual), Object.keys(input))
+  t.deepEqual([...actual.keys()], [...input.keys()])
 })

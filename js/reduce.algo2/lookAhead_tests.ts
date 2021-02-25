@@ -1,6 +1,7 @@
 import test, { ExecutionContext } from "ava"
 import { lookAhead } from "./lookAhead"
 import { parPériode } from "../test/helpers/parPeriode"
+import { ParPériode } from "../RawDataTypes"
 
 type TestCase = {
   name: string
@@ -8,7 +9,7 @@ type TestCase = {
   attr_name: Parameters<typeof lookAhead>[1]
   n_months: Parameters<typeof lookAhead>[2]
   past: Parameters<typeof lookAhead>[3]
-  expected: Partial<ReturnType<typeof lookAhead>>
+  expected: ReturnType<typeof lookAhead>
 }
 
 const testCases: Array<TestCase> = [
@@ -117,7 +118,7 @@ const testCases: Array<TestCase> = [
       "2015-01-01": { outcome: true },
       "2015-02-01": {},
       "2015-03-01": {},
-    }),
+    }) as TestCase["data"],
     attr_name: "outcome",
     n_months: 1,
     past: false,
@@ -137,6 +138,7 @@ testCases.forEach(({ name, expected, ...tc }) => {
       tc["n_months"],
       tc["past"]
     )
-    t.deepEqual(actual, expected)
+    const sortedActual = new ParPériode([...actual.entries()].sort())
+    t.deepEqual(sortedActual, expected)
   })
 })

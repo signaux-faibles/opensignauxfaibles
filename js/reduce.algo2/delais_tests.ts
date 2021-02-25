@@ -1,7 +1,7 @@
 import test, { ExecutionContext } from "ava"
 import { nbDays } from "./nbDays"
 import { delais, ChampsEntréeDelai, ChampsDettes, SortieDelais } from "./delais"
-import { ParPériode } from "../RawDataTypes"
+import { ParPériode, ParHash } from "../RawDataTypes"
 
 const fevrier = new Date("2014-02-01")
 const mars = new Date("2014-03-01")
@@ -25,13 +25,13 @@ const makeDebitParPériode = ({
 
 const runDelais = (debits?: ChampsDettes): ParPériode<SortieDelais> => {
   const delaiTest = makeDelai(new Date("2014-01-03"), new Date("2014-04-05"))
-  const delaiMap: ParPériode<ChampsEntréeDelai> = {
+  const delaiMap: ParHash<ChampsEntréeDelai> = {
     [dummyPeriod]: delaiTest,
   }
-  const debitParPériode: ParPériode<ChampsDettes> = {}
+  const debitParPériode = new ParPériode<ChampsDettes>()
   if (debits) {
-    debitParPériode[fevrier.getTime()] = makeDebitParPériode(debits)
-    debitParPériode[mars.getTime()] = makeDebitParPériode(debits)
+    debitParPériode.set(fevrier, makeDebitParPériode(debits))
+    debitParPériode.set(mars, makeDebitParPériode(debits))
   }
   return delais(delaiMap, debitParPériode, {
     premièreDate: fevrier,
@@ -42,11 +42,11 @@ const runDelais = (debits?: ChampsDettes): ParPériode<SortieDelais> => {
 test("la propriété delai_nb_jours_restants représente le nombre de jours restants du délai", (t: ExecutionContext) => {
   const outputDelai = runDelais()
   t.is(
-    outputDelai[fevrier.getTime()]?.["delai_nb_jours_restants"],
+    outputDelai.get(fevrier)?.["delai_nb_jours_restants"],
     nbDays(new Date("2014-02-01"), new Date("2014-04-05"))
   )
   t.is(
-    outputDelai[mars.getTime()]?.["delai_nb_jours_restants"],
+    outputDelai.get(mars)?.["delai_nb_jours_restants"],
     nbDays(new Date("2014-03-01"), new Date("2014-04-05"))
   )
 })
@@ -54,14 +54,14 @@ test("la propriété delai_nb_jours_restants représente le nombre de jours rest
 test("la propriété delai_nb_jours_total représente la durée totale en jours du délai", (t: ExecutionContext) => {
   const dureeEnJours = nbDays(new Date("2014-01-03"), new Date("2014-04-05"))
   const outputDelai = runDelais()
-  t.is(outputDelai[fevrier.getTime()]?.["delai_nb_jours_total"], dureeEnJours)
-  t.is(outputDelai[mars.getTime()]?.["delai_nb_jours_total"], dureeEnJours)
+  t.is(outputDelai.get(fevrier)?.["delai_nb_jours_total"], dureeEnJours)
+  t.is(outputDelai.get(mars)?.["delai_nb_jours_total"], dureeEnJours)
 })
 
 test("la propriété delai_montant_echeancier représente le montant en euros des cotisations sociales couvertes par le délai", (t: ExecutionContext) => {
   const outputDelai = runDelais()
-  t.is(outputDelai[fevrier.getTime()]?.["delai_montant_echeancier"], 1000)
-  t.is(outputDelai[mars.getTime()]?.["delai_montant_echeancier"], 1000)
+  t.is(outputDelai.get(fevrier)?.["delai_montant_echeancier"], 1000)
+  t.is(outputDelai.get(mars)?.["delai_montant_echeancier"], 1000)
 })
 
 test(
@@ -75,10 +75,9 @@ test(
     const debits = { montant_part_patronale: 600, montant_part_ouvriere: 0 }
     const outputDelai = runDelais(debits as ChampsDettes)
     const tolerance = 10e-3
-    const ratioFebruary =
-      outputDelai[fevrier.getTime()]?.["delai_deviation_remboursement"]
-    const ratioMarch =
-      outputDelai[mars.getTime()]?.["delai_deviation_remboursement"]
+    const ratioFebruary = outputDelai.get(fevrier)
+      ?.delai_deviation_remboursement
+    const ratioMarch = outputDelai.get(mars)?.delai_deviation_remboursement
     t.is(typeof ratioFebruary, "number")
     t.is(typeof ratioMarch, "number")
     if (typeof ratioFebruary === "number") {
@@ -92,14 +91,14 @@ test(
 
 test("un délai en dehors de la période d'intérêt est ignorée", (t: ExecutionContext) => {
   const delaiTest = makeDelai(new Date("2013-01-03"), new Date("2013-03-05"))
-  const delaiMap: ParPériode<ChampsEntréeDelai> = {
+  const delaiMap: ParHash<ChampsEntréeDelai> = {
     [dummyPeriod]: delaiTest,
   }
-  const donnéesParPériode: ParPériode<ChampsDettes> = {}
-  donnéesParPériode[fevrier.getTime()] = makeDebitParPériode()
+  const donnéesParPériode = new ParPériode<ChampsDettes>()
+  donnéesParPériode.set(fevrier, makeDebitParPériode())
   const périodesComplétées = delais(delaiMap, donnéesParPériode, {
     premièreDate: fevrier,
     dernièreDate: mars,
   })
-  t.deepEqual(périodesComplétées, {})
+  t.deepEqual(périodesComplétées, new ParPériode<SortieDelais>())
 })
