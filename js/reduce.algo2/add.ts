@@ -5,9 +5,10 @@ export function add<T>(
   output: ParPériode<Partial<T>>
 ): void {
   "use strict"
-  Object.keys(output).forEach(function (periode) {
-    if (periode in obj) {
-      Object.assign(output[periode], obj[periode])
+  Object.keys(output).forEach(function (strPériode) {
+    if (strPériode in obj) {
+      const période = parseInt(strPériode)
+      Object.assign(output[période], obj[période])
     }
   })
 }

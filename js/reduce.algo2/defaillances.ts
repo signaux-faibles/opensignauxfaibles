@@ -56,11 +56,11 @@ export function defaillances(
       )
     )
     const time_til_last = Object.keys(output_indexed).filter((val) => {
-      return val >= (periode_effet.toISOString().split("T")[0] as string)
+      return parseInt(val) >= periode_effet.getTime()
     })
 
     time_til_last.forEach((time) => {
-      const outputForTime = output_indexed[time]
+      const outputForTime = output_indexed[parseInt(time)]
       if (outputForTime !== undefined) {
         outputForTime.etat_proc_collective = event.etat
         outputForTime.date_proc_collective = event.date_proc_col

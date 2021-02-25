@@ -29,13 +29,15 @@ export function cibleApprentissage(
   const output_cotisation = output_indexed
   const output_procol = output_indexed
   // replace with const
-  const all_keys = Object.keys(output_indexed)
+  const strPériodes = Object.keys(output_indexed)
 
   const merged_info: ParPériode<{ outcome: boolean }> = {}
-  for (const k of all_keys) {
-    merged_info[k] = {
+  for (const strPériode of strPériodes) {
+    const période = parseInt(strPériode)
+    merged_info[période] = {
       outcome: Boolean(
-        output_procol[k]?.tag_failure || output_cotisation[k]?.tag_default
+        output_procol[période]?.tag_failure ||
+          output_cotisation[période]?.tag_default
       ),
     }
   }
@@ -54,7 +56,8 @@ export function cibleApprentissage(
     true
   )
 
-  const output_cible = all_keys.reduce(function (m, k) {
+  const output_cible = strPériodes.reduce(function (m, strPériode) {
+    const k = parseInt(strPériode)
     const outputTimes: SortieCibleApprentissage = {}
     if (output_default[k] !== undefined)
       outputTimes.time_til_default = output_default[k]?.time_til_outcome

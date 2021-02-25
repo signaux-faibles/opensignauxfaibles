@@ -111,7 +111,7 @@ export function effectifs<K extends Clé>(
     futureTimestamps.forEach(({ offset, timestamp }) => {
       sortieEffectif[timestamp] = {
         ...(sortieEffectif[timestamp] as SortieEffectifs<K>),
-        [makePastProp(clé, offset)]: mapEffectif[time],
+        [makePastProp(clé, offset)]: mapEffectif[parseInt(time)],
       }
     })
   })

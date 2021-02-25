@@ -6,6 +6,8 @@ import { ParPériode } from "../RawDataTypes"
 const fevrier = new Date("2014-02-01")
 const mars = new Date("2014-03-01")
 
+const dummyPeriod = new Date("2010-01-01").getTime()
+
 const makeDelai = (firstDate: Date, secondDate: Date): ChampsEntréeDelai => ({
   date_creation: firstDate,
   date_echeance: secondDate,
@@ -24,7 +26,7 @@ const makeDebitParPériode = ({
 const runDelais = (debits?: ChampsDettes): ParPériode<SortieDelais> => {
   const delaiTest = makeDelai(new Date("2014-01-03"), new Date("2014-04-05"))
   const delaiMap: ParPériode<ChampsEntréeDelai> = {
-    abc: delaiTest,
+    [dummyPeriod]: delaiTest,
   }
   const debitParPériode: ParPériode<ChampsDettes> = {}
   if (debits) {
@@ -91,7 +93,7 @@ test(
 test("un délai en dehors de la période d'intérêt est ignorée", (t: ExecutionContext) => {
   const delaiTest = makeDelai(new Date("2013-01-03"), new Date("2013-03-05"))
   const delaiMap: ParPériode<ChampsEntréeDelai> = {
-    abc: delaiTest,
+    [dummyPeriod]: delaiTest,
   }
   const donnéesParPériode: ParPériode<ChampsDettes> = {}
   donnéesParPériode[fevrier.getTime()] = makeDebitParPériode()

@@ -13,13 +13,14 @@ function assertEffectif(
 ): void {
   const périodes = Object.keys(résultat)
   for (let i = 0; i < périodes.length; i++) {
+    const période = parseInt(périodes[i] as string)
     t.is(
-      résultat[périodes[i] as string]?.effectif,
+      résultat[période]?.effectif,
       effectifsAttendus[i]?.[0],
       `valeur inattendue pour la période ${i}`
     )
     t.is(
-      résultat[périodes[i] as string]?.effectif_reporte,
+      résultat[période]?.effectif_reporte,
       effectifsAttendus[i]?.[1] ? 1 : 0,
       `flag de report inattendu pour la période ${i}`
     )
