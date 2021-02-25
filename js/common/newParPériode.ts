@@ -48,7 +48,10 @@ export function newParPériode<T>(
      */
     set(période: Date | Timestamp | string, val: T): this {
       const timestamp = this.getTimestamp(période)
-      super.set(timestamp, val)
+      "put" in Map.prototype
+        ? // @ts-expect-error MongoDB provides Map.prototype.put() instead of Map.prototype.set()
+          super.put(timestamp, val)
+        : super.set(timestamp, val)
       return this
     }
   }
