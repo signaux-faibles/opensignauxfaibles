@@ -25,6 +25,19 @@ export function newParPériode<T>(
       return keys
     }
 
+  Map.prototype.forEach =
+    Map.prototype.forEach ||
+    function forEach(
+      callbackfn: (value: T, key: number, map: Map<Timestamp, T>) => void,
+      thisArg?: unknown
+    ): void {
+      // @ts-expect-error Polyfill for Map.prototype.forEach on MongoDB's Map implementation
+      const data = this._data
+      for (const k in data) {
+        callbackfn.call(thisArg, data[k], parseInt(k), data)
+      }
+    }
+
   /**
    * Cette classe est une Map<Timestamp, T> qui valide (et convertit,
    * si besoin) la période passée aux différentes méthodes.
