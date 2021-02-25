@@ -9,11 +9,89 @@ export interface ParPériode<T> extends Map<Timestamp, T> {
 export function newParPériode<T>(
   arg?: readonly (readonly [number, T])[] | null | undefined
 ): ParPériode<T> {
+  // if ("_get" in Map.prototype && "put" in Map.prototype) {
+  let data: Record<number, T> = {}
+
+  class MyMap {
+    constructor(
+      entries?: readonly (readonly [number, T])[] | null | undefined
+    ) {
+      if (entries) {
+        for (const [key, value] of entries) {
+          data[key] = value
+        }
+      }
+    }
+    // @ ts-expect-error Override MongoDB's Map implementation
+    has(key: number) {
+      return key in data
+    }
+    // @ ts-expect-error Override MongoDB's Map implementation
+    get(key: number): T | undefined {
+      return data[key]
+    }
+    // @ ts-expect-error Override MongoDB's Map implementation
+    set(key: number, value: T): this {
+      data[key] = value
+      return this
+    }
+
+    get size() {
+      return Object.keys(data).length
+    }
+    clear() {
+      data = {}
+    }
+    delete(key: number): boolean {
+      const exists = key in data
+      delete data[key]
+      return exists
+    }
+    // @ ts-expect-error Override MongoDB's Map implementation
+    keys = function* () {
+      for (const k in data) {
+        yield parseInt(k)
+      }
+    }
+    // @ ts-expect-error Override MongoDB's Map implementation
+    values = function* () {
+      for (const val of Object.values(data)) {
+        yield val
+      }
+    }
+    // @ ts-expect-error Override MongoDB's Map implementation
+    entries = function* (): Generator<[number, T]> {
+      for (const k in data) {
+        yield [parseInt(k), data[k] as T]
+      }
+    }
+    // @ ts-expect-error Override MongoDB's Map implementation
+    forEach(
+      callbackfn: (value: T, key: number, map: any) => void,
+      thisArg?: unknown
+    ): void {
+      // @ ts-expect-error entries() is defined above
+      for (const [key, value] of this.entries()) {
+        callbackfn.call(thisArg, value as T, key, this)
+      }
+    }
+    // }
+    [Symbol.iterator]() {
+      return this.entries()
+    }
+
+    get [Symbol.toStringTag]() {
+      return "MyMap"
+    }
+  }
+
   /**
    * Cette classe est une Map<Timestamp, T> qui valide (et convertit,
    * si besoin) la période passée aux différentes méthodes.
    */
-  class ParPériodeImpl<T> extends Map<Timestamp, T> implements ParPériode<T> {
+  class ParPériodeImpl
+    extends MyMap /*<Timestamp, T>*/
+    implements ParPériode<T> {
     private getNumericValue(période: Date | Timestamp | string): number {
       if (typeof période === "number") return période
       if (typeof période === "string") return parseInt(période)
@@ -50,38 +128,6 @@ export function newParPériode<T>(
       const timestamp = this.getTimestamp(période)
       super.set(timestamp, val)
       return this
-    }
-  }
-
-  if ("_get" in Map.prototype && "put" in Map.prototype) {
-    const data: Record<number, T> = {}
-    // @ts-expect-error Override MongoDB's Map implementation
-    Map.prototype.has = (key: number) => key in data
-    // @ts-expect-error Override MongoDB's Map implementation
-    Map.prototype.get = (key: number) => data[key]
-    // @ts-expect-error Override MongoDB's Map implementation
-    Map.prototype.set = (key: number, value: T) => (data[key] = value)
-    // @ts-expect-error Override MongoDB's Map implementation
-    Map.prototype.keys = function* () {
-      for (const k in data) {
-        yield parseInt(k)
-      }
-    }
-    // @ts-expect-error Override MongoDB's Map implementation
-    Map.prototype.entries = function* () {
-      for (const k in data) {
-        yield [parseInt(k), data[k]]
-      }
-    }
-    // @ts-expect-error Override MongoDB's Map implementation
-    Map.prototype.forEach = function (
-      callbackfn: (value: T, key: number, map: unknown) => void,
-      thisArg?: unknown
-    ): void {
-      // @ts-expect-error entries() is defined above
-      for (const [key, value] of this.entries()) {
-        callbackfn.call(thisArg, value, key, this)
-      }
     }
   }
 
