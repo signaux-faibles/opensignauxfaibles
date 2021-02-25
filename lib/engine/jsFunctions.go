@@ -79,6 +79,8 @@ function forEachPopulatedProp(obj, fct) {
     return serie;
 }`,
 "newParPériode": `function newParPériode(arg) {
+    // @ts-expect-error To prevent "ReferenceError: friendlyEqual is not defined" errors, see https://jira.mongodb.org/browse/SERVER-19169 and https://github.com/mongodb/mongo/blob/master/src/mongo/shell/types.js#L584
+    friendlyEqual = () => { }; // eslint-disable-line
     /**
      * Cette classe est une Map<Timestamp, T> qui valide (et convertit,
      * si besoin) la période passée aux différentes méthodes.
