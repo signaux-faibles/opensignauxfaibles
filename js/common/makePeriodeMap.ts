@@ -21,61 +21,56 @@ export interface ParPériode<T> extends Map<Timestamp, T> {
 export function makePeriodeMap<T>(
   arg?: readonly (readonly [number, T])[] | null | undefined
 ): ParPériode<T> {
-  // if ("_get" in Map.prototype && "put" in Map.prototype) {
-  let data: Record<number, T> = {}
-
   /**
-   * MyMap est une ré-implémentation partielle de la classe Map standard de
-   * JavaScript, utilisant un objet JavaScript pour indexer les entrées.
-   * Implémenter l'interface de Map permet de valider les dates passées
-   * en tant que clés, et de supporter plusieurs représentations de ces dates
-   * (ex: instance Date, timestamp numérique ou chaine de caractères), tout en
-   * evitant que des chaines de caractères arbitaires y soient passées.
+   * IntMap est une ré-implémentation partielle de Map<number, T> utilisant un
+   * objet JavaScript pour indexer les entrées, et rendue nécéssaire par le
+   * fait que MongoDB fournit une version non standard de la classe Map.
    */
-  class MyMap {
+  class IntMap {
+    private data: Record<number, T> = {}
     constructor(
       entries?: readonly (readonly [number, T])[] | null | undefined
     ) {
       if (entries) {
         for (const [key, value] of entries) {
-          data[key] = value
+          this.data[key] = value
         }
       }
     }
     has(key: number) {
-      return key in data
+      return key in this.data
     }
     get(key: number): T | undefined {
-      return data[key]
+      return this.data[key]
     }
     set(key: number, value: T): this {
-      data[key] = value
+      this.data[key] = value
       return this
     }
     get size() {
-      return Object.keys(data).length
+      return Object.keys(this.data).length
     }
     clear() {
-      data = {}
+      this.data = {}
     }
     delete(key: number): boolean {
-      const exists = key in data
-      delete data[key]
+      const exists = key in this.data
+      delete this.data[key]
       return exists
     }
     *keys() {
-      for (const k in data) {
+      for (const k in this.data) {
         yield parseInt(k)
       }
     }
     *values() {
-      for (const val of Object.values(data)) {
+      for (const val of Object.values(this.data)) {
         yield val
       }
     }
     *entries(): Generator<[number, T]> {
-      for (const k in data) {
-        yield [parseInt(k), data[k] as T]
+      for (const k in this.data) {
+        yield [parseInt(k), this.data[k] as T]
       }
     }
     forEach(
@@ -90,24 +85,25 @@ export function makePeriodeMap<T>(
       return this.entries()
     }
     get [Symbol.toStringTag]() {
-      return "MyMap"
+      return "IntMap"
     }
   }
 
   /**
-   * Cette classe est une Map<Timestamp, T> qui valide (et convertit,
-   * si besoin) la période passée aux différentes méthodes.
+   * Cette classe étend Map<Timestamp, T> pour valider les dates passées
+   * en tant que clés et supporter diverses représentations de ces dates
+   * (ex: instance Date, timestamp numérique ou chaine de caractères), tout en
+   * evitant que des chaines de caractères arbitaires y soient passées.
    */
-  class ParPériodeImpl
-    extends MyMap /*<Timestamp, T>*/
-    implements ParPériode<T> {
+  class ParPériodeImpl extends IntMap implements ParPériode<T> {
+    /** Extraie le timestamp d'une date, quelque soit sa représentation. */
     private getNumericValue(période: Date | Timestamp | string): number {
       if (typeof période === "number") return période
       if (typeof période === "string") return parseInt(période)
       if (période instanceof Date) return période.getTime()
       throw new TypeError("type non supporté: " + typeof période)
     }
-    // pour vérifier que le timestamp retourné par getNumericValue est valide
+    /** Vérifie que le timestamp retourné par getNumericValue est valide. */
     private getTimestamp(période: Date | Timestamp | string): Timestamp {
       const timestamp = this.getNumericValue(période)
       if (isNaN(timestamp) || new Date(timestamp).getTime() !== timestamp) {
@@ -115,24 +111,15 @@ export function makePeriodeMap<T>(
       }
       return timestamp
     }
-    /**
-     * Informe sur la présence d'une valeur associée à la période donnée.
-     * @throws TypeError si la période n'est pas valide.
-     */
+    /** @throws TypeError ou RangeError si la période n'est pas valide. */
     has(période: Date | Timestamp | string): boolean {
       return super.has(this.getTimestamp(période))
     }
-    /**
-     * Retourne la valeur associée à la période donnée.
-     * @throws TypeError si la période n'est pas valide.
-     */
+    /** @throws TypeError ou RangeError si la période n'est pas valide. */
     get(période: Date | Timestamp | string): T | undefined {
       return super.get(this.getTimestamp(période))
     }
-    /**
-     * Définit la valeur associée à la période donnée.
-     * @throws TypeError si la période n'est pas valide.
-     */
+    /** @throws TypeError ou RangeError si la période n'est pas valide. */
     set(période: Date | Timestamp | string, val: T): this {
       const timestamp = this.getTimestamp(période)
       super.set(timestamp, val)
