@@ -53,6 +53,6 @@ type DataEntry = Record<string, unknown>
 testCases.forEach(({ name, data, additions, expected }) => {
   test.serial(`add(): ${name}`, (t: ExecutionContext) => {
     add(additions as ParPériode<DataEntry>, data as ParPériode<DataEntry>)
-    t.deepEqual([...data], [...expected])
+    t.deepEqual(data, expected)
   })
 })

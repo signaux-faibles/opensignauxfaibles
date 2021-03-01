@@ -79,78 +79,11 @@ function forEachPopulatedProp(obj, fct) {
     return serie;
 }`,
 "newParPériode": `function newParPériode(arg) {
-    // if ("_get" in Map.prototype && "put" in Map.prototype) {
-    let data = {};
-    class MyMap {
-        constructor(entries) {
-            // @ ts-expect-error Override MongoDB's Map implementation
-            this.keys = function* () {
-                for (const k in data) {
-                    yield parseInt(k);
-                }
-            };
-            // @ ts-expect-error Override MongoDB's Map implementation
-            this.values = function* () {
-                for (const val of Object.values(data)) {
-                    yield val;
-                }
-            };
-            // @ ts-expect-error Override MongoDB's Map implementation
-            this.entries = function* () {
-                for (const k in data) {
-                    yield [parseInt(k), data[k]];
-                }
-            };
-            if (entries) {
-                for (const [key, value] of entries) {
-                    data[key] = value;
-                }
-            }
-        }
-        // @ ts-expect-error Override MongoDB's Map implementation
-        has(key) {
-            return key in data;
-        }
-        // @ ts-expect-error Override MongoDB's Map implementation
-        get(key) {
-            return data[key];
-        }
-        // @ ts-expect-error Override MongoDB's Map implementation
-        set(key, value) {
-            data[key] = value;
-            return this;
-        }
-        get size() {
-            return Object.keys(data).length;
-        }
-        clear() {
-            data = {};
-        }
-        delete(key) {
-            const exists = key in data;
-            delete data[key];
-            return exists;
-        }
-        // @ ts-expect-error Override MongoDB's Map implementation
-        forEach(callbackfn, thisArg) {
-            // @ ts-expect-error entries() is defined above
-            for (const [key, value] of this.entries()) {
-                callbackfn.call(thisArg, value, key, this);
-            }
-        }
-        // }
-        [Symbol.iterator]() {
-            return this.entries();
-        }
-        get [Symbol.toStringTag]() {
-            return "MyMap";
-        }
-    }
     /**
      * Cette classe est une Map<Timestamp, T> qui valide (et convertit,
      * si besoin) la période passée aux différentes méthodes.
      */
-    class ParPériodeImpl extends MyMap /*<Timestamp, T>*/ {
+    class ParPériodeImpl extends Map {
         getNumericValue(période) {
             if (typeof période === "number")
                 return période;
@@ -191,6 +124,34 @@ function forEachPopulatedProp(obj, fct) {
             super.set(timestamp, val);
             return this;
         }
+    }
+    if ("_get" in Map.prototype && "put" in Map.prototype) {
+        const data = {};
+        // @ts-expect-error Override MongoDB's Map implementation
+        Map.prototype.has = (key) => key in data;
+        // @ts-expect-error Override MongoDB's Map implementation
+        Map.prototype.get = (key) => data[key];
+        // @ts-expect-error Override MongoDB's Map implementation
+        Map.prototype.set = (key, value) => (data[key] = value);
+        // @ts-expect-error Override MongoDB's Map implementation
+        Map.prototype.keys = function* () {
+            for (const k in data) {
+                yield parseInt(k);
+            }
+        };
+        // @ts-expect-error Override MongoDB's Map implementation
+        Map.prototype.entries = function* () {
+            for (const k in data) {
+                yield [parseInt(k), data[k]];
+            }
+        };
+        // @ts-expect-error Override MongoDB's Map implementation
+        Map.prototype.forEach = function (callbackfn, thisArg) {
+            // @ts-expect-error entries() is defined above
+            for (const [key, value] of this.entries()) {
+                callbackfn.call(thisArg, value, key, this);
+            }
+        };
     }
     return new ParPériodeImpl(arg);
 }`,

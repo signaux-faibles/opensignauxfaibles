@@ -101,5 +101,5 @@ test("un délai en dehors de la période d'intérêt est ignorée", (t: Executio
     premièreDate: fevrier,
     dernièreDate: mars,
   })
-  t.deepEqual([...périodesComplétées], [...newParPériode<SortieDelais>()])
+  t.deepEqual(périodesComplétées, newParPériode<SortieDelais>())
 })

@@ -38,7 +38,7 @@ test("Une ouverture de liquidation est prise en compte dans la période courante
     },
   })
 
-  t.deepEqual([...output_indexed], [...expected])
+  t.deepEqual(output_indexed, expected)
 })
 
 test("Une ouverture puis cloture d'un redressement sont pris en compte, tag_failure reste à TRUE", (t) => {
@@ -79,5 +79,5 @@ test("Une ouverture puis cloture d'un redressement sont pris en compte, tag_fail
     },
   })
 
-  t.deepEqual([...output_indexed], [...expected])
+  t.deepEqual(output_indexed, expected)
 })
