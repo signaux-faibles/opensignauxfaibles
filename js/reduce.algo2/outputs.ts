@@ -53,10 +53,10 @@ export function outputs(
     }
   })
 
-  // TODO: simplifier cette itération
-  const output_indexed = output_array.reduce(function (periodes, val) {
-    return periodes.set(val.periode, val)
-  }, f.makePeriodeMap<DonnéesAgrégées>())
+  const output_indexed: ParPériode<DonnéesAgrégées> = f.makePeriodeMap<DonnéesAgrégées>()
+  for (const val of output_array) {
+    output_indexed.set(val.periode, val)
+  }
 
   return [output_array, output_indexed]
 }

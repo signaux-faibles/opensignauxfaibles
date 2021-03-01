@@ -1966,10 +1966,10 @@ function outputs(v, serie_periode) {
             outcome: false,
         };
     });
-    // TODO: simplifier cette itération
-    const output_indexed = output_array.reduce(function (periodes, val) {
-        return periodes.set(val.periode, val);
-    }, f.makePeriodeMap());
+    const output_indexed = f.makePeriodeMap();
+    for (const val of output_array) {
+        output_indexed.set(val.periode, val);
+    }
     return [output_array, output_indexed];
 }`,
 "poidsFrng": `function poidsFrng(diane) {
