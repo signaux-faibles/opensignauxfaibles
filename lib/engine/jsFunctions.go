@@ -122,7 +122,7 @@ function makePeriodeMap(arg) {
             return exists;
         }
         *keys() {
-            for (const k in this.data) {
+            for (const k of Object.keys(this.data)) {
                 yield parseInt(k);
             }
         }
