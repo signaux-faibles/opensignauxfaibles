@@ -1,17 +1,37 @@
 import { Timestamp } from "../RawDataTypes"
 
+/**
+ * ParPériode est une extension de Map permettant de valider les dates fournies
+ * avant de les sérialiser sous forme de timestamp (numérique), type employé
+ * pour l'indexation des données par période dans ce Map.
+ */
 export interface ParPériode<T> extends Map<Timestamp, T> {
   has(période: Date | Timestamp | string): boolean
   get(période: Date | Timestamp | string): T | undefined
   set(période: Date | Timestamp | string, val: T): this
 }
 
+/**
+ * makePeriodeMap() retourne une nouvelle instance de la classe ParPériode
+ * (équivalente à Map<Timestamp, T>). Cette fonction a été fournie à défaut
+ * d'être parvenu à inclure directement la classe ParPériode dans le scope
+ * transmis à MongoDB depuis le traitement map-reduce lancé par le code Go.
+ * @param arg (optionnel) - pour initialiser la Map avec un tableau d'entries.
+ */
 export function makePeriodeMap<T>(
   arg?: readonly (readonly [number, T])[] | null | undefined
 ): ParPériode<T> {
   // if ("_get" in Map.prototype && "put" in Map.prototype) {
   let data: Record<number, T> = {}
 
+  /**
+   * MyMap est une ré-implémentation partielle de la classe Map standard de
+   * JavaScript, utilisant un objet JavaScript pour indexer les entrées.
+   * Implémenter l'interface de Map permet de valider les dates passées
+   * en tant que clés, et de supporter plusieurs représentations de ces dates
+   * (ex: instance Date, timestamp numérique ou chaine de caractères), tout en
+   * evitant que des chaines de caractères arbitaires y soient passées.
+   */
   class MyMap {
     constructor(
       entries?: readonly (readonly [number, T])[] | null | undefined
@@ -22,20 +42,16 @@ export function makePeriodeMap<T>(
         }
       }
     }
-    // @ ts-expect-error Override MongoDB's Map implementation
     has(key: number) {
       return key in data
     }
-    // @ ts-expect-error Override MongoDB's Map implementation
     get(key: number): T | undefined {
       return data[key]
     }
-    // @ ts-expect-error Override MongoDB's Map implementation
     set(key: number, value: T): this {
       data[key] = value
       return this
     }
-
     get size() {
       return Object.keys(data).length
     }
@@ -47,41 +63,34 @@ export function makePeriodeMap<T>(
       delete data[key]
       return exists
     }
-    // @ ts-expect-error Override MongoDB's Map implementation
     *keys() {
       for (const k in data) {
         yield parseInt(k)
       }
     }
-    // @ ts-expect-error Override MongoDB's Map implementation
     *values() {
       for (const val of Object.values(data)) {
         yield val
       }
     }
-    // @ ts-expect-error Override MongoDB's Map implementation
     *entries(): Generator<[number, T]> {
       for (const k in data) {
         yield [parseInt(k), data[k] as T]
       }
     }
-    // @ ts-expect-error Override MongoDB's Map implementation
     forEach(
       callbackfn: (value: T, key: number, map: any) => void,
       thisArg?: unknown
     ): void {
-      // @ ts-expect-error entries() is defined above
       for (const [key, value] of this.entries()) {
         callbackfn.call(thisArg, value as T, key, this)
       }
     }
-    // }
     [Symbol.iterator]() {
       return this.entries()
     }
-
     get [Symbol.toStringTag]() {
-      return "Map"
+      return "MyMap"
     }
   }
 

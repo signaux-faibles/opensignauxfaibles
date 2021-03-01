@@ -78,9 +78,24 @@ function forEachPopulatedProp(obj, fct) {
     }
     return serie;
 }`,
-"makePeriodeMap": `function makePeriodeMap(arg) {
+"makePeriodeMap": `/**
+ * makePeriodeMap() retourne une nouvelle instance de la classe ParPériode
+ * (équivalente à Map<Timestamp, T>). Cette fonction a été fournie à défaut
+ * d'être parvenu à inclure directement la classe ParPériode dans le scope
+ * transmis à MongoDB depuis le traitement map-reduce lancé par le code Go.
+ * @param arg (optionnel) - pour initialiser la Map avec un tableau d'entries.
+ */
+function makePeriodeMap(arg) {
     // if ("_get" in Map.prototype && "put" in Map.prototype) {
     let data = {};
+    /**
+     * MyMap est une ré-implémentation partielle de la classe Map standard de
+     * JavaScript, utilisant un objet JavaScript pour indexer les entrées.
+     * Implémenter l'interface de Map permet de valider les dates passées
+     * en tant que clés, et de supporter plusieurs représentations de ces dates
+     * (ex: instance Date, timestamp numérique ou chaine de caractères), tout en
+     * evitant que des chaines de caractères arbitaires y soient passées.
+     */
     class MyMap {
         constructor(entries) {
             if (entries) {
@@ -89,15 +104,12 @@ function forEachPopulatedProp(obj, fct) {
                 }
             }
         }
-        // @ ts-expect-error Override MongoDB's Map implementation
         has(key) {
             return key in data;
         }
-        // @ ts-expect-error Override MongoDB's Map implementation
         get(key) {
             return data[key];
         }
-        // @ ts-expect-error Override MongoDB's Map implementation
         set(key, value) {
             data[key] = value;
             return this;
@@ -113,37 +125,31 @@ function forEachPopulatedProp(obj, fct) {
             delete data[key];
             return exists;
         }
-        // @ ts-expect-error Override MongoDB's Map implementation
         *keys() {
             for (const k in data) {
                 yield parseInt(k);
             }
         }
-        // @ ts-expect-error Override MongoDB's Map implementation
         *values() {
             for (const val of Object.values(data)) {
                 yield val;
             }
         }
-        // @ ts-expect-error Override MongoDB's Map implementation
         *entries() {
             for (const k in data) {
                 yield [parseInt(k), data[k]];
             }
         }
-        // @ ts-expect-error Override MongoDB's Map implementation
         forEach(callbackfn, thisArg) {
-            // @ ts-expect-error entries() is defined above
             for (const [key, value] of this.entries()) {
                 callbackfn.call(thisArg, value, key, this);
             }
         }
-        // }
         [Symbol.iterator]() {
             return this.entries();
         }
         get [Symbol.toStringTag]() {
-            return "Map";
+            return "MyMap";
         }
     }
     /**
