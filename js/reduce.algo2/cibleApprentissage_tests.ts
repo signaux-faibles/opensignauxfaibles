@@ -6,7 +6,7 @@ type TestCase = {
   // name: string
   data: Parameters<typeof cibleApprentissage>[0]
   n_months: Parameters<typeof cibleApprentissage>[1]
-  expected: Partial<ReturnType<typeof cibleApprentissage>>
+  expected: ReturnType<typeof cibleApprentissage>
 }
 
 const testCases: TestCase[] = [
@@ -105,6 +105,6 @@ const testCases: TestCase[] = [
 testCases.forEach(({ expected, data, n_months }, name) => {
   test.serial(`cibleApprentissage(): ${name}`, (t: ExecutionContext) => {
     const actual = cibleApprentissage(data, n_months)
-    t.deepEqual(actual, expected)
+    t.deepEqual([...actual], [...expected])
   })
 })

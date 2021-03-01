@@ -139,6 +139,6 @@ testCases.forEach(({ name, expected, ...tc }) => {
       tc["past"]
     )
     const sortedActual = newParPériode([...actual.entries()].sort())
-    t.deepEqual(sortedActual, expected)
+    t.deepEqual([...sortedActual], [...expected])
   })
 })
