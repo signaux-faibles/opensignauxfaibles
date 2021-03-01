@@ -48,19 +48,19 @@ export function newParPériode<T>(
       return exists
     }
     // @ ts-expect-error Override MongoDB's Map implementation
-    keys = function* () {
+    *keys() {
       for (const k in data) {
         yield parseInt(k)
       }
     }
     // @ ts-expect-error Override MongoDB's Map implementation
-    values = function* () {
+    *values() {
       for (const val of Object.values(data)) {
         yield val
       }
     }
     // @ ts-expect-error Override MongoDB's Map implementation
-    entries = function* (): Generator<[number, T]> {
+    *entries(): Generator<[number, T]> {
       for (const k in data) {
         yield [parseInt(k), data[k] as T]
       }
@@ -81,7 +81,7 @@ export function newParPériode<T>(
     }
 
     get [Symbol.toStringTag]() {
-      return "MyMap"
+      return "Map"
     }
   }
 
