@@ -1552,7 +1552,7 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
             "nom_entreprise", "numero_siren", "statut_juridique", "procedure_collective");
             const makePastProp = (prop, offset) => ` + "`" + `${prop}_past_${offset}` + "`" + `;
             if (periodes.includes(periode.getTime())) {
-                Object.assign(output_indexed.get(periode), rest); // TODO: utiliser méthode append() ou upsert()
+                output_indexed.assign(periode, rest);
             }
             for (const ratio of Object.keys(rest)) {
                 if (entréeDiane[ratio] === null) {

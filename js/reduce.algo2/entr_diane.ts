@@ -76,7 +76,7 @@ export function entr_diane(
       ) => `${prop}_past_${offset}` as CléRatioDianePassé
 
       if (periodes.includes(periode.getTime())) {
-        Object.assign(output_indexed.get(periode), rest) // TODO: utiliser méthode append() ou upsert()
+        output_indexed.assign(periode, rest)
       }
 
       for (const ratio of Object.keys(rest) as (keyof typeof rest)[]) {
