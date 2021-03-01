@@ -26,8 +26,8 @@ export function lookAhead<PropName extends keyof EntréeLookAhead>(
   // demander: que va-t-il se passer) ou dans le future (past = false on
   // pourra se demander que s'est-il passé
 
-  const chronologic = (a: number, b: number) => (a > b ? 1 : -1) // TODO: a - b
-  const reverse = (a: number, b: number) => (b > a ? 1 : -1) // TODO: b - a
+  const chronologic = (a: number, b: number) => a - b
+  const reverse = (a: number, b: number) => b - a
 
   let counter = -1
   const output = [...data.keys()]
