@@ -1254,12 +1254,14 @@ function cotisationsdettes(vCotisation, vDebit, periodes, finPériode // corresp
     // Permet de s'aligner avec le calendrier de fourniture des données
     const lastAccountedDay = 20;
     const sortieCotisationsDettes = f.makePeriodeMap();
-    const value_cotisation = {};
+    const value_cotisation = f.makePeriodeMap();
     // Répartition des cotisations sur toute la période qu'elle concerne
     for (const cotisation of Object.values(vCotisation)) {
         const periode_cotisation = f.generatePeriodSerie(cotisation.periode.start, cotisation.periode.end);
         periode_cotisation.forEach((date_cotisation) => {
-            value_cotisation[date_cotisation.getTime()] = (value_cotisation[date_cotisation.getTime()] || []).concat([cotisation.du / periode_cotisation.length]);
+            value_cotisation.set(date_cotisation, (value_cotisation.get(date_cotisation) || []).concat([
+                cotisation.du / periode_cotisation.length,
+            ]));
         });
     }
     // relier les débits
@@ -1342,8 +1344,8 @@ function cotisationsdettes(vCotisation, vDebit, periodes, finPériode // corresp
     periodes.forEach(function (time) {
         var _a;
         const val = (_a = sortieCotisationsDettes.get(time)) !== null && _a !== void 0 ? _a : {};
-        //output_cotisationsdettes[time].numero_compte_urssaf = numeros_compte
-        const valueCotis = value_cotisation[time];
+        //val.numero_compte_urssaf = numeros_compte
+        const valueCotis = value_cotisation.get(time);
         if (valueCotis !== undefined) {
             // somme de toutes les cotisations dues pour une periode donnée
             val.cotisation = valueCotis.reduce((a, cot) => a + cot, 0);
