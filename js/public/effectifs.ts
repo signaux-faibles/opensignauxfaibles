@@ -13,7 +13,7 @@ export type SortieEffectif = {
 export function effectifs(
   effectif?: ParHash<EntréeEffectif>
 ): SortieEffectif[] {
-  const mapEffectif = f.newParPériode<number>()
+  const mapEffectif = f.makePeriodeMap<number>()
   Object.values(effectif ?? {}).forEach((e) => {
     mapEffectif.set(e.periode, (mapEffectif.get(e.periode) || 0) + e.effectif)
   })

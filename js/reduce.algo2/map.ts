@@ -116,7 +116,7 @@ export function map(this: EntréeMap): void {
         f.add(output_repeatable, output_indexed)
       }
 
-      let output_cotisationsdettes = f.newParPériode<SortieCotisationsDettes>()
+      let output_cotisationsdettes = f.makePeriodeMap<SortieCotisationsDettes>()
       if (v.cotisation && v.debit) {
         output_cotisationsdettes = f.cotisationsdettes(
           v.cotisation,
@@ -182,7 +182,7 @@ export function map(this: EntréeMap): void {
 
   if (v.scope === "entreprise") {
     if (includes["all"]) {
-      const output_indexed = f.newParPériode<SortieMapEntreprise>()
+      const output_indexed = f.makePeriodeMap<SortieMapEntreprise>()
       // if (!("print" in this)) {
       // output_indexed.set(1, {} as SortieMapEntreprise) // => TypeError: super.set is not a function (see https://dba.stackexchange.com/questions/253561/mongodb-shell-support-for-map-set)
       // output_indexed.get(1) // => ReferenceError: friendlyEqual is not defined (see https://jira.mongodb.org/browse/SERVER-19169 - https://github.com/mongodb/mongo/blob/master/src/mongo/shell/types.js#L584)

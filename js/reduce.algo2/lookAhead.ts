@@ -57,7 +57,7 @@ export function lookAhead<PropName extends keyof EntréeLookAhead>(
         m.set(période, out)
       }
       return m
-    }, f.newParPériode<Outcome>())
+    }, f.makePeriodeMap<Outcome>())
 
   return output
 }

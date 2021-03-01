@@ -1,8 +1,8 @@
-package engine 
+package engine
 
- var jsFunctions = map[string]map[string]string{
-"common":{
-"compareDebit": `function compareDebit(a, b) {
+var jsFunctions = map[string]map[string]string{
+	"common": {
+		"compareDebit": `function compareDebit(a, b) {
     "use strict";
     if (a.numero_historique < b.numero_historique)
         return -1;
@@ -10,13 +10,13 @@ package engine
         return 1;
     return 0;
 }`,
-"dateAddMonth": `function dateAddMonth(date, nbMonth) {
+		"dateAddMonth": `function dateAddMonth(date, nbMonth) {
     "use strict";
     const result = new Date(date.getTime());
     result.setUTCMonth(result.getUTCMonth() + nbMonth);
     return result;
 }`,
-"flatten": `/**
+		"flatten": `/**
  * Appelé par ` + "`" + `map()` + "`" + `, ` + "`" + `flatten()` + "`" + ` transforme les données importées (*Batches*)
  * d'une entreprise ou établissement afin de retourner un unique objet *plat*
  * contenant les valeurs finales de chaque type de données.
@@ -59,7 +59,7 @@ function flatten(v, actual_batch) {
     }, { key: v.key, scope: v.scope });
     return res;
 }`,
-"forEachPopulatedProp": `// Appelle fct() pour chaque propriété définie (non undefined) de obj.
+		"forEachPopulatedProp": `// Appelle fct() pour chaque propriété définie (non undefined) de obj.
 // Contrat: obj ne doit contenir que les clés définies dans son type.
 function forEachPopulatedProp(obj, fct) {
     ;
@@ -68,7 +68,7 @@ function forEachPopulatedProp(obj, fct) {
             fct(key, obj[key]);
     });
 }`,
-"generatePeriodSerie": `function generatePeriodSerie(date_debut, date_fin) {
+		"generatePeriodSerie": `function generatePeriodSerie(date_debut, date_fin) {
     "use strict";
     const date_next = new Date(date_debut.getTime());
     const serie = [];
@@ -78,7 +78,7 @@ function forEachPopulatedProp(obj, fct) {
     }
     return serie;
 }`,
-"makePeriodeMap": `function makePeriodeMap(arg) {
+		"makePeriodeMap": `function makePeriodeMap(arg) {
     // if ("_get" in Map.prototype && "put" in Map.prototype) {
     let data = {};
     class MyMap {
@@ -194,7 +194,7 @@ function forEachPopulatedProp(obj, fct) {
     }
     return new ParPériodeImpl(arg);
 }`,
-"omit": `// Fonction pour omettre des props, tout en retournant le bon type
+		"omit": `// Fonction pour omettre des props, tout en retournant le bon type
 function omit(object, ...propNames) {
     const result = Object.assign({}, object);
     for (const prop of propNames) {
@@ -202,7 +202,7 @@ function omit(object, ...propNames) {
     }
     return result;
 }`,
-"procolToHuman": `function procolToHuman(action, stade) {
+		"procolToHuman": `function procolToHuman(action, stade) {
     "use strict";
     let res = null;
     if (action === "liquidation" && stade !== "abandon_procedure")
@@ -219,7 +219,7 @@ function omit(object, ...propNames) {
         res = "plan_redressement";
     return res;
 }`,
-"raison_sociale": `function raison_sociale /*eslint-disable-line @typescript-eslint/no-unused-vars */(denomination_unite_legale, nom_unite_legale, nom_usage_unite_legale, prenom1_unite_legale, prenom2_unite_legale, prenom3_unite_legale, prenom4_unite_legale) {
+		"raison_sociale": `function raison_sociale /*eslint-disable-line @typescript-eslint/no-unused-vars */(denomination_unite_legale, nom_unite_legale, nom_usage_unite_legale, prenom1_unite_legale, prenom2_unite_legale, prenom3_unite_legale, prenom4_unite_legale) {
     "use strict";
     const nomUsageUniteLegale = nom_usage_unite_legale
         ? nom_usage_unite_legale + "/"
@@ -238,7 +238,7 @@ function omit(object, ...propNames) {
             " ").trim() + "/";
     return raison_sociale;
 }`,
-"region": `function region(departement) {
+		"region": `function region(departement) {
     "use strict";
     const corr = {
         "01": "Auvergne-Rhône-Alpes",
@@ -339,9 +339,9 @@ function omit(object, ...propNames) {
     };
     return corr[departement] || "";
 }`,
-},
-"compact":{
-"applyPatchesToBatch": `function applyPatchesToBatch(hashToAdd, hashToDelete, stockTypes, currentBatch) {
+	},
+	"compact": {
+		"applyPatchesToBatch": `function applyPatchesToBatch(hashToAdd, hashToDelete, stockTypes, currentBatch) {
     var _a;
     // Application des suppressions
     stockTypes.forEach((type) => {
@@ -379,7 +379,7 @@ function omit(object, ...propNames) {
         }
     });
 }`,
-"applyPatchesToMemory": `function applyPatchesToMemory(hashToAdd, hashToDelete, memory) {
+		"applyPatchesToMemory": `function applyPatchesToMemory(hashToAdd, hashToDelete, memory) {
     // Prise en compte des suppressions de clés dans la mémoire
     f.forEachPopulatedProp(hashToDelete, (type, hashesToDelete) => {
         hashesToDelete.forEach((hash) => {
@@ -396,7 +396,7 @@ function omit(object, ...propNames) {
         });
     });
 }`,
-"compactBatch": `/**
+		"compactBatch": `/**
  * Appelée par reduce(), compactBatch() va générer un diff entre les
  * données de batch et les données précédentes fournies par memory.
  * Paramètres modifiés: currentBatch et memory.
@@ -412,7 +412,7 @@ function compactBatch(currentBatch, memory, fromBatchKey) {
     f.applyPatchesToBatch(hashToAdd, hashToDelete, stockTypes, currentBatch);
     return currentBatch;
 }`,
-"complete_reporder": `// complete_reporder ajoute une propriété "reporder" pour chaque couple
+		"complete_reporder": `// complete_reporder ajoute une propriété "reporder" pour chaque couple
 // SIRET+période, afin d'assurer la reproductibilité de l'échantillonage.
 function complete_reporder(siret, object) {
     "use strict";
@@ -460,7 +460,7 @@ function complete_reporder(siret, object) {
     });
     return object;
 }`,
-"currentState": `// currentState() agrège un ensemble de batch, en tenant compte des suppressions
+		"currentState": `// currentState() agrège un ensemble de batch, en tenant compte des suppressions
 // pour renvoyer le dernier état connu des données.
 // Note: similaire à flatten() de reduce.algo2.
 function currentState(batches) {
@@ -492,7 +492,7 @@ function currentState(batches) {
     }, {});
     return currentState;
 }`,
-"finalize": `// finalize permet de:
+		"finalize": `// finalize permet de:
 // - indiquer les établissements à inclure dans les calculs de variables
 // (processus reduce.algo2)
 // - intégrer les reporder pour permettre la reproductibilité de
@@ -517,7 +517,7 @@ function finalize(k, companyDataValues) {
     }
     return o;
 }`,
-"fixRedundantPatches": `/**
+		"fixRedundantPatches": `/**
  * Modification de hashToAdd et hashToDelete pour retirer les redondances.
  **/
 function fixRedundantPatches(hashToAdd, hashToDelete, memory) {
@@ -553,7 +553,7 @@ function fixRedundantPatches(hashToAdd, hashToDelete, memory) {
         }));
     });
 }`,
-"listHashesToAddAndDelete": `/**
+		"listHashesToAddAndDelete": `/**
  * On recupère les clés ajoutées et les clés supprimées depuis currentBatch.
  * On ajoute aux clés supprimées les types stocks de la memoire.
  */
@@ -597,14 +597,14 @@ function listHashesToAddAndDelete(currentBatch, stockTypes, memory) {
         hashToDelete,
     };
 }`,
-"map": `function map() {
+		"map": `function map() {
     "use strict";
     if (typeof this.value !== "object") {
         throw new Error("this.value should be a valid object, in compact::map()");
     }
     emit(this.value.key, this.value);
 }`,
-"reduce": `// Entrée: données d'entreprises venant de ImportedData, regroupées par entreprise ou établissement.
+		"reduce": `// Entrée: données d'entreprises venant de ImportedData, regroupées par entreprise ou établissement.
 // Sortie: un objet fusionné par entreprise ou établissement, contenant les données historiques et les données importées, à destination de la collection RawData.
 // Opérations: retrait des données doublons et application des corrections de données éventuelles.
 function reduce(key, values // chaque element contient plusieurs batches pour cette entreprise ou établissement
@@ -685,9 +685,9 @@ function reduce(key, values // chaque element contient plusieurs batches pour ce
     });
     return reducedValue;
 }`,
-},
-"migrations":{
-"agg_change_index_Features": `// db.getCollection("Features").aggregate(
+	},
+	"migrations": {
+		"agg_change_index_Features": `// db.getCollection("Features").aggregate(
 // 	[
 // 		// -- Stage 1 --
 // 		{
@@ -726,15 +726,15 @@ db.getCollection("Features").createIndex({
     "value.effectif" : 1,
     "_id.siret" : 1
 })`,
-},
-"public":{
-"apconso": `function apconso(apconso) {
+	},
+	"public": {
+		"apconso": `function apconso(apconso) {
     return Object.values(apconso !== null && apconso !== void 0 ? apconso : {}).sort((p1, p2) => p1.periode < p2.periode ? 1 : -1);
 }`,
-"apdemande": `function apdemande(apdemande) {
+		"apdemande": `function apdemande(apdemande) {
     return Object.values(apdemande !== null && apdemande !== void 0 ? apdemande : {}).sort((p1, p2) => p1.periode.start.getTime() < p2.periode.start.getTime() ? 1 : -1);
 }`,
-"bdf": `function bdf(hs) {
+		"bdf": `function bdf(hs) {
     "use strict";
     const bdf = {};
     // Déduplication par arrete_bilan_bdf
@@ -745,11 +745,11 @@ db.getCollection("Features").createIndex({
     });
     return Object.values(bdf !== null && bdf !== void 0 ? bdf : {}).sort((a, b) => a.annee_bdf < b.annee_bdf ? 1 : -1);
 }`,
-"compte": `function compte(compte) {
+		"compte": `function compte(compte) {
     const c = Object.values(compte !== null && compte !== void 0 ? compte : {});
     return c.length > 0 ? c[c.length - 1] : undefined;
 }`,
-"cotisations": `function cotisations(vcotisation = {}) {
+		"cotisations": `function cotisations(vcotisation = {}) {
     const offset_cotisation = 0;
     const value_cotisation = {};
     // Répartition des cotisations sur toute la période qu'elle concerne
@@ -766,13 +766,13 @@ db.getCollection("Features").createIndex({
     });
     return output_cotisation;
 }`,
-"dateAddDay": `function dateAddDay(date, nbDays) {
+		"dateAddDay": `function dateAddDay(date, nbDays) {
     "use strict";
     const result = new Date(date.getTime());
     result.setDate(result.getDate() + nbDays);
     return result;
 }`,
-"debits": `function debits(vdebit = {}) {
+		"debits": `function debits(vdebit = {}) {
     var _a;
     const last_treatment_day = 20;
     const ecn = {};
@@ -851,10 +851,10 @@ db.getCollection("Features").createIndex({
         periode: f.dateAddDay(f.dateAddMonth(p, 1), -1),
     }));
 }`,
-"delai": `function delai(delai) {
+		"delai": `function delai(delai) {
     return Object.values(delai !== null && delai !== void 0 ? delai : {});
 }`,
-"diane": `function diane(hs) {
+		"diane": `function diane(hs) {
     "use strict";
     const diane = {};
     // Déduplication par arrete_bilan_diane
@@ -865,8 +865,8 @@ db.getCollection("Features").createIndex({
     });
     return Object.values(diane !== null && diane !== void 0 ? diane : {}).sort((a, b) => { var _a, _b; return ((_a = a.exercice_diane) !== null && _a !== void 0 ? _a : 0) < ((_b = b.exercice_diane) !== null && _b !== void 0 ? _b : 0) ? 1 : -1; });
 }`,
-"effectifs": `function effectifs(effectif) {
-    const mapEffectif = f.newParPériode();
+		"effectifs": `function effectifs(effectif) {
+    const mapEffectif = f.makePeriodeMap();
     Object.values(effectif !== null && effectif !== void 0 ? effectif : {}).forEach((e) => {
         mapEffectif.set(e.periode, (mapEffectif.get(e.periode) || 0) + e.effectif);
     });
@@ -879,10 +879,10 @@ db.getCollection("Features").createIndex({
     })
         .filter((p) => p.effectif >= 0);
 }`,
-"finalize": `function finalize(_key, val) {
+		"finalize": `function finalize(_key, val) {
     return val;
 }`,
-"joinUrssaf": `function joinUrssaf(effectif, debit) {
+		"joinUrssaf": `function joinUrssaf(effectif, debit) {
     const result = {
         effectif: [],
         part_patronale: [],
@@ -903,7 +903,7 @@ db.getCollection("Features").createIndex({
     }
     return result;
 }`,
-"map": `function map() {
+		"map": `function map() {
     var _a, _b, _c, _d, _e, _f;
     const value = f.flatten(this.value, actual_batch);
     if (this.value.scope === "etablissement") {
@@ -958,7 +958,7 @@ db.getCollection("Features").createIndex({
         }
     }
 }`,
-"reduce": `function reduce(_key, values) {
+		"reduce": `function reduce(_key, values) {
     return values.reduce((m, v) => {
         if (v.sirets) {
             // TODO: je n'ai pas trouvé d'affectation de valeur dans la propriété "sirets" => est-elle toujours d'actualité ?
@@ -969,17 +969,17 @@ db.getCollection("Features").createIndex({
         return m;
     }, {});
 }`,
-"sirene": `// Cette fonction retourne les données sirene les plus récentes
+		"sirene": `// Cette fonction retourne les données sirene les plus récentes
 function sirene(sireneArray) {
     return sireneArray[sireneArray.length - 1] || {}; // TODO: vérifier que sireneArray est bien classé dans l'ordre chronologique -> c'est sûr qu'il ne l'est pas, vérifier que pour toute la base on a bien un objet sirene unique !
 }`,
-},
-"purgeBatch":{
-"finalize": `function finalize(k, o) {
+	},
+	"purgeBatch": {
+		"finalize": `function finalize(k, o) {
     "use strict";
     return o
 }`,
-"map": `function map() {
+		"map": `function map() {
   "use strict";
   const batches = Object.keys(this.value.batch)
   batches.filter((key) => key >= fromBatchKey).forEach((key) => {
@@ -988,13 +988,13 @@ function sirene(sireneArray) {
   // With a merge output, sending a new object, even empty, is compulsory
   emit(this._id, this.value)
 }`,
-"reduce": `function reduce(key, values) {
+		"reduce": `function reduce(key, values) {
     "use strict";
     return values
 }`,
-},
-"reduce.algo2":{
-"add": `function add(obj, output) {
+	},
+	"reduce.algo2": {
+		"add": `function add(obj, output) {
     "use strict";
     output.forEach((val, période) => {
         if (obj.has(période)) {
@@ -1002,7 +1002,7 @@ function sirene(sireneArray) {
         }
     });
 }`,
-"apart.crossComputation.json": `{
+		"apart.crossComputation.json": `{
   "$set": {
     "value.ratio_apart": {
       "$let": {
@@ -1021,9 +1021,9 @@ function sirene(sireneArray) {
     }
   }
 }`,
-"apart": `function apart(apconso, apdemande) {
+		"apart": `function apart(apconso, apdemande) {
     "use strict";
-    const output_apart = f.newParPériode();
+    const output_apart = f.makePeriodeMap();
     // Mapping (pour l'instant vide) du hash de la demande avec les hash des consos correspondantes
     const apart = {};
     for (const [hash, apdemandeEntry] of Object.entries(apdemande)) {
@@ -1110,7 +1110,7 @@ function sirene(sireneArray) {
     // ratio_apart depuis apart.crossComputation.json.
     return output_apart;
 }`,
-"ccsf": `function ccsf(vCcsf, output_array) {
+		"ccsf": `function ccsf(vCcsf, output_array) {
     "use strict";
     output_array.forEach((val) => {
         let optccsfDateTraitement = new Date(0);
@@ -1125,7 +1125,7 @@ function sirene(sireneArray) {
         }
     });
 }`,
-"cibleApprentissage": `function cibleApprentissage(output_indexed, n_months) {
+		"cibleApprentissage": `function cibleApprentissage(output_indexed, n_months) {
     "use strict";
     var _a, _b;
     // Mock two input instead of one for future modification
@@ -1133,7 +1133,7 @@ function sirene(sireneArray) {
     const output_procol = output_indexed;
     // replace with const
     const périodes = [...output_indexed.keys()];
-    const merged_info = f.newParPériode();
+    const merged_info = f.makePeriodeMap();
     for (const période of périodes) {
         merged_info.set(période, {
             outcome: Boolean(((_a = output_procol.get(période)) === null || _a === void 0 ? void 0 : _a.tag_failure) || ((_b = output_cotisation.get(période)) === null || _b === void 0 ? void 0 : _b.tag_default)),
@@ -1150,13 +1150,13 @@ function sirene(sireneArray) {
         if (output_failure.get(k) !== undefined)
             outputTimes.time_til_failure = (_b = output_failure.get(k)) === null || _b === void 0 ? void 0 : _b.time_til_outcome;
         return m.set(k, Object.assign(Object.assign({}, output_outcome.get(k)), outputTimes));
-    }, f.newParPériode());
+    }, f.makePeriodeMap());
     return output_cible;
 }`,
-"compte": `function compte(compte) {
+		"compte": `function compte(compte) {
     "use strict";
     var _a;
-    const output_compte = f.newParPériode();
+    const output_compte = f.makePeriodeMap();
     //  var offset_compte = 3
     for (const compteEntry of Object.values(compte)) {
         const période = compteEntry.periode;
@@ -1164,15 +1164,15 @@ function sirene(sireneArray) {
     }
     return output_compte;
 }`,
-"cotisation": `function cotisation(output_indexed) {
+		"cotisation": `function cotisation(output_indexed) {
     "use strict";
     var _a, _b, _c;
-    const sortieCotisation = f.newParPériode();
+    const sortieCotisation = f.makePeriodeMap();
     const moyenne = (valeurs = []) => valeurs.some((val) => typeof val === "undefined")
         ? undefined
         : valeurs.reduce((p, c) => p + c, 0) / (valeurs.length || 1);
     // calcul de cotisation_moyenne sur 12 mois
-    const futureArrays = f.newParPériode();
+    const futureArrays = f.makePeriodeMap();
     for (const [période, input] of output_indexed.entries()) {
         const périodeCourante = (_a = output_indexed.get(période)) === null || _a === void 0 ? void 0 : _a.periode;
         if (périodeCourante === undefined)
@@ -1250,7 +1250,7 @@ function sirene(sireneArray) {
     }
     return sortieCotisation;
 }`,
-"cotisationsdettes": `/**
+		"cotisationsdettes": `/**
  * Calcule les variables liées aux cotisations sociales et dettes sur ces
  * cotisations.
  */
@@ -1261,7 +1261,7 @@ function cotisationsdettes(vCotisation, vDebit, periodes, finPériode // corresp
     // Tous les débits traitées après ce jour du mois sont reportées à la période suivante
     // Permet de s'aligner avec le calendrier de fourniture des données
     const lastAccountedDay = 20;
-    const sortieCotisationsDettes = f.newParPériode();
+    const sortieCotisationsDettes = f.makePeriodeMap();
     const value_cotisation = {};
     // Répartition des cotisations sur toute la période qu'elle concerne
     for (const cotisation of Object.values(vCotisation)) {
@@ -1393,7 +1393,7 @@ function cotisationsdettes(vCotisation, vDebit, periodes, finPériode // corresp
     });
     return sortieCotisationsDettes;
 }`,
-"defaillances": `function defaillances(défaillances, output_indexed) {
+		"defaillances": `function defaillances(défaillances, output_indexed) {
     "use strict";
     const codes = Object.keys(défaillances)
         .reduce((events, hash) => {
@@ -1428,7 +1428,7 @@ function cotisationsdettes(vCotisation, vDebit, periodes, finPériode // corresp
         });
     });
 }`,
-"delais": `/**
+		"delais": `/**
  * Calcule pour chaque période le nombre de jours restants du délai accordé et
  * un indicateur de la déviation par rapport à un remboursement linéaire du
  * montant couvert par le délai. Un "délai" étant une demande accordée de délai
@@ -1440,7 +1440,7 @@ function cotisationsdettes(vCotisation, vDebit, periodes, finPériode // corresp
  */
 function delais(vDelai, debitParPériode, intervalleTraitement) {
     "use strict";
-    const donnéesDélaiParPériode = f.newParPériode();
+    const donnéesDélaiParPériode = f.makePeriodeMap();
     Object.values(vDelai).forEach((delai) => {
         if (delai.duree_delai <= 0) {
             return;
@@ -1474,19 +1474,19 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
     });
     return donnéesDélaiParPériode;
 }`,
-"detteFiscale": `function detteFiscale(diane) {
+		"detteFiscale": `function detteFiscale(diane) {
     "use strict";
     var _a, _b;
     const ratio = ((_a = diane["dette_fiscale_et_sociale"]) !== null && _a !== void 0 ? _a : NaN) /
         ((_b = diane["valeur_ajoutee"]) !== null && _b !== void 0 ? _b : NaN);
     return isNaN(ratio) ? null : ratio * 100;
 }`,
-"effectifs": `function effectifs(entréeEffectif, periodes, clé) {
+		"effectifs": `function effectifs(entréeEffectif, periodes, clé) {
     "use strict";
     var _a;
-    const sortieEffectif = f.newParPériode();
+    const sortieEffectif = f.makePeriodeMap();
     // Construction d'une map[time] = effectif à cette periode
-    const mapEffectif = f.newParPériode();
+    const mapEffectif = f.makePeriodeMap();
     Object.keys(entréeEffectif).forEach((hash) => {
         const effectif = entréeEffectif[hash];
         if (effectif !== null && effectif !== undefined) {
@@ -1525,9 +1525,9 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
     });
     return sortieEffectif;
 }`,
-"entr_bdf": `function entr_bdf(donnéesBdf, periodes) {
+		"entr_bdf": `function entr_bdf(donnéesBdf, periodes) {
     "use strict";
-    const outputBdf = f.newParPériode();
+    const outputBdf = f.makePeriodeMap();
     for (const p of periodes) {
         outputBdf.set(p, {});
     }
@@ -1560,7 +1560,7 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
     }
     return outputBdf;
 }`,
-"entr_diane": `function entr_diane(donnéesDiane, output_indexed, periodes) {
+		"entr_diane": `function entr_diane(donnéesDiane, output_indexed, periodes) {
     for (const entréeDiane of Object.values(donnéesDiane)) {
         if (!entréeDiane.arrete_bilan_diane)
             continue;
@@ -1650,9 +1650,9 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
     }
     return output_indexed;
 }`,
-"entr_paydex": `function entr_paydex(vPaydex, sériePériode) {
+		"entr_paydex": `function entr_paydex(vPaydex, sériePériode) {
     "use strict";
-    const paydexParPériode = f.newParPériode();
+    const paydexParPériode = f.makePeriodeMap();
     // initialisation (avec valeurs N/A par défaut)
     for (const période of sériePériode) {
         paydexParPériode.set(période, {
@@ -1666,7 +1666,7 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
         const période = Date.UTC(entréePaydex.date_valeur.getUTCFullYear(), entréePaydex.date_valeur.getUTCMonth(), 1);
         const moisSuivant = f.dateAddMonth(new Date(période), 1).getTime();
         const annéeSuivante = f.dateAddMonth(new Date(période), 12).getTime();
-        const donnéesAdditionnelles = f.newParPériode([
+        const donnéesAdditionnelles = f.makePeriodeMap([
             [période, { paydex_nb_jours: entréePaydex.nb_jours }],
             [moisSuivant, { paydex_nb_jours_past_1: entréePaydex.nb_jours }],
             [annéeSuivante, { paydex_nb_jours_past_12: entréePaydex.nb_jours }],
@@ -1675,9 +1675,9 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
     }
     return paydexParPériode;
 }`,
-"entr_sirene": `function entr_sirene(sirene_ul, sériePériode) {
+		"entr_sirene": `function entr_sirene(sirene_ul, sériePériode) {
     "use strict";
-    const retourEntrSirene = f.newParPériode();
+    const retourEntrSirene = f.makePeriodeMap();
     const sireneHashes = Object.keys(sirene_ul || {});
     sériePériode.forEach((période) => {
         if (sireneHashes.length !== 0) {
@@ -1699,7 +1699,7 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
     });
     return retourEntrSirene;
 }`,
-"finalize": `function finalize(k, v) {
+		"finalize": `function finalize(k, v) {
     "use strict";
     const maxBsonSize = 16777216;
     // v de la forme
@@ -1752,7 +1752,7 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
         return []; // ajouté pour résoudre erreur TS7030 (Not all code paths return a value)
     }
 }`,
-"fraisFinancier": `function fraisFinancier(diane) {
+		"fraisFinancier": `function fraisFinancier(diane) {
     "use strict";
     var _a, _b, _c, _d, _e, _f;
     const ratio = ((_a = diane["interets"]) !== null && _a !== void 0 ? _a : NaN) /
@@ -1763,7 +1763,7 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
             ((_f = diane["charges_financieres"]) !== null && _f !== void 0 ? _f : NaN));
     return isNaN(ratio) ? null : ratio * 100;
 }`,
-"lookAhead": `function lookAhead(data, attr_name /** "outcome" | "tag_default" | "tag_failure" */, n_months, past) {
+		"lookAhead": `function lookAhead(data, attr_name /** "outcome" | "tag_default" | "tag_failure" */, n_months, past) {
     "use strict";
     // Est-ce que l'évènement se répercute dans le passé (past = true on pourra se
     // demander: que va-t-il se passer) ou dans le future (past = false on
@@ -1797,10 +1797,10 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
             m.set(période, out);
         }
         return m;
-    }, f.newParPériode());
+    }, f.makePeriodeMap());
     return output;
 }`,
-"map": `/**
+		"map": `/**
  * ` + "`" + `map()` + "`" + ` est appelée pour chaque entreprise/établissement.
  *
  * Une entreprise/établissement est rattachée à des données de plusieurs types,
@@ -1849,7 +1849,7 @@ function map() {
                 const output_repeatable = f.repeatable(v.reporder);
                 f.add(output_repeatable, output_indexed);
             }
-            let output_cotisationsdettes = f.newParPériode();
+            let output_cotisationsdettes = f.makePeriodeMap();
             if (v.cotisation && v.debit) {
                 output_cotisationsdettes = f.cotisationsdettes(v.cotisation, v.debit, periodes, date_fin);
                 f.add(output_cotisationsdettes, output_indexed);
@@ -1899,7 +1899,7 @@ function map() {
     }
     if (v.scope === "entreprise") {
         if (includes["all"]) {
-            const output_indexed = f.newParPériode();
+            const output_indexed = f.makePeriodeMap();
             // if (!("print" in this)) {
             // output_indexed.set(1, {} as SortieMapEntreprise) // => TypeError: super.set is not a function (see https://dba.stackexchange.com/questions/253561/mongodb-shell-support-for-map-set)
             // output_indexed.get(1) // => ReferenceError: friendlyEqual is not defined (see https://jira.mongodb.org/browse/SERVER-19169 - https://github.com/mongodb/mongo/blob/master/src/mongo/shell/types.js#L584)
@@ -1964,11 +1964,11 @@ function map() {
         }
     }
 }`,
-"nbDays": `const nbDays = (firstDate, secondDate) => {
+		"nbDays": `const nbDays = (firstDate, secondDate) => {
     const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
     return Math.round(Math.abs((firstDate.getTime() - secondDate.getTime()) / oneDay));
 };`,
-"outputs": `/**
+		"outputs": `/**
  * Appelé par ` + "`" + `map()` + "`" + ` pour chaque entreprise/établissement, ` + "`" + `outputs()` + "`" + ` retourne
  * un tableau contenant un objet de base par période, ainsi qu'une version
  * indexée par période de ce tableau, afin de faciliter l'agrégation progressive
@@ -1989,16 +1989,16 @@ function outputs(v, serie_periode) {
     // TODO: simplifier cette itération
     const output_indexed = output_array.reduce(function (periodes, val) {
         return periodes.set(val.periode, val);
-    }, f.newParPériode());
+    }, f.makePeriodeMap());
     return [output_array, output_indexed];
 }`,
-"poidsFrng": `function poidsFrng(diane) {
+		"poidsFrng": `function poidsFrng(diane) {
     "use strict";
     return typeof diane["couverture_ca_fdr"] === "number"
         ? (diane["couverture_ca_fdr"] / 360) * 100
         : null;
 }`,
-"populateNafAndApe": `function populateNafAndApe(output_indexed, naf) {
+		"populateNafAndApe": `function populateNafAndApe(output_indexed, naf) {
     "use strict";
     for (const outputForKey of output_indexed.values()) {
         const code_ape = outputForKey.code_ape;
@@ -2019,16 +2019,16 @@ function outputs(v, serie_periode) {
         }
     }
 }`,
-"reduce": `function reduce(_key, values) {
+		"reduce": `function reduce(_key, values) {
     "use strict";
     return values.reduce((val, accu) => {
         return Object.assign(accu, val);
     }, {});
 }`,
-"repeatable": `function repeatable(rep) {
+		"repeatable": `function repeatable(rep) {
     "use strict";
     var _a;
-    const output_repeatable = f.newParPériode();
+    const output_repeatable = f.makePeriodeMap();
     for (const one_rep of Object.values(rep)) {
         const periode = one_rep.periode.getTime();
         const out = (_a = output_repeatable.get(periode)) !== null && _a !== void 0 ? _a : {};
@@ -2037,7 +2037,7 @@ function outputs(v, serie_periode) {
     }
     return output_repeatable;
 }`,
-"sirene": `function sirene(vSirene, output_array) {
+		"sirene": `function sirene(vSirene, output_array) {
     "use strict";
     const sireneHashes = Object.keys(vSirene || {});
     output_array.forEach((val) => {
@@ -2071,12 +2071,12 @@ function outputs(v, serie_periode) {
         }
     });
 }`,
-"tauxMarge": `function tauxMarge(diane) {
+		"tauxMarge": `function tauxMarge(diane) {
     "use strict";
     var _a, _b;
     const ratio = ((_a = diane["excedent_brut_d_exploitation"]) !== null && _a !== void 0 ? _a : NaN) /
         ((_b = diane["valeur_ajoutee"]) !== null && _b !== void 0 ? _b : NaN);
     return isNaN(ratio) ? null : ratio * 100;
 }`,
-},
+	},
 }

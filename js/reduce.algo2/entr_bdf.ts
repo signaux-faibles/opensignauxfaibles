@@ -42,7 +42,7 @@ export function entr_bdf(
 ): ParPériode<Partial<SortieBdf>> {
   "use strict"
 
-  const outputBdf = f.newParPériode<Partial<SortieBdf>>()
+  const outputBdf = f.makePeriodeMap<Partial<SortieBdf>>()
   for (const p of periodes) {
     outputBdf.set(p, {})
   }

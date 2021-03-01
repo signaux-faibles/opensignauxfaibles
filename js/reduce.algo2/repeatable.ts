@@ -18,7 +18,7 @@ export function repeatable(
   rep: ParHash<EntréeRepOrder>
 ): ParPériode<SortieRepeatable> {
   "use strict"
-  const output_repeatable = f.newParPériode<SortieRepeatable>()
+  const output_repeatable = f.makePeriodeMap<SortieRepeatable>()
   for (const one_rep of Object.values(rep)) {
     const periode = one_rep.periode.getTime()
     const out = output_repeatable.get(periode) ?? ({} as SortieRepeatable)

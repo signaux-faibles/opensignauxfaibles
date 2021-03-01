@@ -29,7 +29,7 @@ export function entr_sirene(
   sériePériode: Date[]
 ): ParPériode<Partial<SortieSireneEntreprise>> {
   "use strict"
-  const retourEntrSirene = f.newParPériode<Partial<SortieSireneEntreprise>>()
+  const retourEntrSirene = f.makePeriodeMap<Partial<SortieSireneEntreprise>>()
   const sireneHashes = Object.keys(sirene_ul || {})
   sériePériode.forEach((période) => {
     if (sireneHashes.length !== 0) {

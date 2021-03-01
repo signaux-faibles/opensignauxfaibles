@@ -60,7 +60,7 @@ export function delais(
   intervalleTraitement: { premièreDate: Date; dernièreDate: Date }
 ): ParPériode<SortieDelais> {
   "use strict"
-  const donnéesDélaiParPériode = f.newParPériode<SortieDelais>()
+  const donnéesDélaiParPériode = f.makePeriodeMap<SortieDelais>()
   Object.values(vDelai).forEach((delai) => {
     if (delai.duree_delai <= 0) {
       return

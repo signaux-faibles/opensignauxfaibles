@@ -72,7 +72,7 @@ export function cotisationsdettes(
   // Permet de s'aligner avec le calendrier de fourniture des données
   const lastAccountedDay = 20
 
-  const sortieCotisationsDettes = f.newParPériode<SortieCotisationsDettes>()
+  const sortieCotisationsDettes = f.makePeriodeMap<SortieCotisationsDettes>()
 
   const value_cotisation: Record<Timestamp, number[]> = {}
 

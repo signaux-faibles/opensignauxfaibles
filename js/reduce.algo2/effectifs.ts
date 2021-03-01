@@ -60,10 +60,10 @@ export function effectifs<K extends Clé>(
 ): ParPériode<SortieEffectifs<K>> {
   "use strict"
 
-  const sortieEffectif = f.newParPériode<SortieEffectifs<K>>()
+  const sortieEffectif = f.makePeriodeMap<SortieEffectifs<K>>()
 
   // Construction d'une map[time] = effectif à cette periode
-  const mapEffectif = f.newParPériode<ValeurEffectif>()
+  const mapEffectif = f.makePeriodeMap<ValeurEffectif>()
 
   Object.keys(entréeEffectif).forEach((hash) => {
     const effectif = entréeEffectif[hash]

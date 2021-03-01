@@ -37,7 +37,7 @@ export function apart(
 ): ParPériode<SortieAPart> {
   "use strict"
 
-  const output_apart = f.newParPériode<SortieAPart>()
+  const output_apart = f.makePeriodeMap<SortieAPart>()
 
   // Mapping (pour l'instant vide) du hash de la demande avec les hash des consos correspondantes
   const apart: Record<

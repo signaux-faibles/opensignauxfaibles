@@ -31,7 +31,7 @@ export function cibleApprentissage(
   // replace with const
   const périodes = [...output_indexed.keys()]
 
-  const merged_info = f.newParPériode<{ outcome: boolean }>()
+  const merged_info = f.makePeriodeMap<{ outcome: boolean }>()
   for (const période of périodes) {
     merged_info.set(période, {
       outcome: Boolean(
@@ -65,7 +65,7 @@ export function cibleApprentissage(
       ...output_outcome.get(k),
       ...outputTimes,
     })
-  }, f.newParPériode<SortieCibleApprentissage>())
+  }, f.makePeriodeMap<SortieCibleApprentissage>())
 
   return output_cible
 }

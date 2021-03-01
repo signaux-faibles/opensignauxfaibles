@@ -32,7 +32,7 @@ import { sirene } from "./sirene"
 import { makePeriodeMap } from "../common/makePeriodeMap"
 
 export const f = {
-  newParPériode: makePeriodeMap,
+  makePeriodeMap: makePeriodeMap,
   flatten,
   outputs,
   apart,

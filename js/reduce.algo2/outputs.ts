@@ -56,7 +56,7 @@ export function outputs(
   // TODO: simplifier cette itération
   const output_indexed = output_array.reduce(function (periodes, val) {
     return periodes.set(val.periode, val)
-  }, f.newParPériode<DonnéesAgrégées>())
+  }, f.makePeriodeMap<DonnéesAgrégées>())
 
   return [output_array, output_indexed]
 }

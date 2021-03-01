@@ -19,7 +19,7 @@ export function compte(
   compte: ParHash<EntréeCompte>
 ): ParPériode<SortieCompte> {
   "use strict"
-  const output_compte = f.newParPériode<SortieCompte>()
+  const output_compte = f.makePeriodeMap<SortieCompte>()
 
   //  var offset_compte = 3
   for (const compteEntry of Object.values(compte)) {
