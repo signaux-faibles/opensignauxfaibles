@@ -18,18 +18,18 @@ export interface ParPériode<T> extends Map<Timestamp, T> {
  * transmis à MongoDB depuis le traitement map-reduce lancé par le code Go.
  * @param arg (optionnel) - pour initialiser la Map avec un tableau d'entries.
  */
-export function makePeriodeMap<T>(
-  arg?: readonly (readonly [number, T])[] | null | undefined
-): ParPériode<T> {
+export function makePeriodeMap<Value>(
+  arg?: readonly (readonly [Timestamp, Value])[] | null | undefined
+): ParPériode<Value> {
   /**
-   * IntMap est une ré-implémentation partielle de Map<number, T> utilisant un
-   * objet JavaScript pour indexer les entrées, et rendue nécéssaire par le
-   * fait que MongoDB fournit une version non standard de la classe Map.
+   * IntMap est une ré-implémentation partielle de Map<Timestamp, Value>
+   * utilisant un objet JavaScript pour indexer les entrées, et rendue
+   * nécéssaire par le fait que la classe Map de MongoDB n'est pas standard.
    */
   class IntMap {
-    private data: Record<number, T> = {}
+    private data: Record<Timestamp, Value> = {}
     constructor(
-      entries?: readonly (readonly [number, T])[] | null | undefined
+      entries?: readonly (readonly [Timestamp, Value])[] | null | undefined
     ) {
       if (entries) {
         for (const [key, value] of entries) {
@@ -37,13 +37,13 @@ export function makePeriodeMap<T>(
         }
       }
     }
-    has(key: number) {
+    has(key: Timestamp) {
       return key in this.data
     }
-    get(key: number): T | undefined {
+    get(key: Timestamp): Value | undefined {
       return this.data[key]
     }
-    set(key: number, value: T): this {
+    set(key: Timestamp, value: Value): this {
       this.data[key] = value
       return this
     }
@@ -53,7 +53,7 @@ export function makePeriodeMap<T>(
     clear() {
       this.data = {}
     }
-    delete(key: number): boolean {
+    delete(key: Timestamp): boolean {
       const exists = key in this.data
       delete this.data[key]
       return exists
@@ -68,17 +68,17 @@ export function makePeriodeMap<T>(
         yield val
       }
     }
-    *entries(): Generator<[number, T]> {
+    *entries(): Generator<[Timestamp, Value]> {
       for (const k in this.data) {
-        yield [parseInt(k), this.data[k] as T]
+        yield [parseInt(k), this.data[k] as Value]
       }
     }
     forEach(
-      callbackfn: (value: T, key: number, map: this) => void,
+      callbackfn: (value: Value, key: Timestamp, map: this) => void,
       thisArg?: unknown
     ): void {
       for (const [key, value] of this.entries()) {
-        callbackfn.call(thisArg, value as T, key, this)
+        callbackfn.call(thisArg, value as Value, key, this)
       }
     }
     [Symbol.iterator]() {
@@ -95,9 +95,9 @@ export function makePeriodeMap<T>(
    * (ex: instance Date, timestamp numérique ou chaine de caractères), tout en
    * evitant que des chaines de caractères arbitaires y soient passées.
    */
-  class ParPériodeImpl extends IntMap implements ParPériode<T> {
+  class ParPériodeImpl extends IntMap implements ParPériode<Value> {
     /** Extraie le timestamp d'une date, quelque soit sa représentation. */
-    private getNumericValue(période: Date | Timestamp | string): number {
+    private getNumericValue(période: Date | Timestamp | string): Timestamp {
       if (typeof période === "number") return période
       if (typeof période === "string") return parseInt(période)
       if (période instanceof Date) return période.getTime()
@@ -116,11 +116,11 @@ export function makePeriodeMap<T>(
       return super.has(this.getTimestamp(période))
     }
     /** @throws TypeError ou RangeError si la période n'est pas valide. */
-    get(période: Date | Timestamp | string): T | undefined {
+    get(période: Date | Timestamp | string): Value | undefined {
       return super.get(this.getTimestamp(période))
     }
     /** @throws TypeError ou RangeError si la période n'est pas valide. */
-    set(période: Date | Timestamp | string, val: T): this {
+    set(période: Date | Timestamp | string, val: Value): this {
       const timestamp = this.getTimestamp(période)
       super.set(timestamp, val)
       return this

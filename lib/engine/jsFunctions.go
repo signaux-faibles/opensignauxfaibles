@@ -87,9 +87,9 @@ function forEachPopulatedProp(obj, fct) {
  */
 function makePeriodeMap(arg) {
     /**
-     * IntMap est une ré-implémentation partielle de Map<Timestamp, T> utilisant
-     * un objet JavaScript pour indexer les entrées, et rendue nécéssaire par le
-     * fait que MongoDB fournit une version non standard de la classe Map.
+     * IntMap est une ré-implémentation partielle de Map<Timestamp, Value>
+     * utilisant un objet JavaScript pour indexer les entrées, et rendue
+     * nécéssaire par le fait que la classe Map de MongoDB n'est pas standard.
      */
     class IntMap {
         constructor(entries) {
