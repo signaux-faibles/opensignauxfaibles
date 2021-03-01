@@ -12,20 +12,18 @@ function assertEffectif(
   résultat: ParPériode<SortieEffectifsEtab>,
   effectifsAttendus: Array<[number | null, boolean]>
 ): void {
-  const périodes = [...résultat.keys()]
-  for (let i = 0; i < périodes.length; i++) {
-    const période = périodes[i] as number
+  ;[...résultat.values()].forEach(({ effectif, effectif_reporte }, i) => {
     t.is(
-      résultat.get(période)?.effectif,
+      effectif,
       effectifsAttendus[i]?.[0],
       `valeur inattendue pour la période ${i}`
     )
     t.is(
-      résultat.get(période)?.effectif_reporte,
+      effectif_reporte,
       effectifsAttendus[i]?.[1] ? 1 : 0,
       `flag de report inattendu pour la période ${i}`
     )
-  }
+  })
 }
 
 test.serial(
