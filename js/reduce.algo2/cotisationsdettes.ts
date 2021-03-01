@@ -123,7 +123,7 @@ export function cotisationsdettes(
       })
   }
 
-  const value_dette: Record<string, Dette[]> = {}
+  const value_dette = f.makePeriodeMap<Dette[]>()
   // Pour chaque objet debit:
   // debit_traitement_debut => periode de traitement du débit
   // debit_traitement_fin => periode de traitement du debit suivant, ou bien finPériode
@@ -164,20 +164,19 @@ export function cotisationsdettes(
       )
     }
 
-    const periode_debut = date_traitement_debut
-    const periode_fin = date_traitement_fin
-
     //f.generatePeriodSerie exlue la dernière période
-    f.generatePeriodSerie(periode_debut, periode_fin).map((date) => {
-      const time = date.getTime()
-      value_dette[time] = (value_dette[time] || []).concat([
-        {
-          periode: debit.periode.start,
-          part_ouvriere: debit.part_ouvriere,
-          part_patronale: debit.part_patronale,
-        },
-      ])
-    })
+    f.generatePeriodSerie(date_traitement_debut, date_traitement_fin).forEach(
+      (date) => {
+        value_dette.set(date, [
+          ...(value_dette.get(date) ?? []),
+          {
+            periode: debit.periode.start,
+            part_ouvriere: debit.part_ouvriere,
+            part_patronale: debit.part_patronale,
+          },
+        ])
+      }
+    )
   }
 
   // TODO faire numero de compte ailleurs
@@ -189,7 +188,7 @@ export function cotisationsdettes(
   //))
 
   periodes.forEach(function (time) {
-    let val =
+    const val =
       sortieCotisationsDettes.get(time) ?? ({} as SortieCotisationsDettes)
     //output_cotisationsdettes[time].numero_compte_urssaf = numeros_compte
     const valueCotis = value_cotisation[time]
@@ -199,18 +198,14 @@ export function cotisationsdettes(
     }
 
     // somme de tous les débits (part ouvriere, part patronale)
-    const montant_dette = (value_dette[time] || []).reduce(
-      function (m, dette) {
-        m.montant_part_ouvriere += dette.part_ouvriere
-        m.montant_part_patronale += dette.part_patronale
-        return m
-      },
-      {
-        montant_part_ouvriere: 0,
-        montant_part_patronale: 0,
-      }
+    val.montant_part_ouvriere = (value_dette.get(time) || []).reduce(
+      (acc, { part_ouvriere }) => acc + part_ouvriere,
+      0
     )
-    val = Object.assign(val, montant_dette) // TODO: affecter directement au lieu de créer variable montant_dette au dessus
+    val.montant_part_patronale = (value_dette.get(time) || []).reduce(
+      (acc, { part_patronale }) => acc + part_patronale,
+      0
+    )
     sortieCotisationsDettes.set(time, val)
 
     const monthOffsets: MonthOffset[] = [1, 2, 3, 6, 12]

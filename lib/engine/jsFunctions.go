@@ -1294,7 +1294,7 @@ function cotisationsdettes(vCotisation, vDebit, periodes, finPériode // corresp
                 vDebitForHash.debit_suivant = next;
         });
     }
-    const value_dette = {};
+    const value_dette = f.makePeriodeMap();
     // Pour chaque objet debit:
     // debit_traitement_debut => periode de traitement du débit
     // debit_traitement_fin => periode de traitement du debit suivant, ou bien finPériode
@@ -1319,12 +1319,11 @@ function cotisationsdettes(vCotisation, vDebit, periodes, finPériode // corresp
         else {
             date_traitement_fin = new Date(Date.UTC(nextDate.getFullYear(), nextDate.getUTCMonth() + 1));
         }
-        const periode_debut = date_traitement_debut;
-        const periode_fin = date_traitement_fin;
         //f.generatePeriodSerie exlue la dernière période
-        f.generatePeriodSerie(periode_debut, periode_fin).map((date) => {
-            const time = date.getTime();
-            value_dette[time] = (value_dette[time] || []).concat([
+        f.generatePeriodSerie(date_traitement_debut, date_traitement_fin).forEach((date) => {
+            var _a;
+            value_dette.set(date, [
+                ...((_a = value_dette.get(date)) !== null && _a !== void 0 ? _a : []),
                 {
                     periode: debit.periode.start,
                     part_ouvriere: debit.part_ouvriere,
@@ -1342,7 +1341,7 @@ function cotisationsdettes(vCotisation, vDebit, periodes, finPériode // corresp
     //))
     periodes.forEach(function (time) {
         var _a;
-        let val = (_a = sortieCotisationsDettes.get(time)) !== null && _a !== void 0 ? _a : {};
+        const val = (_a = sortieCotisationsDettes.get(time)) !== null && _a !== void 0 ? _a : {};
         //output_cotisationsdettes[time].numero_compte_urssaf = numeros_compte
         const valueCotis = value_cotisation[time];
         if (valueCotis !== undefined) {
@@ -1350,15 +1349,8 @@ function cotisationsdettes(vCotisation, vDebit, periodes, finPériode // corresp
             val.cotisation = valueCotis.reduce((a, cot) => a + cot, 0);
         }
         // somme de tous les débits (part ouvriere, part patronale)
-        const montant_dette = (value_dette[time] || []).reduce(function (m, dette) {
-            m.montant_part_ouvriere += dette.part_ouvriere;
-            m.montant_part_patronale += dette.part_patronale;
-            return m;
-        }, {
-            montant_part_ouvriere: 0,
-            montant_part_patronale: 0,
-        });
-        val = Object.assign(val, montant_dette); // TODO: affecter directement au lieu de créer variable montant_dette au dessus
+        val.montant_part_ouvriere = (value_dette.get(time) || []).reduce((acc, { part_ouvriere }) => acc + part_ouvriere, 0);
+        val.montant_part_patronale = (value_dette.get(time) || []).reduce((acc, { part_patronale }) => acc + part_patronale, 0);
         sortieCotisationsDettes.set(time, val);
         const monthOffsets = [1, 2, 3, 6, 12];
         const futureTimestamps = monthOffsets
