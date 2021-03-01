@@ -39,7 +39,7 @@ export function makePeriodeMap<Value>(
       }
     }
     has(key: Timestamp) {
-      return key in this.data
+      return Object.prototype.hasOwnProperty.call(this.data, key)
     }
     get(key: Timestamp): Value | undefined {
       return this.data[key]
@@ -55,7 +55,7 @@ export function makePeriodeMap<Value>(
       this.data = {}
     }
     delete(key: Timestamp): boolean {
-      const exists = key in this.data
+      const exists = this.has(key)
       delete this.data[key]
       return exists
     }
@@ -70,8 +70,8 @@ export function makePeriodeMap<Value>(
       }
     }
     *entries(): Generator<[Timestamp, Value]> {
-      for (const k in this.data) {
-        yield [parseInt(k), this.data[k] as Value]
+      for (const [k, v] of Object.entries(this.data)) {
+        yield [parseInt(k), v]
       }
     }
     forEach(
@@ -79,7 +79,7 @@ export function makePeriodeMap<Value>(
       thisArg?: unknown
     ): void {
       for (const [key, value] of this.entries()) {
-        callbackfn.call(thisArg, value as Value, key, this)
+        callbackfn.call(thisArg, value, key, this)
       }
     }
     [Symbol.iterator]() {

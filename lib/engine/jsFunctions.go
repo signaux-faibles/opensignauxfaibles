@@ -101,7 +101,7 @@ function makePeriodeMap(arg) {
             }
         }
         has(key) {
-            return key in this.data;
+            return Object.prototype.hasOwnProperty.call(this.data, key);
         }
         get(key) {
             return this.data[key];
@@ -117,7 +117,7 @@ function makePeriodeMap(arg) {
             this.data = {};
         }
         delete(key) {
-            const exists = key in this.data;
+            const exists = this.has(key);
             delete this.data[key];
             return exists;
         }
@@ -132,8 +132,8 @@ function makePeriodeMap(arg) {
             }
         }
         *entries() {
-            for (const k in this.data) {
-                yield [parseInt(k), this.data[k]];
+            for (const [k, v] of Object.entries(this.data)) {
+                yield [parseInt(k), v];
             }
         }
         forEach(callbackfn, thisArg) {
