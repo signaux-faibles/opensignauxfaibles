@@ -20,7 +20,7 @@ import { joinUrssaf } from "./joinUrssaf"
 import { sirene } from "./sirene"
 
 export const f = {
-  makePeriodeMap: makePeriodeMap,
+  makePeriodeMap,
   dateAddMonth,
   debits,
   apconso,

@@ -79,7 +79,7 @@ export function makePeriodeMap<T>(
       }
     }
     forEach(
-      callbackfn: (value: T, key: number, map: any) => void,
+      callbackfn: (value: T, key: number, map: this) => void,
       thisArg?: unknown
     ): void {
       for (const [key, value] of this.entries()) {
