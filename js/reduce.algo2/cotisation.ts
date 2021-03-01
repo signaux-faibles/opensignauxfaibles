@@ -113,14 +113,12 @@ export function cotisation(
 
   // Calcul des défauts URSSAF prolongés
   let counter = 0
-  for (const période of [...sortieCotisation.keys()].sort()) {
-    const cotis = sortieCotisation.get(période) as SortieCotisation // TODO: simplifier itération
-    const { ratio_dette } = cotis
-    if (!ratio_dette) continue
-    if (ratio_dette > 0.01) {
+  for (const cotis of sortieCotisation.values()) {
+    if (!cotis.ratio_dette) continue
+    if (cotis.ratio_dette > 0.01) {
       cotis.tag_debit = true // Survenance d'un débit d'au moins 1% des cotisations
     }
-    if (ratio_dette > 1) {
+    if (cotis.ratio_dette > 1) {
       counter = counter + 1
       if (counter >= 3) cotis.tag_default = true
     } else counter = 0
