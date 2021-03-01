@@ -1648,7 +1648,7 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
             [moisSuivant, { paydex_nb_jours_past_1: entréePaydex.nb_jours }],
             [annéeSuivante, { paydex_nb_jours_past_12: entréePaydex.nb_jours }],
         ]);
-        f.add(donnéesAdditionnelles, paydexParPériode); // TODO: utiliser append() ou upsert()
+        f.add(donnéesAdditionnelles, paydexParPériode);
     }
     return paydexParPériode;
 }`,
@@ -1988,13 +1988,9 @@ function outputs(v, serie_periode) {
 }`,
 "repeatable": `function repeatable(rep) {
     "use strict";
-    var _a;
     const output_repeatable = f.makePeriodeMap();
-    for (const one_rep of Object.values(rep)) {
-        const periode = one_rep.periode.getTime();
-        const out = (_a = output_repeatable.get(periode)) !== null && _a !== void 0 ? _a : {};
-        out.random_order = one_rep.random_order;
-        output_repeatable.set(periode, out); // TODO: utiliser append() ou upsert()
+    for (const { periode, random_order } of Object.values(rep)) {
+        output_repeatable.assign(periode, { random_order });
     }
     return output_repeatable;
 }`,

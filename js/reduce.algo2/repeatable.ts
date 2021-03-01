@@ -19,12 +19,8 @@ export function repeatable(
 ): ParPériode<SortieRepeatable> {
   "use strict"
   const output_repeatable = f.makePeriodeMap<SortieRepeatable>()
-  for (const one_rep of Object.values(rep)) {
-    const periode = one_rep.periode.getTime()
-    const out = output_repeatable.get(periode) ?? ({} as SortieRepeatable)
-    out.random_order = one_rep.random_order
-    output_repeatable.set(periode, out) // TODO: utiliser append() ou upsert()
+  for (const { periode, random_order } of Object.values(rep)) {
+    output_repeatable.assign(periode, { random_order })
   }
-
   return output_repeatable
 }
