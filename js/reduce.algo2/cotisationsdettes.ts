@@ -1,5 +1,5 @@
 import { f } from "./functions"
-import { ParPériode } from "../common/newParPériode"
+import { ParPériode } from "../common/makePeriodeMap"
 import { EntréeCotisation, EntréeDebit } from "../GeneratedTypes"
 import { Timestamp, ParHash } from "../RawDataTypes"
 

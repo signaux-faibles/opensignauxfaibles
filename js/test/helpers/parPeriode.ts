@@ -1,4 +1,4 @@
-import { ParPériode, newParPériode } from "../../common/newParPériode"
+import { ParPériode, makePeriodeMap } from "../../common/makePeriodeMap"
 
 /**
  * parPériode convertit un objet indexé par des dates exprimées sous la
@@ -6,7 +6,7 @@ import { ParPériode, newParPériode } from "../../common/newParPériode"
  * par souci de compatibilité avec le type ParPériode.
  */
 export const parPériode = <U>(indexed: Record<string, U>): ParPériode<U> => {
-  const res = newParPériode<U>()
+  const res = makePeriodeMap<U>()
   Object.entries(indexed).forEach(([k, v]) => {
     res.set(new Date(k), v)
   })

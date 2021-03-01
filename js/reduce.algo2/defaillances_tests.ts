@@ -3,7 +3,7 @@ import { defaillances, SortieDefaillances } from "./defaillances"
 import { EntréeDéfaillances } from "../GeneratedTypes"
 import { ParHash } from "../RawDataTypes"
 import { parPériode } from "../test/helpers/parPeriode"
-import { ParPériode } from "../common/newParPériode"
+import { ParPériode } from "../common/makePeriodeMap"
 
 type OutputIndexed = Parameters<typeof defaillances>[1]
 

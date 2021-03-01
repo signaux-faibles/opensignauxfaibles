@@ -2,7 +2,7 @@ import test from "ava"
 import { cotisation, Input, SortieCotisation } from "./cotisation"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { dateAddMonth } from "../common/dateAddMonth"
-import { newParPériode } from "../common/newParPériode"
+import { makePeriodeMap } from "../common/makePeriodeMap"
 
 const dureeEnMois = 13
 const dateDebut = new Date("2018-01-01")
@@ -15,7 +15,7 @@ const forEachMonth = (
   periodeSerie.reduce(
     (acc, periode, month) =>
       acc.set(periode, { periode, ...fct({ periode, month }) }),
-    newParPériode<Input>()
+    makePeriodeMap<Input>()
   )
 
 const testCases = [

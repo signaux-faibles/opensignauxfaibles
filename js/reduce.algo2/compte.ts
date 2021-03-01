@@ -1,7 +1,7 @@
 import { f } from "./functions"
 import { EntréeCompte } from "../GeneratedTypes"
 import { ParHash } from "../RawDataTypes"
-import { ParPériode } from "../common/newParPériode"
+import { ParPériode } from "../common/makePeriodeMap"
 
 export type SortieCompte = {
   /** Compte administratif URSSAF */

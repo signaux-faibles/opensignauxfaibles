@@ -78,7 +78,7 @@ function forEachPopulatedProp(obj, fct) {
     }
     return serie;
 }`,
-"newParPériode": `function newParPériode(arg) {
+"makePeriodeMap": `function makePeriodeMap(arg) {
     // if ("_get" in Map.prototype && "put" in Map.prototype) {
     let data = {};
     class MyMap {

@@ -12,7 +12,7 @@ import { SortieCibleApprentissage } from "./cibleApprentissage"
 import { SortieCotisation } from "./cotisation"
 import { SortieCompte } from "./compte"
 import { SiretOrSiren } from "../RawDataTypes"
-import { ParPériode } from "../common/newParPériode"
+import { ParPériode } from "../common/makePeriodeMap"
 
 export type DonnéesAgrégées = {
   siret: SiretOrSiren

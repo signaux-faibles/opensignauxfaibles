@@ -29,10 +29,10 @@ import { poidsFrng } from "./poidsFrng"
 import { populateNafAndApe } from "./populateNafAndApe"
 import { repeatable } from "./repeatable"
 import { sirene } from "./sirene"
-import { newParPériode } from "../common/newParPériode"
+import { makePeriodeMap } from "../common/makePeriodeMap"
 
 export const f = {
-  newParPériode,
+  newParPériode: makePeriodeMap,
   flatten,
   outputs,
   apart,

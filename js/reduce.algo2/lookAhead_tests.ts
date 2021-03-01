@@ -1,7 +1,7 @@
 import test, { ExecutionContext } from "ava"
 import { lookAhead } from "./lookAhead"
 import { parPériode } from "../test/helpers/parPeriode"
-import { newParPériode } from "../common/newParPériode"
+import { makePeriodeMap } from "../common/makePeriodeMap"
 
 type TestCase = {
   name: string
@@ -138,7 +138,7 @@ testCases.forEach(({ name, expected, ...tc }) => {
       tc["n_months"],
       tc["past"]
     )
-    const sortedActual = newParPériode([...actual.entries()].sort())
+    const sortedActual = makePeriodeMap([...actual.entries()].sort())
     t.deepEqual(sortedActual, expected)
   })
 })

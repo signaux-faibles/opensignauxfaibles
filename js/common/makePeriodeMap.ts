@@ -6,7 +6,7 @@ export interface ParPériode<T> extends Map<Timestamp, T> {
   set(période: Date | Timestamp | string, val: T): this
 }
 
-export function newParPériode<T>(
+export function makePeriodeMap<T>(
   arg?: readonly (readonly [number, T])[] | null | undefined
 ): ParPériode<T> {
   // if ("_get" in Map.prototype && "put" in Map.prototype) {

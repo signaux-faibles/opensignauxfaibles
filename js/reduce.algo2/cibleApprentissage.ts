@@ -1,5 +1,5 @@
 import { f } from "./functions"
-import { ParPériode } from "../common/newParPériode"
+import { ParPériode } from "../common/makePeriodeMap"
 import { Outcome } from "./lookAhead"
 
 export type SortieCibleApprentissage = {

@@ -1,6 +1,6 @@
 import { f } from "./functions"
 import { EntréeApConso, EntréeApDemande } from "../GeneratedTypes"
-import { ParPériode } from "../common/newParPériode"
+import { ParPériode } from "../common/makePeriodeMap"
 
 type ApConsoHash = string
 
