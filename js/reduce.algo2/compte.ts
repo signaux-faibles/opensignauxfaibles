@@ -22,12 +22,8 @@ export function compte(
   const output_compte = f.makePeriodeMap<SortieCompte>()
 
   //  var offset_compte = 3
-  for (const compteEntry of Object.values(compte)) {
-    const période = compteEntry.periode
-    output_compte.set(période, {
-      ...(output_compte.get(période) ?? {}),
-      compte_urssaf: compteEntry.numero_compte,
-    })
+  for (const { periode, numero_compte } of Object.values(compte)) {
+    output_compte.assign(periode, { compte_urssaf: numero_compte })
   }
 
   return output_compte

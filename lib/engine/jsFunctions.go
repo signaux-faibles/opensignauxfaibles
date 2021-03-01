@@ -1151,12 +1151,10 @@ function sirene(sireneArray) {
 }`,
 "compte": `function compte(compte) {
     "use strict";
-    var _a;
     const output_compte = f.makePeriodeMap();
     //  var offset_compte = 3
-    for (const compteEntry of Object.values(compte)) {
-        const période = compteEntry.periode;
-        output_compte.set(période, Object.assign(Object.assign({}, ((_a = output_compte.get(période)) !== null && _a !== void 0 ? _a : {})), { compte_urssaf: compteEntry.numero_compte }));
+    for (const { periode, numero_compte } of Object.values(compte)) {
+        output_compte.assign(periode, { compte_urssaf: numero_compte });
     }
     return output_compte;
 }`,
