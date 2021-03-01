@@ -56,14 +56,12 @@ export function cibleApprentissage(
   )
 
   const output_cible = périodes.reduce(function (m, k) {
-    const outputTimes: SortieCibleApprentissage = {}
-    if (output_default.get(k) !== undefined)
-      outputTimes.time_til_default = output_default.get(k)?.time_til_outcome
-    if (output_failure.get(k) !== undefined)
-      outputTimes.time_til_failure = output_failure.get(k)?.time_til_outcome
+    const oDefault = output_default.get(k)
+    const oFailure = output_failure.get(k)
     return m.set(k, {
       ...output_outcome.get(k),
-      ...outputTimes,
+      ...(oDefault && { time_til_default: oDefault.time_til_outcome }),
+      ...(oFailure && { time_til_failure: oFailure.time_til_outcome }),
     })
   }, f.makePeriodeMap<SortieCibleApprentissage>())
 

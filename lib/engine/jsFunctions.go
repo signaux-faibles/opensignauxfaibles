@@ -1143,13 +1143,9 @@ function sirene(sireneArray) {
     const output_default = f.lookAhead(output_cotisation, "tag_default", n_months, true);
     const output_failure = f.lookAhead(output_procol, "tag_failure", n_months, true);
     const output_cible = périodes.reduce(function (m, k) {
-        var _a, _b;
-        const outputTimes = {};
-        if (output_default.get(k) !== undefined)
-            outputTimes.time_til_default = (_a = output_default.get(k)) === null || _a === void 0 ? void 0 : _a.time_til_outcome;
-        if (output_failure.get(k) !== undefined)
-            outputTimes.time_til_failure = (_b = output_failure.get(k)) === null || _b === void 0 ? void 0 : _b.time_til_outcome;
-        return m.set(k, Object.assign(Object.assign({}, output_outcome.get(k)), outputTimes));
+        const oDefault = output_default.get(k);
+        const oFailure = output_failure.get(k);
+        return m.set(k, Object.assign(Object.assign(Object.assign({}, output_outcome.get(k)), (oDefault && { time_til_default: oDefault.time_til_outcome })), (oFailure && { time_til_failure: oFailure.time_til_outcome })));
     }, f.makePeriodeMap());
     return output_cible;
 }`,
