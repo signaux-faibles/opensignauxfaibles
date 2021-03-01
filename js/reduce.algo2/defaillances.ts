@@ -61,13 +61,13 @@ export function defaillances(
     })
 
     time_til_last.forEach((time) => {
-      const outputForTime = output_indexed.get(time) ?? {}
-      if (outputForTime !== undefined) {
-        outputForTime.etat_proc_collective = event.etat
-        outputForTime.date_proc_collective = event.date_proc_col
-        if (event.etat !== "in_bonis") outputForTime.tag_failure = true
+      if (output_indexed.has(time)) {
+        output_indexed.assign(time, {
+          etat_proc_collective: event.etat,
+          date_proc_collective: event.date_proc_col,
+          ...(event.etat !== "in_bonis" && { tag_failure: true }),
+        })
       }
-      output_indexed.set(time, outputForTime)
     })
   })
 }

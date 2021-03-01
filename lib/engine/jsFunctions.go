@@ -1402,15 +1402,9 @@ function cotisationsdettes(vCotisation, vDebit, periodes, finPériode // corresp
             return période >= periode_effet.getTime();
         });
         time_til_last.forEach((time) => {
-            var _a;
-            const outputForTime = (_a = output_indexed.get(time)) !== null && _a !== void 0 ? _a : {};
-            if (outputForTime !== undefined) {
-                outputForTime.etat_proc_collective = event.etat;
-                outputForTime.date_proc_collective = event.date_proc_col;
-                if (event.etat !== "in_bonis")
-                    outputForTime.tag_failure = true;
+            if (output_indexed.has(time)) {
+                output_indexed.assign(time, Object.assign({ etat_proc_collective: event.etat, date_proc_collective: event.date_proc_col }, (event.etat !== "in_bonis" && { tag_failure: true })));
             }
-            output_indexed.set(time, outputForTime);
         });
     });
 }`,
