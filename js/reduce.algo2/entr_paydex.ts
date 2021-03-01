@@ -45,7 +45,7 @@ export function entr_paydex(
       [moisSuivant, { paydex_nb_jours_past_1: entréePaydex.nb_jours }],
       [annéeSuivante, { paydex_nb_jours_past_12: entréePaydex.nb_jours }],
     ])
-    f.add(donnéesAdditionnelles, paydexParPériode) // TODO: utiliser append() ou upsert()
+    f.add(donnéesAdditionnelles, paydexParPériode)
   }
   return paydexParPériode
 }
