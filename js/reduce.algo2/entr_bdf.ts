@@ -42,10 +42,9 @@ export function entr_bdf(
 ): ParPériode<Partial<SortieBdf>> {
   "use strict"
 
-  const outputBdf = f.makePeriodeMap<Partial<SortieBdf>>()
-  for (const p of periodes) {
-    outputBdf.set(p, {})
-  }
+  const outputBdf = f.makePeriodeMap<Partial<SortieBdf>>(
+    periodes.map((période) => [période, {}])
+  )
 
   for (const entréeBdf of Object.values(donnéesBdf)) {
     const periode_arrete_bilan = new Date(

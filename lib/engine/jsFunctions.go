@@ -1507,10 +1507,7 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
 }`,
 "entr_bdf": `function entr_bdf(donnéesBdf, periodes) {
     "use strict";
-    const outputBdf = f.makePeriodeMap();
-    for (const p of periodes) {
-        outputBdf.set(p, {});
-    }
+    const outputBdf = f.makePeriodeMap(periodes.map((période) => [période, {}]));
     for (const entréeBdf of Object.values(donnéesBdf)) {
         const periode_arrete_bilan = new Date(Date.UTC(entréeBdf.arrete_bilan_bdf.getUTCFullYear(), entréeBdf.arrete_bilan_bdf.getUTCMonth() + 1, 1, 0, 0, 0, 0));
         const periode_dispo = f.dateAddMonth(periode_arrete_bilan, 7);
