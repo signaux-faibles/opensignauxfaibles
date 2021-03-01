@@ -189,8 +189,10 @@ function makePeriodeMap(arg) {
         }
         /** @throws TypeError ou RangeError si la période n'est pas valide. */
         assign(période, val) {
+            var _a;
             const timestamp = this.getTimestamp(période);
-            Object.assign(super.get(timestamp), val);
+            const current = (_a = super.get(timestamp)) !== null && _a !== void 0 ? _a : {};
+            super.set(timestamp, Object.assign(current, val));
             return this;
         }
     }
@@ -1053,10 +1055,10 @@ function sirene(sireneArray) {
             apartForSiren.periode_debut = periode_deb_floor;
             apartForSiren.periode_fin = periode_fin_ceil;
         }
-        const series = f.generatePeriodSerie(periode_deb_floor, periode_fin_ceil);
-        series.forEach((période) => {
-            var _a;
-            output_apart.set(période, Object.assign(Object.assign({}, ((_a = output_apart.get(période)) !== null && _a !== void 0 ? _a : {})), { apart_heures_autorisees: apdemandeEntry.hta }));
+        f.generatePeriodSerie(periode_deb_floor, periode_fin_ceil).forEach((période) => {
+            output_apart.assign(période, {
+                apart_heures_autorisees: apdemandeEntry.hta,
+            });
         });
     }
     // relier les consos faites aux demandes (hashs) dans apart
@@ -1094,14 +1096,12 @@ function sirene(sireneArray) {
                 output_apart.set(période, current);
             });
             // Heures consommees cumulees sur la demande
-            const series = f.generatePeriodSerie(apartEntry.periode_debut, apartEntry.periode_fin);
-            series.reduce((accu, période) => {
+            f.generatePeriodSerie(apartEntry.periode_debut, apartEntry.periode_fin).reduce((accu, période) => {
                 var _a;
                 //output_apart est déjà défini pour les heures autorisées
-                const current = (_a = output_apart.get(période)) !== null && _a !== void 0 ? _a : {};
-                accu = accu + (current.apart_heures_consommees || 0);
-                output_apart.set(période, Object.assign(Object.assign({}, current), { apart_heures_consommees_cumulees: accu }));
-                // TODO: on pourrait ajouter une méthode append (ou upsert) à ParPériode() pour alléger la logique ci-dessus
+                const { apart_heures_consommees } = (_a = output_apart.get(période)) !== null && _a !== void 0 ? _a : {};
+                accu = accu + (apart_heures_consommees !== null && apart_heures_consommees !== void 0 ? apart_heures_consommees : 0);
+                output_apart.assign(période, { apart_heures_consommees_cumulees: accu });
                 return accu;
             }, 0);
         }

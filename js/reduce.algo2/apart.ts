@@ -98,13 +98,13 @@ export function apart(
       apartForSiren.periode_fin = periode_fin_ceil
     }
 
-    const series = f.generatePeriodSerie(periode_deb_floor, periode_fin_ceil)
-    series.forEach((période) => {
-      output_apart.set(période, {
-        ...(output_apart.get(période) ?? ({} as SortieAPart)),
-        apart_heures_autorisees: apdemandeEntry.hta,
-      })
-    })
+    f.generatePeriodSerie(periode_deb_floor, periode_fin_ceil).forEach(
+      (période) => {
+        output_apart.assign(période, {
+          apart_heures_autorisees: apdemandeEntry.hta,
+        })
+      }
+    )
   }
 
   // relier les consos faites aux demandes (hashs) dans apart
@@ -142,19 +142,14 @@ export function apart(
         })
 
       // Heures consommees cumulees sur la demande
-      const series = f.generatePeriodSerie(
+      f.generatePeriodSerie(
         apartEntry.periode_debut,
         apartEntry.periode_fin
-      )
-      series.reduce((accu, période) => {
+      ).reduce((accu, période) => {
         //output_apart est déjà défini pour les heures autorisées
-        const current = output_apart.get(période) ?? ({} as SortieAPart)
-        accu = accu + (current.apart_heures_consommees || 0)
-        output_apart.set(période, {
-          ...current,
-          apart_heures_consommees_cumulees: accu,
-        })
-        // TODO: on pourrait ajouter une méthode append (ou upsert) à ParPériode() pour alléger la logique ci-dessus
+        const { apart_heures_consommees } = output_apart.get(période) ?? {}
+        accu = accu + (apart_heures_consommees ?? 0)
+        output_apart.assign(période, { apart_heures_consommees_cumulees: accu })
         return accu
       }, 0)
     }

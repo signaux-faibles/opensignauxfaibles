@@ -129,7 +129,8 @@ export function makePeriodeMap<Value>(
     /** @throws TypeError ou RangeError si la période n'est pas valide. */
     assign(période: Date | Timestamp | string, val: Partial<Value>): this {
       const timestamp = this.getTimestamp(période)
-      Object.assign(super.get(timestamp), val)
+      const current = super.get(timestamp) ?? ({} as Value)
+      super.set(timestamp, Object.assign(current, val))
       return this
     }
   }
