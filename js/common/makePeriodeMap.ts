@@ -9,6 +9,7 @@ export interface ParPériode<T> extends Map<Timestamp, T> {
   has(période: Date | Timestamp | string): boolean
   get(période: Date | Timestamp | string): T | undefined
   set(période: Date | Timestamp | string, val: T): this
+  assign(période: Date | Timestamp | string, val: Partial<T> | undefined): this
 }
 
 /**
@@ -123,6 +124,12 @@ export function makePeriodeMap<Value>(
     set(période: Date | Timestamp | string, val: Value): this {
       const timestamp = this.getTimestamp(période)
       super.set(timestamp, val)
+      return this
+    }
+    /** @throws TypeError ou RangeError si la période n'est pas valide. */
+    assign(période: Date | Timestamp | string, val: Partial<Value>): this {
+      const timestamp = this.getTimestamp(période)
+      Object.assign(super.get(timestamp), val)
       return this
     }
   }

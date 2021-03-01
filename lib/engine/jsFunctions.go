@@ -187,6 +187,12 @@ function makePeriodeMap(arg) {
             super.set(timestamp, val);
             return this;
         }
+        /** @throws TypeError ou RangeError si la période n'est pas valide. */
+        assign(période, val) {
+            const timestamp = this.getTimestamp(période);
+            Object.assign(super.get(timestamp), val);
+            return this;
+        }
     }
     return new ParPériodeImpl(arg);
 }`,
@@ -992,11 +998,9 @@ function sirene(sireneArray) {
 "reduce.algo2":{
 "add": `function add(obj, output) {
     "use strict";
-    output.forEach((val, période) => {
-        if (obj.has(période)) {
-            Object.assign(val, obj.get(période));
-        }
-    });
+    for (const période of output.keys()) {
+        output.assign(période, obj.get(période));
+    }
 }`,
 "apart.crossComputation.json": `{
   "$set": {
