@@ -74,7 +74,7 @@ export function map(this: EntréeMap): void {
     ] = f.outputs(v, serie_periode)
 
     // Les periodes qui nous interessent, triées
-    const periodes = [...output_indexed.keys()].sort() // TODO: serie_periode.map(date => date.getTime())
+    const periodes = serie_periode.map((date) => date.getTime())
 
     if (includes["apart"] || includes["all"]) {
       if (v.apconso && v.apdemande) {

@@ -1788,7 +1788,7 @@ function map() {
         const [output_array, // DonnéesAgrégées[] dans l'ordre chronologique
         output_indexed,] = f.outputs(v, serie_periode);
         // Les periodes qui nous interessent, triées
-        const periodes = [...output_indexed.keys()].sort(); // TODO: serie_periode.map(date => date.getTime())
+        const periodes = serie_periode.map((date) => date.getTime());
         if (includes["apart"] || includes["all"]) {
             if (v.apconso && v.apdemande) {
                 const output_apart = f.apart(v.apconso, v.apdemande);
