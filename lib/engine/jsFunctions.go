@@ -1740,13 +1740,10 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
             ((_f = diane["charges_financieres"]) !== null && _f !== void 0 ? _f : NaN));
     return isNaN(ratio) ? null : ratio * 100;
 }`,
-"lookAhead": `function lookAhead(data, attr_name /** "outcome" | "tag_default" | "tag_failure" */, n_months, past) {
+"lookAhead": `function lookAhead(data, attr_name, n_months, past) {
     "use strict";
-    // Est-ce que l'évènement se répercute dans le passé (past = true on pourra se
-    // demander: que va-t-il se passer) ou dans le future (past = false on
-    // pourra se demander que s'est-il passé
-    const chronologic = (a, b) => a - b;
-    const reverse = (a, b) => b - a;
+    const chronologic = (pérA, pérB) => pérA - pérB;
+    const reverse = (pérA, pérB) => pérB - pérA;
     let counter = -1;
     const output = [...data.keys()]
         .sort(past ? reverse : chronologic)

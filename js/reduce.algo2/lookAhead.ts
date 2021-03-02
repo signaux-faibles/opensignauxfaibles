@@ -9,15 +9,14 @@ export type Outcome = {
   outcome: boolean
 }
 
-type EntréeLookAhead = {
-  outcome: { outcome: boolean }
-  tag_default: Partial<Pick<SortieCotisation, "tag_default">>
-  tag_failure: Partial<Pick<SortieDefaillances, "tag_failure">>
-}
+type EntréeLookAhead =
+  | { outcome?: boolean /*Outcome["outcome"]*/ }
+  | { tag_default?: SortieCotisation["tag_default"] }
+  | { tag_failure?: SortieDefaillances["tag_failure"] }
 
-export function lookAhead<PropName extends keyof EntréeLookAhead>(
-  data: ParPériode<EntréeLookAhead[PropName]>,
-  attr_name: PropName /** "outcome" | "tag_default" | "tag_failure" */,
+export function lookAhead(
+  data: ParPériode<EntréeLookAhead>,
+  attr_name: "outcome" | "tag_default" | "tag_failure",
   n_months: number,
   past: boolean
 ): ParPériode<Outcome> {
@@ -25,9 +24,9 @@ export function lookAhead<PropName extends keyof EntréeLookAhead>(
   // Est-ce que l'évènement se répercute dans le passé (past = true on pourra se
   // demander: que va-t-il se passer) ou dans le future (past = false on
   // pourra se demander que s'est-il passé
-
-  const chronologic = (a: number, b: number) => a - b
-  const reverse = (a: number, b: number) => b - a
+  type DataEntry = number
+  const chronologic = (pérA: DataEntry, pérB: DataEntry) => pérA - pérB
+  const reverse = (pérA: DataEntry, pérB: DataEntry) => pérB - pérA
 
   let counter = -1
   const output = [...data.keys()]
