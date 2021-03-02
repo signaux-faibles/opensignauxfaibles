@@ -1743,18 +1743,20 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
 "lookAhead": `function lookAhead(data, attr_name, // "outcome" | "tag_default" | "tag_failure",
 n_months, past) {
     "use strict";
+    // Est-ce que l'évènement se répercute dans le passé (past = true on pourra se
+    // demander: que va-t-il se passer) ou dans le future (past = false on
+    // pourra se demander que s'est-il passé
     const chronologic = (pérA, pérB) => pérA - pérB;
     const reverse = (pérA, pérB) => pérB - pérA;
     let counter = -1;
     const output = [...data.keys()]
         .sort(past ? reverse : chronologic)
-        .reduce(function (m, période) {
+        .reduce((m, période) => {
+        var _a;
         // Si on a déjà détecté quelque chose, on compte le nombre de périodes
         if (counter >= 0)
             counter = counter + 1;
-        // TODO: éviter l'explicitation de type ci-dessous:
-        const dataInPeriod = data.get(période);
-        if (dataInPeriod && dataInPeriod[attr_name]) {
+        if ((_a = data.get(période)) === null || _a === void 0 ? void 0 : _a[attr_name]) {
             // si l'évènement se produit on retombe à 0
             counter = 0;
         }
