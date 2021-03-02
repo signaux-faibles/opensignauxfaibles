@@ -1740,7 +1740,8 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
             ((_f = diane["charges_financieres"]) !== null && _f !== void 0 ? _f : NaN));
     return isNaN(ratio) ? null : ratio * 100;
 }`,
-"lookAhead": `function lookAhead(data, attr_name, n_months, past) {
+"lookAhead": `function lookAhead(data, attr_name, // "outcome" | "tag_default" | "tag_failure",
+n_months, past) {
     "use strict";
     const chronologic = (pérA, pérB) => pérA - pérB;
     const reverse = (pérA, pérB) => pérB - pérA;

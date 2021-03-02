@@ -9,14 +9,15 @@ export type Outcome = {
   outcome: boolean
 }
 
-type EntréeLookAhead =
-  | { outcome?: boolean /*Outcome["outcome"]*/ }
-  | { tag_default?: SortieCotisation["tag_default"] }
-  | { tag_failure?: SortieDefaillances["tag_failure"] }
+type EntréeLookAhead = {
+  outcome?: Outcome["outcome"]
+  tag_default?: SortieCotisation["tag_default"]
+  tag_failure?: SortieDefaillances["tag_failure"]
+}
 
 export function lookAhead(
   data: ParPériode<EntréeLookAhead>,
-  attr_name: "outcome" | "tag_default" | "tag_failure",
+  attr_name: keyof EntréeLookAhead, // "outcome" | "tag_default" | "tag_failure",
   n_months: number,
   past: boolean
 ): ParPériode<Outcome> {
