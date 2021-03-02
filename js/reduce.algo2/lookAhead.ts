@@ -47,14 +47,10 @@ export function lookAhead<PropName extends keyof EntréeLookAhead>(
 
       if (counter >= 0) {
         // l'évènement s'est produit
-        const out = m.get(période) ?? ({} as Outcome)
-        out.time_til_outcome = counter
-        if (out.time_til_outcome <= n_months) {
-          out.outcome = true
-        } else {
-          out.outcome = false
-        }
-        m.set(période, out)
+        m.set(période, {
+          time_til_outcome: counter,
+          outcome: counter <= n_months ? true : false,
+        })
       }
       return m
     }, f.makePeriodeMap<Outcome>())

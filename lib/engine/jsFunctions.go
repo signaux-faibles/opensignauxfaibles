@@ -1751,7 +1751,6 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
     const output = [...data.keys()]
         .sort(past ? reverse : chronologic)
         .reduce(function (m, période) {
-        var _a;
         // Si on a déjà détecté quelque chose, on compte le nombre de périodes
         if (counter >= 0)
             counter = counter + 1;
@@ -1763,15 +1762,10 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
         }
         if (counter >= 0) {
             // l'évènement s'est produit
-            const out = (_a = m.get(période)) !== null && _a !== void 0 ? _a : {};
-            out.time_til_outcome = counter;
-            if (out.time_til_outcome <= n_months) {
-                out.outcome = true;
-            }
-            else {
-                out.outcome = false;
-            }
-            m.set(période, out);
+            m.set(période, {
+                time_til_outcome: counter,
+                outcome: counter <= n_months ? true : false,
+            });
         }
         return m;
     }, f.makePeriodeMap());
