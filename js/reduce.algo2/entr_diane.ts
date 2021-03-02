@@ -1,6 +1,7 @@
 import { f } from "./functions"
+import { ParPériode } from "../common/makePeriodeMap"
 import { EntréeBdf, EntréeDiane } from "../GeneratedTypes"
-import { ParHash, ParPériode, Timestamp } from "../RawDataTypes"
+import { ParHash, Timestamp } from "../RawDataTypes"
 
 type YearOffset = 1 | 2
 
@@ -75,12 +76,12 @@ export function entr_diane(
       ) => `${prop}_past_${offset}` as CléRatioDianePassé
 
       if (periodes.includes(periode.getTime())) {
-        Object.assign(output_indexed[periode.getTime()], rest)
+        output_indexed.assign(periode, rest)
       }
 
       for (const ratio of Object.keys(rest) as (keyof typeof rest)[]) {
         if (entréeDiane[ratio] === null) {
-          const outputAtTime = output_indexed[periode.getTime()]
+          const outputAtTime = output_indexed.get(periode)
           if (
             outputAtTime !== undefined &&
             periodes.includes(periode.getTime())
@@ -97,7 +98,7 @@ export function entr_diane(
           const periode_offset = f.dateAddMonth(periode, 12 * offset)
           const variable_name: CléRatioDianePassé = makePastProp(ratio, offset)
 
-          const outputAtOffset = output_indexed[periode_offset.getTime()]
+          const outputAtOffset = output_indexed.get(periode_offset)
           if (
             outputAtOffset !== undefined &&
             ratio !== "arrete_bilan_diane" &&
@@ -110,8 +111,8 @@ export function entr_diane(
     }
 
     for (const periode of series) {
-      const inputInPeriod = output_indexed[periode.getTime()]
-      const outputInPeriod = output_indexed[periode.getTime()]
+      const inputInPeriod = output_indexed.get(periode)
+      const outputInPeriod = output_indexed.get(periode)
       if (
         periodes.includes(periode.getTime()) &&
         inputInPeriod &&
@@ -150,7 +151,7 @@ export function entr_diane(
               const periode_offset = f.dateAddMonth(periode, 12 * offset)
               const variable_name: CléRatioBdfPassé = makePastProp(k, offset)
 
-              const outputAtOffset = output_indexed[periode_offset.getTime()]
+              const outputAtOffset = output_indexed.get(periode_offset)
               if (
                 outputAtOffset &&
                 periodes.includes(periode_offset.getTime())

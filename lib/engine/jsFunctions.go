@@ -78,6 +78,126 @@ function forEachPopulatedProp(obj, fct) {
     }
     return serie;
 }`,
+"makePeriodeMap": `/**
+ * makePeriodeMap() retourne une nouvelle instance de la classe ParPériode
+ * (équivalente à Map<Timestamp, T>). Cette fonction a été fournie à défaut
+ * d'être parvenu à inclure directement la classe ParPériode dans le scope
+ * transmis à MongoDB depuis le traitement map-reduce lancé par le code Go.
+ * @param arg (optionnel) - pour initialiser la Map avec un tableau d'entries.
+ */
+function makePeriodeMap(arg) {
+    /**
+     * IntMap est une ré-implémentation partielle de Map<Timestamp, Value>
+     * utilisant un objet JavaScript pour indexer les entrées, et rendue
+     * nécéssaire par le fait que la classe Map de MongoDB n'est pas standard.
+     */
+    class IntMap {
+        constructor(entries) {
+            this.data = {};
+            if (entries) {
+                for (const [key, value] of entries) {
+                    this.data[key] = value;
+                }
+            }
+        }
+        has(key) {
+            return Object.prototype.hasOwnProperty.call(this.data, key);
+        }
+        get(key) {
+            return this.data[key];
+        }
+        set(key, value) {
+            this.data[key] = value;
+            return this;
+        }
+        get size() {
+            return Object.keys(this.data).length;
+        }
+        clear() {
+            this.data = {};
+        }
+        delete(key) {
+            const exists = this.has(key);
+            delete this.data[key];
+            return exists;
+        }
+        *keys() {
+            for (const k of Object.keys(this.data)) {
+                yield parseInt(k);
+            }
+        }
+        *values() {
+            for (const val of Object.values(this.data)) {
+                yield val;
+            }
+        }
+        *entries() {
+            for (const [k, v] of Object.entries(this.data)) {
+                yield [parseInt(k), v];
+            }
+        }
+        forEach(callbackfn, thisArg) {
+            for (const [key, value] of this.entries()) {
+                callbackfn.call(thisArg, value, key, this);
+            }
+        }
+        [Symbol.iterator]() {
+            return this.entries();
+        }
+        get [Symbol.toStringTag]() {
+            return "IntMap";
+        }
+    }
+    /**
+     * Cette classe étend Map<Timestamp, T> pour valider les dates passées
+     * en tant que clés et supporter diverses représentations de ces dates
+     * (ex: instance Date, timestamp numérique ou chaine de caractères), tout en
+     * evitant que des chaines de caractères arbitaires y soient passées.
+     */
+    class ParPériodeImpl extends IntMap {
+        /** Extraie le timestamp d'une date, quelque soit sa représentation. */
+        getNumericValue(période) {
+            if (typeof période === "number")
+                return période;
+            if (typeof période === "string")
+                return parseInt(période);
+            if (période instanceof Date)
+                return période.getTime();
+            throw new TypeError("type non supporté: " + typeof période);
+        }
+        /** Vérifie que le timestamp retourné par getNumericValue est valide. */
+        getTimestamp(période) {
+            const timestamp = this.getNumericValue(période);
+            if (isNaN(timestamp) || new Date(timestamp).getTime() !== timestamp) {
+                throw new RangeError("valeur invalide: " + période);
+            }
+            return timestamp;
+        }
+        /** @throws TypeError ou RangeError si la période n'est pas valide. */
+        has(période) {
+            return super.has(this.getTimestamp(période));
+        }
+        /** @throws TypeError ou RangeError si la période n'est pas valide. */
+        get(période) {
+            return super.get(this.getTimestamp(période));
+        }
+        /** @throws TypeError ou RangeError si la période n'est pas valide. */
+        set(période, val) {
+            const timestamp = this.getTimestamp(période);
+            super.set(timestamp, val);
+            return this;
+        }
+        /** @throws TypeError ou RangeError si la période n'est pas valide. */
+        assign(période, val) {
+            var _a;
+            const timestamp = this.getTimestamp(période);
+            const current = (_a = super.get(timestamp)) !== null && _a !== void 0 ? _a : {};
+            super.set(timestamp, Object.assign(current, val));
+            return this;
+        }
+    }
+    return new ParPériodeImpl(arg);
+}`,
 "omit": `// Fonction pour omettre des props, tout en retournant le bon type
 function omit(object, ...propNames) {
     const result = Object.assign({}, object);
@@ -750,16 +870,15 @@ db.getCollection("Features").createIndex({
     return Object.values(diane !== null && diane !== void 0 ? diane : {}).sort((a, b) => { var _a, _b; return ((_a = a.exercice_diane) !== null && _a !== void 0 ? _a : 0) < ((_b = b.exercice_diane) !== null && _b !== void 0 ? _b : 0) ? 1 : -1; });
 }`,
 "effectifs": `function effectifs(effectif) {
-    const mapEffectif = {};
+    const mapEffectif = f.makePeriodeMap();
     Object.values(effectif !== null && effectif !== void 0 ? effectif : {}).forEach((e) => {
-        mapEffectif[e.periode.getTime()] =
-            (mapEffectif[e.periode.getTime()] || 0) + e.effectif;
+        mapEffectif.set(e.periode, (mapEffectif.get(e.periode) || 0) + e.effectif);
     });
     return serie_periode
         .map((p) => {
         return {
             periode: p,
-            effectif: mapEffectif[p.getTime()] || -1,
+            effectif: mapEffectif.get(p) || -1,
         };
     })
         .filter((p) => p.effectif >= 0);
@@ -881,12 +1000,9 @@ function sirene(sireneArray) {
 "reduce.algo2":{
 "add": `function add(obj, output) {
     "use strict";
-    Object.keys(output).forEach(function (strPériode) {
-        if (strPériode in obj) {
-            const période = parseInt(strPériode);
-            Object.assign(output[période], obj[période]);
-        }
-    });
+    for (const période of output.keys()) {
+        output.assign(période, obj.get(période));
+    }
 }`,
 "apart.crossComputation.json": `{
   "$set": {
@@ -909,7 +1025,7 @@ function sirene(sireneArray) {
 }`,
 "apart": `function apart(apconso, apdemande) {
     "use strict";
-    const output_apart = {};
+    const output_apart = f.makePeriodeMap();
     // Mapping (pour l'instant vide) du hash de la demande avec les hash des consos correspondantes
     const apart = {};
     for (const [hash, apdemandeEntry] of Object.entries(apdemande)) {
@@ -939,11 +1055,10 @@ function sirene(sireneArray) {
             apartForSiren.periode_debut = periode_deb_floor;
             apartForSiren.periode_fin = periode_fin_ceil;
         }
-        const series = f.generatePeriodSerie(periode_deb_floor, periode_fin_ceil);
-        series.forEach((date) => {
-            var _a;
-            const time = date.getTime();
-            output_apart[time] = Object.assign(Object.assign({}, ((_a = output_apart[time]) !== null && _a !== void 0 ? _a : {})), { apart_heures_autorisees: apdemandeEntry.hta });
+        f.generatePeriodSerie(periode_deb_floor, periode_fin_ceil).forEach((période) => {
+            output_apart.assign(période, {
+                apart_heures_autorisees: apdemandeEntry.hta,
+            });
         });
     }
     // relier les consos faites aux demandes (hashs) dans apart
@@ -964,11 +1079,11 @@ function sirene(sireneArray) {
             )
                 .forEach((h) => {
                 var _a, _b, _c, _d, _e;
-                const time = (_a = apconso[h]) === null || _a === void 0 ? void 0 : _a.periode.getTime();
-                if (time === undefined) {
+                const période = (_a = apconso[h]) === null || _a === void 0 ? void 0 : _a.periode;
+                if (période === undefined) {
                     return;
                 }
-                const current = (_b = output_apart[time]) !== null && _b !== void 0 ? _b : {};
+                const current = (_b = output_apart.get(période)) !== null && _b !== void 0 ? _b : {};
                 const heureConso = (_c = apconso[h]) === null || _c === void 0 ? void 0 : _c.heure_consomme;
                 if (heureConso !== undefined) {
                     current.apart_heures_consommees =
@@ -978,17 +1093,15 @@ function sirene(sireneArray) {
                 if (motifRecours !== undefined) {
                     current.apart_motif_recours = motifRecours;
                 }
-                output_apart[time] = current;
+                output_apart.set(période, current);
             });
             // Heures consommees cumulees sur la demande
-            const series = f.generatePeriodSerie(apartEntry.periode_debut, apartEntry.periode_fin);
-            series.reduce((accu, date) => {
+            f.generatePeriodSerie(apartEntry.periode_debut, apartEntry.periode_fin).reduce((accu, période) => {
                 var _a;
-                const time = date.getTime();
                 //output_apart est déjà défini pour les heures autorisées
-                const current = (_a = output_apart[time]) !== null && _a !== void 0 ? _a : {};
-                accu = accu + (current.apart_heures_consommees || 0);
-                output_apart[time] = Object.assign(Object.assign({}, current), { apart_heures_consommees_cumulees: accu });
+                const { apart_heures_consommees } = (_a = output_apart.get(période)) !== null && _a !== void 0 ? _a : {};
+                accu = accu + (apart_heures_consommees !== null && apart_heures_consommees !== void 0 ? apart_heures_consommees : 0);
+                output_apart.assign(période, { apart_heures_consommees_cumulees: accu });
                 return accu;
             }, 0);
         }
@@ -1019,72 +1132,63 @@ function sirene(sireneArray) {
     const output_cotisation = output_indexed;
     const output_procol = output_indexed;
     // replace with const
-    const strPériodes = Object.keys(output_indexed);
-    const merged_info = {};
-    for (const strPériode of strPériodes) {
-        const période = parseInt(strPériode);
-        merged_info[période] = {
-            outcome: Boolean(((_a = output_procol[période]) === null || _a === void 0 ? void 0 : _a.tag_failure) || ((_b = output_cotisation[période]) === null || _b === void 0 ? void 0 : _b.tag_default)),
-        };
+    const périodes = [...output_indexed.keys()];
+    const merged_info = f.makePeriodeMap();
+    for (const période of périodes) {
+        merged_info.set(période, {
+            outcome: Boolean(((_a = output_procol.get(période)) === null || _a === void 0 ? void 0 : _a.tag_failure) || ((_b = output_cotisation.get(période)) === null || _b === void 0 ? void 0 : _b.tag_default)),
+        });
     }
     const output_outcome = f.lookAhead(merged_info, "outcome", n_months, true);
     const output_default = f.lookAhead(output_cotisation, "tag_default", n_months, true);
     const output_failure = f.lookAhead(output_procol, "tag_failure", n_months, true);
-    const output_cible = strPériodes.reduce(function (m, strPériode) {
-        var _a, _b;
-        const k = parseInt(strPériode);
-        const outputTimes = {};
-        if (output_default[k] !== undefined)
-            outputTimes.time_til_default = (_a = output_default[k]) === null || _a === void 0 ? void 0 : _a.time_til_outcome;
-        if (output_failure[k] !== undefined)
-            outputTimes.time_til_failure = (_b = output_failure[k]) === null || _b === void 0 ? void 0 : _b.time_til_outcome;
-        return Object.assign(Object.assign({}, m), { [k]: Object.assign(Object.assign({}, output_outcome[k]), outputTimes) });
-    }, {});
+    const output_cible = périodes.reduce(function (m, k) {
+        const oDefault = output_default.get(k);
+        const oFailure = output_failure.get(k);
+        return m.set(k, Object.assign(Object.assign(Object.assign({}, output_outcome.get(k)), (oDefault && { time_til_default: oDefault.time_til_outcome })), (oFailure && { time_til_failure: oFailure.time_til_outcome })));
+    }, f.makePeriodeMap());
     return output_cible;
 }`,
 "compte": `function compte(compte) {
     "use strict";
-    var _a;
-    const output_compte = {};
+    const output_compte = f.makePeriodeMap();
     //  var offset_compte = 3
-    for (const compteEntry of Object.values(compte)) {
-        const periode = compteEntry.periode.getTime();
-        output_compte[periode] = Object.assign(Object.assign({}, ((_a = output_compte[periode]) !== null && _a !== void 0 ? _a : {})), { compte_urssaf: compteEntry.numero_compte });
+    for (const { periode, numero_compte } of Object.values(compte)) {
+        output_compte.assign(periode, { compte_urssaf: numero_compte });
     }
     return output_compte;
 }`,
 "cotisation": `function cotisation(output_indexed) {
     "use strict";
-    var _a, _b, _c, _d;
-    const sortieCotisation = {};
+    var _a, _b, _c;
+    const sortieCotisation = f.makePeriodeMap();
     const moyenne = (valeurs = []) => valeurs.some((val) => typeof val === "undefined")
         ? undefined
         : valeurs.reduce((p, c) => p + c, 0) / (valeurs.length || 1);
     // calcul de cotisation_moyenne sur 12 mois
-    const futureArrays = {};
-    for (const [strPériode, input] of Object.entries(output_indexed)) {
-        const période = parseInt(strPériode);
-        const périodeCourante = (_a = output_indexed[période]) === null || _a === void 0 ? void 0 : _a.periode;
+    const futureArrays = f.makePeriodeMap();
+    for (const [période, input] of output_indexed.entries()) {
+        const périodeCourante = (_a = output_indexed.get(période)) === null || _a === void 0 ? void 0 : _a.periode;
         if (périodeCourante === undefined)
             continue;
         const douzeMoisÀVenir = f
             .generatePeriodSerie(périodeCourante, f.dateAddMonth(périodeCourante, 12))
-            .map((periodeFuture) => ({ timestamp: periodeFuture.getTime() }))
-            .filter(({ timestamp }) => timestamp in output_indexed);
+            .filter((périodeFuture) => output_indexed.has(périodeFuture));
         // Accumulation de cotisations sur les 12 mois à venir, pour calcul des moyennes
-        douzeMoisÀVenir.forEach(({ timestamp }) => {
-            const future = (futureArrays[timestamp] = futureArrays[timestamp] || {
+        douzeMoisÀVenir.forEach((périodeFuture) => {
+            const future = futureArrays.get(périodeFuture) || {
                 cotisations: [],
                 montantsPP: [],
                 montantsPO: [],
-            });
+            };
             future.cotisations.push(input.cotisation);
             future.montantsPP.push(input.montant_part_patronale || 0);
             future.montantsPO.push(input.montant_part_ouvriere || 0);
+            futureArrays.set(périodeFuture, future);
         });
         // Calcul des cotisations moyennes à partir des valeurs accumulées ci-dessus
-        const { cotisations, montantsPO, montantsPP } = (_b = futureArrays[période]) !== null && _b !== void 0 ? _b : {};
-        const out = (_c = sortieCotisation[période]) !== null && _c !== void 0 ? _c : {};
+        const { cotisations, montantsPO, montantsPP } = (_b = futureArrays.get(période)) !== null && _b !== void 0 ? _b : {};
+        const out = (_c = sortieCotisation.get(période)) !== null && _c !== void 0 ? _c : {};
         if (cotisations && cotisations.length >= 12) {
             out.cotisation_moy12m = moyenne(cotisations);
         }
@@ -1114,7 +1218,7 @@ function sirene(sireneArray) {
                 out.ratio_dette_moy12m = moyenne(detteVals);
             }
         }
-        sortieCotisation[période] = out;
+        sortieCotisation.set(période, out);
         // Remplace dans cibleApprentissage
         //val.dette_any_12m = (val.montantsPA || []).reduce((p,c) => (c >=
         //100) || p, false) || (val.montantsPO || []).reduce((p, c) => (c >=
@@ -1122,16 +1226,13 @@ function sirene(sireneArray) {
     }
     // Calcul des défauts URSSAF prolongés
     let counter = 0;
-    for (const k of Object.keys(sortieCotisation).sort()) {
-        const période = parseInt(k);
-        const cotis = sortieCotisation[période];
-        const { ratio_dette } = (_d = sortieCotisation[période]) !== null && _d !== void 0 ? _d : {};
-        if (!ratio_dette)
+    for (const cotis of sortieCotisation.values()) {
+        if (!cotis.ratio_dette)
             continue;
-        if (ratio_dette > 0.01) {
+        if (cotis.ratio_dette > 0.01) {
             cotis.tag_debit = true; // Survenance d'un débit d'au moins 1% des cotisations
         }
-        if (ratio_dette > 1) {
+        if (cotis.ratio_dette > 1) {
             counter = counter + 1;
             if (counter >= 3)
                 cotis.tag_default = true;
@@ -1152,13 +1253,15 @@ function cotisationsdettes(vCotisation, vDebit, periodes, finPériode // corresp
     // Tous les débits traitées après ce jour du mois sont reportées à la période suivante
     // Permet de s'aligner avec le calendrier de fourniture des données
     const lastAccountedDay = 20;
-    const sortieCotisationsDettes = {};
-    const value_cotisation = {};
+    const sortieCotisationsDettes = f.makePeriodeMap();
+    const value_cotisation = f.makePeriodeMap();
     // Répartition des cotisations sur toute la période qu'elle concerne
     for (const cotisation of Object.values(vCotisation)) {
         const periode_cotisation = f.generatePeriodSerie(cotisation.periode.start, cotisation.periode.end);
         periode_cotisation.forEach((date_cotisation) => {
-            value_cotisation[date_cotisation.getTime()] = (value_cotisation[date_cotisation.getTime()] || []).concat([cotisation.du / periode_cotisation.length]);
+            value_cotisation.set(date_cotisation, (value_cotisation.get(date_cotisation) || []).concat([
+                cotisation.du / periode_cotisation.length,
+            ]));
         });
     }
     // relier les débits
@@ -1193,7 +1296,7 @@ function cotisationsdettes(vCotisation, vDebit, periodes, finPériode // corresp
                 vDebitForHash.debit_suivant = next;
         });
     }
-    const value_dette = {};
+    const value_dette = f.makePeriodeMap();
     // Pour chaque objet debit:
     // debit_traitement_debut => periode de traitement du débit
     // debit_traitement_fin => periode de traitement du debit suivant, ou bien finPériode
@@ -1218,12 +1321,11 @@ function cotisationsdettes(vCotisation, vDebit, periodes, finPériode // corresp
         else {
             date_traitement_fin = new Date(Date.UTC(nextDate.getFullYear(), nextDate.getUTCMonth() + 1));
         }
-        const periode_debut = date_traitement_debut;
-        const periode_fin = date_traitement_fin;
         //f.generatePeriodSerie exlue la dernière période
-        f.generatePeriodSerie(periode_debut, periode_fin).map((date) => {
-            const time = date.getTime();
-            value_dette[time] = (value_dette[time] || []).concat([
+        f.generatePeriodSerie(date_traitement_debut, date_traitement_fin).forEach((date) => {
+            var _a;
+            value_dette.set(date, [
+                ...((_a = value_dette.get(date)) !== null && _a !== void 0 ? _a : []),
                 {
                     periode: debit.periode.start,
                     part_ouvriere: debit.part_ouvriere,
@@ -1241,24 +1343,17 @@ function cotisationsdettes(vCotisation, vDebit, periodes, finPériode // corresp
     //))
     periodes.forEach(function (time) {
         var _a;
-        let val = (_a = sortieCotisationsDettes[time]) !== null && _a !== void 0 ? _a : {};
-        //output_cotisationsdettes[time].numero_compte_urssaf = numeros_compte
-        const valueCotis = value_cotisation[time];
+        const val = (_a = sortieCotisationsDettes.get(time)) !== null && _a !== void 0 ? _a : {};
+        //val.numero_compte_urssaf = numeros_compte
+        const valueCotis = value_cotisation.get(time);
         if (valueCotis !== undefined) {
             // somme de toutes les cotisations dues pour une periode donnée
             val.cotisation = valueCotis.reduce((a, cot) => a + cot, 0);
         }
         // somme de tous les débits (part ouvriere, part patronale)
-        const montant_dette = (value_dette[time] || []).reduce(function (m, dette) {
-            m.montant_part_ouvriere += dette.part_ouvriere;
-            m.montant_part_patronale += dette.part_patronale;
-            return m;
-        }, {
-            montant_part_ouvriere: 0,
-            montant_part_patronale: 0,
-        });
-        val = Object.assign(val, montant_dette);
-        sortieCotisationsDettes[time] = val;
+        val.montant_part_ouvriere = (value_dette.get(time) || []).reduce((acc, { part_ouvriere }) => acc + part_ouvriere, 0);
+        val.montant_part_patronale = (value_dette.get(time) || []).reduce((acc, { part_patronale }) => acc + part_patronale, 0);
+        sortieCotisationsDettes.set(time, val);
         const monthOffsets = [1, 2, 3, 6, 12];
         const futureTimestamps = monthOffsets
             .map((offset) => ({
@@ -1268,7 +1363,7 @@ function cotisationsdettes(vCotisation, vDebit, periodes, finPériode // corresp
             .filter(({ timestamp }) => periodes.includes(timestamp));
         futureTimestamps.forEach(({ offset, timestamp }) => {
             var _a;
-            sortieCotisationsDettes[timestamp] = Object.assign(Object.assign({}, ((_a = sortieCotisationsDettes[timestamp]) !== null && _a !== void 0 ? _a : {})), { [` + "`" + `montant_part_ouvriere_past_${offset}` + "`" + `]: val.montant_part_ouvriere, [` + "`" + `montant_part_patronale_past_${offset}` + "`" + `]: val.montant_part_patronale });
+            sortieCotisationsDettes.set(timestamp, Object.assign(Object.assign({}, ((_a = sortieCotisationsDettes.get(timestamp)) !== null && _a !== void 0 ? _a : {})), { [` + "`" + `montant_part_ouvriere_past_${offset}` + "`" + `]: val.montant_part_ouvriere, [` + "`" + `montant_part_patronale_past_${offset}` + "`" + `]: val.montant_part_patronale }));
         });
         if (val.montant_part_ouvriere + val.montant_part_patronale > 0) {
             const futureTimestamps = [0, 1, 2, 3, 4, 5]
@@ -1278,7 +1373,7 @@ function cotisationsdettes(vCotisation, vDebit, periodes, finPériode // corresp
                 .filter(({ timestamp }) => periodes.includes(timestamp));
             futureTimestamps.forEach(({ timestamp }) => {
                 var _a;
-                sortieCotisationsDettes[timestamp] = Object.assign(Object.assign({}, ((_a = sortieCotisationsDettes[timestamp]) !== null && _a !== void 0 ? _a : {})), { interessante_urssaf: false });
+                sortieCotisationsDettes.set(timestamp, Object.assign(Object.assign({}, ((_a = sortieCotisationsDettes.get(timestamp)) !== null && _a !== void 0 ? _a : {})), { interessante_urssaf: false }));
             });
         }
     });
@@ -1303,16 +1398,12 @@ function cotisationsdettes(vCotisation, vDebit, periodes, finPériode // corresp
     });
     codes.forEach((event) => {
         const periode_effet = new Date(Date.UTC(event.date_proc_col.getFullYear(), event.date_proc_col.getUTCMonth(), 1, 0, 0, 0, 0));
-        const time_til_last = Object.keys(output_indexed).filter((val) => {
-            return parseInt(val) >= periode_effet.getTime();
+        const time_til_last = [...output_indexed.keys()].filter((période) => {
+            return période >= periode_effet.getTime();
         });
         time_til_last.forEach((time) => {
-            const outputForTime = output_indexed[parseInt(time)];
-            if (outputForTime !== undefined) {
-                outputForTime.etat_proc_collective = event.etat;
-                outputForTime.date_proc_collective = event.date_proc_col;
-                if (event.etat !== "in_bonis")
-                    outputForTime.tag_failure = true;
+            if (output_indexed.has(time)) {
+                output_indexed.assign(time, Object.assign({ etat_proc_collective: event.etat, date_proc_collective: event.date_proc_col }, (event.etat !== "in_bonis" && { tag_failure: true })));
             }
         });
     });
@@ -1329,7 +1420,7 @@ function cotisationsdettes(vCotisation, vDebit, periodes, finPériode // corresp
  */
 function delais(vDelai, debitParPériode, intervalleTraitement) {
     "use strict";
-    const donnéesDélaiParPériode = {};
+    const donnéesDélaiParPériode = f.makePeriodeMap();
     Object.values(vDelai).forEach((delai) => {
         if (delai.duree_delai <= 0) {
             return;
@@ -1342,9 +1433,8 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
             .filter((date) => date >= intervalleTraitement.premièreDate &&
             date <= intervalleTraitement.dernièreDate)
             .map(function (debutDeMois) {
-            const time = debutDeMois.getTime();
             const remainingDays = f.nbDays(debutDeMois, delai.date_echeance);
-            const inputAtTime = debitParPériode[time];
+            const inputAtTime = debitParPériode.get(debutDeMois);
             const outputAtTime = {
                 delai_nb_jours_restants: remainingDays,
                 delai_nb_jours_total: delai.duree_delai,
@@ -1359,7 +1449,7 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
                     (detteActuelle - detteHypothétiqueRemboursementLinéaire) /
                         delai.montant_echeancier;
             }
-            donnéesDélaiParPériode[time] = outputAtTime;
+            donnéesDélaiParPériode.set(debutDeMois, outputAtTime);
         });
     });
     return donnéesDélaiParPériode;
@@ -1374,31 +1464,32 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
 "effectifs": `function effectifs(entréeEffectif, periodes, clé) {
     "use strict";
     var _a;
-    const sortieEffectif = {};
+    const sortieEffectif = f.makePeriodeMap();
     // Construction d'une map[time] = effectif à cette periode
-    const mapEffectif = {};
+    const mapEffectif = f.makePeriodeMap();
     Object.keys(entréeEffectif).forEach((hash) => {
         const effectif = entréeEffectif[hash];
         if (effectif !== null && effectif !== undefined) {
-            mapEffectif[effectif.periode.getTime()] = effectif.effectif;
+            mapEffectif.set(effectif.periode, effectif.effectif);
         }
     });
     // On reporte dans les dernières périodes le dernier effectif connu
     // Ne reporter que si le dernier effectif est disponible
     const dernièrePériodeAvecEffectifConnu = f.dateAddMonth(new Date(periodes[periodes.length - 1]), offset_effectif + 1);
-    const effectifÀReporter = (_a = mapEffectif[dernièrePériodeAvecEffectifConnu.getTime()]) !== null && _a !== void 0 ? _a : null;
+    const effectifÀReporter = (_a = mapEffectif.get(dernièrePériodeAvecEffectifConnu)) !== null && _a !== void 0 ? _a : null;
     const makeReporteProp = (clé) => ` + "`" + `${clé}_reporte` + "`" + `;
     periodes.forEach((time) => {
-        sortieEffectif[time] = Object.assign(Object.assign({}, sortieEffectif[time]), { [clé]: mapEffectif[time] || effectifÀReporter, [makeReporteProp(clé)]: mapEffectif[time] ? 0 : 1 });
+        var _a;
+        sortieEffectif.set(time, Object.assign(Object.assign({}, ((_a = sortieEffectif.get(time)) !== null && _a !== void 0 ? _a : {})), { [clé]: mapEffectif.get(time) || effectifÀReporter, [makeReporteProp(clé)]: mapEffectif.get(time) ? 0 : 1 }));
     });
     const makePastProp = (clé, offset) => ` + "`" + `${clé}_past_${offset}` + "`" + `;
-    Object.keys(mapEffectif).forEach((time) => {
+    mapEffectif.forEach((effectifAtTime, time) => {
         const futureOffsets = [6, 12, 18, 24];
         const futureTimestamps = futureOffsets
             .map((offset) => ({
             offset,
             timestamp: f
-                .dateAddMonth(new Date(parseInt(time)), offset - offset_effectif - 1)
+                .dateAddMonth(new Date(time), offset - offset_effectif - 1)
                 // TODO: réfléchir à si l'offset est nécessaire pour l'algo.
                 // Ces valeurs permettent de calculer les dernières variations réelles
                 // d'effectif sur la période donnée (par exemple: 6 mois),
@@ -1408,24 +1499,21 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
         }))
             .filter(({ timestamp }) => periodes.includes(timestamp));
         futureTimestamps.forEach(({ offset, timestamp }) => {
-            sortieEffectif[timestamp] = Object.assign(Object.assign({}, sortieEffectif[timestamp]), { [makePastProp(clé, offset)]: mapEffectif[parseInt(time)] });
+            var _a;
+            sortieEffectif.set(timestamp, Object.assign(Object.assign({}, ((_a = sortieEffectif.get(timestamp)) !== null && _a !== void 0 ? _a : {})), { [makePastProp(clé, offset)]: effectifAtTime }));
         });
     });
     return sortieEffectif;
 }`,
 "entr_bdf": `function entr_bdf(donnéesBdf, periodes) {
     "use strict";
-    const outputBdf = {};
-    for (const p of periodes) {
-        outputBdf[p] = {};
-    }
+    const outputBdf = f.makePeriodeMap(periodes.map((période) => [période, {}]));
     for (const entréeBdf of Object.values(donnéesBdf)) {
         const periode_arrete_bilan = new Date(Date.UTC(entréeBdf.arrete_bilan_bdf.getUTCFullYear(), entréeBdf.arrete_bilan_bdf.getUTCMonth() + 1, 1, 0, 0, 0, 0));
         const periode_dispo = f.dateAddMonth(periode_arrete_bilan, 7);
         const series = f.generatePeriodSerie(periode_dispo, f.dateAddMonth(periode_dispo, 13));
         for (const periode of series) {
-            const outputInPeriod = (outputBdf[periode.getTime()] =
-                outputBdf[periode.getTime()] || {});
+            const outputInPeriod = outputBdf.get(periode) || {};
             const periodData = f.omit(entréeBdf, "raison_sociale", "secteur", "siren");
             // TODO: Éviter d'ajouter des données en dehors de ` + "`" + `periodes` + "`" + `, sans fausser le calcul des données passées (plus bas)
             Object.assign(outputInPeriod, periodData);
@@ -1438,12 +1526,13 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
                 const past_year_offset = [1, 2];
                 for (const offset of past_year_offset) {
                     const periode_offset = f.dateAddMonth(periode, 12 * offset);
-                    const outputInPast = outputBdf[periode_offset.getTime()];
+                    const outputInPast = outputBdf.get(periode_offset);
                     if (outputInPast) {
                         outputInPast[makePastProp(prop, offset)] = entréeBdf[prop];
                     }
                 }
             }
+            outputBdf.set(periode, outputInPeriod);
         }
     }
     return outputBdf;
@@ -1463,11 +1552,11 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
             "nom_entreprise", "numero_siren", "statut_juridique", "procedure_collective");
             const makePastProp = (prop, offset) => ` + "`" + `${prop}_past_${offset}` + "`" + `;
             if (periodes.includes(periode.getTime())) {
-                Object.assign(output_indexed[periode.getTime()], rest);
+                output_indexed.assign(periode, rest);
             }
             for (const ratio of Object.keys(rest)) {
                 if (entréeDiane[ratio] === null) {
-                    const outputAtTime = output_indexed[periode.getTime()];
+                    const outputAtTime = output_indexed.get(periode);
                     if (outputAtTime !== undefined &&
                         periodes.includes(periode.getTime())) {
                         delete outputAtTime[ratio];
@@ -1479,7 +1568,7 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
                 for (const offset of past_year_offset) {
                     const periode_offset = f.dateAddMonth(periode, 12 * offset);
                     const variable_name = makePastProp(ratio, offset);
-                    const outputAtOffset = output_indexed[periode_offset.getTime()];
+                    const outputAtOffset = output_indexed.get(periode_offset);
                     if (outputAtOffset !== undefined &&
                         ratio !== "arrete_bilan_diane" &&
                         ratio !== "exercice_diane") {
@@ -1489,8 +1578,8 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
             }
         }
         for (const periode of series) {
-            const inputInPeriod = output_indexed[periode.getTime()];
-            const outputInPeriod = output_indexed[periode.getTime()];
+            const inputInPeriod = output_indexed.get(periode);
+            const outputInPeriod = output_indexed.get(periode);
             if (periodes.includes(periode.getTime()) &&
                 inputInPeriod &&
                 outputInPeriod) {
@@ -1525,7 +1614,7 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
                         past_year_offset.forEach((offset) => {
                             const periode_offset = f.dateAddMonth(periode, 12 * offset);
                             const variable_name = makePastProp(k, offset);
-                            const outputAtOffset = output_indexed[periode_offset.getTime()];
+                            const outputAtOffset = output_indexed.get(periode_offset);
                             if (outputAtOffset &&
                                 periodes.includes(periode_offset.getTime())) {
                                 outputAtOffset[variable_name] = outputInPeriod[k];
@@ -1540,32 +1629,32 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
 }`,
 "entr_paydex": `function entr_paydex(vPaydex, sériePériode) {
     "use strict";
-    const paydexParPériode = {};
+    const paydexParPériode = f.makePeriodeMap();
     // initialisation (avec valeurs N/A par défaut)
     for (const période of sériePériode) {
-        paydexParPériode[période.getTime()] = {
+        paydexParPériode.set(période, {
             paydex_nb_jours: null,
             paydex_nb_jours_past_1: null,
             paydex_nb_jours_past_12: null,
-        };
+        });
     }
     // population des valeurs
     for (const entréePaydex of Object.values(vPaydex)) {
         const période = Date.UTC(entréePaydex.date_valeur.getUTCFullYear(), entréePaydex.date_valeur.getUTCMonth(), 1);
         const moisSuivant = f.dateAddMonth(new Date(période), 1).getTime();
         const annéeSuivante = f.dateAddMonth(new Date(période), 12).getTime();
-        const donnéesAdditionnelles = {
-            [période]: { paydex_nb_jours: entréePaydex.nb_jours },
-            [moisSuivant]: { paydex_nb_jours_past_1: entréePaydex.nb_jours },
-            [annéeSuivante]: { paydex_nb_jours_past_12: entréePaydex.nb_jours },
-        };
+        const donnéesAdditionnelles = f.makePeriodeMap([
+            [période, { paydex_nb_jours: entréePaydex.nb_jours }],
+            [moisSuivant, { paydex_nb_jours_past_1: entréePaydex.nb_jours }],
+            [annéeSuivante, { paydex_nb_jours_past_12: entréePaydex.nb_jours }],
+        ]);
         f.add(donnéesAdditionnelles, paydexParPériode);
     }
     return paydexParPériode;
 }`,
 "entr_sirene": `function entr_sirene(sirene_ul, sériePériode) {
     "use strict";
-    const retourEntrSirene = {};
+    const retourEntrSirene = f.makePeriodeMap();
     const sireneHashes = Object.keys(sirene_ul || {});
     sériePériode.forEach((période) => {
         if (sireneHashes.length !== 0) {
@@ -1582,7 +1671,7 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
                 val.age_entreprise =
                     période.getFullYear() - val.date_creation_entreprise;
             }
-            retourEntrSirene[période.getTime()] = val;
+            retourEntrSirene.set(période, val);
         }
     });
     return retourEntrSirene;
@@ -1651,41 +1740,35 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
             ((_f = diane["charges_financieres"]) !== null && _f !== void 0 ? _f : NaN));
     return isNaN(ratio) ? null : ratio * 100;
 }`,
-"lookAhead": `function lookAhead(data, attr_name, n_months, past) {
+"lookAhead": `function lookAhead(data, attr_name, // "outcome" | "tag_default" | "tag_failure",
+n_months, past) {
     "use strict";
     // Est-ce que l'évènement se répercute dans le passé (past = true on pourra se
     // demander: que va-t-il se passer) ou dans le future (past = false on
     // pourra se demander que s'est-il passé
-    const chronologic = (a, b) => (a > b ? 1 : -1);
-    const reverse = (a, b) => (b > a ? 1 : -1);
+    const chronologic = (pérA, pérB) => pérA - pérB;
+    const reverse = (pérA, pérB) => pérB - pérA;
     let counter = -1;
-    const output = Object.keys(data)
+    const output = [...data.keys()]
         .sort(past ? reverse : chronologic)
-        .reduce(function (m, strPériode) {
+        .reduce((m, période) => {
         var _a;
-        const période = parseInt(strPériode);
         // Si on a déjà détecté quelque chose, on compte le nombre de périodes
         if (counter >= 0)
             counter = counter + 1;
-        const dataInPeriod = data[période];
-        if (dataInPeriod && dataInPeriod[attr_name]) {
+        if ((_a = data.get(période)) === null || _a === void 0 ? void 0 : _a[attr_name]) {
             // si l'évènement se produit on retombe à 0
             counter = 0;
         }
         if (counter >= 0) {
             // l'évènement s'est produit
-            const out = (_a = m[période]) !== null && _a !== void 0 ? _a : {};
-            out.time_til_outcome = counter;
-            if (out.time_til_outcome <= n_months) {
-                out.outcome = true;
-            }
-            else {
-                out.outcome = false;
-            }
-            m[période] = out;
+            m.set(période, {
+                time_til_outcome: counter,
+                outcome: counter <= n_months ? true : false,
+            });
         }
         return m;
-    }, {});
+    }, f.makePeriodeMap());
     return output;
 }`,
 "map": `/**
@@ -1705,22 +1788,20 @@ function map() {
         const [output_array, // DonnéesAgrégées[] dans l'ordre chronologique
         output_indexed,] = f.outputs(v, serie_periode);
         // Les periodes qui nous interessent, triées
-        const periodes = Object.keys(output_indexed)
-            .sort()
-            .map((timestamp) => parseInt(timestamp));
+        const periodes = serie_periode.map((date) => date.getTime());
         if (includes["apart"] || includes["all"]) {
             if (v.apconso && v.apdemande) {
                 const output_apart = f.apart(v.apconso, v.apdemande);
-                Object.keys(output_apart)
-                    .filter((periode) => periode in output_indexed) // limiter dans le scope temporel du batch.
-                    .forEach((periode) => {
+                output_apart.forEach((current, periode) => {
+                    if (!output_indexed.has(periode))
+                        return; // limiter dans le scope temporel du batch.
                     const data = {
-                        [this._id]: Object.assign(Object.assign({}, output_apart[parseInt(periode)]), { siret: this._id }),
+                        [this._id]: Object.assign(Object.assign({}, current), { siret: this._id }),
                     };
                     emit({
                         batch: actual_batch,
                         siren: this._id.substring(0, 9),
-                        periode: new Date(parseInt(periode)),
+                        periode: new Date(periode),
                         type: "apart",
                     }, data);
                 });
@@ -1739,7 +1820,7 @@ function map() {
                 const output_repeatable = f.repeatable(v.reporder);
                 f.add(output_repeatable, output_indexed);
             }
-            let output_cotisationsdettes;
+            let output_cotisationsdettes = f.makePeriodeMap();
             if (v.cotisation && v.debit) {
                 output_cotisationsdettes = f.cotisationsdettes(v.cotisation, v.debit, periodes, date_fin);
                 f.add(output_cotisationsdettes, output_indexed);
@@ -1754,7 +1835,10 @@ function map() {
                     error("serie_periode should not contain undefined values");
                 }
                 else {
-                    const output_delai = f.delais(v.delai, output_cotisationsdettes !== null && output_cotisationsdettes !== void 0 ? output_cotisationsdettes : {}, { premièreDate, dernièreDate });
+                    const output_delai = f.delais(v.delai, output_cotisationsdettes, {
+                        premièreDate,
+                        dernièreDate,
+                    });
                     f.add(output_delai, output_indexed);
                 }
             }
@@ -1786,13 +1870,13 @@ function map() {
     }
     if (v.scope === "entreprise") {
         if (includes["all"]) {
-            const output_indexed = {};
+            const output_indexed = f.makePeriodeMap();
             for (const periode of serie_periode) {
-                output_indexed[periode.getTime()] = {
+                output_indexed.set(periode, {
                     siren: v.key,
                     periode,
                     exercice_bdf: 0,
-                };
+                });
             }
             if (v.sirene_ul) {
                 const outputEntrSirene = f.entr_sirene(v.sirene_ul, serie_periode);
@@ -1819,16 +1903,16 @@ function map() {
                 // TODO: rendre f.entr_diane() pure, c.a.d. faire en sorte qu'elle ne modifie plus output_indexed directement
             }
             serie_periode.forEach((date) => {
-                const periode = output_indexed[date.getTime()];
-                if ((periode === null || periode === void 0 ? void 0 : periode.arrete_bilan_bdf) !== undefined ||
-                    (periode === null || periode === void 0 ? void 0 : periode.arrete_bilan_diane) !== undefined) {
+                const entrData = output_indexed.get(date);
+                if ((entrData === null || entrData === void 0 ? void 0 : entrData.arrete_bilan_bdf) !== undefined ||
+                    (entrData === null || entrData === void 0 ? void 0 : entrData.arrete_bilan_diane) !== undefined) {
                     emit({
                         batch: actual_batch,
                         siren: this._id.substring(0, 9),
-                        periode: periode.periode,
+                        periode: entrData.periode,
                         type: "other",
                     }, {
-                        entreprise: periode,
+                        entreprise: entrData,
                     });
                 }
             });
@@ -1857,10 +1941,10 @@ function outputs(v, serie_periode) {
             outcome: false,
         };
     });
-    const output_indexed = output_array.reduce(function (periodes, val) {
-        periodes[val.periode.getTime()] = val;
-        return periodes;
-    }, {});
+    const output_indexed = f.makePeriodeMap();
+    for (const val of output_array) {
+        output_indexed.set(val.periode, val);
+    }
     return [output_array, output_indexed];
 }`,
 "poidsFrng": `function poidsFrng(diane) {
@@ -1871,7 +1955,7 @@ function outputs(v, serie_periode) {
 }`,
 "populateNafAndApe": `function populateNafAndApe(output_indexed, naf) {
     "use strict";
-    for (const outputForKey of Object.values(output_indexed)) {
+    for (const outputForKey of output_indexed.values()) {
         const code_ape = outputForKey.code_ape;
         if (code_ape) {
             const code_naf = naf.n5to1[code_ape];
@@ -1898,13 +1982,9 @@ function outputs(v, serie_periode) {
 }`,
 "repeatable": `function repeatable(rep) {
     "use strict";
-    var _a;
-    const output_repeatable = {};
-    for (const one_rep of Object.values(rep)) {
-        const periode = one_rep.periode.getTime();
-        const out = (_a = output_repeatable[periode]) !== null && _a !== void 0 ? _a : {};
-        out.random_order = one_rep.random_order;
-        output_repeatable[periode] = out;
+    const output_repeatable = f.makePeriodeMap();
+    for (const { periode, random_order } of Object.values(rep)) {
+        output_repeatable.assign(periode, { random_order });
     }
     return output_repeatable;
 }`,

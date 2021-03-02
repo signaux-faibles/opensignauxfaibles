@@ -155,7 +155,7 @@ testedProps.forEach((testedProp) => {
     const actual = cotisationsdettes(cotisation, debit, periode, dateFin)
 
     testedProp.expected.forEach((expectedPropValue, indiceMois) => {
-      const actualValue = actual[dateAddMonth(dateDebut, indiceMois).getTime()]
+      const actualValue = actual.get(dateAddMonth(dateDebut, indiceMois))
       t.is(
         actualValue?.[testedProp.name as keyof SortieCotisationsDettes],
         expectedPropValue,

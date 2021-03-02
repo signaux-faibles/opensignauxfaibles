@@ -1,6 +1,7 @@
 import { f } from "./functions"
+import { ParPériode } from "../common/makePeriodeMap"
 import { EntréeDelai } from "../GeneratedTypes"
-import { ParHash, ParPériode } from "../RawDataTypes"
+import { ParHash } from "../RawDataTypes"
 import { SortieCotisationsDettes } from "./cotisationsdettes"
 
 type DeepReadonly<T> = Readonly<T> // pas vraiment immutable pout l'instant, mais espoir que TS le permette prochainement
@@ -59,7 +60,7 @@ export function delais(
   intervalleTraitement: { premièreDate: Date; dernièreDate: Date }
 ): ParPériode<SortieDelais> {
   "use strict"
-  const donnéesDélaiParPériode: ParPériode<SortieDelais> = {}
+  const donnéesDélaiParPériode = f.makePeriodeMap<SortieDelais>()
   Object.values(vDelai).forEach((delai) => {
     if (delai.duree_delai <= 0) {
       return
@@ -96,9 +97,8 @@ export function delais(
           date <= intervalleTraitement.dernièreDate
       )
       .map(function (debutDeMois) {
-        const time = debutDeMois.getTime()
         const remainingDays = f.nbDays(debutDeMois, delai.date_echeance)
-        const inputAtTime = debitParPériode[time]
+        const inputAtTime = debitParPériode.get(debutDeMois)
         const outputAtTime: SortieDelais = {
           delai_nb_jours_restants: remainingDays,
           delai_nb_jours_total: delai.duree_delai,
@@ -117,7 +117,7 @@ export function delais(
             (detteActuelle - detteHypothétiqueRemboursementLinéaire) /
             delai.montant_echeancier
         }
-        donnéesDélaiParPériode[time] = outputAtTime
+        donnéesDélaiParPériode.set(debutDeMois, outputAtTime)
       })
   })
   return donnéesDélaiParPériode

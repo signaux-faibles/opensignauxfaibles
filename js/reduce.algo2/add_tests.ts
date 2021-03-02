@@ -1,7 +1,7 @@
 import test, { ExecutionContext } from "ava"
 import { add } from "./add"
-import { ParPériode } from "../RawDataTypes"
 import { parPériode } from "../test/helpers/parPeriode"
+import { ParPériode } from "../common/makePeriodeMap"
 
 const testCases = [
   {

@@ -1,6 +1,7 @@
 import { f } from "./functions"
+import { ParPériode } from "../common/makePeriodeMap"
 import { EntréeCotisation, EntréeDebit } from "../GeneratedTypes"
-import { Timestamp, ParPériode, ParHash } from "../RawDataTypes"
+import { Timestamp, ParHash } from "../RawDataTypes"
 
 // Champs de EntréeCotisation nécéssaires à cotisationsdettes
 type ChampsEntréeCotisation = Pick<EntréeCotisation, "periode" | "du">
@@ -71,9 +72,9 @@ export function cotisationsdettes(
   // Permet de s'aligner avec le calendrier de fourniture des données
   const lastAccountedDay = 20
 
-  const sortieCotisationsDettes: ParPériode<SortieCotisationsDettes> = {}
+  const sortieCotisationsDettes = f.makePeriodeMap<SortieCotisationsDettes>()
 
-  const value_cotisation: Record<Timestamp, number[]> = {}
+  const value_cotisation = f.makePeriodeMap<number[]>()
 
   // Répartition des cotisations sur toute la période qu'elle concerne
   for (const cotisation of Object.values(vCotisation)) {
@@ -82,9 +83,12 @@ export function cotisationsdettes(
       cotisation.periode.end
     )
     periode_cotisation.forEach((date_cotisation) => {
-      value_cotisation[date_cotisation.getTime()] = (
-        value_cotisation[date_cotisation.getTime()] || []
-      ).concat([cotisation.du / periode_cotisation.length])
+      value_cotisation.set(
+        date_cotisation,
+        (value_cotisation.get(date_cotisation) || []).concat([
+          cotisation.du / periode_cotisation.length,
+        ])
+      )
     })
   }
 
@@ -122,7 +126,7 @@ export function cotisationsdettes(
       })
   }
 
-  const value_dette: Record<string, Dette[]> = {}
+  const value_dette = f.makePeriodeMap<Dette[]>()
   // Pour chaque objet debit:
   // debit_traitement_debut => periode de traitement du débit
   // debit_traitement_fin => periode de traitement du debit suivant, ou bien finPériode
@@ -163,20 +167,19 @@ export function cotisationsdettes(
       )
     }
 
-    const periode_debut = date_traitement_debut
-    const periode_fin = date_traitement_fin
-
     //f.generatePeriodSerie exlue la dernière période
-    f.generatePeriodSerie(periode_debut, periode_fin).map((date) => {
-      const time = date.getTime()
-      value_dette[time] = (value_dette[time] || []).concat([
-        {
-          periode: debit.periode.start,
-          part_ouvriere: debit.part_ouvriere,
-          part_patronale: debit.part_patronale,
-        },
-      ])
-    })
+    f.generatePeriodSerie(date_traitement_debut, date_traitement_fin).forEach(
+      (date) => {
+        value_dette.set(date, [
+          ...(value_dette.get(date) ?? []),
+          {
+            periode: debit.periode.start,
+            part_ouvriere: debit.part_ouvriere,
+            part_patronale: debit.part_patronale,
+          },
+        ])
+      }
+    )
   }
 
   // TODO faire numero de compte ailleurs
@@ -188,28 +191,25 @@ export function cotisationsdettes(
   //))
 
   periodes.forEach(function (time) {
-    let val = sortieCotisationsDettes[time] ?? ({} as SortieCotisationsDettes)
-    //output_cotisationsdettes[time].numero_compte_urssaf = numeros_compte
-    const valueCotis = value_cotisation[time]
+    const val =
+      sortieCotisationsDettes.get(time) ?? ({} as SortieCotisationsDettes)
+    //val.numero_compte_urssaf = numeros_compte
+    const valueCotis = value_cotisation.get(time)
     if (valueCotis !== undefined) {
       // somme de toutes les cotisations dues pour une periode donnée
       val.cotisation = valueCotis.reduce((a, cot) => a + cot, 0)
     }
 
     // somme de tous les débits (part ouvriere, part patronale)
-    const montant_dette = (value_dette[time] || []).reduce(
-      function (m, dette) {
-        m.montant_part_ouvriere += dette.part_ouvriere
-        m.montant_part_patronale += dette.part_patronale
-        return m
-      },
-      {
-        montant_part_ouvriere: 0,
-        montant_part_patronale: 0,
-      }
+    val.montant_part_ouvriere = (value_dette.get(time) || []).reduce(
+      (acc, { part_ouvriere }) => acc + part_ouvriere,
+      0
     )
-    val = Object.assign(val, montant_dette)
-    sortieCotisationsDettes[time] = val
+    val.montant_part_patronale = (value_dette.get(time) || []).reduce(
+      (acc, { part_patronale }) => acc + part_patronale,
+      0
+    )
+    sortieCotisationsDettes.set(time, val)
 
     const monthOffsets: MonthOffset[] = [1, 2, 3, 6, 12]
     const futureTimestamps = monthOffsets
@@ -220,12 +220,12 @@ export function cotisationsdettes(
       .filter(({ timestamp }) => periodes.includes(timestamp))
 
     futureTimestamps.forEach(({ offset, timestamp }) => {
-      sortieCotisationsDettes[timestamp] = {
-        ...(sortieCotisationsDettes[timestamp] ??
+      sortieCotisationsDettes.set(timestamp, {
+        ...(sortieCotisationsDettes.get(timestamp) ??
           ({} as SortieCotisationsDettes)),
         [`montant_part_ouvriere_past_${offset}`]: val.montant_part_ouvriere,
         [`montant_part_patronale_past_${offset}`]: val.montant_part_patronale,
-      }
+      })
     })
 
     if (val.montant_part_ouvriere + val.montant_part_patronale > 0) {
@@ -236,11 +236,11 @@ export function cotisationsdettes(
         .filter(({ timestamp }) => periodes.includes(timestamp))
 
       futureTimestamps.forEach(({ timestamp }) => {
-        sortieCotisationsDettes[timestamp] = {
-          ...(sortieCotisationsDettes[timestamp] ??
+        sortieCotisationsDettes.set(timestamp, {
+          ...(sortieCotisationsDettes.get(timestamp) ??
             ({} as SortieCotisationsDettes)),
           interessante_urssaf: false,
-        }
+        })
       })
     }
   })

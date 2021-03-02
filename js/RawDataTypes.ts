@@ -23,7 +23,6 @@ import {
 
 export type Timestamp = number // Date.getTime()
 export type Periode = Timestamp
-export type ParPériode<T> = Record<Periode, T>
 
 export type Departement = string
 

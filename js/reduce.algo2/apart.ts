@@ -1,6 +1,6 @@
 import { f } from "./functions"
 import { EntréeApConso, EntréeApDemande } from "../GeneratedTypes"
-import { ParPériode } from "../RawDataTypes"
+import { ParPériode } from "../common/makePeriodeMap"
 
 type ApConsoHash = string
 
@@ -37,7 +37,7 @@ export function apart(
 ): ParPériode<SortieAPart> {
   "use strict"
 
-  const output_apart: ParPériode<SortieAPart> = {}
+  const output_apart = f.makePeriodeMap<SortieAPart>()
 
   // Mapping (pour l'instant vide) du hash de la demande avec les hash des consos correspondantes
   const apart: Record<
@@ -98,14 +98,13 @@ export function apart(
       apartForSiren.periode_fin = periode_fin_ceil
     }
 
-    const series = f.generatePeriodSerie(periode_deb_floor, periode_fin_ceil)
-    series.forEach((date) => {
-      const time = date.getTime()
-      output_apart[time] = {
-        ...(output_apart[time] ?? ({} as SortieAPart)),
-        apart_heures_autorisees: apdemandeEntry.hta,
+    f.generatePeriodSerie(periode_deb_floor, periode_fin_ceil).forEach(
+      (période) => {
+        output_apart.assign(période, {
+          apart_heures_autorisees: apdemandeEntry.hta,
+        })
       }
-    })
+    )
   }
 
   // relier les consos faites aux demandes (hashs) dans apart
@@ -125,11 +124,11 @@ export function apart(
             (apconso[b]?.periode ?? new Date()).getTime() // TODO: use `never` type assertion here?
         )
         .forEach((h) => {
-          const time = apconso[h]?.periode.getTime()
-          if (time === undefined) {
+          const période = apconso[h]?.periode
+          if (période === undefined) {
             return
           }
-          const current = output_apart[time] ?? ({} as SortieAPart)
+          const current = output_apart.get(période) ?? ({} as SortieAPart)
           const heureConso = apconso[h]?.heure_consomme
           if (heureConso !== undefined) {
             current.apart_heures_consommees =
@@ -139,25 +138,18 @@ export function apart(
           if (motifRecours !== undefined) {
             current.apart_motif_recours = motifRecours
           }
-          output_apart[time] = current
+          output_apart.set(période, current)
         })
 
       // Heures consommees cumulees sur la demande
-      const series = f.generatePeriodSerie(
+      f.generatePeriodSerie(
         apartEntry.periode_debut,
         apartEntry.periode_fin
-      )
-      series.reduce((accu, date) => {
-        const time = date.getTime()
-
+      ).reduce((accu, période) => {
         //output_apart est déjà défini pour les heures autorisées
-        const current = output_apart[time] ?? ({} as SortieAPart)
-        accu = accu + (current.apart_heures_consommees || 0)
-        output_apart[time] = {
-          ...current,
-          apart_heures_consommees_cumulees: accu,
-        }
-
+        const { apart_heures_consommees } = output_apart.get(période) ?? {}
+        accu = accu + (apart_heures_consommees ?? 0)
+        output_apart.assign(période, { apart_heures_consommees_cumulees: accu })
         return accu
       }, 0)
     }

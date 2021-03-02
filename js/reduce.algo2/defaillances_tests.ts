@@ -1,8 +1,9 @@
 import test from "ava"
-import { defaillances } from "./defaillances"
+import { defaillances, SortieDefaillances } from "./defaillances"
 import { EntréeDéfaillances } from "../GeneratedTypes"
 import { ParHash } from "../RawDataTypes"
 import { parPériode } from "../test/helpers/parPeriode"
+import { ParPériode } from "../common/makePeriodeMap"
 
 type OutputIndexed = Parameters<typeof defaillances>[1]
 
@@ -23,7 +24,7 @@ test("Une ouverture de liquidation est prise en compte dans la période courante
   } as ParHash<EntréeDéfaillances>
 
   defaillances(data_source, output_indexed)
-  const expected = parPériode({
+  const expected: ParPériode<Partial<SortieDefaillances>> = parPériode({
     ["2018-01-01"]: {},
     ["2018-02-01"]: {
       date_proc_collective: date_ouverture,
@@ -63,8 +64,8 @@ test("Une ouverture puis cloture d'un redressement sont pris en compte, tag_fail
     },
   } as ParHash<EntréeDéfaillances>
 
-  defaillances(parPériode(data_source), output_indexed)
-  const expected = parPériode({
+  defaillances(data_source, output_indexed)
+  const expected: ParPériode<Partial<SortieDefaillances>> = parPériode({
     ["2018-01-01"]: {},
     ["2018-02-01"]: {
       date_proc_collective: date_ouverture,
