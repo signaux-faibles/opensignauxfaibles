@@ -1,0 +1,6 @@
+// Documents from db.RawData, after call to sfdata compact:
+[ ]
+// Documents from db.Features_debug, after call to sfdata reduce:
+[ ]
+// Documents from db.Public_debug, after call to sfdata public:
+[ ]
