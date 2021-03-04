@@ -2061,7 +2061,13 @@
     },
     {
         "source": "entr_paydex",
-        "name": "paydex_nb_jours_past_1",
+        "name": "paydex_nb_jours_past_3",
+        "type": "number",
+        "computed": true
+    },
+    {
+        "source": "entr_paydex",
+        "name": "paydex_nb_jours_past_6",
         "type": "number",
         "computed": true
     },
