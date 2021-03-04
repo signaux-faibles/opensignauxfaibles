@@ -1,7 +1,6 @@
 import { f } from "./functions"
 import { ParPériode } from "../common/makePeriodeMap"
 import { Outcome } from "./lookAhead"
-import { Timestamp } from "../RawDataTypes"
 
 export type SortieCibleApprentissage = {
   outcome?: Outcome["outcome"]
@@ -42,27 +41,8 @@ export function cibleApprentissage(
     })
   }
 
-  function objectMap<InputVal, OutputVal>(
-    input: ParPériode<InputVal>,
-    fct: (key: Timestamp, val: InputVal) => OutputVal
-  ): ParPériode<OutputVal> {
-    const result = f.makePeriodeMap<OutputVal>()
-    input.forEach((val, key) => {
-      result.set(key, fct(key, val))
-    })
-    return result
-  }
-
-  const outputPastOutcome = objectMap(
-    f.lookAhead(merged_info, "outcome", n_months, false),
-    (_, val) => ({
-      ...val,
-      time_til_outcome: -val.time_til_outcome, // ex: -1 veut dire qu'il y a eu une défaillance il y a 1 mois
-    })
-  )
-
+  const outputPastOutcome = f.lookAhead(merged_info, "outcome", n_months, false)
   const output_outcome = f.lookAhead(merged_info, "outcome", n_months, true)
-
   const output_default = f.lookAhead(
     output_cotisation,
     "tag_default",
@@ -77,10 +57,14 @@ export function cibleApprentissage(
   )
 
   const output_cible = périodes.reduce(function (m, k) {
+    const oPast = outputPastOutcome.get(k)
     const oDefault = output_default.get(k)
     const oFailure = output_failure.get(k)
     return m.set(k, {
-      ...outputPastOutcome.get(k),
+      ...(oPast?.time_til_outcome && {
+        outcome: oPast.outcome,
+        time_til_outcome: -oPast.time_til_outcome, // ex: -1 veut dire qu'il y a eu une défaillance il y a 1 mois
+      }),
       ...output_outcome.get(k),
       ...(oDefault && { time_til_default: oDefault.time_til_outcome }),
       ...(oFailure && { time_til_failure: oFailure.time_til_outcome }),

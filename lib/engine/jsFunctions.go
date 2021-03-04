@@ -1140,21 +1140,18 @@ function sirene(sireneArray) {
             outcome: Boolean(((_a = output_procol.get(période)) === null || _a === void 0 ? void 0 : _a.tag_failure) || ((_b = output_cotisation.get(période)) === null || _b === void 0 ? void 0 : _b.tag_default)),
         });
     }
-    function objectMap(input, fct) {
-        const result = f.makePeriodeMap();
-        input.forEach((val, key) => {
-            result.set(key, fct(key, val));
-        });
-        return result;
-    }
-    const outputPastOutcome = objectMap(f.lookAhead(merged_info, "outcome", n_months, false), (_, val) => (Object.assign(Object.assign({}, val), { time_til_outcome: -val.time_til_outcome })));
+    const outputPastOutcome = f.lookAhead(merged_info, "outcome", n_months, false);
     const output_outcome = f.lookAhead(merged_info, "outcome", n_months, true);
     const output_default = f.lookAhead(output_cotisation, "tag_default", n_months, true);
     const output_failure = f.lookAhead(output_procol, "tag_failure", n_months, true);
     const output_cible = périodes.reduce(function (m, k) {
+        const oPast = outputPastOutcome.get(k);
         const oDefault = output_default.get(k);
         const oFailure = output_failure.get(k);
-        return m.set(k, Object.assign(Object.assign(Object.assign(Object.assign({}, outputPastOutcome.get(k)), output_outcome.get(k)), (oDefault && { time_til_default: oDefault.time_til_outcome })), (oFailure && { time_til_failure: oFailure.time_til_outcome })));
+        return m.set(k, Object.assign(Object.assign(Object.assign(Object.assign({}, ((oPast === null || oPast === void 0 ? void 0 : oPast.time_til_outcome) && {
+            outcome: oPast.outcome,
+            time_til_outcome: -oPast.time_til_outcome,
+        })), output_outcome.get(k)), (oDefault && { time_til_default: oDefault.time_til_outcome })), (oFailure && { time_til_failure: oFailure.time_til_outcome })));
     }, f.makePeriodeMap());
     return output_cible;
 }`,
