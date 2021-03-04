@@ -1634,18 +1634,21 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
     for (const période of sériePériode) {
         paydexParPériode.set(période, {
             paydex_nb_jours: null,
-            paydex_nb_jours_past_1: null,
+            paydex_nb_jours_past_3: null,
+            paydex_nb_jours_past_6: null,
             paydex_nb_jours_past_12: null,
         });
     }
     // population des valeurs
     for (const entréePaydex of Object.values(vPaydex)) {
         const période = Date.UTC(entréePaydex.date_valeur.getUTCFullYear(), entréePaydex.date_valeur.getUTCMonth(), 1);
-        const moisSuivant = f.dateAddMonth(new Date(période), 1).getTime();
+        const mois3Suivant = f.dateAddMonth(new Date(période), 3).getTime();
+        const mois6Suivant = f.dateAddMonth(new Date(période), 6).getTime();
         const annéeSuivante = f.dateAddMonth(new Date(période), 12).getTime();
         const donnéesAdditionnelles = f.makePeriodeMap([
             [période, { paydex_nb_jours: entréePaydex.nb_jours }],
-            [moisSuivant, { paydex_nb_jours_past_1: entréePaydex.nb_jours }],
+            [mois3Suivant, { paydex_nb_jours_past_3: entréePaydex.nb_jours }],
+            [mois6Suivant, { paydex_nb_jours_past_6: entréePaydex.nb_jours }],
             [annéeSuivante, { paydex_nb_jours_past_12: entréePaydex.nb_jours }],
         ]);
         f.add(donnéesAdditionnelles, paydexParPériode);
