@@ -1,3 +1,4 @@
+import { f } from "./functions"
 import { SortieAPart } from "./apart"
 import { SortieRepeatable } from "./repeatable"
 import { SortieCotisationsDettes } from "./cotisationsdettes"
@@ -10,7 +11,8 @@ import { SortieDelais } from "./delais"
 import { SortieCibleApprentissage } from "./cibleApprentissage"
 import { SortieCotisation } from "./cotisation"
 import { SortieCompte } from "./compte"
-import { SiretOrSiren, ParPériode } from "../RawDataTypes"
+import { SiretOrSiren } from "../RawDataTypes"
+import { ParPériode } from "../common/makePeriodeMap"
 
 export type DonnéesAgrégées = {
   siret: SiretOrSiren
@@ -51,10 +53,10 @@ export function outputs(
     }
   })
 
-  const output_indexed = output_array.reduce(function (periodes, val) {
-    periodes[val.periode.getTime()] = val
-    return periodes
-  }, {} as ParPériode<DonnéesAgrégées>)
+  const output_indexed: ParPériode<DonnéesAgrégées> = f.makePeriodeMap<DonnéesAgrégées>()
+  for (const val of output_array) {
+    output_indexed.set(val.periode, val)
+  }
 
   return [output_array, output_indexed]
 }

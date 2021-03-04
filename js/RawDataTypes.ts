@@ -21,9 +21,8 @@ import {
 
 // Types de données de base
 
-export type Periode = string // Date.getTime().toString()
 export type Timestamp = number // Date.getTime()
-export type ParPériode<T> = Record<Periode, T>
+export type Periode = Timestamp
 
 export type Departement = string
 
@@ -72,7 +71,7 @@ export type DataType = keyof BatchValueProps // => 'reporder' | 'effectif' | 'ap
 export type BatchValue = Partial<BatchValueProps>
 
 type CommonBatchProps = {
-  reporder: ParPériode<EntréeRepOrder> // RepOrder est généré par "compact", et non importé => Usage de Periode en guise de hash d'indexation
+  reporder: ParHash<EntréeRepOrder> // RepOrder est généré par "compact", et non importé => Usage de Periode en guise de hash d'indexation
 }
 
 export type EntrepriseBatchProps = CommonBatchProps & {

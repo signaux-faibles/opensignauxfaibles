@@ -2,7 +2,8 @@ import { effectifs, SortieEffectifs } from "./effectifs"
 import test, { ExecutionContext } from "ava"
 import { setGlobals } from "../test/helpers/setGlobals"
 import { EntréeEffectif } from "../GeneratedTypes"
-import { ParPériode, ParHash } from "../RawDataTypes"
+import { ParHash } from "../RawDataTypes"
+import { ParPériode } from "../common/makePeriodeMap"
 
 type SortieEffectifsEtab = SortieEffectifs<"effectif">
 
@@ -11,19 +12,18 @@ function assertEffectif(
   résultat: ParPériode<SortieEffectifsEtab>,
   effectifsAttendus: Array<[number | null, boolean]>
 ): void {
-  const périodes = Object.keys(résultat)
-  for (let i = 0; i < périodes.length; i++) {
+  ;[...résultat.values()].forEach(({ effectif, effectif_reporte }, i) => {
     t.is(
-      résultat[périodes[i] as string]?.effectif,
+      effectif,
       effectifsAttendus[i]?.[0],
       `valeur inattendue pour la période ${i}`
     )
     t.is(
-      résultat[périodes[i] as string]?.effectif_reporte,
+      effectif_reporte,
       effectifsAttendus[i]?.[1] ? 1 : 0,
       `flag de report inattendu pour la période ${i}`
     )
-  }
+  })
 }
 
 test.serial(

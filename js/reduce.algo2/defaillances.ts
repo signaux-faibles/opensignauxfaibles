@@ -1,7 +1,8 @@
 import { f } from "./functions"
 import { ProcolToHumanRes } from "../common/procolToHuman"
 import { EntréeDéfaillances } from "../GeneratedTypes"
-import { ParPériode, ParHash } from "../RawDataTypes"
+import { ParHash } from "../RawDataTypes"
+import { ParPériode } from "../common/makePeriodeMap"
 
 export type SortieDefaillances = {
   /** État de la procédure collective. */
@@ -55,16 +56,17 @@ export function defaillances(
         0
       )
     )
-    const time_til_last = Object.keys(output_indexed).filter((val) => {
-      return val >= (periode_effet.toISOString().split("T")[0] as string)
+    const time_til_last = [...output_indexed.keys()].filter((période) => {
+      return période >= periode_effet.getTime()
     })
 
     time_til_last.forEach((time) => {
-      const outputForTime = output_indexed[time]
-      if (outputForTime !== undefined) {
-        outputForTime.etat_proc_collective = event.etat
-        outputForTime.date_proc_collective = event.date_proc_col
-        if (event.etat !== "in_bonis") outputForTime.tag_failure = true
+      if (output_indexed.has(time)) {
+        output_indexed.assign(time, {
+          etat_proc_collective: event.etat,
+          date_proc_collective: event.date_proc_col,
+          ...(event.etat !== "in_bonis" && { tag_failure: true }),
+        })
       }
     })
   })

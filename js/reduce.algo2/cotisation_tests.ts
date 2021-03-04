@@ -2,6 +2,7 @@ import test from "ava"
 import { cotisation, Input, SortieCotisation } from "./cotisation"
 import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { dateAddMonth } from "../common/dateAddMonth"
+import { makePeriodeMap, ParPériode } from "../common/makePeriodeMap"
 
 const dureeEnMois = 13
 const dateDebut = new Date("2018-01-01")
@@ -12,14 +13,17 @@ const forEachMonth = (
   fct: ({ periode, month }: { periode: Date; month: number }) => Partial<Input>
 ) =>
   periodeSerie.reduce(
-    (acc, periode, month) => ({
-      ...acc,
-      [periode.getTime()]: { periode, ...fct({ periode, month }) },
-    }),
-    {}
+    (map, periode, month) =>
+      map.set(periode, { periode, ...fct({ periode, month }) }),
+    makePeriodeMap<Input>()
   )
 
-const testCases = [
+const testCases: {
+  assertion: string
+  input: ParPériode<Input>
+  propName: keyof SortieCotisation
+  expected: number[]
+}[] = [
   {
     assertion:
       "La variable cotisation_moy12m est calculée sur la base de 12 mois de données, pas moins",
@@ -110,9 +114,9 @@ testCases.forEach(({ assertion, input, propName, expected }) => {
   test(assertion, (t) => {
     const actual = cotisation(input)
     expected.forEach((expectedPropValue, indiceMois) => {
-      const actualValue = actual[dateAddMonth(dateDebut, indiceMois).getTime()]
+      const actualValue = actual.get(dateAddMonth(dateDebut, indiceMois))
       t.is(
-        actualValue?.[propName as keyof SortieCotisation],
+        actualValue?.[propName],
         expectedPropValue,
         `mois: #${indiceMois}, expected: ${expectedPropValue}`
       )
@@ -123,5 +127,5 @@ testCases.forEach(({ assertion, input, propName, expected }) => {
 test("cotisation retourne les mêmes périodes que fournies en entrée", (t) => {
   const input = forEachMonth(() => ({}))
   const actual = cotisation(input)
-  t.deepEqual(Object.keys(actual), Object.keys(input))
+  t.deepEqual(actual.keys(), input.keys())
 })

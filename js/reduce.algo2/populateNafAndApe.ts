@@ -1,4 +1,5 @@
-import { CodeAPE, ParPériode } from "../RawDataTypes"
+import { CodeAPE } from "../RawDataTypes"
+import { ParPériode } from "../common/makePeriodeMap"
 
 type CodeAPENiveau2 = string
 type CodeAPENiveau3 = string
@@ -55,7 +56,7 @@ export function populateNafAndApe(
   naf: NAF
 ): void {
   "use strict"
-  for (const outputForKey of Object.values(output_indexed)) {
+  for (const outputForKey of output_indexed.values()) {
     const code_ape = outputForKey.code_ape
     if (code_ape) {
       const code_naf = naf.n5to1[code_ape]

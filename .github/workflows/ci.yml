@@ -172,6 +172,7 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: mr-coverage-report
+      - run: cat lcov.info
       - uses: codacy/codacy-coverage-reporter-action@master
         with:
           project-token: ${{ secrets.CODACY_REPOSITORY_TOKEN_FOR_COVERAGE }}

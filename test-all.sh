@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # Usage:
-# $ git secret reveal                 # pour déchiffrer les données utilisées par les tests (golden files, etc...)
-# $ ./test-all.sh                     # pour éxecuter tous les tests
-# $ ./test-all.sh --update-snapshots  # pour éxecuter tous les tests et mettre à jour les snapshots des tests go + "ava" + les golden files des tests de bout en bout
-# $ git secret changes                # pour visualiser les modifications éventuellement apportées aux golden files
-# $ git secret hide                   # pour chiffrer les golden files suite à leur modification
+# $ git secret reveal       # pour déchiffrer les données utilisées par les tests (golden files, etc...)
+# $ ./test-all.sh           # pour éxecuter tous les tests
+# $ ./test-all.sh --update  # pour éxecuter tous les tests et mettre à jour les snapshots des tests go + "ava" + les golden files des tests de bout en bout
+# $ git secret changes      # pour visualiser les modifications éventuellement apportées aux golden files
+# $ git secret hide         # pour chiffrer les golden files suite à leur modification
 
 function heading {
   echo ""
@@ -35,7 +35,18 @@ heading "typescript check"
 (cd ./js && npx tsc --noEmit) 2>&1 | indent
 
 heading "npm test"
-(cd ./js && npm run lint && npm test -- $@) 2>&1 | indent
+if [[ "$*" == *--update* ]]
+then
+  (cd ./js && npm run lint:fix && npm run test:update-all) 2>&1 | indent
+else
+  (cd ./js && npm run lint && npm run test) 2>&1 | indent
+fi
+
+heading "go generate"
+(cd ./lib/engine && go generate .) 2>&1 | indent
+
+heading "make build"
+(killall sfdata 2>/dev/null || true; make build && echo "📦 sfdata") 2>&1 | indent
 
 heading "go test"
 if [[ "$*" == *--update* ]]
@@ -44,12 +55,6 @@ then
 else
     (go test ./... -test.count=1) 2>&1 | indent
 fi
-
-heading "go generate"
-(cd ./lib/engine && go generate .) 2>&1 | indent
-
-heading "make build"
-(killall sfdata 2>/dev/null || true; make build && echo "📦 sfdata") 2>&1 | indent
 
 heading "test-cli.sh"
 ./tests/test-cli.sh $@ 2>&1 | indent

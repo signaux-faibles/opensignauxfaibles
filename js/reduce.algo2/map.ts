@@ -4,7 +4,6 @@ import {
   BatchKey,
   Siret,
   SiretOrSiren,
-  ParPériode,
 } from "../RawDataTypes"
 import { SortieBdf } from "./entr_bdf"
 import { SortiePaydex } from "./entr_paydex"
@@ -13,6 +12,7 @@ import { SortieSireneEntreprise } from "./entr_sirene"
 import { DonnéesAgrégées } from "./outputs"
 import { NAF } from "./populateNafAndApe"
 import { SortieEffectifs } from "./effectifs"
+import { SortieCotisationsDettes } from "./cotisationsdettes"
 
 export type SortieMapEntreprise = {
   siren: SiretOrSiren
@@ -74,32 +74,29 @@ export function map(this: EntréeMap): void {
     ] = f.outputs(v, serie_periode)
 
     // Les periodes qui nous interessent, triées
-    const periodes = Object.keys(output_indexed)
-      .sort()
-      .map((timestamp) => parseInt(timestamp))
+    const periodes = serie_periode.map((date) => date.getTime())
 
     if (includes["apart"] || includes["all"]) {
       if (v.apconso && v.apdemande) {
         const output_apart = f.apart(v.apconso, v.apdemande)
-        Object.keys(output_apart)
-          .filter((periode) => periode in output_indexed) // limiter dans le scope temporel du batch.
-          .forEach((periode) => {
-            const data: SortieMapEtablissements = {
-              [this._id]: {
-                ...output_apart[periode],
-                siret: this._id,
-              },
-            }
-            emit(
-              {
-                batch: actual_batch,
-                siren: this._id.substring(0, 9),
-                periode: new Date(Number(periode)),
-                type: "apart",
-              },
-              data
-            )
-          })
+        output_apart.forEach((current, periode) => {
+          if (!output_indexed.has(periode)) return // limiter dans le scope temporel du batch.
+          const data: SortieMapEtablissements = {
+            [this._id]: {
+              ...current,
+              siret: this._id,
+            },
+          }
+          emit(
+            {
+              batch: actual_batch,
+              siren: this._id.substring(0, 9),
+              periode: new Date(periode),
+              type: "apart",
+            },
+            data
+          )
+        })
       }
     }
 
@@ -119,7 +116,7 @@ export function map(this: EntréeMap): void {
         f.add(output_repeatable, output_indexed)
       }
 
-      let output_cotisationsdettes
+      let output_cotisationsdettes = f.makePeriodeMap<SortieCotisationsDettes>()
       if (v.cotisation && v.debit) {
         output_cotisationsdettes = f.cotisationsdettes(
           v.cotisation,
@@ -139,11 +136,10 @@ export function map(this: EntréeMap): void {
           }
           error("serie_periode should not contain undefined values")
         } else {
-          const output_delai = f.delais(
-            v.delai,
-            output_cotisationsdettes ?? {},
-            { premièreDate, dernièreDate }
-          )
+          const output_delai = f.delais(v.delai, output_cotisationsdettes, {
+            premièreDate,
+            dernièreDate,
+          })
           f.add(output_delai, output_indexed)
         }
       }
@@ -186,14 +182,13 @@ export function map(this: EntréeMap): void {
 
   if (v.scope === "entreprise") {
     if (includes["all"]) {
-      const output_indexed: ParPériode<SortieMapEntreprise> = {}
-
+      const output_indexed = f.makePeriodeMap<SortieMapEntreprise>()
       for (const periode of serie_periode) {
-        output_indexed[periode.getTime()] = {
+        output_indexed.set(periode, {
           siren: v.key,
           periode,
           exercice_bdf: 0,
-        }
+        })
       }
 
       if (v.sirene_ul) {
@@ -232,20 +227,20 @@ export function map(this: EntréeMap): void {
       }
 
       serie_periode.forEach((date) => {
-        const periode = output_indexed[date.getTime()]
+        const entrData = output_indexed.get(date)
         if (
-          periode?.arrete_bilan_bdf !== undefined ||
-          periode?.arrete_bilan_diane !== undefined
+          entrData?.arrete_bilan_bdf !== undefined ||
+          entrData?.arrete_bilan_diane !== undefined
         ) {
           emit(
             {
               batch: actual_batch,
               siren: this._id.substring(0, 9),
-              periode: periode.periode,
+              periode: entrData.periode,
               type: "other",
             },
             {
-              entreprise: periode,
+              entreprise: entrData,
             }
           )
         }
