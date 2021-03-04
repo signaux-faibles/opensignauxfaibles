@@ -6,7 +6,8 @@ import { ParHash } from "../RawDataTypes"
 export type SortiePaydex = {
   /** Nombre de jours de retard de paiement moyen, basé sur trois expériences de paiement minimum (provenant de trois fournisseurs distincts). */
   paydex_nb_jours: number | null
-  paydex_nb_jours_past_1: number | null
+  paydex_nb_jours_past_3: number | null
+  paydex_nb_jours_past_6: number | null
   paydex_nb_jours_past_12: number | null
 }
 
@@ -27,7 +28,8 @@ export function entr_paydex(
   for (const période of sériePériode) {
     paydexParPériode.set(période, {
       paydex_nb_jours: null,
-      paydex_nb_jours_past_1: null,
+      paydex_nb_jours_past_3: null,
+      paydex_nb_jours_past_6: null,
       paydex_nb_jours_past_12: null,
     })
   }
@@ -38,11 +40,13 @@ export function entr_paydex(
       entréePaydex.date_valeur.getUTCMonth(),
       1
     )
-    const moisSuivant = f.dateAddMonth(new Date(période), 1).getTime()
+    const mois3Suivant = f.dateAddMonth(new Date(période), 3).getTime()
+    const mois6Suivant = f.dateAddMonth(new Date(période), 6).getTime()
     const annéeSuivante = f.dateAddMonth(new Date(période), 12).getTime()
     const donnéesAdditionnelles = f.makePeriodeMap<Partial<SortiePaydex>>([
       [période, { paydex_nb_jours: entréePaydex.nb_jours }],
-      [moisSuivant, { paydex_nb_jours_past_1: entréePaydex.nb_jours }],
+      [mois3Suivant, { paydex_nb_jours_past_3: entréePaydex.nb_jours }],
+      [mois6Suivant, { paydex_nb_jours_past_6: entréePaydex.nb_jours }],
       [annéeSuivante, { paydex_nb_jours_past_12: entréePaydex.nb_jours }],
     ])
     f.add(donnéesAdditionnelles, paydexParPériode)
