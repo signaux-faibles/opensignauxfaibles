@@ -114,16 +114,18 @@ test.serial(
     const finalizeResult = finalize(siret, expectedReduceResults)
     const batchResult = finalizeResult.batch[fromBatchKey] || {}
     const { reporder } = batchResult
-    t.is(typeof reporder, "object")
+    if (typeof reporder !== "object") {
+      throw new Error("reporder doit être un objet")
+    }
     // reporder contient une propriété par periode
-    t.is(Object.keys(reporder || {}).length, dates.length)
-    Object.keys(reporder || {}).forEach((periodKey) => {
-      t.is(typeof reporder?.[periodKey]?.random_order, "number")
+    t.is(Object.keys(reporder).length, dates.length)
+    Object.keys(reporder).forEach((periodKey) => {
+      t.is(typeof reporder[periodKey]?.random_order, "number")
     })
     // vérification de la structure complète, sans les nombres aléatoires
     const finalizeResultWithoutRandomOrder = { ...finalizeResult }
     batchResult.reporder = removeRandomOrder(
-      reporder || {}
+      reporder
     ) as ParHash<EntréeRepOrder>
     t.deepEqual(finalizeResultWithoutRandomOrder, expectedFinalizeResultValue)
   }
