@@ -1,18 +1,19 @@
+import { f } from "./functions"
+import { DataHash } from "../RawDataTypes"
+
 export type Bdf = { annee_bdf: number; arrete_bilan_bdf: Date }
 
-export function bdf(hs?: Record<string | number, Bdf>): Bdf[] {
+export function bdf(hs?: Record<DataHash | number, Bdf>): Bdf[] {
   "use strict"
 
-  const bdf: Record<string, Bdf> = {}
+  const bdf = f.makePeriodeMap<Bdf>()
 
   // Déduplication par arrete_bilan_bdf
-  Object.values(hs ?? {})
-    .filter((b) => b.arrete_bilan_bdf)
-    .forEach((b) => {
-      bdf[b.arrete_bilan_bdf.toISOString()] = b
-    })
+  for (const b of Object.values(hs ?? {})) {
+    if (b.arrete_bilan_bdf !== undefined) {
+      bdf.set(b.arrete_bilan_bdf, b)
+    }
+  }
 
-  return Object.values(bdf ?? {}).sort((a, b) =>
-    a.annee_bdf < b.annee_bdf ? 1 : -1
-  )
+  return [...bdf.values()].sort((a, b) => (a.annee_bdf < b.annee_bdf ? 1 : -1))
 }
