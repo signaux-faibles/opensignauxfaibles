@@ -422,10 +422,7 @@ function complete_reporder(siret, object) {
     "use strict";
     const batches = Object.keys(object.batch);
     batches.sort();
-    const missing = {};
-    serie_periode.forEach((p) => {
-        missing[p.getTime()] = true;
-    });
+    const missing = new Set(serie_periode.map((p) => p.getTime()));
     batches.forEach((batch) => {
         var _a;
         const reporder = (_a = object.batch[batch]) === null || _a === void 0 ? void 0 : _a.reporder;
@@ -436,11 +433,11 @@ function complete_reporder(siret, object) {
             const periode = (_a = reporder[ro]) === null || _a === void 0 ? void 0 : _a.periode;
             if (periode === undefined)
                 return;
-            if (!missing[periode.getTime()]) {
+            if (!missing.has(periode.getTime())) {
                 delete reporder[ro];
             }
             else {
-                missing[periode.getTime()] = false;
+                missing.delete(periode.getTime());
             }
         });
     });
@@ -448,7 +445,7 @@ function complete_reporder(siret, object) {
     if (lastBatch === undefined)
         throw new Error("the last batch should not be undefined");
     serie_periode
-        .filter((p) => missing[p.getTime()])
+        .filter((p) => missing.has(p.getTime()))
         .forEach((p) => {
         var _a;
         const dataInLastBatch = object.batch[lastBatch];
