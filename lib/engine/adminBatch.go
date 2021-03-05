@@ -90,8 +90,8 @@ func CheckBatch(batch base.AdminBatch, parsers []marshal.Parser) (reports []stri
 	for _, parser := range parsers {
 		outputChannel, eventChannel := marshal.ParseFilesFromBatch(cache, &batch, parser) // appelle la fonction ParseFile() pour chaque type de fichier
 		DiscardTuple(outputChannel)
-		lastReport := RelayEvents(eventChannel, "CheckBatch", startDate)
-		reports = append(reports, lastReport)
+		parserReports := RelayEvents(eventChannel, "CheckBatch", startDate)
+		reports = append(reports, parserReports...)
 	}
 
 	return reports, nil
