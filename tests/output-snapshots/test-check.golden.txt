@@ -140,4 +140,4 @@
 // Response body from sfdata check, after parsing 1 file:
 {"reports":["/../lib/urssaf/testData/debitCorrompuTestData.csv: intégration terminée, 5 lignes traitées, 0 erreurs fatales, 2 lignes rejetées, 0 lignes filtrées, 3 lignes valides"]}
 // Response body from sfdata check, after parsing 2 files:
-{"reports":["","","","","/../lib/urssaf/testData/debitCorrompuTestData.csv: intégration terminée, 5 lignes traitées, 0 erreurs fatales, 2 lignes rejetées, 0 lignes filtrées, 3 lignes valides","","","","","","","","/../lib/urssaf/testData/comptesTestData.csv: intégration terminée, 3 lignes traitées, 0 erreurs fatales, 1 lignes rejetées, 0 lignes filtrées, 2 lignes valides","","",""]}
+{"reports":["/../lib/urssaf/testData/debitCorrompuTestData.csv: intégration terminée, 5 lignes traitées, 0 erreurs fatales, 2 lignes rejetées, 0 lignes filtrées, 3 lignes valides","/../lib/urssaf/testData/comptesTestData.csv: intégration terminée, 3 lignes traitées, 0 erreurs fatales, 1 lignes rejetées, 0 lignes filtrées, 2 lignes valides"]}
