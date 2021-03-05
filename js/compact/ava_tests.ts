@@ -11,6 +11,7 @@ import { finalize } from "./finalize"
 import { runMongoMap } from "../test/helpers/mongodb"
 import { setGlobals } from "../test/helpers/setGlobals"
 import {
+  ParHash,
   BatchValues,
   CompanyDataValuesWithFlags,
   CompanyDataValues,
@@ -20,11 +21,14 @@ import {
 } from "../RawDataTypes"
 
 const removeRandomOrder = (
-  reporderProp: Record<string, Partial<EntréeRepOrder>>
-): void =>
-  Object.keys(reporderProp).forEach((period) => {
-    delete reporderProp[period]?.random_order
-  })
+  reporderProp: ParHash<Partial<EntréeRepOrder>>
+): ParHash<Partial<EntréeRepOrder>> => {
+  const cleaned = { ...reporderProp } // cloner l'objet pour ne pas le modifier
+  for (const period of Object.keys(reporderProp)) {
+    delete cleaned[period]?.random_order
+  }
+  return cleaned
+}
 
 // test data inspired by test.sh
 const siret: SiretOrSiren = "01234567891011"
@@ -108,7 +112,8 @@ test.serial(
   (t: ExecutionContext) => {
     setGlobals({ serie_periode: dates }) // used by complete_reporder(), which is called by finalize()
     const finalizeResult = finalize(siret, expectedReduceResults)
-    const { reporder } = finalizeResult.batch[fromBatchKey] || {}
+    const batchResult = finalizeResult.batch[fromBatchKey] || {}
+    const { reporder } = batchResult
     t.is(typeof reporder, "object")
     // reporder contient une propriété par periode
     t.is(Object.keys(reporder || {}).length, dates.length)
@@ -116,7 +121,10 @@ test.serial(
       t.is(typeof reporder?.[periodKey]?.random_order, "number")
     })
     // vérification de la structure complète, sans les nombres aléatoires
-    removeRandomOrder(reporder || {}) // will mutate finalizeResult
-    t.deepEqual(finalizeResult, expectedFinalizeResultValue)
+    const finalizeResultWithoutRandomOrder = { ...finalizeResult }
+    batchResult.reporder = removeRandomOrder(
+      reporder || {}
+    ) as ParHash<EntréeRepOrder>
+    t.deepEqual(finalizeResultWithoutRandomOrder, expectedFinalizeResultValue)
   }
 )
