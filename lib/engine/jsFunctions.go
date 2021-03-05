@@ -420,38 +420,33 @@ function compactBatch(currentBatch, memory, fromBatchKey) {
 // SIRET+période, afin d'assurer la reproductibilité de l'échantillonage.
 function complete_reporder(siret, object) {
     "use strict";
+    var _a, _b;
     const batches = Object.keys(object.batch);
     batches.sort();
     const missing = new Set(serie_periode.map((p) => p.getTime()));
-    batches.forEach((batch) => {
-        var _a;
+    for (const batch of batches) {
         const reporder = (_a = object.batch[batch]) === null || _a === void 0 ? void 0 : _a.reporder;
         if (reporder === undefined)
-            return;
-        Object.keys(reporder).forEach((ro) => {
-            var _a;
-            const periode = (_a = reporder[ro]) === null || _a === void 0 ? void 0 : _a.periode;
-            if (periode === undefined)
-                return;
+            continue;
+        for (const [ro, { periode }] of Object.entries(reporder)) {
             if (!missing.has(periode.getTime())) {
                 delete reporder[ro];
             }
             else {
                 missing.delete(periode.getTime());
             }
-        });
-    });
+        }
+    }
     const lastBatch = batches[batches.length - 1];
     if (lastBatch === undefined)
         throw new Error("the last batch should not be undefined");
+    const dataInLastBatch = object.batch[lastBatch];
+    if (dataInLastBatch === undefined)
+        return object;
+    const reporder_obj = (_b = dataInLastBatch.reporder) !== null && _b !== void 0 ? _b : {};
     serie_periode
         .filter((p) => missing.has(p.getTime()))
         .forEach((p) => {
-        var _a;
-        const dataInLastBatch = object.batch[lastBatch];
-        if (dataInLastBatch === undefined)
-            return;
-        const reporder_obj = (_a = dataInLastBatch.reporder) !== null && _a !== void 0 ? _a : {};
         reporder_obj[p.toString()] = {
             random_order: Math.random(),
             periode: p,

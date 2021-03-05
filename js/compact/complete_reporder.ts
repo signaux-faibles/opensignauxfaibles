@@ -18,29 +18,27 @@ export function complete_reporder(
   batches.sort()
   const missing = new Set<Timestamp>(serie_periode.map((p) => p.getTime()))
 
-  batches.forEach((batch) => {
+  for (const batch of batches) {
     const reporder = object.batch[batch]?.reporder
-    if (reporder === undefined) return
-    Object.keys(reporder).forEach((ro) => {
-      const periode = reporder[ro]?.periode
-      if (periode === undefined) return
+    if (reporder === undefined) continue
+    for (const [ro, { periode }] of Object.entries(reporder)) {
       if (!missing.has(periode.getTime())) {
         delete reporder[ro]
       } else {
         missing.delete(periode.getTime())
       }
-    })
-  })
+    }
+  }
 
   const lastBatch = batches[batches.length - 1]
   if (lastBatch === undefined)
     throw new Error("the last batch should not be undefined")
+  const dataInLastBatch = object.batch[lastBatch]
+  if (dataInLastBatch === undefined) return object
+  const reporder_obj = dataInLastBatch.reporder ?? {}
   serie_periode
     .filter((p) => missing.has(p.getTime()))
     .forEach((p) => {
-      const dataInLastBatch = object.batch[lastBatch]
-      if (dataInLastBatch === undefined) return
-      const reporder_obj = dataInLastBatch.reporder ?? {}
       reporder_obj[p.toString()] = {
         random_order: Math.random(),
         periode: p,
