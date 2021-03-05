@@ -16,10 +16,7 @@ export function complete_reporder(
   "use strict"
   const batches = Object.keys(object.batch)
   batches.sort()
-  const missing: Record<Timestamp, boolean> = {}
-  serie_periode.forEach((p) => {
-    missing[p.getTime()] = true
-  })
+  const missing = new Set<Timestamp>(serie_periode.map((p) => p.getTime()))
 
   batches.forEach((batch) => {
     const reporder = object.batch[batch]?.reporder
@@ -27,10 +24,10 @@ export function complete_reporder(
     Object.keys(reporder).forEach((ro) => {
       const periode = reporder[ro]?.periode
       if (periode === undefined) return
-      if (!missing[periode.getTime()]) {
+      if (!missing.has(periode.getTime())) {
         delete reporder[ro]
       } else {
-        missing[periode.getTime()] = false
+        missing.delete(periode.getTime())
       }
     })
   })
@@ -39,7 +36,7 @@ export function complete_reporder(
   if (lastBatch === undefined)
     throw new Error("the last batch should not be undefined")
   serie_periode
-    .filter((p) => missing[p.getTime()])
+    .filter((p) => missing.has(p.getTime()))
     .forEach((p) => {
       const dataInLastBatch = object.batch[lastBatch]
       if (dataInLastBatch === undefined) return
