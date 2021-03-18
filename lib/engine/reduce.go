@@ -169,8 +169,19 @@ func Reduce(batch base.AdminBatch, types []string) error {
 		return errors.New("erreurs constatées, consultez les journaux")
 	}
 
+	// Création d'index sur la collection Features, pour le chargement de données depuis R
+	Db.DB.C(outCollection).EnsureIndex(mgo.Index{
+		Name: "_id.batch_1_value.random_order_-1__id.periode_1_value.effectif_1", // trouvé sur la db de prod
+		Key:  []string{"_id.batch", "-value.random_order", "_id.periode", "value.effectif"},
+	})
+
+	// Création d'index sur la collection Features, pour le chargement de données par SIREN
+	Db.DB.C(outCollection).EnsureIndex(mgo.Index{
+		Key: []string{"value.siren"},
+	})
+
 	LogOperationEventEx("Reduce", startDate, bson.M{
-		"batchId":    batch.ID.Key,
+		"batchId": batch.ID.Key,
 	})
 
 	if backupColName != "" {
@@ -198,17 +209,6 @@ func reduceCrossComputations(directoryName string) (stages []bson.M, err error) 
 }
 
 func reduceFinalAggregation(tempDatabase *mgo.Database, tempCollection, outDatabase, outCollection string) error {
-
-	// Création d'index sur la collection Features, pour le chargement de données depuis R
-	Db.DB.C(outCollection).EnsureIndex(mgo.Index{
-		Name: "_id.batch_1_value.random_order_-1__id.periode_1_value.effectif_1", // trouvé sur la db de prod
-		Key:  []string{"_id.batch", "-value.random_order", "_id.periode", "value.effectif"},
-	})
-
-	// Création d'index sur la collection Features, pour le chargement de données par SIREN
-	Db.DB.C(outCollection).EnsureIndex(mgo.Index{
-		Key: []string{"value.siren"},
-	})
 
 	setStages, err := reduceCrossComputations("reduce.algo2")
 	if err != nil {
