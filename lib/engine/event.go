@@ -54,18 +54,18 @@ func messageDispatch() chan marshal.Event {
 
 // RelayEvents transmet les événements qui surviennent pendant le parsing d'un
 // fichiers de données et retourne le rapport final du parsing de ce fichier.
-func RelayEvents(eventChannel chan marshal.Event, reportType string, startDate time.Time) (lastReport string) {
+func RelayEvents(eventChannel chan marshal.Event, reportType string, startDate time.Time) (reports []string) {
 	for e := range eventChannel {
 		if reportContainer, ok := e.Comment.(bson.M); ok {
 			if strReport, ok := reportContainer["summary"].(string); ok {
-				lastReport = strReport
+				reports = append(reports, strReport)
 			}
 		}
 		e.ReportType = reportType
 		e.StartDate = startDate
 		mainMessageChannel <- e
 	}
-	return lastReport
+	return reports
 }
 
 // LogOperationEvent rapporte la fin d'une opération effectuée par sfdata.
