@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"sort"
 	"time"
 
 	flag "github.com/cosiner/flag"
@@ -172,6 +173,7 @@ func (params checkBatchHandler) Run() error {
 		return errors.New("Erreurs détectées: " + err.Error())
 	}
 
+	sort.Strings(reports) // to make sure that parsed files are always listed in the same order
 	printJSON(bson.M{"reports": reports})
 	return nil
 }

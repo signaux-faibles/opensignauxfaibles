@@ -59,7 +59,7 @@ echo "- sfdata check (with 2 files to parse) 👉 ${RESULT2}"
   > "${OUTPUT_FILE}" \
 ) << CONTENT
 print("// Documents from db.Journal:");
-printjson(db.Journal.find().toArray().map(doc => ({
+printjson(db.Journal.find().sort({ reportType: -1, parserCode: 1 }).toArray().map(doc => ({
   // note: we use map() to force the order of properties at every run of this test
   event: {
     headRejected: doc.event.headRejected,
