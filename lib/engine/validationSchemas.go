@@ -187,10 +187,14 @@ var validationSchemas = map[string]string{
       "description": "Date de début de la procédure CCSF"
     },
     "stade": {
-      "bsonType": "string"
+      "bsonType": "string",
+      "description": "Stade de la demande de délai",
+      "enum": ["DEBUT", "REFUS", "APPROB", "FIN", "REJ"]
     },
     "action": {
-      "bsonType": "string"
+      "bsonType": "string",
+      "description": "Code externe de l'action",
+      "enum": ["CCSF"]
     }
   },
   "additionalProperties": false
