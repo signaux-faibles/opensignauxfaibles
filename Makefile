@@ -5,7 +5,7 @@ build: ## Build the sfdata binary
 	go build -o "sfdata" -ldflags "-X main.GitCommit=$(shell git rev-parse HEAD)"
 
 build-prod: ## Build the sfdata binary for our production environment
-	GOOS=linux GOARCH=amd64 $(MAKE) build
+	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 $(MAKE) build
 
 test: ## Run automated tests
 	./test-all.sh
