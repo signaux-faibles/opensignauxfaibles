@@ -54,8 +54,9 @@ const rawData: EtablissementDataValues = {
 
 const etablissementKey = rawData.scope + "_" + siret
 
-const expectedMapResults = {
-  [etablissementKey]: {
+const expectedMapResult = {
+  _id: etablissementKey,
+  value: {
     apconso: [rawEtabData.apconso.somehash],
     apdemande: [],
     batch: batchKey,
@@ -73,9 +74,9 @@ const expectedMapResults = {
   },
 }
 
-const expectedReduceResults = expectedMapResults[etablissementKey]
+const expectedReduceResults = expectedMapResult.value
 
-const expectedFinalizeResultValue = expectedMapResults[etablissementKey]
+const expectedFinalizeResultValue = expectedMapResult.value
 
 // exécution complète de la chaine "public"
 
@@ -91,36 +92,31 @@ test.serial(
       key: siret.substr(0, 9), // siren
       batch: { [batchKey]: rawEntrData },
     }
-    const expectedMapResults = {
-      [rawData.scope + "_" + rawData.key]: {
+    const expectedMapResult = {
+      _id: rawData.scope + "_" + rawData.key,
+      value: {
         key: rawData.key,
         batch: batchKey,
         paydex: [rawEntrData.paydex.somehash],
       },
     }
-    const mapResults: Record<string, unknown> = {}
-    runMongoMap(map, [{ _id: null, value: rawData }]).map(
-      ({ _id, value }) => (mapResults[_id as string] = value)
-    )
-    t.deepEqual(mapResults, expectedMapResults)
+    const mapResults = runMongoMap(map, [{ _id: null, value: rawData }])
+    t.deepEqual(mapResults, [expectedMapResult])
   }
 )
 
 test.serial(
   `public.map() retourne les propriétés d'établissement présentées sur le frontal`,
   (t: ExecutionContext) => {
-    const mapResults: Record<string, unknown> = {}
-    runMongoMap(map, [{ _id: null, value: rawData }]).map(
-      ({ _id, value }) => (mapResults[_id as string] = value)
-    )
-    t.deepEqual(mapResults, expectedMapResults)
+    const mapResults = runMongoMap(map, [{ _id: null, value: rawData }])
+    t.deepEqual(mapResults, [expectedMapResult])
   }
 )
 
 test.serial(
   `public.reduce() retourne les propriétés d'établissement, telles quelles`,
   (t: ExecutionContext) => {
-    const reduceValues = [expectedMapResults[etablissementKey] ?? {}]
+    const reduceValues = [expectedMapResult.value]
     const reduceResults = reduce({ scope: rawData.scope }, reduceValues)
     t.deepEqual(reduceResults, expectedReduceResults)
   }

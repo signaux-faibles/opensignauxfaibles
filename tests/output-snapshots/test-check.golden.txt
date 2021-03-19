@@ -3,38 +3,6 @@
 	{
 		"event" : {
 			"headRejected" : [
-				"Line 2: record on line 3: wrong number of fields",
-				"Line 4: parse error on line 5, column 1: bare \" in non-quoted-field"
-			],
-			"headFatal" : [ ],
-			"linesSkipped" : 0,
-			"summary" : "/../lib/urssaf/testData/debitCorrompuTestData.csv: intégration terminée, 5 lignes traitées, 0 erreurs fatales, 2 lignes rejetées, 0 lignes filtrées, 3 lignes valides",
-			"batchKey" : "1910"
-		},
-		"reportType" : "CheckBatch",
-		"parserCode" : "debit",
-		"hasDate" : true,
-		"hasStartDate" : true
-	},
-	{
-		"event" : {
-			"headRejected" : [
-				"Line 2: record on line 3: wrong number of fields",
-				"Line 4: parse error on line 5, column 1: bare \" in non-quoted-field"
-			],
-			"headFatal" : [ ],
-			"linesSkipped" : 0,
-			"summary" : "/../lib/urssaf/testData/debitCorrompuTestData.csv: intégration terminée, 5 lignes traitées, 0 erreurs fatales, 2 lignes rejetées, 0 lignes filtrées, 3 lignes valides",
-			"batchKey" : "1910"
-		},
-		"reportType" : "CheckBatch",
-		"parserCode" : "debit",
-		"hasDate" : true,
-		"hasStartDate" : true
-	},
-	{
-		"event" : {
-			"headRejected" : [
 				"Line 2: Pas de siret associé au compte 450359886246036238 à la période 2011-08-01 00:00:00 +0000 UTC",
 				"Line 2: Pas de siret associé au compte 450359886246036238 à la période 2011-09-01 00:00:00 +0000 UTC",
 				"Line 2: Pas de siret associé au compte 450359886246036238 à la période 2011-10-01 00:00:00 +0000 UTC",
@@ -135,9 +103,41 @@
 		"parserCode" : "admin_urssaf",
 		"hasDate" : true,
 		"hasStartDate" : true
+	},
+	{
+		"event" : {
+			"headRejected" : [
+				"Line 2: record on line 3: wrong number of fields",
+				"Line 4: parse error on line 5, column 1: bare \" in non-quoted-field"
+			],
+			"headFatal" : [ ],
+			"linesSkipped" : 0,
+			"summary" : "/../lib/urssaf/testData/debitCorrompuTestData.csv: intégration terminée, 5 lignes traitées, 0 erreurs fatales, 2 lignes rejetées, 0 lignes filtrées, 3 lignes valides",
+			"batchKey" : "1910"
+		},
+		"reportType" : "CheckBatch",
+		"parserCode" : "debit",
+		"hasDate" : true,
+		"hasStartDate" : true
+	},
+	{
+		"event" : {
+			"headRejected" : [
+				"Line 2: record on line 3: wrong number of fields",
+				"Line 4: parse error on line 5, column 1: bare \" in non-quoted-field"
+			],
+			"headFatal" : [ ],
+			"linesSkipped" : 0,
+			"summary" : "/../lib/urssaf/testData/debitCorrompuTestData.csv: intégration terminée, 5 lignes traitées, 0 erreurs fatales, 2 lignes rejetées, 0 lignes filtrées, 3 lignes valides",
+			"batchKey" : "1910"
+		},
+		"reportType" : "CheckBatch",
+		"parserCode" : "debit",
+		"hasDate" : true,
+		"hasStartDate" : true
 	}
 ]
 // Response body from sfdata check, after parsing 1 file:
 {"reports":["/../lib/urssaf/testData/debitCorrompuTestData.csv: intégration terminée, 5 lignes traitées, 0 erreurs fatales, 2 lignes rejetées, 0 lignes filtrées, 3 lignes valides"]}
 // Response body from sfdata check, after parsing 2 files:
-{"reports":["/../lib/urssaf/testData/debitCorrompuTestData.csv: intégration terminée, 5 lignes traitées, 0 erreurs fatales, 2 lignes rejetées, 0 lignes filtrées, 3 lignes valides","/../lib/urssaf/testData/comptesTestData.csv: intégration terminée, 3 lignes traitées, 0 erreurs fatales, 1 lignes rejetées, 0 lignes filtrées, 2 lignes valides"]}
+{"reports":["/../lib/urssaf/testData/comptesTestData.csv: intégration terminée, 3 lignes traitées, 0 erreurs fatales, 1 lignes rejetées, 0 lignes filtrées, 2 lignes valides","/../lib/urssaf/testData/debitCorrompuTestData.csv: intégration terminée, 5 lignes traitées, 0 erreurs fatales, 2 lignes rejetées, 0 lignes filtrées, 3 lignes valides"]}
