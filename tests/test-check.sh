@@ -50,14 +50,16 @@ CONTENTS
 
 echo ""
 echo "💎 Parsing data..."
-RESULT=$(tests/helpers/sfdata-wrapper.sh check --batch=1910 --parsers='debit')
-echo "- sfdata check 👉 ${RESULT}"
+RESULT1=$(tests/helpers/sfdata-wrapper.sh check --batch=1910 --parsers='debit')
+echo "- sfdata check (with 1 file to parse) 👉 ${RESULT1}"
+RESULT2=$(tests/helpers/sfdata-wrapper.sh check --batch=1910)
+echo "- sfdata check (with 2 files to parse) 👉 ${RESULT2}"
 
 (tests/helpers/mongodb-container.sh run \
   > "${OUTPUT_FILE}" \
 ) << CONTENT
 print("// Documents from db.Journal:");
-printjson(db.Journal.find().toArray().map(doc => ({
+printjson(db.Journal.find().sort({ reportType: -1, parserCode: 1 }).toArray().map(doc => ({
   // note: we use map() to force the order of properties at every run of this test
   event: {
     headRejected: doc.event.headRejected,
@@ -72,10 +74,13 @@ printjson(db.Journal.find().toArray().map(doc => ({
   hasStartDate: !!doc.startDate,
 })));
 
-print("// Response body from sfdata check:");
+print("// Response body from sfdata check, after parsing 1 file:");
 CONTENT
 
-echo "${RESULT}" >> "${OUTPUT_FILE}"
+echo "${RESULT1}" >> "${OUTPUT_FILE}"
+
+echo "// Response body from sfdata check, after parsing 2 files:" >> "${OUTPUT_FILE}"
+echo "${RESULT2}" >> "${OUTPUT_FILE}"
 
 # Display JS errors logged by MongoDB, if any
 tests/helpers/mongodb-container.sh exceptions || true
