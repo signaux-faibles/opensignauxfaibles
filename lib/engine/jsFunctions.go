@@ -732,14 +732,14 @@ db.getCollection("Features").createIndex({
 }`,
 "bdf": `function bdf(hs) {
     "use strict";
-    const bdf = {};
+    const bdf = f.makePeriodeMap();
     // Déduplication par arrete_bilan_bdf
-    Object.values(hs !== null && hs !== void 0 ? hs : {})
-        .filter((b) => b.arrete_bilan_bdf)
-        .forEach((b) => {
-        bdf[b.arrete_bilan_bdf.toISOString()] = b;
-    });
-    return Object.values(bdf !== null && bdf !== void 0 ? bdf : {}).sort((a, b) => a.annee_bdf < b.annee_bdf ? 1 : -1);
+    for (const b of Object.values(hs !== null && hs !== void 0 ? hs : {})) {
+        if (b.arrete_bilan_bdf !== undefined) {
+            bdf.set(b.arrete_bilan_bdf, b);
+        }
+    }
+    return [...bdf.values()].sort((a, b) => (a.annee_bdf < b.annee_bdf ? 1 : -1));
 }`,
 "compte": `function compte(compte) {
     const c = Object.values(compte !== null && compte !== void 0 ? compte : {});
@@ -852,14 +852,14 @@ db.getCollection("Features").createIndex({
 }`,
 "diane": `function diane(hs) {
     "use strict";
-    const diane = {};
+    const diane = f.makePeriodeMap();
     // Déduplication par arrete_bilan_diane
-    Object.values(hs !== null && hs !== void 0 ? hs : {})
-        .filter((d) => d.arrete_bilan_diane)
-        .forEach((d) => {
-        diane[d.arrete_bilan_diane.toISOString()] = d;
-    });
-    return Object.values(diane !== null && diane !== void 0 ? diane : {}).sort((a, b) => { var _a, _b; return ((_a = a.exercice_diane) !== null && _a !== void 0 ? _a : 0) < ((_b = b.exercice_diane) !== null && _b !== void 0 ? _b : 0) ? 1 : -1; });
+    for (const d of Object.values(hs !== null && hs !== void 0 ? hs : {})) {
+        if (d.arrete_bilan_diane !== undefined) {
+            diane.set(d.arrete_bilan_diane, d);
+        }
+    }
+    return [...diane.values()].sort((a, b) => { var _a, _b; return ((_a = a.exercice_diane) !== null && _a !== void 0 ? _a : 0) < ((_b = b.exercice_diane) !== null && _b !== void 0 ? _b : 0) ? 1 : -1; });
 }`,
 "effectifs": `function effectifs(effectif) {
     const mapEffectif = f.makePeriodeMap();

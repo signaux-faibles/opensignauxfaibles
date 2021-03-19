@@ -2,7 +2,9 @@ import { f } from "./functions"
 import { BatchValueWithCompact } from "./applyPatchesToBatch"
 import { DataHash } from "../RawDataTypes"
 
-export type CurrentDataState = Record<string, Set<DataHash>>
+export type CurrentDataState = Partial<
+  Record<keyof BatchValueWithCompact, Set<DataHash>>
+>
 
 // currentState() agrège un ensemble de batch, en tenant compte des suppressions
 // pour renvoyer le dernier état connu des données.

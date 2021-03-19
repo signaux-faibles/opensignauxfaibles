@@ -14,7 +14,6 @@ import {
   ParHash,
   BatchValues,
   CompanyDataValuesWithFlags,
-  CompanyDataValues,
   Scope,
   EntréeRepOrder,
   SiretOrSiren,
@@ -51,8 +50,9 @@ const importedData = {
   },
 }
 
-const expectedMapResults = {
-  [siret]: {
+const expectedMapResult = {
+  _id: siret,
+  value: {
     batch,
     key: siret,
     scope,
@@ -87,21 +87,20 @@ const expectedFinalizeResultValue = {
 test.serial(
   `compact.map() groupe les données par siret`,
   (t: ExecutionContext) => {
-    const mapResults: Record<string, unknown> = {}
-    runMongoMap(map, [
+    const mapResults = runMongoMap(map, [
       {
         _id: null,
         value: { ...importedData.value } as CompanyDataValuesWithFlags,
       },
-    ]).map(({ _id, value }) => (mapResults[_id as string] = value))
-    t.deepEqual(mapResults, expectedMapResults)
+    ])
+    t.deepEqual(mapResults, [expectedMapResult])
   }
 )
 
 test.serial(
   `compact.reduce() agrège les données par entreprise`,
   (t: ExecutionContext) => {
-    const reduceValues = [expectedMapResults[siret] as CompanyDataValues]
+    const reduceValues = [expectedMapResult.value]
     const reduceResults = reduce(siret, reduceValues)
     t.deepEqual(reduceResults, expectedReduceResults)
   }
