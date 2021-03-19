@@ -1,0 +1,2 @@
+# "Semantic Pull Request" to just check the PR title, and ignore the commits messages
+titleOnly: true
