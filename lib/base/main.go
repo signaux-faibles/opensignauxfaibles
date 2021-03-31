@@ -72,10 +72,13 @@ func (file BatchFile) Prefix() string {
 var rePrefix = regexp.MustCompile("^[a-z]*:")
 
 // MockBatch with a map[type][]filepaths
-func MockBatch(filetype string, filepaths []BatchFile) AdminBatch {
-	fileMap := map[string][]BatchFile{filetype: filepaths}
+func MockBatch(filetype string, filepaths []string) AdminBatch {
+	batchFiles := []BatchFile{}
+	for _, file := range filepaths {
+		batchFiles = append(batchFiles, BatchFile(file))
+	}
 	batch := AdminBatch{
-		Files: BatchFiles(fileMap),
+		Files: BatchFiles{filetype: batchFiles},
 		Params: adminBatchParams{
 			DateDebut: time.Date(2019, 0, 1, 0, 0, 0, 0, time.UTC), // January 1st, 2019
 			DateFin:   time.Date(2019, 1, 1, 0, 0, 0, 0, time.UTC), // February 1st, 2019
