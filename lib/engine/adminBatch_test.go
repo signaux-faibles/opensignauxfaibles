@@ -82,13 +82,12 @@ func Test_ImportBatchWithUnreadableFilter(t *testing.T) {
 
 func Test_CheckBatch(t *testing.T) {
 
-	t.Run("CheckBatch devrait réussir à parser un fichier gzip", func(t *testing.T) {
-		// TODO: renommer en "CheckBatch devrait réussir à parser un fichier compressé spécifié avec le préfixe 'gzip:'"
+	t.Run("CheckBatch devrait réussir à parser un fichier compressé spécifié avec le préfixe 'gzip:'", func(t *testing.T) {
 
 		// Compression du fichier de données
 		procolFilePath := filepath.Join("..", "urssaf", "testData", "procolTestData.csv")
-		compressedFilePath := filepath.Join("..", "urssaf", "testData", "procolTestData.csv.gz")
-		cmd := exec.Command("gzip", "--suffix", ".gz", "--keep", procolFilePath) // créée une version gzippée du fichier, TODO: utiliser une autre extension que .gz
+		compressedFilePath := filepath.Join("..", "urssaf", "testData", "procolTestData.csv.compressed")
+		cmd := exec.Command("gzip", "--suffix", ".compressed", "--keep", procolFilePath) // compresse le fichier avec une extension autre que .gz
 		err := cmd.Run()
 		assert.NoError(t, err)
 		cmd.Wait()
@@ -97,13 +96,13 @@ func Test_CheckBatch(t *testing.T) {
 		// Exécution de CheckBatch sur un AdminBatch mentionnant un fichier compressé
 		batch := base.AdminBatch{
 			Files: base.BatchFiles{
-				"procol": {"../../lib/urssaf/testData/procolTestData.csv.gz"}, // TODO: utiliser extension alternative et prefixe "gzip:"
+				"procol": {"../../lib/urssaf/testData/procolTestData.csv.compressed"}, // TODO: utiliser prefixe "gzip:"
 			},
 		}
 		InitVoidEventQueue() // permettre à CheckBatch d'envoyer des messages au canal d'événements, sans stocker dans la db
 		reports, err := CheckBatch(batch, []marshal.Parser{urssaf.ParserProcol})
 		if assert.NoError(t, err) {
-			expectedReports := []string{"../../lib/urssaf/testData/procolTestData.csv.gz: intégration terminée, 3 lignes traitées, 0 erreurs fatales, 0 lignes rejetées, 0 lignes filtrées, 3 lignes valides"}
+			expectedReports := []string{"../../lib/urssaf/testData/procolTestData.csv.compressed: intégration terminée, 3 lignes traitées, 0 erreurs fatales, 0 lignes rejetées, 0 lignes filtrées, 3 lignes valides"}
 			assert.Equal(t, expectedReports, reports)
 		}
 	})
