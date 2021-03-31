@@ -68,7 +68,7 @@ func (file BatchFile) IsCompressed() bool {
 	return file.Prefix() == "gzip:" || strings.HasSuffix(string(file), ".gz")
 }
 
-// FilePath retourne le préfixe éventuellement présent devant le nom de fichier
+// Prefix retourne le préfixe éventuellement présent devant le nom de fichier
 func (file BatchFile) Prefix() string {
 	return rePrefix.FindString(string(file))
 }
