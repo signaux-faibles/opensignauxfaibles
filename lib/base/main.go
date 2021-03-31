@@ -55,16 +55,20 @@ type AdminID struct {
 // BatchFiles fichiers mappés par type
 type BatchFiles map[string][]BatchFile
 
+// BatchFile encapsule un fichier mentionné dans un Batch
 type BatchFile string
 
+// FilePath retourne le chemin vers le fichier, sans préfixe
 func (file BatchFile) FilePath() string {
 	return rePrefix.ReplaceAllString(string(file), "") // c.a.d. suppression du préfixe éventuellement trouvé
 }
 
+// IsCompressed est vrai si le fichier est compressé
 func (file BatchFile) IsCompressed() bool {
 	return file.Prefix() == "gzip:" || strings.HasSuffix(string(file), ".gz")
 }
 
+// FilePath retourne le préfixe éventuellement présent devant le nom de fichier
 func (file BatchFile) Prefix() string {
 	return rePrefix.FindString(string(file))
 }
