@@ -102,7 +102,7 @@ func Test_CheckBatch(t *testing.T) {
 		InitVoidEventQueue() // permettre à CheckBatch d'envoyer des messages au canal d'événements, sans stocker dans la db
 		reports, err := CheckBatch(batch, []marshal.Parser{urssaf.ParserProcol})
 		if assert.NoError(t, err) {
-			expectedReports := []string{"../../lib/urssaf/testData/procolTestData.csv.compressed: intégration terminée, 3 lignes traitées, 0 erreurs fatales, 0 lignes rejetées, 0 lignes filtrées, 3 lignes valides"}
+			expectedReports := []string{"gzip:../../lib/urssaf/testData/procolTestData.csv.compressed: intégration terminée, 3 lignes traitées, 0 erreurs fatales, 0 lignes rejetées, 0 lignes filtrées, 3 lignes valides"}
 			assert.Equal(t, expectedReports, reports)
 		}
 	})
