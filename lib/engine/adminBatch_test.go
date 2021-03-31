@@ -96,7 +96,7 @@ func Test_CheckBatch(t *testing.T) {
 		// Exécution de CheckBatch sur un AdminBatch mentionnant un fichier compressé
 		batch := base.AdminBatch{
 			Files: base.BatchFiles{
-				"procol": {"../../lib/urssaf/testData/procolTestData.csv.compressed"}, // TODO: utiliser prefixe "gzip:"
+				"procol": {"gzip:../../lib/urssaf/testData/procolTestData.csv.compressed"},
 			},
 		}
 		InitVoidEventQueue() // permettre à CheckBatch d'envoyer des messages au canal d'événements, sans stocker dans la db
