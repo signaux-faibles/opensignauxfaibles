@@ -2,18 +2,18 @@
   "tuples": [
     {
       "date_traitement": "2018-01-30T00:00:00Z",
-      "stade": "ukohkb",
-      "action": "klay"
+      "stade": "DEBUT",
+      "action": "CCSF"
     },
     {
       "date_traitement": "2019-04-20T00:00:00Z",
-      "stade": "xljgvd",
-      "action": "cvqv"
+      "stade": "REFUS",
+      "action": "CCSF"
     },
     {
       "date_traitement": "1999-04-01T00:00:00Z",
-      "stade": "ehxdqd",
-      "action": "cair"
+      "stade": "APPROB",
+      "action": "CCSF"
     }
   ],
   "events": [
