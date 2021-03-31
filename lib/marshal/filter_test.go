@@ -54,9 +54,9 @@ func TestGetSirenFilter(t *testing.T) {
 		{"No cache, no filter in batch 2",
 			"", "", base.MockBatch("filter", nil), nil},
 		{"No cache, (mock)read from file",
-			"", "", base.MockBatch("filter", []string{"at least one"}), SirenFilter{"012345678": true}},
+			"", "", base.MockBatch("filter", []base.BatchFile{base.BatchFile("at least one")}), SirenFilter{"012345678": true}},
 		{"Cache has precedence over file",
-			"filter", SirenFilter{"876543210": true}, base.MockBatch("filter", []string{"at least one"}), SirenFilter{"876543210": true}},
+			"filter", SirenFilter{"876543210": true}, base.MockBatch("filter", []base.BatchFile{base.BatchFile("at least one")}), SirenFilter{"876543210": true}},
 	}
 
 	for ind, tc := range testCases {
@@ -85,7 +85,7 @@ func TestGetSirenFilter(t *testing.T) {
 	}
 }
 
-func mockReadFilter(string, []string) (SirenFilter, error) {
+func mockReadFilter(string, []base.BatchFile) (SirenFilter, error) {
 	return SirenFilter{"012345678": true}, nil
 }
 

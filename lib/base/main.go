@@ -2,6 +2,8 @@ package base
 
 import (
 	"errors"
+	"regexp"
+	"strings"
 	"time"
 )
 
@@ -51,11 +53,27 @@ type AdminID struct {
 }
 
 // BatchFiles fichiers mappés par type
-type BatchFiles map[string][]string
+type BatchFiles map[string][]BatchFile
+
+type BatchFile string
+
+func (file BatchFile) FilePath() string {
+	return rePrefix.ReplaceAllString(string(file), "") // c.a.d. suppression du préfixe éventuellement trouvé
+}
+
+func (file BatchFile) IsCompressed() bool {
+	return file.Prefix() == "gzip:" || strings.HasSuffix(string(file), ".gz")
+}
+
+func (file BatchFile) Prefix() string {
+	return rePrefix.FindString(string(file))
+}
+
+var rePrefix = regexp.MustCompile("^[a-z]*:")
 
 // MockBatch with a map[type][]filepaths
-func MockBatch(filetype string, filepaths []string) AdminBatch {
-	fileMap := map[string][]string{filetype: filepaths}
+func MockBatch(filetype string, filepaths []BatchFile) AdminBatch {
+	fileMap := map[string][]BatchFile{filetype: filepaths}
 	batch := AdminBatch{
 		Files: BatchFiles(fileMap),
 		Params: adminBatchParams{

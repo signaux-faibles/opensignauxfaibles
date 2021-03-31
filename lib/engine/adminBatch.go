@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strings"
 	"sync"
 	"time"
 
@@ -67,8 +66,8 @@ func ImportBatch(batch base.AdminBatch, parsers []marshal.Parser, skipFilter boo
 func CheckBatchPaths(batch *base.AdminBatch) error {
 	var ErrorString string
 	for _, filepaths := range batch.Files {
-		for _, filepath := range filepaths {
-			filepath = viper.GetString("APP_DATA") + strings.Replace(filepath, "gzip:", "", 1)
+		for _, batchFile := range filepaths {
+			filepath := viper.GetString("APP_DATA") + batchFile.FilePath()
 			if _, err := os.Stat(filepath); err != nil {
 				ErrorString += filepath + " is missing (" + err.Error() + ").\n"
 			}

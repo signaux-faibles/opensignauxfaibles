@@ -174,11 +174,11 @@ func TestGetCompteSiretMapping(t *testing.T) {
 		expected    Comptes
 	}{
 		// Basic reading from file
-		{NewCache(), base.MockBatch("admin_urssaf", []string{"a"}), false, stdExpected1},
+		{NewCache(), base.MockBatch("admin_urssaf", []base.BatchFile{base.BatchFile("a")}), false, stdExpected1},
 		// Cache superseeds reading from file
-		{Cache{"comptes": stdExpected2}, base.MockBatch("admin_urssaf", []string{"a"}), false, stdExpected2},
+		{Cache{"comptes": stdExpected2}, base.MockBatch("admin_urssaf", []base.BatchFile{base.BatchFile("a")}), false, stdExpected2},
 		// No cache, no file = error
-		{NewCache(), base.MockBatch("otherStuff", []string{"a"}), true, nil},
+		{NewCache(), base.MockBatch("otherStuff", []base.BatchFile{base.BatchFile("a")}), true, nil},
 	}
 
 	for ind, tc := range testCases {

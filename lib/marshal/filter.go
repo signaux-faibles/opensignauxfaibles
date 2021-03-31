@@ -78,14 +78,14 @@ func getSirenFilter(cache Cache, batch *base.AdminBatch, fr filterReader) (Siren
 	return filter, nil
 }
 
-type filterReader func(string, []string) (SirenFilter, error)
+type filterReader func(string, []base.BatchFile) (SirenFilter, error)
 
 // openAndReadFilters reads several files, reads their content and concatenate
 // it into a SirenFilter
-func readFilterFiles(basePath string, filenames []string) (SirenFilter, error) {
+func readFilterFiles(basePath string, filenames []base.BatchFile) (SirenFilter, error) {
 	filter := make(SirenFilter)
 	for _, p := range filenames {
-		file, err := os.Open(filepath.Join(basePath, p))
+		file, err := os.Open(filepath.Join(basePath, p.FilePath()))
 		if err != nil {
 			return nil, errors.New("Erreur à l'ouverture du fichier, " + err.Error())
 		}

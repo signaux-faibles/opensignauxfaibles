@@ -48,7 +48,7 @@ func (params parseFileHandler) Run() error {
 		return err
 	}
 
-	batch := base.AdminBatch{Files: base.BatchFiles{params.Parser: []string{params.File}}}
+	batch := base.AdminBatch{Files: base.BatchFiles{params.Parser: []base.BatchFile{base.BatchFile(params.File)}}}
 	cache := marshal.NewCache()
 	parser := parsers[0]
 

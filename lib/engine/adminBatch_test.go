@@ -44,7 +44,7 @@ func Test_CheckBatchPaths(t *testing.T) {
 		{"./test_data/missing_file", true},
 	}
 	for _, tc := range testCases {
-		mockbatch := base.MockBatch("debit", []string{tc.Filepath})
+		mockbatch := base.MockBatch("debit", []base.BatchFile{base.BatchFile(tc.Filepath)})
 		err := CheckBatchPaths(&mockbatch)
 		if (err == nil && tc.ErrorExpected) ||
 			(err != nil && !tc.ErrorExpected) {
@@ -73,7 +73,7 @@ func Test_ImportBatchWithUnreadableFilter(t *testing.T) {
 		for range data {
 		}
 	}()
-	batch := base.MockBatch("filter", []string{"this_file_does_not_exist"})
+	batch := base.MockBatch("filter", []base.BatchFile{base.BatchFile("this_file_does_not_exist")})
 	err := ImportBatch(batch, []marshal.Parser{}, false, data)
 	if err == nil {
 		t.Error("ImportBatch devrait échouer en tentant d'ouvrir un fichier filtre illisible")
@@ -102,7 +102,7 @@ func Test_CheckBatch(t *testing.T) {
 		InitVoidEventQueue() // permettre à CheckBatch d'envoyer des messages au canal d'événements, sans stocker dans la db
 		reports, err := CheckBatch(batch, []marshal.Parser{urssaf.ParserProcol})
 		if assert.NoError(t, err) {
-			expectedReports := []string{"gzip:../../lib/urssaf/testData/procolTestData.csv.compressed: intégration terminée, 3 lignes traitées, 0 erreurs fatales, 0 lignes rejetées, 0 lignes filtrées, 3 lignes valides"}
+			expectedReports := []string{"../../lib/urssaf/testData/procolTestData.csv.compressed: intégration terminée, 3 lignes traitées, 0 erreurs fatales, 0 lignes rejetées, 0 lignes filtrées, 3 lignes valides"}
 			assert.Equal(t, expectedReports, reports)
 		}
 	})
