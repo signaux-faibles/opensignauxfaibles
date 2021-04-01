@@ -79,49 +79,47 @@ func ParseFile(path base.BatchFile, parser Parser, batch *base.AdminBatch, cache
 	filePath := path.Prefix() + viper.GetString("APP_DATA") + path.FilePath()
 	if err := parser.Init(&cache, batch); err != nil {
 		tracker.AddFatalError(err)
-	} else {
+	} else if err := parser.Open(filePath); err != nil {
+		tracker.AddFatalError(err)
+	}
+	if len(tracker.fatalErrors) == 0 {
 		runParserWithSirenFilter(parser, &filter, filePath, &tracker, outputChannel)
+		if err := parser.Close(); err != nil {
+			tracker.AddFatalError(err)
+		}
 	}
 	return CreateReportEvent(fileType, tracker.Report(batch.ID.Key, path.FilePath())) // abstract
 }
 
 func runParserWithSirenFilter(parser Parser, filter *SirenFilter, filePath string, tracker *ParsingTracker, outputChannel chan Tuple) {
-	openErr := parser.Open(filePath)
 	// Note: on ne passe plus le tracker aux parseurs afin de garder ici le controle de la numérotation des lignes où les erreurs sont trouvées
-	if openErr != nil {
-		tracker.AddFatalError(openErr)
-	} else {
-		parsedLineChan := make(chan ParsedLineResult)
-		go parser.ParseLines(parsedLineChan)
-		for lineResult := range parsedLineChan {
-			filterError := lineResult.FilterError
-			if filterError != nil {
-				tracker.AddFilterError(filterError) // on rapporte le filtrage même si aucun tuple n'est transmis par le parseur
-			}
-			for _, err := range lineResult.Errors {
-				tracker.AddParseError(err)
-			}
-			for _, tuple := range lineResult.Tuples {
-				if filterError != nil {
-					continue // l'erreur de filtrage a déjà été rapportée => on se contente de passer au tuple suivant
-				} else if _, err := isValid(tuple); err != nil {
-					// Si le siret/siren est invalide, on jette le tuple,
-					// et on rapporte une erreur seulement si aucune n'a été
-					// rapportée par le parseur.
-					if len(lineResult.Errors) == 0 {
-						tracker.AddParseError(err)
-					}
-				} else if filter.Skips(tuple.Key()) {
-					tracker.AddFilterError(errors.New("(filtered)"))
-				} else {
-					outputChannel <- tuple
-				}
-			}
-			tracker.Next()
+	parsedLineChan := make(chan ParsedLineResult)
+	go parser.ParseLines(parsedLineChan)
+	for lineResult := range parsedLineChan {
+		filterError := lineResult.FilterError
+		if filterError != nil {
+			tracker.AddFilterError(filterError) // on rapporte le filtrage même si aucun tuple n'est transmis par le parseur
 		}
-	}
-	if err := parser.Close(); err != nil && openErr == nil {
-		tracker.AddFatalError(err)
+		for _, err := range lineResult.Errors {
+			tracker.AddParseError(err)
+		}
+		for _, tuple := range lineResult.Tuples {
+			if filterError != nil {
+				continue // l'erreur de filtrage a déjà été rapportée => on se contente de passer au tuple suivant
+			} else if _, err := isValid(tuple); err != nil {
+				// Si le siret/siren est invalide, on jette le tuple,
+				// et on rapporte une erreur seulement si aucune n'a été
+				// rapportée par le parseur.
+				if len(lineResult.Errors) == 0 {
+					tracker.AddParseError(err)
+				}
+			} else if filter.Skips(tuple.Key()) {
+				tracker.AddFilterError(errors.New("(filtered)"))
+			} else {
+				outputChannel <- tuple
+			}
+		}
+		tracker.Next()
 	}
 }
 
