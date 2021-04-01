@@ -57,7 +57,7 @@ func (parser *procolParser) Close() error {
 }
 
 func (parser *procolParser) Open(filePath string) (err error) {
-	parser.file, parser.reader, err = marshal.OpenCsvReader(filePath, ';', true)
+	parser.file, parser.reader, err = marshal.OpenCsvReader(base.BatchFile(filePath), ';', true)
 	if err == nil {
 		parser.idx, err = parseProcolColMapping(parser.reader)
 	}
