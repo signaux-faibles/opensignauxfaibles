@@ -61,17 +61,9 @@ func ParseFilesFromBatch(cache Cache, batch *base.AdminBatch, parser Parser) (ch
 	outputChannel := make(chan Tuple)
 	eventChannel := make(chan Event)
 	fileType := parser.GetFileType()
-	filter := GetSirenFilterFromCache(cache)
 	go func() {
 		for _, path := range batch.Files[fileType] {
-			tracker := NewParsingTracker()
-			filePath := path.Prefix() + viper.GetString("APP_DATA") + path.FilePath()
-			if err := parser.Init(&cache, batch); err != nil {
-				tracker.AddFatalError(err)
-			} else {
-				RunParserWithSirenFilter(parser, &filter, filePath, &tracker, outputChannel)
-			}
-			eventChannel <- CreateReportEvent(fileType, tracker.Report(batch.ID.Key, path.FilePath())) // abstract
+			eventChannel <- ParseFile(path, parser, batch, cache, outputChannel)
 		}
 		close(outputChannel)
 		close(eventChannel)
@@ -79,8 +71,21 @@ func ParseFilesFromBatch(cache Cache, batch *base.AdminBatch, parser Parser) (ch
 	return outputChannel, eventChannel
 }
 
-// RunParserWithSirenFilter parse un fichier dans un canal de tuples.
-func RunParserWithSirenFilter(parser Parser, filter *SirenFilter, filePath string, tracker *ParsingTracker, outputChannel chan Tuple) {
+// ParseFile parse le fichier parse un fichier dans un canal de tuples puis retourne un rapport
+func ParseFile(path base.BatchFile, parser Parser, batch *base.AdminBatch, cache Cache, outputChannel chan Tuple) Event {
+	tracker := NewParsingTracker()
+	filter := GetSirenFilterFromCache(cache)
+	fileType := parser.GetFileType()
+	filePath := path.Prefix() + viper.GetString("APP_DATA") + path.FilePath()
+	if err := parser.Init(&cache, batch); err != nil {
+		tracker.AddFatalError(err)
+	} else {
+		runParserWithSirenFilter(parser, &filter, filePath, &tracker, outputChannel)
+	}
+	return CreateReportEvent(fileType, tracker.Report(batch.ID.Key, path.FilePath())) // abstract
+}
+
+func runParserWithSirenFilter(parser Parser, filter *SirenFilter, filePath string, tracker *ParsingTracker, outputChannel chan Tuple) {
 	openErr := parser.Open(filePath)
 	// Note: on ne passe plus le tracker aux parseurs afin de garder ici le controle de la numérotation des lignes où les erreurs sont trouvées
 	if openErr != nil {
