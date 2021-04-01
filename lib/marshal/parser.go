@@ -96,6 +96,7 @@ func runParserOnFile(filePath string, parser Parser, batch *base.AdminBatch, cac
 	go parser.ParseLines(parsedLineChan)
 	for lineResult := range parsedLineChan {
 		parseTuplesFromLine(lineResult, &filter, tracker, outputChannel)
+		tracker.Next()
 	}
 	return parser.Close()
 }
@@ -124,7 +125,6 @@ func parseTuplesFromLine(lineResult ParsedLineResult, filter *SirenFilter, track
 			outputChannel <- tuple
 		}
 	}
-	tracker.Next()
 }
 
 // GetJSON sérialise un tuple au format JSON.
