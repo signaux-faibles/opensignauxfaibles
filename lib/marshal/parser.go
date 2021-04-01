@@ -109,10 +109,11 @@ func parseTuplesFromLine(lineResult ParsedLineResult, filter *SirenFilter, track
 	for _, err := range lineResult.Errors {
 		tracker.AddParseError(err)
 	}
+	if filterError != nil {
+		return
+	}
 	for _, tuple := range lineResult.Tuples {
-		if filterError != nil {
-			continue // l'erreur de filtrage a déjà été rapportée => on se contente de passer au tuple suivant
-		} else if _, err := isValid(tuple); err != nil {
+		if _, err := isValid(tuple); err != nil {
 			// On rapporte une erreur de siret/siren invalide seulement si aucune autre error n'a été rapportée par le parseur
 			if len(lineResult.Errors) == 0 {
 				tracker.AddParseError(err)
