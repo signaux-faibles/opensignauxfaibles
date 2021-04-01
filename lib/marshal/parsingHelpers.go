@@ -6,12 +6,13 @@ import (
 	"encoding/csv"
 	"io"
 	"os"
-	"strings"
+
+	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
 )
 
 // OpenCsvReader ouvre un fichier CSV potentiellement gzippé et retourne un csv.Reader.
-func OpenCsvReader(filePath string, comma rune, lazyQuotes bool) (*os.File, *csv.Reader, error) {
-	file, fileReader, err := OpenFileReader(filePath)
+func OpenCsvReader(batchFile base.BatchFile, comma rune, lazyQuotes bool) (*os.File, *csv.Reader, error) {
+	file, fileReader, err := OpenFileReader(batchFile)
 	if err != nil {
 		return file, nil, err
 	}
@@ -22,13 +23,13 @@ func OpenCsvReader(filePath string, comma rune, lazyQuotes bool) (*os.File, *csv
 }
 
 // OpenFileReader ouvre un fichier potentiellement gzippé et retourne un io.Reader.
-func OpenFileReader(filePath string) (*os.File, io.Reader, error) {
-	file, err := os.Open(filePath)
+func OpenFileReader(batchFile base.BatchFile) (*os.File, io.Reader, error) {
+	file, err := os.Open(batchFile.FilePath())
 	if err != nil {
 		return nil, nil, err
 	}
 	var fileReader io.Reader
-	if strings.HasSuffix(filePath, ".gz") {
+	if batchFile.IsCompressed() {
 		fileReader, err = gzip.NewReader(file)
 		if err != nil {
 			return file, nil, err

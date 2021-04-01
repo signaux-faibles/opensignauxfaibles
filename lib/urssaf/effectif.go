@@ -58,7 +58,7 @@ func (parser *effectifParser) Close() error {
 }
 
 func (parser *effectifParser) Open(filePath string) (err error) {
-	parser.file, parser.reader, err = marshal.OpenCsvReader(filePath, ';', false)
+	parser.file, parser.reader, err = marshal.OpenCsvReader(base.BatchFile(filePath), ';', false)
 	if err == nil {
 		parser.idx, parser.periods, err = parseEffectifColMapping(parser.reader)
 	}

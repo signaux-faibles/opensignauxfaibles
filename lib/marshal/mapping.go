@@ -90,7 +90,7 @@ func GetCompteSiretMapping(cache Cache, batch *base.AdminBatch, mr mappingReader
 		return nil, errors.New("No admin_urssaf mapping found")
 	}
 	for _, p := range path {
-		compteSiretMapping, err = mr(basePath, p, compteSiretMapping, cache, batch)
+		compteSiretMapping, err = mr(basePath, p.FilePath(), compteSiretMapping, cache, batch)
 		if err != nil {
 			return nil, err
 		}
@@ -110,7 +110,7 @@ func OpenAndReadSiretMapping(
 	batch *base.AdminBatch,
 ) (Comptes, error) {
 
-	file, fileReader, err := OpenFileReader(path.Join(basePath, endPath))
+	file, fileReader, err := OpenFileReader(base.BatchFile(path.Join(basePath, endPath)))
 	if err != nil {
 		return nil, errors.New("Erreur à l'ouverture du fichier, " + err.Error())
 	}
