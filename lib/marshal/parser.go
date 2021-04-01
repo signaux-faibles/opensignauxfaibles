@@ -12,7 +12,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-// Parser fournit les fonctions de parsing d'un type de fichier donné.
+// Parser spécifie les fonctions qui doivent être implémentées par chaque parseur de fichier.
 type Parser interface {
 	GetFileType() string
 	Init(cache *Cache, batch *base.AdminBatch) error
@@ -49,11 +49,11 @@ func (res *ParsedLineResult) SetFilterError(err error) {
 	}
 }
 
-// Tuple unité de donnée à insérer dans un type
+// Tuple spécifie les fonctions que chaque parseur doit implémenter pour ses tuples.
 type Tuple interface {
-	Key() string
-	Scope() string
-	Type() string
+	Key() string   // entité définie par le tuple: numéro SIRET ou SIREN
+	Scope() string // type d'entité: "entreprise" ou "etablissement"
+	Type() string  // identifiant du parseur qui a extrait ce tuple, ex: "apconso"
 }
 
 // ParseFilesFromBatch parse les tuples des fichiers listés dans batch pour le parseur spécifié.
@@ -106,12 +106,10 @@ func parseTuplesFromLine(lineResult ParsedLineResult, filter *SirenFilter, track
 	filterError := lineResult.FilterError
 	if filterError != nil {
 		tracker.AddFilterError(filterError) // on rapporte le filtrage même si aucun tuple n'est transmis par le parseur
+		return
 	}
 	for _, err := range lineResult.Errors {
 		tracker.AddParseError(err)
-	}
-	if filterError != nil {
-		return
 	}
 	for _, tuple := range lineResult.Tuples {
 		if _, err := isValid(tuple); err != nil {
@@ -139,6 +137,7 @@ func LogProgress(lineNumber *int) (stop context.CancelFunc) {
 	})
 }
 
+// idValid vérifie que la clé (Key) d'un Tuple est valide, selon le type d'entité (Scope) qu'il représente.
 func isValid(tuple Tuple) (bool, error) {
 	scope := tuple.Scope()
 	key := tuple.Key()
