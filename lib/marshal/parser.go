@@ -76,28 +76,28 @@ func ParseFile(path base.BatchFile, parser Parser, batch *base.AdminBatch, cache
 	tracker := NewParsingTracker()
 	fileType := parser.GetFileType()
 	filePath := path.Prefix() + viper.GetString("APP_DATA") + path.FilePath()
-	runParserOnFile(filePath, parser, batch, cache, &tracker, outputChannel)
+	err := runParserOnFile(filePath, parser, batch, cache, &tracker, outputChannel)
+	if err != nil {
+		tracker.AddFatalError(err)
+	}
 	return CreateReportEvent(fileType, tracker.Report(batch.ID.Key, path.FilePath())) // abstract
 }
 
-// runParserOnFile parse les tuples du fichier spécifié.
-func runParserOnFile(filePath string, parser Parser, batch *base.AdminBatch, cache Cache, tracker *ParsingTracker, outputChannel chan Tuple) {
+// runParserOnFile parse les tuples du fichier spécifié, et peut retourner une erreur fatale.
+func runParserOnFile(filePath string, parser Parser, batch *base.AdminBatch, cache Cache, tracker *ParsingTracker, outputChannel chan Tuple) error {
 	filter := GetSirenFilterFromCache(cache)
 	if err := parser.Init(&cache, batch); err != nil {
-		tracker.AddFatalError(err)
-	} else if err := parser.Open(filePath); err != nil {
-		tracker.AddFatalError(err)
+		return err
 	}
-	if len(tracker.fatalErrors) == 0 {
-		parsedLineChan := make(chan ParsedLineResult)
-		go parser.ParseLines(parsedLineChan)
-		for lineResult := range parsedLineChan {
-			parseTuplesFromLine(lineResult, &filter, tracker, outputChannel)
-		}
-		if err := parser.Close(); err != nil {
-			tracker.AddFatalError(err)
-		}
+	if err := parser.Open(filePath); err != nil {
+		return err
 	}
+	parsedLineChan := make(chan ParsedLineResult)
+	go parser.ParseLines(parsedLineChan)
+	for lineResult := range parsedLineChan {
+		parseTuplesFromLine(lineResult, &filter, tracker, outputChannel)
+	}
+	return parser.Close()
 }
 
 // parseTuplesFromLine extraie les tuples et/ou erreurs depuis une ligne parsée.
@@ -113,9 +113,7 @@ func parseTuplesFromLine(lineResult ParsedLineResult, filter *SirenFilter, track
 		if filterError != nil {
 			continue // l'erreur de filtrage a déjà été rapportée => on se contente de passer au tuple suivant
 		} else if _, err := isValid(tuple); err != nil {
-			// Si le siret/siren est invalide, on jette le tuple,
-			// et on rapporte une erreur seulement si aucune n'a été
-			// rapportée par le parseur.
+			// On rapporte une erreur de siret/siren invalide seulement si aucune autre error n'a été rapportée par le parseur
 			if len(lineResult.Errors) == 0 {
 				tracker.AddParseError(err)
 			}
