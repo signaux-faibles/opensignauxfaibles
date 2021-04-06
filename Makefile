@@ -10,8 +10,11 @@ build-prod: ## Build the sfdata binary for our production environment
 test: ## Run automated tests
 	./test-all.sh
 
+test-update: ## Run automated tests, update snaphots and golden files
+	./test-all.sh --update
+
 help: ## This help.
 	@echo 'Available targets:'
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
-.PHONY: build build-prod test help
+.PHONY: build build-prod test test-update help

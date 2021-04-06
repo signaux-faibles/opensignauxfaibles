@@ -2135,6 +2135,13 @@
     },
     {
         "source": "sirene",
+        "name": "code_commune",
+        "description": "Code commune de l’établissement",
+        "type": "string",
+        "computed": false
+    },
+    {
+        "source": "sirene",
         "name": "code_ape",
         "description": "Code APE/NAF de l'établissement.",
         "type": "string",
