@@ -64,9 +64,14 @@ func InitDB() DB {
 		Key:  []string{"value.key"}, // numéro SIRET ou SIREN
 	})
 
-	// TODO: provide data validation document here
 	batchPattern := "[0-9_]+"
 	dataHashPattern := "[0-9a-f]+"
+	var apconsoSchema bson.M
+	if err = json.Unmarshal([]byte(validationSchemas["apconso.schema.json"]), &apconsoSchema); err != nil {
+		log.Fatal("échec de récupération du schéma de validation JSON: apconso.schema.json")
+	}
+
+	// TODO: provide data validation document here
 	jsonSchema := bson.M{
 		"bsonType": "object",
 		"properties": bson.M{
@@ -81,9 +86,7 @@ func InitDB() DB {
 									"apconso": bson.M{
 										"bsonType": "object",
 										"patternProperties": bson.M{
-											dataHashPattern: bson.M{
-												"bsonType": "object",
-											},
+											dataHashPattern: /*bson.M{ "bsonType": "object", },*/ apconsoSchema,
 										},
 										"additionalProperties": false,
 									},
