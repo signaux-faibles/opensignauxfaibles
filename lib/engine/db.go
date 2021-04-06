@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"fmt"
 	"log"
 	"sync"
 	"time"
@@ -62,6 +63,11 @@ func InitDB() DB {
 		Key:  []string{"value.key"}, // numéro SIRET ou SIREN
 	})
 
+	jsonSchema := bson.M{} // TODO: provide data validation document here
+	if err = setupDocValidation(db, "ImportedData", jsonSchema); err != nil {
+		log.Fatal(err)
+	}
+
 	firstBatchID := viper.GetString("FIRST_BATCH")
 	if !base.IsBatchID(firstBatchID) {
 		panic("Paramètre FIRST_BATCH incorrect, vérifiez la configuration.")
@@ -98,6 +104,25 @@ func InitDB() DB {
 		DB:       db,
 		DBStatus: dbstatus,
 	}
+}
+
+func setupDocValidation(db *mgo.Database, colName string, jsonSchema bson.M) error {
+	var validRes struct {
+		Ok            bool          `bson:"ok" json:"ok"`
+		Errmsg        string        `bson:"errmsg" json:"errmsg"`
+		Code          int           `bson:"code" json:"code"`
+		CodeName      string        `bson:"codeName" json:"codeName"`
+		OperationTime time.Duration `bson:"operationTime" json:"operationTime"`
+	}
+	db.Run(bson.D{
+		{Name: "collMod", Value: colName},
+		{Name: "validator", Value: jsonSchema},
+		{Name: "validationLevel", Value: "strict"},
+		{Name: "validationAction", Value: "error"}}, &validRes)
+	if validRes.Ok == false {
+		return fmt.Errorf("Error %v while trying to setup doc validation on %v: %v", validRes.Code, colName, validRes.Errmsg)
+	}
+	return nil
 }
 
 var importing sync.WaitGroup
