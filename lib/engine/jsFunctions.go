@@ -1125,7 +1125,8 @@ function sirene(sireneArray) {
         }
     });
 }`,
-"cibleApprentissage": `function cibleApprentissage(output_indexed, n_months) {
+"cibleApprentissage": `function cibleApprentissage(output_indexed, n_months // nombre de mois avant/après l'évènement pendant lesquels outcome sera true
+) {
     "use strict";
     var _a, _b;
     // Mock two input instead of one for future modification
@@ -1139,13 +1140,18 @@ function sirene(sireneArray) {
             outcome: Boolean(((_a = output_procol.get(période)) === null || _a === void 0 ? void 0 : _a.tag_failure) || ((_b = output_cotisation.get(période)) === null || _b === void 0 ? void 0 : _b.tag_default)),
         });
     }
+    const outputPastOutcome = f.lookAhead(merged_info, "outcome", n_months, false);
     const output_outcome = f.lookAhead(merged_info, "outcome", n_months, true);
     const output_default = f.lookAhead(output_cotisation, "tag_default", n_months, true);
     const output_failure = f.lookAhead(output_procol, "tag_failure", n_months, true);
     const output_cible = périodes.reduce(function (m, k) {
+        const oPast = outputPastOutcome.get(k);
         const oDefault = output_default.get(k);
         const oFailure = output_failure.get(k);
-        return m.set(k, Object.assign(Object.assign(Object.assign({}, output_outcome.get(k)), (oDefault && { time_til_default: oDefault.time_til_outcome })), (oFailure && { time_til_failure: oFailure.time_til_outcome })));
+        return m.set(k, Object.assign(Object.assign(Object.assign(Object.assign({}, ((oPast === null || oPast === void 0 ? void 0 : oPast.time_til_outcome) && {
+            outcome: oPast.outcome,
+            time_til_outcome: -oPast.time_til_outcome,
+        })), output_outcome.get(k)), (oDefault && { time_til_default: oDefault.time_til_outcome })), (oFailure && { time_til_failure: oFailure.time_til_outcome })));
     }, f.makePeriodeMap());
     return output_cible;
 }`,
@@ -1744,7 +1750,9 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
     return isNaN(ratio) ? null : ratio * 100;
 }`,
 "lookAhead": `function lookAhead(data, attr_name, // "outcome" | "tag_default" | "tag_failure",
-n_months, past) {
+n_months, // nombre de mois avant/après l'évènement pendant lesquels outcome sera true
+past // si true: on popule outcome pour les périodes passées, au lieu des périodes futures
+) {
     "use strict";
     // Est-ce que l'évènement se répercute dans le passé (past = true on pourra se
     // demander: que va-t-il se passer) ou dans le future (past = false on
