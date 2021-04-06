@@ -65,8 +65,26 @@ func InitDB() DB {
 	})
 
 	// TODO: provide data validation document here
+	batchPattern := "[0-9_]+"
 	jsonSchema := bson.M{
 		"bsonType": "object",
+		"properties": bson.M{
+			"value": bson.M{
+				"bsonType": "object",
+				"properties": bson.M{
+					"batch": bson.M{
+						"patternProperties": bson.M{
+							batchPattern: bson.M{
+								"bsonType": "object",
+							},
+						},
+					},
+				},
+			},
+		},
+		"oneOf": []bson.M{
+			{},
+		},
 	}
 	if err = setupDocValidation(db, "ImportedData", jsonSchema); err != nil {
 		log.Fatal(err)
