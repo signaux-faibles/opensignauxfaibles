@@ -12948,6 +12948,7 @@ const makeObjects = ISODate => ([
                         "region" : "",
                         "departement" : "",
                         "commune" : "",
+                        "code_commune" : "faux_code_commune",
                         "ape" : "1712Z",
                         "nature_activite" : "NR",
                         "activite_saisoniere" : "P",
