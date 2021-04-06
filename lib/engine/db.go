@@ -63,7 +63,10 @@ func InitDB() DB {
 		Key:  []string{"value.key"}, // numéro SIRET ou SIREN
 	})
 
-	jsonSchema := bson.M{} // TODO: provide data validation document here
+	// TODO: provide data validation document here
+	jsonSchema := bson.M{
+		"bsonType": "object",
+	}
 	if err = setupDocValidation(db, "ImportedData", jsonSchema); err != nil {
 		log.Fatal(err)
 	}
@@ -116,11 +119,11 @@ func setupDocValidation(db *mgo.Database, colName string, jsonSchema bson.M) err
 	}
 	db.Run(bson.D{
 		{Name: "collMod", Value: colName},
-		{Name: "validator", Value: jsonSchema},
+		{Name: "validator", Value: bson.M{"$jsonSchema": jsonSchema}},
 		{Name: "validationLevel", Value: "strict"},
 		{Name: "validationAction", Value: "error"}}, &validRes)
-	if validRes.Ok == false {
-		return fmt.Errorf("Error %v while trying to setup doc validation on %v: %v", validRes.Code, colName, validRes.Errmsg)
+	if !validRes.Ok {
+		return fmt.Errorf("error %v while trying to setup doc validation on %v: %v", validRes.Code, colName, validRes.Errmsg)
 	}
 	return nil
 }
