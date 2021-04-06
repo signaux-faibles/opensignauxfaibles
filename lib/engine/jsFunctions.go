@@ -2009,6 +2009,7 @@ function outputs(v, serie_periode) {
             val.siren = val.siret.substring(0, 9);
             val.latitude = sirene.latitude || null;
             val.longitude = sirene.longitude || null;
+            val.code_commune = sirene.code_commune || null;
             val.departement = sirene.departement || null;
             if (val.departement) {
                 val.region = f.region(val.departement);
