@@ -69,26 +69,7 @@ func InitDB() DB {
 		log.Fatal("échec de récupération d'un schéma de validation JSON: " + err.Error())
 	}
 
-	jsonSchema := bson.M{
-		"bsonType": "object",
-		"properties": bson.M{
-			"_id": bson.M{"bsonType": "objectId"},
-			"value": bson.M{
-				"bsonType": "object",
-				"properties": bson.M{
-					"scope": bson.M{"bsonType": "string", "enum": []string{"etablissement", "entreprise"}},
-					"key":   bson.M{"bsonType": "string", "pattern": "[0-9]+"}, // SIREN ou SIRET
-					"batch": wrapJsonSchemaBehindBatchId(bson.M{
-						"bsonType":             "object",
-						"properties":           schemaPerHashedDataType,
-						"additionalProperties": false,
-					}),
-				},
-				"additionalProperties": false,
-			},
-		},
-		"additionalProperties": false,
-	}
+	jsonSchema := MakeValidationSchemaForImportedData(schemaPerHashedDataType)
 	if err = setupDocValidation(db, "ImportedData", jsonSchema); err != nil {
 		log.Fatal(err)
 	}
