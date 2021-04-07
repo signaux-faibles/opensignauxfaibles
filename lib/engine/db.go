@@ -71,7 +71,7 @@ func InitDB() DB {
 	}
 	schemaPerHashedDataType := MakeValidationSchemaPerHashedDataType(jsonSchemas)
 	jsonSchema := MakeValidationSchemaForImportedData(schemaPerHashedDataType)
-	if err = setupDocValidation(db, "ImportedData", jsonSchema); err != nil {
+	if err = SetupDocValidation(db, "ImportedData", jsonSchema); err != nil {
 		log.Fatal("échec d'injection du schéma de validation de données JSON dans ImportedData:" + err.Error())
 	}
 
@@ -113,7 +113,7 @@ func InitDB() DB {
 	}
 }
 
-func setupDocValidation(db *mgo.Database, colName string, jsonSchema bson.M) error {
+func SetupDocValidation(db *mgo.Database, colName string, jsonSchema bson.M) error {
 	var validRes struct {
 		Ok            bool          `bson:"ok" json:"ok"`
 		Errmsg        string        `bson:"errmsg" json:"errmsg"`
