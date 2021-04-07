@@ -39,16 +39,12 @@ func MakeValidationSchemaForImportedData(schemaPerHashedDataType map[string]bson
 // MakeJsonSchemaPerHashedDataType génère un dictionnaire associant chaque type
 // de données à un JSON Schema permettant de valider les données
 // correspondantes, rattachées à un Hash. (cf structure de ImportedData)
-func MakeJsonSchemaPerHashedDataType() (map[string]bson.M, error) {
+func MakeJsonSchemaPerHashedDataType(jsonSchemas map[string]bson.M) map[string]bson.M {
 	schemas := map[string]bson.M{}
-	jsonSchemas, err := LoadJSONSchemaFiles()
-	if err != nil {
-		return nil, err
+	for dataType, schema := range jsonSchemas {
+		schemas[dataType] = wrapJsonSchemaBehindHash(schema)
 	}
-	for dataType, _ := range jsonSchemas {
-		schemas[dataType] = wrapJsonSchemaBehindHash(jsonSchemas[dataType])
-	}
-	return schemas, nil
+	return schemas
 }
 
 // wrapJsonSchemaBehindHash rattache un JSON Schema à un "data hash".

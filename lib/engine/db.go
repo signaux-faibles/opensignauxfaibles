@@ -64,14 +64,15 @@ func InitDB() DB {
 		Key:  []string{"value.key"}, // numéro SIRET ou SIREN
 	})
 
-	schemaPerHashedDataType, err := MakeJsonSchemaPerHashedDataType()
+	// Injection du schéma de validation de données JSON dans ImportedData
+	jsonSchemas, err := LoadJSONSchemaFiles()
 	if err != nil {
 		log.Fatal("échec de récupération d'un schéma de validation JSON: " + err.Error())
 	}
-
+	schemaPerHashedDataType := MakeJsonSchemaPerHashedDataType(jsonSchemas)
 	jsonSchema := MakeValidationSchemaForImportedData(schemaPerHashedDataType)
 	if err = setupDocValidation(db, "ImportedData", jsonSchema); err != nil {
-		log.Fatal(err)
+		log.Fatal("échec d'injection du schéma de validation de données JSON dans ImportedData:" + err.Error())
 	}
 
 	firstBatchID := viper.GetString("FIRST_BATCH")
