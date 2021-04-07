@@ -113,6 +113,7 @@ func InitDB() DB {
 	}
 }
 
+// SetupDocValidation configure la validation de documents pour une collection existante.
 func SetupDocValidation(db *mgo.Database, colName string, jsonSchema bson.M) error {
 	var validRes struct {
 		Ok            bool          `bson:"ok" json:"ok"`
