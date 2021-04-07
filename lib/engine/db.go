@@ -156,7 +156,9 @@ func InsertIntoImportedData(db *mgo.Database) chan *Value {
 				objects = append(objects, *v)
 			}
 			if len(objects) > 0 {
-				db.C("ImportedData").Insert(objects...)
+				if err := db.C("ImportedData").Insert(objects...); err != nil {
+					log.Println("Erreur lors de l'insertion de certains documents dans ImportedData: " + err.Error()) // ex: document invalide, cf CreateImportedDataCollection()
+				}
 			}
 			buffer = make(map[string]*Value)
 			objects = make([]interface{}, 0)
