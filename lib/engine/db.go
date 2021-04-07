@@ -64,8 +64,6 @@ func InitDB() DB {
 		Key:  []string{"value.key"}, // numéro SIRET ou SIREN
 	})
 
-	batchPattern := "[0-9_]+"
-
 	schemaPerHashedDataType, err := MakeJsonSchemaPerHashedDataType()
 	if err != nil {
 		log.Fatal("échec de récupération d'un schéma de validation JSON: " + err.Error())
@@ -80,16 +78,11 @@ func InitDB() DB {
 				"properties": bson.M{
 					"scope": bson.M{"bsonType": "string", "enum": []string{"etablissement", "entreprise"}},
 					"key":   bson.M{"bsonType": "string", "pattern": "[0-9]+"}, // SIREN ou SIRET
-					"batch": bson.M{
-						"patternProperties": bson.M{
-							batchPattern: bson.M{
-								"bsonType":             "object",
-								"properties":           schemaPerHashedDataType,
-								"additionalProperties": false,
-							},
-						},
+					"batch": wrapJsonSchemaBehindBatchId(bson.M{
+						"bsonType":             "object",
+						"properties":           schemaPerHashedDataType,
 						"additionalProperties": false,
-					},
+					}),
 				},
 				"additionalProperties": false,
 			},

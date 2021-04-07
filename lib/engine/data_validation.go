@@ -38,6 +38,16 @@ func wrapJsonSchemaBehindHash(dataType string, jsonSchema bson.M) bson.M {
 	}
 }
 
+// wrapJsonSchemaBehindBatchId rattache un JSON Schema à un BatchId.
+// (cf structure de ImportedData)
+func wrapJsonSchemaBehindBatchId(jsonSchema bson.M) bson.M {
+	return bson.M{
+		"bsonType":             "object",
+		"patternProperties":    bson.M{"[0-9_]+": jsonSchema},
+		"additionalProperties": false,
+	}
+}
+
 func parseJSONObject(content string) (object bson.M, err error) {
 	err = json.Unmarshal([]byte(content), &object) // transform json string into bson.M
 	return object, err
