@@ -1,7 +1,6 @@
 package engine
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"sync"
@@ -152,23 +151,13 @@ func InsertIntoImportedData(db *mgo.Database) chan *Value {
 		buffer := make(map[string]*Value)
 		objects := make([]interface{}, 0)
 		i := 0
-
 		insertObjectsIntoImportedData := func() {
 			for _, v := range buffer {
 				objects = append(objects, *v)
-				if err := db.C("ImportedData").Insert(*v); err != nil {
-					res, _ := json.Marshal(*v)
-					fmt.Println(string(res))
-
-					log.Fatal(err)
-				}
 			}
-			// if len(objects) > 0 {
-			// 	if err := db.C("ImportedData").Insert(objects...); err != nil {
-			// 		log.Println(err)
-			// 		log.Println(objects...)
-			// 	}
-			// }
+			if len(objects) > 0 {
+				db.C("ImportedData").Insert(objects...)
+			}
 			buffer = make(map[string]*Value)
 			objects = make([]interface{}, 0)
 			i = 0
