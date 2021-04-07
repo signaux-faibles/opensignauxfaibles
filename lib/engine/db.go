@@ -88,12 +88,19 @@ func InitDB() DB {
 									"apconso": bson.M{
 										"bsonType": "object",
 										"patternProperties": bson.M{
-											dataHashPattern: /*bson.M{ "bsonType": "object", },*/ jsonSchemas["apconso.schema.json"],
+											dataHashPattern: jsonSchemas["apconso.schema.json"],
+										},
+										"additionalProperties": false,
+									},
+									"ellisphere": bson.M{
+										"bsonType": "object",
+										"patternProperties": bson.M{
+											dataHashPattern: jsonSchemas["ellisphere.schema.json"],
 										},
 										"additionalProperties": false,
 									},
 								},
-								// "additionalProperties": false,
+								"additionalProperties": false,
 							},
 						},
 						// "additionalProperties": false,
