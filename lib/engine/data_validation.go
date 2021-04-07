@@ -24,7 +24,7 @@ func MakeValidationSchemaForImportedData(schemaPerHashedDataType map[string]bson
 				"properties": bson.M{
 					"scope": bson.M{"bsonType": "string", "enum": []string{"etablissement", "entreprise"}},
 					"key":   bson.M{"bsonType": "string", "pattern": "[0-9]+"}, // SIREN ou SIRET
-					"batch": wrapValidationSchemaBehindBatchId(bson.M{
+					"batch": wrapValidationSchemaBehindBatchID(bson.M{
 						"bsonType":             "object",
 						"properties":           schemaPerHashedDataType,
 						"additionalProperties": false,
@@ -58,9 +58,9 @@ func wrapValidationSchemaBehindHash(jsonSchema bson.M) bson.M {
 	}
 }
 
-// wrapValidationSchemaBehindBatchId rattache un JSON Schema à un BatchId.
+// wrapValidationSchemaBehindBatchID rattache un JSON Schema à un BatchId.
 // (cf structure de ImportedData)
-func wrapValidationSchemaBehindBatchId(jsonSchema bson.M) bson.M {
+func wrapValidationSchemaBehindBatchID(jsonSchema bson.M) bson.M {
 	return bson.M{
 		"bsonType":             "object",
 		"patternProperties":    bson.M{"[0-9_]+": jsonSchema},
