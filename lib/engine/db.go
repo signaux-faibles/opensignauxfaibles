@@ -69,7 +69,7 @@ func InitDB() DB {
 	if err != nil {
 		log.Fatal("échec de récupération d'un schéma de validation JSON: " + err.Error())
 	}
-	schemaPerHashedDataType := MakeJsonSchemaPerHashedDataType(jsonSchemas)
+	schemaPerHashedDataType := MakeValidationSchemaPerHashedDataType(jsonSchemas)
 	jsonSchema := MakeValidationSchemaForImportedData(schemaPerHashedDataType)
 	if err = setupDocValidation(db, "ImportedData", jsonSchema); err != nil {
 		log.Fatal("échec d'injection du schéma de validation de données JSON dans ImportedData:" + err.Error())
