@@ -23,14 +23,14 @@ func MakeJsonSchemaPerHashedDataType() (map[string]bson.M, error) {
 		return nil, err
 	}
 	for dataType, _ := range jsonSchemas {
-		schemas[dataType] = wrapJsonSchemaBehindHash(dataType, jsonSchemas[dataType])
+		schemas[dataType] = wrapJsonSchemaBehindHash(jsonSchemas[dataType])
 	}
 	return schemas, nil
 }
 
 // wrapJsonSchemaBehindHash rattache un JSON Schema à un "data hash".
 // (cf structure de ImportedData)
-func wrapJsonSchemaBehindHash(dataType string, jsonSchema bson.M) bson.M {
+func wrapJsonSchemaBehindHash(jsonSchema bson.M) bson.M {
 	return bson.M{
 		"bsonType":             "object",
 		"patternProperties":    bson.M{"[0-9a-f]+": jsonSchema},
