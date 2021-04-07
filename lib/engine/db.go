@@ -66,26 +66,9 @@ func InitDB() DB {
 
 	batchPattern := "[0-9_]+"
 
-	schemaPerDataType := func() map[string]bson.M {
-		schemas := map[string]bson.M{}
-		dataHashPattern := "[0-9a-f]+"
-		jsonSchemas, err := LoadJSONSchemaFiles()
-		if err != nil {
-			log.Fatal("échec de récupération d'un schéma de validation JSON: " + err.Error())
-		}
-		schemaBehindHash := func(dataType string) bson.M {
-			return bson.M{
-				"bsonType": "object",
-				"patternProperties": bson.M{
-					dataHashPattern: jsonSchemas[dataType],
-				},
-				"additionalProperties": false,
-			}
-		}
-		for dataType, _ := range jsonSchemas {
-			schemas[dataType] = schemaBehindHash(dataType)
-		}
-		return schemas
+	schemaPerHashedDataType, err := MakeJsonSchemaPerHashedDataType()
+	if err != nil {
+		log.Fatal("échec de récupération d'un schéma de validation JSON: " + err.Error())
 	}
 
 	jsonSchema := bson.M{
@@ -98,7 +81,7 @@ func InitDB() DB {
 						"patternProperties": bson.M{
 							batchPattern: bson.M{
 								"bsonType":             "object",
-								"properties":           schemaPerDataType(),
+								"properties":           schemaPerHashedDataType,
 								"additionalProperties": false,
 							},
 						},
