@@ -81,6 +81,27 @@ func InitDB() DB {
 		}
 	}
 
+	schemaPerDataType := func() map[string]bson.M {
+		return map[string]bson.M{
+			"apconso":      schemaBehindHash("apconso"),
+			"apdemande":    schemaBehindHash("apdemande"),
+			"bdf":          schemaBehindHash("bdf"),
+			"ccsf":         schemaBehindHash("ccsf"),
+			"compte":       schemaBehindHash("compte"),
+			"cotisation":   schemaBehindHash("cotisation"),
+			"debit":        schemaBehindHash("debit"),
+			"delai":        schemaBehindHash("delai"),
+			"diane":        schemaBehindHash("diane"),
+			"ellisphere":   schemaBehindHash("ellisphere"),
+			"effectif":     schemaBehindHash("effectif"),
+			"effectif_ent": schemaBehindHash("effectif_ent"),
+			"paydex":       schemaBehindHash("paydex"),
+			"procol":       schemaBehindHash("procol"),
+			"sirene":       schemaBehindHash("sirene"),
+			"sirene_ul":    schemaBehindHash("sirene_ul"),
+		}
+	}
+
 	jsonSchema := bson.M{
 		"bsonType": "object",
 		"properties": bson.M{
@@ -90,25 +111,8 @@ func InitDB() DB {
 					"batch": bson.M{
 						"patternProperties": bson.M{
 							batchPattern: bson.M{
-								"bsonType": "object",
-								"properties": bson.M{
-									"apconso":      schemaBehindHash("apconso"),
-									"apdemande":    schemaBehindHash("apdemande"),
-									"bdf":          schemaBehindHash("bdf"),
-									"ccsf":         schemaBehindHash("ccsf"),
-									"compte":       schemaBehindHash("compte"),
-									"cotisation":   schemaBehindHash("cotisation"),
-									"debit":        schemaBehindHash("debit"),
-									"delai":        schemaBehindHash("delai"),
-									"diane":        schemaBehindHash("diane"),
-									"ellisphere":   schemaBehindHash("ellisphere"),
-									"effectif":     schemaBehindHash("effectif"),
-									"effectif_ent": schemaBehindHash("effectif_ent"),
-									"paydex":       schemaBehindHash("paydex"),
-									"procol":       schemaBehindHash("procol"),
-									"sirene":       schemaBehindHash("sirene"),
-									"sirene_ul":    schemaBehindHash("sirene_ul"),
-								},
+								"bsonType":             "object",
+								"properties":           schemaPerDataType(),
 								"additionalProperties": false,
 							},
 						},
