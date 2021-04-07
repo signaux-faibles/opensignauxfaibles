@@ -70,10 +70,17 @@ func InitDB() DB {
 	if err != nil {
 		log.Fatal("échec de récupération d'un schéma de validation JSON: " + err.Error())
 	}
-	// TODO: support other file types
-	// TODO: git stash pop
 
-	// TODO: provide data validation document here
+	schemaBehindHash := func(dataType string) bson.M {
+		return bson.M{
+			"bsonType": "object",
+			"patternProperties": bson.M{
+				dataHashPattern: jsonSchemas[dataType],
+			},
+			"additionalProperties": false,
+		}
+	}
+
 	jsonSchema := bson.M{
 		"bsonType": "object",
 		"properties": bson.M{
@@ -85,20 +92,22 @@ func InitDB() DB {
 							batchPattern: bson.M{
 								"bsonType": "object",
 								"properties": bson.M{
-									"apconso": bson.M{
-										"bsonType": "object",
-										"patternProperties": bson.M{
-											dataHashPattern: jsonSchemas["apconso.schema.json"],
-										},
-										"additionalProperties": false,
-									},
-									"ellisphere": bson.M{
-										"bsonType": "object",
-										"patternProperties": bson.M{
-											dataHashPattern: jsonSchemas["ellisphere.schema.json"],
-										},
-										"additionalProperties": false,
-									},
+									"apconso":      schemaBehindHash("apconso"),
+									"apdemande":    schemaBehindHash("apdemande"),
+									"bdf":          schemaBehindHash("bdf"),
+									"ccsf":         schemaBehindHash("ccsf"),
+									"compte":       schemaBehindHash("compte"),
+									"cotisation":   schemaBehindHash("cotisation"),
+									"debit":        schemaBehindHash("debit"),
+									"delai":        schemaBehindHash("delai"),
+									"diane":        schemaBehindHash("diane"),
+									"ellisphere":   schemaBehindHash("ellisphere"),
+									"effectif":     schemaBehindHash("effectif"),
+									"effectif_ent": schemaBehindHash("effectif_ent"),
+									"paydex":       schemaBehindHash("paydex"),
+									"procol":       schemaBehindHash("procol"),
+									"sirene":       schemaBehindHash("sirene"),
+									"sirene_ul":    schemaBehindHash("sirene_ul"),
 								},
 								"additionalProperties": false,
 							},
