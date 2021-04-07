@@ -116,11 +116,11 @@ func CreateImportedDataCollection(db *mgo.Database, colName string) error {
 	}
 	schemaPerHashedDataType := MakeValidationSchemaPerHashedDataType(jsonSchemas)
 	jsonSchema := MakeValidationSchemaForImportedData(schemaPerHashedDataType)
-	return SetupDocValidation(db, colName, jsonSchema)
+	return setupDocValidation(db, colName, jsonSchema)
 }
 
-// SetupDocValidation configure la validation de documents pour une collection existante.
-func SetupDocValidation(db *mgo.Database, colName string, jsonSchema bson.M) error {
+// setupDocValidation configure la validation de documents pour une collection existante.
+func setupDocValidation(db *mgo.Database, colName string, jsonSchema bson.M) error {
 	var validRes struct {
 		Ok            bool          `bson:"ok" json:"ok"`
 		Errmsg        string        `bson:"errmsg" json:"errmsg"`
