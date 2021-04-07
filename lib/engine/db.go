@@ -74,9 +74,12 @@ func InitDB() DB {
 	jsonSchema := bson.M{
 		"bsonType": "object",
 		"properties": bson.M{
+			"_id": bson.M{"bsonType": "objectId"},
 			"value": bson.M{
 				"bsonType": "object",
 				"properties": bson.M{
+					"scope": bson.M{"bsonType": "string", "enum": []string{"etablissement", "entreprise"}},
+					"key":   bson.M{"bsonType": "string", "pattern": "[0-9]+"}, // SIREN ou SIRET
 					"batch": bson.M{
 						"patternProperties": bson.M{
 							batchPattern: bson.M{
@@ -88,19 +91,10 @@ func InitDB() DB {
 						"additionalProperties": false,
 					},
 				},
-				// "additionalProperties": false,
+				"additionalProperties": false,
 			},
 		},
-		"oneOf": []bson.M{
-			{},
-		},
-		// "properties": bson.M{
-		// 	"numero_compte": {
-		// 		"bsonType": "string",
-		// 		"description": "Compte administratif URSSAF."
-		// 	},
-		// },
-		// "additionalProperties": true,
+		"additionalProperties": false,
 	}
 	if err = setupDocValidation(db, "ImportedData", jsonSchema); err != nil {
 		log.Fatal(err)
