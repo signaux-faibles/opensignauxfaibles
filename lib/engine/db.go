@@ -58,21 +58,8 @@ func InitDB() DB {
 		Key: []string{"_id.type", "_id.key"},
 	})
 
-	// Création d'index sur la collection ImportedData, pour le découpage du map-reduce de Compact
-	db.C("ImportedData").EnsureIndex(mgo.Index{
-		Name: "value.key_1",         // trouvé sur la db de prod
-		Key:  []string{"value.key"}, // numéro SIRET ou SIREN
-	})
-
-	// Injection du schéma de validation de données JSON dans ImportedData
-	jsonSchemas, err := LoadJSONSchemaFiles()
-	if err != nil {
-		log.Fatal("échec de récupération d'un schéma de validation JSON: " + err.Error())
-	}
-	schemaPerHashedDataType := MakeValidationSchemaPerHashedDataType(jsonSchemas)
-	jsonSchema := MakeValidationSchemaForImportedData(schemaPerHashedDataType)
-	if err = SetupDocValidation(db, "ImportedData", jsonSchema); err != nil {
-		log.Fatal("échec d'injection du schéma de validation de données JSON dans ImportedData:" + err.Error())
+	if err = CreateImportedDataCollection(db, "ImportedData"); err != nil {
+		log.Fatal("échec d'initialisation de ImportedData: " + err.Error())
 	}
 
 	firstBatchID := viper.GetString("FIRST_BATCH")
@@ -111,6 +98,25 @@ func InitDB() DB {
 		DB:       db,
 		DBStatus: dbstatus,
 	}
+}
+
+// CreateImportedDataCollection créée une collection "ImportedData" avec index et
+// validation de documents.
+func CreateImportedDataCollection(db *mgo.Database, colName string) error {
+	// Création d'index sur la collection ImportedData, pour le découpage du map-reduce de Compact
+	db.C(colName).EnsureIndex(mgo.Index{
+		Name: "value.key_1",         // trouvé sur la db de prod
+		Key:  []string{"value.key"}, // numéro SIRET ou SIREN
+	})
+
+	// Injection du schéma de validation de données JSON dans ImportedData
+	jsonSchemas, err := LoadJSONSchemaFiles()
+	if err != nil {
+		return err
+	}
+	schemaPerHashedDataType := MakeValidationSchemaPerHashedDataType(jsonSchemas)
+	jsonSchema := MakeValidationSchemaForImportedData(schemaPerHashedDataType)
+	return SetupDocValidation(db, colName, jsonSchema)
 }
 
 // SetupDocValidation configure la validation de documents pour une collection existante.

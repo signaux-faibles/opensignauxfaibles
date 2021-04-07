@@ -48,7 +48,7 @@ func TestMain(t *testing.T) {
 	db := mongodb.DB(mongoDatabase)
 
 	t.Run("Toutes les commandes (CLI) doivent fonctionner à condition qu'un batch valide soit fourni", func(t *testing.T) {
-
+		// Insertion d'un Batch valide
 		db.C("Admin").Insert(bson.M{
 			"_id": bson.M{
 				"key":  "1910",
@@ -63,7 +63,7 @@ func TestMain(t *testing.T) {
 				"date_fin":   time.Date(2019, 1, 1, 0, 0, 0, 0, time.UTC), // ISODate("2019-02-01T00:00:00.000+0000"),
 			},
 		})
-
+		// Exécution des commandes et vérification qu'elles s'achèvent toutes avec un exit code nul
 		assert.Equal(t, 0, runCLI("sfdata", "check", "--batch=1910"))
 		assert.Equal(t, 0, runCLI("sfdata", "import", "--batch=1910", "--no-filter"))
 		assert.Equal(t, 0, runCLI("sfdata", "validate", "--collection=ImportedData"))
@@ -76,47 +76,35 @@ func TestMain(t *testing.T) {
 	})
 
 	t.Run("Les données importées sont validées par MongoDB", func(t *testing.T) {
-		colName := "FakeImportedData"
-
 		// Création d'une collection associée au schéma de validation de données JSON de ImportedData
-		coll := db.C(colName)
-		coll.Create(&mgo.CollectionInfo{})
-		jsonSchemas, err := engine.LoadJSONSchemaFiles()
-		if err != nil {
-			log.Fatal("échec de récupération d'un schéma de validation JSON: " + err.Error())
-		}
-		schemaPerHashedDataType := engine.MakeValidationSchemaPerHashedDataType(jsonSchemas)
-		jsonSchema := engine.MakeValidationSchemaForImportedData(schemaPerHashedDataType)
-		if err = engine.SetupDocValidation(db, colName, jsonSchema); err != nil {
-			log.Fatal("échec d'injection du schéma de validation de données JSON dans ImportedData:" + err.Error())
-		}
-
-		err = coll.Insert(bson.M{
-			"value": bson.M{
-				"scope": "entreprise",
-				"key":   "000000002",
-				"batch": bson.M{
-					"2002_2": bson.M{
-						"paydex": bson.M{
-							"afafafafafafaf": bson.M{"date_valeur": time.Now(), "nb_jours": 4},
+		colName := "FakeImportedData"
+		err := engine.CreateImportedDataCollection(db, colName)
+		if assert.NoError(t, err) {
+			coll := db.C(colName)
+			// L'insertion d'un document valide ne doit pas provoquer d'erreur
+			assert.NoError(t, coll.Insert(bson.M{
+				"value": bson.M{
+					"scope": "entreprise",
+					"key":   "000000002",
+					"batch": bson.M{
+						"2002_2": bson.M{
+							"paydex": bson.M{
+								"afafafafafafaf": bson.M{"date_valeur": time.Now(), "nb_jours": 4},
+							},
 						},
 					},
 				},
-			},
-		})
-		assert.NoError(t, err)
-
-		err = coll.Insert(bson.M{"a": 1})
-		assert.EqualError(t, err, "Document failed validation")
+			}))
+			// L'insertion d'un document invalide doit provoquer une erreur
+			assert.EqualError(t, coll.Insert(bson.M{"a": 1}), "Document failed validation")
+		}
 	})
-
-	// var firstBatch base.AdminBatch
-	// db.C("Admin").Find(bson.M{}).One(&firstBatch)
-	// log.Println(firstBatch)
 }
 
 func startMongoContainer(t *testing.T) {
 	t.Log("Starting MongoDB in Docker container...")
+	exec.Command("docker", "stop", mongoContainer).Run()
+	exec.Command("docker", "rm", mongoContainer).Run()
 	portMapping := fmt.Sprintf("%v:27017", mongoPort)
 	err := exec.Command("docker", "run", "--rm", "-d", "-p", portMapping, "--name", mongoContainer, mongoImage).Run()
 	if err != nil {
