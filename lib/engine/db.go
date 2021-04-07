@@ -85,7 +85,7 @@ func InitDB() DB {
 								"additionalProperties": false,
 							},
 						},
-						// "additionalProperties": false,
+						"additionalProperties": false,
 					},
 				},
 				// "additionalProperties": false,
