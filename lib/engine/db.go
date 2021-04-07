@@ -65,41 +65,27 @@ func InitDB() DB {
 	})
 
 	batchPattern := "[0-9_]+"
-	dataHashPattern := "[0-9a-f]+"
-	jsonSchemas, err := LoadJSONSchemaFiles()
-	if err != nil {
-		log.Fatal("échec de récupération d'un schéma de validation JSON: " + err.Error())
-	}
-
-	schemaBehindHash := func(dataType string) bson.M {
-		return bson.M{
-			"bsonType": "object",
-			"patternProperties": bson.M{
-				dataHashPattern: jsonSchemas[dataType],
-			},
-			"additionalProperties": false,
-		}
-	}
 
 	schemaPerDataType := func() map[string]bson.M {
-		return map[string]bson.M{
-			"apconso":      schemaBehindHash("apconso"),
-			"apdemande":    schemaBehindHash("apdemande"),
-			"bdf":          schemaBehindHash("bdf"),
-			"ccsf":         schemaBehindHash("ccsf"),
-			"compte":       schemaBehindHash("compte"),
-			"cotisation":   schemaBehindHash("cotisation"),
-			"debit":        schemaBehindHash("debit"),
-			"delai":        schemaBehindHash("delai"),
-			"diane":        schemaBehindHash("diane"),
-			"ellisphere":   schemaBehindHash("ellisphere"),
-			"effectif":     schemaBehindHash("effectif"),
-			"effectif_ent": schemaBehindHash("effectif_ent"),
-			"paydex":       schemaBehindHash("paydex"),
-			"procol":       schemaBehindHash("procol"),
-			"sirene":       schemaBehindHash("sirene"),
-			"sirene_ul":    schemaBehindHash("sirene_ul"),
+		schemas := map[string]bson.M{}
+		dataHashPattern := "[0-9a-f]+"
+		jsonSchemas, err := LoadJSONSchemaFiles()
+		if err != nil {
+			log.Fatal("échec de récupération d'un schéma de validation JSON: " + err.Error())
 		}
+		schemaBehindHash := func(dataType string) bson.M {
+			return bson.M{
+				"bsonType": "object",
+				"patternProperties": bson.M{
+					dataHashPattern: jsonSchemas[dataType],
+				},
+				"additionalProperties": false,
+			}
+		}
+		for dataType, _ := range jsonSchemas {
+			schemas[dataType] = schemaBehindHash(dataType)
+		}
+		return schemas
 	}
 
 	jsonSchema := bson.M{
