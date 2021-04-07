@@ -18,24 +18,24 @@ import (
 // correspondantes, rattachées à un Hash. (cf structure de ImportedData)
 func MakeJsonSchemaPerHashedDataType() (map[string]bson.M, error) {
 	schemas := map[string]bson.M{}
-	dataHashPattern := "[0-9a-f]+"
 	jsonSchemas, err := LoadJSONSchemaFiles()
 	if err != nil {
 		return nil, err
 	}
-	schemaBehindHash := func(dataType string) bson.M {
-		return bson.M{
-			"bsonType": "object",
-			"patternProperties": bson.M{
-				dataHashPattern: jsonSchemas[dataType],
-			},
-			"additionalProperties": false,
-		}
-	}
 	for dataType, _ := range jsonSchemas {
-		schemas[dataType] = schemaBehindHash(dataType)
+		schemas[dataType] = wrapJsonSchemaBehindHash(dataType, jsonSchemas[dataType])
 	}
 	return schemas, nil
+}
+
+// wrapJsonSchemaBehindHash rattache un JSON Schema à un "data hash".
+// (cf structure de ImportedData)
+func wrapJsonSchemaBehindHash(dataType string, jsonSchema bson.M) bson.M {
+	return bson.M{
+		"bsonType":             "object",
+		"patternProperties":    bson.M{"[0-9a-f]+": jsonSchema},
+		"additionalProperties": false,
+	}
 }
 
 func parseJSONObject(content string) (object bson.M, err error) {
