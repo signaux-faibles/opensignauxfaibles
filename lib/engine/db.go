@@ -66,10 +66,12 @@ func InitDB() DB {
 
 	batchPattern := "[0-9_]+"
 	dataHashPattern := "[0-9a-f]+"
-	var apconsoSchema bson.M
-	if err = json.Unmarshal([]byte(validationSchemas["apconso.schema.json"]), &apconsoSchema); err != nil {
-		log.Fatal("échec de récupération du schéma de validation JSON: apconso.schema.json")
+	jsonSchemas, err := LoadJSONSchemaFiles()
+	if err != nil {
+		log.Fatal("échec de récupération d'un schéma de validation JSON: " + err.Error())
 	}
+	// TODO: support other file types
+	// TODO: git stash pop
 
 	// TODO: provide data validation document here
 	jsonSchema := bson.M{
@@ -86,7 +88,7 @@ func InitDB() DB {
 									"apconso": bson.M{
 										"bsonType": "object",
 										"patternProperties": bson.M{
-											dataHashPattern: /*bson.M{ "bsonType": "object", },*/ apconsoSchema,
+											dataHashPattern: /*bson.M{ "bsonType": "object", },*/ jsonSchemas["apconso.schema.json"],
 										},
 										"additionalProperties": false,
 									},
