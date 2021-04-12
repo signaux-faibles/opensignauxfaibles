@@ -27,12 +27,11 @@ func PublicOne(batch base.AdminBatch, key string) error {
 	}
 
 	scope := bson.M{
-		"date_fin":        batch.Params.DateFin,
-		"serie_periode":   misc.GenereSeriePeriode(batch.Params.DateDebut, batch.Params.DateFin),
-		"offset_effectif": (batch.Params.DateFinEffectif.Year()-batch.Params.DateFin.Year())*12 + int(batch.Params.DateFinEffectif.Month()-batch.Params.DateFin.Month()),
-		"actual_batch":    batch.ID.Key,
-		"f":               functions,
-		"batches":         GetBatchesID(),
+		"date_fin":      batch.Params.DateFin,
+		"serie_periode": misc.GenereSeriePeriode(batch.Params.DateDebut, batch.Params.DateFin),
+		"actual_batch":  batch.ID.Key,
+		"f":             functions,
+		"batches":       GetBatchesID(),
 	}
 
 	job := &mgo.MapReduce{
@@ -69,12 +68,11 @@ func Public(batch base.AdminBatch) error {
 		return err
 	}
 	scope := bson.M{
-		"date_fin":        batch.Params.DateFin,
-		"serie_periode":   misc.GenereSeriePeriode(batch.Params.DateFin.AddDate(0, -24, 0), batch.Params.DateFin),
-		"offset_effectif": (batch.Params.DateFinEffectif.Year()-batch.Params.DateFin.Year())*12 + int(batch.Params.DateFinEffectif.Month()-batch.Params.DateFin.Month()), // TODO: nécessaire => faire en sorte qu'il soit retourné par $(getGlobals 'public/*.ts')
-		"actual_batch":    batch.ID.Key,
-		"f":               functions,
-		"batches":         GetBatchesID(),
+		"date_fin":      batch.Params.DateFin,
+		"serie_periode": misc.GenereSeriePeriode(batch.Params.DateFin.AddDate(0, -24, 0), batch.Params.DateFin),
+		"actual_batch":  batch.ID.Key, // TODO: nécessaire => faire en sorte qu'il soit retourné par $(getGlobals 'public/*.ts')
+		"f":             functions,
+		"batches":       GetBatchesID(),
 	}
 
 	chunks, err := ChunkCollection(viper.GetString("DB"), "RawData", viper.GetInt64("chunkByteSize"))
