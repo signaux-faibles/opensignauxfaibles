@@ -314,7 +314,6 @@ func reduceDefineScope(batch base.AdminBatch, types []string) (bson.M, error) {
 	scope := bson.M{
 		"date_debut":             batch.Params.DateDebut,
 		"date_fin":               batch.Params.DateFin,
-		"date_fin_effectif":      batch.Params.DateFinEffectif,
 		"serie_periode":          misc.GenereSeriePeriode(batch.Params.DateDebut, batch.Params.DateFin),
 		"serie_periode_annuelle": misc.GenereSeriePeriodeAnnuelle(batch.Params.DateDebut, batch.Params.DateFin),
 		"offset_effectif":        (batch.Params.DateFinEffectif.Year()-batch.Params.DateFin.Year())*12 + int(batch.Params.DateFinEffectif.Month()-batch.Params.DateFin.Month()),
