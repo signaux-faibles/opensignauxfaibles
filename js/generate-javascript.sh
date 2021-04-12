@@ -45,3 +45,4 @@ checkJS "reduce.algo2/*.js" "f,print,emit,bsonsize,$(getGlobals 'reduce.algo2/*.
 # getGlobals 'compact/*.ts' # => batches,completeTypes,fromBatchKey,serie_periode
 # getGlobals 'public/*.ts' # => actual_batch,date_fin,serie_periode
 # getGlobals 'reduce.algo2/*.ts' # => actual_batch,date_fin,includes,naf,offset_effectif,serie_periode
+# getGlobals 'common/*.ts' => 
