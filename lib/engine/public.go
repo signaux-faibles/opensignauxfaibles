@@ -27,7 +27,6 @@ func PublicOne(batch base.AdminBatch, key string) error {
 	}
 
 	scope := bson.M{
-		// "date_debut":      batch.Params.DateDebut,
 		"date_fin":        batch.Params.DateFin,
 		"serie_periode":   misc.GenereSeriePeriode(batch.Params.DateDebut, batch.Params.DateFin),
 		"offset_effectif": (batch.Params.DateFinEffectif.Year()-batch.Params.DateFin.Year())*12 + int(batch.Params.DateFinEffectif.Month()-batch.Params.DateFin.Month()),
