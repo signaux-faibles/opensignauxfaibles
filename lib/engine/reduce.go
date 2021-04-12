@@ -171,7 +171,7 @@ func Reduce(batch base.AdminBatch, types []string) error {
 
 	// Création d'index sur la collection Features, pour le chargement de données depuis Python
 	Db.DB.C(outCollection).EnsureIndex(mgo.Index{
-		Name: "index_echantillonage",
+		Name: "index_echantillonnage",
 		Key:  []string{"-value.random_order", "_id.periode", "value.effectif", "-value.outcome"},
 	})
 
