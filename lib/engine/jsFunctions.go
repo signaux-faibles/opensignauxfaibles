@@ -838,7 +838,7 @@ db.getCollection("Features").createIndex({
                     periode: debit.periode.start,
                     part_ouvriere: debit.part_ouvriere,
                     part_patronale: debit.part_patronale,
-                    montant_majorations: /*debit.montant_majorations ||*/ 0,
+                    montant_majorations: /*debit.montant_majorations ||*/ 0, // TODO: montant_majorations n'est pas fourni par les fichiers debit de l'urssaf pour l'instant, mais on aimerait y avoir accès un jour.
                 },
             ]);
         });
@@ -1137,7 +1137,8 @@ function sirene(sireneArray) {
     const merged_info = f.makePeriodeMap();
     for (const période of périodes) {
         merged_info.set(période, {
-            outcome: Boolean(((_a = output_procol.get(période)) === null || _a === void 0 ? void 0 : _a.tag_failure) || ((_b = output_cotisation.get(période)) === null || _b === void 0 ? void 0 : _b.tag_default)),
+            outcome: Boolean(((_a = output_procol.get(période)) === null || _a === void 0 ? void 0 : _a.tag_failure) ||
+                ((_b = output_cotisation.get(période)) === null || _b === void 0 ? void 0 : _b.tag_default)),
         });
     }
     const outputPastOutcome = f.lookAhead(merged_info, "outcome", n_months, false);
@@ -1150,7 +1151,7 @@ function sirene(sireneArray) {
         const oFailure = output_failure.get(k);
         return m.set(k, Object.assign(Object.assign(Object.assign(Object.assign({}, ((oPast === null || oPast === void 0 ? void 0 : oPast.time_til_outcome) && {
             outcome: oPast.outcome,
-            time_til_outcome: -oPast.time_til_outcome,
+            time_til_outcome: -oPast.time_til_outcome, // ex: -1 veut dire qu'il y a eu une défaillance il y a 1 mois
         })), output_outcome.get(k)), (oDefault && { time_til_default: oDefault.time_til_outcome })), (oFailure && { time_til_failure: oFailure.time_til_outcome })));
     }, f.makePeriodeMap());
     return output_cible;
@@ -1797,7 +1798,8 @@ function map() {
     const v = f.flatten(this.value, actual_batch);
     if (v.scope === "etablissement") {
         const [output_array, // DonnéesAgrégées[] dans l'ordre chronologique
-        output_indexed,] = f.outputs(v, serie_periode);
+        output_indexed, // { Periode -> DonnéesAgrégées }
+        ] = f.outputs(v, serie_periode);
         // Les periodes qui nous interessent, triées
         const periodes = serie_periode.map((date) => date.getTime());
         if (includes["apart"] || includes["all"]) {
