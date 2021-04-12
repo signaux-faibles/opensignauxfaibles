@@ -14,6 +14,8 @@ type VariablesTransmises = {
   longitude: EntréeSirene["longitude"] | null
   /** Département où est localisé l'établissement. */
   departement: EntréeSirene["departement"] | null
+  /** Code commune de l’établissement */
+  code_commune: EntréeSirene["code_commune"] | null
   /** Code APE/NAF de l'établissement. */
   code_ape: EntréeSirene["ape"]
 }
@@ -54,6 +56,7 @@ export function sirene(
       val.siren = val.siret.substring(0, 9)
       val.latitude = sirene.latitude || null
       val.longitude = sirene.longitude || null
+      val.code_commune = sirene.code_commune || null
       val.departement = sirene.departement || null
       if (val.departement) {
         val.region = f.region(val.departement)

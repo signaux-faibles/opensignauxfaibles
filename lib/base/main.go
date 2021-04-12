@@ -2,6 +2,8 @@ package base
 
 import (
 	"errors"
+	"regexp"
+	"strings"
 	"time"
 )
 
@@ -51,13 +53,36 @@ type AdminID struct {
 }
 
 // BatchFiles fichiers mappés par type
-type BatchFiles map[string][]string
+type BatchFiles map[string][]BatchFile
+
+// BatchFile encapsule un fichier mentionné dans un Batch
+type BatchFile string
+
+// FilePath retourne le chemin vers le fichier, sans préfixe
+func (file BatchFile) FilePath() string {
+	return rePrefix.ReplaceAllString(string(file), "") // c.a.d. suppression du préfixe éventuellement trouvé
+}
+
+// IsCompressed est vrai si le fichier est compressé
+func (file BatchFile) IsCompressed() bool {
+	return file.Prefix() == "gzip:" || strings.HasSuffix(string(file), ".gz")
+}
+
+// Prefix retourne le préfixe éventuellement présent devant le nom de fichier
+func (file BatchFile) Prefix() string {
+	return rePrefix.FindString(string(file))
+}
+
+var rePrefix = regexp.MustCompile("^[a-z]*:")
 
 // MockBatch with a map[type][]filepaths
 func MockBatch(filetype string, filepaths []string) AdminBatch {
-	fileMap := map[string][]string{filetype: filepaths}
+	batchFiles := []BatchFile{}
+	for _, file := range filepaths {
+		batchFiles = append(batchFiles, BatchFile(file))
+	}
 	batch := AdminBatch{
-		Files: BatchFiles(fileMap),
+		Files: BatchFiles{filetype: batchFiles},
 		Params: adminBatchParams{
 			DateDebut: time.Date(2019, 0, 1, 0, 0, 0, 0, time.UTC), // January 1st, 2019
 			DateFin:   time.Date(2019, 1, 1, 0, 0, 0, 0, time.UTC), // February 1st, 2019

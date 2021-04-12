@@ -8,10 +8,10 @@
 			"batch" : {
 				"1910" : {
 					"ccsf" : {
-						"ad0fee602b0e6f8aa4de2b295193c5f8" : {
+						"89bc2500246fbebf18db509a6074a820" : {
 							"date_traitement" : ISODate("2018-01-30T00:00:00Z"),
-							"stade" : "ukohkb",
-							"action" : "klay"
+							"stade" : "DEBUT",
+							"action" : "CCSF"
 						}
 					},
 					"compte" : {
@@ -238,10 +238,10 @@
 			"batch" : {
 				"1910" : {
 					"ccsf" : {
-						"30358cf5c03e745df9e2faa50699204e" : {
+						"d1e7dfee8f53197f320b9bfecddd9573" : {
 							"date_traitement" : ISODate("2019-04-20T00:00:00Z"),
-							"stade" : "xljgvd",
-							"action" : "cvqv"
+							"stade" : "REFUS",
+							"action" : "CCSF"
 						}
 					},
 					"compte" : {
@@ -1562,10 +1562,10 @@
 			"batch" : {
 				"1910" : {
 					"ccsf" : {
-						"250442ed0a8d9f4bb5047ba28f0933ed" : {
+						"bd2b316120b1591f8ae4a166afa851ab" : {
 							"date_traitement" : ISODate("1999-04-01T00:00:00Z"),
-							"stade" : "ehxdqd",
-							"action" : "cair"
+							"stade" : "APPROB",
+							"action" : "CCSF"
 						}
 					},
 					"cotisation" : {
