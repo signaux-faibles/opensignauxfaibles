@@ -175,12 +175,6 @@ func Reduce(batch base.AdminBatch, types []string) error {
 		Key:  []string{"-value.random_order", "_id.periode", "value.effectif", "-value.outcome"},
 	})
 
-	// Création d'index sur la collection Features, pour le chargement de données par SIREN
-	Db.DB.C(outCollection).EnsureIndex(mgo.Index{
-		Name: "index_siren",
-		Key:  []string{"value.siren"},
-	})
-
 	LogOperationEventEx("Reduce", startDate, bson.M{
 		"batchId": batch.ID.Key,
 	})
