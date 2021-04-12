@@ -22,7 +22,6 @@ const initGlobalParams = (dateDebut: Date, dateFin: Date) =>
   setGlobals({
     offset_effectif: 2,
     actual_batch: "2002_1",
-    date_debut: dateDebut,
     date_fin: dateFin,
     serie_periode: generatePeriodSerie(dateDebut, dateFin),
   })
