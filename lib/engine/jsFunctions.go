@@ -690,47 +690,6 @@ function reduce(key, values // chaque element contient plusieurs batches pour ce
     return reducedValue;
 }`,
 },
-"migrations":{
-"agg_change_index_Features": `// db.getCollection("Features").aggregate(
-// 	[
-// 		// -- Stage 1 --
-// 		{
-// 			$project: {
-// 			    "_id": {
-// 			        "batch": "$info.batch",
-// 			        "siret": "$value.siret",
-// 			        "periode": "$info.periode"
-// 			    },
-// 			    "value": "$value"
-// 			}
-// 		},
-
-// 		// -- Stage 2 --
-// 		{
-// 			$out: "Features"
-// 		},
-// 	]
-// );
-
-
-db.getCollection("Features").dropIndex({
-    "info.batch" : 1,
-    "value.random_order" : -1,
-    "info.periode" : 1,
-    "value.effectif" : 1,
-    "info.siren" : 1
-})
-
-
-
-db.getCollection("Features").createIndex({
-    "_id.batch" : 1,
-    "value.random_order" : -1,
-    "_id.periode" : 1,
-    "value.effectif" : 1,
-    "_id.siret" : 1
-})`,
-},
 "public":{
 "apconso": `function apconso(apconso) {
     return Object.values(apconso !== null && apconso !== void 0 ? apconso : {}).sort((p1, p2) => p1.periode < p2.periode ? 1 : -1);
@@ -838,7 +797,7 @@ db.getCollection("Features").createIndex({
                     periode: debit.periode.start,
                     part_ouvriere: debit.part_ouvriere,
                     part_patronale: debit.part_patronale,
-                    montant_majorations: /*debit.montant_majorations ||*/ 0,
+                    montant_majorations: /*debit.montant_majorations ||*/ 0, // TODO: montant_majorations n'est pas fourni par les fichiers debit de l'urssaf pour l'instant, mais on aimerait y avoir accès un jour.
                 },
             ]);
         });
@@ -1125,7 +1084,8 @@ function sirene(sireneArray) {
         }
     });
 }`,
-"cibleApprentissage": `function cibleApprentissage(output_indexed, n_months) {
+"cibleApprentissage": `function cibleApprentissage(output_indexed, n_months // nombre de mois avant/après l'évènement pendant lesquels outcome sera true
+) {
     "use strict";
     var _a, _b;
     // Mock two input instead of one for future modification
@@ -1136,16 +1096,22 @@ function sirene(sireneArray) {
     const merged_info = f.makePeriodeMap();
     for (const période of périodes) {
         merged_info.set(période, {
-            outcome: Boolean(((_a = output_procol.get(période)) === null || _a === void 0 ? void 0 : _a.tag_failure) || ((_b = output_cotisation.get(période)) === null || _b === void 0 ? void 0 : _b.tag_default)),
+            outcome: Boolean(((_a = output_procol.get(période)) === null || _a === void 0 ? void 0 : _a.tag_failure) ||
+                ((_b = output_cotisation.get(période)) === null || _b === void 0 ? void 0 : _b.tag_default)),
         });
     }
+    const outputPastOutcome = f.lookAhead(merged_info, "outcome", n_months, false);
     const output_outcome = f.lookAhead(merged_info, "outcome", n_months, true);
     const output_default = f.lookAhead(output_cotisation, "tag_default", n_months, true);
     const output_failure = f.lookAhead(output_procol, "tag_failure", n_months, true);
     const output_cible = périodes.reduce(function (m, k) {
+        const oPast = outputPastOutcome.get(k);
         const oDefault = output_default.get(k);
         const oFailure = output_failure.get(k);
-        return m.set(k, Object.assign(Object.assign(Object.assign({}, output_outcome.get(k)), (oDefault && { time_til_default: oDefault.time_til_outcome })), (oFailure && { time_til_failure: oFailure.time_til_outcome })));
+        return m.set(k, Object.assign(Object.assign(Object.assign(Object.assign({}, ((oPast === null || oPast === void 0 ? void 0 : oPast.time_til_outcome) && {
+            outcome: oPast.outcome,
+            time_til_outcome: -oPast.time_til_outcome, // ex: -1 veut dire qu'il y a eu une défaillance il y a 1 mois
+        })), output_outcome.get(k)), (oDefault && { time_til_default: oDefault.time_til_outcome })), (oFailure && { time_til_failure: oFailure.time_til_outcome })));
     }, f.makePeriodeMap());
     return output_cible;
 }`,
@@ -1744,7 +1710,9 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
     return isNaN(ratio) ? null : ratio * 100;
 }`,
 "lookAhead": `function lookAhead(data, attr_name, // "outcome" | "tag_default" | "tag_failure",
-n_months, past) {
+n_months, // nombre de mois avant/après l'évènement pendant lesquels outcome sera true
+past // si true: on popule outcome pour les périodes passées, au lieu des périodes futures
+) {
     "use strict";
     // Est-ce que l'évènement se répercute dans le passé (past = true on pourra se
     // demander: que va-t-il se passer) ou dans le future (past = false on
@@ -1789,7 +1757,8 @@ function map() {
     const v = f.flatten(this.value, actual_batch);
     if (v.scope === "etablissement") {
         const [output_array, // DonnéesAgrégées[] dans l'ordre chronologique
-        output_indexed,] = f.outputs(v, serie_periode);
+        output_indexed, // { Periode -> DonnéesAgrégées }
+        ] = f.outputs(v, serie_periode);
         // Les periodes qui nous interessent, triées
         const periodes = serie_periode.map((date) => date.getTime());
         if (includes["apart"] || includes["all"]) {
@@ -2001,6 +1970,7 @@ function outputs(v, serie_periode) {
             val.siren = val.siret.substring(0, 9);
             val.latitude = sirene.latitude || null;
             val.longitude = sirene.longitude || null;
+            val.code_commune = sirene.code_commune || null;
             val.departement = sirene.departement || null;
             if (val.departement) {
                 val.region = f.region(val.departement);

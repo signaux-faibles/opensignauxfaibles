@@ -32,6 +32,18 @@ func InitEventQueue() {
 	}
 }
 
+// InitVoidEventQueue initialise un canal consommé sans envoi à la base de données, pour les tests automatisés
+func InitVoidEventQueue() {
+	relaying.Add(1)
+	mainMessageChannel = make(messageChannel)
+	go func() {
+		defer relaying.Done()
+		for range mainMessageChannel {
+			// on ignore l'événement
+		}
+	}()
+}
+
 // Transmet les messages collectés vers les clients et l'enregistre dans la bdd
 func messageDispatch() chan marshal.Event {
 	relaying.Add(1)

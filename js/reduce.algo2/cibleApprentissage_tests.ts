@@ -43,12 +43,12 @@ const testCases: TestCase[] = [
     expected: parPériode({
       "2015-01-01": {
         time_til_outcome: 2,
-        outcome: false,
+        outcome: false, // pas encore true car time_til_outcome > n_months
         time_til_default: 2,
       },
       "2015-02-01": { time_til_outcome: 1, outcome: true, time_til_default: 1 },
       "2015-03-01": { time_til_outcome: 0, outcome: true, time_til_default: 0 },
-      "2015-04-01": {},
+      "2015-04-01": { time_til_outcome: -1, outcome: true },
     }),
   },
   {
@@ -67,7 +67,7 @@ const testCases: TestCase[] = [
       },
       "2015-02-01": { time_til_outcome: 1, outcome: true, time_til_failure: 1 },
       "2015-03-01": { time_til_outcome: 0, outcome: true, time_til_failure: 0 },
-      "2015-04-01": {},
+      "2015-04-01": { time_til_outcome: -1, outcome: true },
     }),
   },
   {

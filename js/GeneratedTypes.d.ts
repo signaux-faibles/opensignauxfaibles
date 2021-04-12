@@ -148,8 +148,14 @@ export interface EntréeCcsf {
    * Date de début de la procédure CCSF
    */
   date_traitement: Date
-  stade: string
-  action: string
+  /**
+   * Stade de la demande de délai
+   */
+  stade: "DEBUT" | "REFUS" | "APPROB" | "FIN" | "REJ"
+  /**
+   * Code externe de l'action
+   */
+  action: "CCSF"
 }
 /**
  * Champs importés par le parseur lib/urssaf/compte.go de sfdata.

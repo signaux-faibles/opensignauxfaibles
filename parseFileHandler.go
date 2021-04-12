@@ -48,22 +48,16 @@ func (params parseFileHandler) Run() error {
 		return err
 	}
 
-	batch := base.AdminBatch{Files: base.BatchFiles{params.Parser: []string{params.File}}}
+	file := base.BatchFile(params.File)
+	batch := base.AdminBatch{Files: base.BatchFiles{params.Parser: []base.BatchFile{file}}}
 	cache := marshal.NewCache()
 	parser := parsers[0]
 
 	// the following code is inspired from marshal.ParseFilesFromBatch()
 	outputChannel := make(chan marshal.Tuple)
 	eventChannel := make(chan marshal.Event)
-	filter := marshal.GetSirenFilterFromCache(cache)
 	go func() {
-		tracker := marshal.NewParsingTracker()
-		if err := parser.Init(&cache, &batch); err != nil {
-			tracker.AddFatalError(err)
-		} else {
-			marshal.RunParserWithSirenFilter(parser, &filter, params.File, &tracker, outputChannel)
-		}
-		eventChannel <- marshal.CreateReportEvent(params.Parser, tracker.Report(batch.ID.Key, params.File))
+		eventChannel <- marshal.ParseFile(file, parser, &batch, cache, outputChannel)
 		close(outputChannel)
 		close(eventChannel)
 	}()

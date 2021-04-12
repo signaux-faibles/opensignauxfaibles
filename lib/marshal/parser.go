@@ -12,7 +12,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-// Parser fournit les fonctions de parsing d'un type de fichier donné.
+// Parser spécifie les fonctions qui doivent être implémentées par chaque parseur de fichier.
 type Parser interface {
 	GetFileType() string
 	Init(cache *Cache, batch *base.AdminBatch) error
@@ -49,29 +49,21 @@ func (res *ParsedLineResult) SetFilterError(err error) {
 	}
 }
 
-// Tuple unité de donnée à insérer dans un type
+// Tuple spécifie les fonctions que chaque parseur doit implémenter pour ses tuples.
 type Tuple interface {
-	Key() string
-	Scope() string
-	Type() string
+	Key() string   // entité définie par le tuple: numéro SIRET ou SIREN
+	Scope() string // type d'entité: "entreprise" ou "etablissement"
+	Type() string  // identifiant du parseur qui a extrait ce tuple, ex: "apconso"
 }
 
-// ParseFilesFromBatch parse tous les fichiers spécifiés dans batch pour un parseur donné.
+// ParseFilesFromBatch parse les tuples des fichiers listés dans batch pour le parseur spécifié.
 func ParseFilesFromBatch(cache Cache, batch *base.AdminBatch, parser Parser) (chan Tuple, chan Event) {
 	outputChannel := make(chan Tuple)
 	eventChannel := make(chan Event)
 	fileType := parser.GetFileType()
-	filter := GetSirenFilterFromCache(cache)
 	go func() {
 		for _, path := range batch.Files[fileType] {
-			tracker := NewParsingTracker()
-			filePath := viper.GetString("APP_DATA") + path
-			if err := parser.Init(&cache, batch); err != nil {
-				tracker.AddFatalError(err)
-			} else {
-				RunParserWithSirenFilter(parser, &filter, filePath, &tracker, outputChannel)
-			}
-			eventChannel <- CreateReportEvent(fileType, tracker.Report(batch.ID.Key, path)) // abstract
+			eventChannel <- ParseFile(path, parser, batch, cache, outputChannel)
 		}
 		close(outputChannel)
 		close(eventChannel)
@@ -79,44 +71,57 @@ func ParseFilesFromBatch(cache Cache, batch *base.AdminBatch, parser Parser) (ch
 	return outputChannel, eventChannel
 }
 
-// RunParserWithSirenFilter parse un fichier dans un canal de tuples.
-func RunParserWithSirenFilter(parser Parser, filter *SirenFilter, filePath string, tracker *ParsingTracker, outputChannel chan Tuple) {
-	openErr := parser.Open(filePath)
-	// Note: on ne passe plus le tracker aux parseurs afin de garder ici le controle de la numérotation des lignes où les erreurs sont trouvées
-	if openErr != nil {
-		tracker.AddFatalError(openErr)
-	} else {
-		parsedLineChan := make(chan ParsedLineResult)
-		go parser.ParseLines(parsedLineChan)
-		for lineResult := range parsedLineChan {
-			filterError := lineResult.FilterError
-			if filterError != nil {
-				tracker.AddFilterError(filterError) // on rapporte le filtrage même si aucun tuple n'est transmis par le parseur
-			}
-			for _, err := range lineResult.Errors {
+// ParseFile parse les tuples du fichier spécifié puis retourne un rapport de journal.
+func ParseFile(path base.BatchFile, parser Parser, batch *base.AdminBatch, cache Cache, outputChannel chan Tuple) Event {
+	tracker := NewParsingTracker()
+	fileType := parser.GetFileType()
+	filePath := path.Prefix() + viper.GetString("APP_DATA") + path.FilePath()
+	err := runParserOnFile(filePath, parser, batch, cache, &tracker, outputChannel)
+	if err != nil {
+		tracker.AddFatalError(err)
+	}
+	return CreateReportEvent(fileType, tracker.Report(batch.ID.Key, path.FilePath())) // abstract
+}
+
+// runParserOnFile parse les tuples du fichier spécifié, et peut retourner une erreur fatale.
+func runParserOnFile(filePath string, parser Parser, batch *base.AdminBatch, cache Cache, tracker *ParsingTracker, outputChannel chan Tuple) error {
+	filter := GetSirenFilterFromCache(cache)
+	if err := parser.Init(&cache, batch); err != nil {
+		return err
+	}
+	if err := parser.Open(filePath); err != nil {
+		return err
+	}
+	parsedLineChan := make(chan ParsedLineResult)
+	go parser.ParseLines(parsedLineChan)
+	for lineResult := range parsedLineChan {
+		parseTuplesFromLine(lineResult, &filter, tracker, outputChannel)
+		tracker.Next()
+	}
+	return parser.Close()
+}
+
+// parseTuplesFromLine extraie les tuples et/ou erreurs depuis une ligne parsée.
+func parseTuplesFromLine(lineResult ParsedLineResult, filter *SirenFilter, tracker *ParsingTracker, outputChannel chan Tuple) {
+	filterError := lineResult.FilterError
+	if filterError != nil {
+		tracker.AddFilterError(filterError) // on rapporte le filtrage même si aucun tuple n'est transmis par le parseur
+		return
+	}
+	for _, err := range lineResult.Errors {
+		tracker.AddParseError(err)
+	}
+	for _, tuple := range lineResult.Tuples {
+		if _, err := isValid(tuple); err != nil {
+			// On rapporte une erreur de siret/siren invalide seulement si aucune autre error n'a été rapportée par le parseur
+			if len(lineResult.Errors) == 0 {
 				tracker.AddParseError(err)
 			}
-			for _, tuple := range lineResult.Tuples {
-				if filterError != nil {
-					continue // l'erreur de filtrage a déjà été rapportée => on se contente de passer au tuple suivant
-				} else if _, err := isValid(tuple); err != nil {
-					// Si le siret/siren est invalide, on jette le tuple,
-					// et on rapporte une erreur seulement si aucune n'a été
-					// rapportée par le parseur.
-					if len(lineResult.Errors) == 0 {
-						tracker.AddParseError(err)
-					}
-				} else if filter.Skips(tuple.Key()) {
-					tracker.AddFilterError(errors.New("(filtered)"))
-				} else {
-					outputChannel <- tuple
-				}
-			}
-			tracker.Next()
+		} else if filter.Skips(tuple.Key()) {
+			tracker.AddFilterError(errors.New("(filtered)"))
+		} else {
+			outputChannel <- tuple
 		}
-	}
-	if err := parser.Close(); err != nil && openErr == nil {
-		tracker.AddFatalError(err)
 	}
 }
 
@@ -132,6 +137,7 @@ func LogProgress(lineNumber *int) (stop context.CancelFunc) {
 	})
 }
 
+// idValid vérifie que la clé (Key) d'un Tuple est valide, selon le type d'entité (Scope) qu'il représente.
 func isValid(tuple Tuple) (bool, error) {
 	scope := tuple.Scope()
 	key := tuple.Key()
