@@ -85,6 +85,9 @@ func CheckBatch(batch base.AdminBatch, parsers []marshal.Parser) (reports []stri
 	if err := CheckBatchPaths(&batch); err != nil {
 		return nil, err
 	}
+	if err := batch.Validate(); err != nil {
+		return nil, err
+	}
 	var cache = marshal.NewCache()
 	startDate := time.Now()
 	for _, parser := range parsers {

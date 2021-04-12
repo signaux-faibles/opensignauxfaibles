@@ -34,6 +34,20 @@ func (batch *AdminBatch) New(batchKey string) error {
 	return nil
 }
 
+// Validate retourne un message d'erreur si un batch est invalide
+func (batch *AdminBatch) Validate() error {
+	if !IsBatchID(batch.ID.Key) {
+		return errors.New("clé de batch invalide: " + batch.ID.Key)
+	}
+	if batch.ID.Type != "batch" {
+		return errors.New("type de batch invalide: " + batch.ID.Type)
+	}
+	if batch.Params.DateDebut.IsZero() {
+		return errors.New("batch invalide, paramètre manquant: date_debut")
+	}
+	return nil
+}
+
 // IsBatchID retourne `true` si `batchID` est un identifiant de Batch.
 func IsBatchID(batchID string) bool {
 	if len(batchID) < 4 {
