@@ -8,7 +8,6 @@ import (
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/misc"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/naf"
 
 	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
@@ -27,18 +26,12 @@ func PublicOne(batch base.AdminBatch, key string) error {
 		return err
 	}
 
-	naf, err := naf.LoadNAF()
-	if err != nil {
-		return err
-	}
-
 	scope := bson.M{
 		"date_debut":      batch.Params.DateDebut,
 		"date_fin":        batch.Params.DateFin,
 		"serie_periode":   misc.GenereSeriePeriode(batch.Params.DateDebut, batch.Params.DateFin),
 		"offset_effectif": (batch.Params.DateFinEffectif.Year()-batch.Params.DateFin.Year())*12 + int(batch.Params.DateFinEffectif.Month()-batch.Params.DateFin.Month()),
 		"actual_batch":    batch.ID.Key,
-		"naf":             naf,
 		"f":               functions,
 		"batches":         GetBatchesID(),
 	}
@@ -77,12 +70,11 @@ func Public(batch base.AdminBatch) error {
 		return err
 	}
 	scope := bson.M{
-		"date_debut":      batch.Params.DateDebut,
+		"date_debut":      batch.Params.DateDebut, // TODO: nécessaire => faire en sorte qu'il soit retourné par $(getGlobals 'public/*.ts')
 		"date_fin":        batch.Params.DateFin,
 		"serie_periode":   misc.GenereSeriePeriode(batch.Params.DateFin.AddDate(0, -24, 0), batch.Params.DateFin),
 		"offset_effectif": (batch.Params.DateFinEffectif.Year()-batch.Params.DateFin.Year())*12 + int(batch.Params.DateFinEffectif.Month()-batch.Params.DateFin.Month()),
 		"actual_batch":    batch.ID.Key,
-		"naf":             naf.Naf, // TODO: nécessaire => faire en sorte qu'il soit retourné par $(getGlobals 'public/*.ts')
 		"f":               functions,
 		"batches":         GetBatchesID(),
 	}
