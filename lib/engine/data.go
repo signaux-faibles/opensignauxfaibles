@@ -20,20 +20,18 @@ import (
 
 //go:generate go run js/loadJS.go
 
+// makeMapReduceJob construit une requête MapReduce à partir d'un répertoire de fonctions JavaScript et de paramètres à leur transmettre.
 func makeMapReduceJob(jsDirName string, params bson.M) (*mgo.MapReduce, error) {
-
 	functions, err := loadFromJSBundle(jsDirName, params)
 	if err != nil {
 		return nil, err
 	}
-
 	scope := bson.M{
 		"f": functions,
 	}
 	for name := range params {
 		scope[name] = params[name]
 	}
-
 	mapReduceJob := mgo.MapReduce{
 		Map:      functions["map"].Code,
 		Reduce:   functions["reduce"].Code,
@@ -43,12 +41,12 @@ func makeMapReduceJob(jsDirName string, params bson.M) (*mgo.MapReduce, error) {
 	return &mapReduceJob, nil
 }
 
+// loadFromJSBundle récupère les fonctions JavaScript et/ou objets JSONs stockés dans jsFunctions.go.
 func loadFromJSBundle(directoryName string, params bson.M) (map[string]bson.JavaScript, error) {
 	functions := make(map[string]bson.JavaScript)
-
 	// If encountering an error at following line, you probably forgot to
 	// generate the jsFunctions.go file with "go generate" in ./lib/engine
-	rawFunctions, err := jsFunctions["common"](bson.M{})
+	rawFunctions, err := jsFunctions["common"](bson.M{}) // note: on passe un objet vide car les fonctions de common ne s'appuient sur aucun paramètre
 	if err != nil {
 		return nil, err
 	}
@@ -57,12 +55,10 @@ func loadFromJSBundle(directoryName string, params bson.M) (map[string]bson.Java
 			Code: string(v),
 		}
 	}
-
 	functionsGetter, ok := jsFunctions[directoryName]
 	if !ok {
 		return functions, errors.New("Map reduce javascript functions could not be found for " + directoryName)
 	}
-
 	rawFunctions, err = functionsGetter(params)
 	if err != nil {
 		return functions, err
@@ -72,7 +68,6 @@ func loadFromJSBundle(directoryName string, params bson.M) (map[string]bson.Java
 			Code: string(v),
 		}
 	}
-
 	return functions, nil
 }
 

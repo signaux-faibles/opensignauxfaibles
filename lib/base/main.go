@@ -18,7 +18,7 @@ type AdminBatch struct {
 }
 
 type adminBatchParams struct {
-	DateDebut       time.Time `json:"date_debut" bson:"date_debut"` // TODO: vérifier que date_debut est bien fourni
+	DateDebut       time.Time `json:"date_debut" bson:"date_debut"`
 	DateFin         time.Time `json:"date_fin" bson:"date_fin"`
 	DateFinEffectif time.Time `json:"date_fin_effectif" bson:"date_fin_effectif"`
 }
