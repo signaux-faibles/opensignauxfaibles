@@ -99,9 +99,9 @@ func bundleJsFunctions(jsRootDir string) {
 
 func main() {
 	jsRootDir := filepath.Join("..", "..", "js")
-	TranspileTsFunctions(jsRootDir)  // convert *.ts files to .js
+	transpileTsFunctions(jsRootDir)  // convert *.ts files to .js
 	bundleJsFunctions(jsRootDir)     // bundle *.js files to jsFunctions.go
-	DeleteTranspiledFiles(jsRootDir) // delete the *.js files
+	deleteTranspiledFiles(jsRootDir) // delete the *.js files
 }
 
 func shouldInclude(file os.FileInfo) bool {
@@ -117,9 +117,9 @@ func shouldTranspile(filePath string) bool {
 		path.Ext(filePath) == ".ts"
 }
 
-// ListTsFiles retourne la liste des fichiers TypeScript transpilable en JavaScript
+// listTsFiles retourne la liste des fichiers TypeScript transpilable en JavaScript
 // en cherchant récursivement depuis le répertoire jsRootDir.
-func ListTsFiles(jsRootDir string) []string {
+func listTsFiles(jsRootDir string) []string {
 	var files []string
 	err := filepath.Walk(jsRootDir, func(filePath string, info os.FileInfo, err error) error {
 		if err == nil && shouldTranspile(filePath) {
@@ -133,10 +133,10 @@ func ListTsFiles(jsRootDir string) []string {
 	return files
 }
 
-// DeleteTranspiledFiles supprime les fichiers JavaScript résultant de la
+// deleteTranspiledFiles supprime les fichiers JavaScript résultant de la
 // transpilation des fichiers TypeScript listés dans tsFiles.
-func DeleteTranspiledFiles(jsRootDir string) {
-	tsFiles := ListTsFiles(jsRootDir)
+func deleteTranspiledFiles(jsRootDir string) {
+	tsFiles := listTsFiles(jsRootDir)
 	for _, tsFile := range tsFiles {
 		ext := path.Ext(tsFile)
 		if ext != ".ts" {
@@ -150,8 +150,8 @@ func DeleteTranspiledFiles(jsRootDir string) {
 	}
 }
 
-// TranspileTsFunctions convertit les fichiers TypeScript au format JavaScript.
-func TranspileTsFunctions(jsRootDir string) {
+// transpileTsFunctions convertit les fichiers TypeScript au format JavaScript.
+func transpileTsFunctions(jsRootDir string) {
 	cmd := exec.Command("bash", "generate-javascript.sh") // output: .js files
 	cmd.Dir = jsRootDir
 	cmd.Stdout = os.Stdout
