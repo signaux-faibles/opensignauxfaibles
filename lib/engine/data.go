@@ -25,17 +25,26 @@ func loadJSFunctions(directoryName string, params bson.M) (map[string]bson.JavaS
 
 	// If encountering an error at following line, you probably forgot to
 	// generate the file with "go generate" in ./lib/engine
-	for k, v := range jsFunctions["common"](bson.M{}) {
+	rawFunctions, err := jsFunctions["common"](bson.M{})
+	if err != nil {
+		return nil, err
+	}
+	for k, v := range rawFunctions {
 		functions[k] = bson.JavaScript{
 			Code: string(v),
 		}
 	}
 
-	if _, ok := jsFunctions[directoryName]; !ok {
+	functionsGetter, ok := jsFunctions[directoryName]
+	if !ok {
 		return functions, errors.New("Map reduce javascript functions could not be found for " + directoryName)
 	}
 
-	for k, v := range jsFunctions[directoryName](params) {
+	rawFunctions, err = functionsGetter(params)
+	if err != nil {
+		return functions, err
+	}
+	for k, v := range rawFunctions {
 		functions[k] = bson.JavaScript{
 			Code: string(v),
 		}

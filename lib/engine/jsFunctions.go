@@ -1,13 +1,13 @@
 package engine
 
-import "log"
+import "errors"
 import "github.com/globalsign/mgo/bson"
 
 type functions = map[string]string
-type functionGetter = func(bson.M) functions
+type functionGetter = func(bson.M) (functions, error)
 
 var jsFunctions = map[string]functionGetter{
-	"common": func(params bson.M) functions {
+	"common": func(params bson.M) (functions, error) {
 		return functions{
 			"compareDebit": `function compareDebit(a, b) {
     "use strict";
@@ -350,9 +350,9 @@ function omit(object, ...propNames) {
     };
     return corr[departement] || "";
 }`,
-		}
+		}, nil
 	},
-	"compact": func(params bson.M) functions {
+	"compact": func(params bson.M) (functions, error) {
 		return functions{
 			"applyPatchesToBatch": `function applyPatchesToBatch(hashToAdd, hashToDelete, stockTypes, currentBatch) {
     var _a;
@@ -698,9 +698,9 @@ function reduce(key, values // chaque element contient plusieurs batches pour ce
     });
     return reducedValue;
 }`,
-		}
+		}, nil
 	},
-	"public": func(params bson.M) functions {
+	"public": func(params bson.M) (functions, error) {
 		return functions{
 			"apconso": `function apconso(apconso) {
     return Object.values(apconso !== null && apconso !== void 0 ? apconso : {}).sort((p1, p2) => p1.periode < p2.periode ? 1 : -1);
@@ -947,11 +947,11 @@ function reduce(key, values // chaque element contient plusieurs batches pour ce
 function sirene(sireneArray) {
     return sireneArray[sireneArray.length - 1] || {}; // TODO: vérifier que sireneArray est bien classé dans l'ordre chronologique -> c'est sûr qu'il ne l'est pas, vérifier que pour toute la base on a bien un objet sirene unique !
 }`,
-		}
+		}, nil
 	},
-	"purgeBatch": func(params bson.M) functions {
+	"purgeBatch": func(params bson.M) (functions, error) {
 		if _, ok := params["fromBatchKey"]; !ok {
-			log.Fatal("missing required parameter: fromBatchKey")
+			return nil, errors.New("missing required parameter: fromBatchKey")
 		}
 		return functions{
 			"finalize": `function finalize(_, o) {
@@ -973,9 +973,9 @@ function sirene(sireneArray) {
     "use strict";
     return values;
 }`,
-		}
+		}, nil
 	},
-	"reduce.algo2": func(params bson.M) functions {
+	"reduce.algo2": func(params bson.M) (functions, error) {
 		return functions{
 			"add": `function add(obj, output) {
     "use strict";
@@ -2022,6 +2022,6 @@ function outputs(v, serie_periode) {
         ((_b = diane["valeur_ajoutee"]) !== null && _b !== void 0 ? _b : NaN);
     return isNaN(ratio) ? null : ratio * 100;
 }`,
-		}
+		}, nil
 	},
 }

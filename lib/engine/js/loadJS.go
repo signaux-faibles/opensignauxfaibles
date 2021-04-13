@@ -6,10 +6,10 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"os/exec"
+	"path"
 	"path/filepath"
 	"strings"
-
-	"github.com/signaux-faibles/opensignauxfaibles/lib/engine"
 )
 
 // Reads all .js files in the current folder
@@ -22,10 +22,10 @@ func bundleJsFunctions(jsRootDir string) {
 
 	var out bytes.Buffer
 	out.Write([]byte("package engine\n"))
-	out.Write([]byte("import \"log\"\n"))
+	out.Write([]byte("import \"errors\"\n"))
 	out.Write([]byte("import \"github.com/globalsign/mgo/bson\"\n"))
 	out.Write([]byte("type functions = map[string]string\n"))
-	out.Write([]byte("type functionGetter = func (bson.M) functions\n"))
+	out.Write([]byte("type functionGetter = func (bson.M) (functions, error)\n"))
 	out.Write([]byte("var jsFunctions = map[string]functionGetter{\n"))
 
 	// For each folder
@@ -36,11 +36,11 @@ func bundleJsFunctions(jsRootDir string) {
 			!strings.HasPrefix(folder.Name(), ".") && // skip hidden directories, e.g. `.nyc_output`
 			!strings.HasPrefix(folder.Name(), "test") {
 
-			out.Write([]byte(`"` + folder.Name() + `"` + ": func (params bson.M) functions {\n"))
+			out.Write([]byte(`"` + folder.Name() + `"` + ": func (params bson.M) (functions, error) {\n"))
 			if folder.Name() == "purgeBatch" {
 				// TODO: faire pareil pour les autres répertoires, de manière programmatique
 				out.Write([]byte("if _, ok := params[\"fromBatchKey\"]; !ok {\n"))
-				out.Write([]byte("log.Fatal(\"missing required parameter: fromBatchKey\")\n"))
+				out.Write([]byte("return nil, errors.New(\"missing required parameter: fromBatchKey\")\n"))
 				out.Write([]byte("}\n"))
 			}
 			out.Write([]byte("return functions{\n"))
@@ -69,7 +69,7 @@ func bundleJsFunctions(jsRootDir string) {
 					out.Write([]byte("`,\n"))
 				}
 			}
-			out.Write([]byte("} \n },\n"))
+			out.Write([]byte("}, nil \n },\n"))
 		}
 	}
 	out.Write([]byte("}\n"))
@@ -87,13 +87,65 @@ func bundleJsFunctions(jsRootDir string) {
 
 func main() {
 	jsRootDir := filepath.Join("..", "..", "js")
-	engine.TranspileTsFunctions(jsRootDir)  // convert *.ts files to .js
-	bundleJsFunctions(jsRootDir)            // bundle *.js files to jsFunctions.go
-	engine.DeleteTranspiledFiles(jsRootDir) // delete the *.js files
+	TranspileTsFunctions(jsRootDir)  // convert *.ts files to .js
+	bundleJsFunctions(jsRootDir)     // bundle *.js files to jsFunctions.go
+	DeleteTranspiledFiles(jsRootDir) // delete the *.js files
 }
 
 func shouldInclude(file os.FileInfo) bool {
 	return file.Name() != "functions.js" &&
 		(strings.HasSuffix(file.Name(), ".js") ||
 			strings.HasSuffix(file.Name(), ".json"))
+}
+
+func shouldTranspile(filePath string) bool {
+	return !strings.Contains(filePath, "node_modules") &&
+		!strings.Contains(filePath, "test") &&
+		!strings.Contains(filePath, ".d.ts") &&
+		path.Ext(filePath) == ".ts"
+}
+
+// ListTsFiles retourne la liste des fichiers TypeScript transpilable en JavaScript
+// en cherchant récursivement depuis le répertoire jsRootDir.
+func ListTsFiles(jsRootDir string) []string {
+	var files []string
+	err := filepath.Walk(jsRootDir, func(filePath string, info os.FileInfo, err error) error {
+		if err == nil && shouldTranspile(filePath) {
+			files = append(files, filePath)
+		}
+		return err
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+	return files
+}
+
+// DeleteTranspiledFiles supprime les fichiers JavaScript résultant de la
+// transpilation des fichiers TypeScript listés dans tsFiles.
+func DeleteTranspiledFiles(jsRootDir string) {
+	tsFiles := ListTsFiles(jsRootDir)
+	for _, tsFile := range tsFiles {
+		ext := path.Ext(tsFile)
+		if ext != ".ts" {
+			panic("expected a .ts file, found: " + tsFile)
+		}
+		transpiledFile := strings.TrimSuffix(tsFile, ext) + ".js"
+		err := os.Remove(transpiledFile)
+		if err != nil {
+			panic("failed to delete " + transpiledFile)
+		}
+	}
+}
+
+// TranspileTsFunctions convertit les fichiers TypeScript au format JavaScript.
+func TranspileTsFunctions(jsRootDir string) {
+	cmd := exec.Command("bash", "generate-javascript.sh") // output: .js files
+	cmd.Dir = jsRootDir
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err := cmd.Run()
+	if err != nil {
+		log.Fatal(err)
+	}
 }
