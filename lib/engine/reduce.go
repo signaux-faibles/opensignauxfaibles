@@ -25,7 +25,7 @@ func ReduceOne(batch base.AdminBatch, key, from, to string, types []string) erro
 		return errors.New("key minimal length of 9")
 	}
 
-	scope, err := reduceDefineScope(batch, types)
+	job, err := reduceDefineScope(batch, types)
 	if err != nil {
 		return err
 	}
@@ -52,15 +52,7 @@ func ReduceOne(batch base.AdminBatch, key, from, to string, types []string) erro
 		return fmt.Errorf("Les paramètres key, ou la paire de paramètres from et to, sont obligatoires")
 	}
 
-	functions := scope["f"].(map[string]bson.JavaScript)
-	job := &mgo.MapReduce{
-		Map:      functions["map"].Code,
-		Reduce:   functions["reduce"].Code,
-		Finalize: functions["finalize"].Code,
-		Out:      bson.M{"replace": "TemporaryCollection"},
-		Scope:    scope,
-	}
-
+	job.Out = bson.M{"replace": "TemporaryCollection"}
 	_, err = Db.DB.C("RawData").Find(query).MapReduce(job, nil)
 
 	if err != nil {
@@ -75,7 +67,7 @@ func Reduce(batch base.AdminBatch, types []string) error {
 
 	startDate := time.Now()
 
-	scope, err := reduceDefineScope(batch, types)
+	job, err := reduceDefineScope(batch, types)
 	if err != nil {
 		return err
 	}
@@ -99,15 +91,8 @@ func Reduce(batch base.AdminBatch, types []string) error {
 		w.waitGroup.Add(1)
 		dbTemp := "reduce" + strconv.Itoa(i)
 
-		functions := scope["f"].(map[string]bson.JavaScript)
 		// Injection des fonctions JavaScript pour exécution par MongoDB
-		job := &mgo.MapReduce{
-			Map:      functions["map"].Code,
-			Reduce:   functions["reduce"].Code,
-			Finalize: functions["finalize"].Code,
-			Out:      bson.M{"replace": "TemporaryCollection", "db": dbTemp},
-			Scope:    scope,
-		}
+		job.Out = bson.M{"replace": "TemporaryCollection", "db": dbTemp}
 		i++
 		go MRroutine(job, query, dbTemp, "RawData", &w, tempDBChannel)
 
@@ -289,12 +274,7 @@ func reduceFinalAggregation(tempDatabase *mgo.Database, tempCollection, outDatab
 	return err
 }
 
-func reduceDefineScope(batch base.AdminBatch, types []string) (bson.M, error) {
-
-	functions, err := loadJSFunctions("reduce.algo2", bson.M{}) // TODO: pass "global" parameters here
-	if err != nil {
-		return nil, err
-	}
+func reduceDefineScope(batch base.AdminBatch, types []string) (*mgo.MapReduce, error) {
 
 	naf, err := naf.LoadNAF()
 	if err != nil {
@@ -310,8 +290,7 @@ func reduceDefineScope(batch base.AdminBatch, types []string) (bson.M, error) {
 		}
 	}
 
-	scope := bson.M{
-		"f":               functions,
+	jsParams := bson.M{
 		"actual_batch":    batch.ID.Key,
 		"date_fin":        batch.Params.DateFin,
 		"includes":        includes,
@@ -319,7 +298,7 @@ func reduceDefineScope(batch base.AdminBatch, types []string) (bson.M, error) {
 		"offset_effectif": (batch.Params.DateFinEffectif.Year()-batch.Params.DateFin.Year())*12 + int(batch.Params.DateFinEffectif.Month()-batch.Params.DateFin.Month()),
 		"serie_periode":   misc.GenereSeriePeriode(batch.Params.DateDebut, batch.Params.DateFin),
 	}
-	return scope, nil
+	return makeMapReduceJob("reduce.algo2", jsParams)
 }
 
 func backupCollection(adminDb *mgo.Database, namespace string, outCollection string) (string, error) {

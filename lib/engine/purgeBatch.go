@@ -15,25 +15,15 @@ import (
 
 // PurgeBatchOne purge 1 batch pour 1 siren
 func PurgeBatchOne(batch base.AdminBatch, key string) error {
-	functions, err := loadJSFunctions("purgeBatch", bson.M{
+	jsParams := bson.M{
 		"fromBatchKey": batch.ID.Key,
-	})
+	}
+	mapReduceJob, err := makeMapReduceJob("purgeBatch", jsParams)
 	if err != nil {
 		return err
 	}
 
-	MRscope := bson.M{
-		"f":            functions,
-		"fromBatchKey": batch.ID.Key,
-	}
-
-	job := &mgo.MapReduce{ // TODO: laisser loadJSFunctions générer cet objet
-		Map:      functions["map"].Code,
-		Reduce:   functions["reduce"].Code,
-		Finalize: functions["finalize"].Code,
-		Out:      bson.M{"merge": "purgeBatch_debug"},
-		Scope:    MRscope,
-	}
+	mapReduceJob.Out = bson.M{"merge": "purgeBatch_debug"}
 
 	query := bson.M{
 		"_id": bson.M{
@@ -43,7 +33,7 @@ func PurgeBatchOne(batch base.AdminBatch, key string) error {
 		},
 	}
 
-	_, err = Db.DB.C("RawData").Find(query).MapReduce(job, nil)
+	_, err = Db.DB.C("RawData").Find(query).MapReduce(mapReduceJob, nil)
 	return err
 }
 

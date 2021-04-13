@@ -22,7 +22,7 @@ import (
 
 func makeMapReduceJob(jsDirName string, params bson.M) (*mgo.MapReduce, error) {
 
-	functions, err := loadJSFunctions(jsDirName, params)
+	functions, err := loadFromJSBundle(jsDirName, params)
 	if err != nil {
 		return nil, err
 	}
@@ -43,11 +43,11 @@ func makeMapReduceJob(jsDirName string, params bson.M) (*mgo.MapReduce, error) {
 	return &mapReduceJob, nil
 }
 
-func loadJSFunctions(directoryName string, params bson.M) (map[string]bson.JavaScript, error) {
+func loadFromJSBundle(directoryName string, params bson.M) (map[string]bson.JavaScript, error) {
 	functions := make(map[string]bson.JavaScript)
 
 	// If encountering an error at following line, you probably forgot to
-	// generate the file with "go generate" in ./lib/engine
+	// generate the jsFunctions.go file with "go generate" in ./lib/engine
 	rawFunctions, err := jsFunctions["common"](bson.M{})
 	if err != nil {
 		return nil, err
@@ -247,25 +247,21 @@ func Compact(fromBatchKey string) error {
 	}
 	batch = batches[found]
 
-	functions, err := loadJSFunctions("compact", bson.M{}) // TODO: pass "global" parameters here
+	jsParams := bson.M{
+		"batches":       batchesID,
+		"completeTypes": completeTypes,
+		"fromBatchKey":  fromBatchKey,
+		"serie_periode": misc.GenereSeriePeriode(batch.Params.DateDebut, batch.Params.DateFin),
+	}
+	mapReduceJob, err := makeMapReduceJob("compact", jsParams)
 	if err != nil {
 		return err
 	}
 
 	// Traitement MR
-	job := &mgo.MapReduce{
-		Map:      functions["map"].Code,
-		Reduce:   functions["reduce"].Code, // 1st pass: reduce() will be called on the documents of ImportedData
-		Finalize: functions["finalize"].Code,
-		Out:      bson.M{"reduce": "RawData"}, // 2nd pass: for each siret/siren, reduce() will be called on the current RawData document and the result of the 1st pass, to merge the the new data with the existing data
-		Scope: bson.M{
-			"f":             functions,
-			"batches":       batchesID,
-			"completeTypes": completeTypes,
-			"fromBatchKey":  fromBatchKey,
-			"serie_periode": misc.GenereSeriePeriode(batch.Params.DateDebut, batch.Params.DateFin),
-		},
-	}
+	// - 1st pass: "reduce" is called on the documents of ImportedData
+	// - 2nd pass: "reduce" is called on the current RawData document, for each siret/siren, and the result of the 1st pass, to merge the the new data with the existing data
+	mapReduceJob.Out = bson.M{"reduce": "RawData"}
 
 	chunks, err := ChunkCollection(viper.GetString("DB"), "RawData", viper.GetInt64("chunkByteSize"))
 	if err != nil {
@@ -274,7 +270,7 @@ func Compact(fromBatchKey string) error {
 
 	for _, query := range chunks.ToQueries(nil, "value.key") {
 		log.Println(query)
-		_, err = Db.DB.C("ImportedData").Find(query).MapReduce(job, nil)
+		_, err = Db.DB.C("ImportedData").Find(query).MapReduce(mapReduceJob, nil)
 		if err != nil {
 			return err
 		}

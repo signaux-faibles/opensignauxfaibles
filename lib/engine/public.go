@@ -21,25 +21,17 @@ func PublicOne(batch base.AdminBatch, key string) error {
 		return errors.New("key minimal length of 9")
 	}
 
-	functions, err := loadJSFunctions("public", bson.M{}) // TODO: pass "global" parameters here
-	if err != nil {
-		return err
-	}
-
-	scope := bson.M{
-		"f":             functions,
+	jsParams := bson.M{
 		"actual_batch":  batch.ID.Key,
 		"date_fin":      batch.Params.DateFin,
 		"serie_periode": misc.GenereSeriePeriode(batch.Params.DateDebut, batch.Params.DateFin),
 	}
-
-	job := &mgo.MapReduce{
-		Map:      functions["map"].Code,
-		Reduce:   functions["reduce"].Code,
-		Finalize: functions["finalize"].Code,
-		Out:      bson.M{"replace": "Public_debug"},
-		Scope:    scope,
+	job, err := makeMapReduceJob("public", jsParams)
+	if err != nil {
+		return err
 	}
+
+	job.Out = bson.M{"replace": "Public_debug"}
 
 	query := bson.M{
 		"_id": bson.M{
@@ -62,15 +54,14 @@ func PublicOne(batch base.AdminBatch, key string) error {
 func Public(batch base.AdminBatch) error {
 	startDate := time.Now()
 
-	functions, err := loadJSFunctions("public", bson.M{}) // TODO: pass "global" parameters here
-	if err != nil {
-		return err
-	}
-	scope := bson.M{
-		"f":             functions,
+	jsParams := bson.M{
 		"actual_batch":  batch.ID.Key,
 		"date_fin":      batch.Params.DateFin,
 		"serie_periode": misc.GenereSeriePeriode(batch.Params.DateFin.AddDate(0, -24, 0), batch.Params.DateFin),
+	}
+	mapReduceJobTemplate, err := makeMapReduceJob("public", jsParams)
+	if err != nil {
+		return err
 	}
 
 	chunks, err := ChunkCollection(viper.GetString("DB"), "RawData", viper.GetInt64("chunkByteSize"))
@@ -90,17 +81,12 @@ func Public(batch base.AdminBatch) error {
 	for _, query := range chunks.ToQueries(filter, "_id") {
 		w.waitGroup.Add(1)
 
-		dbTemp := "purgeBatch" + strconv.Itoa(i) // TODO: à renommer
-		job := &mgo.MapReduce{
-			Map:      functions["map"].Code,
-			Reduce:   functions["reduce"].Code,
-			Finalize: functions["finalize"].Code,
-			Out:      bson.M{"replace": "TemporaryCollection", "db": dbTemp},
-			Scope:    scope,
-		}
+		dbTemp := "purgeBatch" + strconv.Itoa(i)           // TODO: à renommer
+		var chunkJob mgo.MapReduce = *mapReduceJobTemplate // on dérive mapReduceJobTemplate par copie
+		chunkJob.Out = bson.M{"replace": "TemporaryCollection", "db": dbTemp}
 		i++
 
-		go MRroutine(job, query, dbTemp, "RawData", &w, pipeChannel)
+		go MRroutine(&chunkJob, query, dbTemp, "RawData", &w, pipeChannel)
 
 	}
 
