@@ -21,7 +21,7 @@ func PublicOne(batch base.AdminBatch, key string) error {
 		return errors.New("key minimal length of 9")
 	}
 
-	functions, err := loadJSFunctions("public")
+	functions, err := loadJSFunctions("public", bson.M{}) // TODO: pass "global" parameters here
 	if err != nil {
 		return err
 	}
@@ -62,7 +62,7 @@ func PublicOne(batch base.AdminBatch, key string) error {
 func Public(batch base.AdminBatch) error {
 	startDate := time.Now()
 
-	functions, err := loadJSFunctions("public")
+	functions, err := loadJSFunctions("public", bson.M{}) // TODO: pass "global" parameters here
 	if err != nil {
 		return err
 	}

@@ -287,7 +287,7 @@ func reduceFinalAggregation(tempDatabase *mgo.Database, tempCollection, outDatab
 
 func reduceDefineScope(batch base.AdminBatch, types []string) (bson.M, error) {
 
-	functions, err := loadJSFunctions("reduce.algo2")
+	functions, err := loadJSFunctions("reduce.algo2", bson.M{}) // TODO: pass "global" parameters here
 	if err != nil {
 		return nil, err
 	}

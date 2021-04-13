@@ -15,7 +15,7 @@ import (
 
 // PurgeBatchOne purge 1 batch pour 1 siren
 func PurgeBatchOne(batch base.AdminBatch, key string) error {
-	functions, err := loadJSFunctions("purgeBatch")
+	functions, err := loadJSFunctions("purgeBatch", bson.M{}) // TODO: pass "global" parameters here
 	if err != nil {
 		return err
 	}
@@ -81,7 +81,7 @@ func PurgeBatch(batch base.AdminBatch) error {
 	queries := chunks.ToQueries(bson.M{}, "_id")
 	queryChan := queriesToChan(queries)
 
-	functions, err := loadJSFunctions("purgeBatch")
+	functions, err := loadJSFunctions("purgeBatch", bson.M{}) // TODO: pass "global" parameters here
 	if err != nil {
 		return err
 	}

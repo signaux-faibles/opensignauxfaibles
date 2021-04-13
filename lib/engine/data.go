@@ -20,7 +20,7 @@ import (
 
 //go:generate go run js/loadJS.go
 
-func loadJSFunctions(directoryNames ...string) (map[string]bson.JavaScript, error) {
+func loadJSFunctions(directoryName string, params bson.M) (map[string]bson.JavaScript, error) {
 	functions := make(map[string]bson.JavaScript)
 	var err error
 
@@ -32,18 +32,17 @@ func loadJSFunctions(directoryNames ...string) (map[string]bson.JavaScript, erro
 		}
 	}
 
-	for _, directoryName := range directoryNames {
-		if _, ok := jsFunctions[directoryName]; !ok {
-			err = errors.New("Map reduce javascript functions could not be found for " + directoryName)
-		} else {
-			err = nil
-		}
-		for k, v := range jsFunctions[directoryName](bson.M{}) {
-			functions[k] = bson.JavaScript{
-				Code: string(v),
-			}
+	if _, ok := jsFunctions[directoryName]; !ok {
+		err = errors.New("Map reduce javascript functions could not be found for " + directoryName)
+	} else {
+		err = nil
+	}
+	for k, v := range jsFunctions[directoryName](params) {
+		functions[k] = bson.JavaScript{
+			Code: string(v),
 		}
 	}
+
 	return functions, err
 }
 
@@ -218,7 +217,7 @@ func Compact(fromBatchKey string) error {
 	}
 	batch = batches[found]
 
-	functions, err := loadJSFunctions("compact")
+	functions, err := loadJSFunctions("compact", bson.M{}) // TODO: pass "global" parameters here
 	if err != nil {
 		return err
 	}
