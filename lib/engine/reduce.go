@@ -25,7 +25,7 @@ func ReduceOne(batch base.AdminBatch, key, from, to string, types []string) erro
 		return errors.New("key minimal length of 9")
 	}
 
-	job, err := reduceDefineScope(batch, types)
+	job, err := makeReduceFeaturesJob(batch, types)
 	if err != nil {
 		return err
 	}
@@ -67,7 +67,7 @@ func Reduce(batch base.AdminBatch, types []string) error {
 
 	startDate := time.Now()
 
-	job, err := reduceDefineScope(batch, types)
+	job, err := makeReduceFeaturesJob(batch, types)
 	if err != nil {
 		return err
 	}
@@ -274,7 +274,7 @@ func reduceFinalAggregation(tempDatabase *mgo.Database, tempCollection, outDatab
 	return err
 }
 
-func reduceDefineScope(batch base.AdminBatch, types []string) (*mgo.MapReduce, error) {
+func makeReduceFeaturesJob(batch base.AdminBatch, types []string) (*mgo.MapReduce, error) {
 
 	naf, err := naf.LoadNAF()
 	if err != nil {
