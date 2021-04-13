@@ -25,7 +25,12 @@ func ReduceOne(batch base.AdminBatch, key, from, to string, types []string) erro
 		return errors.New("key minimal length of 9")
 	}
 
-	job, err := makeReduceFeaturesJob(batch, types)
+	jsParams, err := makeReduceFeaturesParams(batch, types)
+	if err != nil {
+		return err
+	}
+
+	job, err := makeMapReduceJob("reduce.algo2", *jsParams)
 	if err != nil {
 		return err
 	}
@@ -58,7 +63,7 @@ func ReduceOne(batch base.AdminBatch, key, from, to string, types []string) erro
 	if err != nil {
 		return err
 	}
-	err = reduceFinalAggregation(Db.DB, "TemporaryCollection", viper.GetString("DB"), "Features_debug")
+	err = reduceFinalAggregation(Db.DB, "TemporaryCollection", viper.GetString("DB"), "Features_debug", *jsParams)
 	return err
 }
 
@@ -67,7 +72,12 @@ func Reduce(batch base.AdminBatch, types []string) error {
 
 	startDate := time.Now()
 
-	job, err := makeReduceFeaturesJob(batch, types)
+	jsParams, err := makeReduceFeaturesParams(batch, types)
+	if err != nil {
+		return err
+	}
+
+	job, err := makeMapReduceJob("reduce.algo2", *jsParams)
 	if err != nil {
 		return err
 	}
@@ -134,6 +144,7 @@ func Reduce(batch base.AdminBatch, types []string) error {
 			"TemporaryCollection",
 			/*outDatabase = */ viper.GetString("DB"),
 			outCollection,
+			*jsParams,
 		)
 
 		if err != nil {
@@ -172,9 +183,9 @@ func Reduce(batch base.AdminBatch, types []string) error {
 }
 
 // loadCrossComputationStages charge les étapes d'agrégation MongoDB depuis des fichiers JSON.
-func reduceCrossComputations(directoryName string) (stages []bson.M, err error) {
+func reduceCrossComputations(reduceParams bson.M) (stages []bson.M, err error) {
 	stages = []bson.M{}
-	rawFiles, err := jsFunctions["reduce.algo2"](bson.M{})
+	rawFiles, err := jsFunctions["reduce.algo2"](reduceParams)
 	if err != nil {
 		return nil, err
 	}
@@ -192,9 +203,9 @@ func reduceCrossComputations(directoryName string) (stages []bson.M, err error) 
 	return stages, nil
 }
 
-func reduceFinalAggregation(tempDatabase *mgo.Database, tempCollection, outDatabase, outCollection string) error {
+func reduceFinalAggregation(tempDatabase *mgo.Database, tempCollection, outDatabase, outCollection string, reduceParams bson.M) error {
 
-	setStages, err := reduceCrossComputations("reduce.algo2")
+	setStages, err := reduceCrossComputations(reduceParams)
 	if err != nil {
 		return err
 	}
@@ -274,7 +285,7 @@ func reduceFinalAggregation(tempDatabase *mgo.Database, tempCollection, outDatab
 	return err
 }
 
-func makeReduceFeaturesJob(batch base.AdminBatch, types []string) (*mgo.MapReduce, error) {
+func makeReduceFeaturesParams(batch base.AdminBatch, types []string) (*bson.M, error) {
 
 	naf, err := naf.LoadNAF()
 	if err != nil {
@@ -298,7 +309,7 @@ func makeReduceFeaturesJob(batch base.AdminBatch, types []string) (*mgo.MapReduc
 		"offset_effectif": (batch.Params.DateFinEffectif.Year()-batch.Params.DateFin.Year())*12 + int(batch.Params.DateFinEffectif.Month()-batch.Params.DateFin.Month()),
 		"serie_periode":   misc.GenereSeriePeriode(batch.Params.DateDebut, batch.Params.DateFin),
 	}
-	return makeMapReduceJob("reduce.algo2", jsParams)
+	return &jsParams, nil
 }
 
 func backupCollection(adminDb *mgo.Database, namespace string, outCollection string) (string, error) {
