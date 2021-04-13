@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"io/ioutil"
 	"log"
 	"os"
@@ -18,10 +19,7 @@ func bundleJsFunctions(jsRootDir string) {
 		log.Fatal(err)
 	}
 
-	out, err := os.Create("jsFunctions.go")
-	if err != nil {
-		log.Fatal(err)
-	}
+	var out bytes.Buffer
 	out.Write([]byte("package engine \n\n var jsFunctions = map[string]map[string]string{\n"))
 
 	// For each folder
@@ -62,6 +60,14 @@ func bundleJsFunctions(jsRootDir string) {
 		}
 	}
 	out.Write([]byte("}\n"))
+
+	fileOut, err := os.Create("jsFunctions.go")
+	if err != nil {
+		log.Fatal(err)
+	}
+	fileOut.Write(out.Bytes())
+
+	// TODO: Source(src []byte) ([]byte, error)
 }
 
 func main() {
