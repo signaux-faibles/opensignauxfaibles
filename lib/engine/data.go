@@ -22,9 +22,13 @@ import (
 
 // makeMapReduceJob construit une requête MapReduce à partir d'un répertoire de fonctions JavaScript et de paramètres à leur transmettre.
 func makeMapReduceJob(jsDirName string, params bson.M) (*mgo.MapReduce, error) {
-	functions, err := loadFromJSBundle(jsDirName, params)
+	functions := make(map[string]bson.JavaScript)
+	rawFunctions, err := loadFromJSBundle(jsDirName, params)
 	if err != nil {
 		return nil, err
+	}
+	for fctName, fctImpl := range rawFunctions {
+		functions[fctName] = bson.JavaScript{Code: fctImpl}
 	}
 	scope := bson.M{
 		"f": functions,
@@ -33,42 +37,34 @@ func makeMapReduceJob(jsDirName string, params bson.M) (*mgo.MapReduce, error) {
 		scope[name] = params[name]
 	}
 	mapReduceJob := mgo.MapReduce{
-		Map:      functions["map"].Code,
-		Reduce:   functions["reduce"].Code,
-		Finalize: functions["finalize"].Code,
+		Map:      rawFunctions["map"],
+		Reduce:   rawFunctions["reduce"],
+		Finalize: rawFunctions["finalize"],
 		Scope:    scope,
 	}
 	return &mapReduceJob, nil
 }
 
 // loadFromJSBundle récupère les fonctions JavaScript et/ou objets JSONs stockés dans jsFunctions.go.
-func loadFromJSBundle(directoryName string, params bson.M) (map[string]bson.JavaScript, error) {
-	functions := make(map[string]bson.JavaScript)
+func loadFromJSBundle(directoryName string, params bson.M) (map[string]string, error) {
 	// If encountering an error at following line, you probably forgot to
 	// generate the jsFunctions.go file with "go generate" in ./lib/engine
 	rawFunctions, err := jsFunctions["common"](bson.M{}) // note: on passe un objet vide car les fonctions de common ne s'appuient sur aucun paramètre
 	if err != nil {
 		return nil, err
 	}
-	for k, v := range rawFunctions {
-		functions[k] = bson.JavaScript{
-			Code: string(v),
-		}
-	}
 	functionsGetter, ok := jsFunctions[directoryName]
 	if !ok {
-		return functions, errors.New("Map reduce javascript functions could not be found for " + directoryName)
+		return nil, errors.New("Map reduce javascript functions could not be found for " + directoryName)
 	}
-	rawFunctions, err = functionsGetter(params)
+	additionalFunctions, err := functionsGetter(params)
 	if err != nil {
-		return functions, err
+		return nil, err
 	}
-	for k, v := range rawFunctions {
-		functions[k] = bson.JavaScript{
-			Code: string(v),
-		}
+	for k, v := range additionalFunctions {
+		rawFunctions[k] = v
 	}
-	return functions, nil
+	return rawFunctions, nil
 }
 
 // PurgeNotCompacted permet de supprimer les objets non encore compactés
