@@ -44,6 +44,7 @@ func bundleJsFunctions(jsRootDir string) {
 
 			out.Write([]byte(`"` + folder.Name() + `"` + ": func (params bson.M) (functions, error) {\n"))
 
+			// validation des paramètres requis par chaque traitement
 			globals, err := getTypeScriptGlobals(jsRootDir, folder.Name())
 			if err != nil {
 				log.Fatal(err)
@@ -55,20 +56,15 @@ func bundleJsFunctions(jsRootDir string) {
 					};`,
 				))
 			}
-			out.Write([]byte("return functions{\n"))
 
+			// ajout de chaque fichier .js et .json dans une map
+			out.Write([]byte("return functions{\n"))
 			files, err := ioutil.ReadDir(filepath.Join(jsRootDir, folder.Name()))
 			if err != nil {
 				log.Print(err)
 			}
-
-			// For each file in folder
 			for _, file := range files {
 				if shouldInclude(file) {
-					out.Write([]byte(
-						`"` + strings.TrimSuffix(file.Name(), ".js") + `"` +
-							": `"))
-
 					function, err := ioutil.ReadFile(filepath.Join(jsRootDir, folder.Name(), file.Name()))
 					if err != nil {
 						log.Fatal(err)
@@ -76,12 +72,11 @@ func bundleJsFunctions(jsRootDir string) {
 					stringFunction := string(function)
 					stringFunction = strings.Replace(stringFunction, "`", "` + \"`\" + `", -1) // escape nested "backticks" quotes
 					stringFunction = strings.Trim(stringFunction, "\n")
-
-					out.Write([]byte(stringFunction))
-					out.Write([]byte("`,\n"))
+					entryName := strings.TrimSuffix(file.Name(), ".js")
+					out.Write([]byte(`"` + entryName + `"` + ": `" + stringFunction + "`,\n"))
 				}
 			}
-			out.Write([]byte("}, nil \n },\n"))
+			out.Write([]byte("}, nil; },\n"))
 		}
 	}
 	out.Write([]byte("}\n"))
