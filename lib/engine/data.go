@@ -22,7 +22,6 @@ import (
 
 func loadJSFunctions(directoryName string, params bson.M) (map[string]bson.JavaScript, error) {
 	functions := make(map[string]bson.JavaScript)
-	var err error
 
 	// If encountering an error at following line, you probably forgot to
 	// generate the file with "go generate" in ./lib/engine
@@ -33,17 +32,16 @@ func loadJSFunctions(directoryName string, params bson.M) (map[string]bson.JavaS
 	}
 
 	if _, ok := jsFunctions[directoryName]; !ok {
-		err = errors.New("Map reduce javascript functions could not be found for " + directoryName)
-	} else {
-		err = nil
+		return functions, errors.New("Map reduce javascript functions could not be found for " + directoryName)
 	}
+
 	for k, v := range jsFunctions[directoryName](params) {
 		functions[k] = bson.JavaScript{
 			Code: string(v),
 		}
 	}
 
-	return functions, err
+	return functions, nil
 }
 
 // PurgeNotCompacted permet de supprimer les objets non encore compactés
