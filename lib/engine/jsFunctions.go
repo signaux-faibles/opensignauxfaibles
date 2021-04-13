@@ -8,6 +8,9 @@ type functionGetter = func(bson.M) (functions, error)
 
 var jsFunctions = map[string]functionGetter{
 	"common": func(params bson.M) (functions, error) {
+		if _, ok := params[""]; !ok {
+			return nil, errors.New("missing required parameter: ")
+		}
 		return functions{
 			"compareDebit": `function compareDebit(a, b) {
     "use strict";
@@ -353,6 +356,18 @@ function omit(object, ...propNames) {
 		}, nil
 	},
 	"compact": func(params bson.M) (functions, error) {
+		if _, ok := params["batches"]; !ok {
+			return nil, errors.New("missing required parameter: batches")
+		}
+		if _, ok := params["completeTypes"]; !ok {
+			return nil, errors.New("missing required parameter: completeTypes")
+		}
+		if _, ok := params["fromBatchKey"]; !ok {
+			return nil, errors.New("missing required parameter: fromBatchKey")
+		}
+		if _, ok := params["serie_periode"]; !ok {
+			return nil, errors.New("missing required parameter: serie_periode")
+		}
 		return functions{
 			"applyPatchesToBatch": `function applyPatchesToBatch(hashToAdd, hashToDelete, stockTypes, currentBatch) {
     var _a;
@@ -701,6 +716,15 @@ function reduce(key, values // chaque element contient plusieurs batches pour ce
 		}, nil
 	},
 	"public": func(params bson.M) (functions, error) {
+		if _, ok := params["actual_batch"]; !ok {
+			return nil, errors.New("missing required parameter: actual_batch")
+		}
+		if _, ok := params["date_fin"]; !ok {
+			return nil, errors.New("missing required parameter: date_fin")
+		}
+		if _, ok := params["serie_periode"]; !ok {
+			return nil, errors.New("missing required parameter: serie_periode")
+		}
 		return functions{
 			"apconso": `function apconso(apconso) {
     return Object.values(apconso !== null && apconso !== void 0 ? apconso : {}).sort((p1, p2) => p1.periode < p2.periode ? 1 : -1);
@@ -976,6 +1000,24 @@ function sirene(sireneArray) {
 		}, nil
 	},
 	"reduce.algo2": func(params bson.M) (functions, error) {
+		if _, ok := params["actual_batch"]; !ok {
+			return nil, errors.New("missing required parameter: actual_batch")
+		}
+		if _, ok := params["date_fin"]; !ok {
+			return nil, errors.New("missing required parameter: date_fin")
+		}
+		if _, ok := params["includes"]; !ok {
+			return nil, errors.New("missing required parameter: includes")
+		}
+		if _, ok := params["naf"]; !ok {
+			return nil, errors.New("missing required parameter: naf")
+		}
+		if _, ok := params["offset_effectif"]; !ok {
+			return nil, errors.New("missing required parameter: offset_effectif")
+		}
+		if _, ok := params["serie_periode"]; !ok {
+			return nil, errors.New("missing required parameter: serie_periode")
+		}
 		return functions{
 			"add": `function add(obj, output) {
     "use strict";

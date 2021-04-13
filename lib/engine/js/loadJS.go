@@ -37,10 +37,14 @@ func bundleJsFunctions(jsRootDir string) {
 			!strings.HasPrefix(folder.Name(), "test") {
 
 			out.Write([]byte(`"` + folder.Name() + `"` + ": func (params bson.M) (functions, error) {\n"))
-			if folder.Name() == "purgeBatch" {
-				// TODO: faire pareil pour les autres répertoires, de manière programmatique
-				out.Write([]byte("if _, ok := params[\"fromBatchKey\"]; !ok {\n"))
-				out.Write([]byte("return nil, errors.New(\"missing required parameter: fromBatchKey\")\n"))
+
+			globals, err := getTypeScriptGlobals(jsRootDir, folder.Name())
+			if err != nil {
+				log.Fatal(err)
+			}
+			for _, globalParam := range globals {
+				out.Write([]byte("if _, ok := params[\"" + globalParam + "\"]; !ok {\n"))
+				out.Write([]byte("return nil, errors.New(\"missing required parameter: " + globalParam + "\")\n"))
 				out.Write([]byte("}\n"))
 			}
 			out.Write([]byte("return functions{\n"))
@@ -148,4 +152,19 @@ func TranspileTsFunctions(jsRootDir string) {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+// getTypeScriptGlobals liste les variables globales utilisées par les fichiers TypeScript de subDir.
+func getTypeScriptGlobals(jsRootDir string, sudDir string) ([]string, error) {
+	cmd := exec.Command("bash", "./get-globals.sh", sudDir+"/*.ts") // output: comma-separated list of globals
+	cmd.Dir = jsRootDir
+	var output bytes.Buffer
+	cmd.Stdout = &output
+	cmd.Stderr = os.Stderr
+	err := cmd.Run()
+	if err != nil {
+		return nil, err
+	}
+	commaSeparatedList := strings.TrimSpace(output.String())
+	return strings.Split(commaSeparatedList, ","), nil
 }
