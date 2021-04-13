@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"go/format"
 	"io/ioutil"
 	"log"
@@ -47,9 +48,11 @@ func bundleJsFunctions(jsRootDir string) {
 				log.Fatal(err)
 			}
 			for _, globalParam := range globals {
-				out.Write([]byte("if _, ok := params[\"" + globalParam + "\"]; !ok {\n"))
-				out.Write([]byte("return nil, errors.New(\"missing required parameter: " + globalParam + "\")\n"))
-				out.Write([]byte("}\n"))
+				out.Write([]byte(fmt.Sprintf(
+					`if _, ok := params["%v"]; !ok { return nil, errors.New("missing required parameter: %v") }`,
+					globalParam,
+					globalParam,
+				)))
 			}
 			out.Write([]byte("return functions{\n"))
 
