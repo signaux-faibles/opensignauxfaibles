@@ -1,5 +1,6 @@
 package engine
 
+import "log"
 import "github.com/globalsign/mgo/bson"
 
 type functions = map[string]string
@@ -949,6 +950,9 @@ function sirene(sireneArray) {
 		}
 	},
 	"purgeBatch": func(params bson.M) functions {
+		if _, ok := params["fromBatchKey"]; !ok {
+			log.Fatal("missing required parameter: fromBatchKey")
+		}
 		return functions{
 			"finalize": `function finalize(_, o) {
     "use strict";

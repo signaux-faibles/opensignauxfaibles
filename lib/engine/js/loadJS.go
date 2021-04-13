@@ -22,6 +22,7 @@ func bundleJsFunctions(jsRootDir string) {
 
 	var out bytes.Buffer
 	out.Write([]byte("package engine\n"))
+	out.Write([]byte("import \"log\"\n"))
 	out.Write([]byte("import \"github.com/globalsign/mgo/bson\"\n"))
 	out.Write([]byte("type functions = map[string]string\n"))
 	out.Write([]byte("type functionGetter = func (bson.M) functions\n"))
@@ -35,7 +36,14 @@ func bundleJsFunctions(jsRootDir string) {
 			!strings.HasPrefix(folder.Name(), ".") && // skip hidden directories, e.g. `.nyc_output`
 			!strings.HasPrefix(folder.Name(), "test") {
 
-			out.Write([]byte(`"` + folder.Name() + `"` + ": func (params bson.M) functions { \n return functions{\n"))
+			out.Write([]byte(`"` + folder.Name() + `"` + ": func (params bson.M) functions {\n"))
+			if folder.Name() == "purgeBatch" {
+				// TODO: faire pareil pour les autres répertoires, de manière programmatique
+				out.Write([]byte("if _, ok := params[\"fromBatchKey\"]; !ok {\n"))
+				out.Write([]byte("log.Fatal(\"missing required parameter: fromBatchKey\")\n"))
+				out.Write([]byte("}\n"))
+			}
+			out.Write([]byte("return functions{\n"))
 
 			files, err := ioutil.ReadDir(filepath.Join(jsRootDir, folder.Name()))
 			if err != nil {

@@ -43,7 +43,7 @@ else
 fi
 
 heading "go generate"
-(cd ./lib/engine && go generate .) 2>&1 | indent
+(go generate ./...) 2>&1 | indent
 
 heading "make build"
 (killall sfdata 2>/dev/null || true; make build && echo "📦 sfdata") 2>&1 | indent
