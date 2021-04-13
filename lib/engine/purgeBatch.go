@@ -83,28 +83,19 @@ func PurgeBatch(batch base.AdminBatch) error {
 	queries := chunks.ToQueries(bson.M{}, "_id")
 	queryChan := queriesToChan(queries)
 
-	functions, err := loadJSFunctions("purgeBatch", bson.M{
+	jsParams := bson.M{
 		"fromBatchKey": batch.ID.Key,
-	})
+	}
+	mapReduceJob, err := makeMapReduceJob("purgeBatch", jsParams)
 	if err != nil {
 		return err
-	}
-
-	baseJob := mgo.MapReduce{ // TODO: laisser loadJSFunctions générer cet objet
-		Map:      functions["map"].Code,
-		Reduce:   functions["reduce"].Code,
-		Finalize: functions["finalize"].Code,
-		Scope: bson.M{
-			"f":            functions,
-			"fromBatchKey": batch.ID.Key,
-		},
 	}
 
 	wg := sync.WaitGroup{}
 
 	for id := 0; id < viper.GetInt("MRthreads"); id++ {
 		wg.Add(1)
-		go MRChunks(queryChan, baseJob, "purgeBatch", id, &wg)
+		go MRChunks(queryChan, *mapReduceJob, "purgeBatch", id, &wg)
 	}
 
 	wg.Wait()

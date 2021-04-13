@@ -20,6 +20,29 @@ import (
 
 //go:generate go run js/loadJS.go
 
+func makeMapReduceJob(jsDirName string, params bson.M) (*mgo.MapReduce, error) {
+
+	functions, err := loadJSFunctions(jsDirName, params)
+	if err != nil {
+		return nil, err
+	}
+
+	scope := bson.M{
+		"f": functions,
+	}
+	for name := range params {
+		scope[name] = params[name]
+	}
+
+	mapReduceJob := mgo.MapReduce{
+		Map:      functions["map"].Code,
+		Reduce:   functions["reduce"].Code,
+		Finalize: functions["finalize"].Code,
+		Scope:    scope,
+	}
+	return &mapReduceJob, nil
+}
+
 func loadJSFunctions(directoryName string, params bson.M) (map[string]bson.JavaScript, error) {
 	functions := make(map[string]bson.JavaScript)
 
