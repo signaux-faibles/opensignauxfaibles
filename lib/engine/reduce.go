@@ -185,7 +185,7 @@ func Reduce(batch base.AdminBatch, types []string) error {
 // loadCrossComputationStages charge les étapes d'agrégation MongoDB depuis des fichiers JSON.
 func reduceCrossComputations(reduceParams bson.M) (stages []bson.M, err error) {
 	stages = []bson.M{}
-	rawFiles, err := jsFunctions["reduce.algo2"](reduceParams)
+	rawFiles, err := loadFromJSBundle("reduce.algo2", reduceParams)
 	if err != nil {
 		return nil, err
 	}
