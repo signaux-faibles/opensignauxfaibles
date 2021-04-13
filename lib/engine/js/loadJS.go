@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"go/format"
 	"io/ioutil"
 	"log"
 	"os"
@@ -61,13 +62,15 @@ func bundleJsFunctions(jsRootDir string) {
 	}
 	out.Write([]byte("}\n"))
 
+	formatted, err := format.Source(out.Bytes())
+	if err != nil {
+		log.Fatal(err)
+	}
 	fileOut, err := os.Create("jsFunctions.go")
 	if err != nil {
 		log.Fatal(err)
 	}
-	fileOut.Write(out.Bytes())
-
-	// TODO: Source(src []byte) ([]byte, error)
+	fileOut.Write(formatted)
 }
 
 func main() {
