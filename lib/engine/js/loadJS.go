@@ -21,7 +21,11 @@ func bundleJsFunctions(jsRootDir string) {
 	}
 
 	var out bytes.Buffer
-	out.Write([]byte("package engine \n\n var jsFunctions = map[string]map[string]string{\n"))
+	out.Write([]byte("package engine\n"))
+	out.Write([]byte("import \"github.com/globalsign/mgo/bson\"\n"))
+	out.Write([]byte("type functions = map[string]string\n"))
+	out.Write([]byte("type functionGetter = func (bson.M) functions\n"))
+	out.Write([]byte("var jsFunctions = map[string]functionGetter{\n"))
 
 	// For each folder
 	for _, folder := range folders {
@@ -31,7 +35,7 @@ func bundleJsFunctions(jsRootDir string) {
 			!strings.HasPrefix(folder.Name(), ".") && // skip hidden directories, e.g. `.nyc_output`
 			!strings.HasPrefix(folder.Name(), "test") {
 
-			out.Write([]byte(`"` + folder.Name() + `"` + ":{\n"))
+			out.Write([]byte(`"` + folder.Name() + `"` + ": func (params bson.M) functions { \n return functions{\n"))
 
 			files, err := ioutil.ReadDir(filepath.Join(jsRootDir, folder.Name()))
 			if err != nil {
@@ -57,7 +61,7 @@ func bundleJsFunctions(jsRootDir string) {
 					out.Write([]byte("`,\n"))
 				}
 			}
-			out.Write([]byte("},\n"))
+			out.Write([]byte("} \n },\n"))
 		}
 	}
 	out.Write([]byte("}\n"))
