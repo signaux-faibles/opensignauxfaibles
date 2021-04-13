@@ -21,8 +21,8 @@ func PurgeBatchOne(batch base.AdminBatch, key string) error {
 	}
 
 	MRscope := bson.M{
-		"fromBatchKey": batch.ID.Key,
 		"f":            functions,
+		"fromBatchKey": batch.ID.Key,
 	}
 
 	job := &mgo.MapReduce{
@@ -91,8 +91,8 @@ func PurgeBatch(batch base.AdminBatch) error {
 		Reduce:   functions["reduce"].Code,
 		Finalize: functions["finalize"].Code,
 		Scope: bson.M{
-			"fromBatchKey": batch.ID.Key,
 			"f":            functions,
+			"fromBatchKey": batch.ID.Key,
 		},
 	}
 
