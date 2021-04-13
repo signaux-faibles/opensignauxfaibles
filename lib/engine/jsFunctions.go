@@ -938,22 +938,24 @@ function sirene(sireneArray) {
 }`,
 },
 "purgeBatch":{
-"finalize": `function finalize(k, o) {
+"finalize": `function finalize(_, o) {
     "use strict";
-    return o
+    return o;
 }`,
 "map": `function map() {
-  "use strict";
-  const batches = Object.keys(this.value.batch)
-  batches.filter((key) => key >= fromBatchKey).forEach((key) => {
-    delete this.value.batch[key]
-  })
-  // With a merge output, sending a new object, even empty, is compulsory
-  emit(this._id, this.value)
-}`,
-"reduce": `function reduce(key, values) {
     "use strict";
-    return values
+    const batches = Object.keys(this.value.batch);
+    batches
+        .filter((key) => key >= fromBatchKey)
+        .forEach((key) => {
+        delete this.value.batch[key];
+    });
+    // With a merge output, sending a new object, even empty, is compulsory
+    emit(this._id, this.value);
+}`,
+"reduce": `function reduce(_, values) {
+    "use strict";
+    return values;
 }`,
 },
 "reduce.algo2":{
