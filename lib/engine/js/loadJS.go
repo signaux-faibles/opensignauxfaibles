@@ -166,5 +166,8 @@ func getTypeScriptGlobals(jsRootDir string, sudDir string) ([]string, error) {
 		return nil, err
 	}
 	commaSeparatedList := strings.TrimSpace(output.String())
+	if commaSeparatedList == "" {
+		return []string{}, nil
+	}
 	return strings.Split(commaSeparatedList, ","), nil
 }

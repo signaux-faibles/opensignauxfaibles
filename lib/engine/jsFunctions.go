@@ -8,9 +8,6 @@ type functionGetter = func(bson.M) (functions, error)
 
 var jsFunctions = map[string]functionGetter{
 	"common": func(params bson.M) (functions, error) {
-		if _, ok := params[""]; !ok {
-			return nil, errors.New("missing required parameter: ")
-		}
 		return functions{
 			"compareDebit": `function compareDebit(a, b) {
     "use strict";
