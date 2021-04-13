@@ -13,16 +13,6 @@ perl -pi'' -e 's/^const .*$//g;' -e 's/^export //;' -e 's/^import .*$//g' ./**/*
 # Note: We use perl because sed adds an empty line at the end of every js file,
 # which was adding changes to git's staging, while debugging failing tests.
 
-# Extract a comma-separated list of global variables that are expected by TypeScript files passed as arguments.
-function getGlobals {
-  grep -F --no-filename 'declare const' $@ \
-    | cut -d' ' -f3 \
-    | cut -d':' -f1 \
-    | sort -u \
-    | uniq \
-    | paste -sd "," -
-}
-
 # Fails if any JavaScript file references a symbol that is not included in the list of expected globals.
 function checkJS {
   FILES="$1"
@@ -37,14 +27,14 @@ function checkJS {
 
 # Check that all functions and constants referenced in JavaScript files will be
 # made available by MongoDB or the map-reduce command sent by sfdata.
-checkJS "compact/*.js"      "f,emit,$(getGlobals 'compact/*.ts')"
-checkJS "public/*.js"       "f,emit,$(getGlobals 'public/*.ts')"
-checkJS "purgeBatch/*.js"   "f,emit,$(getGlobals 'purgeBatch/*.ts')"
-checkJS "reduce.algo2/*.js" "f,emit,print,bsonsize,$(getGlobals 'reduce.algo2/*.ts')"
+checkJS "compact/*.js"      "f,emit,$(./get-globals.sh 'compact/*.ts')"
+checkJS "public/*.js"       "f,emit,$(./get-globals.sh 'public/*.ts')"
+checkJS "purgeBatch/*.js"   "f,emit,$(./get-globals.sh 'purgeBatch/*.ts')"
+checkJS "reduce.algo2/*.js" "f,emit,print,bsonsize,$(./get-globals.sh 'reduce.algo2/*.ts')"
 
 # TODO: effacer ces lignes -- utilisées pour référence pendant le développement de PR #345
-# getGlobals 'compact/*.ts'      # => batches,completeTypes,fromBatchKey,serie_periode ✅
-# getGlobals 'public/*.ts'       # => actual_batch,date_fin,serie_periode ✅
-# getGlobals 'reduce.algo2/*.ts' # => actual_batch,date_fin,includes,naf,offset_effectif,serie_periode
-# getGlobals 'common/*.ts'       # => 
-# getGlobals 'purgeBatch/*.ts'   # => fromBatchKey
+# ./get-globals.sh 'compact/*.ts'      # => batches,completeTypes,fromBatchKey,serie_periode ✅
+# ./get-globals.sh 'public/*.ts'       # => actual_batch,date_fin,serie_periode ✅
+# ./get-globals.sh 'reduce.algo2/*.ts' # => actual_batch,date_fin,includes,naf,offset_effectif,serie_periode
+# ./get-globals.sh 'common/*.ts'       # => 
+# ./get-globals.sh 'purgeBatch/*.ts'   # => fromBatchKey
