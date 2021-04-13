@@ -15,7 +15,9 @@ import (
 
 // PurgeBatchOne purge 1 batch pour 1 siren
 func PurgeBatchOne(batch base.AdminBatch, key string) error {
-	functions, err := loadJSFunctions("purgeBatch", bson.M{}) // TODO: pass "global" parameters here
+	functions, err := loadJSFunctions("purgeBatch", bson.M{
+		"fromBatchKey": batch.ID.Key,
+	})
 	if err != nil {
 		return err
 	}
@@ -25,7 +27,7 @@ func PurgeBatchOne(batch base.AdminBatch, key string) error {
 		"fromBatchKey": batch.ID.Key,
 	}
 
-	job := &mgo.MapReduce{
+	job := &mgo.MapReduce{ // TODO: laisser loadJSFunctions générer cet objet
 		Map:      functions["map"].Code,
 		Reduce:   functions["reduce"].Code,
 		Finalize: functions["finalize"].Code,
@@ -81,12 +83,14 @@ func PurgeBatch(batch base.AdminBatch) error {
 	queries := chunks.ToQueries(bson.M{}, "_id")
 	queryChan := queriesToChan(queries)
 
-	functions, err := loadJSFunctions("purgeBatch", bson.M{}) // TODO: pass "global" parameters here
+	functions, err := loadJSFunctions("purgeBatch", bson.M{
+		"fromBatchKey": batch.ID.Key,
+	})
 	if err != nil {
 		return err
 	}
 
-	baseJob := mgo.MapReduce{
+	baseJob := mgo.MapReduce{ // TODO: laisser loadJSFunctions générer cet objet
 		Map:      functions["map"].Code,
 		Reduce:   functions["reduce"].Code,
 		Finalize: functions["finalize"].Code,
