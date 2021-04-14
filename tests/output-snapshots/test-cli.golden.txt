@@ -217,3 +217,15 @@ Flags:
 	--i-understand-what-im-doing (type: bool)
 		Nécessaire pour confirmer la suppression de données
 ---
+$ ./sfdata parseFile --help
+Parse un fichier vers la sortie standard
+
+Usage:
+	parseFile [FLAG]...
+
+Flags:
+	--parser     (type: string)
+		Parseur à employer (ex: cotisation)
+	--file       (type: string)
+		Nom du fichier à parser
+---

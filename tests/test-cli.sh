@@ -36,6 +36,7 @@ test "sfdata public --help"             2>> "${OUTPUT_FILE}"
 test "sfdata etablissements --help"     2>> "${OUTPUT_FILE}"
 test "sfdata entreprises --help"        2>> "${OUTPUT_FILE}"
 test "sfdata purgeNotCompacted --help"  2>> "${OUTPUT_FILE}"
+test "sfdata parseFile --help"          2>> "${OUTPUT_FILE}"
 
 set -e # will stop the script if any command fails with a non-zero exit code
 tests/helpers/diff-or-update-golden-master.sh "${FLAGS}" "${GOLDEN_FILE}" "${OUTPUT_FILE}"
