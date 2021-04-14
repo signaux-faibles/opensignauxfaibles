@@ -57,7 +57,7 @@ func GetFatalError(output tuplesAndEvents) string {
 func GetFatalErrors(event Event) []interface{} {
 	reportData, _ := event.ParseReport()
 	headFatal, ok := reportData["headFatal"].([]interface{})
-	if ok {
+	if !ok {
 		return nil
 	}
 	return headFatal
