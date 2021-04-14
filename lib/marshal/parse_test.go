@@ -12,12 +12,12 @@ func TestUrssafToDate(t *testing.T) {
 
 	t.Run("échoue si la date fournie n'est pas un nombre", func(t *testing.T) {
 		_, err := UrssafToDate("11A0203")
-		assert.EqualError(t, err, "Valeur non autorisée pour une conversion en date: 11A0203")
+		assert.EqualError(t, err, "valeur non autorisée pour une conversion en date: 11A0203")
 	})
 
 	t.Run("échoue si la date obtenue n'est pas valide", func(t *testing.T) {
 		_, err := UrssafToDate("0000000")
-		assert.EqualError(t, err, "Valeur non autorisée pour une conversion en date: 0000000")
+		assert.EqualError(t, err, "valeur non autorisée pour une conversion en date: 0000000")
 	})
 
 	t.Run("reconnait 1180203 comme représentant le 3 février 2018", func(t *testing.T) {
@@ -57,17 +57,17 @@ func TestUrssafToPeriod(t *testing.T) {
 
 	t.Run("échoue si la date fournie n'est pas un nombre", func(t *testing.T) {
 		_, err := UrssafToPeriod("")
-		assert.EqualError(t, err, "Valeur non autorisée")
+		assert.EqualError(t, err, "valeur non autorisée")
 	})
 
 	t.Run("échoue si la date ne s'étend pas sur 6 chiffre", func(t *testing.T) {
 		_, err := UrssafToPeriod("2004101")
-		assert.EqualError(t, err, "Valeur non autorisée")
+		assert.EqualError(t, err, "valeur non autorisée")
 	})
 
 	t.Run("échoue si l'année n'est pas un nombre", func(t *testing.T) {
 		_, err := UrssafToPeriod("AAAA1010")
-		assert.EqualError(t, err, "Valeur non autorisée")
+		assert.EqualError(t, err, "valeur non autorisée")
 	})
 
 	// si QM == 62 alors période annuelle sur YYYY.
