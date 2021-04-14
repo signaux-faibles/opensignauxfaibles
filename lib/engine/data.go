@@ -286,16 +286,6 @@ func GetBatches() ([]base.AdminBatch, error) {
 	return batches, err
 }
 
-// GetBatchesID retourne les clés des batches contenus en base
-func GetBatchesID() []string {
-	batches, _ := GetBatches()
-	var batchesID []string
-	for _, b := range batches {
-		batchesID = append(batchesID, b.ID.Key)
-	}
-	return batchesID
-}
-
 // GetBatch retourne le batch correspondant à la clé batchKey
 func GetBatch(batchKey string) (base.AdminBatch, error) {
 	var batch base.AdminBatch
