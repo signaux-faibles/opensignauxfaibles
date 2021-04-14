@@ -45,7 +45,7 @@ func TestIndexedRow(t *testing.T) {
 		assert.Equal(t, false, undefFound)
 	})
 
-	t.Run("GetFloat64 retourne la valeur décimale ou nil, selon la présence de la colonne", func(t *testing.T) {
+	t.Run("GetFloat64 retourne la valeur décimale ou nil (avec une erreur), selon la présence de la colonne", func(t *testing.T) {
 		row := idx.IndexRow([]string{"20.20"})
 		dataVal, err := row.GetFloat64("data")
 		assert.Equal(t, 20.20, *dataVal)
@@ -53,6 +53,36 @@ func TestIndexedRow(t *testing.T) {
 		undefVal, undefErr := row.GetFloat64("colonne_inexistante")
 		assert.Nil(t, undefVal)
 		assert.EqualError(t, undefErr, "GetFloat64 failed to find column: colonne_inexistante")
+	})
+
+	t.Run("GetCommaFloat64 retourne la valeur décimale à virgule ou nil (avec une erreur), selon la présence de la colonne", func(t *testing.T) {
+		row := idx.IndexRow([]string{"20,20"})
+		dataVal, err := row.GetCommaFloat64("data")
+		assert.Equal(t, 20.20, *dataVal)
+		assert.Equal(t, nil, err)
+		undefVal, undefErr := row.GetCommaFloat64("colonne_inexistante")
+		assert.Nil(t, undefVal)
+		assert.EqualError(t, undefErr, "GetCommaFloat64 failed to find column: colonne_inexistante")
+	})
+
+	t.Run("GetInt retourne la valeur entière ou nil (avec une erreur), selon la présence de la colonne", func(t *testing.T) {
+		row := idx.IndexRow([]string{"20"})
+		dataVal, err := row.GetInt("data")
+		assert.Equal(t, 20, *dataVal)
+		assert.Equal(t, nil, err)
+		undefVal, undefErr := row.GetInt("colonne_inexistante")
+		assert.Nil(t, undefVal)
+		assert.EqualError(t, undefErr, "GetInt failed to find column: colonne_inexistante")
+	})
+
+	t.Run("GetBool retourne la valeur booléenne ou false (avec une erreur), selon la présence de la colonne", func(t *testing.T) {
+		row := idx.IndexRow([]string{"true"})
+		dataVal, err := row.GetBool("data")
+		assert.Equal(t, true, dataVal)
+		assert.Equal(t, nil, err)
+		undefVal, undefErr := row.GetBool("colonne_inexistante")
+		assert.Equal(t, false, undefVal)
+		assert.EqualError(t, undefErr, "GetBool failed to find column: colonne_inexistante")
 	})
 }
 
