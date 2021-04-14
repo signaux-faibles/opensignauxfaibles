@@ -69,6 +69,7 @@ func TestMain(t *testing.T) {
 	assert.Equal(t, 0, runCLI("sfdata", "etablissements"))
 	assert.Equal(t, 0, runCLI("sfdata", "entreprises"))
 	assert.Equal(t, 0, runCLI("sfdata", "purge", "--since-batch=1910", "--i-understand-what-im-doing"))
+	assert.Equal(t, 0, runCLI("sfdata", "parseFile", "--parser=diane", "--file=lib/diane/testData/dianeTestData.txt"))
 
 	// var firstBatch base.AdminBatch
 	// db.C("Admin").Find(bson.M{}).One(&firstBatch)
