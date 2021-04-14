@@ -22,9 +22,7 @@ func TestUrssafToDate(t *testing.T) {
 	t.Run("reconnait 1180203 comme représentant le 3 février 2018", func(t *testing.T) {
 		date, err := UrssafToDate("1180203")
 		if assert.NoError(t, err) {
-			assert.Equal(t, 2018, date.Year())
-			assert.Equal(t, time.Month(2), date.Month())
-			assert.Equal(t, 3, date.Day())
+			assert.Equal(t, makeDate(2018, 2, 3), date)
 		}
 	})
 }
@@ -46,28 +44,12 @@ func TestUrssafToPeriod(t *testing.T) {
 		assert.EqualError(t, err, "Valeur non autorisée")
 	})
 
-	t.Run("reconnait 0162 comme représentant l'année 2001", func(t *testing.T) {
-		date, err := UrssafToPeriod("0162")
-		if assert.NoError(t, err) {
-			assert.Equal(t, 2001, date.Start.Year())
-			assert.Equal(t, time.Month(1), date.Start.Month())
-			assert.Equal(t, 1, date.Start.Day())
-			assert.Equal(t, 2002, date.End.Year())
-			assert.Equal(t, time.Month(1), date.End.Month())
-			assert.Equal(t, 1, date.End.Day())
-		}
-	})
-
 	// si QM == 62 alors période annuelle sur YYYY.
 	t.Run("reconnait 0162 comme représentant l'année 2001", func(t *testing.T) {
 		date, err := UrssafToPeriod("0162")
 		if assert.NoError(t, err) {
-			assert.Equal(t, 2001, date.Start.Year())
-			assert.Equal(t, time.Month(1), date.Start.Month())
-			assert.Equal(t, 1, date.Start.Day())
-			assert.Equal(t, 2002, date.End.Year())
-			assert.Equal(t, time.Month(1), date.End.Month())
-			assert.Equal(t, 1, date.End.Day())
+			assert.Equal(t, makeDate(2001, 1, 1), date.Start)
+			assert.Equal(t, makeDate(2002, 1, 1), date.End)
 		}
 	})
 
@@ -75,12 +57,8 @@ func TestUrssafToPeriod(t *testing.T) {
 	t.Run("reconnait 5062 comme représentant l'année 1950", func(t *testing.T) {
 		date, err := UrssafToPeriod("5062")
 		if assert.NoError(t, err) {
-			assert.Equal(t, 1950, date.Start.Year())
-			assert.Equal(t, time.Month(1), date.Start.Month())
-			assert.Equal(t, 1, date.Start.Day())
-			assert.Equal(t, 1951, date.End.Year())
-			assert.Equal(t, time.Month(1), date.End.Month())
-			assert.Equal(t, 1, date.End.Day())
+			assert.Equal(t, makeDate(1950, 1, 1), date.Start)
+			assert.Equal(t, makeDate(1951, 1, 1), date.End)
 		}
 	})
 
@@ -88,12 +66,8 @@ func TestUrssafToPeriod(t *testing.T) {
 	t.Run("reconnait 2110 comme représentant le 1er trimestre de 2021", func(t *testing.T) {
 		date, err := UrssafToPeriod("2110")
 		if assert.NoError(t, err) {
-			assert.Equal(t, 2021, date.Start.Year())
-			assert.Equal(t, time.Month(1), date.Start.Month())
-			assert.Equal(t, 1, date.Start.Day())
-			assert.Equal(t, 2021, date.End.Year())
-			assert.Equal(t, time.Month(4), date.End.Month())
-			assert.Equal(t, 1, date.End.Day())
+			assert.Equal(t, makeDate(2021, 1, 1), date.Start)
+			assert.Equal(t, makeDate(2021, 4, 1), date.End)
 		}
 	})
 
@@ -101,12 +75,12 @@ func TestUrssafToPeriod(t *testing.T) {
 	t.Run("reconnait 2041 comme représentant le 1er mois du 4ème trimestre de 2020", func(t *testing.T) {
 		date, err := UrssafToPeriod("2041")
 		if assert.NoError(t, err) {
-			assert.Equal(t, 2020, date.Start.Year())
-			assert.Equal(t, time.Month(10), date.Start.Month())
-			assert.Equal(t, 1, date.Start.Day())
-			assert.Equal(t, 2020, date.End.Year())
-			assert.Equal(t, time.Month(11), date.End.Month())
-			assert.Equal(t, 1, date.End.Day())
+			assert.Equal(t, makeDate(2020, 10, 1), date.Start)
+			assert.Equal(t, makeDate(2020, 11, 1), date.End)
 		}
 	})
+}
+
+func makeDate(year int, month int, day int) time.Time {
+	return time.Date(year, time.Month(month), day, 0, 0, 0, 0, time.UTC)
 }
