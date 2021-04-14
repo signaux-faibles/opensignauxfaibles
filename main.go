@@ -52,13 +52,11 @@ func runCLI(args ...string) int {
 	// execute the command
 	if useDb {
 		connectDb()
+		defer engine.FlushEventQueue()
 	}
 	if err := cmdHandlerWithArgs.Run(); err != nil {
 		fmt.Printf("\nErreur: %v\n", err)
 		return 3
-	}
-	if useDb {
-		engine.FlushEventQueue()
 	}
 	return 0
 }
