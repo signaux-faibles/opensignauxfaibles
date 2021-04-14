@@ -87,7 +87,7 @@ func reflectStructType(structType reflect.Type) propertySchema {
 		field := structType.Field(i)
 		fieldName := field.Tag.Get("bson")
 		if fieldName != "" && fieldName != "-" {
-			if strings.Contains(fieldName, ",omitempty") == true {
+			if strings.Contains(fieldName, ",omitempty") {
 				fieldName = strings.ReplaceAll(fieldName, ",omitempty", "")
 			} else {
 				requiredProps = append(requiredProps, fieldName)
