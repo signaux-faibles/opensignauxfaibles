@@ -65,13 +65,14 @@ func TestMain(t *testing.T) {
 	assert.Equal(t, 0, runCLI("sfdata", "validate", "--collection=ImportedData"))
 	assert.Equal(t, 0, runCLI("sfdata", "compact", "--since-batch=1910"))
 	assert.Equal(t, 0, runCLI("sfdata", "public", "--until-batch=1910"))
-	assert.Equal(t, 0, runCLI("sfdata", "public", "--until-batch=1910", "--key=012345678")) // couverture de PublicOne()
+	assert.Equal(t, 0, runCLI("sfdata", "public", "--until-batch=1910", "--key=012345678")) // pour couvrir PublicOne()
 	assert.Equal(t, 0, runCLI("sfdata", "reduce", "--until-batch=1910"))
+	assert.Equal(t, 0, runCLI("sfdata", "reduce", "--until-batch=1910", "--key=012345678")) // pour couvrir ReduceOne()
 	assert.Equal(t, 0, runCLI("sfdata", "etablissements"))
 	assert.Equal(t, 0, runCLI("sfdata", "entreprises"))
-	assert.Equal(t, 0, runCLI("sfdata", "purgeNotCompacted", "--i-understand-what-im-doing")) // couverture de PurgeNotCompacted()
+	assert.Equal(t, 0, runCLI("sfdata", "purgeNotCompacted", "--i-understand-what-im-doing")) // pour couvrir PurgeNotCompacted()
 	assert.Equal(t, 0, runCLI("sfdata", "purge", "--since-batch=1910", "--i-understand-what-im-doing"))
-	assert.Equal(t, 0, runCLI("sfdata", "purge", "--since-batch=1910", "--i-understand-what-im-doing", "--debug-for-key=012345678")) // couverture de PurgeBatchOne()
+	assert.Equal(t, 0, runCLI("sfdata", "purge", "--since-batch=1910", "--i-understand-what-im-doing", "--debug-for-key=012345678")) // pour couvrir PurgeBatchOne()
 	assert.Equal(t, 0, runCLI("sfdata", "parseFile", "--parser=diane", "--file=lib/diane/testData/dianeTestData.txt"))
 	assert.Equal(t, 2, runCLI("sfdata", "check"))                         // => "Erreur: paramètre `batch` obligatoire."
 	assert.Equal(t, 3, runCLI("sfdata", "pruneEntities", "--batch=1910")) // => "Erreur: Ce batch ne spécifie pas de filtre"
