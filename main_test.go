@@ -70,6 +70,7 @@ func TestMain(t *testing.T) {
 	assert.Equal(t, 0, runCLI("sfdata", "etablissements"))
 	assert.Equal(t, 0, runCLI("sfdata", "entreprises"))
 	assert.Equal(t, 0, runCLI("sfdata", "purge", "--since-batch=1910", "--i-understand-what-im-doing"))
+	assert.Equal(t, 0, runCLI("sfdata", "purge", "--since-batch=1910", "--i-understand-what-im-doing", "--debug-for-key=012345678")) // couverture de PurgeBatchOne()
 	assert.Equal(t, 0, runCLI("sfdata", "parseFile", "--parser=diane", "--file=lib/diane/testData/dianeTestData.txt"))
 
 	// var firstBatch base.AdminBatch
