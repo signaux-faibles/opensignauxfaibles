@@ -66,7 +66,6 @@ func TestMain(t *testing.T) {
 	assert.Equal(t, 0, runCLI("sfdata", "compact", "--since-batch=1910"))
 	assert.Equal(t, 0, runCLI("sfdata", "public", "--until-batch=1910"))
 	assert.Equal(t, 0, runCLI("sfdata", "reduce", "--until-batch=1910"))
-	assert.Equal(t, 0, runCLI("sfdata", "reduce", "--until-batch=1910", "--key=012345678")) // pour couvrir ReduceOne()
 	assert.Equal(t, 0, runCLI("sfdata", "etablissements"))
 	assert.Equal(t, 0, runCLI("sfdata", "entreprises"))
 	assert.Equal(t, 0, runCLI("sfdata", "purge", "--since-batch=1910", "--i-understand-what-im-doing"))
