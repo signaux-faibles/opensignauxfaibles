@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-var update = flag.Bool("update", false, "Update the expected test values in golden file") // please keep this line until https://github.com/kubernetes-sigs/service-catalog/issues/2319#issuecomment-425200065 is fixed
+var _ = flag.Bool("update", false, "Update the expected test values in golden file") // please keep this line until https://github.com/kubernetes-sigs/service-catalog/issues/2319#issuecomment-425200065 is fixed
 
 func Test_ParsePInt(t *testing.T) {
 	a, err1 := ParsePInt("9")
