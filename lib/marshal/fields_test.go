@@ -33,17 +33,26 @@ func TestIndexColumnsFromCsvHeader(t *testing.T) {
 
 func TestIndexedRow(t *testing.T) {
 
-	idx := CreateColMapping(map[string]int{"year": 0}) // simule un fichier csv avec une colonne "year" à l'indice 0
+	idx := CreateColMapping(map[string]int{"data": 0}) // simule un fichier csv avec une colonne "data" à l'indice 0
 
-	t.Run("GetOptionalVal retourne une valeur si la colonne est trouvée", func(t *testing.T) {
-		dataRow := "2020"
-		row := idx.IndexRow([]string{dataRow})
-		yearVal, yearFound := row.GetOptionalVal("year")
-		assert.Equal(t, "2020", yearVal)
-		assert.Equal(t, true, yearFound)
+	t.Run("GetOptionalVal retourne la valeur ou une chaine vide, selon la présence de la colonne", func(t *testing.T) {
+		row := idx.IndexRow([]string{"2020"})
+		dataVal, dataFound := row.GetOptionalVal("data")
+		assert.Equal(t, "2020", dataVal)
+		assert.Equal(t, true, dataFound)
 		undefVal, undefFound := row.GetOptionalVal("colonne_inexistante")
 		assert.Equal(t, "", undefVal)
 		assert.Equal(t, false, undefFound)
+	})
+
+	t.Run("GetFloat64 retourne la valeur décimale ou nil, selon la présence de la colonne", func(t *testing.T) {
+		row := idx.IndexRow([]string{"20.20"})
+		dataVal, err := row.GetFloat64("data")
+		assert.Equal(t, 20.20, *dataVal)
+		assert.Equal(t, nil, err)
+		undefVal, undefErr := row.GetFloat64("colonne_inexistante")
+		assert.Nil(t, undefVal)
+		assert.EqualError(t, undefErr, "GetFloat64 failed to find column: colonne_inexistante")
 	})
 }
 
