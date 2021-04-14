@@ -20,13 +20,18 @@ import (
 
 //go:generate go run js/loadJS.go
 
-// makeMapReduceJob construit une requête MapReduce à partir d'un répertoire de fonctions JavaScript et de paramètres à leur transmettre.
-func makeMapReduceJob(jsDirName string, params bson.M) (*mgo.MapReduce, error) {
-	functions := make(map[string]bson.JavaScript)
+// MakeMapReduceJob construit une requête MapReduce à partir d'un bundle de fonctions JavaScript et de paramètres à leur transmettre.
+func MakeMapReduceJob(jsDirName string, params bson.M) (*mgo.MapReduce, error) {
 	rawFunctions, err := loadFromJSBundle(jsDirName, params)
 	if err != nil {
 		return nil, err
 	}
+	return makeMapReduceJobFromJsFunctions(rawFunctions, params)
+}
+
+// makeMapReduceJobFromJsFunctions construit une requête MapReduce à partir de fonctions JavaScript et de paramètres à leur transmettre.
+func makeMapReduceJobFromJsFunctions(rawFunctions map[string]string, params bson.M) (*mgo.MapReduce, error) {
+	functions := make(map[string]bson.JavaScript)
 	for fctName, fctImpl := range rawFunctions {
 		functions[fctName] = bson.JavaScript{Code: fctImpl}
 	}
@@ -244,7 +249,7 @@ func Compact(fromBatchKey string) error {
 		"fromBatchKey":  fromBatchKey,
 		"serie_periode": misc.GenereSeriePeriode(batch.Params.DateDebut, batch.Params.DateFin),
 	}
-	mapReduceJob, err := makeMapReduceJob("compact", jsParams)
+	mapReduceJob, err := MakeMapReduceJob("compact", jsParams)
 	if err != nil {
 		return err
 	}

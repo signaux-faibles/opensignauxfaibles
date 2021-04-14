@@ -30,7 +30,7 @@ func ReduceOne(batch base.AdminBatch, key, from, to string, types []string) erro
 		return err
 	}
 
-	job, err := makeMapReduceJob("reduce.algo2", *jsParams)
+	job, err := MakeMapReduceJob("reduce.algo2", *jsParams)
 	if err != nil {
 		return err
 	}
@@ -77,7 +77,7 @@ func Reduce(batch base.AdminBatch, types []string) error {
 		return err
 	}
 
-	job, err := makeMapReduceJob("reduce.algo2", *jsParams)
+	job, err := MakeMapReduceJob("reduce.algo2", *jsParams)
 	if err != nil {
 		return err
 	}

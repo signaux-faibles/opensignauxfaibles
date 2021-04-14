@@ -26,7 +26,7 @@ func PublicOne(batch base.AdminBatch, key string) error {
 		"date_fin":      batch.Params.DateFin,
 		"serie_periode": misc.GenereSeriePeriode(batch.Params.DateDebut, batch.Params.DateFin),
 	}
-	job, err := makeMapReduceJob("public", jsParams)
+	job, err := MakeMapReduceJob("public", jsParams)
 	if err != nil {
 		return err
 	}
@@ -59,7 +59,7 @@ func Public(batch base.AdminBatch) error {
 		"date_fin":      batch.Params.DateFin,
 		"serie_periode": misc.GenereSeriePeriode(batch.Params.DateFin.AddDate(0, -24, 0), batch.Params.DateFin),
 	}
-	mapReduceJobTemplate, err := makeMapReduceJob("public", jsParams)
+	mapReduceJobTemplate, err := MakeMapReduceJob("public", jsParams)
 	if err != nil {
 		return err
 	}

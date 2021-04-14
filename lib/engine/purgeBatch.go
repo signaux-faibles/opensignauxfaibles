@@ -18,7 +18,7 @@ func PurgeBatchOne(batch base.AdminBatch, key string) error {
 	jsParams := bson.M{
 		"fromBatchKey": batch.ID.Key,
 	}
-	mapReduceJob, err := makeMapReduceJob("purgeBatch", jsParams)
+	mapReduceJob, err := MakeMapReduceJob("purgeBatch", jsParams)
 	if err != nil {
 		return err
 	}
@@ -76,7 +76,7 @@ func PurgeBatch(batch base.AdminBatch) error {
 	jsParams := bson.M{
 		"fromBatchKey": batch.ID.Key,
 	}
-	mapReduceJob, err := makeMapReduceJob("purgeBatch", jsParams)
+	mapReduceJob, err := MakeMapReduceJob("purgeBatch", jsParams)
 	if err != nil {
 		return err
 	}
