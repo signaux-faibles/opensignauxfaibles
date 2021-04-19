@@ -15,7 +15,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var update = flag.Bool("update", false, "Update the expected test values in golden file") // please keep this line until https://github.com/kubernetes-sigs/service-catalog/issues/2319#issuecomment-425200065 is fixed
+var _ = flag.Bool("update", false, "Update the expected test values in golden file") // please keep this line until https://github.com/kubernetes-sigs/service-catalog/issues/2319#issuecomment-425200065 is fixed
 
 const (
 	mongoImage     = "mongo:4.2@sha256:1c2243a5e21884ffa532ca9d20c221b170d7b40774c235619f98e2f6eaec520a"
@@ -63,16 +63,23 @@ func TestMain(t *testing.T) {
 				"date_fin":   time.Date(2019, 1, 1, 0, 0, 0, 0, time.UTC), // ISODate("2019-02-01T00:00:00.000+0000"),
 			},
 		})
-		// Exécution des commandes et vérification qu'elles s'achèvent toutes avec un exit code nul
-		assert.Equal(t, 0, runCLI("sfdata", "check", "--batch=1910"))
-		assert.Equal(t, 0, runCLI("sfdata", "import", "--batch=1910", "--no-filter"))
-		assert.Equal(t, 0, runCLI("sfdata", "validate", "--collection=ImportedData"))
-		assert.Equal(t, 0, runCLI("sfdata", "compact", "--since-batch=1910"))
-		assert.Equal(t, 0, runCLI("sfdata", "public", "--until-batch=1910"))
-		assert.Equal(t, 0, runCLI("sfdata", "reduce", "--until-batch=1910"))
-		assert.Equal(t, 0, runCLI("sfdata", "etablissements"))
-		assert.Equal(t, 0, runCLI("sfdata", "entreprises"))
-		assert.Equal(t, 0, runCLI("sfdata", "purge", "--since-batch=1910", "--i-understand-what-im-doing"))
+		// Exécution des commandes et vérification qu'elles s'achèvent toutes avec un exit code nul    
+    assert.Equal(t, 0, runCLI("sfdata", "check", "--batch=1910"))
+    assert.Equal(t, 0, runCLI("sfdata", "import", "--batch=1910", "--no-filter"))
+    assert.Equal(t, 0, runCLI("sfdata", "validate", "--collection=ImportedData"))
+    assert.Equal(t, 0, runCLI("sfdata", "compact", "--since-batch=1910"))
+    assert.Equal(t, 0, runCLI("sfdata", "public", "--until-batch=1910"))
+    assert.Equal(t, 0, runCLI("sfdata", "public", "--until-batch=1910", "--key=012345678")) // pour couvrir PublicOne()
+    assert.Equal(t, 0, runCLI("sfdata", "reduce", "--until-batch=1910"))
+    assert.Equal(t, 0, runCLI("sfdata", "reduce", "--until-batch=1910", "--key=012345678")) // pour couvrir ReduceOne()
+    assert.Equal(t, 0, runCLI("sfdata", "etablissements"))
+    assert.Equal(t, 0, runCLI("sfdata", "entreprises"))
+    assert.Equal(t, 0, runCLI("sfdata", "purgeNotCompacted", "--i-understand-what-im-doing")) // pour couvrir PurgeNotCompacted()
+    assert.Equal(t, 0, runCLI("sfdata", "purge", "--since-batch=1910", "--i-understand-what-im-doing"))
+    assert.Equal(t, 0, runCLI("sfdata", "purge", "--since-batch=1910", "--i-understand-what-im-doing", "--debug-for-key=012345678")) // pour couvrir PurgeBatchOne()
+    assert.Equal(t, 0, runCLI("sfdata", "parseFile", "--parser=diane", "--file=lib/diane/testData/dianeTestData.txt"))
+    assert.Equal(t, 2, runCLI("sfdata", "check"))                         // => "Erreur: paramètre `batch` obligatoire."
+    assert.Equal(t, 3, runCLI("sfdata", "pruneEntities", "--batch=1910")) // => "Erreur: Ce batch ne spécifie pas de filtre"
 	})
 
 	t.Run("Les données importées sont validées par MongoDB", func(t *testing.T) {

@@ -75,7 +75,6 @@ test[serialOrSkip](
     const date_fin = new Date("2016-01-01")
     const jsParams = {
       actual_batch: "2002_1",
-      date_debut,
       date_fin,
       serie_periode: generatePeriodSerie(date_debut, date_fin),
       includes: { all: true },
