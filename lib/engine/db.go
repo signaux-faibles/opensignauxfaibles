@@ -75,7 +75,6 @@ func InitDB() DB {
 		Key:  []string{"-value.index.algo2"}, // booléen
 	})
 
-	// firstBatch, err := getBatch(db, firstBatchID)
 	var firstBatch base.AdminBatch
 	db.C("Admin").Find(bson.M{"_id.type": "batch", "_id.key": firstBatchID}).One(&firstBatch)
 	// Si la table Admin n'existe pas, elle sera créée lors de l'insertion, ci-dessous

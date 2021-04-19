@@ -20,31 +20,56 @@ import (
 
 //go:generate go run js/loadJS.go
 
-func loadJSFunctions(directoryNames ...string) (map[string]bson.JavaScript, error) {
+// MakeMapReduceJob construit une requête MapReduce à partir d'un bundle de fonctions JavaScript et de paramètres à leur transmettre.
+func MakeMapReduceJob(jsDirName string, params bson.M) (*mgo.MapReduce, error) {
+	rawFunctions, err := loadFromJSBundle(jsDirName, params)
+	if err != nil {
+		return nil, err
+	}
+	return makeMapReduceJobFromJsFunctions(rawFunctions, params)
+}
+
+// makeMapReduceJobFromJsFunctions construit une requête MapReduce à partir de fonctions JavaScript et de paramètres à leur transmettre.
+func makeMapReduceJobFromJsFunctions(rawFunctions map[string]string, params bson.M) (*mgo.MapReduce, error) {
 	functions := make(map[string]bson.JavaScript)
-	var err error
+	for fctName, fctImpl := range rawFunctions {
+		functions[fctName] = bson.JavaScript{Code: fctImpl}
+	}
+	scope := bson.M{
+		"f": functions,
+	}
+	for name := range params {
+		scope[name] = params[name]
+	}
+	mapReduceJob := mgo.MapReduce{
+		Map:      rawFunctions["map"],
+		Reduce:   rawFunctions["reduce"],
+		Finalize: rawFunctions["finalize"],
+		Scope:    scope,
+	}
+	return &mapReduceJob, nil
+}
 
+// loadFromJSBundle récupère les fonctions JavaScript et/ou objets JSONs stockés dans jsFunctions.go.
+func loadFromJSBundle(directoryName string, params bson.M) (map[string]string, error) {
 	// If encountering an error at following line, you probably forgot to
-	// generate the file with "go generate" in ./lib/engine
-	for k, v := range jsFunctions["common"] {
-		functions[k] = bson.JavaScript{
-			Code: string(v),
-		}
+	// generate the jsFunctions.go file with "go generate" in ./lib/engine
+	rawFunctions, err := jsFunctions["common"](bson.M{}) // note: on passe un objet vide car les fonctions de common ne s'appuient sur aucun paramètre
+	if err != nil {
+		return nil, err
 	}
-
-	for _, directoryName := range directoryNames {
-		if _, ok := jsFunctions[directoryName]; !ok {
-			err = errors.New("Map reduce javascript functions could not be found for " + directoryName)
-		} else {
-			err = nil
-		}
-		for k, v := range jsFunctions[directoryName] {
-			functions[k] = bson.JavaScript{
-				Code: string(v),
-			}
-		}
+	functionsGetter, ok := jsFunctions[directoryName]
+	if !ok {
+		return nil, errors.New("Map reduce javascript functions could not be found for " + directoryName)
 	}
-	return functions, err
+	additionalFunctions, err := functionsGetter(params)
+	if err != nil {
+		return nil, err
+	}
+	for k, v := range additionalFunctions {
+		rawFunctions[k] = v
+	}
+	return rawFunctions, nil
 }
 
 // PurgeNotCompacted permet de supprimer les objets non encore compactés
@@ -218,25 +243,21 @@ func Compact(fromBatchKey string) error {
 	}
 	batch = batches[found]
 
-	functions, err := loadJSFunctions("compact")
+	jsParams := bson.M{
+		"batches":       batchesID,
+		"completeTypes": completeTypes,
+		"fromBatchKey":  fromBatchKey,
+		"serie_periode": misc.GenereSeriePeriode(batch.Params.DateDebut, batch.Params.DateFin),
+	}
+	mapReduceJob, err := MakeMapReduceJob("compact", jsParams)
 	if err != nil {
 		return err
 	}
 
 	// Traitement MR
-	job := &mgo.MapReduce{
-		Map:      functions["map"].Code,
-		Reduce:   functions["reduce"].Code, // 1st pass: reduce() will be called on the documents of ImportedData
-		Finalize: functions["finalize"].Code,
-		Out:      bson.M{"reduce": "RawData"}, // 2nd pass: for each siret/siren, reduce() will be called on the current RawData document and the result of the 1st pass, to merge the the new data with the existing data
-		Scope: bson.M{
-			"f":             functions,
-			"batches":       batchesID,
-			"completeTypes": completeTypes,
-			"fromBatchKey":  fromBatchKey,
-			"serie_periode": misc.GenereSeriePeriode(batch.Params.DateDebut, batch.Params.DateFin),
-		},
-	}
+	// - 1st pass: "reduce" is called on the documents of ImportedData
+	// - 2nd pass: "reduce" is called on the current RawData document, for each siret/siren, and the result of the 1st pass, to merge the the new data with the existing data
+	mapReduceJob.Out = bson.M{"reduce": "RawData"}
 
 	chunks, err := ChunkCollection(viper.GetString("DB"), "RawData", viper.GetInt64("chunkByteSize"))
 	if err != nil {
@@ -245,7 +266,7 @@ func Compact(fromBatchKey string) error {
 
 	for _, query := range chunks.ToQueries(nil, "value.key") {
 		log.Println(query)
-		_, err = Db.DB.C("ImportedData").Find(query).MapReduce(job, nil)
+		_, err = Db.DB.C("ImportedData").Find(query).MapReduce(mapReduceJob, nil)
 		if err != nil {
 			return err
 		}
@@ -263,16 +284,6 @@ func GetBatches() ([]base.AdminBatch, error) {
 	var batches []base.AdminBatch
 	err := Db.DB.C("Admin").Find(bson.M{"_id.type": "batch"}).Sort("_id.key").All(&batches)
 	return batches, err
-}
-
-// GetBatchesID retourne les clés des batches contenus en base
-func GetBatchesID() []string {
-	batches, _ := GetBatches()
-	var batchesID []string
-	for _, b := range batches {
-		batchesID = append(batchesID, b.ID.Key)
-	}
-	return batchesID
 }
 
 // GetBatch retourne le batch correspondant à la clé batchKey

@@ -81,13 +81,3 @@ func GenereSeriePeriode(debut time.Time, fin time.Time) []time.Time {
 	}
 	return serie
 }
-
-// GenereSeriePeriodeAnnuelle génère une liste de dates pour les années entre le début de l'année de la date de début et la fin de l'année de la date de fin
-func GenereSeriePeriodeAnnuelle(debut time.Time, fin time.Time) []int {
-	var serie []int
-	for debut.Year() <= fin.Year() {
-		serie = append(serie, debut.Year())
-		debut = debut.AddDate(1, 0, 0)
-	}
-	return serie
-}

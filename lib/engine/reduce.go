@@ -25,7 +25,12 @@ func ReduceOne(batch base.AdminBatch, key, from, to string, types []string) erro
 		return errors.New("key minimal length of 9")
 	}
 
-	scope, err := reduceDefineScope(batch, types)
+	jsParams, err := makeReduceFeaturesParams(batch, types)
+	if err != nil {
+		return err
+	}
+
+	job, err := MakeMapReduceJob("reduce.algo2", *jsParams)
 	if err != nil {
 		return err
 	}
@@ -52,21 +57,13 @@ func ReduceOne(batch base.AdminBatch, key, from, to string, types []string) erro
 		return fmt.Errorf("les paramètres key, ou la paire de paramètres from et to, sont obligatoires")
 	}
 
-	functions := scope["f"].(map[string]bson.JavaScript)
-	job := &mgo.MapReduce{
-		Map:      functions["map"].Code,
-		Reduce:   functions["reduce"].Code,
-		Finalize: functions["finalize"].Code,
-		Out:      bson.M{"replace": "TemporaryCollection"},
-		Scope:    scope,
-	}
-
+	job.Out = bson.M{"replace": "TemporaryCollection"}
 	_, err = Db.DB.C("RawData").Find(query).MapReduce(job, nil)
 
 	if err != nil {
 		return err
 	}
-	err = reduceFinalAggregation(Db.DB, "TemporaryCollection", viper.GetString("DB"), "Features_debug")
+	err = reduceFinalAggregation(Db.DB, "TemporaryCollection", viper.GetString("DB"), "Features_debug", *jsParams)
 	return err
 }
 
@@ -75,7 +72,12 @@ func Reduce(batch base.AdminBatch, types []string) error {
 
 	startDate := time.Now()
 
-	scope, err := reduceDefineScope(batch, types)
+	jsParams, err := makeReduceFeaturesParams(batch, types)
+	if err != nil {
+		return err
+	}
+
+	job, err := MakeMapReduceJob("reduce.algo2", *jsParams)
 	if err != nil {
 		return err
 	}
@@ -99,15 +101,8 @@ func Reduce(batch base.AdminBatch, types []string) error {
 		w.waitGroup.Add(1)
 		dbTemp := "reduce" + strconv.Itoa(i)
 
-		functions := scope["f"].(map[string]bson.JavaScript)
 		// Injection des fonctions JavaScript pour exécution par MongoDB
-		job := &mgo.MapReduce{
-			Map:      functions["map"].Code,
-			Reduce:   functions["reduce"].Code,
-			Finalize: functions["finalize"].Code,
-			Out:      bson.M{"replace": "TemporaryCollection", "db": dbTemp},
-			Scope:    scope,
-		}
+		job.Out = bson.M{"replace": "TemporaryCollection", "db": dbTemp}
 		i++
 		go MRroutine(job, query, dbTemp, "RawData", &w, tempDBChannel)
 
@@ -149,6 +144,7 @@ func Reduce(batch base.AdminBatch, types []string) error {
 			"TemporaryCollection",
 			/*outDatabase = */ viper.GetString("DB"),
 			outCollection,
+			*jsParams,
 		)
 
 		if err != nil {
@@ -187,9 +183,13 @@ func Reduce(batch base.AdminBatch, types []string) error {
 }
 
 // loadCrossComputationStages charge les étapes d'agrégation MongoDB depuis des fichiers JSON.
-func reduceCrossComputations(directoryName string) (stages []bson.M, err error) {
+func reduceCrossComputations(reduceParams bson.M) (stages []bson.M, err error) {
 	stages = []bson.M{}
-	for file, content := range jsFunctions["reduce.algo2"] {
+	rawFiles, err := loadFromJSBundle("reduce.algo2", reduceParams)
+	if err != nil {
+		return nil, err
+	}
+	for file, content := range rawFiles {
 		if !strings.Contains(file, ".crossComputation.json") {
 			continue
 		}
@@ -203,9 +203,9 @@ func reduceCrossComputations(directoryName string) (stages []bson.M, err error) 
 	return stages, nil
 }
 
-func reduceFinalAggregation(tempDatabase *mgo.Database, tempCollection, outDatabase, outCollection string) error {
+func reduceFinalAggregation(tempDatabase *mgo.Database, tempCollection, outDatabase, outCollection string, reduceParams bson.M) error {
 
-	setStages, err := reduceCrossComputations("reduce.algo2")
+	setStages, err := reduceCrossComputations(reduceParams)
 	if err != nil {
 		return err
 	}
@@ -285,12 +285,7 @@ func reduceFinalAggregation(tempDatabase *mgo.Database, tempCollection, outDatab
 	return err
 }
 
-func reduceDefineScope(batch base.AdminBatch, types []string) (bson.M, error) {
-
-	functions, err := loadJSFunctions("reduce.algo2")
-	if err != nil {
-		return nil, err
-	}
+func makeReduceFeaturesParams(batch base.AdminBatch, types []string) (*bson.M, error) {
 
 	naf, err := naf.LoadNAF()
 	if err != nil {
@@ -306,20 +301,15 @@ func reduceDefineScope(batch base.AdminBatch, types []string) (bson.M, error) {
 		}
 	}
 
-	scope := bson.M{
-		"date_debut":             batch.Params.DateDebut,
-		"date_fin":               batch.Params.DateFin,
-		"date_fin_effectif":      batch.Params.DateFinEffectif,
-		"serie_periode":          misc.GenereSeriePeriode(batch.Params.DateDebut, batch.Params.DateFin),
-		"serie_periode_annuelle": misc.GenereSeriePeriodeAnnuelle(batch.Params.DateDebut, batch.Params.DateFin),
-		"offset_effectif":        (batch.Params.DateFinEffectif.Year()-batch.Params.DateFin.Year())*12 + int(batch.Params.DateFinEffectif.Month()-batch.Params.DateFin.Month()),
-		"actual_batch":           batch.ID.Key,
-		"naf":                    naf,
-		"f":                      functions,
-		"batches":                GetBatchesID(),
-		"includes":               includes,
+	jsParams := bson.M{
+		"actual_batch":    batch.ID.Key,
+		"date_fin":        batch.Params.DateFin,
+		"includes":        includes,
+		"naf":             naf,
+		"offset_effectif": (batch.Params.DateFinEffectif.Year()-batch.Params.DateFin.Year())*12 + int(batch.Params.DateFinEffectif.Month()-batch.Params.DateFin.Month()),
+		"serie_periode":   misc.GenereSeriePeriode(batch.Params.DateDebut, batch.Params.DateFin),
 	}
-	return scope, nil
+	return &jsParams, nil
 }
 
 func backupCollection(adminDb *mgo.Database, namespace string, outCollection string) (string, error) {

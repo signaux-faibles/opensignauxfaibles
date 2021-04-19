@@ -24,7 +24,6 @@ const initGlobalParams = (dateDebut: Date, dateFin: Date) =>
   setGlobals({
     naf: nafValues,
     actual_batch: "1905",
-    date_debut: dateDebut,
     date_fin: dateFin,
     serie_periode: generatePeriodSerie(dateDebut, dateFin),
     offset_effectif: 2,

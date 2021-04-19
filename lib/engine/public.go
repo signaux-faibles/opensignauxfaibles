@@ -8,7 +8,6 @@ import (
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/misc"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/naf"
 
 	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
@@ -22,36 +21,17 @@ func PublicOne(batch base.AdminBatch, key string) error {
 		return errors.New("key minimal length of 9")
 	}
 
-	functions, err := loadJSFunctions("public")
+	jsParams := bson.M{
+		"actual_batch":  batch.ID.Key,
+		"date_fin":      batch.Params.DateFin,
+		"serie_periode": misc.GenereSeriePeriode(batch.Params.DateDebut, batch.Params.DateFin),
+	}
+	job, err := MakeMapReduceJob("public", jsParams)
 	if err != nil {
 		return err
 	}
 
-	naf, err := naf.LoadNAF()
-	if err != nil {
-		return err
-	}
-
-	scope := bson.M{
-		"date_debut":             batch.Params.DateDebut,
-		"date_fin":               batch.Params.DateFin,
-		"date_fin_effectif":      batch.Params.DateFinEffectif,
-		"serie_periode":          misc.GenereSeriePeriode(batch.Params.DateDebut, batch.Params.DateFin),
-		"serie_periode_annuelle": misc.GenereSeriePeriodeAnnuelle(batch.Params.DateDebut, batch.Params.DateFin),
-		"offset_effectif":        (batch.Params.DateFinEffectif.Year()-batch.Params.DateFin.Year())*12 + int(batch.Params.DateFinEffectif.Month()-batch.Params.DateFin.Month()),
-		"actual_batch":           batch.ID.Key,
-		"naf":                    naf,
-		"f":                      functions,
-		"batches":                GetBatchesID(),
-	}
-
-	job := &mgo.MapReduce{
-		Map:      functions["map"].Code,
-		Reduce:   functions["reduce"].Code,
-		Finalize: functions["finalize"].Code,
-		Out:      bson.M{"replace": "Public_debug"},
-		Scope:    scope,
-	}
+	job.Out = bson.M{"replace": "Public_debug"}
 
 	query := bson.M{
 		"_id": bson.M{
@@ -74,21 +54,14 @@ func PublicOne(batch base.AdminBatch, key string) error {
 func Public(batch base.AdminBatch) error {
 	startDate := time.Now()
 
-	functions, err := loadJSFunctions("public")
+	jsParams := bson.M{
+		"actual_batch":  batch.ID.Key,
+		"date_fin":      batch.Params.DateFin,
+		"serie_periode": misc.GenereSeriePeriode(batch.Params.DateFin.AddDate(0, -24, 0), batch.Params.DateFin),
+	}
+	mapReduceJobTemplate, err := MakeMapReduceJob("public", jsParams)
 	if err != nil {
 		return err
-	}
-	scope := bson.M{
-		"date_debut":             batch.Params.DateDebut,
-		"date_fin":               batch.Params.DateFin,
-		"date_fin_effectif":      batch.Params.DateFinEffectif,
-		"serie_periode":          misc.GenereSeriePeriode(batch.Params.DateFin.AddDate(0, -24, 0), batch.Params.DateFin),
-		"serie_periode_annuelle": misc.GenereSeriePeriodeAnnuelle(batch.Params.DateFin.AddDate(0, -24, 0), batch.Params.DateFin),
-		"offset_effectif":        (batch.Params.DateFinEffectif.Year()-batch.Params.DateFin.Year())*12 + int(batch.Params.DateFinEffectif.Month()-batch.Params.DateFin.Month()),
-		"actual_batch":           batch.ID.Key,
-		"naf":                    naf.Naf,
-		"f":                      functions,
-		"batches":                GetBatchesID(),
 	}
 
 	chunks, err := ChunkCollection(viper.GetString("DB"), "RawData", viper.GetInt64("chunkByteSize"))
@@ -108,17 +81,12 @@ func Public(batch base.AdminBatch) error {
 	for _, query := range chunks.ToQueries(filter, "_id") {
 		w.waitGroup.Add(1)
 
-		dbTemp := "purgeBatch" + strconv.Itoa(i) // TODO: à renommer
-		job := &mgo.MapReduce{
-			Map:      functions["map"].Code,
-			Reduce:   functions["reduce"].Code,
-			Finalize: functions["finalize"].Code,
-			Out:      bson.M{"replace": "TemporaryCollection", "db": dbTemp},
-			Scope:    scope,
-		}
+		dbTemp := "purgeBatch" + strconv.Itoa(i)           // TODO: à renommer
+		var chunkJob mgo.MapReduce = *mapReduceJobTemplate // on dérive mapReduceJobTemplate par copie
+		chunkJob.Out = bson.M{"replace": "TemporaryCollection", "db": dbTemp}
 		i++
 
-		go MRroutine(job, query, dbTemp, "RawData", &w, pipeChannel)
+		go MRroutine(&chunkJob, query, dbTemp, "RawData", &w, pipeChannel)
 
 	}
 

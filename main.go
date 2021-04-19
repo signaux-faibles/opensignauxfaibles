@@ -11,8 +11,6 @@ import (
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/engine"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/marshal"
-
-	"github.com/signaux-faibles/opensignauxfaibles/lib/naf"
 )
 
 // GitCommit est le hash du dernier commit à inclure dans le binaire.
@@ -21,12 +19,6 @@ var GitCommit string // (populé lors de la compilation, par `make build`)
 func connectDb() {
 	engine.Db = engine.InitDB()
 	go engine.InitEventQueue()
-
-	var err error
-	naf.Naf, err = naf.LoadNAF()
-	if err != nil {
-		panic(err)
-	}
 }
 
 // main Fonction Principale
