@@ -45,6 +45,7 @@ const bsonsize = (obj: unknown): number => JSON.stringify(obj).length // will no
 export function finalize(k: Clé, v: SortieMap): SortieFinalize {
   "use strict"
 
+  const maxEtabParEntr = 1500
   const maxBsonSize = 16777216
 
   // v de la forme
@@ -65,11 +66,12 @@ export function finalize(k: Clé, v: SortieMap): SortieFinalize {
   )
   const entr: DonnéesEntreprise = { ...v.entreprise } as DonnéesEntreprise // on suppose que v.entreprise est défini
 
-  const output: SortieEtabAvecEntreprise[] = Object.keys(établissements).map(
-    (siret) => {
+  const output: SortieEtabAvecEntreprise[] = Object.keys(établissements)
+    .map((siret) => {
       const etab: SortieMapEtablissement = établissements[siret] ?? {}
       if (etab.effectif) {
-        entr.effectif_entreprise = entr.effectif_entreprise || 0 + etab.effectif
+        entr.effectif_entreprise =
+          (entr.effectif_entreprise || 0) + etab.effectif
       }
       if (etab.apart_heures_consommees) {
         entr.apart_entreprise =
@@ -81,20 +83,20 @@ export function finalize(k: Clé, v: SortieMap): SortieFinalize {
           (etab.montant_part_patronale ?? 0) +
           (etab.montant_part_ouvriere ?? 0)
       }
-      return {
-        ...etab, // TODO: s'assurer que certains champs de données d'établissement ne sont pas écrasés par des données d'entreprise portant le même nom
-        ...entr,
-        nbr_etablissements_connus: Object.keys(établissements).length,
-      }
-    }
-  )
+      return etab
+    })
+    .map((etab) => ({
+      ...etab, // TODO: s'assurer que certains champs de données d'établissement ne sont pas écrasés par des données d'entreprise portant le même nom
+      ...entr,
+      nbr_etablissements_connus: Object.keys(établissements).length,
+    }))
 
   // NON: Pour l'instant, filtrage a posteriori
   // output = output.filter(siret_data => {
   //   return(siret_data.effectif) // Only keep if there is known effectif
   // })
 
-  if (output.length > 0 && output.length <= 1500) {
+  if (output.length > 0 && output.length <= maxEtabParEntr) {
     if (bsonsize(output) + bsonsize({ _id: k }) < maxBsonSize) {
       return output
     } else {
