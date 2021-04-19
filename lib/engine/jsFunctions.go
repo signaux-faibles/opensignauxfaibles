@@ -716,9 +716,6 @@ function reduce(key, values // chaque element contient plusieurs batches pour ce
 }`,
 		}, nil
 	},
-	"coverage": func(params bson.M) (functions, error) {
-		return functions{}, nil
-	},
 	"public": func(params bson.M) (functions, error) {
 		if _, ok := params["actual_batch"]; !ok {
 			return nil, errors.New("missing required parameter: actual_batch")
