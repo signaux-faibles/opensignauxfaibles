@@ -16,7 +16,7 @@
     "ts-node/register"
   ],
   "cache": true,
-  "sourceMap": false,
+  "sourceMap": true, /* nécessaire pour que les instructions couvertes soient associées aux bons numéros de lignes des fichiers TypeScript avant transpilation, cf https://github.com/signaux-faibles/opensignauxfaibles/pull/348#issuecomment-822462720 */
   "instrument": true,
   "all": true
 }
