@@ -48,7 +48,7 @@ func AllErrors(slice []error, item interface{}) bool {
 func ExcelToTime(excel string) (time.Time, error) {
 	excelInt, err := strconv.ParseInt(excel, 10, 64)
 	if err != nil {
-		return time.Time{}, errors.New("Valeur non autorisée")
+		return time.Time{}, errors.New("valeur non autorisée")
 	}
 	return time.Unix((excelInt-25569)*3600*24, 0), nil
 }
@@ -78,16 +78,6 @@ func GenereSeriePeriode(debut time.Time, fin time.Time) []time.Time {
 	for fin.After(debut) {
 		serie = append(serie, debut)
 		debut = debut.AddDate(0, 1, 0)
-	}
-	return serie
-}
-
-// GenereSeriePeriodeAnnuelle génère une liste de dates pour les années entre le début de l'année de la date de début et la fin de l'année de la date de fin
-func GenereSeriePeriodeAnnuelle(debut time.Time, fin time.Time) []int {
-	var serie []int
-	for debut.Year() <= fin.Year() {
-		serie = append(serie, debut.Year())
-		debut = debut.AddDate(1, 0, 0)
 	}
 	return serie
 }

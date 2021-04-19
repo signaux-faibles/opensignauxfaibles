@@ -1,7 +1,6 @@
 package base
 
 import (
-	"errors"
 	"regexp"
 	"strings"
 	"time"
@@ -21,17 +20,6 @@ type adminBatchParams struct {
 	DateDebut       time.Time `json:"date_debut" bson:"date_debut"`
 	DateFin         time.Time `json:"date_fin" bson:"date_fin"`
 	DateFinEffectif time.Time `json:"date_fin_effectif" bson:"date_fin_effectif"`
-}
-
-// New crée un nouveau batch
-func (batch *AdminBatch) New(batchKey string) error {
-	if !IsBatchID(batchKey) {
-		return errors.New("Valeur de batch non autorisée")
-	}
-	batch.ID.Key = batchKey
-	batch.ID.Type = "batch"
-	batch.Files = BatchFiles{}
-	return nil
 }
 
 // IsBatchID retourne `true` si `batchID` est un identifiant de Batch.

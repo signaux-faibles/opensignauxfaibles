@@ -60,7 +60,7 @@ func getSirenFilter(cache Cache, batch *base.AdminBatch, fr filterReader) (Siren
 		if ok {
 			return filter, nil
 		}
-		return nil, errors.New("Wrong format from existing field filter in cache")
+		return nil, errors.New("wrong format from existing field filter in cache")
 	}
 
 	paths := batch.Files["filter"]

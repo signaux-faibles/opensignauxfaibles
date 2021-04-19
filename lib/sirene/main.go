@@ -194,7 +194,7 @@ func parseLine(idx marshal.ColMapping, row []string, parsedLine *marshal.ParsedL
 		}
 		sirene.Departement = departement
 	} else {
-		parsedLine.AddRegularError(errors.New("Code postal est manquant ou de format incorrect"))
+		parsedLine.AddRegularError(errors.New("code postal est manquant ou de format incorrect"))
 	}
 
 	if idxRow.GetVal("activitePrincipaleEtablissement") != "" {
@@ -214,12 +214,12 @@ func parseLine(idx marshal.ColMapping, row []string, parsedLine *marshal.ParsedL
 		sirene.Creation = &creation
 	}
 
-	if val, ok := idxRow.GetOptionalVal("longitude"); ok == true {
+	if val, ok := idxRow.GetOptionalVal("longitude"); ok {
 		sirene.Longitude, err = strconv.ParseFloat(val, 64)
 		parsedLine.AddRegularError(err)
 	}
 
-	if val, ok := idxRow.GetOptionalVal("latitude"); ok == true {
+	if val, ok := idxRow.GetOptionalVal("latitude"); ok {
 		sirene.Latitude, err = strconv.ParseFloat(val, 64)
 		parsedLine.AddRegularError(err)
 	}
