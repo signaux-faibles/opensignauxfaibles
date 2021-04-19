@@ -193,7 +193,7 @@ func (parser *dianeParser) ParseLines(parsedLineChan chan marshal.ParsedLineResu
 		} else if err != nil {
 			parsedLine.AddRegularError(err)
 		} else if len(row) < 83 {
-			parsedLine.AddRegularError(errors.New("Ligne invalide"))
+			parsedLine.AddRegularError(errors.New("ligne invalide"))
 		} else {
 			parsedLine.AddTuple(parseDianeRow(parser.idx, row))
 		}
