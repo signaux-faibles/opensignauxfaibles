@@ -958,10 +958,7 @@ function reduce(key, values // chaque element contient plusieurs batches pour ce
     }
 }`,
 			"reduce": `function reduce(_key, values) {
-    return values.reduce((m, v) => {
-        Object.assign(m, v);
-        return m;
-    }, {});
+    return Object.assign({}, ...values);
 }`,
 			"sirene": `// Cette fonction retourne les données sirene les plus récentes
 function sirene(sireneArray) {
