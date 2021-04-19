@@ -29,7 +29,7 @@ func ImportBatch(batch base.AdminBatch, parsers []marshal.Parser, skipFilter boo
 		return err
 	}
 	if !skipFilter && filter == nil {
-		return errors.New("Veuillez inclure un filtre")
+		return errors.New("veuillez inclure un filtre")
 	}
 	startDate := time.Now()
 	reportUnsupportedFiletypes(batch)

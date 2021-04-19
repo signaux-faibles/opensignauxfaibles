@@ -77,7 +77,7 @@ type IndexedRow struct {
 // Dans le cas où la colonne n'existe pas, une erreur fatale est déclenchée.
 func (indexedRow IndexedRow) GetVal(colName string) string {
 	index, ok := indexedRow.colMaping.index[colName]
-	if ok == false {
+	if !ok {
 		log.Fatal("Column not found in ColMapping: " + colName)
 	}
 	return indexedRow.row[index]
@@ -87,7 +87,7 @@ func (indexedRow IndexedRow) GetVal(colName string) string {
 // Dans le cas où la colonne n'existe pas, le booléen sera faux.
 func (indexedRow IndexedRow) GetOptionalVal(colName string) (string, bool) {
 	index, ok := indexedRow.colMaping.index[colName]
-	if ok == false {
+	if !ok {
 		return "", false
 	}
 	return indexedRow.row[index], true
@@ -97,7 +97,7 @@ func (indexedRow IndexedRow) GetOptionalVal(colName string) (string, bool) {
 // Un pointeur nil est retourné si la colonne n'existe pas ou la valeur est une chaine vide.
 func (indexedRow IndexedRow) GetFloat64(colName string) (*float64, error) {
 	index, ok := indexedRow.colMaping.index[colName]
-	if ok == false {
+	if !ok {
 		return nil, fmt.Errorf("GetFloat64 failed to find column: %v", colName)
 	}
 	return misc.ParsePFloat(indexedRow.row[index])
@@ -107,7 +107,7 @@ func (indexedRow IndexedRow) GetFloat64(colName string) (*float64, error) {
 // Un pointeur nil est retourné si la colonne n'existe pas ou la valeur est une chaine vide.
 func (indexedRow IndexedRow) GetCommaFloat64(colName string) (*float64, error) {
 	index, ok := indexedRow.colMaping.index[colName]
-	if ok == false {
+	if !ok {
 		return nil, fmt.Errorf("GetCommaFloat64 failed to find column: %v", colName)
 	}
 	normalizedDecimalVal := strings.Replace(indexedRow.row[index], ",", ".", -1)
@@ -118,7 +118,7 @@ func (indexedRow IndexedRow) GetCommaFloat64(colName string) (*float64, error) {
 // Un pointeur nil est retourné si la colonne n'existe pas ou la valeur est une chaine vide.
 func (indexedRow IndexedRow) GetInt(colName string) (*int, error) {
 	index, ok := indexedRow.colMaping.index[colName]
-	if ok == false {
+	if !ok {
 		return nil, fmt.Errorf("GetInt failed to find column: %v", colName)
 	}
 	return misc.ParsePInt(indexedRow.row[index])
@@ -128,7 +128,7 @@ func (indexedRow IndexedRow) GetInt(colName string) (*int, error) {
 // Un pointeur nil est retourné si la colonne n'existe pas ou la valeur est une chaine vide.
 func (indexedRow IndexedRow) GetBool(colName string) (bool, error) {
 	index, ok := indexedRow.colMaping.index[colName]
-	if ok == false {
+	if !ok {
 		return false, fmt.Errorf("GetBool failed to find column: %v", colName)
 	}
 	return strconv.ParseBool(indexedRow.row[index])

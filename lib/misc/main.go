@@ -48,7 +48,7 @@ func AllErrors(slice []error, item interface{}) bool {
 func ExcelToTime(excel string) (time.Time, error) {
 	excelInt, err := strconv.ParseInt(excel, 10, 64)
 	if err != nil {
-		return time.Time{}, errors.New("Valeur non autorisée")
+		return time.Time{}, errors.New("valeur non autorisée")
 	}
 	return time.Unix((excelInt-25569)*3600*24, 0), nil
 }
