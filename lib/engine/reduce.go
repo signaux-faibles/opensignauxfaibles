@@ -54,7 +54,7 @@ func ReduceOne(batch base.AdminBatch, key, from, to string, types []string) erro
 			},
 		}
 	} else {
-		return fmt.Errorf("Les paramètres key, ou la paire de paramètres from et to, sont obligatoires")
+		return fmt.Errorf("les paramètres key, ou la paire de paramètres from et to, sont obligatoires")
 	}
 
 	job.Out = bson.M{"replace": "TemporaryCollection"}

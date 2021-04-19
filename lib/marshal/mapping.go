@@ -76,7 +76,7 @@ func GetCompteSiretMapping(cache Cache, batch *base.AdminBatch, mr mappingReader
 		if ok {
 			return comptes, nil
 		}
-		return nil, errors.New("Wrong format from existing field comptes in cache")
+		return nil, errors.New("wrong format from existing field comptes in cache")
 	}
 
 	log.Println("Chargement des comptes urssaf")
@@ -87,7 +87,7 @@ func GetCompteSiretMapping(cache Cache, batch *base.AdminBatch, mr mappingReader
 	basePath := viper.GetString("APP_DATA")
 
 	if len(path) == 0 {
-		return nil, errors.New("No admin_urssaf mapping found")
+		return nil, errors.New("no admin_urssaf mapping found")
 	}
 	for _, p := range path {
 		compteSiretMapping, err = mr(basePath, p.FilePath(), compteSiretMapping, cache, batch)

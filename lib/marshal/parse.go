@@ -15,12 +15,12 @@ func UrssafToDate(urssaf string) (time.Time, error) {
 
 	intUrsaff, err := strconv.Atoi(urssaf)
 	if err != nil {
-		return time.Time{}, errors.New("Valeur non autorisée pour une conversion en date: " + urssaf)
+		return time.Time{}, errors.New("valeur non autorisée pour une conversion en date: " + urssaf)
 	}
 	strDate := strconv.Itoa(intUrsaff + 19000000)
 	date, err := time.Parse("20060102", strDate)
 	if err != nil {
-		return time.Time{}, errors.New("Valeur non autorisée pour une conversion en date: " + urssaf)
+		return time.Time{}, errors.New("valeur non autorisée pour une conversion en date: " + urssaf)
 	}
 
 	return date, nil
@@ -44,12 +44,12 @@ func UrssafToPeriod(urssaf string) (misc.Periode, error) {
 	}
 
 	if len(urssaf) != 6 {
-		return period, errors.New("Valeur non autorisée")
+		return period, errors.New("valeur non autorisée")
 	}
 
 	year, err := strconv.Atoi(urssaf[0:4])
 	if err != nil {
-		return misc.Periode{}, errors.New("Valeur non autorisée")
+		return misc.Periode{}, errors.New("valeur non autorisée")
 	}
 
 	if urssaf[4:6] == "62" {

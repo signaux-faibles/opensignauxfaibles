@@ -96,7 +96,7 @@ func PruneEntities(batchKey string, delete bool) (int, error) {
 		return -1, err
 	}
 	if filter == nil {
-		return -1, errors.New("Ce batch ne spécifie pas de filtre")
+		return -1, errors.New("ce batch ne spécifie pas de filtre")
 	}
 	// Créer une expression régulière pour reconnaitre les SIRENs du périmètre
 	sirens := []string{}
@@ -124,7 +124,7 @@ func PruneEntities(batchKey string, delete bool) (int, error) {
 		},
 	}
 	// Éventuellement, supprimer ces entités
-	if delete == true {
+	if delete {
 		// Enregistrer la liste d'entités dans la collection temporaire "EntitiesToPrune"
 		tmpCollection := "EntitiesToPrune"
 		pipeline = append(pipeline, bson.M{"$out": tmpCollection})

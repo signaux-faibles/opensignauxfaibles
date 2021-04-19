@@ -44,13 +44,11 @@ func runCLI(args ...string) int {
 	// execute the command
 	if useDb {
 		connectDb()
+		defer engine.FlushEventQueue()
 	}
 	if err := cmdHandlerWithArgs.Run(); err != nil {
 		fmt.Printf("\nErreur: %v\n", err)
 		return 3
-	}
-	if useDb {
-		engine.FlushEventQueue()
 	}
 	return 0
 }
@@ -126,7 +124,7 @@ func (cmds *cliCommands) index() map[string]commandHandler {
 		fieldName := supportedCommands.Type().Field(i).Name                    // e.g. "PruneEntities"
 		cmdName := strings.ToLower(fieldName[0:1]) + fieldName[1:]             // e.g. "pruneEntities"
 		cmdArgs, ok := supportedCommands.Field(i).Interface().(commandHandler) // e.g. pruneEntitiesHandler instance
-		if ok != true {
+		if !ok {
 			panic(fmt.Sprintf("Property %v of type cliCommands is not an instance of commandHandler", fieldName))
 		}
 		commandByName[cmdName] = cmdArgs
