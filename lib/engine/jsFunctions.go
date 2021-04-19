@@ -628,9 +628,6 @@ function listHashesToAddAndDelete(currentBatch, stockTypes, memory) {
 }`,
 			"map": `function map() {
     "use strict";
-    if (typeof this.value !== "object") {
-        throw new Error("this.value should be a valid object, in compact::map()");
-    }
     emit(this.value.key, this.value);
 }`,
 			"reduce": `// Entrée: données d'entreprises venant de ImportedData, regroupées par entreprise ou établissement.
