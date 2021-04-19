@@ -13,7 +13,7 @@
     "test:update-snapshots": "SKIP_PRIVATE=true ava --update-snapshots",
     "test:update-golden-files": "ava -- --update",
     "test:update-all": "ava --update-snapshots -- --update",
-    "test:coverage": "TS_NODE_FILES=true nyc npm test"
+    "test:coverage": "TS_NODE_FILES=true nyc --reporter=text --reporter=lcov --require='ts-node/register' --all --include='**/*.ts' --exclude='**/*.js' --exclude='**/*_tests.ts' --exclude='**/*.d.ts' npm test"
   },
   "author": "",
   "license": "MIT",
