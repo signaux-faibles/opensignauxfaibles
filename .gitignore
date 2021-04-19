@@ -35,6 +35,7 @@ debug
 *.patch
 js/node_modules
 js/.nyc_output
+js/coverage
 export/mongo_dump
 **/tags
 script/archive/*
