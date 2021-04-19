@@ -5,6 +5,9 @@ import { ccsf } from "./ccsf"
 import { ParHash } from "../RawDataTypes"
 import { EntréeCcsf } from "../GeneratedTypes"
 
+const makeUTCDate = (year: number, month: number, day?: number): Date =>
+  new Date(Date.UTC(year, month, day || 1))
+
 test(`ccsf retourne la date de début de la procédure CCSF pour chaque période`, (t) => {
   const vCcsf: ParHash<EntréeCcsf> = {
     hash1: { date_traitement: makeUTCDate(2021, 2, 15) } as EntréeCcsf,
@@ -23,6 +26,3 @@ test(`ccsf retourne la date de début de la procédure CCSF pour chaque période
     { periode: makeUTCDate(2021, 2), date_ccsf: makeUTCDate(2021, 1, 15) },
   ])
 })
-
-const makeUTCDate = (year: number, month: number, day?: number): Date =>
-  new Date(Date.UTC(year, month, day || 1))
