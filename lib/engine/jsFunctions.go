@@ -716,6 +716,9 @@ function reduce(key, values // chaque element contient plusieurs batches pour ce
 }`,
 		}, nil
 	},
+	"coverage": func(params bson.M) (functions, error) {
+		return functions{}, nil
+	},
 	"public": func(params bson.M) (functions, error) {
 		if _, ok := params["actual_batch"]; !ok {
 			return nil, errors.New("missing required parameter: actual_batch")
@@ -1724,11 +1727,13 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
     // extraction de l'entreprise et des établissements depuis v
     const établissements = f.omit(v, "entreprise");
     const entr = Object.assign({}, v.entreprise); // on suppose que v.entreprise est défini
-    const output = Object.keys(établissements).map((siret) => {
+    const output = Object.keys(établissements)
+        .map((siret) => {
         var _a, _b, _c, _d;
         const etab = (_a = établissements[siret]) !== null && _a !== void 0 ? _a : {};
         if (etab.effectif) {
-            entr.effectif_entreprise = entr.effectif_entreprise || 0 + etab.effectif;
+            entr.effectif_entreprise =
+                (entr.effectif_entreprise || 0) + etab.effectif;
         }
         if (etab.apart_heures_consommees) {
             entr.apart_entreprise =
@@ -1740,8 +1745,9 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
                     ((_c = etab.montant_part_patronale) !== null && _c !== void 0 ? _c : 0) +
                     ((_d = etab.montant_part_ouvriere) !== null && _d !== void 0 ? _d : 0);
         }
-        return Object.assign(Object.assign(Object.assign({}, etab), entr), { nbr_etablissements_connus: Object.keys(établissements).length });
-    });
+        return etab;
+    })
+        .map((etab) => (Object.assign(Object.assign(Object.assign({}, etab), entr), { nbr_etablissements_connus: Object.keys(établissements).length })));
     // NON: Pour l'instant, filtrage a posteriori
     // output = output.filter(siret_data => {
     //   return(siret_data.effectif) // Only keep if there is known effectif
