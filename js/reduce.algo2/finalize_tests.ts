@@ -98,7 +98,3 @@ test("finalize() retourne un objet incomplet en cas de dépassement de taille au
   t.deepEqual(results, { incomplete: true })
 })
 
-// finalize.ts                 |   77.27 |    44.12 |     100 |   76.19 | 75,79,101-109
-// finalize.ts                 |   81.82 |    47.06 |     100 |   80.95 | 75,79,101-106
-// finalize.ts                 |   86.36 |    47.06 |     100 |   85.71 | 75,79,109
-// finalize.ts                 |    91.3 |       50 |     100 |   90.91 | 76,80
