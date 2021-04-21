@@ -2,7 +2,6 @@ package bdf
 
 import (
 	"encoding/csv"
-	"io"
 	"os"
 	"strings"
 	"time"
@@ -71,22 +70,9 @@ func (parser *bdfParser) Close() error {
 }
 
 func (parser *bdfParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
-	for {
-		parsedLine := marshal.ParsedLineResult{}
-		row, err := parser.reader.Read()
-		if err == io.EOF {
-			close(parsedLineChan)
-			break
-		} else if err != nil {
-			parsedLine.AddRegularError(err)
-		} else {
-			parseBdfLine(row, parser.idx, &parsedLine)
-			if len(parsedLine.Errors) > 0 {
-				parsedLine.Tuples = []marshal.Tuple{}
-			}
-		}
-		parsedLineChan <- parsedLine
-	}
+	marshal.ParseLines(parsedLineChan, parser.reader, func(row []string, parsedLine *marshal.ParsedLineResult) {
+		parseBdfLine(row, parser.idx, parsedLine)
+	})
 }
 
 func parseBdfLine(row []string, idx marshal.ColMapping, parsedLine *marshal.ParsedLineResult) {

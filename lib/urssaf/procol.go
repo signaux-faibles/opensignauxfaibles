@@ -2,7 +2,6 @@ package urssaf
 
 import (
 	"encoding/csv"
-	"io"
 	"os"
 	"regexp"
 	"strings"
@@ -73,22 +72,9 @@ func parseProcolColMapping(reader *csv.Reader) (marshal.ColMapping, error) {
 }
 
 func (parser *procolParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
-	for {
-		parsedLine := marshal.ParsedLineResult{}
-		row, err := parser.reader.Read()
-		if err == io.EOF {
-			close(parsedLineChan)
-			break
-		} else if err != nil {
-			parsedLine.AddRegularError(err)
-		} else {
-			parseProcolLine(row, parser.idx, &parsedLine)
-			if len(parsedLine.Errors) > 0 {
-				parsedLine.Tuples = []marshal.Tuple{}
-			}
-		}
-		parsedLineChan <- parsedLine
-	}
+	marshal.ParseLines(parsedLineChan, parser.reader, func(row []string, parsedLine *marshal.ParsedLineResult) {
+		parseProcolLine(row, parser.idx, parsedLine)
+	})
 }
 
 func parseProcolLine(row []string, idx marshal.ColMapping, parsedLine *marshal.ParsedLineResult) {

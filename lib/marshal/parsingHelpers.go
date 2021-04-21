@@ -39,3 +39,23 @@ func OpenFileReader(batchFile base.BatchFile) (*os.File, io.Reader, error) {
 	}
 	return file, fileReader, err
 }
+
+// ParseLines appelle la fonction parseLine() sur chaque ligne du fichier CSV pour transmettre les tuples et/ou erreurs dans parsedLineChan.
+func ParseLines(parsedLineChan chan ParsedLineResult, lineReader *csv.Reader, parseLine func(row []string, parsedLine *ParsedLineResult)) {
+	for {
+		parsedLine := ParsedLineResult{}
+		row, err := lineReader.Read()
+		if err == io.EOF {
+			close(parsedLineChan)
+			break
+		} else if err != nil {
+			parsedLine.AddRegularError(err)
+		} else if len(row) > 0 {
+			parseLine(row, &parsedLine)
+			if len(parsedLine.Errors) > 0 {
+				parsedLine.Tuples = []Tuple{}
+			}
+		}
+		parsedLineChan <- parsedLine
+	}
+}

@@ -2,7 +2,6 @@ package reporder
 
 import (
 	"encoding/csv"
-	"io"
 	"os"
 	"time"
 
@@ -59,22 +58,9 @@ func (parser *reporderParser) Close() error {
 }
 
 func (parser *reporderParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
-	for {
-		parsedLine := marshal.ParsedLineResult{}
-		row, err := parser.reader.Read()
-		if err == io.EOF {
-			close(parsedLineChan)
-			break
-		} else if err != nil {
-			parsedLine.AddRegularError(err)
-		} else {
-			parseReporderLine(row, &parsedLine)
-			if len(parsedLine.Errors) > 0 {
-				parsedLine.Tuples = []marshal.Tuple{}
-			}
-		}
-		parsedLineChan <- parsedLine
-	}
+	marshal.ParseLines(parsedLineChan, parser.reader, func(row []string, parsedLine *marshal.ParsedLineResult) {
+		parseReporderLine(row, parsedLine)
+	})
 }
 
 func parseReporderLine(row []string, parsedLine *marshal.ParsedLineResult) {
