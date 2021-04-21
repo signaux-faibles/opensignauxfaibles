@@ -2,7 +2,6 @@ package sireneul
 
 import (
 	"encoding/csv"
-	"io"
 	"os"
 	"time"
 
@@ -70,19 +69,9 @@ func (parser *sireneUlParser) Open(filePath string) (err error) {
 }
 
 func (parser *sireneUlParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
-	for {
-		parsedLine := marshal.ParsedLineResult{}
-		row, err := parser.reader.Read()
-		if err == io.EOF {
-			close(parsedLineChan)
-			break
-		} else if err != nil {
-			parsedLine.AddRegularError(err)
-		} else {
-			parseSireneUlLine(parser.idx, row, &parsedLine)
-		}
-		parsedLineChan <- parsedLine
-	}
+	marshal.ParseLines(parsedLineChan, parser.reader, func(row []string, parsedLine *marshal.ParsedLineResult) {
+		parseSireneUlLine(parser.idx, row, parsedLine)
+	})
 }
 
 func parseSireneUlLine(idx marshal.ColMapping, row []string, parsedLine *marshal.ParsedLineResult) {

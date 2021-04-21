@@ -2,7 +2,6 @@ package urssaf
 
 import (
 	"encoding/csv"
-	"io"
 	"os"
 	"regexp"
 	"strconv"
@@ -66,19 +65,9 @@ func (parser *effectifEntParser) Open(filePath string) (err error) {
 }
 
 func (parser *effectifEntParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
-	for {
-		parsedLine := marshal.ParsedLineResult{}
-		row, err := parser.reader.Read()
-		if err == io.EOF {
-			close(parsedLineChan)
-			break
-		} else if err != nil {
-			parsedLine.AddRegularError(err)
-		} else {
-			parseEffectifEntLine(row, parser.idx, &parser.periods, &parsedLine)
-		}
-		parsedLineChan <- parsedLine
-	}
+	marshal.ParseLines(parsedLineChan, parser.reader, func(row []string, parsedLine *marshal.ParsedLineResult) {
+		parseEffectifEntLine(row, parser.idx, &parser.periods, parsedLine)
+	})
 }
 
 func parseEffectifEntColMapping(reader *csv.Reader) (marshal.ColMapping, []periodCol, error) {
