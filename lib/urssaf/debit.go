@@ -76,25 +76,6 @@ func (parser *debitParser) Open(filePath string) (err error) {
 }
 
 func (parser *debitParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
-	// TODO: generaliser l'affichage de la progression aux autres parseurs ?
-	// var lineNumber = 0                                     // starting with the header
-	// stopProgressLogger := marshal.LogProgress(&lineNumber) // TODO: move this call to runParserWithSirenFilter()
-	// defer stopProgressLogger()
-
-	// for {
-	// 	parsedLine := marshal.ParsedLineResult{}
-	// 	lineNumber++
-	// 	row, err := parser.reader.Read()
-	// 	if err == io.EOF {
-	// 		close(parsedLineChan)
-	// 		break
-	// 	} else if err != nil {
-	// 		parsedLine.AddRegularError(err)
-	// 	} else {
-	// 	}
-	// 	parsedLineChan <- parsedLine
-	// }
-
 	marshal.ParseLines(parsedLineChan, parser.reader, func(row []string, parsedLine *marshal.ParsedLineResult) {
 		parser.parseLine(row, parsedLine)
 	})
