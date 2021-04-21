@@ -1,7 +1,6 @@
 package bdf
 
 import (
-	"bufio"
 	"encoding/csv"
 	"io"
 	"os"
@@ -60,7 +59,7 @@ func (parser *bdfParser) Init(cache *marshal.Cache, batch *base.AdminBatch) erro
 }
 
 func (parser *bdfParser) Open(filePath string) (err error) {
-	parser.file, parser.reader, err = openFile(filePath)
+	parser.file, parser.reader, err = marshal.OpenCsvReader(base.BatchFile(filePath), ';', true)
 	if err == nil {
 		parser.idx, err = marshal.IndexColumnsFromCsvHeader(parser.reader, BDF{})
 	}
@@ -69,17 +68,6 @@ func (parser *bdfParser) Open(filePath string) (err error) {
 
 func (parser *bdfParser) Close() error {
 	return parser.file.Close()
-}
-
-func openFile(filePath string) (*os.File, *csv.Reader, error) {
-	file, err := os.Open(filePath)
-	if err != nil {
-		return file, nil, err
-	}
-	reader := csv.NewReader(bufio.NewReader(file))
-	reader.Comma = ';'
-	reader.LazyQuotes = true
-	return file, reader, nil
 }
 
 func (parser *bdfParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {

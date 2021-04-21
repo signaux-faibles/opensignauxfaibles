@@ -65,7 +65,7 @@ func (parser *apdemandeParser) Init(cache *marshal.Cache, batch *base.AdminBatch
 }
 
 func (parser *apdemandeParser) Open(filePath string) (err error) {
-	parser.file, parser.reader, err = openFile(filePath)
+	parser.file, parser.reader, err = marshal.OpenCsvReader(base.BatchFile(filePath), ',', true)
 	if err == nil {
 		parser.idx, err = marshal.IndexColumnsFromCsvHeader(parser.reader, APDemande{})
 	}
@@ -74,17 +74,6 @@ func (parser *apdemandeParser) Open(filePath string) (err error) {
 
 func (parser *apdemandeParser) Close() error {
 	return parser.file.Close()
-}
-
-func openFile(filePath string) (*os.File, *csv.Reader, error) {
-	file, err := os.Open(filePath)
-	if err != nil {
-		return file, nil, err
-	}
-	reader := csv.NewReader(file)
-	reader.Comma = ','
-	reader.LazyQuotes = true
-	return file, reader, nil
 }
 
 func (parser *apdemandeParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {

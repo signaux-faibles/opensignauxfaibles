@@ -1,7 +1,6 @@
 package urssaf
 
 import (
-	"bufio"
 	"encoding/csv"
 	"io"
 	"os"
@@ -59,14 +58,10 @@ func (parser *cotisationParser) Init(cache *marshal.Cache, batch *base.AdminBatc
 }
 
 func (parser *cotisationParser) Open(filePath string) (err error) {
-	parser.file, err = os.Open(filePath)
-	if err != nil {
-		return err
+	parser.file, parser.reader, err = marshal.OpenCsvReader(base.BatchFile(filePath), ';', true)
+	if err == nil {
+		parser.idx, err = marshal.IndexColumnsFromCsvHeader(parser.reader, Cotisation{})
 	}
-	parser.reader = csv.NewReader(bufio.NewReader(parser.file))
-	parser.reader.Comma = ';'
-	parser.reader.LazyQuotes = true
-	parser.idx, err = marshal.IndexColumnsFromCsvHeader(parser.reader, Cotisation{})
 	return err
 }
 

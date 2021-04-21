@@ -7,7 +7,6 @@
 package paydex
 
 import (
-	"bufio"
 	"encoding/csv"
 	"fmt"
 	"io"
@@ -62,21 +61,11 @@ func (parser *paydexParser) Close() error {
 }
 
 func (parser *paydexParser) Open(filePath string) (err error) {
-	parser.file, parser.reader, err = openPaydexFile(filePath)
+	parser.file, parser.reader, err = marshal.OpenCsvReader(base.BatchFile(filePath), ';', false)
 	if err == nil {
 		parser.colIndex, err = marshal.IndexColumnsFromCsvHeader(parser.reader, Paydex{})
 	}
 	return err
-}
-
-func openPaydexFile(filePath string) (*os.File, *csv.Reader, error) {
-	file, err := os.Open(filePath)
-	if err != nil {
-		return file, nil, err
-	}
-	reader := csv.NewReader(bufio.NewReader(file))
-	reader.Comma = ';'
-	return file, reader, err
 }
 
 func (parser *paydexParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {

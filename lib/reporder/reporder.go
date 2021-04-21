@@ -50,13 +50,8 @@ func (parser *reporderParser) Init(cache *marshal.Cache, batch *base.AdminBatch)
 }
 
 func (parser *reporderParser) Open(filePath string) (err error) {
-	parser.file, err = os.Open(filePath)
-	if err != nil {
-		return err
-	}
-	parser.reader = csv.NewReader(parser.file)
-	parser.reader.Comma = ','
-	return nil
+	parser.file, parser.reader, err = marshal.OpenCsvReader(base.BatchFile(filePath), ',', false)
+	return err
 }
 
 func (parser *reporderParser) Close() error {

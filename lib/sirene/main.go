@@ -133,14 +133,10 @@ func (parser *sireneParser) Close() error {
 }
 
 func (parser *sireneParser) Open(filePath string) (err error) {
-	parser.file, err = os.Open(filePath)
-	if err != nil {
-		return err
+	parser.file, parser.reader, err = marshal.OpenCsvReader(base.BatchFile(filePath), ',', true)
+	if err == nil {
+		parser.colIndex, err = marshal.IndexColumnsFromCsvHeader(parser.reader, Sirene{})
 	}
-	parser.reader = csv.NewReader(parser.file)
-	parser.reader.Comma = ','
-	parser.reader.LazyQuotes = true
-	parser.colIndex, err = marshal.IndexColumnsFromCsvHeader(parser.reader, Sirene{})
 	return err
 }
 
