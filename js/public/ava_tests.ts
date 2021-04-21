@@ -5,9 +5,9 @@
 // => Penser à ajouter les nouveaux types dans rawEtabData et rawEntrData.
 //
 import test, { ExecutionContext } from "ava"
-import { map } from "./map"
-import { reduce } from "./reduce"
-import { finalize } from "./finalize"
+import { map } from "../public/map"
+import { reduce } from "../public/reduce"
+import { finalize } from "../public/finalize"
 import { runMongoMap } from "../test/helpers/mongodb"
 import { setGlobals } from "../test/helpers/setGlobals"
 import {

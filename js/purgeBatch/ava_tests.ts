@@ -3,9 +3,9 @@
 // $ cd js && $(npm bin)/ava ./purgeBatch/ava_tests.ts
 
 import test, { ExecutionContext } from "ava"
-import { map } from "./map"
-import { reduce } from "./reduce"
-import { finalize } from "./finalize"
+import { map } from "../purgeBatch/map"
+import { reduce } from "../purgeBatch/reduce"
+import { finalize } from "../purgeBatch/finalize"
 import { runMongoMap } from "../test/helpers/mongodb"
 import { setGlobals } from "../test/helpers/setGlobals"
 import { CompanyDataValues } from "../RawDataTypes"
