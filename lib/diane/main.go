@@ -184,20 +184,16 @@ func (parser *dianeParser) initCsvReader(reader io.Reader) (err error) {
 // ParseLines parse des entrées depuis un fichier Diane, après que les années
 // aient été projetées à raison d'une par ligne.
 func (parser *dianeParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
-	for {
-		parsedLine := marshal.ParsedLineResult{}
-		row, err := parser.reader.Read()
-		if err == io.EOF {
-			close(parsedLineChan)
-			break
-		} else if err != nil {
-			parsedLine.AddRegularError(err)
-		} else if len(row) < 83 {
-			parsedLine.AddRegularError(errors.New("ligne invalide"))
-		} else {
-			parsedLine.AddTuple(parseDianeRow(parser.idx, row))
-		}
-		parsedLineChan <- parsedLine
+	marshal.ParseLines(parsedLineChan, parser.reader, func(row []string, parsedLine *marshal.ParsedLineResult) {
+		parser.parseLine(row, parsedLine)
+	})
+}
+
+func (parser *dianeParser) parseLine(row []string, parsedLine *marshal.ParsedLineResult) {
+	if len(row) < 83 {
+		parsedLine.AddRegularError(errors.New("ligne invalide"))
+	} else {
+		parsedLine.AddTuple(parseDianeRow(parser.idx, row))
 	}
 }
 
