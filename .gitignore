@@ -16,7 +16,7 @@ output/*
 keys.json
 data-raw
 sfdata
-**/.vscode
+**/.vscode/settings.json
 static/*
 archive/*
 rsignauxfaibles/RData/*
