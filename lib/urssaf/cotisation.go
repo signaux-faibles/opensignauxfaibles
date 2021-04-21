@@ -91,5 +91,7 @@ func parseCotisationLine(idx marshal.ColMapping, row []string, comptes *marshal.
 		cotisation.Du, err = idxRow.GetCommaFloat64("cotis_due")
 		parsedLine.AddRegularError(err)
 	}
-	parsedLine.AddTuple(cotisation)
+	if len(parsedLine.Errors) == 0 {
+		parsedLine.AddTuple(cotisation)
+	}
 }

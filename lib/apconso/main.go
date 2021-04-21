@@ -83,5 +83,7 @@ func parseApConsoLine(row []string, idx marshal.ColMapping, parsedLine *marshal.
 	parsedLine.AddRegularError(err)
 	apconso.Effectif, err = idxRow.GetInt("EFFECTIFS")
 	parsedLine.AddRegularError(err)
-	parsedLine.AddTuple(apconso)
+	if len(parsedLine.Errors) == 0 {
+		parsedLine.AddTuple(apconso)
+	}
 }

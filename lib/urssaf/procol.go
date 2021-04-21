@@ -95,5 +95,7 @@ func parseProcolLine(row []string, idx marshal.ColMapping, parsedLine *marshal.P
 			break
 		}
 	}
-	parsedLine.AddTuple(procol)
+	if len(parsedLine.Errors) == 0 {
+		parsedLine.AddTuple(procol)
+	}
 }

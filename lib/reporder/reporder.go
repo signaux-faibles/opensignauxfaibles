@@ -68,9 +68,11 @@ func parseReporderLine(row []string, parsedLine *marshal.ParsedLineResult) {
 	parsedLine.AddRegularError(err)
 	randomOrder, err := misc.ParsePFloat(row[2])
 	parsedLine.AddRegularError(err)
-	parsedLine.AddTuple(RepeatableOrder{
-		Siret:       row[0],
-		Periode:     periode,
-		RandomOrder: randomOrder,
-	})
+	if len(parsedLine.Errors) == 0 {
+		parsedLine.AddTuple(RepeatableOrder{
+			Siret:       row[0],
+			Periode:     periode,
+			RandomOrder: randomOrder,
+		})
+	}
 }

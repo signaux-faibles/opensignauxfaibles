@@ -52,9 +52,6 @@ func ParseLines(parsedLineChan chan ParsedLineResult, lineReader *csv.Reader, pa
 			parsedLine.AddRegularError(err)
 		} else if len(row) > 0 {
 			parseLine(row, &parsedLine)
-			if len(parsedLine.Errors) > 0 {
-				parsedLine.Tuples = []Tuple{}
-			}
 		}
 		parsedLineChan <- parsedLine
 	}

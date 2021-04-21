@@ -129,5 +129,7 @@ func parseBdfLine(row []string, idx marshal.ColMapping, parsedLine *marshal.Pars
 	if bdf.FraisFinancier, err = idxRow.GetFloat64("POIDS_FRAIS_FIN"); bdf.FraisFinancier != nil {
 		parsedLine.AddRegularError(err)
 	}
-	parsedLine.AddTuple(bdf)
+	if len(parsedLine.Errors) == 0 {
+		parsedLine.AddTuple(bdf)
+	}
 }
