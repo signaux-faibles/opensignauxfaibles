@@ -97,4 +97,3 @@ test("finalize() retourne un objet incomplet en cas de dépassement de taille au
   })
   t.deepEqual(results, { incomplete: true })
 })
-
