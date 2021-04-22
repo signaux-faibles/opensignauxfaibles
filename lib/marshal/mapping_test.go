@@ -1,6 +1,9 @@
 package marshal
 
 import (
+	"bytes"
+	"compress/gzip"
+	"io/ioutil"
 	"reflect"
 	"strings"
 	"testing"
@@ -151,17 +154,14 @@ func TestReadSiretMapping(t *testing.T) {
 
 func TestGetCompteSiretMapping(t *testing.T) {
 	t.Run("GetCompteSiretMapping can read from compressed admin_urssaf file with `gzip:` prefix", func(t *testing.T) {
-		expected := Comptes{"oneAccount": []SiretDate{
-			{Siret: "01234567891234", Date: makeDate(2020, 1, 1)},
-		}}
+		expectedComptes := []string{"111982477292496174", "450359886246036238", "636043216536562844"}
+		compressedFileData := compressFileData(t, "../urssaf/testData/comptesTestData.csv")
+		compressedFile := CreateTempFileWithContent(t, compressedFileData.Bytes())
 		cache := NewCache()
-		batch := base.MockBatch("admin_urssaf", []string{"gzip:admin_urssaf.csv.gz"})
+		batch := base.MockBatch("admin_urssaf", []string{"gzip:" + compressedFile.Name()})
 		actual, err := GetCompteSiretMapping(cache, &batch, OpenAndReadSiretMapping)
 		if assert.NoError(t, err) {
-			if !reflect.DeepEqual(actual, expected) {
-				t.Logf("Expected %v", expected)
-				t.Fatalf("Actual %v", actual)
-			}
+			assert.EqualValues(t, expectedComptes, actual.GetSortedKeys())
 		}
 	})
 
@@ -235,4 +235,19 @@ func TestGetSiretFromComptesMapping(t *testing.T) {
 		assert.Equal(t, "", siret)
 		assert.Equal(t, "Pas de siret associé au compte "+compteManquant+" à la période "+date.String(), err.Error())
 	})
+}
+
+func compressFileData(t *testing.T, filePath string) (compressedData bytes.Buffer) {
+	data, err := ioutil.ReadFile(filePath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	zw := gzip.NewWriter(&compressedData)
+	if _, err = zw.Write(data); err != nil {
+		t.Fatal(err)
+	}
+	if err := zw.Close(); err != nil {
+		t.Fatal(err)
+	}
+	return compressedData
 }
