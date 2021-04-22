@@ -3,4 +3,4 @@ engines:
   duplication:
     enabled: true
     exclude_paths:
-      - "**_tests.ts"
+      - "**/*_tests.ts"
