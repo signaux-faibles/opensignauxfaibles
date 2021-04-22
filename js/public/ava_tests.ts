@@ -4,12 +4,10 @@
 //
 // => Penser à ajouter les nouveaux types dans rawEtabData et rawEntrData.
 //
-// TODO: renommer ce fichier --> `map_tests.ts`.
-
 import test, { ExecutionContext } from "ava"
-import { map } from "./map"
-import { reduce } from "./reduce"
-import { finalize } from "./finalize"
+import { map } from "../public/map"
+import { reduce } from "../public/reduce"
+import { finalize } from "../public/finalize"
 import { runMongoMap } from "../test/helpers/mongodb"
 import { setGlobals } from "../test/helpers/setGlobals"
 import {
@@ -19,7 +17,8 @@ import {
   EtablissementDataValues,
   Siret,
 } from "../RawDataTypes"
-import { EntréeApConso } from "../GeneratedTypes"
+import { EntréeApConso, EntréeApDemande } from "../GeneratedTypes"
+import { apdemande } from "./apdemande"
 
 // test data inspired by test.sh
 const siret: Siret = "01234567891011"
@@ -77,6 +76,15 @@ const expectedMapResult = {
 const expectedReduceResults = expectedMapResult.value
 
 const expectedFinalizeResultValue = expectedMapResult.value
+
+test(`apdemande() classe les entrées par ordre antichronologique`, (t) => {
+  const entrée = {
+    hash1: { periode: { start: new Date(0) } } as EntréeApDemande,
+    hash2: { periode: { start: new Date(1) } } as EntréeApDemande,
+  }
+  const sortie = apdemande(entrée)
+  t.deepEqual(sortie, [entrée.hash2, entrée.hash1])
+})
 
 // exécution complète de la chaine "public"
 

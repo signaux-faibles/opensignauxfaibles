@@ -628,9 +628,6 @@ function listHashesToAddAndDelete(currentBatch, stockTypes, memory) {
 }`,
 			"map": `function map() {
     "use strict";
-    if (typeof this.value !== "object") {
-        throw new Error("this.value should be a valid object, in compact::map()");
-    }
     emit(this.value.key, this.value);
 }`,
 			"reduce": `// Entrée: données d'entreprises venant de ImportedData, regroupées par entreprise ou établissement.
@@ -958,15 +955,7 @@ function reduce(key, values // chaque element contient plusieurs batches pour ce
     }
 }`,
 			"reduce": `function reduce(_key, values) {
-    return values.reduce((m, v) => {
-        if (v.sirets) {
-            // TODO: je n'ai pas trouvé d'affectation de valeur dans la propriété "sirets" => est-elle toujours d'actualité ?
-            m.sirets = (m.sirets || []).concat(v.sirets);
-            delete v.sirets;
-        }
-        Object.assign(m, v);
-        return m;
-    }, {});
+    return Object.assign({}, ...values);
 }`,
 			"sirene": `// Cette fonction retourne les données sirene les plus récentes
 function sirene(sireneArray) {
@@ -1710,6 +1699,7 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
 }`,
 			"finalize": `function finalize(k, v) {
     "use strict";
+    const maxEtabParEntr = 1500;
     const maxBsonSize = 16777216;
     // v de la forme
     // _id: {batch / siren / periode / type}
@@ -1749,7 +1739,7 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
     // output = output.filter(siret_data => {
     //   return(siret_data.effectif) // Only keep if there is known effectif
     // })
-    if (output.length > 0 && output.length <= 1500) {
+    if (output.length > 0 && output.length <= maxEtabParEntr) {
         if (bsonsize(output) + bsonsize({ _id: k }) < maxBsonSize) {
             return output;
         }

@@ -45,6 +45,7 @@ const bsonsize = (obj: unknown): number => JSON.stringify(obj).length // will no
 export function finalize(k: Clé, v: SortieMap): SortieFinalize {
   "use strict"
 
+  const maxEtabParEntr = 1500
   const maxBsonSize = 16777216
 
   // v de la forme
@@ -95,7 +96,7 @@ export function finalize(k: Clé, v: SortieMap): SortieFinalize {
   //   return(siret_data.effectif) // Only keep if there is known effectif
   // })
 
-  if (output.length > 0 && output.length <= 1500) {
+  if (output.length > 0 && output.length <= maxEtabParEntr) {
     if (bsonsize(output) + bsonsize({ _id: k }) < maxBsonSize) {
       return output
     } else {

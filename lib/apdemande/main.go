@@ -3,7 +3,6 @@ package apdemande
 import (
 	"encoding/csv"
 	"errors"
-	"io"
 	"os"
 	"strings"
 	"time"
@@ -65,7 +64,7 @@ func (parser *apdemandeParser) Init(cache *marshal.Cache, batch *base.AdminBatch
 }
 
 func (parser *apdemandeParser) Open(filePath string) (err error) {
-	parser.file, parser.reader, err = openFile(filePath)
+	parser.file, parser.reader, err = marshal.OpenCsvReader(base.BatchFile(filePath), ',', true)
 	if err == nil {
 		parser.idx, err = marshal.IndexColumnsFromCsvHeader(parser.reader, APDemande{})
 	}
@@ -76,38 +75,21 @@ func (parser *apdemandeParser) Close() error {
 	return parser.file.Close()
 }
 
-func openFile(filePath string) (*os.File, *csv.Reader, error) {
-	file, err := os.Open(filePath)
-	if err != nil {
-		return file, nil, err
-	}
-	reader := csv.NewReader(file)
-	reader.Comma = ','
-	reader.LazyQuotes = true
-	return file, reader, nil
+func (parser *apdemandeParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
+	marshal.ParseLines(parsedLineChan, parser.reader, func(row []string, parsedLine *marshal.ParsedLineResult) {
+		parser.parseLine(row, parsedLine)
+	})
 }
 
-func (parser *apdemandeParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
-	for {
-		parsedLine := marshal.ParsedLineResult{}
-		row, err := parser.reader.Read()
-		if err == io.EOF {
-			close(parsedLineChan)
-			break
-		} else if err != nil {
-			parsedLine.AddRegularError(err)
-		} else {
-			idxRow := parser.idx.IndexRow(row)
-			if idxRow.GetVal("ETAB_SIRET") == "" {
-				parsedLine.AddRegularError(errors.New("invalidLine"))
-			} else {
-				parseApDemandeLine(idxRow, &parsedLine)
-				if len(parsedLine.Errors) > 0 {
-					parsedLine.Tuples = []marshal.Tuple{}
-				}
-			}
+func (parser *apdemandeParser) parseLine(row []string, parsedLine *marshal.ParsedLineResult) {
+	idxRow := parser.idx.IndexRow(row)
+	if idxRow.GetVal("ETAB_SIRET") == "" {
+		parsedLine.AddRegularError(errors.New("invalidLine"))
+	} else {
+		parseApDemandeLine(idxRow, parsedLine)
+		if len(parsedLine.Errors) > 0 {
+			parsedLine.Tuples = []marshal.Tuple{}
 		}
-		parsedLineChan <- parsedLine
 	}
 }
 

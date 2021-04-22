@@ -1,6 +1,6 @@
 import { BatchKey, CompanyDataValues } from "../RawDataTypes"
 
-// Paramètres globaux utilisés par "public"
+// Paramètres globaux utilisés par "purgeBatch"
 declare const fromBatchKey: BatchKey
 
 declare function emit(key: unknown, value: CompanyDataValues): void

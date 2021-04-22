@@ -1,6 +1,7 @@
 import test from "ava"
 import { finalize } from "./finalize"
-import { CléSortieMap } from "./map"
+import { CléSortieMap, SortieMap } from "./map"
+import { setGlobals } from "../test/helpers/setGlobals"
 
 const clé = {
   batch: "dummy",
@@ -64,4 +65,35 @@ test(`finalize() calcule la dette totale de l'entreprise à partir de celle des 
       nbr_etablissements_connus: 2,
     },
   ] as unknown)
+})
+
+test("finalize() retourne un tableau vide au dela de 1500 établissements pour une même entreprise", (t) => {
+  const clé = {
+    batch: "dummy",
+    siren: "012345678",
+    periode: new Date("2014-01-01"),
+    type: "other" as CléSortieMap["type"],
+  }
+  const etablissements: SortieMap = {}
+  for (let i = 0; i <= 1500; ++i) {
+    // 1500 = cf maxEtabParEntr de finalize.ts
+    const siret = `${i}`
+    etablissements[siret] = { siret }
+  }
+  const results = finalize(clé, etablissements)
+  t.deepEqual(results, [])
+})
+
+test("finalize() retourne un objet incomplet en cas de dépassement de taille autorisée", (t) => {
+  setGlobals({ print: () => {} }) // eslint-disable-line @typescript-eslint/no-empty-function
+  const clé = {
+    batch: "x".repeat(16777216), // cf maxBsonSize de finalize.ts
+    siren: "012345678",
+    periode: new Date("2014-01-01"),
+    type: "other" as CléSortieMap["type"],
+  }
+  const results = finalize(clé, {
+    "12345678901234": { siret: "12345678901234" },
+  })
+  t.deepEqual(results, { incomplete: true })
 })

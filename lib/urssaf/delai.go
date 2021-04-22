@@ -7,7 +7,7 @@ import (
 	"github.com/signaux-faibles/opensignauxfaibles/lib/marshal"
 
 	//"errors"
-	"io"
+
 	"os"
 	"time"
 )
@@ -75,30 +75,20 @@ func (parser *delaiParser) Open(filePath string) (err error) {
 }
 
 func (parser *delaiParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
-	idx := parser.idx
-	for {
-		parsedLine := marshal.ParsedLineResult{}
-		row, err := parser.reader.Read()
-		if err == io.EOF {
-			close(parsedLineChan)
-			break
-		} else if err != nil {
-			parsedLine.AddRegularError(err)
-		} else {
-			idxRow := idx.IndexRow(row)
-			date, err := time.Parse("02/01/2006", idxRow.GetVal("Date_creation"))
-			if err != nil {
-				parsedLine.AddRegularError(err)
-			} else if siret, err := marshal.GetSiretFromComptesMapping(idxRow.GetVal("Numero_compte_externe"), &date, parser.comptes); err == nil {
-				parseDelaiLine(idxRow, siret, &parsedLine)
-				if len(parsedLine.Errors) > 0 {
-					parsedLine.Tuples = []marshal.Tuple{}
-				}
-			} else {
-				parsedLine.SetFilterError(err)
-			}
-		}
-		parsedLineChan <- parsedLine
+	marshal.ParseLines(parsedLineChan, parser.reader, func(row []string, parsedLine *marshal.ParsedLineResult) {
+		parser.parseDelaiLine(row, parsedLine)
+	})
+}
+
+func (parser *delaiParser) parseDelaiLine(row []string, parsedLine *marshal.ParsedLineResult) {
+	idxRow := parser.idx.IndexRow(row)
+	date, err := time.Parse("02/01/2006", idxRow.GetVal("Date_creation"))
+	if err != nil {
+		parsedLine.AddRegularError(err)
+	} else if siret, err := marshal.GetSiretFromComptesMapping(idxRow.GetVal("Numero_compte_externe"), &date, parser.comptes); err == nil {
+		parseDelaiLine(idxRow, siret, parsedLine)
+	} else {
+		parsedLine.SetFilterError(err)
 	}
 }
 
@@ -121,5 +111,7 @@ func parseDelaiLine(idxRow marshal.IndexedRow, siret string, parsedLine *marshal
 	parsedLine.AddRegularError(err)
 	delai.Stade = idxRow.GetVal("Code_externe_stade")
 	delai.Action = idxRow.GetVal("Code_externe_action")
-	parsedLine.AddTuple(delai)
+	if len(parsedLine.Errors) == 0 {
+		parsedLine.AddTuple(delai)
+	}
 }
