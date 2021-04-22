@@ -7,10 +7,8 @@
 package paydex
 
 import (
-	"bufio"
 	"encoding/csv"
 	"fmt"
-	"io"
 	"os"
 	"time"
 
@@ -62,41 +60,25 @@ func (parser *paydexParser) Close() error {
 }
 
 func (parser *paydexParser) Open(filePath string) (err error) {
-	parser.file, parser.reader, err = openPaydexFile(filePath)
+	parser.file, parser.reader, err = marshal.OpenCsvReader(base.BatchFile(filePath), ';', false)
 	if err == nil {
 		parser.colIndex, err = marshal.IndexColumnsFromCsvHeader(parser.reader, Paydex{})
 	}
 	return err
 }
 
-func openPaydexFile(filePath string) (*os.File, *csv.Reader, error) {
-	file, err := os.Open(filePath)
-	if err != nil {
-		return file, nil, err
-	}
-	reader := csv.NewReader(bufio.NewReader(file))
-	reader.Comma = ';'
-	return file, reader, err
+func (parser *paydexParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
+	marshal.ParseLines(parsedLineChan, parser.reader, func(row []string, parsedLine *marshal.ParsedLineResult) {
+		parser.parseLine(row, parsedLine)
+	})
 }
 
-func (parser *paydexParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
-	for {
-		parsedLine := marshal.ParsedLineResult{}
-		row, err := parser.reader.Read()
-		if err == io.EOF {
-			close(parsedLineChan)
-			break
-		} else if err != nil {
-			parsedLine.AddRegularError(err)
-		} else {
-			paydex, err := parsePaydexLine(parser.colIndex, row)
-			if err != nil {
-				parsedLine.AddRegularError(err)
-			} else {
-				parsedLine.AddTuple(paydex)
-			}
-		}
-		parsedLineChan <- parsedLine
+func (parser *paydexParser) parseLine(row []string, parsedLine *marshal.ParsedLineResult) {
+	paydex, err := parsePaydexLine(parser.colIndex, row)
+	if err != nil {
+		parsedLine.AddRegularError(err)
+	} else {
+		parsedLine.AddTuple(paydex)
 	}
 }
 

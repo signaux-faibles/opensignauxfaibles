@@ -2,7 +2,6 @@ package sireneul
 
 import (
 	"encoding/csv"
-	"io"
 	"os"
 	"time"
 
@@ -62,31 +61,17 @@ func (parser *sireneUlParser) Close() error {
 }
 
 func (parser *sireneUlParser) Open(filePath string) (err error) {
-	parser.file, err = os.Open(filePath)
-	if err != nil {
-		return err
+	parser.file, parser.reader, err = marshal.OpenCsvReader(base.BatchFile(filePath), ',', true)
+	if err == nil {
+		parser.idx, err = marshal.IndexColumnsFromCsvHeader(parser.reader, SireneUL{})
 	}
-	parser.reader = csv.NewReader(parser.file)
-	parser.reader.Comma = ','
-	parser.reader.LazyQuotes = true
-	parser.idx, err = marshal.IndexColumnsFromCsvHeader(parser.reader, SireneUL{})
 	return err
 }
 
 func (parser *sireneUlParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
-	for {
-		parsedLine := marshal.ParsedLineResult{}
-		row, err := parser.reader.Read()
-		if err == io.EOF {
-			close(parsedLineChan)
-			break
-		} else if err != nil {
-			parsedLine.AddRegularError(err)
-		} else {
-			parseSireneUlLine(parser.idx, row, &parsedLine)
-		}
-		parsedLineChan <- parsedLine
-	}
+	marshal.ParseLines(parsedLineChan, parser.reader, func(row []string, parsedLine *marshal.ParsedLineResult) {
+		parseSireneUlLine(parser.idx, row, parsedLine)
+	})
 }
 
 func parseSireneUlLine(idx marshal.ColMapping, row []string, parsedLine *marshal.ParsedLineResult) {

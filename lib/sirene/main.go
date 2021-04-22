@@ -5,7 +5,6 @@ import (
 
 	"encoding/csv"
 	"errors"
-	"io"
 	"os"
 	"regexp"
 	"strconv"
@@ -133,31 +132,17 @@ func (parser *sireneParser) Close() error {
 }
 
 func (parser *sireneParser) Open(filePath string) (err error) {
-	parser.file, err = os.Open(filePath)
-	if err != nil {
-		return err
+	parser.file, parser.reader, err = marshal.OpenCsvReader(base.BatchFile(filePath), ',', true)
+	if err == nil {
+		parser.colIndex, err = marshal.IndexColumnsFromCsvHeader(parser.reader, Sirene{})
 	}
-	parser.reader = csv.NewReader(parser.file)
-	parser.reader.Comma = ','
-	parser.reader.LazyQuotes = true
-	parser.colIndex, err = marshal.IndexColumnsFromCsvHeader(parser.reader, Sirene{})
 	return err
 }
 
 func (parser *sireneParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
-	for {
-		parsedLine := marshal.ParsedLineResult{}
-		row, err := parser.reader.Read()
-		if err == io.EOF {
-			close(parsedLineChan)
-			break
-		} else if err != nil {
-			parsedLine.AddRegularError(err)
-		} else {
-			parseLine(parser.colIndex, row, &parsedLine)
-		}
-		parsedLineChan <- parsedLine
-	}
+	marshal.ParseLines(parsedLineChan, parser.reader, func(row []string, parsedLine *marshal.ParsedLineResult) {
+		parseLine(parser.colIndex, row, parsedLine)
+	})
 }
 
 func parseLine(idx marshal.ColMapping, row []string, parsedLine *marshal.ParsedLineResult) {

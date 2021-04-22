@@ -3,7 +3,6 @@ package urssaf
 import (
 	"encoding/csv"
 	"errors"
-	"io"
 	"os"
 	"time"
 
@@ -67,22 +66,9 @@ func (parser *ccsfParser) Open(filePath string) (err error) {
 }
 
 func (parser *ccsfParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
-	for {
-		parsedLine := marshal.ParsedLineResult{}
-		row, err := parser.reader.Read()
-		if err == io.EOF {
-			close(parsedLineChan)
-			break
-		} else if err != nil {
-			parsedLine.AddRegularError(err)
-		} else {
-			parseCcsfLine(parser.idx, row, &parser.comptes, &parsedLine)
-			if len(parsedLine.Errors) > 0 {
-				parsedLine.Tuples = []marshal.Tuple{}
-			}
-		}
-		parsedLineChan <- parsedLine
-	}
+	marshal.ParseLines(parsedLineChan, parser.reader, func(row []string, parsedLine *marshal.ParsedLineResult) {
+		parseCcsfLine(parser.idx, row, &parser.comptes, parsedLine)
+	})
 }
 
 func parseCcsfLine(idx marshal.ColMapping, row []string, comptes *marshal.Comptes, parsedLine *marshal.ParsedLineResult) {
@@ -109,5 +95,7 @@ func parseCcsfLine(idx marshal.ColMapping, row []string, comptes *marshal.Compte
 	} else {
 		parsedLine.AddRegularError(errors.New("ligne non conforme, moins de 4 champs"))
 	}
-	parsedLine.AddTuple(ccsf)
+	if len(parsedLine.Errors) == 0 {
+		parsedLine.AddTuple(ccsf)
+	}
 }

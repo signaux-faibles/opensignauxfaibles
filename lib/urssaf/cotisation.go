@@ -1,9 +1,7 @@
 package urssaf
 
 import (
-	"bufio"
 	"encoding/csv"
-	"io"
 	"os"
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
@@ -59,34 +57,17 @@ func (parser *cotisationParser) Init(cache *marshal.Cache, batch *base.AdminBatc
 }
 
 func (parser *cotisationParser) Open(filePath string) (err error) {
-	parser.file, err = os.Open(filePath)
-	if err != nil {
-		return err
+	parser.file, parser.reader, err = marshal.OpenCsvReader(base.BatchFile(filePath), ';', true)
+	if err == nil {
+		parser.idx, err = marshal.IndexColumnsFromCsvHeader(parser.reader, Cotisation{})
 	}
-	parser.reader = csv.NewReader(bufio.NewReader(parser.file))
-	parser.reader.Comma = ';'
-	parser.reader.LazyQuotes = true
-	parser.idx, err = marshal.IndexColumnsFromCsvHeader(parser.reader, Cotisation{})
 	return err
 }
 
 func (parser *cotisationParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
-	for {
-		parsedLine := marshal.ParsedLineResult{}
-		row, err := parser.reader.Read()
-		if err == io.EOF {
-			close(parsedLineChan)
-			break
-		} else if err != nil {
-			parsedLine.AddRegularError(err)
-		} else {
-			parseCotisationLine(parser.idx, row, &parser.comptes, &parsedLine)
-			if len(parsedLine.Errors) > 0 {
-				parsedLine.Tuples = []marshal.Tuple{}
-			}
-		}
-		parsedLineChan <- parsedLine
-	}
+	marshal.ParseLines(parsedLineChan, parser.reader, func(row []string, parsedLine *marshal.ParsedLineResult) {
+		parseCotisationLine(parser.idx, row, &parser.comptes, parsedLine)
+	})
 }
 
 func parseCotisationLine(idx marshal.ColMapping, row []string, comptes *marshal.Comptes, parsedLine *marshal.ParsedLineResult) {
@@ -110,5 +91,7 @@ func parseCotisationLine(idx marshal.ColMapping, row []string, comptes *marshal.
 		cotisation.Du, err = idxRow.GetCommaFloat64("cotis_due")
 		parsedLine.AddRegularError(err)
 	}
-	parsedLine.AddTuple(cotisation)
+	if len(parsedLine.Errors) == 0 {
+		parsedLine.AddTuple(cotisation)
+	}
 }

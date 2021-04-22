@@ -49,12 +49,9 @@ jobs:
           echo "${GPG_PRIVATE_KEY_FOR_GIT_SECRET}" > ./private_key.gpg
           gpg --import --no-tty --batch --yes ./private_key.gpg
           git secret reveal
-      - name: Tests driven by Node/AVA
+      - name: Run tests + generate coverage report
         working-directory: js
-        run: npm run test:coverage
-      - name: Generate coverage report
-        working-directory: js
-        run: npx nyc report --reporter=lcov --include="**/*.ts" --exclude="**/*.js" # stores the coverage report in ./coverage/lcov.info
+        run: npm run test:coverage # stores the coverage report in ./coverage/lcov.info
       - uses: actions/upload-artifact@v2
         with:
           name: mr-coverage-report
