@@ -67,7 +67,7 @@ func CheckBatchPaths(batch *base.AdminBatch) error {
 	var ErrorString string
 	for _, filepaths := range batch.Files {
 		for _, batchFile := range filepaths {
-			filepath := viper.GetString("APP_DATA") + batchFile.FilePath()
+			filepath := viper.GetString("APP_DATA") + batchFile.FilePath() // TODO: don't forget to prepend with batchFile.Prefix(), to support files with the "gzip:" prefix
 			if _, err := os.Stat(filepath); err != nil {
 				ErrorString += filepath + " is missing (" + err.Error() + ").\n"
 			}
