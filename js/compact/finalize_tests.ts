@@ -357,6 +357,30 @@ const testCases: TestCase[] = [
       },
     },
   },
+  // example 6: entreprise
+  {
+    testCaseName: "Ajoute l'entreprise dans le périmètre algo2",
+    finalizeObject: {
+      key: "012345678", // numéro SIREN
+      scope: "entreprise",
+      batch: {
+        "1901": {},
+      },
+      index: {
+        algo2: false,
+      },
+    },
+    expected: {
+      key: "012345678", // numéro SIREN
+      scope: "entreprise",
+      batch: {
+        "1901": {},
+      },
+      index: {
+        algo2: true,
+      },
+    },
+  },
 ]
 
 const excludeRandomOrder = (obj: unknown): unknown =>

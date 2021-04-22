@@ -2,7 +2,6 @@ package urssaf
 
 import (
 	"encoding/csv"
-	"io"
 	"os"
 	"strconv"
 	"time"
@@ -77,19 +76,9 @@ func parseEffectifColMapping(reader *csv.Reader) (marshal.ColMapping, []periodCo
 }
 
 func (parser *effectifParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
-	for {
-		parsedLine := marshal.ParsedLineResult{}
-		row, err := parser.reader.Read()
-		if err == io.EOF {
-			close(parsedLineChan)
-			break
-		} else if err != nil {
-			parsedLine.AddRegularError(err)
-		} else {
-			parseEffectifLine(row, parser.idx, &parser.periods, &parsedLine)
-		}
-		parsedLineChan <- parsedLine
-	}
+	marshal.ParseLines(parsedLineChan, parser.reader, func(row []string, parsedLine *marshal.ParsedLineResult) {
+		parseEffectifLine(row, parser.idx, &parser.periods, parsedLine)
+	})
 }
 
 func parseEffectifLine(row []string, idx marshal.ColMapping, periods *[]periodCol, parsedLine *marshal.ParsedLineResult) {

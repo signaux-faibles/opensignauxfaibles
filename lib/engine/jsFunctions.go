@@ -620,9 +620,6 @@ function listHashesToAddAndDelete(currentBatch, stockTypes, memory) {
 }`,
 			"map": `function map() {
     "use strict";
-    if (typeof this.value !== "object") {
-        throw new Error("this.value should be a valid object, in compact::map()");
-    }
     emit(this.value.key, this.value);
 }`,
 			"reduce": `// Entrée: données d'entreprises venant de ImportedData, regroupées par entreprise ou établissement.
@@ -950,15 +947,7 @@ function reduce(key, values // chaque element contient plusieurs batches pour ce
     }
 }`,
 			"reduce": `function reduce(_key, values) {
-    return values.reduce((m, v) => {
-        if (v.sirets) {
-            // TODO: je n'ai pas trouvé d'affectation de valeur dans la propriété "sirets" => est-elle toujours d'actualité ?
-            m.sirets = (m.sirets || []).concat(v.sirets);
-            delete v.sirets;
-        }
-        Object.assign(m, v);
-        return m;
-    }, {});
+    return Object.assign({}, ...values);
 }`,
 			"sirene": `// Cette fonction retourne les données sirene les plus récentes
 function sirene(sireneArray) {
@@ -1702,6 +1691,7 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
 }`,
 			"finalize": `function finalize(k, v) {
     "use strict";
+    const maxEtabParEntr = 1500;
     const maxBsonSize = 16777216;
     // v de la forme
     // _id: {batch / siren / periode / type}
@@ -1716,11 +1706,13 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
     // extraction de l'entreprise et des établissements depuis v
     const établissements = f.omit(v, "entreprise");
     const entr = Object.assign({}, v.entreprise); // on suppose que v.entreprise est défini
-    const output = Object.keys(établissements).map((siret) => {
+    const output = Object.keys(établissements)
+        .map((siret) => {
         var _a, _b, _c, _d;
         const etab = (_a = établissements[siret]) !== null && _a !== void 0 ? _a : {};
         if (etab.effectif) {
-            entr.effectif_entreprise = entr.effectif_entreprise || 0 + etab.effectif;
+            entr.effectif_entreprise =
+                (entr.effectif_entreprise || 0) + etab.effectif;
         }
         if (etab.apart_heures_consommees) {
             entr.apart_entreprise =
@@ -1732,13 +1724,14 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
                     ((_c = etab.montant_part_patronale) !== null && _c !== void 0 ? _c : 0) +
                     ((_d = etab.montant_part_ouvriere) !== null && _d !== void 0 ? _d : 0);
         }
-        return Object.assign(Object.assign(Object.assign({}, etab), entr), { nbr_etablissements_connus: Object.keys(établissements).length });
-    });
+        return etab;
+    })
+        .map((etab) => (Object.assign(Object.assign(Object.assign({}, etab), entr), { nbr_etablissements_connus: Object.keys(établissements).length })));
     // NON: Pour l'instant, filtrage a posteriori
     // output = output.filter(siret_data => {
     //   return(siret_data.effectif) // Only keep if there is known effectif
     // })
-    if (output.length > 0 && output.length <= 1500) {
+    if (output.length > 0 && output.length <= maxEtabParEntr) {
         if (bsonsize(output) + bsonsize({ _id: k }) < maxBsonSize) {
             return output;
         }
