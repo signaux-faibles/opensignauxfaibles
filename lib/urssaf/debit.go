@@ -2,7 +2,6 @@ package urssaf
 
 import (
 	"encoding/csv"
-	"io"
 	"os"
 	"time"
 
@@ -77,34 +76,23 @@ func (parser *debitParser) Open(filePath string) (err error) {
 }
 
 func (parser *debitParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
-	var lineNumber = 0                                     // starting with the header
-	stopProgressLogger := marshal.LogProgress(&lineNumber) // TODO: move this call to runParserWithSirenFilter()
-	defer stopProgressLogger()
+	marshal.ParseLines(parsedLineChan, parser.reader, func(row []string, parsedLine *marshal.ParsedLineResult) {
+		parser.parseLine(row, parsedLine)
+	})
 
-	for {
-		parsedLine := marshal.ParsedLineResult{}
-		lineNumber++
-		row, err := parser.reader.Read()
-		if err == io.EOF {
-			close(parsedLineChan)
-			break
-		} else if err != nil {
-			parsedLine.AddRegularError(err)
-		} else {
-			idxRow := parser.idx.IndexRow(row)
-			period, _ := marshal.UrssafToPeriod(idxRow.GetVal("Periode"))
-			date := period.Start
+}
 
-			if siret, err := marshal.GetSiretFromComptesMapping(idxRow.GetVal("num_cpte"), &date, parser.comptes); err == nil {
-				parseDebitLine(siret, idxRow, &parsedLine)
-				if len(parsedLine.Errors) > 0 {
-					parsedLine.Tuples = []marshal.Tuple{}
-				}
-			} else {
-				parsedLine.SetFilterError(err)
-			}
+func (parser *debitParser) parseLine(row []string, parsedLine *marshal.ParsedLineResult) {
+	idxRow := parser.idx.IndexRow(row)
+	period, _ := marshal.UrssafToPeriod(idxRow.GetVal("Periode"))
+	date := period.Start
+	if siret, err := marshal.GetSiretFromComptesMapping(idxRow.GetVal("num_cpte"), &date, parser.comptes); err == nil {
+		parseDebitLine(siret, idxRow, parsedLine)
+		if len(parsedLine.Errors) > 0 {
+			parsedLine.Tuples = []marshal.Tuple{}
 		}
-		parsedLineChan <- parsedLine
+	} else {
+		parsedLine.SetFilterError(err)
 	}
 }
 

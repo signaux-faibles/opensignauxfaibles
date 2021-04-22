@@ -2,7 +2,6 @@ package apconso
 
 import (
 	"encoding/csv"
-	"io"
 	"os"
 	"time"
 
@@ -53,7 +52,7 @@ func (parser *apconsoParser) Init(cache *marshal.Cache, batch *base.AdminBatch) 
 }
 
 func (parser *apconsoParser) Open(filePath string) (err error) {
-	parser.file, parser.reader, err = openFile(filePath)
+	parser.file, parser.reader, err = marshal.OpenCsvReader(base.BatchFile(filePath), ',', false)
 	if err == nil {
 		parser.idx, err = marshal.IndexColumnsFromCsvHeader(parser.reader, APConso{})
 	}
@@ -64,33 +63,10 @@ func (parser *apconsoParser) Close() error {
 	return parser.file.Close()
 }
 
-func openFile(filePath string) (*os.File, *csv.Reader, error) {
-	file, err := os.Open(filePath)
-	if err != nil {
-		return file, nil, err
-	}
-	reader := csv.NewReader(file)
-	reader.Comma = ','
-	return file, reader, nil
-}
-
 func (parser *apconsoParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
-	for {
-		parsedLine := marshal.ParsedLineResult{}
-		row, err := parser.reader.Read()
-		if err == io.EOF {
-			close(parsedLineChan)
-			break
-		} else if err != nil {
-			parsedLine.AddRegularError(err)
-		} else if len(row) > 0 {
-			parseApConsoLine(row, parser.idx, &parsedLine)
-			if len(parsedLine.Errors) > 0 {
-				parsedLine.Tuples = []marshal.Tuple{}
-			}
-		}
-		parsedLineChan <- parsedLine
-	}
+	marshal.ParseLines(parsedLineChan, parser.reader, func(row []string, parsedLine *marshal.ParsedLineResult) {
+		parseApConsoLine(row, parser.idx, parsedLine)
+	})
 }
 
 func parseApConsoLine(row []string, idx marshal.ColMapping, parsedLine *marshal.ParsedLineResult) {
@@ -107,5 +83,7 @@ func parseApConsoLine(row []string, idx marshal.ColMapping, parsedLine *marshal.
 	parsedLine.AddRegularError(err)
 	apconso.Effectif, err = idxRow.GetInt("EFFECTIFS")
 	parsedLine.AddRegularError(err)
-	parsedLine.AddTuple(apconso)
+	if len(parsedLine.Errors) == 0 {
+		parsedLine.AddTuple(apconso)
+	}
 }
