@@ -176,7 +176,7 @@ func TestGetCompteSiretMapping(t *testing.T) {
 		}
 
 		// When file is read, returnd stdExpected1
-		mockOpenFile := func(s1 string, s2 string, c Comptes, ca Cache, ba *base.AdminBatch) (Comptes, error) {
+		mockOpenFile := func(s1 string, s2 base.BatchFile, c Comptes, ca Cache, ba *base.AdminBatch) (Comptes, error) {
 			for key := range stdExpected1 {
 				c[key] = stdExpected1[key]
 			}
