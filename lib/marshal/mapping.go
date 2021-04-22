@@ -5,7 +5,6 @@ import (
 	"errors"
 	"io"
 	"log"
-	"path"
 
 	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/sfregexp"
@@ -83,7 +82,7 @@ func GetCompteSiretMapping(cache Cache, batch *base.AdminBatch, mr mappingReader
 		return nil, errors.New("no admin_urssaf mapping found")
 	}
 	for _, p := range path {
-		compteSiretMapping, err = mr(basePath, p.FilePath(), compteSiretMapping, cache, batch)
+		compteSiretMapping, err = mr(basePath, p, compteSiretMapping, cache, batch)
 		if err != nil {
 			return nil, err
 		}
@@ -92,18 +91,20 @@ func GetCompteSiretMapping(cache Cache, batch *base.AdminBatch, mr mappingReader
 	return compteSiretMapping, nil
 }
 
-type mappingReader func(string, string, Comptes, Cache, *base.AdminBatch) (Comptes, error)
+type mappingReader func(string, base.BatchFile, Comptes, Cache, *base.AdminBatch) (Comptes, error)
 
 // OpenAndReadSiretMapping opens files and reads their content
 func OpenAndReadSiretMapping(
 	basePath string,
-	endPath string,
+	batchFile base.BatchFile,
 	compteSiretMapping Comptes,
 	cache Cache,
 	batch *base.AdminBatch,
 ) (Comptes, error) {
 
-	file, fileReader, err := OpenFileReader(base.BatchFile(path.Join(basePath, endPath)))
+	filePath := base.BatchFile(batchFile.Prefix() + basePath + batchFile.FilePath()) // note: basePath is probably viper.GetString("APP_DATA")
+
+	file, fileReader, err := OpenFileReader(filePath)
 	if err != nil {
 		return nil, errors.New("Erreur à l'ouverture du fichier, " + err.Error())
 	}
