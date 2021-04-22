@@ -46,4 +46,4 @@ proprietes.forEach((propriete) =>
   })
 )
 
-// $ node_modules/.bin/ava-ts ./reduce.algo2/fraisFinancier_tests.ts
+// $ cd js && $(npm bin)/ava ./reduce.algo2/fraisFinancier_tests.ts

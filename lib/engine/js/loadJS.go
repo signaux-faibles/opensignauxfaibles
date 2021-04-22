@@ -38,6 +38,7 @@ func bundleJsFunctions(jsRootDir string) {
 	for _, folder := range folders {
 		if folder.IsDir() &&
 			folder.Name() != "node_modules" && // skip node/npm dependencies cache
+			folder.Name() != "coverage" && // skip coverage reports
 			folder.Name() != "typings" && // skip typescript types for javascript dependencies (e.g. concordance)
 			!strings.HasPrefix(folder.Name(), ".") && // skip hidden directories, e.g. `.nyc_output`
 			!strings.HasPrefix(folder.Name(), "test") {
