@@ -1,5 +1,10 @@
+// Ce script génère une documentation des champs (variables.json) produits par
+// les fonctions TypeScript employées dans l'opération `reduce.algo2`, par
+// introspection des types `Variables` définis à coté de ces fonctions.
+
 import * as path from "path"
 import * as TJS from "typescript-json-schema"
+import * as ts from "typescript"
 
 // Documentation schema for each variable.
 type VarDocumentation = {
@@ -48,7 +53,16 @@ function* extractTypeDefsFromFiles(
   typeName: string,
   filePaths: string[]
 ): Generator<{ fileName: string; getTypeDef: () => TJS.Definition }> {
-  const program = TJS.getProgramFromFiles(filePaths)
+  const options = {
+    noEmit: true,
+    emitDecoratorMetadata: true,
+    experimentalDecorators: true,
+    target: ts.ScriptTarget.ES5,
+    module: ts.ModuleKind.CommonJS,
+    allowUnusedLabels: true,
+  }
+  const program = ts.createProgram(filePaths, options)
+
   const generator = TJS.buildGenerator(program, settings)
   if (!generator) {
     throw new Error("failed to create generator")
