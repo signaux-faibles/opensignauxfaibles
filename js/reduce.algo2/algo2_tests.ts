@@ -15,7 +15,7 @@ import { reducer, invertedReducer } from "../test/helpers/reducers"
 import { runMongoMap, indexMapResultsByKey } from "../test/helpers/mongodb"
 import { setGlobals } from "../test/helpers/setGlobals"
 import { EntréeBdf, EntréeDebit, EntréeDelai } from "../GeneratedTypes"
-import { EntrepriseBatchProps } from "../RawDataTypes"
+import { EntrepriseBatchProps, EtablissementBatchProps } from "../RawDataTypes"
 
 const DAY_IN_MS = 24 * 60 * 60 * 1000
 
@@ -159,4 +159,35 @@ test(`algo2.map() retourne les propriétés d'entreprise attendues par l'algo d'
   t.snapshot(mapResults)
 })
 
-// TODO: écrire un test équivalent pour les établissements
+test(`algo2.map() retourne les propriétés d'établissements attendues par l'algo d'apprentissage`, (t: ExecutionContext) => {
+  const siret = "012345678901234"
+  const batchKey = "1910"
+  const dateDébut = new Date("2015-12-01T00:00:00.000+0000")
+  const dateFin = new Date("2016-01-01T00:00:00.000+0000")
+  const serie_periode = [dateDébut, dateFin]
+  setGlobals({
+    actual_batch: batchKey,
+    serie_periode,
+    includes: { all: true },
+  })
+  // Cet objet sera a compléter, au fur et à mesure qu'on ajoutera des props dans EtablissementBatchProps
+  const rawEtabData: EtablissementBatchProps = {
+    reporder: {},
+    apconso: {},
+  }
+  const mapResults = runMongoMap<EntréeMap, CléSortieMap, SortieMap>(map, [
+    {
+      _id: siret,
+      value: {
+        scope: "etablissement",
+        key: siret,
+        batch: {
+          [batchKey]: {
+            ...rawEtabData,
+          },
+        },
+      },
+    },
+  ])
+  t.snapshot(mapResults)
+})
