@@ -15,7 +15,7 @@ import {
   CompanyDataValuesWithFlags,
   Scope,
   EntréeRepOrder,
-  SiretOrSiren,
+  Siret,
 } from "../RawDataTypes"
 
 const removeRandomOrder = (
@@ -26,7 +26,7 @@ const removeRandomOrder = (
   })
 
 // test data inspired by test.sh
-const siret: SiretOrSiren = "01234567891011"
+const siret: Siret = "01234567891011"
 const scope: Scope = "etablissement"
 const fromBatchKey = "1910"
 const dates = [

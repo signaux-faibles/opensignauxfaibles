@@ -28,7 +28,6 @@ export type Departement = string
 
 export type Siren = string
 export type Siret = string
-export type SiretOrSiren = Siret | Siren // TODO: supprimer ce type, une fois que tous les champs auront été séparés
 export type CodeAPE = string
 
 export type DataHash = string
@@ -107,5 +106,5 @@ export type BatchValueProps = CommonBatchProps &
 export type EntréeRepOrder = {
   random_order: number
   periode: Date
-  siret: SiretOrSiren
+  siret: Siret
 }
