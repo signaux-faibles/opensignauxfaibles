@@ -173,7 +173,15 @@ test(`algo2.map() retourne les propriétés d'établissements attendues par l'al
   // Cet objet sera a compléter, au fur et à mesure qu'on ajoutera des props dans EtablissementBatchProps
   const rawEtabData: EtablissementBatchProps = {
     reporder: {},
-    apconso: {},
+    apconso: {
+      somehash: {
+        id_conso: "",
+        periode: dateDébut,
+        heure_consomme: 1,
+        effectif: 2,
+        montant: 123,
+      },
+    },
   }
   const mapResults = runMongoMap<EntréeMap, CléSortieMap, SortieMap>(map, [
     {
