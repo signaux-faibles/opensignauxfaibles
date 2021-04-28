@@ -101,7 +101,7 @@ func reportUnsupportedFiletypes(batch base.AdminBatch) {
 	for fileType := range batch.Files {
 		if !parsing.IsSupportedParser(fileType) {
 			msg := fmt.Sprintf("Type de fichier non reconnu: %v", fileType)
-			log.Println(msg)
+			log.Println(msg) // notification dans la sortie d'erreurs
 			event := marshal.CreateReportEvent(fileType, bson.M{
 				"batchKey": batch.ID.Key,
 				"summary":  msg,

@@ -71,7 +71,7 @@ func GetCompteSiretMapping(cache Cache, batch *base.AdminBatch, mr mappingReader
 		return nil, errors.New("wrong format from existing field comptes in cache")
 	}
 
-	log.Println("Chargement des comptes urssaf")
+	log.Println("Chargement des comptes urssaf") // TODO: supprimer cet affichage ?
 
 	compteSiretMapping := make(Comptes)
 
