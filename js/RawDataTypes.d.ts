@@ -79,6 +79,7 @@ export type EntrepriseBatchProps = CommonBatchProps & {
 
 export type EtablissementBatchProps = CommonBatchProps & {
   apconso: ParHash<EntréeApConso>
+  apdemande: ParHash<EntréeApDemande>
 }
 
 // TODO: continuer d'extraire les propriétés vers EntrepriseBatchProps et EtablissementBatchProps, puis supprimer BatchValueProps et les types qui en dépendent
@@ -86,7 +87,6 @@ export type BatchValueProps = CommonBatchProps &
   EntrepriseBatchProps &
   EtablissementBatchProps & {
     effectif: ParHash<EntréeEffectif>
-    apdemande: ParHash<EntréeApDemande>
     compte: ParHash<EntréeCompte>
     delai: ParHash<EntréeDelai>
     procol: ParHash<EntréeDéfaillances>

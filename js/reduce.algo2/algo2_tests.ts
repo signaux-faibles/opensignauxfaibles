@@ -165,13 +165,32 @@ test(`algo2.map() retourne les propriétés d'établissements attendues par l'al
   // Cet objet sera a compléter, au fur et à mesure qu'on ajoutera des props dans EtablissementBatchProps
   const rawEtabData: EtablissementBatchProps = {
     reporder: {},
+    apdemande: {
+      b88032c02d1724d92279a47599b112dd: {
+        id_demande: "S044130482",
+        effectif_entreprise: 10,
+        effectif: 10,
+        date_statut: dateDébut,
+        periode: {
+          start: dateDébut,
+          end: dateFin,
+        },
+        hta: 1500,
+        mta: 10000,
+        effectif_autorise: 30,
+        motif_recours_se: 2,
+        heure_consommee: 0,
+        montant_consommee: 0,
+        effectif_consomme: 0,
+      },
+    },
     apconso: {
-      somehash: {
-        id_conso: "",
+      e3af9bbf7d37e62fbbf88efdae464746: {
+        id_conso: "S044130482",
+        heure_consomme: 326.0,
+        montant: 2530.13,
+        effectif: 20,
         periode: dateDébut,
-        heure_consomme: 1,
-        effectif: 2,
-        montant: 123,
       },
     },
   }
