@@ -39,10 +39,10 @@ func TestParseTuplesFromLine(t *testing.T) {
 		tracker.Next()
 
 		report := tracker.Report("", "")
-		assert.Equal(t, 1, report["linesParsed"])
-		assert.Equal(t, 1, report["linesRejected"])
-		assert.Equal(t, 0, report["linesSkipped"])
-		assert.Equal(t, 0, report["linesValid"])
+		assert.Equal(t, int64(1), report["linesParsed"])
+		assert.Equal(t, int64(1), report["linesRejected"])
+		assert.Equal(t, int64(0), report["linesSkipped"])
+		assert.Equal(t, int64(0), report["linesValid"])
 		assert.Equal(t, 2, len(report["headRejected"].([]string)))
 	})
 
@@ -57,10 +57,10 @@ func TestParseTuplesFromLine(t *testing.T) {
 		tracker.Next()
 
 		report := tracker.Report("", "")
-		assert.Equal(t, 1, report["linesParsed"])
-		assert.Equal(t, 0, report["linesRejected"])
-		assert.Equal(t, 1, report["linesSkipped"])
-		assert.Equal(t, 0, report["linesValid"])
+		assert.Equal(t, int64(1), report["linesParsed"])
+		assert.Equal(t, int64(0), report["linesRejected"])
+		assert.Equal(t, int64(1), report["linesSkipped"])
+		assert.Equal(t, int64(0), report["linesValid"])
 		assert.Equal(t, 0, len(report["headRejected"].([]string)))
 	})
 }

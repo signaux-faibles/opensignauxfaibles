@@ -24,7 +24,7 @@ func TestTracker(t *testing.T) {
 			tracker.Next()
 		}
 		report := tracker.Report("", "")
-		assert.Equal(t, expectedLinesRejected, report["linesRejected"])
+		assert.Equal(t, int64(expectedLinesRejected), report["linesRejected"])
 	})
 
 	t.Run("should report just 1 rejected line, given 2 parse errors happened on that same line", func(t *testing.T) {
@@ -35,7 +35,7 @@ func TestTracker(t *testing.T) {
 			tracker.AddParseError(fmt.Errorf("parse error %d", i))
 		}
 		report := tracker.Report("", "")
-		assert.Equal(t, expectedLinesRejected, report["linesRejected"])
+		assert.Equal(t, int64(expectedLinesRejected), report["linesRejected"])
 	})
 
 	t.Run("should report just 1 skipped line, given 2 filter errors happened on that same line", func(t *testing.T) {
@@ -46,7 +46,7 @@ func TestTracker(t *testing.T) {
 			tracker.AddFilterError(fmt.Errorf("filter error %d", i))
 		}
 		report := tracker.Report("", "")
-		assert.Equal(t, expectedLinesSkipped, report["linesSkipped"])
+		assert.Equal(t, int64(expectedLinesSkipped), report["linesSkipped"])
 	})
 
 }
