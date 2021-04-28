@@ -59,20 +59,9 @@ func (parser *effectifParser) Close() error {
 func (parser *effectifParser) Open(filePath string) (err error) {
 	parser.file, parser.reader, err = marshal.OpenCsvReader(base.BatchFile(filePath), ';', false)
 	if err == nil {
-		parser.idx, parser.periods, err = parseEffectifColMapping(parser.reader)
+		parser.idx, parser.periods, err = parseEffectifColMapping(parser.reader, Effectif{})
 	}
 	return err
-}
-
-func parseEffectifColMapping(reader *csv.Reader) (marshal.ColMapping, []periodCol, error) {
-	fields, err := reader.Read()
-	if err != nil {
-		return marshal.ColMapping{}, nil, err
-	}
-	idx, err := marshal.ValidateAndIndexColumnsFromColTags(marshal.LowercaseFields(fields), Effectif{})
-	// Dans quels champs lire l'effectif
-	periods := parseEffectifPeriod(fields)
-	return idx, periods, err
 }
 
 func (parser *effectifParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
