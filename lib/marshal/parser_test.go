@@ -34,9 +34,8 @@ func TestParseTuplesFromLine(t *testing.T) {
 		parsedLine.AddRegularError(errors.New("error 2"))
 		parsedLine.AddTuple(dummyTuple{})
 
-		outputChannel := make(chan Tuple)
 		tracker := NewParsingTracker()
-		parseTuplesFromLine(parsedLine, &SirenFilter{}, &tracker, outputChannel)
+		parseTuplesFromLine(parsedLine, &SirenFilter{}, &tracker, make(chan Tuple))
 		tracker.Next()
 
 		report := tracker.Report("", "")
@@ -45,6 +44,24 @@ func TestParseTuplesFromLine(t *testing.T) {
 		assert.Equal(t, 0, report["linesSkipped"])
 		assert.Equal(t, 0, report["linesValid"])
 		assert.Equal(t, 2, len(report["headRejected"].([]string)))
+	})
+
+	t.Run("ne comptabilise qu'une fois une ligne à la fois erronée et filtrée", func(t *testing.T) {
+		var parsedLine ParsedLineResult
+		parsedLine.AddRegularError(errors.New("regular error"))
+		parsedLine.AddTuple(dummyTuple{})
+		parsedLine.SetFilterError(errors.New("filtered"))
+
+		tracker := NewParsingTracker()
+		parseTuplesFromLine(parsedLine, &SirenFilter{}, &tracker, make(chan Tuple))
+		tracker.Next()
+
+		report := tracker.Report("", "")
+		assert.Equal(t, 1, report["linesParsed"])
+		assert.Equal(t, 0, report["linesRejected"])
+		assert.Equal(t, 1, report["linesSkipped"])
+		assert.Equal(t, 0, report["linesValid"])
+		assert.Equal(t, 0, len(report["headRejected"].([]string)))
 	})
 }
 
