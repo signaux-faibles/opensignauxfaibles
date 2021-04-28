@@ -4967,11 +4967,11 @@
 			"headRejected" : undefined,
 			"headFatal" : undefined,
 			"linesSkipped" : undefined,
-			"summary" : "Type de fichier non reconnu: filter",
+			"summary" : "Type de fichier non reconnu: dummy",
 			"batchKey" : "1910"
 		},
 		"reportType" : "ImportBatch_error",
-		"parserCode" : "filter",
+		"parserCode" : "dummy",
 		"hasCommitHash" : true,
 		"hasDate" : true,
 		"hasStartDate" : true

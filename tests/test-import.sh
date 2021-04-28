@@ -35,6 +35,7 @@ tests/helpers/mongodb-container.sh run > /dev/null << CONTENTS
         "type" : "batch"
     },
     "files": {
+      "dummy":        [],
       "filter":       [],
       "paydex":       [ "/../lib/paydex/testData/paydexTestData.csv" ],
       "apconso":      [ "/../lib/apconso/testData/apconsoTestData.csv" ],
