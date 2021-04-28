@@ -1,7 +1,12 @@
-// Ce script sert à générer GeneratedTypes.d.ts à partir de fichiers *.schema.json
-// dans lesquels les types sont exprimés à l'aide de bsonType.
+// Ce script génère des définitions de types TypeScript (GeneratedTypes.d.ts)
+// à partir de fichiers validation/*.schema.json.
+// Ces types structurent les données stockées dans RawData et utilisées en
+// entrée des fonctions appelées par les opérations map-reduce `public` et
+// `reduce.algo2`.
+// Le script étend "json-schema-to-typescript" pour prendre en charge les types
+// exprimés dans la propriété "bsonType".
 // (cf https://docs.mongodb.com/manual/reference/operator/query/type/#document-type-available-types)
-// (cf la table de correspondance goTypeToBsonType de validation.go.)
+// (cf la table de correspondance goTypeToBsonType de validation.go)
 
 import * as fs from "fs"
 import { compile, JSONSchema } from "json-schema-to-typescript"
