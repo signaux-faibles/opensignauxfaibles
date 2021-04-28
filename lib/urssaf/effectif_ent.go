@@ -3,7 +3,6 @@ package urssaf
 import (
 	"encoding/csv"
 	"os"
-	"regexp"
 	"strconv"
 	"time"
 
@@ -59,7 +58,7 @@ func (parser *effectifEntParser) Init(cache *marshal.Cache, batch *base.AdminBat
 func (parser *effectifEntParser) Open(filePath string) (err error) {
 	parser.file, parser.reader, err = marshal.OpenCsvReader(base.BatchFile(filePath), ';', false)
 	if err == nil {
-		parser.idx, parser.periods, err = parseEffectifEntColMapping(parser.reader)
+		parser.idx, parser.periods, err = parseEffectifColMapping(parser.reader, EffectifEnt{})
 	}
 	return err
 }
@@ -68,35 +67,6 @@ func (parser *effectifEntParser) ParseLines(parsedLineChan chan marshal.ParsedLi
 	marshal.ParseLines(parsedLineChan, parser.reader, func(row []string, parsedLine *marshal.ParsedLineResult) {
 		parseEffectifEntLine(row, parser.idx, &parser.periods, parsedLine)
 	})
-}
-
-func parseEffectifEntColMapping(reader *csv.Reader) (marshal.ColMapping, []periodCol, error) {
-	fields, err := reader.Read()
-	if err != nil {
-		return marshal.ColMapping{}, nil, err
-	}
-	idx, err := marshal.ValidateAndIndexColumnsFromColTags(marshal.LowercaseFields(fields), EffectifEnt{})
-	// Dans quels champs lire l'effectifEnt
-	periods := parseEffectifPeriod(fields)
-	return idx, periods, err
-}
-
-type periodCol struct {
-	dateStart time.Time
-	colIndex  int
-}
-
-// ParseEffectifPeriod extrait les périodes depuis une liste de noms de colonnes csv.
-func parseEffectifPeriod(fields []string) []periodCol {
-	periods := []periodCol{}
-	re, _ := regexp.Compile("^eff")
-	for index, field := range fields {
-		if re.MatchString(field) {
-			date, _ := marshal.UrssafToPeriod(field[3:9]) // format: YYQM ou YYYYQM
-			periods = append(periods, periodCol{dateStart: date.Start, colIndex: index})
-		}
-	}
-	return periods
 }
 
 func parseEffectifEntLine(row []string, idx marshal.ColMapping, periods *[]periodCol, parsedLine *marshal.ParsedLineResult) {
