@@ -4,7 +4,7 @@
 //
 // => Penser à ajouter les nouveaux types dans rawEtabData et rawEntrData.
 
-import { ExecutionContext, serial as test } from "ava"
+import { ExecutionContext, serial as test } from "ava" // Tests à exécuter de manière séquentielle, pour éviter effets de bords liés aux variables globales, dont fonction emit() initialisée par runMongoMap()
 import { map, EntréeMap, CléSortieMap, SortieMap } from "./map"
 import { reduce } from "./reduce"
 import { finalize, Clé } from "./finalize"
@@ -19,11 +19,13 @@ import { EntrepriseBatchProps, EtablissementBatchProps } from "../RawDataTypes"
 
 const DAY_IN_MS = 24 * 60 * 60 * 1000
 
+const batchKey = "1905"
+
 // initialisation des paramètres globaux de reduce.algo2
 const initGlobalParams = (dateDebut: Date, dateFin: Date) =>
   setGlobals({
     naf: nafValues,
-    actual_batch: "1905",
+    actual_batch: batchKey,
     date_fin: dateFin,
     serie_periode: generatePeriodSerie(dateDebut, dateFin),
     offset_effectif: 2,
@@ -43,7 +45,7 @@ const makeInput = (
       key: siret,
       scope: "etablissement",
       batch: {
-        "1905": {
+        [batchKey]: {
           cotisation: {},
           debit: {
             hashDette: {
@@ -118,15 +120,10 @@ test("delai_deviation_remboursement est calculé à partir d'un débit et d'une 
 
 test(`algo2.map() retourne les propriétés d'entreprise attendues par l'algo d'apprentissage`, (t: ExecutionContext) => {
   const siren = "012345678"
-  const batchKey = "1910"
   const dateDébut = new Date("2015-12-01T00:00:00.000+0000")
-  const dateFin = new Date("2016-01-01T00:00:00.000+0000")
-  const serie_periode = [dateDébut, dateFin]
-  setGlobals({
-    actual_batch: batchKey,
-    serie_periode,
-    includes: { all: true },
-  })
+  const dateFin = new Date("2016-02-01T00:00:00.000+0000")
+  initGlobalParams(dateDébut, dateFin)
+
   // Cet objet sera a compléter, au fur et à mesure qu'on ajoutera des props dans EntrepriseBatchProps
   const rawEntrData: EntrepriseBatchProps = {
     reporder: {},
@@ -161,15 +158,10 @@ test(`algo2.map() retourne les propriétés d'entreprise attendues par l'algo d'
 
 test(`algo2.map() retourne les propriétés d'établissements attendues par l'algo d'apprentissage`, (t: ExecutionContext) => {
   const siret = "012345678901234"
-  const batchKey = "1910"
   const dateDébut = new Date("2015-12-01T00:00:00.000+0000")
-  const dateFin = new Date("2016-01-01T00:00:00.000+0000")
-  const serie_periode = [dateDébut, dateFin]
-  setGlobals({
-    actual_batch: batchKey,
-    serie_periode,
-    includes: { all: true },
-  })
+  const dateFin = new Date("2016-02-01T00:00:00.000+0000")
+  initGlobalParams(dateDébut, dateFin)
+
   // Cet objet sera a compléter, au fur et à mesure qu'on ajoutera des props dans EtablissementBatchProps
   const rawEtabData: EtablissementBatchProps = {
     reporder: {},
