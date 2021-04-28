@@ -40,9 +40,10 @@ var registeredParsers = map[string]marshal.Parser{
 	"paydex":       paydex.ParserPaydex,
 }
 
-// IsSupportedParser retourne true si un parseur est défini pour le fileType spécifié.
+// IsSupportedParser retourne true si un parseur est défini pour le fileType spécifié
+// ou si le type est "filter". (cf issue #354)
 func IsSupportedParser(fileType string) bool {
-	return registeredParsers[fileType] != nil
+	return fileType == "filter" || registeredParsers[fileType] != nil
 }
 
 // ResolveParsers sélectionne, vérifie et charge les parsers.
