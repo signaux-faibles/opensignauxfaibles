@@ -17,16 +17,15 @@ import {
   EtablissementDataValues,
   Siret,
 } from "../RawDataTypes"
-import { EntréeApConso, EntréeApDemande } from "../GeneratedTypes"
+import { EntréeApDemande } from "../GeneratedTypes"
 import { apdemande } from "./apdemande"
 
 // test data inspired by test.sh
 const siret: Siret = "01234567891011"
 const batchKey = "1910"
-const dates = [
-  new Date("2015-12-01T00:00:00.000+0000"),
-  new Date("2016-01-01T00:00:00.000+0000"),
-]
+const dateDébut = new Date("2015-12-01T00:00:00.000+0000")
+const dateFin = new Date("2016-01-01T00:00:00.000+0000")
+const dates = [dateDébut, dateFin]
 setGlobals({
   actual_batch: batchKey, // used by map()
   serie_periode: dates, // used by effectifs(), which is called by map()
@@ -34,12 +33,33 @@ setGlobals({
 
 const rawEtabData: EtablissementBatchProps = {
   reporder: {},
+  apdemande: {
+    b88032c02d1724d92279a47599b112dd: {
+      id_demande: "S044130482",
+      effectif_entreprise: 10,
+      effectif: 10,
+      date_statut: dateDébut,
+      periode: {
+        start: dateDébut,
+        end: dateFin,
+      },
+      hta: 1500,
+      mta: 10000,
+      effectif_autorise: 30,
+      motif_recours_se: 2,
+      heure_consommee: 0,
+      montant_consommee: 0,
+      effectif_consomme: 0,
+    },
+  },
   apconso: {
-    somehash: {
-      id_conso: "",
-      periode: new Date(),
-      heure_consomme: 1,
-    } as EntréeApConso,
+    e3af9bbf7d37e62fbbf88efdae464746: {
+      id_conso: "S044130482",
+      heure_consomme: 326.0,
+      montant: 2530.13,
+      effectif: 20,
+      periode: dateDébut,
+    },
   },
 }
 
@@ -56,8 +76,8 @@ const etablissementKey = rawData.scope + "_" + siret
 const expectedMapResult = {
   _id: etablissementKey,
   value: {
-    apconso: [rawEtabData.apconso.somehash],
-    apdemande: [],
+    apconso: [rawEtabData.apconso.e3af9bbf7d37e62fbbf88efdae464746],
+    apdemande: [rawEtabData.apdemande.b88032c02d1724d92279a47599b112dd],
     batch: batchKey,
     compte: undefined,
     cotisation: dates.map(() => 0),
