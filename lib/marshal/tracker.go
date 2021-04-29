@@ -12,14 +12,14 @@ var MaxParsingErrors = 200
 // ParsingTracker permet de collecter puis rapporter des erreurs de parsing.
 type ParsingTracker struct {
 	// fields that are included in the report:
-	currentLine      int      // Note: line 1 is the first line of data (excluding the header) read from a file
-	nbSkippedLines   int      // lines skipped by the perimeter/filter or not found in "comptes" mapping
-	nbRejectedLines  int      // lines that have at least one parse error
+	currentLine      int64    // Note: line 1 is the first line of data (excluding the header) read from a file
+	nbSkippedLines   int64    // lines skipped by the perimeter/filter or not found in "comptes" mapping
+	nbRejectedLines  int64    // lines that have at least one parse error
 	firstParseErrors []string // capped by MaxParsingErrors, with line number rendered as string
 	fatalErrors      []string // with line number rendered as string
 	// private state vars:
-	lastSkippedLine        int // to avoid counting 2 lines if 2 "filter" errors are added on a same line
-	lastLineWithParseError int // to avoid counting 2 lines if 2 "parser" errors are added on a same line
+	lastSkippedLine        int64 // to avoid counting 2 lines if 2 "filter" errors are added on a same line
+	lastLineWithParseError int64 // to avoid counting 2 lines if 2 "parser" errors are added on a same line
 }
 
 // AddFatalError rapporte une erreur fatale liée au parsing d'un fichier

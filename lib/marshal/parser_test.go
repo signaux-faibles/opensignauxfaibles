@@ -26,6 +26,62 @@ func TestParseFilesFromBatch(t *testing.T) {
 	})
 }
 
+func TestParseTuplesFromLine(t *testing.T) {
+
+	t.Run("ne comptabilise pas plus d'une erreur par ligne", func(t *testing.T) {
+		var parsedLine ParsedLineResult
+		parsedLine.AddRegularError(errors.New("error 1"))
+		parsedLine.AddRegularError(errors.New("error 2"))
+		parsedLine.AddTuple(dummyTuple{})
+
+		tracker := NewParsingTracker()
+		parseTuplesFromLine(parsedLine, &SirenFilter{}, &tracker, make(chan Tuple))
+		tracker.Next()
+
+		report := tracker.Report("", "")
+		assert.Equal(t, int64(1), report["linesParsed"])
+		assert.Equal(t, int64(1), report["linesRejected"])
+		assert.Equal(t, int64(0), report["linesSkipped"])
+		assert.Equal(t, int64(0), report["linesValid"])
+		assert.Equal(t, 2, len(report["headRejected"].([]string)))
+	})
+
+	t.Run("ne comptabilise qu'une fois une ligne à la fois erronée et filtrée", func(t *testing.T) {
+		var parsedLine ParsedLineResult
+		parsedLine.AddRegularError(errors.New("regular error"))
+		parsedLine.AddTuple(dummyTuple{})
+		parsedLine.SetFilterError(errors.New("filtered"))
+
+		tracker := NewParsingTracker()
+		parseTuplesFromLine(parsedLine, &SirenFilter{}, &tracker, make(chan Tuple))
+		tracker.Next()
+
+		report := tracker.Report("", "")
+		assert.Equal(t, int64(1), report["linesParsed"])
+		assert.Equal(t, int64(0), report["linesRejected"])
+		assert.Equal(t, int64(1), report["linesSkipped"])
+		assert.Equal(t, int64(0), report["linesValid"])
+		assert.Equal(t, 0, len(report["headRejected"].([]string)))
+	})
+}
+
+type dummyTuple struct{}
+
+// Key id de l'objet",
+func (sirene dummyTuple) Key() string {
+	return ""
+}
+
+// Type de données
+func (sirene dummyTuple) Type() string {
+	return "dummy"
+}
+
+// Scope de l'objet
+func (sirene dummyTuple) Scope() string {
+	return "etablissement"
+}
+
 type dummyParser struct {
 	initError error
 }
