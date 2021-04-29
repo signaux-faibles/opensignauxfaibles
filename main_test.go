@@ -121,6 +121,6 @@ func startMongoContainer(t *testing.T) {
 
 func stopMongoContainer() {
 	if err := exec.Command("docker", "stop", mongoContainer).Run(); err != nil {
-		log.Println(err)
+		log.Println(err) // affichage à titre informatif
 	}
 }

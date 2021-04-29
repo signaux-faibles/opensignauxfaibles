@@ -95,7 +95,7 @@ func (parser *dummyParser) Init(cache *Cache, batch *base.AdminBatch) error {
 }
 
 func (parser *dummyParser) Open(filePath string) (err error) {
-	log.Println("opening", filePath)
+	log.Println("opening", filePath) // TODO: supprimer cet affichage ?
 	return errors.New("error from Open()")
 }
 

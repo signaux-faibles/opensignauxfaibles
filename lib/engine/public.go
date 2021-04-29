@@ -43,7 +43,7 @@ func PublicOne(batch base.AdminBatch, key string) error {
 	_, err = Db.DB.C("RawData").Find(query).MapReduce(job, nil)
 
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println(err) // TODO: supprimer cet affichage ?
 		return err
 	}
 

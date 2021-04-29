@@ -53,10 +53,10 @@ func MRChunks(queryChan chan bson.M, MRBaseJob mgo.MapReduce, tempDBprefix strin
 	for query := range queryChan {
 		job := MRBaseJob
 		job.Out = bson.M{"merge": "TemporaryCollection", "db": tempDBprefix + strconv.Itoa(id)}
-		log.Println(tempDBprefix+strconv.Itoa(id)+": ", query)
+		log.Println(tempDBprefix+strconv.Itoa(id)+": ", query) // TODO: supprimer cet affichage ?
 		_, err := Db.DB.C("RawData").Find(query).MapReduce(&job, nil)
 		if err != nil {
-			fmt.Println(tempDBprefix+strconv.Itoa(id)+": error ", err.Error())
+			fmt.Println(tempDBprefix+strconv.Itoa(id)+": error ", err.Error()) // TODO: plutot utiliser log.Fatal() ou log.Println() pour écrire dans la sortie d'erreurs ?
 		}
 	}
 	wg.Done()
@@ -101,7 +101,7 @@ func PurgeBatch(batch base.AdminBatch) error {
 
 		err = pipe.AllowDiskUse().All(&[]interface{}{})
 		if err != nil {
-			fmt.Println("quelque chose vient de se casser: " + err.Error())
+			fmt.Println("quelque chose vient de se casser: " + err.Error()) // TODO: supprimer cet affichage ?
 			return err
 		}
 		db.DB(tempDB).DropDatabase()
