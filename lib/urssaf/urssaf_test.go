@@ -158,7 +158,7 @@ func TestCotisation(t *testing.T) {
 		reportData, _ := output.Events[0].ParseReport()
 		assert.Equal(t, false, reportData["isFatal"], "aucune erreur fatale ne doit être rapportée")
 		assert.Equal(t, []interface{}{}, reportData["headRejected"], "aucune erreur de parsing ne doit être rapportée")
-		assert.Equal(t, 1.0, reportData["linesValid"], "seule la ligne de cotisation liée à un établissement du périmètre doit être incluse")
+		assert.Equal(t, map[string]interface{}{"$numberLong": 1.0}, reportData["linesValid"], "seule la ligne de cotisation liée à un établissement du périmètre doit être incluse")
 	})
 
 	t.Run("toute ligne de cotisation d'un établissement non inclus dans les comptes urssaf doit être sautée silencieusement", func(t *testing.T) {
@@ -175,7 +175,7 @@ func TestCotisation(t *testing.T) {
 		reportData, _ := output.Events[0].ParseReport()
 		assert.Equal(t, false, reportData["isFatal"], "aucune erreur fatale ne doit être rapportée")
 		assert.Equal(t, []interface{}{}, reportData["headRejected"], "aucune erreur de parsing ne doit être rapportée")
-		assert.Equal(t, 1.0, reportData["linesSkipped"], "seule la ligne de cotisation liée à un établissement hors mapping doit être sautée")
+		assert.Equal(t, map[string]interface{}{"$numberLong": 1.0}, reportData["linesSkipped"], "seule la ligne de cotisation liée à un établissement hors mapping doit être sautée")
 	})
 }
 
