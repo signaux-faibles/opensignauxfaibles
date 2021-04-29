@@ -62,7 +62,7 @@ func bundleJsFunctions(jsRootDir string) {
 			out.Write([]byte("return functions{\n"))
 			files, err := ioutil.ReadDir(filepath.Join(jsRootDir, folder.Name()))
 			if err != nil {
-				log.Print(err)
+				log.Print(err) // TODO: utiliser log.Fatal() pour interrompre le traitement ?
 			}
 			for _, file := range files {
 				if shouldInclude(file) {
@@ -136,12 +136,12 @@ func deleteTranspiledFiles(jsRootDir string) {
 	for _, tsFile := range tsFiles {
 		ext := path.Ext(tsFile)
 		if ext != ".ts" {
-			panic("expected a .ts file, found: " + tsFile)
+			log.Fatal("expected a .ts file, found: " + tsFile)
 		}
 		transpiledFile := strings.TrimSuffix(tsFile, ext) + ".js"
 		err := os.Remove(transpiledFile)
 		if err != nil {
-			panic("failed to delete " + transpiledFile)
+			log.Fatal("failed to delete " + transpiledFile)
 		}
 	}
 }

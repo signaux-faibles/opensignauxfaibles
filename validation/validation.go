@@ -118,12 +118,12 @@ func reflectStructType(structType reflect.Type) propertySchema {
 func loadJSONSchema(filePath string) propertySchema {
 	jsonFile, err := os.Open(filePath)
 	if err != nil {
-		log.Println(err)
+		log.Println(err) // TODO: remplacer par log.Fatal() ?
 	}
 	defer jsonFile.Close()
 	byteValue, err := ioutil.ReadAll(jsonFile)
 	if err != nil {
-		log.Println(err)
+		log.Println(err) // TODO: remplacer par log.Fatal() ?
 	}
 	var schema propertySchema
 	json.Unmarshal(byteValue, &schema)

@@ -46,7 +46,7 @@ func GetFatalError(output tuplesAndEvents) string {
 		return ""
 	}
 	if len(headFatal) > 1 {
-		log.Println(headFatal)
+		log.Println(headFatal) // pour aider au débogage en cas d'échec du test
 		log.Fatal("headFatal should never contain more than one item")
 	}
 	return headFatal[0].(string)

@@ -53,6 +53,7 @@ func messageDispatch() chan marshal.Event {
 		for event := range channel {
 			err := Db.DBStatus.C("Journal").Insert(event)
 			if err != nil {
+				// TODO: utiliser log.Fatal() pour interrompre le traitement ?
 				log.Print("Erreur critique d'insertion dans la base de données: " + err.Error())
 				log.Print(json.Marshal(event))
 			}
