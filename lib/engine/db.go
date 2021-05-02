@@ -24,8 +24,7 @@ func loadConfig() {
 	viper.SetDefault("DB", "opensignauxfaibles")
 	err := viper.ReadInConfig()
 	if err != nil {
-		log.Println(err) // /!\ en ci, seul le fichier config-sample.toml existe
-		panic("Erreur à la lecture de la configuration")
+		log.Fatal(err) // /!\ en ci, seul le fichier config-sample.toml existe
 	}
 }
 
@@ -38,15 +37,13 @@ func InitDB() DB {
 	// définition de 2 connexions pour isoler les requêtes (TODO: utile ?)
 	mongostatus, err := mgo.Dial(dbDial)
 	if err != nil {
-		log.Println("Erreur de connexion (status) à MongoDB")
-		log.Panic(err)
+		log.Fatal("Erreur de connexion (status) à MongoDB")
 	}
 	mongostatus.SetSocketTimeout(72000 * time.Second)
 
 	mongodb, err := mgo.Dial(dbDial)
 	if err != nil {
-		log.Println("Erreur de connexion (data) à MongoDB")
-		log.Panic(err)
+		log.Fatal("Erreur de connexion (data) à MongoDB")
 	}
 	mongodb.SetSocketTimeout(72000 * time.Second)
 	dbstatus := mongostatus.DB(dbDatabase)
@@ -63,7 +60,7 @@ func InitDB() DB {
 
 	firstBatchID := viper.GetString("FIRST_BATCH")
 	if !base.IsBatchID(firstBatchID) {
-		panic("Paramètre FIRST_BATCH incorrect, vérifiez la configuration.")
+		log.Fatal("Paramètre FIRST_BATCH incorrect, vérifiez la configuration.")
 	}
 
 	db.C("RawData").Create(&mgo.CollectionInfo{})
@@ -88,7 +85,7 @@ func InitDB() DB {
 
 		err := db.C("Admin").Insert(firstBatch)
 		if err != nil {
-			panic("Impossible de créer le premier batch: " + err.Error())
+			log.Fatal("Impossible de créer le premier batch: " + err.Error())
 		}
 	}
 

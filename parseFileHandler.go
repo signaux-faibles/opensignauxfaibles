@@ -64,13 +64,13 @@ func (params parseFileHandler) Run() error {
 
 	go func() {
 		for tuple := range outputChannel {
-			printJSON(tuple)
+			printJSON(tuple) // écriture du tuple dans la sortie standard
 		}
 	}()
 
 	for e := range eventChannel {
 		res, _ := json.MarshalIndent(e, "", "  ")
-		log.Println(string(res))
+		log.Println(string(res)) // écriture de l'événement dans la sortie d'erreurs
 	}
 	return nil
 }

@@ -1,8 +1,4 @@
-import {
-  CompanyDataValuesWithFlags,
-  SiretOrSiren,
-  Timestamp,
-} from "../RawDataTypes"
+import { CompanyDataValuesWithFlags, Siret, Timestamp } from "../RawDataTypes"
 
 // Paramètres globaux utilisés par "compact"
 declare const serie_periode: Date[]
@@ -10,7 +6,7 @@ declare const serie_periode: Date[]
 // complete_reporder ajoute une propriété "reporder" pour chaque couple
 // SIRET+période, afin d'assurer la reproductibilité de l'échantillonage.
 export function complete_reporder(
-  siret: SiretOrSiren,
+  siret: Siret,
   object: CompanyDataValuesWithFlags
 ): CompanyDataValuesWithFlags {
   "use strict"

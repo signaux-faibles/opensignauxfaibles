@@ -1,7 +1,7 @@
-import { CompanyDataValuesWithFlags, SiretOrSiren } from "../RawDataTypes"
+import { CompanyDataValuesWithFlags, Siret, Siren } from "../RawDataTypes"
 
 declare function emit(
-  key: SiretOrSiren,
+  key: Siret | Siren,
   value: CompanyDataValuesWithFlags
 ): void
 

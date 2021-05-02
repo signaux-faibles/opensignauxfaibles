@@ -148,7 +148,7 @@ func Reduce(batch base.AdminBatch, types []string) error {
 		)
 
 		if err != nil {
-			fmt.Println(err)
+			fmt.Println(err) // TODO: supprimer cet affichage ?
 			w.add("errors", 1, -1)
 		} else {
 			err = db.DB(dbTemp).DropDatabase()

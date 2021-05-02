@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"reflect"
 	"strings"
@@ -125,7 +126,7 @@ func (cmds *cliCommands) index() map[string]commandHandler {
 		cmdName := strings.ToLower(fieldName[0:1]) + fieldName[1:]             // e.g. "pruneEntities"
 		cmdArgs, ok := supportedCommands.Field(i).Interface().(commandHandler) // e.g. pruneEntitiesHandler instance
 		if !ok {
-			panic(fmt.Sprintf("Property %v of type cliCommands is not an instance of commandHandler", fieldName))
+			log.Fatal(fmt.Sprintf("Property %v of type cliCommands is not an instance of commandHandler", fieldName))
 		}
 		commandByName[cmdName] = cmdArgs
 	}

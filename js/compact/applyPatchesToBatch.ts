@@ -6,7 +6,8 @@ import {
   Scope,
   IndexFlags,
   DataHash,
-  SiretOrSiren,
+  Siret,
+  Siren,
 } from "../RawDataTypes"
 
 export type BatchValueWithCompact = BatchValue & {
@@ -14,7 +15,7 @@ export type BatchValueWithCompact = BatchValue & {
 }
 
 export type CompanyDataValuesWithCompact = {
-  key: SiretOrSiren
+  key: Siret | Siren
   scope: Scope
   batch: Record<BatchKey, BatchValueWithCompact>
 } & Partial<IndexFlags>

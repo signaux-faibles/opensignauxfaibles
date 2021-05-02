@@ -2,7 +2,8 @@ import { f } from "./functions"
 import {
   CompanyDataValues,
   CompanyDataValuesWithFlags,
-  SiretOrSiren,
+  Siret,
+  Siren,
 } from "../RawDataTypes"
 
 // finalize permet de:
@@ -11,7 +12,7 @@ import {
 // - intégrer les reporder pour permettre la reproductibilité de
 // l'échantillonnage pour l'entraînement du modèle.
 export function finalize(
-  k: SiretOrSiren,
+  k: Siret | Siren,
   companyDataValues: CompanyDataValues
 ): CompanyDataValuesWithFlags {
   "use strict"

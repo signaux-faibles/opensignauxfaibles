@@ -198,7 +198,7 @@ func MRroutine(job *mgo.MapReduce, query bson.M, dbTemp string, collOrig string,
 		}
 		time.Sleep(time.Second)
 	}
-	log.Println(query)
+	log.Println(query) // TODO: supprimer cet affichage ?
 
 	db, _ := mgo.Dial(viper.GetString("DB_DIAL"))
 	db.SetSocketTimeout(720000 * time.Second)
@@ -207,7 +207,7 @@ func MRroutine(job *mgo.MapReduce, query bson.M, dbTemp string, collOrig string,
 	if err == nil {
 		pipeChannel <- dbTemp
 	} else {
-		fmt.Println(err)
+		fmt.Println(err) // TODO: supprimer cet affichage ?
 		w.add("errors", 1, -1)
 	}
 
@@ -265,7 +265,7 @@ func Compact(fromBatchKey string) error {
 	}
 
 	for _, query := range chunks.ToQueries(nil, "value.key") {
-		log.Println(query)
+		log.Println(query) // TODO: supprimer cet affichage ?
 		_, err = Db.DB.C("ImportedData").Find(query).MapReduce(mapReduceJob, nil)
 		if err != nil {
 			return err
