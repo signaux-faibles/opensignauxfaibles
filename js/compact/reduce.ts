@@ -3,7 +3,8 @@ import {
   CompanyDataValues,
   BatchValue,
   BatchKey,
-  SiretOrSiren,
+  Siret,
+  Siren,
 } from "../RawDataTypes"
 
 // Paramètres globaux utilisés par "compact"
@@ -14,7 +15,7 @@ declare const fromBatchKey: BatchKey
 // Sortie: un objet fusionné par entreprise ou établissement, contenant les données historiques et les données importées, à destination de la collection RawData.
 // Opérations: retrait des données doublons et application des corrections de données éventuelles.
 export function reduce(
-  key: SiretOrSiren,
+  key: Siret | Siren,
   values: CompanyDataValues[] // chaque element contient plusieurs batches pour cette entreprise ou établissement
 ): CompanyDataValues {
   "use strict"

@@ -11,11 +11,11 @@ import { SortieDelais } from "./delais"
 import { SortieCibleApprentissage } from "./cibleApprentissage"
 import { SortieCotisation } from "./cotisation"
 import { SortieCompte } from "./compte"
-import { SiretOrSiren } from "../RawDataTypes"
+import { Siret, Siren } from "../RawDataTypes"
 import { ParPériode } from "../common/makePeriodeMap"
 
 export type DonnéesAgrégées = {
-  siret: SiretOrSiren
+  siret: Siret
   periode: Date
 } & Partial<SortieCotisationsDettes> &
   Partial<SortieEffectifs<"effectif">> &
@@ -38,7 +38,7 @@ export type DonnéesAgrégées = {
  * de données dans ces structures par `map()`.
  */
 export function outputs(
-  v: { key: SiretOrSiren },
+  v: { key: Siret | Siren },
   serie_periode: Date[]
 ): [DonnéesAgrégées[], ParPériode<DonnéesAgrégées>] {
   "use strict"

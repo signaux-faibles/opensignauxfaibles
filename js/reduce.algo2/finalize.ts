@@ -1,5 +1,5 @@
 import { f } from "./functions"
-import { SiretOrSiren, Siret, BatchKey } from "../RawDataTypes"
+import { Siren, Siret, BatchKey } from "../RawDataTypes"
 import {
   CléSortieMap,
   SortieMap,
@@ -24,7 +24,7 @@ type SortieEtabAvecEntreprise = SortieMapEtablissement & DonnéesEntreprise
 
 export type Clé = {
   batch: BatchKey
-  siren: SiretOrSiren
+  siren: Siren
   periode: Date
   type: CléSortieMap["type"]
 }

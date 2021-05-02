@@ -10,10 +10,10 @@ import { reduce } from "./reduce"
 import { finalize, SortieFinalize } from "./finalize"
 import { setGlobals } from "../test/helpers/setGlobals"
 import { runMongoMap } from "../test/helpers/mongodb"
-import { Scope, SiretOrSiren } from "../RawDataTypes"
+import { Scope, Siret } from "../RawDataTypes"
 
 // test data inspired by test.sh
-const siret: SiretOrSiren = "01234567891011"
+const siret: Siret = "01234567891011"
 const siren = siret.substr(0, 9)
 const scope: Scope = "etablissement"
 const batchKey = "1910"

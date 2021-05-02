@@ -1,10 +1,5 @@
 import { f } from "./functions"
-import {
-  CompanyDataValues,
-  BatchKey,
-  Siret,
-  SiretOrSiren,
-} from "../RawDataTypes"
+import { CompanyDataValues, BatchKey, Siret, Siren } from "../RawDataTypes"
 import { SortieBdf } from "./entr_bdf"
 import { SortiePaydex } from "./entr_paydex"
 import { SortieDiane } from "./entr_diane"
@@ -15,7 +10,7 @@ import { SortieEffectifs } from "./effectifs"
 import { SortieCotisationsDettes } from "./cotisationsdettes"
 
 export type SortieMapEntreprise = {
-  siren: SiretOrSiren
+  siren: Siren
   periode: Date
 } & Partial<SortieSireneEntreprise> &
   Partial<SortieBdf> &
@@ -33,13 +28,13 @@ export type SortieMap = {
 
 export type CléSortieMap = {
   batch: BatchKey
-  siren: SiretOrSiren
+  siren: Siren
   periode: Date
   type: "apart" | "other"
 }
 
 export type EntréeMap = {
-  _id: SiretOrSiren
+  _id: Siret | Siren
   value: CompanyDataValues
 }
 

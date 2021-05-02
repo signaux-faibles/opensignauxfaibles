@@ -28,7 +28,6 @@ export type Departement = string
 
 export type Siren = string
 export type Siret = string
-export type SiretOrSiren = Siret | Siren // TODO: supprimer ce type, une fois que tous les champs auront été séparés
 export type CodeAPE = string
 
 export type DataHash = string
@@ -80,6 +79,7 @@ export type EntrepriseBatchProps = CommonBatchProps & {
 
 export type EtablissementBatchProps = CommonBatchProps & {
   apconso: ParHash<EntréeApConso>
+  apdemande: ParHash<EntréeApDemande>
 }
 
 // TODO: continuer d'extraire les propriétés vers EntrepriseBatchProps et EtablissementBatchProps, puis supprimer BatchValueProps et les types qui en dépendent
@@ -87,7 +87,6 @@ export type BatchValueProps = CommonBatchProps &
   EntrepriseBatchProps &
   EtablissementBatchProps & {
     effectif: ParHash<EntréeEffectif>
-    apdemande: ParHash<EntréeApDemande>
     compte: ParHash<EntréeCompte>
     delai: ParHash<EntréeDelai>
     procol: ParHash<EntréeDéfaillances>
@@ -107,5 +106,5 @@ export type BatchValueProps = CommonBatchProps &
 export type EntréeRepOrder = {
   random_order: number
   periode: Date
-  siret: SiretOrSiren
+  siret: Siret
 }
