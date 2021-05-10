@@ -26,7 +26,6 @@ exploration/*
 *.Rcheck
 rsignauxfaibles/**/*.model
 rsignauxfaibles/**/*.temap
-exploration/*
 debug
 .Rproj.user
 *.orig
