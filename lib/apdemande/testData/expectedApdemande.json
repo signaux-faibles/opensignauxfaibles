@@ -1,55 +1,55 @@
 {
   "tuples": [
     {
-      "id_demande": "2346346466",
-      "effectif_entreprise": 70,
-      "effectif": 24,
-      "date_statut": "2009-05-04T00:00:00Z",
+      "id_demande": "f288626887",
+      "effectif_entreprise": 559,
+      "effectif": 0,
+      "date_statut": "2012-02-11T00:00:00Z",
       "periode": {
-        "start": "2009-04-01T00:00:00Z",
-        "end": "2010-04-30T00:00:00Z"
+        "start": "2017-08-09T00:00:00Z",
+        "end": "2017-09-09T00:00:00Z"
       },
-      "hta": 133,
-      "mta": 7791.22,
-      "effectif_autorise": 21,
-      "motif_recours_se": 1,
-      "heure_consommee": 0,
-      "montant_consommee": 0,
-      "effectif_consomme": 0
+      "hta": 42078.52,
+      "mta": 666113.56,
+      "effectif_autorise": 99,
+      "motif_recours_se": 8,
+      "heure_consommee": 48512,
+      "montant_consommee": 689663.3,
+      "effectif_consomme": 319
     },
     {
-      "id_demande": "2346415253",
-      "effectif_entreprise": 104,
-      "effectif": 78,
-      "date_statut": "2007-04-06T00:00:00Z",
+      "id_demande": "j354624024",
+      "effectif_entreprise": 20,
+      "effectif": 82,
+      "date_statut": "2012-03-11T00:00:00Z",
       "periode": {
-        "start": "2007-10-22T00:00:00Z",
-        "end": "2017-03-14T00:00:00Z"
+        "start": "2005-08-29T00:00:00Z",
+        "end": "2005-09-29T00:00:00Z"
       },
-      "hta": 3874,
-      "mta": 7012.56,
-      "effectif_autorise": 10,
-      "motif_recours_se": 1,
-      "heure_consommee": 811,
-      "montant_consommee": 2037,
-      "effectif_consomme": 10
+      "hta": 178,
+      "mta": 953.96,
+      "effectif_autorise": 9,
+      "motif_recours_se": 3,
+      "heure_consommee": 81,
+      "montant_consommee": 820.94,
+      "effectif_consomme": 8
     },
     {
-      "id_demande": "5745656345",
-      "effectif_entreprise": 154,
-      "effectif": 90,
-      "date_statut": "2007-02-02T00:00:00Z",
+      "id_demande": "m80v947695",
+      "effectif_entreprise": 949,
+      "effectif": 535,
+      "date_statut": "2012-04-11T00:00:00Z",
       "periode": {
-        "start": "2007-05-16T00:00:00Z",
-        "end": "2020-03-04T00:00:00Z"
+        "start": "2014-04-29T00:00:00Z",
+        "end": "2014-05-29T00:00:00Z"
       },
       "hta": 345,
-      "mta": 8024.68,
-      "effectif_autorise": 7,
-      "motif_recours_se": 1,
-      "heure_consommee": 0,
-      "montant_consommee": 0,
-      "effectif_consomme": 0
+      "mta": 72697.76,
+      "effectif_autorise": 83,
+      "motif_recours_se": 7,
+      "heure_consommee": 6165,
+      "montant_consommee": 1456.27,
+      "effectif_consomme": 64
     }
   ],
   "events": [
