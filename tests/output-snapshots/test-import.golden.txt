@@ -1532,7 +1532,7 @@
 			"batch" : {
 				"1910" : {
 					"apdemande" : {
-						"c3ca281b5972cd2a5986241b5140344a" : {
+						"8235ce46fed6fb49b91cbcc6ad17b134" : {
 							"id_demande" : "f288626887",
 							"effectif_entreprise" : 559,
 							"effectif" : 0,
@@ -1547,7 +1547,8 @@
 							"motif_recours_se" : 8,
 							"heure_consommee" : 48512,
 							"montant_consommee" : 689663.3,
-							"effectif_consomme" : 319
+							"effectif_consomme" : 319,
+							"perimetre" : 2
 						}
 					}
 				}
@@ -2797,7 +2798,7 @@
 			"batch" : {
 				"1910" : {
 					"apdemande" : {
-						"516066fd7f43b3ffb38b8b5da1601768" : {
+						"46617083c13f26af5f8286ea824fc0e1" : {
 							"id_demande" : "j354624024",
 							"effectif_entreprise" : 20,
 							"effectif" : 82,
@@ -2812,7 +2813,8 @@
 							"motif_recours_se" : 3,
 							"heure_consommee" : 81,
 							"montant_consommee" : 820.94,
-							"effectif_consomme" : 8
+							"effectif_consomme" : 8,
+							"perimetre" : 2
 						}
 					}
 				}
@@ -4925,7 +4927,7 @@
 			"batch" : {
 				"1910" : {
 					"apdemande" : {
-						"069aa2f2ffd6de37c903ea2c9ff6e63d" : {
+						"92d67dce5af526d364e2aee1821d0f8a" : {
 							"id_demande" : "m80v947695",
 							"effectif_entreprise" : 949,
 							"effectif" : 535,
@@ -4940,7 +4942,8 @@
 							"motif_recours_se" : 7,
 							"heure_consommee" : 6165,
 							"montant_consommee" : 1456.27,
-							"effectif_consomme" : 64
+							"effectif_consomme" : 64,
+							"perimetre" : 1
 						}
 					}
 				}

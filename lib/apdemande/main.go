@@ -29,6 +29,7 @@ type APDemande struct {
 	HeureConsommee     *float64     `col:"S_HEURE_CONSOM_TOT" json:"heure_consommee" bson:"heure_consommee"`
 	MontantConsomme    *float64     `json:"montant_consommee" bson:"montant_consommee"`
 	EffectifConsomme   *int         `col:"S_HEURE_CONSOM_TOT" json:"effectif_consomme" bson:"effectif_consomme"`
+	Perimetre          *int         `col:"PERIMETRE_AP"       json:"perimetre"         bson:"perimetre"`
 }
 
 // Key id de l'objet
@@ -123,6 +124,8 @@ func parseApDemandeLine(idxRow marshal.IndexedRow, parsedLine *marshal.ParsedLin
 	apdemande.EffectifConsomme, err = idxRow.GetIntFromFloat("S_EFF_CONSOM_TOT")
 	parsedLine.AddRegularError(err)
 	apdemande.MontantConsomme, err = misc.ParsePFloat(strings.ReplaceAll(idxRow.GetVal("S_MONTANT_CONSOM_TOT"), ",", "."))
+	parsedLine.AddRegularError(err)
+	apdemande.Perimetre, err = idxRow.GetInt("PERIMETRE_AP")
 	parsedLine.AddRegularError(err)
 	parsedLine.AddTuple(apdemande)
 }

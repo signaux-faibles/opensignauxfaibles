@@ -182,6 +182,7 @@ test(`algo2.map() retourne les propriétés d'établissements attendues par l'al
         heure_consommee: 0,
         montant_consommee: 0,
         effectif_consomme: 0,
+        perimetre: 5,
       },
     },
     apconso: {

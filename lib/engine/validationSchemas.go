@@ -3,7 +3,7 @@
 package engine
 
 var validationSchemas = map[string]string{
-"apconso.schema.json": `{
+	"apconso.schema.json": `{
   "title": "EntréeApConso",
   "description": "Champs importés par le parseur lib/apconso/main.go de sfdata.",
   "bsonType": "object",
@@ -33,7 +33,7 @@ var validationSchemas = map[string]string{
   "additionalProperties": false
 }
 `,
-"apdemande.schema.json": `{
+	"apdemande.schema.json": `{
   "title": "EntréeApDemande",
   "description": "Champs importés par le parseur lib/apdemande/main.go de sfdata.",
   "bsonType": "object",
@@ -49,7 +49,8 @@ var validationSchemas = map[string]string{
     "effectif_autorise",
     "heure_consommee",
     "montant_consommee",
-    "effectif_consomme"
+    "effectif_consomme",
+    "perimetre"
   ],
   "properties": {
     "id_demande": {
@@ -104,12 +105,15 @@ var validationSchemas = map[string]string{
     },
     "effectif_consomme": {
       "bsonType": "number"
+    },
+    "perimetre": {
+      "bsonType": "number"
     }
   },
   "additionalProperties": false
 }
 `,
-"bdf.schema.json": `{
+	"bdf.schema.json": `{
   "title": "EntréeBdf",
   "description": "Champs importés par le parseur lib/bdf/main.go de sfdata.",
   "bsonType": "object",
@@ -176,7 +180,7 @@ var validationSchemas = map[string]string{
   "additionalProperties": false
 }
 `,
-"ccsf.schema.json": `{
+	"ccsf.schema.json": `{
   "title": "EntréeCcsf",
   "description": "Champs importés par le parseur lib/urssaf/ccsf.go de sfdata.",
   "bsonType": "object",
@@ -200,7 +204,7 @@ var validationSchemas = map[string]string{
   "additionalProperties": false
 }
 `,
-"compte.schema.json": `{
+	"compte.schema.json": `{
   "title": "EntréeCompte",
   "description": "Champs importés par le parseur lib/urssaf/compte.go de sfdata.",
   "bsonType": "object",
@@ -222,7 +226,7 @@ var validationSchemas = map[string]string{
   "additionalProperties": false
 }
 `,
-"cotisation.schema.json": `{
+	"cotisation.schema.json": `{
   "title": "EntréeCotisation",
   "description": "Champs importés par le parseur lib/urssaf/cotisation.go de sfdata.",
   "bsonType": "object",
@@ -254,7 +258,7 @@ var validationSchemas = map[string]string{
   "additionalProperties": false
 }
 `,
-"debit.schema.json": `{
+	"debit.schema.json": `{
   "title": "EntréeDebit",
   "description": "Champs importés par le parseur lib/sirene_ul/main.go de sfdata. Représente un reste à payer (dette) sur cotisation sociale ou autre.",
   "bsonType": "object",
@@ -335,7 +339,7 @@ var validationSchemas = map[string]string{
   "additionalProperties": false
 }
 `,
-"delai.schema.json": `{
+	"delai.schema.json": `{
   "title": "EntréeDelai",
   "description": "Champs importés par le parseur lib/urssaf/delai.go de sfdata.",
   "bsonType": "object",
@@ -403,7 +407,7 @@ var validationSchemas = map[string]string{
   "additionalProperties": false
 }
 `,
-"detect_invalid_entries.pipeline.json": `[
+	"detect_invalid_entries.pipeline.json": `[
   { "$project": { "_id": 1, "batches": { "$objectToArray": "$value.batch" } } },
   { "$unwind": { "path": "$batches", "preserveNullAndEmptyArrays": false } },
   {
@@ -427,7 +431,7 @@ var validationSchemas = map[string]string{
   { "$match": { "dataPerHash": { "$not": { "$type": 3 } } } }
 ]
 `,
-"diane.schema.json": `{
+	"diane.schema.json": `{
   "title": "EntréeDiane",
   "description": "Champs importés par le parseur lib/diane/main.go de sfdata.",
   "bsonType": "object",
@@ -756,7 +760,7 @@ var validationSchemas = map[string]string{
   "additionalProperties": false
 }
 `,
-"effectif.schema.json": `{
+	"effectif.schema.json": `{
   "title": "EntréeEffectif",
   "description": "Champs importés par le parseur lib/urssaf/effectif.go de sfdata.",
   "bsonType": "object",
@@ -777,7 +781,7 @@ var validationSchemas = map[string]string{
   "additionalProperties": false
 }
 `,
-"effectif_ent.schema.json": `{
+	"effectif_ent.schema.json": `{
   "title": "EntréeEffectifEnt",
   "description": "Champs importés par le parseur lib/urssaf/effectif_ent.go de sfdata.",
   "bsonType": "object",
@@ -794,7 +798,7 @@ var validationSchemas = map[string]string{
   "additionalProperties": false
 }
 `,
-"ellisphere.schema.json": `{
+	"ellisphere.schema.json": `{
   "title": "EntréeEllisphere",
   "description": "Champs importés par le parseur lib/ellisphere/main.go de sfdata.",
   "bsonType": "object",
@@ -850,7 +854,7 @@ var validationSchemas = map[string]string{
   "additionalProperties": false
 }
 `,
-"flatten_data_entries.pipeline.json": `[
+	"flatten_data_entries.pipeline.json": `[
   { "$project": { "_id": 1, "batches": { "$objectToArray": "$value.batch" } } },
   { "$unwind": { "path": "$batches", "preserveNullAndEmptyArrays": false } },
   {
@@ -885,7 +889,7 @@ var validationSchemas = map[string]string{
   }
 ]
 `,
-"paydex.schema.json": `{
+	"paydex.schema.json": `{
   "title": "EntréePaydex",
   "description": "Champs importés par le parseur lib/paydex/main.go de sfdata.",
   "bsonType": "object",
@@ -901,7 +905,7 @@ var validationSchemas = map[string]string{
   "additionalProperties": false
 }
 `,
-"procol.schema.json": `{
+	"procol.schema.json": `{
   "title": "EntréeDéfaillances",
   "description": "Champs importés par le parseur lib/urssaf/procol.go de sfdata.",
   "bsonType": "object",
@@ -933,7 +937,7 @@ var validationSchemas = map[string]string{
   "additionalProperties": false
 }
 `,
-"sirene.schema.json": `{
+	"sirene.schema.json": `{
   "title": "EntréeSirene",
   "description": "Champs importés par le parseur lib/sirene/main.go de sfdata.",
   "bsonType": "object",
@@ -1039,7 +1043,7 @@ var validationSchemas = map[string]string{
   "additionalProperties": false
 }
 `,
-"sirene_ul.schema.json": `{
+	"sirene_ul.schema.json": `{
   "title": "EntréeSireneEntreprise",
   "description": "Champs importés par le parseur lib/sirene_ul/main.go de sfdata.",
   "bsonType": "object",
