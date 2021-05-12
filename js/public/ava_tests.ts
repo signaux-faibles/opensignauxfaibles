@@ -50,6 +50,7 @@ const rawEtabData: EtablissementBatchProps = {
       heure_consommee: 0,
       montant_consommee: 0,
       effectif_consomme: 0,
+      perimetre: 5,
     },
   },
   apconso: {

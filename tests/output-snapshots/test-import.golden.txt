@@ -1532,7 +1532,7 @@
 			"batch" : {
 				"1910" : {
 					"apdemande" : {
-						"c3ca281b5972cd2a5986241b5140344a" : {
+						"8235ce46fed6fb49b91cbcc6ad17b134" : {
 							"id_demande" : "f288626887",
 							"effectif_entreprise" : 559,
 							"effectif" : 0,
@@ -1547,7 +1547,8 @@
 							"motif_recours_se" : 8,
 							"heure_consommee" : 48512,
 							"montant_consommee" : 689663.3,
-							"effectif_consomme" : 319
+							"effectif_consomme" : 319,
+							"perimetre" : 2
 						}
 					}
 				}
@@ -2797,7 +2798,7 @@
 			"batch" : {
 				"1910" : {
 					"apdemande" : {
-						"81f04ae905477c45553a749faa53411e" : {
+						"46617083c13f26af5f8286ea824fc0e1" : {
 							"id_demande" : "j354624024",
 							"effectif_entreprise" : 20,
 							"effectif" : 82,
@@ -2806,13 +2807,14 @@
 								"start" : ISODate("2005-08-29T00:00:00Z"),
 								"end" : ISODate("2005-09-29T00:00:00Z")
 							},
-							"hta" : 178.53,
+							"hta" : 178,
 							"mta" : 953.96,
 							"effectif_autorise" : 9,
 							"motif_recours_se" : 3,
 							"heure_consommee" : 81,
 							"montant_consommee" : 820.94,
-							"effectif_consomme" : 8
+							"effectif_consomme" : 8,
+							"perimetre" : 2
 						}
 					}
 				}
@@ -2827,11 +2829,11 @@
 			"batch" : {
 				"1910" : {
 					"apconso" : {
-						"c57a06a0b3eb0e9129e664427898bf52" : {
+						"c7cd8592070e4c5b519c359bcde2f0e5" : {
 							"id_conso" : "p95a076375",
-							"heure_consomme" : 6.25,
-							"montant" : 27,
-							"effectif" : 7,
+							"heure_consomme" : 780,
+							"montant" : 62,
+							"effectif" : 16,
 							"periode" : ISODate("_______ Date _______")
 						}
 					}
@@ -4925,7 +4927,7 @@
 			"batch" : {
 				"1910" : {
 					"apdemande" : {
-						"c12aa0c28ea4ac411507b85039ba86dd" : {
+						"92d67dce5af526d364e2aee1821d0f8a" : {
 							"id_demande" : "m80v947695",
 							"effectif_entreprise" : 949,
 							"effectif" : 535,
@@ -4934,13 +4936,14 @@
 								"start" : ISODate("2014-04-29T00:00:00Z"),
 								"end" : ISODate("2014-05-29T00:00:00Z")
 							},
-							"hta" : 8921.61,
+							"hta" : 345,
 							"mta" : 72697.76,
 							"effectif_autorise" : 83,
 							"motif_recours_se" : 7,
 							"heure_consommee" : 6165,
 							"montant_consommee" : 1456.27,
-							"effectif_consomme" : 64
+							"effectif_consomme" : 64,
+							"perimetre" : 1
 						}
 					}
 				}

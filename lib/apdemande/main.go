@@ -29,6 +29,7 @@ type APDemande struct {
 	HeureConsommee     *float64     `col:"S_HEURE_CONSOM_TOT" json:"heure_consommee" bson:"heure_consommee"`
 	MontantConsomme    *float64     `json:"montant_consommee" bson:"montant_consommee"`
 	EffectifConsomme   *int         `col:"S_HEURE_CONSOM_TOT" json:"effectif_consomme" bson:"effectif_consomme"`
+	Perimetre          *int         `col:"PERIMETRE_AP"       json:"perimetre"         bson:"perimetre"`
 }
 
 // Key id de l'objet
@@ -99,30 +100,32 @@ func parseApDemandeLine(idxRow marshal.IndexedRow, parsedLine *marshal.ParsedLin
 	apdemande.ID = idxRow.GetVal("ID_DA")
 	apdemande.Siret = idxRow.GetVal("ETAB_SIRET")
 	var err error
-	apdemande.EffectifEntreprise, err = idxRow.GetInt("EFF_ENT")
+	apdemande.EffectifEntreprise, err = idxRow.GetIntFromFloat("EFF_ENT")
 	parsedLine.AddRegularError(err)
-	apdemande.Effectif, err = idxRow.GetInt("EFF_ETAB")
+	apdemande.Effectif, err = idxRow.GetIntFromFloat("EFF_ETAB")
 	parsedLine.AddRegularError(err)
-	apdemande.DateStatut, err = time.Parse("02/01/2006", idxRow.GetVal("DATE_STATUT"))
+	apdemande.DateStatut, err = time.Parse("2006-01-02", idxRow.GetVal("DATE_STATUT"))
 	parsedLine.AddRegularError(err)
 	apdemande.Periode = misc.Periode{}
-	apdemande.Periode.Start, err = time.Parse("02/01/2006", idxRow.GetVal("DATE_DEB"))
+	apdemande.Periode.Start, err = time.Parse("2006-01-02", idxRow.GetVal("DATE_DEB"))
 	parsedLine.AddRegularError(err)
-	apdemande.Periode.End, err = time.Parse("02/01/2006", idxRow.GetVal("DATE_FIN"))
+	apdemande.Periode.End, err = time.Parse("2006-01-02", idxRow.GetVal("DATE_FIN"))
 	parsedLine.AddRegularError(err)
 	apdemande.HTA, err = idxRow.GetFloat64("HTA")
 	parsedLine.AddRegularError(err)
 	apdemande.MTA, err = misc.ParsePFloat(strings.ReplaceAll(idxRow.GetVal("MTA"), ",", "."))
 	parsedLine.AddRegularError(err)
-	apdemande.EffectifAutorise, err = idxRow.GetInt("EFF_AUTO")
+	apdemande.EffectifAutorise, err = idxRow.GetIntFromFloat("EFF_AUTO")
 	parsedLine.AddRegularError(err)
 	apdemande.MotifRecoursSE, err = idxRow.GetInt("MOTIF_RECOURS_SE")
 	parsedLine.AddRegularError(err)
 	apdemande.HeureConsommee, err = idxRow.GetFloat64("S_HEURE_CONSOM_TOT")
 	parsedLine.AddRegularError(err)
-	apdemande.EffectifConsomme, err = idxRow.GetInt("S_EFF_CONSOM_TOT")
+	apdemande.EffectifConsomme, err = idxRow.GetIntFromFloat("S_EFF_CONSOM_TOT")
 	parsedLine.AddRegularError(err)
 	apdemande.MontantConsomme, err = misc.ParsePFloat(strings.ReplaceAll(idxRow.GetVal("S_MONTANT_CONSOM_TOT"), ",", "."))
+	parsedLine.AddRegularError(err)
+	apdemande.Perimetre, err = idxRow.GetInt("PERIMETRE_AP")
 	parsedLine.AddRegularError(err)
 	parsedLine.AddTuple(apdemande)
 }
