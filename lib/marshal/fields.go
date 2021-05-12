@@ -124,6 +124,16 @@ func (indexedRow IndexedRow) GetInt(colName string) (*int, error) {
 	return misc.ParsePInt(indexedRow.row[index])
 }
 
+// GetIntFromFloat retourne la valeur entière associée à la colonne donnée, sur la ligne en cours.
+// Un pointeur nil est retourné si la colonne n'existe pas ou la valeur est une chaine vide.
+func (indexedRow IndexedRow) GetIntFromFloat(colName string) (*int, error) {
+	index, ok := indexedRow.colMaping.index[colName]
+	if !ok {
+		return nil, fmt.Errorf("GetIntFromFloat failed to find column: %v", colName)
+	}
+	return misc.ParsePIntFromFloat(indexedRow.row[index])
+}
+
 // GetBool retourne la valeur booléenne associée à la colonne donnée, sur la ligne en cours.
 // Un pointeur nil est retourné si la colonne n'existe pas ou la valeur est une chaine vide.
 func (indexedRow IndexedRow) GetBool(colName string) (bool, error) {

@@ -15,7 +15,8 @@
       "motif_recours_se": 8,
       "heure_consommee": 48512,
       "montant_consommee": 689663.3,
-      "effectif_consomme": 319
+      "effectif_consomme": 319,
+      "perimetre": 2
     },
     {
       "id_demande": "j354624024",
@@ -26,13 +27,14 @@
         "start": "2005-08-29T00:00:00Z",
         "end": "2005-09-29T00:00:00Z"
       },
-      "hta": 178.53,
+      "hta": 178,
       "mta": 953.96,
       "effectif_autorise": 9,
       "motif_recours_se": 3,
       "heure_consommee": 81,
       "montant_consommee": 820.94,
-      "effectif_consomme": 8
+      "effectif_consomme": 8,
+      "perimetre": 2
     },
     {
       "id_demande": "m80v947695",
@@ -43,13 +45,14 @@
         "start": "2014-04-29T00:00:00Z",
         "end": "2014-05-29T00:00:00Z"
       },
-      "hta": 8921.61,
+      "hta": 345,
       "mta": 72697.76,
       "effectif_autorise": 83,
       "motif_recours_se": 7,
       "heure_consommee": 6165,
       "montant_consommee": 1456.27,
-      "effectif_consomme": 64
+      "effectif_consomme": 64,
+      "perimetre": 1
     }
   ],
   "events": [

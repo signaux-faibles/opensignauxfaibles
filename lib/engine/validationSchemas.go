@@ -49,7 +49,8 @@ var validationSchemas = map[string]string{
     "effectif_autorise",
     "heure_consommee",
     "montant_consommee",
-    "effectif_consomme"
+    "effectif_consomme",
+    "perimetre"
   ],
   "properties": {
     "id_demande": {
@@ -103,6 +104,9 @@ var validationSchemas = map[string]string{
       "bsonType": "number"
     },
     "effectif_consomme": {
+      "bsonType": "number"
+    },
+    "perimetre": {
       "bsonType": "number"
     }
   },
