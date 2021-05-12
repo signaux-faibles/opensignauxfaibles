@@ -90,6 +90,7 @@ export interface EntréeApDemande {
    */
   montant_consommee: number
   effectif_consomme: number
+  perimetre: number
 }
 /**
  * Champs importés par le parseur lib/bdf/main.go de sfdata.
