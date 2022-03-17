@@ -86,7 +86,7 @@ func Public(batch base.AdminBatch) error {
 		chunkJob.Out = bson.M{"replace": "TemporaryCollection", "db": dbTemp}
 		i++
 
-		go MRroutine(&chunkJob, query, dbTemp, "RawData", &w, pipeChannel)
+		go MRroutine(chunkJob, query, dbTemp, "RawData", &w, pipeChannel)
 
 	}
 

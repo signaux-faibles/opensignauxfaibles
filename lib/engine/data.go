@@ -188,7 +188,7 @@ func (w *MRWait) add(compteur string, val int, max int) bool {
 }
 
 // MRroutine travaille dans un pool pour exécuter des jobs de mapreduce. merge et nonAtomic recommandés.
-func MRroutine(job *mgo.MapReduce, query bson.M, dbTemp string, collOrig string, w *MRWait, pipeChannel chan string) {
+func MRroutine(job mgo.MapReduce, query bson.M, dbTemp string, collOrig string, w *MRWait, pipeChannel chan string) {
 	w.add("total", 1, -1)
 
 	for {
@@ -200,9 +200,13 @@ func MRroutine(job *mgo.MapReduce, query bson.M, dbTemp string, collOrig string,
 	}
 	log.Println(query) // TODO: supprimer cet affichage ?
 
-	db, _ := mgo.Dial(viper.GetString("DB_DIAL"))
+	db, err := mgo.Dial(viper.GetString("DB_DIAL"))
+	if err != nil {
+		log.Println("erreur de connection pendant le MRroutine: " + err.Error())
+	}
 	db.SetSocketTimeout(720000 * time.Second)
-	_, err := db.DB(viper.GetString("DB")).C(collOrig).Find(query).MapReduce(job, nil)
+
+	_, err = db.DB(viper.GetString("DB")).C(collOrig).Find(query).MapReduce(&job, nil)
 
 	if err == nil {
 		pipeChannel <- dbTemp

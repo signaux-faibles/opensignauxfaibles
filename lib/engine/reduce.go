@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	// "github.com/davecgh/go-spew/spew"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/misc"
 	"github.com/signaux-faibles/opensignauxfaibles/lib/naf"
@@ -20,7 +21,6 @@ import (
 
 // ReduceOne lance le calcul de Features pour la clé passée en argument
 func ReduceOne(batch base.AdminBatch, key, from, to string, types []string) error {
-
 	if len(key) < 9 && (from == "" && to == "") {
 		return errors.New("key minimal length of 9")
 	}
@@ -104,7 +104,7 @@ func Reduce(batch base.AdminBatch, types []string) error {
 		// Injection des fonctions JavaScript pour exécution par MongoDB
 		job.Out = bson.M{"replace": "TemporaryCollection", "db": dbTemp}
 		i++
-		go MRroutine(job, query, dbTemp, "RawData", &w, tempDBChannel)
+		go MRroutine(*job, query, dbTemp, "RawData", &w, tempDBChannel)
 
 	}
 
@@ -138,7 +138,6 @@ func Reduce(batch base.AdminBatch, types []string) error {
 	}
 
 	for _, dbTemp := range tempDBs {
-
 		err = reduceFinalAggregation(
 			db.DB(dbTemp),
 			"TemporaryCollection",
@@ -282,6 +281,7 @@ func reduceFinalAggregation(tempDatabase *mgo.Database, tempCollection, outDatab
 
 	var result []interface{}
 	err = pipe.AllowDiskUse().All(&result)
+
 	return err
 }
 
