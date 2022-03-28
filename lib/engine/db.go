@@ -104,14 +104,15 @@ func CreateImportedDataCollection(db *mgo.Database, colName string) error {
 		Key:  []string{"value.key"}, // numéro SIRET ou SIREN
 	})
 
-	// Injection du schéma de validation de données JSON dans ImportedData
-	jsonSchemas, err := LoadJSONSchemaFiles()
-	if err != nil {
-		return err
-	}
-	schemaPerHashedDataType := MakeValidationSchemaPerHashedDataType(jsonSchemas)
-	jsonSchema := MakeValidationSchemaForImportedData(schemaPerHashedDataType)
-	return setupDocValidation(db, colName, jsonSchema)
+	// // Injection du schéma de validation de données JSON dans ImportedData
+	// jsonSchemas, err := LoadJSONSchemaFiles()
+	// if err != nil {
+	// 	return err
+	// }
+	// schemaPerHashedDataType := MakeValidationSchemaPerHashedDataType(jsonSchemas)
+	// jsonSchema := MakeValidationSchemaForImportedData(schemaPerHashedDataType)
+	// return setupDocValidation(db, colName, jsonSchema)
+	return nil
 }
 
 // setupDocValidation configure la validation de documents pour une collection existante.
