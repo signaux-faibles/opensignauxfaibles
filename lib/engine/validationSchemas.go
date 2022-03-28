@@ -89,7 +89,7 @@ var validationSchemas = map[string]string{
     },
     "mta": {
       "description": "Montant total autorisé",
-      "bsonType": "number"
+      "bsonType": ["number", "null"]
     },
     "effectif_autorise": {
       "description": "Effectifs autorisés",
@@ -97,14 +97,15 @@ var validationSchemas = map[string]string{
     },
     "heure_consommee": {
       "description": "Nombre total d'heures consommées",
-      "bsonType": "number"
+      "bsonType": ["number", "null"]
     },
     "montant_consommee": {
       "description": "Montant total consommé",
-      "bsonType": "number"
+      "bsonType": ["number", "null"]
     },
     "effectif_consomme": {
-      "bsonType": "number"
+      "description": "Effectifs consommés",
+      "bsonType":  ["number", "null"]
     },
     "perimetre": {
       "bsonType": "number"
