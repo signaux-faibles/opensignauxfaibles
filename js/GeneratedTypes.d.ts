@@ -76,7 +76,7 @@ export interface EntréeApDemande {
   /**
    * Montant total autorisé
    */
-  mta: number
+  mta: number | null
   /**
    * Effectifs autorisés
    */
@@ -84,12 +84,15 @@ export interface EntréeApDemande {
   /**
    * Nombre total d'heures consommées
    */
-  heure_consommee: number
+  heure_consommee: number | null
   /**
    * Montant total consommé
    */
-  montant_consommee: number
-  effectif_consomme: number
+  montant_consommee: number | null
+  /**
+   * Effectifs consommés
+   */
+  effectif_consomme: number | null
   perimetre: number
 }
 /**
