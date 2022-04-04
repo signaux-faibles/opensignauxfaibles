@@ -20,7 +20,7 @@ import test from "ava"
 // initialisation des paramètres globaux de reduce.algo2
 const initGlobalParams = (dateDebut: Date, dateFin: Date) =>
   setGlobals({
-    actual_batch: "2002_1",
+    actual_batch: "2203",
     date_fin: dateFin,
     serie_periode: generatePeriodSerie(dateDebut, dateFin),
   })

@@ -108,3 +108,10 @@ export type EntréeRepOrder = {
   periode: Date
   siret: Siret
 }
+
+export type SortieRedressementUrssaf2203 = {
+  partPatronaleAncienne: number
+  partOuvriereAncienne: number
+  partPatronaleRecente: number
+  partOuvriereRecente: number
+}
