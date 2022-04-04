@@ -1,11266 +1,8341 @@
-"use strict";
+"use strict"
 
-const makeObjects = ISODate => ([
-        {
-          "_id": "40433868300018",
-          "value": {
-            "key": "40433868300018",
-            "scope": "etablissement",
-            "batch": {
-              "1908": {
-                "compte": {
-                  "0de7693f88533e1b3864e71df932e034": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-09-01T00:00:00Z"
-                    }
-                  },
-                  "5f12d9b2108fed2f2f3adb9b53e140bf": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-08-01T00:00:00Z"
-                    }
-                  }
-                },
-                "cotisation": {
-                  "8b844c36a6c94b222cd7cda1b131c2cf": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2019-06-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2019-07-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 18317,
-                    "du": 18317
-                  },
-                  "4e82a434487134600bf1599350677949": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2019-05-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2019-06-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 17862,
-                    "du": 17862
-                  }
-                }
+const makeObjects = (ISODate) => [
+  {
+    _id: "40433868300018",
+    value: {
+      key: "40433868300018",
+      scope: "etablissement",
+      batch: {
+        1908: {
+          compte: {
+            "0de7693f88533e1b3864e71df932e034": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: {
+                $date: ISODate("2019-09-01T00:00:00.000Z"),
               },
-              "2005": {
-                "effectif": {
-                  "026dc495b8f06d297e1c4de699fd69cd": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2020-01-01T00:00:00Z"
-                    },
-                    "effectif": 27
-                  },
-                  "f9058b3c36afde9e6e0d30af9491c63c": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-11-01T00:00:00Z"
-                    },
-                    "effectif": 27
-                  },
-                  "d38aa7c928586aa5b8de340ce9c8b522": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-12-01T00:00:00Z"
-                    },
-                    "effectif": 27
-                  }
-                },
-                "compte": {
-                  "9c44702f24d80078d3099fd4c19b6af5": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2020-03-01T00:00:00Z"
-                    }
-                  },
-                  "77a483407c15fdd413e0bf3cb9770435": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2020-05-01T00:00:00Z"
-                    }
-                  },
-                  "3aaf73ffe1e45e22cdfa5a46d62a642b": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2020-04-01T00:00:00Z"
-                    }
-                  }
-                },
-                "cotisation": {
-                  "3e58eac322bfbca220b71cc4b15b6150": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2020-02-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2020-03-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 0,
-                    "du": 17104
-                  },
-                  "89e58219d6c3779a607633853f39a5f4": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2020-03-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2020-04-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 10785,
-                    "du": 10785
-                  }
-                },
-                "sirene": {
-                  "877ef1c808260e6d007e473f55e0885d": {
-                    "siren": "404338683",
-                    "nic": "00018",
-                    "siege": true,
-                    "code_postal": "38150",
-                    "departement": "38",
-                    "commune": "CHANAS",
-                    "ape": "4752B",
-                    "date_creation": {
-                      "$date": "1996-01-31T23:00:00Z"
-                    },
-                    "longitude": 4.809034,
-                    "lattitude": 45.324629,
-                    "adresse": [
-                      "BRICOCASH",
-                      "RN 7",
-                      "PARC DU SOLEIL",
-                      "38150",
-                      "CHANAS",
-                      "Parc du Soleil 38150 Chanas"
-                    ]
-                  }
-                },
-                "compact": {
-                  "delete": {
-                    "sirene": [
-                      "dfc5a31364ed5bfb7d1b4332331c5ca2"
-                    ]
-                  }
-                }
-              },
-              "2012": {
-                "cotisation": {
-                  "d1db6b202256e0dc757dae195b4999a6": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2020-10-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2020-11-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 17628,
-                    "du": 17630
-                  }
-                },
-                "effectif": {
-                  "faeb546a14e2bee2c217a0fc1dd75f30": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2020-10-01T00:00:00Z"
-                    },
-                    "effectif": 34
-                  }
-                },
-                "reporder": {}
-              },
-              "2101": {
-                "cotisation": {
-                  "6ed647f3bb93e34c1bcfe3c927a80d0c": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2020-11-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2020-12-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 27884,
-                    "du": 27884
-                  }
-                },
-                "compte": {
-                  "8852fc2eff89491a0143ccf7c797251e": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2020-12-01T00:00:00Z"
-                    }
-                  }
-                },
-                "reporder": {}
-              },
-              "2102": {
-                "effectif": {
-                  "81a8197b20ed4e3aed719858bc07ef37": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2020-12-01T00:00:00Z"
-                    },
-                    "effectif": 33
-                  },
-                  "8ff03983b0792bc295989baee705f52a": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2020-11-01T00:00:00Z"
-                    },
-                    "effectif": 33
-                  }
-                },
-                "sirene": {
-                  "14349ee337067f9db68130891a4d3b9c": {
-                    "siren": "404338683",
-                    "nic": "00018",
-                    "siege": true,
-                    "complement_adresse": "RN 7",
-                    "voie": "PARC DU SOLEIL",
-                    "commune": "CHANAS",
-                    "code_commune": "38072",
-                    "code_postal": "38150",
-                    "departement": "38",
-                    "ape": "4752B",
-                    "date_creation": {
-                      "$date": "1996-02-01T00:00:00Z"
-                    },
-                    "longitude": 4.809034,
-                    "latitude": 45.324629
-                  }
-                },
-                "reporder": {},
-                "compact": {
-                  "delete": {
-                    "sirene": [
-                      "d13d0d4fce275c0de3d99307d5c163bb"
-                    ]
-                  }
-                }
-              },
-              "2104": {
-                "cotisation": {
-                  "2dae9ae4d97433faf274deb8c03e36bf": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2021-02-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2021-03-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 18007,
-                    "du": 18007
-                  }
-                },
-                "effectif": {
-                  "8625902e9cb49a4c3545356f58ebf0da": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2010-07-01T00:00:00Z"
-                    },
-                    "effectif": 26
-                  },
-                  "b07ab0a5f51123b8b66d814dd7390d44": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-04-01T00:00:00Z"
-                    },
-                    "effectif": 31
-                  },
-                  "091211ab4267ac681753a3ab491e8254": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2013-05-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "f5d96cafccc0d4392c27371618b748b3": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-11-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "81f92c80ca618933a2e68e8ea02de7fb": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2017-08-01T00:00:00Z"
-                    },
-                    "effectif": 29
-                  },
-                  "acc3720d35465044723a3281d2961994": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-01-01T00:00:00Z"
-                    },
-                    "effectif": 30
-                  },
-                  "048c4465da26e720225b09b9b6743685": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2011-08-01T00:00:00Z"
-                    },
-                    "effectif": 21
-                  },
-                  "cb9ff9b7c325db508cc10d9883d3b0d0": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-04-01T00:00:00Z"
-                    },
-                    "effectif": 25
-                  },
-                  "3cddbc45f4bccbca7806850496efa1dc": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-01-01T00:00:00Z"
-                    },
-                    "effectif": 27
-                  },
-                  "c8ed3cb84b5365b6bd13141990d714f7": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2010-02-01T00:00:00Z"
-                    },
-                    "effectif": 28
-                  },
-                  "3a458bc806cb4c692d74db65f3c4fd4b": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-02-01T00:00:00Z"
-                    },
-                    "effectif": 27
-                  },
-                  "e601effec9fe5b840f7a249d1a1d4daa": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2020-01-01T00:00:00Z"
-                    },
-                    "effectif": 34
-                  },
-                  "64c17685ce303a09f99af9f910b21b74": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2010-09-01T00:00:00Z"
-                    },
-                    "effectif": 25
-                  },
-                  "07769408d4bdcade6ffad324d7be69c1": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2011-04-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "cc51f65c6d6cd77f39d22742e085a396": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-05-01T00:00:00Z"
-                    },
-                    "effectif": 30
-                  },
-                  "d7d9f85be09b929ce3449e53b83722ff": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2017-09-01T00:00:00Z"
-                    },
-                    "effectif": 29
-                  },
-                  "c711fc28736c18c3d4e2c85ad45e0e5c": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-02-01T00:00:00Z"
-                    },
-                    "effectif": 30
-                  },
-                  "faed516f4cad0866e2f3183891476792": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-09-01T00:00:00Z"
-                    },
-                    "effectif": 32
-                  },
-                  "f9058b3c36afde9e6e0d30af9491c63c": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-11-01T00:00:00Z"
-                    },
-                    "effectif": 27
-                  },
-                  "19c39b4e29c031b501798feab82e7428": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2017-03-01T00:00:00Z"
-                    },
-                    "effectif": 28
-                  },
-                  "4fa9ba0095b02294e6e118320fff5176": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2017-05-01T00:00:00Z"
-                    },
-                    "effectif": 29
-                  },
-                  "d75708492c345353a90e5feacf8952b1": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2020-07-01T00:00:00Z"
-                    },
-                    "effectif": 37
-                  },
-                  "ade0f49ea56b413538b7288a752728a3": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2011-03-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "87b4c7a336d2dfcc495ff17fedb29dd4": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2011-11-01T00:00:00Z"
-                    },
-                    "effectif": 20
-                  },
-                  "513e072c11e5a9d5865598234190b0e3": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2013-12-01T00:00:00Z"
-                    },
-                    "effectif": 23
-                  },
-                  "c76f55e94e31288d25b1b90f0fe9406f": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-09-01T00:00:00Z"
-                    },
-                    "effectif": 31
-                  },
-                  "4052f4de581197123f99b863d3f6c0bc": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2017-10-01T00:00:00Z"
-                    },
-                    "effectif": 29
-                  },
-                  "8464c1a833684f84b91357c71eda7029": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2017-11-01T00:00:00Z"
-                    },
-                    "effectif": 29
-                  },
-                  "495d60ea465f7156078b9b48c61b7761": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2010-03-01T00:00:00Z"
-                    },
-                    "effectif": 27
-                  },
-                  "5a25e37089c4c6edf7650ac209cdf4a7": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2010-06-01T00:00:00Z"
-                    },
-                    "effectif": 25
-                  },
-                  "90a77b8b3fcb875dbb5204ee38c71c95": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2013-03-01T00:00:00Z"
-                    },
-                    "effectif": 22
-                  },
-                  "78985caa0e453817d22224a04bd87f72": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2013-06-01T00:00:00Z"
-                    },
-                    "effectif": 26
-                  },
-                  "096df3b9e65b1b22dbb3b9f5cb4e63e2": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-04-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "6d91eecf6c68d4661043acb74d11653e": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-06-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "78db1c37be7b7eea668df09c5891f390": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-10-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "85ebc9b6de9346bd788186f624ec904e": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-12-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "cc5683d5894f9dfc7e9584d740543fe0": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-01-01T00:00:00Z"
-                    },
-                    "effectif": 28
-                  },
-                  "35de39c8c943fa181f8b0477328983b3": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-02-01T00:00:00Z"
-                    },
-                    "effectif": 28
-                  },
-                  "28f29ccdc47eb5616cec3b79edb39d19": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2012-11-01T00:00:00Z"
-                    },
-                    "effectif": 22
-                  },
-                  "6b63cfd831885aa590d41e97756c46fc": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-06-01T00:00:00Z"
-                    },
-                    "effectif": 33
-                  },
-                  "c4d28d3f8be473166285967c4f237d24": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2017-02-01T00:00:00Z"
-                    },
-                    "effectif": 30
-                  },
-                  "cc1f4c1ba33e392cd00e94cd757dbd3a": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-10-01T00:00:00Z"
-                    },
-                    "effectif": 30
-                  },
-                  "83e667962e0b988e6380ce51e14e1c87": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2010-12-01T00:00:00Z"
-                    },
-                    "effectif": 22
-                  },
-                  "cca77a6a1838add7b7e0357cfaf38c0a": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2012-02-01T00:00:00Z"
-                    },
-                    "effectif": 21
-                  },
-                  "359c9a513d51ee261e4660693cf3eb15": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-07-01T00:00:00Z"
-                    },
-                    "effectif": 30
-                  },
-                  "df9ea53314c2eb255e1c0f7b84bffb5f": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-07-01T00:00:00Z"
-                    },
-                    "effectif": 33
-                  },
-                  "44f4654366c645a39608eaa500b7dfaa": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2020-03-01T00:00:00Z"
-                    },
-                    "effectif": 34
-                  },
-                  "debad1334e88707077f3f058b4d7af5e": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2017-01-01T00:00:00Z"
-                    },
-                    "effectif": 30
-                  },
-                  "970a7f1c246d6a7bbc92aad631514bd8": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2020-06-01T00:00:00Z"
-                    },
-                    "effectif": 37
-                  },
-                  "9c190f2ec0676b5f80bd72baa83a530c": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2012-04-01T00:00:00Z"
-                    },
-                    "effectif": 23
-                  },
-                  "a61bde9d8ef6ec045a9bedbddec08e86": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2012-05-01T00:00:00Z"
-                    },
-                    "effectif": 23
-                  },
-                  "41828e04c6363480109cf46da20cc5a8": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-03-01T00:00:00Z"
-                    },
-                    "effectif": 31
-                  },
-                  "fc4a74c126a5e41e5430f2fa94a4e75c": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-05-01T00:00:00Z"
-                    },
-                    "effectif": 33
-                  },
-                  "844ec20fa5c93d6d3351f9ecfd2b32da": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-07-01T00:00:00Z"
-                    },
-                    "effectif": 33
-                  },
-                  "5f8644d1d210b3b8880f76b63db9e7f2": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2020-09-01T00:00:00Z"
-                    },
-                    "effectif": 35
-                  },
-                  "bf3f0514c4c57b8ef90534164a3672e3": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2010-01-01T00:00:00Z"
-                    },
-                    "effectif": 35
-                  },
-                  "1a044d6f27790d8a225b6befafabece0": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2011-07-01T00:00:00Z"
-                    },
-                    "effectif": 22
-                  },
-                  "437520e0c5cd42880751c847c2d56df6": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2011-12-01T00:00:00Z"
-                    },
-                    "effectif": 20
-                  },
-                  "6b2e3e202987a96e1132fd29db2cde0a": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-09-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "73fda970e5d3105a224f74877017ab13": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-07-01T00:00:00Z"
-                    },
-                    "effectif": 33
-                  },
-                  "ed091d6514adff3f4651d5b58c2c103a": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-12-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "7cb882b0dedf2870ccadb5f2db3a7e59": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-08-01T00:00:00Z"
-                    },
-                    "effectif": 27
-                  },
-                  "839f45789cf84983af3425f4c538c8c6": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-12-01T00:00:00Z"
-                    },
-                    "effectif": 31
-                  },
-                  "2be99ccc885e16b7db346aabd29233bb": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2020-04-01T00:00:00Z"
-                    },
-                    "effectif": 34
-                  },
-                  "f4a0abe29393b4aa74329481e1f89de8": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2012-03-01T00:00:00Z"
-                    },
-                    "effectif": 22
-                  },
-                  "57fb2aad186e7d549c526ba4abe45390": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2013-11-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "d02e6f86414566107754a03a2c4046d6": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-05-01T00:00:00Z"
-                    },
-                    "effectif": 25
-                  },
-                  "45b9f9ca8901245dcbe6f67317e481b0": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2011-02-01T00:00:00Z"
-                    },
-                    "effectif": 21
-                  },
-                  "dc98ba9d3cf98ed8b294cfba8c369ca8": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2012-12-01T00:00:00Z"
-                    },
-                    "effectif": 22
-                  },
-                  "57b3286bf6ae6eb6ad291df499dc47e6": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-01-01T00:00:00Z"
-                    },
-                    "effectif": 23
-                  },
-                  "0f6c38d9579a39e0aa0a0af9c4edf13f": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2017-04-01T00:00:00Z"
-                    },
-                    "effectif": 28
-                  },
-                  "7fe50bda767992391b3072264ccb4195": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-04-01T00:00:00Z"
-                    },
-                    "effectif": 31
-                  },
-                  "53206905425c3923e15dc63ef4737e45": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-08-01T00:00:00Z"
-                    },
-                    "effectif": 33
-                  },
-                  "001789db3b9fdeffc6e744e7210bd103": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2013-02-01T00:00:00Z"
-                    },
-                    "effectif": 23
-                  },
-                  "3483407e601d00308b337591c51d5735": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-03-01T00:00:00Z"
-                    },
-                    "effectif": 25
-                  },
-                  "d38aa7c928586aa5b8de340ce9c8b522": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-12-01T00:00:00Z"
-                    },
-                    "effectif": 27
-                  },
-                  "40c84e3e66e39091244fd2835af9db1c": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2010-08-01T00:00:00Z"
-                    },
-                    "effectif": 26
-                  },
-                  "afe1dd05adb0006a9f8f6db17d2e1be3": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2012-08-01T00:00:00Z"
-                    },
-                    "effectif": 20
-                  },
-                  "67622b6d9570f87717c0dfc02bd36a4c": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2013-01-01T00:00:00Z"
-                    },
-                    "effectif": 23
-                  },
-                  "9acd85a3a95b91a9f5d26398dd101667": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-04-01T00:00:00Z"
-                    },
-                    "effectif": 29
-                  },
-                  "c69b9833e97acddff2213166143a0286": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-08-01T00:00:00Z"
-                    },
-                    "effectif": 31
-                  },
-                  "9b0454af1fa899d72cd11f7f0cd1d63b": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2010-04-01T00:00:00Z"
-                    },
-                    "effectif": 26
-                  },
-                  "7d7499e40d056b31415d23d33d425635": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2011-01-01T00:00:00Z"
-                    },
-                    "effectif": 21
-                  },
-                  "3e20d0b5db039ff6172b670b65b4cabf": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-02-01T00:00:00Z"
-                    },
-                    "effectif": 26
-                  },
-                  "660e96354d59ed4328db4529f0d51f08": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2017-07-01T00:00:00Z"
-                    },
-                    "effectif": 31
-                  },
-                  "d0cf151d393ec5d27411423a9f233c97": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-03-01T00:00:00Z"
-                    },
-                    "effectif": 31
-                  },
-                  "1f2bcfc6fd776fafeb7e00a1898c4580": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2011-10-01T00:00:00Z"
-                    },
-                    "effectif": 21
-                  },
-                  "2a8ee2a505597197e29dd18844647161": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2013-04-01T00:00:00Z"
-                    },
-                    "effectif": 22
-                  },
-                  "9749a601302dbad5663dd9463a19ee44": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-10-01T00:00:00Z"
-                    },
-                    "effectif": 28
-                  },
-                  "452a23370ff5a73e19d4d8c323a3ef83": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2010-11-01T00:00:00Z"
-                    },
-                    "effectif": 23
-                  },
-                  "b051d39e74d907a587302f2761c5b725": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2013-08-01T00:00:00Z"
-                    },
-                    "effectif": 26
-                  },
-                  "11206224e26cddbff659f6ae10081e0b": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-10-01T00:00:00Z"
-                    },
-                    "effectif": 23
-                  },
-                  "0af08022f55553fb1c457387defd2dfa": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-11-01T00:00:00Z"
-                    },
-                    "effectif": 23
-                  },
-                  "6a03464a8b2974375e8cf697f3d97078": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-11-01T00:00:00Z"
-                    },
-                    "effectif": 31
-                  },
-                  "2069e061ded89f0aedddc18a0fec29b2": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2017-06-01T00:00:00Z"
-                    },
-                    "effectif": 31
-                  },
-                  "d6bdf2174b4f8ee04d54810202c3c068": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-06-01T00:00:00Z"
-                    },
-                    "effectif": 30
-                  },
-                  "97a1e0a1783b1a1798d99d76c9170788": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-08-01T00:00:00Z"
-                    },
-                    "effectif": 33
-                  },
-                  "8ff03983b0792bc295989baee705f52a": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2020-11-01T00:00:00Z"
-                    },
-                    "effectif": 33
-                  },
-                  "81a8197b20ed4e3aed719858bc07ef37": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2020-12-01T00:00:00Z"
-                    },
-                    "effectif": 33
-                  },
-                  "a4eb97a93eb2dc1f3fc9987248e78f73": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2010-05-01T00:00:00Z"
-                    },
-                    "effectif": 25
-                  },
-                  "d47a7d5e05d1c95f73b1ab671d06babb": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2011-06-01T00:00:00Z"
-                    },
-                    "effectif": 22
-                  },
-                  "46ed652a69aa5c4a358bbe79acb51cec": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2012-06-01T00:00:00Z"
-                    },
-                    "effectif": 22
-                  },
-                  "a05d4a1cf20c8aee7a0f6355c38794f1": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2012-07-01T00:00:00Z"
-                    },
-                    "effectif": 21
-                  },
-                  "b4ba68358ded3722b47e7af74aa66e52": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2013-07-01T00:00:00Z"
-                    },
-                    "effectif": 26
-                  },
-                  "2d295be944400570dd09f808db04342c": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2013-10-01T00:00:00Z"
-                    },
-                    "effectif": 25
-                  },
-                  "1f96f891d2209d0abfbaffd17588b98a": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2017-12-01T00:00:00Z"
-                    },
-                    "effectif": 28
-                  },
-                  "5c19e127c8c6fca9cb7ad121df89b2a7": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-12-01T00:00:00Z"
-                    },
-                    "effectif": 31
-                  },
-                  "f73466c78caccf15b8cb8f4b96053d02": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-09-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "c364c12bdcb73064f7d5a783dbcf27df": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-11-01T00:00:00Z"
-                    },
-                    "effectif": 31
-                  },
-                  "897417b2389c39b809ce367caa461eaf": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2020-05-01T00:00:00Z"
-                    },
-                    "effectif": 35
-                  },
-                  "988ea4f2ace5cc724e8e7b986bb88ca0": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-10-01T00:00:00Z"
-                    },
-                    "effectif": 31
-                  },
-                  "5982beb5624de5624b05c1c6cbbfc0a0": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2020-08-01T00:00:00Z"
-                    },
-                    "effectif": 36
-                  },
-                  "ed19773f53e37b0d139bdaaa99f37eb6": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-05-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "b90b4d4c604d1aa32ca3ad03ba79d68b": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-08-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "e3980d9c0091678c2612ac0bfee7c84e": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-02-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "73f1925d1345262d49b15956c3339d30": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-06-01T00:00:00Z"
-                    },
-                    "effectif": 32
-                  },
-                  "cdf19fe90090b3e70bcdc2dbf101d293": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2012-09-01T00:00:00Z"
-                    },
-                    "effectif": 20
-                  },
-                  "faeb546a14e2bee2c217a0fc1dd75f30": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2020-10-01T00:00:00Z"
-                    },
-                    "effectif": 34
-                  },
-                  "39f8c954db204f7b8a2d20df78ef499d": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-01-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "bc01804bfc401f22e945d1f5b8b58cb0": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2010-10-01T00:00:00Z"
-                    },
-                    "effectif": 23
-                  },
-                  "e06a46d494165c1e0766cd3f2e82d942": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2012-01-01T00:00:00Z"
-                    },
-                    "effectif": 21
-                  },
-                  "f95139cc81678393873ef9fd10d9921e": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-03-01T00:00:00Z"
-                    },
-                    "effectif": 26
-                  },
-                  "43380cc9b5303ff2542d2f2ce6cfa285": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-05-01T00:00:00Z"
-                    },
-                    "effectif": 32
-                  },
-                  "0491f4db226240374f935ace7304905c": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2011-05-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "3bc60106d3284f4d729662969904dcfc": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2011-09-01T00:00:00Z"
-                    },
-                    "effectif": 21
-                  },
-                  "ae13a63ebd17a320c795a62d1641a200": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2012-10-01T00:00:00Z"
-                    },
-                    "effectif": 21
-                  },
-                  "62b455a4a0ec9570c0d21bf68f5480c9": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2013-09-01T00:00:00Z"
-                    },
-                    "effectif": 26
-                  },
-                  "931b1279e07782acdddb4a173068351a": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-07-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "67c3aa41fd5683063bc477a32424e5aa": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-03-01T00:00:00Z"
-                    },
-                    "effectif": 29
-                  },
-                  "e7929b5085281cd3d922b762b9a8861c": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-06-01T00:00:00Z"
-                    },
-                    "effectif": 33
-                  },
-                  "bfd65d9ec998f305bb54a159902666ad": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-09-01T00:00:00Z"
-                    },
-                    "effectif": 30
-                  },
-                  "1fd6fac99ed9b0fd6499ddc69c610a74": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2020-02-01T00:00:00Z"
-                    },
-                    "effectif": 34
-                  }
-                },
-                "compte": {
-                  "92d6115d4e23981ff4415dae74acd2ca": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2021-03-01T00:00:00Z"
-                    }
-                  }
-                },
-                "reporder": {}
-              },
-              "2105": {
-                "compte": {
-                  "174fdc9569197d9d4b71284eaef066f2": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2021-04-01T00:00:00Z"
-                    }
-                  }
-                },
-                "cotisation": {
-                  "6a936e2be051e764e45763633bc92b0b": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2021-03-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2021-04-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 17483,
-                    "du": 17483
-                  }
-                },
-                "effectif": {
-                  "3fda65d8cb6d51d9f5ba141463e2b9cc": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2021-02-01T00:00:00Z"
-                    },
-                    "effectif": 34
-                  }
-                },
-                "reporder": {}
-              },
-              "2106": {
-                "cotisation": {
-                  "c9dde90bf90be7f15bdfd69355956a4a": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2021-04-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2021-05-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 18387,
-                    "du": 18387
-                  }
-                },
-                "compte": {
-                  "c75b1d479ff04a6c206a289e8de6053a": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2021-05-01T00:00:00Z"
-                    }
-                  }
-                },
-                "reporder": {}
-              },
-              "2107": {
-                "apdemande": {
-                  "7123cb3c07ceb5ad35240a9ba1c380b7": {
-                    "id_demande": "038BDPO0100",
-                    "effectif_entreprise": 34,
-                    "effectif": 34,
-                    "date_statut": {
-                      "$date": "2020-04-27T00:00:00Z"
-                    },
-                    "periode": {
-                      "start": {
-                        "$date": "2020-03-16T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2020-06-30T00:00:00Z"
-                      }
-                    },
-                    "hta": 6000,
-                    "mta": null,
-                    "effectif_autorise": 32,
-                    "motif_recours_se": 5,
-                    "heure_consommee": 4881.34,
-                    "montant_consommee": 39864.77,
-                    "effectif_consomme": 69,
-                    "perimetre": 3
-                  },
-                  "55fca7eab5e7a37831aeb2e12155b7bb": {
-                    "id_demande": "038BDPO0200",
-                    "effectif_entreprise": 34,
-                    "effectif": 34,
-                    "date_statut": {
-                      "$date": "2021-05-12T00:00:00Z"
-                    },
-                    "periode": {
-                      "start": {
-                        "$date": "2021-04-05T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2021-05-31T00:00:00Z"
-                      }
-                    },
-                    "hta": 200,
-                    "mta": null,
-                    "effectif_autorise": 3,
-                    "motif_recours_se": 5,
-                    "heure_consommee": 28,
-                    "montant_consommee": 227.08,
-                    "effectif_consomme": 1,
-                    "perimetre": 2
-                  }
-                },
-                "cotisation": {
-                  "13257e02ab639beb333cd6649157c856": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2021-05-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2021-06-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 18642,
-                    "du": 18642
-                  }
-                },
-                "compte": {
-                  "33655481cb2433bb24f88a6521a4535e": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2021-06-01T00:00:00Z"
-                    }
-                  }
-                },
-                "apconso": {
-                  "0e7271cfa59cd84a05a6a35f3234c14d": {
-                    "id_conso": "038BDPO0200",
-                    "heure_consomme": 28,
-                    "montant": 227.08,
-                    "effectif": 1,
-                    "periode": {
-                      "$date": "2021-04-01T00:00:00Z"
-                    }
-                  },
-                  "7b64324d4cc1ba2ba5139076a069b64f": {
-                    "id_conso": "038BDPO0100",
-                    "heure_consomme": 47,
-                    "montant": 323.49,
-                    "effectif": 2,
-                    "periode": {
-                      "$date": "2020-06-01T00:00:00Z"
-                    }
-                  },
-                  "3f24646dbdb5481254218ea77d93d20b": {
-                    "id_conso": "038BDPO0100",
-                    "heure_consomme": 2146.5,
-                    "montant": 17484.59,
-                    "effectif": 26,
-                    "periode": {
-                      "$date": "2020-04-01T00:00:00Z"
-                    }
-                  },
-                  "d8f1519c6ade47f416d5b9f295f4090c": {
-                    "id_conso": "038BDPO0100",
-                    "heure_consomme": 2285.5,
-                    "montant": 18818.69,
-                    "effectif": 32,
-                    "periode": {
-                      "$date": "2020-03-01T00:00:00Z"
-                    }
-                  }
-                },
-                "sirene": {
-                  "d6d95810782be9c883f960dd0fd7bf0a": {
-                    "siren": "404338683",
-                    "nic": "00018",
-                    "siege": true,
-                    "complement_adresse": "RN 7",
-                    "voie": "PARC DU SOLEIL",
-                    "commune": "CHANAS",
-                    "code_commune": "38072",
-                    "code_postal": "38150",
-                    "departement": "38",
-                    "ape": "4752B",
-                    "date_creation": {
-                      "$date": "1996-02-01T00:00:00Z"
-                    },
-                    "longitude": 4.809731,
-                    "latitude": 45.324821
-                  }
-                },
-                "reporder": {},
-                "compact": {
-                  "delete": {
-                    "apconso": [
-                      "4d7402303374c41b01ba24708402b628",
-                      "b105af8871d3285520951aee2e98f871",
-                      "b048124a6ed4f2ea4c4f3fb740342a33"
-                    ],
-                    "apdemande": [
-                      "f9b3e9b3df6cb5a8e8010e36fadfdb03"
-                    ],
-                    "sirene": [
-                      "14349ee337067f9db68130891a4d3b9c"
-                    ]
-                  }
-                }
-              },
-              "2108": {
-                "debit": {
-                  "a51073112b767a8a71cb6a3651e54673": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2021-07-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 1,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2021-06-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2021-07-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "9ac081a5ed7011ebebdc357eefa04d9f": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2021-07-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2021-06-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2021-07-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  }
-                },
-                "cotisation": {
-                  "883a4bc56ebd12121a1418fad368d68f": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2021-06-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2021-07-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 33906,
-                    "du": 33907
-                  }
-                },
-                "effectif": {
-                  "1a3e0db61bbb1cd26d573b521639348d": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2012-07-01T00:00:00Z"
-                    },
-                    "effectif": 23
-                  },
-                  "dffb42be5b4ef74bb2d4dd195dbb882d": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2013-10-01T00:00:00Z"
-                    },
-                    "effectif": 26
-                  },
-                  "09fb9e83616634c65624fa289196f131": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2012-10-01T00:00:00Z"
-                    },
-                    "effectif": 22
-                  },
-                  "689f428d2bfffcb33f9a6fbac3bb4c67": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-10-01T00:00:00Z"
-                    },
-                    "effectif": 25
-                  },
-                  "3785773b8acbaaa4aac745137b718181": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-08-01T00:00:00Z"
-                    },
-                    "effectif": 32
-                  },
-                  "4278bc5b86b27fdc7b3afe242d044a37": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2011-10-01T00:00:00Z"
-                    },
-                    "effectif": 22
-                  },
-                  "e379f179a19d60ebf8b56b69c4e452b4": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-04-01T00:00:00Z"
-                    },
-                    "effectif": 30
-                  },
-                  "cc9553d47d8700fd7b693d21e25d7e1e": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2017-04-01T00:00:00Z"
-                    },
-                    "effectif": 29
-                  },
-                  "9b17cc654928037f812b9fbc73949d6c": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2011-04-01T00:00:00Z"
-                    },
-                    "effectif": 25
-                  },
-                  "f2bd386b3436428e625caec2f0c1166c": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-07-01T00:00:00Z"
-                    },
-                    "effectif": 36
-                  },
-                  "f4617d24e6812967136d46c7b27cf578": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2011-07-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "00cc8a8a543baf77c5a2fd104eae87f0": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2013-07-01T00:00:00Z"
-                    },
-                    "effectif": 28
-                  },
-                  "bfef8431814c92b90fde05d725e49d81": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2013-04-01T00:00:00Z"
-                    },
-                    "effectif": 23
-                  },
-                  "3ebf4615f08d4ee1aa73e16db1fae145": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-12-01T00:00:00Z"
-                    },
-                    "effectif": 44
-                  },
-                  "360b8764e408c96a69e6598bca5be085": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2020-07-01T00:00:00Z"
-                    },
-                    "effectif": 36
-                  },
-                  "7583d49d8ffa0dc42765de85332654e0": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-10-01T00:00:00Z"
-                    },
-                    "effectif": 32
-                  },
-                  "f77407b47ec48f9604c9b94514b3e841": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-12-01T00:00:00Z"
-                    },
-                    "effectif": 30
-                  },
-                  "187b4a84c21eb607a1f13db2758670b4": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-02-01T00:00:00Z"
-                    },
-                    "effectif": 31
-                  },
-                  "463e9ccd3c0c73d220eca67bb37c3faf": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-06-01T00:00:00Z"
-                    },
-                    "effectif": 31
-                  },
-                  "9aa2e3fe6ba4032026658d60b157d7fc": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-06-01T00:00:00Z"
-                    },
-                    "effectif": 32
-                  },
-                  "f92ddd320b802c2971d2d9aa94f6b9d1": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-09-01T00:00:00Z"
-                    },
-                    "effectif": 29
-                  },
-                  "9dd6da361c2bfea4f895d6bb59e50244": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2010-04-01T00:00:00Z"
-                    },
-                    "effectif": 27
-                  },
-                  "0ae361f58d268a77f392dc538ff0435e": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2017-09-01T00:00:00Z"
-                    },
-                    "effectif": 30
-                  },
-                  "b9f086a38f6f9d06df0a7ef0161be28a": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2021-03-01T00:00:00Z"
-                    },
-                    "effectif": 36
-                  },
-                  "76a384ccb66e4c92ee3c44293e922718": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2010-07-01T00:00:00Z"
-                    },
-                    "effectif": 28
-                  },
-                  "f4925ba8d469969b0ce45bb56f5160d1": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-07-01T00:00:00Z"
-                    },
-                    "effectif": 26
-                  },
-                  "77ff4e0225f4bbd803d688a24306d79e": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-04-01T00:00:00Z"
-                    },
-                    "effectif": 26
-                  },
-                  "1db5c61a4f8e42090149b673a34924ce": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2021-04-01T00:00:00Z"
-                    },
-                    "effectif": 36
-                  },
-                  "98573beaf8f01f3d3e09ecb3514cb5db": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-07-01T00:00:00Z"
-                    },
-                    "effectif": 33
-                  },
-                  "977f4dbc5b8c38427318cff68c351f7f": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2010-10-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "b5091a4f916de2801eff3fb1abf69824": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-10-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "610405b671e4b6b3a50b93685af660c6": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2012-04-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "d7f087b5fb2afd95859c54b3755d54ce": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-04-01T00:00:00Z"
-                    },
-                    "effectif": 25
-                  }
-                },
-                "compact": {
-                  "delete": {
-                    "effectif": [
-                      "8625902e9cb49a4c3545356f58ebf0da",
-                      "cb9ff9b7c325db508cc10d9883d3b0d0",
-                      "07769408d4bdcade6ffad324d7be69c1",
-                      "d7d9f85be09b929ce3449e53b83722ff",
-                      "c711fc28736c18c3d4e2c85ad45e0e5c",
-                      "d75708492c345353a90e5feacf8952b1",
-                      "096df3b9e65b1b22dbb3b9f5cb4e63e2",
-                      "78db1c37be7b7eea668df09c5891f390",
-                      "359c9a513d51ee261e4660693cf3eb15",
-                      "df9ea53314c2eb255e1c0f7b84bffb5f",
-                      "9c190f2ec0676b5f80bd72baa83a530c",
-                      "1a044d6f27790d8a225b6befafabece0",
-                      "0f6c38d9579a39e0aa0a0af9c4edf13f",
-                      "53206905425c3923e15dc63ef4737e45",
-                      "d38aa7c928586aa5b8de340ce9c8b522",
-                      "9acd85a3a95b91a9f5d26398dd101667",
-                      "9b0454af1fa899d72cd11f7f0cd1d63b",
-                      "1f2bcfc6fd776fafeb7e00a1898c4580",
-                      "2a8ee2a505597197e29dd18844647161",
-                      "11206224e26cddbff659f6ae10081e0b",
-                      "a05d4a1cf20c8aee7a0f6355c38794f1",
-                      "b4ba68358ded3722b47e7af74aa66e52",
-                      "2d295be944400570dd09f808db04342c",
-                      "5c19e127c8c6fca9cb7ad121df89b2a7",
-                      "988ea4f2ace5cc724e8e7b986bb88ca0",
-                      "73f1925d1345262d49b15956c3339d30",
-                      "bc01804bfc401f22e945d1f5b8b58cb0",
-                      "ae13a63ebd17a320c795a62d1641a200",
-                      "931b1279e07782acdddb4a173068351a",
-                      "e7929b5085281cd3d922b762b9a8861c",
-                      "bfd65d9ec998f305bb54a159902666ad"
-                    ]
-                  }
-                }
-              },
-              "2109": {
-                "cotisation": {
-                  "c7c11aab619e9d81068def2df7e72e33": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2021-07-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2021-08-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 27016,
-                    "du": 27016
-                  }
-                },
-                "compte": {
-                  "e914b848a010541e1d20ca53835010c3": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2021-08-01T00:00:00Z"
-                    }
-                  },
-                  "801a23cbc746124ea7061fb8316a22bf": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2021-07-01T00:00:00Z"
-                    }
-                  }
-                },
-                "effectif": {
-                  "4f898978cff0109a58deb3546445c104": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2021-04-01T00:00:00Z"
-                    },
-                    "effectif": 38
-                  },
-                  "8187d4795af480ed1fafb82f4cd37d2d": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2021-05-01T00:00:00Z"
-                    },
-                    "effectif": 38
-                  },
-                  "805b0ddec691ba5eedfa9ff8537ebae0": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2021-06-01T00:00:00Z"
-                    },
-                    "effectif": 37
-                  },
-                  "a85103ee873dc36917f4d427b64c6dbe": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2021-07-01T00:00:00Z"
-                    },
-                    "effectif": 39
-                  }
-                },
-                "reporder": {},
-                "compact": {
-                  "delete": {
-                    "effectif": [
-                      "1db5c61a4f8e42090149b673a34924ce"
-                    ]
-                  }
-                }
-              },
-              "2110": {
-                "cotisation": {
-                  "e383ca69fb75724906fd30a6e7ed2e60": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2021-08-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2021-09-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 21352,
-                    "du": 21352
-                  }
-                },
-                "compte": {
-                  "bc2fb203029e1203de54b047c9c6511b": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2021-09-01T00:00:00Z"
-                    }
-                  }
-                },
-                "reporder": {},
-                "compact": {
-                  "delete": {
-                    "apconso": [
-                      "fb7af36ec43f861816dbca8372a4ceea",
-                      "0e7271cfa59cd84a05a6a35f3234c14d",
-                      "7b64324d4cc1ba2ba5139076a069b64f",
-                      "3f24646dbdb5481254218ea77d93d20b",
-                      "d8f1519c6ade47f416d5b9f295f4090c"
-                    ]
-                  }
-                }
-              },
-              "2111": {
-                "cotisation": {
-                  "cc82496938fa0023a9146b763fa01900": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2021-09-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2021-10-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 20179,
-                    "du": 20179
-                  }
-                },
-                "effectif": {
-                  "9b34abdb74dcf0ac9d2eb28d07a642fe": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2021-09-01T00:00:00Z"
-                    },
-                    "effectif": 35
-                  },
-                  "2a70003ae5f2576977d83e0f9b03cff0": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2021-08-01T00:00:00Z"
-                    },
-                    "effectif": 36
-                  }
-                }
-              },
-              "2201": {
-                "compte": {
-                  "78dbd0157904169b5b19d3751b848481": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2021-12-01T00:00:00Z"
-                    }
-                  },
-                  "efdab8963a726681c1d6c6689696d24f": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2021-11-01T00:00:00Z"
-                    }
-                  },
-                  "4a3d8d31ff1361edb742ac4f493a1025": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2021-10-01T00:00:00Z"
-                    }
-                  }
-                },
-                "debit": {
-                  "198ed19973c962cb4510e8d544df74ab": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2021-11-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2021-10-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2021-11-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "cef66cfa1587261ab5e044773cdaeac3": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2021-11-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 1,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2021-10-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2021-11-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "bd5d9f790084777e3a43d6b7383187ed": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2021-12-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 1,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2021-11-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2021-12-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "515010570fe387bf300420564749a3ba": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2021-12-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2021-11-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2021-12-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  }
-                },
-                "effectif": {
-                  "35fcc3d12f911e869e562273e1f1e2a5": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2021-10-01T00:00:00Z"
-                    },
-                    "effectif": 37
-                  },
-                  "4b308e0057d4fe21005d89d3f1f7b47d": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2021-11-01T00:00:00Z"
-                    },
-                    "effectif": 36
-                  }
-                },
-                "cotisation": {
-                  "535f978f743cba57e25561252b92b631": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2021-10-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2021-11-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 19191,
-                    "du": 19192
-                  },
-                  "ae1368a6f4d04713d4a78baf9385c4f2": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2021-11-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2021-12-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 19954,
-                    "du": 19955
-                  }
-                },
-                "reporder": {}
-              },
-              "2202": {
-                "debit": {
-                  "862d77197cdacbd7e9094a1cadab37e5": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2022-01-24T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 1,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2021-12-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2022-01-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "6b4b595299c2680084fb5629479b081a": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2022-01-24T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2021-12-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2022-01-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "1f757197b0fe8f3293572e12a7e7f78c": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2022-02-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 2,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2022-01-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2022-02-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "bbf2253c22c12cc64d6c99727e2f59ad": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2022-02-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2022-01-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2022-02-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  }
-                },
-                "cotisation": {
-                  "1e27b8221944649e0b289f68127f5a9c": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2021-12-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2022-01-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 41016,
-                    "du": 41017
-                  }
-                },
-                "compte": {
-                  "3c42ff7f97d1ea900547b4dcaa7ab688": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2022-01-01T00:00:00Z"
-                    }
-                  }
-                },
-                "effectif": {
-                  "ca85a434921ca6d33d35e62b792a7813": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2021-12-01T00:00:00Z"
-                    },
-                    "effectif": 37
-                  }
-                },
-                "apconso": {
-                  "0e7271cfa59cd84a05a6a35f3234c14d": {
-                    "id_conso": "038BDPO0200",
-                    "heure_consomme": 28,
-                    "montant": 227.08,
-                    "effectif": 1,
-                    "periode": {
-                      "$date": "2021-04-01T00:00:00Z"
-                    }
-                  },
-                  "7b64324d4cc1ba2ba5139076a069b64f": {
-                    "id_conso": "038BDPO0100",
-                    "heure_consomme": 47,
-                    "montant": 323.49,
-                    "effectif": 2,
-                    "periode": {
-                      "$date": "2020-06-01T00:00:00Z"
-                    }
-                  },
-                  "fb7af36ec43f861816dbca8372a4ceea": {
-                    "id_conso": "038BDPO0100",
-                    "heure_consomme": 402.34,
-                    "montant": 3238,
-                    "effectif": 9,
-                    "periode": {
-                      "$date": "2020-05-01T00:00:00Z"
-                    }
-                  },
-                  "3f24646dbdb5481254218ea77d93d20b": {
-                    "id_conso": "038BDPO0100",
-                    "heure_consomme": 2146.5,
-                    "montant": 17484.59,
-                    "effectif": 26,
-                    "periode": {
-                      "$date": "2020-04-01T00:00:00Z"
-                    }
-                  },
-                  "d8f1519c6ade47f416d5b9f295f4090c": {
-                    "id_conso": "038BDPO0100",
-                    "heure_consomme": 2285.5,
-                    "montant": 18818.69,
-                    "effectif": 32,
-                    "periode": {
-                      "$date": "2020-03-01T00:00:00Z"
-                    }
-                  }
-                },
-                "reporder": {
-                  "Wed Jan 01 2014 01:00:00 GMT+0100 (CET)": {
-                    "random_order": 0.19943843676915085,
-                    "periode": {
-                      "$date": "2014-01-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Sat Feb 01 2014 01:00:00 GMT+0100 (CET)": {
-                    "random_order": 0.0187358621672169,
-                    "periode": {
-                      "$date": "2014-02-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Sat Mar 01 2014 01:00:00 GMT+0100 (CET)": {
-                    "random_order": 0.9943116382070262,
-                    "periode": {
-                      "$date": "2014-03-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Tue Apr 01 2014 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.7707679073143755,
-                    "periode": {
-                      "$date": "2014-04-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Thu May 01 2014 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.7160749949979485,
-                    "periode": {
-                      "$date": "2014-05-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Sun Jun 01 2014 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.16601138604726917,
-                    "periode": {
-                      "$date": "2014-06-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Tue Jul 01 2014 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.8918415838108429,
-                    "periode": {
-                      "$date": "2014-07-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Fri Aug 01 2014 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.27991564117960643,
-                    "periode": {
-                      "$date": "2014-08-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Mon Sep 01 2014 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.9501315432897512,
-                    "periode": {
-                      "$date": "2014-09-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Wed Oct 01 2014 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.3207948607346055,
-                    "periode": {
-                      "$date": "2014-10-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Sat Nov 01 2014 01:00:00 GMT+0100 (CET)": {
-                    "random_order": 0.42290391493357293,
-                    "periode": {
-                      "$date": "2014-11-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Mon Dec 01 2014 01:00:00 GMT+0100 (CET)": {
-                    "random_order": 0.39217417741729754,
-                    "periode": {
-                      "$date": "2014-12-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Thu Jan 01 2015 01:00:00 GMT+0100 (CET)": {
-                    "random_order": 0.1512555977233313,
-                    "periode": {
-                      "$date": "2015-01-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Sun Feb 01 2015 01:00:00 GMT+0100 (CET)": {
-                    "random_order": 0.6973888052693495,
-                    "periode": {
-                      "$date": "2015-02-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Sun Mar 01 2015 01:00:00 GMT+0100 (CET)": {
-                    "random_order": 0.8985639534676663,
-                    "periode": {
-                      "$date": "2015-03-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Wed Apr 01 2015 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.6380368149528775,
-                    "periode": {
-                      "$date": "2015-04-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Fri May 01 2015 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.21640321842515886,
-                    "periode": {
-                      "$date": "2015-05-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Mon Jun 01 2015 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.837793010439902,
-                    "periode": {
-                      "$date": "2015-06-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Wed Jul 01 2015 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.40716131937163036,
-                    "periode": {
-                      "$date": "2015-07-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Sat Aug 01 2015 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.7183809175874973,
-                    "periode": {
-                      "$date": "2015-08-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Tue Sep 01 2015 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.7356892838815386,
-                    "periode": {
-                      "$date": "2015-09-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Thu Oct 01 2015 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.6097720617276403,
-                    "periode": {
-                      "$date": "2015-10-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Sun Nov 01 2015 01:00:00 GMT+0100 (CET)": {
-                    "random_order": 0.8361426975095475,
-                    "periode": {
-                      "$date": "2015-11-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Tue Dec 01 2015 01:00:00 GMT+0100 (CET)": {
-                    "random_order": 0.5203686669904963,
-                    "periode": {
-                      "$date": "2015-12-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Fri Jan 01 2016 01:00:00 GMT+0100 (CET)": {
-                    "random_order": 0.39038974300952667,
-                    "periode": {
-                      "$date": "2016-01-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Mon Feb 01 2016 01:00:00 GMT+0100 (CET)": {
-                    "random_order": 0.6380077487190027,
-                    "periode": {
-                      "$date": "2016-02-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Tue Mar 01 2016 01:00:00 GMT+0100 (CET)": {
-                    "random_order": 0.7647907676521726,
-                    "periode": {
-                      "$date": "2016-03-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Fri Apr 01 2016 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.27293538235007286,
-                    "periode": {
-                      "$date": "2016-04-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Sun May 01 2016 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.5501523450629259,
-                    "periode": {
-                      "$date": "2016-05-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Wed Jun 01 2016 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.21552577445613552,
-                    "periode": {
-                      "$date": "2016-06-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Fri Jul 01 2016 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.28530611745424284,
-                    "periode": {
-                      "$date": "2016-07-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Mon Aug 01 2016 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.2645969925149436,
-                    "periode": {
-                      "$date": "2016-08-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Thu Sep 01 2016 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.15324885004767053,
-                    "periode": {
-                      "$date": "2016-09-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Sat Oct 01 2016 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.30654537854068853,
-                    "periode": {
-                      "$date": "2016-10-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Tue Nov 01 2016 01:00:00 GMT+0100 (CET)": {
-                    "random_order": 0.6235243960168106,
-                    "periode": {
-                      "$date": "2016-11-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Thu Dec 01 2016 01:00:00 GMT+0100 (CET)": {
-                    "random_order": 0.2952629592583562,
-                    "periode": {
-                      "$date": "2016-12-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Sun Jan 01 2017 01:00:00 GMT+0100 (CET)": {
-                    "random_order": 0.4036279327670289,
-                    "periode": {
-                      "$date": "2017-01-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Wed Feb 01 2017 01:00:00 GMT+0100 (CET)": {
-                    "random_order": 0.3238633041676592,
-                    "periode": {
-                      "$date": "2017-02-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Wed Mar 01 2017 01:00:00 GMT+0100 (CET)": {
-                    "random_order": 0.4278768819229627,
-                    "periode": {
-                      "$date": "2017-03-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Sat Apr 01 2017 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.9188493113156163,
-                    "periode": {
-                      "$date": "2017-04-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Mon May 01 2017 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.2966156019369923,
-                    "periode": {
-                      "$date": "2017-05-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Thu Jun 01 2017 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.6817156402802919,
-                    "periode": {
-                      "$date": "2017-06-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Sat Jul 01 2017 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.4906404629857014,
-                    "periode": {
-                      "$date": "2017-07-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Tue Aug 01 2017 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.5253060239619604,
-                    "periode": {
-                      "$date": "2017-08-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Fri Sep 01 2017 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.5161338409953501,
-                    "periode": {
-                      "$date": "2017-09-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Sun Oct 01 2017 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.6680716440615005,
-                    "periode": {
-                      "$date": "2017-10-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Wed Nov 01 2017 01:00:00 GMT+0100 (CET)": {
-                    "random_order": 0.6826041890704783,
-                    "periode": {
-                      "$date": "2017-11-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Fri Dec 01 2017 01:00:00 GMT+0100 (CET)": {
-                    "random_order": 0.12865871035655163,
-                    "periode": {
-                      "$date": "2017-12-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Mon Jan 01 2018 01:00:00 GMT+0100 (CET)": {
-                    "random_order": 0.46219006249335093,
-                    "periode": {
-                      "$date": "2018-01-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Thu Feb 01 2018 01:00:00 GMT+0100 (CET)": {
-                    "random_order": 0.8451476386095914,
-                    "periode": {
-                      "$date": "2018-02-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Thu Mar 01 2018 01:00:00 GMT+0100 (CET)": {
-                    "random_order": 0.13971166761044962,
-                    "periode": {
-                      "$date": "2018-03-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Sun Apr 01 2018 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.5396189517458913,
-                    "periode": {
-                      "$date": "2018-04-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Tue May 01 2018 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.9765404518475336,
-                    "periode": {
-                      "$date": "2018-05-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Fri Jun 01 2018 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.5852951929747149,
-                    "periode": {
-                      "$date": "2018-06-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Sun Jul 01 2018 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.657174209831317,
-                    "periode": {
-                      "$date": "2018-07-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Wed Aug 01 2018 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.009606485484252913,
-                    "periode": {
-                      "$date": "2018-08-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Sat Sep 01 2018 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.18669597638296453,
-                    "periode": {
-                      "$date": "2018-09-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Mon Oct 01 2018 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.13699133791322105,
-                    "periode": {
-                      "$date": "2018-10-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Thu Nov 01 2018 01:00:00 GMT+0100 (CET)": {
-                    "random_order": 0.30199739130012815,
-                    "periode": {
-                      "$date": "2018-11-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Sat Dec 01 2018 01:00:00 GMT+0100 (CET)": {
-                    "random_order": 0.9040930446878082,
-                    "periode": {
-                      "$date": "2018-12-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Tue Jan 01 2019 01:00:00 GMT+0100 (CET)": {
-                    "random_order": 0.3621797844491096,
-                    "periode": {
-                      "$date": "2019-01-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Fri Feb 01 2019 01:00:00 GMT+0100 (CET)": {
-                    "random_order": 0.5944137922701596,
-                    "periode": {
-                      "$date": "2019-02-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Fri Mar 01 2019 01:00:00 GMT+0100 (CET)": {
-                    "random_order": 0.005418488855652104,
-                    "periode": {
-                      "$date": "2019-03-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Mon Apr 01 2019 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.11413475644920046,
-                    "periode": {
-                      "$date": "2019-04-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Wed May 01 2019 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.5540453682897557,
-                    "periode": {
-                      "$date": "2019-05-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Sat Jun 01 2019 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.21611555334369925,
-                    "periode": {
-                      "$date": "2019-06-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Mon Jul 01 2019 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.10692764289073675,
-                    "periode": {
-                      "$date": "2019-07-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Thu Aug 01 2019 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.06286700859772099,
-                    "periode": {
-                      "$date": "2019-08-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Sun Sep 01 2019 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.12302101549181588,
-                    "periode": {
-                      "$date": "2019-09-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Tue Oct 01 2019 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.6270637855657417,
-                    "periode": {
-                      "$date": "2019-10-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Fri Nov 01 2019 01:00:00 GMT+0100 (CET)": {
-                    "random_order": 0.4356054714099965,
-                    "periode": {
-                      "$date": "2019-11-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Sun Dec 01 2019 01:00:00 GMT+0100 (CET)": {
-                    "random_order": 0.6639845728846108,
-                    "periode": {
-                      "$date": "2019-12-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Wed Jan 01 2020 01:00:00 GMT+0100 (CET)": {
-                    "random_order": 0.6364378745919065,
-                    "periode": {
-                      "$date": "2020-01-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Sat Feb 01 2020 01:00:00 GMT+0100 (CET)": {
-                    "random_order": 0.17228951873894094,
-                    "periode": {
-                      "$date": "2020-02-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Sun Mar 01 2020 01:00:00 GMT+0100 (CET)": {
-                    "random_order": 0.19668123998611742,
-                    "periode": {
-                      "$date": "2020-03-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Wed Apr 01 2020 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.26076437542486686,
-                    "periode": {
-                      "$date": "2020-04-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Fri May 01 2020 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.7643450049859258,
-                    "periode": {
-                      "$date": "2020-05-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Mon Jun 01 2020 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.37477580905138486,
-                    "periode": {
-                      "$date": "2020-06-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Wed Jul 01 2020 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.2337334103266756,
-                    "periode": {
-                      "$date": "2020-07-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Sat Aug 01 2020 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.9683336599879673,
-                    "periode": {
-                      "$date": "2020-08-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Tue Sep 01 2020 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.6917862918671529,
-                    "periode": {
-                      "$date": "2020-09-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Thu Oct 01 2020 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.22347869073899496,
-                    "periode": {
-                      "$date": "2020-10-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Sun Nov 01 2020 01:00:00 GMT+0100 (CET)": {
-                    "random_order": 0.49703871891022944,
-                    "periode": {
-                      "$date": "2020-11-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Tue Dec 01 2020 01:00:00 GMT+0100 (CET)": {
-                    "random_order": 0.12098804879883318,
-                    "periode": {
-                      "$date": "2020-12-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Fri Jan 01 2021 01:00:00 GMT+0100 (CET)": {
-                    "random_order": 0.6293514694999226,
-                    "periode": {
-                      "$date": "2021-01-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Mon Feb 01 2021 01:00:00 GMT+0100 (CET)": {
-                    "random_order": 0.20381076229312078,
-                    "periode": {
-                      "$date": "2021-02-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Mon Mar 01 2021 01:00:00 GMT+0100 (CET)": {
-                    "random_order": 0.33701975847287624,
-                    "periode": {
-                      "$date": "2021-03-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Thu Apr 01 2021 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.7225818994765397,
-                    "periode": {
-                      "$date": "2021-04-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Sat May 01 2021 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.7449100262461075,
-                    "periode": {
-                      "$date": "2021-05-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Tue Jun 01 2021 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.2246108957977745,
-                    "periode": {
-                      "$date": "2021-06-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Thu Jul 01 2021 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.8149298259664368,
-                    "periode": {
-                      "$date": "2021-07-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Sun Aug 01 2021 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.33667432343203874,
-                    "periode": {
-                      "$date": "2021-08-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Wed Sep 01 2021 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.4279494105881677,
-                    "periode": {
-                      "$date": "2021-09-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Fri Oct 01 2021 02:00:00 GMT+0200 (CEST)": {
-                    "random_order": 0.890807709508037,
-                    "periode": {
-                      "$date": "2021-10-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Mon Nov 01 2021 01:00:00 GMT+0100 (CET)": {
-                    "random_order": 0.3894063462582833,
-                    "periode": {
-                      "$date": "2021-11-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Wed Dec 01 2021 01:00:00 GMT+0100 (CET)": {
-                    "random_order": 0.3166162251670439,
-                    "periode": {
-                      "$date": "2021-12-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  },
-                  "Sat Jan 01 2022 01:00:00 GMT+0100 (CET)": {
-                    "random_order": 0.0993069082668595,
-                    "periode": {
-                      "$date": "2022-01-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  }
-                }
-              },
-              "2203": {
-                "cotisation": {
-                  "9944f7e9ae82dc83a26174af444653ba": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2022-01-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2022-02-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 19441,
-                    "du": 19443
-                  }
-                },
-                "compte": {
-                  "284b5cb293170c53f21517bca56ae676": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2022-02-01T00:00:00Z"
-                    }
-                  }
-                },
-                "effectif": {
-                  "733cc2e759d70eb058e5acd11cd4278f": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2022-01-01T00:00:00Z"
-                    },
-                    "effectif": 38
-                  }
-                },
-                "reporder": {
-                  "Tue Feb 01 2022 01:00:00 GMT+0100 (CET)": {
-                    "random_order": 0.681390261994525,
-                    "periode": {
-                      "$date": "2022-02-01T00:00:00Z"
-                    },
-                    "siret": "40433868300018"
-                  }
-                },
-                "compact": {
-                  "delete": {
-                    "effectif": [
-                      "091211ab4267ac681753a3ab491e8254",
-                      "f5d96cafccc0d4392c27371618b748b3",
-                      "048c4465da26e720225b09b9b6743685",
-                      "c8ed3cb84b5365b6bd13141990d714f7",
-                      "64c17685ce303a09f99af9f910b21b74",
-                      "ade0f49ea56b413538b7288a752728a3",
-                      "87b4c7a336d2dfcc495ff17fedb29dd4",
-                      "513e072c11e5a9d5865598234190b0e3",
-                      "495d60ea465f7156078b9b48c61b7761",
-                      "5a25e37089c4c6edf7650ac209cdf4a7",
-                      "90a77b8b3fcb875dbb5204ee38c71c95",
-                      "78985caa0e453817d22224a04bd87f72",
-                      "6d91eecf6c68d4661043acb74d11653e",
-                      "85ebc9b6de9346bd788186f624ec904e",
-                      "28f29ccdc47eb5616cec3b79edb39d19",
-                      "83e667962e0b988e6380ce51e14e1c87",
-                      "cca77a6a1838add7b7e0357cfaf38c0a",
-                      "a61bde9d8ef6ec045a9bedbddec08e86",
-                      "bf3f0514c4c57b8ef90534164a3672e3",
-                      "437520e0c5cd42880751c847c2d56df6",
-                      "6b2e3e202987a96e1132fd29db2cde0a",
-                      "ed091d6514adff3f4651d5b58c2c103a",
-                      "7cb882b0dedf2870ccadb5f2db3a7e59",
-                      "f4a0abe29393b4aa74329481e1f89de8",
-                      "57fb2aad186e7d549c526ba4abe45390",
-                      "d02e6f86414566107754a03a2c4046d6",
-                      "45b9f9ca8901245dcbe6f67317e481b0",
-                      "dc98ba9d3cf98ed8b294cfba8c369ca8",
-                      "57b3286bf6ae6eb6ad291df499dc47e6",
-                      "001789db3b9fdeffc6e744e7210bd103",
-                      "3483407e601d00308b337591c51d5735",
-                      "40c84e3e66e39091244fd2835af9db1c",
-                      "afe1dd05adb0006a9f8f6db17d2e1be3",
-                      "67622b6d9570f87717c0dfc02bd36a4c",
-                      "7d7499e40d056b31415d23d33d425635",
-                      "3e20d0b5db039ff6172b670b65b4cabf",
-                      "452a23370ff5a73e19d4d8c323a3ef83",
-                      "b051d39e74d907a587302f2761c5b725",
-                      "0af08022f55553fb1c457387defd2dfa",
-                      "d6bdf2174b4f8ee04d54810202c3c068",
-                      "a4eb97a93eb2dc1f3fc9987248e78f73",
-                      "d47a7d5e05d1c95f73b1ab671d06babb",
-                      "46ed652a69aa5c4a358bbe79acb51cec",
-                      "f73466c78caccf15b8cb8f4b96053d02",
-                      "ed19773f53e37b0d139bdaaa99f37eb6",
-                      "b90b4d4c604d1aa32ca3ad03ba79d68b",
-                      "e3980d9c0091678c2612ac0bfee7c84e",
-                      "cdf19fe90090b3e70bcdc2dbf101d293",
-                      "39f8c954db204f7b8a2d20df78ef499d",
-                      "e06a46d494165c1e0766cd3f2e82d942",
-                      "f95139cc81678393873ef9fd10d9921e",
-                      "0491f4db226240374f935ace7304905c",
-                      "3bc60106d3284f4d729662969904dcfc",
-                      "62b455a4a0ec9570c0d21bf68f5480c9",
-                      "1a3e0db61bbb1cd26d573b521639348d",
-                      "dffb42be5b4ef74bb2d4dd195dbb882d",
-                      "09fb9e83616634c65624fa289196f131",
-                      "689f428d2bfffcb33f9a6fbac3bb4c67",
-                      "4278bc5b86b27fdc7b3afe242d044a37",
-                      "9b17cc654928037f812b9fbc73949d6c",
-                      "f4617d24e6812967136d46c7b27cf578",
-                      "00cc8a8a543baf77c5a2fd104eae87f0",
-                      "bfef8431814c92b90fde05d725e49d81",
-                      "9dd6da361c2bfea4f895d6bb59e50244",
-                      "76a384ccb66e4c92ee3c44293e922718",
-                      "f4925ba8d469969b0ce45bb56f5160d1",
-                      "77ff4e0225f4bbd803d688a24306d79e",
-                      "98573beaf8f01f3d3e09ecb3514cb5db",
-                      "977f4dbc5b8c38427318cff68c351f7f",
-                      "b5091a4f916de2801eff3fb1abf69824",
-                      "610405b671e4b6b3a50b93685af660c6",
-                      "d7f087b5fb2afd95859c54b3755d54ce"
-                    ]
-                  }
-                }
-              },
-              "2005_2": {
-                "apdemande": {
-                  "ac7a480e50258a3eb4b62379ff4cc762": {
-                    "id_demande": "038BDPO0100",
-                    "effectif_entreprise": 34,
-                    "effectif": 34,
-                    "date_statut": {
-                      "$date": "2020-04-27T00:00:00Z"
-                    },
-                    "periode": {
-                      "start": {
-                        "$date": "2020-03-16T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2020-06-30T00:00:00Z"
-                      }
-                    },
-                    "hta": 6000,
-                    "mta": null,
-                    "effectif_autorise": 32,
-                    "motif_recours_se": 5,
-                    "heure_consommee": 4432,
-                    "montant_consommee": 36303.28,
-                    "effectif_consomme": 58
-                  }
-                },
-                "apconso": {
-                  "4d7402303374c41b01ba24708402b628": {
-                    "id_conso": "038BDPO0100",
-                    "heure_consomme": 2146.5,
-                    "montant": 17485,
-                    "effectif": 26,
-                    "periode": {
-                      "$date": "2020-04-01T00:00:00Z"
-                    }
-                  },
-                  "b105af8871d3285520951aee2e98f871": {
-                    "id_conso": "038BDPO0100",
-                    "heure_consomme": 2285.5,
-                    "montant": 18819,
-                    "effectif": 32,
-                    "periode": {
-                      "$date": "2020-03-01T00:00:00Z"
-                    }
-                  }
-                },
-                "reporder": {}
-              },
-              "2002_1": {
-                "debit": {
-                  "0612b82d78b76ef484a53ff062198d7d": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2014-02-18T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2014-01-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2014-02-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "48415de85f87abc301a5f90c92026924": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2014-02-18T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 1,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2014-01-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2014-02-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "8123d30b10af8acc354f547aa2cf21b1": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2014-03-18T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 1,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2014-02-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2014-03-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "ffd5fcaba619bd29607e1125893479c0": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2014-03-18T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2014-02-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2014-03-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "a8e238f2325f71c0d79fcd5100ee3a46": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2014-04-16T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2014-03-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2014-04-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "c291b131e31bcc8579b5bbe72552cf01": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2014-04-16T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 1,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2014-03-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2014-04-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "5fc80f5135403e060d235635f968c022": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2014-05-16T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 1,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2014-04-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2014-05-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "e169e4951a201e959dbdc5723dd7263c": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2014-05-16T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2014-04-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2014-05-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "00c6db177e334b0c2a655ed70cc37021": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2014-06-17T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 1,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2014-05-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2014-06-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "418cc5dbd3af24095fe86544551458f7": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2014-06-17T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2014-05-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2014-06-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "4fcf9b3413a637a80784d91fcbfe110c": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2014-07-16T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 1,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2014-06-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2014-07-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "1a953ba00439ff785dddf4b32f636f6a": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2014-07-16T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2014-06-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2014-07-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "f4276a684502594b97c4d987df71826e": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2015-04-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 1,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2015-03-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2015-04-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "450b728684301cb2337560c99bfec644": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2015-04-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2015-03-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2015-04-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "a4416729bb0f8ed18f0909a465a557db": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2015-05-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 1,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2015-04-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2015-05-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "356c43786a74669544d4ac16f68d7b72": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2015-05-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2015-04-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2015-05-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "87097ee7d29067657d89216148cf0a77": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2015-06-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 1,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2015-05-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2015-06-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "364b9a2b5456ebb70b55b85073caec54": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2015-06-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2015-05-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2015-06-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "faba1425431a206e65cb9323cc6214a2": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2015-10-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 1,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2015-09-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2015-10-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "cc2ab22a091c00da060205dd90f3a84c": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2015-10-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2015-09-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2015-10-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "3187f8a3b8b07b8372b6ee25b297c5ba": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2015-11-16T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 1,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2015-10-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2015-11-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "cec8ef14eaef0819abba31b32967f3e5": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2015-11-16T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2015-10-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2015-11-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "612b0d433381c96f9dc4098182d4127a": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2015-12-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 1,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2015-11-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2015-12-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "68bee12e5f7dc63160a5359b377c0a37": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2015-12-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2015-11-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2015-12-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "846c4de1a3f64b3fc6f5fbf86f426056": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2016-08-16T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2016-07-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2016-08-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "9c53773c3522a2f1c384b6004f60ef63": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2016-08-16T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 1,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2016-07-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2016-08-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "fde2a73c81f8f7caa823f194f61acbcd": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2017-01-16T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 2,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2016-12-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-01-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "d90ccc08fa27729c66fe253a68c1800c": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2017-01-16T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2016-12-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-01-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "a2cff8822d749b7c7910adc542862f4a": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2017-06-09T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 5,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-04-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-05-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "12",
-                    "code_motif_ecart_negatif": "25",
-                    "recours_en_cours": false
-                  },
-                  "93c43761d85c7192842db69d725ce6a6": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2017-06-09T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 6,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-04-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-05-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "4",
-                    "code_motif_ecart_negatif": "25",
-                    "recours_en_cours": false
-                  },
-                  "c35d1d9263a23a0e8bb6d3926bba03ec": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2017-05-18T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 144,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-04-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-05-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "25",
-                    "recours_en_cours": false
-                  },
-                  "779a64b3b8abdeec3d9b397b2d66b01f": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2017-06-09T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-04-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-05-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "2",
-                    "code_motif_ecart_negatif": "25",
-                    "recours_en_cours": false
-                  },
-                  "21b8d97d2ceed2e5b3a93dcc74581e10": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2017-06-09T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 3,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-04-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-05-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "12",
-                    "code_motif_ecart_negatif": "25",
-                    "recours_en_cours": false
-                  },
-                  "f9286827017f07685123e18f3949d887": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2017-06-09T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 4,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-04-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-05-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "11",
-                    "code_motif_ecart_negatif": "25",
-                    "recours_en_cours": false
-                  },
-                  "041b7a60bc7ecca6f99f4d505e9bd010": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2017-10-16T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-09-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-10-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "30070a744d35e9a4cc480651d31495b7": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2017-11-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 2,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-10-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-11-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "5e5be481923b120631a02f1eabbd6210": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2017-11-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-10-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-11-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "edc41d1fa90fb5b578c3afac571d7281": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2017-12-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 1,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-11-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-12-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "56275c651398ca78c1741ed6d408f9d4": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2017-12-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-11-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-12-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "9d4ca82a156eecfde9d71b4b736b87f7": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2018-01-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-12-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2018-01-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "f7ca2b8473b13d40f75fe0316c5d92ed": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2018-06-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2018-05-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2018-06-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "8195dda7707dc2fe4cd8a395c6503fb6": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2018-08-16T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2018-07-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2018-08-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "e31ba2d0b61471973da238b358c3b008": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2018-09-17T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2018-08-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2018-09-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "430b9515b634663bd6343329b60bac2c": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2018-11-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2018-10-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2018-11-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "f230423279fee89a4193bceb777c7dea": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2019-01-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2018-12-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2019-01-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "86936c20fbbfb49f99335d1bb7ceb7c8": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2019-05-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2019-04-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2019-05-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  }
-                },
-                "compte": {
-                  "621aa8109d4c58e13cb7c78a3fedd6b0": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2020-01-01T00:00:00Z"
-                    }
-                  },
-                  "86e4b37296d1718f7493ff2829e76056": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2020-02-01T00:00:00Z"
-                    }
-                  }
-                },
-                "sirene": {
-                  "dfc5a31364ed5bfb7d1b4332331c5ca2": {
-                    "siren": "404338683",
-                    "nic": "00018",
-                    "siege": true,
-                    "code_postal": "38150",
-                    "departement": "38",
-                    "commune": "CHANAS",
-                    "ape": "4752B",
-                    "date_creation": {
-                      "$date": "1996-01-31T23:00:00Z"
-                    },
-                    "longitude": 4.80859,
-                    "lattitude": 45.32452,
-                    "adresse": [
-                      "BRICOCASH",
-                      "RN 7",
-                      "PARC DU SOLEIL",
-                      "38150",
-                      "CHANAS",
-                      "Parc du Soleil 38150 Chanas"
-                    ]
-                  }
-                },
-                "reporder": {},
-                "compact": {
-                  "delete": {
-                    "cotisation": [
-                      "fc32680ffc611e906458f9f418c4ef6c",
-                      "086e4b564ef5c4dd8d1014989c0cf830",
-                      "78b8c5c5ad3c6ea9e1147aa77aa9a1fb",
-                      "a223281e4e75ff4ff69a2c6bb58280e0",
-                      "6629121fdef976a66c0d9fb665101064",
-                      "d0c9972e6b968ea49810df1092b48c43",
-                      "0835ccff9b2547e459ee54187c95b931",
-                      "1411c0a2c5412a9611394536b7b82e6e",
-                      "1b11fa45f61ab6dbb9e94bf8d758a6b4",
-                      "7fb92e498c1fabf191657502ec6fd26f",
-                      "35adc33cd68c9966aba78588de80356e",
-                      "0beca00346b4eef027bcdce5ce5b6af4",
-                      "9452674b8b4aedfba84d245bc5e89084",
-                      "ef0d75f4a713c97f7a5dfd759d234eab",
-                      "0a96c02b9ae58afd9042441502892291",
-                      "38590239fbff125d21f3e2a8b4a95f95",
-                      "c96c6d2bbf9fdc73cfd55b866cb2cc34",
-                      "b7a10a4968e7564366fbff7bc1799a36",
-                      "db532ef5064a056e1987e49fa4421cf5",
-                      "89a35cf56c51254bbebc651b15d8ff74",
-                      "b564a758f6d067ad814194fbad172916",
-                      "95d28dfb1eac097c3f145de7f3ab84c6",
-                      "3cb868be26aafd62486f267cc03cb704",
-                      "9cd411503089b9c8e0be0aa73edd2e45",
-                      "680cb8ec2a4eda96879421067d6cf9b9",
-                      "2033652a63d047ac2b32c8fcad51842a",
-                      "e10ea68a86e4feb60be51d173e75728e",
-                      "2c244ebee3e1b5842e987f6521e04947",
-                      "bf397be8dcaacc1b02f88142139c5e69",
-                      "949e2339ae2ddc0918fae1631f474831",
-                      "ad44f89d6264e0c7b19377cac638186e",
-                      "a9e05f7411a4e9ee16f7ab6038ca9368",
-                      "9366e63fe2e6164ef8ea27e38d56065c",
-                      "04da529cb23aa6bc56c2602f7aed4d30",
-                      "e565e0321667cdeb1af86ec7bf49eede",
-                      "0954babb2a7b144816f787e1b589e576",
-                      "5126fc5443d9ec5d10e0cfd535042f49",
-                      "65d8671c19bb4b48e357ad9908e910c8",
-                      "7bc50a93e42cb85dbf4d4fcc0270666f",
-                      "3664816f425a504ea803d86f3b2d2757",
-                      "908bf8b6796733011b791020657f0d0f",
-                      "6667c876f127768c2224f05f2a23a4e8",
-                      "63d521e4780aa7e60a10697b51e0a963",
-                      "25b19c613df2eb7135398caf11e713c6",
-                      "a092342a0758ec61943da9f1b779dc95",
-                      "592b7a075938adad3b79300b64efb85f",
-                      "c58ff83340d27f7553df8a901f12b65f",
-                      "3ceb52c43321dd97bf8f67d90db1678c",
-                      "49d52ce2294ce957e7029faa0ebb2560",
-                      "64ce5c0065152e6ab8a7c2babef5a655",
-                      "dd638090d231af36b5f1a8b6adfe00be",
-                      "ae8384508739b952e4eaea30abc9b2de",
-                      "627092e9e6f6caa8af23be4fe4825a08",
-                      "79d5a767117474254fb19985e76ccf2e",
-                      "519da56450c2b57b3de4f9100bef7eaa",
-                      "f2761075f5047e69fd731e24ffb8b98a",
-                      "8782638c3b4cc2040c7812f2f0d42882",
-                      "b877707baa0410b5c43c10a7fc14a1a1",
-                      "c828f7f4af27f3c251f0be9a0770ff6d",
-                      "310abdd7f4ae8bcd8f24e7a51e68db15",
-                      "81442704991eb718e4f6ee3f21ff633d",
-                      "086d5501a16f85841597be11161a11b4",
-                      "80c07ce0192b16f12dc7551e57113a97",
-                      "1290ef3eb2ed51e7de1cc9f00bb8410c",
-                      "c70f884b6ec178ca6c44a41dd526b1fa",
-                      "928f5b33b22185e894c0f5a187f638bc",
-                      "351ef9cf017bbedd4f0d1bfb83ee024c",
-                      "0dd7e15943605cfe7697cba177d97fb3",
-                      "2ac838f9c4d50fb4f480efebc7c9be54",
-                      "d6f1917e97cd67a6d90243106945c06e",
-                      "8b844c36a6c94b222cd7cda1b131c2cf",
-                      "4e82a434487134600bf1599350677949",
-                      "fd26093b413099bd034f5f2a9d1741f3",
-                      "4b108b41c94729ee7c29260e21e965bc",
-                      "497cec8f1c7555823615d08fdf2bd685",
-                      "27365929616877e52abfb5533ce50a34"
-                    ],
-                    "debit": [
-                      "16ff91f05c2dc51b54d755404cc7146f",
-                      "0f052417ae77753e73f0367a96515989",
-                      "778e1d9e4952a5954d4a20b5d498e4ee",
-                      "b8c98e85b48b06c07bb824c9dc77c1ad",
-                      "a200f84b63f1e8286ef9d350ad69126b",
-                      "9d7e0e371452a2b15cff7d519aaa01ca",
-                      "4f225993920e05a1d52799d32d6a68d8",
-                      "92be067b43f5a7b060215425917e8d64",
-                      "1b2522fc10b18a5d14d525d214255574",
-                      "4f79a81a315ab1f20d16e00b81cd6649",
-                      "f1fef8a9b660f3be296a943bb8ea6f27",
-                      "55c8e2c59d097e5325a7a95ee9796e5a",
-                      "3a2c127e6308a5c8e96da0ecbdb9db84",
-                      "39de7a108138a4d89c43ada3674e812a",
-                      "98530d67646b39920aeba7be5e5be57b",
-                      "1046c8e2f658c8a85ae0876ad213fa26",
-                      "d69a31d7ff074e076620119ba42da672",
-                      "5f3b8bb146cfcab7854757ce2615e786",
-                      "cd58e25d3a62927be68346be32314a11",
-                      "c71c3e91371203418be83cda7b596f1c",
-                      "3a18655c18dccebc1f247cdb7834a6d7",
-                      "7b4eac5877f5a0939574608a3b762b30",
-                      "737839ae53b65fa18d211413ca6d2f72",
-                      "4501f68c2eeeca4963e937d657ce619f",
-                      "93d0f5d365fa435915b3f7acfa4653f9",
-                      "3d0d4cc3b5a285f87aedb4138fac5348",
-                      "7c190280d1bed33d45147e5921a370a1",
-                      "0edfa16205e41867e2e461adf6437fc7",
-                      "bf2d7ba7f139f558ac73690c9f404349",
-                      "3a71f853b4b75d29638bbb78be919f14",
-                      "c547bd553b52a04069c80067fa2f3dd4",
-                      "724d58a0484fb39625c3fc3120ba42e1",
-                      "009052420de66d979bbc938d3dd50142",
-                      "288690e52f9fb994a46afee90c96ce5e",
-                      "3c87c8314fcec4fbcb8bb074de658f5c",
-                      "29aa93ea3f8b271b7288cbeda70029ca",
-                      "00f7f5eec53ae15d188fc58c319db32e",
-                      "145f519f484896eed0c490202d75ad4c",
-                      "e03711b65dd40b07dd0c27a2c8abc05a",
-                      "8d9a0e1912f6d60cc1c7ac252ea6abf8",
-                      "a4228968a416673f562426ddc097f166",
-                      "1ecb6c475d559c481c5df3aec85d07b7",
-                      "7a361ac18c0130c33ab618225fb7b182",
-                      "f58e667ee5d6b04b36e8be77874fafe2",
-                      "99a232fd28a4a4780ef2e964890cf061",
-                      "72a4653d8acb65861fdbadc4463add2f",
-                      "7deec528f3d711722b867594da6a8fbc",
-                      "518dd48d18a1cd1b48f691f3583de353",
-                      "faa2f0b4ab5dc98a0a369b060c5f5e43",
-                      "11073496afe62af8a6d72434f869594c",
-                      "86dcf7c1d4a6f4f15ed36a5e8e2593b0",
-                      "bf0efcbe12826d0514ec24d39fb7a4e3",
-                      "5c675c5078c82d21b2f0dace28fbce83",
-                      "ae6b54de4a456fddbecdd042409c4849"
-                    ],
-                    "sirene": [
-                      "8bc4242fffc943f45406fc79fcb96ee0",
-                      "4d7ad53c61a5f78c50bf2840b89db99d"
-                    ]
-                  }
-                }
-              },
-              "1912_1": {
-                "compte": {
-                  "1cde6163e6c1f4b5434a4625a9b726d9": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-12-01T00:00:00Z"
-                    }
-                  }
-                },
-                "effectif": {
-                  "faed516f4cad0866e2f3183891476792": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-09-01T00:00:00Z"
-                    },
-                    "effectif": 32
-                  },
-                  "9749a601302dbad5663dd9463a19ee44": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-10-01T00:00:00Z"
-                    },
-                    "effectif": 28
-                  },
-                  "53206905425c3923e15dc63ef4737e45": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-08-01T00:00:00Z"
-                    },
-                    "effectif": 33
-                  }
-                },
-                "cotisation": {
-                  "27365929616877e52abfb5533ce50a34": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2019-10-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2019-11-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 25955,
-                    "du": 25955
-                  }
-                },
-                "reporder": {}
-              },
-              "1911_2": {
-                "sirene": {
-                  "4d7ad53c61a5f78c50bf2840b89db99d": {
-                    "siren": "404338683",
-                    "nic": "00018",
-                    "siege": true,
-                    "code_postal": "38150",
-                    "departement": "38",
-                    "commune": "CHANAS",
-                    "ape": "4752B",
-                    "date_creation": {
-                      "$date": "1996-01-31T23:00:00Z"
-                    },
-                    "longitude": 4.80859,
-                    "lattitude": 45.32452,
-                    "adresse": [
-                      "BRICOCASH",
-                      "RN 7",
-                      "PARC DU SOLEIL",
-                      "38150",
-                      "CHANAS",
-                      "Parc du Soleil 38150 Chanas"
-                    ]
-                  }
-                },
-                "reporder": {}
-              },
-              "1911_1": {
-                "cotisation": {
-                  "497cec8f1c7555823615d08fdf2bd685": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2019-09-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2019-10-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 16987,
-                    "du": 16987
-                  }
-                },
-                "compte": {
-                  "5d5c098163cec386901bfadb3b37c951": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-11-01T00:00:00Z"
-                    }
-                  }
-                },
-                "reporder": {}
-              },
-              "1909_3": {
-                "sirene": {
-                  "4d7ad53c61a5f78c50bf2840b89db99d": {
-                    "siren": "404338683",
-                    "nic": "00018",
-                    "siege": true,
-                    "code_postal": "38150",
-                    "departement": "38",
-                    "commune": "CHANAS",
-                    "ape": "4752B",
-                    "date_creation": {
-                      "$date": "1996-01-31T23:00:00Z"
-                    },
-                    "longitude": 4.80859,
-                    "lattitude": 45.32452,
-                    "adresse": [
-                      "BRICOCASH",
-                      "RN 7",
-                      "PARC DU SOLEIL",
-                      "38150",
-                      "CHANAS",
-                      "Parc du Soleil 38150 Chanas"
-                    ]
-                  }
-                },
-                "reporder": {}
-              },
-              "1910_8": {
-                "reporder": {}
-              },
-              "1910_2": {
-                "compte": {
-                  "94b5b69bb2832ba29b9ec4d90f6b0734": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-10-01T00:00:00Z"
-                    }
-                  }
-                }
-              },
-              "1910_1": {
-                "cotisation": {
-                  "4b108b41c94729ee7c29260e21e965bc": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2019-08-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2019-09-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 16852,
-                    "du": 16852
-                  }
-                }
-              },
-              "1909_2": {
-                "cotisation": {
-                  "fd26093b413099bd034f5f2a9d1741f3": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2019-07-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2019-08-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 32439,
-                    "du": 32439
-                  }
-                },
-                "effectif": {
-                  "73f1925d1345262d49b15956c3339d30": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-06-01T00:00:00Z"
-                    },
-                    "effectif": 32
-                  },
-                  "73fda970e5d3105a224f74877017ab13": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-07-01T00:00:00Z"
-                    },
-                    "effectif": 33
-                  },
-                  "43380cc9b5303ff2542d2f2ce6cfa285": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-05-01T00:00:00Z"
-                    },
-                    "effectif": 32
-                  }
-                }
-              },
-              "1906_3": {
-                "compte": {
-                  "a9fd1e283f1fc0bb75ffd3587503dd33": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2017-01-01T00:00:00Z"
-                    }
-                  },
-                  "12d5f166220c4794dd4567fc61db73d7": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2017-02-01T00:00:00Z"
-                    }
-                  },
-                  "02bba2284fd809316e4c7f34a4a60e7d": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-01-01T00:00:00Z"
-                    }
-                  },
-                  "443a90c0c0a2534fbf2a2c5f82a1e52f": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-11-01T00:00:00Z"
-                    }
-                  },
-                  "ca93c98f708ca1904eabb6026cfba14e": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-09-01T00:00:00Z"
-                    }
-                  },
-                  "2ed0b7d59354dfbfa62adc20144ae37d": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-04-01T00:00:00Z"
-                    }
-                  },
-                  "1538a7c425eff7b6239b2888cc08e0af": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-03-01T00:00:00Z"
-                    }
-                  },
-                  "20fb884d248a65e87ce6d69dc7478a45": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2017-07-01T00:00:00Z"
-                    }
-                  },
-                  "2fafd09598640da1094e830904aa96e5": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-08-01T00:00:00Z"
-                    }
-                  },
-                  "f9e3fcdb96ac32308cd12fa2b6a75357": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-07-01T00:00:00Z"
-                    }
-                  },
-                  "395be4fca48af33cca0f0bb57de87753": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2017-09-01T00:00:00Z"
-                    }
-                  },
-                  "e1329f11ac55091af2d319ade3b399f3": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-03-01T00:00:00Z"
-                    }
-                  },
-                  "5796695828ec3482939190538bf6aa54": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-08-01T00:00:00Z"
-                    }
-                  },
-                  "83d62d514275a446393ae2b98e8d27ee": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-12-01T00:00:00Z"
-                    }
-                  },
-                  "389ed93ae4e72a13341829c2b311aa08": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-02-01T00:00:00Z"
-                    }
-                  },
-                  "a10a5c2127b89fd91a43be52ffaddd4e": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2017-08-01T00:00:00Z"
-                    }
-                  },
-                  "b764ecf0cf97b655b519d3b0dad20902": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-10-01T00:00:00Z"
-                    }
-                  },
-                  "ba698053712854dccaebeca14f09e984": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-01-01T00:00:00Z"
-                    }
-                  },
-                  "483b8a82972dbb52d283c8857e2c9a2a": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-05-01T00:00:00Z"
-                    }
-                  },
-                  "1c26068e0f1dc004fdd13ec63e50f2db": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-07-01T00:00:00Z"
-                    }
-                  },
-                  "37c7a5a34cd210a24ad2509d02d68f4c": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-12-01T00:00:00Z"
-                    }
-                  },
-                  "ff2377e9411a2cb21ee3e763c9e24504": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-09-01T00:00:00Z"
-                    }
-                  },
-                  "f6cb106901679b36e55c106a6585a666": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-05-01T00:00:00Z"
-                    }
-                  },
-                  "d0a4c37547f6bebb37bbf26931b6c204": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-06-01T00:00:00Z"
-                    }
-                  },
-                  "808d79f648b0fc0bac93644485087e2b": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-04-01T00:00:00Z"
-                    }
-                  },
-                  "7abf326ddf008ea9023eb54182df1074": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-10-01T00:00:00Z"
-                    }
-                  },
-                  "2541f71e22eaec01da8fd7cae515844b": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-10-01T00:00:00Z"
-                    }
-                  },
-                  "3eb1a8dcb3594b1aedf34ed12a9868e8": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2017-06-01T00:00:00Z"
-                    }
-                  },
-                  "617aa74b1ebc3b83f0edeeba811f81e5": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2017-11-01T00:00:00Z"
-                    }
-                  },
-                  "6c7f57c3445bd5b5f055be31e370159e": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-08-01T00:00:00Z"
-                    }
-                  },
-                  "c20ab512efc04866fdf65478ea3f258d": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-02-01T00:00:00Z"
-                    }
-                  },
-                  "25b36b1bca9a6ccc14738a7ef673557b": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-03-01T00:00:00Z"
-                    }
-                  },
-                  "c72153ce02b6c64d19b83399fd970012": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-05-01T00:00:00Z"
-                    }
-                  },
-                  "4e79e943da95426bbf553287622da66d": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-11-01T00:00:00Z"
-                    }
-                  },
-                  "7aa46760b24ae61a61458fabefac159e": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-06-01T00:00:00Z"
-                    }
-                  },
-                  "8c58d7118bae94034cd833ff115ef4fc": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-04-01T00:00:00Z"
-                    }
-                  },
-                  "3ef8f99fde71298ef408b569319019e1": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2017-10-01T00:00:00Z"
-                    }
-                  },
-                  "c8f3ba493b0a1023bde369baf7a7b4c6": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-07-01T00:00:00Z"
-                    }
-                  },
-                  "092626049498c840f972fa2663a2288c": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-06-01T00:00:00Z"
-                    }
-                  },
-                  "93567a973451e667b28d3a99b7fbed2d": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-01-01T00:00:00Z"
-                    }
-                  },
-                  "8b21cafb6283e0f1f51b938c6b9ab45d": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-02-01T00:00:00Z"
-                    }
-                  },
-                  "c6d2331cf6a81cfb8c272e713c0ff278": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-04-01T00:00:00Z"
-                    }
-                  },
-                  "8bec4cee6c694b615ef87bfe9e69b2c9": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-07-01T00:00:00Z"
-                    }
-                  },
-                  "a565319ec38c347241aa497bcf693791": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-12-01T00:00:00Z"
-                    }
-                  },
-                  "620ba42ab4605bffb0479e266a372c58": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-09-01T00:00:00Z"
-                    }
-                  },
-                  "7fc59f4b7833bbd2d817550d03fb2548": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-12-01T00:00:00Z"
-                    }
-                  },
-                  "ed3f2b7393f58ba8b582b9f2851ae83f": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-02-01T00:00:00Z"
-                    }
-                  },
-                  "8c3253469ce70ba6a290fca5d59f9eec": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-03-01T00:00:00Z"
-                    }
-                  },
-                  "1d9e1f768f87d75687ef53148a197063": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-05-01T00:00:00Z"
-                    }
-                  },
-                  "3387e907f9553abc669e0f9063632f0d": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-04-01T00:00:00Z"
-                    }
-                  },
-                  "47edaa1df3339f0cc7b096ad65953949": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-11-01T00:00:00Z"
-                    }
-                  },
-                  "8e968f274b5fcac3ed498941bb1de62f": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-01-01T00:00:00Z"
-                    }
-                  },
-                  "13a0aa098a3b9bca8fec43c548c5f9ab": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-11-01T00:00:00Z"
-                    }
-                  },
-                  "46d929949921999c686144d3a74d99ca": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2017-03-01T00:00:00Z"
-                    }
-                  },
-                  "22607a4c6d399b5fb47040c2b7c7442a": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-03-01T00:00:00Z"
-                    }
-                  },
-                  "fe2df0633ef6da4664731317ccb63fb1": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-10-01T00:00:00Z"
-                    }
-                  },
-                  "50b7a4f37221da3256055cda333960dc": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2017-12-01T00:00:00Z"
-                    }
-                  },
-                  "e4000788a41aadc46760e83bb553057e": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-05-01T00:00:00Z"
-                    }
-                  },
-                  "dd24983d8487a772ca953501b3cb278d": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-09-01T00:00:00Z"
-                    }
-                  },
-                  "6e65f852dc028bd24d814e4858a8721f": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-08-01T00:00:00Z"
-                    }
-                  },
-                  "8b3e139426a96281e90cda00d7c97e07": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2017-04-01T00:00:00Z"
-                    }
-                  },
-                  "fb9dc40772aeb5c74001bd354773bfde": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2017-05-01T00:00:00Z"
-                    }
-                  },
-                  "57624c01c14cba74d7d82ea563b73d69": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-01-01T00:00:00Z"
-                    }
-                  },
-                  "8cc9d0ceda98fc2dc219b40a87a861e0": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-02-01T00:00:00Z"
-                    }
-                  },
-                  "9aacb5f2c68eadb5ec735e29fa5fe87f": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-06-01T00:00:00Z"
-                    }
-                  },
-                  "74798eb6bfd07334d4ee7cbb09968a6c": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-07-01T00:00:00Z"
-                    }
-                  },
-                  "34af10b89c184126cce35504c26502fc": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-06-01T00:00:00Z"
-                    }
-                  }
-                },
-                "cotisation": {
-                  "fc32680ffc611e906458f9f418c4ef6c": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2018-02-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2018-03-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 17444,
-                    "du": 17444
-                  },
-                  "086e4b564ef5c4dd8d1014989c0cf830": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2018-07-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2018-08-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 25205,
-                    "du": 25206
-                  },
-                  "78b8c5c5ad3c6ea9e1147aa77aa9a1fb": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2018-08-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2018-09-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 29735,
-                    "du": 29736
-                  },
-                  "a223281e4e75ff4ff69a2c6bb58280e0": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2018-09-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2018-10-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 21041,
-                    "du": 21041
-                  },
-                  "6629121fdef976a66c0d9fb665101064": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2019-03-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2019-04-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 18998,
-                    "du": 18998
-                  },
-                  "d0c9972e6b968ea49810df1092b48c43": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2014-04-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2014-05-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 15281,
-                    "du": 15282
-                  },
-                  "0835ccff9b2547e459ee54187c95b931": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2015-01-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2015-02-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 14699,
-                    "du": 14699
-                  },
-                  "1411c0a2c5412a9611394536b7b82e6e": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-10-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-11-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 18802,
-                    "du": 18804
-                  },
-                  "1b11fa45f61ab6dbb9e94bf8d758a6b4": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2019-01-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2019-02-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 18012,
-                    "du": 18012
-                  },
-                  "7fb92e498c1fabf191657502ec6fd26f": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2013-01-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2014-01-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 2,
-                    "du": 2
-                  },
-                  "35adc33cd68c9966aba78588de80356e": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2014-12-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2015-01-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 18727,
-                    "du": 18727
-                  },
-                  "0beca00346b4eef027bcdce5ce5b6af4": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2015-03-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2015-04-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 15062,
-                    "du": 15063
-                  },
-                  "9452674b8b4aedfba84d245bc5e89084": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2016-10-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2016-11-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 17209,
-                    "du": 17209
-                  },
-                  "ef0d75f4a713c97f7a5dfd759d234eab": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2014-03-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2014-04-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 19559,
-                    "du": 19560
-                  },
-                  "0a96c02b9ae58afd9042441502892291": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2015-07-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2015-08-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 16323,
-                    "du": 16323
-                  },
-                  "38590239fbff125d21f3e2a8b4a95f95": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2016-06-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2016-07-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 16993,
-                    "du": 16993
-                  },
-                  "c96c6d2bbf9fdc73cfd55b866cb2cc34": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2014-05-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2014-06-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 15563,
-                    "du": 15564
-                  },
-                  "b7a10a4968e7564366fbff7bc1799a36": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2016-07-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2016-08-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 17698,
-                    "du": 17699
-                  },
-                  "db532ef5064a056e1987e49fa4421cf5": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2016-12-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-01-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 33680,
-                    "du": 33682
-                  },
-                  "89a35cf56c51254bbebc651b15d8ff74": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-11-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-12-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 17228,
-                    "du": 17229
-                  },
-                  "b564a758f6d067ad814194fbad172916": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2018-01-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2018-02-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 16660,
-                    "du": 16660
-                  },
-                  "95d28dfb1eac097c3f145de7f3ab84c6": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2015-11-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2015-12-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 19958,
-                    "du": 19959
-                  },
-                  "3cb868be26aafd62486f267cc03cb704": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2019-02-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2019-03-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 16615,
-                    "du": 16615
-                  },
-                  "9cd411503089b9c8e0be0aa73edd2e45": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "1999-10-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2000-01-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 0,
-                    "du": 0
-                  },
-                  "680cb8ec2a4eda96879421067d6cf9b9": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2014-07-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2014-08-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 16607,
-                    "du": 16607
-                  },
-                  "2033652a63d047ac2b32c8fcad51842a": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2015-06-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2015-07-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 15023,
-                    "du": 15023
-                  },
-                  "e10ea68a86e4feb60be51d173e75728e": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2019-04-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2019-05-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 16817,
-                    "du": 16818
-                  },
-                  "2c244ebee3e1b5842e987f6521e04947": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2014-01-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2015-01-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 0,
-                    "du": 201
-                  },
-                  "bf397be8dcaacc1b02f88142139c5e69": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2015-09-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2015-10-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 9184,
-                    "du": 9185
-                  },
-                  "949e2339ae2ddc0918fae1631f474831": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2015-01-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2016-01-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 0,
-                    "du": 877
-                  },
-                  "ad44f89d6264e0c7b19377cac638186e": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2016-01-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-01-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 0,
-                    "du": 95
-                  },
-                  "a9e05f7411a4e9ee16f7ab6038ca9368": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2014-06-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2014-07-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 15032,
-                    "du": 15033
-                  },
-                  "9366e63fe2e6164ef8ea27e38d56065c": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2015-02-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2015-03-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 13643,
-                    "du": 13643
-                  },
-                  "04da529cb23aa6bc56c2602f7aed4d30": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2015-08-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2015-09-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 19290,
-                    "du": 19290
-                  },
-                  "e565e0321667cdeb1af86ec7bf49eede": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2016-09-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2016-10-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 19360,
-                    "du": 19360
-                  },
-                  "0954babb2a7b144816f787e1b589e576": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2016-11-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2016-12-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 17861,
-                    "du": 17861
-                  },
-                  "5126fc5443d9ec5d10e0cfd535042f49": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-01-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-02-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 28103,
-                    "du": 28103
-                  },
-                  "65d8671c19bb4b48e357ad9908e910c8": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-04-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-05-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 16596,
-                    "du": 16740
-                  },
-                  "7bc50a93e42cb85dbf4d4fcc0270666f": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-07-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-08-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 16340,
-                    "du": 16340
-                  },
-                  "3664816f425a504ea803d86f3b2d2757": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2014-02-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2014-03-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 14169,
-                    "du": 14170
-                  },
-                  "908bf8b6796733011b791020657f0d0f": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2014-09-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2014-10-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 15223,
-                    "du": 15223
-                  },
-                  "6667c876f127768c2224f05f2a23a4e8": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2015-04-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2015-05-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 14356,
-                    "du": 14357
-                  },
-                  "63d521e4780aa7e60a10697b51e0a963": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-08-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-09-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 21535,
-                    "du": 21535
-                  },
-                  "25b19c613df2eb7135398caf11e713c6": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2014-08-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2014-09-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 17250,
-                    "du": 17250
-                  },
-                  "a092342a0758ec61943da9f1b779dc95": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2015-12-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2016-01-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 17090,
-                    "du": 17090
-                  },
-                  "592b7a075938adad3b79300b64efb85f": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2016-04-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2016-05-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 15989,
-                    "du": 15989
-                  },
-                  "c58ff83340d27f7553df8a901f12b65f": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2018-04-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2018-05-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 17645,
-                    "du": 17645
-                  },
-                  "3ceb52c43321dd97bf8f67d90db1678c": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2018-10-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2018-11-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 18074,
-                    "du": 18075
-                  },
-                  "49d52ce2294ce957e7029faa0ebb2560": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2013-12-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2014-01-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 14493,
-                    "du": 14493
-                  },
-                  "64ce5c0065152e6ab8a7c2babef5a655": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-02-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-03-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 19800,
-                    "du": 19800
-                  },
-                  "dd638090d231af36b5f1a8b6adfe00be": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-12-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2018-01-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 28987,
-                    "du": 28988
-                  },
-                  "ae8384508739b952e4eaea30abc9b2de": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2018-11-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2018-12-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 19197,
-                    "du": 19197
-                  },
-                  "627092e9e6f6caa8af23be4fe4825a08": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2014-01-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2014-02-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 14422,
-                    "du": 14423
-                  },
-                  "79d5a767117474254fb19985e76ccf2e": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-06-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-07-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 19273,
-                    "du": 19273
-                  },
-                  "519da56450c2b57b3de4f9100bef7eaa": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2018-05-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2018-06-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 18966,
-                    "du": 18967
-                  },
-                  "f2761075f5047e69fd731e24ffb8b98a": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-09-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-10-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 17516,
-                    "du": 17518
-                  },
-                  "8782638c3b4cc2040c7812f2f0d42882": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2018-12-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2019-01-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 19500,
-                    "du": 19502
-                  },
-                  "b877707baa0410b5c43c10a7fc14a1a1": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2016-01-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2016-02-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 14888,
-                    "du": 14888
-                  },
-                  "c828f7f4af27f3c251f0be9a0770ff6d": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-03-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-04-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 18721,
-                    "du": 18721
-                  },
-                  "310abdd7f4ae8bcd8f24e7a51e68db15": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-05-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-06-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 17760,
-                    "du": 17760
-                  },
-                  "81442704991eb718e4f6ee3f21ff633d": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2018-06-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2018-07-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 18861,
-                    "du": 18861
-                  },
-                  "086d5501a16f85841597be11161a11b4": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2015-05-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2015-06-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 14401,
-                    "du": 14402
-                  },
-                  "80c07ce0192b16f12dc7551e57113a97": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2015-10-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2015-11-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 13609,
-                    "du": 13610
-                  },
-                  "1290ef3eb2ed51e7de1cc9f00bb8410c": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2016-02-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2016-03-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 15736,
-                    "du": 15736
-                  },
-                  "c70f884b6ec178ca6c44a41dd526b1fa": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2016-08-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2016-09-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 17870,
-                    "du": 17870
-                  },
-                  "928f5b33b22185e894c0f5a187f638bc": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2018-03-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2018-04-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 16213,
-                    "du": 16213
-                  },
-                  "351ef9cf017bbedd4f0d1bfb83ee024c": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2014-10-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2014-11-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 16703,
-                    "du": 16703
-                  },
-                  "0dd7e15943605cfe7697cba177d97fb3": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2014-11-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2014-12-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 15940,
-                    "du": 15940
-                  },
-                  "2ac838f9c4d50fb4f480efebc7c9be54": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2016-05-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2016-06-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 16428,
-                    "du": 16428
-                  },
-                  "d6f1917e97cd67a6d90243106945c06e": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2016-03-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2016-04-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 16857,
-                    "du": 16857
-                  }
-                },
-                "debit": {
-                  "16ff91f05c2dc51b54d755404cc7146f": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2014-07-16T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 1,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2014-06-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2014-07-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24"
-                  },
-                  "0f052417ae77753e73f0367a96515989": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2014-06-17T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2014-05-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2014-06-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24"
-                  },
-                  "778e1d9e4952a5954d4a20b5d498e4ee": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2015-04-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 1,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2015-03-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2015-04-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24"
-                  },
-                  "b8c98e85b48b06c07bb824c9dc77c1ad": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2017-10-16T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-09-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-10-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24"
-                  },
-                  "a200f84b63f1e8286ef9d350ad69126b": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2017-06-09T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-04-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-05-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "2",
-                    "code_motif_ecart_negatif": "25"
-                  },
-                  "9d7e0e371452a2b15cff7d519aaa01ca": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2015-10-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 1,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2015-09-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2015-10-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24"
-                  },
-                  "4f225993920e05a1d52799d32d6a68d8": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2014-02-18T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2014-01-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2014-02-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24"
-                  },
-                  "92be067b43f5a7b060215425917e8d64": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2017-06-09T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 4,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-04-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-05-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "11",
-                    "code_motif_ecart_negatif": "25"
-                  },
-                  "1b2522fc10b18a5d14d525d214255574": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2017-06-09T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 5,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-04-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-05-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "12",
-                    "code_motif_ecart_negatif": "25"
-                  },
-                  "4f79a81a315ab1f20d16e00b81cd6649": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2017-11-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-10-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-11-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24"
-                  },
-                  "f1fef8a9b660f3be296a943bb8ea6f27": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2015-11-16T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2015-10-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2015-11-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24"
-                  },
-                  "55c8e2c59d097e5325a7a95ee9796e5a": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2015-05-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2015-04-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2015-05-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24"
-                  },
-                  "3a2c127e6308a5c8e96da0ecbdb9db84": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2017-12-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 1,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-11-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-12-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24"
-                  },
-                  "39de7a108138a4d89c43ada3674e812a": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2015-10-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2015-09-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2015-10-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24"
-                  },
-                  "98530d67646b39920aeba7be5e5be57b": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2014-07-16T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2014-06-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2014-07-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24"
-                  },
-                  "1046c8e2f658c8a85ae0876ad213fa26": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2018-01-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 1,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-12-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2018-01-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24"
-                  },
-                  "d69a31d7ff074e076620119ba42da672": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2018-08-16T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2018-07-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2018-08-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24"
-                  },
-                  "5f3b8bb146cfcab7854757ce2615e786": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2018-06-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 1,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2018-05-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2018-06-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24"
-                  },
-                  "cd58e25d3a62927be68346be32314a11": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2018-09-17T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2018-08-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2018-09-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24"
-                  },
-                  "c71c3e91371203418be83cda7b596f1c": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2017-05-18T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 144,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-04-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-05-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "25"
-                  },
-                  "3a18655c18dccebc1f247cdb7834a6d7": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2019-01-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 2,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2018-12-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2019-01-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24"
-                  },
-                  "7b4eac5877f5a0939574608a3b762b30": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2018-06-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2018-05-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2018-06-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24"
-                  },
-                  "737839ae53b65fa18d211413ca6d2f72": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2015-06-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2015-05-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2015-06-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24"
-                  },
-                  "4501f68c2eeeca4963e937d657ce619f": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2017-06-09T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 6,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-04-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-05-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "4",
-                    "code_motif_ecart_negatif": "25"
-                  },
-                  "93d0f5d365fa435915b3f7acfa4653f9": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2017-06-09T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 3,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-04-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-05-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "12",
-                    "code_motif_ecart_negatif": "25"
-                  },
-                  "3d0d4cc3b5a285f87aedb4138fac5348": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2014-03-18T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2014-02-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2014-03-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24"
-                  },
-                  "7c190280d1bed33d45147e5921a370a1": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2014-05-16T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 1,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2014-04-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2014-05-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24"
-                  },
-                  "0edfa16205e41867e2e461adf6437fc7": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2017-01-16T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2016-12-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-01-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24"
-                  },
-                  "bf2d7ba7f139f558ac73690c9f404349": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2017-11-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 2,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-10-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-11-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24"
-                  },
-                  "3a71f853b4b75d29638bbb78be919f14": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2015-06-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 1,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2015-05-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2015-06-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24"
-                  },
-                  "c547bd553b52a04069c80067fa2f3dd4": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2018-11-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 1,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2018-10-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2018-11-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24"
-                  },
-                  "724d58a0484fb39625c3fc3120ba42e1": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2016-08-16T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 1,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2016-07-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2016-08-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24"
-                  },
-                  "009052420de66d979bbc938d3dd50142": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2014-05-16T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2014-04-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2014-05-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24"
-                  },
-                  "288690e52f9fb994a46afee90c96ce5e": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2015-12-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2015-11-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2015-12-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24"
-                  },
-                  "3c87c8314fcec4fbcb8bb074de658f5c": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2014-03-18T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 1,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2014-02-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2014-03-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24"
-                  },
-                  "29aa93ea3f8b271b7288cbeda70029ca": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2014-06-17T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 1,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2014-05-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2014-06-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24"
-                  },
-                  "00f7f5eec53ae15d188fc58c319db32e": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2014-02-18T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 1,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2014-01-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2014-02-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24"
-                  },
-                  "145f519f484896eed0c490202d75ad4c": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2015-04-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2015-03-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2015-04-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24"
-                  },
-                  "e03711b65dd40b07dd0c27a2c8abc05a": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2019-05-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 1,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2019-04-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2019-05-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24"
-                  },
-                  "8d9a0e1912f6d60cc1c7ac252ea6abf8": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2015-05-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 1,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2015-04-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2015-05-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24"
-                  },
-                  "a4228968a416673f562426ddc097f166": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2018-01-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-12-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2018-01-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24"
-                  },
-                  "1ecb6c475d559c481c5df3aec85d07b7": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2017-01-16T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 2,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2016-12-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-01-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24"
-                  },
-                  "7a361ac18c0130c33ab618225fb7b182": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2014-04-16T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 1,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2014-03-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2014-04-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24"
-                  },
-                  "f58e667ee5d6b04b36e8be77874fafe2": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2015-11-16T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 1,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2015-10-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2015-11-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24"
-                  },
-                  "99a232fd28a4a4780ef2e964890cf061": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2016-08-16T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2016-07-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2016-08-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24"
-                  },
-                  "72a4653d8acb65861fdbadc4463add2f": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2017-10-16T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 2,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-09-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-10-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24"
-                  },
-                  "7deec528f3d711722b867594da6a8fbc": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2017-12-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-11-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-12-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24"
-                  },
-                  "518dd48d18a1cd1b48f691f3583de353": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2018-11-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2018-10-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2018-11-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24"
-                  },
-                  "faa2f0b4ab5dc98a0a369b060c5f5e43": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2018-09-17T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 1,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2018-08-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2018-09-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24"
-                  },
-                  "11073496afe62af8a6d72434f869594c": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2019-05-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2019-04-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2019-05-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24"
-                  },
-                  "86dcf7c1d4a6f4f15ed36a5e8e2593b0": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2019-01-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2018-12-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2019-01-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24"
-                  },
-                  "bf0efcbe12826d0514ec24d39fb7a4e3": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2014-04-16T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2014-03-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2014-04-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24"
-                  },
-                  "5c675c5078c82d21b2f0dace28fbce83": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2015-12-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 1,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2015-11-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2015-12-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24"
-                  },
-                  "ae6b54de4a456fddbecdd042409c4849": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2018-08-16T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 1,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2018-07-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2018-08-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24"
-                  }
-                },
-                "effectif": {
-                  "3bc60106d3284f4d729662969904dcfc": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2011-09-01T00:00:00Z"
-                    },
-                    "effectif": 21
-                  },
-                  "5a25e37089c4c6edf7650ac209cdf4a7": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2010-06-01T00:00:00Z"
-                    },
-                    "effectif": 25
-                  },
-                  "cca77a6a1838add7b7e0357cfaf38c0a": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2012-02-01T00:00:00Z"
-                    },
-                    "effectif": 21
-                  },
-                  "8625902e9cb49a4c3545356f58ebf0da": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2010-07-01T00:00:00Z"
-                    },
-                    "effectif": 26
-                  },
-                  "07769408d4bdcade6ffad324d7be69c1": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2011-04-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "afe1dd05adb0006a9f8f6db17d2e1be3": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2012-08-01T00:00:00Z"
-                    },
-                    "effectif": 20
-                  },
-                  "df9ea53314c2eb255e1c0f7b84bffb5f": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-07-01T00:00:00Z"
-                    },
-                    "effectif": 33
-                  },
-                  "40c84e3e66e39091244fd2835af9db1c": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2010-08-01T00:00:00Z"
-                    },
-                    "effectif": 26
-                  },
-                  "64c17685ce303a09f99af9f910b21b74": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2010-09-01T00:00:00Z"
-                    },
-                    "effectif": 25
-                  },
-                  "3483407e601d00308b337591c51d5735": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-03-01T00:00:00Z"
-                    },
-                    "effectif": 25
-                  },
-                  "bf3f0514c4c57b8ef90534164a3672e3": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2010-01-01T00:00:00Z"
-                    },
-                    "effectif": 35
-                  },
-                  "d7d9f85be09b929ce3449e53b83722ff": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2017-09-01T00:00:00Z"
-                    },
-                    "effectif": 29
-                  },
-                  "78985caa0e453817d22224a04bd87f72": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2013-06-01T00:00:00Z"
-                    },
-                    "effectif": 26
-                  },
-                  "e06a46d494165c1e0766cd3f2e82d942": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2012-01-01T00:00:00Z"
-                    },
-                    "effectif": 21
-                  },
-                  "f4a0abe29393b4aa74329481e1f89de8": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2012-03-01T00:00:00Z"
-                    },
-                    "effectif": 22
-                  },
-                  "091211ab4267ac681753a3ab491e8254": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2013-05-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "b90b4d4c604d1aa32ca3ad03ba79d68b": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-08-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "839f45789cf84983af3425f4c538c8c6": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-12-01T00:00:00Z"
-                    },
-                    "effectif": 31
-                  },
-                  "452a23370ff5a73e19d4d8c323a3ef83": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2010-11-01T00:00:00Z"
-                    },
-                    "effectif": 23
-                  },
-                  "35de39c8c943fa181f8b0477328983b3": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-02-01T00:00:00Z"
-                    },
-                    "effectif": 28
-                  },
-                  "cc1f4c1ba33e392cd00e94cd757dbd3a": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-10-01T00:00:00Z"
-                    },
-                    "effectif": 30
-                  },
-                  "4fa9ba0095b02294e6e118320fff5176": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2017-05-01T00:00:00Z"
-                    },
-                    "effectif": 29
-                  },
-                  "1f2bcfc6fd776fafeb7e00a1898c4580": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2011-10-01T00:00:00Z"
-                    },
-                    "effectif": 21
-                  },
-                  "a05d4a1cf20c8aee7a0f6355c38794f1": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2012-07-01T00:00:00Z"
-                    },
-                    "effectif": 21
-                  },
-                  "359c9a513d51ee261e4660693cf3eb15": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-07-01T00:00:00Z"
-                    },
-                    "effectif": 30
-                  },
-                  "6b2e3e202987a96e1132fd29db2cde0a": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-09-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "19c39b4e29c031b501798feab82e7428": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2017-03-01T00:00:00Z"
-                    },
-                    "effectif": 28
-                  },
-                  "41828e04c6363480109cf46da20cc5a8": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-03-01T00:00:00Z"
-                    },
-                    "effectif": 31
-                  },
-                  "c8ed3cb84b5365b6bd13141990d714f7": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2010-02-01T00:00:00Z"
-                    },
-                    "effectif": 28
-                  },
-                  "9c190f2ec0676b5f80bd72baa83a530c": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2012-04-01T00:00:00Z"
-                    },
-                    "effectif": 23
-                  },
-                  "39f8c954db204f7b8a2d20df78ef499d": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-01-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "83e667962e0b988e6380ce51e14e1c87": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2010-12-01T00:00:00Z"
-                    },
-                    "effectif": 22
-                  },
-                  "85ebc9b6de9346bd788186f624ec904e": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-12-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "b051d39e74d907a587302f2761c5b725": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2013-08-01T00:00:00Z"
-                    },
-                    "effectif": 26
-                  },
-                  "bfd65d9ec998f305bb54a159902666ad": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-09-01T00:00:00Z"
-                    },
-                    "effectif": 30
-                  },
-                  "513e072c11e5a9d5865598234190b0e3": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2013-12-01T00:00:00Z"
-                    },
-                    "effectif": 23
-                  },
-                  "660e96354d59ed4328db4529f0d51f08": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2017-07-01T00:00:00Z"
-                    },
-                    "effectif": 31
-                  },
-                  "844ec20fa5c93d6d3351f9ecfd2b32da": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-07-01T00:00:00Z"
-                    },
-                    "effectif": 33
-                  },
-                  "cc51f65c6d6cd77f39d22742e085a396": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-05-01T00:00:00Z"
-                    },
-                    "effectif": 30
-                  },
-                  "dc98ba9d3cf98ed8b294cfba8c369ca8": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2012-12-01T00:00:00Z"
-                    },
-                    "effectif": 22
-                  },
-                  "fc4a74c126a5e41e5430f2fa94a4e75c": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-05-01T00:00:00Z"
-                    },
-                    "effectif": 33
-                  },
-                  "7fe50bda767992391b3072264ccb4195": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-04-01T00:00:00Z"
-                    },
-                    "effectif": 31
-                  },
-                  "2d295be944400570dd09f808db04342c": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2013-10-01T00:00:00Z"
-                    },
-                    "effectif": 25
-                  },
-                  "97a1e0a1783b1a1798d99d76c9170788": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-08-01T00:00:00Z"
-                    },
-                    "effectif": 33
-                  },
-                  "c711fc28736c18c3d4e2c85ad45e0e5c": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-02-01T00:00:00Z"
-                    },
-                    "effectif": 30
-                  },
-                  "437520e0c5cd42880751c847c2d56df6": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2011-12-01T00:00:00Z"
-                    },
-                    "effectif": 20
-                  },
-                  "1a044d6f27790d8a225b6befafabece0": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2011-07-01T00:00:00Z"
-                    },
-                    "effectif": 22
-                  },
-                  "87b4c7a336d2dfcc495ff17fedb29dd4": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2011-11-01T00:00:00Z"
-                    },
-                    "effectif": 20
-                  },
-                  "f95139cc81678393873ef9fd10d9921e": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-03-01T00:00:00Z"
-                    },
-                    "effectif": 26
-                  },
-                  "096df3b9e65b1b22dbb3b9f5cb4e63e2": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-04-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "bc01804bfc401f22e945d1f5b8b58cb0": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2010-10-01T00:00:00Z"
-                    },
-                    "effectif": 23
-                  },
-                  "ade0f49ea56b413538b7288a752728a3": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2011-03-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "ae13a63ebd17a320c795a62d1641a200": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2012-10-01T00:00:00Z"
-                    },
-                    "effectif": 21
-                  },
-                  "3e20d0b5db039ff6172b670b65b4cabf": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-02-01T00:00:00Z"
-                    },
-                    "effectif": 26
-                  },
-                  "495d60ea465f7156078b9b48c61b7761": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2010-03-01T00:00:00Z"
-                    },
-                    "effectif": 27
-                  },
-                  "67c3aa41fd5683063bc477a32424e5aa": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-03-01T00:00:00Z"
-                    },
-                    "effectif": 29
-                  },
-                  "c76f55e94e31288d25b1b90f0fe9406f": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-09-01T00:00:00Z"
-                    },
-                    "effectif": 31
-                  },
-                  "d6bdf2174b4f8ee04d54810202c3c068": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-06-01T00:00:00Z"
-                    },
-                    "effectif": 30
-                  },
-                  "2a8ee2a505597197e29dd18844647161": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2013-04-01T00:00:00Z"
-                    },
-                    "effectif": 22
-                  },
-                  "90a77b8b3fcb875dbb5204ee38c71c95": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2013-03-01T00:00:00Z"
-                    },
-                    "effectif": 22
-                  },
-                  "57fb2aad186e7d549c526ba4abe45390": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2013-11-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "931b1279e07782acdddb4a173068351a": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-07-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "e3980d9c0091678c2612ac0bfee7c84e": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-02-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "3a458bc806cb4c692d74db65f3c4fd4b": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-02-01T00:00:00Z"
-                    },
-                    "effectif": 27
-                  },
-                  "6a03464a8b2974375e8cf697f3d97078": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-11-01T00:00:00Z"
-                    },
-                    "effectif": 31
-                  },
-                  "28f29ccdc47eb5616cec3b79edb39d19": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2012-11-01T00:00:00Z"
-                    },
-                    "effectif": 22
-                  },
-                  "c69b9833e97acddff2213166143a0286": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-08-01T00:00:00Z"
-                    },
-                    "effectif": 31
-                  },
-                  "c364c12bdcb73064f7d5a783dbcf27df": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-11-01T00:00:00Z"
-                    },
-                    "effectif": 31
-                  },
-                  "b4ba68358ded3722b47e7af74aa66e52": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2013-07-01T00:00:00Z"
-                    },
-                    "effectif": 26
-                  },
-                  "f73466c78caccf15b8cb8f4b96053d02": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-09-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "78db1c37be7b7eea668df09c5891f390": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-10-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "f5d96cafccc0d4392c27371618b748b3": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-11-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "0f6c38d9579a39e0aa0a0af9c4edf13f": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2017-04-01T00:00:00Z"
-                    },
-                    "effectif": 28
-                  },
-                  "4052f4de581197123f99b863d3f6c0bc": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2017-10-01T00:00:00Z"
-                    },
-                    "effectif": 29
-                  },
-                  "57b3286bf6ae6eb6ad291df499dc47e6": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-01-01T00:00:00Z"
-                    },
-                    "effectif": 23
-                  },
-                  "81f92c80ca618933a2e68e8ea02de7fb": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2017-08-01T00:00:00Z"
-                    },
-                    "effectif": 29
-                  },
-                  "e7929b5085281cd3d922b762b9a8861c": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-06-01T00:00:00Z"
-                    },
-                    "effectif": 33
-                  },
-                  "acc3720d35465044723a3281d2961994": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-01-01T00:00:00Z"
-                    },
-                    "effectif": 30
-                  },
-                  "11206224e26cddbff659f6ae10081e0b": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-10-01T00:00:00Z"
-                    },
-                    "effectif": 23
-                  },
-                  "0491f4db226240374f935ace7304905c": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2011-05-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "67622b6d9570f87717c0dfc02bd36a4c": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2013-01-01T00:00:00Z"
-                    },
-                    "effectif": 23
-                  },
-                  "7cb882b0dedf2870ccadb5f2db3a7e59": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-08-01T00:00:00Z"
-                    },
-                    "effectif": 27
-                  },
-                  "cc5683d5894f9dfc7e9584d740543fe0": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-01-01T00:00:00Z"
-                    },
-                    "effectif": 28
-                  },
-                  "b07ab0a5f51123b8b66d814dd7390d44": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-04-01T00:00:00Z"
-                    },
-                    "effectif": 31
-                  },
-                  "7d7499e40d056b31415d23d33d425635": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2011-01-01T00:00:00Z"
-                    },
-                    "effectif": 21
-                  },
-                  "45b9f9ca8901245dcbe6f67317e481b0": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2011-02-01T00:00:00Z"
-                    },
-                    "effectif": 21
-                  },
-                  "3cddbc45f4bccbca7806850496efa1dc": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-01-01T00:00:00Z"
-                    },
-                    "effectif": 27
-                  },
-                  "2069e061ded89f0aedddc18a0fec29b2": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2017-06-01T00:00:00Z"
-                    },
-                    "effectif": 31
-                  },
-                  "1f96f891d2209d0abfbaffd17588b98a": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2017-12-01T00:00:00Z"
-                    },
-                    "effectif": 28
-                  },
-                  "5c19e127c8c6fca9cb7ad121df89b2a7": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-12-01T00:00:00Z"
-                    },
-                    "effectif": 31
-                  },
-                  "9b0454af1fa899d72cd11f7f0cd1d63b": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2010-04-01T00:00:00Z"
-                    },
-                    "effectif": 26
-                  },
-                  "6d91eecf6c68d4661043acb74d11653e": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-06-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "cb9ff9b7c325db508cc10d9883d3b0d0": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-04-01T00:00:00Z"
-                    },
-                    "effectif": 25
-                  },
-                  "988ea4f2ace5cc724e8e7b986bb88ca0": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-10-01T00:00:00Z"
-                    },
-                    "effectif": 31
-                  },
-                  "001789db3b9fdeffc6e744e7210bd103": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2013-02-01T00:00:00Z"
-                    },
-                    "effectif": 23
-                  },
-                  "048c4465da26e720225b09b9b6743685": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2011-08-01T00:00:00Z"
-                    },
-                    "effectif": 21
-                  },
-                  "46ed652a69aa5c4a358bbe79acb51cec": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2012-06-01T00:00:00Z"
-                    },
-                    "effectif": 22
-                  },
-                  "6b63cfd831885aa590d41e97756c46fc": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-06-01T00:00:00Z"
-                    },
-                    "effectif": 33
-                  },
-                  "debad1334e88707077f3f058b4d7af5e": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2017-01-01T00:00:00Z"
-                    },
-                    "effectif": 30
-                  },
-                  "a4eb97a93eb2dc1f3fc9987248e78f73": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2010-05-01T00:00:00Z"
-                    },
-                    "effectif": 25
-                  },
-                  "62b455a4a0ec9570c0d21bf68f5480c9": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2013-09-01T00:00:00Z"
-                    },
-                    "effectif": 26
-                  },
-                  "ed19773f53e37b0d139bdaaa99f37eb6": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-05-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "ed091d6514adff3f4651d5b58c2c103a": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-12-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "c4d28d3f8be473166285967c4f237d24": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2017-02-01T00:00:00Z"
-                    },
-                    "effectif": 30
-                  },
-                  "d02e6f86414566107754a03a2c4046d6": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-05-01T00:00:00Z"
-                    },
-                    "effectif": 25
-                  },
-                  "9acd85a3a95b91a9f5d26398dd101667": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-04-01T00:00:00Z"
-                    },
-                    "effectif": 29
-                  },
-                  "8464c1a833684f84b91357c71eda7029": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2017-11-01T00:00:00Z"
-                    },
-                    "effectif": 29
-                  },
-                  "d0cf151d393ec5d27411423a9f233c97": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-03-01T00:00:00Z"
-                    },
-                    "effectif": 31
-                  },
-                  "d47a7d5e05d1c95f73b1ab671d06babb": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2011-06-01T00:00:00Z"
-                    },
-                    "effectif": 22
-                  },
-                  "cdf19fe90090b3e70bcdc2dbf101d293": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2012-09-01T00:00:00Z"
-                    },
-                    "effectif": 20
-                  },
-                  "0af08022f55553fb1c457387defd2dfa": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-11-01T00:00:00Z"
-                    },
-                    "effectif": 23
-                  },
-                  "a61bde9d8ef6ec045a9bedbddec08e86": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2012-05-01T00:00:00Z"
-                    },
-                    "effectif": 23
-                  }
-                }
-              },
-              "1906_4": {
-                "reporder": {}
-              },
-              "1906_1": {
-                "sirene": {
-                  "8bc4242fffc943f45406fc79fcb96ee0": {
-                    "siren": "404338683",
-                    "nic": "00018",
-                    "siege": true,
-                    "code_postal": "38150",
-                    "departement": "38",
-                    "commune": "CHANAS",
-                    "ape": "4752B",
-                    "date_creation": {
-                      "$date": "1996-01-31T23:00:00Z"
-                    },
-                    "longitude": 4.80859,
-                    "lattitude": 45.32452,
-                    "adresse": [
-                      "BRICOCASH",
-                      "RN 7",
-                      "PARC DU SOLEIL",
-                      "38150",
-                      "CHANAS",
-                      "Parc du Soleil 38150 Chanas"
-                    ]
-                  }
-                }
-              },
-              "1901_interim": {
-                "interim": {
-                  "980679ad48d7f19f23960bce51b47de8": {
-                    "siret": "40433868300018",
-                    "periode": {
-                      "$date": "2014-02-01T00:00:00Z"
-                    },
-                    "etp": 0
-                  },
-                  "7aa9f1a11ba0c653f0ccec13567b15fe": {
-                    "siret": "40433868300018",
-                    "periode": {
-                      "$date": "2014-12-01T00:00:00Z"
-                    },
-                    "etp": 0
-                  },
-                  "3a7bfee455d6d1b30a80956d940bda71": {
-                    "siret": "40433868300018",
-                    "periode": {
-                      "$date": "2015-02-01T00:00:00Z"
-                    },
-                    "etp": 0
-                  },
-                  "4350f0cbe837beb144358171dbfce8de": {
-                    "siret": "40433868300018",
-                    "periode": {
-                      "$date": "2015-03-01T00:00:00Z"
-                    },
-                    "etp": 1.1071
-                  },
-                  "2dc4bdcc7b61ff1635d6b1949d2d4ad0": {
-                    "siret": "40433868300018",
-                    "periode": {
-                      "$date": "2015-04-01T00:00:00Z"
-                    },
-                    "etp": 1.1071
-                  },
-                  "8e49758294425e7334c607cfa3f4c6ef": {
-                    "siret": "40433868300018",
-                    "periode": {
-                      "$date": "2015-06-01T00:00:00Z"
-                    },
-                    "etp": 0
-                  },
-                  "fb761c79efd4435cd15ddcc735692573": {
-                    "siret": "40433868300018",
-                    "periode": {
-                      "$date": "2015-08-01T00:00:00Z"
-                    },
-                    "etp": 0
-                  },
-                  "521209a2b12623bddf52b68d593b95dc": {
-                    "siret": "40433868300018",
-                    "periode": {
-                      "$date": "2015-10-01T00:00:00Z"
-                    },
-                    "etp": 1.1071
-                  },
-                  "caaad8d8b9088264a3773e3b0e1c6cde": {
-                    "siret": "40433868300018",
-                    "periode": {
-                      "$date": "2015-11-01T00:00:00Z"
-                    },
-                    "etp": 1.1071
-                  },
-                  "fa18ba6183fa6b19fd8a6855c076fde7": {
-                    "siret": "40433868300018",
-                    "periode": {
-                      "$date": "2015-12-01T00:00:00Z"
-                    },
-                    "etp": 1.1071
-                  },
-                  "0f54b82afe4ccbc0a5bcba9c1e0bddf6": {
-                    "siret": "40433868300018",
-                    "periode": {
-                      "$date": "2016-01-01T00:00:00Z"
-                    },
-                    "etp": 0
-                  },
-                  "aee11df76e0b8b2c74890028862d1885": {
-                    "siret": "40433868300018",
-                    "periode": {
-                      "$date": "2016-02-01T00:00:00Z"
-                    },
-                    "etp": 0
-                  },
-                  "a6e96e37d1d87fe9ee7076f75aac4c5a": {
-                    "siret": "40433868300018",
-                    "periode": {
-                      "$date": "2016-03-01T00:00:00Z"
-                    },
-                    "etp": 1.1071
-                  },
-                  "e5ef2da2352f2a5e4c68282f3e120da2": {
-                    "siret": "40433868300018",
-                    "periode": {
-                      "$date": "2016-04-01T00:00:00Z"
-                    },
-                    "etp": 0
-                  },
-                  "0f01fdb68c57c16759bd9849e9bf0a63": {
-                    "siret": "40433868300018",
-                    "periode": {
-                      "$date": "2016-05-01T00:00:00Z"
-                    },
-                    "etp": 0.22142
-                  },
-                  "f46cfbbe4049349cfbcea2f1a7350225": {
-                    "siret": "40433868300018",
-                    "periode": {
-                      "$date": "2017-03-01T00:00:00Z"
-                    },
-                    "etp": 0.2
-                  },
-                  "4922285788f28fbb6b7d86dc86dcd829": {
-                    "siret": "40433868300018",
-                    "periode": {
-                      "$date": "2017-04-01T00:00:00Z"
-                    },
-                    "etp": 0
-                  },
-                  "ae12e1b6ca42a55d6bdbb1242f2528b6": {
-                    "siret": "40433868300018",
-                    "periode": {
-                      "$date": "2017-07-01T00:00:00Z"
-                    },
-                    "etp": 0
-                  },
-                  "452c46ead0536ca9fd2e8dcfe60404e5": {
-                    "siret": "40433868300018",
-                    "periode": {
-                      "$date": "2018-01-01T00:00:00Z"
-                    },
-                    "etp": 0
-                  },
-                  "e2aa2919705476ab55b966dcaf3c2d38": {
-                    "siret": "40433868300018",
-                    "periode": {
-                      "$date": "2018-02-01T00:00:00Z"
-                    },
-                    "etp": 1
-                  },
-                  "43b56e520346158402b88de81199c0f4": {
-                    "siret": "40433868300018",
-                    "periode": {
-                      "$date": "2018-03-01T00:00:00Z"
-                    },
-                    "etp": 0
-                  },
-                  "59a0f3afb7d83cf93bcaf7f83a0be03c": {
-                    "siret": "40433868300018",
-                    "periode": {
-                      "$date": "2018-04-01T00:00:00Z"
-                    },
-                    "etp": 0
-                  },
-                  "dc80134c11cd4a0372140b37c995ad1c": {
-                    "siret": "40433868300018",
-                    "periode": {
-                      "$date": "2018-05-01T00:00:00Z"
-                    },
-                    "etp": 0
-                  },
-                  "ca662ccada6180b5ff58928d049bc5bf": {
-                    "siret": "40433868300018",
-                    "periode": {
-                      "$date": "2018-08-01T00:00:00Z"
-                    },
-                    "etp": 0
-                  }
-                }
-              },
-              "2007_1": {
-                "apdemande": {
-                  "f9b3e9b3df6cb5a8e8010e36fadfdb03": {
-                    "id_demande": "038BDPO0100",
-                    "effectif_entreprise": 34,
-                    "effectif": 34,
-                    "date_statut": {
-                      "$date": "2020-04-27T00:00:00Z"
-                    },
-                    "periode": {
-                      "start": {
-                        "$date": "2020-03-16T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2020-06-30T00:00:00Z"
-                      }
-                    },
-                    "hta": 6000,
-                    "mta": null,
-                    "effectif_autorise": 32,
-                    "motif_recours_se": 5,
-                    "heure_consommee": 4881.34,
-                    "montant_consommee": 39864.77,
-                    "effectif_consomme": 69
-                  }
-                },
-                "apconso": {
-                  "fb7af36ec43f861816dbca8372a4ceea": {
-                    "id_conso": "038BDPO0100",
-                    "heure_consomme": 402.34,
-                    "montant": 3238,
-                    "effectif": 9,
-                    "periode": {
-                      "$date": "2020-05-01T00:00:00Z"
-                    }
-                  },
-                  "b048124a6ed4f2ea4c4f3fb740342a33": {
-                    "id_conso": "038BDPO0100",
-                    "heure_consomme": 47,
-                    "montant": 323,
-                    "effectif": 2,
-                    "periode": {
-                      "$date": "2020-06-01T00:00:00Z"
-                    }
-                  }
-                },
-                "compte": {
-                  "f563a2a58143acc266887a4936174462": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2020-07-01T00:00:00Z"
-                    }
-                  },
-                  "f8e646c818281e1c70c326a1d978bd9a": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2020-08-01T00:00:00Z"
-                    }
-                  },
-                  "30b59fd5357f46c274e2253e11852d1f": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2020-09-01T00:00:00Z"
-                    }
-                  },
-                  "ef5799f8e5a7bfc3996d4cfb6cc54d60": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2020-06-01T00:00:00Z"
-                    }
-                  }
-                },
-                "cotisation": {
-                  "c9c333167a8c67f74223d93ae1027586": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2020-05-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2020-06-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 17141,
-                    "du": 17141
-                  }
-                },
-                "reporder": {},
-                "compact": {
-                  "delete": {
-                    "apdemande": [
-                      "ac7a480e50258a3eb4b62379ff4cc762"
-                    ],
-                    "effectif": [
-                      "3bc60106d3284f4d729662969904dcfc",
-                      "5a25e37089c4c6edf7650ac209cdf4a7",
-                      "cca77a6a1838add7b7e0357cfaf38c0a",
-                      "8625902e9cb49a4c3545356f58ebf0da",
-                      "07769408d4bdcade6ffad324d7be69c1",
-                      "afe1dd05adb0006a9f8f6db17d2e1be3",
-                      "df9ea53314c2eb255e1c0f7b84bffb5f",
-                      "40c84e3e66e39091244fd2835af9db1c",
-                      "64c17685ce303a09f99af9f910b21b74",
-                      "3483407e601d00308b337591c51d5735",
-                      "bf3f0514c4c57b8ef90534164a3672e3",
-                      "d7d9f85be09b929ce3449e53b83722ff",
-                      "78985caa0e453817d22224a04bd87f72",
-                      "e06a46d494165c1e0766cd3f2e82d942",
-                      "f4a0abe29393b4aa74329481e1f89de8",
-                      "091211ab4267ac681753a3ab491e8254",
-                      "b90b4d4c604d1aa32ca3ad03ba79d68b",
-                      "839f45789cf84983af3425f4c538c8c6",
-                      "452a23370ff5a73e19d4d8c323a3ef83",
-                      "35de39c8c943fa181f8b0477328983b3",
-                      "cc1f4c1ba33e392cd00e94cd757dbd3a",
-                      "4fa9ba0095b02294e6e118320fff5176",
-                      "1f2bcfc6fd776fafeb7e00a1898c4580",
-                      "a05d4a1cf20c8aee7a0f6355c38794f1",
-                      "359c9a513d51ee261e4660693cf3eb15",
-                      "6b2e3e202987a96e1132fd29db2cde0a",
-                      "19c39b4e29c031b501798feab82e7428",
-                      "41828e04c6363480109cf46da20cc5a8",
-                      "c8ed3cb84b5365b6bd13141990d714f7",
-                      "9c190f2ec0676b5f80bd72baa83a530c",
-                      "39f8c954db204f7b8a2d20df78ef499d",
-                      "83e667962e0b988e6380ce51e14e1c87",
-                      "85ebc9b6de9346bd788186f624ec904e",
-                      "b051d39e74d907a587302f2761c5b725",
-                      "bfd65d9ec998f305bb54a159902666ad",
-                      "513e072c11e5a9d5865598234190b0e3",
-                      "660e96354d59ed4328db4529f0d51f08",
-                      "844ec20fa5c93d6d3351f9ecfd2b32da",
-                      "cc51f65c6d6cd77f39d22742e085a396",
-                      "dc98ba9d3cf98ed8b294cfba8c369ca8",
-                      "fc4a74c126a5e41e5430f2fa94a4e75c",
-                      "7fe50bda767992391b3072264ccb4195",
-                      "2d295be944400570dd09f808db04342c",
-                      "97a1e0a1783b1a1798d99d76c9170788",
-                      "c711fc28736c18c3d4e2c85ad45e0e5c",
-                      "437520e0c5cd42880751c847c2d56df6",
-                      "1a044d6f27790d8a225b6befafabece0",
-                      "87b4c7a336d2dfcc495ff17fedb29dd4",
-                      "f95139cc81678393873ef9fd10d9921e",
-                      "096df3b9e65b1b22dbb3b9f5cb4e63e2",
-                      "bc01804bfc401f22e945d1f5b8b58cb0",
-                      "ade0f49ea56b413538b7288a752728a3",
-                      "ae13a63ebd17a320c795a62d1641a200",
-                      "3e20d0b5db039ff6172b670b65b4cabf",
-                      "495d60ea465f7156078b9b48c61b7761",
-                      "67c3aa41fd5683063bc477a32424e5aa",
-                      "c76f55e94e31288d25b1b90f0fe9406f",
-                      "d6bdf2174b4f8ee04d54810202c3c068",
-                      "2a8ee2a505597197e29dd18844647161",
-                      "90a77b8b3fcb875dbb5204ee38c71c95",
-                      "57fb2aad186e7d549c526ba4abe45390",
-                      "931b1279e07782acdddb4a173068351a",
-                      "e3980d9c0091678c2612ac0bfee7c84e",
-                      "3a458bc806cb4c692d74db65f3c4fd4b",
-                      "6a03464a8b2974375e8cf697f3d97078",
-                      "28f29ccdc47eb5616cec3b79edb39d19",
-                      "c69b9833e97acddff2213166143a0286",
-                      "c364c12bdcb73064f7d5a783dbcf27df",
-                      "b4ba68358ded3722b47e7af74aa66e52",
-                      "f73466c78caccf15b8cb8f4b96053d02",
-                      "78db1c37be7b7eea668df09c5891f390",
-                      "f5d96cafccc0d4392c27371618b748b3",
-                      "0f6c38d9579a39e0aa0a0af9c4edf13f",
-                      "4052f4de581197123f99b863d3f6c0bc",
-                      "57b3286bf6ae6eb6ad291df499dc47e6",
-                      "81f92c80ca618933a2e68e8ea02de7fb",
-                      "e7929b5085281cd3d922b762b9a8861c",
-                      "acc3720d35465044723a3281d2961994",
-                      "11206224e26cddbff659f6ae10081e0b",
-                      "0491f4db226240374f935ace7304905c",
-                      "67622b6d9570f87717c0dfc02bd36a4c",
-                      "7cb882b0dedf2870ccadb5f2db3a7e59",
-                      "cc5683d5894f9dfc7e9584d740543fe0",
-                      "b07ab0a5f51123b8b66d814dd7390d44",
-                      "7d7499e40d056b31415d23d33d425635",
-                      "45b9f9ca8901245dcbe6f67317e481b0",
-                      "3cddbc45f4bccbca7806850496efa1dc",
-                      "2069e061ded89f0aedddc18a0fec29b2",
-                      "1f96f891d2209d0abfbaffd17588b98a",
-                      "5c19e127c8c6fca9cb7ad121df89b2a7",
-                      "9b0454af1fa899d72cd11f7f0cd1d63b",
-                      "6d91eecf6c68d4661043acb74d11653e",
-                      "cb9ff9b7c325db508cc10d9883d3b0d0",
-                      "988ea4f2ace5cc724e8e7b986bb88ca0",
-                      "001789db3b9fdeffc6e744e7210bd103",
-                      "048c4465da26e720225b09b9b6743685",
-                      "46ed652a69aa5c4a358bbe79acb51cec",
-                      "6b63cfd831885aa590d41e97756c46fc",
-                      "debad1334e88707077f3f058b4d7af5e",
-                      "a4eb97a93eb2dc1f3fc9987248e78f73",
-                      "62b455a4a0ec9570c0d21bf68f5480c9",
-                      "ed19773f53e37b0d139bdaaa99f37eb6",
-                      "ed091d6514adff3f4651d5b58c2c103a",
-                      "c4d28d3f8be473166285967c4f237d24",
-                      "d02e6f86414566107754a03a2c4046d6",
-                      "9acd85a3a95b91a9f5d26398dd101667",
-                      "8464c1a833684f84b91357c71eda7029",
-                      "d0cf151d393ec5d27411423a9f233c97",
-                      "d47a7d5e05d1c95f73b1ab671d06babb",
-                      "cdf19fe90090b3e70bcdc2dbf101d293",
-                      "0af08022f55553fb1c457387defd2dfa",
-                      "a61bde9d8ef6ec045a9bedbddec08e86",
-                      "73f1925d1345262d49b15956c3339d30",
-                      "73fda970e5d3105a224f74877017ab13",
-                      "43380cc9b5303ff2542d2f2ce6cfa285",
-                      "faed516f4cad0866e2f3183891476792",
-                      "9749a601302dbad5663dd9463a19ee44",
-                      "53206905425c3923e15dc63ef4737e45",
-                      "026dc495b8f06d297e1c4de699fd69cd",
-                      "f9058b3c36afde9e6e0d30af9491c63c",
-                      "d38aa7c928586aa5b8de340ce9c8b522"
-                    ]
-                  }
-                }
-              },
-              "2009_3": {
-                "sirene": {
-                  "bc9a5c83f59095f3925f3c9b322b2894": {
-                    "siren": "404338683",
-                    "nic": "00018",
-                    "siege": true,
-                    "complement_adresse": "RN 7",
-                    "voie": "PARC DU SOLEIL",
-                    "commune": "CHANAS",
-                    "code_commune": "38072",
-                    "code_postal": "38150",
-                    "departement": "38",
-                    "ape": "4752B",
-                    "date_creation": {
-                      "$date": "1996-01-31T23:00:00Z"
-                    },
-                    "longitude": 4.809034,
-                    "latitude": 45.324629
-                  }
-                },
-                "reporder": {},
-                "compact": {
-                  "delete": {
-                    "sirene": [
-                      "877ef1c808260e6d007e473f55e0885d"
-                    ]
-                  }
-                }
-              },
-              "2009_4": {
-                "effectif": {
-                  "f73466c78caccf15b8cb8f4b96053d02": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-09-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "ed091d6514adff3f4651d5b58c2c103a": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-12-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "81f92c80ca618933a2e68e8ea02de7fb": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2017-08-01T00:00:00Z"
-                    },
-                    "effectif": 29
-                  },
-                  "2a8ee2a505597197e29dd18844647161": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2013-04-01T00:00:00Z"
-                    },
-                    "effectif": 22
-                  },
-                  "513e072c11e5a9d5865598234190b0e3": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2013-12-01T00:00:00Z"
-                    },
-                    "effectif": 23
-                  },
-                  "3e20d0b5db039ff6172b670b65b4cabf": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-02-01T00:00:00Z"
-                    },
-                    "effectif": 26
-                  },
-                  "f95139cc81678393873ef9fd10d9921e": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-03-01T00:00:00Z"
-                    },
-                    "effectif": 26
-                  },
-                  "c76f55e94e31288d25b1b90f0fe9406f": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-09-01T00:00:00Z"
-                    },
-                    "effectif": 31
-                  },
-                  "660e96354d59ed4328db4529f0d51f08": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2017-07-01T00:00:00Z"
-                    },
-                    "effectif": 31
-                  },
-                  "53206905425c3923e15dc63ef4737e45": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-08-01T00:00:00Z"
-                    },
-                    "effectif": 33
-                  },
-                  "f4a0abe29393b4aa74329481e1f89de8": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2012-03-01T00:00:00Z"
-                    },
-                    "effectif": 22
-                  },
-                  "41828e04c6363480109cf46da20cc5a8": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-03-01T00:00:00Z"
-                    },
-                    "effectif": 31
-                  },
-                  "5c19e127c8c6fca9cb7ad121df89b2a7": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-12-01T00:00:00Z"
-                    },
-                    "effectif": 31
-                  },
-                  "43380cc9b5303ff2542d2f2ce6cfa285": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-05-01T00:00:00Z"
-                    },
-                    "effectif": 32
-                  },
-                  "b4ba68358ded3722b47e7af74aa66e52": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2013-07-01T00:00:00Z"
-                    },
-                    "effectif": 26
-                  },
-                  "096df3b9e65b1b22dbb3b9f5cb4e63e2": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-04-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "f5d96cafccc0d4392c27371618b748b3": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-11-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "c69b9833e97acddff2213166143a0286": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-08-01T00:00:00Z"
-                    },
-                    "effectif": 31
-                  },
-                  "acc3720d35465044723a3281d2961994": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-01-01T00:00:00Z"
-                    },
-                    "effectif": 30
-                  },
-                  "7d7499e40d056b31415d23d33d425635": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2011-01-01T00:00:00Z"
-                    },
-                    "effectif": 21
-                  },
-                  "dc98ba9d3cf98ed8b294cfba8c369ca8": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2012-12-01T00:00:00Z"
-                    },
-                    "effectif": 22
-                  },
-                  "2d295be944400570dd09f808db04342c": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2013-10-01T00:00:00Z"
-                    },
-                    "effectif": 25
-                  },
-                  "d02e6f86414566107754a03a2c4046d6": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-05-01T00:00:00Z"
-                    },
-                    "effectif": 25
-                  },
-                  "6b2e3e202987a96e1132fd29db2cde0a": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-09-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "07769408d4bdcade6ffad324d7be69c1": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2011-04-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "091211ab4267ac681753a3ab491e8254": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2013-05-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "67c3aa41fd5683063bc477a32424e5aa": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-03-01T00:00:00Z"
-                    },
-                    "effectif": 29
-                  },
-                  "87b4c7a336d2dfcc495ff17fedb29dd4": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2011-11-01T00:00:00Z"
-                    },
-                    "effectif": 20
-                  },
-                  "b90b4d4c604d1aa32ca3ad03ba79d68b": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-08-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "c364c12bdcb73064f7d5a783dbcf27df": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-11-01T00:00:00Z"
-                    },
-                    "effectif": 31
-                  },
-                  "73f1925d1345262d49b15956c3339d30": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-06-01T00:00:00Z"
-                    },
-                    "effectif": 32
-                  },
-                  "90a77b8b3fcb875dbb5204ee38c71c95": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2013-03-01T00:00:00Z"
-                    },
-                    "effectif": 22
-                  },
-                  "78985caa0e453817d22224a04bd87f72": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2013-06-01T00:00:00Z"
-                    },
-                    "effectif": 26
-                  },
-                  "df9ea53314c2eb255e1c0f7b84bffb5f": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-07-01T00:00:00Z"
-                    },
-                    "effectif": 33
-                  },
-                  "4fa9ba0095b02294e6e118320fff5176": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2017-05-01T00:00:00Z"
-                    },
-                    "effectif": 29
-                  },
-                  "44f4654366c645a39608eaa500b7dfaa": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2020-03-01T00:00:00Z"
-                    },
-                    "effectif": 34
-                  },
-                  "bc01804bfc401f22e945d1f5b8b58cb0": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2010-10-01T00:00:00Z"
-                    },
-                    "effectif": 23
-                  },
-                  "452a23370ff5a73e19d4d8c323a3ef83": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2010-11-01T00:00:00Z"
-                    },
-                    "effectif": 23
-                  },
-                  "8464c1a833684f84b91357c71eda7029": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2017-11-01T00:00:00Z"
-                    },
-                    "effectif": 29
-                  },
-                  "e601effec9fe5b840f7a249d1a1d4daa": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2020-01-01T00:00:00Z"
-                    },
-                    "effectif": 34
-                  },
-                  "c8ed3cb84b5365b6bd13141990d714f7": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2010-02-01T00:00:00Z"
-                    },
-                    "effectif": 28
-                  },
-                  "ade0f49ea56b413538b7288a752728a3": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2011-03-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "3483407e601d00308b337591c51d5735": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-03-01T00:00:00Z"
-                    },
-                    "effectif": 25
-                  },
-                  "a4eb97a93eb2dc1f3fc9987248e78f73": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2010-05-01T00:00:00Z"
-                    },
-                    "effectif": 25
-                  },
-                  "46ed652a69aa5c4a358bbe79acb51cec": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2012-06-01T00:00:00Z"
-                    },
-                    "effectif": 22
-                  },
-                  "ae13a63ebd17a320c795a62d1641a200": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2012-10-01T00:00:00Z"
-                    },
-                    "effectif": 21
-                  },
-                  "cb9ff9b7c325db508cc10d9883d3b0d0": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-04-01T00:00:00Z"
-                    },
-                    "effectif": 25
-                  },
-                  "437520e0c5cd42880751c847c2d56df6": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2011-12-01T00:00:00Z"
-                    },
-                    "effectif": 20
-                  },
-                  "cca77a6a1838add7b7e0357cfaf38c0a": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2012-02-01T00:00:00Z"
-                    },
-                    "effectif": 21
-                  },
-                  "debad1334e88707077f3f058b4d7af5e": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2017-01-01T00:00:00Z"
-                    },
-                    "effectif": 30
-                  },
-                  "fc4a74c126a5e41e5430f2fa94a4e75c": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-05-01T00:00:00Z"
-                    },
-                    "effectif": 33
-                  },
-                  "1fd6fac99ed9b0fd6499ddc69c610a74": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2020-02-01T00:00:00Z"
-                    },
-                    "effectif": 34
-                  },
-                  "970a7f1c246d6a7bbc92aad631514bd8": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2020-06-01T00:00:00Z"
-                    },
-                    "effectif": 37
-                  },
-                  "0491f4db226240374f935ace7304905c": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2011-05-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "a05d4a1cf20c8aee7a0f6355c38794f1": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2012-07-01T00:00:00Z"
-                    },
-                    "effectif": 21
-                  },
-                  "b051d39e74d907a587302f2761c5b725": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2013-08-01T00:00:00Z"
-                    },
-                    "effectif": 26
-                  },
-                  "c711fc28736c18c3d4e2c85ad45e0e5c": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-02-01T00:00:00Z"
-                    },
-                    "effectif": 30
-                  },
-                  "73fda970e5d3105a224f74877017ab13": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-07-01T00:00:00Z"
-                    },
-                    "effectif": 33
-                  },
-                  "2be99ccc885e16b7db346aabd29233bb": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2020-04-01T00:00:00Z"
-                    },
-                    "effectif": 34
-                  },
-                  "9b0454af1fa899d72cd11f7f0cd1d63b": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2010-04-01T00:00:00Z"
-                    },
-                    "effectif": 26
-                  },
-                  "8625902e9cb49a4c3545356f58ebf0da": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2010-07-01T00:00:00Z"
-                    },
-                    "effectif": 26
-                  },
-                  "78db1c37be7b7eea668df09c5891f390": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-10-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "85ebc9b6de9346bd788186f624ec904e": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-12-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "f9058b3c36afde9e6e0d30af9491c63c": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-11-01T00:00:00Z"
-                    },
-                    "effectif": 27
-                  },
-                  "5a25e37089c4c6edf7650ac209cdf4a7": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2010-06-01T00:00:00Z"
-                    },
-                    "effectif": 25
-                  },
-                  "001789db3b9fdeffc6e744e7210bd103": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2013-02-01T00:00:00Z"
-                    },
-                    "effectif": 23
-                  },
-                  "3cddbc45f4bccbca7806850496efa1dc": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-01-01T00:00:00Z"
-                    },
-                    "effectif": 27
-                  },
-                  "d7d9f85be09b929ce3449e53b83722ff": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2017-09-01T00:00:00Z"
-                    },
-                    "effectif": 29
-                  },
-                  "bf3f0514c4c57b8ef90534164a3672e3": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2010-01-01T00:00:00Z"
-                    },
-                    "effectif": 35
-                  },
-                  "35de39c8c943fa181f8b0477328983b3": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-02-01T00:00:00Z"
-                    },
-                    "effectif": 28
-                  },
-                  "a61bde9d8ef6ec045a9bedbddec08e86": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2012-05-01T00:00:00Z"
-                    },
-                    "effectif": 23
-                  },
-                  "62b455a4a0ec9570c0d21bf68f5480c9": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2013-09-01T00:00:00Z"
-                    },
-                    "effectif": 26
-                  },
-                  "40c84e3e66e39091244fd2835af9db1c": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2010-08-01T00:00:00Z"
-                    },
-                    "effectif": 26
-                  },
-                  "cc1f4c1ba33e392cd00e94cd757dbd3a": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-10-01T00:00:00Z"
-                    },
-                    "effectif": 30
-                  },
-                  "359c9a513d51ee261e4660693cf3eb15": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-07-01T00:00:00Z"
-                    },
-                    "effectif": 30
-                  },
-                  "d47a7d5e05d1c95f73b1ab671d06babb": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2011-06-01T00:00:00Z"
-                    },
-                    "effectif": 22
-                  },
-                  "048c4465da26e720225b09b9b6743685": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2011-08-01T00:00:00Z"
-                    },
-                    "effectif": 21
-                  },
-                  "1f2bcfc6fd776fafeb7e00a1898c4580": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2011-10-01T00:00:00Z"
-                    },
-                    "effectif": 21
-                  },
-                  "64c17685ce303a09f99af9f910b21b74": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2010-09-01T00:00:00Z"
-                    },
-                    "effectif": 25
-                  },
-                  "9acd85a3a95b91a9f5d26398dd101667": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-04-01T00:00:00Z"
-                    },
-                    "effectif": 29
-                  },
-                  "c4d28d3f8be473166285967c4f237d24": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2017-02-01T00:00:00Z"
-                    },
-                    "effectif": 30
-                  },
-                  "2069e061ded89f0aedddc18a0fec29b2": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2017-06-01T00:00:00Z"
-                    },
-                    "effectif": 31
-                  },
-                  "844ec20fa5c93d6d3351f9ecfd2b32da": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-07-01T00:00:00Z"
-                    },
-                    "effectif": 33
-                  },
-                  "931b1279e07782acdddb4a173068351a": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-07-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "28f29ccdc47eb5616cec3b79edb39d19": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2012-11-01T00:00:00Z"
-                    },
-                    "effectif": 22
-                  },
-                  "e06a46d494165c1e0766cd3f2e82d942": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2012-01-01T00:00:00Z"
-                    },
-                    "effectif": 21
-                  },
-                  "39f8c954db204f7b8a2d20df78ef499d": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-01-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "d0cf151d393ec5d27411423a9f233c97": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-03-01T00:00:00Z"
-                    },
-                    "effectif": 31
-                  },
-                  "897417b2389c39b809ce367caa461eaf": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2020-05-01T00:00:00Z"
-                    },
-                    "effectif": 35
-                  },
-                  "83e667962e0b988e6380ce51e14e1c87": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2010-12-01T00:00:00Z"
-                    },
-                    "effectif": 22
-                  },
-                  "57b3286bf6ae6eb6ad291df499dc47e6": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-01-01T00:00:00Z"
-                    },
-                    "effectif": 23
-                  },
-                  "19c39b4e29c031b501798feab82e7428": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2017-03-01T00:00:00Z"
-                    },
-                    "effectif": 28
-                  },
-                  "bfd65d9ec998f305bb54a159902666ad": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-09-01T00:00:00Z"
-                    },
-                    "effectif": 30
-                  },
-                  "b07ab0a5f51123b8b66d814dd7390d44": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-04-01T00:00:00Z"
-                    },
-                    "effectif": 31
-                  },
-                  "495d60ea465f7156078b9b48c61b7761": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2010-03-01T00:00:00Z"
-                    },
-                    "effectif": 27
-                  },
-                  "7cb882b0dedf2870ccadb5f2db3a7e59": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-08-01T00:00:00Z"
-                    },
-                    "effectif": 27
-                  },
-                  "6d91eecf6c68d4661043acb74d11653e": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-06-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "d38aa7c928586aa5b8de340ce9c8b522": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-12-01T00:00:00Z"
-                    },
-                    "effectif": 27
-                  },
-                  "ed19773f53e37b0d139bdaaa99f37eb6": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2014-05-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "e3980d9c0091678c2612ac0bfee7c84e": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-02-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "9c190f2ec0676b5f80bd72baa83a530c": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2012-04-01T00:00:00Z"
-                    },
-                    "effectif": 23
-                  },
-                  "67622b6d9570f87717c0dfc02bd36a4c": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2013-01-01T00:00:00Z"
-                    },
-                    "effectif": 23
-                  },
-                  "3a458bc806cb4c692d74db65f3c4fd4b": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-02-01T00:00:00Z"
-                    },
-                    "effectif": 27
-                  },
-                  "4052f4de581197123f99b863d3f6c0bc": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2017-10-01T00:00:00Z"
-                    },
-                    "effectif": 29
-                  },
-                  "e7929b5085281cd3d922b762b9a8861c": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-06-01T00:00:00Z"
-                    },
-                    "effectif": 33
-                  },
-                  "faed516f4cad0866e2f3183891476792": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-09-01T00:00:00Z"
-                    },
-                    "effectif": 32
-                  },
-                  "9749a601302dbad5663dd9463a19ee44": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2019-10-01T00:00:00Z"
-                    },
-                    "effectif": 28
-                  },
-                  "afe1dd05adb0006a9f8f6db17d2e1be3": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2012-08-01T00:00:00Z"
-                    },
-                    "effectif": 20
-                  },
-                  "d6bdf2174b4f8ee04d54810202c3c068": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-06-01T00:00:00Z"
-                    },
-                    "effectif": 30
-                  },
-                  "cc51f65c6d6cd77f39d22742e085a396": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-05-01T00:00:00Z"
-                    },
-                    "effectif": 30
-                  },
-                  "839f45789cf84983af3425f4c538c8c6": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-12-01T00:00:00Z"
-                    },
-                    "effectif": 31
-                  },
-                  "1f96f891d2209d0abfbaffd17588b98a": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2017-12-01T00:00:00Z"
-                    },
-                    "effectif": 28
-                  },
-                  "7fe50bda767992391b3072264ccb4195": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-04-01T00:00:00Z"
-                    },
-                    "effectif": 31
-                  },
-                  "45b9f9ca8901245dcbe6f67317e481b0": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2011-02-01T00:00:00Z"
-                    },
-                    "effectif": 21
-                  },
-                  "57fb2aad186e7d549c526ba4abe45390": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2013-11-01T00:00:00Z"
-                    },
-                    "effectif": 24
-                  },
-                  "11206224e26cddbff659f6ae10081e0b": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-10-01T00:00:00Z"
-                    },
-                    "effectif": 23
-                  },
-                  "0af08022f55553fb1c457387defd2dfa": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2015-11-01T00:00:00Z"
-                    },
-                    "effectif": 23
-                  },
-                  "6b63cfd831885aa590d41e97756c46fc": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-06-01T00:00:00Z"
-                    },
-                    "effectif": 33
-                  },
-                  "0f6c38d9579a39e0aa0a0af9c4edf13f": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2017-04-01T00:00:00Z"
-                    },
-                    "effectif": 28
-                  },
-                  "1a044d6f27790d8a225b6befafabece0": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2011-07-01T00:00:00Z"
-                    },
-                    "effectif": 22
-                  },
-                  "988ea4f2ace5cc724e8e7b986bb88ca0": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-10-01T00:00:00Z"
-                    },
-                    "effectif": 31
-                  },
-                  "6a03464a8b2974375e8cf697f3d97078": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-11-01T00:00:00Z"
-                    },
-                    "effectif": 31
-                  },
-                  "97a1e0a1783b1a1798d99d76c9170788": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2016-08-01T00:00:00Z"
-                    },
-                    "effectif": 33
-                  },
-                  "cdf19fe90090b3e70bcdc2dbf101d293": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2012-09-01T00:00:00Z"
-                    },
-                    "effectif": 20
-                  },
-                  "cc5683d5894f9dfc7e9584d740543fe0": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2018-01-01T00:00:00Z"
-                    },
-                    "effectif": 28
-                  },
-                  "3bc60106d3284f4d729662969904dcfc": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2011-09-01T00:00:00Z"
-                    },
-                    "effectif": 21
-                  }
-                },
-                "reporder": {}
-              },
-              "2010_1": {
-                "effectif": {
-                  "360b8764e408c96a69e6598bca5be085": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2020-07-01T00:00:00Z"
-                    },
-                    "effectif": 36
-                  }
-                },
-                "compte": {
-                  "7f5e2ecbc65be951eaa32e2e08d9adf8": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2020-10-01T00:00:00Z"
-                    }
-                  }
-                },
-                "debit": {
-                  "8553a12369120dcbf97c01da9b00aefd": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2020-03-25T00:00:00Z"
-                    },
-                    "part_ouvriere": 9726,
-                    "part_patronale": 7378,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2020-02-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2020-03-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "13",
-                    "recours_en_cours": false
-                  },
-                  "2f11ba82a309bbee3e2dcfb74849b91f": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2017-10-16T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 2,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-09-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-10-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "fce3ddb6fc322b12c07de9b5ac9272ea": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2018-01-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 1,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-12-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2018-01-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "a3de786a5baa3c5e57538ed26fb52156": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2018-06-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 1,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2018-05-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2018-06-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "596478d3925deac9f5f0579fbe349e66": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2018-08-16T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 1,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2018-07-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2018-08-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "71625b3eedb1a2388fce3e19235409d5": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2018-09-17T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 1,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2018-08-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2018-09-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "14a9777fd7894692e7a4f331f3f6b42f": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2018-11-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 1,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2018-10-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2018-11-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "491310d44c9c7110806148a1b466309e": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2019-01-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 2,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2018-12-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2019-01-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "3a31d68432d62bdc49b261ae67beec4b": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2019-05-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 1,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2019-04-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2019-05-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "6dacd66bc0d90d476fe989f5f2d7fe67": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2020-05-12T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2020-02-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2020-03-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "2",
-                    "code_motif_ecart_negatif": "13",
-                    "recours_en_cours": false
-                  },
-                  "caff37c60c9fd999a4686da869335108": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2020-08-24T00:00:00Z"
-                    },
-                    "part_ouvriere": 1124,
-                    "part_patronale": 0,
-                    "numero_historique": 3,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2020-02-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2020-03-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "12",
-                    "code_motif_ecart_negatif": "13",
-                    "recours_en_cours": false
-                  },
-                  "8cf78579dd859fe8ec18ce87f2862df0": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2020-08-24T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 4,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2020-02-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2020-03-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "11",
-                    "code_motif_ecart_negatif": "13",
-                    "recours_en_cours": false
-                  }
-                },
-                "cotisation": {
-                  "086e4b564ef5c4dd8d1014989c0cf830": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2018-07-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2018-08-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 25205,
-                    "du": 25206
-                  },
-                  "a223281e4e75ff4ff69a2c6bb58280e0": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2018-09-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2018-10-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 21041,
-                    "du": 21041
-                  },
-                  "ae8384508739b952e4eaea30abc9b2de": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2018-11-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2018-12-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 19197,
-                    "du": 19197
-                  },
-                  "680cb8ec2a4eda96879421067d6cf9b9": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2014-07-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2014-08-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 16607,
-                    "du": 16607
-                  },
-                  "0835ccff9b2547e459ee54187c95b931": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2015-01-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2015-02-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 14699,
-                    "du": 14699
-                  },
-                  "fc32680ffc611e906458f9f418c4ef6c": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2018-02-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2018-03-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 17444,
-                    "du": 17444
-                  },
-                  "b877707baa0410b5c43c10a7fc14a1a1": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2016-01-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2016-02-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 14888,
-                    "du": 14888
-                  },
-                  "c828f7f4af27f3c251f0be9a0770ff6d": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-03-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-04-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 18721,
-                    "du": 18721
-                  },
-                  "7bc50a93e42cb85dbf4d4fcc0270666f": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-07-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-08-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 16340,
-                    "du": 16340
-                  },
-                  "9452674b8b4aedfba84d245bc5e89084": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2016-10-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2016-11-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 17209,
-                    "du": 17209
-                  },
-                  "cc5303c712a9322b8c7dd21c39b14ef6": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2019-12-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2020-01-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 23662,
-                    "du": 23662
-                  },
-                  "db532ef5064a056e1987e49fa4421cf5": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2016-12-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-01-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 33680,
-                    "du": 33682
-                  },
-                  "6629121fdef976a66c0d9fb665101064": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2019-03-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2019-04-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 18998,
-                    "du": 18998
-                  },
-                  "e10ea68a86e4feb60be51d173e75728e": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2019-04-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2019-05-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 16817,
-                    "du": 16818
-                  },
-                  "48ee09324ce05f57f6046dbca3281d82": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2019-11-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2019-12-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 13657,
-                    "du": 13657
-                  },
-                  "49d52ce2294ce957e7029faa0ebb2560": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2013-12-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2014-01-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 14493,
-                    "du": 14493
-                  },
-                  "627092e9e6f6caa8af23be4fe4825a08": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2014-01-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2014-02-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 14422,
-                    "du": 14423
-                  },
-                  "9366e63fe2e6164ef8ea27e38d56065c": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2015-02-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2015-03-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 13643,
-                    "du": 13643
-                  },
-                  "c70f884b6ec178ca6c44a41dd526b1fa": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2016-08-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2016-09-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 17870,
-                    "du": 17870
-                  },
-                  "5126fc5443d9ec5d10e0cfd535042f49": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-01-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-02-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 28103,
-                    "du": 28103
-                  },
-                  "310abdd7f4ae8bcd8f24e7a51e68db15": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-05-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-06-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 17760,
-                    "du": 17760
-                  },
-                  "1b11fa45f61ab6dbb9e94bf8d758a6b4": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2019-01-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2019-02-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 18012,
-                    "du": 18012
-                  },
-                  "3664816f425a504ea803d86f3b2d2757": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2014-02-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2014-03-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 14169,
-                    "du": 14170
-                  },
-                  "04da529cb23aa6bc56c2602f7aed4d30": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2015-08-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2015-09-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 19290,
-                    "du": 19290
-                  },
-                  "95d28dfb1eac097c3f145de7f3ab84c6": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2015-11-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2015-12-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 19958,
-                    "du": 19959
-                  },
-                  "d6f1917e97cd67a6d90243106945c06e": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2016-03-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2016-04-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 16857,
-                    "du": 16857
-                  },
-                  "38590239fbff125d21f3e2a8b4a95f95": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2016-06-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2016-07-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 16993,
-                    "du": 16993
-                  },
-                  "3cb868be26aafd62486f267cc03cb704": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2019-02-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2019-03-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 16615,
-                    "du": 16615
-                  },
-                  "ef0d75f4a713c97f7a5dfd759d234eab": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2014-03-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2014-04-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 19559,
-                    "du": 19560
-                  },
-                  "bf397be8dcaacc1b02f88142139c5e69": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2015-09-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2015-10-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 9184,
-                    "du": 9185
-                  },
-                  "592b7a075938adad3b79300b64efb85f": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2016-04-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2016-05-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 15989,
-                    "du": 15989
-                  },
-                  "519da56450c2b57b3de4f9100bef7eaa": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2018-05-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2018-06-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 18966,
-                    "du": 18967
-                  },
-                  "78b8c5c5ad3c6ea9e1147aa77aa9a1fb": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2018-08-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2018-09-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 29735,
-                    "du": 29736
-                  },
-                  "4e82a434487134600bf1599350677949": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2019-05-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2019-06-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 17862,
-                    "du": 17862
-                  },
-                  "8b844c36a6c94b222cd7cda1b131c2cf": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2019-06-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2019-07-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 18317,
-                    "du": 18317
-                  },
-                  "2c244ebee3e1b5842e987f6521e04947": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2014-01-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2015-01-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 0,
-                    "du": 201
-                  },
-                  "0beca00346b4eef027bcdce5ce5b6af4": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2015-03-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2015-04-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 15062,
-                    "du": 15063
-                  },
-                  "e565e0321667cdeb1af86ec7bf49eede": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2016-09-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2016-10-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 19360,
-                    "du": 19360
-                  },
-                  "0a96c02b9ae58afd9042441502892291": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2015-07-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2015-08-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 16323,
-                    "du": 16323
-                  },
-                  "c58ff83340d27f7553df8a901f12b65f": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2018-04-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2018-05-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 17645,
-                    "du": 17645
-                  },
-                  "4b108b41c94729ee7c29260e21e965bc": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2019-08-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2019-09-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 16852,
-                    "du": 16852
-                  },
-                  "908bf8b6796733011b791020657f0d0f": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2014-09-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2014-10-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 15223,
-                    "du": 15223
-                  },
-                  "0dd7e15943605cfe7697cba177d97fb3": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2014-11-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2014-12-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 15940,
-                    "du": 15940
-                  },
-                  "086d5501a16f85841597be11161a11b4": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2015-05-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2015-06-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 14401,
-                    "du": 14402
-                  },
-                  "64ce5c0065152e6ab8a7c2babef5a655": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-02-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-03-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 19800,
-                    "du": 19800
-                  },
-                  "63d521e4780aa7e60a10697b51e0a963": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-08-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-09-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 21535,
-                    "du": 21535
-                  },
-                  "f2761075f5047e69fd731e24ffb8b98a": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-09-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-10-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 17516,
-                    "du": 17518
-                  },
-                  "81442704991eb718e4f6ee3f21ff633d": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2018-06-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2018-07-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 18861,
-                    "du": 18861
-                  },
-                  "9cd411503089b9c8e0be0aa73edd2e45": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "1999-10-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2000-01-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 0,
-                    "du": 0
-                  },
-                  "35adc33cd68c9966aba78588de80356e": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2014-12-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2015-01-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 18727,
-                    "du": 18727
-                  },
-                  "0954babb2a7b144816f787e1b589e576": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2016-11-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2016-12-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 17861,
-                    "du": 17861
-                  },
-                  "3ceb52c43321dd97bf8f67d90db1678c": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2018-10-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2018-11-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 18074,
-                    "du": 18075
-                  },
-                  "8782638c3b4cc2040c7812f2f0d42882": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2018-12-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2019-01-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 19500,
-                    "du": 19502
-                  },
-                  "1290ef3eb2ed51e7de1cc9f00bb8410c": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2016-02-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2016-03-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 15736,
-                    "du": 15736
-                  },
-                  "1411c0a2c5412a9611394536b7b82e6e": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-10-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-11-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 18802,
-                    "du": 18804
-                  },
-                  "928f5b33b22185e894c0f5a187f638bc": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2018-03-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2018-04-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 16213,
-                    "du": 16213
-                  },
-                  "79d5a767117474254fb19985e76ccf2e": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-06-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-07-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 19273,
-                    "du": 19273
-                  },
-                  "89a35cf56c51254bbebc651b15d8ff74": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-11-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-12-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 17228,
-                    "du": 17229
-                  },
-                  "a092342a0758ec61943da9f1b779dc95": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2015-12-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2016-01-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 17090,
-                    "du": 17090
-                  },
-                  "949e2339ae2ddc0918fae1631f474831": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2015-01-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2016-01-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 0,
-                    "du": 877
-                  },
-                  "65d8671c19bb4b48e357ad9908e910c8": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-04-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-05-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 16596,
-                    "du": 16740
-                  },
-                  "b7a10a4968e7564366fbff7bc1799a36": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2016-07-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2016-08-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 17698,
-                    "du": 17699
-                  },
-                  "b564a758f6d067ad814194fbad172916": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2018-01-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2018-02-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 16660,
-                    "du": 16660
-                  },
-                  "27365929616877e52abfb5533ce50a34": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2019-10-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2019-11-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 25955,
-                    "du": 25955
-                  },
-                  "7fb92e498c1fabf191657502ec6fd26f": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2013-01-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2014-01-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 2,
-                    "du": 2
-                  },
-                  "a9e05f7411a4e9ee16f7ab6038ca9368": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2014-06-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2014-07-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 15032,
-                    "du": 15033
-                  },
-                  "25b19c613df2eb7135398caf11e713c6": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2014-08-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2014-09-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 17250,
-                    "du": 17250
-                  },
-                  "80c07ce0192b16f12dc7551e57113a97": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2015-10-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2015-11-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 13609,
-                    "du": 13610
-                  },
-                  "497cec8f1c7555823615d08fdf2bd685": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2019-09-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2019-10-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 16987,
-                    "du": 16987
-                  },
-                  "d0c9972e6b968ea49810df1092b48c43": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2014-04-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2014-05-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 15281,
-                    "du": 15282
-                  },
-                  "6667c876f127768c2224f05f2a23a4e8": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2015-04-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2015-05-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 14356,
-                    "du": 14357
-                  },
-                  "2033652a63d047ac2b32c8fcad51842a": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2015-06-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2015-07-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 15023,
-                    "du": 15023
-                  },
-                  "ad44f89d6264e0c7b19377cac638186e": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2016-01-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2017-01-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 0,
-                    "du": 95
-                  },
-                  "dd638090d231af36b5f1a8b6adfe00be": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2017-12-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2018-01-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 28987,
-                    "du": 28988
-                  },
-                  "fd26093b413099bd034f5f2a9d1741f3": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2019-07-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2019-08-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 32439,
-                    "du": 32439
-                  },
-                  "c96c6d2bbf9fdc73cfd55b866cb2cc34": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2014-05-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2014-06-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 15563,
-                    "du": 15564
-                  },
-                  "351ef9cf017bbedd4f0d1bfb83ee024c": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2014-10-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2014-11-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 16703,
-                    "du": 16703
-                  },
-                  "2ac838f9c4d50fb4f480efebc7c9be54": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2016-05-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2016-06-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 16428,
-                    "du": 16428
-                  },
-                  "e03e23174bf3bae058bfb1d9fe3d31d5": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2020-06-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2020-07-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 18000,
-                    "du": 18000
-                  },
-                  "8c9bda93f1b119aa66e664c5e4690571": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2020-02-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2020-03-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 0,
-                    "du": -1124
-                  },
-                  "0d1c33a4f1addf162dd2c8082763bf0b": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2020-03-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2020-04-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 1124,
-                    "du": 1124
-                  },
-                  "cb647b7676c77326c70d68bb8cd7fddc": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2020-07-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2020-08-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 18826,
-                    "du": 18826
-                  }
-                },
-                "reporder": {}
-              },
-              "2011_0_urssaf": {
-                "cotisation": {
-                  "d042a0941575f7f9fe8606b12439fbbb": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2020-01-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2020-02-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 16180,
-                    "du": 16180
-                  },
-                  "37551048c41dccae08f08735866da533": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2020-08-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2020-09-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 19788,
-                    "du": 19788
-                  },
-                  "80030be05c53f4083ecef6c9b60d45b6": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2020-04-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2020-05-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 12448,
-                    "du": 12452
-                  },
-                  "5c1f0919bcddc580482e5572d655dc6f": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2020-03-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2020-04-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 10781,
-                    "du": 10781
-                  },
-                  "602cfbaa066b86bfda6de12d9c21ca70": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2020-09-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2020-10-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 20679,
-                    "du": 20679
-                  }
-                },
-                "effectif": {
-                  "5f8644d1d210b3b8880f76b63db9e7f2": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2020-09-01T00:00:00Z"
-                    },
-                    "effectif": 35
-                  },
-                  "d75708492c345353a90e5feacf8952b1": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2020-07-01T00:00:00Z"
-                    },
-                    "effectif": 37
-                  },
-                  "5982beb5624de5624b05c1c6cbbfc0a0": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2020-08-01T00:00:00Z"
-                    },
-                    "effectif": 36
-                  }
-                },
-                "debit": {
-                  "0719eff767d303ca0e6a64f130c53849": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "201",
-                    "date_traitement": {
-                      "$date": "2020-09-24T00:00:00Z"
-                    },
-                    "part_ouvriere": 1124,
-                    "part_patronale": 0,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2020-02-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2020-03-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "a5484707f784a947383c333b00c4ca02": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "201",
-                    "date_traitement": {
-                      "$date": "2020-09-24T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2020-02-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2020-03-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "2",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "af4066081ebf26771743496970446a6a": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2020-05-19T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2020-03-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2020-04-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "11",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "a55474691b22cd4d2249ce3f2f63005f": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2020-05-19T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 3,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2020-03-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2020-04-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "11",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "0283d3a6ee16c2f1d00c67345b74786e": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2020-05-19T00:00:00Z"
-                    },
-                    "part_ouvriere": 61,
-                    "part_patronale": 0,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2020-03-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2020-04-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "d92e49d3fa78b20ca395355943bf8841": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2020-05-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 4,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2020-04-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2020-05-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "73978226ba5759745a3c2cef1e52c80d": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2020-05-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2020-04-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2020-05-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "e6020f8212fa338cae03990840705066": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2020-05-25T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 4,
-                    "numero_historique": 3,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2020-04-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2020-05-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "15",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "cacb5fe1d175e12d2f6c3bd05f599f00": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2020-05-25T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 4,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2020-04-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2020-05-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "2",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "9db28c055ebfdb508632f0e4462dc43b": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2020-11-16T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 2,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2020-10-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2020-11-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "a6dbf2dcb50e408a78e9f93cdd46e1c0": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2020-11-16T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2020-10-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2020-11-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  }
-                },
-                "compte": {
-                  "4f06a1fca06361579c5bc9b6fd17f53a": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2020-11-01T00:00:00Z"
-                    }
-                  }
-                },
-                "compact": {
-                  "delete": {
-                    "cotisation": [
-                      "89e58219d6c3779a607633853f39a5f4",
-                      "8c9bda93f1b119aa66e664c5e4690571",
-                      "0d1c33a4f1addf162dd2c8082763bf0b"
-                    ],
-                    "effectif": [
-                      "360b8764e408c96a69e6598bca5be085"
-                    ]
-                  }
-                }
-              },
-              "2011_1_sirene": {
-                "sirene": {
-                  "d13d0d4fce275c0de3d99307d5c163bb": {
-                    "siren": "404338683",
-                    "nic": "00018",
-                    "siege": true,
-                    "complement_adresse": "RN 7",
-                    "voie": "PARC DU SOLEIL",
-                    "commune": "CHANAS",
-                    "code_commune": "38072",
-                    "code_postal": "38150",
-                    "departement": "38",
-                    "ape": "4752B",
-                    "date_creation": {
-                      "$date": "1996-01-31T23:00:00Z"
-                    },
-                    "longitude": 4.809034,
-                    "latitude": 45.324629
-                  }
-                },
-                "compact": {
-                  "delete": {
-                    "sirene": [
-                      "bc9a5c83f59095f3925f3c9b322b2894"
-                    ]
-                  }
-                }
-              },
-              "2011_2_activitepartielle": {
-                "reporder": {}
-              },
-              "2012_apart": {
-                "reporder": {}
-              },
-              "2103_0_urssaf": {
-                "compte": {
-                  "23f14a6d95f79b151075ddd1287af4e7": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2021-02-01T00:00:00Z"
-                    }
-                  },
-                  "ab2e4ca5427ccb18478582bfaed9dd55": {
-                    "siret": "40433868300018",
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2021-01-01T00:00:00Z"
-                    }
-                  }
-                },
-                "cotisation": {
-                  "c55d03a6285caae803e9dccf24ae91bc": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2021-01-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2021-02-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 17438,
-                    "du": 17439
-                  },
-                  "b6fbc9906309c99d641ffaeaf4e0c1a2": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "start": {
-                        "$date": "2020-12-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2021-01-01T00:00:00Z"
-                      }
-                    },
-                    "encaisse": 16909,
-                    "du": 16909
-                  }
-                },
-                "debit": {
-                  "f74658e0f80e7a6fb9b6904be11c44c7": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2021-02-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 1,
-                    "numero_historique": 1,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2021-01-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2021-02-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "1",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  },
-                  "7a2ed290558e2e05c34abfc81dce8db0": {
-                    "numero_compte": "827000002122750681",
-                    "numero_ecart_negatif": "101",
-                    "date_traitement": {
-                      "$date": "2021-02-15T00:00:00Z"
-                    },
-                    "part_ouvriere": 0,
-                    "part_patronale": 0,
-                    "numero_historique": 2,
-                    "etat_compte": 1,
-                    "code_procedure_collective": "0",
-                    "periode": {
-                      "start": {
-                        "$date": "2021-01-01T00:00:00Z"
-                      },
-                      "end": {
-                        "$date": "2021-02-01T00:00:00Z"
-                      }
-                    },
-                    "code_operation_ecart_negatif": "5",
-                    "code_motif_ecart_negatif": "24",
-                    "recours_en_cours": false
-                  }
-                },
-                "effectif": {
-                  "75955e66a3d7301f80eb02b8b81b155a": {
-                    "numero_compte": "827000002122750681",
-                    "periode": {
-                      "$date": "2021-01-01T00:00:00Z"
-                    },
-                    "effectif": 35
-                  }
-                },
-                "reporder": {},
-                "compact": {
-                  "delete": {
-                    "effectif": [
-                      "f73466c78caccf15b8cb8f4b96053d02",
-                      "ed091d6514adff3f4651d5b58c2c103a",
-                      "81f92c80ca618933a2e68e8ea02de7fb",
-                      "2a8ee2a505597197e29dd18844647161",
-                      "513e072c11e5a9d5865598234190b0e3",
-                      "3e20d0b5db039ff6172b670b65b4cabf",
-                      "f95139cc81678393873ef9fd10d9921e",
-                      "c76f55e94e31288d25b1b90f0fe9406f",
-                      "660e96354d59ed4328db4529f0d51f08",
-                      "53206905425c3923e15dc63ef4737e45",
-                      "f4a0abe29393b4aa74329481e1f89de8",
-                      "41828e04c6363480109cf46da20cc5a8",
-                      "5c19e127c8c6fca9cb7ad121df89b2a7",
-                      "43380cc9b5303ff2542d2f2ce6cfa285",
-                      "b4ba68358ded3722b47e7af74aa66e52",
-                      "096df3b9e65b1b22dbb3b9f5cb4e63e2",
-                      "f5d96cafccc0d4392c27371618b748b3",
-                      "c69b9833e97acddff2213166143a0286",
-                      "acc3720d35465044723a3281d2961994",
-                      "7d7499e40d056b31415d23d33d425635",
-                      "dc98ba9d3cf98ed8b294cfba8c369ca8",
-                      "2d295be944400570dd09f808db04342c",
-                      "d02e6f86414566107754a03a2c4046d6",
-                      "6b2e3e202987a96e1132fd29db2cde0a",
-                      "07769408d4bdcade6ffad324d7be69c1",
-                      "091211ab4267ac681753a3ab491e8254",
-                      "67c3aa41fd5683063bc477a32424e5aa",
-                      "87b4c7a336d2dfcc495ff17fedb29dd4",
-                      "b90b4d4c604d1aa32ca3ad03ba79d68b",
-                      "c364c12bdcb73064f7d5a783dbcf27df",
-                      "73f1925d1345262d49b15956c3339d30",
-                      "90a77b8b3fcb875dbb5204ee38c71c95",
-                      "78985caa0e453817d22224a04bd87f72",
-                      "df9ea53314c2eb255e1c0f7b84bffb5f",
-                      "4fa9ba0095b02294e6e118320fff5176",
-                      "44f4654366c645a39608eaa500b7dfaa",
-                      "bc01804bfc401f22e945d1f5b8b58cb0",
-                      "452a23370ff5a73e19d4d8c323a3ef83",
-                      "8464c1a833684f84b91357c71eda7029",
-                      "e601effec9fe5b840f7a249d1a1d4daa",
-                      "c8ed3cb84b5365b6bd13141990d714f7",
-                      "ade0f49ea56b413538b7288a752728a3",
-                      "3483407e601d00308b337591c51d5735",
-                      "a4eb97a93eb2dc1f3fc9987248e78f73",
-                      "46ed652a69aa5c4a358bbe79acb51cec",
-                      "ae13a63ebd17a320c795a62d1641a200",
-                      "cb9ff9b7c325db508cc10d9883d3b0d0",
-                      "437520e0c5cd42880751c847c2d56df6",
-                      "cca77a6a1838add7b7e0357cfaf38c0a",
-                      "debad1334e88707077f3f058b4d7af5e",
-                      "fc4a74c126a5e41e5430f2fa94a4e75c",
-                      "1fd6fac99ed9b0fd6499ddc69c610a74",
-                      "970a7f1c246d6a7bbc92aad631514bd8",
-                      "0491f4db226240374f935ace7304905c",
-                      "a05d4a1cf20c8aee7a0f6355c38794f1",
-                      "b051d39e74d907a587302f2761c5b725",
-                      "c711fc28736c18c3d4e2c85ad45e0e5c",
-                      "73fda970e5d3105a224f74877017ab13",
-                      "2be99ccc885e16b7db346aabd29233bb",
-                      "9b0454af1fa899d72cd11f7f0cd1d63b",
-                      "8625902e9cb49a4c3545356f58ebf0da",
-                      "78db1c37be7b7eea668df09c5891f390",
-                      "85ebc9b6de9346bd788186f624ec904e",
-                      "f9058b3c36afde9e6e0d30af9491c63c",
-                      "5a25e37089c4c6edf7650ac209cdf4a7",
-                      "001789db3b9fdeffc6e744e7210bd103",
-                      "3cddbc45f4bccbca7806850496efa1dc",
-                      "d7d9f85be09b929ce3449e53b83722ff",
-                      "bf3f0514c4c57b8ef90534164a3672e3",
-                      "35de39c8c943fa181f8b0477328983b3",
-                      "a61bde9d8ef6ec045a9bedbddec08e86",
-                      "62b455a4a0ec9570c0d21bf68f5480c9",
-                      "40c84e3e66e39091244fd2835af9db1c",
-                      "cc1f4c1ba33e392cd00e94cd757dbd3a",
-                      "359c9a513d51ee261e4660693cf3eb15",
-                      "d47a7d5e05d1c95f73b1ab671d06babb",
-                      "048c4465da26e720225b09b9b6743685",
-                      "1f2bcfc6fd776fafeb7e00a1898c4580",
-                      "64c17685ce303a09f99af9f910b21b74",
-                      "9acd85a3a95b91a9f5d26398dd101667",
-                      "c4d28d3f8be473166285967c4f237d24",
-                      "2069e061ded89f0aedddc18a0fec29b2",
-                      "844ec20fa5c93d6d3351f9ecfd2b32da",
-                      "931b1279e07782acdddb4a173068351a",
-                      "28f29ccdc47eb5616cec3b79edb39d19",
-                      "e06a46d494165c1e0766cd3f2e82d942",
-                      "39f8c954db204f7b8a2d20df78ef499d",
-                      "d0cf151d393ec5d27411423a9f233c97",
-                      "897417b2389c39b809ce367caa461eaf",
-                      "83e667962e0b988e6380ce51e14e1c87",
-                      "57b3286bf6ae6eb6ad291df499dc47e6",
-                      "19c39b4e29c031b501798feab82e7428",
-                      "bfd65d9ec998f305bb54a159902666ad",
-                      "b07ab0a5f51123b8b66d814dd7390d44",
-                      "495d60ea465f7156078b9b48c61b7761",
-                      "7cb882b0dedf2870ccadb5f2db3a7e59",
-                      "6d91eecf6c68d4661043acb74d11653e",
-                      "d38aa7c928586aa5b8de340ce9c8b522",
-                      "ed19773f53e37b0d139bdaaa99f37eb6",
-                      "e3980d9c0091678c2612ac0bfee7c84e",
-                      "9c190f2ec0676b5f80bd72baa83a530c",
-                      "67622b6d9570f87717c0dfc02bd36a4c",
-                      "3a458bc806cb4c692d74db65f3c4fd4b",
-                      "4052f4de581197123f99b863d3f6c0bc",
-                      "e7929b5085281cd3d922b762b9a8861c",
-                      "faed516f4cad0866e2f3183891476792",
-                      "9749a601302dbad5663dd9463a19ee44",
-                      "afe1dd05adb0006a9f8f6db17d2e1be3",
-                      "d6bdf2174b4f8ee04d54810202c3c068",
-                      "cc51f65c6d6cd77f39d22742e085a396",
-                      "839f45789cf84983af3425f4c538c8c6",
-                      "1f96f891d2209d0abfbaffd17588b98a",
-                      "7fe50bda767992391b3072264ccb4195",
-                      "45b9f9ca8901245dcbe6f67317e481b0",
-                      "57fb2aad186e7d549c526ba4abe45390",
-                      "11206224e26cddbff659f6ae10081e0b",
-                      "0af08022f55553fb1c457387defd2dfa",
-                      "6b63cfd831885aa590d41e97756c46fc",
-                      "0f6c38d9579a39e0aa0a0af9c4edf13f",
-                      "1a044d6f27790d8a225b6befafabece0",
-                      "988ea4f2ace5cc724e8e7b986bb88ca0",
-                      "6a03464a8b2974375e8cf697f3d97078",
-                      "97a1e0a1783b1a1798d99d76c9170788",
-                      "cdf19fe90090b3e70bcdc2dbf101d293",
-                      "cc5683d5894f9dfc7e9584d740543fe0",
-                      "3bc60106d3284f4d729662969904dcfc",
-                      "5f8644d1d210b3b8880f76b63db9e7f2",
-                      "d75708492c345353a90e5feacf8952b1",
-                      "5982beb5624de5624b05c1c6cbbfc0a0",
-                      "faeb546a14e2bee2c217a0fc1dd75f30",
-                      "81a8197b20ed4e3aed719858bc07ef37",
-                      "8ff03983b0792bc295989baee705f52a"
-                    ]
-                  }
-                }
-              }
             },
-            "index": {
-              "algo2": true
-            }
-          }
-        }
-      ]
-)
+            "5f12d9b2108fed2f2f3adb9b53e140bf": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-08-01T00:00:00.000Z"),
+            },
+          },
+          cotisation: {
+            "8b844c36a6c94b222cd7cda1b131c2cf": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2019-06-01T00:00:00.000Z"),
+                end: ISODate("2019-07-01T00:00:00.000Z"),
+              },
+              encaisse: 18317,
+              du: 18317,
+            },
+            "4e82a434487134600bf1599350677949": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2019-05-01T00:00:00.000Z"),
+                end: ISODate("2019-06-01T00:00:00.000Z"),
+              },
+              encaisse: 17862,
+              du: 17862,
+            },
+          },
+        },
+        2005: {
+          effectif: {
+            "026dc495b8f06d297e1c4de699fd69cd": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2020-01-01T00:00:00.000Z"),
+              effectif: 27,
+            },
+            f9058b3c36afde9e6e0d30af9491c63c: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-11-01T00:00:00.000Z"),
+              effectif: 27,
+            },
+            d38aa7c928586aa5b8de340ce9c8b522: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-12-01T00:00:00.000Z"),
+              effectif: 27,
+            },
+          },
+          compte: {
+            "9c44702f24d80078d3099fd4c19b6af5": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2020-03-01T00:00:00.000Z"),
+            },
+            "77a483407c15fdd413e0bf3cb9770435": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2020-05-01T00:00:00.000Z"),
+            },
+            "3aaf73ffe1e45e22cdfa5a46d62a642b": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2020-04-01T00:00:00.000Z"),
+            },
+          },
+          cotisation: {
+            "3e58eac322bfbca220b71cc4b15b6150": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2020-02-01T00:00:00.000Z"),
+                end: ISODate("2020-03-01T00:00:00.000Z"),
+              },
+              encaisse: 0,
+              du: 17104,
+            },
+            "89e58219d6c3779a607633853f39a5f4": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2020-03-01T00:00:00.000Z"),
+                end: ISODate("2020-04-01T00:00:00.000Z"),
+              },
+              encaisse: 10785,
+              du: 10785,
+            },
+          },
+          sirene: {
+            "877ef1c808260e6d007e473f55e0885d": {
+              siren: "404338683",
+              nic: "00018",
+              siege: true,
+              code_postal: "38150",
+              departement: "38",
+              commune: "CHANAS",
+              ape: "4752B",
+              date_creation: ISODate("1996-01-31T23:00:00.000Z"),
+              longitude: 4.809034,
+              lattitude: 45.324629,
+              adresse: [
+                "BRICOCASH",
+                "RN 7",
+                "PARC DU SOLEIL",
+                "38150",
+                "CHANAS",
+                "Parc du Soleil 38150 Chanas",
+              ],
+            },
+          },
+          compact: {
+            delete: {
+              sirene: ["dfc5a31364ed5bfb7d1b4332331c5ca2"],
+            },
+          },
+        },
+        2012: {
+          cotisation: {
+            d1db6b202256e0dc757dae195b4999a6: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2020-10-01T00:00:00.000Z"),
+                end: ISODate("2020-11-01T00:00:00.000Z"),
+              },
+              encaisse: 17628,
+              du: 17630,
+            },
+          },
+          effectif: {
+            faeb546a14e2bee2c217a0fc1dd75f30: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2020-10-01T00:00:00.000Z"),
+              effectif: 34,
+            },
+          },
+          reporder: {},
+        },
+        2101: {
+          cotisation: {
+            "6ed647f3bb93e34c1bcfe3c927a80d0c": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2020-11-01T00:00:00.000Z"),
+                end: ISODate("2020-12-01T00:00:00.000Z"),
+              },
+              encaisse: 27884,
+              du: 27884,
+            },
+          },
+          compte: {
+            "8852fc2eff89491a0143ccf7c797251e": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2020-12-01T00:00:00.000Z"),
+            },
+          },
+          reporder: {},
+        },
+        2102: {
+          effectif: {
+            "81a8197b20ed4e3aed719858bc07ef37": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2020-12-01T00:00:00.000Z"),
+              effectif: 33,
+            },
+            "8ff03983b0792bc295989baee705f52a": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2020-11-01T00:00:00.000Z"),
+              effectif: 33,
+            },
+          },
+          sirene: {
+            "14349ee337067f9db68130891a4d3b9c": {
+              siren: "404338683",
+              nic: "00018",
+              siege: true,
+              complement_adresse: "RN 7",
+              voie: "PARC DU SOLEIL",
+              commune: "CHANAS",
+              code_commune: "38072",
+              code_postal: "38150",
+              departement: "38",
+              ape: "4752B",
+              date_creation: ISODate("1996-02-01T00:00:00.000Z"),
+              longitude: 4.809034,
+              latitude: 45.324629,
+            },
+          },
+          reporder: {},
+          compact: {
+            delete: {
+              sirene: ["d13d0d4fce275c0de3d99307d5c163bb"],
+            },
+          },
+        },
+        2104: {
+          cotisation: {
+            "2dae9ae4d97433faf274deb8c03e36bf": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2021-02-01T00:00:00.000Z"),
+                end: ISODate("2021-03-01T00:00:00.000Z"),
+              },
+              encaisse: 18007,
+              du: 18007,
+            },
+          },
+          effectif: {
+            "8625902e9cb49a4c3545356f58ebf0da": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2010-07-01T00:00:00.000Z"),
+              effectif: 26,
+            },
+            b07ab0a5f51123b8b66d814dd7390d44: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-04-01T00:00:00.000Z"),
+              effectif: 31,
+            },
+            "091211ab4267ac681753a3ab491e8254": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2013-05-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            f5d96cafccc0d4392c27371618b748b3: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-11-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            "81f92c80ca618933a2e68e8ea02de7fb": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2017-08-01T00:00:00.000Z"),
+              effectif: 29,
+            },
+            acc3720d35465044723a3281d2961994: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-01-01T00:00:00.000Z"),
+              effectif: 30,
+            },
+            "048c4465da26e720225b09b9b6743685": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2011-08-01T00:00:00.000Z"),
+              effectif: 21,
+            },
+            cb9ff9b7c325db508cc10d9883d3b0d0: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-04-01T00:00:00.000Z"),
+              effectif: 25,
+            },
+            "3cddbc45f4bccbca7806850496efa1dc": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-01-01T00:00:00.000Z"),
+              effectif: 27,
+            },
+            c8ed3cb84b5365b6bd13141990d714f7: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2010-02-01T00:00:00.000Z"),
+              effectif: 28,
+            },
+            "3a458bc806cb4c692d74db65f3c4fd4b": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-02-01T00:00:00.000Z"),
+              effectif: 27,
+            },
+            e601effec9fe5b840f7a249d1a1d4daa: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2020-01-01T00:00:00.000Z"),
+              effectif: 34,
+            },
+            "64c17685ce303a09f99af9f910b21b74": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2010-09-01T00:00:00.000Z"),
+              effectif: 25,
+            },
+            "07769408d4bdcade6ffad324d7be69c1": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2011-04-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            cc51f65c6d6cd77f39d22742e085a396: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-05-01T00:00:00.000Z"),
+              effectif: 30,
+            },
+            d7d9f85be09b929ce3449e53b83722ff: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2017-09-01T00:00:00.000Z"),
+              effectif: 29,
+            },
+            c711fc28736c18c3d4e2c85ad45e0e5c: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-02-01T00:00:00.000Z"),
+              effectif: 30,
+            },
+            faed516f4cad0866e2f3183891476792: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-09-01T00:00:00.000Z"),
+              effectif: 32,
+            },
+            f9058b3c36afde9e6e0d30af9491c63c: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-11-01T00:00:00.000Z"),
+              effectif: 27,
+            },
+            "19c39b4e29c031b501798feab82e7428": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2017-03-01T00:00:00.000Z"),
+              effectif: 28,
+            },
+            "4fa9ba0095b02294e6e118320fff5176": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2017-05-01T00:00:00.000Z"),
+              effectif: 29,
+            },
+            d75708492c345353a90e5feacf8952b1: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2020-07-01T00:00:00.000Z"),
+              effectif: 37,
+            },
+            ade0f49ea56b413538b7288a752728a3: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2011-03-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            "87b4c7a336d2dfcc495ff17fedb29dd4": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2011-11-01T00:00:00.000Z"),
+              effectif: 20,
+            },
+            "513e072c11e5a9d5865598234190b0e3": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2013-12-01T00:00:00.000Z"),
+              effectif: 23,
+            },
+            c76f55e94e31288d25b1b90f0fe9406f: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-09-01T00:00:00.000Z"),
+              effectif: 31,
+            },
+            "4052f4de581197123f99b863d3f6c0bc": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2017-10-01T00:00:00.000Z"),
+              effectif: 29,
+            },
+            "8464c1a833684f84b91357c71eda7029": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2017-11-01T00:00:00.000Z"),
+              effectif: 29,
+            },
+            "495d60ea465f7156078b9b48c61b7761": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2010-03-01T00:00:00.000Z"),
+              effectif: 27,
+            },
+            "5a25e37089c4c6edf7650ac209cdf4a7": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2010-06-01T00:00:00.000Z"),
+              effectif: 25,
+            },
+            "90a77b8b3fcb875dbb5204ee38c71c95": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2013-03-01T00:00:00.000Z"),
+              effectif: 22,
+            },
+            "78985caa0e453817d22224a04bd87f72": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2013-06-01T00:00:00.000Z"),
+              effectif: 26,
+            },
+            "096df3b9e65b1b22dbb3b9f5cb4e63e2": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-04-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            "6d91eecf6c68d4661043acb74d11653e": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-06-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            "78db1c37be7b7eea668df09c5891f390": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-10-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            "85ebc9b6de9346bd788186f624ec904e": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-12-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            cc5683d5894f9dfc7e9584d740543fe0: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-01-01T00:00:00.000Z"),
+              effectif: 28,
+            },
+            "35de39c8c943fa181f8b0477328983b3": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-02-01T00:00:00.000Z"),
+              effectif: 28,
+            },
+            "28f29ccdc47eb5616cec3b79edb39d19": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2012-11-01T00:00:00.000Z"),
+              effectif: 22,
+            },
+            "6b63cfd831885aa590d41e97756c46fc": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-06-01T00:00:00.000Z"),
+              effectif: 33,
+            },
+            c4d28d3f8be473166285967c4f237d24: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2017-02-01T00:00:00.000Z"),
+              effectif: 30,
+            },
+            cc1f4c1ba33e392cd00e94cd757dbd3a: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-10-01T00:00:00.000Z"),
+              effectif: 30,
+            },
+            "83e667962e0b988e6380ce51e14e1c87": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2010-12-01T00:00:00.000Z"),
+              effectif: 22,
+            },
+            cca77a6a1838add7b7e0357cfaf38c0a: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2012-02-01T00:00:00.000Z"),
+              effectif: 21,
+            },
+            "359c9a513d51ee261e4660693cf3eb15": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-07-01T00:00:00.000Z"),
+              effectif: 30,
+            },
+            df9ea53314c2eb255e1c0f7b84bffb5f: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-07-01T00:00:00.000Z"),
+              effectif: 33,
+            },
+            "44f4654366c645a39608eaa500b7dfaa": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2020-03-01T00:00:00.000Z"),
+              effectif: 34,
+            },
+            debad1334e88707077f3f058b4d7af5e: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2017-01-01T00:00:00.000Z"),
+              effectif: 30,
+            },
+            "970a7f1c246d6a7bbc92aad631514bd8": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2020-06-01T00:00:00.000Z"),
+              effectif: 37,
+            },
+            "9c190f2ec0676b5f80bd72baa83a530c": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2012-04-01T00:00:00.000Z"),
+              effectif: 23,
+            },
+            a61bde9d8ef6ec045a9bedbddec08e86: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2012-05-01T00:00:00.000Z"),
+              effectif: 23,
+            },
+            "41828e04c6363480109cf46da20cc5a8": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-03-01T00:00:00.000Z"),
+              effectif: 31,
+            },
+            fc4a74c126a5e41e5430f2fa94a4e75c: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-05-01T00:00:00.000Z"),
+              effectif: 33,
+            },
+            "844ec20fa5c93d6d3351f9ecfd2b32da": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-07-01T00:00:00.000Z"),
+              effectif: 33,
+            },
+            "5f8644d1d210b3b8880f76b63db9e7f2": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2020-09-01T00:00:00.000Z"),
+              effectif: 35,
+            },
+            bf3f0514c4c57b8ef90534164a3672e3: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2010-01-01T00:00:00.000Z"),
+              effectif: 35,
+            },
+            "1a044d6f27790d8a225b6befafabece0": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2011-07-01T00:00:00.000Z"),
+              effectif: 22,
+            },
+            "437520e0c5cd42880751c847c2d56df6": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2011-12-01T00:00:00.000Z"),
+              effectif: 20,
+            },
+            "6b2e3e202987a96e1132fd29db2cde0a": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-09-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            "73fda970e5d3105a224f74877017ab13": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-07-01T00:00:00.000Z"),
+              effectif: 33,
+            },
+            ed091d6514adff3f4651d5b58c2c103a: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-12-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            "7cb882b0dedf2870ccadb5f2db3a7e59": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-08-01T00:00:00.000Z"),
+              effectif: 27,
+            },
+            "839f45789cf84983af3425f4c538c8c6": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-12-01T00:00:00.000Z"),
+              effectif: 31,
+            },
+            "2be99ccc885e16b7db346aabd29233bb": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2020-04-01T00:00:00.000Z"),
+              effectif: 34,
+            },
+            f4a0abe29393b4aa74329481e1f89de8: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2012-03-01T00:00:00.000Z"),
+              effectif: 22,
+            },
+            "57fb2aad186e7d549c526ba4abe45390": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2013-11-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            d02e6f86414566107754a03a2c4046d6: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-05-01T00:00:00.000Z"),
+              effectif: 25,
+            },
+            "45b9f9ca8901245dcbe6f67317e481b0": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2011-02-01T00:00:00.000Z"),
+              effectif: 21,
+            },
+            dc98ba9d3cf98ed8b294cfba8c369ca8: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2012-12-01T00:00:00.000Z"),
+              effectif: 22,
+            },
+            "57b3286bf6ae6eb6ad291df499dc47e6": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-01-01T00:00:00.000Z"),
+              effectif: 23,
+            },
+            "0f6c38d9579a39e0aa0a0af9c4edf13f": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2017-04-01T00:00:00.000Z"),
+              effectif: 28,
+            },
+            "7fe50bda767992391b3072264ccb4195": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-04-01T00:00:00.000Z"),
+              effectif: 31,
+            },
+            "53206905425c3923e15dc63ef4737e45": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-08-01T00:00:00.000Z"),
+              effectif: 33,
+            },
+            "001789db3b9fdeffc6e744e7210bd103": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2013-02-01T00:00:00.000Z"),
+              effectif: 23,
+            },
+            "3483407e601d00308b337591c51d5735": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-03-01T00:00:00.000Z"),
+              effectif: 25,
+            },
+            d38aa7c928586aa5b8de340ce9c8b522: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-12-01T00:00:00.000Z"),
+              effectif: 27,
+            },
+            "40c84e3e66e39091244fd2835af9db1c": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2010-08-01T00:00:00.000Z"),
+              effectif: 26,
+            },
+            afe1dd05adb0006a9f8f6db17d2e1be3: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2012-08-01T00:00:00.000Z"),
+              effectif: 20,
+            },
+            "67622b6d9570f87717c0dfc02bd36a4c": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2013-01-01T00:00:00.000Z"),
+              effectif: 23,
+            },
+            "9acd85a3a95b91a9f5d26398dd101667": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-04-01T00:00:00.000Z"),
+              effectif: 29,
+            },
+            c69b9833e97acddff2213166143a0286: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-08-01T00:00:00.000Z"),
+              effectif: 31,
+            },
+            "9b0454af1fa899d72cd11f7f0cd1d63b": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2010-04-01T00:00:00.000Z"),
+              effectif: 26,
+            },
+            "7d7499e40d056b31415d23d33d425635": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2011-01-01T00:00:00.000Z"),
+              effectif: 21,
+            },
+            "3e20d0b5db039ff6172b670b65b4cabf": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-02-01T00:00:00.000Z"),
+              effectif: 26,
+            },
+            "660e96354d59ed4328db4529f0d51f08": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2017-07-01T00:00:00.000Z"),
+              effectif: 31,
+            },
+            d0cf151d393ec5d27411423a9f233c97: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-03-01T00:00:00.000Z"),
+              effectif: 31,
+            },
+            "1f2bcfc6fd776fafeb7e00a1898c4580": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2011-10-01T00:00:00.000Z"),
+              effectif: 21,
+            },
+            "2a8ee2a505597197e29dd18844647161": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2013-04-01T00:00:00.000Z"),
+              effectif: 22,
+            },
+            "9749a601302dbad5663dd9463a19ee44": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-10-01T00:00:00.000Z"),
+              effectif: 28,
+            },
+            "452a23370ff5a73e19d4d8c323a3ef83": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2010-11-01T00:00:00.000Z"),
+              effectif: 23,
+            },
+            b051d39e74d907a587302f2761c5b725: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2013-08-01T00:00:00.000Z"),
+              effectif: 26,
+            },
+            "11206224e26cddbff659f6ae10081e0b": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-10-01T00:00:00.000Z"),
+              effectif: 23,
+            },
+            "0af08022f55553fb1c457387defd2dfa": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-11-01T00:00:00.000Z"),
+              effectif: 23,
+            },
+            "6a03464a8b2974375e8cf697f3d97078": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-11-01T00:00:00.000Z"),
+              effectif: 31,
+            },
+            "2069e061ded89f0aedddc18a0fec29b2": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2017-06-01T00:00:00.000Z"),
+              effectif: 31,
+            },
+            d6bdf2174b4f8ee04d54810202c3c068: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-06-01T00:00:00.000Z"),
+              effectif: 30,
+            },
+            "97a1e0a1783b1a1798d99d76c9170788": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-08-01T00:00:00.000Z"),
+              effectif: 33,
+            },
+            "8ff03983b0792bc295989baee705f52a": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2020-11-01T00:00:00.000Z"),
+              effectif: 33,
+            },
+            "81a8197b20ed4e3aed719858bc07ef37": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2020-12-01T00:00:00.000Z"),
+              effectif: 33,
+            },
+            a4eb97a93eb2dc1f3fc9987248e78f73: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2010-05-01T00:00:00.000Z"),
+              effectif: 25,
+            },
+            d47a7d5e05d1c95f73b1ab671d06babb: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2011-06-01T00:00:00.000Z"),
+              effectif: 22,
+            },
+            "46ed652a69aa5c4a358bbe79acb51cec": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2012-06-01T00:00:00.000Z"),
+              effectif: 22,
+            },
+            a05d4a1cf20c8aee7a0f6355c38794f1: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2012-07-01T00:00:00.000Z"),
+              effectif: 21,
+            },
+            b4ba68358ded3722b47e7af74aa66e52: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2013-07-01T00:00:00.000Z"),
+              effectif: 26,
+            },
+            "2d295be944400570dd09f808db04342c": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2013-10-01T00:00:00.000Z"),
+              effectif: 25,
+            },
+            "1f96f891d2209d0abfbaffd17588b98a": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2017-12-01T00:00:00.000Z"),
+              effectif: 28,
+            },
+            "5c19e127c8c6fca9cb7ad121df89b2a7": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-12-01T00:00:00.000Z"),
+              effectif: 31,
+            },
+            f73466c78caccf15b8cb8f4b96053d02: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-09-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            c364c12bdcb73064f7d5a783dbcf27df: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-11-01T00:00:00.000Z"),
+              effectif: 31,
+            },
+            "897417b2389c39b809ce367caa461eaf": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2020-05-01T00:00:00.000Z"),
+              effectif: 35,
+            },
+            "988ea4f2ace5cc724e8e7b986bb88ca0": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-10-01T00:00:00.000Z"),
+              effectif: 31,
+            },
+            "5982beb5624de5624b05c1c6cbbfc0a0": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2020-08-01T00:00:00.000Z"),
+              effectif: 36,
+            },
+            ed19773f53e37b0d139bdaaa99f37eb6: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-05-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            b90b4d4c604d1aa32ca3ad03ba79d68b: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-08-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            e3980d9c0091678c2612ac0bfee7c84e: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-02-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            "73f1925d1345262d49b15956c3339d30": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-06-01T00:00:00.000Z"),
+              effectif: 32,
+            },
+            cdf19fe90090b3e70bcdc2dbf101d293: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2012-09-01T00:00:00.000Z"),
+              effectif: 20,
+            },
+            faeb546a14e2bee2c217a0fc1dd75f30: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2020-10-01T00:00:00.000Z"),
+              effectif: 34,
+            },
+            "39f8c954db204f7b8a2d20df78ef499d": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-01-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            bc01804bfc401f22e945d1f5b8b58cb0: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2010-10-01T00:00:00.000Z"),
+              effectif: 23,
+            },
+            e06a46d494165c1e0766cd3f2e82d942: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2012-01-01T00:00:00.000Z"),
+              effectif: 21,
+            },
+            f95139cc81678393873ef9fd10d9921e: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-03-01T00:00:00.000Z"),
+              effectif: 26,
+            },
+            "43380cc9b5303ff2542d2f2ce6cfa285": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-05-01T00:00:00.000Z"),
+              effectif: 32,
+            },
+            "0491f4db226240374f935ace7304905c": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2011-05-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            "3bc60106d3284f4d729662969904dcfc": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2011-09-01T00:00:00.000Z"),
+              effectif: 21,
+            },
+            ae13a63ebd17a320c795a62d1641a200: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2012-10-01T00:00:00.000Z"),
+              effectif: 21,
+            },
+            "62b455a4a0ec9570c0d21bf68f5480c9": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2013-09-01T00:00:00.000Z"),
+              effectif: 26,
+            },
+            "931b1279e07782acdddb4a173068351a": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-07-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            "67c3aa41fd5683063bc477a32424e5aa": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-03-01T00:00:00.000Z"),
+              effectif: 29,
+            },
+            e7929b5085281cd3d922b762b9a8861c: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-06-01T00:00:00.000Z"),
+              effectif: 33,
+            },
+            bfd65d9ec998f305bb54a159902666ad: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-09-01T00:00:00.000Z"),
+              effectif: 30,
+            },
+            "1fd6fac99ed9b0fd6499ddc69c610a74": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2020-02-01T00:00:00.000Z"),
+              effectif: 34,
+            },
+          },
+          compte: {
+            "92d6115d4e23981ff4415dae74acd2ca": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2021-03-01T00:00:00.000Z"),
+            },
+          },
+          reporder: {},
+        },
+        2105: {
+          compte: {
+            "174fdc9569197d9d4b71284eaef066f2": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2021-04-01T00:00:00.000Z"),
+            },
+          },
+          cotisation: {
+            "6a936e2be051e764e45763633bc92b0b": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2021-03-01T00:00:00.000Z"),
+                end: ISODate("2021-04-01T00:00:00.000Z"),
+              },
+              encaisse: 17483,
+              du: 17483,
+            },
+          },
+          effectif: {
+            "3fda65d8cb6d51d9f5ba141463e2b9cc": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2021-02-01T00:00:00.000Z"),
+              effectif: 34,
+            },
+          },
+          reporder: {},
+        },
+        2106: {
+          cotisation: {
+            c9dde90bf90be7f15bdfd69355956a4a: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2021-04-01T00:00:00.000Z"),
+                end: ISODate("2021-05-01T00:00:00.000Z"),
+              },
+              encaisse: 18387,
+              du: 18387,
+            },
+          },
+          compte: {
+            c75b1d479ff04a6c206a289e8de6053a: {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2021-05-01T00:00:00.000Z"),
+            },
+          },
+          reporder: {},
+        },
+        2107: {
+          apdemande: {
+            "7123cb3c07ceb5ad35240a9ba1c380b7": {
+              id_demande: "038BDPO0100",
+              effectif_entreprise: 34,
+              effectif: 34,
+              date_statut: ISODate("2020-04-27T00:00:00.000Z"),
+              periode: {
+                start: ISODate("2020-03-16T00:00:00.000Z"),
+                end: ISODate("2020-06-30T00:00:00.000Z"),
+              },
+              hta: 6000,
+              mta: null,
+              effectif_autorise: 32,
+              motif_recours_se: 5,
+              heure_consommee: 4881.34,
+              montant_consommee: 39864.77,
+              effectif_consomme: 69,
+              perimetre: 3,
+            },
+            "55fca7eab5e7a37831aeb2e12155b7bb": {
+              id_demande: "038BDPO0200",
+              effectif_entreprise: 34,
+              effectif: 34,
+              date_statut: ISODate("2021-05-12T00:00:00.000Z"),
+              periode: {
+                start: ISODate("2021-04-05T00:00:00.000Z"),
+                end: ISODate("2021-05-31T00:00:00.000Z"),
+              },
+              hta: 200,
+              mta: null,
+              effectif_autorise: 3,
+              motif_recours_se: 5,
+              heure_consommee: 28,
+              montant_consommee: 227.08,
+              effectif_consomme: 1,
+              perimetre: 2,
+            },
+          },
+          cotisation: {
+            "13257e02ab639beb333cd6649157c856": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2021-05-01T00:00:00.000Z"),
+                end: ISODate("2021-06-01T00:00:00.000Z"),
+              },
+              encaisse: 18642,
+              du: 18642,
+            },
+          },
+          compte: {
+            "33655481cb2433bb24f88a6521a4535e": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2021-06-01T00:00:00.000Z"),
+            },
+          },
+          apconso: {
+            "0e7271cfa59cd84a05a6a35f3234c14d": {
+              id_conso: "038BDPO0200",
+              heure_consomme: 28,
+              montant: 227.08,
+              effectif: 1,
+              periode: ISODate("2021-04-01T00:00:00.000Z"),
+            },
+            "7b64324d4cc1ba2ba5139076a069b64f": {
+              id_conso: "038BDPO0100",
+              heure_consomme: 47,
+              montant: 323.49,
+              effectif: 2,
+              periode: ISODate("2020-06-01T00:00:00.000Z"),
+            },
+            "3f24646dbdb5481254218ea77d93d20b": {
+              id_conso: "038BDPO0100",
+              heure_consomme: 2146.5,
+              montant: 17484.59,
+              effectif: 26,
+              periode: ISODate("2020-04-01T00:00:00.000Z"),
+            },
+            d8f1519c6ade47f416d5b9f295f4090c: {
+              id_conso: "038BDPO0100",
+              heure_consomme: 2285.5,
+              montant: 18818.69,
+              effectif: 32,
+              periode: ISODate("2020-03-01T00:00:00.000Z"),
+            },
+          },
+          sirene: {
+            d6d95810782be9c883f960dd0fd7bf0a: {
+              siren: "404338683",
+              nic: "00018",
+              siege: true,
+              complement_adresse: "RN 7",
+              voie: "PARC DU SOLEIL",
+              commune: "CHANAS",
+              code_commune: "38072",
+              code_postal: "38150",
+              departement: "38",
+              ape: "4752B",
+              date_creation: ISODate("1996-02-01T00:00:00.000Z"),
+              longitude: 4.809731,
+              latitude: 45.324821,
+            },
+          },
+          reporder: {},
+          compact: {
+            delete: {
+              apconso: [
+                "4d7402303374c41b01ba24708402b628",
+                "b105af8871d3285520951aee2e98f871",
+                "b048124a6ed4f2ea4c4f3fb740342a33",
+              ],
+              apdemande: ["f9b3e9b3df6cb5a8e8010e36fadfdb03"],
+              sirene: ["14349ee337067f9db68130891a4d3b9c"],
+            },
+          },
+        },
+        2108: {
+          debit: {
+            a51073112b767a8a71cb6a3651e54673: {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2021-07-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 1,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2021-06-01T00:00:00.000Z"),
+                end: ISODate("2021-07-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            "9ac081a5ed7011ebebdc357eefa04d9f": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2021-07-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2021-06-01T00:00:00.000Z"),
+                end: ISODate("2021-07-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+          },
+          cotisation: {
+            "883a4bc56ebd12121a1418fad368d68f": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2021-06-01T00:00:00.000Z"),
+                end: ISODate("2021-07-01T00:00:00.000Z"),
+              },
+              encaisse: 33906,
+              du: 33907,
+            },
+          },
+          effectif: {
+            "1a3e0db61bbb1cd26d573b521639348d": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2012-07-01T00:00:00.000Z"),
+              effectif: 23,
+            },
+            dffb42be5b4ef74bb2d4dd195dbb882d: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2013-10-01T00:00:00.000Z"),
+              effectif: 26,
+            },
+            "09fb9e83616634c65624fa289196f131": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2012-10-01T00:00:00.000Z"),
+              effectif: 22,
+            },
+            "689f428d2bfffcb33f9a6fbac3bb4c67": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-10-01T00:00:00.000Z"),
+              effectif: 25,
+            },
+            "3785773b8acbaaa4aac745137b718181": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-08-01T00:00:00.000Z"),
+              effectif: 32,
+            },
+            "4278bc5b86b27fdc7b3afe242d044a37": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2011-10-01T00:00:00.000Z"),
+              effectif: 22,
+            },
+            e379f179a19d60ebf8b56b69c4e452b4: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-04-01T00:00:00.000Z"),
+              effectif: 30,
+            },
+            cc9553d47d8700fd7b693d21e25d7e1e: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2017-04-01T00:00:00.000Z"),
+              effectif: 29,
+            },
+            "9b17cc654928037f812b9fbc73949d6c": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2011-04-01T00:00:00.000Z"),
+              effectif: 25,
+            },
+            f2bd386b3436428e625caec2f0c1166c: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-07-01T00:00:00.000Z"),
+              effectif: 36,
+            },
+            f4617d24e6812967136d46c7b27cf578: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2011-07-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            "00cc8a8a543baf77c5a2fd104eae87f0": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2013-07-01T00:00:00.000Z"),
+              effectif: 28,
+            },
+            bfef8431814c92b90fde05d725e49d81: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2013-04-01T00:00:00.000Z"),
+              effectif: 23,
+            },
+            "3ebf4615f08d4ee1aa73e16db1fae145": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-12-01T00:00:00.000Z"),
+              effectif: 44,
+            },
+            "360b8764e408c96a69e6598bca5be085": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2020-07-01T00:00:00.000Z"),
+              effectif: 36,
+            },
+            "7583d49d8ffa0dc42765de85332654e0": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-10-01T00:00:00.000Z"),
+              effectif: 32,
+            },
+            f77407b47ec48f9604c9b94514b3e841: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-12-01T00:00:00.000Z"),
+              effectif: 30,
+            },
+            "187b4a84c21eb607a1f13db2758670b4": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-02-01T00:00:00.000Z"),
+              effectif: 31,
+            },
+            "463e9ccd3c0c73d220eca67bb37c3faf": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-06-01T00:00:00.000Z"),
+              effectif: 31,
+            },
+            "9aa2e3fe6ba4032026658d60b157d7fc": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-06-01T00:00:00.000Z"),
+              effectif: 32,
+            },
+            f92ddd320b802c2971d2d9aa94f6b9d1: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-09-01T00:00:00.000Z"),
+              effectif: 29,
+            },
+            "9dd6da361c2bfea4f895d6bb59e50244": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2010-04-01T00:00:00.000Z"),
+              effectif: 27,
+            },
+            "0ae361f58d268a77f392dc538ff0435e": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2017-09-01T00:00:00.000Z"),
+              effectif: 30,
+            },
+            b9f086a38f6f9d06df0a7ef0161be28a: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2021-03-01T00:00:00.000Z"),
+              effectif: 36,
+            },
+            "76a384ccb66e4c92ee3c44293e922718": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2010-07-01T00:00:00.000Z"),
+              effectif: 28,
+            },
+            f4925ba8d469969b0ce45bb56f5160d1: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-07-01T00:00:00.000Z"),
+              effectif: 26,
+            },
+            "77ff4e0225f4bbd803d688a24306d79e": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-04-01T00:00:00.000Z"),
+              effectif: 26,
+            },
+            "1db5c61a4f8e42090149b673a34924ce": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2021-04-01T00:00:00.000Z"),
+              effectif: 36,
+            },
+            "98573beaf8f01f3d3e09ecb3514cb5db": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-07-01T00:00:00.000Z"),
+              effectif: 33,
+            },
+            "977f4dbc5b8c38427318cff68c351f7f": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2010-10-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            b5091a4f916de2801eff3fb1abf69824: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-10-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            "610405b671e4b6b3a50b93685af660c6": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2012-04-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            d7f087b5fb2afd95859c54b3755d54ce: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-04-01T00:00:00.000Z"),
+              effectif: 25,
+            },
+          },
+          compact: {
+            delete: {
+              effectif: [
+                "8625902e9cb49a4c3545356f58ebf0da",
+                "cb9ff9b7c325db508cc10d9883d3b0d0",
+                "07769408d4bdcade6ffad324d7be69c1",
+                "d7d9f85be09b929ce3449e53b83722ff",
+                "c711fc28736c18c3d4e2c85ad45e0e5c",
+                "d75708492c345353a90e5feacf8952b1",
+                "096df3b9e65b1b22dbb3b9f5cb4e63e2",
+                "78db1c37be7b7eea668df09c5891f390",
+                "359c9a513d51ee261e4660693cf3eb15",
+                "df9ea53314c2eb255e1c0f7b84bffb5f",
+                "9c190f2ec0676b5f80bd72baa83a530c",
+                "1a044d6f27790d8a225b6befafabece0",
+                "0f6c38d9579a39e0aa0a0af9c4edf13f",
+                "53206905425c3923e15dc63ef4737e45",
+                "d38aa7c928586aa5b8de340ce9c8b522",
+                "9acd85a3a95b91a9f5d26398dd101667",
+                "9b0454af1fa899d72cd11f7f0cd1d63b",
+                "1f2bcfc6fd776fafeb7e00a1898c4580",
+                "2a8ee2a505597197e29dd18844647161",
+                "11206224e26cddbff659f6ae10081e0b",
+                "a05d4a1cf20c8aee7a0f6355c38794f1",
+                "b4ba68358ded3722b47e7af74aa66e52",
+                "2d295be944400570dd09f808db04342c",
+                "5c19e127c8c6fca9cb7ad121df89b2a7",
+                "988ea4f2ace5cc724e8e7b986bb88ca0",
+                "73f1925d1345262d49b15956c3339d30",
+                "bc01804bfc401f22e945d1f5b8b58cb0",
+                "ae13a63ebd17a320c795a62d1641a200",
+                "931b1279e07782acdddb4a173068351a",
+                "e7929b5085281cd3d922b762b9a8861c",
+                "bfd65d9ec998f305bb54a159902666ad",
+              ],
+            },
+          },
+        },
+        2109: {
+          cotisation: {
+            c7c11aab619e9d81068def2df7e72e33: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2021-07-01T00:00:00.000Z"),
+                end: ISODate("2021-08-01T00:00:00.000Z"),
+              },
+              encaisse: 27016,
+              du: 27016,
+            },
+          },
+          compte: {
+            e914b848a010541e1d20ca53835010c3: {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2021-08-01T00:00:00.000Z"),
+            },
+            "801a23cbc746124ea7061fb8316a22bf": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2021-07-01T00:00:00.000Z"),
+            },
+          },
+          effectif: {
+            "4f898978cff0109a58deb3546445c104": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2021-04-01T00:00:00.000Z"),
+              effectif: 38,
+            },
+            "8187d4795af480ed1fafb82f4cd37d2d": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2021-05-01T00:00:00.000Z"),
+              effectif: 38,
+            },
+            "805b0ddec691ba5eedfa9ff8537ebae0": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2021-06-01T00:00:00.000Z"),
+              effectif: 37,
+            },
+            a85103ee873dc36917f4d427b64c6dbe: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2021-07-01T00:00:00.000Z"),
+              effectif: 39,
+            },
+          },
+          reporder: {},
+          compact: {
+            delete: {
+              effectif: ["1db5c61a4f8e42090149b673a34924ce"],
+            },
+          },
+        },
+        2110: {
+          cotisation: {
+            e383ca69fb75724906fd30a6e7ed2e60: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2021-08-01T00:00:00.000Z"),
+                end: ISODate("2021-09-01T00:00:00.000Z"),
+              },
+              encaisse: 21352,
+              du: 21352,
+            },
+          },
+          compte: {
+            bc2fb203029e1203de54b047c9c6511b: {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2021-09-01T00:00:00.000Z"),
+            },
+          },
+          reporder: {},
+          compact: {
+            delete: {
+              apconso: [
+                "fb7af36ec43f861816dbca8372a4ceea",
+                "0e7271cfa59cd84a05a6a35f3234c14d",
+                "7b64324d4cc1ba2ba5139076a069b64f",
+                "3f24646dbdb5481254218ea77d93d20b",
+                "d8f1519c6ade47f416d5b9f295f4090c",
+              ],
+            },
+          },
+        },
+        2111: {
+          cotisation: {
+            cc82496938fa0023a9146b763fa01900: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2021-09-01T00:00:00.000Z"),
+                end: ISODate("2021-10-01T00:00:00.000Z"),
+              },
+              encaisse: 20179,
+              du: 20179,
+            },
+          },
+          effectif: {
+            "9b34abdb74dcf0ac9d2eb28d07a642fe": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2021-09-01T00:00:00.000Z"),
+              effectif: 35,
+            },
+            "2a70003ae5f2576977d83e0f9b03cff0": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2021-08-01T00:00:00.000Z"),
+              effectif: 36,
+            },
+          },
+        },
+        2201: {
+          compte: {
+            "78dbd0157904169b5b19d3751b848481": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2021-12-01T00:00:00.000Z"),
+            },
+            efdab8963a726681c1d6c6689696d24f: {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2021-11-01T00:00:00.000Z"),
+            },
+            "4a3d8d31ff1361edb742ac4f493a1025": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2021-10-01T00:00:00.000Z"),
+            },
+          },
+          debit: {
+            "198ed19973c962cb4510e8d544df74ab": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2021-11-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2021-10-01T00:00:00.000Z"),
+                end: ISODate("2021-11-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            cef66cfa1587261ab5e044773cdaeac3: {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2021-11-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 1,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2021-10-01T00:00:00.000Z"),
+                end: ISODate("2021-11-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            bd5d9f790084777e3a43d6b7383187ed: {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2021-12-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 1,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2021-11-01T00:00:00.000Z"),
+                end: ISODate("2021-12-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            "515010570fe387bf300420564749a3ba": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2021-12-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2021-11-01T00:00:00.000Z"),
+                end: ISODate("2021-12-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+          },
+          effectif: {
+            "35fcc3d12f911e869e562273e1f1e2a5": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2021-10-01T00:00:00.000Z"),
+              effectif: 37,
+            },
+            "4b308e0057d4fe21005d89d3f1f7b47d": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2021-11-01T00:00:00.000Z"),
+              effectif: 36,
+            },
+          },
+          cotisation: {
+            "535f978f743cba57e25561252b92b631": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2021-10-01T00:00:00.000Z"),
+                end: ISODate("2021-11-01T00:00:00.000Z"),
+              },
+              encaisse: 19191,
+              du: 19192,
+            },
+            ae1368a6f4d04713d4a78baf9385c4f2: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2021-11-01T00:00:00.000Z"),
+                end: ISODate("2021-12-01T00:00:00.000Z"),
+              },
+              encaisse: 19954,
+              du: 19955,
+            },
+          },
+          reporder: {},
+        },
+        2202: {
+          debit: {
+            "862d77197cdacbd7e9094a1cadab37e5": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2022-01-24T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 1,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2021-12-01T00:00:00.000Z"),
+                end: ISODate("2022-01-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            "6b4b595299c2680084fb5629479b081a": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2022-01-24T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2021-12-01T00:00:00.000Z"),
+                end: ISODate("2022-01-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            "1f757197b0fe8f3293572e12a7e7f78c": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2022-02-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 2,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2022-01-01T00:00:00.000Z"),
+                end: ISODate("2022-02-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            bbf2253c22c12cc64d6c99727e2f59ad: {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2022-02-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2022-01-01T00:00:00.000Z"),
+                end: ISODate("2022-02-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+          },
+          cotisation: {
+            "1e27b8221944649e0b289f68127f5a9c": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2021-12-01T00:00:00.000Z"),
+                end: ISODate("2022-01-01T00:00:00.000Z"),
+              },
+              encaisse: 41016,
+              du: 41017,
+            },
+          },
+          compte: {
+            "3c42ff7f97d1ea900547b4dcaa7ab688": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2022-01-01T00:00:00.000Z"),
+            },
+          },
+          effectif: {
+            ca85a434921ca6d33d35e62b792a7813: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2021-12-01T00:00:00.000Z"),
+              effectif: 37,
+            },
+          },
+          apconso: {
+            "0e7271cfa59cd84a05a6a35f3234c14d": {
+              id_conso: "038BDPO0200",
+              heure_consomme: 28,
+              montant: 227.08,
+              effectif: 1,
+              periode: ISODate("2021-04-01T00:00:00.000Z"),
+            },
+            "7b64324d4cc1ba2ba5139076a069b64f": {
+              id_conso: "038BDPO0100",
+              heure_consomme: 47,
+              montant: 323.49,
+              effectif: 2,
+              periode: ISODate("2020-06-01T00:00:00.000Z"),
+            },
+            fb7af36ec43f861816dbca8372a4ceea: {
+              id_conso: "038BDPO0100",
+              heure_consomme: 402.34,
+              montant: 3238,
+              effectif: 9,
+              periode: ISODate("2020-05-01T00:00:00.000Z"),
+            },
+            "3f24646dbdb5481254218ea77d93d20b": {
+              id_conso: "038BDPO0100",
+              heure_consomme: 2146.5,
+              montant: 17484.59,
+              effectif: 26,
+              periode: ISODate("2020-04-01T00:00:00.000Z"),
+            },
+            d8f1519c6ade47f416d5b9f295f4090c: {
+              id_conso: "038BDPO0100",
+              heure_consomme: 2285.5,
+              montant: 18818.69,
+              effectif: 32,
+              periode: ISODate("2020-03-01T00:00:00.000Z"),
+            },
+          },
+          reporder: {
+            "Wed Jan 01 2014 01:00:00 GMT+0100 (CET)": {
+              random_order: 0.19943843676915085,
+              periode: ISODate("2014-01-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Sat Feb 01 2014 01:00:00 GMT+0100 (CET)": {
+              random_order: 0.0187358621672169,
+              periode: ISODate("2014-02-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Sat Mar 01 2014 01:00:00 GMT+0100 (CET)": {
+              random_order: 0.9943116382070262,
+              periode: ISODate("2014-03-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Tue Apr 01 2014 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.7707679073143755,
+              periode: ISODate("2014-04-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Thu May 01 2014 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.7160749949979485,
+              periode: ISODate("2014-05-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Sun Jun 01 2014 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.16601138604726917,
+              periode: ISODate("2014-06-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Tue Jul 01 2014 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.8918415838108429,
+              periode: ISODate("2014-07-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Fri Aug 01 2014 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.27991564117960643,
+              periode: ISODate("2014-08-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Mon Sep 01 2014 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.9501315432897512,
+              periode: ISODate("2014-09-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Wed Oct 01 2014 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.3207948607346055,
+              periode: ISODate("2014-10-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Sat Nov 01 2014 01:00:00 GMT+0100 (CET)": {
+              random_order: 0.42290391493357293,
+              periode: ISODate("2014-11-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Mon Dec 01 2014 01:00:00 GMT+0100 (CET)": {
+              random_order: 0.39217417741729754,
+              periode: ISODate("2014-12-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Thu Jan 01 2015 01:00:00 GMT+0100 (CET)": {
+              random_order: 0.1512555977233313,
+              periode: ISODate("2015-01-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Sun Feb 01 2015 01:00:00 GMT+0100 (CET)": {
+              random_order: 0.6973888052693495,
+              periode: ISODate("2015-02-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Sun Mar 01 2015 01:00:00 GMT+0100 (CET)": {
+              random_order: 0.8985639534676663,
+              periode: ISODate("2015-03-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Wed Apr 01 2015 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.6380368149528775,
+              periode: ISODate("2015-04-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Fri May 01 2015 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.21640321842515886,
+              periode: ISODate("2015-05-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Mon Jun 01 2015 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.837793010439902,
+              periode: ISODate("2015-06-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Wed Jul 01 2015 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.40716131937163036,
+              periode: ISODate("2015-07-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Sat Aug 01 2015 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.7183809175874973,
+              periode: ISODate("2015-08-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Tue Sep 01 2015 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.7356892838815386,
+              periode: ISODate("2015-09-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Thu Oct 01 2015 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.6097720617276403,
+              periode: ISODate("2015-10-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Sun Nov 01 2015 01:00:00 GMT+0100 (CET)": {
+              random_order: 0.8361426975095475,
+              periode: ISODate("2015-11-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Tue Dec 01 2015 01:00:00 GMT+0100 (CET)": {
+              random_order: 0.5203686669904963,
+              periode: ISODate("2015-12-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Fri Jan 01 2016 01:00:00 GMT+0100 (CET)": {
+              random_order: 0.39038974300952667,
+              periode: ISODate("2016-01-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Mon Feb 01 2016 01:00:00 GMT+0100 (CET)": {
+              random_order: 0.6380077487190027,
+              periode: ISODate("2016-02-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Tue Mar 01 2016 01:00:00 GMT+0100 (CET)": {
+              random_order: 0.7647907676521726,
+              periode: ISODate("2016-03-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Fri Apr 01 2016 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.27293538235007286,
+              periode: ISODate("2016-04-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Sun May 01 2016 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.5501523450629259,
+              periode: ISODate("2016-05-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Wed Jun 01 2016 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.21552577445613552,
+              periode: ISODate("2016-06-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Fri Jul 01 2016 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.28530611745424284,
+              periode: ISODate("2016-07-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Mon Aug 01 2016 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.2645969925149436,
+              periode: ISODate("2016-08-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Thu Sep 01 2016 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.15324885004767053,
+              periode: ISODate("2016-09-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Sat Oct 01 2016 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.30654537854068853,
+              periode: ISODate("2016-10-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Tue Nov 01 2016 01:00:00 GMT+0100 (CET)": {
+              random_order: 0.6235243960168106,
+              periode: ISODate("2016-11-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Thu Dec 01 2016 01:00:00 GMT+0100 (CET)": {
+              random_order: 0.2952629592583562,
+              periode: ISODate("2016-12-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Sun Jan 01 2017 01:00:00 GMT+0100 (CET)": {
+              random_order: 0.4036279327670289,
+              periode: ISODate("2017-01-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Wed Feb 01 2017 01:00:00 GMT+0100 (CET)": {
+              random_order: 0.3238633041676592,
+              periode: ISODate("2017-02-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Wed Mar 01 2017 01:00:00 GMT+0100 (CET)": {
+              random_order: 0.4278768819229627,
+              periode: ISODate("2017-03-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Sat Apr 01 2017 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.9188493113156163,
+              periode: ISODate("2017-04-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Mon May 01 2017 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.2966156019369923,
+              periode: ISODate("2017-05-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Thu Jun 01 2017 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.6817156402802919,
+              periode: ISODate("2017-06-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Sat Jul 01 2017 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.4906404629857014,
+              periode: ISODate("2017-07-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Tue Aug 01 2017 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.5253060239619604,
+              periode: ISODate("2017-08-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Fri Sep 01 2017 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.5161338409953501,
+              periode: ISODate("2017-09-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Sun Oct 01 2017 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.6680716440615005,
+              periode: ISODate("2017-10-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Wed Nov 01 2017 01:00:00 GMT+0100 (CET)": {
+              random_order: 0.6826041890704783,
+              periode: ISODate("2017-11-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Fri Dec 01 2017 01:00:00 GMT+0100 (CET)": {
+              random_order: 0.12865871035655163,
+              periode: ISODate("2017-12-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Mon Jan 01 2018 01:00:00 GMT+0100 (CET)": {
+              random_order: 0.46219006249335093,
+              periode: ISODate("2018-01-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Thu Feb 01 2018 01:00:00 GMT+0100 (CET)": {
+              random_order: 0.8451476386095914,
+              periode: ISODate("2018-02-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Thu Mar 01 2018 01:00:00 GMT+0100 (CET)": {
+              random_order: 0.13971166761044962,
+              periode: ISODate("2018-03-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Sun Apr 01 2018 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.5396189517458913,
+              periode: ISODate("2018-04-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Tue May 01 2018 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.9765404518475336,
+              periode: ISODate("2018-05-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Fri Jun 01 2018 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.5852951929747149,
+              periode: ISODate("2018-06-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Sun Jul 01 2018 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.657174209831317,
+              periode: ISODate("2018-07-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Wed Aug 01 2018 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.009606485484252913,
+              periode: ISODate("2018-08-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Sat Sep 01 2018 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.18669597638296453,
+              periode: ISODate("2018-09-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Mon Oct 01 2018 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.13699133791322105,
+              periode: ISODate("2018-10-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Thu Nov 01 2018 01:00:00 GMT+0100 (CET)": {
+              random_order: 0.30199739130012815,
+              periode: ISODate("2018-11-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Sat Dec 01 2018 01:00:00 GMT+0100 (CET)": {
+              random_order: 0.9040930446878082,
+              periode: ISODate("2018-12-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Tue Jan 01 2019 01:00:00 GMT+0100 (CET)": {
+              random_order: 0.3621797844491096,
+              periode: ISODate("2019-01-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Fri Feb 01 2019 01:00:00 GMT+0100 (CET)": {
+              random_order: 0.5944137922701596,
+              periode: ISODate("2019-02-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Fri Mar 01 2019 01:00:00 GMT+0100 (CET)": {
+              random_order: 0.005418488855652104,
+              periode: ISODate("2019-03-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Mon Apr 01 2019 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.11413475644920046,
+              periode: ISODate("2019-04-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Wed May 01 2019 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.5540453682897557,
+              periode: ISODate("2019-05-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Sat Jun 01 2019 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.21611555334369925,
+              periode: ISODate("2019-06-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Mon Jul 01 2019 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.10692764289073675,
+              periode: ISODate("2019-07-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Thu Aug 01 2019 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.06286700859772099,
+              periode: ISODate("2019-08-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Sun Sep 01 2019 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.12302101549181588,
+              periode: ISODate("2019-09-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Tue Oct 01 2019 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.6270637855657417,
+              periode: ISODate("2019-10-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Fri Nov 01 2019 01:00:00 GMT+0100 (CET)": {
+              random_order: 0.4356054714099965,
+              periode: ISODate("2019-11-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Sun Dec 01 2019 01:00:00 GMT+0100 (CET)": {
+              random_order: 0.6639845728846108,
+              periode: ISODate("2019-12-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Wed Jan 01 2020 01:00:00 GMT+0100 (CET)": {
+              random_order: 0.6364378745919065,
+              periode: ISODate("2020-01-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Sat Feb 01 2020 01:00:00 GMT+0100 (CET)": {
+              random_order: 0.17228951873894094,
+              periode: ISODate("2020-02-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Sun Mar 01 2020 01:00:00 GMT+0100 (CET)": {
+              random_order: 0.19668123998611742,
+              periode: ISODate("2020-03-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Wed Apr 01 2020 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.26076437542486686,
+              periode: ISODate("2020-04-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Fri May 01 2020 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.7643450049859258,
+              periode: ISODate("2020-05-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Mon Jun 01 2020 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.37477580905138486,
+              periode: ISODate("2020-06-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Wed Jul 01 2020 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.2337334103266756,
+              periode: ISODate("2020-07-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Sat Aug 01 2020 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.9683336599879673,
+              periode: ISODate("2020-08-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Tue Sep 01 2020 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.6917862918671529,
+              periode: ISODate("2020-09-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Thu Oct 01 2020 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.22347869073899496,
+              periode: ISODate("2020-10-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Sun Nov 01 2020 01:00:00 GMT+0100 (CET)": {
+              random_order: 0.49703871891022944,
+              periode: ISODate("2020-11-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Tue Dec 01 2020 01:00:00 GMT+0100 (CET)": {
+              random_order: 0.12098804879883318,
+              periode: ISODate("2020-12-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Fri Jan 01 2021 01:00:00 GMT+0100 (CET)": {
+              random_order: 0.6293514694999226,
+              periode: ISODate("2021-01-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Mon Feb 01 2021 01:00:00 GMT+0100 (CET)": {
+              random_order: 0.20381076229312078,
+              periode: ISODate("2021-02-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Mon Mar 01 2021 01:00:00 GMT+0100 (CET)": {
+              random_order: 0.33701975847287624,
+              periode: ISODate("2021-03-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Thu Apr 01 2021 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.7225818994765397,
+              periode: ISODate("2021-04-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Sat May 01 2021 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.7449100262461075,
+              periode: ISODate("2021-05-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Tue Jun 01 2021 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.2246108957977745,
+              periode: ISODate("2021-06-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Thu Jul 01 2021 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.8149298259664368,
+              periode: ISODate("2021-07-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Sun Aug 01 2021 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.33667432343203874,
+              periode: ISODate("2021-08-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Wed Sep 01 2021 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.4279494105881677,
+              periode: ISODate("2021-09-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Fri Oct 01 2021 02:00:00 GMT+0200 (CEST)": {
+              random_order: 0.890807709508037,
+              periode: ISODate("2021-10-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Mon Nov 01 2021 01:00:00 GMT+0100 (CET)": {
+              random_order: 0.3894063462582833,
+              periode: ISODate("2021-11-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Wed Dec 01 2021 01:00:00 GMT+0100 (CET)": {
+              random_order: 0.3166162251670439,
+              periode: ISODate("2021-12-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+            "Sat Jan 01 2022 01:00:00 GMT+0100 (CET)": {
+              random_order: 0.0993069082668595,
+              periode: ISODate("2022-01-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+          },
+        },
+        2203: {
+          cotisation: {
+            "9944f7e9ae82dc83a26174af444653ba": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2022-01-01T00:00:00.000Z"),
+                end: ISODate("2022-02-01T00:00:00.000Z"),
+              },
+              encaisse: 19441,
+              du: 19443,
+            },
+          },
+          compte: {
+            "284b5cb293170c53f21517bca56ae676": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2022-02-01T00:00:00.000Z"),
+            },
+          },
+          effectif: {
+            "733cc2e759d70eb058e5acd11cd4278f": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2022-01-01T00:00:00.000Z"),
+              effectif: 38,
+            },
+          },
+          reporder: {
+            "Tue Feb 01 2022 01:00:00 GMT+0100 (CET)": {
+              random_order: 0.681390261994525,
+              periode: ISODate("2022-02-01T00:00:00.000Z"),
+              siret: "40433868300018",
+            },
+          },
+          compact: {
+            delete: {
+              effectif: [
+                "091211ab4267ac681753a3ab491e8254",
+                "f5d96cafccc0d4392c27371618b748b3",
+                "048c4465da26e720225b09b9b6743685",
+                "c8ed3cb84b5365b6bd13141990d714f7",
+                "64c17685ce303a09f99af9f910b21b74",
+                "ade0f49ea56b413538b7288a752728a3",
+                "87b4c7a336d2dfcc495ff17fedb29dd4",
+                "513e072c11e5a9d5865598234190b0e3",
+                "495d60ea465f7156078b9b48c61b7761",
+                "5a25e37089c4c6edf7650ac209cdf4a7",
+                "90a77b8b3fcb875dbb5204ee38c71c95",
+                "78985caa0e453817d22224a04bd87f72",
+                "6d91eecf6c68d4661043acb74d11653e",
+                "85ebc9b6de9346bd788186f624ec904e",
+                "28f29ccdc47eb5616cec3b79edb39d19",
+                "83e667962e0b988e6380ce51e14e1c87",
+                "cca77a6a1838add7b7e0357cfaf38c0a",
+                "a61bde9d8ef6ec045a9bedbddec08e86",
+                "bf3f0514c4c57b8ef90534164a3672e3",
+                "437520e0c5cd42880751c847c2d56df6",
+                "6b2e3e202987a96e1132fd29db2cde0a",
+                "ed091d6514adff3f4651d5b58c2c103a",
+                "7cb882b0dedf2870ccadb5f2db3a7e59",
+                "f4a0abe29393b4aa74329481e1f89de8",
+                "57fb2aad186e7d549c526ba4abe45390",
+                "d02e6f86414566107754a03a2c4046d6",
+                "45b9f9ca8901245dcbe6f67317e481b0",
+                "dc98ba9d3cf98ed8b294cfba8c369ca8",
+                "57b3286bf6ae6eb6ad291df499dc47e6",
+                "001789db3b9fdeffc6e744e7210bd103",
+                "3483407e601d00308b337591c51d5735",
+                "40c84e3e66e39091244fd2835af9db1c",
+                "afe1dd05adb0006a9f8f6db17d2e1be3",
+                "67622b6d9570f87717c0dfc02bd36a4c",
+                "7d7499e40d056b31415d23d33d425635",
+                "3e20d0b5db039ff6172b670b65b4cabf",
+                "452a23370ff5a73e19d4d8c323a3ef83",
+                "b051d39e74d907a587302f2761c5b725",
+                "0af08022f55553fb1c457387defd2dfa",
+                "d6bdf2174b4f8ee04d54810202c3c068",
+                "a4eb97a93eb2dc1f3fc9987248e78f73",
+                "d47a7d5e05d1c95f73b1ab671d06babb",
+                "46ed652a69aa5c4a358bbe79acb51cec",
+                "f73466c78caccf15b8cb8f4b96053d02",
+                "ed19773f53e37b0d139bdaaa99f37eb6",
+                "b90b4d4c604d1aa32ca3ad03ba79d68b",
+                "e3980d9c0091678c2612ac0bfee7c84e",
+                "cdf19fe90090b3e70bcdc2dbf101d293",
+                "39f8c954db204f7b8a2d20df78ef499d",
+                "e06a46d494165c1e0766cd3f2e82d942",
+                "f95139cc81678393873ef9fd10d9921e",
+                "0491f4db226240374f935ace7304905c",
+                "3bc60106d3284f4d729662969904dcfc",
+                "62b455a4a0ec9570c0d21bf68f5480c9",
+                "1a3e0db61bbb1cd26d573b521639348d",
+                "dffb42be5b4ef74bb2d4dd195dbb882d",
+                "09fb9e83616634c65624fa289196f131",
+                "689f428d2bfffcb33f9a6fbac3bb4c67",
+                "4278bc5b86b27fdc7b3afe242d044a37",
+                "9b17cc654928037f812b9fbc73949d6c",
+                "f4617d24e6812967136d46c7b27cf578",
+                "00cc8a8a543baf77c5a2fd104eae87f0",
+                "bfef8431814c92b90fde05d725e49d81",
+                "9dd6da361c2bfea4f895d6bb59e50244",
+                "76a384ccb66e4c92ee3c44293e922718",
+                "f4925ba8d469969b0ce45bb56f5160d1",
+                "77ff4e0225f4bbd803d688a24306d79e",
+                "98573beaf8f01f3d3e09ecb3514cb5db",
+                "977f4dbc5b8c38427318cff68c351f7f",
+                "b5091a4f916de2801eff3fb1abf69824",
+                "610405b671e4b6b3a50b93685af660c6",
+                "d7f087b5fb2afd95859c54b3755d54ce",
+              ],
+            },
+          },
+        },
+        "2005_2": {
+          apdemande: {
+            ac7a480e50258a3eb4b62379ff4cc762: {
+              id_demande: "038BDPO0100",
+              effectif_entreprise: 34,
+              effectif: 34,
+              date_statut: ISODate("2020-04-27T00:00:00.000Z"),
+              periode: {
+                start: ISODate("2020-03-16T00:00:00.000Z"),
+                end: ISODate("2020-06-30T00:00:00.000Z"),
+              },
+              hta: 6000,
+              mta: null,
+              effectif_autorise: 32,
+              motif_recours_se: 5,
+              heure_consommee: 4432,
+              montant_consommee: 36303.28,
+              effectif_consomme: 58,
+            },
+          },
+          apconso: {
+            "4d7402303374c41b01ba24708402b628": {
+              id_conso: "038BDPO0100",
+              heure_consomme: 2146.5,
+              montant: 17485,
+              effectif: 26,
+              periode: ISODate("2020-04-01T00:00:00.000Z"),
+            },
+            b105af8871d3285520951aee2e98f871: {
+              id_conso: "038BDPO0100",
+              heure_consomme: 2285.5,
+              montant: 18819,
+              effectif: 32,
+              periode: ISODate("2020-03-01T00:00:00.000Z"),
+            },
+          },
+          reporder: {},
+        },
+        "2002_1": {
+          debit: {
+            "0612b82d78b76ef484a53ff062198d7d": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2014-02-18T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2014-01-01T00:00:00.000Z"),
+                end: ISODate("2014-02-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            "48415de85f87abc301a5f90c92026924": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2014-02-18T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 1,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2014-01-01T00:00:00.000Z"),
+                end: ISODate("2014-02-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            "8123d30b10af8acc354f547aa2cf21b1": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2014-03-18T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 1,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2014-02-01T00:00:00.000Z"),
+                end: ISODate("2014-03-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            ffd5fcaba619bd29607e1125893479c0: {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2014-03-18T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2014-02-01T00:00:00.000Z"),
+                end: ISODate("2014-03-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            a8e238f2325f71c0d79fcd5100ee3a46: {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2014-04-16T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2014-03-01T00:00:00.000Z"),
+                end: ISODate("2014-04-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            c291b131e31bcc8579b5bbe72552cf01: {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2014-04-16T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 1,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2014-03-01T00:00:00.000Z"),
+                end: ISODate("2014-04-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            "5fc80f5135403e060d235635f968c022": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2014-05-16T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 1,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2014-04-01T00:00:00.000Z"),
+                end: ISODate("2014-05-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            e169e4951a201e959dbdc5723dd7263c: {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2014-05-16T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2014-04-01T00:00:00.000Z"),
+                end: ISODate("2014-05-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            "00c6db177e334b0c2a655ed70cc37021": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2014-06-17T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 1,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2014-05-01T00:00:00.000Z"),
+                end: ISODate("2014-06-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            "418cc5dbd3af24095fe86544551458f7": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2014-06-17T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2014-05-01T00:00:00.000Z"),
+                end: ISODate("2014-06-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            "4fcf9b3413a637a80784d91fcbfe110c": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2014-07-16T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 1,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2014-06-01T00:00:00.000Z"),
+                end: ISODate("2014-07-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            "1a953ba00439ff785dddf4b32f636f6a": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2014-07-16T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2014-06-01T00:00:00.000Z"),
+                end: ISODate("2014-07-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            f4276a684502594b97c4d987df71826e: {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2015-04-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 1,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2015-03-01T00:00:00.000Z"),
+                end: ISODate("2015-04-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            "450b728684301cb2337560c99bfec644": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2015-04-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2015-03-01T00:00:00.000Z"),
+                end: ISODate("2015-04-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            a4416729bb0f8ed18f0909a465a557db: {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2015-05-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 1,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2015-04-01T00:00:00.000Z"),
+                end: ISODate("2015-05-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            "356c43786a74669544d4ac16f68d7b72": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2015-05-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2015-04-01T00:00:00.000Z"),
+                end: ISODate("2015-05-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            "87097ee7d29067657d89216148cf0a77": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2015-06-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 1,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2015-05-01T00:00:00.000Z"),
+                end: ISODate("2015-06-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            "364b9a2b5456ebb70b55b85073caec54": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2015-06-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2015-05-01T00:00:00.000Z"),
+                end: ISODate("2015-06-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            faba1425431a206e65cb9323cc6214a2: {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2015-10-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 1,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2015-09-01T00:00:00.000Z"),
+                end: ISODate("2015-10-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            cc2ab22a091c00da060205dd90f3a84c: {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2015-10-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2015-09-01T00:00:00.000Z"),
+                end: ISODate("2015-10-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            "3187f8a3b8b07b8372b6ee25b297c5ba": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2015-11-16T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 1,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2015-10-01T00:00:00.000Z"),
+                end: ISODate("2015-11-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            cec8ef14eaef0819abba31b32967f3e5: {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2015-11-16T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2015-10-01T00:00:00.000Z"),
+                end: ISODate("2015-11-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            "612b0d433381c96f9dc4098182d4127a": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2015-12-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 1,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2015-11-01T00:00:00.000Z"),
+                end: ISODate("2015-12-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            "68bee12e5f7dc63160a5359b377c0a37": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2015-12-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2015-11-01T00:00:00.000Z"),
+                end: ISODate("2015-12-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            "846c4de1a3f64b3fc6f5fbf86f426056": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2016-08-16T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2016-07-01T00:00:00.000Z"),
+                end: ISODate("2016-08-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            "9c53773c3522a2f1c384b6004f60ef63": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2016-08-16T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 1,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2016-07-01T00:00:00.000Z"),
+                end: ISODate("2016-08-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            fde2a73c81f8f7caa823f194f61acbcd: {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2017-01-16T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 2,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2016-12-01T00:00:00.000Z"),
+                end: ISODate("2017-01-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            d90ccc08fa27729c66fe253a68c1800c: {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2017-01-16T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2016-12-01T00:00:00.000Z"),
+                end: ISODate("2017-01-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            a2cff8822d749b7c7910adc542862f4a: {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2017-06-09T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 5,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2017-04-01T00:00:00.000Z"),
+                end: ISODate("2017-05-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "12",
+              code_motif_ecart_negatif: "25",
+              recours_en_cours: false,
+            },
+            "93c43761d85c7192842db69d725ce6a6": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2017-06-09T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 6,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2017-04-01T00:00:00.000Z"),
+                end: ISODate("2017-05-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "4",
+              code_motif_ecart_negatif: "25",
+              recours_en_cours: false,
+            },
+            c35d1d9263a23a0e8bb6d3926bba03ec: {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2017-05-18T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 144,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2017-04-01T00:00:00.000Z"),
+                end: ISODate("2017-05-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "25",
+              recours_en_cours: false,
+            },
+            "779a64b3b8abdeec3d9b397b2d66b01f": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2017-06-09T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2017-04-01T00:00:00.000Z"),
+                end: ISODate("2017-05-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "2",
+              code_motif_ecart_negatif: "25",
+              recours_en_cours: false,
+            },
+            "21b8d97d2ceed2e5b3a93dcc74581e10": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2017-06-09T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 3,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2017-04-01T00:00:00.000Z"),
+                end: ISODate("2017-05-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "12",
+              code_motif_ecart_negatif: "25",
+              recours_en_cours: false,
+            },
+            f9286827017f07685123e18f3949d887: {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2017-06-09T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 4,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2017-04-01T00:00:00.000Z"),
+                end: ISODate("2017-05-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "11",
+              code_motif_ecart_negatif: "25",
+              recours_en_cours: false,
+            },
+            "041b7a60bc7ecca6f99f4d505e9bd010": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2017-10-16T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2017-09-01T00:00:00.000Z"),
+                end: ISODate("2017-10-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            "30070a744d35e9a4cc480651d31495b7": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2017-11-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 2,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2017-10-01T00:00:00.000Z"),
+                end: ISODate("2017-11-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            "5e5be481923b120631a02f1eabbd6210": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2017-11-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2017-10-01T00:00:00.000Z"),
+                end: ISODate("2017-11-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            edc41d1fa90fb5b578c3afac571d7281: {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2017-12-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 1,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2017-11-01T00:00:00.000Z"),
+                end: ISODate("2017-12-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            "56275c651398ca78c1741ed6d408f9d4": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2017-12-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2017-11-01T00:00:00.000Z"),
+                end: ISODate("2017-12-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            "9d4ca82a156eecfde9d71b4b736b87f7": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2018-01-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2017-12-01T00:00:00.000Z"),
+                end: ISODate("2018-01-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            f7ca2b8473b13d40f75fe0316c5d92ed: {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2018-06-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2018-05-01T00:00:00.000Z"),
+                end: ISODate("2018-06-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            "8195dda7707dc2fe4cd8a395c6503fb6": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2018-08-16T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2018-07-01T00:00:00.000Z"),
+                end: ISODate("2018-08-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            e31ba2d0b61471973da238b358c3b008: {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2018-09-17T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2018-08-01T00:00:00.000Z"),
+                end: ISODate("2018-09-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            "430b9515b634663bd6343329b60bac2c": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2018-11-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2018-10-01T00:00:00.000Z"),
+                end: ISODate("2018-11-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            f230423279fee89a4193bceb777c7dea: {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2019-01-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2018-12-01T00:00:00.000Z"),
+                end: ISODate("2019-01-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            "86936c20fbbfb49f99335d1bb7ceb7c8": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2019-05-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2019-04-01T00:00:00.000Z"),
+                end: ISODate("2019-05-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+          },
+          compte: {
+            "621aa8109d4c58e13cb7c78a3fedd6b0": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2020-01-01T00:00:00.000Z"),
+            },
+            "86e4b37296d1718f7493ff2829e76056": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2020-02-01T00:00:00.000Z"),
+            },
+          },
+          sirene: {
+            dfc5a31364ed5bfb7d1b4332331c5ca2: {
+              siren: "404338683",
+              nic: "00018",
+              siege: true,
+              code_postal: "38150",
+              departement: "38",
+              commune: "CHANAS",
+              ape: "4752B",
+              date_creation: ISODate("1996-01-31T23:00:00.000Z"),
+              longitude: 4.80859,
+              lattitude: 45.32452,
+              adresse: [
+                "BRICOCASH",
+                "RN 7",
+                "PARC DU SOLEIL",
+                "38150",
+                "CHANAS",
+                "Parc du Soleil 38150 Chanas",
+              ],
+            },
+          },
+          reporder: {},
+          compact: {
+            delete: {
+              cotisation: [
+                "fc32680ffc611e906458f9f418c4ef6c",
+                "086e4b564ef5c4dd8d1014989c0cf830",
+                "78b8c5c5ad3c6ea9e1147aa77aa9a1fb",
+                "a223281e4e75ff4ff69a2c6bb58280e0",
+                "6629121fdef976a66c0d9fb665101064",
+                "d0c9972e6b968ea49810df1092b48c43",
+                "0835ccff9b2547e459ee54187c95b931",
+                "1411c0a2c5412a9611394536b7b82e6e",
+                "1b11fa45f61ab6dbb9e94bf8d758a6b4",
+                "7fb92e498c1fabf191657502ec6fd26f",
+                "35adc33cd68c9966aba78588de80356e",
+                "0beca00346b4eef027bcdce5ce5b6af4",
+                "9452674b8b4aedfba84d245bc5e89084",
+                "ef0d75f4a713c97f7a5dfd759d234eab",
+                "0a96c02b9ae58afd9042441502892291",
+                "38590239fbff125d21f3e2a8b4a95f95",
+                "c96c6d2bbf9fdc73cfd55b866cb2cc34",
+                "b7a10a4968e7564366fbff7bc1799a36",
+                "db532ef5064a056e1987e49fa4421cf5",
+                "89a35cf56c51254bbebc651b15d8ff74",
+                "b564a758f6d067ad814194fbad172916",
+                "95d28dfb1eac097c3f145de7f3ab84c6",
+                "3cb868be26aafd62486f267cc03cb704",
+                "9cd411503089b9c8e0be0aa73edd2e45",
+                "680cb8ec2a4eda96879421067d6cf9b9",
+                "2033652a63d047ac2b32c8fcad51842a",
+                "e10ea68a86e4feb60be51d173e75728e",
+                "2c244ebee3e1b5842e987f6521e04947",
+                "bf397be8dcaacc1b02f88142139c5e69",
+                "949e2339ae2ddc0918fae1631f474831",
+                "ad44f89d6264e0c7b19377cac638186e",
+                "a9e05f7411a4e9ee16f7ab6038ca9368",
+                "9366e63fe2e6164ef8ea27e38d56065c",
+                "04da529cb23aa6bc56c2602f7aed4d30",
+                "e565e0321667cdeb1af86ec7bf49eede",
+                "0954babb2a7b144816f787e1b589e576",
+                "5126fc5443d9ec5d10e0cfd535042f49",
+                "65d8671c19bb4b48e357ad9908e910c8",
+                "7bc50a93e42cb85dbf4d4fcc0270666f",
+                "3664816f425a504ea803d86f3b2d2757",
+                "908bf8b6796733011b791020657f0d0f",
+                "6667c876f127768c2224f05f2a23a4e8",
+                "63d521e4780aa7e60a10697b51e0a963",
+                "25b19c613df2eb7135398caf11e713c6",
+                "a092342a0758ec61943da9f1b779dc95",
+                "592b7a075938adad3b79300b64efb85f",
+                "c58ff83340d27f7553df8a901f12b65f",
+                "3ceb52c43321dd97bf8f67d90db1678c",
+                "49d52ce2294ce957e7029faa0ebb2560",
+                "64ce5c0065152e6ab8a7c2babef5a655",
+                "dd638090d231af36b5f1a8b6adfe00be",
+                "ae8384508739b952e4eaea30abc9b2de",
+                "627092e9e6f6caa8af23be4fe4825a08",
+                "79d5a767117474254fb19985e76ccf2e",
+                "519da56450c2b57b3de4f9100bef7eaa",
+                "f2761075f5047e69fd731e24ffb8b98a",
+                "8782638c3b4cc2040c7812f2f0d42882",
+                "b877707baa0410b5c43c10a7fc14a1a1",
+                "c828f7f4af27f3c251f0be9a0770ff6d",
+                "310abdd7f4ae8bcd8f24e7a51e68db15",
+                "81442704991eb718e4f6ee3f21ff633d",
+                "086d5501a16f85841597be11161a11b4",
+                "80c07ce0192b16f12dc7551e57113a97",
+                "1290ef3eb2ed51e7de1cc9f00bb8410c",
+                "c70f884b6ec178ca6c44a41dd526b1fa",
+                "928f5b33b22185e894c0f5a187f638bc",
+                "351ef9cf017bbedd4f0d1bfb83ee024c",
+                "0dd7e15943605cfe7697cba177d97fb3",
+                "2ac838f9c4d50fb4f480efebc7c9be54",
+                "d6f1917e97cd67a6d90243106945c06e",
+                "8b844c36a6c94b222cd7cda1b131c2cf",
+                "4e82a434487134600bf1599350677949",
+                "fd26093b413099bd034f5f2a9d1741f3",
+                "4b108b41c94729ee7c29260e21e965bc",
+                "497cec8f1c7555823615d08fdf2bd685",
+                "27365929616877e52abfb5533ce50a34",
+              ],
+              debit: [
+                "16ff91f05c2dc51b54d755404cc7146f",
+                "0f052417ae77753e73f0367a96515989",
+                "778e1d9e4952a5954d4a20b5d498e4ee",
+                "b8c98e85b48b06c07bb824c9dc77c1ad",
+                "a200f84b63f1e8286ef9d350ad69126b",
+                "9d7e0e371452a2b15cff7d519aaa01ca",
+                "4f225993920e05a1d52799d32d6a68d8",
+                "92be067b43f5a7b060215425917e8d64",
+                "1b2522fc10b18a5d14d525d214255574",
+                "4f79a81a315ab1f20d16e00b81cd6649",
+                "f1fef8a9b660f3be296a943bb8ea6f27",
+                "55c8e2c59d097e5325a7a95ee9796e5a",
+                "3a2c127e6308a5c8e96da0ecbdb9db84",
+                "39de7a108138a4d89c43ada3674e812a",
+                "98530d67646b39920aeba7be5e5be57b",
+                "1046c8e2f658c8a85ae0876ad213fa26",
+                "d69a31d7ff074e076620119ba42da672",
+                "5f3b8bb146cfcab7854757ce2615e786",
+                "cd58e25d3a62927be68346be32314a11",
+                "c71c3e91371203418be83cda7b596f1c",
+                "3a18655c18dccebc1f247cdb7834a6d7",
+                "7b4eac5877f5a0939574608a3b762b30",
+                "737839ae53b65fa18d211413ca6d2f72",
+                "4501f68c2eeeca4963e937d657ce619f",
+                "93d0f5d365fa435915b3f7acfa4653f9",
+                "3d0d4cc3b5a285f87aedb4138fac5348",
+                "7c190280d1bed33d45147e5921a370a1",
+                "0edfa16205e41867e2e461adf6437fc7",
+                "bf2d7ba7f139f558ac73690c9f404349",
+                "3a71f853b4b75d29638bbb78be919f14",
+                "c547bd553b52a04069c80067fa2f3dd4",
+                "724d58a0484fb39625c3fc3120ba42e1",
+                "009052420de66d979bbc938d3dd50142",
+                "288690e52f9fb994a46afee90c96ce5e",
+                "3c87c8314fcec4fbcb8bb074de658f5c",
+                "29aa93ea3f8b271b7288cbeda70029ca",
+                "00f7f5eec53ae15d188fc58c319db32e",
+                "145f519f484896eed0c490202d75ad4c",
+                "e03711b65dd40b07dd0c27a2c8abc05a",
+                "8d9a0e1912f6d60cc1c7ac252ea6abf8",
+                "a4228968a416673f562426ddc097f166",
+                "1ecb6c475d559c481c5df3aec85d07b7",
+                "7a361ac18c0130c33ab618225fb7b182",
+                "f58e667ee5d6b04b36e8be77874fafe2",
+                "99a232fd28a4a4780ef2e964890cf061",
+                "72a4653d8acb65861fdbadc4463add2f",
+                "7deec528f3d711722b867594da6a8fbc",
+                "518dd48d18a1cd1b48f691f3583de353",
+                "faa2f0b4ab5dc98a0a369b060c5f5e43",
+                "11073496afe62af8a6d72434f869594c",
+                "86dcf7c1d4a6f4f15ed36a5e8e2593b0",
+                "bf0efcbe12826d0514ec24d39fb7a4e3",
+                "5c675c5078c82d21b2f0dace28fbce83",
+                "ae6b54de4a456fddbecdd042409c4849",
+              ],
+              sirene: [
+                "8bc4242fffc943f45406fc79fcb96ee0",
+                "4d7ad53c61a5f78c50bf2840b89db99d",
+              ],
+            },
+          },
+        },
+        "1912_1": {
+          compte: {
+            "1cde6163e6c1f4b5434a4625a9b726d9": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-12-01T00:00:00.000Z"),
+            },
+          },
+          effectif: {
+            faed516f4cad0866e2f3183891476792: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-09-01T00:00:00.000Z"),
+              effectif: 32,
+            },
+            "9749a601302dbad5663dd9463a19ee44": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-10-01T00:00:00.000Z"),
+              effectif: 28,
+            },
+            "53206905425c3923e15dc63ef4737e45": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-08-01T00:00:00.000Z"),
+              effectif: 33,
+            },
+          },
+          cotisation: {
+            "27365929616877e52abfb5533ce50a34": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2019-10-01T00:00:00.000Z"),
+                end: ISODate("2019-11-01T00:00:00.000Z"),
+              },
+              encaisse: 25955,
+              du: 25955,
+            },
+          },
+          reporder: {},
+        },
+        "1911_2": {
+          sirene: {
+            "4d7ad53c61a5f78c50bf2840b89db99d": {
+              siren: "404338683",
+              nic: "00018",
+              siege: true,
+              code_postal: "38150",
+              departement: "38",
+              commune: "CHANAS",
+              ape: "4752B",
+              date_creation: ISODate("1996-01-31T23:00:00.000Z"),
+              longitude: 4.80859,
+              lattitude: 45.32452,
+              adresse: [
+                "BRICOCASH",
+                "RN 7",
+                "PARC DU SOLEIL",
+                "38150",
+                "CHANAS",
+                "Parc du Soleil 38150 Chanas",
+              ],
+            },
+          },
+          reporder: {},
+        },
+        "1911_1": {
+          cotisation: {
+            "497cec8f1c7555823615d08fdf2bd685": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2019-09-01T00:00:00.000Z"),
+                end: ISODate("2019-10-01T00:00:00.000Z"),
+              },
+              encaisse: 16987,
+              du: 16987,
+            },
+          },
+          compte: {
+            "5d5c098163cec386901bfadb3b37c951": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-11-01T00:00:00.000Z"),
+            },
+          },
+          reporder: {},
+        },
+        "1909_3": {
+          sirene: {
+            "4d7ad53c61a5f78c50bf2840b89db99d": {
+              siren: "404338683",
+              nic: "00018",
+              siege: true,
+              code_postal: "38150",
+              departement: "38",
+              commune: "CHANAS",
+              ape: "4752B",
+              date_creation: ISODate("1996-01-31T23:00:00.000Z"),
+              longitude: 4.80859,
+              lattitude: 45.32452,
+              adresse: [
+                "BRICOCASH",
+                "RN 7",
+                "PARC DU SOLEIL",
+                "38150",
+                "CHANAS",
+                "Parc du Soleil 38150 Chanas",
+              ],
+            },
+          },
+          reporder: {},
+        },
+        "1910_8": {
+          reporder: {},
+        },
+        "1910_2": {
+          compte: {
+            "94b5b69bb2832ba29b9ec4d90f6b0734": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-10-01T00:00:00.000Z"),
+            },
+          },
+        },
+        "1910_1": {
+          cotisation: {
+            "4b108b41c94729ee7c29260e21e965bc": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2019-08-01T00:00:00.000Z"),
+                end: ISODate("2019-09-01T00:00:00.000Z"),
+              },
+              encaisse: 16852,
+              du: 16852,
+            },
+          },
+        },
+        "1909_2": {
+          cotisation: {
+            fd26093b413099bd034f5f2a9d1741f3: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2019-07-01T00:00:00.000Z"),
+                end: ISODate("2019-08-01T00:00:00.000Z"),
+              },
+              encaisse: 32439,
+              du: 32439,
+            },
+          },
+          effectif: {
+            "73f1925d1345262d49b15956c3339d30": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-06-01T00:00:00.000Z"),
+              effectif: 32,
+            },
+            "73fda970e5d3105a224f74877017ab13": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-07-01T00:00:00.000Z"),
+              effectif: 33,
+            },
+            "43380cc9b5303ff2542d2f2ce6cfa285": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-05-01T00:00:00.000Z"),
+              effectif: 32,
+            },
+          },
+        },
+        "1906_3": {
+          compte: {
+            a9fd1e283f1fc0bb75ffd3587503dd33: {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2017-01-01T00:00:00.000Z"),
+            },
+            "12d5f166220c4794dd4567fc61db73d7": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2017-02-01T00:00:00.000Z"),
+            },
+            "02bba2284fd809316e4c7f34a4a60e7d": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-01-01T00:00:00.000Z"),
+            },
+            "443a90c0c0a2534fbf2a2c5f82a1e52f": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-11-01T00:00:00.000Z"),
+            },
+            ca93c98f708ca1904eabb6026cfba14e: {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-09-01T00:00:00.000Z"),
+            },
+            "2ed0b7d59354dfbfa62adc20144ae37d": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-04-01T00:00:00.000Z"),
+            },
+            "1538a7c425eff7b6239b2888cc08e0af": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-03-01T00:00:00.000Z"),
+            },
+            "20fb884d248a65e87ce6d69dc7478a45": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2017-07-01T00:00:00.000Z"),
+            },
+            "2fafd09598640da1094e830904aa96e5": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-08-01T00:00:00.000Z"),
+            },
+            f9e3fcdb96ac32308cd12fa2b6a75357: {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-07-01T00:00:00.000Z"),
+            },
+            "395be4fca48af33cca0f0bb57de87753": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2017-09-01T00:00:00.000Z"),
+            },
+            e1329f11ac55091af2d319ade3b399f3: {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-03-01T00:00:00.000Z"),
+            },
+            "5796695828ec3482939190538bf6aa54": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-08-01T00:00:00.000Z"),
+            },
+            "83d62d514275a446393ae2b98e8d27ee": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-12-01T00:00:00.000Z"),
+            },
+            "389ed93ae4e72a13341829c2b311aa08": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-02-01T00:00:00.000Z"),
+            },
+            a10a5c2127b89fd91a43be52ffaddd4e: {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2017-08-01T00:00:00.000Z"),
+            },
+            b764ecf0cf97b655b519d3b0dad20902: {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-10-01T00:00:00.000Z"),
+            },
+            ba698053712854dccaebeca14f09e984: {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-01-01T00:00:00.000Z"),
+            },
+            "483b8a82972dbb52d283c8857e2c9a2a": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-05-01T00:00:00.000Z"),
+            },
+            "1c26068e0f1dc004fdd13ec63e50f2db": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-07-01T00:00:00.000Z"),
+            },
+            "37c7a5a34cd210a24ad2509d02d68f4c": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-12-01T00:00:00.000Z"),
+            },
+            ff2377e9411a2cb21ee3e763c9e24504: {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-09-01T00:00:00.000Z"),
+            },
+            f6cb106901679b36e55c106a6585a666: {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-05-01T00:00:00.000Z"),
+            },
+            d0a4c37547f6bebb37bbf26931b6c204: {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-06-01T00:00:00.000Z"),
+            },
+            "808d79f648b0fc0bac93644485087e2b": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-04-01T00:00:00.000Z"),
+            },
+            "7abf326ddf008ea9023eb54182df1074": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-10-01T00:00:00.000Z"),
+            },
+            "2541f71e22eaec01da8fd7cae515844b": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-10-01T00:00:00.000Z"),
+            },
+            "3eb1a8dcb3594b1aedf34ed12a9868e8": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2017-06-01T00:00:00.000Z"),
+            },
+            "617aa74b1ebc3b83f0edeeba811f81e5": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2017-11-01T00:00:00.000Z"),
+            },
+            "6c7f57c3445bd5b5f055be31e370159e": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-08-01T00:00:00.000Z"),
+            },
+            c20ab512efc04866fdf65478ea3f258d: {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-02-01T00:00:00.000Z"),
+            },
+            "25b36b1bca9a6ccc14738a7ef673557b": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-03-01T00:00:00.000Z"),
+            },
+            c72153ce02b6c64d19b83399fd970012: {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-05-01T00:00:00.000Z"),
+            },
+            "4e79e943da95426bbf553287622da66d": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-11-01T00:00:00.000Z"),
+            },
+            "7aa46760b24ae61a61458fabefac159e": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-06-01T00:00:00.000Z"),
+            },
+            "8c58d7118bae94034cd833ff115ef4fc": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-04-01T00:00:00.000Z"),
+            },
+            "3ef8f99fde71298ef408b569319019e1": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2017-10-01T00:00:00.000Z"),
+            },
+            c8f3ba493b0a1023bde369baf7a7b4c6: {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-07-01T00:00:00.000Z"),
+            },
+            "092626049498c840f972fa2663a2288c": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-06-01T00:00:00.000Z"),
+            },
+            "93567a973451e667b28d3a99b7fbed2d": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-01-01T00:00:00.000Z"),
+            },
+            "8b21cafb6283e0f1f51b938c6b9ab45d": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-02-01T00:00:00.000Z"),
+            },
+            c6d2331cf6a81cfb8c272e713c0ff278: {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-04-01T00:00:00.000Z"),
+            },
+            "8bec4cee6c694b615ef87bfe9e69b2c9": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-07-01T00:00:00.000Z"),
+            },
+            a565319ec38c347241aa497bcf693791: {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-12-01T00:00:00.000Z"),
+            },
+            "620ba42ab4605bffb0479e266a372c58": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-09-01T00:00:00.000Z"),
+            },
+            "7fc59f4b7833bbd2d817550d03fb2548": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-12-01T00:00:00.000Z"),
+            },
+            ed3f2b7393f58ba8b582b9f2851ae83f: {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-02-01T00:00:00.000Z"),
+            },
+            "8c3253469ce70ba6a290fca5d59f9eec": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-03-01T00:00:00.000Z"),
+            },
+            "1d9e1f768f87d75687ef53148a197063": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-05-01T00:00:00.000Z"),
+            },
+            "3387e907f9553abc669e0f9063632f0d": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-04-01T00:00:00.000Z"),
+            },
+            "47edaa1df3339f0cc7b096ad65953949": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-11-01T00:00:00.000Z"),
+            },
+            "8e968f274b5fcac3ed498941bb1de62f": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-01-01T00:00:00.000Z"),
+            },
+            "13a0aa098a3b9bca8fec43c548c5f9ab": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-11-01T00:00:00.000Z"),
+            },
+            "46d929949921999c686144d3a74d99ca": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2017-03-01T00:00:00.000Z"),
+            },
+            "22607a4c6d399b5fb47040c2b7c7442a": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-03-01T00:00:00.000Z"),
+            },
+            fe2df0633ef6da4664731317ccb63fb1: {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-10-01T00:00:00.000Z"),
+            },
+            "50b7a4f37221da3256055cda333960dc": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2017-12-01T00:00:00.000Z"),
+            },
+            e4000788a41aadc46760e83bb553057e: {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-05-01T00:00:00.000Z"),
+            },
+            dd24983d8487a772ca953501b3cb278d: {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-09-01T00:00:00.000Z"),
+            },
+            "6e65f852dc028bd24d814e4858a8721f": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-08-01T00:00:00.000Z"),
+            },
+            "8b3e139426a96281e90cda00d7c97e07": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2017-04-01T00:00:00.000Z"),
+            },
+            fb9dc40772aeb5c74001bd354773bfde: {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2017-05-01T00:00:00.000Z"),
+            },
+            "57624c01c14cba74d7d82ea563b73d69": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-01-01T00:00:00.000Z"),
+            },
+            "8cc9d0ceda98fc2dc219b40a87a861e0": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-02-01T00:00:00.000Z"),
+            },
+            "9aacb5f2c68eadb5ec735e29fa5fe87f": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-06-01T00:00:00.000Z"),
+            },
+            "74798eb6bfd07334d4ee7cbb09968a6c": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-07-01T00:00:00.000Z"),
+            },
+            "34af10b89c184126cce35504c26502fc": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-06-01T00:00:00.000Z"),
+            },
+          },
+          cotisation: {
+            fc32680ffc611e906458f9f418c4ef6c: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2018-02-01T00:00:00.000Z"),
+                end: ISODate("2018-03-01T00:00:00.000Z"),
+              },
+              encaisse: 17444,
+              du: 17444,
+            },
+            "086e4b564ef5c4dd8d1014989c0cf830": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2018-07-01T00:00:00.000Z"),
+                end: ISODate("2018-08-01T00:00:00.000Z"),
+              },
+              encaisse: 25205,
+              du: 25206,
+            },
+            "78b8c5c5ad3c6ea9e1147aa77aa9a1fb": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2018-08-01T00:00:00.000Z"),
+                end: ISODate("2018-09-01T00:00:00.000Z"),
+              },
+              encaisse: 29735,
+              du: 29736,
+            },
+            a223281e4e75ff4ff69a2c6bb58280e0: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2018-09-01T00:00:00.000Z"),
+                end: ISODate("2018-10-01T00:00:00.000Z"),
+              },
+              encaisse: 21041,
+              du: 21041,
+            },
+            "6629121fdef976a66c0d9fb665101064": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2019-03-01T00:00:00.000Z"),
+                end: ISODate("2019-04-01T00:00:00.000Z"),
+              },
+              encaisse: 18998,
+              du: 18998,
+            },
+            d0c9972e6b968ea49810df1092b48c43: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2014-04-01T00:00:00.000Z"),
+                end: ISODate("2014-05-01T00:00:00.000Z"),
+              },
+              encaisse: 15281,
+              du: 15282,
+            },
+            "0835ccff9b2547e459ee54187c95b931": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2015-01-01T00:00:00.000Z"),
+                end: ISODate("2015-02-01T00:00:00.000Z"),
+              },
+              encaisse: 14699,
+              du: 14699,
+            },
+            "1411c0a2c5412a9611394536b7b82e6e": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2017-10-01T00:00:00.000Z"),
+                end: ISODate("2017-11-01T00:00:00.000Z"),
+              },
+              encaisse: 18802,
+              du: 18804,
+            },
+            "1b11fa45f61ab6dbb9e94bf8d758a6b4": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2019-01-01T00:00:00.000Z"),
+                end: ISODate("2019-02-01T00:00:00.000Z"),
+              },
+              encaisse: 18012,
+              du: 18012,
+            },
+            "7fb92e498c1fabf191657502ec6fd26f": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2013-01-01T00:00:00.000Z"),
+                end: ISODate("2014-01-01T00:00:00.000Z"),
+              },
+              encaisse: 2,
+              du: 2,
+            },
+            "35adc33cd68c9966aba78588de80356e": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2014-12-01T00:00:00.000Z"),
+                end: ISODate("2015-01-01T00:00:00.000Z"),
+              },
+              encaisse: 18727,
+              du: 18727,
+            },
+            "0beca00346b4eef027bcdce5ce5b6af4": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2015-03-01T00:00:00.000Z"),
+                end: ISODate("2015-04-01T00:00:00.000Z"),
+              },
+              encaisse: 15062,
+              du: 15063,
+            },
+            "9452674b8b4aedfba84d245bc5e89084": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2016-10-01T00:00:00.000Z"),
+                end: ISODate("2016-11-01T00:00:00.000Z"),
+              },
+              encaisse: 17209,
+              du: 17209,
+            },
+            ef0d75f4a713c97f7a5dfd759d234eab: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2014-03-01T00:00:00.000Z"),
+                end: ISODate("2014-04-01T00:00:00.000Z"),
+              },
+              encaisse: 19559,
+              du: 19560,
+            },
+            "0a96c02b9ae58afd9042441502892291": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2015-07-01T00:00:00.000Z"),
+                end: ISODate("2015-08-01T00:00:00.000Z"),
+              },
+              encaisse: 16323,
+              du: 16323,
+            },
+            "38590239fbff125d21f3e2a8b4a95f95": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2016-06-01T00:00:00.000Z"),
+                end: ISODate("2016-07-01T00:00:00.000Z"),
+              },
+              encaisse: 16993,
+              du: 16993,
+            },
+            c96c6d2bbf9fdc73cfd55b866cb2cc34: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2014-05-01T00:00:00.000Z"),
+                end: ISODate("2014-06-01T00:00:00.000Z"),
+              },
+              encaisse: 15563,
+              du: 15564,
+            },
+            b7a10a4968e7564366fbff7bc1799a36: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2016-07-01T00:00:00.000Z"),
+                end: ISODate("2016-08-01T00:00:00.000Z"),
+              },
+              encaisse: 17698,
+              du: 17699,
+            },
+            db532ef5064a056e1987e49fa4421cf5: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2016-12-01T00:00:00.000Z"),
+                end: ISODate("2017-01-01T00:00:00.000Z"),
+              },
+              encaisse: 33680,
+              du: 33682,
+            },
+            "89a35cf56c51254bbebc651b15d8ff74": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2017-11-01T00:00:00.000Z"),
+                end: ISODate("2017-12-01T00:00:00.000Z"),
+              },
+              encaisse: 17228,
+              du: 17229,
+            },
+            b564a758f6d067ad814194fbad172916: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2018-01-01T00:00:00.000Z"),
+                end: ISODate("2018-02-01T00:00:00.000Z"),
+              },
+              encaisse: 16660,
+              du: 16660,
+            },
+            "95d28dfb1eac097c3f145de7f3ab84c6": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2015-11-01T00:00:00.000Z"),
+                end: ISODate("2015-12-01T00:00:00.000Z"),
+              },
+              encaisse: 19958,
+              du: 19959,
+            },
+            "3cb868be26aafd62486f267cc03cb704": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2019-02-01T00:00:00.000Z"),
+                end: ISODate("2019-03-01T00:00:00.000Z"),
+              },
+              encaisse: 16615,
+              du: 16615,
+            },
+            "9cd411503089b9c8e0be0aa73edd2e45": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("1999-10-01T00:00:00.000Z"),
+                end: ISODate("2000-01-01T00:00:00.000Z"),
+              },
+              encaisse: 0,
+              du: 0,
+            },
+            "680cb8ec2a4eda96879421067d6cf9b9": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2014-07-01T00:00:00.000Z"),
+                end: ISODate("2014-08-01T00:00:00.000Z"),
+              },
+              encaisse: 16607,
+              du: 16607,
+            },
+            "2033652a63d047ac2b32c8fcad51842a": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2015-06-01T00:00:00.000Z"),
+                end: ISODate("2015-07-01T00:00:00.000Z"),
+              },
+              encaisse: 15023,
+              du: 15023,
+            },
+            e10ea68a86e4feb60be51d173e75728e: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2019-04-01T00:00:00.000Z"),
+                end: ISODate("2019-05-01T00:00:00.000Z"),
+              },
+              encaisse: 16817,
+              du: 16818,
+            },
+            "2c244ebee3e1b5842e987f6521e04947": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2014-01-01T00:00:00.000Z"),
+                end: ISODate("2015-01-01T00:00:00.000Z"),
+              },
+              encaisse: 0,
+              du: 201,
+            },
+            bf397be8dcaacc1b02f88142139c5e69: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2015-09-01T00:00:00.000Z"),
+                end: ISODate("2015-10-01T00:00:00.000Z"),
+              },
+              encaisse: 9184,
+              du: 9185,
+            },
+            "949e2339ae2ddc0918fae1631f474831": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2015-01-01T00:00:00.000Z"),
+                end: ISODate("2016-01-01T00:00:00.000Z"),
+              },
+              encaisse: 0,
+              du: 877,
+            },
+            ad44f89d6264e0c7b19377cac638186e: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2016-01-01T00:00:00.000Z"),
+                end: ISODate("2017-01-01T00:00:00.000Z"),
+              },
+              encaisse: 0,
+              du: 95,
+            },
+            a9e05f7411a4e9ee16f7ab6038ca9368: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2014-06-01T00:00:00.000Z"),
+                end: ISODate("2014-07-01T00:00:00.000Z"),
+              },
+              encaisse: 15032,
+              du: 15033,
+            },
+            "9366e63fe2e6164ef8ea27e38d56065c": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2015-02-01T00:00:00.000Z"),
+                end: ISODate("2015-03-01T00:00:00.000Z"),
+              },
+              encaisse: 13643,
+              du: 13643,
+            },
+            "04da529cb23aa6bc56c2602f7aed4d30": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2015-08-01T00:00:00.000Z"),
+                end: ISODate("2015-09-01T00:00:00.000Z"),
+              },
+              encaisse: 19290,
+              du: 19290,
+            },
+            e565e0321667cdeb1af86ec7bf49eede: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2016-09-01T00:00:00.000Z"),
+                end: ISODate("2016-10-01T00:00:00.000Z"),
+              },
+              encaisse: 19360,
+              du: 19360,
+            },
+            "0954babb2a7b144816f787e1b589e576": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2016-11-01T00:00:00.000Z"),
+                end: ISODate("2016-12-01T00:00:00.000Z"),
+              },
+              encaisse: 17861,
+              du: 17861,
+            },
+            "5126fc5443d9ec5d10e0cfd535042f49": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2017-01-01T00:00:00.000Z"),
+                end: ISODate("2017-02-01T00:00:00.000Z"),
+              },
+              encaisse: 28103,
+              du: 28103,
+            },
+            "65d8671c19bb4b48e357ad9908e910c8": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2017-04-01T00:00:00.000Z"),
+                end: ISODate("2017-05-01T00:00:00.000Z"),
+              },
+              encaisse: 16596,
+              du: 16740,
+            },
+            "7bc50a93e42cb85dbf4d4fcc0270666f": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2017-07-01T00:00:00.000Z"),
+                end: ISODate("2017-08-01T00:00:00.000Z"),
+              },
+              encaisse: 16340,
+              du: 16340,
+            },
+            "3664816f425a504ea803d86f3b2d2757": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2014-02-01T00:00:00.000Z"),
+                end: ISODate("2014-03-01T00:00:00.000Z"),
+              },
+              encaisse: 14169,
+              du: 14170,
+            },
+            "908bf8b6796733011b791020657f0d0f": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2014-09-01T00:00:00.000Z"),
+                end: ISODate("2014-10-01T00:00:00.000Z"),
+              },
+              encaisse: 15223,
+              du: 15223,
+            },
+            "6667c876f127768c2224f05f2a23a4e8": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2015-04-01T00:00:00.000Z"),
+                end: ISODate("2015-05-01T00:00:00.000Z"),
+              },
+              encaisse: 14356,
+              du: 14357,
+            },
+            "63d521e4780aa7e60a10697b51e0a963": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2017-08-01T00:00:00.000Z"),
+                end: ISODate("2017-09-01T00:00:00.000Z"),
+              },
+              encaisse: 21535,
+              du: 21535,
+            },
+            "25b19c613df2eb7135398caf11e713c6": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2014-08-01T00:00:00.000Z"),
+                end: ISODate("2014-09-01T00:00:00.000Z"),
+              },
+              encaisse: 17250,
+              du: 17250,
+            },
+            a092342a0758ec61943da9f1b779dc95: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2015-12-01T00:00:00.000Z"),
+                end: ISODate("2016-01-01T00:00:00.000Z"),
+              },
+              encaisse: 17090,
+              du: 17090,
+            },
+            "592b7a075938adad3b79300b64efb85f": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2016-04-01T00:00:00.000Z"),
+                end: ISODate("2016-05-01T00:00:00.000Z"),
+              },
+              encaisse: 15989,
+              du: 15989,
+            },
+            c58ff83340d27f7553df8a901f12b65f: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2018-04-01T00:00:00.000Z"),
+                end: ISODate("2018-05-01T00:00:00.000Z"),
+              },
+              encaisse: 17645,
+              du: 17645,
+            },
+            "3ceb52c43321dd97bf8f67d90db1678c": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2018-10-01T00:00:00.000Z"),
+                end: ISODate("2018-11-01T00:00:00.000Z"),
+              },
+              encaisse: 18074,
+              du: 18075,
+            },
+            "49d52ce2294ce957e7029faa0ebb2560": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2013-12-01T00:00:00.000Z"),
+                end: ISODate("2014-01-01T00:00:00.000Z"),
+              },
+              encaisse: 14493,
+              du: 14493,
+            },
+            "64ce5c0065152e6ab8a7c2babef5a655": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2017-02-01T00:00:00.000Z"),
+                end: ISODate("2017-03-01T00:00:00.000Z"),
+              },
+              encaisse: 19800,
+              du: 19800,
+            },
+            dd638090d231af36b5f1a8b6adfe00be: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2017-12-01T00:00:00.000Z"),
+                end: ISODate("2018-01-01T00:00:00.000Z"),
+              },
+              encaisse: 28987,
+              du: 28988,
+            },
+            ae8384508739b952e4eaea30abc9b2de: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2018-11-01T00:00:00.000Z"),
+                end: ISODate("2018-12-01T00:00:00.000Z"),
+              },
+              encaisse: 19197,
+              du: 19197,
+            },
+            "627092e9e6f6caa8af23be4fe4825a08": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2014-01-01T00:00:00.000Z"),
+                end: ISODate("2014-02-01T00:00:00.000Z"),
+              },
+              encaisse: 14422,
+              du: 14423,
+            },
+            "79d5a767117474254fb19985e76ccf2e": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2017-06-01T00:00:00.000Z"),
+                end: ISODate("2017-07-01T00:00:00.000Z"),
+              },
+              encaisse: 19273,
+              du: 19273,
+            },
+            "519da56450c2b57b3de4f9100bef7eaa": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2018-05-01T00:00:00.000Z"),
+                end: ISODate("2018-06-01T00:00:00.000Z"),
+              },
+              encaisse: 18966,
+              du: 18967,
+            },
+            f2761075f5047e69fd731e24ffb8b98a: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2017-09-01T00:00:00.000Z"),
+                end: ISODate("2017-10-01T00:00:00.000Z"),
+              },
+              encaisse: 17516,
+              du: 17518,
+            },
+            "8782638c3b4cc2040c7812f2f0d42882": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2018-12-01T00:00:00.000Z"),
+                end: ISODate("2019-01-01T00:00:00.000Z"),
+              },
+              encaisse: 19500,
+              du: 19502,
+            },
+            b877707baa0410b5c43c10a7fc14a1a1: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2016-01-01T00:00:00.000Z"),
+                end: ISODate("2016-02-01T00:00:00.000Z"),
+              },
+              encaisse: 14888,
+              du: 14888,
+            },
+            c828f7f4af27f3c251f0be9a0770ff6d: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2017-03-01T00:00:00.000Z"),
+                end: ISODate("2017-04-01T00:00:00.000Z"),
+              },
+              encaisse: 18721,
+              du: 18721,
+            },
+            "310abdd7f4ae8bcd8f24e7a51e68db15": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2017-05-01T00:00:00.000Z"),
+                end: ISODate("2017-06-01T00:00:00.000Z"),
+              },
+              encaisse: 17760,
+              du: 17760,
+            },
+            "81442704991eb718e4f6ee3f21ff633d": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2018-06-01T00:00:00.000Z"),
+                end: ISODate("2018-07-01T00:00:00.000Z"),
+              },
+              encaisse: 18861,
+              du: 18861,
+            },
+            "086d5501a16f85841597be11161a11b4": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2015-05-01T00:00:00.000Z"),
+                end: ISODate("2015-06-01T00:00:00.000Z"),
+              },
+              encaisse: 14401,
+              du: 14402,
+            },
+            "80c07ce0192b16f12dc7551e57113a97": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2015-10-01T00:00:00.000Z"),
+                end: ISODate("2015-11-01T00:00:00.000Z"),
+              },
+              encaisse: 13609,
+              du: 13610,
+            },
+            "1290ef3eb2ed51e7de1cc9f00bb8410c": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2016-02-01T00:00:00.000Z"),
+                end: ISODate("2016-03-01T00:00:00.000Z"),
+              },
+              encaisse: 15736,
+              du: 15736,
+            },
+            c70f884b6ec178ca6c44a41dd526b1fa: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2016-08-01T00:00:00.000Z"),
+                end: ISODate("2016-09-01T00:00:00.000Z"),
+              },
+              encaisse: 17870,
+              du: 17870,
+            },
+            "928f5b33b22185e894c0f5a187f638bc": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2018-03-01T00:00:00.000Z"),
+                end: ISODate("2018-04-01T00:00:00.000Z"),
+              },
+              encaisse: 16213,
+              du: 16213,
+            },
+            "351ef9cf017bbedd4f0d1bfb83ee024c": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2014-10-01T00:00:00.000Z"),
+                end: ISODate("2014-11-01T00:00:00.000Z"),
+              },
+              encaisse: 16703,
+              du: 16703,
+            },
+            "0dd7e15943605cfe7697cba177d97fb3": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2014-11-01T00:00:00.000Z"),
+                end: ISODate("2014-12-01T00:00:00.000Z"),
+              },
+              encaisse: 15940,
+              du: 15940,
+            },
+            "2ac838f9c4d50fb4f480efebc7c9be54": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2016-05-01T00:00:00.000Z"),
+                end: ISODate("2016-06-01T00:00:00.000Z"),
+              },
+              encaisse: 16428,
+              du: 16428,
+            },
+            d6f1917e97cd67a6d90243106945c06e: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2016-03-01T00:00:00.000Z"),
+                end: ISODate("2016-04-01T00:00:00.000Z"),
+              },
+              encaisse: 16857,
+              du: 16857,
+            },
+          },
+          debit: {
+            "16ff91f05c2dc51b54d755404cc7146f": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2014-07-16T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 1,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2014-06-01T00:00:00.000Z"),
+                end: ISODate("2014-07-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+            },
+            "0f052417ae77753e73f0367a96515989": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2014-06-17T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2014-05-01T00:00:00.000Z"),
+                end: ISODate("2014-06-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+            },
+            "778e1d9e4952a5954d4a20b5d498e4ee": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2015-04-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 1,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2015-03-01T00:00:00.000Z"),
+                end: ISODate("2015-04-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+            },
+            b8c98e85b48b06c07bb824c9dc77c1ad: {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2017-10-16T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2017-09-01T00:00:00.000Z"),
+                end: ISODate("2017-10-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+            },
+            a200f84b63f1e8286ef9d350ad69126b: {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2017-06-09T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2017-04-01T00:00:00.000Z"),
+                end: ISODate("2017-05-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "2",
+              code_motif_ecart_negatif: "25",
+            },
+            "9d7e0e371452a2b15cff7d519aaa01ca": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2015-10-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 1,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2015-09-01T00:00:00.000Z"),
+                end: ISODate("2015-10-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+            },
+            "4f225993920e05a1d52799d32d6a68d8": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2014-02-18T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2014-01-01T00:00:00.000Z"),
+                end: ISODate("2014-02-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+            },
+            "92be067b43f5a7b060215425917e8d64": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2017-06-09T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 4,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2017-04-01T00:00:00.000Z"),
+                end: ISODate("2017-05-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "11",
+              code_motif_ecart_negatif: "25",
+            },
+            "1b2522fc10b18a5d14d525d214255574": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2017-06-09T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 5,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2017-04-01T00:00:00.000Z"),
+                end: ISODate("2017-05-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "12",
+              code_motif_ecart_negatif: "25",
+            },
+            "4f79a81a315ab1f20d16e00b81cd6649": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2017-11-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2017-10-01T00:00:00.000Z"),
+                end: ISODate("2017-11-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+            },
+            f1fef8a9b660f3be296a943bb8ea6f27: {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2015-11-16T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2015-10-01T00:00:00.000Z"),
+                end: ISODate("2015-11-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+            },
+            "55c8e2c59d097e5325a7a95ee9796e5a": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2015-05-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2015-04-01T00:00:00.000Z"),
+                end: ISODate("2015-05-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+            },
+            "3a2c127e6308a5c8e96da0ecbdb9db84": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2017-12-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 1,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2017-11-01T00:00:00.000Z"),
+                end: ISODate("2017-12-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+            },
+            "39de7a108138a4d89c43ada3674e812a": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2015-10-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2015-09-01T00:00:00.000Z"),
+                end: ISODate("2015-10-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+            },
+            "98530d67646b39920aeba7be5e5be57b": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2014-07-16T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2014-06-01T00:00:00.000Z"),
+                end: ISODate("2014-07-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+            },
+            "1046c8e2f658c8a85ae0876ad213fa26": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2018-01-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 1,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2017-12-01T00:00:00.000Z"),
+                end: ISODate("2018-01-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+            },
+            d69a31d7ff074e076620119ba42da672: {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2018-08-16T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2018-07-01T00:00:00.000Z"),
+                end: ISODate("2018-08-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+            },
+            "5f3b8bb146cfcab7854757ce2615e786": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2018-06-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 1,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2018-05-01T00:00:00.000Z"),
+                end: ISODate("2018-06-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+            },
+            cd58e25d3a62927be68346be32314a11: {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2018-09-17T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2018-08-01T00:00:00.000Z"),
+                end: ISODate("2018-09-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+            },
+            c71c3e91371203418be83cda7b596f1c: {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2017-05-18T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 144,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2017-04-01T00:00:00.000Z"),
+                end: ISODate("2017-05-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "25",
+            },
+            "3a18655c18dccebc1f247cdb7834a6d7": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2019-01-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 2,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2018-12-01T00:00:00.000Z"),
+                end: ISODate("2019-01-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+            },
+            "7b4eac5877f5a0939574608a3b762b30": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2018-06-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2018-05-01T00:00:00.000Z"),
+                end: ISODate("2018-06-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+            },
+            "737839ae53b65fa18d211413ca6d2f72": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2015-06-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2015-05-01T00:00:00.000Z"),
+                end: ISODate("2015-06-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+            },
+            "4501f68c2eeeca4963e937d657ce619f": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2017-06-09T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 6,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2017-04-01T00:00:00.000Z"),
+                end: ISODate("2017-05-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "4",
+              code_motif_ecart_negatif: "25",
+            },
+            "93d0f5d365fa435915b3f7acfa4653f9": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2017-06-09T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 3,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2017-04-01T00:00:00.000Z"),
+                end: ISODate("2017-05-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "12",
+              code_motif_ecart_negatif: "25",
+            },
+            "3d0d4cc3b5a285f87aedb4138fac5348": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2014-03-18T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2014-02-01T00:00:00.000Z"),
+                end: ISODate("2014-03-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+            },
+            "7c190280d1bed33d45147e5921a370a1": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2014-05-16T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 1,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2014-04-01T00:00:00.000Z"),
+                end: ISODate("2014-05-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+            },
+            "0edfa16205e41867e2e461adf6437fc7": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2017-01-16T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2016-12-01T00:00:00.000Z"),
+                end: ISODate("2017-01-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+            },
+            bf2d7ba7f139f558ac73690c9f404349: {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2017-11-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 2,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2017-10-01T00:00:00.000Z"),
+                end: ISODate("2017-11-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+            },
+            "3a71f853b4b75d29638bbb78be919f14": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2015-06-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 1,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2015-05-01T00:00:00.000Z"),
+                end: ISODate("2015-06-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+            },
+            c547bd553b52a04069c80067fa2f3dd4: {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2018-11-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 1,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2018-10-01T00:00:00.000Z"),
+                end: ISODate("2018-11-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+            },
+            "724d58a0484fb39625c3fc3120ba42e1": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2016-08-16T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 1,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2016-07-01T00:00:00.000Z"),
+                end: ISODate("2016-08-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+            },
+            "009052420de66d979bbc938d3dd50142": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2014-05-16T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2014-04-01T00:00:00.000Z"),
+                end: ISODate("2014-05-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+            },
+            "288690e52f9fb994a46afee90c96ce5e": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2015-12-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2015-11-01T00:00:00.000Z"),
+                end: ISODate("2015-12-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+            },
+            "3c87c8314fcec4fbcb8bb074de658f5c": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2014-03-18T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 1,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2014-02-01T00:00:00.000Z"),
+                end: ISODate("2014-03-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+            },
+            "29aa93ea3f8b271b7288cbeda70029ca": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2014-06-17T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 1,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2014-05-01T00:00:00.000Z"),
+                end: ISODate("2014-06-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+            },
+            "00f7f5eec53ae15d188fc58c319db32e": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2014-02-18T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 1,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2014-01-01T00:00:00.000Z"),
+                end: ISODate("2014-02-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+            },
+            "145f519f484896eed0c490202d75ad4c": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2015-04-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2015-03-01T00:00:00.000Z"),
+                end: ISODate("2015-04-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+            },
+            e03711b65dd40b07dd0c27a2c8abc05a: {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2019-05-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 1,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2019-04-01T00:00:00.000Z"),
+                end: ISODate("2019-05-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+            },
+            "8d9a0e1912f6d60cc1c7ac252ea6abf8": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2015-05-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 1,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2015-04-01T00:00:00.000Z"),
+                end: ISODate("2015-05-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+            },
+            a4228968a416673f562426ddc097f166: {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2018-01-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2017-12-01T00:00:00.000Z"),
+                end: ISODate("2018-01-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+            },
+            "1ecb6c475d559c481c5df3aec85d07b7": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2017-01-16T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 2,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2016-12-01T00:00:00.000Z"),
+                end: ISODate("2017-01-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+            },
+            "7a361ac18c0130c33ab618225fb7b182": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2014-04-16T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 1,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2014-03-01T00:00:00.000Z"),
+                end: ISODate("2014-04-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+            },
+            f58e667ee5d6b04b36e8be77874fafe2: {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2015-11-16T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 1,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2015-10-01T00:00:00.000Z"),
+                end: ISODate("2015-11-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+            },
+            "99a232fd28a4a4780ef2e964890cf061": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2016-08-16T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2016-07-01T00:00:00.000Z"),
+                end: ISODate("2016-08-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+            },
+            "72a4653d8acb65861fdbadc4463add2f": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2017-10-16T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 2,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2017-09-01T00:00:00.000Z"),
+                end: ISODate("2017-10-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+            },
+            "7deec528f3d711722b867594da6a8fbc": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2017-12-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2017-11-01T00:00:00.000Z"),
+                end: ISODate("2017-12-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+            },
+            "518dd48d18a1cd1b48f691f3583de353": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2018-11-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2018-10-01T00:00:00.000Z"),
+                end: ISODate("2018-11-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+            },
+            faa2f0b4ab5dc98a0a369b060c5f5e43: {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2018-09-17T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 1,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2018-08-01T00:00:00.000Z"),
+                end: ISODate("2018-09-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+            },
+            "11073496afe62af8a6d72434f869594c": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2019-05-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2019-04-01T00:00:00.000Z"),
+                end: ISODate("2019-05-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+            },
+            "86dcf7c1d4a6f4f15ed36a5e8e2593b0": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2019-01-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2018-12-01T00:00:00.000Z"),
+                end: ISODate("2019-01-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+            },
+            bf0efcbe12826d0514ec24d39fb7a4e3: {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2014-04-16T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2014-03-01T00:00:00.000Z"),
+                end: ISODate("2014-04-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+            },
+            "5c675c5078c82d21b2f0dace28fbce83": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2015-12-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 1,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2015-11-01T00:00:00.000Z"),
+                end: ISODate("2015-12-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+            },
+            ae6b54de4a456fddbecdd042409c4849: {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2018-08-16T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 1,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2018-07-01T00:00:00.000Z"),
+                end: ISODate("2018-08-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+            },
+          },
+          effectif: {
+            "3bc60106d3284f4d729662969904dcfc": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2011-09-01T00:00:00.000Z"),
+              effectif: 21,
+            },
+            "5a25e37089c4c6edf7650ac209cdf4a7": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2010-06-01T00:00:00.000Z"),
+              effectif: 25,
+            },
+            cca77a6a1838add7b7e0357cfaf38c0a: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2012-02-01T00:00:00.000Z"),
+              effectif: 21,
+            },
+            "8625902e9cb49a4c3545356f58ebf0da": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2010-07-01T00:00:00.000Z"),
+              effectif: 26,
+            },
+            "07769408d4bdcade6ffad324d7be69c1": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2011-04-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            afe1dd05adb0006a9f8f6db17d2e1be3: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2012-08-01T00:00:00.000Z"),
+              effectif: 20,
+            },
+            df9ea53314c2eb255e1c0f7b84bffb5f: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-07-01T00:00:00.000Z"),
+              effectif: 33,
+            },
+            "40c84e3e66e39091244fd2835af9db1c": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2010-08-01T00:00:00.000Z"),
+              effectif: 26,
+            },
+            "64c17685ce303a09f99af9f910b21b74": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2010-09-01T00:00:00.000Z"),
+              effectif: 25,
+            },
+            "3483407e601d00308b337591c51d5735": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-03-01T00:00:00.000Z"),
+              effectif: 25,
+            },
+            bf3f0514c4c57b8ef90534164a3672e3: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2010-01-01T00:00:00.000Z"),
+              effectif: 35,
+            },
+            d7d9f85be09b929ce3449e53b83722ff: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2017-09-01T00:00:00.000Z"),
+              effectif: 29,
+            },
+            "78985caa0e453817d22224a04bd87f72": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2013-06-01T00:00:00.000Z"),
+              effectif: 26,
+            },
+            e06a46d494165c1e0766cd3f2e82d942: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2012-01-01T00:00:00.000Z"),
+              effectif: 21,
+            },
+            f4a0abe29393b4aa74329481e1f89de8: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2012-03-01T00:00:00.000Z"),
+              effectif: 22,
+            },
+            "091211ab4267ac681753a3ab491e8254": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2013-05-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            b90b4d4c604d1aa32ca3ad03ba79d68b: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-08-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            "839f45789cf84983af3425f4c538c8c6": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-12-01T00:00:00.000Z"),
+              effectif: 31,
+            },
+            "452a23370ff5a73e19d4d8c323a3ef83": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2010-11-01T00:00:00.000Z"),
+              effectif: 23,
+            },
+            "35de39c8c943fa181f8b0477328983b3": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-02-01T00:00:00.000Z"),
+              effectif: 28,
+            },
+            cc1f4c1ba33e392cd00e94cd757dbd3a: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-10-01T00:00:00.000Z"),
+              effectif: 30,
+            },
+            "4fa9ba0095b02294e6e118320fff5176": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2017-05-01T00:00:00.000Z"),
+              effectif: 29,
+            },
+            "1f2bcfc6fd776fafeb7e00a1898c4580": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2011-10-01T00:00:00.000Z"),
+              effectif: 21,
+            },
+            a05d4a1cf20c8aee7a0f6355c38794f1: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2012-07-01T00:00:00.000Z"),
+              effectif: 21,
+            },
+            "359c9a513d51ee261e4660693cf3eb15": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-07-01T00:00:00.000Z"),
+              effectif: 30,
+            },
+            "6b2e3e202987a96e1132fd29db2cde0a": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-09-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            "19c39b4e29c031b501798feab82e7428": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2017-03-01T00:00:00.000Z"),
+              effectif: 28,
+            },
+            "41828e04c6363480109cf46da20cc5a8": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-03-01T00:00:00.000Z"),
+              effectif: 31,
+            },
+            c8ed3cb84b5365b6bd13141990d714f7: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2010-02-01T00:00:00.000Z"),
+              effectif: 28,
+            },
+            "9c190f2ec0676b5f80bd72baa83a530c": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2012-04-01T00:00:00.000Z"),
+              effectif: 23,
+            },
+            "39f8c954db204f7b8a2d20df78ef499d": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-01-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            "83e667962e0b988e6380ce51e14e1c87": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2010-12-01T00:00:00.000Z"),
+              effectif: 22,
+            },
+            "85ebc9b6de9346bd788186f624ec904e": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-12-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            b051d39e74d907a587302f2761c5b725: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2013-08-01T00:00:00.000Z"),
+              effectif: 26,
+            },
+            bfd65d9ec998f305bb54a159902666ad: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-09-01T00:00:00.000Z"),
+              effectif: 30,
+            },
+            "513e072c11e5a9d5865598234190b0e3": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2013-12-01T00:00:00.000Z"),
+              effectif: 23,
+            },
+            "660e96354d59ed4328db4529f0d51f08": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2017-07-01T00:00:00.000Z"),
+              effectif: 31,
+            },
+            "844ec20fa5c93d6d3351f9ecfd2b32da": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-07-01T00:00:00.000Z"),
+              effectif: 33,
+            },
+            cc51f65c6d6cd77f39d22742e085a396: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-05-01T00:00:00.000Z"),
+              effectif: 30,
+            },
+            dc98ba9d3cf98ed8b294cfba8c369ca8: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2012-12-01T00:00:00.000Z"),
+              effectif: 22,
+            },
+            fc4a74c126a5e41e5430f2fa94a4e75c: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-05-01T00:00:00.000Z"),
+              effectif: 33,
+            },
+            "7fe50bda767992391b3072264ccb4195": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-04-01T00:00:00.000Z"),
+              effectif: 31,
+            },
+            "2d295be944400570dd09f808db04342c": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2013-10-01T00:00:00.000Z"),
+              effectif: 25,
+            },
+            "97a1e0a1783b1a1798d99d76c9170788": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-08-01T00:00:00.000Z"),
+              effectif: 33,
+            },
+            c711fc28736c18c3d4e2c85ad45e0e5c: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-02-01T00:00:00.000Z"),
+              effectif: 30,
+            },
+            "437520e0c5cd42880751c847c2d56df6": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2011-12-01T00:00:00.000Z"),
+              effectif: 20,
+            },
+            "1a044d6f27790d8a225b6befafabece0": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2011-07-01T00:00:00.000Z"),
+              effectif: 22,
+            },
+            "87b4c7a336d2dfcc495ff17fedb29dd4": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2011-11-01T00:00:00.000Z"),
+              effectif: 20,
+            },
+            f95139cc81678393873ef9fd10d9921e: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-03-01T00:00:00.000Z"),
+              effectif: 26,
+            },
+            "096df3b9e65b1b22dbb3b9f5cb4e63e2": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-04-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            bc01804bfc401f22e945d1f5b8b58cb0: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2010-10-01T00:00:00.000Z"),
+              effectif: 23,
+            },
+            ade0f49ea56b413538b7288a752728a3: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2011-03-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            ae13a63ebd17a320c795a62d1641a200: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2012-10-01T00:00:00.000Z"),
+              effectif: 21,
+            },
+            "3e20d0b5db039ff6172b670b65b4cabf": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-02-01T00:00:00.000Z"),
+              effectif: 26,
+            },
+            "495d60ea465f7156078b9b48c61b7761": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2010-03-01T00:00:00.000Z"),
+              effectif: 27,
+            },
+            "67c3aa41fd5683063bc477a32424e5aa": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-03-01T00:00:00.000Z"),
+              effectif: 29,
+            },
+            c76f55e94e31288d25b1b90f0fe9406f: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-09-01T00:00:00.000Z"),
+              effectif: 31,
+            },
+            d6bdf2174b4f8ee04d54810202c3c068: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-06-01T00:00:00.000Z"),
+              effectif: 30,
+            },
+            "2a8ee2a505597197e29dd18844647161": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2013-04-01T00:00:00.000Z"),
+              effectif: 22,
+            },
+            "90a77b8b3fcb875dbb5204ee38c71c95": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2013-03-01T00:00:00.000Z"),
+              effectif: 22,
+            },
+            "57fb2aad186e7d549c526ba4abe45390": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2013-11-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            "931b1279e07782acdddb4a173068351a": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-07-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            e3980d9c0091678c2612ac0bfee7c84e: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-02-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            "3a458bc806cb4c692d74db65f3c4fd4b": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-02-01T00:00:00.000Z"),
+              effectif: 27,
+            },
+            "6a03464a8b2974375e8cf697f3d97078": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-11-01T00:00:00.000Z"),
+              effectif: 31,
+            },
+            "28f29ccdc47eb5616cec3b79edb39d19": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2012-11-01T00:00:00.000Z"),
+              effectif: 22,
+            },
+            c69b9833e97acddff2213166143a0286: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-08-01T00:00:00.000Z"),
+              effectif: 31,
+            },
+            c364c12bdcb73064f7d5a783dbcf27df: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-11-01T00:00:00.000Z"),
+              effectif: 31,
+            },
+            b4ba68358ded3722b47e7af74aa66e52: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2013-07-01T00:00:00.000Z"),
+              effectif: 26,
+            },
+            f73466c78caccf15b8cb8f4b96053d02: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-09-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            "78db1c37be7b7eea668df09c5891f390": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-10-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            f5d96cafccc0d4392c27371618b748b3: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-11-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            "0f6c38d9579a39e0aa0a0af9c4edf13f": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2017-04-01T00:00:00.000Z"),
+              effectif: 28,
+            },
+            "4052f4de581197123f99b863d3f6c0bc": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2017-10-01T00:00:00.000Z"),
+              effectif: 29,
+            },
+            "57b3286bf6ae6eb6ad291df499dc47e6": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-01-01T00:00:00.000Z"),
+              effectif: 23,
+            },
+            "81f92c80ca618933a2e68e8ea02de7fb": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2017-08-01T00:00:00.000Z"),
+              effectif: 29,
+            },
+            e7929b5085281cd3d922b762b9a8861c: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-06-01T00:00:00.000Z"),
+              effectif: 33,
+            },
+            acc3720d35465044723a3281d2961994: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-01-01T00:00:00.000Z"),
+              effectif: 30,
+            },
+            "11206224e26cddbff659f6ae10081e0b": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-10-01T00:00:00.000Z"),
+              effectif: 23,
+            },
+            "0491f4db226240374f935ace7304905c": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2011-05-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            "67622b6d9570f87717c0dfc02bd36a4c": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2013-01-01T00:00:00.000Z"),
+              effectif: 23,
+            },
+            "7cb882b0dedf2870ccadb5f2db3a7e59": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-08-01T00:00:00.000Z"),
+              effectif: 27,
+            },
+            cc5683d5894f9dfc7e9584d740543fe0: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-01-01T00:00:00.000Z"),
+              effectif: 28,
+            },
+            b07ab0a5f51123b8b66d814dd7390d44: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-04-01T00:00:00.000Z"),
+              effectif: 31,
+            },
+            "7d7499e40d056b31415d23d33d425635": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2011-01-01T00:00:00.000Z"),
+              effectif: 21,
+            },
+            "45b9f9ca8901245dcbe6f67317e481b0": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2011-02-01T00:00:00.000Z"),
+              effectif: 21,
+            },
+            "3cddbc45f4bccbca7806850496efa1dc": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-01-01T00:00:00.000Z"),
+              effectif: 27,
+            },
+            "2069e061ded89f0aedddc18a0fec29b2": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2017-06-01T00:00:00.000Z"),
+              effectif: 31,
+            },
+            "1f96f891d2209d0abfbaffd17588b98a": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2017-12-01T00:00:00.000Z"),
+              effectif: 28,
+            },
+            "5c19e127c8c6fca9cb7ad121df89b2a7": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-12-01T00:00:00.000Z"),
+              effectif: 31,
+            },
+            "9b0454af1fa899d72cd11f7f0cd1d63b": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2010-04-01T00:00:00.000Z"),
+              effectif: 26,
+            },
+            "6d91eecf6c68d4661043acb74d11653e": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-06-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            cb9ff9b7c325db508cc10d9883d3b0d0: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-04-01T00:00:00.000Z"),
+              effectif: 25,
+            },
+            "988ea4f2ace5cc724e8e7b986bb88ca0": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-10-01T00:00:00.000Z"),
+              effectif: 31,
+            },
+            "001789db3b9fdeffc6e744e7210bd103": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2013-02-01T00:00:00.000Z"),
+              effectif: 23,
+            },
+            "048c4465da26e720225b09b9b6743685": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2011-08-01T00:00:00.000Z"),
+              effectif: 21,
+            },
+            "46ed652a69aa5c4a358bbe79acb51cec": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2012-06-01T00:00:00.000Z"),
+              effectif: 22,
+            },
+            "6b63cfd831885aa590d41e97756c46fc": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-06-01T00:00:00.000Z"),
+              effectif: 33,
+            },
+            debad1334e88707077f3f058b4d7af5e: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2017-01-01T00:00:00.000Z"),
+              effectif: 30,
+            },
+            a4eb97a93eb2dc1f3fc9987248e78f73: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2010-05-01T00:00:00.000Z"),
+              effectif: 25,
+            },
+            "62b455a4a0ec9570c0d21bf68f5480c9": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2013-09-01T00:00:00.000Z"),
+              effectif: 26,
+            },
+            ed19773f53e37b0d139bdaaa99f37eb6: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-05-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            ed091d6514adff3f4651d5b58c2c103a: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-12-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            c4d28d3f8be473166285967c4f237d24: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2017-02-01T00:00:00.000Z"),
+              effectif: 30,
+            },
+            d02e6f86414566107754a03a2c4046d6: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-05-01T00:00:00.000Z"),
+              effectif: 25,
+            },
+            "9acd85a3a95b91a9f5d26398dd101667": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-04-01T00:00:00.000Z"),
+              effectif: 29,
+            },
+            "8464c1a833684f84b91357c71eda7029": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2017-11-01T00:00:00.000Z"),
+              effectif: 29,
+            },
+            d0cf151d393ec5d27411423a9f233c97: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-03-01T00:00:00.000Z"),
+              effectif: 31,
+            },
+            d47a7d5e05d1c95f73b1ab671d06babb: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2011-06-01T00:00:00.000Z"),
+              effectif: 22,
+            },
+            cdf19fe90090b3e70bcdc2dbf101d293: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2012-09-01T00:00:00.000Z"),
+              effectif: 20,
+            },
+            "0af08022f55553fb1c457387defd2dfa": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-11-01T00:00:00.000Z"),
+              effectif: 23,
+            },
+            a61bde9d8ef6ec045a9bedbddec08e86: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2012-05-01T00:00:00.000Z"),
+              effectif: 23,
+            },
+          },
+        },
+        "1906_4": {
+          reporder: {},
+        },
+        "1906_1": {
+          sirene: {
+            "8bc4242fffc943f45406fc79fcb96ee0": {
+              siren: "404338683",
+              nic: "00018",
+              siege: true,
+              code_postal: "38150",
+              departement: "38",
+              commune: "CHANAS",
+              ape: "4752B",
+              date_creation: ISODate("1996-01-31T23:00:00.000Z"),
+              longitude: 4.80859,
+              lattitude: 45.32452,
+              adresse: [
+                "BRICOCASH",
+                "RN 7",
+                "PARC DU SOLEIL",
+                "38150",
+                "CHANAS",
+                "Parc du Soleil 38150 Chanas",
+              ],
+            },
+          },
+        },
+        "1901_interim": {
+          interim: {
+            "980679ad48d7f19f23960bce51b47de8": {
+              siret: "40433868300018",
+              periode: ISODate("2014-02-01T00:00:00.000Z"),
+              etp: 0,
+            },
+            "7aa9f1a11ba0c653f0ccec13567b15fe": {
+              siret: "40433868300018",
+              periode: ISODate("2014-12-01T00:00:00.000Z"),
+              etp: 0,
+            },
+            "3a7bfee455d6d1b30a80956d940bda71": {
+              siret: "40433868300018",
+              periode: ISODate("2015-02-01T00:00:00.000Z"),
+              etp: 0,
+            },
+            "4350f0cbe837beb144358171dbfce8de": {
+              siret: "40433868300018",
+              periode: ISODate("2015-03-01T00:00:00.000Z"),
+              etp: 1.1071,
+            },
+            "2dc4bdcc7b61ff1635d6b1949d2d4ad0": {
+              siret: "40433868300018",
+              periode: ISODate("2015-04-01T00:00:00.000Z"),
+              etp: 1.1071,
+            },
+            "8e49758294425e7334c607cfa3f4c6ef": {
+              siret: "40433868300018",
+              periode: ISODate("2015-06-01T00:00:00.000Z"),
+              etp: 0,
+            },
+            fb761c79efd4435cd15ddcc735692573: {
+              siret: "40433868300018",
+              periode: ISODate("2015-08-01T00:00:00.000Z"),
+              etp: 0,
+            },
+            "521209a2b12623bddf52b68d593b95dc": {
+              siret: "40433868300018",
+              periode: ISODate("2015-10-01T00:00:00.000Z"),
+              etp: 1.1071,
+            },
+            caaad8d8b9088264a3773e3b0e1c6cde: {
+              siret: "40433868300018",
+              periode: ISODate("2015-11-01T00:00:00.000Z"),
+              etp: 1.1071,
+            },
+            fa18ba6183fa6b19fd8a6855c076fde7: {
+              siret: "40433868300018",
+              periode: ISODate("2015-12-01T00:00:00.000Z"),
+              etp: 1.1071,
+            },
+            "0f54b82afe4ccbc0a5bcba9c1e0bddf6": {
+              siret: "40433868300018",
+              periode: ISODate("2016-01-01T00:00:00.000Z"),
+              etp: 0,
+            },
+            aee11df76e0b8b2c74890028862d1885: {
+              siret: "40433868300018",
+              periode: ISODate("2016-02-01T00:00:00.000Z"),
+              etp: 0,
+            },
+            a6e96e37d1d87fe9ee7076f75aac4c5a: {
+              siret: "40433868300018",
+              periode: ISODate("2016-03-01T00:00:00.000Z"),
+              etp: 1.1071,
+            },
+            e5ef2da2352f2a5e4c68282f3e120da2: {
+              siret: "40433868300018",
+              periode: ISODate("2016-04-01T00:00:00.000Z"),
+              etp: 0,
+            },
+            "0f01fdb68c57c16759bd9849e9bf0a63": {
+              siret: "40433868300018",
+              periode: ISODate("2016-05-01T00:00:00.000Z"),
+              etp: 0.22142,
+            },
+            f46cfbbe4049349cfbcea2f1a7350225: {
+              siret: "40433868300018",
+              periode: ISODate("2017-03-01T00:00:00.000Z"),
+              etp: 0.2,
+            },
+            "4922285788f28fbb6b7d86dc86dcd829": {
+              siret: "40433868300018",
+              periode: ISODate("2017-04-01T00:00:00.000Z"),
+              etp: 0,
+            },
+            ae12e1b6ca42a55d6bdbb1242f2528b6: {
+              siret: "40433868300018",
+              periode: ISODate("2017-07-01T00:00:00.000Z"),
+              etp: 0,
+            },
+            "452c46ead0536ca9fd2e8dcfe60404e5": {
+              siret: "40433868300018",
+              periode: ISODate("2018-01-01T00:00:00.000Z"),
+              etp: 0,
+            },
+            e2aa2919705476ab55b966dcaf3c2d38: {
+              siret: "40433868300018",
+              periode: ISODate("2018-02-01T00:00:00.000Z"),
+              etp: 1,
+            },
+            "43b56e520346158402b88de81199c0f4": {
+              siret: "40433868300018",
+              periode: ISODate("2018-03-01T00:00:00.000Z"),
+              etp: 0,
+            },
+            "59a0f3afb7d83cf93bcaf7f83a0be03c": {
+              siret: "40433868300018",
+              periode: ISODate("2018-04-01T00:00:00.000Z"),
+              etp: 0,
+            },
+            dc80134c11cd4a0372140b37c995ad1c: {
+              siret: "40433868300018",
+              periode: ISODate("2018-05-01T00:00:00.000Z"),
+              etp: 0,
+            },
+            ca662ccada6180b5ff58928d049bc5bf: {
+              siret: "40433868300018",
+              periode: ISODate("2018-08-01T00:00:00.000Z"),
+              etp: 0,
+            },
+          },
+        },
+        "2007_1": {
+          apdemande: {
+            f9b3e9b3df6cb5a8e8010e36fadfdb03: {
+              id_demande: "038BDPO0100",
+              effectif_entreprise: 34,
+              effectif: 34,
+              date_statut: ISODate("2020-04-27T00:00:00.000Z"),
+              periode: {
+                start: ISODate("2020-03-16T00:00:00.000Z"),
+                end: ISODate("2020-06-30T00:00:00.000Z"),
+              },
+              hta: 6000,
+              mta: null,
+              effectif_autorise: 32,
+              motif_recours_se: 5,
+              heure_consommee: 4881.34,
+              montant_consommee: 39864.77,
+              effectif_consomme: 69,
+            },
+          },
+          apconso: {
+            fb7af36ec43f861816dbca8372a4ceea: {
+              id_conso: "038BDPO0100",
+              heure_consomme: 402.34,
+              montant: 3238,
+              effectif: 9,
+              periode: ISODate("2020-05-01T00:00:00.000Z"),
+            },
+            b048124a6ed4f2ea4c4f3fb740342a33: {
+              id_conso: "038BDPO0100",
+              heure_consomme: 47,
+              montant: 323,
+              effectif: 2,
+              periode: ISODate("2020-06-01T00:00:00.000Z"),
+            },
+          },
+          compte: {
+            f563a2a58143acc266887a4936174462: {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2020-07-01T00:00:00.000Z"),
+            },
+            f8e646c818281e1c70c326a1d978bd9a: {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2020-08-01T00:00:00.000Z"),
+            },
+            "30b59fd5357f46c274e2253e11852d1f": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2020-09-01T00:00:00.000Z"),
+            },
+            ef5799f8e5a7bfc3996d4cfb6cc54d60: {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2020-06-01T00:00:00.000Z"),
+            },
+          },
+          cotisation: {
+            c9c333167a8c67f74223d93ae1027586: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2020-05-01T00:00:00.000Z"),
+                end: ISODate("2020-06-01T00:00:00.000Z"),
+              },
+              encaisse: 17141,
+              du: 17141,
+            },
+          },
+          reporder: {},
+          compact: {
+            delete: {
+              apdemande: ["ac7a480e50258a3eb4b62379ff4cc762"],
+              effectif: [
+                "3bc60106d3284f4d729662969904dcfc",
+                "5a25e37089c4c6edf7650ac209cdf4a7",
+                "cca77a6a1838add7b7e0357cfaf38c0a",
+                "8625902e9cb49a4c3545356f58ebf0da",
+                "07769408d4bdcade6ffad324d7be69c1",
+                "afe1dd05adb0006a9f8f6db17d2e1be3",
+                "df9ea53314c2eb255e1c0f7b84bffb5f",
+                "40c84e3e66e39091244fd2835af9db1c",
+                "64c17685ce303a09f99af9f910b21b74",
+                "3483407e601d00308b337591c51d5735",
+                "bf3f0514c4c57b8ef90534164a3672e3",
+                "d7d9f85be09b929ce3449e53b83722ff",
+                "78985caa0e453817d22224a04bd87f72",
+                "e06a46d494165c1e0766cd3f2e82d942",
+                "f4a0abe29393b4aa74329481e1f89de8",
+                "091211ab4267ac681753a3ab491e8254",
+                "b90b4d4c604d1aa32ca3ad03ba79d68b",
+                "839f45789cf84983af3425f4c538c8c6",
+                "452a23370ff5a73e19d4d8c323a3ef83",
+                "35de39c8c943fa181f8b0477328983b3",
+                "cc1f4c1ba33e392cd00e94cd757dbd3a",
+                "4fa9ba0095b02294e6e118320fff5176",
+                "1f2bcfc6fd776fafeb7e00a1898c4580",
+                "a05d4a1cf20c8aee7a0f6355c38794f1",
+                "359c9a513d51ee261e4660693cf3eb15",
+                "6b2e3e202987a96e1132fd29db2cde0a",
+                "19c39b4e29c031b501798feab82e7428",
+                "41828e04c6363480109cf46da20cc5a8",
+                "c8ed3cb84b5365b6bd13141990d714f7",
+                "9c190f2ec0676b5f80bd72baa83a530c",
+                "39f8c954db204f7b8a2d20df78ef499d",
+                "83e667962e0b988e6380ce51e14e1c87",
+                "85ebc9b6de9346bd788186f624ec904e",
+                "b051d39e74d907a587302f2761c5b725",
+                "bfd65d9ec998f305bb54a159902666ad",
+                "513e072c11e5a9d5865598234190b0e3",
+                "660e96354d59ed4328db4529f0d51f08",
+                "844ec20fa5c93d6d3351f9ecfd2b32da",
+                "cc51f65c6d6cd77f39d22742e085a396",
+                "dc98ba9d3cf98ed8b294cfba8c369ca8",
+                "fc4a74c126a5e41e5430f2fa94a4e75c",
+                "7fe50bda767992391b3072264ccb4195",
+                "2d295be944400570dd09f808db04342c",
+                "97a1e0a1783b1a1798d99d76c9170788",
+                "c711fc28736c18c3d4e2c85ad45e0e5c",
+                "437520e0c5cd42880751c847c2d56df6",
+                "1a044d6f27790d8a225b6befafabece0",
+                "87b4c7a336d2dfcc495ff17fedb29dd4",
+                "f95139cc81678393873ef9fd10d9921e",
+                "096df3b9e65b1b22dbb3b9f5cb4e63e2",
+                "bc01804bfc401f22e945d1f5b8b58cb0",
+                "ade0f49ea56b413538b7288a752728a3",
+                "ae13a63ebd17a320c795a62d1641a200",
+                "3e20d0b5db039ff6172b670b65b4cabf",
+                "495d60ea465f7156078b9b48c61b7761",
+                "67c3aa41fd5683063bc477a32424e5aa",
+                "c76f55e94e31288d25b1b90f0fe9406f",
+                "d6bdf2174b4f8ee04d54810202c3c068",
+                "2a8ee2a505597197e29dd18844647161",
+                "90a77b8b3fcb875dbb5204ee38c71c95",
+                "57fb2aad186e7d549c526ba4abe45390",
+                "931b1279e07782acdddb4a173068351a",
+                "e3980d9c0091678c2612ac0bfee7c84e",
+                "3a458bc806cb4c692d74db65f3c4fd4b",
+                "6a03464a8b2974375e8cf697f3d97078",
+                "28f29ccdc47eb5616cec3b79edb39d19",
+                "c69b9833e97acddff2213166143a0286",
+                "c364c12bdcb73064f7d5a783dbcf27df",
+                "b4ba68358ded3722b47e7af74aa66e52",
+                "f73466c78caccf15b8cb8f4b96053d02",
+                "78db1c37be7b7eea668df09c5891f390",
+                "f5d96cafccc0d4392c27371618b748b3",
+                "0f6c38d9579a39e0aa0a0af9c4edf13f",
+                "4052f4de581197123f99b863d3f6c0bc",
+                "57b3286bf6ae6eb6ad291df499dc47e6",
+                "81f92c80ca618933a2e68e8ea02de7fb",
+                "e7929b5085281cd3d922b762b9a8861c",
+                "acc3720d35465044723a3281d2961994",
+                "11206224e26cddbff659f6ae10081e0b",
+                "0491f4db226240374f935ace7304905c",
+                "67622b6d9570f87717c0dfc02bd36a4c",
+                "7cb882b0dedf2870ccadb5f2db3a7e59",
+                "cc5683d5894f9dfc7e9584d740543fe0",
+                "b07ab0a5f51123b8b66d814dd7390d44",
+                "7d7499e40d056b31415d23d33d425635",
+                "45b9f9ca8901245dcbe6f67317e481b0",
+                "3cddbc45f4bccbca7806850496efa1dc",
+                "2069e061ded89f0aedddc18a0fec29b2",
+                "1f96f891d2209d0abfbaffd17588b98a",
+                "5c19e127c8c6fca9cb7ad121df89b2a7",
+                "9b0454af1fa899d72cd11f7f0cd1d63b",
+                "6d91eecf6c68d4661043acb74d11653e",
+                "cb9ff9b7c325db508cc10d9883d3b0d0",
+                "988ea4f2ace5cc724e8e7b986bb88ca0",
+                "001789db3b9fdeffc6e744e7210bd103",
+                "048c4465da26e720225b09b9b6743685",
+                "46ed652a69aa5c4a358bbe79acb51cec",
+                "6b63cfd831885aa590d41e97756c46fc",
+                "debad1334e88707077f3f058b4d7af5e",
+                "a4eb97a93eb2dc1f3fc9987248e78f73",
+                "62b455a4a0ec9570c0d21bf68f5480c9",
+                "ed19773f53e37b0d139bdaaa99f37eb6",
+                "ed091d6514adff3f4651d5b58c2c103a",
+                "c4d28d3f8be473166285967c4f237d24",
+                "d02e6f86414566107754a03a2c4046d6",
+                "9acd85a3a95b91a9f5d26398dd101667",
+                "8464c1a833684f84b91357c71eda7029",
+                "d0cf151d393ec5d27411423a9f233c97",
+                "d47a7d5e05d1c95f73b1ab671d06babb",
+                "cdf19fe90090b3e70bcdc2dbf101d293",
+                "0af08022f55553fb1c457387defd2dfa",
+                "a61bde9d8ef6ec045a9bedbddec08e86",
+                "73f1925d1345262d49b15956c3339d30",
+                "73fda970e5d3105a224f74877017ab13",
+                "43380cc9b5303ff2542d2f2ce6cfa285",
+                "faed516f4cad0866e2f3183891476792",
+                "9749a601302dbad5663dd9463a19ee44",
+                "53206905425c3923e15dc63ef4737e45",
+                "026dc495b8f06d297e1c4de699fd69cd",
+                "f9058b3c36afde9e6e0d30af9491c63c",
+                "d38aa7c928586aa5b8de340ce9c8b522",
+              ],
+            },
+          },
+        },
+        "2009_3": {
+          sirene: {
+            bc9a5c83f59095f3925f3c9b322b2894: {
+              siren: "404338683",
+              nic: "00018",
+              siege: true,
+              complement_adresse: "RN 7",
+              voie: "PARC DU SOLEIL",
+              commune: "CHANAS",
+              code_commune: "38072",
+              code_postal: "38150",
+              departement: "38",
+              ape: "4752B",
+              date_creation: ISODate("1996-01-31T23:00:00.000Z"),
+              longitude: 4.809034,
+              latitude: 45.324629,
+            },
+          },
+          reporder: {},
+          compact: {
+            delete: {
+              sirene: ["877ef1c808260e6d007e473f55e0885d"],
+            },
+          },
+        },
+        "2009_4": {
+          effectif: {
+            f73466c78caccf15b8cb8f4b96053d02: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-09-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            ed091d6514adff3f4651d5b58c2c103a: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-12-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            "81f92c80ca618933a2e68e8ea02de7fb": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2017-08-01T00:00:00.000Z"),
+              effectif: 29,
+            },
+            "2a8ee2a505597197e29dd18844647161": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2013-04-01T00:00:00.000Z"),
+              effectif: 22,
+            },
+            "513e072c11e5a9d5865598234190b0e3": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2013-12-01T00:00:00.000Z"),
+              effectif: 23,
+            },
+            "3e20d0b5db039ff6172b670b65b4cabf": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-02-01T00:00:00.000Z"),
+              effectif: 26,
+            },
+            f95139cc81678393873ef9fd10d9921e: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-03-01T00:00:00.000Z"),
+              effectif: 26,
+            },
+            c76f55e94e31288d25b1b90f0fe9406f: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-09-01T00:00:00.000Z"),
+              effectif: 31,
+            },
+            "660e96354d59ed4328db4529f0d51f08": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2017-07-01T00:00:00.000Z"),
+              effectif: 31,
+            },
+            "53206905425c3923e15dc63ef4737e45": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-08-01T00:00:00.000Z"),
+              effectif: 33,
+            },
+            f4a0abe29393b4aa74329481e1f89de8: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2012-03-01T00:00:00.000Z"),
+              effectif: 22,
+            },
+            "41828e04c6363480109cf46da20cc5a8": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-03-01T00:00:00.000Z"),
+              effectif: 31,
+            },
+            "5c19e127c8c6fca9cb7ad121df89b2a7": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-12-01T00:00:00.000Z"),
+              effectif: 31,
+            },
+            "43380cc9b5303ff2542d2f2ce6cfa285": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-05-01T00:00:00.000Z"),
+              effectif: 32,
+            },
+            b4ba68358ded3722b47e7af74aa66e52: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2013-07-01T00:00:00.000Z"),
+              effectif: 26,
+            },
+            "096df3b9e65b1b22dbb3b9f5cb4e63e2": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-04-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            f5d96cafccc0d4392c27371618b748b3: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-11-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            c69b9833e97acddff2213166143a0286: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-08-01T00:00:00.000Z"),
+              effectif: 31,
+            },
+            acc3720d35465044723a3281d2961994: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-01-01T00:00:00.000Z"),
+              effectif: 30,
+            },
+            "7d7499e40d056b31415d23d33d425635": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2011-01-01T00:00:00.000Z"),
+              effectif: 21,
+            },
+            dc98ba9d3cf98ed8b294cfba8c369ca8: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2012-12-01T00:00:00.000Z"),
+              effectif: 22,
+            },
+            "2d295be944400570dd09f808db04342c": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2013-10-01T00:00:00.000Z"),
+              effectif: 25,
+            },
+            d02e6f86414566107754a03a2c4046d6: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-05-01T00:00:00.000Z"),
+              effectif: 25,
+            },
+            "6b2e3e202987a96e1132fd29db2cde0a": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-09-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            "07769408d4bdcade6ffad324d7be69c1": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2011-04-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            "091211ab4267ac681753a3ab491e8254": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2013-05-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            "67c3aa41fd5683063bc477a32424e5aa": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-03-01T00:00:00.000Z"),
+              effectif: 29,
+            },
+            "87b4c7a336d2dfcc495ff17fedb29dd4": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2011-11-01T00:00:00.000Z"),
+              effectif: 20,
+            },
+            b90b4d4c604d1aa32ca3ad03ba79d68b: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-08-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            c364c12bdcb73064f7d5a783dbcf27df: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-11-01T00:00:00.000Z"),
+              effectif: 31,
+            },
+            "73f1925d1345262d49b15956c3339d30": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-06-01T00:00:00.000Z"),
+              effectif: 32,
+            },
+            "90a77b8b3fcb875dbb5204ee38c71c95": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2013-03-01T00:00:00.000Z"),
+              effectif: 22,
+            },
+            "78985caa0e453817d22224a04bd87f72": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2013-06-01T00:00:00.000Z"),
+              effectif: 26,
+            },
+            df9ea53314c2eb255e1c0f7b84bffb5f: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-07-01T00:00:00.000Z"),
+              effectif: 33,
+            },
+            "4fa9ba0095b02294e6e118320fff5176": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2017-05-01T00:00:00.000Z"),
+              effectif: 29,
+            },
+            "44f4654366c645a39608eaa500b7dfaa": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2020-03-01T00:00:00.000Z"),
+              effectif: 34,
+            },
+            bc01804bfc401f22e945d1f5b8b58cb0: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2010-10-01T00:00:00.000Z"),
+              effectif: 23,
+            },
+            "452a23370ff5a73e19d4d8c323a3ef83": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2010-11-01T00:00:00.000Z"),
+              effectif: 23,
+            },
+            "8464c1a833684f84b91357c71eda7029": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2017-11-01T00:00:00.000Z"),
+              effectif: 29,
+            },
+            e601effec9fe5b840f7a249d1a1d4daa: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2020-01-01T00:00:00.000Z"),
+              effectif: 34,
+            },
+            c8ed3cb84b5365b6bd13141990d714f7: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2010-02-01T00:00:00.000Z"),
+              effectif: 28,
+            },
+            ade0f49ea56b413538b7288a752728a3: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2011-03-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            "3483407e601d00308b337591c51d5735": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-03-01T00:00:00.000Z"),
+              effectif: 25,
+            },
+            a4eb97a93eb2dc1f3fc9987248e78f73: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2010-05-01T00:00:00.000Z"),
+              effectif: 25,
+            },
+            "46ed652a69aa5c4a358bbe79acb51cec": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2012-06-01T00:00:00.000Z"),
+              effectif: 22,
+            },
+            ae13a63ebd17a320c795a62d1641a200: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2012-10-01T00:00:00.000Z"),
+              effectif: 21,
+            },
+            cb9ff9b7c325db508cc10d9883d3b0d0: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-04-01T00:00:00.000Z"),
+              effectif: 25,
+            },
+            "437520e0c5cd42880751c847c2d56df6": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2011-12-01T00:00:00.000Z"),
+              effectif: 20,
+            },
+            cca77a6a1838add7b7e0357cfaf38c0a: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2012-02-01T00:00:00.000Z"),
+              effectif: 21,
+            },
+            debad1334e88707077f3f058b4d7af5e: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2017-01-01T00:00:00.000Z"),
+              effectif: 30,
+            },
+            fc4a74c126a5e41e5430f2fa94a4e75c: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-05-01T00:00:00.000Z"),
+              effectif: 33,
+            },
+            "1fd6fac99ed9b0fd6499ddc69c610a74": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2020-02-01T00:00:00.000Z"),
+              effectif: 34,
+            },
+            "970a7f1c246d6a7bbc92aad631514bd8": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2020-06-01T00:00:00.000Z"),
+              effectif: 37,
+            },
+            "0491f4db226240374f935ace7304905c": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2011-05-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            a05d4a1cf20c8aee7a0f6355c38794f1: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2012-07-01T00:00:00.000Z"),
+              effectif: 21,
+            },
+            b051d39e74d907a587302f2761c5b725: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2013-08-01T00:00:00.000Z"),
+              effectif: 26,
+            },
+            c711fc28736c18c3d4e2c85ad45e0e5c: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-02-01T00:00:00.000Z"),
+              effectif: 30,
+            },
+            "73fda970e5d3105a224f74877017ab13": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-07-01T00:00:00.000Z"),
+              effectif: 33,
+            },
+            "2be99ccc885e16b7db346aabd29233bb": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2020-04-01T00:00:00.000Z"),
+              effectif: 34,
+            },
+            "9b0454af1fa899d72cd11f7f0cd1d63b": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2010-04-01T00:00:00.000Z"),
+              effectif: 26,
+            },
+            "8625902e9cb49a4c3545356f58ebf0da": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2010-07-01T00:00:00.000Z"),
+              effectif: 26,
+            },
+            "78db1c37be7b7eea668df09c5891f390": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-10-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            "85ebc9b6de9346bd788186f624ec904e": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-12-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            f9058b3c36afde9e6e0d30af9491c63c: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-11-01T00:00:00.000Z"),
+              effectif: 27,
+            },
+            "5a25e37089c4c6edf7650ac209cdf4a7": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2010-06-01T00:00:00.000Z"),
+              effectif: 25,
+            },
+            "001789db3b9fdeffc6e744e7210bd103": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2013-02-01T00:00:00.000Z"),
+              effectif: 23,
+            },
+            "3cddbc45f4bccbca7806850496efa1dc": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-01-01T00:00:00.000Z"),
+              effectif: 27,
+            },
+            d7d9f85be09b929ce3449e53b83722ff: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2017-09-01T00:00:00.000Z"),
+              effectif: 29,
+            },
+            bf3f0514c4c57b8ef90534164a3672e3: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2010-01-01T00:00:00.000Z"),
+              effectif: 35,
+            },
+            "35de39c8c943fa181f8b0477328983b3": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-02-01T00:00:00.000Z"),
+              effectif: 28,
+            },
+            a61bde9d8ef6ec045a9bedbddec08e86: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2012-05-01T00:00:00.000Z"),
+              effectif: 23,
+            },
+            "62b455a4a0ec9570c0d21bf68f5480c9": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2013-09-01T00:00:00.000Z"),
+              effectif: 26,
+            },
+            "40c84e3e66e39091244fd2835af9db1c": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2010-08-01T00:00:00.000Z"),
+              effectif: 26,
+            },
+            cc1f4c1ba33e392cd00e94cd757dbd3a: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-10-01T00:00:00.000Z"),
+              effectif: 30,
+            },
+            "359c9a513d51ee261e4660693cf3eb15": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-07-01T00:00:00.000Z"),
+              effectif: 30,
+            },
+            d47a7d5e05d1c95f73b1ab671d06babb: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2011-06-01T00:00:00.000Z"),
+              effectif: 22,
+            },
+            "048c4465da26e720225b09b9b6743685": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2011-08-01T00:00:00.000Z"),
+              effectif: 21,
+            },
+            "1f2bcfc6fd776fafeb7e00a1898c4580": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2011-10-01T00:00:00.000Z"),
+              effectif: 21,
+            },
+            "64c17685ce303a09f99af9f910b21b74": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2010-09-01T00:00:00.000Z"),
+              effectif: 25,
+            },
+            "9acd85a3a95b91a9f5d26398dd101667": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-04-01T00:00:00.000Z"),
+              effectif: 29,
+            },
+            c4d28d3f8be473166285967c4f237d24: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2017-02-01T00:00:00.000Z"),
+              effectif: 30,
+            },
+            "2069e061ded89f0aedddc18a0fec29b2": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2017-06-01T00:00:00.000Z"),
+              effectif: 31,
+            },
+            "844ec20fa5c93d6d3351f9ecfd2b32da": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-07-01T00:00:00.000Z"),
+              effectif: 33,
+            },
+            "931b1279e07782acdddb4a173068351a": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-07-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            "28f29ccdc47eb5616cec3b79edb39d19": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2012-11-01T00:00:00.000Z"),
+              effectif: 22,
+            },
+            e06a46d494165c1e0766cd3f2e82d942: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2012-01-01T00:00:00.000Z"),
+              effectif: 21,
+            },
+            "39f8c954db204f7b8a2d20df78ef499d": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-01-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            d0cf151d393ec5d27411423a9f233c97: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-03-01T00:00:00.000Z"),
+              effectif: 31,
+            },
+            "897417b2389c39b809ce367caa461eaf": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2020-05-01T00:00:00.000Z"),
+              effectif: 35,
+            },
+            "83e667962e0b988e6380ce51e14e1c87": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2010-12-01T00:00:00.000Z"),
+              effectif: 22,
+            },
+            "57b3286bf6ae6eb6ad291df499dc47e6": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-01-01T00:00:00.000Z"),
+              effectif: 23,
+            },
+            "19c39b4e29c031b501798feab82e7428": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2017-03-01T00:00:00.000Z"),
+              effectif: 28,
+            },
+            bfd65d9ec998f305bb54a159902666ad: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-09-01T00:00:00.000Z"),
+              effectif: 30,
+            },
+            b07ab0a5f51123b8b66d814dd7390d44: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-04-01T00:00:00.000Z"),
+              effectif: 31,
+            },
+            "495d60ea465f7156078b9b48c61b7761": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2010-03-01T00:00:00.000Z"),
+              effectif: 27,
+            },
+            "7cb882b0dedf2870ccadb5f2db3a7e59": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-08-01T00:00:00.000Z"),
+              effectif: 27,
+            },
+            "6d91eecf6c68d4661043acb74d11653e": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-06-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            d38aa7c928586aa5b8de340ce9c8b522: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-12-01T00:00:00.000Z"),
+              effectif: 27,
+            },
+            ed19773f53e37b0d139bdaaa99f37eb6: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2014-05-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            e3980d9c0091678c2612ac0bfee7c84e: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-02-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            "9c190f2ec0676b5f80bd72baa83a530c": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2012-04-01T00:00:00.000Z"),
+              effectif: 23,
+            },
+            "67622b6d9570f87717c0dfc02bd36a4c": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2013-01-01T00:00:00.000Z"),
+              effectif: 23,
+            },
+            "3a458bc806cb4c692d74db65f3c4fd4b": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-02-01T00:00:00.000Z"),
+              effectif: 27,
+            },
+            "4052f4de581197123f99b863d3f6c0bc": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2017-10-01T00:00:00.000Z"),
+              effectif: 29,
+            },
+            e7929b5085281cd3d922b762b9a8861c: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-06-01T00:00:00.000Z"),
+              effectif: 33,
+            },
+            faed516f4cad0866e2f3183891476792: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-09-01T00:00:00.000Z"),
+              effectif: 32,
+            },
+            "9749a601302dbad5663dd9463a19ee44": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2019-10-01T00:00:00.000Z"),
+              effectif: 28,
+            },
+            afe1dd05adb0006a9f8f6db17d2e1be3: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2012-08-01T00:00:00.000Z"),
+              effectif: 20,
+            },
+            d6bdf2174b4f8ee04d54810202c3c068: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-06-01T00:00:00.000Z"),
+              effectif: 30,
+            },
+            cc51f65c6d6cd77f39d22742e085a396: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-05-01T00:00:00.000Z"),
+              effectif: 30,
+            },
+            "839f45789cf84983af3425f4c538c8c6": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-12-01T00:00:00.000Z"),
+              effectif: 31,
+            },
+            "1f96f891d2209d0abfbaffd17588b98a": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2017-12-01T00:00:00.000Z"),
+              effectif: 28,
+            },
+            "7fe50bda767992391b3072264ccb4195": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-04-01T00:00:00.000Z"),
+              effectif: 31,
+            },
+            "45b9f9ca8901245dcbe6f67317e481b0": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2011-02-01T00:00:00.000Z"),
+              effectif: 21,
+            },
+            "57fb2aad186e7d549c526ba4abe45390": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2013-11-01T00:00:00.000Z"),
+              effectif: 24,
+            },
+            "11206224e26cddbff659f6ae10081e0b": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-10-01T00:00:00.000Z"),
+              effectif: 23,
+            },
+            "0af08022f55553fb1c457387defd2dfa": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2015-11-01T00:00:00.000Z"),
+              effectif: 23,
+            },
+            "6b63cfd831885aa590d41e97756c46fc": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-06-01T00:00:00.000Z"),
+              effectif: 33,
+            },
+            "0f6c38d9579a39e0aa0a0af9c4edf13f": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2017-04-01T00:00:00.000Z"),
+              effectif: 28,
+            },
+            "1a044d6f27790d8a225b6befafabece0": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2011-07-01T00:00:00.000Z"),
+              effectif: 22,
+            },
+            "988ea4f2ace5cc724e8e7b986bb88ca0": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-10-01T00:00:00.000Z"),
+              effectif: 31,
+            },
+            "6a03464a8b2974375e8cf697f3d97078": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-11-01T00:00:00.000Z"),
+              effectif: 31,
+            },
+            "97a1e0a1783b1a1798d99d76c9170788": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2016-08-01T00:00:00.000Z"),
+              effectif: 33,
+            },
+            cdf19fe90090b3e70bcdc2dbf101d293: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2012-09-01T00:00:00.000Z"),
+              effectif: 20,
+            },
+            cc5683d5894f9dfc7e9584d740543fe0: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2018-01-01T00:00:00.000Z"),
+              effectif: 28,
+            },
+            "3bc60106d3284f4d729662969904dcfc": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2011-09-01T00:00:00.000Z"),
+              effectif: 21,
+            },
+          },
+          reporder: {},
+        },
+        "2010_1": {
+          effectif: {
+            "360b8764e408c96a69e6598bca5be085": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2020-07-01T00:00:00.000Z"),
+              effectif: 36,
+            },
+          },
+          compte: {
+            "7f5e2ecbc65be951eaa32e2e08d9adf8": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2020-10-01T00:00:00.000Z"),
+            },
+          },
+          debit: {
+            "8553a12369120dcbf97c01da9b00aefd": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2020-03-25T00:00:00.000Z"),
+              part_ouvriere: 9726,
+              part_patronale: 7378,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2020-02-01T00:00:00.000Z"),
+                end: ISODate("2020-03-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "13",
+              recours_en_cours: false,
+            },
+            "2f11ba82a309bbee3e2dcfb74849b91f": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2017-10-16T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 2,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2017-09-01T00:00:00.000Z"),
+                end: ISODate("2017-10-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            fce3ddb6fc322b12c07de9b5ac9272ea: {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2018-01-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 1,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2017-12-01T00:00:00.000Z"),
+                end: ISODate("2018-01-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            a3de786a5baa3c5e57538ed26fb52156: {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2018-06-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 1,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2018-05-01T00:00:00.000Z"),
+                end: ISODate("2018-06-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            "596478d3925deac9f5f0579fbe349e66": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2018-08-16T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 1,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2018-07-01T00:00:00.000Z"),
+                end: ISODate("2018-08-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            "71625b3eedb1a2388fce3e19235409d5": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2018-09-17T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 1,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2018-08-01T00:00:00.000Z"),
+                end: ISODate("2018-09-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            "14a9777fd7894692e7a4f331f3f6b42f": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2018-11-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 1,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2018-10-01T00:00:00.000Z"),
+                end: ISODate("2018-11-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            "491310d44c9c7110806148a1b466309e": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2019-01-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 2,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2018-12-01T00:00:00.000Z"),
+                end: ISODate("2019-01-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            "3a31d68432d62bdc49b261ae67beec4b": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2019-05-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 1,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2019-04-01T00:00:00.000Z"),
+                end: ISODate("2019-05-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            "6dacd66bc0d90d476fe989f5f2d7fe67": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2020-05-12T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2020-02-01T00:00:00.000Z"),
+                end: ISODate("2020-03-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "2",
+              code_motif_ecart_negatif: "13",
+              recours_en_cours: false,
+            },
+            caff37c60c9fd999a4686da869335108: {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2020-08-24T00:00:00.000Z"),
+              part_ouvriere: 1124,
+              part_patronale: 0,
+              numero_historique: 3,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2020-02-01T00:00:00.000Z"),
+                end: ISODate("2020-03-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "12",
+              code_motif_ecart_negatif: "13",
+              recours_en_cours: false,
+            },
+            "8cf78579dd859fe8ec18ce87f2862df0": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2020-08-24T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 4,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2020-02-01T00:00:00.000Z"),
+                end: ISODate("2020-03-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "11",
+              code_motif_ecart_negatif: "13",
+              recours_en_cours: false,
+            },
+          },
+          cotisation: {
+            "086e4b564ef5c4dd8d1014989c0cf830": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2018-07-01T00:00:00.000Z"),
+                end: ISODate("2018-08-01T00:00:00.000Z"),
+              },
+              encaisse: 25205,
+              du: 25206,
+            },
+            a223281e4e75ff4ff69a2c6bb58280e0: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2018-09-01T00:00:00.000Z"),
+                end: ISODate("2018-10-01T00:00:00.000Z"),
+              },
+              encaisse: 21041,
+              du: 21041,
+            },
+            ae8384508739b952e4eaea30abc9b2de: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2018-11-01T00:00:00.000Z"),
+                end: ISODate("2018-12-01T00:00:00.000Z"),
+              },
+              encaisse: 19197,
+              du: 19197,
+            },
+            "680cb8ec2a4eda96879421067d6cf9b9": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2014-07-01T00:00:00.000Z"),
+                end: ISODate("2014-08-01T00:00:00.000Z"),
+              },
+              encaisse: 16607,
+              du: 16607,
+            },
+            "0835ccff9b2547e459ee54187c95b931": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2015-01-01T00:00:00.000Z"),
+                end: ISODate("2015-02-01T00:00:00.000Z"),
+              },
+              encaisse: 14699,
+              du: 14699,
+            },
+            fc32680ffc611e906458f9f418c4ef6c: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2018-02-01T00:00:00.000Z"),
+                end: ISODate("2018-03-01T00:00:00.000Z"),
+              },
+              encaisse: 17444,
+              du: 17444,
+            },
+            b877707baa0410b5c43c10a7fc14a1a1: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2016-01-01T00:00:00.000Z"),
+                end: ISODate("2016-02-01T00:00:00.000Z"),
+              },
+              encaisse: 14888,
+              du: 14888,
+            },
+            c828f7f4af27f3c251f0be9a0770ff6d: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2017-03-01T00:00:00.000Z"),
+                end: ISODate("2017-04-01T00:00:00.000Z"),
+              },
+              encaisse: 18721,
+              du: 18721,
+            },
+            "7bc50a93e42cb85dbf4d4fcc0270666f": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2017-07-01T00:00:00.000Z"),
+                end: ISODate("2017-08-01T00:00:00.000Z"),
+              },
+              encaisse: 16340,
+              du: 16340,
+            },
+            "9452674b8b4aedfba84d245bc5e89084": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2016-10-01T00:00:00.000Z"),
+                end: ISODate("2016-11-01T00:00:00.000Z"),
+              },
+              encaisse: 17209,
+              du: 17209,
+            },
+            cc5303c712a9322b8c7dd21c39b14ef6: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2019-12-01T00:00:00.000Z"),
+                end: ISODate("2020-01-01T00:00:00.000Z"),
+              },
+              encaisse: 23662,
+              du: 23662,
+            },
+            db532ef5064a056e1987e49fa4421cf5: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2016-12-01T00:00:00.000Z"),
+                end: ISODate("2017-01-01T00:00:00.000Z"),
+              },
+              encaisse: 33680,
+              du: 33682,
+            },
+            "6629121fdef976a66c0d9fb665101064": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2019-03-01T00:00:00.000Z"),
+                end: ISODate("2019-04-01T00:00:00.000Z"),
+              },
+              encaisse: 18998,
+              du: 18998,
+            },
+            e10ea68a86e4feb60be51d173e75728e: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2019-04-01T00:00:00.000Z"),
+                end: ISODate("2019-05-01T00:00:00.000Z"),
+              },
+              encaisse: 16817,
+              du: 16818,
+            },
+            "48ee09324ce05f57f6046dbca3281d82": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2019-11-01T00:00:00.000Z"),
+                end: ISODate("2019-12-01T00:00:00.000Z"),
+              },
+              encaisse: 13657,
+              du: 13657,
+            },
+            "49d52ce2294ce957e7029faa0ebb2560": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2013-12-01T00:00:00.000Z"),
+                end: ISODate("2014-01-01T00:00:00.000Z"),
+              },
+              encaisse: 14493,
+              du: 14493,
+            },
+            "627092e9e6f6caa8af23be4fe4825a08": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2014-01-01T00:00:00.000Z"),
+                end: ISODate("2014-02-01T00:00:00.000Z"),
+              },
+              encaisse: 14422,
+              du: 14423,
+            },
+            "9366e63fe2e6164ef8ea27e38d56065c": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2015-02-01T00:00:00.000Z"),
+                end: ISODate("2015-03-01T00:00:00.000Z"),
+              },
+              encaisse: 13643,
+              du: 13643,
+            },
+            c70f884b6ec178ca6c44a41dd526b1fa: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2016-08-01T00:00:00.000Z"),
+                end: ISODate("2016-09-01T00:00:00.000Z"),
+              },
+              encaisse: 17870,
+              du: 17870,
+            },
+            "5126fc5443d9ec5d10e0cfd535042f49": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2017-01-01T00:00:00.000Z"),
+                end: ISODate("2017-02-01T00:00:00.000Z"),
+              },
+              encaisse: 28103,
+              du: 28103,
+            },
+            "310abdd7f4ae8bcd8f24e7a51e68db15": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2017-05-01T00:00:00.000Z"),
+                end: ISODate("2017-06-01T00:00:00.000Z"),
+              },
+              encaisse: 17760,
+              du: 17760,
+            },
+            "1b11fa45f61ab6dbb9e94bf8d758a6b4": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2019-01-01T00:00:00.000Z"),
+                end: ISODate("2019-02-01T00:00:00.000Z"),
+              },
+              encaisse: 18012,
+              du: 18012,
+            },
+            "3664816f425a504ea803d86f3b2d2757": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2014-02-01T00:00:00.000Z"),
+                end: ISODate("2014-03-01T00:00:00.000Z"),
+              },
+              encaisse: 14169,
+              du: 14170,
+            },
+            "04da529cb23aa6bc56c2602f7aed4d30": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2015-08-01T00:00:00.000Z"),
+                end: ISODate("2015-09-01T00:00:00.000Z"),
+              },
+              encaisse: 19290,
+              du: 19290,
+            },
+            "95d28dfb1eac097c3f145de7f3ab84c6": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2015-11-01T00:00:00.000Z"),
+                end: ISODate("2015-12-01T00:00:00.000Z"),
+              },
+              encaisse: 19958,
+              du: 19959,
+            },
+            d6f1917e97cd67a6d90243106945c06e: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2016-03-01T00:00:00.000Z"),
+                end: ISODate("2016-04-01T00:00:00.000Z"),
+              },
+              encaisse: 16857,
+              du: 16857,
+            },
+            "38590239fbff125d21f3e2a8b4a95f95": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2016-06-01T00:00:00.000Z"),
+                end: ISODate("2016-07-01T00:00:00.000Z"),
+              },
+              encaisse: 16993,
+              du: 16993,
+            },
+            "3cb868be26aafd62486f267cc03cb704": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2019-02-01T00:00:00.000Z"),
+                end: ISODate("2019-03-01T00:00:00.000Z"),
+              },
+              encaisse: 16615,
+              du: 16615,
+            },
+            ef0d75f4a713c97f7a5dfd759d234eab: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2014-03-01T00:00:00.000Z"),
+                end: ISODate("2014-04-01T00:00:00.000Z"),
+              },
+              encaisse: 19559,
+              du: 19560,
+            },
+            bf397be8dcaacc1b02f88142139c5e69: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2015-09-01T00:00:00.000Z"),
+                end: ISODate("2015-10-01T00:00:00.000Z"),
+              },
+              encaisse: 9184,
+              du: 9185,
+            },
+            "592b7a075938adad3b79300b64efb85f": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2016-04-01T00:00:00.000Z"),
+                end: ISODate("2016-05-01T00:00:00.000Z"),
+              },
+              encaisse: 15989,
+              du: 15989,
+            },
+            "519da56450c2b57b3de4f9100bef7eaa": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2018-05-01T00:00:00.000Z"),
+                end: ISODate("2018-06-01T00:00:00.000Z"),
+              },
+              encaisse: 18966,
+              du: 18967,
+            },
+            "78b8c5c5ad3c6ea9e1147aa77aa9a1fb": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2018-08-01T00:00:00.000Z"),
+                end: ISODate("2018-09-01T00:00:00.000Z"),
+              },
+              encaisse: 29735,
+              du: 29736,
+            },
+            "4e82a434487134600bf1599350677949": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2019-05-01T00:00:00.000Z"),
+                end: ISODate("2019-06-01T00:00:00.000Z"),
+              },
+              encaisse: 17862,
+              du: 17862,
+            },
+            "8b844c36a6c94b222cd7cda1b131c2cf": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2019-06-01T00:00:00.000Z"),
+                end: ISODate("2019-07-01T00:00:00.000Z"),
+              },
+              encaisse: 18317,
+              du: 18317,
+            },
+            "2c244ebee3e1b5842e987f6521e04947": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2014-01-01T00:00:00.000Z"),
+                end: ISODate("2015-01-01T00:00:00.000Z"),
+              },
+              encaisse: 0,
+              du: 201,
+            },
+            "0beca00346b4eef027bcdce5ce5b6af4": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2015-03-01T00:00:00.000Z"),
+                end: ISODate("2015-04-01T00:00:00.000Z"),
+              },
+              encaisse: 15062,
+              du: 15063,
+            },
+            e565e0321667cdeb1af86ec7bf49eede: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2016-09-01T00:00:00.000Z"),
+                end: ISODate("2016-10-01T00:00:00.000Z"),
+              },
+              encaisse: 19360,
+              du: 19360,
+            },
+            "0a96c02b9ae58afd9042441502892291": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2015-07-01T00:00:00.000Z"),
+                end: ISODate("2015-08-01T00:00:00.000Z"),
+              },
+              encaisse: 16323,
+              du: 16323,
+            },
+            c58ff83340d27f7553df8a901f12b65f: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2018-04-01T00:00:00.000Z"),
+                end: ISODate("2018-05-01T00:00:00.000Z"),
+              },
+              encaisse: 17645,
+              du: 17645,
+            },
+            "4b108b41c94729ee7c29260e21e965bc": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2019-08-01T00:00:00.000Z"),
+                end: ISODate("2019-09-01T00:00:00.000Z"),
+              },
+              encaisse: 16852,
+              du: 16852,
+            },
+            "908bf8b6796733011b791020657f0d0f": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2014-09-01T00:00:00.000Z"),
+                end: ISODate("2014-10-01T00:00:00.000Z"),
+              },
+              encaisse: 15223,
+              du: 15223,
+            },
+            "0dd7e15943605cfe7697cba177d97fb3": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2014-11-01T00:00:00.000Z"),
+                end: ISODate("2014-12-01T00:00:00.000Z"),
+              },
+              encaisse: 15940,
+              du: 15940,
+            },
+            "086d5501a16f85841597be11161a11b4": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2015-05-01T00:00:00.000Z"),
+                end: ISODate("2015-06-01T00:00:00.000Z"),
+              },
+              encaisse: 14401,
+              du: 14402,
+            },
+            "64ce5c0065152e6ab8a7c2babef5a655": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2017-02-01T00:00:00.000Z"),
+                end: ISODate("2017-03-01T00:00:00.000Z"),
+              },
+              encaisse: 19800,
+              du: 19800,
+            },
+            "63d521e4780aa7e60a10697b51e0a963": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2017-08-01T00:00:00.000Z"),
+                end: ISODate("2017-09-01T00:00:00.000Z"),
+              },
+              encaisse: 21535,
+              du: 21535,
+            },
+            f2761075f5047e69fd731e24ffb8b98a: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2017-09-01T00:00:00.000Z"),
+                end: ISODate("2017-10-01T00:00:00.000Z"),
+              },
+              encaisse: 17516,
+              du: 17518,
+            },
+            "81442704991eb718e4f6ee3f21ff633d": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2018-06-01T00:00:00.000Z"),
+                end: ISODate("2018-07-01T00:00:00.000Z"),
+              },
+              encaisse: 18861,
+              du: 18861,
+            },
+            "9cd411503089b9c8e0be0aa73edd2e45": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("1999-10-01T00:00:00.000Z"),
+                end: ISODate("2000-01-01T00:00:00.000Z"),
+              },
+              encaisse: 0,
+              du: 0,
+            },
+            "35adc33cd68c9966aba78588de80356e": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2014-12-01T00:00:00.000Z"),
+                end: ISODate("2015-01-01T00:00:00.000Z"),
+              },
+              encaisse: 18727,
+              du: 18727,
+            },
+            "0954babb2a7b144816f787e1b589e576": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2016-11-01T00:00:00.000Z"),
+                end: ISODate("2016-12-01T00:00:00.000Z"),
+              },
+              encaisse: 17861,
+              du: 17861,
+            },
+            "3ceb52c43321dd97bf8f67d90db1678c": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2018-10-01T00:00:00.000Z"),
+                end: ISODate("2018-11-01T00:00:00.000Z"),
+              },
+              encaisse: 18074,
+              du: 18075,
+            },
+            "8782638c3b4cc2040c7812f2f0d42882": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2018-12-01T00:00:00.000Z"),
+                end: ISODate("2019-01-01T00:00:00.000Z"),
+              },
+              encaisse: 19500,
+              du: 19502,
+            },
+            "1290ef3eb2ed51e7de1cc9f00bb8410c": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2016-02-01T00:00:00.000Z"),
+                end: ISODate("2016-03-01T00:00:00.000Z"),
+              },
+              encaisse: 15736,
+              du: 15736,
+            },
+            "1411c0a2c5412a9611394536b7b82e6e": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2017-10-01T00:00:00.000Z"),
+                end: ISODate("2017-11-01T00:00:00.000Z"),
+              },
+              encaisse: 18802,
+              du: 18804,
+            },
+            "928f5b33b22185e894c0f5a187f638bc": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2018-03-01T00:00:00.000Z"),
+                end: ISODate("2018-04-01T00:00:00.000Z"),
+              },
+              encaisse: 16213,
+              du: 16213,
+            },
+            "79d5a767117474254fb19985e76ccf2e": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2017-06-01T00:00:00.000Z"),
+                end: ISODate("2017-07-01T00:00:00.000Z"),
+              },
+              encaisse: 19273,
+              du: 19273,
+            },
+            "89a35cf56c51254bbebc651b15d8ff74": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2017-11-01T00:00:00.000Z"),
+                end: ISODate("2017-12-01T00:00:00.000Z"),
+              },
+              encaisse: 17228,
+              du: 17229,
+            },
+            a092342a0758ec61943da9f1b779dc95: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2015-12-01T00:00:00.000Z"),
+                end: ISODate("2016-01-01T00:00:00.000Z"),
+              },
+              encaisse: 17090,
+              du: 17090,
+            },
+            "949e2339ae2ddc0918fae1631f474831": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2015-01-01T00:00:00.000Z"),
+                end: ISODate("2016-01-01T00:00:00.000Z"),
+              },
+              encaisse: 0,
+              du: 877,
+            },
+            "65d8671c19bb4b48e357ad9908e910c8": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2017-04-01T00:00:00.000Z"),
+                end: ISODate("2017-05-01T00:00:00.000Z"),
+              },
+              encaisse: 16596,
+              du: 16740,
+            },
+            b7a10a4968e7564366fbff7bc1799a36: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2016-07-01T00:00:00.000Z"),
+                end: ISODate("2016-08-01T00:00:00.000Z"),
+              },
+              encaisse: 17698,
+              du: 17699,
+            },
+            b564a758f6d067ad814194fbad172916: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2018-01-01T00:00:00.000Z"),
+                end: ISODate("2018-02-01T00:00:00.000Z"),
+              },
+              encaisse: 16660,
+              du: 16660,
+            },
+            "27365929616877e52abfb5533ce50a34": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2019-10-01T00:00:00.000Z"),
+                end: ISODate("2019-11-01T00:00:00.000Z"),
+              },
+              encaisse: 25955,
+              du: 25955,
+            },
+            "7fb92e498c1fabf191657502ec6fd26f": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2013-01-01T00:00:00.000Z"),
+                end: ISODate("2014-01-01T00:00:00.000Z"),
+              },
+              encaisse: 2,
+              du: 2,
+            },
+            a9e05f7411a4e9ee16f7ab6038ca9368: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2014-06-01T00:00:00.000Z"),
+                end: ISODate("2014-07-01T00:00:00.000Z"),
+              },
+              encaisse: 15032,
+              du: 15033,
+            },
+            "25b19c613df2eb7135398caf11e713c6": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2014-08-01T00:00:00.000Z"),
+                end: ISODate("2014-09-01T00:00:00.000Z"),
+              },
+              encaisse: 17250,
+              du: 17250,
+            },
+            "80c07ce0192b16f12dc7551e57113a97": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2015-10-01T00:00:00.000Z"),
+                end: ISODate("2015-11-01T00:00:00.000Z"),
+              },
+              encaisse: 13609,
+              du: 13610,
+            },
+            "497cec8f1c7555823615d08fdf2bd685": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2019-09-01T00:00:00.000Z"),
+                end: ISODate("2019-10-01T00:00:00.000Z"),
+              },
+              encaisse: 16987,
+              du: 16987,
+            },
+            d0c9972e6b968ea49810df1092b48c43: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2014-04-01T00:00:00.000Z"),
+                end: ISODate("2014-05-01T00:00:00.000Z"),
+              },
+              encaisse: 15281,
+              du: 15282,
+            },
+            "6667c876f127768c2224f05f2a23a4e8": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2015-04-01T00:00:00.000Z"),
+                end: ISODate("2015-05-01T00:00:00.000Z"),
+              },
+              encaisse: 14356,
+              du: 14357,
+            },
+            "2033652a63d047ac2b32c8fcad51842a": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2015-06-01T00:00:00.000Z"),
+                end: ISODate("2015-07-01T00:00:00.000Z"),
+              },
+              encaisse: 15023,
+              du: 15023,
+            },
+            ad44f89d6264e0c7b19377cac638186e: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2016-01-01T00:00:00.000Z"),
+                end: ISODate("2017-01-01T00:00:00.000Z"),
+              },
+              encaisse: 0,
+              du: 95,
+            },
+            dd638090d231af36b5f1a8b6adfe00be: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2017-12-01T00:00:00.000Z"),
+                end: ISODate("2018-01-01T00:00:00.000Z"),
+              },
+              encaisse: 28987,
+              du: 28988,
+            },
+            fd26093b413099bd034f5f2a9d1741f3: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2019-07-01T00:00:00.000Z"),
+                end: ISODate("2019-08-01T00:00:00.000Z"),
+              },
+              encaisse: 32439,
+              du: 32439,
+            },
+            c96c6d2bbf9fdc73cfd55b866cb2cc34: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2014-05-01T00:00:00.000Z"),
+                end: ISODate("2014-06-01T00:00:00.000Z"),
+              },
+              encaisse: 15563,
+              du: 15564,
+            },
+            "351ef9cf017bbedd4f0d1bfb83ee024c": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2014-10-01T00:00:00.000Z"),
+                end: ISODate("2014-11-01T00:00:00.000Z"),
+              },
+              encaisse: 16703,
+              du: 16703,
+            },
+            "2ac838f9c4d50fb4f480efebc7c9be54": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2016-05-01T00:00:00.000Z"),
+                end: ISODate("2016-06-01T00:00:00.000Z"),
+              },
+              encaisse: 16428,
+              du: 16428,
+            },
+            e03e23174bf3bae058bfb1d9fe3d31d5: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2020-06-01T00:00:00.000Z"),
+                end: ISODate("2020-07-01T00:00:00.000Z"),
+              },
+              encaisse: 18000,
+              du: 18000,
+            },
+            "8c9bda93f1b119aa66e664c5e4690571": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2020-02-01T00:00:00.000Z"),
+                end: ISODate("2020-03-01T00:00:00.000Z"),
+              },
+              encaisse: 0,
+              du: -1124,
+            },
+            "0d1c33a4f1addf162dd2c8082763bf0b": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2020-03-01T00:00:00.000Z"),
+                end: ISODate("2020-04-01T00:00:00.000Z"),
+              },
+              encaisse: 1124,
+              du: 1124,
+            },
+            cb647b7676c77326c70d68bb8cd7fddc: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2020-07-01T00:00:00.000Z"),
+                end: ISODate("2020-08-01T00:00:00.000Z"),
+              },
+              encaisse: 18826,
+              du: 18826,
+            },
+          },
+          reporder: {},
+        },
+        "2011_0_urssaf": {
+          cotisation: {
+            d042a0941575f7f9fe8606b12439fbbb: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2020-01-01T00:00:00.000Z"),
+                end: ISODate("2020-02-01T00:00:00.000Z"),
+              },
+              encaisse: 16180,
+              du: 16180,
+            },
+            "37551048c41dccae08f08735866da533": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2020-08-01T00:00:00.000Z"),
+                end: ISODate("2020-09-01T00:00:00.000Z"),
+              },
+              encaisse: 19788,
+              du: 19788,
+            },
+            "80030be05c53f4083ecef6c9b60d45b6": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2020-04-01T00:00:00.000Z"),
+                end: ISODate("2020-05-01T00:00:00.000Z"),
+              },
+              encaisse: 12448,
+              du: 12452,
+            },
+            "5c1f0919bcddc580482e5572d655dc6f": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2020-03-01T00:00:00.000Z"),
+                end: ISODate("2020-04-01T00:00:00.000Z"),
+              },
+              encaisse: 10781,
+              du: 10781,
+            },
+            "602cfbaa066b86bfda6de12d9c21ca70": {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2020-09-01T00:00:00.000Z"),
+                end: ISODate("2020-10-01T00:00:00.000Z"),
+              },
+              encaisse: 20679,
+              du: 20679,
+            },
+          },
+          effectif: {
+            "5f8644d1d210b3b8880f76b63db9e7f2": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2020-09-01T00:00:00.000Z"),
+              effectif: 35,
+            },
+            d75708492c345353a90e5feacf8952b1: {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2020-07-01T00:00:00.000Z"),
+              effectif: 37,
+            },
+            "5982beb5624de5624b05c1c6cbbfc0a0": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2020-08-01T00:00:00.000Z"),
+              effectif: 36,
+            },
+          },
+          debit: {
+            "0719eff767d303ca0e6a64f130c53849": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "201",
+              date_traitement: ISODate("2020-09-24T00:00:00.000Z"),
+              part_ouvriere: 1124,
+              part_patronale: 0,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2020-02-01T00:00:00.000Z"),
+                end: ISODate("2020-03-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            a5484707f784a947383c333b00c4ca02: {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "201",
+              date_traitement: ISODate("2020-09-24T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2020-02-01T00:00:00.000Z"),
+                end: ISODate("2020-03-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "2",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            af4066081ebf26771743496970446a6a: {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2020-05-19T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2020-03-01T00:00:00.000Z"),
+                end: ISODate("2020-04-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "11",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            a55474691b22cd4d2249ce3f2f63005f: {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2020-05-19T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 3,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2020-03-01T00:00:00.000Z"),
+                end: ISODate("2020-04-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "11",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            "0283d3a6ee16c2f1d00c67345b74786e": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2020-05-19T00:00:00.000Z"),
+              part_ouvriere: 61,
+              part_patronale: 0,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2020-03-01T00:00:00.000Z"),
+                end: ISODate("2020-04-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            d92e49d3fa78b20ca395355943bf8841: {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2020-05-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 4,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2020-04-01T00:00:00.000Z"),
+                end: ISODate("2020-05-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            "73978226ba5759745a3c2cef1e52c80d": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2020-05-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2020-04-01T00:00:00.000Z"),
+                end: ISODate("2020-05-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            e6020f8212fa338cae03990840705066: {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2020-05-25T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 4,
+              numero_historique: 3,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2020-04-01T00:00:00.000Z"),
+                end: ISODate("2020-05-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "15",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            cacb5fe1d175e12d2f6c3bd05f599f00: {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2020-05-25T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 4,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2020-04-01T00:00:00.000Z"),
+                end: ISODate("2020-05-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "2",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            "9db28c055ebfdb508632f0e4462dc43b": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2020-11-16T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 2,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2020-10-01T00:00:00.000Z"),
+                end: ISODate("2020-11-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            a6dbf2dcb50e408a78e9f93cdd46e1c0: {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2020-11-16T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2020-10-01T00:00:00.000Z"),
+                end: ISODate("2020-11-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+          },
+          compte: {
+            "4f06a1fca06361579c5bc9b6fd17f53a": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2020-11-01T00:00:00.000Z"),
+            },
+          },
+          compact: {
+            delete: {
+              cotisation: [
+                "89e58219d6c3779a607633853f39a5f4",
+                "8c9bda93f1b119aa66e664c5e4690571",
+                "0d1c33a4f1addf162dd2c8082763bf0b",
+              ],
+              effectif: ["360b8764e408c96a69e6598bca5be085"],
+            },
+          },
+        },
+        "2011_1_sirene": {
+          sirene: {
+            d13d0d4fce275c0de3d99307d5c163bb: {
+              siren: "404338683",
+              nic: "00018",
+              siege: true,
+              complement_adresse: "RN 7",
+              voie: "PARC DU SOLEIL",
+              commune: "CHANAS",
+              code_commune: "38072",
+              code_postal: "38150",
+              departement: "38",
+              ape: "4752B",
+              date_creation: ISODate("1996-01-31T23:00:00.000Z"),
+              longitude: 4.809034,
+              latitude: 45.324629,
+            },
+          },
+          compact: {
+            delete: {
+              sirene: ["bc9a5c83f59095f3925f3c9b322b2894"],
+            },
+          },
+        },
+        "2011_2_activitepartielle": {
+          reporder: {},
+        },
+        "2012_apart": {
+          reporder: {},
+        },
+        "2103_0_urssaf": {
+          compte: {
+            "23f14a6d95f79b151075ddd1287af4e7": {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2021-02-01T00:00:00.000Z"),
+            },
+            ab2e4ca5427ccb18478582bfaed9dd55: {
+              siret: "40433868300018",
+              numero_compte: "827000002122750681",
+              periode: ISODate("2021-01-01T00:00:00.000Z"),
+            },
+          },
+          cotisation: {
+            c55d03a6285caae803e9dccf24ae91bc: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2021-01-01T00:00:00.000Z"),
+                end: ISODate("2021-02-01T00:00:00.000Z"),
+              },
+              encaisse: 17438,
+              du: 17439,
+            },
+            b6fbc9906309c99d641ffaeaf4e0c1a2: {
+              numero_compte: "827000002122750681",
+              periode: {
+                start: ISODate("2020-12-01T00:00:00.000Z"),
+                end: ISODate("2021-01-01T00:00:00.000Z"),
+              },
+              encaisse: 16909,
+              du: 16909,
+            },
+          },
+          debit: {
+            f74658e0f80e7a6fb9b6904be11c44c7: {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2021-02-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 1,
+              numero_historique: 1,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2021-01-01T00:00:00.000Z"),
+                end: ISODate("2021-02-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "1",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+            "7a2ed290558e2e05c34abfc81dce8db0": {
+              numero_compte: "827000002122750681",
+              numero_ecart_negatif: "101",
+              date_traitement: ISODate("2021-02-15T00:00:00.000Z"),
+              part_ouvriere: 0,
+              part_patronale: 0,
+              numero_historique: 2,
+              etat_compte: 1,
+              code_procedure_collective: "0",
+              periode: {
+                start: ISODate("2021-01-01T00:00:00.000Z"),
+                end: ISODate("2021-02-01T00:00:00.000Z"),
+              },
+              code_operation_ecart_negatif: "5",
+              code_motif_ecart_negatif: "24",
+              recours_en_cours: false,
+            },
+          },
+          effectif: {
+            "75955e66a3d7301f80eb02b8b81b155a": {
+              numero_compte: "827000002122750681",
+              periode: ISODate("2021-01-01T00:00:00.000Z"),
+              effectif: 35,
+            },
+          },
+          reporder: {},
+          compact: {
+            delete: {
+              effectif: [
+                "f73466c78caccf15b8cb8f4b96053d02",
+                "ed091d6514adff3f4651d5b58c2c103a",
+                "81f92c80ca618933a2e68e8ea02de7fb",
+                "2a8ee2a505597197e29dd18844647161",
+                "513e072c11e5a9d5865598234190b0e3",
+                "3e20d0b5db039ff6172b670b65b4cabf",
+                "f95139cc81678393873ef9fd10d9921e",
+                "c76f55e94e31288d25b1b90f0fe9406f",
+                "660e96354d59ed4328db4529f0d51f08",
+                "53206905425c3923e15dc63ef4737e45",
+                "f4a0abe29393b4aa74329481e1f89de8",
+                "41828e04c6363480109cf46da20cc5a8",
+                "5c19e127c8c6fca9cb7ad121df89b2a7",
+                "43380cc9b5303ff2542d2f2ce6cfa285",
+                "b4ba68358ded3722b47e7af74aa66e52",
+                "096df3b9e65b1b22dbb3b9f5cb4e63e2",
+                "f5d96cafccc0d4392c27371618b748b3",
+                "c69b9833e97acddff2213166143a0286",
+                "acc3720d35465044723a3281d2961994",
+                "7d7499e40d056b31415d23d33d425635",
+                "dc98ba9d3cf98ed8b294cfba8c369ca8",
+                "2d295be944400570dd09f808db04342c",
+                "d02e6f86414566107754a03a2c4046d6",
+                "6b2e3e202987a96e1132fd29db2cde0a",
+                "07769408d4bdcade6ffad324d7be69c1",
+                "091211ab4267ac681753a3ab491e8254",
+                "67c3aa41fd5683063bc477a32424e5aa",
+                "87b4c7a336d2dfcc495ff17fedb29dd4",
+                "b90b4d4c604d1aa32ca3ad03ba79d68b",
+                "c364c12bdcb73064f7d5a783dbcf27df",
+                "73f1925d1345262d49b15956c3339d30",
+                "90a77b8b3fcb875dbb5204ee38c71c95",
+                "78985caa0e453817d22224a04bd87f72",
+                "df9ea53314c2eb255e1c0f7b84bffb5f",
+                "4fa9ba0095b02294e6e118320fff5176",
+                "44f4654366c645a39608eaa500b7dfaa",
+                "bc01804bfc401f22e945d1f5b8b58cb0",
+                "452a23370ff5a73e19d4d8c323a3ef83",
+                "8464c1a833684f84b91357c71eda7029",
+                "e601effec9fe5b840f7a249d1a1d4daa",
+                "c8ed3cb84b5365b6bd13141990d714f7",
+                "ade0f49ea56b413538b7288a752728a3",
+                "3483407e601d00308b337591c51d5735",
+                "a4eb97a93eb2dc1f3fc9987248e78f73",
+                "46ed652a69aa5c4a358bbe79acb51cec",
+                "ae13a63ebd17a320c795a62d1641a200",
+                "cb9ff9b7c325db508cc10d9883d3b0d0",
+                "437520e0c5cd42880751c847c2d56df6",
+                "cca77a6a1838add7b7e0357cfaf38c0a",
+                "debad1334e88707077f3f058b4d7af5e",
+                "fc4a74c126a5e41e5430f2fa94a4e75c",
+                "1fd6fac99ed9b0fd6499ddc69c610a74",
+                "970a7f1c246d6a7bbc92aad631514bd8",
+                "0491f4db226240374f935ace7304905c",
+                "a05d4a1cf20c8aee7a0f6355c38794f1",
+                "b051d39e74d907a587302f2761c5b725",
+                "c711fc28736c18c3d4e2c85ad45e0e5c",
+                "73fda970e5d3105a224f74877017ab13",
+                "2be99ccc885e16b7db346aabd29233bb",
+                "9b0454af1fa899d72cd11f7f0cd1d63b",
+                "8625902e9cb49a4c3545356f58ebf0da",
+                "78db1c37be7b7eea668df09c5891f390",
+                "85ebc9b6de9346bd788186f624ec904e",
+                "f9058b3c36afde9e6e0d30af9491c63c",
+                "5a25e37089c4c6edf7650ac209cdf4a7",
+                "001789db3b9fdeffc6e744e7210bd103",
+                "3cddbc45f4bccbca7806850496efa1dc",
+                "d7d9f85be09b929ce3449e53b83722ff",
+                "bf3f0514c4c57b8ef90534164a3672e3",
+                "35de39c8c943fa181f8b0477328983b3",
+                "a61bde9d8ef6ec045a9bedbddec08e86",
+                "62b455a4a0ec9570c0d21bf68f5480c9",
+                "40c84e3e66e39091244fd2835af9db1c",
+                "cc1f4c1ba33e392cd00e94cd757dbd3a",
+                "359c9a513d51ee261e4660693cf3eb15",
+                "d47a7d5e05d1c95f73b1ab671d06babb",
+                "048c4465da26e720225b09b9b6743685",
+                "1f2bcfc6fd776fafeb7e00a1898c4580",
+                "64c17685ce303a09f99af9f910b21b74",
+                "9acd85a3a95b91a9f5d26398dd101667",
+                "c4d28d3f8be473166285967c4f237d24",
+                "2069e061ded89f0aedddc18a0fec29b2",
+                "844ec20fa5c93d6d3351f9ecfd2b32da",
+                "931b1279e07782acdddb4a173068351a",
+                "28f29ccdc47eb5616cec3b79edb39d19",
+                "e06a46d494165c1e0766cd3f2e82d942",
+                "39f8c954db204f7b8a2d20df78ef499d",
+                "d0cf151d393ec5d27411423a9f233c97",
+                "897417b2389c39b809ce367caa461eaf",
+                "83e667962e0b988e6380ce51e14e1c87",
+                "57b3286bf6ae6eb6ad291df499dc47e6",
+                "19c39b4e29c031b501798feab82e7428",
+                "bfd65d9ec998f305bb54a159902666ad",
+                "b07ab0a5f51123b8b66d814dd7390d44",
+                "495d60ea465f7156078b9b48c61b7761",
+                "7cb882b0dedf2870ccadb5f2db3a7e59",
+                "6d91eecf6c68d4661043acb74d11653e",
+                "d38aa7c928586aa5b8de340ce9c8b522",
+                "ed19773f53e37b0d139bdaaa99f37eb6",
+                "e3980d9c0091678c2612ac0bfee7c84e",
+                "9c190f2ec0676b5f80bd72baa83a530c",
+                "67622b6d9570f87717c0dfc02bd36a4c",
+                "3a458bc806cb4c692d74db65f3c4fd4b",
+                "4052f4de581197123f99b863d3f6c0bc",
+                "e7929b5085281cd3d922b762b9a8861c",
+                "faed516f4cad0866e2f3183891476792",
+                "9749a601302dbad5663dd9463a19ee44",
+                "afe1dd05adb0006a9f8f6db17d2e1be3",
+                "d6bdf2174b4f8ee04d54810202c3c068",
+                "cc51f65c6d6cd77f39d22742e085a396",
+                "839f45789cf84983af3425f4c538c8c6",
+                "1f96f891d2209d0abfbaffd17588b98a",
+                "7fe50bda767992391b3072264ccb4195",
+                "45b9f9ca8901245dcbe6f67317e481b0",
+                "57fb2aad186e7d549c526ba4abe45390",
+                "11206224e26cddbff659f6ae10081e0b",
+                "0af08022f55553fb1c457387defd2dfa",
+                "6b63cfd831885aa590d41e97756c46fc",
+                "0f6c38d9579a39e0aa0a0af9c4edf13f",
+                "1a044d6f27790d8a225b6befafabece0",
+                "988ea4f2ace5cc724e8e7b986bb88ca0",
+                "6a03464a8b2974375e8cf697f3d97078",
+                "97a1e0a1783b1a1798d99d76c9170788",
+                "cdf19fe90090b3e70bcdc2dbf101d293",
+                "cc5683d5894f9dfc7e9584d740543fe0",
+                "3bc60106d3284f4d729662969904dcfc",
+                "5f8644d1d210b3b8880f76b63db9e7f2",
+                "d75708492c345353a90e5feacf8952b1",
+                "5982beb5624de5624b05c1c6cbbfc0a0",
+                "faeb546a14e2bee2c217a0fc1dd75f30",
+                "81a8197b20ed4e3aed719858bc07ef37",
+                "8ff03983b0792bc295989baee705f52a",
+              ],
+            },
+          },
+        },
+      },
+      index: {
+        algo2: true,
+      },
+    },
+  },
+]
 
-const objects = makeObjects(date => new Date(date))
+const objects = makeObjects((date) => new Date(date))
 Object.freeze(objects)
 
 exports.objects = objects
