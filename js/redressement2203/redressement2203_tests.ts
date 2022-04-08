@@ -3,7 +3,6 @@
 //
 // Important: ce jeu de données ne couvre pas tous les types d'entrées.
 
-import { generatePeriodSerie } from "../common/generatePeriodSerie"
 import { map, Input, OutKey, OutValue } from "./map"
 import { reduce } from "./reduce"
 import { finalize } from "./finalize"
@@ -18,11 +17,9 @@ import {
 import test from "ava"
 
 // initialisation des paramètres globaux de reduce.algo2
-const initGlobalParams = (dateDebut: Date, dateFin: Date) =>
+const initGlobalParams = (date: string) =>
   setGlobals({
-    actual_batch: "2203",
-    date_fin: dateFin,
-    serie_periode: generatePeriodSerie(dateDebut, dateFin),
+    dateStr: date,
   })
 
 // test("l'ordre de traitement des données n'influe pas sur les résultats", (t) => {
@@ -57,7 +54,7 @@ const initGlobalParams = (dateDebut: Date, dateFin: Date) =>
 
 // inspiré par reduce.algo2/map_tests.ts et reduce.algo2/algo2_golden_tests.ts
 test("map(), reduce() et finalize() retournent les même données que d'habitude", (t) => {
-  initGlobalParams(new Date("2014-01-01"), new Date("2016-01-01"))
+  initGlobalParams("2016-01-01")
 
   const mapResult = runMongoMap<Input, OutKey, OutValue>(map, testCases)
   t.snapshot(mapResult)
