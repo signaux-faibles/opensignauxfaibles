@@ -989,6 +989,54 @@ function sirene(sireneArray) {
 }`,
 		}, nil
 	},
+	"redressement2203": func(params bson.M) (functions, error) {
+		if _, ok := params["dateStr"]; !ok {
+			return nil, errors.New("missing required parameter: dateStr")
+		}
+		return functions{
+			"finalize": `function finalize(_key, val) {
+    return val;
+}`,
+			"map": `/* eslint-disable @typescript-eslint/no-unused-vars */
+
+function map() {
+    const testDate = new Date(dateStr);
+    const values = f.flatten(this.value, "2203");
+    const beforeBatches = [];
+    const afterBatches = [];
+    if (values.debit) {
+        for (const debit of Object.values(values.debit)) {
+            debit.periode.start > testDate
+                ? afterBatches.push(debit)
+                : beforeBatches.push(debit);
+        }
+    }
+    const latestBatchBeforeDate = beforeBatches.length > 0
+        ? beforeBatches.reduce((a, b) => a.periode.start > b.periode.start ? a : b)
+        : null;
+    const latestBatchAfterDate = afterBatches.length > 0
+        ? afterBatches.reduce((a, b) => a.periode.start > b.periode.start ? a : b)
+        : null;
+    emit(this.value.key, {
+        partPatronaleAncienne: latestBatchBeforeDate
+            ? latestBatchBeforeDate.part_patronale
+            : 0,
+        partOuvriereAncienne: latestBatchBeforeDate
+            ? latestBatchBeforeDate.part_ouvriere
+            : 0,
+        partPatronaleRecente: latestBatchAfterDate
+            ? latestBatchAfterDate.part_patronale
+            : 0,
+        partOuvriereRecente: latestBatchAfterDate
+            ? latestBatchAfterDate.part_ouvriere
+            : 0,
+    });
+}`,
+			"reduce": `function reduce(_key, values) {
+    return Object.assign({}, ...values);
+}`,
+		}, nil
+	},
 	"reduce.algo2": func(params bson.M) (functions, error) {
 		if _, ok := params["actual_batch"]; !ok {
 			return nil, errors.New("missing required parameter: actual_batch")

@@ -99,6 +99,7 @@ type cliCommands struct {
 	Public            publicHandler
 	Etablissements    exportEtablissementsHandler
 	Entreprises       exportEntreprisesHandler
+	Redressement2203  redressement2203Handler
 }
 
 func (cmds *cliCommands) populateFromArgs(args []string) {

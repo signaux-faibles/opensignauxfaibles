@@ -251,3 +251,35 @@ func (params validateHandler) Run() error {
 
 	return nil
 }
+
+type redressement2203Handler struct {
+	Enable  bool   // set to true by cosiner/flag if the user is running this command
+	DateStr string `names:"--date" arglist:"date_str" desc:"Date de séparation avant/après utilisée pour le calcul des features. Format AAAA-MM-JJ. Par défaut 2021-09-01."`
+}
+
+func (params redressement2203Handler) Documentation() flag.Flag {
+	return flag.Flag{
+		Usage: "Calcul des features de redressement de Mars 2022. ",
+		Desc: `
+		Créé une nouvelle collection contenant les informations relatives aux
+		montants de dettes patronales et sociales des sociétés avant et après 
+		septembre 2021.
+		`,
+	}
+}
+
+func (params redressement2203Handler) IsEnabled() bool {
+	return params.Enable
+}
+
+func (params redressement2203Handler) Validate() error {
+	return nil
+}
+
+func (params redressement2203Handler) Run() error {
+	var date = params.DateStr
+	if date == "" {
+		date = "2021-09-01"
+	}
+	return engine.Redressement2203One(params.DateStr)
+}
