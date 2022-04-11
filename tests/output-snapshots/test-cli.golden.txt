@@ -27,6 +27,7 @@ Sets:
 	public            Génère les données destinées au site web
 	etablissements    Exporte la liste des établissements
 	entreprises       Exporte la liste des entreprises
+	redressement2203  Calcul des features de redressement de Mars 2022. 
 ---
 $ ./sfdata purge
 Erreur: paramètre `since-batch` obligatoire. Utilisez ./sfdata purge --help pour consulter la documentation.
