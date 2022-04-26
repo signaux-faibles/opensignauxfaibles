@@ -31,7 +31,7 @@ function recupererValeursUniquesEcartsNegatifs(debits: EntréeDebit[]) {
   return [...new Set(ecartsNegatifs)]
 }
 
-function recupererDetteParType(debits: EntréeDebit[]): SommesDettes {
+function recupererDetteTotale(debits: EntréeDebit[]): SommesDettes {
   const ecartsNegatifs = recupererValeursUniquesEcartsNegatifs(debits)
   let mostRecentBatch: EntréeDebit
   const sommesDettes: SommesDettes = new SommesDettes()
@@ -60,14 +60,14 @@ export function map(this: Input): void {
     }
   }
 
-  const dettesAnciennesParECN: SommesDettes = recupererDetteParType(
+  const dettesAnciennesParECN: SommesDettes = recupererDetteTotale(
     beforeBatches
   )
-  const dettesAnciennesDebutParECN: SommesDettes = recupererDetteParType(
+  const dettesAnciennesDebutParECN: SommesDettes = recupererDetteTotale(
     beforeBatches.filter((b) => b.date_traitement <= testDate)
   )
 
-  const dettesRecentesParECN: SommesDettes = recupererDetteParType(afterBatches)
+  const dettesRecentesParECN: SommesDettes = recupererDetteTotale(afterBatches)
 
   emit(this.value.key, {
     partPatronaleAncienne: dettesAnciennesParECN.partPatronale,
