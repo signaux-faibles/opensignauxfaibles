@@ -114,4 +114,6 @@ export type SortieRedressementUrssaf2203 = {
   partOuvriereAncienne: number
   partPatronaleRecente: number
   partOuvriereRecente: number
+  partOuvriereAncienneDebut: number
+  partPatronaleAncienneDebut: number
 }
