@@ -35,12 +35,15 @@ function recupererDetteTotale(debits: EntréeDebit[]): SommesDettes {
   const ecartsNegatifs = recupererValeursUniquesEcartsNegatifs(debits)
   let mostRecentBatch: EntréeDebit
   const sommesDettes: SommesDettes = new SommesDettes()
-  for (const _en of ecartsNegatifs) {
-    mostRecentBatch = debits.reduce((a, b) =>
-      a.periode.start > b.periode.start ? a : b
-    )
-    sommesDettes.partOuvriere += mostRecentBatch.part_ouvriere
-    sommesDettes.partPatronale += mostRecentBatch.part_patronale
+  for (const en of ecartsNegatifs) {
+    const debitsECN = debits.filter((d) => d.code_motif_ecart_negatif === en)
+    if (debitsECN.length > 0) {
+      mostRecentBatch = debitsECN.reduce((a, b) =>
+        a.periode.start > b.periode.start ? a : b
+      )
+      sommesDettes.partOuvriere += mostRecentBatch.part_ouvriere
+      sommesDettes.partPatronale += mostRecentBatch.part_patronale
+    }
   }
   return sommesDettes
 }
