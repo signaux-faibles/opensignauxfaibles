@@ -997,12 +997,10 @@ function sirene(sireneArray) {
 			"finalize": `function finalize(_key, val) {
     return val;
 }`,
-			"map": `/* eslint-disable @typescript-eslint/no-unused-vars */
-
-function map() {
+			"map": `function map() {
     const testDate = new Date(dateStr);
     const values = f.flatten(this.value, "2203");
-    const beforeBatches = [];
+    const beforeBatches = []; // TODO : renommer les variables
     const afterBatches = [];
     if (values.debit) {
         for (const debit of Object.values(values.debit)) {
@@ -1011,26 +1009,46 @@ function map() {
                 : beforeBatches.push(debit);
         }
     }
-    const latestBatchBeforeDate = beforeBatches.length > 0
-        ? beforeBatches.reduce((a, b) => a.periode.start > b.periode.start ? a : b)
-        : null;
-    const latestBatchAfterDate = afterBatches.length > 0
-        ? afterBatches.reduce((a, b) => a.periode.start > b.periode.start ? a : b)
-        : null;
+    const dettesAnciennesParECN = f.recupererDetteTotale(beforeBatches);
+    const dettesAnciennesDebutParECN = f.recupererDetteTotale(beforeBatches.filter((b) => b.date_traitement <= testDate));
+    const dettesRecentesParECN = f.recupererDetteTotale(afterBatches);
     emit(this.value.key, {
-        partPatronaleAncienne: latestBatchBeforeDate
-            ? latestBatchBeforeDate.part_patronale
-            : 0,
-        partOuvriereAncienne: latestBatchBeforeDate
-            ? latestBatchBeforeDate.part_ouvriere
-            : 0,
-        partPatronaleRecente: latestBatchAfterDate
-            ? latestBatchAfterDate.part_patronale
-            : 0,
-        partOuvriereRecente: latestBatchAfterDate
-            ? latestBatchAfterDate.part_ouvriere
-            : 0,
+        partPatronaleAncienne: dettesAnciennesParECN.partPatronale,
+        partOuvriereAncienne: dettesAnciennesParECN.partOuvriere,
+        partPatronaleRecente: dettesRecentesParECN.partPatronale,
+        partOuvriereRecente: dettesRecentesParECN.partOuvriere,
+        partOuvriereAncienneDebut: dettesAnciennesDebutParECN.partOuvriere,
+        partPatronaleAncienneDebut: dettesAnciennesDebutParECN.partPatronale,
     });
+}`,
+			"recupererDetteTotale": `function recupererDetteTotale(debits) {
+    const ecartsNegatifs = f.recupererValeursUniquesEcartsNegatifs(debits);
+    // let mostRecentBatch: EntréeDebit
+    const sommesDettes = {
+        partOuvriere: 0,
+        partPatronale: 0,
+    };
+    for (const en of ecartsNegatifs) {
+        const debitsECN = debits.filter((d) => d.numero_ecart_negatif === en);
+        const mostRecentBatch = debitsECN.reduce((a, b) => a.date_traitement > b.date_traitement ? a : b);
+        sommesDettes.partOuvriere += mostRecentBatch.part_ouvriere;
+        sommesDettes.partPatronale += mostRecentBatch.part_patronale;
+        // if (debitsECN.length > 0) {
+        //   const mostRecentBatch = debitsECN.sort(
+        //     (a, b) => b.date_traitement.getTime() - a.date_traitement.getTime()
+        //   )
+        // if (mostRecentBatch.length > 0) {
+        //   const latestBatch = mostRecentBatch[0]!
+        //   sommesDettes.partOuvriere += latestBatch.part_ouvriere
+        //   sommesDettes.partPatronale += latestBatch.part_patronale
+        // }
+        // }
+    }
+    return sommesDettes;
+}`,
+			"recupererValeursUniquesEcartsNegatifs": `function recupererValeursUniquesEcartsNegatifs(debits) {
+    const ecartsNegatifs = debits.map((debit) => debit.numero_ecart_negatif);
+    return [...new Set(ecartsNegatifs)];
 }`,
 			"reduce": `function reduce(_key, values) {
     return Object.assign({}, ...values);

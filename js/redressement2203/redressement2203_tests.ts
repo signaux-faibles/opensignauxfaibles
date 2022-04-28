@@ -19,7 +19,7 @@ const initGlobalParams = (date: string) =>
 
 // inspiré par reduce.algo2/map_tests.ts et reduce.algo2/algo2_golden_tests.ts
 test("map(), reduce() et finalize() retournent les même données que d'habitude", (t) => {
-  initGlobalParams("2016-01-01")
+  initGlobalParams("2021-09-01")
 
   const mapResult = runMongoMap<Input, OutKey, OutValue>(map, testCases)
   t.snapshot(mapResult)

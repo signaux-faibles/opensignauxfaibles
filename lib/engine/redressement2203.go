@@ -1,6 +1,8 @@
 package engine
 
 import (
+	"fmt"
+
 	"github.com/globalsign/mgo/bson"
 )
 
@@ -8,6 +10,9 @@ func Redressement2203One(dateStr string) error {
 	jsParams := bson.M{
 		"dateStr": dateStr,
 	}
+
+	fmt.Println(jsParams)
+
 	mapReduceJob, err := MakeMapReduceJob("redressement2203", jsParams)
 	if err != nil {
 		return err

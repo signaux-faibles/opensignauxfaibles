@@ -62,6 +62,7 @@ func loadFromJSBundle(directoryName string, params bson.M) (map[string]string, e
 	if !ok {
 		return nil, errors.New("Map reduce javascript functions could not be found for " + directoryName)
 	}
+
 	additionalFunctions, err := functionsGetter(params)
 	if err != nil {
 		return nil, err

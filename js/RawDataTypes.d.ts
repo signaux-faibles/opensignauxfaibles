@@ -17,6 +17,7 @@ import {
   EntréePaydex,
   EntréeSirene,
   EntréeSireneEntreprise,
+  SommesDettes,
 } from "./GeneratedTypes"
 
 // Types de données de base
@@ -116,4 +117,9 @@ export type SortieRedressementUrssaf2203 = {
   partOuvriereRecente: number
   partOuvriereAncienneDebut: number
   partPatronaleAncienneDebut: number
+}
+
+export type SommesDettes = {
+  partOuvriere: number
+  partPatronale: number
 }

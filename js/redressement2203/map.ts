@@ -1,10 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { f } from "./functions"
 import {
   CompanyDataValues,
+  SommesDettes,
   SortieRedressementUrssaf2203,
 } from "../RawDataTypes"
-import { EntréeDebit } from "../GeneratedTypes"
 
 export type SortieMap = SortieRedressementUrssaf2203
 
@@ -15,44 +14,13 @@ export type Input = { _id: unknown; value: CompanyDataValues }
 export type OutKey = string
 export type OutValue = Partial<SortieMap>
 
-class SommesDettes {
-  public partOuvriere: number
-  public partPatronale: number
-
-  constructor() {
-    this.partOuvriere = 0
-    this.partPatronale = 0
-  }
-}
 declare function emit(key: string, value: OutValue): void
-
-function recupererValeursUniquesEcartsNegatifs(debits: EntréeDebit[]) {
-  const ecartsNegatifs = debits.map((debit) => debit.numero_ecart_negatif)
-  return [...new Set(ecartsNegatifs)]
-}
-
-function recupererDetteTotale(debits: EntréeDebit[]): SommesDettes {
-  const ecartsNegatifs = recupererValeursUniquesEcartsNegatifs(debits)
-  let mostRecentBatch: EntréeDebit
-  const sommesDettes: SommesDettes = new SommesDettes()
-  for (const en of ecartsNegatifs) {
-    const debitsECN = debits.filter((d) => d.code_motif_ecart_negatif === en)
-    if (debitsECN.length > 0) {
-      mostRecentBatch = debitsECN.reduce((a, b) =>
-        a.periode.start > b.periode.start ? a : b
-      )
-      sommesDettes.partOuvriere += mostRecentBatch.part_ouvriere
-      sommesDettes.partPatronale += mostRecentBatch.part_patronale
-    }
-  }
-  return sommesDettes
-}
 
 export function map(this: Input): void {
   const testDate = new Date(dateStr)
 
   const values = f.flatten(this.value, "2203")
-  const beforeBatches = []
+  const beforeBatches = [] // TODO : renommer les variables
   const afterBatches = []
 
   if (values.debit) {
@@ -62,15 +30,17 @@ export function map(this: Input): void {
         : beforeBatches.push(debit)
     }
   }
-
-  const dettesAnciennesParECN: SommesDettes = recupererDetteTotale(
+  const dettesAnciennesParECN: SommesDettes = f.recupererDetteTotale(
     beforeBatches
   )
-  const dettesAnciennesDebutParECN: SommesDettes = recupererDetteTotale(
+
+  const dettesAnciennesDebutParECN: SommesDettes = f.recupererDetteTotale(
     beforeBatches.filter((b) => b.date_traitement <= testDate)
   )
 
-  const dettesRecentesParECN: SommesDettes = recupererDetteTotale(afterBatches)
+  const dettesRecentesParECN: SommesDettes = f.recupererDetteTotale(
+    afterBatches
+  )
 
   emit(this.value.key, {
     partPatronaleAncienne: dettesAnciennesParECN.partPatronale,
