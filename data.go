@@ -278,8 +278,10 @@ func (params redressement2203Handler) Validate() error {
 
 func (params redressement2203Handler) Run() error {
 	var date = params.DateStr
-	if date == "" {
-		date = "2021-09-01"
+	batch := base.AdminBatch{}
+	err := engine.Load(&batch, "2203")
+	if err != nil {
+		return errors.New("batch non trouvé")
 	}
-	return engine.Redressement2203One(params.DateStr)
+	return engine.Redressement2203(batch, date)
 }

@@ -111,12 +111,14 @@ export type EntréeRepOrder = {
 }
 
 export type SortieRedressementUrssaf2203 = {
-  partPatronaleAncienne: number
-  partOuvriereAncienne: number
-  partPatronaleRecente: number
-  partOuvriereRecente: number
-  partOuvriereAncienneDebut: number
-  partPatronaleAncienneDebut: number
+  montant_part_patronale_ancienne_courante: number
+  montant_part_ouvriere_ancienne_courante: number
+  montant_part_patronale_recente_courante: number
+  montant_part_ouvriere_recente_courante: number
+  montant_part_ouvriere_ancienne_reference: number
+  montant_part_patronale_ancienne_reference: number
+  cotisation_moyenne_12m: number
+  total_demande_ap: number
 }
 
 export type SommesDettes = {

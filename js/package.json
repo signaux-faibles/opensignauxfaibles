@@ -35,7 +35,7 @@
   "ava": {
     "timeout": "30s",
     "files": [
-      "**/redressement2203_tests.ts"
+      "**/*_tests.ts"
     ],
     "extensions": [
       "ts"

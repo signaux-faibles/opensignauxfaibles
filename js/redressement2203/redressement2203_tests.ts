@@ -15,6 +15,7 @@ import test from "ava"
 const initGlobalParams = (date: string) =>
   setGlobals({
     dateStr: date,
+    dateFin: new Date(),
   })
 
 // inspiré par reduce.algo2/map_tests.ts et reduce.algo2/algo2_golden_tests.ts

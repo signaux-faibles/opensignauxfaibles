@@ -13,6 +13,13 @@ type functionGetter = func(bson.M) (functions, error)
 var jsFunctions = map[string]functionGetter{
 	"common": func(params bson.M) (functions, error) {
 		return functions{
+			"cleEcartNegatif": `function cleEcartNegatif(debit) {
+    const start = debit.periode.start;
+    const end = debit.periode.end;
+    const num_ecn = debit.numero_ecart_negatif;
+    const compte = debit.numero_compte;
+    return start + "-" + end + "-" + num_ecn + "-" + compte;
+}`,
 			"compareDebit": `function compareDebit(a, b) {
     "use strict";
     if (a.numero_historique < b.numero_historique)
@@ -990,15 +997,52 @@ function sirene(sireneArray) {
 		}, nil
 	},
 	"redressement2203": func(params bson.M) (functions, error) {
+		if _, ok := params["dateFin"]; !ok {
+			return nil, errors.New("missing required parameter: dateFin")
+		}
 		if _, ok := params["dateStr"]; !ok {
 			return nil, errors.New("missing required parameter: dateStr")
 		}
 		return functions{
+			"cotisation": `function cotisation(vCotisation, dateFin // correspond à la variable globale date_fin
+) {
+    const dateDebutObservation = new Date(dateFin);
+    const dateFinObservation = new Date(dateFin.getTime());
+    dateDebutObservation.setFullYear(dateDebutObservation.getFullYear() - 1);
+    const value_cotisation = f.makePeriodeMap();
+    // Répartition des cotisations sur toute la période qu'elle concerne
+    for (const cotisation of Object.values(vCotisation)) {
+        const periode_cotisation = f.generatePeriodSerie(cotisation.periode.start, cotisation.periode.end);
+        periode_cotisation.forEach((date_cotisation) => {
+            if (date_cotisation.getTime() <= dateFinObservation.getTime() &&
+                date_cotisation.getTime() >= dateDebutObservation.getTime()) {
+                value_cotisation.set(date_cotisation, (value_cotisation.get(date_cotisation) || 0) +
+                    cotisation.du / periode_cotisation.length);
+            }
+        });
+    }
+    let somme = 0;
+    let taille = 0;
+    for (const t of value_cotisation.values()) {
+        somme += t;
+        taille++;
+    }
+    const result = taille > 0 ? somme / taille : 0;
+    return Math.round(result * 100) / 100;
+}`,
 			"finalize": `function finalize(_key, val) {
     return val;
 }`,
-			"map": `function map() {
+			"map": `/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
+function map() {
+    const dateDebutObservation = new Date(dateFin);
     const testDate = new Date(dateStr);
+    const dateFinObservation = new Date(dateFin.getTime());
+    dateDebutObservation.setFullYear(dateDebutObservation.getFullYear() - 1);
+    const plafonnerDateObservation = (dateObs, dateDebut, dateFin) => {
+        return Math.min(Math.max(dateObs.getTime(), dateDebut.getTime()), dateFin.getTime());
+    };
     const values = f.flatten(this.value, "2203");
     const beforeBatches = []; // TODO : renommer les variables
     const afterBatches = [];
@@ -1012,42 +1056,72 @@ function sirene(sireneArray) {
     const dettesAnciennesParECN = f.recupererDetteTotale(beforeBatches);
     const dettesAnciennesDebutParECN = f.recupererDetteTotale(beforeBatches.filter((b) => b.date_traitement <= testDate));
     const dettesRecentesParECN = f.recupererDetteTotale(afterBatches);
-    emit(this.value.key, {
-        partPatronaleAncienne: dettesAnciennesParECN.partPatronale,
-        partOuvriereAncienne: dettesAnciennesParECN.partOuvriere,
-        partPatronaleRecente: dettesRecentesParECN.partPatronale,
-        partOuvriereRecente: dettesRecentesParECN.partOuvriere,
-        partOuvriereAncienneDebut: dettesAnciennesDebutParECN.partOuvriere,
-        partPatronaleAncienneDebut: dettesAnciennesDebutParECN.partPatronale,
+    const cotisationMoyenne = f.cotisation(values.cotisation || {}, dateFin);
+    // Jours de demande
+    const totalMoisDemande = Object.values(values.apdemande || [])
+        .filter((a) => a.motif_recours_se < 6)
+        .reduce((a, b) => plafonnerDateObservation(b.periode.end, dateDebutObservation, dateFinObservation) -
+        plafonnerDateObservation(b.periode.start, dateDebutObservation, dateFinObservation) +
+        a, 0) /
+        (3600 * 1000 * 24 * 30);
+    if (dettesAnciennesParECN.partPatronale !== 0 ||
+        dettesAnciennesParECN.partOuvriere !== 0 ||
+        dettesRecentesParECN.partOuvriere !== 0 ||
+        dettesRecentesParECN.partPatronale !== 0 ||
+        dettesAnciennesDebutParECN.partOuvriere !== 0 ||
+        dettesAnciennesDebutParECN.partPatronale !== 0) {
+        emit(this.value.key, {
+            montant_part_patronale_ancienne_courante: dettesAnciennesParECN.partPatronale,
+            montant_part_ouvriere_ancienne_courante: dettesAnciennesParECN.partOuvriere,
+            montant_part_patronale_recente_courante: dettesRecentesParECN.partPatronale,
+            montant_part_ouvriere_recente_courante: dettesRecentesParECN.partOuvriere,
+            montant_part_ouvriere_ancienne_reference: dettesAnciennesDebutParECN.partOuvriere,
+            montant_part_patronale_ancienne_reference: dettesAnciennesDebutParECN.partPatronale,
+            cotisation_moyenne_12m: cotisationMoyenne,
+            total_demande_ap: totalMoisDemande,
+        });
+    }
+}`,
+			"outputs": `/**
+ * Appelé par ` + "`" + `map()` + "`" + ` pour chaque entreprise/établissement, ` + "`" + `outputs()` + "`" + ` retourne
+ * un tableau contenant un objet de base par période, ainsi qu'une version
+ * indexée par période de ce tableau, afin de faciliter l'agrégation progressive
+ * de données dans ces structures par ` + "`" + `map()` + "`" + `.
+ */
+function outputs(v, serie_periode) {
+    "use strict";
+    const output_array = serie_periode.map(function (e) {
+        return {
+            siret: v.key,
+            periode: e,
+            effectif: null,
+            etat_proc_collective: "in_bonis",
+            interessante_urssaf: true,
+            outcome: false,
+        };
     });
+    const output_indexed = f.makePeriodeMap();
+    for (const val of output_array) {
+        output_indexed.set(val.periode, val);
+    }
+    return [output_array, output_indexed];
 }`,
 			"recupererDetteTotale": `function recupererDetteTotale(debits) {
     const ecartsNegatifs = f.recupererValeursUniquesEcartsNegatifs(debits);
-    // let mostRecentBatch: EntréeDebit
     const sommesDettes = {
         partOuvriere: 0,
         partPatronale: 0,
     };
     for (const en of ecartsNegatifs) {
-        const debitsECN = debits.filter((d) => d.numero_ecart_negatif === en);
-        const mostRecentBatch = debitsECN.reduce((a, b) => a.date_traitement > b.date_traitement ? a : b);
+        const debitsECN = debits.filter((d) => f.cleEcartNegatif(d) === en);
+        const mostRecentBatch = debitsECN.reduce((a, b) => a.numero_historique > b.numero_historique ? a : b);
         sommesDettes.partOuvriere += mostRecentBatch.part_ouvriere;
         sommesDettes.partPatronale += mostRecentBatch.part_patronale;
-        // if (debitsECN.length > 0) {
-        //   const mostRecentBatch = debitsECN.sort(
-        //     (a, b) => b.date_traitement.getTime() - a.date_traitement.getTime()
-        //   )
-        // if (mostRecentBatch.length > 0) {
-        //   const latestBatch = mostRecentBatch[0]!
-        //   sommesDettes.partOuvriere += latestBatch.part_ouvriere
-        //   sommesDettes.partPatronale += latestBatch.part_patronale
-        // }
-        // }
     }
     return sommesDettes;
 }`,
 			"recupererValeursUniquesEcartsNegatifs": `function recupererValeursUniquesEcartsNegatifs(debits) {
-    const ecartsNegatifs = debits.map((debit) => debit.numero_ecart_negatif);
+    const ecartsNegatifs = debits.map((debit) => f.cleEcartNegatif(debit));
     return [...new Set(ecartsNegatifs)];
 }`,
 			"reduce": `function reduce(_key, values) {
