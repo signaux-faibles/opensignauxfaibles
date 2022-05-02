@@ -1036,6 +1036,7 @@ function sirene(sireneArray) {
 			"map": `/* eslint-disable @typescript-eslint/no-non-null-assertion */
 
 function map() {
+    "use strict";
     const dateDebutObservation = new Date(dateFin);
     const testDate = new Date(dateStr);
     const dateFinObservation = new Date(dateFin.getTime());
@@ -1054,7 +1055,9 @@ function map() {
         }
     }
     const dettesAnciennesParECN = f.recupererDetteTotale(beforeBatches);
-    const dettesAnciennesDebutParECN = f.recupererDetteTotale(beforeBatches.filter((b) => b.date_traitement <= testDate));
+    // const dettesAnciennesDebutParECN: SommesDettes = f.recupererDetteTotale(
+    //   beforeBatches.filter((b) => b.date_traitement <= testDate)
+    // )
     const dettesRecentesParECN = f.recupererDetteTotale(afterBatches);
     const cotisationMoyenne = f.cotisation(values.cotisation || {}, dateFin);
     // Jours de demande
@@ -1068,15 +1071,18 @@ function map() {
         dettesAnciennesParECN.partOuvriere !== 0 ||
         dettesRecentesParECN.partOuvriere !== 0 ||
         dettesRecentesParECN.partPatronale !== 0 ||
-        dettesAnciennesDebutParECN.partOuvriere !== 0 ||
-        dettesAnciennesDebutParECN.partPatronale !== 0) {
+        // dettesAnciennesDebutParECN.partOuvriere !== 0 ||
+        // dettesAnciennesDebutParECN.partPatronale !== 0 ||
+        totalMoisDemande !== 0) {
         emit(this.value.key, {
             montant_part_patronale_ancienne_courante: dettesAnciennesParECN.partPatronale,
             montant_part_ouvriere_ancienne_courante: dettesAnciennesParECN.partOuvriere,
             montant_part_patronale_recente_courante: dettesRecentesParECN.partPatronale,
             montant_part_ouvriere_recente_courante: dettesRecentesParECN.partOuvriere,
-            montant_part_ouvriere_ancienne_reference: dettesAnciennesDebutParECN.partOuvriere,
-            montant_part_patronale_ancienne_reference: dettesAnciennesDebutParECN.partPatronale,
+            // montant_part_ouvriere_ancienne_reference:
+            //   dettesAnciennesDebutParECN.partOuvriere,
+            // montant_part_patronale_ancienne_reference:
+            //   dettesAnciennesDebutParECN.partPatronale,
             cotisation_moyenne_12m: cotisationMoyenne,
             total_demande_ap: totalMoisDemande,
         });

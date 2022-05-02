@@ -23,7 +23,10 @@ func Redressement2203One(batch base.AdminBatch, dateStr string, key string) erro
 		return err
 	}
 
-	mapReduceJob.Out = bson.M{"merge": "redressement2203_debug"}
+	mapReduceJob.Out = bson.M{
+		"merge":     "redressement2203_debug",
+		"nonAtomic": true,
+	}
 
 	query := bson.M{
 		"_id": bson.M{
@@ -45,7 +48,7 @@ func Redressement2203(batch base.AdminBatch, dateStr string) error {
 	if err != nil {
 		return fmt.Errorf("chunkCollection a échoué: %s", err.Error())
 	}
-	queries := chunks.ToQueries(bson.M{}, "_id")
+	queries := chunks.ToQueries(bson.M{"value.index.algo2": true}, "_id")
 	queryChan := queriesToChan(queries)
 
 	jsParams := bson.M{
@@ -83,7 +86,7 @@ func Redressement2203(batch base.AdminBatch, dateStr string) error {
 		db.DB(tempDB).DropDatabase()
 	}
 
-	LogOperationEvent("Redressement2203", startDate)
+	LogOperationEvent("redressement2203", startDate)
 
 	return nil
 }
