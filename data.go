@@ -255,6 +255,7 @@ func (params validateHandler) Run() error {
 type redressement2203Handler struct {
 	Enable  bool   // set to true by cosiner/flag if the user is running this command
 	DateStr string `names:"--date" arglist:"date_str" desc:"Date de séparation avant/après utilisée pour le calcul des features. Format AAAA-MM-JJ. Par défaut 2021-09-01."`
+	Key     string `names:"--debug-for-key" desc:"Numéro SIRET or SIREN d'une entité à déboguer (ex: 012345678901234)"` // (not tested yet)
 }
 
 func (params redressement2203Handler) Documentation() flag.Flag {
@@ -273,6 +274,9 @@ func (params redressement2203Handler) IsEnabled() bool {
 }
 
 func (params redressement2203Handler) Validate() error {
+	if params.DateStr == "" {
+		return errors.New("paramètre `date` obligatoire")
+	}
 	return nil
 }
 
@@ -283,5 +287,16 @@ func (params redressement2203Handler) Run() error {
 	if err != nil {
 		return errors.New("batch non trouvé")
 	}
-	return engine.Redressement2203(batch, date)
+
+	if params.Key != "" {
+		err = engine.Redressement2203One(batch, date, params.Key)
+	} else {
+		err = engine.Redressement2203(batch, date)
+	}
+
+	if err != nil {
+		return errors.New("(✖╭╮✖) le traitement n'a pas abouti: " + err.Error())
+	}
+
+	return nil
 }

@@ -12,7 +12,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-func Redressement2203One(batch base.AdminBatch, dateStr string) error {
+func Redressement2203One(batch base.AdminBatch, dateStr string, key string) error {
 	jsParams := bson.M{
 		"dateStr": dateStr,
 		"dateFin": batch.Params.DateFin,
@@ -25,7 +25,13 @@ func Redressement2203One(batch base.AdminBatch, dateStr string) error {
 
 	mapReduceJob.Out = bson.M{"merge": "redressement2203_debug"}
 
-	query := bson.M{}
+	query := bson.M{
+		"_id": bson.M{
+			"$regex": bson.RegEx{Pattern: "^" + key[0:9],
+				Options: "",
+			},
+		},
+	}
 
 	_, err = Db.DB.C("RawData").Find(query).MapReduce(mapReduceJob, nil)
 	return err
