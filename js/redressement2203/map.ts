@@ -51,9 +51,9 @@ export function map(this: Input): void {
     beforeBatches
   )
 
-  // const dettesAnciennesDebutParECN: SommesDettes = f.recupererDetteTotale(
-  //   beforeBatches.filter((b) => b.date_traitement <= testDate)
-  // )
+  const dettesAnciennesDebutParECN: SommesDettes = f.recupererDetteTotale(
+    beforeBatches.filter((b) => b.date_traitement <= testDate)
+  )
 
   const dettesRecentesParECN: SommesDettes = f.recupererDetteTotale(
     afterBatches
@@ -87,8 +87,7 @@ export function map(this: Input): void {
     dettesAnciennesParECN.partOuvriere !== 0 ||
     dettesRecentesParECN.partOuvriere !== 0 ||
     dettesRecentesParECN.partPatronale !== 0 ||
-    // dettesAnciennesDebutParECN.partOuvriere !== 0 ||
-    // dettesAnciennesDebutParECN.partPatronale !== 0 ||
+    cotisationMoyenne !== 0 ||
     totalMoisDemande !== 0
   ) {
     emit(this.value.key, {
@@ -99,10 +98,10 @@ export function map(this: Input): void {
       montant_part_patronale_recente_courante:
         dettesRecentesParECN.partPatronale,
       montant_part_ouvriere_recente_courante: dettesRecentesParECN.partOuvriere,
-      // montant_part_ouvriere_ancienne_reference:
-      //   dettesAnciennesDebutParECN.partOuvriere,
-      // montant_part_patronale_ancienne_reference:
-      //   dettesAnciennesDebutParECN.partPatronale,
+      montant_part_ouvriere_ancienne_reference:
+        dettesAnciennesDebutParECN.partOuvriere,
+      montant_part_patronale_ancienne_reference:
+        dettesAnciennesDebutParECN.partPatronale,
       cotisation_moyenne_12m: cotisationMoyenne,
       total_demande_ap: totalMoisDemande,
     })
