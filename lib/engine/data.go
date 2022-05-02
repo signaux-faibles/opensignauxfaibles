@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"sort"
+	"strconv"
 	"sync"
 	"time"
 
@@ -128,14 +129,14 @@ func PruneEntities(batchKey string, delete bool) (int, error) {
 	if delete {
 		// Enregistrer la liste d'entités dans la collection temporaire "EntitiesToPrune"
 		tmpCollection := "EntitiesToPrune"
-		pipeline = append(pipeline, bson.M{"$out": tmpCollection})
-		iterator := Db.DB.C("RawData").Pipe(pipeline).AllowDiskUse().Iter()
+		// pipeline = append(pipeline, bson.M{"$out": tmpCollection})
+		// iterator := Db.DB.C("RawData").Pipe(pipeline).AllowDiskUse().Iter()
 		var item struct {
 			ID string `json:"id"   bson:"_id"`
 		}
 		// Supprimer les entités en itérant sur "EntitiesToPrune"
 		var nbDeleted = 0
-		iterator = Db.DB.C(tmpCollection).Find(bson.M{}).Iter()
+		iterator := Db.DB.C(tmpCollection).Find(bson.M{}).Iter()
 		for iterator.Next(&item) {
 			if err := iterator.Err(); err != nil {
 				return -1, err
@@ -454,4 +455,37 @@ func storeMongoPipelineResults(iterator *mgo.Iter) error {
 	close(gzipWriter)
 	wait.Wait()
 	return nil
+}
+
+func queriesToChan(queries []bson.M) chan bson.M {
+	channel := make(chan bson.M)
+	go func() {
+		for _, query := range queries {
+			channel <- query
+		}
+		close(channel)
+	}()
+	return channel
+}
+
+// MRChunks exécute un job MapReduce à partir d'un channel fournissant des queries
+func MRChunks(queryChan chan bson.M, MRBaseJob mgo.MapReduce, tempDBprefix string, id int, wg *sync.WaitGroup) {
+	db, err := mgo.Dial(viper.GetString("DB_DIAL"))
+	if err != nil {
+		log.Println("erreur de connection pendant MRChunks: " + err.Error())
+	}
+	db.SetSocketTimeout(720000 * time.Second)
+	defer db.Close()
+	defer wg.Done()
+	for query := range queryChan {
+		job := MRBaseJob
+		job.Out = bson.M{"merge": "TemporaryCollection", "db": tempDBprefix + "_" + strconv.Itoa(id)}
+		log.Println(tempDBprefix+strconv.Itoa(id)+": ", query) // TODO: supprimer cet affichage ?
+		_, err = db.DB(viper.GetString("DB")).C("RawData").Find(query).MapReduce(&job, nil)
+
+		if err != nil {
+			fmt.Println(tempDBprefix+strconv.Itoa(id)+": error ", err.Error()) // TODO: plutot utiliser log.Fatal() ou log.Println() pour écrire dans la sortie d'erreurs ?
+		}
+	}
+	wg.Done()
 }

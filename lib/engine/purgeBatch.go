@@ -2,7 +2,6 @@ package engine
 
 import (
 	"fmt"
-	"log"
 	"strconv"
 	"sync"
 	"time"
@@ -35,31 +34,6 @@ func PurgeBatchOne(batch base.AdminBatch, key string) error {
 
 	_, err = Db.DB.C("RawData").Find(query).MapReduce(mapReduceJob, nil)
 	return err
-}
-
-func queriesToChan(queries []bson.M) chan bson.M {
-	channel := make(chan bson.M)
-	go func() {
-		for _, query := range queries {
-			channel <- query
-		}
-		close(channel)
-	}()
-	return channel
-}
-
-// MRChunks exécute un job MapReduce à partir d'un channel fournissant des queries
-func MRChunks(queryChan chan bson.M, MRBaseJob mgo.MapReduce, tempDBprefix string, id int, wg *sync.WaitGroup) {
-	for query := range queryChan {
-		job := MRBaseJob
-		job.Out = bson.M{"merge": "TemporaryCollection", "db": tempDBprefix + strconv.Itoa(id)}
-		log.Println(tempDBprefix+strconv.Itoa(id)+": ", query) // TODO: supprimer cet affichage ?
-		_, err := Db.DB.C("RawData").Find(query).MapReduce(&job, nil)
-		if err != nil {
-			fmt.Println(tempDBprefix+strconv.Itoa(id)+": error ", err.Error()) // TODO: plutot utiliser log.Fatal() ou log.Println() pour écrire dans la sortie d'erreurs ?
-		}
-	}
-	wg.Done()
 }
 
 // PurgeBatch permet de supprimer tous les batch consécutifs au un batch donné dans RawData
