@@ -14,9 +14,7 @@ Mettre-à-jour régulièrement Node.js et les dépendances du projet [`opensigna
 Depuis le répertoire `js`:
 
 0. Usage de la version prévue de Node.js: `nvm use`
-1. Mise-à-jour des versions des dépendances dans `package.json`: 
-`npx npm-check-updates -u`
-2. Installation de ces nouvelles versions de dépendances:
-`npm install`
+1. Mise-à-jour des versions des dépendances dans `package.json`: `npx npm-check-updates -u`
+2. Installation de ces nouvelles versions de dépendances:`npm install`
 3. Exécution des tests: `make test`
 4. Si tout est bon, faire un commit avec `package.json` et `package-lock.json`
