@@ -32,7 +32,7 @@ jobs:
       - name: Prepare container sources & resources
         shell: bash
         run: |
-          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build
+          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o sfdata
           cp ./sfdata ./build-container
 
       - name: Extract metadata (tags, labels) for Docker
