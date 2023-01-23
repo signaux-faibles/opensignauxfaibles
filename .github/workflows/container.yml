@@ -3,8 +3,6 @@ name: Build & Push Container vers ghcr.io
 on:
   push:
     branches:
-      - 'master'
-    tags:
   release:
     types: [published, edited]
   pull_request:
