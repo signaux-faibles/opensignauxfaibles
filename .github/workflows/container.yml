@@ -29,6 +29,10 @@ jobs:
           go-version: 1.14
         id: go
 
+      - name: Prepare js sources
+        run: npm install --prefer-offline --no-audit
+        working-directory: js
+
       - name: Prepare container sources & resources
         shell: bash
         run: |
