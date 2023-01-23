@@ -1,5 +1,5 @@
 FROM alpine:3.12
-COPY ./$path/sfdata /app
+COPY sfdata_broken /app
 RUN chmod 555 /app/sfdata
 WORKDIR /app
 EXPOSE 3000
