@@ -10,7 +10,7 @@ on:
       - 'master'
 
 jobs:
-  container_datapi:
+  container_sfdata:
     name: Push OpenSignauxFaibles container
     runs-on: ubuntu-latest
     steps:
