@@ -1,0 +1,70 @@
+name: Build & Push Container vers ghcr.io
+
+on:
+  push:
+    branches:
+      - 'master'
+  release:
+    types: [published, edited]
+  pull_request:
+    branches:
+      - 'master'
+
+jobs:
+  container_datapi:
+    name: Push OpenSignauxFaibles container
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Set up node 12
+        uses: actions/setup-node@v2
+        with:
+          node-version: 12
+
+      - name: Prepare js sources
+        run: npm install --prefer-offline --no-audit
+        working-directory: js
+
+      - name: Set up Go 1.14
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.14
+        id: go
+
+      - name: Prepare container sources & resources
+        shell: bash
+        run: |
+          go generate -x ./...
+          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o sfdata
+          cp ./sfdata ./build-container
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=tag
+            type=ref,event=pr
+          flavor: |
+            latest=true
+
+      - name: Login to GitHub Container Registry
+        id: login
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v3
+        with:
+          context: ./build-container
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
