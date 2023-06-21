@@ -9,8 +9,6 @@ function restoreConfig {
 }
 trap restoreConfig EXIT
 
-go version
-
 # Add prefix to stderr stream
 exec 2> >(sed 's/^/  [sfdata] /' >&2)
 
