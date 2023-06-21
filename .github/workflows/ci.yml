@@ -9,11 +9,11 @@ on:
 jobs:
   go-tests:
     name: Go tests
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/setup-go@v2
         with:
-          go-version: 1.14
+          go-version: "1.20"
       - uses: actions/checkout@v2
       - run: go test -v -coverprofile=go-coverage.out -covermode=atomic -coverpkg=./... ./...
       - name: Show coverage
@@ -27,7 +27,7 @@ jobs:
 
   mr-tests:
     name: Map-Reduce tests
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/setup-node@v2
         with:
@@ -59,11 +59,11 @@ jobs:
 
   build:
     name: Generate and lint
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/setup-go@v2
         with:
-          go-version: 1.14
+          go-version: "1.20"
       - uses: actions/checkout@v2
       - run: make build
       - uses: actions/setup-node@v2
@@ -90,11 +90,11 @@ jobs:
 
   e2e-tests:
     name: End-to-end tests
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/setup-go@v2
         with:
-          go-version: 1.14
+          go-version: "1.20"
 
       - uses: actions/checkout@v2
 

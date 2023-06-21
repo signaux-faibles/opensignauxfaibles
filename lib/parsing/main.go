@@ -6,16 +6,16 @@ package parsing
 import (
 	"errors"
 
-	"github.com/signaux-faibles/opensignauxfaibles/lib/apconso"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/apdemande"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/bdf"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/diane"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/ellisphere"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/marshal"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/paydex"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/sirene"
-	sireneul "github.com/signaux-faibles/opensignauxfaibles/lib/sirene_ul"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/urssaf"
+	"opensignauxfaibles/lib/apconso"
+	"opensignauxfaibles/lib/apdemande"
+	"opensignauxfaibles/lib/bdf"
+	"opensignauxfaibles/lib/diane"
+	"opensignauxfaibles/lib/ellisphere"
+	"opensignauxfaibles/lib/marshal"
+	"opensignauxfaibles/lib/paydex"
+	"opensignauxfaibles/lib/sirene"
+	sireneul "opensignauxfaibles/lib/sirene_ul"
+	"opensignauxfaibles/lib/urssaf"
 )
 
 // RegisteredParsers liste des parsers disponibles

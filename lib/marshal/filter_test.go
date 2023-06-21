@@ -6,8 +6,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
 	"github.com/stretchr/testify/assert"
+
+	"opensignauxfaibles/lib/base"
 )
 
 var _ = flag.Bool("update", false, "Update the expected test values in golden file") // please keep this line until https://github.com/kubernetes-sigs/service-catalog/issues/2319#issuecomment-425200065 is fixed

@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/marshal"
+	"opensignauxfaibles/lib/base"
+	"opensignauxfaibles/lib/marshal"
 )
 
 // Procol Procédures collectives, extraction URSSAF
