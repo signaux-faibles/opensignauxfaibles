@@ -12,8 +12,6 @@ import (
 	"github.com/globalsign/mgo/bson"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
-
-	"opensignauxfaibles/lib/engine"
 )
 
 var _ = flag.Bool("update", false, "Update the expected test values in golden file") // please keep this line until https://github.com/kubernetes-sigs/service-catalog/issues/2319#issuecomment-425200065 is fixed
@@ -25,7 +23,7 @@ const (
 	mongoDatabase  = "signauxfaibles"
 )
 
-func TestMain(t *testing.T) {
+func TestPrincipal(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping in short mode")
 	}
@@ -83,30 +81,30 @@ func TestMain(t *testing.T) {
 		assert.Equal(t, 3, runCLI("sfdata", "pruneEntities", "--batch=1910")) // => "Erreur: Ce batch ne spécifie pas de filtre"
 	})
 
-// 	t.Run("Les données importées sont validées par MongoDB", func(t *testing.T) {
-// 		// Création d'une collection associée au schéma de validation de données JSON de ImportedData
-// 		colName := "FakeImportedData"
-// 		err := engine.CreateImportedDataCollection(db, colName)
-// 		if assert.NoError(t, err) {
-// 			coll := db.C(colName)
-// 			// L'insertion d'un document valide ne doit pas provoquer d'erreur
-// 			assert.NoError(t, coll.Insert(bson.M{
-// 				"value": bson.M{
-// 					"scope": "entreprise",
-// 					"key":   "000000002",
-// 					"batch": bson.M{
-// 						"2002_2": bson.M{
-// 							"paydex": bson.M{
-// 								"afafafafafafaf": bson.M{"date_valeur": time.Now(), "nb_jours": 4},
-// 							},
-// 						},
-// 					},
-// 				},
-// 			}))
-// 			// L'insertion d'un document invalide doit provoquer une erreur
-// 			assert.EqualError(t, coll.Insert(bson.M{"a": 1}), "Document failed validation")
-// 		}
-// 	})
+	// 	t.Run("Les données importées sont validées par MongoDB", func(t *testing.T) {
+	// 		// Création d'une collection associée au schéma de validation de données JSON de ImportedData
+	// 		colName := "FakeImportedData"
+	// 		err := engine.CreateImportedDataCollection(db, colName)
+	// 		if assert.NoError(t, err) {
+	// 			coll := db.C(colName)
+	// 			// L'insertion d'un document valide ne doit pas provoquer d'erreur
+	// 			assert.NoError(t, coll.Insert(bson.M{
+	// 				"value": bson.M{
+	// 					"scope": "entreprise",
+	// 					"key":   "000000002",
+	// 					"batch": bson.M{
+	// 						"2002_2": bson.M{
+	// 							"paydex": bson.M{
+	// 								"afafafafafafaf": bson.M{"date_valeur": time.Now(), "nb_jours": 4},
+	// 							},
+	// 						},
+	// 					},
+	// 				},
+	// 			}))
+	// 			// L'insertion d'un document invalide doit provoquer une erreur
+	// 			assert.EqualError(t, coll.Insert(bson.M{"a": 1}), "Document failed validation")
+	// 		}
+	// 	})
 }
 
 func startMongoContainer(t *testing.T) {
