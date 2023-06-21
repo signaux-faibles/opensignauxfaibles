@@ -18,12 +18,12 @@ jobs:
       - run: go test -v -coverprofile=go-coverage.out -covermode=atomic -coverpkg=./... ./...
       - name: Show coverage
         run: go tool cover -func=go-coverage.out
-      - name: Generate coverage report
-        run: go run github.com/richardlt/gocover-cobertura < go-coverage.out > go-coverage.xml
-      - uses: actions/upload-artifact@v2
-        with:
-          name: go-coverage-report
-          path: go-coverage.xml
+#      - name: Generate coverage report
+#        run: go run github.com/richardlt/gocover-cobertura < go-coverage.out > go-coverage.xml
+#      - uses: actions/upload-artifact@v2
+#        with:
+#          name: go-coverage-report
+#          path: go-coverage.xml
 
   mr-tests:
     name: Map-Reduce tests
@@ -170,7 +170,7 @@ jobs:
         with:
           name: mr-coverage-report
       - run: cat lcov.info
-      - uses: codacy/codacy-coverage-reporter-action@master
-        with:
-          project-token: ${{ secrets.CODACY_REPOSITORY_TOKEN_FOR_COVERAGE }}
-          coverage-reports: go-coverage.xml,lcov.info
+#      - uses: codacy/codacy-coverage-reporter-action@master
+#        with:
+#          project-token: ${{ secrets.CODACY_REPOSITORY_TOKEN_FOR_COVERAGE }}
+#          coverage-reports: go-coverage.xml,lcov.info
