@@ -69,7 +69,7 @@ Il est possible de tous les exécuter en local: `$ ./test-all.sh`.
 
 Certains tests (ex: `test-reduce-2.sh` et `algo2_golden_tests.ts`) s'appuient sur des fichiers de données sensibles qui doivent donc être déchiffrés avant l'exécution de ces tests.
 
-Reconnaissables à leur extension `.secret`, ces fichiers sont stockés dans le répertoire `/tests` du dépôt. Ils sont chiffrés et déchiffrés à l'aide de [git secret](https://git-secret.io/), commande basée sur l'outil de chiffrage GPG. Chaque développeur désireux d'accéder et/ou de modifier ces fichiers doit y être autorisé par un autre développeur y ayant déjà acccès, en intégrant sa clé publique GPG au porte-clés du projet (incarné par le fichier `.gitsecret/keys/pubring.kbx`).
+Reconnaissables à leur extension `.secret`, ces fichiers sont stockés dans le répertoire `/tests` du dépôt. Ils sont chiffrés et déchiffrés à l'aide de [git secret](https://git-secret.io/), commande basée sur l'outil de chiffrage GPG. Chaque développeur désireux d'accéder et/ou de modifier ces fichiers doit y être autorisé par un autre développeur y ayant déjà accès, en intégrant sa clé publique GPG au porte-clés du projet (incarné par le fichier `.gitsecret/keys/pubring.kbx`).
 
 À noter qu'une clé GPG a été générée et intégrée afin de permettre le déchiffrage de ces données lors de l'exécution des tests automatisés en environnement d'Intégration Continue (CI).
 
