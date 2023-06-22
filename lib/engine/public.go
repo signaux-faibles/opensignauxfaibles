@@ -6,12 +6,12 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/misc"
-
 	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
 	"github.com/spf13/viper"
+
+	"opensignauxfaibles/lib/base"
+	"opensignauxfaibles/lib/misc"
 )
 
 // PublicOne traite le mapReduce public pour une clé unique (siren)

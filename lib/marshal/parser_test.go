@@ -5,8 +5,9 @@ import (
 	"log"
 	"testing"
 
-	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
 	"github.com/stretchr/testify/assert"
+
+	"opensignauxfaibles/lib/base"
 )
 
 func TestParseFilesFromBatch(t *testing.T) {

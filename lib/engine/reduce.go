@@ -9,14 +9,14 @@ import (
 	"strings"
 	"time"
 
-	// "github.com/davecgh/go-spew/spew"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/misc"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/naf"
-
 	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
 	"github.com/spf13/viper"
+
+	// "github.com/davecgh/go-spew/spew"
+	"opensignauxfaibles/lib/base"
+	"opensignauxfaibles/lib/misc"
+	"opensignauxfaibles/lib/naf"
 )
 
 // ReduceOne lance le calcul de Features pour la clé passée en argument

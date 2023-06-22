@@ -5,8 +5,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/marshal"
+	"opensignauxfaibles/lib/base"
+	"opensignauxfaibles/lib/marshal"
 )
 
 // SireneUL informations sur les entreprises
