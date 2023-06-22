@@ -9,25 +9,25 @@ on:
 jobs:
   go-tests:
     name: Go tests
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/setup-go@v2
         with:
-          go-version: 1.14
+          go-version: "1.20"
       - uses: actions/checkout@v2
       - run: go test -v -coverprofile=go-coverage.out -covermode=atomic -coverpkg=./... ./...
       - name: Show coverage
         run: go tool cover -func=go-coverage.out
-      - name: Generate coverage report
-        run: go run github.com/richardlt/gocover-cobertura < go-coverage.out > go-coverage.xml
-      - uses: actions/upload-artifact@v2
-        with:
-          name: go-coverage-report
-          path: go-coverage.xml
+#      - name: Generate coverage report
+#        run: go run github.com/richardlt/gocover-cobertura < go-coverage.out > go-coverage.xml
+#      - uses: actions/upload-artifact@v2
+#        with:
+#          name: go-coverage-report
+#          path: go-coverage.xml
 
   mr-tests:
     name: Map-Reduce tests
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/setup-node@v2
         with:
@@ -59,11 +59,11 @@ jobs:
 
   build:
     name: Generate and lint
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/setup-go@v2
         with:
-          go-version: 1.14
+          go-version: "1.20"
       - uses: actions/checkout@v2
       - run: make build
       - uses: actions/setup-node@v2
@@ -90,11 +90,11 @@ jobs:
 
   e2e-tests:
     name: End-to-end tests
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/setup-go@v2
         with:
-          go-version: 1.14
+          go-version: "1.20"
 
       - uses: actions/checkout@v2
 
@@ -160,17 +160,17 @@ jobs:
     needs:
       - mr-tests
       - go-tests
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-        with:
-          name: go-coverage-report
+#      - uses: actions/download-artifact@v2
+#        with:
+#          name: go-coverage-report
       - uses: actions/download-artifact@v2
         with:
           name: mr-coverage-report
       - run: cat lcov.info
-      - uses: codacy/codacy-coverage-reporter-action@master
-        with:
-          project-token: ${{ secrets.CODACY_REPOSITORY_TOKEN_FOR_COVERAGE }}
-          coverage-reports: go-coverage.xml,lcov.info
+#      - uses: codacy/codacy-coverage-reporter-action@master
+#        with:
+#          project-token: ${{ secrets.CODACY_REPOSITORY_TOKEN_FOR_COVERAGE }}
+#          coverage-reports: go-coverage.xml,lcov.info

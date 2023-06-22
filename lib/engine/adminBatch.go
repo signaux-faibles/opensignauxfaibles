@@ -9,10 +9,11 @@ import (
 	"time"
 
 	"github.com/globalsign/mgo/bson"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/marshal"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/parsing"
 	"github.com/spf13/viper"
+
+	"opensignauxfaibles/lib/base"
+	"opensignauxfaibles/lib/marshal"
+	"opensignauxfaibles/lib/parsing"
 )
 
 // Load charge les données d'un batch depuis la base de données

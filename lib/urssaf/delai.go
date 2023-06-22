@@ -2,14 +2,11 @@ package urssaf
 
 import (
 	"encoding/csv"
-
-	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/marshal"
-
-	//"errors"
-
 	"os"
 	"time"
+
+	"opensignauxfaibles/lib/base"
+	"opensignauxfaibles/lib/marshal"
 )
 
 // Delai tuple fichier ursaff

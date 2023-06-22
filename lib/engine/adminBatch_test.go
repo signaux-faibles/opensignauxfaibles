@@ -6,10 +6,11 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/marshal"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/urssaf"
 	"github.com/stretchr/testify/assert"
+
+	"opensignauxfaibles/lib/base"
+	"opensignauxfaibles/lib/marshal"
+	"opensignauxfaibles/lib/urssaf"
 )
 
 func Test_IsBatchID(t *testing.T) {
