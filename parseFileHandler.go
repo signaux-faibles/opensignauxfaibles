@@ -6,10 +6,11 @@ import (
 	"log"
 	"os"
 
-	flag "github.com/cosiner/flag"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/marshal"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/parsing"
+	"github.com/cosiner/flag"
+
+	"opensignauxfaibles/lib/base"
+	"opensignauxfaibles/lib/marshal"
+	"opensignauxfaibles/lib/parsing"
 )
 
 type parseFileHandler struct {

@@ -10,7 +10,8 @@ import (
 	"time"
 
 	"github.com/globalsign/mgo/bson"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/marshal"
+
+	"opensignauxfaibles/lib/marshal"
 )
 
 type messageChannel chan marshal.Event

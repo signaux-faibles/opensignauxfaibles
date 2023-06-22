@@ -2,9 +2,10 @@ package ellisphere
 
 import (
 	"github.com/pkg/errors"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/marshal"
 	"github.com/tealeg/xlsx/v3"
+
+	"opensignauxfaibles/lib/base"
+	"opensignauxfaibles/lib/marshal"
 )
 
 // Ellisphere informations groupe pour une entreprise"

@@ -7,7 +7,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
+	"opensignauxfaibles/lib/base"
 )
 
 // OpenCsvReader ouvre un fichier CSV potentiellement gzippé et retourne un csv.Reader.

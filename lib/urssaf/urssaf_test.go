@@ -3,14 +3,14 @@ package urssaf
 import (
 	"bytes"
 	"flag"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"testing"
 
-	"github.com/signaux-faibles/opensignauxfaibles/lib/marshal"
 	"github.com/stretchr/testify/assert"
+
+	"opensignauxfaibles/lib/marshal"
 )
 
 var update = flag.Bool("update", false, "Update the expected test values in golden file")
@@ -52,7 +52,7 @@ func TestUrssaf(t *testing.T) {
 				compressedFilePath := filepath.Join("testData", testCase.InputFile+".gz")
 				t.Cleanup(func() { os.Remove(compressedFilePath) })
 				// Création d'un fichier Golden temporaire mentionnant le nom du fichier compressé
-				initialGoldenContent, err := ioutil.ReadFile(filepath.Join("testData", testCase.GoldenFile))
+				initialGoldenContent, err := os.ReadFile(filepath.Join("testData", testCase.GoldenFile))
 				assert.NoError(t, err)
 				goldenContent := bytes.ReplaceAll(initialGoldenContent, []byte(testCase.InputFile), []byte(testCase.InputFile+".gz"))
 				tmpGoldenFile := marshal.CreateTempFileWithContent(t, goldenContent)

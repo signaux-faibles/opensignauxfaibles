@@ -4,12 +4,14 @@ import (
 	"encoding/csv"
 	"flag"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 
-	"github.com/signaux-faibles/opensignauxfaibles/lib/marshal"
 	"github.com/stretchr/testify/assert"
+
+	"opensignauxfaibles/lib/marshal"
 )
 
 var update = flag.Bool("update", false, "Update the expected test values in golden file")
@@ -62,9 +64,9 @@ func TestDiane(t *testing.T) {
 func diffWithGoldenFile(t *testing.T, output []byte, goldenFileName string, updateGoldenFile bool) {
 	t.Helper()
 	if updateGoldenFile {
-		ioutil.WriteFile(goldenFileName, output, 0644)
+		os.WriteFile(goldenFileName, output, 0644)
 	}
-	expected, err := ioutil.ReadFile(goldenFileName)
+	expected, err := os.ReadFile(goldenFileName)
 	if assert.NoError(t, err) {
 		assert.Equal(t, expected, output)
 	}
