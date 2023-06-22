@@ -10,8 +10,8 @@ import (
 	cosFlag "github.com/cosiner/flag"
 	"github.com/spf13/viper"
 
-	"github.com/signaux-faibles/opensignauxfaibles/lib/engine"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/marshal"
+	"opensignauxfaibles/lib/engine"
+	"opensignauxfaibles/lib/marshal"
 )
 
 // GitCommit est le hash du dernier commit à inclure dans le binaire.

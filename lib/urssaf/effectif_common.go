@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"time"
 
-	"github.com/signaux-faibles/opensignauxfaibles/lib/marshal"
+	"opensignauxfaibles/lib/marshal"
 )
 
 type periodCol struct {

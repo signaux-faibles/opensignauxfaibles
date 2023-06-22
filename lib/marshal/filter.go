@@ -8,10 +8,10 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/sfregexp"
-
 	"github.com/spf13/viper"
+
+	"opensignauxfaibles/lib/base"
+	"opensignauxfaibles/lib/sfregexp"
 )
 
 // SirenFilter liste les numéros SIREN d'entreprise et établissements à exclure des traitements.

@@ -7,9 +7,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/marshal"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/misc"
+	"opensignauxfaibles/lib/base"
+	"opensignauxfaibles/lib/marshal"
+	"opensignauxfaibles/lib/misc"
 )
 
 // Periode Période de temps avec un début et une fin

@@ -5,15 +5,13 @@ import (
 	"errors"
 	"io"
 	"log"
-
-	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/sfregexp"
-
-	//"strconv"
 	"sort"
 	"time"
 
 	"github.com/spf13/viper"
+
+	"opensignauxfaibles/lib/base"
+	"opensignauxfaibles/lib/sfregexp"
 )
 
 // GetSiret gets the siret related to a specific compte at a given point in
@@ -120,7 +118,7 @@ func OpenAndReadSiretMapping(
 	return compteSiretMapping, nil
 }
 
-//readSiretMapping reads a admin_urssaf file
+// readSiretMapping reads a admin_urssaf file
 func readSiretMapping(
 	reader io.Reader,
 	cache Cache,

@@ -12,8 +12,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/marshal"
+	"opensignauxfaibles/lib/base"
+	"opensignauxfaibles/lib/marshal"
 )
 
 // Paydex décrit le format de chaque entrée de donnée résultant du parsing.

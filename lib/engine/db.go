@@ -8,8 +8,9 @@ import (
 
 	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
 	"github.com/spf13/viper"
+
+	"opensignauxfaibles/lib/base"
 )
 
 // DB type centralisant les accès à une base de données
@@ -104,14 +105,15 @@ func CreateImportedDataCollection(db *mgo.Database, colName string) error {
 		Key:  []string{"value.key"}, // numéro SIRET ou SIREN
 	})
 
-	// Injection du schéma de validation de données JSON dans ImportedData
-	jsonSchemas, err := LoadJSONSchemaFiles()
-	if err != nil {
-		return err
-	}
-	schemaPerHashedDataType := MakeValidationSchemaPerHashedDataType(jsonSchemas)
-	jsonSchema := MakeValidationSchemaForImportedData(schemaPerHashedDataType)
-	return setupDocValidation(db, colName, jsonSchema)
+	// // Injection du schéma de validation de données JSON dans ImportedData
+	// jsonSchemas, err := LoadJSONSchemaFiles()
+	// if err != nil {
+	// 	return err
+	// }
+	// schemaPerHashedDataType := MakeValidationSchemaPerHashedDataType(jsonSchemas)
+	// jsonSchema := MakeValidationSchemaForImportedData(schemaPerHashedDataType)
+	// return setupDocValidation(db, colName, jsonSchema)
+	return nil
 }
 
 // setupDocValidation configure la validation de documents pour une collection existante.
