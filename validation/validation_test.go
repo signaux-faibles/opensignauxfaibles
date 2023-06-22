@@ -14,7 +14,6 @@ import (
 
 	"opensignauxfaibles/lib/apconso"
 	"opensignauxfaibles/lib/apdemande"
-	"opensignauxfaibles/lib/diane"
 	"opensignauxfaibles/lib/ellisphere"
 	"opensignauxfaibles/lib/paydex"
 	"opensignauxfaibles/lib/sirene"
@@ -118,7 +117,6 @@ func TestTypeAlignment(t *testing.T) {
 		"cotisation.schema.json":   urssaf.Cotisation{},
 		"debit.schema.json":        urssaf.Debit{},
 		"delai.schema.json":        urssaf.Delai{},
-		"diane.schema.json":        diane.Diane{},
 		"effectif.schema.json":     urssaf.Effectif{},
 		"effectif_ent.schema.json": urssaf.EffectifEnt{},
 		"ellisphere.schema.json":   ellisphere.Ellisphere{},

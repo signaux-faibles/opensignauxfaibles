@@ -8,7 +8,6 @@ import (
 
 	"opensignauxfaibles/lib/apconso"
 	"opensignauxfaibles/lib/apdemande"
-	"opensignauxfaibles/lib/diane"
 	"opensignauxfaibles/lib/ellisphere"
 	"opensignauxfaibles/lib/marshal"
 	"opensignauxfaibles/lib/paydex"
@@ -33,7 +32,6 @@ var registeredParsers = map[string]marshal.Parser{
 	"apdemande":    apdemande.Parser,
 	"sirene":       sirene.Parser,
 	"sirene_ul":    sireneul.Parser,
-	"diane":        diane.Parser,
 	"ellisphere":   ellisphere.Parser,
 	"paydex":       paydex.ParserPaydex,
 }
