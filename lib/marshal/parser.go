@@ -7,9 +7,10 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/sfregexp"
 	"github.com/spf13/viper"
+
+	"opensignauxfaibles/lib/base"
+	"opensignauxfaibles/lib/sfregexp"
 )
 
 // Parser spécifie les fonctions qui doivent être implémentées par chaque parseur de fichier.
