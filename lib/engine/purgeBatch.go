@@ -9,8 +9,9 @@ import (
 
 	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
 	"github.com/spf13/viper"
+
+	"opensignauxfaibles/lib/base"
 )
 
 // PurgeBatchOne purge 1 batch pour 1 siren

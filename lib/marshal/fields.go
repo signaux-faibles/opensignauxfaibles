@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/signaux-faibles/opensignauxfaibles/lib/misc"
+	"opensignauxfaibles/lib/misc"
 )
 
 // IndexColumnsFromCsvHeader extrait les noms de colonnes depuis l'en-tête d'un

@@ -3,14 +3,15 @@ package marshal
 import (
 	"bytes"
 	"compress/gzip"
-	"io/ioutil"
+	"os"
 	"reflect"
 	"strings"
 	"testing"
 	"time"
 
-	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
 	"github.com/stretchr/testify/assert"
+
+	"opensignauxfaibles/lib/base"
 )
 
 func TestGetSiret(t *testing.T) {
@@ -238,7 +239,7 @@ func TestGetSiretFromComptesMapping(t *testing.T) {
 }
 
 func compressFileData(t *testing.T, filePath string) (compressedData bytes.Buffer) {
-	data, err := ioutil.ReadFile(filePath)
+	data, err := os.ReadFile(filePath)
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -10,8 +10,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
 	"github.com/stretchr/testify/assert"
+
+	"opensignauxfaibles/lib/base"
 )
 
 // MockComptesMapping ...
@@ -136,10 +137,10 @@ func TestParserOutput(
 	}
 
 	if update {
-		ioutil.WriteFile(goldenFile, []byte(actual), 0644)
+		_ = os.WriteFile(goldenFile, actual, 0644)
 	}
 
-	expected, err := ioutil.ReadFile(goldenFile)
+	expected, err := os.ReadFile(goldenFile)
 	if err != nil {
 		t.Fatal("Could not open golden file" + err.Error())
 	}
