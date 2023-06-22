@@ -24,6 +24,8 @@ PORT="27016" tests/helpers/mongodb-container.sh start
 export MONGODB_PORT="27016" # for tests/helpers/sfdata-wrapper.sh
 
 echo ""
+echo "go version -> $(go version)"
+echo ""
 echo "📝 Inserting test data..."
 sleep 1 # give some time for MongoDB to start
 

@@ -6,8 +6,9 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/signaux-faibles/opensignauxfaibles/lib/marshal"
 	"github.com/stretchr/testify/assert"
+
+	"opensignauxfaibles/lib/marshal"
 )
 
 var update = flag.Bool("update", false, "Update the expected test values in golden file")

@@ -7,13 +7,12 @@ import (
 	"sort"
 	"time"
 
-	flag "github.com/cosiner/flag"
-
-	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/engine"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/parsing"
-
+	"github.com/cosiner/flag"
 	"github.com/globalsign/mgo/bson"
+
+	"opensignauxfaibles/lib/base"
+	"opensignauxfaibles/lib/engine"
+	"opensignauxfaibles/lib/parsing"
 )
 
 type purgeBatchHandler struct {

@@ -27,7 +27,7 @@ func bundleValidationSchemas(schemaDir string) {
 	// For each file in folder
 	for _, file := range files {
 		if shouldInclude(file) {
-			content, err := ioutil.ReadFile(filepath.Join(schemaDir, file.Name()))
+			content, err := os.ReadFile(filepath.Join(schemaDir, file.Name()))
 			if err != nil {
 				log.Fatal(err)
 			}

@@ -1,6 +1,6 @@
 FROM alpine:3.12
-COPY ./$path/sfdata /app
-RUN chmod 555 /app/sfdata
+COPY --chmod=555 sfdata /app/sfdata
+COPY local_data /local_data
 WORKDIR /app
 EXPOSE 3000
 CMD ["/app/sfdata"]

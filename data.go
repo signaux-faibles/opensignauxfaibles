@@ -5,8 +5,8 @@ import (
 
 	flag "github.com/cosiner/flag"
 
-	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/engine"
+	"opensignauxfaibles/lib/base"
+	"opensignauxfaibles/lib/engine"
 )
 
 type reduceHandler struct {
