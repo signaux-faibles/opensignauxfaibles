@@ -13,10 +13,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/signaux-faibles/opensignauxfaibles/lib/base"
-	"github.com/signaux-faibles/opensignauxfaibles/lib/marshal"
 	"golang.org/x/text/encoding/unicode"
 	"golang.org/x/text/transform"
+
+	"opensignauxfaibles/lib/base"
+	"opensignauxfaibles/lib/marshal"
 )
 
 // Diane Information financières

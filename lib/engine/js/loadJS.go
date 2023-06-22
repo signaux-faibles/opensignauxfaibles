@@ -66,7 +66,7 @@ func bundleJsFunctions(jsRootDir string) {
 			}
 			for _, file := range files {
 				if shouldInclude(file) {
-					function, err := ioutil.ReadFile(filepath.Join(jsRootDir, folder.Name(), file.Name()))
+					function, err := os.ReadFile(filepath.Join(jsRootDir, folder.Name(), file.Name()))
 					if err != nil {
 						log.Fatal(err)
 					}

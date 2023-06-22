@@ -10,7 +10,6 @@ import (
 
 	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
-// 	"github.com/signaux-faibles/opensignauxfaibles/lib/engine"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 )
@@ -24,7 +23,7 @@ const (
 	mongoDatabase  = "signauxfaibles"
 )
 
-func TestMain(t *testing.T) {
+func TestPrincipal(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping in short mode")
 	}
@@ -63,49 +62,49 @@ func TestMain(t *testing.T) {
 				"date_fin":   time.Date(2019, 1, 1, 0, 0, 0, 0, time.UTC), // ISODate("2019-02-01T00:00:00.000+0000"),
 			},
 		})
-		// Exécution des commandes et vérification qu'elles s'achèvent toutes avec un exit code nul    
-    assert.Equal(t, 0, runCLI("sfdata", "check", "--batch=1910"))
-    assert.Equal(t, 0, runCLI("sfdata", "import", "--batch=1910", "--no-filter"))
-    assert.Equal(t, 0, runCLI("sfdata", "validate", "--collection=ImportedData"))
-    assert.Equal(t, 0, runCLI("sfdata", "compact", "--since-batch=1910"))
-    assert.Equal(t, 0, runCLI("sfdata", "public", "--until-batch=1910"))
-    assert.Equal(t, 0, runCLI("sfdata", "public", "--until-batch=1910", "--key=012345678")) // pour couvrir PublicOne()
-    assert.Equal(t, 0, runCLI("sfdata", "reduce", "--until-batch=1910"))
-    assert.Equal(t, 0, runCLI("sfdata", "reduce", "--until-batch=1910", "--key=012345678")) // pour couvrir ReduceOne()
-    assert.Equal(t, 0, runCLI("sfdata", "etablissements"))
-    assert.Equal(t, 0, runCLI("sfdata", "entreprises"))
-    assert.Equal(t, 0, runCLI("sfdata", "purgeNotCompacted", "--i-understand-what-im-doing")) // pour couvrir PurgeNotCompacted()
-    assert.Equal(t, 0, runCLI("sfdata", "purge", "--since-batch=1910", "--i-understand-what-im-doing"))
-    assert.Equal(t, 0, runCLI("sfdata", "purge", "--since-batch=1910", "--i-understand-what-im-doing", "--debug-for-key=012345678")) // pour couvrir PurgeBatchOne()
-    assert.Equal(t, 0, runCLI("sfdata", "parseFile", "--parser=diane", "--file=lib/diane/testData/dianeTestData.txt"))
-    assert.Equal(t, 2, runCLI("sfdata", "check"))                         // => "Erreur: paramètre `batch` obligatoire."
-    assert.Equal(t, 3, runCLI("sfdata", "pruneEntities", "--batch=1910")) // => "Erreur: Ce batch ne spécifie pas de filtre"
+		// Exécution des commandes et vérification qu'elles s'achèvent toutes avec un exit code nul
+		assert.Equal(t, 0, runCLI("sfdata", "check", "--batch=1910"))
+		assert.Equal(t, 0, runCLI("sfdata", "import", "--batch=1910", "--no-filter"))
+		assert.Equal(t, 0, runCLI("sfdata", "validate", "--collection=ImportedData"))
+		assert.Equal(t, 0, runCLI("sfdata", "compact", "--since-batch=1910"))
+		assert.Equal(t, 0, runCLI("sfdata", "public", "--until-batch=1910"))
+		assert.Equal(t, 0, runCLI("sfdata", "public", "--until-batch=1910", "--key=012345678")) // pour couvrir PublicOne()
+		assert.Equal(t, 0, runCLI("sfdata", "reduce", "--until-batch=1910"))
+		assert.Equal(t, 0, runCLI("sfdata", "reduce", "--until-batch=1910", "--key=012345678")) // pour couvrir ReduceOne()
+		assert.Equal(t, 0, runCLI("sfdata", "etablissements"))
+		assert.Equal(t, 0, runCLI("sfdata", "entreprises"))
+		assert.Equal(t, 0, runCLI("sfdata", "purgeNotCompacted", "--i-understand-what-im-doing")) // pour couvrir PurgeNotCompacted()
+		assert.Equal(t, 0, runCLI("sfdata", "purge", "--since-batch=1910", "--i-understand-what-im-doing"))
+		assert.Equal(t, 0, runCLI("sfdata", "purge", "--since-batch=1910", "--i-understand-what-im-doing", "--debug-for-key=012345678")) // pour couvrir PurgeBatchOne()
+		assert.Equal(t, 0, runCLI("sfdata", "parseFile", "--parser=diane", "--file=lib/diane/testData/dianeTestData.txt"))
+		assert.Equal(t, 2, runCLI("sfdata", "check"))                         // => "Erreur: paramètre `batch` obligatoire."
+		assert.Equal(t, 3, runCLI("sfdata", "pruneEntities", "--batch=1910")) // => "Erreur: Ce batch ne spécifie pas de filtre"
 	})
 
-// 	t.Run("Les données importées sont validées par MongoDB", func(t *testing.T) {
-// 		// Création d'une collection associée au schéma de validation de données JSON de ImportedData
-// 		colName := "FakeImportedData"
-// 		err := engine.CreateImportedDataCollection(db, colName)
-// 		if assert.NoError(t, err) {
-// 			coll := db.C(colName)
-// 			// L'insertion d'un document valide ne doit pas provoquer d'erreur
-// 			assert.NoError(t, coll.Insert(bson.M{
-// 				"value": bson.M{
-// 					"scope": "entreprise",
-// 					"key":   "000000002",
-// 					"batch": bson.M{
-// 						"2002_2": bson.M{
-// 							"paydex": bson.M{
-// 								"afafafafafafaf": bson.M{"date_valeur": time.Now(), "nb_jours": 4},
-// 							},
-// 						},
-// 					},
-// 				},
-// 			}))
-// 			// L'insertion d'un document invalide doit provoquer une erreur
-// 			assert.EqualError(t, coll.Insert(bson.M{"a": 1}), "Document failed validation")
-// 		}
-// 	})
+	// 	t.Run("Les données importées sont validées par MongoDB", func(t *testing.T) {
+	// 		// Création d'une collection associée au schéma de validation de données JSON de ImportedData
+	// 		colName := "FakeImportedData"
+	// 		err := engine.CreateImportedDataCollection(db, colName)
+	// 		if assert.NoError(t, err) {
+	// 			coll := db.C(colName)
+	// 			// L'insertion d'un document valide ne doit pas provoquer d'erreur
+	// 			assert.NoError(t, coll.Insert(bson.M{
+	// 				"value": bson.M{
+	// 					"scope": "entreprise",
+	// 					"key":   "000000002",
+	// 					"batch": bson.M{
+	// 						"2002_2": bson.M{
+	// 							"paydex": bson.M{
+	// 								"afafafafafafaf": bson.M{"date_valeur": time.Now(), "nb_jours": 4},
+	// 							},
+	// 						},
+	// 					},
+	// 				},
+	// 			}))
+	// 			// L'insertion d'un document invalide doit provoquer une erreur
+	// 			assert.EqualError(t, coll.Insert(bson.M{"a": 1}), "Document failed validation")
+	// 		}
+	// 	})
 }
 
 func startMongoContainer(t *testing.T) {

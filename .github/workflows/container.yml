@@ -28,10 +28,10 @@ jobs:
         run: npm install --prefer-offline --no-audit
         working-directory: js
 
-      - name: Set up Go 1.14
+      - name: Set up Go
         uses: actions/setup-go@v3
         with:
-          go-version: 1.14
+          go-version: "1.20"
         id: go
 
       - name: Prepare container sources & resources

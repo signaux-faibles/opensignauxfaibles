@@ -4,8 +4,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/signaux-faibles/opensignauxfaibles/lib/misc"
 	"github.com/stretchr/testify/assert"
+
+	"opensignauxfaibles/lib/misc"
 )
 
 func TestUrssafToDate(t *testing.T) {
