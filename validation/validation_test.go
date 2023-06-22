@@ -4,16 +4,16 @@ import (
 	"encoding/json"
 	"errors"
 	"flag"
-	"io/ioutil"
+	"os"
 	"reflect"
 	"strings"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
+
 	"opensignauxfaibles/lib/apconso"
 	"opensignauxfaibles/lib/apdemande"
-	"opensignauxfaibles/lib/bdf"
 	"opensignauxfaibles/lib/diane"
 	"opensignauxfaibles/lib/ellisphere"
 	"opensignauxfaibles/lib/paydex"
@@ -113,7 +113,6 @@ func TestTypeAlignment(t *testing.T) {
 	typesToCompare := map[string]interface{}{
 		"apconso.schema.json":      apconso.APConso{},
 		"apdemande.schema.json":    apdemande.APDemande{},
-		"bdf.schema.json":          bdf.BDF{},
 		"ccsf.schema.json":         urssaf.CCSF{},
 		"compte.schema.json":       urssaf.Compte{},
 		"cotisation.schema.json":   urssaf.Cotisation{},
@@ -131,7 +130,7 @@ func TestTypeAlignment(t *testing.T) {
 	}
 
 	t.Run("chaque fichier JSON Schema est couvert par un test d'alignement avec son type Go correspondant", func(t *testing.T) {
-		files, err := ioutil.ReadDir(".")
+		files, err := os.ReadDir(".")
 		if err != nil {
 			t.Fatal(err)
 		}

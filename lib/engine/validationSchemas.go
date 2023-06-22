@@ -3,7 +3,7 @@
 package engine
 
 var validationSchemas = map[string]string{
-"apconso.schema.json": `{
+	"apconso.schema.json": `{
   "title": "EntréeApConso",
   "description": "Champs importés par le parseur lib/apconso/main.go de sfdata.",
   "bsonType": "object",
@@ -33,7 +33,7 @@ var validationSchemas = map[string]string{
   "additionalProperties": false
 }
 `,
-"apdemande.schema.json": `{
+	"apdemande.schema.json": `{
   "title": "EntréeApDemande",
   "description": "Champs importés par le parseur lib/apdemande/main.go de sfdata.",
   "bsonType": "object",
@@ -114,74 +114,7 @@ var validationSchemas = map[string]string{
   "additionalProperties": false
 }
 `,
-"bdf.schema.json": `{
-  "title": "EntréeBdf",
-  "description": "Champs importés par le parseur lib/bdf/main.go de sfdata.",
-  "bsonType": "object",
-  "required": [
-    "siren",
-    "annee_bdf",
-    "arrete_bilan_bdf",
-    "raison_sociale",
-    "secteur",
-    "poids_frng",
-    "taux_marge",
-    "delai_fournisseur",
-    "dette_fiscale",
-    "financier_court_terme",
-    "frais_financier"
-  ],
-  "properties": {
-    "arrete_bilan_bdf": {
-      "description": "Date de clôture de l'exercice.",
-      "bsonType": "date"
-    },
-    "annee_bdf": {
-      "description": "Année de l'exercice.",
-      "bsonType": "number"
-    },
-    "raison_sociale": {
-      "description": "Raison sociale de l'entreprise.",
-      "bsonType": "string"
-    },
-    "secteur": {
-      "description": "Secteur d'activité.",
-      "bsonType": "string"
-    },
-    "siren": {
-      "description": "Siren de l'entreprise.",
-      "bsonType": "string",
-      "pattern": "^[0-9]{9}$"
-    },
-    "poids_frng": {
-      "description": "Poids du fonds de roulement net global sur le chiffre d'affaire. Exprimé en %.",
-      "bsonType": "number"
-    },
-    "taux_marge": {
-      "description": "Taux de marge, rapport de l'excédent brut d'exploitation (EBE) sur la valeur ajoutée (exprimé en %): 100*EBE / valeur ajoutee",
-      "bsonType": "number"
-    },
-    "delai_fournisseur": {
-      "description": "Délai estimé de paiement des fournisseurs (exprimé en jours): 360 * dettes fournisseurs / achats HT",
-      "bsonType": "number"
-    },
-    "dette_fiscale": {
-      "description": "Poids des dettes fiscales et sociales, par rapport à la valeur ajoutée (exprimé en %): 100 * dettes fiscales et sociales / Valeur ajoutee",
-      "bsonType": "number"
-    },
-    "financier_court_terme": {
-      "description": "Poids du financement court terme (exprimé en %): 100 * concours bancaires courants / chiffre d'affaires HT",
-      "bsonType": "number"
-    },
-    "frais_financier": {
-      "description": "Poids des frais financiers, sur l'excedent brut d'exploitation corrigé des produits et charges hors exploitation (exprimé en %): 100 * frais financiers / (EBE + Produits hors expl. - charges hors expl.)",
-      "bsonType": "number"
-    }
-  },
-  "additionalProperties": false
-}
-`,
-"ccsf.schema.json": `{
+	"ccsf.schema.json": `{
   "title": "EntréeCcsf",
   "description": "Champs importés par le parseur lib/urssaf/ccsf.go de sfdata.",
   "bsonType": "object",
@@ -205,7 +138,7 @@ var validationSchemas = map[string]string{
   "additionalProperties": false
 }
 `,
-"compte.schema.json": `{
+	"compte.schema.json": `{
   "title": "EntréeCompte",
   "description": "Champs importés par le parseur lib/urssaf/compte.go de sfdata.",
   "bsonType": "object",
@@ -227,7 +160,7 @@ var validationSchemas = map[string]string{
   "additionalProperties": false
 }
 `,
-"cotisation.schema.json": `{
+	"cotisation.schema.json": `{
   "title": "EntréeCotisation",
   "description": "Champs importés par le parseur lib/urssaf/cotisation.go de sfdata.",
   "bsonType": "object",
@@ -259,7 +192,7 @@ var validationSchemas = map[string]string{
   "additionalProperties": false
 }
 `,
-"debit.schema.json": `{
+	"debit.schema.json": `{
   "title": "EntréeDebit",
   "description": "Champs importés par le parseur lib/sirene_ul/main.go de sfdata. Représente un reste à payer (dette) sur cotisation sociale ou autre.",
   "bsonType": "object",
@@ -340,7 +273,7 @@ var validationSchemas = map[string]string{
   "additionalProperties": false
 }
 `,
-"delai.schema.json": `{
+	"delai.schema.json": `{
   "title": "EntréeDelai",
   "description": "Champs importés par le parseur lib/urssaf/delai.go de sfdata.",
   "bsonType": "object",
@@ -408,7 +341,7 @@ var validationSchemas = map[string]string{
   "additionalProperties": false
 }
 `,
-"detect_invalid_entries.pipeline.json": `[
+	"detect_invalid_entries.pipeline.json": `[
   { "$project": { "_id": 1, "batches": { "$objectToArray": "$value.batch" } } },
   { "$unwind": { "path": "$batches", "preserveNullAndEmptyArrays": false } },
   {
@@ -432,7 +365,7 @@ var validationSchemas = map[string]string{
   { "$match": { "dataPerHash": { "$not": { "$type": 3 } } } }
 ]
 `,
-"diane.schema.json": `{
+	"diane.schema.json": `{
   "title": "EntréeDiane",
   "description": "Champs importés par le parseur lib/diane/main.go de sfdata.",
   "bsonType": "object",
@@ -761,7 +694,7 @@ var validationSchemas = map[string]string{
   "additionalProperties": false
 }
 `,
-"effectif.schema.json": `{
+	"effectif.schema.json": `{
   "title": "EntréeEffectif",
   "description": "Champs importés par le parseur lib/urssaf/effectif.go de sfdata.",
   "bsonType": "object",
@@ -782,7 +715,7 @@ var validationSchemas = map[string]string{
   "additionalProperties": false
 }
 `,
-"effectif_ent.schema.json": `{
+	"effectif_ent.schema.json": `{
   "title": "EntréeEffectifEnt",
   "description": "Champs importés par le parseur lib/urssaf/effectif_ent.go de sfdata.",
   "bsonType": "object",
@@ -799,7 +732,7 @@ var validationSchemas = map[string]string{
   "additionalProperties": false
 }
 `,
-"ellisphere.schema.json": `{
+	"ellisphere.schema.json": `{
   "title": "EntréeEllisphere",
   "description": "Champs importés par le parseur lib/ellisphere/main.go de sfdata.",
   "bsonType": "object",
@@ -855,7 +788,7 @@ var validationSchemas = map[string]string{
   "additionalProperties": false
 }
 `,
-"flatten_data_entries.pipeline.json": `[
+	"flatten_data_entries.pipeline.json": `[
   { "$project": { "_id": 1, "batches": { "$objectToArray": "$value.batch" } } },
   { "$unwind": { "path": "$batches", "preserveNullAndEmptyArrays": false } },
   {
@@ -890,7 +823,7 @@ var validationSchemas = map[string]string{
   }
 ]
 `,
-"paydex.schema.json": `{
+	"paydex.schema.json": `{
   "title": "EntréePaydex",
   "description": "Champs importés par le parseur lib/paydex/main.go de sfdata.",
   "bsonType": "object",
@@ -906,7 +839,7 @@ var validationSchemas = map[string]string{
   "additionalProperties": false
 }
 `,
-"procol.schema.json": `{
+	"procol.schema.json": `{
   "title": "EntréeDéfaillances",
   "description": "Champs importés par le parseur lib/urssaf/procol.go de sfdata.",
   "bsonType": "object",
@@ -938,7 +871,7 @@ var validationSchemas = map[string]string{
   "additionalProperties": false
 }
 `,
-"sirene.schema.json": `{
+	"sirene.schema.json": `{
   "title": "EntréeSirene",
   "description": "Champs importés par le parseur lib/sirene/main.go de sfdata.",
   "bsonType": "object",
@@ -1044,7 +977,7 @@ var validationSchemas = map[string]string{
   "additionalProperties": false
 }
 `,
-"sirene_ul.schema.json": `{
+	"sirene_ul.schema.json": `{
   "title": "EntréeSireneEntreprise",
   "description": "Champs importés par le parseur lib/sirene_ul/main.go de sfdata.",
   "bsonType": "object",
