@@ -6,7 +6,7 @@ set -e # will stop the script if any command fails with a non-zero exit code
 ./generate-types.sh
 
 # Run typescript transpiler, to generate .js files from .ts files.
-$(npm bin)/tsc --p "tsconfig-transpilation.json"
+./node_modules/.bin/tsc --p "tsconfig-transpilation.json"
 
 # Exclude JavaScript keywords that are not supported by MongoDB.
 perl -pi'' -e 's/^const .*$//g;' -e 's/^export //;' -e 's/^import .*$//g' ./**/*.js
@@ -17,7 +17,7 @@ perl -pi'' -e 's/^const .*$//g;' -e 's/^export //;' -e 's/^import .*$//g' ./**/*
 function checkJS {
   FILES="$1"
   GLOBALS="$2"
-  $(npm bin)/eslint --no-eslintrc \
+  ./node_modules/.bin/eslint --no-eslintrc \
     --parser-options=ecmaVersion:6 --env es6 \
     --rule "no-undef:2" --quiet \
     --ignore-pattern "functions.js" \
