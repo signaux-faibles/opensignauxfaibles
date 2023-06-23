@@ -5,7 +5,6 @@ import {
   EntréeCompte,
   EntréeDelai,
   EntréeDéfaillances,
-  EntréeDiane,
   EntréeEllisphere,
   EntréePaydex,
   EntréeSirene,
@@ -13,7 +12,6 @@ import {
 } from "../GeneratedTypes"
 import { CompanyDataValues, BatchKey } from "../RawDataTypes"
 import { SortieDebit } from "./debits"
-import { Bdf } from "./bdf"
 
 type SortieMapCommon = {
   key: string
@@ -38,8 +36,6 @@ type SortieMapEtablissement = SortieMapCommon & {
 }
 
 type SortieMapEntreprise = SortieMapCommon & {
-  diane: EntréeDiane[]
-  bdf: Bdf[]
   sirene_ul: EntréeSireneEntreprise
   ellisphere: EntréeEllisphere
   paydex: EntréePaydex[]
@@ -83,8 +79,6 @@ export function map(this: Input): void {
     emit("etablissement_" + this.value.key, vcmde)
   } else if (this.value.scope === "entreprise") {
     const v: Partial<SortieMapEntreprise> = {}
-    const diane = f.diane(value.diane)
-    const bdf = f.bdf(value.bdf)
     const sirene_ul = Object.values(value.sirene_ul ?? {})[0] ?? null
     const ellisphere = Object.values(value.ellisphere ?? {})[0] ?? null
 
@@ -102,12 +96,6 @@ export function map(this: Input): void {
     v.key = this.value.key
     v.batch = actual_batch
 
-    if (diane.length > 0) {
-      v.diane = diane
-    }
-    if (bdf.length > 0) {
-      v.bdf = bdf
-    }
     if (sirene_ul) {
       v.sirene_ul = sirene_ul
     }

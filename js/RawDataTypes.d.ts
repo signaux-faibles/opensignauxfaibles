@@ -10,7 +10,6 @@ import {
   EntréeDebit,
   EntréeDelai,
   EntréeDéfaillances,
-  EntréeDiane,
   EntréeEffectif,
   EntréeEffectifEnt,
   EntréeEllisphere,
@@ -97,7 +96,6 @@ export type BatchValueProps = CommonBatchProps &
     sirene_ul: ParHash<EntréeSireneEntreprise>
     effectif_ent: ParHash<EntréeEffectifEnt>
     bdf: ParHash<EntréeBdf>
-    diane: ParHash<EntréeDiane>
     ellisphere: ParHash<EntréeEllisphere>
   }
 

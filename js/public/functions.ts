@@ -8,13 +8,11 @@ import { omit } from "../common/omit"
 import { procolToHuman } from "../common/procolToHuman"
 import { apconso } from "./apconso"
 import { apdemande } from "./apdemande"
-import { bdf } from "./bdf"
 import { compte } from "./compte"
 import { cotisations } from "./cotisations"
 import { dateAddDay } from "./dateAddDay"
 import { debits } from "./debits"
 import { delai } from "./delai"
-import { diane } from "./diane"
 import { effectifs } from "./effectifs"
 import { joinUrssaf } from "./joinUrssaf"
 import { sirene } from "./sirene"
@@ -34,8 +32,6 @@ export const f = {
   dateAddDay,
   omit,
   generatePeriodSerie,
-  diane,
-  bdf,
   joinUrssaf,
   procolToHuman,
   compareDebit,

@@ -730,17 +730,6 @@ function reduce(key, values // chaque element contient plusieurs batches pour ce
 			"apdemande": `function apdemande(apdemande) {
     return Object.values(apdemande !== null && apdemande !== void 0 ? apdemande : {}).sort((p1, p2) => p1.periode.start.getTime() < p2.periode.start.getTime() ? 1 : -1);
 }`,
-			"bdf": `function bdf(hs) {
-    "use strict";
-    const bdf = f.makePeriodeMap();
-    // Déduplication par arrete_bilan_bdf
-    for (const b of Object.values(hs !== null && hs !== void 0 ? hs : {})) {
-        if (b.arrete_bilan_bdf !== undefined) {
-            bdf.set(b.arrete_bilan_bdf, b);
-        }
-    }
-    return [...bdf.values()].sort((a, b) => (a.annee_bdf < b.annee_bdf ? 1 : -1));
-}`,
 			"compte": `function compte(compte) {
     const c = Object.values(compte !== null && compte !== void 0 ? compte : {});
     return c.length > 0 ? c[c.length - 1] : undefined;
@@ -925,8 +914,6 @@ function reduce(key, values // chaque element contient plusieurs batches pour ce
     }
     else if (this.value.scope === "entreprise") {
         const v = {};
-        const diane = f.diane(value.diane);
-        const bdf = f.bdf(value.bdf);
         const sirene_ul = (_d = Object.values((_c = value.sirene_ul) !== null && _c !== void 0 ? _c : {})[0]) !== null && _d !== void 0 ? _d : null;
         const ellisphere = (_f = Object.values((_e = value.ellisphere) !== null && _e !== void 0 ? _e : {})[0]) !== null && _f !== void 0 ? _f : null;
         if (sirene_ul) {
@@ -934,12 +921,6 @@ function reduce(key, values // chaque element contient plusieurs batches pour ce
         }
         v.key = this.value.key;
         v.batch = actual_batch;
-        if (diane.length > 0) {
-            v.diane = diane;
-        }
-        if (bdf.length > 0) {
-            v.bdf = bdf;
-        }
         if (sirene_ul) {
             v.sirene_ul = sirene_ul;
         }
@@ -1472,13 +1453,6 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
     });
     return donnéesDélaiParPériode;
 }`,
-			"detteFiscale": `function detteFiscale(diane) {
-    "use strict";
-    var _a, _b;
-    const ratio = ((_a = diane["dette_fiscale_et_sociale"]) !== null && _a !== void 0 ? _a : NaN) /
-        ((_b = diane["valeur_ajoutee"]) !== null && _b !== void 0 ? _b : NaN);
-    return isNaN(ratio) ? null : ratio * 100;
-}`,
 			"effectifs": `function effectifs(entréeEffectif, periodes, clé) {
     "use strict";
     var _a;
@@ -1522,128 +1496,6 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
         });
     });
     return sortieEffectif;
-}`,
-			"entr_bdf": `function entr_bdf(donnéesBdf, periodes) {
-    "use strict";
-    const outputBdf = f.makePeriodeMap(periodes.map((période) => [période, {}]));
-    for (const entréeBdf of Object.values(donnéesBdf)) {
-        const periode_arrete_bilan = new Date(Date.UTC(entréeBdf.arrete_bilan_bdf.getUTCFullYear(), entréeBdf.arrete_bilan_bdf.getUTCMonth() + 1, 1, 0, 0, 0, 0));
-        const periode_dispo = f.dateAddMonth(periode_arrete_bilan, 7);
-        const series = f.generatePeriodSerie(periode_dispo, f.dateAddMonth(periode_dispo, 13));
-        for (const periode of series) {
-            const outputInPeriod = outputBdf.get(periode) || {};
-            const periodData = f.omit(entréeBdf, "raison_sociale", "secteur", "siren");
-            // TODO: Éviter d'ajouter des données en dehors de ` + "`" + `periodes` + "`" + `, sans fausser le calcul des données passées (plus bas)
-            Object.assign(outputInPeriod, periodData);
-            if (outputInPeriod.annee_bdf) {
-                outputInPeriod.exercice_bdf = outputInPeriod.annee_bdf - 1;
-            }
-            const pastData = f.omit(periodData, "arrete_bilan_bdf", "annee_bdf");
-            const makePastProp = (prop, offset) => ` + "`" + `${prop}_past_${offset}` + "`" + `;
-            for (const prop of Object.keys(pastData)) {
-                const past_year_offset = [1, 2];
-                for (const offset of past_year_offset) {
-                    const periode_offset = f.dateAddMonth(periode, 12 * offset);
-                    const outputInPast = outputBdf.get(periode_offset);
-                    if (outputInPast) {
-                        outputInPast[makePastProp(prop, offset)] = entréeBdf[prop];
-                    }
-                }
-            }
-            outputBdf.set(periode, outputInPeriod);
-        }
-    }
-    return outputBdf;
-}`,
-			"entr_diane": `function entr_diane(donnéesDiane, output_indexed, periodes) {
-    for (const entréeDiane of Object.values(donnéesDiane)) {
-        if (!entréeDiane.arrete_bilan_diane)
-            continue;
-        //entréeDiane.arrete_bilan_diane = new Date(Date.UTC(entréeDiane.exercice_diane, 11, 31, 0, 0, 0, 0))
-        const periode_arrete_bilan = new Date(Date.UTC(entréeDiane.arrete_bilan_diane.getUTCFullYear(), entréeDiane.arrete_bilan_diane.getUTCMonth() + 1, 1, 0, 0, 0, 0));
-        const periode_dispo = f.dateAddMonth(periode_arrete_bilan, 7); // 01/08 pour un bilan le 31/12, donc algo qui tourne en 01/09
-        const series = f.generatePeriodSerie(periode_dispo, f.dateAddMonth(periode_dispo, 14) // periode de validité d'un bilan auprès de la Banque de France: 21 mois (14+7)
-        );
-        for (const periode of series) {
-            const rest = f.omit(entréeDiane, 
-            // "marquee",
-            "nom_entreprise", "numero_siren", "statut_juridique", "procedure_collective");
-            const makePastProp = (prop, offset) => ` + "`" + `${prop}_past_${offset}` + "`" + `;
-            if (periodes.includes(periode.getTime())) {
-                output_indexed.assign(periode, rest);
-            }
-            for (const ratio of Object.keys(rest)) {
-                if (entréeDiane[ratio] === null) {
-                    const outputAtTime = output_indexed.get(periode);
-                    if (outputAtTime !== undefined &&
-                        periodes.includes(periode.getTime())) {
-                        delete outputAtTime[ratio];
-                    }
-                    continue;
-                }
-                // Passé
-                const past_year_offset = [1, 2];
-                for (const offset of past_year_offset) {
-                    const periode_offset = f.dateAddMonth(periode, 12 * offset);
-                    const variable_name = makePastProp(ratio, offset);
-                    const outputAtOffset = output_indexed.get(periode_offset);
-                    if (outputAtOffset !== undefined &&
-                        ratio !== "arrete_bilan_diane" &&
-                        ratio !== "exercice_diane") {
-                        outputAtOffset[variable_name] = entréeDiane[ratio];
-                    }
-                }
-            }
-        }
-        for (const periode of series) {
-            const inputInPeriod = output_indexed.get(periode);
-            const outputInPeriod = output_indexed.get(periode);
-            if (periodes.includes(periode.getTime()) &&
-                inputInPeriod &&
-                outputInPeriod) {
-                // Recalcul BdF si ratios bdf sont absents
-                if (!("poids_frng" in inputInPeriod)) {
-                    const poids = f.poidsFrng(entréeDiane);
-                    if (poids !== null)
-                        outputInPeriod.poids_frng = poids;
-                }
-                if (!("dette_fiscale" in inputInPeriod)) {
-                    const dette = f.detteFiscale(entréeDiane);
-                    if (dette !== null)
-                        outputInPeriod.dette_fiscale = dette;
-                }
-                if (!("frais_financier" in inputInPeriod)) {
-                    const frais = f.fraisFinancier(entréeDiane);
-                    if (frais !== null)
-                        outputInPeriod.frais_financier = frais;
-                }
-                // TODO: mettre en commun population des champs _past_ avec bdf ?
-                const bdf_vars = [
-                    "taux_marge",
-                    "poids_frng",
-                    "dette_fiscale",
-                    "financier_court_terme",
-                    "frais_financier",
-                ];
-                const past_year_offset = [1, 2];
-                const makePastProp = (clé, offset) => ` + "`" + `${clé}_past_${offset}` + "`" + `;
-                bdf_vars.forEach((k) => {
-                    if (k in outputInPeriod) {
-                        past_year_offset.forEach((offset) => {
-                            const periode_offset = f.dateAddMonth(periode, 12 * offset);
-                            const variable_name = makePastProp(k, offset);
-                            const outputAtOffset = output_indexed.get(periode_offset);
-                            if (outputAtOffset &&
-                                periodes.includes(periode_offset.getTime())) {
-                                outputAtOffset[variable_name] = outputInPeriod[k];
-                            }
-                        });
-                    }
-                });
-            }
-        }
-    }
-    return output_indexed;
 }`,
 			"entr_paydex": `function entr_paydex(vPaydex, sériePériode) {
     "use strict";
@@ -1753,17 +1605,6 @@ function delais(vDelai, debitParPériode, intervalleTraitement) {
     else {
         return []; // ajouté pour résoudre erreur TS7030 (Not all code paths return a value)
     }
-}`,
-			"fraisFinancier": `function fraisFinancier(diane) {
-    "use strict";
-    var _a, _b, _c, _d, _e, _f;
-    const ratio = ((_a = diane["interets"]) !== null && _a !== void 0 ? _a : NaN) /
-        (((_b = diane["excedent_brut_d_exploitation"]) !== null && _b !== void 0 ? _b : NaN) +
-            ((_c = diane["produits_financiers"]) !== null && _c !== void 0 ? _c : NaN) +
-            ((_d = diane["produit_exceptionnel"]) !== null && _d !== void 0 ? _d : NaN) -
-            ((_e = diane["charge_exceptionnelle"]) !== null && _e !== void 0 ? _e : NaN) -
-            ((_f = diane["charges_financieres"]) !== null && _f !== void 0 ? _f : NaN));
-    return isNaN(ratio) ? null : ratio * 100;
 }`,
 			"lookAhead": `function lookAhead(data, attr_name, // "outcome" | "tag_default" | "tag_failure",
 n_months, // nombre de mois avant/après l'évènement pendant lesquels outcome sera true
@@ -1903,7 +1744,6 @@ function map() {
                 output_indexed.set(periode, {
                     siren: v.key,
                     periode,
-                    exercice_bdf: 0,
                 });
             }
             if (v.sirene_ul) {
@@ -1919,31 +1759,6 @@ function map() {
                 const paydexParPériode = f.entr_paydex(v.paydex, serie_periode);
                 f.add(paydexParPériode, output_indexed);
             }
-            v.bdf = v.bdf || {};
-            v.diane = v.diane || {};
-            if (v.bdf) {
-                const outputBdf = f.entr_bdf(v.bdf, periodes);
-                f.add(outputBdf, output_indexed);
-            }
-            if (v.diane) {
-                /*const outputDiane =*/ f.entr_diane(v.diane, output_indexed, periodes);
-                // f.add(outputDiane, output_indexed)
-                // TODO: rendre f.entr_diane() pure, c.a.d. faire en sorte qu'elle ne modifie plus output_indexed directement
-            }
-            serie_periode.forEach((date) => {
-                const entrData = output_indexed.get(date);
-                if ((entrData === null || entrData === void 0 ? void 0 : entrData.arrete_bilan_bdf) !== undefined ||
-                    (entrData === null || entrData === void 0 ? void 0 : entrData.arrete_bilan_diane) !== undefined) {
-                    emit({
-                        batch: actual_batch,
-                        siren: this._id.substring(0, 9),
-                        periode: entrData.periode,
-                        type: "other",
-                    }, {
-                        entreprise: entrData,
-                    });
-                }
-            });
         }
     }
 }`,
@@ -1974,12 +1789,6 @@ function outputs(v, serie_periode) {
         output_indexed.set(val.periode, val);
     }
     return [output_array, output_indexed];
-}`,
-			"poidsFrng": `function poidsFrng(diane) {
-    "use strict";
-    return typeof diane["couverture_ca_fdr"] === "number"
-        ? (diane["couverture_ca_fdr"] / 360) * 100
-        : null;
 }`,
 			"populateNafAndApe": `function populateNafAndApe(output_indexed, naf) {
     "use strict";
@@ -2050,13 +1859,6 @@ function outputs(v, serie_periode) {
             }
         }
     });
-}`,
-			"tauxMarge": `function tauxMarge(diane) {
-    "use strict";
-    var _a, _b;
-    const ratio = ((_a = diane["excedent_brut_d_exploitation"]) !== null && _a !== void 0 ? _a : NaN) /
-        ((_b = diane["valeur_ajoutee"]) !== null && _b !== void 0 ? _b : NaN);
-    return isNaN(ratio) ? null : ratio * 100;
 }`,
 		}, nil
 	},

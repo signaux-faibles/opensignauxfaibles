@@ -15,17 +15,12 @@ import { cotisation } from "./cotisation"
 import { cotisationsdettes } from "./cotisationsdettes"
 import { defaillances } from "./defaillances"
 import { delais } from "./delais"
-import { detteFiscale } from "./detteFiscale"
 import { effectifs } from "./effectifs"
-import { entr_bdf } from "./entr_bdf"
-import { entr_diane } from "./entr_diane"
 import { entr_paydex } from "./entr_paydex"
 import { entr_sirene } from "./entr_sirene"
-import { fraisFinancier } from "./fraisFinancier"
 import { lookAhead } from "./lookAhead"
 import { nbDays } from "./nbDays"
 import { outputs } from "./outputs"
-import { poidsFrng } from "./poidsFrng"
 import { populateNafAndApe } from "./populateNafAndApe"
 import { repeatable } from "./repeatable"
 import { sirene } from "./sirene"
@@ -51,12 +46,7 @@ export const f = {
   entr_sirene,
   dateAddMonth,
   generatePeriodSerie,
-  poidsFrng,
-  detteFiscale,
-  fraisFinancier,
-  entr_bdf,
   omit,
-  entr_diane,
   entr_paydex,
   lookAhead,
   compareDebit,

@@ -1,8 +1,6 @@
 import { f } from "./functions"
 import { CompanyDataValues, BatchKey, Siret, Siren } from "../RawDataTypes"
-import { SortieBdf } from "./entr_bdf"
 import { SortiePaydex } from "./entr_paydex"
-import { SortieDiane } from "./entr_diane"
 import { SortieSireneEntreprise } from "./entr_sirene"
 import { DonnéesAgrégées } from "./outputs"
 import { NAF } from "./populateNafAndApe"
@@ -13,9 +11,7 @@ export type SortieMapEntreprise = {
   siren: Siren
   periode: Date
 } & Partial<SortieSireneEntreprise> &
-  Partial<SortieBdf> &
   Partial<SortiePaydex> &
-  Partial<SortieDiane> &
   Partial<SortieEffectifs<"effectif_ent">>
 
 export type SortieMapEtablissement = Partial<DonnéesAgrégées>
@@ -182,7 +178,6 @@ export function map(this: EntréeMap): void {
         output_indexed.set(periode, {
           siren: v.key,
           periode,
-          exercice_bdf: 0,
         })
       }
 
@@ -206,40 +201,6 @@ export function map(this: EntréeMap): void {
         const paydexParPériode = f.entr_paydex(v.paydex, serie_periode)
         f.add(paydexParPériode, output_indexed)
       }
-
-      v.bdf = v.bdf || {}
-      v.diane = v.diane || {}
-
-      if (v.bdf) {
-        const outputBdf = f.entr_bdf(v.bdf, periodes)
-        f.add(outputBdf, output_indexed)
-      }
-
-      if (v.diane) {
-        /*const outputDiane =*/ f.entr_diane(v.diane, output_indexed, periodes)
-        // f.add(outputDiane, output_indexed)
-        // TODO: rendre f.entr_diane() pure, c.a.d. faire en sorte qu'elle ne modifie plus output_indexed directement
-      }
-
-      serie_periode.forEach((date) => {
-        const entrData = output_indexed.get(date)
-        if (
-          entrData?.arrete_bilan_bdf !== undefined ||
-          entrData?.arrete_bilan_diane !== undefined
-        ) {
-          emit(
-            {
-              batch: actual_batch,
-              siren: this._id.substring(0, 9),
-              periode: entrData.periode,
-              type: "other",
-            },
-            {
-              entreprise: entrData,
-            }
-          )
-        }
-      })
     }
   }
 }
