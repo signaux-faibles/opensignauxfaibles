@@ -8,7 +8,7 @@ require (
 	github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/viper v1.16.0
-	github.com/stretchr/testify v1.8.3
+	github.com/stretchr/testify v1.8.4
 	github.com/tealeg/xlsx/v3 v3.3.0
 	golang.org/x/text v0.10.0
 )
