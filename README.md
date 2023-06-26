@@ -30,12 +30,19 @@ Contact: [contact@signaux-faibles.beta.gouv.fr](mailto:contact@signaux-faibles.b
 ```bash
 $ git clone https://github.com/signaux-faibles/opensignauxfaibles.git
 $ cd opensignauxfaibles
+$ cd js
+$ nvm use # pour utiliser la version de Node.js spécifiée dans .nvmrc
+$ npm install # pour installer les dépendances
+$ npm test # pour exécuter les tests unitaires et d'intégration, tel que décrit dans package.json
+$ cd ..
 $ go generate ./...
 $ make build
 $ go test ./...
 ```
 
 Dans l'arbre de sources de l'installation go, vous trouverez tous les répertoires nécessaires à l'exécution.
+
+Avant de démarrer les test il est nécessaire de lancer le démon Docker.
 
 ## Configuration
 
