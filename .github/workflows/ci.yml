@@ -14,7 +14,7 @@ jobs:
       - uses: actions/setup-go@v4
         with:
           go-version: "1.20"
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - run: go test -v -coverprofile=go-coverage.out -covermode=atomic -coverpkg=./... ./...
       - name: Show coverage
         run: go tool cover -func=go-coverage.out
@@ -32,7 +32,7 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: 20.3
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/cache@v3
         with:
           path: ~/.npm
@@ -62,7 +62,7 @@ jobs:
       - uses: actions/setup-go@v4
         with:
           go-version: "1.20"
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - run: make build
       - uses: actions/setup-node@v2 # TODO utiliser la version nvmrc
         with:
@@ -94,7 +94,7 @@ jobs:
         with:
           go-version: "1.20"
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Reveal golden master files for tests
         uses: entrostat/git-secret-action@v4
@@ -157,7 +157,7 @@ jobs:
       - go-tests
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 #      - uses: actions/download-artifact@v3
 #        with:
 #          name: go-coverage-report
