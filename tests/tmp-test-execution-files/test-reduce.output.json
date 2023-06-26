@@ -1,0 +1,5 @@
+// db.Journal:
+2023-06-23T13:03:22.898+0000 E  QUERY    [js] uncaught exception: TypeError: report.event is undefined :
+@file.js:7:3
+2023-06-23T13:03:22.898+0000 F  -        [main] failed to load: file.js
+2023-06-23T13:03:22.898+0000 E  -        [main] exiting with code -3
