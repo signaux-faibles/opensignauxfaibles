@@ -158,10 +158,10 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v2
-#      - uses: actions/download-artifact@v2
+#      - uses: actions/download-artifact@v3
 #        with:
 #          name: go-coverage-report
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         with:
           name: mr-coverage-report
       - run: cat lcov.info
