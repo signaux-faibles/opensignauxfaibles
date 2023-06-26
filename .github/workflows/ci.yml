@@ -20,7 +20,7 @@ jobs:
         run: go tool cover -func=go-coverage.out
 #      - name: Generate coverage report
 #        run: go run github.com/richardlt/gocover-cobertura < go-coverage.out > go-coverage.xml
-#      - uses: actions/upload-artifact@v2
+#      - uses: actions/upload-artifact@v3
 #        with:
 #          name: go-coverage-report
 #          path: go-coverage.xml
@@ -33,7 +33,7 @@ jobs:
         with:
           node-version: 20.3
       - uses: actions/checkout@v2
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
@@ -50,7 +50,7 @@ jobs:
       - name: Run tests + generate coverage report
         working-directory: js
         run: npm run test:coverage # stores the coverage report in ./coverage/lcov.info
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: mr-coverage-report
           path: js/coverage/lcov.info
@@ -67,7 +67,7 @@ jobs:
       - uses: actions/setup-node@v2 # TODO utiliser la version nvmrc
         with:
           node-version: 20.3
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
