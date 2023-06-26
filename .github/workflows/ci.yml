@@ -42,13 +42,13 @@ jobs:
       - run: npm install --prefer-offline --no-audit
         working-directory: js
       - name: Reveal golden master files for tests
-        env:
-          GPG_PRIVATE_KEY_FOR_GIT_SECRET: ${{ secrets.GPG_PRIVATE_KEY_FOR_GIT_SECRET }}
-        run: |
-          sudo apt-get install git-secret # to decrypt golden master files, for tests
-          echo "${GPG_PRIVATE_KEY_FOR_GIT_SECRET}" > ./private_key.gpg
-          gpg --import --no-tty --batch --yes ./private_key.gpg
-          git secret reveal
+        uses: entrostat/git-secret-action@v4
+        with:
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY_FOR_GIT_SECRET }}
+          # The passphrase is optional, you can leave
+          # the line below out if you don't have one
+          gpg-private-key-passphrase: ${{ secrets.GPG_PRIVATE_KEY_PASSPHRASE }}
+
       - name: Run tests + generate coverage report
         working-directory: js
         run: npm run test:coverage # stores the coverage report in ./coverage/lcov.info
