@@ -18,7 +18,7 @@ then
 else
     # Diff between expected and actual output
     echo -e "${COLOR_YELLOW}"
-    diff --brief "${GOLDEN_FILE}" "${OUTPUT_FILE}" # if differences are found, the script will exit with a non-zero exit code
+    diff  "${GOLDEN_FILE}" "${OUTPUT_FILE}" # if differences are found, the script will exit with a non-zero exit code
     echo -e "${COLOR_DEFAULT}"
     echo "✅ ${OUTPUT_FILE} matches the golden master file."
 fi
