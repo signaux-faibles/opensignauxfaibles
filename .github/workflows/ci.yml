@@ -11,10 +11,10 @@ jobs:
     name: Go tests
     runs-on: ubuntu-22.04
     steps:
+      - uses: actions/checkout@v3
       - uses: actions/setup-go@v4
         with:
-          go-version: "1.20"
-      - uses: actions/checkout@v3
+          go-version-file: ./go.mod
       - run: go test -v -coverprofile=go-coverage.out -covermode=atomic -coverpkg=./... ./...
       - name: Show coverage
         run: go tool cover -func=go-coverage.out
@@ -59,10 +59,10 @@ jobs:
     name: Generate and lint
     runs-on: ubuntu-22.04
     steps:
+      - uses: actions/checkout@v3
       - uses: actions/setup-go@v4
         with:
-          go-version: "1.20"
-      - uses: actions/checkout@v3
+          go-version-file: ./go.mod
       - run: make build
       - uses: actions/setup-node@v3
         with:
@@ -90,11 +90,11 @@ jobs:
     name: End-to-end tests
     runs-on: ubuntu-22.04
     steps:
+      - uses: actions/checkout@v3
+
       - uses: actions/setup-go@v4
         with:
-          go-version: "1.20"
-
-      - uses: actions/checkout@v3
+          go-version-file: ./go.mod
 
       - name: Reveal golden master files for tests
         uses: entrostat/git-secret-action@v4
