@@ -1,4 +1,4 @@
-import test, { ExecutionContext } from "ava"
+import test from "ava"
 import { cibleApprentissage } from "./cibleApprentissage"
 import { parPériode } from "../test/helpers/parPeriode"
 
@@ -103,7 +103,7 @@ const testCases: TestCase[] = [
 ]
 
 testCases.forEach(({ expected, data, n_months }, name) => {
-  test.serial(`cibleApprentissage(): ${name}`, (t: ExecutionContext) => {
+  test.serial(`cibleApprentissage(): ${name}`, (t: test) => {
     const actual = cibleApprentissage(data, n_months)
     t.deepEqual(actual, expected)
   })

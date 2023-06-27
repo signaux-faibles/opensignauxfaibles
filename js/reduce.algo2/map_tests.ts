@@ -33,7 +33,7 @@ function initGlobalParams(dateDebut: Date, dateFin: Date) {
   })
 }
 
-test("map() retourne les même données que d'habitude", (t) => {
+test("map() retourne les même données que d'habitude", (t: test) => {
   initGlobalParams(DATE_DEBUT, DATE_FIN)
   const results = indexMapResultsByKey(runMongoMap(map, testData))
   t.snapshot(results)

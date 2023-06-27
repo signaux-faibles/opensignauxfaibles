@@ -2,7 +2,7 @@
 
 // $ cd js && $(npm bin)/ava ./purgeBatch/ava_tests.ts
 
-import test, { ExecutionContext } from "ava"
+import test from "ava"
 import { map } from "../purgeBatch/map"
 import { reduce } from "../purgeBatch/reduce"
 import { finalize } from "../purgeBatch/finalize"
@@ -12,7 +12,7 @@ import { CompanyDataValues } from "../RawDataTypes"
 
 test.serial(
   `purgeBatch() ne conserve que les données des batches antérieurs au batch fourni`,
-  (t: ExecutionContext) => {
+  (t: test) => {
     setGlobals({ fromBatchKey: "1911_2" }) // important: utiliser test.serial() pour que ces paramètres ne soient utilisés que pour ce test
     const rawData: CompanyDataValues = {
       batch: {

@@ -81,7 +81,7 @@ const makeInput = (
 // Tests
 test.serial(
   "l'ordre de traitement des données n'influe pas sur les résultats",
-  (t) => {
+  (t: test) => {
     testCases.forEach(({ _id, value }) => {
       initGlobalParams(new Date("2014-01-01"), new Date("2018-02-01"))
       const values = Object.values(
@@ -104,7 +104,7 @@ test.serial(
 
 test.serial(
   "delai_deviation_remboursement est calculé à partir d'un débit et d'une demande de délai de règlement de cotisations sociales",
-  (t) => {
+  (t: test) => {
     const dateDebut = new Date("2018-01-01")
     const dateFin = new Date("2018-02-01")
     initGlobalParams(dateDebut, dateFin)
@@ -119,7 +119,7 @@ test.serial(
 
 test.serial(
   `algo2.map() retourne les propriétés d'entreprise attendues par l'algo d'apprentissage`,
-  (t) => {
+  (t: test) => {
     const siren = "012345678"
     const dateDébut = new Date("2015-12-01T00:00:00.000+0000")
     const dateFin = new Date("2016-02-01T00:00:00.000+0000")
@@ -160,7 +160,7 @@ test.serial(
 
 test.serial(
   `algo2.map() retourne les propriétés d'établissements attendues par l'algo d'apprentissage`,
-  (t) => {
+  (t: test) => {
     const siret = "012345678901234"
     const dateDébut = new Date("2015-12-01T00:00:00.000+0000")
     const dateFin = new Date("2016-02-01T00:00:00.000+0000")

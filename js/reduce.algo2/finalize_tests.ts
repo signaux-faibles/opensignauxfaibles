@@ -10,7 +10,7 @@ const clé = {
   type: "other" as CléSortieMap["type"],
 }
 
-test(`finalize() fait la somme des effectifs des établissement rattachés à l'entreprise`, (t) => {
+test(`finalize() fait la somme des effectifs des établissement rattachés à l'entreprise`, (t: test) => {
   const results = finalize(clé, {
     siret1: { effectif: 3 },
     siret2: { effectif: 4 },
@@ -29,7 +29,7 @@ test(`finalize() fait la somme des effectifs des établissement rattachés à l'
   ] as unknown)
 })
 
-test(`finalize() fait la somme des heures d'activité partielle des établissement rattachés à l'entreprise`, (t) => {
+test(`finalize() fait la somme des heures d'activité partielle des établissement rattachés à l'entreprise`, (t: test) => {
   const results = finalize(clé, {
     siret1: { apart_heures_consommees: 3 },
     siret2: { apart_heures_consommees: 4 },
@@ -48,7 +48,7 @@ test(`finalize() fait la somme des heures d'activité partielle des établisseme
   ] as unknown)
 })
 
-test(`finalize() calcule la dette totale de l'entreprise à partir de celle des établissement`, (t) => {
+test(`finalize() calcule la dette totale de l'entreprise à partir de celle des établissement`, (t: test) => {
   const results = finalize(clé, {
     siret1: { montant_part_patronale: 3 },
     siret2: { montant_part_ouvriere: 4 },
@@ -67,7 +67,7 @@ test(`finalize() calcule la dette totale de l'entreprise à partir de celle des 
   ] as unknown)
 })
 
-test("finalize() retourne un tableau vide au dela de 1500 établissements pour une même entreprise", (t) => {
+test("finalize() retourne un tableau vide au dela de 1500 établissements pour une même entreprise", (t: test) => {
   const clé = {
     batch: "dummy",
     siren: "012345678",
@@ -84,7 +84,7 @@ test("finalize() retourne un tableau vide au dela de 1500 établissements pour u
   t.deepEqual(results, [])
 })
 
-test("finalize() retourne un objet incomplet en cas de dépassement de taille autorisée", (t) => {
+test("finalize() retourne un objet incomplet en cas de dépassement de taille autorisée", (t: test) => {
   setGlobals({ print: () => {} }) // eslint-disable-line @typescript-eslint/no-empty-function
   const clé = {
     batch: "x".repeat(16777216), // cf maxBsonSize de finalize.ts

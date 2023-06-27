@@ -4,7 +4,7 @@
 // sur le jeu de données minimal utilisé dans notre suite de bout en bout
 // définie dans test.sh.
 
-import test, { ExecutionContext } from "ava"
+import test from "ava"
 import { map } from "./map"
 import { reduce } from "./reduce"
 import { finalize } from "./finalize"
@@ -80,31 +80,25 @@ const expectedFinalizeResultValue = {
 
 // exécution complète de la chaine "compact"
 
-test.serial(
-  `compact.map() groupe les données par siret`,
-  (t: ExecutionContext) => {
-    const mapResults = runMongoMap(map, [
-      {
-        _id: null,
-        value: { ...importedData.value } as CompanyDataValuesWithFlags,
-      },
-    ])
-    t.deepEqual(mapResults, [expectedMapResult])
-  }
-)
+test.serial(`compact.map() groupe les données par siret`, (t: test) => {
+  const mapResults = runMongoMap(map, [
+    {
+      _id: null,
+      value: { ...importedData.value } as CompanyDataValuesWithFlags,
+    },
+  ])
+  t.deepEqual(mapResults, [expectedMapResult])
+})
 
-test.serial(
-  `compact.reduce() agrège les données par entreprise`,
-  (t: ExecutionContext) => {
-    const reduceValues = [expectedMapResult.value]
-    const reduceResults = reduce(siret, reduceValues)
-    t.deepEqual(reduceResults, expectedReduceResults)
-  }
-)
+test.serial(`compact.reduce() agrège les données par entreprise`, (t: test) => {
+  const reduceValues = [expectedMapResult.value]
+  const reduceResults = reduce(siret, reduceValues)
+  t.deepEqual(reduceResults, expectedReduceResults)
+})
 
 test.serial(
   `compact.finalize() intègre des clés d'échantillonage pour chaque période`,
-  (t: ExecutionContext) => {
+  (t: test) => {
     setGlobals({ serie_periode: dates }) // used by complete_reporder(), which is called by finalize()
     const finalizeResult = finalize(siret, expectedReduceResults)
     const { reporder } = finalizeResult.batch[fromBatchKey] || {}

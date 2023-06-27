@@ -4,7 +4,7 @@
 //
 // => Penser à ajouter les nouveaux types dans rawEtabData et rawEntrData.
 //
-import test, { ExecutionContext } from "ava"
+import test from "ava"
 import { map } from "../public/map"
 import { reduce } from "../public/reduce"
 import { finalize } from "../public/finalize"
@@ -98,7 +98,7 @@ const expectedReduceResults = expectedMapResult.value
 
 const expectedFinalizeResultValue = expectedMapResult.value
 
-test(`apdemande() classe les entrées par ordre antichronologique`, (t) => {
+test(`apdemande() classe les entrées par ordre antichronologique`, (t: test) => {
   const entrée = {
     hash1: { periode: { start: new Date(0) } } as EntréeApDemande,
     hash2: { periode: { start: new Date(1) } } as EntréeApDemande,
@@ -111,7 +111,7 @@ test(`apdemande() classe les entrées par ordre antichronologique`, (t) => {
 
 test.serial(
   `public.map() retourne toutes les propriétés d'entreprise attendues sur le frontal`,
-  (t: ExecutionContext) => {
+  (t: test) => {
     const rawEntrData: EntrepriseBatchProps = {
       reporder: {},
       paydex: { somehash: { date_valeur: new Date(), nb_jours: 1 } },
@@ -136,7 +136,7 @@ test.serial(
 
 test.serial(
   `public.map() retourne les propriétés d'établissement présentées sur le frontal`,
-  (t: ExecutionContext) => {
+  (t: test) => {
     const mapResults = runMongoMap(map, [{ _id: null, value: rawData }])
     t.deepEqual(mapResults, [expectedMapResult])
   }
@@ -144,7 +144,7 @@ test.serial(
 
 test.serial(
   `public.reduce() retourne les propriétés d'établissement, telles quelles`,
-  (t: ExecutionContext) => {
+  (t: test) => {
     const reduceValues = [expectedMapResult.value]
     const reduceResults = reduce({ scope: rawData.scope }, reduceValues)
     t.deepEqual(reduceResults, expectedReduceResults)
@@ -153,7 +153,7 @@ test.serial(
 
 test.serial(
   `public.finalize() retourne les propriétés d'établissement, telles quelles`,
-  (t: ExecutionContext) => {
+  (t: test) => {
     const finalizeResultValue = finalize(
       { scope: rawData.scope },
       expectedReduceResults

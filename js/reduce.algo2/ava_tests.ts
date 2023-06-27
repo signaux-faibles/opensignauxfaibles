@@ -4,7 +4,7 @@
 // sur le jeu de données minimal utilisé dans notre suite de bout en bout
 // définie dans test.sh.
 
-import test, { ExecutionContext } from "ava"
+import test from "ava"
 import { map, EntréeMap, CléSortieMap, SortieMap } from "./map"
 import { reduce } from "./reduce"
 import { finalize, SortieFinalize } from "./finalize"
@@ -79,37 +79,28 @@ const expectedFinalizeResults = expectedMapResults.map(({ _id }) => ({
 
 // exécution complète de la chaine "reduce.algo2"
 
-test.serial(
-  `reduce.algo2.map() émet un objet par période`,
-  (t: ExecutionContext) => {
-    const mapResults = runMongoMap<EntréeMap, CléSortieMap, SortieMap>(map, [
-      { _id: siret, value: rawData },
-    ])
-    t.deepEqual(mapResults, expectedMapResults)
-  }
-)
+test.serial(`reduce.algo2.map() émet un objet par période`, (t: test) => {
+  const mapResults = runMongoMap<EntréeMap, CléSortieMap, SortieMap>(map, [
+    { _id: siret, value: rawData },
+  ])
+  t.deepEqual(mapResults, expectedMapResults)
+})
 
-test.serial(
-  `reduce.algo2.reduce() émet un objet par période`,
-  (t: ExecutionContext) => {
-    const reduceResults = expectedMapResults.map(({ _id, value }) => {
-      // Note: on suppose qu'il n'y a qu'une valeur par clé
-      return { _id, value: reduce(_id, [value]) }
-    })
-    t.deepEqual(reduceResults, expectedReduceResults)
-  }
-)
+test.serial(`reduce.algo2.reduce() émet un objet par période`, (t: test) => {
+  const reduceResults = expectedMapResults.map(({ _id, value }) => {
+    // Note: on suppose qu'il n'y a qu'une valeur par clé
+    return { _id, value: reduce(_id, [value]) }
+  })
+  t.deepEqual(reduceResults, expectedReduceResults)
+})
 
-test.serial(
-  `reduce.algo2.finalize() émet un objet par période`,
-  (t: ExecutionContext) => {
-    const finalizeResult = expectedReduceResults.map(({ _id, value }) => {
-      // Note: on suppose qu'il n'y a qu'une valeur par clé
-      return {
-        _id,
-        value: finalize(_id, value),
-      }
-    })
-    t.deepEqual(finalizeResult, expectedFinalizeResults)
-  }
-)
+test.serial(`reduce.algo2.finalize() émet un objet par période`, (t: test) => {
+  const finalizeResult = expectedReduceResults.map(({ _id, value }) => {
+    // Note: on suppose qu'il n'y a qu'une valeur par clé
+    return {
+      _id,
+      value: finalize(_id, value),
+    }
+  })
+  t.deepEqual(finalizeResult, expectedFinalizeResults)
+})

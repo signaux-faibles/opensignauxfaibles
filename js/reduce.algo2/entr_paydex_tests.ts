@@ -2,7 +2,7 @@ import test from "ava"
 import { entr_paydex } from "./entr_paydex"
 import { f } from "./functions"
 
-test(`doit retourner paydex_nb_jours pour chaque période`, (t) => {
+test(`doit retourner paydex_nb_jours pour chaque période`, (t: test) => {
   const dateDébut = new Date("2015-12-01T00:00Z")
   const dateFin = new Date("2016-01-01T00:00Z")
   const périodes = [dateDébut, dateFin]
@@ -25,7 +25,7 @@ test(`doit retourner paydex_nb_jours pour chaque période`, (t) => {
   )
 })
 
-test(`doit donner accès au nombre de jours d'il y a 3 mois`, (t) => {
+test(`doit donner accès au nombre de jours d'il y a 3 mois`, (t: test) => {
   const dateDébut = new Date("2015-12-01T00:00Z")
   const dateFin = new Date("2016-03-01T00:00Z")
   const périodes = [dateDébut, dateFin]
@@ -43,7 +43,7 @@ test(`doit donner accès au nombre de jours d'il y a 3 mois`, (t) => {
   t.is(decembre?.paydex_nb_jours_past_3, null)
 })
 
-test(`doit donner accès au nombre de jours d'il y a 6 mois`, (t) => {
+test(`doit donner accès au nombre de jours d'il y a 6 mois`, (t: test) => {
   const dateDébut = new Date("2015-12-01T00:00Z")
   const dateFin = new Date("2016-06-01T00:00Z")
   const périodes = [dateDébut, dateFin]
@@ -61,7 +61,7 @@ test(`doit donner accès au nombre de jours d'il y a 6 mois`, (t) => {
   t.is(decembre?.paydex_nb_jours_past_6, null)
 })
 
-test(`doit donner accès au nombre de jours d'il y a 12 mois`, (t) => {
+test(`doit donner accès au nombre de jours d'il y a 12 mois`, (t: test) => {
   const dateDébut = new Date("2015-12-01T00:00Z")
   const dateFin = new Date("2017-01-01T00:00Z")
   const périodes = f.generatePeriodSerie(dateDébut, dateFin)
