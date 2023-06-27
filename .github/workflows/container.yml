@@ -22,7 +22,7 @@ jobs:
       - name: Set up node
         uses: actions/setup-node@v3
         with:
-          node-version: 20.3
+          node-version-file: ./js/.nvmrc
 
       - name: Prepare js sources
         run: npm install --prefer-offline --no-audit
@@ -31,7 +31,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
-          go-version: "1.20"
+          go-version-file: ./go.mod
         id: go
 
       - name: Prepare container sources & resources
