@@ -13,11 +13,14 @@ function assertEffectif(
   effectifsAttendus: Array<[number | null, boolean]>
 ): void {
   ;[...résultat.values()].forEach(({ effectif, effectif_reporte }, i) => {
-    t.is(
-      effectif,
-      effectifsAttendus[i]?.[0],
-      `valeur inattendue pour la période ${i}`
-    )
+    const effectifAttendu: number | null = effectifsAttendus[i]?.[0] ?? null
+    if (effectifAttendu !== undefined) {
+      t.is(
+        effectif,
+        effectifAttendu,
+        `valeur inattendue pour la période ${i} : ${effectif} au lieu de ${effectifsAttendus}`
+      )
+    }
     t.is(
       effectif_reporte,
       effectifsAttendus[i]?.[1] ? 1 : 0,
