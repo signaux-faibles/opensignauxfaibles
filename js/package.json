@@ -30,7 +30,7 @@
     "prettier": "^2.2.1",
     "ts-node": "^9.1.1",
     "typescript": "^4.2.3",
-    "typescript-json-schema": "^0.50.0"
+    "typescript-json-schema": "^0.51.0"
   },
   "ava": {
     "timeout": "30s",
