@@ -1,4 +1,4 @@
-import test, { ExecutionContext } from "ava"
+import test from "ava"
 import { raison_sociale } from "./raison_sociale"
 
 type Param = string | null | undefined
@@ -36,7 +36,7 @@ testCases.forEach(({ data, expected }) => {
     `raison_sociale(${data.map((param) =>
       param ? param.toString() : typeof param
     )}) === ${expected}`,
-    (t: ExecutionContext) => {
+    (t: test) => {
       const actualResults = raison_sociale(...data)
       t.deepEqual(actualResults, expected)
     }

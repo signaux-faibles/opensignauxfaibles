@@ -1,4 +1,4 @@
-import test, { ExecutionContext } from "ava"
+import test from "ava"
 import { finalize } from "./finalize"
 import { setGlobals } from "../test/helpers/setGlobals"
 import {
@@ -399,7 +399,7 @@ const excludeRandomOrder = (obj: unknown): unknown =>
   )
 
 testCases.forEach(({ testCaseName, expected, finalizeObject }) => {
-  test.serial(`finalize: ${testCaseName}`, (t: ExecutionContext) => {
+  test.serial(`finalize: ${testCaseName}`, (t: test) => {
     setGlobals({ serie_periode: [DATE_DEBUT, DATE_FIN] })
     // exécution du test
     const actual = finalize(SIRET, finalizeObject)

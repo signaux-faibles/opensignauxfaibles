@@ -25,7 +25,7 @@ const initGlobalParams = (dateDebut: Date, dateFin: Date) =>
     serie_periode: generatePeriodSerie(dateDebut, dateFin),
   })
 
-test("l'ordre de traitement des données n'influe pas sur les résultats", (t) => {
+test("l'ordre de traitement des données n'influe pas sur les résultats", (t: test) => {
   initGlobalParams(new Date("2014-01-01"), new Date("2018-02-01"))
 
   const pool = indexMapResultsByKey(
@@ -56,7 +56,7 @@ test("l'ordre de traitement des données n'influe pas sur les résultats", (t) =
 })
 
 // inspiré par reduce.algo2/map_tests.ts et reduce.algo2/algo2_golden_tests.ts
-test("map(), reduce() et finalize() retournent les même données que d'habitude", (t) => {
+test("map(), reduce() et finalize() retournent les même données que d'habitude", (t: test) => {
   initGlobalParams(new Date("2014-01-01"), new Date("2016-01-01"))
 
   const mapResult = runMongoMap<Input, OutKey, OutValue>(map, testCases)

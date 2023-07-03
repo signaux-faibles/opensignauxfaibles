@@ -11,7 +11,7 @@
 // - run `$ git secret reveal` before running these tests;
 // - run `$ git secret hide` (to encrypt changes) after updating.
 
-import test, { ExecutionContext as ExecCtx } from "ava"
+import test from "ava"
 import * as fs from "fs"
 import * as util from "util"
 import { naf } from "../test/data/naf"
@@ -50,7 +50,7 @@ const writeFile = async (filename: string, data: string): Promise<void> => {
 
 // N'affichera le diff complet que si les tests ne tournent pas en CI.
 // (pour éviter une fuite de données privée des fichiers golden master)
-const safeDeepEqual = (t: ExecCtx, actual: unknown, expected: unknown) => {
+const safeDeepEqual = (t: test, actual: unknown, expected: unknown) => {
   if (process.env.CI) {
     const { pass } = compare(actual, expected)
     if (!pass) {
@@ -65,7 +65,7 @@ const safeDeepEqual = (t: ExecCtx, actual: unknown, expected: unknown) => {
 
 test[serialOrSkip](
   "l'application de reduce.algo2 sur reduce_test_data.json donne le même résultat que d'habitude",
-  async (t) => {
+  async (t: test) => {
     const testData = parseMongoObject(
       await readFile(INPUT_FILE)
     ) as TestDataItem[]

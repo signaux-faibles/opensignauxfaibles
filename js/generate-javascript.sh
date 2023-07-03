@@ -18,7 +18,7 @@ function checkJS {
   FILES="$1"
   GLOBALS="$2"
   ./node_modules/.bin/eslint --no-eslintrc \
-    --parser-options=ecmaVersion:6 --env es6 \
+    --parser-options=ecmaVersion:2019 --env es6 \
     --rule "no-undef:2" --quiet \
     --ignore-pattern "functions.js" \
     --global "${GLOBALS}" \

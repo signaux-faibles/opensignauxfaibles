@@ -1,4 +1,4 @@
-import test, { ExecutionContext } from "ava"
+import test from "ava"
 import { add } from "./add"
 import { parPériode } from "../test/helpers/parPeriode"
 import { ParPériode } from "../common/makePeriodeMap"
@@ -51,7 +51,7 @@ const testCases = [
 type DataEntry = Record<string, unknown>
 
 testCases.forEach(({ name, data, additions, expected }) => {
-  test.serial(`add(): ${name}`, (t: ExecutionContext) => {
+  test.serial(`add(): ${name}`, (t: test) => {
     add(additions as ParPériode<DataEntry>, data as ParPériode<DataEntry>)
     t.deepEqual(data, expected)
   })

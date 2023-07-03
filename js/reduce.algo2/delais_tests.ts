@@ -1,4 +1,4 @@
-import test, { ExecutionContext } from "ava"
+import test from "ava"
 import { nbDays } from "./nbDays"
 import { delais, ChampsEntréeDelai, ChampsDettes, SortieDelais } from "./delais"
 import { ParHash } from "../RawDataTypes"
@@ -40,7 +40,7 @@ const runDelais = (debits?: ChampsDettes): ParPériode<SortieDelais> => {
   })
 }
 
-test("la propriété delai_nb_jours_restants représente le nombre de jours restants du délai", (t: ExecutionContext) => {
+test("la propriété delai_nb_jours_restants représente le nombre de jours restants du délai", (t: test) => {
   const outputDelai = runDelais()
   t.is(
     outputDelai.get(fevrier)?.["delai_nb_jours_restants"],
@@ -52,14 +52,14 @@ test("la propriété delai_nb_jours_restants représente le nombre de jours rest
   )
 })
 
-test("la propriété delai_nb_jours_total représente la durée totale en jours du délai", (t: ExecutionContext) => {
+test("la propriété delai_nb_jours_total représente la durée totale en jours du délai", (t: test) => {
   const dureeEnJours = nbDays(new Date("2014-01-03"), new Date("2014-04-05"))
   const outputDelai = runDelais()
   t.is(outputDelai.get(fevrier)?.["delai_nb_jours_total"], dureeEnJours)
   t.is(outputDelai.get(mars)?.["delai_nb_jours_total"], dureeEnJours)
 })
 
-test("la propriété delai_montant_echeancier représente le montant en euros des cotisations sociales couvertes par le délai", (t: ExecutionContext) => {
+test("la propriété delai_montant_echeancier représente le montant en euros des cotisations sociales couvertes par le délai", (t: test) => {
   const outputDelai = runDelais()
   t.is(outputDelai.get(fevrier)?.["delai_montant_echeancier"], 1000)
   t.is(outputDelai.get(mars)?.["delai_montant_echeancier"], 1000)
@@ -70,7 +70,7 @@ test(
     "(dette actuelle - dette hypothétique en cas de remboursement linéaire) / dette initiale\n" +
     "Elle représente la déviation par rapport à un remboursement linéaire de la dette " +
     "en pourcentage de la dette initialement dû",
-  (t: ExecutionContext) => {
+  (t: test) => {
     const expectedFebruary = -0.0848
     const expectedMarch = 0.22
     const debits = { montant_part_patronale: 600, montant_part_ouvriere: 0 }
@@ -90,7 +90,7 @@ test(
   }
 )
 
-test("un délai en dehors de la période d'intérêt est ignorée", (t: ExecutionContext) => {
+test("un délai en dehors de la période d'intérêt est ignorée", (t: test) => {
   const delaiTest = makeDelai(new Date("2013-01-03"), new Date("2013-03-05"))
   const delaiMap: ParHash<ChampsEntréeDelai> = {
     [dummyPeriod]: delaiTest,

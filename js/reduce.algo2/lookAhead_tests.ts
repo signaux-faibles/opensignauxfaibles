@@ -1,4 +1,4 @@
-import test, { ExecutionContext } from "ava"
+import test from "ava"
 import { lookAhead } from "./lookAhead"
 import { parPériode } from "../test/helpers/parPeriode"
 import { makePeriodeMap } from "../common/makePeriodeMap"
@@ -131,7 +131,7 @@ const testCases: Array<TestCase> = [
 ]
 
 testCases.forEach(({ name, expected, ...tc }) => {
-  test.serial(`lookAhead(): ${name}`, (t: ExecutionContext) => {
+  test.serial(`lookAhead(): ${name}`, (t: test) => {
     const actual = lookAhead(
       tc["data"],
       tc["attr_name"],

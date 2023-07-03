@@ -17,7 +17,7 @@ test(`fraisFinancier est calculé selon la formule:
   produits_financiers +
   produit_exceptionnel -
   charge_exceptionnelle -
-  charges_financieres ) * 100`, (t) => {
+  charges_financieres ) * 100`, (t: test) => {
   const diane = fakeDiane()
   const resultat =
     (diane.interets /
@@ -39,7 +39,7 @@ const proprietes: (keyof ChampsDiane)[] = [
   "charges_financieres",
 ]
 proprietes.forEach((propriete) =>
-  test(`fraisFinancier est nul si "${propriete}" n'est pas disponible dans Diane`, (t) => {
+  test(`fraisFinancier est nul si "${propriete}" n'est pas disponible dans Diane`, (t: test) => {
     const diane = fakeDiane()
     delete diane[propriete]
     t.is(fraisFinancier(diane), null)

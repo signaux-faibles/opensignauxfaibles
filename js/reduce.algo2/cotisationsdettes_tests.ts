@@ -150,7 +150,7 @@ const testedProps = [
 ]
 
 testedProps.forEach((testedProp) => {
-  test(testedProp.assertion, (t) => {
+  test(testedProp.assertion, (t: test) => {
     const { cotisation, debit } = testedProp.input
     const actual = cotisationsdettes(cotisation, debit, periode, dateFin)
 

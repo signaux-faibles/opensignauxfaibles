@@ -1,4 +1,4 @@
-import test, { ExecutionContext } from "ava"
+import test from "ava"
 import { reduce } from "./reduce"
 import { setGlobals } from "../test/helpers/setGlobals"
 import {
@@ -368,7 +368,7 @@ const testCases: TestCase[] = [
 ]
 
 testCases.forEach(({ testCaseName, expected, ...testCase }) => {
-  test.serial(`reduce: ${testCaseName}`, (t: ExecutionContext) => {
+  test.serial(`reduce: ${testCaseName}`, (t: test) => {
     // définition des valeurs de paramètres globaux utilisés par les fonctions de "compact"
     setGlobals({
       completeTypes: testCase.completeTypes,
@@ -383,7 +383,7 @@ testCases.forEach(({ testCaseName, expected, ...testCase }) => {
 
 test.serial(
   `reduce retourne 2 cotisations depuis deux objets importés couvrant le même batch`,
-  (t: ExecutionContext) => {
+  (t: test) => {
     // initialisation des paramètres de compact
     const batchId = "1910"
     const hashCotisation = ["hash1", "hash2"]
@@ -433,7 +433,7 @@ test.serial(
 
 test.serial(
   `reduce intègre le batch suivant, même s'il contient des données invalides`,
-  (t: ExecutionContext) => {
+  (t: test) => {
     // définition des valeurs de paramètres globaux utilisés par les fonctions de "compact"
     const batchKeyWithInvalidData = "2009"
     const fromBatchKey = "2008"
@@ -463,7 +463,7 @@ test.serial(
 
 test.serial(
   `le compactage intègre bien les données de 3 batches, dont 2 qui viennent d'être importés`, // cf https://github.com/signaux-faibles/opensignauxfaibles/issues/248
-  (t: ExecutionContext) => {
+  (t: test) => {
     // définition des valeurs de paramètres globaux utilisés par les fonctions de "compact"
     const oldBatchKey = "1910_6"
     const fromBatchKey = "2011_0_urssaf"

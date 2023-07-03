@@ -8,7 +8,7 @@ import { EntréeCcsf } from "../GeneratedTypes"
 const makeUTCDate = (year: number, month: number, day?: number): Date =>
   new Date(Date.UTC(year, month, day || 1))
 
-test(`ccsf retourne la date de début de la procédure CCSF pour chaque période`, (t) => {
+test(`ccsf retourne la date de début de la procédure CCSF pour chaque période`, (t: test) => {
   const vCcsf: ParHash<EntréeCcsf> = {
     hash1: { date_traitement: makeUTCDate(2021, 2, 15) } as EntréeCcsf,
     hash2: { date_traitement: makeUTCDate(2021, 0, 15) } as EntréeCcsf,

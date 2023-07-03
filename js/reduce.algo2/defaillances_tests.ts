@@ -7,7 +7,7 @@ import { ParPériode } from "../common/makePeriodeMap"
 
 type OutputIndexed = Parameters<typeof defaillances>[1]
 
-test("Une ouverture de liquidation est prise en compte dans la période courante et les suivantes", (t) => {
+test("Une ouverture de liquidation est prise en compte dans la période courante et les suivantes", (t: test) => {
   const output_indexed: OutputIndexed = parPériode({
     ["2018-01-01"]: {},
     ["2018-02-01"]: {},
@@ -41,7 +41,7 @@ test("Une ouverture de liquidation est prise en compte dans la période courante
   t.deepEqual(output_indexed, expected)
 })
 
-test("Une ouverture puis cloture d'un redressement sont pris en compte, tag_failure reste à TRUE", (t) => {
+test("Une ouverture puis cloture d'un redressement sont pris en compte, tag_failure reste à TRUE", (t: test) => {
   const output_indexed: OutputIndexed = parPériode({
     ["2018-01-01"]: {},
     ["2018-02-01"]: {},

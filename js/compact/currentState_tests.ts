@@ -1,4 +1,4 @@
-import test, { ExecutionContext } from "ava"
+import test from "ava"
 import { currentState } from "./currentState"
 import { EntréeApConso, EntréeApDemande } from "../GeneratedTypes"
 
@@ -17,7 +17,7 @@ const makeApConso = () =>
     heure_consomme: 0,
   } as EntréeApConso)
 
-test("currentState", (t: ExecutionContext) => {
+test("currentState", (t: test) => {
   const actualRes = currentState([
     {
       apdemande: { a: makeApDemande(), b: makeApDemande() },
