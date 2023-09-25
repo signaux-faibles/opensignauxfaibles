@@ -101,7 +101,7 @@ func (params importBatchHandler) Validate() error {
 	return nil
 }
 
-// importBatchHandler traite les demandes d'import par l'API
+// Run importBatchHandler traite les demandes d'import par l'API
 // on peut demander l'exécution de tous les parsers sans fournir d'option
 // ou demander l'exécution de parsers particuliers en fournissant une liste de leurs codes.
 func (params importBatchHandler) Run() error {
@@ -155,7 +155,6 @@ func (params checkBatchHandler) Validate() error {
 }
 
 func (params checkBatchHandler) Run() error {
-
 	batch := base.AdminBatch{}
 	err := engine.Load(&batch, params.BatchKey)
 	if err != nil {

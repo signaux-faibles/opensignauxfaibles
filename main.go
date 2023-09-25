@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"log/slog"
 	"os"
 	"reflect"
 	"strings"
@@ -17,7 +18,7 @@ import (
 // GitCommit est le hash du dernier commit à inclure dans le binaire.
 var GitCommit string // (populé lors de la compilation, par `make build`)
 
-func connectDb() {
+func connectDB() {
 	engine.Db = engine.InitDB()
 	go engine.InitEventQueue()
 }
@@ -31,7 +32,8 @@ func main() {
 
 func runCLI(args ...string) int {
 	cmdHandlerWithArgs := parseCommandFromArgs(args)
-	useDb := os.Getenv("NO_DB") != "1"
+	slog.Debug("run cli", slog.Any("args", args))
+	useDB := os.Getenv("NO_DB") != "1"
 	// exit if no command was recognized in args
 	if cmdHandlerWithArgs == nil {
 		fmt.Printf("Commande non reconnue. Utilisez %v --help pour lister les commandes.\n", strings.Join(args, " "))
@@ -43,8 +45,8 @@ func runCLI(args ...string) int {
 		return 2
 	}
 	// execute the command
-	if useDb {
-		connectDb()
+	if useDB {
+		connectDB()
 		defer engine.FlushEventQueue()
 	}
 	if err := cmdHandlerWithArgs.Run(); err != nil {

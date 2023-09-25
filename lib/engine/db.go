@@ -51,7 +51,7 @@ func InitDB() DB {
 	db := mongodb.DB(dbDatabase)
 
 	// Création d'index sur la collection Admin, pour selection et tri de GetBatches()
-	db.C("Admin").EnsureIndex(mgo.Index{
+	_ = db.C("Admin").EnsureIndex(mgo.Index{
 		Key: []string{"_id.type", "_id.key"},
 	})
 

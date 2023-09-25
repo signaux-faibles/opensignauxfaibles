@@ -4,7 +4,7 @@ import (
 	"encoding/csv"
 	"errors"
 	"io"
-	"log"
+	"log/slog"
 	"sort"
 	"time"
 
@@ -59,7 +59,6 @@ func (comptes *Comptes) GetSortedKeys() []string {
 // GetCompteSiretMapping returns the siret mapping in cache if available, else
 // reads the file and save it in cache. Lazy loaded.
 func GetCompteSiretMapping(cache Cache, batch *base.AdminBatch, mr mappingReader) (Comptes, error) {
-
 	value, err := cache.Get("comptes")
 	if err == nil {
 		comptes, ok := value.(Comptes)
@@ -69,7 +68,7 @@ func GetCompteSiretMapping(cache Cache, batch *base.AdminBatch, mr mappingReader
 		return nil, errors.New("wrong format from existing field comptes in cache")
 	}
 
-	log.Println("Chargement des comptes urssaf") // TODO: supprimer cet affichage ?
+	slog.Debug("Chargement des comptes urssaf", slog.Any("comptesValue", value))
 
 	compteSiretMapping := make(Comptes)
 
@@ -82,8 +81,10 @@ func GetCompteSiretMapping(cache Cache, batch *base.AdminBatch, mr mappingReader
 	for _, p := range path {
 		compteSiretMapping, err = mr(basePath, p, compteSiretMapping, cache, batch)
 		if err != nil {
+			slog.Error("erreur pendant le mapping siret <-> compte", slog.Any("error", err))
 			return nil, err
 		}
+		slog.Debug("mapping siret <-> compte", slog.Any("comptes", compteSiretMapping.GetSortedKeys()))
 	}
 	cache.Set("comptes", compteSiretMapping)
 	return compteSiretMapping, nil
@@ -99,7 +100,6 @@ func OpenAndReadSiretMapping(
 	cache Cache,
 	batch *base.AdminBatch,
 ) (Comptes, error) {
-
 	filePath := base.BatchFile(batchFile.Prefix() + basePath + batchFile.FilePath()) // note: basePath is probably viper.GetString("APP_DATA")
 
 	file, fileReader, err := OpenFileReader(filePath)
@@ -115,6 +115,7 @@ func OpenAndReadSiretMapping(
 	for key := range addSiretMapping {
 		compteSiretMapping[key] = addSiretMapping[key]
 	}
+	slog.Debug("siret mapping", slog.Any("mapping", compteSiretMapping))
 	return compteSiretMapping, nil
 }
 
@@ -124,7 +125,6 @@ func readSiretMapping(
 	cache Cache,
 	batch *base.AdminBatch,
 ) (Comptes, error) {
-
 	filter, err := GetSirenFilter(cache, batch)
 	if err != nil {
 		return nil, err
