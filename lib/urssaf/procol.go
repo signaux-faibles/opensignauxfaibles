@@ -47,7 +47,7 @@ func (parser *procolParser) GetFileType() string {
 	return "procol"
 }
 
-func (parser *procolParser) Init(cache *marshal.Cache, batch *base.AdminBatch) error {
+func (parser *procolParser) Init(_ *marshal.Cache, _ *base.AdminBatch) error {
 	return nil
 }
 

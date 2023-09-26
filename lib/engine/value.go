@@ -5,6 +5,7 @@ import (
 
 	"github.com/cnf/structhash"
 	"github.com/globalsign/mgo/bson"
+
 	"opensignauxfaibles/lib/marshal"
 )
 
@@ -27,6 +28,7 @@ func GetMD5(tuple marshal.Tuple) []byte {
 }
 
 // Batch ensemble des données
+// TODO --> le 2e string est le nom du parser c'est celui qui nous intéresse
 type Batch map[string]map[string]marshal.Tuple
 
 // Merge union de deux objets Batch

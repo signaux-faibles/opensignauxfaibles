@@ -43,7 +43,6 @@ func (params parseFileHandler) Validate() error {
 }
 
 func (params parseFileHandler) Run() error {
-
 	parsers, err := parsing.ResolveParsers([]string{params.Parser})
 	if err != nil {
 		return err

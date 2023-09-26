@@ -238,7 +238,6 @@ func (params validateHandler) Validate() error {
 }
 
 func (params validateHandler) Run() error {
-
 	jsonSchema, err := engine.LoadJSONSchemaFiles()
 	if err != nil {
 		return err
