@@ -116,7 +116,7 @@ func (params importBatchHandler) Run() error {
 		return err
 	}
 
-	dataChan := engine.InsertIntoImportedData(engine.Db.DB)
+	dataChan := engine.InsertIntoCSV()
 	err = engine.ImportBatch(batch, parsers, params.NoFilter, dataChan)
 	if err != nil {
 		return err

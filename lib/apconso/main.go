@@ -47,7 +47,7 @@ func (parser *apconsoParser) GetFileType() string {
 	return "apconso"
 }
 
-func (parser *apconsoParser) Init(cache *marshal.Cache, batch *base.AdminBatch) error {
+func (parser *apconsoParser) Init(_ *marshal.Cache, _ *base.AdminBatch) error {
 	return nil
 }
 

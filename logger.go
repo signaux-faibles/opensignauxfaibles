@@ -14,10 +14,10 @@ func LogLevel(newLevel slog.LevelVar) {
 
 func init() {
 	loglevel = new(slog.LevelVar)
-	loglevel.Set(slog.LevelDebug)
+	loglevel.Set(slog.LevelWarn)
 	handler := slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
-		Level:     loglevel,
-		AddSource: true,
+		Level: loglevel,
+		//AddSource: true,
 	})
 
 	parentLogger := slog.New(

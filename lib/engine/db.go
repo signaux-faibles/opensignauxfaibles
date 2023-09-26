@@ -3,6 +3,7 @@ package engine
 import (
 	"fmt"
 	"log"
+	"log/slog"
 	"sync"
 	"time"
 
@@ -11,6 +12,7 @@ import (
 	"github.com/spf13/viper"
 
 	"opensignauxfaibles/lib/base"
+	"opensignauxfaibles/lib/marshal"
 )
 
 // DB type centralisant les accès à une base de données
@@ -137,6 +139,67 @@ func setupDocValidation(db *mgo.Database, colName string, jsonSchema bson.M) err
 }
 
 var importing sync.WaitGroup
+
+func InsertIntoCSV() chan *Value {
+	importing.Add(1)
+	source := make(chan *Value, 10)
+
+	go func(chan *Value) {
+		defer importing.Done()
+		buffer := make(map[string]*Value)
+		i := 0
+		insertObjectsIntoImportedData := func() {
+			for _, v := range buffer {
+				writeBatchesToCSV(v.Value.Batch)
+			}
+			buffer = make(map[string]*Value)
+			i = 0
+		}
+
+		for value := range source {
+			if i >= 100 {
+				insertObjectsIntoImportedData()
+			}
+			if knownValue, ok := buffer[value.Value.Key]; ok {
+				newValue, _ := (*knownValue).Merge(*value)
+				buffer[value.Value.Key] = &newValue
+			} else {
+				value.ID = bson.NewObjectId()
+				buffer[value.Value.Key] = value
+				i++
+			}
+		}
+		// le canal a été fermé => importer les données restantes avant de rendre la main
+		insertObjectsIntoImportedData()
+	}(source)
+
+	return source
+}
+
+func writeBatchesToCSV(batchs map[string]Batch) {
+	for _, v := range batchs {
+		writeBatchToCSV(v)
+	}
+}
+
+func writeBatchToCSV(batch Batch) {
+	for _, tuples := range batch {
+		writeLinesToCSV(tuples)
+	}
+}
+
+func writeLinesToCSV(tuples map[string]marshal.Tuple) {
+	for _, tuple := range tuples {
+		slog.Warn(
+			"write line to CSV",
+			slog.Any("values", tuple),
+			slog.Group("tuple",
+				slog.String("key", tuple.Key()),
+				slog.String("scope", tuple.Scope()),
+				slog.String("type", tuple.Type())),
+		)
+	}
+}
 
 // InsertIntoImportedData retourne un canal dont les objets seront ajoutés à
 // la collection ImportedData, par paquets de 100.

@@ -91,7 +91,6 @@ func parseCcsfLine(idx marshal.ColMapping, row []string, comptes *marshal.Compte
 			return
 		}
 		ccsf.NumeroCompte = idxRow.GetVal("Compte")
-
 	} else {
 		parsedLine.AddRegularError(errors.New("ligne non conforme, moins de 4 champs"))
 	}
