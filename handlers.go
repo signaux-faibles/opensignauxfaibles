@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"os"
 	"sort"
 	"time"
 
@@ -116,7 +117,7 @@ func (params importBatchHandler) Run() error {
 		return err
 	}
 
-	dataChan := engine.InsertIntoCSV()
+	dataChan := engine.InsertIntoCSVs()
 	err = engine.ImportBatch(batch, parsers, params.NoFilter, dataChan)
 	if err != nil {
 		return err
@@ -254,4 +255,8 @@ func (params pruneEntitiesHandler) Run() error {
 func printJSON(object interface{}) {
 	res, _ := json.Marshal(object)
 	fmt.Println(string(res))
+}
+
+func parserToCSVMapping() map[string]os.File {
+	return nil
 }
