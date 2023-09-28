@@ -32,6 +32,16 @@ type APDemande struct {
 	Perimetre          *int         `col:"PERIMETRE_AP"       json:"perimetre"         bson:"perimetre"`
 }
 
+func (apdemande APDemande) Headers() []string {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (apdemande APDemande) Values() []string {
+	//TODO implement me
+	panic("implement me")
+}
+
 // Key id de l'objet
 func (apdemande APDemande) Key() string {
 	return apdemande.Siret

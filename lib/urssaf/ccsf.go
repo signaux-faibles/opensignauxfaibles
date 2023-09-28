@@ -19,6 +19,16 @@ type CCSF struct {
 	Action         string    `col:"Code_externe_action" json:"action"          bson:"action"`
 }
 
+func (ccsf CCSF) Headers() []string {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (ccsf CCSF) Values() []string {
+	//TODO implement me
+	panic("implement me")
+}
+
 // Key _id de l'objet
 func (ccsf CCSF) Key() string {
 	return ccsf.key

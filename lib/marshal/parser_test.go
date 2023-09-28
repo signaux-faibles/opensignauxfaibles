@@ -68,6 +68,16 @@ func TestParseTuplesFromLine(t *testing.T) {
 
 type dummyTuple struct{}
 
+func (sirene dummyTuple) Headers() []string {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (sirene dummyTuple) Values() []string {
+	//TODO implement me
+	panic("implement me")
+}
+
 // Key id de l'objet",
 func (sirene dummyTuple) Key() string {
 	return ""

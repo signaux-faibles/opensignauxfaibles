@@ -110,6 +110,16 @@ type Diane struct {
 	// 59 "Achats de march. kEUR";
 }
 
+func (diane Diane) Headers() []string {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (diane Diane) Values() []string {
+	//TODO implement me
+	panic("implement me")
+}
+
 // Key id de l'objet
 func (diane Diane) Key() string {
 	return diane.NumeroSiren

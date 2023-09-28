@@ -25,6 +25,16 @@ type Delai struct {
 	Action            string    `col:"Code_externe_action"         json:"action"             bson:"action"`
 }
 
+func (delai Delai) Headers() []string {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (delai Delai) Values() []string {
+	//TODO implement me
+	panic("implement me")
+}
+
 // Key _id de l'objet
 func (delai Delai) Key() string {
 	return delai.key

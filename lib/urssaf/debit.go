@@ -29,6 +29,16 @@ type Debit struct {
 	// MontantMajorations        float64      `                       json:"montant_majorations"          bson:"montant_majorations"`  // TODO: montant_majorations n'est pas fourni par les fichiers debit de l'urssaf pour l'instant, mais on aimerait y avoir accès un jour.
 }
 
+func (debit Debit) Headers() []string {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (debit Debit) Values() []string {
+	//TODO implement me
+	panic("implement me")
+}
+
 // Key _id de l'objet
 func (debit Debit) Key() string {
 	return debit.key

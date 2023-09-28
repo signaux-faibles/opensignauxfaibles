@@ -34,6 +34,16 @@ type Ellisphere struct {
 	// 20: "FIL Pays"
 }
 
+func (ellisphere Ellisphere) Headers() []string {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (ellisphere Ellisphere) Values() []string {
+	//TODO implement me
+	panic("implement me")
+}
+
 // Key id de l'objet
 func (ellisphere Ellisphere) Key() string {
 	return ellisphere.Siren

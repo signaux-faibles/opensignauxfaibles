@@ -55,9 +55,8 @@ type Tuple interface {
 	Key() string   // entité définie par le tuple: numéro SIRET ou SIREN
 	Scope() string // type d'entité: "entreprise" ou "etablissement"
 	Type() string  // identifiant du parseur qui a extrait ce tuple, ex: "apconso"
-	// TODO
-	//Headers() []string
-	//Values() []string
+	Headers() []string
+	Values() []string
 }
 
 // ParseFilesFromBatch parse les tuples des fichiers listés dans batch pour le parseur spécifié.

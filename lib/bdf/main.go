@@ -25,6 +25,16 @@ type BDF struct {
 	FraisFinancier      *float64  `col:"POIDS_FRAIS_FIN" json:"frais_financier"       bson:"frais_financier"`
 }
 
+func (bdf BDF) Headers() []string {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (bdf BDF) Values() []string {
+	//TODO implement me
+	panic("implement me")
+}
+
 // Key id de l'objet
 func (bdf BDF) Key() string {
 	return bdf.Siren

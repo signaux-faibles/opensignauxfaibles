@@ -18,6 +18,16 @@ type EffectifEnt struct {
 	EffectifEnt int       `            json:"effectif" bson:"effectif"`
 }
 
+func (effectifEnt EffectifEnt) Headers() []string {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (effectifEnt EffectifEnt) Values() []string {
+	//TODO implement me
+	panic("implement me")
+}
+
 // Key _id de l'objet
 func (effectifEnt EffectifEnt) Key() string {
 	return effectifEnt.Siren
