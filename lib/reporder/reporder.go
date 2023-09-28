@@ -17,6 +17,16 @@ type RepeatableOrder struct {
 	RandomOrder *float64  `json:"random_order"   bson:"random_order"`
 }
 
+func (rep RepeatableOrder) Headers() []string {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (rep RepeatableOrder) Values() []string {
+	//TODO implement me
+	panic("implement me")
+}
+
 // Key de l'objet
 func (rep RepeatableOrder) Key() string {
 	return rep.Siret

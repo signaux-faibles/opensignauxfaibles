@@ -24,6 +24,16 @@ type SireneUL struct {
 	Creation            *time.Time `col:"dateCreationUniteLegale"       json:"date_creation,omitempty"          bson:"date_creation,omitempty"`
 }
 
+func (sirene_ul SireneUL) Headers() []string {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (sirene_ul SireneUL) Values() []string {
+	//TODO implement me
+	panic("implement me")
+}
+
 // Key id de l'objet
 func (sirene_ul SireneUL) Key() string {
 	return sirene_ul.Siren

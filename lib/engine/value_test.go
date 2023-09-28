@@ -11,12 +11,21 @@ type Test struct {
 	value string
 }
 
+func (test Test) Headers() []string {
+	// TODO implement me
+	panic("implement me")
+}
+
+func (test Test) Values() []string {
+	// TODO implement me
+	panic("implement me")
+}
+
 func (test Test) Key() string   { return "" }
 func (test Test) Scope() string { return "" }
 func (test Test) Type() string  { return "" }
 
 func Test_mergeBatch(t *testing.T) {
-
 	batch1 := Batch{
 		"test1": map[string]marshal.Tuple{
 			"hash1": Test{"test1"},
@@ -90,5 +99,4 @@ func Test_mergeBatch(t *testing.T) {
 	} else {
 		t.Error("Test d'écrasement d'un hash: Fail.")
 	}
-
 }

@@ -19,6 +19,16 @@ type Procol struct {
 	Siret        string    `col:"siret"         json:"-"             bson:"-"`
 }
 
+func (procol Procol) Headers() []string {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (procol Procol) Values() []string {
+	//TODO implement me
+	panic("implement me")
+}
+
 // Key _id de l'objet
 func (procol Procol) Key() string {
 	return procol.Siret

@@ -19,6 +19,16 @@ type Effectif struct {
 	Effectif     int       `             json:"effectif"      bson:"effectif"`
 }
 
+func (effectif Effectif) Headers() []string {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (effectif Effectif) Values() []string {
+	//TODO implement me
+	panic("implement me")
+}
+
 // Key _id de l'objet
 func (effectif Effectif) Key() string {
 	return effectif.Siret

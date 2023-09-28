@@ -10,6 +10,7 @@ import (
 	"encoding/csv"
 	"fmt"
 	"os"
+	"strconv"
 	"time"
 
 	"opensignauxfaibles/lib/base"
@@ -21,6 +22,20 @@ type Paydex struct {
 	Siren      string    `col:"SIREN" json:"-" bson:"-"`
 	DateValeur time.Time `col:"DATE_VALEUR" json:"date_valeur" bson:"date_valeur"`
 	NbJours    int       `col:"NB_JOURS" json:"nb_jours" bson:"nb_jours"`
+}
+
+func (paydex Paydex) Headers() []string {
+	return []string{
+		"SIREN", "DATE_VALEUR", "NB_JOURS",
+	}
+}
+
+func (paydex Paydex) Values() []string {
+	return []string{
+		paydex.Siren,
+		paydex.DateValeur.Format(time.DateOnly),
+		strconv.Itoa(paydex.NbJours),
+	}
 }
 
 // Key _id de l'objet

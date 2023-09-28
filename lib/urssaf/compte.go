@@ -15,6 +15,14 @@ type Compte struct {
 	Periode      time.Time `json:"periode" bson:"periode"`
 }
 
+func (compte Compte) Headers() []string {
+	return []string{"siret", "numero_compte", "periode"}
+}
+
+func (compte Compte) Values() []string {
+	return []string{compte.Siret, compte.NumeroCompte, compte.Periode.Format(time.DateTime)}
+}
+
 // Key _id de l'objet
 func (compte Compte) Key() string {
 	return compte.Siret

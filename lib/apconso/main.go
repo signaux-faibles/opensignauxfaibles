@@ -19,6 +19,16 @@ type APConso struct {
 	Periode        time.Time `col:"MOIS"       json:"periode"        bson:"periode"`
 }
 
+func (apconso APConso) Headers() []string {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (apconso APConso) Values() []string {
+	//TODO implement me
+	panic("implement me")
+}
+
 // Key id de l'objet
 func (apconso APConso) Key() string {
 	return apconso.Siret

@@ -18,6 +18,16 @@ type Cotisation struct {
 	Du           *float64     `col:"cotis_due"  json:"du"            bson:"du"`
 }
 
+func (cotisation Cotisation) Headers() []string {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (cotisation Cotisation) Values() []string {
+	//TODO implement me
+	panic("implement me")
+}
+
 // Key _id de l'objet
 func (cotisation Cotisation) Key() string {
 	return cotisation.key

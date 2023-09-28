@@ -110,6 +110,16 @@ func (sirene Sirene) Scope() string {
 	return "etablissement"
 }
 
+func (sirene Sirene) Headers() []string {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (sirene Sirene) Values() []string {
+	//TODO implement me
+	panic("implement me")
+}
+
 // Parser fournit une instance utilisable par ParseFilesFromBatch.
 var Parser = &sireneParser{}
 
