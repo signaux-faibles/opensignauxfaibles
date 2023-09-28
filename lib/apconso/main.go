@@ -3,6 +3,7 @@ package apconso
 import (
 	"encoding/csv"
 	"os"
+	"strconv"
 	"time"
 
 	"opensignauxfaibles/lib/base"
@@ -20,13 +21,18 @@ type APConso struct {
 }
 
 func (apconso APConso) Headers() []string {
-	//TODO implement me
-	panic("implement me")
+	return marshal.ExtractColTags(apconso)
 }
 
 func (apconso APConso) Values() []string {
-	//TODO implement me
-	panic("implement me")
+	return []string{
+		apconso.ID,
+		apconso.Siret,
+		strconv.FormatFloat(*apconso.HeureConsommee, 'f', -1, 64),
+		strconv.FormatFloat(*apconso.Montant, 'f', -1, 64),
+		strconv.Itoa(*apconso.Effectif),
+		apconso.Periode.Format(time.DateOnly),
+	}
 }
 
 // Key id de l'objet

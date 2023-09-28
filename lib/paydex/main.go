@@ -25,9 +25,7 @@ type Paydex struct {
 }
 
 func (paydex Paydex) Headers() []string {
-	return []string{
-		"SIREN", "DATE_VALEUR", "NB_JOURS",
-	}
+	return marshal.ExtractColTags(paydex)
 }
 
 func (paydex Paydex) Values() []string {
@@ -66,7 +64,7 @@ func (parser *paydexParser) GetFileType() string {
 	return "paydex"
 }
 
-func (parser *paydexParser) Init(cache *marshal.Cache, batch *base.AdminBatch) error {
+func (parser *paydexParser) Init(_ *marshal.Cache, _ *base.AdminBatch) error {
 	return nil
 }
 
