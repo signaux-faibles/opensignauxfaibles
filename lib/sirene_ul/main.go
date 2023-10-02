@@ -29,10 +29,6 @@ func (sirene_ul SireneUL) Headers() []string {
 }
 
 func (sirene_ul SireneUL) Values() []string {
-	creation := ""
-	if sirene_ul.Creation != nil {
-		creation = sirene_ul.Creation.Format(time.DateOnly)
-	}
 	return []string{
 		sirene_ul.Siren,
 		sirene_ul.RaisonSociale,
@@ -43,7 +39,7 @@ func (sirene_ul SireneUL) Values() []string {
 		sirene_ul.NomUniteLegale,
 		sirene_ul.NomUsageUniteLegale,
 		sirene_ul.CodeStatutJuridique,
-		creation,
+		marshal.TimeToCSV(sirene_ul.Creation),
 	}
 }
 

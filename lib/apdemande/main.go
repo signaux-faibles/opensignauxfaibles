@@ -4,7 +4,6 @@ import (
 	"encoding/csv"
 	"errors"
 	"os"
-	"strconv"
 	"strings"
 	"time"
 
@@ -57,19 +56,19 @@ func (apdemande APDemande) Values() []string {
 	return []string{
 		apdemande.ID,
 		apdemande.Siret,
-		strconv.Itoa(*apdemande.EffectifEntreprise),
-		strconv.Itoa(*apdemande.Effectif),
+		marshal.IntToCSV(apdemande.EffectifEntreprise),
+		marshal.IntToCSV(apdemande.Effectif),
 		marshal.TimeToCSV(&apdemande.DateStatut),
 		marshal.TimeToCSV(&apdemande.Periode.Start),
 		marshal.TimeToCSV(&apdemande.Periode.End),
 		marshal.FloatToCSV(apdemande.HTA),
 		marshal.FloatToCSV(apdemande.MTA),
-		strconv.Itoa(*apdemande.EffectifAutorise),
-		strconv.Itoa(*apdemande.MotifRecoursSE),
+		marshal.IntToCSV(apdemande.EffectifAutorise),
+		marshal.IntToCSV(apdemande.MotifRecoursSE),
 		marshal.FloatToCSV(apdemande.HeureConsommee),
 		marshal.FloatToCSV(apdemande.MontantConsomme),
-		strconv.Itoa(*apdemande.EffectifConsomme),
-		strconv.Itoa(*apdemande.Perimetre),
+		marshal.IntToCSV(apdemande.EffectifConsomme),
+		marshal.IntToCSV(apdemande.Perimetre),
 	}
 }
 

@@ -25,3 +25,10 @@ func IntToCSV(f *int) string {
 	}
 	return ""
 }
+
+func BoolToCSV(b *bool) string {
+	if b != nil {
+		return strconv.FormatBool(*b)
+	}
+	return ""
+}

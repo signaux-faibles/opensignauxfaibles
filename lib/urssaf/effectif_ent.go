@@ -20,7 +20,7 @@ type EffectifEnt struct {
 }
 
 func (effectifEnt EffectifEnt) Headers() []string {
-	slog.Warn("on n'utilise pas le tag `col` pour le csv")
+	slog.Warn("on n'utilise pas le tag `col` pour le csv", slog.String("type", "EffectifEnt"))
 	return []string{
 		"siren",
 		"periode",
@@ -32,7 +32,7 @@ func (effectifEnt EffectifEnt) Values() []string {
 	return []string{
 		effectifEnt.Siren,
 		marshal.TimeToCSV(&effectifEnt.Periode),
-		strconv.Itoa(effectifEnt.EffectifEnt),
+		marshal.IntToCSV(&effectifEnt.EffectifEnt),
 	}
 }
 
@@ -69,7 +69,7 @@ func (parser *effectifEntParser) Close() error {
 	return parser.file.Close()
 }
 
-func (parser *effectifEntParser) Init(cache *marshal.Cache, batch *base.AdminBatch) error {
+func (parser *effectifEntParser) Init(_ *marshal.Cache, _ *base.AdminBatch) error {
 	return nil
 }
 

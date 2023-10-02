@@ -3,7 +3,6 @@ package urssaf
 import (
 	"encoding/csv"
 	"os"
-	"strconv"
 	"time"
 
 	"opensignauxfaibles/lib/base"
@@ -39,10 +38,10 @@ func (delai Delai) Values() []string {
 		delai.NumeroContentieux,
 		marshal.TimeToCSV(&delai.DateCreation),
 		marshal.TimeToCSV(&delai.DateEcheance),
-		strconv.Itoa(*delai.DureeDelai),
+		marshal.IntToCSV(delai.DureeDelai),
 		delai.Denomination,
 		delai.Indic6m,
-		strconv.Itoa(*delai.AnneeCreation),
+		marshal.IntToCSV(delai.AnneeCreation),
 		marshal.FloatToCSV(delai.MontantEcheancier),
 		delai.Stade,
 		delai.Action,
