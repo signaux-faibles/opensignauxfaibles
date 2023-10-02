@@ -25,13 +25,22 @@ type SireneUL struct {
 }
 
 func (sirene_ul SireneUL) Headers() []string {
-	//TODO implement me
-	panic("implement me")
+	return marshal.ExtractColTags(sirene_ul)
 }
 
 func (sirene_ul SireneUL) Values() []string {
-	//TODO implement me
-	panic("implement me")
+	return []string{
+		sirene_ul.Siren,
+		sirene_ul.RaisonSociale,
+		sirene_ul.Prenom1UniteLegale,
+		sirene_ul.Prenom2UniteLegale,
+		sirene_ul.Prenom3UniteLegale,
+		sirene_ul.Prenom4UniteLegale,
+		sirene_ul.NomUniteLegale,
+		sirene_ul.NomUsageUniteLegale,
+		sirene_ul.CodeStatutJuridique,
+		sirene_ul.Creation.Format(time.DateOnly),
+	}
 }
 
 // Key id de l'objet
