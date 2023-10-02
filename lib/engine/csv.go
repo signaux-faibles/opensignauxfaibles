@@ -79,7 +79,6 @@ func writeLinesToCSV(tuples map[string]marshal.Tuple) {
 		if err != nil {
 			logger.Error("erreur pendant l'écriture du tuple en csvWriter")
 		}
-		logger.Warn("write line to CSV")
 		csvWriter.Flush()
 	}
 }
