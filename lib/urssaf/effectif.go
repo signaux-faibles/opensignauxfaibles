@@ -27,12 +27,12 @@ func (effectif Effectif) Headers() []string {
 	}
 }
 
-func (e Effectif) Values() []string {
+func (effectif Effectif) Values() []string {
 	return []string{
-		e.Siret,
-		e.NumeroCompte,
-		e.Periode.Format(time.DateOnly),
-		strconv.Itoa(e.Effectif),
+		effectif.Siret,
+		effectif.NumeroCompte,
+		effectif.Periode.Format(time.DateOnly),
+		strconv.Itoa(effectif.Effectif),
 	}
 }
 

@@ -20,13 +20,16 @@ type Procol struct {
 }
 
 func (procol Procol) Headers() []string {
-	//TODO implement me
-	panic("implement me")
+	return marshal.ExtractColTags(procol)
 }
 
 func (procol Procol) Values() []string {
-	//TODO implement me
-	panic("implement me")
+	return []string{
+		procol.DateEffet.Format(time.DateOnly),
+		procol.ActionProcol,
+		procol.StadeProcol,
+		procol.Siret,
+	}
 }
 
 // Key _id de l'objet
