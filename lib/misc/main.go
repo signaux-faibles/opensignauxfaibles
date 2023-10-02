@@ -91,3 +91,9 @@ func GenereSeriePeriode(debut time.Time, fin time.Time) []time.Time {
 	}
 	return serie
 }
+
+func (p Periode) String() string {
+	return p.Start.Format(time.DateTime) +
+		"-" +
+		p.End.Format(time.DateTime)
+}
