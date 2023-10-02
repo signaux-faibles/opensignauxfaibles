@@ -104,11 +104,13 @@ func openFile(tuple marshal.Tuple) *csv.Writer {
 	writer := csv.NewWriter(file)
 	logger.Warn("write headers")
 	err = writer.Write(tuple.Headers())
-	logger.Error(
-		"erreur pendant l'écriture des headers'",
-		slog.String("filename", filename),
-		slog.Any("error", err),
-	)
+	if err != nil {
+		logger.Error(
+			"erreur pendant l'écriture des headers",
+			slog.String("filename", filename),
+			slog.Any("error", err),
+		)
+	}
 	writer.Flush()
 	return writer
 }
