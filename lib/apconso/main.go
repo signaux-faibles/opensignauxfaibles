@@ -3,7 +3,6 @@ package apconso
 import (
 	"encoding/csv"
 	"os"
-	"strconv"
 	"time"
 
 	"opensignauxfaibles/lib/base"
@@ -28,10 +27,10 @@ func (apconso APConso) Values() []string {
 	return []string{
 		apconso.ID,
 		apconso.Siret,
-		strconv.FormatFloat(*apconso.HeureConsommee, 'f', -1, 64),
-		strconv.FormatFloat(*apconso.Montant, 'f', -1, 64),
-		strconv.Itoa(*apconso.Effectif),
-		apconso.Periode.Format(time.DateOnly),
+		marshal.FloatToCSV(apconso.HeureConsommee),
+		marshal.FloatToCSV(apconso.Montant),
+		marshal.IntToCSV(apconso.Effectif),
+		marshal.TimeToCSV(&apconso.Periode),
 	}
 }
 

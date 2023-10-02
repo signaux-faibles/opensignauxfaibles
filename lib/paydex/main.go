@@ -31,7 +31,7 @@ func (paydex Paydex) Headers() []string {
 func (paydex Paydex) Values() []string {
 	return []string{
 		paydex.Siren,
-		paydex.DateValeur.Format(time.DateOnly),
+		marshal.TimeToCSV(&paydex.DateValeur),
 		strconv.Itoa(paydex.NbJours),
 	}
 }
