@@ -2,6 +2,7 @@ package urssaf
 
 import (
 	"encoding/csv"
+	"log/slog"
 	"os"
 	"strconv"
 	"time"
@@ -20,13 +21,19 @@ type Effectif struct {
 }
 
 func (effectif Effectif) Headers() []string {
-	//TODO implement me
-	panic("implement me")
+	slog.Warn("le tag col n'est pas défini sur tous les champs de l'Effctif Urssaf")
+	return []string{
+		"siret", "compte", "periode", "effectif",
+	}
 }
 
-func (effectif Effectif) Values() []string {
-	//TODO implement me
-	panic("implement me")
+func (e Effectif) Values() []string {
+	return []string{
+		e.Siret,
+		e.NumeroCompte,
+		e.Periode.Format(time.DateOnly),
+		strconv.Itoa(e.Effectif),
+	}
 }
 
 // Key _id de l'objet
