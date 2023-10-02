@@ -20,13 +20,19 @@ type CCSF struct {
 }
 
 func (ccsf CCSF) Headers() []string {
-	//TODO implement me
-	panic("implement me")
+	r := []string{"key"}
+	r = append(r, marshal.ExtractColTags(ccsf)...)
+	return r
 }
 
 func (ccsf CCSF) Values() []string {
-	//TODO implement me
-	panic("implement me")
+	return []string{
+		ccsf.key,
+		ccsf.NumeroCompte,
+		ccsf.DateTraitement.Format(time.DateOnly),
+		ccsf.Stade,
+		ccsf.Action,
+	}
 }
 
 // Key _id de l'objet
