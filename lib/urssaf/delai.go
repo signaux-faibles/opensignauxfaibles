@@ -3,6 +3,7 @@ package urssaf
 import (
 	"encoding/csv"
 	"os"
+	"strconv"
 	"time"
 
 	"opensignauxfaibles/lib/base"
@@ -26,13 +27,27 @@ type Delai struct {
 }
 
 func (delai Delai) Headers() []string {
-	//TODO implement me
-	panic("implement me")
+	r := []string{"key"}
+	r = append(r, marshal.ExtractColTags(delai)...)
+	return r
 }
 
 func (delai Delai) Values() []string {
-	//TODO implement me
-	panic("implement me")
+	r := []string{
+		delai.key,
+		delai.NumeroCompte,
+		delai.NumeroContentieux,
+		delai.DateCreation.Format(time.DateOnly),
+		delai.DateEcheance.Format(time.DateOnly),
+		strconv.Itoa(*delai.DureeDelai),
+		delai.Denomination,
+		delai.Indic6m,
+		strconv.Itoa(*delai.AnneeCreation),
+		strconv.FormatFloat(*delai.MontantEcheancier, 'f', -1, 64),
+		delai.Stade,
+		delai.Action,
+	}
+	return r
 }
 
 // Key _id de l'objet
