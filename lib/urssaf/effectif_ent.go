@@ -2,6 +2,7 @@ package urssaf
 
 import (
 	"encoding/csv"
+	"log/slog"
 	"os"
 	"strconv"
 	"time"
@@ -19,13 +20,20 @@ type EffectifEnt struct {
 }
 
 func (effectifEnt EffectifEnt) Headers() []string {
-	//TODO implement me
-	panic("implement me")
+	slog.Warn("on n'utilise pas le tag `col` pour le csv")
+	return []string{
+		"siren",
+		"periode",
+		"effectif_entreprise",
+	}
 }
 
 func (effectifEnt EffectifEnt) Values() []string {
-	//TODO implement me
-	panic("implement me")
+	return []string{
+		effectifEnt.Siren,
+		effectifEnt.Periode.Format(time.DateOnly),
+		strconv.Itoa(effectifEnt.EffectifEnt),
+	}
 }
 
 // Key _id de l'objet
