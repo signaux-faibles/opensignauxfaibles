@@ -111,13 +111,33 @@ func (sirene Sirene) Scope() string {
 }
 
 func (sirene Sirene) Headers() []string {
-	//TODO implement me
-	panic("implement me")
+	return marshal.ExtractColTags(sirene)
 }
 
-func (sirene Sirene) Values() []string {
-	//TODO implement me
-	panic("implement me")
+func (s Sirene) Values() []string {
+	return []string{
+		s.Siren,
+		s.Nic,
+		strconv.FormatBool(s.Siege),
+		s.ComplementAdresse,
+		s.NumVoie,
+		s.IndRep,
+		s.TypeVoie,
+		s.Voie,
+		s.Commune,
+		s.CommuneEtranger,
+		s.DistributionSpeciale,
+		s.CodeCommune,
+		s.CodeCedex,
+		s.CodePaysEtranger,
+		s.PaysEtranger,
+		s.CodePostal,
+		s.CodeActivite,
+		s.NomenActivite,
+		s.Creation.Format(time.DateOnly),
+		strconv.FormatFloat(s.Longitude, 'f', -1, 64),
+		strconv.FormatFloat(s.Latitude, 'f', -1, 64),
+	}
 }
 
 // Parser fournit une instance utilisable par ParseFilesFromBatch.
