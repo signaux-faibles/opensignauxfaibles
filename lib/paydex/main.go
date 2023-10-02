@@ -10,7 +10,6 @@ import (
 	"encoding/csv"
 	"fmt"
 	"os"
-	"strconv"
 	"time"
 
 	"opensignauxfaibles/lib/base"
@@ -32,7 +31,7 @@ func (paydex Paydex) Values() []string {
 	return []string{
 		paydex.Siren,
 		marshal.TimeToCSV(&paydex.DateValeur),
-		strconv.Itoa(paydex.NbJours),
+		marshal.IntToCSV(&paydex.NbJours),
 	}
 }
 

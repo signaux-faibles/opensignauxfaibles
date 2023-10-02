@@ -32,7 +32,7 @@ func (effectif Effectif) Values() []string {
 		effectif.Siret,
 		effectif.NumeroCompte,
 		marshal.TimeToCSV(&effectif.Periode),
-		strconv.Itoa(effectif.Effectif),
+		marshal.IntToCSV(&effectif.Effectif),
 	}
 }
 

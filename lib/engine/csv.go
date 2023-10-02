@@ -4,6 +4,7 @@ import (
 	"encoding/csv"
 	"log/slog"
 	"os"
+	"reflect"
 
 	"github.com/globalsign/mgo/bson"
 
@@ -102,8 +103,13 @@ func openFile(tuple marshal.Tuple) *csv.Writer {
 		panic(err)
 	}
 	writer := csv.NewWriter(file)
-	logger.Warn("write headers")
-	err = writer.Write(tuple.Headers())
+	headers := tuple.Headers()
+	logger.Warn(
+		"write headers",
+		slog.Any("headers", headers),
+		slog.Any("type", reflect.TypeOf(tuple)),
+	)
+	err = writer.Write(headers)
 	if err != nil {
 		logger.Error(
 			"erreur pendant l'écriture des headers",

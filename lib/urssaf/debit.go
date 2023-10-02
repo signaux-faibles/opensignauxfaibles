@@ -4,7 +4,6 @@ import (
 	"encoding/csv"
 	"log/slog"
 	"os"
-	"strconv"
 	"time"
 
 	"opensignauxfaibles/lib/base"
@@ -32,7 +31,7 @@ type Debit struct {
 }
 
 func (debit Debit) Headers() []string {
-	slog.Warn("ATTENTION, là c'est fait un peu au pif")
+	slog.Warn("ATTENTION, là c'est fait un peu au pif", slog.String("type", "Debit"))
 	var r []string
 	r = append(r, "key")
 	r = append(r, marshal.ExtractColTags(debit)...)
@@ -46,15 +45,15 @@ func (d Debit) Values() []string {
 		d.NumeroCompte,
 		d.NumeroEcartNegatif,
 		marshal.TimeToCSV(&d.DateTraitement),
-		strconv.FormatFloat(d.PartOuvriere, 'f', -1, 64),
-		strconv.FormatFloat(d.PartPatronale, 'f', -1, 64),
-		strconv.Itoa(*d.NumeroHistoriqueEcartNegatif),
-		strconv.Itoa(*d.EtatCompte),
+		marshal.FloatToCSV(&d.PartOuvriere),
+		marshal.FloatToCSV(&d.PartPatronale),
+		marshal.IntToCSV(d.NumeroHistoriqueEcartNegatif),
+		marshal.IntToCSV(d.EtatCompte),
 		d.CodeProcedureCollective,
 		d.Periode.String(),
 		d.CodeOperationEcartNegatif,
 		d.CodeMotifEcartNegatif,
-		strconv.FormatBool(d.Recours),
+		marshal.BoolToCSV(&d.Recours),
 		d.DebitSuivant,
 	}
 }

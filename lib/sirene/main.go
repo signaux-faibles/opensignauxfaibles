@@ -118,7 +118,7 @@ func (s Sirene) Values() []string {
 	return []string{
 		s.Siren,
 		s.Nic,
-		strconv.FormatBool(s.Siege),
+		marshal.BoolToCSV(&s.Siege),
 		s.ComplementAdresse,
 		s.NumVoie,
 		s.IndRep,
@@ -135,8 +135,8 @@ func (s Sirene) Values() []string {
 		s.CodeActivite,
 		s.NomenActivite,
 		marshal.TimeToCSV(s.Creation),
-		strconv.FormatFloat(s.Longitude, 'f', -1, 64),
-		strconv.FormatFloat(s.Latitude, 'f', -1, 64),
+		marshal.FloatToCSV(&s.Longitude),
+		marshal.FloatToCSV(&s.Latitude),
 	}
 }
 
