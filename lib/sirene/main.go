@@ -153,7 +153,7 @@ func (parser *sireneParser) GetFileType() string {
 	return "sirene"
 }
 
-func (parser *sireneParser) Init(cache *marshal.Cache, batch *base.AdminBatch) error {
+func (parser *sireneParser) Init(_ *marshal.Cache, _ *base.AdminBatch) error {
 	return nil
 }
 
