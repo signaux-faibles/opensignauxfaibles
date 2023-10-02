@@ -2,7 +2,9 @@ package urssaf
 
 import (
 	"encoding/csv"
+	"log/slog"
 	"os"
+	"strconv"
 	"time"
 
 	"opensignauxfaibles/lib/base"
@@ -30,13 +32,31 @@ type Debit struct {
 }
 
 func (debit Debit) Headers() []string {
-	//TODO implement me
-	panic("implement me")
+	slog.Warn("ATTENTION, là c'est fait un peu au pif")
+	var r = []string{}
+	r = append(r, "key")
+	r = append(r, marshal.ExtractColTags(debit)...)
+	r = append(r, "DebitSuivant")
+	return r
 }
 
-func (debit Debit) Values() []string {
-	//TODO implement me
-	panic("implement me")
+func (d Debit) Values() []string {
+	return []string{
+		d.key,
+		d.NumeroCompte,
+		d.NumeroEcartNegatif,
+		d.DateTraitement.Format(time.DateOnly),
+		strconv.FormatFloat(d.PartOuvriere, 'f', -1, 64),
+		strconv.FormatFloat(d.PartPatronale, 'f', -1, 64),
+		strconv.Itoa(*d.NumeroHistoriqueEcartNegatif),
+		strconv.Itoa(*d.EtatCompte),
+		d.CodeProcedureCollective,
+		d.Periode.String(),
+		d.CodeOperationEcartNegatif,
+		d.CodeMotifEcartNegatif,
+		strconv.FormatBool(d.Recours),
+		d.DebitSuivant,
+	}
 }
 
 // Key _id de l'objet
