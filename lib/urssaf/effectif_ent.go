@@ -31,7 +31,7 @@ func (effectifEnt EffectifEnt) Headers() []string {
 func (effectifEnt EffectifEnt) Values() []string {
 	return []string{
 		effectifEnt.Siren,
-		effectifEnt.Periode.Format(time.DateOnly),
+		marshal.TimeToCSV(&effectifEnt.Periode),
 		strconv.Itoa(effectifEnt.EffectifEnt),
 	}
 }

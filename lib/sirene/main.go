@@ -134,7 +134,7 @@ func (s Sirene) Values() []string {
 		s.CodePostal,
 		s.CodeActivite,
 		s.NomenActivite,
-		s.Creation.Format(time.DateOnly),
+		marshal.TimeToCSV(s.Creation),
 		strconv.FormatFloat(s.Longitude, 'f', -1, 64),
 		strconv.FormatFloat(s.Latitude, 'f', -1, 64),
 	}

@@ -25,7 +25,7 @@ func (procol Procol) Headers() []string {
 
 func (procol Procol) Values() []string {
 	return []string{
-		procol.DateEffet.Format(time.DateOnly),
+		marshal.TimeToCSV(&procol.DateEffet),
 		procol.ActionProcol,
 		procol.StadeProcol,
 		procol.Siret,

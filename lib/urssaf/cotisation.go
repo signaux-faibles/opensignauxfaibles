@@ -19,13 +19,20 @@ type Cotisation struct {
 }
 
 func (cotisation Cotisation) Headers() []string {
-	//TODO implement me
-	panic("implement me")
+	var r []string
+	r = append(r, "key")
+	r = append(r, marshal.ExtractColTags(cotisation)...)
+	return r
 }
 
 func (cotisation Cotisation) Values() []string {
-	//TODO implement me
-	panic("implement me")
+	return []string{
+		cotisation.key,
+		cotisation.NumeroCompte,
+		cotisation.Periode.String(),
+		marshal.FloatToCSV(cotisation.Encaisse),
+		marshal.FloatToCSV(cotisation.Du),
+	}
 }
 
 // Key _id de l'objet

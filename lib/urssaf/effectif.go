@@ -31,7 +31,7 @@ func (effectif Effectif) Values() []string {
 	return []string{
 		effectif.Siret,
 		effectif.NumeroCompte,
-		effectif.Periode.Format(time.DateOnly),
+		marshal.TimeToCSV(&effectif.Periode),
 		strconv.Itoa(effectif.Effectif),
 	}
 }

@@ -29,7 +29,7 @@ func (ccsf CCSF) Values() []string {
 	return []string{
 		ccsf.key,
 		ccsf.NumeroCompte,
-		ccsf.DateTraitement.Format(time.DateOnly),
+		marshal.TimeToCSV(&ccsf.DateTraitement),
 		ccsf.Stade,
 		ccsf.Action,
 	}

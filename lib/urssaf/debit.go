@@ -33,7 +33,7 @@ type Debit struct {
 
 func (debit Debit) Headers() []string {
 	slog.Warn("ATTENTION, là c'est fait un peu au pif")
-	var r = []string{}
+	var r []string
 	r = append(r, "key")
 	r = append(r, marshal.ExtractColTags(debit)...)
 	r = append(r, "DebitSuivant")
@@ -45,7 +45,7 @@ func (d Debit) Values() []string {
 		d.key,
 		d.NumeroCompte,
 		d.NumeroEcartNegatif,
-		d.DateTraitement.Format(time.DateOnly),
+		marshal.TimeToCSV(&d.DateTraitement),
 		strconv.FormatFloat(d.PartOuvriere, 'f', -1, 64),
 		strconv.FormatFloat(d.PartPatronale, 'f', -1, 64),
 		strconv.Itoa(*d.NumeroHistoriqueEcartNegatif),
