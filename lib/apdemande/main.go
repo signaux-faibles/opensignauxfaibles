@@ -4,6 +4,7 @@ import (
 	"encoding/csv"
 	"errors"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -33,13 +34,43 @@ type APDemande struct {
 }
 
 func (apdemande APDemande) Headers() []string {
-	//TODO implement me
-	panic("implement me")
+	return []string{
+		"ID_DA",
+		"ETAB_SIRET",
+		"EFF_ENT",
+		"EFF_ETAB",
+		"DATE_STATUT",
+		"DATE_DEB",
+		"DATE_FIN",
+		"HTA",
+		"MTA",
+		"EFF_AUTO",
+		"MOTIF_RECOURS_SE",
+		"S_HEURE_CONSOM_TOT",
+		"MONTANT_CONSOMME",
+		"S_HEURE_CONSOM_TOT",
+		"PERIMETRE_AP",
+	}
 }
 
 func (apdemande APDemande) Values() []string {
-	//TODO implement me
-	panic("implement me")
+	return []string{
+		apdemande.ID,
+		apdemande.Siret,
+		strconv.Itoa(*apdemande.EffectifEntreprise),
+		strconv.Itoa(*apdemande.Effectif),
+		apdemande.DateStatut.Format(time.DateOnly),
+		apdemande.Periode.Start.Format(time.DateOnly),
+		apdemande.Periode.End.Format(time.DateOnly),
+		strconv.FormatFloat(*apdemande.HTA, 'f', -1, 64),
+		strconv.FormatFloat(*apdemande.MTA, 'f', -1, 64),
+		strconv.Itoa(*apdemande.EffectifAutorise),
+		strconv.Itoa(*apdemande.MotifRecoursSE),
+		strconv.FormatFloat(*apdemande.HeureConsommee, 'f', -1, 64),
+		strconv.FormatFloat(*apdemande.MontantConsomme, 'f', -1, 64),
+		strconv.Itoa(*apdemande.EffectifConsomme),
+		strconv.Itoa(*apdemande.Perimetre),
+	}
 }
 
 // Key id de l'objet
