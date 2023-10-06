@@ -13,15 +13,20 @@ var csvFiles = map[string]*os.File{}
 func InsertIntoCSVs() chan *Value {
 	importing.Add(1)
 	source := make(chan *Value, 10)
-	defer closeCSVs()
 	go func() {
 		defer importing.Done()
 		for v := range source {
 			writeBatchesToCSV(v.Value.Batch)
 		}
 	}()
-
 	return source
+}
+
+// FlushImportedData finalise l'insertion des données dans ImportedData.
+func FlushImportedData(channel chan *Value) {
+	close(channel)
+	closeCSVs()
+	importing.Wait()
 }
 
 func closeCSVs() {
