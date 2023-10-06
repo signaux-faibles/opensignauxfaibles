@@ -20,7 +20,12 @@ type Procol struct {
 }
 
 func (procol Procol) Headers() []string {
-	return marshal.ExtractColTags(procol)
+	return []string{
+		"DateEffet",
+		"ActionProcol",
+		"StadeProcol",
+		"Siret",
+	}
 }
 
 func (procol Procol) Values() []string {

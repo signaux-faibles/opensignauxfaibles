@@ -5,8 +5,6 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/globalsign/mgo/bson"
-
 	"opensignauxfaibles/lib/marshal"
 )
 
@@ -16,34 +14,12 @@ func InsertIntoCSVs() chan *Value {
 	importing.Add(1)
 	source := make(chan *Value, 10)
 	defer closeCSVs()
-	go func(chan *Value) {
+	go func() {
 		defer importing.Done()
-		buffer := make(map[string]*Value)
-		i := 0
-		insertObjectsIntoImportedData := func() {
-			for _, v := range buffer {
-				writeBatchesToCSV(v.Value.Batch)
-			}
-			buffer = make(map[string]*Value)
-			i = 0
+		for v := range source {
+			writeBatchesToCSV(v.Value.Batch)
 		}
-
-		for value := range source {
-			if i >= 100 {
-				insertObjectsIntoImportedData()
-			}
-			if knownValue, ok := buffer[value.Value.Key]; ok {
-				newValue, _ := (*knownValue).Merge(*value)
-				buffer[value.Value.Key] = &newValue
-			} else {
-				value.ID = bson.NewObjectId()
-				buffer[value.Value.Key] = value
-				i++
-			}
-		}
-		// le canal a été fermé => importer les données restantes avant de rendre la main
-		insertObjectsIntoImportedData()
-	}(source)
+	}()
 
 	return source
 }

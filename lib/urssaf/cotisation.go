@@ -19,10 +19,13 @@ type Cotisation struct {
 }
 
 func (cotisation Cotisation) Headers() []string {
-	var r []string
-	r = append(r, "key")
-	r = append(r, marshal.ExtractColTags(cotisation)...)
-	return r
+	return []string{
+		"key",
+		"NumeroCompte",
+		"Periode",
+		"Encaisse",
+		"Du",
+	}
 }
 
 func (cotisation Cotisation) Values() []string {

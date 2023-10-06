@@ -20,7 +20,14 @@ type APConso struct {
 }
 
 func (apconso APConso) Headers() []string {
-	return marshal.ExtractColTags(apconso)
+	return []string{
+		"ID",
+		"Siret",
+		"HeureConsommee",
+		"Montant",
+		"Effectif",
+		"Periode",
+	}
 }
 
 func (apconso APConso) Values() []string {

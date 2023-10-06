@@ -2,7 +2,6 @@ package urssaf
 
 import (
 	"encoding/csv"
-	"log/slog"
 	"os"
 	"time"
 
@@ -31,12 +30,22 @@ type Debit struct {
 }
 
 func (debit Debit) Headers() []string {
-	slog.Warn("ATTENTION, là c'est fait un peu au pif", slog.String("type", "Debit"))
-	var r []string
-	r = append(r, "key")
-	r = append(r, marshal.ExtractColTags(debit)...)
-	r = append(r, "DebitSuivant")
-	return r
+	return []string{
+		"key",
+		"NumeroCompte",
+		"NumeroEcartNegatif",
+		"DateTraitement",
+		"PartOuvriere",
+		"PartPatronale",
+		"NumeroHistoriqueEcartNegatif",
+		"EtatCompte",
+		"CodeProcedureCollective",
+		"Periode",
+		"CodeOperationEcartNegatif",
+		"CodeMotifEcartNegatif",
+		"Recours",
+		"DebitSuivant",
+	}
 }
 
 func (d Debit) Values() []string {
