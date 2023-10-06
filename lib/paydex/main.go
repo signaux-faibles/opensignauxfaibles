@@ -24,7 +24,11 @@ type Paydex struct {
 }
 
 func (paydex Paydex) Headers() []string {
-	return marshal.ExtractColTags(paydex)
+	return []string{
+		"Siren",
+		"DateValeur",
+		"NbJours",
+	}
 }
 
 func (paydex Paydex) Values() []string {

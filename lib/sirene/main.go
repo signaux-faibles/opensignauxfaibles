@@ -111,7 +111,32 @@ func (sirene Sirene) Scope() string {
 }
 
 func (sirene Sirene) Headers() []string {
-	return marshal.ExtractColTags(sirene)
+	return []string{
+		"Siren",
+		"Nic",
+		"Siege",
+		"ComplementAdresse",
+		"NumVoie",
+		"IndRep",
+		"TypeVoie",
+		"Voie",
+		"Commune",
+		"CommuneEtranger",
+		"DistributionSpeciale",
+		"CodeCommune",
+		"CodeCedex",
+		"Cedex",
+		"CodePaysEtranger",
+		"PaysEtranger",
+		"CodePostal",
+		"Departement",
+		"APE",
+		"CodeActivite",
+		"NomenActivite",
+		"Creation",
+		"Longitude",
+		"Latitude",
+	}
 }
 
 func (s Sirene) Values() []string {

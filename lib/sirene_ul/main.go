@@ -25,7 +25,19 @@ type SireneUL struct {
 }
 
 func (sirene_ul SireneUL) Headers() []string {
-	return marshal.ExtractColTags(sirene_ul)
+	return []string{
+		"Siren",
+		"Nic",
+		"RaisonSociale",
+		"Prenom1UniteLegale",
+		"Prenom2UniteLegale",
+		"Prenom3UniteLegale",
+		"Prenom4UniteLegale",
+		"NomUniteLegale",
+		"NomUsageUniteLegale",
+		"CodeStatutJuridique",
+		"Creation",
+	}
 }
 
 func (sirene_ul SireneUL) Values() []string {

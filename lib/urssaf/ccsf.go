@@ -20,9 +20,13 @@ type CCSF struct {
 }
 
 func (ccsf CCSF) Headers() []string {
-	r := []string{"key"}
-	r = append(r, marshal.ExtractColTags(ccsf)...)
-	return r
+	return []string{
+		"key",
+		"NumeroCompte",
+		"DateTraitement",
+		"Stade",
+		"Action",
+	}
 }
 
 func (ccsf CCSF) Values() []string {

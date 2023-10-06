@@ -26,9 +26,20 @@ type Delai struct {
 }
 
 func (delai Delai) Headers() []string {
-	r := []string{"key"}
-	r = append(r, marshal.ExtractColTags(delai)...)
-	return r
+	return []string{
+		"key",
+		"NumeroCompte",
+		"NumeroContentieux",
+		"DateCreation",
+		"DateEcheance",
+		"DureeDelai",
+		"Denomination",
+		"Indic6m",
+		"AnneeCreation",
+		"MontantEcheancier",
+		"Stade",
+		"Action",
+	}
 }
 
 func (delai Delai) Values() []string {
