@@ -9,12 +9,6 @@
 		"hasStartDate" : true
 	},
 	{
-		"reportType" : "PurgeNotCompacted",
-		"hasCommitHash" : true,
-		"hasDate" : true,
-		"hasStartDate" : true
-	},
-	{
 		"event" : {
 			"headRejected" : undefined,
 			"headFatal" : undefined,
