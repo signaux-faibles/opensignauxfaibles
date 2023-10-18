@@ -12,6 +12,8 @@ import (
 	"opensignauxfaibles/lib/marshal"
 )
 
+const exportPath = "/export/csv"
+
 var csvFiles = map[string]*os.File{}
 
 func InsertIntoCSVs() chan *Value {
@@ -106,7 +108,7 @@ func openFile(key string, tuple marshal.Tuple) *csv.Writer {
 }
 
 func prepareFilename(key string, s string) string {
-	rootPath := "export"
+	rootPath := exportPath
 	filename := string(s) + ".csv"
 	if viper.IsSet("export.path") {
 		rootPath = viper.GetString("export.path")
