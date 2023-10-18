@@ -30,6 +30,7 @@ func InsertIntoCSVs() chan *Value {
 
 // FlushImportedData finalise l'insertion des données dans ImportedData.
 func FlushImportedData(channel chan *Value) {
+	close(channel)
 	closeCSVs()
 	importing.Wait()
 }
