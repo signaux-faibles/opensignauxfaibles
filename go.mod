@@ -6,6 +6,7 @@ require (
 	github.com/cnf/structhash v0.0.0-20201127153200-e1b16c1ebc08
 	github.com/cosiner/flag v0.5.2
 	github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8
+	github.com/jaswdr/faker v1.19.1
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/viper v1.17.0
 	github.com/stretchr/testify v1.8.4

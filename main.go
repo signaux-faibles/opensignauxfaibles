@@ -90,7 +90,6 @@ type commandHandler interface {
 // Each entry must implement the commandHandler interface.
 type cliCommands struct {
 	ParseFile         parseFileHandler
-	Purge             purgeBatchHandler
 	Check             checkBatchHandler
 	PruneEntities     pruneEntitiesHandler
 	Import            importBatchHandler

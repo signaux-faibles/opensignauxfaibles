@@ -4,6 +4,10 @@ import (
 	"encoding/csv"
 	"log/slog"
 	"os"
+	"path/filepath"
+
+	"github.com/pkg/errors"
+	"github.com/spf13/viper"
 
 	"opensignauxfaibles/lib/marshal"
 )
@@ -24,7 +28,6 @@ func InsertIntoCSVs() chan *Value {
 
 // FlushImportedData finalise l'insertion des données dans ImportedData.
 func FlushImportedData(channel chan *Value) {
-	close(channel)
 	closeCSVs()
 	importing.Wait()
 }
@@ -32,30 +35,32 @@ func FlushImportedData(channel chan *Value) {
 func closeCSVs() {
 	for _, file := range csvFiles {
 		err := file.Close()
-		slog.Error(
-			"erreur pendant la fermeture du fichier",
-			slog.Any("error", err),
-			slog.String("filename", file.Name()),
-		)
+		if err != nil {
+			slog.Error(
+				"erreur pendant la fermeture du fichier",
+				slog.Any("error", err),
+				slog.String("filename", file.Name()),
+			)
+		}
 	}
 }
 
 func writeBatchesToCSV(batchs map[string]Batch) {
-	for _, v := range batchs {
-		writeBatchToCSV(v)
+	for k, v := range batchs {
+		writeBatchToCSV(k, v)
 	}
 }
 
-func writeBatchToCSV(batch Batch) {
+func writeBatchToCSV(key string, batch Batch) {
 	for _, tuples := range batch {
-		writeLinesToCSV(tuples)
+		writeLinesToCSV(key, tuples)
 	}
 }
 
-func writeLinesToCSV(tuples map[string]marshal.Tuple) {
+func writeLinesToCSV(key string, tuples map[string]marshal.Tuple) {
 	for _, tuple := range tuples {
 		logger := slog.Default().With(slog.Any("tuple", tuple))
-		csvWriter := openFile(tuple)
+		csvWriter := openFile(key, tuple)
 		err := csvWriter.Write(tuple.Values())
 		if err != nil {
 			logger.Error("erreur pendant l'écriture du tuple en csvWriter")
@@ -64,20 +69,21 @@ func writeLinesToCSV(tuples map[string]marshal.Tuple) {
 	}
 }
 
-func openFile(tuple marshal.Tuple) *csv.Writer {
+func openFile(key string, tuple marshal.Tuple) *csv.Writer {
 	logger := slog.Default().With(slog.Any("tuple", tuple))
 	file, found := csvFiles[tuple.Type()]
 	if found {
 		return csv.NewWriter(file)
 	}
 	var err error
-	filename := string(tuple.Type()) + ".csv"
-	file, err = os.OpenFile(filename, os.O_RDWR|os.O_TRUNC|os.O_CREATE, 0644)
+	fullFilename := prepareFilename(key, tuple.Type())
+
+	logger = logger.With(slog.String("filename", fullFilename))
+	file, err = os.OpenFile(fullFilename, os.O_RDWR|os.O_TRUNC|os.O_CREATE, 0644)
 	csvFiles[tuple.Type()] = file
 	if err != nil {
 		logger.Error(
 			"erreur pendant l'ouverture du fichier",
-			slog.String("filename", filename),
 			slog.Any("error", err),
 		)
 		panic(err)
@@ -92,10 +98,32 @@ func openFile(tuple marshal.Tuple) *csv.Writer {
 	if err != nil {
 		logger.Error(
 			"erreur pendant l'écriture des headers",
-			slog.String("filename", filename),
 			slog.Any("error", err),
 		)
 	}
 	writer.Flush()
 	return writer
+}
+
+func prepareFilename(key string, s string) string {
+	rootPath := "export"
+	filename := string(s) + ".csv"
+	if viper.IsSet("export.path") {
+		rootPath = viper.GetString("export.path")
+	}
+	exportPath := filepath.Join(rootPath, key)
+	createExportFolder(exportPath)
+	return filepath.Join(exportPath, filename)
+}
+
+func createExportFolder(path string) {
+	err := os.MkdirAll(path, os.ModePerm)
+	if err != nil {
+		slog.Error(
+			"erreur pendant la création du répertoire d'export",
+			slog.String("path", path),
+			slog.Any("error", err),
+		)
+		panic(errors.Wrap(err, "erreur pendant la création du répertoire d'export"))
+	}
 }
