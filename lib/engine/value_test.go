@@ -12,18 +12,16 @@ type Test struct {
 }
 
 func (test Test) Headers() []string {
-	// TODO implement me
-	panic("implement me")
+	return nil
 }
 
 func (test Test) Values() []string {
-	// TODO implement me
-	panic("implement me")
+	return nil
 }
 
 func (test Test) Key() string   { return "" }
 func (test Test) Scope() string { return "" }
-func (test Test) Type() string  { return "" }
+func (test Test) Type() string  { return "tuType" }
 
 func Test_mergeBatch(t *testing.T) {
 	batch1 := Batch{
