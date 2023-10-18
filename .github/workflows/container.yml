@@ -2,13 +2,7 @@ name: Build & Push Container vers ghcr.io
 
 on:
   push:
-    branches:
-      - 'master'
-  release:
-    types: [published, edited]
-  pull_request:
-    branches:
-      - 'master'
+
 
 jobs:
   container_datapi:
