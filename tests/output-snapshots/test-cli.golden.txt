@@ -14,7 +14,6 @@ Flags:
 
 Commands:
     parseFile            Parse un fichier vers la sortie standard
-    purge                Supprime une partie des données compactées
     check                Vérifie la validité d'un batch avant son importation
     pruneEntities        Compte/supprime les entités hors périmètre
     import               Importe des fichiers de données
@@ -25,30 +24,6 @@ Commands:
     public               Génère les données destinées au site web
     etablissements       Exporte la liste des établissements
     entreprises          Exporte la liste des entreprises
----
-$ ./sfdata purge
-Erreur: paramètre `since-batch` obligatoire. Utilisez ./sfdata purge --help pour consulter la documentation.
----
-$ ./sfdata purge --help
-Supprime une partie des données compactées
-
-Usage: purge [FLAG]...
-
-Description:
-    /!\ ce traitement est destructif et irréversible /!\
-    Supprime les données dans les objets de la collection RawData pour les batches suivant le numéro de batch donné.
-    La propriété "debugForKey" permet de traiter une entreprise en fournissant son siren, le résultat n'impacte pas la collection RawData mais est déversé dans purgeBatch_debug à des fins de vérifications.
-    Lorsque "key" n'est pas fourni, le traitement s'exécute sur l'ensemble de la base, et dans ce cas le flag --i-understand-what-im-doing doit être fourni pour confirmer la décision de suppression.
-    Répond "ok" dans la sortie standard, si le traitement s'est bien déroulé.
-    /!\ ce traitement est destructif et irréversible /!\
-
-Flags:
-    --since-batch batch_key             (type: string)
-                                    Identifiant du batch à partir duquel supprimer les données (ex: 1802, pour Février 2018)
-    --debug-for-key                     (type: string)
-                                    Numéro SIRET or SIREN d'une entité à déboguer (ex: 012345678901234)
-    --i-understand-what-im-doing        (type: bool)
-                                    Nécessaire pour confirmer la suppression de données
 ---
 $ ./sfdata check --help
 Vérifie la validité d'un batch avant son importation
@@ -190,19 +165,6 @@ Description:
 Flags:
     --key        (type: string)
              Numéro SIREN à utiliser pour filtrer les résultats (ex: 012345678)
----
-$ ./sfdata purgeNotCompacted --help
-Vide la collection ImportedData
-
-Usage: purgeNotCompacted [FLAG]...
-
-Description:
-    Vide la collection "ImportedData".
-    Répond "ok" dans la sortie standard, si le traitement s'est bien déroulé.
-
-Flags:
-    --i-understand-what-im-doing        (type: bool)
-                                    Nécessaire pour confirmer la suppression de données
 ---
 $ ./sfdata parseFile --help
 Parse un fichier vers la sortie standard

@@ -24,8 +24,6 @@ function test {
 test "sfdata"                           2>> "${OUTPUT_FILE}"
 test "sfdata unknown_command"           2>> "${OUTPUT_FILE}"
 test "sfdata --help"                    2>> "${OUTPUT_FILE}"
-test "sfdata purge"                     2>> "${OUTPUT_FILE}"
-test "sfdata purge --help"              2>> "${OUTPUT_FILE}"
 test "sfdata check --help"              2>> "${OUTPUT_FILE}"
 test "sfdata pruneEntities --help"      2>> "${OUTPUT_FILE}"
 test "sfdata import --help"             2>> "${OUTPUT_FILE}"
@@ -35,7 +33,6 @@ test "sfdata reduce --help"             2>> "${OUTPUT_FILE}"
 test "sfdata public --help"             2>> "${OUTPUT_FILE}"
 test "sfdata etablissements --help"     2>> "${OUTPUT_FILE}"
 test "sfdata entreprises --help"        2>> "${OUTPUT_FILE}"
-test "sfdata purgeNotCompacted --help"  2>> "${OUTPUT_FILE}"
 test "sfdata parseFile --help"          2>> "${OUTPUT_FILE}"
 
 set -e # will stop the script if any command fails with a non-zero exit code

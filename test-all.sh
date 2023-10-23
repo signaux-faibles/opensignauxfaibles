@@ -89,8 +89,8 @@ heading "test-reduce.sh"
 heading "test-reduce-2.sh"
 ./tests/test-reduce-2.sh $@ 2>&1 | indent
 
-heading "test-purge-batch.sh"
-./tests/test-purge-batch.sh $@ 2>&1 | indent
+#heading "test-purge-batch.sh"
+#./tests/test-purge-batch.sh $@ 2>&1 | indent
 
 heading "test-export.sh"
 ./tests/test-export.sh $@ 2>&1 | indent
