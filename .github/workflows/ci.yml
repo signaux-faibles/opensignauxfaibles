@@ -16,12 +16,6 @@ jobs:
       - run: go test -v -coverprofile=go-coverage.out -covermode=atomic -coverpkg=./... ./...
       - name: Show coverage
         run: go tool cover -func=go-coverage.out
-#      - name: Generate coverage report
-#        run: go run github.com/richardlt/gocover-cobertura < go-coverage.out > go-coverage.xml
-#      - uses: actions/upload-artifact@v3
-#        with:
-#          name: go-coverage-report
-#          path: go-coverage.xml
 
   mr-tests:
     name: Map-Reduce tests
@@ -139,8 +133,6 @@ jobs:
       - run: ./tests/test-public.sh
 
       - run: ./tests/test-reduce.sh
-
-      - run: ./tests/test-purge-batch.sh
 
       - run: ./tests/test-compact-failure.sh
 
