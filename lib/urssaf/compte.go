@@ -16,11 +16,19 @@ type Compte struct {
 }
 
 func (compte Compte) Headers() []string {
-	return []string{"siret", "numero_compte", "periode"}
+	return []string{
+		"siret",
+		"numéro_compte",
+		"période",
+	}
 }
 
 func (compte Compte) Values() []string {
-	return []string{compte.Siret, compte.NumeroCompte, compte.Periode.Format(time.DateTime)}
+	return []string{
+		compte.Siret,
+		compte.NumeroCompte,
+		compte.Periode.Format(time.DateTime),
+	}
 }
 
 // Key _id de l'objet

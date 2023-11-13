@@ -27,18 +27,18 @@ type Delai struct {
 
 func (delai Delai) Headers() []string {
 	return []string{
-		"key",
-		"NumeroCompte",
-		"NumeroContentieux",
-		"DateCreation",
-		"DateEcheance",
-		"DureeDelai",
-		"Denomination",
-		"Indic6m",
-		"AnneeCreation",
-		"MontantEcheancier",
-		"Stade",
-		"Action",
+		"siret",
+		"numéro_compte",
+		"numéro_contentieux",
+		"date_création",
+		"date_échéance",
+		"durée_délai",
+		"dénomination",
+		"indic_6mois",
+		"année_création",
+		"montant_échéancier",
+		"stade",
+		"action",
 	}
 }
 

@@ -21,11 +21,11 @@ type CCSF struct {
 
 func (ccsf CCSF) Headers() []string {
 	return []string{
-		"key",
-		"NumeroCompte",
-		"DateTraitement",
-		"Stade",
-		"Action",
+		"siret",
+		"numéro_compte",
+		"date_traitement",
+		"stade",
+		"action",
 	}
 }
 
