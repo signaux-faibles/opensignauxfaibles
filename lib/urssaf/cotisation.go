@@ -20,11 +20,11 @@ type Cotisation struct {
 
 func (cotisation Cotisation) Headers() []string {
 	return []string{
-		"key",
-		"NumeroCompte",
-		"Periode",
-		"Encaisse",
-		"Du",
+		"siret",
+		"numéro_compte",
+		"période",
+		"encaissé",
+		"du",
 	}
 }
 

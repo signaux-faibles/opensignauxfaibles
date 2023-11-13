@@ -21,19 +21,19 @@ type Procol struct {
 
 func (procol Procol) Headers() []string {
 	return []string{
-		"DateEffet",
-		"ActionProcol",
-		"StadeProcol",
-		"Siret",
+		"siret",
+		"date_effet",
+		"action_procol",
+		"stade_procol",
 	}
 }
 
 func (procol Procol) Values() []string {
 	return []string{
+		procol.Siret,
 		marshal.TimeToCSV(&procol.DateEffet),
 		procol.ActionProcol,
 		procol.StadeProcol,
-		procol.Siret,
 	}
 }
 

@@ -23,7 +23,7 @@ func (effectifEnt EffectifEnt) Headers() []string {
 	slog.Warn("on n'utilise pas le tag `col` pour le csv", slog.String("type", "EffectifEnt"))
 	return []string{
 		"siren",
-		"periode",
+		"période",
 		"effectif_entreprise",
 	}
 }

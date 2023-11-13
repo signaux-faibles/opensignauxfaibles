@@ -31,20 +31,19 @@ type Debit struct {
 
 func (debit Debit) Headers() []string {
 	return []string{
-		"key",
-		"NumeroCompte",
-		"NumeroEcartNegatif",
-		"DateTraitement",
-		"PartOuvriere",
-		"PartPatronale",
-		"NumeroHistoriqueEcartNegatif",
-		"EtatCompte",
-		"CodeProcedureCollective",
-		"Periode",
-		"CodeOperationEcartNegatif",
-		"CodeMotifEcartNegatif",
-		"Recours",
-		"DebitSuivant",
+		"siret",
+		"numéro_compte",
+		"numéro_écart_négatif",
+		"date_traitement",
+		"part_ouvrière",
+		"part_patronale",
+		"numéro_historique_écart_négatif",
+		"état_compte",
+		"code_procédure_collective",
+		"période",
+		"code_opération_écart_négatif",
+		"code_motif_écart_négatif",
+		"recours",
 	}
 }
 
@@ -63,7 +62,6 @@ func (d Debit) Values() []string {
 		d.CodeOperationEcartNegatif,
 		d.CodeMotifEcartNegatif,
 		marshal.BoolToCSV(&d.Recours),
-		d.DebitSuivant,
 	}
 }
 
