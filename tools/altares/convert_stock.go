@@ -8,56 +8,44 @@ import (
 	"strings"
 
 	"github.com/iancoleman/strcase"
+	"github.com/pkg/errors"
 )
 
 var loglevel *slog.LevelVar
 
-func main() {
-	slog.Debug("c'est parti")
-	columnToRemove := 7
+const HEADER_TO_REMOVE = "NBR_EXPERIENCES_PAIEMENT"
 
-	slog.Info("suppression d'une colonne", slog.String("status", "start"), slog.Int("index", columnToRemove))
+func main() {
 
 	inputFile, err := os.Open(os.Args[1])
 	if err != nil {
 		panic(err)
 	}
+	defer func() {
+		closeErr := inputFile.Close()
+		if closeErr != nil {
+			panic(errors.Wrap(closeErr, "erreur à la fermeture du fichier"))
+		}
+	}()
+
 	reader := csv.NewReader(inputFile)
 	reader.Comma = ';'
 
 	w := csv.NewWriter(os.Stdout)
+	defer w.Flush()
 	w.Comma = reader.Comma
 
 	slog.Info("manipule les headers")
-	headers, err := reader.Read()
-	if err != nil {
-		panic(err)
-	}
-	for idx, header := range headers {
-		headers[idx] = formatHeader(header)
-	}
-	err = w.Write(removeColumn(headers, columnToRemove))
-	if err != nil {
-		panic(err)
-	}
+	columnToRemove := manageHeaders(reader, w)
+	slog.Info("suppression d'une colonne", slog.String("status", "start"), slog.Int("index", columnToRemove))
 
-	//x	headers[idx] = strcase.ToSnakeWithIgnore(value, ".,")
-	//}
-	//removeColumn(headers)
-	//slog.Info("transforme les headers", slog.Any("headers", headers))
-	//err = w.Write(headers)
-	//if err != nil {
-	//	panic(err)
-	//}
-
-	slog.Info("manipule les headers")
 	for {
 		record, err := reader.Read()
 		if err, ok := err.(*csv.ParseError); ok && err.Err != csv.ErrFieldCount {
+			slog.Warn("erreur lors de la lecture", slog.Any("error", err))
 			continue
 		}
 		if err == io.EOF {
-			w.Flush()
 			slog.Info("suppression d'une colonne", slog.String("status", "end"), slog.Int("index", columnToRemove))
 			return
 		}
@@ -67,6 +55,26 @@ func main() {
 			panic(err)
 		}
 	}
+}
+
+func manageHeaders(reader *csv.Reader, w *csv.Writer) int {
+	columnToRemove := -1
+	headers, err := reader.Read()
+	if err != nil {
+		panic(err)
+	}
+	for idx, header := range headers {
+		if header == HEADER_TO_REMOVE {
+			columnToRemove = idx
+		}
+		headers[idx] = formatHeader(header)
+	}
+	err = w.Write(removeColumn(headers, columnToRemove))
+	if err != nil {
+		panic(err)
+	}
+	slog.Info("colonne à supprimer", slog.Int("idx", columnToRemove))
+	return columnToRemove
 }
 
 func removeColumn(record []string, remove int) []string {
@@ -81,6 +89,7 @@ func removeColumn(record []string, remove int) []string {
 
 func formatHeader(input string) string {
 	r := strcase.ToSnakeWithIgnore(input, ".,")
+	r = strings.TrimSpace(r)
 	r = strings.Replace(r, "etat", "état", 1)
 	r = strings.Replace(r, "etudies", "étudiés", 1)
 	return r
