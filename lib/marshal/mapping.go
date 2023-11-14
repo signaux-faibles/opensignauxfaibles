@@ -60,6 +60,7 @@ func (comptes *Comptes) GetSortedKeys() []string {
 // reads the file and save it in cache. Lazy loaded.
 func GetCompteSiretMapping(cache Cache, batch *base.AdminBatch, mr mappingReader) (Comptes, error) {
 	value, err := cache.Get("comptes")
+	slog.Debug("associe les siret et les numéros de compte URSSAF", slog.Any("AdminBatch", *batch))
 	if err == nil {
 		comptes, ok := value.(Comptes)
 		if ok {
@@ -67,8 +68,6 @@ func GetCompteSiretMapping(cache Cache, batch *base.AdminBatch, mr mappingReader
 		}
 		return nil, errors.New("wrong format from existing field comptes in cache")
 	}
-
-	slog.Debug("Chargement des comptes urssaf", slog.Any("comptesValue", value))
 
 	compteSiretMapping := make(Comptes)
 
@@ -87,6 +86,7 @@ func GetCompteSiretMapping(cache Cache, batch *base.AdminBatch, mr mappingReader
 		slog.Debug("mapping siret <-> compte", slog.Any("comptes", compteSiretMapping.GetSortedKeys()))
 	}
 	cache.Set("comptes", compteSiretMapping)
+	slog.Debug("Chargement des comptes URSSAF terminé", slog.Any("comptesValue", value))
 	return compteSiretMapping, nil
 }
 
@@ -109,13 +109,14 @@ func OpenAndReadSiretMapping(
 	defer file.Close()
 
 	addSiretMapping, err := readSiretMapping(fileReader, cache, batch)
+	slog.Debug("lecture du mapping des sirets", slog.Any("mapping", addSiretMapping))
 	if err != nil {
 		return nil, err
 	}
 	for key := range addSiretMapping {
 		compteSiretMapping[key] = addSiretMapping[key]
 	}
-	slog.Debug("siret mapping", slog.Any("mapping", compteSiretMapping))
+	slog.Debug("nouveau mapping des sirest", slog.Any("mapping", compteSiretMapping))
 	return compteSiretMapping, nil
 }
 
@@ -187,5 +188,6 @@ func readSiretMapping(
 			)
 		}
 	}
+	slog.Debug("lecture du mapping des siret terminée", slog.Any("nombre de mapping", len(addSiretMapping)))
 	return addSiretMapping, nil
 }

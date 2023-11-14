@@ -5,6 +5,7 @@ import (
 	"encoding/csv"
 	"errors"
 	"io"
+	"log/slog"
 	"os"
 	"path/filepath"
 
@@ -20,7 +21,8 @@ type SirenFilter map[string]bool
 // Skips retourne `false` si le numéro SIREN/SIRET peut être traité,
 // car il est inclus dans le Filtre, ou car il n'y a pas de filtre.
 func (filter SirenFilter) Skips(siretOrSiren string) bool {
-	return filter != nil && !filter.includes(siretOrSiren)
+	skip := filter != nil && !filter.includes(siretOrSiren)
+	return skip
 }
 
 // includes retourne `true` si le numéro SIREN/SIRET est inclus, c.a.d. à traiter.
@@ -65,6 +67,7 @@ func getSirenFilter(cache Cache, batch *base.AdminBatch, fr filterReader) (Siren
 
 	paths := batch.Files["filter"]
 	if len(paths) == 0 {
+		slog.Debug("pas de filtre SIREN")
 		// No filter
 		return nil, nil
 	}
