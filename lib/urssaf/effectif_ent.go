@@ -2,7 +2,6 @@ package urssaf
 
 import (
 	"encoding/csv"
-	"log/slog"
 	"os"
 	"strconv"
 	"time"
@@ -20,7 +19,6 @@ type EffectifEnt struct {
 }
 
 func (effectifEnt EffectifEnt) Headers() []string {
-	slog.Warn("on n'utilise pas le tag `col` pour le csv", slog.String("type", "EffectifEnt"))
 	return []string{
 		"siren",
 		"période",

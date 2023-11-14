@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"log/slog"
 	"os/exec"
 	"testing"
 	"time"
@@ -112,7 +113,9 @@ func startMongoContainer(t *testing.T) {
 	exec.Command("docker", "stop", mongoContainer).Run()
 	exec.Command("docker", "rm", mongoContainer).Run()
 	portMapping := fmt.Sprintf("%v:27017", mongoPort)
-	err := exec.Command("docker", "run", "--rm", "-d", "-p", portMapping, "--name", mongoContainer, mongoImage).Run()
+	startMongoCommand := exec.Command("docker", "run", "--rm", "-d", "-p", portMapping, "--name", mongoContainer, mongoImage)
+	slog.Info("démarre mongo", slog.Any("command", startMongoCommand.Args))
+	err := startMongoCommand.Run()
 	if err != nil {
 		t.Fatalf("docker run: %v", err)
 	}
