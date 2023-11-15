@@ -15,6 +15,10 @@ var loglevel *slog.LevelVar
 
 const HEADER_TO_REMOVE = "NBR_EXPERIENCES_PAIEMENT"
 
+var FORMATTERS = map[int]func(string) string{
+	9: datifyStock,
+}
+
 func main() {
 
 	inputFile, err := os.Open(os.Args[1])
@@ -27,13 +31,11 @@ func main() {
 			panic(errors.Wrap(closeErr, "erreur à la fermeture du fichier"))
 		}
 	}()
-
 	reader := csv.NewReader(inputFile)
 	reader.Comma = ';'
 
 	w := csv.NewWriter(os.Stdout)
 	defer w.Flush()
-	w.Comma = reader.Comma
 
 	slog.Info("manipule les headers")
 	columnToRemove := manageHeaders(reader, w)
@@ -50,11 +52,25 @@ func main() {
 			return
 		}
 		newRecord := removeColumn(record, columnToRemove)
+		formatValues(newRecord)
 		err = w.Write(newRecord)
 		if err != nil {
 			panic(err)
 		}
 	}
+}
+
+func formatValues(record []string) {
+	for idx, value := range record {
+		formatter := FORMATTERS[idx]
+		if formatter != nil {
+			record[idx] = formatter(value)
+		}
+	}
+}
+
+func datifyStock(s string) string {
+	return s[6:10] + "-" + s[3:5] + "-" + s[0:2]
 }
 
 func manageHeaders(reader *csv.Reader, w *csv.Writer) int {
@@ -63,6 +79,7 @@ func manageHeaders(reader *csv.Reader, w *csv.Writer) int {
 	if err != nil {
 		panic(err)
 	}
+	slog.Debug("description des headers", slog.Any("headers", headers))
 	for idx, header := range headers {
 		if header == HEADER_TO_REMOVE {
 			columnToRemove = idx
@@ -105,5 +122,4 @@ func init() {
 	logger := slog.New(
 		handler)
 	slog.SetDefault(logger)
-
 }
