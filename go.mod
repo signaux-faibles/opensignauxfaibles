@@ -3,9 +3,11 @@ module opensignauxfaibles
 go 1.21
 
 require (
+	github.com/aws/aws-sdk-go v1.47.10
 	github.com/cnf/structhash v0.0.0-20201127153200-e1b16c1ebc08
 	github.com/cosiner/flag v0.5.2
 	github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8
+	github.com/iancoleman/strcase v0.3.0
 	github.com/jaswdr/faker v1.19.1
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/viper v1.17.0
@@ -21,7 +23,7 @@ require (
 	github.com/google/btree v1.0.0 // indirect
 	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
-	github.com/iancoleman/strcase v0.3.0 // indirect
+	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/kr/pretty v0.3.1 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect

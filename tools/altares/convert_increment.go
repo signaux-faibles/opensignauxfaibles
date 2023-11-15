@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/pkg/errors"
+	"golang.org/x/text/encoding/charmap"
 )
 
 var FIELDS = []int{
@@ -22,10 +23,6 @@ var FIELDS = []int{
 	30,
 }
 
-var FORMATS = map[int]func(string) string{
-	30: datify,
-}
-
 func main() {
 	inputFile, err := os.Open(os.Args[1])
 	if err != nil {
@@ -38,18 +35,20 @@ func main() {
 		}
 	}()
 
-	reader := csv.NewReader(inputFile)
+	fromISO8859_15toUTF8 := charmap.ISO8859_15.NewDecoder()
+	convertReader := fromISO8859_15toUTF8.Reader(inputFile)
+	reader := csv.NewReader(convertReader)
 	reader.Comma = ';'
 
 	w := csv.NewWriter(os.Stdout)
 	defer w.Flush()
-	w.Comma = reader.Comma
 
 	// discard headers
-	_, err = reader.Read()
+	headers, err := reader.Read()
 	if err != nil {
 		panic(err)
 	}
+	slog.Debug("description des headers", slog.Any("headers", headers))
 
 	for {
 		record, err := reader.Read()
@@ -80,16 +79,19 @@ func selectFields(record []string) []string {
 			)
 			return nil
 		}
-		convertor := FORMATS[field]
-		if convertor != nil {
-			record[field] = convertor(record[field])
-		}
 		data = append(data, record[field])
-
 	}
 	return data
 }
 
-func datify(s string) string {
-	return s[8:10] + "/" + s[5:7] + "/" + s[0:4]
+func init() {
+	loglevel := new(slog.LevelVar)
+	loglevel.Set(slog.LevelDebug)
+	handler := slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{
+		Level: loglevel,
+	})
+
+	logger := slog.New(
+		handler)
+	slog.SetDefault(logger)
 }
