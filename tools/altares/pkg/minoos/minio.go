@@ -54,7 +54,7 @@ func (m MC) GetAltaresFile(name string) *minio.Object {
 }
 
 func (m MC) PutAltaresFile(name string, reader io.Reader) (int64, time.Time) {
-	slog.Info("pousse le fichier", slog.String("status", "start"))
+	slog.Info("pousse le fichier", slog.String("status", "start"), slog.String("filename", name))
 	opts := minio.PutObjectOptions{
 		UserMetadata:    map[string]string{"type": "fichier stock", "name": name},
 		SendContentMd5:  true,
