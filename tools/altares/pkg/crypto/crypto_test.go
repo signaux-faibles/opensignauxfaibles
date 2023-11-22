@@ -41,7 +41,6 @@ import (
 
 func Test_ExampleEncrypt(t *testing.T) {
 	mc := minoos.NewWithClient(test.NewS3ForTest(t))
-	//t.Cleanup(func() { mc.CleanupVersionedBucket() })
 	stock := test.GenerateStockCSV(50)
 
 	remoteFileName := "altares.csv.gz.x"
@@ -49,7 +48,6 @@ func Test_ExampleEncrypt(t *testing.T) {
 	key := buildKey()
 
 	reader, writer := io.Pipe()
-
 	gzw := gzip.NewWriter(writer)
 	var wg sync.WaitGroup
 
@@ -59,6 +57,8 @@ func Test_ExampleEncrypt(t *testing.T) {
 		wg.Add(1)
 		_, err := sio.Encrypt(gzw, stock, sio.Config{Key: key[:]})
 		utils.ManageError(err, "erreur à l'encryption")
+		err = gzw.Flush()
+		utils.ManageError(err, "erreur au vidage")
 		wg.Done()
 		slog.Info("encrypte", slog.String("status", "end"))
 	}()
@@ -87,14 +87,10 @@ func Test_ExampleEncrypt(t *testing.T) {
 
 	slog.Info("récupère le fichier sur OOS", slog.String("status", "start"))
 	remote := mc.GetAltaresFile(remoteFileName)
-	//defer cclose(remote, "fermeture du fichier remote")
 	slog.Info("récupère le fichier sur OOS", slog.String("status", "end"))
 	gzr, err := gzip.NewReader(remote)
 	require.NoError(t, err)
 
-	//r, w := io.Pipe()
-	//go func() {
-	//wg.Add(1)
 	var decrypted int64
 	decryptReader, err := sio.DecryptReader(gzr, sio.Config{Key: key[:]})
 	require.NoError(t, err)
@@ -110,14 +106,7 @@ func Test_ExampleEncrypt(t *testing.T) {
 	}
 	slog.Debug("fichier décrypté", slog.Any("decrypted", decrypted))
 	cclose(remote, "fermeture du fichier remote")
-	//wg.Done()
-	//}()
-
-	//slog.Info("copie sur le fichier local", slog.String("status", "start"))
-	//written, err := io.Copy(localTarget, r)
-	//slog.Info("copie sur le fichier local", slog.String("status", "end"))
 	require.NoError(t, err)
-	//slog.Info("copie effectuée", slog.Any("wrote", written), slog.Any("path", localTarget.Name()))
 }
 
 func buildKey() [32]byte {
