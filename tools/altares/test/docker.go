@@ -1,11 +1,10 @@
 package test
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"log/slog"
-	"os"
+	"net/http"
 	"testing"
 	"time"
 
@@ -13,9 +12,8 @@ import (
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	"github.com/ory/dockertest/v3"
 	"github.com/ory/dockertest/v3/docker"
+	"github.com/pkg/errors"
 	"github.com/stretchr/testify/require"
-
-	"opensignauxfaibles/tools/altares/pkg/utils"
 )
 
 var s3AccessKey = "test"
@@ -23,7 +21,7 @@ var s3SecretKey = "testtest"
 
 var s3Credentials = credentials.NewStaticV4(s3AccessKey, s3SecretKey, "")
 
-const s3ContainerName = "s3_by_minio"
+const s3ContainerName = "s3_by_minio_"
 
 func NewS3ForTest(t *testing.T) *minio.Client {
 	s3Test := startMinio(t)
@@ -32,28 +30,22 @@ func NewS3ForTest(t *testing.T) *minio.Client {
 		"l'api S3 est disponible",
 		slog.String("endpoint", apiHostAndPort),
 	)
-	time.Sleep(time.Second)
 	client, err := minio.New(apiHostAndPort, &minio.Options{Creds: s3Credentials})
 	require.NoError(t, err)
 	return client
 }
 
 func startMinio(t *testing.T) *dockertest.Resource {
-	dir, err := os.MkdirTemp(os.TempDir(), "s3_volume_*")
-	require.NoError(t, err)
-	pool, err := dockertest.NewPool("")
-	require.NoError(t, err)
-	s3, found := pool.ContainerByName(s3ContainerName)
-	if found {
-		slog.Info("le containers s3 existe déjà", slog.String("volume", sourcesFrom(s3.Container.Mounts)))
-		return s3
-	}
+	s3ContainerName := s3ContainerName + Fake.Lorem().Word() + "_" + Fake.Lorem().Word()
+	dir := t.TempDir()
 	slog.Info(
 		"démarre le container minio s3",
 		slog.String("name", s3ContainerName),
 		slog.String("path", dir),
 	)
-	s3, err = pool.RunWithOptions(&dockertest.RunOptions{
+	pool, err := dockertest.NewPool("")
+	require.NoError(t, err)
+	s3, err := pool.RunWithOptions(&dockertest.RunOptions{
 		Name:       s3ContainerName,
 		Repository: "quay.io/minio/minio",
 		//Tag:        "15-alpine",
@@ -74,15 +66,20 @@ func startMinio(t *testing.T) *dockertest.Resource {
 	})
 	if err != nil {
 		killContainer(s3)
-		slog.Error(
-			"erreur pendant le démarrage du container",
-			slog.String("container", s3ContainerName),
-			slog.Any("error", err),
-		)
-		require.NoError(t, err)
+		panic(err)
 	}
 	// container stops after 20'
-	if err = s3.Expire(10); err != nil {
+	makeS3WillExpire(s3, 10)
+	hostPort := s3.GetHostPort("9000/tcp")
+	start := time.Now()
+	waitS3IsReady(pool, hostPort)
+	end := time.Now()
+	slog.Info("temps d'attente de démarrage de s3", slog.Any("duration", end.Sub(start)))
+	return s3
+}
+
+func makeS3WillExpire(s3 *dockertest.Resource, seconds uint) {
+	if err := s3.Expire(seconds); err != nil {
 		killContainer(s3)
 		slog.Error(
 			"erreur pendant la configuration de l'expiration du container",
@@ -91,10 +88,6 @@ func startMinio(t *testing.T) *dockertest.Resource {
 		)
 		panic(err)
 	}
-	wait := time.Second
-	slog.Debug("attends que S3 soit prêt", slog.Any("wait", wait))
-	time.Sleep(wait)
-	return s3
 }
 
 func sourcesFrom(mounts []docker.Mount) string {
@@ -114,28 +107,24 @@ func killContainer(resource *dockertest.Resource) {
 	}
 }
 
-func wait4S3IsReady(s3Endpoint string) {
+func waitS3IsReady(pool *dockertest.Pool, s3Endpoint string) {
 	// exponential backoff-retry, because the application in the container might not be ready to accept connections yet
-	pool, err := dockertest.NewPool("")
-	utils.ManageError(err, "erreur à création du pool docker par défaut")
-	pool.MaxWait = 60 * time.Second
+	// the minio client does not do service discovery for you (i.e. it does not check if connection can be established), so we have to use the health check
 	if err := pool.Retry(func() error {
-		client, err := minio.New(s3Endpoint, &minio.Options{
-			Creds:  credentials.NewEnvMinio(),
-			Secure: true,
-		})
+		url := fmt.Sprintf("http://%s/minio/health/live", s3Endpoint)
+		resp, err := http.Get(url)
 		if err != nil {
+			slog.Info("s3 pas encore prêt", slog.Any("cause", err))
 			return err
 		}
-		_, err = client.BucketExists(context.Background(), "random")
-		return err
+		if resp.StatusCode != http.StatusOK {
+			slog.Info("s3 pas encore prêt", slog.Int("statusCode", resp.StatusCode))
+			return fmt.Errorf("status code not OK")
+		}
+		slog.Info("s3 prêt")
+		return nil
 	}); err != nil {
-		slog.Error(
-			"erreur lors de la connexion au conteneur S3",
-			slog.Any("error", err),
-			slog.String("url", s3Endpoint),
-		)
-		panic(err)
+		panic(errors.Wrap(err, "erreur de connexion à Docker"))
 	}
-	slog.Debug("le stockage objet est prêt", slog.String("url", s3Endpoint))
+	slog.Info("le stockage objet est prêt", slog.String("url", s3Endpoint))
 }

@@ -7,16 +7,16 @@ import (
 	"github.com/jaswdr/faker"
 )
 
-var fake faker.Faker
+var Fake faker.Faker
 
 func init() {
-	fake = faker.NewWithSeed(rand.NewSource(time.Now().UnixNano()))
+	Fake = faker.NewWithSeed(rand.NewSource(time.Now().UnixNano()))
 }
 
 func FakeBucketName() string {
 	bucketName := ""
 	for len(bucketName) <= 3 {
-		bucketName = fake.Lorem().Word()
+		bucketName = Fake.Lorem().Word()
 	}
 	return bucketName
 }

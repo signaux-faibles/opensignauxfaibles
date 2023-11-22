@@ -54,7 +54,7 @@ func newStockLine() []string {
 		nbJours,
 		aNbFournisseurs(),
 		aEncoursEtudies(),
-		fake.Lorem().Word(), // cette ligne est coupée normalement
+		Fake.Lorem().Word(), // cette ligne est coupée normalement
 		aNote100(),
 		aNote100(),
 		aStockDateValeur(),
@@ -62,7 +62,7 @@ func newStockLine() []string {
 }
 
 func aStockDateValeur() string {
-	between := fake.Time().TimeBetween(
+	between := Fake.Time().TimeBetween(
 		time.Now().AddDate(-10, 0, 0),
 		time.Now().AddDate(0, -1, 0),
 	)
@@ -70,21 +70,21 @@ func aStockDateValeur() string {
 }
 
 func aNote100() string {
-	return strconv.Itoa(fake.IntBetween(0, 100))
+	return strconv.Itoa(Fake.IntBetween(0, 100))
 }
 
 func aEncoursEtudies() string {
-	float := fake.RandomFloat(3, 1, 999999)
+	float := Fake.RandomFloat(3, 1, 999999)
 	return strconv.FormatFloat(float, 'f', -1, 64)
 }
 
 func aNbFournisseurs() string {
-	nb := fake.IntBetween(1, 150)
+	nb := Fake.IntBetween(1, 150)
 	return strconv.Itoa(nb)
 }
 
 func aPaydex() (string, string, string) {
-	code := fake.RandomStringMapKey(altares.Paydex)
+	code := Fake.RandomStringMapKey(altares.Paydex)
 	label := altares.Paydex[code]
 	nbJours := ""
 	before, _, found := strings.Cut(label, " ")
@@ -98,9 +98,9 @@ func aPaydex() (string, string, string) {
 }
 
 func anEtatOrganisation() string {
-	return fake.RandomStringElement([]string{"Actif", "Fermé", "Liquidé"})
+	return Fake.RandomStringElement([]string{"Actif", "Fermé", "Liquidé"})
 }
 
 func aSiret() string {
-	return fmt.Sprintf("%09d", fake.IntBetween(1000, 9999))
+	return fmt.Sprintf("%09d", Fake.IntBetween(1000, 9999))
 }
