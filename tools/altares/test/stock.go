@@ -3,19 +3,14 @@ package test
 import (
 	"encoding/csv"
 	"fmt"
-	"math/rand"
 	"os"
 	"strconv"
 	"strings"
 	"time"
 
-	"github.com/jaswdr/faker"
-
 	"opensignauxfaibles/tools/altares/pkg/altares"
 	"opensignauxfaibles/tools/altares/pkg/utils"
 )
-
-var fake = faker.NewWithSeed(rand.NewSource(time.Now().UnixMicro()))
 
 func GenerateStockCSV(lines int) *os.File {
 	temp, err := os.CreateTemp(os.TempDir(), "stock_*.csv")
@@ -38,9 +33,6 @@ func GenerateStockCSV(lines int) *os.File {
 	err = writer.Write(headers)
 	utils.ManageError(err, "erreur à l'écriture des headers")
 	for i := 0; i < lines; i++ {
-		//if i%100 == 0 {
-		//	slog.Debug("generation du CSV en cours", slog.Int("i", i), slog.String("name", temp.Name()))
-		//}
 		err = writer.Write(newStockLine())
 		utils.ManageError(err, "erreur d'écriture de la ligne")
 	}
@@ -54,7 +46,6 @@ func GenerateStockCSV(lines int) *os.File {
 
 func newStockLine() []string {
 	codePaydex, paydexLabel, nbJours := aPaydex()
-
 	return []string{
 		aSiret(),
 		anEtatOrganisation(),
