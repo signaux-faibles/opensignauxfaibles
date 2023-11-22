@@ -40,7 +40,7 @@ import (
 )
 
 func Test_ExampleEncrypt(t *testing.T) {
-	mc := minoos.NewWithClient(test.NewS3ForTest(t))
+	mc := minoos.New(test.NewS3ForTest(t), test.FakeBucketName())
 	stock := test.GenerateStockCSV(50)
 
 	remoteFileName := "altares.csv.gz.x"

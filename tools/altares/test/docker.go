@@ -2,14 +2,13 @@ package test
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"log/slog"
-	"math/rand"
 	"os"
 	"testing"
 	"time"
 
-	"github.com/jaswdr/faker"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	"github.com/ory/dockertest/v3"
@@ -19,56 +18,54 @@ import (
 	"opensignauxfaibles/tools/altares/pkg/utils"
 )
 
-var S3AccessKey = "test"
-var S3SecretKey = "testtest"
+var s3AccessKey = "test"
+var s3SecretKey = "testtest"
 
-var S3Credentials = credentials.NewStaticV4(S3AccessKey, S3SecretKey, "")
+var s3Credentials = credentials.NewStaticV4(s3AccessKey, s3SecretKey, "")
+
+const s3ContainerName = "s3_by_minio"
 
 func NewS3ForTest(t *testing.T) *minio.Client {
-	volume := t.TempDir()
-	s3Test := startMinio(volume)
+	s3Test := startMinio(t)
 	apiHostAndPort := s3Test.GetHostPort("9000/tcp")
 	slog.Debug(
 		"l'api S3 est disponible",
 		slog.String("endpoint", apiHostAndPort),
-		slog.String("volume", volume),
 	)
 	time.Sleep(time.Second)
-	client, err := minio.New(apiHostAndPort, &minio.Options{Creds: S3Credentials})
+	client, err := minio.New(apiHostAndPort, &minio.Options{Creds: s3Credentials})
 	require.NoError(t, err)
 	return client
-	//s3APIURL := fmt.Sprintf("http://%s", hostAndPort)
-	//return s3APIURL
 }
 
-func startMinio(dir string) *dockertest.Resource {
-	s3ContainerName := "s3_" + faker.NewWithSeed(rand.NewSource(time.Now().UnixMicro())).Lorem().Word()
+func startMinio(t *testing.T) *dockertest.Resource {
+	dir, err := os.MkdirTemp(os.TempDir(), "s3_volume_*")
+	require.NoError(t, err)
+	pool, err := dockertest.NewPool("")
+	require.NoError(t, err)
+	s3, found := pool.ContainerByName(s3ContainerName)
+	if found {
+		slog.Info("le containers s3 existe déjà", slog.String("volume", sourcesFrom(s3.Container.Mounts)))
+		return s3
+	}
 	slog.Info(
 		"démarre le container minio s3",
 		slog.String("name", s3ContainerName),
 		slog.String("path", dir),
 	)
-
-	pool, err := dockertest.NewPool("")
-	if err != nil {
-		panic(err)
-	}
-	err = os.Setenv("MINIO_ROOT_USER", S3AccessKey)
-	if err != nil {
-		panic(err)
-	}
-	err = os.Setenv("MINIO_ROOT_PASSWORD", S3SecretKey)
-	if err != nil {
-		panic(err)
-	}
-	s3, err := pool.RunWithOptions(&dockertest.RunOptions{
+	require.NoError(t, err)
+	err = os.Setenv("MINIO_ROOT_USER", s3AccessKey)
+	require.NoError(t, err)
+	err = os.Setenv("MINIO_ROOT_PASSWORD", s3SecretKey)
+	require.NoError(t, err)
+	s3, err = pool.RunWithOptions(&dockertest.RunOptions{
 		Name:       s3ContainerName,
 		Repository: "quay.io/minio/minio",
 		//Tag:        "15-alpine",
 		Cmd: []string{"server", "/data"},
 		Env: []string{
-			"MINIO_ROOT_USER=" + S3AccessKey,
-			"MINIO_ROOT_PASSWORD=" + S3SecretKey,
+			"MINIO_ROOT_USER=" + s3AccessKey,
+			"MINIO_ROOT_PASSWORD=" + s3SecretKey,
 		},
 		Mounts: []string{
 			dir + ":/data",
@@ -87,10 +84,10 @@ func startMinio(dir string) *dockertest.Resource {
 			slog.String("container", s3ContainerName),
 			slog.Any("error", err),
 		)
-		panic(err)
+		require.NoError(t, err)
 	}
 	// container stops after 20'
-	if err = s3.Expire(600); err != nil {
+	if err = s3.Expire(10); err != nil {
 		killContainer(s3)
 		slog.Error(
 			"erreur pendant la configuration de l'expiration du container",
@@ -103,6 +100,14 @@ func startMinio(dir string) *dockertest.Resource {
 	slog.Debug("attends que S3 soit prêt", slog.Any("wait", wait))
 	time.Sleep(wait)
 	return s3
+}
+
+func sourcesFrom(mounts []docker.Mount) string {
+	r := ""
+	for _, m := range mounts {
+		r = fmt.Sprint(m.Source + ":" + m.Destination)
+	}
+	return r
 }
 
 func killContainer(resource *dockertest.Resource) {

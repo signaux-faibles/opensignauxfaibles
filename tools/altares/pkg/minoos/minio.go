@@ -3,6 +3,7 @@ package minoos
 import (
 	"context"
 	"io"
+	"log"
 	"log/slog"
 	"time"
 
@@ -12,7 +13,6 @@ import (
 	"opensignauxfaibles/tools/altares/pkg/utils"
 )
 
-const BUCKET_NAME = "bidon"
 const REGION = "cloudgouv-eu-west-1"
 
 var fake faker.Faker
@@ -21,10 +21,11 @@ type MC struct {
 	delegate   *minio.Client
 	bucketName string
 	ctx        context.Context
+	//mu         sync.Mutex
 }
 
-func NewWithClient(minioClient *minio.Client) MC {
-	bucketName := BUCKET_NAME
+func New(minioClient *minio.Client, bucketName string) MC {
+	slog.Info("nouveau oos client", slog.Any("endpoint", minioClient.EndpointURL()), slog.String("bucket", bucketName))
 	mc := MC{minioClient, bucketName, context.Background()}
 	mc.ensureBucketExists()
 	return mc
@@ -54,7 +55,8 @@ func (m MC) GetAltaresFile(name string) *minio.Object {
 }
 
 func (m MC) PutAltaresFile(name string, reader io.Reader) (int64, time.Time) {
-	slog.Info("pousse le fichier", slog.String("status", "start"), slog.String("filename", name))
+	//m.mu.Lock()
+	slog.Info("pousse le fichier", slog.String("status", "start"), slog.String("filename", name), slog.String("bucket", m.bucketName))
 	opts := minio.PutObjectOptions{
 		UserMetadata:    map[string]string{"type": "fichier stock", "name": name},
 		SendContentMd5:  true,
@@ -73,10 +75,13 @@ func (m MC) PutAltaresFile(name string, reader io.Reader) (int64, time.Time) {
 			slog.Any("lastModified", info.LastModified),
 		),
 	)
+	//m.mu.Unlock()
 	return info.Size, info.LastModified
 }
 
 func (mc MC) ensureBucketExists() {
+	//mc.mu.Lock()
+	//defer mc.mu.Unlock()
 	exists, err := mc.delegate.BucketExists(mc.ctx, mc.bucketName)
 	utils.ManageError(err, "erreur pendant la vérification de l'existence du bucket "+mc.bucketName)
 	slog.Debug("le bucket existe", slog.String("name", mc.bucketName), slog.Bool("exists", exists))
@@ -93,43 +98,45 @@ func (mc MC) ensureBucketExists() {
 }
 
 func (mc MC) configureBucket() {
+
 	versioningEnabled := minio.BucketVersioningConfiguration{
 		Status: "Enabled",
 	}
 	err := mc.delegate.SetBucketVersioning(mc.ctx, mc.bucketName, versioningEnabled)
 	utils.ManageError(err, "erreur à l'activation du versioning")
 	slog.Debug("versioning activé", slog.String("name", mc.bucketName))
+
 }
 
-//func (mc MC) CleanupVersionedBucket() {
-//	slog.Warn("nettoyage du seau versionné", slog.String("status", "start"))
-//	doneCh := make(chan struct{})
-//	defer close(doneCh)
-//	for obj := range mc.delegate.ListObjects(mc.ctx, mc.bucketName, minio.ListObjectsOptions{WithVersions: true, Recursive: true}) {
-//		utils.ManageError(obj.Err, "erreur au listing des objets du seau")
-//		if obj.Key != "" {
-//			err := mc.delegate.RemoveObject(mc.ctx, mc.bucketName, obj.Key,
-//				minio.RemoveObjectOptions{VersionID: obj.VersionID, GovernanceBypass: true})
-//			utils.ManageError(err, "erreur à la suppression de l'objet "+obj.Key)
-//		}
-//	}
-//	for objPartInfo := range mc.delegate.ListIncompleteUploads(context.Background(), mc.bucketName, "", true) {
-//		utils.ManageError(objPartInfo.Err, "erreur au listing des poussages incomplets")
-//		if objPartInfo.Key != "" {
-//			err := mc.delegate.RemoveIncompleteUpload(context.Background(), mc.bucketName, objPartInfo.Key)
-//			utils.ManageError(err, "erreur à la suppression du poussage incomplet de "+objPartInfo.Key)
-//		}
-//	}
-//	// objects are already deleted, clear the buckets now
-//	err := mc.delegate.RemoveBucket(context.Background(), mc.bucketName)
-//	if err != nil {
-//		for obj := range mc.delegate.ListObjects(context.Background(), mc.bucketName, minio.ListObjectsOptions{WithVersions: true, Recursive: true}) {
-//			log.Println("found", obj.Key, obj.VersionID)
-//		}
-//		utils.ManageError(err, "erreur à la suppression du seau "+mc.bucketName)
-//	}
-//	slog.Warn("nettoyage du seau versionné", slog.String("status", "end"))
-//}
+func (mc MC) CleanupVersionedBucket() {
+	slog.Warn("nettoyage du seau versionné", slog.String("status", "start"))
+	doneCh := make(chan struct{})
+	defer close(doneCh)
+	for obj := range mc.delegate.ListObjects(mc.ctx, mc.bucketName, minio.ListObjectsOptions{WithVersions: true, Recursive: true}) {
+		utils.ManageError(obj.Err, "erreur au listing des objets du seau")
+		if obj.Key != "" {
+			err := mc.delegate.RemoveObject(mc.ctx, mc.bucketName, obj.Key,
+				minio.RemoveObjectOptions{VersionID: obj.VersionID, GovernanceBypass: true})
+			utils.ManageError(err, "erreur à la suppression de l'objet "+obj.Key)
+		}
+	}
+	for objPartInfo := range mc.delegate.ListIncompleteUploads(context.Background(), mc.bucketName, "", true) {
+		utils.ManageError(objPartInfo.Err, "erreur au listing des poussages incomplets")
+		if objPartInfo.Key != "" {
+			err := mc.delegate.RemoveIncompleteUpload(context.Background(), mc.bucketName, objPartInfo.Key)
+			utils.ManageError(err, "erreur à la suppression du poussage incomplet de "+objPartInfo.Key)
+		}
+	}
+	// objects are already deleted, clear the buckets now
+	err := mc.delegate.RemoveBucket(context.Background(), mc.bucketName)
+	if err != nil {
+		for obj := range mc.delegate.ListObjects(context.Background(), mc.bucketName, minio.ListObjectsOptions{WithVersions: true, Recursive: true}) {
+			log.Println("found", obj.Key, obj.VersionID)
+		}
+		utils.ManageError(err, "erreur à la suppression du seau "+mc.bucketName)
+	}
+	slog.Warn("nettoyage du seau versionné", slog.String("status", "end"))
+}
 
 //func generateIncrementCSV() string {
 //	headers := []string{

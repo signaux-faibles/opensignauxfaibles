@@ -12,7 +12,8 @@ import (
 )
 
 func Test_something(t *testing.T) {
-	mc := NewWithClient(test.NewS3ForTest(t))
+	mc := New(test.NewS3ForTest(t), test.FakeBucketName())
+	//t.Cleanup(mc.CleanupVersionedBucket)
 	expectedLines := 8000
 	stockCSV := test.GenerateStockCSV(expectedLines)
 	stats, err := stockCSV.Stat()
@@ -37,6 +38,6 @@ func Test_something(t *testing.T) {
 func Test_newLocalS3(t *testing.T) {
 	// Initialize minio client object.
 	minioClient := test.NewS3ForTest(t)
-	mc := NewWithClient(minioClient)
+	mc := New(minioClient, test.FakeBucketName())
 	assert.NotNil(t, mc)
 }
