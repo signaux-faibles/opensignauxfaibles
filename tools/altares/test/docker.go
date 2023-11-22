@@ -53,11 +53,6 @@ func startMinio(t *testing.T) *dockertest.Resource {
 		slog.String("name", s3ContainerName),
 		slog.String("path", dir),
 	)
-	require.NoError(t, err)
-	err = os.Setenv("MINIO_ROOT_USER", s3AccessKey)
-	require.NoError(t, err)
-	err = os.Setenv("MINIO_ROOT_PASSWORD", s3SecretKey)
-	require.NoError(t, err)
 	s3, err = pool.RunWithOptions(&dockertest.RunOptions{
 		Name:       s3ContainerName,
 		Repository: "quay.io/minio/minio",
