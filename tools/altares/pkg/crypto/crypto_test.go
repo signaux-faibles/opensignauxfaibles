@@ -52,7 +52,7 @@ func Test_ExampleEncrypt(t *testing.T) {
 	var wg sync.WaitGroup
 
 	go func() {
-		defer cclose(writer, "fermeture du writer encrypté ")
+		defer utils.CloseIt(writer, "fermeture du writer encrypté ")
 		slog.Info("encrypte", slog.String("status", "start"))
 		wg.Add(1)
 		_, err := sio.Encrypt(gzw, stock, sio.Config{Key: key[:]})
@@ -71,7 +71,7 @@ func Test_ExampleEncrypt(t *testing.T) {
 		slog.Any("wrote", size),
 		slog.Time("lastModified", lastModified),
 	)
-	cclose(reader, "fermeture du pipe reader")
+	utils.CloseIt(reader, "fermeture du pipe reader")
 	wg.Wait()
 
 	files := mc.ListAltaresFiles()
@@ -83,7 +83,7 @@ func Test_ExampleEncrypt(t *testing.T) {
 	localTarget, err := os.Create(filepath.Join(os.TempDir(), remoteFileName))
 	require.NoError(t, err)
 	slog.Info("copie locale créée", slog.String("path", localTarget.Name()))
-	defer cclose(localTarget, "fermeture de la copie locale")
+	defer utils.CloseIt(localTarget, "fermeture de la copie locale")
 
 	slog.Info("récupère le fichier sur OOS", slog.String("status", "start"))
 	remote := mc.GetAltaresFile(remoteFileName)
@@ -105,7 +105,7 @@ func Test_ExampleEncrypt(t *testing.T) {
 		utils.ManageError(err, "erreur de déchiffrage des données") // add error handling
 	}
 	slog.Debug("fichier décrypté", slog.Any("decrypted", decrypted))
-	cclose(remote, "fermeture du fichier remote")
+	utils.CloseIt(remote, "fermeture du fichier remote")
 	require.NoError(t, err)
 }
 
@@ -128,12 +128,6 @@ func buildKey() [32]byte {
 	_, err = io.ReadFull(kdf, key[:])
 	utils.ManageError(err, "erreur à la dérication de la clé d'encryption")
 	return key
-}
-
-func cclose(o io.Closer, s string) {
-	err := o.Close()
-	slog.Debug(s)
-	utils.ManageError(err, "erreur "+s)
 }
 
 func ExampleDecrypt() {

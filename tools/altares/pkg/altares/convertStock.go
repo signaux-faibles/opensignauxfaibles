@@ -1,4 +1,4 @@
-package main
+package altares
 
 import (
 	"encoding/csv"
@@ -9,9 +9,9 @@ import (
 
 	"github.com/iancoleman/strcase"
 	"github.com/pkg/errors"
-)
 
-var loglevel *slog.LevelVar
+	"opensignauxfaibles/tools/altares/pkg/utils"
+)
 
 const HEADER_TO_REMOVE = "NBR_EXPERIENCES_PAIEMENT"
 
@@ -19,9 +19,9 @@ var FORMATTERS = map[int]func(string) string{
 	9: datifyStock,
 }
 
-func main() {
-
-	inputFile, err := os.Open(os.Args[1])
+func ConvertStock(stockFilename string, output io.Writer) {
+	slog.Info("conversion du fichier stock", slog.String("filename", stockFilename))
+	inputFile, err := os.Open(stockFilename)
 	if err != nil {
 		panic(err)
 	}
@@ -34,29 +34,32 @@ func main() {
 	reader := csv.NewReader(inputFile)
 	reader.Comma = ';'
 
-	w := csv.NewWriter(os.Stdout)
+	w := csv.NewWriter(output)
 	defer w.Flush()
 
-	slog.Info("manipule les headers")
+	slog.Debug("manipule les headers")
 	columnToRemove := manageHeaders(reader, w)
-	slog.Info("suppression d'une colonne", slog.String("status", "start"), slog.Int("index", columnToRemove))
+	slog.Debug("suppression d'une colonne", slog.String("status", "start"), slog.Int("index", columnToRemove))
 
 	for {
 		record, err := reader.Read()
 		if err, ok := err.(*csv.ParseError); ok && err.Err != csv.ErrFieldCount {
 			slog.Warn("erreur lors de la lecture", slog.Any("error", err))
-			continue
+			utils.ManageError(err, "erreur pendant la suppression de colonne")
 		}
 		if err == io.EOF {
-			slog.Info("suppression d'une colonne", slog.String("status", "end"), slog.Int("index", columnToRemove))
+			slog.Info(
+				"suppression d'une colonne",
+				slog.String("status", "end"),
+				slog.Int("index", columnToRemove),
+				slog.Any("row", reader.InputOffset()),
+			)
 			return
 		}
 		newRecord := removeColumn(record, columnToRemove)
 		formatValues(newRecord)
 		err = w.Write(newRecord)
-		if err != nil {
-			panic(err)
-		}
+		utils.ManageError(err, "erreur pendant l'écriture du fichier de sortie")
 	}
 }
 
@@ -76,9 +79,7 @@ func datifyStock(s string) string {
 func manageHeaders(reader *csv.Reader, w *csv.Writer) int {
 	columnToRemove := -1
 	headers, err := reader.Read()
-	if err != nil {
-		panic(err)
-	}
+	utils.ManageError(err, "erreur à la lecture des headers du fichier stock")
 	slog.Debug("description des headers", slog.Any("headers", headers))
 	for idx, header := range headers {
 		if header == HEADER_TO_REMOVE {
@@ -110,16 +111,4 @@ func formatHeader(input string) string {
 	r = strings.Replace(r, "etat", "état", 1)
 	r = strings.Replace(r, "etudies", "étudiés", 1)
 	return r
-}
-
-func init() {
-	loglevel = new(slog.LevelVar)
-	loglevel.Set(slog.LevelDebug)
-	handler := slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{
-		Level: loglevel,
-	})
-
-	logger := slog.New(
-		handler)
-	slog.SetDefault(logger)
 }
