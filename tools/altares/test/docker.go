@@ -35,6 +35,14 @@ func NewS3ForTest(t *testing.T) *minio.Client {
 	return client
 }
 
+func getMountedDirectory(s3 *dockertest.Resource) string {
+	mounts := s3.Container.Mounts
+	if len(mounts) != 1 {
+		panic(fmt.Sprintf("pas assez ou trop de répertoire local sur ce S3 : %d", len(mounts)))
+	}
+	return mounts[0].Source
+}
+
 func startMinio(t *testing.T) *dockertest.Resource {
 	s3ContainerName := s3ContainerName + Fake.Lorem().Word() + "_" + Fake.Lorem().Word()
 	dir := t.TempDir()
