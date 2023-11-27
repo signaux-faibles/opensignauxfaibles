@@ -15,9 +15,9 @@ import (
 	"opensignauxfaibles/tools/altares/pkg/utils"
 )
 
-var COLUMNS_TO_REMOVE = []string{"NBR_EXPERIENCES_PAIEMENT"}
+var columnsToRemove = []string{"NBR_EXPERIENCES_PAIEMENT"}
 
-var FORMATTERS = map[int]func(string) string{
+var formatters = map[int]func(string) string{
 	9: datifyStock,
 }
 
@@ -80,7 +80,7 @@ func ConvertStock(stockFilename string, output io.Writer) {
 
 func formatValues(record []string) {
 	for idx, value := range record {
-		formatter := FORMATTERS[idx]
+		formatter := formatters[idx]
 		if formatter != nil {
 			record[idx] = formatter(value)
 		}
@@ -92,22 +92,22 @@ func datifyStock(s string) string {
 }
 
 func manageHeaders(reader *csv.Reader, w *csv.Writer) []int {
-	var columnsToRemove []int
+	var idxToRemove []int
 	headers, err := reader.Read()
 	utils.ManageError(err, "erreur à la lecture des headers du fichier stock")
 	slog.Debug("description des headers", slog.Any("headers", headers))
 	for idx, header := range headers {
-		if slices.Contains(COLUMNS_TO_REMOVE, header) {
-			columnsToRemove = append(columnsToRemove, idx)
+		if slices.Contains(columnsToRemove, header) {
+			idxToRemove = append(idxToRemove, idx)
 		}
 		headers[idx] = formatHeader(header)
 	}
-	err = w.Write(removeColumns(headers, columnsToRemove...))
+	err = w.Write(removeColumns(headers, idxToRemove...))
 	if err != nil {
 		panic(err)
 	}
-	slog.Info("colonnes à supprimer", slog.Any("idx", columnsToRemove))
-	return columnsToRemove
+	slog.Info("colonnes à supprimer", slog.Any("idx", idxToRemove))
+	return idxToRemove
 }
 
 func removeColumns(record []string, remove ...int) []string {
