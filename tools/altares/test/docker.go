@@ -76,8 +76,8 @@ func startMinio(t *testing.T) *dockertest.Resource {
 		killContainer(s3)
 		panic(err)
 	}
-	// container stops after 20'
-	makeS3WillExpire(s3, 10)
+	// container stops after 20"
+	makeS3WillExpire(s3, 20)
 	hostPort := s3.GetHostPort("9000/tcp")
 	start := time.Now()
 	waitS3IsReady(pool, hostPort)

@@ -61,9 +61,6 @@ func ConvertIncrement(incrementFilename string, output io.Writer) {
 			slog.Warn("prbleme", slog.Any("error", err))
 			continue
 		}
-		//if err == io.EOF {
-		//	return
-		//}
 		if isIncrementalEndOfFile(record) {
 			return
 		}
@@ -81,15 +78,6 @@ func ConvertIncrement(incrementFilename string, output io.Writer) {
 func selectFields(record []string) []string {
 	var data []string
 	for _, field := range FIELDS {
-		//if field > len(record)-1 {
-		//	if
-		//	slog.Error(
-		//		"erreur de longueur de ligne",
-		//		slog.Any("record", record),
-		//	)
-		//	utils.ManageError(fmt.Errorf("erreur de longueur de ligne, attendu : %d, obtenu %d", field, len(record)-1), "mais que se passe t il ?"))
-		//	return nil
-		//}
 		data = append(data, record[field])
 	}
 	return data
@@ -99,8 +87,6 @@ func isIncrementalEndOfFile(record []string) bool {
 	if len(record) > 2 {
 		return false
 	}
-	//names := END_OF_FILE_REGEXP.SubexpNames()
-	//slog.Info("les captures", slog.Any("names", names))
 	line := END_OF_FILE_REGEXP.FindStringSubmatch(record[0])
 	if len(line) != 2 {
 		utils.ManageError(fmt.Errorf("erreur de fin de fichier : %+v", record), "problème avec la fin de fichier")
