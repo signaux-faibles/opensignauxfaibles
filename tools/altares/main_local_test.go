@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-var EXPECTED_HEADERS = []string{"siren", "état_organisation", "code_paydex", "paydex", "nbr_jrs_retard", "nbr_fournisseurs", "encours_étudiés", "note_100_alerteur_plus_30", "note_100_alerteur_plus_90_jours", "date_valeur"}
+var EXPECTED_HEADERS = []string{"siren", "état_organisation", "code_paydex", "nbr_jrs_retard", "nbr_fournisseurs", "encours_étudiés", "note_100_alerteur_plus_30", "note_100_alerteur_plus_90_jours", "date_valeur"}
 
 func Test_convertAndConcat(t *testing.T) {
 	output, err := os.CreateTemp(t.TempDir(), "output_*.csv")
@@ -36,7 +36,7 @@ func Test_convertAndConcat(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, EXPECTED_HEADERS, headers)
 	// première ligne -> provient du fichier stock
-	expectedFirstLine := []string{"005480546", "Fermé", "", "", "", "4", "4390.532", "", "", "2022-05-15"}
+	expectedFirstLine := []string{"005480546", "Fermé", "", "", "4", "4390.532", "", "", "2022-05-15"}
 	firstLine, err := csvR.Read()
 	require.NoError(t, err)
 	assert.Equal(t, expectedFirstLine, firstLine)
@@ -55,6 +55,6 @@ func Test_convertAndConcat(t *testing.T) {
 		assert.Len(t, currentLine, len(EXPECTED_HEADERS))
 	}
 
-	expectedLastLine := []string{"999990286", "Actif", "070", "070", "15", "12", "70873", "22", "13", "2023-10-30"}
+	expectedLastLine := []string{"999990286", "Actif", "070", "15", "12", "70873", "22", "13", "2023-10-30"}
 	assert.Equal(t, expectedLastLine, lastLine)
 }
