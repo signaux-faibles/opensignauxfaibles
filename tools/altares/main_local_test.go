@@ -50,7 +50,7 @@ func Test_convertAndConcat(t *testing.T) {
 		}
 		lastLine = currentLine // on n'est pas à la fin du fichier, alors peut-être est-ce la dernière ligne ?
 		if err != nil {
-			t.Errorf("erreur de lecture à la ligne %d du fichier cible : %v", csvR.InputOffset(), err)
+			t.Errorf("erreur de lecture du fichier cible : %v", err)
 		}
 		assert.Len(t, currentLine, len(EXPECTED_HEADERS))
 	}

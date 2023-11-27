@@ -2,6 +2,7 @@ package altares
 
 import (
 	"encoding/csv"
+	"log/slog"
 	"strings"
 	"testing"
 
@@ -28,5 +29,11 @@ func Test_isIncrementalEndOfFile(t *testing.T) {
 				t.Errorf("isIncrementalEndOfFile() = %v, want %v", got, tt.want)
 			}
 		})
+	}
+}
+
+func Test_dummy(t *testing.T) {
+	for _, c := range allColumns {
+		slog.Info("valeur de mapping", slog.Any("colonne", c), slog.Any("valeur", mappingMensuel[c]))
 	}
 }

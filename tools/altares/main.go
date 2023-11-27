@@ -22,6 +22,7 @@ func main() {
 
 func convertAndConcat(altaresFiles []string, outputCsv io.Writer) {
 	slog.Debug("démarrage de la conversion et de la concaténation", slog.Any("inputs", altaresFiles))
+	altares.WriteHeaders(outputCsv)
 	altares.ConvertStock(altaresFiles[0], outputCsv)
 	if len(altaresFiles) == 1 {
 		slog.Info("terminé, pas de fichier incrément")
