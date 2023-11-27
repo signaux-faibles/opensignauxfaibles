@@ -122,7 +122,6 @@ func waitS3IsReady(pool *dockertest.Pool, s3Endpoint string) {
 		url := fmt.Sprintf("http://%s/minio/health/live", s3Endpoint)
 		resp, err := http.Get(url)
 		if err != nil {
-			slog.Info("s3 pas encore prêt", slog.Any("cause", err))
 			return err
 		}
 		if resp.StatusCode != http.StatusOK {
