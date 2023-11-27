@@ -7,6 +7,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/dimchansky/utfbom"
 	"github.com/iancoleman/strcase"
 	"github.com/pkg/errors"
 
@@ -31,7 +32,10 @@ func ConvertStock(stockFilename string, output io.Writer) {
 			panic(errors.Wrap(closeErr, "erreur à la fermeture du fichier"))
 		}
 	}()
-	reader := csv.NewReader(inputFile)
+	inputFileWithoutBOM, encoding := utfbom.Skip(inputFile)
+	slog.Info("encodage du fichier stock détecté", slog.String("encoding", encoding.String()))
+	reader := csv.NewReader(inputFileWithoutBOM)
+	reader.TrimLeadingSpace = true
 	reader.Comma = ';'
 
 	w := csv.NewWriter(output)

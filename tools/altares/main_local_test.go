@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-var EXPECTED_HEADERS = []string{"\ufeffsiren", "état_organisation", "code_paydex", "paydex", "nbr_jrs_retard", "nbr_fournisseurs", "encours_étudiés", "note_100_alerteur_plus_30", "note_100_alerteur_plus_90_jours", "date_valeur"}
+var EXPECTED_HEADERS = []string{"siren", "état_organisation", "code_paydex", "paydex", "nbr_jrs_retard", "nbr_fournisseurs", "encours_étudiés", "note_100_alerteur_plus_30", "note_100_alerteur_plus_90_jours", "date_valeur"}
 
 func Test_convertAndConcat(t *testing.T) {
 	output, err := os.CreateTemp(t.TempDir(), "output_*.csv")
