@@ -14,16 +14,16 @@ import (
 	"opensignauxfaibles/tools/altares/pkg/utils"
 )
 
-var FIELDS = []int{
-	1,
-	18,
-	21,
-	22,
-	23,
-	24,
-	26,
-	27,
-	30,
+var mappingMensuel = mapping{
+	siren:                           simpleConversion(1),
+	etat_organisation:               simpleConversion(18),
+	code_paydex:                     simpleConversion(21),
+	nbr_jrs_retard:                  simpleConversion(22),
+	nbr_fournisseurs:                simpleConversion(23),
+	encours_etudies:                 simpleConversion(24),
+	note_100_alerteur_plus_30:       simpleConversion(26),
+	note_100_alerteur_plus_90_jours: simpleConversion(27),
+	date_valeur:                     simpleConversion(30),
 }
 
 var END_OF_FILE_REGEXP = regexp.MustCompile("Fin du fichier : total (?P<nblines>\\d+) ligne\\(s\\)")
@@ -49,37 +49,7 @@ func ConvertIncrement(incrementFilename string, output io.Writer) {
 	w := csv.NewWriter(output)
 	defer w.Flush()
 
-	// discard headers
-	headers, err := reader.Read()
-	utils.ManageError(err, "erreur lors de la lecture des headers")
-	slog.Debug("description des headers", slog.Any("headers", headers))
-
-	for {
-		record, err := reader.Read()
-		if err, ok := err.(*csv.ParseError); ok && err.Err != csv.ErrFieldCount {
-			slog.Warn("probleme", slog.Any("error", err))
-			continue
-		}
-		if isIncrementalEndOfFile(record) {
-			return
-		}
-		out := selectFields(record)
-
-		if out != nil {
-			err = w.Write(out)
-			if err != nil {
-				panic(err)
-			}
-		}
-	}
-}
-
-func selectFields(record []string) []string {
-	var data []string
-	for _, field := range FIELDS {
-		data = append(data, record[field])
-	}
-	return data
+	readAllRowsUntil(reader, w, mappingMensuel, true, isIncrementalEndOfFile)
 }
 
 func isIncrementalEndOfFile(record []string) bool {
