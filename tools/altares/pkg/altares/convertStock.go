@@ -15,10 +15,10 @@ import (
 	"opensignauxfaibles/tools/altares/pkg/utils"
 )
 
-var columnsToRemove = []string{"NBR_EXPERIENCES_PAIEMENT"}
+var columnsToRemove = []string{"NBR_EXPERIENCES_PAIEMENT", "PAYDEX"}
 
 var formatters = map[int]func(string) string{
-	9: datifyStock,
+	8: datifyStock,
 }
 
 func ConvertStock(stockFilename string, output io.Writer) {
