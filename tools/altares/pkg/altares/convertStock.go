@@ -43,9 +43,20 @@ func ConvertStock(stockFilename string, output io.Writer) {
 
 	for {
 		record, err := reader.Read()
-		if err, ok := err.(*csv.ParseError); ok && err.Err != csv.ErrFieldCount {
-			slog.Warn("erreur lors de la lecture", slog.Any("error", err))
-			utils.ManageError(err, "erreur pendant la suppression de colonne")
+		if err, ok := err.(*csv.ParseError); ok {
+			switch err.Err {
+			case csv.ErrFieldCount:
+				slog.Warn(
+					"erreur lors de la lecture du fichier stock, enregistrement rejeté",
+					slog.Any("error", err.Err),
+					slog.Any("line", reader.InputOffset()),
+					slog.Any("record", record),
+				)
+				continue
+			default:
+				slog.Error("erreur lors de la lecture", slog.Any("error", err))
+				utils.ManageError(err, "erreur pendant la suppression de colonne")
+			}
 		}
 		if err == io.EOF {
 			slog.Info(
