@@ -5,6 +5,7 @@ import (
 	"io"
 	"log/slog"
 	"os"
+	"slices"
 	"strings"
 
 	"github.com/dimchansky/utfbom"
@@ -14,7 +15,7 @@ import (
 	"opensignauxfaibles/tools/altares/pkg/utils"
 )
 
-const HEADER_TO_REMOVE = "NBR_EXPERIENCES_PAIEMENT"
+var COLUMNS_TO_REMOVE = []string{"NBR_EXPERIENCES_PAIEMENT"}
 
 var FORMATTERS = map[int]func(string) string{
 	9: datifyStock,
@@ -42,8 +43,8 @@ func ConvertStock(stockFilename string, output io.Writer) {
 	defer w.Flush()
 
 	slog.Debug("manipule les headers")
-	columnToRemove := manageHeaders(reader, w)
-	slog.Debug("suppression d'une colonne", slog.String("status", "start"), slog.Int("index", columnToRemove))
+	columnsToRemove := manageHeaders(reader, w)
+	slog.Debug("conversion du fichier stock", slog.String("status", "start"))
 
 	for {
 		record, err := reader.Read()
@@ -63,15 +64,14 @@ func ConvertStock(stockFilename string, output io.Writer) {
 			}
 		}
 		if err == io.EOF {
-			slog.Info(
-				"suppression d'une colonne",
+			slog.Debug(
+				"conversion du fichier stock",
 				slog.String("status", "end"),
-				slog.Int("index", columnToRemove),
 				slog.Any("row", reader.InputOffset()),
 			)
 			return
 		}
-		newRecord := removeColumn(record, columnToRemove)
+		newRecord := removeColumns(record, columnsToRemove...)
 		formatValues(newRecord)
 		err = w.Write(newRecord)
 		utils.ManageError(err, "erreur pendant l'écriture du fichier de sortie")
@@ -91,29 +91,32 @@ func datifyStock(s string) string {
 	return s[6:10] + "-" + s[3:5] + "-" + s[0:2]
 }
 
-func manageHeaders(reader *csv.Reader, w *csv.Writer) int {
-	columnToRemove := -1
+func manageHeaders(reader *csv.Reader, w *csv.Writer) []int {
+	var columnsToRemove []int
 	headers, err := reader.Read()
 	utils.ManageError(err, "erreur à la lecture des headers du fichier stock")
 	slog.Debug("description des headers", slog.Any("headers", headers))
 	for idx, header := range headers {
-		if header == HEADER_TO_REMOVE {
-			columnToRemove = idx
+		if slices.Contains(COLUMNS_TO_REMOVE, header) {
+			columnsToRemove = append(columnsToRemove, idx)
 		}
 		headers[idx] = formatHeader(header)
 	}
-	err = w.Write(removeColumn(headers, columnToRemove))
+	err = w.Write(removeColumns(headers, columnsToRemove...))
 	if err != nil {
 		panic(err)
 	}
-	slog.Info("colonne à supprimer", slog.Int("idx", columnToRemove))
-	return columnToRemove
+	slog.Info("colonnes à supprimer", slog.Any("idx", columnsToRemove))
+	return columnsToRemove
 }
 
-func removeColumn(record []string, remove int) []string {
+func removeColumns(record []string, remove ...int) []string {
+	if remove == nil {
+		return record
+	}
 	var r []string
 	for idx, value := range record {
-		if idx != remove {
+		if !slices.Contains(remove, idx) {
 			r = append(r, value)
 		}
 	}
