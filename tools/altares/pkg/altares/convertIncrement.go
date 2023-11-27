@@ -58,7 +58,7 @@ func ConvertIncrement(incrementFilename string, output io.Writer) {
 	for {
 		record, err := reader.Read()
 		if err, ok := err.(*csv.ParseError); ok && err.Err != csv.ErrFieldCount {
-			slog.Warn("prbleme", slog.Any("error", err))
+			slog.Warn("probleme", slog.Any("error", err))
 			continue
 		}
 		if isIncrementalEndOfFile(record) {

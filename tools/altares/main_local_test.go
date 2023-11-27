@@ -4,6 +4,8 @@ package main
 
 import (
 	"encoding/csv"
+	"io"
+	"log"
 	"os"
 	"testing"
 
@@ -15,6 +17,7 @@ var EXPECTED_HEADERS = []string{"\ufeffsiren", "état_organisation", "code_payde
 
 func Test_convertAndConcat(t *testing.T) {
 	output, err := os.CreateTemp(t.TempDir(), "output_*.csv")
+	log.Print("fichier généré ", output.Name())
 	require.NoError(t, err)
 	convertAndConcat(
 		[]string{"resources/SF_DATA_20230706.txt", "resources/S_202011095834-3_202310020319.csv", "resources/S_202011095834-3_202311010315.csv"},
@@ -23,12 +26,35 @@ func Test_convertAndConcat(t *testing.T) {
 	err = output.Close()
 	require.NoError(t, err)
 
-	output, err = os.Open(output.Name())
+	generated, err := os.Open(output.Name())
 	require.NoError(t, err)
+	defer output.Close()
 
-	csvR := csv.NewReader(output)
+	csvR := csv.NewReader(generated)
 	// read headers
 	headers, err := csvR.Read()
 	require.NoError(t, err)
 	assert.Equal(t, EXPECTED_HEADERS, headers)
+	// première ligne -> provient du fichier stock
+	expectedFirstLine := []string{"005480546", "Fermé", "", "", "", "4", "4390.532", "", "", "2022-05-15"}
+	firstLine, err := csvR.Read()
+	require.NoError(t, err)
+	assert.Equal(t, expectedFirstLine, firstLine)
+
+	// toutes les lignes
+	var lastLine []string
+	for {
+		currentLine, err := csvR.Read()
+		if err == io.EOF {
+			break
+		}
+		lastLine = currentLine // on n'est pas à la fin du fichier, alors peut-être est-ce la dernière ligne ?
+		if err != nil {
+			t.Errorf("erreur de lecture à la ligne %d du fichier cible : %v", csvR.InputOffset(), err)
+		}
+		assert.Len(t, currentLine, len(EXPECTED_HEADERS))
+	}
+
+	expectedLastLine := []string{"999990286", "Actif", "070", "070", "15", "12", "70873", "22", "13", "2023-10-30"}
+	assert.Equal(t, expectedLastLine, lastLine)
 }
