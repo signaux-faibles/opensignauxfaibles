@@ -35,21 +35,11 @@ func NewS3ForTest(t *testing.T) *minio.Client {
 	return client
 }
 
-func getMountedDirectory(s3 *dockertest.Resource) string {
-	mounts := s3.Container.Mounts
-	if len(mounts) != 1 {
-		panic(fmt.Sprintf("pas assez ou trop de répertoire local sur ce S3 : %d", len(mounts)))
-	}
-	return mounts[0].Source
-}
-
 func startMinio(t *testing.T) *dockertest.Resource {
 	s3ContainerName := s3ContainerName + Fake.Lorem().Word() + "_" + Fake.Lorem().Word()
-	dir := t.TempDir()
 	slog.Info(
 		"démarre le container minio s3",
 		slog.String("name", s3ContainerName),
-		slog.String("path", dir),
 	)
 	pool, err := dockertest.NewPool("")
 	require.NoError(t, err)
@@ -62,9 +52,6 @@ func startMinio(t *testing.T) *dockertest.Resource {
 			"MINIO_ROOT_USER=" + s3AccessKey,
 			"MINIO_ROOT_PASSWORD=" + s3SecretKey,
 		},
-		Mounts: []string{
-			dir + ":/data",
-		},
 	}, func(config *docker.HostConfig) {
 		// set AutoRemove to true so that stopped container goes away by itself
 		config.AutoRemove = true
@@ -74,10 +61,10 @@ func startMinio(t *testing.T) *dockertest.Resource {
 	})
 	if err != nil {
 		killContainer(s3)
-		panic(err)
+		require.NoError(t, err)
 	}
 	// container stops after 20"
-	makeS3WillExpire(s3, 20)
+	setContainerExpiration(s3, 20)
 	hostPort := s3.GetHostPort("9000/tcp")
 	start := time.Now()
 	waitS3IsReady(pool, hostPort)
@@ -86,7 +73,7 @@ func startMinio(t *testing.T) *dockertest.Resource {
 	return s3
 }
 
-func makeS3WillExpire(s3 *dockertest.Resource, seconds uint) {
+func setContainerExpiration(s3 *dockertest.Resource, seconds uint) {
 	if err := s3.Expire(seconds); err != nil {
 		killContainer(s3)
 		slog.Error(
@@ -96,14 +83,6 @@ func makeS3WillExpire(s3 *dockertest.Resource, seconds uint) {
 		)
 		panic(err)
 	}
-}
-
-func sourcesFrom(mounts []docker.Mount) string {
-	r := ""
-	for _, m := range mounts {
-		r = fmt.Sprint(m.Source + ":" + m.Destination)
-	}
-	return r
 }
 
 func killContainer(resource *dockertest.Resource) {
