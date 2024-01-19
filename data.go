@@ -42,7 +42,6 @@ func (params reduceHandler) Validate() error {
 }
 
 func (params reduceHandler) Run() error {
-
 	batch, err := engine.GetBatch(params.BatchKey)
 	if err != nil {
 		return errors.New("Batch inexistant: " + err.Error())
