@@ -7,7 +7,7 @@ require (
 	github.com/cosiner/flag v0.5.2
 	github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8
 	github.com/jaswdr/faker v1.19.1
-	github.com/minio/minio-go/v7 v7.0.64
+	github.com/minio/minio-go/v7 v7.0.66
 	github.com/minio/sio v0.3.1
 	github.com/ory/dockertest/v3 v3.10.0
 	github.com/pkg/errors v0.9.1
@@ -36,12 +36,12 @@ require (
 	github.com/google/btree v1.0.0 // indirect
 	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510 // indirect
-	github.com/google/uuid v1.4.0 // indirect
+	github.com/google/uuid v1.5.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/imdario/mergo v0.3.16 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
-	github.com/klauspost/compress v1.17.0 // indirect
-	github.com/klauspost/cpuid/v2 v2.2.5 // indirect
+	github.com/klauspost/compress v1.17.4 // indirect
+	github.com/klauspost/cpuid/v2 v2.2.6 // indirect
 	github.com/kr/pretty v0.3.1 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
