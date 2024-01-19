@@ -13,7 +13,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/viper v1.18.2
 	github.com/stretchr/testify v1.8.4
-	github.com/tealeg/xlsx/v3 v3.3.4
+	github.com/tealeg/xlsx/v3 v3.3.5
 	golang.org/x/crypto v0.18.0
 	golang.org/x/text v0.14.0
 )
