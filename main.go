@@ -26,6 +26,7 @@ func connectDB() {
 // main Fonction Principale
 func main() {
 	initConfig()
+	initLogger()
 	exitCode := runCLI(os.Args...)
 	os.Exit(exitCode)
 }
@@ -62,6 +63,10 @@ func initConfig() {
 	viper.AddConfigPath("/etc/opensignauxfaibles")
 	viper.AddConfigPath("$HOME/.opensignauxfaibles")
 	viper.AddConfigPath(".")
+	err := viper.ReadInConfig()
+	if err != nil {
+		slog.Error("erreur à la lecture de la config toml", slog.Any("error", err))
+	}
 	marshal.SetGitCommit(GitCommit)
 }
 
