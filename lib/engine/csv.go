@@ -73,7 +73,6 @@ func writeLinesToCSV(key string, tuples map[string]marshal.Tuple) {
 }
 
 func openFile(key string, tuple marshal.Tuple) *csv.Writer {
-	logger := slog.Default().With(slog.Any("tuple", tuple))
 	file, found := csvFiles[tuple.Type()]
 	if found {
 		return csv.NewWriter(file)
@@ -81,7 +80,7 @@ func openFile(key string, tuple marshal.Tuple) *csv.Writer {
 	var err error
 	fullFilename := prepareFilename(key, tuple.Type())
 
-	logger = logger.With(slog.String("filename", fullFilename))
+	logger := slog.Default().With(slog.String("filename", fullFilename))
 	file, err = os.OpenFile(fullFilename, os.O_RDWR|os.O_TRUNC|os.O_CREATE, 0644)
 	csvFiles[tuple.Type()] = file
 	if err != nil {
@@ -94,7 +93,7 @@ func openFile(key string, tuple marshal.Tuple) *csv.Writer {
 	writer := csv.NewWriter(file)
 	headers := tuple.Headers()
 	logger.Info(
-		"write headers",
+		"écrit les headers",
 		slog.Any("headers", headers),
 	)
 	err = writer.Write(headers)
