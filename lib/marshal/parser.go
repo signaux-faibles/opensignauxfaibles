@@ -3,7 +3,7 @@ package marshal
 import (
 	"context"
 	"errors"
-	"fmt"
+	"log/slog"
 	"time"
 
 	"github.com/spf13/viper"
@@ -78,7 +78,10 @@ func ParseFile(path base.BatchFile, parser Parser, batch *base.AdminBatch, cache
 	tracker := NewParsingTracker()
 	fileType := parser.GetFileType()
 	filePath := path.Prefix() + viper.GetString("APP_DATA") + path.FilePath()
+	parserLog := slog.Default().With(slog.String("filename", filePath), slog.String("filetype", fileType))
+	parserLog.Info("c'est parti")
 	err := runParserOnFile(filePath, parser, batch, cache, &tracker, outputChannel)
+	parserLog.Info("c'est fini")
 	if err != nil {
 		tracker.AddFatalError(err)
 	}
@@ -130,7 +133,7 @@ func parseTuplesFromLine(lineResult ParsedLineResult, filter *SirenFilter, track
 // LogProgress affiche le numéro de ligne en cours de parsing, toutes les 2s.
 func LogProgress(lineNumber *int) (stop context.CancelFunc) {
 	return base.Cron(time.Second*2, func() {
-		fmt.Printf("Reading csv line %d\n", *lineNumber)
+		slog.Info("Reading csv line", slog.Int("line", *lineNumber))
 	})
 }
 

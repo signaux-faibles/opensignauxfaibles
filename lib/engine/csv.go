@@ -108,15 +108,22 @@ func openFile(key string, tuple marshal.Tuple) *csv.Writer {
 	return writer
 }
 
-func prepareFilename(key string, s string) string {
+func prepareFilename(key string, filetype string) string {
 	rootPath := exportPath
-	filename := string(s) + ".csv"
+	filename := filetype + ".csv"
 	if viper.IsSet("export.path") {
 		rootPath = viper.GetString("export.path")
 	}
 	exportPath := filepath.Join(rootPath, key)
 	createExportFolder(exportPath)
-	return filepath.Join(exportPath, filename)
+	filename = filepath.Join(exportPath, filename)
+	slog.Debug(
+		"le nom de fichier est généré",
+		slog.String("key", key),
+		slog.String("type", filetype),
+		slog.String("filename", filename),
+	)
+	return filename
 }
 
 func createExportFolder(path string) {

@@ -16,5 +16,8 @@ FIRST_BATCH = "1802"
 MRthreads = 2
 chunkByteSize = 1000000000
 
+[log]
+level = "debug"
+
 [export]
 path = "path/export"
