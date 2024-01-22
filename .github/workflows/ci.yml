@@ -116,9 +116,11 @@ jobs:
             -type f \
             -exec rm -v {} +
 
-      - name: Liste les fichiers présents
+      - name: Crée le fichier de configuration minimal
         run: |
-          ls -alh
+          touch config.toml 
+          echo "[log]" >> config.toml
+          echo "level = \"error\"" >> config.toml
 
       - run: ./tests/test-cli.sh
 
