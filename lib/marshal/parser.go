@@ -133,7 +133,7 @@ func parseTuplesFromLine(lineResult ParsedLineResult, filter *SirenFilter, track
 // LogProgress affiche le numéro de ligne en cours de parsing, toutes les 2s.
 func LogProgress(lineNumber *int) (stop context.CancelFunc) {
 	return base.Cron(time.Second*2, func() {
-		slog.Info("Reading csv line", slog.Int("line", *lineNumber))
+		slog.Debug("Reading csv line", slog.Int("line", *lineNumber))
 	})
 }
 
