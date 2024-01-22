@@ -116,6 +116,10 @@ jobs:
             -type f \
             -exec rm -v {} +
 
+      - name: Liste les fichiers présents
+        run: |
+          ls -alh
+
       - run: ./tests/test-cli.sh
 
       - run: ./tests/test-prune-entities.sh
