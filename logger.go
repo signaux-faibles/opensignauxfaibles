@@ -12,7 +12,7 @@ import (
 
 var loglevel *slog.LevelVar
 
-func init() {
+func initLogger() {
 	loglevel = new(slog.LevelVar)
 	loglevel.Set(slog.LevelInfo)
 	handler := slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{

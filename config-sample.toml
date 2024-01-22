@@ -17,7 +17,7 @@ MRthreads = 2
 chunkByteSize = 1000000000
 
 [log]
-level = "debug"
+level = "error"
 
 [export]
 path = "path/export"
