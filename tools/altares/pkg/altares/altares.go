@@ -1,10 +1,15 @@
 package altares
 
 import (
+	"bufio"
 	"encoding/csv"
 	"fmt"
 	"io"
 	"log/slog"
+	"os"
+	"strings"
+
+	"github.com/pkg/errors"
 
 	"opensignauxfaibles/tools/altares/pkg/utils"
 )
@@ -17,6 +22,8 @@ type conversion struct {
 	source  int
 	convert func(string) string
 }
+
+const RESULT_FIRST_LINE = "siren,état_organisation,code_paydex,nbr_jrs_retard,nbr_fournisseurs,encours_étudiés,note_100_alerteur_plus_30,note_100_alerteur_plus_90_jours,date_valeur"
 
 const (
 	siren column = iota
@@ -152,4 +159,50 @@ func WriteHeaders(output io.Writer) {
 	}
 	err := writer.Write(headers)
 	utils.ManageError(err, "erreur pendant  l'écriture des headers")
+}
+
+func Convert(filename string, output io.Writer) {
+	// Ouvrir le fichier en lecture
+	slog.Info("démarrage de la conversion du fichier ", slog.String("filename", filename))
+	fichier, err := os.Open(filename)
+	if err != nil {
+		panic(err)
+	}
+	defer func() {
+		closeErr := fichier.Close()
+		if closeErr != nil {
+			panic(errors.Wrap(closeErr, "erreur à la fermeture du fichier"))
+		}
+	}()
+
+	// Créer un scanner pour lire le fichier ligne par ligne
+	scanner := bufio.NewScanner(fichier)
+
+	// Lire la première ligne
+	if scanner.Scan() {
+		premiereLigne := scanner.Text()
+		if IsStockFile(premiereLigne) {
+			convertStockFile(fichier, output)
+		} else if IsIncrementFile(premiereLigne) {
+			convertIncrementFile(fichier, output)
+		} else if IsResultFile(premiereLigne) {
+			slog.Info("le fichier est le résultat d'un process précédent", slog.String("filename", filename))
+		} else {
+			utils.ManageError(errors.New("fichier de type inconnu"), "erreur à la conversion du fichier", slog.Any("filename", filename))
+		}
+	} else if err := scanner.Err(); err != nil {
+		utils.ManageError(err, "erreur à la lecture de la première ligne du fichier", slog.Any("filename", filename))
+	}
+}
+
+func IsStockFile(firstLine string) bool {
+	return strings.EqualFold(STOCK_FIRST_LINE, firstLine)
+}
+
+func IsIncrementFile(firstLine string) bool {
+	return strings.EqualFold(INCREMENT_FIRST_LINE, firstLine)
+}
+
+func IsResultFile(firstLine string) bool {
+	return strings.EqualFold(RESULT_FIRST_LINE, firstLine)
 }

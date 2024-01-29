@@ -10,7 +10,7 @@ import (
 
 func Test_isIncrementalEndOfFile(t *testing.T) {
 	recordEOF, err := csv.NewReader(strings.NewReader("Fin du fichier : total 122909 ligne(s);")).Read()
-	t.Log("match -> ", END_OF_FILE_REGEXP.MatchString(recordEOF[0]))
+	t.Log("match -> ", EndOfFileRegexp.MatchString(recordEOF[0]))
 	require.NoError(t, err)
 	type args struct {
 		record []string

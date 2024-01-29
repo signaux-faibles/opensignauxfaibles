@@ -21,10 +21,10 @@ func Test_convertAndConcat(t *testing.T) {
 	convertAndConcat(
 		[]string{
 			"resources/SF_DATA_20230706.txt",
-			"resources_2401/S_202011095834-3_202310020319.csv",
-			"resources_2401/S_202011095834-3_202311010315.csv",
-			"resources_2401/S_202011095834-3_202312011707.csv",
-			"resources_2401/S_202011095834-3_202401010331.csv",
+			"resources/2312/S_202011095834-3_202310020319.csv",
+			"resources/2312/S_202011095834-3_202311010315.csv",
+			"resources/2401/S_202011095834-3_202312011707.csv",
+			"resources/2401/S_202011095834-3_202401010331.csv",
 		},
 		output,
 	)
