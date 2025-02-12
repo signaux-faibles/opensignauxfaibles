@@ -93,7 +93,7 @@ func readFilterFiles(basePath string, filenames []base.BatchFile) (SirenFilter, 
 			return nil, errors.New("Erreur à l'ouverture du fichier, " + err.Error())
 		}
 		defer file.Close()
-		err = readFilter(bufio.NewReader(file), filter)
+		err = readFilter(bufio.NewReader(file), filter, filepath.Base(file.Name()))
 		if err != nil {
 			return nil, errors.New("Erreur à la lecture du fichier, " + err.Error())
 		}
@@ -103,7 +103,7 @@ func readFilterFiles(basePath string, filenames []base.BatchFile) (SirenFilter, 
 
 // readFilter reads the content of a io.Reader and adds it to an existing
 // filter
-func readFilter(reader io.Reader, filter SirenFilter) error {
+func readFilter(reader io.Reader, filter SirenFilter, filename string) error {
 
 	csvreader := csv.NewReader(reader)
 	csvreader.Comma = ';'
@@ -123,7 +123,7 @@ func readFilter(reader io.Reader, filter SirenFilter) error {
 		if sfregexp.RegexpDict["siren"].MatchString(siren) {
 			filter[siren] = true
 		} else {
-			return errors.New("Format de siren incorrect trouvé : " + siren)
+			return errors.New("Format de siren incorrect trouvé : " + siren + " dans le fichier " + filename)
 		}
 	}
 	return nil

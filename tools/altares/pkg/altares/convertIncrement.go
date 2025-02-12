@@ -16,14 +16,14 @@ import (
 
 var mappingMensuel = mapping{
 	siren:                           simpleConversion(1),
-	etat_organisation:               simpleConversion(18),
-	code_paydex:                     simpleConversion(21),
-	nbr_jrs_retard:                  simpleConversion(22),
-	nbr_fournisseurs:                simpleConversion(23),
-	encours_etudies:                 simpleConversion(24),
-	note_100_alerteur_plus_30:       simpleConversion(26),
-	note_100_alerteur_plus_90_jours: simpleConversion(27),
-	date_valeur:                     simpleConversion(30),
+	etat_organisation:               simpleConversion(3),
+	code_paydex:                     simpleConversion(4),
+	nbr_jrs_retard:                  simpleConversion(5),
+	nbr_fournisseurs:                simpleConversion(6),
+	encours_etudies:                 simpleConversion(7),
+	note_100_alerteur_plus_30:       simpleConversion(9),
+	note_100_alerteur_plus_90_jours: simpleConversion(10),
+	date_valeur:                     simpleConversion(13),
 }
 
 var END_OF_FILE_REGEXP = regexp.MustCompile("Fin du fichier : total (?P<nblines>\\d+) ligne\\(s\\)")

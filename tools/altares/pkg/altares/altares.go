@@ -126,7 +126,7 @@ func convertRow(record []string, m mapping) ([]string, error) {
 		return record, nil
 	}
 	if len(record) < len(m) {
-		slog.Warn("moins de colonnes dans l'enregistrement que dans le conversion")
+		slog.Warn("moins de colonnes dans l'enregistrement que dans la conversion")
 	}
 	for _, colonne := range allColumns {
 		actualConversion, found := m[colonne]
@@ -134,6 +134,8 @@ func convertRow(record []string, m mapping) ([]string, error) {
 			return nil, fmt.Errorf("erreur de définition de mapping pour la colonne %d", colonne)
 		}
 		if len(record) <= actualConversion.source {
+			slog.Warn(fmt.Sprintf("erreur sur la ligne %v", record))
+			slog.Warn(fmt.Sprintf("erreur sur la ligne %v", m))
 			return nil, fmt.Errorf("problème de conversion de la ligne, l'index du mapping recherché %v est inférieur à la longueur de l'enregistrement %v",
 				actualConversion.source, len(record))
 		}
