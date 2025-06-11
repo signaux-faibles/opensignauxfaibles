@@ -105,6 +105,15 @@ func TestReadFilter(t *testing.T) {
 	if err == nil {
 		t.Fatalf("readFilter should fail on incorrect siren")
 	}
+
+	testFilter = make(SirenFilter)
+	err = readFilter(strings.NewReader("siren\n012345678"), testFilter)
+	if err != nil {
+		t.Fatalf("Header provokes an error: %v", err)
+	}
+	if !reflect.DeepEqual(testFilter, SirenFilter{"012345678": true}) {
+		t.Fatalf("Filter not read as expected in presence of a header, failure")
+	}
 }
 
 func TestNilFilter(t *testing.T) {
