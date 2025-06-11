@@ -136,6 +136,12 @@ func TestReadFilter(t *testing.T) {
 			wantErr:  true,
 		},
 		{
+			name:     "invalid header (or invalid siren)",
+			input:    "abcdefghi\n876543210",
+			expected: nil,
+			wantErr:  true,
+		},
+		{
 			name:     "valid siren with header",
 			input:    "siren\n012345678",
 			expected: SirenFilter{"012345678": true},
