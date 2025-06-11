@@ -90,29 +90,79 @@ func mockReadFilter(string, []base.BatchFile) (SirenFilter, error) {
 	return SirenFilter{"012345678": true}, nil
 }
 
+// func TestReadFilter(t *testing.T) {
+// 	var testFilter = make(SirenFilter)
+// 	err := readFilter(strings.NewReader("012345678\n876543210"), testFilter)
+// 	if err != nil {
+// 		t.Fatalf("Error: %v", err)
+// 	}
+// 	if !reflect.DeepEqual(testFilter, SirenFilter{"012345678": true, "876543210": true}) {
+// 		t.Fatalf("Filter not read as expected, failure")
+// 	}
+
+// 	testFilter = make(SirenFilter)
+// 	err = readFilter(strings.NewReader("0123456789\n876543210"), testFilter)
+// 	if err == nil {
+// 		t.Fatalf("readFilter should fail on incorrect siren")
+// 	}
+
+// 	testFilter = make(SirenFilter)
+// 	err = readFilter(strings.NewReader("siren\n012345678"), testFilter)
+// 	if err != nil {
+// 		t.Fatalf("Header provokes an error: %v", err)
+// 	}
+// 	if !reflect.DeepEqual(testFilter, SirenFilter{"012345678": true}) {
+// 		t.Fatalf("Filter not read as expected in presence of a header, failure")
+// 	}
+// }
+
 func TestReadFilter(t *testing.T) {
-	var testFilter = make(SirenFilter)
-	err := readFilter(strings.NewReader("012345678\n876543210"), testFilter)
-	if err != nil {
-		t.Fatalf("Error: %v", err)
-	}
-	if !reflect.DeepEqual(testFilter, SirenFilter{"012345678": true, "876543210": true}) {
-		t.Fatalf("Filter not read as expected, failure")
+	testCases := []struct {
+		name     string
+		input    string
+		expected SirenFilter
+		wantErr  bool
+	}{
+		{
+			name:     "valid sirens",
+			input:    "012345678\n876543210",
+			expected: SirenFilter{"012345678": true, "876543210": true},
+			wantErr:  false,
+		},
+		{
+			name:     "invalid siren (wrong length)",
+			input:    "0123456789\n876543210",
+			expected: nil,
+			wantErr:  true,
+		},
+		{
+			name:     "valid siren with header",
+			input:    "siren\n012345678",
+			expected: SirenFilter{"012345678": true},
+			wantErr:  false,
+		},
 	}
 
-	testFilter = make(SirenFilter)
-	err = readFilter(strings.NewReader("0123456789\n876543210"), testFilter)
-	if err == nil {
-		t.Fatalf("readFilter should fail on incorrect siren")
-	}
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			testFilter := make(SirenFilter)
+			err := readFilter(strings.NewReader(tc.input), testFilter)
 
-	testFilter = make(SirenFilter)
-	err = readFilter(strings.NewReader("siren\n012345678"), testFilter)
-	if err != nil {
-		t.Fatalf("Header provokes an error: %v", err)
-	}
-	if !reflect.DeepEqual(testFilter, SirenFilter{"012345678": true}) {
-		t.Fatalf("Filter not read as expected in presence of a header, failure")
+			if tc.wantErr {
+				if err == nil {
+					t.Fatalf("readFilter should fail on incorrect siren")
+				}
+				return
+			}
+
+			if err != nil {
+				t.Fatalf("Error: %v", err)
+			}
+
+			if !reflect.DeepEqual(testFilter, tc.expected) {
+				t.Fatalf("Filter not read as expected, failure")
+			}
+		})
 	}
 }
 
