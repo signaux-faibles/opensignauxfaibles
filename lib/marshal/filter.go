@@ -120,6 +120,10 @@ func readFilter(reader io.Reader, filter SirenFilter) error {
 
 		siren := row[sirenIndex]
 
+		if siren == "siren" {
+			continue
+		}
+
 		if sfregexp.RegexpDict["siren"].MatchString(siren) {
 			filter[siren] = true
 		} else {
