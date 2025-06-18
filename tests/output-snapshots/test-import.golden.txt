@@ -182,10 +182,13 @@
 	},
 	{
 		"event" : {
-			"headRejected" : [ ],
+			"headRejected" : [
+				"Line 5: strconv.ParseFloat: parsing \"NOT_VALID\": invalid syntax",
+				"Line 5: strconv.ParseFloat: parsing \"NOT_VALID\": invalid syntax"
+			],
 			"headFatal" : [ ],
 			"linesSkipped" : NumberLong(0),
-			"summary" : "/../lib/sirene/testData/sireneTestData.csv: intégration terminée, 3 lignes traitées, 0 erreurs fatales, 0 lignes rejetées, 0 lignes filtrées, 3 lignes valides",
+			"summary" : "/../lib/sirene/testData/sireneTestData.csv: intégration terminée, 5 lignes traitées, 0 erreurs fatales, 1 lignes rejetées, 0 lignes filtrées, 4 lignes valides",
 			"batchKey" : "1910"
 		},
 		"reportType" : "ImportBatch",
