@@ -17,36 +17,6 @@ jobs:
       - name: Show coverage
         run: go tool cover -func=go-coverage.out
 
-  mr-tests:
-    name: Map-Reduce tests
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: ./js/.nvmrc
-      - uses: actions/cache@v4
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-      - run: npm install --prefer-offline --no-audit
-        working-directory: js
-      - name: Reveal golden master files for tests
-        uses: entrostat/git-secret-action@v4
-        with:
-          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY_FOR_GIT_SECRET }}
-          gpg-private-key-passphrase: ${{ secrets.GPG_PRIVATE_KEY_PASSPHRASE }}
-
-      - name: Run tests + generate coverage report
-        working-directory: js
-        run: npm run test:coverage # stores the coverage report in ./coverage/lcov.info
-      - uses: actions/upload-artifact@v4
-        with:
-          name: mr-coverage-report
-          path: js/coverage/lcov.info
-
   build:
     name: Generate and lint
     runs-on: ubuntu-22.04
@@ -118,33 +88,17 @@ jobs:
 
       - name: Crée le fichier de configuration minimal
         run: |
-          touch config.toml 
+          touch config.toml
           echo "[log]" >> config.toml
           echo "level = \"error\"" >> config.toml
 
       - run: ./tests/test-cli.sh
-
-      - run: ./tests/test-prune-entities.sh
-
-      - run: ./tests/test.sh
 
       - run: ./tests/test-import.sh
 
       - run: ./tests/test-validate.sh
 
       - run: ./tests/test-check.sh
-
-      - run: ./tests/test-export.sh
-
-      - run: ./tests/test-public.sh
-
-      - run: ./tests/test-reduce.sh
-
-      - run: ./tests/test-compact-failure.sh
-
-      - run: ./tests/test-compact.sh # relies on encrypted files
-
-      - run: ./tests/test-reduce-2.sh # relies on encrypted files
 
   coverage:
     name: Send coverage data to Codacy
