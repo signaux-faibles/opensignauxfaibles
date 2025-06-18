@@ -13,17 +13,10 @@ Flags:
     -h, --help    show help    (type: bool)
 
 Commands:
-    parseFile            Parse un fichier vers la sortie standard
-    check                Vérifie la validité d'un batch avant son importation
-    pruneEntities        Compte/supprime les entités hors périmètre
-    import               Importe des fichiers de données
-    purgeNotCompacted    Vide la collection ImportedData
-    validate             Liste les entrées de données invalides
-    compact              Compacte la base de données
-    reduce               Calcule les variables destinées à la prédiction
-    public               Génère les données destinées au site web
-    etablissements       Exporte la liste des établissements
-    entreprises          Exporte la liste des entreprises
+    parseFile    Parse un fichier vers la sortie standard
+    check        Vérifie la validité d'un batch avant son importation
+    import       Importe des fichiers de données
+    validate     Liste les entrées de données invalides
 ---
 $ ./sfdata check --help
 Vérifie la validité d'un batch avant son importation
