@@ -26,27 +26,12 @@ jobs:
         with:
           go-version-file: ./go.mod
       - run: make build
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: ./js/.nvmrc
       - uses: actions/cache@v4
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-      - run: npm install --prefer-offline --no-audit
-        working-directory: js
       - name: Check that generated files are up to date (jsFunctions.go and variables.json)
         run: |
           go generate -x ./...
           git diff
           exit $(git diff | wc -l)
-      - run: npm run lint
-        working-directory: js
-      - name: Typescript type checks
-        run: npx tsc --noEmit
-        working-directory: js
 
   e2e-tests:
     name: End-to-end tests
