@@ -257,12 +257,12 @@ func parseLine(idx marshal.ColMapping, row []string, parsedLine *marshal.ParsedL
 		sirene.Creation = &creation
 	}
 
-	if val, ok := idxRow.GetOptionalVal("longitude"); ok {
+	if val, ok := idxRow.GetOptionalVal("longitude"); ok && val != "" {
 		sirene.Longitude, err = strconv.ParseFloat(val, 64)
 		parsedLine.AddRegularError(err)
 	}
 
-	if val, ok := idxRow.GetOptionalVal("latitude"); ok {
+	if val, ok := idxRow.GetOptionalVal("latitude"); ok && val != "" {
 		sirene.Latitude, err = strconv.ParseFloat(val, 64)
 		parsedLine.AddRegularError(err)
 	}
