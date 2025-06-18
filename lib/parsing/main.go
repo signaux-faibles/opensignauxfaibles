@@ -8,9 +8,7 @@ import (
 
 	"opensignauxfaibles/lib/apconso"
 	"opensignauxfaibles/lib/apdemande"
-	"opensignauxfaibles/lib/ellisphere"
 	"opensignauxfaibles/lib/marshal"
-	"opensignauxfaibles/lib/paydex"
 	"opensignauxfaibles/lib/sirene"
 	sireneul "opensignauxfaibles/lib/sirene_ul"
 	"opensignauxfaibles/lib/urssaf"
@@ -32,8 +30,6 @@ var registeredParsers = map[string]marshal.Parser{
 	"apdemande":    apdemande.Parser,
 	"sirene":       sirene.Parser,
 	"sirene_ul":    sireneul.Parser,
-	"ellisphere":   ellisphere.Parser,
-	"paydex":       paydex.ParserPaydex,
 }
 
 // IsSupportedParser retourne true si un parseur est défini pour le fileType spécifié

@@ -403,62 +403,6 @@ var validationSchemas = map[string]string{
   "additionalProperties": false
 }
 `,
-"ellisphere.schema.json": `{
-  "title": "EntréeEllisphere",
-  "description": "Champs importés par le parseur lib/ellisphere/main.go de sfdata.",
-  "bsonType": "object",
-  "properties": {
-    "code_groupe": {
-      "description": "Code du groupe/actionnaire.",
-      "bsonType": "string"
-    },
-    "siren_groupe": {
-      "description": "Siren du groupe/actionnaire.",
-      "bsonType": "string",
-      "pattern": "^[0-9]{9}$"
-    },
-    "refid_groupe": {
-      "description": "Référence du groupe/actionnaire.",
-      "bsonType": "string"
-    },
-    "raison_sociale_groupe": {
-      "description": "Raison sociale du groupe/actionnaire.",
-      "bsonType": "string"
-    },
-    "adresse_groupe": {
-      "description": "Adresse du groupe/actionnaire.",
-      "bsonType": "string"
-    },
-    "personne_pou_m_groupe": {
-      "description": "Groupe/actionnaire: personne physique (P) ou morale (M)",
-      "bsonType": "string",
-      "enum": ["P", "M"]
-    },
-    "niveau_detention": {
-      "description": "Le Rang exprime le nombre d’intermédiaires entre 2 entités. (c.a.d. entre l'actionnaire et la filiale)",
-      "bsonType": "number"
-    },
-    "part_financiere": {
-      "description": "Le Pourcentage d’intérêt exprime la part mathématique du capital de la société détenue directement ou indirectement par l’entité mère.",
-      "bsonType": "number"
-    },
-    "code_filiere": {
-      "description": "Code de la filiale.",
-      "bsonType": "string"
-    },
-    "refid_filiere": {
-      "description": "Référence de la filiale.",
-      "bsonType": "string"
-    },
-    "personne_pou_m_filiere": {
-      "description": "Filiale: personne physique (P) ou morale (M)",
-      "bsonType": "string",
-      "enum": ["P", "M"]
-    }
-  },
-  "additionalProperties": false
-}
-`,
 "flatten_data_entries.pipeline.json": `[
   { "$project": { "_id": 1, "batches": { "$objectToArray": "$value.batch" } } },
   { "$unwind": { "path": "$batches", "preserveNullAndEmptyArrays": false } },
@@ -493,22 +437,6 @@ var validationSchemas = map[string]string{
     }
   }
 ]
-`,
-"paydex.schema.json": `{
-  "title": "EntréePaydex",
-  "description": "Champs importés par le parseur lib/paydex/main.go de sfdata.",
-  "bsonType": "object",
-  "required": ["date_valeur", "nb_jours"],
-  "properties": {
-    "date_valeur": {
-      "bsonType": "date"
-    },
-    "nb_jours": {
-      "bsonType": "number"
-    }
-  },
-  "additionalProperties": false
-}
 `,
 "procol.schema.json": `{
   "title": "EntréeDéfaillances",
