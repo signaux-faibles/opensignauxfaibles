@@ -103,7 +103,6 @@ jobs:
   coverage:
     name: Send coverage data to Codacy
     needs:
-      - mr-tests
       - go-tests
     runs-on: ubuntu-22.04
     steps:
@@ -111,9 +110,6 @@ jobs:
 #      - uses: actions/download-artifact@v4
 #        with:
 #          name: go-coverage-report
-      - uses: actions/download-artifact@v4
-        with:
-          name: mr-coverage-report
       - run: cat lcov.info
 #      - uses: codacy/codacy-coverage-reporter-action@master
 #        with:
