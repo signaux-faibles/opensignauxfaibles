@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"os"
 	"sort"
 
 	"github.com/cosiner/flag"
@@ -122,8 +121,4 @@ func (params checkBatchHandler) Run() error {
 func printJSON(object interface{}) {
 	res, _ := json.Marshal(object)
 	fmt.Println(string(res))
-}
-
-func parserToCSVMapping() map[string]os.File {
-	return nil
 }
