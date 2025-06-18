@@ -13,15 +13,6 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
 
-      - name: Set up node
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: ./js/.nvmrc
-
-      - name: Prepare js sources
-        run: npm install --prefer-offline --no-audit
-        working-directory: js
-
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
