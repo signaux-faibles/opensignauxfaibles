@@ -47,6 +47,21 @@
       "date_creation": "2007-04-20T00:00:00Z",
       "longitude": 5.52488,
       "latitude": 65.448048
+    },
+    {
+      "siren": "121212123",
+      "nic": "00001",
+      "siege": true,
+      "numero_voie": "55",
+      "type_voie": "HAMEAU",
+      "voie": "demnbujm",
+      "commune": "hzvnctxvbgkms",
+      "code_commune": "63024",
+      "code_postal": "83699",
+      "departement": "83",
+      "code_activite": "28.4x",
+      "nomen_activite": "NAFRev1",
+      "date_creation": "2007-04-20T00:00:00Z"
     }
   ],
   "events": [
@@ -58,11 +73,11 @@
         "headFatal": [],
         "headRejected": [],
         "isFatal": false,
-        "linesParsed": 3,
+        "linesParsed": 4,
         "linesRejected": 0,
         "linesSkipped": 0,
-        "linesValid": 3,
-        "summary": "testData/sireneTestData.csv: intégration terminée, 3 lignes traitées, 0 erreurs fatales, 0 lignes rejetées, 0 lignes filtrées, 3 lignes valides"
+        "linesValid": 4,
+        "summary": "testData/sireneTestData.csv: intégration terminée, 4 lignes traitées, 0 erreurs fatales, 0 lignes rejetées, 0 lignes filtrées, 4 lignes valides"
       },
       "priority": "info",
       "parserCode": "sirene",
