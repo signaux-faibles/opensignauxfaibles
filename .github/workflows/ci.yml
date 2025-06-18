@@ -93,19 +93,3 @@ jobs:
       - run: ./tests/test-validate.sh
 
       - run: ./tests/test-check.sh
-
-  coverage:
-    name: Send coverage data to Codacy
-    needs:
-      - go-tests
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v4
-#      - uses: actions/download-artifact@v4
-#        with:
-#          name: go-coverage-report
-      - run: cat lcov.info
-#      - uses: codacy/codacy-coverage-reporter-action@master
-#        with:
-#          project-token: ${{ secrets.CODACY_REPOSITORY_TOKEN_FOR_COVERAGE }}
-#          coverage-reports: go-coverage.xml,lcov.info
