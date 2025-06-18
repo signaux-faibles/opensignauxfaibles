@@ -10,16 +10,15 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stretchr/testify/assert"
 	"opensignauxfaibles/lib/apconso"
 	"opensignauxfaibles/lib/apdemande"
-	"opensignauxfaibles/lib/bdf"
-	"opensignauxfaibles/lib/diane"
 	"opensignauxfaibles/lib/ellisphere"
 	"opensignauxfaibles/lib/paydex"
 	"opensignauxfaibles/lib/sirene"
 	sireneul "opensignauxfaibles/lib/sirene_ul"
 	"opensignauxfaibles/lib/urssaf"
+
+	"github.com/stretchr/testify/assert"
 )
 
 var _ = flag.Bool("update", false, "Update the expected test values in golden file") // please keep this line until https://github.com/kubernetes-sigs/service-catalog/issues/2319#issuecomment-425200065 is fixed
@@ -113,13 +112,11 @@ func TestTypeAlignment(t *testing.T) {
 	typesToCompare := map[string]interface{}{
 		"apconso.schema.json":      apconso.APConso{},
 		"apdemande.schema.json":    apdemande.APDemande{},
-		"bdf.schema.json":          bdf.BDF{},
 		"ccsf.schema.json":         urssaf.CCSF{},
 		"compte.schema.json":       urssaf.Compte{},
 		"cotisation.schema.json":   urssaf.Cotisation{},
 		"debit.schema.json":        urssaf.Debit{},
 		"delai.schema.json":        urssaf.Delai{},
-		"diane.schema.json":        diane.Diane{},
 		"effectif.schema.json":     urssaf.Effectif{},
 		"effectif_ent.schema.json": urssaf.EffectifEnt{},
 		"ellisphere.schema.json":   ellisphere.Ellisphere{},

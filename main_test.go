@@ -66,7 +66,7 @@ func TestPrincipal(t *testing.T) {
 		// Exécution des commandes et vérification qu'elles s'achèvent toutes avec un exit code nul
 		assert.Equal(t, 0, runCLI("sfdata", "check", "--batch=1910"))
 		assert.Equal(t, 0, runCLI("sfdata", "import", "--batch=1910", "--no-filter"))
-		assert.Equal(t, 0, runCLI("sfdata", "parseFile", "--parser=diane", "--file=lib/diane/testData/dianeTestData.txt"))
+		assert.Equal(t, 0, runCLI("sfdata", "parseFile", "--parser=apconso", "--file=lib/apconso/testData/apconsoTestData.csv"))
 		assert.Equal(t, 2, runCLI("sfdata", "check"))                  // => "Erreur: paramètre `batch` obligatoire."
 		assert.Equal(t, 3, runCLI("sfdata", "import", "--batch=1910")) // => "Erreur: Ce batch ne spécifie pas de filtre"
 	})
