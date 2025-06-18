@@ -18,8 +18,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-//go:generate go run js/loadJS.go
-
 // MakeMapReduceJob construit une requête MapReduce à partir d'un bundle de fonctions JavaScript et de paramètres à leur transmettre.
 func MakeMapReduceJob(jsDirName string, params bson.M) (*mgo.MapReduce, error) {
 	rawFunctions, err := loadFromJSBundle(jsDirName, params)
