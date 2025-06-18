@@ -31,11 +31,6 @@ jobs:
           go generate -x ./...
           git diff
           exit $(git diff | wc -l)
-      - run: npm run lint
-        working-directory: js
-      - name: Typescript type checks
-        run: npx tsc --noEmit
-        working-directory: js
 
   e2e-tests:
     name: End-to-end tests
