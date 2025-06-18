@@ -58,12 +58,6 @@ jobs:
         with:
           go-version-file: ./go.mod
 
-      - name: Reveal golden master files for tests
-        uses: entrostat/git-secret-action@v4
-        with:
-          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY_FOR_GIT_SECRET }}
-          gpg-private-key-passphrase: ${{ secrets.GPG_PRIVATE_KEY_PASSPHRASE }}
-
       - run: make build
 
       - name: Remove source code
