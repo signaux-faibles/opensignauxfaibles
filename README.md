@@ -22,19 +22,14 @@ Contact: [contact@signaux-faibles.beta.gouv.fr](mailto:contact@signaux-faibles.b
 
 ## Dépendances / pré-requis
 
-- [Node.js](https://nodejs.org/) (voir version spécifiée dans `js/.nvmrc`), pour transpiler les fonctions map-reduce de TypeScript vers JavaScript et exécuter les tests automatisés, après toute modification de ces fonctions.
-- [git secret](https://git-secret.io/), pour (dé)chiffrer les fichiers de données privées utilisés dans certains tests automatisés.
+- [git secret](https://git-secret.io/), pour (dé)chiffrer les fichiers de 
+  données privées utilisés dans certains tests automatisés.
 
 ## Installation
 
 ```bash
 $ git clone https://github.com/signaux-faibles/opensignauxfaibles.git
 $ cd opensignauxfaibles
-$ cd js
-$ nvm use # pour utiliser la version de Node.js spécifiée dans .nvmrc
-$ npm install # pour installer les dépendances
-$ npm test # pour exécuter les tests unitaires et d'intégration, tel que décrit dans package.json
-$ cd ..
 $ go generate ./...
 $ make build
 $ go test ./...
@@ -63,7 +58,6 @@ La commande `sfdata` s'inscrit dans un workflow d'intégration de données. Pour
 Afin de prévenir les régressions, plusieurs types de tests automatisés sont inclus dans le dépôt:
 
 - tests unitaires de `sfdata`: `$ go test ./...`
-- tests unitaires et d'intégration des fonctions map-reduce: `$ cd js && npm test`
 - tests de bout en bout: `$ tests/test-*.sh`
 
 Tous ces tests sont exécutés en environnement d'Intégration Continue (CI) après chaque commit poussé sur GitHub, grâce à GitHub actions, tel que défini dans les fichiers `yaml` du répertoire `.github/workflows`.
