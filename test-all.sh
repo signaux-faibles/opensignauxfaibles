@@ -40,6 +40,7 @@ fi
 heading "test-cli.sh"
 ./tests/test-cli.sh $@ 2>&1 | indent
 
+
 heading "test-validate.sh"
 ./tests/test-validate.sh $@ 2>&1 | indent
 
@@ -48,6 +49,9 @@ heading "test-check.sh"
 
 heading "test-import.sh"
 ./tests/test-import.sh $@ 2>&1 | indent
+
+heading "test-parseFile.sh"
+./tests/test-parseFile.sh $@ 2>&1 | indent
 
 # Check if the --update flag was passed
 if [[ "$*" == *--update* ]]

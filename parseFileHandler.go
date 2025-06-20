@@ -70,7 +70,7 @@ func (params parseFileHandler) Run() error {
 
 	for e := range eventChannel {
 		res, _ := json.MarshalIndent(e, "", "  ")
-		log.Println(string(res)) // écriture de l'événement dans la sortie d'erreurs
+		log.Println(string(res)) // écriture de l'événement dans stderr
 	}
 	return nil
 }
