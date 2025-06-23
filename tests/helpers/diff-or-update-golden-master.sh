@@ -14,7 +14,7 @@ if [[ "${FLAGS}" == *--update* ]]
 then
     echo "🖼  Updating the golden master file from ${OUTPUT_FILE} ..."
     cp "${OUTPUT_FILE}" "${GOLDEN_FILE}"
-    echo "ℹ️  Updated ${GOLDEN_FILE} => you may have to run: $ git secret hide" # to re-encrypt the golden master file, after having updated it
+    echo "ℹ️  Updated ${GOLDEN_FILE}"
 else
     # Diff between expected and actual output
     echo -e "${COLOR_YELLOW}"

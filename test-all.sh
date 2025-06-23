@@ -1,11 +1,8 @@
 #!/bin/bash
 
 # Usage:
-# $ git secret reveal       # pour déchiffrer les données utilisées par les tests (golden files, etc...)
 # $ ./test-all.sh           # pour éxecuter tous les tests
-# $ ./test-all.sh --update  # pour éxecuter tous les tests et mettre à jour les snapshots des tests go + "ava" + les golden files des tests de bout en bout
-# $ git secret changes      # pour visualiser les modifications éventuellement apportées aux golden files
-# $ git secret hide         # pour chiffrer les golden files suite à leur modification
+# $ ./test-all.sh --update  # pour éxecuter tous les tests et mettre à jour les snapshots des tests go + les golden files des tests de bout en bout
 
 function heading {
   echo ""
@@ -56,5 +53,5 @@ heading "test-parseFile.sh"
 # Check if the --update flag was passed
 if [[ "$*" == *--update* ]]
 then
-    echo "ℹ️  Golden master files were updated => you may have to run: $ git secret hide" # to re-encrypt the golden master files
+    echo "ℹ️  Golden master files were updated"
 fi
