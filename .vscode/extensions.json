@@ -4,10 +4,7 @@
 
   // List of extensions which should be recommended for users of this workspace.
   "recommendations": [
-    "golang.go",
-    "dbaeumer.vscode-eslint",
-    "esbenp.prettier-vscode",
-    "ryanluker.vscode-coverage-gutters"
+    "golang.go"
   ],
   // List of extensions recommended by VS Code that should not be recommended for users of this workspace.
   "unwantedRecommendations": []
