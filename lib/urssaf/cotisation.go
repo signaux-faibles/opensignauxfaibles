@@ -76,8 +76,8 @@ func (parser *cotisationParser) Init(cache *marshal.Cache, batch *base.AdminBatc
 	return err
 }
 
-func (parser *cotisationParser) Open(filePath string) (err error) {
-	parser.file, parser.reader, err = marshal.OpenCsvReader(base.BatchFile(filePath), ';', true)
+func (parser *cotisationParser) Open(filePath base.BatchFile) (err error) {
+	parser.file, parser.reader, err = marshal.OpenCsvReader(filePath, ';', true)
 	if err == nil {
 		parser.idx, err = marshal.IndexColumnsFromCsvHeader(parser.reader, Cotisation{})
 	}

@@ -83,7 +83,7 @@ func Test_ImportBatchWithUnreadableFilter(t *testing.T) {
 
 func Test_CheckBatch(t *testing.T) {
 
-	t.Run("CheckBatch devrait réussir à parser un fichier compressé spécifié avec le préfixe 'gzip:'", func(t *testing.T) {
+	t.Run("CheckBatch devrait réussir à parser un fichier compressé spécifié avec le schéma 'gzip:'", func(t *testing.T) {
 
 		// Compression du fichier de données
 		procolFilePath := filepath.Join("..", "urssaf", "testData", "procolTestData.csv")
@@ -95,9 +95,10 @@ func Test_CheckBatch(t *testing.T) {
 		t.Cleanup(func() { os.Remove(compressedFilePath) })
 
 		// Exécution de CheckBatch sur un AdminBatch mentionnant un fichier compressé
+
 		batch := base.AdminBatch{
 			Files: base.BatchFiles{
-				"procol": {"gzip:../../lib/urssaf/testData/procolTestData.csv.compressed"},
+				"procol": {base.NewBatchFile("gzip:../../lib/urssaf/testData/procolTestData.csv.compressed")},
 			},
 		}
 		InitVoidEventQueue() // permettre à CheckBatch d'envoyer des messages au canal d'événements, sans stocker dans la db

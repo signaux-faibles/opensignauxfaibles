@@ -7,9 +7,6 @@ import (
 	"io"
 	"log/slog"
 	"os"
-	"path/filepath"
-
-	"github.com/spf13/viper"
 
 	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/sfregexp"
@@ -72,8 +69,7 @@ func getSirenFilter(cache Cache, batch *base.AdminBatch, fr filterReader) (Siren
 		return nil, nil
 	}
 
-	basePath := viper.GetString("APP_DATA")
-	filter, err := fr(basePath, paths)
+	filter, err := fr(paths)
 	if err != nil {
 		return nil, err
 	}
@@ -81,14 +77,14 @@ func getSirenFilter(cache Cache, batch *base.AdminBatch, fr filterReader) (Siren
 	return filter, nil
 }
 
-type filterReader func(string, []base.BatchFile) (SirenFilter, error)
+type filterReader func([]base.BatchFile) (SirenFilter, error)
 
 // openAndReadFilters reads several files, reads their content and concatenate
 // it into a SirenFilter
-func readFilterFiles(basePath string, filenames []base.BatchFile) (SirenFilter, error) {
+func readFilterFiles(filenames []base.BatchFile) (SirenFilter, error) {
 	filter := make(SirenFilter)
 	for _, p := range filenames {
-		file, err := os.Open(filepath.Join(basePath, p.FilePath()))
+		file, err := os.Open(p.FilePath())
 		if err != nil {
 			return nil, errors.New("Erreur à l'ouverture du fichier, " + err.Error())
 		}

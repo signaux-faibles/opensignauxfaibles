@@ -154,7 +154,7 @@ func TestReadSiretMapping(t *testing.T) {
 }
 
 func TestGetCompteSiretMapping(t *testing.T) {
-	t.Run("GetCompteSiretMapping can read from compressed admin_urssaf file with `gzip:` prefix", func(t *testing.T) {
+	t.Run("GetCompteSiretMapping can read from compressed admin_urssaf file with `gzip:` scheme", func(t *testing.T) {
 		expectedComptes := []string{"111982477292496174", "450359886246036238", "636043216536562844"}
 		compressedFileData := compressFileData(t, "../urssaf/testData/comptesTestData.csv")
 		compressedFile := CreateTempFileWithContent(t, compressedFileData.Bytes())

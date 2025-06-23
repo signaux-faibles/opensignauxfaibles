@@ -74,8 +74,8 @@ func (parser *effectifParser) Close() error {
 	return parser.file.Close()
 }
 
-func (parser *effectifParser) Open(filePath string) (err error) {
-	parser.file, parser.reader, err = marshal.OpenCsvReader(base.BatchFile(filePath), ';', false)
+func (parser *effectifParser) Open(filePath base.BatchFile) (err error) {
+	parser.file, parser.reader, err = marshal.OpenCsvReader(filePath, ';', false)
 	if err == nil {
 		parser.idx, parser.periods, err = parseEffectifColMapping(parser.reader, Effectif{})
 	}

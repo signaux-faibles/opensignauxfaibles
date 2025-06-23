@@ -77,8 +77,8 @@ func (parser *ccsfParser) Close() error {
 	return parser.file.Close()
 }
 
-func (parser *ccsfParser) Open(filePath string) (err error) {
-	parser.file, parser.reader, err = marshal.OpenCsvReader(base.BatchFile(filePath), ';', false)
+func (parser *ccsfParser) Open(filePath base.BatchFile) (err error) {
+	parser.file, parser.reader, err = marshal.OpenCsvReader(filePath, ';', false)
 	if err == nil {
 		parser.idx, err = marshal.IndexColumnsFromCsvHeader(parser.reader, CCSF{})
 	}

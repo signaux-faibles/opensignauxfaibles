@@ -6,8 +6,6 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/spf13/viper"
-
 	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/sfregexp"
 )
@@ -16,7 +14,7 @@ import (
 type Parser interface {
 	GetFileType() string
 	Init(cache *Cache, batch *base.AdminBatch) error
-	Open(filePath string) error
+	Open(filePath base.BatchFile) error
 	ParseLines(parsedLineChan chan ParsedLineResult)
 	Close() error
 }
@@ -77,19 +75,18 @@ func ParseFilesFromBatch(cache Cache, batch *base.AdminBatch, parser Parser) (ch
 func ParseFile(path base.BatchFile, parser Parser, batch *base.AdminBatch, cache Cache, outputChannel chan Tuple) Event {
 	tracker := NewParsingTracker()
 	fileType := parser.GetFileType()
-	filePath := path.Prefix() + viper.GetString("APP_DATA") + path.FilePath()
-	parserLog := slog.Default().With(slog.String("filename", filePath), slog.String("filetype", fileType))
+	parserLog := slog.Default().With(slog.String("filename", path.RelativePath()), slog.String("filetype", fileType))
 	parserLog.Info("c'est parti")
-	err := runParserOnFile(filePath, parser, batch, cache, &tracker, outputChannel)
+	err := runParserOnFile(path, parser, batch, cache, &tracker, outputChannel)
 	parserLog.Info("c'est fini")
 	if err != nil {
 		tracker.AddFatalError(err)
 	}
-	return CreateReportEvent(fileType, tracker.Report(batch.ID.Key, path.FilePath())) // abstract
+	return CreateReportEvent(fileType, tracker.Report(batch.ID.Key, path.RelativePath())) // abstract
 }
 
 // runParserOnFile parse les tuples du fichier spécifié, et peut retourner une erreur fatale.
-func runParserOnFile(filePath string, parser Parser, batch *base.AdminBatch, cache Cache, tracker *ParsingTracker, outputChannel chan Tuple) error {
+func runParserOnFile(filePath base.BatchFile, parser Parser, batch *base.AdminBatch, cache Cache, tracker *ParsingTracker, outputChannel chan Tuple) error {
 	filter := GetSirenFilterFromCache(cache)
 	if err := parser.Init(&cache, batch); err != nil {
 		return err

@@ -37,7 +37,6 @@ tests/helpers/mongodb-container.sh run > /dev/null << CONTENTS
     "files": {
       "dummy":        [],
       "filter":       [],
-      "paydex":       [ "/../lib/paydex/testData/paydexTestData.csv" ],
       "apconso":      [ "/../lib/apconso/testData/apconsoTestData.csv" ],
       "apdemande":    [ "/../lib/apdemande/testData/apdemandeTestData.csv" ],
       "sirene":       [ "/../lib/sirene/testData/sireneTestData.csv" ],

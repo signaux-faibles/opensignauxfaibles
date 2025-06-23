@@ -73,8 +73,8 @@ func (parser *apconsoParser) Init(_ *marshal.Cache, _ *base.AdminBatch) error {
 	return nil
 }
 
-func (parser *apconsoParser) Open(filePath string) (err error) {
-	parser.file, parser.reader, err = marshal.OpenCsvReader(base.BatchFile(filePath), ',', false)
+func (parser *apconsoParser) Open(filePath base.BatchFile) (err error) {
+	parser.file, parser.reader, err = marshal.OpenCsvReader(filePath, ',', false)
 	if err == nil {
 		parser.idx, err = marshal.IndexColumnsFromCsvHeader(parser.reader, APConso{})
 	}

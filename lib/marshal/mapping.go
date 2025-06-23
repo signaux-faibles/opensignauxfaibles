@@ -100,9 +100,8 @@ func OpenAndReadSiretMapping(
 	cache Cache,
 	batch *base.AdminBatch,
 ) (Comptes, error) {
-	filePath := base.BatchFile(batchFile.Prefix() + basePath + batchFile.FilePath()) // note: basePath is probably viper.GetString("APP_DATA")
 
-	file, fileReader, err := OpenFileReader(filePath)
+	file, fileReader, err := OpenFileReader(batchFile)
 	if err != nil {
 		return nil, errors.New("Erreur à l'ouverture du fichier, " + err.Error())
 	}

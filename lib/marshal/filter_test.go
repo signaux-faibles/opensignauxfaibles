@@ -86,7 +86,7 @@ func TestGetSirenFilter(t *testing.T) {
 	}
 }
 
-func mockReadFilter(string, []base.BatchFile) (SirenFilter, error) {
+func mockReadFilter([]base.BatchFile) (SirenFilter, error) {
 	return SirenFilter{"012345678": true}, nil
 }
 

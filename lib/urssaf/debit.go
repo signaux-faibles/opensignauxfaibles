@@ -103,8 +103,8 @@ func (parser *debitParser) Init(cache *marshal.Cache, batch *base.AdminBatch) (e
 	return err
 }
 
-func (parser *debitParser) Open(filePath string) (err error) {
-	parser.file, parser.reader, err = marshal.OpenCsvReader(base.BatchFile(filePath), ';', false)
+func (parser *debitParser) Open(filePath base.BatchFile) (err error) {
+	parser.file, parser.reader, err = marshal.OpenCsvReader(filePath, ';', false)
 	if err == nil {
 		parser.idx, err = marshal.IndexColumnsFromCsvHeader(parser.reader, Debit{})
 	}
