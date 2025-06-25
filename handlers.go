@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"sort"
+	"sync"
 
 	"github.com/cosiner/flag"
 	"github.com/globalsign/mgo/bson"
@@ -175,7 +176,11 @@ func (params parseFileHandler) Run() error {
 		close(eventChannel)
 	}()
 
+	var wg sync.WaitGroup
+
+	wg.Add(1)
 	go func() {
+		defer wg.Done()
 		for tuple := range outputChannel {
 			printJSON(tuple) // écriture du tuple dans la sortie standard
 		}
@@ -185,6 +190,10 @@ func (params parseFileHandler) Run() error {
 		res, _ := json.MarshalIndent(e, "", "  ")
 		log.Println(string(res)) // écriture de l'événement dans stderr
 	}
+
+	// Only return once all channels are closed
+	wg.Wait()
+
 	return nil
 }
 
