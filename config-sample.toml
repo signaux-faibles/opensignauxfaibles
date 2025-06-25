@@ -4,11 +4,6 @@ APP_DATA = "sample-data-raw"
 # Connexion à la base de données
 DB_DIAL = "mongodb://localhost:27017"
 DB = "signauxfaibles"
-FIRST_BATCH = "1802"
-
-# Parallélisme du MapReduce
-MRthreads = 2
-chunkByteSize = 1000000000
 
 [log]
 level = "error"
