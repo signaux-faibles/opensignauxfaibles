@@ -71,8 +71,8 @@ func (parser *effectifEntParser) Init(_ *marshal.Cache, _ *base.AdminBatch) erro
 	return nil
 }
 
-func (parser *effectifEntParser) Open(filePath string) (err error) {
-	parser.file, parser.reader, err = marshal.OpenCsvReader(base.BatchFile(filePath), ';', false)
+func (parser *effectifEntParser) Open(filePath base.BatchFile) (err error) {
+	parser.file, parser.reader, err = marshal.OpenCsvReader(filePath, ';', false)
 	if err == nil {
 		parser.idx, parser.periods, err = parseEffectifColMapping(parser.reader, EffectifEnt{})
 	}

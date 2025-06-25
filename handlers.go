@@ -4,15 +4,17 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"os"
 	"sort"
-	"time"
+	"sync"
 
 	"github.com/cosiner/flag"
 	"github.com/globalsign/mgo/bson"
 
 	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/engine"
+	"opensignauxfaibles/lib/marshal"
 	"opensignauxfaibles/lib/parsing"
 )
 
@@ -120,86 +122,117 @@ func (params checkBatchHandler) Run() error {
 	return nil
 }
 
-type purgeNotCompactedHandler struct {
-	Enable                 bool // set to true by cosiner/flag if the user is running this command
-	IUnderstandWhatImDoing bool `names:"--i-understand-what-im-doing" desc:"Nécessaire pour confirmer la suppression de données"`
-}
-
-func (params purgeNotCompactedHandler) Documentation() flag.Flag {
-	return flag.Flag{
-		Usage: "Vide la collection ImportedData",
-		Desc: `
-		Vide la collection "ImportedData".
-		Répond "ok" dans la sortie standard, si le traitement s'est bien déroulé.
-		`,
-	}
-}
-
-func (params purgeNotCompactedHandler) IsEnabled() bool {
-	return params.Enable
-}
-
-func (params purgeNotCompactedHandler) Validate() error {
-	if !params.IUnderstandWhatImDoing {
-		return errors.New("--i-understand-what-im-doing doit être employé pour confirmer la suppression")
-	}
-	return nil
-}
-
-func (params purgeNotCompactedHandler) Run() error {
-	startDate := time.Now()
-	err := engine.PurgeNotCompacted()
-	if err != nil {
-		return err
-	}
-	engine.LogOperationEvent("PurgeNotCompacted", startDate)
-	printJSON("ok")
-	return nil
-}
-
-type pruneEntitiesHandler struct {
-	Enable   bool   // set to true by cosiner/flag if the user is running this command
-	BatchKey string `names:"--batch" arglist:"batch_key" desc:"Identifiant du batch à nettoyer (ex: 1802, pour Février 2018)"`
-	Delete   bool   `names:"--delete" desc:"Nécessaire pour confirmer la suppression de données"`
-}
-
-func (params pruneEntitiesHandler) Documentation() flag.Flag {
-	return flag.Flag{
-		Usage: "Compte/supprime les entités hors périmètre",
-		Desc: `
-		Compte ou supprime dans la collection "RawData" les entités (établissements et entreprises)
-		non listées dans le filtre de périmètre du batch spécifié.
-		Répond avec un propriété JSON "count" qui vaut le nombre d'entités hors périmètre comptées ou supprimées.
-	`,
-	}
-}
-
-func (params pruneEntitiesHandler) IsEnabled() bool {
-	return params.Enable
-}
-
-func (params pruneEntitiesHandler) Validate() error {
-	if params.BatchKey == "" {
-		return errors.New("paramètre `batch` obligatoire")
-	}
-	return nil
-}
-
-// Count – then delete – companies from RawData that should have been
-// excluded by the SIREN Filter.
-func (params pruneEntitiesHandler) Run() error {
-	count, err := engine.PruneEntities(params.BatchKey, params.Delete)
-	if err == nil {
-		printJSON(bson.M{"count": count})
-	}
-	return err
-}
-
 func printJSON(object interface{}) {
 	res, _ := json.Marshal(object)
 	fmt.Println(string(res))
 }
 
-func parserToCSVMapping() map[string]os.File {
+type parseFileHandler struct {
+	Enable bool   // set to true by cosiner/flag if the user is running this command
+	Parser string `names:"--parser" desc:"Parseur à employer (ex: cotisation)"`
+	File   string `names:"--file"   desc:"Nom du fichier à parser. Contrairement à l'import, le chemin du fichier doit être complet et ne tient pas compte de la variable d'environnement APP_DATA"`
+}
+
+func (params parseFileHandler) Documentation() flag.Flag {
+	return flag.Flag{
+		Usage: "Parse un fichier vers la sortie standard",
+	}
+}
+
+func (params parseFileHandler) IsEnabled() bool {
+	return params.Enable
+}
+
+func (params parseFileHandler) Validate() error {
+	if params.Parser == "" {
+		return errors.New("paramètre `parser` obligatoire")
+	}
+	if params.File == "" {
+		return errors.New("paramètre `file` obligatoire")
+	}
+	if _, err := os.Stat(params.File); err != nil {
+		return errors.New("Can't find " + params.File + ": " + err.Error())
+	}
+	return nil
+}
+
+func (params parseFileHandler) Run() error {
+	parsers, err := parsing.ResolveParsers([]string{params.Parser})
+	if err != nil {
+		return err
+	}
+
+	file := base.NewBatchFileWithBasePath(params.File, "")
+	batch := base.AdminBatch{Files: base.BatchFiles{params.Parser: []base.BatchFile{file}}}
+	cache := marshal.NewCache()
+	parser := parsers[0]
+
+	// the following code is inspired from marshal.ParseFilesFromBatch()
+	outputChannel := make(chan marshal.Tuple)
+	eventChannel := make(chan marshal.Event)
+	go func() {
+		eventChannel <- marshal.ParseFile(file, parser, &batch, cache, outputChannel)
+		close(outputChannel)
+		close(eventChannel)
+	}()
+
+	var wg sync.WaitGroup
+
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		for tuple := range outputChannel {
+			printJSON(tuple) // écriture du tuple dans la sortie standard
+		}
+	}()
+
+	for e := range eventChannel {
+		res, _ := json.MarshalIndent(e, "", "  ")
+		log.Println(string(res)) // écriture de l'événement dans stderr
+	}
+
+	// Only return once all channels are closed
+	wg.Wait()
+
+	return nil
+}
+
+type validateHandler struct {
+	Enable     bool   // set to true by cosiner/flag if the user is running this command
+	Collection string `names:"--collection" arglist:"RawData|ImportedData" desc:"Nom de la collection à valider"`
+}
+
+func (params validateHandler) Documentation() flag.Flag {
+	return flag.Flag{
+		Usage: "Liste les entrées de données invalides",
+		Desc: `
+		Vérifie la validité des entrées de données contenues dans les documents de la collection RawData ou ImportedData.
+		Répond en listant dans la sortie standard les entrées invalides au format JSON.
+		`,
+	}
+}
+
+func (params validateHandler) IsEnabled() bool {
+	return params.Enable
+}
+
+func (params validateHandler) Validate() error {
+	if params.Collection != "RawData" && params.Collection != "ImportedData" {
+		return errors.New("le paramètre collection doit valoir RawData ou ImportedData")
+	}
+	return nil
+}
+
+func (params validateHandler) Run() error {
+	jsonSchema, err := engine.LoadJSONSchemaFiles()
+	if err != nil {
+		return err
+	}
+
+	err = engine.ValidateDataEntries(jsonSchema, params.Collection)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }

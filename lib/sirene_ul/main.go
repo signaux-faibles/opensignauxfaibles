@@ -91,8 +91,8 @@ func (parser *sireneUlParser) Close() error {
 	return parser.file.Close()
 }
 
-func (parser *sireneUlParser) Open(filePath string) (err error) {
-	parser.file, parser.reader, err = marshal.OpenCsvReader(base.BatchFile(filePath), ',', true)
+func (parser *sireneUlParser) Open(filePath base.BatchFile) (err error) {
+	parser.file, parser.reader, err = marshal.OpenCsvReader(filePath, ',', true)
 	if err == nil {
 		parser.idx, err = marshal.IndexColumnsFromCsvHeader(parser.reader, SireneUL{})
 	}

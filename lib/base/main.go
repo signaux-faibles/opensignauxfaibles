@@ -1,9 +1,13 @@
 package base
 
 import (
+	"path/filepath"
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/globalsign/mgo/bson"
+	"github.com/spf13/viper"
 )
 
 // AdminBatch metadata Batch
@@ -44,30 +48,75 @@ type AdminID struct {
 type BatchFiles map[string][]BatchFile
 
 // BatchFile encapsule un fichier mentionné dans un Batch
-type BatchFile string
+type BatchFile struct {
+	// Scheme prefix, e.g. `gzip:`
+	Scheme string
 
-// FilePath retourne le chemin vers le fichier, sans préfixe
+	// Directory path where data is to be looked for
+	basePath string
+
+	// Relative path inside the base path
+	relativePath string
+}
+
+var reScheme = regexp.MustCompile("^[a-z]*:")
+
+// NewBatchFile créé un chemin d'un fichier encapsulé dans un batch avec la
+// variable d'environnement "APP_DATA" comme chemin de base
+func NewBatchFile(path string) BatchFile {
+	return NewBatchFileWithBasePath(path, viper.GetString("APP_DATA"))
+}
+
+// GetBSON implements bson.Getter
+func (file BatchFile) GetBSON() (any, error) {
+	value := file.Scheme + file.relativePath
+	return value, nil
+}
+
+// SetBSON implements bson.Setter
+func (file *BatchFile) SetBSON(raw bson.Raw) error {
+	var value string
+	if err := raw.Unmarshal(&value); err != nil {
+		return err
+	}
+
+	batchFile := NewBatchFile(value)
+	file.Scheme = batchFile.Scheme
+	file.relativePath = batchFile.relativePath
+	file.basePath = batchFile.basePath
+
+	return nil
+}
+
+// NewBatchFileWithBasePath crée un chemin d'un fichier encapsulé dans un
+// batch
+func NewBatchFileWithBasePath(path, basePath string) BatchFile {
+	scheme := reScheme.FindString(path)
+	pathWithoutScheme := reScheme.ReplaceAllString(path, "")
+	return BatchFile{Scheme: scheme, relativePath: pathWithoutScheme, basePath: basePath}
+}
+
+// FilePath retourne le chemin vers le fichier, sans le schéma
+// (base path)
 func (file BatchFile) FilePath() string {
-	return rePrefix.ReplaceAllString(string(file), "") // c.a.d. suppression du préfixe éventuellement trouvé
+	return filepath.Join(file.basePath, file.relativePath)
+}
+
+func (file BatchFile) RelativePath() string {
+	return file.relativePath
 }
 
 // IsCompressed est vrai si le fichier est compressé
 func (file BatchFile) IsCompressed() bool {
-	return file.Prefix() == "gzip:" || strings.HasSuffix(string(file), ".gz")
+	return file.Scheme == "gzip:" ||
+		strings.HasSuffix(file.relativePath, ".gz")
 }
-
-// Prefix retourne le préfixe éventuellement présent devant le nom de fichier
-func (file BatchFile) Prefix() string {
-	return rePrefix.FindString(string(file))
-}
-
-var rePrefix = regexp.MustCompile("^[a-z]*:")
 
 // MockBatch with a map[type][]filepaths
 func MockBatch(filetype string, filepaths []string) AdminBatch {
 	batchFiles := []BatchFile{}
 	for _, file := range filepaths {
-		batchFiles = append(batchFiles, BatchFile(file))
+		batchFiles = append(batchFiles, NewBatchFile(file))
 	}
 	batch := AdminBatch{
 		Files: BatchFiles{filetype: batchFiles},

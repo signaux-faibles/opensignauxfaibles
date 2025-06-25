@@ -104,8 +104,8 @@ func (parser *apdemandeParser) Init(cache *marshal.Cache, batch *base.AdminBatch
 	return nil
 }
 
-func (parser *apdemandeParser) Open(filePath string) (err error) {
-	parser.file, parser.reader, err = marshal.OpenCsvReader(base.BatchFile(filePath), ',', true)
+func (parser *apdemandeParser) Open(filePath base.BatchFile) (err error) {
+	parser.file, parser.reader, err = marshal.OpenCsvReader(filePath, ',', true)
 	if err == nil {
 		parser.idx, err = marshal.IndexColumnsFromCsvHeader(parser.reader, APDemande{})
 	}

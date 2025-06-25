@@ -98,8 +98,8 @@ func (parser *delaiParser) Init(cache *marshal.Cache, batch *base.AdminBatch) (e
 	return err
 }
 
-func (parser *delaiParser) Open(filePath string) (err error) {
-	parser.file, parser.reader, err = marshal.OpenCsvReader(base.BatchFile(filePath), ';', false)
+func (parser *delaiParser) Open(filePath base.BatchFile) (err error) {
+	parser.file, parser.reader, err = marshal.OpenCsvReader(filePath, ';', false)
 	if err == nil {
 		parser.idx, err = marshal.IndexColumnsFromCsvHeader(parser.reader, Delai{})
 	}

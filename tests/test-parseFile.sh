@@ -15,7 +15,7 @@ mkdir -p "${TMP_DIR}"
 echo ""
 echo "💎 Parsing data..."
 echo "- sfdata parseFile ..."
-NO_DB=1 tests/helpers/sfdata-wrapper.sh parseFile --parser "diane" --file "lib/diane/testData/dianeTestData.txt" > "${OUTPUT_FILE}"
+NO_DB=1 tests/helpers/sfdata-wrapper.sh parseFile --parser "apconso" --file "./lib/apconso/testData/apconsoTestData.csv" > "${OUTPUT_FILE}"
 tests/helpers/diff-or-update-golden-master.sh "${FLAGS}" "${GOLDEN_FILE}" "${OUTPUT_FILE}"
 
 rm -rf "${TMP_DIR}"

@@ -13,14 +13,14 @@ import (
 func TestParseFilesFromBatch(t *testing.T) {
 
 	t.Run("intérrompt le parsing en cas d'erreur d'initialisation", func(t *testing.T) {
-		batch := base.AdminBatch{Files: base.BatchFiles{"dummy": {"dummy.csv"}}}
+		batch := base.AdminBatch{Files: base.BatchFiles{"dummy": {base.NewBatchFile("dummy.csv")}}}
 		_, eventChan := ParseFilesFromBatch(NewCache(), &batch, &dummyParser{initError: errors.New("error from Init()")})
 		fatalErrors := ConsumeFatalErrors(eventChan)
 		assert.Equal(t, []string{"Fatal: error from Init()"}, fatalErrors)
 	})
 
 	t.Run("ne rapporte pas d'erreur de fermeture en cas d'erreur d'ouverture", func(t *testing.T) {
-		batch := base.AdminBatch{Files: base.BatchFiles{"dummy": {"dummy.csv"}}}
+		batch := base.AdminBatch{Files: base.BatchFiles{"dummy": {base.NewBatchFile("dummy.csv")}}}
 		_, eventChan := ParseFilesFromBatch(NewCache(), &batch, &dummyParser{})
 		fatalErrors := ConsumeFatalErrors(eventChan)
 		assert.Equal(t, []string{"Fatal: error from Open()"}, fatalErrors)
@@ -105,7 +105,7 @@ func (parser *dummyParser) Init(cache *Cache, batch *base.AdminBatch) error {
 	return parser.initError
 }
 
-func (parser *dummyParser) Open(filePath string) (err error) {
+func (parser *dummyParser) Open(filePath base.BatchFile) (err error) {
 	log.Println("opening", filePath) // TODO: supprimer cet affichage ?
 	return errors.New("error from Open()")
 }
