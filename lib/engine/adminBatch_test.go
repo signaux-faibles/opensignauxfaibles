@@ -26,7 +26,7 @@ func Test_IsBatchID(t *testing.T) {
 		t.Error("'190193039' ne devrait pas être considéré comme un ID de batch")
 	}
 	if !base.IsBatchID("1901_93039") {
-		t.Error("'190193039'  devrait être considéré comme un ID de batch")
+		t.Error("'1901_93039'  devrait être considéré comme un ID de batch")
 	}
 
 	if base.IsBatchID("abcd") {
