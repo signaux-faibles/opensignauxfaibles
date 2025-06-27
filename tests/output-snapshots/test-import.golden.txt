@@ -3,12 +3,6 @@
 // Reports from db.Journal:
 [
 	{
-		"reportType" : "ValidateDataEntries",
-		"hasCommitHash" : true,
-		"hasDate" : true,
-		"hasStartDate" : true
-	},
-	{
 		"event" : {
 			"headRejected" : undefined,
 			"headFatal" : undefined,
