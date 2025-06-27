@@ -55,7 +55,6 @@ jobs:
             ! -name 'diff-or-update-golden-master.sh' \
             ! -name 'mongodb-container.sh' \
             ! -name 'populate-from-objects.sh' \
-            ! -name 'remove-random_order.sh' \
             ! -name '*.txt' \
             ! -name '*.csv' \
             ! -name '*.json' \
