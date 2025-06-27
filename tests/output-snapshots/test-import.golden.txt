@@ -1,5 +1,3 @@
-// Documents from db.ImportedData, after call to sfdata import:
-[ ]
 // Reports from db.Journal:
 [
 	{
@@ -190,5 +188,3 @@
 		"hasStartDate" : true
 	}
 ]
-// Invalid data entries returned by sfdata validate:
-

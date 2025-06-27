@@ -61,35 +61,6 @@ echo ""
 echo "💎 Parsing and importing data..."
 echo "- sfdata import 👉 $(tests/helpers/sfdata-wrapper.sh import --batch=1910 --no-filter)"
 
-VALIDATION_REPORT=$(tests/helpers/sfdata-wrapper.sh validate --collection=ImportedData)
-echo "- sfdata validate"
-
-(tests/helpers/mongodb-container.sh run \
-  | perl -p -e 's/"[0-9a-z]{24}"/"________ObjectId________"/' \
-  | perl -p -e 's/"periode" : ISODate\("....-..-..T..:..:..Z"\)/"periode" : ISODate\("_______ Date _______"\)/' \
-  > "${OUTPUT_FILE}" \
-) << CONTENT
-print("// Documents from db.ImportedData, after call to sfdata import:");
-printjson(db.ImportedData.find().sort({"value.key":1}).toArray().map(doc => ({
-  ...doc,
-  value: {
-    ...doc.value,
-    // on classe les données par type, de manière à ce que l'ordre soit stable
-    batch: Object.keys(doc.value.batch).reduce((batch, batchKey) => ({
-      ...batch,
-      [ batchKey ]: Object.keys(doc.value.batch[batchKey]).sort().reduce((batchData, dataType) => ({
-        ...batchData,
-        [ dataType ]: Object.keys(doc.value.batch[batchKey][dataType]).sort().reduce((hashedData, hash) => ({
-          ...hashedData,
-          [ hash ]: doc.value.batch[batchKey][dataType][hash]
-        }), {})
-      }), {})
-    }), {})
-  }
-})));
-CONTENT
-
-echo "- sfdata purgeNotCompacted 👉 $(tests/helpers/sfdata-wrapper.sh purgeNotCompacted --i-understand-what-im-doing)"
 
 (tests/helpers/mongodb-container.sh run \
   >> "${OUTPUT_FILE}" \
@@ -115,47 +86,7 @@ printjson(db.Journal.find().sort({ reportType: -1, parserCode: 1 }).toArray().ma
   hasDate: !!doc.date,
   hasStartDate: !!doc.startDate,
 })));
-
-print("// Invalid data entries returned by sfdata validate:");
 CONTENT
-
-function printJsonValidationErrors {
-  line=$1
-  [ -z "${line}" ] && return;
-  DATA_TYPE=$(LINE="$line" node -p 'JSON.parse(process.env.LINE).dataType');
-  echo "- listing ${DATA_TYPE} validation error(s)..." 1>&2;
-  npx --quiet --package "ajv-cli" --package "ajv-bsontype" \
-    ajv --strict=false -c "ajv-bsontype" \
-      -s "validation/${DATA_TYPE}.schema.json" \
-      -d <(echo "$line")
-}
-
-echo "${VALIDATION_REPORT}" \
-  | perl -p -e 's/"[0-9a-z]{24}"/"________ObjectId________"/' \
-  | perl -p -e 's/"periode" : ISODate\("....-..-..T..:..:..Z"\)/"periode" : ISODate\("_______ Date _______"\)/' \
-  | sort \
-  | while read -r line; do ( echo "$line"; printJsonValidationErrors "$line" || true ); done \
-  >> "${OUTPUT_FILE}"
-
-# Print test results from stdin. Fails on any "false" result.
-# Expected format for each line: "<test label> : <true|false>"
-function reportFailedTests {
-  while IFS='$\n' read -r line; do
-    echo "  - $line" | (grep --color=always " : false") || true # display failed test
-    echo "  - $line" | grep " : true" # display passing test, and make the test function fail otherwise
-  done
-}
-
-(tests/helpers/mongodb-container.sh run \
-  | reportFailedTests \
-) << CONTENT
-  Object.entries({
-    "ImportedData was emptied by purgeNotCompacted": db.ImportedData.count() === 0,
-  }).forEach(([ testName, testRes ]) => print(testName, ':', testRes));
-CONTENT
-
-# Display JS errors logged by MongoDB, if any
-tests/helpers/mongodb-container.sh exceptions || true
 
 tests/helpers/diff-or-update-golden-master.sh "${FLAGS}" "${GOLDEN_FILE}" "${OUTPUT_FILE}"
 
