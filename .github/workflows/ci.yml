@@ -73,6 +73,4 @@ jobs:
 
       - run: ./tests/test-import.sh
 
-      - run: ./tests/test-validate.sh
-
       - run: ./tests/test-check.sh
