@@ -2,7 +2,6 @@ package engine
 
 import (
 	"log"
-	"sync"
 	"time"
 
 	"github.com/globalsign/mgo"
@@ -56,5 +55,3 @@ func InitDB() DB {
 		DBStatus: dbstatus,
 	}
 }
-
-var importing sync.WaitGroup

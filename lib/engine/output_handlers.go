@@ -62,11 +62,9 @@ func (out *CSVOutputHandler) Close() {
 }
 
 func InsertIntoCSVs() chan *Value {
-	importing.Add(1)
 	source := make(chan *Value, 10)
 
 	go func() {
-		defer importing.Done()
 		for v := range source {
 			writeBatchesToCSV(v.Value.Batch)
 		}
