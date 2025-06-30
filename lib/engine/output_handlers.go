@@ -19,12 +19,14 @@ var csvFiles = map[string]*os.File{}
 func InsertIntoCSVs() chan *Value {
 	importing.Add(1)
 	source := make(chan *Value, 10)
+
 	go func() {
 		defer importing.Done()
 		for v := range source {
 			writeBatchesToCSV(v.Value.Batch)
 		}
 	}()
+
 	return source
 }
 
@@ -49,14 +51,10 @@ func closeCSVs() {
 }
 
 func writeBatchesToCSV(batchs map[string]Batch) {
-	for k, v := range batchs {
-		writeBatchToCSV(k, v)
-	}
-}
-
-func writeBatchToCSV(key string, batch Batch) {
-	for _, tuples := range batch {
-		writeLinesToCSV(key, tuples)
+	for key, batch := range batchs {
+		for _, tuples := range batch {
+			writeLinesToCSV(key, tuples)
+		}
 	}
 }
 
