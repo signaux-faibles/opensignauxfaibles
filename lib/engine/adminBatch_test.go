@@ -57,7 +57,7 @@ func Test_CheckBatchPaths(t *testing.T) {
 
 type TestOutputHandler struct{}
 
-func (TestOutputHandler) Stream(ch chan marshal.Tuple, batchKey BatchKey) error {
+func (TestOutputHandler) Stream(ch chan marshal.Tuple) error {
 	go func() {
 		for range ch {
 		}

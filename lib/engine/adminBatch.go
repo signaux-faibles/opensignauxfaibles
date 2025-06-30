@@ -52,7 +52,7 @@ func ImportBatch(batch base.AdminBatch, parsers []marshal.Parser, skipFilter boo
 
 		go func() {
 			defer wg.Done()
-			outputHandler.Stream(outputChannel, batch.ID.Key)
+			outputHandler.Stream(outputChannel)
 		}()
 
 	}
