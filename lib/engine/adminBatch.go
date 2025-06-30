@@ -22,8 +22,10 @@ func Load(batch *base.AdminBatch, batchKey string) error {
 }
 
 // ImportBatch lance tous les parsers sur le batch fourni
-func ImportBatch(batch base.AdminBatch, parsers []marshal.Parser, skipFilter bool, data chan *Value) error {
+func ImportBatch(batch base.AdminBatch, parsers []marshal.Parser, skipFilter bool, outputHandler OutputHandler) error {
+
 	var cache = marshal.NewCache()
+
 	filter, err := marshal.GetSirenFilter(cache, &batch)
 	if err != nil {
 		return err
@@ -31,34 +33,30 @@ func ImportBatch(batch base.AdminBatch, parsers []marshal.Parser, skipFilter boo
 	if !skipFilter && filter == nil {
 		return errors.New("veuillez inclure un filtre")
 	}
+
 	startDate := time.Now()
 	reportUnsupportedFiletypes(batch)
+
 	var wg sync.WaitGroup
+
 	for _, parser := range parsers {
-		wg.Add(1)
+		wg.Add(2)
+
 		outputChannel, eventChannel := marshal.ParseFilesFromBatch(cache, &batch, parser) // appelle la fonction ParseFile() pour chaque type de fichier
+
 		// Insert events (parsing logs) into the "Journal" collection
 		go func() {
 			defer wg.Done()
 			RelayEvents(eventChannel, "ImportBatch", startDate)
 		}()
-		// Insert tuples (data) into the "ImportedData" collection
-		for tuple := range outputChannel {
-			hash := fmt.Sprintf("%x", GetMD5(tuple))
-			value := Value{
-				Value: Data{
-					Scope: tuple.Scope(),
-					Key:   tuple.Key(),
-					Batch: map[string]Batch{
-						batch.ID.Key: {
-							tuple.Type(): map[string]marshal.Tuple{
-								hash: tuple,
-							}}}}}
-			data <- &value
-		}
+
+		go func() {
+			defer wg.Done()
+			outputHandler.Stream(outputChannel, batch.ID.Key)
+		}()
+
 	}
 	wg.Wait() // wait for all events and tuples to be inserted
-	FlushImportedData(data)
 	return nil
 }
 

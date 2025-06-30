@@ -2,6 +2,7 @@ package engine
 
 import (
 	"encoding/csv"
+	"fmt"
 	"log/slog"
 	"os"
 	"path/filepath"
@@ -16,6 +17,50 @@ const exportPath = "/export/csv"
 
 var csvFiles = map[string]*os.File{}
 
+// An OutputHandler directs a stream of output data to the desired sink
+type OutputHandler interface {
+	Stream(ch chan marshal.Tuple, batchKey string) error
+}
+
+// CSVOutputHandler writes the output to CSVs. Implements OutputHandler
+type CSVOutputHandler struct {
+	chanToCSVs chan *Value
+}
+
+func NewOutputHandler() *CSVOutputHandler {
+	ch := InsertIntoCSVs()
+	out := CSVOutputHandler{ch}
+	return &out
+}
+
+func (out *CSVOutputHandler) Stream(ch chan marshal.Tuple, batchKey string) error {
+	for tuple := range ch {
+
+		hash := fmt.Sprintf("%x", GetMD5(tuple))
+
+		value := Value{
+			Value: Data{
+				Scope: tuple.Scope(),
+				Key:   tuple.Key(),
+				Batch: map[string]Batch{
+					batchKey: {
+						tuple.Type(): map[string]marshal.Tuple{
+							hash: tuple,
+						},
+					},
+				},
+			},
+		}
+		out.chanToCSVs <- &value
+	}
+	return nil
+}
+
+func (out *CSVOutputHandler) Close() {
+	close(out.chanToCSVs)
+	closeCSVs()
+}
+
 func InsertIntoCSVs() chan *Value {
 	importing.Add(1)
 	source := make(chan *Value, 10)
@@ -28,13 +73,6 @@ func InsertIntoCSVs() chan *Value {
 	}()
 
 	return source
-}
-
-// FlushImportedData finalise l'insertion des données dans ImportedData.
-func FlushImportedData(channel chan *Value) {
-	close(channel)
-	closeCSVs()
-	importing.Wait()
 }
 
 func closeCSVs() {

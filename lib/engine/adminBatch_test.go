@@ -55,27 +55,28 @@ func Test_CheckBatchPaths(t *testing.T) {
 	}
 }
 
-func Test_ImportBatch(t *testing.T) {
-	data := make(chan *Value)
+type TestOutputHandler struct{}
+
+func (TestOutputHandler) Stream(ch chan marshal.Tuple, batchKey string) error {
 	go func() {
-		for range data {
+		for range ch {
 		}
 	}()
+	return nil
+}
+
+func Test_ImportBatch(t *testing.T) {
+
 	batch := base.AdminBatch{}
-	err := ImportBatch(batch, []marshal.Parser{}, false, data)
+	err := ImportBatch(batch, []marshal.Parser{}, false, TestOutputHandler{})
 	if err == nil {
 		t.Error("ImportBatch devrait nous empêcher d'importer sans filtre")
 	}
 }
 
 func Test_ImportBatchWithUnreadableFilter(t *testing.T) {
-	data := make(chan *Value)
-	go func() {
-		for range data {
-		}
-	}()
 	batch := base.MockBatch("filter", []string{"this_file_does_not_exist"})
-	err := ImportBatch(batch, []marshal.Parser{}, false, data)
+	err := ImportBatch(batch, []marshal.Parser{}, false, TestOutputHandler{})
 	if err == nil {
 		t.Error("ImportBatch devrait échouer en tentant d'ouvrir un fichier filtre illisible")
 	}
