@@ -52,6 +52,7 @@ func (params importBatchHandler) Validate() error {
 // ou demander l'exécution de parsers particuliers en fournissant une liste de leurs codes.
 func (params importBatchHandler) Run() error {
 	batch := base.AdminBatch{}
+
 	err := engine.Load(&batch, params.BatchKey)
 	if err != nil {
 		return errors.New("Batch inexistant: " + err.Error())
@@ -62,8 +63,10 @@ func (params importBatchHandler) Run() error {
 		return err
 	}
 
-	dataChan := engine.InsertIntoCSVs()
-	err = engine.ImportBatch(batch, parsers, params.NoFilter, dataChan)
+	outputHandler := engine.NewOutputHandler()
+	err = engine.ImportBatch(batch, parsers, params.NoFilter, outputHandler)
+	outputHandler.Close()
+
 	if err != nil {
 		return err
 	}
