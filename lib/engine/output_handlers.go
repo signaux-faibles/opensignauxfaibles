@@ -19,7 +19,7 @@ var csvFiles = map[string]*os.File{}
 
 // An OutputHandler directs a stream of output data to the desired sink
 type OutputHandler interface {
-	Stream(ch chan marshal.Tuple, batchKey string) error
+	Stream(ch chan marshal.Tuple, batchKey BatchKey) error
 }
 
 // CSVOutputHandler writes the output to CSVs. Implements OutputHandler
@@ -33,7 +33,7 @@ func NewOutputHandler() *CSVOutputHandler {
 	return &out
 }
 
-func (out *CSVOutputHandler) Stream(ch chan marshal.Tuple, batchKey string) error {
+func (out *CSVOutputHandler) Stream(ch chan marshal.Tuple, batchKey BatchKey) error {
 	for tuple := range ch {
 
 		hash := fmt.Sprintf("%x", GetMD5(tuple))
@@ -41,7 +41,7 @@ func (out *CSVOutputHandler) Stream(ch chan marshal.Tuple, batchKey string) erro
 		value := Data{
 			Scope: tuple.Scope(),
 			Key:   tuple.Key(),
-			Batch: map[string]Batch{
+			Batch: map[BatchKey]Batch{
 				batchKey: {
 					tuple.Type(): map[string]marshal.Tuple{
 						hash: tuple,
@@ -84,7 +84,7 @@ func closeCSVs() {
 	}
 }
 
-func writeBatchesToCSV(batchs map[string]Batch) {
+func writeBatchesToCSV(batchs map[BatchKey]Batch) {
 	for key, batch := range batchs {
 		for _, tuples := range batch {
 			writeLinesToCSV(key, tuples)
@@ -92,7 +92,7 @@ func writeBatchesToCSV(batchs map[string]Batch) {
 	}
 }
 
-func writeLinesToCSV(key string, tuples map[string]marshal.Tuple) {
+func writeLinesToCSV(key BatchKey, tuples map[string]marshal.Tuple) {
 	for _, tuple := range tuples {
 		logger := slog.Default().With(slog.Any("tuple", tuple))
 		csvWriter := openFile(key, tuple)

@@ -6,11 +6,13 @@ import (
 	"opensignauxfaibles/lib/marshal"
 )
 
+type BatchKey = string
+
 // Data objet établissement (/entreprise/)
 type Data struct {
-	Scope string           `json:"scope" bson:"scope"`
-	Key   string           `json:"key" bson:"key"`
-	Batch map[string]Batch `json:"batch,omitempty" bson:"batch,omitempty"`
+	Scope string             `json:"scope" bson:"scope"`
+	Key   string             `json:"key" bson:"key"`
+	Batch map[BatchKey]Batch `json:"batch,omitempty" bson:"batch,omitempty"`
 }
 
 // GetMD5 returns a MD5 signature of the Tuple

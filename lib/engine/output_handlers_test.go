@@ -21,7 +21,7 @@ func init() {
 func Test_writeLinesToCSV(t *testing.T) {
 	exportPath := filepath.Join(os.TempDir(), fakeCsv.Lorem().Word())
 	viper.Set("export.path", exportPath)
-	batchKey := "2310"
+	batchKey := BatchKey("2310")
 
 	tuple := Test{}
 	tuples := map[string]marshal.Tuple{
