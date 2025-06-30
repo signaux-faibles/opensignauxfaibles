@@ -63,7 +63,7 @@ func (params importBatchHandler) Run() error {
 		return err
 	}
 
-	outputHandler := engine.NewOutputHandler()
+	outputHandler := engine.NewOutputHandler(batch.ID.Key)
 	err = engine.ImportBatch(batch, parsers, params.NoFilter, outputHandler)
 	outputHandler.Close()
 

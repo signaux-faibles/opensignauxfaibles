@@ -19,21 +19,22 @@ var csvFiles = map[string]*os.File{}
 
 // An OutputHandler directs a stream of output data to the desired sink
 type OutputHandler interface {
-	Stream(ch chan marshal.Tuple, batchKey BatchKey) error
+	Stream(ch chan marshal.Tuple) error
 }
 
 // CSVOutputHandler writes the output to CSVs. Implements OutputHandler
 type CSVOutputHandler struct {
+	directory  string
 	chanToCSVs chan *Data
 }
 
-func NewOutputHandler() *CSVOutputHandler {
+func NewOutputHandler(batchKey BatchKey) *CSVOutputHandler {
 	ch := InsertIntoCSVs()
-	out := CSVOutputHandler{ch}
+	out := CSVOutputHandler{batchKey, ch}
 	return &out
 }
 
-func (out *CSVOutputHandler) Stream(ch chan marshal.Tuple, batchKey BatchKey) error {
+func (out *CSVOutputHandler) Stream(ch chan marshal.Tuple) error {
 	for tuple := range ch {
 
 		hash := fmt.Sprintf("%x", GetMD5(tuple))
@@ -42,7 +43,7 @@ func (out *CSVOutputHandler) Stream(ch chan marshal.Tuple, batchKey BatchKey) er
 			Scope: tuple.Scope(),
 			Key:   tuple.Key(),
 			Batch: map[BatchKey]Batch{
-				batchKey: {
+				out.directory: {
 					tuple.Type(): map[string]marshal.Tuple{
 						hash: tuple,
 					},
