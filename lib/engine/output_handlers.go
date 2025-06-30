@@ -24,7 +24,7 @@ type OutputHandler interface {
 
 // CSVOutputHandler writes the output to CSVs. Implements OutputHandler
 type CSVOutputHandler struct {
-	chanToCSVs chan *Value
+	chanToCSVs chan *Data
 }
 
 func NewOutputHandler() *CSVOutputHandler {
@@ -38,15 +38,13 @@ func (out *CSVOutputHandler) Stream(ch chan marshal.Tuple, batchKey string) erro
 
 		hash := fmt.Sprintf("%x", GetMD5(tuple))
 
-		value := Value{
-			Value: Data{
-				Scope: tuple.Scope(),
-				Key:   tuple.Key(),
-				Batch: map[string]Batch{
-					batchKey: {
-						tuple.Type(): map[string]marshal.Tuple{
-							hash: tuple,
-						},
+		value := Data{
+			Scope: tuple.Scope(),
+			Key:   tuple.Key(),
+			Batch: map[string]Batch{
+				batchKey: {
+					tuple.Type(): map[string]marshal.Tuple{
+						hash: tuple,
 					},
 				},
 			},
@@ -61,12 +59,12 @@ func (out *CSVOutputHandler) Close() {
 	closeCSVs()
 }
 
-func InsertIntoCSVs() chan *Value {
-	source := make(chan *Value, 10)
+func InsertIntoCSVs() chan *Data {
+	source := make(chan *Data, 10)
 
 	go func() {
 		for v := range source {
-			writeBatchesToCSV(v.Value.Batch)
+			writeBatchesToCSV(v.Batch)
 		}
 	}()
 
