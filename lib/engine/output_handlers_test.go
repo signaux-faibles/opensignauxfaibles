@@ -8,8 +8,6 @@ import (
 	"github.com/jaswdr/faker"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
-
-	"opensignauxfaibles/lib/marshal"
 )
 
 var fakeCsv faker.Faker
@@ -24,9 +22,6 @@ func Test_writeLinesToCSV(t *testing.T) {
 	batchKey := BatchKey("2310")
 
 	tuple := Test{}
-	tuples := map[string]marshal.Tuple{
-		fakeCsv.Lorem().Word(): tuple,
-	}
-	writeLinesToCSV(batchKey, tuples)
+	writeLinesToCSV(batchKey, tuple)
 	assert.FileExists(t, filepath.Join(exportPath, batchKey, tuple.Type()+".csv"))
 }
