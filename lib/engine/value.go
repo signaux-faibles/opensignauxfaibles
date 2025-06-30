@@ -20,10 +20,8 @@ func GetMD5(tuple marshal.Tuple) []byte {
 	return structhash.Md5(tuple, 1)
 }
 
-// Batch ensemble des données
-// TODO --> le 1e string est le nom du parser c'est celui qui nous intéresse
-// TODO --> le 2nd string est un hash
-type Batch map[string]map[string]marshal.Tuple
+// Batch ensemble des données, par type de données
+type Batch map[string]marshal.Tuple
 
 // Merge union de deux objets Batch
 func (batch1 Batch) Merge(batch2 Batch) {
