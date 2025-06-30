@@ -10,9 +10,9 @@ type BatchKey = string
 
 // Data objet établissement (/entreprise/)
 type Data struct {
-	Scope string             `json:"scope" bson:"scope"`
-	Key   string             `json:"key" bson:"key"`
-	Batch map[BatchKey]Batch `json:"batch,omitempty" bson:"batch,omitempty"`
+	Scope string `json:"scope" bson:"scope"`
+	Key   string `json:"key" bson:"key"`
+	Batch Batch  `json:"batch,omitempty" bson:"batch,omitempty"`
 }
 
 // GetMD5 returns a MD5 signature of the Tuple
@@ -22,16 +22,3 @@ func GetMD5(tuple marshal.Tuple) []byte {
 
 // Batch ensemble des données, par type de données
 type Batch map[string]marshal.Tuple
-
-// Merge union de deux objets Batch
-func (batch1 Batch) Merge(batch2 Batch) {
-	for k := range batch2 {
-		if _, ok := batch1[k]; !ok {
-			batch1[k] = batch2[k]
-		} else {
-			for i, j := range batch2[k] {
-				batch1[k][i] = j
-			}
-		}
-	}
-}

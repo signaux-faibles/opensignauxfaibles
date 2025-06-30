@@ -27,9 +27,9 @@ type CSVOutputHandler struct {
 	chanToCSVs chan *Data
 }
 
-func NewOutputHandler(batchKey BatchKey) *CSVOutputHandler {
-	ch := InsertIntoCSVs()
-	out := CSVOutputHandler{batchKey, ch}
+func NewOutputHandler(directory string) *CSVOutputHandler {
+	ch := InsertIntoCSVs(directory)
+	out := CSVOutputHandler{directory, ch}
 	return &out
 }
 
@@ -39,10 +39,8 @@ func (out *CSVOutputHandler) Stream(ch chan marshal.Tuple) error {
 		value := Data{
 			Scope: tuple.Scope(),
 			Key:   tuple.Key(),
-			Batch: map[BatchKey]Batch{
-				out.directory: {
-					tuple.Type(): tuple,
-				},
+			Batch: Batch{
+				tuple.Type(): tuple,
 			},
 		}
 		out.chanToCSVs <- &value
@@ -55,12 +53,12 @@ func (out *CSVOutputHandler) Close() {
 	closeCSVs()
 }
 
-func InsertIntoCSVs() chan *Data {
+func InsertIntoCSVs(directory string) chan *Data {
 	data := make(chan *Data, 10)
 
 	go func() {
 		for v := range data {
-			writeBatchesToCSV(v.Batch)
+			writeBatchToCSV(v.Batch, directory)
 		}
 	}()
 
@@ -80,24 +78,20 @@ func closeCSVs() {
 	}
 }
 
-func writeBatchesToCSV(batchs map[BatchKey]Batch) {
-	for key, batch := range batchs {
-		for _, tuples := range batch {
-			writeLinesToCSV(key, tuples)
-		}
+func writeBatchToCSV(batch Batch, directory string) {
+	for _, tuples := range batch {
+		writeLinesToCSV(directory, tuples)
 	}
 }
 
-func writeLinesToCSV(key BatchKey, tuples map[string]marshal.Tuple) {
-	for _, tuple := range tuples {
-		logger := slog.Default().With(slog.Any("tuple", tuple))
-		csvWriter := openFile(key, tuple)
-		err := csvWriter.Write(tuple.Values())
-		if err != nil {
-			logger.Error("erreur pendant l'écriture du tuple en csvWriter")
-		}
-		csvWriter.Flush()
+func writeLinesToCSV(key BatchKey, tuple marshal.Tuple) {
+	logger := slog.Default().With(slog.Any("tuple", tuple))
+	csvWriter := openFile(key, tuple)
+	err := csvWriter.Write(tuple.Values())
+	if err != nil {
+		logger.Error("erreur pendant l'écriture du tuple en csvWriter")
 	}
+	csvWriter.Flush()
 }
 
 func openFile(key string, tuple marshal.Tuple) *csv.Writer {
