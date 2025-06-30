@@ -61,15 +61,15 @@ func (out *CSVOutputHandler) Close() {
 }
 
 func InsertIntoCSVs() chan *Data {
-	source := make(chan *Data, 10)
+	data := make(chan *Data, 10)
 
 	go func() {
-		for v := range source {
+		for v := range data {
 			writeBatchesToCSV(v.Batch)
 		}
 	}()
 
-	return source
+	return data
 }
 
 func closeCSVs() {

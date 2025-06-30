@@ -21,7 +21,8 @@ func GetMD5(tuple marshal.Tuple) []byte {
 }
 
 // Batch ensemble des données
-// TODO --> le 2e string est le nom du parser c'est celui qui nous intéresse
+// TODO --> le 1e string est le nom du parser c'est celui qui nous intéresse
+// TODO --> le 2nd string est un hash
 type Batch map[string]map[string]marshal.Tuple
 
 // Merge union de deux objets Batch
