@@ -2,7 +2,6 @@ package engine
 
 import (
 	"encoding/csv"
-	"fmt"
 	"log/slog"
 	"os"
 	"path/filepath"
@@ -37,16 +36,12 @@ func NewOutputHandler(batchKey BatchKey) *CSVOutputHandler {
 func (out *CSVOutputHandler) Stream(ch chan marshal.Tuple) error {
 	for tuple := range ch {
 
-		hash := fmt.Sprintf("%x", GetMD5(tuple))
-
 		value := Data{
 			Scope: tuple.Scope(),
 			Key:   tuple.Key(),
 			Batch: map[BatchKey]Batch{
 				out.directory: {
-					tuple.Type(): map[string]marshal.Tuple{
-						hash: tuple,
-					},
+					tuple.Type(): tuple,
 				},
 			},
 		}
