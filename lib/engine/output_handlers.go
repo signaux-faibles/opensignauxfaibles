@@ -24,7 +24,7 @@ type OutputHandler interface {
 // CSVOutputHandler writes the output to CSVs. Implements OutputHandler
 type CSVOutputHandler struct {
 	directory  string
-	chanToCSVs chan *Data
+	chanToCSVs chan marshal.Tuple
 }
 
 func NewOutputHandler(directory string) *CSVOutputHandler {
@@ -35,15 +35,7 @@ func NewOutputHandler(directory string) *CSVOutputHandler {
 
 func (out *CSVOutputHandler) Stream(ch chan marshal.Tuple) error {
 	for tuple := range ch {
-
-		value := Data{
-			Scope: tuple.Scope(),
-			Key:   tuple.Key(),
-			Batch: Batch{
-				tuple.Type(): tuple,
-			},
-		}
-		out.chanToCSVs <- &value
+		out.chanToCSVs <- tuple
 	}
 	return nil
 }
@@ -53,16 +45,16 @@ func (out *CSVOutputHandler) Close() {
 	closeCSVs()
 }
 
-func InsertIntoCSVs(directory string) chan *Data {
-	data := make(chan *Data, 10)
+func InsertIntoCSVs(directory string) chan marshal.Tuple {
+	tuples := make(chan marshal.Tuple, 10)
 
 	go func() {
-		for v := range data {
-			writeBatchToCSV(v.Batch, directory)
+		for t := range tuples {
+			writeLineToCSV(directory, t)
 		}
 	}()
 
-	return data
+	return tuples
 }
 
 func closeCSVs() {
@@ -78,15 +70,9 @@ func closeCSVs() {
 	}
 }
 
-func writeBatchToCSV(batch Batch, directory string) {
-	for _, tuples := range batch {
-		writeLinesToCSV(directory, tuples)
-	}
-}
-
-func writeLinesToCSV(key BatchKey, tuple marshal.Tuple) {
+func writeLineToCSV(directory string, tuple marshal.Tuple) {
 	logger := slog.Default().With(slog.Any("tuple", tuple))
-	csvWriter := openFile(key, tuple)
+	csvWriter := openFile(directory, tuple)
 	err := csvWriter.Write(tuple.Values())
 	if err != nil {
 		logger.Error("erreur pendant l'écriture du tuple en csvWriter")

@@ -22,6 +22,6 @@ func Test_writeLinesToCSV(t *testing.T) {
 	batchKey := BatchKey("2310")
 
 	tuple := Test{}
-	writeLinesToCSV(batchKey, tuple)
+	writeLineToCSV(batchKey, tuple)
 	assert.FileExists(t, filepath.Join(exportPath, batchKey, tuple.Type()+".csv"))
 }
