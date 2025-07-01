@@ -23,38 +23,25 @@ type OutputHandler interface {
 
 // CSVOutputHandler writes the output to CSVs. Implements OutputHandler
 type CSVOutputHandler struct {
-	directory  string
-	chanToCSVs chan marshal.Tuple
+	directory string
 }
 
 func NewOutputHandler(directory string) *CSVOutputHandler {
-	ch := InsertIntoCSVs(directory)
-	out := CSVOutputHandler{directory, ch}
+	out := CSVOutputHandler{directory}
 	return &out
 }
 
 func (out *CSVOutputHandler) Stream(ch chan marshal.Tuple) error {
-	for tuple := range ch {
-		out.chanToCSVs <- tuple
-	}
+	go func() {
+		for t := range ch {
+			writeLineToCSV(out.directory, t)
+		}
+	}()
 	return nil
 }
 
 func (out *CSVOutputHandler) Close() {
-	close(out.chanToCSVs)
 	closeCSVs()
-}
-
-func InsertIntoCSVs(directory string) chan marshal.Tuple {
-	tuples := make(chan marshal.Tuple, 10)
-
-	go func() {
-		for t := range tuples {
-			writeLineToCSV(directory, t)
-		}
-	}()
-
-	return tuples
 }
 
 func closeCSVs() {
