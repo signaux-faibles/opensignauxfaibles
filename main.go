@@ -97,7 +97,6 @@ type cliCommands struct {
 	ParseFile parseFileHandler
 	Check     checkBatchHandler
 	Import    importBatchHandler
-	Validate  validateHandler
 }
 
 func (cmds *cliCommands) populateFromArgs(args []string) {

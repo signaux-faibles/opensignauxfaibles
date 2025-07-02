@@ -37,10 +37,6 @@ fi
 heading "test-cli.sh"
 ./tests/test-cli.sh $@ 2>&1 | indent
 
-
-heading "test-validate.sh"
-./tests/test-validate.sh $@ 2>&1 | indent
-
 heading "test-check.sh"
 ./tests/test-check.sh $@ 2>&1 | indent
 

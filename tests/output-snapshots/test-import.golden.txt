@@ -1,13 +1,5 @@
-// Documents from db.ImportedData, after call to sfdata import:
-[ ]
 // Reports from db.Journal:
 [
-	{
-		"reportType" : "ValidateDataEntries",
-		"hasCommitHash" : true,
-		"hasDate" : true,
-		"hasStartDate" : true
-	},
 	{
 		"event" : {
 			"headRejected" : undefined,
@@ -196,5 +188,3 @@
 		"hasStartDate" : true
 	}
 ]
-// Invalid data entries returned by sfdata validate:
-
