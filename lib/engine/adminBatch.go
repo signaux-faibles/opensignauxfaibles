@@ -22,7 +22,7 @@ func Load(batch *base.AdminBatch, batchKey string) error {
 }
 
 // ImportBatch lance tous les parsers sur le batch fourni
-func ImportBatch(batch base.AdminBatch, parsers []marshal.Parser, skipFilter bool, outputHandler OutputHandler) error {
+func ImportBatch(batch base.AdminBatch, parsers []marshal.Parser, skipFilter bool) error {
 
 	var cache = marshal.NewCache()
 
@@ -51,13 +51,20 @@ func ImportBatch(batch base.AdminBatch, parsers []marshal.Parser, skipFilter boo
 		}()
 
 		go func() {
+			outputStreamer := NewCSVOutputStreamer(batch.ID.Key)
+
 			defer wg.Done()
-			outputHandler.Stream(outputChannel)
+			outputStreamer.Stream(outputChannel)
 		}()
 
 	}
 	wg.Wait() // wait for all events and tuples to be inserted
 	return nil
+}
+
+// An OutputStreamer directs a stream of output data to the desired sink
+type OutputStreamer interface {
+	Stream(ch chan marshal.Tuple) error
 }
 
 // CheckBatchPaths checks if the filepaths of batch.Files exist
