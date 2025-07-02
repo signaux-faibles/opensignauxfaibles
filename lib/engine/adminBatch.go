@@ -62,11 +62,6 @@ func ImportBatch(batch base.AdminBatch, parsers []marshal.Parser, skipFilter boo
 	return nil
 }
 
-// An OutputStreamer directs a stream of output data to the desired sink
-type OutputStreamer interface {
-	Stream(ch chan marshal.Tuple) error
-}
-
 // CheckBatchPaths checks if the filepaths of batch.Files exist
 func CheckBatchPaths(batch *base.AdminBatch) error {
 	var ErrorString string
