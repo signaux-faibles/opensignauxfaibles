@@ -55,32 +55,34 @@ func Test_CheckBatchPaths(t *testing.T) {
 	}
 }
 
-type TestOutputHandler struct{}
+type TestOutputStreamer struct{}
 
-func (TestOutputHandler) Stream(ch chan marshal.Tuple) error {
-	go func() {
+func (TestOutputStreamer) Stream(ch chan marshal.Tuple) error {
+	go func() { // discard all data
 		for range ch {
 		}
 	}()
 	return nil
 }
 
-// func Test_ImportBatch(t *testing.T) {
+var initOutputStreamer = func(key string) OutputStreamer { return TestOutputStreamer{} }
 
-// 	batch := base.AdminBatch{}
-// 	err := ImportBatch(batch, []marshal.Parser{}, false, TestOutputHandler{})
-// 	if err == nil {
-// 		t.Error("ImportBatch devrait nous empêcher d'importer sans filtre")
-// 	}
-// }
+func Test_ImportBatch(t *testing.T) {
 
-// func Test_ImportBatchWithUnreadableFilter(t *testing.T) {
-// 	batch := base.MockBatch("filter", []string{"this_file_does_not_exist"})
-// 	err := ImportBatch(batch, []marshal.Parser{}, false, TestOutputHandler{})
-// 	if err == nil {
-// 		t.Error("ImportBatch devrait échouer en tentant d'ouvrir un fichier filtre illisible")
-// 	}
-// }
+	batch := base.AdminBatch{}
+	err := ImportBatch(batch, []marshal.Parser{}, false, initOutputStreamer)
+	if err == nil {
+		t.Error("ImportBatch devrait nous empêcher d'importer sans filtre")
+	}
+}
+
+func Test_ImportBatchWithUnreadableFilter(t *testing.T) {
+	batch := base.MockBatch("filter", []string{"this_file_does_not_exist"})
+	err := ImportBatch(batch, []marshal.Parser{}, false, initOutputStreamer)
+	if err == nil {
+		t.Error("ImportBatch devrait échouer en tentant d'ouvrir un fichier filtre illisible")
+	}
+}
 
 func Test_CheckBatch(t *testing.T) {
 

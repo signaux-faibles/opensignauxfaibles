@@ -63,7 +63,8 @@ func (params importBatchHandler) Run() error {
 		return err
 	}
 
-	err = engine.ImportBatch(batch, parsers, params.NoFilter)
+	initCSVStreamer := engine.NewCSVOutputStreamer
+	err = engine.ImportBatch(batch, parsers, params.NoFilter, initCSVStreamer)
 
 	if err != nil {
 		return err

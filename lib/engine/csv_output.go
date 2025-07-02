@@ -26,9 +26,9 @@ type CSVOutputStreamer struct {
 
 // NewCSVOutputStreamer creates a streamer that will write CSV files into a
 // given directory.
-func NewCSVOutputStreamer(relativeDirPath string) *CSVOutputStreamer {
+func NewCSVOutputStreamer(relativeDirPath string) OutputStreamer {
 	out := CSVOutputStreamer{relativeDirPath, nil}
-	return &out
+	return out
 }
 
 // Stream creates and writes all incoming data to a csv file.

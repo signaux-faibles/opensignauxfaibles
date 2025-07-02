@@ -21,8 +21,18 @@ func Load(batch *base.AdminBatch, batchKey string) error {
 	return err
 }
 
+// An OutputStreamer directs a stream of output data to the desired sink
+type OutputStreamer interface {
+	Stream(ch chan marshal.Tuple) error
+}
+
 // ImportBatch lance tous les parsers sur le batch fourni
-func ImportBatch(batch base.AdminBatch, parsers []marshal.Parser, skipFilter bool) error {
+func ImportBatch(
+	batch base.AdminBatch,
+	parsers []marshal.Parser,
+	skipFilter bool,
+	initStreamer func(batchKey string) OutputStreamer,
+) error {
 
 	var cache = marshal.NewCache()
 
@@ -51,7 +61,7 @@ func ImportBatch(batch base.AdminBatch, parsers []marshal.Parser, skipFilter boo
 		}()
 
 		go func() {
-			outputStreamer := NewCSVOutputStreamer(batch.ID.Key)
+			outputStreamer := initStreamer(batch.ID.Key)
 
 			defer wg.Done()
 			outputStreamer.Stream(outputChannel)
