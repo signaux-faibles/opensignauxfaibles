@@ -177,7 +177,7 @@ type sireneParser struct {
 	colIndex marshal.ColMapping
 }
 
-func (parser *sireneParser) GetFileType() string {
+func (parser *sireneParser) Type() string {
 	return "sirene"
 }
 

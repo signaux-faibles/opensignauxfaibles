@@ -59,7 +59,7 @@ type effectifEntParser struct {
 	idx     marshal.ColMapping
 }
 
-func (parser *effectifEntParser) GetFileType() string {
+func (parser *effectifEntParser) Type() string {
 	return "effectif_ent"
 }
 

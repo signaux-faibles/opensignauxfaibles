@@ -85,7 +85,7 @@ type delaiParser struct {
 	idx     marshal.ColMapping
 }
 
-func (parser *delaiParser) GetFileType() string {
+func (parser *delaiParser) Type() string {
 	return "delai"
 }
 

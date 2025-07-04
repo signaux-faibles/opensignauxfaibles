@@ -63,7 +63,7 @@ type cotisationParser struct {
 	idx     marshal.ColMapping
 }
 
-func (parser *cotisationParser) GetFileType() string {
+func (parser *cotisationParser) Type() string {
 	return "cotisation"
 }
 

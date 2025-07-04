@@ -119,12 +119,12 @@ func (cmds *cliCommands) Metadata() map[string]cosFlag.Flag {
 func (cmds *cliCommands) index() map[string]commandHandler {
 	commandByName := map[string]commandHandler{}
 	supportedCommands := reflect.ValueOf(*cmds)
-	for i := 0; i < supportedCommands.NumField(); i++ {
+	for i := range supportedCommands.NumField() {
 		fieldName := supportedCommands.Type().Field(i).Name                    // e.g. "PruneEntities"
 		cmdName := strings.ToLower(fieldName[0:1]) + fieldName[1:]             // e.g. "pruneEntities"
 		cmdArgs, ok := supportedCommands.Field(i).Interface().(commandHandler) // e.g. pruneEntitiesHandler instance
 		if !ok {
-			log.Fatal(fmt.Sprintf("Property %v of type cliCommands is not an instance of commandHandler", fieldName))
+			log.Fatalf("Property %v of type cliCommands is not an instance of commandHandler", fieldName)
 		}
 		commandByName[cmdName] = cmdArgs
 	}

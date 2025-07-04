@@ -97,7 +97,7 @@ type dummyParser struct {
 	initError error
 }
 
-func (parser *dummyParser) GetFileType() string {
+func (parser *dummyParser) Type() string {
 	return "dummy"
 }
 

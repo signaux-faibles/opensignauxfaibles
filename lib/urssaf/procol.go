@@ -61,7 +61,7 @@ type procolParser struct {
 	idx    marshal.ColMapping
 }
 
-func (parser *procolParser) GetFileType() string {
+func (parser *procolParser) Type() string {
 	return "procol"
 }
 
