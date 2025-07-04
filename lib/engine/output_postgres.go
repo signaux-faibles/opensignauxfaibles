@@ -6,6 +6,7 @@ import (
 	"opensignauxfaibles/lib/marshal"
 	"strings"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -15,7 +16,8 @@ const BatchSize = 1000
 // PostgresOutputStreamer writes the output to postgresql.
 //
 // The name of the table is defined by `parserType`, prefixed with "stg_".
-// The table is created or replaced.
+// The table is expected to exist and be properly formatted. It is truncated
+// before inserting new values.
 //
 // The columns of this table will correspond to the "Tuple.Headers()"
 type PostgresOutputStreamer struct {
@@ -41,6 +43,13 @@ func (out *PostgresOutputStreamer) Stream(ch chan marshal.Tuple) error {
 	var headers []string
 
 	tableName := fmt.Sprintf("stg_%s", out.parserType)
+
+	_, err := out.conn.Exec(context.Background(), fmt.Sprintf("TRUNCATE %s",
+		tableName))
+
+	if err != nil {
+		return err
+	}
 
 	for tuple := range ch {
 		if headers == nil {
@@ -72,30 +81,29 @@ func insertTuples(tuples []marshal.Tuple, conn *pgxpool.Pool, tableName string, 
 		return nil
 	}
 
-	// To store the required arguments for the SQL query
-	valueArgs := make([]string, 0, len(tuples))
+	values := make([][]any, 0, len(tuples))
+
+	// TODO rather than construct values
+	// implement CopyFromSource interface
 	for _, tuple := range tuples {
-		valueArgs = append(valueArgs, fmt.Sprintf("(%s)", strings.Join(tuple.Values(), ", ")))
+		newSlice := make([]any, 0, len(tuple.Values()))
+		for _, value := range tuple.Values() {
+			newSlice = append(newSlice, value)
+		}
+		values = append(values, newSlice)
+	}
+	lowerColumns := make([]string, len(columns))
+	for i, c := range columns {
+		lowerColumns[i] = strings.ToLower(c)
 	}
 
-	placeholders := make([]string, len(valueArgs))
-	for i := range valueArgs {
-		// Start at $3 as placeholders are 1-indexed
-		// and first one is for column names
-		placeholders[i] = fmt.Sprintf("$%d", i+1)
-	}
-	query := fmt.Sprintf(
-		fmt.Sprintf(
-			`INSERT INTO %s (%s)VALUES %s`,
-			tableName,
-			strings.Join(columns, ", "),
-			strings.Join(valueArgs, ", "),
-		),
-	)
-
-	_, err := conn.Exec(
+	// Batch insertion
+	_, err := conn.CopyFrom(
 		context.Background(),
-		query,
+		pgx.Identifier{tableName},
+		lowerColumns,
+		pgx.CopyFromRows(values),
 	)
+
 	return err
 }
