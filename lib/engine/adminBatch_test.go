@@ -55,17 +55,24 @@ func Test_CheckBatchPaths(t *testing.T) {
 	}
 }
 
-type TestOutputStreamer struct{}
+type TestOutputStreamer struct {
+	Count int
+}
 
-func (TestOutputStreamer) Stream(ch chan marshal.Tuple) error {
-	go func() { // discard all data
-		for range ch {
-		}
-	}()
+func NewTestOutputStreamer() *TestOutputStreamer {
+	return &TestOutputStreamer{0}
+}
+
+func (out *TestOutputStreamer) Stream(ch chan marshal.Tuple) error {
+	for range ch {
+		out.Count = out.Count + 1
+	}
 	return nil
 }
 
-var initOutputStreamer = func(parserType string) OutputStreamer { return TestOutputStreamer{} }
+var initOutputStreamer = func(parserType string) OutputStreamer {
+	return NewTestOutputStreamer()
+}
 
 func Test_ImportBatch(t *testing.T) {
 

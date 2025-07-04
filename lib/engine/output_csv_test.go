@@ -6,8 +6,8 @@ import (
 	"testing"
 )
 
-// mockTuple implements the marshal.Tuple interface for testing
-type mockTuple struct {
+// MockTuple implements the marshal.Tuple interface for testing
+type MockTuple struct {
 	key     string
 	scope   string
 	tType   string
@@ -15,11 +15,11 @@ type mockTuple struct {
 	values  []string
 }
 
-func (m mockTuple) Key() string       { return m.key }
-func (m mockTuple) Scope() string     { return m.scope }
-func (m mockTuple) Type() string      { return m.tType }
-func (m mockTuple) Headers() []string { return m.headers }
-func (m mockTuple) Values() []string  { return m.values }
+func (m MockTuple) Key() string       { return m.key }
+func (m MockTuple) Scope() string     { return m.scope }
+func (m MockTuple) Type() string      { return m.tType }
+func (m MockTuple) Headers() []string { return m.headers }
+func (m MockTuple) Values() []string  { return m.values }
 
 func TestCSVOutputStreamer_Stream(t *testing.T) {
 
@@ -32,14 +32,14 @@ func TestCSVOutputStreamer_Stream(t *testing.T) {
 
 	// setup channel
 	ch := make(chan marshal.Tuple, 3)
-	ch <- mockTuple{
+	ch <- MockTuple{
 		key:     "123456789",
 		scope:   "entreprise",
 		tType:   "testtype",
 		headers: []string{"header1", "header2", "header3"},
 		values:  []string{"value1", "value2", "value3"},
 	}
-	ch <- mockTuple{
+	ch <- MockTuple{
 		key:     "987654321",
 		scope:   "entreprise",
 		tType:   "testtype",

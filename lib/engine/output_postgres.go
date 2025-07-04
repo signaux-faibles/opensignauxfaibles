@@ -30,6 +30,9 @@ func NewPostgresOutputStreamer(conn *pgxpool.Pool, parserType string) *PostgresO
 func (out *PostgresOutputStreamer) Stream(ch chan marshal.Tuple) error {
 	// Temporary: only ap data
 	if out.parserType != "apconso" && out.parserType != "apdemande" {
+		for range ch {
+			// discard data
+		}
 		return nil
 	}
 	// End temporary
@@ -78,22 +81,21 @@ func insertTuples(tuples []marshal.Tuple, conn *pgxpool.Pool, tableName string, 
 	placeholders := make([]string, len(valueArgs))
 	for i := range valueArgs {
 		// Start at $3 as placeholders are 1-indexed
-		// and two first ones are for table name and column names
-		placeholders[i] = fmt.Sprintf("$%d", i+3)
+		// and first one is for column names
+		placeholders[i] = fmt.Sprintf("$%d", i+1)
 	}
-	query := fmt.Sprintf(`
-    INSERT INTO $1 ($2)
-      VALUES
-        %s
-        `,
-		strings.Join(placeholders, ", "),
+	query := fmt.Sprintf(
+		fmt.Sprintf(
+			`INSERT INTO %s (%s)VALUES %s`,
+			tableName,
+			strings.Join(columns, ", "),
+			strings.Join(valueArgs, ", "),
+		),
 	)
+
 	_, err := conn.Exec(
 		context.Background(),
 		query,
-		tableName,
-		columns,
-		strings.Join(valueArgs, ", "),
 	)
 	return err
 }
