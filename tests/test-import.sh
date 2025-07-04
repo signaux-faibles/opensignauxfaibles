@@ -10,10 +10,13 @@ set -e # will stop the script if any command fails with a non-zero exit code
 
 # Setup
 FLAGS="$*" # the script will update the golden file if "--update" flag was provided as 1st argument
-TMP_DIR="tests/tmp-test-execution-files"
+export TMP_DIR="tests/tmp-test-execution-files" # for tests/helpers/sfdata-wrapper.sh
 OUTPUT_FILE="${TMP_DIR}/test-import.output.txt"
 GOLDEN_FILE="tests/output-snapshots/test-import.golden.txt"
 mkdir -p "${TMP_DIR}"
+
+# Clear output
+> "$OUTPUT_FILE"
 
 # Clean up on exit
 function teardown {
@@ -87,6 +90,19 @@ printjson(db.Journal.find().sort({ reportType: -1, parserCode: 1 }).toArray().ma
   hasStartDate: !!doc.startDate,
 })));
 CONTENT
+
+echo -e "\n// Data exported to csv files:\n\n" >> "${OUTPUT_FILE}"
+
+# Loop through all files in the export directory, always in same order
+find "./${TMP_DIR}/1910/" -maxdepth 1 -type f | sort | while IFS= read -r file; do
+    if [[ -f "$file" ]]; then
+        echo "==== $(basename "$file") ====" >> "$OUTPUT_FILE"
+        echo -e "\n" >> "$OUTPUT_FILE"
+        cat "$file" >> "$OUTPUT_FILE"
+        echo -e "\n" >> "$OUTPUT_FILE"
+    fi
+done
+
 
 tests/helpers/diff-or-update-golden-master.sh "${FLAGS}" "${GOLDEN_FILE}" "${OUTPUT_FILE}"
 

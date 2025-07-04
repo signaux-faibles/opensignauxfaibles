@@ -16,6 +16,8 @@ exec 2> >(sed 's/^/  [sfdata] /' >&2)
 [ -f config.toml ] && mv config.toml config.backup.toml
 cp config-sample.toml config.toml
 perl -pi'' -e "s,27017,${MONGODB_PORT}," config.toml
+perl -pi'' -e "s,path/export,${TMP_DIR}," config.toml
+
 
 # Run the command
 ./sfdata "$@" || true # pass all arguments to sfdata
