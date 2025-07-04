@@ -23,11 +23,17 @@ type PostgresOutputStreamer struct {
 	parserType string
 }
 
-func NewPostgresOutputStreamer(conn *pgxpool.Pool, batchKey, parserType string) *PostgresOutputStreamer {
+func NewPostgresOutputStreamer(conn *pgxpool.Pool, parserType string) *PostgresOutputStreamer {
 	return &PostgresOutputStreamer{conn, parserType}
 }
 
 func (out *PostgresOutputStreamer) Stream(ch chan marshal.Tuple) error {
+	// Temporary: only ap data
+	if out.parserType != "apconso" && out.parserType != "apdemande" {
+		return nil
+	}
+	// End temporary
+
 	var currentBatch []marshal.Tuple
 	var headers []string
 
