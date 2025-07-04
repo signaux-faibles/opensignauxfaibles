@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/globalsign/mgo"
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/spf13/viper"
 )
 
@@ -14,7 +14,7 @@ import (
 type DB struct {
 	DB         *mgo.Database
 	DBStatus   *mgo.Database
-	PostgresDB *pgx.Conn
+	PostgresDB *pgxpool.Pool
 }
 
 func loadConfig() {
@@ -53,7 +53,7 @@ func InitDB() DB {
 		Key: []string{"_id.type", "_id.key"},
 	})
 
-	conn, err := pgx.Connect(context.Background(), viper.GetString("POSTGRES_DB_URL"))
+	conn, err := pgxpool.New(context.Background(), viper.GetString("POSTGRES_DB_URL"))
 
 	if err != nil {
 		// TODO currently we don't want the PostgreSQL database to be mandatory,
