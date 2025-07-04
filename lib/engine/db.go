@@ -1,17 +1,20 @@
 package engine
 
 import (
+	"context"
 	"log"
 	"time"
 
 	"github.com/globalsign/mgo"
+	"github.com/jackc/pgx/v5"
 	"github.com/spf13/viper"
 )
 
 // DB type centralisant les accès à une base de données
 type DB struct {
-	DB       *mgo.Database
-	DBStatus *mgo.Database
+	DB         *mgo.Database
+	DBStatus   *mgo.Database
+	PostgresDB *pgx.Conn
 }
 
 func loadConfig() {
@@ -50,8 +53,17 @@ func InitDB() DB {
 		Key: []string{"_id.type", "_id.key"},
 	})
 
+	conn, err := pgx.Connect(context.Background(), viper.GetString("POSTGRES_DB_URL"))
+
+	if err != nil {
+		// TODO currently we don't want the PostgreSQL database to be mandatory,
+		// e.g. for the e2e tests
+		log.Printf("Erreur de connexion à la base de données PostgreSQL: %v", err)
+	}
+
 	return DB{
-		DB:       db,
-		DBStatus: dbstatus,
+		DB:         db,
+		DBStatus:   dbstatus,
+		PostgresDB: conn,
 	}
 }
