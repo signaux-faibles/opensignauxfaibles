@@ -96,7 +96,7 @@ type apdemandeParser struct {
 	idx    marshal.ColMapping
 }
 
-func (parser *apdemandeParser) GetFileType() string {
+func (parser *apdemandeParser) Type() string {
 	return "apdemande"
 }
 

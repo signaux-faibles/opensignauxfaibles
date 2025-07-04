@@ -64,7 +64,7 @@ type ccsfParser struct {
 	idx     marshal.ColMapping
 }
 
-func (parser *ccsfParser) GetFileType() string {
+func (parser *ccsfParser) Type() string {
 	return "ccsf"
 }
 

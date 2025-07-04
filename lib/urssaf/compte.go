@@ -54,7 +54,7 @@ type comptesParser struct {
 	mapping  marshal.Comptes
 }
 
-func (parser *comptesParser) GetFileType() string {
+func (parser *comptesParser) Type() string {
 	return "admin_urssaf"
 }
 

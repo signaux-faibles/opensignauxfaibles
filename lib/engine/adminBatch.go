@@ -31,7 +31,7 @@ func ImportBatch(
 	batch base.AdminBatch,
 	parsers []marshal.Parser,
 	skipFilter bool,
-	initStreamer func(batchKey string) OutputStreamer,
+	initStreamer func(batchKey, parserType string) OutputStreamer,
 ) error {
 
 	var cache = marshal.NewCache()
@@ -61,7 +61,7 @@ func ImportBatch(
 		}()
 
 		go func() {
-			outputStreamer := initStreamer(batch.ID.Key)
+			outputStreamer := initStreamer(batch.ID.Key, parser.Type())
 
 			defer wg.Done()
 			outputStreamer.Stream(outputChannel)

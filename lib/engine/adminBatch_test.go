@@ -65,7 +65,7 @@ func (TestOutputStreamer) Stream(ch chan marshal.Tuple) error {
 	return nil
 }
 
-var initOutputStreamer = func(key string) OutputStreamer { return TestOutputStreamer{} }
+var initOutputStreamer = func(key, parserType string) OutputStreamer { return TestOutputStreamer{} }
 
 func Test_ImportBatch(t *testing.T) {
 

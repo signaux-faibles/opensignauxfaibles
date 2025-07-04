@@ -21,13 +21,14 @@ const DefaultExportPath = "/export/csv"
 // Otherwise, it will stream to the io.Writer.
 type CSVOutputStreamer struct {
 	relativeDirPath string
+	parserType      string
 	writer          io.Writer
 }
 
 // NewCSVOutputStreamer creates a streamer that will write CSV files into a
 // given directory.
-func NewCSVOutputStreamer(relativeDirPath string) OutputStreamer {
-	out := CSVOutputStreamer{relativeDirPath, nil}
+func NewCSVOutputStreamer(relativeDirPath, parserType string) OutputStreamer {
+	out := CSVOutputStreamer{relativeDirPath, parserType, nil}
 	return out
 }
 
@@ -41,10 +42,6 @@ func NewCSVOutputStreamer(relativeDirPath string) OutputStreamer {
 // path, relative to the export root directory ("export.path"
 // configuration, or by default the `DefaultExportPath` constant)
 func (out CSVOutputStreamer) Stream(ch chan marshal.Tuple) error {
-	firstTuple, ok := <-ch // to retrieve the type of data
-	if !ok {
-		return nil // no data to process
-	}
 
 	var w *csv.Writer
 
@@ -53,7 +50,7 @@ func (out CSVOutputStreamer) Stream(ch chan marshal.Tuple) error {
 		w = csv.NewWriter(out.writer)
 	} else {
 
-		filePath := resolveFilePath(out.relativeDirPath, firstTuple.Type())
+		filePath := resolveFilePath(out.relativeDirPath, out.parserType)
 		slog.Debug(fmt.Sprintf("Set up writer to %s, create file and directory if needed", filePath))
 
 		file, err := createFile(filePath)
@@ -66,11 +63,14 @@ func (out CSVOutputStreamer) Stream(ch chan marshal.Tuple) error {
 		w = csv.NewWriter(file)
 	}
 
-	slog.Debug(fmt.Sprintf("Writing data for type %s", firstTuple.Type()))
+	slog.Debug(fmt.Sprintf("Writing data for type %s", out.parserType))
 
-	w.Write(firstTuple.Headers())
-	w.Write(firstTuple.Values())
+	headersWritten := false
 	for tuple := range ch { // remaining data
+		if !headersWritten {
+			w.Write(tuple.Headers())
+			headersWritten = true
+		}
 		w.Write(tuple.Values())
 	}
 	w.Flush()

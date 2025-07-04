@@ -90,7 +90,7 @@ type debitParser struct {
 	idx     marshal.ColMapping
 }
 
-func (parser *debitParser) GetFileType() string {
+func (parser *debitParser) Type() string {
 	return "debit"
 }
 

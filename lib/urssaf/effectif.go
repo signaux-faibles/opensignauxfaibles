@@ -62,7 +62,7 @@ type effectifParser struct {
 	idx     marshal.ColMapping
 }
 
-func (parser *effectifParser) GetFileType() string {
+func (parser *effectifParser) Type() string {
 	return "effectif"
 }
 
