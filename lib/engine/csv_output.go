@@ -66,7 +66,7 @@ func (out CSVOutputStreamer) Stream(ch chan marshal.Tuple) error {
 	slog.Debug(fmt.Sprintf("Writing data for type %s", out.parserType))
 
 	headersWritten := false
-	for tuple := range ch { // remaining data
+	for tuple := range ch {
 		if !headersWritten {
 			w.Write(tuple.Headers())
 			headersWritten = true
