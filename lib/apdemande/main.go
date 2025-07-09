@@ -16,20 +16,20 @@ import (
 
 // APDemande Demande d'activité partielle
 type APDemande struct {
-	ID                 string       `col:"ID_DA" json:"id_demande"`
-	Siret              string       `col:"ETAB_SIRET" json:"-"`
-	EffectifEntreprise *int         `col:"EFF_ENT" json:"effectif_entreprise"`
-	Effectif           *int         `col:"EFF_ETAB" json:"effectif"`
-	DateStatut         time.Time    `col:"DATE_STATUT" json:"date_statut"`
-	Periode            misc.Periode `cols:"DATE_DEB,DATE_FIN" json:"periode"`
-	HTA                *float64     `col:"HTA" json:"hta"`
-	MTA                *float64     `json:"mta"`
-	EffectifAutorise   *int         `col:"EFF_AUTO" json:"effectif_autorise"`
-	MotifRecoursSE     *int         `col:"MOTIF_RECOURS_SE" json:"motif_recours_se"`
-	HeureConsommee     *float64     `col:"S_HEURE_CONSOM_TOT" json:"heure_consommee"`
-	MontantConsomme    *float64     `json:"montant_consommee"`
-	EffectifConsomme   *int         `col:"S_HEURE_CONSOM_TOT" json:"effectif_consomme"`
-	Perimetre          *int         `col:"PERIMETRE_AP"       json:"perimetre"`
+	ID                 string       `input:"ID_DA"              json:"id_demande"`
+	Siret              string       `input:"ETAB_SIRET"         json:"-"`
+	EffectifEntreprise *int         `input:"EFF_ENT"            json:"effectif_entreprise"`
+	Effectif           *int         `input:"EFF_ETAB"           json:"effectif"`
+	DateStatut         time.Time    `input:"DATE_STATUT"        json:"date_statut"`
+	Periode            misc.Periode `                           json:"periode"`
+	HTA                *float64     `input:"HTA"                json:"hta"`
+	MTA                *float64     `                           json:"mta"`
+	EffectifAutorise   *int         `input:"EFF_AUTO"           json:"effectif_autorise"`
+	MotifRecoursSE     *int         `input:"MOTIF_RECOURS_SE"   json:"motif_recours_se"`
+	HeureConsommee     *float64     `input:"S_HEURE_CONSOM_TOT" json:"heure_consommee"`
+	MontantConsomme    *float64     `                           json:"montant_consommee"`
+	EffectifConsomme   *int         `input:"S_HEURE_CONSOM_TOT" json:"effectif_consomme"`
+	Perimetre          *int         `input:"PERIMETRE_AP"       json:"perimetre"`
 }
 
 func (apdemande APDemande) Headers() []string {

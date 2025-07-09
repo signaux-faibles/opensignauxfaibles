@@ -13,7 +13,7 @@ import (
 
 // EffectifEnt Urssaf
 type EffectifEnt struct {
-	Siren       string    `col:"siren" json:"-"`
+	Siren       string    `input:"siren" json:"-"`
 	Periode     time.Time `            json:"periode"`
 	EffectifEnt int       `            json:"effectif"`
 }

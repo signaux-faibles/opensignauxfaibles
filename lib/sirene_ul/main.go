@@ -11,17 +11,17 @@ import (
 
 // SireneUL informations sur les entreprises
 type SireneUL struct {
-	Siren               string     `col:"siren"                         json:"siren,omitempty"`
+	Siren               string     `input:"siren"                         json:"siren,omitempty"`
 	Nic                 string     `                                    json:"nic,omitempty"`
-	RaisonSociale       string     `col:"denominationUniteLegale"       json:"raison_sociale"`
-	Prenom1UniteLegale  string     `col:"prenom1UniteLegale"            json:"prenom1_unite_legale,omitempty"`
-	Prenom2UniteLegale  string     `col:"prenom2UniteLegale"            json:"prenom2_unite_legale,omitempty"`
-	Prenom3UniteLegale  string     `col:"prenom3UniteLegale"            json:"prenom3_unite_legale,omitempty"`
-	Prenom4UniteLegale  string     `col:"prenom4UniteLegale"            json:"prenom4_unite_legale,omitempty"`
-	NomUniteLegale      string     `col:"nomUniteLegale"                json:"nom_unite_legale,omitempty"`
-	NomUsageUniteLegale string     `col:"nomUsageUniteLegale"           json:"nom_usage_unite_legale,omitempty"`
-	CodeStatutJuridique string     `col:"categorieJuridiqueUniteLegale" json:"statut_juridique"`
-	Creation            *time.Time `col:"dateCreationUniteLegale"       json:"date_creation,omitempty"`
+	RaisonSociale       string     `input:"denominationUniteLegale"       json:"raison_sociale"`
+	Prenom1UniteLegale  string     `input:"prenom1UniteLegale"            json:"prenom1_unite_legale,omitempty"`
+	Prenom2UniteLegale  string     `input:"prenom2UniteLegale"            json:"prenom2_unite_legale,omitempty"`
+	Prenom3UniteLegale  string     `input:"prenom3UniteLegale"            json:"prenom3_unite_legale,omitempty"`
+	Prenom4UniteLegale  string     `input:"prenom4UniteLegale"            json:"prenom4_unite_legale,omitempty"`
+	NomUniteLegale      string     `input:"nomUniteLegale"                json:"nom_unite_legale,omitempty"`
+	NomUsageUniteLegale string     `input:"nomUsageUniteLegale"           json:"nom_usage_unite_legale,omitempty"`
+	CodeStatutJuridique string     `input:"categorieJuridiqueUniteLegale" json:"statut_juridique"`
+	Creation            *time.Time `input:"dateCreationUniteLegale"       json:"date_creation,omitempty"`
 }
 
 func (sirene_ul SireneUL) Headers() []string {

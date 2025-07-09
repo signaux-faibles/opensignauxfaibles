@@ -17,30 +17,30 @@ import (
 
 // Sirene informations sur les entreprises
 type Sirene struct {
-	Siren                string     `col:"siren" json:"siren,omitempty"`
-	Nic                  string     `col:"nic" json:"nic,omitempty"`
-	Siege                bool       `col:"etablissementSiege" json:"siege,omitempty"`
-	ComplementAdresse    string     `col:"complementAdresseEtablissement" json:"complement_adresse,omitempty"`
-	NumVoie              string     `col:"numeroVoieEtablissement" json:"numero_voie,omitempty"`
-	IndRep               string     `col:"indiceRepetitionEtablissement" json:"indrep,omitempty"`
-	TypeVoie             string     `col:"typeVoieEtablissement" json:"type_voie,omitempty"`
-	Voie                 string     `col:"libelleVoieEtablissement" json:"voie,omitempty"`
-	Commune              string     `col:"libelleCommuneEtablissement" json:"commune,omitempty"`
-	CommuneEtranger      string     `col:"libelleCommuneEtrangerEtablissement" json:"commune_etranger,omitempty"`
-	DistributionSpeciale string     `col:"distributionSpecialeEtablissement" json:"distribution_speciale,omitempty"`
-	CodeCommune          string     `col:"codeCommuneEtablissement" json:"code_commune,omitempty"`
-	CodeCedex            string     `col:"codeCedexEtablissement" json:"code_cedex,omitempty"`
-	Cedex                string     `col:"libelleCedexEtablissement" json:"cedex,omitempty"`
-	CodePaysEtranger     string     `col:"codePaysEtrangerEtablissement" json:"code_pays_etranger,omitempty"`
-	PaysEtranger         string     `col:"libellePaysEtrangerEtablissement" json:"pays_etranger,omitempty"`
-	CodePostal           string     `col:"codePostalEtablissement" json:"code_postal,omitempty"`
-	Departement          string     `json:"departement,omitempty"`
-	APE                  string     `json:"ape,omitempty"`
-	CodeActivite         string     `col:"activitePrincipaleEtablissement" json:"code_activite,omitempty"`
-	NomenActivite        string     `col:"nomenclatureActivitePrincipaleEtablissement" json:"nomen_activite,omitempty"`
-	Creation             *time.Time `col:"dateCreationEtablissement" json:"date_creation,omitempty"`
-	Longitude            float64    `col:"longitude" json:"longitude,omitempty"`
-	Latitude             float64    `col:"latitude" json:"latitude,omitempty"`
+	Siren                string     `input:"siren"                                       json:"siren,omitempty"`
+	Nic                  string     `input:"nic"                                         json:"nic,omitempty"`
+	Siege                bool       `input:"etablissementSiege"                          json:"siege,omitempty"`
+	ComplementAdresse    string     `input:"complementAdresseEtablissement"              json:"complement_adresse,omitempty"`
+	NumVoie              string     `input:"numeroVoieEtablissement"                     json:"numero_voie,omitempty"`
+	IndRep               string     `input:"indiceRepetitionEtablissement"               json:"indrep,omitempty"`
+	TypeVoie             string     `input:"typeVoieEtablissement"                       json:"type_voie,omitempty"`
+	Voie                 string     `input:"libelleVoieEtablissement"                    json:"voie,omitempty"`
+	Commune              string     `input:"libelleCommuneEtablissement"                 json:"commune,omitempty"`
+	CommuneEtranger      string     `input:"libelleCommuneEtrangerEtablissement"         json:"commune_etranger,omitempty"`
+	DistributionSpeciale string     `input:"distributionSpecialeEtablissement"           json:"distribution_speciale,omitempty"`
+	CodeCommune          string     `input:"codeCommuneEtablissement"                    json:"code_commune,omitempty"`
+	CodeCedex            string     `input:"codeCedexEtablissement"                      json:"code_cedex,omitempty"`
+	Cedex                string     `input:"libelleCedexEtablissement"                   json:"cedex,omitempty"`
+	CodePaysEtranger     string     `input:"codePaysEtrangerEtablissement"               json:"code_pays_etranger,omitempty"`
+	PaysEtranger         string     `input:"libellePaysEtrangerEtablissement"            json:"pays_etranger,omitempty"`
+	CodePostal           string     `input:"codePostalEtablissement"                     json:"code_postal,omitempty"`
+	Departement          string     `                                                    json:"departement,omitempty"`
+	APE                  string     `                                                    json:"ape,omitempty"`
+	CodeActivite         string     `input:"activitePrincipaleEtablissement"             json:"code_activite,omitempty"`
+	NomenActivite        string     `input:"nomenclatureActivitePrincipaleEtablissement" json:"nomen_activite,omitempty"`
+	Creation             *time.Time `input:"dateCreationEtablissement"                   json:"date_creation,omitempty"`
+	Longitude            float64    `input:"longitude"                                   json:"longitude,omitempty"`
+	Latitude             float64    `input:"latitude"                                    json:"latitude,omitempty"`
 }
 
 var typeVoie = map[string]string{
