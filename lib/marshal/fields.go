@@ -24,9 +24,9 @@ func IndexColumnsFromCsvHeader(reader *csv.Reader, destObject interface{}) (ColM
 
 // ValidateAndIndexColumnsFromColTags valide puis indexe les colonnes trouvées
 // en en-tête d'un fichier csv, à partir des noms de colonnes spécifiés dans le
-// tag "col" ou "cols" annotant les propriétés du type de destination du parseur.
+// tag "input"  annotant les propriétés du type de destination du parseur.
 func ValidateAndIndexColumnsFromColTags(headerRow []string, destObject interface{}) (ColMapping, error) {
-	requiredFields := ExtractColTags(destObject)
+	requiredFields := ExtractInputTags(destObject)
 	idx := indexFields(headerRow)
 	_, err := idx.HasFields(requiredFields)
 	return idx, err
@@ -153,19 +153,26 @@ func LowercaseFields(headerFields []string) []string {
 	return normalizedHeaderFields
 }
 
-// ExtractColTags extraie les noms de colonnes depuis les valeurs du tag "col"
-// (ou "cols", séparés par des virgules) de chaque propriété de l'objet fourni.
-// Il est possible d'associer plusieurs colonnes en séparant par des virgules.
-func ExtractColTags(object interface{}) (expectedFields []string) {
-	structure := reflect.TypeOf(object)
-	for i := 0; i < structure.NumField(); i++ {
-		tagWithSingleVal := structure.Field(i).Tag.Get("col")
+// ExtractInputTags extraie les noms de colonnes depuis les valeurs du tag
+// "input" de chaque propriété de l'objet ("struct") fourni.
+// En l'absence de ce tag, pour une propriété de type "struct", les noms des
+// colonnes seront recursivement extraites du type de la propriété.
+func ExtractInputTags(object any) (expectedFields []string) {
+	t := reflect.TypeOf(object)
+	return recursiveExtractTags(t, "input")
+}
+
+func recursiveExtractTags(t reflect.Type, tag string) (expectedFields []string) {
+	for i := range t.NumField() {
+		field := t.Field(i)
+
+		tagWithSingleVal := field.Tag.Get(tag)
+
 		if tagWithSingleVal != "" {
 			expectedFields = append(expectedFields, tagWithSingleVal)
-		}
-		tagWithMultiVal := structure.Field(i).Tag.Get("cols")
-		if tagWithMultiVal != "" {
-			expectedFields = append(expectedFields, strings.Split(tagWithMultiVal, ",")...)
+		} else if field.Type.Kind() == reflect.Struct {
+			nestedFields := recursiveExtractTags(field.Type, tag)
+			expectedFields = append(expectedFields, nestedFields...)
 		}
 	}
 	return expectedFields
