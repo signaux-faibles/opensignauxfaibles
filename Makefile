@@ -21,6 +21,9 @@ postgres-container: ## Spin up a Postgresql container for testing (container: te
 		-p 5432:5432 \
 		-d postgres:17
 
+postgres-migrations:
+	@ for file in ./migrations/*; do psql postgres://testuser:testpass@localhost:5432/testdb  -f "$${file}"; done
+
 postgres-cleanup: ## Clean up the Postgresql container
 	@ docker stop test-postgres
 	@ docker rm test-postgres
