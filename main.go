@@ -18,9 +18,11 @@ import (
 // GitCommit est le hash du dernier commit à inclure dans le binaire.
 var GitCommit string // (populé lors de la compilation, par `make build`)
 
-func connectDB() {
-	engine.Db = engine.InitDB()
+func connectDB() error {
+	var err error
+	engine.Db, err = engine.InitDB()
 	go engine.InitEventQueue()
+	return err
 }
 
 // main Fonction Principale
@@ -54,13 +56,20 @@ func runCLI(args ...string) int {
 
 	// execute the command
 	if useDB {
-		connectDB()
+		err := connectDB()
+
+		if err != nil {
+			logger.Error("error while connecting to db", "error", err)
+			fmt.Printf("\nErreur: %v\n", err)
+			return 3
+		}
 		defer engine.FlushEventQueue()
 	}
+
 	if err := cmdHandlerWithArgs.Run(); err != nil {
 		logger.Error("error while executing command", "error", err)
 		fmt.Printf("\nErreur: %v\n", err)
-		return 3
+		return 4
 	}
 	return 0
 }

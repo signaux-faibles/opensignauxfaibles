@@ -2,6 +2,7 @@ package engine
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"time"
 
@@ -28,7 +29,7 @@ func loadConfig() {
 }
 
 // InitDB Initialisation de la connexion MongoDB
-func InitDB() DB {
+func InitDB() (DB, error) {
 	loadConfig()
 	dbDial := viper.GetString("DB_DIAL")
 	dbDatabase := viper.GetString("DB")
@@ -36,13 +37,13 @@ func InitDB() DB {
 	// définition de 2 connexions pour isoler les requêtes (TODO: utile ?)
 	mongostatus, err := mgo.Dial(dbDial)
 	if err != nil {
-		log.Fatal("Erreur de connexion (status) à MongoDB")
+		return DB{}, fmt.Errorf("erreur de connexion (status) à MongoDB : %w", err)
 	}
 	mongostatus.SetSocketTimeout(72000 * time.Second)
 
 	mongodb, err := mgo.Dial(dbDial)
 	if err != nil {
-		log.Fatal("Erreur de connexion (data) à MongoDB")
+		return DB{}, fmt.Errorf("erreur de connexion (data) à MongoDB : %w", err)
 	}
 	mongodb.SetSocketTimeout(72000 * time.Second)
 	dbstatus := mongostatus.DB(dbDatabase)
@@ -65,5 +66,5 @@ func InitDB() DB {
 		DB:         db,
 		DBStatus:   dbstatus,
 		PostgresDB: conn,
-	}
+	}, nil
 }
