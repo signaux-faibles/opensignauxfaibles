@@ -14,19 +14,18 @@ echo "" > "${OUTPUT_FILE}"
 
 function test {
   CMD="./$1"
-  echo "- ${CMD}"
-  echo "$ ${CMD}"  >> "${OUTPUT_FILE}"
-  echo "$(${CMD})" >> "${OUTPUT_FILE}"
-  echo "---"       >> "${OUTPUT_FILE}"
+  echo "$ ${CMD}"
+  echo "$(${CMD})"
+  echo "---"
 }
 
 # run test cases
-test "sfdata"                           2>> "${OUTPUT_FILE}"
-test "sfdata unknown_command"           2>> "${OUTPUT_FILE}"
-test "sfdata --help"                    2>> "${OUTPUT_FILE}"
-test "sfdata check --help"              2>> "${OUTPUT_FILE}"
-test "sfdata import --help"             2>> "${OUTPUT_FILE}"
-test "sfdata parseFile --help"          2>> "${OUTPUT_FILE}"
+test "sfdata"                           >> "${OUTPUT_FILE}"
+test "sfdata unknown_command"           >> "${OUTPUT_FILE}"
+test "sfdata --help"                    >> "${OUTPUT_FILE}"
+test "sfdata check --help"              >> "${OUTPUT_FILE}"
+test "sfdata import --help"             >> "${OUTPUT_FILE}"
+test "sfdata parseFile --help"          >> "${OUTPUT_FILE}"
 
 set -e # will stop the script if any command fails with a non-zero exit code
 tests/helpers/diff-or-update-golden-master.sh "${FLAGS}" "${GOLDEN_FILE}" "${OUTPUT_FILE}"
