@@ -13,10 +13,10 @@ import (
 // CCSF information urssaf ccsf
 type CCSF struct {
 	key            string
-	NumeroCompte   string    `col:"Compte"              json:"-"`
-	DateTraitement time.Time `col:"Date_de_traitement"  json:"date_traitement"`
-	Stade          string    `col:"Code_externe_stade"  json:"stade"`
-	Action         string    `col:"Code_externe_action" json:"action"`
+	NumeroCompte   string    `input:"Compte"              json:"-"`
+	DateTraitement time.Time `input:"Date_de_traitement"  json:"date_traitement"`
+	Stade          string    `input:"Code_externe_stade"  json:"stade"`
+	Action         string    `input:"Code_externe_action" json:"action"`
 }
 
 func (ccsf CCSF) Headers() []string {

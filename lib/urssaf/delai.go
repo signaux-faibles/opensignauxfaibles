@@ -12,17 +12,17 @@ import (
 // Delai tuple fichier ursaff
 type Delai struct {
 	key               string
-	NumeroCompte      string    `col:"Numero_compte_externe"       json:"numero_compte"`
-	NumeroContentieux string    `col:"Numero_structure"            json:"numero_contentieux"`
-	DateCreation      time.Time `col:"Date_creation"               json:"date_creation"`
-	DateEcheance      time.Time `col:"Date_echeance"               json:"date_echeance"`
-	DureeDelai        *int      `col:"Duree_delai"                 json:"duree_delai"`
-	Denomination      string    `col:"Denomination_premiere_ligne" json:"denomination"`
-	Indic6m           string    `col:"Indic_6M"                    json:"indic_6m"`
-	AnneeCreation     *int      `col:"Annee_creation"              json:"annee_creation"`
-	MontantEcheancier *float64  `col:"Montant_global_echeancier"   json:"montant_echeancier"`
-	Stade             string    `col:"Code_externe_stade"          json:"stade"`
-	Action            string    `col:"Code_externe_action"         json:"action"`
+	NumeroCompte      string    `input:"Numero_compte_externe"       json:"numero_compte"`
+	NumeroContentieux string    `input:"Numero_structure"            json:"numero_contentieux"`
+	DateCreation      time.Time `input:"Date_creation"               json:"date_creation"`
+	DateEcheance      time.Time `input:"Date_echeance"               json:"date_echeance"`
+	DureeDelai        *int      `input:"Duree_delai"                 json:"duree_delai"`
+	Denomination      string    `input:"Denomination_premiere_ligne" json:"denomination"`
+	Indic6m           string    `input:"Indic_6M"                    json:"indic_6m"`
+	AnneeCreation     *int      `input:"Annee_creation"              json:"annee_creation"`
+	MontantEcheancier *float64  `input:"Montant_global_echeancier"   json:"montant_echeancier"`
+	Stade             string    `input:"Code_externe_stade"          json:"stade"`
+	Action            string    `input:"Code_externe_action"         json:"action"`
 }
 
 func (delai Delai) Headers() []string {
