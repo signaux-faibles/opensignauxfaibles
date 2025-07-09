@@ -1,9 +1,9 @@
 package engine
 
 import (
-	"errors"
 	"opensignauxfaibles/lib/marshal"
-	"sync"
+
+	"golang.org/x/sync/errgroup"
 )
 
 // An OutputStreamer directs a stream of output data to the desired sink
@@ -29,10 +29,6 @@ func (combined *CombinedStreamer) Stream(ch chan marshal.Tuple) error {
 	outCh1 := make(chan marshal.Tuple, 1000)
 	outCh2 := make(chan marshal.Tuple, 1000)
 
-	// All errors (max 2) are buffered as they are processed only after both
-	// streams have ended
-	errCh := make(chan error, 2)
-
 	go func() {
 		defer close(outCh1)
 		defer close(outCh2)
@@ -44,44 +40,23 @@ func (combined *CombinedStreamer) Stream(ch chan marshal.Tuple) error {
 		}
 	}()
 
-	var wg sync.WaitGroup
-	wg.Add(2)
+	var g errgroup.Group
 
-	go func() {
-		defer wg.Done()
+	g.Go(
+		func() error {
+			err := combined.out1.Stream(outCh1)
+			return err
+		},
+	)
 
-		err := combined.out1.Stream(outCh1)
-		if err != nil {
-			errCh <- err
-		}
-	}()
+	g.Go(
+		func() error {
+			err := combined.out2.Stream(outCh2)
+			return err
+		},
+	)
 
-	go func() {
-		defer wg.Done()
-		err := combined.out2.Stream(outCh2)
-		if err != nil {
-			errCh <- err
-		}
-	}()
-
-	wg.Wait()
-	// When all go routines have ended we can safely close errCh
-	close(errCh)
-
-	errs := []error{}
-	for err := range errCh {
-		errs = append(errs, err)
-	}
-
-	var err error
-	switch len(errs) {
-	case 2:
-		err = errors.Join(errs[0], errs[1])
-	case 1:
-		err = errs[0]
-	case 0:
-		err = nil
-	}
+	err := g.Wait()
 
 	return err
 }

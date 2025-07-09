@@ -64,7 +64,8 @@ CONTENTS
 
 echo ""
 echo "💎 Parsing and importing data..."
-echo "- sfdata import 👉 $(tests/helpers/sfdata-wrapper.sh import --batch=1910 --no-filter)"
+echo "- sfdata import 👉"
+./sfdata import --batch=1910 --no-filter
 
 
 (tests/helpers/mongodb-container.sh run \

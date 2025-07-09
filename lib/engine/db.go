@@ -56,10 +56,13 @@ func InitDB() (DB, error) {
 
 	conn, err := pgxpool.New(context.Background(), viper.GetString("POSTGRES_DB_URL"))
 
+	if err == nil {
+		// Test connectivity with postgreSQL database
+		err = conn.Ping(context.Background())
+	}
+
 	if err != nil {
-		// TODO currently we don't want the PostgreSQL database to be mandatory,
-		// e.g. for the e2e tests
-		log.Printf("Erreur de connexion à la base de données PostgreSQL: %v", err)
+		return DB{}, fmt.Errorf("erreur de connexion à PostgreSQL : %w", err)
 	}
 
 	return DB{

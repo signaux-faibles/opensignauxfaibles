@@ -31,12 +31,12 @@ func NewPostgresOutputStreamer(conn *pgxpool.Pool, parserType string) *PostgresO
 }
 
 func (out *PostgresOutputStreamer) Stream(ch chan marshal.Tuple) error {
-	logger := slog.With("parser", out.parserType)
+	logger := slog.With("parser", out.parserType, "streamer", "postgresql")
 
 	// Temporary: only ap data
 	if out.parserType != "apconso" && out.parserType != "apdemande" {
+		logger.Debug("discarding data")
 		for range ch {
-			// discard data
 		}
 		return nil
 	}

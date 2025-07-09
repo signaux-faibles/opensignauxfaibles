@@ -17,10 +17,12 @@ mkdir -p "${TMP_DIR}"
 # Clean up on exit
 function teardown {
     tests/helpers/mongodb-container.sh stop
+    tests/helpers/postgres-container.sh stop
 }
 trap teardown EXIT
 
 PORT="27016" tests/helpers/mongodb-container.sh start
+PORT="5432" tests/helpers/postgres-container.sh start
 export MONGODB_PORT="27016" # for tests/helpers/sfdata-wrapper.sh
 
 echo ""

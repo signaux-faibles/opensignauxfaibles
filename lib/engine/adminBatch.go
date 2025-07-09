@@ -6,10 +6,10 @@ import (
 	"log"
 	"log/slog"
 	"os"
-	"sync"
 	"time"
 
 	"github.com/globalsign/mgo/bson"
+	"golang.org/x/sync/errgroup"
 
 	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/marshal"
@@ -47,32 +47,42 @@ func ImportBatch(
 	startDate := time.Now()
 	reportUnsupportedFiletypes(batch)
 
-	var wg sync.WaitGroup
+	var g errgroup.Group
+
+	// Limit maximum concurrent go routines
+	g.SetLimit(6)
 
 	for _, parser := range parsers {
 		if len(batch.Files[parser.Type()]) > 0 {
-			wg.Add(2)
 			logger.Info("parse raw data", "parser", parser.Type())
 
 			outputChannel, eventChannel := marshal.ParseFilesFromBatch(cache, &batch, parser) // appelle la fonction ParseFile() pour chaque type de fichier
 
 			// Insert events (parsing logs) into the "Journal" collection
-			go func() {
-				defer wg.Done()
-				RelayEvents(eventChannel, "ImportBatch", startDate)
-			}()
+			g.Go(
+				func() error {
+					RelayEvents(eventChannel, "ImportBatch", startDate)
+					return nil
+				},
+			)
 
 			// Stream data to the output sink(s)
-			go func() {
-				outputStreamer := initStreamer(parser.Type())
+			g.Go(
+				func() error {
+					outputStreamer := initStreamer(parser.Type())
 
-				defer wg.Done()
-				outputStreamer.Stream(outputChannel)
-			}()
+					return outputStreamer.Stream(outputChannel)
+				},
+			)
 		}
 
 	}
-	wg.Wait() // wait for all events and tuples to be inserted
+
+	err = g.Wait() // wait for all events and tuples to be inserted, get the error if any
+
+	if err != nil {
+		return err
+	}
 
 	logger.Info("raw data parsing ended")
 	logger.Info("inspect the \"Journal\" database to consult parsing errors.")

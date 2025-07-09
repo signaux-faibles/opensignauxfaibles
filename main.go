@@ -56,6 +56,7 @@ func runCLI(args ...string) int {
 
 	// execute the command
 	if useDB {
+
 		err := connectDB()
 
 		if err != nil {

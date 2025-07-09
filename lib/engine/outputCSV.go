@@ -42,7 +42,7 @@ func NewCSVOutputStreamer(relativeDirPath, parserType string) OutputStreamer {
 // path, relative to the export root directory ("export.path"
 // configuration, or by default the `DefaultExportPath` constant)
 func (out CSVOutputStreamer) Stream(ch chan marshal.Tuple) error {
-	logger := slog.With("parser", out.parserType)
+	logger := slog.With("parser", out.parserType, "streamer", "csv")
 	logger.Debug("stream data to CSV file")
 
 	var w *csv.Writer
