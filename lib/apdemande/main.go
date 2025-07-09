@@ -16,20 +16,20 @@ import (
 
 // APDemande Demande d'activité partielle
 type APDemande struct {
-	ID                 string       `col:"ID_DA" json:"id_demande" bson:"id_demande"`
-	Siret              string       `col:"ETAB_SIRET" json:"-" bson:"-"`
-	EffectifEntreprise *int         `col:"EFF_ENT" json:"effectif_entreprise" bson:"effectif_entreprise"`
-	Effectif           *int         `col:"EFF_ETAB" json:"effectif" bson:"effectif"`
-	DateStatut         time.Time    `col:"DATE_STATUT" json:"date_statut" bson:"date_statut"`
-	Periode            misc.Periode `cols:"DATE_DEB,DATE_FIN" json:"periode" bson:"periode"`
-	HTA                *float64     `col:"HTA" json:"hta" bson:"hta"`
-	MTA                *float64     `json:"mta" bson:"mta"`
-	EffectifAutorise   *int         `col:"EFF_AUTO" json:"effectif_autorise" bson:"effectif_autorise"`
-	MotifRecoursSE     *int         `col:"MOTIF_RECOURS_SE" json:"motif_recours_se" bson:"motif_recours_se"`
-	HeureConsommee     *float64     `col:"S_HEURE_CONSOM_TOT" json:"heure_consommee" bson:"heure_consommee"`
-	MontantConsomme    *float64     `json:"montant_consommee" bson:"montant_consommee"`
-	EffectifConsomme   *int         `col:"S_HEURE_CONSOM_TOT" json:"effectif_consomme" bson:"effectif_consomme"`
-	Perimetre          *int         `col:"PERIMETRE_AP"       json:"perimetre"         bson:"perimetre"`
+	ID                 string       `col:"ID_DA" json:"id_demande"`
+	Siret              string       `col:"ETAB_SIRET" json:"-"`
+	EffectifEntreprise *int         `col:"EFF_ENT" json:"effectif_entreprise"`
+	Effectif           *int         `col:"EFF_ETAB" json:"effectif"`
+	DateStatut         time.Time    `col:"DATE_STATUT" json:"date_statut"`
+	Periode            misc.Periode `cols:"DATE_DEB,DATE_FIN" json:"periode"`
+	HTA                *float64     `col:"HTA" json:"hta"`
+	MTA                *float64     `json:"mta"`
+	EffectifAutorise   *int         `col:"EFF_AUTO" json:"effectif_autorise"`
+	MotifRecoursSE     *int         `col:"MOTIF_RECOURS_SE" json:"motif_recours_se"`
+	HeureConsommee     *float64     `col:"S_HEURE_CONSOM_TOT" json:"heure_consommee"`
+	MontantConsomme    *float64     `json:"montant_consommee"`
+	EffectifConsomme   *int         `col:"S_HEURE_CONSOM_TOT" json:"effectif_consomme"`
+	Perimetre          *int         `col:"PERIMETRE_AP"       json:"perimetre"`
 }
 
 func (apdemande APDemande) Headers() []string {
