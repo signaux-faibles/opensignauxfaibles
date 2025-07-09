@@ -21,10 +21,12 @@ mkdir -p "${TMP_DIR}"
 # Clean up on exit
 function teardown {
     tests/helpers/mongodb-container.sh stop
+    tests/helpers/postgres-container.sh stop
 }
 trap teardown EXIT
 
 PORT="27016" tests/helpers/mongodb-container.sh start
+PORT="5432" tests/helpers/postgres-container.sh start
 export MONGODB_PORT="27016" # for tests/helpers/sfdata-wrapper.sh
 
 echo ""
@@ -102,6 +104,18 @@ find "./${TMP_DIR}/1910/" -maxdepth 1 -type f | sort | while IFS= read -r file; 
         echo -e "\n" >> "$OUTPUT_FILE"
     fi
 done
+
+echo -e "\n// Data imported to database:\n\n" >> "${OUTPUT_FILE}"
+
+# List postgresql tables
+(tests/helpers/postgres-container.sh run \
+  >> "$OUTPUT_FILE" \
+) << CONTENT
+\echo '==== stg_apconso ===='
+SELECT * FROM stg_apconso;
+\echo '==== stg_apdemande ===='
+SELECT * FROM stg_apdemande;
+CONTENT
 
 
 tests/helpers/diff-or-update-golden-master.sh "${FLAGS}" "${GOLDEN_FILE}" "${OUTPUT_FILE}"

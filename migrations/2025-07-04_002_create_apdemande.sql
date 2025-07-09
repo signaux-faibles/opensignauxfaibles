@@ -1,4 +1,4 @@
-CREATE TABLE stg_apdemande (
+CREATE TABLE IF NOT EXISTS stg_apdemande (
     ID VARCHAR(255),
     Siret VARCHAR(14) PRIMARY KEY,
     EffectifEntreprise INTEGER,
