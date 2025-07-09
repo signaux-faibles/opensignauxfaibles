@@ -10,7 +10,7 @@ function restoreConfig {
 trap restoreConfig EXIT
 
 # Add prefix to stderr stream
-exec 2> >(sed 's/^/  [sfdata] /' >&2)
+# exec 2> >(sed 's/^/  [sfdata] /' >&2)
 
 # Set MONGODB_PORT in config.toml
 [ -f config.toml ] && mv config.toml config.backup.toml

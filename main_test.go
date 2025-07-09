@@ -25,13 +25,24 @@ const (
 	mongoDatabase  = "signauxfaibles"
 )
 
+const (
+	postgresImage     = "postgres:17@sha256:fe3f571d128e8efadcd8b2fde0e2b73ebab6dbec33f6bfe69d98c682c7d8f7bd"
+	postgresContainer = "sf-postgres"
+	postgresPort      = 5432
+	postgresDatabase  = "testdb"
+	postgresUser      = "testuser"
+	postgresPassword  = "testpass"
+)
+
 func TestPrincipal(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping in short mode")
 	}
 
 	startMongoContainer(t) // the test will fail in case of error
+	startPostgresContainer(t)
 	t.Cleanup(stopMongoContainer)
+	t.Cleanup(stopPostgresContainer)
 	t.Cleanup(deleteTempFolder)
 
 	viper.AddConfigPath(".")
@@ -71,7 +82,7 @@ func TestPrincipal(t *testing.T) {
 		assert.Equal(t, 0, runCLI("sfdata", "import", "--batch=1910", "--no-filter"))
 		assert.Equal(t, 0, runCLI("sfdata", "parseFile", "--parser=apconso", "--file=lib/apconso/testData/apconsoTestData.csv"))
 		assert.Equal(t, 2, runCLI("sfdata", "check"))                  // => "Erreur: paramètre `batch` obligatoire."
-		assert.Equal(t, 3, runCLI("sfdata", "import", "--batch=1910")) // => "Erreur: Ce batch ne spécifie pas de filtre"
+		assert.Equal(t, 4, runCLI("sfdata", "import", "--batch=1910")) // => "Erreur: Ce batch ne spécifie pas de filtre"
 	})
 }
 
@@ -81,7 +92,7 @@ func startMongoContainer(t *testing.T) {
 	exec.Command("docker", "rm", mongoContainer).Run()
 	portMapping := fmt.Sprintf("%v:27017", mongoPort)
 	startMongoCommand := exec.Command("docker", "run", "--rm", "-d", "-p", portMapping, "--name", mongoContainer, mongoImage)
-	slog.Info("démarre mongo", slog.Any("command", startMongoCommand.Args))
+	slog.Info("starting mongo", slog.Any("command", startMongoCommand.Args))
 	err := startMongoCommand.Run()
 	if err != nil {
 		t.Fatalf("docker run: %v", err)
@@ -90,6 +101,22 @@ func startMongoContainer(t *testing.T) {
 
 func stopMongoContainer() {
 	if err := exec.Command("docker", "stop", mongoContainer).Run(); err != nil {
+		log.Println(err) // affichage à titre informatif
+	}
+}
+
+func startPostgresContainer(t *testing.T) {
+	t.Log("Starting PostgreSQL in Docker container...")
+	startPostgresCommand := exec.Command("bash", "./tests/helpers/postgres-container.sh", "start")
+	slog.Info("starting mongo", slog.Any("command", startPostgresCommand.Args))
+	err := startPostgresCommand.Run()
+	if err != nil {
+		t.Fatalf("postgresql docker run: %v", err)
+	}
+}
+
+func stopPostgresContainer() {
+	if err := exec.Command("docker", "stop", postgresContainer).Run(); err != nil {
 		log.Println(err) // affichage à titre informatif
 	}
 }

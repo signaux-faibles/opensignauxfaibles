@@ -3,7 +3,6 @@ $ ./sfdata
 Commande non reconnue. Utilisez ./sfdata --help pour lister les commandes.
 ---
 $ ./sfdata unknown_command
-unexpected non-flag value: [sfdata] unknown_command
 
 ---
 $ ./sfdata --help

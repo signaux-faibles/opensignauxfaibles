@@ -58,6 +58,7 @@ type Tuple interface {
 
 // ParseFilesFromBatch parse les tuples des fichiers listés dans batch pour le parseur spécifié.
 func ParseFilesFromBatch(cache Cache, batch *base.AdminBatch, parser Parser) (chan Tuple, chan Event) {
+
 	outputChannel := make(chan Tuple)
 	eventChannel := make(chan Event)
 	fileType := parser.Type()
@@ -73,15 +74,17 @@ func ParseFilesFromBatch(cache Cache, batch *base.AdminBatch, parser Parser) (ch
 
 // ParseFile parse les tuples du fichier spécifié puis retourne un rapport de journal.
 func ParseFile(path base.BatchFile, parser Parser, batch *base.AdminBatch, cache Cache, outputChannel chan Tuple) Event {
+	logger := slog.With("batch", batch.ID.Key, "parser", parser.Type(), "filename", path.RelativePath())
+	logger.Debug("parsing file")
+
 	tracker := NewParsingTracker()
 	fileType := parser.Type()
-	parserLog := slog.Default().With(slog.String("filename", path.RelativePath()), slog.String("filetype", fileType))
-	parserLog.Info("c'est parti")
 	err := runParserOnFile(path, parser, batch, cache, &tracker, outputChannel)
-	parserLog.Info("c'est fini")
 	if err != nil {
 		tracker.AddFatalError(err)
 	}
+
+	logger.Debug("end of file parsing")
 	return CreateReportEvent(fileType, tracker.Report(batch.ID.Key, path.RelativePath())) // abstract
 }
 

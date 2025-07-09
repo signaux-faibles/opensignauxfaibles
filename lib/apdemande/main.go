@@ -34,21 +34,21 @@ type APDemande struct {
 
 func (apdemande APDemande) Headers() []string {
 	return []string{
-		"ID_DA",
-		"ETAB_SIRET",
-		"EFF_ENT",
-		"EFF_ETAB",
-		"DATE_STATUT",
-		"DATE_DEB",
-		"DATE_FIN",
+		"ID",
+		"Siret",
+		"EffectifEntreprise",
+		"Effectif",
+		"DateStatut",
+		"PeriodeStart",
+		"PeriodeEnd",
 		"HTA",
 		"MTA",
-		"EFF_AUTO",
-		"MOTIF_RECOURS_SE",
-		"S_HEURE_CONSOM_TOT",
-		"MONTANT_CONSOMME",
-		"S_HEURE_CONSOM_TOT",
-		"PERIMETRE_AP",
+		"EffectifAutorise",
+		"MotifRecoursSE",
+		"HeureConsommee",
+		"MontantConsomme",
+		"EffectifConsomme",
+		"Perimetre",
 	}
 }
 
