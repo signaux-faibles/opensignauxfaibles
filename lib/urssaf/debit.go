@@ -12,7 +12,7 @@ import (
 
 // Debit Débit – fichier Urssaf
 type Debit struct {
-	key                          string       `                       hash:"-"`
+	key                          string
 	NumeroCompte                 string       `col:"num_cpte"         json:"numero_compte"`
 	NumeroEcartNegatif           string       `col:"Num_Ecn"          json:"numero_ecart_negatif"`
 	DateTraitement               time.Time    `col:"Dt_trt_ecn"       json:"date_traitement"`

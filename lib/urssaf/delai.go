@@ -11,7 +11,7 @@ import (
 
 // Delai tuple fichier ursaff
 type Delai struct {
-	key               string    `hash:"-"`
+	key               string
 	NumeroCompte      string    `col:"Numero_compte_externe"       json:"numero_compte"`
 	NumeroContentieux string    `col:"Numero_structure"            json:"numero_contentieux"`
 	DateCreation      time.Time `col:"Date_creation"               json:"date_creation"`
