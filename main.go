@@ -32,25 +32,33 @@ func main() {
 }
 
 func runCLI(args ...string) int {
+	logger := slog.With("args", args)
+	logger.Info("running cli command")
+
 	cmdHandlerWithArgs := parseCommandFromArgs(args)
-	slog.Debug("run cli", slog.Any("args", args))
 	useDB := os.Getenv("NO_DB") != "1"
+
 	// exit if no command was recognized in args
 	if cmdHandlerWithArgs == nil {
+		logger.Error("unrecognized command")
 		fmt.Printf("Commande non reconnue. Utilisez %v --help pour lister les commandes.\n", strings.Join(args, " "))
 		return 1
 	}
+
 	// validate command parameters
 	if err := cmdHandlerWithArgs.Validate(); err != nil {
+		logger.Error("invalid command arguments", "error", err)
 		fmt.Printf("Erreur: %v. Utilisez %v --help pour consulter la documentation.", err, strings.Join(args, " "))
 		return 2
 	}
+
 	// execute the command
 	if useDB {
 		connectDB()
 		defer engine.FlushEventQueue()
 	}
 	if err := cmdHandlerWithArgs.Run(); err != nil {
+		logger.Error("error while executing command", "error", err)
 		fmt.Printf("\nErreur: %v\n", err)
 		return 3
 	}

@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"log/slog"
 	"os"
 	"sync"
 	"time"
@@ -29,6 +30,10 @@ func ImportBatch(
 	initStreamer func(parserType string) OutputStreamer,
 ) error {
 
+	logger := slog.With("batch", batch.ID.Key)
+
+	logger.Info("starting raw data import")
+
 	var cache = marshal.NewCache()
 
 	filter, err := marshal.GetSirenFilter(cache, &batch)
@@ -45,25 +50,33 @@ func ImportBatch(
 	var wg sync.WaitGroup
 
 	for _, parser := range parsers {
-		wg.Add(2)
+		if len(batch.Files[parser.Type()]) > 0 {
+			wg.Add(2)
+			logger.Info("parse raw data", "parser", parser.Type())
 
-		outputChannel, eventChannel := marshal.ParseFilesFromBatch(cache, &batch, parser) // appelle la fonction ParseFile() pour chaque type de fichier
+			outputChannel, eventChannel := marshal.ParseFilesFromBatch(cache, &batch, parser) // appelle la fonction ParseFile() pour chaque type de fichier
 
-		// Insert events (parsing logs) into the "Journal" collection
-		go func() {
-			defer wg.Done()
-			RelayEvents(eventChannel, "ImportBatch", startDate)
-		}()
+			// Insert events (parsing logs) into the "Journal" collection
+			go func() {
+				defer wg.Done()
+				RelayEvents(eventChannel, "ImportBatch", startDate)
+			}()
 
-		go func() {
-			outputStreamer := initStreamer(parser.Type())
+			// Stream data to the output sink(s)
+			go func() {
+				outputStreamer := initStreamer(parser.Type())
 
-			defer wg.Done()
-			outputStreamer.Stream(outputChannel)
-		}()
+				defer wg.Done()
+				outputStreamer.Stream(outputChannel)
+			}()
+		}
 
 	}
 	wg.Wait() // wait for all events and tuples to be inserted
+
+	logger.Info("raw data parsing ended")
+	logger.Info("inspect the \"Journal\" database to consult parsing errors.")
+
 	return nil
 }
 

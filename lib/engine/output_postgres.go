@@ -3,6 +3,7 @@ package engine
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"opensignauxfaibles/lib/marshal"
 	"strings"
 
@@ -30,6 +31,8 @@ func NewPostgresOutputStreamer(conn *pgxpool.Pool, parserType string) *PostgresO
 }
 
 func (out *PostgresOutputStreamer) Stream(ch chan marshal.Tuple) error {
+	logger := slog.With("parser", out.parserType)
+
 	// Temporary: only ap data
 	if out.parserType != "apconso" && out.parserType != "apdemande" {
 		for range ch {
@@ -39,10 +42,14 @@ func (out *PostgresOutputStreamer) Stream(ch chan marshal.Tuple) error {
 	}
 	// End temporary
 
+	logger.Debug("stream output to PostgreSQL")
+
 	var currentBatch []marshal.Tuple
 	var headers []string
 
 	tableName := fmt.Sprintf("stg_%s", out.parserType)
+
+	logger.Debug("truncate table", "table", tableName)
 
 	_, err := out.conn.Exec(context.Background(), fmt.Sprintf("TRUNCATE %s",
 		tableName))
@@ -50,6 +57,10 @@ func (out *PostgresOutputStreamer) Stream(ch chan marshal.Tuple) error {
 	if err != nil {
 		return err
 	}
+
+	logger.Debug("data insertion", "table", tableName)
+
+	nInserted := 0
 
 	for tuple := range ch {
 		if headers == nil {
@@ -59,19 +70,28 @@ func (out *PostgresOutputStreamer) Stream(ch chan marshal.Tuple) error {
 		currentBatch = append(currentBatch, tuple)
 
 		if len(currentBatch) >= BatchSize {
+
 			if err := insertTuples(currentBatch, out.conn, tableName, headers); err != nil {
 				return fmt.Errorf("failed to execute batch insert: %w", err)
 			}
+
+			nInserted += len(currentBatch)
+
 			currentBatch = currentBatch[:0] // Reset currentBatch slice
 		}
 	}
 
 	// Insert remaining tuples after channel closes
 	if len(currentBatch) > 0 {
+
 		if err := insertTuples(currentBatch, out.conn, tableName, headers); err != nil {
 			return fmt.Errorf("failed to execute final batch: %w", err)
 		}
+
+		nInserted += len(currentBatch)
 	}
+
+	logger.Debug("output streaming to PostgreSQL ended successfully", "n_inserted", nInserted)
 
 	return nil
 }
