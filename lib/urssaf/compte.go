@@ -10,9 +10,9 @@ import (
 
 // Compte tuple fichier ursaff
 type Compte struct {
-	Siret        string    `json:"siret" bson:"siret"`
-	NumeroCompte string    `json:"numero_compte" bson:"numero_compte"`
-	Periode      time.Time `json:"periode" bson:"periode"`
+	Siret        string    `json:"siret"`
+	NumeroCompte string    `json:"numero_compte"`
+	Periode      time.Time `json:"periode"`
 }
 
 func (compte Compte) Headers() []string {

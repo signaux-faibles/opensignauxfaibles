@@ -11,11 +11,11 @@ import (
 
 // Cotisation Objet cotisation
 type Cotisation struct {
-	key          string       `                 hash:"-"`
-	NumeroCompte string       `col:"Compte"     json:"numero_compte" bson:"numero_compte"`
-	Periode      misc.Periode `col:"periode"    json:"periode"       bson:"periode"`
-	Encaisse     *float64     `col:"enc_direct" json:"encaisse"      bson:"encaisse"`
-	Du           *float64     `col:"cotis_due"  json:"du"            bson:"du"`
+	key          string
+	NumeroCompte string       `col:"Compte"     json:"numero_compte"`
+	Periode      misc.Periode `col:"periode"    json:"periode"`
+	Encaisse     *float64     `col:"enc_direct" json:"encaisse"`
+	Du           *float64     `col:"cotis_due"  json:"du"`
 }
 
 func (cotisation Cotisation) Headers() []string {

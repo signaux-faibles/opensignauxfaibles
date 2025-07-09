@@ -13,10 +13,10 @@ import (
 
 // Procol Procédures collectives, extraction URSSAF
 type Procol struct {
-	DateEffet    time.Time `col:"dt_effet"      json:"date_effet"    bson:"date_effet"`
-	ActionProcol string    `col:"lib_actx_stdx" json:"action_procol" bson:"action_procol"`
-	StadeProcol  string    `col:"lib_actx_stdx" json:"stade_procol"  bson:"stade_procol"`
-	Siret        string    `col:"siret"         json:"-"             bson:"-"`
+	DateEffet    time.Time `col:"dt_effet"      json:"date_effet"`
+	ActionProcol string    `col:"lib_actx_stdx" json:"action_procol"`
+	StadeProcol  string    `col:"lib_actx_stdx" json:"stade_procol"`
+	Siret        string    `col:"siret"         json:"-"`
 }
 
 func (procol Procol) Headers() []string {

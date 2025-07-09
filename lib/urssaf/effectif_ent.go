@@ -13,9 +13,9 @@ import (
 
 // EffectifEnt Urssaf
 type EffectifEnt struct {
-	Siren       string    `col:"siren" json:"-"        bson:"-"`
-	Periode     time.Time `            json:"periode"  bson:"periode"`
-	EffectifEnt int       `            json:"effectif" bson:"effectif"`
+	Siren       string    `col:"siren" json:"-"`
+	Periode     time.Time `            json:"periode"`
+	EffectifEnt int       `            json:"effectif"`
 }
 
 func (effectifEnt EffectifEnt) Headers() []string {
