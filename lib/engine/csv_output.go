@@ -68,7 +68,7 @@ func (out CSVOutputStreamer) Stream(ch chan marshal.Tuple) error {
 	headersWritten := false
 	for tuple := range ch {
 		if !headersWritten {
-			w.Write(tuple.Headers())
+			w.Write(marshal.ExtractCSVTags(tuple))
 			headersWritten = true
 		}
 		w.Write(tuple.Values())
