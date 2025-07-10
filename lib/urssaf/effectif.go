@@ -13,28 +13,10 @@ import (
 
 // Effectif Urssaf
 type Effectif struct {
-	Siret        string    `col:"siret"  json:"-"             bson:"-"`
-	NumeroCompte string    `col:"compte" json:"numero_compte" bson:"numero_compte"`
-	Periode      time.Time `             json:"periode"       bson:"periode"`
-	Effectif     int       `             json:"effectif"      bson:"effectif"`
-}
-
-func (effectif Effectif) Headers() []string {
-	return []string{
-		"siret",
-		"compte",
-		"période",
-		"effectif",
-	}
-}
-
-func (effectif Effectif) Values() []string {
-	return []string{
-		effectif.Siret,
-		effectif.NumeroCompte,
-		marshal.TimeToCSV(&effectif.Periode),
-		marshal.IntToCSV(&effectif.Effectif),
-	}
+	Siret        string    `input:"siret"  json:"-"             csv:"siret"`
+	NumeroCompte string    `input:"compte" json:"numero_compte" csv:"compte"`
+	Periode      time.Time `               json:"periode"       csv:"période"`
+	Effectif     int       `               json:"effectif"      csv:"effectif"`
 }
 
 // Key _id de l'objet

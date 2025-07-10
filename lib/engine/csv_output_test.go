@@ -8,18 +8,20 @@ import (
 
 // mockTuple implements the marshal.Tuple interface for testing
 type mockTuple struct {
-	key     string
-	scope   string
-	tType   string
-	headers []string
-	values  []string
+	H1     string `csv:"header1"`
+	H2     string `csv:"header2"`
+	H3     string `csv:"header3"`
+	key    string
+	scope  string
+	tType  string
+	values []string
 }
 
 func (m mockTuple) Key() string       { return m.key }
 func (m mockTuple) Scope() string     { return m.scope }
 func (m mockTuple) Type() string      { return m.tType }
-func (m mockTuple) Headers() []string { return m.headers }
-func (m mockTuple) Values() []string  { return m.values }
+func (m mockTuple) Headers() []string { return []string{"header1", "header2", "header3"} }
+func (m mockTuple) Values() []string  { return []string{m.H1, m.H2, m.H3} }
 
 func TestCSVOutputStreamer_Stream(t *testing.T) {
 
@@ -33,18 +35,20 @@ func TestCSVOutputStreamer_Stream(t *testing.T) {
 	// setup channel
 	ch := make(chan marshal.Tuple, 3)
 	ch <- mockTuple{
-		key:     "123456789",
-		scope:   "entreprise",
-		tType:   "testtype",
-		headers: []string{"header1", "header2", "header3"},
-		values:  []string{"value1", "value2", "value3"},
+		H1:    "value1",
+		H2:    "value2",
+		H3:    "value3",
+		key:   "123456789",
+		scope: "entreprise",
+		tType: "testtype",
 	}
 	ch <- mockTuple{
-		key:     "987654321",
-		scope:   "entreprise",
-		tType:   "testtype",
-		headers: []string{"header1", "header2", "header3"},
-		values:  []string{"value4", "value5", "value6"},
+		H1:    "value4",
+		H2:    "value5",
+		H3:    "value6",
+		key:   "987654321",
+		scope: "entreprise",
+		tType: "testtype",
 	}
 	close(ch)
 

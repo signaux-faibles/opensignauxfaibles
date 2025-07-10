@@ -12,64 +12,22 @@ import (
 	"opensignauxfaibles/lib/misc"
 )
 
-// Periode Période de temps avec un début et une fin
-
 // APDemande Demande d'activité partielle
 type APDemande struct {
-	ID                 string       `col:"ID_DA" json:"id_demande" bson:"id_demande"`
-	Siret              string       `col:"ETAB_SIRET" json:"-" bson:"-"`
-	EffectifEntreprise *int         `col:"EFF_ENT" json:"effectif_entreprise" bson:"effectif_entreprise"`
-	Effectif           *int         `col:"EFF_ETAB" json:"effectif" bson:"effectif"`
-	DateStatut         time.Time    `col:"DATE_STATUT" json:"date_statut" bson:"date_statut"`
-	Periode            misc.Periode `cols:"DATE_DEB,DATE_FIN" json:"periode" bson:"periode"`
-	HTA                *float64     `col:"HTA" json:"hta" bson:"hta"`
-	MTA                *float64     `json:"mta" bson:"mta"`
-	EffectifAutorise   *int         `col:"EFF_AUTO" json:"effectif_autorise" bson:"effectif_autorise"`
-	MotifRecoursSE     *int         `col:"MOTIF_RECOURS_SE" json:"motif_recours_se" bson:"motif_recours_se"`
-	HeureConsommee     *float64     `col:"S_HEURE_CONSOM_TOT" json:"heure_consommee" bson:"heure_consommee"`
-	MontantConsomme    *float64     `json:"montant_consommee" bson:"montant_consommee"`
-	EffectifConsomme   *int         `col:"S_HEURE_CONSOM_TOT" json:"effectif_consomme" bson:"effectif_consomme"`
-	Perimetre          *int         `col:"PERIMETRE_AP"       json:"perimetre"         bson:"perimetre"`
-}
-
-func (apdemande APDemande) Headers() []string {
-	return []string{
-		"ID_DA",
-		"ETAB_SIRET",
-		"EFF_ENT",
-		"EFF_ETAB",
-		"DATE_STATUT",
-		"DATE_DEB",
-		"DATE_FIN",
-		"HTA",
-		"MTA",
-		"EFF_AUTO",
-		"MOTIF_RECOURS_SE",
-		"S_HEURE_CONSOM_TOT",
-		"MONTANT_CONSOMME",
-		"S_HEURE_CONSOM_TOT",
-		"PERIMETRE_AP",
-	}
-}
-
-func (apdemande APDemande) Values() []string {
-	return []string{
-		apdemande.ID,
-		apdemande.Siret,
-		marshal.IntToCSV(apdemande.EffectifEntreprise),
-		marshal.IntToCSV(apdemande.Effectif),
-		marshal.TimeToCSV(&apdemande.DateStatut),
-		marshal.TimeToCSV(&apdemande.Periode.Start),
-		marshal.TimeToCSV(&apdemande.Periode.End),
-		marshal.FloatToCSV(apdemande.HTA),
-		marshal.FloatToCSV(apdemande.MTA),
-		marshal.IntToCSV(apdemande.EffectifAutorise),
-		marshal.IntToCSV(apdemande.MotifRecoursSE),
-		marshal.FloatToCSV(apdemande.HeureConsommee),
-		marshal.FloatToCSV(apdemande.MontantConsomme),
-		marshal.IntToCSV(apdemande.EffectifConsomme),
-		marshal.IntToCSV(apdemande.Perimetre),
-	}
+	ID                 string       `input:"ID_DA"              json:"id_demande"           csv:"id_demande"`
+	Siret              string       `input:"ETAB_SIRET"         json:"-"                    csv:"siret"`
+	EffectifEntreprise *int         `input:"EFF_ENT"            json:"effectif_entreprise"  csv:"effectif_entreprise"`
+	Effectif           *int         `input:"EFF_ETAB"           json:"effectif"             csv:"effectif"`
+	DateStatut         time.Time    `input:"DATE_STATUT"        json:"date_statut"          csv:"date_statut"`
+	Periode            misc.Periode `                           json:"periode"              csv:"période"`
+	HTA                *float64     `input:"HTA"                json:"hta"                  csv:"heures_autorisées"`
+	MTA                *float64     `                           json:"mta"                  csv:"montants_autorisés"`
+	EffectifAutorise   *int         `input:"EFF_AUTO"           json:"effectif_autorise"    csv:"effectif_autorisé"`
+	MotifRecoursSE     *int         `input:"MOTIF_RECOURS_SE"   json:"motif_recours_se"     csv:"motif_recours_se"`
+	HeureConsommee     *float64     `input:"S_HEURE_CONSOM_TOT" json:"heure_consommee"      csv:"heure_consommee"`
+	MontantConsomme    *float64     `                           json:"montant_consommee"    csv:"montant_consomme"`
+	EffectifConsomme   *int         `input:"S_HEURE_CONSOM_TOT" json:"effectif_consomme"    csv:"effectif_consomme"`
+	Perimetre          *int         `input:"PERIMETRE_AP"       json:"perimetre"            csv:"perimetre"`
 }
 
 // Key id de l'objet

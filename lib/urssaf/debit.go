@@ -12,57 +12,19 @@ import (
 
 // Debit Débit – fichier Urssaf
 type Debit struct {
-	key                          string       `                       hash:"-"`
-	NumeroCompte                 string       `col:"num_cpte"         json:"numero_compte"                bson:"numero_compte"`
-	NumeroEcartNegatif           string       `col:"Num_Ecn"          json:"numero_ecart_negatif"         bson:"numero_ecart_negatif"`
-	DateTraitement               time.Time    `col:"Dt_trt_ecn"       json:"date_traitement"              bson:"date_traitement"`
-	PartOuvriere                 float64      `col:"Mt_PO"            json:"part_ouvriere"                bson:"part_ouvriere"`
-	PartPatronale                float64      `col:"Mt_PP"            json:"part_patronale"               bson:"part_patronale"`
-	NumeroHistoriqueEcartNegatif *int         `col:"Num_Hist_Ecn"     json:"numero_historique"            bson:"numero_historique"`
-	EtatCompte                   *int         `col:"Etat_cpte"        json:"etat_compte"                  bson:"etat_compte"`
-	CodeProcedureCollective      string       `col:"Cd_pro_col"       json:"code_procedure_collective"    bson:"code_procedure_collective"`
-	Periode                      misc.Periode `col:"Periode"          json:"periode"                      bson:"periode"`
-	CodeOperationEcartNegatif    string       `col:"Cd_op_ecn"        json:"code_operation_ecart_negatif" bson:"code_operation_ecart_negatif"`
-	CodeMotifEcartNegatif        string       `col:"Motif_ecn"        json:"code_motif_ecart_negatif"     bson:"code_motif_ecart_negatif"`
-	Recours                      bool         `col:"Recours_en_cours" json:"recours_en_cours"             bson:"recours_en_cours"`
-	DebitSuivant                 string       `                       json:"debit_suivant,omitempty"      bson:"debit_suivant,omitempty"` // généré par traitement map-reduce
-	// MontantMajorations        float64      `                       json:"montant_majorations"          bson:"montant_majorations"`  // TODO: montant_majorations n'est pas fourni par les fichiers debit de l'urssaf pour l'instant, mais on aimerait y avoir accès un jour.
-}
-
-func (debit Debit) Headers() []string {
-	return []string{
-		"siret",
-		"numéro_compte",
-		"numéro_écart_négatif",
-		"date_traitement",
-		"part_ouvrière",
-		"part_patronale",
-		"numéro_historique_écart_négatif",
-		"état_compte",
-		"code_procédure_collective",
-		"période",
-		"code_opération_écart_négatif",
-		"code_motif_écart_négatif",
-		"recours",
-	}
-}
-
-func (d Debit) Values() []string {
-	return []string{
-		d.key,
-		d.NumeroCompte,
-		d.NumeroEcartNegatif,
-		marshal.TimeToCSV(&d.DateTraitement),
-		marshal.FloatToCSV(&d.PartOuvriere),
-		marshal.FloatToCSV(&d.PartPatronale),
-		marshal.IntToCSV(d.NumeroHistoriqueEcartNegatif),
-		marshal.IntToCSV(d.EtatCompte),
-		d.CodeProcedureCollective,
-		d.Periode.String(),
-		d.CodeOperationEcartNegatif,
-		d.CodeMotifEcartNegatif,
-		marshal.BoolToCSV(&d.Recours),
-	}
+	key                          string       `                                                             csv:"siret"`
+	NumeroCompte                 string       `input:"num_cpte"         json:"numero_compte"                csv:"numéro_compte"`
+	NumeroEcartNegatif           string       `input:"Num_Ecn"          json:"numero_ecart_negatif"         csv:"numéro_écart_négatif"`
+	DateTraitement               time.Time    `input:"Dt_trt_ecn"       json:"date_traitement"              csv:"date_traitement"`
+	PartOuvriere                 float64      `input:"Mt_PO"            json:"part_ouvriere"                csv:"part_ouvrière"`
+	PartPatronale                float64      `input:"Mt_PP"            json:"part_patronale"               csv:"part_patronale"`
+	NumeroHistoriqueEcartNegatif *int         `input:"Num_Hist_Ecn"     json:"numero_historique"            csv:"numéro_historique_écart_négatif"`
+	EtatCompte                   *int         `input:"Etat_cpte"        json:"etat_compte"                  csv:"état_compte"`
+	CodeProcedureCollective      string       `input:"Cd_pro_col"       json:"code_procedure_collective"    csv:"code_procédure_collective"`
+	Periode                      misc.Periode `input:"Periode"          json:"periode"                      csv:"période"`
+	CodeOperationEcartNegatif    string       `input:"Cd_op_ecn"        json:"code_operation_ecart_negatif" csv:"code_opération_écart_négatif"`
+	CodeMotifEcartNegatif        string       `input:"Motif_ecn"        json:"code_motif_ecart_negatif"     csv:"code_motif_écart_négatif"`
+	Recours                      bool         `input:"Recours_en_cours" json:"recours_en_cours"             csv:"recours"`
 }
 
 // Key _id de l'objet

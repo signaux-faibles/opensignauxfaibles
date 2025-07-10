@@ -12,31 +12,11 @@ import (
 
 // CCSF information urssaf ccsf
 type CCSF struct {
-	key            string    `hash:"-"`
-	NumeroCompte   string    `col:"Compte"              json:"-"               bson:"-"`
-	DateTraitement time.Time `col:"Date_de_traitement"  json:"date_traitement" bson:"date_traitement"`
-	Stade          string    `col:"Code_externe_stade"  json:"stade"           bson:"stade"`
-	Action         string    `col:"Code_externe_action" json:"action"          bson:"action"`
-}
-
-func (ccsf CCSF) Headers() []string {
-	return []string{
-		"siret",
-		"numéro_compte",
-		"date_traitement",
-		"stade",
-		"action",
-	}
-}
-
-func (ccsf CCSF) Values() []string {
-	return []string{
-		ccsf.key,
-		ccsf.NumeroCompte,
-		marshal.TimeToCSV(&ccsf.DateTraitement),
-		ccsf.Stade,
-		ccsf.Action,
-	}
+	key            string    `                                                   csv:"siret"`
+	NumeroCompte   string    `input:"Compte"              json:"-"               csv:"numéro_compte"`
+	DateTraitement time.Time `input:"Date_de_traitement"  json:"date_traitement" csv:"date_traitement"`
+	Stade          string    `input:"Code_externe_stade"  json:"stade"           csv:"stade"`
+	Action         string    `input:"Code_externe_action" json:"action"          csv:"action"`
 }
 
 // Key _id de l'objet

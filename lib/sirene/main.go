@@ -17,30 +17,30 @@ import (
 
 // Sirene informations sur les entreprises
 type Sirene struct {
-	Siren                string     `col:"siren" json:"siren,omitempty" bson:"siren,omitempty"`
-	Nic                  string     `col:"nic" json:"nic,omitempty" bson:"nic,omitempty"`
-	Siege                bool       `col:"etablissementSiege" json:"siege,omitempty" bson:"siege,omitempty"`
-	ComplementAdresse    string     `col:"complementAdresseEtablissement" json:"complement_adresse,omitempty" bson:"complement_adresse,omitempty"`
-	NumVoie              string     `col:"numeroVoieEtablissement" json:"numero_voie,omitempty" bson:"numero_voie,omitempty"`
-	IndRep               string     `col:"indiceRepetitionEtablissement" json:"indrep,omitempty" bson:"indrep,omitempty"`
-	TypeVoie             string     `col:"typeVoieEtablissement" json:"type_voie,omitempty" bson:"type_voie,omitempty"`
-	Voie                 string     `col:"libelleVoieEtablissement" json:"voie,omitempty" bson:"voie,omitempty"`
-	Commune              string     `col:"libelleCommuneEtablissement" json:"commune,omitempty" bson:"commune,omitempty"`
-	CommuneEtranger      string     `col:"libelleCommuneEtrangerEtablissement" json:"commune_etranger,omitempty" bson:"commune_etranger,omitempty"`
-	DistributionSpeciale string     `col:"distributionSpecialeEtablissement" json:"distribution_speciale,omitempty" bson:"distribution_speciale,omitempty"`
-	CodeCommune          string     `col:"codeCommuneEtablissement" json:"code_commune,omitempty" bson:"code_commune,omitempty"`
-	CodeCedex            string     `col:"codeCedexEtablissement" json:"code_cedex,omitempty" bson:"code_cedex,omitempty"`
-	Cedex                string     `col:"libelleCedexEtablissement" json:"cedex,omitempty" bson:"cedex,omitempty"`
-	CodePaysEtranger     string     `col:"codePaysEtrangerEtablissement" json:"code_pays_etranger,omitempty" bson:"code_pays_etranger,omitempty"`
-	PaysEtranger         string     `col:"libellePaysEtrangerEtablissement" json:"pays_etranger,omitempty" bson:"pays_etranger,omitempty"`
-	CodePostal           string     `col:"codePostalEtablissement" json:"code_postal,omitempty" bson:"code_postal,omitempty"`
-	Departement          string     `json:"departement,omitempty" bson:"departement,omitempty"`
-	APE                  string     `json:"ape,omitempty" bson:"ape,omitempty"`
-	CodeActivite         string     `col:"activitePrincipaleEtablissement" json:"code_activite,omitempty" bson:"code_activite,omitempty"`
-	NomenActivite        string     `col:"nomenclatureActivitePrincipaleEtablissement" json:"nomen_activite,omitempty" bson:"nomen_activite,omitempty"`
-	Creation             *time.Time `col:"dateCreationEtablissement" json:"date_creation,omitempty" bson:"date_creation,omitempty"`
-	Longitude            float64    `col:"longitude" json:"longitude,omitempty" bson:"longitude,omitempty"`
-	Latitude             float64    `col:"latitude" json:"latitude,omitempty" bson:"latitude,omitempty"`
+	Siren                string     `input:"siren"                                       json:"siren,omitempty"                 csv:"siren"`
+	Nic                  string     `input:"nic"                                         json:"nic,omitempty"                   csv:"nic"`
+	Siege                bool       `input:"etablissementSiege"                          json:"siege,omitempty"                 csv:"siege"`
+	ComplementAdresse    string     `input:"complementAdresseEtablissement"              json:"complement_adresse,omitempty"    csv:"complement_adresse"`
+	NumVoie              string     `input:"numeroVoieEtablissement"                     json:"numero_voie,omitempty"           csv:"numéro_voie"`
+	IndRep               string     `input:"indiceRepetitionEtablissement"               json:"indrep,omitempty"                csv:"indrep"`
+	TypeVoie             string     `input:"typeVoieEtablissement"                       json:"type_voie,omitempty"             csv:"type_voie"`
+	Voie                 string     `input:"libelleVoieEtablissement"                    json:"voie,omitempty"                  csv:"voie"`
+	Commune              string     `input:"libelleCommuneEtablissement"                 json:"commune,omitempty"               csv:"commune"`
+	CommuneEtranger      string     `input:"libelleCommuneEtrangerEtablissement"         json:"commune_etranger,omitempty"      csv:"commune_étranger"`
+	DistributionSpeciale string     `input:"distributionSpecialeEtablissement"           json:"distribution_speciale,omitempty" csv:"distribution_speciale"`
+	CodeCommune          string     `input:"codeCommuneEtablissement"                    json:"code_commune,omitempty"          csv:"code_commune"`
+	CodeCedex            string     `input:"codeCedexEtablissement"                      json:"code_cedex,omitempty"            csv:"code_cedex"`
+	Cedex                string     `input:"libelleCedexEtablissement"                   json:"cedex,omitempty"                 csv:"cedex"`
+	CodePaysEtranger     string     `input:"codePaysEtrangerEtablissement"               json:"code_pays_etranger,omitempty"    csv:"code_pays_étranger"`
+	PaysEtranger         string     `input:"libellePaysEtrangerEtablissement"            json:"pays_etranger,omitempty"         csv:"pays_étranger"`
+	CodePostal           string     `input:"codePostalEtablissement"                     json:"code_postal,omitempty"           csv:"code_postal"`
+	Departement          string     `                                                    json:"departement,omitempty"           csv:"département"`
+	APE                  string     `                                                    json:"ape,omitempty"                   csv:"ape"`
+	CodeActivite         string     `input:"activitePrincipaleEtablissement"             json:"code_activite,omitempty"         csv:"code_activité"`
+	NomenActivite        string     `input:"nomenclatureActivitePrincipaleEtablissement" json:"nomen_activite,omitempty"        csv:"nomenclature_activité"`
+	Creation             *time.Time `input:"dateCreationEtablissement"                   json:"date_creation,omitempty"         csv:"création"`
+	Longitude            float64    `input:"longitude"                                   json:"longitude,omitempty"             csv:"longitude"`
+	Latitude             float64    `input:"latitude"                                    json:"latitude,omitempty"              csv:"latitude"`
 }
 
 var typeVoie = map[string]string{
@@ -108,64 +108,6 @@ func (sirene Sirene) Type() string {
 // Scope de l'objet
 func (sirene Sirene) Scope() string {
 	return "etablissement"
-}
-
-func (sirene Sirene) Headers() []string {
-	return []string{
-		"siren",
-		"nic",
-		"siege",
-		"complement_adresse",
-		"numéro_voie",
-		"indrep",
-		"type_voie",
-		"voie",
-		"commune",
-		"commune_étranger",
-		"distribution_speciale",
-		"code_commune",
-		"code_cedex",
-		"cedex",
-		"code_pays_étranger",
-		"pays_étranger",
-		"code_postal",
-		"département",
-		"ape",
-		"code_activité",
-		"nomenclature_activité",
-		"création",
-		"longitude",
-		"latitude",
-	}
-}
-
-func (s Sirene) Values() []string {
-	return []string{
-		s.Siren,
-		s.Nic,
-		marshal.BoolToCSV(&s.Siege),
-		s.ComplementAdresse,
-		s.NumVoie,
-		s.IndRep,
-		s.TypeVoie,
-		s.Voie,
-		s.Commune,
-		s.CommuneEtranger,
-		s.DistributionSpeciale,
-		s.CodeCommune,
-		s.CodeCedex,
-		s.Cedex,
-		s.CodePaysEtranger,
-		s.PaysEtranger,
-		s.CodePostal,
-		s.Departement,
-		s.APE,
-		s.CodeActivite,
-		s.NomenActivite,
-		marshal.TimeToCSV(s.Creation),
-		marshal.FloatToCSV(&s.Longitude),
-		marshal.FloatToCSV(&s.Latitude),
-	}
 }
 
 // Parser fournit une instance utilisable par ParseFilesFromBatch.
