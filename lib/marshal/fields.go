@@ -153,13 +153,22 @@ func LowercaseFields(headerFields []string) []string {
 	return normalizedHeaderFields
 }
 
-// ExtractInputTags extraie les noms de colonnes depuis les valeurs du tag
-// "input" de chaque propriété de l'objet ("struct") fourni.
+// ExtractInputTags extrait les noms de colonnes depuis les valeurs du tag
+// "input" de chaque propriété de l'objet (de type "struct") fourni.
 // En l'absence de ce tag, pour une propriété de type "struct", les noms des
 // colonnes seront recursivement extraites du type de la propriété.
 func ExtractInputTags(object any) (expectedFields []string) {
 	t := reflect.TypeOf(object)
 	return recursiveExtractTags(t, "input")
+}
+
+// ExtractCSVTags extrait les noms de colonnes depuis les valeurs du tag
+// "csv" de chaque propriété de l'objet (de type "struct") fourni.
+// En l'absence de ce tag, pour une propriété de type "struct", les noms des
+// colonnes seront recursivement extraites du type de la propriété.
+func ExtractCSVTags(object any) (header []string) {
+	t := reflect.TypeOf(object)
+	return recursiveExtractTags(t, "csv")
 }
 
 func recursiveExtractTags(t reflect.Type, tag string) (expectedFields []string) {
