@@ -186,3 +186,23 @@ func recursiveExtractTags(t reflect.Type, tag string) (expectedFields []string) 
 	}
 	return expectedFields
 }
+
+func (m CSVMarshaller) recursiveExtractValues(t reflect.Type, v reflect.Value,
+	tag string) (values []reflect.Value) {
+
+	for i := 0; i < t.NumField(); i++ {
+		field := t.Field(i)
+		fieldValue := v.Field(i)
+		tagWithSingleVal := field.Tag.Get(tag)
+
+		if tagWithSingleVal != "" {
+			csvValue := fieldValue
+			values = append(values, csvValue)
+		} else if field.Type.Kind() == reflect.Struct {
+			// Recursively process nested struct
+			nestedValues := m.recursiveExtractValues(field.Type, fieldValue, tag)
+			values = append(values, nestedValues...)
+		}
+	}
+	return values
+}

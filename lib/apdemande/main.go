@@ -12,8 +12,6 @@ import (
 	"opensignauxfaibles/lib/misc"
 )
 
-// Periode Période de temps avec un début et une fin
-
 // APDemande Demande d'activité partielle
 type APDemande struct {
 	ID                 string       `input:"ID_DA"              json:"id_demande"           csv:"ID_DA"`

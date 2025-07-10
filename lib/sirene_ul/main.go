@@ -12,7 +12,7 @@ import (
 // SireneUL informations sur les entreprises
 type SireneUL struct {
 	Siren               string     ` input:"siren"                         json:"siren,omitempty"                  csv:"Siren"`
-	Nic                 string     ` json:"nic,omitempty"                                                          csv:"Nic"`
+	Nic                 string     ` json:"nic,omitempty"                                                                     `
 	RaisonSociale       string     ` input:"denominationUniteLegale"       json:"raison_sociale"                   csv:"RaisonSociale"`
 	Prenom1UniteLegale  string     ` input:"prenom1UniteLegale"            json:"prenom1_unite_legale,omitempty"   csv:"Prenom1UniteLegale"`
 	Prenom2UniteLegale  string     ` input:"prenom2UniteLegale"            json:"prenom2_unite_legale,omitempty"   csv:"Prenom2UniteLegale"`

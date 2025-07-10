@@ -78,8 +78,8 @@ func SliceIndex(limit int, predicate func(i int) bool) int {
 // fonctions opensignauxfaibles manipulant des périodes temporelles. La date de fin
 // est exclue de la période.
 type Periode struct {
-	Start time.Time `input:"DATE_DEB" json:"start" csv:"DATE_DEB"`
-	End   time.Time `input:"DATE_FIN" json:"end"   csv:"DATE_FIN"`
+	Start time.Time `input:"DATE_DEB" json:"start" csv:"période_début"`
+	End   time.Time `input:"DATE_FIN" json:"end"   csv:"période_fin"`
 }
 
 // GenereSeriePeriode génère une liste de dates pour les mois entre la date de début (incluse) et la date de fin (exclue)
