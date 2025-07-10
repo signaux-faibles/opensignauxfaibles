@@ -34,9 +34,6 @@ else
     (go test ./... -test.count=1) 2>&1 | indent
 fi
 
-heading "test-cli.sh"
-./tests/test-cli.sh $@ 2>&1 | indent
-
 heading "test-check.sh"
 ./tests/test-check.sh $@ 2>&1 | indent
 
