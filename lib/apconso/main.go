@@ -19,11 +19,6 @@ type APConso struct {
 	Periode        time.Time `input:"MOIS"       json:"periode"        csv:"Periode"`
 }
 
-func (apconso APConso) Values() []string {
-	marshaller := marshal.NewCSVMarshaller(apconso)
-	return marshaller.Values()
-}
-
 // Key id de l'objet
 func (apconso APConso) Key() string {
 	return apconso.Siret

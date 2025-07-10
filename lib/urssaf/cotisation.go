@@ -18,16 +18,6 @@ type Cotisation struct {
 	Du           *float64     `input:"cotis_due"  json:"du"            csv:"du"`
 }
 
-func (cotisation Cotisation) Values() []string {
-	return []string{
-		cotisation.key,
-		cotisation.NumeroCompte,
-		cotisation.Periode.String(),
-		marshal.FloatToCSV(cotisation.Encaisse),
-		marshal.FloatToCSV(cotisation.Du),
-	}
-}
-
 // Key _id de l'objet
 func (cotisation Cotisation) Key() string {
 	return cotisation.key

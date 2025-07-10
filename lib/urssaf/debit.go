@@ -27,24 +27,6 @@ type Debit struct {
 	Recours                      bool         `input:"Recours_en_cours" json:"recours_en_cours"             csv:"recours"`
 }
 
-func (debit Debit) Values() []string {
-	return []string{
-		debit.key,
-		debit.NumeroCompte,
-		debit.NumeroEcartNegatif,
-		marshal.TimeToCSV(&debit.DateTraitement),
-		marshal.FloatToCSV(&debit.PartOuvriere),
-		marshal.FloatToCSV(&debit.PartPatronale),
-		marshal.IntToCSV(debit.NumeroHistoriqueEcartNegatif),
-		marshal.IntToCSV(debit.EtatCompte),
-		debit.CodeProcedureCollective,
-		debit.Periode.String(),
-		debit.CodeOperationEcartNegatif,
-		debit.CodeMotifEcartNegatif,
-		marshal.BoolToCSV(&debit.Recours),
-	}
-}
-
 // Key _id de l'objet
 func (debit Debit) Key() string {
 	return debit.key

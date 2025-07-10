@@ -19,15 +19,6 @@ type Procol struct {
 	StadeProcol  string    `input:"lib_actx_stdx" json:"stade_procol"  csv:"stade_procol"`
 }
 
-func (procol Procol) Values() []string {
-	return []string{
-		procol.Siret,
-		marshal.TimeToCSV(&procol.DateEffet),
-		procol.ActionProcol,
-		procol.StadeProcol,
-	}
-}
-
 // Key _id de l'objet
 func (procol Procol) Key() string {
 	return procol.Siret

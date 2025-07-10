@@ -19,16 +19,6 @@ type CCSF struct {
 	Action         string    `input:"Code_externe_action" json:"action"          csv:"action"`
 }
 
-func (ccsf CCSF) Values() []string {
-	return []string{
-		ccsf.key,
-		ccsf.NumeroCompte,
-		marshal.TimeToCSV(&ccsf.DateTraitement),
-		ccsf.Stade,
-		ccsf.Action,
-	}
-}
-
 // Key _id de l'objet
 func (ccsf CCSF) Key() string {
 	return ccsf.key

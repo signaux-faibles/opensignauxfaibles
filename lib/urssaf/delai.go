@@ -25,24 +25,6 @@ type Delai struct {
 	Action            string    `input:"Code_externe_action"         json:"action"             csv:"action"`
 }
 
-func (delai Delai) Values() []string {
-	r := []string{
-		delai.key,
-		delai.NumeroCompte,
-		delai.NumeroContentieux,
-		marshal.TimeToCSV(&delai.DateCreation),
-		marshal.TimeToCSV(&delai.DateEcheance),
-		marshal.IntToCSV(delai.DureeDelai),
-		delai.Denomination,
-		delai.Indic6m,
-		marshal.IntToCSV(delai.AnneeCreation),
-		marshal.FloatToCSV(delai.MontantEcheancier),
-		delai.Stade,
-		delai.Action,
-	}
-	return r
-}
-
 // Key _id de l'objet
 func (delai Delai) Key() string {
 	return delai.key
