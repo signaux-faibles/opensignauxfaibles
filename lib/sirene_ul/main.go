@@ -79,7 +79,7 @@ type sireneUlParser struct {
 	idx    marshal.ColMapping
 }
 
-func (parser *sireneUlParser) GetFileType() string {
+func (parser *sireneUlParser) Type() string {
 	return "sirene_ul"
 }
 

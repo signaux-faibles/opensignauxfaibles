@@ -97,7 +97,7 @@ func RunParser(
 	cache Cache,
 	inputFile string,
 ) (output tuplesAndEvents) {
-	batch := base.MockBatch(parser.GetFileType(), []string{inputFile})
+	batch := base.MockBatch(parser.Type(), []string{inputFile})
 	tuples, events := ParseFilesFromBatch(cache, &batch, parser)
 
 	// intercepter et afficher les évènements pendant l'importation

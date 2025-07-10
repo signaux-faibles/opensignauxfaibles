@@ -12,7 +12,7 @@ import (
 
 // Parser spécifie les fonctions qui doivent être implémentées par chaque parseur de fichier.
 type Parser interface {
-	GetFileType() string
+	Type() string
 	Init(cache *Cache, batch *base.AdminBatch) error
 	Open(filePath base.BatchFile) error
 	ParseLines(parsedLineChan chan ParsedLineResult)
@@ -60,7 +60,7 @@ type Tuple interface {
 func ParseFilesFromBatch(cache Cache, batch *base.AdminBatch, parser Parser) (chan Tuple, chan Event) {
 	outputChannel := make(chan Tuple)
 	eventChannel := make(chan Event)
-	fileType := parser.GetFileType()
+	fileType := parser.Type()
 	go func() {
 		for _, path := range batch.Files[fileType] {
 			eventChannel <- ParseFile(path, parser, batch, cache, outputChannel)
@@ -74,7 +74,7 @@ func ParseFilesFromBatch(cache Cache, batch *base.AdminBatch, parser Parser) (ch
 // ParseFile parse les tuples du fichier spécifié puis retourne un rapport de journal.
 func ParseFile(path base.BatchFile, parser Parser, batch *base.AdminBatch, cache Cache, outputChannel chan Tuple) Event {
 	tracker := NewParsingTracker()
-	fileType := parser.GetFileType()
+	fileType := parser.Type()
 	parserLog := slog.Default().With(slog.String("filename", path.RelativePath()), slog.String("filetype", fileType))
 	parserLog.Info("c'est parti")
 	err := runParserOnFile(path, parser, batch, cache, &tracker, outputChannel)

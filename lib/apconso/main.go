@@ -65,7 +65,7 @@ type apconsoParser struct {
 	idx    marshal.ColMapping
 }
 
-func (parser *apconsoParser) GetFileType() string {
+func (parser *apconsoParser) Type() string {
 	return "apconso"
 }
 
