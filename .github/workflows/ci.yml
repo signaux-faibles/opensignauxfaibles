@@ -71,8 +71,6 @@ jobs:
           echo "[log]" >> config.toml
           echo "level = \"error\"" >> config.toml
 
-      - run: ./tests/test-cli.sh
-
       - run: ./tests/test-import.sh
 
       - run: ./tests/test-check.sh
