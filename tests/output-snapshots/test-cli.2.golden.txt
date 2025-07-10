@@ -1,0 +1,11 @@
+$ ./sfdata --help
+Usage: sfdata [FLAG|COMMAND]...
+
+Flags:
+    -h, --help    show help    (type: bool)
+
+Commands:
+    parseFile    Parse un fichier vers la sortie standard
+    check        Vérifie la validité d'un batch avant son importation
+    import       Importe des fichiers de données
+---
