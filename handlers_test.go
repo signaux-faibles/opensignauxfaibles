@@ -116,21 +116,26 @@ func TestCLI(t *testing.T) {
 			} else {
 
 				err := compareWithGoldenFile(goldenFilePath, output.String())
+				outputFilePath := filepath.Join(tmpDir, tc.tmpFile)
+
 				if err != nil {
 					// Write output to temp file for easy diffing
-					outputFilePath := filepath.Join(tmpDir, tc.tmpFile)
 					_ = os.WriteFile(outputFilePath, output.Bytes(), 0644)
-					t.Logf("💾 Output written to: %s", outputFilePath)
+				} else {
+					_ = os.Remove(outputFilePath)
 				}
 
 				assert.NoError(t, err)
 			}
 		})
 	}
+	files, _ := os.ReadDir(tmpDir)
+	if len(files) == 0 {
+		// Only if all tests passes, otherwise we want to keep the tmp files for
+		// inspection
+		os.Remove(tmpDir)
+	}
 
-	// Only if all tests passes, otherwise we want to keep the tmp files for
-	// inspection
-	os.RemoveAll(tmpDir)
 }
 
 // updateGoldenFile writes the output to the golden file
