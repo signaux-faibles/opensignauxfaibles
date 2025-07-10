@@ -43,7 +43,7 @@ func (compte Compte) Scope() string {
 
 // Type de l'objet
 func (compte Compte) Type() string {
-	return "compte"
+	return "admin_urssaf"
 }
 
 // ParserCompte fournit une instance utilisable par ParseFilesFromBatch.

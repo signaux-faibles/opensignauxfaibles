@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"log/slog"
+	"os"
 	"os/exec"
 	"testing"
 	"time"
@@ -31,10 +32,12 @@ func TestPrincipal(t *testing.T) {
 
 	startMongoContainer(t) // the test will fail in case of error
 	t.Cleanup(stopMongoContainer)
+	t.Cleanup(deleteTempFolder)
 
 	viper.AddConfigPath(".")
 	viper.SetConfigType("toml")
 	viper.SetConfigName("config-sample") // => config will be loaded from ./config-sample.toml
+	viper.Set("export.path", "tmp")
 
 	mongoURI := fmt.Sprintf("mongodb://localhost:%v", mongoPort)
 	viper.Set("DB_DIAL", mongoURI)
@@ -89,4 +92,8 @@ func stopMongoContainer() {
 	if err := exec.Command("docker", "stop", mongoContainer).Run(); err != nil {
 		log.Println(err) // affichage à titre informatif
 	}
+}
+
+func deleteTempFolder() {
+	os.RemoveAll(viper.GetString("export.path"))
 }
