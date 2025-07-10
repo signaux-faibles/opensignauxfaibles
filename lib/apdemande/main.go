@@ -32,10 +32,6 @@ type APDemande struct {
 	Perimetre          *int         `input:"PERIMETRE_AP"       json:"perimetre"            csv:"PERIMETRE_AP"`
 }
 
-func (apdemande APDemande) Headers() []string {
-	return marshal.ExtractCSVTags(apdemande)
-}
-
 func (apdemande APDemande) Values() []string {
 	return []string{
 		apdemande.ID,

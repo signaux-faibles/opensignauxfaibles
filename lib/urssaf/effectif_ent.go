@@ -18,10 +18,6 @@ type EffectifEnt struct {
 	EffectifEnt int       `              json:"effectif" csv:"effectif_entreprise"`
 }
 
-func (effectifEnt EffectifEnt) Headers() []string {
-	return marshal.ExtractCSVTags(effectifEnt)
-}
-
 func (effectifEnt EffectifEnt) Values() []string {
 	return []string{
 		effectifEnt.Siren,

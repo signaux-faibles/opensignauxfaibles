@@ -19,10 +19,6 @@ type CCSF struct {
 	Action         string    `input:"Code_externe_action" json:"action"          csv:"action"`
 }
 
-func (ccsf CCSF) Headers() []string {
-	return marshal.ExtractCSVTags(ccsf)
-}
-
 func (ccsf CCSF) Values() []string {
 	return []string{
 		ccsf.key,

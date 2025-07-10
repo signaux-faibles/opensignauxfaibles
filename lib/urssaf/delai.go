@@ -25,10 +25,6 @@ type Delai struct {
 	Action            string    `input:"Code_externe_action"         json:"action"             csv:"action"`
 }
 
-func (delai Delai) Headers() []string {
-	return marshal.ExtractCSVTags(delai)
-}
-
 func (delai Delai) Values() []string {
 	r := []string{
 		delai.key,

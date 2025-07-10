@@ -18,10 +18,6 @@ type Cotisation struct {
 	Du           *float64     `input:"cotis_due"  json:"du"            csv:"du"`
 }
 
-func (cotisation Cotisation) Headers() []string {
-	return marshal.ExtractCSVTags(cotisation)
-}
-
 func (cotisation Cotisation) Values() []string {
 	return []string{
 		cotisation.key,

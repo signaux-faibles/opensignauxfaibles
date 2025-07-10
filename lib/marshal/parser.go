@@ -52,7 +52,6 @@ type Tuple interface {
 	Key() string   // entité définie par le tuple: numéro SIRET ou SIREN
 	Scope() string // type d'entité: "entreprise" ou "etablissement"
 	Type() string  // identifiant du parseur qui a extrait ce tuple, ex: "apconso"
-	Headers() []string
 	Values() []string
 }
 

@@ -19,10 +19,6 @@ type APConso struct {
 	Periode        time.Time `input:"MOIS"       json:"periode"        csv:"Periode"`
 }
 
-func (apconso APConso) Headers() []string {
-	return marshal.ExtractCSVTags(apconso)
-}
-
 func (apconso APConso) Values() []string {
 	return []string{
 		apconso.ID,

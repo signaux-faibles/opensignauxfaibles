@@ -24,10 +24,6 @@ type SireneUL struct {
 	Creation            *time.Time ` input:"dateCreationUniteLegale"       json:"date_creation,omitempty"          csv:"Creation"`
 }
 
-func (sireneUL SireneUL) Headers() []string {
-	return marshal.ExtractCSVTags(sireneUL)
-}
-
 func (sireneUL SireneUL) Values() []string {
 	return []string{
 		sireneUL.Siren,
