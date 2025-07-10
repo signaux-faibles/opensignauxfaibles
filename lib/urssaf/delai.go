@@ -11,35 +11,22 @@ import (
 
 // Delai tuple fichier ursaff
 type Delai struct {
-	key               string
-	NumeroCompte      string    `input:"Numero_compte_externe"       json:"numero_compte"`
-	NumeroContentieux string    `input:"Numero_structure"            json:"numero_contentieux"`
-	DateCreation      time.Time `input:"Date_creation"               json:"date_creation"`
-	DateEcheance      time.Time `input:"Date_echeance"               json:"date_echeance"`
-	DureeDelai        *int      `input:"Duree_delai"                 json:"duree_delai"`
-	Denomination      string    `input:"Denomination_premiere_ligne" json:"denomination"`
-	Indic6m           string    `input:"Indic_6M"                    json:"indic_6m"`
-	AnneeCreation     *int      `input:"Annee_creation"              json:"annee_creation"`
-	MontantEcheancier *float64  `input:"Montant_global_echeancier"   json:"montant_echeancier"`
-	Stade             string    `input:"Code_externe_stade"          json:"stade"`
-	Action            string    `input:"Code_externe_action"         json:"action"`
+	key               string    `                                                              csv:"siret"`
+	NumeroCompte      string    `input:"Numero_compte_externe"       json:"numero_compte"      csv:"numéro_compte"`
+	NumeroContentieux string    `input:"Numero_structure"            json:"numero_contentieux" csv:"numéro_contentieux"`
+	DateCreation      time.Time `input:"Date_creation"               json:"date_creation"      csv:"date_création"`
+	DateEcheance      time.Time `input:"Date_echeance"               json:"date_echeance"      csv:"date_échéance"`
+	DureeDelai        *int      `input:"Duree_delai"                 json:"duree_delai"        csv:"durée_délai"`
+	Denomination      string    `input:"Denomination_premiere_ligne" json:"denomination"       csv:"dénomination"`
+	Indic6m           string    `input:"Indic_6M"                    json:"indic_6m"           csv:"indic_6mois"`
+	AnneeCreation     *int      `input:"Annee_creation"              json:"annee_creation"     csv:"année_création"`
+	MontantEcheancier *float64  `input:"Montant_global_echeancier"   json:"montant_echeancier" csv:"montant_échéancier"`
+	Stade             string    `input:"Code_externe_stade"          json:"stade"              csv:"stade"`
+	Action            string    `input:"Code_externe_action"         json:"action"             csv:"action"`
 }
 
 func (delai Delai) Headers() []string {
-	return []string{
-		"siret",
-		"numéro_compte",
-		"numéro_contentieux",
-		"date_création",
-		"date_échéance",
-		"durée_délai",
-		"dénomination",
-		"indic_6mois",
-		"année_création",
-		"montant_échéancier",
-		"stade",
-		"action",
-	}
+	return marshal.ExtractCSVTags(delai)
 }
 
 func (delai Delai) Values() []string {

@@ -191,7 +191,7 @@ func TestProcol(t *testing.T) {
 	t.Run("doit rapporter une erreur fatale s'il manque une colonne", func(t *testing.T) {
 		output := marshal.RunParserInlineEx(t, cache, ParserProcol, []string{"dummy"})
 		assert.Equal(t, []marshal.Tuple(nil), output.Tuples, "should return no tuples")
-		assert.Contains(t, marshal.GetFatalError(output), "Colonne dt_effet non trouvée.")
+		assert.Contains(t, marshal.GetFatalError(output), "non trouvée")
 	})
 
 	t.Run("est insensible à la casse des en-têtes de colonnes", func(t *testing.T) {

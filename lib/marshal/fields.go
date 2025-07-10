@@ -19,13 +19,13 @@ func IndexColumnsFromCsvHeader(reader *csv.Reader, destObject interface{}) (ColM
 	if err != nil {
 		return ColMapping{}, err
 	}
-	return ValidateAndIndexColumnsFromColTags(header, destObject)
+	return ValidateAndIndexColumnsFromInputTags(header, destObject)
 }
 
-// ValidateAndIndexColumnsFromColTags valide puis indexe les colonnes trouvées
+// ValidateAndIndexColumnsFromInputTags valide puis indexe les colonnes trouvées
 // en en-tête d'un fichier csv, à partir des noms de colonnes spécifiés dans le
 // tag "input"  annotant les propriétés du type de destination du parseur.
-func ValidateAndIndexColumnsFromColTags(headerRow []string, destObject interface{}) (ColMapping, error) {
+func ValidateAndIndexColumnsFromInputTags(headerRow []string, destObject interface{}) (ColMapping, error) {
 	requiredFields := ExtractInputTags(destObject)
 	idx := indexFields(headerRow)
 	_, err := idx.HasFields(requiredFields)

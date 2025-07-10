@@ -10,17 +10,13 @@ import (
 
 // Compte tuple fichier ursaff
 type Compte struct {
-	Siret        string    `json:"siret"`
-	NumeroCompte string    `json:"numero_compte"`
-	Periode      time.Time `json:"periode"`
+	Siret        string    `json:"siret"         csv:"siret"`
+	NumeroCompte string    `json:"numero_compte" csv:"numéro_compte"`
+	Periode      time.Time `json:"periode"       csv:"période"`
 }
 
 func (compte Compte) Headers() []string {
-	return []string{
-		"siret",
-		"numéro_compte",
-		"période",
-	}
+	return marshal.ExtractCSVTags(compte)
 }
 
 func (compte Compte) Values() []string {

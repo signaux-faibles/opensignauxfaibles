@@ -11,23 +11,16 @@ import (
 
 // APConso Consommation d'activité partielle
 type APConso struct {
-	ID             string    `input:"ID_DA"      json:"id_conso"`
-	Siret          string    `input:"ETAB_SIRET" json:"-"`
-	HeureConsommee *float64  `input:"HEURES"     json:"heure_consomme"`
-	Montant        *float64  `input:"MONTANTS"   json:"montant"`
-	Effectif       *int      `input:"EFFECTIFS"  json:"effectif"`
-	Periode        time.Time `input:"MOIS"       json:"periode"`
+	ID             string    `input:"ID_DA"      json:"id_conso"       csv:"ID"`
+	Siret          string    `input:"ETAB_SIRET" json:"-"              csv:"Siret"`
+	HeureConsommee *float64  `input:"HEURES"     json:"heure_consomme" csv:"HeureConsommee"`
+	Montant        *float64  `input:"MONTANTS"   json:"montant"        csv:"Montant"`
+	Effectif       *int      `input:"EFFECTIFS"  json:"effectif"       csv:"Effectif"`
+	Periode        time.Time `input:"MOIS"       json:"periode"        csv:"Periode"`
 }
 
 func (apconso APConso) Headers() []string {
-	return []string{
-		"ID",
-		"Siret",
-		"HeureConsommee",
-		"Montant",
-		"Effectif",
-		"Periode",
-	}
+	return marshal.ExtractCSVTags(apconso)
 }
 
 func (apconso APConso) Values() []string {

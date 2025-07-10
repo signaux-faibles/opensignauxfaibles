@@ -12,21 +12,15 @@ import (
 
 // CCSF information urssaf ccsf
 type CCSF struct {
-	key            string
-	NumeroCompte   string    `input:"Compte"              json:"-"`
-	DateTraitement time.Time `input:"Date_de_traitement"  json:"date_traitement"`
-	Stade          string    `input:"Code_externe_stade"  json:"stade"`
-	Action         string    `input:"Code_externe_action" json:"action"`
+	key            string    `                                                   csv:"siret"`
+	NumeroCompte   string    `input:"Compte"              json:"-"               csv:"numéro_compte"`
+	DateTraitement time.Time `input:"Date_de_traitement"  json:"date_traitement" csv:"date_traitement"`
+	Stade          string    `input:"Code_externe_stade"  json:"stade"           csv:"stade"`
+	Action         string    `input:"Code_externe_action" json:"action"          csv:"action"`
 }
 
 func (ccsf CCSF) Headers() []string {
-	return []string{
-		"siret",
-		"numéro_compte",
-		"date_traitement",
-		"stade",
-		"action",
-	}
+	return marshal.ExtractCSVTags(ccsf)
 }
 
 func (ccsf CCSF) Values() []string {

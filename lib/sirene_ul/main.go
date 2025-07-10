@@ -11,87 +11,75 @@ import (
 
 // SireneUL informations sur les entreprises
 type SireneUL struct {
-	Siren               string     `input:"siren"                         json:"siren,omitempty"`
-	Nic                 string     `                                    json:"nic,omitempty"`
-	RaisonSociale       string     `input:"denominationUniteLegale"       json:"raison_sociale"`
-	Prenom1UniteLegale  string     `input:"prenom1UniteLegale"            json:"prenom1_unite_legale,omitempty"`
-	Prenom2UniteLegale  string     `input:"prenom2UniteLegale"            json:"prenom2_unite_legale,omitempty"`
-	Prenom3UniteLegale  string     `input:"prenom3UniteLegale"            json:"prenom3_unite_legale,omitempty"`
-	Prenom4UniteLegale  string     `input:"prenom4UniteLegale"            json:"prenom4_unite_legale,omitempty"`
-	NomUniteLegale      string     `input:"nomUniteLegale"                json:"nom_unite_legale,omitempty"`
-	NomUsageUniteLegale string     `input:"nomUsageUniteLegale"           json:"nom_usage_unite_legale,omitempty"`
-	CodeStatutJuridique string     `input:"categorieJuridiqueUniteLegale" json:"statut_juridique"`
-	Creation            *time.Time `input:"dateCreationUniteLegale"       json:"date_creation,omitempty"`
+	Siren               string     ` input:"siren"                         json:"siren,omitempty"                  csv:"Siren"`
+	Nic                 string     ` json:"nic,omitempty"                                                          csv:"Nic"`
+	RaisonSociale       string     ` input:"denominationUniteLegale"       json:"raison_sociale"                   csv:"RaisonSociale"`
+	Prenom1UniteLegale  string     ` input:"prenom1UniteLegale"            json:"prenom1_unite_legale,omitempty"   csv:"Prenom1UniteLegale"`
+	Prenom2UniteLegale  string     ` input:"prenom2UniteLegale"            json:"prenom2_unite_legale,omitempty"   csv:"Prenom2UniteLegale"`
+	Prenom3UniteLegale  string     ` input:"prenom3UniteLegale"            json:"prenom3_unite_legale,omitempty"   csv:"Prenom3UniteLegale"`
+	Prenom4UniteLegale  string     ` input:"prenom4UniteLegale"            json:"prenom4_unite_legale,omitempty"   csv:"Prenom4UniteLegale"`
+	NomUniteLegale      string     ` input:"nomUniteLegale"                json:"nom_unite_legale,omitempty"       csv:"NomUniteLegale"`
+	NomUsageUniteLegale string     ` input:"nomUsageUniteLegale"           json:"nom_usage_unite_legale,omitempty" csv:"NomUsageUniteLegale"`
+	CodeStatutJuridique string     ` input:"categorieJuridiqueUniteLegale" json:"statut_juridique"                 csv:"CodeStatutJuridique"`
+	Creation            *time.Time ` input:"dateCreationUniteLegale"       json:"date_creation,omitempty"          csv:"Creation"`
 }
 
-func (sirene_ul SireneUL) Headers() []string {
-	return []string{
-		"Siren",
-		"Nic",
-		"RaisonSociale",
-		"Prenom1UniteLegale",
-		"Prenom2UniteLegale",
-		"Prenom3UniteLegale",
-		"Prenom4UniteLegale",
-		"NomUniteLegale",
-		"NomUsageUniteLegale",
-		"CodeStatutJuridique",
-		"Creation",
-	}
+func (sireneUL SireneUL) Headers() []string {
+	return marshal.ExtractCSVTags(sireneUL)
 }
 
-func (sirene_ul SireneUL) Values() []string {
+func (sireneUL SireneUL) Values() []string {
 	return []string{
-		sirene_ul.Siren,
-		sirene_ul.RaisonSociale,
-		sirene_ul.Prenom1UniteLegale,
-		sirene_ul.Prenom2UniteLegale,
-		sirene_ul.Prenom3UniteLegale,
-		sirene_ul.Prenom4UniteLegale,
-		sirene_ul.NomUniteLegale,
-		sirene_ul.NomUsageUniteLegale,
-		sirene_ul.CodeStatutJuridique,
-		marshal.TimeToCSV(sirene_ul.Creation),
+		sireneUL.Siren,
+		sireneUL.RaisonSociale,
+		sireneUL.Prenom1UniteLegale,
+		sireneUL.Prenom2UniteLegale,
+		sireneUL.Prenom3UniteLegale,
+		sireneUL.Prenom4UniteLegale,
+		sireneUL.NomUniteLegale,
+		sireneUL.NomUsageUniteLegale,
+		sireneUL.CodeStatutJuridique,
+		marshal.TimeToCSV(sireneUL.Creation),
 	}
 }
 
 // Key id de l'objet
-func (sirene_ul SireneUL) Key() string {
-	return sirene_ul.Siren
+func (sireneUL SireneUL) Key() string {
+	return sireneUL.Siren
 }
 
 // Type de données
-func (sirene_ul SireneUL) Type() string {
+func (sireneUL SireneUL) Type() string {
 	return "sirene_ul"
 }
 
 // Scope de l'objet
-func (sirene_ul SireneUL) Scope() string {
+func (sireneUL SireneUL) Scope() string {
 	return "entreprise"
 }
 
 // Parser fournit une instance utilisable par ParseFilesFromBatch.
-var Parser = &sireneUlParser{}
+var Parser = &sireneULParser{}
 
-type sireneUlParser struct {
+type sireneULParser struct {
 	file   *os.File
 	reader *csv.Reader
 	idx    marshal.ColMapping
 }
 
-func (parser *sireneUlParser) Type() string {
+func (parser *sireneULParser) Type() string {
 	return "sirene_ul"
 }
 
-func (parser *sireneUlParser) Init(cache *marshal.Cache, batch *base.AdminBatch) error {
+func (parser *sireneULParser) Init(cache *marshal.Cache, batch *base.AdminBatch) error {
 	return nil
 }
 
-func (parser *sireneUlParser) Close() error {
+func (parser *sireneULParser) Close() error {
 	return parser.file.Close()
 }
 
-func (parser *sireneUlParser) Open(filePath base.BatchFile) (err error) {
+func (parser *sireneULParser) Open(filePath base.BatchFile) (err error) {
 	parser.file, parser.reader, err = marshal.OpenCsvReader(filePath, ',', true)
 	if err == nil {
 		parser.idx, err = marshal.IndexColumnsFromCsvHeader(parser.reader, SireneUL{})
@@ -99,7 +87,7 @@ func (parser *sireneUlParser) Open(filePath base.BatchFile) (err error) {
 	return err
 }
 
-func (parser *sireneUlParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
+func (parser *sireneULParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {
 	marshal.ParseLines(parsedLineChan, parser.reader, func(row []string, parsedLine *marshal.ParsedLineResult) {
 		parseSireneUlLine(parser.idx, row, parsedLine)
 	})

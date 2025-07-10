@@ -12,38 +12,23 @@ import (
 
 // Debit Débit – fichier Urssaf
 type Debit struct {
-	key                          string
-	NumeroCompte                 string       `input:"num_cpte"         json:"numero_compte"`
-	NumeroEcartNegatif           string       `input:"Num_Ecn"          json:"numero_ecart_negatif"`
-	DateTraitement               time.Time    `input:"Dt_trt_ecn"       json:"date_traitement"`
-	PartOuvriere                 float64      `input:"Mt_PO"            json:"part_ouvriere"`
-	PartPatronale                float64      `input:"Mt_PP"            json:"part_patronale"`
-	NumeroHistoriqueEcartNegatif *int         `input:"Num_Hist_Ecn"     json:"numero_historique"`
-	EtatCompte                   *int         `input:"Etat_cpte"        json:"etat_compte"`
-	CodeProcedureCollective      string       `input:"Cd_pro_col"       json:"code_procedure_collective"`
-	Periode                      misc.Periode `input:"Periode"          json:"periode"`
-	CodeOperationEcartNegatif    string       `input:"Cd_op_ecn"        json:"code_operation_ecart_negatif"`
-	CodeMotifEcartNegatif        string       `input:"Motif_ecn"        json:"code_motif_ecart_negatif"`
-	Recours                      bool         `input:"Recours_en_cours" json:"recours_en_cours"`
-	DebitSuivant                 string       `                         json:"debit_suivant,omitempty"` // généré par traitement map-reduce
+	key                          string       `                                                             csv:"siret"`
+	NumeroCompte                 string       `input:"num_cpte"         json:"numero_compte"                csv:"numéro_compte"`
+	NumeroEcartNegatif           string       `input:"Num_Ecn"          json:"numero_ecart_negatif"         csv:"numéro_écart_négatif"`
+	DateTraitement               time.Time    `input:"Dt_trt_ecn"       json:"date_traitement"              csv:"date_traitement"`
+	PartOuvriere                 float64      `input:"Mt_PO"            json:"part_ouvriere"                csv:"part_ouvrière"`
+	PartPatronale                float64      `input:"Mt_PP"            json:"part_patronale"               csv:"part_patronale"`
+	NumeroHistoriqueEcartNegatif *int         `input:"Num_Hist_Ecn"     json:"numero_historique"            csv:"numéro_historique_écart_négatif"`
+	EtatCompte                   *int         `input:"Etat_cpte"        json:"etat_compte"                  csv:"état_compte"`
+	CodeProcedureCollective      string       `input:"Cd_pro_col"       json:"code_procedure_collective"    csv:"code_procédure_collective"`
+	Periode                      misc.Periode `input:"Periode"          json:"periode"                      csv:"période"`
+	CodeOperationEcartNegatif    string       `input:"Cd_op_ecn"        json:"code_operation_ecart_negatif" csv:"code_opération_écart_négatif"`
+	CodeMotifEcartNegatif        string       `input:"Motif_ecn"        json:"code_motif_ecart_negatif"     csv:"code_motif_écart_négatif"`
+	Recours                      bool         `input:"Recours_en_cours" json:"recours_en_cours"             csv:"recours"`
 }
 
 func (debit Debit) Headers() []string {
-	return []string{
-		"siret",
-		"numéro_compte",
-		"numéro_écart_négatif",
-		"date_traitement",
-		"part_ouvrière",
-		"part_patronale",
-		"numéro_historique_écart_négatif",
-		"état_compte",
-		"code_procédure_collective",
-		"période",
-		"code_opération_écart_négatif",
-		"code_motif_écart_négatif",
-		"recours",
-	}
+	return marshal.ExtractCSVTags(debit)
 }
 
 func (debit Debit) Values() []string {
