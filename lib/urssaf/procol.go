@@ -2,6 +2,7 @@ package urssaf
 
 import (
 	"encoding/csv"
+	"fmt"
 	"os"
 	"regexp"
 	"strings"
@@ -13,19 +14,15 @@ import (
 
 // Procol Procédures collectives, extraction URSSAF
 type Procol struct {
-	DateEffet    time.Time `input:"dt_effet"      json:"date_effet"`
-	ActionProcol string    `input:"lib_actx_stdx" json:"action_procol"`
-	StadeProcol  string    `input:"lib_actx_stdx" json:"stade_procol"`
-	Siret        string    `input:"siret"         json:"-"`
+	Siret        string    `input:"siret"         json:"-"             csv:"siret"`
+	DateEffet    time.Time `input:"dt_effet"      json:"date_effet"    csv:"date_effet"`
+	ActionProcol string    `input:"lib_actx_stdx" json:"action_procol" csv:"action_procol"`
+	StadeProcol  string    `input:"lib_actx_stdx" json:"stade_procol"  csv:"stade_procol"`
 }
 
 func (procol Procol) Headers() []string {
-	return []string{
-		"siret",
-		"date_effet",
-		"action_procol",
-		"stade_procol",
-	}
+	fmt.Println(marshal.ExtractCSVTags(procol))
+	return marshal.ExtractCSVTags(procol)
 }
 
 func (procol Procol) Values() []string {
@@ -86,7 +83,7 @@ func parseProcolColMapping(reader *csv.Reader) (marshal.ColMapping, error) {
 	if err != nil {
 		return marshal.ColMapping{}, err
 	}
-	return marshal.ValidateAndIndexColumnsFromColTags(marshal.LowercaseFields(fields), Procol{})
+	return marshal.ValidateAndIndexColumnsFromInputTags(marshal.LowercaseFields(fields), Procol{})
 }
 
 func (parser *procolParser) ParseLines(parsedLineChan chan marshal.ParsedLineResult) {

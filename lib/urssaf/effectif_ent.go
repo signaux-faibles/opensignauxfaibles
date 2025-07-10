@@ -13,17 +13,13 @@ import (
 
 // EffectifEnt Urssaf
 type EffectifEnt struct {
-	Siren       string    `input:"siren" json:"-"`
-	Periode     time.Time `            json:"periode"`
-	EffectifEnt int       `            json:"effectif"`
+	Siren       string    `input:"siren" json:"-"        csv:"siren"`
+	Periode     time.Time `              json:"periode"  csv:"période"`
+	EffectifEnt int       `              json:"effectif" csv:"effectif_entreprise"`
 }
 
 func (effectifEnt EffectifEnt) Headers() []string {
-	return []string{
-		"siren",
-		"période",
-		"effectif_entreprise",
-	}
+	return marshal.ExtractCSVTags(effectifEnt)
 }
 
 func (effectifEnt EffectifEnt) Values() []string {

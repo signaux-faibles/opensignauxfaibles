@@ -11,21 +11,15 @@ import (
 
 // Cotisation Objet cotisation
 type Cotisation struct {
-	key          string
-	NumeroCompte string       `input:"Compte"     json:"numero_compte"`
-	Periode      misc.Periode `input:"periode"    json:"periode"`
-	Encaisse     *float64     `input:"enc_direct" json:"encaisse"`
-	Du           *float64     `input:"cotis_due"  json:"du"`
+	key          string       `                                        csv:"siret"`
+	NumeroCompte string       `input:"Compte"     json:"numero_compte" csv:"numéro_compte"`
+	Periode      misc.Periode `input:"periode"    json:"periode"       csv:"période"`
+	Encaisse     *float64     `input:"enc_direct" json:"encaisse"      csv:"encaissé"`
+	Du           *float64     `input:"cotis_due"  json:"du"            csv:"du"`
 }
 
 func (cotisation Cotisation) Headers() []string {
-	return []string{
-		"siret",
-		"numéro_compte",
-		"période",
-		"encaissé",
-		"du",
-	}
+	return marshal.ExtractCSVTags(cotisation)
 }
 
 func (cotisation Cotisation) Values() []string {

@@ -18,7 +18,7 @@ func parseEffectifColMapping(reader *csv.Reader, destObject interface{}) (marsha
 	if err != nil {
 		return marshal.ColMapping{}, nil, err
 	}
-	idx, err := marshal.ValidateAndIndexColumnsFromColTags(marshal.LowercaseFields(fields), destObject)
+	idx, err := marshal.ValidateAndIndexColumnsFromInputTags(marshal.LowercaseFields(fields), destObject)
 	// Dans quels champs lire l'effectifEnt
 	periods := parseEffectifPeriod(fields)
 	return idx, periods, err

@@ -13,19 +13,14 @@ import (
 
 // Effectif Urssaf
 type Effectif struct {
-	Siret        string    `input:"siret"  json:"-"`
-	NumeroCompte string    `input:"compte" json:"numero_compte"`
-	Periode      time.Time `             json:"periode"`
-	Effectif     int       `             json:"effectif"`
+	Siret        string    `input:"siret"  json:"-"             csv:"siret"`
+	NumeroCompte string    `input:"compte" json:"numero_compte" csv:"compte"`
+	Periode      time.Time `               json:"periode"       csv:"période"`
+	Effectif     int       `               json:"effectif"      csv:"effectif"`
 }
 
 func (effectif Effectif) Headers() []string {
-	return []string{
-		"siret",
-		"compte",
-		"période",
-		"effectif",
-	}
+	return marshal.ExtractCSVTags(effectif)
 }
 
 func (effectif Effectif) Values() []string {
