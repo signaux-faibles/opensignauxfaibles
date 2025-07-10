@@ -19,10 +19,6 @@ type Effectif struct {
 	Effectif     int       `               json:"effectif"      csv:"effectif"`
 }
 
-func (effectif Effectif) Headers() []string {
-	return marshal.ExtractCSVTags(effectif)
-}
-
 func (effectif Effectif) Values() []string {
 	return []string{
 		effectif.Siret,

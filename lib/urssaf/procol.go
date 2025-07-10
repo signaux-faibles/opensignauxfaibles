@@ -2,7 +2,6 @@ package urssaf
 
 import (
 	"encoding/csv"
-	"fmt"
 	"os"
 	"regexp"
 	"strings"
@@ -18,11 +17,6 @@ type Procol struct {
 	DateEffet    time.Time `input:"dt_effet"      json:"date_effet"    csv:"date_effet"`
 	ActionProcol string    `input:"lib_actx_stdx" json:"action_procol" csv:"action_procol"`
 	StadeProcol  string    `input:"lib_actx_stdx" json:"stade_procol"  csv:"stade_procol"`
-}
-
-func (procol Procol) Headers() []string {
-	fmt.Println(marshal.ExtractCSVTags(procol))
-	return marshal.ExtractCSVTags(procol)
 }
 
 func (procol Procol) Values() []string {

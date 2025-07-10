@@ -110,10 +110,6 @@ func (sirene Sirene) Scope() string {
 	return "etablissement"
 }
 
-func (sirene Sirene) Headers() []string {
-	return marshal.ExtractCSVTags(sirene)
-}
-
 func (s Sirene) Values() []string {
 	return []string{
 		s.Siren,

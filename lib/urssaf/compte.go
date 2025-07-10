@@ -15,10 +15,6 @@ type Compte struct {
 	Periode      time.Time `json:"periode"       csv:"période"`
 }
 
-func (compte Compte) Headers() []string {
-	return marshal.ExtractCSVTags(compte)
-}
-
 func (compte Compte) Values() []string {
 	return []string{
 		compte.Siret,

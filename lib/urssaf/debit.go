@@ -27,10 +27,6 @@ type Debit struct {
 	Recours                      bool         `input:"Recours_en_cours" json:"recours_en_cours"             csv:"recours"`
 }
 
-func (debit Debit) Headers() []string {
-	return marshal.ExtractCSVTags(debit)
-}
-
 func (debit Debit) Values() []string {
 	return []string{
 		debit.key,
