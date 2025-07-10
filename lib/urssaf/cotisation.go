@@ -13,7 +13,7 @@ import (
 type Cotisation struct {
 	key          string       `                                        csv:"siret"`
 	NumeroCompte string       `input:"Compte"     json:"numero_compte" csv:"numéro_compte"`
-	Periode      misc.Periode `input:"periode"    json:"periode"`
+	Periode      misc.Periode `input:"periode"    json:"periode"       csv:"période"`
 	Encaisse     *float64     `input:"enc_direct" json:"encaisse"      csv:"encaissé"`
 	Du           *float64     `input:"cotis_due"  json:"du"            csv:"du"`
 }

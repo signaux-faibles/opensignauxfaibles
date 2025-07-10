@@ -21,7 +21,7 @@ type Debit struct {
 	NumeroHistoriqueEcartNegatif *int         `input:"Num_Hist_Ecn"     json:"numero_historique"            csv:"numéro_historique_écart_négatif"`
 	EtatCompte                   *int         `input:"Etat_cpte"        json:"etat_compte"                  csv:"état_compte"`
 	CodeProcedureCollective      string       `input:"Cd_pro_col"       json:"code_procedure_collective"    csv:"code_procédure_collective"`
-	Periode                      misc.Periode `input:"Periode"          json:"periode"                      `
+	Periode                      misc.Periode `input:"Periode"          json:"periode"                      csv:"période"`
 	CodeOperationEcartNegatif    string       `input:"Cd_op_ecn"        json:"code_operation_ecart_negatif" csv:"code_opération_écart_négatif"`
 	CodeMotifEcartNegatif        string       `input:"Motif_ecn"        json:"code_motif_ecart_negatif"     csv:"code_motif_écart_négatif"`
 	Recours                      bool         `input:"Recours_en_cours" json:"recours_en_cours"             csv:"recours"`
