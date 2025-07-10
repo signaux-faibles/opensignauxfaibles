@@ -7,6 +7,9 @@ import (
 	"time"
 )
 
+// CSVMarshaller is a handy wrapper to extract headers and values from a tuple.
+// The tuple is expected to be a "struct" type with "csv" tags for values to be
+// included in the csv export.
 type CSVMarshaller struct {
 	objectType  reflect.Type
 	objectValue reflect.Value
@@ -19,10 +22,12 @@ func NewCSVMarshaller(tuple any) CSVMarshaller {
 	}
 }
 
+// Headers returns the CSV headers
 func (m CSVMarshaller) Headers() []string {
 	return recursiveExtractTags(m.objectType, "csv")
 }
 
+// Values returns the tuple values, in same order as the header, and converted to strings
 func (m CSVMarshaller) Values() (values []string) {
 	rawValues := m.recursiveExtractValues(m.objectType, m.objectValue, "csv")
 	for _, v := range rawValues {
@@ -65,32 +70,4 @@ func (m CSVMarshaller) valueToCSV(v reflect.Value) string {
 		// Fallback to string representation
 		return v.String()
 	}
-}
-
-func TimeToCSV(t *time.Time) string {
-	if t != nil {
-		return t.Format(time.DateOnly)
-	}
-	return ""
-}
-
-func FloatToCSV(f *float64) string {
-	if f != nil {
-		return strconv.FormatFloat(*f, 'f', -1, 64)
-	}
-	return ""
-}
-
-func IntToCSV(f *int) string {
-	if f != nil {
-		return strconv.Itoa(*f)
-	}
-	return ""
-}
-
-func BoolToCSV(b *bool) string {
-	if b != nil {
-		return strconv.FormatBool(*b)
-	}
-	return ""
 }
