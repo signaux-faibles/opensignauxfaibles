@@ -15,7 +15,7 @@ var loglevel *slog.LevelVar
 func initLogger() {
 	loglevel = new(slog.LevelVar)
 	loglevel.Set(slog.LevelInfo)
-	handler := slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+	handler := slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{
 		Level: loglevel,
 		//AddSource: true,
 	})

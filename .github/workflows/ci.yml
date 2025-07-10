@@ -29,6 +29,8 @@ jobs:
         with:
           go-version-file: ./go.mod
       - run: make build
+      - run: cp config-sample.toml config.toml
+
       - run: go test -v -coverprofile=go-coverage.out -covermode=atomic -coverpkg=./... ./...
       - name: Show coverage
         run: go tool cover -func=go-coverage.out
