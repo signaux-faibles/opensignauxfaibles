@@ -19,7 +19,7 @@ type APDemande struct {
 	EffectifEntreprise *int         `input:"EFF_ENT"            json:"effectif_entreprise"  csv:"effectif_entreprise"`
 	Effectif           *int         `input:"EFF_ETAB"           json:"effectif"             csv:"effectif"`
 	DateStatut         time.Time    `input:"DATE_STATUT"        json:"date_statut"          csv:"date_statut"`
-	Periode            misc.Periode `                           json:"periode"`
+	Periode            misc.Periode `                           json:"periode"              csv:"période"`
 	HTA                *float64     `input:"HTA"                json:"hta"                  csv:"heures_autorisées"`
 	MTA                *float64     `                           json:"mta"                  csv:"montants_autorisés"`
 	EffectifAutorise   *int         `input:"EFF_AUTO"           json:"effectif_autorise"    csv:"effectif_autorisé"`
