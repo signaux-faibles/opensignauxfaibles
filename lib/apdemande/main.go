@@ -30,26 +30,6 @@ type APDemande struct {
 	Perimetre          *int         `input:"PERIMETRE_AP"       json:"perimetre"            csv:"PERIMETRE_AP"`
 }
 
-func (apdemande APDemande) Values() []string {
-	return []string{
-		apdemande.ID,
-		apdemande.Siret,
-		marshal.IntToCSV(apdemande.EffectifEntreprise),
-		marshal.IntToCSV(apdemande.Effectif),
-		marshal.TimeToCSV(&apdemande.DateStatut),
-		marshal.TimeToCSV(&apdemande.Periode.Start),
-		marshal.TimeToCSV(&apdemande.Periode.End),
-		marshal.FloatToCSV(apdemande.HTA),
-		marshal.FloatToCSV(apdemande.MTA),
-		marshal.IntToCSV(apdemande.EffectifAutorise),
-		marshal.IntToCSV(apdemande.MotifRecoursSE),
-		marshal.FloatToCSV(apdemande.HeureConsommee),
-		marshal.FloatToCSV(apdemande.MontantConsomme),
-		marshal.IntToCSV(apdemande.EffectifConsomme),
-		marshal.IntToCSV(apdemande.Perimetre),
-	}
-}
-
 // Key id de l'objet
 func (apdemande APDemande) Key() string {
 	return apdemande.Siret

@@ -18,14 +18,6 @@ type EffectifEnt struct {
 	EffectifEnt int       `              json:"effectif" csv:"effectif_entreprise"`
 }
 
-func (effectifEnt EffectifEnt) Values() []string {
-	return []string{
-		effectifEnt.Siren,
-		marshal.TimeToCSV(&effectifEnt.Periode),
-		marshal.IntToCSV(&effectifEnt.EffectifEnt),
-	}
-}
-
 // Key _id de l'objet
 func (effectifEnt EffectifEnt) Key() string {
 	return effectifEnt.Siren

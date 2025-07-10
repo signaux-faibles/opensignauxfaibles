@@ -24,21 +24,6 @@ type SireneUL struct {
 	Creation            *time.Time ` input:"dateCreationUniteLegale"       json:"date_creation,omitempty"          csv:"Creation"`
 }
 
-func (sireneUL SireneUL) Values() []string {
-	return []string{
-		sireneUL.Siren,
-		sireneUL.RaisonSociale,
-		sireneUL.Prenom1UniteLegale,
-		sireneUL.Prenom2UniteLegale,
-		sireneUL.Prenom3UniteLegale,
-		sireneUL.Prenom4UniteLegale,
-		sireneUL.NomUniteLegale,
-		sireneUL.NomUsageUniteLegale,
-		sireneUL.CodeStatutJuridique,
-		marshal.TimeToCSV(sireneUL.Creation),
-	}
-}
-
 // Key id de l'objet
 func (sireneUL SireneUL) Key() string {
 	return sireneUL.Siren

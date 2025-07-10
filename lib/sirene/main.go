@@ -110,35 +110,6 @@ func (sirene Sirene) Scope() string {
 	return "etablissement"
 }
 
-func (s Sirene) Values() []string {
-	return []string{
-		s.Siren,
-		s.Nic,
-		marshal.BoolToCSV(&s.Siege),
-		s.ComplementAdresse,
-		s.NumVoie,
-		s.IndRep,
-		s.TypeVoie,
-		s.Voie,
-		s.Commune,
-		s.CommuneEtranger,
-		s.DistributionSpeciale,
-		s.CodeCommune,
-		s.CodeCedex,
-		s.Cedex,
-		s.CodePaysEtranger,
-		s.PaysEtranger,
-		s.CodePostal,
-		s.Departement,
-		s.APE,
-		s.CodeActivite,
-		s.NomenActivite,
-		marshal.TimeToCSV(s.Creation),
-		marshal.FloatToCSV(&s.Longitude),
-		marshal.FloatToCSV(&s.Latitude),
-	}
-}
-
 // Parser fournit une instance utilisable par ParseFilesFromBatch.
 var Parser = &sireneParser{}
 
