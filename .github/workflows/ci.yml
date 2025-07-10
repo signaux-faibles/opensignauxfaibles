@@ -5,18 +5,6 @@ on:
     branches:
 
 jobs:
-  go-tests:
-    name: Go tests
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
-        with:
-          go-version-file: ./go.mod
-      - run: go test -v -coverprofile=go-coverage.out -covermode=atomic -coverpkg=./... ./...
-      - name: Show coverage
-        run: go tool cover -func=go-coverage.out
-
   build:
     name: Generate and lint
     runs-on: ubuntu-22.04
@@ -31,6 +19,22 @@ jobs:
           go generate -x ./...
           git diff
           exit $(git diff | wc -l)
+
+  go-tests:
+    name: Go tests
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+      - run: make build
+      - run: cp config-sample.toml config.toml
+
+      - run: go test -v -coverprofile=go-coverage.out -covermode=atomic -coverpkg=./... ./...
+      - name: Show coverage
+        run: go tool cover -func=go-coverage.out
+
 
   e2e-tests:
     name: End-to-end tests
@@ -68,8 +72,6 @@ jobs:
           touch config.toml
           echo "[log]" >> config.toml
           echo "level = \"error\"" >> config.toml
-
-      - run: ./tests/test-cli.sh
 
       - run: ./tests/test-import.sh
 
