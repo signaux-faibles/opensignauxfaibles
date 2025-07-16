@@ -163,7 +163,7 @@ func verifyJournalReports(t *testing.T, db *mgo.Database) {
 		t.Log("✅ Golden master file updated")
 	} else {
 
-		err := compareWithGoldenFile(t, goldenFilePath, output)
+		err := compareWithGoldenFile(goldenFilePath, output)
 		outputFilePath := filepath.Join(tmpDir, "test-import.journal.output.txt")
 
 		if err != nil {
@@ -214,7 +214,7 @@ func verifyExportedCSVFiles(t *testing.T) {
 		output := fmt.Sprintf("==== %s ====\n\n%s\n", baseName, string(content))
 
 		// Compare with golden file
-		compareWithGoldenFile(t, goldenFilePath, output)
+		compareWithGoldenFile(goldenFilePath, output)
 		if *update {
 			err := updateGoldenFile(goldenFilePath, output)
 			assert.NoError(t, err)
@@ -222,7 +222,7 @@ func verifyExportedCSVFiles(t *testing.T) {
 			t.Log("✅ Golden master file updated")
 		} else {
 
-			err := compareWithGoldenFile(t, goldenFilePath, output)
+			err := compareWithGoldenFile(goldenFilePath, output)
 			outputFilePath := filepath.Join(tmpDir, "test-import.journal.output.txt")
 
 			if err != nil {
