@@ -5,14 +5,9 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"os"
 	"os/exec"
-	"path"
-	"path/filepath"
 	"strings"
 	"testing"
-
-	"github.com/stretchr/testify/assert"
 )
 
 func TestCLI(t *testing.T) {
@@ -91,29 +86,7 @@ func TestCLI(t *testing.T) {
 
 			output.WriteString("---\n")
 
-			goldenFilePath := path.Join(goldenFilesDir, tc.goldenFile)
-
-			// Handle golden file comparison/update
-			if *update {
-				err := updateGoldenFile(goldenFilePath, output.String())
-				assert.NoError(t, err)
-
-				t.Log("✅ Golden master file updated")
-
-			} else {
-
-				err := compareWithGoldenFile(goldenFilePath, output.String())
-				outputFilePath := filepath.Join(tmpDir, tc.tmpFile)
-
-				if err != nil {
-					// Write output to temp file for easy diffing
-					_ = os.WriteFile(outputFilePath, output.Bytes(), 0644)
-				} else {
-					_ = os.Remove(outputFilePath)
-				}
-
-				assert.NoError(t, err)
-			}
+			compareWithGoldenFileOrUpdate(t, tc.goldenFile, output.String(), tc.tmpFile)
 		})
 	}
 }

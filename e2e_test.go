@@ -17,9 +17,12 @@ import (
 )
 
 type TestSuite struct {
-	TmpDir   string
-	MongoURI string
+	TmpDir         string
+	GoldenFilesDir string
+	MongoURI       string
 }
+
+var suite *TestSuite
 
 const (
 	mongoImage     = "mongo:4.2@sha256:1c2243a5e21884ffa532ca9d20c221b170d7b40774c235619f98e2f6eaec520a"
@@ -28,14 +31,9 @@ const (
 	mongoDatabase  = "signauxfaibles"
 )
 
-var (
-	tmpDir         = filepath.Join("tests", "tmp-test-execution-files")
-	goldenFilesDir = filepath.Join("tests", "output-snapshots")
-)
+var ()
 
 var update = flag.Bool("update", false, "Update the expected test values in golden file")
-
-var suite *TestSuite
 
 func TestMain(m *testing.M) {
 	var err error
@@ -67,6 +65,8 @@ func setupSuite() (*TestSuite, error) {
 	viper.AddConfigPath(".")
 	viper.SetConfigType("toml")
 	viper.SetConfigName("config-sample") // => config will be loaded from ./config-sample.toml
+
+	tmpDir := filepath.Join("tests", "tmp-test-execution-files")
 	viper.Set("export.path", tmpDir)
 
 	viper.Set("DB_DIAL", mongoURI)
@@ -85,8 +85,9 @@ func setupSuite() (*TestSuite, error) {
 	time.Sleep(2 * time.Second)
 
 	return &TestSuite{
-		TmpDir:   tmpDir,
-		MongoURI: mongoURI,
+		TmpDir:         tmpDir,
+		MongoURI:       mongoURI,
+		GoldenFilesDir: filepath.Join("tests", "output-snapshots"),
 	}, nil
 }
 
@@ -104,8 +105,8 @@ func teardownSuite() {
 // for inspection.
 func compareWithGoldenFileOrUpdate(t *testing.T, goldenFile, actualOutput, outputFile string) {
 
-	goldenPath := filepath.Join(goldenFilesDir, goldenFile)
-	outputPath := filepath.Join(tmpDir, outputFile)
+	goldenPath := filepath.Join(suite.GoldenFilesDir, goldenFile)
+	outputPath := filepath.Join(suite.TmpDir, outputFile)
 
 	if *update {
 		err := updateGoldenFile(goldenPath, actualOutput)
@@ -172,5 +173,5 @@ func stopMongoContainer() {
 }
 
 func deleteTempFolder() {
-	os.RemoveAll(viper.GetString("export.path"))
+	os.RemoveAll(suite.TmpDir)
 }

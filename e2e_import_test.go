@@ -18,8 +18,6 @@ import (
 
 func TestImportEndToEnd(t *testing.T) {
 
-	uri := suite.MongoURI
-	t.Log("uri", uri)
 	mongodb, err := mgo.Dial(suite.MongoURI)
 	assert.NoError(t, err)
 	defer mongodb.Close()
@@ -122,7 +120,7 @@ func verifyJournalReports(t *testing.T, db *mgo.Database) {
 func verifyExportedCSVFiles(t *testing.T) {
 	t.Log("📁 Verifying exported CSV files...")
 
-	exportDir := filepath.Join(tmpDir, "1910")
+	exportDir := filepath.Join(suite.TmpDir, "1910")
 
 	// Find all CSV files in the export directory
 	files, err := filepath.Glob(filepath.Join(exportDir, "*"))
