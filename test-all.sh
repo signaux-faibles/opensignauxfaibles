@@ -37,9 +37,6 @@ fi
 heading "test-check.sh"
 ./tests/test-check.sh $@ 2>&1 | indent
 
-heading "test-import.sh"
-./tests/test-import.sh $@ 2>&1 | indent
-
 heading "test-parseFile.sh"
 ./tests/test-parseFile.sh $@ 2>&1 | indent
 

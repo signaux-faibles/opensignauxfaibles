@@ -1,0 +1,7 @@
+==== apdemande.csv ====
+
+id_demande,siret,effectif_entreprise,effectif,date_statut,période,heures_autorisées,montants_autorisés,effectif_autorisé,motif_recours_se,heure_consommee,montant_consomme,effectif_consomme,perimetre
+f288626887,15756082097503,559,0,2012-02-11,2017-08-09 00:00:00-2017-09-09 00:00:00,42078.52,666113.56,99,8,48512,689663.3,319,2
+j354624024,50930194570891,20,82,2012-03-11,2005-08-29 00:00:00-2005-09-29 00:00:00,178,953.96,9,3,81,820.94,8,2
+m80v947695,99508628226971,949,535,2012-04-11,2014-04-29 00:00:00-2014-05-29 00:00:00,345,72697.76,83,7,6165,1456.27,64,1
+

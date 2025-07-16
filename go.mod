@@ -5,11 +5,8 @@ go 1.23.0
 toolchain go1.24.3
 
 require (
-	github.com/cnf/structhash v0.0.0-20250313080605-df4c6cc74a9a
 	github.com/cosiner/flag v0.5.2
 	github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8
-	github.com/jaswdr/faker v1.19.1
-	github.com/pkg/errors v0.9.1
 	github.com/spf13/viper v1.20.1
 	github.com/stretchr/testify v1.10.0
 )
