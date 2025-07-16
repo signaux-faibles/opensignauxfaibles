@@ -74,3 +74,5 @@ jobs:
           echo "level = \"error\"" >> config.toml
 
       - run: ./tests/test-check.sh
+
+      - run: go test -tags=e2e
