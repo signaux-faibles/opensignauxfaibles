@@ -1,9 +1,10 @@
+//go:build e2e
+
 package main
 
 import (
 	"fmt"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -12,29 +13,17 @@ import (
 
 	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
-	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestImportEndToEnd(t *testing.T) {
 
-	// Setup
-	setupImportTest(t)
-	t.Cleanup(cleanupImportTest)
-
-	// Configure viper
-	viper.AddConfigPath(".")
-	viper.SetConfigType("toml")
-	viper.SetConfigName("config-sample") // => config will be loaded from ./config-sample.toml
-	viper.Set("export.path", "tests/tmp-test-execution-files")
-
-	mongoURI := fmt.Sprintf("mongodb://localhost:%v", mongoPort)
-	viper.Set("DB_DIAL", mongoURI)
-	viper.Set("DB", mongoDatabase)
-
-	mongodb, err := mgo.Dial(mongoURI)
+	uri := suite.MongoURI
+	t.Log("uri", uri)
+	mongodb, err := mgo.Dial(suite.MongoURI)
 	assert.NoError(t, err)
 	defer mongodb.Close()
+
 	db := mongodb.DB(mongoDatabase)
 
 	t.Run("Insert test data and run import", func(t *testing.T) {
@@ -51,37 +40,6 @@ func TestImportEndToEnd(t *testing.T) {
 	t.Run("Verify exported CSV files", func(t *testing.T) {
 		verifyExportedCSVFiles(t)
 	})
-}
-
-func setupImportTest(t *testing.T) {
-	t.Log("Setting up import test...")
-
-	// Stop any existing container
-	exec.Command("docker", "stop", mongoContainer).Run()
-	exec.Command("docker", "rm", mongoContainer).Run()
-
-	startMongoContainer(t)
-
-	// Create temp directory
-	tmpDir := "tests/tmp-test-execution-files"
-	os.RemoveAll(tmpDir)
-	err := os.MkdirAll(tmpDir, 0755)
-	assert.NoError(t, err)
-
-	// Give MongoDB time to start
-	time.Sleep(2 * time.Second)
-}
-
-func cleanupImportTest() {
-	// Stop MongoDB container
-	stopMongoContainer()
-
-	// Clean up temp directory
-	os.RemoveAll("tests/tmp-test-execution-files")
-
-	// Clean up environment variables
-	os.Unsetenv("TMP_DIR")
-	os.Unsetenv("MONGODB_PORT")
 }
 
 func insertImportTestBatch(t *testing.T, db *mgo.Database) {
@@ -127,13 +85,13 @@ func verifyJournalReports(t *testing.T, db *mgo.Database) {
 	assert.NoError(t, err)
 
 	// Transform the data similar to the MongoDB query in the bash script
-	var transformedEntries []map[string]interface{}
+	var transformedEntries []map[string]any
 	for _, doc := range journalEntries {
-		transformed := make(map[string]interface{})
+		transformed := make(map[string]any)
 
 		if event, hasEvent := doc["event"]; hasEvent {
 			eventMap := event.(bson.M)
-			transformed["event"] = map[string]interface{}{
+			transformed["event"] = map[string]any{
 				"headRejected": eventMap["headRejected"],
 				"headFatal":    eventMap["headFatal"],
 				"linesSkipped": eventMap["linesSkipped"],
@@ -155,31 +113,16 @@ func verifyJournalReports(t *testing.T, db *mgo.Database) {
 	output := formatJournalOutput(transformedEntries)
 
 	// Handle golden file comparison/update
-	goldenFilePath := "tests/output-snapshots/test-import.journal.golden.txt"
-	if *update {
-		err := updateGoldenFile(goldenFilePath, output)
-		assert.NoError(t, err)
+	goldenFilePath := "test-import.journal.golden.txt"
+	tmpOutputPath := "test-import.journal.output.txt"
 
-		t.Log("✅ Golden master file updated")
-	} else {
-
-		err := compareWithGoldenFile(goldenFilePath, output)
-		outputFilePath := filepath.Join(tmpDir, "test-import.journal.output.txt")
-
-		if err != nil {
-			// Write output to temp file for easy diffing
-			_ = os.WriteFile(outputFilePath, []byte(output), 0644)
-		} else {
-			_ = os.Remove(outputFilePath)
-		}
-		assert.NoError(t, err)
-	}
+	compareWithGoldenFileOrUpdate(t, goldenFilePath, output, tmpOutputPath)
 }
 
 func verifyExportedCSVFiles(t *testing.T) {
 	t.Log("📁 Verifying exported CSV files...")
 
-	exportDir := "tests/tmp-test-execution-files/1910"
+	exportDir := filepath.Join(tmpDir, "1910")
 
 	// Find all CSV files in the export directory
 	files, err := filepath.Glob(filepath.Join(exportDir, "*"))
@@ -200,39 +143,19 @@ func verifyExportedCSVFiles(t *testing.T) {
 			continue
 		}
 
-		// Read file content
 		content, err := os.ReadFile(file)
 		assert.NoError(t, err)
 
-		// Create golden file name based on CSV file name
 		baseName := filepath.Base(file)
-		goldenFileName := fmt.Sprintf("test-import.%s.golden.txt",
-			strings.TrimSuffix(baseName, ".csv"))
-		goldenFilePath := filepath.Join("tests/output-snapshots", goldenFileName)
+		parserType := strings.TrimSuffix(baseName, ".csv")
 
-		// Format output with header
+		goldenFile := fmt.Sprintf("test-import.%s.golden.txt", parserType)
+		tmpOutputFile := fmt.Sprintf("test-import.%s.output.txt", parserType)
+
+		// Format output with output csv filename as header
 		output := fmt.Sprintf("==== %s ====\n\n%s\n", baseName, string(content))
 
-		// Compare with golden file
-		compareWithGoldenFile(goldenFilePath, output)
-		if *update {
-			err := updateGoldenFile(goldenFilePath, output)
-			assert.NoError(t, err)
-
-			t.Log("✅ Golden master file updated")
-		} else {
-
-			err := compareWithGoldenFile(goldenFilePath, output)
-			outputFilePath := filepath.Join(tmpDir, "test-import.journal.output.txt")
-
-			if err != nil {
-				// Write output to temp file for easy diffing
-				_ = os.WriteFile(outputFilePath, []byte(output), 0644)
-			} else {
-				_ = os.Remove(outputFilePath)
-			}
-			assert.NoError(t, err)
-		}
+		compareWithGoldenFileOrUpdate(t, goldenFile, output, tmpOutputFile)
 	}
 }
 

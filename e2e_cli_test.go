@@ -1,8 +1,9 @@
+//go:build e2e
+
 package main
 
 import (
 	"bytes"
-	"flag"
 	"fmt"
 	"os"
 	"os/exec"
@@ -14,22 +15,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var update = flag.Bool("update", false, "Update the expected test values in golden file")
-
-const (
-	tmpDir         = "tests/tmp-test-execution-files"
-	goldenFilesDir = "tests/output-snapshots"
-)
-
 func TestCLI(t *testing.T) {
-
-	// Setup temporary directory
-	err := os.MkdirAll(tmpDir, 0755)
-	assert.NoError(t, err)
-
-	t.Cleanup(func() {
-	})
-
+	t.Log("Checking sfdata command's output")
 	testCases := []struct {
 		name       string
 		args       []string
@@ -129,36 +116,4 @@ func TestCLI(t *testing.T) {
 			}
 		})
 	}
-	files, _ := os.ReadDir(tmpDir)
-	if len(files) == 0 {
-		// Only if all tests passes, otherwise we want to keep the tmp files for
-		// inspection
-		os.Remove(tmpDir)
-	}
-
-}
-
-// updateGoldenFile writes the output to the golden file
-func updateGoldenFile(goldenPath, content string) error {
-	dir := filepath.Dir(goldenPath)
-	if err := os.MkdirAll(dir, 0755); err != nil {
-		return fmt.Errorf("failed to create directory %s: %w", dir, err)
-	}
-
-	return os.WriteFile(goldenPath, []byte(content), 0644)
-}
-
-// compareWithGoldenFile compares the output with the golden file
-func compareWithGoldenFile(goldenPath, actual string) error {
-	expected, err := os.ReadFile(goldenPath)
-	if err != nil {
-		return fmt.Errorf("failed to read golden file %s: %w", goldenPath, err)
-	}
-
-	if string(expected) != actual {
-		return fmt.Errorf("output doesn't match golden file %s.\nExpected:\n%s\nActual:\n%s",
-			goldenPath, string(expected), actual)
-	}
-
-	return nil
 }

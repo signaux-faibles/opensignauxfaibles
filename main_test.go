@@ -1,11 +1,9 @@
+//go:build e2e
+
 package main
 
 import (
 	"fmt"
-	"log"
-	"log/slog"
-	"os"
-	"os/exec"
 	"testing"
 	"time"
 
@@ -15,21 +13,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-const (
-	mongoImage     = "mongo:4.2@sha256:1c2243a5e21884ffa532ca9d20c221b170d7b40774c235619f98e2f6eaec520a"
-	mongoContainer = "sf-mongodb"
-	mongoPort      = 27016
-	mongoDatabase  = "signauxfaibles"
-)
-
 func TestPrincipal(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping in short mode")
 	}
-
-	startMongoContainer(t) // the test will fail in case of error
-	t.Cleanup(stopMongoContainer)
-	t.Cleanup(deleteTempFolder)
 
 	viper.AddConfigPath(".")
 	viper.SetConfigType("toml")
@@ -70,27 +57,4 @@ func TestPrincipal(t *testing.T) {
 		assert.Equal(t, 2, runCLI("sfdata", "check"))                  // => "Erreur: paramètre `batch` obligatoire."
 		assert.Equal(t, 3, runCLI("sfdata", "import", "--batch=1910")) // => "Erreur: Ce batch ne spécifie pas de filtre"
 	})
-}
-
-func startMongoContainer(t *testing.T) {
-	t.Log("Starting MongoDB in Docker container...")
-	exec.Command("docker", "stop", mongoContainer).Run()
-	exec.Command("docker", "rm", mongoContainer).Run()
-	portMapping := fmt.Sprintf("%v:27017", mongoPort)
-	startMongoCommand := exec.Command("docker", "run", "--rm", "-d", "-p", portMapping, "--name", mongoContainer, mongoImage)
-	slog.Info("démarre mongo", slog.Any("command", startMongoCommand.Args))
-	err := startMongoCommand.Run()
-	if err != nil {
-		t.Fatalf("docker run: %v", err)
-	}
-}
-
-func stopMongoContainer() {
-	if err := exec.Command("docker", "stop", mongoContainer).Run(); err != nil {
-		log.Println(err) // affichage à titre informatif
-	}
-}
-
-func deleteTempFolder() {
-	os.RemoveAll(viper.GetString("export.path"))
 }
