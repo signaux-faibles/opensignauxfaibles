@@ -6,36 +6,21 @@ import (
 	"time"
 )
 
-// CSVMarshaller is a handy wrapper to extract headers and values from a tuple.
-// The tuple is expected to be a "struct" type with "csv" tags for values to be
-// included in the csv export.
-type CSVMarshaller struct {
-	objectType  reflect.Type
-	objectValue reflect.Value
+// ExtractCSVHeaders extrait les en-têtes csv via le tag "csv"
+func ExtractCSVHeaders(tuple Tuple) (header []string) {
+	return ExtractFieldsByTags(tuple, "csv")
 }
 
-func NewCSVMarshaller(tuple any) CSVMarshaller {
-	return CSVMarshaller{
-		objectType:  reflect.TypeOf(tuple),
-		objectValue: reflect.ValueOf(tuple),
-	}
-}
-
-// Headers returns the CSV headers
-func (m CSVMarshaller) Headers() []string {
-	return recursiveExtractTags(m.objectType, "csv")
-}
-
-// Values returns the tuple values, in same order as the header, and converted to strings
-func (m CSVMarshaller) Values() (values []string) {
-	rawValues := m.recursiveExtractValues(m.objectType, m.objectValue, "csv")
+// ExtractCSVRow returns the tuple values, in same order as the header, and converted to strings
+func ExtractCSVRow(tuple Tuple) (values []string) {
+	rawValues := ExtractValuesByTags(tuple, "csv")
 	for _, v := range rawValues {
-		values = append(values, m.valueToCSV(v))
+		values = append(values, valueToString(v))
 	}
 	return values
 }
 
-func (m CSVMarshaller) valueToCSV(v reflect.Value) string {
+func valueToString(v reflect.Value) string {
 	if v.Kind() == reflect.Ptr && v.IsNil() {
 		return ""
 	}

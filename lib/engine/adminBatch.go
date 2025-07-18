@@ -4,11 +4,12 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"log/slog"
 	"os"
-	"sync"
 	"time"
 
 	"github.com/globalsign/mgo/bson"
+	"golang.org/x/sync/errgroup"
 
 	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/marshal"
@@ -21,18 +22,16 @@ func Load(batch *base.AdminBatch, batchKey string) error {
 	return err
 }
 
-// An OutputStreamer directs a stream of output data to the desired sink
-type OutputStreamer interface {
-	Stream(ch chan marshal.Tuple) error
-}
-
 // ImportBatch lance tous les parsers sur le batch fourni
 func ImportBatch(
 	batch base.AdminBatch,
 	parsers []marshal.Parser,
 	skipFilter bool,
-	initStreamer func(batchKey, parserType string) OutputStreamer,
+	initStreamer func(parserType string) OutputStreamer,
 ) error {
+
+	logger := slog.With("batch", batch.ID.Key)
+	logger.Info("starting raw data import")
 
 	var cache = marshal.NewCache()
 
@@ -47,28 +46,42 @@ func ImportBatch(
 	startDate := time.Now()
 	reportUnsupportedFiletypes(batch)
 
-	var wg sync.WaitGroup
+	var g errgroup.Group
+
+	// Limit maximum concurrent go routines
+	g.SetLimit(6)
 
 	for _, parser := range parsers {
-		wg.Add(2)
+		if len(batch.Files[parser.Type()]) > 0 {
+			logger.Info("parse raw data", "parser", parser.Type())
 
-		outputChannel, eventChannel := marshal.ParseFilesFromBatch(cache, &batch, parser) // appelle la fonction ParseFile() pour chaque type de fichier
+			outputChannel, eventChannel := marshal.ParseFilesFromBatch(cache, &batch, parser) // appelle la fonction ParseFile() pour chaque type de fichier
 
-		// Insert events (parsing logs) into the "Journal" collection
-		go func() {
-			defer wg.Done()
-			RelayEvents(eventChannel, "ImportBatch", startDate)
-		}()
+			// Insert events (parsing logs) into the "Journal" collection
+			g.Go(
+				func() error {
+					RelayEvents(eventChannel, "ImportBatch", startDate)
+					return nil
+				},
+			)
 
-		go func() {
-			outputStreamer := initStreamer(batch.ID.Key, parser.Type())
-
-			defer wg.Done()
-			outputStreamer.Stream(outputChannel)
-		}()
-
+			// Stream data to the output sink(s)
+			g.Go(
+				func() error {
+					outputStreamer := initStreamer(parser.Type())
+					return outputStreamer.Stream(outputChannel)
+				},
+			)
+		}
 	}
-	wg.Wait() // wait for all events and tuples to be inserted
+	err = g.Wait() // wait for all events and tuples to be inserted, get the error if any
+
+	if err != nil {
+		return err
+	}
+	logger.Info("raw data parsing ended")
+	logger.Info("inspect the \"Journal\" database to consult parsing errors.")
+
 	return nil
 }
 

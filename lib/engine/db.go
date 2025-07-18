@@ -1,34 +1,37 @@
 package engine
 
 import (
-	"log"
+	"context"
+	"fmt"
 	"time"
 
 	"github.com/globalsign/mgo"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/spf13/viper"
 )
 
 // DB type centralisant les accès à une base de données
 type DB struct {
-	DB       *mgo.Database
-	DBStatus *mgo.Database
+	DB         *mgo.Database
+	DBStatus   *mgo.Database
+	PostgresDB *pgxpool.Pool
 }
 
 // InitDB Initialisation de la connexion MongoDB
-func InitDB() DB {
+func InitDB() (DB, error) {
 	dbDial := viper.GetString("DB_DIAL")
 	dbDatabase := viper.GetString("DB")
 
 	// définition de 2 connexions pour isoler les requêtes (TODO: utile ?)
 	mongostatus, err := mgo.Dial(dbDial)
 	if err != nil {
-		log.Fatal("Erreur de connexion (status) à MongoDB")
+		return DB{}, fmt.Errorf("erreur de connexion (status) à MongoDB : %w", err)
 	}
 	mongostatus.SetSocketTimeout(72000 * time.Second)
 
 	mongodb, err := mgo.Dial(dbDial)
 	if err != nil {
-		log.Fatal("Erreur de connexion (data) à MongoDB")
+		return DB{}, fmt.Errorf("erreur de connexion (data) à MongoDB : %w", err)
 	}
 	mongodb.SetSocketTimeout(72000 * time.Second)
 	dbstatus := mongostatus.DB(dbDatabase)
@@ -39,8 +42,20 @@ func InitDB() DB {
 		Key: []string{"_id.type", "_id.key"},
 	})
 
-	return DB{
-		DB:       db,
-		DBStatus: dbstatus,
+	conn, err := pgxpool.New(context.Background(), viper.GetString("POSTGRES_DB_URL"))
+
+	if err == nil {
+		// Test connectivity with postgreSQL database
+		err = conn.Ping(context.Background())
 	}
+
+	if err != nil {
+		return DB{}, fmt.Errorf("erreur de connexion à PostgreSQL : %w", err)
+	}
+
+	return DB{
+		DB:         db,
+		DBStatus:   dbstatus,
+		PostgresDB: conn,
+	}, nil
 }

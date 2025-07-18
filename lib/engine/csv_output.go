@@ -42,16 +42,18 @@ func NewCSVOutputStreamer(relativeDirPath, parserType string) OutputStreamer {
 // path, relative to the export root directory ("export.path"
 // configuration, or by default the `DefaultExportPath` constant)
 func (out CSVOutputStreamer) Stream(ch chan marshal.Tuple) error {
+	logger := slog.With("parser", out.parserType, "streamer", "csv")
+	logger.Debug("stream data to CSV file")
 
 	var w *csv.Writer
 
 	if out.writer != nil {
-		slog.Debug("Use provided CSVOutputStreamer's writer")
+		logger.Debug("a writer has been provided with the CSVOutputStreamer")
 		w = csv.NewWriter(out.writer)
 	} else {
 
 		filePath := resolveFilePath(out.relativeDirPath, out.parserType)
-		slog.Debug(fmt.Sprintf("Set up writer to %s, create file and directory if needed", filePath))
+		logger.Debug("set up file writer, create file and directory if needed", "output_file", filePath)
 
 		file, err := createFile(filePath)
 
@@ -63,19 +65,22 @@ func (out CSVOutputStreamer) Stream(ch chan marshal.Tuple) error {
 		w = csv.NewWriter(file)
 	}
 
-	slog.Debug(fmt.Sprintf("Writing data for type %s", out.parserType))
+	logger.Debug("data writing")
+
+	nWritten := 0
 
 	headersWritten := false
 	for tuple := range ch {
-		m := marshal.NewCSVMarshaller(tuple)
 		if !headersWritten {
-			w.Write(m.Headers())
+			w.Write(marshal.ExtractCSVHeaders(tuple))
 			headersWritten = true
 		}
-		w.Write(m.Values())
+		w.Write(marshal.ExtractCSVRow(tuple))
+		nWritten++
 	}
 	w.Flush()
 
+	logger.Debug("output streaming to CSV file ended successfully", "n_written", nWritten)
 	return nil
 }
 

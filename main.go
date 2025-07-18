@@ -18,9 +18,11 @@ import (
 // GitCommit est le hash du dernier commit à inclure dans le binaire.
 var GitCommit string // (populé lors de la compilation, par `make build`)
 
-func connectDB() {
-	engine.Db = engine.InitDB()
+func connectDB() error {
+	var err error
+	engine.Db, err = engine.InitDB()
 	go engine.InitEventQueue()
+	return err
 }
 
 // main Fonction Principale
@@ -31,25 +33,36 @@ func main() {
 }
 
 func runCLI(args ...string) int {
+	logger := slog.With("args", args)
+	logger.Info("running cli command")
+
 	cmdHandlerWithArgs := parseCommandFromArgs(args)
 	slog.Debug("run cli", slog.Any("args", args))
 	useDB := os.Getenv("NO_DB") != "1"
 	// exit if no command was recognized in args
 	if cmdHandlerWithArgs == nil {
+		logger.Error("unrecognized command")
 		fmt.Printf("Commande non reconnue. Utilisez %v --help pour lister les commandes.\n", strings.Join(args, " "))
 		return 1
 	}
 	// validate command parameters
 	if err := cmdHandlerWithArgs.Validate(); err != nil {
+		logger.Error("invalid command arguments", "error", err)
 		fmt.Printf("Erreur: %v. Utilisez %v --help pour consulter la documentation.", err, strings.Join(args, " "))
 		return 2
 	}
 	// execute the command
 	if useDB {
-		connectDB()
+		err := connectDB()
+		if err != nil {
+			logger.Error("error while connecting to db", "error", err)
+			fmt.Printf("\nErreur: %v\n", err)
+			return 4
+		}
 		defer engine.FlushEventQueue()
 	}
 	if err := cmdHandlerWithArgs.Run(); err != nil {
+		logger.Error("error while executing command", "error", err)
 		fmt.Printf("\nErreur: %v\n", err)
 		return 3
 	}
@@ -57,7 +70,6 @@ func runCLI(args ...string) int {
 }
 
 func initConfig() {
-
 	viper.SetConfigType("toml")
 	viper.SetConfigName("config") // => will look for config.toml in the following paths:
 	viper.AddConfigPath("/etc/opensignauxfaibles")

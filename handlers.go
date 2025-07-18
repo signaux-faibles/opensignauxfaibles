@@ -63,7 +63,14 @@ func (params importBatchHandler) Run() error {
 		return err
 	}
 
-	initCSVStreamer := engine.NewCSVOutputStreamer
+	initCSVStreamer := func(parserType string) engine.OutputStreamer {
+		out := engine.NewCombinedStreamer(
+			engine.NewCSVOutputStreamer(batch.ID.Key, parserType),
+			engine.NewPostgresOutputStreamer(engine.Db.PostgresDB, parserType),
+		)
+		return out
+	}
+
 	err = engine.ImportBatch(batch, parsers, params.NoFilter, initCSVStreamer)
 
 	if err != nil {

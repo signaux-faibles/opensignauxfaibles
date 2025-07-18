@@ -11,12 +11,12 @@ import (
 
 // APConso Consommation d'activité partielle
 type APConso struct {
-	ID             string    `input:"ID_DA"      json:"id_conso"       csv:"ID"`
-	Siret          string    `input:"ETAB_SIRET" json:"-"              csv:"Siret"`
-	HeureConsommee *float64  `input:"HEURES"     json:"heure_consomme" csv:"HeureConsommee"`
-	Montant        *float64  `input:"MONTANTS"   json:"montant"        csv:"Montant"`
-	Effectif       *int      `input:"EFFECTIFS"  json:"effectif"       csv:"Effectif"`
-	Periode        time.Time `input:"MOIS"       json:"periode"        csv:"Periode"`
+	ID             string    `input:"ID_DA"      json:"id_conso"       sql:"id_conso"      csv:"ID"`
+	Siret          string    `input:"ETAB_SIRET" json:"-"              sql:"siret"         csv:"Siret"`
+	HeureConsommee *float64  `input:"HEURES"     json:"heure_consomme" sql:"heure_consomme"csv:"HeureConsommee"`
+	Montant        *float64  `input:"MONTANTS"   json:"montant"        sql:"montant"       csv:"Montant"`
+	Effectif       *int      `input:"EFFECTIFS"  json:"effectif"       sql:"effectif"      csv:"Effectif"`
+	Periode        time.Time `input:"MOIS"       json:"periode"        sql:"periode"       csv:"Periode"`
 }
 
 // Key id de l'objet
