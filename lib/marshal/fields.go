@@ -154,7 +154,7 @@ func LowercaseFields(headerFields []string) []string {
 }
 
 // ExtractInputHeaders extrait les en-têtes des fichiers d'entrée via le tag "input"
-func ExtractInputHeaders(object any) (expectedFields []string) {
+func ExtractInputHeaders(object any) []string {
 	return ExtractFieldsByTags(object, "input")
 }
 
@@ -163,35 +163,26 @@ func ExtractInputHeaders(object any) (expectedFields []string) {
 //
 // Pour une propriété de type "struct", et en l'absence de ce tag, les noms des
 // colonnes seront recursivement extraites du type de la propriété.
-func ExtractFieldsByTags(object any, tag string) []string {
+func ExtractFieldsByTags(object any, tag string) (fields []string) {
 	t := reflect.TypeOf(object)
-	return recursiveExtractTags(t, tag)
-}
-
-func recursiveExtractTags(t reflect.Type, tag string) (expectedFields []string) {
 	for i := range t.NumField() {
 		field := t.Field(i)
 
-		tagWithSingleVal := field.Tag.Get(tag)
+		fieldTag := field.Tag.Get(tag)
 
-		if tagWithSingleVal != "" {
-			expectedFields = append(expectedFields, tagWithSingleVal)
-		} else if field.Type.Kind() == reflect.Struct {
-			nestedFields := recursiveExtractTags(field.Type, tag)
-			expectedFields = append(expectedFields, nestedFields...)
+		if fieldTag != "" {
+			fields = append(fields, fieldTag)
 		}
 	}
-	return expectedFields
+	return fields
 }
 
 // ExtractValuesByTags returns the values associated with a tag
 // The values are in same order than the output of ExtractFieldsByTags
 func ExtractValuesByTags(object any, tag string) (values []reflect.Value) {
-	return recursiveExtractValues(reflect.TypeOf(object), reflect.ValueOf(object), tag)
-}
 
-func recursiveExtractValues(t reflect.Type, v reflect.Value,
-	tag string) (values []reflect.Value) {
+	t := reflect.TypeOf(object)
+	v := reflect.ValueOf(object)
 
 	for i := range t.NumField() {
 		field := t.Field(i)
@@ -200,10 +191,6 @@ func recursiveExtractValues(t reflect.Type, v reflect.Value,
 
 		if tagWithSingleVal != "" {
 			values = append(values, fieldValue)
-		} else if field.Type.Kind() == reflect.Struct {
-			// Recursively process nested struct
-			nestedValues := recursiveExtractValues(field.Type, fieldValue, tag)
-			values = append(values, nestedValues...)
 		}
 	}
 	return values
