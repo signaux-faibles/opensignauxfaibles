@@ -20,9 +20,6 @@ function indent {
 set -e # will stop the script if any command fails with a non-zero exit code
 set -o pipefail # ... even for tests which pipe their output to indent
 
-heading "go generate"
-(go generate ./...) 2>&1 | indent
-
 heading "make build"
 (killall sfdata 2>/dev/null || true; make build && echo "📦 sfdata") 2>&1 | indent
 
