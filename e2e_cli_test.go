@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"fmt"
 	"os/exec"
+	"regexp"
 	"strings"
 	"testing"
 )
@@ -81,7 +82,11 @@ func TestCLI(t *testing.T) {
 			}
 			if stderr.Len() > 0 {
 				output.WriteString("--- stderr capture\n")
-				output.WriteString(stderr.String())
+
+				re := regexp.MustCompile(`app\.sha1=[a-f0-9]+ `)
+				reproducibleStderr := re.ReplaceAllString(stderr.String(), "")
+
+				output.WriteString(reproducibleStderr)
 			}
 
 			output.WriteString("---\n")

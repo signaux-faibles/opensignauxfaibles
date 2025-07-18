@@ -1,10 +1,10 @@
 CREATE TABLE  IF NOT EXISTS stg_apconso  (
-    Siret VARCHAR(14) PRIMARY KEY,
-    ID VARCHAR(255),
-    HeureConsommee FLOAT,
-    Montant FLOAT,
-    Effectif INTEGER,
-    Periode DATE
+    siret VARCHAR(14) PRIMARY KEY,
+    id_conso VARCHAR(255),
+    heures_consommees FLOAT,
+    montant FLOAT,
+    effectif INTEGER,
+    periode DATE
 );
 
 ---- create above / drop below ----

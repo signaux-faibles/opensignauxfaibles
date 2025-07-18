@@ -25,8 +25,8 @@ type APDemande struct {
 	MTA                *float64  `                           json:"mta"                 sql:"mta"                  csv:"montants_autorisés"`
 	EffectifAutorise   *int      `input:"EFF_AUTO"           json:"effectif_autorise"   sql:"effectif_autorise"    csv:"effectif_autorisé"`
 	MotifRecoursSE     *int      `input:"MOTIF_RECOURS_SE"   json:"motif_recours_se"    sql:"motif_recours_se"     csv:"motif_recours_se"`
-	HeureConsommee     *float64  `input:"S_HEURE_CONSOM_TOT" json:"heure_consommee"     sql:"heure_consommee"      csv:"heure_consommee"`
-	MontantConsomme    *float64  `                           json:"montant_consommee"   sql:"montant_consommee"    csv:"montant_consomme"`
+	HeureConsommee     *float64  `input:"S_HEURE_CONSOM_TOT" json:"heures_consommees"     sql:"heure_consommee"      csv:"heure_consommee"`
+	MontantConsomme    *float64  `                           json:"montant_consomme"   sql:"montant_consommee"    csv:"montant_consomme"`
 	EffectifConsomme   *int      `input:"S_HEURE_CONSOM_TOT" json:"effectif_consomme"   sql:"effectif_consomme"    csv:"effectif_consomme"`
 	Perimetre          *int      `input:"PERIMETRE_AP"       json:"perimetre"           sql:"perimetre"            csv:"perimetre"`
 }
