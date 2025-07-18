@@ -25,6 +25,8 @@ func TestImportEndToEnd(t *testing.T) {
 	db := mongodb.DB(mongoDatabase)
 
 	t.Run("Insert test data and run import", func(t *testing.T) {
+		cleanDatabase(t, db)
+
 		insertImportTestBatch(t, db)
 
 		exitCode := runCLI("sfdata", "import", "--batch", "1910", "--no-filter")
@@ -51,18 +53,18 @@ func insertImportTestBatch(t *testing.T, db *mgo.Database) {
 		"files": bson.M{
 			"dummy":        []string{},
 			"filter":       []string{},
-			"apconso":      []string{"/../lib/apconso/testData/apconsoTestData.csv"},
-			"apdemande":    []string{"/../lib/apdemande/testData/apdemandeTestData.csv"},
-			"sirene":       []string{"/../lib/sirene/testData/sireneTestData.csv"},
-			"sirene_ul":    []string{"/../lib/sirene_ul/testData/sireneULTestData.csv"},
-			"admin_urssaf": []string{"/../lib/urssaf/testData/comptesTestData.csv"},
-			"debit":        []string{"/../lib/urssaf/testData/debitTestData.csv"},
-			"ccsf":         []string{"/../lib/urssaf/testData/ccsfTestData.csv"},
-			"cotisation":   []string{"/../lib/urssaf/testData/cotisationTestData.csv"},
-			"delai":        []string{"/../lib/urssaf/testData/delaiTestData.csv"},
-			"effectif":     []string{"/../lib/urssaf/testData/effectifTestData.csv"},
-			"effectif_ent": []string{"/../lib/urssaf/testData/effectifEntTestData.csv"},
-			"procol":       []string{"/../lib/urssaf/testData/procolTestData.csv"},
+			"apconso":      []string{"./lib/apconso/testData/apconsoTestData.csv"},
+			"apdemande":    []string{"./lib/apdemande/testData/apdemandeTestData.csv"},
+			"sirene":       []string{"./lib/sirene/testData/sireneTestData.csv"},
+			"sirene_ul":    []string{"./lib/sirene_ul/testData/sireneULTestData.csv"},
+			"admin_urssaf": []string{"./lib/urssaf/testData/comptesTestData.csv"},
+			"debit":        []string{"./lib/urssaf/testData/debitTestData.csv"},
+			"ccsf":         []string{"./lib/urssaf/testData/ccsfTestData.csv"},
+			"cotisation":   []string{"./lib/urssaf/testData/cotisationTestData.csv"},
+			"delai":        []string{"./lib/urssaf/testData/delaiTestData.csv"},
+			"effectif":     []string{"./lib/urssaf/testData/effectifTestData.csv"},
+			"effectif_ent": []string{"./lib/urssaf/testData/effectifEntTestData.csv"},
+			"procol":       []string{"./lib/urssaf/testData/procolTestData.csv"},
 		},
 		"param": bson.M{
 			"date_debut": time.Date(2019, time.January, 1, 0, 0, 0, 0, time.UTC),
