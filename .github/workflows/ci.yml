@@ -29,8 +29,6 @@ jobs:
         with:
           go-version-file: ./go.mod
       - run: make build
-      - run: cp config-sample.toml config.toml
-
       - run: go test -v -coverprofile=go-coverage.out -covermode=atomic -coverpkg=./... ./...
       - name: Show coverage
         run: go tool cover -func=go-coverage.out
@@ -47,13 +45,5 @@ jobs:
           go-version-file: ./go.mod
 
       - run: make build
-
-      - name: Crée le fichier de configuration minimal
-        run: |
-          touch config.toml
-          echo "[log]" >> config.toml
-          echo "level = \"error\"" >> config.toml
-
-      - run: ./tests/test-check.sh
 
       - run: go test -tags=e2e

@@ -12,7 +12,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/spf13/viper"
+	"github.com/globalsign/mgo"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -30,8 +30,6 @@ const (
 	mongoPort      = 27016
 	mongoDatabase  = "signauxfaibles"
 )
-
-var ()
 
 var update = flag.Bool("update", false, "Update the expected test values in golden file")
 
@@ -62,15 +60,19 @@ func setupSuite() (*TestSuite, error) {
 
 	log.Println("  Setting up configuration")
 
-	viper.AddConfigPath(".")
-	viper.SetConfigType("toml")
-	viper.SetConfigName("config-sample") // => config will be loaded from ./config-sample.toml
-
 	tmpDir := filepath.Join("tests", "tmp-test-execution-files")
-	viper.Set("export.path", tmpDir)
 
-	viper.Set("DB_DIAL", mongoURI)
-	viper.Set("DB", mongoDatabase)
+	// When running the command with cmd.Exec, the viper config is lost, so we
+	// use environment variables instead
+	os.Setenv("DB_DIAL", mongoURI)
+	os.Setenv("DB", mongoDatabase)
+	os.Setenv("APP_DATA", ".")
+	os.Setenv("LOG_LEVEL", "error")
+	os.Setenv("EXPORT_PATH", tmpDir)
+
+	// When testing "runCli" directly, the config is not initialized, so we do
+	// it here
+	initConfig()
 
 	log.Println("  Setting up temporary directory")
 
@@ -163,6 +165,19 @@ func startMongoContainer() {
 	err := startMongoCommand.Run()
 	if err != nil {
 		panic(err)
+	}
+}
+
+func cleanDatabase(t *testing.T, db *mgo.Database) {
+	t.Log("🧹 Cleaning database...")
+
+	// Drop all collections
+	collections := []string{"Admin", "Journal"}
+	for _, collection := range collections {
+		err := db.C(collection).DropCollection()
+		if err != nil && err.Error() != "ns not found" {
+			t.Logf("Warning: could not drop collection %s: %v", collection, err)
+		}
 	}
 }
 
