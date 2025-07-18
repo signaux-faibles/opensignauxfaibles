@@ -20,14 +20,8 @@ type APConso struct {
 }
 
 func (apconso APConso) Values() []string {
-	return []string{
-		apconso.ID,
-		apconso.Siret,
-		marshal.FloatToCSV(apconso.HeureConsommee),
-		marshal.FloatToCSV(apconso.Montant),
-		marshal.IntToCSV(apconso.Effectif),
-		marshal.TimeToCSV(&apconso.Periode),
-	}
+	marshaller := marshal.NewCSVMarshaller(apconso)
+	return marshaller.Values()
 }
 
 // Key id de l'objet
