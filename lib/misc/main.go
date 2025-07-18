@@ -74,14 +74,6 @@ func SliceIndex(limit int, predicate func(i int) bool) int {
 	return -1
 }
 
-// Periode est un type temporel avec un début et une fin employé dans les types et
-// fonctions opensignauxfaibles manipulant des périodes temporelles. La date de fin
-// est exclue de la période.
-type Periode struct {
-	Start time.Time `input:"DATE_DEB" json:"start" csv:"période_début"`
-	End   time.Time `input:"DATE_FIN" json:"end"   csv:"période_fin"`
-}
-
 // GenereSeriePeriode génère une liste de dates pour les mois entre la date de début (incluse) et la date de fin (exclue)
 func GenereSeriePeriode(debut time.Time, fin time.Time) []time.Time {
 	var serie []time.Time
@@ -90,10 +82,4 @@ func GenereSeriePeriode(debut time.Time, fin time.Time) []time.Time {
 		debut = debut.AddDate(0, 1, 0)
 	}
 	return serie
-}
-
-func (p Periode) String() string {
-	return p.Start.Format(time.DateTime) +
-		"-" +
-		p.End.Format(time.DateTime)
 }

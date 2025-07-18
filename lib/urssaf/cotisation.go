@@ -3,19 +3,20 @@ package urssaf
 import (
 	"encoding/csv"
 	"os"
+	"time"
 
 	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/marshal"
-	"opensignauxfaibles/lib/misc"
 )
 
 // Cotisation Objet cotisation
 type Cotisation struct {
-	key          string       `                                        csv:"siret"`
-	NumeroCompte string       `input:"Compte"     json:"numero_compte" csv:"numéro_compte"`
-	Periode      misc.Periode `input:"periode"    json:"periode"       csv:"période"`
-	Encaisse     *float64     `input:"enc_direct" json:"encaisse"      csv:"encaissé"`
-	Du           *float64     `input:"cotis_due"  json:"du"            csv:"du"`
+	key          string    `                                        csv:"siret"`
+	NumeroCompte string    `input:"Compte"     json:"numero_compte" csv:"numéro_compte"`
+	PeriodeDebut time.Time `input:"periode"    json:"periode_debut" csv:"période_début"`
+	PeriodeFin   time.Time `input:"periode"    json:"periode_fin"   csv:"période_fin"`
+	Encaisse     *float64  `input:"enc_direct" json:"encaisse"      csv:"encaissé"`
+	Du           *float64  `input:"cotis_due"  json:"du"            csv:"du"`
 }
 
 // Key _id de l'objet
@@ -74,18 +75,17 @@ func parseCotisationLine(idx marshal.ColMapping, row []string, comptes *marshal.
 	idxRow := idx.IndexRow(row)
 	cotisation := Cotisation{}
 
-	periode, err := marshal.UrssafToPeriod(idxRow.GetVal("periode"))
-	date := periode.Start
+	periodeDebut, periodeFin, err := marshal.UrssafToPeriod(idxRow.GetVal("periode"))
 	parsedLine.AddRegularError(err)
 
-	siret, err := marshal.GetSiretFromComptesMapping(idxRow.GetVal("Compte"), &date, *comptes)
+	siret, err := marshal.GetSiretFromComptesMapping(idxRow.GetVal("Compte"), &periodeDebut, *comptes)
 	if err != nil {
 		parsedLine.SetFilterError(err)
 	} else {
 		cotisation.key = siret
 		cotisation.NumeroCompte = idxRow.GetVal("Compte")
-		cotisation.Periode, err = marshal.UrssafToPeriod(idxRow.GetVal("periode"))
-		parsedLine.AddRegularError(err)
+		cotisation.PeriodeDebut = periodeDebut
+		cotisation.PeriodeFin = periodeFin
 		cotisation.Encaisse, err = idxRow.GetCommaFloat64("enc_direct")
 		parsedLine.AddRegularError(err)
 		cotisation.Du, err = idxRow.GetCommaFloat64("cotis_due")

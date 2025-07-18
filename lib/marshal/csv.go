@@ -1,7 +1,6 @@
 package marshal
 
 import (
-	"opensignauxfaibles/lib/misc"
 	"reflect"
 	"strconv"
 	"time"
@@ -60,10 +59,6 @@ func (m CSVMarshaller) valueToCSV(v reflect.Value) string {
 		if v.Type() == reflect.TypeOf(time.Time{}) {
 			t := v.Interface().(time.Time)
 			return t.Format(time.DateOnly)
-		}
-		if v.Type() == reflect.TypeOf(misc.Periode{}) {
-			t := v.Interface().(misc.Periode)
-			return t.String()
 		}
 		return ""
 	default:
