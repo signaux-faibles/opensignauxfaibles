@@ -1,17 +1,17 @@
 CREATE TABLE IF NOT EXISTS stg_apdemande (
-            id                   VARCHAR(255),
+            id_demande                   VARCHAR(255),
             siret                VARCHAR(14)     PRIMARY   KEY,
             effectif_entreprise   INTEGER,
             effectif             INTEGER,
             date_statut           DATE,
-            periode_start         DATE,
-            periode_end           DATE,
+            periode_debut         DATE,
+            periode_fin           DATE,
             hta                  FLOAT,
             mta                  FLOAT,
             effectif_autorise     INTEGER,
             motif_recours_se       INTEGER,
-            heureconsommee       FLOAT,
-            montantconsomme      FLOAT,
+            heures_consommees       FLOAT,
+            montant_consomme      FLOAT,
             effectifconsomme     INTEGER,
             perimetre            INTEGER
 );
