@@ -16,4 +16,12 @@ help: ## This help.
 	@echo 'Available targets:'
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
+start_postgres:
+	@docker run --name test-postgres \
+    -e POSTGRES_DB=testdb \
+    -e POSTGRES_USER=testuser \
+    -e POSTGRES_PASSWORD=testpass \
+    -p 5432:5432 \
+    -d postgres:17
+
 .PHONY: build build-prod test test-update help

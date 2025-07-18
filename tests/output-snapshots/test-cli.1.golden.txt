@@ -1,3 +1,5 @@
 $ ./sfdata 
 Commande non reconnue. Utilisez ./sfdata --help pour lister les commandes.
+--- stderr capture
+time=2025-07-18T16:34:38.508+02:00 level=ERROR msg="unrecognized command" app.sha1=3eeaf562a394fd0aa74e5790d833b67171052cb2 args=[./sfdata]
 ---
