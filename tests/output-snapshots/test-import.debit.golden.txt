@@ -1,7 +1,5 @@
 ==== debit.csv ====
-
 siret,numéro_compte,numéro_écart_négatif,date_traitement,part_ouvrière,part_patronale,numéro_historique_écart_négatif,état_compte,code_procédure_collective,période,code_opération_écart_négatif,code_motif_écart_négatif,recours
 00000000000000,111982477292496174,659,1999-05-05,1959.07,8644.97,9,5,0,2017-02-01 00:00:00-2017-03-01 00:00:00,3,74,false
 11111111111111,636043216536562844,397,2005-08-24,0.03,0.02,9,4,4,2015-01-01 00:00:00-2015-02-01 00:00:00,63,74,false
 22222222222222,450359886246036238,738,2012-10-18,0.01,0.02,4,1,1,1999-01-01 00:00:00-1999-02-01 00:00:00,43,40,true
-

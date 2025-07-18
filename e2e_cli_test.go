@@ -66,7 +66,7 @@ func TestCLI(t *testing.T) {
 
 			err := cmd.Run()
 
-			// Format output similar to your bash script
+			// Format output
 			cmdStr := fmt.Sprintf("./sfdata %s", strings.Join(tc.args, " "))
 			t.Logf("- %s", cmdStr)
 			if err != nil {

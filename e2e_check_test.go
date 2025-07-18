@@ -48,7 +48,6 @@ func TestCheckEndToEnd(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Log("💎 Parsing data...")
 
-			// Run check command with single parser (debit)
 			cmd := exec.Command("./sfdata", tc.args...)
 			cmd.Env = os.Environ()
 
@@ -56,7 +55,6 @@ func TestCheckEndToEnd(t *testing.T) {
 
 			assert.NoError(t, err, "%s failed: %s", tc.name, string(output))
 			compareWithGoldenFileOrUpdate(t, tc.goldenFile, string(output), tc.tmpFile)
-
 		})
 	}
 
@@ -117,11 +115,9 @@ func verifyCheckJournalReports(t *testing.T, db *mgo.Database) {
 		transformedEntries = append(transformedEntries, transformed)
 	}
 
-	// Format output to match the original script
 	output, err := json.MarshalIndent(transformedEntries, "", "  ")
 	assert.NoError(t, err)
 
-	// Handle golden file comparison/update
 	goldenFilePath := "test-check.journal.golden.txt"
 	tmpOutputPath := "test-check.journal.output.txt"
 

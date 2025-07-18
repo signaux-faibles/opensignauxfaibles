@@ -3,6 +3,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -79,12 +80,10 @@ func insertImportTestBatch(t *testing.T, db *mgo.Database) {
 func verifyJournalReports(t *testing.T, db *mgo.Database) {
 	t.Log("💎 Verifying Journal reports...")
 
-	// Query Journal collection
 	var journalEntries []bson.M
 	err := db.C("Journal").Find(nil).Sort("reportType", "parserCode").All(&journalEntries)
 	assert.NoError(t, err)
 
-	// Transform the data similar to the MongoDB query in the bash script
 	var transformedEntries []map[string]any
 	for _, doc := range journalEntries {
 		transformed := make(map[string]any)
@@ -110,13 +109,13 @@ func verifyJournalReports(t *testing.T, db *mgo.Database) {
 	}
 
 	// Convert to string for comparison
-	output := formatJournalOutput(transformedEntries)
+	output, err := json.MarshalIndent(transformedEntries, "", "  ")
+	assert.NoError(t, err)
 
-	// Handle golden file comparison/update
 	goldenFilePath := "test-import.journal.golden.txt"
 	tmpOutputPath := "test-import.journal.output.txt"
 
-	compareWithGoldenFileOrUpdate(t, goldenFilePath, output, tmpOutputPath)
+	compareWithGoldenFileOrUpdate(t, goldenFilePath, string(output), tmpOutputPath)
 }
 
 func verifyExportedCSVFiles(t *testing.T) {
@@ -153,20 +152,8 @@ func verifyExportedCSVFiles(t *testing.T) {
 		tmpOutputFile := fmt.Sprintf("test-import.%s.output.txt", parserType)
 
 		// Format output with output csv filename as header
-		output := fmt.Sprintf("==== %s ====\n\n%s\n", baseName, string(content))
+		output := fmt.Sprintf("==== %s ====\n%s", baseName, string(content))
 
 		compareWithGoldenFileOrUpdate(t, goldenFile, output, tmpOutputFile)
 	}
-}
-
-func formatJournalOutput(entries []map[string]any) string {
-	var output strings.Builder
-	output.WriteString("// Reports from db.Journal:\n")
-
-	for _, entry := range entries {
-		// Convert to JSON-like format (simplified)
-		output.WriteString(fmt.Sprintf("%+v\n", entry))
-	}
-
-	return output.String()
 }
