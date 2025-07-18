@@ -14,20 +14,21 @@ import (
 
 // APDemande Demande d'activité partielle
 type APDemande struct {
-	ID                 string       `input:"ID_DA"              json:"id_demande"           csv:"id_demande"`
-	Siret              string       `input:"ETAB_SIRET"         json:"-"                    csv:"siret"`
-	EffectifEntreprise *int         `input:"EFF_ENT"            json:"effectif_entreprise"  csv:"effectif_entreprise"`
-	Effectif           *int         `input:"EFF_ETAB"           json:"effectif"             csv:"effectif"`
-	DateStatut         time.Time    `input:"DATE_STATUT"        json:"date_statut"          csv:"date_statut"`
-	Periode            misc.Periode `                           json:"periode"              csv:"période"`
-	HTA                *float64     `input:"HTA"                json:"hta"                  csv:"heures_autorisées"`
-	MTA                *float64     `                           json:"mta"                  csv:"montants_autorisés"`
-	EffectifAutorise   *int         `input:"EFF_AUTO"           json:"effectif_autorise"    csv:"effectif_autorisé"`
-	MotifRecoursSE     *int         `input:"MOTIF_RECOURS_SE"   json:"motif_recours_se"     csv:"motif_recours_se"`
-	HeureConsommee     *float64     `input:"S_HEURE_CONSOM_TOT" json:"heure_consommee"      csv:"heure_consommee"`
-	MontantConsomme    *float64     `                           json:"montant_consommee"    csv:"montant_consomme"`
-	EffectifConsomme   *int         `input:"S_HEURE_CONSOM_TOT" json:"effectif_consomme"    csv:"effectif_consomme"`
-	Perimetre          *int         `input:"PERIMETRE_AP"       json:"perimetre"            csv:"perimetre"`
+	ID                 string    `input:"ID_DA"              json:"id_demande"           csv:"id_demande"`
+	Siret              string    `input:"ETAB_SIRET"         json:"-"                    csv:"siret"`
+	EffectifEntreprise *int      `input:"EFF_ENT"            json:"effectif_entreprise"  csv:"effectif_entreprise"`
+	Effectif           *int      `input:"EFF_ETAB"           json:"effectif"             csv:"effectif"`
+	DateStatut         time.Time `input:"DATE_STATUT"        json:"date_statut"          csv:"date_statut"`
+	PeriodeDebut       time.Time `input:"DATE_DEB"            json:"periode_debut"        csv:"période_début"`
+	PeriodeFin         time.Time `input:"DATE_FIN"            json:"periode_fin"          csv:"période_fin"`
+	HTA                *float64  `input:"HTA"                json:"hta"                  csv:"heures_autorisées"`
+	MTA                *float64  `                           json:"mta"                  csv:"montants_autorisés"`
+	EffectifAutorise   *int      `input:"EFF_AUTO"           json:"effectif_autorise"    csv:"effectif_autorisé"`
+	MotifRecoursSE     *int      `input:"MOTIF_RECOURS_SE"   json:"motif_recours_se"     csv:"motif_recours_se"`
+	HeureConsommee     *float64  `input:"S_HEURE_CONSOM_TOT" json:"heure_consommee"      csv:"heure_consommee"`
+	MontantConsomme    *float64  `                           json:"montant_consommee"    csv:"montant_consomme"`
+	EffectifConsomme   *int      `input:"S_HEURE_CONSOM_TOT" json:"effectif_consomme"    csv:"effectif_consomme"`
+	Perimetre          *int      `input:"PERIMETRE_AP"       json:"perimetre"            csv:"perimetre"`
 }
 
 // Key id de l'objet
@@ -104,10 +105,9 @@ func parseApDemandeLine(idxRow marshal.IndexedRow, parsedLine *marshal.ParsedLin
 	parsedLine.AddRegularError(err)
 	apdemande.DateStatut, err = time.Parse("2006-01-02", idxRow.GetVal("DATE_STATUT"))
 	parsedLine.AddRegularError(err)
-	apdemande.Periode = misc.Periode{}
-	apdemande.Periode.Start, err = time.Parse("2006-01-02", idxRow.GetVal("DATE_DEB"))
+	apdemande.PeriodeDebut, err = time.Parse("2006-01-02", idxRow.GetVal("DATE_DEB"))
 	parsedLine.AddRegularError(err)
-	apdemande.Periode.End, err = time.Parse("2006-01-02 00:00:00", idxRow.GetVal("DATE_FIN"))
+	apdemande.PeriodeFin, err = time.Parse("2006-01-02 00:00:00", idxRow.GetVal("DATE_FIN"))
 	parsedLine.AddRegularError(err)
 	apdemande.HTA, err = idxRow.GetFloat64("HTA")
 	parsedLine.AddRegularError(err)

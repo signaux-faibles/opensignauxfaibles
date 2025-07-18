@@ -9,10 +9,8 @@
       "numero_historique": 9,
       "etat_compte": 5,
       "code_procedure_collective": "0",
-      "periode": {
-        "start": "2017-02-01T00:00:00Z",
-        "end": "2017-03-01T00:00:00Z"
-      },
+      "periode_debut": "2017-02-01T00:00:00Z",
+      "periode_fin": "2017-03-01T00:00:00Z",
       "code_operation_ecart_negatif": "3",
       "code_motif_ecart_negatif": "74",
       "recours_en_cours": false
@@ -26,10 +24,8 @@
       "numero_historique": 9,
       "etat_compte": 4,
       "code_procedure_collective": "4",
-      "periode": {
-        "start": "2015-01-01T00:00:00Z",
-        "end": "2015-02-01T00:00:00Z"
-      },
+      "periode_debut": "2015-01-01T00:00:00Z",
+      "periode_fin": "2015-02-01T00:00:00Z",
       "code_operation_ecart_negatif": "63",
       "code_motif_ecart_negatif": "74",
       "recours_en_cours": false
@@ -43,10 +39,8 @@
       "numero_historique": 4,
       "etat_compte": 1,
       "code_procedure_collective": "1",
-      "periode": {
-        "start": "1999-01-01T00:00:00Z",
-        "end": "1999-02-01T00:00:00Z"
-      },
+      "periode_debut": "1999-01-01T00:00:00Z",
+      "periode_fin": "1999-02-01T00:00:00Z",
       "code_operation_ecart_negatif": "43",
       "code_motif_ecart_negatif": "40",
       "recours_en_cours": true

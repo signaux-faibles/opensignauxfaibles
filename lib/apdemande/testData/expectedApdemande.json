@@ -5,10 +5,8 @@
       "effectif_entreprise": 559,
       "effectif": 0,
       "date_statut": "2012-02-11T00:00:00Z",
-      "periode": {
-        "start": "2017-08-09T00:00:00Z",
-        "end": "2017-09-09T00:00:00Z"
-      },
+      "periode_debut": "2017-08-09T00:00:00Z",
+      "periode_fin": "2017-09-09T00:00:00Z",
       "hta": 42078.52,
       "mta": 666113.56,
       "effectif_autorise": 99,
@@ -23,10 +21,8 @@
       "effectif_entreprise": 20,
       "effectif": 82,
       "date_statut": "2012-03-11T00:00:00Z",
-      "periode": {
-        "start": "2005-08-29T00:00:00Z",
-        "end": "2005-09-29T00:00:00Z"
-      },
+      "periode_debut": "2005-08-29T00:00:00Z",
+      "periode_fin": "2005-09-29T00:00:00Z",
       "hta": 178,
       "mta": 953.96,
       "effectif_autorise": 9,
@@ -41,10 +37,8 @@
       "effectif_entreprise": 949,
       "effectif": 535,
       "date_statut": "2012-04-11T00:00:00Z",
-      "periode": {
-        "start": "2014-04-29T00:00:00Z",
-        "end": "2014-05-29T00:00:00Z"
-      },
+      "periode_debut": "2014-04-29T00:00:00Z",
+      "periode_fin": "2014-05-29T00:00:00Z",
       "hta": 345,
       "mta": 72697.76,
       "effectif_autorise": 83,

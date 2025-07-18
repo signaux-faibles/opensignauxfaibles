@@ -4,8 +4,6 @@ import (
 	"errors"
 	"strconv"
 	"time"
-
-	"opensignauxfaibles/lib/misc"
 )
 
 // UrssafToDate convertit le format de date urssaf en type Date.
@@ -32,8 +30,7 @@ func UrssafToDate(urssaf string) (time.Time, error) {
 // si QM == 62 alors période annuelle sur YYYY.
 // si M == 0 alors période trimestrielle sur le trimestre Q de YYYY.
 // si 0 < M < 4 alors mois M du trimestre Q.
-func UrssafToPeriod(urssaf string) (misc.Periode, error) {
-	period := misc.Periode{}
+func UrssafToPeriod(urssaf string) (start time.Time, end time.Time, err error) {
 
 	if len(urssaf) == 4 {
 		if urssaf[0:2] < "50" {
@@ -44,33 +41,33 @@ func UrssafToPeriod(urssaf string) (misc.Periode, error) {
 	}
 
 	if len(urssaf) != 6 {
-		return period, errors.New("valeur non autorisée")
+		return start, end, errors.New("valeur non autorisée")
 	}
 
 	year, err := strconv.Atoi(urssaf[0:4])
 	if err != nil {
-		return misc.Periode{}, errors.New("valeur non autorisée")
+		return start, end, errors.New("valeur non autorisée")
 	}
 
 	if urssaf[4:6] == "62" {
-		period.Start = time.Date(year, time.Month(1), 1, 0, 0, 0, 0, time.UTC)
-		period.End = time.Date(year+1, time.Month(1), 1, 0, 0, 0, 0, time.UTC)
+		start = time.Date(year, time.Month(1), 1, 0, 0, 0, 0, time.UTC)
+		end = time.Date(year+1, time.Month(1), 1, 0, 0, 0, 0, time.UTC)
 	} else {
 		quarter, err := strconv.Atoi(urssaf[4:5])
 		if err != nil {
-			return period, err
+			return start, end, err
 		}
 		monthOfQuarter, err := strconv.Atoi(urssaf[5:6])
 		if err != nil {
-			return period, err
+			return start, end, err
 		}
 		if monthOfQuarter == 0 {
-			period.Start = time.Date(year, time.Month((quarter-1)*3+1), 1, 0, 0, 0, 0, time.UTC)
-			period.End = time.Date(year, time.Month((quarter-1)*3+4), 1, 0, 0, 0, 0, time.UTC)
+			start = time.Date(year, time.Month((quarter-1)*3+1), 1, 0, 0, 0, 0, time.UTC)
+			end = time.Date(year, time.Month((quarter-1)*3+4), 1, 0, 0, 0, 0, time.UTC)
 		} else {
-			period.Start = time.Date(year, time.Month((quarter-1)*3+monthOfQuarter), 1, 0, 0, 0, 0, time.UTC)
-			period.End = time.Date(year, time.Month((quarter-1)*3+monthOfQuarter+1), 1, 0, 0, 0, 0, time.UTC)
+			start = time.Date(year, time.Month((quarter-1)*3+monthOfQuarter), 1, 0, 0, 0, 0, time.UTC)
+			end = time.Date(year, time.Month((quarter-1)*3+monthOfQuarter+1), 1, 0, 0, 0, 0, time.UTC)
 		}
 	}
-	return period, nil
+	return start, end, nil
 }

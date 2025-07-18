@@ -5,8 +5,6 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
-
-	"opensignauxfaibles/lib/misc"
 )
 
 func TestUrssafToDate(t *testing.T) {
@@ -55,124 +53,107 @@ func TestUrssafToDate(t *testing.T) {
 }
 
 func TestUrssafToPeriod(t *testing.T) {
+	testCases := []struct {
+		name      string
+		input     string
+		wantStart time.Time
+		wantEnd   time.Time
+		wantErr   bool
+	}{
+		{
+			name:    "échoue si la date fournie n'est pas un nombre",
+			input:   "",
+			wantErr: true,
+		},
+		{
+			name:    "échoue si la date ne s'étend pas sur 6 chiffre",
+			input:   "2004101",
+			wantErr: true,
+		},
+		{
+			name:    "échoue si l'année n'est pas un nombre",
+			input:   "AAAA1010",
+			wantErr: true,
+		},
+		{
+			name:      "0162 représente l'année 2001",
+			input:     "0162",
+			wantStart: makeDate(2001, 1, 1),
+			wantEnd:   makeDate(2002, 1, 1),
+		},
+		{
+			name:      "5062 représente l'année 1950",
+			input:     "5062",
+			wantStart: makeDate(1950, 1, 1),
+			wantEnd:   makeDate(1951, 1, 1),
+		},
+		{
+			name:      "2110 représente le 1er trimestre 2021",
+			input:     "2110",
+			wantStart: makeDate(2021, 1, 1),
+			wantEnd:   makeDate(2021, 4, 1),
+		},
+		{
+			name:      "2041 représente le 1er mois du 4e trimestre 2020",
+			input:     "2041",
+			wantStart: makeDate(2020, 10, 1),
+			wantEnd:   makeDate(2020, 11, 1),
+		},
+		{
+			name:      "1862 -> année 2018",
+			input:     "1862",
+			wantStart: makeDate(2018, 1, 1),
+			wantEnd:   makeDate(2019, 1, 1),
+		},
+		{
+			name:      "1820 -> 2e trimestre 2018",
+			input:     "1820",
+			wantStart: makeDate(2018, 4, 1),
+			wantEnd:   makeDate(2018, 7, 1),
+		},
+		{
+			name:      "6331 -> juillet 1963",
+			input:     "6331",
+			wantStart: makeDate(1963, 7, 1),
+			wantEnd:   makeDate(1963, 8, 1),
+		},
+		{
+			name:    "56331 -> erreur de format",
+			input:   "56331",
+			wantErr: true,
+		},
+		{
+			name:    "56a1 -> erreur de format",
+			input:   "56a1",
+			wantErr: true,
+		},
+		{
+			name:    "5a31 -> erreur de format",
+			input:   "5a31",
+			wantErr: true,
+		},
+		{
+			name:    "564a -> erreur de format",
+			input:   "564a",
+			wantErr: true,
+		},
+	}
 
-	t.Run("échoue si la date fournie n'est pas un nombre", func(t *testing.T) {
-		_, err := UrssafToPeriod("")
-		assert.EqualError(t, err, "valeur non autorisée")
-	})
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			gotStart, gotEnd, err := UrssafToPeriod(tc.input)
 
-	t.Run("échoue si la date ne s'étend pas sur 6 chiffre", func(t *testing.T) {
-		_, err := UrssafToPeriod("2004101")
-		assert.EqualError(t, err, "valeur non autorisée")
-	})
-
-	t.Run("échoue si l'année n'est pas un nombre", func(t *testing.T) {
-		_, err := UrssafToPeriod("AAAA1010")
-		assert.EqualError(t, err, "valeur non autorisée")
-	})
-
-	// si QM == 62 alors période annuelle sur YYYY.
-	t.Run("reconnait 0162 comme représentant l'année 2001", func(t *testing.T) {
-		date, err := UrssafToPeriod("0162")
-		if assert.NoError(t, err) {
-			assert.Equal(t, makeDate(2001, 1, 1), date.Start)
-			assert.Equal(t, makeDate(2002, 1, 1), date.End)
-		}
-	})
-
-	// si YY ≥ 50 alors YYYY = 19YY.
-	t.Run("reconnait 5062 comme représentant l'année 1950", func(t *testing.T) {
-		date, err := UrssafToPeriod("5062")
-		if assert.NoError(t, err) {
-			assert.Equal(t, makeDate(1950, 1, 1), date.Start)
-			assert.Equal(t, makeDate(1951, 1, 1), date.End)
-		}
-	})
-
-	// si M == 0 alors période trimestrielle sur le trimestre Q de YYYY.
-	t.Run("reconnait 2110 comme représentant le 1er trimestre de 2021", func(t *testing.T) {
-		date, err := UrssafToPeriod("2110")
-		if assert.NoError(t, err) {
-			assert.Equal(t, makeDate(2021, 1, 1), date.Start)
-			assert.Equal(t, makeDate(2021, 4, 1), date.End)
-		}
-	})
-
-	// si 0 < M < 4 alors mois M du trimestre Q.
-	t.Run("reconnait 2041 comme représentant le 1er mois du 4ème trimestre de 2020", func(t *testing.T) {
-		date, err := UrssafToPeriod("2041")
-		if assert.NoError(t, err) {
-			assert.Equal(t, makeDate(2020, 10, 1), date.Start)
-			assert.Equal(t, makeDate(2020, 11, 1), date.End)
-		}
-	})
-
-	t.Run("(tests récupérés depuis lib/misc/main_test.go)", func(t *testing.T) {
-		a, e := UrssafToPeriod("1862")
-		b := misc.Periode{
-			Start: time.Date(2018, time.Month(1), 1, 0, 0, 0, 0, time.UTC),
-			End:   time.Date(2019, time.Month(1), 1, 0, 0, 0, 0, time.UTC),
-		}
-		if a == b && e == nil {
-			t.Log("UrssafToPeriod: 1862 -> l'année 2018: OK")
-		} else {
-			t.Error("UrssafToPeriod: 1862 -> l'année 2018: Fail")
-		}
-
-		b = misc.Periode{
-			Start: time.Date(2018, time.Month(4), 1, 0, 0, 0, 0, time.UTC),
-			End:   time.Date(2018, time.Month(7), 1, 0, 0, 0, 0, time.UTC),
-		}
-		a, e = UrssafToPeriod("1820")
-		if a == b && e == nil {
-			t.Log("UrssafToPeriod: 1820 -> 2° trimestre 2018: OK")
-		} else {
-			t.Error("UrssafToPeriod: 1820 -> 2° trimestre 2018: Fail")
-		}
-
-		b = misc.Periode{
-			Start: time.Date(1963, time.Month(7), 1, 0, 0, 0, 0, time.UTC),
-			End:   time.Date(1963, time.Month(8), 1, 0, 0, 0, 0, time.UTC),
-		}
-		a, e = UrssafToPeriod("6331")
-		if a == b && e == nil {
-			t.Log("UrssafToPeriod: 6331 -> Juillet 1963: OK")
-		} else {
-			t.Error("UrssafToPeriod: 6331 -> Juillet 1963: Fail")
-		}
-
-		b = misc.Periode{
-			Start: time.Time{},
-			End:   time.Time{},
-		}
-		a, e = UrssafToPeriod("56331")
-		if a == b && e != nil {
-			t.Log("UrssafToPeriod: 56331 -> erreur: OK")
-		} else {
-			t.Error("UrssafToPeriod: 56331 -> erreur: Fail")
-		}
-
-		a, e = UrssafToPeriod("56a1")
-		if a == b && e != nil {
-			t.Log("UrssafToPeriod: 56a1 -> erreur: OK")
-		} else {
-			t.Error("UrssafToPeriod: 56a1 -> erreur: Fail")
-		}
-
-		a, e = UrssafToPeriod("5a31")
-		if a == b && e != nil {
-			t.Log("UrssafToPeriod: 5a31 -> erreur: OK")
-		} else {
-			t.Error("UrssafToPeriod: 5a31 -> erreur: Fail")
-		}
-
-		a, e = UrssafToPeriod("564a")
-		if a == b && e != nil {
-			t.Log("UrssafToPeriod: 564a -> erreur: OK")
-		} else {
-			t.Error("UrssafToPeriod: 56564aa1 -> erreur: Fail")
-		}
-	})
+			if tc.wantErr {
+				assert.Error(t, err)
+				assert.True(t, gotStart.IsZero())
+				assert.True(t, gotEnd.IsZero())
+			} else {
+				assert.NoError(t, err)
+				assert.Equal(t, tc.wantStart, gotStart)
+				assert.Equal(t, tc.wantEnd, gotEnd)
+			}
+		})
+	}
 }
 
 func makeDate(year int, month int, day int) time.Time {
