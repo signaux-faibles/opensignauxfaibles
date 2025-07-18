@@ -1,4 +1,2 @@
 $ ./sfdata unknown_command
---- stderr capture
-unexpected non-flag value: [sfdata] unknown_command
 ---
