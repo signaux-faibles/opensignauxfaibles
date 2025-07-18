@@ -32,11 +32,16 @@ Avant de démarrer les test il est nécessaire de lancer le démon Docker.
 
 Voir `config-sample.toml` dans les sources.
 
-Par ordre de priorité, le fichier de configuration peut se trouver dans:
+Par ordre de priorité, la configuration peut être définie:
 
-- /etc/opensignauxfaibles/config.toml
-- ~/.opensignauxfaibles/config.toml
-- ./config.toml
+- via des variables d'environnement
+- dans /etc/opensignauxfaibles/config.toml
+- dans ~/.opensignauxfaibles/config.toml
+- dans ./config.toml
+
+Pour les variables d'environnement, les variables sont en majuscules et les 
+points `.` des options imbriquées sont remplacées par des `_` (par exemple, 
+"log.level" est défini via "LOG_LEVEL").
 
 ## Usage
 
@@ -47,7 +52,7 @@ La commande `sfdata` s'inscrit dans un workflow d'intégration de données. Pour
 Afin de prévenir les régressions, plusieurs types de tests automatisés sont inclus dans le dépôt:
 
 - tests unitaires de `sfdata`: `$ go test ./...`
-- tests de bout en bout: `$ tests/test-*.sh`
+- tests de bout en bout: `$ go test -tags=e2e ./...`
 
 Tous ces tests sont exécutés en environnement d'Intégration Continue (CI) après chaque commit poussé sur GitHub, grâce à GitHub actions, tel que défini dans les fichiers `yaml` du répertoire `.github/workflows`.
 

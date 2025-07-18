@@ -1,0 +1,7 @@
+==== sirene.csv ====
+siren,nic,siege,complement_adresse,numéro_voie,indrep,type_voie,voie,commune,commune_étranger,distribution_speciale,code_commune,code_cedex,cedex,code_pays_étranger,pays_étranger,code_postal,département,ape,code_activité,nomenclature_activité,création,longitude,latitude
+956520573,44947,false,,,,CHEMIN,dguylittc,rjkxla,,,73187,,,,,64276,64,,94.7h,NAFRev1,2007-04-20,6.1256,14.106745
+969792769,56291,true,,192,,RUE,oyrdvmle,qxszfpieiukzzxr,,,94133,,,,,08079,08,,00.9u,NAFRev1,,6.140122,58.817057
+497888333,27462,true,,55,,HAMEAU,demnbujm,hzvnctxvbgkms,,,63024,,,,,83699,83,,28.4x,NAFRev1,2007-04-20,5.52488,65.448048
+121212123,00001,true,,55,,HAMEAU,demnbujm,hzvnctxvbgkms,,,63024,,,,,83699,83,,28.4x,NAFRev1,2007-04-20,0,0
+232323234,00001,true,,55,,HAMEAU,demnbujm,hzvnctxvbgkms,,,63024,,,,,83699,83,,28.4x,NAFRev1,2007-04-20,0,0

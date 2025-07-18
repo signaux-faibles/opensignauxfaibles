@@ -14,19 +14,8 @@ type DB struct {
 	DBStatus *mgo.Database
 }
 
-func loadConfig() {
-	// Note: viper.SetConfigType() and viper.AddConfigPath() are called by initConfig()
-	viper.SetDefault("APP_DATA", "$HOME/data-raw/")
-	viper.SetDefault("DB", "opensignauxfaibles")
-	err := viper.ReadInConfig()
-	if err != nil {
-		log.Fatal(err) // /!\ en ci, seul le fichier config-sample.toml existe
-	}
-}
-
 // InitDB Initialisation de la connexion MongoDB
 func InitDB() DB {
-	loadConfig()
 	dbDial := viper.GetString("DB_DIAL")
 	dbDatabase := viper.GetString("DB")
 

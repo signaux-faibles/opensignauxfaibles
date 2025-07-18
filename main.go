@@ -26,7 +26,6 @@ func connectDB() {
 // main Fonction Principale
 func main() {
 	initConfig()
-	initLogger()
 	exitCode := runCLI(os.Args...)
 	os.Exit(exitCode)
 }
@@ -58,14 +57,28 @@ func runCLI(args ...string) int {
 }
 
 func initConfig() {
+
 	viper.SetConfigType("toml")
 	viper.SetConfigName("config") // => will look for config.toml in the following paths:
 	viper.AddConfigPath("/etc/opensignauxfaibles")
 	viper.AddConfigPath("$HOME/.opensignauxfaibles")
 	viper.AddConfigPath(".")
+
+	viper.SetDefault("APP_DATA", "$HOME/data-raw/")
+	viper.SetDefault("DB", "opensignauxfaibles")
+	viper.SetDefault("log.level", "error")
+
 	err := viper.ReadInConfig()
+
+	// config variable a.b can be passed as env variable A_B
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+	viper.AutomaticEnv()
+
+	// init logger before first log
+	initLogger()
+
 	if err != nil {
-		slog.Error("erreur à la lecture de la config toml", slog.Any("error", err))
+		slog.Warn("aucun fichier de configuration n'a pu être trouvé", slog.Any("error", err))
 	}
 	marshal.SetGitCommit(GitCommit)
 }
