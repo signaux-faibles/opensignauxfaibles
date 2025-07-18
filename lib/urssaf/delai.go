@@ -11,53 +11,18 @@ import (
 
 // Delai tuple fichier ursaff
 type Delai struct {
-	key               string    `hash:"-"`
-	NumeroCompte      string    `col:"Numero_compte_externe"       json:"numero_compte"      bson:"numero_compte"`
-	NumeroContentieux string    `col:"Numero_structure"            json:"numero_contentieux" bson:"numero_contentieux"`
-	DateCreation      time.Time `col:"Date_creation"               json:"date_creation"      bson:"date_creation"`
-	DateEcheance      time.Time `col:"Date_echeance"               json:"date_echeance"      bson:"date_echeance"`
-	DureeDelai        *int      `col:"Duree_delai"                 json:"duree_delai"        bson:"duree_delai"`
-	Denomination      string    `col:"Denomination_premiere_ligne" json:"denomination"       bson:"denomination"`
-	Indic6m           string    `col:"Indic_6M"                    json:"indic_6m"           bson:"indic_6m"`
-	AnneeCreation     *int      `col:"Annee_creation"              json:"annee_creation"     bson:"annee_creation"`
-	MontantEcheancier *float64  `col:"Montant_global_echeancier"   json:"montant_echeancier" bson:"montant_echeancier"`
-	Stade             string    `col:"Code_externe_stade"          json:"stade"              bson:"stade"`
-	Action            string    `col:"Code_externe_action"         json:"action"             bson:"action"`
-}
-
-func (delai Delai) Headers() []string {
-	return []string{
-		"siret",
-		"numéro_compte",
-		"numéro_contentieux",
-		"date_création",
-		"date_échéance",
-		"durée_délai",
-		"dénomination",
-		"indic_6mois",
-		"année_création",
-		"montant_échéancier",
-		"stade",
-		"action",
-	}
-}
-
-func (delai Delai) Values() []string {
-	r := []string{
-		delai.key,
-		delai.NumeroCompte,
-		delai.NumeroContentieux,
-		marshal.TimeToCSV(&delai.DateCreation),
-		marshal.TimeToCSV(&delai.DateEcheance),
-		marshal.IntToCSV(delai.DureeDelai),
-		delai.Denomination,
-		delai.Indic6m,
-		marshal.IntToCSV(delai.AnneeCreation),
-		marshal.FloatToCSV(delai.MontantEcheancier),
-		delai.Stade,
-		delai.Action,
-	}
-	return r
+	key               string    `                                                              csv:"siret"`
+	NumeroCompte      string    `input:"Numero_compte_externe"       json:"numero_compte"      csv:"numéro_compte"`
+	NumeroContentieux string    `input:"Numero_structure"            json:"numero_contentieux" csv:"numéro_contentieux"`
+	DateCreation      time.Time `input:"Date_creation"               json:"date_creation"      csv:"date_création"`
+	DateEcheance      time.Time `input:"Date_echeance"               json:"date_echeance"      csv:"date_échéance"`
+	DureeDelai        *int      `input:"Duree_delai"                 json:"duree_delai"        csv:"durée_délai"`
+	Denomination      string    `input:"Denomination_premiere_ligne" json:"denomination"       csv:"dénomination"`
+	Indic6m           string    `input:"Indic_6M"                    json:"indic_6m"           csv:"indic_6mois"`
+	AnneeCreation     *int      `input:"Annee_creation"              json:"annee_creation"     csv:"année_création"`
+	MontantEcheancier *float64  `input:"Montant_global_echeancier"   json:"montant_echeancier" csv:"montant_échéancier"`
+	Stade             string    `input:"Code_externe_stade"          json:"stade"              csv:"stade"`
+	Action            string    `input:"Code_externe_action"         json:"action"             csv:"action"`
 }
 
 // Key _id de l'objet

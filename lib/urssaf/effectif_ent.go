@@ -13,25 +13,9 @@ import (
 
 // EffectifEnt Urssaf
 type EffectifEnt struct {
-	Siren       string    `col:"siren" json:"-"        bson:"-"`
-	Periode     time.Time `            json:"periode"  bson:"periode"`
-	EffectifEnt int       `            json:"effectif" bson:"effectif"`
-}
-
-func (effectifEnt EffectifEnt) Headers() []string {
-	return []string{
-		"siren",
-		"période",
-		"effectif_entreprise",
-	}
-}
-
-func (effectifEnt EffectifEnt) Values() []string {
-	return []string{
-		effectifEnt.Siren,
-		marshal.TimeToCSV(&effectifEnt.Periode),
-		marshal.IntToCSV(&effectifEnt.EffectifEnt),
-	}
+	Siren       string    `input:"siren" json:"-"        csv:"siren"`
+	Periode     time.Time `              json:"periode"  csv:"période"`
+	EffectifEnt int       `              json:"effectif" csv:"effectif_entreprise"`
 }
 
 // Key _id de l'objet

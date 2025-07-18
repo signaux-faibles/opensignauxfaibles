@@ -10,25 +10,9 @@ import (
 
 // Compte tuple fichier ursaff
 type Compte struct {
-	Siret        string    `json:"siret" bson:"siret"`
-	NumeroCompte string    `json:"numero_compte" bson:"numero_compte"`
-	Periode      time.Time `json:"periode" bson:"periode"`
-}
-
-func (compte Compte) Headers() []string {
-	return []string{
-		"siret",
-		"numéro_compte",
-		"période",
-	}
-}
-
-func (compte Compte) Values() []string {
-	return []string{
-		compte.Siret,
-		compte.NumeroCompte,
-		compte.Periode.Format(time.DateTime),
-	}
+	Siret        string    `json:"siret"         csv:"siret"`
+	NumeroCompte string    `json:"numero_compte" csv:"numéro_compte"`
+	Periode      time.Time `json:"periode"       csv:"période"`
 }
 
 // Key _id de l'objet
