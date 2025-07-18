@@ -1,7 +1,6 @@
 .DEFAULT_GOAL := build
 
 build: ## Build the sfdata binary
-	# Note: don't forget to run `go generate ./...` before building.
 	go build -o "sfdata" -ldflags "-X main.GitCommit=$(shell git rev-parse HEAD)"
 
 build-prod: ## Build the sfdata binary for our production environment
