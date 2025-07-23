@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS stg_apdemande (
             motif_recours_se       INTEGER,
             heures_consommees       FLOAT,
             montant_consomme      FLOAT,
-            effectifconsomme     INTEGER,
+            effectif_consomme     INTEGER,
             perimetre            INTEGER
 );
 
