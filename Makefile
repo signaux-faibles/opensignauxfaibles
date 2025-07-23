@@ -16,12 +16,16 @@ help: ## This help.
 	@echo 'Available targets:'
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
-start_postgres:
+start-postgres: ## Run a postgres container for tests
 	@docker run --name test-postgres \
     -e POSTGRES_DB=testdb \
     -e POSTGRES_USER=testuser \
     -e POSTGRES_PASSWORD=testpass \
     -p 5432:5432 \
     -d postgres:17
+
+stop-postgres: ## Stop the postgrescontainer. All data will be lost
+	@docker stop test-postgres
+	@docker rm test-postgres
 
 .PHONY: build build-prod test test-update help
