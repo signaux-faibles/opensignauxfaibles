@@ -228,14 +228,10 @@ func getTableContents(t *testing.T, conn *pgx.Conn, tableName string) string {
 }
 
 func getAllTables(t *testing.T, conn *pgx.Conn) []string {
-	query := `
-        SELECT table_name
-        FROM information_schema.tables
-        WHERE table_schema = 'public'
-        AND table_name != 'my_schema_version'
-        AND table_type = 'BASE TABLE'
-        ORDER BY table_name
-    `
+	query := `SELECT tablename
+  FROM pg_catalog.pg_tables
+  WHERE schemaname = 'public'
+    AND tablename != 'my_schema_version'`
 
 	rows, err := conn.Query(context.Background(), query)
 	if err != nil {
