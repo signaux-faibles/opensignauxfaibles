@@ -107,11 +107,7 @@ func insertTuples(tuples []marshal.Tuple, conn *pgxpool.Pool, tableName string, 
 	// implement CopyFromSource interface
 	for _, tuple := range tuples {
 		row := marshal.ExtractTableRow(tuple)
-		newSlice := make([]any, 0, len(row))
-		for _, value := range row {
-			newSlice = append(newSlice, value)
-		}
-		values = append(values, newSlice)
+		values = append(values, row)
 	}
 	lowerColumns := make([]string, len(columns))
 	for i, c := range columns {
