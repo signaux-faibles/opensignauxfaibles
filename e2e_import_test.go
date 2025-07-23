@@ -174,11 +174,20 @@ func verifyPostgresExport(t *testing.T) {
 	}
 
 	tables := getAllTables(t, conn)
+
+	hasMigrationTable := false
 	for _, table := range tables {
+		if table == pgMigrationsTable {
+			hasMigrationTable = true
+			continue
+		}
 		output := getTableContents(t, conn, table)
 		goldenFile := fmt.Sprintf("test-import.sql.%s.golden.txt", table)
 		tmpOutputFile := fmt.Sprintf("test-import.sql.%s.output.txt", table)
 		compareWithGoldenFileOrUpdate(t, goldenFile, output, tmpOutputFile)
+	}
+	if !hasMigrationTable {
+		t.Errorf("Expecting the migration table to be present")
 	}
 }
 
@@ -231,7 +240,7 @@ func getAllTables(t *testing.T, conn *pgx.Conn) []string {
 	query := `SELECT tablename
   FROM pg_catalog.pg_tables
   WHERE schemaname = 'public'
-    AND tablename != 'my_schema_version'`
+  `
 
 	rows, err := conn.Query(context.Background(), query)
 	if err != nil {
