@@ -36,13 +36,14 @@ const (
 )
 
 const (
-	pgImage         = "postgres:17.5@sha256:30fa5c5e240b7b2ff2c31adf5a4c5ccacf22dae1d7760fea39061eb8af475854"
-	pgContainer     = "test-postgres"
-	pgPort          = 5432
-	pgDatabase      = "testdb"
-	pgUser          = "testuser"
-	pgPassword      = "testpass"
-	pgMigrationsDir = "./migrations"
+	pgImage           = "postgres:17.5@sha256:30fa5c5e240b7b2ff2c31adf5a4c5ccacf22dae1d7760fea39061eb8af475854"
+	pgContainer       = "test-postgres"
+	pgPort            = 5432
+	pgDatabase        = "testdb"
+	pgUser            = "testuser"
+	pgPassword        = "testpass"
+	pgMigrationsDir   = "./migrations"
+	pgMigrationsTable = "migrations"
 )
 
 var update = flag.Bool("update", false, "Update the expected test values in golden file")
@@ -254,7 +255,7 @@ func runPostgresMigrations() {
 		panic(err)
 	}
 
-	m, err := migrate.NewMigrator(context.Background(), conn, "my_schema_version")
+	m, err := migrate.NewMigrator(context.Background(), conn, pgMigrationsTable)
 	if err != nil {
 		panic(err)
 	}
