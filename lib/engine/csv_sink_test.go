@@ -6,22 +6,20 @@ import (
 	"testing"
 )
 
-// mockTuple implements the marshal.Tuple interface for testing
-type mockTuple struct {
-	H1     string `csv:"header1"`
-	H2     string `csv:"header2"`
-	H3     string `csv:"header3"`
-	key    string
-	scope  string
-	tType  string
-	values []string
+// MockTuple implements the marshal.Tuple interface for testing
+// H1, H2, H3 are three mock data
+type MockTuple struct {
+	H1    string `csv:"header1"`
+	H2    string `csv:"header2"`
+	H3    string `csv:"header3"`
+	key   string
+	scope string
+	tType string
 }
 
-func (m mockTuple) Key() string       { return m.key }
-func (m mockTuple) Scope() string     { return m.scope }
-func (m mockTuple) Type() string      { return m.tType }
-func (m mockTuple) Headers() []string { return []string{"header1", "header2", "header3"} }
-func (m mockTuple) Values() []string  { return []string{m.H1, m.H2, m.H3} }
+func (m MockTuple) Key() string   { return m.key }
+func (m MockTuple) Scope() string { return m.scope }
+func (m MockTuple) Type() string  { return m.tType }
 
 func TestCSVSink_ProcessOutput(t *testing.T) {
 
@@ -32,7 +30,7 @@ func TestCSVSink_ProcessOutput(t *testing.T) {
 
 	// setup channel
 	ch := make(chan marshal.Tuple, 3)
-	ch <- mockTuple{
+	ch <- MockTuple{
 		H1:    "value1",
 		H2:    "value2",
 		H3:    "value3",
@@ -40,7 +38,7 @@ func TestCSVSink_ProcessOutput(t *testing.T) {
 		scope: "entreprise",
 		tType: "testtype",
 	}
-	ch <- mockTuple{
+	ch <- MockTuple{
 		H1:    "value4",
 		H2:    "value5",
 		H3:    "value6",

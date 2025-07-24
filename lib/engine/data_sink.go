@@ -89,10 +89,13 @@ func (s *compositeSink) ProcessOutput(ch chan marshal.Tuple) error {
 	return err
 }
 
-type DiscardDataSink struct{}
+type DiscardDataSink struct {
+	counter int
+}
 
-func (DiscardDataSink) ProcessOutput(ch chan marshal.Tuple) error {
+func (s *DiscardDataSink) ProcessOutput(ch chan marshal.Tuple) error {
 	for range ch {
+		s.counter++
 	}
 	return nil
 }
