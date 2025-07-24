@@ -15,7 +15,7 @@ import (
 
 	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -168,7 +168,7 @@ func verifyExportedCSVFiles(t *testing.T) {
 func verifyPostgresExport(t *testing.T) {
 	t.Log("🗃️ Verifying postgresql export...")
 
-	conn, err := pgx.Connect(context.Background(), suite.PostgresURI)
+	conn, err := pgxpool.New(context.Background(), suite.PostgresURI)
 	if err != nil {
 		t.Errorf("Unable to connect to test database: %s", err)
 	}
@@ -191,7 +191,7 @@ func verifyPostgresExport(t *testing.T) {
 	}
 }
 
-func getTableContents(t *testing.T, conn *pgx.Conn, tableName string) string {
+func getTableContents(t *testing.T, conn *pgxpool.Pool, tableName string) string {
 	query := fmt.Sprintf("SELECT * FROM %s", tableName)
 
 	rows, err := conn.Query(context.Background(), query)
@@ -236,7 +236,7 @@ func getTableContents(t *testing.T, conn *pgx.Conn, tableName string) string {
 	return result.String()
 }
 
-func getAllTables(t *testing.T, conn *pgx.Conn) []string {
+func getAllTables(t *testing.T, conn *pgxpool.Pool) []string {
 	query := `SELECT tablename
   FROM pg_catalog.pg_tables
   WHERE schemaname = 'public'

@@ -27,7 +27,7 @@ func ImportBatch(
 	batch base.AdminBatch,
 	parsers []marshal.Parser,
 	skipFilter bool,
-	initStreamer func(parserType string) OutputStreamer,
+	sinkFactory SinkFactory,
 ) error {
 
 	logger := slog.With("batch", batch.ID.Key)
@@ -68,8 +68,12 @@ func ImportBatch(
 			// Stream data to the output sink(s)
 			g.Go(
 				func() error {
-					outputStreamer := initStreamer(parser.Type())
-					return outputStreamer.Stream(outputChannel)
+					dataSink, err := sinkFactory.CreateSink(parser.Type())
+					if err != nil {
+						return err
+					}
+
+					return dataSink.ProcessOutput(outputChannel)
 				},
 			)
 		}
