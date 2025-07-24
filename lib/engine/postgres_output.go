@@ -14,51 +14,59 @@ import (
 // BatchSize controls the max number of rows inserted at a time
 const BatchSize = 1000
 
-// PostgresOutputStreamer writes the output to postgresql.
+type PostgresSinkFactory struct {
+	conn *pgxpool.Pool
+}
+
+func NewPostgresSinkFactory(conn *pgxpool.Pool) SinkFactory {
+	return &PostgresSinkFactory{conn}
+}
+
+func (f *PostgresSinkFactory) CreateSink(parserType string) (DataSink, error) {
+	// Temporary: only ap data
+	if parserType == "apconso" || parserType == "apdemande" {
+		tableName := fmt.Sprintf("stg_%s", parserType)
+		return &PostgresSink{f.conn, tableName}, nil
+	}
+	return DiscardDataSink{}, nil
+
+}
+
+// PostgresSink writes the output to postgresql.
 //
 // The name of the table is defined by `parserType`, prefixed with "stg_".
 // The table is expected to exist and be properly formatted. It is truncated
 // before inserting new values.
 //
 // The columns of this table will correspond to the "Tuple.Headers()"
-type PostgresOutputStreamer struct {
-	conn       *pgxpool.Pool
-	parserType string
+type PostgresSink struct {
+	conn *pgxpool.Pool
+
+	// Name of the table to which to write
+	table string
 }
 
-func NewPostgresOutputStreamer(conn *pgxpool.Pool, parserType string) *PostgresOutputStreamer {
-	return &PostgresOutputStreamer{conn, parserType}
+func NewPostgresSink(conn *pgxpool.Pool) *PostgresSink {
+	return &PostgresSink{conn, ""}
 }
 
-func (out *PostgresOutputStreamer) Stream(ch chan marshal.Tuple) error {
-	logger := slog.With("parser", out.parserType, "streamer", "postgresql")
-
-	// Temporary: only ap data
-	if out.parserType != "apconso" && out.parserType != "apdemande" {
-		logger.Debug("discarding data")
-		for range ch {
-		}
-		return nil
-	}
-	// End temporary
+func (s *PostgresSink) ProcessOutput(ch chan marshal.Tuple) error {
+	logger := slog.With("sink", "postgresql", "table", s.table)
 
 	logger.Debug("stream output to PostgreSQL")
 
 	var currentBatch []marshal.Tuple
 	var headers []string
 
-	tableName := fmt.Sprintf("stg_%s", out.parserType)
+	logger.Debug("truncate table")
 
-	logger.Debug("truncate table", "table", tableName)
-
-	_, err := out.conn.Exec(context.Background(), fmt.Sprintf("TRUNCATE %s",
-		tableName))
+	_, err := s.conn.Exec(context.Background(), fmt.Sprintf("TRUNCATE %s", s.table))
 
 	if err != nil {
 		return err
 	}
 
-	logger.Debug("data insertion", "table", tableName)
+	logger.Debug("data insertion")
 
 	nInserted := 0
 
@@ -71,7 +79,7 @@ func (out *PostgresOutputStreamer) Stream(ch chan marshal.Tuple) error {
 
 		if len(currentBatch) >= BatchSize {
 
-			if err := insertTuples(currentBatch, out.conn, tableName, headers); err != nil {
+			if err := insertTuples(currentBatch, s.conn, s.table, headers); err != nil {
 				return fmt.Errorf("failed to execute batch insert: %w", err)
 			}
 
@@ -84,7 +92,7 @@ func (out *PostgresOutputStreamer) Stream(ch chan marshal.Tuple) error {
 	// Insert remaining tuples after channel closes
 	if len(currentBatch) > 0 {
 
-		if err := insertTuples(currentBatch, out.conn, tableName, headers); err != nil {
+		if err := insertTuples(currentBatch, s.conn, s.table, headers); err != nil {
 			return fmt.Errorf("failed to execute final batch: %w", err)
 		}
 

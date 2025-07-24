@@ -23,13 +23,11 @@ func (m mockTuple) Type() string      { return m.tType }
 func (m mockTuple) Headers() []string { return []string{"header1", "header2", "header3"} }
 func (m mockTuple) Values() []string  { return []string{m.H1, m.H2, m.H3} }
 
-func TestCSVOutputStreamer_Stream(t *testing.T) {
+func TestCSVSink_ProcessOutput(t *testing.T) {
 
-	// setup streamer func()
 	var buf bytes.Buffer
-	streamer := &CSVOutputStreamer{
-		relativeDirPath: "test",
-		writer:          &buf,
+	sink := &CSVSink{
+		writer: &buf,
 	}
 
 	// setup channel
@@ -53,7 +51,7 @@ func TestCSVOutputStreamer_Stream(t *testing.T) {
 	close(ch)
 
 	// Stream to writer
-	err := streamer.Stream(ch)
+	err := sink.ProcessOutput(ch)
 
 	if err != nil {
 		t.Error("Expect data to be streamed to writer")

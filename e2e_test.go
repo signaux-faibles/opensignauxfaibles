@@ -93,9 +93,17 @@ func setupSuite() (*TestSuite, error) {
 	os.Setenv("DB_DIAL", mongoURI)
 	os.Setenv("DB", mongoDatabase)
 	os.Setenv("APP_DATA", ".")
-	os.Setenv("LOG_LEVEL", "error")
 	os.Setenv("EXPORT_PATH", tmpDir)
 	os.Setenv("POSTGRES_DB_URL", postgresURI)
+
+	// Allow to set a different log level with LOG_LEVEL environment variable
+	// This may break the tests, which expect an "error" log level,
+	// but it makes it easier to debug a test that fails.
+	logLevel := os.Getenv("LOG_LEVEL")
+	if logLevel == "" {
+		logLevel = "error"
+	}
+	os.Setenv("LOG_LEVEL", logLevel)
 
 	// When testing "runCli" directly, the config is not initialized, so we do
 	// it here
