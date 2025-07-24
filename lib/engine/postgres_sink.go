@@ -28,7 +28,7 @@ func (f *PostgresSinkFactory) CreateSink(parserType string) (DataSink, error) {
 		tableName := fmt.Sprintf("stg_%s", parserType)
 		return &PostgresSink{f.conn, tableName}, nil
 	}
-	return DiscardDataSink{}, nil
+	return &DiscardDataSink{}, nil
 
 }
 

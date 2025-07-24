@@ -58,7 +58,7 @@ func Test_CheckBatchPaths(t *testing.T) {
 type TestSinkFactory struct{}
 
 func (TestSinkFactory) CreateSink(parserType string) (DataSink, error) {
-	return DiscardDataSink{}, nil
+	return &DiscardDataSink{}, nil
 }
 
 func Test_ImportBatch(t *testing.T) {
