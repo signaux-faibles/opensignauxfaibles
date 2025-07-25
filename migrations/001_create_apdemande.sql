@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS stg_apdemande (
-            id_demande           VARCHAR(255),
-            siret                VARCHAR(14) PRIMARY KEY,
+            id_demande           VARCHAR(11) PRIMARY KEY,
+            siret                VARCHAR(14),
             effectif_entreprise  INTEGER,
             effectif             INTEGER,
             date_statut          DATE,
@@ -15,6 +15,8 @@ CREATE TABLE IF NOT EXISTS stg_apdemande (
             effectif_consomme    INTEGER,
             perimetre            INTEGER
 );
+
+CREATE INDEX IF NOT EXISTS idx_stg_apdemande_siret ON stg_apdemande(siret);
 
 ---- create above / drop below ----
 

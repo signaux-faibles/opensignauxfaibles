@@ -11,7 +11,7 @@ import (
 
 // APConso Consommation d'activité partielle
 type APConso struct {
-	ID             string    `input:"ID_DA"      json:"id_conso"       sql:"id_conso"         csv:"ID"`
+	ID             string    `input:"ID_DA"      json:"id_conso"       sql:"id_demande"       csv:"ID"`
 	Siret          string    `input:"ETAB_SIRET" json:"-"              sql:"siret"            csv:"Siret"`
 	HeureConsommee *float64  `input:"HEURES"     json:"heure_consomme" sql:"heures_consommees"csv:"HeureConsommee"`
 	Montant        *float64  `input:"MONTANTS"   json:"montant"        sql:"montant"          csv:"Montant"`
