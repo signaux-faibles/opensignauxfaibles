@@ -176,14 +176,19 @@ func verifyPostgresExport(t *testing.T) {
 
 	tables := getAllTables(t, conn)
 
+	hasMigrationTable := false
 	for _, table := range tables {
 		if table == engine.VersionTable {
+			hasMigrationTable = true
 			continue
 		}
 		output := getTableContents(t, conn, table)
 		goldenFile := fmt.Sprintf("test-import.sql.%s.golden.txt", table)
 		tmpOutputFile := fmt.Sprintf("test-import.sql.%s.output.txt", table)
 		compareWithGoldenFileOrUpdate(t, goldenFile, output, tmpOutputFile)
+	}
+	if !hasMigrationTable {
+		t.Errorf("Expecting the migration table to be present")
 	}
 }
 
