@@ -6,6 +6,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"opensignauxfaibles/lib/engine"
 	"os"
 	"path/filepath"
 	"sort"
@@ -177,7 +178,7 @@ func verifyPostgresExport(t *testing.T) {
 
 	hasMigrationTable := false
 	for _, table := range tables {
-		if table == pgMigrationsTable {
+		if table == engine.VersionTable {
 			hasMigrationTable = true
 			continue
 		}
