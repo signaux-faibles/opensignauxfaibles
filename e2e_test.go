@@ -3,11 +3,9 @@
 package main
 
 import (
-	"context"
 	"flag"
 	"fmt"
 	"log"
-	"opensignauxfaibles/lib/engine"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -15,8 +13,6 @@ import (
 	"time"
 
 	"github.com/globalsign/mgo"
-	"github.com/jackc/pgx/v5"
-	"github.com/jackc/tern/v2/migrate"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -37,13 +33,12 @@ const (
 )
 
 const (
-	pgImage         = "postgres:17.5@sha256:30fa5c5e240b7b2ff2c31adf5a4c5ccacf22dae1d7760fea39061eb8af475854"
-	pgContainer     = "test-postgres"
-	pgPort          = 5432
-	pgDatabase      = "testdb"
-	pgUser          = "testuser"
-	pgPassword      = "testpass"
-	pgMigrationsDir = "./lib/engine/migrations"
+	pgImage     = "postgres:17.5@sha256:30fa5c5e240b7b2ff2c31adf5a4c5ccacf22dae1d7760fea39061eb8af475854"
+	pgContainer = "test-postgres"
+	pgPort      = 5432
+	pgDatabase  = "testdb"
+	pgUser      = "testuser"
+	pgPassword  = "testpass"
 )
 
 var update = flag.Bool("update", false, "Update the expected test values in golden file")
@@ -118,11 +113,7 @@ func setupSuite() (*TestSuite, error) {
 		panic(err)
 	}
 
-	// Needs to be done after environment variables are set
-	log.Println("  Run PostgreSQL migrations")
-	runPostgresMigrations()
-	log.Println("  PostreSQL migrations completed successfuly")
-
+	time.Sleep(3 * time.Second)
 	return &TestSuite{
 		TmpDir:         tmpDir,
 		MongoURI:       mongoURI,
@@ -233,49 +224,6 @@ func startPostgresContainer() {
 	if err != nil {
 		panic(err)
 	}
-}
-
-func runPostgresMigrations() {
-
-	ctx := context.Background()
-
-	var err error
-
-	// Try to connect as soon as container allows it
-	var conn *pgx.Conn
-	retries := 5
-	for range retries {
-		conn, err = pgx.Connect(ctx, os.Getenv("POSTGRES_DB_URL"))
-
-		if err == nil {
-			defer conn.Close(context.Background())
-			err = conn.Ping(context.Background())
-
-			if err == nil {
-				break
-			}
-		}
-
-		time.Sleep(1 * time.Second)
-	}
-
-	if err != nil {
-		panic(err)
-	}
-
-	m, err := migrate.NewMigrator(context.Background(), conn, engine.VersionTable)
-	if err != nil {
-		panic(err)
-	}
-
-	if err = m.LoadMigrations(engine.MigrationFS); err != nil {
-		panic(err)
-	}
-
-	if err = m.Migrate(ctx); err != nil {
-		panic(err)
-	}
-
 }
 
 func cleanDatabase(t *testing.T, db *mgo.Database) {
