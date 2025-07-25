@@ -9,7 +9,7 @@ RUN apk add --no-cache ca-certificates wget tar && \
     apk del wget tar
 
 COPY --chmod=555 sfdata /app/sfdata
-COPY migrations /migrations
+COPY migrations /app/migrations
 WORKDIR /app
 EXPOSE 3000
 CMD ["/app/sfdata"]
