@@ -29,8 +29,6 @@ jobs:
         with:
           go-version-file: ./go.mod
       - run: make build
-      - run: cp config-sample.toml config.toml
-
       - run: go test -v -coverprofile=go-coverage.out -covermode=atomic -coverpkg=./... ./...
       - name: Show coverage
         run: go tool cover -func=go-coverage.out
@@ -48,31 +46,4 @@ jobs:
 
       - run: make build
 
-      - name: Remove source code
-        run: |
-          # delete all files, except the binary, config, NAF and other data files used by tests
-          find . \
-            ! -name 'sfdata' \
-            ! -name '*.toml' \
-            ! -name 'test*.sh' \
-            ! -name 'sfdata-wrapper.sh' \
-            ! -name 'diff-or-update-golden-master.sh' \
-            ! -name 'mongodb-container.sh' \
-            ! -name 'populate-from-objects.sh' \
-            ! -name '*.txt' \
-            ! -name '*.csv' \
-            ! -name '*.json' \
-            ! -name '*.excel' \
-            ! -name 'objects.js' \
-            -type f \
-            -exec rm -v {} +
-
-      - name: Crée le fichier de configuration minimal
-        run: |
-          touch config.toml
-          echo "[log]" >> config.toml
-          echo "level = \"error\"" >> config.toml
-
-      - run: ./tests/test-import.sh
-
-      - run: ./tests/test-check.sh
+      - run: go test -tags=e2e

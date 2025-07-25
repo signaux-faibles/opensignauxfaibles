@@ -1,0 +1,6 @@
+==== sirene_ul.csv ====
+Siren,RaisonSociale,Prenom1UniteLegale,Prenom2UniteLegale,Prenom3UniteLegale,Prenom4UniteLegale,NomUniteLegale,NomUsageUniteLegale,CodeStatutJuridique,Creation
+138426539,,cuhgjdp,,,,jjqcmkg,,5465,
+789211558,,ajfwprw-qmxobv,,,,fvxmjl,,5258,
+238307776,,wwdsrst,,,,nduxdzbou,,4263,1964-01-01
+112233445,companyname,,,,,,,5422,1967-01-01

@@ -30,21 +30,8 @@ heading "go test"
 if [[ "$*" == *--update* ]]
 then
     (go test ./... -test.count=1 -update) 2>&1 | indent
+    (go test ./... -tags=e2e -test.count=1 -update) 2>&1 | indent
 else
     (go test ./... -test.count=1) 2>&1 | indent
-fi
-
-heading "test-check.sh"
-./tests/test-check.sh $@ 2>&1 | indent
-
-heading "test-import.sh"
-./tests/test-import.sh $@ 2>&1 | indent
-
-heading "test-parseFile.sh"
-./tests/test-parseFile.sh $@ 2>&1 | indent
-
-# Check if the --update flag was passed
-if [[ "$*" == *--update* ]]
-then
-    echo "ℹ️  Golden master files were updated"
+    (go test ./... -tags=e2e -test.count=1) 2>&1 | indent
 fi
