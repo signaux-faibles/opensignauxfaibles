@@ -55,22 +55,16 @@ func Test_CheckBatchPaths(t *testing.T) {
 	}
 }
 
-type TestOutputStreamer struct{}
+type TestSinkFactory struct{}
 
-func (TestOutputStreamer) Stream(ch chan marshal.Tuple) error {
-	go func() { // discard all data
-		for range ch {
-		}
-	}()
-	return nil
+func (TestSinkFactory) CreateSink(parserType string) (DataSink, error) {
+	return &DiscardDataSink{}, nil
 }
-
-var initOutputStreamer = func(key, parserType string) OutputStreamer { return TestOutputStreamer{} }
 
 func Test_ImportBatch(t *testing.T) {
 
 	batch := base.AdminBatch{}
-	err := ImportBatch(batch, []marshal.Parser{}, false, initOutputStreamer)
+	err := ImportBatch(batch, []marshal.Parser{}, false, TestSinkFactory{})
 	if err == nil {
 		t.Error("ImportBatch devrait nous empêcher d'importer sans filtre")
 	}
@@ -78,7 +72,7 @@ func Test_ImportBatch(t *testing.T) {
 
 func Test_ImportBatchWithUnreadableFilter(t *testing.T) {
 	batch := base.MockBatch("filter", []string{"this_file_does_not_exist"})
-	err := ImportBatch(batch, []marshal.Parser{}, false, initOutputStreamer)
+	err := ImportBatch(batch, []marshal.Parser{}, false, TestSinkFactory{})
 	if err == nil {
 		t.Error("ImportBatch devrait échouer en tentant d'ouvrir un fichier filtre illisible")
 	}

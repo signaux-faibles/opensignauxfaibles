@@ -26,7 +26,7 @@ func IndexColumnsFromCsvHeader(reader *csv.Reader, destObject interface{}) (ColM
 // en en-tête d'un fichier csv, à partir des noms de colonnes spécifiés dans le
 // tag "input"  annotant les propriétés du type de destination du parseur.
 func ValidateAndIndexColumnsFromInputTags(headerRow []string, destObject interface{}) (ColMapping, error) {
-	requiredFields := ExtractInputTags(destObject)
+	requiredFields := ExtractInputHeaders(destObject)
 	idx := indexFields(headerRow)
 	_, err := idx.HasFields(requiredFields)
 	return idx, err
@@ -153,55 +153,44 @@ func LowercaseFields(headerFields []string) []string {
 	return normalizedHeaderFields
 }
 
-// ExtractInputTags extrait les noms de colonnes depuis les valeurs du tag
-// "input" de chaque propriété de l'objet (de type "struct") fourni.
-// En l'absence de ce tag, pour une propriété de type "struct", les noms des
-// colonnes seront recursivement extraites du type de la propriété.
-func ExtractInputTags(object any) (expectedFields []string) {
-	t := reflect.TypeOf(object)
-	return recursiveExtractTags(t, "input")
+// ExtractInputHeaders extrait les en-têtes des fichiers d'entrée via le tag "input"
+func ExtractInputHeaders(object any) []string {
+	return ExtractFieldsByTags(object, "input")
 }
 
-// ExtractCSVTags extrait les noms de colonnes depuis les valeurs du tag
-// "csv" de chaque propriété de l'objet (de type "struct") fourni.
-// En l'absence de ce tag, pour une propriété de type "struct", les noms des
+// ExtractFieldsByTags extrait les noms de colonnes depuis les valeurs du tag
+// "tag" de chaque propriété de l'objet (de type "struct") fourni.
+//
+// Pour une propriété de type "struct", et en l'absence de ce tag, les noms des
 // colonnes seront recursivement extraites du type de la propriété.
-func ExtractCSVTags(object any) (header []string) {
+func ExtractFieldsByTags(object any, tag string) (fields []string) {
 	t := reflect.TypeOf(object)
-	return recursiveExtractTags(t, "csv")
-}
-
-func recursiveExtractTags(t reflect.Type, tag string) (expectedFields []string) {
 	for i := range t.NumField() {
 		field := t.Field(i)
 
-		tagWithSingleVal := field.Tag.Get(tag)
+		fieldTag := field.Tag.Get(tag)
 
-		if tagWithSingleVal != "" {
-			expectedFields = append(expectedFields, tagWithSingleVal)
-		} else if field.Type.Kind() == reflect.Struct {
-			nestedFields := recursiveExtractTags(field.Type, tag)
-			expectedFields = append(expectedFields, nestedFields...)
+		if fieldTag != "" {
+			fields = append(fields, fieldTag)
 		}
 	}
-	return expectedFields
+	return fields
 }
 
-func (m CSVMarshaller) recursiveExtractValues(t reflect.Type, v reflect.Value,
-	tag string) (values []reflect.Value) {
+// ExtractValuesByTags returns the values associated with a tag
+// The values are in same order than the output of ExtractFieldsByTags
+func ExtractValuesByTags(object any, tag string) (values []reflect.Value) {
 
-	for i := 0; i < t.NumField(); i++ {
+	t := reflect.TypeOf(object)
+	v := reflect.ValueOf(object)
+
+	for i := range t.NumField() {
 		field := t.Field(i)
 		fieldValue := v.Field(i)
 		tagWithSingleVal := field.Tag.Get(tag)
 
 		if tagWithSingleVal != "" {
-			csvValue := fieldValue
-			values = append(values, csvValue)
-		} else if field.Type.Kind() == reflect.Struct {
-			// Recursively process nested struct
-			nestedValues := m.recursiveExtractValues(field.Type, fieldValue, tag)
-			values = append(values, nestedValues...)
+			values = append(values, fieldValue)
 		}
 	}
 	return values

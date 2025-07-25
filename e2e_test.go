@@ -3,6 +3,7 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"log"
@@ -13,6 +14,8 @@ import (
 	"time"
 
 	"github.com/globalsign/mgo"
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/tern/v2/migrate"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -20,6 +23,7 @@ type TestSuite struct {
 	TmpDir         string
 	GoldenFilesDir string
 	MongoURI       string
+	PostgresURI    string
 }
 
 var suite *TestSuite
@@ -29,6 +33,17 @@ const (
 	mongoContainer = "sf-mongodb"
 	mongoPort      = 27016
 	mongoDatabase  = "signauxfaibles"
+)
+
+const (
+	pgImage           = "postgres:17.5@sha256:30fa5c5e240b7b2ff2c31adf5a4c5ccacf22dae1d7760fea39061eb8af475854"
+	pgContainer       = "test-postgres"
+	pgPort            = 5432
+	pgDatabase        = "testdb"
+	pgUser            = "testuser"
+	pgPassword        = "testpass"
+	pgMigrationsDir   = "./migrations"
+	pgMigrationsTable = "migrations"
 )
 
 var update = flag.Bool("update", false, "Update the expected test values in golden file")
@@ -58,6 +73,17 @@ func setupSuite() (*TestSuite, error) {
 	startMongoContainer()
 	mongoURI := fmt.Sprintf("mongodb://localhost:%v", mongoPort)
 
+	log.Println("  Setting up Postgresql")
+	startPostgresContainer()
+
+	postgresURI := fmt.Sprintf(
+		"postgres://%s:%s@localhost:%v/%s?sslmode=disable",
+		pgUser,
+		pgPassword,
+		pgPort,
+		pgDatabase,
+	)
+
 	log.Println("  Setting up configuration")
 
 	tmpDir := filepath.Join("tests", "tmp-test-execution-files")
@@ -67,8 +93,17 @@ func setupSuite() (*TestSuite, error) {
 	os.Setenv("DB_DIAL", mongoURI)
 	os.Setenv("DB", mongoDatabase)
 	os.Setenv("APP_DATA", ".")
-	os.Setenv("LOG_LEVEL", "error")
 	os.Setenv("EXPORT_PATH", tmpDir)
+	os.Setenv("POSTGRES_DB_URL", postgresURI)
+
+	// Allow to set a different log level with LOG_LEVEL environment variable
+	// This may break the tests, which expect an "error" log level,
+	// but it makes it easier to debug a test that fails.
+	logLevel := os.Getenv("LOG_LEVEL")
+	if logLevel == "" {
+		logLevel = "error"
+	}
+	os.Setenv("LOG_LEVEL", logLevel)
 
 	// When testing "runCli" directly, the config is not initialized, so we do
 	// it here
@@ -83,12 +118,15 @@ func setupSuite() (*TestSuite, error) {
 		panic(err)
 	}
 
-	// Give the DB time to start
-	time.Sleep(2 * time.Second)
+	// Needs to be done after environment variables are set
+	log.Println("  Run PostgreSQL migrations")
+	runPostgresMigrations()
+	log.Println("  PostreSQL migrations completed successfuly")
 
 	return &TestSuite{
 		TmpDir:         tmpDir,
 		MongoURI:       mongoURI,
+		PostgresURI:    postgresURI,
 		GoldenFilesDir: filepath.Join("tests", "output-snapshots"),
 	}, nil
 }
@@ -96,6 +134,7 @@ func setupSuite() (*TestSuite, error) {
 func teardownSuite() {
 	log.Println("Teardown db containers and temporary directory...")
 	stopMongoContainer()
+	stopPostgresContainer()
 	deleteTempFolder()
 }
 
@@ -168,6 +207,79 @@ func startMongoContainer() {
 	}
 }
 
+func startPostgresContainer() {
+	exec.Command("docker", "stop", pgContainer).Run()
+	exec.Command("docker", "rm", pgContainer).Run()
+	portMapping := fmt.Sprintf("%v:5432", pgPort)
+	startPgCommand := exec.Command(
+		"docker",
+		"run",
+		"--rm",
+		"-d",
+		"-p",
+		portMapping,
+		"--name",
+		pgContainer,
+		"-e",
+		fmt.Sprintf("POSTGRES_DB=%s", pgDatabase),
+		"-e",
+		fmt.Sprintf("POSTGRES_USER=%s", pgUser),
+		"-e",
+		fmt.Sprintf("POSTGRES_PASSWORD=%s", pgPassword),
+		pgImage,
+	)
+
+	err := startPgCommand.Run()
+	if err != nil {
+		panic(err)
+	}
+}
+
+func runPostgresMigrations() {
+
+	ctx := context.Background()
+
+	var err error
+
+	// Try to connect as soon as container allows it
+	var conn *pgx.Conn
+	retries := 5
+	for range retries {
+		conn, err = pgx.Connect(ctx, os.Getenv("POSTGRES_DB_URL"))
+
+		if err == nil {
+			defer conn.Close(context.Background())
+			err = conn.Ping(context.Background())
+
+			if err == nil {
+				break
+			}
+		}
+
+		time.Sleep(1 * time.Second)
+	}
+
+	if err != nil {
+		panic(err)
+	}
+
+	m, err := migrate.NewMigrator(context.Background(), conn, pgMigrationsTable)
+	if err != nil {
+		panic(err)
+	}
+
+	migrationFS := os.DirFS(pgMigrationsDir)
+
+	if err = m.LoadMigrations(migrationFS); err != nil {
+		panic(err)
+	}
+
+	if err = m.Migrate(ctx); err != nil {
+		panic(err)
+	}
+
+}
+
 func cleanDatabase(t *testing.T, db *mgo.Database) {
 	t.Log("🧹 Cleaning database...")
 
@@ -183,6 +295,12 @@ func cleanDatabase(t *testing.T, db *mgo.Database) {
 
 func stopMongoContainer() {
 	if err := exec.Command("docker", "stop", mongoContainer).Run(); err != nil {
+		log.Println(err) // affichage à titre informatif
+	}
+}
+
+func stopPostgresContainer() {
+	if err := exec.Command("docker", "stop", pgContainer).Run(); err != nil {
 		log.Println(err) // affichage à titre informatif
 	}
 }

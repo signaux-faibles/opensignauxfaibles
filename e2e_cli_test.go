@@ -60,9 +60,8 @@ func TestCLI(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			// Execute command and capture output
 			cmd := exec.Command("./sfdata", tc.args...)
-			var stdout, stderr bytes.Buffer
+			var stdout bytes.Buffer
 			cmd.Stdout = &stdout
-			cmd.Stderr = &stderr
 
 			err := cmd.Run()
 
@@ -78,10 +77,6 @@ func TestCLI(t *testing.T) {
 
 			if stdout.Len() > 0 {
 				output.WriteString(stdout.String())
-			}
-			if stderr.Len() > 0 {
-				output.WriteString("--- stderr capture\n")
-				output.WriteString(stderr.String())
 			}
 
 			output.WriteString("---\n")

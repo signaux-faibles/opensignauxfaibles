@@ -14,21 +14,21 @@ import (
 
 // APDemande Demande d'activité partielle
 type APDemande struct {
-	ID                 string    `input:"ID_DA"              json:"id_demande"           csv:"id_demande"`
-	Siret              string    `input:"ETAB_SIRET"         json:"-"                    csv:"siret"`
-	EffectifEntreprise *int      `input:"EFF_ENT"            json:"effectif_entreprise"  csv:"effectif_entreprise"`
-	Effectif           *int      `input:"EFF_ETAB"           json:"effectif"             csv:"effectif"`
-	DateStatut         time.Time `input:"DATE_STATUT"        json:"date_statut"          csv:"date_statut"`
-	PeriodeDebut       time.Time `input:"DATE_DEB"            json:"periode_debut"        csv:"période_début"`
-	PeriodeFin         time.Time `input:"DATE_FIN"            json:"periode_fin"          csv:"période_fin"`
-	HTA                *float64  `input:"HTA"                json:"hta"                  csv:"heures_autorisées"`
-	MTA                *float64  `                           json:"mta"                  csv:"montants_autorisés"`
-	EffectifAutorise   *int      `input:"EFF_AUTO"           json:"effectif_autorise"    csv:"effectif_autorisé"`
-	MotifRecoursSE     *int      `input:"MOTIF_RECOURS_SE"   json:"motif_recours_se"     csv:"motif_recours_se"`
-	HeureConsommee     *float64  `input:"S_HEURE_CONSOM_TOT" json:"heure_consommee"      csv:"heure_consommee"`
-	MontantConsomme    *float64  `                           json:"montant_consommee"    csv:"montant_consomme"`
-	EffectifConsomme   *int      `input:"S_HEURE_CONSOM_TOT" json:"effectif_consomme"    csv:"effectif_consomme"`
-	Perimetre          *int      `input:"PERIMETRE_AP"       json:"perimetre"            csv:"perimetre"`
+	ID                 string    `input:"ID_DA"              json:"id_demande"          sql:"id_demande"           csv:"id_demande"`
+	Siret              string    `input:"ETAB_SIRET"         json:"-"                   sql:"siret"                csv:"siret"`
+	EffectifEntreprise *int      `input:"EFF_ENT"            json:"effectif_entreprise" sql:"effectif_entreprise"  csv:"effectif_entreprise"`
+	Effectif           *int      `input:"EFF_ETAB"           json:"effectif"            sql:"effectif"             csv:"effectif"`
+	DateStatut         time.Time `input:"DATE_STATUT"        json:"date_statut"         sql:"date_statut"          csv:"date_statut"`
+	PeriodeDebut       time.Time `input:"DATE_DEB"           json:"periode_debut"       sql:"periode_debut"        csv:"période_début"`
+	PeriodeFin         time.Time `input:"DATE_FIN"           json:"periode_fin"         sql:"periode_fin"          csv:"période_fin"`
+	HTA                *float64  `input:"HTA"                json:"hta"                 sql:"hta"                  csv:"heures_autorisées"`
+	MTA                *float64  `                           json:"mta"                 sql:"mta"                  csv:"montants_autorisés"`
+	EffectifAutorise   *int      `input:"EFF_AUTO"           json:"effectif_autorise"   sql:"effectif_autorise"    csv:"effectif_autorisé"`
+	MotifRecoursSE     *int      `input:"MOTIF_RECOURS_SE"   json:"motif_recours_se"    sql:"motif_recours_se"     csv:"motif_recours_se"`
+	HeureConsommee     *float64  `input:"S_HEURE_CONSOM_TOT" json:"heures_consommees"   sql:"heures_consommees"    csv:"heure_consommee"`
+	MontantConsomme    *float64  `                           json:"montant_consomme"    sql:"montant_consomme"    csv:"montant_consomme"`
+	EffectifConsomme   *int      `input:"S_HEURE_CONSOM_TOT" json:"effectif_consomme"   sql:"effectif_consomme"    csv:"effectif_consomme"`
+	Perimetre          *int      `input:"PERIMETRE_AP"       json:"perimetre"           sql:"perimetre"            csv:"perimetre"`
 }
 
 // Key id de l'objet
