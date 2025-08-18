@@ -24,11 +24,8 @@ func NewPostgresSinkFactory(conn *pgxpool.Pool) SinkFactory {
 
 func (f *PostgresSinkFactory) CreateSink(parserType string) (DataSink, error) {
 	// Temporary: only ap data
-	if parserType == "apconso" || parserType == "apdemande" {
-		tableName := fmt.Sprintf("stg_%s", parserType)
-		return &PostgresSink{f.conn, tableName}, nil
-	}
-	return &DiscardDataSink{}, nil
+	tableName := fmt.Sprintf("stg_%s", parserType)
+	return &PostgresSink{f.conn, tableName}, nil
 }
 
 // PostgresSink writes the output to postgresql.
