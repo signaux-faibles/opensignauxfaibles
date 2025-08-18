@@ -1,6 +1,5 @@
 CREATE TABLE IF NOT EXISTS stg_sirene_ul (
     siren                   VARCHAR(9),
-    nic                     VARCHAR(5),
     raison_sociale          TEXT,
     prenom1_unite_legale    VARCHAR(100),
     prenom2_unite_legale    VARCHAR(100),

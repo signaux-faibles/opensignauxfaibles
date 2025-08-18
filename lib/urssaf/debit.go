@@ -11,7 +11,7 @@ import (
 
 // Debit Débit – fichier Urssaf
 type Debit struct {
-	key                          string    `                                                             sql:"siret"                            csv:"siret"`
+	Siret                        string    `                         json:"-"                            sql:"siret"                            csv:"siret"`
 	NumeroCompte                 string    `input:"num_cpte"         json:"numero_compte"                sql:"numero_compte"                    csv:"numéro_compte"`
 	NumeroEcartNegatif           string    `input:"Num_Ecn"          json:"numero_ecart_negatif"         sql:"numero_ecart_negatif"             csv:"numéro_écart_négatif"`
 	DateTraitement               time.Time `input:"Dt_trt_ecn"       json:"date_traitement"              sql:"date_traitement"                  csv:"date_traitement"`
@@ -29,7 +29,7 @@ type Debit struct {
 
 // Key _id de l'objet
 func (debit Debit) Key() string {
-	return debit.key
+	return debit.Siret
 }
 
 // Scope de l'objet
@@ -87,7 +87,7 @@ func (parser *debitParser) parseLine(row []string, parsedLine *marshal.ParsedLin
 
 	if siret, err := marshal.GetSiretFromComptesMapping(idxRow.GetVal("num_cpte"), &periodeDebut, parser.comptes); err == nil {
 		debit := Debit{
-			key:                       siret,
+			Siret:                     siret,
 			NumeroCompte:              idxRow.GetVal("num_cpte"),
 			NumeroEcartNegatif:        idxRow.GetVal("Num_Ecn"),
 			CodeProcedureCollective:   idxRow.GetVal("Cd_pro_col"),

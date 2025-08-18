@@ -11,7 +11,7 @@ import (
 
 // Delai tuple fichier ursaff
 type Delai struct {
-	key               string    `                                                              sql:"siret"                csv:"siret"`
+	Siret             string    `                                    json:"-"                  sql:"siret"                csv:"siret"`
 	NumeroCompte      string    `input:"Numero_compte_externe"       json:"numero_compte"      sql:"numero_compte"        csv:"numéro_compte"`
 	NumeroContentieux string    `input:"Numero_structure"            json:"numero_contentieux" sql:"numero_contentieux"   csv:"numéro_contentieux"`
 	DateCreation      time.Time `input:"Date_creation"               json:"date_creation"      sql:"date_creation"        csv:"date_création"`
@@ -27,7 +27,7 @@ type Delai struct {
 
 // Key _id de l'objet
 func (delai Delai) Key() string {
-	return delai.key
+	return delai.Siret
 }
 
 // Scope de l'objet
@@ -92,7 +92,7 @@ func (parser *delaiParser) parseDelaiLine(row []string, parsedLine *marshal.Pars
 func parseDelaiLine(idxRow marshal.IndexedRow, siret string, parsedLine *marshal.ParsedLineResult) {
 	var err error
 	delai := Delai{}
-	delai.key = siret
+	delai.Siret = siret
 	delai.NumeroCompte = idxRow.GetVal("Numero_compte_externe")
 	delai.NumeroContentieux = idxRow.GetVal("Numero_structure")
 	delai.DateCreation, err = time.Parse("02/01/2006", idxRow.GetVal("Date_creation"))

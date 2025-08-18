@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS stg_delai (
-    key                 VARCHAR(14),
+    siret               VARCHAR(14),
     numero_compte       TEXT,
     numero_contentieux  VARCHAR(50),
     date_creation       DATE,
@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS stg_delai (
     action              VARCHAR(50)
 );
 
-CREATE INDEX IF NOT EXISTS idx_stg_delai_key ON stg_delai(key);
+CREATE INDEX IF NOT EXISTS idx_stg_delai_siret ON stg_delai(siret);
 CREATE INDEX IF NOT EXISTS idx_stg_delai_date_creation ON stg_delai(date_creation);
 CREATE INDEX IF NOT EXISTS idx_stg_delai_date_echeance ON stg_delai(date_echeance);
 
