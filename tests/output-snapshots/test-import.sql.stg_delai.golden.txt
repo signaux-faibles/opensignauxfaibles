@@ -1,0 +1,3 @@
+siret               	numero_compte       	numero_contentieux  	date_creation       	date_echeance       	duree_delai         	denomination        	indic_6m            	annee_creation      	montant_echeancier  	stade               	action              
+00000000000000      	111982477292496174  	5856690802766       	2000-01-01 00:00:00 	2001-01-04 00:00:00 	456                 	etmlgcthph ecoowixkn	lhm                 	5647                	5065.79             	nbz sk              	cya ng              
+11111111111111      	636043216536562844  	8981265766679       	2000-03-03 00:00:00 	2001-05-05 00:00:00 	758                 	mtj n.p. eg saxjoc  	uqu                 	9941                	74825.41            	qh                  	bad mu              
