@@ -11,7 +11,7 @@ import (
 
 // Cotisation Objet cotisation
 type Cotisation struct {
-	key          string    `                                        sql:"siret"            csv:"siret"`
+	Siret        string    `                   json:"-"             sql:"siret"            csv:"siret"`
 	NumeroCompte string    `input:"Compte"     json:"numero_compte" sql:"numero_compte"  csv:"numéro_compte"`
 	PeriodeDebut time.Time `input:"periode"    json:"periode_debut" sql:"periode_debut"  csv:"période_début"`
 	PeriodeFin   time.Time `input:"periode"    json:"periode_fin"   sql:"periode_fin"    csv:"période_fin"`
@@ -21,7 +21,7 @@ type Cotisation struct {
 
 // Key _id de l'objet
 func (cotisation Cotisation) Key() string {
-	return cotisation.key
+	return cotisation.Siret
 }
 
 // Scope de l'objet
@@ -82,7 +82,7 @@ func parseCotisationLine(idx marshal.ColMapping, row []string, comptes *marshal.
 	if err != nil {
 		parsedLine.SetFilterError(err)
 	} else {
-		cotisation.key = siret
+		cotisation.Siret = siret
 		cotisation.NumeroCompte = idxRow.GetVal("Compte")
 		cotisation.PeriodeDebut = periodeDebut
 		cotisation.PeriodeFin = periodeFin

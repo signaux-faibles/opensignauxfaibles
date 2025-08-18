@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS stg_sirene (
 );
 
 CREATE INDEX IF NOT EXISTS idx_stg_sirene_siren ON stg_sirene(siren);
-CREATE INDEX IF NOT EXISTS idx_stg_sirene_nic ON stg_sirene(nic);
+CREATE INDEX IF NOT EXISTS idx_stg_sirene_siret ON stg_sirene(siret);
 
 ---- create above / drop below ----
 

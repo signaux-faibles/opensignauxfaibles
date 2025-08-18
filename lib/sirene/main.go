@@ -19,7 +19,7 @@ import (
 type Sirene struct {
 	Siren                string     `input:"siren"                                       json:"siren,omitempty"                 sql:"siren"                    csv:"siren"`
 	Nic                  string     `input:"nic"                                         json:"nic,omitempty"                                                  csv:"nic"`
-	Siret                string     `                                                                                           sql:"siret"`
+	Siret                string     `                                                    json:"-"                               sql:"siret"`
 	Siege                bool       `input:"etablissementSiege"                          json:"siege,omitempty"                 sql:"siege"                    csv:"siege"`
 	ComplementAdresse    string     `input:"complementAdresseEtablissement"              json:"complement_adresse,omitempty"    sql:"complement_adresse"       csv:"complement_adresse"`
 	NumVoie              string     `input:"numeroVoieEtablissement"                     json:"numero_voie,omitempty"           sql:"numero_voie"              csv:"numéro_voie"`
