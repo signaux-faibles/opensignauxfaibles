@@ -1,0 +1,6 @@
+id                  	label               
+1                   	Conjoncture économi
+2                   	Difficultés d'appro
+3                   	Sinistre ou intempé
+4                   	Transformation, rest
+5                   	Autres circonstances
