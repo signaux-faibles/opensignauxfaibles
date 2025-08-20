@@ -109,7 +109,7 @@ func setupSuite() (*TestSuite, error) {
 
 func teardownSuite() {
 	log.Println("Teardown db containers and temporary directory...")
-	stopPostgresContainer()
+	rmPostgresContainer()
 	deleteTempFolder()
 }
 
@@ -172,8 +172,8 @@ func updateGoldenFile(goldenPath, actualOutput string) error {
 }
 
 func startPostgresContainer() {
-	exec.Command("docker", "stop", pgContainer).Run()
-	exec.Command("docker", "rm", pgContainer).Run()
+	rmPostgresContainer()
+
 	portMapping := fmt.Sprintf("%v:5432", pgPort)
 	startPgCommand := exec.Command(
 		"docker",
@@ -193,16 +193,15 @@ func startPostgresContainer() {
 		pgImage,
 	)
 
-	err := startPgCommand.Run()
+	out, err := startPgCommand.CombinedOutput()
 	if err != nil {
-		panic(err)
+		log.Fatalf("Failed to start Postgres container: %v\nOutput: %s", err, string(out))
 	}
 }
 
-func stopPostgresContainer() {
-	if err := exec.Command("docker", "stop", pgContainer).Run(); err != nil {
-		log.Println(err) // affichage à titre informatif
-	}
+func rmPostgresContainer() {
+	exec.Command("docker", "stop", pgContainer).Run()
+	exec.Command("docker", "rm", "-f", pgContainer).Run()
 }
 
 func deleteTempFolder() {
