@@ -30,11 +30,50 @@ type DB struct {
 // Cette fonction réalise les migrations - le cas échéant - de la base
 // PostgreSQL.
 func InitDB() (DB, error) {
+<<<<<<< HEAD
 	conn, err := pgxpool.New(context.Background(), viper.GetString("POSTGRES_DB_URL"))
+=======
+	dbDial := viper.GetString("DB_DIAL")
+	dbDatabase := viper.GetString("DB")
+
+	// définition de 2 connexions pour isoler les requêtes (TODO: utile ?)
+	mongostatus, err := mgo.Dial(dbDial)
+	if err != nil {
+		return DB{}, fmt.Errorf("erreur de connexion (status) à MongoDB : %w", err)
+	}
+	mongostatus.SetSocketTimeout(72000 * time.Second)
+
+	mongodb, err := mgo.Dial(dbDial)
+	if err != nil {
+		return DB{}, fmt.Errorf("erreur de connexion (data) à MongoDB : %w", err)
+	}
+	mongodb.SetSocketTimeout(72000 * time.Second)
+	dbstatus := mongostatus.DB(dbDatabase)
+	db := mongodb.DB(dbDatabase)
+
+	// Création d'index sur la collection Admin, pour selection et tri de GetBatches()
+	_ = db.C("Admin").EnsureIndex(mgo.Index{
+		Key: []string{"_id.type", "_id.key"},
+	})
+
+	ctx := context.Background()
+	conn, err := pgxpool.New(ctx, viper.GetString("POSTGRES_DB_URL"))
+
+	poolConn, _ := conn.Acquire(ctx)
+	rows, _ := poolConn.Conn().Query(ctx, `
+  SELECT table_name
+  FROM information_schema.tables
+  WHERE table_schema='public'`)
+	for rows.Next() {
+		var name string
+		rows.Scan(&name)
+		fmt.Println("Table:", name)
+	}
+>>>>>>> fe5bd47 (Refine migrations + frontend_ap views)
 
 	if err == nil {
 		// Test connectivity with postgreSQL database
-		err = conn.Ping(context.Background())
+		err = conn.Ping(ctx)
 	}
 
 	if err != nil {
@@ -42,7 +81,7 @@ func InitDB() (DB, error) {
 	}
 
 	// Run database migrations
-	if err := runMigrations(conn); err != nil {
+	if err := runMigrations(ctx, conn); err != nil {
 		return DB{}, fmt.Errorf("erreur lors de l'exécution des migrations : %w", err)
 	}
 
@@ -52,8 +91,7 @@ func InitDB() (DB, error) {
 }
 
 // runMigrations executes database migrations using Tern
-func runMigrations(pool *pgxpool.Pool) error {
-	ctx := context.Background()
+func runMigrations(ctx context.Context, pool *pgxpool.Pool) error {
 
 	conn, err := pool.Acquire(ctx)
 	if err != nil {
@@ -61,7 +99,7 @@ func runMigrations(pool *pgxpool.Pool) error {
 	}
 	defer conn.Release()
 
-	migrator, err := migrate.NewMigrator(ctx, conn.Conn(), "sfdata_migrations")
+	migrator, err := migrate.NewMigrator(ctx, conn.Conn(), VersionTable)
 	if err != nil {
 		return fmt.Errorf("impossible d'initialiser les migrations : %w", err)
 	}
