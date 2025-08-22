@@ -1,4 +1,4 @@
-CREATE OR REPLACE VIEW clean_cotisations AS
+CREATE OR REPLACE VIEW clean_cotisation AS
 SELECT
   siret,
   periode_debut as periode,
@@ -8,4 +8,4 @@ GROUP BY siret, periode_debut;
 
 ---- create above / drop below ----
 
-DROP VIEW clean_cotisations;
+DROP VIEW clean_cotisation;
