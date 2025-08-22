@@ -12,7 +12,7 @@ import (
 // Cotisation Objet cotisation
 type Cotisation struct {
 	Siret        string    `                   json:"-"             sql:"siret"            csv:"siret"`
-	NumeroCompte string    `input:"Compte"     json:"numero_compte" sql:"numero_compte"  csv:"numéro_compte"`
+	NumeroCompte string    `input:"Compte"     json:"numero_compte"                      csv:"numéro_compte"`
 	PeriodeDebut time.Time `input:"periode"    json:"periode_debut" sql:"periode_debut"  csv:"période_début"`
 	PeriodeFin   time.Time `input:"periode"    json:"periode_fin"   sql:"periode_fin"    csv:"période_fin"`
 	Encaisse     *float64  `input:"enc_direct" json:"encaisse"                           csv:"encaissé"`
