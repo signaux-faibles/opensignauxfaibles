@@ -23,14 +23,25 @@ func NewPostgresSinkFactory(conn *pgxpool.Pool) SinkFactory {
 }
 
 func (f *PostgresSinkFactory) CreateSink(parserType string) (DataSink, error) {
-	// Temporary: only ap data
-	if parserType == "apconso" || parserType == "apdemande" || parserType ==
-		"cotisation" || parserType == "debit" || parserType == "delai" ||
-		parserType == "effectif" || parserType == "effectif_ent" || parserType ==
-		"sirene" || parserType == "sirene_ul" {
+	switch parserType {
+	case "apconso",
+		"apdemande",
+		"cotisation",
+		"debit",
+		"delai",
+		"effectif",
+		"effectif_ent",
+		"sirene",
+		"sirene_ul":
 		tableName := fmt.Sprintf("stg_%s", parserType)
-		return &PostgresSink{f.conn, tableName}, nil
+		materializedTableUpdate := ""
+		if parserType == "apdemande" {
+			materializedTableUpdate = "stg_apdemande_by_period"
+		}
+
+		return &PostgresSink{f.conn, tableName, materializedTableUpdate}, nil
 	}
+
 	return &DiscardDataSink{}, nil
 }
 
@@ -46,9 +57,13 @@ type PostgresSink struct {
 
 	// Name of the table to which to write
 	table string
+
+	// Name of a materialized view to refresh after write
+	viewToRefresh string
 }
 
 func (s *PostgresSink) ProcessOutput(ch chan marshal.Tuple) error {
+	ctx := context.Background()
 	logger := slog.With("sink", "postgresql", "table", s.table)
 
 	logger.Debug("stream output to PostgreSQL")
@@ -57,16 +72,16 @@ func (s *PostgresSink) ProcessOutput(ch chan marshal.Tuple) error {
 	var headers []string
 
 	logger.Debug("begin transaction")
-	tx, err := s.conn.Begin(context.Background())
+	tx, err := s.conn.Begin(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to begin transaction: %w", err)
 	}
 
-	defer tx.Rollback(context.Background()) // Will be no-op if tx is already committed
+	defer tx.Rollback(ctx) // Will be no-op if tx is already committed
 
 	logger.Debug("truncate table")
 
-	_, err = tx.Exec(context.Background(), fmt.Sprintf("TRUNCATE %s", s.table))
+	_, err = tx.Exec(ctx, fmt.Sprintf("TRUNCATE %s", s.table))
 	if err != nil {
 		return fmt.Errorf("failed to truncate table: %w", err)
 	}
@@ -104,9 +119,17 @@ func (s *PostgresSink) ProcessOutput(ch chan marshal.Tuple) error {
 		nInserted += len(currentBatch)
 	}
 
-	tx.Commit(context.Background())
-
 	logger.Debug("output streaming to PostgreSQL ended successfully", "n_inserted", nInserted)
+
+	if s.viewToRefresh != "" {
+		_, err = tx.Exec(ctx, fmt.Sprintf("REFRESH MATERIALIZED VIEW %s", s.viewToRefresh))
+		if err != nil {
+			return fmt.Errorf("failed to refresh materialized view %s: %w", s.viewToRefresh, err)
+		}
+
+		logger.Debug("Materialized View updated", "view", s.viewToRefresh)
+	}
+	tx.Commit(ctx)
 
 	return nil
 }
