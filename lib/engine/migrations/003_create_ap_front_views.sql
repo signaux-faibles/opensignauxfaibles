@@ -1,5 +1,5 @@
 -- Vue 1: agrégation au siret
-CREATE MATERIALIZED VIEW IF NOT EXISTS clean_ap AS
+CREATE OR REPLACE VIEW clean_ap AS
 SELECT
     siret,
     LEFT(siret, 9) as siren,
@@ -52,10 +52,6 @@ FROM (
 ) ETP
 GROUP BY siret, periode;
 
-CREATE INDEX IF NOT EXISTS idx_clean_ap_siret ON clean_ap(siret);
-CREATE INDEX IF NOT EXISTS idx_clean_ap_siren ON clean_ap(siren);
-CREATE INDEX IF NOT EXISTS idx_clean_ap_period ON clean_ap(periode);
-
 ---- create above / drop below ----
 
-DROP MATERIALIZED VIEW IF EXISTS clean_ap CASCADE;
+DROP VIEW IF EXISTS clean_ap CASCADE;
