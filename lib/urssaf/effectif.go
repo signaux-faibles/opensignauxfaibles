@@ -14,7 +14,7 @@ import (
 // Effectif Urssaf
 type Effectif struct {
 	Siret        string    `input:"siret"  json:"-"             sql:"siret"          csv:"siret"`
-	NumeroCompte string    `input:"compte" json:"numero_compte" sql:"numero_compte"  csv:"compte"`
+	NumeroCompte string    `input:"compte" json:"numero_compte"                      csv:"compte"`
 	Periode      time.Time `               json:"periode"       sql:"periode"        csv:"période"`
 	Effectif     int       `               json:"effectif"      sql:"effectif"       csv:"effectif"`
 }
