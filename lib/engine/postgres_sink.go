@@ -48,10 +48,6 @@ type PostgresSink struct {
 	table string
 }
 
-func NewPostgresSink(conn *pgxpool.Pool) *PostgresSink {
-	return &PostgresSink{conn, ""}
-}
-
 func (s *PostgresSink) ProcessOutput(ch chan marshal.Tuple) error {
 	logger := slog.With("sink", "postgresql", "table", s.table)
 
