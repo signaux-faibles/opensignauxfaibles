@@ -23,7 +23,6 @@ CREATE TABLE IF NOT EXISTS stg_apdemande (
 );
 
 CREATE INDEX IF NOT EXISTS idx_stg_apdemande_siret ON stg_apdemande(siret);
-CREATE INDEX IF NOT EXISTS idx_stg_apdemande_siren ON stg_apdemande(LEFT(siret, 9));
 
 ---- create above / drop below ----
 
