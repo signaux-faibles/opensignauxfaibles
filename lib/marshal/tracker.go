@@ -2,8 +2,6 @@ package marshal
 
 import (
 	"fmt"
-
-	"github.com/globalsign/mgo/bson"
 )
 
 // MaxParsingErrors is the number of parsing errors to report per file.
@@ -61,8 +59,20 @@ func (tracker *ParsingTracker) Next() {
 	tracker.currentLine++
 }
 
+type Report struct {
+	BatchKey      string   `json:"batch_key"`
+	HeadFatal     []string `json:"head_fatal"`
+	HeadRejected  []string `json:"head_rejected"`
+	IsFatal       bool     `json:"is_fatal"`
+	LinesParsed   int64    `json:"lines_parsed"`
+	LinesRejected int64    `json:"lines_rejected"`
+	LinesSkipped  int64    `json:"lines_skipped"`
+	LinesValid    int64    `json:"lines_valid"`
+	Summary       string   `json:"summary"`
+}
+
 // Report génère un rapport de parsing à partir des erreurs rapportées.
-func (tracker *ParsingTracker) Report(batchKey string, filePath string) bson.M {
+func (tracker *ParsingTracker) Report(batchKey string, filePath string) Report {
 	nbParsedLines := tracker.currentLine - 1 // -1 because we started counting at line number 1
 	nbValidLines := nbParsedLines - tracker.nbRejectedLines - tracker.nbSkippedLines
 
@@ -76,16 +86,16 @@ func (tracker *ParsingTracker) Report(batchKey string, filePath string) bson.M {
 		nbValidLines,
 	)
 
-	return bson.M{
-		"batchKey":      batchKey,
-		"summary":       report,
-		"linesParsed":   nbParsedLines,
-		"linesValid":    nbValidLines,
-		"linesSkipped":  tracker.nbSkippedLines,
-		"linesRejected": tracker.nbRejectedLines,
-		"isFatal":       len(tracker.fatalErrors) > 0,
-		"headRejected":  tracker.firstParseErrors,
-		"headFatal":     tracker.fatalErrors,
+	return Report{
+		BatchKey:      batchKey,
+		Summary:       report,
+		LinesParsed:   nbParsedLines,
+		LinesValid:    nbValidLines,
+		LinesSkipped:  tracker.nbSkippedLines,
+		LinesRejected: tracker.nbRejectedLines,
+		IsFatal:       len(tracker.fatalErrors) > 0,
+		HeadRejected:  tracker.firstParseErrors,
+		HeadFatal:     tracker.fatalErrors,
 	}
 }
 

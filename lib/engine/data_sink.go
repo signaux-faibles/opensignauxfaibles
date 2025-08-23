@@ -99,3 +99,14 @@ func (s *DiscardDataSink) ProcessOutput(ch chan marshal.Tuple) error {
 	}
 	return nil
 }
+
+type DiscardEventSink struct {
+	counter int
+}
+
+func (s DiscardEventSink) Process(ch chan marshal.Event) error {
+	for range ch {
+		s.counter++
+	}
+	return nil
+}

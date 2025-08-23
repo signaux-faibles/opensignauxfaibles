@@ -21,7 +21,6 @@ var GitCommit string // (populé lors de la compilation, par `make build`)
 func connectDB() error {
 	var err error
 	engine.Db, err = engine.InitDB()
-	go engine.InitEventQueue()
 	return err
 }
 
@@ -59,7 +58,6 @@ func runCLI(args ...string) int {
 			fmt.Printf("\nErreur: %v\n", err)
 			return 4
 		}
-		defer engine.FlushEventQueue()
 	}
 	if err := cmdHandlerWithArgs.Run(); err != nil {
 		logger.Error("error while executing command", "error", err)

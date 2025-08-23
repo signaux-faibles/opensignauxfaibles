@@ -64,7 +64,7 @@ func (TestSinkFactory) CreateSink(parserType string) (DataSink, error) {
 func Test_ImportBatch(t *testing.T) {
 
 	batch := base.AdminBatch{}
-	err := ImportBatch(batch, []marshal.Parser{}, false, TestSinkFactory{})
+	err := ImportBatch(batch, []marshal.Parser{}, false, TestSinkFactory{}, DiscardEventSink{})
 	if err == nil {
 		t.Error("ImportBatch devrait nous empêcher d'importer sans filtre")
 	}
@@ -72,7 +72,7 @@ func Test_ImportBatch(t *testing.T) {
 
 func Test_ImportBatchWithUnreadableFilter(t *testing.T) {
 	batch := base.MockBatch("filter", []string{"this_file_does_not_exist"})
-	err := ImportBatch(batch, []marshal.Parser{}, false, TestSinkFactory{})
+	err := ImportBatch(batch, []marshal.Parser{}, false, TestSinkFactory{}, DiscardEventSink{})
 	if err == nil {
 		t.Error("ImportBatch devrait échouer en tentant d'ouvrir un fichier filtre illisible")
 	}
@@ -98,11 +98,7 @@ func Test_CheckBatch(t *testing.T) {
 				"procol": {base.NewBatchFile("gzip:../../lib/urssaf/testData/procolTestData.csv.compressed")},
 			},
 		}
-		InitVoidEventQueue() // permettre à CheckBatch d'envoyer des messages au canal d'événements, sans stocker dans la db
-		reports, err := CheckBatch(batch, []marshal.Parser{urssaf.ParserProcol})
-		if assert.NoError(t, err) {
-			expectedReports := []string{"../../lib/urssaf/testData/procolTestData.csv.compressed: intégration terminée, 3 lignes traitées, 0 erreurs fatales, 0 lignes rejetées, 0 lignes filtrées, 3 lignes valides"}
-			assert.Equal(t, expectedReports, reports)
-		}
+		err = CheckBatch(batch, []marshal.Parser{urssaf.ParserProcol})
+		assert.NoError(t, err)
 	})
 }

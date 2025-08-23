@@ -6,11 +6,9 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"sort"
 	"sync"
 
 	"github.com/cosiner/flag"
-	"github.com/globalsign/mgo/bson"
 
 	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/engine"
@@ -63,12 +61,13 @@ func (params importBatchHandler) Run() error {
 		return err
 	}
 
-	sink := engine.NewCompositeSinkFactory(
+	dataSink := engine.NewCompositeSinkFactory(
 		engine.NewCSVSinkFactory(batch.ID.Key),
 		engine.NewPostgresSinkFactory(engine.Db.PostgresDB),
 	)
+	eventSink := engine.NewPostgresEventSink(engine.Db.PostgresDB, "ImportBatch")
 
-	err = engine.ImportBatch(batch, parsers, params.NoFilter, sink)
+	err = engine.ImportBatch(batch, parsers, params.NoFilter, dataSink, eventSink)
 
 	if err != nil {
 		return err
@@ -118,13 +117,10 @@ func (params checkBatchHandler) Run() error {
 		return err
 	}
 
-	reports, err := engine.CheckBatch(batch, parsers)
+	err = engine.CheckBatch(batch, parsers)
 	if err != nil {
-		return errors.New("Erreurs détectées: " + err.Error())
+		return fmt.Errorf("erreurs détectées: %v", err)
 	}
-
-	sort.Strings(reports) // to make sure that parsed files are always listed in the same order
-	printJSON(bson.M{"reports": reports})
 	return nil
 }
 
