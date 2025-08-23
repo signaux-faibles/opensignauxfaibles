@@ -4,6 +4,7 @@ package main
 
 import (
 	"encoding/json"
+	"opensignauxfaibles/lib/base"
 	"os"
 	"os/exec"
 	"testing"
@@ -22,7 +23,7 @@ func TestCheckEndToEnd(t *testing.T) {
 	db := mongodb.DB(mongoDatabase)
 
 	cleanDatabase(t, db)
-	insertCheckTestBatch(t, db)
+	createCheckTestBatch(t)
 
 	testCases := []struct {
 		name       string
@@ -61,26 +62,24 @@ func TestCheckEndToEnd(t *testing.T) {
 	verifyCheckJournalReports(t, db)
 }
 
-func insertCheckTestBatch(t *testing.T, db *mgo.Database) {
-	t.Log("📝 Inserting test data...")
+func createCheckTestBatch(t *testing.T) {
 
-	batch := bson.M{
-		"_id": bson.M{
-			"key":  "1910",
-			"type": "batch",
+	batch := base.AdminBatch{
+		ID: base.AdminID{
+			Key:  "1910",
+			Type: "batch",
 		},
-		"files": bson.M{
-			"admin_urssaf": []string{"./lib/urssaf/testData/comptesTestData.csv"},
-			"debit":        []string{"./lib/urssaf/testData/debitCorrompuTestData.csv"},
+		Files: base.BatchFiles{
+			"admin_urssaf": {base.NewBatchFile("./lib/urssaf/testData/comptesTestData.csv")},
+			"debit":        {base.NewBatchFile("./lib/urssaf/testData/debitCorrompuTestData.csv")},
 		},
-		"param": bson.M{
-			"date_debut": time.Date(2001, time.January, 1, 0, 0, 0, 0, time.UTC),
-			"date_fin":   time.Date(2019, time.February, 1, 0, 0, 0, 0, time.UTC),
+		Params: base.AdminBatchParams{
+			DateDebut: time.Date(2001, time.January, 1, 0, 0, 0, 0, time.UTC),
+			DateFin:   time.Date(2019, time.February, 1, 0, 0, 0, 0, time.UTC),
 		},
 	}
+	writeBatchConfig(t, batch)
 
-	err := db.C("Admin").Insert(batch)
-	assert.NoError(t, err)
 }
 
 func verifyCheckJournalReports(t *testing.T, db *mgo.Database) {

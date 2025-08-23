@@ -55,7 +55,7 @@ func (params importBatchHandler) Run() error {
 
 	err := engine.Load(&batch, params.BatchKey)
 	if err != nil {
-		return errors.New("Batch inexistant: " + err.Error())
+		return errors.New("Impossible de charger la configuration du batch: " + err.Error())
 	}
 
 	parsers, err := parsing.ResolveParsers(params.Parsers)

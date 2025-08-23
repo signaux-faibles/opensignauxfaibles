@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
@@ -9,6 +10,7 @@ import (
 	"time"
 
 	"github.com/globalsign/mgo/bson"
+	"github.com/spf13/viper"
 	"golang.org/x/sync/errgroup"
 
 	"opensignauxfaibles/lib/base"
@@ -18,7 +20,12 @@ import (
 
 // Load charge les données d'un batch depuis la base de données
 func Load(batch *base.AdminBatch, batchKey string) error {
-	err := Db.DB.C("Admin").Find(bson.M{"_id.type": "batch", "_id.key": batchKey}).One(batch)
+	batchFileContent, err := os.ReadFile(viper.GetString("BATCH_CONFIG_FILE"))
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(batchFileContent, batch)
 	return err
 }
 
