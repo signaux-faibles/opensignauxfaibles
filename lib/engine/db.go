@@ -67,7 +67,6 @@ func InitDB() (DB, error) {
 	for rows.Next() {
 		var name string
 		rows.Scan(&name)
-		fmt.Println("Table:", name)
 	}
 >>>>>>> fe5bd47 (Refine migrations + frontend_ap views)
 
