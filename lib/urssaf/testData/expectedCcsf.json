@@ -18,8 +18,7 @@
   ],
   "events": [
     {
-      "date": "0001-01-01T00:00:00Z",
-      "startDate": "0001-01-01T00:00:00Z",
+      "start_date": "0001-01-01T00:00:00Z",
       "report": {
         "batch_key": "",
         "head_fatal": [],
@@ -31,8 +30,7 @@
         "lines_valid": 3,
         "summary": "testData/ccsfTestData.csv: intégration terminée, 3 lignes traitées, 0 erreurs fatales, 0 lignes rejetées, 0 lignes filtrées, 3 lignes valides"
       },
-      "priority": "info",
-      "parserCode": "ccsf",
+      "parser": "ccsf",
       "report_type": ""
     }
   ]

@@ -115,6 +115,7 @@ func CheckBatchPaths(batch *base.AdminBatch) error {
 func CheckBatch(
 	batch base.AdminBatch,
 	parsers []marshal.Parser,
+	eventSink EventSink,
 ) error {
 	if err := CheckBatchPaths(&batch); err != nil {
 		return err
@@ -122,7 +123,7 @@ func CheckBatch(
 	var cache = marshal.NewCache()
 	for _, parser := range parsers {
 		logger := slog.With("batch", batch.ID.Key, "parser", parser.Type())
-		outputChannel, eventChannel := marshal.ParseFilesFromBatch(cache, &batch, parser) // appelle la fonction ParseFile() pour chaque type de fichier
+		outputChannel, eventChannel := marshal.ParseFilesFromBatch(cache, &batch, parser)
 
 		DiscardTuple(outputChannel)
 		for event := range eventChannel {

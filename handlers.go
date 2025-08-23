@@ -117,7 +117,8 @@ func (params checkBatchHandler) Run() error {
 		return err
 	}
 
-	err = engine.CheckBatch(batch, parsers)
+	eventSink := engine.NewPostgresEventSink(engine.Db.PostgresDB, "CheckBatch")
+	err = engine.CheckBatch(batch, parsers, eventSink)
 	if err != nil {
 		return fmt.Errorf("erreurs détectées: %v", err)
 	}
