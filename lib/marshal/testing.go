@@ -50,18 +50,13 @@ func GetFatalError(output tuplesAndEvents) string {
 		log.Println(headFatal) // pour aider au débogage en cas d'échec du test
 		log.Fatal("headFatal should never contain more than one item")
 	}
-	return headFatal[0].(string)
+	return headFatal[0]
 }
 
 // GetFatalErrors retourne les messages d'erreurs fatales obtenus suite à une
 // opération de parsing, ou nil.
-func GetFatalErrors(event Event) []interface{} {
-	reportData, _ := event.ParseReport()
-	headFatal, ok := reportData["headFatal"].([]interface{})
-	if !ok {
-		return nil
-	}
-	return headFatal
+func GetFatalErrors(event Event) []string {
+	return event.Report.HeadFatal
 }
 
 // ConsumeFatalErrors récupère les erreurs fatales depuis un canal d'évènements
@@ -70,7 +65,7 @@ func ConsumeFatalErrors(eventChan chan Event) []string {
 	for event := range eventChan {
 		headFatal := GetFatalErrors(event)
 		for _, fatalError := range headFatal {
-			fatalErrors = append(fatalErrors, fatalError.(string))
+			fatalErrors = append(fatalErrors, fatalError)
 		}
 	}
 	return fatalErrors

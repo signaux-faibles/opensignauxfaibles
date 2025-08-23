@@ -155,10 +155,10 @@ func TestCotisation(t *testing.T) {
 		cache.Set("filter", marshal.SirenFilter{allowedSiren: true})
 		// test
 		output := marshal.RunParser(ParserCotisation, cache, testData)
-		reportData, _ := output.Events[0].ParseReport()
-		assert.Equal(t, false, reportData["isFatal"], "aucune erreur fatale ne doit être rapportée")
-		assert.Equal(t, []interface{}{}, reportData["headRejected"], "aucune erreur de parsing ne doit être rapportée")
-		assert.Equal(t, map[string]interface{}{"$numberLong": 1.0}, reportData["linesValid"], "seule la ligne de cotisation liée à un établissement du périmètre doit être incluse")
+		reportData := output.Events[0].Report
+		assert.Equal(t, false, reportData.IsFatal, "aucune erreur fatale ne doit être rapportée")
+		assert.Equal(t, []string{}, reportData.HeadRejected, "aucune erreur de parsing ne doit être rapportée")
+		assert.Equal(t, int64(1.0), reportData.LinesValid, "seule la ligne de cotisation liée à un établissement du périmètre doit être incluse")
 	})
 
 	t.Run("toute ligne de cotisation d'un établissement non inclus dans les comptes urssaf doit être sautée silencieusement", func(t *testing.T) {
@@ -172,10 +172,10 @@ func TestCotisation(t *testing.T) {
 		))
 		// test
 		output := marshal.RunParser(ParserCotisation, cache, testData)
-		reportData, _ := output.Events[0].ParseReport()
-		assert.Equal(t, false, reportData["isFatal"], "aucune erreur fatale ne doit être rapportée")
-		assert.Equal(t, []interface{}{}, reportData["headRejected"], "aucune erreur de parsing ne doit être rapportée")
-		assert.Equal(t, map[string]interface{}{"$numberLong": 1.0}, reportData["linesSkipped"], "seule la ligne de cotisation liée à un établissement hors mapping doit être sautée")
+		report := output.Events[0].Report
+		assert.Equal(t, false, report.IsFatal, "aucune erreur fatale ne doit être rapportée")
+		assert.Equal(t, []string{}, report.HeadRejected, "aucune erreur de parsing ne doit être rapportée")
+		assert.Equal(t, int64(1.0), report.LinesSkipped, "seule la ligne de cotisation liée à un établissement hors mapping doit être sautée")
 	})
 }
 

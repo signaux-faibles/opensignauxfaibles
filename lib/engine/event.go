@@ -4,104 +4,38 @@
 package engine
 
 import (
-	"encoding/json"
-	"log"
-	"sync"
 	"time"
 
-	"github.com/globalsign/mgo/bson"
+	"github.com/jackc/pgx/v5/pgxpool"
 
 	"opensignauxfaibles/lib/marshal"
 )
 
-type messageChannel chan marshal.Event
+const EventTable string = "import_logs"
 
-var mainMessageChannel messageChannel // canal dans lequel on va émettre tous les messages
+type EventSink interface {
+	Process(ch chan marshal.Event) error
+}
 
-var relaying sync.WaitGroup // permet de savoir quand les messages ont fini d'être transmis
+type PostgresEventSink struct {
+	conn *pgxpool.Pool
 
-var messageClientChannels = []messageChannel{}
+	// Name of the table to which to write
+	table string
 
-// AddClientChannel enregistre un nouveau client
-var AddClientChannel = make(chan messageChannel)
+	// Attach the processed events to a specific command
+	command string
 
-// InitEventQueue surveille l'ajout de nouveaux clients pour les enregistrer dans la liste des clients
-func InitEventQueue() {
-	mainMessageChannel = messageDispatch()
-	for clientChannel := range AddClientChannel {
-		messageClientChannels = append(messageClientChannels, clientChannel)
+	// time of creation
+	timestamp time.Time
+}
+
+func NewPostgresEventSink(conn *pgxpool.Pool, command string) EventSink {
+	return &PostgresEventSink{conn, EventTable, command, time.Now()}
+}
+
+func (sink *PostgresEventSink) Process(ch chan marshal.Event) error {
+	for range ch {
 	}
-}
-
-// InitVoidEventQueue initialise un canal consommé sans envoi à la base de données, pour les tests automatisés
-func InitVoidEventQueue() {
-	relaying.Add(1)
-	mainMessageChannel = make(messageChannel)
-	go func() {
-		defer relaying.Done()
-		for range mainMessageChannel {
-			// on ignore l'événement
-		}
-	}()
-}
-
-// Transmet les messages collectés vers les clients et l'enregistre dans la bdd
-func messageDispatch() chan marshal.Event {
-	relaying.Add(1)
-	channel := make(messageChannel)
-	go func() {
-		defer relaying.Done()
-		for event := range channel {
-			err := Db.DBStatus.C("Journal").Insert(event)
-			if err != nil {
-				// TODO : utiliser log.Fatal() pour interrompre le traitement ?
-				log.Print("Erreur critique d'insertion dans la base de données: " + err.Error())
-				log.Print(json.Marshal(event))
-			}
-			for _, clientChannel := range messageClientChannels {
-				clientChannel <- event
-			}
-		}
-	}()
-	return channel
-}
-
-// RelayEvents transmet les événements qui surviennent pendant le parsing d'un
-// fichiers de données et retourne le rapport final du parsing de ce fichier.
-func RelayEvents(eventChannel chan marshal.Event, reportType string, startDate time.Time) (reports []string) {
-	for e := range eventChannel {
-		if reportContainer, ok := e.Comment.(bson.M); ok {
-			if strReport, ok := reportContainer["summary"].(string); ok {
-				reports = append(reports, strReport)
-			}
-		}
-		e.ReportType = reportType
-		e.StartDate = startDate
-		mainMessageChannel <- e
-	}
-	return reports
-}
-
-// LogOperationEvent rapporte la fin d'une opération effectuée par sfdata.
-func LogOperationEvent(reportType string, startDate time.Time) {
-	event := marshal.CreateEvent()
-	event.StartDate = startDate
-	event.ReportType = reportType
-	mainMessageChannel <- event
-}
-
-// LogOperationEventEx rapporte la fin d'une opération effectuée par sfdata,
-// tout en permettant l'ajout d'un commentaire.
-func LogOperationEventEx(reportType string, startDate time.Time, comment interface{}) {
-	event := marshal.CreateEvent()
-	event.StartDate = startDate
-	event.ReportType = reportType
-	event.Comment = comment
-	mainMessageChannel <- event
-}
-
-// FlushEventQueue finalise l'insertion des événements dans Journal.
-func FlushEventQueue() {
-	close(mainMessageChannel)
-	relaying.Wait()
+	return nil
 }
