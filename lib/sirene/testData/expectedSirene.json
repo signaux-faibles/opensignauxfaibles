@@ -81,8 +81,7 @@
   ],
   "events": [
     {
-      "date": "0001-01-01T00:00:00Z",
-      "startDate": "0001-01-01T00:00:00Z",
+      "start_date": "0001-01-01T00:00:00Z",
       "report": {
         "batch_key": "",
         "head_fatal": [],
@@ -97,8 +96,7 @@
         "lines_valid": 4,
         "summary": "testData/sireneTestData.csv: intégration terminée, 5 lignes traitées, 0 erreurs fatales, 1 lignes rejetées, 0 lignes filtrées, 4 lignes valides"
       },
-      "priority": "info",
-      "parserCode": "sirene",
+      "parser": "sirene",
       "report_type": ""
     }
   ]

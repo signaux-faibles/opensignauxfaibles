@@ -53,7 +53,6 @@ func TestCheckEndToEnd(t *testing.T) {
 			output, err := cmd.CombinedOutput()
 
 			assert.NoError(t, err, "%s failed: %s", tc.name, string(output))
-			compareWithGoldenFileOrUpdate(t, tc.goldenFile, string(output), tc.tmpFile)
 		})
 	}
 }

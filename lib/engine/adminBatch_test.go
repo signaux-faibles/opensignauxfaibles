@@ -98,7 +98,7 @@ func Test_CheckBatch(t *testing.T) {
 				"procol": {base.NewBatchFile("gzip:../../lib/urssaf/testData/procolTestData.csv.compressed")},
 			},
 		}
-		err = CheckBatch(batch, []marshal.Parser{urssaf.ParserProcol})
+		err = CheckBatch(batch, []marshal.Parser{urssaf.ParserProcol}, DiscardEventSink{})
 		assert.NoError(t, err)
 	})
 }
