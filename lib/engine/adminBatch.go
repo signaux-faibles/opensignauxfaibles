@@ -18,7 +18,7 @@ import (
 	"opensignauxfaibles/lib/parsing"
 )
 
-// Load charge les données d'un batch depuis la base de données
+// Load charge les données d'un batch depuis le fichier de configuration
 func Load(batch *base.AdminBatch, batchKey string) error {
 	batchFileContent, err := os.ReadFile(viper.GetString("BATCH_CONFIG_FILE"))
 	if err != nil {
