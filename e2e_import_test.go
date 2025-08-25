@@ -221,10 +221,7 @@ func getTableContents(t *testing.T, conn *pgxpool.Pool, tableName string) string
 			if v == nil {
 				strValues = append(strValues, fmt.Sprintf("%-20s", "NULL"))
 			} else {
-				formatted := fmt.Sprintf("%-20v", v)
-				if len(formatted) > 20 {
-					formatted = formatted[:20]
-				}
+				formatted := fmt.Sprintf("%-20s", fmt.Sprintf("%v", v))[:20]
 				strValues = append(strValues, formatted)
 			}
 		}
