@@ -11,6 +11,7 @@ require (
 	github.com/jackc/tern/v2 v2.3.3
 	github.com/spf13/viper v1.20.1
 	github.com/stretchr/testify v1.10.0
+	go.mongodb.org/mongo-driver v1.17.4
 	golang.org/x/sync v0.16.0
 )
 
