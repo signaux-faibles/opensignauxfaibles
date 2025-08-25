@@ -219,9 +219,13 @@ func getTableContents(t *testing.T, conn *pgxpool.Pool, tableName string) string
 		var strValues []string
 		for _, v := range values {
 			if v == nil {
-				strValues = append(strValues, fmt.Sprintf("%-20s", "NULL"))
+				strValues = append(strValues, fmt.Sprintf("%-40s", "NULL"))
 			} else {
-				strValues = append(strValues, fmt.Sprintf("%-20v", v)[:20])
+				formatted := fmt.Sprintf("%-30v", v)
+				if len(formatted) > 30 {
+					formatted = formatted[:30]
+				}
+				strValues = append(strValues, formatted)
 			}
 		}
 

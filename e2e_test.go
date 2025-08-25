@@ -251,9 +251,9 @@ func stopMongoContainer() {
 }
 
 func stopPostgresContainer() {
-	if err := exec.Command("docker", "stop", pgContainer).Run(); err != nil {
-		log.Println(err) // affichage à titre informatif
-	}
+	// if err := exec.Command("docker", "stop", pgContainer).Run(); err != nil {
+	// 	log.Println(err) // affichage à titre informatif
+	// }
 }
 
 func deleteTempFolder() {
