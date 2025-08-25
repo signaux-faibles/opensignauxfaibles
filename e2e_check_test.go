@@ -9,18 +9,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/globalsign/mgo"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestCheckEndToEnd(t *testing.T) {
-	mongodb, err := mgo.Dial(suite.MongoURI)
-	assert.NoError(t, err)
-	defer mongodb.Close()
-
-	db := mongodb.DB(mongoDatabase)
-
-	cleanDatabase(t, db)
 	createCheckTestBatch(t)
 
 	testCases := []struct {

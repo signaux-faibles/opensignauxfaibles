@@ -12,18 +12,18 @@ import (
 
 // AdminBatch metadata Batch
 type AdminBatch struct {
-	ID            AdminID          `json:"id" bson:"_id"`
-	Files         BatchFiles       `json:"files" bson:"files"`
-	Name          string           `json:"name" bson:"name"`
-	Readonly      bool             `json:"readonly" bson:"readonly"`
-	CompleteTypes []string         `json:"complete_types" bson:"complete_types"`
-	Params        AdminBatchParams `json:"params" bson:"param"`
+	ID            AdminID          `json:"id"`
+	Files         BatchFiles       `json:"files"`
+	Name          string           `json:"name"`
+	Readonly      bool             `json:"readonly"`
+	CompleteTypes []string         `json:"complete_types"`
+	Params        AdminBatchParams `json:"params"`
 }
 
 type AdminBatchParams struct {
-	DateDebut       time.Time `json:"date_debut" bson:"date_debut"`
-	DateFin         time.Time `json:"date_fin" bson:"date_fin"`
-	DateFinEffectif time.Time `json:"date_fin_effectif" bson:"date_fin_effectif"`
+	DateDebut       time.Time `json:"date_debut"`
+	DateFin         time.Time `json:"date_fin"`
+	DateFinEffectif time.Time `json:"date_fin_effectif"`
 }
 
 // IsBatchID retourne `true` si `batchID` est un identifiant de Batch.
@@ -40,8 +40,8 @@ func IsBatchID(batchID string) bool {
 
 // AdminID Collection key
 type AdminID struct {
-	Key  string `json:"key" bson:"key"`
-	Type string `json:"type" bson:"type"`
+	Key  string `json:"key"`
+	Type string `json:"type"`
 }
 
 // BatchFiles fichiers mappés par type
