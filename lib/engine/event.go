@@ -90,10 +90,7 @@ func insertEvent(event marshal.Event, conn *pgxpool.Pool, tableName string) erro
 		event.Report.LinesValid,
 		event.Report.Summary,
 	}
-	fmt.Println("DEBUG")
-	fmt.Printf("(%s) %v\n", event.Parser, event.Report.HeadRejected)
 	ctx := context.Background()
 	_, err := conn.Exec(ctx, query, row...)
-	fmt.Println("DEBUG ping", event.Parser)
 	return err
 }
