@@ -7,10 +7,9 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
-	"strings"
 	"time"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	"opensignauxfaibles/lib/marshal"
@@ -40,101 +39,61 @@ func NewPostgresEventSink(conn *pgxpool.Pool, command string) EventSink {
 }
 
 func (s *PostgresEventSink) Process(ch chan marshal.Event) error {
-	logger := slog.With("table", s.table)
+	logger := slog.With("sink", "postgresql", "table", s.table)
 
-	ctx := context.Background()
 	logger.Debug("stream events to PostgreSQL")
 
-	logger.Debug("begin transaction")
-	tx, err := s.conn.Begin(ctx)
-	if err != nil {
-		return fmt.Errorf("failed to begin transaction: %w", err)
-	}
-
-	defer tx.Rollback(ctx) // Will be no-op if tx is already committed
-
 	logger.Debug("events insertion")
-
 	nInserted := 0
 
-	var currentBatch []marshal.Event
-	var headers []string
-
 	for event := range ch {
-		if headers == nil {
-			headers = []string{"start_date", "parser", "batch_key", "head_fatal", "head_rejected", "is_fatal", "lines_parsed", "lines_rejected", "lines_skipped", "lines_valid", "summary"}
+
+		if err := insertEvent(event, s.conn, s.table); err != nil {
+			return fmt.Errorf("failed to insert event: %w", err)
 		}
 
-		currentBatch = append(currentBatch, event)
-
-		if len(currentBatch) >= BatchSize {
-
-			if err := insertEvents(currentBatch, tx, s.table, headers); err != nil {
-				return fmt.Errorf("failed to execute batch insert: %w", err)
-			}
-
-			nInserted += len(currentBatch)
-
-			currentBatch = currentBatch[:0] // Reset currentBatch slice
-		}
+		nInserted++
 	}
 
-	// Insert remaining tuples after channel closes
-	if len(currentBatch) > 0 {
-
-		if err := insertEvents(currentBatch, tx, s.table, headers); err != nil {
-			return fmt.Errorf("failed to execute final batch: %w", err)
-		}
-
-		nInserted += len(currentBatch)
-	}
-
-	tx.Commit(context.Background())
-
-	logger.Debug("output streaming to PostgreSQL ended successfully", "n_inserted", nInserted)
+	logger.Debug("events streaming to PostgreSQL ended successfully", "n_inserted", nInserted)
 
 	return nil
 }
 
-func insertEvents(events []marshal.Event, tx pgx.Tx, tableName string, columns []string) error {
-	if len(events) == 0 {
-		return nil
-	}
+func insertEvent(event marshal.Event, conn *pgxpool.Pool, tableName string) error {
 
-	values := make([][]any, 0, len(events))
+	query := fmt.Sprintf(`
+		INSERT INTO %s (
+			start_date, parser, batch_key, head_fatal, head_rejected,
+			is_fatal, lines_parsed, lines_rejected, lines_skipped,
+			lines_valid, summary
+		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`, tableName)
 
-	// TODO rather than construct values
-	// implement CopyFromSource interface
-	for _, event := range events {
-		row := []any{
-			event.StartDate,
-			event.Parser,
-			event.Report.BatchKey,
-			// event.Report.HeadFatal,
-			// event.Report.HeadRejected,
-			"abc",
-			"def",
-			event.Report.IsFatal,
-			event.Report.LinesParsed,
-			event.Report.LinesRejected,
-			event.Report.LinesSkipped,
-			event.Report.LinesValid,
-			event.Report.Summary,
+	// Auxiliaire pour insérer des données au format Postgres TEXT[]
+	toPgArray := func(slice []string) pgtype.FlatArray[string] {
+		if slice == nil {
+			return pgtype.FlatArray[string](nil)
 		}
-		values = append(values, row)
-	}
-	lowerColumns := make([]string, len(columns))
-	for i, c := range columns {
-		lowerColumns[i] = strings.ToLower(c)
+		return pgtype.FlatArray[string](slice)
 	}
 
-	// Batch insertion
-	_, err := tx.CopyFrom(
-		context.Background(),
-		pgx.Identifier{tableName},
-		lowerColumns,
-		pgx.CopyFromRows(values),
-	)
-
+	row := []any{
+		event.StartDate,
+		event.Parser,
+		event.Report.BatchKey,
+		toPgArray(event.Report.HeadFatal),
+		toPgArray(event.Report.HeadRejected),
+		event.Report.IsFatal,
+		event.Report.LinesParsed,
+		event.Report.LinesRejected,
+		event.Report.LinesSkipped,
+		event.Report.LinesValid,
+		event.Report.Summary,
+	}
+	fmt.Println("DEBUG")
+	fmt.Printf("(%s) %v\n", event.Parser, event.Report.HeadRejected)
+	ctx := context.Background()
+	_, err := conn.Exec(ctx, query, row...)
+	fmt.Println("DEBUG ping", event.Parser)
 	return err
 }
