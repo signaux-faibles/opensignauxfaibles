@@ -14,22 +14,13 @@ import (
 	"testing"
 	"time"
 
-	"github.com/globalsign/mgo"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestImportEndToEnd(t *testing.T) {
 
-	mongodb, err := mgo.Dial(suite.MongoURI)
-	assert.NoError(t, err)
-	defer mongodb.Close()
-
-	db := mongodb.DB(mongoDatabase)
-
-	t.Run("Insert test data and run import", func(t *testing.T) {
-		cleanDatabase(t, db)
-
+	t.Run("Create batch and run import", func(t *testing.T) {
 		createImportTestBatch(t)
 
 		exitCode := runCLI("sfdata", "import", "--batch", "1910", "--no-filter")
@@ -37,7 +28,7 @@ func TestImportEndToEnd(t *testing.T) {
 	})
 
 	t.Run("Verify Events reports", func(t *testing.T) {
-		verifyEventsReports(t, db)
+		verifyEventsReports(t)
 	})
 
 	t.Run("Verify exported CSV files", func(t *testing.T) {

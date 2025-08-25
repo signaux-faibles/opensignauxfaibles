@@ -6,12 +6,10 @@ toolchain go1.24.3
 
 require (
 	github.com/cosiner/flag v0.5.2
-	github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8
 	github.com/jackc/pgx/v5 v5.7.5
 	github.com/jackc/tern/v2 v2.3.3
 	github.com/spf13/viper v1.20.1
 	github.com/stretchr/testify v1.10.0
-	go.mongodb.org/mongo-driver v1.17.4
 	golang.org/x/sync v0.16.0
 )
 
