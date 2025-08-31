@@ -30,32 +30,6 @@ type DB struct {
 // Cette fonction réalise les migrations - le cas échéant - de la base
 // PostgreSQL.
 func InitDB() (DB, error) {
-<<<<<<< HEAD
-	conn, err := pgxpool.New(context.Background(), viper.GetString("POSTGRES_DB_URL"))
-=======
-	dbDial := viper.GetString("DB_DIAL")
-	dbDatabase := viper.GetString("DB")
-
-	// définition de 2 connexions pour isoler les requêtes (TODO: utile ?)
-	mongostatus, err := mgo.Dial(dbDial)
-	if err != nil {
-		return DB{}, fmt.Errorf("erreur de connexion (status) à MongoDB : %w", err)
-	}
-	mongostatus.SetSocketTimeout(72000 * time.Second)
-
-	mongodb, err := mgo.Dial(dbDial)
-	if err != nil {
-		return DB{}, fmt.Errorf("erreur de connexion (data) à MongoDB : %w", err)
-	}
-	mongodb.SetSocketTimeout(72000 * time.Second)
-	dbstatus := mongostatus.DB(dbDatabase)
-	db := mongodb.DB(dbDatabase)
-
-	// Création d'index sur la collection Admin, pour selection et tri de GetBatches()
-	_ = db.C("Admin").EnsureIndex(mgo.Index{
-		Key: []string{"_id.type", "_id.key"},
-	})
-
 	ctx := context.Background()
 	conn, err := pgxpool.New(ctx, viper.GetString("POSTGRES_DB_URL"))
 
@@ -68,7 +42,6 @@ func InitDB() (DB, error) {
 		var name string
 		rows.Scan(&name)
 	}
->>>>>>> fe5bd47 (Refine migrations + frontend_ap views)
 
 	if err == nil {
 		// Test connectivity with postgreSQL database
