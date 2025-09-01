@@ -19,7 +19,7 @@
   "reports": [
     {
       "commit": "",
-      "start_date": "2025-09-01T13:25:14.860585972+02:00",
+      "start_date": "0001-01-01T00:00:00Z",
       "parser": "procol",
       "batch_key": "",
       "head_fatal": [],

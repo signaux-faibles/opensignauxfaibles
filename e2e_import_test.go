@@ -176,8 +176,15 @@ func getTableContents(t *testing.T, conn *pgxpool.Pool, query string) string {
 	fieldDescriptions := rows.FieldDescriptions()
 
 	var headers []string
+
+	// timestamp columns should be skipped for reproducible output
+	var includeColumn []bool
 	for _, fd := range fieldDescriptions {
-		headers = append(headers, fmt.Sprintf("%-20s", fd.Name)[:20])
+		isTimestamp := fd.Name == "start_date"
+		includeColumn = append(includeColumn, !isTimestamp)
+		if !isTimestamp {
+			headers = append(headers, fmt.Sprintf("%-20s", fd.Name)[:20])
+		}
 	}
 	result.WriteString(strings.Join(headers, "\t") + "\n")
 
@@ -188,7 +195,11 @@ func getTableContents(t *testing.T, conn *pgxpool.Pool, query string) string {
 		}
 
 		var strValues []string
-		for _, v := range values {
+		for i, v := range values {
+			if !includeColumn[i] {
+				continue
+			}
+
 			if v == nil {
 				strValues = append(strValues, fmt.Sprintf("%-20s", "NULL"))
 			} else {
