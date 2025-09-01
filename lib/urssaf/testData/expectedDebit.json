@@ -49,7 +49,7 @@
   "reports": [
     {
       "commit": "",
-      "start_date": "2025-09-01T13:25:14.859164421+02:00",
+      "start_date": "0001-01-01T00:00:00Z",
       "parser": "debit",
       "batch_key": "",
       "head_fatal": [],

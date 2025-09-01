@@ -32,7 +32,7 @@
   "reports": [
     {
       "commit": "",
-      "start_date": "2025-09-01T13:25:14.825706415+02:00",
+      "start_date": "0001-01-01T00:00:00Z",
       "parser": "sirene_ul",
       "batch_key": "",
       "head_fatal": [],

@@ -14,7 +14,7 @@
   "reports": [
     {
       "commit": "",
-      "start_date": "2025-09-01T13:25:14.858944724+02:00",
+      "start_date": "0001-01-01T00:00:00Z",
       "parser": "admin_urssaf",
       "batch_key": "",
       "head_fatal": [],

@@ -64,9 +64,7 @@ func ConsumeFatalErrors(ch chan Report) []string {
 	var fatalErrors []string
 	for event := range ch {
 		headFatal := GetFatalErrors(event)
-		for _, fatalError := range headFatal {
-			fatalErrors = append(fatalErrors, fatalError)
-		}
+		fatalErrors = append(fatalErrors, headFatal...)
 	}
 	return fatalErrors
 }
@@ -87,6 +85,7 @@ func RunParserInlineEx(t *testing.T, cache Cache, parser Parser, rows []string) 
 
 // RunParser returns Tuples and Reports resulting from the execution of a
 // Parser on a given input file.
+// TimeStamps are set to 0 for reproducibility
 func RunParser(
 	parser Parser,
 	cache Cache,
@@ -101,6 +100,7 @@ func RunParser(
 	go func() {
 		defer wg.Done()
 		for event := range events {
+			event.StartDate = time.Time{}
 			output.Reports = append(output.Reports, event)
 		}
 	}()
