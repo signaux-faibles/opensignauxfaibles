@@ -11,24 +11,22 @@
       "periode": "2018-12-01T00:00:00Z"
     }
   ],
-  "events": [
+  "reports": [
     {
-      "start_date": "0001-01-01T00:00:00Z",
-      "report": {
-        "batch_key": "",
-        "head_fatal": [],
-        "head_rejected": [
-          "Line 2: Pas de siret associé au compte 450359886246036238 à la période 2018-12-01 00:00:00 +0000 UTC"
-        ],
-        "is_fatal": false,
-        "lines_parsed": 3,
-        "lines_rejected": 1,
-        "lines_skipped": 0,
-        "lines_valid": 2,
-        "summary": "testData/comptesTestData.csv: intégration terminée, 3 lignes traitées, 0 erreurs fatales, 1 lignes rejetées, 0 lignes filtrées, 2 lignes valides"
-      },
+      "commit": "",
+      "start_date": "2025-09-01T13:25:14.858944724+02:00",
       "parser": "admin_urssaf",
-      "report_type": ""
+      "batch_key": "",
+      "head_fatal": [],
+      "head_rejected": [
+        "Line 2: Pas de siret associé au compte 450359886246036238 à la période 2018-12-01 00:00:00 +0000 UTC"
+      ],
+      "is_fatal": false,
+      "lines_parsed": 3,
+      "lines_rejected": 1,
+      "lines_skipped": 0,
+      "lines_valid": 2,
+      "summary": "testData/comptesTestData.csv: intégration terminée, 3 lignes traitées, 0 erreurs fatales, 1 lignes rejetées, 0 lignes filtrées, 2 lignes valides"
     }
   ]
 }

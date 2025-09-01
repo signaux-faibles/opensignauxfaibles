@@ -65,7 +65,7 @@ func (params importBatchHandler) Run() error {
 		engine.NewCSVSinkFactory(batch.ID.Key),
 		engine.NewPostgresSinkFactory(engine.Db.PostgresDB),
 	)
-	eventSink := engine.NewPostgresEventSink(engine.Db.PostgresDB)
+	eventSink := engine.NewPostgresReportSink(engine.Db.PostgresDB)
 
 	err = engine.ImportBatch(batch, parsers, params.NoFilter, dataSink, eventSink)
 
@@ -117,7 +117,7 @@ func (params checkBatchHandler) Run() error {
 		return err
 	}
 
-	eventSink := engine.NewPostgresEventSink(engine.Db.PostgresDB)
+	eventSink := engine.NewPostgresReportSink(engine.Db.PostgresDB)
 	err = engine.CheckBatch(batch, parsers, eventSink)
 	if err != nil {
 		return fmt.Errorf("erreurs détectées: %v", err)
@@ -172,11 +172,11 @@ func (params parseFileHandler) Run() error {
 
 	// the following code is inspired from marshal.ParseFilesFromBatch()
 	outputChannel := make(chan marshal.Tuple)
-	eventChannel := make(chan marshal.Event)
+	reportChannel := make(chan marshal.Report)
 	go func() {
-		eventChannel <- marshal.ParseFile(file, parser, &batch, cache, outputChannel)
+		reportChannel <- marshal.ParseFile(file, parser, &batch, cache, outputChannel)
 		close(outputChannel)
-		close(eventChannel)
+		close(reportChannel)
 	}()
 
 	var wg sync.WaitGroup
@@ -189,7 +189,7 @@ func (params parseFileHandler) Run() error {
 		}
 	}()
 
-	for e := range eventChannel {
+	for e := range reportChannel {
 		res, _ := json.MarshalIndent(e, "", "  ")
 		log.Println(string(res)) // écriture de l'événement dans stderr
 	}

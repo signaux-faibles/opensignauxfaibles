@@ -100,11 +100,11 @@ func (s *DiscardDataSink) ProcessOutput(ch chan marshal.Tuple) error {
 	return nil
 }
 
-type DiscardEventSink struct {
+type DiscardReportSink struct {
 	counter int
 }
 
-func (s DiscardEventSink) Process(ch chan marshal.Event) error {
+func (s DiscardReportSink) Process(ch chan marshal.Report) error {
 	for range ch {
 		s.counter++
 	}

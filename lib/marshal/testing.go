@@ -34,15 +34,15 @@ func MockComptesMapping(mapping map[string]string) Comptes {
 	return mockComptes
 }
 
-type tuplesAndEvents = struct {
-	Tuples []Tuple `json:"tuples"`
-	Events []Event `json:"events"`
+type tuplesAndReports = struct {
+	Tuples  []Tuple  `json:"tuples"`
+	Reports []Report `json:"reports"`
 }
 
 // GetFatalError retourne le message d'erreur fatale obtenu suite à une
 // opération de parsing, ou une chaine vide.
-func GetFatalError(output tuplesAndEvents) string {
-	headFatal := GetFatalErrors(output.Events[0])
+func GetFatalError(output tuplesAndReports) string {
+	headFatal := GetFatalErrors(output.Reports[0])
 	if headFatal == nil || len(headFatal) < 1 {
 		return ""
 	}
@@ -55,14 +55,14 @@ func GetFatalError(output tuplesAndEvents) string {
 
 // GetFatalErrors retourne les messages d'erreurs fatales obtenus suite à une
 // opération de parsing, ou nil.
-func GetFatalErrors(event Event) []string {
-	return event.Report.HeadFatal
+func GetFatalErrors(report Report) []string {
+	return report.HeadFatal
 }
 
 // ConsumeFatalErrors récupère les erreurs fatales depuis un canal d'évènements
-func ConsumeFatalErrors(eventChan chan Event) []string {
+func ConsumeFatalErrors(ch chan Report) []string {
 	var fatalErrors []string
-	for event := range eventChan {
+	for event := range ch {
 		headFatal := GetFatalErrors(event)
 		for _, fatalError := range headFatal {
 			fatalErrors = append(fatalErrors, fatalError)
@@ -71,27 +71,27 @@ func ConsumeFatalErrors(eventChan chan Event) []string {
 	return fatalErrors
 }
 
-// RunParserInline returns Tuples and Events resulting from the execution of a
+// RunParserInline returns Tuples and Reports resulting from the execution of a
 // Parser on a given list of rows, with an empty Cache.
-func RunParserInline(t *testing.T, parser Parser, rows []string) (output tuplesAndEvents) {
+func RunParserInline(t *testing.T, parser Parser, rows []string) (output tuplesAndReports) {
 	return RunParserInlineEx(t, NewCache(), parser, rows)
 }
 
-// RunParserInlineEx returns Tuples and Events resulting from the execution of a
+// RunParserInlineEx returns Tuples and Reports resulting from the execution of a
 // Parser on a given list of rows.
-func RunParserInlineEx(t *testing.T, cache Cache, parser Parser, rows []string) (output tuplesAndEvents) {
+func RunParserInlineEx(t *testing.T, cache Cache, parser Parser, rows []string) (output tuplesAndReports) {
 	csvData := strings.Join(rows, "\n")
 	csvFile := CreateTempFileWithContent(t, []byte(csvData)) // will clean up after the test
 	return RunParser(parser, cache, csvFile.Name())
 }
 
-// RunParser returns Tuples and Events resulting from the execution of a
+// RunParser returns Tuples and Reports resulting from the execution of a
 // Parser on a given input file.
 func RunParser(
 	parser Parser,
 	cache Cache,
 	inputFile string,
-) (output tuplesAndEvents) {
+) (output tuplesAndReports) {
 	batch := base.MockBatch(parser.Type(), []string{inputFile})
 	tuples, events := ParseFilesFromBatch(cache, &batch, parser)
 
@@ -101,7 +101,7 @@ func RunParser(
 	go func() {
 		defer wg.Done()
 		for event := range events {
-			output.Events = append(output.Events, event)
+			output.Reports = append(output.Reports, event)
 		}
 	}()
 
@@ -113,7 +113,7 @@ func RunParser(
 	return output
 }
 
-// TestParserOutput compares output Tuples and output Events with JSON stored
+// TestParserOutput compares output Tuples and output Reports with JSON stored
 // in a golden file. If update = true, the the golden file is updated.
 func TestParserOutput(
 	t *testing.T,

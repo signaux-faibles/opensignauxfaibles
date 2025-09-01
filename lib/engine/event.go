@@ -14,46 +14,46 @@ import (
 	"opensignauxfaibles/lib/marshal"
 )
 
-const EventTable string = "import_logs"
+const ReportTable string = "import_logs"
 
-type EventSink interface {
-	Process(ch chan marshal.Event) error
+type ReportSink interface {
+	Process(ch chan marshal.Report) error
 }
 
-type PostgresEventSink struct {
+type PostgresReportSink struct {
 	conn *pgxpool.Pool
 
 	// Name of the table to which to write
 	table string
 }
 
-func NewPostgresEventSink(conn *pgxpool.Pool) EventSink {
-	return &PostgresEventSink{conn, EventTable}
+func NewPostgresReportSink(conn *pgxpool.Pool) ReportSink {
+	return &PostgresReportSink{conn, ReportTable}
 }
 
-func (s *PostgresEventSink) Process(ch chan marshal.Event) error {
+func (s *PostgresReportSink) Process(ch chan marshal.Report) error {
 	logger := slog.With("sink", "postgresql", "table", s.table)
 
-	logger.Debug("stream events to PostgreSQL")
+	logger.Debug("stream reports/logs to PostgreSQL")
 
-	logger.Debug("events insertion")
+	logger.Debug("reports insertion")
 	nInserted := 0
 
-	for event := range ch {
+	for report := range ch {
 
-		if err := insertEvent(event, s.conn, s.table); err != nil {
-			return fmt.Errorf("failed to insert event: %w", err)
+		if err := insertReport(report, s.conn, s.table); err != nil {
+			return fmt.Errorf("failed to insert report: %w", err)
 		}
 
 		nInserted++
 	}
 
-	logger.Debug("events streaming to PostgreSQL ended successfully", "n_inserted", nInserted)
+	logger.Debug("reports streaming to PostgreSQL ended successfully", "n_inserted", nInserted)
 
 	return nil
 }
 
-func insertEvent(event marshal.Event, conn *pgxpool.Pool, tableName string) error {
+func insertReport(report marshal.Report, conn *pgxpool.Pool, tableName string) error {
 
 	query := fmt.Sprintf(`
 		INSERT INTO %s (
@@ -71,17 +71,17 @@ func insertEvent(event marshal.Event, conn *pgxpool.Pool, tableName string) erro
 	}
 
 	row := []any{
-		event.StartDate,
-		event.Parser,
-		event.Report.BatchKey,
-		toPgArray(event.Report.HeadFatal),
-		toPgArray(event.Report.HeadRejected),
-		event.Report.IsFatal,
-		event.Report.LinesParsed,
-		event.Report.LinesRejected,
-		event.Report.LinesSkipped,
-		event.Report.LinesValid,
-		event.Report.Summary,
+		report.StartDate,
+		report.Parser,
+		report.BatchKey,
+		toPgArray(report.HeadFatal),
+		toPgArray(report.HeadRejected),
+		report.IsFatal,
+		report.LinesParsed,
+		report.LinesRejected,
+		report.LinesSkipped,
+		report.LinesValid,
+		report.Summary,
 	}
 	ctx := context.Background()
 	_, err := conn.Exec(ctx, query, row...)

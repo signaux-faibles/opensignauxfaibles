@@ -79,25 +79,23 @@
       "date_creation": "2007-04-20T00:00:00Z"
     }
   ],
-  "events": [
+  "reports": [
     {
-      "start_date": "0001-01-01T00:00:00Z",
-      "report": {
-        "batch_key": "",
-        "head_fatal": [],
-        "head_rejected": [
-          "Line 5: strconv.ParseFloat: parsing \"NOT_VALID\": invalid syntax",
-          "Line 5: strconv.ParseFloat: parsing \"NOT_VALID\": invalid syntax"
-        ],
-        "is_fatal": false,
-        "lines_parsed": 5,
-        "lines_rejected": 1,
-        "lines_skipped": 0,
-        "lines_valid": 4,
-        "summary": "testData/sireneTestData.csv: intégration terminée, 5 lignes traitées, 0 erreurs fatales, 1 lignes rejetées, 0 lignes filtrées, 4 lignes valides"
-      },
+      "commit": "",
+      "start_date": "2025-09-01T13:25:14.816214701+02:00",
       "parser": "sirene",
-      "report_type": ""
+      "batch_key": "",
+      "head_fatal": [],
+      "head_rejected": [
+        "Line 5: strconv.ParseFloat: parsing \"NOT_VALID\": invalid syntax",
+        "Line 5: strconv.ParseFloat: parsing \"NOT_VALID\": invalid syntax"
+      ],
+      "is_fatal": false,
+      "lines_parsed": 5,
+      "lines_rejected": 1,
+      "lines_skipped": 0,
+      "lines_valid": 4,
+      "summary": "testData/sireneTestData.csv: intégration terminée, 5 lignes traitées, 0 erreurs fatales, 1 lignes rejetées, 0 lignes filtrées, 4 lignes valides"
     }
   ]
 }

@@ -23,7 +23,7 @@ func TestTracker(t *testing.T) {
 			tracker.AddParseError(fmt.Errorf("parse error %d", i))
 			tracker.Next()
 		}
-		report := tracker.Report("", "")
+		report := tracker.Report("", "", "")
 		assert.Equal(t, int64(expectedLinesRejected), report.LinesRejected)
 	})
 
@@ -34,7 +34,7 @@ func TestTracker(t *testing.T) {
 		for i := range errorsOnSameLine {
 			tracker.AddParseError(fmt.Errorf("parse error %d", i))
 		}
-		report := tracker.Report("", "")
+		report := tracker.Report("", "", "")
 		assert.Equal(t, int64(expectedLinesRejected), report.LinesRejected)
 	})
 
@@ -45,7 +45,7 @@ func TestTracker(t *testing.T) {
 		for i := range errorsOnSameLine {
 			tracker.AddFilterError(fmt.Errorf("filter error %d", i))
 		}
-		report := tracker.Report("", "")
+		report := tracker.Report("", "", "")
 		assert.Equal(t, int64(expectedLinesSkipped), report.LinesSkipped)
 	})
 
