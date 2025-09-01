@@ -14,7 +14,7 @@ import (
 	"opensignauxfaibles/lib/marshal"
 )
 
-const ReportTable string = "import_logs"
+const ReportTable string = "sfdata_import_logs"
 
 type ReportSink interface {
 	Process(ch chan marshal.Report) error

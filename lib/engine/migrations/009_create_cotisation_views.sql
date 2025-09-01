@@ -1,11 +1,11 @@
-CREATE OR REPLACE VIEW clean_cotisation AS
+CREATE OR REPLACE VIEW sfdata_clean_cotisation AS
 SELECT
   siret,
   periode_debut as periode,
   sum(du) as du
-FROM stg_cotisation
+FROM sfdata_stg_cotisation
 GROUP BY siret, periode_debut;
 
 ---- create above / drop below ----
 
-DROP VIEW clean_cotisation;
+DROP VIEW sfdata_clean_cotisation;

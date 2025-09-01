@@ -1,21 +1,21 @@
-CREATE TABLE IF NOT EXISTS stg_effectif (
+CREATE TABLE IF NOT EXISTS sfdata_stg_effectif (
     siret           VARCHAR(14),
     periode         DATE,
     effectif        INTEGER
 );
 
-CREATE INDEX IF NOT EXISTS idx_stg_effectif_siret ON stg_effectif(siret);
+CREATE INDEX IF NOT EXISTS idx_stg_effectif_siret ON sfdata_stg_effectif(siret);
 
 
-CREATE TABLE IF NOT EXISTS stg_effectif_ent (
+CREATE TABLE IF NOT EXISTS sfdata_stg_effectif_ent (
     siren           VARCHAR(9),
     periode         DATE,
     effectif_ent    INTEGER
 );
 
-CREATE INDEX IF NOT EXISTS idx_stg_effectif_ent_siren ON stg_effectif_ent(siren);
+CREATE INDEX IF NOT EXISTS idx_stg_effectif_ent_siren ON sfdata_stg_effectif_ent(siren);
 
 ---- create above / drop below ----
 
-DROP TABLE stg_effectif;
-DROP TABLE stg_effectif_ent;
+DROP TABLE sfdata_stg_effectif;
+DROP TABLE sfdata_stg_effectif_ent;
