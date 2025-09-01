@@ -7,7 +7,6 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
-	"time"
 
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -26,16 +25,10 @@ type PostgresEventSink struct {
 
 	// Name of the table to which to write
 	table string
-
-	// Attach the processed events to a specific command
-	command string
-
-	// time of creation
-	timestamp time.Time
 }
 
-func NewPostgresEventSink(conn *pgxpool.Pool, command string) EventSink {
-	return &PostgresEventSink{conn, EventTable, command, time.Now()}
+func NewPostgresEventSink(conn *pgxpool.Pool) EventSink {
+	return &PostgresEventSink{conn, EventTable}
 }
 
 func (s *PostgresEventSink) Process(ch chan marshal.Event) error {
