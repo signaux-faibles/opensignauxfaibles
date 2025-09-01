@@ -70,18 +70,18 @@ func SetGitCommit(hash string) {
 }
 
 type Report struct {
-	Commit        string
-	StartDate     time.Time
-	Parser        string
-	BatchKey      string   `json:"batch_key"`
-	HeadFatal     []string `json:"head_fatal"`
-	HeadRejected  []string `json:"head_rejected"`
-	IsFatal       bool     `json:"is_fatal"`
-	LinesParsed   int64    `json:"lines_parsed"`
-	LinesRejected int64    `json:"lines_rejected"`
-	LinesSkipped  int64    `json:"lines_skipped"`
-	LinesValid    int64    `json:"lines_valid"`
-	Summary       string   `json:"summary"`
+	Commit        string    `json:"commit"`
+	StartDate     time.Time `json:"start_date"`
+	Parser        string    `json:"parser"`
+	BatchKey      string    `json:"batch_key"`
+	HeadFatal     []string  `json:"head_fatal"`
+	HeadRejected  []string  `json:"head_rejected"`
+	IsFatal       bool      `json:"is_fatal"`
+	LinesParsed   int64     `json:"lines_parsed"`
+	LinesRejected int64     `json:"lines_rejected"`
+	LinesSkipped  int64     `json:"lines_skipped"`
+	LinesValid    int64     `json:"lines_valid"`
+	Summary       string    `json:"summary"`
 }
 
 // Report génère un rapport de parsing à partir des erreurs rapportées.

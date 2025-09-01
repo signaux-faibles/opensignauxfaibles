@@ -46,25 +46,23 @@
       "recours_en_cours": true
     }
   ],
-  "events": [
+  "reports": [
     {
-      "start_date": "0001-01-01T00:00:00Z",
-      "report": {
-        "batch_key": "",
-        "head_fatal": [],
-        "head_rejected": [
-          "Line 2: record on line 3: wrong number of fields",
-          "Line 4: parse error on line 5, column 4: bare \" in non-quoted-field"
-        ],
-        "is_fatal": false,
-        "lines_parsed": 5,
-        "lines_rejected": 2,
-        "lines_skipped": 0,
-        "lines_valid": 3,
-        "summary": "testData/debitCorrompuTestData.csv: intégration terminée, 5 lignes traitées, 0 erreurs fatales, 2 lignes rejetées, 0 lignes filtrées, 3 lignes valides"
-      },
+      "commit": "",
+      "start_date": "2025-09-01T13:25:14.859542298+02:00",
       "parser": "debit",
-      "report_type": ""
+      "batch_key": "",
+      "head_fatal": [],
+      "head_rejected": [
+        "Line 2: record on line 3: wrong number of fields",
+        "Line 4: parse error on line 5, column 4: bare \" in non-quoted-field"
+      ],
+      "is_fatal": false,
+      "lines_parsed": 5,
+      "lines_rejected": 2,
+      "lines_skipped": 0,
+      "lines_valid": 3,
+      "summary": "testData/debitCorrompuTestData.csv: intégration terminée, 5 lignes traitées, 0 erreurs fatales, 2 lignes rejetées, 0 lignes filtrées, 3 lignes valides"
     }
   ]
 }

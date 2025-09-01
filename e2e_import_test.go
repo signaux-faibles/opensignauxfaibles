@@ -27,8 +27,8 @@ func TestImportEndToEnd(t *testing.T) {
 		assert.Equal(t, 0, exitCode, "sfdata import should succeed")
 	})
 
-	t.Run("Verify Events reports", func(t *testing.T) {
-		verifyEventsReports(t)
+	t.Run("Verify exported Postgres reports", func(t *testing.T) {
+		verifyReports(t)
 	})
 
 	t.Run("Verify exported CSV files", func(t *testing.T) {
@@ -72,15 +72,15 @@ func createImportTestBatch(t *testing.T) {
 	writeBatchConfig(t, batch)
 }
 
-func verifyEventsReports(t *testing.T) {
-	t.Log("💎 Verifying Events reports...")
+func verifyReports(t *testing.T) {
+	t.Log("💎 Verifying exported reports...")
 
 	conn, err := pgxpool.New(context.Background(), suite.PostgresURI)
 	if err != nil {
 		t.Errorf("Unable to connect to test database: %s", err)
 	}
 
-	table := engine.EventTable
+	table := engine.ReportTable
 	query := fmt.Sprintf("SELECT * FROM %s ORDER BY parser", table)
 	output := getTableContents(t, conn, query)
 	goldenFile := fmt.Sprintf("test-import.sql.%s.golden.txt", table)
@@ -147,7 +147,7 @@ func verifyPostgresExport(t *testing.T) {
 			continue
 		}
 
-		if table == engine.EventTable {
+		if table == engine.ReportTable {
 			hasEventTable = true
 			continue
 		}

@@ -39,7 +39,7 @@ func TestParseTuplesFromLine(t *testing.T) {
 		parseTuplesFromLine(parsedLine, &SirenFilter{}, &tracker, make(chan Tuple))
 		tracker.Next()
 
-		report := tracker.Report("", "")
+		report := tracker.Report("", "", "")
 		assert.Equal(t, int64(1), report.LinesParsed)
 		assert.Equal(t, int64(1), report.LinesRejected)
 		assert.Equal(t, int64(0), report.LinesSkipped)
@@ -57,7 +57,7 @@ func TestParseTuplesFromLine(t *testing.T) {
 		parseTuplesFromLine(parsedLine, &SirenFilter{}, &tracker, make(chan Tuple))
 		tracker.Next()
 
-		report := tracker.Report("", "")
+		report := tracker.Report("", "", "")
 		assert.Equal(t, int64(1), report.LinesParsed)
 		assert.Equal(t, int64(0), report.LinesRejected)
 		assert.Equal(t, int64(1), report.LinesSkipped)

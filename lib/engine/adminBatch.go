@@ -31,7 +31,7 @@ func ImportBatch(
 	parsers []marshal.Parser,
 	skipFilter bool,
 	sinkFactory SinkFactory,
-	eventSink EventSink,
+	eventSink ReportSink,
 ) error {
 
 	logger := slog.With("batch", batch.ID.Key)
@@ -115,7 +115,7 @@ func CheckBatchPaths(batch *base.AdminBatch) error {
 func CheckBatch(
 	batch base.AdminBatch,
 	parsers []marshal.Parser,
-	eventSink EventSink,
+	eventSink ReportSink,
 ) error {
 	if err := CheckBatchPaths(&batch); err != nil {
 		return err
@@ -126,11 +126,11 @@ func CheckBatch(
 		outputChannel, eventChannel := marshal.ParseFilesFromBatch(cache, &batch, parser)
 
 		DiscardTuple(outputChannel)
-		for event := range eventChannel {
-			if event.Report.LinesRejected > 0 {
-				logger.Error(event.Report.Summary)
+		for report := range eventChannel {
+			if report.LinesRejected > 0 {
+				logger.Error(report.Summary)
 			} else {
-				logger.Info(event.Report.Summary)
+				logger.Info(report.Summary)
 			}
 		}
 	}
