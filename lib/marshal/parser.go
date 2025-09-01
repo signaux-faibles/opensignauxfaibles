@@ -60,6 +60,7 @@ func ParseFilesFromBatch(cache Cache, batch *base.AdminBatch, parser Parser) (ch
 	outputChannel := make(chan Tuple)
 	eventChannel := make(chan Event)
 	fileType := parser.Type()
+
 	go func() {
 		for _, path := range batch.Files[fileType] {
 			eventChannel <- ParseFile(path, parser, batch, cache, outputChannel)

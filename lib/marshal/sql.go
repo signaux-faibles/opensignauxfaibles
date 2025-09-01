@@ -7,6 +7,7 @@ func ExtractTableColumns(tuple Tuple) (header []string) {
 	return ExtractFieldsByTags(tuple, "sql")
 }
 
+// ExtractTableRow extrait les valeurs des colonnes pour une table SQL via le tag "sql"
 func ExtractTableRow(tuple Tuple) (row []any) {
 	rawValues := ExtractValuesByTags(tuple, "sql")
 	for _, v := range rawValues {

@@ -65,7 +65,7 @@ func (params importBatchHandler) Run() error {
 		engine.NewCSVSinkFactory(batch.ID.Key),
 		engine.NewPostgresSinkFactory(engine.Db.PostgresDB),
 	)
-	eventSink := engine.NewPostgresEventSink(engine.Db.PostgresDB, "ImportBatch")
+	eventSink := engine.NewPostgresEventSink(engine.Db.PostgresDB)
 
 	err = engine.ImportBatch(batch, parsers, params.NoFilter, dataSink, eventSink)
 
@@ -117,7 +117,7 @@ func (params checkBatchHandler) Run() error {
 		return err
 	}
 
-	eventSink := engine.NewPostgresEventSink(engine.Db.PostgresDB, "CheckBatch")
+	eventSink := engine.NewPostgresEventSink(engine.Db.PostgresDB)
 	err = engine.CheckBatch(batch, parsers, eventSink)
 	if err != nil {
 		return fmt.Errorf("erreurs détectées: %v", err)
