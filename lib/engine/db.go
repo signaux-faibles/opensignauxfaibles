@@ -33,14 +33,8 @@ func InitDB() (DB, error) {
 	ctx := context.Background()
 	conn, err := pgxpool.New(ctx, viper.GetString("POSTGRES_DB_URL"))
 
-	poolConn, _ := conn.Acquire(ctx)
-	rows, _ := poolConn.Conn().Query(ctx, `
-  SELECT table_name
-  FROM information_schema.tables
-  WHERE table_schema='public'`)
-	for rows.Next() {
-		var name string
-		rows.Scan(&name)
+	if err != nil {
+		return DB{}, fmt.Errorf("erreur de connexion à PostgreSQL : %w", err)
 	}
 
 	if err == nil {
