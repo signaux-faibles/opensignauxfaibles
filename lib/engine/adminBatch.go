@@ -54,9 +54,6 @@ func ImportBatch(
 
 	var g errgroup.Group
 
-	// Limit maximum concurrent go routines
-	g.SetLimit(6)
-
 	for _, parser := range parsers {
 		if len(batch.Files[parser.Type()]) > 0 {
 			logger.Info("parse raw data", "parser", parser.Type())
