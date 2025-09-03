@@ -71,17 +71,9 @@ func (s *PostgresSink) ProcessOutput(ch chan marshal.Tuple) error {
 	var currentBatch []marshal.Tuple
 	var headers []string
 
-	logger.Debug("begin transaction")
-	tx, err := s.conn.Begin(ctx)
-	if err != nil {
-		return fmt.Errorf("failed to begin transaction: %w", err)
-	}
-
-	defer tx.Rollback(ctx) // Will be no-op if tx is already committed
-
 	logger.Debug("truncate table")
 
-	_, err = tx.Exec(ctx, fmt.Sprintf("TRUNCATE %s", s.table))
+	_, err := s.conn.Exec(ctx, fmt.Sprintf("TRUNCATE %s", s.table))
 	if err != nil {
 		return fmt.Errorf("failed to truncate table: %w", err)
 	}
@@ -99,7 +91,7 @@ func (s *PostgresSink) ProcessOutput(ch chan marshal.Tuple) error {
 
 		if len(currentBatch) >= BatchSize {
 
-			if err := insertTuples(currentBatch, tx, s.table, headers); err != nil {
+			if err = insertTuples(currentBatch, s.conn, s.table, headers); err != nil {
 				return fmt.Errorf("failed to execute batch insert: %w", err)
 			}
 
@@ -112,7 +104,7 @@ func (s *PostgresSink) ProcessOutput(ch chan marshal.Tuple) error {
 	// Insert remaining tuples after channel closes
 	if len(currentBatch) > 0 {
 
-		if err := insertTuples(currentBatch, tx, s.table, headers); err != nil {
+		if err = insertTuples(currentBatch, s.conn, s.table, headers); err != nil {
 			return fmt.Errorf("failed to execute final batch: %w", err)
 		}
 
@@ -122,19 +114,18 @@ func (s *PostgresSink) ProcessOutput(ch chan marshal.Tuple) error {
 	logger.Debug("output streaming to PostgreSQL ended successfully", "n_inserted", nInserted)
 
 	if s.viewToRefresh != "" {
-		_, err = tx.Exec(ctx, fmt.Sprintf("REFRESH MATERIALIZED VIEW %s", s.viewToRefresh))
+		_, err = s.conn.Exec(ctx, fmt.Sprintf("REFRESH MATERIALIZED VIEW %s", s.viewToRefresh))
 		if err != nil {
 			return fmt.Errorf("failed to refresh materialized view %s: %w", s.viewToRefresh, err)
 		}
 
 		logger.Debug("Materialized View updated", "view", s.viewToRefresh)
 	}
-	tx.Commit(ctx)
 
 	return nil
 }
 
-func insertTuples(tuples []marshal.Tuple, tx pgx.Tx, tableName string, columns []string) error {
+func insertTuples(tuples []marshal.Tuple, conn *pgxpool.Pool, tableName string, columns []string) error {
 	if len(tuples) == 0 {
 		return nil
 	}
@@ -153,7 +144,7 @@ func insertTuples(tuples []marshal.Tuple, tx pgx.Tx, tableName string, columns [
 	}
 
 	// Batch insertion
-	_, err := tx.CopyFrom(
+	_, err := conn.CopyFrom(
 		context.Background(),
 		pgx.Identifier{tableName},
 		lowerColumns,
