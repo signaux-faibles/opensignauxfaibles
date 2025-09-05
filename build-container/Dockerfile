@@ -1,4 +1,4 @@
-FROM alpine:3.19
+FROM alpine:3.22
 COPY --chmod=555 sfdata /app/sfdata
 COPY local_data /local_data
 WORKDIR /app
