@@ -7,6 +7,15 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
+// DefaultBufferSize defines the size of the buffer of values that each sink
+// has.
+// Sinks may proceed input at different paces, and to avoid to have all sinks
+// waiting for the slowest one, the slower sinks buffer values while the
+// faster ones proceed.
+// However, we do not want the buffer to grow unconstrained, so when the
+// buffer is full, all sinks have to go at the slowest sink's pace.
+const DefaultBufferSize = 100000
+
 // SinkFactory creates DataSink instances configured for specific parser types
 type SinkFactory interface {
 	// CreateSink returns a new DataSink instance configured for the given parser type
@@ -28,12 +37,14 @@ type DataSink interface {
 // instances that combine multiple sinks
 func NewCompositeSinkFactory(factories ...SinkFactory) SinkFactory {
 	return &compositeSinkFactory{
-		factories: factories,
+		factories:  factories,
+		bufferSize: DefaultBufferSize,
 	}
 }
 
 type compositeSinkFactory struct {
-	factories []SinkFactory
+	factories  []SinkFactory
+	bufferSize int
 }
 
 func (f *compositeSinkFactory) CreateSink(parserType string) (DataSink, error) {
@@ -45,11 +56,12 @@ func (f *compositeSinkFactory) CreateSink(parserType string) (DataSink, error) {
 		}
 		sinks = append(sinks, sink)
 	}
-	return &compositeSink{sinks}, nil
+	return &compositeSink{sinks, f.bufferSize}, nil
 }
 
 type compositeSink struct {
-	sinks []DataSink
+	sinks      []DataSink
+	bufferSize int
 }
 
 func (s *compositeSink) ProcessOutput(ctx context.Context, ch chan marshal.Tuple) error {
@@ -63,7 +75,7 @@ func (s *compositeSink) ProcessOutput(ctx context.Context, ch chan marshal.Tuple
 
 	// We duplicate the channels
 	for range s.sinks {
-		outChannels = append(outChannels, make(chan marshal.Tuple, 1000))
+		outChannels = append(outChannels, make(chan marshal.Tuple, s.bufferSize))
 	}
 
 	go func() {
