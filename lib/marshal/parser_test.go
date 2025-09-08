@@ -1,6 +1,7 @@
 package marshal
 
 import (
+	"context"
 	"errors"
 	"log"
 	"testing"
@@ -11,23 +12,25 @@ import (
 )
 
 func TestParseFilesFromBatch(t *testing.T) {
+	ctx := context.Background()
 
 	t.Run("intérrompt le parsing en cas d'erreur d'initialisation", func(t *testing.T) {
 		batch := base.AdminBatch{Files: base.BatchFiles{"dummy": {base.NewBatchFile("dummy.csv")}}}
-		_, eventChan := ParseFilesFromBatch(NewCache(), &batch, &dummyParser{initError: errors.New("error from Init()")})
+		_, eventChan := ParseFilesFromBatch(ctx, NewCache(), &batch, &dummyParser{initError: errors.New("error from Init()")})
 		fatalErrors := ConsumeFatalErrors(eventChan)
 		assert.Equal(t, []string{"Fatal: error from Init()"}, fatalErrors)
 	})
 
 	t.Run("ne rapporte pas d'erreur de fermeture en cas d'erreur d'ouverture", func(t *testing.T) {
 		batch := base.AdminBatch{Files: base.BatchFiles{"dummy": {base.NewBatchFile("dummy.csv")}}}
-		_, eventChan := ParseFilesFromBatch(NewCache(), &batch, &dummyParser{})
+		_, eventChan := ParseFilesFromBatch(ctx, NewCache(), &batch, &dummyParser{})
 		fatalErrors := ConsumeFatalErrors(eventChan)
 		assert.Equal(t, []string{"Fatal: error from Open()"}, fatalErrors)
 	})
 }
 
 func TestParseTuplesFromLine(t *testing.T) {
+	ctx := context.Background()
 
 	t.Run("ne comptabilise pas plus d'une erreur par ligne", func(t *testing.T) {
 		var parsedLine ParsedLineResult
@@ -36,7 +39,7 @@ func TestParseTuplesFromLine(t *testing.T) {
 		parsedLine.AddTuple(dummyTuple{})
 
 		tracker := NewParsingTracker()
-		parseTuplesFromLine(parsedLine, &SirenFilter{}, &tracker, make(chan Tuple))
+		parseTuplesFromLine(ctx, parsedLine, &SirenFilter{}, &tracker, make(chan Tuple))
 		tracker.Next()
 
 		report := tracker.Report("", "", "")
@@ -54,7 +57,7 @@ func TestParseTuplesFromLine(t *testing.T) {
 		parsedLine.SetFilterError(errors.New("filtered"))
 
 		tracker := NewParsingTracker()
-		parseTuplesFromLine(parsedLine, &SirenFilter{}, &tracker, make(chan Tuple))
+		parseTuplesFromLine(ctx, parsedLine, &SirenFilter{}, &tracker, make(chan Tuple))
 		tracker.Next()
 
 		report := tracker.Report("", "", "")
