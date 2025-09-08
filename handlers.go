@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -173,8 +174,9 @@ func (params parseFileHandler) Run() error {
 	// the following code is inspired from marshal.ParseFilesFromBatch()
 	outputChannel := make(chan marshal.Tuple)
 	reportChannel := make(chan marshal.Report)
+	ctx := context.Background()
 	go func() {
-		reportChannel <- marshal.ParseFile(file, parser, &batch, cache, outputChannel)
+		reportChannel <- marshal.ParseFile(ctx, file, parser, &batch, cache, outputChannel)
 		close(outputChannel)
 		close(reportChannel)
 	}()

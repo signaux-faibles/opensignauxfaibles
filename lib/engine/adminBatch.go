@@ -64,7 +64,7 @@ func ImportBatch(
 		if len(batch.Files[parser.Type()]) > 0 {
 			logger.Info("parse raw data", "parser", parser.Type())
 
-			outputChannel, eventChannel := marshal.ParseFilesFromBatch(cache, &batch, parser) // appelle la fonction ParseFile() pour chaque type de fichier
+			outputChannel, eventChannel := marshal.ParseFilesFromBatch(ctx, cache, &batch, parser) // appelle la fonction ParseFile() pour chaque type de fichier
 
 			// Insert events (parsing logs) into the "Journal" collection
 			g.Go(
@@ -126,13 +126,14 @@ func CheckBatch(
 	parsers []marshal.Parser,
 	eventSink ReportSink,
 ) error {
+	ctx := context.Background()
 	if err := CheckBatchPaths(&batch); err != nil {
 		return err
 	}
 	var cache = marshal.NewCache()
 	for _, parser := range parsers {
 		logger := slog.With("batch", batch.ID.Key, "parser", parser.Type())
-		outputChannel, eventChannel := marshal.ParseFilesFromBatch(cache, &batch, parser)
+		outputChannel, eventChannel := marshal.ParseFilesFromBatch(ctx, cache, &batch, parser)
 
 		DiscardTuple(outputChannel)
 		for report := range eventChannel {
