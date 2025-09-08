@@ -3,16 +3,20 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
+	"opensignauxfaibles/lib/base"
 	"os"
 	"os/exec"
+	"path"
 	"path/filepath"
 	"testing"
 	"time"
 
 	"github.com/globalsign/mgo"
+	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -88,6 +92,7 @@ func setupSuite() (*TestSuite, error) {
 	os.Setenv("DB_DIAL", mongoURI)
 	os.Setenv("DB", mongoDatabase)
 	os.Setenv("APP_DATA", ".")
+	os.Setenv("BATCH_CONFIG_FILE", path.Join(tmpDir, "batch.json"))
 	os.Setenv("EXPORT_PATH", tmpDir)
 	os.Setenv("POSTGRES_DB_URL", postgresURI)
 
@@ -253,4 +258,13 @@ func stopPostgresContainer() {
 
 func deleteTempFolder() {
 	os.RemoveAll(suite.TmpDir)
+}
+
+func writeBatchConfig(t *testing.T, batch base.AdminBatch) {
+	t.Log("📝 Writing test batch config...")
+
+	bytes, err := json.Marshal(batch)
+	assert.NoError(t, err)
+	err = os.WriteFile(viper.GetString("BATCH_CONFIG_FILE"), bytes, 0644)
+	assert.NoError(t, err)
 }

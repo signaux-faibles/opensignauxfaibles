@@ -77,6 +77,7 @@ func initConfig() {
 	viper.AddConfigPath(".")
 
 	viper.SetDefault("APP_DATA", "$HOME/data-raw/")
+	viper.SetDefault("BATCH_CONFIG_FILE", "./batch.json")
 	viper.SetDefault("DB", "opensignauxfaibles")
 	viper.SetDefault("log.level", "error")
 

@@ -1,12 +1,12 @@
 package base
 
 import (
+	"encoding/json"
 	"path/filepath"
 	"regexp"
 	"strings"
 	"time"
 
-	"github.com/globalsign/mgo/bson"
 	"github.com/spf13/viper"
 )
 
@@ -17,10 +17,10 @@ type AdminBatch struct {
 	Name          string           `json:"name" bson:"name"`
 	Readonly      bool             `json:"readonly" bson:"readonly"`
 	CompleteTypes []string         `json:"complete_types" bson:"complete_types"`
-	Params        adminBatchParams `json:"params" bson:"param"`
+	Params        AdminBatchParams `json:"params" bson:"param"`
 }
 
-type adminBatchParams struct {
+type AdminBatchParams struct {
 	DateDebut       time.Time `json:"date_debut" bson:"date_debut"`
 	DateFin         time.Time `json:"date_fin" bson:"date_fin"`
 	DateFinEffectif time.Time `json:"date_fin_effectif" bson:"date_fin_effectif"`
@@ -67,16 +67,16 @@ func NewBatchFile(path string) BatchFile {
 	return NewBatchFileWithBasePath(path, viper.GetString("APP_DATA"))
 }
 
-// GetBSON implements bson.Getter
-func (file BatchFile) GetBSON() (any, error) {
+// MarshalJSON implements json.Marshaller interface
+func (file BatchFile) MarshalJSON() ([]byte, error) {
 	value := file.Scheme + file.relativePath
-	return value, nil
+	return json.Marshal(value)
 }
 
-// SetBSON implements bson.Setter
-func (file *BatchFile) SetBSON(raw bson.Raw) error {
+// UnmarshalJSON implements json.Unmarshaller interface
+func (file *BatchFile) UnmarshalJSON(raw []byte) error {
 	var value string
-	if err := raw.Unmarshal(&value); err != nil {
+	if err := json.Unmarshal(raw, &value); err != nil {
 		return err
 	}
 
@@ -120,7 +120,7 @@ func MockBatch(filetype string, filepaths []string) AdminBatch {
 	}
 	batch := AdminBatch{
 		Files: BatchFiles{filetype: batchFiles},
-		Params: adminBatchParams{
+		Params: AdminBatchParams{
 			DateDebut: time.Date(2019, 0, 1, 0, 0, 0, 0, time.UTC), // January 1st, 2019
 			DateFin:   time.Date(2019, 1, 1, 0, 0, 0, 0, time.UTC), // February 1st, 2019
 		},

@@ -6,6 +6,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/engine"
 	"os"
 	"path/filepath"
@@ -31,7 +32,7 @@ func TestImportEndToEnd(t *testing.T) {
 	t.Run("Insert test data and run import", func(t *testing.T) {
 		cleanDatabase(t, db)
 
-		insertImportTestBatch(t, db)
+		createImportTestBatch(t)
 
 		exitCode := runCLI("sfdata", "import", "--batch", "1910", "--no-filter")
 		assert.Equal(t, 0, exitCode, "sfdata import should succeed")
@@ -51,38 +52,35 @@ func TestImportEndToEnd(t *testing.T) {
 	})
 }
 
-func insertImportTestBatch(t *testing.T, db *mgo.Database) {
-	t.Log("📝 Inserting test data...")
+func createImportTestBatch(t *testing.T) {
 
-	batch := bson.M{
-		"_id": bson.M{
-			"key":  "1910",
-			"type": "batch",
+	batch := base.AdminBatch{
+		ID: base.AdminID{
+			Key:  "1910",
+			Type: "batch",
 		},
-		"files": bson.M{
-			"dummy":        []string{},
-			"filter":       []string{},
-			"apconso":      []string{"./lib/apconso/testData/apconsoTestData.csv"},
-			"apdemande":    []string{"./lib/apdemande/testData/apdemandeTestData.csv"},
-			"sirene":       []string{"./lib/sirene/testData/sireneTestData.csv"},
-			"sirene_ul":    []string{"./lib/sirene_ul/testData/sireneULTestData.csv"},
-			"admin_urssaf": []string{"./lib/urssaf/testData/comptesTestData.csv"},
-			"debit":        []string{"./lib/urssaf/testData/debitTestData.csv"},
-			"ccsf":         []string{"./lib/urssaf/testData/ccsfTestData.csv"},
-			"cotisation":   []string{"./lib/urssaf/testData/cotisationTestData.csv"},
-			"delai":        []string{"./lib/urssaf/testData/delaiTestData.csv"},
-			"effectif":     []string{"./lib/urssaf/testData/effectifTestData.csv"},
-			"effectif_ent": []string{"./lib/urssaf/testData/effectifEntTestData.csv"},
-			"procol":       []string{"./lib/urssaf/testData/procolTestData.csv"},
+		Files: map[string][]base.BatchFile{
+			"dummy":        {},
+			"filter":       {},
+			"apconso":      {base.NewBatchFile("./lib/apconso/testData/apconsoTestData.csv")},
+			"apdemande":    {base.NewBatchFile("./lib/apdemande/testData/apdemandeTestData.csv")},
+			"sirene":       {base.NewBatchFile("./lib/sirene/testData/sireneTestData.csv")},
+			"sirene_ul":    {base.NewBatchFile("./lib/sirene_ul/testData/sireneULTestData.csv")},
+			"admin_urssaf": {base.NewBatchFile("./lib/urssaf/testData/comptesTestData.csv")},
+			"debit":        {base.NewBatchFile("./lib/urssaf/testData/debitTestData.csv")},
+			"ccsf":         {base.NewBatchFile("./lib/urssaf/testData/ccsfTestData.csv")},
+			"cotisation":   {base.NewBatchFile("./lib/urssaf/testData/cotisationTestData.csv")},
+			"delai":        {base.NewBatchFile("./lib/urssaf/testData/delaiTestData.csv")},
+			"effectif":     {base.NewBatchFile("./lib/urssaf/testData/effectifTestData.csv")},
+			"effectif_ent": {base.NewBatchFile("./lib/urssaf/testData/effectifEntTestData.csv")},
+			"procol":       {base.NewBatchFile("./lib/urssaf/testData/procolTestData.csv")},
 		},
-		"param": bson.M{
-			"date_debut": time.Date(2019, time.January, 1, 0, 0, 0, 0, time.UTC),
-			"date_fin":   time.Date(2019, time.February, 1, 0, 0, 0, 0, time.UTC),
+		Params: base.AdminBatchParams{
+			DateDebut: time.Date(2019, time.January, 1, 0, 0, 0, 0, time.UTC),
+			DateFin:   time.Date(2019, time.February, 1, 0, 0, 0, 0, time.UTC),
 		},
 	}
-
-	err := db.C("Admin").Insert(batch)
-	assert.NoError(t, err)
+	writeBatchConfig(t, batch)
 }
 
 func verifyJournalReports(t *testing.T, db *mgo.Database) {
