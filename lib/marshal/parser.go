@@ -3,6 +3,7 @@ package marshal
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log/slog"
 	"time"
 
@@ -119,6 +120,14 @@ func parseTuplesFromLine(ctx context.Context, lineResult ParsedLineResult, filte
 		tracker.AddParseError(err)
 	}
 	for _, tuple := range lineResult.Tuples {
+		select {
+		case <-ctx.Done():
+			slog.Warn("Parser interrupted by cancelled context")
+			tracker.AddFatalError(fmt.Errorf("Parser interrupted by cancelled context"))
+			return
+		default:
+		}
+
 		if _, err := isValid(tuple); err != nil {
 			// On rapporte une erreur de siret/siren invalide seulement si aucune autre error n'a été rapportée par le parseur
 			if len(lineResult.Errors) == 0 {
