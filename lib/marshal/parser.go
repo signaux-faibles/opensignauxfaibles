@@ -103,18 +103,27 @@ func runParserOnFile(ctx context.Context, filePath base.BatchFile, parser Parser
 	parsedLineChan := make(chan ParsedLineResult)
 	go parser.ParseLines(parsedLineChan)
 	for lineResult := range parsedLineChan {
-		parseTuplesFromLine(ctx, lineResult, &filter, tracker, outputChannel)
+		err := parseTuplesFromLine(ctx, lineResult, &filter, tracker, outputChannel)
+		if err != nil {
+			// Do not proceed with parsing if fatal error
+			tracker.AddFatalError(err)
+			slog.Error("Fatal error while parsing line: " + err.Error())
+			break
+		}
+
 		tracker.Next()
 	}
 	return parser.Close()
 }
 
 // parseTuplesFromLine extraie les tuples et/ou erreurs depuis une ligne parsée.
-func parseTuplesFromLine(ctx context.Context, lineResult ParsedLineResult, filter *SirenFilter, tracker *ParsingTracker, outputChannel chan Tuple) {
+// Return an error only if parsing cannot proceed. Otherwise, track errors
+// with the ParsingTracker.
+func parseTuplesFromLine(ctx context.Context, lineResult ParsedLineResult, filter *SirenFilter, tracker *ParsingTracker, outputChannel chan Tuple) error {
 	filterError := lineResult.FilterError
 	if filterError != nil {
 		tracker.AddFilterError(filterError) // on rapporte le filtrage même si aucun tuple n'est transmis par le parseur
-		return
+		return nil
 	}
 	for _, err := range lineResult.Errors {
 		tracker.AddParseError(err)
@@ -130,13 +139,12 @@ func parseTuplesFromLine(ctx context.Context, lineResult ParsedLineResult, filte
 		} else {
 			select {
 			case <-ctx.Done():
-				slog.Warn("Parser interrupted by cancelled context")
-				tracker.AddFatalError(fmt.Errorf("Parser interrupted by cancelled context"))
-				return
+				return fmt.Errorf("Parser interrupted by cancelled context")
 			case outputChannel <- tuple:
 			}
 		}
 	}
+	return nil
 }
 
 // LogProgress affiche le numéro de ligne en cours de parsing, toutes les 2s.
