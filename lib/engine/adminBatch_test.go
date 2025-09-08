@@ -8,6 +8,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"opensignauxfaibles/lib/apdemande"
 	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/marshal"
 	"opensignauxfaibles/lib/urssaf"
@@ -75,6 +76,18 @@ func Test_ImportBatchWithUnreadableFilter(t *testing.T) {
 	err := ImportBatch(batch, []marshal.Parser{}, false, TestSinkFactory{}, DiscardReportSink{})
 	if err == nil {
 		t.Error("ImportBatch devrait échouer en tentant d'ouvrir un fichier filtre illisible")
+	}
+}
+
+func Test_ImportBatchWithSinkFailure(t *testing.T) {
+	batch := base.AdminBatch{
+		Files: base.BatchFiles{
+			"apdemande": {base.NewBatchFile("../../lib/apdemande/testData/apdemandeTestData.csv")},
+		},
+	}
+	err := ImportBatch(batch, []marshal.Parser{apdemande.Parser}, true, FailSinkFactory{}, DiscardReportSink{})
+	if err == nil {
+		t.Error("ImportBatch devrait échouer si le sink échoue")
 	}
 }
 
