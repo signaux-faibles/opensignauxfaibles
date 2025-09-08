@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"log/slog"
@@ -55,6 +56,11 @@ func ImportBatch(
 	var g errgroup.Group
 
 	for _, parser := range parsers {
+		// We create a parser-specific context. Any error will cancel all
+		// parser-related operations
+		ctx, cancel := context.WithCancel(context.Background())
+		defer cancel()
+
 		if len(batch.Files[parser.Type()]) > 0 {
 			logger.Info("parse raw data", "parser", parser.Type())
 
@@ -63,7 +69,8 @@ func ImportBatch(
 			// Insert events (parsing logs) into the "Journal" collection
 			g.Go(
 				func() error {
-					return eventSink.Process(eventChannel)
+					err := eventSink.Process(eventChannel)
+					return err
 				},
 			)
 
@@ -75,7 +82,12 @@ func ImportBatch(
 						return err
 					}
 
-					return dataSink.ProcessOutput(outputChannel)
+					err = dataSink.ProcessOutput(ctx, outputChannel)
+					if err != nil {
+						cancel()
+					}
+
+					return err
 				},
 			)
 		}

@@ -62,8 +62,7 @@ type PostgresSink struct {
 	viewToRefresh string
 }
 
-func (s *PostgresSink) ProcessOutput(ch chan marshal.Tuple) error {
-	ctx := context.Background()
+func (s *PostgresSink) ProcessOutput(ctx context.Context, ch chan marshal.Tuple) error {
 	logger := slog.With("sink", "postgresql", "table", s.table)
 
 	logger.Debug("stream output to PostgreSQL")
