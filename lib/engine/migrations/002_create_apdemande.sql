@@ -8,7 +8,9 @@ INSERT INTO sfdata_labels_motif_recours (id, label) VALUES
 (2, 'Difficultés d''approvisionnement en matières premières ou en énergie'),
 (3, 'Sinistre ou intempéries de caractère exceptionnel'),
 (4, 'Transformation, restructuration ou modernisation des installations et des bâtiments'),
-(5, 'Autres circonstances exceptionnelles');
+(5, 'Autres circonstances exceptionnelles'),
+(6, 'Motif inconnu'),
+(7, 'Motif inconnu');
 
 CREATE TABLE IF NOT EXISTS sfdata_stg_apdemande (
             id_demande           VARCHAR(11) PRIMARY KEY,

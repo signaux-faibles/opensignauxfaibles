@@ -120,7 +120,7 @@ func parseApDemandeLine(idxRow marshal.IndexedRow, parsedLine *marshal.ParsedLin
 	parsedLine.AddRegularError(err)
 
 	if motifRecoursSE != nil {
-		if *motifRecoursSE >= 1 && *motifRecoursSE <= 5 {
+		if *motifRecoursSE >= 1 && *motifRecoursSE <= 7 {
 			apdemande.MotifRecoursSE = motifRecoursSE
 		} else {
 			parsedLine.AddRegularError(fmt.Errorf("property \"MOTIF_RECOURS_SE\" a une valeur invalide : %d. Valeur ignorée", *motifRecoursSE))
