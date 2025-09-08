@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"context"
 	"encoding/csv"
 	"fmt"
 	"io"
@@ -61,7 +62,7 @@ type CSVSink struct {
 // The directory is derived from the CSVSink's directory
 // path, relative to the export root directory ("export.path"
 // configuration, or by default the `DefaultExportPath` constant)
-func (s *CSVSink) ProcessOutput(ch chan marshal.Tuple) error {
+func (s *CSVSink) ProcessOutput(ctx context.Context, ch chan marshal.Tuple) error {
 	logger := slog.With("sink", "csv", "file", s.file)
 	logger.Debug("stream data to CSV file")
 

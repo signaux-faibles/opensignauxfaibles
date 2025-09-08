@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"context"
 	"opensignauxfaibles/lib/marshal"
 	"testing"
 )
@@ -33,8 +34,9 @@ func TestCompositeSink(t *testing.T) {
 	f2 := TestSinkFactory{}
 	compositeFactory := NewCompositeSinkFactory(f1, f2)
 
+	ctx := context.Background()
 	compSink, _ := compositeFactory.CreateSink("testtype")
-	compSink.ProcessOutput(ch)
+	compSink.ProcessOutput(ctx, ch)
 
 	allSinks := compSink.(*compositeSink).sinks
 	if len(allSinks) != 2 {
