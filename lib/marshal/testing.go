@@ -1,6 +1,7 @@
 package marshal
 
 import (
+	"context"
 	"encoding/json"
 	"io/ioutil"
 	"log"
@@ -91,8 +92,9 @@ func RunParser(
 	cache Cache,
 	inputFile string,
 ) (output tuplesAndReports) {
+	ctx := context.Background()
 	batch := base.MockBatch(parser.Type(), []string{inputFile})
-	tuples, events := ParseFilesFromBatch(cache, &batch, parser)
+	tuples, events := ParseFilesFromBatch(ctx, cache, &batch, parser)
 
 	// intercepter et afficher les évènements pendant l'importation
 	var wg sync.WaitGroup

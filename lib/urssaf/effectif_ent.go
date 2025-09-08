@@ -13,9 +13,9 @@ import (
 
 // EffectifEnt Urssaf
 type EffectifEnt struct {
-	Siren       string    `input:"siren" json:"-"        csv:"siren"`
-	Periode     time.Time `              json:"periode"  csv:"période"`
-	EffectifEnt int       `              json:"effectif" csv:"effectif_entreprise"`
+	Siren       string    `input:"siren" json:"-"        sql:"siren"        csv:"siren"`
+	Periode     time.Time `              json:"periode"  sql:"periode"      csv:"période"`
+	EffectifEnt int       `              json:"effectif" sql:"effectif_ent" csv:"effectif_entreprise"`
 }
 
 // Key _id de l'objet

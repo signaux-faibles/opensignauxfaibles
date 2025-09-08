@@ -17,30 +17,31 @@ import (
 
 // Sirene informations sur les entreprises
 type Sirene struct {
-	Siren                string     `input:"siren"                                       json:"siren,omitempty"                 csv:"siren"`
-	Nic                  string     `input:"nic"                                         json:"nic,omitempty"                   csv:"nic"`
-	Siege                bool       `input:"etablissementSiege"                          json:"siege,omitempty"                 csv:"siege"`
-	ComplementAdresse    string     `input:"complementAdresseEtablissement"              json:"complement_adresse,omitempty"    csv:"complement_adresse"`
-	NumVoie              string     `input:"numeroVoieEtablissement"                     json:"numero_voie,omitempty"           csv:"numéro_voie"`
-	IndRep               string     `input:"indiceRepetitionEtablissement"               json:"indrep,omitempty"                csv:"indrep"`
-	TypeVoie             string     `input:"typeVoieEtablissement"                       json:"type_voie,omitempty"             csv:"type_voie"`
-	Voie                 string     `input:"libelleVoieEtablissement"                    json:"voie,omitempty"                  csv:"voie"`
-	Commune              string     `input:"libelleCommuneEtablissement"                 json:"commune,omitempty"               csv:"commune"`
-	CommuneEtranger      string     `input:"libelleCommuneEtrangerEtablissement"         json:"commune_etranger,omitempty"      csv:"commune_étranger"`
-	DistributionSpeciale string     `input:"distributionSpecialeEtablissement"           json:"distribution_speciale,omitempty" csv:"distribution_speciale"`
-	CodeCommune          string     `input:"codeCommuneEtablissement"                    json:"code_commune,omitempty"          csv:"code_commune"`
-	CodeCedex            string     `input:"codeCedexEtablissement"                      json:"code_cedex,omitempty"            csv:"code_cedex"`
-	Cedex                string     `input:"libelleCedexEtablissement"                   json:"cedex,omitempty"                 csv:"cedex"`
-	CodePaysEtranger     string     `input:"codePaysEtrangerEtablissement"               json:"code_pays_etranger,omitempty"    csv:"code_pays_étranger"`
-	PaysEtranger         string     `input:"libellePaysEtrangerEtablissement"            json:"pays_etranger,omitempty"         csv:"pays_étranger"`
-	CodePostal           string     `input:"codePostalEtablissement"                     json:"code_postal,omitempty"           csv:"code_postal"`
-	Departement          string     `                                                    json:"departement,omitempty"           csv:"département"`
-	APE                  string     `                                                    json:"ape,omitempty"                   csv:"ape"`
-	CodeActivite         string     `input:"activitePrincipaleEtablissement"             json:"code_activite,omitempty"         csv:"code_activité"`
-	NomenActivite        string     `input:"nomenclatureActivitePrincipaleEtablissement" json:"nomen_activite,omitempty"        csv:"nomenclature_activité"`
-	Creation             *time.Time `input:"dateCreationEtablissement"                   json:"date_creation,omitempty"         csv:"création"`
-	Longitude            float64    `input:"longitude"                                   json:"longitude,omitempty"             csv:"longitude"`
-	Latitude             float64    `input:"latitude"                                    json:"latitude,omitempty"              csv:"latitude"`
+	Siren                string     `input:"siren"                                       json:"siren,omitempty"                 sql:"siren"                    csv:"siren"`
+	Nic                  string     `input:"nic"                                         json:"nic,omitempty"                                                  csv:"nic"`
+	Siret                string     `                                                    json:"-"                               sql:"siret"`
+	Siege                bool       `input:"etablissementSiege"                          json:"siege,omitempty"                 sql:"siege"                    csv:"siege"`
+	ComplementAdresse    string     `input:"complementAdresseEtablissement"              json:"complement_adresse,omitempty"    sql:"complement_adresse"       csv:"complement_adresse"`
+	NumVoie              string     `input:"numeroVoieEtablissement"                     json:"numero_voie,omitempty"           sql:"numero_voie"              csv:"numéro_voie"`
+	IndRep               string     `input:"indiceRepetitionEtablissement"               json:"indrep,omitempty"                sql:"indrep"                   csv:"indrep"`
+	TypeVoie             string     `input:"typeVoieEtablissement"                       json:"type_voie,omitempty"             sql:"type_voie"                csv:"type_voie"`
+	Voie                 string     `input:"libelleVoieEtablissement"                    json:"voie,omitempty"                  sql:"voie"                     csv:"voie"`
+	Commune              string     `input:"libelleCommuneEtablissement"                 json:"commune,omitempty"               sql:"commune"                  csv:"commune"`
+	CommuneEtranger      string     `input:"libelleCommuneEtrangerEtablissement"         json:"commune_etranger,omitempty"      sql:"commune_etranger"         csv:"commune_étranger"`
+	DistributionSpeciale string     `input:"distributionSpecialeEtablissement"           json:"distribution_speciale,omitempty" sql:"distribution_speciale"    csv:"distribution_speciale"`
+	CodeCommune          string     `input:"codeCommuneEtablissement"                    json:"code_commune,omitempty"          sql:"code_commune"             csv:"code_commune"`
+	CodeCedex            string     `input:"codeCedexEtablissement"                      json:"code_cedex,omitempty"            sql:"code_cedex"               csv:"code_cedex"`
+	Cedex                string     `input:"libelleCedexEtablissement"                   json:"cedex,omitempty"                 sql:"cedex"                    csv:"cedex"`
+	CodePaysEtranger     string     `input:"codePaysEtrangerEtablissement"               json:"code_pays_etranger,omitempty"    sql:"code_pays_etranger"       csv:"code_pays_étranger"`
+	PaysEtranger         string     `input:"libellePaysEtrangerEtablissement"            json:"pays_etranger,omitempty"         sql:"pays_etranger"            csv:"pays_étranger"`
+	CodePostal           string     `input:"codePostalEtablissement"                     json:"code_postal,omitempty"           sql:"code_postal"              csv:"code_postal"`
+	Departement          string     `                                                    json:"departement,omitempty"           sql:"departement"              csv:"département"`
+	APE                  string     `                                                    json:"ape,omitempty"                   sql:"ape"                      csv:"ape"`
+	CodeActivite         string     `input:"activitePrincipaleEtablissement"             json:"code_activite,omitempty"         sql:"code_activite"            csv:"code_activité"`
+	NomenActivite        string     `input:"nomenclatureActivitePrincipaleEtablissement" json:"nomen_activite,omitempty"        sql:"nomenclature_activite"    csv:"nomenclature_activité"`
+	Creation             *time.Time `input:"dateCreationEtablissement"                   json:"date_creation,omitempty"         sql:"date_creation"            csv:"création"`
+	Longitude            float64    `input:"longitude"                                   json:"longitude,omitempty"             sql:"longitude"                csv:"longitude"`
+	Latitude             float64    `input:"latitude"                                    json:"latitude,omitempty"              sql:"latitude"                 csv:"latitude"`
 }
 
 var typeVoie = map[string]string{
@@ -151,6 +152,8 @@ func parseLine(idx marshal.ColMapping, row []string, parsedLine *marshal.ParsedL
 	sirene := Sirene{}
 	sirene.Siren = idxRow.GetVal("siren")
 	sirene.Nic = idxRow.GetVal("nic")
+	sirene.Siret = sirene.Siren + sirene.Nic
+
 	sirene.Siege, err = idxRow.GetBool("etablissementSiege")
 	parsedLine.AddRegularError(err)
 

@@ -30,11 +30,16 @@ type DB struct {
 // Cette fonction réalise les migrations - le cas échéant - de la base
 // PostgreSQL.
 func InitDB() (DB, error) {
-	conn, err := pgxpool.New(context.Background(), viper.GetString("POSTGRES_DB_URL"))
+	ctx := context.Background()
+	conn, err := pgxpool.New(ctx, viper.GetString("POSTGRES_DB_URL"))
+
+	if err != nil {
+		return DB{}, fmt.Errorf("erreur de connexion à PostgreSQL : %w", err)
+	}
 
 	if err == nil {
 		// Test connectivity with postgreSQL database
-		err = conn.Ping(context.Background())
+		err = conn.Ping(ctx)
 	}
 
 	if err != nil {
@@ -42,7 +47,7 @@ func InitDB() (DB, error) {
 	}
 
 	// Run database migrations
-	if err := runMigrations(conn); err != nil {
+	if err := runMigrations(ctx, conn); err != nil {
 		return DB{}, fmt.Errorf("erreur lors de l'exécution des migrations : %w", err)
 	}
 
@@ -52,8 +57,7 @@ func InitDB() (DB, error) {
 }
 
 // runMigrations executes database migrations using Tern
-func runMigrations(pool *pgxpool.Pool) error {
-	ctx := context.Background()
+func runMigrations(ctx context.Context, pool *pgxpool.Pool) error {
 
 	conn, err := pool.Acquire(ctx)
 	if err != nil {
@@ -61,7 +65,7 @@ func runMigrations(pool *pgxpool.Pool) error {
 	}
 	defer conn.Release()
 
-	migrator, err := migrate.NewMigrator(ctx, conn.Conn(), "sfdata_migrations")
+	migrator, err := migrate.NewMigrator(ctx, conn.Conn(), VersionTable)
 	if err != nil {
 		return fmt.Errorf("impossible d'initialiser les migrations : %w", err)
 	}

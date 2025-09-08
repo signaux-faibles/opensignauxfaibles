@@ -1,10 +1,20 @@
 package engine
 
 import (
+	"context"
 	"opensignauxfaibles/lib/marshal"
 
 	"golang.org/x/sync/errgroup"
 )
+
+// DefaultBufferSize defines the size of the buffer of values that each sink
+// has.
+// Sinks may proceed input at different paces, and to avoid to have all sinks
+// waiting for the slowest one, the slower sinks buffer values while the
+// faster ones proceed.
+// However, we do not want the buffer to grow unconstrained, so when the
+// buffer is full, all sinks have to go at the slowest sink's pace.
+const DefaultBufferSize = 100000
 
 // SinkFactory creates DataSink instances configured for specific parser types
 type SinkFactory interface {
@@ -20,19 +30,21 @@ type DataSink interface {
 	// caller.
 	//
 	// The channel ch must be completely consumed.
-	ProcessOutput(ch chan marshal.Tuple) error
+	ProcessOutput(ctx context.Context, ch chan marshal.Tuple) error
 }
 
 // NewCompositeSinkFactory gives a SinkFactory, that creates DataSink
 // instances that combine multiple sinks
 func NewCompositeSinkFactory(factories ...SinkFactory) SinkFactory {
 	return &compositeSinkFactory{
-		factories: factories,
+		factories:  factories,
+		bufferSize: DefaultBufferSize,
 	}
 }
 
 type compositeSinkFactory struct {
-	factories []SinkFactory
+	factories  []SinkFactory
+	bufferSize int
 }
 
 func (f *compositeSinkFactory) CreateSink(parserType string) (DataSink, error) {
@@ -44,20 +56,26 @@ func (f *compositeSinkFactory) CreateSink(parserType string) (DataSink, error) {
 		}
 		sinks = append(sinks, sink)
 	}
-	return &compositeSink{sinks}, nil
+	return &compositeSink{sinks, f.bufferSize}, nil
 }
 
 type compositeSink struct {
-	sinks []DataSink
+	sinks      []DataSink
+	bufferSize int
 }
 
-func (s *compositeSink) ProcessOutput(ch chan marshal.Tuple) error {
+func (s *compositeSink) ProcessOutput(ctx context.Context, ch chan marshal.Tuple) error {
+
+	// Creates a new context for the ability to cancel all sinks if any sink
+	// fails. For the moment this is an intended and acceptable behavior.
+	subctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	var outChannels []chan marshal.Tuple
 
 	// We duplicate the channels
 	for range s.sinks {
-		outChannels = append(outChannels, make(chan marshal.Tuple, 1000))
+		outChannels = append(outChannels, make(chan marshal.Tuple, s.bufferSize))
 	}
 
 	go func() {
@@ -67,8 +85,13 @@ func (s *compositeSink) ProcessOutput(ch chan marshal.Tuple) error {
 
 		for tuple := range ch {
 			for _, outCh := range outChannels {
-				// tuple is immutable and does not need a copy
-				outCh <- tuple
+				select {
+				case <-ctx.Done(): // something went wrong upstream or downstream
+					return
+				case <-subctx.Done(): // something went wrong with a sink
+					return
+				case outCh <- tuple:
+				}
 			}
 		}
 	}()
@@ -78,7 +101,12 @@ func (s *compositeSink) ProcessOutput(ch chan marshal.Tuple) error {
 	for i, sink := range s.sinks {
 		g.Go(
 			func() error {
-				err := sink.ProcessOutput(outChannels[i])
+				err := sink.ProcessOutput(subctx, outChannels[i])
+
+				if err != nil {
+					cancel() // cancels all sinks
+				}
+
 				return err
 			},
 		)
@@ -93,7 +121,7 @@ type DiscardDataSink struct {
 	counter int
 }
 
-func (s *DiscardDataSink) ProcessOutput(ch chan marshal.Tuple) error {
+func (s *DiscardDataSink) ProcessOutput(ctx context.Context, ch chan marshal.Tuple) error {
 	for range ch {
 		s.counter++
 	}

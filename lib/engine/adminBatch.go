@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"log/slog"
@@ -54,19 +55,22 @@ func ImportBatch(
 
 	var g errgroup.Group
 
-	// Limit maximum concurrent go routines
-	g.SetLimit(6)
-
 	for _, parser := range parsers {
+		// We create a parser-specific context. Any error will cancel all
+		// parser-related operations
+		ctx, cancel := context.WithCancel(context.Background())
+		defer cancel()
+
 		if len(batch.Files[parser.Type()]) > 0 {
 			logger.Info("parse raw data", "parser", parser.Type())
 
-			outputChannel, eventChannel := marshal.ParseFilesFromBatch(cache, &batch, parser) // appelle la fonction ParseFile() pour chaque type de fichier
+			outputChannel, eventChannel := marshal.ParseFilesFromBatch(ctx, cache, &batch, parser) // appelle la fonction ParseFile() pour chaque type de fichier
 
 			// Insert events (parsing logs) into the "Journal" collection
 			g.Go(
 				func() error {
-					return eventSink.Process(eventChannel)
+					err := eventSink.Process(eventChannel)
+					return err
 				},
 			)
 
@@ -78,7 +82,12 @@ func ImportBatch(
 						return err
 					}
 
-					return dataSink.ProcessOutput(outputChannel)
+					err = dataSink.ProcessOutput(ctx, outputChannel)
+					if err != nil {
+						cancel()
+					}
+
+					return err
 				},
 			)
 		}
@@ -117,13 +126,14 @@ func CheckBatch(
 	parsers []marshal.Parser,
 	eventSink ReportSink,
 ) error {
+	ctx := context.Background()
 	if err := CheckBatchPaths(&batch); err != nil {
 		return err
 	}
 	var cache = marshal.NewCache()
 	for _, parser := range parsers {
 		logger := slog.With("batch", batch.ID.Key, "parser", parser.Type())
-		outputChannel, eventChannel := marshal.ParseFilesFromBatch(cache, &batch, parser)
+		outputChannel, eventChannel := marshal.ParseFilesFromBatch(ctx, cache, &batch, parser)
 
 		DiscardTuple(outputChannel)
 		for report := range eventChannel {

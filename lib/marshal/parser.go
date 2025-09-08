@@ -3,6 +3,7 @@ package marshal
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log/slog"
 	"time"
 
@@ -56,14 +57,14 @@ type Tuple interface {
 }
 
 // ParseFilesFromBatch parse les tuples des fichiers listés dans batch pour le parseur spécifié.
-func ParseFilesFromBatch(cache Cache, batch *base.AdminBatch, parser Parser) (chan Tuple, chan Report) {
+func ParseFilesFromBatch(ctx context.Context, cache Cache, batch *base.AdminBatch, parser Parser) (chan Tuple, chan Report) {
 	outputChannel := make(chan Tuple)
 	reportChannel := make(chan Report)
 	fileType := parser.Type()
 
 	go func() {
 		for _, path := range batch.Files[fileType] {
-			reportChannel <- ParseFile(path, parser, batch, cache, outputChannel)
+			reportChannel <- ParseFile(ctx, path, parser, batch, cache, outputChannel)
 		}
 		close(outputChannel)
 		close(reportChannel)
@@ -72,7 +73,7 @@ func ParseFilesFromBatch(cache Cache, batch *base.AdminBatch, parser Parser) (ch
 }
 
 // ParseFile parse les tuples du fichier spécifié puis retourne un rapport de journal.
-func ParseFile(path base.BatchFile, parser Parser, batch *base.AdminBatch,
+func ParseFile(ctx context.Context, path base.BatchFile, parser Parser, batch *base.AdminBatch,
 	cache Cache, outputChannel chan Tuple) Report {
 	logger := slog.With("batch", batch.ID.Key, "parser", parser.Type(), "filename", path.RelativePath())
 	logger.Debug("parsing file")
@@ -80,7 +81,7 @@ func ParseFile(path base.BatchFile, parser Parser, batch *base.AdminBatch,
 	tracker := NewParsingTracker()
 	fileType := parser.Type()
 
-	err := runParserOnFile(path, parser, batch, cache, &tracker, outputChannel)
+	err := runParserOnFile(ctx, path, parser, batch, cache, &tracker, outputChannel)
 	if err != nil {
 		tracker.AddFatalError(err)
 	}
@@ -91,7 +92,7 @@ func ParseFile(path base.BatchFile, parser Parser, batch *base.AdminBatch,
 }
 
 // runParserOnFile parse les tuples du fichier spécifié, et peut retourner une erreur fatale.
-func runParserOnFile(filePath base.BatchFile, parser Parser, batch *base.AdminBatch, cache Cache, tracker *ParsingTracker, outputChannel chan Tuple) error {
+func runParserOnFile(ctx context.Context, filePath base.BatchFile, parser Parser, batch *base.AdminBatch, cache Cache, tracker *ParsingTracker, outputChannel chan Tuple) error {
 	filter := GetSirenFilterFromCache(cache)
 	if err := parser.Init(&cache, batch); err != nil {
 		return err
@@ -102,18 +103,27 @@ func runParserOnFile(filePath base.BatchFile, parser Parser, batch *base.AdminBa
 	parsedLineChan := make(chan ParsedLineResult)
 	go parser.ParseLines(parsedLineChan)
 	for lineResult := range parsedLineChan {
-		parseTuplesFromLine(lineResult, &filter, tracker, outputChannel)
+		err := parseTuplesFromLine(ctx, lineResult, &filter, tracker, outputChannel)
+		if err != nil {
+			// Do not proceed with parsing if fatal error
+			tracker.AddFatalError(err)
+			slog.Error("Fatal error while parsing line: " + err.Error())
+			break
+		}
+
 		tracker.Next()
 	}
 	return parser.Close()
 }
 
 // parseTuplesFromLine extraie les tuples et/ou erreurs depuis une ligne parsée.
-func parseTuplesFromLine(lineResult ParsedLineResult, filter *SirenFilter, tracker *ParsingTracker, outputChannel chan Tuple) {
+// Return an error only if parsing cannot proceed. Otherwise, track errors
+// with the ParsingTracker.
+func parseTuplesFromLine(ctx context.Context, lineResult ParsedLineResult, filter *SirenFilter, tracker *ParsingTracker, outputChannel chan Tuple) error {
 	filterError := lineResult.FilterError
 	if filterError != nil {
 		tracker.AddFilterError(filterError) // on rapporte le filtrage même si aucun tuple n'est transmis par le parseur
-		return
+		return nil
 	}
 	for _, err := range lineResult.Errors {
 		tracker.AddParseError(err)
@@ -127,9 +137,14 @@ func parseTuplesFromLine(lineResult ParsedLineResult, filter *SirenFilter, track
 		} else if filter.Skips(tuple.Key()) {
 			tracker.AddFilterError(errors.New("(filtered)"))
 		} else {
-			outputChannel <- tuple
+			select {
+			case <-ctx.Done():
+				return fmt.Errorf("Parser interrupted by cancelled context")
+			case outputChannel <- tuple:
+			}
 		}
 	}
+	return nil
 }
 
 // LogProgress affiche le numéro de ligne en cours de parsing, toutes les 2s.

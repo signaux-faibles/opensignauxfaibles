@@ -3,6 +3,7 @@ package apdemande
 import (
 	"encoding/csv"
 	"errors"
+	"fmt"
 	"os"
 	"strings"
 	"time"
@@ -16,19 +17,19 @@ import (
 type APDemande struct {
 	ID                 string    `input:"ID_DA"              json:"id_demande"          sql:"id_demande"           csv:"id_demande"`
 	Siret              string    `input:"ETAB_SIRET"         json:"-"                   sql:"siret"                csv:"siret"`
-	EffectifEntreprise *int      `input:"EFF_ENT"            json:"effectif_entreprise" sql:"effectif_entreprise"  csv:"effectif_entreprise"`
-	Effectif           *int      `input:"EFF_ETAB"           json:"effectif"            sql:"effectif"             csv:"effectif"`
+	EffectifEntreprise *int      `input:"EFF_ENT"            json:"effectif_entreprise"                            csv:"effectif_entreprise"`
+	Effectif           *int      `input:"EFF_ETAB"           json:"effectif"                                       csv:"effectif"`
 	DateStatut         time.Time `input:"DATE_STATUT"        json:"date_statut"         sql:"date_statut"          csv:"date_statut"`
 	PeriodeDebut       time.Time `input:"DATE_DEB"           json:"periode_debut"       sql:"periode_debut"        csv:"période_début"`
 	PeriodeFin         time.Time `input:"DATE_FIN"           json:"periode_fin"         sql:"periode_fin"          csv:"période_fin"`
-	HTA                *float64  `input:"HTA"                json:"hta"                 sql:"hta"                  csv:"heures_autorisées"`
-	MTA                *float64  `                           json:"mta"                 sql:"mta"                  csv:"montants_autorisés"`
-	EffectifAutorise   *int      `input:"EFF_AUTO"           json:"effectif_autorise"   sql:"effectif_autorise"    csv:"effectif_autorisé"`
-	MotifRecoursSE     *int      `input:"MOTIF_RECOURS_SE"   json:"motif_recours_se"    sql:"motif_recours_se"     csv:"motif_recours_se"`
-	HeureConsommee     *float64  `input:"S_HEURE_CONSOM_TOT" json:"heures_consommees"   sql:"heures_consommees"    csv:"heure_consommee"`
-	MontantConsomme    *float64  `                           json:"montant_consomme"    sql:"montant_consomme"    csv:"montant_consomme"`
-	EffectifConsomme   *int      `input:"S_HEURE_CONSOM_TOT" json:"effectif_consomme"   sql:"effectif_consomme"    csv:"effectif_consomme"`
-	Perimetre          *int      `input:"PERIMETRE_AP"       json:"perimetre"           sql:"perimetre"            csv:"perimetre"`
+	HTA                *float64  `input:"HTA"                json:"hta"                 sql:"heures"               csv:"heures_autorisées"`
+	MTA                *float64  `                           json:"mta"                 sql:"montant"              csv:"montants_autorisés"`
+	EffectifAutorise   *int      `input:"EFF_AUTO"           json:"effectif_autorise"   sql:"effectif"             csv:"effectif_autorisé"`
+	MotifRecoursSE     *int      `input:"MOTIF_RECOURS_SE"   json:"motif_recours_se"    sql:"motif_recours"        csv:"motif_recours_se"`
+	HeureConsommee     *float64  `input:"S_HEURE_CONSOM_TOT" json:"heures_consommees"                              csv:"heure_consommee"`
+	MontantConsomme    *float64  `                           json:"montant_consomme"                               csv:"montant_consomme"`
+	EffectifConsomme   *int      `input:"S_HEURE_CONSOM_TOT" json:"effectif_consomme"                              csv:"effectif_consomme"`
+	Perimetre          *int      `input:"PERIMETRE_AP"       json:"perimetre"                                      csv:"perimetre"`
 }
 
 // Key id de l'objet
@@ -115,8 +116,17 @@ func parseApDemandeLine(idxRow marshal.IndexedRow, parsedLine *marshal.ParsedLin
 	parsedLine.AddRegularError(err)
 	apdemande.EffectifAutorise, err = idxRow.GetIntFromFloat("EFF_AUTO")
 	parsedLine.AddRegularError(err)
-	apdemande.MotifRecoursSE, err = idxRow.GetInt("MOTIF_RECOURS_SE")
+	motifRecoursSE, err := idxRow.GetInt("MOTIF_RECOURS_SE")
 	parsedLine.AddRegularError(err)
+
+	if motifRecoursSE != nil {
+		if *motifRecoursSE >= 1 && *motifRecoursSE <= 7 {
+			apdemande.MotifRecoursSE = motifRecoursSE
+		} else {
+			parsedLine.AddRegularError(fmt.Errorf("property \"MOTIF_RECOURS_SE\" a une valeur invalide : %d. Valeur ignorée", *motifRecoursSE))
+		}
+	}
+
 	apdemande.HeureConsommee, err = idxRow.GetFloat64("S_HEURE_CONSOM_TOT")
 	parsedLine.AddRegularError(err)
 	apdemande.EffectifConsomme, err = idxRow.GetIntFromFloat("S_EFF_CONSOM_TOT")

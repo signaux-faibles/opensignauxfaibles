@@ -2,6 +2,7 @@ package engine
 
 import (
 	"bytes"
+	"context"
 	"opensignauxfaibles/lib/marshal"
 	"testing"
 )
@@ -48,8 +49,9 @@ func TestCSVSink_ProcessOutput(t *testing.T) {
 	}
 	close(ch)
 
+	ctx := context.Background()
 	// Stream to writer
-	err := sink.ProcessOutput(ch)
+	err := sink.ProcessOutput(ctx, ch)
 
 	if err != nil {
 		t.Error("Expect data to be streamed to writer")
