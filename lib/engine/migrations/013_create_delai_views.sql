@@ -2,8 +2,8 @@
 -- le jour ou des transformations sont nécessaires dans ces données.
 -- Par ailleurs, les utilisateurs savent qu'ils doivent uniquement requêter
 -- les tables nommées 'clean_...'
-CREATE OR REPLACE VIEW clean_delai AS SELECT * FROM stg_delai;
+CREATE OR REPLACE VIEW sfdata_clean_delai AS SELECT * FROM sfdata_stg_delai;
 
 ---- create above / drop below ----
 
-DROP VIEW clean_delai;
+DROP VIEW sfdata_clean_delai;

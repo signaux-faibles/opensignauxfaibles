@@ -33,10 +33,10 @@ func (f *PostgresSinkFactory) CreateSink(parserType string) (DataSink, error) {
 		"effectif_ent",
 		"sirene",
 		"sirene_ul":
-		tableName := fmt.Sprintf("stg_%s", parserType)
+		tableName := fmt.Sprintf("sfdata_stg_%s", parserType)
 		materializedTableUpdate := ""
 		if parserType == "apdemande" {
-			materializedTableUpdate = "stg_apdemande_by_period"
+			materializedTableUpdate = "sfdata_stg_apdemande_by_period"
 		}
 
 		return &PostgresSink{f.conn, tableName, materializedTableUpdate}, nil

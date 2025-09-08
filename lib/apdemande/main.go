@@ -3,6 +3,7 @@ package apdemande
 import (
 	"encoding/csv"
 	"errors"
+	"fmt"
 	"os"
 	"strings"
 	"time"
@@ -115,8 +116,17 @@ func parseApDemandeLine(idxRow marshal.IndexedRow, parsedLine *marshal.ParsedLin
 	parsedLine.AddRegularError(err)
 	apdemande.EffectifAutorise, err = idxRow.GetIntFromFloat("EFF_AUTO")
 	parsedLine.AddRegularError(err)
-	apdemande.MotifRecoursSE, err = idxRow.GetInt("MOTIF_RECOURS_SE")
+	motifRecoursSE, err := idxRow.GetInt("MOTIF_RECOURS_SE")
 	parsedLine.AddRegularError(err)
+
+	if motifRecoursSE != nil {
+		if *motifRecoursSE >= 1 && *motifRecoursSE <= 7 {
+			apdemande.MotifRecoursSE = motifRecoursSE
+		} else {
+			parsedLine.AddRegularError(fmt.Errorf("property \"MOTIF_RECOURS_SE\" a une valeur invalide : %d. Valeur ignorée", *motifRecoursSE))
+		}
+	}
+
 	apdemande.HeureConsommee, err = idxRow.GetFloat64("S_HEURE_CONSOM_TOT")
 	parsedLine.AddRegularError(err)
 	apdemande.EffectifConsomme, err = idxRow.GetIntFromFloat("S_EFF_CONSOM_TOT")

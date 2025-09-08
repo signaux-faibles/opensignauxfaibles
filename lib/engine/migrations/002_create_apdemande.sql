@@ -1,16 +1,18 @@
-CREATE TABLE IF NOT EXISTS labels_motif_recours (
+CREATE TABLE IF NOT EXISTS sfdata_labels_motif_recours (
   id    INTEGER PRIMARY KEY,
   label TEXT
 );
 
-INSERT INTO labels_motif_recours (id, label) VALUES
+INSERT INTO sfdata_labels_motif_recours (id, label) VALUES
 (1, 'Conjoncture économique'),
 (2, 'Difficultés d''approvisionnement en matières premières ou en énergie'),
 (3, 'Sinistre ou intempéries de caractère exceptionnel'),
 (4, 'Transformation, restructuration ou modernisation des installations et des bâtiments'),
-(5, 'Autres circonstances exceptionnelles');
+(5, 'Autres circonstances exceptionnelles'),
+(6, 'Motif inconnu'),
+(7, 'Motif inconnu');
 
-CREATE TABLE IF NOT EXISTS stg_apdemande (
+CREATE TABLE IF NOT EXISTS sfdata_stg_apdemande (
             id_demande           VARCHAR(11) PRIMARY KEY,
             siret                VARCHAR(14),
             date_statut          DATE,
@@ -19,13 +21,13 @@ CREATE TABLE IF NOT EXISTS stg_apdemande (
             heures               FLOAT,
             montant              FLOAT,
             effectif             INTEGER,
-            motif_recours        INTEGER REFERENCES labels_motif_recours(id)
+            motif_recours        INTEGER REFERENCES sfdata_labels_motif_recours(id)
 );
 
-CREATE INDEX IF NOT EXISTS idx_stg_apdemande_siret ON stg_apdemande(siret);
-CREATE INDEX IF NOT EXISTS idx_stg_apdemande_siren ON stg_apdemande(LEFT(siret, 9));
+CREATE INDEX IF NOT EXISTS idx_stg_apdemande_siret ON sfdata_stg_apdemande(siret);
+CREATE INDEX IF NOT EXISTS idx_stg_apdemande_siren ON sfdata_stg_apdemande(LEFT(siret, 9));
 
 ---- create above / drop below ----
 
-DROP TABLE labels_motif_recours;
-DROP TABLE stg_apdemande;
+DROP TABLE sfdata_labels_motif_recours;
+DROP TABLE sfdata_stg_apdemande;

@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS stg_sirene_ul (
+CREATE TABLE IF NOT EXISTS sfdata_stg_sirene_ul (
     siren                   VARCHAR(9),
     raison_sociale          TEXT,
     prenom1_unite_legale    VARCHAR(100),
@@ -11,8 +11,8 @@ CREATE TABLE IF NOT EXISTS stg_sirene_ul (
     creation                DATE
 );
 
-CREATE INDEX IF NOT EXISTS idx_stg_sirene_ul_siren ON stg_sirene_ul(siren);
+CREATE INDEX IF NOT EXISTS idx_stg_sirene_ul_siren ON sfdata_stg_sirene_ul(siren);
 
 ---- create above / drop below ----
 
-DROP TABLE stg_sirene_ul;
+DROP TABLE sfdata_stg_sirene_ul;

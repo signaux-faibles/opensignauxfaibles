@@ -4,3 +4,5 @@ id                  	label
 3                   	Sinistre ou intempé
 4                   	Transformation, rest
 5                   	Autres circonstances
+6                   	Motif inconnu       
+7                   	Motif inconnu       
