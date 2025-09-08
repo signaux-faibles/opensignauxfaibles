@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"opensignauxfaibles/lib/marshal"
+	"time"
 )
 
 // DiscardTuple ignore les données
@@ -18,6 +19,7 @@ func DiscardTuple(tuples chan marshal.Tuple) {
 type FailDataSink struct{}
 
 func (s *FailDataSink) ProcessOutput(ctx context.Context, ch chan marshal.Tuple) error {
+	time.Sleep(500 * time.Millisecond)
 	return fmt.Errorf("this sink always fails")
 }
 
